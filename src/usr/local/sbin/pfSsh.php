@@ -4,7 +4,9 @@
  * pfSsh
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +24,7 @@
 
 require_once("globals.inc");
 if ($argc < 2) {
-	echo "Starting the {$g['product_name']} developer shell";
+	echo "Starting the {$g['product_label']} developer shell";
 }
 require_once("functions.inc");
 if ($argc < 2) {
@@ -129,14 +131,14 @@ $show_help_text = <<<EOF
 	/* to output the dhcp server configuration */
 	print_r(\$config['dhcpd']);
 
-	/* to exit the {$g['product_name']} developer shell */
+	/* to exit the {$g['product_label']} developer shell */
 	exit
 
 	/* to output supported wireless modes for an interface */
 	print_r(get_wireless_modes(\"ath0\"));
 
 	/* to enable SSH */
-	\$config['system']['enablesshd'] = true;
+	\$config['system']['ssh']['enable'] = "enabled";
 
 	/* change OPTX to the OPT interface name such as BACKHAUL */
 	\$config['interfaces']['optx']['wireless']['standard'] = "11a";
@@ -202,7 +204,7 @@ function get_playback_files() {
 }
 
 if ($argc < 2) {
-	echo "Welcome to the {$g['product_name']} developer shell\n";
+	echo "Welcome to the {$g['product_label']} developer shell\n";
 	echo "\nType \"help\" to show common usage scenarios.\n";
 	echo "\nAvailable playback commands:\n     ";
 	$tccommands[] = "playback";
@@ -244,7 +246,7 @@ $tccommands[] = "master";
 $tccommands[] = "RELENG_1_2";
 
 while ($shell_active == true) {
-	$command = readline("{$g['product_name']} shell: ");
+	$command = readline("{$g['product_label']} shell: ");
 	readline_add_history($command);
 	$command_split = explode(" ", $command);
 	$first_command = $command_split[0];

@@ -4,7 +4,9 @@
  * rc.newwanipv6
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2006-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2006-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -41,7 +43,7 @@ function restart_packages() {
 	global $oldipv6, $curwanipv6, $g;
 
 	/* restart packages */
-	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldipv6 -> $curwanipv6 - Restarting packages.");
+	log_error("{$g['product_label']} package system has detected an IP change or dynamic WAN reconnection - $oldipv6 -> $curwanipv6 - Restarting packages.");
 	send_event("service reload packages");
 }
 
@@ -96,7 +98,7 @@ if (!empty($new_domain_name_servers)) {
 		}
 	}
 
-	if (count($valid_ns > 0)) {
+	if (count($valid_ns) > 0) {
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 	}
 }
@@ -132,11 +134,12 @@ link_interface_to_track6($interface, "update");
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 
+/* reconfigure our gateway monitor, dpinger results need to be 
+ * available when configuring the default gateway */
+setup_gateways_monitor();
+
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
-
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
 
 if (platform_booting()) {
 	// avoid race conditions in many of the below functions that occur during boot
@@ -147,49 +150,68 @@ if (platform_booting()) {
 /* signal filter reload */
 filter_configure();
 
+$srvupdate = true;
 if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 	if ($curwanipv6 == $oldipv6) {
 		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-		if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
-			/* reconfigure IPsec tunnels */
-			vpn_ipsec_force_reload($interface);
-
-			/* start OpenVPN server & clients */
-			if (substr($interface_real, 0, 4) != "ovpn") {
-				openvpn_resync_all($interface);
-			}
+		if (!in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
+			return;
+		} else {
+			$srvupdate = false;
 		}
-		return;
-	} else if (does_interface_exist($interface_real) && !empty($oldipv6)) {
+	} elseif (does_interface_exist($interface_real) && !empty($oldipv6)) {
 		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
 	}
 
 	file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 }
 
-/* reload unbound */
-services_unbound_configure();
+if ($srvupdate) {
+	/* reload unbound */
+	services_unbound_configure();
 
-/* perform RFC 2136 DNS update */
-services_dnsupdate_process($interface);
+	/* perform RFC 2136 DNS update */
+	services_dnsupdate_process($interface);
 
-/* signal dyndns update */
-services_dyndns_configure($interface);
+	/* signal dyndns update */
+	services_dyndns_configure($interface);
+}
 
 /* reconfigure IPsec tunnels */
-vpn_ipsec_force_reload($interface);
+ipsec_force_reload($interface);
 
 /* start OpenVPN server & clients */
 if (substr($interface_real, 0, 4) != "ovpn") {
 	openvpn_resync_all($interface);
 }
 
-/* reload graphing functions */
-enable_rrd_graphing();
+/* reconfigure GRE/GIF tunnels */
+$gre = link_interface_to_tunnelif($interface, 'gre', 'inet6');
+array_walk($gre, 'interface_gre_configure');
 
-/* reload igmpproxy */
-services_igmpproxy_configure();
+$gif = link_interface_to_tunnelif($interface, 'gif', 'inet6');
+array_walk($gif, 'interface_gif_configure');
 
-restart_packages();
+foreach ($gif as $giftun) {
+	$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
+	}
+}
+foreach ($gre as $gretun) {
+	$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
+	}
+}
+
+if ($srvupdate) {
+	/* reload graphing functions */
+	enable_rrd_graphing();
+
+	restart_packages();
+}
 
 ?>

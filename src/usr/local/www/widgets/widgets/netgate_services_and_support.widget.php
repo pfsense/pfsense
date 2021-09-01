@@ -3,7 +3,9 @@
  * netgate_services_and_support.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +32,6 @@
 
 require_once("guiconfig.inc");
 
-$nocsrf = true;
 $supportfile = "/var/db/support.json";
 $idfile = "/var/db/uniqueid";
 $FQDN = "https://ews.netgate.com/support";
@@ -39,9 +40,11 @@ $refreshinterval = (24 * 3600);	// 24 hours
 
 if ($_REQUEST['ajax']) {
 
-	// Retrieve the support data from Netgate.com if the support data file does not exist,
-	// or if it is more than a day old
-	if (!file_exists($supportfile) || ( time()-filemtime($supportfile) > $refreshinterval)) {
+	// Retrieve the support data from Netgate.com if
+	// the support data file does not exist, or
+	// if it is more than a day old and the URL seems resolvable
+	if (!file_exists($supportfile) ||
+	    ((time()-filemtime($supportfile) > $refreshinterval) && is_url_hostname_resolvable($FQDN))) {
 		if (file_exists($supportfile)) {
 			unlink($supportfile);
 		}
@@ -71,7 +74,7 @@ if ($_REQUEST['act'] == "refresh") {
 // Poll the Netgate server to obtain the JSON/HTML formatted support information
 // and write it to the JSON file
 function updateSupport() {
-	global $g, $supportfile, $idfile, $FQDN;
+	global $g, $supportfile, $idfile, $FQDN, $config;
 
 	if (file_exists($idfile)) {
 		if (function_exists('curl_version')) {
@@ -82,11 +85,13 @@ function updateSupport() {
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_VERBOSE, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+			curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,4);
+			set_curlproxy($ch);
+
 			$response = curl_exec($ch);
 			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
@@ -137,12 +142,18 @@ print("</div>");
 
 				success: function(data){
 					if (data.length > 0) {
-						var obj = JSON.parse(data);
+						try{
+							var obj = JSON.parse(data);
 
-						$('#summary').removeClass("alert");
-						$('#summary').removeClass("alert-warning");
-						$('#summary').html(obj.summary);
-						$('#htmltxt').html(obj.htmltext);
+							$('#summary').removeClass("alert");
+							$('#summary').removeClass("alert-warning");
+							$('#summary').html(obj.summary);
+							$('#htmltxt').html(obj.htmltext);
+
+						}catch(e){
+
+						}
+
 					}
 				},
 

@@ -3,7 +3,9 @@
  * services_captiveportal_hostname.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,11 +51,9 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
+$a_cp = &$config['captiveportal'];
+$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
@@ -63,34 +63,37 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
-	$a_allowedhostnames =& $a_cp[$cpzone]['allowedhostname'];
+if ($_POST['act'] == "del" && !empty($cpzone)) {
 	if ($a_allowedhostnames[$_POST['id']]) {
 		$ipent = $a_allowedhostnames[$_POST['id']];
 
+		$ipaddress = array();
 		if (isset($a_cp[$cpzone]['enable'])) {
 			if (is_ipaddr($ipent['hostname'])) {
-				$ip = $ipent['hostname'];
+				$ipaddress = $ipent['hostname'];
 			} else {
-				$ip = gethostbyname($ipent['hostname']);
+				$ipaddress = resolve_host_addresses($ipent['hostname'], array(DNS_A, DNS_AAAA), false);
 			}
-			$sn = (is_ipaddrv6($ip)) ? 128 : 32;
-			if (is_ipaddr($ip)) {
-				$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$ip}/{$sn}");
 
-				pfSense_ipfw_table("{$cpzone}_allowed_up", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
-				pfSense_ipfw_table("{$cpzone}_allowed_down", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
+			foreach ($ipaddress as $ip) {
+				if (is_ipaddr($ip)) {
+					$sn = (is_ipaddrv6($ip)) ? 128 : 32;
+					$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$ip}/{$sn}");
 
-				if (is_array($rule) && !empty($rule['pipe'])) {
-					captiveportal_free_dn_ruleno($rule['pipe']);
-					pfSense_ipfw_pipe("pipe delete {$rule['pipe']}");
-					pfSense_ipfw_pipe("pipe delete " . ($rule['pipe']+1));
+					pfSense_ipfw_table("{$cpzone}_allowed_up", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
+					pfSense_ipfw_table("{$cpzone}_allowed_down", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
 				}
+			}
+
+			if (is_array($rule) && !empty($rule['pipe'])) {
+				captiveportal_free_dn_ruleno($rule['pipe']);
+				pfSense_ipfw_pipe("pipe delete {$rule['pipe']}");
+				pfSense_ipfw_pipe("pipe delete " . ($rule['pipe']+1));
 			}
 		}
 
 		unset($a_allowedhostnames[$_POST['id']]);
-		write_config();
+		write_config("Captive portal allowed hostnames saved");
 		captiveportal_allowedhostname_configure();
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;
@@ -105,6 +108,7 @@ $tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zon
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), true, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("High Availability"), false, "services_captiveportal_hasync.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 ?>
@@ -126,7 +130,7 @@ $i = 0;
 foreach ($a_cp[$cpzone]['allowedhostname'] as $ip): ?>
 			<tr>
 				<td>
-					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower($ip['hostname'])?>
+					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower(idn_to_utf8($ip['hostname']))?>
 				</td>
 				<td >
 					<?=htmlspecialchars($ip['descr'])?>

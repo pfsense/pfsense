@@ -3,7 +3,9 @@
  * easyrule.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2009-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2009-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Originally Sponsored By Anathematic @ pfSense Forums
  * All rights reserved.
  *
@@ -27,22 +29,36 @@ require_once("util.inc");
 require_once("ipsec.inc");
 require_once("config.inc");
 
+global $specialsrcdst;
+$specialsrcdst = explode(" ", "any pppoe l2tp");
+
 function easyrule_find_rule_interface($int) {
 	global $config;
 	/* Borrowed from firewall_rules.php */
 	$iflist = get_configured_interface_with_descr(true);
 
-	if ($config['pppoe']['mode'] == "server") {
-		$iflist['pppoe'] = "PPPoE Server";
+	// add group interfaces
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
+		}
+	}
+
+	if (is_pppoe_server_enabled()) {
+		$iflist['pppoe'] = gettext("PPPoE Server");
 	}
 
 	if ($config['l2tp']['mode'] == "server") {
-		$iflist['l2tp'] = "L2TP VPN";
+		$iflist['l2tp'] = gettext("L2TP VPN");
 	}
 
 	/* add ipsec interfaces */
 	if (ipsec_enabled()) {
-		$iflist["enc0"] = "IPSEC";
+		$iflist["enc0"] = gettext("IPsec");
+	}
+
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+		$iflist["openvpn"] = gettext("OpenVPN");
 	}
 
 	if (isset($iflist[$int])) {
@@ -57,6 +73,9 @@ function easyrule_find_rule_interface($int) {
 
 	if (substr($int, 0, 4) == "ovpn") {
 		return "openvpn";
+	}
+	if (substr($int, 0, 5) == "ipsec") {
+		return "ipsec";
 	}
 
 	return false;
@@ -95,11 +114,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 		return true;
 	}
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
+	init_config_arr(array('filter', 'rule'));
 	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
@@ -111,8 +126,8 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$filterent['source']['address'] = $blockaliasname . strtoupper($int);
 	$filterent['destination']['any'] = '';
 	$filterent['descr'] = gettext("Easy Rule: Blocked from Firewall Log View");
-	/* Do not translate this, it's considered a username which cannot contain international characters */
 	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
+	$filterent['tracker'] = (int)microtime(true);
 
 	// Refer to firewall_rules_edit.php separators updating code.
 	// Using same code, variables, and techniques here.
@@ -122,6 +137,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$tmpif = $int;
 
 	// Update the separators
+	init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 	$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 	$ridx = ifridx($tmpif, $after);	// get rule index within interface
 	$mvnrows = +1;
@@ -154,11 +170,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		return false;
 	}
 
-	/* If there are no aliases, start an array */
-	if (!is_array($config['aliases']['alias'])) {
-		$config['aliases']['alias'] = array();
-	}
-
+	init_config_arr(array('aliases', 'alias'));
 	$a_aliases = &$config['aliases']['alias'];
 
 	/* Try to get the ID if the alias already exists */
@@ -229,12 +241,18 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	return true;
 }
 
-function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
+function easyrule_block_host_add($host, $int = 'wan') {
 	global $retval;
 	/* Bail if the supplied host is not a valid IP address */
 	$host = trim($host, "[]");
 	if (!is_ipaddr($host) && !is_subnet($host)) {
 		return false;
+	}
+
+	if (is_v6($host)) {
+		$ipproto = 'inet6';
+	} else {
+		$ipproto = 'inet';
 	}
 
 	/* Flag whether or not we need to reload the filter */
@@ -279,11 +297,7 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	global $config;
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
+	init_config_arr(array('filter', 'rule'));
 	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
@@ -333,8 +347,8 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	pconfig_to_address($filterent['source'], $srchost, $srcmask);
 	pconfig_to_address($filterent['destination'], $dsthost, $dstmask, '', $dstport, $dstport);
 
-	/* Do not translate this, it's considered a username which cannot contain international characters */
 	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
+	$filterent['tracker'] = (int)microtime(true);
 	$a_filter[] = $filterent;
 
 	write_config($filterent['descr']);
@@ -347,7 +361,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	}
 }
 
-function easyrule_parse_block($int, $src, $ipproto = "inet") {
+function easyrule_parse_block($int, $src) {
 	if (!empty($src) && !empty($int)) {
 		$src = trim($src, "[]");
 		if (!is_ipaddr($src) && !is_subnet($src)) {
@@ -357,7 +371,7 @@ function easyrule_parse_block($int, $src, $ipproto = "inet") {
 		if ($int === false) {
 			return gettext("Invalid interface for block rule:") . ' ' . htmlspecialchars($int);
 		}
-		if (easyrule_block_host_add($src, $int, $ipproto)) {
+		if (easyrule_block_host_add($src, $int)) {
 			return gettext("Host added successfully");
 		} else {
 			return gettext("Failed to create block rule, alias, or add host.");
@@ -368,7 +382,7 @@ function easyrule_parse_block($int, $src, $ipproto = "inet") {
 	return gettext("Unknown block error.");
 }
 
-function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
+function easyrule_parse_unblock($int, $host) {
 	global $blockaliasname, $config;
 
 	if (!empty($host) && !empty($int)) {
@@ -387,6 +401,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 			return gettext("No block rules set on interface:") . ' ' . htmlspecialchars($int);
 		}
 
+		init_config_arr(array('aliases', 'alias', $id));
 		$alias = &$config['aliases']['alias'][$id];
 
 		if (is_subnet($host)) {
@@ -467,6 +482,14 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 		}
 		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !is_specialnet($dst)) {
 			return gettext("Tried to pass invalid destination IP:") . ' ' . htmlspecialchars($dst);
+		}
+		if ((is_v6($src) && is_v4($dst)) || (is_v4($src) && is_v6($dst))) {
+			return gettext("The source IP address family has to match the family of the destination IP address.");
+		}
+		if (is_v6($src)) {
+			$ipproto = 'inet6';
+		} else {
+			$ipproto = 'inet';
 		}
 		if (in_array($proto, $protocols_with_ports)) {
 			if (empty($dstport)) {

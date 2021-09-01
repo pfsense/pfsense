@@ -3,7 +3,9 @@
  * diag_dump_states_source.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -43,12 +45,15 @@ if ($_POST['action']) {
 }
 
 /* get our states */
+$cmd = "/sbin/pfctl -s Sources";
 if ($_POST['filter']) {
-	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_POST['filter'])), $sources);
-} else {
-	exec("/sbin/pfctl -s Sources", $sources);
+	/* Ensure the user-supplied filter is sane */
+	$filtertext = cleanup_regex_pattern($_POST['filter']);
+	if (!empty($filtertext)) {
+		$cmd .= " | /usr/bin/egrep -- " . escapeshellarg($filtertext);
+	}
 }
-
+exec($cmd, $sources);
 
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Source Tracking"));
 $pglinks = array("", "diag_dump_states.php", "@self");
@@ -97,7 +102,7 @@ $section->addInput(new Form_Input(
 	'Filter expression',
 	'text',
 	$_POST['filter']
-));
+))->setHelp('Use a regular expression to filter the source tracking table. Invalid or potentially dangerous patterns will be ignored.');
 
 $form->add($section);
 

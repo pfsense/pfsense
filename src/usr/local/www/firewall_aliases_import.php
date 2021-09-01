@@ -3,7 +3,9 @@
  * firewall_aliases_import.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +29,8 @@
 ##|-PRIV
 
 
-// Keywords not allowed in names
-$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+// Keywords not allowed in names, see globals.inc for list.
+global $pf_reserved_keywords;
 
 require_once("guiconfig.inc");
 require_once("util.inc");
@@ -37,15 +39,8 @@ require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
-// Add all Load balance names to reserved_keywords
-if (is_array($config['load_balancer']['lbpool'])) {
-	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$reserved_keywords[] = $lbpool['name'];
-	}
-}
-
 $reserved_ifs = get_configured_interface_list(true);
-$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
+$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 
 $tab = $_REQUEST['tab'];
 if (empty($tab)) {
@@ -55,9 +50,7 @@ if (empty($tab)) {
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 $pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 if ($_POST) {
@@ -77,7 +70,7 @@ if ($_POST) {
 
 
 	/* Check for reserved keyword names */
-	foreach ($reserved_keywords as $rk) {
+	foreach ($pf_reserved_keywords as $rk) {
 		if ($rk == $_POST['name']) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
@@ -114,7 +107,7 @@ if ($_POST) {
 
 		foreach ($tocheck as $impline) {
 			$implinea = explode(" ", trim($impline), 2);
-			$impip = $implinea[0];
+			$impip = alias_idn_to_ascii($implinea[0]);
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {
 				if ((strpos($impdesc, "||") === false) && (substr($impdesc, 0, 1) != "|") && (substr($impdesc, -1, 1) != "|")) {
@@ -229,7 +222,7 @@ if ($tab == "port") {
 	$sectiontext = gettext('IP Alias Details');
 	$helptext = gettext('Paste in the aliases to ' .
 		'import separated by a carriage return. Common examples are lists of IPs, ' .
-		'networks, blacklists, etc. The list may contain IP addresses, with or without ' .
+		'networks, blocklists, etc. The list may contain IP addresses, with or without ' .
 		'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after ' .
 		'each IP. e.g.:') .
 		'</span><ul><li>' .

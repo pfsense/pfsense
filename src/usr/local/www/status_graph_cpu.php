@@ -3,7 +3,9 @@
  * status_graph_cpu.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -39,12 +41,12 @@ include("head.inc");
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("CPU Load Graph");?></h2></div>
 	<div class="panel-body text-center">
 		<embed src="graph_cpu.php" type="image/svg+xml"
-			   width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+			   width="550" height="275" pluginspage="https://www.adobe.com/svg/viewer/install/auto" />
 	</div>
 
 	<p class="text-center">
 		<strong><?=gettext("Note"); ?>:</strong>
-		<?=sprintf(gettext('If the graph cannot be seen, the %1$sAdobe SVG viewer%2$s may need to be installed'), '<a href="http://www.adobe.com/svg/viewer/install/" target="_blank">', '</a>')?>
+		<?=sprintf(gettext('If the graph cannot be seen, the %1$sAdobe SVG viewer%2$s may need to be installed'), '<a href="https://www.adobe.com/svg/viewer/install/" target="_blank">', '</a>')?>
 	</p>
 </div>
 

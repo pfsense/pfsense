@@ -3,7 +3,9 @@
  * services_rfc2136_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,31 +30,45 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dnsupdates']['dnsupdate'])) {
-	$config['dnsupdates']['dnsupdate'] = array();
-}
+$tsig_key_algos = array(
+	'hmac-md5'    => 'HMAC-MD5 (legacy default)',
+	'hmac-sha1'   => 'HMAC-SHA1',
+	'hmac-sha224' => 'HMAC-SHA224',
+	'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+	'hmac-sha384' => 'HMAC-SHA384',
+	'hmac-sha512' => 'HMAC-SHA512 (most secure)',
+);
 
+init_config_arr(array('dnsupdates', 'dnsupdate'));
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+$dup = false;
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$dup = true;
+}
+
 if (isset($id) && isset($a_rfc2136[$id])) {
 	$pconfig['enable'] = isset($a_rfc2136[$id]['enable']);
-	$pconfig['host'] = $a_rfc2136[$id]['host'];
+	if (!$dup) {
+		$pconfig['host'] = $a_rfc2136[$id]['host'];
+	}
 	$pconfig['ttl'] = $a_rfc2136[$id]['ttl'];
 	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
 	}
-	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
+	$pconfig['zone'] = $a_rfc2136[$id]['zone'];
 	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
-	$pconfig['keytype'] = $a_rfc2136[$id]['keytype'];
-	if (!$pconfig['keytype']) {
-		$pconfig['keytype'] = "zone";
-	}
+	$pconfig['keyalgorithm'] = $a_rfc2136[$id]['keyalgorithm'];
+	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['server'] = $a_rfc2136[$id]['server'];
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
+	$pconfig['updatesource'] = $a_rfc2136[$id]['updatesource'];
+	$pconfig['updatesourcefamily'] = $a_rfc2136[$id]['updatesourcefamily'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
 	$pconfig['usepublicip'] = isset($a_rfc2136[$id]['usepublicip']);
 	$pconfig['recordtype'] = $a_rfc2136[$id]['recordtype'];
@@ -69,39 +85,46 @@ if ($_POST['save'] || $_POST['force']) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = array();
-	$reqdfieldsn = array();
-	$reqdfields = array_merge($reqdfields, explode(" ", "host ttl keyname keydata"));
-	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key")));
+	$reqdfields = array('host', 'ttl', 'keyname', 'keydata');
+	$reqdfieldsn = array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['host'] && !is_domain($_POST['host']))) {
+	if ($_POST['host'] && !is_domain($_POST['host'])) {
 		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
 	}
-	if (($_POST['ttl'] && !is_numericint($_POST['ttl']))) {
+	if ($_POST['zone'] && !is_domain($_POST['zone'])) {
+		$input_errors[] = gettext("The DNS zone name contains invalid characters.");
+	}
+	if ($_POST['ttl'] && !is_numericint($_POST['ttl'])) {
 		$input_errors[] = gettext("The DNS update TTL must be an integer.");
 	}
-	if (($_POST['keyname'] && !is_domain($_POST['keyname']))) {
+	if ($_POST['keyname'] && !is_domain($_POST['keyname'])) {
 		$input_errors[] = gettext("The DNS update key name contains invalid characters.");
+	}
+	if ($_POST['keyalgorithm'] && !array_key_exists($_POST['keyalgorithm'], $tsig_key_algos)) {
+		$input_errors[] = gettext("The DNS update key algorithm is invalid.");
 	}
 
 	if (!$input_errors) {
 		$rfc2136 = array();
 		$rfc2136['enable'] = $_POST['enable'] ? true : false;
 		$rfc2136['host'] = $_POST['host'];
+		$rfc2136['zone'] = $_POST['zone'];
 		$rfc2136['ttl'] = $_POST['ttl'];
 		$rfc2136['keyname'] = $_POST['keyname'];
-		$rfc2136['keytype'] = $_POST['keytype'];
+		$rfc2136['keyalgorithm'] = $_POST['keyalgorithm'];
 		$rfc2136['keydata'] = $_POST['keydata'];
 		$rfc2136['server'] = $_POST['server'];
 		$rfc2136['usetcp'] = $_POST['usetcp'] ? true : false;
 		$rfc2136['usepublicip'] = $_POST['usepublicip'] ? true : false;
 		$rfc2136['recordtype'] = $_POST['recordtype'];
 		$rfc2136['interface'] = $_POST['interface'];
+		$rfc2136['updatesource'] = $_POST['updatesource'];
+		$rfc2136['updatesourcefamily'] = $_POST['updatesourcefamily'];
 		$rfc2136['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_rfc2136[$id]) {
+		if (isset($id) && $a_rfc2136[$id] && !$dup) {
 			$a_rfc2136[$id] = $rfc2136;
 		} else {
 			$a_rfc2136[] = $rfc2136;
@@ -142,6 +165,15 @@ function build_if_list() {
 	return($list);
 }
 
+function build_us_list() {
+	$list = array(
+		'' => 'Default (use Interface above)',
+		'none' => 'Do not specify',
+	);
+
+	return(array_merge($list, get_possible_listen_ips()));
+}
+
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"), gettext("Edit"));
 $pglinks = array("", "services_dyndns.php", "services_rfc2136.php", "@self");
 include("head.inc");
@@ -161,8 +193,6 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['enable']
 ));
 
-$optionlist = array();
-
 $iflist = build_if_list();
 
 $section->addInput(new Form_Select(
@@ -170,7 +200,7 @@ $section->addInput(new Form_Select(
 	'*Interface',
 	$pconfig['interface'],
 	$iflist
-));
+))->setHelp('Interface to monitor for updates. The address of this interface will be used in the updated DNS record.');
 
 $section->addInput(new Form_Input(
 	'host',
@@ -178,6 +208,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['host']
 ))->setHelp('Fully qualified hostname of the host to be updated.');
+
+$section->addInput(new Form_Input(
+	'zone',
+	'Zone',
+	'text',
+	$pconfig['zone']
+))->setHelp('Hostname zone (optional).');
 
 $section->addInput(new Form_Input(
 	'ttl',
@@ -193,40 +230,19 @@ $section->addInput(new Form_Input(
 	$pconfig['keyname']
 ))->setHelp('This must match the setting on the DNS server.');
 
-$group = new Form_Group('*Key Type');
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'Zone',
-	($pconfig['keytype'] == 'zone'),
-	'zone'
-))->displayAsRadio();
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'Host',
-	($pconfig['keytype'] == 'host'),
-	'host'
-))->displayAsRadio();
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'User',
-	($pconfig['keytype'] == 'user'),
-	'user'
-))->displayAsRadio();
-
-$section->add($group);
+$section->addInput(new Form_Select(
+	'keyalgorithm',
+	'*Key algorithm',
+	$pconfig['keyalgorithm'],
+	$tsig_key_algos
+));
 
 $section->addInput(new Form_Input(
 	'keydata',
 	'*Key',
 	'text',
 	$pconfig['keydata']
-))->setHelp('Paste an HMAC-MD5 key here.');
+))->setHelp('Secret TSIG domain key.');
 
 $section->addInput(new Form_Input(
 	'server',
@@ -248,6 +264,26 @@ $section->addInput(new Form_Checkbox(
 	'If the interface IP is private, attempt to fetch and use the public IP instead.',
 	$pconfig['usepublicip']
 ));
+
+$uslist = build_us_list();
+
+$section->addInput(new Form_Select(
+	'updatesource',
+	'Update Source',
+	$pconfig['updatesource'],
+	$uslist
+))->setHelp('Interface or address from which the firewall will send the DNS update request.');
+
+$section->addInput(new Form_Select(
+	'updatesourcefamily',
+	'Update Source Family',
+	$pconfig['updatesourcefamily'],
+	array(
+		'' => 'Default',
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+	)
+))->setHelp('Address family to use for sourcing updates.');
 
 $group = new Form_Group('*Record Type');
 
@@ -285,7 +321,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_rfc2136[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

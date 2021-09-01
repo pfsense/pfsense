@@ -3,7 +3,9 @@
  * services_captiveportal_zones_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,16 +33,14 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
+require_once("xmlparse.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zone"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self");
 $shortcut_section = "captiveportal";
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 if ($_POST['Submit']) {
 	unset($input_errors);
@@ -56,6 +56,10 @@ if ($_POST['Submit']) {
 		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores ( _ ).");
 	}
 
+	if (in_array(strtolower($_POST['zone']), array_keys(array_merge(listtags(), listtags_pkg()), true))) {
+		$input_errors[] = sprintf(gettext("The zone name [%s] is reserved."), $_POST['zone']);
+	}
+
 	foreach ($a_cp as $cpkey => $cpent) {
 		if ($cpent['zone'] == $_POST['zone']) {
 			$input_errors[] = sprintf(gettext("Zone [%s] already exists."), $_POST['zone']);
@@ -69,7 +73,7 @@ if ($_POST['Submit']) {
 		$a_cp[$cpzone]['zone'] = str_replace(" ", "", $_POST['zone']);
 		$a_cp[$cpzone]['descr'] = $_POST['descr'];
 		$a_cp[$cpzone]['localauth_priv'] = true;
-		write_config();
+		write_config("Captive portal zone saved");
 
 		header("Location: services_captiveportal.php?zone={$cpzone}");
 		exit;

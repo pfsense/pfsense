@@ -3,7 +3,9 @@
  * interfaces_gif_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,10 +30,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['gifs']['gif'])) {
-	$config['gifs']['gif'] = array();
-}
-
+init_config_arr(array('gifs', 'gif'));
 $a_gifs = &$config['gifs']['gif'];
 $id = $_REQUEST['id'];
 
@@ -133,7 +132,7 @@ if ($_POST['save']) {
 				$a_gifs[] = $gif;
 			}
 
-			write_config();
+			write_config("GIF interface added");
 
 			$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
 
@@ -223,7 +222,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'gifif',
 	null,
 	'hidden',
@@ -231,7 +230,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_gifs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

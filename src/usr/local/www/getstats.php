@@ -3,7 +3,9 @@
  * getstats.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Bill Marquette
  * All rights reserved.
  *
@@ -35,6 +37,6 @@ header("Pragma: no-cache"); // HTTP/1.0
 require_once("auth_check.inc");
 include_once("includes/functions.inc.php");
 
-echo get_stats();
+echo get_stats($_POST['skipitems']);
 
 ?>

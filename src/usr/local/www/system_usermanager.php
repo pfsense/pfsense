@@ -3,7 +3,9 @@
  * system_usermanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * All rights reserved.
@@ -37,15 +39,20 @@ require_once("certs.inc");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+$cert_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
+$cert_keytypes = array("RSA", "ECDSA");
+$openssl_ecnames = cert_build_curve_list();
+
+global $openssl_digest_algs;
+
 // start admin user code
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
 }
 
-if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
-	$config['system']['user'] = array();
-}
-
+init_config_arr(array('system', 'user'));
 $a_user = &$config['system']['user'];
 $act = $_REQUEST['act'];
 
@@ -81,7 +88,21 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_POST['act'] == "deluser") {
+/*
+ * Check user privileges to test if the user is allowed to make changes.
+ * Otherwise users can end up in an inconsistent state where some changes are
+ * performed and others denied. See https://redmine.pfsense.org/issues/9259
+ */
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+phpsession_end();
+
+if (!empty($_POST) && $read_only) {
+	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+}
+
+if (($_POST['act'] == "deluser") && !$read_only) {
 
 	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
@@ -94,8 +115,11 @@ if ($_POST['act'] == "deluser") {
 		local_user_del($a_user[$id]);
 		$userdeleted = $a_user[$id]['name'];
 		unset($a_user[$id]);
-		write_config();
-		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+		$a_user = array_values($a_user);
+		$savemsg = sprintf(gettext("Successfully deleted user: %s"), $userdeleted);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
 
 } else if ($act == "new") {
@@ -120,12 +144,10 @@ if ($_POST['act'] == "deluser") {
 
 }
 
-if (isset($_POST['dellall'])) {
+if (isset($_POST['dellall']) && !$read_only) {
 
 	$del_users = $_POST['delete_check'];
-	$deleted_users = "";
-	$deleted_count = 0;
-	$comma = "";
+	$deleted_users = array();
 
 	if (!empty($del_users)) {
 		foreach ($del_users as $userid) {
@@ -133,9 +155,7 @@ if (isset($_POST['dellall'])) {
 				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
 					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
 				} else {
-					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
-					$comma = ", ";
-					$deleted_count++;
+					$deleted_users[] = $a_user[$userid]['name'];
 					local_user_del($a_user[$userid]);
 					unset($a_user[$userid]);
 				}
@@ -144,18 +164,17 @@ if (isset($_POST['dellall'])) {
 			}
 		}
 
-		if ($deleted_count > 0) {
-			if ($deleted_count == 1) {
-				$savemsg = sprintf(gettext("User %s successfully deleted."), $deleted_users);
-			} else {
-				$savemsg = sprintf(gettext("Users %s successfully deleted."), $deleted_users);
-			}
+		if (count($deleted_users) > 0) {
+			$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
+			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+			$a_user = array_values($a_user);
 			write_config($savemsg);
+			syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		}
 	}
 }
 
-if ($_POST['act'] == "delcert") {
+if (($_POST['act'] == "delcert") && !$read_only) {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
@@ -165,21 +184,23 @@ if ($_POST['act'] == "delcert") {
 	$certdeleted = lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
 	$certdeleted = $certdeleted['descr'];
 	unset($a_user[$id]['cert'][$_POST['certid']]);
-	write_config();
+	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, $a_user[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
-	$savemsg = sprintf(gettext("Certificate %s association removed."), $certdeleted);
 }
 
-if ($_POST['act'] == "delprivid") {
+if (($_POST['act'] == "delprivid") && !$read_only) {
 	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
 	unset($a_user[$id]['priv'][$_POST['privid']]);
 	local_user_set($a_user[$id]);
-	write_config();
+	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from user %s"), $privdeleted, $a_user[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
-	$savemsg = sprintf(gettext("Privilege %s removed."), $privdeleted);
 }
 
-if ($_POST['save']) {
+if ($_POST['save'] && !$read_only) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -211,8 +232,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
 
-	if (strlen($_POST['usernamefld']) > 16) {
-		$input_errors[] = gettext("The username is longer than 16 characters.");
+	if (strlen($_POST['usernamefld']) > 32) {
+		$input_errors[] = gettext("The username is longer than 32 characters.");
 	}
 
 	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2'])) {
@@ -282,6 +303,10 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 		}
 	}
+	validate_webguicss_field($input_errors, $_POST['webguicss']);
+	validate_webguifixedmenu_field($input_errors, $_POST['webguifixedmenu']);
+	validate_webguihostnamemenu_field($input_errors, $_POST['webguihostnamemenu']);
+	validate_dashboardcolumns_field($input_errors, $_POST['dashboardcolumns']);
 
 	if (!$input_errors) {
 
@@ -402,22 +427,34 @@ if ($_POST['save']) {
 
 				$cert['descr'] = $_POST['name'];
 
-				$subject = cert_get_subject_array($ca['crt']);
+				$subject = cert_get_subject_hash($ca['crt']);
 
-				$dn = array(
-					'countryName' => $subject[0]['v'],
-					'stateOrProvinceName' => $subject[1]['v'],
-					'localityName' => $subject[2]['v'],
-					'organizationName' => $subject[3]['v'],
-					'emailAddress' => $subject[4]['v'],
-					'commonName' => $userent['name']);
-				$altnames_tmp = array(cert_add_altname_type($userent['name']));
-				if (!empty($altnames_tmp)) {
-					$dn['subjectAltName'] = implode(",", $altnames_tmp);
+				$dn = array();
+				if (!empty($subject['C'])) {
+					$dn['countryName'] = $subject['C'];
+				}
+				if (!empty($subject['ST'])) {
+					$dn['stateOrProvinceName'] = $subject['ST'];
+				}
+				if (!empty($subject['L'])) {
+					$dn['localityName'] = $subject['L'];
+				}
+				if (!empty($subject['O'])) {
+					$dn['organizationName'] = $subject['O'];
+				}
+				if (!empty($subject['OU'])) {
+					$dn['organizationalUnitName'] = $subject['OU'];
+				}
+				$dn['commonName'] = $userent['name'];
+				$cn_altname = cert_add_altname_type($userent['name']);
+				if (!empty($cn_altname)) {
+					$dn['subjectAltName'] = $cn_altname;
 				}
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
-					(int)$_POST['lifetime'], $dn);
+					(int)$_POST['lifetime'], $dn, 'user',
+					$_POST['digest_alg'], $_POST['keytype'],
+					$_POST['ecname']);
 
 				if (!is_array($config['cert'])) {
 					$config['cert'] = array();
@@ -440,24 +477,31 @@ if ($_POST['save']) {
 			$a_user[] = $userent;
 		}
 
-		/* Add user to groups so PHP can see the memberships properly or else the user's shell account does not get proper permissions (if applicable) See #5152. */
+		/* Sort it alphabetically */
+		usort($config['system']['user'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+
 		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
-		/* Add user to groups again to ensure they are set everywhere, otherwise the user may not appear to be a member of the group. See commit:5372d26d9d25d751d16865ed9d46869d3b0ec5e1. */
-		local_user_set_groups($userent, $_POST['groups']);
-		write_config();
 
+		/* Update user index to account for new changes */
+		global $userindex;
+		$userindex = index_users();
+
+		$savemsg = sprintf(gettext("Successfully %s user %s"), (isset($id)) ? gettext("edited") : gettext("created"), $userent['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
 		}
-
 
 		pfSenseHeader("system_usermanager.php");
 	}
 }
 
 function build_priv_table() {
-	global $a_user, $id;
+	global $a_user, $id, $read_only;
 
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -490,7 +534,7 @@ function build_priv_table() {
 		}
 		$privhtml .=			'</td>';
 		$privhtml .=			'<td>';
-		if (!$group) {
+		if (!$group && !$read_only) {
 			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
 		}
 
@@ -518,14 +562,16 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	if (!$read_only) {
+		$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	}
 	$privhtml .= '</nav>';
 
 	return($privhtml);
 }
 
 function build_cert_table() {
-	global $a_user, $id;
+	global $a_user, $id, $read_only;
 
 	$certhtml = '<div class="table-responsive">';
 	$certhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -550,8 +596,10 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
-			$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
-			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
+			if (!$read_only) {
+				$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
+				$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
+			}
 			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
 			$i++;
@@ -564,7 +612,9 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	if (!$read_only) {
+		$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	}
 	$certhtml .= '</nav>';
 
 	return($certhtml);
@@ -641,7 +691,7 @@ foreach ($a_user as $i => $userent):
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
-<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
+<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username']) && !$read_only): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
 						</td>
@@ -653,6 +703,8 @@ foreach ($a_user as $i => $userent):
 	</div>
 </div>
 <nav class="action-buttons">
+	<?php if (!$read_only): ?>
+
 	<a href="?act=new" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
@@ -662,6 +714,7 @@ foreach ($a_user as $i => $userent):
 		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete")?>
 	</button>
+	<?php endif; ?>
 
 </nav>
 </form>
@@ -743,7 +796,8 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'usernamefld',
 		'*Username',
 		'text',
-		$pconfig['usernamefld']
+		$pconfig['usernamefld'],
+		['autocomplete' => 'new-password']
 	));
 
 	if ($ro) {
@@ -767,12 +821,16 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$group->add(new Form_Input(
 		'passwordfld1',
 		'Password',
-		'password'
+		'password',
+		null,
+		['autocomplete' => 'new-password']
 	));
 	$group->add(new Form_Input(
 		'passwordfld2',
 		'Confirm Password',
-		'password'
+		'password',
+		null,
+		['autocomplete' => 'new-password']
 	));
 
 	$section->add($group);
@@ -817,7 +875,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	foreach ($config['system']['group'] as $Ggroup) {
 		if ($Ggroup['name'] != "all") {
-			if (($act == 'edit') && $Ggroup['member'] && in_array($pconfig['uid'], $Ggroup['member'])) {
+			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array($a_user[$id]['uid'], $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
 			} else {
 				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
@@ -928,24 +986,42 @@ if ($act == "new" || $act == "edit" || $input_errors):
 			));
 
 			$section->addInput(new Form_Select(
+				'keytype',
+				'*Key type',
+				$pconfig['keytype'],
+				array_combine($cert_keytypes, $cert_keytypes)
+			));
+
+			$group = new Form_Group($i == 0 ? '*Key length':'');
+			$group->addClass('rsakeys');
+			$group->add(new Form_Select(
 				'keylen',
-				'Key length',
-				2048,
-				array(
-					512 => '512 bits',
-					1024 => '1024 bits',
-					2048 => '2048 bits',
-					3072 => '3072 bits',
-					4096 => '4096 bits',
-					7680 => '7680 bits',
-					8192 => '8192 bits',
-					15360 => '15360 bits',
-					16384 => '16384 bits'
-				)
-			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
-				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
-				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
-				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
+				null,
+				$pconfig['keylen'] ? $pconfig['keylen'] : '2048',
+				array_combine($cert_keylens, $cert_keylens)
+			))->setHelp('The length to use when generating a new RSA key, in bits. %1$s' .
+				'The Key Length should not be lower than 2048 or some platforms ' .
+				'may consider the certificate invalid.', '<br/>');
+			$section->add($group);
+
+			$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
+			$group->addClass('ecnames');
+			$group->add(new Form_Select(
+				'ecname',
+				null,
+				$pconfig['ecname'] ? $pconfig['ecname'] : 'prime256v1',
+				$openssl_ecnames
+			))->setHelp('Curves may not be compatible with all uses. Known compatible curve uses are denoted in brackets.');
+			$section->add($group);
+
+			$section->addInput(new Form_Select(
+				'digest_alg',
+				'*Digest Algorithm',
+				$pconfig['digest_alg'] ? $pconfig['digest_alg'] : 'sha256',
+				array_combine($openssl_digest_algs, $openssl_digest_algs)
+			))->setHelp('The digest method used when the certificate is signed. %1$s' .
+				'The best practice is to use an algorithm stronger than SHA1. '.
+				'Some platforms may consider weaker digest algorithms invalid', '<br/>');
 
 			$section->addInput(new Form_Input(
 				'lifetime',
@@ -1018,6 +1094,11 @@ events.push(function() {
 		}
 	}
 
+	function change_keytype() {
+		hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
+		hideClass('ecnames', ($('#keytype').val() != 'ECDSA'));
+	}
+
 	$('#webguicss').change(function() {
 		setThemeWarning();
 	});
@@ -1066,12 +1147,17 @@ events.push(function() {
 
 	$('#expires').datepicker();
 
+	$('#keytype').change(function () {
+		change_keytype();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideClass('cert-options', true);
 	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
 	setcustomoptions();
+	change_keytype();
 
 	// On submit mark all the user's groups as "selected"
 	$('form').submit(function() {

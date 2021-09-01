@@ -3,7 +3,9 @@
  * firewall_shaper_wizards.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +40,7 @@ if ($_GET['reset'] != "") {
 }
 
 if ($_POST['apply']) {
-	write_config();
+	write_config("Traffic Shaper Wizard settings applied");
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */

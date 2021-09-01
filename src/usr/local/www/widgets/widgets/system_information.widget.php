@@ -3,7 +3,9 @@
  * system_information.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * All rights reserved.
  *
@@ -32,11 +34,14 @@ include_once("includes/functions.inc.php");
 
 $sysinfo_items = array(
 	'name' => gettext('Name'),
+	'user' => gettext('User'),
 	'system' => gettext('System'),
 	'bios' => gettext('BIOS'),
 	'version' => gettext('Version'),
 	'cpu_type' => gettext('CPU Type'),
 	'hwcrypto' => gettext('Hardware Crypto'),
+	'pti' => gettext('Kernel PTI'),
+	'mds' => gettext('MDS Mitigation'),
 	'uptime' => gettext('Uptime'),
 	'current_datetime' => gettext('Current Date/Time'),
 	'dns_servers' => gettext('DNS Server(s)'),
@@ -53,6 +58,7 @@ $sysinfo_items = array(
 
 // Declared here so that JavaScript can access it
 $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa fa-cog fa-spin'></i>");
+$state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -79,10 +85,7 @@ if ($_REQUEST['getupdatestatus']) {
 		exit;
 	}
 
-	$version_compare = pkg_version_compare(
-	    $system_version['installed_version'], $system_version['version']);
-
-	switch ($version_compare) {
+	switch ($system_version['pkg_version_compare']) {
 	case '<':
 ?>
 		<div>
@@ -140,7 +143,10 @@ if ($_REQUEST['getupdatestatus']) {
 $filesystems = get_mounted_filesystems();
 
 $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
+
 $rows_displayed = false;
+// use the preference of the first thermal sensor widget, if it's available (false == empty)
+$temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($user_settings['widgets']['thermal_sensors-0']['thermal_sensors_widget_show_fahrenheit']));
 ?>
 
 <div class="table-responsive">
@@ -156,28 +162,41 @@ $rows_displayed = false;
 		</tr>
 <?php
 	endif;
+	if (!in_array('user', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("User");?></th>
+			<td><?php echo htmlspecialchars(get_config_user()); ?></td>
+<?php
+	endif;
 	if (!in_array('system', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("System");?></th>
 			<td>
-			<?php
+<?php
 				$platform = system_identify_specific_platform();
 				if (isset($platform['descr'])) {
 					echo $platform['descr'];
 				} else {
 					echo gettext('Unknown system');
 				}
-			?>
-			<br />
-			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
-<?php
-		// If the uniqueID is available, display it here
-		$uniqueid = system_get_uniqueid();
-		if (!empty($uniqueid)) {
-			print("<br />" . gettext("Netgate Device ID:") . " <strong>{$uniqueid}</strong>");
-		}
+
+				$serial = system_get_serial();
+				if (!empty($serial)) {
+					print("<br />" . gettext("Serial:") .
+					    " <strong>{$serial}</strong>\n");
+				}
+
+				// If the uniqueID is available, display it here
+				$uniqueid = system_get_uniqueid();
+				if (!empty($uniqueid)) {
+					print("<br />" .
+					    gettext("Netgate Device ID:") .
+					    " <strong>{$uniqueid}</strong>");
+				}
 ?>
 			</td>
 		</tr>
@@ -248,7 +267,7 @@ $rows_displayed = false;
 				</div>
 		<?php endif; ?>
 				<div id="cpucrypto">
-					<?= get_cpu_crypto_support(); ?>
+					<?= get_cpu_crypto_string($hwcrypto); ?>
 				</div>
 			</td>
 		</tr>
@@ -260,9 +279,29 @@ $rows_displayed = false;
 		<?php if ($hwcrypto): ?>
 		<tr>
 			<th><?=gettext("Hardware crypto");?></th>
-			<td><?=htmlspecialchars($hwcrypto);?></td>
+			<td><?=htmlspecialchars(crypto_accel_get_algs($hwcrypto));?></td>
 		</tr>
 		<?php endif; ?>
+<?php
+	endif;
+	$pti = get_single_sysctl('vm.pmap.pti');
+	if ((strlen($pti) > 0) && !in_array('pti', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("Kernel PTI");?></th>
+			<td><?=($pti == 0) ? gettext("Disabled") : gettext("Enabled");?></td>
+		</tr>
+<?php
+	endif;
+	$mds = get_single_sysctl('hw.mds_disable_state');
+	if ((strlen($mds) > 0) && !in_array('mds', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("MDS Mitigation");?></th>
+			<td><?=ucwords(htmlspecialchars($mds));?></td>
+		</tr>
 <?php
 	endif;
 	if (!in_array('uptime', $skipsysinfoitems)):
@@ -291,7 +330,7 @@ $rows_displayed = false;
 			<td>
 				<ul style="margin-bottom:0px">
 				<?php
-					$dns_servers = get_dns_servers();
+					$dns_servers = get_dns_nameservers(false, true);
 					foreach ($dns_servers as $dns) {
 						echo "<li>{$dns}</li>";
 					}
@@ -312,20 +351,60 @@ $rows_displayed = false;
 		<?php endif; ?>
 <?php
 	endif;
+
+
 	if (!in_array('state_table_size', $skipsysinfoitems)):
 		$rows_displayed = true;
+
+		$pfstatetext = get_pfstate();
+		$pfstateusage = get_pfstate(true);
+
+		// Calculate scaling factor
+		$adaptive = false;
+
+		if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
+			$maxstates="{$config['system']['maximumstates']}";
+		} else {
+			$maxstates=pfsense_default_state_size();
+		}
+
+		if (isset($config['system']['adaptivestart']) and $config['system']['adaptivestart'] > 0) {
+		    $adaptivestart = "{$config['system']['adaptivestart']}";
+		} else {
+		    $adaptivestart = intval($maxstates * 0.6);
+		}
+
+		if (isset($config['system']['adaptiveend']) and $config['system']['adaptiveend'] > 0) {
+		    $adaptiveend = "{$config['system']['adaptiveend']}";
+		} else {
+		    $adaptiveend = intval($maxstates * 1.2);
+		}
+
+		$adaptive_text = "";
+
+		if ($pfstatetext > $adaptivestart) {
+		    $scalingfactor = round(($adaptiveend - $pfstatetext) / ($adaptiveend - $adaptivestart) * 100, 0);
+		    $adaptive = true;
+		}
 ?>
 		<tr>
-			<th><?=gettext("State table size");?></th>
+			<th>
+<?php
+				print(gettext("State table size"));
+				// If adaptive state handling is enabled, display the % and provide a tooltip with more details
+				print('<span id="scaledstates"><br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' .
+					$state_tt . $scalingfactor . '%">' .
+					gettext("Scaling ") . $scalingfactor . '%</a></span>');
+
+?>
+			</th>
 			<td>
-				<?php
-					$pfstatetext = get_pfstate();
-					$pfstateusage = get_pfstate(true);
-				?>
+				<!-- The color of the progress bar is changed to 'warniing' to indicate adaptive state handling is in use -->
 				<div class="progress">
-					<div id="statePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
+					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>
 				</div>
+
 				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span>&nbsp;<span id="pfstate">(<?= htmlspecialchars($pfstatetext)?>)</span>&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
@@ -352,16 +431,16 @@ $rows_displayed = false;
 	if (!in_array('temperature', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>
-		<?php if (get_temp() != ""): ?>
+		<?php if ($temp_deg_c = get_temp()): ?>
 		<tr>
 			<th><?=gettext("Temperature");?></th>
 			<td>
-				<?php $temp_deg_c = get_temp(); ?>
+				<?php $display_temp = ($temp_use_f) ? $temp_deg_c * 1.8 + 32 : $temp_deg_c; ?>
 				<div class="progress">
-					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$temp_deg_c?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$temp_deg_c?>%">
+					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$display_temp?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$temp_use_f ? $temp_deg_c * .212 : $temp_deg_c?>%">
 					</div>
 				</div>
-				<span id="tempmeter"><?= $temp_deg_c . "&deg;C"; ?></span>
+				<span id="tempmeter" data-units="<?=$temp_use_f ? 'F' : 'C';?>"><?=$display_temp?></span>&deg;<?=$temp_use_f ? 'F' : 'C';?>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -422,7 +501,7 @@ $rows_displayed = false;
 					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
 					</div>
 				</div>
-				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MiB</span>
+				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/tail -1 | /usr/bin/awk '{ print $2;}'`) ?> MiB</span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -432,11 +511,23 @@ $rows_displayed = false;
 	if (!in_array('disk_usage', $skipsysinfoitems)):
 		$rows_displayed = true;
 		$diskidx = 0;
+		$first = true;
 		foreach ($filesystems as $fs):
 ?>
 		<tr>
-			<th><?=gettext("Disk usage");?>&nbsp;( <?=$fs['mountpoint']?> )</th>
+			<th>
+				<?php if ($first): ?>
+					<?=gettext("Disk usage:");?>
+					<br/>
+				<?php endif; ?>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<?=$fs['mountpoint']?>
+			</th>
 			<td>
+				<?php if ($first):
+					$first = false; ?>
+					<br/>
+				<?php endif; ?>
 				<div class="progress" >
 					<div id="diskspace<?=$diskidx?>" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
 					</div>
@@ -468,7 +559,7 @@ $rows_displayed = false;
 <form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -508,6 +599,19 @@ $rows_displayed = false;
 
 var lastTotal = 0;
 var lastUsed = 0;
+
+// Collect some PHP values required by the states calculation
+<?php if (!in_array('state_table_size', $skipsysinfoitems)): ?>
+var adaptiveend = <?=$adaptiveend?>;
+var adaptivestart = <?=$adaptivestart?>;
+var maxstates = <?=$maxstates?>;
+var state_tt = "<?=$state_tt?>";
+<?php else: ?>
+var adaptiveend = 0;
+var adaptivestart = 0;
+var maxstates = 0;
+var state_tt = "";
+<?php endif; ?>
 
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
@@ -594,12 +698,10 @@ function updateCPU(total, used) {
 }
 
 function updateTemp(x) {
-	if ($("#tempmeter")) {
-		$('[id="tempmeter"]').html(x + '&deg;' + 'C');
-	}
-	if ($('#tempPB')) {
-		setProgress('tempPB', parseInt(x));
-	}
+	$("#tempmeter").html(function() {
+		return this.dataset.units === "F" ? parseInt(x * 1.8 + 32, 10) : x;
+	});
+	setProgress('tempPB', parseInt(x));
 }
 
 function updateDateTime(x) {
@@ -617,6 +719,31 @@ function updateUptime(x) {
 function updateState(x) {
 	if ($('#pfstate')) {
 		$('[id="pfstate"]').html('(' + x + ')');
+
+		// get numeric part of string before hte '/'
+		x = x.split('/')[0]
+
+		if (x > adaptivestart) {
+			var scalingfactor = Math.round((adaptiveend - x) / (adaptiveend - adaptivestart) * 100);
+			var disphtml = 	'<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' +
+				state_tt +  scalingfactor + '%">' +
+				'Scaling ' + scalingfactor + '%</a>';
+
+			// Only update the display if the tooltip is not visible. Otherwise the tip will go away
+			if ($('.tooltip').length == 0) {
+				$('#scaledstates').html(disphtml);
+			}
+
+			// Renable the tooltip
+			$(function () {
+				$('[data-toggle="tooltip"]').tooltip()
+			})
+
+			$('#statePB').addClass('progress-bar-warning');
+		} else {
+			$('#scaledstates').html('');
+			$('#statePB').removeClass('progress-bar-warning');
+		}
 	}
 }
 
@@ -653,7 +780,14 @@ function widgetActive(x) {
 
 <?php endif; // $widget_first_instance ?>
 
-events.push(function(){
+events.push(function() {
+
+	$('#scaledstates').html('');
+
+	// Enable tooltips
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip()
+	})
 
 	// --------------------- Centralized widget refresh system ------------------------------
 
@@ -664,7 +798,8 @@ events.push(function(){
 
 	// POST data to send via AJAX
 	var postdata = {
-		ajax: "ajax"
+		ajax: "ajax",
+		skipitems: <?=json_encode($skipsysinfoitems)?>
 	 };
 
 	// Create an object defining the widget refresh AJAX call
@@ -693,7 +828,8 @@ events.push(function(){
 	// POST data to send via AJAX
 	var postdata = {
 		ajax: "ajax",
-		getupdatestatus: "1"
+		getupdatestatus: "1",
+		skipitems: <?=json_encode($skipsysinfoitems)?>
 	 };
 
 	// Create an object defining the widget refresh AJAX call
@@ -723,7 +859,8 @@ events.push(function(){
 			dataType: 'html',
 			data: {
 				ajax: "ajax",
-				getupdatestatus: "2"
+				getupdatestatus: "2",
+				skipitems: <?=json_encode($skipsysinfoitems)?>
 			},
 
 			success: function(data){
@@ -743,6 +880,3 @@ events.push(function(){
 });
 //]]>
 </script>
-
-
-

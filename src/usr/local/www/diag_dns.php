@@ -3,7 +3,9 @@
  * diag_dns.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,14 +30,11 @@
 
 $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
-$host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
+$host = idn_to_ascii(trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'"));
 
-/* If this section of config.xml has not been populated yet we need to set it up
-*/
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 $aliasname = substr(str_replace(array(".", "-"), "_", $host), 0, 31);
@@ -47,41 +46,6 @@ foreach ($a_aliases as $a) {
 		$id = $counter;
 	}
 	$counter++;
-}
-
-function resolve_host_addresses($host) {
-	$recordtypes = array(DNS_A, DNS_AAAA, DNS_CNAME);
-	$dnsresult = array();
-	$resolved = array();
-	$errreporting = error_reporting();
-	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
-	foreach ($recordtypes as $recordtype) {
-		$tmp = dns_get_record($host, $recordtype);
-		if (is_array($tmp)) {
-			$dnsresult = array_merge($dnsresult, $tmp);
-		}
-	}
-	error_reporting($errreporting);// restore original php warning/error settings.
-
-	foreach ($dnsresult as $item) {
-		$newitem = array();
-		$newitem['type'] = $item['type'];
-		switch ($item['type']) {
-			case 'CNAME':
-				$newitem['data'] = $item['target'];
-				$resolved[] = $newitem;
-				break;
-			case 'A':
-				$newitem['data'] = $item['ip'];
-				$resolved[] = $newitem;
-				break;
-			case 'AAAA':
-				$newitem['data'] = $item['ipv6'];
-				$resolved[] = $newitem;
-				break;
-		}
-	}
-	return $resolved;
 }
 
 if (isAllowedPage('firewall_aliases_edit.php') && isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
@@ -137,15 +101,14 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (!is_hostname($host) && !is_ipaddr($host)) {
+	if (!is_hostname(rtrim($host, '.')) && !is_ipaddr($host)) {
 		$input_errors[] = gettext("Host must be a valid hostname or IP address.");
 	} else {
 		// Test resolution speed of each DNS server.
 		$dns_speeds = array();
-		$dns_servers = array();
-		exec("/usr/bin/grep nameserver /etc/resolv.conf | /usr/bin/cut -f2 -d' '", $dns_servers);
+		$dns_servers = get_dns_nameservers(false, true);
 		foreach ($dns_servers as $dns_server) {
-			$query_time = exec("/usr/bin/drill {$host_esc} " . escapeshellarg("@" . trim($dns_server)) . " | /usr/bin/grep Query | /usr/bin/cut -d':' -f2");
+			$query_time = exec("/usr/bin/drill " . escapeshellarg($host) . " " . escapeshellarg("@" . trim($dns_server)) . " | /usr/bin/grep Query | /usr/bin/cut -d':' -f2");
 			if ($query_time == "") {
 				$query_time = gettext("No response");
 			}
@@ -171,7 +134,7 @@ if ($_POST) {
 				$tmpresolved['data'] = $resolvedptr;
 				$resolved[] = $tmpresolved;
 			}
-		} elseif (is_hostname($host)) {
+		} elseif (is_hostname(rtrim($host, '.'))) {
 			$type = "hostname";
 			$ipaddr = gethostbyname($host);
 			$resolved = resolve_host_addresses($host);
@@ -210,7 +173,7 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 } else if (!$resolved && $type) {
-	print_info_box(sprintf(gettext('Host "%s" could not be resolved.'), $host), 'warning', false);
+	print_info_box(sprintf(gettext('Host "%s" could not be resolved.'), idn_to_utf8($host)), 'warning', false);
 }
 
 if ($createdalias) {
@@ -238,7 +201,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'*Hostname',
 	'text',
-	$host,
+	idn_to_utf8($host),
 	['placeholder' => 'Hostname to look up.']
 ));
 
@@ -252,16 +215,11 @@ $form->addGlobal(new Form_Button(
 ))->addClass('btn-primary');
 
 if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
-	if ($alias_exists) {
-		$button_text = gettext("Update alias");
-	} else {
-		$button_text = gettext("Add alias");
-	}
 	$form->addGlobal(new Form_Button(
 		'create_alias',
-		$button_text,
+		($alias_exists) ? gettext("Update Alias") : gettext("Add Alias"),
 		null,
-		'fa-plus'
+		($alias_exists) ? 'fa-refresh' : 'fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');
 }
 
@@ -324,20 +282,16 @@ if (!$input_errors && $type) {
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>
 			<li class="list-group-item"><a href="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a></li>
 		</ul>
-		<h5><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></h5>
-		<ul class="list-group">
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=$ipaddr;?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=$ipaddr;?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>
-		</ul>
 	</div>
 </div>
 <?php
 }
+if (!$input_errors):
 ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	var original_host = "<?=$host;?>";
+	var original_host = <?=json_encode($host);?>;
 
 	$('input[name="host"]').on('input', function() {
 		if ($('#host').val() == original_host) {
@@ -350,4 +304,5 @@ events.push(function() {
 //]]>
 </script>
 <?php
+endif;
 include("foot.inc");

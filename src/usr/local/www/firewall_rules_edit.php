@@ -3,7 +3,9 @@
  * firewall_rules_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -40,15 +42,18 @@ $icmptypes4 = array('any' => gettext('any'));
 $icmptypes6 = array('any' => gettext('any'));
 $icmptypes46 = array('any' => gettext('any'));
 
+// ICMP descriptions may be translated, so require escaping to handle single quotes (in particular)
 foreach ($icmptypes as $k => $v) {
+	$description = addslashes($v['descrip']);
+
 	if ($v['valid4']) {
-		$icmptypes4[$k] = $v['descrip'];
+		$icmptypes4[$k] = $description;
 		if ($v['valid6']) {
-			$icmptypes6[$k] = $v['descrip'];
-			$icmptypes46[$k] = $v['descrip'];
+			$icmptypes6[$k] = $description;
+			$icmptypes46[$k] = $description;
 		}
 	} else {
-		$icmptypes6[$k] = $v['descrip'];
+		$icmptypes6[$k] = $description;
 	}
 }
 
@@ -57,6 +62,24 @@ $icmplookup = array(
 	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
 	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
 );
+
+$statetype_values = array(
+	'keep state' => gettext('Keep'),
+	'sloppy state' => gettext('Sloppy'),
+	'synproxy state' => gettext('Synproxy'),
+	'none' => gettext('None'),
+);
+
+$vlanprio = array(
+	"" => "none",
+	"bk" => "Background (BK, 0)",
+	"be" => "Best Effort (BE, 1)",
+	"ee" => "Excellent Effort (EE, 2)",
+	"ca" => "Critical Applications (CA, 3)",
+	"vi" => "Video (VI, 4)",
+	"vo" => "Voice (VO, 5)",
+	"ic" => "Internetwork Control (IC, 6)",
+	"nc" => "Network Control (NC, 7)");
 
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
@@ -78,6 +101,7 @@ function is_aoadv_used($rule_config) {
 	    (isset($rule_config['disablereplyto'])) ||
 	    ($rule_config['tag'] != "") ||
 	    ($rule_config['tagged'] != "") ||
+	    (isset($rule_config['nottagged'])) ||
 	    ($rule_config['max'] != "") ||
 	    ($rule_config['max-src-nodes'] != "") ||
 	    ($rule_config['max-src-conn'] != "") ||
@@ -136,10 +160,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['filter']['rule'])) {
-	$config['filter']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
@@ -254,6 +275,9 @@ if (isset($id) && $a_filter[$id]) {
 	if (isset($a_filter[$id]['disablereplyto'])) {
 		$pconfig['disablereplyto'] = true;
 	}
+	if (isset($a_filter[$id]['nottagged'])) {
+		$pconfig['nottagged'] = true;
+	}
 
 	/* advanced */
 	$pconfig['max'] = $a_filter[$id]['max'];
@@ -310,6 +334,20 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 
 read_altq_config(); /* XXX: */
 $qlist =& get_unique_queue_list();
+
+$list = array('' => 'none');
+if (!is_array($qlist)) {
+	$qlist = array();
+}
+
+foreach ($qlist as $q => $qkey) {
+	if (isset($ifdisp[$q])) {
+		$list[$q] = $ifdisp[$q];
+	} else {
+		$list[$q] = $q;
+	}
+}
+
 read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
@@ -368,6 +406,10 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
 			}
 		}
+	}
+
+	if (strpos($_POST['descr'], "\\") !== false) {
+		$input_errors[] = gettext("The '\' character is not allowed in the Description field.");
 	}
 
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
@@ -481,6 +523,15 @@ if ($_POST['save']) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ((isset($_POST['srcnot']) && ($_POST['srctype'] == 'any')) ||
+	    (isset($_POST['dstnot']) && ($_POST['dsttype'] == 'any'))) {
+		$input_errors[] = gettext("Invert match cannot be selected with 'any'.");
+	}
+
+	if (isset($_POST['nottagged']) && empty($_POST['tagged'])) {
+		$input_errors[] = gettext("Invert tagged match cannot be selected without any tags.");
+	}
 
 	if (!$_POST['srcbeginport']) {
 		$_POST['srcbeginport'] = 0;
@@ -605,7 +656,7 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['proto'] == "icmp") {
-		$t =& $_POST['icmptype'];
+		$t = $_POST['icmptype'];
 		if (isset($t) && !is_array($t)) {
 			// shouldn't happen but avoids making assumptions for data-sanitising
 			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
@@ -671,9 +722,6 @@ if ($_POST['save']) {
 		}
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
 			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) can only be specified for TCP protocol.");
-		}
-		if (!empty($_POST['statetimeout'])) {
-			$input_errors[] = gettext("The state timeout (advanced option) can only be specified for TCP protocol.");
 		}
 	}
 
@@ -761,7 +809,47 @@ if ($_POST['save']) {
 		}
 		if (empty($outoftcpflags) && !empty($settcpflags)) {
 			$input_errors[] = gettext("If TCP flags that should be set is specified, then out of which flags should be specified as well.");
+		} else {
+			/* https://redmine.pfsense.org/issues/11762 */
+			foreach ($settcpflags as $tcpflag) {
+				if (!in_array($tcpflag, $outoftcpflags)) {
+					$input_errors[] = sprintf(gettext("The TCP flag %s must be checked in 'out of' list."), strtoupper($tcpflag));
+				}
+			}
 		}
+	}
+
+	if ($_POST['dscp'] && !in_array($_POST['dscp'], $firewall_rules_dscp_types)) {
+		$input_errors[] = gettext("Invalid DSCP value.");
+	}
+	if ($_POST['tag'] && !is_validaliasname($_POST['tag'])) {
+		$input_errors[] = gettext("Invalid tag value.");
+	}
+	if ($_POST['tagged'] && !is_validaliasname($_POST['tagged'])) {
+		$input_errors[] = gettext("Invalid tagged value.");
+	}
+	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
+		$input_errors[] = gettext("Invalid State Type.");
+	}
+	if ($_POST['vlanprio'] && !array_key_exists($_POST['vlanprio'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio.");
+	}
+	if ($_POST['vlanprioset'] && !array_key_exists($_POST['vlanprioset'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio Set.");
+	}
+
+	if ($_POST['ackqueue'] && !array_key_exists($_POST['ackqueue'], $list)) {
+		$input_errors[] = gettext("Invalid ACK Queue.");
+	}
+	if ($_POST['defaultqueue'] && !array_key_exists($_POST['defaultqueue'], $list)) {
+		$input_errors[] = gettext("Invalid Default Queue.");
+	}
+
+	if ($_POST['dnpipe'] && !array_key_exists($_POST['dnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid In Pipe.");
+	}
+	if ($_POST['pdnpipe'] && !array_key_exists($_POST['pdnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid Out Pipe.");
 	}
 
 	// Allow extending of the firewall edit page and include custom input validation
@@ -829,6 +917,11 @@ if ($_POST['save']) {
 			$filterent['disablereplyto'] = true;
 		} else {
 			unset($filterent['disablereplyto']);
+		}
+		if ($_POST['nottagged'] == "yes") {
+			$filterent['nottagged'] = true;
+		} else {
+			unset($filterent['nottagged']);
 		}
 		$filterent['max'] = $_POST['max'];
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
@@ -962,6 +1055,7 @@ if ($_POST['save']) {
 				$a_filter[$id] = $filterent;
 			} else {							// rule moved to different interface
 				// Update the separators of previous interface.
+				init_config_arr(array('filter', 'separator', strtolower($if)));
 				$a_separators = &$config['filter']['separator'][strtolower($if)];
 				$ridx = ifridx($if, $id);		// get rule index within interface
 				$mvnrows = -1;
@@ -970,6 +1064,7 @@ if ($_POST['save']) {
 				$a_filter[$id] = $filterent;	// save edited rule to new interface
 
 				// Update the separators of new interface.
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $id);	// get rule index within interface
 				if ($ridx == 0) {				// rule was placed at the top
@@ -1001,6 +1096,7 @@ if ($_POST['save']) {
 				}
 
 				// Update the separators
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $after);	// get rule index within interface
 				$mvnrows = +1;
@@ -1064,47 +1160,6 @@ function build_flag_table() {
 	$flagtable .= '<strong>' . gettext(" Any flags.") . '</strong>';
 
 	return($flagtable);
-}
-
-function build_if_list() {
-	global $config;
-
-	$iflist = array();
-
-	// add group interfaces
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-			if (have_ruleint_access($ifgen['ifname'])) {
-				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-			}
-		}
-	}
-
-	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
-			$iflist[$ifent] = $ifdesc;
-		}
-	}
-
-	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = gettext('L2TP VPN');
-	}
-
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-		$iflist['pppoe'] = gettext("PPPoE Server");
-	}
-
-	// add ipsec interfaces
-	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$iflist["enc0"] = gettext("IPsec");
-	}
-
-	// add openvpn/tun interfaces
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$iflist["openvpn"] = gettext("OpenVPN");
-	}
-
-	return($iflist);
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
@@ -1249,7 +1304,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		build_if_list(),
+		filter_get_interface_list(),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');
 } else {
@@ -1257,7 +1312,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		build_if_list()
+		filter_get_interface_list()
 	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 
@@ -1305,6 +1360,7 @@ $section->addInput(new Form_Select(
 		'esp' => 'ESP',
 		'ah' => 'AH',
 		'gre' => 'GRE',
+		'etherip' => 'EoIP',
 		'ipv6' => 'IPV6',
 		'igmp' => 'IGMP',
 		'pim' => 'PIM',
@@ -1338,7 +1394,7 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 	$group->add(new Form_Checkbox(
 		$type .'not',
 		$name .' not',
-		'Invert match.',
+		'Invert match',
 		$pconfig[$type.'not']
 	))->setWidth(2);
 
@@ -1536,12 +1592,25 @@ $section->addInput(new Form_Input(
 ))->setHelp('A packet matching this rule can be marked and this mark used to match '.
 	'on other NAT/filter rules. It is called %1$sPolicy filtering%2$s.', '<b>', '</b>');
 
-$section->addInput(new Form_Input(
-	'tagged',
-	'Tagged',
-	'text',
-	$pconfig['tagged']
-))->setHelp('A packet can be matched on a mark placed before on another rule.');
+$group = new Form_Group('Tagged');
+
+$group->add(new Form_Checkbox(
+	'nottagged',
+	'nottagged',
+	'Invert',
+	$pconfig['nottagged']
+))->setWidth(1);
+
+$group->add(new Form_Input(
+'tagged',
+'Tagged',
+'text',
+$pconfig['tagged']
+))->setWidth(4);
+
+$group->setHelp('Match a mark placed on a packet by a different rule with the Tag option. Check Invert to match packets which do not contain this tag.');
+
+$section->add($group);
 
 $section->addInput(new Form_Input(
 	'max',
@@ -1592,7 +1661,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['statetimeout'],
 	['min' => 1]
-))->setHelp('State Timeout in seconds (TCP only)');
+))->setHelp('State Timeout in seconds');
 
 $section->addInput(new Form_StaticText(
 	'TCP Flags',
@@ -1610,12 +1679,7 @@ $section->addInput(new Form_Select(
 	'statetype',
 	'State type',
 	(isset($pconfig['statetype'])) ? $pconfig['statetype'] : "keep state",
-	array(
-		'keep state' => gettext('Keep'),
-		'sloppy state' => gettext('Sloppy'),
-		'synproxy state' => gettext('Synproxy'),
-		'none' => gettext('None'),
-	)
+	$statetype_values
 ))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.%1$s',
 			'<br /><span></span>');
 
@@ -1625,17 +1689,6 @@ $section->addInput(new Form_Checkbox(
 	'Prevent the rule on Master from automatically syncing to other CARP members',
 	$pconfig['nosync']
 ))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
-
-$vlanprio = array(
-	"" => "none",
-	"bk" => "Background (BK, 0)",
-	"be" => "Best Effort (BE, 1)",
-	"ee" => "Excellent Effort (EE, 2)",
-	"ca" => "Critical Applications (CA, 3)",
-	"vi" => "Video (VI, 4)",
-	"vo" => "Voice (VO, 5)",
-	"ic" => "Internetwork Control (IC, 6)",
-	"nc" => "Network Control (NC, 7)");
 
 $section->addInput(new Form_Select(
 	'vlanprio',
@@ -1665,37 +1718,35 @@ $section->addInput(new Form_Select(
 	['' => gettext('none')] + array_combine($schedules, $schedules)
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time.');
 
-$gateways = array("" => gettext('default'));
-foreach (return_gateways_array() as $gwname => $gw) {
-	if (($pconfig['ipprotocol'] == "inet46")) {
-		continue;
-	}
-	if (($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway'])))) {
-		continue;
-	}
-	if (($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway'])))) {
-		continue;
-	}
-	if ($gw == "") {
-		continue;
-	}
+// Build the gateway lists in JSON so the selector can be populated in JS
+$gwjson = '[{"name":"", "gateway":"Default", "family":"inet46"}';
 
-	$gateways[ $gwname ] = $gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr']);
+foreach (return_gateways_array() as $gwname => $gw) {
+	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwname) . ', "gateway":' .
+	json_encode($gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr'])) . ',"family":' .
+	json_encode($gw['ipprotocol']) . '}';
 }
 
 foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data) {
-	if ((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
-		$gateways[ $gwg_name ] = $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr']);
-	}
+	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwg_name) . ', "gateway":' .
+	json_encode($gwg_data['name'] . $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr'])) . ',"family":' .
+	json_encode($gwg_data['ipprotocol']) . '}';
+	$firstgw = false;
 }
 
+$gwjson .= ']';
+$gwselected = $pconfig['gateway'];
+
+// print($gwjson);
+
+// Gateway selector is populated by JavaScript updateGWselect() function
 $section->addInput(new Form_Select(
 	'gateway',
 	'Gateway',
-	$pconfig['gateway'],
-	$gateways
+	'',
+	[]
 ))->setHelp('Leave as \'default\' to use the system routing table. Or choose a '.
-	'gateway to utilize policy based routing.');
+	'gateway to utilize policy based routing. %sGateway selection is not valid for "IPV4+IPV6" address family.', '<br />');
 
 $group = new Form_Group('In / Out pipe');
 
@@ -1724,19 +1775,6 @@ $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '
 
 $group = new Form_Group('Ackqueue / Queue');
 
-$list = array('' => 'none');
-if (!is_array($qlist)) {
-	$qlist = array();
-}
-
-foreach ($qlist as $q => $qkey) {
-	if (isset($ifdisp[$q])) {
-		$list[$q] = $ifdisp[$q];
-	} else {
-		$list[$q] = $q;
-	}
-}
-
 $group->add(new Form_Select(
 	'ackqueue',
 	'Ackqueue',
@@ -1757,7 +1795,7 @@ $section->add($group)->setHelp('Choose the Acknowledge Queue only if there is a 
 
 $form->add($section);
 
-gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated']);
+gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated'], $a_filter[$id]['tracker']);
 
 echo $form;
 ?>
@@ -1772,6 +1810,9 @@ events.push(function() {
 
 	// Show advanced additional opts options ======================================================
 	var showadvopts = false;
+
+	// Remove focus on page load
+	document.activeElement.blur()
 
 	function show_advopts(ispageload) {
 		var text;
@@ -1918,6 +1959,33 @@ events.push(function() {
 		}
 	}
 
+	// Populate the "gateway" selector from a JSON array composed in the PHP
+	function updateGWselect() {
+		var selected = "<?=$gwselected?>";
+		var protocol = $('#ipprotocol').val();
+		var json = JSON.parse(<?=json_encode($gwjson)?>);
+
+		// Remove all of the existing optns
+		$('#gateway').find('option').remove();
+
+		// Add new ones as appropriate for the address family
+		json.forEach(function(gwobj) {
+			if (((gwobj.family == protocol) || (gwobj.family == "inet46")) && (protocol != "inet46")) {
+				$('#gateway').append($('<option>', {
+				    text: gwobj.gateway,
+				    value: gwobj.name
+				}));
+			}
+		});
+
+		// Add "selected" attribute as needed
+		$('#gateway').val(selected);
+
+		// Gateway selection is not permitted for "IPV4+IPV6"
+		$('#gateway').prop("disabled", protocol == "inet46");
+
+	}
+
 	function proto_change() {
 		var is_tcpudp = (jQuery.inArray($('#proto :selected').val(), ['tcp','udp', 'tcp/udp']) != -1);
 		portsenabled = (is_tcpudp ? 1 : 0);
@@ -1964,6 +2032,8 @@ events.push(function() {
 		}
 
 		show_source_port_range();
+
+		updateGWselect();
 	}
 
 	function icmptype_change() {
@@ -2093,7 +2163,7 @@ events.push(function() {
 		setHelpText(target, dispstr);
 	}
 
-	// When editing "associated" rules, everything except the enable, action, address family and desscription
+	// When editing "associated" rules, everything except the enable, action, address family and description
 	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [
@@ -2123,7 +2193,7 @@ events.push(function() {
 
 	// ---------- Autocomplete --------------------------------------------------------------------
 
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "url", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "url", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
 	$('#src, #dst').autocomplete({

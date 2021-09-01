@@ -3,7 +3,9 @@
  * status_dhcp_leases.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,13 +34,14 @@
 
 require_once("guiconfig.inc");
 require_once("config.inc");
+require_once("system.inc");
 
 $pgtitle = array(gettext("Status"), gettext("DHCP Leases"));
 $shortcut_section = "dhcp";
 
-$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
-
 if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
+	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
+
 	/* Stop DHCPD */
 	killbyname("dhcpd");
 
@@ -71,245 +74,50 @@ if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
 }
 
+if ($_POST['cleardhcpleases']) {
+	killbyname("dhcpd");
+	sleep(2);
+	unlink_if_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases*");
+
+	services_dhcpd_configure();
+	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
+}
+
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
 include("head.inc");
 
-function leasecmp($a, $b) {
-	return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
-}
+$leases = system_get_dhcpleases();
 
-function adjust_gmt($dt) {
-	global $config;
-	$dhcpd = $config['dhcpd'];
-	foreach ($dhcpd as $dhcpditem) {
-		$dhcpleaseinlocaltime = $dhcpditem['dhcpleaseinlocaltime'];
-		if ($dhcpleaseinlocaltime == "yes") {
-			break;
-		}
-	}
-	if ($dhcpleaseinlocaltime == "yes") {
-		$ts = strtotime($dt . " GMT");
-		if ($ts !== false) {
-			return strftime("%Y/%m/%d %H:%M:%S", $ts);
-		}
-	}
-	/* If we did not need to convert to local time or the conversion failed, just return the input. */
-	return $dt;
-}
-
-function remove_duplicate($array, $field) {
-	foreach ($array as $sub) {
-		$cmp[] = $sub[$field];
-	}
-	$unique = array_unique(array_reverse($cmp, true));
-	foreach ($unique as $k => $rien) {
-		$new[] = $array[$k];
-	}
-	return $new;
-}
-
-$awk = "/usr/bin/awk";
-/* this pattern sticks comments into a single array item */
-$cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
-/* We then split the leases file by } */
-$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
-
-/* stuff the leases file in a proper format into a array by line */
-exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
-$leases_count = count($leases_content);
-exec("/usr/sbin/arp -an", $rawdata);
-$arpdata_ip = array();
+$arp_table = system_get_arp_table();
 $arpdata_mac = array();
-foreach ($rawdata as $line) {
-	$elements = explode(' ', $line);
-	if ($elements[3] != "(incomplete)") {
-		$arpent = array();
-		$arpdata_ip[] = trim(str_replace(array('(', ')'), '', $elements[1]));
-		$arpdata_mac[] = strtolower(trim($elements[3]));
+foreach ($arp_table as $arp_entry) {
+	if (isset($arpentry['incomplete'])) {
+		continue;
 	}
+	$arpdata_mac[] = $arp_entry['mac-address'];
 }
-unset($rawdata);
-$pools = array();
-$leases = array();
-$i = 0;
-$l = 0;
-$p = 0;
+unset($arp_table);
 
-// Translate these once so we don't do it over and over in the loops below.
+/*
+ * Translate these once so we don't do it over and over in the loops
+ * below.
+ */
 $online_string = gettext("online");
-$offline_string = gettext("offline");
 $active_string = gettext("active");
 $expired_string = gettext("expired");
-$reserved_string = gettext("reserved");
 $dynamic_string = gettext("dynamic");
 $static_string = gettext("static");
 
-// Put everything together again
-foreach ($leases_content as $lease) {
-	/* split the line by space */
-	$data = explode(" ", $lease);
-	/* walk the fields */
-	$f = 0;
-	$fcount = count($data);
-	/* with less than 20 fields there is nothing useful */
-	if ($fcount < 20) {
-		$i++;
-		continue;
-	}
-	while ($f < $fcount) {
-		switch ($data[$f]) {
-			case "failover":
-				$pools[$p]['name'] = trim($data[$f+2], '"');
-				$pools[$p]['name'] = "{$pools[$p]['name']} (" . convert_friendly_interface_to_friendly_descr(substr($pools[$p]['name'], 5)) . ")";
-				$pools[$p]['mystate'] = $data[$f+7];
-				$pools[$p]['peerstate'] = $data[$f+14];
-				$pools[$p]['mydate'] = $data[$f+10];
-				$pools[$p]['mydate'] .= " " . $data[$f+11];
-				$pools[$p]['peerdate'] = $data[$f+17];
-				$pools[$p]['peerdate'] .= " " . $data[$f+18];
-				$p++;
-				$i++;
-				continue 3;
-			case "lease":
-				$leases[$l]['ip'] = $data[$f+1];
-				$leases[$l]['type'] = $dynamic_string;
-				$f = $f+2;
-				break;
-			case "starts":
-				$leases[$l]['start'] = $data[$f+2];
-				$leases[$l]['start'] .= " " . $data[$f+3];
-				$f = $f+3;
-				break;
-			case "ends":
-				if ($data[$f+1] == "never") {
-					// Quote from dhcpd.leases(5) man page:
-					// If a lease will never expire, date is never instead of an actual date.
-					$leases[$l]['end'] = gettext("Never");
-					$f = $f+1;
-				} else {
-					$leases[$l]['end'] = $data[$f+2];
-					$leases[$l]['end'] .= " " . $data[$f+3];
-					$f = $f+3;
-				}
-				break;
-			case "tstp":
-				$f = $f+3;
-				break;
-			case "tsfp":
-				$f = $f+3;
-				break;
-			case "atsfp":
-				$f = $f+3;
-				break;
-			case "cltt":
-				$f = $f+3;
-				break;
-			case "binding":
-				switch ($data[$f+2]) {
-					case "active":
-						$leases[$l]['act'] = $active_string;
-						break;
-					case "free":
-						$leases[$l]['act'] = $expired_string;
-						$leases[$l]['online'] = $offline_string;
-						break;
-					case "backup":
-						$leases[$l]['act'] = $reserved_string;
-						$leases[$l]['online'] = $offline_string;
-						break;
-				}
-				$f = $f+1;
-				break;
-			case "next":
-				/* skip the next binding statement */
-				$f = $f+3;
-				break;
-			case "rewind":
-				/* skip the rewind binding statement */
-				$f = $f+3;
-				break;
-			case "hardware":
-				$leases[$l]['mac'] = $data[$f+2];
-				/* check if it's online and the lease is active */
-				if (in_array($leases[$l]['ip'], $arpdata_ip)) {
-					$leases[$l]['online'] = $online_string;
-				} else {
-					$leases[$l]['online'] = $offline_string;
-				}
-				$f = $f+2;
-				break;
-			case "client-hostname":
-				if ($data[$f+1] <> "") {
-					$leases[$l]['hostname'] = preg_replace('/"/', '', $data[$f+1]);
-				} else {
-					$hostname = gethostbyaddr($leases[$l]['ip']);
-					if ($hostname <> "") {
-						$leases[$l]['hostname'] = $hostname;
-					}
-				}
-				$f = $f+1;
-				break;
-			case "uid":
-				$f = $f+1;
-				break;
-		}
-		$f++;
-	}
-	$l++;
-	$i++;
-	/* slowly chisel away at the source array */
-	array_shift($leases_content);
-}
-/* remove the old array */
-unset($lease_content);
-
-/* remove duplicate items by mac address */
-if (count($leases) > 0) {
-	$leases = remove_duplicate($leases, "ip");
-}
-
-if (count($pools) > 0) {
-	$pools = remove_duplicate($pools, "name");
-	asort($pools);
-}
-
-$got_cid = false;
-
-foreach ($config['interfaces'] as $ifname => $ifarr) {
-	if (is_array($config['dhcpd'][$ifname]) &&
-	    is_array($config['dhcpd'][$ifname]['staticmap'])) {
-		foreach ($config['dhcpd'][$ifname]['staticmap'] as $idx => $static) {
-			if (!empty($static['mac']) || !empty($static['cid'])) {
-				$slease = array();
-				$slease['ip'] = $static['ipaddr'];
-				$slease['type'] = $static_string;
-				if (!empty($static['cid'])) {
-					$slease['cid'] = $static['cid'];
-					$got_cid = true;
-				}
-				$slease['mac'] = $static['mac'];
-				$slease['if'] = $ifname;
-				$slease['start'] = "";
-				$slease['end'] = "";
-				$slease['hostname'] = $static['hostname'];
-				$slease['descr'] = $static['descr'];
-				$slease['act'] = $static_string;
-				$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? $online_string : $offline_string;
-				$slease['staticmap_array_index'] = $idx;
-				$leases[] = $slease;
-			}
-		}
-	}
-}
-
 if ($_REQUEST['order']) {
-	usort($leases, "leasecmp");
+	usort($leases['lease'], function($a, $b) {
+		return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
+	});
 }
 
 /* only print pool status when we have one */
-if (count($pools) > 0) {
+if (count($leases['failover']) > 0):
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool Status')?></h2></div>
@@ -325,13 +133,13 @@ if (count($pools) > 0) {
 			</tr>
 		</thead>
 		<tbody>
-<?php foreach ($pools as $data):?>
+<?php foreach ($leases['failover'] as $data):?>
 			<tr>
 				<td><?=htmlspecialchars($data['name'])?></td>
 				<td><?=htmlspecialchars($data['mystate'])?></td>
-				<td><?=htmlspecialchars(adjust_gmt($data['mydate']))?></td>
-				<td><?=htmlspecialchars($data['peerstate'])?></td>
-				<td><?=htmlspecialchars(adjust_gmt($data['peerdate']))?></td>
+				<td><?=htmlspecialchars($data['mydate'])?></td>
+				<td><?=htmlspecialchars($data['partnerstate'])?></td>
+				<td><?=htmlspecialchars($data['partnerdate'])?></td>
 			</tr>
 <?php endforeach; ?>
 		</tbody>
@@ -340,8 +148,51 @@ if (count($pools) > 0) {
 </div>
 <?php
 /* only print pool status when we have one */
-}
+endif;
 ?>
+
+<div class="panel panel-default" id="search-panel">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext('Search')?>
+			<span class="widget-heading-icon pull-right">
+				<a data-toggle="collapse" href="#search-panel_panel-body">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
+	</div>
+	<div id="search-panel_panel-body" class="panel-body collapse in">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Search term")?>
+			</label>
+			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
+			<div class="col-sm-2">
+				<select id="where" class="form-control">
+					<option value="1"><?=gettext("IP Address")?></option>
+					<option value="2"><?=gettext("MAC Address")?></option>
+					<option value="3"><?=gettext("Client ID")?></option>
+					<option value="4"><?=gettext("Hostname")?></option>
+					<option value="5"><?=gettext("Description")?></option>
+					<option value="6"><?=gettext("Start")?></option>
+					<option value="7"><?=gettext("End")?></option>
+					<option value="8"><?=gettext("Online")?></option>
+					<option value="9"><?=gettext("Lease Type")?></option>
+					<option value="10" selected><?=gettext("All")?></option>
+				</select>
+			</div>
+			<div class="col-sm-3">
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+			</div>
+			<div class="col-sm-10 col-sm-offset-2">
+				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to filter entries.')?></span>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
 	<div class="panel-body table-responsive">
@@ -351,14 +202,7 @@ if (count($pools) > 0) {
 					<th><!-- icon --></th>
 					<th><?=gettext("IP address")?></th>
 					<th><?=gettext("MAC address")?></th>
-<?php
-/* only make CID column when we have one */
-if ($got_cid) {
-?>
 					<th><?=gettext("Client Id")?></th>
-<?php
-}
-?>
 					<th><?=gettext("Hostname")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Start")?></th>
@@ -368,13 +212,13 @@ if ($got_cid) {
 					<th data-sortable="false"><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="leaselist">
 <?php
 $dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
 $iflist = get_configured_interface_with_descr(); //get interface descr for # of leases
 $no_leases_displayed = true;
 
-foreach ($leases as $data):
+foreach ($leases['lease'] as $data):
 	if ($data['act'] != $active_string && $data['act'] != $static_string && $_REQUEST['all'] != 1) {
 		continue;
 	}
@@ -439,19 +283,12 @@ foreach ($leases as $data):
 							(<?=htmlspecialchars($mac_man[$mac_hi])?>)
 						<?php endif; ?>
 					</td>
-<?php
-/* only make CID column when we have one */
-if ($got_cid) {
-?>
 					<td><?=htmlspecialchars($data['cid'])?></td>
-<?php
-}
-?>
 					<td><?=htmlspecialchars($data['hostname'])?></td>
 					<td><?=htmlspecialchars($data['descr'])?></td>
-					<? if ($data['type'] != "static"): ?>
-						<td><?=htmlspecialchars(adjust_gmt($data['start']))?></td>
-						<td><?=htmlspecialchars(adjust_gmt($data['end']))?></td>
+					<? if ($data['type'] != $static_string): ?>
+						<td><?=htmlspecialchars($data['starts'])?></td>
+						<td><?=htmlspecialchars($data['ends'])?></td>
 					<? else: ?>
 						<td><?=gettext("n/a")?></td>
 						<td><?=gettext("n/a")?></td>
@@ -470,7 +307,7 @@ if ($got_cid) {
 <?php endif; ?>
 
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_POST['all'])?>" usepost></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>
@@ -527,6 +364,82 @@ else:
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=0"><i class="fa fa-minus-circle icon-embed-btn"></i><?=gettext("Show active and static leases only")?></a>
 <?php else: ?>
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext("Show all configured leases")?></a>
-<?php endif;
+<?php endif; ?>
+	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa fa-trash icon-embed-btn"></i><?=gettext("Clear all DHCP leases")?></a>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	// Make these controls plain buttons
+	$("#btnsearch").prop('type', 'button');
+	$("#btnclear").prop('type', 'button');
+
+	// Search for a term in the entry name and/or dn
+	$("#btnsearch").click(function() {
+		var searchstr = $('#searchstr').val().toLowerCase();
+		var table = $("#leaselist");
+		var where = $('#where').val();
+
+		table.find('tr').each(function (i) {
+			var $tds = $(this).find('td'),
+				ipaddr   = $tds.eq(1).text().trim().toLowerCase();
+				macaddr  = $tds.eq(2).text().trim().toLowerCase();
+				clientid = $tds.eq(3).text().trim().toLowerCase(),
+				hostname = $tds.eq(4).text().trim().toLowerCase();
+				descr    = $tds.eq(5).text().trim().toLowerCase();
+				start    = $tds.eq(6).text().trim().toLowerCase();
+				end      = $tds.eq(7).text().trim().toLowerCase();
+				online   = $tds.eq(8).text().trim().toLowerCase();
+				lease    = $tds.eq(9).text().trim().toLowerCase();
+
+			regexp = new RegExp(searchstr);
+			if (searchstr.length > 0) {
+				if (!(regexp.test(ipaddr)   && ((where == 1) || (where == 10))) &&
+				    !(regexp.test(macaddr)  && ((where == 2) || (where == 10))) &&
+				    !(regexp.test(clientid) && ((where == 3) || (where == 10))) &&
+				    !(regexp.test(hostname) && ((where == 4) || (where == 10))) &&
+				    !(regexp.test(descr)    && ((where == 5) || (where == 10))) &&
+				    !(regexp.test(start)    && ((where == 6) || (where == 10))) &&
+				    !(regexp.test(end)      && ((where == 7) || (where == 10))) &&
+				    !(regexp.test(online)   && ((where == 8) || (where == 10))) &&
+				    !(regexp.test(lease)    && ((where == 9) || (where == 10)))
+				    ) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			} else {
+				$(this).show();	// A blank search string shows all
+			}
+		});
+	});
+
+	// Clear the search term and unhide all rows (that were hidden during a previous search)
+	$("#btnclear").click(function() {
+		var table = $("#leaselist");
+
+		$('#searchstr').val("");
+
+		table.find('tr').each(function (i) {
+			$(this).show();
+		});
+	});
+
+	// Hitting the enter key will do the same as clicking the search button
+	$("#searchstr").on("keyup", function (event) {
+		if (event.keyCode == 13) {
+			$("#btnsearch").get(0).click();
+		}
+	});
+  
+	$('#cleardhcp').click(function() {
+		if (confirm("Are you sure you wish to clear all DHCP leases?")) {
+			postSubmit({cleardhcpleases: 'true'}, 'status_dhcp_leases.php');
+		}
+	});
+
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

@@ -11,13 +11,13 @@ We are migrating pfSense to Bootstrap. You can help! Please respect these code-g
 * html attributes should be using double-quoted attribute-values. This means your php-code should probably use single-quoted strings
 * we use icons for status-indication and buttons for actions
 * **do not** refactor any of the 'backend' code that is on top of each file. Only changes necessary after updating are acceptable; any other changes will be rejected (including changes that were done upstream)
-* we accepth both [K&R](https://en.wikipedia.org/wiki/Indent_style#K.26R_style) and [ZF](http://framework.zend.com/manual/1.12/en/coding-standard.html) styled code, the above guidelines have a higher precedence
+* we accept both [K&R](https://en.wikipedia.org/wiki/Indent_style#K.26R_style) and [ZF](http://framework.zend.com/manual/1.12/en/coding-standard.html) styled code, the above guidelines have a higher precedence
 
 If you feel adventurous you can sometimes rewrite some PHP & javascript code as well; but try to keep this to a minimum.
 
 # Development setup
 
-We suggest you setup a development enviroment for testing your changes. This can be done with either Virtualbox or Qemu.
+We suggest you setup a development environment for testing your changes. This can be done with either Virtualbox or Qemu.
 
 ## Qemu
 

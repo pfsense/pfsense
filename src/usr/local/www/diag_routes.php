@@ -3,7 +3,9 @@
  * diag_routes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Fernando Lamos
  * All rights reserved.
  *
@@ -30,11 +32,14 @@
 $limit = '100';
 $filter = '';
 
-if (isset($_REQUEST['isAjax'])) {
+/* Keep above the AJAX code so it gets CSRF protection */
+require_once('guiconfig.inc');
+
+if (isset($_POST['isAjax'])) {
 	require_once('auth_check.inc');
-	
+
 	$netstat = "/usr/bin/netstat -rW";
-	if (isset($_REQUEST['IPv6'])) {
+	if (isset($_POST['IPv6'])) {
 		$netstat .= " -f inet6";
 		echo "IPv6\n";
 	} else {
@@ -42,26 +47,29 @@ if (isset($_REQUEST['isAjax'])) {
 		echo "IPv4\n";
 
 	}
-	if (!isset($_REQUEST['resolve'])) {
+	if (!isset($_POST['resolve'])) {
 		$netstat .= " -n";
 	}
 
-	if (!empty($_REQUEST['filter'])) {
-		$netstat .= " | /usr/bin/sed -e " . escapeshellarg("1,3d; 5,\$ { /" . htmlspecialchars($_REQUEST['filter']) . "/!d; };");
-	} else {
-		$netstat .= " | /usr/bin/sed -e '1,3d'";
+	$netstat .= " | /usr/bin/tail -n +5";
+
+	/* Ensure the user-supplied filter is sane */
+	$filtertext = cleanup_regex_pattern($_POST['filter']);
+	if (!empty($filtertext)) {
+		/* Place filter after "--" (bare double-dash) so grep knows not
+		 * to interpret the filter as command line parameters.
+		 */
+		$netstat .= " | /usr/bin/egrep -- " . escapeshellarg($filtertext);
 	}
 
-	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0) {
-		$_REQUEST['limit']++;  // Account for the header line
-		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
+	if (is_numeric($_POST['limit']) && $_POST['limit'] > 0) {
+		$netstat .= " | /usr/bin/head -n " . escapeshellarg($_POST['limit']);
 	}
 
 	echo htmlspecialchars_decode(shell_exec($netstat));
 
 	exit;
 }
-require_once('guiconfig.inc');
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Routes"));
 $shortcut_section = "routing";
@@ -97,8 +105,8 @@ $section->addInput(new Form_Input(
 	'filter',
 	'Filter',
 	'text',
-	$host
-))->setHelp('Use a regular expression to filter the tables.');
+	null
+))->setHelp('Use a regular expression to filter the tables. Invalid or potentially dangerous patterns will be ignored.');
 
 $form->add($section);
 
@@ -130,7 +138,6 @@ function update_routes_callback(html) {
 	var tbody = '';
 	var field = '';
 	var tr_class = '';
-	var thead = '<tr>';
 
 	for (var i = 0; i < responseTextArr.length; i++) {
 
@@ -138,11 +145,7 @@ function update_routes_callback(html) {
 			continue;
 		}
 
-		if (i == 0) {
-			var tmp = '';
-		} else {
-			var tmp = '<tr>';
-		}
+		var tmp = '<tr>';
 
 		var j = 0;
 		var entry = responseTextArr[i].split(" ");
@@ -150,23 +153,14 @@ function update_routes_callback(html) {
 			if (entry[k] == "") {
 				continue;
 			}
-			if (i == 0) {
-				tmp += '<th>' + entry[k] + '<\/th>';
-			} else {
-				tmp += '<td>' + entry[k] + '<\/td>';
-			}
+			tmp += '<td>' + entry[k] + '<\/td>';
 			j++;
 		}
 
-		if (i == 0) {
-			thead += tmp;
-		} else {
-			tmp += '<td><\/td>'
-			tbody += tmp;
-		}
+		tmp += '<td><\/td>'
+		tbody += tmp;
 	}
 
-	$('#' + section + ' > thead').html(thead);
 	$('#' + section + ' > tbody').html(tbody);
 }
 
@@ -176,7 +170,7 @@ function update_all_routes() {
 }
 
 events.push(function() {
-	setInterval('update_all_routes()', 5000);
+	setInterval('update_all_routes()', 15000);
 	update_all_routes();
 
 	$(document.forms[0]).on('submit', function(e) {
@@ -191,15 +185,21 @@ events.push(function() {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPv4 Routes")?></h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv4">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv4" data-sortable>
 		<thead>
 			<tr>
-				<th><!-- filled by xhr --></th>
+				<th><?= gettext('Destination') ?></th>
+				<th><?= gettext('Gateway') ?></th>
+				<th><?= gettext('Flags') ?></th>
+				<th><?= gettext('Uses') ?></th>
+				<th><?= gettext('MTU') ?></th>
+				<th><?= gettext('Interface') ?></th>
+				<th><?= gettext('Expire') ?></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
-				<td><?=gettext("Gathering data, please wait...")?></td>
+				<td colspan="7"><?=gettext("Gathering data, please wait...")?></td>
 			</tr>
 		</tbody>
 		</table>
@@ -209,15 +209,21 @@ events.push(function() {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPv6 Routes")?></h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv6">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv6" data-sortable>
 		<thead>
 			<tr>
-				<th><!-- filled by xhr --></th>
+				<th><?= gettext('Destination') ?></th>
+				<th><?= gettext('Gateway') ?></th>
+				<th><?= gettext('Flags') ?></th>
+				<th><?= gettext('Uses') ?></th>
+				<th><?= gettext('MTU') ?></th>
+				<th><?= gettext('Interface') ?></th>
+				<th><?= gettext('Expire') ?></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
-				<td><?=gettext("Gathering data, please wait...")?></td>
+				<td colspan="7"><?=gettext("Gathering data, please wait...")?></td>
 			</tr>
 		</tbody>
 		</table>

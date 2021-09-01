@@ -3,7 +3,9 @@
  * pkg_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,6 +84,10 @@ if ($pkg['custom_php_global_functions'] != "") {
 }
 
 // grab the installedpackages->package_name section.
+if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])])) {
+	$config['installedpackages'][xml_safe_fieldname($pkg['name'])] = array();
+}
+
 if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])) {
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 }
@@ -91,8 +97,9 @@ if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_s
  *  https://redmine.pfsense.org/issues/7624
  *  https://redmine.pfsense.org/issues/476
  */
-if ($config['installedpackages'] &&
-    (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) &&
+
+init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
+if ((count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) &&
     (empty($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0])) &&
     is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])) {
 	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
@@ -320,7 +327,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 				null,
 				'password',
 				$value
-			))->setHelp($description);
+			))->setHelp($description)->setAttribute('autocomplete', 'new-password');
 			break;
 		case "textarea":
 			$group->add(new Form_Textarea(
@@ -552,10 +559,6 @@ if ($pkg['tabs'] != "") {
 			$active = false;
 		}
 
-		if (isset($tab['no_drop_down'])) {
-			$no_drop_down = true;
-		}
-
 		$urltmp = "";
 		if ($tab['url'] != "") {
 			$urltmp = $tab['url'];
@@ -587,6 +590,9 @@ if ($pkg['tabs'] != "") {
 
 	ksort($tab_array);
 }
+if (!empty($pkg['tabs'])) {
+	$shortcut_section = $pkg['shortcut_section'];
+}
 
 include("head.inc");
 if ($pkg['custom_php_after_head_command']) {
@@ -594,7 +600,7 @@ if ($pkg['custom_php_after_head_command']) {
 }
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
-		display_top_tabs($tab); //, $no_drop_down, $tabid);
+		display_top_tabs($tab);
 	}
 }
 
@@ -794,7 +800,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					$pkga['fielddescr'],
 					'password',
 					$value
-				))->setHelp($pkga['description']);
+				))->setHelp($pkga['description'])->setAttribute('autocomplete', 'new-password');
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Input(
@@ -802,14 +808,14 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						$pkga['fielddescr'],
 						'password',
 						$value
-					))->setHelp($pkga['description']);
+					))->setHelp($pkga['description'])->setAttribute('autocomplete', 'new-password');
 				} else {
 					$section->addInput(new Form_Input(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
 						'password',
 						$value
-					))->setHelp($pkga['description']);
+					))->setHelp($pkga['description'])->setAttribute('autocomplete', 'new-password');
 				}
 			}
 
@@ -908,8 +914,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
 
 			$source_url = $pkga['source'];
-			eval("\$pkg_source_txt = &$source_url;");
-
+			try{
+				@eval("\$pkg_source_txt = &$source_url;");
+			} catch (\Throwable | \Error | \Exception $e) {
+				//do nothing
+			}
 			#check if show disable option is present on xml
 			if (!is_array($pkg_source_txt)) {
 				$pkg_source_txt = array();
@@ -1098,6 +1107,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			// Use xml tag <typealiases> to filter type aliases
 			$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
 			$fieldname = $pkga['fieldname'];
+
+			init_config_arr(array('aliases', 'alias'));
 			$a_aliases = &$config['aliases']['alias'];
 			$addrisfirst = 0;
 			$aliasesaddr = "";
@@ -1315,7 +1326,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			$newbtn = new Form_Button(
 				$pkga['fieldname'],
-				$pkga['fieldname'],
+				$pkga['fielddescr'],
 				null,
 				$newbtnicon
 			);

@@ -3,7 +3,9 @@
  * status_captiveportal_vouchers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -36,11 +38,8 @@ require_once("voucher.inc");
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 /* If the zone does not exist, do not display the invalid zone */
 if (!array_key_exists($cpzone, $a_cp)) {
@@ -48,7 +47,7 @@ if (!array_key_exists($cpzone, $a_cp)) {
 }
 
 if (empty($cpzone)) {
-	header("Location: services_captiveportal_zones.php");
+	header("Location: status_captiveportal.php");
 	exit;
 }
 
@@ -56,9 +55,7 @@ $pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars(
 $pglinks = array("", "status_captiveportal.php", "status_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-if (!is_array($config['voucher'][$cpzone]['roll'])) {
-	$config['voucher'][$cpzone]['roll'] = array();
-}
+init_config_arr(array('voucher', $cpzone, 'roll'));
 
 $a_roll = $config['voucher'][$cpzone]['roll'];
 

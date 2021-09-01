@@ -3,7 +3,9 @@
  * status_ipsec_leases.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,8 +52,9 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 			<thead>
 				<tr>
 					<th><?=gettext("Pool")?></th>
-					<th><?=gettext("Usage")?></th>
+					<th><?=gettext("Base")?></th>
 					<th><?=gettext("Online")?></th>
+					<th><?=gettext("Total Usage")?></th>
 					<th><?=gettext("ID")?></th>
 					<th><?=gettext("Host")?></th>
 					<th><?=gettext("Status")?></th>
@@ -67,20 +70,26 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 						<?=$pool['name']?>
 					</td>
 					<td>
-						<?=$pool['usage']?>
+						<?=$pool['base']?>
 					</td>
 					<td>
 						<?=$pool['online']?>
 					</td>
+					<td>
+						<?php if ($pool['size'] > 0): ?>
+						<?=$pool['online'] + $pool['offline']?> / <?=$pool['size']?>
+						<?php endif; ?>
+					</td>
 
 <?php
 				$leaserow = true;
-				if (is_array($pool['lease']) && count($pool['lease']) > 0) {
+				if (is_array($pool['lease']) && (count($pool['lease']) > 0)) {
 					foreach ($pool['lease'] as $lease) {
 						if (!$leaserow) {
 							// On subsequent rows the first three columns are blank
 ?>
 				<tr>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -95,7 +104,14 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 						<?=htmlspecialchars($lease['host'])?>
 					</td>
 					<td>
+						<?php if ($lease['status'] == 'online'): ?>
+						<span style="color:green; font-weight: bold">
+						<span class="fa fa-check"></span>
+						<?php else: ?>
+						<span>
+						<?php endif; ?>
 						<?=htmlspecialchars($lease['status'])?>
+						</span>
 					</td>
 				</tr>
 <?php

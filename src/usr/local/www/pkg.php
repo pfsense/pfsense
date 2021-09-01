@@ -3,7 +3,9 @@
  * pkg.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,6 +127,7 @@ if ($_REQUEST['act'] == "del") {
 		}
 	}
 
+	init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
 	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 	if ($a_pkg[$_REQUEST['id']]) {
@@ -190,9 +193,6 @@ if ($pkg['tabs'] != "") {
 		} else {
 			$active = false;
 		}
-		if (isset($tab['no_drop_down'])) {
-			$no_drop_down = true;
-		}
 		$urltmp = "";
 		if ($tab['url'] != "") {
 			$urltmp = $tab['url'];
@@ -222,10 +222,14 @@ if ($pkg['tabs'] != "") {
 	ksort($tab_array);
 }
 
+if (!empty($pkg['tabs'])) {
+	$shortcut_section = $pkg['shortcut_section'];
+}
+
 include("head.inc");
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
-		display_top_tabs($tab); //, $no_drop_down, $tabid);
+		display_top_tabs($tab);
 	}
 }
 
@@ -411,7 +415,7 @@ if ($savemsg) {
 <?php
 	$i = 0;
 	$pagination_counter = 0;
-	if ($evaledvar) {
+	if ($evaledvar && is_array($evaledvar)) {
 		foreach ($evaledvar as $ip) {
 			if ($startdisplayingat) {
 				if ($i < $startdisplayingat) {

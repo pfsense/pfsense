@@ -2,7 +2,9 @@
  * pfSense.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -113,6 +115,37 @@ $(function() {
 		});
 	})();
 
+	// Add +/- buttons to certain Groups; to allow adding multiple entries
+	(function()
+	{
+		var groups = $('div.form-listitem.user-duplication');
+		var fg = $('<div class="form-group"></div>');
+		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
+		var plus = $('<a class="btn btn-xs btn-success"><i class="fa fa-plus icon-embed-btn"></i>Add</a>');
+		var minus = $('<a class="btn btn-xs btn-warning"><i class="fa fa-trash icon-embed-btn"></i>Delete</a>');
+
+		minus.on('click', function(){
+			var groups = $('div.form-listitem.user-duplication');
+			if (groups.length > 1) {
+				$(this).parents('div.form-listitem').remove();
+			}
+		});
+
+		plus.on('click', function(){
+			var group = $(this).parents('div.form-listitem');
+			var clone = group.clone(true);
+			bump_input_id(clone);
+			clone.appendTo(group.parent());
+		});
+
+		groups.each(function(idx, group){
+			var fgClone = fg.clone(true).appendTo(group);
+			var controlsClone = controlsContainer.clone(true).appendTo(fgClone);
+			minus.clone(true).appendTo(controlsClone);
+			plus.clone(true).appendTo(controlsClone);
+		});
+	})();
+
 	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPv4 addresses
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');
@@ -138,8 +171,11 @@ $(function() {
 				if (select.options.length < max) {
 					for (var i=select.options.length; i<=max; i++)
 						select.options.add(new Option(i, i), 0);
-					// Make sure index 0 is selected otherwise it will stay in "32" for V6
-					select.options.selectedIndex = "0";
+
+					if (isV6) {
+						// Make sure index 0 is selected otherwise it will stay in "32" for V6
+						select.options.selectedIndex = "0";
+					}
 				}
 			}
 		});
@@ -187,7 +223,9 @@ $(function() {
 			all.prop('checked', (all.length != checked.length));
 		});
 
-		a.appendTo($(this));
+		if ( ! $(this).parent().hasClass("notoggleall")) {
+			a.appendTo($(this));
+		}
 	});
 
 	// The need to NOT hide the advanced options if the elements therein are not set to the system
@@ -228,6 +266,17 @@ $(function() {
 	    })
 	  }
 	};
+
+	// Bootstrap 3.4.1 sanitizes the contents of popovers even when data-html is specified
+	// Add table tags to the list of elements permitted by the sanitizer
+	var defaultWhiteList = $.fn.tooltip.Constructor.DEFAULTS.whiteList
+
+	defaultWhiteList.table = []
+	defaultWhiteList.thead = []
+	defaultWhiteList.tr = ["class"]
+	defaultWhiteList.th = ["style"]
+	defaultWhiteList.tbody = []
+	defaultWhiteList.td = ["style"]
 
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover({ delay: {show: 50, hide: 400} });
@@ -303,7 +352,7 @@ $(function() {
 	};
 
 	(function(Plugin, $, window) {
-		$(window).load(function() {
+		$(window).on("load", function() {
 			var $controls = $('[data-toggle=disable]');
 
 			$controls.each(function() {

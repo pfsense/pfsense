@@ -3,7 +3,9 @@
  * diag_packet_capture.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,16 +30,16 @@
 
 $allowautocomplete = true;
 
-function fixup_host_logic($value) {
+function fixup_logic($value) {
 	return str_replace(array(" ", ",", "+", "|", "!"), array("", "and ", "and ", "or ", "not "), $value);
 }
 
-function strip_host_logic($value) {
+function strip_logic($value) {
 	return str_replace(array(" ", ",", "+", "|", "!"), array("", "", "", "", ""), $value);
 }
 
-function get_host_boolean($value, $host) {
-	$value = str_replace(array("!", $host), array("", ""), $value);
+function get_boolean($value, $entry) {
+	$value = str_replace(array("!", $entry), array("", ""), $value);
 	$andor = "";
 	switch (trim($value)) {
 		case "|":
@@ -64,17 +66,19 @@ function strip_not($value) {
 	return ltrim(trim($value), '!');
 }
 
-function fixup_host($value, $position) {
-	$host = strip_host_logic($value);
+function fixup_hostport($value, $position, $type) {
+	$item = strip_logic($value);
 	$not = has_not($value) ? "not " : "";
-	$andor = ($position > 0) ? get_host_boolean($value, $host) : "";
-	if (is_ipaddr($host)) {
-		return "{$andor}host {$not}" . $host;
-	} elseif (is_subnet($host)) {
-		return "{$andor}net {$not}" . $host;
-	} elseif (is_macaddr($host, false)) {
-		return "{$andor}ether host {$not}" . $host;
-	} elseif (is_macaddr($host, true)) {
+	$andor = ($position > 0) ? get_boolean($value, $item) : "";
+	if ($type == 'port') {
+		return "{$andor}port {$not}" . $item;
+	} elseif (is_ipaddr($item)) {
+		return "{$andor}host {$not}" . $item;
+	} elseif (is_subnet($item)) {
+		return "{$andor}net {$not}" . $item;
+	} elseif (is_macaddr($item, false)) {
+		return "{$andor}ether host {$not}" . $item;
+	} elseif (is_macaddr($item, true)) {
 		/* Try to match a partial MAC address. tcpdump only allows
 		 * matching 1, 2, or 4 byte chunks so enforce that limit
 		 */
@@ -84,7 +88,7 @@ function fixup_host($value, $position) {
 		 * but sections may only have one digit (leading 0) so add a
 		 * left 0 pad.
 		 */
-		foreach (explode(':', $host) as $mp) {
+		foreach (explode(':', $item) as $mp) {
 			$searchmac .= str_pad($mp, 2, "0", STR_PAD_LEFT);
 			$partcount++;
 		}
@@ -99,6 +103,38 @@ function fixup_host($value, $position) {
 	}
 }
 
+function precheck_hostport($item_array) {
+	$item_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $item_array);
+
+	if (strpos($item_string, '#') === false) {
+		$items = array($item_array);
+	} else {
+		$items = explode('#', $item_string);
+	}
+	return $items;
+}
+
+function hostport_array_fixer($items,$type) {
+	$itemmatch = "";
+	$itemcount = 0;
+
+	foreach ($items as $i) {
+		if ($type == 'port') {
+			$i = fixup_hostport($i, $itemcount++,'port');
+		} else {
+			$i = fixup_hostport($i, $itemcount++,'host');
+		}
+
+		if (!empty($i)) {
+			$itemmatch .= " " . $i;
+		}
+	}
+
+	if (!empty($itemmatch)) {
+		return "({$itemmatch})";
+	}
+}
+
 if ($_POST['downloadbtn'] == gettext("Download Capture")) {
 	$nocsrf = true;
 }
@@ -110,12 +146,14 @@ require_once("ipsec.inc");
 
 $fp = "/root/";
 $fn = "packetcapture.cap";
+$fns = "packetcapture.start";
 $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
+$max_display_size = 50*1024*1024; // 50MB limit on GUI capture display. See https://redmine.pfsense.org/issues/9239
 
 $fams = array('ip', 'ip6');
-$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync',
-		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync', 'ospf',
+		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync', '!ospf');
 
 $input_errors = array();
 
@@ -123,6 +161,7 @@ $interfaces = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
 	$interfaces['enc0'] = "IPsec";
 }
+$interfaces['lo0'] = "Localhost";
 
 foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenVPN Client')) as $mode => $mode_descr) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
@@ -133,6 +172,8 @@ foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenV
 		}
 	}
 }
+
+$interfaces = array_merge($interfaces, interface_ipsec_vti_list_all());
 
 if ($_POST) {
 	$host = $_POST['host'];
@@ -160,8 +201,8 @@ if ($_POST) {
 		if ($fam == "ip6" && $proto == "icmp") {
 			$input_errors[] = gettext("IPv6 with ICMP is not valid.");
 		}
-		if ($fam == "ip6" && $proto =="arp") {
-			$input_errors[] = gettext("IPv6 with ARP is not valid.");
+		if ($proto =="arp") {
+			$input_errors[] = gettext("Selecting an Address Family for ARP is not valid.");
 		}
 	}
 
@@ -170,16 +211,9 @@ if ($_POST) {
 	}
 
 	if ($host != "") {
-		$host_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $host);
-
-		if (strpos($host_string, '#') === false) {
-			$hosts = array($host);
-		} else {
-			$hosts = explode('#', $host_string);
-		}
-
+		$hosts = precheck_hostport($host);
 		foreach ($hosts as $h) {
-			$h = strip_host_logic($h);
+			$h = strip_logic($h);
 			if (!is_subnet($h) && !is_ipaddr($h) && !is_macaddr($h, true)) {
 				$input_errors[] = sprintf(gettext("A valid IP address, CIDR block, or MAC address must be specified. [%s]"), $h);
 			}
@@ -194,8 +228,12 @@ if ($_POST) {
 	}
 
 	if ($port != "") {
-		if (!is_port(strip_not($port))) {
-			$input_errors[] = gettext("Invalid value specified for port.");
+		$ports = precheck_hostport($port);
+		foreach ($ports as $p) {
+			$p = strip_logic($p);
+			if (!is_port(strip_not($p))) {
+				$input_errors[] = gettext("Invalid value specified for port.");
+			}
 		}
 	}
 
@@ -256,15 +294,9 @@ if ($_POST) {
 				$process_id = substr($process, 0, $process_id_pos);
 				exec("kill $process_id");
 			}
-
 		} elseif ($_POST['downloadbtn'] != "") {
 			//download file
-			$fs = filesize($fp.$fn);
-			header("Content-Type: application/octet-stream");
-			header("Content-Disposition: attachment; filename=$fn");
-			header("Content-Length: $fs");
-			readfile($fp.$fn);
-			exit;
+			send_user_download('file', $fp.$fn);
 		}
 	}
 } else {
@@ -290,7 +322,9 @@ $protocollist = array(
 	'pfsync' => 'pfsync',
 	'!pfsync' => $excl . ' pfsync',
 	'esp' => 'ESP',
-	'!esp' => $excl . ' ESP'
+	'!esp' => $excl . ' ESP',
+	'ospf' => 'OSPF',
+	'!ospf' => $excl . ' OSPF'
 );
 
 include("head.inc");
@@ -329,7 +363,7 @@ $section->addInput(new Form_Checkbox(
 	'<span class="infoblock" style="font-size:90%"><br />',
 	'&nbsp;<a target="_blank" href="https://security.stackexchange.com/questions/3630/how-to-find-out-that-a-nic-is-in-promiscuous-mode-on-a-lan">[1]</a>' .
 		'&nbsp;<a href="https://nmap.org/nsedoc/scripts/sniffer-detect.html">[2]</a>',
-	'&nbsp;<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+11.0-stable&amp;arch=default&amp;format=html">[3]</a>',
+	'&nbsp;<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=tcpdump&apropos=0&sektion=0&manpath=FreeBSD+12.2-RELEASE+and+Ports&arch=default&format=html">[3]</a>',
 	'</span></p>'
 );
 
@@ -368,6 +402,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$port
 ))->setHelp('The port can be either the source or destination port. The packet capture will look for this port in either field. ' .
+			'Matching can be negated by preceding the value with "!". Multiple ports may be specified. Comma (",") separated values perform a boolean "AND". Separating with a pipe ("|") performs a boolean "OR".' .
 			'Leave blank if not filtering by port.');
 
 $section->addInput(new Form_Input(
@@ -395,6 +430,7 @@ $section->addInput(new Form_Select(
 		  'medium' => gettext('Medium'),
 		  'high' => gettext('High'),
 		  'full' => gettext('Full'),
+		  'none' => gettext('None'),
 	)
 ))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.%s' .
 			'This option does not affect the level of detail when downloading the packet capture. ',
@@ -430,6 +466,15 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 		null,
 		'fa-stop-circle'
 	))->addClass('btn-warning');
+	if ($action == gettext("Start")) {
+		touch("/root/packetcapture.start");
+	}
+	if (file_exists($fp.$fns)) {
+		$section->addInput(new Form_StaticText(
+			'Last capture start',
+			date("F jS, Y g:i:s a.", filemtime($fp.$fns))
+		));
+	}
 }
 
 if (file_exists($fp.$fn) and $processisrunning != true) {
@@ -447,8 +492,14 @@ if (file_exists($fp.$fn) and $processisrunning != true) {
 		'fa-download'
 	))->addClass('btn-primary');
 
+	if (file_exists($fp.$fns)) {
+		$section->addInput(new Form_StaticText(
+			'Last capture start',
+			date("F jS, Y g:i:s a.", filemtime($fp.$fns))
+		));
+	}
 	$section->addInput(new Form_StaticText(
-		'Last capture',
+		'Last capture stop',
 		date("F jS, Y g:i:s a.", filemtime($fp.$fn))
 	));
 }
@@ -463,28 +514,28 @@ if ($do_tcpdump) :
 	}
 
 	if (in_array($proto, $protos)) {
+		switch (ltrim($proto, '!')) {
+			case 'ospf':
+				$proto = str_replace('ospf', 'proto ospf', $proto);
+				break;
+			case 'carp':
+				$proto = str_replace('carp', 'proto 112', $proto);
+				break;
+			case 'pfsync':
+				$proto = str_replace('pfsync', 'proto pfsync', $proto);
+				break;
+			default:
+				break;
+		}
 		$matches[] = fixup_not($proto);
 	}
 
 	if ($port != "") {
-		$matches[] = "port ".fixup_not($port);
+		$matches[] = hostport_array_fixer($ports,'port');
 	}
 
 	if ($host != "") {
-		$hostmatch = "";
-		$hostcount = 0;
-
-		foreach ($hosts as $h) {
-			$h = fixup_host($h, $hostcount++);
-
-			if (!empty($h)) {
-				$hostmatch .= " " . $h;
-			}
-		}
-
-		if (!empty($hostmatch)) {
-			$matches[] = "({$hostmatch})";
-		}
+		$matches[] = hostport_array_fixer($hosts,'host');
 	}
 
 	if ($count != "0") {
@@ -496,13 +547,14 @@ if ($do_tcpdump) :
 	$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
 
 	if ($action == gettext("Start")) {
-		$matchstr = implode($matches, " and ");
-
-		print_info_box(gettext('Packet capture is running.'), 'info');
-
+		$matchstr = implode(" and ", $matches);
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
-		// Debug
-		//echo $cmd;
+		print_info_box(gettext('Packet capture is running'), 'info');
+		?>
+		<div class="infoblock">
+		<? print_info_box(gettext('Command line') . ': ' . htmlspecialchars($cmd), 'info', false); ?>
+		</div>
+		<?php
 		mwexec_bg ($cmd);
 	} else {
 ?>
@@ -512,7 +564,7 @@ if ($do_tcpdump) :
 	<div class="panel-body">
 		<div class="form-group">
 <?php
-		if ($proto == "carp") {
+		if ($_POST['proto'] == "carp") {
 			$iscarp = "-T carp";
 		} else {
 			$iscarp = "";
@@ -535,7 +587,17 @@ if ($do_tcpdump) :
 		}
 
 		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
-		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
+		if (file_exists($fp.$fn) && (filesize($fp.$fn) > $max_display_size)) {
+			print(gettext("Packet capture file is too large to display in the GUI.") .
+			    "\n" .
+			    gettext("Download the file, or view it in the console or ssh shell."));
+		} elseif (!file_exists($fp.$fn)) {
+			print(gettext("No capture file to display."));
+		} elseif ($detail == 'none') {
+			print(gettext("Select a detail level to view the contents of the packet capture."));
+		} else {
+			system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
+		}
 		print('</textarea>');
 
 ?>

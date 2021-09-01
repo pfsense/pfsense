@@ -3,7 +3,9 @@
  * services_status.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Sam Wenham
  * All rights reserved.
  *
@@ -20,8 +22,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("captiveportal.inc");
 require_once("service-utils.inc");
@@ -34,6 +34,9 @@ $services = get_services();
 $numsvcs = count($services);
 
 for ($idx=0; $idx<$numsvcs; $idx++) {
+	if (!is_array($services[$idx])) {
+		$services[$idx] = array();
+	}
 	$services[$idx]['dispname'] = $services[$idx]['name'];
 }
 
@@ -97,7 +100,7 @@ if (count($services) > 0) {
 			$service['description'] = get_pkg_descr($service['name']);
 		}
 
-		$service_desc = explode(".",$service['description']);
+		$service_desc = explode(". ",$service['description']);
 ?>
 			<tr>
 				<td><?=get_service_status_icon($service, false, true, false, "state")?></td>
@@ -125,7 +128,7 @@ if (count($services) > 0) {
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>

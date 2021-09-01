@@ -1,4 +1,6 @@
+/usr/local/share/%%PRODUCT_NAME%%/fix_for_SA-19-10.ufs
 /etc/pfSense-rc
 /etc/pfSense-rc.shutdown
 /etc/rc
+/etc/rc.ramdisk_functions.sh
 @shell /etc/rc.initial

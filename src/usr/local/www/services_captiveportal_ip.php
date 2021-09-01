@@ -3,7 +3,9 @@
  * services_captiveportal_ip.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -46,11 +48,8 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
@@ -60,8 +59,9 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
-	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
+if ($_POST['act'] == "del" && !empty($cpzone)) {
+	init_config_arr(array('captiveportal', $cpzone, 'allowedip'));
+	$a_allowedips = &$config['captiveportal'][$cpzone]['allowedip'];
 
 	if ($a_allowedips[$_POST['id']]) {
 		$ipent = $a_allowedips[$_POST['id']];
@@ -82,7 +82,7 @@ if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 		}
 
 		unset($a_allowedips[$_POST['id']]);
-		write_config();
+		write_config("Captive portal allowed IPs saved");
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
 	}
@@ -96,6 +96,7 @@ $tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zon
 $tab_array[] = array(gettext("Allowed IP Addresses"), true, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("High Availability"), false, "services_captiveportal_hasync.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 

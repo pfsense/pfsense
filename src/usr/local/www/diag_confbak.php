@@ -3,7 +3,9 @@
  * diag_confbak.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -24,6 +26,7 @@
 ##|*IDENT=page-diagnostics-configurationhistory
 ##|*NAME=Diagnostics: Configuration History
 ##|*DESCR=Allow access to the 'Diagnostics: Configuration History' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=diag_confbak.php*
 ##|-PRIV
 
@@ -63,17 +66,9 @@ if ($_POST['rmver'] != "") {
 
 if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
-	$file = $g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml';
-
-	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
-	$exp_data = file_get_contents($file);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
+	send_user_download('file',
+				$g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml',
+				"config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
 }
 
 if (($_REQUEST['diff'] == 'Diff') && isset($_REQUEST['oldtime']) && isset($_REQUEST['newtime']) &&
@@ -210,7 +205,7 @@ if (is_array($confvers)):
 			<thead>
 				<tr>
 					<th colspan="2">
-						<button type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>">
+						<button type="submit" name="diff" class="btn btn-info btn-xs" value="Diff">
 							<i class="fa fa-exchange icon-embed-btn"></i>
 							<?=gettext("Diff"); ?>
 						</button>
@@ -274,7 +269,7 @@ if (is_array($confvers)):
 ?>
 				<tr>
 					<td colspan="2">
-						<button type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>">
+						<button type="submit" name="diff" class="btn btn-info btn-xs" value="Diff">
 							<i class="fa fa-exchange icon-embed-btn"></i>
 							<?=gettext("Diff"); ?>
 						</button>

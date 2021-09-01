@@ -3,7 +3,9 @@
 # pfSense-rc.shutdown
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2013 BSD Perimeter
+# Copyright (c) 2013-2016 Electric Sheep Fencing
+# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,11 +25,11 @@ if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 	exit -1
 fi
 
-# Read product_name from $g, defaults to pfSense
-product=$(/usr/local/sbin/read_global_var product_name pfSense)
+# Read product_label from $g, defaults to pfSense
+product_label=$(/usr/local/sbin/read_global_var product_label pfSense)
 
 echo
-echo "${product} is now shutting down ..."
+echo "${product_label} is now shutting down ..."
 echo
 
 stty status '^T'
@@ -42,13 +44,15 @@ export PATH
 # Remove temporary files on shutdown from /tmp/
 find -x /tmp/* -type f -exec rm -f {} \; >/dev/null 2>&1
 
-USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
-DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
-DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
-# If we are not on a full install, or if the full install wants RAM disks, or if the full install _was_ using RAM disks, but isn't for the next boot...
-if [ "${USE_MFS_TMPVAR}" = "true" ] || [ "${DISK_TYPE}" = "md" ]; then
-	/etc/rc.backup_aliastables.sh
-	/etc/rc.backup_rrd.sh
-	/etc/rc.backup_dhcpleases.sh
-	/etc/rc.backup_logs.sh
-fi
+. /etc/rc.ramdisk_functions.sh
+ramdisk_make_backup
+
+# Invoke shutdown scripts if present
+scripts=/usr/local/etc/rc.d/shutdown.*.sh
+for script in $scripts
+do
+	if [ -f "$script" -a -x "$script" ]
+	then
+		$script
+	fi
+done

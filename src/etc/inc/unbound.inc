@@ -4,7 +4,8 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
- * Copyright (c) 2015-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2016 Electric Sheep Fencing
+ * Copyright (c) 2015-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -29,6 +30,8 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("interfaces.inc");
+require_once("util.inc");
 
 function create_unbound_chroot_path($cfgsubdir = "") {
 	global $config, $g;
@@ -82,7 +85,7 @@ function unbound_optimization() {
 	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
 		foreach ($config['sysctl']['item'] as $tunable) {
 			if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
-				$so = floor(($tunable['value']/1024/1024)-4);
+				$so = floor((intval($tunable['value'])/1024/1024)-4);
 				// Check to ensure that the number is not a negative
 				if ($so >= 4) {
 					// Limit to 32MB, users might set maxsockbuf very high for other reasons.
@@ -108,15 +111,33 @@ function test_unbound_config($unboundcfg, &$output) {
 	global $g;
 
 	$cfgsubdir = "/test";
+	$cfgdir = "{$g['unbound_chroot_path']}{$cfgsubdir}";
+	rmdir_recursive($cfgdir);
+
+	// Copy the Python files to the test folder
+	if (isset($unboundcfg['python']) &&
+	    !empty($unboundcfg['python_script'])) {
+		$python_files = glob("{$g['unbound_chroot_path']}/{$unboundcfg['python_script']}.*");
+		if (is_array($python_files)) {
+			create_unbound_chroot_path($cfgsubdir);
+			foreach ($python_files as $file) {
+				$file = pathinfo($file, PATHINFO_BASENAME);
+				@copy("{$g['unbound_chroot_path']}/{$file}", "{$cfgdir}/{$file}");
+			}
+		}
+	}
+
 	unbound_generate_config($unboundcfg, $cfgsubdir);
 	unbound_remote_control_setup($cfgsubdir);
 	do_as_unbound_user("unbound-anchor", $cfgsubdir);
 
-	$cfgdir = "{$g['unbound_chroot_path']}{$cfgsubdir}";
-
 	$rv = 0;
-	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1", $output, $rv);
-	rmdir_recursive($cfgdir);
+	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
+	    $output, $rv);
+
+	if ($rv == 0) {
+		rmdir_recursive($cfgdir);
+	}
 
 	return $rv;
 }
@@ -140,6 +161,30 @@ function unbound_generate_config($unboundcfg = NULL, $cfgsubdir = "") {
 	file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound.conf", $unboundcfgtxt);
 }
 
+function unbound_get_python_scriptname($unboundcfg, $cfgsubdir = '') {
+	global $g;
+	if (!isset($unboundcfg['python']) ||
+	    empty($unboundcfg['python_script'])) {
+		/* Python is not enabled, or no script defined. */
+		return "";
+	}
+
+	$python_path = $g['unbound_chroot_path'];
+	if (!empty($cfgsubdir)) {
+		$python_path .= "{$cfgsubdir}";
+	}
+
+	/* Full path to the selected script file */
+	$python_script_file = "{$python_path}/{$unboundcfg['python_script']}.py";
+
+	if (file_exists($python_script_file)) {
+		/* If using a subdir (e.g. testing) use the full path, otherwise
+		 * only use the base filename. */
+		return empty($cfgsubdir) ? basename($python_script_file) : $python_script_file;
+	} else {
+		return '';
+	}
+}
 
 function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
@@ -148,60 +193,130 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 		$unboundcfg = $config['unbound'];
 	}
 
+	if (platform_booting()) {
+		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
+	}
+
 	// Setup optimization
 	$optimization = unbound_optimization();
 
+	$module_config = '';
+
+	// Setup Python module (pre validator)
+	if (!empty(unbound_get_python_scriptname($unboundcfg, $cfgsubdir)) &&
+	    $unboundcfg['python_order'] == 'pre_validator') {
+		$module_config .= 'python ';
+	}
+
+	// Setup DNS64 support
+	if (isset($unboundcfg['dns64'])) {
+		$module_config .= 'dns64 ';
+		$dns64_conf = 'dns64-prefix: ';
+		if (is_subnetv6($unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'])) {
+			$dns64_conf .= $unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'];
+		} else {
+			$dns64_conf .= '64:ff9b::/96';
+		}
+	}
+
 	// Setup DNSSEC support
 	if (isset($unboundcfg['dnssec'])) {
-		$module_config = "validator iterator";
+		$module_config .= 'validator ';
 		$anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}{$cfgsubdir}/root.key";
-	} else {
-		$module_config = "iterator";
 	}
+
+	// Setup Python module (post validator)
+	if (!empty(unbound_get_python_scriptname($unboundcfg, $cfgsubdir)) &&
+	    $unboundcfg['python_order'] == 'post_validator') {
+		$module_config .= 'python ';
+	}
+
+	$module_config .= 'iterator';
 
 	// Setup DNS Rebinding
 	if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {
 		// Private-addresses for DNS Rebinding
 		$private_addr = <<<EOF
 # For DNS Rebinding prevention
+private-address: 127.0.0.0/8
 private-address: 10.0.0.0/8
+private-address: ::ffff:a00:0/104
 private-address: 172.16.0.0/12
+private-address: ::ffff:ac10:0/108
 private-address: 169.254.0.0/16
+private-address: ::ffff:a9fe:0/112
 private-address: 192.168.0.0/16
+private-address: ::ffff:c0a8:0/112
 private-address: fd00::/8
 private-address: fe80::/10
 EOF;
 	}
 
-	// Determine interfaces to run on
-	$bindints = "";
-	if (!empty($unboundcfg['active_interface'])) {
-		$active_interfaces = explode(",", $unboundcfg['active_interface']);
-		if (in_array("all", $active_interfaces, true)) {
-			$bindints .= "interface: 0.0.0.0\n";
-			$bindints .= "interface: ::0\n";
-			$bindints .= "interface-automatic: yes\n";
-		} else {
-			foreach ($active_interfaces as $ubif) {
-				if (is_ipaddr($ubif)) {
-					$bindints .= "interface: $ubif\n";
-				} else {
-					$intip = get_interface_ip($ubif);
-					if (is_ipaddrv4($intip)) {
-						$bindints .= "interface: $intip\n";
-					}
-					$intip = get_interface_ipv6($ubif);
-					if (is_ipaddrv6($intip)) {
-						$bindints .= "interface: $intip\n";
-					}
+	// Determine interfaces where unbound will bind
+	$tlsport = is_numeric($unboundcfg['tlsport']) ? $unboundcfg['tlsport'] : "853";
+	$bindintcfg = "";
+	$bindints = array();
+	$active_interfaces = explode(",", $unboundcfg['active_interface']);
+	if (empty($unboundcfg['active_interface']) || in_array("all", $active_interfaces, true)) {
+		$bindints[] = "0.0.0.0";
+		$bindints[] = "::0";
+		$bindintcfg .= "interface-automatic: " . (isset($unboundcfg['enablessl']) ? "no" : "yes") . "\n";
+	} else {
+		foreach ($active_interfaces as $ubif) {
+			/* Do not bind to disabled/nocarrier interfaces,
+			 * see https://redmine.pfsense.org/issues/11087 */
+			$ifinfo = get_interface_info($ubif);
+			if ($ifinfo && (($ifinfo['status'] != 'up') || !$ifinfo['enable'])) {
+				continue;
+			}
+			if (is_ipaddr($ubif)) {
+				$bindints[] = $ubif;
+			} else {
+				$intip = get_interface_ip($ubif);
+				if (is_ipaddrv4($intip)) {
+					$bindints[] = $intip;
+				}
+				$intip = get_interface_ipv6($ubif);
+				if (is_ipaddrv6($intip)) {
+					$bindints[] = $intip;
 				}
 			}
 		}
-	} else {
-		$bindints .= "interface: 0.0.0.0\n";
-		$bindints .= "interface: ::0\n";
-		/* If the active interface array is empty, treat it the same as "All" as is done above. Otherwise it breaks CARP with a default config. */
-		$bindints .= "interface-automatic: yes\n";
+	}
+	foreach ($bindints as $bindint) {
+		$bindintcfg .= "interface: {$bindint}\n";
+		if (isset($unboundcfg['enablessl'])) {
+			$bindintcfg .= "interface: {$bindint}@{$tlsport}\n";
+		}
+	}
+
+	// TLS Configuration
+	$tlsconfig = "tls-cert-bundle: \"/etc/ssl/cert.pem\"\n";
+
+	if (isset($unboundcfg['enablessl'])) {
+		$tlscert_path = "{$g['unbound_chroot_path']}/sslcert.crt";
+		$tlskey_path = "{$g['unbound_chroot_path']}/sslcert.key";
+
+		// Enable SSL/TLS on the chosen or default port
+		$tlsconfig .= "tls-port: {$tlsport}\n";
+
+		// Lookup CA and Server Cert
+		$cert = lookup_cert($unboundcfg['sslcertref']);
+		$ca = ca_chain($cert);
+		$cert_chain = base64_decode($cert['crt']);
+		if (!empty($ca)) {
+			$cert_chain .= "\n" . $ca;
+		}
+
+		// Write CA and Server Cert
+		file_put_contents($tlscert_path, $cert_chain);
+		chmod($tlscert_path, 0644);
+		file_put_contents($tlskey_path, base64_decode($cert['prv']));
+		chmod($tlskey_path, 0600);
+
+		// Add config for CA and Server Cert
+		$tlsconfig .= "tls-service-pem: \"{$tlscert_path}\"\n";
+		$tlsconfig .= "tls-service-key: \"{$tlskey_path}\"\n";
 	}
 
 	// Determine interfaces to run on
@@ -210,6 +325,10 @@ EOF;
 		$outgoingints = "# Outgoing interfaces to be used\n";
 		$outgoing_interfaces = explode(",", $unboundcfg['outgoing_interface']);
 		foreach ($outgoing_interfaces as $outif) {
+			$ifinfo = get_interface_info($outif);
+			if ($ifinfo && (($ifinfo['status'] != 'up') || !$ifinfo['enable'])) {
+				continue;
+			}
 			$outip = get_interface_ip($outif);
 			if (is_ipaddr($outip)) {
 				$outgoingints .= "outgoing-interface: $outip\n";
@@ -246,12 +365,19 @@ EOF;
 	$port = (is_port($unboundcfg['port'])) ? $unboundcfg['port'] : "53";
 	$hide_identity = isset($unboundcfg['hideidentity']) ? "yes" : "no";
 	$hide_version = isset($unboundcfg['hideversion']) ? "yes" : "no";
+	$ipv6_allow = isset($config['system']['ipv6allow']) ? "yes" : "no";
 	$harden_dnssec_stripped = isset($unboundcfg['dnssecstripped']) ? "yes" : "no";
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
+	$dns_record_cache = isset($unboundcfg['dnsrecordcache']) ? "yes" : "no";
+	$aggressivensec = isset($unboundcfg['aggressivensec']) ? "yes" : "no";
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
-	$edns_buffer_size = (!empty($unboundcfg['edns_buffer_size'])) ? $unboundcfg['edns_buffer_size'] : "4096";
+	if (empty($unboundcfg['edns_buffer_size']) || ($unboundcfg['edns_buffer_size'] == 'auto')) {
+		$edns_buffer_size = unbound_auto_ednsbufsize();
+	} else {
+		$edns_buffer_size = $unboundcfg['edns_buffer_size'];
+	}
 	$num_queries_per_thread = (!empty($unboundcfg['num_queries_per_thread'])) ? $unboundcfg['num_queries_per_thread'] : "4096";
 	$jostle_timeout = (!empty($unboundcfg['jostle_timeout'])) ? $unboundcfg['jostle_timeout'] : "200";
 	$cache_max_ttl = (!empty($unboundcfg['cache_max_ttl'])) ? $unboundcfg['cache_max_ttl'] : "86400";
@@ -266,26 +392,19 @@ EOF;
 	$verbosity = isset($unboundcfg['log_verbosity']) ? $unboundcfg['log_verbosity'] : 1;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
 
+	if (isset($unboundcfg['regovpnclients'])) {
+		$openvpn_clients_conf .=<<<EOD
+# OpenVPN client entries
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
+EOD;
+	} else {
+		$openvpn_clients_conf = '';
+		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
+	}
+
 	// Set up forwarding if it is configured
 	if (isset($unboundcfg['forwarding'])) {
-		$dnsservers = array();
-		if (isset($config['system']['dnsallowoverride'])) {
-			$ns = array_unique(get_nameservers());
-			foreach ($ns as $nameserver) {
-				if ($nameserver) {
-					$dnsservers[] = $nameserver;
-				}
-			}
-		} else {
-			$ns = array();
-		}
-		$sys_dnsservers = array_unique(get_dns_servers());
-		foreach ($sys_dnsservers as $sys_dnsserver) {
-			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
-				$dnsservers[] = $sys_dnsserver;
-			}
-		}
-
+		$dnsservers = get_dns_nameservers(false, true);
 		if (!empty($dnsservers)) {
 			$forward_conf .=<<<EOD
 # Forwarding
@@ -293,9 +412,32 @@ forward-zone:
 	name: "."
 
 EOD;
+			if (isset($unboundcfg['forward_tls_upstream'])) {
+				$forward_conf .= "\tforward-tls-upstream: yes\n";
+			}
+
+			/* Build DNS server hostname list. See https://redmine.pfsense.org/issues/8602 */
+			$dns_hostnames = array();
+			$dnshost_counter = 1;
+			while (isset($config["system"]["dns{$dnshost_counter}host"])) {
+				$pconfig_dnshost_counter = $dnshost_counter - 1;
+				if (!empty($config["system"]["dns{$dnshost_counter}host"]) &&
+				    isset($config["system"]["dnsserver"][$pconfig_dnshost_counter]))
+				$dns_hostnames[$config["system"]["dnsserver"][$pconfig_dnshost_counter]] = $config["system"]["dns{$dnshost_counter}host"];
+				$dnshost_counter++;
+			}
+
 			foreach ($dnsservers as $dnsserver) {
+				$fwdport = "";
+				$fwdhost = "";
 				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
-					$forward_conf .= "\tforward-addr: $dnsserver\n";
+					if (isset($unboundcfg['forward_tls_upstream'])) {
+						$fwdport = "@853";
+						if (array_key_exists($dnsserver, $dns_hostnames)) {
+							$fwdhost = "#{$dns_hostnames[$dnsserver]}";
+						}
+					}
+					$forward_conf .= "\tforward-addr: {$dnsserver}{$fwdport}{$fwdhost}\n";
 				}
 			}
 		}
@@ -305,6 +447,24 @@ EOD;
 
 	// Size of the RRset cache == 2 * msg-cache-size per Unbound's recommendations
 	$rrset_cache_size = $msg_cache_size * 2;
+
+	/* QNAME Minimization. https://redmine.pfsense.org/issues/8028
+	 * Unbound uses the British style in the option name so the internal option
+	 * name follows that, but the user-visible descriptions follow US English.
+	 */
+	$qname_min = "";
+	if (isset($unboundcfg['qname-minimisation'])) {
+		$qname_min = "qname-minimisation: yes\n";
+		if (isset($unboundcfg['qname-minimisation-strict'])) {
+			$qname_min .= "qname-minimisation-strict: yes\n";
+		}
+	}
+
+	$python_module = '';
+	$python_script_file = unbound_get_python_scriptname($unboundcfg, $cfgsubdir);
+	if (!empty($python_script_file)) {
+		$python_module = "\n# Python Module\npython:\npython-script: {$python_script_file}";
+	}
 
 	$unboundconf = <<<EOD
 ##########################
@@ -327,7 +487,7 @@ hide-identity: {$hide_identity}
 hide-version: {$hide_version}
 harden-glue: yes
 do-ip4: yes
-do-ip6: yes
+do-ip6: {$ipv6_allow}
 do-udp: yes
 do-tcp: yes
 do-daemonize: yes
@@ -345,7 +505,7 @@ cache-min-ttl: {$cache_min_ttl}
 harden-dnssec-stripped: {$harden_dnssec_stripped}
 msg-cache-size: {$msg_cache_size}m
 rrset-cache-size: {$rrset_cache_size}m
-
+{$qname_min}
 {$optimization['number_threads']}
 {$optimization['msg_cache_slabs']}
 {$optimization['rrset_cache_slabs']}
@@ -357,15 +517,19 @@ outgoing-range: 4096
 prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
 use-caps-for-id: {$use_caps}
+serve-expired: {$dns_record_cache}
+aggressive-nsec: {$aggressivensec}
 # Statistics
 {$statistics}
+# TLS Configuration
+{$tlsconfig}
 # Interface IP(s) to bind to
-{$bindints}
+{$bindintcfg}
 {$outgoingints}
-
 # DNS Rebinding
 {$private_addr}
 {$private_domains}
+{$dns64_conf}
 
 # Access lists
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/access_lists.conf
@@ -375,6 +539,8 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 
 # dhcp lease entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
+
+{$openvpn_clients_conf}
 
 # Domain overrides
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf
@@ -386,6 +552,7 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf
 # Remote Control Config
 ###
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf
+{$python_module}
 
 EOD;
 
@@ -395,7 +562,9 @@ EOD;
 function unbound_remote_control_setup($cfgsubdir = "") {
 	global $g;
 
-	if (!file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") || !file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key")) {
+	if (!file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") ||
+	    (filesize("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") == 0) ||
+	    !file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key")) {
 		$remotcfg = <<<EOF
 remote-control:
 	control-enable: yes
@@ -465,10 +634,10 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}/unbound.conf");
 			break;
 		case "stop":
-			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf stop' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf stop'", true);
 			break;
 		case "reload":
-			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload'", true);
 			break;
 		case "unbound-anchor":
 			$root_key_file = "{$g['unbound_chroot_path']}{$param1}/root.key";
@@ -480,14 +649,14 @@ function do_as_unbound_user($cmd, $param1 = "") {
 					unlink_if_exists($root_key_file);
 				}
 			}
-			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$root_key_file}' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {
-				pfSense_fsync($root_key_file);
+				//pfSense_fsync($root_key_file);
 			}
 			break;
 		case "unbound-control-setup":
-			mwexec("echo '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}{$param1}' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}{$param1}'", true);
 			break;
 		default:
 			break;
@@ -501,12 +670,19 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
+	$tls_domains = array();
+	$tls_hostnames = array();
 	foreach ($sorted_domains as $domain) {
 		$domain_key = current($domain);
 		if (!isset($result[$domain_key])) {
 			$result[$domain_key] = array();
 		}
 		$result[$domain_key][] = $domain['ip'];
+		/* If any entry for a domain has TLS set, it will be active for all entries. */
+		if (isset($domain['forward_tls_upstream'])) {
+			$tls_domains[] = $domain_key;
+			$tls_hostnames[$domain['ip']] = $domain['tls_hostname'];
+		}
 	}
 
 	// Domain overrides that have multiple entries need multiple stub-addr: added
@@ -516,14 +692,29 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 			$domain_entries .= "private-domain: \"$domain\"\n";
 			$domain_entries .= "domain-insecure: \"$domain\"\n";
 		} else if ($pvt_rev == "reverse") {
-			if ((substr($domain, -14) == ".in-addr.arpa.") || (substr($domain, -13) == ".in-addr.arpa")) {
+			if (preg_match("/.+\.(in-addr|ip6)\.arpa\.?$/", $domain)) {
 				$domain_entries .= "local-zone: \"$domain\" typetransparent\n";
 			}
 		} else {
+			$use_tls = in_array($domain, $tls_domains);
 			$domain_entries .= "forward-zone:\n";
 			$domain_entries .= "\tname: \"$domain\"\n";
+			$fwdport = "";
+			/* Enable TLS forwarding for this domain if needed. */
+			if ($use_tls) {
+				$domain_entries .= "\tforward-tls-upstream: yes\n";
+				$fwdport = "@853";
+			}
 			foreach ($ips as $ip) {
-				$domain_entries .= "\tforward-addr: $ip\n";
+				$fwdhost = "";
+				/* If an IP address already contains a port specification, do not add another. */
+				if (strstr($ip, '@') !== false) {
+					$fwdport = "";
+				}
+				if ($use_tls && array_key_exists($ip, $tls_hostnames)) {
+					$fwdhost = "#{$tls_hostnames[$ip]}";
+				}
+				$domain_entries .= "\tforward-addr: {$ip}{$fwdport}{$fwdhost}\n";
 			}
 		}
 	}
@@ -702,8 +893,8 @@ function unbound_acls_config($cfgsubdir = "") {
 	global $g, $config;
 
 	if (!isset($config['unbound']['disable_auto_added_access_control'])) {
-		$aclcfg = "access-control: 127.0.0.1/32 allow\n";
-		$aclcfg .= "access-control: ::1 allow\n";
+		$aclcfg = "access-control: 127.0.0.1/32 allow_snoop\n";
+		$aclcfg .= "access-control: ::1 allow_snoop\n";
 		// Add our networks for active interfaces including localhost
 		if (!empty($config['unbound']['active_interface'])) {
 			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
@@ -714,7 +905,7 @@ function unbound_acls_config($cfgsubdir = "") {
 			$active_interfaces = get_configured_interface_with_descr();
 		}
 
-		$bindints = "";
+		$aclnets = array();
 		foreach ($active_interfaces as $ubif => $ifdesc) {
 			$ifip = get_interface_ip($ubif);
 			if (is_ipaddrv4($ifip)) {
@@ -727,7 +918,7 @@ function unbound_acls_config($cfgsubdir = "") {
 					$subnet_ip = gen_subnetv6($ifip, $subnet_bits);
 					// only add LAN-type interfaces
 					if (!interface_has_gateway($ubif)) {
-						$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
+						$aclnets[] = "{$subnet_ip}/{$subnet_bits}";
 					}
 				}
 				// add for IPv6 static routes to local networks
@@ -737,20 +928,52 @@ function unbound_acls_config($cfgsubdir = "") {
 				foreach ($static_routes as $route) {
 					if ((lookup_gateway_interface_by_name($route['gateway']) == $ubif) && !interface_has_gateway($ubif)) {
 						// route is on this interface, interface doesn't have gateway, add it
-						$aclcfg .= "access-control: {$route['network']} allow\n";
+						$aclnets[] = $route['network'];
 					}
 				}
 			}
+		}
+
+		// OpenVPN IPv6 Tunnel Networks
+		foreach (array('openvpn-client', 'openvpn-server') as $ovpnentry) {
+			if (is_array($config['openvpn'][$ovpnentry])) {
+				foreach ($config['openvpn'][$ovpnentry] as $ovpnent) {
+					if (!isset($ovpnent['disable']) && !empty($ovpnent['tunnel_networkv6'])) {
+						$aclnets[] = implode('/', openvpn_gen_tunnel_network($settings['tunnel_networkv6']));
+					}
+				}
+			}
+		}
+		// IPsec Mobile Virtual IPv6 Address Pool
+		if ((isset($config['ipsec']['client']['enable'])) &&
+		    (!empty($config['ipsec']['client']['pool_address_v6'])) &&
+		    (!empty($config['ipsec']['client']['pool_netbits_v6']))) {
+			$aclnets[] = "{$config['ipsec']['client']['pool_address_v6']}/{$config['ipsec']['client']['pool_netbits_v6']}";
 		}
 
 		// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
 		if (empty($FilterIflist)) {
 			filter_generate_optcfg_array();
 		}
-		$natnetworks_array = array();
-		$natnetworks_array = filter_nat_rules_automatic_tonathosts();
-		foreach ($natnetworks_array as $allowednet) {
-			$aclcfg .= "access-control: $allowednet allow \n";
+		$aclnets = array_merge($aclnets, filter_nat_rules_automatic_tonathosts());
+
+		/* Automatic ACL networks deduplication and sorting
+		 * https://redmine.pfsense.org/issues/11309 */
+		$aclnets4 = array();
+		$aclnets6 = array();
+		foreach (array_unique($aclnets) as $acln) {
+			if (is_v4($acln)) {
+				$aclnets4[] = $acln;
+			} else {
+				$aclnets6[] = $acln;
+			}
+		}
+		/* ipcmp only supports IPv4 */
+		usort($aclnets4, "ipcmp");
+		sort($aclnets6);
+
+		foreach (array_merge($aclnets4, $aclnets6) as $acln) {
+			$aclcfg .= "access-control: {$acln} allow \n";
 		}
 	}
 
@@ -798,6 +1021,40 @@ function unbound_local_zone_types() {
 		"inform_deny" => gettext("Inform Deny"),
 		"nodefault" => gettext("No Default")
 	);
+}
+
+// Autoconfig EDNS buffer size
+function unbound_auto_ednsbufsize() {
+	global $config;
+
+	$active_ipv6_inf = false;
+	if ($config['unbound']['active_interface'] != 'all') {
+		$active_interfaces = explode(",", $config['unbound']['active_interface']);
+	} else {
+		$active_interfaces = get_configured_interface_list();
+	}
+
+	$min_mtu = get_interface_mtu(get_real_interface($active_interfaces[0]));
+	foreach ($active_interfaces as $ubif) {
+		$ubif_mtu = get_interface_mtu(get_real_interface($ubif));
+		if (get_interface_ipv6($ubif)) {
+			$active_ipv6_inf = true;
+		}
+		if ($ubif_mtu < $min_mtu) {
+			$min_mtu = $ubif_mtu;
+		}
+	}
+
+	// maximum IPv4 + UDP header = 68 bytes
+	$min_mtu = $min_mtu - 68;
+
+	if (($min_mtu < 1232) && $active_ipv6_inf) {
+		$min_mtu = 1232;
+	} elseif ($min_mtu < 512) {
+		$min_mtu = 512;
+	}	
+
+	return $min_mtu;
 }
 
 ?>

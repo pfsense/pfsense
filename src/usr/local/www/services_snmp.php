@@ -3,7 +3,9 @@
  * services_snmp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,8 +34,6 @@
 
 require_once("guiconfig.inc");
 require_once("functions.inc");
-
-$specplatform = system_identify_specific_platform();
 
 if (!is_array($config['snmpd'])) {
 	$config['snmpd'] = array();
@@ -161,7 +161,7 @@ if ($_POST) {
 			$config['snmpd']['bindip'] = implode(",", $_POST['bindip']);
 		}
 
-		write_config();
+		write_config("SNMP settings saved");
 
 		$changes_applied = true;
 		$retval = 0;
@@ -318,14 +318,12 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['pf']
 ));
 
-if (!(($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
-	$group->add(new Form_MultiCheckbox(
-		'hostres',
-		null,
-		'Host Resources',
-		$pconfig['hostres']
-	));
-}
+$group->add(new Form_MultiCheckbox(
+	'hostres',
+	null,
+	'Host Resources',
+	$pconfig['hostres']
+));
 
 $group->add(new Form_MultiCheckbox(
 	'ucd',
@@ -342,14 +340,6 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $section->add($group);
-if ((($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
-	$section->addInput(new Form_StaticText(
-		NULL,
-		NULL
-	))->setHelp(sprint_info_box('The hostres module is not compatible with VMware virtual ' .
-		    'machines configured with a virtual CD/DVD Drive.', 'warning', false));
-}
-
 $form->add($section);
 
 $section = new Form_Section('Interface Binding');

@@ -3,7 +3,9 @@
  * services_captiveportal_filemanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Jonathan De Graeve (jonathan.de.graeve@imelda.be)
  * Copyright (c) 2005-2006 Paul Taylor (paultaylor@winn-dixie.com)
  * All rights reserved.
@@ -57,26 +59,30 @@ if (empty($cpzone)) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'element'));
+$a_cp = &$config['captiveportal'];
+$a_element = &$a_cp[$cpzone]['element'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("File Manager"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if (!is_array($a_cp[$cpzone]['element'])) {
-	$a_cp[$cpzone]['element'] = array();
-}
-
-$a_element =& $a_cp[$cpzone]['element'];
-
 // Calculate total size of all files
 $total_size = 0;
-foreach ($a_element as $element) {
-	$total_size += $element['size'];
+for ($i = 0; $i < count($a_element); $i++) {
+
+	// if the image in the directory does not exist remove it from config
+	if(!file_exists("{$g['captiveportal_path']}/" . $a_element[$i]['name'])){
+		@unlink("{$g['captiveportal_element_path']}/" . $a_element[$i]['name']);
+		// remove from list and reorder array.
+		unset($a_element[$i]);
+		$a_element = array_values($a_element);
+		continue;
+	}
+	if(!isset($a_element[$i]['nocontent'])) {
+		$total_size += $a_element[$i]['size'];
+	}
+
 }
 
 if ($_POST['Submit']) {
@@ -114,7 +120,7 @@ if ($_POST['Submit']) {
 			$a_element[] = $element;
 			cpelements_sort();
 
-			write_config();
+			write_config("Captive portal file manager: file uploaded");
 			captiveportal_write_elements();
 			header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 			exit;
@@ -124,7 +130,7 @@ if ($_POST['Submit']) {
 	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_POST['id']]['name']);
 	@unlink("{$g['captiveportal_path']}/" . $a_element[$_POST['id']]['name']);
 	unset($a_element[$_POST['id']]);
-	write_config();
+	write_config("Captive portal file manager: file deleted");
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 	exit;
 }
@@ -141,6 +147,7 @@ $tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zon
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("High Availability"), false, "services_captiveportal_hasync.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
@@ -152,7 +159,7 @@ if ($_REQUEST['act'] == 'add') {
 
 	$section = new Form_Section('Upload a New File');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'zone',
 		null,
 		'hidden',
@@ -237,7 +244,7 @@ endif;
 <?php endif; ?>
 	   </nav>
 <?php
-// The notes displayed on the page are large, the page content comparitively small. A "Note" button
+// The notes displayed on the page are large, the page content comparatively small. A "Note" button
 // is provided so that you only see the notes if you ask for them
 ?>
 <div class="infoblock panel panel-default">

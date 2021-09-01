@@ -4,7 +4,9 @@
  * rc.newwanip
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2006-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2006-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -40,7 +42,7 @@ function restart_packages() {
 	global $oldip, $curwanip, $g;
 
 	/* restart packages */
-	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldip ->  $curwanip - Restarting packages.");
+	log_error("{$g['product_label']} package system has detected an IP change or dynamic WAN reconnection - $oldip ->  $curwanip - Restarting packages.");
 	send_event("service reload packages");
 }
 
@@ -120,17 +122,14 @@ if (is_ipaddr($curwanip)) {
 
 link_interface_to_vips($interface, "update");
 
-unset($gre);
-$gre = link_interface_to_gre($interface);
-if (!empty($gre)) {
-	array_walk($gre, 'interface_gre_configure');
-}
+$gre = link_interface_to_tunnelif($interface, 'gre', 'inet');
+array_walk($gre, 'interface_gre_configure');
 
-unset($gif);
-$gif = link_interface_to_gif($interface);
-if (!empty($gif)) {
-	array_walk($gif, 'interface_gif_configure');
-}
+$gif = link_interface_to_tunnelif($interface, 'gif', 'inet');
+array_walk($gif, 'interface_gif_configure');
+
+/* reconfigure L2TP/PPTP tunnels, see https://redmine.pfsense.org/issues/12072 */ 
+$ppp = link_interface_to_ppp_tunnelif($interface);
 
 $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp)) {
@@ -154,36 +153,51 @@ switch ($config['interfaces'][$interface]['ipaddrv6']) {
 	case "6rd":
 		interface_6rd_configure($interface, $config['interfaces'][$interface]);
 		break;
+	case "slaac":
 	case "dhcp6":
 		// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script calls
 		// interface_dhcpv6_configure() for these connections after IPv6CP is up
-		if (isset($config['interfaces'][$interface]['dhcp6usev4iface']) && !interface_isppp_type($interface)) {
+		if ((($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6') &&
+		    isset($config['interfaces'][$interface]['dhcp6usev4iface'])) ||
+		    (($config['interfaces'][$interface]['ipaddrv6'] == 'slaac') &&
+		    isset($config['interfaces'][$interface]['slaacusev4iface'])) ||
+		    !interface_isppp_type($interface)) {
 			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
 		}
+		break;
+	default:
 		break;
 }
 
 /* Check Gif tunnels */
-if (!empty($gif)) {
-	foreach ($gif as $giftun) {
-		$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
-		if (!empty($confif)) {
-			interface_configure($confif);
-			system_routing_configure($confif);
-		}
+foreach ($gif as $giftun) {
+	$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
 	}
 }
-if (!empty($gre)) {
-	foreach ($gre as $gretun) {
-		$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
-		if (!empty($confif)) {
-			interface_configure($confif);
-			system_routing_configure($confif);
-		}
+foreach ($gre as $gretun) {
+	$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
+	}
+}
+foreach ($ppp as $ppptun) {
+	$confif = convert_real_interface_to_friendly_interface_name($ppptun['if']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
 	}
 }
 
-if (platform_booting()) {
+if (platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", "ppt", "l2t"))) {
+	// unlike dhcp interfaces which wait until they get an ip, a ppp connection lets the boot continue while 
+	// trying to acquire a ip address so to avoid a race condition where it would be possible that the default
+	// route would not be set, this script must continue to use the new assigned ip even while booting
+	// https://redmine.pfsense.org/issues/8561
+	
 	// avoid race conditions in many of the below functions that occur during boot
 	// setting up gateways monitor doesn't seem to have issues here, and fixes the
 	// most commonly encountered bugs from earlier versions when everything below
@@ -197,19 +211,8 @@ if (platform_booting()) {
  * Even with the same IP the VPN software is unhappy with the IP disappearing, and we
  * could be failing back in which case we need to switch IPs back anyhow.
  */
-if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
-	/* IP changed, kill states accordingly */
-	if ($curwanip != $oldip) {
-		if (isset($config['system']['ip_change_kill_states'])) {
-			log_error("IP Address has changed, killing all states (ip_change_kill_states is set).");
-			pfSense_kill_states($oldip);
-			filter_flush_state_table();
-		} else {
-			log_error("IP Address has changed, killing states on former IP Address $oldip.");
-			pfSense_kill_states($oldip);
-		}
-	}
-
+if (!is_ipaddr($oldip) || ($curwanip != $oldip) ||
+    (!is_ipaddrv4($config['interfaces'][$interface]['ipaddr']) && ($config['interfaces'][$interface]['ipaddr'] != 'dhcp'))) {
 	/*
 	 * Some services (e.g. dyndns, see ticket #4066) depend on
 	 * filter_configure() to be called before, otherwise pass out
@@ -218,11 +221,24 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	 */
 	filter_configure_sync();
 
+	/* reconfigure our gateway monitor, dpinger results need to be 
+	 * available when configuring the default gateway */
+	setup_gateways_monitor();
+
 	/* reconfigure static routes (kernel may have deleted them) */
 	system_routing_configure($interface);
 
-	/* reconfigure our gateway monitor */
-	setup_gateways_monitor();
+	/* If the IP address changed, kill old states after rules and routing have been updated */
+	if ($curwanip != $oldip) {
+		if (isset($config['system']['ip_change_kill_states'])) {
+			log_error("IP Address has changed, killing all states (ip_change_kill_states is set).");
+			pfSense_kill_states(utf8_encode($oldip));
+			filter_flush_state_table();
+		} else {
+			log_error("IP Address has changed, killing states on former IP Address $oldip.");
+			pfSense_kill_states(utf8_encode($oldip));
+		}
+	}
 
 	/* reload unbound */
 	services_unbound_configure();
@@ -238,7 +254,7 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	services_dyndns_configure($interface);
 
 	/* reconfigure IPsec tunnels */
-	vpn_ipsec_force_reload($interface);
+	ipsec_force_reload($interface);
 
 	/* start OpenVPN server & clients */
 	if (substr($interface_real, 0, 4) != "ovpn") {

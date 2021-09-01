@@ -3,7 +3,9 @@
  * vpn_openvpn_csc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -34,10 +36,7 @@ require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
 
-if (!is_array($config['openvpn']['openvpn-csc'])) {
-	$config['openvpn']['openvpn-csc'] = array();
-}
-
+init_config_arr(array('openvpn', 'openvpn-csc'));
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -48,20 +47,27 @@ if (isset($_REQUEST['act'])) {
 	$act = $_REQUEST['act'];
 }
 
+$user_entry = getUserEntry($_SESSION['Username']);
+$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-csc-advanced") || userHasPrivilege($user_entry, "page-all"));
+
 if ($_POST['act'] == "del") {
 	if (!$a_csc[$id]) {
 		pfSenseHeader("vpn_openvpn_csc.php");
 		exit;
 	}
 
-	$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
-	openvpn_delete_csc($a_csc[$id]);
-	unset($a_csc[$id]);
-	write_config($wc_msg);
-	$savemsg = gettext("Client specific override successfully deleted.");
+	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
+	} else {
+		$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
+		openvpn_delete_csc($a_csc[$id]);
+		unset($a_csc[$id]);
+		write_config($wc_msg);
+		$savemsg = gettext("Client specific override successfully deleted.");
+	}
 }
 
-if ($act == "edit") {
+if (($act == "edit") || ($act == "dup")) {
 	if (isset($id) && $a_csc[$id]) {
 		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
@@ -79,6 +85,7 @@ if ($act == "edit") {
 		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
 
 		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
+		$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
 
 		$pconfig['dns_domain'] = $a_csc[$id]['dns_domain'];
 		if ($pconfig['dns_domain']) {
@@ -124,32 +131,47 @@ if ($act == "edit") {
 	}
 }
 
+if ($act == "dup") {
+	$act = "new";
+	unset($id);
+}
+
 if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network')) {
-		$input_errors[] = $result;
+	if (isset($pconfig['custom_options']) &&
+	    ($pconfig['custom_options'] != $a_csc[$id]['custom_options']) &&
+	    !$user_can_edit_advanced) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
+	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
+		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
+	}
+
+	if (!empty($pconfig['tunnel_network']) && !openvpn_validate_tunnel_network($pconfig['tunnel_network'], 'ipv4')) {
+		$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask or an alias with a single IPv4 subnet with CIDR mask.");
+	}
+
+	if (!empty($pconfig['tunnel_networkv6']) && !openvpn_validate_tunnel_network($pconfig['tunnel_networkv6'], 'ipv6')) {
+		$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix or an alias with a single IPv6 prefix.");
+	}
+
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4")) {
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4")) {
-		$input_errors[] = $result;
-	}
-
-	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
 	}
 
@@ -227,6 +249,7 @@ if ($_POST['save']) {
 		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$csc['gwredir'] = $pconfig['gwredir'];
 		$csc['push_reset'] = $pconfig['push_reset'];
+		$csc['remove_route'] = $pconfig['remove_route'];
 
 		if ($pconfig['dns_domain_enable']) {
 			$csc['dns_domain'] = $pconfig['dns_domain'];
@@ -311,6 +334,24 @@ if ($act == "new" || $act == "edit"):
 
 	$section = new Form_Section('General Information');
 
+	$section->addInput(new Form_Input(
+		'description',
+		'Description',
+		'text',
+		$pconfig['description']
+	))->setHelp('A description of this override for administrative reference.');
+
+	$section->addInput(new Form_Checkbox(
+		'disable',
+		'Disable',
+		'Disable this override',
+		$pconfig['disable']
+	))->setHelp('Set this option to disable this client-specific override without removing it from the list.');
+
+	$form->add($section);
+
+	$section = new Form_Section('Override Configuration');
+
 	$serveroptionlist = array();
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
@@ -320,35 +361,12 @@ if ($act == "new" || $act == "edit"):
 		}
 	}
 
-	$section->addInput(new Form_Select(
-		'server_list',
-		'Server List',
-		$pconfig['server_list'],
-		$serveroptionlist,
-		true
-		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
-
-
-	$section->addInput(new Form_Checkbox(
-		'disable',
-		'Disable',
-		'Disable this override',
-		$pconfig['disable']
-	))->setHelp('Set this option to disable this client-specific override without removing it from the list.');
-
 	$section->addInput(new Form_Input(
 		'common_name',
 		'*Common Name',
 		'text',
 		$pconfig['common_name']
-	))->setHelp('Enter the X.509 common name for the client certificate, or the username for VPNs utilizing password authentication. This match is case sensitive.');
-
-	$section->addInput(new Form_Input(
-		'description',
-		'Description',
-		'text',
-		$pconfig['description']
-	))->setHelp('A description for administrative reference (not parsed).');
+	))->setHelp('Enter the X.509 common name for the client certificate, or the username for VPNs utilizing password authentication. This match is case sensitive. Enter "DEFAULT" to override default client behavior.');
 
 	$section->addInput(new Form_Checkbox(
 		'block',
@@ -356,6 +374,14 @@ if ($act == "new" || $act == "edit"):
 		'Block this client connection based on its common name.',
 		$pconfig['block']
 	))->setHelp('Prevents the client from connecting to this server. Do not use this option to permanently disable a client due to a compromised key or password. Use a CRL (certificate revocation list) instead.');
+
+	$section->addInput(new Form_Select(
+		'server_list',
+		'Server List',
+		$pconfig['server_list'],
+		$serveroptionlist,
+		true
+		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
 
 	$form->add($section);
 
@@ -366,7 +392,7 @@ if ($act == "new" || $act == "edit"):
 		'IPv4 Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('The virtual IPv4 network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). %1$s' .
+	))->setHelp('The virtual IPv4 network or network type alias with a single entry used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). %1$s' .
 		    'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. %1$s' .
 		    'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.',
 			'<br />');
@@ -376,7 +402,7 @@ if ($act == "new" || $act == "edit"):
 		'IPv6 Tunnel Network',
 		'text',
 		$pconfig['tunnel_networkv6']
-	))->setHelp('The virtual IPv6 network used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
+	))->setHelp('The virtual IPv6 network or network type alias with a single entry used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
 		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
 			'<br />');
 
@@ -385,7 +411,7 @@ if ($act == "new" || $act == "edit"):
 		'IPv4 Local Network/s',
 		'text',
 		$pconfig['local_network']
-	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR networks. %1$s' .
+	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR ranges or host/network type aliases. %1$s' .
 		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
 			'<br />');
 
@@ -429,12 +455,20 @@ if ($act == "new" || $act == "edit"):
 
 	$section = new Form_Section('Client Settings');
 
-	// Default domain name
 	$section->addInput(new Form_Checkbox(
 		'push_reset',
 		'Server Definitions',
 		'Prevent this client from receiving any server-defined client settings. ',
 		$pconfig['push_reset']
+	));
+
+	/* as "push-reset" can break subnet topology, 
+	 * "push-remove route" removes only IPv4/IPv6 routes, see #9702 */
+	$section->addInput(new Form_Checkbox(
+		'remove_route',
+		'Remove Server Routes',
+		'Prevent this client from receiving any server-defined routes without removing any other options. ',
+		$pconfig['remove_route']
 	));
 
 	$section->addInput(new Form_Checkbox(
@@ -576,16 +610,20 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
-	$section->addInput(new Form_Textarea(
+	$custops = new Form_Textarea(
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. %1$s' .
+	);
+	if (!$user_can_edit_advanced) {
+		$custops->setDisabled();
+	}
+	$section->addInput($custops)->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. %1$s' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ',
 				'<br />');
 
 	// The hidden fields
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',
@@ -593,7 +631,7 @@ if ($act == "new" || $act == "edit"):
 	));
 
 	if (isset($id) && $a_csc[$id]) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
@@ -655,7 +693,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('CSC Overrides')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Disabled")?></th>
@@ -682,6 +720,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-clone"	title="<?=gettext("Copy CSC Override")?>"	href="vpn_openvpn_csc.php?act=dup&amp;id=<?=$i?>" usepost></a>
 						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>

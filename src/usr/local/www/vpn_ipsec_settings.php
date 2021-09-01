@@ -3,7 +3,9 @@
  * vpn_ipsec_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,17 +35,27 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
+global $ipsec_filtermodes;
+
+init_config_arr(array('ipsec', 'phase1'));
+$a_phase1 = &$config['ipsec']['phase1'];
+
 $pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
 $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
+$pconfig['pkcs11support'] = isset($config['ipsec']['pkcs11support']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
-$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
-$pconfig['maxmss'] = $config['system']['maxmss'];
+$pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
+$pconfig['filtermode'] = $config['ipsec']['filtermode'];
+$pconfig['ipsecbypass'] = isset($config['ipsec']['ipsecbypass']);
+$pconfig['bypassrules'] = $config['ipsec']['bypassrules'];
+$pconfig['port'] = $config['ipsec']['port'];
+$pconfig['port_nat_t'] = $config['ipsec']['port_nat_t'];
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -57,14 +69,62 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (isset($pconfig['maxmss'])) {
-		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
-			$input_errors[] = gettext("An integer must be specified for Maximum MSS.");
-		}
-		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
-			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
+	if ($_POST['maxexchange'] && (!is_numeric($_POST['maxexchange']) ||
+	    ($_POST['maxexchange'] < 3) || ($_POST['maxexchange'] > 64))) {
+		$input_errors[] = gettext("The number of IKEv1 phase 2 exchanges must be between 3 and 64.");
+	}
+
+	if ($_POST['ipsecbypass']) {
+		$bypassrules = array();
+		for ($x = 0; $x < 99; $x++) {
+			if (isset($_POST["source{$x}"]) && isset($_POST["destination{$x}"]) &&
+			    isset($_POST["srcmask{$x}"]) && isset($_POST["dstmask{$x}"])) {
+				$source = $_POST["source{$x}"] . '/' . $_POST["srcmask{$x}"];
+				$destination = $_POST["destination{$x}"] . '/' . $_POST["dstmask{$x}"];
+				if (!is_subnetv4($source) && !is_subnetv6($source)) {
+					$input_errors[] = sprintf(gettext('%s is not valid source IP address for
+					       	IPsec bypass rule'), htmlspecialchars($source));
+				}
+				if (!is_subnetv4($destination) && !is_subnetv6($destination)) {
+					$input_errors[] = sprintf(gettext('%s is not valid destination IP address 
+						for IPsec bypass rule'), htmlspecialchars($destination));
+				}
+				if ((is_subnetv4($source) && is_subnetv6($destination)) ||
+				    (is_subnetv6($source) && is_subnetv4($destination))) {
+					$input_errors[] = gettext('IPsec bypass source and destination addresses
+						must belong to the same IP family.');
+				}
+				$bypassrules['rule'][] = array(
+					'source' => $_POST["source{$x}"],
+				       	'srcmask' => $_POST["srcmask{$x}"],
+					'destination' => $_POST["destination{$x}"], 
+					'dstmask' => $_POST["dstmask{$x}"]
+				);
+			}
 		}
 	}
+
+	if ($_POST['port']) {
+		if (!is_port($pconfig['port'])) {
+			$input_errors[] = gettext("The IKE port number is invalid.");
+		}
+	} else {
+		unset($pconfig['port']);
+	}
+
+	if ($_POST['port_nat_t']) {
+		if (!is_port($pconfig['port_nat_t'])) {
+			$input_errors[] = gettext("The NAT-T port number is invalid.");
+		}
+	} else {
+		unset($pconfig['port_nat_t']);
+	}
+
+	if (isset($pconfig['port']) && isset($pconfig['port_nat_t']) && $pconfig['port'] == $pconfig['port_nat_t']) {
+		$input_errors[] = gettext("IKE and NAT-T port numbers must be different.");
+	}
+
+	$pconfig['bypassrules'] = $bypassrules;
 
 	if (!$input_errors) {
 
@@ -76,8 +136,8 @@ if ($_POST['save']) {
 				continue;
 			}
 			if ($pconfig['logging'][$cat] != $config['ipsec']['logging'][$cat]) {
+				init_config_arr(array('ipsec', 'logging'));
 				$config['ipsec']['logging'][$cat] = $pconfig['logging'][$cat];
-				vpn_update_daemon_loglevel($cat, $pconfig['logging'][$cat]);
 			}
 		}
 
@@ -91,6 +151,28 @@ if ($_POST['save']) {
 		} elseif (isset($config['ipsec']['compression'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['compression']);
+		}
+
+		if ($_POST['pkcs11support'] == "yes") {
+			if (!isset($config['ipsec']['pkcs11support'])) {
+				$needsrestart = true;
+			}
+			$config['ipsec']['pkcs11support'] = true;
+		} elseif (isset($config['ipsec']['pkcs11support'])) {
+			foreach ($a_phase1 as $ph1ent) {
+				if (($ph1ent['authentication_method'] == 'pkcs11') &&
+				    !isset($ph1ent['disabled'])) {
+					$pkcs11phase1 = true;
+					break;
+				}
+			}
+			if ($pkcs11phase1) {
+				$input_errors[] = gettext("Unable to disable PKCS#11 support,
+				       	already in use for Phase 1 authentication.");
+			} else {
+				$needsrestart = true;
+				unset($config['ipsec']['pkcs11support']);
+			}
 		}
 
 		if ($_POST['enableinterfacesuse'] == "yes") {
@@ -135,6 +217,18 @@ if ($_POST['save']) {
 			$config['ipsec']['noshuntlaninterfaces'] = true;
 		}
 
+		if ($_POST['ipsecbypass'] == "yes") {
+			$config['ipsec']['ipsecbypass'] = true;
+		} else {
+			unset($config['ipsec']['ipsecbypass']);
+		}
+
+		if ($_POST['async_crypto'] == "yes") {
+			$config['ipsec']['async_crypto'] = "enabled";
+		} else {
+			$config['ipsec']['async_crypto'] = "disabled";
+		}
+
 		if ($_POST['acceptunencryptedmainmode'] == "yes") {
 			if (!isset($config['ipsec']['acceptunencryptedmainmode'])) {
 				$needsrestart = true;
@@ -145,22 +239,47 @@ if ($_POST['save']) {
 			unset($config['ipsec']['acceptunencryptedmainmode']);
 		}
 
+		if (isset($_POST['maxexchange']) && (strlen($_POST['maxexchange']) > 0)) {
+			if (!isset($config['ipsec']['maxexchange']) || ($pconfig['maxexchange'] != $config['ipsec']['maxexchange'])) {
+				$needsrestart = true;
+			}
+			$config['ipsec']['maxexchange'] = (int)$_POST['maxexchange'];
+			$pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
+		} elseif (isset($config['ipsec']['maxexchange'])) {
+			$needsrestart = true;
+			unset($config['ipsec']['maxexchange']);
+		}
+
 		if (!empty($_POST['uniqueids'])) {
 			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
 		} else if (isset($config['ipsec']['uniqueids'])) {
 			unset($config['ipsec']['uniqueids']);
 		}
 
-		if ($_POST['maxmss_enable'] == "yes") {
-			$config['system']['maxmss_enable'] = true;
-			$config['system']['maxmss'] = $_POST['maxmss'];
+		if (!empty($_POST['filtermode'])) {
+			$config['ipsec']['filtermode'] = $_POST['filtermode'];
+		} else if (isset($config['ipsec']['filtermode'])) {
+			unset($config['ipsec']['filtermode']);
+		}
+
+		if (isset($config['ipsec']['bypassrules']['rule'])) {
+			unset($config['ipsec']['bypassrules']['rule']);
+		}
+
+		$config['ipsec']['bypassrules'] = $bypassrules;
+
+		if (!empty($_POST['port_nat_t'])) {
+			$config['ipsec']['port_nat_t'] = $_POST['port_nat_t'];
 		} else {
-			if (isset($config['system']['maxmss_enable'])) {
-				unset($config['system']['maxmss_enable']);
-			}
-			if (isset($config['system']['maxmss'])) {
-				unset($config['system']['maxmss']);
-			}
+			unset($config['ipsec']['port_nat_t']);
+			$pconfig['port_nat_t'] = '';
+		}
+
+		if (!empty($_POST['port'])) {
+			$config['ipsec']['port'] = $_POST['port'];
+		} else {
+			unset($config['ipsec']['port']);
+			$pconfig['port'] = '';
 		}
 
 		write_config(gettext("Saved IPsec advanced settings."));
@@ -169,7 +288,9 @@ if ($_POST['save']) {
 		$retval = 0;
 		$retval |= filter_configure();
 
-		vpn_ipsec_configure($needsrestart);
+		ipsec_configure($needsrestart);
+		system_setup_sysctl();
+		clear_subsystem_dirty('sysctl');
 	}
 
 	// The logic value sent by $_POST for autoexcludelanaddress is opposite to
@@ -183,28 +304,18 @@ if ($_POST['save']) {
 	}
 }
 
+if (isset($config['ipsec']['async_crypto'])) {
+	$pconfig['async_crypto'] = $config['ipsec']['async_crypto'];
+} else {
+	$pconfig['async_crypto'] = "disabled";
+}
+
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Advanced Settings"));
 $pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
-?>
 
-<script type="text/javascript">
-//<![CDATA[
-
-function maxmss_checked(obj) {
-	if (obj.checked) {
-		$('#maxmss').attr('disabled', false);
-	} else {
-		$('#maxmss').attr('disabled', 'true');
-	}
-}
-
-//]]>
-</script>
-
-<?php
 if ($changes_applied) {
 	print_apply_result_box($retval);
 }
@@ -257,12 +368,34 @@ $section->addInput(new Form_Select(
 	'<b>', '</b>'
 );
 
+$section->addInput(new Form_Select(
+	'filtermode',
+	'IPsec Filter Mode',
+	$pconfig['filtermode'],
+	$ipsec_filtermodes
+))->setHelp(
+	'Experimental. Controls how the firewall will filter IPsec traffic. By default, rules on ' .
+	'the IPsec tab filter all IPsec traffic, including tunnel mode, transport mode, and VTI mode. %3$s' .
+	'This is limited in that it does not allow for filtering on assigned VTI or transport mode interfaces (e.g. GRE), and it does not ' .
+	'support features such as NAT rules and reply-to for return routing. ' .
+	'When set to filter on assigned VTI and transport interfaces, %1$sall tunnel mode traffic is blocked%2$s. ' .
+	'Do not set this option unless %1$sall%2$s IPsec tunnels are using VTI or transport mode.',
+	'<b>', '</b>', '<br />'
+);
+
 $section->addInput(new Form_Checkbox(
 	'compression',
 	'IP Compression',
 	'Enable IPCompression',
 	$pconfig['compression']
 ))->setHelp('IPComp compression of content is proposed on the connection.');
+
+$section->addInput(new Form_Checkbox(
+	'pkcs11support',
+	'PKCS#11 Support',
+	'Enable PKCS#11',
+	$pconfig['pkcs11support']
+))->setHelp('Allow use of PKCS#11 tokens for Phase 1 authentication.');
 
 $section->addInput(new Form_Checkbox(
 	'enableinterfacesuse',
@@ -283,31 +416,17 @@ $section->addInput(new Form_Checkbox(
 	'It is recommended to keep this option to no, unless the exact implications are known and compatibility is required for such devices (for example, some SonicWall boxes).'
 );
 
-$section->addInput(new Form_Checkbox(
-	'maxmss_enable',
-	'Enable Maximum MSS',
-	'Enable MSS clamping on VPN traffic',
-	$pconfig['maxmss_enable']
-))->toggles('.toggle-maxmss', 'collapse');
-
-$group = new Form_Group('Maximum MSS');
-$group->addClass('toggle-maxmss collapse');
-
-if (!empty($pconfig['maxmss_enable'])) {
-	$group->addClass('in');
-}
-
-$group->add(new Form_Input(
-	'maxmss',
-	'Maximum MSS',
-	'text',
-	($pconfig['maxmss'] ? $pconfig['maxmss'] : '1400')
+$section->addInput(new Form_Input(
+	'maxexchange',
+	'Maximum IKEv1 Phase 2 Exchanges',
+	'number',
+	$pconfig['maxexchange'],
+	['placeholder' => '3']
 ))->setHelp(
-	'Enable MSS clamping on TCP flows over VPN. ' .
-	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
+	'IKEv1 phase 2 rekeying for one VPN gateway can be initiated in parallel. By default only 3 parallel rekeys are allowed. ' .
+	'Undersized values can break VPN connections with many phase 2 definitions. ' .
+	'If unsure, set this value to match the largest number of phase 2 entries on any phase 1.'
 );
-
-$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'unityplugin',
@@ -321,7 +440,7 @@ $section->addInput(new Form_Checkbox(
 	'Strict CRL Checking',
 	'Enable strict Certificate Revocation List checking',
 	$pconfig['strictcrlpolicy']
-))->setHelp('Check this to require availability of a fresh CRL for peer authentication based on RSA signatures to succeed.');
+))->setHelp('Check this to require availability of a fresh CRL for peer authentication based on certificate signatures to succeed.');
 
 $section->addInput(new Form_Checkbox(
 	'makebeforebreak',
@@ -333,16 +452,120 @@ $section->addInput(new Form_Checkbox(
 			'during reauthentication, but requires support for overlapping SAs by the peer.');
 
 $section->addInput(new Form_Checkbox(
+	'async_crypto',
+	'Asynchronous Cryptography',
+	'Use asynchronous mode to parallelize multiple cryptography jobs',
+	($pconfig['async_crypto'] == "enabled")
+))->setHelp('Allow crypto(9) jobs to be dispatched multi-threaded to increase performance. ' .
+		'Jobs are handled in the order they are received so that packets will be reinjected in the correct order.');
+
+$group = new Form_Group('Custom ports');
+$group->add(new Form_Input(
+  'port',
+	'IKE port',
+	'number',
+	$pconfig['port'],
+	['min' => 1, 'max' => 65535]
+))->setHelp('Local UDP port for IKE (Default: 500)');
+
+$group->add(new Form_Input(
+  'port_nat_t',
+	'NAT-T port',
+	'number',
+	$pconfig['port_nat_t'],
+	['min' => 1, 'max' => 65535]
+))->setHelp('Local UDP port for NAT-T (Default: 4500)');
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
 	'autoexcludelanaddress',
 	'Auto-exclude LAN address',
 	'Enable bypass for LAN interface IP',
 	!$pconfig['noshuntlaninterfaces']
 ))->setHelp('Exclude traffic from LAN subnet to LAN IP address from IPsec.');
 
+$section->addInput(new Form_Checkbox(
+	'ipsecbypass',
+	'Additional IPsec bypass',
+	'Enable extra IPsec bypass rules',
+	$pconfig['ipsecbypass']
+))->setHelp('Create extra rules to exclude specific traffic from IPsec.');
+
+$form->add($section);
+
+$section = new Form_Section('IPsec bypass rules');
+$section->addClass('ipsecbypass');
+
+if (!$pconfig['bypassrules']) {
+	$pconfig['bypassrules'] = array();
+	$pconfig['bypassrules']['rule']  = array(array('source' => '', 'srcmask' => '32',
+	       					'destination' => '', 'dstmask' => '32'));
+}
+
+$numrows = count($item) -1;
+$counter = 0;
+
+$numrows = count($pconfig['bypassrules']['rule']) -1;
+
+foreach ($pconfig['bypassrules']['rule'] as $rule) {
+	$group = new Form_Group(($counter == 0) ? 'Rule':null);
+	$group->addClass('repeatable');
+
+	$group->add(new Form_IpAddress(
+		'source' . $counter,
+		null,
+		$rule['source']
+	))->setWidth(4)->setHelp($numrows == $counter ? 'Source address' : null)->addMask('srcmask' . $counter, $rule['srcmask'], 128, 0);
+
+	$group->add(new Form_IpAddress(
+		'destination' . $counter,
+		null,
+		$rule['destination']
+	))->setWidth(4)->setHelp($numrows == $counter ? 'Destination address' : null)->addMask('dstmask' . $counter, $rule['dstmask'], 128, 0);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
+
+	$section->add($group);
+
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
+
 $form->add($section);
 
 print $form;
 
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	var ipsecbypass = false;
+
+	function show_ipsecbypass() {
+		hide = !$('#ipsecbypass').prop('checked');
+		hideClass('ipsecbypass', hide);
+	}
+
+	$('#ipsecbypass').click(function () {
+		show_ipsecbypass();
+	});
+
+	show_ipsecbypass();
+	checkLastRow();
+});
+//]]>
+</script>
 
 <?php include("foot.inc"); ?>

@@ -3,7 +3,9 @@
  * system_gateway_groups_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -31,10 +33,7 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['gateways']['gateway_group'])) {
-	$config['gateways']['gateway_group'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 
@@ -134,7 +133,7 @@ if (isset($_POST['save'])) {
 		mark_subsystem_dirty('staticroutes');
 		mark_subsystem_dirty('gwgroup.' . $gateway_group['name']);
 
-		write_config();
+		write_config("Gateway Groups settings saved");
 
 		header("Location: system_gateway_groups.php");
 		exit;
@@ -152,24 +151,6 @@ function build_gateway_protocol_map (&$a_gateways) {
 	}
 
 	return $result;
-}
-
-function build_vip_list($family = 'all') {
-	global $gateway;
-
-	$list = array('address' => gettext('Interface Address'));
-
-	$viplist = get_configured_vip_list($family);
-	foreach ($viplist as $vip => $address) {
-		if ($gateway['friendlyiface'] == get_configured_vip_interface($vip)) {
-			$list[$vip] = "$address";
-			if (get_vip_descr($address)) {
-				$list[$vip] .= " (". get_vip_descr($address) .")";
-			}
-		}
-	}
-
-	return($list);
 }
 
 include("head.inc");
@@ -284,7 +265,7 @@ foreach ($a_gateways as $gwname => $gateway) {
 		$gwname . '_vip',
 		'Virtual IP',
 		$vaddress,
-		build_vip_list($gateway['ipprotocol'])
+		build_vip_list($gateway['friendlyiface'], $gateway['ipprotocol'])
 	));
 
 	$group->add(new Form_Input(
@@ -322,12 +303,7 @@ $section->addInput(new Form_Select(
 	'trigger',
 	'*Trigger Level',
 	$pconfig['trigger'],
-	array(
-		'0' => gettext('Member down'),
-		'1' => gettext('Packet Loss'),
-		'2' => gettext('High Latency'),
-		'3' => gettext('Packet Loss or High latency')
-	)
+	$categories
 ))->setHelp('When to trigger exclusion of a member');
 
 $section->addInput(new Form_Input(
@@ -338,7 +314,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_gateway_groups[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 	'id',
 	null,
 	'hidden',

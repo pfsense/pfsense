@@ -3,7 +3,9 @@
  * services_captiveportal_mac_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -57,11 +59,9 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
+$a_cp = &$config['captiveportal'];
+$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_mac.php?zone=" . $cpzone, "@self");
@@ -70,12 +70,6 @@ $shortcut_section = "captiveportal";
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
-
-if (!is_array($a_cp[$cpzone]['passthrumac'])) {
-	$a_cp[$cpzone]['passthrumac'] = array();
-}
-
-$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['action'] = $a_passthrumacs[$id]['action'];
@@ -96,7 +90,9 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
+	$macfull = explode('/', $_POST['mac']);
+	$macmask = $macfull[1] ? $macfull[1] : false; 
+	$_POST['mac'] = strtolower(str_replace("-", ":", $macfull[0]));
 
 	if ($_POST['mac']) {
 		if (is_macaddr($_POST['mac'])) {
@@ -123,6 +119,9 @@ if ($_POST['save']) {
 	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
 		$input_errors[] = gettext("Download speed must be between 1 and 999999");
 	}
+	if ($macmask && (($macmask > 48) || ($macmask < 1))) {
+		$input_errors[] = gettext("MAC address mask must be between 1 and 48");
+	}
 
 	foreach ($a_passthrumacs as $macent) {
 		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent)) {
@@ -139,6 +138,9 @@ if ($_POST['save']) {
 		$mac = array();
 		$mac['action'] = $_POST['action'];
 		$mac['mac'] = $_POST['mac'];
+		if ($macmask) {
+			$mac['mac'] .= '/' . $macmask;
+		}
 		if ($_POST['bw_up']) {
 			$mac['bw_up'] = $_POST['bw_up'];
 		}
@@ -160,7 +162,7 @@ if ($_POST['save']) {
 		}
 		passthrumacs_sort();
 
-		write_config();
+		write_config("Captive portal passthrough MAC added");
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
@@ -180,8 +182,13 @@ if ($_POST['save']) {
 
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
+$arp_table = system_get_arp_table();
+if (($key = array_search($ip, array_column($arp_table, 'ip-address')))
+    !== FALSE) {
+	if (!empty($arp_table[$key]['mac-address'])) {
+		$mymac = $arp_table[$key]['mac-address'];
+	}
+}
 
 include("head.inc");
 
@@ -220,7 +227,10 @@ $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('
 $group = new Form_Group('*MAC Address');
 $group->add($macaddress);
 $group->add($btnmymac);
-$group->setHelp('6 hex octets separated by colons');
+$group->setHelp('6 hex octets separated by colons%1$s%2$s%3$s', '<div class="infoblock">',
+	sprint_info_box(gettext('It is also possible to add a mask value (like /24),
+	for example, to allow all phones of a certain manufacturer to bypass the portal'), 'info', false),
+	'</div>');
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -244,7 +254,7 @@ $section->addInput(new Form_Input(
 	$pconfig['bw_down']
 ))->setHelp('Enter a download limit to be enforced on this MAC in Kbit/s');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
@@ -252,7 +262,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_passthrumacs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -261,7 +271,7 @@ if (isset($id) && $a_passthrumacs[$id]) {
 }
 
 if (isset($pconfig['username']) && $pconfig['username']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'username',
 		null,
 		'hidden',

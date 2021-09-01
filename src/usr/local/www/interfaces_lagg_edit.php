@@ -3,7 +3,9 @@
  * interfaces_lagg_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,15 +30,12 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['laggs']['lagg'])) {
-	$config['laggs']['lagg'] = array();
-}
-
+init_config_arr(array('laggs', 'lagg'));
 $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
-$laggprotos	  = array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin");
-$laggprotosuc = array(gettext("NONE"), gettext("LACP"), gettext("FAILOVER"), gettext("FEC"), gettext("LOADBALANCE"), gettext("ROUNDROBIN"));
+$laggprotos	  = array("none", "lacp", "failover", "loadbalance", "roundrobin");
+$laggprotosuc = array(gettext("NONE"), gettext("LACP"), gettext("FAILOVER"), gettext("LOADBALANCE"), gettext("ROUNDROBIN"));
 
 $protohelp =
 '<ul>' .
@@ -62,17 +61,10 @@ $protohelp =
 		'<strong>' . $laggprotosuc[2] . '</strong><br />' .
 		gettext('Sends and receives traffic only through the master port.  If ' .
 				'the master port becomes unavailable, the next active port is ' .
-				'used.	The first interface added is the master port; any ' .
-				'interfaces added after that are used as failover devices.') .
+				'used.') .
 	'</li>' .
 	'<li>' .
 		'<strong>' . $laggprotosuc[3] . '</strong><br />' .
-		gettext('Supports Cisco EtherChannel.  This is a static setup and ' .
-				'does not negotiate aggregation with the peer or exchange ' .
-				'frames to monitor the link.') .
-	'</li>' .
-	'<li>' .
-		'<strong>' . $laggprotosuc[4] . '</strong><br />' .
 		gettext('Balances outgoing traffic across the active ports based on ' .
 				'hashed protocol header information and accepts incoming ' .
 				'traffic from any active port.	 This is a static setup and ' .
@@ -82,7 +74,7 @@ $protohelp =
 				'tag, and the IP source and destination address.') .
 	'</li>' .
 	'<li>' .
-		'<strong>' . $laggprotosuc[5] . '</strong><br />' .
+		'<strong>' . $laggprotosuc[4] . '</strong><br />' .
 		gettext('Distributes outgoing traffic using a round-robin scheduler ' .
 				'through all active ports and accepts incoming traffic from ' .
 				'any active port.') .
@@ -117,6 +109,12 @@ if (isset($id) && $a_laggs[$id]) {
 		unset($realifchecklist[get_real_interface($tmpif)]);
 	}
 	$pconfig['proto'] = $a_laggs[$id]['proto'];
+	if (isset($a_laggs[$id]['failovermaster'])) {
+		$pconfig['failovermaster'] = $a_laggs[$id]['failovermaster'];
+	}
+	if (isset($a_laggs[$id]['lacptimeout'])) {
+		$pconfig['lacptimeout'] = $a_laggs[$id]['lacptimeout'];
+	}
 	$pconfig['descr'] = $a_laggs[$id]['descr'];
 }
 
@@ -148,12 +146,27 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Protocol supplied is invalid");
 	}
 
+	if (is_array($_POST['members']) && ($_POST['proto'] == 'failover') && isset($_POST['failovermaster']) &&
+	    ($_POST['failovermaster'] != 'auto') && (array_search($_POST['failovermaster'], $_POST['members']) === false)) {
+			$input_errors[] = sprintf(gettext("Failover Master Interface must be selected as member."));
+	}
+
 	if (!$input_errors) {
 		$lagg = array();
 		$lagg['members'] = implode(',', $_POST['members']);
 		$lagg['descr'] = $_POST['descr'];
 		$lagg['laggif'] = $_POST['laggif'];
 		$lagg['proto'] = $_POST['proto'];
+		if (($_POST['proto'] == 'failover') && isset($_POST['failovermaster'])) {
+			$lagg['failovermaster'] = $_POST['failovermaster'];
+		} else {
+			unset($lagg['failovermaster']);
+		}
+		if (($_POST['proto'] == 'lacp') && isset($_POST['lacptimeout'])) {
+			$lagg['lacptimeout'] = $_POST['lacptimeout'];
+		} else {
+			unset($lagg['lacptimeout']);
+		}
 		if (isset($id) && $a_laggs[$id]) {
 			$lagg['laggif'] = $a_laggs[$id]['laggif'];
 		}
@@ -168,7 +181,7 @@ if ($_POST['save']) {
 				$a_laggs[] = $lagg;
 			}
 
-			write_config();
+			write_config("LAGG interface added");
 
 			$confif = convert_real_interface_to_friendly_interface_name($lagg['laggif']);
 			if ($confif != "") {
@@ -204,7 +217,10 @@ function build_member_list() {
 			continue;
 		}
 
-		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
+		$hwaddr = get_interface_vendor_mac($ifn);
+
+		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] .
+		    ($hwaddr != $ifinfo['mac'] ? " | hw: {$hwaddr}" : '') . ')';
 
 		if (in_array($ifn, explode(",", $pconfig['members']))) {
 			array_push($memberlist['selected'], $ifn);
@@ -228,6 +244,7 @@ $form = new Form();
 $section = new Form_Section('LAGG Configuration');
 
 $memberslist = build_member_list();
+$failoverlist = array_merge(array('auto' => 'auto'), $memberslist['list']);
 
 $section->addInput(new Form_Select(
 	'members',
@@ -244,6 +261,30 @@ $section->addInput(new Form_Select(
 	array_combine($laggprotos, $laggprotosuc)
 ))->setHelp($protohelp);
 
+$group = new Form_Group('Failover Master Interface');
+$group->addClass('fomaster');
+$group->add(new Form_Select(
+	'failovermaster',
+	'Failover Master Interface',
+	$pconfig['failovermaster'],
+	$failoverlist
+))->setHelp('Master interface for the <b>FAILOVER</b> mode. If auto is selected, then the first interface added is the master port; any interfaces added after that are used as failover devices.');
+$section->add($group);
+
+$group = new Form_Group('LACP Timeout Mode');
+$group->addClass('lacptimeout');
+$group->add(new Form_Select(
+	'lacptimeout',
+	'LACP Timeout',
+	$pconfig['lacptimeout'],
+	array('slow' => 'Slow (default)', 'fast' => 'Fast')
+))->setHelp('In a <b>Slow</b> timeout, PDUs are sent every 30 seconds and in a <b>Fast</b> timeout, ' .
+	    'PDUs are sent every second. LACP timeout occurs when 3 consecutive PDUs are missed. ' .
+	    'If LACP timeout is a slow timeout, the time taken when 3 consecutive PDUs are missed ' .
+	    'is 90 seconds (3x30 seconds). If LACP timeout is a fast timeout, the time taken is 3 ' .
+	    'seconds (3x1 second).');
+$section->add($group);
+
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
@@ -251,7 +292,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp("Enter a description here for reference only (Not parsed).");
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'laggif',
 	null,
 	'hidden',
@@ -259,7 +300,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_laggs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -269,5 +310,26 @@ if (isset($id) && $a_laggs[$id]) {
 
 $form->add($section);
 print($form);
+?>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	function change_proto() {
+		hideClass('fomaster', ($('#proto').val() != 'failover'));
+		hideClass('lacptimeout', ($('#proto').val() != 'lacp'));
+	}
+
+	$('#proto').change(function () {
+		change_proto();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	change_proto();
+
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

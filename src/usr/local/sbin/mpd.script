@@ -116,7 +116,7 @@ DialPeerSetAPN:
 	log $modemCmd
 	call ModemCmd2
 	return
-	
+
 # Null-modem connection
 DialNullModem:
 	log "Connected via null modem connection."
@@ -403,6 +403,8 @@ ModemIdentGeneric:
 
 ModemIdentCustom:
 	set $ModemDescription "Custom modem"
+	if $SimPin != "" call DialPeerSetPin
+	if $APN != "" call DialPeerSetAPN
 	set $ModemSetupFunc CustomSetup
 	return
 
@@ -1396,7 +1398,7 @@ SetBaudrate2:
 	goto ModemCmd2
 
 ##
-## ModemCheckValue 
+## ModemCheckValue
 ##
 ## Check the value in an S-register (or equivalent). If it is
 ## not what we want, then change it and set $valueChanged to "yes",
@@ -1639,4 +1641,3 @@ AutoLoginTimeout:
 	log "Auto-login timeout."
 	cancel all
 	return
-

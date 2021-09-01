@@ -3,7 +3,9 @@
  * status_openvpn.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -78,7 +80,7 @@ include("head.inc"); ?>
 	function killComplete(req) {
 		var values = req.responseText.split("|");
 		if (values[3] != "0") {
-			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
+	//		alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}
 
@@ -95,7 +97,7 @@ include("head.inc"); ?>
 ?>
 
 <div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext('Client Connections')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext('Client Connections') . ": " . ($server['conns'][0]['common_name'] != '[error]' ? sizeof($server['conns']) : '0');?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
@@ -104,7 +106,9 @@ include("head.inc"); ?>
 						<th><?=gettext("Real Address")?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Bytes Sent/Received")?></th>
+						<th><?=gettext("Bytes Sent")?></th>
+						<th><?=gettext("Bytes Received")?></th>
+						<th><?=gettext("Cipher")?></th>
 						<th><!-- Icons --></th>
 					</tr>
 				</thead>
@@ -132,7 +136,9 @@ include("head.inc"); ?>
 							<?=$conn['virtual_addr6'];?>
 						</td>
 						<td><?=$conn['connect_time'];?></td>
-						<td><?=format_bytes($conn['bytes_sent']);?> / <?=format_bytes($conn['bytes_recv']);?></td>
+						<td data-value="<?=trim($conn['bytes_sent'])?>"><?=format_bytes($conn['bytes_sent']);?></td>
+						<td data-value="<?=trim($conn['bytes_recv'])?>"><?=format_bytes($conn['bytes_recv']);?></td>
+						<td data-value="<?=trim($conn['cipher'])?>"><?=$conn['cipher'];?></td>
 						<td>
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
@@ -238,7 +244,8 @@ include("head.inc"); ?>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent / Received"); ?></th>
+						<th><?=gettext("Bytes Sent"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -259,7 +266,8 @@ include("head.inc"); ?>
 							<?=$sk_server['virtual_addr6'];?>
 						</td>
 						<td><?=$sk_server['remote_host'];?></td>
-						<td><?=format_bytes($sk_server['bytes_sent']);?> / <?=format_bytes($sk_server['bytes_recv']);?></td>
+						<td data-value="<?=trim($sk_server['bytes_sent'])?>"><?=format_bytes($sk_server['bytes_sent']);?></td>
+						<td data-value="<?=trim($sk_server['bytes_recv'])?>"><?=format_bytes($sk_server['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>
@@ -299,7 +307,8 @@ include("head.inc"); ?>
 						<th><?=gettext("Local Address"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent/Received"); ?></th>
+						<th><?=gettext("Bytes Sent"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -333,7 +342,8 @@ include("head.inc"); ?>
 							<?=$client['remote_host'];?>:<?=$client['remote_port'];?>
 					<?php endif; ?>
 						</td>
-						<td><?=format_bytes($client['bytes_sent']);?> / <?=format_bytes($client['bytes_recv']);?></td>
+						<td data-value="<?=trim($client['bytes_sent'])?>"><?=format_bytes($client['bytes_sent']);?></td>
+						<td data-value="<?=trim($client['bytes_recv'])?>"><?=format_bytes($client['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>

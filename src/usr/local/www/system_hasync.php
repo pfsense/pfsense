@@ -3,7 +3,9 @@
  * system_hasync.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,14 +30,12 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['hasync'])) {
-	$config['hasync'] = array();
-}
-
+init_config_arr(array('hasync'));
 $a_hasync = &$config['hasync'];
 
 $checkbox_names = array(
 	'pfsyncenabled',
+	'adminsync',
 	'synchronizeusers',
 	'synchronizeauthservers',
 	'synchronizecerts',
@@ -46,9 +46,10 @@ $checkbox_names = array(
 	'synchronizeipsec',
 	'synchronizeopenvpn',
 	'synchronizedhcpd',
+	'synchronizedhcrelay',
+	'synchronizedhcrelay6',
 	'synchronizewol',
 	'synchronizestaticroutes',
-	'synchronizelb',
 	'synchronizevirtualip',
 	'synchronizetrafficshaper',
 	'synchronizetrafficshaperlimiter',
@@ -73,10 +74,12 @@ if ($_POST) {
 		$input_errors[] = gettext("Password and confirmation must match.");
 	}
 
-	if ($pconfig['pfsyncpeerip'] != "") {
-		if (!is_ipaddrv4($pconfig['pfsyncpeerip'])) {
-			$input_errors[] = gettext("pfsync Synchronize Peer IP must be an IPv4 IP.");
-		}
+	if (!empty($pconfig['pfsyncpeerip']) && !is_ipaddrv4($pconfig['pfsyncpeerip'])) {
+		$input_errors[] = gettext("pfsync Synchronize Peer IP must be an IPv4 IP.");
+	}
+
+	if (!empty($pconfig['synchronizetoip']) && !is_ipaddr($pconfig['synchronizetoip'])) {
+		$input_errors[] = gettext("Synchronize Config to IP must be a valid IP address.");
 	}
 
 	if (!$input_errors) {
@@ -165,7 +168,8 @@ $section->addInput(new Form_Input(
 	'username',
 	'Remote System Username',
 	'text',
-	$pconfig['username']
+	$pconfig['username'],
+	['autocomplete' => 'new-password']
 ))->setHelp('Enter the webConfigurator username of the system entered above for synchronizing the configuration.%1$s' .
 			'Do not use the Synchronize Config to IP and username option on backup cluster members!', '<br />');
 
@@ -176,6 +180,16 @@ $section->addPassword(new Form_Input(
 	$pconfig['passwordfld']
 ))->setHelp('Enter the webConfigurator password of the system entered above for synchronizing the configuration.%1$s' .
 			'Do not use the Synchronize Config to IP and password option on backup cluster members!', '<br />');
+
+$section->addInput(new Form_Checkbox(
+	'adminsync',
+	'Synchronize admin',
+	'synchronize admin accounts and autoupdate sync password.',
+	($pconfig['adminsync'] === 'on'),
+	'on'
+))->setHelp('By default, the admin account does not synchronize, and each node may have a different admin password.%1$s' .
+			'This option automatically updates XMLRPC Remote System Password when the password is changed on 
+			the Remote System Username account.', '<br />');
 
 $group = new Form_MultiCheckboxGroup('Select options to sync');
 
@@ -246,7 +260,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizeopenvpn',
 	'Synchronize OpenVPN',
-	'OpenVPN configuration ',
+	'OpenVPN configuration (Implies CA/Cert/CRL Sync) ',
 	($pconfig['synchronizeopenvpn'] === 'on'),
 	'on'
 ));
@@ -256,6 +270,22 @@ $group->add(new Form_MultiCheckbox(
 	'Synchronize DHCPD',
 	'DHCP Server settings ',
 	($pconfig['synchronizedhcpd'] === 'on'),
+	'on'
+));
+
+$group->add(new Form_MultiCheckbox(
+	'synchronizedhcrelay',
+	'Synchronize DHCP Relay',
+	'DHCP Relay settings ',
+	($pconfig['synchronizedhcrelay'] === 'on'),
+	'on'
+));
+
+$group->add(new Form_MultiCheckbox(
+	'synchronizedhcrelay6',
+	'Synchronize DHCPv6 Relay',
+	'DHCPv6 Relay settings',
+	($pconfig['synchronizedhcrelay6'] === 'on'),
 	'on'
 ));
 
@@ -272,14 +302,6 @@ $group->add(new Form_MultiCheckbox(
 	'Synchronize Static Routes',
 	'Static Route configuration ',
 	($pconfig['synchronizestaticroutes'] === 'on'),
-	'on'
-));
-
-$group->add(new Form_MultiCheckbox(
-	'synchronizelb',
-	'Synchronize Load Balancer',
-	'Load Balancer configuration ',
-	($pconfig['synchronizelb'] === 'on'),
 	'on'
 ));
 

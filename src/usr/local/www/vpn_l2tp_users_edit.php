@@ -3,7 +3,9 @@
  * vpn_l2tp_users_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,28 +32,11 @@ $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Users"), gettext("Edi
 $pglinks = array("", "vpn_l2tp.php", "vpn_l2tp_users.php", "@self");
 $shortcut_section = "l2tps";
 
-function l2tpusercmp($a, $b) {
-	return strcasecmp($a['name'], $b['name']);
-}
-
-function l2tp_users_sort() {
-	global $config;
-
-	if (!is_array($config['l2tp']['user'])) {
-		return;
-	}
-
-	usort($config['l2tp']['user'], "l2tpusercmp");
-}
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['l2tp']['user'])) {
-	$config['l2tp']['user'] = array();
-}
-
+init_config_arr(array('l2tp', 'user'));
 $a_secret = &$config['l2tp']['user'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -82,14 +67,12 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld'])) {
+	if (preg_match("/[^a-zA-Z0-9\.\@\-_]/", $_POST['usernamefld'])) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
-
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['passwordfld'])) {
-		$input_errors[] = gettext("The password contains invalid characters.");
+	if (preg_match("/^!/", trim($_POST['passwordfld']))) {
+		$input_errors[] = gettext("The password cannot start with '!'.");
 	}
-
 	if (($_POST['passwordfld']) && ($_POST['passwordfld'] != $_POST['passwordfld_confirm'])) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
@@ -129,7 +112,7 @@ if ($_POST['save']) {
 
 		write_config(gettext("Configured a L2TP VPN user."));
 
-		$retval = vpn_l2tp_configure();
+		vpn_l2tp_updatesecret();
 
 		pfSenseHeader("vpn_l2tp_users.php");
 
@@ -151,7 +134,8 @@ $section->addInput(new Form_Input(
 	'usernamefld',
 	'*Username',
 	'text',
-	$pconfig['usernamefld']
+	$pconfig['usernamefld'],
+	['autocomplete' => 'new-password']
 ));
 
 $pwd = new Form_Input(

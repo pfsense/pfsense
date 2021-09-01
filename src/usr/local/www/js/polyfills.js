@@ -22,11 +22,11 @@ if (!String.prototype.includes) {
 }
 
 /***
-** 
+**
 ** Polyfill for older browsers that don't yet have the newer string "startsWith()" method implemented.
 ** Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#Polyfill
 ** Documentation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
-** 
+**
 ***/
 
 if (!String.prototype.startsWith) {

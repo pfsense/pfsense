@@ -5,7 +5,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2009 Seth Mos <seth.mos@dds.nl>.
- * Copyright (c) 2007-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2007-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -42,7 +44,7 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 	} else {
 		if (!empty($interface)) {
 			$mode_id = $mode . $ovpn_settings['vpnid'];
-			$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
+			$fpath = "{$g['openvpn_base']}/{$mode_id}/interface";
 			if (file_exists($fpath)) {
 				/* Compare the interface currently used by the VPN with the interface that should be used.
 				   If the VPN should stay on the same interface, do not resync */
@@ -69,6 +71,16 @@ if (isset($_GET['interface'])) {
 } else {
 	$argument = trim($argv[1], " \n");
 }
+
+// Workaround as rc.openvpn is called by the gatewaymonitor / check_reload event system,..
+//file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED ".$argument);
+$gateways_arr = return_gateways_array();
+if (isset($gateways_arr[$argument])) {
+	//file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED WITH GW:".$argument);
+	// called upon rc.gateway_alarm 
+	system_routing_configure();
+}
+
 
 if ((is_array($config['openvpn']['openvpn-server']) && count($config['openvpn']['openvpn-server'])) ||
     (is_array($config['openvpn']['openvpn-client']) && count($config['openvpn']['openvpn-client']))) {

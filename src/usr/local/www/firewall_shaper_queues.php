@@ -3,7 +3,9 @@
  * firewall_shaper_queues.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,7 +80,7 @@ if ($_GET) {
 			$qtmp =& $altq->find_queue("", $qname);
 			if ($qtmp) {
 				$qtmp->delete_queue();
-				if (write_config()) {
+				if (write_config("Traffic Shaper: Queue deleted")) {
 					mark_subsystem_dirty('shaper');
 				}
 			}
@@ -123,7 +125,7 @@ if ($_GET) {
 						$config['shaper']['queue'][] = $newroot;
 					}
 
-					if (write_config()) {
+					if (write_config("Traffic Shaper: Added new queue")) {
 						mark_subsystem_dirty('shaper');
 					}
 
@@ -163,7 +165,7 @@ if ($_GET) {
 }
 
 if ($_POST['apply']) {
-	write_config();
+	write_config("Traffic Shaper: Changes applied");
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */

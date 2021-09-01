@@ -5,6 +5,7 @@ global $priv_list;
 $priv_list['system-xmlrpc-ha-sync'] = array();
 $priv_list['system-xmlrpc-ha-sync']['name'] = gettext("System - HA node sync");
 $priv_list['system-xmlrpc-ha-sync']['descr'] = gettext("Allow access to authenticate this user for HA sync via XMLRPC");
+$priv_list['system-xmlrpc-ha-sync']['warn'] = "standard-warning-root";
 
 $priv_list['user-services-captiveportal-login'] = array();
 $priv_list['user-services-captiveportal-login']['name']  = gettext("User - Services: Captive Portal login");
@@ -21,7 +22,7 @@ $priv_list['page-dashboard-all']['name'] = gettext("WebCfg - Dashboard (all)");
 $priv_list['page-dashboard-all']['descr'] = gettext("Allow access to all pages required for the dashboard.");
 $priv_list['page-dashboard-all']['match'] = array();
 $priv_list['page-dashboard-all']['match'][] = "index.php*";
-$priv_list['page-dashboard-all']['match'][] = "*.widget.php*";
+$priv_list['page-dashboard-all']['match'][] = "widgets/widgets/*.widget.php*";
 $priv_list['page-dashboard-all']['match'][] = "graph.php*";
 $priv_list['page-dashboard-all']['match'][] = "graph_cpu.php*";
 $priv_list['page-dashboard-all']['match'][] = "getstats.php*";
@@ -32,7 +33,7 @@ $priv_list['page-dashboard-widgets'] = array();
 $priv_list['page-dashboard-widgets']['name'] = gettext("WebCfg - Dashboard widgets (direct access).");
 $priv_list['page-dashboard-widgets']['descr'] = gettext("Allow direct access to all Dashboard widget pages, required for some widgets using AJAX.");
 $priv_list['page-dashboard-widgets']['match'] = array();
-$priv_list['page-dashboard-widgets']['match'][] = "*.widget.php*";
+$priv_list['page-dashboard-widgets']['match'][] = "widgets/widgets/*.widget.php*";
 
 $priv_list['user-config-readonly'] = array();
 $priv_list['user-config-readonly']['name']  = gettext("User - Config: Deny Config Write");
@@ -53,7 +54,7 @@ $priv_list['user-shell-access']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files'] = array();
 $priv_list['user-copy-files']['name']  = gettext("User - System: Copy files (scp)");
-$priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP.");
+$priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_label']} appliance via SCP/SFTP.");
 $priv_list['user-copy-files']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files-chroot'] = array();
@@ -132,12 +133,6 @@ $priv_list['page-status-systemlogs-ppp']['descr'] = gettext("Allow access to the
 $priv_list['page-status-systemlogs-ppp']['match'] = array();
 $priv_list['page-status-systemlogs-ppp']['match'][] = "status_logs.php?logfile=ppp";
 
-$priv_list['page-status-systemlogs-loadbalancer'] = array();
-$priv_list['page-status-systemlogs-loadbalancer']['name'] = gettext("WebCfg - Status: System Logs: Load Balancer");
-$priv_list['page-status-systemlogs-loadbalancer']['descr'] = gettext("Allow access to the 'Status: System Logs: Load Balancer' page.");
-$priv_list['page-status-systemlogs-loadbalancer']['match'] = array();
-$priv_list['page-status-systemlogs-loadbalancer']['match'][] = "status_logs.php?logfile=relayd";
-
 $priv_list['page-status-systemlogs-routing'] = array();
 $priv_list['page-status-systemlogs-routing']['name'] = gettext("WebCfg - Status: System Logs: Routing");
 $priv_list['page-status-systemlogs-routing']['descr'] = gettext("Allow access to the 'Status: System Logs: System: Routing' page.");
@@ -155,5 +150,20 @@ $priv_list['page-services-upnp']['name'] = gettext("WebCfg - Services: UPnP");
 $priv_list['page-services-upnp']['descr'] = gettext("Allow access to the 'Services: UPnP' page.");
 $priv_list['page-services-upnp']['match'] = array();
 $priv_list['page-services-upnp']['match'][] = "pkg_edit.php?xml=miniupnpd.xml";
+
+$priv_list['page-openvpn-server-advanced'] = array();
+$priv_list['page-openvpn-server-advanced']['name'] = gettext("WebCfg - OpenVPN: Clients Edit Advanced");
+$priv_list['page-openvpn-server-advanced']['descr'] = gettext("Allow edit access to the 'OpenVPN: Clients' Advanced settings field.");
+$priv_list['page-openvpn-server-advanced']['warn'] = "standard-warning-root";
+
+$priv_list['page-openvpn-csc-advanced'] = array();
+$priv_list['page-openvpn-csc-advanced']['name'] = gettext("WebCfg - OpenVPN: Client Specific Override Edit Advanced");
+$priv_list['page-openvpn-csc-advanced']['descr'] = gettext("Allow edit access to the 'OpenVPN: Client Specific Override' advanced settings field.");
+$priv_list['page-openvpn-csc-advanced']['warn'] = "standard-warning-root";
+
+$priv_list['page-openvpn-client-advanced'] = array();
+$priv_list['page-openvpn-client-advanced']['name'] = gettext("WebCfg - OpenVPN: Servers Edit Advanced");
+$priv_list['page-openvpn-client-advanced']['descr'] = gettext("Allow edit access to the 'OpenVPN: Servers' Advanced settings field.");
+$priv_list['page-openvpn-client-advanced']['warn'] = "standard-warning-root";
 
 ?>

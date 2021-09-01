@@ -1,0 +1,64 @@
+#!/bin/sh
+# Start or stop strongswan with vici
+# Based on rc script from FreeBSD ports
+
+. /etc/rc.subr
+
+name=strongswan
+desc="Strongswan IPsec startup script"
+rcvar=strongswan_enable
+
+load_rc_config $name
+
+: ${strongswan_enable:=YES}
+: ${strongswan_interface:="vici"}
+
+extra_commands="reload statusall"
+
+charon_command=/usr/local/libexec/ipsec/charon
+charon_pidfile=/var/run/charon.pid
+swanctl_command=/usr/local/sbin/swanctl
+
+# "vici"
+SWANCTL_DIR=/var/etc/ipsec/
+export SWANCTL_DIR
+command=/usr/sbin/daemon
+pidfile=/var/run/daemon-charon.pid
+command_args="-S -P ${pidfile} ${charon_command} --use-syslog"
+
+required_files=${charon_command}
+extra_commands="reload statusall"
+
+start_postcmd=${name}_swanctl_poststart
+status_cmd="${swanctl_command} --stats"
+reload_cmd=${name}_swanctl_reload
+statusall_cmd=${name}_swanctl_statusall
+
+strongswan_swanctl_poststart()
+{
+	local _waitmax=5
+
+	# Need to wait for charon to finish startup,
+	# else vici socket is unreadable
+	while [ ! -f ${charon_pidfile} ] && [ ${_waitmax} -gt 0 ]; do
+		sleep 1
+		_waitmax=$((_waitmax - 1))
+	done
+
+	${swanctl_command} --load-all --noprompt
+}
+
+strongswan_swanctl_reload()
+{
+	${swanctl_command} --reload-settings
+	${swanctl_command} --load-all --noprompt
+}
+
+strongswan_swanctl_statusall()
+{
+	${swanctl_command} --stats
+	${swanctl_command} --list-conns
+	${swanctl_command} --list-sas
+}
+
+run_rc_command "$1"

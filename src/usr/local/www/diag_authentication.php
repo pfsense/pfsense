@@ -3,7 +3,9 @@
  * diag_authentication.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +29,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("radius.inc");
+require_once("auth.inc");
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -38,7 +40,7 @@ if ($_POST) {
 		$input_errors[] =  sprintf(gettext('%s is not a valid authentication server'), $_POST['authmode']);
 	}
 
-	if (empty($_POST['username']) || empty($_POST['password'])) {
+	if (empty($_POST['username'])) {
 		$input_errors[] = gettext("A username and password must be specified.");
 	}
 
@@ -82,8 +84,8 @@ $form = new Form(false);
 
 $section = new Form_Section('Authentication Test');
 
-foreach (auth_get_authserver_list() as $auth_server) {
-	$serverlist[$auth_server['name']] = $auth_server['name'];
+foreach (auth_get_authserver_list() as $key => $auth_server) {
+	$serverlist[$key] = $auth_server['name'];
 }
 
 $section->addInput(new Form_Select(
@@ -98,7 +100,7 @@ $section->addInput(new Form_Input(
 	'*Username',
 	'text',
 	$pconfig['username'],
-	['placeholder' => 'Username']
+	['placeholder' => 'Username', 'autocomplete' => 'new-password']
 ));
 
 $section->addInput(new Form_Input(
@@ -106,7 +108,7 @@ $section->addInput(new Form_Input(
 	'*Password',
 	'password',
 	$pconfig['password'],
-	['placeholder' => 'Password']
+	['placeholder' => 'Password', 'autocomplete' => 'new-password']
 ));
 
 $form->add($section);

@@ -3,7 +3,9 @@
  * interfaces_ppps_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Gabriel B. <gnoahb@gmail.com>
  * All rights reserved.
  *
@@ -39,15 +41,10 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-if (!is_array($config['ppps']['ppp'])) {
-	$config['ppps']['ppp'] = array();
-}
-
+init_config_arr(array('ppps', 'ppp'));
 $a_ppps = &$config['ppps']['ppp'];
 
 $iflist = get_configured_interface_with_descr();
-$portlist = get_interface_list();
-$portlist = array_merge($portlist, $iflist);
 
 if (isset($_REQUEST['type'])) {
 	$pconfig['type'] = $_REQUEST['type'];
@@ -69,6 +66,9 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['interfaces'] = explode(",", $a_ppps[$id]['ports']);
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
+	if (isset($a_ppps[$id]['secret'])) {
+		$pconfig['secret'] = base64_decode($a_ppps[$id]['secret']);
+	}
 	if (isset($a_ppps[$id]['ondemand'])) {
 		$pconfig['ondemand'] = true;
 	}
@@ -98,6 +98,12 @@ if (isset($id) && $a_ppps[$id]) {
 	if (isset($a_ppps[$id]['protocomp'])) {
 		$pconfig['protocomp'] = true;
 	}
+	if (isset($a_ppps[$id]['pppoe-multilink-over-singlelink'])) {
+		$pconfig['pppoe-multilink-over-singlelink'] = true;
+	}
+	if (isset($a_ppps[$id]['mtu-override'])) {
+		$pconfig['mtu-override'] = true;
+	}
 	if (isset($a_ppps[$id]['vjcomp'])) {
 		$pconfig['vjcomp'] = true;
 	}
@@ -113,20 +119,30 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['apnum'] = $a_ppps[$id]['apnum'];
 			$pconfig['phone'] = $a_ppps[$id]['phone'];
 			$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
-			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
-			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
+			$localip = explode(",", $a_ppps[$id]['localip']);
+			for ($i = 0; $i < count($localip); $i++)
+				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
+			$gateway = explode(",", $a_ppps[$id]['gateway']);
+			for ($i = 0; $i < count($gateway); $i++)
+				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 			$pconfig['country'] = $a_ppps[$id]['country'];
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
 			$pconfig['providerplan'] = $a_ppps[$id]['providerplan'];
 			break;
 		case "l2tp":
 		case "pptp":
-			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
-			$pconfig['subnet'] = explode(",", $a_ppps[$id]['subnet']);
-			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
+			$localip = explode(",", $a_ppps[$id]['localip']);
+			for ($i = 0; $i < count($localip); $i++)
+				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
+			$subnet = explode(",", $a_ppps[$id]['subnet']);
+			for ($i = 0; $i < count($subnet); $i++)
+				$pconfig['subnet'][$pconfig['interfaces'][$i]] = $subnet[$i];
+			$gateway = explode(",", $a_ppps[$id]['gateway']);
+			for ($i = 0; $i < count($gateway); $i++)
+				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
-			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider'])) {
+			if (isset($a_ppps[$id]['provider']) && empty($a_ppps[$id]['provider'])) {
 				$pconfig['null_service'] = true;
 			}
 			/* ================================================ */
@@ -238,7 +254,10 @@ if ($_POST['save']) {
 	} else {
 		$input_errors[] = gettext("Password and confirmed password must match.");
 	}
-	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
+	if (($_POST['type'] == 'l2tp') && (isset($_POST['secret']))) {
+		$pconfig['secret'] = $_POST['secret'];
+	}
+	if (($_POST['type'] == "ppp") && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
 	if ($_POST['provider'] && $_POST['null_service']) {
@@ -323,6 +342,11 @@ if ($_POST['save']) {
 			$ppp['password'] = base64_encode($_POST['passwordfld']);
 		} else {
 			$ppp['password'] = $a_ppps[$id]['password'];
+		}
+		if (($_POST['type'] == 'l2tp') && (!empty($_POST['secret']))) {
+			$ppp['secret'] = base64_encode($_POST['secret']);
+		} else {
+			unset($ppp['secret']);
 		}
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout'])) {
@@ -409,6 +433,10 @@ if ($_POST['save']) {
 		$ppp['shortseq'] = $_POST['shortseq'] ? true : false;
 		$ppp['acfcomp'] = $_POST['acfcomp'] ? true : false;
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
+		$ppp['pppoe-multilink-over-singlelink'] =
+		    $_POST['pppoe-multilink-over-singlelink'] ? true : false;
+		$ppp['mtu-override'] =
+		    $_POST['mtu-override'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		if (is_array($port_data['bandwidth'])) {
@@ -435,7 +463,7 @@ if ($_POST['save']) {
 			$a_ppps[] = $ppp;
 		}
 
-		write_config();
+		write_config("PPP interface added");
 		configure_cron();
 
 		foreach ($iflist as $pppif => $ifdescr) {
@@ -458,7 +486,6 @@ $types = array("select" => gettext("Select"), "ppp" => gettext("PPP"), "pppoe" =
 $serviceproviders_xml = "/usr/local/share/mobile-broadband-provider-info/serviceproviders.xml";
 $serviceproviders_contents = file_get_contents($serviceproviders_xml);
 $serviceproviders_attr = xml2array($serviceproviders_contents, 1, "attr");
-
 $serviceproviders = &$serviceproviders_attr['serviceproviders']['country'];
 
 //print_r($serviceproviders);
@@ -469,84 +496,13 @@ function build_country_list() {
 	$list = array();
 
 	// get_country_name is in pfSense-utils.inc
-	$country_list = get_country_name("ALL");
+	$country_list = get_country_name();
 
 	foreach ($country_list as $country) {
 		$list[$country['code']] = $country['name'];
 	}
 
 	return($list);
-}
-
-function build_link_list() {
-	global $config, $pconfig;
-
-	$linklist = array('list' => array(), 'selected' => array());
-
-	$selected_ports = array();
-
-	if (is_array($pconfig['interfaces'])) {
-		$selected_ports = $pconfig['interfaces'];
-	} elseif (!empty($pconfig['interfaces'])) {
-		$selected_ports = explode(',', $pconfig['interfaces']);
-	}
-
-	if (!is_dir("/var/spool/lock")) {
-		mwexec("/bin/mkdir -p /var/spool/lock");
-	}
-
-	if ($pconfig['type'] == 'ppp') {
-		$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
-		$serport_count = 0;
-
-		foreach ($serialports as $port) {
-			$serport_count++;
-
-			$linklist['list'][$port] = trim($port);
-
-			if (in_array($port, $selected_ports)) {
-				array_push($linklist['selected'], $port);
-			}
-		}
-	} else {
-		$port_count = 0;
-		$portlist = get_interface_list();
-		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan) {
-				$portlist[$vlan['vlanif']] = $vlan;
-			}
-		}
-		foreach ($portlist as $ifn => $ifinfo) {
-			$port_count++;
-			$string = "";
-
-			if (is_array($ifinfo)) {
-				$string .= $ifn;
-				if ($ifinfo['mac']) {
-					$string .= " ({$ifinfo['mac']})";
-				}
-				if ($ifinfo['friendly']) {
-					$string .= " - " . convert_friendly_interface_to_friendly_descr($ifinfo['friendly']);
-				} elseif ($ifinfo['descr']) {
-					$string .= " - {$ifinfo['descr']}";
-				}
-			} else {
-				$string .= $ifinfo;
-			}
-
-			$linklist['list'][$ifn] = $string;
-
-			if (in_array($ifn, $selected_ports)) {
-				array_push($linklist['selected'], $ifn);
-			}
-		}
-
-		if ($serport_count > $port_count) {
-			$port_count = $serport_count;
-		}
-	}
-
-	return($linklist);
 }
 
 if ($input_errors) {
@@ -569,7 +525,7 @@ $section->addInput(new Form_Select(
 	$types
 ));
 
-$linklist = build_link_list();
+$linklist = build_ppps_link_list();
 
 $section->addInput(new Form_Select(
 	'interfaces',
@@ -620,7 +576,8 @@ $section->addInput(new Form_Input(
 	'username',
 	$username_label,
 	'text',
-	$pconfig['username']
+	$pconfig['username'],
+	['autocomplete' => 'new-password']
 ));
 
 $section->addPassword(new Form_Input(
@@ -630,9 +587,23 @@ $section->addPassword(new Form_Input(
 	$pconfig['password']
 ));
 
+if ($pconfig['type'] == 'l2tp') {
+	$group = new Form_Group('Shared Secret');
+
+	$group->add(new Form_Input(
+		'secret',
+		'*Secret',
+		'password',
+		$pconfig['secret']
+	))->setHelp('L2TP tunnel Shared Secret. Used to authenticate tunnel connection and encrypt ' .
+       		    'important control packet contents. (Optional)');
+
+	$group->addClass('secret');
+	$section->add($group);
+}
+
 // These elements are hidden by default, and un-hidden in Javascript
 if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
-	$j = 0;
 	foreach ($linklist['list'] as $ifnm => $nm) {
 
 		$group = new Form_Group('IP/Gateway (' . $ifnm . ')');
@@ -640,17 +611,15 @@ if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 		$group->add(new Form_IpAddress(
 			'localip[' . $ifnm . ']',
 			null,
-			$pconfig['localip'][$j]
-		))->addMask('subnet[' . $ifnm . ']', $pconfig['subnet'][$j], 31)->setHelp('Local IP Address');
+			$pconfig['localip'][$ifnm]
+		))->addMask('subnet[' . $ifnm . ']', $pconfig['subnet'][$ifnm], 31)->setHelp('Local IP Address');
 
 		$group->add(new Form_Input(
 			'gateway[' . $ifnm . ']',
 			null,
 			'text',
-			$pconfig['gateway'][$j]
+			$pconfig['gateway'][$ifnm]
 		))->setHelp('Gateway IP or Hostname');
-
-		$j++;
 
 		$group->addClass('localip')->addClass('localip' . $ifnm);
 		$section->add($group);
@@ -896,8 +865,21 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['protocomp']
 ))->setHelp('Protocol field compression. This option saves one byte per frame for most frames.');
 
+$section->addInput(new Form_Checkbox(
+	'pppoe-multilink-over-singlelink',
+	'Multilink over single link',
+	'Multilink extensions over single link',
+	$pconfig['pppoe-multilink-over-singlelink']
+))->setHelp('Enable if the provider supports LCP multilink extensions over single link (will ignore MTU / MRU settings)');
+
+$section->addInput(new Form_Checkbox(
+	'mtu-override',
+	'Force MTU',
+	'Force MTU value to a known higher value',
+	$pconfig['mtu-override']
+))->setHelp('Overwrite the result of LCP negotiation with a known working higher value. WARNING: This option violates RFC 1661 and can break connectivity.');
+
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
-$j = 0;
 foreach ($linklist['list'] as $ifnm => $nm) {
 
 	$group = new Form_Group('Link Parameters (' . $ifnm . ')');
@@ -930,10 +912,8 @@ foreach ($linklist['list'] as $ifnm => $nm) {
 		$pconfig['mrru'][$ifnm]
 	))->setHelp('MRRU');
 
-	$j++;
-
 	$section->add($group);
-	$group->addClass('localip sec-advanced')->addClass('linkparam' . $ifnm);
+	$group->addClass('localip sec-advanced')->addClass('linkparam' . str_replace('.', '_', $ifnm));
 }
 
 $linkparamhelp = new Form_StaticText(
@@ -1009,6 +989,8 @@ events.push(function() {
 			    (!$pconfig['tcpmssfix']) &&
 			    (!$pconfig['shortseq']) &&
 			    (!$pconfig['acfcomp']) &&
+			    (!$pconfig['pppoe-multilink-over-singlelink']) &&
+			    (!$pconfig['mtu-override']) &&
 			    (!$pconfig['protocomp'])) {
 				$showadv = false;
 			} else {
@@ -1040,6 +1022,8 @@ events.push(function() {
 		hideClass('pppoe', !pppoetype);
 		hideResetDisplay(!(showadvopts && pppoetype));
 		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
+		hideCheckbox('pppoe-multilink-over-singlelink', !(showadvopts && pppoetype));
+		hideCheckbox('mtu-override', !(showadvopts && pppoetype));
 
 		hideInterfaces();
 
@@ -1048,6 +1032,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
+
 		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
 	} // e-o-show_advopts
 
@@ -1080,11 +1065,12 @@ events.push(function() {
 		<?php if ($pconfig['type'] != 'ppp') : ?>
 		var selected = $(".interfaces").val();
 		var length = $(".interfaces :selected").length;
+
 		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 
 			if (showadvopts) {
-				hideClass('linkparam' + selected[i], false);
+				hideClass('linkparam' + selected[i].replace(".", "_"), false);
 				hideInput('linkparamhelp', false);
 			}
 		}

@@ -3,7 +3,9 @@
  * status_graph.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -36,6 +38,9 @@
 require_once("guiconfig.inc");
 require_once("ipsec.inc");
 
+if (is_array($config["traffic_graphs"])){
+	$pconfig = $config["traffic_graphs"];
+}
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
@@ -43,17 +48,24 @@ if (ipsec_enabled()) {
 }
 
 foreach (array('server', 'client') as $mode) {
-	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-			if (!isset($setting['disable'])) {
-				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " " . $mode . ": ".htmlspecialchars($setting['description']);
-			}
+	if (!is_array($config['openvpn']["openvpn-{$mode}"])) {
+		continue;
+	}
+	foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+		if (isset($setting['disable'])) {
+			continue;
 		}
+		$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] =
+		    gettext("OpenVPN") . " " . $mode . ": " .
+		    htmlspecialchars($setting['description']);
 	}
 }
 
-if ($_REQUEST['if']) {
-	$curif = $_REQUEST['if'];
+$ifdescrs = array_merge($ifdescrs, interface_ipsec_vti_list_all());
+
+if (!empty($_POST)) {
+	// update view if settings are changed or saved
+	$curif = $_POST['if'];
 	$found = false;
 	foreach ($ifdescrs as $descr => $ifdescr) {
 		if ($descr == $curif) {
@@ -65,34 +77,60 @@ if ($_REQUEST['if']) {
 		header("Location: status_graph.php");
 		exit;
 	}
-} else {
-	if (empty($ifdescrs["wan"])) {
-		/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
-		reset($ifdescrs);
-		$curif = key($ifdescrs);
-	} else {
-		$curif = "wan";
+	$cursort = $_POST['sort'];
+	$curfilter = $_POST['filter'];
+	$curhostipformat = $_POST['hostipformat'];
+	$curbackgroundupdate = $_POST['backgroundupdate'];
+	$curinvert = $_POST['invert'];
+	$cursmoothing = $_POST['smoothfactor'];
+	$curmode = $_POST['mode'];
+
+	// Save data to config
+	if (isset($_POST['save'])) {
+		$pconfig = array();
+		$pconfig["if"] = $curif;
+		$pconfig["sort"] = $cursort;
+		$pconfig["filter"] = $curfilter;
+		$pconfig["hostipformat"] = $curhostipformat;
+		$pconfig["backgroundupdate"] = $curbackgroundupdate;
+		$pconfig["smoothfactor"] = $cursmoothing;
+		$pconfig["invert"] = $curinvert;
+		$pconfig["mode"] = $curmode;
+		$config["traffic_graphs"] = array();
+		$config["traffic_graphs"] = $pconfig;
+		write_config("Traffic Graphs settings updated");
 	}
-}
-if ($_REQUEST['sort']) {
-	$cursort = $_REQUEST['sort'];
 } else {
-	$cursort = "";
-}
-if ($_REQUEST['filter']) {
-	$curfilter = $_REQUEST['filter'];
-} else {
-	$curfilter = "";
-}
-if ($_REQUEST['hostipformat']) {
-	$curhostipformat = $_REQUEST['hostipformat'];
-} else {
-	$curhostipformat = "";
-}
-if ($_REQUEST['backgroundupdate']) {
-	$curbackgroundupdate = $_REQUEST['backgroundupdate'];
-} else {
-	$curbackgroundupdate = "";
+	// default settings from config
+	if (is_array($pconfig)) {
+		$curif = $pconfig['if'];
+		$cursort = $pconfig['sort'];
+		$curfilter = $pconfig['filter'];
+		$curhostipformat = $pconfig['hostipformat'];
+		$curbackgroundupdate = $pconfig['backgroundupdate'];
+		$cursmoothing = $pconfig['smoothfactor'];
+		$curinvert = $pconfig['invert'];
+		$curmode = $pconfig['mode'];;
+	} else {
+		// initialize when no config details are present
+		if (empty($ifdescrs["wan"])) {
+			/*
+			 * Handle the case when WAN has been disabled. Use the
+			 * first key in ifdescrs.
+			 */
+			reset($ifdescrs);
+			$curif = key($ifdescrs);
+		} else {
+			$curif = "wan";
+		}
+		$cursort = "";
+		$curfilter = "";
+		$curhostipformat = "";
+		$curbackgroundupdate = "";
+		$cursmoothing = 0;
+		$curinvert = "";
+		$curmode = "";
+	}
 }
 
 function iflist() {
@@ -111,12 +149,12 @@ $pgtitle = array(gettext("Status"), gettext("Traffic Graph"));
 
 include("head.inc");
 
-$form = new Form(false);
+$form = new Form();
 $form->addClass('auto-submit');
 
 $section = new Form_Section('Graph Settings');
 
-$group = new Form_Group('');
+$group = new Form_Group('Traffic Graph');
 
 $group->add(new Form_Select(
 	'if',
@@ -151,7 +189,7 @@ $group->add(new Form_Select(
 	null,
 	$curhostipformat,
 	array (
-		''			=> gettext('IP Address'),
+		''		=> gettext('IP Address'),
 		'hostname'	=> gettext('Host Name'),
 		'descr'		=> gettext('Description'),
 		'fqdn'		=> gettext('FQDN')
@@ -159,16 +197,54 @@ $group->add(new Form_Select(
 ))->setHelp('Display');
 
 $group->add(new Form_Select(
+	'mode',
+	null,
+	$curmode,
+	array (
+		'rate'	=> gettext('rate (standard)'),
+		'iftop'	=> gettext('iftop (experimental)')
+	)
+))->setHelp('Mode');
+
+$section->add($group);
+
+$group2 = new Form_Group('Controls');
+
+$group2->add(new Form_Select(
 	'backgroundupdate',
 	null,
 	$curbackgroundupdate,
 	array (
 		'false'	=> gettext('Clear graphs when not visible.'),
-		'true'	=> gettext('Keep graphs updated on inactive tab. (increases cpu usage)'),
+		'true'	=> gettext('Keep graphs updated on inactive tab. ' .
+		    '(increases cpu usage)'),
 	)
 ))->setHelp('Background updates');
 
-$section->add($group);
+$group2->add(new Form_Select(
+	'invert',
+	null,
+	$curinvert,
+	array (
+		'true'	=> gettext('On'),
+		'false'	=> gettext('Off'),
+	)
+))->setHelp('Invert in/out');
+
+$group2->add(new Form_Input(
+	'smoothfactor',
+	null,
+	'range',
+	$cursmoothing,
+	array (
+		'min' => 0,
+		'max' => 5,
+		'step' => 1
+		)
+
+))->setHelp('Graph Smoothing');
+
+$section->add($group2);
 
 $form->add($section);
 print $form;
@@ -190,10 +266,10 @@ events.push(function() {
 
 	var InterfaceString = "<?=$curif?>";
 	var RealInterfaceString = "<?=$realif?>";
-    window.graph_backgroundupdate = $('#backgroundupdate').val() === "true";
-
+	window.graph_backgroundupdate = $('#backgroundupdate').val() === "true";
+	window.smoothing = $('#smoothfactor').val();
 	window.interval = 1;
-	window.invert = "true";
+	window.invert = $('#invert').val() === "true";
 	window.size = 8;
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });

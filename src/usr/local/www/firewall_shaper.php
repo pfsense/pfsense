@@ -3,7 +3,9 @@
  * firewall_shaper.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -89,71 +91,71 @@ $dfltmsg = false;
 
 if ($_GET) {
 	switch ($action) {
-		case "delete":
-			if ($queue) {
-				$queue->delete_queue();
-				if (write_config()) {
-					mark_subsystem_dirty('shaper');
-				}
+	case "delete":
+		if ($queue) {
+			$queue->delete_queue();
+			if (write_config("Traffic Shaper: Item deleted")) {
+				mark_subsystem_dirty('shaper');
 			}
+		}
 
-			header("Location: firewall_shaper.php");
-			exit;
-			break;
-		case "resetall":
-			foreach ($altq_list_queues as $altq) {
-				$altq->delete_all();
+		header("Location: firewall_shaper.php");
+		exit;
+		break;
+	case "resetall":
+		foreach ($altq_list_queues as $altq) {
+			$altq->delete_all();
+		}
+		unset($altq_list_queues);
+		$altq_list_queues = array();
+		$tree = "<ul class=\"tree\" >";
+		$tree .= get_interface_list_to_show();
+		$tree .= "</ul>";
+		unset($config['shaper']['queue']);
+		unset($queue);
+		unset($altq);
+		$can_add = false;
+		$can_enable = false;
+		$dontshow = true;
+		foreach ($config['filter']['rule'] as $key => $rule) {
+			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
+				unset($config['filter']['rule'][$key]);
 			}
-			unset($altq_list_queues);
-			$altq_list_queues = array();
-			$tree = "<ul class=\"tree\" >";
-			$tree .= get_interface_list_to_show();
-			$tree .= "</ul>";
-			unset($config['shaper']['queue']);
-			unset($queue);
-			unset($altq);
-			$can_add = false;
-			$can_enable = false;
-			$dontshow = true;
-			foreach ($config['filter']['rule'] as $key => $rule) {
-				if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-					unset($config['filter']['rule'][$key]);
-				}
-			}
+		}
 
-			if (write_config()) {
-				$changes_applied = true;
-				$retval = 0;
-				$retval |= filter_configure();
-			} else {
-				$no_write_config_msg = gettext("Unable to write config.xml (Access Denied?).");
-			}
+		if (write_config("Traffic Shapper: Reset all")) {
+			$changes_applied = true;
+			$retval = 0;
+			$retval |= filter_configure();
+		} else {
+			$no_write_config_msg = gettext("Unable to write config.xml (Access Denied?).");
+		}
 
-			$dfltmsg = true;
+		$dfltmsg = true;
 
 
 		break;
 
 	case "add":
-			/* XXX: Find better way because we shouldn't know about this */
+		/* XXX: Find better way because we shouldn't know about this */
 		if ($altq) {
 
 			switch ($altq->GetScheduler()) {
-				case "PRIQ":
-					$q = new priq_queue();
+			case "PRIQ":
+				$q = new priq_queue();
 				break;
-				case "FAIRQ":
-					$q = new fairq_queue();
+			case "FAIRQ":
+				$q = new fairq_queue();
 				break;
-				case "HFSC":
-					$q = new hfsc_queue();
+			case "HFSC":
+				$q = new hfsc_queue();
 				break;
-				case "CBQ":
-						$q = new cbq_queue();
+			case "CBQ":
+				$q = new cbq_queue();
 				break;
-				default:
-					/* XXX: Happens when sched==NONE?! */
-					$q = new altq_root_queue();
+			default:
+				/* XXX: Happens when sched==NONE?! */
+				$q = new altq_root_queue();
 				break;
 			}
 		} else if ($addnewaltq) {
@@ -166,50 +168,50 @@ if ($_GET) {
 			$q->SetInterface($interface);
 			$sform = $q->build_form();
 			$sform->addGlobal(new Form_Input(
-				'parentqueue',
-				null,
-				'hidden',
-				$qname
-			));
+			    'parentqueue',
+			    null,
+			    'hidden',
+			    $qname
+			    ));
 
 			$newjavascript = $q->build_javascript();
 			unset($q);
 			$newqueue = true;
 		}
 		break;
-		case "show":
-			if ($queue) {
-				$sform = $queue->build_form();
-			} else {
-				$input_errors[] = gettext("Queue not found!");
-			}
+	case "show":
+		if ($queue) {
+			$sform = $queue->build_form();
+		} else {
+			$input_errors[] = gettext("Queue not found!");
+		}
 		break;
-		case "enable":
-			if ($queue) {
-				$queue->SetEnabled("on");
-				$sform = $queue->build_form();
-				if (write_config()) {
-					mark_subsystem_dirty('shaper');
-				}
-			} else {
-				$input_errors[] = gettext("Queue not found!");
+	case "enable":
+		if ($queue) {
+			$queue->SetEnabled("on");
+			$sform = $queue->build_form();
+			if (write_config("Traffic Shaper: Queue enabled")) {
+				mark_subsystem_dirty('shaper');
 			}
-			break;
-		case "disable":
-			if ($queue) {
-				$queue->SetEnabled("");
-				$sform = $queue->build_form();
-				if (write_config()) {
-					mark_subsystem_dirty('shaper');
-				}
-			} else {
-				$input_errors[] = gettext("Queue not found!");
+		} else {
+			$input_errors[] = gettext("Queue not found!");
+		}
+		break;
+	case "disable":
+		if ($queue) {
+			$queue->SetEnabled("");
+			$sform = $queue->build_form();
+			if (write_config("Traffic Shaper: Queue disabled")) {
+				mark_subsystem_dirty('shaper');
 			}
-			break;
-		default:
-			$dfltmsg = true;
-			$dontshow = true;
-			break;
+		} else {
+			$input_errors[] = gettext("Queue not found!");
+		}
+		break;
+	default:
+		$dfltmsg = true;
+		$dontshow = true;
+		break;
 	}
 }
 
@@ -217,7 +219,7 @@ if ($_POST) {
 	unset($input_errors);
 
 	if ($addnewaltq) {
-		$altq =& new altq_root_queue();
+		$__tmp_altq = new altq_root_queue(); $altq =& $__tmp_altq;
 		$altq->SetInterface($interface);
 		$altq->ReadConfig($_POST);
 		$altq->validate_input($_POST, $input_errors);
@@ -226,7 +228,7 @@ if ($_POST) {
 			$tmppath[] = $altq->GetInterface();
 			$altq->SetLink($tmppath);
 			$altq->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Added root queue")) {
 				mark_subsystem_dirty('shaper');
 			}
 			$can_enable = true;
@@ -254,7 +256,7 @@ if ($_POST) {
 				} else {
 					$can_add = false;
 				}
-				if (write_config()) {
+				if (write_config("Traffic Shaper: Added new queue")) {
 					mark_subsystem_dirty('shaper');
 				}
 				$can_enable = true;
@@ -272,7 +274,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Could not add new queue.");
 		}
 	} else if ($_POST['apply']) {
-		write_config();
+		write_config("Traffic Shaper: Apply changes");
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
@@ -296,7 +298,7 @@ if ($_POST) {
 		if (!$input_errors) {
 			$queue->update_altq_queue_data($_POST);
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Changed queue")) {
 				mark_subsystem_dirty('shaper');
 			}
 			$dontshow = false;
@@ -307,7 +309,7 @@ if ($_POST) {
 		$dfltmsg = true;
 		$dontshow = true;
 	}
-	mwexec("killall qstats");
+	mwexec("/usr/bin/killall -q qstats");
 }
 
 if (!$_POST && !$_GET) {
@@ -428,7 +430,7 @@ if (!$dfltmsg && $sform)  {
 			$queue ? 'Delete this queue':'Disable shaper on interface',
 			$url,
 			'fa-trash'
-		))->addClass('btn-danger');
+		))->addClass('btn-danger nowarn');
 
 	}
 

@@ -3,7 +3,9 @@
  * system_gateways_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,10 +39,7 @@ if (isset($_POST['referer'])) {
 
 $a_gateways = return_gateways_array(true, false, true, true);
 
-if (!is_array($config['gateways']['gateway_item'])) {
-	$config['gateways']['gateway_item'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_item'));
 $a_gateway_item = &$config['gateways']['gateway_item'];
 $dpinger_default = return_dpinger_defaults();
 
@@ -67,7 +66,6 @@ if (isset($id) && $a_gateways[$id]) {
 		$pconfig['dynamic'] = true;
 	}
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
-	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	$pconfig['force_down'] = isset($a_gateways[$id]['force_down']);
 	$pconfig['latencylow'] = $a_gateways[$id]['latencylow'];
 	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
@@ -195,13 +193,6 @@ if ($pconfig['dynamic']) {
 $section->addInput($egw);
 
 $section->addInput(new Form_Checkbox(
-	'defaultgw',
-	'Default Gateway',
-	'This will select the above gateway as the default gateway.',
-	$pconfig['defaultgw']
-));
-
-$section->addInput(new Form_Checkbox(
 	'monitor_disable',
 	'Gateway Monitoring',
 	'Disable Gateway Monitoring',
@@ -278,7 +269,7 @@ $section->addInput(new Form_Input(
 	'Data Payload',
 	'number',
 	$pconfig['data_payload'],
-	['placeholder' => $dpinger_default['data_payload']]
+	['placeholder' => $dpinger_default['data_payload'], 'min' => 0]
 ))->setHelp('Define data payload to send on ICMP packets to gateway monitor IP.');
 
 $group = new Form_Group('Latency thresholds');
@@ -327,7 +318,7 @@ $section->addInput(new Form_Input(
 	$pconfig['interval'],
 	[
 		'placeholder' => $dpinger_default['interval'],
-		'max' => 86400
+		'max' => 3600000
 	]
 ))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.', $dpinger_default['interval']);
 
@@ -429,7 +420,8 @@ events.push(function() {
 		if (ispageload) {
 <?php
 			if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
-			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
+			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) ||
+			    (isset($pconfig['data_payload']) && is_numeric($pconfig['data_payload']) &&  intval($pconfig['data_payload']) >= 0) ||
 			    (!empty($pconfig['weight']) && $pconfig['weight'] > 1) ||
 			    (!empty($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
 			    (!empty($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||

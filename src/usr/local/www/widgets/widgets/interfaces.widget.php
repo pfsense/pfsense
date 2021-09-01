@@ -3,7 +3,9 @@
  * interfaces.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2007 Scott Dale
  * All rights reserved.
  *
@@ -19,8 +21,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-$nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
@@ -58,7 +58,7 @@ if ($_REQUEST['widgetkey']) {
 
 ?>
 
-<div class="table-responsive" id="ifaces_status_<?=$widgetkey?>">
+<div class="table-responsive" id="ifaces_status_<?=htmlspecialchars($widgetkey)?>">
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 
@@ -103,7 +103,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 ?>
 	<tr>
-		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">
+		<td title="<?=htmlspecialchars($ifinfo['if'])?> (<?=htmlspecialchars($ifinfo['macaddr'])?>)">
 			<i class="fa fa-<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
@@ -117,8 +117,10 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			<?php endif; ?>
 		</td>
 		<td>
-			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink'] == "up" || $ifinfo['l2tplink'] == "up"):?>
+			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink'] == "up" || $ifinfo['l2tplink'] == "up" || $ifinfo['ppplink'] == "up"):?>
 				<?=sprintf(gettext("Uptime: %s"), htmlspecialchars($ifinfo['ppp_uptime']));?>
+			<?php elseif (isset($ifinfo['laggproto'])):?>
+				<?=sprintf(gettext("LAGG Ports: %s"), htmlspecialchars(get_lagg_ports($ifinfo['laggport'])));?>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['media']);?>
 			<?php endif; ?>
@@ -161,7 +163,7 @@ endif;
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -215,12 +217,12 @@ if ($_REQUEST['ajax']) {
 
 		// Callback function called by refresh system when data is retrieved
 		function interfaces_callback(s) {
-			$('#ifaces_status_<?=$widgetkey?>').html(s);
+			$(<?=json_encode('#ifaces_status_' . $widgetkey)?>).html(s);
 		}
 
 		// POST data to send via AJAX
 		var postdata = {
-			widgetkey :"<?=$widgetkey?>",
+			widgetkey :<?=json_encode($widgetkey)?>,
 			ajax: "ajax"
 		};
 

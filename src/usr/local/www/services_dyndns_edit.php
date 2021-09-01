@@ -3,7 +3,9 @@
  * services_dyndns_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +34,7 @@ function is_dyndns_username($uname) {
 		return false;
 	}
 
-	if (preg_match("/[^a-z0-9\-\+.@_:]/i", $uname)) {
+	if (preg_match("/[^a-z0-9\-\+.@_:#]/i", $uname)) {
 		return false;
 	} else {
 		return true;
@@ -41,22 +43,28 @@ function is_dyndns_username($uname) {
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dyndnses']['dyndns'])) {
-	$config['dyndnses']['dyndns'] = array();
-}
-
+init_config_arr(array('dyndnses', 'dyndns'));
 $a_dyndns = &$config['dyndnses']['dyndns'];
+
 $id = $_REQUEST['id'];
+
+$dup = false;
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$dup = true;
+}
 
 if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['username'] = $a_dyndns[$id]['username'];
 	$pconfig['password'] = $a_dyndns[$id]['password'];
-	$pconfig['host'] = $a_dyndns[$id]['host'];
+	if (!$dup) {
+		$pconfig['host'] = $a_dyndns[$id]['host'];
+	}
 	$pconfig['domainname'] = $a_dyndns[$id]['domainname'];
 	$pconfig['mx'] = $a_dyndns[$id]['mx'];
 	$pconfig['type'] = $a_dyndns[$id]['type'];
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
-	$pconfig['interface'] = $a_dyndns[$id]['interface'];
+	$pconfig['interface'] = str_replace('_stf', '', $a_dyndns[$id]['interface']);
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['proxied'] = isset($a_dyndns[$id]['proxied']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
@@ -64,9 +72,10 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['curl_ssl_verifypeer'] = isset($a_dyndns[$id]['curl_ssl_verifypeer']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
 	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
+	$pconfig['maxcacheage'] = $a_dyndns[$id]['maxcacheage'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
-	$pconfig['requestif'] = $a_dyndns[$id]['requestif'];
+	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -75,10 +84,10 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap") && $_POST['username'] == "") {
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns" ||  $pconfig['type'] == "gandi-livedns-v6" || $pconfig['type'] == "cloudflare" || $pconfig['type'] == "cloudflare-v6" || $pconfig['type'] == "yandex" || $pconfig['type'] == "yandex-v6" || $pconfig['type'] == "desec" || $pconfig['type'] == "desec-v6" || $pconfig['type'] == 'dnsmadeeasy')
+	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
-
 	/* input validation */
 	$reqdfields = array();
 	$reqdfieldsn = array();
@@ -86,8 +95,10 @@ if ($_POST['save'] || $_POST['force']) {
 	$reqdfieldsn = array(gettext("Service type"));
 
 	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
-		$reqdfields[] = "host";
-		$reqdfieldsn[] = gettext("Hostname");
+		if ($pconfig['type'] != "dnsomatic") {
+			$reqdfields[] = "host";
+			$reqdfieldsn[] = gettext("Hostname");
+		}
 		$reqdfields[] = "passwordfld";
 		$reqdfieldsn[] = gettext("Password");
 		$reqdfields[] = "username";
@@ -108,11 +119,30 @@ if ($_POST['save'] || $_POST['force']) {
 	}
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
+		$allow_wildcard = false;
 		/* Namecheap can have a @. and *. in hostname */
-		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
+		if (($pconfig['type'] == "namecheap") && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
-		} elseif ((($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
+			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
+			$allow_wildcard = true;
+		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6")) {
+			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
+			$allow_wildcard = true;
+		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
+			$host_to_check = $_POST['host'];
+			$allow_wildcard = true;
+		} elseif ($pconfig['type'] == "hover") {
+			/* hover allows hostnames '@' and '*' also */
+			if ((strcmp("@", $_POST['host']) == 0) || (strcmp("*", $_POST['host']) == 0)) {
+				$host_to_check = $_POST['domainname'];
+			} else {
+				$host_to_check = $_POST['host'] . '.' . $_POST['domainname'];
+			}
 		} else {
 			$host_to_check = $_POST['host'];
 
@@ -128,7 +158,7 @@ if ($_POST['save'] || $_POST['force']) {
 		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
-			if (!is_domain($host_to_check)) {
+			if (!is_domain($host_to_check, $allow_wildcard)) {
 				$input_errors[] = gettext("The hostname contains invalid characters.");
 			}
 		}
@@ -140,6 +170,9 @@ if ($_POST['save'] || $_POST['force']) {
 	}
 	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) {
 		$input_errors[] = gettext("The username contains invalid characters.");
+	}
+	if (isset($_POST['maxcacheage']) && $_POST['maxcacheage'] !== "" && (!is_numericint($_POST['maxcacheage']) || (int)$_POST['maxcacheage'] < 1)) {
+		$input_errors[] = gettext("The max cache age must be an integer and greater than 0 (or empty for the default).");
 	}
 
 	if (!$input_errors) {
@@ -165,13 +198,23 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['enable'] = true;
 		}
-		$dyndns['interface'] = $_POST['interface'];
+		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) {
+			$dyndns['interface'] = $_POST['interface'] . '_stf';
+		} else {
+			$dyndns['interface'] = $_POST['interface'];
+		}
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
+		$dyndns['maxcacheage'] = $_POST['maxcacheage'];
 		$dyndns['updateurl'] = $_POST['updateurl'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
-		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) {
+			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
+		} else {
+			$dyndns['requestif'] = $_POST['requestif'];
+		}
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 
@@ -179,7 +222,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$dyndns['username'] = "";
 		}
 
-		if (isset($id) && $a_dyndns[$id]) {
+		if (isset($id) && $a_dyndns[$id] && !$dup) {
 			$a_dyndns[$id] = $dyndns;
 		} else {
 			$a_dyndns[] = $dyndns;
@@ -299,7 +342,9 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
+			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode, DigitalOcean: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
+			'Cloudflare, Linode: Enter @ as the hostname to indicate an empty field.%1$s' .
+			'deSEC: Enter the FQDN.', '<br />');
 
 $section->add($group);
 
@@ -320,12 +365,12 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'proxied',
-	'CloudFlare Proxy',
+	'Cloudflare Proxy',
 	'Enable Proxy',
 	$pconfig['proxied']
-))->setHelp('Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will route all traffic '.
+))->setHelp('Note: This enables Cloudflare Virtual DNS proxy.  When Enabled it will route all traffic '.
 			'through their servers. By Default this is disabled and your Real IP is exposed.'.
-			'More info: %s', '<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>');
+			'More info: %s', '<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">Cloudflare Blog</a>');
 
 $section->addInput(new Form_Checkbox(
 	'verboselog',
@@ -343,21 +388,27 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'curl_ssl_verifypeer',
-	'HTTP API SSL Options',
-	'Verify SSL Certificate Trust',
+	'HTTP API SSL/TLS Options',
+	'Verify SSL/TLS Certificate Trust',
 	$pconfig['curl_ssl_verifypeer']
-))->setHelp('When set, the server must provide a valid certificate trust chain which can be verified by this firewall.');
+))->setHelp('When set, the server must provide a valid SSL/TLS certificate trust chain which can be verified by this firewall.');
 
 $section->addInput(new Form_Input(
 	'username',
 	'Username',
 	'text',
-	$pconfig['username']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
-			'DNS Made Easy: Dynamic DNS ID%1$s' .
+	$pconfig['username'],
+	['autocomplete' => 'new-password']
+))->setHelp('Username is required for all types except DNS Made Easy, Namecheap, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), DigitalOcean, Linode, Cloudflare and Custom Entries.%1$s' .
+			'Azure: Enter your Azure AD application ID%1$s' .
+			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
+			'Domeneshop: Enter the API token.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
+			'Godaddy: Enter the API key.%1$s' .
+			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
+			'NoIP: For group authentication, replace semicolon (:) with pound-key (#).%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(
@@ -365,13 +416,21 @@ $section->addPassword(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
+			'Azure: client secret of the AD application%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
+			'DigitalOcean: Enter API token%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
+			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
+			'Gandi LiveDNS: Enter API token%1$s' .
+			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
-			'Cloudflare: Enter the Global API Key.', '<br />');
+			'Linode: Enter the Personal Access Token.%1$s' .
+			'Yandex: Yandex PDD Token.%1$s' .
+			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.%1$s' .
+			'deSEC: Enter the API token.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',
@@ -379,6 +438,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['zoneid']
 ))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
+			'Azure: Enter the resource id of the of the DNS Zone%1$s' .
 			'DNSimple: Enter the Record ID of record to update.', '<br />');
 
 $section->addInput(new Form_Input(
@@ -405,14 +465,22 @@ $section->addInput(new Form_Input(
 ))->setHelp('Choose TTL for the dns record.');
 
 $section->addInput(new Form_Input(
+	'maxcacheage',
+	'Max Cache Age',
+	'number',
+	$pconfig['maxcacheage']
+))->setHelp('The number of days after which the DNS record is always updated. The DNS record is updated when: update is forced, WAN address changes or this number of days has passed.');
+
+$section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).%1$s' .
+			'This field will be used in the Dynamic DNS Status Widget for Custom services.', '<br />');
 
 if (isset($id) && $a_dyndns[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -439,10 +507,25 @@ print($form);
 events.push(function() {
 
 	function setVisible(service) {
+		// First, set default visibility and then modify per service, if needed.
+		hideGroupInput('domainname', true);
+		hideInput('resultmatch', true);
+		hideInput('updateurl', true);
+		hideInput('requestif', true);
+		hideCheckbox('curl_ipresolve_v4', true);
+		hideCheckbox('curl_ssl_verifypeer', true);
+		hideInput('username', false); // show by default
+		hideInput('host', false); // show by default
+		hideInput('mx', false); // show by default
+		hideCheckbox('wildcard', false); // show by default
+		hideCheckbox('proxied', true);
+		hideInput('zoneid', true);
+		hideInput('ttl', true);
+		hideInput('maxcacheage', true);
+
 		switch (service) {
 			case "custom" :
 			case "custom-v6" :
-				hideGroupInput('domainname', true);
 				hideInput('resultmatch', false);
 				hideInput('updateurl', false);
 				hideInput('requestif', false);
@@ -451,85 +534,97 @@ events.push(function() {
 				hideInput('host', true);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
+				hideInput('maxcacheage', false);
 				break;
-
-			case "dnsimple":
-			case "route53":
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', false);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
-				hideCheckbox('proxied', true);
+			// providers in an alphabetical order (based on the first provider in a group of cases)
+			case "azure":
+			case "azurev6":
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
-			case "namecheap":
-			case "gratisdns":
-			case "hover":
+			case "cloudflare":
+			case "cloudflare-v6":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
-				break;
-			case 'dreamhost':
-			case 'dreamhost-v6':
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
-				break;
-			case "cloudflare-v6":
-			case "cloudflare":
-				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
 				hideCheckbox('proxied', false);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
+				hideInput('ttl', false);
+				break;
+			case "cloudns":
+				hideGroupInput('domainname', false);
+				hideInput('ttl', false);
+				break;
+			case 'desec':
+			case 'desec-v6':
+				hideInput('username', true);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				break;
+			case "digitalocean":
+			case "digitalocean-v6":
+			case "gandi-livedns":
+			case "gandi-livedns-v6":
+			case "yandex":
+			case "yandex-v6":
+				hideGroupInput('domainname', false);
+				hideInput('username', true);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideInput('ttl', false);
+				break;
+			case "dnsimple":
+				hideCheckbox('curl_ssl_verifypeer', false);
+				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "domeneshop":
+			case "domeneshop-v6":
+			case "dreamhost":
+			case "dreamhost-v6":
+			case "dyfi":
+			case "nicru":
+			case "nicru-v6":
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				break;
+			case "godaddy":
+			case "godaddy-v6":
+			case "linode":
+			case "linode-v6":
+			case "onecom":
+			case "onecom-v6":
+				hideGroupInput('domainname', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideInput('ttl', false);
+				break;
+			case "gratisdns":
+			case "hover":
+			case "namecheap":
+				hideGroupInput('domainname', false);
+				break;
+			case "mythicbeasts":
+			case "mythicbeasts-v6":
+				hideGroupInput('domainname', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				break;
+			case "route53":
+			case "route53-v6":
+				hideCheckbox('curl_ssl_verifypeer', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "strato":
+			case "dnsmadeeasy":
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				break;
 			default:
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
 		}
 	}
 

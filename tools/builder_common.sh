@@ -3,7 +3,9 @@
 # builder_common.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2013 BSD Perimeter
+# Copyright (c) 2013-2016 Electric Sheep Fencing
+# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # FreeSBIE portions of the code
@@ -67,6 +69,7 @@ core_pkg_create_repo() {
 	ln -sf $(basename ${CORE_PKG_REAL_PATH}) ${CORE_PKG_PATH}/.latest
 	ln -sf .latest/All ${CORE_PKG_ALL_PATH}
 	ln -sf .latest/digests.txz ${CORE_PKG_PATH}/digests.txz
+	ln -sf .latest/meta.conf ${CORE_PKG_PATH}/meta.conf
 	ln -sf .latest/meta.txz ${CORE_PKG_PATH}/meta.txz
 	ln -sf .latest/packagesite.txz ${CORE_PKG_PATH}/packagesite.txz
 }
@@ -77,17 +80,28 @@ core_pkg_create() {
 	local _flavor="${2}"
 	local _version="${3}"
 	local _root="${4}"
-	local _filter="${5}"
+	local _findroot="${5}"
+	local _filter="${6}"
 
 	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
+
+	# Use default pkg repo to obtain ABI and ALTABI
+	local _abi=$(sed -e "s/%%ARCH%%/${TARGET_ARCH}/g" \
+	    ${PKG_REPO_DEFAULT%%.conf}.abi)
+	local _altabi_arch=$(get_altabi_arch ${TARGET_ARCH})
+	local _altabi=$(sed -e "s/%%ARCH%%/${_altabi_arch}/g" \
+	    ${PKG_REPO_DEFAULT%%.conf}.altabi)
 
 	${BUILDER_SCRIPTS}/create_core_pkg.sh \
 		-t "${_template_path}" \
 		-f "${_flavor}" \
 		-v "${_version}" \
 		-r "${_root}" \
+		-s "${_findroot}" \
 		-F "${_filter}" \
 		-d "${CORE_PKG_REAL_PATH}/All" \
+		-a "${_abi}" \
+		-A "${_altabi}" \
 		|| print_error_pfS
 }
 
@@ -161,11 +175,12 @@ build_all_kernels() {
 		ensure_kernel_exists $KERNEL_DESTDIR
 
 		echo ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area..."  | tee -a ${LOGFILE}
-		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \*.ko.debug
+		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \
+		    "./usr/lib/debug/boot" \*.debug
 		rm -rf ${KERNEL_DESTDIR}/usr
 
 		echo ">>> Creating pkg of $KERNEL_NAME kernel to staging area..."  | tee -a ${LOGFILE}
-		core_pkg_create kernel ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR}
+		core_pkg_create kernel ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} "./boot/kernel ./boot/modules"
 
 		rm -rf $KERNEL_DESTDIR 2>&1 1>/dev/null
 	done
@@ -187,8 +202,8 @@ install_default_kernel() {
 		print_error_pfS
 	fi
 
-	# Lock kernel to avoid user end up removing it for any reason
-	pkg_chroot ${FINAL_CHROOT_DIR} lock -q -y $(get_pkg_name kernel-${KERNEL_NAME})
+	# Set kernel pkg as vital to avoid user end up removing it for any reason
+	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name kernel-${KERNEL_NAME})
 
 	if [ ! -f $FINAL_CHROOT_DIR/boot/kernel/kernel.gz ]; then
 		echo ">>> ERROR: No kernel installed on $FINAL_CHROOT_DIR and the resulting image will be unusable. STOPPING!" | tee -a ${LOGFILE}
@@ -255,10 +270,15 @@ make_world() {
 		-d ${STAGE_CHROOT_DIR} \
 		|| print_error_pfS
 
+	# Use the builder cross compiler from obj to produce the final binary.
+	BUILD_CC="${MAKEOBJDIRPREFIX}${FREEBSD_SRC_DIR}/${TARGET}.${TARGET_ARCH}/tmp/usr/bin/cc"
+
+	[ -f "${BUILD_CC}" ] || print_error_pfS
+
 	# XXX It must go to the scripts
 	[ -d "${STAGE_CHROOT_DIR}/usr/local/bin" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}/usr/local/bin
-	makeargs="DESTDIR=${STAGE_CHROOT_DIR}"
+	makeargs="CC=${BUILD_CC} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	# XXX FIX IT
@@ -269,8 +289,11 @@ make_world() {
 		echo ">>> Building gnid... " | tee -a ${LOGFILE}
 		(\
 			cd ${GNID_SRC_DIR} && \
-			make INCLUDE_DIR=${GNID_INCLUDE_DIR} \
-			LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR} clean gnid \
+			make \
+				CC=${BUILD_CC} \
+				INCLUDE_DIR=${GNID_INCLUDE_DIR} \
+				LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR} \
+			clean gnid \
 		) || print_error_pfS
 		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
 			${STAGE_CHROOT_DIR}/usr/sbin \
@@ -326,8 +349,8 @@ create_ova_image() {
 	if [ -z "${OVA_SWAP_PART_SIZE_IN_GB}" -o "${OVA_SWAP_PART_SIZE_IN_GB}" = "0" ]; then
 		# first partition size (freebsd-ufs)
 		local OVA_FIRST_PART_SIZE_IN_GB=${VMDK_DISK_CAPACITY_IN_GB}
-		# Calculate real first partition size, removing 128 blocks (65536 bytes) beginning/loader
-		local OVA_FIRST_PART_SIZE=$((${OVA_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Calculate real first partition size, removing 256 blocks (131072 bytes) beginning/loader
+		local OVA_FIRST_PART_SIZE=$((${OVA_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-131072))
 		# Unset swap partition size variable
 		unset OVA_SWAP_PART_SIZE
 		# Parameter used by mkimg
@@ -337,8 +360,8 @@ create_ova_image() {
 		local OVA_FIRST_PART_SIZE_IN_GB=$((VMDK_DISK_CAPACITY_IN_GB-OVA_SWAP_PART_SIZE_IN_GB))
 		# Use first partition size in g
 		local OVA_FIRST_PART_SIZE="${OVA_FIRST_PART_SIZE_IN_GB}g"
-		# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
-		local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Calculate real swap size, removing 256 blocks (131072 bytes) beginning/loader
+		local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-131072))
 		# Parameter used by mkimg
 		local OVA_SWAP_PART_PARAM="-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE}"
 	fi
@@ -556,11 +579,6 @@ clone_to_staging_area() {
 	tar -C ${PRODUCT_SRC} -c -f - . | \
 		tar -C ${STAGE_CHROOT_DIR} -x -p -f -
 
-	if [ "${PRODUCT_NAME}" != "pfSense" ]; then
-		mv ${STAGE_CHROOT_DIR}/usr/local/sbin/pfSense-upgrade \
-			${STAGE_CHROOT_DIR}/usr/local/sbin/${PRODUCT_NAME}-upgrade
-	fi
-
 	mkdir -p ${STAGE_CHROOT_DIR}/etc/mtree
 	mtree -Pcp ${STAGE_CHROOT_DIR}/var > ${STAGE_CHROOT_DIR}/etc/mtree/var.dist
 	mtree -Pcp ${STAGE_CHROOT_DIR}/etc > ${STAGE_CHROOT_DIR}/etc/mtree/etc.dist
@@ -641,13 +659,14 @@ clone_to_staging_area() {
 	pkg_bootstrap ${STAGE_CHROOT_DIR}
 
 	# Make sure correct repo is available on tmp dir
-	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg-repos
+	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg/pkg-repos
 	setup_pkg_repo \
-		${PKG_REPO_DEFAULT} \
-		${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf \
+		${PKG_REPO_BUILD} \
+		${STAGE_CHROOT_DIR}/tmp/pkg/pkg-repos/repo.conf \
 		${TARGET} \
 		${TARGET_ARCH} \
-		staging
+		staging \
+		${STAGE_CHROOT_DIR}/tmp/pkg/pkg.conf
 
 	echo "Done!"
 }
@@ -697,6 +716,10 @@ customize_stagearea_for_image() {
 	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
 	pkg_chroot_add ${FINAL_CHROOT_DIR} base
 
+	# Set base/rc pkgs as vital to avoid user end up removing it for any reason
+	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name rc)
+	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name base)
+
 	if [ "${_image_type}" = "iso" -o \
 	     "${_image_type}" = "memstick" -o \
 	     "${_image_type}" = "memstickserial" -o \
@@ -728,12 +751,15 @@ customize_stagearea_for_image() {
 	    -d ${BUILDER_TOOLS}/templates/custom_logos/${_image_variant} ]; then
 		mkdir -p ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 		cp -f \
-			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.svg \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+		cp -f \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.css \
 			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 	fi
 
 	# Remove temporary repo conf
-	rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repos
+	rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg
 }
 
 create_distribution_tarball() {
@@ -780,6 +806,7 @@ create_iso_image() {
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
@@ -824,7 +851,6 @@ create_memstick_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -832,13 +858,18 @@ create_memstick_image() {
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
+	echo 'boot_serial="NO"' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
-		${INSTALLER_CHROOT_DIR} \
-		${_image_path}
+	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
+
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
+		${FSLABEL} \
+		${_image_path} \
+		${INSTALLER_CHROOT_DIR}
 
 	if [ ! -f "${_image_path}" ]; then
 		echo "ERROR! memstick image was not built"
@@ -864,7 +895,6 @@ create_memstick_serial_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -874,6 +904,7 @@ create_memstick_serial_image() {
 
 	# Activate serial console+video console in loader.conf
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	echo 'boot_multicons="YES"' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
@@ -912,7 +943,6 @@ create_memstick_adi_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -922,6 +952,7 @@ create_memstick_adi_image() {
 
 	# Activate serial console+video console in loader.conf
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
@@ -949,6 +980,21 @@ create_memstick_adi_image() {
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
+get_altabi_arch() {
+	local _target_arch="$1"
+
+	if [ "${_target_arch}" = "amd64" ]; then
+		echo "x86:64"
+	elif [ "${_target_arch}" = "i386" ]; then
+		echo "x86:32"
+	elif [ "${_target_arch}" = "armv7" ]; then
+		echo "32:el:eabi:softfp"
+	else
+		echo ">>> ERROR: Invalid arch"
+		print_error_pfS
+	fi
+}
+
 # Create pkg conf on desired place with desired arch/branch
 setup_pkg_repo() {
 	if [ -z "${4}" ]; then
@@ -960,6 +1006,7 @@ setup_pkg_repo() {
 	local _arch="${3}"
 	local _target_arch="${4}"
 	local _staging="${5}"
+	local _pkg_conf="${6}"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
@@ -988,8 +1035,31 @@ setup_pkg_repo() {
 		-e "s,%%PKG_REPO_SERVER_RELEASE%%,${_pkg_repo_server_release},g" \
 		-e "s,%%POUDRIERE_PORTS_NAME%%,${POUDRIERE_PORTS_NAME},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
+		-e "s/%%REPO_BRANCH_PREFIX%%/${REPO_PATH_PREFIX}/g" \
 		${_template} \
 		> ${_target}
+
+	local ALTABI_ARCH=$(get_altabi_arch ${_target_arch})
+
+	ABI=$(cat ${_template%%.conf}.abi 2>/dev/null \
+	    | sed -e "s/%%ARCH%%/${_target_arch}/g")
+	ALTABI=$(cat ${_template%%.conf}.altabi 2>/dev/null \
+	    | sed -e "s/%%ARCH%%/${ALTABI_ARCH}/g")
+
+	if [ -n "${_pkg_conf}" -a -n "${ABI}" -a -n "${ALTABI}" ]; then
+		mkdir -p $(dirname ${_pkg_conf})
+		echo "ABI=${ABI}" > ${_pkg_conf}
+		echo "ALTABI=${ALTABI}" >> ${_pkg_conf}
+	fi
+}
+
+depend_check() {
+	for _pkg in ${BUILDER_PKG_DEPENDENCIES}; do
+		if ! pkg info -e ${_pkg}; then
+			echo "Missing dependency (${_pkg})."
+			print_error_pfS
+		fi
+	done
 }
 
 # This routine ensures any ports / binaries that the builder
@@ -1008,7 +1078,7 @@ builder_setup() {
 
 		local _arch=$(uname -m)
 		setup_pkg_repo \
-			${PKG_REPO_DEFAULT} \
+			${PKG_REPO_BUILD} \
 			${PKG_REPO_PATH} \
 			${_arch} \
 			${_arch} \
@@ -1086,8 +1156,11 @@ pkg_chroot() {
 	cp -f /etc/resolv.conf ${_root}/etc/resolv.conf
 	touch ${BUILDER_LOGS}/install_pkg_install_ports.txt
 	local _params=""
-	if [ -f "${_root}/tmp/pkg-repos/repo.conf" ]; then
-		_params="--repo-conf-dir /tmp/pkg-repos "
+	if [ -f "${_root}/tmp/pkg/pkg-repos/repo.conf" ]; then
+		_params="--repo-conf-dir /tmp/pkg/pkg-repos "
+	fi
+	if [ -f "${_root}/tmp/pkg/pkg.conf" ]; then
+		_params="${_params} --config /tmp/pkg/pkg.conf "
 	fi
 	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt \
 		chroot ${_root} pkg ${_params}$@ >/dev/null 2>&1
@@ -1127,7 +1200,7 @@ pkg_bootstrap() {
 	local _root=${1:-"${STAGE_CHROOT_DIR}"}
 
 	setup_pkg_repo \
-		${PKG_REPO_DEFAULT} \
+		${PKG_REPO_BUILD} \
 		${_root}${PKG_REPO_PATH} \
 		${TARGET} \
 		${TARGET_ARCH} \
@@ -1164,6 +1237,8 @@ install_pkg_install_ports() {
 	fi
 	# Make sure required packages are set as non-automatic
 	pkg_chroot ${STAGE_CHROOT_DIR} set -A 0 pkg ${MAIN_PKG} ${custom_package_list}
+	# pkg and MAIN_PKG are vital
+	pkg_chroot ${STAGE_CHROOT_DIR} set -y -v 1 pkg ${MAIN_PKG}
 	# Remove unnecessary packages
 	pkg_chroot ${STAGE_CHROOT_DIR} autoremove
 	echo "Done!"
@@ -1245,6 +1320,7 @@ finish() {
 pkg_repo_rsync() {
 	local _repo_path_param="${1}"
 	local _ignore_final_rsync="${2}"
+	local _aws_sync_cmd="aws s3 sync --quiet --exclude '.real*/*' --exclude '.latest/*'"
 
 	if [ -z "${_repo_path_param}" -o ! -d "${_repo_path_param}" ]; then
 		return
@@ -1300,6 +1376,9 @@ pkg_repo_rsync() {
 
 			if sha256 -q ${_pkgfile} | ${PKG_REPO_SIGNING_COMMAND} \
 			    > ${_pkgfile}.sig 2>/dev/null; then
+				# XXX Temporary workaround to create link to pkg sig
+				[ -e ${_repo_path}/Latest/pkg.pkg ] && \
+					ln -sf pkg.txz.sig ${_repo_path}/Latest/pkg.pkg.sig
 				echo "Done!" | tee -a ${_logfile}
 			else
 				echo "Failed!" | tee -a ${_logfile}
@@ -1315,12 +1394,12 @@ pkg_repo_rsync() {
 
 	for _pkg_rsync_hostname in ${PKG_RSYNC_HOSTNAME}; do
 		# Make sure destination directory exist
-		ssh -p ${PKG_RSYNC_SSH_PORT} \
+		ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
 			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} \
 			"mkdir -p ${PKG_RSYNC_DESTDIR}"
 
 		echo -n ">>> Sending updated repository to ${_pkg_rsync_hostname}... " | tee -a ${_logfile}
-		if script -aq ${_logfile} rsync -Have "ssh -p ${PKG_RSYNC_SSH_PORT}" \
+		if script -aq ${_logfile} rsync -Have "ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT}" \
 			--timeout=60 --delete-delay ${_repo_path} \
 			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
 		then
@@ -1338,14 +1417,14 @@ pkg_repo_rsync() {
 		if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
 			for _pkg_final_rsync_hostname in ${PKG_FINAL_RSYNC_HOSTNAME}; do
 				# Send .real* directories first to prevent having a broken repo while transfer happens
-				local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+				local _cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 					--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
 					--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
 					--exclude=\"*\" \
 					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
 
 				echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
-				if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
 					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
@@ -1354,12 +1433,12 @@ pkg_repo_rsync() {
 					print_error_pfS
 				fi
 
-				_cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+				_cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 					--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
 					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
 
 				echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
-				if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
 					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
@@ -1367,6 +1446,36 @@ pkg_repo_rsync() {
 					echo ">>> ERROR: An error occurred sending repo to final hostname"
 					print_error_pfS
 				fi
+
+				if [ -z "${PKG_FINAL_S3_PATH}" ]; then
+					continue
+				fi
+
+				local _repos=$(ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+				    "ls -1d ${PKG_FINAL_RSYNC_DESTDIR}/${_repo_base%%-core}*")
+				for _repo in ${_repos}; do
+					echo -n ">>> Sending updated packages to AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
+					if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+					    "${_aws_sync_cmd} ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+						echo "Done!" | tee -a ${_logfile}
+					else
+						echo "Failed!" | tee -a ${_logfile}
+						echo ">>> ERROR: An error occurred sending files to AWS S3"
+						print_error_pfS
+					fi
+					echo -n ">>> Cleaning up packages at AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
+					if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+					    "${_aws_sync_cmd} --delete ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+						echo "Done!" | tee -a ${_logfile}
+					else
+						echo "Failed!" | tee -a ${_logfile}
+						echo ">>> ERROR: An error occurred sending files to AWS S3"
+						print_error_pfS
+					fi
+				done
 			done
 		fi
 	done
@@ -1376,7 +1485,7 @@ poudriere_possible_archs() {
 	local _arch=$(uname -m)
 	local _archs=""
 
-	# If host is amd64, we'll create both repos, and if possible armv6
+	# If host is amd64, we'll create both repos, and if possible armv7
 	if [ "${_arch}" = "amd64" ]; then
 		_archs="amd64.amd64"
 
@@ -1384,8 +1493,8 @@ poudriere_possible_archs() {
 			# Make sure binmiscctl is ok
 			/usr/local/etc/rc.d/qemu_user_static forcestart >/dev/null 2>&1
 
-			if binmiscctl lookup armv6 >/dev/null 2>&1; then
-				_archs="${_archs} arm.armv6"
+			if binmiscctl lookup armv7 >/dev/null 2>&1; then
+				_archs="${_archs} arm.armv7"
 			fi
 		fi
 	fi
@@ -1436,6 +1545,7 @@ poudriere_rename_ports() {
 		local _pdir=$(dirname ${d})
 		local _pname=$(echo $(basename ${d}) | sed "s,pfSense,${PRODUCT_NAME},")
 		local _plist=""
+		local _pdescr=""
 
 		if [ -e ${_pdir}/${_pname} ]; then
 			rm -rf ${_pdir}/${_pname}
@@ -1447,11 +1557,14 @@ poudriere_rename_ports() {
 			_plist=${_pdir}/${_pname}/pkg-plist
 		fi
 
+		if [ -f ${_pdir}/${_pname}/pkg-descr ]; then
+			_pdescr=${_pdir}/${_pname}/pkg-descr
+		fi
+
 		sed -i '' -e "s,pfSense,${PRODUCT_NAME},g" \
 			  -e "s,https://www.pfsense.org,${PRODUCT_URL},g" \
 			  -e "/^MAINTAINER=/ s,^.*$,MAINTAINER=	${PRODUCT_EMAIL}," \
-			${_pdir}/${_pname}/Makefile \
-			${_pdir}/${_pname}/pkg-descr ${_plist}
+			${_pdir}/${_pname}/Makefile ${_pdescr} ${_plist}
 
 		# PHP module is special
 		if echo "${_pname}" | grep -q "^php[0-9]*-${PRODUCT_NAME}-module"; then
@@ -1459,19 +1572,21 @@ poudriere_rename_ports() {
 			sed -i '' -e "s,PHP_PFSENSE,PHP_${_product_capital},g" \
 				  -e "s,PFSENSE_SHARED_LIBADD,${_product_capital}_SHARED_LIBADD,g" \
 				  -e "s,pfSense,${PRODUCT_NAME},g" \
-				  -e "s,${PRODUCT_NAME}\.c,pfSense.c,g" \
+				  -e "s,pfSense.c,${PRODUCT_NAME}\.c,g" \
 				${_pdir}/${_pname}/files/config.m4
 
 			sed -i '' -e "s,COMPILE_DL_PFSENSE,COMPILE_DL_${_product_capital}," \
 				  -e "s,pfSense_module_entry,${PRODUCT_NAME}_module_entry,g" \
+				  -e "s,php_pfSense.h,php_${PRODUCT_NAME}\.h,g" \
 				  -e "/ZEND_GET_MODULE/ s,pfSense,${PRODUCT_NAME}," \
 				  -e "/PHP_PFSENSE_WORLD_EXTNAME/ s,pfSense,${PRODUCT_NAME}," \
 				${_pdir}/${_pname}/files/pfSense.c \
+				${_pdir}/${_pname}/files/dummynet.c \
 				${_pdir}/${_pname}/files/php_pfSense.h
 		fi
 
 		if [ -d ${_pdir}/${_pname}/files ]; then
-			for fd in $(find ${_pdir}/${_pname}/files -type d -name '*pfSense*'); do
+			for fd in $(find ${_pdir}/${_pname}/files -name '*pfSense*'); do
 				local _fddir=$(dirname ${fd})
 				local _fdname=$(echo $(basename ${fd}) | sed "s,pfSense,${PRODUCT_NAME},")
 
@@ -1492,13 +1607,45 @@ poudriere_create_ports_tree() {
 			print_error_pfS
 		fi
 		if [ -n "${POUDRIERE_PORTS_GIT_BRANCH}" ]; then
-			_branch="-B ${POUDRIERE_PORTS_GIT_BRANCH}"
+			_branch="${POUDRIERE_PORTS_GIT_BRANCH}"
 		fi
 		echo -n ">>> Creating poudriere ports tree, it may take some time... " | tee -a ${LOGFILE}
-		if ! script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m git -U ${POUDRIERE_PORTS_GIT_URL} ${_branch} >/dev/null 2>&1; then
-			echo "" | tee -a ${LOGFILE}
-			echo ">>> ERROR: Error creating poudriere ports tree, aborting..." | tee -a ${LOGFILE}
-			print_error_pfS
+		if [ "${AWS}" = 1 ]; then
+			set -e
+			script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m none
+			script -aq ${LOGFILE} zfs create ${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}
+
+			# If S3 doesn't contain stashed ports tree, create one
+			if ! aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz >/dev/null 2>&1; then
+				mkdir ${SCRATCHDIR}/${FLAVOR}-ports
+				${BUILDER_SCRIPTS}/git_checkout.sh \
+				    -r ${POUDRIERE_PORTS_GIT_URL} \
+				    -d ${SCRATCHDIR}/${FLAVOR}-ports \
+				    -b ${POUDRIERE_PORTS_GIT_BRANCH}
+
+				tar --zstd -C ${SCRATCHDIR} -cf ${FLAVOR}-ports.tz ${FLAVOR}-ports
+				aws_exec s3 cp ${FLAVOR}-ports.tz s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz --no-progress
+			else
+				# Download local copy of the ports tree stashed in S3
+				echo ">>>  Downloading cached copy of the ports tree from S3.." | tee -a ${LOGFILE}
+				aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz . --no-progress
+			fi
+
+			script -aq ${LOGFILE} tar --strip-components 1 -xf ${FLAVOR}-ports.tz -C /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}
+			# Update the ports tree
+			(
+				cd /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}
+				echo ">>>  Updating cached copy of the ports tree from git.." | tee -a ${LOGFILE}
+				script -aq ${LOGFILE} git pull
+				script -aq ${LOGFILE} git checkout ${_branch}
+			)
+			set +e
+		else
+			if ! script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m git -U ${POUDRIERE_PORTS_GIT_URL} -B ${_branch} >/dev/null 2>&1; then
+				echo "" | tee -a ${LOGFILE}
+				echo ">>> ERROR: Error creating poudriere ports tree, aborting..." | tee -a ${LOGFILE}
+				print_error_pfS
+			fi
 		fi
 		echo "Done!" | tee -a ${LOGFILE}
 		poudriere_rename_ports
@@ -1550,10 +1697,10 @@ poudriere_init() {
 	fi
 
 	# Make sure poudriere is installed
-	if ! pkg info --quiet poudriere-devel; then
-		echo ">>> Installing poudriere-devel..." | tee -a ${LOGFILE}
-		if ! pkg install poudriere-devel >/dev/null 2>&1; then
-			echo ">>> ERROR: poudriere-devel was not installed, aborting..." | tee -a ${LOGFILE}
+	if [ ! -f /usr/local/bin/poudriere ]; then
+		echo ">>> Installing poudriere..." | tee -a ${LOGFILE}
+		if ! pkg install poudriere >/dev/null 2>&1; then
+			echo ">>> ERROR: poudriere was not installed, aborting..." | tee -a ${LOGFILE}
 			print_error_pfS
 		fi
 	fi
@@ -1563,6 +1710,11 @@ poudriere_init() {
 		echo ">>> ERROR: POUDRIERE_PORTS_GIT_URL is not defined"
 		print_error_pfS
 	fi
+
+	# PARALLEL_JOBS us ncpu / 4 for best performance
+	local _parallel_jobs=$(sysctl -qn hw.ncpu)
+	_parallel_jobs=$((_parallel_jobs / 4))
+
 	echo ">>> Creating poudriere.conf" | tee -a ${LOGFILE}
 	cat <<EOF >/usr/local/etc/poudriere.conf
 ZPOOL=${ZFS_TANK}
@@ -1579,7 +1731,15 @@ ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
 KEEP_OLD_PACKAGES=yes
 KEEP_OLD_PACKAGES_COUNT=5
+ALLOW_MAKE_JOBS=yes
+PARALLEL_JOBS=${_parallel_jobs}
 EOF
+
+	if pkg info -e ccache; then
+	cat <<EOF >>/usr/local/etc/poudriere.conf
+CCACHE_DIR=/var/cache/ccache
+EOF
+	fi
 
 	# Create specific items conf
 	[ ! -d /usr/local/etc/poudriere.d ] \
@@ -1590,13 +1750,24 @@ EOF
 		mkdir -p /usr/ports/distfiles
 	fi
 
+	if [ "${AWS}" = 1 ] && \
+	    aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-distfiles.tar >/dev/null 2>&1; then
+		# Download a copy of the distfiles from S3
+		echo ">>> Downloading distfile cache from S3.." | tee -a ${LOGFILE}
+		aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-distfiles.tar . --no-progress
+		script -aq ${LOGFILE} tar -xf ${FLAVOR}-distfiles.tar -C /usr/ports/distfiles
+		# Save a list of distfiles
+		find /usr/ports/distfiles > pre-build-distfile-list
+
+	fi
+
 	# Remove old jails
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
 		if poudriere jail -i -j "${jail_name}" >/dev/null 2>&1; then
 			echo ">>> Poudriere jail ${jail_name} already exists, deleting it..." | tee -a ${LOGFILE}
-			poudriere jail -d -j "${jail_name}" >/dev/null 2>&1
+			poudriere jail -d -j "${jail_name}"
 		fi
 	done
 
@@ -1604,6 +1775,13 @@ EOF
 	if poudriere ports -l | grep -q -E "^${POUDRIERE_PORTS_NAME}[[:blank:]]"; then
 		echo ">>> Poudriere ports tree ${POUDRIERE_PORTS_NAME} already exists, deleting it..." | tee -a ${LOGFILE}
 		poudriere ports -d -p "${POUDRIERE_PORTS_NAME}"
+		if [ "${AWS}" = 1 ]; then
+			for d in `zfs list -o name`; do
+				if [ "${d}" = "${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}" ]; then
+					script -aq ${LOGFILE} zfs destroy ${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}
+				fi
+			done
+		fi
 	fi
 
 	local native_xtools=""
@@ -1611,18 +1789,60 @@ EOF
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv7" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""
 		fi
 
-		echo -n ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
-		if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
-				-a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE} ${native_xtools} >/dev/null 2>&1; then
-			echo "" | tee -a ${LOGFILE}
-			echo ">>> ERROR: Error creating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
-			print_error_pfS
+		echo ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
+		if [ "${AWS}" = "1" ]; then
+			mkdir objs
+			echo ">>> Downloading prebuilt release objs from s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/ ..." | tee -a ${LOGFILE}
+			# Download prebuilt release tarballs from previous job
+			aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/LATEST-${jail_arch} objs --no-progress
+			SRC_COMMIT=`cat objs/LATEST-${jail_arch}`
+			aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/MANIFEST-${jail_arch}-${SRC_COMMIT} objs --no-progress
+			ln -s MANIFEST-${jail_arch}-${SRC_COMMIT} objs/MANIFEST
+			for i in base doc kernel src tests; do
+				if [ ! -f objs/${i}-${jail_arch}-${SRC_COMMIT}.txz ]; then
+					aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/${i}-${jail_arch}-${SRC_COMMIT}.txz objs --no-progress
+					ln -s ${i}-${jail_arch}-${SRC_COMMIT}.txz objs/${i}.txz
+				fi
+			done
+
+			if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
+					-a ${jail_arch} -m url=file://${PWD}/objs >/dev/null 2>&1; then
+				echo "" | tee -a ${LOGFILE}
+				echo ">>> ERROR: Error creating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
+				print_error_pfS
+			fi
+
+			# Download a cached pkg repo from S3
+			OLDIFS=${IFS}
+			IFS=$'\n'
+			echo ">>> Downloading cached pkgs for ${jail_arch} from S3.." | tee -a ${LOGFILE}
+			if aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar >/dev/null 2>&1; then
+				aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar . --no-progress
+				[ ! -d /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} ] && mkdir -p /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}
+				echo "Extracting ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar to /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}" | tee -a ${LOGFILE}
+				[ ! -d /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} ] && mkdir /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}
+				script -aq ${LOGFILE} tar -xf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}
+				# Save a list of pkgs
+				cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
+				find . > ${WORKSPACE}/pre-build-pkg-list-${jail_arch}
+				cd ${WORKSPACE}
+			else
+				touch pre-build-pkg-list-${jail_arch}
+			fi
+			IFS=${OLDIFS}
+		else
+			if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
+					-a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE} ${native_xtools} >/dev/null 2>&1; then
+				echo "" | tee -a ${LOGFILE}
+				echo ">>> ERROR: Error creating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
+				print_error_pfS
+			fi
 		fi
 		echo "Done!" | tee -a ${LOGFILE}
 	done
@@ -1649,7 +1869,7 @@ poudriere_update_jails() {
 			_create_or_update_text="Creating"
 		fi
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv7" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""
@@ -1683,8 +1903,63 @@ poudriere_update_ports() {
 	fi
 }
 
+save_logs_to_s3() {
+	# Save a copy of the past few logs into S3
+	DATE=`date +%Y%m%d-%H%M%S`
+	script -aq ${LOGFILE} tar --zstd -cf pkg-logs-${jail_arch}-${DATE}.tar -C /usr/local/poudriere/data/logs/bulk/${jail_name}-${POUDRIERE_PORTS_NAME}/latest/ .
+	aws_exec s3 cp pkg-logs-${jail_arch}-${DATE}.tar s3://pfsense-engineering-build-pkg/logs/ --no-progress
+	OLDIFS=${IFS}
+	IFS=$'\n'
+	local _logtemp=$( mktemp /tmp/loglist.XXXXX )
+	for i in $(aws_exec s3 ls s3://pfsense-engineering-build-pkg/logs/); do
+		echo ${i} | awk '{print $4}' | grep pkg-logs-${jail_arch} | tr -d '\r' >> ${_logtemp}
+	done
+	# keep at least ~30 days of logs, plus some extra for one off runs
+	local _maxlogs=45
+	local _curlogs=0
+	_curlogs=$( wc -l ${_logtemp} | awk '{print $1}' )
+	if [ ${_curlogs} -gt ${_maxlogs} ]; then
+		local _extralogs=$(( ${_curlogs} - ${_maxlogs} ))
+		for _last in $( head -${_extralogs} ${_logtemp} ); do
+			aws_exec s3 rm s3://pfsense-engineering-build-pkg/logs/${_last}
+		done
+	fi
+	IFS=${OLDIFS}
+}
+
+save_pkgs_to_s3() {
+	echo ">>> Save a copy of the package repo into S3..." | tee -a ${LOGFILE}
+	cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
+	find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
+	cd ${WORKSPACE}
+	diff pre-build-pkg-list-${jail_arch} post-build-pkg-list-${jail_arch} > /dev/null
+	if [ $? = 1 ]; then
+		[ -f ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar ] && rm ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar
+		script -aq ${LOGFILE} tar -cf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} .
+		aws_exec s3 cp ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar s3://pfsense-engineering-build-pkg/ --no-progress
+
+		save_logs_to_s3
+	fi
+}
+
+aws_exec() {
+	script -aq ${LOGFILE} \
+	    env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+	    AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+	    AWS_DEFAULT_REGION=us-east-2 \
+	    AWS_DEFAULT_OUTPUT=text \
+	    aws $@
+	return $?
+}
+
 poudriere_bulk() {
 	local _archs=$(poudriere_possible_archs)
+	local _makeconf
+
+	# Create DISTFILES_CACHE if it doesn't exist
+	if [ ! -d /usr/ports/distfiles ]; then
+		mkdir -p /usr/ports/distfiles
+	fi
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
@@ -1700,19 +1975,48 @@ poudriere_bulk() {
 	[ -d /usr/local/etc/poudriere.d ] || \
 		mkdir -p /usr/local/etc/poudriere.d
 
+	_makeconf=/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
 	if [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
-		cp -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" \
-			/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
+		    -e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
+		    "${BUILDER_TOOLS}/conf/pfPorts/make.conf" > ${_makeconf}
 	fi
 
 	cat <<EOF >>/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+
 PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL}
 PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE}
 PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL}
 PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE}
 POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME}
+PFSENSE_DEFAULT_REPO=${PFSENSE_DEFAULT_REPO}
 PRODUCT_NAME=${PRODUCT_NAME}
+REPO_BRANCH_PREFIX=${REPO_PATH_PREFIX}
 EOF
+
+	local _value=""
+	for jail_arch in ${_archs}; do
+		eval "_value=\${PKG_REPO_BRANCH_DEVEL_${jail_arch##*.}}"
+		if [ -n "${_value}" ]; then
+			echo "PKG_REPO_BRANCH_DEVEL_${jail_arch##*.}=${_value}" \
+				>> ${_makeconf}
+		fi
+		eval "_value=\${PKG_REPO_BRANCH_RELEASE_${jail_arch##*.}}"
+		if [ -n "${_value}" ]; then
+			echo "PKG_REPO_BRANCH_RELEASE_${jail_arch##*.}=${_value}" \
+				>> ${_makeconf}
+		fi
+		eval "_value=\${PKG_REPO_SERVER_DEVEL_${jail_arch##*.}}"
+		if [ -n "${_value}" ]; then
+			echo "PKG_REPO_SERVER_DEVEL_${jail_arch##*.}=${_value}" \
+				>> ${_makeconf}
+		fi
+		eval "_value=\${PKG_REPO_SERVER_RELEASE_${jail_arch##*.}}"
+		if [ -n "${_value}" ]; then
+			echo "PKG_REPO_SERVER_RELEASE_${jail_arch##*.}=${_value}" \
+				>> ${_makeconf}
+		fi
+	done
 
 	# Change version of pfSense meta ports for snapshots
 	if [ -z "${_IS_RELEASE}" ]; then
@@ -1737,13 +2041,18 @@ EOF
 			continue
 		fi
 
-		if [ -f "${POUDRIERE_BULK}.${jail_arch}" ]; then
-			_ref_bulk="${POUDRIERE_BULK}.${jail_arch}"
-		else
-			_ref_bulk="${POUDRIERE_BULK}"
+		_ref_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}.ref.${jail_arch}
+		rm -rf ${_ref_bulk} ${_ref_bulk}.tmp
+		touch ${_ref_bulk}.tmp
+		if [ -f "${POUDRIERE_BULK}.${jail_arch#*.}" ]; then
+			cat "${POUDRIERE_BULK}.${jail_arch#*.}" >> ${_ref_bulk}.tmp
 		fi
+		if [ -f "${POUDRIERE_BULK}" ]; then
+			cat "${POUDRIERE_BULK}" >> ${_ref_bulk}.tmp
+		fi
+		cat ${_ref_bulk}.tmp | sort -u > ${_ref_bulk}
 
-		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}
+		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}.${jail_arch}
 		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" ${_ref_bulk} > ${_bulk}
 
 		local _exclude_bulk="${POUDRIERE_BULK}.exclude.${jail_arch}"
@@ -1754,10 +2063,15 @@ EOF
 			rm -f ${_bulk}.tmp ${_bulk}.exclude
 		fi
 
+		echo ">>> Poudriere bulk started at `date "+%Y/%m/%d %H:%M:%S"` for ${jail_arch}"
 		if ! poudriere bulk -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME}; then
 			echo ">>> ERROR: Something went wrong..."
+			if [ "${AWS}" = 1 ]; then
+				save_pkgs_to_s3
+			fi
 			print_error_pfS
 		fi
+		echo ">>> Poudriere bulk complated at `date "+%Y/%m/%d %H:%M:%S"` for ${jail_arch}"
 
 		echo ">>> Cleaning up old packages from repo..."
 		if ! poudriere pkgclean -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME} -y; then
@@ -1765,8 +2079,24 @@ EOF
 			print_error_pfS
 		fi
 
+		if [ "${AWS}" = 1 ]; then
+			save_pkgs_to_s3
+		fi
+
 		pkg_repo_rsync "/usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}"
 	done
+
+	if [ "${AWS}" = 1 ]; then
+		echo ">>> Save a copy of the distfiles into S3..." | tee -a ${LOGFILE}
+		# Save a copy of the distfiles from S3
+		find /usr/ports/distfiles > post-build-distfile-list
+		diff pre-build-distfile-list post-build-distfile-list > /dev/null
+		if [ $? -eq 1 ]; then
+			rm ${FLAVOR}-distfiles.tar
+			script -aq ${LOGFILE} tar -cf ${FLAVOR}-distfiles.tar -C /usr/ports/distfiles .
+			aws_exec s3 cp ${FLAVOR}-distfiles.tar s3://pfsense-engineering-build-pkg/ --no-progress
+		fi
+	fi
 }
 
 # This routine is called to write out to stdout
@@ -1832,7 +2162,7 @@ snapshots_create_sha256() {
 
 snapshots_scp_files() {
 	if [ -z "${RSYNC_COPY_ARGUMENTS}" ]; then
-		RSYNC_COPY_ARGUMENTS="-ave ssh --timeout=60"
+		RSYNC_COPY_ARGUMENTS="-Have \"ssh -o StrictHostKeyChecking=no\" --timeout=60"
 	fi
 
 	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
@@ -1843,12 +2173,12 @@ snapshots_scp_files() {
 		snapshots_update_status ">>> Copying files to ${_rsyncip}"
 
 		# Ensure directory(s) are available
-		ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/installer"
+		ssh -o StrictHostKeyChecking=no ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/installer"
 		if [ -d $IMAGES_FINAL_DIR/virtualization ]; then
-			ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/virtualization"
+			ssh -o StrictHostKeyChecking=no ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/virtualization"
 		fi
 		# ensure permissions are correct for r+w
-		ssh ${RSYNCUSER}@${_rsyncip} "chmod -R ug+rw ${RSYNCPATH}/."
+		ssh -o StrictHostKeyChecking=no ${RSYNCUSER}@${_rsyncip} "chmod -R ug+rw ${RSYNCPATH}/."
 		rsync $RSYNC_COPY_ARGUMENTS $IMAGES_FINAL_DIR/installer/* \
 			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/installer/
 		if [ -d $IMAGES_FINAL_DIR/virtualization ]; then

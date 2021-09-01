@@ -3,7 +3,9 @@
  * status.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -35,30 +37,54 @@
  * showing the results.
  */
 
+global $console;
+global $show_output;
+
+$console = false;
+$show_output = !isset($_GET['archiveonly']);
+
+if ((php_sapi_name() == 'cli') || (defined('STDIN'))) {
+	/* Running from console/shell, not web */
+	$console = true;
+	$show_output = false;
+	parse_str($argv[1], $_GET);
+}
+
 /* include all configuration functions */
-require_once("guiconfig.inc");
+if ($console) {
+	require_once("config.inc");
+} else {
+	require_once("guiconfig.inc");
+}
 require_once("functions.inc");
 require_once("gwlb.inc");
 $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
+$filtered_tags = array(
+	'accountkey', 'authorizedkeys', 'auth_pass',
+	'auth_server_shared_secret', 'auth_server_shared_secret2', 'auth_user',
+	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
+	'crypto_password2', 'dns_nsupdatensupdate_key', 'ddnsdomainkey', 'encryption_password',
+	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
+	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
+	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
+	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode',
+	'oinkmastercode', 'pass', 'passphrase', 'password', 'passwordagain',
+	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key', 'presharedkey', 'privatekey', 'proxypass',
+	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radmac_secret', 'radius_secret',
+	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2', 'securiteinfo_id',
+       	'serverauthkey', 'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
+	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
+	'varsqlconf2password', 	'varsyncpassword', 'varmodulesldappassword', 'varmodulesldap2password',
+	'varusersmotpinitsecret', 'varusersmotppin', 'varuserspassword', 'webrootftppassword'
+);
+
+$acme_filtered_tags = array('key', 'password', 'secret', 'token', 'pwd', 'pw');
+
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
 	session_cache_limiter('public');
-	$fd = fopen($output_file, "rb");
-	header("Content-Type: application/octet-stream");
-	header("Content-Length: " . filesize($output_file));
-	header("Content-Disposition: attachment; filename=\"" .
-		trim(htmlentities(basename($output_file))) . "\"");
-	if (isset($_SERVER['HTTPS'])) {
-		header('Pragma: ');
-		header('Cache-Control: ');
-	} else {
-		header("Pragma: private");
-		header("Cache-Control: private, must-revalidate");
-	}
-
-	fpassthru($fd);
-	exit;
+	send_user_download('file', $output_file);
 }
 
 if (is_dir($output_path)) {
@@ -69,16 +95,17 @@ unlink_if_exists($output_file);
 mkdir($output_path);
 
 function doCmdT($title, $command, $method) {
-	global $output_path, $output_file;
+	global $output_path, $output_file, $filtered_tags, $acme_filtered_tags, $show_output;
 	/* Fixup output directory */
 
-	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
-	echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
-
-	print('<div class="panel panel-default">');
-	print('<div class="panel-heading"><h2 class="panel-title">' . $title . '</h2></div>');
-	print('<div class="panel-body">');
-	print('<pre>');
+	if ($show_output) {
+		$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
+		echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
+		print('<div class="panel panel-default">');
+		print('<div class="panel-heading"><h2 class="panel-title">' . $title . '</h2></div>');
+		print('<div class="panel-body">');
+		print('<pre>');
+	}
 
 	if ($command == "dumpconfigxml") {
 		$ofd = @fopen("{$output_path}/config-sanitized.xml", "w");
@@ -87,61 +114,50 @@ function doCmdT($title, $command, $method) {
 			while (!feof($fd)) {
 				$line = fgets($fd);
 				/* remove sensitive contents */
-				$line = preg_replace("/<authorizedkeys>.*?<\\/authorizedkeys>/", "<authorizedkeys>xxxxx</authorizedkeys>", $line);
-				$line = preg_replace("/<secret>.*?<\\/secret>/", "<secret>xxxxx</secret>", $line);
-				$line = preg_replace("/<bcrypt-hash>.*?<\\/bcrypt-hash>/", "<bcrypt-hash>xxxxx</bcrypt-hash>", $line);
-				$line = preg_replace("/<password>.*?<\\/password>/", "<password>xxxxx</password>", $line);
-				$line = preg_replace("/<auth_user>.*?<\\/auth_user>/", "<auth_user>xxxxx</auth_user>", $line);
-				$line = preg_replace("/<auth_pass>.*?<\\/auth_pass>/", "<auth_pass>xxxxx</auth_pass>", $line);
-				$line = preg_replace("/<proxy_user>.*?<\\/proxy_user>/", "<proxy_user>xxxxx</proxy_user>", $line);
-				$line = preg_replace("/<proxy_passwd>.*?<\\/proxy_passwd>/", "<proxy_passwd>xxxxx</proxy_passwd>", $line);
-				$line = preg_replace("/<proxyuser>.*?<\\/proxyuser>/", "<proxyuser>xxxxx</proxyuser>", $line);
-				$line = preg_replace("/<proxypass>.*?<\\/proxypass>/", "<proxypass>xxxxx</proxypass>", $line);
-				$line = preg_replace("/<pre-shared-key>.*?<\\/pre-shared-key>/", "<pre-shared-key>xxxxx</pre-shared-key>", $line);
-				$line = preg_replace("/<rocommunity>.*?<\\/rocommunity>/", "<rocommunity>xxxxx</rocommunity>", $line);
-				$line = preg_replace("/<prv>.*?<\\/prv>/", "<prv>xxxxx</prv>", $line);
-				$line = preg_replace("/<shared_key>.*?<\\/shared_key>/", "<shared_key>xxxxx</shared_key>", $line);
-				$line = preg_replace("/<tls>.*?<\\/tls>/", "<tls>xxxxx</tls>", $line);
-				$line = preg_replace("/<ipsecpsk>.*?<\\/ipsecpsk>/", "<ipsecpsk>xxxxx</ipsecpsk>", $line);
-				$line = preg_replace("/<md5-hash>.*?<\\/md5-hash>/", "<md5-hash>xxxxx</md5-hash>", $line);
-				$line = preg_replace("/<md5password>.*?<\\/md5password>/", "<md5password>xxxxx</md5password>", $line);
-				$line = preg_replace("/<nt-hash>.*?<\\/nt-hash>/", "<nt-hash>xxxxx</nt-hash>", $line);
-				$line = preg_replace("/<radius_secret>.*?<\\/radius_secret>/", "<radius_secret>xxxxx</radius_secret>", $line);
-				$line = preg_replace("/<ldap_bindpw>.*?<\\/ldap_bindpw>/", "<ldap_bindpw>xxxxx</ldap_bindpw>", $line);
-				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
-				$line = preg_replace("/<crypto_password>.*?<\\/crypto_password>/", "<crypto_password>xxxxx</crypto_password>", $line);
-				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
-				$line = preg_replace("/<md5sigpass>.*?<\\/md5sigpass>/", "<md5sigpass>xxxxx</md5sigpass>", $line);
-				$line = preg_replace("/<md5sigkey>.*?<\\/md5sigkey>/", "<md5sigkey>xxxxx</md5sigkey>", $line);
-				$line = str_replace("\t", "    ", $line);
-				echo htmlspecialchars($line, ENT_NOQUOTES);
+				foreach ($filtered_tags as $tag) {
+					$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
+				}
+				/* remove ACME pkg sensitive contents */
+				foreach ($acme_filtered_tags as $tag) {
+					$line = preg_replace("/<dns_(.+){$tag}>.*?<\\/dns_(.+){$tag}>/", "<dns_$1{$tag}>xxxxx</dns_$1{$tag}>", $line);
+				}
+				if ($show_output) {
+					echo htmlspecialchars(str_replace("\t", "    ", $line), ENT_NOQUOTES);
+				}
 				fwrite($ofd, $line);
 			}
 		}
 		fclose($fd);
 		fclose($ofd);
 	} else {
-		$ofd = @fopen("{$output_path}/{$title}.txt", "w");
 		$execOutput = "";
 		$execStatus = "";
+		$fn = "{$output_path}/{$title}.txt";
 		if ($method == "exec") {
-			exec($command . " 2>&1", $execOutput, $execStatus);
-		} elseif ($method == "php_func") {
-			$execOutput = explode("\n", $command());
-		}
-		for ($i = 0; isset($execOutput[$i]); $i++) {
-			if ($i > 0) {
-				echo "\n";
+			exec($command . " > " . escapeshellarg($fn) . " 2>&1", $execOutput, $execStatus);
+			if ($show_output) {
+				$ofd = @fopen($fn, "r");
+				if ($ofd) {
+					while (!feof($ofd)) {
+						echo htmlspecialchars(fgets($ofd), ENT_NOQUOTES);
+					}
+				}
+				fclose($ofd);
 			}
-			echo htmlspecialchars($execOutput[$i], ENT_NOQUOTES);
-			fwrite($ofd, $execOutput[$i] . "\n");
+		} elseif ($method == "php_func") {
+			$execOutput = $command();
+			if ($show_output) {
+				echo htmlspecialchars($execOutput, ENT_NOQUOTES);
+			}
+			file_put_contents($fn, $execOutput);
 		}
-		fclose($ofd);
 	}
 
-	print('</pre>');
-	print('</div>');
-	print('</div>');
+	if ($show_output) {
+		print('</pre>');
+		print('</div>');
+		print('</div>');
+	}
 }
 
 /* Define a command, with a title, to be executed later. */
@@ -185,7 +201,7 @@ function execCmds() {
 function get_firewall_info() {
 	global $g, $output_path;
 	/* Firewall Platform/Serial */
-	$firewall_info = "Product Name: " . htmlspecialchars($g['product_name']);
+	$firewall_info = "Product Name: " . htmlspecialchars($g['product_label']);
 	$platform = system_identify_specific_platform();
 	if (!empty($platform['descr'])) {
 		$firewall_info .= "<br/>Platform: " . htmlspecialchars($platform['descr']);
@@ -198,13 +214,21 @@ function get_firewall_info() {
 		}
 	}
 
+	if (function_exists("system_get_thothid") &&
+	    (php_uname("m") == "arm64")) {
+		$thothid = system_get_thothid();
+		if (!empty($thothid)) {
+			$firewall_info .= "<br/>Netgate Crypto ID: " . htmlspecialchars(chop($thothid));
+		}
+	}
+
 	$serial = system_get_serial();
 	if (!empty($serial)) {
-		$firewall_info .= "<br/>SN/UUID: " . htmlspecialchars($serial);
+		$firewall_info .= "<br/>Serial: " . htmlspecialchars($serial);
 	}
 
 	if (!empty($g['product_version_string'])) {
-		$firewall_info .= "<br/>" . htmlspecialchars($g['product_name']) .
+		$firewall_info .= "<br/>" . htmlspecialchars($g['product_label']) .
 		    " version: " . htmlspecialchars($g['product_version_string']);
 	}
 
@@ -230,7 +254,7 @@ function get_firewall_info() {
 		}
 	}
 
-	file_put_contents("{$output_path}/Product Info.txt", str_replace("<br/>", "\n", $firewall_info) . "\n");
+	file_put_contents("{$output_path}/Product-Info.txt", str_replace("<br/>", "\n", $firewall_info) . "\n");
 	return $firewall_info;
 }
 
@@ -243,8 +267,16 @@ global $g, $config;
 /* Set up all of the commands we want to execute. */
 
 /* OS stats/info */
+if (function_exists("system_get_thothid") &&
+    (php_uname("m") == "arm64")) {
+	$thothid = system_get_thothid();
+	if (!empty($thothid)) {
+		defCmdT("Product-Public Key", "/usr/local/sbin/ping-auth -p");
+	}
+}
+
 defCmdT("OS-Uptime", "/usr/bin/uptime");
-defCmdT("Network-Interfaces", "/sbin/ifconfig -a");
+defCmdT("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
 defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
 defCmdT("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
 defCmdT("Process-List", "/bin/ps xauwwd");
@@ -255,15 +287,26 @@ defCmdT("Network-Gateway Status", 'get_gateway_status', "php_func");
 defCmdT("Network-Mbuf Usage", "/usr/bin/netstat -mb");
 defCmdT("Network-Protocol Statistics", "/usr/bin/netstat -s");
 defCmdT("Network-Buffer and Timer Statistics", "/usr/bin/netstat -nWx");
+defCmdT("Network-Listen Queues", "/usr/bin/netstat -LaAn");
 defCmdT("Network-Sockets", "/usr/bin/sockstat");
 defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
 defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");
+defCmdT("OS-Kernel Modules", "/sbin/kldstat -v");
 defCmdT("OS-Kernel VMStat", "/usr/bin/vmstat -afimsz");
+
+/* If a device has a switch, put the switch configuration in the status output */
+if (file_exists("/dev/etherswitch0")) {
+	defCmdT("Network-Switch Configuration", "/sbin/etherswitchcfg -f /dev/etherswitch0 info");
+}
 
 /* Firewall rules and info */
 defCmdT("Firewall-Generated Ruleset", "/bin/cat {$g['tmp_path']}/rules.debug");
 defCmdT("Firewall-Generated Ruleset Limiters", "/bin/cat {$g['tmp_path']}/rules.limiter");
 defCmdT("Firewall-Generated Ruleset Limits", "/bin/cat {$g['tmp_path']}/rules.limits");
+foreach (glob("{$g['tmp_path']}/rules.packages.*") as $pkgrules) {
+	$pkgname = substr($pkgrules, strrpos($pkgrules, '.') + 1);
+	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat {$pkgrules}");
+}
 defCmdT("Firewall-pf NAT Rules", "/sbin/pfctl -vvsn");
 defCmdT("Firewall-pf Firewall Rules", "/sbin/pfctl -vvsr");
 defCmdT("Firewall-pf Tables", "/sbin/pfctl -vs Tables");
@@ -281,27 +324,34 @@ defCmdT("Firewall-pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
 defCmdT("Firewall-IPFW Rules for Captive Portal", "/sbin/ipfw show");
 defCmdT("Firewall-IPFW Limiter Info", "/sbin/ipfw pipe show");
 defCmdT("Firewall-IPFW Queue Info", "/sbin/ipfw queue show");
-
-if (is_array($config['load_balancer']['lbpool']) && is_array($config['load_balancer']['virtual_server'])) {
-	defCmdT("Load Balancer-Redirects", "/usr/local/sbin/relayctl show redirects");
-	defCmdT("Load Balancer-Relays", "/usr/local/sbin/relayctl show relays");
-	defCmdT("Load Balancer-Summary", "/usr/local/sbin/relayctl show summary");
-}
+defCmdT("Firewall-IPFW Tables", "/sbin/ipfw table all list");
 
 /* Configuration Files */
 defCmdT("Disk-Contents of var run", "/bin/ls /var/run");
 defCmdT("Disk-Contents of conf", "/bin/ls /conf");
 defCmdT("config.xml", "dumpconfigxml");
 defCmdT("DNS-Resolution Configuration", "/bin/cat /etc/resolv.conf");
-defCmdT("DHCP-IPv4 Configuration", "/bin/cat /var/dhcpd/etc/dhcpd.conf");
-defCmdT("DHCP-IPv6-Configuration", "/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
-defCmdT("IPsec-strongSwan Configuration", "/bin/cat /var/etc/ipsec/strongswan.conf");
-defCmdT("IPsec-Configuration", "/bin/cat /var/etc/ipsec/ipsec.conf");
-defCmdT("IPsec-Status", "/usr/local/sbin/ipsec statusall");
+defCmdT("DNS-Resolver Access Lists", "/bin/cat /var/unbound/access_lists.conf");
+defCmdT("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.conf");
+defCmdT("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
+defCmdT("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
+defCmdT("DHCP-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
+defCmdT("DHCP-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
+defCmdT("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
+defCmdT("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
+defCmdT("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
+defCmdT("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
+defCmdT("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
+defCmdT("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
+defCmdT("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
+defCmdT("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
 defCmdT("IPsec-SPD", "/sbin/setkey -DP");
 defCmdT("IPsec-SAD", "/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {
 	defCmdT("OS-Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
+}
+if (file_exists("/cf/conf/upgrade_log.latest.txt")) {
+	defCmdT("OS-Upgrade Log Latest", "/bin/cat /cf/conf/upgrade_log.latest.txt");
 }
 if (file_exists("/boot/loader.conf")) {
 	defCmdT("OS-Boot Loader Configuration", "/bin/cat /boot/loader.conf");
@@ -313,31 +363,70 @@ if (file_exists("/var/etc/filterdns.conf")) {
 	defCmdT("DNS-filterdns Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
 }
 
-/* Logs */
-defCmdT("Log-System-Last 1000 entries", "/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 1000");
-defCmdT("Log-DHCP-Last 1000 entries", "/usr/local/sbin/clog /var/log/dhcpd.log 2>&1 | tail -n 1000");
-defCmdT("Log-Filter-Last 500 entries", "/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 500");
-defCmdT("Log-Gateways-Last 1000 entries", "/usr/local/sbin/clog /var/log/gateways.log 2>&1 | tail -n 1000");
-defCmdT("Log-IPsec-Last 1000 entries", "/usr/local/sbin/clog /var/log/ipsec.log 2>&1 | tail -n 1000");
-defCmdT("Log-L2TP-Last 1000 entries", "/usr/local/sbin/clog /var/log/l2tps.log 2>&1 | tail -n 1000");
-defCmdT("Log-NTP-Last 1000 entries", "/usr/local/sbin/clog /var/log/ntpd.log 2>&1 | tail -n 1000");
-defCmdT("Log-OpenVPN-Last 1000 entries", "/usr/local/sbin/clog /var/log/openvpn.log 2>&1 | tail -n 1000");
-defCmdT("Log-Captive Portal Authentication-Last 1000 entries", "/usr/local/sbin/clog /var/log/portalauth.log 2>&1 | tail -n 1000");
-defCmdT("Log-PPP-Last 1000 entries", "/usr/local/sbin/clog /var/log/poes.log 2>&1 | tail -n 1000");
-defCmdT("Log-relayd-Last 1000 entries", "/usr/local/sbin/clog /var/log/relayd.log 2>&1 | tail -n 1000");
-defCmdT("Log-DNS-Last 1000 entries", "/usr/local/sbin/clog /var/log/resolver.log 2>&1 | tail -n 1000");
-defCmdT("Log-Routing-Last 1000 entries", "/usr/local/sbin/clog /var/log/routing.log 2>&1 | tail -n 1000");
-defCmdT("Log-Wireless-Last 1000 entries", "/usr/local/sbin/clog /var/log/wireless.log 2>&1 | tail -n 1000");
-if (file_exists("/tmp/PHP_errors.log")) {
-	defCmdT("Log-PHP Errors", "/bin/cat /tmp/PHP_errors.log");
+if (is_dir("/var/etc/openvpn")) {
+	foreach(glob('/var/etc/openvpn/*/config.ovpn') as $file) {
+		$ovpnfile = explode('/', $file);
+		if (!count($ovpnfile) || (count($ovpnfile) < 6)) {
+			continue;
+		}
+		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
+	}
 }
+
+if (file_exists("/var/etc/l2tp-vpn/mpd.conf")) {
+	defCmdT("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');
+}
+
+/* Config History */
+$confvers = get_backups();
+unset($confvers['versions']);
+if (count($confvers) != 0) {
+	for ($c = count($confvers)-1; $c >= 0; $c--) {
+		$conf_history .= backup_info($confvers[$c], $c+1);
+		$conf_history .= "\n";
+	}
+	defCmdT("Config History", "echo " . escapeshellarg($conf_history));
+}
+
+/* Logs */
+function status_add_log($name, $logfile, $number = 1000) {
+	if (!file_exists($logfile)) {
+		return;
+	}
+	$descr = "Log-{$name}";
+	$tail = '';
+	if ($number != "all") {
+		$descr .= "-Last {$number} entries";
+		$tail = ' | tail -n ' . escapeshellarg($number);
+	}
+	defCmdT($descr, system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . $tail);
+}
+
+status_add_log("System", '/var/log/system.log');
+status_add_log("DHCP", '/var/log/dhcpd.log');
+status_add_log("Filter", '/var/log/filter.log');
+status_add_log("Gateways", '/var/log/gateways.log');
+status_add_log("IPsec", '/var/log/ipsec.log');
+status_add_log("L2TP", '/var/log/l2tps.log');
+status_add_log("NTP", '/var/log/ntpd.log');
+status_add_log("OpenVPN", '/var/log/openvpn.log');
+status_add_log("Captive Portal Authentication", '/var/log/portalauth.log');
+status_add_log("PPP", '/var/log/ppp.log');
+status_add_log("PPPoE Server", '/var/log/poes.log');
+status_add_log("DNS", '/var/log/resolver.log');
+status_add_log("Routing", '/var/log/routing.log');
+status_add_log("Wireless", '/var/log/wireless.log');
+status_add_log("PHP Errors", '/tmp/PHP_errors.log', 'all');
+
 defCmdT("OS-Message Buffer", "/sbin/dmesg -a");
 defCmdT("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 
 /* OS/Hardware Status */
-defCmdT("OS-sysctl values", "/sbin/sysctl -a");
+defCmdT("OS-sysctl values", "/sbin/sysctl -aq");
 defCmdT("OS-Kernel Environment", "/bin/kenv");
-defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
+defCmdT("OS-Kernel Memory Usage", "/usr/local/sbin/kmemusage.sh");
+defCmdT("OS-Installed Packages", "/usr/local/sbin/pkg-static info");
+defCmdT("OS-Package Manager Configuration", "/usr/local/sbin/pkg-static -vv");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
 
@@ -352,15 +441,17 @@ defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
-$pgtitle = array($g['product_name'], "Status");
+$pgtitle = array($g['product_label'], "Status");
+
+if (!$console):
 include("head.inc"); ?>
 
 <form action="status.php" method="post">
 
 <?php print_info_box(
-	gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting information from this page in public places (like mailing lists).") .
+	gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting information from this page in public places such as forum or social media sites.") .
 	'<br />' .
-	gettext("Common password fields in config.xml have been automatically redacted.") .
+	gettext("Common password and other private fields in config.xml have been automatically redacted.") .
 	'<br />' .
 	sprintf(gettext('When the page has finished loading, the output is stored in %1$s. It may be downloaded via scp or using this button: '), $output_file) .
 	' <button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">' .
@@ -372,17 +463,33 @@ include("head.inc"); ?>
 
 <?php print_info_box(get_firewall_info(), 'info', false);
 
-listCmds();
+if ($show_output) {
+	listCmds();
+} else {
+	print_info_box(gettext("Status output suppressed. Download archive to view."), 'info', false);
+}
+
+endif;
+
+if ($console) {
+	print(gettext("Gathering status data...") . "\n");
+	get_firewall_info();
+}
 execCmds();
 
 print(gettext("Saving output to archive..."));
 
 if (is_dir($output_path)) {
 	mwexec("/usr/bin/tar czpf " . escapeshellarg($output_file) . " -C " . escapeshellarg(dirname($output_path)) . " " . escapeshellarg(basename($output_path)));
-	unlink_if_exists("{$output_path}/*");
-	@rmdir($output_path);
+
+	if (!isset($_GET["nocleanup"])) {
+		unlink_if_exists("{$output_path}/*");
+		@rmdir($output_path);
+	}
 }
 
-print(gettext("Done."));
+print(gettext("Done.") . "\n");
 
-include("foot.inc");
+if (!$console) {
+	include("foot.inc");
+}

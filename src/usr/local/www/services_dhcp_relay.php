@@ -3,7 +3,9 @@
  * services_dhcp_relay.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Justin Ellison <justin@techadvise.com>
  * All rights reserved.
  *
@@ -38,7 +40,8 @@ if (empty($config['dhcrelay']['interface'])) {
 }
 
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
-$pconfig['server'] = $config['dhcrelay']['server'];
+$pconfig['server'] = isset($config['dhcrelay']['server']) ? $config['dhcrelay']['server'] : null;
+$pconfig['carpstatusvip'] = isset($config['dhcrelay']['carpstatusvip']) ? $config['dhcrelay']['carpstatusvip'] : 'none';
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -46,11 +49,25 @@ $iflist = array_intersect_key(
 		array_filter(
 			array_keys(get_configured_interface_with_descr()),
 			function($if) {
-				return is_ipaddr(get_interface_ip($if));
+				return (get_interface_ip($if) &&
+				    !is_pseudo_interface(convert_friendly_interface_to_real_interface_name($if)));
 			}
 		)
 	)
 );
+
+$carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
+       	get_configured_vip_list_with_descr('inet', VIP_CARP),
+	array_flip(
+		array_filter(
+			array_keys(get_configured_vip_list_with_descr('inet', VIP_CARP)),
+			function($if) {
+				return (get_interface_ip($if) &&
+				    !is_pseudo_interface(convert_friendly_interface_to_real_interface_name($if)));
+			}
+		)
+	)
+));
 
 /*   set the enabled flag which will tell us if DHCP server is enabled
  *   on any interface.   We will use this to disable dhcp-relay since
@@ -107,12 +124,20 @@ if ($_POST) {
 	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
+		init_config_arr(array('dhcrelay'));
 		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
-		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
+		if (isset($_POST['interface']) &&
+		    is_array($_POST['interface'])) {
+			$config['dhcrelay']['interface'] = implode(",",
+			    $_POST['interface']);
+		} else {
+			unset($config['dhcrelay']['interface']);
+		}
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
 		$config['dhcrelay']['server'] = $svrlist;
+		$config['dhcrelay']['carpstatusvip'] = $_POST['carpstatusvip'];
 
-		write_config();
+		write_config("DHCP Relay settings saved");
 
 		$changes_applied = true;
 		$retval = 0;
@@ -146,7 +171,7 @@ $section = new Form_Section('DHCP Relay Configuration');
 $section->addInput(new Form_Checkbox(
 	'enable',
 	'Enable',
-	'Enable DHCP relay on interface',
+	'Enable DHCP Relay on interface',
 	$pconfig['enable']
 ));
 
@@ -158,14 +183,22 @@ $section->addInput(new Form_Select(
 	true
 ))->setHelp('Interfaces without an IP address will not be shown.');
 
+$section->addInput(new Form_Select(
+	'carpstatusvip',
+	'*CARP Status VIP',
+	$pconfig['carpstatusvip'],
+	$carpiflist,
+))->setHelp('Used to determine the HA MASTER/BACKUP status. DHCP Relay will be stopped when the ' .
+	    'chosen VIP is in BACKUP status, and started in MASTER status.');
+
 $section->addInput(new Form_Checkbox(
 	'agentoption',
 	'',
 	'Append circuit ID and agent ID to requests',
 	$pconfig['agentoption']
 ))->setHelp(
-	'If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
-	$g['product_name']
+	'If this is checked, the DHCP Relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
+	$g['product_label']
 	);
 
 $counter = 0;
@@ -215,6 +248,7 @@ print $form;
 			}
 
 			hideCheckbox('agentoption', hide);
+			hideInput('carpstatusvip', hide);
 			hideClass('repeatable', hide);
 		}
 

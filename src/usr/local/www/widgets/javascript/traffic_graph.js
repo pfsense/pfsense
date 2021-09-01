@@ -2,7 +2,9 @@
  * traffic_graph.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +27,7 @@ function trafficshowDiv(incDiv,ifDescription,refreshIntervalSec,swapButtons) {
 		'<object data="graph.php?ifnum=' + incDiv + '&amp;ifname=' + ifDescription + '&amp;timeint=' + refreshIntervalSec + '&amp;initdelay=0" height="100%" width="100%">' +
 		'<param name="id" value="graph" />' +
 		'<param name="type" value="image/svg+xml" />' +
-		'<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />' +
+		'<param name="pluginspage" value="https://www.adobe.com/svg/viewer/install/auto" />' +
 		'</object>');
 	$('#' + selectedDiv).effect('blind',{mode:'show'},1000);
 	d = document;
@@ -58,4 +60,3 @@ function  trafficminimizeDiv(incDiv,swapButtons) {
 	}
 	document.traffic_graphs_widget_iform["shown[" + incDiv + "]"].value = "hide";
 }
-

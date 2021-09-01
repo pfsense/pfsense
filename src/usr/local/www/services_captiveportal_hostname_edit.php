@@ -3,7 +3,9 @@
  * services_captiveportal_hostname_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +29,7 @@
 ##|-PRIV
 
 function allowedhostnamescmp($a, $b) {
-	return strcmp($a['hostname'], $b['hostname']);
+	return strcmp(idn_to_utf8($a['hostname']), idn_to_utf8($b['hostname']));
 }
 
 function allowedhostnames_sort() {
@@ -54,11 +56,9 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
+$a_cp = &$config['captiveportal'];
+$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed Hostnames"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_hostname.php?zone=" . $cpzone, "@self");
@@ -66,16 +66,9 @@ $shortcut_section = "captiveportal";
 
 $id = $_REQUEST['id'];
 
-
-if (!is_array($a_cp[$cpzone]['allowedhostname'])) {
-	$a_cp[$cpzone]['allowedhostname'] = array();
-}
-
-$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
-
 if (isset($id) && $a_allowedhostnames[$id]) {
 	$pconfig['zone'] = $a_allowedhostnames[$id]['zone'];
-	$pconfig['hostname'] = $a_allowedhostnames[$id]['hostname'];
+	$pconfig['hostname'] = idn_to_utf8($a_allowedhostnames[$id]['hostname']);
 	$pconfig['sn'] = $a_allowedhostnames[$id]['sn'];
 	$pconfig['dir'] = $a_allowedhostnames[$id]['dir'];
 	$pconfig['bw_up'] = $a_allowedhostnames[$id]['bw_up'];
@@ -86,6 +79,7 @@ if (isset($id) && $a_allowedhostnames[$id]) {
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
+	$_POST['hostname'] = idn_to_ascii($_POST['hostname']);
 
 	/* input validation */
 	$reqdfields = explode(" ", "hostname");
@@ -94,7 +88,7 @@ if ($_POST['save']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) {
-		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), $_POST['hostname']);
+		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), idn_to_utf8($_POST['hostname']));
 	}
 
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up'])) {
@@ -110,7 +104,7 @@ if ($_POST['save']) {
 		}
 
 		if ($ipent['hostname'] == $_POST['hostname']) {
-			$input_errors[] = sprintf(gettext("Hostname [%s] already allowed."), $_POST['hostname']) ;
+			$input_errors[] = sprintf(gettext("Hostname [%s] already allowed."), idn_to_utf8($_POST['hostname'])) ;
 			break ;
 		}
 	}
@@ -135,7 +129,7 @@ if ($_POST['save']) {
 
 		allowedhostnames_sort();
 
-		write_config();
+		write_config("Captive portal allowed hostnames added");
 
 		$rules = captiveportal_allowedhostname_configure();
 		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
@@ -204,7 +198,7 @@ $section->addInput(new Form_Input(
 	$pconfig['bw_down']
 ))->setHelp('Enter a download limit to be enforced on this Hostname in Kbit/s');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
@@ -212,7 +206,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_allowedhostnames[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

@@ -3,7 +3,9 @@
  * services_checkip_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,10 +30,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['checkipservices']['checkipservice'])) {
-	$config['checkipservices']['checkipservice'] = array();
-}
-
+init_config_arr(array('checkipservices', 'checkipservice'));
 $a_checkip = &$config['checkipservices']['checkipservice'];
 
 if (is_numericint($_REQUEST['id'])) {
@@ -140,7 +139,8 @@ $section->addInput(new Form_Input(
 	'username',
 	'User name',
 	'text',
-	$pconfig['username']
+	$pconfig['username'],
+	['autocomplete' => 'new-password']
 ));
 
 $section->addPassword(new Form_Input(
@@ -152,8 +152,8 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'verifysslpeer',
-	'Verify SSL Peer',
-	'Verify SSL Peer',
+	'Verify SSL/TLS Peer',
+	'Verify SSL/TLS Peer',
 	$pconfig['verifysslpeer']
 ));
 
@@ -165,7 +165,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_checkip[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

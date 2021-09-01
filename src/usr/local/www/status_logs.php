@@ -3,7 +3,9 @@
  * status_logs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -42,14 +44,14 @@ $allowed_logs = array(
 		    "shortcut" => ""),
 	"dhcpd" => array("name" => gettext("DHCP"),
 		    "shortcut" => "dhcp"),
+	"auth" => array("name" => gettext("General"),
+		    "shortcut" => ""),
 	"portalauth" => array("name" => gettext("Captive Portal Auth"),
 		    "shortcut" => "captiveportal"),
 	"ipsec" => array("name" => gettext("IPsec"),
 		    "shortcut" => "ipsec"),
 	"ppp" => array("name" => gettext("PPP"),
 		    "shortcut" => ""),
-	"relayd" => array("name" => gettext("Load Balancer"),
-		    "shortcut" => "relayd"),
 	"openvpn" => array("name" => gettext("OpenVPN"),
 		    "shortcut" => "openvpn"),
 	"ntpd" => array("name" => gettext("NTP"),
@@ -62,6 +64,14 @@ $allowed_logs = array(
 		    "shortcut" => "resolver"),
 	"wireless" => array("name" => gettext("Wireless"),
 		    "shortcut" => "wireless"),
+	"nginx" => array("name" => gettext("GUI Service"),
+		    "shortcut" => ""),
+	"dmesg.boot" => array("name" => gettext("OS Boot"),
+		    "shortcut" => ""),
+	"utx" => array("name" => gettext("OS User Events"),
+		    "shortcut" => ""),
+	"userlog" => array("name" => gettext("OS Account Changes"),
+		    "shortcut" => ""),
 );
 
 // The logs to display are specified in a REQUEST argument. Default to 'system' logs
@@ -92,13 +102,21 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless'))) {
+if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot'))) {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("System"), $allowed_logs[$logfile]["name"]);
+	$pglinks = array("", "status_logs.php", "status_logs.php", "@self");
+} elseif (in_array($logfile, array('auth', 'portalauth', 'utx', 'userlog'))) {
+	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Authentication"), $allowed_logs[$logfile]["name"]);
 	$pglinks = array("", "status_logs.php", "status_logs.php", "@self");
 } else {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), $allowed_logs[$logfile]["name"]);
 	$pglinks = array("", "status_logs.php", "@self");
 }
+
+if (in_array($logfile, array('userlog', 'dmesg.boot'))) {
+	$rawfilter = true;
+}
+
 include("head.inc");
 
 if ($changes_applied) {
@@ -109,33 +127,50 @@ if ($changes_applied) {
 // Tab Array
 tab_array_logs_common();
 
-
 // Manage Log - Section/Form
 if ($system_logs_manage_log_form_hidden) {
 	manage_log_section();
 }
 
-
 // Filter Section/Form - System
 filter_form_system();
-
-
-// Now the forms are complete we can draw the log table and its controls
+if (($logfile == 'resolver') || ($logfile == 'system')) {
+	$inverse = array("ppp");
+} else {
+	$inverse = null;
+}
 if (!$rawfilter) {
 	system_log_filter();
+}
+
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-<?php
-	print(system_log_table_panel_title());
-?>
+<?php print(system_log_table_panel_title()); ?>
 		</h2>
 	</div>
 	<div class="panel-body">
-	   <div class="table-responsive">
+	    <div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+<?php if ($logfile == 'utx'): ?>
+			<thead>
+				<tr class="text-nowrap">
+					<th><?=gettext("Login Time")?></th>
+					<th><?=gettext("Duration")?></th>
+					<th><?=gettext("TTY")?></th>
+					<th style="width:100%"><?=gettext("User/Message")?></th>
+				</tr>
+			</thead>
+<?php elseif ($rawfilter): ?>
+			<thead>
+				<tr class="text-nowrap">
+					<th><?=gettext("Time")?></th>
+					<th style="width:100%"><?=gettext("Message")?></th>
+				</tr>
+			</thead>
+<?php else: ?>
 			<thead>
 				<tr class="text-nowrap">
 					<th><?=gettext("Time")?></th>
@@ -144,10 +179,11 @@ if (!$rawfilter) {
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>
 			</thead>
+<?php endif; ?>
+
 			<tbody>
-<?php
-	foreach ($filterlog as $filterent) {
-?>
+<?php if (!$rawfilter): ?>
+<?php	foreach ($filterlog as $filterent): ?>
 				<tr class="text-nowrap">
 					<td>
 						<?=htmlspecialchars($filterent['time'])?>
@@ -162,51 +198,13 @@ if (!$rawfilter) {
 						<?=htmlspecialchars($filterent['message'])?>
 					</td>
 				</tr>
-<?php
-	} // e-o-foreach
-?>
+<?php	endforeach; ?>
+<?php else:
+	system_log_filter(); ?>
+<?php endif; ?>
 			</tbody>
 		</table>
-<?php
-	if (count($filterlog) == 0) {
-		print_info_box(gettext('No logs to display.'));
-	}
-?>
-		</div>
-	</div>
-</div>
-<?php
-} else {
-?>
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h2 class="panel-title">
-<?php
-	print(system_log_table_panel_title());
-?>
-		</h2>
-	</div>
-	<div class="table table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr class="text-nowrap">
-					<th><?=gettext("Time")?></th>
-					<th style="width:100%"><?=gettext("Message")?></th>
-				</tr>
-			</thead>
-			<tbody>
-<?php
-	if (($logfile == 'resolver') || ($logfile == 'system')) {
-		$inverse = array("ppp");
-	} else {
-		$inverse = null;
-	}
-
-	system_log_filter();
-?>
-			</tbody>
-		</table>
-
+<?php if ($rawfilter): ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -214,16 +212,18 @@ events.push(function() {
 });
 //]]>
 </script>
-
+<?php else:
+	$rows = count($filterlog); ?>
+<?php endif; ?>
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display.'));
 	}
 ?>
+		</div>
 	</div>
 </div>
 <?php
-}
 
 # Manage Log - Section/Form
 if (!$system_logs_manage_log_form_hidden) {

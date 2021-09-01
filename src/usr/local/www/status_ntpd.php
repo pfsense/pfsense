@@ -3,7 +3,9 @@
  * status_ntpd.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -33,14 +35,24 @@
 
 require_once("guiconfig.inc");
 
-if (!isset($config['ntpd']['noquery'])) {
+$allow_query = !isset($config['ntpd']['noquery']);
+if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
+	foreach ($config['ntpd']['restrictions']['row'] as $v) {
+		if (ip_in_subnet('127.0.0.1', "{$v['acl_network']}/{$v['mask']}") || 
+		    ip_in_subnet('::1', "{$v['acl_network']}/{$v['mask']}")) {
+			$allow_query = !isset($v['noquery']);
+		}
+	}
+}
+
+if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
 	} else {
 		$inet_version = " -4";
 	}
 
-	exec("/usr/local/sbin/ntpq -pn $inet_version | /usr/bin/tail +3", $ntpq_output);
+	exec('/usr/local/sbin/ntpq -pnw ' . $inet_version . ' | /usr/bin/tail +3 | /usr/bin/awk -v RS= \'{gsub(/\n[[:space:]][[:space:]]+/," ")}1\'', $ntpq_output);
 
 	$ntpq_servers = array();
 	foreach ($ntpq_output as $line) {
@@ -106,9 +118,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[3], 2);
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
 				$gps_lon_min = substr($gps_vars[5], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[4];
 				$gps_lon_dir = $gps_vars[6];
@@ -119,9 +131,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[2], 2);
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
 				$gps_lon_min = substr($gps_vars[4], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
@@ -135,9 +147,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[1], 2);
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
 				$gps_lon_min = substr($gps_vars[3], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[2];
 				$gps_lon_dir = $gps_vars[4];
@@ -148,9 +160,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[6], 2);
 				$gps_lon_deg = substr($gps_vars[8], 0, 3);
 				$gps_lon_min = substr($gps_vars[8], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[7] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[9] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[7];
 				$gps_lon_dir = $gps_vars[9];
@@ -192,10 +204,15 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $config, $ntpq_servers;
+	global $config, $ntpq_servers, $allow_query;
 
-	if (isset($config['ntpd']['noquery'])):
-
+	if ($config['ntpd']['enable'] == 'disabled'):
+		print("<tr>\n");
+		print('<td class="warning" colspan="11">');
+		printf(gettext('NTP Server is disabled'));
+		print("</td>\n");
+		print("</tr>\n");
+	elseif (!$allow_query):
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
 		printf(gettext('Statistics unavailable because ntpq and ntpdc queries are disabled in the %1$sNTP service settings%2$s'), '<a href="services_ntpd.php">', '</a>');
@@ -276,7 +293,7 @@ function print_gps() {
 
 	print("</tr>\n");
 	print("<tr>\n");
-	print('<td colspan="' . $gps_goo_lnk . '"><a target="_gmaps" href="http://maps.google.com/?q=' . $gps_lat . ',' . $gps_lon . '">' . gettext("Google Maps Link") . '</a></td>');
+	print('<td colspan="' . $gps_goo_lnk . '"><a target="_gmaps" href="https://maps.google.com/?q=' . $gps_lat . ',' . $gps_lon . '">' . gettext("Google Maps Link") . '</a></td>');
 	print("</tr>\n");
 }
 
@@ -298,11 +315,11 @@ include("head.inc");
 					<th><?=gettext("Stratum")?></th>
 					<th><?=gettext("Type")?></th>
 					<th><?=gettext("When")?></th>
-					<th><?=gettext("Poll")?></th>
+					<th><?=gettext("Poll (s)")?></th>
 					<th><?=gettext("Reach")?></th>
-					<th><?=gettext("Delay")?></th>
-					<th><?=gettext("Offset")?></th>
-					<th><?=gettext("Jitter")?></th>
+					<th><?=gettext("Delay (ms)")?></th>
+					<th><?=gettext("Offset (ms)")?></th>
+					<th><?=gettext("Jitter (ms)")?></th>
 				</tr>
 			</thead>
 			<tbody id="ntpbody">

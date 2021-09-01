@@ -33,9 +33,9 @@ get_ufsid() {
 		/usr/bin/cut -f2 -d'[' | \
 		/usr/bin/cut -f1 -d ']')
 	# " 51110eb0 f288b35d " (note it has more spaces than we need/want)
-	ID_PART1=$(echo ${ID_PARTS} | awk '{print $1}')
+	ID_PART1=$(echo ${ID_PARTS} | /usr/bin/awk '{print $1}')
 	# "51110eb0"
-	ID_PART2=$(echo ${ID_PARTS} | awk '{print $2}')
+	ID_PART2=$(echo ${ID_PARTS} | /usr/bin/awk '{print $2}')
 	# "f288b35d"
 
 	if [ -z "${ID_PART1}" -o -z  "${ID_PART2}" ]; then
@@ -57,7 +57,7 @@ get_ufsid() {
 
 find_fs_device() {
 	unset DEV
-	DEV=$(/usr/bin/grep -e "[[:blank:]]*${1}[[:blank:]]" ${FSTAB} | awk '{print $1}')
+	DEV=$(/usr/bin/grep -e "[[:blank:]]*${1}[[:blank:]]" ${FSTAB} | /usr/bin/awk '{print $1}')
 	DEV=${DEV##/dev/}
 }
 

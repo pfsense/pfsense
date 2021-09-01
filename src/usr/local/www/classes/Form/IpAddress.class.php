@@ -3,7 +3,9 @@
  * IpAddress.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -39,6 +41,7 @@ class Form_IpAddress extends Form_Input
 
 			case "V6":
 				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1';
+				break;
 
 			case "ALIASV4V6":
 				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or an alias';
@@ -67,7 +70,7 @@ class Form_IpAddress extends Form_Input
 	}
 
 	// $min is provided to allow for VPN masks in which '0' is valid
-	public function addMask($name, $value, $max = 128, $min = 1)
+	public function addMask($name, $value, $max = 128, $min = 1, $auto = true)
 	{
 		$this->_mask = new Form_Select(
 			$name,
@@ -77,6 +80,9 @@ class Form_IpAddress extends Form_Input
 		);
 
 		$this->_mask->addClass("pfIpMask");
+
+		if ($auto)
+			$this->_auto = true;
 
 		return $this;
 	}
@@ -96,10 +102,13 @@ class Form_IpAddress extends Form_Input
 		if (!isset($this->_mask))
 			return $input;
 
+		if (isset($this->_auto))
+			$pfipmask = " pfIpMask";
+
 		return <<<EOT
 		<div class="input-group">
 			$input
-			<span class="input-group-addon input-group-inbetween pfIpMask">/</span>
+			<span class="input-group-addon input-group-inbetween$pfipmask">/</span>
 			{$this->_mask}
 		</div>
 EOT;

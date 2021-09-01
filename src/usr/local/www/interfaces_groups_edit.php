@@ -3,7 +3,9 @@
  * interfaces_groups_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,10 +36,7 @@ $pgtitle = array(gettext("Interfaces"), gettext("Interface Groups"), gettext("Ed
 $pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
-if (!is_array($config['ifgroups']['ifgroupentry'])) {
-	$config['ifgroups']['ifgroupentry'] = array();
-}
-
+init_config_arr(array('ifgroups', 'ifgroupentry'));
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 $id = $_REQUEST['id'];
 
@@ -47,11 +46,17 @@ if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
 }
 
-$interface_list = get_configured_interface_with_descr();
+$interface_list = get_configured_interface_with_descr(true);
 $interface_list_disabled = get_configured_interface_with_descr(true);
 $ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
 $ifname_no_digit_text = gettext("The group name cannot end with a digit.");
 
+/* hide VTI interfaces, see https://redmine.pfsense.org/issues/11134 */
+foreach ($interface_list as $if => $ifdescr) {
+	if (substr(get_real_interface($if), 0, 5) == "ipsec") {
+		unset($interface_list[$if]);
+	}
+}
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -69,8 +74,8 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (strlen($_POST['ifname']) > 16) {
-			$input_errors[] = gettext("Group name cannot have more than 16 characters.");
+		if (strlen($_POST['ifname']) > 15) {
+			$input_errors[] = gettext("Group name cannot have more than 15 characters.");
 		}
 
 		if (preg_match("/([^a-zA-Z0-9_])+/", $_POST['ifname'])) {
@@ -180,7 +185,7 @@ if ($_POST['save']) {
 			$a_ifgroups[] = $ifgroupentry;
 		}
 
-		write_config();
+		write_config("Interface Group added");
 		interface_group_setup($ifgroupentry);
 
 		header("Location: interfaces_groups.php");
@@ -208,7 +213,7 @@ $section->addInput(new Form_Input(
 	'*Group Name',
 	'text',
 	$pconfig['ifname'],
-	['placeholder' => 'Group Name', 'maxlength' => "16"]
+	['placeholder' => 'Group Name', 'maxlength' => "15"]
 ))->setWidth(6)->setHelp($ifname_allowed_chars_text . " " . $ifname_no_digit_text);
 
 $section->addInput(new Form_Input(
@@ -229,7 +234,7 @@ $section->addInput(new Form_Select(
 ))->setWidth(6)->setHelp('NOTE: Rules for WAN type '.
 	'interfaces in groups do not contain the reply-to mechanism upon which '.
 	'Multi-WAN typically relies. %1$sMore Information%2$s',
-	'<a href="https://doc.pfsense.org/index.php/Interface_Groups">', '</a>');
+	'<a href="https://docs.netgate.com/pfsense/en/latest/interfaces/groups.html">', '</a>');
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$form->addGlobal(new Form_Input(

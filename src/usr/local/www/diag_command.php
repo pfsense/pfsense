@@ -3,7 +3,9 @@
  * diag_command.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
@@ -41,21 +43,7 @@ require_once("guiconfig.inc");
 
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
-	$fd = fopen($_POST['dlPath'], "rb");
-	header("Content-Type: application/octet-stream");
-	header("Content-Length: " . filesize($_POST['dlPath']));
-	header("Content-Disposition: attachment; filename=\"" .
-		trim(htmlentities(basename($_POST['dlPath']))) . "\"");
-	if (isset($_SERVER['HTTPS'])) {
-		header('Pragma: ');
-		header('Cache-Control: ');
-	} else {
-		header("Pragma: private");
-		header("Cache-Control: private, must-revalidate");
-	}
-
-	fpassthru($fd);
-	exit;
+	send_user_download('file', $_POST['dlPath']);
 } else if ($_POST['submit'] == "UPLOAD" && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], $g["tmp_path"] . "/" . $_FILES['ulfile']['name']);
 	$ulmsg = sprintf(gettext('Uploaded file to %s.'), $g["tmp_path"] . "/" . htmlentities($_FILES['ulfile']['name']));
@@ -255,13 +243,13 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 		</div>
 	</div>
 <?php
-	
+
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
 	if ($_POST['submit'] == "EXECPHP" && !isBlank($_POST['txtPHPCommand'])) {
 
-		safe_mkdir($g[tmp_path_user_code]);     //create if doesn't exist
-		$tmpfile = tempnam($g[tmp_path_user_code], "");
+		safe_mkdir($g['tmp_path_user_code']);     //create if doesn't exist
+		$tmpfile = tempnam($g['tmp_path_user_code'], "");
 		$phpcode = <<<END_FILE
 <?php
 require_once("/etc/inc/config.inc");
@@ -288,7 +276,7 @@ END_FILE;
 			/* Trap failed code - test both retval and output message
 			 * Typical messages as at 2.3.x:
 			 *   "Parse error: syntax error, ERR_DETAILS in FILE on line NN"
-			 *   "PHP ERROR: Type: NN, File: FILE, Line: NN, Message: ERR_DETAILS" 
+			 *   "PHP ERROR: Type: NN, File: FILE, Line: NN, Message: ERR_DETAILS"
 			 *   "Parse error: syntax error, unexpected end of file in FILE(NN) : eval()'d code on line 1" [the number in (..) is the error line]
 			*/
 			if ($matches[1] > $lineno_correction) {

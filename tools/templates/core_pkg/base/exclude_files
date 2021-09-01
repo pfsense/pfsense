@@ -4,7 +4,7 @@
 ./boot/loader.conf
 ./boot/loader.conf.local
 ./boot/loader.rc.local
-./boot/modules/bwi_v3_ucode.ko
+./boot/modules
 ./cf/conf/config.xml
 ./cf/conf/enableserial_force
 ./cf/conf/trigger_initial_wizard
@@ -25,6 +25,7 @@
 ./etc/pwd.db
 ./etc/rc
 ./etc/rc.conf
+./etc/rc.ramdisk_functions.sh
 ./etc/spwd.db
 ./etc/syslog.conf
 ./media
@@ -34,6 +35,7 @@
 ./sys
 ./tmp
 ./usr/lib/debug
+./usr/libexec/telnetd
 ./usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
 ./usr/local/share/locale/*/LC_MESSAGES/%%PRODUCT_NAME%%.po
 ./usr/local/share/%%PRODUCT_NAME%%/base.mtree

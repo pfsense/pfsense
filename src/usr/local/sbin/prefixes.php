@@ -3,7 +3,9 @@
  * prefixes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +21,9 @@
  * limitations under the License.
  */
 
+require_once('system.inc');
+require_once('util.inc');
+
 $leases_file = "/var/dhcpd/var/db/dhcpd6.leases";
 if (!file_exists($leases_file)) {
 	exit(1);
@@ -29,7 +34,7 @@ $fd = fopen($leases_file, 'r');
 $duid_arr = array();
 while (( $line = fgets($fd, 4096)) !== false) {
 	// echo "$line";
-	
+
 	/* Originally: preg_match("/^(ia-[np][ad])[ ]+\"(.*?)\"/i", $line, $duidmatch)
 	   That is: \"(.*?)\"
 	   , which is a non-greedy matching. However that does not go well with the legal
@@ -98,16 +103,15 @@ foreach ($duid_arr as $entry) {
 // echo "add routes\n";
 if (count($routes) > 0) {
 	foreach ($routes as $address => $prefix) {
-		echo "/sbin/route change -inet6 {$prefix} {$address} " .
-		    "|| /sbin/route add -inet6 {$prefix} {$address}\n";
+		route_add_or_change($prefix, $address);
 	}
 }
 
-/* get clog from dhcpd */
+/* get log from dhcpd */
 $dhcpdlogfile = "/var/log/dhcpd.log";
 $expires = array();
 if (file_exists($dhcpdlogfile)) {
-	$fd = popen("clog $dhcpdlogfile", 'r');
+	$fd = popen(system_log_get_cat() . ' ' . sort_related_log_files($dhcpdlogfile, true, true), 'r');
 	while (($line = fgets($fd)) !== false) {
 		//echo $line;
 		if (preg_match("/releases[ ]+prefix[ ]+([0-9a-f:]+\/[0-9]+)/i", $line, $expire)) {
@@ -123,7 +127,7 @@ if (file_exists($dhcpdlogfile)) {
 // echo "remove routes\n";
 if (count($expires) > 0) {
 	foreach ($expires as $prefix) {
-		echo "/sbin/route delete -inet6 {$prefix['prefix']}\n";
+		route_del($prefix['prefix']);
 	}
 }
 

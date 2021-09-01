@@ -4,7 +4,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
- * Copyright (c) 2010-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -159,10 +161,10 @@ function enable_rrd_graphing() {
 	$wireless = "-wireless.rrd";
 	$queues = "-queues.rrd";
 	$queuesdrop = "-queuedrops.rrd";
-	$spamd = "-spamd.rrd";
 	$proc = "-processor.rrd";
 	$mem = "-memory.rrd";
 	$mbuf = "-mbuf.rrd";
+	$sensors = "-sensors.rrd";
 	$cellular = "-cellular.rrd";
 	$vpnusers = "-vpnusers.rrd";
 	$captiveportalconcurrent = "-concurrent.rrd";
@@ -173,12 +175,12 @@ function enable_rrd_graphing() {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
 	$awk = "/usr/bin/awk";
+	$sed = "/usr/bin/sed";
 	$tar = "/usr/bin/tar";
 	$pfctl = "/sbin/pfctl";
 	$sysctl = "/sbin/sysctl";
 	$php = "/usr/local/bin/php-cgi";
 	$cpustats = "/usr/local/sbin/cpustats";
-	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
 	$captiveportal_gather = "/usr/local/bin/captiveportal_gather_stats.php";
 	$dhcpd_gather = "/usr/local/bin/dhcpd_gather_stats.php";
@@ -190,11 +192,11 @@ function enable_rrd_graphing() {
 	$rrdqueuesdropinterval = 60;
 	$rrdpacketsinterval = 60;
 	$rrdstatesinterval = 60;
-	$rrdspamdinterval = 60;
 	$rrdlbpoolinterval = 60;
 	$rrdprocinterval = 60;
 	$rrdmeminterval = 60;
 	$rrdmbufinterval = 60;
+	$rrdsensorsinterval = 60;
 	$rrdcellularinterval = 60;
 	$rrdvpninterval = 60;
 	$rrdcaptiveportalinterval = 60;
@@ -207,11 +209,11 @@ function enable_rrd_graphing() {
 	$queuesdropvalid = $rrdqueuesdropinterval * 2;
 	$packetsvalid = $rrdpacketsinterval * 2;
 	$statesvalid = $rrdstatesinterval*2;
-	$spamdvalid = $rrdspamdinterval * 2;
 	$lbpoolvalid = $rrdlbpoolinterval * 2;
 	$procvalid = $rrdlbpoolinterval * 2;
 	$memvalid = $rrdmeminterval * 2;
 	$mbufvalid = $rrdmbufinterval * 2;
+	$sensorsvalid = $rrdsensorsinterval * 2;
 	$cellularvalid = $rrdcellularinterval * 2;
 	$vpnvalid = $rrdvpninterval * 2;
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
@@ -392,12 +394,13 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= " sleep 0.2\n";
 				$rrdupdatesh .= " echo \"quit\"\n";
 				$rrdupdatesh .= "}\n";
-				$rrdupdatesh .= "OVPN=`list_current_users | nc -U {$g['varetc_path']}/openvpn/server{$vpnid}.sock | awk -F\",\" '/^CLIENT_LIST/ {print \$2}' | wc -l | awk '{print $1}'`\n";
+				$rrdupdatesh .= "OVPN=`list_current_users | /usr/bin/nc -U {$g['openvpn_base']}/server{$vpnid}/sock | /usr/bin/awk -F\",\" '/^CLIENT_LIST/ {print \$2}' | /usr/bin/wc -l | /usr/bin/awk '{print $1}'`\n";
 				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$vpnusers N:\${OVPN}\n";
 			}
 
 			/* QUEUES, set up the queues databases */
-			if ($altq_list_queues[$ifname]) {
+			if (($altq_list_queues[$ifname]) && 
+			    !empty($altq_list_queues[$ifname]->get_queue_list())) {
 				$altq =& $altq_list_queues[$ifname];
 				/* NOTE: Is it worth as its own function?! */
 				switch ($altq->GetBwscale()) {
@@ -415,7 +418,7 @@ function enable_rrd_graphing() {
 						$factor = 1;
 						break;
 				}
-				$qbandwidth = $altq->GetBandwidth() * $factor;
+				$qbandwidth = (int) $altq->GetBandwidth() * $factor;
 				if ($qbandwidth <= 0) {
 					$qbandwidth = 100 * 1000 * 1000; /* 100Mbit */
 				}
@@ -634,7 +637,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* the Memory stats gathering function. */
-		$rrdupdatesh .= "MEM=`$sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
+		$rrdupdatesh .= "MEM=`$sysctl -qn vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
 		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf ";
 		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n";
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";
@@ -677,15 +680,27 @@ function enable_rrd_graphing() {
 
 		/* End mbuf statistics */
 
-		/* SPAMD, set up the spamd rrd file */
-		if (isset($config['installedpackages']['spamdsettings']) &&
-		    $config['installedpackages']['spamdsettings']['config'][0]['enablerrd']) {
-			/* set up the spamd rrd file */
-			if (!file_exists("$rrddbpath$ifname$spamd")) {
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$spamd --step $rrdspamdinterval ";
-				$rrdcreate .= "DS:conn:GAUGE:$spamdvalid:0:10000 ";
-				$rrdcreate .= "DS:time:GAUGE:$spamdvalid:0:86400 ";
-				$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
+		/* CPU temperature */
+
+		$sensors_array = array();
+		$unknown = "";
+		$rrdupdateds = "";
+		$rrdsensors = "";
+		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc | /usr/bin/grep temperature | /usr/bin/cut -d':' -f1", $sensors_array);
+
+		if (!empty($sensors_array)) {
+			foreach ($sensors_array as $sensor) {
+				preg_match("/^(.+)\.(.+\..+)\.temperature/", $sensor, $sensor_match);
+				$sensor_name = str_replace(".", "_", $sensor_match[2]);
+				$rrdcreateds .= "DS:$sensor_name:GAUGE:$sensorsvalid:0:100 ";
+				$unknown .= ":U";
+				$rrddsname = strtoupper($sensor_name);
+				$rrdupdateds .= "$rrddsname=`$sysctl -qn $sensor | $sed 's/C//'`\n";
+				$rrdsensors .= ":\${$rrddsname}";
+			}
+			if (!file_exists("$rrddbpath$ifname$sensors")) {
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$sensors --step $rrdsensorsinterval ";
+				$rrdcreate .= $rrdcreateds;
 				$rrdcreate .= "RRA:MIN:0.5:5:720 ";
 				$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
 				$rrdcreate .= "RRA:MIN:0.5:1440:2284 ";
@@ -696,19 +711,24 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
 				$rrdcreate .= "RRA:MAX:0.5:5:720 ";
 				$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
-				$rrdcreate .= "RRA:MAX:0.5:1440:2284 ";
+				$rrdcreate .= "RRA:MAX:0.5:1440:2284";
 
 				create_new_rrd($rrdcreate);
 				unset($rrdcreate);
 			}
 
-			$rrdupdatesh .= "\n";
-			$rrdupdatesh .= "# polling spamd for connections and tarpitness \n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$spamd \\\n";
-			$rrdupdatesh .= "`$php -q $spamd_gather`\n";
+			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+			if (platform_booting()) {
+				mwexec("$rrdtool update $rrddbpath$ifname$sensors N$unknown");
+			}
 
+			/* the CPU temp gathering function. */
+
+			$rrdupdatesh .= $rrdupdateds;
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$sensors N$rrdsensors\n";
 		}
-		/* End System statistics */
+
+		/* End CPU temperature */
 
 		/* Captive Portal statistics, set up the rrd file */
 		if (is_array($config['captiveportal'])) {
@@ -795,7 +815,7 @@ function enable_rrd_graphing() {
 		/* End Captive Portal statistics */
 
 		/* NTP, set up the ntpd rrd file */
-		if (isset($config['ntpd']['statsgraph'])) {
+		if (isset($config['ntpd']['statsgraph']) && ($config['ntpd']['enable'] != 'disabled')) {
 			/* set up the ntpd rrd file */
 			if (!file_exists("$rrddbpath$ntpd")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ntpd --step $rrdntpdinterval ";
@@ -803,7 +823,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:sjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:cjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:wander:GAUGE:$ntpdvalid:0:1000 ";
-				$rrdcreate .= "DS:freq:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:freq:GAUGE:$ntpdvalid:-1000:1000 ";
 				$rrdcreate .= "DS:disp:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
 				$rrdcreate .= "RRA:MIN:0.5:5:720 ";

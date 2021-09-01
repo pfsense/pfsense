@@ -3,7 +3,9 @@
  * status_logs_filter_dynamic.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -33,7 +35,7 @@
 
 /* AJAX related routines */
 require_once("guiconfig.inc");
-require_once("filter_log.inc");
+require_once("syslog.inc");
 handle_ajax();
 
 
@@ -473,7 +475,7 @@ if ($tcpcnt > 0) {
 ?>
 <div class="infoblock">
 <?php
-	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags">' .
+	print_info_box('<a href="https://docs.netgate.com/pfsense/en/latest/firewall/configure.html#tcp-flags">' .
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.', 'info', false);
 ?>
 </div>

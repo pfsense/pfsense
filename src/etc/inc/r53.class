@@ -1,7 +1,7 @@
 <?php
 /**
 * r53.class for managing Amazon AWS Route53 Resources
-* 
+*
 * This is a simplified version of r53.class for trivial "dynDNS" operations
 * that integrates well with pfSense. Based on the original r53.class by
 * Dan Myers at  http://sourceforge.net/projects/php-r53/ .
@@ -48,7 +48,7 @@ class Route53
 {
 	protected $__accessKey; // AWS Access key
 	protected $__secretKey; // AWS Secret key
-	
+
 	/**
 	* Constructor
 	*
@@ -61,7 +61,7 @@ class Route53
 			$this->setAuth($accessKey, $secretKey);
 		}
 	}
-	
+
 	/**
 	* Set AWS access key and secret key
 	*
@@ -73,7 +73,7 @@ class Route53
 		$this->__accessKey = $accessKey;
 		$this->__secretKey = $secretKey;
 	}
-	
+
 	/**
 	* Return XML document for POST
 	*
@@ -95,10 +95,27 @@ class Route53
 		$xmlreq .= "</ResourceRecordSet>";
 		$xmlreq .= "</Change></Changes></ChangeBatch>";
 		$xmlreq .= "</ChangeResourceRecordSetsRequest>";
-			
+
 		return $xmlreq;
 	}
-	
+
+	public function getRequestBodyV6($fqdn, $ip, $ttl){
+		$xmlreq = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		$xmlreq .= "<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
+		$xmlreq .= "<ChangeBatch><Changes><Change>";
+		$xmlreq .= "<Action>UPSERT</Action>";
+		$xmlreq .= "<ResourceRecordSet>";
+		$xmlreq .= sprintf("<Name>%s</Name>", $fqdn);
+		$xmlreq .= "<Type>AAAA</Type>";
+		$xmlreq .= sprintf("<TTL>%d</TTL>", $ttl);
+		$xmlreq .= sprintf("<ResourceRecords><ResourceRecord><Value>%s</Value></ResourceRecord></ResourceRecords>",	$ip);
+		$xmlreq .= "</ResourceRecordSet>";
+		$xmlreq .= "</Change></Changes></ChangeBatch>";
+		$xmlreq .= "</ChangeResourceRecordSetsRequest>";
+
+		return $xmlreq;
+	}
+
 	/**
 	* Return API URL
 	*
@@ -110,8 +127,8 @@ class Route53
 	}
 
 	/**
-	* Return HTTP post headers 
-	* 
+	* Return HTTP post headers
+	*
 	* @param string zoneId Amazon Zone
 	* @param string regionId Amazon Region Code (e.g. us-east-1)
 	* @param string requestBodySHA256 SHA256 hash of the request body
@@ -128,11 +145,11 @@ class Route53
 
 		$signed_headers = "content-type;host;x-amz-date";
 
-		$canonical_request = sprintf("%s\n%s\n\n%s\n%s\n%s", 
+		$canonical_request = sprintf("%s\n%s\n\n%s\n%s\n%s",
 			"POST", $canonical_uri, $canonical_headers, $signed_headers, $requestBodySHA256);
 		$algorithm = "AWS4-HMAC-SHA256";
 		$credential_scope = sprintf("%s/%s/%s/%s", $date_stamp, $regionId, "route53", "aws4_request");
-		$string_to_sign = sprintf("%s\n%s\n%s\n%s", 
+		$string_to_sign = sprintf("%s\n%s\n%s\n%s",
 			$algorithm, $amz_date, $credential_scope, hash("sha256", $canonical_request));
 
 		$kSecret = sprintf("AWS4%s", $this->__secretKey);
@@ -152,4 +169,3 @@ class Route53
 		return $httphead;
 	}
 }
-

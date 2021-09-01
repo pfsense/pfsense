@@ -3,7 +3,9 @@
  * services_captiveportal_vouchers_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -41,27 +43,16 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+init_config_arr(array('voucher', $cpzone, 'roll'));
+$a_cp = &$config['captiveportal'];
+$a_roll = &$config['voucher'][$cpzone]['roll'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_vouchers.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-if (!is_array($config['voucher'])) {
-	$config['voucher'] = array();
-}
-
-if (!is_array($config['voucher'][$cpzone]['roll'])) {
-	$config['voucher'][$cpzone]['roll'] = array();
-}
-
-$a_roll = &$config['voucher'][$cpzone]['roll'];
 $id = $_REQUEST['id'];
-
 
 if (isset($id) && $a_roll[$id]) {
 	$pconfig['zone'] = $a_roll[$id]['zone'];
@@ -130,6 +121,17 @@ if ($_POST['save']) {
 			voucher_write_used_db($rollent['number'], $rollent['used']);
 			voucher_write_active_db($rollent['number'], array());	// create empty DB
 			voucher_log(LOG_INFO, sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
+
+			if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
+				$syncuser, $syncpass, $carp_loop)) {
+				$rpc_client = new pfsense_xmlrpc_client();
+				$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+				$rpc_client->set_noticefile("CaptivePortalVouchersSync");
+				$arguments = array('active_and_used_vouchers_bitmasks' => array($rollent['number'] => base64_decode($rollent['used'])),
+				'active_vouchers' => array($rollent['number'] => array()));
+
+				$rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'write_vouchers', 'zone' => $cpzone, 'arguments' => base64_encode(serialize($arguments))));
+			}
 		} else {
 			// existing roll has been modified but without changing the count
 			// read active and used DB from ramdisk and store it in XML config
@@ -146,6 +148,8 @@ if ($_POST['save']) {
 			}
 			$rollent['active'] = $db;
 		}
+		/* Flag this entry to be sync'd */
+		$rollent['lastsync'] = time();
 
 		unlock($voucherlck);
 
@@ -155,7 +159,7 @@ if ($_POST['save']) {
 			$a_roll[] = $rollent;
 		}
 
-		write_config();
+		write_config("Captive portal vouchers edited");
 
 		header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 		exit;
@@ -200,7 +204,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('Can be used to further identify this roll. Ignored by the system.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
@@ -208,7 +212,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_roll[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

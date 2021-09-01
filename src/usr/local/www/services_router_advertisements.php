@@ -3,7 +3,9 @@
  * services_router_advertisements.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -39,16 +41,6 @@ if (!$g['services_dhcp_server_enable']) {
 }
 
 $if = $_REQUEST['if'];
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
 
 if (!$_REQUEST['if']) {
 	$info_msg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
@@ -92,6 +84,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
+	$pconfig['radvd-dns'] = ($config['dhcpdv6'][$if]['radvd-dns'] != 'disabled') ? true : false;
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
 	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
@@ -130,7 +123,9 @@ $ramode_help = gettext('Select the Operating Mode for the Router Advertisement (
 	'<dt>' . gettext('Assisted') . 		 '</dt><dd>' . gettext('Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.') . '</dd>' .
 	'<dt>' . gettext('Stateless DHCP') . '</dt><dd>' . gettext('Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.') . '</dd>' .
 	'</dl>' .
-	gettext('It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.') .
+	sprintf(gettext('It is not required to activate DHCPv6 server on %s ' .
+	    'when set to "Managed", "Assisted" or "Stateless DHCP", it can ' .
+	    'be another host on the network.'), $g['product_label']) .
 	'</div>';
 
 if ($_POST['save']) {
@@ -185,7 +180,7 @@ if ($_POST['save']) {
 		if (!is_numericint($_POST['raminrtradvinterval'])) {
 			$input_errors[] = gettext("Minimum advertisement interval must be an integer.");
 		}
-		if ($_POST['raminrtradvinterval'] < "3") {
+		if ($_POST['raminrtradvinterval'] < 3) {
 			$input_errors[] = gettext("Minimum advertisement interval must be no less than 3.");
 		}
 		if ($_POST['ramaxrtradvinterval'] && $_POST['raminrtradvinterval'] > (0.75 * $_POST['ramaxrtradvinterval'])) {
@@ -196,15 +191,26 @@ if ($_POST['save']) {
 		if (!is_numericint($_POST['ramaxrtradvinterval'])) {
 			$input_errors[] = gettext("Maximum advertisement interval must be an integer.");
 		}
-		if ($_POST['ramaxrtradvinterval'] < "4" || $_POST['ramaxrtradvinterval'] > "1800") {
+		if ($_POST['ramaxrtradvinterval'] < 4 || $_POST['ramaxrtradvinterval'] > 1800) {
 			$input_errors[] = gettext("Maximum advertisement interval must be no less than 4 and no greater than 1800.");
 		}
 	}
-	if ($_POST['raadvdefaultlifetime'] && !is_numericint($_POST['raadvdefaultlifetime'])) {
+	if ($_POST['raadvdefaultlifetime'] && (($_POST['raadvdefaultlifetime'] < 1) || ($_POST['raadvdefaultlifetime'] > 9000))) {
 		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
+	}
+	if (($_POST['ravalidlifetime'] && $_POST['rapreferredlifetime'] &&
+	    ($_POST['ravalidlifetime'] < $_POST['rapreferredlifetime'])) ||
+	    ($_POST['ravalidlifetime'] && empty($_POST['rapreferredlifetime']) &&
+	    ($_POST['ravalidlifetime'] < 14400)) || (empty($_POST['ravalidlifetime']) &&
+	    $_POST['rapreferredlifetime'] && ($_POST['rapreferredlifetime'] > 86400))) { 
+		$input_errors[] = gettext("Default valid lifetime must be greater than Default preferred lifetime.");
 	}
 
 	if (!$input_errors) {
+		if (!is_array($config['dhcpdv6'])) {
+			$config['dhcpdv6'] = array();
+		}
+
 		if (!is_array($config['dhcpdv6'][$if])) {
 			$config['dhcpdv6'][$if] = array();
 		}
@@ -231,6 +237,7 @@ if ($_POST['save']) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns3'];
 		}
 
+		$config['dhcpdv6'][$if]['radvd-dns'] = ($_POST['radvd-dns']) ? "enabled" : "disabled";
 		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
 
 		if (count($pconfig['subnets'])) {
@@ -239,7 +246,7 @@ if ($_POST['save']) {
 			unset($config['dhcpdv6'][$if]['subnets']);
 		}
 
-		write_config();
+		write_config("Router Advertisements settings saved");
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= services_radvd_configure();
@@ -255,6 +262,7 @@ if (!empty($if) && isset($iflist[$if])) {
 }
 $pgtitle[] = gettext("Router Advertisements");
 $pglinks[] = "@self";
+$shortcut_section = "radvd";
 
 include("head.inc");
 
@@ -354,7 +362,7 @@ $section->addInput(new Form_Input(
 	'Default valid lifetime',
 	'number',
 	$pconfig['ravalidlifetime'],
-	['min' => 1, 'max' => 655350]
+	['min' => 1, 'max' => 655350, 'placeholder' => 86400]
 ))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.%1$s' .
 'The default is 86400 seconds.', '<br />');
 
@@ -362,7 +370,8 @@ $section->addInput(new Form_Input(
 	'rapreferredlifetime',
 	'Default preferred lifetime',
 	'text',
-	$pconfig['rapreferredlifetime']
+	$pconfig['rapreferredlifetime'],
+	['placeholder' => 14400]
 ))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
 			'The default is 14400 seconds.', '<br />');
 
@@ -371,24 +380,37 @@ $section->addInput(new Form_Input(
 	'Minimum RA interval',
 	'number',
 	$pconfig['raminrtradvinterval'],
-	['min' => 3, 'max' => 1350]
-))->setHelp('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.');
+	['min' => 3, 'max' => 1350, 'placeholder' => 200]
+))->setHelp('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
+'The default is 200 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'ramaxrtradvinterval',
 	'Maximum RA interval',
 	'number',
 	$pconfig['ramaxrtradvinterval'],
-	['min' => 4, 'max' => 1800]
-))->setHelp('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.');
+	['min' => 4, 'max' => 1800, 'placeholder' => 600]
+))->setHelp('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
+'The default is 600 seconds.', '<br />');
+
+if (isset($pconfig['raadvdefaultlifetime']) &&
+    is_numeric($pconfig['raadvdefaultlifetime'])) {
+	$raadvdefaultlifetime = $pconfig['raadvdefaultlifetime'];
+} elseif (isset($pconfig['ramaxrtradvinterval']) &&
+    is_numeric($pconfig['ramaxrtradvinterval'])) {
+	$raadvdefaultlifetime = $pconfig['ramaxrtradvinterval'] * 3;
+} else {
+	$raadvdefaultlifetime = 1800;
+}	
 
 $section->addInput(new Form_Input(
 	'raadvdefaultlifetime',
 	'Router lifetime',
 	'number',
 	$pconfig['raadvdefaultlifetime'],
-	['min' => 1, 'max' => 9000]
-))->setHelp('The lifetime associated with the default router in seconds.');
+	['min' => 1, 'max' => 9000, 'placeholder' => $raadvdefaultlifetime]
+))->setHelp('The lifetime associated with the default router in seconds.%1$s' .
+'The default is 3 * Maximum RA interval seconds.', '<br />');
 
 $section->addInput(new Form_StaticText(
 	'RA Subnets',
@@ -458,13 +480,21 @@ $section->addInput(new Form_Input(
 ))->setHelp('The RA server can optionally provide a domain search list. Use the semicolon character as separator.');
 
 $section->addInput(new Form_Checkbox(
+	'radvd-dns',
+	null,
+	'Provide DNS configuration via radvd',
+	$pconfig['radvd-dns']
+))->setHelp('Unchecking this box disables the RDNSS/DNSSL options in /var/etc/radvd.conf. ' .
+			'Use with caution, as the resulting behavior may violate some RFCs.');
+
+$section->addInput(new Form_Checkbox(
 	'rasamednsasdhcp6',
 	'Settings',
 	'Use same settings as DHCPv6 server',
 	$pconfig['rasamednsasdhcp6']
 ));
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'if',
 	null,
 	'hidden',
@@ -483,7 +513,7 @@ events.push(function() {
 	checkLastRow();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
 
 	$('#radns1, #radns2, #radns3').autocomplete({
 		source: addressarray

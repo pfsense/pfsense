@@ -3,7 +3,9 @@
  * status_logs_filter.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -251,6 +253,20 @@ if (!$rawfilter) {
 <?php
 		if ($filterent['proto'] == "TCP") {
 			$filterent['proto'] .= ":{$filterent['tcpflags']}";
+		} elseif ($filterent['protoid'] == '112') {
+			$carp_details = array();
+			if (strlen($filterent['vhid'])) {
+				$carp_details[] = $filterent['vhid'];
+			}
+			if (strlen($filterent['advskew'])) {
+				$carp_details[] = $filterent['advskew'];
+			}
+			if (strlen($filterent['advbase'])) {
+				$carp_details[] = $filterent['advbase'];
+			}
+			if (!empty($carp_details)) {
+				$filterent['proto'] .= " " . implode("/", $carp_details);
+			}
 		}
 ?>
 					<td>
@@ -327,7 +343,7 @@ events.push(function() {
 
 <div class="infoblock">
 <?php
-print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags">' .
+print_info_box('<a href="https://docs.netgate.com/pfsense/en/latest/firewall/configure.html#tcp-flags">' .
 	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.' . '<br />' .
 	'<i class="fa fa-minus-square-o icon-primary"></i> = ' . gettext('Add to block list') . ', <i class="fa fa-plus-square-o icon-primary"></i> = ' . gettext('Pass traffic') . ', <i class="fa fa-info icon-primary"></i> = ' . gettext('Resolve'), 'info', false);
 ?>

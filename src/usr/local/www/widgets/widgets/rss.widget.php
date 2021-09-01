@@ -3,7 +3,9 @@
  * rss.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +20,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-$nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
@@ -127,7 +127,7 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/rss.widget.php" method="post" class="form-horizontal">
-	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+	<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
 		<label for="rssfeed" class="col-sm-4 control-label"><?=gettext('Feeds')?></label>

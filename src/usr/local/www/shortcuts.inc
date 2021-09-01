@@ -3,7 +3,9 @@
  * shortcuts.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +22,7 @@
  */
 
 // On the page, add in like so:
-//   $shortcut_section = "relayd";
+//   $shortcut_section = "ipsec";
 
 $shortcuts = array();
 
@@ -111,6 +113,13 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 				$link = $shortcuts[$shortcut_section]['status'];
 			}
 			break;
+		case "captiveportal-vouchers":
+			if (!empty($zone)) {
+				$link = "status_captiveportal_vouchers.php?zone={$zone}";
+			} else {
+				$link = $shortcuts[$shortcut_section]['status'];
+			}
+			break;
 		default:
 			$link = $shortcuts[$shortcut_section]['status'];
 			break;
@@ -146,18 +155,6 @@ if (is_dir("/usr/local/pkg/shortcuts")) {
 	}
 }
 
-$shortcuts['relayd'] = array();
-$shortcuts['relayd']['main'] = "load_balancer_pool.php";
-$shortcuts['relayd']['log'] = "status_logs.php?logfile=relayd";
-$shortcuts['relayd']['status'] = "status_lb_pool.php";
-$shortcuts['relayd']['service'] = "relayd";
-
-$shortcuts['relayd-virtualservers'] = array();
-$shortcuts['relayd-virtualservers']['main'] = "load_balancer_virtual_server.php";
-$shortcuts['relayd-virtualservers']['log'] = "status_logs.php?logfile=relayd";
-$shortcuts['relayd-virtualservers']['status'] = "status_lb_vs.php";
-$shortcuts['relayd-virtualservers']['service'] = "relayd";
-
 $shortcuts['captiveportal'] = array();
 $shortcuts['captiveportal']['main'] = "services_captiveportal_zones.php";
 $shortcuts['captiveportal']['log'] = "status_logs.php?logfile=portalauth";
@@ -179,7 +176,12 @@ $shortcuts['dhcp6'] = array();
 $shortcuts['dhcp6']['main'] = "services_dhcpv6.php";
 $shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
+$shortcuts['dhcp6']['service'] = "dhcpd";
 
+$shortcuts['radvd'] = array();
+$shortcuts['radvd']['main'] = "services_router_advertisements.php";
+$shortcuts['radvd']['log'] = "status_logs.php?logfile=routing";
+$shortcuts['radvd']['service'] = "radvd";
 
 $shortcuts['ipsec'] = array();
 $shortcuts['ipsec']['main'] = "vpn_ipsec.php";
@@ -235,6 +237,7 @@ $shortcuts['resolver'] = array();
 $shortcuts['resolver']['main'] = "services_unbound.php";
 $shortcuts['resolver']['log'] = "status_logs.php?logfile=resolver";
 $shortcuts['resolver']['service'] = "unbound";
+$shortcuts['resolver']['status'] = "status_unbound.php";
 
 $shortcuts['wireless'] = array();
 $shortcuts['wireless']['main'] = "interfaces_wireless.php";
@@ -275,4 +278,5 @@ $shortcuts['authentication']['main'] = "system_authservers.php";
 $shortcuts['aliases'] = array();
 $shortcuts['aliases']['main'] = "firewall_aliases.php";
 $shortcuts['aliases']['status'] = "diag_tables.php";
+
 ?>

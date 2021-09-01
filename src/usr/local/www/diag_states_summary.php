@@ -3,7 +3,9 @@
  * diag_states_summary.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -125,7 +127,7 @@ function build_port_info($portarr, $proto) {
 		}
 		$ports[] = "{$port}: {$count}";
 	}
-	return implode($ports, ', ');
+	return implode(', ', $ports);
 }
 
 function print_summary_table($label, $iparr, $sort = TRUE) {
@@ -173,11 +175,16 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 <?php foreach ($ipinfo['protos'] as $proto => $protoinfo): ?>
 <?php if ($protocolCount > 1 && $i > 0): ?>
 							</tr><tr>
-<?php endif; ?>
+<?php endif;
+
+	$srscnt = is_array($protoinfo['srcports']) ? count($protoinfo['srcports']) : 0;
+	$dstcnt = is_array($protoinfo['dstports']) ? count($protoinfo['dstports']) : 0;
+
+?>
 							<td><?=$proto;?></td>
 							<td class="text-center" ><?=$protoinfo['seen'];?></td>
-							<td class="text-center" ><span title="<?=build_port_info($protoinfo['srcports'], $proto);?>"><?=count($protoinfo['srcports']);?></span></td>
-							<td class="text-center" ><span title="<?=build_port_info($protoinfo['dstports'], $proto);?>"><?=count($protoinfo['dstports']);?></span></td>
+							<td class="text-center" ><span title="<?=build_port_info($protoinfo['srcports'], $proto);?>"><?=$srccnt?></span></td>
+							<td class="text-center" ><span title="<?=build_port_info($protoinfo['dstports'], $proto);?>"><?=$dstcnt?></span></td>
 <?php $i++; endforeach; ?>
 						</tr>
 <?php endforeach; ?>

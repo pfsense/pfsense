@@ -3,7 +3,9 @@
 # pfSense-rc
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2013 BSD Perimeter
+# Copyright (c) 2013-2016 Electric Sheep Fencing
+# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -52,31 +54,52 @@ get_version ()
 
 get_version
 
-# Read product_name from $g, defaults to pfSense
-# Use php -n here because we are not ready to load extensions yet
-product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
-
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
 /etc/rc.dumpon
 
-# Setup ddb on all platforms.
-if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/${product}-ddb.conf
+if [ -e /root/force_growfs ]; then
+	/etc/rc.d/growfs onestart
 fi
+
+#
+# The file system needs to be unmounted to guarantee a clean operation of fsck.
+# Pending changes can keep the file system dirty until all the cached data is
+# flushed to the disk.
+#
+/sbin/mount -ur /
 
 fsck_forced_iterations=`/bin/kenv -q pfsense.fsck.force`
 if [ ! -z "${fsck_forced_iterations}" ]; then
 	echo "Forcing filesystem check (${fsck_forced_iterations} times)..."
 	while [ ${fsck_forced_iterations} -gt 0 ]; do
-		/sbin/fsck -y -t ufs
+		/sbin/fsck -fy -t ufs
 		fsck_forced_iterations=$((fsck_forced_iterations - 1))
 	done
 fi
 
-if [ -e /root/force_growfs ]; then
-	/etc/rc.d/growfs onestart
+fsck_fix_flag_file="/.fix_for_SA-19-10.ufs"
+
+# Apply fix for https://www.freebsd.org/security/advisories/FreeBSD-SA-19:10.ufs.asc
+unset fsck_fix_applied
+unset skip_fsck_fix
+unset fsck_fix_count
+if [ -f ${fsck_fix_flag_file} ]; then
+	if ! awk '{print $3}' /etc/fstab | grep -q ufs; then
+		echo "Fix for FreeBSD-SA-19:10.ufs is not needed in this system"
+		skip_fsck_fix=1
+	else
+		fsck_fix_count=$(cat ${fsck_fix_flag_file})
+		echo "Applying fix for FreeBSD-SA-19:10.ufs"
+		/sbin/fsck -t ufs -f -p -T ufs:-z >/dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			fsck_fix_applied=1
+		fi
+	fi
 fi
+
+# Set it to 0 if it's empty
+fsck_fix_count=${fsck_fix_count:-0}
 
 FSCK_ACTION_NEEDED=0
 /sbin/fsck -p
@@ -85,7 +108,7 @@ case $? in
 	echo "Filesystems are clean, continuing..."
 	echo "Mounting filesystems..."
 	;;
-8)
+8|16)
 	echo "Preen mode recommended running a check that will be performed now."
 	FSCK_ACTION_NEEDED=1
 	;;
@@ -97,14 +120,14 @@ esac
 
 if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
 	echo "WARNING: Trying to recover filesystem from inconsistency..."
-	/sbin/fsck -y -t ufs
+	/sbin/fsck -fy -t ufs
 fi
 
 /sbin/mount -a 2>/dev/null
 mount_rc=$?
 attempts=0
 while [ ${mount_rc} -ne 0 -a ${attempts} -lt 10 ]; do
-	/sbin/fsck -y -t ufs
+	/sbin/fsck -fy -t ufs
 	/sbin/mount -a 2>/dev/null
 	mount_rc=$?
 	attempts=$((attempts+1))
@@ -129,6 +152,11 @@ if /sbin/kldstat -qm zfs; then
 			/sbin/zfs set readonly=off $ZFSROOT
 		fi
 		/sbin/zfs mount -a
+		# If /bootpool is present, then there is an additional zfs pool to import
+		# See https://redmine.pfsense.org/issues/8063
+		if [ -d /bootpool ]; then
+			/sbin/zpool import -f bootpool
+		fi
 	fi
 fi
 
@@ -142,45 +170,47 @@ if [ -d "/conf" ]; then
 	fi
 fi
 
-USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+. /etc/rc.ramdisk_functions.sh
 
-unset MOVE_PKG_DATA
-# If use MFS var is disabled, move files back to place
-if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
-	MOVE_PKG_DATA=1
-	rm -rf /var/db/pkg 2>/dev/null
-	rm -rf /var/cache/pkg 2>/dev/null
-	mv -f /root/var/db/pkg /var/db
-	mv -f /root/var/cache/pkg /var/cache
-# If use MFS var is enabled, move files to a safe place
-elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
-	MOVE_PKG_DATA=1
-	rm -rf /root/var/db/pkg 2>/dev/null
-	rm -rf /root/var/cache/pkg 2>/dev/null
-	/bin/mkdir -p /root/var/db /root/var/cache
-	mv -f /var/db/pkg /root/var/db
-	mv -f /var/cache/pkg /root/var/cache
+# Check if RAM disks are enabled, store for repeated use
+if ramdisk_check_enabled; then
+	USE_RAMDISK=true
 fi
 
-# Mount /var and /tmp on ZFS filesystems when it's necessary
-if [ -n "${USE_ZFS}" -a "${USE_MFS_TMPVAR}" = "true" ]; then
-	zfs list -H -o name,mountpoint |
-	    while read volume mountpoint; do
-		[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
-			&& continue
+# Relocate pkgdb based on desired RAM disk settings
+ramdisk_relocate_pkgdb_all
 
-		/sbin/zfs umount ${volume}
-	done
+# Dismount /tmp and /var on ZFS if using RAM disks and they are separate volumes
+if [ -n "${USE_ZFS}" -a -n "${USE_RAMDISK}" ]; then
+	ramdisk_fixup_zfs umount
 fi
 
-if [ "${USE_MFS_TMPVAR}" = "true" ]; then
+# Attempt to create and mount RAM disks
+if [ -n "${USE_RAMDISK}" ]; then
 	/etc/rc.embedded
 fi
 
-if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
-	/bin/mkdir -p /var/db /var/cache
-	ln -sf ../../root/var/db/pkg /var/db/pkg
-	ln -sf ../../root/var/cache/pkg /var/cache/pkg
+# If RAM disks are active, make symlinks for pkg database
+if [ -n "${USE_RAMDISK}" -o -n "${MOVE_PKG_DATA}" ]; then
+	ramdisk_link_pkgdb
+fi
+
+# If activating RAM disks failed, then undo some of the above actions
+if [ -n "${USE_RAMDISK}" ] && ramdisk_failed; then
+	ramdisk_fixup_zfs mount
+	ramdisk_relocate_pkgdb disk
+else
+	ramdisk_reset_status
+fi
+
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product_name=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+product_label=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_label pfSense)
+
+# Setup ddb on all platforms.
+if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+	/sbin/ddb /etc/${product_name}-ddb.conf
 fi
 
 # Restore contents of the RAM disk store
@@ -191,6 +221,7 @@ fi
 	|| mkdir /home
 
 /bin/rm -f /root/force_fsck
+/bin/rm -f /root/force_growfs
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
 
@@ -209,22 +240,37 @@ fi
 # Use php -n here because we are not ready to load extensions yet
 varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
-if [ "${USE_MFS_TMPVAR}" != "true" ]; then
-	/sbin/mdmfs -S -M -s 4m md $varrunpath
+if ! ramdisk_is_active; then
+	/sbin/mount -o rw,size=4m,mode=1777 -t tmpfs tmpfs $varrunpath
 fi
 
 echo
 cat /usr/local/share/pfSense/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version}${version_patch}..."
+echo "Welcome to ${product_label} ${version}${version_patch}..."
 echo
 
 /sbin/conscontrol mute off >/dev/null
 
-SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
-/sbin/swapon -a 2>/dev/null >/dev/null
-/etc/rc.savecore
+SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1 | /usr/bin/head -n 1`
+if [ -n "${SWAPDEVICE}" ]; then
+	/bin/rm -f /tmp/fstab.swap
+	if ! [ -c ${SWAPDEVICE} ]; then
+		# Keep the original device, in case it is special, such as encrypted+mirrored zfs swap
+		echo "${SWAPDEVICE}	none	swap	sw	0	0" >> /tmp/fstab.swap
+		# The swap device in fstab does not exist, look for other valid entries and update fstab
+		for SWAPLABEL in /dev/label/swap* /dev/mirror/swap*; do
+			if [ -c ${SWAPLABEL} ]; then
+				echo "${SWAPLABEL}	none	swap	sw	0	0" >> /tmp/fstab.swap
+			fi
+		done
+	else
+		/bin/cp /etc/fstab /tmp/fstab.swap
+	fi
+	/sbin/swapon -F /tmp/fstab.swap -a 2>/dev/null >/dev/null
+	/etc/rc.savecore
+fi
 
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
@@ -282,20 +328,10 @@ set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
 echo -n "."
-DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
-LOG_FILES="system filter dhcpd vpn poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"
-
-DEFAULT_LOG_FILE_SIZE=$(/usr/local/sbin/read_xml_tag.sh string syslog/logfilesize)
-DEFAULT_LOG_FILE_SIZE=${DEFAULT_LOG_FILE_SIZE:-"511488"}
+LOG_FILES="system filter dhcpd vpn poes l2tps openvpn auth portalauth ipsec ppp wireless nginx ntpd gateways resolver routing"
 
 for logfile in $LOG_FILES; do
-	if [ "$DISABLESYSLOGCLOG" = "true" ]; then
-		/usr/bin/touch /var/log/$logfile.log
-	else
-		if [ ! -f /var/log/$logfile.log ]; then
-			/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
-		fi
-	fi
+	/usr/bin/touch /var/log/${logfile}.log
 done
 
 # change permissions on newly created log files.
@@ -333,14 +369,19 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
+if [ -f /cf/conf/needs_package_sync ]; then
+	skip_packages=1
+fi
+
 # Second upgrade stage
-/usr/local/sbin/${product}-upgrade -y -b 2
+[ -z "$skip_packages" ] \
+	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 2
 
 # Copy default openssl config file
 [ -d /etc/ssl ] \
 	|| mkdir -p /etc/ssl
-[ -f /usr/local/share/${product}/ssl/openssl.cnf ] \
-	&& cp -f /usr/local/share/${product}/ssl/openssl.cnf /etc/ssl
+[ -f /usr/local/share/${product_name}/ssl/openssl.cnf ] \
+	&& cp -f /usr/local/share/${product_name}/ssl/openssl.cnf /etc/ssl
 mkdir -p /usr/local/openssl >/dev/null 2>&1
 ln -sf /etc/ssl/openssl.cnf \
 	/usr/local/openssl/openssl.cnf
@@ -368,9 +409,48 @@ echo -n "Launching the init system..."
 /usr/bin/touch $varrunpath/booting
 
 # Copy custom logo over if it's present
-if [ -d /usr/local/share/${product}/custom_logos ]; then
-	cp -f /usr/local/share/${product}/custom_logos/*png \
+if [ -d /usr/local/share/${product_name}/custom_logos ]; then
+	cp -f /usr/local/share/${product_name}/custom_logos/*svg \
 		/usr/local/www
+	cp -f /usr/local/share/${product_name}/custom_logos/*css \
+		/usr/local/www/css
+fi
+
+# Apply CPU microcode update
+[ -x /usr/local/etc/rc.d/microcode_update ] \
+	&& /usr/local/etc/rc.d/microcode_update onestart
+
+if [ -n "${skip_fsck_fix}" ]; then
+	rm -f ${fsck_fix_flag_file}
+elif [ -f ${fsck_fix_flag_file} ]; then
+	# fsck fix already applied
+	if [ -n "${fsck_fix_applied}" ]; then
+		touch /cf/conf/applied_fix_for_SA-19-10.ufs
+		rm -f ${fsck_fix_flag_file}
+	elif [ ${fsck_fix_count} -ge 3 ]; then
+		echo "ERROR: fsck fix for SA-19-10 failed to apply..."
+		sleep 5
+		rm -f ${fsck_fix_flag_file}
+	else
+		# if / is UFS, reroot instead of reboot
+		root_fstype=$(mount -p / | awk '{print $3}')
+		unset reroot
+		if [ "${root_fstype}" = "ufs" ]; then
+			reroot="-r"
+		fi
+
+		# fsck fix failed, increment escape counter to avoid infinite
+		# loop on a system with a broken filesystem
+		fsck_fix_count=$((fsck_fix_count+1))
+
+		echo "${fsck_fix_count}" > ${fsck_fix_flag_file}
+
+		# fsck binary was old and didn't have -z option, then reboot
+		# and run again
+		echo "fsck needs to run to fix SA-10-10. Rebooting..."
+		/etc/rc.reboot ${reroot}
+		exit 0
+	fi
 fi
 
 /etc/rc.bootup
@@ -385,13 +465,13 @@ echo -n "Starting CRON... "
 cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."
 
-# Start packages
-/usr/local/sbin/fcgicli -f /etc/rc.start_packages
-
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
 # Start ping handler every 240 seconds
 /usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
+
+# Start IPsec keep alive handler every 300 seconds
+/usr/local/bin/minicron 300 $varrunpath/ipsec_keepalive.pid /usr/local/bin/ipsec_keepalive.php
 
 # Start account expire handler every hour
 /usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
@@ -410,7 +490,12 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
-/usr/local/sbin/${product}-upgrade -y -b 3
+[ -z "$skip_packages" ] \
+	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 3
+
+# Start packages
+[ -z "$skip_packages" ] \
+	&& /usr/local/sbin/fcgicli -f /etc/rc.start_packages
 
 # Update pkg metadata
 /etc/rc.update_pkg_metadata now
@@ -419,9 +504,10 @@ fi
 get_version
 BUILDTIME=`cat /etc/version.buildtime`
 ARCH=`uname -m`
-echo "$product ${version}${version_patch} $ARCH $BUILDTIME"
+echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
 
 echo "Bootup complete"
+echo "Bootup complete" | /usr/bin/logger
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

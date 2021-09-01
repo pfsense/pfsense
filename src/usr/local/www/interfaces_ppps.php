@@ -3,7 +3,9 @@
  * interfaces_ppps.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -59,15 +61,20 @@ if ($_POST['act'] == "del") {
 		unset($config['ppps']['ppp'][$_POST['id']]['pppoe-reset-type']);
 		handle_pppoe_reset($config['ppps']['ppp'][$_POST['id']]);
 		unset($config['ppps']['ppp'][$_POST['id']]);
-		write_config();
+		write_config("PPP interface deleted");
 		header("Location: interfaces_ppps.php");
 		exit;
 	}
 }
 
+if (!is_array($config['ppps'])) {
+	$config['ppps'] = array();
+}
+
 if (!is_array($config['ppps']['ppp'])) {
 	$config['ppps']['ppp'] = array();
 }
+
 $a_ppps = $config['ppps']['ppp'];
 
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"));
@@ -105,7 +112,9 @@ display_top_tabs($tab_array);
 
 $i = 0;
 
-foreach ($a_ppps as $id => $ppp) {
+
+if (is_array($a_ppps)) {
+	foreach ($a_ppps as $id => $ppp) {
 ?>
 					<tr>
 						<td>
@@ -132,6 +141,7 @@ foreach ($a_ppps as $id => $ppp) {
 					</tr>
 <?php
 	$i++;
+	}
 }
 ?>
 				</tbody>
@@ -149,4 +159,3 @@ foreach ($a_ppps as $id => $ppp) {
 
 <?php
 include("foot.inc");
-

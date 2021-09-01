@@ -3,7 +3,9 @@
  * vpn_ipsec_mobile.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -37,29 +39,49 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
 $a_phase1 = &$config['ipsec']['phase1'];
 
-if (!is_array($config['ipsec']['client'])) {
-	$config['ipsec']['client'] = array();
-}
-
+init_config_arr(array('ipsec', 'client'));
 $a_client = &$config['ipsec']['client'];
+
+init_config_arr(array('system', 'group'));
+$a_group = &$config['system']['group'];
+
+$auth_groups = array();
+foreach ($config['system']['group'] as $group) {
+	if (isset($group['priv'])) {
+		foreach ($group['priv'] as $priv) {
+			if (($priv == 'page-all') || ($priv == 'user-ipsec-xauth-dialin')) {
+				if (!empty($group['description'])) {
+					$auth_groups[$group['name']] = $group['description'] . " (" . $group['name'] . ")";
+				} else {
+					$auth_groups[$group['name']] = $group['name'];
+				}
+				continue 2;
+			}
+		}
+	}
+}
 
 if (count($a_client)) {
 
 	$pconfig['enable'] = $a_client['enable'];
+	$pconfig['radiusaccounting'] = ($a_client['radiusaccounting'] == 'enabled');
+	$pconfig['radius_groups'] = $a_client['radius_groups'];
 
 	$pconfig['user_source'] = $a_client['user_source'];
 	$pconfig['group_source'] = $a_client['group_source'];
+	$pconfig['auth_groups'] = $a_client['auth_groups'];
 
 	$pconfig['pool_address'] = $a_client['pool_address'];
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
 	$pconfig['pool_address_v6'] = $a_client['pool_address_v6'];
 	$pconfig['pool_netbits_v6'] = $a_client['pool_netbits_v6'];
+	$pconfig['radius_retransmit_base'] = $a_client['radius_retransmit_base'];
+	$pconfig['radius_retransmit_timeout'] = $a_client['radius_retransmit_timeout'];
+	$pconfig['radius_retransmit_tries'] = $a_client['radius_retransmit_tries'];
+	$pconfig['radius_sockets'] = $a_client['radius_sockets'];
 	$pconfig['net_list'] = $a_client['net_list'];
 	$pconfig['save_passwd'] = $a_client['save_passwd'];
 	$pconfig['dns_domain'] = $a_client['dns_domain'];
@@ -72,18 +94,33 @@ if (count($a_client)) {
 	$pconfig['wins_server2'] = $a_client['wins_server2'];
 	$pconfig['pfs_group'] = $a_client['pfs_group'];
 	$pconfig['login_banner'] = $a_client['login_banner'];
-
+	$pconfig['radius_ip_priority_enable'] = $a_client['radius_ip_priority_enable'];
+	
 	if (isset($pconfig['enable'])) {
 		$pconfig['enable'] = true;
 	}
 
-	if ($pconfig['pool_address']&&$pconfig['pool_netbits']) {
+	if ($pconfig['group_source'] == 'enabled') {
+		$pconfig['group_source'] = true;
+		$pconfig['auth_groups'] = $a_client['auth_groups'];
+	}
+
+	if ($pconfig['pool_address'] && $pconfig['pool_netbits']) {
 		$pconfig['pool_enable'] = true;
 	} else {
 		$pconfig['pool_netbits'] = 24;
 	}
 
-	if ($pconfig['pool_address_v6']&&$pconfig['pool_netbits_v6']) {
+	if (isset($pconfig['radius_ip_priority_enable'])) {
+		$pconfig['radius_ip_priority_enable'] = true;
+	}
+
+	if ($pconfig['radius_retransmit_base'] || $pconfig['radius_retransmit_timeout'] ||
+	    $pconfig['radius_retransmit_tries'] || $pconfig['radius_sockets']) {
+		$pconfig['radius_advanced'] = true;
+	}
+
+	if ($pconfig['pool_address_v6'] && $pconfig['pool_netbits_v6']) {
 		$pconfig['pool_enable_v6'] = true;
 	} else {
 		$pconfig['pool_netbits_v6'] = 120;
@@ -105,11 +142,11 @@ if (count($a_client)) {
 		$pconfig['dns_split_enable'] = true;
 	}
 
-	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4']) {
+	if ($pconfig['dns_server1'] || $pconfig['dns_server2'] || $pconfig['dns_server3'] || $pconfig['dns_server4']) {
 		$pconfig['dns_server_enable'] = true;
 	}
 
-	if ($pconfig['wins_server1']||$pconfig['wins_server2']) {
+	if ($pconfig['wins_server1'] || $pconfig['wins_server2']) {
 		$pconfig['wins_server_enable'] = true;
 	}
 
@@ -129,7 +166,7 @@ if ($_REQUEST['create']) {
 if ($_POST['apply']) {
 	$retval = 0;
 	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
-	$ipsec_dynamic_hosts = vpn_ipsec_configure(true);
+	$ipsec_dynamic_hosts = ipsec_configure(true);
 	if ($ipsec_dynamic_hosts >= 0) {
 		if (is_subsystem_dirty('ipsec')) {
 			clear_subsystem_dirty('ipsec');
@@ -151,8 +188,8 @@ if ($_POST['save']) {
 
 	/* input validation */
 
-	$reqdfields = explode(" ", "user_source group_source");
-	$reqdfieldsn = array(gettext("User Authentication Source"), gettext("Group Authentication Source"));
+	$reqdfields = explode(" ", "user_source");
+	$reqdfieldsn = array(gettext("User Authentication Source"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -165,6 +202,18 @@ if ($_POST['save']) {
 		if (!is_ipaddrv6($pconfig['pool_address_v6'])) {
 			$input_errors[] = gettext("A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be specified.");
 		}
+	}
+	if ($pconfig['radius_retransmit_base'] && !is_numeric($pconfig['radius_retransmit_base'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Base.");
+	}
+	if ($pconfig['radius_retransmit_timeout'] && !is_numeric($pconfig['radius_retransmit_timeout'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Timeout.");
+	}
+	if ($pconfig['radius_retransmit_tries'] && !is_numericint($pconfig['radius_retransmit_tries'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Tries.");
+	}
+	if ($pconfig['radius_sockets'] && !is_numericint($pconfig['radius_sockets'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Sockets.");
 	}
 	if ($pconfig['dns_domain_enable']) {
 		if (!is_domain($pconfig['dns_domain'])) {
@@ -190,16 +239,20 @@ if ($_POST['save']) {
 		    !$pconfig['dns_server3'] && !$pconfig['dns_server4']) {
 			$input_errors[] = gettext("At least one DNS server must be specified to enable the DNS Server option.");
 		}
-		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1'])) {
+		if ($pconfig['dns_server1'] && (!is_ipaddr($pconfig['dns_server1']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server1']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #1' must be specified.");
 		}
-		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2'])) {
+		if ($pconfig['dns_server2'] && (!is_ipaddr($pconfig['dns_server2']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server2']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #2' must be specified.");
 		}
-		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3'])) {
+		if ($pconfig['dns_server3'] && (!is_ipaddr($pconfig['dns_server3']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server3']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #3' must be specified.");
 		}
-		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4'])) {
+		if ($pconfig['dns_server4'] && (!is_ipaddr($pconfig['dns_server4']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server4']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #4' must be specified.");
 		}
 	}
@@ -234,6 +287,13 @@ if ($_POST['save']) {
 		}
 	}
 
+	if ($pconfig['radius_ip_priority_enable']) {
+		if (!(isset($mobileph1) && ($mobileph1['authentication_method'] == 'eap-radius'))) {
+			$input_errors[] = gettext("RADIUS IP may only take prioriy when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
+			$pconfig['user_source'] = implode(',', $pconfig['user_source']);
+		}
+	}
+
 	if (!$input_errors) {
 		$client = array();
 
@@ -241,19 +301,47 @@ if ($_POST['save']) {
 			$client['enable'] = true;
 		}
 
+		$client['radiusaccounting'] = ($pconfig['radiusaccounting'] == 'yes') ? "enabled" : "disabled";
+
 		if (!empty($pconfig['user_source'])) {
 			$client['user_source'] = implode(",", $pconfig['user_source']);
+			$client['user_source'] = htmlentities($client['user_source'],ENT_COMPAT,'UTF-8');
 		}
-		$client['group_source'] = $pconfig['group_source'];
+
+		$client['group_source'] = ($pconfig['group_source'] == 'yes') ? "enabled" : "disabled";
+
+		if (($pconfig['group_source'] == 'yes') && !empty($pconfig['auth_groups'])) {
+			$client['auth_groups'] = implode(",", $pconfig['auth_groups']);
+		} else {
+			unset($client['group_source']);
+			unset($client['auth_groups']);
+		}
 
 		if ($pconfig['pool_enable']) {
 			$client['pool_address'] = $pconfig['pool_address'];
 			$client['pool_netbits'] = $pconfig['pool_netbits'];
 		}
 
+		if ($pconfig['radius_ip_priority_enable']) {
+			$client['radius_ip_priority_enable'] = true;
+		}
+
 		if ($pconfig['pool_enable_v6']) {
 			$client['pool_address_v6'] = $pconfig['pool_address_v6'];
 			$client['pool_netbits_v6'] = $pconfig['pool_netbits_v6'];
+		}
+
+		if ($pconfig['radius_retransmit_base']) {
+			$client['radius_retransmit_base'] = $pconfig['radius_retransmit_base'];
+		}
+		if ($pconfig['radius_retransmit_timeout']) {
+			$client['radius_retransmit_timeout'] = $pconfig['radius_retransmit_timeout'];
+		}
+		if ($pconfig['radius_retransmit_tries']) {
+			$client['radius_retransmit_tries'] = $pconfig['radius_retransmit_tries'];
+		}
+		if ($pconfig['radius_sockets']) {
+			$client['radius_sockets'] = $pconfig['radius_sockets'];
 		}
 
 		if ($pconfig['net_list_enable']) {
@@ -291,7 +379,6 @@ if ($_POST['save']) {
 		if ($pconfig['login_banner_enable']) {
 			$client['login_banner'] = $pconfig['login_banner'];
 		}
-
 		$a_client = $client;
 
 		write_config(gettext("Saved IPsec Mobile Clients configuration."));
@@ -331,6 +418,21 @@ include("head.inc");
 			} else {
 				document.iform.pool_address_v6.disabled = 1;
 				document.iform.pool_netbits_v6.disabled = 1;
+			}
+		}
+
+		function radius_advanced_change() {
+
+			if (document.iform.radius_advanced_enable.checked) {
+				document.iform.radius_retransmit_base.disabled = 0;
+				document.iform.radius_retransmit_timeout.disabled = 0;
+				document.iform.radius_retransmit_tries.disabled = 0;
+				document.iform.radius_sockets.disabled = 0;
+			} else {
+				document.iform.radius_retransmit_base.disabled = 1;
+				document.iform.radius_retransmit_timeout.disabled = 1;
+				document.iform.radius_retransmit_tries.disabled = 1;
+				document.iform.radius_sockets.disabled = 1;
 			}
 		}
 
@@ -442,27 +544,53 @@ $section = new Form_Section('Extended Authentication (Xauth)');
 
 $authServers = array();
 
-foreach (auth_get_authserver_list() as $authServer) {
-	$authServers[$authServer['name']] = $authServer['name']; // Value == name
+foreach (auth_get_authserver_list() as $key => $authServer) {
+	$authServers[$key] = $authServer['name']; // Value == name
 }
 
 $section->addInput(new Form_Select(
 	'user_source',
 	'*User Authentication',
-	explode(",", $pconfig['user_source']),
+	is_array($pconfig['user_source']) ? $pconfig['user_source'] : explode(",", $pconfig['user_source']),
 	$authServers,
 	true
 ))->setHelp('Source');
 
-$section->addInput(new Form_Select(
+$section->addInput(new Form_Checkbox(
 	'group_source',
-	'*Group Authentication',
+	'Group Authentication',
+	'Group Authentication',
 	$pconfig['group_source'],
-	array(
-		'none' => gettext('none'),
-		'system' => gettext('system'),
-	)
-))->setHelp('Source');
+))->setHelp('Authenticate members of groups which have either "User - VPN: IPsec with Dialin" or "WebCfg - All pages" privileges.')
+  ->toggles('.toggle-group_source');
+
+$group = new Form_Group('Authentication Groups');
+$group->addClass('toggle-group_source collapse');
+
+if (!empty($pconfig['group_source'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Select(
+	'auth_groups',
+	'Groups',
+	is_array($pconfig['auth_groups']) ? $pconfig['auth_groups'] : explode(",", $pconfig['auth_groups']),
+	$auth_groups,
+	true
+))->setHelp('Multiple group selection is allowed.');
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'radiusaccounting',
+	'RADIUS Accounting',
+	'Enable RADIUS Accounting',
+	$pconfig['radiusaccounting']
+))->setHelp('When enabled, the IPsec daemon will attempt to send RADIUS accounting ' .
+		'data for all tunnels, not only connections associated with mobile IPsec. ' .
+		'Do not enable this option unless the selected RADIUS servers are online and ' .
+		'capable of receiving RADIUS accounting data. If RADIUS accounting data is ' .
+		'enabled and fails to send, tunnels will be disconnected.');
 
 $form->add($section);
 
@@ -538,7 +666,66 @@ $group->add(new Form_Select(
 	'',
 	$pconfig['pool_netbits_v6'],
 	$netBitsv6
-))->setWidth(3);
+))->setWidth(2);
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'radius_ip_priority_enable',
+	'RADIUS IP address priority',
+	'IPv4/IPv6 address pool is used if address is not supplied by RADIUS server',
+	$pconfig['radius_ip_priority_enable']
+));
+
+$section->addInput(new Form_Checkbox(
+	'radius_advanced',
+	'RADIUS Advanced Parameters',
+	'Show Advanced RADIUS parameters',
+	$pconfig['radius_advanced']
+))->toggles('.toggle-radius_advanced')->setHelp('May only be required when using 2FA/MFA with RADIUS or under high load.');
+
+$group = new Form_Group('');
+$group->addClass('toggle-radius_advanced collapse');
+
+if (!empty($pconfig['radius_advanced'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Input(
+	'radius_retransmit_base',
+	'Retrasmit Base',
+	'text',
+	$pconfig['radius_retransmit_base'],
+	['placeholder' => 1.4]
+))->setHelp('%1$sRetransmit Base%2$s -%3$sBase to use for calculating exponential back off.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'radius_retransmit_timeout',
+	'Retrasmit Timeout',
+	'text',
+	$pconfig['radius_retransmit_timeout'],
+	['placeholder' => 2.0]
+))->setHelp('%1$sRetransmit Timeout%2$s -%3$sTimeout in seconds before sending first retransmit.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'radius_retransmit_tries',
+	'Retransmit Tries',
+	'text',
+	$pconfig['radius_retransmit_tries'],
+	['placeholder' => 4]
+))->setHelp('%1$sRetransmit Tries%2$s -%3$sNumber of times to retransmit a packet before giving up.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'radius_sockets',
+	'Sockets',
+	'text',
+	$pconfig['radius_sockets'],
+	['placeholder' => 1]
+))->setHelp('%1$sSockets%2$s -%3$sNumber of sockets (ports) to use, increase for high load.',
+	'<b>', '</b>', '<br/>');
 
 $section->add($group);
 
@@ -607,7 +794,7 @@ $section->addInput(new Form_Checkbox(
 	'DNS Servers',
 	'Provide a DNS server list to clients',
 	$pconfig['dns_server_enable']
-))->toggles('.toggle-dns_server_enable');
+))->setHelp('NOTE: IPv4-mapped IPv6 addresses (ex: fd00::1.2.3.4) are not supported.')->toggles('.toggle-dns_server_enable');
 
 for ($i = 1; $i <= 4; $i++) {
 	$group = new Form_Group('Server #' . $i);
@@ -672,7 +859,7 @@ $group->add(new Form_Select(
 	'Group',
 	$pconfig['pfs_group'],
 	$p2_pfskeygroups
-))->setWidth(2);
+))->setHelp('Note: Groups 1, 2, 5, 22, 23, and 24 provide weak security and should be avoided.');
 
 $section->add($group);
 

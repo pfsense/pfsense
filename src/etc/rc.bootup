@@ -6,7 +6,9 @@
  * originally based on m0n0wall (http://m0n0.ch/wall)
  * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * Copyright (c) 2009 Erik Kristensen
- * Copyright (c) 2005-2016 Rubicon Communications, LLC (Netgate). All rights reserved.
+ * Copyright (c) 2005-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,16 +87,10 @@ if (file_exists("/root/firmware.tgz")) {
 	unlink("/root/firmware.tgz");
 }
 
-/* Reinstall of packages after reboot has been requested */
-if (file_exists('/conf/needs_package_sync_after_reboot')) {
-	touch('/conf/needs_package_sync');
-	@unlink('/conf/needs_package_sync_after_reboot');
-}
-
 /* Triggering of the initial setup wizard after reboot has been requested */
-if (file_exists('/conf/trigger_initial_wizard_after_reboot')) {
-	touch('/conf/trigger_initial_wizard');
-	@unlink('/conf/trigger_initial_wizard_after_reboot');
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard_after_reboot")) {
+	touch("{$g['conf_path']}/trigger_initial_wizard");
+	@unlink("{$g['conf_path']}/trigger_initial_wizard_after_reboot");
 }
 
 /* start devd (dhclient now uses it) */
@@ -117,7 +113,7 @@ system_do_shell_commands(1);
 // Only do the alternate interface checks if:
 // 1) The user has not yet run the initial wizard; and
 // 2) The user has not used the console menu to setup interface assignments
-if (file_exists("/conf/trigger_initial_wizard") && !file_exists("/conf/assign_complete")) {
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard") && !file_exists("{$g['conf_path']}/assign_complete")) {
 	check_for_alternate_interfaces();
 }
 
@@ -149,7 +145,13 @@ while (is_interface_mismatch() == true) {
 			interfaces_bring_up($iface);
 		}
 	}
-	set_networking_interfaces_ports();
+	if (set_networking_interfaces_ports() == -1) {
+		echo "\npfSense cannot continue without at least one Network Interface Card.\n";
+		echo "\nHalting the system.\n";
+		system("/sbin/shutdown -h now");
+		exit(0);
+	}
+	reload_interfaces_sync();
 	led_kitt();
 }
 
@@ -180,22 +182,58 @@ system_hosts_generate();
 /* configure loopback interface */
 interfaces_loopback_configure();
 
+/* Setup Local CA Trust Store */
+ca_setup_trust_store();
+
+/* If the system uses ZFS and has compression enabled for /var/log, disable log
+ * compression by default. See https://redmine.pfsense.org/issues/12011
+ */
+$varlog_compression_state = 'off';
+if (is_module_loaded('zfs.ko')) {
+	exec("/sbin/zfs get -H compression /var/log | /usr/bin/awk '{print $3;}'", $varlog_compression_state);
+	$varlog_compression_state = $varlog_compression_state[0];
+}
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard") &&
+    (trim($varlog_compression_state) != 'off')) {
+	touch("{$g['conf_path']}/syslog_default_uncompressed");
+}
 /* start syslogd */
 system_syslogd_start();
+
+/* set pam shell authentication backend */
+set_pam_auth();
 
 /* Log the RAM disk restore messages. */
 if (file_exists("/var/log/restore_ramdisk_store.boot")) {
 	exec("logger -f /var/log/restore_ramdisk_store.boot");
 }
 
-echo "Starting Secure Shell Services...";
-send_event("service reload sshd");
-echo "done.\n";
+init_config_arr(array('system', 'ssh'));
+if (isset($config['system']['ssh']['enable'])) {
+	echo "Starting Secure Shell Services...";
+	send_event("service reload sshd");
+	echo "done.\n";
+}
 
 /* setup interface microcode which improves tcp/ip speed */
 echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
+
+if (isset($config['system']['mds_disable']) &&
+    (strlen($config['system']['mds_disable']) > 0)) {
+	set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);
+}
+
+/* remove leftover dhcp6c lock files if they exist */
+foreach ($config['interfaces'] as $interface) {
+        if ($interface['ipaddrv6'] == "dhcp6") {
+            if (file_exists("/tmp/dhcp6c_" . $interface['if'] . "_lock")) {
+                @unlink("/tmp/dhcp6c_" . $interface['if'] . "_lock");
+                echo("Removed leftover dhcp6c lock file: " . "/tmp/dhcp6c_" . $interface['if'] . "_lock\n");
+            }
+         }
+     }
 
 /* set up interfaces */
 if (!$debugging) {
@@ -227,21 +265,27 @@ filter_pflog_start();
 echo "done.\n";
 
 /* reconfigure our gateway monitor */
-echo "Setting up gateway monitors...";
 setup_gateways_monitor();
-echo "done.\n";
 
 /* set up static routes */
+echo "Setting up static routes...";
 system_routing_configure();
+echo "done.\n";
 
-/* start dnsmasq service */
-services_dnsmasq_configure();
+init_config_arr(array('unbound'));
+init_config_arr(array('dnsmasq'));
+if (isset($config['unbound']['enable']) ||
+    isset($config['dnsmasq']['enable'])) {
+	echo "Setting up DNSs...\n";
+	/* start dnsmasq service */
+	services_dnsmasq_configure();
 
-/* start unbound service */
-services_unbound_configure();
+	/* start unbound service */
+	services_unbound_configure();
+}
 
 echo "Synchronizing user settings...";
-local_sync_accounts();
+local_reset_accounts();
 echo "done.\n";
 
 if ($realmem > 0 and $realmem < 65) {
@@ -262,15 +306,10 @@ echo "done.\n";
 system_routing_enable();
 
 /* Enable ntpd */
-echo "Starting NTP time client...";
 system_ntp_configure();
-echo "done.\n";
 
-/* start load balancer daemon */
-relayd_configure();
-
-/* configure console menu and serial port*/
-setup_serial_port();
+/* Configure console (and serial port - if necessary). */
+console_configure();
 
 /* start DHCP service */
 services_dhcpd_configure();
@@ -303,7 +342,7 @@ voucher_configure();
 system_do_shell_commands();
 
 /* start IPsec tunnels */
-$ipsec_dynamic_hosts = vpn_ipsec_configure();
+$ipsec_dynamic_hosts = ipsec_configure();
 
 /* start SNMP service */
 services_snmpd_configure();
@@ -328,11 +367,16 @@ if ($config['system']['afterbootupshellcmd'] <> "") {
 
 if ($physmem < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
-	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+	file_notice("{$g['product_label']}MemoryRequirements", "{$g['product_label']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	set_sysctl(array(
 		"net.inet.tcp.recvspace" => "4096",
 		"net.inet.tcp.sendspace" => "4096"
 	));
+}
+
+if (file_exists("/conf/ram_disks_failed")) {
+	require_once("/etc/inc/notices.inc");
+	file_notice("RAM Disks", "RAM disk creation failed. Reverted to traditional storage. Check RAM disk sizes.", "RAM Disks");
 }
 
 /* if we are operating at 1000 then increase timeouts.
@@ -357,16 +401,13 @@ activate_powerd();
 prefer_ipv4_or_ipv6();
 
 /* Resync / Reinstall packages if need be */
-if (file_exists('/conf/needs_package_sync')) {
-	mark_subsystem_dirty('packagelock');
-	if (package_reinstall_all()) {
-		@unlink('/conf/needs_package_sync');
-	}
-	clear_subsystem_dirty('packagelock');
+if (file_exists("{$g['conf_path']}/needs_package_sync")) {
+	echo "Triggering packages reinstallation in background\n";
+	mwexec_bg("{$g['etc_path']}/rc.package_reinstall_all");
+} else {
+	/* Detect installed binary pkgs that are not registered in the system */
+	register_all_installed_packages();
 }
-
-/* Detect installed binary pkgs that are not registered in the system */
-register_all_installed_packages();
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
    fail to route syslog messages properly on both IPv4 and IPv6 */
@@ -378,7 +419,7 @@ unset($g['booting']);
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {
-	vpn_ipsec_configure();
+	ipsec_configure();
 }
 if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 	filter_configure();
@@ -386,5 +427,5 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 
 led_normalize();
 
-
+notify_all_remote("Bootup complete");
 ?>

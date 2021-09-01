@@ -4,7 +4,9 @@
  * rc.carpmaster
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,13 +26,16 @@ require_once("functions.inc");
 require_once("config.inc");
 require_once("notices.inc");
 require_once("openvpn.inc");
+require_once("ipsec.inc");
 require_once("interfaces.inc");
+require_once("captiveportal.inc");
 
 if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
 } else {
 	$argument = str_replace("\n", "", $argv[1]);
 }
+$argument = ltrim($argument, '$');
 if (!strstr($argument, "@")) {
 	log_error("CARP master event triggered from wrong source {$argument}");
 	exit;
@@ -50,13 +55,13 @@ foreach ($vips as $vip) {
 	    $vip['subnet'], $iface, $friendly_descr, $vhid);
 
 	notify_via_smtp($notificationmsg);
-	notify_via_growl($notificationmsg);
 	log_error($notificationmsg);
 }
+restart_ppp_interfaces_using_interfaces($vips);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;
-$a_groups = return_gateway_groups_array();
+$a_groups = return_gateway_groups_array(true);
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 	foreach ($config['openvpn']['openvpn-client'] as $settings) {
 		if (substr($settings['interface'], 0, 4) == '_vip') {
@@ -99,6 +104,15 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 		}
 	}
 }
+if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1'])) {
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if ((substr($ph1ent['interface'], 0, 4) == '_vip') && (in_array($ph1ent['interface'], $vips))) {
+			log_error("Reconfiguring IPsec because of transition to CARP master.");
+			ipsec_configure();
+			break;
+		}
+	}
+}
 
 /* Reconfigure radvd when necessary */
 if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
@@ -116,6 +130,85 @@ if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 	}
 }
 
+/* Reconfigure DHCP Relay when necessary */
+if (isset($config['dhcrelay']) && is_array($config['dhcrelay']) && isset($config['dhcrelay']['enable']) &&
+    isset($config['dhcrelay']['carpstatusvip']) && ($config['dhcrelay']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+	log_error("Starting DHCP Relay service because of transition to CARP master.");
+	services_dhcrelay_configure();
+}
+
+/* Reconfigure DHCPv6 Relay when necessary */
+if (isset($config['dhcrelay6']) && is_array($config['dhcrelay6']) && isset($config['dhcrelay6']['enable']) &&
+    isset($config['dhcrelay6']['carpstatusvip']) && ($config['dhcrelay6']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+	log_error("Starting DHCPv6 Relay service because of transition to CARP master.");
+	services_dhcrelay6_configure();
+}
+
+/* Reconfigure captive portal when necessary :
+   If we are the primary node, and we are switching back from backup to master : Get user list from the backup node */
+if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($config['hasync']['synchronizetoip']) &&
+    $config['hasync']['synchronizecaptiveportal'] != "") {
+	if (empty($config['hasync']['username'])) {
+		$xmlrpc_username = "admin";
+	} else {
+		$xmlrpc_username = $config['hasync']['username'];
+	}
+	$xmlrpc_port = $config['system']['webgui']['port'];
+	if (empty($xmlrpc_port)) {
+		if ($config['system']['webgui']['protocol'] == "http") {
+			$xmlrpc_port = "80";
+		} else {
+			$xmlrpc_port = "443";
+		}
+	}
+
+	foreach ($config['captiveportal'] as $cpzone=>$cp) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($config['hasync']['synchronizetoip'], $xmlrpc_port, $xmlrpc_username, $config['hasync']['password']);
+		$resp = $rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'get_databases', 'zone' => $cpzone));
+
+		if (is_array($resp)) { // $resp will be an array only if the communication was successful
+			// Contains array of connected users (will be stored in SQLite DB)
+			$connected_users = unserialize(base64_decode($resp['connected_users']));
+			// Contains array of active vouchers (will be stored in active vouchers db)
+			$active_vouchers = unserialize(base64_decode($resp['active_vouchers']));
+			// Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
+			$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers']));
+			// Contains array of usedmacs (will be stored in usedmacs db)
+			$usedmacs = unserialize(base64_decode($resp['usedmacs']));
+
+			$cpdb = captiveportal_read_db();
+			$unsetindexes = array_column($cpdb, 5);
+			if (!empty($unsetindexes)) {
+				captiveportal_remove_entries($unsetindexes, true); // true: prevent carp loop
+			}
+			captiveportal_free_dnrules();
+
+			foreach ($connected_users as $id => $user) {
+				$pipeno = captiveportal_get_next_dn_ruleno('auth');
+				$attributes = array();
+				$attributes['allow_time'] = $user['allow_time'];
+				$attributes['session_timeout'] = $user['session_timeout'];
+				$attributes['idle_timeout'] = $user['idle_timeout'];
+				$attributes['session_terminate_time'] = $user['session_terminate_time'];
+				$attributes['interim_interval'] = $user['interim_interval'];
+				$attributes['maxbytes'] = $user['traffic_quota'];
+
+				portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), null,
+				    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
+			}
+			foreach ($expired_vouchers as $roll => $vdb) {
+				voucher_write_used_db($roll, $vdb);
+			}
+			foreach ($active_vouchers as $roll => $vouchers) {
+				voucher_write_active_db($roll, $vouchers);
+			}
+			captiveportal_write_usedmacs_db($usedmacs); 
+		}
+		captiveportal_syslog(sprintf(gettext('Connected users, used vouchers and used MACs have been synchronized from %1$s'), $config['hasync']['synchronizetoip']));
+	}
+}
+openlog("", LOG_PID, LOG_LOCAL0);
 $pluginparams = array();
 $pluginparams['type'] = 'carp';
 $pluginparams['event'] = 'rc.carpmaster';

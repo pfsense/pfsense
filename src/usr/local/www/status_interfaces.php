@@ -3,7 +3,9 @@
  * status_interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,6 +37,8 @@ require_once("interfaces.inc");
 require_once("pfsense-utils.inc");
 require_once("util.inc");
 
+global $config;
+
 if ($_POST['ifdescr'] && $_POST['submit']) {
 	$interface = $_POST['ifdescr'];
 	if ($_POST['status'] == "up") {
@@ -53,7 +57,7 @@ $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' 
 					'<input type="hidden" name="ifdescr" value="%s" />' .
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
-					'<button type="submit" name="submit" class="btn btn-warning btn-xs" value="%s">' .
+					'<button type="submit" name="submit" class="btn btn-danger btn-xs" value="%s">' .
 					'<i class="fa fa-refresh icon-embed-btn"></i>' .
 					'%s' .
 					'</button>' .
@@ -62,9 +66,21 @@ $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' 
 
 // Display a term/definition pair
 function showDef($show, $term, $def) {
+	// Choose an icon by interface status
+	if ($term == "Status") {
+		if ($def == "up" || $def == "associated") {
+			$icon = 'arrow-up text-success';
+		} elseif ($def == "no carrier") {
+			$icon = 'times-circle text-danger';
+		} elseif ($def == "down") {
+			$icon = 'arrow-down text-danger';
+		} else {
+			$icon = '';
+		}
+	}
 	if ($show) {
 		print('<dt>' . $term . '</dt>');
-		print('<dd>' . htmlspecialchars($def) . '</dd>');
+		print('<dd>' . htmlspecialchars($def) . ' <i class="fa fa-' . $icon . '"></i></dd>');
 	}
 }
 
@@ -85,9 +101,13 @@ function dhcp_relinquish_lease($if, $ifdescr, $ipv) {
 	$leases_db = '/var/db/dhclient.leases.' . $if;
 	$conf_file = '/var/etc/dhclient_'.$ifdescr.'.conf';
 	$script_file = '/usr/local/sbin/pfSense-dhclient-script';
+	$ipv = ((int) $ipv == 6) ? '-6' : '-4';
 
 	if (file_exists($leases_db) && file_exists($script_file)) {
-		mwexec('/usr/local/sbin/dhclient -'.$ipv.' -d -r -lf '.$leases_db.' -cf '.$conf_file.' -sf '.$script_file);
+		mwexec('/usr/local/sbin/dhclient {$ipv} -d -r' .
+			' -lf ' . escapeshellarg($leases_db) .
+			' -cf ' . escapeshellarg($conf_file) .
+			' -sf ' . escapeshellarg($script_file));
 	}
 }
 
@@ -106,20 +126,31 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 								'<input type="hidden" name="if" value='.$ifinfo['if'].' />';
 	$chkbox_relinquish_lease_v4 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=4 />';
 	$chkbox_relinquish_lease_v6 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=6 />';
+
+	$ifhwinfo = $ifinfo['hwif'];
+	$vlan = interface_is_vlan($ifinfo['hwif']);
+	if ($vlan && is_array($config['switches']['switch'][0]['vlangroups']['vlangroup'])) {
+		foreach ($config['switches']['switch'][0]['vlangroups']['vlangroup'] as $vlangroup) {
+			if ($vlangroup['vlanid'] == $vlan['tag']) {
+				$ifhwinfo .= ', switchports: ' . $vlangroup['members'];
+				break;
+			}
+		}
+	}
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($ifname)?><?=gettext(" Interface "); ?>(<?=htmlspecialchars($ifdescr)?>, <?=htmlspecialchars($ifinfo['hwif'])?>)</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($ifname)?><?=gettext(" Interface "); ?>(<?=htmlspecialchars($ifdescr)?>, <?=htmlspecialchars($ifhwinfo)?>)</h2></div>
 	<div class="panel-body">
 		<dl class="dl-horizontal">
 <?php
-		showDef(true, gettext("Status"), $ifinfo['status']);
-		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
-		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
-		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
-		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
-		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
-		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"), '');
+		showDef(true, gettext("Status"), $ifinfo['enable'] ? $ifinfo['status'] : gettext('disabled'));
+		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, (($ifinfo['dhcplink'] == "up") ? gettext("Release") : gettext("Renew")) . " {$ifname}", $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
+		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, (($ifinfo['dhcp6link'] == "up") ? gettext("Release") : gettext("Renew")) . " {$ifname}", $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
+		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, (($ifinfo['pppoelink'] == "up") ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
+		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, (($ifinfo['pptplink'] == "up") ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
+		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, (($ifinfo['l2tplink'] == "up") ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
+		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, (($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
 		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? gettext('(historical)'):''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
 		showDef($ifinfo['cell_rssi'], gettext("Cell Signal (RSSI)"), $ifinfo['cell_rssi']);
 		showDef($ifinfo['cell_mode'], gettext("Cell Mode"), $ifinfo['cell_mode']);
@@ -146,14 +177,16 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
 				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
 
-				if ($ifdescr == "wan" && file_exists("{$g['etc_path']}/resolv.conf")) {
-					$dns_servers = get_dns_servers();
-					$dnscnt = 0;
-					foreach ($dns_servers as $dns) {
-						showDef(true, $dnscnt == 0 ? gettext('DNS servers'):'', $dns);
-						$dnscnt++;
-					}
+				$dns_servers = get_dynamic_nameservers($ifdescr);
+				$dnscnt = 0;
+				foreach ($dns_servers as $dns) {
+					showDef(true, $dnscnt == 0 ? gettext('DNS servers'):'', $dns);
+					$dnscnt++;
 				}
+			}
+
+			if ($ifinfo['laggport']) {
+				$laggport = get_lagg_ports($ifinfo['laggport']);
 			}
 
 			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);

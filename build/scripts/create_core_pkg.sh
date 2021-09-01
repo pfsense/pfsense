@@ -3,7 +3,9 @@
 # create_core_pkg.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2013 BSD Perimeter
+# Copyright (c) 2013-2016 Electric Sheep Fencing
+# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,8 +40,11 @@ Options:
 	-f flavor    -- package flavor
 	-v version   -- package version
 	-r root      -- root directory containing package files
+	-s search    -- search path
 	-F filter    -- filter pattern to exclude files from plist
 	-d destdir   -- Destination directory to create package
+	-a ABI       -- Package ABI
+	-A ALTABI    -- Package ALTABI (aka arch)
 	-h           -- Show this help and exit
 
 Environment:
@@ -50,7 +55,7 @@ END
 	exit 1
 }
 
-while getopts t:f:v:r:F:d:h opt; do
+while getopts s:t:f:v:r:F:d:ha:A: opt; do
 	case "$opt" in
 		t)
 			template=$OPTARG
@@ -64,11 +69,20 @@ while getopts t:f:v:r:F:d:h opt; do
 		r)
 			root=$OPTARG
 			;;
+		s)
+			findroot=$OPTARG
+			;;
 		F)
 			filter=$OPTARG
 			;;
 		d)
 			destdir=$OPTARG
+			;;
+		a)
+			ABI=$OPTARG
+			;;
+		A)
+			ALTABI=$OPTARG
 			;;
 		*)
 			usage
@@ -125,11 +139,16 @@ else
 	if [ -n "${filter}" ]; then
 		filter="-name ${filter}"
 	fi
-	(cd ${root} \
-		&& find . ${filter} -type f -or -type l \
-			| sed 's,^.,,' \
-			| sort -u \
-	) > ${plist}
+	if [ -z "${findroot}" ]; then
+		findroot="."
+	fi
+	for froot in ${findroot}; do
+		(cd ${root} \
+			&& find ${froot} ${filter} -type f -or -type l \
+				| sed 's,^.,,' \
+				| sort -u \
+		) >> ${plist}
+	done
 fi
 
 if [ -f "${template_path}/exclude_plist" ]; then
@@ -158,7 +177,7 @@ fi
 
 # Add license information
 if [ -d "${template_licensedir}" ]; then
-	portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${metadir}/+MANIFEST)
+	portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${manifest})
 	licenses_dir="/usr/local/share/licenses/${portname}-${version}"
 
 	mkdir -p ${root}${licenses_dir}
@@ -167,6 +186,12 @@ if [ -d "${template_licensedir}" ]; then
 		echo "${licenses_dir}/$(basename ${f})" >> ${plist}
 	done
 fi
+
+# Force desired ABI and arch
+[ -n "${ABI}" ] \
+    && echo "abi: ${ABI}" >> ${manifest}
+[ -n "${ALTABI}" ] \
+    && echo "arch: ${ALTABI}" >> ${manifest}
 
 run "Creating core package ${template_name}" \
 	"pkg create -o ${destdir} -p ${plist} -r ${root} -m ${metadir}"

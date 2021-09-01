@@ -3,7 +3,9 @@
  * firewall_nat_npt.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -35,84 +37,32 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("firewall_nat_npt.inc");
 
-if (!is_array($config['nat']['npt'])) {
-	$config['nat']['npt'] = array();
-}
-
+init_config_arr(array('nat', 'npt'));
 $a_npt = &$config['nat']['npt'];
 
-/* update rule order, POST[rule] is an array of ordered IDs */
+// Process $_POST/$_REQUEST =======================================================================
+if ($_REQUEST['savemsg']) {
+	$savemsg = $_REQUEST['savemsg'];
+}
+
 if (array_key_exists('order-store', $_REQUEST)) {
-	if (is_array($_POST['rule']) && !empty($_REQUEST['rule'])) {
-		$a_npt_new = array();
-
-		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_REQUEST['rule'] as $id) {
-			$a_npt_new[] = $a_npt[$id];
-		}
-
-		$a_npt = $a_npt_new;
-
-		if (write_config(gettext("Firewall: NAT: NPt - reordered NPt mappings."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_npt.php");
-		exit;
-	}
-}
-
-if ($_POST['apply']) {
-	$retval = 0;
-	$retval |= filter_configure();
-
-	if ($retval == 0) {
-		clear_subsystem_dirty('natconf');
-		clear_subsystem_dirty('filter');
-	}
-}
-
-if ($_POST['act'] == "del") {
+	reordernptNATrules($_POST);
+} else if ($_POST['apply']) {
+	$retval = applynptNATrules();
+} else if (($_POST['act'] == "del")) {
 	if ($a_npt[$_POST['id']]) {
-		unset($a_npt[$_POST['id']]);
-		if (write_config(gettext("Firewall: NAT: NPt - deleted NPt mapping."))) {
-			mark_subsystem_dirty('natconf');
-		}
-		header("Location: firewall_nat_npt.php");
-		exit;
+		deletenptNATrule($_POST);
 	}
-}
-
-if (isset($_POST['del_x'])) {
+} else if (isset($_POST['del_x'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		foreach ($_POST['rule'] as $rulei) {
-			unset($a_npt[$rulei]);
-		}
-
-		if (write_config(gettext("Firewall: NAT: NPt - deleted selected NPt mappings."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_npt.php");
-		exit;
+		deleteMultiplenptNATrules($_POST);
 	}
-
-} else if ($_POST['act'] == "toggle") {
+} elseif (($_POST['act'] == "toggle")) {
 	if ($a_npt[$_POST['id']]) {
-		if (isset($a_npt[$_POST['id']]['disabled'])) {
-			unset($a_npt[$_POST['id']]['disabled']);
-			$wc_msg = gettext('Firewall: NAT: NPt - enabled NPt rule.');
-		} else {
-			$a_npt[$_POST['id']]['disabled'] = true;
-			$wc_msg = gettext('Firewall: NAT: NPt - disabled NPt rule.');
-		}
-		if (write_config($wc_msg)) {
-			mark_subsystem_dirty('natconf');
-		}
-		header("Location: firewall_nat_npt.php");
-		exit;
+		togglenptNATrule($_POST);
 	}
 }
 
@@ -126,7 +76,7 @@ if ($_POST['apply']) {
 
 if (is_subsystem_dirty('natconf')) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
-					gettext('The changes must be applied for them to take effect.'));
+	   gettext('The changes must be applied for them to take effect.'));
 }
 
 $tab_array = array();
@@ -140,10 +90,10 @@ display_top_tabs($tab_array);
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('NPt Mappings')?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table class="table table-striped table-hover table-condensed">
+			<table id="ruletable" class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- checkbox --></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- icon --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("External Prefix")?></th>
@@ -241,6 +191,8 @@ endforeach;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules draggable/sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -249,6 +201,7 @@ events.push(function() {
 			dirty = true;
 		}
 	});
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
@@ -269,6 +222,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

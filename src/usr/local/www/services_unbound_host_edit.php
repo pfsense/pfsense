@@ -3,7 +3,9 @@
  * services_unbound_host_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -48,10 +50,7 @@ function hosts_sort() {
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['unbound']['hosts'])) {
-	$config['unbound']['hosts'] = array();
-}
-
+init_config_arr(array('unbound', 'hosts'));
 $a_hosts = &$config['unbound']['hosts'];
 $id = $_REQUEST['id'];
 
@@ -87,8 +86,13 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid domain must be specified.");
 	}
 
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
+	if ($_POST['ip']) {
+		foreach (explode(',', $_POST['ip']) as $ip) {
+			if (!is_ipaddr($ip)) {
+				$input_errors[] = gettext("A valid IP addresses must be specified.");
+				break;
+			}
+		}
 	}
 
 	/* collect aliases */
@@ -211,8 +215,9 @@ $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
-))->setHelp('IPv4 or IPv6 address to be returned for the host%1$s' .
-			'e.g.: 192.168.100.100 or fd00:abcd::1', '<br />');
+))->setHelp('IPv4 or IPv6 comma-separated addresses to be returned for the host%1$s' .
+			'e.g.: 192.168.100.100 or fd00:abcd::%1$s' .
+			'or list 192.168.1.3,192.168.4.5,fc00:123::3' , '<br />');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -222,7 +227,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_hosts[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -237,7 +242,7 @@ $section->addInput(new Form_StaticText(
 		"and parent domain (e.g., 'somesite.google.com' is entered as host='somesite' and parent domain='google.com'). Any " .
 		"attempt to lookup that host will automatically return the given IP address, and any usual external lookup server for " .
 		"the domain will not be queried. Both the name and parent domain can contain 'non-standard', 'invalid' and 'local' " .
-		"domains such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable names ".
+		"domains such as 'test', 'nas.home.arpa', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable names ".
 		"such as 'www' or 'google.co.uk'.") .
 	'</span>'
 ));
@@ -246,6 +251,9 @@ $form->add($section);
 
 $section = new Form_Section('Additional Names for this Host');
 
+if (!$pconfig['aliases']) {
+	$pconfig['aliases'] = array();
+}
 if (!$pconfig['aliases']['item']) {
 	$pconfig['aliases']['item'] = array('host' => "");
 }

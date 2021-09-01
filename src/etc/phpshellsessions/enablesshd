@@ -2,7 +2,8 @@
  * enablesshd
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016 Electric Sheep Fencing
+ * Copyright (c) 2016-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,14 +20,15 @@
  */
 
 global $config;
-echo "Starting enablesshd...";
+echo "Enabling sshd...";
 require("config.inc");
 echo ".";
 $config = parse_config(true);
 echo ".";
-$config['system']['enablesshd'] = true;
+init_config_arr(array('system', 'ssh'));
+$config['system']['ssh']['enable'] = "enabled";
 echo ".";
 write_config("pfSsh.php enabled sshd");
-echo "\nEnabling SSHD, please wait...";
+echo "\nRestarting sshd, please wait...";
 send_event("service reload sshd");
 echo "\n\n";

@@ -3,7 +3,9 @@
  * firewall_shaper_vinterface.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -101,7 +103,7 @@ if ($_GET) {
 				}
 				if (!$input_errors) {
 					$queue->delete_queue();
-					if (write_config()) {
+					if (write_config("Traffic Shaper: Queue deleted")) {
 						mark_subsystem_dirty('shaper');
 					}
 					header("Location: firewall_shaper_vinterface.php");
@@ -134,7 +136,7 @@ if ($_GET) {
 					unset($config['filter']['rule'][$key]['pdnpipe']);
 				}
 			}
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Reset all")) {
 				$changes_applied = true;
 				$retval = 0;
 				$retval |= filter_configure();
@@ -184,7 +186,7 @@ if ($_GET) {
 			$queue->SetEnabled("on");
 			$sform = $queue->build_form();
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue enabled")) {
 				mark_subsystem_dirty('shaper');
 			}
 		} else {
@@ -196,7 +198,7 @@ if ($_GET) {
 			$queue->SetEnabled("");
 			$sform = $queue->build_form();
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue disabled")) {
 				mark_subsystem_dirty('shaper');
 			}
 		} else {
@@ -217,7 +219,7 @@ if ($_POST) {
 		if (!empty($dummynet_pipe_list[$qname])) {
 			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
 		} else {
-			$dnpipe =& new dnpipe_class();
+			$__tmp_dnpipe = new dnpipe_class(); $dnpipe =& $__tmp_dnpipe;
 
 			$dnpipe->ReadConfig($_POST);
 			$dnpipe->validate_input($_POST, $input_errors);
@@ -228,7 +230,7 @@ if ($_POST) {
 				$tmppath[] = $dnpipe->GetQname();
 				$dnpipe->SetLink($tmppath);
 				$dnpipe->wconfig();
-				if (write_config()) {
+				if (write_config("Traffic Shaper: New pipe added")) {
 					mark_subsystem_dirty('shaper');
 				}
 				$can_enable = true;
@@ -249,7 +251,7 @@ if ($_POST) {
 			if (!$input_errors) {
 				array_pop($tmppath);
 				$tmp->wconfig();
-				if (write_config()) {
+				if (write_config("Traffic Shaper: New queue added")) {
 					$can_enable = true;
 					$can_add = false;
 					mark_subsystem_dirty('shaper');
@@ -261,7 +263,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Could not add new queue.");
 		}
 	} else if ($_POST['apply']) {
-		write_config();
+		write_config("Traffic Shaper: Changes applied");
 
 		$changes_applied = true;
 		$retval = 0;
@@ -285,7 +287,7 @@ if ($_POST) {
 		if (!$input_errors) {
 			$queue->update_dn_data($_POST);
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue changed")) {
 				mark_subsystem_dirty('shaper');
 			}
 			$dontshow = false;
@@ -412,12 +414,14 @@ if (!$dfltmsg) {
 				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
 			}
 
-			$sform->addGlobal(new Form_Button(
-				'delete',
-				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
-				$url,
-				'fa-trash'
-			))->addClass('btn-danger');
+			if ($sform) {
+				$sform->addGlobal(new Form_Button(
+					'delete',
+					($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
+					$url,
+					'fa-trash'
+				))->addClass('btn-danger nowarn');
+			}
 		}
 	}
 

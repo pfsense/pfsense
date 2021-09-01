@@ -3,7 +3,9 @@
  * interfaces_bridge_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,10 +29,6 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-
-if (!is_array($config['bridges']['bridged'])) {
-	$config['bridges']['bridged'] = array();
-}
 
 function is_aoadv_used($pconfig) {
 	if (($pconfig['static'] !="") ||
@@ -56,6 +54,7 @@ function is_aoadv_used($pconfig) {
 	return false;
 }
 
+init_config_arr(array('bridges', 'bridged'));
 $a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();
@@ -185,6 +184,18 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("At least one member interface must be selected for a bridge.");
 	}
 
+	if (is_array($_POST['members']) && is_array($config['captiveportal'])) {
+		foreach ($_POST['members'] as $member) {
+			foreach ($config['captiveportal'] as $cp) {
+				if (in_array($member, explode(',', $cp['interface']))) {
+					$input_errors[] = sprintf(gettext('The interface (%s) is part of ' .
+						'the Captive Portal and cannot be part of the bridge. ' .
+						'Remove the interface to continue.'), $ifacelist[$cpint]);
+				}
+			}
+		}
+	}
+
 	if (is_array($_POST['static'])) {
 		foreach ($_POST['static'] as $ifstatic) {
 			if (is_array($_POST['members']) && !in_array($ifstatic, $_POST['members'])) {
@@ -205,6 +216,10 @@ if ($_POST['save']) {
 		foreach ($_POST['stp'] as $ifstp) {
 			if (is_array($_POST['members']) && !in_array($ifstp, $_POST['members'])) {
 				$input_errors[] = sprintf(gettext('STP interface (%s) is not part of the bridge. Remove the STP interface to continue.'), $ifacelist[$ifstp]);
+			}
+			$realif = get_real_interface($ifstp);
+			if (is_pseudo_interface($realif) || interface_is_vlan($realif)) {
+				$input_errors[] = sprintf(gettext('STP interface (%s) must not be a pseudo-interface or a VLAN interface.'), $ifacelist[$ifstp]);
 			}
 		}
 		$pconfig['stp'] = implode(',', $_POST['stp']);
@@ -288,6 +303,7 @@ if ($_POST['save']) {
 		$bridge['proto'] = $_POST['proto'];
 		$bridge['holdcnt'] = $_POST['holdcnt'];
 		$i = 0;
+		$j = 0;
 		$ifpriority = "";
 		$ifpathcost = "";
 
@@ -301,14 +317,15 @@ if ($_POST['save']) {
 					$ifpriority .= ",";
 				}
 				$ifpriority .= $ifn.":".$_POST[$ifn];
+				$i++;
 			}
 			if ($_POST["{$ifn}0"] <> "") {
-				if ($i > 0) {
+				if ($j > 0) {
 					$ifpathcost .= ",";
 				}
 				$ifpathcost .= $ifn.":".$_POST["{$ifn}0"];
+				$j++;
 			}
-			$i++;
 		}
 
 		$bridge['ifpriority'] = $ifpriority;
@@ -340,17 +357,19 @@ if ($_POST['save']) {
 		}
 
 		$bridge['bridgeif'] = $_POST['bridgeif'];
+
 		interface_bridge_configure($bridge);
 		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
+
 			if (isset($id) && $a_bridges[$id]) {
 				$a_bridges[$id] = $bridge;
 			} else {
 				$a_bridges[] = $bridge;
 			}
 
-			write_config();
+			write_config("Bridge interface created");
 
 			$confif = convert_real_interface_to_friendly_interface_name($bridge['bridgeif']);
 			if ($confif <> "") {
@@ -626,7 +645,7 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 	$i++;
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'bridgeif',
 	null,
 	'hidden',
@@ -634,7 +653,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_bridges[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

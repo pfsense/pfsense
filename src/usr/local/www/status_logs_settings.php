@@ -3,7 +3,9 @@
  * status_logs_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -34,6 +36,9 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("status_logs_common.inc");
+
+global $g, $system_log_compression_types, $syslog_formats;
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
@@ -44,10 +49,10 @@ $pconfig['sourceip'] = $config['syslog']['sourceip'];
 $pconfig['ipproto'] = $config['syslog']['ipproto'];
 $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
+$pconfig['auth'] = isset($config['syslog']['auth']);
 $pconfig['portalauth'] = isset($config['syslog']['portalauth']);
 $pconfig['vpn'] = isset($config['syslog']['vpn']);
 $pconfig['dpinger'] = isset($config['syslog']['dpinger']);
-$pconfig['relayd'] = isset($config['syslog']['relayd']);
 $pconfig['hostapd'] = isset($config['syslog']['hostapd']);
 $pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['system'] = isset($config['syslog']['system']);
@@ -64,14 +69,22 @@ $pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
 $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
+$pconfig['logconfigchanges'] = ($config['syslog']['logconfigchanges'] != "disabled");
 $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
-$pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
+$pconfig['logcompressiontype'] = $config['syslog']['logcompressiontype'];
+$pconfig['rotatecount'] = $config['syslog']['rotatecount'];
+$pconfig['format'] = $config['syslog']['format'];
 
 if (!$pconfig['nentries']) {
-	$pconfig['nentries'] = 50;
+	$pconfig['nentries'] = $g['default_log_entries'];
 }
 
 function is_valid_syslog_server($target) {
+	$parts = explode(":", $target);
+	if (is_numericint($parts[0])) {
+		/* OS interprets numeric value as decimal IP address, see https://redmine.pfsense.org/issues/12000 */
+		return false;
+	}
 	return (is_ipaddr($target)
 		|| is_ipaddrwithport($target)
 		|| is_hostname($target)
@@ -96,16 +109,35 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$input_errors[] = gettext("A valid IP address/hostname or IP/hostname:port must be specified for remote syslog server #3.");
 	}
 
-	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 2000)) {
-		$input_errors[] = gettext("Number of log entries to show must be between 5 and 2000.");
+	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 200000)) {
+		$input_errors[] = gettext("Number of log entries to show must be between 5 and 200000.");
 	}
 
 	if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
 		if (!is_numeric($_POST['logfilesize']) || ($_POST['logfilesize'] < 100000)) {
 			$input_errors[] = gettext("Log file size must be numeric and greater than or equal to 100000.");
+		} elseif ($_POST['logfilesize'] >= (2**32)/2) {
+			$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 		}
 	}
+	if (isset($_POST['rotatecount']) && (strlen($_POST['rotatecount']) > 0)) {
+		if (!is_numericint($_POST['rotatecount']) ||
+		    ($_POST['rotatecount'] < 0) ||
+		    ($_POST['rotatecount'] > 99)) {
+			$input_errors[] = gettext("Log Retention Count must be an integer from 0 to 99.");
+		}
+	}
+
+	if (!array_key_exists($_POST['format'], $syslog_formats)) {
+		$input_errors[] = gettext("Invalid Log Message Format.");
+	}
+
+	if (!array_key_exists($_POST['logcompressiontype'], $system_log_compression_types)) {
+		$input_errors[] = gettext("Invalid log compression type.");
+	}
+
 	if (!$input_errors) {
+		init_config_arr(array('syslog'));
 		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
 		$config['syslog']['nentries'] = (int)$_POST['nentries'];
 		$pconfig['nentries'] = $config['syslog']['nentries'];
@@ -115,6 +147,25 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		} else {
 			unset($config['syslog']['logfilesize']);
 		}
+
+		if (isset($_POST['logcompressiontype'])) {
+			/* If the non-default compression type changed and the
+			 * old type was not 'none', then remove the old log files. */
+
+			if ((!isset($config['syslog']['logcompressiontype']) && ($_POST['logcompressiontype'] != 'bzip2')) ||
+			    (isset($config['syslog']['logcompressiontype']) &&
+			    ($config['syslog']['logcompressiontype'] != 'none') &&
+			    ($config['syslog']['logcompressiontype'] != $_POST['logcompressiontype']))) {
+				/* Clear old rotated log files */
+				foreach (system_syslogd_get_all_logfilenames() as $lfile) {
+					unlink_if_exists("{$g['varlog_path']}/{$lfile}.log.*");
+				}
+			}
+			$config['syslog']['logcompressiontype'] = $_POST['logcompressiontype'];
+		}
+
+		$config['syslog']['format'] = $_POST['format'];
+		$config['syslog']['rotatecount'] = $_POST['rotatecount'];
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
 		$config['syslog']['remoteserver3'] = $_POST['remoteserver3'];
@@ -122,10 +173,10 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['ipproto'] = $_POST['ipproto'];
 		$config['syslog']['filter'] = $_POST['filter'] ? true : false;
 		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
+		$config['syslog']['auth'] = $_POST['auth'] ? true : false;
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
 		$config['syslog']['dpinger'] = $_POST['dpinger'] ? true : false;
-		$config['syslog']['relayd'] = $_POST['relayd'] ? true : false;
 		$config['syslog']['hostapd'] = $_POST['hostapd'] ? true : false;
 		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
 		$config['syslog']['system'] = $_POST['system'] ? true : false;
@@ -134,6 +185,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['routing'] = $_POST['routing'] ? true : false;
 		$config['syslog']['ntpd'] = $_POST['ntpd'] ? true : false;
 		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
+		$config['syslog']['logconfigchanges'] = $_POST['logconfigchanges'] ? "enabled" : "disabled";
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
 		$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
@@ -146,7 +198,6 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
 		$config['syslog']['nolognginx'] = $_POST['lognginx'] ? false : true;
 		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
-		$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
 
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
 			$config['syslog']['filterdescriptions'] = $_POST['filterdescriptions'];
@@ -188,12 +239,21 @@ $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"))
 $pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
-$logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
+$current_log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : $g['default_log_size'];
+$current_rotate_count = is_numericint($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
+
+$logfilesizeHelp =	sprintf(gettext("This field controls the size at which logs will be rotated. By default this is %s per log file, and there are nearly 20 such log files. " .
+					"Rotated log files consume additional disk space, which varies depending on compression and retention count."), format_bytes($g['default_log_size'])) .
 					'<br /><br />' .
-					gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, first save the options to set the size, then clear all logs using the \"Reset Log Files\" option farther down this page. ") .
-					gettext("Be aware that increasing this value increases every log file size, so disk usage will increase significantly.") . '<br /><br />' .
-					gettext("Disk space currently used by log files is: ") . exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'") .
-					gettext(" Remaining disk space for log files: ") . exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'");
+					gettext("NOTE: Increasing this value allows every log file to grow to the specified size, so disk usage may increase significantly.") . '<br />' .
+					gettext("Logs from packages may consume additional space which is not accounted for in these settings. Check package-specific settings.") . ' ' .
+					gettext("Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value.") . ' ' .
+					'<br /><br />' .
+					gettext("Disk space currently used by log files:") . ' ' . exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'") .
+					'<br />' .
+					gettext("Worst case disk usage for base system logs based on current global settings:") . ' ' . format_bytes(count($system_log_files) * $current_log_size * $current_rotate_count) .
+					'<br />' .
+					gettext("Remaining disk space for log files:") . ' ' . exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'");
 
 $remoteloghelp =	gettext("This option will allow the logging daemon to bind to a single IP address, rather than all IP addresses.") . " " .
 					gettext("If a single IP is picked, remote syslog servers must all be of that IP type. To mix IPv4 and IPv6 remote syslog servers, bind to all interfaces.") .
@@ -212,23 +272,20 @@ if ($changes_applied) {
 	print_apply_result_box($retval, $extra_save_msg);
 }
 
-$tab_array = array();
-$tab_array[] = array(gettext("System"), false, "status_logs.php");
-$tab_array[] = array(gettext("Firewall"), false, "status_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Captive Portal Auth"), false, "status_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), true, "status_logs_settings.php");
-display_top_tabs($tab_array);
+tab_array_logs_common();
 
 $form = new Form();
 
 $section = new Form_Section('General Logging Options');
+
+$section->addInput(new Form_Select(
+	'format',
+	'Log Message Format',
+	!isset($pconfig['format']) ? 'rfc3164' : $pconfig['format'],
+	$syslog_formats
+))->setHelp('The format of syslog messages written to disk locally and sent to ' .
+	'remote syslog servers (if enabled).%s' .
+	'Changing this value will only affect new log messages.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'reverse',
@@ -240,18 +297,10 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Input(
 	'nentries',
 	'GUI Log Entries',
-	'text',
+	'number',
 	$pconfig['nentries'],
-	['placeholder' => '']
+	['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : $g['default_log_entries']]
 ))->setHelp('This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.');
-
-$section->addInput(new Form_Input(
-	'logfilesize',
-	'Log file size (Bytes)',
-	'text',
-	$pconfig['logfilesize'],
-	['placeholder' => 'Bytes']
-))->setHelp($logfilesizeHelp);
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultblock',
@@ -295,13 +344,6 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['rawfilter']
 ))->setHelp('If this is checked, filter logs are shown as generated by the packet filter, without any formatting. This will reveal more detailed information, but it is more difficult to read.');
 
-$section->addINput(new Form_Checkbox(
-	'igmpxverbose',
-	'IGMP Proxy',
-	'Enable verbose logging (Default is terse logging)',
-	$pconfig['igmpxverbose']
-));
-
 $section->addInput(new Form_Select(
 	'filterdescriptions',
 	'Where to show rule descriptions',
@@ -322,12 +364,50 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['disablelocallogging']
 ));
 
+$section->addInput(new Form_Checkbox(
+	'logconfigchanges',
+	'Log Configuration Changes',
+	"Generate log entries when making changes to the configuration.",
+	$pconfig['logconfigchanges']
+));
+
 $section->addInput(new Form_Button(
 	'resetlogs',
 	'Reset Log Files',
 	null,
 	'fa-trash'
 ))->addClass('btn-danger btn-sm')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if any setting changes have been made.');
+
+$form->add($section);
+$section = new Form_Section('Log Rotation Options');
+
+$section->addInput(new Form_Input(
+	'logfilesize',
+	'Log Rotation Size (Bytes)',
+	'number',
+	$pconfig['logfilesize'],
+	['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : $g['default_log_size']]
+))->setHelp($logfilesizeHelp);
+
+$section->addInput(new Form_Select(
+	'logcompressiontype',
+	'Log Compression',
+	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
+	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types))
+))->setHelp('The type of compression to use when rotating log files. ' .
+	'Compressing rotated log files saves disk space, but can incur a performance penalty. ' .
+	'Compressed logs remain available for display and searching in the GUI.%1$s%1$s' .
+	'Compression should be disabled when using large log files and/or slower hardware.%1$s' .
+	'Disabled by default on new ZFS installations as ZFS already performs compression.%1$s' .
+	' WARNING: Changing this value will remove previously rotated compressed log files!', '<br />');
+
+$section->addInput(new Form_Input(
+	'rotatecount',
+	'Log Retention Count',
+	'number',
+	$pconfig['rotatecount'],
+	['min' => 0, 'max' => 99, 'placeholder' => '7']
+))->setHelp('The number of log files to keep before the oldest copy is removed on rotation.');
 
 $form->add($section);
 $section = new Form_Section('Remote Logging Options');
@@ -350,7 +430,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'ipproto',
 	'IP Protocol',
-	$ipproto,
+	$pconfig['ipproto'],
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('This option is only used when a non-default address is chosen as the source above. ' .
 			'This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
@@ -431,6 +511,13 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
+	'auth',
+	null,
+	'General Authentication Events',
+	$pconfig['auth']
+));
+
+$group->add(new Form_MultiCheckbox(
 	'portalauth',
 	null,
 	'Captive Portal Events',
@@ -459,13 +546,6 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
-	'relayd',
-	null,
-	'Server Load Balancer Events (relayd)',
-	$pconfig['relayd']
-));
-
-$group->add(new Form_MultiCheckbox(
 	'ntpd',
 	null,
 	'Network Time Protocol Events (NTP Daemon, NTP Client)',
@@ -481,7 +561,7 @@ $group->add(new Form_MultiCheckbox(
 
 $group->setHelp('Syslog sends UDP datagrams to port 514 on the specified remote '.
 	'syslog server, unless another port is specified. Be sure to set syslogd on '.
-	'the remote server to accept syslog messages from pfSense.');
+	'the remote server to accept syslog messages from %s.', $g['product_label']);
 
 $section->add($group);
 
@@ -514,10 +594,10 @@ events.push(function() {
 		disableInput('system', hide);
 		disableInput('filter', hide);
 		disableInput('dhcp', hide);
+		disableInput('auth', hide);
 		disableInput('portalauth', hide);
 		disableInput('vpn', hide);
 		disableInput('dpinger', hide);
-		disableInput('relayd', hide);
 		disableInput('hostapd', hide);
 		disableInput('resolver', hide);
 		disableInput('ppp', hide);

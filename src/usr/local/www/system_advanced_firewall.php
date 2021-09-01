@@ -3,7 +3,9 @@
  * system_advanced_firewall.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -35,331 +37,29 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("system_advanced_firewall.inc");
 
-$pconfig['disablefilter'] = $config['system']['disablefilter'];
-$pconfig['scrubnodf'] = $config['system']['scrubnodf'];
-$pconfig['scrubrnid'] = $config['system']['scrubrnid'];
-$pconfig['optimization'] = $config['filter']['optimization'];
-$pconfig['adaptivestart'] = $config['system']['adaptivestart'];
-$pconfig['adaptiveend'] = $config['system']['adaptiveend'];
-$pconfig['maximumstates'] = $config['system']['maximumstates'];
-$pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval'];
-$old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
-$pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
-$pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
-$pconfig['maximumfrags'] = $config['system']['maximumfrags'];
-$pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
-$pconfig['disablenegate'] = isset($config['system']['disablenegate']);
-$pconfig['bogonsinterval'] = $config['system']['bogons']['interval'];
-$pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
-$pconfig['enablebinatreflection'] = $config['system']['enablebinatreflection'];
-$pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
-$pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
-$pconfig['disablescrub'] = isset($config['system']['disablescrub']);
-$pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
-$pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
-$pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout'];
-$pconfig['tcpopeningtimeout'] = $config['system']['tcpopeningtimeout'];
-$pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout'];
-$pconfig['tcpclosingtimeout'] = $config['system']['tcpclosingtimeout'];
-$pconfig['tcpfinwaittimeout'] = $config['system']['tcpfinwaittimeout'];
-$pconfig['tcpclosedtimeout'] = $config['system']['tcpclosedtimeout'];
-$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout'];
-$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout'];
-$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout'];
-$pconfig['icmpfirsttimeout'] = $config['system']['icmpfirsttimeout'];
-$pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
-$pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
-$pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
-$pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
+// Retrieve furewall settings
+$pconfig = getSystemAdvancedFirewall();
+$old_maximumtableentries = $pconfig['maximumtableentries'];
+$old_aliasesresolveinterval = $pconfig['aliasesresolveinterval'];
 
+$show_reboot_msg = false;
+$reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
+    'been changed to a value bigger than system can support without a ' .
+    'reboot.\n\nReboot now ?');
+
+$pftimeouts = get_pf_timeouts();
+
+// Validate/save new settings
 if ($_POST) {
-
-	unset($input_errors);
 	$pconfig = $_POST;
 
-	/* input validation */
-	if ((isset($_POST['adaptivestart']) && !isset($_POST['adaptiveend'])) || (!isset($_POST['adaptivestart']) && isset($_POST['adaptiveend']))) {
-		$input_errors[] = gettext("The Firewall Adaptive values must be set together.");
-	}
-	if (isset($_POST['adaptivestart']) && (strlen($_POST['adaptivestart']) > 0) && !is_numericint($_POST['adaptivestart'])) {
-		$input_errors[] = gettext("The Firewall Adaptive Start value must be an integer.");
-	}
-	if (isset($_POST['adaptive-end']) && (strlen($_POST['adaptive-end']) > 0) && !is_numericint($_POST['adaptive-end'])) {
-		$input_errors[] = gettext("The Firewall Adaptive End value must be an integer.");
-	}
-	if ($_POST['firewall-maximum-states'] && !is_numericint($_POST['firewall-maximum-states'])) {
-		$input_errors[] = gettext("The Firewall Maximum States value must be an integer.");
-	}
-	if ($_POST['aliases-hostnames-resolve-interval'] && !is_numericint($_POST['aliases-hostnames-resolve-interval'])) {
-		$input_errors[] = gettext("The Aliases Hostname Resolve Interval value must be an integer.");
-	}
-	if ($_POST['firewall-maximum-table-entries'] && !is_numericint($_POST['firewall-maximum-table-entries'])) {
-		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
-	}
-	if ($_POST['maximumfrags'] && !is_numericint($_POST['maximumfrags'])) {
-		$input_errors[] = gettext("The Firewall Maximum Fragment Entries value must be an integer.");
-	}
-	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
-		$input_errors[] = gettext("The TCP idle timeout must be an integer.");
-	}
-	if ($_POST['reflectiontimeout'] && !is_numericint($_POST['reflectiontimeout'])) {
-		$input_errors[] = gettext("The Reflection timeout must be an integer.");
-	}
-	if ($_POST['tcpfirsttimeout'] && !is_numericint($_POST['tcpfirsttimeout'])) {
-		$input_errors[] = gettext("The TCP first timeout value must be an integer.");
-	}
-	if ($_POST['tcpopeningtimeout'] && !is_numericint($_POST['tcpopeningtimeout'])) {
-		$input_errors[] = gettext("The TCP opening timeout value must be an integer.");
-	}
-	if ($_POST['tcpestablishedtimeout'] && !is_numericint($_POST['tcpestablishedtimeout'])) {
-		$input_errors[] = gettext("The TCP established timeout value must be an integer.");
-	}
-	if ($_POST['tcpclosingtimeout'] && !is_numericint($_POST['tcpclosingtimeout'])) {
-		$input_errors[] = gettext("The TCP closing timeout value must be an integer.");
-	}
-	if ($_POST['tcpfinwaittimeout'] && !is_numericint($_POST['tcpfinwaittimeout'])) {
-		$input_errors[] = gettext("The TCP FIN wait timeout value must be an integer.");
-	}
-	if ($_POST['tcpclosedtimeout'] && !is_numericint($_POST['tcpclosedtimeout'])) {
-		$input_errors[] = gettext("The TCP closed timeout value must be an integer.");
-	}
-	if ($_POST['udpfirsttimeout'] && !is_numericint($_POST['udpfirsttimeout'])) {
-		$input_errors[] = gettext("The UDP first timeout value must be an integer.");
-	}
-	if ($_POST['udpsingletimeout'] && !is_numericint($_POST['udpsingletimeout'])) {
-		$input_errors[] = gettext("The UDP single timeout value must be an integer.");
-	}
-	if ($_POST['udpmultipletimeout'] && !is_numericint($_POST['udpmultipletimeout'])) {
-		$input_errors[] = gettext("The UDP multiple timeout value must be an integer.");
-	}
-	if ($_POST['icmpfirsttimeout'] && !is_numericint($_POST['icmpfirsttimeout'])) {
-		$input_errors[] = gettext("The ICMP first timeout value must be an integer.");
-	}
-	if ($_POST['icmperrortimeout'] && !is_numericint($_POST['icmperrortimeout'])) {
-		$input_errors[] = gettext("The ICMP error timeout value must be an integer.");
-	}
-	if ($_POST['otherfirsttimeout'] && !is_numericint($_POST['otherfirsttimeout'])) {
-		$input_errors[] = gettext("The Other first timeout value must be an integer.");
-	}
-	if ($_POST['othersingletimeout'] && !is_numericint($_POST['othersingletimeout'])) {
-		$input_errors[] = gettext("The Other single timeout value must be an integer.");
-	}
-	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) {
-		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
-	}
+	$rv = saveSystemAdvancedFirewall($_POST);
 
-	ob_flush();
-	flush();
-
-	if (!$input_errors) {
-
-		if ($_POST['disablefilter'] == "yes") {
-			$config['system']['disablefilter'] = "enabled";
-		} else {
-			unset($config['system']['disablefilter']);
-		}
-
-		if ($_POST['disablevpnrules'] == "yes") {
-			$config['system']['disablevpnrules'] = true;
-		} else {
-			unset($config['system']['disablevpnrules']);
-		}
-		if ($_POST['rfc959workaround'] == "yes") {
-			$config['system']['rfc959workaround'] = "enabled";
-		} else {
-			unset($config['system']['rfc959workaround']);
-		}
-
-		if ($_POST['scrubnodf'] == "yes") {
-			$config['system']['scrubnodf'] = "enabled";
-		} else {
-			unset($config['system']['scrubnodf']);
-		}
-
-		if ($_POST['scrubrnid'] == "yes") {
-			$config['system']['scrubrnid'] = "enabled";
-		} else {
-			unset($config['system']['scrubrnid']);
-		}
-
-		if (is_numericint($_POST['adaptiveend'])) {
-			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
-		} else {
-			unset($config['system']['adaptiveend']);
-		}
-		if (is_numericint($_POST['adaptivestart'])) {
-			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
-		} else {
-			unset($config['system']['adaptivestart']);
-		}
-
-		if ($_POST['checkaliasesurlcert'] == "yes") {
-			$config['system']['checkaliasesurlcert'] = true;
-		} else {
-			unset($config['system']['checkaliasesurlcert']);
-		}
-
-		$config['system']['optimization'] = $_POST['optimization'];
-		$config['system']['maximumstates'] = $_POST['maximumstates'];
-		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
-		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
-		$config['system']['maximumfrags'] = $_POST['maximumfrags'];
-
-		if (!empty($_POST['tcpfirsttimeout'])) {
-			$config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
-		} else {
-			unset($config['system']['tcpfirsttimeout']);
-		}
-		if (!empty($_POST['tcpopeningtimeout'])) {
-			$config['system']['tcpopeningtimeout'] = $_POST['tcpopeningtimeout'];
-		} else {
-			unset($config['system']['tcpopeningtimeout']);
-		}
-		if (!empty($_POST['tcpestablishedtimeout'])) {
-			$config['system']['tcpestablishedtimeout'] = $_POST['tcpestablishedtimeout'];
-		} else {
-			unset($config['system']['tcpestablishedtimeout']);
-		}
-		if (!empty($_POST['tcpclosingtimeout'])) {
-			$config['system']['tcpclosingtimeout'] = $_POST['tcpclosingtimeout'];
-		} else {
-			unset($config['system']['tcpclosingtimeout']);
-		}
-		if (!empty($_POST['tcpfinwaittimeout'])) {
-			$config['system']['tcpfinwaittimeout'] = $_POST['tcpfinwaittimeout'];
-		} else {
-			unset($config['system']['tcpfinwaittimeout']);
-		}
-		if (!empty($_POST['tcpclosedtimeout'])) {
-			$config['system']['tcpclosedtimeout'] = $_POST['tcpclosedtimeout'];
-		} else {
-			unset($config['system']['tcpclosedtimeout']);
-		}
-		if (!empty($_POST['udpfirsttimeout'])) {
-			$config['system']['udpfirsttimeout'] = $_POST['udpfirsttimeout'];
-		} else {
-			unset($config['system']['udpfirsttimeout']);
-		}
-		if (!empty($_POST['udpsingletimeout'])) {
-			$config['system']['udpsingletimeout'] = $_POST['udpsingletimeout'];
-		} else {
-			unset($config['system']['udpsingletimeout']);
-		}
-		if (!empty($_POST['udpmultipletimeout'])) {
-			$config['system']['udpmultipletimeout'] = $_POST['udpmultipletimeout'];
-		} else {
-			unset($config['system']['udpmultipletimeout']);
-		}
-		if (!empty($_POST['icmpfirsttimeout'])) {
-			$config['system']['icmpfirsttimeout'] = $_POST['icmpfirsttimeout'];
-		} else {
-			unset($config['system']['icmpfirsttimeout']);
-		}
-		if (!empty($_POST['icmperrortimeout'])) {
-			$config['system']['icmperrortimeout'] = $_POST['icmperrortimeout'];
-		} else {
-			unset($config['system']['icmperrortimeout']);
-		}
-		if (!empty($_POST['otherfirsttimeout'])) {
-			$config['system']['otherfirsttimeout'] = $_POST['otherfirsttimeout'];
-		} else {
-			unset($config['system']['otherfirsttimeout']);
-		}
-		if (!empty($_POST['othersingletimeout'])) {
-			$config['system']['othersingletimeout'] = $_POST['othersingletimeout'];
-		} else {
-			unset($config['system']['othersingletimeout']);
-		}
-		if (!empty($_POST['othermultipletimeout'])) {
-			$config['system']['othermultipletimeout'] = $_POST['othermultipletimeout'];
-		} else {
-			unset($config['system']['othermultipletimeout']);
-		}
-
-		if ($_POST['natreflection'] == "proxy") {
-			unset($config['system']['disablenatreflection']);
-			unset($config['system']['enablenatreflectionpurenat']);
-		} else if ($_POST['natreflection'] == "purenat") {
-			unset($config['system']['disablenatreflection']);
-			$config['system']['enablenatreflectionpurenat'] = "yes";
-		} else {
-			$config['system']['disablenatreflection'] = "yes";
-			unset($config['system']['enablenatreflectionpurenat']);
-		}
-
-		if ($_POST['enablebinatreflection'] == "yes") {
-			$config['system']['enablebinatreflection'] = "yes";
-		} else {
-			unset($config['system']['enablebinatreflection']);
-		}
-
-		if ($_POST['disablereplyto'] == "yes") {
-			$config['system']['disablereplyto'] = $_POST['disablereplyto'];
-		} else {
-			unset($config['system']['disablereplyto']);
-		}
-
-		if ($_POST['disablenegate'] == "yes") {
-			$config['system']['disablenegate'] = $_POST['disablenegate'];
-		} else {
-			unset($config['system']['disablenegate']);
-		}
-
-		if ($_POST['enablenatreflectionhelper'] == "yes") {
-			$config['system']['enablenatreflectionhelper'] = "yes";
-		} else {
-			unset($config['system']['enablenatreflectionhelper']);
-		}
-
-		$config['system']['reflectiontimeout'] = $_POST['reflection-timeout'];
-
-		if ($_POST['bypassstaticroutes'] == "yes") {
-			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
-		} elseif (isset($config['filter']['bypassstaticroutes'])) {
-			unset($config['filter']['bypassstaticroutes']);
-		}
-
-		if ($_POST['disablescrub'] == "yes") {
-			$config['system']['disablescrub'] = $_POST['disablescrub'];
-		} else {
-			unset($config['system']['disablescrub']);
-		}
-
-		if ($_POST['tftpinterface']) {
-			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
-		} else {
-			unset($config['system']['tftpinterface']);
-		}
-
-		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
-			switch ($_POST['bogonsinterval']) {
-				case 'daily':
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*", "root", false);
-					break;
-				case 'weekly':
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "0", "root", false);
-					break;
-				case 'monthly':
-					// fall through
-				default:
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*", "root", false);
-			}
-			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
-		}
-
-		write_config(gettext("Changed Advanced Firewall/NAT settings."));
-
-		// Kill filterdns when value changes, filter_configure() will restart it
-		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
-		    isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
-			killbypid("{$g['varrun_path']}/filterdns.pid");
-		}
-
-		$changes_applied = true;
-		$retval = 0;
-		$retval |= filter_configure();
-	}
+	$input_errors = $rv['input_errors'];
+	$retval = $rv['retval'];
+	$changes_applied = $rv['changes_applied'];
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), htmlspecialchars(gettext("Firewall & NAT")));
@@ -386,7 +86,7 @@ display_top_tabs($tab_array);
 ?><div id="container"><?php
 
 $form = new Form;
-$section = new Form_Section('Firewall Advanced');
+$section = new Form_Section('Packet Processing');
 
 $section->addInput(new Form_Checkbox(
 	'scrubnodf',
@@ -421,15 +121,6 @@ $section->addInput($input = new Form_Select(
 ))->setHelp('Select the type of state table optimization to use');
 
 $section->addInput(new Form_Checkbox(
-	'disablefilter',
-	'Disable Firewall',
-	'Disable all packet filtering.',
-	isset($config['system']['disablefilter'])
-))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
-	'Note: This will also turn off NAT! To only disable NAT, '.
-	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', $g["product_name"], '<br/>', '<a href="firewall_nat_out.php">', '</a>');
-
-$section->addInput(new Form_Checkbox(
 	'disablescrub',
 	'Disable Firewall Scrub',
 	'Disables the PF scrubbing option which can sometimes interfere with NFS traffic.',
@@ -443,7 +134,7 @@ $group->add(new Form_Input(
 	'Adaptive start',
 	'number',
 	$pconfig['adaptivestart'],
-	['min' => 0]
+	['min' => 0, 'placeholder' => $pftimeouts['ADAPTIVE']['Start']['value']]
 ))->setHelp('When the number of state entries exceeds this value, adaptive '.
 	'scaling begins.  All timeout values are scaled linearly with factor '.
 	'(adaptive.end - number of states) / (adaptive.end - adaptive.start). '.
@@ -454,7 +145,7 @@ $group->add(new Form_Input(
 	'Adaptive end',
 	'number',
 	$pconfig['adaptiveend'],
-	['min' => 0]
+	['min' => 0, 'placeholder' => $pftimeouts['ADAPTIVE']['End']['value']]
 ))->setHelp('When reaching this number of state entries, all timeout values '.
 	'become zero, effectively purging all state entries immediately.  This '.
 	'value is used to define the scale factor, it should not actually be '.
@@ -484,7 +175,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maximumtableentries'],
 	['placeholder' => pfsense_default_table_entries_size()]
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
-	'sshlockout, snort, etc, combined.%1$sNote: Leave this blank for the '.
+	'sshguard, snort, etc, combined.%1$sNote: Leave this blank for the '.
 	'default. On this system the default size is: %2$d',
 	'<br/>',
 	pfsense_default_table_entries_size());
@@ -493,8 +184,76 @@ $section->addInput(new Form_Input(
 	'maximumfrags',
 	'Firewall Maximum Fragment Entries',
 	'text',
-	$pconfig['maximumfrags']
+	$pconfig['maximumfrags'],
+	['placeholder' => 5000]
 ))->setHelp('Maximum number of packet fragments to hold for reassembly by scrub rules. Leave this blank for the default (5000)');
+
+$form->add($section);
+
+$section = new Form_Section('VPN Packet Processing');
+
+$section->addInput(new Form_StaticText(
+	'',
+	gettext('These setting will affect IPsec, OpenVPN and PPPoE Server network traffic')
+));
+
+$section->addInput(new Form_Checkbox(
+	'vpn_scrubnodf',
+	'IP Do-Not-Fragment compatibility',
+	'Clear invalid DF bits instead of dropping the packets',
+	$pconfig['vpn_scrubnodf']
+))->setHelp('This allows for communications with hosts that generate fragmented '.
+	'packets with the don\'t fragment (DF) bit set. Linux NFS is known to do this. '.
+	'This will cause the filter to not drop such packets but instead clear the don\'t '.
+	'fragment bit.');
+
+$section->addInput(new Form_Checkbox(
+	'vpn_fragment_reassemble',
+	'IP Fragment Reassemble',
+	'Reassemble IP Fragments until they form a complete packet',
+	$pconfig['vpn_fragment_reassemble']
+))->setHelp('Reassemble IP Fragments for normalization. In this case, fragments are buffered until ' .
+	    'they form a complete packet, and only the completed packet is passed on to the filter. ' .
+	    'The advantage is that filter rules have to deal only with complete packets, and can ignore ' .
+	    'fragments. The drawback of caching fragments is the additional memory cost.');
+
+$section->addInput(new Form_Checkbox(
+	'maxmss_enable',
+	'Enable Maximum MSS',
+	'Enable MSS clamping on VPN traffic',
+	$pconfig['maxmss_enable']
+))->toggles('.toggle-maxmss', 'collapse');
+
+$group = new Form_Group('Maximum MSS');
+$group->addClass('toggle-maxmss collapse');
+
+if (!empty($pconfig['maxmss_enable'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Input(
+	'maxmss',
+	'Maximum MSS',
+	'text',
+	$pconfig['maxmss'],
+	['placeholder' => 1400]
+))->setHelp(
+	'Enable MSS clamping on TCP flows over VPN. ' .
+	'This helps overcome problems with PMTUD on IPsec VPN links. The default value is 1400 bytes.');
+
+$section->add($group);
+$form->add($section);
+
+$section = new Form_Section('Advanced Options');
+
+$section->addInput(new Form_Checkbox(
+	'disablefilter',
+	'Disable Firewall',
+	'Disable all packet filtering.',
+	isset($config['system']['disablefilter'])
+))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
+	'Note: This will also turn off NAT! To only disable NAT, '.
+	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', $g["product_label"], '<br/>', '<a href="firewall_nat_out.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'bypassstaticroutes',
@@ -532,6 +291,13 @@ $section->addInput(new Form_Checkbox(
 	'connected networks and VPN networks when using policy routing. This can be disabled '.
 	'for special purposes but it requires manually creating rules for these networks.');
 
+$section->addInput(new Form_Checkbox(
+	'no_apipa_block',
+	'Allow APIPA',
+	'Allow APIPA traffic',
+	$pconfig['no_apipa_block']
+))->setHelp('Normally this traffic is dropped by the firewall, as APIPA traffic cannot be routed, but some providers may utilize APIPA space for interconnect interfaces.');
+
 $section->addInput(new Form_Input(
 	'aliasesresolveinterval',
 	'Aliases Hostnames Resolve Interval',
@@ -551,6 +317,7 @@ $section->addInput(new Form_Checkbox(
 	'aliases. If it\'s not valid or is revoked, do not download it.');
 
 $form->add($section);
+
 $section = new Form_Section('Bogon Networks');
 
 $section->addInput(new Form_Select(
@@ -647,48 +414,19 @@ if (count($config['interfaces']) > 1) {
 
 $section = new Form_Section('State Timeouts (seconds - blank for default)');
 
-$tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN Wait', 'Closed');
-foreach ($tcpTimeouts as $name) {
-	$keyname = 'tcp'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'TCP '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
-}
-
-$udpTimeouts = array('First', 'Single', 'Multiple');
-foreach ($udpTimeouts as $name) {
-	$keyname = 'udp'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'UDP '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
-}
-
-$icmpTimeouts = array('First', 'Error');
-foreach ($icmpTimeouts as $name) {
-	$keyname = 'icmp'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'ICMP '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
-}
-
-$otherTimeouts = array('First', 'Single', 'Multiple');
-foreach ($otherTimeouts as $name) {
-	$keyname = 'other'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'Other '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
+foreach ($pftimeouts as $proto => $tm) {
+	foreach ($tm as $type => $item) {
+		$section->addInput(new Form_Input(
+			$item['keyname'],
+			$item['name'],
+			'number',
+			$config['system'][$item['keyname']],
+			['placeholder' => $item['value']]
+		));
+	}
+	if ($item['keyname'] == 'othermultipletimeout') {
+		break;
+	}
 }
 
 $form->add($section);
@@ -696,6 +434,11 @@ $form->add($section);
 print $form;
 
 ?></div>
+
+<div class="infoblock">
+	<?php print_info_box(gettext('You need to reload this page after changing the Firewall Optimization Options to see the actual timeout values.'), 'info', false); ?>
+</div>
+
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -726,6 +469,11 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setOptText($('#optimization').val())
+
+	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
+		postSubmit({override : 'yes'}, 'diag_reboot.php')
+	}
+
 });
 //]]>
 </script>

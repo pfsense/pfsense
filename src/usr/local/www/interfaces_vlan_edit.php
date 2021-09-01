@@ -3,7 +3,9 @@
  * interfaces_vlan_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,18 +34,37 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['vlans']['vlan'])) {
-	$config['vlans']['vlan'] = array();
-}
+global $config;
 
+init_config_arr(array('vlans', 'vlan'));
 $a_vlans = &$config['vlans']['vlan'];
 
 $portlist = get_interface_list();
+$lagglist = get_lagg_interface_list();
+$portlist = array_merge($portlist, $lagglist);
+foreach ($lagglist as $laggif => $lagg) {
+	/* LAGG members cannot be assigned */
+	$laggmembers = explode(',', $lagg['members']);
+	foreach ($laggmembers as $lagm) {
+		if (isset($portlist[$lagm])) {
+			unset($portlist[$lagm]);
+		}
+	}
+}
 
-/* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
-		$portlist[$lagg['laggif']] = $lagg;
+/* Do not allow OpenVPN TUN interfaces to be used for QinQ
+ * https://redmine.pfsense.org/issues/11675 */
+init_config_arr(array('openvpn', 'openvpn-server'));
+init_config_arr(array('openvpn', 'openvpn-client'));
+foreach ($portlist as $portname => $port) {
+	if (strstr($portname, "ovpn")) {
+		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
+		$type = ($m[1] == 'c') ? 'client' : 'server';
+		foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
+			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
+				unset($portlist[$portname]);
+			}
+		}
 	}
 }
 
@@ -70,7 +91,7 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (isset($_POST['tag']) && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
+	if (isset($_POST['tag']) && !vlan_valid_tag($_POST['tag'])) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
 	if (isset($_POST['pcp']) && !empty($_POST['pcp']) && (!is_numericint($_POST['pcp']) || ($_POST['pcp'] < '0') || ($_POST['pcp'] > '7'))) {
@@ -114,11 +135,11 @@ if ($_POST['save']) {
 					// Destroy previous vlan
 					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
 				} else {
-					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
-					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
+					pfSense_interface_destroy(vlan_interface($a_vlans[id]));
+					$confif = convert_real_interface_to_friendly_interface_name(vlan_interface($a_vlans[$id]));
 				}
 				if ($confif != "") {
-					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['tag']}";
+					$config['interfaces'][$confif]['if'] = vlan_interface($_POST);
 				}
 			}
 		}
@@ -127,9 +148,10 @@ if ($_POST['save']) {
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['pcp'] = $_POST['pcp'];
 		$vlan['descr'] = $_POST['descr'];
-		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
-		$vlan['vlanif'] = interface_vlan_configure($vlan);
-		if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan")) {
+		$vlan['vlanif'] = vlan_interface($_POST);
+		$vlanif = interface_vlan_configure($vlan);
+		if ($vlanif == NULL || $vlanif != $vlan['vlanif']) {
+			pfSense_interface_destroy($vlan['vlanif']);
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 			if (isset($id) && $a_vlans[$id]) {
@@ -138,7 +160,7 @@ if ($_POST['save']) {
 				$a_vlans[] = $vlan;
 			}
 
-			write_config();
+			write_config("VLAN interface added");
 
 			if ($confif != "") {
 				interface_configure($confif);
@@ -155,11 +177,10 @@ function build_interfaces_list() {
 	$list = array();
 
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (is_jumbo_capable($ifn)) {
-			$list[$ifn] = $ifn . " (" . $ifinfo['mac'] . ")";
-			$iface = convert_real_interface_to_friendly_interface_name($ifn);
-			if (isset($iface) && strlen($iface) > 0)
-				$list[$ifn] .= " - $iface";
+		$list[$ifn] = $ifn . " (" . $ifinfo['mac'] . ")";
+		$iface = convert_real_interface_to_friendly_interface_name($ifn);
+		if (isset($iface) && strlen($iface) > 0) {
+			$list[$ifn] .= " - $iface";
 		}
 	}
 

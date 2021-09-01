@@ -4,7 +4,9 @@
  * filterparser.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2009-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2009-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally based on m0n0wall (http://m0n0.ch/wall)
@@ -25,12 +27,12 @@
 /*
  * A quick CLI log parser.
  * Examples:
- *  clog /var/log/filter.log | tail -50 | /usr/local/www/filterparser.php
- *  clog -f /var/log/filter.log | /usr/local/www/filterparser.php
+ *  tail -50 /var/log/filter.log | /usr/local/www/filterparser.php
+ *  tail -F /var/log/filter.log | /usr/local/www/filterparser.php
  */
 
 include_once("functions.inc");
-include_once("filter_log.inc");
+include_once("syslog.inc");
 
 $log = fopen("php://stdin", "r");
 $lastline = "";

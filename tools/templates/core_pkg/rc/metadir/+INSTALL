@@ -1,0 +1,34 @@
+#!/bin/sh
+
+if [ "${2}" = "POST-INSTALL" ]; then
+	exit 0
+fi
+
+# Do not run during build installation
+if [ ! -f /cf/conf/config.xml ]; then
+	exit 0
+fi
+
+if ! /usr/bin/grep -q "net.pf.request_maxcount" /boot/loader.conf \
+    /boot/loader.conf.local 2>/dev/null; then
+	_value=$(/usr/local/sbin/read_xml_tag.sh string \
+	    system/maximumtableentries)
+	if [ -z "${_value}" ]; then
+		# Default value is minimumtableentries_bogonsv6 from globals.inc
+		_value="400000"
+	fi
+
+	if [ -z "${_value}" ]; then
+		echo "===> WARN: Impossible to set net.pf.request_maxcount"
+	else
+		echo "===> Setting net.pf.request_maxcount=${_value}"
+		echo "net.pf.request_maxcount=${_value}" >> /boot/loader.conf
+	fi
+fi
+
+if [ -f /usr/local/share/%%PRODUCT_NAME%%/fix_for_SA-19-10.ufs ]; then
+	exit 0
+fi
+
+echo "===> Flagging this system to apply fix for FreeBSD-SA-19:10.ufs"
+touch /.fix_for_SA-19-10.ufs

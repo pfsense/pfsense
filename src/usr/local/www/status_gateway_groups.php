@@ -3,7 +3,9 @@
  * status_gateway_groups.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -35,10 +37,7 @@ define('COLOR', true);
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_group'])) {
-	$config['gateways']['gateway_group'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $changedesc = gettext("Gateway Groups") . ": ";
 
@@ -115,19 +114,48 @@ display_top_tabs($tab_array);
 									while ($c <= $priority_count) {
 										$monitor = lookup_gateway_monitor_ip_by_name($member);
 										if ($p == $c) {
-											$status = $gateways_status[$monitor]['status'];
-											if (stristr($status, "down")) {
-													$online = gettext("Offline");
-													$bgcolor = "bg-danger";
-											} elseif (stristr($status, "loss")) {
-													$online = gettext("Warning, Packetloss");
-													$bgcolor = "bg-warning";
-											} elseif (stristr($status, "delay")) {
-													$online = gettext("Warning, Latency");
-													$bgcolor = "bg-warning";
-											} elseif ($status == "none") {
-													$online = gettext("Online");
-													$bgcolor = "bg-success";
+											$status = $gateways_status[$monitor];
+											if (stristr($status['status'], "online")) {
+												switch ($status['substatus']) {
+													case "highloss":
+														$online = gettext("Danger, Packetloss") . ': ' . $status['loss'];
+														$bgcolor = "bg-danger";
+														break;
+													case "highdelay":
+														$online = gettext("Danger, Latency") . ': ' . $status['delay'];
+														$bgcolor = "bg-danger";
+														break;
+													case "loss":
+														$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
+														$bgcolor = "bg-warning";
+														break;
+													case "delay":
+														$online = gettext("Warning, Latency") . ': ' . $status['delay'];
+														$bgcolor = "bg-warning";
+														break;
+													default:
+														if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
+															$online = gettext("Online <br/>(unmonitored)");
+														} else {
+															$online = gettext("Online");
+														}
+														$bgcolor = "bg-success";
+												}
+											} elseif (stristr($status['status'], "down")) {
+												$bgcolor = "bg-danger";
+												switch ($status['substatus']) {
+													case "force_down":
+														$online = gettext("Offline (forced)");
+														break;
+													case "highloss":
+														$online = gettext("Offline, Packetloss") . ': ' . $status['loss'];
+														break;
+													case "highdelay":
+														$online = gettext("Offline, Latency") . ': ' . $status['delay'];
+														break;
+													default:
+														$online = gettext("Offline");
+												}
 											} else {
 												$online = gettext("Gathering data");
 												$bgcolor = "bg-info";

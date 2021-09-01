@@ -3,7 +3,9 @@
  * Section.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -38,6 +40,7 @@ class Form_Section extends Form_Element
 		if (!empty($id)) {
 			$this->_attributes['id'] = $id;
 		}
+
 		$this->_title = $title;
 		$this->_collapsible = $collapsible;
 	}
@@ -64,7 +67,7 @@ class Form_Section extends Form_Element
 	// Shortcut, adds a group with a password and a confirm password field.
 	// The confirm password element is created by appending "_confirm" to the name supplied
 	// The value is overwritten with a default pattern (So the user cannot see it)
-	public function addPassword(Form_Input $input)
+	public function addPassword(Form_Input $input, $confirmfield=true)
 	{
 		$group = new Form_Group($input->getTitle());
 		if ($input->getValue() != "") {
@@ -72,11 +75,14 @@ class Form_Section extends Form_Element
 		}
 
 		$input->setType("password");
+		$input->setAttribute('autocomplete', 'new-password');
 		$group->add($input);
-		$confirm = clone $input;
-		$confirm->setName($confirm->getName() . "_confirm");
-		$confirm->setHelp("Confirm");
-		$group->add($confirm);
+		if ($confirmfield) {
+			$confirm = clone $input;
+			$confirm->setName($confirm->getName() . "_confirm");
+			$confirm->setHelp("Confirm");
+			$group->add($confirm);
+		}
 		$this->add($group);
 
 		return $input;
@@ -96,7 +102,7 @@ class Form_Section extends Form_Element
 		$bodyclass = '<div class="panel-body">';
 		$id = $this->_attributes['id'];
 
-		if ($this->_collapsible & COLLAPSIBLE) {
+		if (intval($this->_collapsible) & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .
 				'<a data-toggle="collapse" href="#' . $id . '_panel-body">' .
 					'<i class="fa fa-plus-circle"></i>' .

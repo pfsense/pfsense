@@ -3,7 +3,9 @@
  * services_ntpd.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -32,6 +34,12 @@ require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 
+global $ntp_poll_min_default, $ntp_poll_max_default;
+$ntp_poll_values = system_ntp_poll_values();
+$auto_pool_suffix = "pool.ntp.org";
+$max_candidate_peers = 25;
+$min_candidate_peers = 4;
+
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
 }
@@ -41,7 +49,7 @@ if (empty($config['ntpd']['interface'])) {
 	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
-		write_config(gettext("Upgraded settings from openttpd"));
+		write_config(gettext("Upgraded settings from openntpd"));
 	} else {
 		$pconfig['interface'] = array();
 	}
@@ -53,21 +61,61 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if (!empty($_POST['ntpmaxpeers']) && (!is_numericint($_POST['ntpmaxpeers']) ||
+	    ($_POST['ntpmaxpeers'] < $min_candidate_peers) || ($_POST['ntpmaxpeers'] > $max_candidate_peers))) {
+		$input_errors[] = sprintf(gettext("Max candidate pool peers must be a number between %d and %d"), $min_candidate_peers, $max_candidate_peers);
+	}
+	
 	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
 		$input_errors[] = gettext("The supplied value for NTP Orphan Mode is invalid.");
 	}
 
+	if (!array_key_exists($pconfig['ntpminpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['ntpmaxpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+	}
+
+	for ($i = 0; $i < NUMTIMESERVERS; $i++) {
+		if (isset($pconfig["servselect{$i}"]) && (isset($pconfig["servispool{$i}"]) || 
+		    (substr_compare($pconfig["server{$i}"], $auto_pool_suffix, strlen($pconfig["server{$i}"]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0))) {
+			$input_errors[] = gettext("It is not possible to use 'No Select' for pools.");
+		}
+		if (!empty($pconfig["server{$i}"]) && !is_domain($pconfig["server{$i}"]) &&
+		    !is_ipaddr($pconfig["server{$i}"])) {
+			$input_errors[] = gettext("NTP Time Server names must be valid domain names, IPv4 addresses, or IPv6 addresses");
+		}
+	}
+
+	if (is_numericint($pconfig['ntpminpoll']) &&
+	    is_numericint($pconfig['ntpmaxpoll']) &&
+	    ($pconfig['ntpmaxpoll'] < $pconfig['ntpminpoll'])) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than NTP Maximum Poll Interval.");
+	}
+
+	if (isset($pconfig['serverauth'])) {
+		if (empty($pconfig['serverauthkey'])) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key can't be empty.");
+		} elseif (($pconfig['serverauthalgo'] == 'md5') && ((strlen($pconfig['serverauthkey']) > 20) ||
+		    !ctype_print($pconfig['serverauthkey']))) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key for MD5 digest must be from 1 to 20 printable characters.");
+		} elseif (($pconfig['serverauthalgo'] == 'sha1') && ((strlen($pconfig['serverauthkey']) != 40) ||
+		    !ctype_xdigit($pconfig['serverauthkey']))) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key for SHA1 digest must be hex-encoded string of 40 characters.");
+		} elseif (($pconfig['serverauthalgo'] == 'sha256') && ((strlen($pconfig['serverauthkey']) != 64) ||
+		    !ctype_xdigit($pconfig['serverauthkey']))) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key for SHA256 digest must be hex-encoded string of 64 characters.");
+		}
+	}
+
 	if (!$input_errors) {
+		$config['ntpd']['enable'] = isset($_POST['enable']) ? 'enabled' : 'disabled';
 		if (is_array($_POST['interface'])) {
 			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
 		} elseif (isset($config['ntpd']['interface'])) {
 			unset($config['ntpd']['interface']);
-		}
-
-		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
-			$config['ntpd']['gpsport'] = $_POST['gpsport'];
-		} elseif (isset($config['ntpd']['gpsport'])) {
-			unset($config['ntpd']['gpsport']);
 		}
 
 		unset($config['ntpd']['prefer']);
@@ -79,13 +127,13 @@ if ($_POST) {
 			$tserver = trim($_POST["server{$i}"]);
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
-				if (!empty($_POST["servprefer{$i}"])) {
+				if (isset($_POST["servprefer{$i}"])) {
 					$config['ntpd']['prefer'] .= "{$tserver} ";
 				}
-				if (!empty($_POST["servselect{$i}"])) {
+				if (isset($_POST["servselect{$i}"])) {
 					$config['ntpd']['noselect'] .= "{$tserver} ";
 				}
-				if (!empty($_POST["servispool{$i}"])) {
+				if (isset($_POST["servispool{$i}"])) {
 					$config['ntpd']['ispool'] .= "{$tserver} ";
 				}
 			}
@@ -95,7 +143,15 @@ if ($_POST) {
 		}
 		$config['system']['timeservers'] = trim($timeservers);
 
+		if (!empty($pconfig['ntpmaxpeers'])) {
+			$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
+		} else {
+			unset($config['ntpd']['ntpmaxpeers']);
+		}
 		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
+		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
+		$config['ntpd']['ntpmaxpoll'] = $pconfig['ntpmaxpoll'];
+		$config['ntpd']['dnsresolv'] = $pconfig['dnsresolv'];
 
 		if (!empty($_POST['logpeer'])) {
 			$config['ntpd']['logpeer'] = $_POST['logpeer'];
@@ -149,6 +205,16 @@ if ($_POST) {
 			$config['ntpd']['leapsec'] = base64_encode(file_get_contents($_FILES['leapfile']['tmp_name']));
 		}
 
+		if (!empty($_POST['serverauth'])) {
+			$config['ntpd']['serverauth'] = $_POST['serverauth'];
+			$config['ntpd']['serverauthkey'] = base64_encode(trim($_POST['serverauthkey']));
+			$config['ntpd']['serverauthalgo'] = $_POST['serverauthalgo'];
+		} elseif (isset($config['ntpd']['serverauth'])) {
+			unset($config['ntpd']['serverauth']);
+			unset($config['ntpd']['serverauthkey']);
+			unset($config['ntpd']['serverauthalgo']);
+		}
+
 		write_config("Updated NTP Server Settings");
 
 		$changes_applied = true;
@@ -163,6 +229,8 @@ function build_interface_list() {
 	$iflist = array('options' => array(), 'selected' => array());
 
 	$interfaces = get_configured_interface_with_descr();
+	$interfaces['lo0'] = "Localhost";
+
 	foreach ($interfaces as $iface => $ifacename) {
 		if (!is_ipaddr(get_interface_ip($iface)) &&
 		    !is_ipaddrv6(get_interface_ipv6($iface))) {
@@ -179,7 +247,9 @@ function build_interface_list() {
 	return($iflist);
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
+$pconfig['enable'] = ($config['ntpd']['enable'] != 'disabled') ? 'enabled' : 'disabled';
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
 } else {
@@ -210,6 +280,13 @@ $form->setMultipartEncoding();	// Allow file uploads
 
 $section = new Form_Section('NTP Server Configuration');
 
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable',
+	'Enable NTP Server',
+	($pconfig['enable'] == 'enabled')
+))->setHelp('You may need to disable NTP if %1$s is running in a virtual machine and the host is responsible for the clock.', $g['product_label']);
+
 $iflist = build_interface_list();
 
 $section->addInput(new Form_Select(
@@ -224,7 +301,6 @@ $section->addInput(new Form_Select(
 
 $timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
-$auto_pool_suffix = "pool.ntp.org";
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
 	$group->addClass('repeatable');
@@ -288,12 +364,24 @@ $section->addInput(new Form_StaticText(
 	'%2$sPrefer%3$s - NTP should favor the use of this server more than all others.%1$s' .
 	'%2$sNo Select%3$s - NTP should not use this server for time, but stats for this server will be collected and displayed.%1$s' .
 	'%2$sIs a Pool%3$s - this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
-	'<br />', 
-	'<b>', 
-	'</b>', 
-	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">', 
+	'<br />',
+	'<b>',
+	'</b>',
+	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">',
 	'</a>'
 	);
+
+$section->addInput(new Form_Input(
+	'ntpmaxpeers',
+	'Max candidate pool peers',
+	'number',
+	$pconfig['ntpmaxpeers'],
+	['min' => $min_candidate_peers, 'max' => $max_candidate_peers]
+))->setHelp('Maximum number of candidate peers in the NTP pool. This value should be set low enough to provide sufficient alternate sources ' .
+	    'while not contacting an excessively large number of peers. ' .
+	    'Many servers inside public pools are provided by volunteers, ' .
+	    'and a large candidate pool places unnecessary extra load ' .
+	    'on the volunteer time servers for little to no added benefit. (Default: 5).');
 
 $section->addInput(new Form_Input(
 	'ntporphan',
@@ -304,6 +392,20 @@ $section->addInput(new Form_Input(
 ))->setHelp('Orphan mode allows the system clock to be used when no other clocks are available. ' .
 			'The number here specifies the stratum reported during orphan mode and should normally be set to a number high enough ' .
 			'to insure that any other servers available to clients are preferred over this server (default: 12).');
+
+$section->addInput(new Form_Select(
+	'ntpminpoll',
+	'Minimum Poll Interval',
+	$pconfig['ntpminpoll'],
+	$ntp_poll_values
+))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
+
+$section->addInput(new Form_Select(
+	'ntpmaxpoll',
+	'Maximum Poll Interval',
+	$pconfig['ntpmaxpoll'],
+	$ntp_poll_values
+))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(
 	'statsgraph',
@@ -405,6 +507,49 @@ $section->addInput(new Form_Input(
 	'file'
 ))->addClass('btn-default');
 
+$section->addInput(new Form_Select(
+	'dnsresolv',
+	'DNS Resolution',
+	$pconfig['dnsresolv'],
+	array(
+		'auto' => 'Auto',
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+	)
+))->setHelp('Force NTP peers DNS resolution IP protocol. Do not affect pools.');
+
+$section->addInput(new Form_Checkbox(
+	'serverauth',
+	'Enable NTP Server Authentication',
+	'Enable NTPv3 authentication (RFC 1305)',
+	$pconfig['serverauth']
+))->setHelp('Authentication allows the NTP client to confirm it is communicating with the intended server, ' .
+	    'which protects against man-in-the-middle attacks.');
+
+$group = new Form_Group('Authentication key');
+$group->addClass('ntpserverauth');
+
+$group->add(new Form_IpAddress(
+	'serverauthkey',
+	'NTP Authentication key',
+	base64_decode($pconfig['serverauthkey']),
+	['placeholder' => 'NTP Authentication key']
+))->setHelp(
+	'Key format: %1$s MD5 - The key is 1 to 20 printable characters %1$s' .
+	'SHA1 - The key is a hex-encoded ASCII string of 40 characters %1$s' .
+	'SHA256 - The key is a hex-encoded ASCII string of 64 characters',
+	'<br />'
+);
+
+$group->add(new Form_Select(
+	'serverauthalgo',
+	null,
+	$pconfig['serverauthalgo'],
+	$ntp_auth_halgos
+))->setWidth(3)->setHelp('Digest algorithm');
+
+$section->add($group);
+
 $form->add($section);
 
 print($form);
@@ -491,13 +636,22 @@ events.push(function() {
 		$('#btnadvleap').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
+	function change_serverauth() {
+		hideClass('ntpserverauth', !($('#serverauth').prop('checked')));
+	}
+
 	$('#btnadvleap').click(function(event) {
 		show_advleap();
+	});
+
+	$('#serverauth').change(function () {
+		change_serverauth();
 	});
 
 	// Set initial states
 	show_advstats(true);
 	show_advleap(true);
+	change_serverauth();
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

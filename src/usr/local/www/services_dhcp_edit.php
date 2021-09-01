@@ -3,7 +3,9 @@
  * services_dhcp_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -29,6 +31,8 @@
 ##|*DESCR=Allow access to the 'Services: DHCP Server: Edit static mapping' page.
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
+
+global $ddnsdomainkeyalgorithms;
 
 function staticmapcmp($a, $b) {
 	return ipcmp($a['ipaddr'], $b['ipaddr']);
@@ -56,27 +60,12 @@ if (!$if) {
 	exit;
 }
 
-if (!is_array($config['dhcpd'])) {
-	$config['dhcpd'] = array();
-}
-
-if (!is_array($config['dhcpd'][$if])) {
-	$config['dhcpd'][$if] = array();
-}
-
-if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-	$config['dhcpd'][$if]['staticmap'] = array();
-}
-
-if (!is_array($config['dhcpd'][$if]['pool'])) {
-	$config['dhcpd'][$if]['pool'] = array();
-}
-
+init_config_arr(array('dhcpd', $if, 'staticmap'));
+init_config_arr(array('dhcpd', $if, 'pool'));
+$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $a_pools = &$config['dhcpd'][$if]['pool'];
-
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
-$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
@@ -101,12 +90,26 @@ if (isset($id) && $a_maps[$id]) {
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $a_maps[$id]['dnsserver'];
 	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
+	$pconfig['ddnsdomainsecondary'] = $a_maps[$id]['ddnsdomainsecondary'];
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $a_maps[$id]['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
-	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
+	$pconfig['ldap'] = $a_maps[$id]['ldap'];
+	$pconfig['netboot'] = isset($a_maps[$id]['netboot']);
+	$pconfig['nextserver'] = $a_maps[$id]['nextserver'];
+	$pconfig['filename'] = $a_maps[$id]['filename'];
+	$pconfig['filename32'] = $a_maps[$id]['filename32'];
+	$pconfig['filename64'] = $a_maps[$id]['filename64'];
+	$pconfig['filename32arm'] = $a_maps[$id]['filename32arm'];
+	$pconfig['filename64arm'] = $a_maps[$id]['filename64arm'];
+	$pconfig['uefihttpboot'] = $a_maps[$id]['uefihttpboot'];
+	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
+	$pconfig['netmask'] = $a_maps[$id]['netmask'];
+	$pconfig['numberoptions'] = $a_maps[$id]['numberoptions'];
 } else {
 	$pconfig['mac'] = $_REQUEST['mac'];
 	$pconfig['cid'] = $_REQUEST['cid'];
@@ -128,18 +131,51 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['dns4'] = $_REQUEST['dns4'];
 	$pconfig['ddnsdomain'] = $_REQUEST['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $_REQUEST['ddnsdomainprimary'];
+	$pconfig['ddnsdomainsecondary'] = $_REQUEST['ddnsdomainsecondary'];
 	$pconfig['ddnsdomainkeyname'] = $_REQUEST['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $_REQUEST['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $_REQUEST['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($_REQUEST['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($_REQUEST['ddnsforcehostname']);
 	$pconfig['ntp1'] = $_REQUEST['ntp1'];
 	$pconfig['ntp2'] = $_REQUEST['ntp2'];
+	$pconfig['ntp3'] = $_REQUEST['ntp3'];
 	$pconfig['tftp'] = $_REQUEST['tftp'];
+	$pconfig['ldap'] = $_REQUEST['ldap'];
+	$pconfig['netboot'] = isset($_REQUEST['netboot']);
+	$pconfig['nextserver'] = $_REQUEST['nextserver'];
+	$pconfig['filename'] = $_REQUEST['filename'];
+	$pconfig['filename32'] = $_REQUEST['filename32'];
+	$pconfig['filename64'] = $_REQUEST['filename64'];
+	$pconfig['filename32arm'] = $_REQUEST['filename32arm'];
+	$pconfig['filename64arm'] = $_REQUEST['filename64arm'];
+	$pconfig['uefihttpboot'] = $_REQUEST['uefihttpboot'];
+	$pconfig['rootpath'] = $_REQUEST['rootpath'];
+	$pconfig['netmask'] = $_REQUEST['netmask'];
+	$pconfig['numberoptions'] = $_REQUEST['numberoptions'];
 }
 
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	$numberoptions = array();
+	for ($x = 0; $x < 99; $x++) {
+		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+			if ($_POST["number{$x}"] < 1 || $_POST["number{$x}"] > 254) {
+				$input_errors[] = gettext("The DHCP option must be a number between 1 and 254.");
+				continue;
+			}
+			$numbervalue = array();
+			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
+			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
+			$numbervalue['value'] = base64_encode($_POST["value{$x}"]);
+			$numberoptions['item'][] = $numbervalue;
+		}
+	}
+
+	// Reload the new pconfig variable that the form uses.
+	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
 	$reqdfields = array();
@@ -185,16 +221,9 @@ if ($_POST['save']) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
 			continue;
 		}
-		/* The fully qualified hostname (hostname + '.' + domainname) must be unique.
-		 * The unqualified hostname does not have to be unique as long as the fully
-		 * qualified hostname is unique. */
-		$existingFqn = "{$mapent['hostname']}.{$mapent['domain']}";
-		$candidateFqn = "{$_POST['hostname']}.{$_POST['domain']}";
-		if ((($existingFqn == $candidateFqn) && $mapent['hostname']) ||
-		    (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
-		    (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr']) ||
+		if ((($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
 		    (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
-			$input_errors[] = gettext("This fully qualified hostname (Hostname + Domainname), IP, MAC address or Client identifier already exists.");
+			$input_errors[] = gettext("This MAC address or Client identifier already exists.");
 			break;
 		}
 	}
@@ -254,15 +283,25 @@ if ($_POST['save']) {
 	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
 		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 	}
-	if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
-		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
-	}
-	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
-		$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
-	}
-	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
-	    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
-		$input_errors[] = gettext("Both a valid domain key and key name must be specified.");
+	if ($_POST['ddnsupdate']) {
+		if (!is_domain($_POST['ddnsdomain'])) {
+			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+		}
+		if (!is_ipaddr($_POST['ddnsdomainprimary'])) {
+			$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+		}
+		if (!empty($_POST['ddnsdomainsecondary']) && !is_ipaddr($_POST['ddnsdomainsecondary'])) {
+			$input_errors[] = gettext("A valid secondary domain name server IP address must be specified for the dynamic domain name.");
+		}
+		if (!$_POST['ddnsdomainkeyname'] || !$_POST['ddnsdomainkeyalgorithm'] || !$_POST['ddnsdomainkey']) {
+			$input_errors[] = gettext("A valid domain key name, algorithm and secret must be specified.");
+		}
+		if (preg_match('/[^A-Za-z0-9\.\-\_]/', $_POST['ddnsdomainkeyname'])) {
+			$input_errors[] = gettext("The domain key name may only contain the characters a-z, A-Z, 0-9, '-', '_' and '.'");
+		}
+		if ($_POST['ddnsdomainkey'] && !base64_decode($_POST['ddnsdomainkey'], true)) {
+			$input_errors[] = gettext("The domain key secret must be a Base64 encoded value.");
+		}
 	}
 	if ($_POST['domainsearchlist']) {
 		$domain_array=preg_split("/[ ;]+/", $_POST['domainsearchlist']);
@@ -274,8 +313,13 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
-		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary NTP servers.");
+	if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) ||
+	    ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2']))) ||
+	    ($_POST['ntp3'] && (!is_ipaddrv4($_POST['ntp3']) && !is_hostname($_POST['ntp3'])))) {
+		$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
+	}
+	if ($_POST['domain'] && (!is_domain($_POST['domain'], false, false))) {
+		$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
 	}
 	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
 		$input_errors[] = gettext("A valid IPv4 address, hostname or URL must be specified for the TFTP server.");
@@ -330,7 +374,9 @@ if ($_POST['save']) {
 		$mapent['domainsearchlist'] = $_POST['domainsearchlist'];
 		$mapent['ddnsdomain'] = $_POST['ddnsdomain'];
 		$mapent['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
+		$mapent['ddnsdomainsecondary'] = $_POST['ddnsdomainsecondary'];
 		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$mapent['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 		$mapent['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
@@ -342,9 +388,21 @@ if ($_POST['save']) {
 		if ($_POST['ntp2']) {
 			$mapent['ntpserver'][] = $_POST['ntp2'];
 		}
+		if ($_POST['ntp3']) {
+			$mapent['ntpserver'][] = $_POST['ntp3'];
+		}
 
 		$mapent['tftp'] = $_POST['tftp'];
 		$mapent['ldap'] = $_POST['ldap'];
+		$mapent['netboot'] = ($_POST['netboot']) ? true : false;
+		$mapent['nextserver'] = $_POST['nextserver'];
+		$mapent['filename'] = $_POST['filename'];
+		$mapent['filename32'] = $_POST['filename32'];
+		$mapent['filename64'] = $_POST['filename64'];
+		$mapent['filename32arm'] = $_POST['filename32arm'];
+		$mapent['filename64arm'] = $_POST['filename64arm'];
+		$mapent['uefihttpboot'] = $_POST['uefihttpboot'];
+		$mapent['numberoptions'] = $pconfig['numberoptions'];
 
 		if (isset($id) && $a_maps[$id]) {
 			$a_maps[$id] = $mapent;
@@ -353,7 +411,7 @@ if ($_POST['save']) {
 		}
 		staticmaps_sort($if);
 
-		write_config();
+		write_config("DHCP Server settings saved");
 
 		if (isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
@@ -439,7 +497,8 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['ipaddr'],
 	'V4'
 ))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.', '<br />');
+			'If no IPv4 address is given, one will be dynamically allocated from the pool.%1$s%1$s' .
+			'The same IP address may be assigned to multiple mappings.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',
@@ -603,14 +662,23 @@ $section->addInput(new Form_Input(
 	'DDNS Domain',
 	'text',
 	$pconfig['ddnsdomain']
-))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
+))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will ' .
+	    'be used to register client names in the DNS server. Only the first defined set of option for each ' .
+	    'domain will be honored if it is used for multiple interfaces/entries.');
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
-	'DDNS Server IP',
+	'Primary DDNS address',
 	$pconfig['ddnsdomainprimary'],
-	'V4'
-))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
+	'BOTH'
+))->setHelp('Primary domain name server IP address for the dynamic domain name.');
+
+$section->addInput(new Form_IpAddress(
+	'ddnsdomainsecondary',
+	'Secondary DDNS address',
+	$pconfig['ddnsdomainsecondary'],
+	'BOTH'
+))->setHelp('Secondary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
@@ -618,6 +686,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ddnsdomainkeyname']
 ))->setHelp('Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.');
+
+$section->addInput(new Form_Select(
+	'ddnsdomainkeyalgorithm',
+	'Key algorithm',
+	$pconfig['ddnsdomainkeyalgorithm'],
+	$ddnsdomainkeyalgorithms
+));
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',
@@ -658,6 +733,14 @@ $group->add(new Form_Input(
 	['placeholder' => 'NTP 2']
 ));
 
+$group->add(new Form_Input(
+	'ntp3',
+	'NTP Server 3',
+	'text',
+	$pconfig['ntp3'],
+	['placeholder' => 'NTP 3']
+));
+
 $group->addClass('ntpclass');
 
 $section->add($group);
@@ -683,6 +766,199 @@ $section->addInput(new Form_Input(
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable. Enter a full hostname or IP for the TFTP server.');
 
+// Advanced LDAP
+$btnadv = new Form_Button(
+	'btnadvldap',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'LDAP',
+	$btnadv
+));
+
+$section->addInput(new Form_Input(
+	'ldap',
+	'LDAP Server URI',
+	'text',
+	$pconfig['ldap']
+))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
+
+// Advanced Network Booting options
+$btnadv = new Form_Button(
+	'btnadvnwkboot',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Network Booting',
+	$btnadv
+));
+
+$section->addInput(new Form_Checkbox(
+	'netboot',
+	'Enable',
+	'Enables network booting',
+	$pconfig['netboot']
+));
+
+$section->addInput(new Form_IpAddress(
+	'nextserver',
+	'Next Server',
+	$pconfig['nextserver'],
+	'V4'
+))->setHelp('Enter the IP address of the next server');
+
+$section->addInput(new Form_Input(
+	'filename',
+	'Default BIOS file name',
+	'text',
+	$pconfig['filename']
+));
+
+$section->addInput(new Form_Input(
+	'filename32',
+	'UEFI 32 bit file name',
+	'text',
+	$pconfig['filename32']
+));
+
+$section->addInput(new Form_Input(
+	'filename64',
+	'UEFI 64 bit file name',
+	'text',
+	$pconfig['filename64']
+));
+
+$section->addInput(new Form_Input(
+	'filename32arm',
+	'ARM 32 bit file name',
+	'text',
+	$pconfig['filename32arm']
+));
+
+$section->addInput(new Form_Input(
+	'filename64arm',
+	'ARM 64 bit file name',
+	'text',
+	$pconfig['filename64arm']
+))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
+			'All five filenames and a configured boot server are necessary for UEFI & ARM to work! ');
+
+$section->addInput(new Form_Input(
+	'uefihttpboot',
+	'UEFI HTTPBoot URL',
+	'text',
+	$pconfig['uefihttpboot']
+))->setHelp('string-format: http://(servername)/(firmwarepath)');
+
+$section->addInput(new Form_Input(
+	'rootpath',
+	'Root path',
+	'text',
+	$pconfig['rootpath']
+))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
+
+// Advanced Additional options
+$btnadv = new Form_Button(
+	'btnadvopts',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Additional BOOTP/DHCP Options',
+	$btnadv
+));
+
+$form->add($section);
+
+$section = new Form_Section('Additional BOOTP/DHCP Options');
+$section->addClass('adnlopts');
+
+$section->addInput(new Form_StaticText(
+	null,
+	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
+	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s.%3$s'), '<a href="https://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>', '</div>')
+));
+
+if (!$pconfig['numberoptions']) {
+	$pconfig['numberoptions'] = array();
+	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
+}
+
+$customitemtypes = array(
+	'text' => gettext('Text'), 'string' => gettext('String'), 'boolean' => gettext('Boolean'),
+	'unsigned integer 8' => gettext('Unsigned 8-bit integer'), 'unsigned integer 16' => gettext('Unsigned 16-bit integer'), 'unsigned integer 32' => gettext('Unsigned 32-bit integer'),
+	'signed integer 8' => gettext('Signed 8-bit integer'), 'signed integer 16' => gettext('Signed 16-bit integer'), 'signed integer 32' => gettext('Signed 32-bit integer'), 'ip-address' => gettext('IP address or host')
+);
+
+$numrows = count($item) -1;
+$counter = 0;
+
+$numrows = count($pconfig['numberoptions']['item']) -1;
+
+foreach ($pconfig['numberoptions']['item'] as $item) {
+	$number = $item['number'];
+	$itemtype = $item['type'];
+	$value = base64_decode($item['value']);
+
+	$group = new Form_Group(($counter == 0) ? 'Option':null);
+	$group->addClass('repeatable');
+
+	$group->add(new Form_Input(
+		'number' . $counter,
+		null,
+		'number',
+		$number,
+		['min'=>'1', 'max'=>'254']
+	))->setHelp($numrows == $counter ? 'Number':null);
+
+
+	$group->add(new Form_Select(
+		'itemtype' . $counter,
+		null,
+		$itemtype,
+		$customitemtypes
+	))->setWidth(3)->setHelp($numrows == $counter ? 'Type':null);
+
+	$group->add(new Form_Input(
+		'value' . $counter,
+		null,
+		'text',
+		$value
+	))->setHelp($numrows == $counter ? 'Value':null);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
+
+	$section->add($group);
+
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
+
 $form->add($section);
 print($form);
 ?>
@@ -699,8 +975,14 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
-			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
+		if (!$pconfig['ddnsupdate'] &&
+	       	    !$pconfig['ddnsforcehostname'] &&
+		    empty($pconfig['ddnsdomain']) &&
+		    empty($pconfig['ddnsdomainprimary']) &&
+		    empty($pconfig['ddnsdomainsecondary']) &&
+		    empty($pconfig['ddnsdomainkeyname']) &&
+		    (empty($pconfig['ddnsdomainkeyalgorithm']) || ($pconfig['ddnsdomainkeyalgorithm'] == "hmac-md5")) &&
+		    empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -716,8 +998,10 @@ events.push(function() {
 		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
+		hideInput('ddnsdomainsecondary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);
+		hideInput('ddnsdomainkeyalgorithm', !showadvdns);
 
 		if (showadvdns) {
 			text = "<?=gettext('Hide Advanced');?>";
@@ -739,7 +1023,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
+			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2']) && empty($pconfig['ntp3'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -753,6 +1037,7 @@ events.push(function() {
 
 		hideInput('ntp1', !showadvntp);
 		hideInput('ntp2', !showadvntp);
+		hideInput('ntp3', !showadvntp);
 
 		if (showadvntp) {
 			text = "<?=gettext('Hide Advanced');?>";
@@ -800,6 +1085,117 @@ events.push(function() {
 		show_advtftp();
 	});
 
+	// Show advanced LDAP options ======================================================================================
+	var showadvldap = false;
+
+	function show_advldap(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['ldap'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvldap = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvldap = !showadvldap;
+		}
+
+		hideInput('ldap', !showadvldap);
+
+		if (showadvldap) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvldap').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvldap').click(function(event) {
+		show_advldap();
+	});
+
+	// Show advanced additional opts options ===========================================================================
+	var showadvopts = false;
+
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['numberoptions']) ||
+			    (empty($pconfig['numberoptions']['item'][0]['number']) && (empty($pconfig['numberoptions']['item'][0]['value'])))) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvopts = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
+		}
+
+		hideClass('adnlopts', !showadvopts);
+
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
+	});
+
+	// Show advanced Network Booting options ===========================================================================
+	var showadvnwkboot = false;
+
+	function show_advnwkboot(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['netboot'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvnwkboot = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvnwkboot = !showadvnwkboot;
+		}
+
+		hideCheckbox('netboot', !showadvnwkboot);
+		hideInput('nextserver', !showadvnwkboot);
+		hideInput('filename', !showadvnwkboot);
+		hideInput('filename32', !showadvnwkboot);
+		hideInput('filename64', !showadvnwkboot);
+		hideInput('filename32arm', !showadvnwkboot);
+		hideInput('filename64arm', !showadvnwkboot);
+		hideInput('uefihttpboot', !showadvnwkboot);
+		hideInput('rootpath', !showadvnwkboot);
+
+		if (showadvnwkboot) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvnwkboot').click(function(event) {
+		show_advnwkboot();
+	});
+
 	// On click, copy the hidden 'mymac' text to the 'mac' input
 	$("#btnmymac").click(function() {
 		$('#mac').val('<?=$mymac?>');
@@ -809,6 +1205,13 @@ events.push(function() {
 	show_advdns(true);
 	show_advntp(true);
 	show_advtftp(true);
+	show_advldap(true);
+	show_advopts(true);
+	show_advnwkboot(true);
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
 });
 //]]>
 </script>

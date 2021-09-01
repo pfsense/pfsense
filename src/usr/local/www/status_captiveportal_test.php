@@ -3,7 +3,9 @@
  * status_captiveportal_test.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -36,11 +38,8 @@ require_once("voucher.inc");
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 /* If the zone does not exist, do not display the invalid zone */
 if (!array_key_exists($cpzone, $a_cp)) {
@@ -58,21 +57,19 @@ $shortcut_section = "captiveportal-vouchers";
 
 include("head.inc");
 
-if ($_POST['save']) {
-	if ($_POST['vouchers']) {
-		$test_results = voucher_auth($_POST['vouchers'], 1);
-		$output = "";
-		$class = 'warning';
+if ($_POST['Submit'] && $_POST['vouchers']) {
+	$test_results = voucher_auth(trim($_POST['vouchers']), 1);
+	$output = "";
+	$class = 'warning';
 
-		foreach ($test_results as $result) {
-			$output .= htmlspecialchars($result) . '<br />';
+	foreach ($test_results as $result) {
+		$output .= htmlspecialchars($result) . '<br />';
 
-			if (strpos($result, " good ") || strpos($result, " granted ")) {
-				$class = 'success';
-			}
+		if (strpos($result, " good ") || strpos($result, " granted ")) {
+			$class = 'success';
 		}
-		print_info_box($output, $class, false);
 	}
+	print_info_box($output, $class, false);
 }
 
 $tab_array = array();
@@ -93,7 +90,7 @@ $section->addInput(new Form_Textarea(
 	$_POST['vouchers']
 ))->setHelp('Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',

@@ -3,7 +3,9 @@
  * status_carp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,41 +54,48 @@ function find_ipalias($carpif) {
 
 $status = get_carp_status();
 
-if ($status != 0 && $_POST['carp_maintenancemode'] != "") {
-	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
+if ($_POST['carp_maintenancemode'] != "") {
+	if (!isset($config["virtualip_carp_maintenancemode"])) {
+		$maintenancemode = true;
+		$savemsg = gettext("Entering Persistent CARP Maintenance Mode.");
+	} else {
+		$maintenancemode = false;
+		$savemsg = gettext("Leaving Persistent CARP Maintenance Mode.");
+	}
+	/* allow to switch to Persistent Maintenance Mode if CARP is disabled
+	 * see https://redmine.pfsense.org/issues/11727 */
+	interfaces_carp_set_maintenancemode($maintenancemode);
+	if ($status == 0) {
+		$_POST['disablecarp'] = "off";
+	}
 }
 
 if ($_POST['disablecarp'] != "") {
+	init_config_arr(array('virtualip', 'vip'));
+	$viparr = &$config['virtualip']['vip'];
 	if ($status != 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
-		if (is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
-					continue;
-				if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
-					continue;
-
-				interface_vip_bring_down($vip);
-			}
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+				continue;
+			if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
+				continue;
+			interface_vip_bring_down($vip);
 		}
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);
 		$status = 0;
 	} else {
-		$savemsg = gettext("CARP has been enabled.");
-		if (is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				switch ($vip['mode']) {
-					case "carp":
-						interface_carp_configure($vip);
-						break;
-					case 'ipalias':
-						if (substr($vip['interface'], 0, 4) == "_vip") {
-							interface_ipalias_configure($vip);
-						}
-						break;
-				}
+		$savemsg .= gettext("CARP has been enabled.");
+		foreach ($viparr as $vip) {
+			switch ($vip['mode']) {
+				case "carp":
+					interface_carp_configure($vip);
+					break;
+				case 'ipalias':
+					if (substr($vip['interface'], 0, 4) == "_vip") {
+						interface_ipalias_configure($vip);
+					}
+					break;
 			}
 		}
 		interfaces_sync_setup();
@@ -109,10 +118,6 @@ $shortcut_section = "carp";
 include("head.inc");
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
-}
-
-if ($status == 0 && $_POST['carp_maintenancemode'] != "") {
-	print_info_box('Please enable CARP before setting the maintenance mode.');
 }
 
 $carpcount = 0;

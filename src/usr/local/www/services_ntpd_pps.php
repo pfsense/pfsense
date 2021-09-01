@@ -3,7 +3,9 @@
  * services_ntpd_pps.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -29,6 +31,11 @@
 
 require_once("guiconfig.inc");
 
+global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
+$ntp_poll_values = system_ntp_poll_values();
+
+$serialports = get_serial_ports(true);
+
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
 }
@@ -39,8 +46,26 @@ if (!is_array($config['ntpd']['pps'])) {
 if ($_POST) {
 	unset($input_errors);
 
+	if (!empty($_POST['ppsport']) && !array_key_exists($_POST['ppsport'], $serialports)) {
+		$input_errors[] = gettext("The selected PPS port does not exist.");
+	}
+
+	if (!array_key_exists($pconfig['ppsminpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['ppsmaxpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+	}
+
+	if (is_numericint($pconfig['ppsminpoll']) &&
+	    is_numericint($pconfig['ppsmaxpoll']) ||
+	    ($pconfig['ppsmaxpoll'] < $pconfig['ppsminpoll'])) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than Maximum Poll Interval.");
+	}
+
 	if (!$input_errors) {
-		if (!empty($_POST['ppsport']) && file_exists('/dev/'.$_POST['ppsport'])) {
+		if (!empty($_POST['ppsport']) && array_key_exists($_POST['ppsport'], $serialports)) {
 			$config['ntpd']['pps']['port'] = $_POST['ppsport'];
 		} else {
 			/* if port is not set, remove all the pps config */
@@ -88,6 +113,8 @@ if ($_POST) {
 		} elseif (isset($config['ntpd']['pps']['refid'])) {
 			unset($config['ntpd']['pps']['refid']);
 		}
+		$config['ntpd']['pps']['ppsminpoll'] = $_POST['ppsminpoll'];
+		$config['ntpd']['pps']['ppsmaxpoll'] = $_POST['ppsmaxpoll'];
 
 		write_config("Updated NTP PPS Settings");
 
@@ -97,8 +124,8 @@ if ($_POST) {
 	}
 }
 
+init_config_arr(array('ntpd', 'pps'));
 $pconfig = &$config['ntpd']['pps'];
-
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("PPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
@@ -132,21 +159,12 @@ $section->addInput(new Form_StaticText(
 	'<a href="services_ntpd.php">' . 'Services > NTP > Settings' . '</a>' . ' to reliably supply the time of each PPS pulse.'
 ));
 
-$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-
 if (!empty($serialports)) {
-	$splist = array();
-
-	foreach ($serialports as $port) {
-		$shortport = substr($port, 5);
-		$splist[$shortport] = $shortport;
-	}
-
 	$section->addInput(new Form_Select(
 		'ppsport',
 		'Serial Port',
 		$pconfig['port'],
-		['' => gettext('None')] + $splist
+		['' => gettext('None')] + $serialports
 	))->setHelp('All serial ports are listed, be sure to pick the port with the PPS source attached. ');
 }
 
@@ -163,6 +181,20 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['stratum']
 ))->setHelp('This may be used to change the PPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock and just monitor this source.');
+
+$section->addInput(new Form_Select(
+	'ppsminpoll',
+	'Minimum Poll Interval',
+	$pconfig['ppsminpoll'],
+	$ntp_poll_values
+))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
+
+$section->addInput(new Form_Select(
+	'ppsmaxpoll',
+	'Maximum Poll Interval',
+	$pconfig['ppsmaxpoll'],
+	$ntp_poll_values
+))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(
 	'ppsflag2',

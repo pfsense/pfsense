@@ -2,7 +2,8 @@
  * pfSense-dark.css
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016 Electric Sheep Fencing
+ * Copyright (c) 2016-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,7 @@
  */
 
 @import url("/css/pfSense.css");
-@import url("/vendor/jquery/jquery-ui/themes/dark-hive/theme.css");
+@import url("/vendor/jquery-ui/themes/dark-hive/theme.css");
 
 body {
     background-color: #212121;
@@ -299,6 +300,11 @@ tr.disabled a {
     color: rgba(0, 150, 136,.5);
 }
 
+.table-striped>tbody>tr.disabled>td:first-child {
+    border-left: 3px solid #F44336;
+    padding-left: 7px;
+}
+
 .table-bordered {
     border: 1px solid #303030;
 }
@@ -440,6 +446,7 @@ textarea {
 .ui-autocomplete {
     color: #212121;
     background-color: #e0e0e0;
+    background-image: none;
 }
 
 .ui-widget {

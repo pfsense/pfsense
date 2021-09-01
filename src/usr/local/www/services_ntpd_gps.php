@@ -3,7 +3,9 @@
  * services_ntpd_gps.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -28,6 +30,13 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+
+$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
+
+global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
+$ntp_poll_values = system_ntp_poll_values();
+
+$serialports = get_serial_ports(true);
 
 function set_default_gps() {
 	global $config;
@@ -147,9 +156,40 @@ function autocorrect_initcmd($initcmd) {
 }
 
 if ($_POST) {
-	unset($input_errors);
+	$input_errors = array();
+	if (!in_array($_POST['gpstype'], $gpstypes)) {
+		$input_errors[] = gettext("The submitted GPS type is invalid.");
+	}
 
-	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
+	if (!empty($_POST['gpsport']) && !array_key_exists($_POST['gpsport'], $serialports)) {
+		$input_errors[] = gettext("The selected GPS port does not exist.");
+	}
+
+	if (!array_key_exists($pconfig['gpsminpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['gpsmaxpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+	}
+
+	if (is_numericint($pconfig['gpsminpoll']) &&
+	    is_numericint($pconfig['gpsmaxpoll']) ||
+	    ($pconfig['gpsmaxpoll'] < $pconfig['gpsminpoll'])) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than Maximum Poll Interval.");
+	}
+
+} else {
+	/* set defaults if they do not already exist */
+	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
+		set_default_gps();
+	}
+}
+
+
+if ($_POST && empty($input_errors)) {
+
+	if (!empty($_POST['gpsport']) && array_key_exists($_POST['gpsport'], $serialports)) {
 		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
 	} else {
 		/* if port is not set, remove all the gps config */
@@ -164,8 +204,17 @@ if ($_POST) {
 
 	if (!empty($_POST['gpsspeed'])) {
 		$config['ntpd']['gps']['speed'] = $_POST['gpsspeed'];
+		if ($_POST['gpsspeed'] == 'autoalways') {
+			$fixghost = true;
+		}
 	} elseif (isset($config['ntpd']['gps']['speed'])) {
 		unset($config['ntpd']['gps']['speed']);
+	}
+	
+	if (!empty($_POST['autobaudinit'])) {
+		$config['ntpd']['gps']['autobaudinit'] = $_POST['autobaudinit'];
+	} elseif (isset($config['ntpd']['gps']['autobaudinit'])) {
+		unset($config['ntpd']['gps']['autobaudinit']);
 	}
 
 	if (!empty($_POST['gpsnmea']) && ($_POST['gpsnmea'][0] === "0")) {
@@ -173,7 +222,7 @@ if ($_POST) {
 	} else {
 		$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
 	}
-	
+
 	if (!empty($_POST['processpgrmf'])) {
 		$config['ntpd']['gps']['processpgrmf'] = $_POST['processpgrmf'];
 	} elseif (isset($config['ntpd']['gps']['processpgrmf'])) {
@@ -270,11 +319,17 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['nmeaset']);
 	}
 
+	$config['ntpd']['gps']['gpsminpoll'] = $_POST['gpsminpoll'];
+	$config['ntpd']['gps']['gpsmaxpoll'] = $_POST['gpsmaxpoll'];
+
 	write_config(gettext("Updated NTP GPS Settings"));
 
 	$changes_applied = true;
 	$retval = 0;
 	$retval |= system_ntp_configure();
+	if ($fixghost) {
+		$config['ntpd']['gps']['speed'] = 'autoalways';
+	}
 } else {
 	/* set defaults if they do not already exist */
 	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
@@ -306,11 +361,16 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
+init_config_arr(array('ntpd', 'gps'));
 $pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 if ($changes_applied) {
 	print_apply_result_box($retval);
@@ -336,42 +396,46 @@ $section->addInput(new Form_StaticText(
 	' to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients.'
 ));
 
-$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
-
 $section->addInput(new Form_Select(
 	'gpstype',
 	'GPS Type',
 	$pconfig['type'],
 	array_combine($gpstypes, $gpstypes)
 ))->setHelp('This option allows a predefined configuration to be selected. ' .
-			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if the GPS is not listed.%1$s' .
-			'The predefined configurations assume the GPS has already been set to NMEA mode.', '<br /><br />');
-
-$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
+    'Default is the configuration of %1$s 2.1 and earlier (not recommended). Select Generic if the GPS is not listed.%2$s' .
+    'The predefined configurations assume the GPS has already been set to NMEA mode.', $g['product_label'], '<br /><br />');
 
 if (!empty($serialports)) {
-	$splist = array();
-
-	foreach ($serialports as $port) {
-		$shortport = substr($port, 5);
-		$splist[$shortport] = $shortport;
-	}
-
 	$section->addInput(new Form_Select(
 		'gpsport',
 		'Serial Port',
 		$pconfig['port'],
-		['' => gettext('None')] + $splist
+		['' => gettext('None')] + $serialports
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
 
 	$section->addInput(new Form_Select(
 		'gpsspeed',
 		null,
 		$pconfig['speed'],
-		[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
+		[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200', 'autoset' => 'Autoset', 'autoalways' => 'Always Auto']
 
 	))->setHelp('A higher baud rate is generally only helpful if the GPS is sending too many sentences. ' .
-				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.');
+				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.%1$s' .
+				'Autoset tries to find the correct baud rate of the GPS device and then saves the configuration.%1$s' .
+				'Always Auto tries to find the correct baud rate of the GPS device every time NTPd is started.', '<br /><br />');
+	
+	$section->addInput(new Form_Checkbox(
+		'autobaudinit',
+		null,
+		'Check baud rate before sending init commands (default: unchecked).',
+		$pconfig['autobaudinit']
+	))->setHelp(
+		'Before sending the initialization commands, check the GPS baud rate. ' . 
+		'If it is not correct try to find the correct baud rate automatically, ' .
+		'send the initialization commands if the correct rate is found, ' .
+		'and then set the baud rate to the configured speed.%1$s' . 
+		'This is useful if the GPS device resets back to a default rate on power loss ' .
+		'or when changing the baud rate.', '<br /><br />');
 }
 
 $nmealist = build_nmea_list();
@@ -410,6 +474,20 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['stratum']
 ))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock.');
+
+$section->addInput(new Form_Select(
+	'gpsminpoll',
+	'Minimum Poll Interval',
+	$pconfig['gpsminpoll'],
+	$ntp_poll_values
+))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
+
+$section->addInput(new Form_Select(
+	'gpsmaxpoll',
+	'Maximum Poll Interval',
+	$pconfig['gpsmaxpoll'],
+	$ntp_poll_values
+))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(
 	'gpsprefer',
@@ -568,7 +646,7 @@ events.push(function() {
 				break;
 
 			case "Garmin":
-				return "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==";
+				return "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDIqNzUNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==";
 				break;
 
 			case "Generic":
@@ -602,7 +680,7 @@ events.push(function() {
 	function set_gps_default(type) {
 		$('#gpsnmea').val(0);
 		$('#processpgrmf').prop('checked', false);
-		$('#gpsspeed').val(0);
+		$('#autobaudinit').prop('checked', false);
 		$('#gpsfudge1').val(0);
 		$('#gpsinitcmd').val(get_gps_string(type));
 
@@ -702,10 +780,10 @@ events.push(function() {
 		set_gps_default($(this).val());
 		hideInput('processpgrmf', ($(this).val() !== "Garmin" && $(this).val() !== "Custom"));
 	});
-	hideInput('processpgrmf', ('<?=$pconfig['type']?>' !== "Garmin" && '<?=$pconfig['type']?>' !== "Custom"));
+	hideInput('processpgrmf', (<?=json_encode($pconfig['type'])?> !== "Garmin" && <?=json_encode($pconfig['type'])?> !== "Custom"));
 
 	if ('<?=$pconfig['initcmd']?>' == '') {
-		set_gps_default('<?=$pconfig['type']?>');
+		set_gps_default(<?=json_encode($pconfig['type'])?>);
 	}
 
 	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive

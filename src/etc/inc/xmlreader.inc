@@ -3,7 +3,9 @@
  * xmlreader.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -32,8 +34,8 @@ function listtags() {
 	$ret = array(
 		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
 		'bridged', 'build_port_path',
-		'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 'container', 'columnitem',
-		'checkipservice',
+		'ca', 'cacert', 'cert', 'crl', 'clone', 'config',
+	       	'container', 'columnitem', 'checkipservice',
 		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
 		'earlyshellcmd', 'element', 'encryption-algorithm-option',
 		'field', 'fieldname',
@@ -47,9 +49,9 @@ function listtags() {
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
-		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
-		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
-		'winsserver', 'wolentry', 'widget'
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup', 'voucherdbfile',
+		'vxlan', 'winsserver', 'wolentry', 'widget', 'xmldatafile'
 	);
 	return array_flip($ret);
 }

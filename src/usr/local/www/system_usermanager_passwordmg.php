@@ -3,7 +3,9 @@
  * system_usermanager_passwordmg.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +32,9 @@ require_once("auth.inc");
 require_once("certs.inc");
 require_once("guiconfig.inc");
 
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+
 $pgtitle = array(gettext("System"), gettext("User Password"));
 
 if (isset($_POST['save'])) {
@@ -43,20 +48,23 @@ if (isset($_POST['save'])) {
 	if ($_POST['passwordfld1'] != $_POST['passwordfld2']) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
+	if (!isset($config['system']['user'][$userindex[$_SESSION['Username']]]) ||
+	    !is_array($config['system']['user'][$userindex[$_SESSION['Username']]])) {
+		$input_errors[] = gettext("Could not locate this user.");
+	}
 
 	if (!$input_errors) {
 		phpsession_begin();
 		// all values are okay --> saving changes
-
 		$userent =& $config['system']['user'][$userindex[$_SESSION['Username']]];
 		local_user_set_password($userent, $_POST['passwordfld1']);
 		local_user_set($userent);
+		$savemsg = sprintf(gettext("Password changed for user: %s"), $userent['name']);
 		unset($userent);
 		phpsession_end(true);
 
-		write_config();
-
-		$savemsg = gettext("Password successfully changed.");
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
 }
 
@@ -82,6 +90,13 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+$tab_array = array();
+$tab_array[] = array(gettext("User Password"), true, "system_usermanager_passwordmg.php");
+$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
+$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
+display_top_tabs($tab_array);
+
 if ($islocal == false) {
 	echo gettext("The password cannot be changed for a non-local user.");
 	include("foot.inc");
@@ -95,13 +110,17 @@ $section = new Form_Section('Update Password');
 $section->addInput(new Form_Input(
 	'passwordfld1',
 	'*Password',
-	'password'
+	'password',
+	null,
+	['autocomplete' => 'new-password']
 ));
 
 $section->addInput(new Form_Input(
 	'passwordfld2',
 	'*Confirmation',
-	'password'
+	'password',
+	null,
+	['autocomplete' => 'new-password']
 ))->setHelp('Select a new password');
 
 $form->add($section);

@@ -3,7 +3,9 @@
  * services_wol.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -31,31 +33,36 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-if (!is_array($config['wol']['wolentry'])) {
-	$config['wol']['wolentry'] = array();
-}
+
+init_config_arr(array('wol', 'wolentry'));
 $a_wol = &$config['wol']['wolentry'];
 
+function send_wol($if, $mac, $description, & $savemsg, & $class) {
+	$ipaddr = get_interface_ip($if);
+	if (!is_ipaddr($ipaddr) || !is_macaddr($mac)) {
+		return array();
+	}
+	if (!empty($description)) {
+		$description = ' (' . htmlspecialchars($description) . ')';
+	}
+	/* determine broadcast address */
+	$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
+	/* Execute wol command and check return code. */
+	if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")) {
+		$savemsg .= sprintf(gettext('Sent magic packet to %1$s%2$s.'), $mac, $description) . "<br />";
+		$class = 'success';
+	} else {
+		$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $description, htmlspecialchars($mac)) . "<br />";
+		$class = 'warning';
+	}
+}
+
+$savemsg = "";
+$class = "";
+
 if ($_REQUEST['wakeall'] != "") {
-	$i = 0;
-	$savemsg = "";
 	foreach ($a_wol as $wolent) {
-		$mac = $wolent['mac'];
-		$if = $wolent['interface'];
-		$description = $wolent['descr'];
-		$ipaddr = get_interface_ip($if);
-		if (!is_ipaddr($ipaddr)) {
-			continue;
-		}
-		$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
-		/* Execute wol command and check return code. */
-		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")) {
-			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s).'), $mac, $description) . "<br />";
-			$class = 'success';
-		} else {
-			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $description, $mac) . "<br />";
-			$class = 'warning';
-		}
+		send_wol($wolent['interface'], $wolent['mac'], $wolent['descr'], $savemsg, $class);
 	}
 }
 
@@ -78,21 +85,7 @@ if ($_POST['Submit'] || $_POST['mac']) {
 	}
 
 	if (!$input_errors) {
-		/* determine broadcast address */
-		$ipaddr = get_interface_ip($if);
-		if (!is_ipaddr($ipaddr)) {
-			$input_errors[] = gettext("A valid ip could not be found!");
-		} else {
-			$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
-			/* Execute wol command and check return code. */
-			if (!mwexec("/usr/local/bin/wol -i {$bcip} " . escapeshellarg($mac))) {
-				$savemsg .= sprintf(gettext("Sent magic packet to %s."), $mac);
-				$class = 'success';
-			} else {
-				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $mac) . "<br />";
-				$class = 'warning';
-			}
-		}
+		send_wol($if, $mac, '', $savemsg, $class);
 	}
 }
 
@@ -126,6 +119,11 @@ if ($savemsg) {
 	print_info_box($savemsg, $class);
 }
 
+$selected_if = (empty($if) ? 'lan' : $if);
+if (!isset(get_configured_interface_list(false)[$selected_if])) {
+	$selected_if = null;
+}
+
 $form = new Form(false);
 
 $section = new Form_Section('Wake-on-LAN');
@@ -133,7 +131,7 @@ $section = new Form_Section('Wake-on-LAN');
 $section->addInput(new Form_Select(
 	'if',
 	'*Interface',
-	(link_interface_to_bridge($if) ? null : $if),
+	$selected_if,
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface the host to be woken up is connected to.');
 
@@ -161,8 +159,25 @@ print $form;
 		<h2 class="panel-title"><?=gettext("Wake-on-LAN Devices");?></h2>
 	</div>
 
+<?php
+	// Add top buttons if more than 24 entries in the table
+	if (is_array($a_wol) && (count($a_wol) > 24)) {
+?>
+	<div class="panel-footer">
+		<a class="btn btn-success" href="services_wol_edit.php">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Add");?>
+		</a>
+
+		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
+			<i class="fa fa-power-off icon-embed-btn"></i>
+			<?=gettext("Wake All Devices")?>
+		</a>
+	</div>
+<?php } ?>
+
 	<div class="panel-body">
-		<p><?=gettext("Click the MAC address to wake up an individual device.")?></p>
+		<p class="text-danger" style="margin-left: 8px;margin-bottom:0px;"><?=gettext("Click the MAC address to wake up an individual device.")?></p>
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-rowdblclickedit">
 				<thead>
@@ -202,7 +217,7 @@ print $form;
 			<?=gettext("Add");?>
 		</a>
 
-		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
+		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary" usepost>
 			<i class="fa fa-power-off icon-embed-btn"></i>
 			<?=gettext("Wake All Devices")?>
 		</a>

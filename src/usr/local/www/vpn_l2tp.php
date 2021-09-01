@@ -3,7 +3,9 @@
  * vpn_l2tp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +31,7 @@
 require_once("guiconfig.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['l2tp']['radius'])) {
-	$config['l2tp']['radius'] = array();
-}
+init_config_arr(array('l2tp', 'radius'));
 $l2tpcfg = &$config['l2tp'];
 
 $pconfig['remoteip'] = $l2tpcfg['remoteip'];
@@ -41,6 +41,7 @@ $pconfig['mode'] = $l2tpcfg['mode'];
 $pconfig['interface'] = $l2tpcfg['interface'];
 $pconfig['l2tp_dns1'] = $l2tpcfg['dns1'];
 $pconfig['l2tp_dns2'] = $l2tpcfg['dns2'];
+$pconfig['mtu'] = $l2tpcfg['mtu'];
 $pconfig['radiusenable'] = isset($l2tpcfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($l2tpcfg['radius']['accounting']);
 $pconfig['radiusserver'] = $l2tpcfg['radius']['server'];
@@ -57,10 +58,12 @@ if ($_POST['save']) {
 
 	/* input validation */
 	if ($_POST['mode'] == "server") {
-		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = array(gettext("Server address"), gettext("Remote start address"));
-
-		if ($_POST['radiusenable']) {
+		$reqdfields = explode(" ", "localip");
+		$reqdfieldsn = array(gettext("Server address"));
+		if (!$_POST['radiusenable'] || !$_POST['radiusissueips']) {
+			$reqdfields = array_merge($reqdfields, explode(" ", "remoteip"));
+			$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Remote start address")));
+		} elseif ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
 				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
@@ -68,16 +71,17 @@ if ($_POST['save']) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
+		if (($_POST['localip'] && !is_ipaddrv4($_POST['localip']))) {
 			$input_errors[] = gettext("A valid server address must be specified.");
 		}
 		if (is_ipaddr_configured($_POST['localip'])) {
 			$input_errors[] = gettext("'Server address' parameter should NOT be set to any IP address currently in use on this firewall.");
 		}
-		if (($_POST['l2tp_subnet'] && !is_ipaddr($_POST['remoteip']))) {
+		if ($_POST['l2tp_subnet'] && !is_ipaddrv4($_POST['remoteip']) &&
+		    (!$_POST['radiusenable'] || !$_POST['radiusissueips'])) {
 			$input_errors[] = gettext("A valid remote start address must be specified.");
 		}
-		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
+		if (($_POST['radiusserver'] && !is_ipaddrv4($_POST['radiusserver']))) {
 			$input_errors[] = gettext("A valid RADIUS server address must be specified.");
 		}
 
@@ -112,7 +116,16 @@ if ($_POST['save']) {
 		if (!empty($_POST['l2tp_dns2']) && empty($_POST['l2tp_dns1'])) {
 			$input_errors[] = gettext("The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server is empty.");
 		}
-
+		if ($_POST['mtu']) {
+			if (!is_numericint($_POST['mtu'])) {
+				$input_errors[] = "MTU must be an integer.";
+			}
+			$min_mtu = 576;
+			$max_mtu = 9000;
+			if (($_POST['mtu'] < $min_mtu) || ($_POST['mtu'] > $max_mtu)) {
+				$input_errors[] = sprintf(gettext("The MTU must be between %d and %d bytes."), $min_mtu, $max_mtu);
+			}
+		}
 	}
 
 	if (!$input_errors) {
@@ -148,6 +161,14 @@ if ($_POST['save']) {
 			}
 		} else {
 			$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
+		}
+
+		if ($_POST['mtu'] == "") {
+			if (isset($l2tpcfg['mtu'])) {
+				unset($l2tpcfg['mtu']);
+			}
+		} else {
+			$l2tpcfg['mtu'] = $_POST['mtu'];
 		}
 
 		if ($_POST['radiusenable'] == "yes") {
@@ -234,10 +255,10 @@ $section->addInput(new Form_Input(
 			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
 $section->addInput(new Form_IpAddress(
-	'remoteip',
-	'*Remote address range',
-	$pconfig['remoteip']
-))->addMask(l2tp_subnet, $pconfig['l2tp_subnet'])
+        'remoteip',
+        '*Remote address range',
+        $pconfig['remoteip']
+))->addMask('l2tp_subnet', $pconfig['l2tp_subnet'], 32)->setWidth(5)
   ->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput(new Form_Select(
@@ -278,6 +299,14 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['l2tp_dns2']
 ));
+
+$section->addInput(new Form_Input(
+	'mtu',
+	'VPN MTU',
+	'number',
+	$pconfig['mtu']
+))->setHelp('If this field is blank, the adapter\'s default MTU will be used. ' .
+			'This is typically 1500 bytes but can vary in some circumstances.');
 
 $form->add($section);
 

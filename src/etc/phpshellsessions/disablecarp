@@ -2,7 +2,8 @@
  * disablecarp
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016 Electric Sheep Fencing
+ * Copyright (c) 2016-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +26,7 @@ require_once("util.inc");
 
 set_single_sysctl("net.inet.carp.allow", "0");
 if (is_array($config['virtualip']['vip'])) {
+	init_config_arr(array('virtualip', 'vip'));
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 		switch ($vip['mode']) {

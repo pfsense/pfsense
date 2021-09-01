@@ -3,7 +3,9 @@
  * interfaces_vlan.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -31,25 +33,12 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("interfaces_fast.inc");
 
-if (!is_array($config['vlans']['vlan'])) {
-	$config['vlans']['vlan'] = array();
-}
+global $profile;
 
-$a_vlans = &$config['vlans']['vlan'] ;
-
-function vlan_inuse($num) {
-	global $config, $a_vlans;
-
-	$iflist = get_configured_interface_list(true);
-	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_vlans[$num]['vlanif']) {
-			return true;
-		}
-	}
-
-	return false;
-}
+init_config_arr(array('vlans', 'vlan'));
+$a_vlans = &$config['vlans']['vlan'];
 
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
@@ -57,7 +46,7 @@ if ($_POST['act'] == "del") {
 	} else if (empty($a_vlans[$_POST['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (vlan_inuse($_POST['id'])) {
+	} else if (vlan_inuse($a_vlans[$_POST['id']])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
 	} else {
 		if (does_interface_exist($a_vlans[$_POST['id']]['vlanif'])) {
@@ -65,7 +54,7 @@ if ($_POST['act'] == "del") {
 		}
 		unset($a_vlans[$_POST['id']]);
 
-		write_config();
+		write_config("VLAN interface deleted");
 
 		header("Location: interfaces_vlan.php");
 		exit;
@@ -101,7 +90,7 @@ display_top_tabs($tab_array);
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('VLAN Interfaces')?></h2></div>
 		<div class="panel-body">
 			<div class="table-responsive">
-				<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+				<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 					<thead>
 						<tr>
 							<th><?=gettext('Interface');?></th>
@@ -114,23 +103,24 @@ display_top_tabs($tab_array);
 					<tbody>
 <?php
 	$i = 0;
+	$gettext_array = array('edit'=>gettext('Edit VLAN'),'del'=>gettext('Delete VLAN'));
+	$ifaces = convert_real_interface_to_friendly_interface_name_fast(array());
 	foreach ($a_vlans as $vlan) {
 ?>
 						<tr>
 							<td>
 <?php
 	printf("%s", htmlspecialchars($vlan['if']));
-	$iface = convert_real_interface_to_friendly_interface_name($vlan['if']);
-	if (isset($iface) && strlen($iface) > 0)
-		printf(" (%s)", htmlspecialchars($iface));
+	if (isset($ifaces[$vlan['if']]) && strlen($ifaces[$vlan['if']]) > 0)
+		printf(" (%s)", htmlspecialchars($ifaces[$vlan['if']]));
 ?>
 							</td>
 							<td><?=htmlspecialchars($vlan['tag']);?></td>
 							<td><?=htmlspecialchars($vlan['pcp']);?></td>
 							<td><?=htmlspecialchars($vlan['descr']);?></td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
-								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
+								<a class="fa fa-pencil"	title="<?=$gettext_array['edit']?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
+								<a class="fa fa-trash no-confirm"	title="<?=$gettext_array['del']?>"	role="button" id="del-<?=$i?>"></a>
 							</td>
 						</tr>
 <?php
@@ -156,7 +146,7 @@ display_top_tabs($tab_array);
 	<?php print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q '.
 		'VLAN tagging properly. %1$sOn cards that do not explicitly support it, VLAN '.
 		'tagging will still work, but the reduced MTU may cause problems.%1$sSee the '.
-		'%2$s handbook for information on supported cards.'), '<br />', $g['product_name']), 'info', false); ?>
+		'%2$s handbook for information on supported cards.'), '<br />', $g['product_label']), 'info', false); ?>
 </div>
 
 <?php

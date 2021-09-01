@@ -3,7 +3,9 @@
  * services_rfc2136.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,16 +30,13 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dnsupdates']['dnsupdate'])) {
-	$config['dnsupdates']['dnsupdate'] = array();
-}
-
+init_config_arr(array('dnsupdates', 'dnsupdate'));
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
 if ($_POST['act'] == "del") {
 	unset($a_rfc2136[$_POST['id']]);
 
-	write_config();
+	write_config("RFC 2136 client deleted");
 
 	header("Location: services_rfc2136.php");
 	exit;
@@ -45,10 +44,12 @@ if ($_POST['act'] == "del") {
 	if ($a_rfc2136[$_POST['id']]) {
 		if (isset($a_rfc2136[$_POST['id']]['enable'])) {
 			unset($a_rfc2136[$_POST['id']]['enable']);
+			$action = "disabled";
 		} else {
 			$a_rfc2136[$_POST['id']]['enable'] = true;
+			$action = "enabled";
 		}
-		write_config();
+		write_config("RFC 2136 {$action}");
 
 		header("Location: services_rfc2136.php");
 		exit;
@@ -78,6 +79,7 @@ if ($input_errors) {
 				<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 					<thead>
 						<tr>
+							<th><?=gettext("Status")?></th>
 							<th><?=gettext("Interface")?></th>
 							<th><?=gettext("Server")?></th>
 							<th><?=gettext("Hostname")?></th>
@@ -95,8 +97,49 @@ $groupslist = return_gateway_groups_array();
 
 $i = 0;
 foreach ($a_rfc2136 as $rfc2136):
+	$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
+	$filename_v6 = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}_v6.cache";
+	$if = get_failover_interface($rfc2136['interface']);
+
+	if (file_exists($filename)) {
+		if (isset($rfc2136['usepublicip'])) {
+			$ipaddr = dyndnsCheckIP($if);
+		} else {
+			$ipaddr = get_interface_ip($if);
+		}
+
+		$cached_ip_s = explode("|", file_get_contents($filename));
+		$cached_ip = $cached_ip_s[0];
+
+		if ($ipaddr == $cached_ip) {
+			$icon_class = "fa fa-check-circle";
+			$text_class = "text-success";
+			$icon_title = "Updated";
+		} else {
+			$icon_class = "fa fa-times-circle";
+			$text_class = "text-danger";
+			$icon_title = "Failed";
+		}
+	} elseif (file_exists($filename_v6)) {
+		$ipv6addr = get_interface_ipv6($if);
+		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
+		$cached_ipv6 = $cached_ip_s[0];
+
+		if ($ipv6addr == $cached_ipv6) {
+			$icon_class = "fa fa-check-circle";
+			$text_class = "text-success";
+			$icon_title = "Updated";
+		} else {
+			$icon_class = "fa fa-times-circle";
+			$text_class = "text-danger";
+			$icon_title = "Failed";
+		}
+	}
 ?>
 						<tr<?=(isset($rfc2136['enable']) ? '' : ' class="disabled"')?>>
+							<td>
+							<i class="<?=$icon_class?> <?=$text_class?>" title="<?=$icon_title?>"></i>
+							</td>
 							<td>
 <?php
 	foreach ($iflist as $if => $ifdesc) {
@@ -121,28 +164,14 @@ foreach ($a_rfc2136 as $rfc2136):
 							</td>
 							<td>
 <?php
-	$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
-	$filename_v6 = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}_v6.cache";
-	$if = get_failover_interface($rfc2136['interface']);
-
 	if (file_exists($filename)) {
 		print('IPv4: ');
-		if (isset($rfc2136['usepublicip'])) {
-			$ipaddr = dyndnsCheckIP($if);
-		} else {
-			$ipaddr = get_interface_ip($if);
-		}
-
-		$cached_ip_s = explode("|", file_get_contents($filename));
-		$cached_ip = $cached_ip_s[0];
-
-		if ($ipaddr != $cached_ip) {
-			print('<span class="text-danger">');
-		} else {
-			print('<span class="text-success">');
-		}
-
+		print("<span class='{$text_class}'>");
 		print(htmlspecialchars($cached_ip));
+		print('</span>');
+	} elseif (file_exists($filename_v6)) {
+		print("<span class='{$text_class}'>");
+		print(htmlspecialchars($cached_ipv6));
 		print('</span>');
 	} else {
 		print('IPv4: N/A');
@@ -183,6 +212,7 @@ foreach ($a_rfc2136 as $rfc2136):
 						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php }
 					?>
+						<a class="fa fa-clone" title="<?=gettext('Copy client')?>" href="services_rfc2136_edit.php?dup=<?=$i?>"></a>
 						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 					</tr>
@@ -203,6 +233,11 @@ endforeach; ?>
 		<?=gettext('Add')?>
 	</a>
 </nav>
+
+<div>
+	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa fa-check-circle text-success"></i>')?>
+	<?=gettext('An update can be forced on the edit page for an entry.')?>
+</div>
 
 <?php
 include("foot.inc");

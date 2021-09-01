@@ -3,7 +3,9 @@
  * ntp_status.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +21,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
@@ -30,7 +30,8 @@ require_once("/usr/local/www/widgets/include/ntp_status.inc");
 // to once per 60 seconds, not once per 10 seconds
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
-if ($_REQUEST['updateme']) {
+if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
+    !isset($config['ntpd']['enable']) || ($config['ntpd']['enable'] == 'enabled'))) {
 //this block displays only on ajax refresh
 	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
@@ -38,7 +39,7 @@ if ($_REQUEST['updateme']) {
 		$inet_version = " -4";
 	}
 
-	exec("/usr/local/sbin/ntpq -pn -w $inet_version | /usr/bin/tail +3", $ntpq_output);
+	exec('/usr/local/sbin/ntpq -pnw ' . $inet_version . ' | /usr/bin/tail +3 | /usr/bin/awk -v RS= \'{gsub(/\n[[:space:]][[:space:]]+/," ")}1\'', $ntpq_output);
 	$ntpq_counter = 0;
 	$stratum_text = gettext("stratum");
 	foreach ($ntpq_output as $line) {
@@ -73,9 +74,9 @@ if ($_REQUEST['updateme']) {
 				$gps_lat_min = substr($gps_vars[3], 2);
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
 				$gps_lon_min = substr($gps_vars[5], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[4];
 				$gps_lon_dir = $gps_vars[6];
@@ -86,9 +87,9 @@ if ($_REQUEST['updateme']) {
 				$gps_lat_min = substr($gps_vars[2], 2);
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
 				$gps_lon_min = substr($gps_vars[4], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
@@ -102,9 +103,9 @@ if ($_REQUEST['updateme']) {
 				$gps_lat_min = substr($gps_vars[1], 2);
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
 				$gps_lon_min = substr($gps_vars[3], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[2];
 				$gps_lon_dir = $gps_vars[4];
@@ -115,9 +116,9 @@ if ($_REQUEST['updateme']) {
 				$gps_lat_min = substr($gps_vars[6], 2);
 				$gps_lon_deg = substr($gps_vars[8], 0, 3);
 				$gps_lon_min = substr($gps_vars[8], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[7] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[9] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[7];
 				$gps_lon_dir = $gps_vars[9];
@@ -147,6 +148,7 @@ if ($_REQUEST['updateme']) {
 ?>
 
 <table id="ntp_status_widget" class="table table-striped table-hover">
+<?php if (!is_array($config['ntpd']) || !isset($config['ntpd']['enable']) || ($config['ntpd']['enable'] == 'enabled')): ?>
 	<tr>
 		<th><?=gettext('Server Time')?></th>
 		<td id="ClockTime">
@@ -168,7 +170,7 @@ if ($_REQUEST['updateme']) {
 		<tr>
 			<th><?=gettext('Clock location')?></th>
 			<td>
-				<a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat;?>,<?=$gps_lon;?>">
+				<a target="_gmaps" href="https://maps.google.com/?q=<?=$gps_lat;?>,<?=$gps_lon;?>">
 				<?php
 				echo sprintf("%.5f", $gps_lat) . " " . $gps_lat_dir . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lon_dir; ?>
 				</a>
@@ -188,6 +190,11 @@ if ($_REQUEST['updateme']) {
 			</tr>
 		<?php endif; ?>
 	<?php endif; ?>
+<?php else: ?>
+	<tr>
+		<td class="text-danger"><?=gettext('NTP Server is disabled')?></td>
+	</tr>
+<?php endif; ?>
 </table>
 
 <?php
@@ -197,9 +204,16 @@ if ($_REQUEST['updateme']) {
 <?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
-var ntp_d = new Date('<?=date_format(date_create(), 'c')?>');
-var tz = '<?=date('T');?>';
+// Have to convert the date to UTC time to match the PHP clock not the local client clock.
+function convertDateToUTC(date,offset) {
+	var hours_offset = offset/3600;
+	var minute_offset = (offset % 3600)/60;
+	var d = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours() + hours_offset, date.getUTCMinutes() + minute_offset, date.getUTCSeconds())
+	return d;
+}
 
+var ntp_d = convertDateToUTC(new Date('<?=date_format(date_create(), 'c')?>'), '<?=date('Z')?>');
+var tz = '<?=date('T');?>';
 setInterval(function() {
 	ntp_d.setSeconds(ntp_d.getSeconds() + 1);
 	var thisSecond = ntp_d.getSeconds();
@@ -218,9 +232,11 @@ setInterval(function() {
 <table id="ntpstatus" class="table table-striped table-hover">
 	<tbody>
 		<tr>
-			<td>
-				<?=gettext('Updating...')?>
-			</td>
+		<?php if (!is_array($config['ntpd']) || !isset($config['ntpd']['enable']) || ($config['ntpd']['enable'] == 'enabled')): ?>
+			<td><?=gettext('Updating...')?></td>
+		<?php else: ?>
+			<td class="text-danger"><?=gettext('NTP Server is disabled')?></td>
+		<?php endif; ?>
 		</tr>
 	</tbody>
 </table>

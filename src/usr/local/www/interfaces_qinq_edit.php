@@ -3,7 +3,9 @@
  * interfaces_qinq_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,18 +34,35 @@ $shortcut_section = "interfaces";
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['qinqs']['qinqentry'])) {
-	$config['qinqs']['qinqentry'] = array();
-}
-
+init_config_arr(array('qinqs', 'qinqentry'));
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
 $portlist = get_interface_list();
+$lagglist = get_lagg_interface_list();
+$portlist = array_merge($portlist, $lagglist);
+foreach ($lagglist as $laggif => $lagg) {
+	/* LAGG members cannot be assigned */
+	$laggmembers = explode(',', $lagg['members']);
+	foreach ($laggmembers as $lagm) {
+		if (isset($portlist[$lagm])) {
+			unset($portlist[$lagm]);
+		}
+	}
+}
 
-/* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
-		$portlist[$lagg['laggif']] = $lagg;
+/* Do not allow OpenVPN TUN interfaces to be used for QinQ
+ * https://redmine.pfsense.org/issues/11675 */
+init_config_arr(array('openvpn', 'openvpn-server'));
+init_config_arr(array('openvpn', 'openvpn-client'));
+foreach ($portlist as $portname => $port) {
+	if (strstr($portname, "ovpn")) {
+		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
+		$type = ($m[1] == 'c') ? 'client' : 'server';
+		foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
+			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
+				unset($portlist[$portname]);
+			}
+		}
 	}
 }
 
@@ -143,10 +162,22 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("At least one tag must be entered.");
 	}
 
+	$nmembers = explode(" ", $members);
+	if (isset($id) && $a_qinqs[$id]) {
+		$omembers = explode(" ", $a_qinqs[$id]['members']);
+		$delmembers = array_diff($omembers, $nmembers);
+		foreach ($delmembers as $tag) {
+			if (qinq_inuse($a_qinqs[$id], $tag)) {
+				$input_errors[] = gettext("This QinQ tag cannot be deleted because it is still being used as an interface.");
+				break;
+			}
+		}
+	}
+
 	if (!$input_errors) {
 		$qinqentry['members'] = $members;
 		$qinqentry['descr'] = $_POST['descr'];
-		$qinqentry['vlanif'] = "{$_POST['if']}_{$_POST['tag']}";
+		$qinqentry['vlanif'] = vlan_interface($_POST);
 		$nmembers = explode(" ", $members);
 
 		if (isset($id) && $a_qinqs[$id]) {
@@ -155,22 +186,29 @@ if ($_POST['save']) {
 			$addmembers = array_diff($nmembers, $omembers);
 
 			if ((count($delmembers) > 0) || (count($addmembers) > 0)) {
-				$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
 				foreach ($delmembers as $tag) {
-					fwrite($fd, "shutdown {$qinqentry['vlanif']}h{$tag}:\n");
-					fwrite($fd, "msg {$qinqentry['vlanif']}qinq: delfilter \\\"{$qinqentry['vlanif']}{$tag}\\\"\n");
+					$ngif = str_replace(".", "_", $qinqentry['vlanif']);
+					exec("/usr/sbin/ngctl shutdown {$ngif}h{$tag}: > /dev/null 2>&1");
+					exec("/usr/sbin/ngctl msg {$ngif}qinq: delfilter \\\"{$ngif}{$tag}\\\" > /dev/null 2>&1");
 				}
 
+				$qinqcmdbuf = "";
 				foreach ($addmembers as $member) {
 					$qinq = array();
 					$qinq['if'] = $qinqentry['vlanif'];
 					$qinq['tag'] = $member;
 					$macaddr = get_interface_mac($qinqentry['vlanif']);
-					interface_qinq2_configure($qinq, $fd, $macaddr);
+					interface_qinq2_configure($qinq, $qinqcmdbuf, $macaddr);
 				}
 
-				fclose($fd);
-				mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd");
+				if (strlen($qinqcmdbuf) > 0) {
+					$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
+					if ($fd) {
+						fwrite($fd, $qinqcmdbuf);
+						fclose($fd);
+						mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd > /dev/null 2>&1");
+					}
+				}
 			}
 			$a_qinqs[$id] = $qinqentry;
 		} else {
@@ -189,7 +227,7 @@ if ($_POST['save']) {
 			}
 			$additions = "";
 			foreach ($nmembers as $qtag) {
-				$additions .= "{$qinqentry['vlanif']}_{$qtag} ";
+				$additions .= qinq_interface($qinqentry, $qtag) . " ";
 			}
 			$additions .= "{$qinqentry['vlanif']}";
 			if ($found == true) {
@@ -199,11 +237,12 @@ if ($_POST['save']) {
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";
 				$gentry['descr'] = gettext("QinQ VLANs group");
+				init_config_arr(array('ifgroups', 'ifgroupentry'));
 				$config['ifgroups']['ifgroupentry'][] = $gentry;
 			}
 		}
 
-		write_config();
+		write_config("QinQ interface added");
 
 		header("Location: interfaces_qinq.php");
 		exit;
@@ -220,9 +259,7 @@ function build_parent_list() {
 	$list = array();
 
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (is_jumbo_capable($ifn)) {
-			$list[$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
-		}
+		$list[$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
 	}
 
 	return($list);
@@ -274,7 +311,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (isset($id) && $a_qinqs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

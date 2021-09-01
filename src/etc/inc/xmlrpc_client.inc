@@ -1,9 +1,10 @@
 <?php
 /*
- * xmlrpc_client.php
+ * xmlrpc_client.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016 Electric Sheep Fencing
+ * Copyright (c) 2016-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,9 +23,9 @@
 require_once("XML/RPC2/Client.php");
 
 class pfsense_xmlrpc_client {
-	
+
 	private $username, $password, $url, $logurl, $filenotice, $error;
-	
+
 	public function __construct() {
 		global $config;
 		$hasync = $config['hasync'];
@@ -65,9 +66,9 @@ class pfsense_xmlrpc_client {
 		if (is_ipaddrv6($syncip)) {
 			$syncip = "[{$syncip}]";
 		}
-		$user = urlencode($this->username);
-		$pass = urlencode($this->password);
-		
+		$user = rawurlencode($this->username);
+		$pass = rawurlencode($this->password);
+
 		$this->logurl = "{$scheme}://{$syncip}:{$port}/xmlrpc.php";
 		$this->url = "{$scheme}://{$user}:{$pass}@{$syncip}:{$port}/xmlrpc.php";
 	}
@@ -75,56 +76,50 @@ class pfsense_xmlrpc_client {
 	public function set_noticefile($noticefile) {
 		$this->filenotice = $noticefile;
 	}
-	
+
 	private function xmlrpc_internal($method, $parameter, $timeout = 240) {
-		$this->error = null;
 		$options = array(
 			'prefix' => 'pfsense.',
 			'sslverify' => false,
 			'connectionTimeout' => $timeout
 		);
-		
+
+		$max_attempts = 4;
 		$numberofruns = 0;
-		while ($numberofruns < 2) {
+		while ($numberofruns < $max_attempts) {
 			$numberofruns++;
+			$this->error = null;
 
 			log_error(sprintf(gettext("Beginning XMLRPC sync data to %s."), $this->logurl));
 			$cli = XML_RPC2_Client::create($this->url, $options);
 			if (!is_object($cli)) {
 				$this->error = sprintf(gettext("A communications error occurred while attempting XMLRPC sync with %s (pfsense.%s)."), $this->log, $method);
-				log_error($this->error);
-				file_notice($this->filenotice, $this->error, "Settings Sync", "");
-				continue;
 			}
 			try {//restore_config_section
 				$REQUEST_URI = $_SERVER['REQUEST_URI'];
 				unset($_SERVER['REQUEST_URI']); // force use of 'toText()' when setting XML_RPC2_CurlException message
-				$resp = $cli->$method($parameter);
+				$resp = $cli->$method($parameter, $timeout);
 			} catch (XML_RPC2_FaultException $e) {
 				// The XMLRPC server returns a XMLRPC error
 				$this->error = "Exception calling XMLRPC method {$method} #" . $e->getFaultCode() . ' : ' . $e->getFaultString();
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
-				continue;
-			}  catch (XML_RPC2_CurlException $e) {
+			} catch (XML_RPC2_CurlException $e) {
 				$previouserror = $e->getPrevious();// HTTP_Request2_ConnectionException
 				if ($previouserror == null) {
 					// CurlException doesnt get filled with PreviousError,
 					// however we dont want to show the stacktrace included in the 'message' to non sysadmin users
 					preg_match("/HTTP_Request2_ConnectionException: (.*) in \/.*/", $e->getMessage(), $errormsg);
-					$this->error = "A communications error occurred while attempting to call XMLRPC method {$method}: " . $errormsg[1];
+					if (empty($errormsg) || (is_array($errormsg) && empty($errormsg[1]))) {
+						$errormsg = $e->getMessage();
+					}
+					$this->error = "A communications error occurred while attempting to call XMLRPC method {$method}: {$errormsg}";
 				} else {
 					$this->error = "CurlException calling XMLRPC method {$method} #" . $previouserror->getMessage();
 				}
-				log_error($this->error);
-				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
-				continue;
 			} catch (Exception $e) {
 				// Other errors (HTTP or networking problems...)
 				$this->error = "Exception calling XMLRPC method {$method} # " . $e->getMessage();
-				log_error($this->error);
-				file_notice($this->filenotice, $this->error, gettext("Error code received"), "");
-				continue;
 			} finally {
 				if (isset($REQUEST_URI)) {
 					// restore the unset variable to its previous state.
@@ -134,30 +129,35 @@ class pfsense_xmlrpc_client {
 
 			if (!is_array($resp) && trim($resp) == "Authentication failed") {
 				$this->error = "An authentication failure occurred while trying to access {$this->logurl} ({$method}).";
-				log_error($this->error);
-				file_notice($this->filenotice, $this->error, "Settings Sync", "");
-				continue;
 			}
-			log_error(sprintf(gettext("XMLRPC reload data success with %s (pfsense.{$method})."), $this->logurl));
-			return $resp;
+			if (empty($this->error)) {
+				log_error(sprintf(gettext("XMLRPC reload data success with %s (pfsense.{$method})."), $this->logurl));
+				return $resp;
+			} elseif ($numberofruns < $max_attempts) {
+				log_error(sprintf(gettext("Retrying XMLRPC Request due to error: %s"), $this->error));
+				sleep(1);
+			} else {
+				log_error($this->error);
+				file_notice($this->filenotice, $this->error, "XMLRPC Error", "");
+			}
 		}
 		return null;
 	}
-	
+
 	public function xmlrpc_exec_php($execcmd, $timeout = 240) {
 		$resp = $this->xmlrpc_internal("exec_php", $execcmd, $timeout);
 		return $resp;
 	}
-	
+
 	public function xmlrpc_method($method, $parameter = "", $timeout = 240) {
 		$resp = $this->xmlrpc_internal($method, $parameter, $timeout);
 		return $resp;
 	}
-	
+
 	public function get_error() {
 		return $this->error;
 	}
-	
+
 	public function getUrl() {
 		return $this->logurl;
 	}

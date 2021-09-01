@@ -3,7 +3,9 @@
  * system_usermanager_addprivs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt.
  * All rights reserved.
  *
@@ -31,6 +33,9 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
 }
@@ -53,7 +58,21 @@ if (!is_array($a_user['priv'])) {
 $spriv_list = $priv_list;
 uasort($spriv_list, "compare_by_name");
 
-if ($_POST['save']) {
+/*
+ * Check user privileges to test if the user is allowed to make changes.
+ * Otherwise users can end up in an inconsistent state where some changes are
+ * performed and others denied. See https://redmine.pfsense.org/issues/9259
+ */
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+phpsession_end();
+
+if (!empty($_POST) && $read_only) {
+	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+}
+
+if ($_POST['save'] && !$read_only) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -77,7 +96,10 @@ if ($_POST['save']) {
 
 		$a_user['priv'] = sort_user_privs($a_user['priv']);
 		local_user_set($a_user);
-		write_config();
+
+		$savemsg = sprintf(gettext("Privileges changed for user: %s"), $a_user['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 
 		post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 
@@ -135,7 +157,7 @@ $section = new Form_Section('User Privileges');
 
 $name_string = $a_user['name'];
 if (!empty($a_user['descr'])) {
-	$name_string .= " ({$a_user['descr']})";
+	$name_string .= " (" . htmlspecialchars($a_user['descr']) . ")";
 }
 
 $section->addInput(new Form_StaticText(
@@ -204,7 +226,7 @@ $btnclear->setAttribute('type','button')->addClass('btn btn-warning');
 $form->addGlobal($btnclear);
 
 if (isset($userid)) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 	'userid',
 	null,
 	'hidden',
@@ -235,7 +257,7 @@ events.push(function() {
 			if (in_array($pname, $a_user['priv'])) {
 				continue;
 			}
-			$desc = preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']);
+			$desc = preg_replace("/pfSense/i", $g['product_label'], $pdata['descr']);
 			if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
 				$desc .= ' ' . gettext('(This privilege effectively gives administrator-level access to the user)');
 			}
@@ -310,7 +332,7 @@ events.push(function() {
 	});
 
 	function copyselect(selected) {
-		// Copy all optionsfrom shadow to sysprivs
+		// Copy all options from shadow to sysprivs
 		$('.multiselect').html($('.shadowselect').html());
 
 		if (selected) {

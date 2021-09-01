@@ -3,7 +3,9 @@
  * Form.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -32,7 +34,7 @@ class Form extends Form_Element
 	protected $_sections = array();
 	protected $_global = array();
 
-	public function __construct($submit = null)
+	public function __construct($submit = null, $enabled = true)
 	{
 		if (!isset($submit)) {
 			$submit = gettext('Save');
@@ -45,6 +47,11 @@ class Form extends Form_Element
 				null,
 				'fa-save'
 			);
+
+			if (!$enabled) {
+				$submit->setAttribute("disabled", true);
+			}
+
 			$submit->addClass('btn-primary');
 		}
 
@@ -84,7 +91,7 @@ class Form extends Form_Element
 		return $this;
 	}
 
-	protected function _setParent()
+	protected function _setParent(Form_Element $parent)
 	{
 		throw new Exception('Form does not have a parent');
 	}

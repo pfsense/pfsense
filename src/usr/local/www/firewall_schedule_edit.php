@@ -3,7 +3,9 @@
  * firewall_schedule_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -57,10 +59,7 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
-if (!is_array($config['schedules']['schedule'])) {
-	$config['schedules']['schedule'] = array();
-}
-
+init_config_arr(array('schedules', 'schedule'));
 $a_schedules = &$config['schedules']['schedule'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -108,7 +107,7 @@ if ($_POST['save']) {
 	$schedule = array();
 
 	$schedule['name'] = $_POST['name'];
-	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+	$schedule['descr'] = $_POST['descr'];
 
 	$timerangeFound = false;
 
@@ -131,7 +130,7 @@ if ($_POST['save']) {
 			$timehourstr = $_POST['starttime' . $x];
 			$timehourstr .= "-";
 			$timehourstr .= $_POST['stoptime' . $x];
-			$timedescrstr = htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8');
+			$timedescrstr = $_POST['timedescr' . $x];
 			$dashpos = strpos($timestr, '-');
 
 			if ($dashpos === false) {
@@ -211,7 +210,7 @@ if ($_POST['save']) {
 
 include("head.inc");
 
-// Returns a string containg the HTML to display a calendar table
+// Returns a string containing the HTML to display a calendar table
 function build_date_table() {
 	$tblstr = "";
 
@@ -445,7 +444,7 @@ $group->add(new Form_Button(
 $section->add($group);
 
 if (isset($id) && $a_schedules[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -458,7 +457,7 @@ $form->add($section);
 $section = new Form_Section('Configured Ranges');
 $counter = 0;
 
-if ($getSchedule) {
+if ($getSchedule && !empty($pconfig['timerange'])) {
 	$maxrows = count($pconfig['timerange']) -1;
 
 	foreach ($pconfig['timerange'] as $timerange) {

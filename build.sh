@@ -1,9 +1,11 @@
-#!/bin/sh
+#!/bin/sh -T
 #
 # build.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2013 BSD Perimeter
+# Copyright (c) 2013-2016 Electric Sheep Fencing
+# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +23,7 @@
 set +e
 usage() {
 	echo "Usage $0 [options] [ iso | ova | memstick | memstickserial | memstickadi | all | none ]"
-	echo "		all = iso memstick memstickserial memstickadi"
+	echo "		all = memstick memstickserial memstickadi"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
@@ -40,9 +42,10 @@ usage() {
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
 	echo "		--create-unified-patch - Create a big patch with all changes done on FreeBSD"
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
-	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
+	echo "		--update-poudriere-ports [-a ARCH_LIST] - Update poudriere ports tree"
 	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
 	echo "		--upload|-U - Upload pkgs and/or snapshots"
+	echo "		--skip-final-rsync|-i - Skip rsync to final server"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
 }
@@ -150,6 +153,9 @@ while test "$1" != ""; do
 		--upload|-U)
 			export UPLOAD=1
 			;;
+		--skip-final-rsync|-i)
+			export SKIP_FINAL_RSYNC=1
+			;;
 		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
@@ -235,12 +241,10 @@ case $BUILDACTION in
 		poudriere_update_ports
 	;;
 	rsync_repos)
-		unset SKIP_FINAL_RSYNC
 		export UPLOAD=1
 		pkg_repo_rsync "${CORE_PKG_PATH}"
 	;;
 	rsync_snapshots)
-		unset SKIP_FINAL_RSYNC
 		export UPLOAD=1
 		snapshots_scp_files
 	;;
@@ -309,7 +313,7 @@ fi
 if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
-	_IMAGESTOBUILD="iso memstick memstickserial"
+	_IMAGESTOBUILD="memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
 		if [ -n "${_IS_RELEASE}"  ]; then
@@ -343,7 +347,7 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	git_last_commit
 
 	# Ensure binaries are present that builder system requires
-	builder_setup
+	depend_check
 
 	# Build world, kernel and install
 	make_world

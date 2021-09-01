@@ -3,7 +3,9 @@
  * traffic_graphs.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org>
  * Copyright (c) 2004-2005 Jonathan Watt <jwatt@jwatt.org>.
@@ -26,8 +28,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("ipsec.inc");
@@ -45,19 +45,23 @@ if ($_POST) {
 		$user_settings["widgets"]["traffic_graphs"] = array();
 	}
 
-	if (isset($_POST["refreshinterval"])) {
+	if (isset($_POST["refreshinterval"]) && is_numeric($_POST["refreshinterval"]) && ($_POST["refreshinterval"] >= 1) && ($_POST["refreshinterval"] <= 10)) {
 		$user_settings["widgets"]["traffic_graphs"]["refreshinterval"] = $_POST["refreshinterval"];
 	}
 
-	if (isset($_POST["invert"])) {
+	if (isset($_POST["invert"]) && in_array($_POST["invert"], array("true", "false"))) {
 		$user_settings["widgets"]["traffic_graphs"]["invert"] = $_POST["invert"];
 	}
 
-	if (isset($_POST["backgroundupdate"])) {
+	if (isset($_POST["backgroundupdate"]) && in_array($_POST["backgroundupdate"], array("true", "false"))) {
 		$user_settings["widgets"]["traffic_graphs"]["backgroundupdate"] = $_POST["backgroundupdate"];
 	}
 
-	if (isset($_POST["size"])) {
+	if (isset($_POST["smoothfactor"]) && is_numeric($_POST["smoothfactor"]) && ($_POST["smoothfactor"] >= 0) && ($_POST["smoothfactor"] <= 5)) {
+		$user_settings["widgets"]["traffic_graphs"]["smoothfactor"] = $_POST["smoothfactor"];
+	}
+
+	if (isset($_POST["size"]) && in_array($_POST["size"], array("8", "1"))) {
 		$user_settings["widgets"]["traffic_graphs"]["size"] = $_POST["size"];
 	}
 
@@ -79,27 +83,35 @@ if ($_POST) {
 }
 
 if (isset($user_settings['widgets']['traffic_graphs']['refreshinterval'])) {
-	$tg_refreshinterval = $user_settings['widgets']['traffic_graphs']['refreshinterval'];
+	$tg_refreshinterval = (int)$user_settings['widgets']['traffic_graphs']['refreshinterval'];
 } else {
 	$tg_refreshinterval = 1;
 }
 
 if (isset($user_settings['widgets']['traffic_graphs']['size'])) {
-	$tg_size = $user_settings['widgets']['traffic_graphs']['size'];
+	$tg_size = (int)$user_settings['widgets']['traffic_graphs']['size'];
 } else {
 	$tg_size = 1;
 }
 
-if (isset($user_settings['widgets']['traffic_graphs']['invert'])) {
-	$tg_invert = $user_settings['widgets']['traffic_graphs']['invert'];
+if (isset($user_settings['widgets']['traffic_graphs']['invert']) &&
+    ($user_settings['widgets']['traffic_graphs']['invert'] == 'false')) {
+	$tg_invert = false;
 } else {
-	$tg_invert = 'true';
+	$tg_invert = true;
 }
 
-if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate'])) {
-	$tg_backgroundupdate = $user_settings['widgets']['traffic_graphs']['backgroundupdate'];
+if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate']) &&
+    ($user_settings['widgets']['traffic_graphs']['backgroundupdate'] == 'false')) {
+	$tg_backgroundupdate = false;
 } else {
-	$tg_backgroundupdate = 'true';
+	$tg_backgroundupdate = true;
+}
+
+if (isset($user_settings['widgets']['traffic_graphs']['smoothfactor'])) {
+	$tg_smoothfactor = (int)$user_settings['widgets']['traffic_graphs']['smoothfactor'];
+} else {
+	$tg_smoothfactor = 0;
 }
 
 $skip_tg_items = explode(",", $user_settings['widgets']['traffic_graphs']['filter']);
@@ -152,7 +164,7 @@ $tg_displayed_realifsarray = [];
 		<div class="form-group">
 			<label for="traffic-graph-interval" class="col-sm-3 control-label"><?=gettext('Refresh Interval')?></label>
 			<div class="col-sm-9">
-				<input type="number" id="refreshinterval" name="refreshinterval" value="<?=$tg_refreshinterval?>" min="1" max="10" class="form-control" />
+				<input type="number" id="refreshinterval" name="refreshinterval" value="<?=htmlspecialchars($tg_refreshinterval)?>" min="1" max="10" class="form-control" />
 			</div>
 		</div>
 
@@ -161,7 +173,7 @@ $tg_displayed_realifsarray = [];
 			<div class="col-sm-9">
 				<select class="form-control" id="invert" name="invert">
 				<?php
-					if ($tg_invert === "true") {
+					if ($tg_invert === true) {
 						echo '<option value="true" selected>On</option>';
 						echo '<option value="false">Off</option>';
 					} else {
@@ -178,7 +190,7 @@ $tg_displayed_realifsarray = [];
 			<div class="col-sm-9">
 				<select class="form-control" id="size" name="size">
 				<?php
-					if ($tg_size === "8") {
+					if ($tg_size === 8) {
 						echo '<option value="8" selected>Bits</option>';
 						echo '<option value="1">Bytes</option>';
 					} else {
@@ -195,7 +207,7 @@ $tg_displayed_realifsarray = [];
 			<div class="col-sm-9">
 				<select class="form-control" id="backgroundupdate" name="backgroundupdate">
 				<?php
-					if ($tg_backgroundupdate === "true") {
+					if ($tg_backgroundupdate === true) {
 						echo '<option value="true" selected>Keep graphs updated on inactive tab. (increases cpu usage)</option>';
 						echo '<option value="false">Clear graphs when not visible.</option>';
 					} else {
@@ -204,6 +216,13 @@ $tg_displayed_realifsarray = [];
 					}
 				?>
 				</select>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="smoothfactor" class="col-sm-3 control-label"><?=gettext('Graph Smoothing')?></label>
+			<div class="col-sm-9">
+				<input type='range' id="smoothfactor" name='smoothfactor' class='form-control' min='0' max='5'value="<?= htmlspecialchars($tg_smoothfactor) ?>"/>
 			</div>
 		</div>
 
@@ -258,17 +277,18 @@ events.push(function() {
 
 	var InterfaceString = "<?=implode("|", $tg_displayed_ifs_array)?>";
 	var RealInterfaceString = "<?=implode("|", $tg_displayed_realifsarray)?>";
-    window.graph_backgroundupdate = <?=$tg_backgroundupdate?>;
+	window.graph_backgroundupdate = <?=json_encode($tg_backgroundupdate)?>;
 
-	window.interval = <?=$tg_refreshinterval?>;
-	window.invert = <?=$tg_invert?>;
-	window.size = <?=$tg_size?>;
+	window.interval = <?=json_encode($tg_refreshinterval)?>;
+	window.invert = JSON.parse(<?=json_encode($tg_invert)?>);
+	window.size = <?=json_encode($tg_size)?>;
+	window.smoothing = <?=json_encode($tg_smoothfactor)?>;
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 
 	graph_init();
 	graph_visibilitycheck();
-	
+
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showalltgitems");
 });
 //]]>

@@ -5,7 +5,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Shrew Soft Inc
- * Copyright (c) 2008-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,42 +31,11 @@
 
 require_once("globals.inc");
 require_once("config.inc");
-require_once("radius.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
-/**
- * Get the NAS-Identifier
- *
- * We will use our local hostname to make up the nas_id
- */
-if (!function_exists("getNasID")) {
-function getNasID() {
-	global $g;
+global $config;
 
-	$nasId = gethostname();
-	if (empty($nasId)) {
-		$nasId = $g['product_name'];
-	}
-	return $nasId;
-}
-}
-
-/**
- * Get the NAS-IP-Address based on the current wan address
- *
- * Use functions in interfaces.inc to find this out
- *
- */
-if (!function_exists("getNasIP")) {
-function getNasIP() {
-	$nasIp = get_interface_ip();
-	if (!$nasIp) {
-		$nasIp = "0.0.0.0";
-	}
-	return $nasIp;
-}
-}
 /* setup syslog logging */
 openlog("charon", LOG_ODELAY, LOG_AUTH);
 
@@ -81,7 +52,7 @@ if (isset($_GET['username'])) {
 	$authmodes = explode(",", getenv("authcfg"));
 }
 
-if (!$username || !$password) {
+if (!$username) {
 	syslog(LOG_ERR, "invalid user authentication environment");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
@@ -96,7 +67,7 @@ if (!$username || !$password) {
 $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
-	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
+	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -107,7 +78,13 @@ if (($strictusercn === true) && ($common_name != $username)) {
 	}
 }
 
-$attributes = array();
+$attributes = array("nas_identifier" => "xauthIPsec");
+if (($config['ipsec']['client']['group_source'] == 'enabled') &&
+    !empty($config['ipsec']['client']['auth_groups'])) {
+	$ipsec_groups = explode(",", ($config['ipsec']['client']['auth_groups']));
+} else { 
+	$ipsec_groups = '';
+}
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
 	if (!$authcfg && $authmode != "Local Database") {
@@ -116,11 +93,13 @@ foreach ($authmodes as $authmode) {
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
 	if ($authenticated == true) {
+		$userGroups = getUserGroups($username, $authcfg, $attributes);
 		if ($authmode == "Local Database") {
 			$user = getUserEntry($username);
-			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
+			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin") ||
+			    (!empty($ipsec_groups) && (count(array_intersect($userGroups, $ipsec_groups)) == 0))) {
 				$authenticated = false;
-				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.\n");
+				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.");
 				continue;
 			}
 		}
@@ -129,7 +108,7 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
+	syslog(LOG_WARNING, "user '{$username}' could not authenticate.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -144,7 +123,7 @@ if (file_exists("/etc/inc/ipsec.attributes.php")) {
 	include_once("/etc/inc/ipsec.attributes.php");
 }
 
-syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+syslog(LOG_NOTICE, "user '{$username}' authenticated");
 closelog();
 
 if (isset($_GET['username'])) {

@@ -3,7 +3,9 @@
  * firewall_schedule.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,48 +40,21 @@ $monthArray = array (gettext('January'), gettext('February'), gettext('March'), 
 require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("firewall_schedule.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
-if (!is_array($config['schedules']['schedule'])) {
-	$config['schedules']['schedule'] = array();
-}
-
+init_config_arr(array('schedules', 'schedule'));
 $a_schedules = &$config['schedules']['schedule'];
 
 if ($_POST['act'] == "del") {
-	if ($a_schedules[$_POST['id']]) {
-		/* make sure rule is not being referenced by any nat or filter rules */
-		$is_schedule_referenced = false;
-		$referenced_by = false;
-		$schedule_name = $a_schedules[$_POST['id']]['name'];
-
-		if (is_array($config['filter']['rule'])) {
-			foreach ($config['filter']['rule'] as $rule) {
-				//check for this later once this is established
-				if ($rule['sched'] == $schedule_name) {
-					$referenced_by = $rule['descr'];
-					$is_schedule_referenced = true;
-					break;
-				}
-			}
-		}
-
-		if ($is_schedule_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete schedule. Currently in use by %s."), $referenced_by);
-		} else {
-			unset($a_schedules[$_POST['id']]);
-			write_config(gettext("Firewall schedule deleted."));
-			header("Location: firewall_schedule.php");
-			exit;
-		}
-	}
+	$errmsg = deleteSchedule($_POST);
 }
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($errmsg) {
+	print_info_box($errmsg, 'danger');
 }
 ?>
 
@@ -209,7 +184,7 @@ foreach ($a_schedules as $schedule):
 			}
 
 			$timeFriendly = $starttime . "-" . $stoptime;
-			$description = $timerange['rangedescr'];
+			$description = htmlspecialchars($timerange['rangedescr']);
 
 			print(($first ? '':'<br />') . $dayFriendly . ' / ' . $timeFriendly . ' / ' . $description);
 		}

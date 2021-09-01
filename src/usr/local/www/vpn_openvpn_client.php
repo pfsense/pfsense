@@ -3,7 +3,9 @@
  * vpn_openvpn_client.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -34,29 +36,17 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
 
-if (!is_array($config['openvpn']['openvpn-client'])) {
-	$config['openvpn']['openvpn-client'] = array();
-}
-
+init_config_arr(array('openvpn', 'openvpn-client'));
 $a_client = &$config['openvpn']['openvpn-client'];
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -70,40 +60,55 @@ if (isset($id) && $a_client[$id]) {
 	$vpnid = 0;
 }
 
+$user_entry = getUserEntry($_SESSION['Username']);
+$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-client-advanced") || userHasPrivilege($user_entry, "page-all"));
+
 if ($_POST['act'] == "del") {
 
 	if (!isset($a_client[$id])) {
 		pfSenseHeader("vpn_openvpn_client.php");
 		exit;
 	}
-	if (!empty($a_client[$id])) {
+
+	if (empty($a_client[$id])) {
+		$wc_msg = gettext('Deleted empty OpenVPN client');
+	} elseif (openvpn_inuse($a_client[$id]['vpnid'], 'client')) {
+		$input_errors[] = gettext("Cannot delete an OpenVPN instance while the interface is assigned. Remove the interface assignment first.");
+	} elseif (!$user_can_edit_advanced && !empty($a_client[$id]['custom_options'])) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
+	} else {
 		openvpn_delete('client', $a_client[$id]);
 		$wc_msg = sprintf(gettext('Deleted OpenVPN client to server %1$s:%2$s %3$s'), $a_client[$id]['server_addr'], $a_client[$id]['server_port'], $a_client[$id]['description']);
-	} else {
-		$wc_msg = gettext('Deleted empty OpenVPN client');
 	}
-	unset($a_client[$id]);
-	write_config($wc_msg);
-	$savemsg = gettext("Client successfully deleted.");
+	if (!empty($wc_msg)) {
+		unset($a_client[$id]);
+		write_config($wc_msg);
+		$savemsg = gettext("Client successfully deleted.");
+	}
 }
 
 if ($act == "new") {
 	$pconfig['ncp_enable'] = "enabled";
-	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
+	$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
+	$pconfig['data_ciphers_fallback'] = 'AES-256-CBC';
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
+	$pconfig['tlsauth_keydir'] = "default";
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['interface'] = "wan";
 	$pconfig['server_port'] = 1194;
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
-	// OpenVPN Defaults to SHA1
-	$pconfig['digest'] = "SHA1";
+	$pconfig['digest'] = "SHA256";
+	$pconfig['allow_compression'] = "no";
+	$pconfig['compression'] = "";
+	$pconfig['exit_notify'] = 1;
+	$pconfig['remote_cert_tls'] = "yes";
 }
 
 global $simplefields;
-$simplefields = array('auth_user', 'auth_pass');
+$simplefields = array('auth_user', 'auth_pass', 'proxy_user', 'proxy_passwd');
 
-if ($act == "edit") {
+if (($act == "edit") || ($act == "dup")) {
 	if (isset($id) && $a_client[$id]) {
 		foreach ($simplefields as $stat) {
 			$pconfig[$stat] = $a_client[$id][$stat];
@@ -121,16 +126,14 @@ if ($act == "edit") {
 		$pconfig['server_port'] = $a_client[$id]['server_port'];
 		$pconfig['proxy_addr'] = $a_client[$id]['proxy_addr'];
 		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
-		$pconfig['proxy_user'] = $a_client[$id]['proxy_user'];
-		$pconfig['proxy_passwd'] = $a_client[$id]['proxy_passwd'];
 		$pconfig['proxy_authtype'] = $a_client[$id]['proxy_authtype'];
 		$pconfig['description'] = $a_client[$id]['description'];
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 		$pconfig['ns_cert_type'] = $a_client[$id]['ns_cert_type'];
-		if (isset($a_client[$id]['ncp-ciphers'])) {
-			$pconfig['ncp-ciphers'] = $a_client[$id]['ncp-ciphers'];
+		if (isset($a_client[$id]['data_ciphers'])) {
+			$pconfig['data_ciphers'] = $a_client[$id]['data_ciphers'];
 		} else {
-			$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
+			$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
 		}
 		if (isset($a_client[$id]['ncp_enable'])) {
 			$pconfig['ncp_enable'] = $a_client[$id]['ncp_enable'];
@@ -142,17 +145,19 @@ if ($act == "edit") {
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_client[$id]['caref'];
 			$pconfig['certref'] = $a_client[$id]['certref'];
+			$pconfig['crlref'] = $a_client[$id]['crlref'];
 			if ($a_client[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
 				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
 			}
+			$pconfig['remote_cert_tls'] = $a_client[$id]['remote_cert_tls'];
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		}
-		$pconfig['crypto'] = $a_client[$id]['crypto'];
-		// OpenVPN Defaults to SHA1 if unset
-		$pconfig['digest'] = !empty($a_client[$id]['digest']) ? $a_client[$id]['digest'] : "SHA1";
+		$pconfig['tlsauth_keydir'] = $a_client[$id]['tlsauth_keydir'];
+		$pconfig['data_ciphers_fallback'] = $a_client[$id]['data_ciphers_fallback'];
+		$pconfig['digest'] = !empty($a_client[$id]['digest']) ? $a_client[$id]['digest'] : "SHA256";
 		$pconfig['engine'] = $a_client[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_client[$id]['tunnel_network'];
@@ -160,9 +165,12 @@ if ($act == "edit") {
 		$pconfig['remote_network'] = $a_client[$id]['remote_network'];
 		$pconfig['remote_networkv6'] = $a_client[$id]['remote_networkv6'];
 		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
+		$pconfig['allow_compression'] = $a_client[$id]['allow_compression'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
+		$pconfig['auth-retry-none'] = $a_client[$id]['auth-retry-none'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
 		$pconfig['udp_fast_io'] = $a_client[$id]['udp_fast_io'];
+		$pconfig['exit_notify'] = $a_client[$id]['exit_notify'];
 		$pconfig['sndrcvbuf'] = $a_client[$id]['sndrcvbuf'];
 		$pconfig['topology'] = $a_client[$id]['topology'];
 
@@ -172,12 +180,33 @@ if ($act == "edit") {
 
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
+		$pconfig['dns_add'] = $a_client[$id]['dns_add'];
+		if (isset($a_client[$id]['create_gw'])) {
+			$pconfig['create_gw'] = $a_client[$id]['create_gw'];
+		} else {
+			$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
+		}
 		if (isset($a_client[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
 		} else {
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 		}
+
+		$pconfig['ping_method'] = $a_client[$id]['ping_method'];
+		$pconfig['keepalive_interval'] = $a_client[$id]['keepalive_interval'];
+		$pconfig['keepalive_timeout'] = $a_client[$id]['keepalive_timeout'];
+		$pconfig['ping_seconds'] = $a_client[$id]['ping_seconds'];
+		$pconfig['ping_action'] = $a_client[$id]['ping_action'];
+		$pconfig['ping_action_seconds'] = $a_client[$id]['ping_action_seconds'];
+		$pconfig['inactive_seconds'] = $a_client[$id]['inactive_seconds'] ?: 0;
 	}
+}
+
+if ($act == "dup") {
+	$act = "new";
+	$vpnid = 0;
+	$parentid = $id;
+	unset($id);
 }
 
 if ($_POST['save']) {
@@ -191,9 +220,29 @@ if ($_POST['save']) {
 		$vpnid = 0;
 	}
 
+	$pconfig['ncp_enable'] = ($pconfig['ncp_enable'] == 'yes') ? 'enabled' : 'disabled';
+
+	if ($pconfig['disable'] && openvpn_inuse($vpnid, 'client')) {
+		$input_errors[] = gettext("Cannot disable an OpenVPN instance while the interface is assigned. Remove the interface assignment first.");
+	}
+
+	if (isset($pconfig['custom_options']) &&
+	    ($pconfig['custom_options'] != $a_client[$id]['custom_options']) &&
+	    !$user_can_edit_advanced) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
+	}
+	if (!$user_can_edit_advanced && !empty($a_client[$id]['custom_options'])) {
+		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
+	}
+
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
-	if (!in_array($pconfig['crypto'], $cipher_validation_list)) {
-		$input_errors[] = gettext("The selected Encryption Algorithm is not valid.");
+	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
+		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
+	}
+
+	/* Maximum option line length = 256, see https://redmine.pfsense.org/issues/11559 */
+	if (!empty($pconfig['data_ciphers']) && (strlen("data-ciphers " . implode(",", $pconfig['data_ciphers'])) > 254)) {
+		$input_errors[] = gettext("Too many Data Encryption Algorithms have been selected.");
 	}
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
@@ -260,30 +309,36 @@ if ($_POST['save']) {
 			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd'])) {
 				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
 			}
-
-			if ($pconfig['proxy_passwd'] != $pconfig['proxy_passwd_confirm']) {
-				$input_errors[] = gettext("Password and confirmation must match.");
-			}
 		}
 	}
 
 	if ($pconfig['tunnel_network']) {
-		if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4")) {
-			$input_errors[] = $result;
+		if (!openvpn_validate_tunnel_network($pconfig['tunnel_network'], 'ipv4')) {
+			$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask or an alias with a single IPv4 subnet with CIDR mask.");
+		}
+		if ((!isset($a_client[$id]) ||
+		    ($a_client[$id]['tunnel_network'] != $pconfig['tunnel_network'])) &&
+		    openvpn_is_tunnel_network_in_use($pconfig['tunnel_network'])) {
+			$input_errors[] = gettext("The submitted IPv4 Tunnel Network is already in use.");
 		}
 	}
 
 	if ($pconfig['tunnel_networkv6']) {
-		if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
-			$input_errors[] = $result;
+		if (!openvpn_validate_tunnel_network($pconfig['tunnel_networkv6'], 'ipv6')) {
+			$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix or an alias with a single IPv6 prefix.");
+		}
+		if ((!isset($a_client[$id]) ||
+		    ($a_client[$id]['tunnel_networkv6'] != $pconfig['tunnel_networkv6'])) &&
+		    openvpn_is_tunnel_network_in_use($pconfig['tunnel_networkv6'])) {
+			$input_errors[] = gettext("The submitted IPv6 Tunnel Network is already in use.");
 		}
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
 	}
 
@@ -312,16 +367,16 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['crypto'], "GCM")) {
+	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['data_ciphers_fallback'], "GCM")) {
 		$input_errors[] = gettext("GCM Encryption Algorithms cannot be used with Shared Key mode.");
 	}
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['ncp-ciphers']) && is_array($pconfig['ncp-ciphers'])) {
-			foreach ($pconfig['ncp-ciphers'] as $ncpc) {
-				if (!in_array(trim($ncpc), $cipher_validation_list)) {
-					$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
+		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
+			foreach ($pconfig['data_ciphers'] as $dc) {
+				if (!in_array(trim($dc), $cipher_validation_list)) {
+					$input_errors[] = gettext("One or more of the selected Data Encryption Algorithms is not valid.");
 				}
 			}
 		}
@@ -335,20 +390,27 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($pconfig['mode'] != "p2p_shared_key") && empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
-		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
+	if ($pconfig['mode'] != "p2p_shared_key") {
+		if (empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
+			$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
+		}
 	}
 
-	if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {
-		$input_errors[] = gettext("Password and confirmation must match.");
-	}
-
-	/* UDP Fast I/O is not compatible with TCP, so toss the option out when
-	   submitted since it can't be set this way legitimately. This also avoids
-	   having to perform any more trickery on the stored option to not preserve
-	   the value when changing modes. */
-	if ($pconfig['udp_fast_io'] && (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp")) {
-		unset($pconfig['udp_fast_io']);
+	/* UDP Fast I/O and Exit Notify are not compatible with TCP, so toss the
+	 * option out when submitted since it can't be set this way
+	 * legitimately. This also avoids having to perform any more trickery on
+	 * the stored option to not preserve the value when changing modes. */
+	if (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp") {
+		if ($pconfig['udp_fast_io']) {
+			unset($pconfig['udp_fast_io']);
+		}
+		if ($pconfig['exit_notify']) {
+			unset($pconfig['exit_notify']);
+		}
+	} else {
+		if (!array_key_exists($pconfig['exit_notify'], $openvpn_exit_notify_client)) {
+			$input_errors[] = gettext("The Exit Notify value is invalid.");
+		}
 	}
 
 	if ($pconfig['udp_fast_io'] && (!empty($pconfig['use_shaper']))) {
@@ -362,6 +424,28 @@ if ($_POST['save']) {
 
 	if (!empty($pconfig['sndrcvbuf']) && !array_key_exists($pconfig['sndrcvbuf'], openvpn_get_buffer_values())) {
 		$input_errors[] = gettext("The supplied Send/Receive Buffer size is invalid.");
+	}
+
+	if (!empty($pconfig['ping_method']) && !array_key_exists($pconfig['ping_method'], $openvpn_ping_method)) {
+		$input_errors[] = gettext("The supplied Ping Method is invalid.");
+	}
+	if (!empty($pconfig['ping_action']) && !array_key_exists($pconfig['ping_action'], $openvpn_ping_action)) {
+		$input_errors[] = gettext("The supplied Ping Action is invalid.");
+	}
+	if (!empty($pconfig['keepalive_interval']) && !is_numericint($pconfig['keepalive_interval'])) {
+		$input_errors[] = gettext("The supplied Keepalive Interval value is invalid.");
+	}
+	if (!empty($pconfig['keepalive_timeout']) && !is_numericint($pconfig['keepalive_timeout'])) {
+		$input_errors[] = gettext("The supplied Keepalive Timeout value is invalid.");
+	}
+	if (!empty($pconfig['ping_seconds']) && !is_numericint($pconfig['ping_seconds'])) {
+		$input_errors[] = gettext("The supplied Ping Seconds value is invalid.");
+	}
+	if (!empty($pconfig['ping_action_seconds']) && !is_numericint($pconfig['ping_action_seconds'])) {
+		$input_errors[] = gettext("The supplied Ping Restart or Exit Seconds value is invalid.");
+	}
+	if (!empty($pconfig['inactive_seconds']) && !is_numericint($pconfig['inactive_seconds'])) {
+		$input_errors[] = gettext("The supplied Inactive Seconds value is invalid.");
 	}
 
 	if (!$input_errors) {
@@ -378,8 +462,13 @@ if ($_POST['save']) {
 		}
 
 		foreach ($simplefields as $stat) {
-			if (($stat == 'auth_pass') && ($_POST[$stat] == DMYPWD)) {
-				$client[$stat] = $a_client[$id]['auth_pass'];
+			if ($_POST[$stat] == DMYPWD) {
+				if (is_numeric($_POST['parentid'])) {
+					$orig_id = $_POST['parentid'];
+				} else {
+					$orig_id = $id;
+				}
+				$client[$stat] = $a_client[$orig_id][$stat];
 			} else {
 				update_if_changed($stat, $client[$stat], $_POST[$stat]);
 			}
@@ -403,10 +492,6 @@ if ($_POST['save']) {
 		$client['proxy_addr'] = $pconfig['proxy_addr'];
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
-		$client['proxy_user'] = $pconfig['proxy_user'];
-		if ($pconfig['proxy_passwd'] != DMYPWD) {
-			$client['proxy_passwd'] = $pconfig['proxy_passwd'];
-		}
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
 		$client['topology'] = $pconfig['topology'];
@@ -415,17 +500,20 @@ if ($_POST['save']) {
 		if ($tls_mode) {
 			$client['caref'] = $pconfig['caref'];
 			$client['certref'] = $pconfig['certref'];
+			$client['crlref'] = $pconfig['crlref'];
 			if ($pconfig['tlsauth_enable']) {
 				if ($pconfig['autotls_enable']) {
 					$pconfig['tls'] = openvpn_create_key();
 				}
 				$client['tls'] = base64_encode($pconfig['tls']);
 				$client['tls_type'] = $pconfig['tls_type'];
+				$client['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
+			$client['remote_cert_tls'] = $pconfig['remote_cert_tls'];
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
-		$client['crypto'] = $pconfig['crypto'];
+		$client['data_ciphers_fallback'] = $pconfig['data_ciphers_fallback'];
 		$client['digest'] = $pconfig['digest'];
 		$client['engine'] = $pconfig['engine'];
 
@@ -434,20 +522,33 @@ if ($_POST['save']) {
 		$client['remote_network'] = $pconfig['remote_network'];
 		$client['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$client['use_shaper'] = $pconfig['use_shaper'];
+		$client['allow_compression'] = $pconfig['allow_compression'];
 		$client['compression'] = $pconfig['compression'];
+		$client['auth-retry-none'] = $pconfig['auth-retry-none'];
 		$client['passtos'] = $pconfig['passtos'];
 		$client['udp_fast_io'] = $pconfig['udp_fast_io'];
+		$client['exit_notify'] = $pconfig['exit_notify'];
 		$client['sndrcvbuf'] = $pconfig['sndrcvbuf'];
 
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
+		$client['dns_add'] = $pconfig['dns_add'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
+		$client['create_gw'] = $pconfig['create_gw'];
 
-		if (!empty($pconfig['ncp-ciphers'])) {
-			$client['ncp-ciphers'] = implode(",", $pconfig['ncp-ciphers']);
+		if (!empty($pconfig['data_ciphers'])) {
+			$client['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 		}
 
-		$client['ncp_enable'] = $pconfig['ncp_enable'] ? "enabled":"disabled";
+		$client['ncp_enable'] = $pconfig['ncp_enable'];
+
+		$client['ping_method'] = $pconfig['ping_method'];
+		$client['keepalive_interval'] = $pconfig['keepalive_interval'];
+		$client['keepalive_timeout'] = $pconfig['keepalive_timeout'];
+		$client['ping_seconds'] = $pconfig['ping_seconds'];
+		$client['ping_action'] = $pconfig['ping_action'];
+		$client['ping_action_seconds'] = $pconfig['ping_action_seconds'];
+		$client['inactive_seconds'] = $pconfig['inactive_seconds'];
 
 		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
@@ -464,8 +565,8 @@ if ($_POST['save']) {
 		exit;
 	}
 
-	if (!empty($pconfig['ncp-ciphers'])) {
-		$pconfig['ncp-ciphers'] = implode(",", $pconfig['ncp-ciphers']);
+	if (!empty($pconfig['data_ciphers'])) {
+		$pconfig['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 	}
 }
 
@@ -505,12 +606,30 @@ if ($act=="new" || $act=="edit"):
 
 	$section = new Form_Section('General Information');
 
+	$section->addInput(new Form_Input(
+		'description',
+		'Description',
+		'text',
+		$pconfig['description']
+	))->setHelp('A description of this VPN for administrative reference.');
+
 	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
 		'Disable this client',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this client without removing it from the list.');
+
+	if ($vpnid) {
+		$section->addInput(new Form_StaticText(
+			'Unique VPN ID',
+			gettext('Client') . " {$vpnid} (ovpnc{$vpnid})"
+		));
+	}
+
+	$form->add($section);
+
+	$section = new Form_Section('Mode Configuration');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -520,19 +639,23 @@ if ($act=="new" || $act=="edit"):
 		));
 
 	$section->addInput(new Form_Select(
-		'protocol',
-		'*Protocol',
-		$pconfig['protocol'],
-		$openvpn_prots
-		));
-
-	$section->addInput(new Form_Select(
 		'dev_mode',
 		'*Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
 		$openvpn_dev_mode
 		))->setHelp('"tun" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms.%1$s' .
 		    '"tap" mode is capable of carrying 802.3 (OSI Layer 2.)', '<br/>');
+
+	$form->add($section);
+
+	$section = new Form_Section('Endpoint Configuration');
+
+	$section->addInput(new Form_Select(
+		'protocol',
+		'*Protocol',
+		$pconfig['protocol'],
+		$openvpn_prots
+		));
 
 	$section->addInput(new Form_Select(
 		'interface',
@@ -574,7 +697,7 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Input(
 		'proxy_port',
 		'Proxy port',
-		number,
+		'number',
 		$pconfig['proxy_port']
 	));
 
@@ -589,22 +712,16 @@ if ($act=="new" || $act=="edit"):
 		'proxy_user',
 		'Username',
 		'text',
-		$pconfig['proxy_user']
+		$pconfig['proxy_user'],
+		['autocomplete' => 'new-password']
 	));
 
 	$section->addPassword(new Form_Input(
 		'proxy_passwd',
 		'Password',
 		'password',
-		$pconfig['proxy_passwd']
-	));
-
-	$section->addInput(new Form_Input(
-		'description',
-		'Description',
-		'text',
-		$pconfig['description']
-	))->setHelp('A description may be entered here for administrative reference (not parsed).');
+		$pconfig['proxy_passwd'],
+	), false);
 
 	$form->add($section);
 	$section = new Form_Section('User Authentication Settings');
@@ -614,7 +731,8 @@ if ($act=="new" || $act=="edit"):
 		'auth_user',
 		'Username',
 		'text',
-		$pconfig['auth_user']
+		$pconfig['auth_user'],
+		['autocomplete' => 'new-password']
 	))->setHelp('Leave empty when no user name is needed');
 
 	$section->addPassword(new Form_Input(
@@ -622,7 +740,18 @@ if ($act=="new" || $act=="edit"):
 		'Password',
 		'password',
 		$pconfig['auth_pass']
-	))->setHelp('Leave empty when no password is needed');
+	), false)->setHelp('Leave empty when no password is needed');
+
+	$section->addInput(new Form_Checkbox(
+		'auth-retry-none',
+		'Authentication Retry',
+		'Do not retry connection when authentication fails',
+		$pconfig['auth-retry-none']
+	))->setHelp('When enabled, the OpenVPN process will exit if it receives an authentication failure message. ' .
+		    'The default behavior is to retry.%1$s%2$s%3$s', '<div class="infoblock">',
+		    sprint_info_box(gettext('WARNING: If the remote server requires both a username and a password, ' .
+		    'but only one is filled in, the system will hang on reboot prompting for OpenVPN Client credentials unless ' .
+		    'Authentication Retry is checked.'), 'info', false), '</div>');
 
 	$form->add($section);
 
@@ -661,17 +790,24 @@ if ($act=="new" || $act=="edit"):
 		))->setHelp('In Authentication mode the TLS key is used only as HMAC authentication for the control channel, protecting the peers from unauthorized connections. %1$s' .
 		    'Encryption and Authentication mode also encrypts control channel communication, providing more privacy and traffic control channel obfuscation.', '<br/>');
 
-	if (count($a_ca)) {
-		$list = array();
-		foreach ($a_ca as $ca) {
-			$list[$ca['refid']] = $ca['descr'];
-		}
+	if (strlen($pconfig['tlsauth_keydir']) == 0) {
+		$pconfig['tlsauth_keydir'] = "default";
+	}
+	$section->addInput(new Form_Select(
+		'tlsauth_keydir',
+		'*TLS keydir direction',
+		$pconfig['tlsauth_keydir'],
+		openvpn_get_keydirlist()
+	))->setHelp('The TLS Key Direction must be set to complementary values on the client and server. ' .
+			'For example, if the server is set to 0, the client must be set to 1. ' .
+			'Both may be set to omit the direction, in which case the TLS Key will be used bidirectionally.');
 
+	if (count($a_ca)) {
 		$section->addInput(new Form_Select(
 			'caref',
 			'*Peer Certificate Authority',
 			$pconfig['caref'],
-			$list
+			cert_build_list('ca', 'OpenVPN')
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
@@ -716,30 +852,19 @@ if ($act=="new" || $act=="edit"):
 		$cl['server']
 		));
 
-	$section->addInput(new Form_Select(
-		'crypto',
-		'*Encryption Algorithm',
-		$pconfig['crypto'],
-		openvpn_get_cipherlist()
-		))->setHelp('The Encryption Algorithm used for data channel packets when Negotiable Cryptographic Parameter (NCP) support is not available.');
-
 	$section->addInput(new Form_Checkbox(
 		'ncp_enable',
-		'Enable NCP',
-		'Enable Negotiable Cryptographic Parameters',
+		'Data Encryption Negotiation',
+		'Enable Data Encryption Negotiation',
 		($pconfig['ncp_enable'] == "enabled")
-	))->setHelp('Check this option to allow OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
-				'Encryption Algorithms from those selected in the NCP Algorithms list below.' .
-				'%1$s%2$s%3$s',
-				'<div class="infoblock">',
-				sprint_info_box(gettext('When both peers support NCP and have it enabled, NCP overrides the Encryption Algorithm above.') . '<br />' .
-					gettext('When disabled, only the selected Encryption Algorithm is allowed.'), 'info', false),
-				'</div>');
+	))->setHelp('This option allows OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
+			'data encryption algorithms from those selected in the Data Encryption Algorithms list below. ' .
+			'Disabling this feature is deprecated.');
 
-	foreach (explode(",", $pconfig['ncp-ciphers']) as $cipher) {
-		$ncp_ciphers_list[$cipher] = $cipher;
+	foreach (explode(",", $pconfig['data_ciphers']) as $cipher) {
+		$data_ciphers_list[$cipher] = $cipher;
 	}
-	$group = new Form_Group('NCP Algorithms');
+	$group = new Form_Group('Data Encryption Algorithms');
 
 	$group->add(new Form_Select(
 		'availciphers',
@@ -748,26 +873,35 @@ if ($act=="new" || $act=="edit"):
 		openvpn_get_cipherlist(),
 		true
 	))->setAttribute('size', '10')
-	  ->setHelp('Available NCP Encryption Algorithms%1$sClick to add or remove an algorithm from the list', '<br />');
+	  ->setHelp('Available Data Encryption Algorithms%1$sClick to add or remove an algorithm from the list', '<br />');
 
 	$group->add(new Form_Select(
-		'ncp-ciphers',
+		'data_ciphers',
 		null,
 		array(),
-		$ncp_ciphers_list,
+		$data_ciphers_list,
 		true
 	))->setReadonly()
 	  ->setAttribute('size', '10')
-	  ->setHelp('Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from the list');
+	  ->setHelp('Allowed Data Encryption Algorithms. Click an algorithm name to remove it from the list');
 
-	$group->setHelp('The order of the selected NCP Encryption Algorithms is respected by OpenVPN.' .
-					'%1$s%2$s%3$s',
+	$group->setHelp('The order of the selected Data Encryption Algorithms is respected by OpenVPN.%1$s%2$s%3$s',
 					'<div class="infoblock">',
-					sprint_info_box(gettext('For backward compatibility, when an older peer connects that does not support NCP, OpenVPN will use the Encryption Algorithm ' .
-						'requested by the peer so long as it is selected in this list or chosen as the Encryption Algorithm.'), 'info', false),
+					sprint_info_box(
+						gettext('For backward compatibility, when an older peer connects that does not support dynamic negotiation, OpenVPN will use the Fallback Data Encryption Algorithm ' .
+							'requested by the peer so long as it is selected in this list or chosen as the Fallback Data Encryption Algorithm.'), 'info', false),
 					'</div>');
 
 	$section->add($group);
+
+	$section->addInput(new Form_Select(
+		'data_ciphers_fallback',
+		'Fallback Data Encryption Algorithm',
+		$pconfig['data_ciphers_fallback'],
+		openvpn_get_cipherlist()
+		))->setHelp('The Fallback Data Encryption Algorithm used for data channel packets when communicating with ' .
+				'clients that do not support data encryption algorithm negotiation. ' .
+				'This algorithm is automatically included in the Data Encryption Algorithms list.');
 
 	$section->addInput(new Form_Select(
 		'digest',
@@ -776,7 +910,7 @@ if ($act=="new" || $act=="edit"):
 		openvpn_get_digestlist()
 		))->setHelp('The algorithm used to authenticate data channel packets, and control channel packets if a TLS Key is present.%1$s' .
 		    'When an AEAD Encryption Algorithm mode is used, such as AES-GCM, this digest is used for the control channel only, not the data channel.%1$s' .
-		    'Leave this set to SHA1 unless the server uses a different value. SHA1 is the default for OpenVPN. ', '<br />');
+		    'Set this to the same value as the server. While SHA1 is the default for OpenVPN, this algorithm is insecure. ', '<br />');
 
 	$section->addInput(new Form_Select(
 		'engine',
@@ -784,6 +918,13 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['engine'],
 		openvpn_get_engines()
 		));
+
+	$section->addInput(new Form_Checkbox(
+		'remote_cert_tls',
+		'Server Certificate Key Usage Validation',
+		'Enforce key usage',
+		$pconfig['remote_cert_tls']
+	))->setHelp('Verify that remote host uses a server certificate (EKU: "TLS Web Server Authentication").');
 
 	$form->add($section);
 
@@ -794,19 +935,20 @@ if ($act=="new" || $act=="edit"):
 		'IPv4 Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('This is the IPv4 virtual network used for private communications between this client and the server ' .
-				'expressed using CIDR notation (e.g. 10.0.8.0/24). The second usable address in the network will be assigned to ' .
-				'the client virtual interface. Leave blank if the server is capable of providing addresses to clients.');
+	))->setHelp('This is the IPv4 virtual network or network type alias with a single entry used for private ' .
+		    'communications between this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). ' .
+		    'The second usable address in the network will be assigned to the client virtual interface. ' .
+		    'Leave blank if the server is capable of providing addresses to clients.');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
 		'IPv6 Tunnel Network',
 		'text',
 		$pconfig['tunnel_networkv6']
-	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this client and the server expressed using CIDR notation (e.g. fe80::/64). ' .
-				'When set static using this field, the ::2 address in the network will be assigned to the client virtual interface. ' .
-				'Leave blank if the server is capable of providing addresses to clients.');
+	))->setHelp('This is the IPv6 virtual network or network alias with a single entry used for private ' .
+        	    'communications between this client and the server expressed using CIDR notation (e.g. fe80::/64). ' .
+		    'When set static using this field, the ::2 address in the network will be assigned to the client ' .
+		    'virtual interface. Leave blank if the server is capable of providing addresses to clients.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
@@ -814,7 +956,7 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['remote_network']
 	))->setHelp('IPv4 networks that will be routed through the tunnel, so that a site-to-site VPN can be established without manually ' .
-				'changing the routing tables. Expressed as a comma-separated list of one or more CIDR ranges. ' .
+				'changing the routing tables. Expressed as a comma-separated list of one or more CIDR ranges or host/network type aliases. ' .
 				'If this is a site-to-site VPN, enter the remote LAN/s here. May be left blank for non site-to-site VPN.');
 
 	$section->addInput(new Form_Input(
@@ -823,7 +965,7 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['remote_networkv6']
 	))->setHelp('These are the IPv6 networks that will be routed through the tunnel, so that a site-to-site VPN can be established without manually ' .
-				'changing the routing tables. Expressed as a comma-separated list of one or more IP/PREFIX. ' .
+				'changing the routing tables. Expressed as a comma-separated list of one or more IP/PREFIX or host/network type aliases. ' .
 				'If this is a site-to-site VPN, enter the remote LAN/s here. May be left blank for non site-to-site VPN.');
 
 	$section->addInput(new Form_Input(
@@ -836,11 +978,28 @@ if ($act=="new" || $act=="edit"):
 				'Not compatible with UDP Fast I/O.');
 
 	$section->addInput(new Form_Select(
+		'allow_compression',
+		'Allow Compression',
+		$pconfig['allow_compression'],
+		$openvpn_allow_compression
+		))->setHelp('Allow compression to be used with this VPN instance. %1$s' .
+				'Compression can potentially increase throughput but may allow an attacker to extract secrets if they can control ' .
+				'compressed plaintext traversing the VPN (e.g. HTTP). ' .
+				'Before enabling compression, consult information about the VORACLE, CRIME, TIME, and BREACH attacks against TLS ' .
+				'to decide if the use case for this specific VPN is vulnerable to attack. %1$s%1$s' .
+				'Asymmetric compression allows an easier transition when connecting with older peers. %1$s',
+				'<br/>');
+
+	$section->addInput(new Form_Select(
 		'compression',
 		'Compression',
 		$pconfig['compression'],
 		$openvpn_compression_modes
-	))->setHelp('Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently.');
+		))->setHelp('Deprecated. Compress tunnel packets using the LZO algorithm. %1$s' .
+				'Compression can potentially dangerous and insecure. See the note on the Allow Compression option above. %1$s%1$s' .
+				'Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the ' .
+				'packets is not being compressed efficiently.',
+				'<br/>');
 
 	$section->addInput(new Form_Select(
 		'topology',
@@ -870,16 +1029,101 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['route_no_exec']
 	))->setHelp('Do not execute operating system commands to install routes. Instead, pass routes to --route-up script using environmental variables.');
 
+	$section->addInput(new Form_Checkbox(
+		'dns_add',
+		'Pull DNS',
+		'Add server provided DNS',
+		$pconfig['dns_add']
+	))->setHelp('If this option is set, pfSense will use DNS servers assigned by remote OpenVPN server for its own purposes (including the DNS Forwarder/DNS Resolver).');
+
+	$form->add($section);
+
+	$section = new Form_Section("Ping settings");
+
+	$section->addInput(new Form_Input(
+		'inactive_seconds',
+		'Inactive',
+		'number',
+		$pconfig['inactive_seconds'] ?: 0,
+		['min' => '0']
+	))->setHelp('Causes OpenVPN to exit after n seconds of ' .
+		'inactivity on the TUN/TAP device.%1$s' .
+		'Activity is based on the last incoming or outgoing tunnel packet ' .
+		'(not control or keep-alive packets).%1$s' .
+		'A value of 0 disables this feature.%1$s%1$s' .
+		'WARNING: Use with caution. When triggered, the client process ' .
+		'will exit and it will not automatically restart.', '<br />');
+
+	$section->addInput(new Form_Select(
+		'ping_method',
+		'Ping method',
+		$pconfig['ping_method'],
+		$openvpn_ping_method
+	))->setHelp('keepalive helper uses interval and timeout parameters ' .
+	    'to define ping and ping-restart values as follows:%1$s' .
+	    'ping = interval%1$s' .
+	    'ping-restart = timeout%1$s',
+	    '<br />');
+
+	$section->addInput(new Form_Input(
+		'keepalive_interval',
+		'Interval',
+		'number',
+		$pconfig['keepalive_interval']
+		    ?: $openvpn_default_keepalive_interval,
+		['min' => '0']
+	));
+
+	$section->addInput(new Form_Input(
+		'keepalive_timeout',
+		'Timeout',
+		'number',
+		$pconfig['keepalive_timeout']
+		    ?: $openvpn_default_keepalive_timeout,
+		['min' => '0']
+	));
+
+	$section->addInput(new Form_Input(
+		'ping_seconds',
+		'Ping',
+		'number',
+		$pconfig['ping_seconds'] ?: $openvpn_default_keepalive_interval,
+		['min' => '0']
+	))->setHelp('Ping remote over the TCP/UDP control channel if no ' .
+	    'packets have been sent for at least n seconds.%1$s',
+	    '<br />');
+
+	$section->addInput(new Form_Select(
+		'ping_action',
+		'Ping restart or exit',
+		$pconfig['ping_action'],
+		$openvpn_ping_action
+	))->setHelp('Exit or restart OpenVPN after timeout from remote%1$s',
+	    '<br />');
+
+	$section->addInput(new Form_Input(
+		'ping_action_seconds',
+		'Ping restart or exit seconds',
+		'number',
+		$pconfig['ping_action_seconds']
+		    ?: $openvpn_default_keepalive_timeout,
+		['min' => '0']
+	));
+
 	$form->add($section);
 
 	$section = new Form_Section('Advanced Configuration');
 	$section->addClass('advanced');
 
-	$section->addInput(new Form_Textarea(
+	$custops = new Form_Textarea(
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add to the OpenVPN client configuration here, separated by semicolon.');
+	);
+	if (!$user_can_edit_advanced) {
+		$custops->setDisabled();
+	}
+	$section->addInput($custops)->setHelp('Enter any additional options to add to the OpenVPN client configuration here, separated by semicolon.');
 
 	$section->addInput(new Form_Checkbox(
 		'udp_fast_io',
@@ -890,6 +1134,17 @@ if ($act=="new" || $act=="edit"):
 		'Not compatible with all platforms, and not compatible with OpenVPN bandwidth limiting.');
 
 	$section->addInput(new Form_Select(
+		'exit_notify',
+		'Exit Notify',
+		$pconfig['exit_notify'],
+		$openvpn_exit_notify_client
+	))->setHelp('Send an explicit exit notification to connected servers/peers when restarting ' .
+		'or shutting down, so they may immediately disconnect rather than waiting for a timeout. ' .
+		'This value controls how many times this instance will attempt to send the exit notification.%1$s%1$s' .
+		'This option is ignored in Peer-to-Peer Shared Key mode and in SSL/TLS mode with a ' .
+		'/30 tunnel network as it will cause the server to exit and not restart.', '<br/>');
+
+	$section->addInput(new Form_Select(
 		'sndrcvbuf',
 		'Send/Receive Buffer',
 		$pconfig['sndrcvbuf'],
@@ -898,6 +1153,37 @@ if ($act=="new" || $act=="edit"):
 				'The default buffer size can be too small in many cases, depending on hardware and network uplink speeds. ' .
 				'Finding the best buffer size can take some experimentation. To test the best value for a site, start at ' .
 				'512KiB and test higher and lower values.');
+
+	$group = new Form_Group('Gateway creation');
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'Both',
+		($pconfig['create_gw'] == "both"),
+		'both'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv4 only',
+		($pconfig['create_gw'] == "v4only"),
+		'v4only'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv6 only',
+		($pconfig['create_gw'] == "v6only"),
+		'v6only'
+	))->displayAsRadio();
+
+	$group->setHelp('If you assign a virtual interface to this OpenVPN client, ' .
+		'this setting controls which gateway types will be created. The default ' .
+		'setting is \'both\'.');
+
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'verbosity_level',
@@ -910,7 +1196,7 @@ if ($act=="new" || $act=="edit"):
 					'5: Output R and W characters to the console for each packet read and write. Uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets.%1$s' .
 					'6-11: Debug info range', '<br />');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',
@@ -918,11 +1204,20 @@ if ($act=="new" || $act=="edit"):
 	));
 
 	if (isset($id) && $a_client[$id]) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
 			$id
+		));
+	}
+
+	if (isset($parentid)) {
+		$form->addGlobal(new Form_Input(
+			'parentid',
+			null,
+			'hidden',
+			$parentid
 		));
 	}
 
@@ -936,8 +1231,10 @@ else:
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
-					<th><?=gettext("Protocol")?></th>
+					<th><?=gettext("Interface")?></th>
+					<th data-sortable-type="alpha"><?=gettext("Protocol")?></th>
 					<th><?=gettext("Server")?></th>
+					<th><?=gettext("Mode / Crypto")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -948,20 +1245,48 @@ else:
 	$i = 0;
 	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
+		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], ($client['ncp_enable'] != "disabled"));
+		$dca = explode(',', $dc);
+		if (count($dca) > 5) {
+			$dca = array_slice($dca, 0, 5);
+			$dca[] = '[...]';
+		}
+		$dc = implode(', ', $dca);
 ?>
 				<tr <?=isset($client['disable']) ? 'class="disabled"':''?>>
 					<td>
+						<?=convert_openvpn_interface_to_friendly_descr($client['interface'])?>
+					</td>
+					<td>
 						<?=htmlspecialchars($client['protocol'])?>
+						<br/>(<?= htmlspecialchars(strtoupper(empty($client['dev_mode']) ? 'TUN' : $client['dev_mode'])) ?>)
 					</td>
 					<td>
 						<?=htmlspecialchars($server)?>
 					</td>
 					<td>
+						<strong><?= gettext('Mode') ?>:</strong> <?= htmlspecialchars($openvpn_client_modes[$client['mode']]) ?>
+						<br/>
+						<strong><?= gettext('Data Ciphers') ?>:</strong> <?= htmlspecialchars($dc) ?>
+						<br/>
+						<strong><?= gettext('Digest') ?>:</strong> <?= htmlspecialchars($client['digest']) ?>
+					<?php if (!empty($client['dh_length'])): ?>
+						<br/>
+						<strong><?= gettext('D-H Params') ?>:</strong>
+						<?php if (is_numeric($client['dh_length'])): ?>
+							<?= htmlspecialchars($client['dh_length']) ?> <?= gettext('bits') ?>
+						<?php elseif ($client['dh_length'] == "none"): ?>
+							<?= gettext("Disabled, ECDH Only") ?>
+						<?php endif; ?>
+					<?php endif; ?>
+					</td>
+					<td>
 						<?=htmlspecialchars($client['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete client')?>" href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit Client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-clone"	title="<?=gettext("Copy Client")?>"	href="vpn_openvpn_client.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete Client')?>"	href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -996,27 +1321,35 @@ events.push(function() {
 		switch ($('#mode').val()) {
 			case "p2p_tls":
 				hideCheckbox('tlsauth_enable', false);
+				hideInput('tlsauth_keydir', false);
 				hideInput('caref', false);
 				hideInput('certref', false);
 				hideClass('authentication', false);
 				hideCheckbox('autokey_enable', true);
+				hideCheckbox('remote_cert_tls', false);
 				hideInput('shared_key', true);
 				hideLabel('Peer Certificate Revocation list', false);
 				hideInput('crlref', false);
 				hideInput('topology', false);
 				hideCheckbox('route_no_pull', false);
+				hideInput('inactive_seconds', false);
+				hideInput('exit_notify', false);
 				break;
 			case "p2p_shared_key":
 				hideCheckbox('tlsauth_enable', true);
+				hideInput('tlsauth_keydir', true);
 				hideInput('caref', true);
 				hideInput('certref', true);
 				hideClass('authentication', true);
 				hideCheckbox('autokey_enable', false);
+				hideCheckbox('remote_cert_tls', true);
 				hideInput('shared_key', false);
 				hideLabel('Peer Certificate Revocation list', true);
 				hideInput('crlref', true);
 				hideInput('topology', true);
 				hideCheckbox('route_no_pull', true);
+				hideInput('inactive_seconds', true);
+				hideInput('exit_notify', true);
 				break;
 		}
 
@@ -1031,16 +1364,23 @@ events.push(function() {
 	}
 
 	function protocol_change() {
-		if ($('#protocol').val().substring(0, 3).toLowerCase() == 'udp') {
-			hideCheckbox('udp_fast_io', false);
-		} else {
-			hideCheckbox('udp_fast_io', true);
+		if ($('#protocol').val() != undefined) {
+			hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
+			var notudp = !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp');
+			hideCheckbox('udp_fast_io', notudp);
+			switch ($('#mode').val()) {
+				case "p2p_shared_key":
+					hideInput('exit_notify', true);
+					break;
+				default:
+					hideInput('exit_notify', notudp);
+			}
 		}
 	}
 
 	// Process "Automatically generate a shared key" checkbox
 	function autokey_change() {
-		hideInput('shared_key', $('#autokey_enable').prop('checked'));
+		hideInput('shared_key', ($('#autokey_enable').prop('checked') || ($('#mode').val() == 'p2p_tls')));
 	}
 
 	function useproxy_changed() {
@@ -1060,6 +1400,23 @@ events.push(function() {
 		hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked') || ($('#mode').val() == 'p2p_shared_key'));
 	}
 
+	function ping_method_change() {
+		pvalue = $('#ping_method').val();
+
+		keepalive = (pvalue == 'keepalive');
+
+		hideInput('keepalive_interval', !keepalive);
+		hideInput('keepalive_timeout', !keepalive);
+		hideInput('ping_seconds', keepalive);
+		hideInput('ping_action', keepalive);
+		hideInput('ping_action_seconds', keepalive);
+	}
+
+	function allow_compression_change() {
+		var hide  = ($('#allow_compression').val() == 'no')
+		hideInput('compression', hide);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	 // TLS Authorization
@@ -1075,6 +1432,7 @@ events.push(function() {
 	 // Mode
 	$('#mode').change(function () {
 		mode_change();
+		protocol_change();
 	});
 
 	// Protocol
@@ -1092,17 +1450,27 @@ events.push(function() {
 		dev_mode_change();
 	});
 
+	// ping
+	$('#ping_method').change(function () {
+		ping_method_change();
+	});
+
 	 // Auto TLS
 	$('#autotls_enable').click(function () {
 		autotls_change();
 	});
 
-	function updateCiphers(mem) {
+	// Compression Settings
+	$('#allow_compression').change(function () {
+		allow_compression_change();
+	});
+
+	function updateCipher(mem) {
 		var found = false;
 
 		// If the cipher exists, remove it
-		$('[id="ncp-ciphers[]"] option').each(function() {
-			if($(this).val() == mem) {
+		$('[id="data_ciphers[]"] option').each(function() {
+			if($(this).val().toString() == mem) {
 				$(this).remove();
 				found = true;
 			}
@@ -1110,8 +1478,12 @@ events.push(function() {
 
 		// If not, add it
 		if (!found) {
-			$('[id="ncp-ciphers[]"]').append(new Option(mem , mem));
+			$('[id="data_ciphers[]"]').append(new Option(mem , mem));
 		}
+	}
+
+	function updateCiphers(mem) {
+		mem.toString().split(",").forEach(updateCipher);
 
 		// Unselect all options
 		$('[id="availciphers[]"] option:selected').removeAttr("selected");
@@ -1123,7 +1495,7 @@ events.push(function() {
 	});
 
 	// On click, remove the cipher from the list
-	$('[id="ncp-ciphers[]"]').click(function () {
+	$('[id="data_ciphers[]"]').click(function () {
 		if ($(this).val() != null) {
 			updateCiphers($(this).val());
 		}
@@ -1133,7 +1505,7 @@ events.push(function() {
 	// and select all of the chosen ciphers so that they are submitted
 	$('form').submit(function() {
 		$("#availciphers" ).prop( "disabled", true);
-		$('[id="ncp-ciphers[]"] option').attr("selected", "selected");
+		$('[id="data_ciphers[]"] option').prop("selected", true);
 	});
 
 	// ---------- Set initial page display state ----------------------------------------------------------------------
@@ -1142,6 +1514,8 @@ events.push(function() {
 	autokey_change();
 	tlsauth_change();
 	useproxy_changed();
+	ping_method_change();
+	allow_compression_change();
 });
 //]]>
 </script>

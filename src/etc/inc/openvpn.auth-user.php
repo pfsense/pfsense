@@ -4,7 +4,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Shrew Soft Inc
- * Copyright (c) 2008-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,72 +30,13 @@
 
 require_once("globals.inc");
 require_once("config.inc");
-require_once("radius.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
-/**
- * Get the NAS-Identifier
- *
- * We will return "openVPN" so that connections can be distinguished by the Radius
- */
-if (!function_exists("getNasID")) {
-function getNasID() {
-	return "openVPN";
-}
-}
-
-/**
- * Get the NAS-IP-Address based on the current wan address
- *
- * Use functions in interfaces.inc to find this out
- *
- */
-if (!function_exists("getNasIP")) {
-function getNasIP() {
-	$nasIp = get_interface_ip();
-	if (!$nasIp) {
-		$nasIp = "0.0.0.0";
-	}
-	return $nasIp;
-}
-}
-
-/**
- * Set the NAS-Port-Type
- *
- * Should be "Virtual" since that denotes VPN connections
- */
-if (!function_exists("getNasPortType")) {
-function getNasPortType() {
-	return RADIUS_VIRTUAL;
-}
-}
-
-/**
- * Set the NAS-Port
- *
- * We will return the port the client connected to
- */
-if (!function_exists("getNasPort")) {
-function getNasPort() {
-	return $_GET['nas_port'];
-}
-}
-
-/**
- * Set the Called-Station-ID
- *
- * We will return the IP and port the client connected to
- */
-if (!function_exists("getCalledStationId")) {
-function getCalledStationId() {
-	return get_interface_ip() . ":" . getNasPort();
-}
-}
-
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
+
+global $common_name, $username, $dev, $untrusted_port;
 
 if (isset($_GET['username'])) {
 	$authmodes = explode(",", base64_decode($_GET['authcfg']));
@@ -103,14 +46,18 @@ if (isset($_GET['username'])) {
 	$common_name = $_GET['cn'];
 	$modeid = $_GET['modeid'];
 	$strictusercn = $_GET['strictcn'] == "false" ? false : true;
+	$dev = $_GET['dev'];
+	$untrusted_port = $_GET['untrusted_port'];
 } else {
 	/* read data from environment */
 	$username = getenv("username");
 	$password = getenv("password");
 	$common_name = getenv("common_name");
+	$dev = getenv("dev");
+	$untrusted_port = getenv("untrusted_port");
 }
 
-if (!$username || !$password) {
+if (!$username) {
 	syslog(LOG_ERR, "invalid user authentication environment");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
@@ -125,15 +72,10 @@ if (!$username || !$password) {
 /* Replaced by a sed with proper variables used below(ldap parameters). */
 //<template>
 
-if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
-	putenv("LDAPTLS_CACERT={$g['varetc_path']}/openvpn/{$modeid}.ca");
-	putenv("LDAPTLS_REQCERT=never");
-}
-
 $authenticated = false;
 
 if (($strictusercn === true) && (mb_strtolower($common_name) !== mb_strtolower($username))) {
-	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
+	syslog(LOG_WARNING, "Username does not match certificate common name (\"{$username}\" != \"{$common_name}\"), access denied.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -156,7 +98,12 @@ if (!is_array($authmodes)) {
 	}
 }
 
-$attributes = array();
+
+$attributes = array("nas_identifier" => "openVPN",
+	"nas_port_type" => RADIUS_VIRTUAL,
+	"nas_port" => $_GET['nas_port'],
+	"calling_station_id" => get_interface_ip() . ":" . $_GET['nas_port']);
+	
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
 	if (!$authcfg && $authmode != "Local Database") {
@@ -170,7 +117,7 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
+	syslog(LOG_WARNING, "user '{$username}' could not authenticate.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -213,7 +160,7 @@ if (!empty($content)) {
 	@file_put_contents("{$g['tmp_path']}/{$username}", $content);
 }
 
-syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+syslog(LOG_NOTICE, "user '{$username}' authenticated");
 closelog();
 
 if (isset($_GET['username'])) {

@@ -1,0 +1,61 @@
+#!/usr/local/bin/php-cgi -f
+<?php
+/*
+ * rc.package_reinstall_all
+ *
+ * Copyright (c) 2018-2021 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+require_once("util.inc");
+require_once("notices.inc");
+require_once("pkg-utils.inc");
+
+$ntries = 1;
+$max_tries = 5;
+
+mark_subsystem_dirty('packagelock');
+
+/* If it's still booting, give it a few seconds before start */
+if (platform_booting()) {
+	sleep(5);
+}
+
+while($ntries <= $max_tries) {
+	if (package_reinstall_all()) {
+		break;
+	}
+	log_error("Attempt #{$ntries} to reinstall packages FAILED.");
+	$ntries++;
+}
+
+unlink_if_exists("{$g['conf_path']}/needs_package_sync");
+
+if ($ntries > $max_tries) {
+	file_notice(gettext("Package reinstall"), gettext("Package reinstall " .
+	    "process was ABORTED due to lack of internet connectivity"));
+} else {
+	file_notice(gettext("Package reinstall"), gettext("Package reinstall " .
+	    "process finished successfully"));
+	mwexec_bg("{$g['etc_path']}/rc.start_packages");
+}
+
+/* Detect installed binary pkgs that are not registered in the system */
+register_all_installed_packages();
+clear_subsystem_dirty('packagelock');
+
+if ($ntries <= $max_tries) {
+	mwexec_bg("/etc/rc.filter_configure_sync");
+}

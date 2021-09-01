@@ -3,7 +3,9 @@
  * MultiCheckboxGroup.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -22,7 +24,7 @@
 
 class Form_MultiCheckboxGroup extends Form_Group
 {
-	public function add(Form_MultiCheckbox $input)
+	public function add(Form_Input $input)
 	{
 		return parent::add($input);
 	}

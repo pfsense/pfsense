@@ -3,7 +3,9 @@
  * picture.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,66 +21,93 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
+
 if ($_GET['getpic']=="true") {
-	$pic_type_s = explode(".", $user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']);
-	$pic_type = $pic_type_s[1];
-	if ($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']) {
-		$data = base64_decode($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']);
+	$wk = basename($_GET['widgetkey']);
+	$image_filename = "/conf/widget_image.{$wk}";
+	if (empty($wk) ||
+	    !isset($user_settings['widgets'][$wk]) ||
+	    !is_array($user_settings['widgets'][$wk]) ||
+	    !file_exists($image_filename)) {
+		echo null;
+		exit;
 	}
-	header("Content-Disposition: inline; filename=\"{$user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']}\"");
-	header("Content-Type: image/{$pic_type}");
-	header("Content-Length: " . strlen($data));
-	echo $data;
-	exit;
+
+	/* Do not rely on filename to determine image type. */
+	$pic_type = is_supported_image($image_filename);
+	if (empty($pic_type)) {
+		exit;
+	}
+
+	if ($user_settings['widgets'][$wk]['picturewidget']) {
+		if (file_exists($image_filename)) {
+			$data = file_get_contents($image_filename);
+		} else {
+			$data = "";
+		}
+	}
+
+	send_user_download('data', $data, $image_filename, image_type_to_mime_type($pic_type));
 }
 
 if ($_POST['widgetkey']) {
-	set_customwidgettitle($user_settings);
+	$wk = basename($_POST['widgetkey']);
 
-	if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
-		/* read the file contents */
-		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
-		while (($buf=fread($fd_pic, 8192)) != '') {
-		    // Here, $buf is guaranteed to contain data
-		    $data .= $buf;
+	// Valid widgetkey format is "picture-nnn". Check it looks reasonable
+	if (preg_match('/^picture-[0-9]{1,3}$/', $wk) == 1) {
+		set_customwidgettitle($user_settings);
+		if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
+			/* read the file contents */
+			$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
+			while (($buf=fread($fd_pic, 8192)) != '') {
+			    // Here, $buf is guaranteed to contain data
+			    $data .= $buf;
+			}
+			fclose($fd_pic);
+			if (!$data) {
+				log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
+				die("Could not read temporary file");
+			} else {
+				// Make sure they upload an image and not some other file
+				if (!is_supported_image($_FILES['pictfile']['tmp_name'])) {
+					die("Not a supported image type");
+				}
+				$picname = basename($_FILES['uploadedfile']['name']);
+				$user_settings['widgets'][$wk]['picturewidget'] = "/conf/widget_image";
+				file_put_contents("/conf/widget_image.{$wk}", $data);
+				$user_settings['widgets'][$wk]['picturewidget_filename'] = $_FILES['pictfile']['name'];
+			}
 		}
-		fclose($fd_pic);
-		if (!$data) {
-			log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
-			die("Could not read temporary file");
-		} else {
-			$picname = basename($_FILES['uploadedfile']['name']);
-			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget'] = base64_encode($data);
-			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget_filename'] = $_FILES['pictfile']['name'];
-		}
+
+		save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
 	}
 
-	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
 	header("Location: /index.php");
 	exit;
 }
 
 ?>
-<a href="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" target="_blank">
-	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" alt="picture" />
+<?php
+if($user_settings['widgets'][$widgetkey]["picturewidget"] != null){?>
+<a href="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=htmlspecialchars($widgetkey)?>" target="_blank">
+	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=htmlspecialchars($widgetkey)?>" alt="picture" />
 </a>
-
+<?php } ?>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>"
+	<?php echo "class= " . "'" . "panel-footer". ($user_settings['widgets'][$widgetkey]["picturewidget"] != null ? " collapse": ""). "'";  ?>>
 
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-horizontal">
-	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+	<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
-		<label for="pictfile" class="col-sm-4 control-label"><?=gettext('New picture:')?> </label>
+		<label for="pictfile" class="col-sm-4 control-label"><?=gettext('New pictures:')?> </label>
 		<div class="col-sm-6">
-			<input id="pictfile" name="pictfile" type="file" class="form-control" />
+			<input id="pictfile" name="pictfile" type="file" class="form-control" accept="image/*"/>
 		</div>
 	</div>
 	<div class="form-group">

@@ -2,7 +2,8 @@
  * pfSense.css
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016 Electric Sheep Fencing
+ * Copyright (c) 2016-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +21,7 @@
 
 @import url("/vendor/bootstrap/css/bootstrap.min.css");
 @import url("/css/fonts/roboto.css");
-@import url("/vendor/jquery/jquery-ui/themes/smoothness/theme.css");
+@import url("/vendor/jquery-ui/jquery-ui-1.12.1.min.css");
 
 html {
     position: relative;
@@ -138,6 +139,22 @@ tr.disabled a {
     max-height: 36px;
     width: auto;
     height: auto;
+}
+
+.navbar-brand svg#logo {
+    width: 105px;
+}
+
+.logo-st0 {
+    fill:#FFFFFF;
+}
+
+.logo-st1 {
+    fill:#FFFFFF;
+}
+
+.logo-st2 {
+    fill:#FFFFFF;
 }
 
 .navbar-brand {
@@ -287,13 +304,26 @@ tr.disabled a {
     border-bottom: none;
 }
 
+.form-listitem {
+	border-top: 3px solid #E0E0E0;
+}
+.form-listitem:first-child {
+	border-top: none;
+}
+
 .input-group-addon {
     padding: 0 12px;
 }
 
 .table {
-    margin-bottom: 0;
+    margin-bottom: 0px;
 }
+/*This is parsed by IE10+ only. Need this to stop empty tables from collapsing */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+ .table {
+	  margin-bottom:1px !important;
+  }
+ }
 
 .table>tbody>tr>td {
     padding: 6px 4px 6px 10px;
@@ -307,6 +337,29 @@ tr.disabled a {
 /* active table row on hover */
 .table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr.active:hover>th, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover {
     background-color: #BDBDBD;
+}
+
+/* Handle the limited space available on the Status DHCPv6 Leases table.
+ * Break DUID string when needed and use smaller text.
+ */
+.statusdhcpv6leases tbody>tr>td:nth-of-type(4) {
+    word-wrap: break-word;
+    word-break: break-all;
+    font-size: smaller;
+}
+
+/* Smaller text for IAID in leases table and in prefixes table
+ * for the route ip and its IAID.
+ */
+.statusdhcpv6leases tbody>tr>td:nth-of-type(3),
+.statusdhcpv6prefixes tbody>tr>td:nth-of-type(3) {
+    font-size: smaller;
+}
+
+/* Break DUID string in the prefixes table. */
+.statusdhcpv6prefixes tbody>tr>td:nth-of-type(5) {
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .popover {
@@ -399,7 +452,7 @@ form .btn + .btn {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 40px;
     background-color: #212121;
     padding-top: 10px;
     text-align: center;
@@ -605,7 +658,8 @@ footer a {
     padding-bottom: 17px;
     margin-top: -0.125em;
     width: 14px;
-    height: 14px
+    height: 14px;
+    pointer-events: none;
 }
 
 /* Used when you need an icon to act as a submit button **/
@@ -660,7 +714,7 @@ textarea
 
 /*
  * CSS for Standard tree layout
- * Copyright (C) 2005 SilverStripe Limited
+ * Copyright (c) 2005 SilverStripe Limited
  * Feel free to use this on your websites, but please leave this message in the fies
  * http://www.silverstripe.com/blog
  */
@@ -873,7 +927,7 @@ a[href]:after {
     content: normal;
 }
 
-/** Text color for diff display when comapring configs */
+/** Text color for diff display when comparing configs */
 .diff-text {
     color: #000000;
 }

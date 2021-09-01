@@ -3,7 +3,9 @@
  * services_pppoe.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,10 +32,7 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['pppoes']['pppoe'])) {
-	$config['pppoes']['pppoe'] = array();
-}
-
+init_config_arr(array('pppoes', 'pppoe'));
 $a_pppoes = &$config['pppoes']['pppoe'];
 
 
@@ -65,11 +64,11 @@ if ($_POST['act'] == "del") {
 		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid") {
 			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid");
 		}
-		if (is_dir("{$g['varetc_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'])) {
-			mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid']);
+		if (is_dir("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn")) {
+			rmdir_recursive("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn");
 		}
 		unset($a_pppoes[$_POST['id']]);
-		write_config();
+		write_config("PPPoE Server deleted");
 		header("Location: services_pppoe.php");
 		exit;
 	}

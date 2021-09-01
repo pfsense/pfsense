@@ -3,7 +3,9 @@
  * interfaces_wireless.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Erik Fonnesbeck
  * All rights reserved.
  *
@@ -29,13 +31,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['wireless'])) {
-	$config['wireless'] = array();
-}
-if (!is_array($config['wireless']['clone'])) {
-	$config['wireless']['clone'] = array();
-}
-
+init_config_arr(array('wireless', 'clone'));
 $a_clones = &$config['wireless']['clone'];
 
 function clone_inuse($num) {
@@ -60,7 +56,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($a_clones[$_POST['id']]['cloneif']);
 		unset($a_clones[$_POST['id']]);
 
-		write_config();
+		write_config("Wireless interface deleted");
 
 		header("Location: interfaces_wireless.php");
 		exit;

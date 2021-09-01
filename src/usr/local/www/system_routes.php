@@ -3,7 +3,9 @@
  * system_routes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,10 +37,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['staticroutes']['route'])) {
-	$config['staticroutes']['route'] = array();
-}
-
+init_config_arr(array('staticroutes', 'route'));
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true, true);
 $changedesc_prefix = gettext("Static Routes") . ": ";
@@ -68,7 +67,7 @@ if ($_POST['apply']) {
 }
 
 function delete_static_route($id) {
-	global $config, $a_routes, $changedesc_prefix;
+	global $config, $a_routes, $changedesc_prefix, $a_gateways;
 
 	if (!isset($a_routes[$id])) {
 		return;
@@ -76,7 +75,8 @@ function delete_static_route($id) {
 
 	$targets = array();
 	if (is_alias($a_routes[$id]['network'])) {
-		foreach (filter_expand_alias_array($a_routes[$id]['network']) as $tgt) {
+		foreach (filter_expand_alias_array($a_routes[$id]['network']) as
+		    $tgt) {
 			if (is_ipaddrv4($tgt)) {
 				$tgt .= "/32";
 			} else if (is_ipaddrv6($tgt)) {
@@ -92,8 +92,7 @@ function delete_static_route($id) {
 	}
 
 	foreach ($targets as $tgt) {
-		$family = (is_subnetv6($tgt) ? "-inet6" : "-inet");
-		mwexec("/sbin/route delete {$family} " . escapeshellarg($tgt));
+		route_del($tgt);
 	}
 
 	unset($targets);
@@ -130,6 +129,7 @@ if (isset($_POST['del_x'])) {
 if ($_POST['act'] == "toggle") {
 	if ($a_routes[$_POST['id']]) {
 		$do_update_config = true;
+		$route_del = false;
 		if (isset($a_routes[$_POST['id']]['disabled'])) {
 			// Do not enable a route whose gateway is disabled
 			if (isset($a_gateways[$a_routes[$_POST['id']]['gateway']]['disabled'])) {
@@ -140,6 +140,7 @@ if ($_POST['act'] == "toggle") {
 				$changedesc = $changedesc_prefix . sprintf(gettext("enabled route to %s"), $a_routes[$_POST['id']]['network']);
 			}
 		} else {
+			$route_del = true;
 			delete_static_route($_POST['id']);
 			$a_routes[$_POST['id']]['disabled'] = true;
 			$changedesc = $changedesc_prefix . sprintf(gettext("disabled route to %s"), $a_routes[$_POST['id']]['network']);
@@ -147,7 +148,9 @@ if ($_POST['act'] == "toggle") {
 
 		if ($do_update_config) {
 			if (write_config($changedesc)) {
-				mark_subsystem_dirty('staticroutes');
+				if (!$route_del) {
+					mark_subsystem_dirty('staticroutes');
+				}
 			}
 			header("Location: system_routes.php");
 			exit;
@@ -249,14 +252,19 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 foreach ($a_routes as $i => $route):
-	if (isset($route['disabled'])) {
+	if (isset($a_gateways[$route['gateway']]['inactive'])) {
+		$icon = 'fa-times-circle-o';
+		$title = gettext("Route inactive, gateway interface is missing");
+	} elseif (isset($route['disabled'])) {
 		$icon = 'fa-ban';
+		$title = gettext("Route disabled");
 	} else {
 		$icon = 'fa-check-circle-o';
+		$title = gettext("Route enabled");
 	}
 ?>
 				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-					<td><i class="fa <?=$icon?>"></i></td>
+					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
 					<td>
 						<?=strtolower($route['network'])?>
 					</td>
@@ -298,6 +306,15 @@ foreach ($a_routes as $i => $route):
 		<?=gettext("Add")?>
 	</a>
 </nav>
+<div class="infoblock">
+<?php
+print_info_box(
+	sprintf(gettext('%1$s Route is inactive, gateway interface is missing'), '<br /><strong><i class="fa fa-times-circle-o"></i></strong>') .
+	sprintf(gettext('%1$s Route disabled'), '<br /><strong><i class="fa fa-ban"></i></strong>') .
+	sprintf(gettext('%1$s Route enabled'), '<br /><strong><i class="fa fa-check-circle-o"></i></strong>')
+	);
+?>
+</div>
 <?php
 
 include("foot.inc");

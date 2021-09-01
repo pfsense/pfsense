@@ -3,7 +3,9 @@
  * system_usermanager_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -34,29 +36,30 @@ require_once("auth.inc");
 // Test LDAP settings in response to an AJAX request from this page.
 if ($_REQUEST['ajax']) {
 
-	if (isset($config['system']['authserver'][0]['host'])) {
-		$auth_server = $config['system']['authserver'][0]['host'];
-		$authserver = $_REQUEST['authserver'];
-		$authcfg = auth_get_authserver($authserver);
-	}
+	$authserver = $_REQUEST['authserver'];
+	$authcfg = auth_get_authserver($authserver);
+	$auth_server_host = $authcfg['host'];
 
 	if (!$authcfg) {
 		printf(gettext('%1$sError: Could not find settings for %2$s%3$s'), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
 		exit;
+	} elseif ($authcfg['type'] != 'ldap') {
+		printf(gettext('%1$sError: cannot test settings for %2$s because testing is supported only for LDAP based backends.%3$s'), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
+		exit;
 	} else {
 		print("<pre>");
 
-		print('<table class="table table-hover table-striped table-condensed">');
+		print('<table class="table table-hover table-condensed">');
 
-		print("<tr><td>" . sprintf(gettext('Attempting connection to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+		print("<tr><td>" . sprintf(gettext('Attempting connection to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server_host), "</center></td>"));
 		if (ldap_test_connection($authcfg)) {
 			print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
 
-			print("<tr><td>" . sprintf(gettext('Attempting bind to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+			print("<tr><td>" . sprintf(gettext('Attempting bind to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server_host), "</center></td>"));
 			if (ldap_test_bind($authcfg)) {
 				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
 
-				print("<tr><td>" . sprintf(gettext('Attempting to fetch Organizational Units from %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+				print("<tr><td>" . sprintf(gettext('Attempting to fetch Organizational Units from %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server_host), "</center></td>"));
 				$ous = ldap_get_user_ous(true, $authcfg);
 
 				if (count($ous)>1) {
@@ -65,7 +68,7 @@ if ($_REQUEST['ajax']) {
 
 					if (is_array($ous)) {
 						print("<b>" . gettext("Organization units found") . "</b>");
-						print('<table class="table table-hover">');
+						print('<table class="table-hover">');
 						foreach ($ous as $ou) {
 							print("<tr><td>" . $ou . "</td></tr>");
 						}
@@ -101,6 +104,8 @@ if (isset($config['system']['webgui']['authmode'])) {
 	$pconfig['authmode'] = "Local Database";
 }
 
+$pconfig['shellauth'] = isset($config['system']['webgui']['shellauth']) ? true : false;
+
 $pconfig['backend'] = $config['system']['webgui']['backend'];
 
 $pconfig['auth_refresh_time'] = $config['system']['webgui']['auth_refresh_time'];
@@ -127,6 +132,17 @@ if ($_POST) {
 		if (!is_numeric($timeout) || $timeout < 0 || $timeout > 3600 ) {
 			$input_errors[] = gettext("Authentication refresh time must be an integer between 0 and 3600 (inclusive).");
 		}
+	}
+
+	$authcfg = auth_get_authserver($_POST['authmode']);
+	if (($authcfg['type'] == 'radius') && !isset($authcfg['radius_auth_port'])) {
+		$input_errors[] = gettext("RADIUS Authentication Server must provide Authentication service.");
+	}
+
+	if (($authcfg['type'] == 'ldap') && empty($authcfg['ldap_pam_groupdn']) &&
+	    isset($_POST['shellauth'])) {
+		$input_errors[] = gettext("Shell Authentication Group DN must be specified for LDAP server if " . 
+			"Shell Authentication is used.");
 	}
 
 	if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
@@ -156,15 +172,21 @@ if ($_POST) {
 		} else {
 			unset($config['system']['webgui']['authmode']);
 		}
-		
+
+		if (isset($_POST['shellauth'])) {
+			$config['system']['webgui']['shellauth'] = true;
+		} else {
+			unset($config['system']['webgui']['shellauth']);
+		}
+
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
 			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
 		} else {
 			unset($config['system']['webgui']['auth_refresh_time']);
 		}
 
-		write_config();
-
+		write_config("User Manager Settings saved");
+		set_pam_auth();
 	}
 }
 
@@ -179,7 +201,11 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+if (!isAllowedPage("system_usermanager.php")) {
+       $tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
+} else {
+       $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+}
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
@@ -216,6 +242,17 @@ $section->addInput(new Form_Select(
 	$auth_servers
 ));
 
+$section->addInput(new Form_Checkbox(
+	'shellauth',
+	'Shell Authentication',
+	'Use Authentication Server for Shell Authentication',
+	$pconfig['shellauth'],
+))->setHelp('If RADIUS or LDAP server is selected it is used for console and SSH authentication. ' .
+	    'Otherwise, the Local Database is used.%1$s To allow logins with RADIUS credentials, ' .
+	    'equivalent local users with the expected privileges must be created first.%1$s ' .
+	    'To allow logins with LDAP credentials, ' .
+	    'Shell Authentication Group DN must be specified on the LDAP server configuration page.', '<br/>'); 
+
 $section->addInput(new Form_Input(
 	'auth_refresh_time',
 	'Auth Refresh Time',
@@ -238,7 +275,7 @@ $modal = new Modal("LDAP settings", "testresults", true);
 
 $modal->addInput(new Form_StaticText(
 	'Test results',
-	'<span id="ldaptestop">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>', $g['product_label']
 ));
 
 $form->add($modal);

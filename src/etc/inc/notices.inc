@@ -4,7 +4,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005 Colin Smith (ethethlay@gmail.com)
- * Copyright (c) 2005-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +27,7 @@ require_once("functions.inc");
 require_once("led.inc");
 
 $notice_path = $g['tmp_path'] . '/notices';
+global $smtp_authentication_mechanisms;
 $smtp_authentication_mechanisms = array(
 	'PLAIN' => 'PLAIN',
 	'LOGIN' => 'LOGIN');
@@ -35,6 +38,32 @@ $smtp_authentication_mechanisms = array(
  *	'MD5' => 'MD5'
  *	'CRAM-MD5' => 'CRAM-MD5'
 */
+global $pushover_sounds;
+$pushover_sounds = array(
+	'devicedefault' => 'Device Default',
+	'pushover' => 'Pushover',
+	'bike' => 'Bike',
+	'bugle' => 'Bugle',
+	'cashregister' => 'Cash Register',
+	'classical' => 'Classical',
+	'cosmic' => 'Cosmic',
+	'falling' => 'Falling',
+	'gamelan' => 'Gamelan',
+	'incoming' => 'Incomming',
+	'intermission' => 'Intermission',
+	'magic' => 'Magic',
+	'mechanical' => 'Mechanical',
+	'pianobar' => 'Piano Bar',
+	'siren' => 'Siren',
+	'spacealarm' => 'Space Alarm',
+	'tugboat' => 'Tug Boat',
+	'alien' => 'Alien (long)',
+	'climb' => 'Climb (long)',
+	'persistent' => 'Persistent (long)',
+	'echo' => 'Echo (long)',
+	'updown' => 'Up Down (long)',
+	'vibrate' => 'Vibrate only',
+	'none' => 'None (silent)');
 
 /****f* notices/file_notice
  * NAME
@@ -42,8 +71,8 @@ $smtp_authentication_mechanisms = array(
  * INPUTS
  *	 $id, $notice, $category, $url, $priority, $local_only
  * RESULT
- *   Files a notice and kicks off the various alerts, smtp, growl, system log, LED's, etc.
- *   If $local_only is true then the notice is not sent to external places (smtp, growl)
+ *   Files a notice and kicks off the various alerts, smtp, telegram, pushover, system log, LED's, etc.
+ *   If $local_only is true then the notice is not sent to external places (smtp, telegram, pushover)
  ******/
 function file_notice($id, $notice, $category = "General", $url = "", $priority = 1, $local_only = false) {
 	/*
@@ -215,6 +244,74 @@ function are_notices_pending($category = "all") {
 	return false;
 }
 
+function notices_sendqueue() {
+	global $g;
+	$nothing_done_count = 0;
+	$messagequeue = array();
+
+	while(true) {
+		$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
+		$nothing_done_count++;
+		$smptcount = 0;
+		$messages = array();
+		if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+			$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
+			$messagequeue = $messages;
+			$messages['mails']['item'] = array(); // clear all items to be send
+			file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+			unset($messages);
+		}
+		// clear lock before trying to send messages, so new one's can be added
+		unlock($notifyqueue_lck);
+
+		if (is_array($messagequeue['mails']['item'])) {
+			$smtpmessage = "";
+			foreach($messagequeue['mails']['item'] as $mail) {
+				switch ($mail['type']) {
+					case 'mail':
+						$smptcount++;
+						$smtpmessage .= "\r\n" . date("G:i:s",$mail['time']) . " " . $mail['msg'];
+						break;
+					default:
+						break;
+				}
+			}
+			if (!empty($smtpmessage)) {
+				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smptcount);
+				$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
+				$nothing_done_count = 0;
+				notify_via_smtp($smtpmessageheader . $smtpmessage, true);
+			}
+		}
+		if ($nothing_done_count > 6) {
+			break;
+		} else {
+			sleep(10);
+		}
+	}
+}
+
+function notify_via_queue_add($message, $type='mail') {
+	global $g;
+	$mail = array();
+	$mail['time'] = time();
+	$mail['type'] = $type;
+	$mail['msg'] = $message;
+	$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
+	$messages = array();
+	if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+		$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
+	}
+	if(is_array($messages)) {
+		$messages['mails']['item'][] = $mail;
+		file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+	}
+	unset($messages);
+
+	mwexec_bg('/usr/local/bin/notify_monitor.php');
+	unlock($notifyqueue_lck);
+}
+
 /****f* notices/notify_via_smtp
  * NAME
  *   notify_via_smtp
@@ -242,11 +339,15 @@ function notify_via_smtp($message, $force = false) {
 	}
 
 	/* Store last message sent to avoid spamming */
-	$fd = fopen("/var/db/notices_lastmsg.txt", "w");
-	fwrite($fd, $message);
-	fclose($fd);
+	@file_put_contents("/var/db/notices_lastmsg.txt", $message);
+	if (!$force) {
+		notify_via_queue_add($message, 'mail');
+		$ret = true;
+	} else {
+		$ret = send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
+	}
 
-	return send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
+	return $ret;
 }
 
 function send_smtp_message($message, $subject = "(no subject)", $force = false) {
@@ -300,6 +401,14 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		'persist' => false
 	);
 
+	if ($config['notifications']['smtp']['sslvalidate'] == "disabled") {
+		$params['socket_options'] = array(
+			'ssl' => array(
+				'verify_peer_name' => false,
+				'verify_peer' => false
+		));
+	}
+
 	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];
 	} else {
@@ -313,13 +422,20 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		"Date"    => date("r")
 	);
 
-	$smtp =& Mail::factory('smtp', $params);
-	$mail = $smtp->send($to, $headers, $message);
+	$error_text = 'Could not send the message to %1$s -- Error: %2$s';
+	try {
+		$smtp =& Mail::factory('smtp', $params);
+		$mail = @$smtp->send($to, $headers, $message);
 
-	if (PEAR::isError($mail)) {
-		$err_msg = sprintf(gettext(
-		    'Could not send the message to %1$s -- Error: %2$s'),
-		    $to, $mail->getMessage());
+		if (PEAR::isError($mail)) {
+			$err_msg = sprintf(gettext($error_text),
+			    $to, $mail->getMessage());
+		}
+	} catch (Exception $e) {
+		$err_msg = sprintf(gettext($error_text), $to, $e->getMessage());
+	}
+
+	if (!empty($err_msg)) {
 		log_error($err_msg);
 		return($err_msg);
 	}
@@ -327,134 +443,122 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	log_error(sprintf(gettext("Message sent to %s OK"), $to));
 	return;
 }
-
-/****f* notices/notify_via_growl
+/****f* notices/notify_via_telegram
  * NAME
- *   notify_via_growl
+ *   notify_via_telegram
  * INPUTS
- *	 notification string to send
+ *	 notification string to send to Telegram via API
  * RESULT
- *   returns true if message was sent
+ *   returns NULL if message was sent
  ******/
-function notify_via_growl($message, $force=false) {
-	require_once("Net/Growl/Autoload.php");
 
-	global $config, $g;
-
-	if (isset($config['notifications']['growl']['disable']) && !$force) {
-		return;
-	}
-
-	if (empty($config['notifications']['growl']['ipaddress'])) {
-		return;
-	}
-
-	/* Do NOT send the same message twice */
-	if (file_exists("/var/db/growlnotices_lastmsg.txt")) {
-		$lastmsg = trim(file_get_contents("/var/db/growlnotices_lastmsg.txt"));
-		if ($lastmsg == $message) {
-			return;
+function notify_via_telegram($message, $force = false) {
+	global $config;
+	if ((!isset($config['notifications']['telegram']['enabled']) && (!$force))
+	    || !$config['notifications']['telegram']['api']
+	    || !$config['notifications']['telegram']['chatid']) {
+		if ($force) {
+			return gettext("Unable to test Telegram notification without both API Key & Chat ID set");
 		}
+		return;
 	}
 
-	$ip = $config['notifications']['growl']['ipaddress'];
-
-	if (!is_ipaddr($ip) && !(dns_check_record($ip, A) || dns_check_record($ip, AAAA))) {
-		$err_msg = gettext(
-		    "Growl IP Address is invalid. Check the setting in System Advanced Notifications.");
-		log_error($err_msg);
-		return($err_msg);
-	}
-
-	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
-	$password = $config['notifications']['growl']['password'];
-	$name = $config['notifications']['growl']['name'];
-	$notification = $config['notifications']['growl']['notification_name'];
-
-	$options  = array(
-		'host' => $ip,
-		'protocol' => 'gntp',
-		'timeout' => 20
+	$url = "https://api.telegram.org/bot{$config['notifications']['telegram']['api']}/sendMessage?";
+	$data = array(
+		"chat_id" => $config['notifications']['telegram']['chatid'],
+		"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
 	);
-
-	try {
-		$growl = Net_Growl::singleton($name, null, $password, $options);
-		//$name = 'GROWL_NOTIFY_STATUS';
-		$title = sprintf(gettext('%1$s (%2$s) - Notification'), $g['product_name'], $hostname);
-		$growl->publish($name, $title, $message);
-	} catch (Net_Growl_Exception $e) {
-		$err_msg = sprintf(gettext(
-		    'Could not send Growl notification to %1$s -- Error: %2$s'),
-		    $ip, $e->getMessage());
+	$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
+	if (is_array($result)) {
+		if ($result['ok']) {
+			unset($err_msg);
+		} else {
+			$err_msg = sprintf(gettext("Failed to send Telegram notification. Error received was :{$result['error_code']}: {$result['description']}"));
+			log_error($err_msg);
+		}
+	} else {
+		$err_msg = gettext("API to Telegram did not return data in expected format!");
 		log_error($err_msg);
-		return($err_msg);
 	}
-
-	/* Store last message sent to avoid spamming */
-	@file_put_contents("/var/db/growlnotices_lastmsg.txt", $message);
-
-	return;
+	return $err_msg;
 }
 
-/****f* notices/register_via_growl
+function curl_post_telegram($url) {
+	$conn = curl_init($url);
+	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
+	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+	set_curlproxy($conn);
+	$curl_post_telegram_data = curl_exec($conn);
+	curl_close($conn);
+	return $curl_post_telegram_data;	//json encoded
+}
+
+/****f* notices/notify_via_pushover
  * NAME
- *   register_via_growl
+ *   notify_via_pushover
  * INPUTS
- *	 none
+ *	 notification string to send to Pushover via API
  * RESULT
- *   none
+ *   returns NULL if message was sent
  ******/
-function register_via_growl() {
-	require_once("Net/Growl/Autoload.php");
 
+function notify_via_pushover($message, $force = false) {
 	global $config;
-
-	if (empty($config['notifications']['growl']['ipaddress'])) {
+	if ((!isset($config['notifications']['pushover']['enabled']) && (!$force))
+	    || !$config['notifications']['pushover']['apikey']
+	    || !$config['notifications']['pushover']['userkey']) {
+		if ($force) {
+			return gettext("Unable to test Pushover notification without both API Key & User Key set");
+		}
 		return;
 	}
-
-	$ip = $config['notifications']['growl']['ipaddress'];
-
-	if (!is_ipaddr($ip) && !(dns_check_record($ip, A) || dns_check_record($ip, AAAA))) {
-		$err_msg = gettext(
-		    "Growl IP Address is invalid. Check the setting in System Advanced Notifications.");
-		log_error($err_msg);
-		return($err_msg);
+	if (strcasecmp($config['notifications']['pushover']['sound'], 'devicedefault') == 0) {
+		unset($config['notifications']['pushover']['sound']);
 	}
 
-	$name = $config['notifications']['growl']['name'];
-	$password = $config['notifications']['growl']['password'];
-
-	$app = new Net_Growl_Application(
-		$name,
-		null,
-		$password
+	$url = "https://api.pushover.net/1/messages.json";
+	$data = array(
+		"token" => $config['notifications']['pushover']['apikey'],
+		"user" => $config['notifications']['pushover']['userkey'],
+		"sound" => $config['notifications']['pushover']['sound'],
+		"priority" => $config['notifications']['pushover']['priority'],
+		"retry" => $config['notifications']['pushover']['retry'],
+		"expire" => $config['notifications']['pushover']['expire'],
+		"message" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
 	);
-
-	$options = array(
-		'host' => $ip,
-		'protocol' => 'gntp',
-		'timeout' => 20
-	);
-
-	try {
-		$growl = Net_Growl::singleton($app, null, null, $options);
-		$growl->register();
-	} catch (Net_Growl_Exception $e) {
-		$err_msg = sprintf(gettext(
-		    'Could not send register Growl on %1$s -- Error: %2$s'),
-		    $ip, $e->getMessage());
+	$result = json_decode(curl_post_pushover($url, $data), true);
+	if (is_array($result)) {
+		if ($result['status']) {
+			unset($err_msg);
+		} else {
+			$err_msg = sprintf(gettext("Failed to send Pushover notification. Error received was: %s"), $result['errors']['0']);
+			log_error($err_msg);
+		}
+	} else {
+		$err_msg = gettext("Pushover API server did not return data in expected format!");
 		log_error($err_msg);
-		return($err_msg);
 	}
+	return $err_msg;
+}
 
-	return;
+function curl_post_pushover($url, $data) {
+	$conn = curl_init($url);
+	curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
+	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
+	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+	set_curlproxy($conn);
+	$curl_post_pushover_data = curl_exec($conn);
+	curl_close($conn);
+	return $curl_post_pushover_data;	//json encoded
 }
 
 /* Notify via remote methods only - not via GUI. */
 function notify_all_remote($msg) {
 	notify_via_smtp($msg);
-	notify_via_growl($msg);
+	notify_via_telegram($msg);
+	notify_via_pushover($msg);
 }
 
 ?>

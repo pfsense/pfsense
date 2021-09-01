@@ -57,23 +57,23 @@ print("{$message}\n");
 exit($ret_code);
 
 function easyrule_print_usage() {
-	$s = fn($x) => $x;
+	$script = basename($argv[0]);
 	foreach (array(
 		"Usage:\n",
 		" Blocking only requires an IP to block, block rules can be shown with showblock and revoked using unblock\n",
-		"     {$s(basename($argv[0]))} block <interface> <source IP>\n\n",
+		"     {$script} block <interface> <source IP>\n\n",
 		" Passing requires more detail, as it must be as specific as possible. The destination port is optional if you're using a protocol without a port (e.g. ICMP, OSPF, etc).\n",
-		"     {$s(basename($argv[0]))} pass <interface> <protocol> <source IP> <destination ip> [destination port]\n\n",
+		"     {$script} pass <interface> <protocol> <source IP> <destination ip> [destination port]\n\n",
 		" Block example:\n",
-		"     {$s(basename($argv[0]))} block wan 1.2.3.4\n\n",
+		"     {$script} block wan 1.2.3.4\n\n",
 		" Show active blocks example:\n",
-		"     {$s(basename($argv[0]))} showblock wan\n\n",
+		"     {$script} showblock wan\n\n",
 		" Unblock example:\n",
-		"     {$s(basename($argv[0]))} unblock wan 1.2.3.4\n\n",
+		"     {$script} unblock wan 1.2.3.4\n\n",
 		" Pass example (protocol with port):\n",
-		"     {$s(basename($argv[0]))} pass wan tcp 1.2.3.4 192.168.0.4 80\n\n",
+		"     {$script} pass wan tcp 1.2.3.4 192.168.0.4 80\n\n",
 		" Pass example (protocol without port):\n",
-		"     {$s(basename($argv[0]))} pass wan icmp 1.2.3.4 192.168.0.4\n\n"
+		"     {$script} pass wan icmp 1.2.3.4 192.168.0.4\n\n"
 	) as $line) { print($line); }
 }
 

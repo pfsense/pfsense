@@ -1559,7 +1559,13 @@ function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
 	}
 
 	$left_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
-	$right_spec = $ph1ent['remote-gateway'];
+
+	/* Attempt to resolve the remote gateway if needed */
+	$right_spec = ipsec_get_phase1_dst($ph1ent);
+	if (empty($right_spec)) {
+		/* Far end cannot be resolved */
+		return false;
+	}
 
 	$iface_addrs = array();
 	$reqids = array();

@@ -2836,6 +2836,18 @@ function ipsec_setup_tunnels($gateways_status = false) {
 				ipsec_setup_vtireq($children[$cname], $ipsec_vti_cleanup_ifs, $ph1ent);
 			}
 			if (!empty($ealgoAHsp2arr)) {
+				$halgos = array();
+				$halgos_sha = array();
+				foreach ($ealgoAHsp2arr as $halg) {
+					if (strstr($halg, "sha")) {
+						/* put SHA ciphers on top, 
+						*  see https://redmine.pfsense.org/issues/12323 */
+						$halgos_sha[] = $halg;
+					} else {
+						$halgos[] = $halg;
+					}
+				}
+				$ealgoAHsp2arr = array_merge(array_reverse($halgos_sha), $halgos);
 				$children[$cname]['ah_proposals'] = implode(',', array_unique($ealgoAHsp2arr));
 			}
 			if (!empty($ealgoESPsp2arr)) {

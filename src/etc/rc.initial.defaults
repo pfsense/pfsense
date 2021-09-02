@@ -30,6 +30,7 @@
 require_once("util.inc");
 require_once("config.lib.inc");
 require_once("functions.inc");
+require_once("pkg-utils.inc");
 
 $fp = fopen('php://stdin', 'r');
 

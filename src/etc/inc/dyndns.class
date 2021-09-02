@@ -895,7 +895,7 @@
 
 					// get record_id
 					curl_setopt($ch, CURLOPT_URL, "https://pddimp.yandex.ru/api2/admin/dns/list?domain={$this->_dnsDomain}");
-					curl_setopt($ch, CURLOPT_HTTPHEADER, 'PddToken: ' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('PddToken: ' . $this->_dnsPass));
 					$output = json_decode(curl_exec($ch), true);
 					if (is_array($output["records"])) {
 						foreach($output["records"] as $record) {
@@ -923,7 +923,7 @@
 					}
 
 					curl_setopt($ch, CURLOPT_URL, 'https://pddimp.yandex.ru/api2/admin/dns/' . $action);
-					curl_setopt($ch, CURLOPT_HTTPHEADER, 'PddToken: ' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('PddToken: ' . $this->_dnsPass));
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'duiadns':

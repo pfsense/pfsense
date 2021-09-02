@@ -939,7 +939,7 @@ function unbound_acls_config($cfgsubdir = "") {
 			if (is_array($config['openvpn'][$ovpnentry])) {
 				foreach ($config['openvpn'][$ovpnentry] as $ovpnent) {
 					if (!isset($ovpnent['disable']) && !empty($ovpnent['tunnel_networkv6'])) {
-						$aclnets[] = implode('/', openvpn_gen_tunnel_network($settings['tunnel_networkv6']));
+						$aclnets[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_networkv6']));
 					}
 				}
 			}
@@ -973,6 +973,10 @@ function unbound_acls_config($cfgsubdir = "") {
 		sort($aclnets6);
 
 		foreach (array_merge($aclnets4, $aclnets6) as $acln) {
+			/* Do not form an invalid directive with an empty address */
+			if (empty($acln)) {
+				continue;
+			}
 			$aclcfg .= "access-control: {$acln} allow \n";
 		}
 	}

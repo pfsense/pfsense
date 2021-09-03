@@ -16,5 +16,5 @@ fi
 [ -d /boot/kernel.old ] \
 	&& rm -rf /boot/kernel.old
 
-cp -r /boot/kernel /boot/kernel.old
+cp -Rp /boot/kernel /boot/kernel.old
 exit $?

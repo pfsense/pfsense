@@ -47,7 +47,7 @@
 	<script src="/js/polyfills.js?v=<?=filemtime('/usr/local/www/js/polyfills.js')?>"></script>
 	<script src="/vendor/sortable/sortable.js?v=<?=filemtime('/usr/local/www/vendor/sortable/sortable.js')?>"></script>
 	
-	<script type="text/javascript" src="/vendor/jquery-treegrid/js/jquery.treegrid.js?v=<?=filemtime('/usr/local/www/vendor/jquery-treegrid/js/jquery.treegrid.min.js')?>"></script>
+	<script type="text/javascript" src="/vendor/jquery-treegrid/js/jquery.treegrid.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery-treegrid/js/jquery.treegrid.min.js')?>"></script>
 	<script type="text/javascript" src="/vendor/js-cookie/js.cookie.js?v=<?=filemtime('/usr/local/www/vendor/js-cookie/js.cookie.js')?>"></script>
 
 	<script type="text/javascript">

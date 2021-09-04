@@ -777,13 +777,15 @@ function ipsec_status() {
 			if (!array_key_exists($tunnel['p1']['ikeid'], $cmap['connected']['p1'])) {
 				$cmap['disconnected']['p1'][$tunnel['p1']['ikeid']] = ipsec_conid($tunnel['p1']);
 			}
-			foreach ($tunnel['p2'] as $p2) {
-				if (isset($p2['mobile'])) {
-					continue;
-				}
-				if (!array_key_exists($p2['reqid'], $cmap['connected']['p2'])) {
-					/* This P2 is not connected */
-					$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($p1['p1'], $p2);
+			if (is_array($tunnel['p2'])) {
+				foreach ($tunnel['p2'] as $p2) {
+					if (isset($p2['mobile'])) {
+						continue;
+					}
+					if (!array_key_exists($p2['reqid'], $cmap['connected']['p2'])) {
+						/* This P2 is not connected */
+						$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($p1['p1'], $p2);
+					}
 				}
 			}
 		}

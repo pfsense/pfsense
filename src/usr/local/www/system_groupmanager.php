@@ -49,7 +49,7 @@ $id = $_REQUEST['groupid'];
 $act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
 if ($act == 'dup') {
-	$dup = true;
+	$dup = $id;
 	$act = 'edit';
 }
 
@@ -105,7 +105,7 @@ if (($_POST['act'] == "delgroup") && !$read_only) {
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 }
 
-if (($_POST['act'] == "delpriv") && !$read_only) {
+if (($_POST['act'] == "delpriv") && !$read_only && !$dup) {
 
 	if (!isset($id) || !isset($a_group[$id])) {
 		pfSenseHeader("system_groupmanager.php");
@@ -144,9 +144,9 @@ if ($act == "edit") {
 			$pconfig['gtype'] = ($a_group[$id]['scope'] == 'system')
 			    ? "local" : $a_group[$id]['scope'];
 		}
+		$pconfig['priv'] = $a_group[$id]['priv'];
 		$pconfig['description'] = $a_group[$id]['description'];
 		$pconfig['members'] = $a_group[$id]['member'];
-		$pconfig['priv'] = $a_group[$id]['priv'];
 	}
 }
 
@@ -182,10 +182,6 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 if (isset($_POST['save']) && !$read_only) {
 	unset($input_errors);
 	$pconfig = $_POST;
-
-	if ($dup) {
-		unset($id);
-	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "groupname");
@@ -253,6 +249,9 @@ if (isset($_POST['save']) && !$read_only) {
 			$a_group[$id] = $group;
 		} else {
 			$group['gid'] = $config['system']['nextgid']++;
+			if ($_POST['dup']) {
+				$group['priv'] = $a_group[$_POST['dup']]['priv'];
+			}
 			$a_group[] = $group;
 		}
 
@@ -293,7 +292,7 @@ if (isset($_POST['save']) && !$read_only) {
 }
 
 function build_priv_table() {
-	global $a_group, $id, $read_only;
+	global $a_group, $id, $read_only, $dup;
 
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -317,7 +316,7 @@ function build_priv_table() {
 			$user_has_root_priv = true;
 		}
 		$privhtml .=			'</td>';
-		if (!$read_only) {
+		if (!$read_only && !$dup) {
 			$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
 		}
 		$privhtml .=		'</tr>';
@@ -340,7 +339,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	if (!$read_only) {
+	if (!$read_only && !$dup) {
 		$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$privhtml .= '</nav>';
@@ -445,12 +444,21 @@ if (!($act == "new" || $act == "edit")) {
 
 $form = new Form;
 $form->setAction('system_groupmanager.php?act=edit');
-$form->addGlobal(new Form_Input(
-	'groupid',
-	null,
-	'hidden',
-	$id
-));
+if (!$dup) {
+	$form->addGlobal(new Form_Input(
+		'groupid',
+		null,
+		'hidden',
+		$id
+	));
+} else {
+	$form->addGlobal(new Form_Input(
+		'dup',
+		null,
+		'hidden',
+		$dup
+	));
+}
 
 if (isset($id) && $a_group[$id]) {
 	$form->addGlobal(new Form_Input(

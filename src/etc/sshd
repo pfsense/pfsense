@@ -85,7 +85,12 @@ foreach ($keys as $key) {
 }
 $sshconf .= "Compression delayed\n";
 $sshconf .= "ClientAliveInterval 30\n";
-$sshconf .= "PermitRootLogin yes\n";
+if (is_account_disabled("admin") || is_account_expired("admin")) {
+	$permitroot = 'no';
+} else {
+	$permitroot = 'yes';
+}
+$sshconf .= "PermitRootLogin {$permitroot}\n";
 if ($config['system']['ssh']['sshdkeyonly'] == "both") {
 	$sshconf .= "# Login via both Key and Password only\n";
 	$sshconf .= "AuthenticationMethods publickey,password\n";

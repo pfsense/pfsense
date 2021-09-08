@@ -496,6 +496,11 @@ if ($_POST['save'] && !$read_only) {
 			run_plugins("/etc/inc/privhooks");
 		}
 
+		if ($userent['uid'] == 0) {
+			log_error(gettext("Restarting sshd due to admin account change."));
+			send_event("service restart sshd");
+		}
+
 		pfSenseHeader("system_usermanager.php");
 	}
 }

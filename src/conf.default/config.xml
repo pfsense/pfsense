@@ -251,7 +251,7 @@
 		<enable></enable>
 	</rrd>
 	<widgets>
-		<sequence>system_information:col1:show,netgate_services_and_support:col2:show,interfaces:col2:show</sequence>
+		<sequence>system_information:col1:show,disks:col1:show,netgate_services_and_support:col2:show,interfaces:col2:show</sequence>
 		<period>10</period>
 	</widgets>
 	<openvpn></openvpn>

@@ -6562,6 +6562,36 @@ function upgrade_219_to_220() {
 }
 
 /*
+ * Add new disk widget to dashboard if user already had the system information
+ * wiget configured to show disk usage stats.
+ */
+function upgrade_220_to_221() {
+	global $config;
+
+	$widgets = explode(',', $config['widgets']['sequence']);
+
+	foreach ($widgets as $idx => $widget) {
+		[$name, $col, $state, $index] = explode(':', $widget);
+
+		if ($name === 'system_information') {
+			$widget_settings_key = "{$name}-{$index}";
+
+			$filter = explode(',', $config['widgets'][$widget_settings_key]['filter']);
+
+			if (!in_array('disk_usage', $filter)) {
+				$disk_widget = "disks:{$col}:{$state}:{$index}";
+
+				if (!in_array($disk_widget, $widgets)) {
+					array_splice($widgets, ($idx + 1), 0, $disk_widget);
+				}
+			}
+		}
+	}
+
+	$config['widgets']['sequence'] = implode(',', $widgets);
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

@@ -1,0 +1,18 @@
+{
+    "name": "pfsense/pfsense",
+    "require": {
+        "mikehaertl/php-shellcommand": "^1.6",
+        "symfony/cache": "^5.3",
+        "nette/utils": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Netgate\\": "/usr/local/pfSense/include/Netgate",
+            "pfSense\\": "/usr/local/pfSense/include"
+        }
+    },
+    "config": {
+        "vendor-dir": "src/usr/local/pfSense/include/vendor",
+        "optimize-autoloader": true
+    }
+}

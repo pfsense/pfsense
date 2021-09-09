@@ -383,6 +383,26 @@ function deleteVIP($id, $json = false) {
 			}
 		}
 
+		init_config_arr(array('ipsec', 'phase1'));
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			if (!isset($ph1ent['disabled'])) {
+				foreach (explode(',', ipsec_get_phase1_src($ph1ent)) as $ifip) {
+					if ($ifip == $a_vip[$id]['subnet']) {
+						if (strlen($ph1ent['descr'])) {
+							$ipsec_desc = $ph1ent['descr'];
+						} elseif (isset($ph1ent['mobile'])) {
+							$ipsec_desc = "Mobile on " . convert_friendly_interface_to_friendly_descr($ph1ent['interface']);
+						} else {
+							$ipsec_desc = "on " . convert_friendly_interface_to_friendly_descr($ph1ent['interface']) .
+							    " to " . $ph1ent['remote-gateway'];
+						}
+						$input_errors[] = sprintf(gettext('This entry cannot be deleted because it is still referenced by IPsec %1$s.'), $ipsec_desc);
+						break 2;
+					}
+				}
+			}
+		}
+
 		if (is_ipaddrv6($a_vip[$id]['subnet'])) {
 			$is_ipv6 = true;
 			$subnet = gen_subnetv6($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']);

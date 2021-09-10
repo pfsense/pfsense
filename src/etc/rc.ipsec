@@ -1,0 +1,99 @@
+#!/usr/local/bin/php-cgi -f
+<?php
+/*
+ * rc.ipsec
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2021 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* parse the configuration and include all functions used below */
+require_once("config.inc");
+require_once("gwlb.inc");
+require_once("ipsec.inc");
+require_once("util.inc");
+require_once("globals.inc");
+
+/* make sure to wait until the boot scripts have finished */
+if (platform_booting()) {
+	return;
+}
+
+if (isset($_GET['interface'])) {
+	$argument = $_GET['interface'];
+} else {
+	$argument = trim($argv[1], " \n");
+}
+
+$ipsec_reload = false;
+if (empty($argument)) {
+	$ipsec_reload = true;
+} else {
+	$arg_array = explode(",", $argument);
+	foreach ($arg_array as $arg_element) {
+		$gwgroups = array();
+		if ($arg_element == "all") {
+			$ipsec_reload = true;
+			break;
+		} else {
+			// e.g. $arg_element = "WANGW", $interface = "wan"
+			$interface = lookup_gateway_interface_by_name($arg_element);
+			if (empty($interface)) {
+				$interface = $arg_element;
+			} else {
+				// e.g. $arg_element = "WANGW", $gwgroups = array of gateway groups that use "wan"
+				$gwgroups = gateway_is_gwgroup_member($arg_element);
+			}
+			init_config_arr(array('ipsec', 'phase1'));
+			foreach ($config['ipsec']['phase1'] as $phase1) {
+				if (isset($phase1['disabled']) || isset($phase1['mobile']) ||
+				    ($phase1['startaction'] == 'none')) {
+					continue;
+				}
+				if (substr($phase1['interface'], 0, 4) == "_vip") {
+					$phase1iface = get_configured_vip_interface($phase1['interface']);
+					if (substr($phase1iface, 0, 4) == "_vip") {
+						// vips are nested if its a ipalias with a carp parent
+						$phase1iface = get_configured_vip_interface($phase1iface);
+					}
+				} else {
+					$phase1iface = $phase1['interface'];
+				}
+				if (($phase1iface == $interface) ||
+				    (!empty($gwgroups) && in_array($phase1iface, $gwgroups))) {
+					$ipsec_reload = true;
+					break 2;
+				}
+			}
+		}
+	}
+}
+
+if ($ipsec_reload) {
+	$ipseclck_pending = try_lock('ipsecdns_pending', 0);
+	if (!$ipseclck_pending) {
+		/* if a ipsec_configure() is still pending no need to stack up another one */
+		return;
+	}
+	$ipseclck = lock('ipsecdns', LOCK_EX);
+	sleep(12);
+	unlock($ipseclck_pending);
+	sleep(3);
+	log_error("IPSEC: One or more IPsec tunnel gateways have changed. Refreshing.");
+	ipsec_configure();
+	unlock($ipseclck);
+	ipsec_reload_package_hook();
+}

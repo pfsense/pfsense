@@ -39,13 +39,13 @@ echo ">>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:$( pr
 
 /usr/local/sbin/pfSctl \
 	-c "service reload dyndns ${GW}" \
-	-c "service reload ipsecdns" \
+	-c "service reload ipsec ${GW}" \
 	-c "service reload openvpn ${GW}" \
 	-c "filter reload" >/dev/null 2>&1
 
 # after above signal the check_reload_status process calls the following scripts simultaneously.:
 # - "/etc/rc.dyndns.update", "dyndns=%s"
-# - "/etc/rc.newipsecdns"
+# - "/etc/rc.ipsec", "interface=%s"
 # - "/etc/rc.openvpn", "interface=%s"
 # - "/etc/rc.filter_configure_sync"
 

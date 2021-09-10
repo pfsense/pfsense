@@ -6579,7 +6579,7 @@ function upgrade_220_to_221() {
 			$filter = explode(',', $config['widgets'][$widget_settings_key]['filter']);
 
 			if (!in_array('disk_usage', $filter)) {
-				$disk_widget = "disks:{$col}:{$state}:{$index}";
+				$disk_widget = implode(':', array_filter(['disks', $col, $state, $index]));
 
 				if (!in_array($disk_widget, $widgets)) {
 					array_splice($widgets, ($idx + 1), 0, $disk_widget);

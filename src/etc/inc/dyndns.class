@@ -456,6 +456,8 @@
 					case 'spdyn-v6':
 					case 'staticcling':
 					case 'strato':
+					case 'onecom':
+					case 'onecom-v6':
 					case 'yandex':
 					case 'yandex-v6':
 					case 'zoneedit':
@@ -1233,25 +1235,38 @@
 					break;
 				case 'onecom':
 				case 'onecom-v6':
-					// see https://redmine.pfsense.org/issues/11293
+					/* see https://redmine.pfsense.org/issues/11293
+					 * and https://redmine.pfsense.org/issues/12352 */
+
+					curl_setopt($ch, CURLOPT_URL, "https://www.one.com/admin/");
+					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					$output = curl_exec($ch);
+					$last_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+
+					// extract the cookies
+					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
+					if (count($cookies[1]) > 0) {
+						$cookie_data = implode("; ", $cookies[1]);
+					}
 
 					// login in
-					$post_data['displayUsername'] = $this->_dnsUser;
 					$post_data['username'] = $this->_dnsUser;
-					$post_data['password1'] = $this->_dnsPass;
-					$post_data['loginDomain'] = True;
-					$post_data['loginTarget'] = '';
-					$post_data['targetDomain'] = '';
+					$post_data['password'] = $this->_dnsPass;
+					$post_data['credentialId'] = '';
 
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-					curl_setopt($ch, CURLOPT_URL, "https://www.one.com/admin/login.do");
+					curl_setopt($ch, CURLOPT_URL, $last_url);
+					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
 					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					$output = curl_exec($ch);
 
 					// extract the cookies
 					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
-					if( count($cookies[1]) > 0 ){
-						$cookie_data = implode("; ",$cookies[1]);
+					if (count($cookies[1]) > 0) {
+						$cookie_data = implode("; ", $cookies[1]);
 					}
 
 					// gets all DNS records of the domain.
@@ -1262,6 +1277,7 @@
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					$output = curl_exec($ch);
 					$result = json_decode($output, true);
 					$records = $result['result']['data'];
@@ -1299,6 +1315,7 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($tosend));
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					break;
 				case 'dreamhost':
 				case 'dreamhost-v6':

@@ -475,7 +475,7 @@ function deleteVIP($id, $json = false) {
 				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $vip['descr']);
 			}
 		} else if ($a_vip[$id]['mode'] == "carp") {
-			$vipiface = "{$a_vip[$id]['interface']}_vip{$a_vip[$id]['vhid']}";
+			$vipiface = "_vip{$a_vip[$id]['uniqid']}";
 			foreach ($a_vip as $vip) {
 				if ($vipiface == $vip['interface'] && $vip['mode'] == "ipalias") {
 					$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description %s."), $vip['descr']);

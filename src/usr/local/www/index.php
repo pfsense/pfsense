@@ -214,10 +214,6 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 	exit;
 }
 
-## Find out whether there's hardware encryption or not
-unset($hwcrypto);
-$hwcrypto = get_cpu_crypto_support();
-
 ##build widget saved list information
 if ($user_settings['widgets']['sequence'] != "") {
 	$dashboardcolumns = isset($user_settings['webgui']['dashboardcolumns']) ? (int) $user_settings['webgui']['dashboardcolumns'] : 2;

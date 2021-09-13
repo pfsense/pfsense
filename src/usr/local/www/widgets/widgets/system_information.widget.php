@@ -139,7 +139,7 @@ if ($_REQUEST['getupdatestatus']) {
 	header("Location: /index.php");
 }
 
-$filesystems = get_mounted_filesystems();
+$hwcrypto = get_cpu_crypto_support();
 
 $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 

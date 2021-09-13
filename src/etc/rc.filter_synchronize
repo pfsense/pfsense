@@ -33,7 +33,6 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require_once("interfaces.inc");
 require_once("xmlrpc_client.inc");
 
 /*
@@ -162,10 +161,9 @@ function carp_sync_xml($rpc_client, $sections) {
 
 	if (is_array($config_copy['dhcpd'])) {
 		foreach ($config_copy['dhcpd'] as $dhcpif => $dhcpifconf) {
-			if ($dhcpifconf['failover_peerip'] <> "") {
-				$int = convert_friendly_interface_to_real_interface_name($dhcpif);
-				$intip = find_interface_ip($int);
-				$config_copy['dhcpd'][$dhcpif]['failover_peerip'] = $intip;
+			if (($dhcpifconf['failover_peerip'] <> "") && 
+			    (isset($config_copy['interfaces'][$dhcpif]['ipaddr']))) {
+				$config_copy['dhcpd'][$dhcpif]['failover_peerip'] = $config_copy['interfaces'][$dhcpif]['ipaddr'];
 			}
 		}
 	}

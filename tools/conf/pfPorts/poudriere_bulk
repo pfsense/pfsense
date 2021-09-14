@@ -57,7 +57,6 @@ net/%%PRODUCT_NAME%%-pkg-WireGuard
 net/hping
 net/mosh
 net/py-speedtest-cli
-net/realtek-re-kmod
 net/trafshow
 net/trafshow3
 net/vnstat

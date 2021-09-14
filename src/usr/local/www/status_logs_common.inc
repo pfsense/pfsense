@@ -711,6 +711,11 @@ function manage_log_code() {
 
 		if (!$input_errors) {
 
+			if (($rotatecount != $config['syslog'][$specific_log]['rotatecount']) ||
+			    ($logfilesize != $config['syslog'][$specific_log]['logfilesize'])) {
+				$logging_changed = true;
+			}
+
 			# Clear out the specific log settings and leave only the applied settings to override the general logging options (global) settings.
 			if (isset($config['syslog'][$specific_log])) {
 				unset($config['syslog'][$specific_log]);

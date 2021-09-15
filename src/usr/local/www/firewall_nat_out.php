@@ -47,7 +47,7 @@ $a_out = &$config['nat']['outbound']['rule'];
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
 if (isset($_REQUEST['order-store'])) {
-	reorderoutNATrules($_POST);
+	outNATrulesreorder($_POST);
 }
 
 if (!isset($config['nat']['outbound']['mode'])) {

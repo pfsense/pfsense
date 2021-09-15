@@ -21,58 +21,146 @@
 
 namespace pfSense\Services\Filesystem;
 
-use Nette\Utils\Arrays;
-use Nette\Utils\Strings;
+use Nette\Utils\{
+	Arrays,
+	Strings
+};
 
 final class Filesystem {
+	private $parent = null;
+
 	private $filesystem = [];
 
-	public function __construct(array $filesystem) {
-		$this->filesystem = $filesystem;
+	private $children = [];
+
+	public function __construct(?Filesystem $parent, $filesystem) {
+		$this->_setParent($parent);
+
+		$this->_setFilesystem($filesystem);
+
+		$this->_initChildren();
 	}
 
-	public function getProperty($key, $default = null) {
-		return Arrays::Get($this->filesystem, $key, $default);
+	public function getBasename() {
+		$basename = $this->getPath();
+
+		if ($this->hasParent()) {
+
+			if (Strings::startsWith($this->getPath(), $this->getParentPath())) {
+
+				$basename = Strings::substring($basename, Strings::length($this->getParentPath()));
+			
+			}
+
+		}
+
+		return $basename;
 	}
 
 	public function getName() {
-		return $this->getProperty('name');
+		return $this->_getProperty('name');
 	}
 
-	public function getType() {
-		return $this->getProperty('type');
+	public function hasParent() {
+		$parent = $this->getParent();
+
+		return (!is_null($parent) && ($parent instanceof self));
 	}
 
-	public function getUsedPercent() {
-		return $this->getProperty('used-percent');
-	}
-
-	public function getPath() {
-		return $this->getProperty('mounted-on');
-	}
-
-	public function getUsed() {
-		return $this->getProperty('used');
-	}
-
-	public function getSize() {
-		return $this->getProperty('blocks');
+	public function getParent() {
+		return $this->parent;
 	}
 
 	public function getParentPath() {
-		return dirname($this->getPath(), 1);
+		return $this->hasParent() ? $this->getParent()->getPath() : null;
 	}
 
-	public function getHtmlClass() {
-		return Strings::webalize("root{$this->getPath()}");
+	public function getPath() {
+		return $this->_getProperty('mounted-on');
 	}
 
-	public function getParentHtmlClass() {
-		return Strings::webalize("root{$this->getParentPath()}");
+	public function getSize() {
+		return $this->_getProperty('blocks');
+	}
+
+	public function getType() {
+		return $this->_getProperty('type');
+	}
+
+	public function getUsed() {
+		return $this->_getProperty('used');
+	}
+
+	public function getUsedPercent() {
+		return $this->_getProperty('used-percent');
+	}
+
+	public function getHtmlClass(string $prefix = null, $parentPath = false) : string {
+		$parent = $this->getParent();
+
+		$prefix = $this->hasParent() ? "{$parent->getHtmlClass($prefix)}-" : "{$prefix}root";
+
+		$suffix = $parentPath ? null : $this->getBasename();
+
+		return Strings::webalize("{$prefix}{$suffix}");
+	}
+
+	public function getParentHtmlClass(string $prefix = null) : string {
+		return $this->getHtmlClass($prefix, true);
 	}
 
 	public function isRoot() {
 		return Strings::compare($this->getPath(), '/');
+	}
+
+	public function getChildrenAndSelf() {
+		$filesystems = [$this,];
+
+		foreach ($this->getChildren() as $child) {
+			$children = $child->getChildrenAndSelf();
+
+			$filesystems = array_merge($filesystems, $children);
+		}
+
+		return $filesystems;
+	}
+
+	public function hasChildren() {
+		return !empty($this->children);
+	}
+
+	public function getChildren() {
+		if (empty($this->children)) {
+			$this->_initChildren();
+		}
+
+		return $this->children;
+	}
+
+	private function _getProperty($key, $default = null) {
+		return Arrays::get($this->filesystem, $key, $default);
+	}
+
+	private function _initChildren() {
+		$this->children = array_map(function($child) {
+			return $this->_getNewFilesystemObject($child);
+		}, $this->_getProperty('children'));
+	}
+
+	private function _setFilesystem($filesystem) {
+		$this->filesystem = $filesystem;
+
+		return $this;
+	}
+
+	private function _setParent(?Filesystem $parent) {
+		$this->parent = $parent;
+
+		return $this;
+	}
+
+	private function _getNewFilesystemObject($filesystem) {
+		return (new Filesystem($this, $filesystem));
 	}
 }
 

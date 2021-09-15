@@ -28,9 +28,6 @@ require_once('guiconfig.inc');
 // Widget includes
 require_once('/usr/local/www/widgets/include/disks.inc');
 
-// Randomly invalidate the cache on page refresh...
-disks_cache_invalidate(false, 0.1);
-
 global $disks_widget_defaults;
 
 $widgetkey = (isset($_POST['widgetkey'])) ? $_POST['widgetkey'] : $widgetkey;
@@ -38,10 +35,11 @@ $widgetkey = (isset($_POST['widgetkey'])) ? $_POST['widgetkey'] : $widgetkey;
 // Now overide any defaults with user settings
 $widget_config = array_replace($disks_widget_defaults, (array) $user_settings['widgets'][$widgetkey]);
 
+// Randomly invalidate the cache, 25% chance.
+disks_cache_invalidate(false, 0.25);
+
 // Are we handling an ajax refresh?
 if (isset($_POST['ajax'])) {
-	disks_cache_invalidate(true);
-
 	print(disks_compose_widget_table($widget_config));
 
 	// We are done here...

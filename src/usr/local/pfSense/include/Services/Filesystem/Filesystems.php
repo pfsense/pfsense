@@ -21,44 +21,48 @@
 
 namespace pfSense\Services\Filesystem;
 
-use Nette\Utils\Arrays;
-use Nette\Utils\Strings;
+use pfSense\Services\Filesystem\Provider\{
+	AbstractProvider,
+	SystemProvider
+};
+
+use Nette\Utils\{
+	Arrays,
+	Strings
+};
 
 final class Filesystems {
 	private $filesystems = [];
 
-	private $df = null;
+	private $provider = null;
 
-	public function __construct(DF $df = null) {
-		if (is_null($df) || (!($df instanceof DF))) {
-			$df = new DF();
+	public function __construct(AbstractProvider $provider = null) {
+		if (is_null($provider)
+		    || (!($df instanceof AbstractProvider))) {
+			$provider = new SystemProvider();
 		}
 
-		$this->df = $df;
+		$this->setProvider($provider);
 
 		$this->_initFilesystems();
 	}
 
-	public function getDf() {
-		return $this->df;
-	}
-
-	public function setDf(Df $df) {
-		$this->__construct($df);
+	public function setProvider(AbstractProvider $provider) {
+		$this->provider = $provider;
 
 		return $this;
 	}
 
-	public function getFilesystems(...$types) {
-		$types = (is_array($types[0])) ? $types[0] : $types;
+	public function getProvider() {
+		return $this->provider;
+	}
 
-		return array_values(array_filter($this->filesystems, function ($fs) use ($types) {
-			return (empty($types) || in_array($fs->getProperty('type'), $types));
-		}));
+	public function flushProviderCache() {
+		$this->getProvider()->flushCache();
 	}
 
 	public function getRootFilesystem() {
-		foreach ($this->getFilesystems() as $fs) {
+		foreach ($this->_getFilesystemsTree() as $fs) {
 			if ($fs->isRoot()) {
 				return $fs;
 			}
@@ -70,37 +74,51 @@ final class Filesystems {
 	public function getNonRootFilesystems(...$types) {
 		$types = (is_array($types[0])) ? $types[0] : $types;
 
-		return array_values(array_filter($this->getFilesystems($types), function ($fs) {
+		return array_filter($this->getFilesystemsFlattened($types), function ($fs) {
 			return !$fs->isRoot();
-		}));
+		});
 	}
 
 	public function getMounts(...$types) {
 		$types = (is_array($types[0])) ? $types[0] : $types;
 
 		return array_map(function($fs) {
-			return $fs->getProperty('mounted-on');
-		}, $this->getFilesystems($types));
+			return $fs->getPath();
+		}, $this->getFilesystemsFlattened($types));
+	}
+
+	public function getFilesystemsFlattened(...$types) {
+		$types = (is_array($types[0])) ? $types[0] : $types;
+
+		$filesystems = [];
+
+		foreach($this->_getFilesystemsTree() as $filesystem) {
+			$filtered = array_filter($filesystem->getChildrenAndSelf(), function($fs) use ($types) {
+				return (empty($types) || in_array($fs->getType(), $types));
+			});
+
+			$filesystems = array_merge($filesystems, $filtered);
+		}
+
+		return $filesystems;
+	}
+
+	public function _getFilesystemsTree() {
+		if (empty($this->filesystems)){
+			$this->_initFilesystems();
+		}
+
+		return $this->filesystems;
 	}
 
 	private function _initFilesystems() {
-		$df = $this->getDf()->getDfData();
-
-		$filesystems = Arrays::get($df, ['storage-system-information', 'filesystem'], array());
-
-		foreach ($filesystems as $filesystem) {
-			$filesystem = $this->_getNewFilesystemObject($filesystem);
-			
-			$this->filesystems[$filesystem->getProperty('mounted-on')] = $filesystem;
-		}
-
-		usort($this->filesystems, function ($fs1, $fs2) {
-			return $fs1->getProperty('mounted-on') <=> $fs2->getProperty('mounted-on');
-		});
+		$this->filesystems = array_map(function($filesystem) {
+			return $this->_getNewFilesystemObject($filesystem);
+		}, $this->getProvider()->getFilesystems());
 	}
 
 	private function _getNewFilesystemObject($filesystem) {
-		return (new Filesystem($filesystem));
+		return (new Filesystem(null, $filesystem));
 	}
 }
 

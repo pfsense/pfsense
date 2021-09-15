@@ -21,9 +21,11 @@
 
 require_once('vendor/autoload.php');
 
-use pfSense\Services\Filesystem\DF;
-use pfSense\Services\Filesystem\Filesystem;
-use pfSense\Services\Filesystem\Filesystems;
+use pfSense\Services\Filesystem\{
+	Filesystem,
+	Filesystems,
+	Provider\SystemProvider,
+};
 
 use Nette\Utils\Html;
 
@@ -35,8 +37,11 @@ $disks_widget_defaults = array(
 				'disk_filter' => null,
 				'autoshow_threshold' => 75);
 
+// Initialize the Filesystems service		
+$filesystems = new Filesystems();
+
 function disks_do_widget_settings_post($post, $user_settings) {
-	global $disks_types, $disks_widget_defaults;
+	global $disks_types, $disks_widget_defaults, $filesystems;
 
 	// start with widget defaults
 	$pconfig = $disks_widget_defaults;
@@ -57,7 +62,7 @@ function disks_do_widget_settings_post($post, $user_settings) {
 
 		// Check if the posted disk_filter is valid, if so set it...
 		if (!empty($disk_filter) && is_array($disk_filter)) {
-			$valid_mounts = (new Filesystems())->getMounts($disks_types);
+			$valid_mounts = $filesystems->getMounts($disks_types);
 
 			// Filter out any invalid mounts
 			$disk_filter = array_filter($disk_filter, function($mount) use ($valid_mounts) {
@@ -164,7 +169,9 @@ function disk_compose_icon_link($text, $title, $icon_class) {
 }
 
 function disk_compose_root_filesystem_row() {
-	$fs = (new Filesystems())->getRootFilesystem();
+	global $filesystems;
+
+	$fs = $filesystems->getRootFilesystem();
 
 	$tr = Html::el('tr');
 
@@ -193,7 +200,7 @@ function disk_compose_root_filesystem_row() {
 }
 
 function disks_compose_widget_user_body($widget_config) {
-	global $disks_types;
+	global $disks_types, $filesystems;
 
 	$has_user_row = false;
 
@@ -202,10 +209,8 @@ function disks_compose_widget_user_body($widget_config) {
 	$disk_filter = explode(',', $widget_config['disk_filter']);
 
 	$autoshow_threshold = $widget_config['autoshow_threshold'];
-
-	$fss = (new Filesystems())->getNonRootFilesystems($disks_types);
 	
-	foreach ($fss as $fs) {
+	foreach ($filesystems->getNonRootFilesystems($disks_types) as $fs) {
 		if (in_array($fs->getPath(), $disk_filter)
 		    || (($autoshow_threshold != 0) && ($fs->getUsedPercent() >= $autoshow_threshold))) {
 			$has_user_row = true;
@@ -239,15 +244,13 @@ function disks_compose_widget_user_body($widget_config) {
 }
 
 function disks_compose_widget_tree_body() {
-	global $disks_types;
+	global $disks_types, $filesystems;
 
 	$tbody = Html::el('tbody');
 
 	$tbody->addHtml(disk_compose_root_filesystem_row());
 
-	$fss = (new Filesystems())->getNonRootFilesystems($disks_types);
-
-	foreach ($fss as $fs) {
+	foreach ($filesystems->getNonRootFilesystems($disks_types) as $fs) {
 		$tr = Html::el('tr');
 
 		$tr->setAttribute('class', "treegrid-{$fs->getHtmlClass()} treegrid-parent-{$fs->getParentHtmlClass()}");
@@ -278,14 +281,16 @@ function disks_compose_widget_tree_body() {
 }
 
 function disks_get_nonroot_filesystems() {
-	global $disks_types;
+	global $disks_types, $filesystems;
 
-	return (new Filesystems())->getNonRootFilesystems($disks_types);
+	return $filesystems->getNonRootFilesystems($disks_types);
 }
 
 function disks_cache_invalidate($force = false, $chancef = 0.1) {
+	global $filesystems;
+
 	if (((rand() / getrandmax()) < $chancef) || $force) {
-		(new DF)->flushCache();
+		$filesystems->flushProviderCache();
 	}
 }
 

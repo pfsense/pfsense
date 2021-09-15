@@ -114,7 +114,7 @@ function openvpnAlias ($id) {
 
 	$alarm_message = "";
 	$is_alias_referenced = false;
-	$referenced_by = false;
+	$referenced_by = array();
 	$alias_name = $a_aliases[$id]['name'];
 
 	if ($a_aliases[$id]['type'] != 'network') {

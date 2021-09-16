@@ -230,7 +230,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		system_reboot();
 		$rebootingnow = true;
 	} else {
-		write_config("Interfaces assignement settings changed");
+		write_config("Interfaces assignment settings changed");
 
 		$changes_applied = true;
 		$retval = 0;
@@ -348,7 +348,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				}
 			}
 		}
-		write_config("Interfaces assignement settings changed");
+		write_config("Interfaces assignment settings changed");
 
 		enable_rrd_graphing();
 	}
@@ -403,7 +403,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				}
 			}
 
-			write_config("Interface assignement deleted");
+			write_config("Interface assignment deleted");
 
 			/* If we are in firewall/routing mode (not single interface)
 			 * then ensure that we are not running DHCP on the wan which

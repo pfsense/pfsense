@@ -41,7 +41,7 @@ final class SystemProvider extends AbstractProvider {
 		$roots = [];
 
 		foreach ($this->_queryFilesystemProvider() as $idx => $filesystem) {
-			$path = Arrays::get($filesystem, 'mounted-on', null);
+			$path = Arrays::get($filesystem, 'mounted-on', '');
 
 			$filesystems[$path] = $filesystem;
 
@@ -64,11 +64,12 @@ final class SystemProvider extends AbstractProvider {
 	public function flushCache() {
 		$this->getCacheAdapter()->prune();
 	}
+
 	public function _getParentFilesystemPath($path) {
 		$filesystems = $this->_queryFilesystemProvider();
 
 		foreach (array_reverse($filesystems) as $filesystem) {
-			$mount = Arrays::get($filesystem, 'mounted-on', null);
+			$mount = Arrays::get($filesystem, 'mounted-on', '');
 
 			if (!Strings::compare($path, $mount)
 			    && Strings::startsWith($path, $mount)) {
@@ -96,7 +97,7 @@ final class SystemProvider extends AbstractProvider {
 			$filesystems = Arrays::get($retArray, ['storage-system-information', 'filesystem'], array());
 
 			usort($filesystems, function($a, $b) {
-				return (Arrays::get($a, 'mounted-on', null) <=> Arrays::get($b, 'mounted-on', null));
+				return (Arrays::get($a, 'mounted-on', '') <=> Arrays::get($b, 'mounted-on', ''));
 			});
 
 			return $filesystems;

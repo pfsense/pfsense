@@ -103,7 +103,7 @@ final class Filesystems {
 		return $filesystems;
 	}
 
-	public function _getFilesystemsTree() {
+	private function _getFilesystemsTree() {
 		if (empty($this->filesystems)){
 			$this->_initFilesystems();
 		}

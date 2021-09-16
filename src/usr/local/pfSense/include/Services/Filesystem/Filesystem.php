@@ -43,15 +43,11 @@ final class Filesystem {
 
 	public function getBasename() {
 		$basename = $this->getPath();
+		
+		$parent = $this->getParentPath();
 
-		if ($this->hasParent()) {
-
-			if (Strings::startsWith($this->getPath(), $this->getParentPath())) {
-
-				$basename = Strings::substring($basename, Strings::length($this->getParentPath()));
-			
-			}
-
+		if (Strings::startsWith($basename, $parent)) {
+			$basename = Strings::substring($basename, Strings::length($parent));
 		}
 
 		return $basename;
@@ -72,7 +68,13 @@ final class Filesystem {
 	}
 
 	public function getParentPath() {
-		return $this->hasParent() ? $this->getParent()->getPath() : null;
+		$path = '';
+
+		if ($this->hasParent()) {
+			$path = $this->getParent()->getPath();
+		}
+
+		return $path;
 	}
 
 	public function getPath() {
@@ -137,7 +139,7 @@ final class Filesystem {
 		return $this->children;
 	}
 
-	private function _getProperty($key, $default = null) {
+	private function _getProperty($key, $default = '') {
 		return Arrays::get($this->filesystem, $key, $default);
 	}
 

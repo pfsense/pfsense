@@ -731,6 +731,8 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	while ($filename = readdir($dh)) {
 		if (($filename != ".") && ($filename != "..") &&
 		    (!is_dir($g['conf_path'] . "/" . $filename))) {
+			if ($filename == "enableserial_force")
+				continue;
 			unlink_if_exists($g['conf_path'] . "/" . $filename);
 		}
 	}

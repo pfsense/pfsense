@@ -6591,6 +6591,10 @@ function upgrade_220_to_221() {
 	$config['widgets']['sequence'] = implode(',', $widgets);
 }
 
+/* No functional changes. */
+function upgrade_221_to_222() {
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

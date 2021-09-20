@@ -50,6 +50,8 @@ require_once("interfaces_fast.inc");
 
 global $friendlyifnames;
 
+global $config;
+
 /*moved most gettext calls to here, we really don't want to be repeatedly calling gettext() within loops if it can be avoided.*/
 $gettextArray = array('add'=>gettext('Add'),'addif'=>gettext('Add interface'),'delete'=>gettext('Delete'),'deleteif'=>gettext('Delete interface'),'edit'=>gettext('Edit'),'on'=>gettext('on'));
 
@@ -378,32 +380,37 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
+			init_config_arr(['dhcpd', $id]);
+
 			if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
 				unset($config['dhcpd'][$id]);
 				services_dhcpd_configure('inet');
 			}
+
+			init_config_arr(['dhcpdv6', $id]);
 
 			if (is_array($config['dhcpdv6']) && is_array($config['dhcpdv6'][$id])) {
 				unset($config['dhcpdv6'][$id]);
 				services_dhcpd_configure('inet6');
 			}
 
-			if (count($config['filter']['rule']) > 0) {
-				foreach ($config['filter']['rule'] as $x => $rule) {
-					if ($rule['interface'] == $id) {
-						unset($config['filter']['rule'][$x]);
-					}
-				}
-			}
-			if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
-				foreach ($config['nat']['rule'] as $x => $rule) {
-					if ($rule['interface'] == $id) {
-						unset($config['nat']['rule'][$x]['interface']);
-					}
+			init_config_arr(['filter', 'rule']);
+
+			foreach ($config['filter']['rule'] as $x => $rule) {
+				if ($rule['interface'] == $id) {
+					unset($config['filter']['rule'][$x]);
 				}
 			}
 
-			write_config("Interface assignement deleted");
+			init_config_arr(['nat', 'rule']);
+		
+			foreach ($config['nat']['rule'] as $x => $rule) {
+				if ($rule['interface'] == $id) {
+					unset($config['nat']['rule'][$x]['interface']);
+				}
+			}
+
+			write_config(gettext('Interface assignement deleted'));
 
 			/* If we are in firewall/routing mode (not single interface)
 			 * then ensure that we are not running DHCP on the wan which

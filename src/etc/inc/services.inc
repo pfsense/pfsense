@@ -2462,7 +2462,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach ($config['dnsmasq']['domainoverrides'] as $override) {
 				if ($override['ip'] == "!") {
-					$override[ip] = "";
+					$override['ip'] = "";
 				}
 				$args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
 			}

@@ -792,8 +792,6 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$p1 = ipsec_get_phase1($pconfig['ikeid']);
-
 // Hidden inputs
 if ($pconfig['mobile']) {
 	$form->addGlobal(new Form_Input(
@@ -820,6 +818,7 @@ if ($pconfig['mobile']) {
 	))->setHelp('Periodically checks to see if the P2 is disconnected and initiates when it is down. ' .
 			'Does not send traffic inside the tunnel. Works for VTI and tunnel mode P2 entries. ' .
 			'For IKEv2 without split connections, this only needs enabled on one P2.');
+	$form->add($section);
 }
 
 $form->addGlobal(new Form_Input(
@@ -844,8 +843,6 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	$pconfig['uniqid']
 ));
-
-$form->add($section);
 
 print($form);
 

@@ -315,7 +315,8 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Set this to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
 	'cause the data in /tmp and /var to be lost. RRD, '.
-	'DHCP leases and log directory will be retained. Changing this setting will cause the firewall to reboot after clicking "Save".');
+	'DHCP leases, log directory and Captive Portal data will be retained. ' .
+       	'Changing this setting will cause the firewall to reboot after clicking "Save".');
 
 $group = new Form_Group('RAM Disk Size');
 

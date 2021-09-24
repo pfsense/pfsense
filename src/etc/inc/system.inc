@@ -672,7 +672,7 @@ function system_dhcpleases_configure() {
 	}
 }
 
-function system_get_dhcpleases() {
+function system_get_dhcpleases($dnsavailable=null) {
 	global $config, $g;
 
 	$leases = array();
@@ -730,6 +730,7 @@ function system_get_dhcpleases() {
 	$failover = false;
 	$dedup_lease = false;
 	$dedup_failover = false;
+
 	foreach ($leases_content as $line) {
 		/* Skip comments */
 		if (preg_match('/^\s*(|#.*)$/', $line)) {
@@ -739,9 +740,14 @@ function system_get_dhcpleases() {
 		if (preg_match('/}$/', $line)) {
 			if ($lease) {
 				if (empty($item['hostname'])) {
-					$hostname = gethostbyaddr($item['ip']);
-					if (!empty($hostname)) {
-						$item['hostname'] = $hostname;
+					if (is_null($dnsavailable)) {
+						$dnsavailable = check_dnsavailable();
+					}
+					if ($dnsavailable) {
+						$hostname = gethostbyaddr($item['ip']);
+						if (!empty($hostname)) {
+							$item['hostname'] = $hostname;
+						}
 					}
 				}
 				$leases['lease'][] = $item;
@@ -2702,6 +2708,35 @@ function system_get_arp_table($resolve_hostnames = false) {
 	}
 
 	return $arp_table;
+}
+
+function _getHostName($mac, $ip) {
+	global $dhcpmac, $dhcpip;
+
+	if ($dhcpmac[$mac]) {
+		return $dhcpmac[$mac];
+	} else if ($dhcpip[$ip]) {
+		return $dhcpip[$ip];
+	} else {
+		exec("/usr/bin/host -W 1 " . escapeshellarg($ip), $output);
+		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
+			if ($matches[1] <> $ip) {
+				return $matches[1];
+			}
+		}
+	}
+	return "";
+}
+
+function check_dnsavailable() {
+	$dns = trim(_getHostName("", "8.8.8.8"));
+	if ($dns == "") {
+		$dns = trim(_getHostName("", "8.8.4.4"));
+		if ($dns == "") {
+			return false;
+		}
+	}
+	return true;
 }
 
 ?>

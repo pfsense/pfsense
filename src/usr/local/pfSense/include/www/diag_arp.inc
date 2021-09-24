@@ -31,28 +31,10 @@ require_once("config.gui.inc");
 $dhcpmac = array();
 $dhcpip = array();
 
-function _getHostName($mac, $ip) {
-	global $dhcpmac, $dhcpip;
-
-	if ($dhcpmac[$mac]) {
-		return $dhcpmac[$mac];
-	} else if ($dhcpip[$ip]) {
-		return $dhcpip[$ip];
-	} else {
-		exec("host -W 1 " . escapeshellarg($ip), $output);
-		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
-			if ($matches[1] <> $ip) {
-				return $matches[1];
-			}
-		}
-	}
-	return "";
-}
-
 function prepare_ARP_table($json = false) {
 	global $dhcpmac, $dhcpip;
 
-	$leases = system_get_dhcpleases();
+	$leases = system_get_dhcpleases(false);
 
 	// Put this in an easy to use form
 	$dhcpmac = array();
@@ -88,20 +70,19 @@ function prepare_ARP_table($json = false) {
 	// Resolve hostnames and replace Z_ with "".  The intention
 	// is to sort the list by hostnames, alpha and then the non
 	// resolvable addresses will appear last in the list.
-	$dnsavailable=1;
-	$dns = trim(_getHostName("", "8.8.8.8"));
-	if ($dns == "") {
-		$dns = trim(_getHostName("", "8.8.4.4"));
-		if ($dns == "") {
-			$dnsavailable = 0;
-		}
-	}
 
 	foreach ($arp_table as &$entry) {
 		// Add dnsresolve
-		if ($dnsavailable && !empty($entry['mac-address'])) {
-			$dns = trim(_getHostName($entry['mac-address'],
-			    $entry['ip-address']));
+		if (!empty($entry['mac-address'])) {
+			if (is_null($dnsavailable)) {
+				$dnsavailable = check_dnsavailable();
+			}
+			if ($dnsavailable) {
+				$dns = trim(_getHostName($entry['mac-address'],
+					$entry['ip-address']));
+			} else {
+				$dns="";
+			}
 		} else {
 			$dns="";
 		}

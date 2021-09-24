@@ -36,7 +36,7 @@ $result['range'] = "NaN";
 if (is_array($config['dhcpd'][$argv[1]])) {
 
 	$dhcpif = $argv[1] ;
-	$leases = system_get_dhcpleases();
+	$leases = system_get_dhcpleases(false);
 
 	$ifcfgip = get_interface_ip($dhcpif);
 	$ifcfgsn = get_interface_subnet($dhcpif);

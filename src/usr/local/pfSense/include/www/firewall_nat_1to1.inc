@@ -397,8 +397,8 @@ function build_srctype_list() {
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
-			$list[$ifent] = $ifdesc . ' net';
-			$list[$ifent . 'ip'] = $ifdesc . ' address';
+			$list[$ifent] = $ifdesc . ' ' . gettext('net');
+			$list[$ifent . 'ip'] = $ifdesc . ' ' . gettext('address');
 		}
 	}
 
@@ -444,8 +444,8 @@ function build_dsttype_list() {
 
 	foreach ($ifdisp as $if => $ifdesc) {
 		if (have_ruleint_access($if)) {
-			$list[$if] = $ifdesc;
-			$list[$if . 'ip'] = $ifdesc . ' address';
+			$list[$if] = $ifdesc . ' ' . gettext('net');
+			$list[$if . 'ip'] = $ifdesc . ' ' . gettext('address');
 		}
 	}
 
@@ -507,7 +507,7 @@ function build_exttype_list() {
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
-			$list[$ifent . 'ip'] = $ifdesc . ' address';
+			$list[$ifent . 'ip'] = $ifdesc . ' ' . gettext('address');
 		}
 	}
 

@@ -123,8 +123,9 @@ function save1to1NATrule($post, $id, $json = false) {
 	$dstipaddrtype = false;
 
 	if (((($post['ipprotocol'] == 'inet') && !is_interface_ipaddr($post['interface'])) ||
-	    (($post['ipprotocol'] == 'inet6') && !is_interface_ipaddrv6($post['interface']))) &&
-		!is_interface_group($post['interface']) && !in_array($post['interface'], $vpn_and_ppp_ifs)) {
+	    (($post['ipprotocol'] == 'inet6') && !is_interface_ipaddrv6($post['interface']))) && 
+	    !get_specialnet_type($post['interface'], $post['ipprotocol']) &&
+	    !is_interface_group($post['interface']) && !in_array($post['interface'], $vpn_and_ppp_ifs)) {
 		$input_errors[] = gettext("The interface does not have an address from the specified address family.");
 	}
 

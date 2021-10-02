@@ -1665,9 +1665,7 @@ function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
 
 function interfaces_ipsec_vti_configure($gateways_status = false) {
 	global $config;
-	if (platform_booting()) {
-		echo gettext("Configuring IPsec VTI interfaces...");
-	}
+
 	/* Fetch gateway status if not passed */
 	if (!is_array($gateways_status)) {
 		$gateways_status = return_gateways_status(true);
@@ -1679,10 +1677,14 @@ function interfaces_ipsec_vti_configure($gateways_status = false) {
 			if ($ph1ent['disabled']) {
 				continue;
 			}
-			interface_ipsec_vti_configure($ph1ent, $gateways_status);
+			if (interface_ipsec_vti_configure($ph1ent, $gateways_status) &&
+			    !$bootmsg && platform_booting()) {
+				echo gettext("Configuring IPsec VTI interfaces...");
+				$bootmsg = true;
+			}
 		}
 	}
-	if (platform_booting()) {
+	if (platform_booting() && $bootmsg) {
 		echo gettext("done.") . "\n";
 	}
 }

@@ -2097,7 +2097,7 @@ function openvpn_get_client_status($client, $socket) {
 	return $client;
 }
 
-function openvpn_kill_client($port, $remipp) {
+function openvpn_kill_client($port, $remipp, $client_id) {
 	global $g;
 
 	//$tcpsrv = "tcp://127.0.0.1:{$port}";
@@ -2110,7 +2110,12 @@ function openvpn_kill_client($port, $remipp) {
 	$killed = -1;
 	if ($fp) {
 		stream_set_timeout($fp, 1);
-		fputs($fp, "kill {$remipp}\n");
+		if (!empty($client_id)) {
+			/* terminate remote client, see https://redmine.pfsense.org/issues/12416 */
+			fputs($fp, "client-kill {$client_id} HALT\n");
+		} else {
+			fputs($fp, "kill {$remipp}\n");
+		}
 		while (!feof($fp)) {
 			$line = fgets($fp, 1024);
 

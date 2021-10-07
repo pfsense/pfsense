@@ -42,8 +42,9 @@ if ($_REQUEST['action']) {
 	if ($_REQUEST['action'] == "kill") {
 		$port  = $_REQUEST['port'];
 		$remipp  = $_REQUEST['remipp'];
+		$client_id  = $_REQUEST['client_id'];
 		if (!empty($port) and !empty($remipp)) {
-			$retval = openvpn_kill_client($port, $remipp);
+			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
@@ -61,7 +62,7 @@ include("head.inc"); ?>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 //<![CDATA[
-	function killClient(mport, remipp) {
+	function killClient(mport, remipp, client_id) {
 		var busy = function(index,icon) {
 			$(icon).bind("onclick","");
 			$(icon).attr('src',$(icon).attr('src').replace("\.gif", "_d.gif"));
@@ -72,7 +73,7 @@ include("head.inc"); ?>
 
 		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>" +
-				"?action=kill&port=" + mport + "&remipp=" + remipp,
+				"?action=kill&port=" + mport + "&remipp=" + remipp + "&client_id=" + client_id,
 			{ type: "get", complete: killComplete }
 		);
 	}
@@ -109,7 +110,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Bytes Sent")?></th>
 						<th><?=gettext("Bytes Received")?></th>
 						<th><?=gettext("Cipher")?></th>
-						<th><!-- Icons --></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -141,10 +142,16 @@ include("head.inc"); ?>
 						<td data-value="<?=trim($conn['cipher'])?>"><?=$conn['cipher'];?></td>
 						<td>
 							<a
-							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
+							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							   title="<?php echo sprintf(gettext("Kill client connection from %s"), $conn['remote_host']); ?>">
 							<i class="fa fa-times"></i>
+							</a>&nbsp;
+							<a
+							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '<?=$conn['client_id'];?>');" style="cursor:pointer;"
+							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
+							   title="<?php echo sprintf(gettext("Halt client connection from %s"), $conn['remote_host']); ?>">
+							<i class="fa fa-times-circle text-danger"></i>
 							</a>
 						</td>
 					</tr>

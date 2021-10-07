@@ -176,8 +176,13 @@ if ($_POST['save']) {
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
 		if (is_array($config['interfaces'][$pconfig['localid_type']])) {
 			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
-			$address = get_interface_ip($pconfig['localid_type']);
-			$netbits = get_interface_subnet($pconfig['localid_type']);
+			if ($pconfig['mode'] == 'tunnel6') {
+				$address = get_interface_ipv6($pconfig['localid_type']);
+				$netbits = get_interface_subnetv6($pconfig['localid_type']);
+			} else {
+				$address = get_interface_ip($pconfig['localid_type']);
+				$netbits = get_interface_subnet($pconfig['localid_type']);
+			}
 
 			if (empty($address) || empty($netbits)) {
 				$input_errors[] = gettext("Invalid Local Network.") . " " . sprintf(gettext("%s has no subnet."), convert_friendly_interface_to_friendly_descr($pconfig['localid_type']));
@@ -192,6 +197,14 @@ if ($_POST['save']) {
 					}
 					if ($pconfig['localid_type'] == "address") {
 						$input_errors[] = gettext("A network type address cannot be configured for NAT while only an address type is selected for local source.");
+					}
+					if (((($pconfig['mode'] == "tunnel") && ($pconfig['natlocalid_netbits'] != 32)) ||
+					    (($pconfig['mode'] == "tunnel6") && ($pconfig['natlocalid_netbits'] != 128))) &&
+					    ((is_numeric($pconfig['localid_netbits']) && 
+					    ($pconfig['natlocalid_netbits'] != $pconfig['localid_netbits'])) ||
+					    (is_numeric($netbits) && 
+					    ($pconfig['natlocalid_netbits'] != $netbits)))) { 
+						$input_errors[] = gettext("Local network subnet size and NAT local network subnet size cannot be different.");
 					}
 				case "address":
 					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address'])) {

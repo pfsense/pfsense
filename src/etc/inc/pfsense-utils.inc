@@ -2994,7 +2994,11 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 			if ($isipv6) {
 				$if_ipv6 = get_interface_ipv6($if);
 				$if_snbitsv6 = get_interface_subnetv6($if);
-				if ($if_ipv6 && $if_snbitsv6 && check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
+				/* do not check subnet overlapping on 6rd interfaces,
+				 * see https://redmine.pfsense.org/issues/12371 */ 
+				if ($if_ipv6 && $if_snbitsv6 &&
+				    (($config['interfaces'][$if]['ipaddrv6'] != '6rd') || ($cidrprefix > $if_snbitsv6)) &&
+				    check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
 					$where_entry = array();
 					$where_entry['if'] = $if;
 					$where_entry['ip_or_subnet'] = get_interface_ipv6($if) . "/" . get_interface_subnetv6($if);

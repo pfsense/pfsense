@@ -195,6 +195,11 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("Maximum advertisement interval must be no less than 4 and no greater than 1800.");
 		}
 	}
+	if ($_POST['rapreferredlifetime']) {
+		if (!is_numericint($_POST['rapreferredlifetime'])) {
+			$input_errors[] = gettext("Default preferred lifetime must be an integer.");
+		}
+	}
 	if ($_POST['raadvdefaultlifetime'] && (($_POST['raadvdefaultlifetime'] < 1) || ($_POST['raadvdefaultlifetime'] > 9000))) {
 		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
 	}
@@ -369,7 +374,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'rapreferredlifetime',
 	'Default preferred lifetime',
-	'text',
+	'number',
 	$pconfig['rapreferredlifetime'],
 	['placeholder' => 14400]
 ))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .

@@ -721,6 +721,9 @@ if ($_POST['apply']) {
 					}
 				}
 			}
+			if (!is_subnetv6($_POST['prefix-6rd'])) {
+				$input_errors[] = gettext("6RD Prefix must be a valid IPv6 prefix.");
+			}
 			if (!is_ipaddrv4($_POST['gateway-6rd'])) {
 				$input_errors[] = gettext("6RD Border Relay must be an IPv4 address.");
 			}

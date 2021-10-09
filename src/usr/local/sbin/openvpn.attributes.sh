@@ -60,7 +60,6 @@ if [ "$script_type" = "client-connect" ]; then
 
 	/bin/cat "${rulesfile}" | /usr/bin/sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" | /usr/bin/sed "s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" > "${rulesfile}.tmp" && /bin/mv "${rulesfile}.tmp" "${rulesfile}"
 	/sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
-	/bin/rm "${rulesfile}"
 
 	if [ -f /tmp/$common_name ]; then
 		/bin/cat /tmp/$common_name > $1
@@ -89,6 +88,7 @@ elif [ "$script_type" = "client-disconnect" ]; then
 	/sbin/pfctl -k $ifconfig_pool_remote_ip6
 	/sbin/pfctl -K $ifconfig_pool_remote_ip6
 
+	/bin/rm "${rulesfile}"
 	/bin/rm "${lockfile}"
 fi
 

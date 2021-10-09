@@ -536,9 +536,9 @@ function deleteVIP($id, $json = false) {
 				header("Location: firewall_virtual_ip.php");
 				exit;
 			}
-		} else {
-			$input_errors[] = sprintf(gettext("Virtual IP # %s does not exist."), $id);
 		}
+	} else {
+		$input_errors[] = sprintf(gettext("Virtual IP # %s does not exist."), $id);
 	}
 
 	$rv['input_errors'] = $input_errors;

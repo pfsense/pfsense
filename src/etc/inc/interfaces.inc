@@ -4192,11 +4192,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if ((!platform_booting() && !does_interface_exist($interface_to_check)) ||
-	    (in_array(substr($realif, 0, 3), array("gre", "gif", "ips")) && !does_interface_exist($realif))) {
+	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif")) ||
+	    !does_interface_exist($interface_to_check))) {
 		interface_virtual_create($interface_to_check);
 	}
-
 
 	/* Disable Accepting router advertisements unless specifically requested */
 	if ($g['debug']) {

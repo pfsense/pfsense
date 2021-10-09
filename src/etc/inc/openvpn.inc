@@ -2110,7 +2110,7 @@ function openvpn_kill_client($port, $remipp, $client_id) {
 	$killed = -1;
 	if ($fp) {
 		stream_set_timeout($fp, 1);
-		if (!empty($client_id)) {
+		if (is_numeric($client_id)) {
 			/* terminate remote client, see https://redmine.pfsense.org/issues/12416 */
 			fputs($fp, "client-kill {$client_id} HALT\n");
 		} else {

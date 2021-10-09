@@ -307,6 +307,18 @@ foreach (glob("{$g['tmp_path']}/rules.packages.*") as $pkgrules) {
 	$pkgname = substr($pkgrules, strrpos($pkgrules, '.') + 1);
 	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat {$pkgrules}");
 }
+$ovpnradrules = array();
+foreach (glob("{$g['tmp_path']}/ovpn_ovpns*.rules") as $ovpnrules) {
+	if (preg_match('/ovpn_ovpns(\d+)\_(\w+)\_(\d+)\.rules/', basename($ovpnrules), $matches)) {
+		$ovpnradrules[$matches[1]] .= "# user '{$matches[2]}' remote port {$matches[3]}\n";
+		$ovpnradrules[$matches[1]] .= file_get_contents($ovpnrules);
+		$ovpnradrules[$matches[1]] .= "\n";
+	}
+}
+foreach ($ovpnradrules as $ovpns => $genrules) {
+	defCmdT("OpenVPN-Generated RADIUS ACL Ruleset for server{$ovpns}",
+	  "echo " .  escapeshellarg($genrules));
+}
 defCmdT("Firewall-pf NAT Rules", "/sbin/pfctl -vvsn");
 defCmdT("Firewall-pf Firewall Rules", "/sbin/pfctl -vvsr");
 defCmdT("Firewall-pf Tables", "/sbin/pfctl -vs Tables");

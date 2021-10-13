@@ -76,6 +76,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
 	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
+	$pconfig['curl_proxy'] = isset($a_dyndns[$id]['curl_proxy']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -215,6 +216,7 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['requestif'] = $_POST['requestif'];
 		}
+		$dyndns['curl_proxy'] = $_POST['curl_proxy'] ? true : false;
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 
@@ -470,6 +472,15 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['maxcacheage']
 ))->setHelp('The number of days after which the DNS record is always updated. The DNS record is updated when: update is forced, WAN address changes or this number of days has passed.');
+
+if (!empty($config['system']['proxyurl'])) {
+	$section->addInput(new Form_Checkbox(
+		'curl_proxy',
+		'Use Proxy',
+		'Use Proxy for DynDNS updates',
+		$pconfig['curl_proxy'],
+	))->setHelp('Use proxy configured under System > Advanced, on the Miscellaneous tab.');
+}
 
 $section->addInput(new Form_Input(
 	'descr',

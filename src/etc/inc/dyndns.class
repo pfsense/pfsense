@@ -191,6 +191,7 @@
 		var $_forceUpdateNeeded;
 		var $_useIPv6;
 		var $_existingRecords;
+		var $_curlProxy;
 
 		/*
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -205,7 +206,8 @@
 					$dnsWildcard = 'OFF', $dnsProxied = false, $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 					$dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '', $dnsMaxCacheAge = '',
-					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
+					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true,
+					$curlProxy = false) {
 
 			global $config, $g, $dyndns_split_domain_types;
 			if (in_array($dnsService, $dyndns_split_domain_types)) {
@@ -220,6 +222,7 @@
 
 			$this->_curlIpresolveV4 = $curlIpresolveV4;
 			$this->_curlSslVerifypeer = $curlSslVerifypeer;
+			$this->_curlProxy = $curlProxy;
 			$this->_dnsVerboseLog = $dnsVerboseLog;
 			if ($this->_dnsVerboseLog) {
 				log_error(gettext("Dynamic DNS: updatedns() starting"));
@@ -1620,6 +1623,9 @@
 			}
 			if ($this->_dnsService != 'ods') {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
+				if ($this->_curlProxy == true) {
+					set_curlproxy($ch);
+				}
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);

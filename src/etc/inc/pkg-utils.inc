@@ -1665,6 +1665,11 @@ function save_repo($json) {
 
 			file_put_contents($fppath, $repo['fingerprint']);
 		}
+
+		// Save the client Cert
+		if (!empty($repo['cert'])) {
+			file_put_contents($basename . "cert", $repo['cert']);
+		}
 	} else {
 		/*
 		 * If there was anything wrong with the custom repository

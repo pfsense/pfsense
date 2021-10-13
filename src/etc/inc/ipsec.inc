@@ -184,7 +184,7 @@ $p1_dhgroups = array(
 	29 => '29 (brainpool ecp384)',
 	30 => '30 (brainpool ecp512)',
 	31 => '31 (Elliptic Curve 25519, 256 bit)',
-	32 => '32 (Elliptic Curve 25519, 448 bit)',
+	32 => '32 (Elliptic Curve 448, 448 bit)',
 );
 
 global $p2_halgos;

@@ -103,6 +103,7 @@ if ($act == "new") {
 	$pconfig['compression'] = "";
 	$pconfig['exit_notify'] = 1;
 	$pconfig['remote_cert_tls'] = "yes";
+	$pconfig['create_gw'] = "both";
 }
 
 global $simplefields;

@@ -5308,7 +5308,9 @@ function filter_generate_dummynet_rules() {
 	}
 	if (!empty($dn_rules)) {
 		if (!is_module_loaded("dummynet.ko")) {
+			mute_kernel_msgs();
 			mwexec("/sbin/kldload dummynet");
+			unmute_kernel_msgs();
 		}
 		$sysctls = (array(
 				"net.inet.ip.dummynet.io_fast" => "1",

@@ -1975,7 +1975,9 @@ function load_thermal_hardware() {
 
 	if (!empty($config['system']['thermal_hardware']) && !is_module_loaded($config['system']['thermal_hardware'])) {
 		log_error(sprintf(gettext("Loading %s thermal monitor module."), $config['system']['thermal_hardware']));
+		mute_kernel_msgs();
 		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
+		unmute_kernel_msgs();
 	}
 }
 

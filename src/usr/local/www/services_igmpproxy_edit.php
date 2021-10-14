@@ -232,7 +232,7 @@ foreach ($item as $ww) {
 		null,
 		$address,
 		['placeholder' => 'Address']
-	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet, 32)->setWidth(4);
+	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet, 32, 0)->setWidth(4);
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,

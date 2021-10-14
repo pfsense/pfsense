@@ -426,6 +426,9 @@ EOD;
 					}
 					echo "done\n";
 				}
+			} else {
+				/* reset database on unclean shutdown, see https://redmine.pfsense.org/issues/12355 */
+				unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 			}
 		}
 

@@ -2314,6 +2314,7 @@ function dyndnsCheckIP($int) {
 					$username = $checkipservice['username'];
 					$password = $checkipservice['password'];
 					$verifysslpeer = isset($checkipservice['verifysslpeer']);
+					$curl_proxy = isset($checkipservice['curl_proxy']);
 					break;
 				}
 			}
@@ -2329,6 +2330,9 @@ function dyndnsCheckIP($int) {
 		curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
+		if ($curl_proxy) {
+			set_curlproxy($ip_ch);
+		}
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
 		$ip_result_decoded = urldecode($ip_result_page);

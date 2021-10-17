@@ -48,6 +48,7 @@ if (isset($id) && isset($a_checkip[$id])) {
 	$pconfig['username'] = $a_checkip[$id]['username'];
 	$pconfig['password'] = $a_checkip[$id]['password'];
 	$pconfig['verifysslpeer'] = isset($a_checkip[$id]['verifysslpeer']);
+	$pconfig['curl_proxy'] = isset($a_checkip[$id]['curl_proxy']);
 	$pconfig['descr'] = $a_checkip[$id]['descr'];
 }
 
@@ -87,6 +88,7 @@ if ($_POST) {
 		}
 
 		$checkip['verifysslpeer'] = $_POST['verifysslpeer'] ? true : false;
+		$checkip['curl_proxy'] = $_POST['curl_proxy'] ? true : false;
 		$checkip['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_checkip[$id]) {
@@ -156,6 +158,15 @@ $section->addInput(new Form_Checkbox(
 	'Verify SSL/TLS Peer',
 	$pconfig['verifysslpeer']
 ));
+
+if (!empty($config['system']['proxyurl'])) {
+	$section->addInput(new Form_Checkbox(
+		'curl_proxy',
+		'Use Proxy',
+		'Use Proxy for Check IP server connection',
+		$pconfig['curl_proxy'],
+	))->setHelp('Use proxy configured under System > Advanced, on the Miscellaneous tab.');
+}
 
 $section->addInput(new Form_Input(
 	'descr',

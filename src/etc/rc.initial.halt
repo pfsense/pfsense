@@ -37,7 +37,9 @@ echo "\n" . sprintf(gettext("%s will shutdown and halt system. This may take a f
 echo gettext("Do you want to proceed [y|n]?") . " ";
 
 if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-	echo "\n" . sprintf(gettext("%s will shutdown and halt system now."), $g['product_label']) . "\n";
+	$msg = sprintf(gettext("%s will shutdown and halt system now."), $g['product_label']);
+	echo "\n" . $msg . "\n";
+	notify_all_remote($msg);
 	system_halt();
 }
 

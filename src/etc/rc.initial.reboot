@@ -48,24 +48,32 @@ echo gettext("Enter an option:") . " ";
 switch (chop(fgets($fp))) {
 	case "S":
 		mwexec('/sbin/nextboot -o "-s" -k kernel');
-		echo "\n" . sprintf(gettext("%s is rebooting into single user mode now."), $g['product_label']) . "\n";
+		$msg = sprintf(gettext("%s is rebooting into single user mode now."), $g['product_label']);
+		echo "\n" . $msg . "\n";
+		notify_all_remote($msg);
 		system_reboot_sync();
 		break;
 	case "F":
 		if (!is_module_loaded("zfs.ko")) {
 			mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
-			echo "\n" . sprintf(gettext("%s is rebooting for a filesystem check now."), $g['product_label']) . "\n";
+			$msg = sprintf(gettext("%s is rebooting for a filesystem check now."), $g['product_label']);
+			echo "\n" . $msg . "\n";
+			notify_all_remote($msg);
 			system_reboot_sync();
 		}
 		break;
 	case "R":
 	case "r":
-		echo "\n" . sprintf(gettext("%s is rerooting now."), $g['product_label']) . "\n";
+		$msg = sprintf(gettext("%s is rerooting now."), $g['product_label']);
+		echo "\n" . $msg . "\n";
+		notify_all_remote($msg);
 		system_reboot_sync(true);
 		break;
 	case "Y":
 	case "y":
-		echo "\n" . sprintf(gettext("%s is rebooting now."), $g['product_label']) . "\n";
+		$msg = sprintf(gettext("%s is rebooting now."), $g['product_label']);
+		echo "\n" . $msg . "\n";
+		notify_all_remote($msg);
 		system_reboot_sync();
 		break;
 	default:

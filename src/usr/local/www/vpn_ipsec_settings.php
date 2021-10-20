@@ -395,7 +395,7 @@ $section->addInput(new Form_Checkbox(
 	'PKCS#11 Support',
 	'Enable PKCS#11',
 	$pconfig['pkcs11support']
-))->setHelp('Allow use of PKCS#11 tokens for Phase 1 authentication.');
+))->setHelp('Allow use of PKCS#11 tokens for Phase 1 authentication. Note that restarting the PS/SC Smart Card service will restart IPsec and vice versa.');
 
 $section->addInput(new Form_Checkbox(
 	'enableinterfacesuse',

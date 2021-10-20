@@ -229,9 +229,19 @@ function captiveportal_load_modules() {
 }
 
 function captiveportal_configure() {
-	global $config, $cpzone, $cpzoneid;
+	global $config, $g, $cpzone, $cpzoneid;
 
 	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone) {
+			if (isset($cpzone['preservedb'])) {
+				$keep_online_users = true;
+				break;
+			}
+		}
+		if (!$keep_online_users) {
+			/* see https://redmine.pfsense.org/issues/12455 */
+			unlink_if_exists("{$g['vardb_path']}/captiveportal_online_users");
+		}
 		foreach ($config['captiveportal'] as $cpkey => $cp) {
 			$cpzone = $cpkey;
 			$cpzoneid = $cp['zoneid'];

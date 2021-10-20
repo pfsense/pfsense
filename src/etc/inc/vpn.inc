@@ -40,18 +40,6 @@ function vpn_setup() {
 	vpn_l2tp_configure();
 }
 
-function vpn_netgraph_support() {
-	$iflist = get_configured_interface_list();
-	foreach ($iflist as $iface) {
-		$realif = get_real_interface($iface);
-		/* Get support for netgraph(4) from the nic */
-		$ifinfo = pfSense_get_interface_addresses($realif);
-		if (!empty($ifinfo) && in_array($ifinfo['iftype'], array("ether", "vlan", "bridge"))) {
-			pfSense_ngctl_attach(".", $realif);
-		}
-	}
-}
-
 function vpn_pppoes_configure() {
 	global $config;
 
@@ -240,8 +228,6 @@ EOD;
 				killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
 			}
 
-			/* Get support for netgraph(4) from the nic */
-			pfSense_ngctl_attach(".", $pppoe_interface);
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
@@ -446,7 +432,6 @@ EOD;
 			unset($mpdconf);
 
 			vpn_l2tp_updatesecret();
-			vpn_netgraph_support();
 
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");

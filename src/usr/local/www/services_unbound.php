@@ -423,8 +423,9 @@ $section->addInput(new Form_Checkbox(
 	'Enable Forwarding Mode',
 	$pconfig['forwarding']
 ))->setHelp('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
-					' %1$sSystem &gt; General Setup%2$s or those obtained via DHCP/PPP on WAN'.
-					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>');
+					' %1$sSystem &gt; General Setup%2$s or those obtained via dynamic ' .
+					'interfaces such as DHCP, PPP, or OpenVPN (if DNS Server Override ' .
+				        'is enabled there).','<a href="system.php">','</a>');
 
 $section->addInput(new Form_Checkbox(
 	'forward_tls_upstream',

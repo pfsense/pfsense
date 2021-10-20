@@ -617,12 +617,12 @@ $section->addInput(new Form_Button(
 $section->addInput(new Form_Checkbox(
 	'dnsallowoverride',
 	'DNS Server Override',
-	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
+	'Allow DNS server list to be overridden by DHCP/PPP on WAN or remote OpenVPN server',
 	$pconfig['dnsallowoverride']
 ))->setHelp('If this option is set, %s will use DNS servers '.
-	'assigned by a DHCP/PPP server on WAN for its own purposes (including '.
-	'the DNS Forwarder/DNS Resolver). However, they will not be assigned to DHCP '.
-	'clients.', $g['product_label']);
+	'assigned by a DHCP/PPP server on WAN or a remote OpenVPN server (if Pull DNS ' .
+	'option is enabled) for its own purposes (including the DNS Forwarder/DNS Resolver). '.
+        'However, they will not be assigned to DHCP clients.', $g['product_label']);
 
 $section->addInput(new Form_Select(
 	'dnslocalhost',

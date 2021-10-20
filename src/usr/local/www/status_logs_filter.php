@@ -201,7 +201,7 @@ if (!$rawfilter) {
 					<td>
 <?php
 		if ($filterent['direction'] == "out") {
-			print('&#x25ba;' . ' ');
+			print '<i class="fa fa-arrow-circle-o-right" title="'. gettext("direction is out") .'" style="cursor: pointer;"></i>';
 		}
 ?>
 		<?=htmlspecialchars($filterent['interface'])?>

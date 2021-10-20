@@ -531,11 +531,19 @@ foreach ($a_filter as $filteri => $filterent):
 
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset) {
-			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
+			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'" style="cursor: pointer;"></i>';
 		}
 
 		if (isset($filterent['log'])) {
 			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'" style="cursor: pointer;"></i>';
+		}
+
+		if (isset($filterent['direction'])) {
+			if ($filterent['direction'] == 'in') {
+				print '<i class="fa fa-arrow-circle-o-left" title="'. gettext("direction is in") .'" style="cursor: pointer;"></i>';
+			} elseif ($filterent['direction'] == 'out') {
+				print '<i class="fa fa-arrow-circle-o-right" title="'. gettext("direction is out") .'" style="cursor: pointer;"></i>';
+			}
 		}
 	?>
 						</td>

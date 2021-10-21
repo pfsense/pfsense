@@ -1908,6 +1908,7 @@ save_logs_to_s3() {
 	DATE=`date +%Y%m%d-%H%M%S`
 	script -aq ${LOGFILE} tar --zstd -cf pkg-logs-${jail_arch}-${DATE}.tar -C /usr/local/poudriere/data/logs/bulk/${jail_name}-${POUDRIERE_PORTS_NAME}/latest/ .
 	aws_exec s3 cp pkg-logs-${jail_arch}-${DATE}.tar s3://pfsense-engineering-build-pkg/logs/ --no-progress
+	echo ">>> Uploading pkg-logs-${jail_arch}-${DATE}.tar to s3" | tee -a ${LOGFILE}
 	OLDIFS=${IFS}
 	IFS=$'\n'
 	local _logtemp=$( mktemp /tmp/loglist.XXXXX )
@@ -1928,7 +1929,7 @@ save_logs_to_s3() {
 }
 
 save_pkgs_to_s3() {
-	echo ">>> Save a copy of the package repo into S3..." | tee -a ${LOGFILE}
+	echo ">>> Saving a copy of the package repo into S3..." | tee -a ${LOGFILE}
 	cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
 	find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
 	cd ${WORKSPACE}

@@ -68,6 +68,7 @@ if (isset($id) && $a_pppoes[$id]) {
 	$pconfig['pppoe_subnet'] = $pppoecfg['pppoe_subnet'];
 	$pconfig['pppoe_dns1'] = $pppoecfg['dns1'];
 	$pconfig['pppoe_dns2'] = $pppoecfg['dns2'];
+	$pconfig['paporchap'] = $pppoecfg['paporchap'];
 	$pconfig['descr'] = $pppoecfg['descr'];
 	$pconfig['username'] = $pppoecfg['username'];
 	$pconfig['pppoeid'] = $pppoecfg['pppoeid'];
@@ -172,6 +173,7 @@ if ($_POST['save']) {
 		$pppoecfg['n_pppoe_units'] = $_POST['n_pppoe_units'];
 		$pppoecfg['n_pppoe_maxlogin'] = $_POST['n_pppoe_maxlogin'];
 		$pppoecfg['pppoe_subnet'] = $_POST['pppoe_subnet'];
+		$pppoecfg['paporchap'] = $_POST['paporchap'];
 		$pppoecfg['descr'] = $_POST['descr'];
 		if ($_POST['radiusserver'] || $_POST['radiusserver2']) {
 			$pppoecfg['radius'] = array();
@@ -258,6 +260,7 @@ if ($_POST['save']) {
 		    ($pppoecfg_old['pppoe_subnet'] != $pppoecfg['pppoe_subnet']) ||
 		    ($pppoecfg_old['dns1'] != $pppoecfg['dns1']) ||
 		    ($pppoecfg_old['dns2'] != $pppoecfg['dns2']) ||
+		    ($pppoecfg_old['paporchap'] != $pppoecfg['paporchap']) ||
 		    ($pppoecfg_old['radius'] != $pppoecfg['radius']))) {
 		    	$reload = true;
 		} else {
@@ -369,6 +372,16 @@ $section->addInput(new Form_Select(
 	$pconfig['pppoe_subnet'],
 	array_combine(range(0, 32, 1), range(0, 32, 1))
 ))->setHelp('Hint: 24 is 255.255.255.0');
+
+$section->addInput(new Form_Select(
+	'paporchap',
+	'*Authentication type',
+	$pconfig['paporchap'],
+	array(
+		'pap' => 'PAP',
+		'chap' => 'CHAP'
+		)
+))->setHelp('Specifies the protocol to use for authentication.');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -611,8 +624,6 @@ events.push(function() {
 		disableInput('radiussecret_confirm', hide);
 		disableInput('radiusserverport', hide);
 		disableInput('radiusserveracctport', hide);
-		disableInput('radiusissueips', hide);
-		disableInput('radius_nasip', hide);
 		disableInput('radiusissueips', hide);
 		disableInput('radius_nasip', hide);
 		disableInput('radius_acct_update', hide);

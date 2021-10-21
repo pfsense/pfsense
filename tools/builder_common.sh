@@ -2088,6 +2088,11 @@ EOF
 	done
 
 	if [ "${AWS}" = 1 ]; then
+		echo ">>> Run poudriere distclean to prune old distfiles..." | tee -a ${LOGFILE}
+		if ! poudriere distclean -f ${_bulk} -p ${POUDRIERE_PORTS_NAME} -y; then
+			echo ">>> ERROR: Something went wrong..."
+			print_error_pfS
+		fi
 		echo ">>> Save a copy of the distfiles into S3..." | tee -a ${LOGFILE}
 		# Save a copy of the distfiles from S3
 		find /usr/ports/distfiles > post-build-distfile-list

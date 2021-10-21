@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (DEBUG) {
 	   printf(gettext("Not actually halting (DEBUG is set true)%s"), "<br />");
 	} else {
+		notify_all_remote(sprintf(gettext("%s will shutdown and halt system now."), $g['product_label']));
 		print('<pre>');
 		system_halt();
 		print('</pre>');

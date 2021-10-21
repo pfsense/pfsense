@@ -35,6 +35,8 @@
 // Set DEBUG to true to prevent the system_reboot() function from being called
 define("DEBUG", false);
 
+global $g;
+
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
@@ -56,13 +58,16 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 			case 'FSCKReboot':
 				if ((php_uname('m') != 'arm') && !is_module_loaded("zfs.ko")) {
 					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
+					notify_all_remote(sprintf(gettext("%s is rebooting for a filesystem check now."), $g['product_label']));
 					system_reboot();
 				}
 				break;
 			case 'Reroot':
+				notify_all_remote(sprintf(gettext("%s is rerooting now."), $g['product_label']));
 				system_reboot_sync(true);
 				break;
 			case 'Reboot':
+				notify_all_remote(sprintf(gettext("%s is rebooting now."), $g['product_label']));
 				system_reboot();
 				break;
 			default:

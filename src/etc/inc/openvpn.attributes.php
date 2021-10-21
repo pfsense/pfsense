@@ -28,9 +28,11 @@ if (empty($dev)) {
 }
 
 $rules = parse_cisco_acl($attributes, $dev);
+$filename = "{$g['tmp_path']}/ovpn_{$dev}_{$username}_{$untrusted_port}.rules";
 if (!empty($rules)) {
-	$filename = "{$g['tmp_path']}/ovpn_{$dev}_{$username}_{$untrusted_port}.rules";
 	@file_put_contents($filename, $rules);
+} else {
+	unlink_if_exists($filename);
 }
 
 ?>

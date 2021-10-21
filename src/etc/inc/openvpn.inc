@@ -1533,6 +1533,7 @@ function openvpn_restart($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
+	openvpn_clean_rules($mode, $vpnid);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
@@ -1644,6 +1645,7 @@ function openvpn_delete($mode, $settings) {
 	/* remove the configuration files */
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
+	openvpn_clean_rules($mode, $vpnid);
 }
 
 function openvpn_resync_csc(& $settings) {
@@ -2397,6 +2399,14 @@ function openvpn_inuse($id, $mode) {
 	}
 
 	return false;
+}
+
+function openvpn_clean_rules($mode, $id) {
+	global $g;
+
+	if ($mode == "server") {
+		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
+	}
 }
 
 ?>

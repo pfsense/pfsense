@@ -1751,11 +1751,11 @@ EOF
 	fi
 
 	if [ "${AWS}" = 1 ] && \
-	    aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-distfiles.tar >/dev/null 2>&1; then
+	    aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar >/dev/null 2>&1; then
 		# Download a copy of the distfiles from S3
 		echo ">>> Downloading distfile cache from S3.." | tee -a ${LOGFILE}
-		aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-distfiles.tar . --no-progress
-		script -aq ${LOGFILE} tar -xf ${FLAVOR}-distfiles.tar -C /usr/ports/distfiles
+		aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar . --no-progress
+		script -aq ${LOGFILE} tar -xf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar -C /usr/ports/distfiles
 		# Save a list of distfiles
 		find /usr/ports/distfiles > pre-build-distfile-list
 
@@ -2098,9 +2098,9 @@ EOF
 		find /usr/ports/distfiles > post-build-distfile-list
 		diff pre-build-distfile-list post-build-distfile-list > /dev/null
 		if [ $? -eq 1 ]; then
-			rm ${FLAVOR}-distfiles.tar
-			script -aq ${LOGFILE} tar -cf ${FLAVOR}-distfiles.tar -C /usr/ports/distfiles .
-			aws_exec s3 cp ${FLAVOR}-distfiles.tar s3://pfsense-engineering-build-pkg/ --no-progress
+			rm ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar
+			script -aq ${LOGFILE} tar -cf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar -C /usr/ports/distfiles .
+			aws_exec s3 cp ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar s3://pfsense-engineering-build-pkg/ --no-progress
 		fi
 	fi
 }

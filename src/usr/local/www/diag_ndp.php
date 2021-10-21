@@ -99,23 +99,18 @@ foreach ($rawdata as $line) {
 	$data[] = $ndpent;
 }
 
-/* FIXME: Not ipv6 compatible dns resolving. PHP needs fixing */
-function _getHostName($mac, $ip) {
-	if (is_ipaddr($ip)) {
-		list($ip, $scope) = explode("%", $ip);
-		if (gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip) {
-			return gethostbyaddr($ip);
-		} else {
-			return "";
-		}
-	}
-}
-
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
 foreach ($data as &$entry) {
-	$dns = trim(_getHostName($entry['mac'], $entry['ipv6']));
+	if (is_null($dnsavailable)) {
+		$dnsavailable = check_dnsavailable('inet6');
+	}
+	if ($dnsavailable) {
+		$dns = trim(_getHostName($entry['mac'], $entry['ipv6']));
+	} else {
+		$dns = "";
+	}
 	if (trim($dns)) {
 		$entry['dnsresolve'] = "$dns";
 	} else {

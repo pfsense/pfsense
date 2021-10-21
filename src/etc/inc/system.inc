@@ -2718,7 +2718,8 @@ function _getHostName($mac, $ip) {
 	} else if ($dhcpip[$ip]) {
 		return $dhcpip[$ip];
 	} else {
-		exec("/usr/bin/host -W 1 " . escapeshellarg($ip), $output);
+		$ipproto = (is_ipaddrv4($ip)) ? '-4 ' : '-6 ';
+		exec("/usr/bin/host -W 1 " . $ipproto . escapeshellarg($ip), $output);
 		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
 			if ($matches[1] <> $ip) {
 				return $matches[1];
@@ -2728,15 +2729,41 @@ function _getHostName($mac, $ip) {
 	return "";
 }
 
-function check_dnsavailable() {
-	$dns = trim(_getHostName("", "8.8.8.8"));
-	if ($dns == "") {
-		$dns = trim(_getHostName("", "8.8.4.4"));
+function check_dnsavailable($proto='inet') {
+	$nameservers = get_dns_nameservers();
+
+	if ((count($nameservers) == 1) && ($nameservers[0] == '127.0.0.1')) {
+		/* recursion is enabled, use hardcoded Google DNS for testing */
+		$checkip = ($proto == 'inet') ? '8.8.8.8' : '2001:4860:4860::8888';
+		$dns = trim(_getHostName("", $checkip));
 		if ($dns == "") {
-			return false;
+			$checkip = ($proto == 'inet') ? '8.8.4.4' : '2001:4860:4860::8844';
+			$dns = trim(_getHostName("", $checkip));
+			if ($dns == "") {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	} else {
+		foreach ($nameservers as $dns) {
+			if ($dns == '127.0.0.1') {
+				continue;
+			} elseif ((is_ipaddrv4($dns) && ($proto == 'inet')) ||
+				  (is_ipaddrv6($dns) && ($proto == 'inet6'))) {
+				$dns_result = trim(_getHostName("", $dns));
+				if ($secondtest && ($dns_result == "")) {
+					return false;
+				} elseif ($dns_result == "") {
+					$secondtest = true;
+					continue;
+				} else {
+					return true;
+				}
+			}
 		}
 	}
-	return true;
+	return false;
 }
 
 ?>

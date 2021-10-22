@@ -270,7 +270,7 @@ $p2_pfskeygroups = array(
 	29 => gettext('29 (brainpool ecp384)'),
 	30 => gettext('30 (brainpool ecp512)'),
 	31 => gettext('31 (Elliptic Curve 25519, 256 bit)'),
-	32 => gettext('32 (Elliptic Curve 25519, 448 bit)'),
+	32 => gettext('32 (Elliptic Curve 448, 448 bit)')
 );
 
 function ipsec_enabled() {

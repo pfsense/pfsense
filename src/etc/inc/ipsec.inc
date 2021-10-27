@@ -960,7 +960,16 @@ function ipsec_dump_spd() {
 						$upperspec = explode("/", $linea[0]);
 						$cursp['proto'] = $upperspec[0];
 						list($cursp['src'], $cursp['dst']) = explode("-", $upperspec[2]);
-						$cursp['reqid'] = substr($upperspec[3], strpos($upperspec[3], "#")+1);
+						$cursp['unique'] = substr($upperspec[3], strpos($upperspec[3], ":")+1);
+						break;
+					default:
+						if (substr($linea[0], 0, 4) != 'spid') {
+							break;
+						}
+						$cursp['scope'] = substr($linea[3], strpos($linea[3], "=")+1);
+						if ($cursp['scope'] == 'ifnet') {
+							$cursp['ifname'] = substr($linea[4], strpos($linea[4], "=")+1);
+						}
 						break;
 				}
 			}

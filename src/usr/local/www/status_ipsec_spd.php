@@ -58,6 +58,7 @@ if (count($spd)) {
 		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
+					<th><?= gettext("Mode"); ?></th>
 					<th><?= gettext("Source"); ?></th>
 					<th><?= gettext("Destination"); ?></th>
 					<th><?= gettext("Direction"); ?></th>
@@ -77,6 +78,16 @@ if (count($spd)) {
 ?>
 				<tr>
 					<td>
+					<? if ($sp['scope'] == 'ifnet'): ?>
+						<?=htmlspecialchars(gettext("VTI"))?>
+						<? if (!empty($sp['ifname'])): ?>
+							<?=htmlspecialchars($sp['ifname'])?>
+						<? endif; ?>
+					<? else: ?>
+						<?=htmlspecialchars(gettext("Tunnel"))?>
+					<? endif; ?>
+					</td>
+					<td>
 						<?=htmlspecialchars($sp['srcid'])?>
 					</td>
 					<td>
@@ -89,7 +100,11 @@ if (count($spd)) {
 						<?=htmlspecialchars(strtoupper($sp['proto']))?>
 					</td>
 					<td>
-						<?=htmlspecialchars($sp['src'])?> -&gt; <?=htmlspecialchars($sp['dst'])?>
+					<? if ($sp['dir'] == 'in'): ?>
+						<?=htmlspecialchars($sp['dst'])?> <?= LEFTARROW ?> <?=htmlspecialchars($sp['src'])?>
+					<? else: ?>
+						<?=htmlspecialchars($sp['src'])?> <?= RIGHTARROW ?> <?=htmlspecialchars($sp['dst'])?>
+					<? endif; ?>
 					</td>
 				</tr>
 <?php

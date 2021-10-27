@@ -94,15 +94,43 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		$data->tunnel .= "<td colspan=2>" . htmlspecialchars($p1dst) . "</td>";
 		$data->tunnel .= "<td colspan=2>" . htmlspecialchars($tunnel['p1']['descr']) . "</td>";
 		$p1conid = ipsec_conid($tunnel['p1'], null);
-		if (isset($tunnel['p1']['connected'])) {
-			$data->tunnel .= '<td><i class="fa fa-arrow-up text-success" title="connected"></i> ';
-			$data->tunnel .= ipsec_status_button('ajax', 'disconnect', 'ike', $p1conid, null, false);
-			$data->tunnel .= '</td>';
+
+		// This is an array, take value of last entry only
+		if (is_array($tunnel['status'])) {
+			$tstatus = array_pop($tunnel['status']);
 		} else {
-			$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger" title="disconnected"></i> ';
-			$data->tunnel .= ipsec_status_button('ajax', 'connect', 'all', $p1conid, null, false);
-			$data->tunnel .= '</td>';
+			$tstatus = array('state' => 'DISCONNECTED');
 		}
+
+		switch ($tstatus['state']) {
+			case 'ESTABLISHED':
+				$statusicon = 'arrow-up';
+				$iconcolor = 'success';
+				$icontitle = gettext('Connected');
+				$buttonaction = 'disconnect';
+				$buttontarget = 'ike';
+				break;
+			case 'CONNECTING':
+				$statusicon = 'spinner fa-spin';
+				$iconcolor = 'warning';
+				$icontitle = gettext('Connecting');
+				$buttonaction = 'disconnect';
+				$buttontarget = 'ike';
+				break;
+			default:
+				$statusicon = 'arrow-down';
+				$iconcolor = 'danger';
+				$icontitle = gettext('Disconnected');
+				$buttonaction = 'connect';
+				$buttontarget = 'all';
+				break;
+		}
+
+		$data->tunnel .= '<td><i class="fa fa-' . $statusicon .
+					' text-' . $iconcolor . '" ' .
+					'title="' . $icontitle . '"></i> ';
+		$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p1conid, null, false);
+		$data->tunnel .= '</td>';
 		$data->tunnel .= "</tr>";
 
 		if (is_array($tunnel['p2'])) {
@@ -126,15 +154,27 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				$data->tunnel .= "<td>" . htmlspecialchars($p2dst) . "</td>";
 				$data->tunnel .= "<td>&nbsp;</td>";
 				$data->tunnel .= "<td>" . htmlspecialchars($p2['descr']) . "</td>";
+
+
 				if (isset($p2['connected'])) {
-					$data->tunnel .= '<td><i class="fa fa-arrow-up text-success" title="connected"></i> ';
-					$data->tunnel .= ipsec_status_button('ajax', 'disconnect', 'child', $p2conid, null, false);
-					$data->tunnel .= '</td>';
+					$statusicon = 'arrow-up';
+					$iconcolor = 'success';
+					$icontitle = gettext('Connected');
+					$buttonaction = 'disconnect';
+					$buttontarget = 'child';
 				} else {
-					$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger" title="disconnected"></i> ';
-					$data->tunnel .= ipsec_status_button('ajax', 'connect', 'child', $p2conid, null, false);
-					$data->tunnel .= '</td>';
+					$statusicon = 'arrow-down';
+					$iconcolor = 'danger';
+					$icontitle = gettext('Disconnected');
+					$buttonaction = 'connect';
+					$buttontarget = 'child';
 				}
+
+				$data->tunnel .= '<td><i class="fa fa-' . $statusicon .
+							' text-' . $iconcolor . '" ' .
+							'title="' . $icontitle . '"></i> ';
+				$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p2conid, null, false);
+				$data->tunnel .= '</td>';
 				$data->tunnel .= "</tr>";
 			}
 		} else {

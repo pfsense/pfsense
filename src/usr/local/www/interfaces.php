@@ -2065,8 +2065,9 @@ $group->add(new Form_Button(
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway4')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%1$s' .
-				'On local area network interfaces the upstream gateway should be "none". ' .
-				'Gateways can be managed by %2$sclicking here%3$s.', '<br />', '<a target="_blank" href="system_gateways.php">', '</a>');
+				'On local area network interfaces the upstream gateway should be "none".%1$s' .
+				'Selecting an upstream gateway causes the firewall to treat this interface as a %2$sWAN type interface%4$s.%1$s' .
+				'Gateways can be managed by %3$sclicking here%4$s.', '<br />', '<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/interfaces/wanvslan.html">', '<a target="_blank" href="system_gateways.php">', '</a>');
 
 $section->add($group);
 

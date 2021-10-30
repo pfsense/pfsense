@@ -90,6 +90,7 @@ if ($_POST['save'] || $_POST['force']) {
 		"cloudflare-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"desec" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"desec-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"desec-v4v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"digitalocean" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"digitalocean-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"dnsmadeeasy" => array("apex" => false, "wildcard" => false, "username_none" => true),
@@ -146,9 +147,9 @@ if ($_POST['save'] || $_POST['force']) {
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		$allow_wildcard = false;
-		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
+		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) &&
 		    (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
-		    (isset($ddns_attr[$pconfig['type']]['wildcard']) && ($ddns_attr[$pconfig['type']]['wildcard'] == true) && 
+		    (isset($ddns_attr[$pconfig['type']]['wildcard']) && ($ddns_attr[$pconfig['type']]['wildcard'] == true) &&
 		    (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
@@ -593,6 +594,7 @@ events.push(function() {
 				break;
 			case 'desec':
 			case 'desec-v6':
+			case 'desec-v4v6':
 				hideInput('username', true);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);

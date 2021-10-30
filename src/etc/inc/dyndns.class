@@ -101,6 +101,7 @@
 	 *  ClouDNS         - Last Tested: 22 August 2017
 	 *  deSEC           - Last Tested: NEVER
 	 *  deSEC IPv6      - Last Tested: NEVER
+	 *  deSEC IPv4&v6   - Last Tested: 31 October 2021
 	 *  DHS             - Last Tested: 12 July 2005
 	 *  DigitalOcean    - Not Yet Tested
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
@@ -268,6 +269,7 @@
 				break;
 			case 'desec':
 			case 'desec-v6':
+			case 'desec-v4v6':
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				break;
@@ -349,6 +351,9 @@
 			}
 
 			switch ($dnsService) {
+				case 'desec-v4v6':
+					$this->_useIPv4Andv6 = true;
+					break;
 				default:
 					$this->_useIPv4Andv6 = false;
 			}
@@ -417,6 +422,7 @@
 					case 'custom-v6':
 					case 'desec':
 					case 'desec-v6':
+					case 'desec-v4v6':
 					case 'dhs':
 					case 'digitalocean':
 					case 'digitalocean-v6':
@@ -1706,6 +1712,11 @@
 					curl_setopt($ch, CURLOPT_URL, 'https://update6.dedyn.io/?hostname=' . $this->_dnsHost);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
 					break;
+				case 'desec-v4v6':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://update.dedyn.io/?hostname=' . $this->_dnsHost . '&myipv4=' . $this->_dnsLegacyIP . '&myipv6=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
+					break;
 				default:
 					break;
 			}
@@ -2927,6 +2938,7 @@
 					break;
 				case 'desec':
 				case 'desec-v6':
+				case 'desec-v4v6':
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					switch ($http_code) {
 						case '200':

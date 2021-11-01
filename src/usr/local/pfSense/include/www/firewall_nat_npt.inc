@@ -47,8 +47,10 @@ function savenptNATrule($post, $id, $json = false) {
 	$reqdfieldsn = array(gettext("Interface"));
 	$reqdfields[] = "src";
 	$reqdfieldsn[] = gettext("Source prefix");
-	$reqdfields[] = "dst";
-	$reqdfieldsn[] = gettext("Destination prefix");
+	if (!is_specialnet($post['dsttype'])) {
+		$reqdfields[] = "dst";
+		$reqdfieldsn[] = gettext("Destination prefix");
+	}
 
 	if (!$json) {
 		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
@@ -57,12 +59,19 @@ function savenptNATrule($post, $id, $json = false) {
 	if (!is_ipaddrv6(trim($post['src']))) {
 		$input_errors[] = gettext("The specified source address is not a valid IPv6 prefix");
 	}
-	if (!is_ipaddrv6(trim($post['dst']))) {
+	if (!is_ipaddrv6(trim($post['dst'])) && !is_specialnet(trim($post['dsttype']))) {
 		$input_errors[] = gettext("The specified destination address is not a valid IPv6 prefix");
 	}
 	if (check_subnetsv6_overlap(get_interface_ipv6($post['interface']), 128, trim($post['dst']), $post['dstmask']) &&
 	    !$post['dstnot']) {
 		$input_errors[] = gettext("The specified destination address and interface IPv6 address cannot overlap");
+	}
+	if (is_specialnet($post['dsttype'])) {
+		$track6ip = get_interface_track6ip($post['dsttype']);
+		$post['dstmask'] = $track6ip[1];
+	}
+	if (!empty($post['dstmask']) && ($post['srcmask'] != $post['dstmask'])) {
+		$input_errors[] = gettext("The specified source prefix size must be equal to the destination prefix size.");
 	}
 
 	if (!$input_errors) {
@@ -75,7 +84,10 @@ function savenptNATrule($post, $id, $json = false) {
 		if ($post['src']) {
 			$post['src'] = trim($post['src']);
 		}
-		if ($post['dst']) {
+		if (is_specialnet($post['dsttype'])) {
+			$post['dst'] = $post['dsttype'];
+			$post['dstmask'] = 0;
+		} elseif ($post['dst']) {
 			$post['dst'] = trim($post['dst']);
 		}
 

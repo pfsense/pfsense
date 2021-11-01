@@ -2215,6 +2215,7 @@ function filter_nat_rules_generate() {
 			if (isset($rule['disabled'])) {
 				continue;
 			}
+			$rule['ipprotocol'] = 'inet6';
 
 			if (!$rule['interface']) {
 				$natif = "wan";

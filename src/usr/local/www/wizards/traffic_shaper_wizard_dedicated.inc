@@ -212,6 +212,7 @@ function step2_stepbeforeformdisplay() {
 		$field['name'] = "conn{$i}uploadspeed";
 		$field['typehint'] = "Upload bandwidth on this connection.";
 		$field['type'] = "select";
+		$field['value'] = "Mb";
 		$field['options']['option'] = array();
 		$opts = array();
 		$opts['value'] = "Kb";
@@ -243,6 +244,7 @@ function step2_stepbeforeformdisplay() {
 		$field['name'] = "conn{$i}downloadspeed";
 		$field['typehint'] = "Download bandwidth on this connection.";
 		$field['type'] = "select";
+		$field['value'] = "Mb";
 		$field['options']['option'] = array();
 		$opts = array();
 		$opts['value'] = "Kb";

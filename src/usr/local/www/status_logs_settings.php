@@ -71,7 +71,7 @@ $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
 $pconfig['logconfigchanges'] = ($config['syslog']['logconfigchanges'] != "disabled");
 $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
-$pconfig['logcompressiontype'] = $config['syslog']['logcompressiontype'];
+$pconfig['logcompressiontype'] = system_log_get_compression();
 $pconfig['rotatecount'] = $config['syslog']['rotatecount'];
 $pconfig['format'] = $config['syslog']['format'];
 
@@ -392,7 +392,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Select(
 	'logcompressiontype',
 	'Log Compression',
-	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
+	$pconfig['logcompressiontype'],
 	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types))
 ))->setHelp('The type of compression to use when rotating log files. ' .
 	'Compressing rotated log files saves disk space, but can incur a performance penalty. ' .

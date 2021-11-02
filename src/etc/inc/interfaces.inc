@@ -6931,7 +6931,7 @@ function is_altq_capable($int) {
 	 * 20150328 - removed wireless drivers - ath, awi, bwn, iwi, ipw, ral, rum, run, wi - for now. redmine #4406
 	 */
 	$capable = array("ae", "age", "alc", "ale", "an", "aue", "axe", "bce",
-			"bfe", "bge", "bnxt", "bridge", "cas", "cpsw", "cxl", "dc", "de",
+			"bfe", "bge", "bnxt", "bridge", "cas", "cc", "cpsw", "cxl", "dc", "de",
 			"ed", "em", "ep", "epair", "et", "fxp", "gem", "hme", "hn",
 			"igb", "igc", "ix", "jme", "l2tp", "le", "lem", "msk", "mxge", "my",
 			"ndis", "nfe", "ng", "nge", "npe", "nve", "ql", "ovpnc",

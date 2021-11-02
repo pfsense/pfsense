@@ -1336,11 +1336,6 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
 				$a_ppps[$pppid]['type'] = $_POST['type'];
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
-				if (isset($_POST['ppp_port'])) {
-					$a_ppps[$pppid]['ports'] = $_POST['ppp_port'];
-				} else {
-					$a_ppps[$pppid]['ports'] = $wancfg['if'];
-				}
 				$a_ppps[$pppid]['username'] = $_POST['pppoe_username'];
 				if ($_POST['pppoe_password'] != DMYPWD) {
 					$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
@@ -1379,11 +1374,6 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
 				$a_ppps[$pppid]['type'] = $_POST['type'];
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
-				if (isset($_POST['ppp_port'])) {
-					$a_ppps[$pppid]['ports'] = $_POST['ppp_port'];
-				} else {
-					$a_ppps[$pppid]['ports'] = $wancfg['if'];
-				}
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
 				if ($_POST['pptp_password'] != DMYPWD) {
 					$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
@@ -3552,15 +3542,6 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	$if
 ));
-
-if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
-	$form->addGlobal(new Form_Input(
-		'ppp_port',
-		null,
-		'hidden',
-		$pconfig['port']
-	));
-}
 
 $form->addGlobal(new Form_Input(
 	'ptpid',

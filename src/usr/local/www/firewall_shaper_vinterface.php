@@ -94,22 +94,12 @@ if ($_GET) {
 	switch ($action) {
 		case "delete":
 			if ($queue) {
-				if (is_array($config['filter']['rule'])) {
-					foreach ($config['filter']['rule'] as $rule) {
-						if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname()) {
-							$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleting.");
-						}
-					}
+				$queue->delete_queue();
+				if (write_config("Traffic Shaper: Queue deleted")) {
+					mark_subsystem_dirty('shaper');
 				}
-				if (!$input_errors) {
-					$queue->delete_queue();
-					if (write_config("Traffic Shaper: Queue deleted")) {
-						mark_subsystem_dirty('shaper');
-					}
-					header("Location: firewall_shaper_vinterface.php");
-					exit;
-				}
-				$sform= $queue->build_form();
+				header("Location: firewall_shaper_vinterface.php");
+				exit;
 			} else {
 				$input_errors[] = sprintf(gettext("No queue with name %s was found!"), $qname);
 				$output_form .= $dn_default_shaper_msg;

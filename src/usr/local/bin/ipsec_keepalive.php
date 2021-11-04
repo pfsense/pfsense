@@ -22,6 +22,7 @@
 
 include_once('ipsec.inc');
 include_once('service-utils.inc');
+include_once('gwlb.inc');
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
 global $config;
@@ -66,6 +67,9 @@ $status = ipsec_status();
  * P1 have the Keep Alive option enabled. */
 $initiate = array_unique($initiate);
 
+/* get gateway groups array */
+$a_groups = return_gateway_groups_array(true);
+
 /* Check each connected entry to see if the one we want is enabled */
 foreach ($initiate as $conid) {
 	if ($debug) {
@@ -76,8 +80,11 @@ foreach ($initiate as $conid) {
 	    in_array($conid, $status['disconnected']['p2'])) {
 		/* Check if P1 is using a CARP VIP. If so, check CARP status. */
 		list($ikeid, $reqid) = ipsec_id_by_conid($conid);
-		if ((substr($status[$ikeid]['p1']['interface'], 0, 4) == "_vip") &&
-		    in_array(get_carp_bind_status($status[$ikeid]['p1']['interface']), array('BACKUP', 'INIT'))) {
+		if (((substr($status[$ikeid]['p1']['interface'], 0, 4) == "_vip") &&
+		    in_array(get_carp_bind_status($status[$ikeid]['p1']['interface']), array('BACKUP', 'INIT'))) ||
+		    (is_array($a_groups[$status[$ikeid]['p1']['interface']]) &&
+		    !empty($a_groups[$status[$ikeid]['p1']['interface']][0]['vip']) &&
+		    in_array(get_carp_bind_status($a_groups[$status[$ikeid]['p1']['interface']][0]['vip']), array('BACKUP', 'INIT')))) {
 			if ($debug) {
 				echo "{$conid} is disconnected but using a CARP VIP in BACKUP or INIT status. Skipping.\n";
 			}

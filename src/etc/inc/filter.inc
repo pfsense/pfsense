@@ -1153,7 +1153,8 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 	}
 	foreach ($FilterIflist as $ifent => $ifcfg) {
 		$subnet = "{$ifcfg['sa']}/{$ifcfg['sn']}";
-		if (is_subnet($subnet)) {
+		$subnetv6 = "{$ifcfg['sav6']}/{$ifcfg['snv6']}";
+		if (is_subnetv4($subnet)) {
 			if ($returnsubnetsonly) {
 				$networks_arr[] = $subnet;
 			} else {
@@ -1161,6 +1162,16 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 					'subnet' => $subnet,
 					'if' => $ifent,
 					'ip' => $ifcfg['ip']);
+			}
+		}
+		if (is_subnetv6($subnetv6)) {
+			if ($returnsubnetsonly) {
+				$networks_arr[] = $subnetv6;
+			} else {
+				$networks_arr[] = array(
+					'subnet' => $subnetv6,
+					'if' => $ifcfg['ifv6'],
+					'ip' => $ifcfg['ipv6']);
 			}
 		}
 	}
@@ -1411,17 +1422,18 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$protocol_text = "";
 	}
 
-	if (empty($target_subnet) || !is_numeric($target_subnet)) {
+	if ((!isset($rule['ipprotocol']) || ($rule['ipprotocol'] == 'inet4')) &&
+	    empty($target_subnet) || !is_numeric($target_subnet)) {
 		$target_subnet = 32;
+	} elseif (($rule['ipprotocol'] == 'inet6') &&
+	    empty($target_subnet) || !is_numeric($target_subnet)) {
+		$target_subnet = 128;
 	}
 
 	if (!is_array($route_table)) {
-		/* get a simulated IPv4-only route table based on the config */
+		/* get a simulated route table based on the config */
 		$route_table = filter_get_direct_networks_list(false);
 		foreach ($route_table as $rt_key => $rt_ent) {
-			if (!is_subnetv4($rt_ent['subnet'])) {
-				unset($route_table[$rt_key]);
-			}
 			if (isset($route_table[$rt_key]) && isset($FilterIflist[$rt_ent['if']]['if'])) {
 				$route_table[$rt_key]['if'] = $FilterIflist[$rt_ent['if']]['if'];
 			}
@@ -1432,9 +1444,16 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 	foreach ($route_table as $route) {
 		if (isset($route['gateway']) && is_ipaddr($route['gateway'])) {
 			$subnet_split = explode("/", $route['subnet']);
-			if (in_array($route['if'], $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
+			if (in_array($route['if'], $nat_ifs) &&
+			    ((is_ipaddrv4($target_ip) && is_ipaddrv4($subnet_split[0])) ||
+			    (is_ipaddrv6($target_ip) && is_ipaddrv6($subnet_split[0]))) &&
+			    check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
 				$target_ip = $route['gateway'];
-				$target_subnet = 32;
+				if (is_ipaddrv4($target_ip)) {
+					$target_subnet = 32;
+				} else {
+					$target_subnet = 128;
+				}
 				break;
 			}
 		}
@@ -1447,11 +1466,15 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$subnet_if = $route['if'];
 		/* Blacklist invalid "from" sources since they can be picked up accidentally and cause rule errors. */
 		$no_reflect_from = array("l2tp");
-		if (in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
+		if (in_array($subnet_if, $nat_ifs) &&
+		    ((is_ipaddrv4($target_ip) && is_ipaddrv4($subnet_split[0])) ||
+		    (is_ipaddrv6($target_ip) && is_ipaddrv6($subnet_split[0]))) &&
+		    check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
 			$ifsubnet_ip = "";
 			/* Find interface IP to use for NAT */
 			foreach ($route_table as $ifnetwork) {
-				if (isset($ifnetwork['ip']) && is_ipaddr($ifnetwork['ip']) && $ifnetwork['if'] == $subnet_if && ip_in_subnet($ifnetwork['ip'], $subnet)) {
+				if (isset($ifnetwork['ip']) && is_ipaddr($ifnetwork['ip']) &&
+				    ($ifnetwork['if'] == $subnet_if) && ip_in_subnet($ifnetwork['ip'], $subnet)) {
 					$ifsubnet_ip = $ifnetwork['ip'];
 					break;
 				}
@@ -1469,7 +1492,8 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 				}
 				/* Do not generate a rule with an interface source if that interface has no IP address.
 				 * See https://redmine.pfsense.org/issues/8604 */
-				if (!empty(get_interface_ip($subnet_if))) {
+				if ((!empty(get_interface_ip($subnet_if)) && is_ipaddrv4($target)) || 
+				    (!empty(get_interface_ipv6($subnet_if)) && is_ipaddrv6($target))) {
 					$natrules .= "no nat on {$subnet_if}{$protocol_text} from ({$subnet_if}) to {$target}\n";
 				}
 				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";

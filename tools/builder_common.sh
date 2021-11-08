@@ -1765,6 +1765,8 @@ EOF
 				DISTFILES="${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles"
 			else
 				DISTFILES="${FLAVOR}-${DEFAULT_BRANCH}-distfiles"
+				echo ">>> ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar, not found."
+				echo ">>> Falling back to ${DISTFILES}.tar"
 			fi
 		fi
 
@@ -1776,6 +1778,7 @@ EOF
 			# Save a list of distfiles
 			find /usr/ports/distfiles > pre-build-distfile-list
 		else
+			echo ">>> No distfile cache found, all distfiles will be fetched."
 			touch pre-build-distfile-list
 		fi
 	fi

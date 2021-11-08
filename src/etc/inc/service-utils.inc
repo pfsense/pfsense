@@ -763,7 +763,7 @@ function service_control_stop($name, $extras) {
 				$id = htmlspecialchars($extras['id']);
 				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
 				killbypid($pidfile);
-				openvpn_clean_rules($vpnmode, $id);
+				openvpn_delete_tmp($vpnmode, $id);
 			}
 			break;
 		case 'syslogd':

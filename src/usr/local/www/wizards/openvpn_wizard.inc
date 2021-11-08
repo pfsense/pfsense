@@ -452,6 +452,9 @@ function step10_submitphpaction() {
 
 	if ($_POST['concurrentcon'] && !is_numeric($_POST['concurrentcon']))
 		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
+	
+	if ($_POST['connuserlimit'] && !is_numeric($_POST['connuserlimit']))
+		$input_errors[] = "The field 'Duplicate Connection Limit' must be numeric.";
 
 	if (empty($_POST['tunnelnet']))
 		$input_errors[] = "A 'Tunnel network' must be specified.";
@@ -649,6 +652,8 @@ function step12_submitphpaction() {
 		$server['local_network'] = $pconfig['step10']['localnet'];
 	if (isset($pconfig['step10']['concurrentcon']))
 		$server['maxclients'] = $pconfig['step10']['concurrentcon'];
+	if (isset($pconfig['step10']['connuserlimit']))
+		$server['connlimit'] = $pconfig['step10']['connuserlimit'];
 	if (isset($pconfig['step10']['allowcompression']))
 		$server['allow_compression'] = $pconfig['step10']['allowcompression'];
 	if (isset($pconfig['step10']['compression']))

@@ -461,6 +461,23 @@ if [ -f $varrunpath/booting ]; then
 	/bin/rm $varrunpath/booting
 fi
 
+if [ "${USE_ZFS}" -eq 1 ]; then
+	# Create ZFS reservation
+	if [ ! -f /.no_zfs_reservation ]; then
+		zfs list -Hp -o name -t filesystem | grep -q pfSense/reservation
+		if [ $? -ne 0 ]; then
+			AVAIL=$( zfs list -Hpo avail pfSense )
+			RESSIZE=$( zfs list -Hpo avail,used pfSense | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
+			if [ $(( ${AVAIL} / 2 )) -gt ${RESSIZE} ]; then
+				logger "Creating ZFS reservation of ${RESSIZE} bytes"
+				zfs create -o reservation=${RESSIZE} pfSense/reservation
+			else
+				logger "Not enough space to create reservation;  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
+			fi
+		fi
+	fi
+fi
+
 echo -n "Starting CRON... "
 cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."

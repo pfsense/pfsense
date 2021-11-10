@@ -461,7 +461,7 @@ if [ -f $varrunpath/booting ]; then
 	/bin/rm $varrunpath/booting
 fi
 
-if [ "${USE_ZFS}" -eq 1 ]; then
+if [ -n "${USE_ZFS}" ]; then
 	# Create ZFS reservation
 	if [ ! -f /.no_zfs_reservation ]; then
 		zfs list -Hp -o name -t filesystem | grep -q pfSense/reservation

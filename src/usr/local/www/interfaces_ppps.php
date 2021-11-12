@@ -81,6 +81,10 @@ $pgtitle = array(gettext("Interfaces"), gettext("PPPs"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
 $tab_array = array();
 $tab_array[] = array(gettext("Interface Assignments"), false, "interfaces_assign.php");
 $tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");

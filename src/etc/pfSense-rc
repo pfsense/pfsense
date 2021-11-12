@@ -464,15 +464,19 @@ fi
 if [ -n "${USE_ZFS}" ]; then
 	# Create ZFS reservation
 	if [ ! -f /.no_zfs_reservation ]; then
-		zfs list -Hp -o name -t filesystem | grep -q pfSense/reservation
-		if [ $? -ne 0 ]; then
-			AVAIL=$( zfs list -Hpo avail pfSense )
-			RESSIZE=$( zfs list -Hpo avail,used pfSense | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
-			if [ $(( ${AVAIL} / 2 )) -gt ${RESSIZE} ]; then
-				logger "Creating ZFS reservation of ${RESSIZE} bytes"
-				zfs create -o reservation=${RESSIZE} pfSense/reservation
-			else
-				logger "Not enough space to create reservation;  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
+		zpool list -o name pfSense > /dev/null 2>&1 && ZPOOL=pfSense
+		zpool list -o name zroot > /dev/null 2>&1 && ZPOOL=zroot
+		if [ -n "${ZPOOL}" ]; then
+			zfs list -Hp -o name -t filesystem | grep -q ${ZPOOL}/reservation
+			if [ $? -ne 0 ]; then
+				AVAIL=$( zfs list -Hpo avail ${ZPOOL} )
+				RESSIZE=$( zfs list -Hpo avail,used ${ZPOOL} | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
+				if [ $(( ${AVAIL} / 2 )) -gt ${RESSIZE} ]; then
+					logger "Creating ZFS reservation of ${RESSIZE} bytes on ${ZPOOL}"
+					zfs create -o reservation=${RESSIZE} ${ZPOOL}/reservation
+				else
+					logger "Not enough space to create reservation on ${ZPOOL};  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
+				fi
 			fi
 		fi
 	fi

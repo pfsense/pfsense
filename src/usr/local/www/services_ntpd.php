@@ -34,7 +34,7 @@ require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 
-global $ntp_poll_min_default, $ntp_poll_max_default;
+global $ntp_poll_min_default, $ntp_poll_max_default, $ntp_server_types;
 $ntp_poll_values = system_ntp_poll_values();
 $auto_pool_suffix = "pool.ntp.org";
 $max_candidate_peers = 25;
@@ -79,7 +79,7 @@ if ($_POST) {
 	}
 
 	for ($i = 0; $i < NUMTIMESERVERS; $i++) {
-		if (isset($pconfig["servselect{$i}"]) && (isset($pconfig["servispool{$i}"]) || 
+		if (isset($pconfig["servselect{$i}"]) && (($pconfig["servistype{$i}"] == 'pool') || 
 		    (substr_compare($pconfig["server{$i}"], $auto_pool_suffix, strlen($pconfig["server{$i}"]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0))) {
 			$input_errors[] = gettext("It is not possible to use 'No Select' for pools.");
 		}
@@ -121,6 +121,7 @@ if ($_POST) {
 		unset($config['ntpd']['prefer']);
 		unset($config['ntpd']['noselect']);
 		unset($config['ntpd']['ispool']);
+		unset($config['ntpd']['ispeer']);
 		$timeservers = '';
 
 		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -133,8 +134,10 @@ if ($_POST) {
 				if (isset($_POST["servselect{$i}"])) {
 					$config['ntpd']['noselect'] .= "{$tserver} ";
 				}
-				if (isset($_POST["servispool{$i}"])) {
+				if ($_POST["servistype{$i}"] == 'pool') {
 					$config['ntpd']['ispool'] .= "{$tserver} ";
+				} elseif ($_POST["servistype{$i}"] == 'peer') {
+					$config['ntpd']['ispeer'] .= "{$tserver} ";
 				}
 			}
 		}
@@ -329,13 +332,20 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		isset($config['ntpd']['noselect']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['noselect'], $timeservers[$counter])
 	 ))->sethelp('No Select');
 
-	$group->add(new Form_Checkbox(
-		'servispool' . $counter,
+	if ((substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0) || (isset($config['ntpd']['ispool']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispool'], $timeservers[$counter]))) {
+		$servertype = 'pool';
+	} elseif (isset($config['ntpd']['ispeer']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispeer'], $timeservers[$counter])) {
+		$servertype = 'peer';
+	} else {
+		$servertype = 'server';
+	}
+
+	$group->add(new Form_Select(
+		'servistype' . $counter,
 		null,
-		null,
-		(substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0)
-		 || (isset($config['ntpd']['ispool']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispool'], $timeservers[$counter]))
-	 ))->sethelp('Is a Pool');
+		$servertype,
+		$ntp_server_types
+	 ))->sethelp('Type')->setWidth(2);
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
@@ -363,7 +373,7 @@ $section->addInput(new Form_StaticText(
 	'are configured and they disagree, %2$sneither%3$s will be believed. Options:%1$s' .
 	'%2$sPrefer%3$s - NTP should favor the use of this server more than all others.%1$s' .
 	'%2$sNo Select%3$s - NTP should not use this server for time, but stats for this server will be collected and displayed.%1$s' .
-	'%2$sIs a Pool%3$s - this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
+	'%2$sType%3$s - Server, Peer or a Pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
 	'<br />',
 	'<b>',
 	'</b>',

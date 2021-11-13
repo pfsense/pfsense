@@ -1621,7 +1621,7 @@ global $ntp_poll_min_value, $ntp_poll_max_value;
 global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
 global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
 global $ntp_poll_min_default, $ntp_poll_max_default;
-global $ntp_auth_halgos;
+global $ntp_auth_halgos, $ntp_server_types;
 $ntp_poll_min_value = 4;
 $ntp_poll_max_value = 17;
 $ntp_poll_min_default_gps = 4;
@@ -1634,6 +1634,11 @@ $ntp_auth_halgos = array(
 	'md5' => 'MD5',
 	'sha1' => 'SHA1',
 	'sha256' => 'SHA256'
+);
+$ntp_server_types = array(
+	'server' => 'Server',
+	'pool' => 'Pool',
+	'peer' => 'Peer'
 );
 
 function system_ntp_poll_values() {
@@ -1996,7 +2001,11 @@ function system_ntp_configure() {
 			$ntpcfg .= 'pool ';
 			$have_pools = true;
 		} else {
-			$ntpcfg .= 'server ';
+			if (substr_count($config['ntpd']['ispeer'], $ts)) {
+				$ntpcfg .= 'peer ';
+			} else {
+				$ntpcfg .= 'server ';
+			}
 			if ($config['ntpd']['dnsresolv'] == 'inet') {
 				$ntpcfg .= '-4 ';
 			} elseif ($config['ntpd']['dnsresolv'] == 'inet6') {
@@ -2004,7 +2013,10 @@ function system_ntp_configure() {
 			}
 		}
 
-		$ntpcfg .= "{$ts} iburst";
+		$ntpcfg .= "{$ts}";
+		if (!substr_count($config['ntpd']['ispeer'], $ts)) {
+			$ntpcfg .= " iburst";
+		}
 
 		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['ntpminpoll'], $ntp_poll_min_default);
 		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['ntpmaxpoll'], $ntp_poll_max_default);

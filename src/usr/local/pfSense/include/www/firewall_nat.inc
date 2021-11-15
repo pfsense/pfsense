@@ -319,6 +319,13 @@ function saveNATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("The submitted interface does not exist.");
 	}
 
+	if ((($post['natreflection'] == "purenat") || ($post['natreflection'] == "enable") ||
+	    (($post['natreflection'] == "default") && !isset($config['system']['disablenatreflection']))) &&
+	    ((is_specialnet($post['interface']) || is_interface_group($post['interface'])) &&
+	    in_array($post['dst'], array('any', '0.0.0.0', '::')))) {
+		$input_errors[] = gettext("The submitted interface does not support the 'Any' destination type with enabled NAT reflection.");
+	}
+
 	if (!isset($post['nordr']) && $post['localip'] &&
 	    !is_ipaddroralias($post['localip']) && !is_specialnet($post['localtype'])) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $post['localip']);

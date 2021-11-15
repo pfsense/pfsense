@@ -2557,7 +2557,9 @@ function filter_nat_rules_generate() {
 				continue; // Skip port forward if no destination address found
 			}
 			$dstaddr_reflect = $dstaddr;
-			if (isset($rule['destination']['any'])) {
+			if (isset($rule['destination']['any']) && 
+			    ((!isset($rule['natreflection']) && !isset($config['system']['disablenatreflection'])) ||
+			    ($rule['natreflection'] == "purenat") || ($rule['natreflection'] == "enable"))) { 
 				/* With reflection enabled, destination of 'any' has side effects
 				 * that most people would not expect, so change it on reflection rules. */
 

@@ -214,6 +214,10 @@ function restore_backup($file) {
 			restore_rrddata($conf);
 			$data = clear_tagdata("rrd", $data);
 		}
+		if ($conf['sshdata']) {
+			restore_sshdata($conf);
+			$data = clear_tagdata("ssh", $data);
+		}
 		foreach ($g['backuppath'] as $bk => $path) {
 			if (!empty($conf[$bk][$bk.'data'])) {
 				restore_xmldatafile($bk, $conf);
@@ -314,6 +318,22 @@ function restore_rrddata($conf = false) {
 				log_error(sprintf(gettext("fclose %s failed"), $rrd_file));
 				continue;
 			}
+		}
+	}
+}
+
+function restore_sshdata($conf = false) {
+	global $config, $sshConfigDir;
+
+	if (!$conf) {
+		$conf = & $config;
+	}
+
+	foreach ($conf["sshdata"]["sshkeyfile"] as $sshkey) {
+		$keypath = "{$sshConfigDir}/{$sshkey['filename']}";
+		if (file_put_contents($keypath, gzinflate(base64_decode($sshkey['xmldata']))) === false) {
+			log_error(sprintf(gettext("Cannot write %s"), $sshkey['filename']));
+			continue;
 		}
 	}
 }

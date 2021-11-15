@@ -347,4 +347,14 @@ $ipsec_filter_sysctl = array(
 
 global $vpn_and_ppp_ifs;
 $vpn_and_ppp_ifs = array("l2tp", "pppoe", "enc0", "openvpn");
+
+global $ssh_keys;
+$ssh_keys = array(
+	array('type' => 'rsa',     'suffix' => 'rsa_'),
+	array('type' => 'ed25519', 'suffix' => 'ed25519_')
+);
+
+global $sshConfigDir;
+$sshConfigDir = "/etc/ssh";
+
 ?>

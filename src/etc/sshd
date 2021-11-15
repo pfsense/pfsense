@@ -28,19 +28,14 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("shaper.inc");
 
+global $config, $ssh_keys, $sshConfigDir;
+
 if (!isset($config['system']['ssh']['enable'])) {
 	return;
 }
 
-$sshConfigDir = "/etc/ssh";
-
-$keys = array(
-	array('type' => 'rsa',     'suffix' => 'rsa_'),
-	array('type' => 'ed25519', 'suffix' => 'ed25519_')
-);
-
 $keyfiles = array();
-foreach ($keys as $key) {
+foreach ($ssh_keys as $key) {
 	$keyfiles[] = "ssh_host_{$key['suffix']}key";
 	$keyfiles[] = "ssh_host_{$key['suffix']}key.pub";
 }
@@ -80,7 +75,7 @@ $sshconf .= "KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exc
 $sshconf .= "Port $sshport\n";
 /* Only allow protocol 2, because we say so */
 $sshconf .= "Protocol 2\n";
-foreach ($keys as $key) {
+foreach ($ssh_keys as $key) {
 	$sshconf .= "HostKey {$sshConfigDir}/ssh_host_{$key['suffix']}key\n";
 }
 $sshconf .= "Compression delayed\n";
@@ -152,13 +147,13 @@ if ($config['ssh']['dsa_key'] <> "") {
 
 /* are we already running?  if so exit */
 if (is_subsystem_dirty('sshdkeys')) {
-	unset($keys, $keyfiles);
+	unset($keyfiles);
 	return;
 }
 
 // Check for all needed key files. If any are missing, the keys need to be regenerated.
 $generate_keys = array();
-foreach ($keys as $key) {
+foreach ($ssh_keys as $key) {
 	if (!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key") ||
 	    !file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
 		$generate_keys[] = $key;
@@ -192,5 +187,5 @@ if ($status <> 0) {
 	echo "done.\n";
 }
 
-unset($keys, $keyfiles);
+unset($keyfiles);
 ?>

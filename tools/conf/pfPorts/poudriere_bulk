@@ -53,6 +53,7 @@ net/%%PRODUCT_NAME%%-pkg-pimd
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/%%PRODUCT_NAME%%-pkg-WireGuard
 net/hping
+net/librdkafka
 net/mosh
 net/py-speedtest-cli
 net/trafshow

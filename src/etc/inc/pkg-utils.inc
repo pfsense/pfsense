@@ -1327,6 +1327,10 @@ function get_base_pkg_name() {
 function get_system_pkg_version($baseonly = false, $use_cache = true) {
 	global $g;
 
+	if (!check_dnsavailable()) {
+		return false;
+	}
+
 	$cache_file = $g['version_cache_file'];
 	$rc_file = $cache_file . '.rc';
 

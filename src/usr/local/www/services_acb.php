@@ -228,7 +228,8 @@ if ($_REQUEST['download']) {
 }
 
 // $confvers must be populated viewing info but there were errors
-if ( !($_REQUEST['download']) || $input_errors) {
+$confvers = array();
+if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable()) {
 	// Populate available backups
 	$curl_session = curl_init();
 
@@ -259,8 +260,6 @@ if ( !($_REQUEST['download']) || $input_errors) {
 
 	// Loop through and create new confvers
 	$data_split = explode("\n", $data);
-
-	$confvers = array();
 
 	foreach ($data_split as $ds) {
 		$ds_split = explode($exp_sep, $ds);

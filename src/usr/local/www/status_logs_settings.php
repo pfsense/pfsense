@@ -362,7 +362,7 @@ $section->addInput(new Form_Checkbox(
 	'Local Logging',
 	"Disable writing log files to the local disk",
 	$pconfig['disablelocallogging']
-));
+))->setHelp('WARNING: This will also disable Login Protection!');
 
 $section->addInput(new Form_Checkbox(
 	'logconfigchanges',

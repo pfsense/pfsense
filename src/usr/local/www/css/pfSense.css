@@ -1056,3 +1056,11 @@ text underline, but text-color, background, font etc. could also be used */
 .element-required {
     box-shadow: inset 0 0px 0 white, inset 0 -1px 0 black
 }
+
+.traffic-hosts .numeric {
+    text-align: right;
+}
+
+.traffic-hosts .speed-G .number, .traffic-hosts .speed-M .number {
+    font-weight: bold;
+}

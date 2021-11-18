@@ -37,6 +37,8 @@ if (!does_interface_exist($real_interface)) {
 	return;
 }
 
+$has_dhcp = is_dhcp_server_enabled_on_interface($interface);
+
 $intip = find_interface_ip($real_interface);
 $intip6 = find_interface_ipv6($real_interface);
 //get interface subnet
@@ -54,11 +56,13 @@ if ($filter == "") {
 
 if ($filter == "local") {
 	$ratesubnet = "-c " . $intsubnet;
+	$iftopParam = $has_dhcp ? "hidesource" : "all";
 } else {
 	// Tell the rate utility to consider the whole internet (0.0.0.0/0)
 	// and to consider local "l" traffic - i.e. traffic within the whole internet
 	// then we can filter the resulting output as we wish below.
 	$ratesubnet = "-lc 0.0.0.0/0";
+	$iftopParam = ($filter == "all" || !$has_dhcp) ? "all" : "hidedestination";
 }
 
 //get the sort method
@@ -114,27 +118,54 @@ if ($hostipformat != "") {
 	}
 }
 
+$tryToResolveHostAssignmentFromStaticRouteSubnets = function(string $ip, bool $shortenIp): string {
+	global $config;
+	if ($ip) {
+		$routes = $config['staticroutes']['route'];
+		foreach ($routes as $route) {
+			if (ip_in_subnet($ip, $route['network'])) {
+				if ($shortenIp && preg_match('~([0-9]{1,3}\.[0-9]{1,3}|[0-9a-f]{1,4})[:]*$~i', $ip, $match)) {
+					$shortIpIdent = $match[1];
+				}
+				return ($shortIpIdent ?? $ip) . '@' . ($route['descr'] ?: $route['gateway']);
+			}
+		}
+	}
+	return $ip;
+};
+
+$format_bits = function (string $num): string {
+	$units = array('', 'k', 'M', 'G', 'T');
+
+	$i = 0;
+	while ($num >= 1000 && $i < count($units)) {
+		$num /= 1000;
+		$i++;
+	}
+	$precision = $i > 0 ? 1 : 0;
+	$num = number_format($num, $precision, '.', '');
+
+	return ("$num {$units[$i]}");
+};
 
 //get the mode
 $mode = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
 if ($mode == "iftop") {
 	$current_ts = time();
-	if ( file_exists("/var/run/iftop_{$real_interface}.pid") ) {
-		$statPID = stat("/var/run/iftop_{$real_interface}.pid");
-		$since = $current_ts - $statPID['mtime'];
-		if ( $since < 5 && file_exists("/var/db/iftop_{$real_interface}.log") ) {
-			$listedIPs=file("/var/db/iftop_{$real_interface}.log");
-		} else {
-			if ( isvalidpid("/var/run/iftop_{$real_interface}.pid") ) {
-				killbypid("/var/run/iftop_{$real_interface}.pid");
-			}
-			unlink ( "/var/run/iftop_{$real_interface}.pid" );
-			$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
-		}
-	} else {
-		// refresh iftop infos
-		$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
+	$pidFile = "/var/run/iftop/{$real_interface}_{$iftopParam}.pid";
+	$dataFile = "/var/tmp/iftop/{$real_interface}_{$iftopParam}.txt";
+
+	$since = null;
+	if (file_exists($pidFile)) {
+		$since = $current_ts - filemtime($pidFile);
 	}
+
+	$dataExists = file_exists($dataFile);
+	if (!$since || $since >= 3 || !$dataExists) {
+		$_grb = exec("/usr/local/bin/iftop_parser.sh {$real_interface} {$iftopParam} 1>/dev/null 2>&1 &");
+	}
+
+	$listedIPs = $dataExists ? file($dataFile) : [];
 
 	// order and group by
 	$arr_in = array();
@@ -167,7 +198,7 @@ if ($mode == "iftop") {
 	$listedIPs[] = "";
 	$listedIPs[] = "";
 	foreach ($arrIP as $k => $ip) {
-		$listedIPs[] = $ip.";".format_number($arr_in[$ip],2).";".format_number($arr_out[$ip],2);
+		$listedIPs[] = $ip . ";" . $format_bits($arr_in[$ip]) . ";" . $format_bits($arr_out[$ip]);
 	}
 
 } else {
@@ -176,6 +207,11 @@ if ($mode == "iftop") {
 
 
 $someinfo = false;
+$formatNumericRate = function(string &$value): void {
+	// rate and iftop output format is inconsistent, unify it
+	$value = preg_replace('~^([\d.]+)[ ]?([a-z]?)$~i', '\\1 \\2', $value);
+};
+
 for ($x=2; $x<12; $x++) {
 
 	$bandwidthinfo = $listedIPs[$x];
@@ -184,6 +220,9 @@ for ($x=2; $x<12; $x++) {
 	$emptyinfocounter = 1;
 	if ($bandwidthinfo != "") {
 		$infoarray = explode (";", $bandwidthinfo);
+		if ($infoarray[0] == '*') {
+			continue;
+		}
 		if (($filter == "all") ||
 		    (($filter == "local") && ((ip_in_subnet($infoarray[0], $intsubnet)) || (ip_in_subnet($infoarray[0], $intsubnet6)))) ||
 		    (($filter == "remote") && ((!ip_in_subnet($infoarray[0], $intsubnet)) || (!ip_in_subnet($infoarray[0], $intsubnet6))))) {
@@ -205,9 +244,14 @@ for ($x=2; $x<12; $x++) {
 							$name_array = explode(".", $addrdata);
 							$addrdata = $name_array[0];
 						}
+					} else {
+						$addrdata = $tryToResolveHostAssignmentFromStaticRouteSubnets($infoarray[0], $hostipformat != "fqdn");
 					}
 				}
 			}
+
+			$formatNumericRate($infoarray[1]);
+			$formatNumericRate($infoarray[2]);
 			//print host information;
 			echo $addrdata . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
 

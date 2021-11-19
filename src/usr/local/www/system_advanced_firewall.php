@@ -44,11 +44,6 @@ $pconfig = getSystemAdvancedFirewall();
 $old_maximumtableentries = $pconfig['maximumtableentries'];
 $old_aliasesresolveinterval = $pconfig['aliasesresolveinterval'];
 
-$show_reboot_msg = false;
-$reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
-    'been changed to a value bigger than system can support without a ' .
-    'reboot.\n\nReboot now ?');
-
 $pftimeouts = get_pf_timeouts();
 
 // Validate/save new settings
@@ -469,10 +464,6 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setOptText($('#optimization').val())
-
-	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
-		postSubmit({override : 'yes'}, 'diag_reboot.php')
-	}
 
 });
 //]]>

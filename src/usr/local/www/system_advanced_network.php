@@ -349,7 +349,7 @@ events.push(function() {
 	showHideIpv6duid();
 
 	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
-		postSubmit({override : 'yes'}, 'diag_reboot.php')
+		postSubmit({rebootmode : 'Reboot', Submit: 'Yes'}, 'diag_reboot.php')
 	}
 
 });

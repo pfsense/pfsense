@@ -167,7 +167,7 @@ if ($_REQUEST['newver'] != "") {
 			<br />
 		<form action="diag_reboot.php" method="post">
 			Reboot the firewall to full activate changes?
-			<input name="override" type="hidden" value="yes" />
+			<input name="rebootmode" type="hidden" value="Reboot" />
 			<input name="Submit" type="submit" class="formbtn" value=" Yes " />
 		</form>
 EOF;

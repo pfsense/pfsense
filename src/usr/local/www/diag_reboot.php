@@ -48,8 +48,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 $platform = system_identify_specific_platform();
 include("head.inc");
 
-if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
-    ($_POST['override'] != "yes"))):
+if ($_SERVER['REQUEST_METHOD'] == 'POST'):
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
@@ -154,19 +153,6 @@ $form->addGlobal(new Form_Button(
 ))->addClass('btn-primary');
 
 print $form;
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	//If we have been called with $_POST['override'] == "yes", then just reload the page to simulate the user clicking "Reboot"
-	if ( "<?=$_POST['override']?>" == "yes") {
-		$('form').submit();
-	}
-});
-//]]>
-</script>
-<?php
 
 endif;
 

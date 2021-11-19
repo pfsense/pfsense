@@ -422,7 +422,7 @@ $use_mfs_tmpvar_changed = $rebootneeded;
 events.push(function() {
 	// Has the Use ramdisk checkbox changed state?
 	if (<?=(int)$use_mfs_tmpvar_changed?> && confirm("<?=$ramdisk_msg?>")) {
-		postSubmit({override : 'yes'}, 'diag_reboot.php')
+		postSubmit({rebootmode : 'Reboot', Submit: 'Yes'}, 'diag_reboot.php')
 	}
 
 	// source track timeout field is disabled if sticky connections not enabled

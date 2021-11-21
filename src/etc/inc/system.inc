@@ -1622,7 +1622,7 @@ global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
 global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
 global $ntp_poll_min_default, $ntp_poll_max_default;
 global $ntp_auth_halgos, $ntp_server_types;
-$ntp_poll_min_value = 4;
+$ntp_poll_min_value = 3;
 $ntp_poll_max_value = 17;
 $ntp_poll_min_default_gps = 4;
 $ntp_poll_max_default_gps = 4;

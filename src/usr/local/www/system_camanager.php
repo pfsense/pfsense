@@ -598,7 +598,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'randomserial',
 	'Randomize Serial',
-	'Use random serial numbers when signing certifices',
+	'Use random serial numbers when signing certificates',
 	$pconfig['randomserial']
 ))->setHelp('When enabled, if this CA is capable of signing certificates then ' .
 		'serial numbers for certificates signed by this CA will be ' .

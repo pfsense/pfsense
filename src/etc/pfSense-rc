@@ -59,6 +59,11 @@ echo "Configuring crash dumps..."
 /etc/rc.dumpon
 
 if [ -e /root/force_growfs ]; then
+	/sbin/zpool status pfSense | grep -q mmcsd0 > /dev/null
+	if [ $? -eq 0 ]; then
+		echo "Clearing ZFS label before expanding"
+		/sbin/zpool labelclear /dev/mmcsd0
+	fi
 	/etc/rc.d/growfs onestart
 fi
 

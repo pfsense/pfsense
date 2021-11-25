@@ -77,8 +77,9 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['network'] && !is_ipaddr($_POST['network']) && !is_alias($_POST['network']))) {
-		$input_errors[] = gettext("A valid IPv4 or IPv6 destination network must be specified.");
+	if ($_POST['network'] && !is_ipaddr($_POST['network']) &&
+	    (!is_alias($_POST['network']) || !in_array(alias_get_type($_POST['network']), array('host', 'network', 'url')))) {
+		$input_errors[] = gettext("A valid IPv4 or IPv6 destination network or an alias must be specified.");
 	}
 	if (($_POST['network_subnet'] && !is_numeric($_POST['network_subnet']))) {
 		$input_errors[] = gettext("A valid destination network bit count must be specified.");
@@ -122,9 +123,6 @@ if ($_POST['save']) {
 			if (!is_subnet($tgt)) {
 				continue;
 			}
-			if (!is_subnetv6($tgt)) {
-				continue;
-			}
 			$new_targets[] = $tgt;
 		}
 	}
@@ -132,29 +130,21 @@ if ($_POST['save']) {
 		$id = count($a_routes);
 	}
 	$oroute = $a_routes[$id];
-	$old_targets = array();
 	if (!empty($oroute)) {
-		if (is_alias($oroute['network'])) {
-			foreach (filter_expand_alias_array($oroute['network']) as $tgt) {
-				if (is_ipaddrv4($tgt)) {
-					$tgt .= "/32";
-				} else if (is_ipaddrv6($tgt)) {
-					$tgt .= "/128";
-				}
-				if (!is_subnet($tgt)) {
-					continue;
-				}
-				$old_targets[] = $tgt;
-			}
-		} else {
-			$old_targets[] = $oroute['network'];
+		if (file_exists("{$g['tmp_path']}/staticroute_{$id}")) {
+			$old_targets = unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}"));
+		}
+		if (file_exists("{$g['tmp_path']}/staticroute_{$id}_gw")) {
+			$old_gateway = unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}_gw"));
 		}
 	}
 
-	$overlaps = array_intersect($current_targets, $new_targets);
-	$overlaps = array_diff($overlaps, $old_targets);
-	if (count($overlaps)) {
-		$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
+	if (!empty($old_targets)) {
+		$overlaps = array_intersect($current_targets, $new_targets);
+		$overlaps = array_diff($overlaps, $old_targets);
+		if (count($overlaps)) {
+			$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
+		}
 	}
 
 	if (is_array($config['interfaces'])) {
@@ -194,7 +184,14 @@ if ($_POST['save']) {
 		$a_routes[$id] = $route;
 
 		if (!empty($oroute)) {
-			$delete_targets = array_diff($old_targets, $new_targets);
+			$rgateway = $route[0]['gateway'];
+			if (!empty($old_gateway) && ($rgateway != $old_gateway)) {
+				$delete_targets = $old_targets;
+				$delgw = lookup_gateway_ip_by_name($old_gateway);
+			} else {
+				$delete_targets = array_diff($old_targets, $new_targets);
+				$delgw = lookup_gateway_ip_by_name($rgateway);
+			}
 			if (count($delete_targets)) {
 				foreach ($delete_targets as $dts) {
 					if (is_ipaddrv6($dts)) {
@@ -204,14 +201,12 @@ if ($_POST['save']) {
 					if (!count($route)) {
 						continue;
 					}
-					$rgateway = $route[0]['gateway'];
 					$toapplylist[] = "/sbin/route delete " .
-					    $family . " " . $dts . $rgateway;
+					    $family . " " . $dts . " " . $delgw;
 				}
 			}
 		}
-		file_put_contents("{$g['tmp_path']}/.system_routes.apply",
-		    serialize($toapplylist));
+		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
 
 		mark_subsystem_dirty('staticroutes');
 

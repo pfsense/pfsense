@@ -187,6 +187,30 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 	}
 }
 
+function staticrouteAlias($id) {
+	global $config;
+
+	init_config_arr(array('aliases', 'alias'));
+	$a_aliases = &$config['aliases']['alias'];
+
+	$alarm_message = "";
+	$is_alias_referenced = false;
+	$referenced_by = array();
+	$alias_name = $a_aliases[$id]['name'];
+
+	if ($a_aliases[$id]['type'] != 'host') {
+		return false;
+	}
+
+	find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
+
+	if ($is_alias_referenced) {
+		$alarm_message = sprintf(gettext("Alias is used in static routes. Pressing save will reload static routes: %s."), htmlspecialchars(implode(", ", $referenced_by)));
+	}
+
+	return $alarm_message;
+}
+
 function alias_same_type($name, $type) {
 	global $config;
 
@@ -208,7 +232,7 @@ function alias_same_type($name, $type) {
 }
 
 function saveAlias($post, $id) {
-	global $config, $pf_reserved_keywords, $reserved_table_names, $pconfig, $aliastable;
+	global $config, $g, $pf_reserved_keywords, $reserved_table_names, $pconfig, $aliastable;
 
 	$origname = $post['origname'];
 	$reserved_ifs = get_configured_interface_list(true);
@@ -625,8 +649,8 @@ function saveAlias($post, $id) {
 
 		write_config(gettext("Edited a firewall alias."));
 
-		/* restart related OpenVPN instances
-		 * see https://redmine.pfsense.org/issues/2668 */
+		/* restart related OpenVPN instances, see https://redmine.pfsense.org/issues/2668
+		 * reload related static routes, see https://redmine.pfsense.org/issues/7547 */
 		if (in_array($alias['type'], array('host', 'network', 'url'))) {
 			$config = parse_config(true);
 			init_config_arr(array('openvpn', 'openvpn-server'));
@@ -657,6 +681,33 @@ function saveAlias($post, $id) {
 							}
 						}
 					}
+				}
+			}
+
+			init_config_arr(array('staticroutes', 'route'));
+			$srid = 0;
+			foreach ($config['staticroutes']['route'] as $sroute) {
+				if (!isset($sroute['disabled']) &&
+				    ($alias['name'] == $sroute['network'])) {
+					delete_static_route($srid);
+					$reload_static_route = true;
+				}
+				$srid++;
+			}
+			if ($reload_static_route && file_exists("{$g['tmp_path']}/.system_routes.apply")) {
+				$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+				foreach ($toapplylist as $toapply) {
+					mwexec("{$toapply}");
+				}
+				@unlink("{$g['tmp_path']}/.system_routes.apply");
+
+				$retval |= system_routing_configure();
+				$retval |= filter_configure();
+				/* reconfigure our gateway monitor */
+				setup_gateways_monitor();
+
+				if ($retval == 0) {
+					clear_subsystem_dirty('staticroutes');
 				}
 			}
 		}

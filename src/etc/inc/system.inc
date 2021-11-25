@@ -1041,6 +1041,32 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			}
 		}
 		unset($gateways_arr);
+
+		/* keep static routes cache,
+		 * see https://redmine.pfsense.org/issues/11599 */
+		$id = 0;
+		foreach ($config['staticroutes']['route'] as $sroute) {
+			$targets = array();
+			if (is_subnet($sroute['network'])) {
+				$targets[] = $sroute['network'];
+			} elseif (is_alias($sroute['network'])) {
+				foreach (preg_split('/\s+/', $aliastable[$sroute['network']]) as $tgt) {
+					if (is_ipaddrv4($tgt)) {
+						$tgt .= "/32";
+					}
+					if (is_ipaddrv6($tgt)) {
+						$tgt .= "/128";
+					}
+					if (!is_subnet($tgt)) {
+						continue;
+					}
+					$targets[] = $tgt;
+				}
+			}
+			file_put_contents("{$g['tmp_path']}/staticroute_{$id}", serialize($targets));
+			file_put_contents("{$g['tmp_path']}/staticroute_{$id}_gw", serialize($sroute['gateway']));
+			$id++;
+		}
 	}
 	unset($static_routes);
 
@@ -1068,6 +1094,52 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 	unset($filterdns_list);
 
 	return 0;
+}
+
+function delete_static_route($id, $delete = false) {
+	global $g, $config, $changedesc_prefix, $a_gateways;
+
+	if (!isset($config['staticroutes']['route'][$id])) {
+		return;
+	}
+
+	if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
+		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+	} else {
+		$toapplylist = array();
+	}
+
+	if (file_exists("{$g['tmp_path']}/staticroute_{$id}") &&
+	    file_exists("{$g['tmp_path']}/staticroute_{$id}_gw")) {
+		$delete_targets = unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}"));
+		$delgw = lookup_gateway_ip_by_name(unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}_gw")));
+		if (count($delete_targets)) {
+			foreach ($delete_targets as $dts) {
+				if (is_ipaddrv6($dts)) {
+					$family = "-inet6";
+				} else {
+					$family = "-inet";
+				}
+				$route = route_get($dts, '', true);
+				if (!count($route)) {
+					continue;
+				}
+				$toapplylist[] = "/sbin/route delete " .
+				    $family . " " . $dts . " " . $delgw;
+			}
+		}
+	}
+
+	if ($delete) {
+		unlink_if_exists("{$g['tmp_path']}/staticroute_{$id}");
+		unlink_if_exists("{$g['tmp_path']}/staticroute_{$id}_gw");
+	}
+
+	if (!empty($toapplylist)) {
+		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
+	}
+
+	unset($targets);
 }
 
 function system_routing_enable() {

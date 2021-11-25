@@ -66,44 +66,13 @@ if ($_POST['apply']) {
 	}
 }
 
-function delete_static_route($id) {
-	global $config, $a_routes, $changedesc_prefix, $a_gateways;
-
-	if (!isset($a_routes[$id])) {
-		return;
-	}
-
-	$targets = array();
-	if (is_alias($a_routes[$id]['network'])) {
-		foreach (filter_expand_alias_array($a_routes[$id]['network']) as
-		    $tgt) {
-			if (is_ipaddrv4($tgt)) {
-				$tgt .= "/32";
-			} else if (is_ipaddrv6($tgt)) {
-				$tgt .= "/128";
-			}
-			if (!is_subnet($tgt)) {
-				continue;
-			}
-			$targets[] = $tgt;
-		}
-	} else {
-		$targets[] = $a_routes[$id]['network'];
-	}
-
-	foreach ($targets as $tgt) {
-		route_del($tgt);
-	}
-
-	unset($targets);
-}
-
 if ($_POST['act'] == "del") {
 	if ($a_routes[$_POST['id']]) {
 		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to %s"), $a_routes[$_POST['id']]['network']);
-		delete_static_route($_POST['id']);
+		delete_static_route($_POST['id'], true);
 		unset($a_routes[$_POST['id']]);
 		write_config($changedesc);
+		mark_subsystem_dirty('staticroutes');
 		header("Location: system_routes.php");
 		exit;
 	}
@@ -115,21 +84,20 @@ if (isset($_POST['del_x'])) {
 		$deleted_routes = "";
 		foreach ($_POST['route'] as $routei) {
 			$deleted_routes .= " " . $a_routes[$routei]['network'];
-			delete_static_route($routei);
+			delete_static_route($routei, true);
 			unset($a_routes[$routei]);
 		}
 		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to%s"), $deleted_routes);
 		write_config($changedesc);
+		mark_subsystem_dirty('staticroutes');
 		header("Location: system_routes.php");
 		exit;
 	}
-
 }
 
 if ($_POST['act'] == "toggle") {
 	if ($a_routes[$_POST['id']]) {
 		$do_update_config = true;
-		$route_del = false;
 		if (isset($a_routes[$_POST['id']]['disabled'])) {
 			// Do not enable a route whose gateway is disabled
 			if (isset($a_gateways[$a_routes[$_POST['id']]['gateway']]['disabled'])) {
@@ -140,7 +108,6 @@ if ($_POST['act'] == "toggle") {
 				$changedesc = $changedesc_prefix . sprintf(gettext("enabled route to %s"), $a_routes[$_POST['id']]['network']);
 			}
 		} else {
-			$route_del = true;
 			delete_static_route($_POST['id']);
 			$a_routes[$_POST['id']]['disabled'] = true;
 			$changedesc = $changedesc_prefix . sprintf(gettext("disabled route to %s"), $a_routes[$_POST['id']]['network']);
@@ -148,9 +115,7 @@ if ($_POST['act'] == "toggle") {
 
 		if ($do_update_config) {
 			if (write_config($changedesc)) {
-				if (!$route_del) {
-					mark_subsystem_dirty('staticroutes');
-				}
+				mark_subsystem_dirty('staticroutes');
 			}
 			header("Location: system_routes.php");
 			exit;

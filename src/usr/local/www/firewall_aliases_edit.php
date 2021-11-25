@@ -106,6 +106,7 @@ if ($dup) {
 	unset($id);
 } else {
 	$openvpnuse = openvpnAlias($id);
+	$staticrouteuse = staticrouteAlias($id);
 }
 
 if ($_POST['save']) {
@@ -255,6 +256,9 @@ if ($input_errors) {
 
 if ($openvpnuse) {
 	print_info_box($openvpnuse);
+}
+if ($staticrouteuse) {
+	print_info_box($staticrouteuse);
 }
 
 $form = new Form;

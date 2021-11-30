@@ -32,9 +32,6 @@ $cert_types = array(
 	"user" => "User Certificate"
 );
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
 init_config_arr(array('cert'));
 $a_cert = &$config['cert'];
 
@@ -43,9 +40,25 @@ $a_cert = &$config['cert'];
 // This code was previously in /usr/local/www/system_certmanager.php but was moved here so
 // other processes can access it. (MVC)
 function getCertData($html = true) {
-	global $a_cert, $a_ca, $cert_types;
-	
+	global $a_cert;
+
 	$certificates = array();
+	$idx = 0;
+	foreach ($a_cert as $cert) {
+		if (is_array($cert) && !empty($cert)) {
+			$certificates[] = parseCert($idx, $html);
+		}
+
+		$idx++;
+	}
+
+	return $certificates;
+}
+
+function parseCert($idx, $html) {
+	global $cert_types, $a_cert;
+
+	$cert = $a_cert[$idx];
 
     // Optionally eliminate the HTML tags
     $em = $notem = $ital = $notital = $bold = $notbold = ""; $br = "\n";
@@ -64,102 +77,94 @@ function getCertData($html = true) {
 	$pluginparams['type'] = 'certificates';
 	$pluginparams['event'] = 'used_certificates';
 	$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+	$name = htmlspecialchars($cert['descr']);
 
-	foreach ($a_cert as $cert) {
-		if (!is_array($cert) || empty($cert)) {
-			continue;
+	if ($cert['crt']) {
+		$subj = cert_get_subject($cert['crt']);
+		$issuer = cert_get_issuer($cert['crt']);
+		$purpose = cert_get_purpose($cert['crt']);
 
-		$name = htmlspecialchars($cert['descr']);
-
-		if ($cert['crt']) {
-			$subj = cert_get_subject($cert['crt']);
-			$issuer = cert_get_issuer($cert['crt']);
-			$purpose = cert_get_purpose($cert['crt']);
-	
-			if ($subj == $issuer) {
-				$caname = $ital . gettext("self-signed") . $notital;
-			} else {
-				$caname = $ital. gettext("external"). $notital;
-			}
-	
-			$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
+		if ($subj == $issuer) {
+			$caname = $ital . gettext("self-signed") . $notital;
 		} else {
-			$subj = "";
-			$issuer = "";
-			$purpose = "";
-			$startdate = "";
-			$enddate = "";
-			$caname = $em . gettext("private key only") . $notem;
-		}
-	
-		if ($cert['csr']) {
-			$subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
-			$caname = $em . gettext("external - signature pending") . $notem;
-		}
-	
-		$ca = lookup_ca($cert['caref']);
-		if ($ca) {
-			$caname = $ca['descr'];
+			$caname = $ital. gettext("external"). $notital;
 		}
 
-		$cinfo = array();
-
-		$cinfo['name'] = $name . $br;
-		if ($cert['type']) {
-			$cinfo['name'] .= ($ital . $cert_types[$cert['type']] . $notital . $rb);
-		}
-
-		if (is_array($purpose)) {
-			$cinfo['name'] .= ("CA: " . $bold . $purpose['ca'] . $notbold . $br . gettext("Server") . ": " . $bold . $purpose['server'] . $notbold . $br);
-		}
-
-		$cinfo['issuer'] = $caname;
-		$cinfo['subj'] = $subj;
-		$cinfo['info'] = cert_print_infoblock($cert);
-		$cinfo['dates'] = cert_print_dates($cert);
-		$cinfo['refid'] = $cert['refid'];
-		$cinfo['csr'] = $cert['csr'];
-		$cinfo['prv'] = $cert['prv'];
-
-		$cinfo['inuse'] = "";
-		if (is_cert_revoked($cert)) {
-			$cinfo['inuse'] .= ($ital . gettext("Revoked") . $notital);
-		}
-
-		if (is_webgui_cert($cert['refid'])) {
-			$cinfo['inuse'] .= gettext("webConfigurator");
-		}
-
-		if (is_user_cert($cert['refid'])) {
-			$cinfo['inuse'] .= gettext("User Cert");
-		}
-
-		if (is_openvpn_server_cert($cert['refid'])) {
-			$cinfo['inuse'] .= gettext("OpenVPN Server");
-		}
-
-		if (is_openvpn_client_cert($cert['refid'])) {
-			$cinfo['inuse'] .= gettext("OpenVPN Client");
-		}
-
-		if (is_ipsec_cert($cert['refid'])) {
-			$cinfo['inuse'] .= gettext("IPsec Tunnel");
-		}
-
-		if (is_captiveportal_cert($cert['refid'])) {
-			$cinfo['inuse'] .= gettext("Captive Portal");
-		}
-
-		if (is_unbound_cert($cert['refid'])) {
-			$cinfo['inuse'] .= gettext("DNS Resolver");
-		}
-
-		$cinfo['inuse'] .= cert_usedby_description($cert['refid'], $certificates_used_by_packages);
-
-		
+		$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
+	} else {
+		$subj = "";
+		$issuer = "";
+		$purpose = "";
+		$startdate = "";
+		$enddate = "";
+		$caname = $em . gettext("private key only") . $notem;
 	}
 
-	return $certificates;
+	if ($cert['csr']) {
+		$subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
+		$caname = $em . gettext("external - signature pending") . $notem;
+	}
+
+	$ca = lookup_ca($cert['caref']);
+	if ($ca) {
+		$caname = $ca['descr'];
+	}
+
+	$cinfo = array();
+
+	$cinfo['name'] = $name . $br;
+	if ($cert['type']) {
+		$cinfo['name'] .= ($ital . $cert_types[$cert['type']] . $notital . $rb);
+	}
+
+	if (is_array($purpose)) {
+		$cinfo['name'] .= ("CA: " . $bold . $purpose['ca'] . $notbold . $br . gettext("Server") . ": " . $bold . $purpose['server'] . $notbold . $br);
+	}
+
+	$cinfo['issuer'] = $caname;
+	$cinfo['subj'] = $subj;
+	$cinfo['info'] = cert_print_infoblock($cert);
+	$cinfo['dates'] = cert_print_dates($cert);
+	$cinfo['refid'] = $cert['refid'];
+	$cinfo['csr'] = $cert['csr'];
+	$cinfo['prv'] = $cert['prv'];
+
+	$cinfo['inuse'] = "";
+	if (is_cert_revoked($cert)) {
+		$cinfo['inuse'] .= ($ital . gettext("Revoked") . $notital);
+	}
+
+	if (is_webgui_cert($cert['refid'])) {
+		$cinfo['inuse'] .= gettext("webConfigurator");
+	}
+
+	if (is_user_cert($cert['refid'])) {
+		$cinfo['inuse'] .= gettext("User Cert");
+	}
+
+	if (is_openvpn_server_cert($cert['refid'])) {
+		$cinfo['inuse'] .= gettext("OpenVPN Server");
+	}
+
+	if (is_openvpn_client_cert($cert['refid'])) {
+		$cinfo['inuse'] .= gettext("OpenVPN Client");
+	}
+
+	if (is_ipsec_cert($cert['refid'])) {
+		$cinfo['inuse'] .= gettext("IPsec Tunnel");
+	}
+
+	if (is_captiveportal_cert($cert['refid'])) {
+		$cinfo['inuse'] .= gettext("Captive Portal");
+	}
+
+	if (is_unbound_cert($cert['refid'])) {
+		$cinfo['inuse'] .= gettext("DNS Resolver");
+	}
+
+	$cinfo['inuse'] .= cert_usedby_description($cert['refid'], $certificates_used_by_packages);
+
+	return $cinfo;
 }
 
 // Return an array containing the IDs of all CAs

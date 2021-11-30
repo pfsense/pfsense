@@ -36,6 +36,9 @@ require_once("pfsense-utils.inc");
 // Non-display functions moved to this include file for MVC
 require_once("system_certmanager.inc");
 
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
+
 $cert_methods = array(
 	"internal" => gettext("Create an internal Certificate"),
 	"import" => gettext("Import an existing Certificate"),
@@ -1349,7 +1352,7 @@ $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $plugin
 // ['csr']
 // ['prv']
 // ['inuse']
-$certs = getCertData(false);
+$certs = getCertData();
 
 foreach ($certs as $cert):
 ?>

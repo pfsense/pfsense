@@ -37,6 +37,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("ipsec.inc");
 require_once("shaper.inc");
+require_once("firewall_rules.inc");
 
 $XmoveTitle = gettext("Move checked rules above this one. Shift+Click to move checked rules below.");
 $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to move checked rules above.");
@@ -152,33 +153,11 @@ if (!$if || !isset($iflist[$if])) {
 }
 
 if ($_POST['apply']) {
-	$retval = 0;
-	$retval |= filter_configure();
-
-	clear_subsystem_dirty('filter');
+	$retval = applyFilterRules();
 }
 
 if ($_POST['act'] == "del") {
-	if ($a_filter[$_POST['id']]) {
-		if (!empty($a_filter[$_POST['id']]['associated-rule-id'])) {
-			delete_nat_association($a_filter[$_POST['id']]['associated-rule-id']);
-		}
-		unset($a_filter[$_POST['id']]);
-
-		// Update the separators
-		init_config_arr(array('filter', 'separator', strtolower($if)));
-		$a_separators = &$config['filter']['separator'][strtolower($if)];
-		$ridx = ifridx($if, $_POST['id']);	// get rule index within interface
-		$mvnrows = -1;
-		move_separators($a_separators, $ridx, $mvnrows);
-
-		if (write_config(gettext("Firewall: Rules - deleted a firewall rule."))) {
-			mark_subsystem_dirty('filter');
-		}
-
-		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
-		exit;
-	}
+	deleteFilterRule($_POST, $if);
 }
 
 // Handle save msg if defined
@@ -187,118 +166,11 @@ if ($_REQUEST['savemsg']) {
 }
 
 if (isset($_POST['del_x'])) {
-	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		init_config_arr(array('filter', 'separator', strtolower($if)));
-		$a_separators = &$config['filter']['separator'][strtolower($if)];
-
-		$first_idx = 0;		
-		$num_deleted = 0;
-		foreach ($_POST['rule'] as $rulei) {
-			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
-			unset($a_filter[$rulei]);
-
-			// Capture first changed filter index for later separator shifting
-			if (!$first_idx) $first_idx = ifridx($if, $rulei);
-			$num_deleted++;
-		}
-
-		if ($num_deleted) {
-			move_separators($a_separators, $first_idx, -$num_deleted);
-			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
-				mark_subsystem_dirty('filter');
-			}
-		}
-
-		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
-		exit;
-	}
+	deleteMultipleFilterRules($_POST, $if);
 } else if ($_POST['act'] == "toggle") {
-	if ($a_filter[$_POST['id']]) {
-		if (isset($a_filter[$_POST['id']]['disabled'])) {
-			unset($a_filter[$_POST['id']]['disabled']);
-			$wc_msg = gettext('Firewall: Rules - enabled a firewall rule.');
-		} else {
-			$a_filter[$_POST['id']]['disabled'] = true;
-			$wc_msg = gettext('Firewall: Rules - disabled a firewall rule.');
-		}
-		if (write_config($wc_msg)) {
-			mark_subsystem_dirty('filter');
-		}
-
-		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
-		exit;
-	}
+	toggleFilterRule($_POST, $if);
 } else if ($_POST['order-store']) {
-	$updated = false;
-	$dirty = false;
-
-	/* update rule order, POST[rule] is an array of ordered IDs */
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
-		$a_filter_new = array();
-
-		// Include the rules of other interfaces listed in config before this (the selected) interface.
-		foreach ($a_filter as $filteri_before => $filterent) {
-			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
-				break;
-			} else {
-				$a_filter_new[] = $filterent;
-			}
-		}
-
-		// Include the rules of this (the selected) interface.
-		// If a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
-			$a_filter_new[] = $a_filter[$id];
-		}
-
-		// Include the rules of other interfaces listed in config after this (the selected) interface.
-		foreach ($a_filter as $filteri_after => $filterent) {
-			if ($filteri_before > $filteri_after) {
-				continue;
-			}
-			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
-				continue;
-			} else {
-				$a_filter_new[] = $filterent;
-			}
-		}
-
-		if ($a_filter !== $a_filter_new) {
-			$a_filter = $a_filter_new;
-			$dirty = true;
-		}
-	}
-
-	$a_separators = &$config['filter']['separator'][strtolower($if)];
-
-	/* update separator order, POST[separator] is an array of ordered IDs */
-	if (is_array($_POST['separator']) && !empty($_POST['separator'])) {
-		$new_separator = array();
-		$idx = 0;
-
-		foreach ($_POST['separator'] as $separator) {
-			$new_separator['sep' . $idx++] = $separator;
-		}
-
-		if ($a_separators !== $new_separator) {
-			$a_separators = $new_separator;
-			$updated = true;
-		}
-	} else if (!empty($a_separators)) {
-		$a_separators = "";
-		$updated = true;
-	}
-
-	if ($updated || $dirty) {
-		if (write_config(gettext("Firewall: Rules - reordered firewall rules."))) {
-			if ($dirty) {
-				mark_subsystem_dirty('filter');
-			}
-		}
-	}
-
-	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
-	exit;
+	reorderFilterRules($_POST, $if);
 }
 
 $tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));

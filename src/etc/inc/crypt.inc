@@ -36,10 +36,12 @@
 		file_put_contents("{$file}.dec", $val);
 
 		/* Use PBKDF2 Key Derivation (https://en.wikipedia.org/wiki/PBKDF2)
-		 *  unless we need to read old data encrypted without it. */
+		 *  unless we need to read old data encrypted without it.
+		 * Specify an iterations count of 500000 for FIPS-140 compliance.
+		 *  https://redmine.pfsense.org/issues/12556 */
 		$keyder = ($legacy) ? "" : "-pbkdf2";
 		$md = ($legacy) ? "md5" : "sha256";
-		$iter = ($legacy) ? "" : "-iter 300000";
+		$iter = ($legacy) ? "" : "-iter 500000";
 
 		$output = "";
 		$exitcode = "";

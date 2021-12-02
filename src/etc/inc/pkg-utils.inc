@@ -1647,13 +1647,13 @@ function save_repo($json) {
 	    isset($repo['name']) && (strlen($repo['conf']) > 10)) {
 		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
-		file_put_contents($basename . "conf", base64_decode(
-		    $repo['conf']));
+		file_put_contents($basename . "conf", base64_decode($repo['conf']));
 		file_put_contents($basename . "descr", $repo['descr']);
 		file_put_contents($basename . "abi", $repo['abi']);
 		file_put_contents($basename . "altabi", $repo['altabi']);
 		file_put_contents($basename . "name", $repo['name']);
 		file_put_contents($basename . "help", $repo['help']);
+		file_put_contents($basename . "key", $repo['key']);
 
 		// Save fingerprint file
 		if (!empty($repo['fingerprint'])) {

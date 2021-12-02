@@ -715,7 +715,7 @@ foreach ($a_filter as $filteri => $filterent):
 									}
 								?>
 								<?php if (!empty($gw_info[$filterent['gateway']])): ?>
-									<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateway details')?>" data-content="<?=$gw_info[$filterent['gateway']]?>" data-html="true">
+									<?=$gw_info[$filterent['gateway']]?>
 								<?php else: ?>
 									<span>
 								<?php endif; ?>

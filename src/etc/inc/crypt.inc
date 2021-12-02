@@ -39,10 +39,11 @@
 		 *  unless we need to read old data encrypted without it. */
 		$keyder = ($legacy) ? "" : "-pbkdf2";
 		$md = ($legacy) ? "md5" : "sha256";
+		$iter = ($legacy) ? "" : "-iter 300000";
 
 		$output = "";
 		$exitcode = "";
-		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md ${md} {$keyder} 2> /dev/null", $output, $exitcode);
+		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md ${md} {$keyder} {$iter} 2> /dev/null", $output, $exitcode);
 
 		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");

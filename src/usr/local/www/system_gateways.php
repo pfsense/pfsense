@@ -123,6 +123,24 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 		}
 	}
 
+	/* prevent removing a gateway if it's still in use by DNS servers
+	 * see https://redmine.pfsense.org/issues/8390 */
+	$dnsgw_counter = 1;
+	init_config_arr(array('system', 'dnsserver'));
+	foreach ($config['system']['dnsserver'] as $dnsserver) {
+		if (isset($config["system"]["dns{$dnsgw_counter}gw"]) &&
+		    ($a_gateways[$id]['name'] == $config["system"]["dns{$dnsgw_counter}gw"])) {
+				if (!$disable) {
+					// The user wants to delete this gateway, but there is a static route to the DNS server that refers to the gateway.
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be deleted because it is in use by DNS Server "%2$s"'), $a_gateways[$id]['name'], $dnsserver);
+				} else {
+					// The user wants to disable this gateway, but there is a static route to the DNS server that refers to the gateway.
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use by DNS Server "%2$s"'), $a_gateways[$id]['name'], $dnsserver);
+				}
+		}
+		$dnsgw_counter++;
+	}
+
 	if (isset($input_errors)) {
 		return false;
 	}

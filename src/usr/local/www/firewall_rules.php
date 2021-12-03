@@ -410,7 +410,7 @@ foreach ($a_filter as $filteri => $filterent):
 			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'" style="cursor: pointer;"></i>';
 		}
 
-		if (isset($filterent['direction'])) {
+		if (isset($filterent['direction']) && ($if == "FloatingRules")) {
 			if ($filterent['direction'] == 'in') {
 				print '<i class="fa fa-arrow-circle-o-left" title="'. gettext("direction is in") .'" style="cursor: pointer;"></i>';
 			} elseif ($filterent['direction'] == 'out') {

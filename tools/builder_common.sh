@@ -1007,8 +1007,6 @@ setup_pkg_repo() {
 	local _target_arch="${4}"
 	local _staging="${5}"
 	local _pkg_conf="${6}"
-	local _mirror_type="srv"
-	local _signature_type="fingerprints"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
@@ -1031,7 +1029,6 @@ setup_pkg_repo() {
 
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
-		-e "s/%%MIRROR_TYPE%%/${_mirror_type}/" \
 		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${_pkg_repo_branch_devel}/g" \
 		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch_release}/g" \
 		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${_pkg_repo_server_devel},g" \
@@ -1039,7 +1036,6 @@ setup_pkg_repo() {
 		-e "s,%%POUDRIERE_PORTS_NAME%%,${POUDRIERE_PORTS_NAME},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
 		-e "s/%%REPO_BRANCH_PREFIX%%/${REPO_PATH_PREFIX}/g" \
-		-e "s/%%SIGNATURE_TYPE%%/${_signature_type}/" \
 		${_template} \
 		> ${_target}
 

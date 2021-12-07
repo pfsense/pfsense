@@ -998,7 +998,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 	global $config, $user_settings;
 
 	init_config_arr(array('gateways', 'gateway_group'));
-	$a_gateways = return_gateways_array();
+	$a_gateways = return_gateways_array(true, false, true, true);
 
 	/* Use cached gateway status if available.
 	 * See https://redmine.pfsense.org/issues/12174 */
@@ -1014,14 +1014,12 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 	$bgcolor = "bg-info";
 
 	if (is_array($a_gateways)) {
-		$id = 0;
 		foreach ($a_gateways as $i => $gateway) {
 			if ($gateway['name'] == $showgw) {
 				$gws[] = $gateway['name'];
-				$link = "/system_gateways_edit.php?id={$id}";
+				$link = "/system_gateways_edit.php?id={$i}";
 				break;
 			}
-			$id++;
 		}
 	}
 	if (is_array($config['gateways']['gateway_group'])) {

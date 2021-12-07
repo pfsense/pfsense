@@ -87,6 +87,15 @@ if (file_exists("/root/firmware.tgz")) {
 	unlink("/root/firmware.tgz");
 }
 
+/* restore RRD and extra data on bsdinstall config restore
+ * see https://redmine.pfsense.org/issues/12518 */
+if (file_exists("{$g['conf_path']}/trigger_restore_config_after_bsdinstall")) {
+	copy("/cf/conf/config.xml", "{$g['tmp_path']}/config_to_restore.xml");
+	restore_backup("{$g['tmp_path']}/config_to_restore.xml");
+	@unlink("{$g['tmp_path']}/config_to_restore.xml");
+	@unlink("{$g['conf_path']}/trigger_restore_config_after_bsdinstall");
+}
+
 /* Triggering of the initial setup wizard after reboot has been requested */
 if (file_exists("{$g['conf_path']}/trigger_initial_wizard_after_reboot")) {
 	touch("{$g['conf_path']}/trigger_initial_wizard");

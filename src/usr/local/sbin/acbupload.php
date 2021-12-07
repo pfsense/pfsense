@@ -68,6 +68,8 @@ unlink_if_exists($lockfile);
 function upload($basename) {
     global $acbuploadpath, $badreasons;
 
+    $upload_url = "https://acb.netgate.com/save";
+
     // Retrieve the data to send
     // Retrieve the form data
     $formdata = file_get_contents($acbuploadpath . $basename . ".form");
@@ -87,7 +89,7 @@ function upload($basename) {
     // Check configuration into the ESF repo (Copied from /etc/inc/acb.inc)
     $curl_session = curl_init();
 
-    curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/save");
+    curl_setopt($curl_session, CURLOPT_URL, $upload_url);
     curl_setopt($curl_session, CURLOPT_POST, count($post_fields));
     curl_setopt($curl_session, CURLOPT_POSTFIELDS, $post_fields);
     curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);

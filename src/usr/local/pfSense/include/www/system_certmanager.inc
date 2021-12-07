@@ -39,6 +39,7 @@ $a_cert = &$config['cert'];
 // Return the result in an array which roughly corresponds to the display columns.
 // This code was previously in /usr/local/www/system_certmanager.php but was moved here so
 // other processes can access it. (MVC)
+//X
 function getCertData($html = true) {
 	global $a_cert;
 

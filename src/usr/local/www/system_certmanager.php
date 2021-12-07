@@ -33,6 +33,12 @@ require_once("guiconfig.inc");
 require_once("certs.inc");
 require_once("pfsense-utils.inc");
 
+// Non-display functions moved to this include file for MVC
+require_once("system_certmanager.inc");
+
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
+
 $cert_methods = array(
 	"internal" => gettext("Create an internal Certificate"),
 	"import" => gettext("Import an existing Certificate"),
@@ -63,12 +69,6 @@ if (isset($userid)) {
 	init_config_arr(array('system', 'user'));
 	$a_user =& $config['system']['user'];
 }
-
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
 
 $internal_ca_count = 0;
 foreach ($a_ca as $ca) {
@@ -745,34 +745,6 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	$form->add($section);
 
-	// Return an array containing the IDs od all CAs
-	function list_cas() {
-		global $a_ca;
-		$allCas = array();
-
-		foreach ($a_ca as $ca) {
-			if ($ca['prv']) {
-				$allCas[$ca['refid']] = $ca['descr'];
-			}
-		}
-
-		return $allCas;
-	}
-
-	// Return an array containing the IDs od all CSRs
-	function list_csrs() {
-		global $config;
-		$allCsrs = array();
-
-		foreach ($config['cert'] as $cert) {
-			if ($cert['csr']) {
-				$allCsrs[$cert['refid']] = $cert['descr'];
-			}
-		}
-
-		return ['new' => gettext('New CSR (Paste below)')] + $allCsrs;
-	}
-
 	$section = new Form_Section('Sign CSR');
 	$section->addClass('toggle-sign collapse');
 
@@ -1369,86 +1341,37 @@ $pluginparams = array();
 $pluginparams['type'] = 'certificates';
 $pluginparams['event'] = 'used_certificates';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
-foreach ($a_cert as $cert):
-	if (!is_array($cert) || empty($cert)) {
-		continue;
-	}
-	$name = htmlspecialchars($cert['descr']);
-	if ($cert['crt']) {
-		$subj = cert_get_subject($cert['crt']);
-		$issuer = cert_get_issuer($cert['crt']);
-		$purpose = cert_get_purpose($cert['crt']);
 
-		if ($subj == $issuer) {
-			$caname = '<i>'. gettext("self-signed") .'</i>';
-		} else {
-			$caname = '<i>'. gettext("external").'</i>';
-		}
+// Gather the data required to display a certificate table. The array returned includes:
+// ['name']
+// ['subj']
+// ['issuer']
+// ['info'] (infoblock contents)
+// ['dates']
+// ['refid']
+// ['csr']
+// ['prv']
+// ['inuse']
+$certs = getCertData();
 
-		$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
-	} else {
-		$subj = "";
-		$issuer = "";
-		$purpose = "";
-		$startdate = "";
-		$enddate = "";
-		$caname = "<em>" . gettext("private key only") . "</em>";
-	}
-
-	if ($cert['csr']) {
-		$subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
-		$caname = "<em>" . gettext("external - signature pending") . "</em>";
-	}
-
-	$ca = lookup_ca($cert['caref']);
-	if ($ca) {
-		$caname = $ca['descr'];
-	}
+foreach ($certs as $cert):
 ?>
 				<tr>
-					<td>
-						<?=$name?><br />
-						<?php if ($cert['type']): ?>
-							<i><?=$cert_types[$cert['type']]?></i><br />
-						<?php endif?>
-						<?php if (is_array($purpose)): ?>
-							CA: <b><?=$purpose['ca']?></b><br/>
-							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
-						<?php endif?>
+					<td> <?=$cert['name']; ?> </td>
+					<td> <?=$cert['issuer']; ?> </td>
+					<td> <?=$cert['subj']; ?> 
+						<?php
+						if (!empty($cert['info'])) {
+							print('<div class="infoblock">');
+							print_info_box($cert['info'], 'info', false);
+							print("</div>" . $cert['dates']);
+						}
+						?>
+
 					</td>
-					<td><?=$caname?></td>
-					<td>
-						<?=$subj?>
-						<?= cert_print_infoblock($cert); ?>
-						<?php cert_print_dates($cert);?>
-					</td>
-					<td>
-						<?php if (is_cert_revoked($cert)): ?>
-							<i><?=gettext("Revoked")?></i>
-						<?php endif?>
-						<?php if (is_webgui_cert($cert['refid'])): ?>
-							<?=gettext("webConfigurator")?>
-						<?php endif?>
-						<?php if (is_user_cert($cert['refid'])): ?>
-							<?=gettext("User Cert")?>
-						<?php endif?>
-						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Server")?>
-						<?php endif?>
-						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Client")?>
-						<?php endif?>
-						<?php if (is_ipsec_cert($cert['refid'])): ?>
-							<?=gettext("IPsec Tunnel")?>
-						<?php endif?>
-						<?php if (is_captiveportal_cert($cert['refid'])): ?>
-							<?=gettext("Captive Portal")?>
-						<?php endif?>
-						<?php if (is_unbound_cert($cert['refid'])): ?>
-							<?=gettext("DNS Resolver")?>
-						<?php endif?>
-						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
-					</td>
+
+					<td> <?=$cert['inuse']; ?> </td>
+
 					<td>
 						<?php if (!$cert['csr']): ?>
 							<a href="system_certmanager.php?act=edit&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit Certificate")?>"></a>
@@ -1471,6 +1394,7 @@ foreach ($a_cert as $cert):
 					</td>
 				</tr>
 <?php
+$idx++;
 	endforeach; ?>
 			</tbody>
 		</table>
@@ -1537,6 +1461,7 @@ events.push(function() {
 });
 //]]>
 </script>
+
 <?php
 	include("foot.inc");
 	exit;

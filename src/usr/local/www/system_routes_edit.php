@@ -130,6 +130,7 @@ if ($_POST['save']) {
 		$id = count($a_routes);
 	}
 	$oroute = $a_routes[$id];
+	$old_targets = array();
 	if (!empty($oroute)) {
 		if (file_exists("{$g['tmp_path']}/staticroute_{$id}")) {
 			$old_targets = unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}"));
@@ -139,12 +140,10 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (!empty($old_targets)) {
-		$overlaps = array_intersect($current_targets, $new_targets);
-		$overlaps = array_diff($overlaps, $old_targets);
-		if (count($overlaps)) {
-			$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
-		}
+	$overlaps = array_intersect($current_targets, $new_targets);
+	$overlaps = array_diff($overlaps, $old_targets);
+	if (count($overlaps)) {
+		$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
 	}
 
 	if (is_array($config['interfaces'])) {

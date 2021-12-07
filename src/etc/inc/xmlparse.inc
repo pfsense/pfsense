@@ -48,7 +48,7 @@ function listtags() {
 		'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
-		'schedule', 'service', 'servernat', 'servers',
+		'schedule', 'service', 'servernat', 'servers', 'sshkeyfile',
 		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
 		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup', 'voucherdbfile',
 		'vxlan', 'wgpeer', 'winsserver', 'wolentry', 'widget', 'xmldatafile'

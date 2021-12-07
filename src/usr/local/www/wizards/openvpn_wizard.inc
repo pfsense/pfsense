@@ -704,7 +704,6 @@ function step12_submitphpaction() {
 		if (strlen($rule['descr']) > 52) {
 			$rule['descr'] = substr($rule['descr'], 0, 52);
 		}
-		$rule['direction'] = "in";
 		$rule['source']['any'] = TRUE;
 		$rule['destination']['network'] = $server['interface'] . "ip";
 		$rule['destination']['port'] = $server['local_port'];

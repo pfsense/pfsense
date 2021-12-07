@@ -2777,29 +2777,58 @@ begemotSnmpdCommunityDisable    = 1
 EOD;
 
 		$bind_to_ips = array();
+		$bind_to_ip6s = array();
 		if (isset($config['snmpd']['bindip'])) {
+			if (!isset($config['snmpd']['ipprotocol']) ||
+			    (isset($config['snmpd']['ipprotocol']) &&
+			    strstr($config['snmpd']['ipprotocol'], "4"))) {
+				$inet4 = true;
+			}
+			if (isset($config['snmpd']['ipprotocol']) &&
+			    strstr($config['snmpd']['ipprotocol'], "6")) {
+				$inet6 = true;
+			}
 			foreach (explode(",", $config['snmpd']['bindip']) as $bind_to_ip) {
 				if (is_ipaddr($bind_to_ip)) {
 					$bind_to_ips[] = $bind_to_ip;
 				} else {
 					$if = get_real_interface($bind_to_ip);
 					if (does_interface_exist($if)) {
-						$bindip = get_interface_ip($bind_to_ip);
-						if (is_ipaddr($bindip)) {
-							$bind_to_ips[] = $bindip;
+						if ($inet4) {
+							$bindip = get_interface_ip($bind_to_ip);
+							if (is_ipaddrv4($bindip)) {
+								$bind_to_ips[] = $bindip;
+							}
+						}
+						if ($inet6) {
+							$bindip6 = get_interface_ipv6($bind_to_ip);
+							if (is_ipaddrv6($bindip6)) {
+								$bind_to_ip6s[] = $bindip6;
+							}
 						}
 					}
 				}
 			}
 		}
-		if (!count($bind_to_ips)) {
+		if (!count($bind_to_ips) && $inet4) {
 			$bind_to_ips = array("0.0.0.0");
+		}
+		if (!count($bind_to_ip6s) && $inet6) {
+			$bind_to_ip6s = array("::");
 		}
 
 		if (is_port($config['snmpd']['pollport'])) {
 			foreach ($bind_to_ips as $bind_to_ip) {
 				$snmpdconf .= <<<EOD
 begemotSnmpdPortStatus.{$bind_to_ip}.{$config['snmpd']['pollport']} = 1
+
+EOD;
+
+			}
+			foreach ($bind_to_ip6s as $bind_to_ip6) {
+				$bind_to_ip6 = ip6_to_asn1($bind_to_ip6);
+				$snmpdconf .= <<<EOD
+begemotSnmpdTransInetStatus.2.16.{$bind_to_ip6}{$config['snmpd']['pollport']}.1 = 4
 
 EOD;
 

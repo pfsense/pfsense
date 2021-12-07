@@ -998,7 +998,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 	global $config, $user_settings;
 
 	init_config_arr(array('gateways', 'gateway_group'));
-	$a_gateways = return_gateways_array();
+	$a_gateways = return_gateways_array(true, false, true, true);
 
 	/* Use cached gateway status if available.
 	 * See https://redmine.pfsense.org/issues/12174 */
@@ -1017,16 +1017,20 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 		foreach ($a_gateways as $i => $gateway) {
 			if ($gateway['name'] == $showgw) {
 				$gws[] = $gateway['name'];
+				$link = "/system_gateways_edit.php?id={$i}";
+				break;
 			}
 		}
 	}
 	if (is_array($config['gateways']['gateway_group'])) {
-		foreach($config['gateways']['gateway_group'] as $gwgroup) {
+		foreach($config['gateways']['gateway_group'] as $i => $gwgroup) {
 			if ($gwgroup['name'] == $showgw) {
 				foreach ($gwgroup['item'] as $member) {
 					$membersplit = explode("|", $member);
 					$gws[] = $membersplit[0];
 				}
+				$link = "system_gateway_groups_edit.php?id={$i}";
+				break;
 			}
 		}
 	}
@@ -1072,7 +1076,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 		return;
 	}
 
-	return $content;
+	return "<a href=\"{$link}\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"" . gettext('Gateway details') . "\" data-content=\"{$content}\" data-html=\"true\">";
 }
 
 function rule_columns_with_alias($src, $srcport, $dst, $dstport, $target="", $targetport="") {

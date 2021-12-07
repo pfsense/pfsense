@@ -2430,6 +2430,8 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		$gateways_status = return_gateways_status(true);
 	}
 
+	$a_groups = return_gateway_groups_array(true);
+
 	foreach ($tunnels as $ph1ent) {
 		/* Skip disabled entries */
 		if (isset($ph1ent['disabled'])) {
@@ -2472,8 +2474,11 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		$ikeid = $ph1ent['ikeid'];
 
 		$carpbackup = false;
-		if ((substr($ph1ent['interface'], 0, 4) == "_vip") &&
-		    in_array(get_carp_bind_status($ph1ent['interface']), array('BACKUP', 'INIT'))) {
+		if (((substr($ph1ent['interface'], 0, 4) == "_vip") &&
+		    in_array(get_carp_bind_status($ph1ent['interface']), array('BACKUP', 'INIT'))) ||
+		    (is_array($a_groups[$ph1ent['interface']]) &&
+		    !empty($a_groups[$ph1ent['interface']][0]['vip']) &&
+		    in_array(get_carp_bind_status($a_groups[$ph1ent['interface']][0]['vip']), array('BACKUP', 'INIT')))) {
 			$carpbackup = true;
 		}
 

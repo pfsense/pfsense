@@ -89,6 +89,31 @@ function backup_xmldatafile($tab=false, $type='voucher') {
 	return $result;
 }
 
+function ssh_keys_xml() {
+	global $ssh_keys, $sshConfigDir;
+
+	$keyfiles = array();
+	foreach ($ssh_keys as $key) {
+		$keyfiles[] = "ssh_host_{$key['suffix']}key";
+		$keyfiles[] = "ssh_host_{$key['suffix']}key.pub";
+	}
+
+	$result = "\t<sshdata>\n";
+	foreach ($keyfiles as $f2c) {
+		$keyfile = "{$sshConfigDir}/{$f2c}";
+		if (file_exists($keyfile) || filesize($keyfile) != 0) {
+			$result .= "\t\t<sshkeyfile>\n";
+			$result .= "\t\t\t<filename>{$f2c}</filename>\n";
+			$result .= "\t\t\t<xmldata>" . base64_encode(gzdeflate(file_get_contents($keyfile))) . "</xmldata>\n";
+			$result .= "\t\t</sshkeyfile>\n";
+		} else {
+			return;
+		}
+	}
+	$result .= "\t</sshdata>\n";
+	return $result;
+}
+
 function check_and_returnif_section_exists($section) {
 	global $config;
 	if (is_array($config[$section])) {
@@ -176,6 +201,12 @@ function execPost($post, $postfiles, $ui = true) {
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
 
+				if ($post['backupssh']) {
+					$ssh_keys_xml = ssh_keys_xml();
+					$closing_tag = "</" . $g['xml_rootobj'] . ">";
+					$data = str_replace($closing_tag, $ssh_keys_xml . $closing_tag, $data);
+				}
+
 				if ($post['encrypt']) {
 					$data = encrypt_data($data, $post['encrypt_password']);
 					tagfile_reformat($data, $data, "config.xml");
@@ -234,6 +265,11 @@ function execPost($post, $postfiles, $ui = true) {
 								if ($config['rrddata']) {
 									restore_rrddata();
 									unset($config['rrddata']);
+									$conf_change = true;
+								}
+								if ($config['sshdata']) {
+									restore_sshdata();
+									unset($config['sshdata']);
 									$conf_change = true;
 								}
 								if (!empty($config[$post['restorearea']][$post['restorearea'].'data'])) {
@@ -311,6 +347,11 @@ function execPost($post, $postfiles, $ui = true) {
 								if ($config['rrddata']) {
 									restore_rrddata();
 									unset($config['rrddata']);
+									$conf_change = true;
+								}
+								if ($config['sshdata']) {
+									restore_sshdata();
+									unset($config['sshdata']);
 									$conf_change = true;
 								}
 								foreach ($g['backuppath'] as $bk => $path) {

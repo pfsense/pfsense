@@ -3856,4 +3856,25 @@ function cleanup_regex_pattern($filtertext) {
 	return $filtertext;
 }
 
+function ip6_to_asn1($addr) {
+	/* IPv6 MIB uses an OCTET STRING of length 16 to represent
+	 * 128-bit IPv6 address in network byte order.
+	 * see https://datatracker.ietf.org/doc/html/rfc2465#section-3 
+	 * i.e. fc00:3::4 = 252.0.0.3.0.0.0.0.0.0.0.0.0.0.0.4
+	 */
+
+	if (!is_ipaddrv6($addr)) {
+		return false;
+	}
+
+	foreach (explode(':', Net_IPv6::uncompress($addr)) as $v) {
+		$ipv6str .= str_pad($v, 4, '0', STR_PAD_LEFT);
+	}
+	foreach (str_split($ipv6str, 2) as $v) {
+		$octstr .= base_convert($v, 16, 10) . '.';
+	}
+
+	return $octstr;
+}
+
 ?>

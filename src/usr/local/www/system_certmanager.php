@@ -373,6 +373,22 @@ if ($_POST['save'] == gettext("Save")) {
 		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
 			$input_errors[] = gettext("The field 'Descriptive Name' contains invalid characters.");
 		}
+		$pattern = '/[^a-zA-Z0-9\ \'\/~`\!@#\$%\^&\*\(\)_\-\+=\{\}\[\]\|;:"\<\>,\.\?\\\]/';
+		if (!empty($_POST['dn_commonname']) && preg_match($pattern, $_POST['dn_commonname'])) {
+			$input_errors[] = gettext("The field 'Common Name' contains invalid characters.");
+		}
+		if (!empty($_POST['dn_state']) && preg_match($pattern, $_POST['dn_state'])) {
+			$input_errors[] = gettext("The field 'State or Province' contains invalid characters.");
+		}
+		if (!empty($_POST['dn_city']) && preg_match($pattern, $_POST['dn_city'])) {
+			$input_errors[] = gettext("The field 'City' contains invalid characters.");
+		}
+		if (!empty($_POST['dn_organization']) && preg_match($pattern, $_POST['dn_organization'])) {
+			$input_errors[] = gettext("The field 'Organization' contains invalid characters.");
+		}
+		if (!empty($_POST['dn_organizationalunit']) && preg_match($pattern, $_POST['dn_organizationalunit'])) {
+			$input_errors[] = gettext("The field 'Organizational Unit' contains invalid characters.");
+		}
 
 		switch ($pconfig['method']) {
 			case "internal":

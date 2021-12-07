@@ -32,7 +32,7 @@ echo
 echo "${product_label} is now shutting down ..."
 echo
 
-stty status '^T'
+/bin/stty status '^T'
 
 # Set shell to ignore SIGINT (2), but not children;
 trap : 2
@@ -42,7 +42,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
 
 # Remove temporary files on shutdown from /tmp/
-find -x /tmp/* -type f -exec rm -f {} \; >/dev/null 2>&1
+/usr/bin/find -x /tmp/* -type f -exec rm -f {} \; >/dev/null 2>&1
 
 . /etc/rc.ramdisk_functions.sh
 ramdisk_make_backup

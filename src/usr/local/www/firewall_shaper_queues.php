@@ -35,7 +35,7 @@ require_once("shaper.inc");
 require_once("rrd.inc");
 
 if ($_GET['reset'] != "") {
-	mwexec("killall -9 pfctl");
+	mwexec("/usr/bin/killall -9 pfctl");
 	exit;
 }
 

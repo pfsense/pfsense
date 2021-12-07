@@ -7003,7 +7003,7 @@ function get_wireless_modes($interface) {
 		$format_list = "/usr/bin/awk '{print \$5 \" \" \$6 \",\" \$1}'";
 
 		$interface_channels = "";
-		exec("$chan_list | $stack_list | sort -u | $format_list 2>&1", $interface_channels);
+		exec("$chan_list | $stack_list | /usr/bin/sort -u | $format_list 2>&1", $interface_channels);
 		$interface_channel_count = count($interface_channels);
 
 		$c = 0;

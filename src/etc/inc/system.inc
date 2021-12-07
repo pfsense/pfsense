@@ -1813,7 +1813,7 @@ function system_ntp_setup_gps($serialport) {
 
 	/* XXX: Why not file_put_contents to the device */
 	@file_put_contents('/tmp/gps.init', $gps_init);
-	mwexec("cat /tmp/gps.init > {$serialport}");
+	mwexec("/bin/cat /tmp/gps.init > {$serialport}");
 
 	if ($found && $config['ntpd']['gps']['autobaudinit']) {
 		system_ntp_setup_rawspeed($serialport, $gpsbaud);
@@ -2294,7 +2294,7 @@ function system_reboot() {
 
 	system_reboot_cleanup();
 
-	mwexec("nohup /etc/rc.reboot > /dev/null 2>&1 &");
+	mwexec("/usr/bin/nohup /etc/rc.reboot > /dev/null 2>&1 &");
 }
 
 function system_reboot_sync($reroot=false) {

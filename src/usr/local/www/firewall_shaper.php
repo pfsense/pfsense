@@ -36,7 +36,7 @@ require_once("rrd.inc");
 
 if ($_GET['reset'] != "") {
 	/* XXX: Huh, why are we killing php? */
-	mwexec("killall -9 pfctl php");
+	mwexec("/usr/bin/killall -9 pfctl php");
 	exit;
 }
 

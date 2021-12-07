@@ -85,8 +85,8 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 		mkdir("/tmp/simplepie");
 		mkdir("/tmp/simplepie/cache");
 	}
-	exec("chmod a+rw /tmp/simplepie/.");
-	exec("chmod a+rw /tmp/simplepie/cache/.");
+	exec("/bin/chmod a+rw /tmp/simplepie/.");
+	exec("/bin/chmod a+rw /tmp/simplepie/cache/.");
 	require_once("simplepie/simplepie.inc");
 	if (!function_exists('textLimit')) {
 		function textLimit($string, $length, $replacer = '...') {

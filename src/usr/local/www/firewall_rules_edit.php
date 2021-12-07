@@ -36,7 +36,6 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require_once("firewall_rules.inc");
 
 /* build icmptypes valid for IPv4, IPv6 and IPv<any> */
 $icmptypes4 = array('any' => gettext('any'));
@@ -88,7 +87,47 @@ if (isset($_POST['referer'])) {
 	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_rules.php');
 }
 
+function is_posnumericint($arg) {
+	// Integer > 0? (Note that to be safe we do not allow any leading zero - "01", "007")
+	return (is_numericint($arg) && $arg[0] != '0');
+}
 
+function is_aoadv_used($rule_config) {
+	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
+	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
+	if (($rule_config['os'] != "") ||
+	    ($rule_config['dscp'] != "") ||
+	    (isset($rule_config['allowopts'])) ||
+	    (isset($rule_config['disablereplyto'])) ||
+	    ($rule_config['tag'] != "") ||
+	    ($rule_config['tagged'] != "") ||
+	    (isset($rule_config['nottagged'])) ||
+	    ($rule_config['max'] != "") ||
+	    ($rule_config['max-src-nodes'] != "") ||
+	    ($rule_config['max-src-conn'] != "") ||
+	    ($rule_config['max-src-states'] != "") ||
+	    ($rule_config['max-src-conn-rate'] != "") ||
+	    ($rule_config['max-src-conn-rates'] != "") ||
+	    ($rule_config['statetimeout'] != "") ||
+	    ($rule_config['tcpflags1'] != "") ||
+	    ($rule_config['tcpflags2'] != "") ||
+	    ($rule_config['tcpflags_any']) ||
+	    ($rule_config['nopfsync']) ||
+	    (($rule_config['statetype'] != "") && ($rule_config['statetype'] != "keep state")) ||
+	    ($rule_config['nosync']) ||
+	    ($rule_config['vlanprio'] != "") ||
+	    ($rule_config['vlanprioset'] != "") ||
+	    ($rule_config['sched'] != "") ||
+	    ($rule_config['gateway'] != "") ||
+	    ($rule_config['dnpipe'] != "") ||
+	    ($rule_config['pdnpipe'] != "") ||
+	    ($rule_config['ackqueue'] != "") ||
+	    ($rule_config['defaultqueue'] != "")) {
+		return true;
+	}
+
+	return false;
+}
 
 $ostypes = array();
 exec('/sbin/pfctl -s osfp | /usr/bin/tr \'\t\' \' \'', $ostypes);
@@ -314,18 +353,772 @@ $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
 
 if ($_POST['save']) {
-  $rv = saveFilterRule($_POST, $id);
-  $input_errors = $rv['input_errors'];
-  $pconfig = $rv['pconfig'];
 
-  if (!$input_errors) {
-    if (isset($_POST['floating'])) {
-      header("Location: firewall_rules.php?if=FloatingRules");
-    } else {
-      header("Location: firewall_rules.php?if=" . htmlspecialchars($_POST['interface']));
-    }
-    exit;
-  }
+	unset($input_errors);
+
+	if (!array_key_exists($_POST['ipprotocol'], $icmplookup)) {
+		$input_errors[] = gettext("The IP protocol is not recognized.");
+		unset($_POST['ipprotocol']);
+	}
+
+	// add validation + input error for $_POST['interface']
+
+	$valid = ($_POST['interface'] == "FloatingRules" || isset($_POST['floating'])) ? ['pass','block','reject', 'match'] : ['pass','block','reject'];
+	if (!(is_string($_POST['type'])  && in_array($_POST['type'], $valid))) {
+		$input_errors[] = gettext("A valid rule type is not selected.");
+		unset($_POST['type']);
+	}
+
+	if (isset($_POST['tracker']) && !is_numericint($_POST['tracker'])) {
+		unset($_POST['tracker']);	// silently unset hidden input if invalid
+	}
+
+	if (isset($a_filter[$id]['associated-rule-id'])) {
+		$_POST['proto'] = $pconfig['proto'];
+		if ($pconfig['proto'] == "icmp") {
+			$_POST['icmptype'] = $pconfig['icmptype'];
+		}
+	}
+
+	if (isset($_POST['ipprotocol']) && $_POST['gateway'] <> '') {
+		if (is_array($config['gateways']['gateway_group'])) {
+			foreach ($config['gateways']['gateway_group'] as $gw_group) {
+				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
+					if ($_POST['ipprotocol'] == "inet46") {
+						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+					} elseif ($_POST['ipprotocol'] == "inet6") {
+						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
+					} elseif ($_POST['ipprotocol'] == "inet") {
+						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
+					}
+				}
+			}
+		}
+		if ($iptype = is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway']))) {
+			// this also implies that  $_POST['gateway'] was set and not empty
+			if ($_POST['ipprotocol'] == "inet46") {
+				$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+			}
+			if (($_POST['ipprotocol'] == "inet6") && ($iptype != 6)) {
+				$input_errors[] = gettext("An IPv4 gateway can not be assigned in IPv6 rules.");
+			}
+			if (($_POST['ipprotocol'] == "inet") && ($iptype != 4)) {
+				$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
+			}
+		}
+	}
+
+	if (strpos($_POST['descr'], "\\") !== false) {
+		$input_errors[] = gettext("The '\' character is not allowed in the Description field.");
+	}
+
+	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
+		$_POST['srcbeginport'] = 0;
+		$_POST['srcendport'] = 0;
+		$_POST['dstbeginport'] = 0;
+		$_POST['dstendport'] = 0;
+	} else {
+		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport']) {
+			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
+		}
+		if ($_POST['srcendport_cust'] && !$_POST['srcendport']) {
+			$_POST['srcendport'] = trim($_POST['srcendport_cust']);
+		}
+		if ($_POST['srcbeginport'] == "any") {
+			$_POST['srcbeginport'] = 0;
+			$_POST['srcendport'] = 0;
+		} else {
+			if (!$_POST['srcendport']) {
+				$_POST['srcendport'] = $_POST['srcbeginport'];
+			}
+		}
+		if ($_POST['srcendport'] == "any") {
+			$_POST['srcendport'] = $_POST['srcbeginport'];
+		}
+
+		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport']) {
+			$_POST['dstbeginport'] = trim($_POST['dstbeginport_cust']);
+		}
+		if ($_POST['dstendport_cust'] && !$_POST['dstendport']) {
+			$_POST['dstendport'] = trim($_POST['dstendport_cust']);
+		}
+
+		if ($_POST['dstbeginport'] == "any") {
+			$_POST['dstbeginport'] = 0;
+			$_POST['dstendport'] = 0;
+		} else {
+			if (!$_POST['dstendport']) {
+				$_POST['dstendport'] = $_POST['dstbeginport'];
+			}
+		}
+		if ($_POST['dstendport'] == "any") {
+			$_POST['dstendport'] = $_POST['dstbeginport'];
+		}
+	}
+
+	if (is_specialnet($_POST['srctype'])) {
+		$_POST['src'] = $_POST['srctype'];
+		$_POST['srcmask'] = 0;
+	} else if ($_POST['srctype'] == "single") {
+		if (is_ipaddrv6($_POST['src'])) {
+			$_POST['srcmask'] = 128;
+		} else {
+			$_POST['srcmask'] = 32;
+		}
+	}
+	if (is_specialnet($_POST['dsttype'])) {
+		$_POST['dst'] = $_POST['dsttype'];
+		$_POST['dstmask'] = 0;
+	} else if ($_POST['dsttype'] == "single") {
+		if (is_ipaddrv6($_POST['dst'])) {
+			$_POST['dstmask'] = 128;
+		} else {
+			$_POST['dstmask'] = 32;
+		}
+	}
+
+	$pconfig = $_POST;
+
+	if (!isset($pconfig['ipprotocol'])) {
+		// other things depend on this, so ensure a valid value if none provided
+		$pconfig['ipprotocol'] = "inet";
+	}
+
+	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
+		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
+	} else {
+		unset($pconfig['icmptype']);
+	}
+
+	/* input validation */
+	$reqdfields = explode(" ", "type proto");
+	if (isset($a_filter[$id]['associated-rule-id']) === false) {
+		$reqdfields[] = "src";
+		$reqdfields[] = "dst";
+	}
+	$reqdfieldsn = array(gettext("Type"), gettext("Protocol"));
+	if (isset($a_filter[$id]['associated-rule-id']) === false) {
+		$reqdfieldsn[] = gettext("Source");
+		$reqdfieldsn[] = gettext("Destination");
+	}
+
+	if ($_POST['statetype'] == "synproxy state") {
+		if ($_POST['proto'] != "tcp") {
+			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."), $_POST['statetype']);
+		}
+		if ($_POST['gateway'] != "") {
+			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."), $_POST['statetype']);
+		}
+	}
+
+	if (isset($a_filter[$id]['associated-rule-id']) === false &&
+	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
+		$reqdfields[] = "srcmask";
+		$reqdfieldsn[] = gettext("Source bit count");
+	}
+	if (isset($a_filter[$id]['associated-rule-id']) === false &&
+	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
+		$reqdfields[] = "dstmask";
+		$reqdfieldsn[] = gettext("Destination bit count");
+	}
+
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ((isset($_POST['srcnot']) && ($_POST['srctype'] == 'any')) ||
+	    (isset($_POST['dstnot']) && ($_POST['dsttype'] == 'any'))) {
+		$input_errors[] = gettext("Invert match cannot be selected with 'any'.");
+	}
+
+	if (isset($_POST['nottagged']) && empty($_POST['tagged'])) {
+		$input_errors[] = gettext("Invert tagged match cannot be selected without any tags.");
+	}
+
+	if (!$_POST['srcbeginport']) {
+		$_POST['srcbeginport'] = 0;
+		$_POST['srcendport'] = 0;
+	}
+	if (!$_POST['dstbeginport']) {
+		$_POST['dstbeginport'] = 0;
+		$_POST['dstendport'] = 0;
+	}
+
+	if ($_POST['srcbeginport'] && !is_port_or_alias($_POST['srcbeginport'])) {
+		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
+	}
+	if ($_POST['srcendport'] && !is_port_or_alias($_POST['srcendport'])) {
+			$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);
+	}
+	if ($_POST['dstbeginport'] && !is_port_or_alias($_POST['dstbeginport'])) {
+			$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstbeginport']);
+	}
+	if ($_POST['dstendport'] && !is_port_or_alias($_POST['dstendport'])) {
+			$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
+	}
+	if (!$_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
+		if (is_alias($_POST['srcendport_cust'])) {
+			$input_errors[] = 'If a port alias is put in the Source port range to: field the same port alias must be put in the from: field';
+		}
+	}
+	if ($_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
+		if (is_alias($_POST['srcbeginport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
+			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
+		}
+		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
+		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
+			$input_errors[] = 'Numbers and port aliases cannot be specified at the same time in Source port range from: and to: field';
+		}
+	}
+	if (!$_POST['dstbeginport_cust'] && $_POST['dstendport_cust']) {
+		if (is_alias($_POST['dstendport_cust'])) {
+			$input_errors[] = 'If a port alias is put in the Destination port range to: field the same port alias must be put in the from: field';
+		}
+	}
+	if ($_POST['dstbeginport_cust'] && $_POST['dstendport_cust']) {
+		if (is_alias($_POST['dstbeginport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
+			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
+		}
+		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
+		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
+			$input_errors[] = 'Numbers and port aliases cannot be specified at the same time in Destination port range from: and to: field';
+		}
+	}
+
+	if ($_POST['src']) {
+		$_POST['src'] = addrtolower(trim($_POST['src']));
+	}
+	if ($_POST['dst']) {
+		$_POST['dst'] = addrtolower(trim($_POST['dst']));
+	}
+
+	/* if user enters an alias and selects "network" then disallow. */
+	if ($_POST['srctype'] == "network") {
+		if (is_alias($_POST['src'])) {
+			$input_errors[] = gettext("Alias entries must be a single host or alias.");
+		}
+	}
+	if ($_POST['dsttype'] == "network") {
+		if (is_alias($_POST['dst'])) {
+			$input_errors[] = gettext("Alias entries must be a single host or alias.");
+		}
+	}
+
+	if (!is_specialnet($_POST['srctype'])) {
+		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
+			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
+		}
+		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
+			$input_errors[] = gettext("A valid source bit count must be specified.");
+		}
+	}
+	if (!is_specialnet($_POST['dsttype'])) {
+		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
+			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
+		}
+		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
+			$input_errors[] = gettext("A valid destination bit count must be specified.");
+		}
+	}
+	if ((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst']))) {
+		if (!validate_address_family($_POST['src'], $_POST['dst'])) {
+			$input_errors[] = gettext("The source and destination IP addresses must have the same family (IPv4 / IPv6).");
+		}
+	}
+	if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
+		$input_errors[] = gettext("IPv6 addresses cannot be used in IPv4 rules (except within an alias).");
+	}
+	if ((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6")) {
+		$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules (except within an alias).");
+	}
+
+	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
+		$input_errors[] = gettext("IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and IPv6 (except within an alias).");
+	}
+
+	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
+		/* swap */
+		$tmp = $_POST['srcendport'];
+		$_POST['srcendport'] = $_POST['srcbeginport'];
+		$_POST['srcbeginport'] = $tmp;
+	}
+	if ($_POST['dstbeginport'] > $_POST['dstendport']) {
+		/* swap */
+		$tmp = $_POST['dstendport'];
+		$_POST['dstendport'] = $_POST['dstbeginport'];
+		$_POST['dstbeginport'] = $tmp;
+	}
+	if ($_POST['os']) {
+		if ($_POST['proto'] != "tcp") {
+			$input_errors[] = gettext("OS detection is only valid with protocol TCP.");
+		}
+		if (!in_array($_POST['os'], $ostypes)) {
+			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
+		}
+	}
+
+	if ($_POST['proto'] == "icmp") {
+		$t = $_POST['icmptype'];
+		if (isset($t) && !is_array($t)) {
+			// shouldn't happen but avoids making assumptions for data-sanitising
+			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
+		} elseif (!isset($t) || count($t) == 0) {
+			// not specified or none selected
+			unset($_POST['icmptype']);
+		} elseif (isset($_POST['ipprotocol'])) {
+			// check data; if ipprotocol invalid then safe to skip this (we can't determine valid icmptypes, but input error already raised for ipprotocol)
+			$bad_types = array();
+			if ((count($t) == 1 && !isset($t['any'])) || count($t) > 1) {
+				// Only need to check valid if just one selected != "any", or >1 selected
+				$p = $_POST['ipprotocol'];
+				foreach ($t as $type) {
+					if (($p == 'inet' && !array_key_exists($type, $icmptypes4)) ||
+					    ($p == 'inet6' && !array_key_exists($type, $icmptypes6)) ||
+					    ($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
+							$bad_types[] = $type;
+					}
+				}
+			}
+			if (count($bad_types) > 0) {
+				$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s can not be used with %s."), implode(';', $bad_types),  $t['name']);
+			}
+		}
+	} else {
+		unset($_POST['icmptype']); // field not applicable, might hold junk from old hidden selections. Unset it.
+	}
+
+	if ($_POST['ackqueue'] != "") {
+		if ($_POST['defaultqueue'] == "") {
+			$input_errors[] = gettext("A queue must be selected when an acknowledge queue is also selected.");
+		} else if ($_POST['ackqueue'] == $_POST['defaultqueue']) {
+			$input_errors[] = gettext("Acknowledge queue and Queue cannot be the same.");
+		}
+	}
+	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any")) {
+		$input_errors[] = gettext("Limiters can not be used in Floating rules without choosing a direction.");
+	}
+	if (isset($_POST['floating']) && $_POST['gateway'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any")) {
+		$input_errors[] = gettext("Gateways can not be used in Floating rules without choosing a direction.");
+	}
+	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "") {
+		if ($_POST['dnpipe'] == "") {
+			$input_errors[] = gettext("A queue must be selected for the In direction before selecting one for Out too.");
+		} else if ($_POST['pdnpipe'] == $_POST['dnpipe']) {
+			$input_errors[] = gettext("In and Out Queue cannot be the same.");
+		} else if ($dnqlist[$_POST['pdnpipe']][0] == "?" && $dnqlist[$_POST['dnpipe']][0] <> "?") {
+			$input_errors[] = gettext("A queue and a virtual interface cannot be selected for IN and Out. Both must be from the same type.");
+		} else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] <> "?") {
+			$input_errors[] = gettext("A queue and a virtual interface cannot be selected for IN and Out. Both must be from the same type.");
+		}
+		if ($_POST['direction'] == "out" && empty($_POST['gateway'])) {
+			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
+		}
+	}
+	if (!empty($_POST['ruleid']) && !is_numericint($_POST['ruleid'])) {
+		$input_errors[] = gettext('ID must be an integer');
+	}
+
+	if (!in_array($_POST['proto'], array("tcp", "tcp/udp"))) {
+		if (!empty($_POST['max-src-conn'])) {
+			$input_errors[] = gettext("The maximum number of established connections per host (advanced option) can only be specified for TCP protocol.");
+		}
+		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
+			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) can only be specified for TCP protocol.");
+		}
+	}
+
+	if ($_POST['type'] <> "pass") {
+		if (!empty($_POST['max'])) {
+			$input_errors[] = gettext("The maximum state entries (advanced option) can only be specified for Pass type rules.");
+		}
+		if (!empty($_POST['max-src-nodes'])) {
+			$input_errors[] = gettext("The maximum number of unique source hosts (advanced option) can only be specified for Pass type rules.");
+		}
+		if (!empty($_POST['max-src-conn'])) {
+			$input_errors[] = gettext("The maximum number of established connections per host (advanced option) can only be specified for Pass type rules.");
+		}
+		if (!empty($_POST['max-src-states'])) {
+			$input_errors[] = gettext("The maximum state entries per host (advanced option) can only be specified for Pass type rules.");
+		}
+		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
+			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) can only be specified for Pass type rules.");
+		}
+		if (!empty($_POST['statetimeout'])) {
+			$input_errors[] = gettext("The state timeout (advanced option) can only be specified for Pass type rules.");
+		}
+	}
+
+	if ($_POST['statetype'] == "none") {
+		if (!empty($_POST['max'])) {
+			$input_errors[] = gettext("The maximum state entries (advanced option) cannot be specified if statetype is none.");
+		}
+		if (!empty($_POST['max-src-nodes'])) {
+			$input_errors[] = gettext("The maximum number of unique source hosts (advanced option) cannot be specified if statetype is none.");
+		}
+		if (!empty($_POST['max-src-conn'])) {
+			$input_errors[] = gettext("The maximum number of established connections per host (advanced option) cannot be specified if statetype is none.");
+		}
+		if (!empty($_POST['max-src-states'])) {
+			$input_errors[] = gettext("The maximum state entries per host (advanced option) cannot be specified if statetype is none.");
+		}
+		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
+			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) cannot be specified if statetype is none.");
+		}
+		if (!empty($_POST['statetimeout'])) {
+			$input_errors[] = gettext("The state timeout (advanced option) cannot be specified if statetype is none.");
+		}
+	}
+
+	if (($_POST['max'] != "") && !is_posnumericint($_POST['max'])) {
+		$input_errors[] = gettext("Maximum state entries (advanced option) must be a positive integer");
+	}
+
+	if (($_POST['max-src-nodes'] != "") && !is_posnumericint($_POST['max-src-nodes'])) {
+		$input_errors[] = gettext("Maximum number of unique source hosts (advanced option) must be a positive integer");
+	}
+
+	if (($_POST['max-src-conn'] != "") && !is_posnumericint($_POST['max-src-conn'])) {
+		$input_errors[] = gettext("Maximum number of established connections per host (advanced option) must be a positive integer");
+	}
+
+	if (($_POST['max-src-states'] != "") && !is_posnumericint($_POST['max-src-states'])) {
+		$input_errors[] = gettext("Maximum state entries per host (advanced option) must be a positive integer");
+	}
+
+	if (($_POST['max-src-conn-rate'] != "") && !is_posnumericint($_POST['max-src-conn-rate'])) {
+		$input_errors[] = gettext("Maximum new connections per host / per second(s) (advanced option) must be a positive integer");
+	}
+
+	if (($_POST['statetimeout'] != "") && !is_posnumericint($_POST['statetimeout'])) {
+		$input_errors[] = gettext("State timeout (advanced option) must be a positive integer");
+	}
+
+	if ((($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] == "")) ||
+	    (($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
+		$input_errors[] = gettext("Both maximum new connections per host and the interval (per second(s)) must be specified");
+	}
+
+	if (!$_POST['tcpflags_any']) {
+		$settcpflags = array();
+		$outoftcpflags = array();
+		foreach ($tcpflags as $tcpflag) {
+			if ($_POST['tcpflags1_' . $tcpflag] == "on") {
+				$settcpflags[] = $tcpflag;
+			}
+			if ($_POST['tcpflags2_' . $tcpflag] == "on") {
+				$outoftcpflags[] = $tcpflag;
+			}
+		}
+		if (empty($outoftcpflags) && !empty($settcpflags)) {
+			$input_errors[] = gettext("If TCP flags that should be set is specified, then out of which flags should be specified as well.");
+		} else {
+			/* https://redmine.pfsense.org/issues/11762 */
+			foreach ($settcpflags as $tcpflag) {
+				if (!in_array($tcpflag, $outoftcpflags)) {
+					$input_errors[] = sprintf(gettext("The TCP flag %s must be checked in 'out of' list."), strtoupper($tcpflag));
+				}
+			}
+		}
+	}
+
+	if ($_POST['dscp'] && !in_array($_POST['dscp'], $firewall_rules_dscp_types)) {
+		$input_errors[] = gettext("Invalid DSCP value.");
+	}
+	if ($_POST['tag'] && !is_validaliasname($_POST['tag'])) {
+		$input_errors[] = gettext("Invalid tag value.");
+	}
+	if ($_POST['tagged'] && !is_validaliasname($_POST['tagged'])) {
+		$input_errors[] = gettext("Invalid tagged value.");
+	}
+	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
+		$input_errors[] = gettext("Invalid State Type.");
+	}
+	if ($_POST['vlanprio'] && !array_key_exists($_POST['vlanprio'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio.");
+	}
+	if ($_POST['vlanprioset'] && !array_key_exists($_POST['vlanprioset'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio Set.");
+	}
+
+	if ($_POST['ackqueue'] && !array_key_exists($_POST['ackqueue'], $list)) {
+		$input_errors[] = gettext("Invalid ACK Queue.");
+	}
+	if ($_POST['defaultqueue'] && !array_key_exists($_POST['defaultqueue'], $list)) {
+		$input_errors[] = gettext("Invalid Default Queue.");
+	}
+
+	if ($_POST['dnpipe'] && !array_key_exists($_POST['dnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid In Pipe.");
+	}
+	if ($_POST['pdnpipe'] && !array_key_exists($_POST['pdnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid Out Pipe.");
+	}
+
+	// Allow extending of the firewall edit page and include custom input validation
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/input_validation");
+
+	if (!$input_errors) {
+		$filterent = array();
+		$filterent['id'] = $_POST['ruleid']>0?$_POST['ruleid']:'';
+
+		$filterent['tracker'] = empty($_POST['tracker']) ? (int)microtime(true) : $_POST['tracker'];
+
+		$filterent['type'] = $_POST['type'];
+
+		if (isset($_POST['interface'])) {
+			$filterent['interface'] = $_POST['interface'];
+		} // FIXME: can $_POST['interface'] be unset at this point, if so then what?
+
+		$filterent['ipprotocol'] = $_POST['ipprotocol'];
+
+		if ($_POST['tcpflags_any']) {
+			$filterent['tcpflags_any'] = true;
+		} else {
+			$settcpflags = array();
+			$outoftcpflags = array();
+			foreach ($tcpflags as $tcpflag) {
+				if ($_POST['tcpflags1_' . $tcpflag] == "on") {
+					$settcpflags[] = $tcpflag;
+				}
+				if ($_POST['tcpflags2_' . $tcpflag] == "on") {
+					$outoftcpflags[] = $tcpflag;
+				}
+			}
+			if (!empty($outoftcpflags)) {
+				$filterent['tcpflags2'] = join(",", $outoftcpflags);
+				if (!empty($settcpflags)) {
+					$filterent['tcpflags1'] = join(",", $settcpflags);
+				}
+			}
+		}
+
+		if (isset($_POST['tag'])) {
+			$filterent['tag'] = $_POST['tag'];
+		}
+		if (isset($_POST['tagged'])) {
+			$filterent['tagged'] = $_POST['tagged'];
+		}
+		if ($if == "FloatingRules" || isset($_POST['floating'])) {
+			$filterent['direction'] = $_POST['direction'];
+			if (isset($_POST['quick']) && $_POST['quick'] <> "") {
+				$filterent['quick'] = $_POST['quick'];
+			}
+			$filterent['floating'] = "yes";
+			if (isset($_POST['interface']) && count($_POST['interface']) > 0) {
+				$filterent['interface'] = implode(",", $_POST['interface']);
+			}
+		}
+
+		/* Advanced options */
+		if ($_POST['allowopts'] == "yes") {
+			$filterent['allowopts'] = true;
+		} else {
+			unset($filterent['allowopts']);
+		}
+		if ($_POST['disablereplyto'] == "yes") {
+			$filterent['disablereplyto'] = true;
+		} else {
+			unset($filterent['disablereplyto']);
+		}
+		if ($_POST['nottagged'] == "yes") {
+			$filterent['nottagged'] = true;
+		} else {
+			unset($filterent['nottagged']);
+		}
+		$filterent['max'] = $_POST['max'];
+		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
+		$filterent['max-src-conn'] = $_POST['max-src-conn'];
+		$filterent['max-src-states'] = $_POST['max-src-states'];
+		$filterent['statetimeout'] = $_POST['statetimeout'];
+		$filterent['statetype'] = $_POST['statetype'];
+		$filterent['os'] = $_POST['os'];
+		if ($_POST['nopfsync'] <> "") {
+			$filterent['nopfsync'] = true;
+		} else {
+			unset($filterent['nopfsync']);
+		}
+
+		/* Nosync directive - do not xmlrpc sync this item */
+		if ($_POST['nosync'] <> "") {
+			$filterent['nosync'] = true;
+		} else {
+			unset($filterent['nosync']);
+		}
+
+		/* unless both values are provided, unset the values - ticket #650 */
+		if ($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] <> "") {
+			$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
+			$filterent['max-src-conn-rates'] = $_POST['max-src-conn-rates'];
+		} else {
+			unset($filterent['max-src-conn-rate']);
+			unset($filterent['max-src-conn-rates']);
+		}
+
+		if ($_POST['proto'] != "any") {
+			$filterent['protocol'] = $_POST['proto'];
+		} else {
+			unset($filterent['protocol']);
+		}
+
+		// Convert array of selected ICMP types to comma-separated string, for backwards compatibility (previously only allowed one type per rule)
+		if ($_POST['proto'] == "icmp" && is_array($_POST['icmptype']) && !isset($_POST['icmptype']['any']) && count($_POST['icmptype']) > 0) {
+			//if any of these conditions not met, rule would apply to all icmptypes, so we would unset
+			$filterent['icmptype'] = implode(',', $_POST['icmptype']);
+		} else {
+			unset($filterent['icmptype']);
+		}
+
+		pconfig_to_address($filterent['source'], $_POST['src'],
+			$_POST['srcmask'], $_POST['srcnot'],
+			$_POST['srcbeginport'], $_POST['srcendport']);
+
+		pconfig_to_address($filterent['destination'], $_POST['dst'],
+			$_POST['dstmask'], $_POST['dstnot'],
+			$_POST['dstbeginport'], $_POST['dstendport']);
+
+		if ($_POST['disabled']) {
+			$filterent['disabled'] = true;
+		} else {
+			unset($filterent['disabled']);
+		}
+
+		if ($_POST['dscp']) {
+			$filterent['dscp'] = $_POST['dscp'];
+		}
+
+		if ($_POST['log']) {
+			$filterent['log'] = true;
+		} else {
+			unset($filterent['log']);
+		}
+
+		$filterent['descr'] = trim($_POST['descr']);
+
+		if ($_POST['gateway'] != "") {
+			$filterent['gateway'] = $_POST['gateway'];
+		}
+
+		if ($_POST['defaultqueue'] != "") {
+			$filterent['defaultqueue'] = $_POST['defaultqueue'];
+			if ($_POST['ackqueue'] != "") {
+				$filterent['ackqueue'] = $_POST['ackqueue'];
+			}
+		}
+
+		if ($_POST['dnpipe'] != "") {
+			$filterent['dnpipe'] = $_POST['dnpipe'];
+			if ($_POST['pdnpipe'] != "") {
+				$filterent['pdnpipe'] = $_POST['pdnpipe'];
+			}
+		}
+
+		if ($_POST['sched'] != "") {
+			$filterent['sched'] = $_POST['sched'];
+		}
+
+		if ($_POST['vlanprio'] != "") {
+			$filterent['vlanprio'] = $_POST['vlanprio'];
+		}
+		if ($_POST['vlanprioset'] != "") {
+			$filterent['vlanprioset'] = $_POST['vlanprioset'];
+		}
+
+		// If we have an associated nat rule, make sure the source and destination doesn't change
+		if (isset($a_filter[$id]['associated-rule-id'])) {
+			$filterent['interface'] = $a_filter[$id]['interface'];
+			if (isset($a_filter[$id]['protocol'])) {
+				$filterent['protocol'] = $a_filter[$id]['protocol'];
+			} else if (isset($filterent['protocol'])) {
+				unset($filterent['protocol']);
+			}
+			if ($a_filter[$id]['protocol'] == "icmp" && $a_filter[$id]['icmptype']) {
+				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
+			} else if (isset($filterent['icmptype'])) {
+				unset($filterent['icmptype']);
+			}
+
+			$filterent['source'] = $a_filter[$id]['source'];
+			$filterent['destination'] = $a_filter[$id]['destination'];
+			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
+		}
+
+		if (isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created'])) {
+			$filterent['created'] = $a_filter[$id]['created'];
+		}
+
+		$filterent['updated'] = make_config_revision_entry();
+
+		// Allow extending of the firewall edit page and include custom input validation
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
+
+		if (isset($id) && $a_filter[$id]) {
+			$tmpif = $filterent['interface'];
+			if (($tmpif == $if) || (isset($pconfig['floating']))) {
+				$a_filter[$id] = $filterent;
+			} else {							// rule moved to different interface
+				// Update the separators of previous interface.
+				init_config_arr(array('filter', 'separator', strtolower($if)));
+				$a_separators = &$config['filter']['separator'][strtolower($if)];
+				$ridx = ifridx($if, $id);		// get rule index within interface
+				$mvnrows = -1;
+				move_separators($a_separators, $ridx, $mvnrows);
+
+				$a_filter[$id] = $filterent;	// save edited rule to new interface
+
+				// Update the separators of new interface.
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
+				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$ridx = ifridx($tmpif, $id);	// get rule index within interface
+				if ($ridx == 0) {				// rule was placed at the top
+					$ridx = -1;					// move all separators
+				}
+				$mvnrows = +1;
+				move_separators($a_separators, $ridx, $mvnrows);
+			}
+
+		} else {
+			$filterent['created'] = make_config_revision_entry();
+			if (is_numeric($after)) {
+				array_splice($a_filter, $after+1, 0, array($filterent));
+
+				// For copy/dup the $if var is taken from the rule submission.
+				// In the case of floating rules that could be anything.  But never "FloatingRules" that is needed.
+				if (isset($pconfig['floating'])) {
+					$tmpif = 'FloatingRules';
+				} else if (isset($filterent['interface'])) {
+					$tmpif = $filterent['interface'];
+					if ($tmpif != $if) {					// rule copied to different interface
+						$ridx = ifridx($tmpif, $after+1);	// get rule index within interface
+						if ($ridx == 0) {					// rule was placed at the top
+							$after = -1;					// move all separators
+						}
+					}
+				} else {
+					$tmpif = $if;
+				}
+
+				// Update the separators
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
+				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$ridx = ifridx($tmpif, $after);	// get rule index within interface
+				$mvnrows = +1;
+				move_separators($a_separators, $ridx, $mvnrows);
+			} else {
+				$a_filter[] = $filterent;
+			}
+		}
+
+		filter_rules_sort();
+
+		if (write_config(gettext("Firewall: Rules - saved/edited a firewall rule."))) {
+			mark_subsystem_dirty('filter');
+		}
+
+		if (isset($_POST['floating'])) {
+			header("Location: firewall_rules.php?if=FloatingRules");
+		} else {
+			header("Location: firewall_rules.php?if=" . htmlspecialchars($_POST['interface']));
+		}
+		exit;
+	}
 }
 
 function build_flag_table() {

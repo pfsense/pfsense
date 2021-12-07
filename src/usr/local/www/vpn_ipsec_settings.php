@@ -52,10 +52,21 @@ $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencrypte
 $pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 $pconfig['filtermode'] = $config['ipsec']['filtermode'];
+$pconfig['ikev2_retransmit_tries'] = $config['ipsec']['ikev2_retransmit_tries'];
+$pconfig['ikev2_retransmit_timeout'] = $config['ipsec']['ikev2_retransmit_timeout'];
+$pconfig['ikev2_retransmit_base'] = $config['ipsec']['ikev2_retransmit_base'];
+$pconfig['ikev2_retransmit_jitter'] = $config['ipsec']['ikev2_retransmit_jitter'];
+$pconfig['ikev2_retransmit_limit'] = $config['ipsec']['ikev2_retransmit_limit'];
 $pconfig['ipsecbypass'] = isset($config['ipsec']['ipsecbypass']);
 $pconfig['bypassrules'] = $config['ipsec']['bypassrules'];
 $pconfig['port'] = $config['ipsec']['port'];
 $pconfig['port_nat_t'] = $config['ipsec']['port_nat_t'];
+
+if ($pconfig['ikev2_retransmit_tries'] || $pconfig['ikev2_retransmit_timeout'] ||
+    $pconfig['ikev2_retransmit_base'] || $pconfig['ikev2_retransmit_jitter'] ||
+    $pconfig['ikev2_retransmit_limit']) {
+	$pconfig['ikev2_retransmit_enable'] = true;
+}
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -72,6 +83,30 @@ if ($_POST['save']) {
 	if ($_POST['maxexchange'] && (!is_numeric($_POST['maxexchange']) ||
 	    ($_POST['maxexchange'] < 3) || ($_POST['maxexchange'] > 64))) {
 		$input_errors[] = gettext("The number of IKEv1 phase 2 exchanges must be between 3 and 64.");
+	}
+
+	if (!isset($_POST['ikev2_retransmit_enable'])) {
+		unset($_POST['ikev2_retransmit_tries']);
+		unset($_POST['ikev2_retransmit_timeout']);
+		unset($_POST['ikev2_retransmit_base']);
+		unset($_POST['ikev2_retransmit_jitter']);
+		unset($_POST['ikev2_retransmit_limit']);
+	}
+
+	if ($_POST['ikev2_retransmit_tries'] && !is_numericint($_POST['ikev2_retransmit_tries'])) {
+		$input_errors[] = gettext("An integer must be specified for IKEv2 Retrasmit Tries.");
+	}
+	if ($_POST['ikev2_retransmit_timeout'] && !is_numeric($_POST['ikev2_retransmit_timeout'])) {
+		$input_errors[] = gettext("A number must be specified for IKEv2 Retrasmit Timeout.");
+	}
+	if ($_POST['ikev2_retransmit_base'] && !is_numeric($_POST['ikev2_retransmit_base'])) {
+		$input_errors[] = gettext("A number must be specified for IKEv2 Retrasmit Base.");
+	}
+	if ($_POST['ikev2_retransmit_jitter'] && !is_numericint($_POST['ikev2_retransmit_jitter'])) {
+		$input_errors[] = gettext("An integer must be specified for IKEv2 Retrasmit Jitter.");
+	}
+	if ($_POST['ikev2_retransmit_limit'] && !is_numericint($_POST['ikev2_retransmit_limit'])) {
+		$input_errors[] = gettext("An integer must be specified for IKEv2 Retrasmit Limit.");
 	}
 
 	if ($_POST['ipsecbypass']) {
@@ -262,6 +297,46 @@ if ($_POST['save']) {
 			unset($config['ipsec']['filtermode']);
 		}
 
+		if (!empty($_POST['ikev2_retransmit_tries'])) {
+			$config['ipsec']['ikev2_retransmit_tries'] = $_POST['ikev2_retransmit_tries'];
+			$needsrestart = false;
+		} else if (isset($config['ipsec']['ikev2_retransmit_tries'])) {
+			unset($config['ipsec']['ikev2_retransmit_tries']);
+			$needsrestart = false;
+		}
+
+		if (!empty($_POST['ikev2_retransmit_timeout'])) {
+			$config['ipsec']['ikev2_retransmit_timeout'] = $_POST['ikev2_retransmit_timeout'];
+			$needsrestart = false;
+		} else if (isset($config['ipsec']['ikev2_retransmit_timeout'])) {
+			unset($config['ipsec']['ikev2_retransmit_timeout']);
+			$needsrestart = false;
+		}
+
+		if (!empty($_POST['ikev2_retransmit_base'])) {
+			$config['ipsec']['ikev2_retransmit_base'] = $_POST['ikev2_retransmit_base'];
+			$needsrestart = false;
+		} else if (isset($config['ipsec']['ikev2_retransmit_base'])) {
+			unset($config['ipsec']['ikev2_retransmit_base']);
+			$needsrestart = false;
+		}
+
+		if (!empty($_POST['ikev2_retransmit_jitter'])) {
+			$config['ipsec']['ikev2_retransmit_jitter'] = $_POST['ikev2_retransmit_jitter'];
+			$needsrestart = false;
+		} else if (isset($config['ipsec']['ikev2_retransmit_jitter'])) {
+			unset($config['ipsec']['ikev2_retransmit_jitter']);
+			$needsrestart = false;
+		}
+
+		if (!empty($_POST['ikev2_retransmit_limit'])) {
+			$config['ipsec']['ikev2_retransmit_limit'] = $_POST['ikev2_retransmit_limit'];
+			$needsrestart = false;
+		} else if (isset($config['ipsec']['ikev2_retransmit_limit'])) {
+			unset($config['ipsec']['ikev2_retransmit_limit']);
+			$needsrestart = false;
+		}
+
 		if (isset($config['ipsec']['bypassrules']['rule'])) {
 			unset($config['ipsec']['bypassrules']['rule']);
 		}
@@ -382,6 +457,67 @@ $section->addInput(new Form_Select(
 	'Do not set this option unless %1$sall%2$s IPsec tunnels are using VTI or transport mode.',
 	'<b>', '</b>', '<br />'
 );
+
+$section->addInput(new Form_Checkbox(
+	'ikev2_retransmit_enable',
+	'IKEv2 Retransmission Parameters',
+	'Set IKEv2 Retransmission parameters',
+	$pconfig['ikev2_retransmit_enable']
+))->toggles('.toggle-ikev2_retransmit_enable')->setHelp('Retransmission timeout parameters for IKEv2.');
+
+$group = new Form_Group('');
+$group->addClass('toggle-ikev2_retransmit_enable collapse');
+
+if (!empty($pconfig['ikev2_retransmit_enable'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Input(
+	'ikev2_retransmit_tries',
+	'Retransmit Tries',
+	'number',
+	$pconfig['ikev2_retransmit_tries'],
+	['placeholder' => 5]
+))->setHelp('%1$sRetransmit Tries%2$s -%3$sNumber of retransmissions to send before giving up.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'ikev2_retransmit_timeout',
+	'Retransmit Timeout',
+	'text',
+	$pconfig['ikev2_retransmit_timeout'],
+	['placeholder' => 4.0]
+))->setHelp('%1$sRetransmit Timeout%2$s -%3$sTimeout in seconds.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'ikev2_retransmit_base',
+	'Retransmit Base',
+	'text',
+	$pconfig['ikev2_retransmit_base'],
+	['placeholder' => 1.8]
+))->setHelp('%1$sRetransmit Base%2$s -%3$sBase of exponential backoff.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'ikev2_retransmit_jitter',
+	'Retransmit Jitter',
+	'number',
+	$pconfig['ikev2_retransmit_jitter'],
+	['placeholder' => 0]
+))->setHelp('%1$sRetransmit Jitter%2$s -%3$sMaximum jitter in percent to apply randomly to calculated ' .
+	    'retransmission timeout (0 to disable).', '<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'ikev2_retransmit_limit',
+	'Retransmit Limit',
+	'number',
+	$pconfig['ikev2_retransmit_limit'],
+	['placeholder' => 0]
+))->setHelp('%1$sRetransmit Limit%2$s -%3$sUpper limit in seconds for calculated retransmission timeout ' .
+	    '(0 to disable).', '<b>', '</b>', '<br/>');
+
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'compression',

@@ -1733,6 +1733,23 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['port_nat_t'] = $config['ipsec']['port_nat_t'];
 	}
 
+	/* IKEv2 retransmit options, see https://redmine.pfsense.org/issues/12184 */
+	if (isset($config['ipsec']['ikev2_retransmit_tries'])) {
+		$ssconf['charon']['retransmit_tries'] = $config['ipsec']['ikev2_retransmit_tries'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_timeout'])) {
+		$ssconf['charon']['retransmit_timeout'] = $config['ipsec']['ikev2_retransmit_timeout'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_base'])) {
+		$ssconf['charon']['retransmit_base'] = $config['ipsec']['ikev2_retransmit_base'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_jitter'])) {
+		$ssconf['charon']['retransmit_jitter'] = $config['ipsec']['ikev2_retransmit_jitter'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_limit'])) {
+		$ssconf['charon']['retransmit_limit'] = $config['ipsec']['ikev2_retransmit_limit'];
+	}
+
 	$ssconf['charon']['syslog'] = array();
 	$ssconf['charon']['syslog']['identifier'] = 'charon';
 	$ssconf['charon']['syslog'][] = "# log everything under daemon since it ends up in the same place regardless with our syslog.conf";
@@ -2550,7 +2567,11 @@ function ipsec_setup_tunnels($gateways_status = false) {
 				$child_params['dpd_action'] = "clear";
 			}
 			$conn['dpd_delay'] = "{$ph1ent['dpd_delay']}s";
-			$conn['dpd_timeout'] =  $ph1ent['dpd_delay'] * ($ph1ent['dpd_maxfail'] + 1) . "s";
+			if ($ph1ent['iketype'] == 'ikev1') {
+				/* in IKEv2 the default retransmission timeout applies,
+				 * see https://redmine.pfsense.org/issues/12184 */
+				$conn['dpd_timeout'] =  $ph1ent['dpd_delay'] * ($ph1ent['dpd_maxfail'] + 1) . "s";
+			}
 
 			/* Adjust dpd_action if the close_action is explicitly set */
 			if (!empty($child_params['close_action'])) {

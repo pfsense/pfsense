@@ -1154,21 +1154,24 @@ $section->addInput(new Form_Checkbox(
 	'Dead Peer Detection',
 	'Enable DPD',
 	$pconfig['dpd_enable']
-));
+))->setHelp('Check the liveness of a peer by using IKEv2 INFORMATIONAL exchanges or IKEv1 R_U_THERE messages. ' .
+	    'Active DPD checking is only enforced if no IKE or ESP/AH packet has been received for the configured DPD delay.');
 
 $section->addInput(new Form_Input(
 	'dpd_delay',
 	'Delay',
 	'number',
 	$pconfig['dpd_delay']
-))->setHelp('Delay between requesting peer acknowledgement.');
+))->setHelp('Delay between sending peer acknowledgement messages. In IKEv2, a value of 0 sends no additional ' .
+	    'messages and only standard messages (such as those to rekey) are used to detect dead peers.');
 
 $section->addInput(new Form_Input(
 	'dpd_maxfail',
 	'Max failures',
 	'number',
 	$pconfig['dpd_maxfail']
-))->setHelp('Number of consecutive failures allowed before disconnect. ');
+))->setHelp('Number of consecutive failures allowed before disconnecting. This only applies to IKEv1; in IKEv2 ' .
+	    'the %1$sretransmission timeout%2$s is used instead.', '<a href="/vpn_ipsec_settings.php">', '</a>');
 
 if ((!empty($_REQUEST['ikeid']) &&
     $p1['ikeid']) &&

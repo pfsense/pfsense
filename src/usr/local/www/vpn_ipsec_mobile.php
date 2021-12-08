@@ -203,6 +203,12 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be specified.");
 		}
 	}
+	if (!isset($pconfig['radius_advanced'])) {
+		unset($pconfig['radius_retransmit_base']);
+		unset($pconfig['radius_retransmit_timeout']);
+		unset($pconfig['radius_retransmit_tries']);
+		unset($pconfig['radius_retransmit_sockets']);
+	}
 	if ($pconfig['radius_retransmit_base'] && !is_numeric($pconfig['radius_retransmit_base'])) {
 		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Base.");
 	}
@@ -680,7 +686,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'radius_advanced',
 	'RADIUS Advanced Parameters',
-	'Show Advanced RADIUS parameters',
+	'Set Advanced RADIUS parameters',
 	$pconfig['radius_advanced']
 ))->toggles('.toggle-radius_advanced')->setHelp('May only be required when using 2FA/MFA with RADIUS or under high load.');
 

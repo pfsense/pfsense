@@ -898,12 +898,18 @@ events.push(function() {
 			hideClass('opt_localid', false);
 			hideClass('opt_natid', true);
 			hideClass('opt_remoteid', false);
-			$('#localid_type').val('address');
-			disableInput('localid_type', false);
-			typesel_change_local(30);
-			$('#remoteid_type').val('address');
-			disableInput('remoteid_type', false);
-			typesel_change_remote(30);
+			address_is_blank = !/\S/.test($('#localid_type').val());
+			if (address_is_blank) {
+				$('#localid_type').val('address');
+				disableInput('localid_type', false);
+				typesel_change_remote(0);
+			}
+			address_is_blank = !/\S/.test($('#remoteid_address').val());
+			if (address_is_blank) {
+				$('#remoteid_type').val('address');
+				disableInput('remoteid_type', false);
+				typesel_change_remote(0);
+			}
 			$('#opt_localid_help').html("<?=$localid_help_vti?>");
 			$('#opt_remoteid_help').html("<?=$remoteid_help_vti?>");
 		} else {

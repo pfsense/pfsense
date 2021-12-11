@@ -54,7 +54,7 @@ foreach ($vips as $vip) {
 	$notificationmsg = sprintf('HA cluster member "(%1$s@%2$s): (%3$s)" has resumed CARP state "MASTER" for vhid %4$s',
 	    $vip['subnet'], $iface, $friendly_descr, $vhid);
 
-	notify_via_smtp($notificationmsg);
+	notify_all_remote($notificationmsg);
 	log_error($notificationmsg);
 }
 restart_ppp_interfaces_using_interfaces($vips);

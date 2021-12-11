@@ -104,7 +104,15 @@ function process_state_req($post, $request, $json = false) {
 		$statedisp[$i]['dstip'] =  $dstip;
 		$statedisp[$i]['state'] = $res[$i]['state'];
 		$statedisp[$i]['packets'] = format_number($res[$i]['packets in']) . ' / ' . format_number($res[$i]['packets out']);
+		$statedisp[$i]['packets_in'] = format_number($res[$i]['packets in']);
+		$statedisp[$i]['packets_out'] = format_number($res[$i]['packets out']);
+		$statedisp[$i]['packets_raw_in'] = $res[$i]['packets in'];
+		$statedisp[$i]['packets_raw_out'] =  $res[$i]['packets out'];
 		$statedisp[$i]['bytes'] = format_bytes($res[$i]['bytes in']) . ' / ' . format_bytes($res[$i]['bytes out']);
+		$statedisp[$i]['bytes_in'] = format_bytes($res[$i]['bytes in']);
+		$statedisp[$i]['bytes_out'] = format_bytes($res[$i]['bytes out']);
+		$statedisp[$i]['bytes_raw_in'] = $res[$i]['bytes in'];		
+		$statedisp[$i]['bytes_raw_out'] = $res[$i]['bytes out'];
 
 	endfor;
 

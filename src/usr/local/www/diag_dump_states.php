@@ -67,31 +67,30 @@ $delmsg = gettext("Are you sure you wish to delete this state?");
 ?>
 
 <script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	$('a[data-entry]').on('click', function() {
-		var el = $(this);
-		var data = $(this).data('entry').split('|');
+	//<![CDATA[
+	events.push(function() {
+		$('a[data-entry]').on('click', function() {
+			var el = $(this);
+			var data = $(this).data('entry').split('|');
 
-		if (confirm("<?=$delmsg?>")) {
+			if (confirm("<?= $delmsg ?>")) {
 
-			$.ajax(
-				'/diag_dump_states.php',
-				{
-					type: 'post',
-					data: {
-						action: 'remove',
-						srcip: data[0],
-						dstip: data[1]
-					},
-					success: function() {
-						el.parents('tr').remove();
-					},
-			});
-		}
+				$.ajax(
+					'/diag_dump_states.php', {
+						type: 'post',
+						data: {
+							action: 'remove',
+							srcip: data[0],
+							dstip: data[1]
+						},
+						success: function() {
+							el.parents('tr').remove();
+						},
+					});
+			}
+		});
 	});
-});
-//]]>
+	//]]>
 </script>
 
 <?php
@@ -104,11 +103,11 @@ $tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
 display_top_tabs($tab_array);
 
 // Start of tab content
-$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
+$current_statecount = `pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 
 $form = new Form(false);
 
-$section = new Form_Section('State Filter', 'secfilter', COLLAPSIBLE|SEC_OPEN);
+$section = new Form_Section('State Filter', 'secfilter', COLLAPSIBLE | SEC_OPEN);
 
 $iflist = get_configured_interface_with_descr();
 $iflist['enc0'] = "IPsec";
@@ -169,41 +168,42 @@ $states = count($statedisp);
 
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("States")?></h2></div>
+	<div class="panel-heading">
+		<h2 class="panel-title"><?= gettext("States") ?></h2>
+	</div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
-						<th><?=gettext("Interface")?></th>
-						<th><?=gettext("Protocol")?></th>
-						<th><?=gettext("Source (Original Source) -> Destination (Original Destination)")?></th>
-						<th><?=gettext("State")?></th>
-						<th data-sortable="false"><?=gettext("Packets")?></th>
-						<th data-sortable="false"><?=gettext("Bytes")?></th>
+						<th><?= gettext("Interface") ?></th>
+						<th><?= gettext("Protocol") ?></th>
+						<th><?= gettext("Source (Original Source) -> Destination (Original Destination)") ?></th>
+						<th><?= gettext("State") ?></th>
+						<th data-sortable="false"><?= gettext("Packets") ?></th>
+						<th><?= gettext("Bytes") ?></th>
 						<th data-sortable="false"></th> <!-- For the optional "Remove" button -->
 					</tr>
 				</thead>
 				<tbody>
-<?php
-		foreach ($statedisp as $dstate):
-?>
-					<tr>
-						<td><?= $dstate['interface']?></td>
-						<td><?= $dstate['proto'] ?></td>
-						<td><?= $dstate['display']?></td>
-						<td><?= $dstate['state'] ?></td>
-						<td><?= $dstate['packets']?></td>
-						<td><?= $dstate['bytes'] ?></td>
+					<?php
+					foreach ($statedisp as $dstate) :
+					?>
+						<tr>
+							<td><?= $dstate['interface'] ?></td>
+							<td><?= $dstate['proto'] ?></td>
+							<td><?= $dstate['display'] ?></td>
+							<td><?= $dstate['state'] ?></td>
+							<td><?= $dstate['packets'] ?></td>
+							<td><?= $dstate['bytes'] ?></td>
 
-						<td>
-							<a class="btn fa fa-trash no-confirm" data-entry="<?=$dstate['srcip']?>|<?=$dstate['dstip']?>"
-								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $dstate['srcip'], $dstate['dstip']);?>"></a>
-						</td>
-					</tr>
-<?php
-	endforeach;
-?>
+							<td>
+								<a class="btn fa fa-trash no-confirm" data-entry="<?= $dstate['srcip'] ?>|<?= $dstate['dstip'] ?>" title="<?= sprintf(gettext('Remove all state entries from %1$s to %2$s'), $dstate['srcip'], $dstate['dstip']); ?>"></a>
+							</td>
+						</tr>
+					<?php
+					endforeach;
+					?>
 				</tbody>
 			</table>
 		</div>
@@ -214,10 +214,12 @@ $states = count($statedisp);
 if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter.');
-	} else if (!isset($_POST['filter']) && !isset($_REQUEST['ruleid']) &&
-	    isset($config['system']['webgui']['requirestatefilter'])) {
-		$errmsg = gettext('State display suppressed without filter submission. '.
-		'See System > General Setup, Require State Filter.');
+	} else if (
+		!isset($_POST['filter']) && !isset($_REQUEST['ruleid']) &&
+		isset($config['system']['webgui']['requirestatefilter'])
+	) {
+		$errmsg = gettext('State display suppressed without filter submission. ' .
+			'See System > General Setup, Require State Filter.');
 	} else {
 		$errmsg = gettext('No states were found.');
 	}

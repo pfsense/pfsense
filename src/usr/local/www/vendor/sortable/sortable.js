@@ -237,6 +237,40 @@
 		}
 	};
 
+	function getMaxBytes(number) {
+		var vals = number.split("/");
+		var n1 = parseFloat(vals[0].replace(/[^0-9]/g, '')); 
+		var n2 = parseFloat(vals[1].replace(/[^0-9]/g, ''));
+		var u1 = vals[0].replace(/[^a-zA-Z]+/g, '').toUpperCase();
+		var u2 = vals[1].replace(/[^a-zA-Z]+/g, '').toUpperCase();
+
+		var nf1 = getBytes(n1, u1);
+		var nf2 = getBytes(n2, u2);
+
+		if (nf1 > nf2){
+			return nf1;
+		}
+		return nf2;
+	}
+
+	function getBytes(value, unit) {
+		switch (unit) {
+			case "KIB":
+				value = value * 1024;
+				break;
+			case "MIB":
+				value = value * Math.pow(1024, 2);
+				break;
+			case "GIB":
+				value = value * Math.pow(1024, 3);
+				break;
+			case "TIB":
+				value = value * Math.pow(1024, 4);
+				break;
+		}
+		return value;
+	}
+
 	// ip type needs to go first to prevent 'numeric" from catching it
 	// 3 dots = IPv4
 	// 2 colons = IPv6
@@ -254,6 +288,15 @@
 			a = padip(a);
 			b = padip(b);
 			return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+		}
+	},	{
+		name: 'bytesIO',
+		defaultSortDirection: 'ascending',
+		match: function(a) {
+			return a.includes("B / ");
+		},
+		compare: function(a, b) {
+			return getMaxBytes(a) < getMaxBytes(b) ? -1 : (getMaxBytes(a) > getMaxBytes(b) ? 1 : 0);
 		}
 	},	{
 		name: 'numeric',

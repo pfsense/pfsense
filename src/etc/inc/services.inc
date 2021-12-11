@@ -79,17 +79,16 @@ function services_radvd_configure($blacklist = array()) {
 		$racarpif = false;
 		$rasrcaddr = "";
 		/* check if binding to CARP IP */
-		if (!empty($dhcpv6ifconf['rainterface'])) {
-			if (strstr($dhcpv6ifconf['rainterface'], "_vip")) {
+		if (!empty($dhcpv6ifconf['rainterface']) && strstr($dhcpv6ifconf['rainterface'], "_vip")) {
+			if (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
 				if (is_linklocal(get_configured_vip_ipv6($dhcpv6ifconf['rainterface']))) {
 					$rasrcaddr = get_configured_vip_ipv6($dhcpv6ifconf['rainterface']);
-				}
-				elseif (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
+				} else {
 					$dhcpv6if = $dhcpv6ifconf['rainterface'];
 					$racarpif = true;
-				} else {
-					continue;
 				}
+			} else {
+				continue;
 			}
 		}
 

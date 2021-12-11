@@ -44,7 +44,7 @@ foreach ($arguments as $item => $arg) {
 
 if ($message) {
 	if ($send_email) {
-		notify_via_smtp($message);
+		notify_all_remote($message);
 	}
 }
 

@@ -2691,6 +2691,23 @@ function route_table() {
 	return $result;
 }
 
+/* check if route is static (not BGP/OSPF) */
+function is_static_route($target, $ipprotocol = '') {
+	if (is_v4($target) || (($target == 'default') && ($ipprotocol == 'inet'))) {
+		$inet = '4';
+	} elseif (is_v6($target) || (($target == 'default') && ($ipprotocol == 'inet6'))) {
+		$inet = '6';
+	} else {
+		return false;
+	}
+
+	if (exec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | egrep 'flags: <.*STATIC.*>'")) {
+		return true;
+	}
+
+	return false;
+}
+
 /* Get static route for specific destination */
 function route_get($target, $ipprotocol = '', $useroute = false) {
 	global $config;

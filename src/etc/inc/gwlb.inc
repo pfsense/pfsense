@@ -1112,8 +1112,12 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	} else {
 		$gwdefault = $config['gateways']['defaultgw6'];
 	}
+	/* do not delete dynamic (frr/bgp/ospf) route
+	 * see https://redmine.pfsense.org/issues/12536 */
 	if ($gwdefault == "-") {
-		// 'none', dont set the default gateway, useful if routes are managed by frr/bgp/ospf or similar
+		if (is_static_route('default', $ipprotocol)) {
+			route_del('default', $ipprotocol); 
+		}
 		return;
 	}
 	if (isset($gateways_arr[$gwdefault])) {

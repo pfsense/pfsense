@@ -1248,9 +1248,8 @@ function buffer_rules_load() {
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {
 			list($key, $value) = explode (" ", $line, 2);
-			# pfctl rule number output with tracker number: @dd(dddddddddd)
 			$matches = array();
-			if (preg_match('/\@(?P<rulenum>\d+)\((?<trackernum>\d+)\)/', $key, $matches) == 1) {
+			if (preg_match('/\@(?P<rulenum>\d+).*ridentifier (?<trackernum>\d+)/', $line, $matches) == 1) {
 				if ($matches['trackernum'] > 0) {
 					$key = $matches['trackernum'];
 				} else {

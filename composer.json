@@ -7,8 +7,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Netgate\\": "/usr/local/pfSense/include/Netgate",
-            "pfSense\\": "/usr/local/pfSense/include"
+            "Netgate\\": "//usr/local/pfSense/include/Netgate/",
+            "pfSense\\": "//usr/local/pfSense/include/"
         }
     },
     "config": {

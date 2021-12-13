@@ -1209,7 +1209,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	if ($trackernum == "0") {
 		$lookup_pattern = "^@{$rulenum}\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
 	} else {
-		$lookup_pattern = "^@[0-9]+\({$trackernum}\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
+		$lookup_pattern = "^@[0-9]+\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]].*[[:space:]]ridentifier[[:space:]]{$trackernum}";
 	}
 
 	/* At the moment, miniupnpd is the only thing I know of that

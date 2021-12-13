@@ -1405,7 +1405,7 @@ pkg_repo_rsync() {
 		echo -n ">>> Sending updated repository to ${_pkg_rsync_hostname}... " | tee -a ${_logfile}
 		if script -aq ${_logfile} rsync -Have "ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT}" \
 			--timeout=60 --delete-delay ${_repo_path} \
-			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
+			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >> ${BUILDER_LOGS}/rsync.log 2>&1
 		then
 			echo "Done!" | tee -a ${_logfile}
 		else
@@ -1429,7 +1429,7 @@ pkg_repo_rsync() {
 
 				echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
 				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
 					echo "Failed!" | tee -a ${_logfile}
@@ -1443,7 +1443,7 @@ pkg_repo_rsync() {
 
 				echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
 				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
 					echo "Failed!" | tee -a ${_logfile}

@@ -117,6 +117,8 @@ if ($config['ipsec']['filtermode'] == 'if_ipsec') {
  *
  */
 
+define("TRACKER_DEFAULT", 1000000000);
+define("NEGATE_TRACKER_DEFAULT", 10000000);
 define("ANTILOCKOUT_TRACKER_START", 10000);
 define("ANTILOCKOUT_TRACKER_END", 10999);
 define("BOGONS_TRACKER_START", 11000);
@@ -126,8 +128,8 @@ define("RFC1918_TRACKER_END", 12999);
 define("PFLABEL_MAXLEN", 63);
 define("USER_LABEL_INTRO", "USER_RULE: ");
 
-$tracker = 1000000000;
-$negate_tracker = 10000000;
+$tracker = TRACKER_DEFAULT;
+$negate_tracker = NEGATE_TRACKER_DEFAULT;
 $antilockout_tracker = ANTILOCKOUT_TRACKER_START;
 $bogons_tracker = BOGONS_TRACKER_START;
 $rfc1918_tracker = RFC1918_TRACKER_START;
@@ -262,6 +264,9 @@ function filter_delete_states_for_down_gateways() {
 function filter_configure_sync($delete_states_if_needed = true) {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases, $dummynet_name_list;
+	global $tracker, $negate_tracker;
+	$tracker = TRACKER_DEFAULT;
+	$negate_tracker = NEGATE_TRACKER_DEFAULT;
 
 	/* Use filter lock to not allow concurrent filter reloads during this run. */
 	$filterlck = lock('filter', LOCK_EX);

@@ -1653,7 +1653,7 @@ function save_repo($json) {
 		file_put_contents($basename . "altabi", $repo['altabi']);
 		file_put_contents($basename . "name", $repo['name']);
 		file_put_contents($basename . "help", $repo['help']);
-		file_put_contents($basename . "key", $repo['key']);
+
 
 		// Save fingerprint file
 		if (!empty($repo['fingerprint'])) {
@@ -1666,9 +1666,12 @@ function save_repo($json) {
 			file_put_contents($fppath, $repo['fingerprint']);
 		}
 
-		// Save the client Cert
-		if (!empty($repo['cert'])) {
-			file_put_contents($basename . "cert", $repo['cert']);
+		// Save the client Cert & key
+		if (!empty($repo['cert']) && !empty($repo['key'])) {
+			$certbasename = "/etc/ssl/{$g['product_name']}-repo-custom.";
+			file_put_contents($certbasename . "cert", $repo['cert']);
+			file_put_contents($certbasename . "key", $repo['key']);
+			chmod($certbasename . "key", 0600);
 		}
 	} else {
 		/*

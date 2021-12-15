@@ -1955,18 +1955,19 @@ save_logs_to_s3() {
 }
 
 save_pkgs_to_s3() {
-	echo ">>> Saving a copy of the package repo into S3..." | tee -a ${LOGFILE}
 	cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
 	find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
 	cd ${WORKSPACE}
 	diff pre-build-pkg-list-${jail_arch} post-build-pkg-list-${jail_arch} > /dev/null
 	if [ $? = 1 ]; then
+		echo ">>> Saving a copy of the package repo into S3..." | tee -a ${LOGFILE}
 		[ -f ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar ] && rm ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar
 		script -aq ${LOGFILE} tar -cf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} .
 		aws_exec s3 cp ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar s3://pfsense-engineering-build-pkg/ --no-progress
-
-		save_logs_to_s3
+	else
+		echo ">>> No pkgs different, not saving to S3..." | tee -a ${LOGFILE}
 	fi
+	save_logs_to_s3
 }
 
 aws_exec() {

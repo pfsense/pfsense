@@ -211,7 +211,7 @@ if ($_POST['save'] || $_POST['force']) {
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
 		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
-		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) {
+		if (($dyndns['type'] == "custom-v6") && !$dyndns['curl_ipresolve_v4'] && is_stf_interface($_POST['requestif'])) {
 			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
 		} elseif (($dyndns['type'] == "custom") || ($dyndns['type'] == "custom-v6")) {
 			$dyndns['requestif'] = $_POST['requestif'];

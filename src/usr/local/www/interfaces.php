@@ -506,7 +506,7 @@ if ($_POST['apply']) {
 		}
 
 		/* restart snmp so that it binds to correct address */
-		$retval |= services_snmpd_configure();
+		$retval |= services_snmpd_configure($ifapply);
 
 		/* sync filter configuration */
 		setup_gateways_monitor();

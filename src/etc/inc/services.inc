@@ -2731,11 +2731,25 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 	return $return;
 }
 
-function services_snmpd_configure() {
+function services_snmpd_configure($interface='') {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_snmpd_configure() being called $mt\n";
+	}
+
+	if (!empty($interface) &&
+	    !empty($config['snmpd']['bindip']) &&
+	    isset($config['snmpd']['enable'])) {
+		foreach (explode(",", $config['snmpd']['bindip']) as $bind_to_ip) {
+			if ($bind_to_ip == $interface) {
+				$interface_restart = true;
+				break;
+			}
+		}
+		if (!$interface_restart) {
+			return 0;
+		}
 	}
 
 	/* kill any running snmpd */

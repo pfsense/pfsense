@@ -268,7 +268,7 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 	services_igmpproxy_configure($interface);
 
 	/* restart snmp */
-	services_snmpd_configure();
+	services_snmpd_configure($interface);
 
 	restart_packages();
 

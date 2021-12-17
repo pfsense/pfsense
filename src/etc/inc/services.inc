@@ -2538,13 +2538,19 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 	return $return;
 }
 
-function services_unbound_configure($restart_dhcp = true) {
+function services_unbound_configure($restart_dhcp = true, $interface = '') {
 	global $config, $g;
 	$return = 0;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_unbound_configure() being called $mt\n";
+	}
+
+	if (!empty($interface) && isset($config['unbound']['enable']) &&
+	    !in_array($interface, explode(',', $config['unbound']['active_interface'])) &&
+	    !in_array($interface, explode(',', $config['unbound']['outgoing_interface']))) {
+		return $return;
 	}
 
 	if (isset($config['unbound']['enable'])) {

@@ -241,7 +241,7 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) ||
 	}
 
 	/* reload unbound */
-	services_unbound_configure();
+	services_unbound_configure(true, $interface);
 
 	if (is_ipaddr($curwanip)) {
 		@file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);

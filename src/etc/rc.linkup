@@ -122,11 +122,7 @@ function handle_argument_group($iface, $argument2) {
 				}
 				/* restart unbound on interface recover,
 				 * https://redmine.pfsense.org/issues/11547 */
-				if (isset($config['unbound']['enable']) &&
-				    (in_array($iface, explode(',', $config['unbound']['active_interface'])) ||
-				    in_array($iface, explode(',', $config['unbound']['outgoing_interface'])))) {
-					services_unbound_configure();
-				}
+				services_unbound_configure(true, $iface);
 				break;
 		}
 	}

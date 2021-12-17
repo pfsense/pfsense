@@ -155,7 +155,9 @@ $optionlist = array();
 $iflist = get_configured_interface_with_descr();
 
 foreach ($iflist as $ifnam => $ifdescr) {
-	$optionlist[$ifnam] = $ifdescr;
+	if (!empty($config['interfaces'][$ifnam]['ipaddr'])) {
+		$optionlist[$ifnam] = $ifdescr;
+	}
 }
 
 $section->addInput(new Form_Select(

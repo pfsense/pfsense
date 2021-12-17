@@ -1920,17 +1920,39 @@ EOD;
 	return 0;
 }
 
-function services_igmpproxy_configure() {
+function services_igmpproxy_configure($interface='') {
 	global $config, $g;
 
-	/* kill any running igmpproxy */
-	killbyname("igmpproxy");
+	if (!empty($interface) && is_array($config['igmpproxy']['igmpentry'])) { 
+		foreach ($config['igmpproxy']['igmpentry'] as $igmpentry) {
+			if ($igmpentry['ifname'] == $interface) {
+				$igmpinf = true;
+				break;
+			}
+		}
+		if (!$igmpinf) {
+			return false;
+		}
+	}
 
 	if (!isset($config['igmpproxy']['enable'])) {
-		return 0;
+		if (isvalidproc("igmpproxy")) {
+			log_error(gettext("Stopping IGMP Proxy service."));
+			killbyname("igmpproxy");
+		}
+		return true;
 	}
 	if (!is_array($config['igmpproxy']['igmpentry']) || (count($config['igmpproxy']['igmpentry']) == 0)) {
-		return 1;
+		return false;
+	}
+
+	if (platform_booting()) {
+		echo gettext("Starting IGMP Proxy service...");
+	}
+
+	if (isvalidproc("igmpproxy")) {
+		log_error(gettext("Restarting IGMP Proxy service."));
+		killbyname("igmpproxy");
 	}
 
 	$iflist = get_configured_interface_list();
@@ -1945,6 +1967,9 @@ quickleave
 EOD;
 
 	foreach ($config['igmpproxy']['igmpentry'] as $igmpcf) {
+		if (empty($config['interfaces'][$igmpcf['ifname']]['ipaddr'])) {
+			continue;
+		}
 		unset($iflist[$igmpcf['ifname']]);
 		$realif = get_real_interface($igmpcf['ifname']);
 		if (empty($igmpcf['threshold'])) {
@@ -1961,6 +1986,11 @@ EOD;
 			}
 		}
 		$igmpconf .= "\n";
+		if ($igmpcf['type'] == 'upstream') {
+		       $upstream = true;	
+		} else {
+		       $downstream = true;	
+		}
 	}
 	foreach ($iflist as $ifn) {
 		$realif = get_real_interface($ifn);
@@ -1968,9 +1998,14 @@ EOD;
 	}
 	$igmpconf .= "\n";
 
+	if (!$upstream || !$downstream) {
+		log_error(gettext("Could not find upstream or downstream IGMP Proxy interfaces!"));
+		return;
+	}
+
 	$igmpfl = fopen($g['varetc_path'] . "/igmpproxy.conf", "w");
 	if (!$igmpfl) {
-		log_error(gettext("Could not write Igmpproxy configuration file!"));
+		log_error(gettext("Could not write IGMP Proxy configuration file!"));
 		return;
 	}
 	fwrite($igmpfl, $igmpconf);
@@ -1983,9 +2018,13 @@ EOD;
 		mwexec_bg("/usr/local/sbin/igmpproxy {$g['varetc_path']}/igmpproxy.conf");
 	}
 
-	log_error(gettext("Started IGMP proxy service."));
+	log_error(gettext("Started IGMP Proxy service."));
 
-	return 0;
+	if (platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
+
+	return true;
 }
 
 function services_dhcrelay_configure() {

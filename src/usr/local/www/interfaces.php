@@ -527,6 +527,8 @@ if ($_POST['apply']) {
 		if (isset($config['syslog']['enable']) && ($ifapply == $config['syslog']['sourceip'])) {
 			system_syslogd_start();
 		}
+
+		services_igmpproxy_configure($ifapply);
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
 } else if ($_POST['save']) {

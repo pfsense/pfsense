@@ -56,17 +56,37 @@ if (isset($config['igmpproxy']['enable'])) {
 $pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
 
 if ($_POST['save']) {
+	unset($input_errors);
 	$pconfig = $_POST;
+
 	if (isset($pconfig['enable'])) {
-		$config['igmpproxy']['enable'] = true;
-	} else {
-		unset($config['igmpproxy']['enable']);
+		if (is_array($config['igmpproxy']['igmpentry']) && 
+		    !empty($config['igmpproxy']['igmpentry'])) {
+			foreach ($config['igmpproxy']['igmpentry'] as $igmpcf) {
+				if ($igmpcf['type'] == 'upstream') {
+				       $upstream = true;	
+				} else {
+				       $downstream = true;	
+				}
+			}
+		}
+		if (!$upstream || !$downstream) {
+			$input_errors[] = gettext("At least one upstream and one downstream interface must be added.");
+		}
 	}
-	$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
-	write_config("IGMP Proxy settings saved");
-	mark_subsystem_dirty('igmpproxy');
-	header("Location: services_igmpproxy.php");
-	exit;
+
+	if (!$input_errors) {
+		if (isset($pconfig['enable'])) {
+			$config['igmpproxy']['enable'] = true;
+		} else {
+			unset($config['igmpproxy']['enable']);
+		}
+		$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
+		write_config("IGMP Proxy settings saved");
+		mark_subsystem_dirty('igmpproxy');
+		header("Location: services_igmpproxy.php");
+		exit;
+	}
 }
 
 if ($_POST['act'] == "del") {
@@ -81,6 +101,10 @@ if ($_POST['act'] == "del") {
 
 $pgtitle = array(gettext("Services"), gettext("IGMP Proxy"));
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 if ($changes_applied) {
 	print_apply_result_box($retval);

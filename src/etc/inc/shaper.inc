@@ -4684,10 +4684,20 @@ EOD;
 			$cflink[$config_key] = $this->GetAQMParameter($key);
 		}
 		$cflink['ecn'] = $this->GetECN();
-		$cflink['pie_onoff'] = $this->GetPIE_ONOFF();
-		$cflink['pie_capdrop'] = $this->GetPIE_CAPDROP();
-		$cflink['pie_qdelay'] = $this->GetPIE_QDELAY();
-		$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
+
+		$selectedScheduler = getSchedulers()[$this->getScheduler()];
+		if ($selectedScheduler["pie_onoff"]) {
+			$cflink['pie_onoff'] = $this->GetPIE_ONOFF();
+		}
+		if ($selectedScheduler["pie_capdrop"]) {
+			$cflink['pie_capdrop'] = $this->GetPIE_CAPDROP();
+		}
+		if ($selectedScheduler["pie_qdelay"]) {
+			$cflink['pie_qdelay'] = $this->GetPIE_QDELAY();
+		}
+		if ($selectedScheduler["pie_pderand"]) {
+			$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
+		}
 		/* End limiter queue patch */
 	}
 
@@ -5215,10 +5225,20 @@ class dnqueue_class extends dummynet_class {
 			$cflink[$config_key] = $this->GetAQMParameter($key);
 		}
 		$cflink['ecn'] = $this->GetECN();
-		$cflink['pie_onoff'] = $this->GetPIE_ONOFF();
-		$cflink['pie_capdrop'] = $this->GetPIE_CAPDROP();
-		$cflink['pie_qdelay'] = $this->GetPIE_QDELAY();
-		$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
+
+		$selectedAQM = getAQMs()[$this->getAQM()];
+		if ($selectedAQM["pie_onoff"]) {
+			$cflink['pie_onoff'] = $this->GetPIE_ONOFF();
+		}
+		if ($selectedAQM["pie_capdrop"]) {
+			$cflink['pie_capdrop'] = $this->GetPIE_CAPDROP();
+		}
+		if ($selectedAQM["pie_qdelay"]) {
+			$cflink['pie_qdelay'] = $this->GetPIE_QDELAY();
+		}
+		if ($selectedAQM["pie_pderand"]) {
+			$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
+		}
 		/* End limiter queue patch */
 	}
 }

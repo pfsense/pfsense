@@ -5057,8 +5057,13 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 #!/bin/sh
 # This shell script launches dhcp6c and configured gateways for this interface.
 if [ -n "\$2" ]; then
-	echo \$2 > {$g['tmp_path']}/{$wanif}_routerv6
-	echo \$2 > {$g['tmp_path']}/{$wanif}_defaultgwv6
+	if [ -n "$(echo \$2 | /usr/bin/grep '^fe80')" ]; then
+		echo \$2\%{$wanif} > {$g['tmp_path']}/{$wanif}_routerv6
+		echo \$2\%{$wanif} > {$g['tmp_path']}/{$wanif}_defaultgwv6
+	else
+		echo \$2 > {$g['tmp_path']}/{$wanif}_routerv6
+		echo \$2 > {$g['tmp_path']}/{$wanif}_defaultgwv6
+	fi
 	/usr/bin/logger -t rtsold "Received RA specifying route \$2 for interface {$interface}({$wanif})"
 fi
 

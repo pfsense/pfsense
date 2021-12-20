@@ -2970,6 +2970,12 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($if);
+			if (is_private_ip($wanip)) {
+				log_error(sprintf(gettext(
+				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),
+				    $dnsupdate['host']));
+				continue;
+			}
 			$bindipv4 = get_interface_ip($if);
 		} else {
 			$wanip = get_interface_ip($if);

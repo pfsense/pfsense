@@ -211,7 +211,7 @@ if (platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", 
  * Even with the same IP the VPN software is unhappy with the IP disappearing, and we
  * could be failing back in which case we need to switch IPs back anyhow.
  */
-if (!is_ipaddr($oldip) || ($curwanip != $oldip) ||
+if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}/{$interface}_upstart4") ||
     (!is_ipaddrv4($config['interfaces'][$interface]['ipaddr']) && ($config['interfaces'][$interface]['ipaddr'] != 'dhcp'))) {
 	/*
 	 * Some services (e.g. dyndns, see ticket #4066) depend on
@@ -271,6 +271,11 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) ||
 	services_snmpd_configure();
 
 	restart_packages();
+
+	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
+	if (empty($config['interfaces'][$interface]['ipaddrv6'])) {
+		unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart6");
+	}
 } else {
 	/* signal filter reload */
 	filter_configure();

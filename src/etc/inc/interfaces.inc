@@ -2030,6 +2030,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	unlink_if_exists("{$g['varetc_path']}/nameserver_v6{$interface}");
 	unlink_if_exists("{$g['varetc_path']}/searchdomain_{$realif}");
 	unlink_if_exists("{$g['varetc_path']}/searchdomain_v6{$interface}");
+	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
+	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart6");
 
 	/* hostapd and wpa_supplicant do not need to be running when the interface is down.
 	 * They will also use 100% CPU if running after the wireless clone gets deleted. */

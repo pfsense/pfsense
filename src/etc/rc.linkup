@@ -94,10 +94,12 @@ function handle_argument_group($iface, $argument2) {
 		switch ($argument2) {
 			case 'start':
 			case 'up':
-				$iface = get_real_interface($iface);
+				$realif = get_real_interface($iface);
 				/* NOTE: Do not generate event for OpenVPN since the daemon does that for us. */
-				if (substr($iface, 0, 4) != "ovpn") {
-					send_event("interface newip {$iface}");
+				if (substr($realif, 0, 4) != "ovpn") {
+					touch("{$g['tmp_path']}/{$iface}_upstart4");
+					touch("{$g['tmp_path']}/{$iface}_upstart6");
+					send_event("interface newip {$realif}");
 				}
 				break;
 		}
@@ -112,6 +114,12 @@ function handle_argument_group($iface, $argument2) {
 			case "up":
 				log_error("DEVD Ethernet attached event for {$iface}");
 				log_error("HOTPLUG: Configuring interface {$iface}");
+				/* trigger services restart
+				 * see https://redmine.pfsense.org/issues/11570 */
+				if (!$staticv4) {
+					touch("{$g['tmp_path']}/{$iface}_upstart4");
+					touch("{$g['tmp_path']}/{$iface}_upstart6");
+				}
 				// Do not try to readd to bridge otherwise em(4) has problems
 				interface_configure($iface, true, true);
 

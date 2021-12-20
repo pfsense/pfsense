@@ -1405,7 +1405,7 @@ pkg_repo_rsync() {
 		echo -n ">>> Sending updated repository to ${_pkg_rsync_hostname}... " | tee -a ${_logfile}
 		if script -aq ${_logfile} rsync -Have "ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT}" \
 			--timeout=60 --delete-delay ${_repo_path} \
-			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
+			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >> ${BUILDER_LOGS}/rsync.log 2>&1
 		then
 			echo "Done!" | tee -a ${_logfile}
 		else
@@ -1429,7 +1429,7 @@ pkg_repo_rsync() {
 
 				echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
 				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
 					echo "Failed!" | tee -a ${_logfile}
@@ -1443,7 +1443,7 @@ pkg_repo_rsync() {
 
 				echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
 				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
 					echo "Failed!" | tee -a ${_logfile}
@@ -1955,18 +1955,19 @@ save_logs_to_s3() {
 }
 
 save_pkgs_to_s3() {
-	echo ">>> Saving a copy of the package repo into S3..." | tee -a ${LOGFILE}
 	cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
 	find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
 	cd ${WORKSPACE}
 	diff pre-build-pkg-list-${jail_arch} post-build-pkg-list-${jail_arch} > /dev/null
 	if [ $? = 1 ]; then
+		echo ">>> Saving a copy of the package repo into S3..." | tee -a ${LOGFILE}
 		[ -f ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar ] && rm ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar
 		script -aq ${LOGFILE} tar -cf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} .
 		aws_exec s3 cp ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar s3://pfsense-engineering-build-pkg/ --no-progress
-
-		save_logs_to_s3
+	else
+		echo ">>> No pkgs different, not saving to S3..." | tee -a ${LOGFILE}
 	fi
+	save_logs_to_s3
 }
 
 aws_exec() {

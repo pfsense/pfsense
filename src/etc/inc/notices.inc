@@ -576,11 +576,11 @@ function notify_via_slack($message, $force = false) {
 function curl_post_notification($url, $data = array()) {
 	$conn = curl_init($url);
 	if (!empty($data)) {
-		//curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
+		curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
 	}
 	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
 	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
-	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($conn, CURLOPT_RETURNTRANSFER, true);
 	set_curlproxy($conn);
 	$curl_post_result = curl_exec($conn);
 	curl_close($conn);

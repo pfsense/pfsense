@@ -2049,6 +2049,15 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		}
 	}
 
+	/* If interface has a gateway, we need to bounce dpinger to keep dpinger happy */
+	foreach (return_gateways_array(true) as $gw) {
+		if ($gw['friendlyiface'] !== $interface) {
+			continue;
+		}
+		setup_gateways_monitor();
+		break;
+	}
+
 	return;
 }
 

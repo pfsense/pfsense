@@ -465,6 +465,14 @@ if ($_POST['apply']) {
 						$wancfg = $config['interfaces'][$ifapply];
 						interface_track6_configure($ifapply, $wancfg, true);
 					}
+					/* restart RADVD to announce correct IPv6 prefix
+					 * see https://redmine.pfsense.org/issues/12604 */ 
+					if ((($ifcfg['ipaddrv6'] == "staticv6") || ($ifcfg['ipaddrv6'] == "track6")) &&
+					    is_array($config['dhcpdv6'][$ifapply]) &&
+					    isset($config['dhcpdv6'][$ifapply]['ramode']) &&
+					    ($config['dhcpdv6'][$ifapply]['ramode'] != "disabled")) {
+						services_radvd_configure();
+					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 					if (isset($config['dhcpd'][$ifapply]['enable']) ||

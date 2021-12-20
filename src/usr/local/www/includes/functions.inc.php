@@ -28,6 +28,7 @@ require_once("config.inc");
 require_once("pfsense-utils.inc");
 
 function get_stats($sitems = array()) {
+	$sitems = is_array($sitems) ? $sitems : [];
 	$stats['cpu'] = (!in_array('cpu_usage', $sitems)) ? cpu_usage() : '|';
 	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? mem_usage() : '';
 	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_uptime() : '';

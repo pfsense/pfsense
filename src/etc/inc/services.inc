@@ -1641,6 +1641,16 @@ EOD;
 		// of each subnet here is always /64.
 		$pdlen = 64;
 
+		if (is_ipaddrv6($ifcfgipv6)) {
+			$subnet_start = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+			$subnet_end = gen_subnetv6_max($ifcfgipv6, $ifcfgsnv6);
+			if ((!is_inrange_v6($dhcpv6ifconf['range']['from'], $subnet_start, $subnet_end)) ||
+			    (!is_inrange_v6($dhcpv6ifconf['range']['to'], $subnet_start, $subnet_end))) {
+				log_error(gettext("The specified range lies outside of the current subnet. Skipping DHCP6 entry."));
+				continue;
+			}
+		}
+
 		$dnscfgv6 = "";
 
 		if ($dhcpv6ifconf['domain']) {

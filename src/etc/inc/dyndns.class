@@ -66,6 +66,8 @@
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - Hover (www.hover.com)
 	 *    - Loopia (loopia.se)
+	 *    - Name.com (name.com)
+	 *    - Name.com IPv6 (name.com)
 	 *    - Namecheap (namecheap.com)
 	 *    - No-IP (no-ip.com)
 	 *    - OpenDNS (opendns.com)
@@ -132,6 +134,8 @@
 	 *  HN.org          - Last Tested: 12 July 2005
 	 *  Hover           - Last Tested: 15 February 2017
 	 *  Loopia          - Last Tested: 21 August 2019
+	 *  Name.com        - Last Tested: 5 Dec 2021
+	 *  Name.com IPv6   - Last Tested: 5 Dec 2021
 	 *  Namecheap       - Last Tested: 31 August 2010
 	 *  No-IP           - Last Tested: 20 July 2008
 	 *  ODS             - Last Tested: 02 August 2005
@@ -288,6 +292,8 @@
 				break;
 			case 'gratisdns':
 			case 'hover':
+			case 'name.com':
+			case 'name.com-v6':
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
@@ -327,6 +333,7 @@
 				case 'he-net-v6':
 				case 'linode-v6':
 				case 'mythicbeasts-v6':
+				case 'name.com-v6':
 				case 'noip-free-v6':
 				case 'noip-v6':
 				case 'route53-v6':
@@ -439,6 +446,8 @@
 					case 'loopia':
 					case 'mythicbeasts':
 					case 'mythicbeasts-v6':
+					case 'name.com':
+					case 'name.com-v6':
 					case 'namecheap':
 					case 'nicru':
 					case 'nicru-v6':
@@ -868,6 +877,48 @@
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				case 'name.com':
+				case 'name.com-v6':
+					// API documentation: https://www.name.com/api-docs/ & https://www.name.com/api-docs/DNS
+					$namedotcom_api = "https://api.name.com/v4/domains/{$this->_dnsDomain}/records";
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					// Check if a record already exists for this host.
+					curl_setopt($ch, CURLOPT_URL, "{$namedotcom_api}?perPage=1000");
+					$response = json_decode(curl_exec($ch), true);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code != "200") {
+						log_error(gettext("Error message: ") . $response);
+						return false;
+					}
+					if (!is_array($response["records"])) {
+						log_error(gettext("Unexpected response: ") . $response);
+						return false;
+					}
+					foreach($response["records"] as $record) {
+						if (($record["domainName"] == $this->_dnsDomain) &&
+							($record["host"] == $this->_dnsHost) &&
+							($record["type"] == $record_type)) {
+								$record_id = $record["id"];
+								$existing_ttl = $record["ttl"];
+								break;
+						}
+					}
+					if (!$record_id && $response["nextPage"])
+					{
+						log_error(gettext("Too many (>1000) Name.com DNS records. Paging not supported."));
+						return false;
+					}
+					// Either update an existing record or create a new one.
+					$post_data['host'] = $this->_dnsHost;
+					$post_data['type'] = $record_type;
+					$post_data['answer'] = $this->_dnsIP;
+					$post_data['ttl'] = max($this->_dnsTTL ?: $existing_ttl, 300);
+					curl_setopt($ch, CURLOPT_URL, "{$namedotcom_api}/{$record_id}");
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $record_id ? "PUT" : "POST");
 					break;
 				case 'namecheap':
 					/* Example:
@@ -2339,6 +2390,17 @@
 						$successful_update = true;
 					} else {
 						log_error($status_intro . " ( " . gettext("Error message: ") . $result['error'] . " )");
+					}
+					break;
+				case 'name.com':
+				case 'name.com-v6':
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code == "200") {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Error, HTTP response code") . ": " . $http_code . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 					}
 					break;
 				case 'namecheap':

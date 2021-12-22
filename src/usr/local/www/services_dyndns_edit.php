@@ -344,7 +344,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode, DigitalOcean: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
+			'Name.com, Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode, DigitalOcean: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
 			'Cloudflare, Linode: Enter @ as the hostname to indicate an empty field.%1$s' .
 			'deSEC: Enter the FQDN.', '<br />');
 
@@ -430,6 +430,7 @@ $section->addPassword(new Form_Input(
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
+			'Name.com: Enter the API token.%1$s' .
 			'Yandex: Yandex PDD Token.%1$s' .
 			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.%1$s' .
 			'deSEC: Enter the API token.', '<br />');
@@ -604,6 +605,8 @@ events.push(function() {
 			case "godaddy-v6":
 			case "linode":
 			case "linode-v6":
+			case "name.com":
+			case "name.com-v6":
 			case "onecom":
 			case "onecom-v6":
 				hideGroupInput('domainname', false);

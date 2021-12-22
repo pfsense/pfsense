@@ -36,7 +36,7 @@ if (isset($_REQUEST["getThermalSensorsData"])) {
 		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc | /usr/bin/grep 'temperature:'", $dfout);
 	}
 	$dfout_filtered = array_filter($dfout, function($v) {
-		return strpos($negsign, ' -') === false;
+		return strpos($v, ' -') === false;
 	});
 
 	print(join("|", $dfout_filtered));

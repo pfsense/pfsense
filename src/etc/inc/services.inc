@@ -310,6 +310,8 @@ function services_radvd_configure($blacklist = array()) {
 			}
 			if (count($searchlist) > 0) {
 				$searchliststring = trim(implode(" ", $searchlist));
+			} else {
+				$searchliststring = "";
 			}
 			if (!empty($dhcpv6ifconf['domain'])) {
 				/* 

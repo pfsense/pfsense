@@ -183,7 +183,7 @@ if (!function_exists('compose_table_body_contents')) {
 
 		if (!$gw_displayed) {
 			$rtnstr .= '<tr>';
-			$rtnstr .= 	'<td colspan="5" class="text-center">';
+			$rtnstr .= 	'<td colspan="6" class="text-center">';
 			if (count($a_gateways)) {
 				$rtnstr .= gettext('All gateways are hidden.');
 			} else {

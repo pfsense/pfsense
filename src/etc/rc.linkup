@@ -173,23 +173,26 @@ if (!empty($realiface)) {
 	if (!empty($interface)) {
 		handle_argument_group($interface, $action);
 	}
-	if ($action == 'start') {
-		/* Check if there is any child on this one as ppp types and trigger them */
-		if (is_array($config['ppps']['ppp'])) {
-			foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
-				if ($ppp['type'] == 'ppp') {
+	/* Check if there is any child on this one as ppp types and trigger them */
+	init_config_arr(array('ppps', 'ppp'));
+	if (is_array($config['ppps']['ppp'])) {
+		foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
+			if ($ppp['type'] == 'ppp') {
+				continue;
+			}
+			$ports = explode(',', $ppp['ports']);
+			foreach ($ports as $pid => $parent_if) {
+				/* The loop here is because ppp types can have real and assigned interfaces as members */
+				$tmpiface = get_real_interface($parent_if);
+				if ($tmpiface != $realiface) {
 					continue;
 				}
-				$ports = explode(',', $ppp['ports']);
-				foreach ($ports as $pid => $parent_if) {
-					/* The loop here is because ppp types can have real and assigned interfaces as members */
-					$tmpiface = get_real_interface($parent_if);
-					if ($tmpiface != $realiface) {
-						continue;
-					}
-					$tmpiface = convert_real_interface_to_friendly_interface_name($ppp['if']);
-					if (!empty($tmpiface)) {
+				$tmpiface = convert_real_interface_to_friendly_interface_name($ppp['if']);
+				if (!empty($tmpiface)) {
+					if (($action == 'start') || ($action == 'up')) {
 						interface_configure($tmpiface, true, true);
+					} elseif (($action == 'stop') || ($action == 'down')) {
+						interface_bring_down($tmpiface);
 					}
 				}
 			}

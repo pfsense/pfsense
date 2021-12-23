@@ -101,7 +101,7 @@ function ssh_keys_xml() {
 	$result = "\t<sshdata>\n";
 	foreach ($keyfiles as $f2c) {
 		$keyfile = "{$sshConfigDir}/{$f2c}";
-		if (file_exists($keyfile) || filesize($keyfile) != 0) {
+		if (file_exists($keyfile) && (filesize($keyfile) != 0)) {
 			$result .= "\t\t<sshkeyfile>\n";
 			$result .= "\t\t\t<filename>{$f2c}</filename>\n";
 			$result .= "\t\t\t<xmldata>" . base64_encode(gzdeflate(file_get_contents($keyfile))) . "</xmldata>\n";

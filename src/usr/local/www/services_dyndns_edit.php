@@ -213,7 +213,7 @@ if ($_POST['save'] || $_POST['force']) {
 		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
 		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) {
 			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
-		} else {
+		} elseif (($dyndns['type'] == "custom") || ($dyndns['type'] == "custom-v6")) {
 			$dyndns['requestif'] = $_POST['requestif'];
 		}
 		$dyndns['curl_proxy'] = $_POST['curl_proxy'] ? true : false;

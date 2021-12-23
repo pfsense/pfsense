@@ -360,7 +360,11 @@
 			$this->_checkIP();
 			$this->_dnsUpdateURL = $dnsUpdateURL;
 			$this->_dnsResultMatch = $dnsResultMatch;
-			$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
+			if (($this->_dnsService == 'custom') || ($this->_dnsService == 'custom-v6')) {
+				$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
+			} else {
+				$this->_dnsRequestIf = $this->_if;
+			}
 			if (($dnsMaxCacheAge !== null) && ($dnsMaxCacheAge !== "")) {
 				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
 			} else {

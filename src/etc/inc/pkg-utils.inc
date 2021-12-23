@@ -1522,11 +1522,11 @@ function pkg_conf_setup() {
 	$auth_key = "/etc/ssl/pfSense-repo-custom.key";
 	if (file_exists($auth_ca) && file_exists($auth_cert) &&
 	    file_exists($auth_key)) {
-		$pkg_conf[] = "PKG_ENV {";
-		$pkg_conf[] = "\tSSL_CA_CERT_FILE=$auth_ca";
-		$pkg_conf[] = "\tSSL_CLIENT_CERT_FILE=$auth_cert";
-		$pkg_conf[] = "\tSSL_CLIENT_KEY_FILE=$auth_key";
-		$pkg_conf[] = "}";
+		$pkg_conf[] = "PKG_ENV {\n";
+		$pkg_conf[] = "\tSSL_CA_CERT_FILE=$auth_ca\n";
+		$pkg_conf[] = "\tSSL_CLIENT_CERT_FILE=$auth_cert\n";
+		$pkg_conf[] = "\tSSL_CLIENT_KEY_FILE=$auth_key\n";
+		$pkg_conf[] = "}\n";
 	}
 
 	file_put_contents($pkg_conf_path, $pkg_conf);

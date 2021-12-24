@@ -953,6 +953,18 @@ function unbound_acls_config($cfgsubdir = "") {
 				}
 			}
 		}
+		// OpenVPN CSO
+		init_config_arr(array('openvpn', 'openvpn-csc'));
+		foreach ($config['openvpn']['openvpn-csc'] as $ovpnent) {
+			if (is_array($ovpnent) && !isset($ovpnent['disable'])) {
+				if (!empty($ovpnent['tunnel_network'])) {
+					$aclnets[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
+				}
+				if (!empty($ovpnent['tunnel_networkv6'])) {
+					$aclnets[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_networkv6']));
+				}
+			}
+		}
 		// IPsec Mobile Virtual IPv6 Address Pool
 		if ((isset($config['ipsec']['client']['enable'])) &&
 		    (!empty($config['ipsec']['client']['pool_address_v6'])) &&

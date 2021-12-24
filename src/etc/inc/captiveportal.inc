@@ -689,7 +689,7 @@ function captiveportal_init_rules($reinit = false) {
 	$rulenum = $skipto;
 	$cprules .= "table {$cpzone}_pipe_mac create type mac valtype pipe\n";
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg MAC table({$cpzone}_pipe_mac)");
+	    "pipe tablearg tag 1 MAC table({$cpzone}_pipe_mac)");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
 	    "allow pfsync from any to any");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,

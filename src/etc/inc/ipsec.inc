@@ -1554,7 +1554,6 @@ function ipsec_setup_gwifs($gateways_status = false) {
 			$rg = $ph1ent['remote-gateway'];
 			if (!is_ipaddr($rg)) {
 				$filterdns_list[] = "{$rg}";
-				add_hostname_to_watch($rg);
 				if (!platform_booting()) {
 					$rg = resolve_retry($rg, $ph1ent['protocol']);
 				}

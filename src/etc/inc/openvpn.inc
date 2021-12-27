@@ -1739,6 +1739,7 @@ function openvpn_resync_csc(& $settings) {
 
 function openvpn_resync_csc_all() {
 	global $config;
+	init_config_arr(array('openvpn', 'openvpn-csc'));
 	if (is_array($config['openvpn']['openvpn-csc'])) {
 		foreach ($config['openvpn']['openvpn-csc'] as & $settings) {
 			openvpn_resync_csc($settings);
@@ -1779,12 +1780,6 @@ function openvpn_resync($mode, $settings) {
 function openvpn_resync_all($interface = "") {
 	global $g, $config;
 
-	openvpn_create_dirs();
-
-	if (!is_array($config['openvpn'])) {
-		$config['openvpn'] = array();
-	}
-
 	if ($interface <> "") {
 		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
 	} else {
@@ -1792,11 +1787,16 @@ function openvpn_resync_all($interface = "") {
 	}
 
 	// Check if OpenVPN clients and servers require a resync.
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
 	foreach (array("server", "client") as $type) {
 		if (!is_array($config['openvpn']["openvpn-{$type}"])) {
 			continue;
 		}
 		foreach ($config['openvpn']["openvpn-{$type}"] as & $settings) {
+			if (isset($settings['disable'])) {
+				continue;
+			}
 			$fpath = "{$g['openvpn_base']}/{$type}{$settings['vpnid']}/interface";
 			$gw_group_change = FALSE;
 			$ip_change = ($interface === "") ||
@@ -1810,17 +1810,24 @@ function openvpn_resync_all($interface = "") {
 			}
 
 			if ($ip_change || $gw_group_change) {
+				if (!$dirs) {
+					openvpn_create_dirs();
+				}
 				openvpn_resync($type, $settings);
+				$restarted = true;
+				$dirs = true;
 			}
 		}
 	}
 
-	openvpn_resync_csc_all();
+	if ($restarted) {
+		openvpn_resync_csc_all();
 
-	/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
-	 * see https://redmine.pfsense.org/issues/11662 */
-	if (platform_booting()) {
-		interfaces_qinq_configure(true);
+		/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
+		 * see https://redmine.pfsense.org/issues/11662 */
+		if (platform_booting()) {
+			interfaces_qinq_configure(true);
+		}
 	}
 }
 
@@ -2190,15 +2197,15 @@ function openvpn_create_dirs() {
 	init_config_arr(array('openvpn', 'openvpn-client'));
 	foreach(array('server', 'client') as $mode) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $settings) {
+			if (isset($settings['disable'])) {
+				continue;
+			}
 			$target = "{$g['openvpn_base']}/{$mode}{$settings['vpnid']}";
+			$csctarget = "{$target}/csc/";
 			@unlink_if_exists($csctarget);
 			@safe_mkdir($target);
 			if (in_array($settings['mode'], $openvpn_tls_server_modes)) {
-				if ($settings['vpnid']) {
-					$csctarget = "{$target}/csc/";
-					@unlink_if_exists($csctarget);
-					@safe_mkdir($csctarget);
-				}
+				@safe_mkdir($csctarget);
 			}
 		}
 	}

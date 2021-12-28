@@ -97,10 +97,16 @@
 			<description>Use system uptime instead of UPnP &amp; NAT-PMP service uptime.</description>
 		</field>
 		<field>
-			<fielddescr>Default Deny</fielddescr>
-			<fieldname>permdefault</fieldname>
-			<type>checkbox</type>
-			<description>Deny access to UPnP &amp; NAT-PMP by default.</description>
+			<fielddescr>Custom presentation URL</fielddescr>
+			<fieldname>presentationurl</fieldname>
+			<type>input</type>
+			<description>If left blank the default value of the WebGUI of this firewall will be used.</description>
+		</field>
+		<field>
+			<fielddescr>Custom model number</fielddescr>
+			<fieldname>modelnumber</fieldname>
+			<type>input</type>
+			<description>If left blank the default value of the firmware version of pfSense will be used.</description>
 		</field>
 		<field>
 			<name>STUN Configuration</name>
@@ -152,6 +158,12 @@
 			<type>listtopic</type>
 		</field>
 		<field>
+			<fielddescr>Default Deny</fielddescr>
+			<fieldname>permdefault</fieldname>
+			<type>checkbox</type>
+			<description>Deny access to UPnP &amp; NAT-PMP by default.</description>
+		</field>
+		<field>
 			<name>ACL Help</name>
 			<type>info</type>
 			<description>
@@ -171,18 +183,6 @@
 					<size>60</size>
 				</rowhelperfield>
 			</rowhelper>
-		</field>
-		<field>
-			<fielddescr>Custom presentation URL</fielddescr>
-			<fieldname>presentationurl</fieldname>
-			<type>input</type>
-			<description>If left blank the default value of the WebGUI of this firewall will be used.</description>
-		</field>
-		<field>
-			<fielddescr>Custom model number</fielddescr>
-			<fieldname>modelnumber</fieldname>
-			<type>input</type>
-			<description>If left blank the default value of the firmware version of pfSense will be used.</description>
 		</field>
 	</fields>
 	<custom_php_command_before_form>

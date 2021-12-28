@@ -3124,17 +3124,16 @@
 			} else {
 				$ip_address = dyndnsCheckIP($this->_if);
 				if (!is_ipaddr($ip_address)) {
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
+					return 0;
+				} elseif (is_private_ip($ip_address)) {
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): Public IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
 					return 0;
 				}
 			}
 			if ($this->_useIPv6 == false && is_private_ip(get_interface_ip($this->_if))) {
-				if (is_ipaddr($ip_address)) {
-					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
-					}
-				} else {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
-					return 0;
+				if ($this->_dnsVerboseLog) {
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
 				}
 			} else {
 				if ($this->_dnsVerboseLog) {

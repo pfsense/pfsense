@@ -329,13 +329,20 @@ function restore_sshdata($conf = false) {
 		$conf = & $config;
 	}
 
+	$oldmask = umask();
 	foreach ($conf["sshdata"]["sshkeyfile"] as $sshkey) {
 		$keypath = "{$sshConfigDir}/{$sshkey['filename']}";
+		if (strstr($sshkey['filename'], 'pub')) {
+			umask(0133);
+		} else {
+			umask(0177);
+		}
 		if (file_put_contents($keypath, gzinflate(base64_decode($sshkey['xmldata']))) === false) {
 			log_error(sprintf(gettext("Cannot write %s"), $sshkey['filename']));
 			continue;
 		}
 	}
+	umask($oldmask);
 }
 
 /****f* config/parse_config_bootup

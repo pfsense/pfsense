@@ -30,40 +30,14 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("openvpn.inc");
-require_once("pfsense-utils.inc");
-require_once("pkg-utils.inc");
+require_once("vpn_openvpn_server.inc");
 
-global $openvpn_topologies, $openvpn_tls_modes, $openvpn_exit_notify_server;
-
-init_config_arr(array('openvpn', 'openvpn-server'));
-$a_server = &$config['openvpn']['openvpn-server'];
-
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-
-init_config_arr(array('crl'));
-$a_crl = &$config['crl'];
-
-foreach ($a_crl as $cid => $acrl) {
-	if (!isset($acrl['refid'])) {
-		unset ($a_crl[$cid]);
-	}
-}
+$user_entry = getUserEntry($_SESSION['Username']);
+$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-server-advanced") || userHasPrivilege($user_entry, "page-all"));
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
-
-if (isset($_REQUEST['act'])) {
-	$act = $_REQUEST['act'];
-}
-
-$user_entry = getUserEntry($_SESSION['Username']);
-$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-server-advanced") || userHasPrivilege($user_entry, "page-all"));
 
 if (isset($id) && $a_server[$id]) {
 	$vpnid = $a_server[$id]['vpnid'];
@@ -71,55 +45,21 @@ if (isset($id) && $a_server[$id]) {
 	$vpnid = 0;
 }
 
+// Delete a server definition?
 if ($_POST['act'] == "del") {
+	$rv = deleteOpenVPNServer($id);
 
-	if (!isset($a_server[$id])) {
-		pfSenseHeader("vpn_openvpn_server.php");
-		exit;
-	}
-
-	if (empty($a_server[$id])) {
-		$wc_msg = gettext('Deleted empty OpenVPN server');
-	} elseif (openvpn_inuse($a_server[$id]['vpnid'], 'server')) {
-		$input_errors[] = gettext("Cannot delete an OpenVPN instance while the interface is assigned. Remove the interface assignment first.");
-	} elseif (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
-		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
-	} else {
-		openvpn_delete('server', $a_server[$id]);
-		$wc_msg = sprintf(gettext('Deleted OpenVPN server from %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($a_server[$id]['interface']), $a_server[$id]['local_port'], $a_server[$id]['description']);
-	}
-	if (!empty($wc_msg)) {
-		unset($a_server[$id]);
-		write_config($wc_msg);
-		$savemsg = gettext("Server successfully deleted.");
-	}
+	$savemsg = $rv['savemsg'];
+    $input_errors = $rv['input_errors'];
+    $wc_msg = $rv['wc_msg'];
 }
 
+// Initialize $pconfig for new server
 if ($act == "new") {
-	$pconfig['ncp_enable'] = "enabled";
-	$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
-	$pconfig['data_ciphers_fallback'] = 'AES-256-CBC';
-	$pconfig['autokey_enable'] = "yes";
-	$pconfig['tlsauth_enable'] = "yes";
-	$pconfig['tlsauth_keydir'] = "default";
-	$pconfig['autotls_enable'] = "yes";
-	$pconfig['dh_length'] = 2048;
-	$pconfig['dev_mode'] = "tun";
-	$pconfig['interface'] = "wan";
-	$pconfig['local_port'] = openvpn_port_next('UDP');
-	$pconfig['cert_depth'] = 1;
-	$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
-	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
-	$pconfig['digest'] = "SHA256";
-	$pconfig['allow_compression'] = "no";
-	$pconfig['compression'] = "";
-	$pconfig['inactive_seconds'] = 300;
-	$pconfig['exit_notify'] = 1;
-	$pconfig['remote_cert_tls'] = "yes";
+	$pconfig = createNewOpenVPNServer();
 }
 
 if (($act == "edit") || ($act == "dup")) {
-
 	if (isset($id) && $a_server[$id]) {
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
 		$pconfig['mode'] = $a_server[$id]['mode'];

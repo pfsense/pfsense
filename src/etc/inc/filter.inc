@@ -2548,6 +2548,8 @@ function filter_nat_rules_generate() {
 
 			if (($ipproto == 'inet6') && is_stf_interface($natif)) {
 				$rdrif = $natif . "_stf";
+			} elseif ($natif == 'pppoe') {
+				$rdrif = 'pppoe';
 			} else {
 				$rdrif = $FilterIflist[$natif]['if'];
 			}
@@ -2584,7 +2586,9 @@ function filter_nat_rules_generate() {
 				}
 			}
 
-			$natif = $FilterIflist[$natif]['if'];
+			if ($natif != 'pppoe') {
+				$natif = $FilterIflist[$natif]['if'];
+			}
 
 			$reflection_type = "none";
 			if (($rule['natreflection'] != "disable") && ($dstaddr_port[0] != "0.0.0.0") && 

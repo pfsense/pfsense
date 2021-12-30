@@ -1987,7 +1987,10 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 		} else {
 			$ifip = get_interface_ipv6($if);
 			if (is_ipaddrv6($ifip)) {
-				$tgt6 = "{$ifip}/128";
+				/* remove link-local scope (%realif) from IPv6 address
+				 * see https://redmine.pfsense.org/issues/11984 */
+				preg_match('/^([0-9a-fA-F:]+)%?.*$/', $ifip, $matches);
+				$tgt6 = "{$matches[1]}/128";
 			} else {
 				$tgt6 = "(" . $FilterIflist[$if]['if'] . ")";
 			}

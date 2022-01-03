@@ -821,24 +821,6 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 	$conf .= "{$directive} {$fpath} {$opt}\n";
 }
 
-function openvpn_delete_tmp($mode, $id) {
-	global $g;
-
-	/* delete temporary files created by connect script */
-	if (($mode == "server") && (isset($id))) {
-		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
-	}
-	/* delete temporary files created by OpenVPN */
-	$tmpfiles = array_filter(glob("{$g['tmp_path']}/openvpn_cc*.tmp"),'is_file');
-	if (!empty($tmpfiles)) {
-		foreach ($tmpfiles as $tmpfile) {
-			if ((time() - filemtime($tmpfile)) > 60) {
-				@unlink_if_exists($tmpfile);
-			}
-		}
-	}
-}
-
 function openvpn_reconfigure($mode, $settings) {
 	global $g, $config, $openvpn_tls_server_modes, $openvpn_dh_lengths, $openvpn_default_keepalive_interval, $openvpn_default_keepalive_timeout;
 
@@ -1193,13 +1175,9 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				break;
 		}
-		$connlimit = "0";
 		if ($settings['mode'] != 'p2p_shared_key' &&
 		    isset($settings['duplicate_cn'])) {
 			$conf .= "duplicate-cn\n";
-			if ($settings['connlimit']) {
-				$connlimit = "{$settings['connlimit']}";
-			}
 		}
 		if (($settings['mode'] != 'p2p_shared_key') &&
 		    isset($settings['remote_cert_tls'])) {
@@ -1536,8 +1514,6 @@ function openvpn_reconfigure($mode, $settings) {
 	unset($conf);
 	$fpath = "{$g['openvpn_base']}/{$mode_id}/interface";
 	file_put_contents($fpath, $interface);
-	$fpath = "{$g['openvpn_base']}/{$mode_id}/connuserlimit";
-	file_put_contents($fpath, $connlimit);
 	//chown($fpath, 'nobody');
 	//chgrp($fpath, 'nobody');
 	@chmod("{$g['openvpn_base']}/{$mode_id}/config.ovpn", 0600);
@@ -1545,7 +1521,6 @@ function openvpn_reconfigure($mode, $settings) {
 	@chmod("{$g['openvpn_base']}/{$mode_id}/key", 0600);
 	@chmod("{$g['openvpn_base']}/{$mode_id}/tls-auth", 0600);
 	@chmod("{$g['openvpn_base']}/{$mode_id}/conf", 0600);
-	@chmod("{$g['openvpn_base']}/{$mode_id}/connuserlimit", 0600);
 
 	if ($wait_tentative) {
 		interface_wait_tentative($interface);
@@ -1558,6 +1533,7 @@ function openvpn_restart($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
+	openvpn_clean_rules($mode, $vpnid);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
@@ -1589,8 +1565,6 @@ function openvpn_restart($mode, $settings) {
 		unlock($lockhandle);
 		return;
 	}
-
-	openvpn_delete_tmp($mode, $vpnid);
 
 	/* Do not start an instance if we are not CARP master on this vip! */
 	if (strstr($settings['interface'], "_vip")) {
@@ -1671,7 +1645,7 @@ function openvpn_delete($mode, $settings) {
 	/* remove the configuration files */
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
-	openvpn_delete_tmp($mode, $vpnid);
+	openvpn_clean_rules($mode, $vpnid);
 }
 
 function openvpn_resync_csc(& $settings) {
@@ -2425,6 +2399,14 @@ function openvpn_inuse($id, $mode) {
 	}
 
 	return false;
+}
+
+function openvpn_clean_rules($mode, $id) {
+	global $g;
+
+	if ($mode == "server") {
+		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
+	}
 }
 
 ?>

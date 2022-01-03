@@ -972,14 +972,6 @@
 			<bindstofield>ovpnserver->step10->duplicate_cn</bindstofield>
 		</field>
 		<field>
-			<displayname>Duplicate Connection Limit</displayname>
-			<name>connuserlimit</name>
-			<description>Limit the number of concurrent connections from the same user.</description>
-			<type>input</type>
-			<size>10</size>
-			<bindstofield>ovpnserver->step10->connuserlimit</bindstofield>
-		</field>
-		<field>
 			<type>listtopic</type>
 			<name>Client Settings</name>
 		</field>

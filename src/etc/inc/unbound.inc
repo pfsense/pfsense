@@ -188,7 +188,7 @@ function unbound_get_python_scriptname($unboundcfg, $cfgsubdir = '') {
 
 function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
-	global $config, $g;
+	global $config, $g, $nooutifs;
 	if (is_null($unboundcfg)) {
 		$unboundcfg = $config['unbound'];
 	}
@@ -322,7 +322,6 @@ EOF;
 	// Determine interfaces to run on
 	$outgoingints = "";
 	if (!empty($unboundcfg['outgoing_interface'])) {
-		$outgoingints = "# Outgoing interfaces to be used\n";
 		$outgoing_interfaces = explode(",", $unboundcfg['outgoing_interface']);
 		foreach ($outgoing_interfaces as $outif) {
 			$ifinfo = get_interface_info($outif);
@@ -337,6 +336,11 @@ EOF;
 			if (is_ipaddrv6($outip)) {
 				$outgoingints .= "outgoing-interface: $outip\n";
 			}
+		}
+		if (!empty($outgoingints)) {
+			$outgoingints = "# Outgoing interfaces to be used\n" . $outgoingints;
+		} else {
+			$nooutifs = true;
 		}
 	}
 
@@ -763,7 +767,7 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 }
 
 function unbound_add_host_entries($cfgsubdir = "") {
-	global $config, $g;
+	global $config, $g, $nooutifs;
 
 	$hosts = system_hosts_entries($config['unbound']);
 
@@ -785,6 +789,11 @@ function unbound_add_host_entries($cfgsubdir = "") {
 		if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
 			$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
 		}
+	}
+	/* disable recursion if the selected outgoing interfaces are available,
+	 * see https://redmine.pfsense.org/issues/12460 */
+	if ($nooutifs && isset($config['unbound']['strictout'])) {
+		$unbound_entries = "local-zone: \".\" refuse\n";
 	}
 	/* Add entries for the system domain before all others */
 	if (array_key_exists($config['system']['domain'], $hosts_by_domain)) {

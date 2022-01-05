@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -2144,6 +2144,12 @@ events.push(function() {
 		hideCheckbox('compression_push', hide);
 	}
 
+	function duplicate_cn_change() {
+		var hide  = ! $('#duplicate_cn').prop('checked');
+
+		hideInput('connlimit', hide);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	// NTP
@@ -2223,6 +2229,11 @@ events.push(function() {
 		ocspcheck_change();
 	});
 
+	// Duplicate Connection
+	$('#duplicate_cn').click(function () {
+		duplicate_cn_change();
+	});
+
 	// Certref
 	$('#certref').on('change', function() {
 		var errmsg = "";
@@ -2298,6 +2309,7 @@ events.push(function() {
 	ping_method_change();
 	ocspcheck_change();
 	allow_compression_change();
+	duplicate_cn_change();
 });
 //]]>
 </script>

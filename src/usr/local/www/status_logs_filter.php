@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -201,7 +201,7 @@ if (!$rawfilter) {
 					<td>
 <?php
 		if ($filterent['direction'] == "out") {
-			print('&#x25ba;' . ' ');
+			print '<i class="fa fa-arrow-circle-o-right" title="'. gettext("direction is out") .'" style="cursor: pointer;"></i>';
 		}
 ?>
 		<?=htmlspecialchars($filterent['interface'])?>

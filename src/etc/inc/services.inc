@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -26,8 +26,8 @@
  */
 
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 desec desec-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyfi dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 namecheap nicru nicru-v6 noip noip-v6 noip-free noip-free-v6 onecom onecom-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 strato yandex yandex-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),deSEC,deSEC (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DY.fi,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Mythic Beasts,Mythic Beasts (v6),Namecheap,NIC.RU,NIC.RU (v6),No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),One.com,One.com (v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),Strato,Yandex,Yandex (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 desec desec-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyfi dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 name.com name.com-v6 namecheap nicru nicru-v6 noip noip-v6 noip-free noip-free-v6 onecom onecom-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 strato yandex yandex-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),deSEC,deSEC (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DY.fi,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Mythic Beasts,Mythic Beasts (v6),Name.com,Name.com (v6),Namecheap,NIC.RU,NIC.RU (v6),No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),One.com,One.com (v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),Strato,Yandex,Yandex (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -310,6 +310,8 @@ function services_radvd_configure($blacklist = array()) {
 			}
 			if (count($searchlist) > 0) {
 				$searchliststring = trim(implode(" ", $searchlist));
+			} else {
+				$searchliststring = "";
 			}
 			if (!empty($dhcpv6ifconf['domain'])) {
 				/* 
@@ -2314,6 +2316,7 @@ function dyndnsCheckIP($int) {
 					$username = $checkipservice['username'];
 					$password = $checkipservice['password'];
 					$verifysslpeer = isset($checkipservice['verifysslpeer']);
+					$curl_proxy = isset($checkipservice['curl_proxy']);
 					break;
 				}
 			}
@@ -2329,6 +2332,9 @@ function dyndnsCheckIP($int) {
 		curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
+		if ($curl_proxy) {
+			set_curlproxy($ip_ch);
+		}
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
 		$ip_result_decoded = urldecode($ip_result_page);
@@ -2773,29 +2779,58 @@ begemotSnmpdCommunityDisable    = 1
 EOD;
 
 		$bind_to_ips = array();
+		$bind_to_ip6s = array();
 		if (isset($config['snmpd']['bindip'])) {
+			if (!isset($config['snmpd']['ipprotocol']) ||
+			    (isset($config['snmpd']['ipprotocol']) &&
+			    strstr($config['snmpd']['ipprotocol'], "4"))) {
+				$inet4 = true;
+			}
+			if (isset($config['snmpd']['ipprotocol']) &&
+			    strstr($config['snmpd']['ipprotocol'], "6")) {
+				$inet6 = true;
+			}
 			foreach (explode(",", $config['snmpd']['bindip']) as $bind_to_ip) {
 				if (is_ipaddr($bind_to_ip)) {
 					$bind_to_ips[] = $bind_to_ip;
 				} else {
 					$if = get_real_interface($bind_to_ip);
 					if (does_interface_exist($if)) {
-						$bindip = get_interface_ip($bind_to_ip);
-						if (is_ipaddr($bindip)) {
-							$bind_to_ips[] = $bindip;
+						if ($inet4) {
+							$bindip = get_interface_ip($bind_to_ip);
+							if (is_ipaddrv4($bindip)) {
+								$bind_to_ips[] = $bindip;
+							}
+						}
+						if ($inet6) {
+							$bindip6 = get_interface_ipv6($bind_to_ip);
+							if (is_ipaddrv6($bindip6)) {
+								$bind_to_ip6s[] = $bindip6;
+							}
 						}
 					}
 				}
 			}
 		}
-		if (!count($bind_to_ips)) {
+		if (!count($bind_to_ips) && $inet4) {
 			$bind_to_ips = array("0.0.0.0");
+		}
+		if (!count($bind_to_ip6s) && $inet6) {
+			$bind_to_ip6s = array("::");
 		}
 
 		if (is_port($config['snmpd']['pollport'])) {
 			foreach ($bind_to_ips as $bind_to_ip) {
 				$snmpdconf .= <<<EOD
 begemotSnmpdPortStatus.{$bind_to_ip}.{$config['snmpd']['pollport']} = 1
+
+EOD;
+
+			}
+			foreach ($bind_to_ip6s as $bind_to_ip6) {
+				$bind_to_ip6 = ip6_to_asn1($bind_to_ip6);
+				$snmpdconf .= <<<EOD
+begemotSnmpdTransInetStatus.2.16.{$bind_to_ip6}{$config['snmpd']['pollport']}.1 = 4
 
 EOD;
 
@@ -2937,6 +2972,12 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($if);
+			if (is_private_ip($wanip)) {
+				log_error(sprintf(gettext(
+				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),
+				    $dnsupdate['host']));
+				continue;
+			}
 			$bindipv4 = get_interface_ip($if);
 		} else {
 			$wanip = get_interface_ip($if);

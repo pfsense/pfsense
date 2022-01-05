@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2013-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@ require_once("config.inc");
 require_once("pfsense-utils.inc");
 
 function get_stats($sitems = array()) {
+	$sitems = is_array($sitems) ? $sitems : [];
 	$stats['cpu'] = (!in_array('cpu_usage', $sitems)) ? cpu_usage() : '|';
 	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? mem_usage() : '';
 	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_uptime() : '';

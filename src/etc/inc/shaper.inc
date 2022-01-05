@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -5308,7 +5308,9 @@ function filter_generate_dummynet_rules() {
 	}
 	if (!empty($dn_rules)) {
 		if (!is_module_loaded("dummynet.ko")) {
+			mute_kernel_msgs();
 			mwexec("/sbin/kldload dummynet");
+			unmute_kernel_msgs();
 		}
 		$sysctls = (array(
 				"net.inet.ip.dummynet.io_fast" => "1",

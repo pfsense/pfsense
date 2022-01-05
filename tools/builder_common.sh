@@ -5,7 +5,7 @@
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2013 BSD Perimeter
 # Copyright (c) 2013-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # FreeSBIE portions of the code
@@ -1007,6 +1007,8 @@ setup_pkg_repo() {
 	local _target_arch="${4}"
 	local _staging="${5}"
 	local _pkg_conf="${6}"
+	local _mirror_type="srv"
+	local _signature_type="fingerprints"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
@@ -1029,6 +1031,7 @@ setup_pkg_repo() {
 
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
+		-e "s/%%MIRROR_TYPE%%/${_mirror_type}/" \
 		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${_pkg_repo_branch_devel}/g" \
 		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch_release}/g" \
 		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${_pkg_repo_server_devel},g" \
@@ -1036,6 +1039,7 @@ setup_pkg_repo() {
 		-e "s,%%POUDRIERE_PORTS_NAME%%,${POUDRIERE_PORTS_NAME},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
 		-e "s/%%REPO_BRANCH_PREFIX%%/${REPO_PATH_PREFIX}/g" \
+		-e "s/%%SIGNATURE_TYPE%%/${_signature_type}/" \
 		${_template} \
 		> ${_target}
 
@@ -1401,7 +1405,7 @@ pkg_repo_rsync() {
 		echo -n ">>> Sending updated repository to ${_pkg_rsync_hostname}... " | tee -a ${_logfile}
 		if script -aq ${_logfile} rsync -Have "ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT}" \
 			--timeout=60 --delete-delay ${_repo_path} \
-			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
+			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >> ${BUILDER_LOGS}/rsync.log 2>&1
 		then
 			echo "Done!" | tee -a ${_logfile}
 		else
@@ -1425,7 +1429,7 @@ pkg_repo_rsync() {
 
 				echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
 				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
 					echo "Failed!" | tee -a ${_logfile}
@@ -1439,7 +1443,7 @@ pkg_repo_rsync() {
 
 				echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
 				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
 					echo "Failed!" | tee -a ${_logfile}
@@ -1729,8 +1733,6 @@ CHECK_CHANGED_OPTIONS=yes
 CHECK_CHANGED_DEPS=yes
 ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
-KEEP_OLD_PACKAGES=yes
-KEEP_OLD_PACKAGES_COUNT=5
 ALLOW_MAKE_JOBS=yes
 PARALLEL_JOBS=${_parallel_jobs}
 EOF
@@ -1750,15 +1752,37 @@ EOF
 		mkdir -p /usr/ports/distfiles
 	fi
 
-	if [ "${AWS}" = 1 ] && \
-	    aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-distfiles.tar >/dev/null 2>&1; then
-		# Download a copy of the distfiles from S3
-		echo ">>> Downloading distfile cache from S3.." | tee -a ${LOGFILE}
-		aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-distfiles.tar . --no-progress
-		script -aq ${LOGFILE} tar -xf ${FLAVOR}-distfiles.tar -C /usr/ports/distfiles
-		# Save a list of distfiles
-		find /usr/ports/distfiles > pre-build-distfile-list
+	if [ "${AWS}" = 1 ]; then
+		# Find the distfiles cache for our branch, but fall back to devel cache if it does not exist
+		if [ "${FLAVOR}" = "Plus" ]; then
+			DEFAULT_BRANCH="plus-devel"
+		else
+			DEFAULT_BRANCH="devel"
+		fi
 
+		if [ "${POUDRIERE_PORTS_GIT_BRANCH}" = "${DEFAULT_BRANCH}" ]; then
+			DISTFILES="${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles"
+		else
+			if aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar >/dev/null 2>&1; then
+				DISTFILES="${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles"
+			else
+				DISTFILES="${FLAVOR}-${DEFAULT_BRANCH}-distfiles"
+				echo ">>> ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar, not found."
+				echo ">>> Falling back to ${DISTFILES}.tar"
+			fi
+		fi
+
+		if aws_exec s3 ls s3://pfsense-engineering-build-pkg/${DISTFILES}.tar >/dev/null 2>&1; then
+			# Download a copy of the distfiles from S3
+			echo ">>> Downloading distfile cache ${DISTFILES} from S3.." | tee -a ${LOGFILE}
+			aws_exec s3 cp s3://pfsense-engineering-build-pkg/${DISTFILES}.tar . --no-progress
+			script -aq ${LOGFILE} tar -xf ${DISTFILES}.tar -C /usr/ports/distfiles
+			# Save a list of distfiles
+			find /usr/ports/distfiles > pre-build-distfile-list
+		else
+			echo ">>> No distfile cache found, all distfiles will be fetched."
+			touch pre-build-distfile-list
+		fi
 	fi
 
 	# Remove old jails
@@ -1908,6 +1932,7 @@ save_logs_to_s3() {
 	DATE=`date +%Y%m%d-%H%M%S`
 	script -aq ${LOGFILE} tar --zstd -cf pkg-logs-${jail_arch}-${DATE}.tar -C /usr/local/poudriere/data/logs/bulk/${jail_name}-${POUDRIERE_PORTS_NAME}/latest/ .
 	aws_exec s3 cp pkg-logs-${jail_arch}-${DATE}.tar s3://pfsense-engineering-build-pkg/logs/ --no-progress
+	echo ">>> Uploading pkg-logs-${jail_arch}-${DATE}.tar to s3" | tee -a ${LOGFILE}
 	OLDIFS=${IFS}
 	IFS=$'\n'
 	local _logtemp=$( mktemp /tmp/loglist.XXXXX )
@@ -1928,18 +1953,19 @@ save_logs_to_s3() {
 }
 
 save_pkgs_to_s3() {
-	echo ">>> Save a copy of the package repo into S3..." | tee -a ${LOGFILE}
 	cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
 	find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
 	cd ${WORKSPACE}
 	diff pre-build-pkg-list-${jail_arch} post-build-pkg-list-${jail_arch} > /dev/null
 	if [ $? = 1 ]; then
+		echo ">>> Saving a copy of the package repo into S3..." | tee -a ${LOGFILE}
 		[ -f ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar ] && rm ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar
 		script -aq ${LOGFILE} tar -cf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} .
 		aws_exec s3 cp ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-pkgs-${jail_arch}.tar s3://pfsense-engineering-build-pkg/ --no-progress
-
-		save_logs_to_s3
+	else
+		echo ">>> No pkgs different, not saving to S3..." | tee -a ${LOGFILE}
 	fi
+	save_logs_to_s3
 }
 
 aws_exec() {
@@ -2087,14 +2113,19 @@ EOF
 	done
 
 	if [ "${AWS}" = 1 ]; then
+		echo ">>> Run poudriere distclean to prune old distfiles..." | tee -a ${LOGFILE}
+		if ! poudriere distclean -f ${_bulk} -p ${POUDRIERE_PORTS_NAME} -y; then
+			echo ">>> ERROR: Something went wrong..."
+			print_error_pfS
+		fi
 		echo ">>> Save a copy of the distfiles into S3..." | tee -a ${LOGFILE}
 		# Save a copy of the distfiles from S3
 		find /usr/ports/distfiles > post-build-distfile-list
 		diff pre-build-distfile-list post-build-distfile-list > /dev/null
 		if [ $? -eq 1 ]; then
-			rm ${FLAVOR}-distfiles.tar
-			script -aq ${LOGFILE} tar -cf ${FLAVOR}-distfiles.tar -C /usr/ports/distfiles .
-			aws_exec s3 cp ${FLAVOR}-distfiles.tar s3://pfsense-engineering-build-pkg/ --no-progress
+			rm -f ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar
+			script -aq ${LOGFILE} tar -cf ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar -C /usr/ports/distfiles .
+			aws_exec s3 cp ${FLAVOR}-${POUDRIERE_PORTS_GIT_BRANCH}-distfiles.tar s3://pfsense-engineering-build-pkg/ --no-progress
 		fi
 	fi
 }

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Erik Kristensen
  * All rights reserved.
  *
@@ -214,6 +214,10 @@ function restore_backup($file) {
 			restore_rrddata($conf);
 			$data = clear_tagdata("rrd", $data);
 		}
+		if ($conf['sshdata']) {
+			restore_sshdata($conf);
+			$data = clear_tagdata("ssh", $data);
+		}
 		foreach ($g['backuppath'] as $bk => $path) {
 			if (!empty($conf[$bk][$bk.'data'])) {
 				restore_xmldatafile($bk, $conf);
@@ -316,6 +320,29 @@ function restore_rrddata($conf = false) {
 			}
 		}
 	}
+}
+
+function restore_sshdata($conf = false) {
+	global $config, $sshConfigDir;
+
+	if (!$conf) {
+		$conf = & $config;
+	}
+
+	$oldmask = umask();
+	foreach ($conf["sshdata"]["sshkeyfile"] as $sshkey) {
+		$keypath = "{$sshConfigDir}/{$sshkey['filename']}";
+		if (strstr($sshkey['filename'], 'pub')) {
+			umask(0133);
+		} else {
+			umask(0177);
+		}
+		if (file_put_contents($keypath, gzinflate(base64_decode($sshkey['xmldata']))) === false) {
+			log_error(sprintf(gettext("Cannot write %s"), $sshkey['filename']));
+			continue;
+		}
+	}
+	umask($oldmask);
 }
 
 /****f* config/parse_config_bootup

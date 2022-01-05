@@ -6,7 +6,7 @@
  * Copyright (c) 2005 Colin Smith (ethethlay@gmail.com)
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -576,11 +576,11 @@ function notify_via_slack($message, $force = false) {
 function curl_post_notification($url, $data = array()) {
 	$conn = curl_init($url);
 	if (!empty($data)) {
-		//curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
+		curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
 	}
 	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
 	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
-	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($conn, CURLOPT_RETURNTRANSFER, true);
 	set_curlproxy($conn);
 	$curl_post_result = curl_exec($conn);
 	curl_close($conn);

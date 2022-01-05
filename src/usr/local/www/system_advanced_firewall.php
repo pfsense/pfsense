@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -43,11 +43,6 @@ require_once("system_advanced_firewall.inc");
 $pconfig = getSystemAdvancedFirewall();
 $old_maximumtableentries = $pconfig['maximumtableentries'];
 $old_aliasesresolveinterval = $pconfig['aliasesresolveinterval'];
-
-$show_reboot_msg = false;
-$reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
-    'been changed to a value bigger than system can support without a ' .
-    'reboot.\n\nReboot now ?');
 
 $pftimeouts = get_pf_timeouts();
 
@@ -469,10 +464,6 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setOptText($('#optimization').val())
-
-	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
-		postSubmit({override : 'yes'}, 'diag_reboot.php')
-	}
 
 });
 //]]>

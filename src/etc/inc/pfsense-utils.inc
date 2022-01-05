@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1975,7 +1975,9 @@ function load_thermal_hardware() {
 
 	if (!empty($config['system']['thermal_hardware']) && !is_module_loaded($config['system']['thermal_hardware'])) {
 		log_error(sprintf(gettext("Loading %s thermal monitor module."), $config['system']['thermal_hardware']));
+		mute_kernel_msgs();
 		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
+		unmute_kernel_msgs();
 	}
 }
 

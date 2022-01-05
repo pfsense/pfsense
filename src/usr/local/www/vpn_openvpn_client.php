@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -103,6 +103,7 @@ if ($act == "new") {
 	$pconfig['compression'] = "";
 	$pconfig['exit_notify'] = 1;
 	$pconfig['remote_cert_tls'] = "yes";
+	$pconfig['create_gw'] = "both";
 }
 
 global $simplefields;

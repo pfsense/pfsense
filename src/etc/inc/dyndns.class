@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,6 +66,8 @@
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - Hover (www.hover.com)
 	 *    - Loopia (loopia.se)
+	 *    - Name.com (name.com)
+	 *    - Name.com IPv6 (name.com)
 	 *    - Namecheap (namecheap.com)
 	 *    - No-IP (no-ip.com)
 	 *    - OpenDNS (opendns.com)
@@ -132,6 +134,8 @@
 	 *  HN.org          - Last Tested: 12 July 2005
 	 *  Hover           - Last Tested: 15 February 2017
 	 *  Loopia          - Last Tested: 21 August 2019
+	 *  Name.com        - Last Tested: 5 Dec 2021
+	 *  Name.com IPv6   - Last Tested: 5 Dec 2021
 	 *  Namecheap       - Last Tested: 31 August 2010
 	 *  No-IP           - Last Tested: 20 July 2008
 	 *  ODS             - Last Tested: 02 August 2005
@@ -288,6 +292,8 @@
 				break;
 			case 'gratisdns':
 			case 'hover':
+			case 'name.com':
+			case 'name.com-v6':
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
@@ -327,6 +333,7 @@
 				case 'he-net-v6':
 				case 'linode-v6':
 				case 'mythicbeasts-v6':
+				case 'name.com-v6':
 				case 'noip-free-v6':
 				case 'noip-v6':
 				case 'route53-v6':
@@ -353,7 +360,11 @@
 			$this->_checkIP();
 			$this->_dnsUpdateURL = $dnsUpdateURL;
 			$this->_dnsResultMatch = $dnsResultMatch;
-			$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
+			if (($this->_dnsService == 'custom') || ($this->_dnsService == 'custom-v6')) {
+				$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
+			} else {
+				$this->_dnsRequestIf = $this->_if;
+			}
 			if (($dnsMaxCacheAge !== null) && ($dnsMaxCacheAge !== "")) {
 				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
 			} else {
@@ -439,6 +450,8 @@
 					case 'loopia':
 					case 'mythicbeasts':
 					case 'mythicbeasts-v6':
+					case 'name.com':
+					case 'name.com-v6':
 					case 'namecheap':
 					case 'nicru':
 					case 'nicru-v6':
@@ -456,6 +469,8 @@
 					case 'spdyn-v6':
 					case 'staticcling':
 					case 'strato':
+					case 'onecom':
+					case 'onecom-v6':
 					case 'yandex':
 					case 'yandex-v6':
 					case 'zoneedit':
@@ -529,6 +544,9 @@
 							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 						}
 						if ($this->_curlSslVerifypeer) {
+							/* required for a local CA
+							 * see https://redmine.pfsense.org/issues/12589 */
+							curl_setopt($ch, CURLOPT_CAPATH, "/etc/ssl/certs/");
 							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
 						} else {
 							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -863,6 +881,48 @@
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				case 'name.com':
+				case 'name.com-v6':
+					// API documentation: https://www.name.com/api-docs/ & https://www.name.com/api-docs/DNS
+					$namedotcom_api = "https://api.name.com/v4/domains/{$this->_dnsDomain}/records";
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					// Check if a record already exists for this host.
+					curl_setopt($ch, CURLOPT_URL, "{$namedotcom_api}?perPage=1000");
+					$response = json_decode(curl_exec($ch), true);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code != "200") {
+						log_error(gettext("Error message: ") . $response);
+						return false;
+					}
+					if (!is_array($response["records"])) {
+						log_error(gettext("Unexpected response: ") . $response);
+						return false;
+					}
+					foreach($response["records"] as $record) {
+						if (($record["domainName"] == $this->_dnsDomain) &&
+							($record["host"] == $this->_dnsHost) &&
+							($record["type"] == $record_type)) {
+								$record_id = $record["id"];
+								$existing_ttl = $record["ttl"];
+								break;
+						}
+					}
+					if (!$record_id && $response["nextPage"])
+					{
+						log_error(gettext("Too many (>1000) Name.com DNS records. Paging not supported."));
+						return false;
+					}
+					// Either update an existing record or create a new one.
+					$post_data['host'] = $this->_dnsHost;
+					$post_data['type'] = $record_type;
+					$post_data['answer'] = $this->_dnsIP;
+					$post_data['ttl'] = max($this->_dnsTTL ?: $existing_ttl, 300);
+					curl_setopt($ch, CURLOPT_URL, "{$namedotcom_api}/{$record_id}");
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $record_id ? "PUT" : "POST");
 					break;
 				case 'namecheap':
 					/* Example:
@@ -1233,25 +1293,38 @@
 					break;
 				case 'onecom':
 				case 'onecom-v6':
-					// see https://redmine.pfsense.org/issues/11293
+					/* see https://redmine.pfsense.org/issues/11293
+					 * and https://redmine.pfsense.org/issues/12352 */
+
+					curl_setopt($ch, CURLOPT_URL, "https://www.one.com/admin/");
+					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					$output = curl_exec($ch);
+					$last_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+
+					// extract the cookies
+					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
+					if (count($cookies[1]) > 0) {
+						$cookie_data = implode("; ", $cookies[1]);
+					}
 
 					// login in
-					$post_data['displayUsername'] = $this->_dnsUser;
 					$post_data['username'] = $this->_dnsUser;
-					$post_data['password1'] = $this->_dnsPass;
-					$post_data['loginDomain'] = True;
-					$post_data['loginTarget'] = '';
-					$post_data['targetDomain'] = '';
+					$post_data['password'] = $this->_dnsPass;
+					$post_data['credentialId'] = '';
 
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-					curl_setopt($ch, CURLOPT_URL, "https://www.one.com/admin/login.do");
+					curl_setopt($ch, CURLOPT_URL, $last_url);
+					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
 					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					$output = curl_exec($ch);
 
 					// extract the cookies
 					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
-					if( count($cookies[1]) > 0 ){
-						$cookie_data = implode("; ",$cookies[1]);
+					if (count($cookies[1]) > 0) {
+						$cookie_data = implode("; ", $cookies[1]);
 					}
 
 					// gets all DNS records of the domain.
@@ -1262,6 +1335,7 @@
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					$output = curl_exec($ch);
 					$result = json_decode($output, true);
 					$records = $result['result']['data'];
@@ -1299,6 +1373,7 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($tosend));
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					break;
 				case 'dreamhost':
 				case 'dreamhost-v6':
@@ -2321,6 +2396,17 @@
 						log_error($status_intro . " ( " . gettext("Error message: ") . $result['error'] . " )");
 					}
 					break;
+				case 'name.com':
+				case 'name.com-v6':
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code == "200") {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Error, HTTP response code") . ": " . $http_code . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+					}
+					break;
 				case 'namecheap':
 					$tmp = str_replace("^M", "", $data);
 					$ncresponse = @xml2array($tmp);
@@ -3038,17 +3124,16 @@
 			} else {
 				$ip_address = dyndnsCheckIP($this->_if);
 				if (!is_ipaddr($ip_address)) {
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
+					return 0;
+				} elseif (is_private_ip($ip_address)) {
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): Public IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
 					return 0;
 				}
 			}
 			if ($this->_useIPv6 == false && is_private_ip(get_interface_ip($this->_if))) {
-				if (is_ipaddr($ip_address)) {
-					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
-					}
-				} else {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
-					return 0;
+				if ($this->_dnsVerboseLog) {
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
 				}
 			} else {
 				if ($this->_dnsVerboseLog) {

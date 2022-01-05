@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -422,7 +422,7 @@ $use_mfs_tmpvar_changed = $rebootneeded;
 events.push(function() {
 	// Has the Use ramdisk checkbox changed state?
 	if (<?=(int)$use_mfs_tmpvar_changed?> && confirm("<?=$ramdisk_msg?>")) {
-		postSubmit({override : 'yes'}, 'diag_reboot.php')
+		postSubmit({rebootmode : 'Reboot', Submit: 'Yes'}, 'diag_reboot.php')
 	}
 
 	// source track timeout field is disabled if sticky connections not enabled

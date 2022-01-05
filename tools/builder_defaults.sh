@@ -5,7 +5,7 @@
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2013 BSD Perimeter
 # Copyright (c) 2013-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -140,7 +140,7 @@ export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
 if [ -z "${MODULES_OVERRIDE}" ]; then
 	export MODULES_OVERRIDE_base="cc/cc_cdg cc/cc_chd cc/cc_cubic cc/cc_dctcp cc/cc_hd cc/cc_htcp cc/cc_vegas cryptodev dummynet fdescfs hwpmc i2c if_stf ipdivert ipfw ipfw_nat64 opensolaris usb/cdce usb/ipheth usb/ure usb/urndis zfs"
-	export MODULES_OVERRIDE_amd64="${MODULES_OVERRIDE_base} aesni amdsmn amdtemp blake2 coretemp cpuctl drm2 ipmi ix ixv ndis nmdm sfxge vmm"
+	export MODULES_OVERRIDE_amd64="${MODULES_OVERRIDE_base} aesni amdsmn amdtemp blake2 coretemp cpuctl drm2 ipmi ix ixv ndis nmdm qlnx sfxge vmm"
 	export MODULES_OVERRIDE="${MODULES_OVERRIDE_amd64}"
 fi
 

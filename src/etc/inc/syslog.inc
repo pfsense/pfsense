@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1209,7 +1209,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	if ($trackernum == "0") {
 		$lookup_pattern = "^@{$rulenum}\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
 	} else {
-		$lookup_pattern = "^@[0-9]+\({$trackernum}\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
+		$lookup_pattern = "^@[0-9]+\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]].*[[:space:]]ridentifier[[:space:]]{$trackernum}";
 	}
 
 	/* At the moment, miniupnpd is the only thing I know of that
@@ -1248,9 +1248,8 @@ function buffer_rules_load() {
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {
 			list($key, $value) = explode (" ", $line, 2);
-			# pfctl rule number output with tracker number: @dd(dddddddddd)
 			$matches = array();
-			if (preg_match('/\@(?P<rulenum>\d+)\((?<trackernum>\d+)\)/', $key, $matches) == 1) {
+			if (preg_match('/\@(?P<rulenum>\d+).*ridentifier (?<trackernum>\d+)/', $line, $matches) == 1) {
 				if ($matches['trackernum'] > 0) {
 					$key = $matches['trackernum'];
 				} else {

@@ -6,7 +6,7 @@
  * Copyright (c) 2008 Bill Marquette, Seth Mos
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1749,6 +1749,16 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 					}
 				}
 			}
+		}
+
+		// Check if the gateway name is used by any DNS Server
+		$dnsgw_counter = 1;
+		while (isset($config["system"]["dns{$dnsgw_counter}gw"])) {
+			if ($gateway_settings['name'] == $config["system"]["dns{$dnsgw_counter}gw"]) {
+				// The user wants to disable this gateway, but there is a static route to the DNS server that refers to the gateway.
+				$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use by DNS Server "%2$s"'), $gateway_settings['name'], $config["system"]["dns{$dnsgw_counter}gw"]);
+			}
+			$dnsgw_counter++;
 		}
 	}
 	/* skip system gateways which have been automatically added */

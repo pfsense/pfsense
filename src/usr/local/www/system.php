@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -150,11 +150,16 @@ foreach ($timezonedesc as $idx => $desc) {
 }
 
 $multiwan = 0;
-$interfaces = get_configured_interface_list();
-foreach ($interfaces as $interface) {
-	if (interface_has_gateway($interface)) {
+$multiwan6 = 0;
+foreach ($arr_gateways as $gw) {
+	if ($gw['ipprotocol'] == 'inet') {
 		$multiwan++;
 		if ($multiwan > 1) {
+			break;
+		}
+	} else {
+		$multiwan6++;
+		if ($multiwan6 > 1) {
 			break;
 		}
 	}
@@ -573,7 +578,7 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 		$pconfig['dnshost' . $dnsserver_num]
 	))->setHelp(($is_last_dnsserver) ? $dnshost_help:null);
 
-	if ($multiwan > 1) {
+	if (($multiwan > 1) || ($multiwan6 > 1)) {
 		$options = array('none' => 'none');
 
 		foreach ($arr_gateways as $gwname => $gwitem) {
@@ -617,12 +622,12 @@ $section->addInput(new Form_Button(
 $section->addInput(new Form_Checkbox(
 	'dnsallowoverride',
 	'DNS Server Override',
-	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
+	'Allow DNS server list to be overridden by DHCP/PPP on WAN or remote OpenVPN server',
 	$pconfig['dnsallowoverride']
 ))->setHelp('If this option is set, %s will use DNS servers '.
-	'assigned by a DHCP/PPP server on WAN for its own purposes (including '.
-	'the DNS Forwarder/DNS Resolver). However, they will not be assigned to DHCP '.
-	'clients.', $g['product_label']);
+	'assigned by a DHCP/PPP server on WAN or a remote OpenVPN server (if Pull DNS ' .
+	'option is enabled) for its own purposes (including the DNS Forwarder/DNS Resolver). '.
+        'However, they will not be assigned to DHCP clients.', $g['product_label']);
 
 $section->addInput(new Form_Select(
 	'dnslocalhost',

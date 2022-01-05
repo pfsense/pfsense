@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -48,7 +48,7 @@ function listtags() {
 		'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
-		'schedule', 'service', 'servernat', 'servers',
+		'schedule', 'service', 'servernat', 'servers', 'sshkeyfile',
 		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
 		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup', 'voucherdbfile',
 		'vxlan', 'wgpeer', 'winsserver', 'wolentry', 'widget', 'xmldatafile'

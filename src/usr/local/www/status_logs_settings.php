@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -71,7 +71,7 @@ $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
 $pconfig['logconfigchanges'] = ($config['syslog']['logconfigchanges'] != "disabled");
 $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
-$pconfig['logcompressiontype'] = $config['syslog']['logcompressiontype'];
+$pconfig['logcompressiontype'] = system_log_get_compression();
 $pconfig['rotatecount'] = $config['syslog']['rotatecount'];
 $pconfig['format'] = $config['syslog']['format'];
 
@@ -362,7 +362,7 @@ $section->addInput(new Form_Checkbox(
 	'Local Logging',
 	"Disable writing log files to the local disk",
 	$pconfig['disablelocallogging']
-));
+))->setHelp('WARNING: This will also disable Login Protection!');
 
 $section->addInput(new Form_Checkbox(
 	'logconfigchanges',
@@ -392,7 +392,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Select(
 	'logcompressiontype',
 	'Log Compression',
-	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
+	$pconfig['logcompressiontype'],
 	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types))
 ))->setHelp('The type of compression to use when rotating log files. ' .
 	'Compressing rotated log files saves disk space, but can incur a performance penalty. ' .

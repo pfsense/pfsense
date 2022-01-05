@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -49,6 +49,8 @@ require_once("rrd.inc");
 require_once("interfaces_fast.inc");
 
 global $friendlyifnames;
+
+global $config;
 
 /*moved most gettext calls to here, we really don't want to be repeatedly calling gettext() within loops if it can be avoided.*/
 $gettextArray = array('add'=>gettext('Add'),'addif'=>gettext('Add interface'),'delete'=>gettext('Delete'),'deleteif'=>gettext('Delete interface'),'edit'=>gettext('Edit'),'on'=>gettext('on'));
@@ -230,7 +232,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		system_reboot();
 		$rebootingnow = true;
 	} else {
-		write_config("Interfaces assignement settings changed");
+		write_config("Interfaces assignment settings changed");
 
 		$changes_applied = true;
 		$retval = 0;
@@ -348,7 +350,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				}
 			}
 		}
-		write_config("Interfaces assignement settings changed");
+		write_config("Interfaces assignment settings changed");
 
 		enable_rrd_graphing();
 	}
@@ -378,32 +380,37 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
+			init_config_arr(['dhcpd', $id]);
+
 			if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
 				unset($config['dhcpd'][$id]);
 				services_dhcpd_configure('inet');
 			}
+
+			init_config_arr(['dhcpdv6', $id]);
 
 			if (is_array($config['dhcpdv6']) && is_array($config['dhcpdv6'][$id])) {
 				unset($config['dhcpdv6'][$id]);
 				services_dhcpd_configure('inet6');
 			}
 
-			if (count($config['filter']['rule']) > 0) {
-				foreach ($config['filter']['rule'] as $x => $rule) {
-					if ($rule['interface'] == $id) {
-						unset($config['filter']['rule'][$x]);
-					}
-				}
-			}
-			if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
-				foreach ($config['nat']['rule'] as $x => $rule) {
-					if ($rule['interface'] == $id) {
-						unset($config['nat']['rule'][$x]['interface']);
-					}
+			init_config_arr(['filter', 'rule']);
+
+			foreach ($config['filter']['rule'] as $x => $rule) {
+				if ($rule['interface'] == $id) {
+					unset($config['filter']['rule'][$x]);
 				}
 			}
 
-			write_config("Interface assignement deleted");
+			init_config_arr(['nat', 'rule']);
+		
+			foreach ($config['nat']['rule'] as $x => $rule) {
+				if ($rule['interface'] == $id) {
+					unset($config['nat']['rule'][$x]['interface']);
+				}
+			}
+
+			write_config(gettext('Interface assignment deleted'));
 
 			/* If we are in firewall/routing mode (not single interface)
 			 * then ensure that we are not running DHCP on the wan which

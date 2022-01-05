@@ -6,7 +6,7 @@
  * Copyright (c) 2006 Fernando Lemos
  * Copyright (c) 2006-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but
@@ -1533,6 +1533,7 @@ function openvpn_restart($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
+	openvpn_clean_rules($mode, $vpnid);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
@@ -1644,6 +1645,7 @@ function openvpn_delete($mode, $settings) {
 	/* remove the configuration files */
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
+	openvpn_clean_rules($mode, $vpnid);
 }
 
 function openvpn_resync_csc(& $settings) {
@@ -2110,7 +2112,7 @@ function openvpn_kill_client($port, $remipp, $client_id) {
 	$killed = -1;
 	if ($fp) {
 		stream_set_timeout($fp, 1);
-		if (!empty($client_id)) {
+		if (is_numeric($client_id)) {
 			/* terminate remote client, see https://redmine.pfsense.org/issues/12416 */
 			fputs($fp, "client-kill {$client_id} HALT\n");
 		} else {
@@ -2397,6 +2399,14 @@ function openvpn_inuse($id, $mode) {
 	}
 
 	return false;
+}
+
+function openvpn_clean_rules($mode, $id) {
+	global $g;
+
+	if ($mode == "server") {
+		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
+	}
 }
 
 ?>

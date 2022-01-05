@@ -3,7 +3,7 @@
  * firewall_nat.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -317,6 +317,13 @@ function saveNATrule($post, $id, $json = false) {
 
 	if (!array_key_exists($post['interface'], create_interface_list($json))) {
 		$input_errors[] = gettext("The submitted interface does not exist.");
+	}
+
+	if ((($post['natreflection'] == "purenat") || ($post['natreflection'] == "enable") ||
+	    (($post['natreflection'] == "default") && !isset($config['system']['disablenatreflection']))) &&
+	    ((is_specialnet($post['interface']) || is_interface_group($post['interface'])) &&
+	    in_array($post['dst'], array('any', '0.0.0.0', '::')))) {
+		$input_errors[] = gettext("The submitted interface does not support the 'Any' destination type with enabled NAT reflection.");
 	}
 
 	if (!isset($post['nordr']) && $post['localip'] &&

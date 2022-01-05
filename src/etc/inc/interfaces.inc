@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -140,63 +140,6 @@ function does_vip_exist($vip) {
 	}
 
 	return false;
-}
-
-function interface_netgraph_needed($interface = "wan") {
-	global $config;
-
-	$found = false;
-	if (!empty($config['l2tp']) &&
-	    $config['l2tp']['mode'] == "server") {
-		$found = true;
-	}
-	if ($found == false && is_array($config['pppoes']['pppoe'])) {
-		foreach ($config['pppoes']['pppoe'] as $pppoe) {
-			if ($pppoe['mode'] != "server") {
-				continue;
-			}
-			if ($pppoe['interface'] == $interface) {
-				$found = true;
-				break;
-			}
-		}
-	}
-	if ($found == false) {
-		$found = interface_isppp_type($interface);
-	}
-
-	if ($found == false) {
-		$realif = get_real_interface($interface);
-		init_config_arr(array('ppps', 'ppp'));
-		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-			$ports = explode(',', $ppp['ports']);
-			foreach ($ports as $pid => $port) {
-				$port = get_real_interface($port);
-				if ($realif == $port) {
-					$found = true;
-					break;
-				}
-				/* Find the parent interfaces of the vlans in the MLPPP configs
-				* there should be only one element in the array here
-				* -- this could be better . . . */
-				$parent_if = get_parent_interface($port);
-				if ($realif == $parent_if[0]) {
-					$found = true;
-					break;
-				}
-			}
-		}
-	}
-
-	if ($found == false) {
-		$realif = get_real_interface($interface);
-		pfSense_ngctl_detach("{$realif}:", $realif);
-	}
-	/* NOTE: We make sure for this on interface_ppps_configure()
-	 *	no need to do it here again.
-	 *	else
-	 *		pfSense_ngctl_attach(".", $realif);
-	 */
 }
 
 function interfaces_loopback_configure() {
@@ -594,7 +537,6 @@ function interface_qinq_configure(&$qinq, $fd = NULL, $flush = true) {
 	/* make sure the parent is converted to ng_vlan(4) and is up */
 	interfaces_bring_up($qinqif);
 
-	pfSense_ngctl_attach(".", $qinqif);
 	$ngif = str_replace(".", "_", $vlanif);
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
 		exec("/usr/sbin/ngctl shutdown {$ngif}qinq: > /dev/null 2>&1");
@@ -2107,6 +2049,15 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		}
 	}
 
+	/* If interface has a gateway, we need to bounce dpinger to keep dpinger happy */
+	foreach (return_gateways_array(true) as $gw) {
+		if ($gw['friendlyiface'] !== $interface) {
+			continue;
+		}
+		setup_gateways_monitor();
+		break;
+	}
+
 	return;
 }
 
@@ -2385,7 +2336,6 @@ function interface_ppps_configure($interface) {
 			case "pppoe":
 				/* Bring the parent interface up */
 				interfaces_bring_up($port);
-				pfSense_ngctl_attach(".", $port);
 				/* Enable setautosrc to automatically change mac address if parent interface's changes */
 				$ngif = str_replace(".", "_", $port);
 				mwexec("/usr/sbin/ngctl msg {$ngif}: setautosrc 1");
@@ -2412,7 +2362,6 @@ function interface_ppps_configure($interface) {
 					log_error(sprintf(gettext('Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in interfaces_ppps_configure.'), $dhcp_gateway, $gway));
 					return 0;
 				}
-				pfSense_ngctl_attach(".", $port);
 				break;
 			case "ppp":
 				if (!file_exists("{$port}")) {
@@ -4192,11 +4141,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if ((!platform_booting() && !does_interface_exist($interface_to_check)) ||
-	    (in_array(substr($realif, 0, 3), array("gre", "gif", "ips")) && !does_interface_exist($realif))) {
+	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif")) ||
+	    !does_interface_exist($interface_to_check))) {
 		interface_virtual_create($interface_to_check);
 	}
-
 
 	/* Disable Accepting router advertisements unless specifically requested */
 	if ($g['debug']) {
@@ -4407,8 +4355,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			}
 			break;
 	}
-
-	interface_netgraph_needed($interface);
 
 	if (!platform_booting()) {
 		link_interface_to_vips($interface, "update");
@@ -6994,7 +6940,7 @@ function is_altq_capable($int) {
 	 * 20150328 - removed wireless drivers - ath, awi, bwn, iwi, ipw, ral, rum, run, wi - for now. redmine #4406
 	 */
 	$capable = array("ae", "age", "alc", "ale", "an", "aue", "axe", "bce",
-			"bfe", "bge", "bnxt", "bridge", "cas", "cpsw", "cxl", "dc", "de",
+			"bfe", "bge", "bnxt", "bridge", "cas", "cc", "cpsw", "cxl", "dc", "de",
 			"ed", "em", "ep", "epair", "et", "fxp", "gem", "hme", "hn",
 			"igb", "igc", "ix", "jme", "l2tp", "le", "lem", "msk", "mxge", "my",
 			"ndis", "nfe", "ng", "nge", "npe", "nve", "ql", "ovpnc",

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -112,8 +112,9 @@ function print_ipsec_body() {
 					$p2connected[$childreqid] = $childsa['name'];
 				} else {
 					/* If this is IKEv2 w/o Split, mark all reqids for the P1 as connected */
-					if ($cmap[$childikeid]['p1']['iketype'] == 'ikev2' &&
-					    !isset($cmap[$childikeid]['p1']['splitconn'])) {
+					if (($cmap[$childikeid]['p1']['iketype'] == 'ikev2') &&
+					    !isset($cmap[$childikeid]['p1']['splitconn']) &&
+					    isset($cmap[$ikeid]['p2']) && is_array($cmap[$ikeid]['p2'])) {
 						foreach ($cmap[$ikeid]['p2'] as $p2) {
 							$p2connected[$p2['reqid']] = $childsa['name'];
 						}

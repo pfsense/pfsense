@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -106,6 +106,7 @@ if ($dup) {
 	unset($id);
 } else {
 	$openvpnuse = openvpnAlias($id);
+	$staticrouteuse = staticrouteAlias($id);
 }
 
 if ($_POST['save']) {
@@ -255,6 +256,9 @@ if ($input_errors) {
 
 if ($openvpnuse) {
 	print_info_box($openvpnuse);
+}
+if ($staticrouteuse) {
+	print_info_box($staticrouteuse);
 }
 
 $form = new Form;

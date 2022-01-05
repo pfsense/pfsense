@@ -10,7 +10,7 @@ devel/git
 dns/%%PRODUCT_NAME%%-pkg-bind
 dns/dnstop
 editors/nano
-editors/vim-console
+editors/vim
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 emulators/qemu-guest-agent
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
@@ -28,12 +28,10 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent4
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent5
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent52
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent54
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy4
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy5
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy52
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy54
 net-mgmt/dhcp_probe
 net-mgmt/iprange
@@ -55,6 +53,7 @@ net/%%PRODUCT_NAME%%-pkg-pimd
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/%%PRODUCT_NAME%%-pkg-WireGuard
 net/hping
+net/librdkafka
 net/mosh
 net/py-speedtest-cli
 net/trafshow

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -55,7 +55,7 @@ $copyrightfile = "{$g['cf_conf_path']}/copyright";
 				</p>
 				<p>
 					Copyright<sup>&copy;</sup> 2004-2016. Electric Sheep Fencing, LLC ("ESF").  All Rights Reserved. <br />
-					Copyright<sup>&copy;</sup> 2014-2021. Rubicon Communications, LLC d/b/a Netgate ("Netgate").  All Rights Reserved.
+					Copyright<sup>&copy;</sup> 2014-2022. Rubicon Communications, LLC d/b/a Netgate ("Netgate").  All Rights Reserved.
 				</p>
 				<p>
 					All logos, text, and content of ESF and/or Netgate, including underlying HTML code, designs, and graphics used and/or depicted herein are protected under United States and international copyright and trademark laws and treaties, and may not be used or reproduced without the prior express written permission of ESF and/or Netgate.

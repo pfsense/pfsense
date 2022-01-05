@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -64,6 +64,7 @@ if ($_REQUEST['wakeall'] != "") {
 	foreach ($a_wol as $wolent) {
 		send_wol($wolent['interface'], $wolent['mac'], $wolent['descr'], $savemsg, $class);
 	}
+	$savemsg .= gettext('Sent magic packet to all devices.') . "<br />";
 }
 
 if ($_POST['Submit'] || $_POST['mac']) {
@@ -217,12 +218,26 @@ print $form;
 			<?=gettext("Add");?>
 		</a>
 
-		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary" usepost>
+		<button id="wakeall" class="btn btn-primary">
 			<i class="fa fa-power-off icon-embed-btn"></i>
 			<?=gettext("Wake All Devices")?>
-		</a>
+		</button>
 	</div>
 </div>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	$('#wakeall').click(function() {
+		if (confirm("Are you sure you wish to Wake All Devices?")) {
+			postSubmit({wakeall: 'true'}, 'services_wol.php');
+		}
+	});
+
+});
+//]]>
+</script>
 
 <?php
 

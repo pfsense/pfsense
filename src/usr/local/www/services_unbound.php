@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
  * All rights reserved.
  *
@@ -45,6 +45,9 @@ if (isset($a_unboundcfg['enable'])) {
 }
 if (isset($a_unboundcfg['enablessl'])) {
 	$pconfig['enablessl'] = true;
+}
+if (isset($a_unboundcfg['strictout'])) {
+	$pconfig['strictout'] = true;
 }
 if (isset($a_unboundcfg['dnssec'])) {
 	$pconfig['dnssec'] = true;
@@ -192,6 +195,7 @@ if ($_POST['save']) {
 		$a_unboundcfg['port'] = $pconfig['port'];
 		$a_unboundcfg['tlsport'] = $pconfig['tlsport'];
 		$a_unboundcfg['sslcertref'] = $pconfig['sslcertref'];
+		$a_unboundcfg['strictout'] = isset($pconfig['strictout']);
 		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 
 		$a_unboundcfg['python'] = isset($pconfig['python']);
@@ -370,6 +374,13 @@ $section->addInput(new Form_Select(
 	true
 ))->addClass('general', 'resizable')->setHelp('Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.');
 
+$section->addInput(new Form_Checkbox(
+	'strictout',
+	'Strict Outgoing Network Interface Binding',
+	'Do not send recursive queries if none of the selected Outgoing Network Interfaces are available.',
+	$pconfig['strictout']
+))->setHelp('By default the DNS Resolver sends recursive DNS requests over any available interfaces if none of the selected Outgoing Network Interfaces are available. This option makes the DNS Resolver refuse recursive queries.');
+
 $section->addInput(new Form_Select(
 	'system_domain_local_zone_type',
 	'*System Domain Local Zone Type',
@@ -423,8 +434,9 @@ $section->addInput(new Form_Checkbox(
 	'Enable Forwarding Mode',
 	$pconfig['forwarding']
 ))->setHelp('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
-					' %1$sSystem &gt; General Setup%2$s or those obtained via DHCP/PPP on WAN'.
-					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>');
+					' %1$sSystem &gt; General Setup%2$s or those obtained via dynamic ' .
+					'interfaces such as DHCP, PPP, or OpenVPN (if DNS Server Override ' .
+				        'is enabled there).','<a href="system.php">','</a>');
 
 $section->addInput(new Form_Checkbox(
 	'forward_tls_upstream',
@@ -520,6 +532,7 @@ events.push(function() {
 		hideMultiClass('general', hide);
 		hideInput('port', hide);
 		hideSelect('system_domain_local_zone_type', hide);
+		hideCheckbox('strictout', hide);
 		hideCheckbox('dnssec', hide);
 		hideCheckbox('forwarding', hide);
 		hideCheckbox('regdhcp', hide);

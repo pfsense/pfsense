@@ -1016,7 +1016,12 @@ function filter_generate_gateways() {
 							log_error(sprintf(gettext("Too many members in group %s, gateway group truncated in ruleset."), $member['name']));
 							continue;
 						}
-						if ((int) $member['weight'] > 0) {
+						/* Only repeat the gateway string if the gateway is weighted
+						 * and there is more than one gateway involved
+						 * See https://redmine.pfsense.org/issues/12660
+						 */
+						if (((int) $member['weight'] > 0) &&
+						    (count($members) > 1)) {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight'] * $mult);
 							$routetomembers += (int) $member['weight'];
 						} else {

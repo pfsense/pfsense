@@ -1559,7 +1559,7 @@ $configflename = "{$repopath}/{$g['product_name']}-repo-custom.conf";
 
 /*
  * Update the list of available repositories from the server. This will allow
- * migration to another update repository should the existing one becomes
+ * migration to another update repository should the existing one become
  * unavailable
  */
 function update_repos() {
@@ -1663,12 +1663,12 @@ function save_repo($json) {
 	    isset($repo['name']) && (strlen($repo['conf']) > 10)) {
 		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
-		file_put_contents($basename . "conf", base64_decode($repo['conf']));
-		file_put_contents($basename . "descr", $repo['descr']);
-		file_put_contents($basename . "abi", $repo['abi']);
-		file_put_contents($basename . "altabi", $repo['altabi']);
-		file_put_contents($basename . "name", $repo['name']);
-		file_put_contents($basename . "help", $repo['help']);
+		if (!empty($repo['conf']))		{file_put_contents($basename . "conf", base64_decode($repo['conf']));}
+		if (!empty($repo['descr']))		{file_put_contents($basename . "descr", $repo['descr']);}
+		if (!empty($repo['abi']))		{file_put_contents($basename . "abi", $repo['abi']);}
+		if (!empty($repo['altabi']))	{file_put_contents($basename . "altabi", $repo['altabi']);}
+		if (!empty($repo['name']))		{file_put_contents($basename . "name", $repo['name']);}
+		if (!empty($repo['help']))		{file_put_contents($basename . "help", $repo['help']);}
 
 
 		// Save fingerprint file

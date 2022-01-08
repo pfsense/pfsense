@@ -1565,7 +1565,7 @@ $cafile = "/etc/ssl/netgate-ca.pem";
  * unavailable
  */
 function update_repos() {
-	global $g, $config, $idfile, $FQDN, $repopath;
+	global $g, $cafile, $cafilesrc, $config, $idfile, $FQDN, $repopath;
 
 	if (!file_exists($idfile) || !function_exists('curl_version')) {
 		return;

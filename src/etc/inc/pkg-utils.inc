@@ -1556,6 +1556,8 @@ $refreshinterval = (24 * 3600);	// 24 hours
 $idfile = "/var/db/uniqueid";
 $repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
 $configflename = "{$repopath}/{$g['product_name']}-repo-custom.conf";
+$cafilesrc = "/usr/local/share/{$g['product_name']}/ssl/netgate-ca.pem";
+$cafile = "/etc/ssl/netgate-ca.pem";
 
 /*
  * Update the list of available repositories from the server. This will allow
@@ -1567,6 +1569,10 @@ function update_repos() {
 
 	if (!file_exists($idfile) || !function_exists('curl_version')) {
 		return;
+	}
+	/* Copy the CA file to the proper place before start. */
+	if (!file_exists($cafile) && file_exists($cafilesrc)) {
+		copy($cafilesrc, $cafile);
 	}
 	/*
 	 * If the custom repository definition does not exist, or is more

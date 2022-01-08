@@ -39,16 +39,19 @@ include("head.inc");
 // Possible helpblock messages
 $pgtitle = array(gettext("System"), gettext("Register"));
 
-$pghelp = sprintf(gettext('Thank you for choosing %1s%2s'), $g['product_label_html'], '<br />');
+$pghelp = sprintf(gettext('Thank you for choosing %1s%2s'), $g['product_label_html'], '<br /><br />');
 
 $pghelp_notrequired = gettext("Your device does not require registration, we recognize it already." .
    " You may have already registered, or it may be a pre-registered Netgate appliance.");
 
 $pghelp_offline = gettext("The registration system is not currently available. Please check your network connection and try again.");
 
-$pghelp_ok = gettext("If you have purchased an upgrade to pfSense Plus&copy; you should have received an activation token by email. " .
-   " Please paste that token into the field below and then click the “Register” button. " .
-   "This will ensure that you have access to the services included with pfSense© Plus software.");
+$pghelp_ok = gettext('pfSense<sup>&reg;</sup> Community Edition software may be upgraded to pfSense<sup>&reg;</sup> Plus software by purchasing an upgrade from the Netgate store here: ' .
+'<a href="https://redirects.netgate.com/upgrade">Upgrade</a>' .
+'<br />Once your upgrade purchase is complete, you will receive an activation token by email.' .
+'Please paste that token into the field below, then click “Register”.' .
+'<br /><br>Registration ensures you have access to the services included with pfSense<sup>&reg;</sup> Plus software.' .
+'<br />If you do not receive the activation token email within a few minutes of placing the order, please contact <a href="https://go.netgate.com">Netgate TAC</a>.');
 
 $pghelp_exists = sprintf(gettext("This device has already been registered. " .
    "If you believe that to be incorrect, please contact Netgate TAC support for assistance by visiting %1s."), 
@@ -60,7 +63,7 @@ $pghelp_notready = sprintf(gettext("The registration service is not available ye
    '<a href="https://www.reddit.com/r/Netgate/" target="_blank">Reddit</a>'
 );
 
-$pghelp_success = gettext("Your firewall has been successfully registered.");
+$pghelp_success = gettext("Your firewall has been successfully registered. On your next visit to the System/Update page, select pfSense<sup>&reg;</sup> Plus software from the list of repositories.");
 
 $pghelp_notfound = sprintf(gettext("This activation token is not valid. " . 
    "Please contact Netgate TAC support for assistance by visiting %1s"), '<a href="https://go.netgate.com" target="_blank">go.netgate.com</a>');

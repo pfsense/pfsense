@@ -18,7 +18,7 @@ function activate_plus($action, $token) {
 
 	if (file_exists($idfile)) {
 		if (function_exists('curl_version')) {
-			$post = ['act' => $action, 'uid' => file_get_contents($idfile), 'token' => $token];
+			$post = ['act' => $action, 'uid' => file_get_contents($idfile), 'token' => $token, 'product' => "CE"];
 			$url = $FQDN;
 
 			$ch = curl_init();

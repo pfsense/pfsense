@@ -54,10 +54,10 @@ $pghelp_ok = gettext('pfSense<sup>&reg;</sup> Community Edition software may be 
 '<br />If you do not receive the activation token email within a few minutes of placing the order, please contact <a href="https://go.netgate.com">Netgate TAC</a>.');
 
 $pghelp_exists = sprintf(gettext("This device has already been registered. " .
-   "If you believe that to be incorrect, please contact Netgate TAC support for assistance by visiting %1s."), 
+   "If you believe that to be incorrect, please contact Netgate TAC support for assistance by visiting %1s."),
    '<a href="go.netgate.com", target="_blank">go.netgate.com</a>');
 
-$pghelp_notready = sprintf(gettext("The registration service is not available yet. Please watch %1s, %2s, %3s,  for updates."), 
+$pghelp_notready = sprintf(gettext("The registration service is not available yet. Please watch %1s, %2s, %3s,  for updates."),
    '<a href="https://www.netgate.com/blog/" target="_blank">our blog</a>',
    '<a href="https://twitter.com/NetgateUSA" target="_blank">Twitter</a>',
    '<a href="https://www.reddit.com/r/Netgate/" target="_blank">Reddit</a>'
@@ -65,7 +65,7 @@ $pghelp_notready = sprintf(gettext("The registration service is not available ye
 
 $pghelp_success = gettext("Your firewall has been successfully registered. On your next visit to the System/Update page, select pfSense<sup>&reg;</sup> Plus software from the list of repositories.");
 
-$pghelp_notfound = sprintf(gettext("This activation token is not valid. " . 
+$pghelp_notfound = sprintf(gettext("This activation token is not valid. " .
    "Please contact Netgate TAC support for assistance by visiting %1s"), '<a href="https://go.netgate.com" target="_blank">go.netgate.com</a>');
 
 $disabled = "disabled";
@@ -143,7 +143,7 @@ function makeHelp($res) {
 			$disabled = "";
 		break;
 
-		case "FAIL" : 
+		case "FAIL" :
 			$pghelp .= $pghelp_offline;
 			$alert_color = 'danger';
 		break;

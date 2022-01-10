@@ -1975,7 +1975,7 @@
 					break;
 				case 'glesys':
 					$status_intro = "GleSYS ({$this->_dnsHost}): ";
-					if (preg_match('/Record updated/i', $data)) {
+					if (preg_match("/OK/i", $data)) {
 						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else {

@@ -1492,7 +1492,7 @@ function pkg_get_repo_name($path) {
 }
 
 /* Setup pkg.conf according current repo */
-function pkg_conf_setup() {
+function pkg_conf_setup($repo_path) {
 	global $g;
 
 	$pkg_conf_path = "/usr/local/etc/pkg.conf";
@@ -1524,7 +1524,8 @@ function pkg_conf_setup() {
 	$auth_ca = "/etc/ssl/netgate-ca.pem";
 	$auth_cert = "/etc/ssl/pfSense-repo-custom.cert";
 	$auth_key = "/etc/ssl/pfSense-repo-custom.key";
-	if (file_exists($auth_ca) && file_exists($auth_cert) &&
+	if (strpos($repo_path, "{$g['product_name']}-repo-custom") &&
+	    file_exists($auth_ca) && file_exists($auth_cert) &&
 	    file_exists($auth_key)) {
 		$pkg_conf[] = "PKG_ENV {\n";
 		$pkg_conf[] = "\tSSL_CA_CERT_FILE=$auth_ca\n";
@@ -1544,7 +1545,7 @@ function pkg_switch_repo($path) {
 	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
 	@symlink($path, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
 
-	pkg_conf_setup();
+	pkg_conf_setup($path);
 
 	/* Update pfSense_version cache */
 	mwexec_bg("/etc/rc.update_pkg_metadata now");

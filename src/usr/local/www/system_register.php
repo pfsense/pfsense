@@ -36,6 +36,10 @@ require_once("system_register.inc");
 
 include("head.inc");
 
+if  (strpos($g['product_label'], 'Plus') !== false) {
+	header("Location: /");
+}
+
 // Possible helpblock messages
 $pgtitle = array(gettext("System"), gettext("Register"));
 

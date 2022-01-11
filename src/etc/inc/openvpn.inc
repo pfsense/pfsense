@@ -1382,8 +1382,12 @@ function openvpn_reconfigure($mode, $settings) {
 	/* Data encryption cipher support.
 	 * If it is not set, assume enabled since that is OpenVPN's default.
 	 * Note that diabling this is now deprecated and will be removed in a future version of OpenVPN */
-	if ($settings['ncp_enable'] == "disabled") {
-		$conf .= "ncp-disable\n";
+	if (($settings['ncp_enable'] == "disabled") ||
+	    ($settings['mode'] == "p2p_shared_key")) {
+		if ($settings['mode'] != "p2p_shared_key") {
+			/* Do not include this option for shared key as it is redundant. */
+			$conf .= "ncp-disable\n";
+		}
 		$conf .= "cipher {$fbcipher}\n";
 	} else {
 		$conf .= "data-ciphers " . str_replace(',', ':', openvpn_build_data_cipher_list($settings['data_ciphers'], $fbcipher)) . "\n";

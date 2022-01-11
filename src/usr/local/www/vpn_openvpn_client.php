@@ -246,6 +246,17 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Too many Data Encryption Algorithms have been selected.");
 	}
 
+	if (!empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
+		foreach ($pconfig['data_ciphers'] as $dc) {
+			if (!in_array(trim($dc), $cipher_validation_list)) {
+				$input_errors[] = gettext("One or more of the selected Data Encryption Algorithms is not valid.");
+			}
+		}
+	} else {
+		/* If data_ciphers is not empty and also not an array, it can't be valid. */
+		$input_errors[] = gettext("The Data Encryption Algorithm list is not valid.");
+	}
+
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
 	if (is_ipaddrv4($iv_ip) && (stristr($pconfig['protocol'], "6") !== false)) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. An IPv6 protocol and an IPv4 IP address cannot be selected.");
@@ -374,13 +385,6 @@ if ($_POST['save']) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
-			foreach ($pconfig['data_ciphers'] as $dc) {
-				if (!in_array(trim($dc), $cipher_validation_list)) {
-					$input_errors[] = gettext("One or more of the selected Data Encryption Algorithms is not valid.");
-				}
-			}
-		}
 		$reqdfields = explode(" ", "caref");
 		$reqdfieldsn = array(gettext("Certificate Authority"));
 	} elseif (!$pconfig['autokey_enable']) {
@@ -886,7 +890,8 @@ if ($act=="new" || $act=="edit"):
 	  ->setAttribute('size', '10')
 	  ->setHelp('Allowed Data Encryption Algorithms. Click an algorithm name to remove it from the list');
 
-	$group->setHelp('The order of the selected Data Encryption Algorithms is respected by OpenVPN.%1$s%2$s%3$s',
+	$group->setHelp('The order of the selected Data Encryption Algorithms is respected by OpenVPN. ' .
+					'This list is ignored in Shared Key mode.%1$s%2$s%3$s',
 					'<div class="infoblock">',
 					sprint_info_box(
 						gettext('For backward compatibility, when an older peer connects that does not support dynamic negotiation, OpenVPN will use the Fallback Data Encryption Algorithm ' .
@@ -901,7 +906,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['data_ciphers_fallback'],
 		openvpn_get_cipherlist()
 		))->setHelp('The Fallback Data Encryption Algorithm used for data channel packets when communicating with ' .
-				'clients that do not support data encryption algorithm negotiation. ' .
+				'clients that do not support data encryption algorithm negotiation (e.g. Shared Key). ' .
 				'This algorithm is automatically included in the Data Encryption Algorithms list.');
 
 	$section->addInput(new Form_Select(
@@ -1246,7 +1251,8 @@ else:
 	$i = 0;
 	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
-		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], ($client['ncp_enable'] != "disabled"));
+		$ncp = (($client['mode'] != "p2p_shared_key") && ($client['ncp_enable'] != 'disabled'));
+		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], $ncp);
 		$dca = explode(',', $dc);
 		if (count($dca) > 5) {
 			$dca = array_slice($dca, 0, 5);

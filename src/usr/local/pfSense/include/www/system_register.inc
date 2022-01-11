@@ -16,9 +16,11 @@ $idfile = "/var/db/uniqueid";
 function activate_plus($action, $token) {
 	global $g, $FQDN, $idfile;
 
+	$product = (strpos($g['product_label'], 'Plus') === false) ? "CE":"Plus";
+
 	if (file_exists($idfile)) {
 		if (function_exists('curl_version')) {
-			$post = ['act' => $action, 'uid' => file_get_contents($idfile), 'token' => $token, 'product' => "CE"];
+			$post = ['act' => $action, 'uid' => file_get_contents($idfile), 'token' => $token, 'product' => $product];
 			$url = $FQDN;
 
 			$ch = curl_init();

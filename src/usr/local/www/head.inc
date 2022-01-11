@@ -254,6 +254,8 @@ $system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
+$system_menu[] = array(gettext("Register"), "/system_register.php");
+
 if (!isAllowedPage("system_usermanager.php")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
 } else {
@@ -435,6 +437,7 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("pfSense Book"), "https://redirects.netgate.com/book");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://redirects.netgate.com/fbsdhandbook");
 	$help_menu[] = array(gettext("User survey"), "https://redirects.netgate.com/survey_1");
+	$help_menu[] = array(gettext("Upgrade to pfSense Plus"), "https://redirects.netgate.com/upgrade");
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
 

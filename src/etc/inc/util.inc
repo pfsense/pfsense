@@ -115,6 +115,13 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
+function clear_filter_subsystems_dirty() {
+	clear_subsystem_dirty('aliases');
+	clear_subsystem_dirty('filter');
+	clear_subsystem_dirty('natconf');
+	clear_subsystem_dirty('shaper');
+}
+
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
 	global $g;

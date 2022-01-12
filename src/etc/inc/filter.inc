@@ -620,6 +620,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		echo gettext("done.") . "\n";
 	}
 
+	clear_filter_subsystems_dirty();
+
 	unlock($filterlck);
 	return 0;
 }

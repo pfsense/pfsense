@@ -48,6 +48,9 @@ $a_cert = &$config['cert'];
 init_config_arr(array('crl'));
 $a_crl = &$config['crl'];
 
+$proxy_auth_types = array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'));
+$certlist = openvpn_build_cert_list(true);
+
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -236,6 +239,25 @@ if ($_POST['save']) {
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 	}
 
+	if (!empty($pconfig['mode']) &&
+	    !array_key_exists($pconfig['mode'], $openvpn_client_modes)) {
+		$input_errors[] = gettext("The selected mode is not valid.");
+	}
+
+	if (!empty($pconfig['dev_mode']) &&
+	    !array_key_exists($pconfig['dev_mode'], $openvpn_dev_mode)) {
+		$input_errors[] = gettext("The selected Device Mode is not valid.");
+	}
+	if (!empty($pconfig['protocol']) &&
+	    !array_key_exists($pconfig['protocol'], $openvpn_prots)) {
+		$input_errors[] = gettext("The selected Protocol is not valid.");
+	}
+
+	if (!empty($pconfig['interface']) &&
+	    !array_key_exists($pconfig['interface'], openvpn_build_if_list())) {
+		$input_errors[] = gettext("The selected Interface is not valid.");
+	}
+
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
 	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
 		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
@@ -276,8 +298,42 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (!empty($pconfig['digest']) &&
+	    !array_key_exists($pconfig['digest'], openvpn_get_digestlist())) {
+		$input_errors[] = gettext("The selected Auth Digest Algorithm is not valid.");
+	}
+
+	if (!empty($pconfig['engine']) &&
+	    !array_key_exists($pconfig['engine'], openvpn_get_engines())) {
+		$input_errors[] = gettext("The selected Hardware Crypto engine is not valid.");
+	}
+
+	if (!empty($pconfig['allow_compression']) &&
+	    !array_key_exists($pconfig['allow_compression'], $openvpn_allow_compression)) {
+		$input_errors[] = gettext("The selected Allow Compression value is not valid.");
+	}
+
+	if (!empty($pconfig['compression']) &&
+	    !array_key_exists($pconfig['compression'], $openvpn_compression_modes)) {
+		$input_errors[] = gettext("The selected Compression is not valid.");
+	}
+
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$tls_mode = true;
+		if (!empty($pconfig['caref']) &&
+		    !array_key_exists($pconfig['caref'], cert_build_list('ca', 'OpenVPN'))) {
+			$input_errors[] = gettext("The selected Peer Certificate Authority is not valid.");
+		}
+
+		if (!empty($pconfig['crlref']) &&
+		    !array_key_exists($pconfig['crlref'], openvpn_build_crl_list())) {
+			$input_errors[] = gettext("The selected Peer Certificate Revocation List is not valid.");
+		}
+
+		if (!empty($pconfig['certref']) &&
+		    !array_key_exists($pconfig['certref'], $certlist['server'])) {
+			$input_errors[] = gettext("The selected Client Certificate is not valid.");
+		}
 	} else {
 		$tls_mode = false;
 	}
@@ -308,6 +364,10 @@ if ($_POST['save']) {
 	}
 
 	if ($pconfig['proxy_addr']) {
+		if (!empty($pconfig['proxy_authtype']) &&
+		    !array_key_exists($pconfig['proxy_authtype'], $proxy_auth_types)) {
+			$input_errors[] = gettext("The selected Proxy Authentication Type is not valid.");
+		}
 
 		if ($result = openvpn_validate_host($pconfig['proxy_addr'], 'Proxy host or address')) {
 			$input_errors[] = $result;
@@ -376,6 +436,11 @@ if ($_POST['save']) {
 		}
 		if (!in_array($pconfig['tls_type'], array_keys($openvpn_tls_modes))) {
 			$input_errors[] = gettext("The field 'TLS Key Usage Mode' is not valid");
+		}
+
+		if (!empty($pconfig['tlsauth_keydir']) &&
+		    !array_key_exists($pconfig['tlsauth_keydir'], openvpn_get_keydirlist())) {
+			$input_errors[] = gettext("The selected TLS Key Direction is not valid.");
 		}
 	}
 
@@ -451,6 +516,11 @@ if ($_POST['save']) {
 	}
 	if (!empty($pconfig['inactive_seconds']) && !is_numericint($pconfig['inactive_seconds'])) {
 		$input_errors[] = gettext("The supplied Inactive Seconds value is invalid.");
+	}
+
+	if (!empty($pconfig['verbosity_level']) &&
+	    !array_key_exists($pconfig['verbosity_level'], $openvpn_verbosity_level)) {
+		$input_errors[] = gettext("The selected Verbosity Level is not valid.");
 	}
 
 	if (!$input_errors) {
@@ -710,7 +780,7 @@ if ($act=="new" || $act=="edit"):
 		'proxy_authtype',
 		'Proxy Authentication',
 		$pconfig['proxy_authtype'],
-		array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'))
+		$proxy_auth_types
 		))->setHelp("The type of authentication used by the proxy server.");
 
 	$section->addInput(new Form_Input(
@@ -848,13 +918,11 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['shared_key']
 	))->setHelp('Paste the shared key here');
 
-	$cl = openvpn_build_cert_list(true);
-
 	$section->addInput(new Form_Select(
 		'certref',
 		'Client Certificate',
 		$pconfig['certref'],
-		$cl['server']
+		$certlist['server']
 		));
 
 	$section->addInput(new Form_Checkbox(

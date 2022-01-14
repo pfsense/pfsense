@@ -54,6 +54,8 @@ foreach ($a_crl as $cid => $acrl) {
 	}
 }
 
+$certlist = openvpn_build_cert_list(false, true);
+
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -315,6 +317,31 @@ if ($_POST['save']) {
 		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
 	}
 
+	if (!empty($pconfig['mode']) &&
+	    !array_key_exists($pconfig['mode'], openvpn_build_mode_list())) {
+		$input_errors[] = gettext("The selected Server Mode is not valid.");
+	}
+
+	if (!empty($pconfig['dev_mode']) &&
+	    !array_key_exists($pconfig['dev_mode'], $openvpn_dev_mode)) {
+		$input_errors[] = gettext("The selected Device Mode is not valid.");
+	}
+
+	if (!empty($pconfig['protocol']) &&
+	    !array_key_exists($pconfig['protocol'], $openvpn_prots)) {
+		$input_errors[] = gettext("The selected Protocol is not valid.");
+	}
+
+	if (!empty($pconfig['interface']) &&
+	    !array_key_exists($pconfig['interface'], openvpn_build_if_list())) {
+		$input_errors[] = gettext("The selected Interface is not valid.");
+	}
+
+	if (!empty($pconfig['ecdh_curve']) &&
+	    !array_key_exists($pconfig['ecdh_curve'], openvpn_get_curvelist())) {
+		$input_errors[] = gettext("The selected ECDH Curve is not valid.");
+	}
+
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
 	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
 		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
@@ -334,6 +361,21 @@ if ($_POST['save']) {
 	} else {
 		/* If data_ciphers is not empty and also not an array, it can't be valid. */
 		$input_errors[] = gettext("The Data Encryption Algorithm list is not valid.");
+	}
+
+	if (!empty($pconfig['digest']) &&
+	    !array_key_exists($pconfig['digest'], openvpn_get_digestlist())) {
+		$input_errors[] = gettext("The selected Auth Digest Algorithm is not valid.");
+	}
+
+	if (!empty($pconfig['engine']) &&
+	    !array_key_exists($pconfig['engine'], openvpn_get_engines())) {
+		$input_errors[] = gettext("The selected Hardware Crypto engine is not valid.");
+	}
+
+	if (!empty($pconfig['cert_depth']) &&
+	    !array_key_exists($pconfig['cert_depth'], $openvpn_cert_depths)) {
+		$input_errors[] = gettext("The selected Certificate Depth is not valid.");
 	}
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
@@ -357,6 +399,22 @@ if ($_POST['save']) {
 
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$tls_mode = true;
+
+		if (!empty($pconfig['caref']) &&
+		    !array_key_exists($pconfig['caref'], cert_build_list('ca', 'OpenVPN'))) {
+			$input_errors[] = gettext("The selected Peer Certificate Authority is not valid.");
+		}
+
+		if (!empty($pconfig['crlref']) &&
+		    !array_key_exists($pconfig['crlref'], openvpn_build_crl_list())) {
+			$input_errors[] = gettext("The selected Peer Certificate Revocation List is not valid.");
+		}
+
+		if (!empty($pconfig['certref']) &&
+		    !array_key_exists($pconfig['certref'], $certlist['server'] + $certlist['non-server'])) {
+			$input_errors[] = gettext("The selected Server Certificate is not valid.");
+		}
+
 	} else {
 		$tls_mode = false;
 	}
@@ -421,6 +479,16 @@ if ($_POST['save']) {
 		$input_errors[] = $result;
 	}
 
+	if (!empty($pconfig['allow_compression']) &&
+	    !array_key_exists($pconfig['allow_compression'], $openvpn_allow_compression)) {
+		$input_errors[] = gettext("The selected Allow Compression value is not valid.");
+	}
+
+	if (!empty($pconfig['compression']) &&
+	    !array_key_exists($pconfig['compression'], $openvpn_compression_modes)) {
+		$input_errors[] = gettext("The selected Compression is not valid.");
+	}
+
 	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['interface'], $pconfig['local_port'], $vpnid);
 	if (($portused != $vpnid) && ($portused != 0)) {
 		$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
@@ -444,6 +512,10 @@ if ($_POST['save']) {
 		}
 		if (!in_array($pconfig['tls_type'], array_keys($openvpn_tls_modes))) {
 			$input_errors[] = gettext("The field 'TLS Key Usage Mode' is not valid");
+		}
+		if (!empty($pconfig['tlsauth_keydir']) &&
+		    !array_key_exists($pconfig['tlsauth_keydir'], openvpn_get_keydirlist())) {
+			$input_errors[] = gettext("The selected TLS Key Direction is not valid.");
 		}
 	}
 
@@ -491,6 +563,11 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
 		}
+
+		if (!empty($pconfig['netbios_ntype']) &&
+		    !array_key_exists($pconfig['netbios_ntype'], $netbios_nodetypes)) {
+			$input_errors[] = gettext("The selected NetBIOS Node Type is not valid.");
+		}
 	}
 
 	if ($pconfig['maxclients'] && !is_numericint($pconfig['maxclients'])) {
@@ -528,6 +605,11 @@ if ($_POST['save']) {
 	}
 
 	if ($pconfig['dev_mode'] == "tap") {
+		if (!empty($pconfig['serverbridge_interface']) &&
+		    !array_key_exists($pconfig['serverbridge_interface'], openvpn_build_bridge_list())) {
+			$input_errors[] = gettext("The selected Server Bridge Interface is not valid.");
+		}
+
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
 		}
@@ -594,6 +676,10 @@ if ($_POST['save']) {
 	}
 	if (!empty($pconfig['ocspurl']) && !is_URL($pconfig['ocspurl'])) {
 		$input_errors[] = gettext("OCSP URL must be a valid URL address.");
+	}
+	if (!empty($pconfig['verbosity_level']) &&
+	    !array_key_exists($pconfig['verbosity_level'], $openvpn_verbosity_level)) {
+		$input_errors[] = gettext("The selected Verbosity Level is not valid.");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -1020,16 +1106,14 @@ if ($act=="new" || $act=="edit"):
 		$certhelp = sprintf(gettext('No Certificates defined. One may be created here: %1$s%2$s%3$s'), '<span id="certtype">', '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
 	}
 
-	$cl = openvpn_build_cert_list(false, true);
-
 	//Save the number of server certs for use at run-time
-	$servercerts = count($cl['server']);
+	$servercerts = count($certlist['server']);
 
 	$section->addInput(new Form_Select(
 		'certref',
 		'*Server certificate',
 		$pconfig['certref'],
-		$cl['server'] + $cl['non-server']
+		$certlist['server'] + $certlist['non-server']
 		))->setHelp($certhelp);
 
 	$section->addInput(new Form_Select(

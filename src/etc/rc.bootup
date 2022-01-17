@@ -442,5 +442,14 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 
 led_normalize();
 
+// Ensure that any custom repository specifications that were downloaded are now clearred. 
+// This ensure that no "left over" repos or messages remain
+// If the custom repo is still required, it will be downloaded once the user visists system/update
+// Basically this circumvents the 24 hour cache when custom repositories are in use
+$basename = "/usr/local/share/{$g['product_name']}/pkg/repos/pfSense-repo-custom.*";
+foreach (glob($basename) as $f) {
+    unlink($f);
+}
+
 notify_all_remote("Bootup complete");
 ?>

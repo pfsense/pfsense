@@ -1664,11 +1664,11 @@ function save_repo($json) {
 	global $repopath, $g;
 
 	$repo = json_decode($json, true);
+	$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
 	if (($repo != NULL) && isset($repo['abi']) && isset($repo['altabi']) &&
 	    isset($repo['conf']) && isset($repo['descr']) &&
 	    isset($repo['name']) && (strlen($repo['conf']) > 10)) {
-		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
 		if (!empty($repo['conf']))		{file_put_contents($basename . "conf", base64_decode($repo['conf']));}
 		if (!empty($repo['descr']))		{file_put_contents($basename . "descr", $repo['descr']);}
@@ -1699,10 +1699,10 @@ function save_repo($json) {
 	} else {
 		/*
 		 * If there was anything wrong with the custom repository
-		 * definition, remove the help text to avoid possible confusion
+		 * definition, remove the custom files to avoid possible confusion
 		 */
-		if (file_exists($basename . "help")) {
-			unlink($basename . "help");
+		foreach (glob($basename . "*") as $f) {
+			unlink($f);
 		}
 	}
 }

@@ -62,8 +62,12 @@ if ($_POST['apply']) {
 	saveNAToutMode($_POST);
 } else if ($_POST['act'] == "del") {
 	deleteoutNATrule($_POST);
-} else if (isset($_POST['del_x'])) {
-	/* delete selected rules */
+} else if (isset($_POST['del_x']) &&
+    isset($_POST['rule']) &&
+    !empty($_POST['rule']) &&
+    is_array($_POST['rule'])) {
+	/* Delete selected rules, but only when given valid data
+	 * See https://redmine.pfsense.org/issues/12694 */
 	deleteMultipleoutNATrules($_POST);
 } else if ($_POST['act'] == "toggle") {
 	toggleoutNATrule($_POST);

@@ -72,6 +72,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['losslow'] = $a_gateways[$id]['losslow'];
 	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
+	$pconfig['dpinger_dont_add_static_route'] = isset($a_gateways[$id]['dpinger_dont_add_static_route']);
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['action_disable'] = isset($a_gateways[$id]['action_disable']);
 	$pconfig['data_payload'] = $a_gateways[$id]['data_payload'];
@@ -222,6 +223,17 @@ $group->add(new Form_Input(
 	'load balancer entries. Use this if the gateway does not respond to ICMP echo '.
 	'requests (pings).');
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'dpinger_dont_add_static_route',
+	'Static route',
+	'Do not add static route for gateway monitor IP address via the chosen interface',
+	$pconfig['dpinger_dont_add_static_route']
+))->setHelp('By default the firewall adds static routes for gateway monitor IP addresses '.
+	'to ensure traffic to the monitor IP address leaves via the correct interface. '.
+	'Enabling this checkbox overrides that behavior.');
+
+$form->add($section);
 
 $section->addInput(new Form_Checkbox(
 	'force_down',

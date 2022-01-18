@@ -239,18 +239,21 @@ function setup_gateways_monitor() {
 			 * Add static routes for each gateway with their monitor IP
 			 * not strictly necessary but is a added level of protection.
 			 */
-			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-				if (interface_isppp_type($gateway['friendlyiface'])) {
-					route_add_or_change($gateway['monitor'],
-					    '', $gateway['interface']);
-					system_staticroutes_configure($gateway['friendlyiface']);
-				} else {
-					route_add_or_change($gateway['monitor'],
-					    $gateway['gateway']);
-				}
+			if (!isset($config['system']['dpinger_dont_add_static_routes']) &&
+					!isset($gateway['dpinger_dont_add_static_route'])) {
+				if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
+					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+					if (interface_isppp_type($gateway['friendlyiface'])) {
+						route_add_or_change($gateway['monitor'],
+						    '', $gateway['interface']);
+						system_staticroutes_configure($gateway['friendlyiface']);
+					} else {
+						route_add_or_change($gateway['monitor'],
+						    $gateway['gateway']);
+					}
 
-				pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
+					pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
+				}
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if (is_linklocal($gateway['gateway']) &&
@@ -282,18 +285,22 @@ function setup_gateways_monitor() {
 			 * Add static routes for each gateway with their monitor IP
 			 * not strictly necessary but is a added level of protection.
 			 */
-			if ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) {
-				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-				if (interface_isppp_type($gateway['friendlyiface'])) {
-					route_add_or_change($gateway['monitor'],
-					    '', $gateway['interface']);
-					system_staticroutes_configure($gateway['friendlyiface']);
-				} else {
-					route_add_or_change($gateway['monitor'],
-					    $gateway['gateway']);
-				}
 
-				pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
+			if (!isset($config['system']['dpinger_dont_add_static_routes']) &&
+					!isset($gateway['dpinger_dont_add_static_route'])) {
+				if ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) {
+					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+					if (interface_isppp_type($gateway['friendlyiface'])) {
+						route_add_or_change($gateway['monitor'],
+						    '', $gateway['interface']);
+						system_staticroutes_configure($gateway['friendlyiface']);
+					} else {
+						route_add_or_change($gateway['monitor'],
+						    $gateway['gateway']);
+					}
+
+					pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
+				}
 			}
 		} else {
 			continue;
@@ -2077,6 +2084,9 @@ function save_gateway($gateway_settings, $realid = "") {
 	}
 	if ($gateway_settings['nonlocalgateway'] == "yes") {
 		$gateway['nonlocalgateway'] = true;
+	}
+	if ($gateway_settings['dpinger_dont_add_static_route'] == "yes") {
+		$gateway['dpinger_dont_add_static_route'] = true;
 	}
 	if ($gateway_settings['force_down'] == "yes") {
 		$gateway['force_down'] = true;

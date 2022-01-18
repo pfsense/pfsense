@@ -56,6 +56,7 @@ function getSystemAdvancedMisc($json = false) {
 	$pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 	$pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 	$pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
+	$pconfig['dpinger_dont_add_static_routes'] = isset($config['system']['dpinger_dont_add_static_routes']);
 	$pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 	$pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 	$pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];

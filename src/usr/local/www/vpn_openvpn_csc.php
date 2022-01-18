@@ -38,6 +38,14 @@ global $openvpn_tls_server_modes;
 
 init_config_arr(array('openvpn', 'openvpn-csc'));
 $a_csc = &$config['openvpn']['openvpn-csc'];
+init_config_arr(array('openvpn', 'openvpn-server'));
+
+$serveroptionlist = array();
+foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+	if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
+		$serveroptionlist[$serversettings['vpnid']] = sprintf(gettext("OpenVPN Server %d: %s"), $serversettings['vpnid'], $serversettings['description']);
+	}
+}
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -151,6 +159,18 @@ if ($_POST['save']) {
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
 	}
 
+	if (!empty($pconfig['server_list'])) {
+		if (is_array($pconfig['server_list'])) {
+			foreach ($pconfig['server_list'] as $server) {
+				if (!array_key_exists(trim($server), $serveroptionlist)) {
+					$input_errors[] = gettext("The server list contains an invalid entry.");
+				}
+			}
+		} else {
+			$input_errors[] = gettext("The server list is invalid");
+		}
+	}
+
 	if (!empty($pconfig['tunnel_network']) && !openvpn_validate_tunnel_network($pconfig['tunnel_network'], 'ipv4')) {
 		$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask or an alias with a single IPv4 subnet with CIDR mask.");
 	}
@@ -218,6 +238,11 @@ if ($_POST['save']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
+		}
+
+		if (!empty($pconfig['netbios_ntype']) &&
+		    !array_key_exists($pconfig['netbios_ntype'], $netbios_nodetypes)) {
+			$input_errors[] = gettext("The selected NetBIOS Node Type is not valid.");
 		}
 	}
 
@@ -351,15 +376,6 @@ if ($act == "new" || $act == "edit"):
 	$form->add($section);
 
 	$section = new Form_Section('Override Configuration');
-
-	$serveroptionlist = array();
-	if (is_array($config['openvpn']['openvpn-server'])) {
-		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
-			if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
-				$serveroptionlist[$serversettings['vpnid']] = sprintf(gettext("OpenVPN Server %d: %s"), $serversettings['vpnid'], $serversettings['description']);
-			}
-		}
-	}
 
 	$section->addInput(new Form_Input(
 		'common_name',

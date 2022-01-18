@@ -254,6 +254,10 @@ $system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
+if  (strpos($g['product_label'], 'Plus') === false) {
+	$system_menu[] = array(gettext("Register"), "/system_register.php");
+}
+
 if (!isAllowedPage("system_usermanager.php")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
 } else {
@@ -435,6 +439,9 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("pfSense Book"), "https://redirects.netgate.com/book");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://redirects.netgate.com/fbsdhandbook");
 	$help_menu[] = array(gettext("User survey"), "https://redirects.netgate.com/survey_1");
+	if  (strpos($g['product_label'], 'Plus') === false) {
+		$help_menu[] = array(gettext("Upgrade to pfSense Plus"), "https://redirects.netgate.com/upgrade");
+	}
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
 
@@ -550,9 +557,7 @@ if (are_notices_pending()) {
 	if ($_SESSION['Username'] == "admin") {
 		$cu = getUserEntry("admin");
 
-		$hash = (empty($cu['bcrypt-hash']) ? $cu['password'] : $cu['bcrypt-hash']);
-
-		if (password_verify($g['factory_shipped_password'], $hash)) {
+		if (local_backed("admin", $g['factory_shipped_password'])) {
 			print('<div class="alert alert-danger">' .
 				sprintf(gettext('%sWARNING:%s The \'admin\' account password is set to the default value. ' .
 				' %s Change the password in the User Manager.%s'),

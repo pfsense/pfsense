@@ -1374,15 +1374,15 @@ pkg_repo_rsync() {
 			print_error_pfS
 		fi
 
-		local _pkgfile="${_repo_path}/Latest/pkg.txz"
+		local _pkgfile="${_repo_path}/Latest/pkg.pkg"
 		if [ -e ${_pkgfile} ]; then
-			echo -n ">>> Signing Latest/pkg.txz for bootstraping... " | tee -a ${_logfile}
+			echo -n ">>> Signing Latest/pkg.pkg for bootstraping... " | tee -a ${_logfile}
 
 			if sha256 -q ${_pkgfile} | ${PKG_REPO_SIGNING_COMMAND} \
 			    > ${_pkgfile}.sig 2>/dev/null; then
 				# XXX Temporary workaround to create link to pkg sig
-				[ -e ${_repo_path}/Latest/pkg.pkg ] && \
-					ln -sf pkg.txz.sig ${_repo_path}/Latest/pkg.pkg.sig
+				[ -e ${_repo_path}/Latest/pkg.txz ] && \
+					ln -sf pkg.pkg.sig ${_repo_path}/Latest/pkg.txz.sig
 				echo "Done!" | tee -a ${_logfile}
 			else
 				echo "Failed!" | tee -a ${_logfile}

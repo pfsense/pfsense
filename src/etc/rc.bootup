@@ -89,11 +89,13 @@ if (file_exists("/root/firmware.tgz")) {
 
 /* restore RRD, SSH keys and extra data on bsdinstall config restore
  * see https://redmine.pfsense.org/issues/12518 */
-if (file_exists("{$g['conf_path']}/installer_copied_config")) {
+if (file_exists("{$g['conf_path']}/installer_copied_config") &&
+    file_exists("{$g['conf_path']}/restore_config_data")) {
 	copy("/cf/conf/config.xml", "{$g['tmp_path']}/config_to_restore.xml");
 	restore_backup("{$g['tmp_path']}/config_to_restore.xml");
 	@unlink("{$g['tmp_path']}/config_to_restore.xml");
 	@unlink("{$g['conf_path']}/installer_copied_config");
+	@unlink("{$g['conf_path']}/restore_config_data");
 }
 
 /* Triggering of the initial setup wizard after reboot has been requested */
@@ -439,6 +441,15 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 }
 
 led_normalize();
+
+// Ensure that any custom repository specifications that were downloaded are now clearred. 
+// This ensure that no "left over" repos or messages remain
+// If the custom repo is still required, it will be downloaded once the user visists system/update
+// Basically this circumvents the 24 hour cache when custom repositories are in use
+$basename = "/usr/local/share/{$g['product_name']}/pkg/repos/pfSense-repo-custom.*";
+foreach (glob($basename) as $f) {
+    unlink($f);
+}
 
 notify_all_remote("Bootup complete");
 ?>

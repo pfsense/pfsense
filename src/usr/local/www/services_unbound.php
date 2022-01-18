@@ -141,7 +141,7 @@ if ($_POST['save']) {
 			}
 		}
 		if ($founddns == false) {
-			$input_errors[] = gettext("At least one DNS server must be specified under System &gt; General Setup to enable Forwarding mode.");
+			$input_errors[] = gettext("At least one DNS server must be specified under System > General Setup to enable Forwarding mode.");
 		}
 	}
 
@@ -707,7 +707,7 @@ endforeach;
 	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered,
 	such as 'test', 'nas.home.arpa', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the
 	authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.
-	If there are multiple authoritative DNS servers available for a domain then make a separate entry for each, 
+	If there are multiple authoritative DNS servers available for a domain then make a separate entry for each,
 	using the same domain name.
 </span>
 

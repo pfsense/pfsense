@@ -48,6 +48,9 @@ $a_cert = &$config['cert'];
 init_config_arr(array('crl'));
 $a_crl = &$config['crl'];
 
+$proxy_auth_types = array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'));
+$certlist = openvpn_build_cert_list(true);
+
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -236,6 +239,25 @@ if ($_POST['save']) {
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 	}
 
+	if (!empty($pconfig['mode']) &&
+	    !array_key_exists($pconfig['mode'], $openvpn_client_modes)) {
+		$input_errors[] = gettext("The selected mode is not valid.");
+	}
+
+	if (!empty($pconfig['dev_mode']) &&
+	    !array_key_exists($pconfig['dev_mode'], $openvpn_dev_mode)) {
+		$input_errors[] = gettext("The selected Device Mode is not valid.");
+	}
+	if (!empty($pconfig['protocol']) &&
+	    !array_key_exists($pconfig['protocol'], $openvpn_prots)) {
+		$input_errors[] = gettext("The selected Protocol is not valid.");
+	}
+
+	if (!empty($pconfig['interface']) &&
+	    !array_key_exists($pconfig['interface'], openvpn_build_if_list())) {
+		$input_errors[] = gettext("The selected Interface is not valid.");
+	}
+
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
 	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
 		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
@@ -244,6 +266,17 @@ if ($_POST['save']) {
 	/* Maximum option line length = 256, see https://redmine.pfsense.org/issues/11559 */
 	if (!empty($pconfig['data_ciphers']) && (strlen("data-ciphers " . implode(",", $pconfig['data_ciphers'])) > 254)) {
 		$input_errors[] = gettext("Too many Data Encryption Algorithms have been selected.");
+	}
+
+	if (!empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
+		foreach ($pconfig['data_ciphers'] as $dc) {
+			if (!in_array(trim($dc), $cipher_validation_list)) {
+				$input_errors[] = gettext("One or more of the selected Data Encryption Algorithms is not valid.");
+			}
+		}
+	} else {
+		/* If data_ciphers is not empty and also not an array, it can't be valid. */
+		$input_errors[] = gettext("The Data Encryption Algorithm list is not valid.");
 	}
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
@@ -265,8 +298,42 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (!empty($pconfig['digest']) &&
+	    !array_key_exists($pconfig['digest'], openvpn_get_digestlist())) {
+		$input_errors[] = gettext("The selected Auth Digest Algorithm is not valid.");
+	}
+
+	if (!empty($pconfig['engine']) &&
+	    !array_key_exists($pconfig['engine'], openvpn_get_engines())) {
+		$input_errors[] = gettext("The selected Hardware Crypto engine is not valid.");
+	}
+
+	if (!empty($pconfig['allow_compression']) &&
+	    !array_key_exists($pconfig['allow_compression'], $openvpn_allow_compression)) {
+		$input_errors[] = gettext("The selected Allow Compression value is not valid.");
+	}
+
+	if (!empty($pconfig['compression']) &&
+	    !array_key_exists($pconfig['compression'], $openvpn_compression_modes)) {
+		$input_errors[] = gettext("The selected Compression is not valid.");
+	}
+
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$tls_mode = true;
+		if (!empty($pconfig['caref']) &&
+		    !array_key_exists($pconfig['caref'], cert_build_list('ca', 'OpenVPN'))) {
+			$input_errors[] = gettext("The selected Peer Certificate Authority is not valid.");
+		}
+
+		if (!empty($pconfig['crlref']) &&
+		    !array_key_exists($pconfig['crlref'], openvpn_build_crl_list())) {
+			$input_errors[] = gettext("The selected Peer Certificate Revocation List is not valid.");
+		}
+
+		if (!empty($pconfig['certref']) &&
+		    !array_key_exists($pconfig['certref'], $certlist['server'])) {
+			$input_errors[] = gettext("The selected Client Certificate is not valid.");
+		}
 	} else {
 		$tls_mode = false;
 	}
@@ -297,6 +364,10 @@ if ($_POST['save']) {
 	}
 
 	if ($pconfig['proxy_addr']) {
+		if (!empty($pconfig['proxy_authtype']) &&
+		    !array_key_exists($pconfig['proxy_authtype'], $proxy_auth_types)) {
+			$input_errors[] = gettext("The selected Proxy Authentication Type is not valid.");
+		}
 
 		if ($result = openvpn_validate_host($pconfig['proxy_addr'], 'Proxy host or address')) {
 			$input_errors[] = $result;
@@ -366,6 +437,11 @@ if ($_POST['save']) {
 		if (!in_array($pconfig['tls_type'], array_keys($openvpn_tls_modes))) {
 			$input_errors[] = gettext("The field 'TLS Key Usage Mode' is not valid");
 		}
+
+		if (!empty($pconfig['tlsauth_keydir']) &&
+		    !array_key_exists($pconfig['tlsauth_keydir'], openvpn_get_keydirlist())) {
+			$input_errors[] = gettext("The selected TLS Key Direction is not valid.");
+		}
 	}
 
 	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['data_ciphers_fallback'], "GCM")) {
@@ -374,13 +450,6 @@ if ($_POST['save']) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
-			foreach ($pconfig['data_ciphers'] as $dc) {
-				if (!in_array(trim($dc), $cipher_validation_list)) {
-					$input_errors[] = gettext("One or more of the selected Data Encryption Algorithms is not valid.");
-				}
-			}
-		}
 		$reqdfields = explode(" ", "caref");
 		$reqdfieldsn = array(gettext("Certificate Authority"));
 	} elseif (!$pconfig['autokey_enable']) {
@@ -447,6 +516,11 @@ if ($_POST['save']) {
 	}
 	if (!empty($pconfig['inactive_seconds']) && !is_numericint($pconfig['inactive_seconds'])) {
 		$input_errors[] = gettext("The supplied Inactive Seconds value is invalid.");
+	}
+
+	if (!empty($pconfig['verbosity_level']) &&
+	    !array_key_exists($pconfig['verbosity_level'], $openvpn_verbosity_level)) {
+		$input_errors[] = gettext("The selected Verbosity Level is not valid.");
 	}
 
 	if (!$input_errors) {
@@ -706,7 +780,7 @@ if ($act=="new" || $act=="edit"):
 		'proxy_authtype',
 		'Proxy Authentication',
 		$pconfig['proxy_authtype'],
-		array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'))
+		$proxy_auth_types
 		))->setHelp("The type of authentication used by the proxy server.");
 
 	$section->addInput(new Form_Input(
@@ -844,13 +918,11 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['shared_key']
 	))->setHelp('Paste the shared key here');
 
-	$cl = openvpn_build_cert_list(true);
-
 	$section->addInput(new Form_Select(
 		'certref',
 		'Client Certificate',
 		$pconfig['certref'],
-		$cl['server']
+		$certlist['server']
 		));
 
 	$section->addInput(new Form_Checkbox(
@@ -886,7 +958,8 @@ if ($act=="new" || $act=="edit"):
 	  ->setAttribute('size', '10')
 	  ->setHelp('Allowed Data Encryption Algorithms. Click an algorithm name to remove it from the list');
 
-	$group->setHelp('The order of the selected Data Encryption Algorithms is respected by OpenVPN.%1$s%2$s%3$s',
+	$group->setHelp('The order of the selected Data Encryption Algorithms is respected by OpenVPN. ' .
+					'This list is ignored in Shared Key mode.%1$s%2$s%3$s',
 					'<div class="infoblock">',
 					sprint_info_box(
 						gettext('For backward compatibility, when an older peer connects that does not support dynamic negotiation, OpenVPN will use the Fallback Data Encryption Algorithm ' .
@@ -901,7 +974,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['data_ciphers_fallback'],
 		openvpn_get_cipherlist()
 		))->setHelp('The Fallback Data Encryption Algorithm used for data channel packets when communicating with ' .
-				'clients that do not support data encryption algorithm negotiation. ' .
+				'clients that do not support data encryption algorithm negotiation (e.g. Shared Key). ' .
 				'This algorithm is automatically included in the Data Encryption Algorithms list.');
 
 	$section->addInput(new Form_Select(
@@ -1246,7 +1319,8 @@ else:
 	$i = 0;
 	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
-		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], ($client['ncp_enable'] != "disabled"));
+		$ncp = (($client['mode'] != "p2p_shared_key") && ($client['ncp_enable'] != 'disabled'));
+		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], $ncp);
 		$dca = explode(',', $dc);
 		if (count($dca) > 5) {
 			$dca = array_slice($dca, 0, 5);

@@ -35,6 +35,12 @@ sleep 1
 # Remove temporary files on shutdown from /tmp/
 rm -rf /tmp/*
 
+# Ensure that any custom repository specifications that were downloaded are now clearred. 
+# This ensures that no "left over" repos or messages remain
+# If the custom repo is still required, it will be downloaded once the user visists system/update
+# Basically this circumvents the 24 hour cache when custom repositories are in use
+rm -f /usr/local/share/pfSense/pkg/repos/pfSense-repo-custom.*
+
 . /etc/rc.ramdisk_functions.sh
 ramdisk_make_backup
 

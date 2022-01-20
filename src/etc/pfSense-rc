@@ -398,7 +398,7 @@ ln -sf /etc/ssl/openssl.cnf \
 /usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader
-/usr/local/sbin/fcgicli -f /etc/ecl.php
+/etc/rc.ecl
 
 if [ -f /etc/rc.custom_boot_early ]; then
 	/bin/echo -n "Launching /etc/rc.custom_boot_early...";

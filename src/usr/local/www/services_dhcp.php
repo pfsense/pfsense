@@ -727,14 +727,17 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['filename64arm'] = $_POST['filename64arm'];
 		$dhcpdconf['uefihttpboot'] = $_POST['uefihttpboot'];
 		$dhcpdconf['rootpath'] = $_POST['rootpath'];
-		unset($dhcpdconf['statsgraph']);
-		if ($_POST['statsgraph']) {
-			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
-			enable_rrd_graphing();
+
+		if (empty($_POST['statsgraph']) == isset($dhcpdconf['statsgraph'])) {
+			$enable_rrd_graphing = true;
 		}
-		unset($dhcpdconf['disablepingcheck']);
-		if ($_POST['disablepingcheck']) {
-			$dhcpdconf['disablepingcheck'] = $_POST['disablepingcheck'];
+		if (!empty($_POST['statsgraph'])) {
+			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
+		} elseif (isset($dhcpdconf['statsgraph'])) {
+			unset($dhcpdconf['statsgraph']);
+		}
+		if ($enable_rrd_graphing) {
+			enable_rrd_graphing();
 		}
 
 		// Handle the custom options rowhelper

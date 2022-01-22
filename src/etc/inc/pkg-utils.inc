@@ -1661,7 +1661,7 @@ function update_repos() {
 
 // Parse the received JSON data and save the custom repository information
 function save_repo($json) {
-	global $repopath, $g;
+	global $repopath, $g, $config;
 
 	$repo = json_decode($json, true);
 	$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
@@ -1703,6 +1703,12 @@ function save_repo($json) {
 		 */
 		foreach (glob($basename . "*") as $f) {
 			unlink($f);
+		}
+
+		// If config.xml still contains a reference to the custom repo, replace it
+		if ($config['system']['pkg_repo_conf_path'] == "/usr/local/share/pfSense/pkg/repos/pfSense-repo.conf") {
+			$config['system']['pkg_repo_conf_path'] = "/usr/local/share/pfSense/pkg/repos/pfSense-repo-next.conf";
+			write_config("-NoReMoTeBaCkUp");
 		}
 	}
 }

@@ -1705,11 +1705,11 @@ function save_repo($json) {
 			unlink($f);
 		}
 
-		// If config.xml still contains a reference to the custom repo, replace it
-		if ($config['system']['pkg_repo_conf_path'] == "{$repopath}/{$g['product_name']}-repo-custom.conf") {
-			$config['system']['pkg_repo_conf_path'] = "/usr/local/share/pfSense/pkg/repos/pfSense-repo-next.conf";
+		// If config.xml still contains a reference to the custom repo, replace it with the "stable" repository definition
+		if (strpos($config['system']['pkg_repo_conf_path'], "custom") !== false) {
+			$config['system']['pkg_repo_conf_path'] = "/usr/local/share/pfSense/pkg/repos/pfSense-repo.conf";
 			write_config("-NoReMoTeBaCkUp");
-			pkg_switch_repo("/usr/local/share/pfSense/pkg/repos/pfSense-repo-next.conf");
+			pkg_switch_repo("/usr/local/share/pfSense/pkg/repos/pfSense-repo.conf");
 		}
 	}
 }

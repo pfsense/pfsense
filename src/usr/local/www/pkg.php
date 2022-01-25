@@ -434,10 +434,11 @@ if ($savemsg) {
 									if ($sf['name'] == $_REQUEST['pkg_filter_type']) {
 										$filter_fieldname = $sf['fieldname'];
 										#Use a default regex on sortable fields when none is declared
+										$pkg_filter = cleanup_regex_pattern(htmlspecialchars(strip_tags($_REQUEST['pkg_filter'])));
 										if ($sf['regex']) {
-											$filter_regex = str_replace("%FILTERTEXT%", $_REQUEST['pkg_filter'], trim($sf['regex']));
+											$filter_regex = str_replace("%FILTERTEXT%", $pkg_filter, trim($sf['regex']));
 										} else {
-											$filter_regex = "/{$_REQUEST['pkg_filter']}/i";
+											$filter_regex = "/{$pkg_filter}/i";
 										}
 									}
 								}
@@ -452,7 +453,6 @@ if ($savemsg) {
 						$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
 						if ($column['fieldname'] == $filter_fieldname) {
 							if ($filter_regex) {
-								//echo "$filter_regex - $fieldname<p/>";
 								preg_match($filter_regex, $fieldname, $filter_matches);
 								break;
 							}
@@ -603,7 +603,4 @@ if ($savemsg) {
 
 </form>
 <?php
-echo "<!-- filter_fieldname: {$filter_fieldname} -->";
-echo "<!-- filter_regex: {$filter_regex} -->";
-
 include("foot.inc"); ?>

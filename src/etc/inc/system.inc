@@ -1115,10 +1115,10 @@ function delete_static_route($id, $delete = false) {
 		$delgw = lookup_gateway_ip_by_name(unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}_gw")));
 		if (count($delete_targets)) {
 			foreach ($delete_targets as $dts) {
-				if (is_ipaddrv6($dts)) {
-					$family = "-inet6";
-				} else {
+				if (is_subnetv4($dts)) {
 					$family = "-inet";
+				} else {
+					$family = "-inet6";
 				}
 				$route = route_get($dts, '', true);
 				if (!count($route)) {

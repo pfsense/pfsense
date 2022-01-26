@@ -2246,6 +2246,25 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
 	// Alias in an alias
 	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name);
+	// Static routes
+	update_alias_names_upon_change(array('staticroutes', 'route'), array('network'), $new_alias_name, $orig_alias_name);
+	// OpenVPN
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('tunnel_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('tunnel_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('local_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('local_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('remote_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('remote_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('tunnel_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('tunnel_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('remote_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('remote_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('tunnel_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('tunnel_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('local_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('local_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('remote_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('remote_networkv6'), $new_alias_name, $orig_alias_name);
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {

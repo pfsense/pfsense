@@ -355,9 +355,16 @@ if ($_POST['save']) {
 							$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
 							break;
 						}
-					} else if ($pconfig['mode'] == "tunnel6") {
+					} elseif ($pconfig['mode'] == "tunnel6") {
 						if (check_subnetsv6_overlap($interfaceip, 128, $entered_local_network, $entered_local_mask) && check_subnets_overlap($phase1['remote-gateway'], 128, $entered_remote_network, $entered_remote_mask)) {
 							$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
+							break;
+						}
+					} elseif ($pconfig['mode'] == "vti") {
+						if (($phase1['remote-gateway'] == '0.0.0.0') ||
+						    (is_ipaddrv6($phase1['remote-gateway']) &&
+						    (text_to_compressed_ip6($phase1['remote-gateway']) == '::'))) { 
+							$input_errors[] = gettext("A remote gateway address of \"0.0.0.0\" or \"::\" is not compatible with a child Phase 2 in VTI mode.");
 							break;
 						}
 					}

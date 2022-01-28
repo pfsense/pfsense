@@ -490,6 +490,15 @@ function toggleoutNATrule($post, $json = false) {
 function deleteMultipleoutNATrules($post, $json = false) {
 	global $config;
 
+	if (empty($post) ||
+	    !is_array($post) ||
+	    !isset($post['rule']) ||
+	    !is_array($post['rule'])) {
+		/* Nothing to do.
+		 * See https://redmine.pfsense.org/issues/12694 */
+		return;
+	}
+
 	init_config_arr(array('nat', 'outbound', 'rule'));
 	$a_out = &$config['nat']['outbound']['rule'];
 

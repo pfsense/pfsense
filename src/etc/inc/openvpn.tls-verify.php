@@ -81,12 +81,14 @@ foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
 		$cert_details = openssl_x509_parse($cert_contents);
 		$issuer = $capath . $cert_details['hash'] . ".0";
 		$serial = $_GET['serial'];
-		$status = exec("/usr/bin/openssl ocsp -issuer " . escapeshellarg($issuer)
+		$status_out = array();
+		exec("/usr/bin/openssl ocsp -issuer " . escapeshellarg($issuer)
 			. " -resp_text"
 			. " -no_nonce"
 			. " -CApath " . escapeshellarg($capath)
 			. " -url " . escapeshellarg($ovpns['ocspurl'])
-			. " -serial " . escapeshellarg($serial));
+			. " -serial " . escapeshellarg($serial), $status_out);
+		$status = implode(",", $status_out);
 		if (preg_match('/(error|fail)/', $status)) {
 			echo "FAILED";
 			closelog();

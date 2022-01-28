@@ -1250,11 +1250,11 @@ function ldap_get_groups($username, $authcfg) {
 	global $debug, $config;
 
 	if (!function_exists("ldap_connect")) {
-		return;
+		return array();
 	}
 
 	if (!$username) {
-		return false;
+		return array();
 	}
 
 	if (!isset($authcfg['ldap_nostrip_at']) && stristr($username, "@")) {
@@ -1297,7 +1297,7 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapscope = $authcfg['ldap_scope'];
 		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
-		return false;
+		return array();
 	}
 
 	if (isset($authcfg['ldap_rfc2307'])) {
@@ -1334,7 +1334,7 @@ function ldap_get_groups($username, $authcfg) {
 		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
-			return false;
+			return array();
 		}
 	}
 
@@ -1345,7 +1345,7 @@ function ldap_get_groups($username, $authcfg) {
 		if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
 			@ldap_close($ldap);
-			return false;
+			return array();
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s."), $ldapname));

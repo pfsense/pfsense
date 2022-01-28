@@ -664,8 +664,8 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 		 */
 		if ($another_instance) {
 			$failmsg = gettext(sprintf("Another instance of %s " .
-			    "is running.  Try again later"),
-			    $g['product_name'] . "-upgrade");
+			    "is running.  Try again later",
+			    $g['product_name'] . "-upgrade"));
 		} elseif (!$start_polling) {
 			/* Remove last line, used to provide return code */
 			unset($log[count($log)-1]);

@@ -293,7 +293,7 @@ function dup_edit_server($id, $json=false) {
 }
 
 // Save an edited OpenVPN server specification. Return $pconfig, $wc_msg and/or $input_errors
-function saveOpenVPNServer($id, $post, $json=false) {
+function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
     global $a_server, $user_can_edit_advanced, $openvpn_exit_notify_server;
     global $openvpn_ping_method, $openvpn_ping_action, $openvpn_tls_modes;
     global $openvpn_topologies, $openvpn_dh_lengths;

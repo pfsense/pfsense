@@ -6595,6 +6595,19 @@ function upgrade_220_to_221() {
 function upgrade_221_to_222() {
 }
 
+function upgrade_222_to_223() {
+	foreach ($config['system']['user'] as & $user) {
+		if ($user['name'] == 'admin') {
+			$user_home = "/root";
+		} else {
+			$user_home = "/home/{$user_name}";
+		}
+		if (file_exists("{$user_home}/.keephistory")) {
+			$user['keephistory'] = true;
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

@@ -656,6 +656,7 @@ function local_user_set(& $user) {
 	/* Cases here should be ordered by most privileged to least privileged. */
 	if (userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all")) {
 		$user_shell = "/bin/tcsh";
+		$shell_access = true;
 	} elseif (userHasPrivilege($user, "user-copy-files-chroot")) {
 		$user_shell = "/usr/local/sbin/scponlyc";
 	} elseif (userHasPrivilege($user, "user-copy-files")) {
@@ -693,6 +694,7 @@ function local_user_set(& $user) {
 		$user_group = "wheel";
 		$user_home = "/root";
 		$user_shell = "/etc/rc.initial";
+		$shell_access = true;
 	}
 
 	/* read from pw db */
@@ -760,6 +762,13 @@ function local_user_set(& $user) {
 		@chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	} else {
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
+	}
+
+	if ($user['keephistory'] && $shell_access &&
+	    !file_exists("{$user_home}/.keephistory")) {
+		@touch("{$user_home}/.keephistory");
+	} elseif (!$user['keephistory']) {
+		unlink_if_exists("{$user_home}/.keephistory");
 	}
 
 	$un = $lock_account ? "" : "un";

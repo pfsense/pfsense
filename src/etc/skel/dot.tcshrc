@@ -31,6 +31,7 @@ endif
 
 set prompt="[%B`cat /etc/version`%b][%B%n%b%{\033[0;1;31m%}@%{\033[0;0;0m%}%B%M%b]%/%{\033[0;1;31m%}:%{\033[0;0;0m%} "
 set autologout="0"
+set histdup="prev"
 set autolist set color set colorcat
 setenv CLICOLOR "true"
 setenv LSCOLORS "exfxcxdxbxegedabagacad"

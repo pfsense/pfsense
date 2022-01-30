@@ -587,6 +587,7 @@ events.push(function() {
 				hideInput('ttl', false);
 				break;
 			case "dnsimple":
+			case "dnsimple-v6":
 				hideCheckbox('curl_ssl_verifypeer', false);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);

@@ -321,6 +321,7 @@
 				case 'custom-v6':
 				case 'desec-v6':
 				case 'digitalocean-v6':
+				case 'dnsimple-v6':
 				case 'domeneshop-v6':
 				case 'dreamhost-v6':
 				case 'duiadns-v6':
@@ -413,6 +414,7 @@
 					case 'digitalocean-v6':
 					case 'dnsexit':
 					case 'dnsimple':
+					case 'dnsimple-v6':
 					case 'dnsmadeeasy':
 					case 'dnsomatic':
 					case 'domeneshop':
@@ -1171,6 +1173,7 @@
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'dnsimple':
+				case 'dnsimple-v6':
 					/* Uses DNSimple's v2 REST API
 					   Requires the Account ID as the username (found in the URL when pull up the domain)
 					   And an API Token for the password (generated in the User Settings -> API tokens area of the website)
@@ -2629,6 +2632,7 @@
 					}
 					break;
 				case 'dnsimple':
+				case 'dnsimple-v6':
 					/* Responds with HTTP 200 on success.
 					   Responds with HTTP 4xx on error.
 					   Returns JSON data as body */

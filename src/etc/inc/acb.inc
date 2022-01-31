@@ -268,6 +268,8 @@ function upload_config($manual = false) {
 				'manmax' => $manmax
 			);
 
+			unlink_if_exists($tmpname);
+
 			if (!is_dir($g['acbbackuppath'])) {
 				mkdir($g['acbbackuppath']);
 			}

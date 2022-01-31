@@ -170,6 +170,9 @@ if [ -d "/conf" ]; then
 	fi
 fi
 
+# Sanity check the clock
+/etc/rc.checkclock
+
 . /etc/rc.ramdisk_functions.sh
 
 # Check if RAM disks are enabled, store for repeated use

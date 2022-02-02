@@ -3320,6 +3320,7 @@ function unixnewlines($text) {
 }
 
 function array_remove_duplicate($array, $field) {
+	$cmp = array();
 	foreach ($array as $sub) {
 		if (isset($sub[$field])) {
 			$cmp[] = $sub[$field];

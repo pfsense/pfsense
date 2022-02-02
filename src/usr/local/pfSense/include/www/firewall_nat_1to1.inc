@@ -3,7 +3,7 @@
  * firewall_nat_1to1.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -123,8 +123,9 @@ function save1to1NATrule($post, $id, $json = false) {
 	$dstipaddrtype = false;
 
 	if (((($post['ipprotocol'] == 'inet') && !is_interface_ipaddr($post['interface'])) ||
-	    (($post['ipprotocol'] == 'inet6') && !is_interface_ipaddrv6($post['interface']))) &&
-		!is_interface_group($post['interface']) && !in_array($post['interface'], $vpn_and_ppp_ifs)) {
+	    (($post['ipprotocol'] == 'inet6') && !is_interface_ipaddrv6($post['interface']))) && 
+	    !get_specialnet_type($post['interface'], $post['ipprotocol']) &&
+	    !is_interface_group($post['interface']) && !in_array($post['interface'], $vpn_and_ppp_ifs)) {
 		$input_errors[] = gettext("The interface does not have an address from the specified address family.");
 	}
 
@@ -397,8 +398,8 @@ function build_srctype_list() {
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
-			$list[$ifent] = $ifdesc . ' net';
-			$list[$ifent . 'ip'] = $ifdesc . ' address';
+			$list[$ifent] = $ifdesc . ' ' . gettext('net');
+			$list[$ifent . 'ip'] = $ifdesc . ' ' . gettext('address');
 		}
 	}
 
@@ -444,8 +445,8 @@ function build_dsttype_list() {
 
 	foreach ($ifdisp as $if => $ifdesc) {
 		if (have_ruleint_access($if)) {
-			$list[$if] = $ifdesc;
-			$list[$if . 'ip'] = $ifdesc . ' address';
+			$list[$if] = $ifdesc . ' ' . gettext('net');
+			$list[$if . 'ip'] = $ifdesc . ' ' . gettext('address');
 		}
 	}
 
@@ -507,7 +508,7 @@ function build_exttype_list() {
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
-			$list[$ifent . 'ip'] = $ifdesc . ' address';
+			$list[$ifent . 'ip'] = $ifdesc . ' ' . gettext('address');
 		}
 	}
 

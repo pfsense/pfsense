@@ -3,7 +3,7 @@
  * firewall_nat_out.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -489,6 +489,15 @@ function toggleoutNATrule($post, $json = false) {
 // Delete multiple Outbound rules
 function deleteMultipleoutNATrules($post, $json = false) {
 	global $config;
+
+	if (empty($post) ||
+	    !is_array($post) ||
+	    !isset($post['rule']) ||
+	    !is_array($post['rule'])) {
+		/* Nothing to do.
+		 * See https://redmine.pfsense.org/issues/12694 */
+		return;
+	}
 
 	init_config_arr(array('nat', 'outbound', 'rule'));
 	$a_out = &$config['nat']['outbound']['rule'];

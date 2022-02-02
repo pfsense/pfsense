@@ -3,7 +3,7 @@
  * firewall_nat.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -319,6 +319,13 @@ function saveNATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("The submitted interface does not exist.");
 	}
 
+	if ((($post['natreflection'] == "purenat") || ($post['natreflection'] == "enable") ||
+	    (($post['natreflection'] == "default") && !isset($config['system']['disablenatreflection']))) &&
+	    ((is_specialnet($post['interface']) || is_interface_group($post['interface'])) &&
+	    in_array($post['dst'], array('any', '0.0.0.0', '::')))) {
+		$input_errors[] = gettext("The submitted interface does not support the 'Any' destination type with enabled NAT reflection.");
+	}
+
 	if (!isset($post['nordr']) && $post['localip'] &&
 	    !is_ipaddroralias($post['localip']) && !is_specialnet($post['localtype'])) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $post['localip']);
@@ -445,12 +452,14 @@ function saveNATrule($post, $id, $json = false) {
 		if ($natent['interface'] != $post['interface']) {
 			continue;
 		}
- 		if ((($post['srctype'] == "network") && ($natent['source']['address'] != ($post['src'] . $post['srcmask']))) ||
-			(($post['srctype'] != "network") && ($natent['source']['address'] != $post['src']))) {
+ 		if ((($post['srctype'] == "network") && ($natent['source']['address'] != ($post['src'] . '/' . $post['srcmask']))) ||
+		    (($post['srctype'] == "single") && ($natent['source']['address'] != $post['src'])) ||
+		    ((is_specialnet($post['srctype'])) && ($natent['source']['network'] != $post['src']))) {
 			continue;
 		}
-		if ((($post['dsttype'] == "network") && ($natent['destination']['address'] != ($post['dst'] . $post['dstmask']))) ||
-		    (($post['dsttype'] != "network") && ($natent['destination']['address'] != $post['dst']))) {
+		if ((($post['dsttype'] == "network") && ($natent['destination']['address'] != ($post['dst'] . '/' . $post['dstmask']))) ||
+		    (($post['dsttype'] == "single") && ($natent['destination']['address'] != $post['dst'])) ||
+		    ((is_specialnet($post['dsttype'])) && ($natent['destination']['network'] != $post['dst']))) {
 			continue;
 		}
 		if (($natent['protocol'] != $post['proto']) &&
@@ -468,6 +477,12 @@ function saveNATrule($post, $id, $json = false) {
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
 			break;
 		}
+
+	}
+
+	/* https://redmine.pfsense.org/issues/12319 */
+	if (($post['ipprotocol'] == 'inet6') && ($post['natreflection'] == 'enable')) {
+		$input_errors[] = gettext("IPv6 address family doesn't support NAT + Proxy reflection mode.");
 	}
 
 	if (!$input_errors) {

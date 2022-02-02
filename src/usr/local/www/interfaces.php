@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -465,6 +465,14 @@ if ($_POST['apply']) {
 						$wancfg = $config['interfaces'][$ifapply];
 						interface_track6_configure($ifapply, $wancfg, true);
 					}
+					/* restart RADVD to announce correct IPv6 prefix
+					 * see https://redmine.pfsense.org/issues/12604 */ 
+					if ((($ifcfg['ipaddrv6'] == "staticv6") || ($ifcfg['ipaddrv6'] == "track6")) &&
+					    is_array($config['dhcpdv6'][$ifapply]) &&
+					    isset($config['dhcpdv6'][$ifapply]['ramode']) &&
+					    ($config['dhcpdv6'][$ifapply]['ramode'] != "disabled")) {
+						services_radvd_configure();
+					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 					if (isset($config['dhcpd'][$ifapply]['enable']) ||
@@ -720,6 +728,9 @@ if ($_POST['apply']) {
 						break;
 					}
 				}
+			}
+			if (!is_subnetv6($_POST['prefix-6rd'])) {
+				$input_errors[] = gettext("6RD Prefix must be a valid IPv6 prefix.");
 			}
 			if (!is_ipaddrv4($_POST['gateway-6rd'])) {
 				$input_errors[] = gettext("6RD Border Relay must be an IPv4 address.");
@@ -1653,6 +1664,11 @@ if ($_POST['apply']) {
 		exit;
 	}
 
+	/* keep port value, see https://redmine.pfsense.org/issues/12498 */
+	if (!empty($_POST['ppp_port'])) {
+		$pconfig['port'] = $_POST['ppp_port'];
+	}
+
 } // end if ($_POST['save'])
 
 function handle_wireless_post() {
@@ -2062,8 +2078,9 @@ $group->add(new Form_Button(
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway4')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%1$s' .
-				'On local area network interfaces the upstream gateway should be "none". ' .
-				'Gateways can be managed by %2$sclicking here%3$s.', '<br />', '<a target="_blank" href="system_gateways.php">', '</a>');
+				'On local area network interfaces the upstream gateway should be "none".%1$s' .
+				'Selecting an upstream gateway causes the firewall to treat this interface as a %2$sWAN type interface%4$s.%1$s' .
+				'Gateways can be managed by %3$sclicking here%4$s.', '<br />', '<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/interfaces/wanvslan.html">', '<a target="_blank" href="system_gateways.php">', '</a>');
 
 $section->add($group);
 

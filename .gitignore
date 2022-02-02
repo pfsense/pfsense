@@ -14,3 +14,5 @@ upload.sh
 .idea
 *.php-e
 .zanata-cache
+# Composer
+src/usr/local/pfSense/include/www/vendor/

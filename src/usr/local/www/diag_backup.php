@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -186,6 +186,13 @@ $section->addInput(new Form_Checkbox(
 );
 
 $section->addInput(new Form_Checkbox(
+	'backupssh',
+	'Backup SSH keys',
+	'Backup SSH keys (otherwise clients would fail to recognize the host keys after restore)',
+	true
+));
+
+$section->addInput(new Form_Checkbox(
 	'encrypt',
 	'Encryption',
 	'Encrypt this configuration file.',
@@ -336,10 +343,12 @@ events.push(function() {
 			disableInput('donotbackuprrd', false);
 			disableInput('nopackages', false);
 			disableInput('backupdata', false);
+			disableInput('backupssh', false);
 		} else {
 			disableInput('donotbackuprrd', true);
 			disableInput('nopackages', true);
 			disableInput('backupdata', true);
+			disableInput('backupssh', true);
 			if (['captiveportal', 'dhcpd', 'dhcpdv6', 'voucher'].includes(document.getElementById("backuparea").value)) {
 				disableInput('backupdata', false);
 			}

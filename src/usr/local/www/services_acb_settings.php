@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -118,7 +118,8 @@ $section->addInput(new Form_Checkbox(
 	'Enable ACB',
 	'Enable automatic configuration backups',
 	($pconfig['enable'] == "yes")
-));
+))->setHelp("Auto Configuration Backup automatically encrypts configuration backup content using the " .
+	    "Encryption Password below and then securely uploads the encrypted backup over HTTPS to Netgate servers.");
 
 $group = new Form_MultiCheckboxGroup('Backup Frequency');
 
@@ -188,7 +189,7 @@ $section->addPassword(new Form_Input(
 	'*Encryption Password',
 	'password',
 	$pconfig['encryption_password']
-));
+))->setHelp("The best practice for security is to use a long and complex password.");
 
 $section->addInput(new Form_Input(
 	'hint',

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -167,7 +167,7 @@ if ($_REQUEST['newver'] != "") {
 			<br />
 		<form action="diag_reboot.php" method="post">
 			Reboot the firewall to full activate changes?
-			<input name="override" type="hidden" value="yes" />
+			<input name="rebootmode" type="hidden" value="Reboot" />
 			<input name="Submit" type="submit" class="formbtn" value=" Yes " />
 		</form>
 EOF;
@@ -228,7 +228,8 @@ if ($_REQUEST['download']) {
 }
 
 // $confvers must be populated viewing info but there were errors
-if ( !($_REQUEST['download']) || $input_errors) {
+$confvers = array();
+if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable()) {
 	// Populate available backups
 	$curl_session = curl_init();
 
@@ -259,8 +260,6 @@ if ( !($_REQUEST['download']) || $input_errors) {
 
 	// Loop through and create new confvers
 	$data_split = explode("\n", $data);
-
-	$confvers = array();
 
 	foreach ($data_split as $ds) {
 		$ds_split = explode($exp_sep, $ds);

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,6 +35,8 @@
 // Set DEBUG to true to prevent the system_reboot() function from being called
 define("DEBUG", false);
 
+global $g;
+
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
@@ -46,8 +48,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 $platform = system_identify_specific_platform();
 include("head.inc");
 
-if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
-    ($_POST['override'] != "yes"))):
+if ($_SERVER['REQUEST_METHOD'] == 'POST'):
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
@@ -56,13 +57,16 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 			case 'FSCKReboot':
 				if ((php_uname('m') != 'arm') && !is_module_loaded("zfs.ko")) {
 					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
+					notify_all_remote(sprintf(gettext("%s is rebooting for a filesystem check now."), $g['product_label']));
 					system_reboot();
 				}
 				break;
 			case 'Reroot':
+				notify_all_remote(sprintf(gettext("%s is rerooting now."), $g['product_label']));
 				system_reboot_sync(true);
 				break;
 			case 'Reboot':
+				notify_all_remote(sprintf(gettext("%s is rebooting now."), $g['product_label']));
 				system_reboot();
 				break;
 			default:
@@ -149,19 +153,6 @@ $form->addGlobal(new Form_Button(
 ))->addClass('btn-primary');
 
 print $form;
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	//If we have been called with $_POST['override'] == "yes", then just reload the page to simulate the user clicking "Reboot"
-	if ( "<?=$_POST['override']?>" == "yes") {
-		$('form').submit();
-	}
-});
-//]]>
-</script>
-<?php
 
 endif;
 

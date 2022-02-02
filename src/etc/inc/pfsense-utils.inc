@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -795,79 +795,6 @@ function captiveportal_ha_is_node_in_backup_mode($cpzone) {
 		}
 	}
 	return false;
-}
-
-/*
- * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
- */
-function get_pfsync_interface_status($pfsyncinterface) {
-	if (!does_interface_exist($pfsyncinterface)) {
-		return;
-	}
-
-	return exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
-}
-
-/*
- * add_rule_to_anchor($anchor, $rule): adds the specified rule to an anchor
- */
-function add_rule_to_anchor($anchor, $rule, $label) {
-	mwexec("echo " . escapeshellarg($rule) . " | /sbin/pfctl -a " . escapeshellarg($anchor) . ":" . escapeshellarg($label) . " -f -");
-}
-
-/*
- * remove_text_from_file
- * remove $text from file $file
- */
-function remove_text_from_file($file, $text) {
-	if (!file_exists($file) && !is_writable($file)) {
-		return;
-	}
-	$filecontents = file_get_contents($file);
-	$text = str_replace($text, "", $filecontents);
-	@file_put_contents($file, $text);
-}
-
-/*
- *   after_sync_bump_adv_skew(): create skew values by 1S
- */
-function after_sync_bump_adv_skew() {
-	global $config, $g;
-	$processed_skew = 1;
-	init_config_arr(array('virtualip', 'vip'));
-	$a_vip = &$config['virtualip']['vip'];
-	foreach ($a_vip as $vipent) {
-		if ($vipent['advskew'] <> "") {
-			$processed_skew = 1;
-			$vipent['advskew'] = $vipent['advskew']+1;
-		}
-	}
-	if ($processed_skew == 1) {
-		write_config(gettext("After synch increase advertising skew"));
-	}
-}
-
-/*
- * get_filename_from_url($url): converts a url to its filename.
- */
-function get_filename_from_url($url) {
-	return basename($url);
-}
-
-/*
- *   get_dir: return an array of $dir
- */
-function get_dir($dir) {
-	$dir_array = array();
-	$d = dir($dir);
-	if (!is_object($d)) {
-		return array();
-	}
-	while (false !== ($entry = $d->read())) {
-		array_push($dir_array, $entry);
-	}
-	$d->close();
-	return $dir_array;
 }
 
 /****f* pfsense-utils/WakeOnLan
@@ -2048,7 +1975,9 @@ function load_thermal_hardware() {
 
 	if (!empty($config['system']['thermal_hardware']) && !is_module_loaded($config['system']['thermal_hardware'])) {
 		log_error(sprintf(gettext("Loading %s thermal monitor module."), $config['system']['thermal_hardware']));
+		mute_kernel_msgs();
 		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
+		unmute_kernel_msgs();
 	}
 }
 
@@ -3067,7 +2996,11 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 			if ($isipv6) {
 				$if_ipv6 = get_interface_ipv6($if);
 				$if_snbitsv6 = get_interface_subnetv6($if);
-				if ($if_ipv6 && $if_snbitsv6 && check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
+				/* do not check subnet overlapping on 6rd interfaces,
+				 * see https://redmine.pfsense.org/issues/12371 */ 
+				if ($if_ipv6 && $if_snbitsv6 &&
+				    (($config['interfaces'][$if]['ipaddrv6'] != '6rd') || ($cidrprefix > $if_snbitsv6)) &&
+				    check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
 					$where_entry = array();
 					$where_entry['if'] = $if;
 					$where_entry['ip_or_subnet'] = get_interface_ipv6($if) . "/" . get_interface_subnetv6($if);

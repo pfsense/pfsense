@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -176,8 +176,13 @@ if ($_POST['save']) {
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
 		if (is_array($config['interfaces'][$pconfig['localid_type']])) {
 			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
-			$address = get_interface_ip($pconfig['localid_type']);
-			$netbits = get_interface_subnet($pconfig['localid_type']);
+			if ($pconfig['mode'] == 'tunnel6') {
+				$address = get_interface_ipv6($pconfig['localid_type']);
+				$netbits = get_interface_subnetv6($pconfig['localid_type']);
+			} else {
+				$address = get_interface_ip($pconfig['localid_type']);
+				$netbits = get_interface_subnet($pconfig['localid_type']);
+			}
 
 			if (empty($address) || empty($netbits)) {
 				$input_errors[] = gettext("Invalid Local Network.") . " " . sprintf(gettext("%s has no subnet."), convert_friendly_interface_to_friendly_descr($pconfig['localid_type']));
@@ -192,6 +197,14 @@ if ($_POST['save']) {
 					}
 					if ($pconfig['localid_type'] == "address") {
 						$input_errors[] = gettext("A network type address cannot be configured for NAT while only an address type is selected for local source.");
+					}
+					if (((($pconfig['mode'] == "tunnel") && ($pconfig['natlocalid_netbits'] != 32)) ||
+					    (($pconfig['mode'] == "tunnel6") && ($pconfig['natlocalid_netbits'] != 128))) &&
+					    ((is_numeric($pconfig['localid_netbits']) && 
+					    ($pconfig['natlocalid_netbits'] != $pconfig['localid_netbits'])) ||
+					    (is_numeric($netbits) && 
+					    ($pconfig['natlocalid_netbits'] != $netbits)))) { 
+						$input_errors[] = gettext("Local network subnet size and NAT local network subnet size cannot be different.");
 					}
 				case "address":
 					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address'])) {
@@ -792,8 +805,6 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$p1 = ipsec_get_phase1($pconfig['ikeid']);
-
 // Hidden inputs
 if ($pconfig['mobile']) {
 	$form->addGlobal(new Form_Input(
@@ -820,6 +831,7 @@ if ($pconfig['mobile']) {
 	))->setHelp('Periodically checks to see if the P2 is disconnected and initiates when it is down. ' .
 			'Does not send traffic inside the tunnel. Works for VTI and tunnel mode P2 entries. ' .
 			'For IKEv2 without split connections, this only needs enabled on one P2.');
+	$form->add($section);
 }
 
 $form->addGlobal(new Form_Input(
@@ -844,8 +856,6 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	$pconfig['uniqid']
 ));
-
-$form->add($section);
 
 print($form);
 
@@ -1056,14 +1066,16 @@ events.push(function() {
 	<?php endif; ?>
 
 	function change_protocol() {
-		hideClass('encalg', ($('#proto').val() != 'esp'));
+		var hide = ($('#proto').val() != 'esp');
+		hideClass('encalg', hide);
+		$("input[name='halgos[]']").prop("disabled", !hide);
 	}
 
 	function change_aead() {
 		var notaead = ['AES', 'Blowfish', '3DES', 'CAST128'];
 		var arrayLength = notaead.length;
 		for (var i = 0; i < arrayLength; i++) {
-			if ($('#' + notaead[i]).prop('checked')) {
+			if ($('#' + notaead[i]).prop('checked') || ($('#proto').val() != 'esp')) {
 				$("input[name='halgos[]']").prop("disabled", false);
 				return;
 			} 

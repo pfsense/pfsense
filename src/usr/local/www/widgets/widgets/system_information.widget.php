@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * All rights reserved.
  *
@@ -52,8 +52,7 @@ $sysinfo_items = array(
 	'load_average' => gettext('Load Average'),
 	'cpu_usage' => gettext('CPU Usage'),
 	'memory_usage' => gettext('Memory Usage'),
-	'swap_usage' => gettext('Swap Usage'),
-	'disk_usage' => gettext('Disk Usage')
+	'swap_usage' => gettext('Swap Usage')
 	);
 
 // Declared here so that JavaScript can access it
@@ -140,7 +139,7 @@ if ($_REQUEST['getupdatestatus']) {
 	header("Location: /index.php");
 }
 
-$filesystems = get_mounted_filesystems();
+$hwcrypto = get_cpu_crypto_support();
 
 $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 
@@ -507,37 +506,6 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<?php endif; ?>
 
 <?php
-	endif;
-	if (!in_array('disk_usage', $skipsysinfoitems)):
-		$rows_displayed = true;
-		$diskidx = 0;
-		$first = true;
-		foreach ($filesystems as $fs):
-?>
-		<tr>
-			<th>
-				<?php if ($first): ?>
-					<?=gettext("Disk usage:");?>
-					<br/>
-				<?php endif; ?>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<?=$fs['mountpoint']?>
-			</th>
-			<td>
-				<?php if ($first):
-					$first = false; ?>
-					<br/>
-				<?php endif; ?>
-				<div class="progress" >
-					<div id="diskspace<?=$diskidx?>" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
-					</div>
-				</div>
-				<span><?=$fs['percent_used']?>%<?=gettext(" of ")?><?=$fs['total_size']?>iB - <?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></span>
-			</td>
-		</tr>
-<?php
-			$diskidx++;
-		endforeach;
 	endif;
 	if (!$rows_displayed):
 ?>

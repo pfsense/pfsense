@@ -3,7 +3,7 @@
  * system_advanced_firewall.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -257,7 +257,7 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		if ($post['vpn_scrubnodf'] == "yes") {
 			$config['system']['vpn_scrubnodf'] = true;
 		} else {
-			unset($config['system']['scrubnodf']);
+			unset($config['system']['vpn_scrubnodf']);
 		}
 
 		if ($post['vpn_fragment_reassemble'] == "yes") {

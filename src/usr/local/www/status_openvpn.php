@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -42,11 +42,23 @@ if ($_REQUEST['action']) {
 	if ($_REQUEST['action'] == "kill") {
 		$port  = $_REQUEST['port'];
 		$remipp  = $_REQUEST['remipp'];
+		$client_id  = $_REQUEST['client_id'];
 		if (!empty($port) and !empty($remipp)) {
-			$retval = openvpn_kill_client($port, $remipp);
+			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
+		}
+		exit;
+	}
+}
+if ($_POST['action']) {
+	if (($_POST['action'] == "showrule") && is_numeric($_POST['vpnid']) &&
+	    !preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['username']) && is_port($_POST['port'])) {
+		$rulesfile = "{$g['tmp_path']}/ovpn_ovpns{$_POST['vpnid']}_{$_POST['username']}_{$_POST['port']}.rules";
+		if (file_exists($rulesfile)) {
+			$rule_text = base64_encode(file_get_contents($rulesfile));
+			echo $rule_text;
 		}
 		exit;
 	}
@@ -61,7 +73,7 @@ include("head.inc"); ?>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 //<![CDATA[
-	function killClient(mport, remipp) {
+	function killClient(mport, remipp, client_id) {
 		var busy = function(index,icon) {
 			$(icon).bind("onclick","");
 			$(icon).attr('src',$(icon).attr('src').replace("\.gif", "_d.gif"));
@@ -72,7 +84,7 @@ include("head.inc"); ?>
 
 		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>" +
-				"?action=kill&port=" + mport + "&remipp=" + remipp,
+				"?action=kill&port=" + mport + "&remipp=" + remipp + "&client_id=" + client_id,
 			{ type: "get", complete: killComplete }
 		);
 	}
@@ -88,6 +100,31 @@ include("head.inc"); ?>
 			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}
+
+	function showRuleContents(vpnid, username, port) {
+			$('#rulesviewer_text').text("...Loading...");
+			$('#rulesviewer').modal('show');
+
+			$.ajax(
+				"<?=$_SERVER['SCRIPT_NAME'];?>",
+				{
+					type: 'post',
+					data: {
+						vpnid:           vpnid,
+						username:     username,
+						port:             port,
+						action:      'showrule'
+					},
+					complete: ruleComplete
+				}
+			);
+	}
+
+	function ruleComplete(req) {
+			$('#rulesviewer_text').text(atob(req.responseText));
+			$('#rulesviewer_text').attr('readonly', true);
+	}
+
 //]]>
 </script>
 
@@ -109,13 +146,15 @@ include("head.inc"); ?>
 						<th><?=gettext("Bytes Sent")?></th>
 						<th><?=gettext("Bytes Received")?></th>
 						<th><?=gettext("Cipher")?></th>
-						<th><!-- Icons --></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>
 
 					<?php
 							foreach ($server['conns'] as $conn):
+								$remote_port = substr($conn['remote_host'], strpos($conn['remote_host'], ':') + 1);
+								$rulesfile = "{$g['tmp_path']}/ovpn_ovpns{$server['vpnid']}_{$conn['user_name']}_{$remote_port}.rules";
 					?>
 					<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
 						<td>
@@ -140,11 +179,25 @@ include("head.inc"); ?>
 						<td data-value="<?=trim($conn['bytes_recv'])?>"><?=format_bytes($conn['bytes_recv']);?></td>
 						<td data-value="<?=trim($conn['cipher'])?>"><?=$conn['cipher'];?></td>
 						<td>
+
+					<?php if (file_exists($rulesfile)): ?>
 							<a
-							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
+							onclick="showRuleContents('<?=$server['vpnid'];?>', '<?=$conn['user_name'];?>', '<?=$remote_port;?>');" style="cursor:pointer;"
+							   title="<?php echo gettext("Show RADIUS ACL generated ruleset"); ?>">
+							<i class="fa fa-info"></i>
+							</a>&nbsp;
+					<?php endif; ?>
+							<a
+							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							   title="<?php echo sprintf(gettext("Kill client connection from %s"), $conn['remote_host']); ?>">
 							<i class="fa fa-times"></i>
+							</a>&nbsp;
+							<a
+							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '<?=$conn['client_id'];?>');" style="cursor:pointer;"
+							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
+							   title="<?php echo sprintf(gettext("Halt client connection from %s"), $conn['remote_host']); ?>">
+							<i class="fa fa-times-circle text-danger"></i>
 							</a>
 						</td>
 					</tr>
@@ -374,6 +427,17 @@ if ($DisplayNote) {
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 	print_info_box(gettext("No OpenVPN instances defined."));
 }
+
+// Create a Modal object to display RADIUS ACL generated ruleset
+$form = new Form(FALSE);
+$modal = new Modal('RADIUS ACL Generated Ruleset', 'rulesviewer', 'large', 'Close');
+$modal->addInput(new Form_Textarea (
+	'rulesviewer_text',
+	null,
+	'...Loading...'
+))->removeClass('form-control')->addClass('row-fluid col-sm-11')->setAttribute('rows', '10')->setAttribute('wrap', 'soft');
+$form->add($modal);
+print($form);
 ?>
 </form>
 

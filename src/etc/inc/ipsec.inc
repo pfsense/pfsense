@@ -6,7 +6,7 @@
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2007-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -184,7 +184,7 @@ $p1_dhgroups = array(
 	29 => '29 (brainpool ecp384)',
 	30 => '30 (brainpool ecp512)',
 	31 => '31 (Elliptic Curve 25519, 256 bit)',
-	32 => '32 (Elliptic Curve 25519, 448 bit)',
+	32 => '32 (Elliptic Curve 448, 448 bit)',
 );
 
 global $p2_halgos;
@@ -270,7 +270,7 @@ $p2_pfskeygroups = array(
 	29 => gettext('29 (brainpool ecp384)'),
 	30 => gettext('30 (brainpool ecp512)'),
 	31 => gettext('31 (Elliptic Curve 25519, 256 bit)'),
-	32 => gettext('32 (Elliptic Curve 25519, 448 bit)'),
+	32 => gettext('32 (Elliptic Curve 448, 448 bit)')
 );
 
 function ipsec_enabled() {
@@ -777,13 +777,15 @@ function ipsec_status() {
 			if (!array_key_exists($tunnel['p1']['ikeid'], $cmap['connected']['p1'])) {
 				$cmap['disconnected']['p1'][$tunnel['p1']['ikeid']] = ipsec_conid($tunnel['p1']);
 			}
-			foreach ($tunnel['p2'] as $p2) {
-				if (isset($p2['mobile'])) {
-					continue;
-				}
-				if (!array_key_exists($p2['reqid'], $cmap['connected']['p2'])) {
-					/* This P2 is not connected */
-					$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($p1['p1'], $p2);
+			if (is_array($tunnel['p2'])) {
+				foreach ($tunnel['p2'] as $p2) {
+					if (isset($p2['mobile'])) {
+						continue;
+					}
+					if (!array_key_exists($p2['reqid'], $cmap['connected']['p2'])) {
+						/* This P2 is not connected */
+						$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($p1['p1'], $p2);
+					}
 				}
 			}
 		}
@@ -958,7 +960,16 @@ function ipsec_dump_spd() {
 						$upperspec = explode("/", $linea[0]);
 						$cursp['proto'] = $upperspec[0];
 						list($cursp['src'], $cursp['dst']) = explode("-", $upperspec[2]);
-						$cursp['reqid'] = substr($upperspec[3], strpos($upperspec[3], "#")+1);
+						$cursp['unique'] = substr($upperspec[3], strpos($upperspec[3], ":")+1);
+						break;
+					default:
+						if (substr($linea[0], 0, 4) != 'spid') {
+							break;
+						}
+						$cursp['scope'] = substr($linea[3], strpos($linea[3], "=")+1);
+						if ($cursp['scope'] == 'ifnet') {
+							$cursp['ifname'] = substr($linea[4], strpos($linea[4], "=")+1);
+						}
 						break;
 				}
 			}
@@ -1722,6 +1733,23 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['port_nat_t'] = $config['ipsec']['port_nat_t'];
 	}
 
+	/* IKEv2 retransmit options, see https://redmine.pfsense.org/issues/12184 */
+	if (isset($config['ipsec']['ikev2_retransmit_tries'])) {
+		$ssconf['charon']['retransmit_tries'] = $config['ipsec']['ikev2_retransmit_tries'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_timeout'])) {
+		$ssconf['charon']['retransmit_timeout'] = $config['ipsec']['ikev2_retransmit_timeout'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_base'])) {
+		$ssconf['charon']['retransmit_base'] = $config['ipsec']['ikev2_retransmit_base'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_jitter'])) {
+		$ssconf['charon']['retransmit_jitter'] = $config['ipsec']['ikev2_retransmit_jitter'];
+	}
+	if (isset($config['ipsec']['ikev2_retransmit_limit'])) {
+		$ssconf['charon']['retransmit_limit'] = $config['ipsec']['ikev2_retransmit_limit'];
+	}
+
 	$ssconf['charon']['syslog'] = array();
 	$ssconf['charon']['syslog']['identifier'] = 'charon';
 	$ssconf['charon']['syslog'][] = "# log everything under daemon since it ends up in the same place regardless with our syslog.conf";
@@ -2419,6 +2447,8 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		$gateways_status = return_gateways_status(true);
 	}
 
+	$a_groups = return_gateway_groups_array(true);
+
 	foreach ($tunnels as $ph1ent) {
 		/* Skip disabled entries */
 		if (isset($ph1ent['disabled'])) {
@@ -2461,8 +2491,11 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		$ikeid = $ph1ent['ikeid'];
 
 		$carpbackup = false;
-		if ((substr($ph1ent['interface'], 0, 4) == "_vip") &&
-		    in_array(get_carp_bind_status($ph1ent['interface']), array('BACKUP', 'INIT'))) {
+		if (((substr($ph1ent['interface'], 0, 4) == "_vip") &&
+		    in_array(get_carp_bind_status($ph1ent['interface']), array('BACKUP', 'INIT'))) ||
+		    (is_array($a_groups[$ph1ent['interface']]) &&
+		    !empty($a_groups[$ph1ent['interface']][0]['vip']) &&
+		    in_array(get_carp_bind_status($a_groups[$ph1ent['interface']][0]['vip']), array('BACKUP', 'INIT')))) {
 			$carpbackup = true;
 		}
 
@@ -2534,7 +2567,11 @@ function ipsec_setup_tunnels($gateways_status = false) {
 				$child_params['dpd_action'] = "clear";
 			}
 			$conn['dpd_delay'] = "{$ph1ent['dpd_delay']}s";
-			$conn['dpd_timeout'] =  $ph1ent['dpd_delay'] * ($ph1ent['dpd_maxfail'] + 1) . "s";
+			if ($ph1ent['iketype'] == 'ikev1') {
+				/* in IKEv2 the default retransmission timeout applies,
+				 * see https://redmine.pfsense.org/issues/12184 */
+				$conn['dpd_timeout'] =  $ph1ent['dpd_delay'] * ($ph1ent['dpd_maxfail'] + 1) . "s";
+			}
 
 			/* Adjust dpd_action if the close_action is explicitly set */
 			if (!empty($child_params['close_action'])) {
@@ -2836,6 +2873,18 @@ function ipsec_setup_tunnels($gateways_status = false) {
 				ipsec_setup_vtireq($children[$cname], $ipsec_vti_cleanup_ifs, $ph1ent);
 			}
 			if (!empty($ealgoAHsp2arr)) {
+				$halgos = array();
+				$halgos_sha = array();
+				foreach ($ealgoAHsp2arr as $halg) {
+					if (strstr($halg, "sha")) {
+						/* put SHA ciphers on top, 
+						*  see https://redmine.pfsense.org/issues/12323 */
+						$halgos_sha[] = $halg;
+					} else {
+						$halgos[] = $halg;
+					}
+				}
+				$ealgoAHsp2arr = array_merge(array_reverse($halgos_sha), $halgos);
 				$children[$cname]['ah_proposals'] = implode(',', array_unique($ealgoAHsp2arr));
 			}
 			if (!empty($ealgoESPsp2arr)) {

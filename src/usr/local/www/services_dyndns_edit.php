@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,6 +76,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
 	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
+	$pconfig['curl_proxy'] = isset($a_dyndns[$id]['curl_proxy']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -212,9 +213,10 @@ if ($_POST['save'] || $_POST['force']) {
 		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
 		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) {
 			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
-		} else {
+		} elseif (($dyndns['type'] == "custom") || ($dyndns['type'] == "custom-v6")) {
 			$dyndns['requestif'] = $_POST['requestif'];
 		}
+		$dyndns['curl_proxy'] = $_POST['curl_proxy'] ? true : false;
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 
@@ -342,7 +344,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode, DigitalOcean: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
+			'Name.com, Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode, DigitalOcean: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
 			'Cloudflare, Linode: Enter @ as the hostname to indicate an empty field.%1$s' .
 			'deSEC: Enter the FQDN.', '<br />');
 
@@ -428,6 +430,7 @@ $section->addPassword(new Form_Input(
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
+			'Name.com: Enter the API token.%1$s' .
 			'Yandex: Yandex PDD Token.%1$s' .
 			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.%1$s' .
 			'deSEC: Enter the API token.', '<br />');
@@ -470,6 +473,15 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['maxcacheage']
 ))->setHelp('The number of days after which the DNS record is always updated. The DNS record is updated when: update is forced, WAN address changes or this number of days has passed.');
+
+if (!empty($config['system']['proxyurl'])) {
+	$section->addInput(new Form_Checkbox(
+		'curl_proxy',
+		'Use Proxy',
+		'Use Proxy for DynDNS updates',
+		$pconfig['curl_proxy'],
+	))->setHelp('Use proxy configured under System > Advanced, on the Miscellaneous tab.');
+}
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -593,6 +605,8 @@ events.push(function() {
 			case "godaddy-v6":
 			case "linode":
 			case "linode-v6":
+			case "name.com":
+			case "name.com-v6":
 			case "onecom":
 			case "onecom-v6":
 				hideGroupInput('domainname', false);

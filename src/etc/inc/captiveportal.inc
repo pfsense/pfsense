@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -229,9 +229,19 @@ function captiveportal_load_modules() {
 }
 
 function captiveportal_configure() {
-	global $config, $cpzone, $cpzoneid;
+	global $config, $g, $cpzone, $cpzoneid;
 
 	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone) {
+			if (isset($cpzone['preservedb'])) {
+				$keep_online_users = true;
+				break;
+			}
+		}
+		if (!$keep_online_users) {
+			/* see https://redmine.pfsense.org/issues/12455 */
+			unlink_if_exists("{$g['vardb_path']}/captiveportal_online_users");
+		}
 		foreach ($config['captiveportal'] as $cpkey => $cp) {
 			$cpzone = $cpkey;
 			$cpzoneid = $cp['zoneid'];
@@ -426,6 +436,9 @@ EOD;
 					}
 					echo "done\n";
 				}
+			} else {
+				/* reset database on unclean shutdown, see https://redmine.pfsense.org/issues/12355 */
+				unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 			}
 		}
 
@@ -573,6 +586,9 @@ function captiveportal_init_general_rules($flush = false) {
 
 	$cprules = <<<EOD
 {$flush_rule}
+# Allow traffic that's been passed by layer2
+add 999 allow tagged 1
+
 # Table with interfaces that have CP enabled
 table cp_ifaces create type iface valtype skipto
 
@@ -673,7 +689,7 @@ function captiveportal_init_rules($reinit = false) {
 	$rulenum = $skipto;
 	$cprules .= "table {$cpzone}_pipe_mac create type mac valtype pipe\n";
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg MAC table({$cpzone}_pipe_mac)");
+	    "pipe tablearg tag 1 MAC table({$cpzone}_pipe_mac)");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
 	    "allow pfsync from any to any");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
@@ -725,9 +741,9 @@ function captiveportal_init_rules($reinit = false) {
 		$cprules .= "table {$cpzone}_auth_down create type addr valtype pipe\n";
 	}
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg ip from table({$cpzone}_auth_up) to any layer2 in");
+	    "pipe tablearg tag 1 ip from table({$cpzone}_auth_up) to any layer2 in");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg ip from any to table({$cpzone}_auth_down) layer2 out");
+	    "pipe tablearg tag 1 ip from any to table({$cpzone}_auth_down) layer2 out");
 
 	if (!empty($config['captiveportal'][$cpzone]['listenporthttp'])) {
 		$listenporthttp = $config['captiveportal'][$cpzone]['listenporthttp'];

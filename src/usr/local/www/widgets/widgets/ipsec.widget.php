@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org> (BSD 2 clause)
  * Copyright (c) 2007 Jonathan Watt <jwatt@jwatt.org> (BSD 2 clause)
  * Copyright (c) 2007 Scott Dale (BSD 2 clause)
@@ -59,12 +59,16 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	// Generate JSON formatted data for the widget to update from
 	$data = new stdClass();
 	$data->overview = "<tr>";
-	$data->overview .= "<td>" . count($cmap['connected']['p1']) . " / ";
-	$data->overview .= count($cmap['connected']['p1']) + count($cmap['disconnected']['p1']) . "</td>";
-	$data->overview .= "<td>" . count($cmap['connected']['p2']) . " / ";
-	$data->overview .= count($cmap['connected']['p2']) + count($cmap['disconnected']['p2']) . "</td>";
-	$data->overview .= "<td>" . htmlspecialchars($mobileactive) . " / ";
-	$data->overview .= htmlspecialchars($mobileactive + $mobileinactive) . "</td>";
+	if (!empty($cmap) && is_array($cmap['connected']['p1']) && is_array($cmap['connected']['p2'])) {
+		$data->overview .= "<td>" . count($cmap['connected']['p1']) . " / ";
+		$data->overview .= count($cmap['connected']['p1']) + count($cmap['disconnected']['p1']) . "</td>";
+		$data->overview .= "<td>" . count($cmap['connected']['p2']) . " / ";
+		$data->overview .= count($cmap['connected']['p2']) + count($cmap['disconnected']['p2']) . "</td>";
+		$data->overview .= "<td>" . htmlspecialchars($mobileactive) . " / ";
+		$data->overview .= htmlspecialchars($mobileactive + $mobileinactive) . "</td>";
+	} else {
+		$data->overview .= "<td></td><td></td><td></td>";
+	}
 	$data->overview .= "</tr>";
 
 	$gateways_status = return_gateways_status(true);
@@ -90,47 +94,91 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		$data->tunnel .= "<td colspan=2>" . htmlspecialchars($p1dst) . "</td>";
 		$data->tunnel .= "<td colspan=2>" . htmlspecialchars($tunnel['p1']['descr']) . "</td>";
 		$p1conid = ipsec_conid($tunnel['p1'], null);
-		if (isset($tunnel['p1']['connected'])) {
-			$data->tunnel .= '<td><i class="fa fa-arrow-up text-success"></i> ';
-			$data->tunnel .= ipsec_status_button('ajax', 'disconnect', 'ike', $p1conid, null, false);
-			$data->tunnel .= '</td>';
+
+		// This is an array, take value of last entry only
+		if (is_array($tunnel['status'])) {
+			$tstatus = array_pop($tunnel['status']);
 		} else {
-			$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger"></i> ';
-			$data->tunnel .= ipsec_status_button('ajax', 'connect', 'all', $p1conid, null, false);
-			$data->tunnel .= '</td>';
+			$tstatus = array('state' => 'DISCONNECTED');
 		}
+
+		switch ($tstatus['state']) {
+			case 'ESTABLISHED':
+				$statusicon = 'arrow-up';
+				$iconcolor = 'success';
+				$icontitle = gettext('Connected');
+				$buttonaction = 'disconnect';
+				$buttontarget = 'ike';
+				break;
+			case 'CONNECTING':
+				$statusicon = 'spinner fa-spin';
+				$iconcolor = 'warning';
+				$icontitle = gettext('Connecting');
+				$buttonaction = 'disconnect';
+				$buttontarget = 'ike';
+				break;
+			default:
+				$statusicon = 'arrow-down';
+				$iconcolor = 'danger';
+				$icontitle = gettext('Disconnected');
+				$buttonaction = 'connect';
+				$buttontarget = 'all';
+				break;
+		}
+
+		$data->tunnel .= '<td><i class="fa fa-' . $statusicon .
+					' text-' . $iconcolor . '" ' .
+					'title="' . $icontitle . '"></i> ';
+		$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p1conid, null, false);
+		$data->tunnel .= '</td>';
 		$data->tunnel .= "</tr>";
 
-		foreach ($tunnel['p2'] as $p2) {
-			if (isset($p2['mobile'])) {
-				continue;
-			}
-			$p2src = ipsec_idinfo_to_text($p2['localid']);
-			$p2dst = ipsec_idinfo_to_text($p2['remoteid']);
+		if (is_array($tunnel['p2'])) {
+			foreach ($tunnel['p2'] as $p2) {
+				if (isset($p2['mobile']) || isset($ph2['disabled'])) {
+					continue;
+				}
+				$p2src = ipsec_idinfo_to_text($p2['localid']);
+				$p2dst = ipsec_idinfo_to_text($p2['remoteid']);
 
-			if ($tunnel['p1']['iketype'] == 'ikev2' && !isset($tunnel['p1']['splitconn'])) {
-				$p2conid = ipsec_conid($tunnel['p1']);
-			} else {
-				$p2conid = ipsec_conid($tunnel['p1'], $p2);
-			}
+				if ($tunnel['p1']['iketype'] == 'ikev2' && !isset($tunnel['p1']['splitconn'])) {
+					$p2conid = ipsec_conid($tunnel['p1']);
+				} else {
+					$p2conid = ipsec_conid($tunnel['p1'], $p2);
+				}
 
-			$data->tunnel .= "<tr>";
-			$data->tunnel .= "<td>&nbsp;</td>";
-			$data->tunnel .= "<td>" . htmlspecialchars($p2src) . "</td>";
-			$data->tunnel .= "<td>&nbsp;</td>";
-			$data->tunnel .= "<td>" . htmlspecialchars($p2dst) . "</td>";
-			$data->tunnel .= "<td>&nbsp;</td>";
-			$data->tunnel .= "<td>" . htmlspecialchars($p2['descr']) . "</td>";
-			if (isset($p2['connected'])) {
-				$data->tunnel .= '<td><i class="fa fa-arrow-up text-success"></i> ';
-				$data->tunnel .= ipsec_status_button('ajax', 'disconnect', 'child', $p2conid, null, false);
+				$data->tunnel .= "<tr>";
+				$data->tunnel .= "<td>&nbsp;</td>";
+				$data->tunnel .= "<td>" . htmlspecialchars($p2src) . "</td>";
+				$data->tunnel .= "<td>&nbsp;</td>";
+				$data->tunnel .= "<td>" . htmlspecialchars($p2dst) . "</td>";
+				$data->tunnel .= "<td>&nbsp;</td>";
+				$data->tunnel .= "<td>" . htmlspecialchars($p2['descr']) . "</td>";
+
+
+				if (isset($p2['connected'])) {
+					$statusicon = 'arrow-up';
+					$iconcolor = 'success';
+					$icontitle = gettext('Connected');
+					$buttonaction = 'disconnect';
+					$buttontarget = 'child';
+				} else {
+					$statusicon = 'arrow-down';
+					$iconcolor = 'danger';
+					$icontitle = gettext('Disconnected');
+					$buttonaction = 'connect';
+					$buttontarget = 'child';
+				}
+
+				$data->tunnel .= '<td><i class="fa fa-' . $statusicon .
+							' text-' . $iconcolor . '" ' .
+							'title="' . $icontitle . '"></i> ';
+				$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p2conid, null, false);
 				$data->tunnel .= '</td>';
-			} else {
-				$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger"></i> ';
-				$data->tunnel .= ipsec_status_button('ajax', 'connect', 'child', $p2conid, null, false);
-				$data->tunnel .= '</td>';
+				$data->tunnel .= "</tr>";
 			}
-			$data->tunnel .= "</tr>";
+		} else {
+			$data->tunnel .= '<tr><td colspan="7">&nbsp;' . gettext("No Phase 2 entries") . '</tr>';
 		}
 	}
 	
@@ -175,7 +223,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
-if (isset($config['ipsec']['phase1'])) {
+if (ipsec_enabled()) {
 	$tab_array = array();
 	$tab_array[] = array(gettext("Overview"), true, htmlspecialchars($widgetkey_nodash) . "-Overview");
 	$tab_array[] = array(gettext("Tunnels"), false, htmlspecialchars($widgetkey_nodash) . "-tunnel");
@@ -187,7 +235,7 @@ if (isset($config['ipsec']['phase1'])) {
 $mobile = ipsec_dump_mobile();
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 
-if (count($config['ipsec']['phase2'])): ?>
+if (ipsec_enabled()): ?>
 <div id="<?=htmlspecialchars($widgetkey_nodash)?>-Overview" style="display:block;"  class="table-responsive">
 	<table class="table table-striped table-hover">
 		<thead>
@@ -243,7 +291,7 @@ if (count($config['ipsec']['phase2'])): ?>
 
 <?php else: ?>
 	<div>
-		<h5 style="padding-left:10px;"><?= htmlspecialchars(gettext("There are no configured IPsec Tunnels")) ?></h5>
+		<h5 style="padding-left:10px;"><?= htmlspecialchars(gettext("There are no configured or enabled IPsec Tunnels")) ?></h5>
 		<p  style="padding-left:10px;"><?= sprintf(htmlspecialchars(gettext('IPsec can be configured %shere.%s')), '<a href="vpn_ipsec.php">', '</a>') ?></p>
 	</div>
 <?php endif;

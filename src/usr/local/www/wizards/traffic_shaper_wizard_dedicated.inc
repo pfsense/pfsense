@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -212,6 +212,7 @@ function step2_stepbeforeformdisplay() {
 		$field['name'] = "conn{$i}uploadspeed";
 		$field['typehint'] = "Upload bandwidth on this connection.";
 		$field['type'] = "select";
+		$field['value'] = "Mb";
 		$field['options']['option'] = array();
 		$opts = array();
 		$opts['value'] = "Kb";
@@ -243,6 +244,7 @@ function step2_stepbeforeformdisplay() {
 		$field['name'] = "conn{$i}downloadspeed";
 		$field['typehint'] = "Download bandwidth on this connection.";
 		$field['type'] = "select";
+		$field['value'] = "Mb";
 		$field['options']['option'] = array();
 		$opts = array();
 		$opts['value'] = "Kb";
@@ -1481,6 +1483,7 @@ function apply_all_chosen_items() {
 			$rule = array();
 			$rule['type'] = "match";
 			$rule['interface'] = $interfacelist;
+			$rule['ipprotocol'] = "inet46";
 			$rule['descr'] = gettext("Penalty Box");
 			$rule['defaultqueue'] = "qOthersLow";
 			$rule['source']['address'] = $config['ezshaper']['step4']['address'];
@@ -1501,6 +1504,7 @@ function apply_all_chosen_items() {
 			$rule = array();
 			$rule['type'] = "match";
 			//$rule['interface'] = $interfacelist;
+			$rule['ipprotocol'] = "inet46";
 			$rule['descr'] = gettext("Connections From Upstream SIP Server");
 			$rule['protocol'] = "udp";
 			$rule['defaultqueue'] = "qVoIP";
@@ -1516,6 +1520,7 @@ function apply_all_chosen_items() {
 			$rule = array();
 			$rule['type'] = "match";
 			//$rule['interface'] = $interfacelist;
+			$rule['ipprotocol'] = "inet46";
 			$rule['descr'] = gettext("Connections To Upstream SIP Server");
 			$rule['protocol'] = "udp";
 			$rule['defaultqueue'] = "qVoIP";
@@ -1533,6 +1538,7 @@ function apply_all_chosen_items() {
 			$rule = array();
 			$rule['type'] = "match";
 			$rule['interface'] = $interfacelist;
+			$rule['ipprotocol'] = "inet46";
 			$rule['descr'] = "DiffServ/Lowdelay/Upload";
 			$rule['protocol'] = "udp";
 			$rule['source']['any'] = TRUE;
@@ -1551,6 +1557,7 @@ function apply_all_chosen_items() {
 				$rule = array();
 				$rule['type'] = "match";
 				$rule['interface'] = $interfacelist;
+				$rule['ipprotocol'] = "inet46";
 				$rule['defaultqueue'] = 'qVoIP';
 				$rule['source']['any'] = TRUE;
 				$rule['destination']['any'] = TRUE;
@@ -1577,6 +1584,7 @@ function apply_all_chosen_items() {
 				$rule = array();
 				$rule['type'] = "match";
 				$rule['interface'] = $interfacelist;
+				$rule['ipprotocol'] = "inet46";
 				$rule['defaultqueue'] = 'qP2P';
 				$rule['source']['any'] = TRUE;
 				$rule['destination']['any'] = TRUE;
@@ -1602,6 +1610,7 @@ function apply_all_chosen_items() {
 				$rule = array();
 				$rule['type'] = "match";
 				$rule['interface'] = $interfacelist;
+				$rule['ipprotocol'] = "inet46";
 				$rule['defaultqueue'] = 'qGames';
 				if ($Gameclient[1] == "tcp")
 					$rule['ackqueue'] = 'qACK';
@@ -1628,6 +1637,7 @@ function apply_all_chosen_items() {
 				$rule = array();
 				$rule['type'] = "match";
 				$rule['interface'] = $interfacelist;
+				$rule['ipprotocol'] = "inet46";
 				switch ($val) {
 				case "H":
 					$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */

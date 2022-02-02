@@ -8,7 +8,7 @@
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1250,11 +1250,11 @@ function ldap_get_groups($username, $authcfg) {
 	global $debug, $config;
 
 	if (!function_exists("ldap_connect")) {
-		return;
+		return array();
 	}
 
 	if (!$username) {
-		return false;
+		return array();
 	}
 
 	if (!isset($authcfg['ldap_nostrip_at']) && stristr($username, "@")) {
@@ -1297,7 +1297,7 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapscope = $authcfg['ldap_scope'];
 		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
-		return false;
+		return array();
 	}
 
 	if (isset($authcfg['ldap_rfc2307'])) {
@@ -1334,7 +1334,7 @@ function ldap_get_groups($username, $authcfg) {
 		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
-			return false;
+			return array();
 		}
 	}
 
@@ -1345,7 +1345,7 @@ function ldap_get_groups($username, $authcfg) {
 		if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
 			@ldap_close($ldap);
-			return false;
+			return array();
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s."), $ldapname));

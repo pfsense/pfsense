@@ -1,5 +1,5 @@
 # Language translation for pfSense project.
-# Copyright (C) 2011-2015 Rubicon Communications, LLC (Netgate)
+# Copyright (C) 2011-2022 Rubicon Communications, LLC (Netgate)
 # This file is distributed under the same license as the pfSense package.
 # Kiyo Takami and Isaac (.ike) Levy, 2013.
 # Administrator <sbeaver@netgate.com>, 2019. #zanata

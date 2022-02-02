@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -94,22 +94,12 @@ if ($_GET) {
 	switch ($action) {
 		case "delete":
 			if ($queue) {
-				if (is_array($config['filter']['rule'])) {
-					foreach ($config['filter']['rule'] as $rule) {
-						if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname()) {
-							$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleting.");
-						}
-					}
+				$queue->delete_queue();
+				if (write_config("Traffic Shaper: Queue deleted")) {
+					mark_subsystem_dirty('shaper');
 				}
-				if (!$input_errors) {
-					$queue->delete_queue();
-					if (write_config("Traffic Shaper: Queue deleted")) {
-						mark_subsystem_dirty('shaper');
-					}
-					header("Location: firewall_shaper_vinterface.php");
-					exit;
-				}
-				$sform= $queue->build_form();
+				header("Location: firewall_shaper_vinterface.php");
+				exit;
 			} else {
 				$input_errors[] = sprintf(gettext("No queue with name %s was found!"), $qname);
 				$output_form .= $dn_default_shaper_msg;

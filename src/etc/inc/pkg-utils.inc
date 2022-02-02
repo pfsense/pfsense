@@ -6,7 +6,7 @@
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1327,6 +1327,10 @@ function get_base_pkg_name() {
 function get_system_pkg_version($baseonly = false, $use_cache = true) {
 	global $g;
 
+	if (!check_dnsavailable()) {
+		return false;
+	}
+
 	$cache_file = $g['version_cache_file'];
 	$rc_file = $cache_file . '.rc';
 
@@ -1488,7 +1492,7 @@ function pkg_get_repo_name($path) {
 }
 
 /* Setup pkg.conf according current repo */
-function pkg_conf_setup() {
+function pkg_conf_setup($repo_path) {
 	global $g;
 
 	$pkg_conf_path = "/usr/local/etc/pkg.conf";
@@ -1517,6 +1521,19 @@ function pkg_conf_setup() {
 		);
 	}
 
+	$auth_ca = "/etc/ssl/netgate-ca.pem";
+	$auth_cert = "/etc/ssl/pfSense-repo-custom.cert";
+	$auth_key = "/etc/ssl/pfSense-repo-custom.key";
+	if (strpos($repo_path, "{$g['product_name']}-repo-custom") &&
+	    file_exists($auth_ca) && file_exists($auth_cert) &&
+	    file_exists($auth_key)) {
+		$pkg_conf[] = "PKG_ENV {\n";
+		$pkg_conf[] = "\tSSL_CA_CERT_FILE=$auth_ca\n";
+		$pkg_conf[] = "\tSSL_CLIENT_CERT_FILE=$auth_cert\n";
+		$pkg_conf[] = "\tSSL_CLIENT_KEY_FILE=$auth_key\n";
+		$pkg_conf[] = "}\n";
+	}
+
 	file_put_contents($pkg_conf_path, $pkg_conf);
 }
 
@@ -1528,7 +1545,7 @@ function pkg_switch_repo($path) {
 	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
 	@symlink($path, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
 
-	pkg_conf_setup();
+	pkg_conf_setup($path);
 
 	/* Update pfSense_version cache */
 	mwexec_bg("/etc/rc.update_pkg_metadata now");
@@ -1540,17 +1557,23 @@ $refreshinterval = (24 * 3600);	// 24 hours
 $idfile = "/var/db/uniqueid";
 $repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
 $configflename = "{$repopath}/{$g['product_name']}-repo-custom.conf";
+$cafilesrc = "/usr/local/share/{$g['product_name']}/ssl/netgate-ca.pem";
+$cafile = "/etc/ssl/netgate-ca.pem";
 
 /*
  * Update the list of available repositories from the server. This will allow
- * migration to another update repository should the existing one becomes
+ * migration to another update repository should the existing one become
  * unavailable
  */
 function update_repos() {
-	global $g, $config, $idfile, $FQDN, $repopath;
+	global $g, $cafile, $cafilesrc, $config, $idfile, $FQDN, $repopath;
 
 	if (!file_exists($idfile) || !function_exists('curl_version')) {
 		return;
+	}
+	/* Copy the CA file to the proper place before start. */
+	if (!file_exists($cafile) && file_exists($cafilesrc)) {
+		copy($cafilesrc, $cafile);
 	}
 	/*
 	 * If the custom repository definition does not exist, or is more
@@ -1638,22 +1661,22 @@ function update_repos() {
 
 // Parse the received JSON data and save the custom repository information
 function save_repo($json) {
-	global $repopath, $g;
+	global $repopath, $g, $config;
 
 	$repo = json_decode($json, true);
+	$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
 	if (($repo != NULL) && isset($repo['abi']) && isset($repo['altabi']) &&
 	    isset($repo['conf']) && isset($repo['descr']) &&
 	    isset($repo['name']) && (strlen($repo['conf']) > 10)) {
-		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
-		file_put_contents($basename . "conf", base64_decode(
-		    $repo['conf']));
-		file_put_contents($basename . "descr", $repo['descr']);
-		file_put_contents($basename . "abi", $repo['abi']);
-		file_put_contents($basename . "altabi", $repo['altabi']);
-		file_put_contents($basename . "name", $repo['name']);
-		file_put_contents($basename . "help", $repo['help']);
+		if (!empty($repo['conf']))		{file_put_contents($basename . "conf", base64_decode($repo['conf']));}
+		if (!empty($repo['descr']))		{file_put_contents($basename . "descr", $repo['descr']);}
+		if (!empty($repo['abi']))		{file_put_contents($basename . "abi", $repo['abi']);}
+		if (!empty($repo['altabi']))	{file_put_contents($basename . "altabi", $repo['altabi']);}
+		if (!empty($repo['name']))		{file_put_contents($basename . "name", $repo['name']);}
+		if (!empty($repo['help']))		{file_put_contents($basename . "help", $repo['help']);}
+
 
 		// Save fingerprint file
 		if (!empty($repo['fingerprint'])) {
@@ -1665,13 +1688,28 @@ function save_repo($json) {
 
 			file_put_contents($fppath, $repo['fingerprint']);
 		}
+
+		// Save the client Cert & key
+		if (!empty($repo['cert']) && !empty($repo['key'])) {
+			$certbasename = "/etc/ssl/{$g['product_name']}-repo-custom.";
+			file_put_contents($certbasename . "cert", $repo['cert']);
+			file_put_contents($certbasename . "key", $repo['key']);
+			chmod($certbasename . "key", 0600);
+		}
 	} else {
 		/*
 		 * If there was anything wrong with the custom repository
-		 * definition, remove the help text to avoid possible confusion
+		 * definition, remove the custom files to avoid possible confusion
 		 */
-		if (file_exists($basename . "help")) {
-			unlink($basename . "help");
+		foreach (glob($basename . "*") as $f) {
+			unlink($f);
+		}
+
+		// If config.xml still contains a reference to the custom repo, replace it with the "stable" repository definition
+		if (strpos($config['system']['pkg_repo_conf_path'], "custom") !== false) {
+			$config['system']['pkg_repo_conf_path'] = "/usr/local/share/pfSense/pkg/repos/pfSense-repo.conf";
+			write_config("-NoReMoTeBaCkUp");
+			pkg_switch_repo("/usr/local/share/pfSense/pkg/repos/pfSense-repo.conf");
 		}
 	}
 }

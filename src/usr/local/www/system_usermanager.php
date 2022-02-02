@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * All rights reserved.
@@ -494,6 +494,11 @@ if ($_POST['save'] && !$read_only) {
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
+		}
+
+		if ($userent['uid'] == 0) {
+			log_error(gettext("Restarting sshd due to admin account change."));
+			send_event("service restart sshd");
 		}
 
 		pfSenseHeader("system_usermanager.php");

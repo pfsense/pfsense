@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -43,11 +43,6 @@ require_once("system_advanced_firewall.inc");
 $pconfig = getSystemAdvancedFirewall();
 $old_maximumtableentries = $pconfig['maximumtableentries'];
 $old_aliasesresolveinterval = $pconfig['aliasesresolveinterval'];
-
-$show_reboot_msg = false;
-$reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
-    'been changed to a value bigger than system can support without a ' .
-    'reboot.\n\nReboot now ?');
 
 $pftimeouts = get_pf_timeouts();
 
@@ -351,24 +346,24 @@ if (count($config['interfaces']) > 1) {
 		$value,
 		array(
 			'disable' => gettext('disabled'),
-			'proxy' => gettext('NAT + proxy'),
+			'proxy' => gettext('NAT + Proxy'),
 			'purenat' => gettext('Pure NAT'),
 		)
-	))->setHelp('%1$sThe pure NAT mode uses a set of NAT rules to direct '.
+	))->setHelp('%1$sThe Pure NAT mode uses a set of NAT rules to direct '.
 		'packets to the target of the port forward. It has better scalability, '.
 		'but it must be possible to accurately determine the interface and '.
 		'gateway IP used for communication with the target at the time the '.
 		'rules are loaded. There are no inherent limits to the number of ports '.
 		'other than the limits of the protocols.  All protocols available for '.
-		'port forwards are supported.%2$sThe NAT + proxy mode uses a '.
+		'port forwards are supported.%2$sThe NAT + Proxy mode uses a '.
 		'helper program to send packets to the target of the port forward. '.
 		'It is useful in setups where the interface and/or gateway IP used '.
 		'for communication with the target cannot be accurately determined at '.
 		'the time the rules are loaded. Reflection rules are not created for '.
 		'ranges larger than 500 ports and will not be used for more than 1000 '.
-		'ports total between all port forwards. Only TCP and UDP protocols are '.
-		'supported.%3$sIndividual rules may be configured to override '.
-		'this system setting on a per-rule basis.',
+		'ports total between all port forwards. This feature does not support IPv6. ' .
+	        'Only TCP and UDP protocols are supported.%3$sIndividual rules may ' .
+		'be configured to override this system setting on a per-rule basis.',
 		'</span><ul class="help-block"><li>', '</li><li>', '</li></ul><span class="help-block">');
 
 	$section->addInput(new Form_Input(
@@ -376,7 +371,7 @@ if (count($config['interfaces']) > 1) {
 		'Reflection Timeout',
 		'number',
 		$config['system']['reflectiontimeout'],
-		['min' => 1]
+		['min' => 1, 'placeholder' => '2000']
 	))->setHelp('Enter value for Reflection timeout in seconds.%1$sNote: Only '.
 		'applies to Reflection on port forwards in NAT + proxy mode.', '<br/>');
 
@@ -469,10 +464,6 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setOptText($('#optimization').val())
-
-	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
-		postSubmit({override : 'yes'}, 'diag_reboot.php')
-	}
 
 });
 //]]>

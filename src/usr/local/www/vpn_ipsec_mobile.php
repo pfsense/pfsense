@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -202,6 +202,12 @@ if ($_POST['save']) {
 		if (!is_ipaddrv6($pconfig['pool_address_v6'])) {
 			$input_errors[] = gettext("A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be specified.");
 		}
+	}
+	if (!isset($pconfig['radius_advanced'])) {
+		unset($pconfig['radius_retransmit_base']);
+		unset($pconfig['radius_retransmit_timeout']);
+		unset($pconfig['radius_retransmit_tries']);
+		unset($pconfig['radius_retransmit_sockets']);
 	}
 	if ($pconfig['radius_retransmit_base'] && !is_numeric($pconfig['radius_retransmit_base'])) {
 		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Base.");
@@ -680,7 +686,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'radius_advanced',
 	'RADIUS Advanced Parameters',
-	'Show Advanced RADIUS parameters',
+	'Set Advanced RADIUS parameters',
 	$pconfig['radius_advanced']
 ))->toggles('.toggle-radius_advanced')->setHelp('May only be required when using 2FA/MFA with RADIUS or under high load.');
 

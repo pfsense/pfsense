@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -6559,6 +6559,40 @@ function upgrade_219_to_220() {
 	if ($config['system']['acb']['enable'] == "yes" && file_exists("/usr/local/sbin/acbupload.php")) {
 		install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/acbupload.php", true, "*");
 	}
+}
+
+/*
+ * Add new disk widget to dashboard if user already had the system information
+ * wiget configured to show disk usage stats.
+ */
+function upgrade_220_to_221() {
+	global $config;
+
+	$widgets = explode(',', $config['widgets']['sequence']);
+
+	foreach ($widgets as $idx => $widget) {
+		[$name, $col, $state, $index] = explode(':', $widget);
+
+		if ($name === 'system_information') {
+			$widget_settings_key = "{$name}-{$index}";
+
+			$filter = explode(',', $config['widgets'][$widget_settings_key]['filter']);
+
+			if (!in_array('disk_usage', $filter)) {
+				$disk_widget = implode(':', array_filter(['disks', $col, $state, $index]));
+
+				if (!in_array($disk_widget, $widgets)) {
+					array_splice($widgets, ($idx + 1), 0, $disk_widget);
+				}
+			}
+		}
+	}
+
+	$config['widgets']['sequence'] = implode(',', $widgets);
+}
+
+/* No functional changes. */
+function upgrade_221_to_222() {
 }
 
 /*

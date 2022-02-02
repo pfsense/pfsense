@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  *
@@ -678,6 +678,9 @@ function service_control_start($name, $extras) {
 		case 'sshd':
 			send_event("service restart sshd");
 			break;
+		case 'pcscd':
+			ipsec_force_reload();
+			break;
 		case 'openvpn':
 			$vpnmode = isset($extras['vpnmode']) ? htmlspecialchars($extras['vpnmode']) : htmlspecialchars($extras['mode']);
 			if (($vpnmode == "server") || ($vpnmode == "client")) {
@@ -690,9 +693,6 @@ function service_control_start($name, $extras) {
 			break;
 		case 'syslogd':
 			system_syslogd_start();
-			break;
-		case 'pcscd':
-			mwexec_bg("service pcscd onestart");
 			break;
 		default:
 			start_service($name);
@@ -750,8 +750,12 @@ function service_control_stop($name, $extras) {
 		case 'sshd':
 			killbyname("sshd");
 			break;
+		case 'pcscd':
 		case 'ipsec':
 			exec("/usr/local/sbin/strongswanrc stop");
+			if (isvalidproc("pcscd")) {
+				killbyname("pcscd");
+			}
 			break;
 		case 'openvpn':
 			$vpnmode = htmlspecialchars($extras['vpnmode']);
@@ -759,6 +763,7 @@ function service_control_stop($name, $extras) {
 				$id = htmlspecialchars($extras['id']);
 				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
 				killbypid($pidfile);
+				openvpn_clean_rules($vpnmode, $id);
 			}
 			break;
 		case 'syslogd':
@@ -772,9 +777,6 @@ function service_control_stop($name, $extras) {
 			}
 			/* Make sure sshguard stops as well */
 			sigkillbyname("sshguard", "TERM");
-			break;
-		case 'pcscd':
-			mwexec_bg("service pcscd onestop");
 			break;
 		default:
 			stop_service($name);
@@ -831,6 +833,13 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'sshd':
 			send_event("service restart sshd");
+			break;
+		case 'pcscd':
+			exec("/usr/local/sbin/strongswanrc stop");
+			if (isvalidproc("pcscd")) {
+				killbyname("pcscd");
+			}
+			ipsec_force_reload();
 			break;
 		case 'openvpn':
 			$vpnmode = htmlspecialchars($extras['vpnmode']);

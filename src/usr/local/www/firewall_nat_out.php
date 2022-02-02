@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -47,7 +47,7 @@ $a_out = &$config['nat']['outbound']['rule'];
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
 if (isset($_REQUEST['order-store'])) {
-	reorderoutNATrules($_POST);
+	outNATrulesreorder($_POST);
 }
 
 if (!isset($config['nat']['outbound']['mode'])) {
@@ -62,8 +62,12 @@ if ($_POST['apply']) {
 	saveNAToutMode($_POST);
 } else if ($_POST['act'] == "del") {
 	deleteoutNATrule($_POST);
-} else if (isset($_POST['del_x'])) {
-	/* delete selected rules */
+} else if (isset($_POST['del_x']) &&
+    isset($_POST['rule']) &&
+    !empty($_POST['rule']) &&
+    is_array($_POST['rule'])) {
+	/* Delete selected rules, but only when given valid data
+	 * See https://redmine.pfsense.org/issues/12694 */
 	deleteMultipleoutNATrules($_POST);
 } else if ($_POST['act'] == "toggle") {
 	toggleoutNATrule($_POST);

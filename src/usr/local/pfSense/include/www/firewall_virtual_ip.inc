@@ -3,7 +3,7 @@
  * firewall_virtual_ip.inc.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -383,6 +383,26 @@ function deleteVIP($id, $json = false) {
 			}
 		}
 
+		init_config_arr(array('ipsec', 'phase1'));
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			if (!isset($ph1ent['disabled'])) {
+				foreach (explode(',', ipsec_get_phase1_src($ph1ent)) as $ifip) {
+					if ($ifip == $a_vip[$id]['subnet']) {
+						if (strlen($ph1ent['descr'])) {
+							$ipsec_desc = $ph1ent['descr'];
+						} elseif (isset($ph1ent['mobile'])) {
+							$ipsec_desc = "Mobile on " . convert_friendly_interface_to_friendly_descr($ph1ent['interface']);
+						} else {
+							$ipsec_desc = "on " . convert_friendly_interface_to_friendly_descr($ph1ent['interface']) .
+							    " to " . $ph1ent['remote-gateway'];
+						}
+						$input_errors[] = sprintf(gettext('This entry cannot be deleted because it is still referenced by IPsec %1$s.'), $ipsec_desc);
+						break 2;
+					}
+				}
+			}
+		}
+
 		if (is_ipaddrv6($a_vip[$id]['subnet'])) {
 			$is_ipv6 = true;
 			$subnet = gen_subnetv6($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']);
@@ -475,7 +495,7 @@ function deleteVIP($id, $json = false) {
 				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $vip['descr']);
 			}
 		} else if ($a_vip[$id]['mode'] == "carp") {
-			$vipiface = "{$a_vip[$id]['interface']}_vip{$a_vip[$id]['vhid']}";
+			$vipiface = "_vip{$a_vip[$id]['uniqid']}";
 			foreach ($a_vip as $vip) {
 				if ($vipiface == $vip['interface'] && $vip['mode'] == "ipalias") {
 					$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description %s."), $vip['descr']);
@@ -516,9 +536,9 @@ function deleteVIP($id, $json = false) {
 				header("Location: firewall_virtual_ip.php");
 				exit;
 			}
-		} else {
-			$input_errors[] = sprintf(gettext("Virtual IP # %s does not exist."), $id);
 		}
+	} else {
+		$input_errors[] = sprintf(gettext("Virtual IP # %s does not exist."), $id);
 	}
 
 	$rv['input_errors'] = $input_errors;

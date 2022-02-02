@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -531,11 +531,19 @@ foreach ($a_filter as $filteri => $filterent):
 
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset) {
-			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
+			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'" style="cursor: pointer;"></i>';
 		}
 
 		if (isset($filterent['log'])) {
 			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'" style="cursor: pointer;"></i>';
+		}
+
+		if (isset($filterent['direction']) && ($if == "FloatingRules")) {
+			if ($filterent['direction'] == 'in') {
+				print '<i class="fa fa-arrow-circle-o-left" title="'. gettext("direction is in") .'" style="cursor: pointer;"></i>';
+			} elseif ($filterent['direction'] == 'out') {
+				print '<i class="fa fa-arrow-circle-o-right" title="'. gettext("direction is out") .'" style="cursor: pointer;"></i>';
+			}
 		}
 	?>
 						</td>
@@ -835,7 +843,7 @@ foreach ($a_filter as $filteri => $filterent):
 									}
 								?>
 								<?php if (!empty($gw_info[$filterent['gateway']])): ?>
-									<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateway details')?>" data-content="<?=$gw_info[$filterent['gateway']]?>" data-html="true">
+									<?=$gw_info[$filterent['gateway']]?>
 								<?php else: ?>
 									<span>
 								<?php endif; ?>

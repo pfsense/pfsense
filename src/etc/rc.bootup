@@ -8,7 +8,7 @@
  * Copyright (c) 2009 Erik Kristensen
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,6 +85,17 @@ system_check_reset_button();
 /* remove previous firmware upgrade if present */
 if (file_exists("/root/firmware.tgz")) {
 	unlink("/root/firmware.tgz");
+}
+
+/* restore RRD, SSH keys and extra data on bsdinstall config restore
+ * see https://redmine.pfsense.org/issues/12518 */
+if (file_exists("{$g['conf_path']}/installer_copied_config") &&
+    file_exists("{$g['conf_path']}/restore_config_data")) {
+	copy("/cf/conf/config.xml", "{$g['tmp_path']}/config_to_restore.xml");
+	restore_backup("{$g['tmp_path']}/config_to_restore.xml");
+	@unlink("{$g['tmp_path']}/config_to_restore.xml");
+	@unlink("{$g['conf_path']}/installer_copied_config");
+	@unlink("{$g['conf_path']}/restore_config_data");
 }
 
 /* Triggering of the initial setup wizard after reboot has been requested */
@@ -288,15 +299,6 @@ echo "Synchronizing user settings...";
 local_reset_accounts();
 echo "done.\n";
 
-if ($realmem > 0 and $realmem < 65) {
-	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
-	/* start webConfigurator up on final pass */
-	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
-} else {
-	/* start web server */
-	system_webgui_start();
-}
-
 /* configure cron service */
 echo "Configuring CRON...";
 configure_cron();
@@ -305,8 +307,56 @@ echo "done.\n";
 /* enable routing */
 system_routing_enable();
 
+/* Set initial time by using IP addresses in case DNS is not available
+ * This works around issues with DNSSEC and gives the firewall a better chance
+ * of having a highly accurate clock at boot.
+ * NG 7352, NG 7447
+ */
+
+/* Default to Google Public NTP servers */
+$ntp_boot_time_servers = '216.239.35.0 216.239.35.4 216.239.35.8 216.239.35.12';
+/* File to allow users to override default behavior.
+ * Servers must be a single line with space-separated IP address entries ONLY as
+ * DNS may not be functional. */
+$ntp_boot_time_servers_override = '/conf/ntp-boot-time-servers';
+
+/* Handle user override of NTP bootstrap behavior */
+if (file_exists($ntp_boot_time_servers_override)) {
+	if (filesize($ntp_boot_time_servers_override) > 0) {
+		/* Read servers from file if the file is not empty. */
+		$servers = file_get_contents($ntp_boot_time_servers_override);
+		$checkservers = explode(' ', trim($servers));
+		$goodservers = array();
+		/* Only add entries which are valid IP addresses. */
+		foreach ($checkservers as $ntpserver) {
+			if (is_ipaddr($ntpserver)) {
+				$goodservers[] = escapeshellarg($ntpserver);
+			}
+		}
+		$ntp_boot_time_servers = implode(' ', $goodservers);
+	} else {
+		/* Disable check if the file exists but is empty. */
+		$ntp_boot_time_servers = '';
+	}
+}
+
+if (!empty($ntp_boot_time_servers)) {
+	echo gettext("Bootstrapping clock...");
+	mwexec("/usr/bin/timeout -k 45 30 /usr/local/sbin/ntpd -g -q -c /dev/null {$ntp_boot_time_servers}");
+	echo gettext("done.") . "\n";
+}
+
 /* Enable ntpd */
 system_ntp_configure();
+
+if ($realmem > 0 and $realmem < 65) {
+	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
+	/* start webConfigurator up on final pass */
+	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
+} else {
+	/* start web server */
+	system_webgui_start();
+}
 
 /* Configure console (and serial port - if necessary). */
 console_configure();
@@ -419,10 +469,14 @@ unset($g['booting']);
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {
+	echo gettext("Configuring IPsec VPN for dynamic hosts... ");
 	ipsec_configure();
+	echo gettext("done") . "\n";
 }
 if ($ipsec_dynamic_hosts || !empty($filterdns)) {
+	echo gettext("Configuring filter for dynamic IPsec VPN hosts... ");
 	filter_configure();
+	echo gettext("done") . "\n";
 }
 
 led_normalize();

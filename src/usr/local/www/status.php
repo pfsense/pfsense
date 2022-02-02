@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -306,6 +306,18 @@ defCmdT("Firewall-Generated Ruleset Limits", "/bin/cat {$g['tmp_path']}/rules.li
 foreach (glob("{$g['tmp_path']}/rules.packages.*") as $pkgrules) {
 	$pkgname = substr($pkgrules, strrpos($pkgrules, '.') + 1);
 	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat {$pkgrules}");
+}
+$ovpnradrules = array();
+foreach (glob("{$g['tmp_path']}/ovpn_ovpns*.rules") as $ovpnrules) {
+	if (preg_match('/ovpn_ovpns(\d+)\_(\w+)\_(\d+)\.rules/', basename($ovpnrules), $matches)) {
+		$ovpnradrules[$matches[1]] .= "# user '{$matches[2]}' remote port {$matches[3]}\n";
+		$ovpnradrules[$matches[1]] .= file_get_contents($ovpnrules);
+		$ovpnradrules[$matches[1]] .= "\n";
+	}
+}
+foreach ($ovpnradrules as $ovpns => $genrules) {
+	defCmdT("OpenVPN-Generated RADIUS ACL Ruleset for server{$ovpns}",
+	  "echo " .  escapeshellarg($genrules));
 }
 defCmdT("Firewall-pf NAT Rules", "/sbin/pfctl -vvsn");
 defCmdT("Firewall-pf Firewall Rules", "/sbin/pfctl -vvsr");

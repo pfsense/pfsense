@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -664,8 +664,8 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 		 */
 		if ($another_instance) {
 			$failmsg = gettext(sprintf("Another instance of %s " .
-			    "is running.  Try again later"),
-			    $g['product_name'] . "-upgrade");
+			    "is running.  Try again later",
+			    $g['product_name'] . "-upgrade"));
 		} elseif (!$start_polling) {
 			/* Remove last line, used to provide return code */
 			unset($log[count($log)-1]);

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -710,6 +710,11 @@ function manage_log_code() {
 		}
 
 		if (!$input_errors) {
+
+			if (($rotatecount != $config['syslog'][$specific_log]['rotatecount']) ||
+			    ($logfilesize != $config['syslog'][$specific_log]['logfilesize'])) {
+				$logging_changed = true;
+			}
 
 			# Clear out the specific log settings and leave only the applied settings to override the general logging options (global) settings.
 			if (isset($config['syslog'][$specific_log])) {

@@ -5,7 +5,7 @@
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2013 BSD Perimeter
 # Copyright (c) 2013-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -169,6 +169,9 @@ if [ -d "/conf" ]; then
 		/bin/ln -s /cf/conf /conf
 	fi
 fi
+
+# Sanity check the clock
+/etc/rc.checkclock
 
 . /etc/rc.ramdisk_functions.sh
 
@@ -377,7 +380,7 @@ fi
 [ -z "$skip_packages" ] \
 	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 2
 
-# Copy default openssl config file
+# Copy default openssl config file and Netgate CA
 [ -d /etc/ssl ] \
 	|| mkdir -p /etc/ssl
 [ -f /usr/local/share/${product_name}/ssl/openssl.cnf ] \
@@ -385,6 +388,9 @@ fi
 mkdir -p /usr/local/openssl >/dev/null 2>&1
 ln -sf /etc/ssl/openssl.cnf \
 	/usr/local/openssl/openssl.cnf
+
+[ -f /usr/local/share/${product_name}/ssl/netgate-ca.pem ] \
+	&& cp -f /usr/local/share/${product_name}/ssl/netgate-ca.pem /etc/ssl
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini
@@ -459,6 +465,27 @@ fi
 # Be sure the file is removed to not create troubles after
 if [ -f $varrunpath/booting ]; then
 	/bin/rm $varrunpath/booting
+fi
+
+if [ -n "${USE_ZFS}" ]; then
+	# Create ZFS reservation
+	if [ ! -f /.no_zfs_reservation ]; then
+		zpool list -o name pfSense > /dev/null 2>&1 && ZPOOL=pfSense
+		zpool list -o name zroot > /dev/null 2>&1 && ZPOOL=zroot
+		if [ -n "${ZPOOL}" ]; then
+			zfs list -Hp -o name -t filesystem | grep -q ${ZPOOL}/reservation
+			if [ $? -ne 0 ]; then
+				AVAIL=$( zfs list -Hpo avail ${ZPOOL} )
+				RESSIZE=$( zfs list -Hpo avail,used ${ZPOOL} | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
+				if [ $(( ${AVAIL} / 2 )) -gt ${RESSIZE} ]; then
+					logger "Creating ZFS reservation of ${RESSIZE} bytes on ${ZPOOL}"
+					zfs create -o reservation=${RESSIZE} ${ZPOOL}/reservation
+				else
+					logger "Not enough space to create reservation on ${ZPOOL};  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
+				fi
+			fi
+		fi
+	fi
 fi
 
 echo -n "Starting CRON... "

@@ -6,7 +6,7 @@
  * Copyright (c) 2006 Fernando Lemos
  * Copyright (c) 2006-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but
@@ -1382,8 +1382,12 @@ function openvpn_reconfigure($mode, $settings) {
 	/* Data encryption cipher support.
 	 * If it is not set, assume enabled since that is OpenVPN's default.
 	 * Note that diabling this is now deprecated and will be removed in a future version of OpenVPN */
-	if ($settings['ncp_enable'] == "disabled") {
-		$conf .= "ncp-disable\n";
+	if (($settings['ncp_enable'] == "disabled") ||
+	    ($settings['mode'] == "p2p_shared_key")) {
+		if ($settings['mode'] != "p2p_shared_key") {
+			/* Do not include this option for shared key as it is redundant. */
+			$conf .= "ncp-disable\n";
+		}
 		$conf .= "cipher {$fbcipher}\n";
 	} else {
 		$conf .= "data-ciphers " . str_replace(',', ':', openvpn_build_data_cipher_list($settings['data_ciphers'], $fbcipher)) . "\n";
@@ -1533,6 +1537,7 @@ function openvpn_restart($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
+	openvpn_clean_rules($mode, $vpnid);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
@@ -1644,6 +1649,7 @@ function openvpn_delete($mode, $settings) {
 	/* remove the configuration files */
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
+	openvpn_clean_rules($mode, $vpnid);
 }
 
 function openvpn_resync_csc(& $settings) {
@@ -2097,7 +2103,7 @@ function openvpn_get_client_status($client, $socket) {
 	return $client;
 }
 
-function openvpn_kill_client($port, $remipp) {
+function openvpn_kill_client($port, $remipp, $client_id) {
 	global $g;
 
 	//$tcpsrv = "tcp://127.0.0.1:{$port}";
@@ -2110,7 +2116,12 @@ function openvpn_kill_client($port, $remipp) {
 	$killed = -1;
 	if ($fp) {
 		stream_set_timeout($fp, 1);
-		fputs($fp, "kill {$remipp}\n");
+		if (is_numeric($client_id)) {
+			/* terminate remote client, see https://redmine.pfsense.org/issues/12416 */
+			fputs($fp, "client-kill {$client_id} HALT\n");
+		} else {
+			fputs($fp, "kill {$remipp}\n");
+		}
 		while (!feof($fp)) {
 			$line = fgets($fp, 1024);
 
@@ -2392,6 +2403,14 @@ function openvpn_inuse($id, $mode) {
 	}
 
 	return false;
+}
+
+function openvpn_clean_rules($mode, $id) {
+	global $g;
+
+	if ($mode == "server") {
+		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
+	}
 }
 
 ?>

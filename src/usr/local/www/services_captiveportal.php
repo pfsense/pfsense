@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -311,10 +311,10 @@ if ($_POST['save']) {
 	if (!empty($_POST['preauthurl']) && !is_URL($_POST['preauthurl'])) {
 		$input_errors[] = gettext("Pre-authentication redirect URL contents must be a valid URL");
 	}
-	if (!empty($_POST['blockedmacsurl']) && !is_URL($_POST['blockedmacsurl'])) {
+	if (!empty($_POST['redirurl']) && !is_URL($_POST['redirurl'])) {
 		$input_errors[] = gettext("After authentication Redirection URL contents must be a valid URL");
 	}
-	if (!empty($_POST['redirurl']) && !is_URL($_POST['redirurl'])) {
+	if (!empty($_POST['blockedmacsurl']) && !is_URL($_POST['blockedmacsurl'])) {
 		$input_errors[] = gettext("Blocked MAC address redirect URL contents must be a valid URL");
 	}
 

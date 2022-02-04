@@ -1213,7 +1213,9 @@
 					$port = "";
 					curl_setopt($ch, CURLOPT_URL, 'https://domains.google.com/nic/update');
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					curl_setopt($ch, CURLOPT_POST, 1);
 					break;
 				case 'dnsmadeeasy':
 					$needsIP = TRUE;

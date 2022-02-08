@@ -2091,6 +2091,8 @@ function filter_nat_rules_generate() {
 
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
+	$natrules .= "binat-anchor \"miniupnpd\"\n";
+	$natrules .= "nat-anchor \"miniupnpd\"\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";

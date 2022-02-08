@@ -719,11 +719,11 @@ function openvpn_validate_tunnel_network($value, $ipproto) {
 function openvpn_gen_tunnel_network($tunnel_network) {
 	if (is_alias($tunnel_network)) {
 		$net = alias_to_subnets_recursive($tunnel_network);
-		$pair = $net[0];
+		$pair = openvpn_tunnel_network_fix($net[0]);
 	} else {
 		$pair = $tunnel_network;
 	}
-	return explode('/', trim($pair));
+	return explode('/', $pair);
 }
 
 function openvpn_add_dhcpopts(& $settings, & $conf) {
@@ -2411,6 +2411,17 @@ function openvpn_clean_rules($mode, $id) {
 	if ($mode == "server") {
 		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
 	}
+}
+
+function openvpn_tunnel_network_fix($tunnel_network) {
+	$tunnel_network = trim($tunnel_network);
+	if (is_subnet($tunnel_network)) {
+		/* convert to correct network address,
+		 * see https://redmine.pfsense.org/issues/11416 */
+		list($tunnel_ip, $tunnel_netmask) = explode('/', $tunnel_network);
+		$tunnel_network = gen_subnet($tunnel_ip, $tunnel_netmask) . '/' . $tunnel_netmask;
+	}
+	return $tunnel_network;
 }
 
 ?>

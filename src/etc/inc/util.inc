@@ -3877,4 +3877,28 @@ function ip6_to_asn1($addr) {
 	return $octstr;
 }
 
+function interfaces_interrupts() {
+	exec("/usr/bin/vmstat -i --libxo json", $rawdata, $rc);
+	$interrupts = array();
+	if ($rc == 0) {
+		$vnstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+		$interruptarr = $vnstatarr['interrupt-statistics']['interrupt'];
+
+		foreach ($interruptarr as $int){
+			preg_match("/irq\d+: ([a-z0-9]+)/", $int['name'], $matches);
+			$name = $matches[1];
+			if (array_key_exists($name, $interrupts)) {
+				/* interface with multiple queues */
+				$interrupts[$name]['total'] += $int['total'];
+				$interrupts[$name]['rate'] += $int['rate'];
+			} else {
+				$interrupts[$name]['total'] = $int['total'];
+				$interrupts[$name]['rate'] = $int['rate'];
+			}
+		}
+	}
+
+	return $interrupts;
+}
+
 ?>

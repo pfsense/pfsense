@@ -400,10 +400,10 @@ print('</div>');
 		<div class="table-responsive">
 		</div>
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed" id="backups">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="backups" data-sortable>
 				<thead>
 					<tr>
-						<th width="30%"><?=gettext("Date")?></th>
+						<th data-sortable-type="date" width="30%"><?=gettext("Date")?></th>
 						<th width="60%"><?=gettext("Configuration Change")?></th>
 						<th width="10%"><?=gettext("Actions")?></th>
 					</tr>
@@ -429,21 +429,24 @@ print('</div>');
 					</tr>
 				<?php	$counter++;
 				endforeach;
-				if ($counter == 0): ?>
-					<tr>
-						<td colspan="3" align="center" class="text-danger"><strong>
-							<?=gettext("No backups could be located for this device.")?>
-							</strong>
-						</td>
-					</tr>
-				<?php else: ?>
-					<tr>
-						<td colspan="3" align="center">
-							<br /><?=gettext("Current count of hosted backups")?> : <?= $counter ?>
-						</td>
-					</tr>
-				<?php endif; ?>
+				?>
 				</tbody>
+			</table>
+			<table class="table table-striped table-hover table-condensed" id="backups" data-sortable>
+			<?php if ($counter == 0): ?>
+				<tr>
+					<td colspan="3" align="center" class="text-danger"><strong>
+						<?=gettext("No backups could be located for this device.")?>
+						</strong>
+					</td>
+				</tr>
+			<?php else: ?>
+				<tr>
+					<td colspan="3" align="center">
+						<br /><?=gettext("Current count of hosted backups")?> : <?= $counter ?>
+					</td>
+				</tr>
+			<?php endif; ?>
 			</table>
 		</div>
 	</div>

@@ -148,11 +148,8 @@ if (!$_REQUEST['ajax']) {
 		$dstIP = str_replace(':', ':<wbr>', $dstIP);
 ?>
 		<tr>
-			<td><a href="#" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
-			role="button" data-toggle="popover" data-trigger="hover"
-				data-title="<?=gettext("Rule that triggered this action")?>"
-				data-content="<?=htmlspecialchars($rule)?>"> <i
-					class="fa fa-<?=$iconfn?>"></i>
+			<td><i class="fa fa-<?=$iconfn?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
+			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($rule)?>">
 			</a></td>
 			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
 			<td><?=htmlspecialchars($filterent['interface']);?></td>

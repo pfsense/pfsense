@@ -140,7 +140,11 @@ if ($carpcount == 0) {
 				   '</a>');
 } else {
 ?>
-<form action="status_carp.php" method="post">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("CARP Maintenance");?></h2></div>
+		<div class="panel-body">
+			<div class="content">
+				<form action="status_carp.php" method="post">
 <?php
 	if ($status != 0) {
 		$carp_enabled = true;
@@ -166,19 +170,20 @@ if ($carpcount == 0) {
 	}
 
 ?>
-	<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" ><i class="fa fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
-	<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" ><i class="fa fa-wrench icon-embed-btn"></i><?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
-
-	<br /><br />
+				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" ><i class="fa fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
+				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" ><i class="fa fa-wrench icon-embed-btn"></i><?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
+			</div>
+		</div>
+	</div>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('CARP Interfaces')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('CARP Status')?></h2></div>
 			<div class="panel-body table-responsive">
 				<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap " data-sortable>
 					<thead>
 						<tr>
-							<th><?=gettext("CARP Interface")?></th>
-							<th><?=gettext("Virtual IP")?></th>
+							<th><?=gettext("Interface and VHID")?></th>
+							<th><?=gettext("Virtual IP Address")?></th>
 							<th><?=gettext("Status")?></th>
 						</tr>
 					</thead>
@@ -227,11 +232,11 @@ if ($carpcount == 0) {
 </form>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('pfSync Nodes')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('State Synchronization Status')?></h2></div>
 	<div class="panel-body">
 		<ul>
 <?php
-        echo "<br />" . gettext("pfSync nodes") . ":<br />";
+        echo "<br />" . gettext("State Creator IDs") . ":<br />";
         echo "<pre>";
         system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
         echo "</pre>";
@@ -239,6 +244,11 @@ if ($carpcount == 0) {
 
 		</ul>
 	</div>
+</div>
+<div class="infoblock blockopen">
+<?php
+	print_info_box(gettext("When state synchronization is enabled and functioning properly the list of state creator IDs will be nearly identical on each node participating in state synchronization."), 'info', false);
+?>
 </div>
 
 <?php

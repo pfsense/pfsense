@@ -481,7 +481,9 @@ function saveNATrule($post, $id, $json = false) {
 	}
 
 	/* https://redmine.pfsense.org/issues/12319 */
-	if (($post['ipprotocol'] == 'inet6') && ($post['natreflection'] == 'enable')) {
+	if (($post['ipprotocol'] == 'inet6') && (($post['natreflection'] == 'enable') ||
+	    (($post['natreflection'] == 'default') && !isset($config['system']['disablenatreflection']) &&
+	    !isset($config['system']['enablenatreflectionpurenat'])))) {
 		$input_errors[] = gettext("IPv6 address family doesn't support NAT + Proxy reflection mode.");
 	}
 

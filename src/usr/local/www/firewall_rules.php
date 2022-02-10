@@ -212,6 +212,22 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
+} elseif (isset($_POST['toggle_x'])) {
+	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		foreach ($_POST['rule'] as $rulei) {
+			if (isset($a_filter[$rulei]['disabled'])) {
+				unset($a_filter[$rulei]['disabled']);
+			} else {
+				$a_filter[$rulei]['disabled'] = true;
+			}
+		}
+		if (write_config(gettext("Firewall: Rules - toggle selected firewall rules."))) {
+			mark_subsystem_dirty('filter');
+		}
+
+		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
+		exit;
+	}
 } else if ($_POST['act'] == "toggle") {
 	if ($a_filter[$_POST['id']]) {
 		if (isset($a_filter[$_POST['id']]['disabled'])) {
@@ -938,6 +954,10 @@ if ($seprows[$nrules]) {
 		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" title="<?=gettext('Delete selected rules')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
+		</button>
+		<button name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" title="<?=gettext('Toggle selected rules')?>">
+			<i class="fa fa-ban icon-embed-btn"></i>
+			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled title="<?=gettext('Save rule order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>

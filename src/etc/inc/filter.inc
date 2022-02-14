@@ -1824,6 +1824,15 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
+	// OpenVPN CSO
+	init_config_arr(array('openvpn', 'openvpn-csc'));
+	foreach ($config['openvpn']['openvpn-csc'] as $ovpnent) {
+		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
+			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
+			$descriptions[] = gettext("OpenVPN CSO");
+		}
+	}
+
 	/* IPsec mode_cfg subnet */
 	if ((isset($config['ipsec']['client']['enable'])) &&
 	    (!empty($config['ipsec']['client']['pool_address'])) &&

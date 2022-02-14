@@ -1396,7 +1396,13 @@ pkg_repo_rsync() {
 		return
 	fi
 
-	for _pkg_rsync_hostname in ${PKG_RSYNC_HOSTNAME}; do
+	local _pkg_rsync_site
+	for _pkg_rsync_site in ${PKG_RSYNC_HOSTS}; do
+		eval _pkg_rsync_hostname=\$PKG_RSYNC_HOSTNAME$_pkg_rsync_site
+		if [ -z "${_pkg_rsync_hostname}" ]; then
+			echo "PKG_RSYNC_HOSTNAME$_pkg_rsync_site is empty, skipping.."
+			continue
+		fi
 		# Make sure destination directory exist
 		ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
 			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} \
@@ -1419,67 +1425,71 @@ pkg_repo_rsync() {
 		fi
 
 		if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
-			for _pkg_final_rsync_hostname in ${PKG_FINAL_RSYNC_HOSTNAME}; do
-				# Send .real* directories first to prevent having a broken repo while transfer happens
-				local _cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
-					--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
-					--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
-					--exclude=\"*\" \
-					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
+			local _pkg_final_rsync_hostname
+			eval _pkg_final_rsync_hostname=\$PKG_FINAL_RSYNC_HOSTNAME$_pkg_rsync_site
+			if [ -z "${_pkg_final_rsync_hostname}" ]; then
+				_pkg_final_rsync_hostname="$_pkg_rsync_hostname"
+			fi
 
-				echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
-				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
-					echo "Done!" | tee -a ${_logfile}
-				else
-					echo "Failed!" | tee -a ${_logfile}
-					echo ">>> ERROR: An error occurred sending repo to final hostname"
-					print_error_pfS
-				fi
+			# Send .real* directories first to prevent having a broken repo while transfer happens
+			local _cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+				--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
+				--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
+				--exclude=\"*\" \
+				${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
 
-				_cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
-					--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
-					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
+			echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
+			if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
+				${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
+				echo "Done!" | tee -a ${_logfile}
+			else
+				echo "Failed!" | tee -a ${_logfile}
+				echo ">>> ERROR: An error occurred sending repo to final hostname"
+				print_error_pfS
+			fi
 
-				echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
-				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
-					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
-					echo "Done!" | tee -a ${_logfile}
-				else
-					echo "Failed!" | tee -a ${_logfile}
-					echo ">>> ERROR: An error occurred sending repo to final hostname"
-					print_error_pfS
-				fi
+			_cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+				--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
+				${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
 
-				if [ -z "${PKG_FINAL_S3_PATH}" ]; then
-					continue
-				fi
+			echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
+			if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
+				${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >> ${BUILDER_LOGS}/rsync.log 2>&1; then
+				echo "Done!" | tee -a ${_logfile}
+			else
+				echo "Failed!" | tee -a ${_logfile}
+				echo ">>> ERROR: An error occurred sending repo to final hostname"
+				print_error_pfS
+			fi
 
-				local _repos=$(ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+			if [ -z "${PKG_FINAL_S3_PATH}" ]; then
+				continue
+			fi
+
+			local _repos=$(ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+			    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+			    "ls -1d ${PKG_FINAL_RSYNC_DESTDIR}/${_repo_base%%-core}*")
+			for _repo in ${_repos}; do
+				echo -n ">>> Sending updated packages to AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
+				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
 				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
-				    "ls -1d ${PKG_FINAL_RSYNC_DESTDIR}/${_repo_base%%-core}*")
-				for _repo in ${_repos}; do
-					echo -n ">>> Sending updated packages to AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
-					if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
-					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
-					    "${_aws_sync_cmd} ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
-						echo "Done!" | tee -a ${_logfile}
-					else
-						echo "Failed!" | tee -a ${_logfile}
-						echo ">>> ERROR: An error occurred sending files to AWS S3"
-						print_error_pfS
-					fi
-					echo -n ">>> Cleaning up packages at AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
-					if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
-					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
-					    "${_aws_sync_cmd} --delete ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
-						echo "Done!" | tee -a ${_logfile}
-					else
-						echo "Failed!" | tee -a ${_logfile}
-						echo ">>> ERROR: An error occurred sending files to AWS S3"
-						print_error_pfS
-					fi
-				done
+				    "${_aws_sync_cmd} ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+					echo "Done!" | tee -a ${_logfile}
+				else
+					echo "Failed!" | tee -a ${_logfile}
+					echo ">>> ERROR: An error occurred sending files to AWS S3"
+					print_error_pfS
+				fi
+				echo -n ">>> Cleaning up packages at AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
+				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+				    "${_aws_sync_cmd} --delete ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+					echo "Done!" | tee -a ${_logfile}
+				else
+					echo "Failed!" | tee -a ${_logfile}
+					echo ">>> ERROR: An error occurred sending files to AWS S3"
+					print_error_pfS
+				fi
 			done
 		fi
 	done

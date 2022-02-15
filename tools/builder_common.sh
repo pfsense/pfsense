@@ -1999,8 +1999,15 @@ poudriere_bulk() {
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
-	if [ -n "${UPLOAD}" -a -z "${PKG_RSYNC_HOSTNAME}" ]; then
-		echo ">>> ERROR: PKG_RSYNC_HOSTNAME is not set"
+	local _pkg_rsync_site_count=0
+	for _pkg_rsync_site in ${PKG_RSYNC_HOSTS}; do
+		eval _pkg_rsync_hostname=\$PKG_RSYNC_HOSTNAME$_pkg_rsync_site
+		[ -n "${_pkg_rsync_hostname}" ] && \
+			_pkg_rsync_site_count=$(( ${_pkg_rsync_site_count} + 1 ))
+	done
+
+	if [ -n "${UPLOAD}" ] && [ "${_pkg_rsync_site_count}" -eq 0 ]; then
+		echo ">>> ERROR: PKG_RSYNC_HOSTS is not set"
 		print_error_pfS
 	fi
 

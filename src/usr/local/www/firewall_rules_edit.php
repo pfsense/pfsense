@@ -863,9 +863,11 @@ if ($_POST['save']) {
 
 		$filterent['type'] = $_POST['type'];
 
-		if (isset($_POST['interface'])) {
+		if (!isset($_POST['interface']) || in_array('any', $_POST['interface'])) {
+			$_POST['interface'] = array('any');
+		} else {
 			$filterent['interface'] = $_POST['interface'];
-		} // FIXME: can $_POST['interface'] be unset at this point, if so then what?
+		}
 
 		$filterent['ipprotocol'] = $_POST['ipprotocol'];
 
@@ -902,9 +904,7 @@ if ($_POST['save']) {
 				$filterent['quick'] = $_POST['quick'];
 			}
 			$filterent['floating'] = "yes";
-			if (isset($_POST['interface']) && count($_POST['interface']) > 0) {
-				$filterent['interface'] = implode(",", $_POST['interface']);
-			}
+			$filterent['interface'] = implode(",", $_POST['interface']);
 		}
 
 		/* Advanced options */
@@ -1304,7 +1304,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		filter_get_interface_list(),
+		array_merge(array('any' => 'Any'), filter_get_interface_list()),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');
 } else {

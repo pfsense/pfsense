@@ -6596,6 +6596,8 @@ function upgrade_221_to_222() {
 }
 
 function upgrade_222_to_223() {
+	global $config;
+
 	foreach ($config['system']['user'] as & $user) {
 		if ($user['name'] == 'admin') {
 			$user_home = "/root";
@@ -6604,6 +6606,17 @@ function upgrade_222_to_223() {
 		}
 		if (file_exists("{$user_home}/.keephistory")) {
 			$user['keephistory'] = true;
+		}
+	}
+}
+
+function upgrade_223_to_224() {
+	global $config;
+
+	init_config_arr(array('filter', 'rule'));
+	foreach ($config['filter']['rule'] as & $rule) {
+		if (isset($rule['floating']) && !isset($rule['interface'])) {
+			$rule['interface'] = 'any';
 		}
 	}
 }

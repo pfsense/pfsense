@@ -85,8 +85,33 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns" ||  $pconfig['type'] == "gandi-livedns-v6" || $pconfig['type'] == "cloudflare" || $pconfig['type'] == "cloudflare-v6" || $pconfig['type'] == "yandex" || $pconfig['type'] == "yandex-v6" || $pconfig['type'] == "desec" || $pconfig['type'] == "desec-v6" || $pconfig['type'] == 'dnsmadeeasy')
-	    && $_POST['username'] == "") {
+	$ddns_attr = array(
+		"cloudflare" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"cloudflare-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"desec" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"desec-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"digitalocean" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"digitalocean-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"dnsmadeeasy" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"freedns" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"freedns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"freedns2" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"freedns2-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"gandi-livedns" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"gandi-livedns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"godaddy" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"godaddy-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"googledomains" => array("apex" => false, "wildcard" => true, "username_none" => false),
+		"linode" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"linode-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"yandex" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"yandex-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+	);
+
+	if (isset($ddns_attr[$pconfig['type']]['username_none']) &&
+	    ($ddns_attr[$pconfig['type']]['username_none'] == true) &&
+	    empty($_POST['username'])) {
 		$_POST['username'] = "none";
 	}
 	/* input validation */
@@ -121,14 +146,14 @@ if ($_POST['save'] || $_POST['force']) {
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		$allow_wildcard = false;
-		/* Namecheap and GoDaddy can have a @. and *. in hostname */
-		if ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6") || ($pconfig['type'] == "namecheap")) && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
+		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
+		    (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
+		    (isset($ddns_attr[$pconfig['type']]['wildcard']) && ($ddns_attr[$pconfig['type']]['wildcard'] == true) && 
+		    (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
-			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;

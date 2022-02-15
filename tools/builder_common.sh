@@ -1398,9 +1398,9 @@ pkg_repo_rsync() {
 
 	local _pkg_rsync_site
 	for _pkg_rsync_site in ${PKG_RSYNC_HOSTS}; do
-		eval _pkg_rsync_hostname=\$PKG_RSYNC_HOSTNAME$_pkg_rsync_site
+		eval _pkg_rsync_hostname=\$PKG_RSYNC_HOSTNAME_$_pkg_rsync_site
 		if [ -z "${_pkg_rsync_hostname}" ]; then
-			echo "PKG_RSYNC_HOSTNAME$_pkg_rsync_site is empty, skipping.."
+			echo "PKG_RSYNC_HOSTNAME_$_pkg_rsync_site is empty, skipping.."
 			continue
 		fi
 		# Make sure destination directory exist
@@ -1426,7 +1426,7 @@ pkg_repo_rsync() {
 
 		if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
 			local _pkg_final_rsync_hostname
-			eval _pkg_final_rsync_hostname=\$PKG_FINAL_RSYNC_HOSTNAME$_pkg_rsync_site
+			eval _pkg_final_rsync_hostname=\$PKG_FINAL_RSYNC_HOSTNAME_$_pkg_rsync_site
 			if [ -z "${_pkg_final_rsync_hostname}" ]; then
 				_pkg_final_rsync_hostname="$_pkg_rsync_hostname"
 			fi
@@ -2001,7 +2001,7 @@ poudriere_bulk() {
 
 	local _pkg_rsync_site_count=0
 	for _pkg_rsync_site in ${PKG_RSYNC_HOSTS}; do
-		eval _pkg_rsync_hostname=\$PKG_RSYNC_HOSTNAME$_pkg_rsync_site
+		eval _pkg_rsync_hostname=\$PKG_RSYNC_HOSTNAME_$_pkg_rsync_site
 		[ -n "${_pkg_rsync_hostname}" ] && \
 			_pkg_rsync_site_count=$(( ${_pkg_rsync_site_count} + 1 ))
 	done

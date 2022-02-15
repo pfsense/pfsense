@@ -49,6 +49,14 @@ else
 	fi
 fi
 
+if [ -n "${ifconfig_local}" ]; then
+	/usr/bin/touch /tmp/${1}_upstart4
+fi
+
+if [ -n "${ifconfig_ipv6_local}" ]; then
+	/usr/bin/touch /tmp/${1}_upstart6
+fi
+
 /usr/bin/touch /tmp/${1}up
 # reload filter
 /usr/local/sbin/pfSctl -c "interface newip ${1}"

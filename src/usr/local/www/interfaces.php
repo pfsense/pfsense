@@ -301,9 +301,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "dhcp6";
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
-		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
-		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
 		$pconfig['dhcp6vlanenable'] = isset($wancfg['dhcp6vlanenable']);
 		$pconfig['dhcp6cvpt'] = $wancfg['dhcp6cvpt'];
 		break;
@@ -1155,8 +1153,8 @@ if ($_POST['apply']) {
 			} else if ($wancfg['ipaddr'] == "dhcp") {
 				kill_dhclient_process($wancfg['if']);
 			}
-			if ($wancfg['ipaddrv6'] == "dhcp6") {
-				kill_dhcp6client_process($wancfg['if'],true);
+			if (($wancfg['ipaddrv6'] == "dhcp6") && ($_POST['type6'] != "dhcp6")) {
+				interface_dhcpv6_configure($if, $wancfg, true);
 			}
 		}
 		$ppp = array();
@@ -1179,11 +1177,9 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6usev4iface']);
 		unset($wancfg['slaacusev4iface']);
 		unset($wancfg['ipv6usev4iface']);
-		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['dhcp6withoutra']);
-		unset($wancfg['dhcp6norelease']);
 		unset($wancfg['dhcp6vlanenable']);
 		unset($wancfg['dhcp6cvpt']);
 		unset($wancfg['prefix-6rd']);
@@ -1460,15 +1456,8 @@ if ($_POST['apply']) {
 				if ($_POST['dhcp6usev4iface'] == "yes") {
 					$wancfg['dhcp6usev4iface'] = true;
 				}
-				if ($_POST['dhcp6debug'] == "yes") {
-					$wancfg['dhcp6debug'] = true;
-				}
-
 				if ($_POST['dhcp6withoutra'] == "yes") {
 					$wancfg['dhcp6withoutra'] = true;
-				}
-				if ($_POST['dhcp6norelease'] == "yes") {
-					$wancfg['dhcp6norelease'] = true;
 				}
 				if ($_POST['dhcp6vlanenable'] == "yes") {
 					$wancfg['dhcp6vlanenable'] = true;
@@ -2456,22 +2445,10 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'dhcp6debug',
-	'Debug',
-	'Start DHCP6 client in debug mode',
-	$pconfig['dhcp6debug']
-));
-$section->addInput(new Form_Checkbox(
 	'dhcp6withoutra',
 	'Do not wait for a RA',
 	'Required by some ISPs, especially those not using PPPoE',
 	$pconfig['dhcp6withoutra']
-));
-$section->addInput(new Form_Checkbox(
-	'dhcp6norelease',
-	'Do not allow PD/Address release',
-	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
-	$pconfig['dhcp6norelease']
 ));
 
 if (interface_is_vlan($wancfg['if']) != NULL) {

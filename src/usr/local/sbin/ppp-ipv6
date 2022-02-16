@@ -39,13 +39,13 @@ function interface_ipv6_lower($interface_real) {
                     case 'slaac':
                     case 'dhcp6':
                         // Take no action if dhcp6 is active on the parent interface, not the PPP interface
-                        if ($ifcfg['ipaddrv6']==='dhcp6' && !(isset($ifcfg['dhcp6usev4iface']) || $ifcfg['ipaddr']==='ppp')) {
-                            break;
+			if ((($ifcfg['ipaddrv6'] == 'dhcp6') && !isset($ifcfg['dhcp6usev4iface'])) ||
+			    (($ifcfg['ipaddrv6'] == 'slaac') && !isset($ifcfg['slaacusev4iface'])) ||
+			    !interface_isppp_type($interface)) {
+				break;
                         }
-                        // bring down dhcp6c if it is running
-						kill_dhcp6client_process($interface_real,false);
-
-                        unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
+                        // reconfigure dhcp6c if it is running
+			interface_dhcpv6_configure($interface, $ifcfg, true);
 
                         // disable router advertisements (and therefore SLAAC)
                         mwexec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6 -accept_rtadv");
@@ -80,25 +80,12 @@ function interface_ipv6_raise($interface_real) {
                     case 'slaac':
                     case 'dhcp6':
                         // Take no action if dhcp6 is active on the parent interface, not the PPP interface
-                        if ($ifcfg['ipaddrv6']==='dhcp6' && !(isset($ifcfg['dhcp6usev4iface']) || $ifcfg['ipaddr']==='ppp')) {
-                            break;
+			if ((($ifcfg['ipaddrv6'] == 'dhcp6') && !isset($ifcfg['dhcp6usev4iface'])) ||
+			    (($ifcfg['ipaddrv6'] == 'slaac') && !isset($ifcfg['slaacusev4iface'])) ||
+			    !interface_isppp_type($interface)) {
+				break;
                         }
-                        $pidv6 = find_dhcp6c_process($interface_real);
-                        if (empty($pidv6)) {
-                            // only fire if router advertisements off
-                            // (if router advertisements are on, rtsold might be primed to fire dhcp6c already)
-                            exec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6", $ifconfig_output);
-                            $start = true;
-                            foreach ($ifconfig_output as $output) {
-                                if (preg_match('{ \A .* ACCEPT_RTADV .* \Z}xmsi', $output)) {
-                                    $start = false;
-                                    break;
-                                }
-                            }
-                            if ($start) {
-                                interface_dhcpv6_configure($interface, $ifcfg);
-                            }
-                        }
+			interface_dhcpv6_configure($interface, $ifcfg);
                         break;
                     default:
                         break;

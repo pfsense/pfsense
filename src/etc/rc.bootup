@@ -236,15 +236,14 @@ if (isset($config['system']['mds_disable']) &&
 	set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);
 }
 
-/* remove leftover dhcp6c lock files if they exist */
-foreach ($config['interfaces'] as $interface) {
-        if ($interface['ipaddrv6'] == "dhcp6") {
-            if (file_exists("/tmp/dhcp6c_" . $interface['if'] . "_lock")) {
-                @unlink("/tmp/dhcp6c_" . $interface['if'] . "_lock");
-                echo("Removed leftover dhcp6c lock file: " . "/tmp/dhcp6c_" . $interface['if'] . "_lock\n");
-            }
-         }
-     }
+/* remove leftover dhcp6c lock file if it exist */
+if (file_exists("/tmp/dhcp6c_lock")) {
+	@unlink("/tmp/dhcp6c_lock");
+	echo("Removed leftover dhcp6c lock file: /tmp/dhcp6c_lock\n");
+}
+if (file_exists("/tmp/dhcp6c_ifs")) {
+	@unlink("/tmp/dhcp6c_ifs");
+}
 
 /* set up interfaces */
 if (!$debugging) {

@@ -6621,6 +6621,23 @@ function upgrade_223_to_224() {
 	}
 }
 
+function upgrade_224_to_225() {
+	global $config;
+
+	/* DHCP6 now uses single config for all interfaces
+	 * see https://redmine.pfsense.org/issues/6880 */
+	foreach ($config['interfaces'] as & $inf) {
+		if (isset($inf['dhcp6debug'])) {
+			$config['system']['dhcp6debug'] = true;
+			unset($inf['dhcp6debug']);
+		}
+		if (isset($inf['dhcp6norelease'])) {
+			$config['system']['dhcp6norelease'] = true;
+			unset($inf['dhcp6norelease']);
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

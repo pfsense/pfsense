@@ -3223,31 +3223,31 @@ function filter_generate_user_rule($rule) {
 	if (!empty($rule['dscp'])) {
 		switch (strtolower($rule['dscp'])) {
 			case 'va':
-				$aline['dscp'] = " tos \"44\" ";
+				$aline['dscp'] = " tos 44 ";
 				break;
 			case 'VA':
-				$aline['dscp'] = " tos \"44\" ";
+				$aline['dscp'] = " tos 44 ";
 				break;
 			case 'cs1':
-				$aline['dscp'] = " tos \"8\" ";
+				$aline['dscp'] = " tos 8 ";
 				break;
 			case 'cs2':
-				$aline['dscp'] = " tos \"16\" ";
+				$aline['dscp'] = " tos 16 ";
 				break;
 			case 'cs3':
-				$aline['dscp'] = " tos \"24\" ";
+				$aline['dscp'] = " tos 24 ";
 				break;
 			case 'cs4':
-				$aline['dscp'] = " tos \"32\" ";
+				$aline['dscp'] = " tos 32 ";
 				break;
 			case 'cs5':
-				$aline['dscp'] = " tos \"40\" ";
+				$aline['dscp'] = " tos 40 ";
 				break;
 			case 'cs6':
-				$aline['dscp'] = " tos \"48\" ";
+				$aline['dscp'] = " tos 48 ";
 				break;
 			case 'cs7':
-				$aline['dscp'] = " tos \"56\" ";
+				$aline['dscp'] = " tos 56 ";
 				break;
 			default:
 				$aline['dscp'] = " tos " . $rule['dscp'] . " ";

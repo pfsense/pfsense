@@ -816,7 +816,7 @@ function local_user_set_password(&$user, $password) {
 	unset($user['password']);
 	unset($user['md5-hash']);
 	unset($user['bcrypt-hash']);
-	$salt = substr(bin2hex(openssl_random_pseudo_bytes(16)),0,16);
+	$salt = substr(bin2hex(random_bytes(16)),0,16);
 	$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
 	if (($user['name'] == $config['hasync']['username']) &&
 	    ($config['hasync']['adminsync'] == 'on')) {

@@ -45,6 +45,7 @@ if [ "${PROTOCOL}" == "inet" ]; then
 	echo ${REMOTE_IP} > /tmp/${IF}_router
 	echo ${LOCAL_IP} > /tmp/${IF}_ip
 	touch /tmp/${IF}up
+	touch /tmp/${IF}_upstart4
 
 	if [ "${DNSALLOWOVERRIDE}" = "true" ]; then
 		# write nameservers to file
@@ -72,6 +73,7 @@ elif [ "${PROTOCOL}" == "inet6" ]; then
 	echo ${REMOTE_IP} |cut -d% -f1 > /tmp/${IF}_routerv6
 	echo ${LOCAL_IP} |cut -d% -f1 > /tmp/${IF}_ipv6
 	touch /tmp/${IF}upv6
+	touch /tmp/${IF}_upstart6
 
 	if [ "${DNSALLOWOVERRIDE}" = "true" ]; then
 		# write nameservers to file

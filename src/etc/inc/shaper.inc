@@ -93,17 +93,24 @@ function getSchedulers() {
 		),
 		"fq_pie" => array(
 			"name" => "FQ_PIE",
-			"parameter_format" => "type fq_pie target %sms tupdate %sms alpha %s beta %s max_burst %s max_ecnth %s",
+			"parameter_format" => "type fq_pie target %sms tupdate %sms alpha %s beta %s max_burst %s max_ecnth %s quantum %s limit %s flows %s",
 			"description" => "Fair Queue Proportional Integral controller Enhanced AQM (FQ_PIE) is similar to FQ_CODEL but uses a slightly different algorithm.",
 			"parameters" => array(
 				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.target")) / 1000),
 				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate")) / 1000),
-				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),
-				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),
-				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),
-				"max_ecnth" => array("name" => "max_ecnth", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth"))
+				"alpha" => array("name" => "alpha", "type" => "number step=any", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")) / 1000),
+				"beta" => array("name" => "beta", "type" => "number step=any", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")) / 1000),
+				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")) / 1000),
+				"max_ecnth" => array("name" => "max_ecnth", "type" => "number step=any", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth")) / 1000),
+				"quantum" => array("name" => "quantum", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.quantum")),
+				"limit" => array("name" => "limit", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.limit")),
+				"flows" => array("name" => "flows", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.flows"))
 			),
-			"ecn" => true
+			"ecn" => true,
+			"pie_onoff" => true,
+			"pie_capdrop" => true,
+			"pie_qdelay" => true,
+			"pie_pderand" => true
 		)
 	);
 }
@@ -134,12 +141,16 @@ function getAQMs() {
 			"parameters" => array(
 				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.target")) / 1000),
 				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate")) / 1000),
-				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),
-				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),
-				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),
-				"max_ecnth" => array("name" => "max_ecnth", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth"))
+				"alpha" => array("name" => "alpha", "type" => "number step=any", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")) / 1000),
+				"beta" => array("name" => "beta", "type" => "number step=any", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")) / 1000),
+				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")) / 1000),
+				"max_ecnth" => array("name" => "max_ecnth", "type" => "number step=any", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth")) / 1000)
 			),
-			"ecn" => true
+			"ecn" => true,
+			"pie_onoff" => true,
+			"pie_capdrop" => true,
+			"pie_qdelay" => true,
+			"pie_pderand" => true
 		),
 		"red" => array(
 			"name" => "Random Early Detection (RED)",
@@ -202,7 +213,8 @@ function build_queue_params($array, $selected, $params, $id) {
 
 			// get current value, or default.
 			$currentValue = $params[$key];
-			if (!$currentValue || $currentValue == '') {
+			// check if param key is set. using isset allows the param key to be zero.
+			if (! isset($currentValue)) {
 				$currentValue = $value["default"]; // default to default
 			}
 
@@ -3756,6 +3768,10 @@ class dnpipe_class extends dummynet_class {
 
 	/* Limiter queue patch */
 	var $ecn; // ecn 'on' or 'off'
+	var $pie_onoff;
+	var $pie_capdrop;
+	var $pie_qdelay;
+	var $pie_pderand;
 	var $aqm; // key to aqm_map
 	var $aqm_params = array(); // AQM params
 	var $scheduler;	// key to scheduler_map
@@ -3783,6 +3799,30 @@ class dnpipe_class extends dummynet_class {
 	}
 	function SetECN($ecn) {
 			$this->ecn = $ecn;
+	}
+	function GetPIE_ONOFF() {
+			return $this->pie_onoff;
+	}
+	function SetPIE_ONOFF($pie_onoff) {
+			$this->pie_onoff = $pie_onoff;
+	}
+	function GetPIE_CAPDROP() {
+			return $this->pie_capdrop;
+	}
+	function SetPIE_CAPDROP($pie_capdrop) {
+			$this->pie_capdrop = $pie_capdrop;
+	}
+	function GetPIE_QDELAY() {
+			return $this->pie_qdelay;
+	}
+	function SetPIE_QDELAY($pie_qdelay) {
+			$this->pie_qdelay = $pie_qdelay;
+	}
+	function GetPIE_PDERAND() {
+			return $this->pie_pderand;
+	}
+	function SetPIE_PDERAND($pie_pderand) {
+			$this->pie_pderand = $pie_pderand;
 	}
 	function GetScheduler() {
 			return $this->scheduler;
@@ -3949,9 +3989,6 @@ class dnpipe_class extends dummynet_class {
 		if (!empty($data['aqm']) && !$selectedAqm) {
 			$input_errors[] = gettext("Selected AQM not recognized.");
 		}
-		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedScheduler["ecn"] && !$selectedAqm["ecn"]) {
-			$input_errors[] = gettext("Explicit Congestion Notification is selected, but neither " . $selectedAqm["name"] . " nor " . $selectedScheduler["name"] . " support it.");
-		}
 		/* End limiter patch */
 	}
 
@@ -4074,6 +4111,11 @@ class dnpipe_class extends dummynet_class {
 
 		// ecn flag
 		$this->SetECN($q['ecn']);
+		// PIE Flags.
+		$this->SetPIE_ONOFF($q['pie_onoff']);
+		$this->SetPIE_CAPDROP($q['pie_capdrop']);
+		$this->SetPIE_QDELAY($q['pie_qdelay']);
+		$this->SetPIE_PDERAND($q['pie_pderand']);
 		/* End limiter patch */
 	}
 
@@ -4178,6 +4220,34 @@ class dnpipe_class extends dummynet_class {
 					$pfq_rule .= ' ecn';
 				} else {
 					$pfq_rule .= ' noecn';
+				}
+			}
+			if ($selectedScheduler["pie_onoff"]) {
+				if ($this->getPIE_ONOFF() == 'on') {
+					$pfq_rule .= 'onoff';
+				} else {
+					$pfq_rule .= '';
+				}
+			}
+			if ($selectedScheduler["pie_capdrop"]) {
+				if ($this->getPIE_CAPDROP() == 'on') {
+					$pfq_rule .= ' capdrop';
+				} else {
+					$pfq_rule .= ' nocapdrop';
+				}
+			}
+			if ($selectedScheduler["pie_qdelay"]) {
+				if ($this->getPIE_QDELAY() == 'on') {
+					$pfq_rule .= ' ts';
+				} else {
+					$pfq_rule .= ' dre';
+				}
+			}
+			if ($selectedScheduler["pie_pderand"]) {
+				if ($this->getPIE_PDERAND() == 'on') {
+					$pfq_rule .= ' derand';
+				} else {
+					$pfq_rule .= ' noderand';
 				}
 			}
 		}
@@ -4485,13 +4555,57 @@ EOD;
 		))->setHelp('Specifies the length of the limiter\'s queue, which the scheduler and AQM are responsible for. ' .
 			'This field may be left empty.');
 
-		$section->addInput(new Form_Checkbox(
-			'ecn',
-			'ECN',
-			'Enable Explicit Congestion Notification (ECN)',
-			($this->GetECN() == "on"),
-			'on'
-		))->setHelp('ECN sets a reserved TCP flag when the queue is nearing or exceeding capacity. Not all AQMs or schedulers support this.');
+		$selectedScheduler = getSchedulers()[$this->getScheduler()];
+
+		if ($selectedScheduler["ecn"]) {
+			$section->addInput(new Form_Checkbox(
+				'ecn',
+				'ECN',
+				'Enable Explicit Congestion Notification (ECN)',
+				($this->GetECN() == "on"),
+				'on'
+			))->setHelp('ECN sets a reserved TCP flag when the queue is nearing or exceeding capacity. Not all AQMs or schedulers support this.');
+		}
+
+		if ($selectedScheduler["pie_onoff"]) {
+			$section->addInput(new Form_Checkbox(
+				'pie_onoff',
+				'ONOFF',
+				'Enable Onoff (onoff,)',
+				($this->GetPIE_ONOFF() == "on"),
+				'on'
+                	))->setHelp('Enable turning PIE on and off depending on queue load.');
+		}
+
+		if ($selectedScheduler["pie_capdrop"]) {
+			$section->addInput(new Form_Checkbox(
+				'pie_capdrop',
+				'CAPDROP',
+				'Enable Capdrop (capdrop,nocapdrop)',
+				($this->GetPIE_CAPDROP() == "on"),
+				'on'
+			))->setHelp('Enable cap drop adjustment.');
+		}
+
+		if ($selectedScheduler["pie_qdelay"]) {
+                        $section->addInput(new Form_Checkbox(
+                                'pie_qdelay',
+                                'QUEUE DELAY TYPE',
+                                'Enable Type Of Qdelay (ts,dre)',
+                                ($this->GetPIE_QDELAY() == "on"),
+                                'on'
+                        ))->setHelp('Set queue delay type to timestamps (checked) or departure rate estimation (unchecked).');
+                }
+
+		if ($selectedScheduler["pie_pderand"]) {
+			$section->addInput(new Form_Checkbox(
+				'pie_pderand',
+				'PROB DERAND',
+				'Enable Drop Probability De-randomisation (derand,noderand)',
+				($this->GetPIE_PDERAND() == "on"),
+				'on'
+			))->setHelp('Enable (checked) or disable (unchecked) drop probability de-randomisation.');
+		}
 
 		$sform->add($section);
 		/* End limiter patch */
@@ -4570,6 +4684,20 @@ EOD;
 			$cflink[$config_key] = $this->GetAQMParameter($key);
 		}
 		$cflink['ecn'] = $this->GetECN();
+
+		$selectedScheduler = getSchedulers()[$this->getScheduler()];
+		if ($selectedScheduler["pie_onoff"]) {
+			$cflink['pie_onoff'] = $this->GetPIE_ONOFF();
+		}
+		if ($selectedScheduler["pie_capdrop"]) {
+			$cflink['pie_capdrop'] = $this->GetPIE_CAPDROP();
+		}
+		if ($selectedScheduler["pie_qdelay"]) {
+			$cflink['pie_qdelay'] = $this->GetPIE_QDELAY();
+		}
+		if ($selectedScheduler["pie_pderand"]) {
+			$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
+		}
 		/* End limiter queue patch */
 	}
 
@@ -4580,6 +4708,10 @@ class dnqueue_class extends dummynet_class {
 	var $weight;
 	/* Limiter queue patch */
     var $ecn; // ecn 'on' or 'off'
+	var $pie_onoff;
+	var $pie_capdrop;
+	var $pie_qdelay;
+	var $pie_pderand;
     var $aqm; // key to aqm_map
     var $aqm_params = array(); // AQM params
 	function GetAQM() {
@@ -4605,6 +4737,30 @@ class dnqueue_class extends dummynet_class {
 	}
 	function SetECN($ecn) {
 			$this->ecn = $ecn;
+	}
+	function GetPIE_ONOFF() {
+			return $this->pie_onoff;
+	}
+	function SetPIE_ONOFF($pie_onoff) {
+			$this->pie_onoff = $pie_onoff;
+	}
+	function GetPIE_CAPDROP() {
+			return $this->pie_capdrop;
+	}
+	function SetPIE_CAPDROP($pie_capdrop) {
+			$this->pie_capdrop = $pie_capdrop;
+	}
+	function GetPIE_QDELAY() {
+			return $this->pie_qdelay;
+	}
+	function SetPIE_QDELAY($pie_qdelay) {
+			$this->pie_qdelay = $pie_qdelay;
+	}
+	function GetPIE_PDERAND() {
+			return $this->pie_pderand;
+	}
+	function SetPIE_PDERAND($pie_pderand) {
+			$this->pie_pderand = $pie_pderand;
 	}
 	/* End limiter queue patch */
 
@@ -4640,9 +4796,6 @@ class dnqueue_class extends dummynet_class {
 		$selectedAqm = getAQMs()[$data['aqm']];
 		if (!empty($data['aqm']) && !$selectedAqm) {
 			$input_errors[] = gettext("Selected AQM not recognized.");
-		}
-		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedAqm["ecn"]) {
-			$input_errors[] = gettext("Explicit Congestion Notification is selected, but " . $selectedAqm["name"] . " does not support it.");
 		}
 		/* End limiter patch */
 
@@ -4746,6 +4899,11 @@ class dnqueue_class extends dummynet_class {
 
 		// ecn flag
 		$this->SetECN($q['ecn']);
+		// PIE Flags.
+		$this->SetPIE_ONOFF($q['pie_onoff']);
+		$this->SetPIE_CAPDROP($q['pie_capdrop']);
+		$this->SetPIE_QDELAY($q['pie_qdelay']);
+		$this->SetPIE_PDERAND($q['pie_pderand']);
 		/* End limiter patch */
 	}
 
@@ -4785,6 +4943,34 @@ class dnqueue_class extends dummynet_class {
 					$pfq_rule .= ' ecn';
 				} elseif (($this->getAQM() != 'red') && ($this->getAQM() != 'gred')) {
 					$pfq_rule .= ' noecn';
+				}
+			}
+			if ($selectedAQM["pie_onoff"]) {
+				if ($this->getPIE_ONOFF() == 'on') {
+				$pfq_rule .= 'onoff';
+				} else {
+					$pfq_rule .= '';
+				}
+			}
+			if ($selectedAQM["pie_capdrop"]) {
+				if ($this->getPIE_CAPDROP() == 'on') {
+					$pfq_rule .= ' capdrop';
+				} else {
+					$pfq_rule .= ' nocapdrop';
+				}
+			}
+			if ($selectedAQM["pie_qdelay"]) {
+				if ($this->getPIE_QDELAY() == 'on') {
+					$pfq_rule .= ' ts';
+				} else {
+					$pfq_rule .= ' dre';
+				}
+			}
+			if ($selectedAQM["pie_pderand"]) {
+				if ($this->getPIE_PDERAND() == 'on') {
+					$pfq_rule .= ' derand';
+				} else {
+					$pfq_rule .= ' noderand';
 				}
 			}
 		}
@@ -4916,14 +5102,57 @@ class dnqueue_class extends dummynet_class {
 				$this->GetQlimit()
 		))->setHelp('Specifies the length of this queue, which the AQM is responsible for.  This field may be left empty.');
 
-		$section->addInput(new Form_Checkbox(
-			'ecn',
-			'ECN',
-			'Enable Explicit Congestion Notification (ECN)',
-			($this->GetECN() == "on"),
-			'on'
-		))->setHelp('ECN sets a reserved TCP flag when the queue is nearing or exceeding capacity. Not all AQMs or schedulers support this.');
+		$selectedAQM = getAQMs()[$this->getAQM()];
 
+		if ($selectedAQM["ecn"]) {
+			$section->addInput(new Form_Checkbox(
+				'ecn',
+				'ECN',
+				'Enable Explicit Congestion Notification (ECN)',
+				($this->GetECN() == "on"),
+				'on'
+			))->setHelp('ECN sets a reserved TCP flag when the queue is nearing or exceeding capacity. Not all AQMs or schedulers support this.');
+		}
+
+		if ($selectedAQM["pie_onoff"]) {
+			$section->addInput(new Form_Checkbox(
+				'pie_onoff',
+				'ONOFF',
+				'Enable Onoff (onoff,)',
+				($this->GetPIE_ONOFF() == "on"),
+				'on'
+			))->setHelp('Enable turning PIE on and off depending on queue load.');
+		}
+                                 
+		if ($selectedAQM["pie_capdrop"]) {
+			$section->addInput(new Form_Checkbox(
+				'pie_capdrop',
+				'CAPDROP',
+				'Enable Capdrop (capdrop,nocapdrop)',
+				($this->GetPIE_CAPDROP() == "on"),
+				'on'
+			))->setHelp('Enable cap drop adjustment.');
+		}
+                 
+		if ($selectedAQM["pie_qdelay"]) {
+			$section->addInput(new Form_Checkbox(
+				'pie_qdelay',
+				'QUEUE DELAY TYPE',
+				'Enable Type Of Qdelay (ts,dre)',
+				($this->GetPIE_QDELAY() == "on"),
+				'on'
+			))->setHelp('Set queue delay type to timestamps (checked) or departure rate estimation (unchecked).');
+		}
+
+		if ($selectedAQM["pie_pderand"]) {
+			$section->addInput(new Form_Checkbox(
+				'pie_pderand',
+				'PROB DERAND',
+				'Enable Drop Probability De-randomisation (derand,noderand)',
+				($this->GetPIE_PDERAND() == "on"),
+				'on'
+			))->setHelp('Enable (checked) or disable (unchecked) drop probability de-randomisation.');
+		}
 		$sform->add($section);
 		/* End limiter patch */
 
@@ -4996,6 +5225,20 @@ class dnqueue_class extends dummynet_class {
 			$cflink[$config_key] = $this->GetAQMParameter($key);
 		}
 		$cflink['ecn'] = $this->GetECN();
+
+		$selectedAQM = getAQMs()[$this->getAQM()];
+		if ($selectedAQM["pie_onoff"]) {
+			$cflink['pie_onoff'] = $this->GetPIE_ONOFF();
+		}
+		if ($selectedAQM["pie_capdrop"]) {
+			$cflink['pie_capdrop'] = $this->GetPIE_CAPDROP();
+		}
+		if ($selectedAQM["pie_qdelay"]) {
+			$cflink['pie_qdelay'] = $this->GetPIE_QDELAY();
+		}
+		if ($selectedAQM["pie_pderand"]) {
+			$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
+		}
 		/* End limiter queue patch */
 	}
 }

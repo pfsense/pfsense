@@ -1348,6 +1348,11 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 						$groupmember['gw'] = $member;
 						$groupmember['int'] = $int;
 						$groupmember['gwip'] = $gatewayip;
+						/* set correct linklocal gateway address,
+						 * see https://redmine.pfsense.org/issues/12721 */
+						if (is_ipaddrv6($gatewayip) && is_linklocal($gatewayip) && empty(get_ll_scope($gatewayip))) {
+							$groupmember['gwip'] .= '%' . $int;
+						}
 						$groupmember['weight'] = isset($gateway['weight']) ? $gateway['weight'] : 1;
 						if (is_array($gwvip_arr[$group['name']]) && !empty($gwvip_arr[$group['name']][$member])) {
 							$groupmember['vip'] = $gwvip_arr[$group['name']][$member];

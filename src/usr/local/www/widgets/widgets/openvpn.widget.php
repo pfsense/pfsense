@@ -76,11 +76,17 @@ if (!function_exists('printPanel')) {
 		$opstring .=						$conn['remote_host'];
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						"<i class=\"fa fa-times-circle\" ";
-		$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "');\" ";
+		$opstring .=						"<i class=\"fa fa-times\" ";
+		$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "', '');\" ";
 		$opstring .=							"style=\"cursor:pointer;\" ";
 		$opstring .=							"name=\"" . "i:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" ";
 		$opstring .=							"title=\"" . sprintf(gettext('Kill client connection from %s'), $conn['remote_host']) . "\">";
+		$opstring .=						"</i>&nbsp;";
+		$opstring .=						"<i class=\"fa fa-times-circle text-danger\" ";
+		$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "', '" . $conn['client_id'] . "');\" ";
+		$opstring .=							"style=\"cursor:pointer;\" ";
+		$opstring .=							"name=\"" . "i:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" ";
+		$opstring .=							"title=\"" . sprintf(gettext('Halt client connection from %s'), $conn['remote_host']) . "\">";
 		$opstring .=						"</i>";
 		$opstring .=					"</td>";
 		$opstring .=				"</tr>";
@@ -281,8 +287,9 @@ if ($_GET['action']) {
 	if ($_GET['action'] == "kill") {
 		$port = $_GET['port'];
 		$remipp = $_GET['remipp'];
+		$client_id  = $_GET['client_id'];
 		if (!empty($port) and !empty($remipp)) {
-			$retval = openvpn_kill_client($port, $remipp);
+			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
@@ -399,11 +406,11 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 <script type="text/javascript">
 //<![CDATA[
-	function killClient(mport, remipp) {
+	function killClient(mport, remipp, client_id) {
 
 		$.ajax(
 			"widgets/widgets/openvpn.widget.php" +
-				"?action=kill&port=" + mport + "&remipp=" + remipp,
+				"?action=kill&port=" + mport + "&remipp=" + remipp + "&client_id=" + client_id,
 			{ type: "get", complete: killComplete }
 		);
 	}

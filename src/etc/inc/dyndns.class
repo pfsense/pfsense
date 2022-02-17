@@ -2415,6 +2415,10 @@
 				case 'namecheap':
 					$tmp = str_replace("^M", "", $data);
 					$ncresponse = @xml2array($tmp);
+					/* If XML parsing failed, it may be due to mismatched encoding on the response, drop the xml line. */
+					if (empty($ncresponse)) {
+						$ncresponse = @xml2array(substr($tmp, strpos($tmp, "\n") + 1));
+					}
 					if (preg_match("/internal server error/i", $data)) {
 						$status = $status_intro . $error_str . gettext("Server side error.");
 					} else if (preg_match("/request is badly formed/i", $data)) {

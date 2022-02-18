@@ -1081,6 +1081,13 @@ function interface_lagg_configure($lagg, $flush = true) {
 		$lacptimeout = '';
 	}
 
+	if ((($lagg['proto'] == 'lacp') || ($lagg['proto'] == 'loadbalance')) &&
+	    isset($lagg['lagghash']) && !empty($lagg['lagghash'])) {
+		$lagghash = 'lagghash ' . escapeshellarg($lagg['lagghash']);
+	} else {
+		$lagghash = '';
+	}
+
 	foreach ($members as $member) {
 		if (!does_interface_exist($member)) {
 			continue;
@@ -1097,7 +1104,7 @@ function interface_lagg_configure($lagg, $flush = true) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($laggif) . " laggport " . escapeshellarg($member));
 	}
 
-	mwexec("/sbin/ifconfig {$laggif} laggproto " . escapeshellarg($lagg['proto']) . " {$lacptimeout}");
+	mwexec("/sbin/ifconfig " escapeshellarg($laggif) . " laggproto " . escapeshellarg($lagg['proto']) . " {$lacptimeout} {$lagghash}");
 
 	if ($flush) {
 		get_interface_arr(true);

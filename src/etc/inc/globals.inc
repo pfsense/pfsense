@@ -357,4 +357,15 @@ $ssh_keys = array(
 global $sshConfigDir;
 $sshConfigDir = "/etc/ssh";
 
+global $lagg_hash_list;
+$lagg_hash_list = array(
+	'l2,l3,l4' => 'Layer 2/3/4 (default)',
+	'l2' => 'Layer 2 (MAC Address)',
+	'l3' => 'Layer 3 (IP Address)',
+	'l4' => 'Layer 4 (Port Number)',
+	'l2,l3' => 'Layer 2/3 (MAC + IP)',
+	'l3,l4' => 'Layer 3/4 (IP + Port)',
+	'l2,l4' => 'Layer 2/4 (MAC + Port)'
+);
+
 ?>

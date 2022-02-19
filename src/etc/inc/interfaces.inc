@@ -1104,7 +1104,7 @@ function interface_lagg_configure($lagg, $flush = true) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($laggif) . " laggport " . escapeshellarg($member));
 	}
 
-	mwexec("/sbin/ifconfig " escapeshellarg($laggif) . " laggproto " . escapeshellarg($lagg['proto']) . " {$lacptimeout} {$lagghash}");
+	mwexec("/sbin/ifconfig " . escapeshellarg($laggif) . " laggproto " . escapeshellarg($lagg['proto']) . " {$lacptimeout} {$lagghash}");
 
 	if ($flush) {
 		get_interface_arr(true);

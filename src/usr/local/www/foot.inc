@@ -54,7 +54,7 @@
 	//<![CDATA[
 		// Un-hide the "Top of page" icons if the page is larger than the window
 		if ($(document).height() > $(window).height()) {
-		    $('[id^=tp]').show();
+			$('[id^=tp]').show();
 		}
 	//]]>
 	</script>

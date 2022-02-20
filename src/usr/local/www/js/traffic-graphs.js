@@ -20,14 +20,14 @@
 function graph_init() {
 
 	window.charts = {};
-    window.myData = {};
-    window.updateIds = 0;
-    window.updateTimerIds = 0;
-    window.latest = [];
-    //TODO make it fall on a second value so it increments better
-    var now = then = new Date(Date.now());
+	window.myData = {};
+	window.updateIds = 0;
+	window.updateTimerIds = 0;
+	window.latest = [];
+	//TODO make it fall on a second value so it increments better
+	var now = then = new Date(Date.now());
 
-    var nowTime = now.getTime();
+	var nowTime = now.getTime();
 
 	$.each(window.interfaces, function( key, value ) {
 
@@ -187,13 +187,13 @@ function draw_graph(then) {
 				.text(myData[value]['interfacename']);
 
 			charts[value].yAxis
-		    	.tickFormat(d3.format('.2s'))
-		    	.showMaxMin(false);
+				.tickFormat(d3.format('.2s'))
+				.showMaxMin(false);
 
 			d3.select('#traffic-chart-' + value + ' svg')
 				.datum(myData[value])
-		    	.transition().duration(500)
-		    	.call(charts[value]);
+				.transition().duration(500)
+				.call(charts[value]);
 
 			nv.utils.windowResize(charts[value].update);
 
@@ -251,7 +251,6 @@ function draw_graph(then) {
 				//$(".traffic-widget-chart").remove();
 				//$("#traffic-chart-error").show().html('<strong>Error</strong>: ' + error);
 				return console.warn("Caught: " + error);
-
 
 			}
 

@@ -209,8 +209,8 @@ function output_menu($arrayitem, $target = null, $section = "") {
 
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
 		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" ||
-		    (($section == "Help") && isAllowedPage("help.php")) ||
-		    (substr($item[1], 0, 8) == "https://")) {
+			(($section == "Help") && isAllowedPage("help.php")) ||
+			(substr($item[1], 0, 8) == "https://")) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 
 			if ($target) {
@@ -381,7 +381,7 @@ $wifdescrs = array();
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
-	    preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
+		preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
 		$wifdescrs[$ent] = $entdesc;
 	}
 }
@@ -489,24 +489,24 @@ if (are_notices_pending()) {
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
 			<?php
-                if ($user_settings['webgui']['webguihostnamemenu'] == 'hostonly') {
-                    $help_menu_title = htmlspecialchars($config['system']['hostname']);
-                }
-                elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
-                    $help_menu_title = htmlspecialchars($system_url);
-                }
-                else {
-                    $help_menu_title = 'Help';
-                }
-                foreach ([
-					['name' => 'System',	     'menu' => $system_menu,	  'href' => null],
-					['name' => 'Interfaces',     'menu' => $interfaces_menu,  'href' => null],
-					['name' => 'Firewall',	     'menu' => $firewall_menu,	  'href' => null],
-					['name' => 'Services',	     'menu' => $services_menu,	  'href' => null],
-					['name' => 'VPN',		     'menu' => $vpn_menu,		  'href' => null],
-					['name' => 'Status',	     'menu' => $status_menu,	  'href' => null],
-					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
-                    ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
+				if ($user_settings['webgui']['webguihostnamemenu'] == 'hostonly') {
+					$help_menu_title = htmlspecialchars($config['system']['hostname']);
+				}
+				elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
+					$help_menu_title = htmlspecialchars($system_url);
+				}
+				else {
+					$help_menu_title = 'Help';
+				}
+				foreach ([
+					['name' => 'System',		 'menu' => $system_menu,	  'href' => null],
+					['name' => 'Interfaces',	 'menu' => $interfaces_menu,  'href' => null],
+					['name' => 'Firewall',		 'menu' => $firewall_menu,	  'href' => null],
+					['name' => 'Services',		 'menu' => $services_menu,	  'href' => null],
+					['name' => 'VPN',			 'menu' => $vpn_menu,		  'href' => null],
+					['name' => 'Status',		 'menu' => $status_menu,	  'href' => null],
+					['name' => 'Diagnostics',	'menu' => $diagnostics_menu, 'href' => null],
+					['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
@@ -693,20 +693,20 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 $warning_text = "";
 if (file_exists('/conf/needs_package_sync') && platform_booting()) {
 	$warning_text = sprintf(gettext(
-	    '%1$s%3$s is booting, then packages will be reinstalled in the ' .
-	    'background.%2$s%1$sDo not make changes in the GUI until this is ' .
-	    'complete.%2$s'), '<p>', '</p>', $g['product_label']);
+		'%1$s%3$s is booting, then packages will be reinstalled in the ' .
+		'background.%2$s%1$sDo not make changes in the GUI until this is ' .
+		'complete.%2$s'), '<p>', '</p>', $g['product_label']);
 } elseif (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	$warning_text = sprintf(gettext('%1$sPackages are currently being ' .
-	    'reinstalled in the background.%2$s%1$sDo not make changes in ' .
-	    'the GUI until this is complete.%2$s'), '<p>', '</p>');
+		'reinstalled in the background.%2$s%1$sDo not make changes in ' .
+		'the GUI until this is complete.%2$s'), '<p>', '</p>');
 	$warning_text .= sprintf(gettext('%1$sIf the above message is still ' .
-	    'displayed after a couple of hours, use the \'Clear Package ' .
-	    'Lock\' button on the %3$s page and reinstall packages manually.' .
-	    '%2$s'), '<p>', '</p>', sprintf('<a href="diag_backup.php" ' .
-	    'title="%1$s &gt; %2$s">%1$s &gt; %2$s</a>', gettext('Diagnostics'),
-	    htmlspecialchars(gettext('Backup & Restore'))));
+		'displayed after a couple of hours, use the \'Clear Package ' .
+		'Lock\' button on the %3$s page and reinstall packages manually.' .
+		'%2$s'), '<p>', '</p>', sprintf('<a href="diag_backup.php" ' .
+		'title="%1$s &gt; %2$s">%1$s &gt; %2$s</a>', gettext('Diagnostics'),
+		htmlspecialchars(gettext('Backup & Restore'))));
 }
 
 if (!empty($warning_text)) {
@@ -788,7 +788,7 @@ if ($display_notices):
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function() {
-	    $('#clearallnotices').click(function() {
+		$('#clearallnotices').click(function() {
 			ajaxRequest = $.ajax({
 				url: "/index.php",
 				type: "post",

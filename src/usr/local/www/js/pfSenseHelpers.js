@@ -848,7 +848,7 @@ function postSubmit(data, target) {
 				.attr("name", name)
 				.val(data[name])
 		);
-    }
+	}
 
 	$form
 		.attr("method", "POST")

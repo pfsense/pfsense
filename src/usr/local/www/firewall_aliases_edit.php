@@ -118,11 +118,22 @@ if ($_POST['save']) {
 }
 
 if ($_REQUEST['exportaliases']) {
-	$expdata = explode(" ", $a_aliases[$id]['address']);
-	if ($a_aliases[$id]['type'] == 'host') {
-		$expdata = array_map('alias_idn_to_utf8', $expdata);
+	$addresses = explode(" ", $pconfig['address']);
+	$details = explode("||", $pconfig['detail']);
+	$exportalias = array();
+	foreach ($addresses as $id => $addr) {
+		if (!empty($details[$id])) {
+			$det = " {$details[$id]}";
+		} else {
+			$det = '';
+		}
+		if (is_fqdn($addr)) {
+			$exportalias[] = alias_idn_to_utf8($addr) . $det;
+		} else {
+			$exportalias[] = $addr . $det;
+		}
 	}
-	$expdata = implode("\n", $expdata);
+	$expdata = implode("\n", $exportalias);
 	$expdata .= "\n";
 	send_user_download('data', $expdata, "{$_POST['origname']}.txt");
 }

@@ -863,7 +863,8 @@ if ($_POST['save']) {
 
 		$filterent['type'] = $_POST['type'];
 
-		if (!isset($_POST['interface']) || in_array('any', $_POST['interface'])) {
+		if (isset($_POST['floating']) && (!isset($_POST['interface']) ||
+		    in_array('any', $_POST['interface']))) {
 			$_POST['interface'] = array('any');
 		} else {
 			$filterent['interface'] = $_POST['interface'];

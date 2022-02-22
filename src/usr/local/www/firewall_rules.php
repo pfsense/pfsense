@@ -315,6 +315,41 @@ if (isset($_POST['del_x'])) {
 
 	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 	exit;
+} elseif (isset($_POST['dstif']) && !empty($_POST['dstif']) &&
+    isset($iflist[$_POST['dstif']]) && have_ruleint_access($_POST['dstif']) && 
+    is_array($_POST['rule']) && count($_POST['rule'])) {
+    	$confiflist = get_configured_interface_list();
+	foreach ($_POST['rule'] as $rulei) {
+		$filterent = $a_filter[$rulei];
+		$filterent['tracker'] = (int)microtime(true);
+		$filterent['interface'] = $_POST['dstif'];
+		if ($_POST['convertif'] && ($if != $_POST['dstif']) &&
+		    in_array($_POST['dstif'], $confiflist)) {
+			if (isset($filterent['source']['network']) &&
+			    ($filterent['source']['network'] == $if)) {
+				$filterent['source']['network'] = $_POST['dstif'];
+			}
+			if (isset($filterent['destination']['network']) &&
+			    ($filterent['destination']['network'] == $if)) {
+				$filterent['destination']['network'] = $_POST['dstif'];
+			}
+			if (isset($filterent['source']['network']) &&
+			    ($filterent['source']['network'] == ($if . 'ip'))) {
+				$filterent['source']['network'] = $_POST['dstif'] . $ip;
+			}
+			if (isset($filterent['destination']['network']) &&
+			    ($filterent['destination']['network'] == ($if . 'ip'))) {
+				$filterent['destination']['network'] = $_POST['dstif'] . $ip;
+			}
+		}
+		$a_filter[] = $filterent;
+	}
+	if (write_config(gettext("Firewall: Rules - copying selected firewall rules."))) {
+		mark_subsystem_dirty('filter');
+	}
+
+	header("Location: firewall_rules.php?if=" . htmlspecialchars($_POST['dstif']));
+	exit;
 }
 
 $tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));
@@ -397,8 +432,10 @@ if ($if == "FloatingRules") {
 }
 </style>
 
-<form method="post">
+<form id="mainform" method="post">
 	<input name="if" id="if" type="hidden" value="<?=$if?>" />
+	<input name="dstif" id="dstif" type="hidden" value="" />
+	<input name="convertif" id="convertif" type="hidden" value="" />
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=$rules_header_text?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
@@ -962,6 +999,12 @@ if ($seprows[$nrules]) {
 			<i class="fa fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
+		<?php if ($if != 'FloatingRules'):?>
+		<button name="copy_x" type="button" class="btn btn-primary btn-sm" value="<?=gettext("Copy selected rules"); ?>" title="<?=gettext('Copy selected rules')?>" data-toggle="modal" data-target="#rulescopy" style="cursor:pointer;">
+			<i class="fa fa-clone icon-embed-btn"></i>
+			<?=gettext("Copy"); ?>
+		</button>
+		<?php endif;?>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled title="<?=gettext('Save rule order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
@@ -972,7 +1015,45 @@ if ($seprows[$nrules]) {
 		</button>
 	</nav>
 </form>
-
+<?php
+// Create a Modal object to display Rules Copy window
+$form = new Form(false);
+$modal = new Modal('Copy selected rules', 'rulescopy', true);
+$modal->addInput(new Form_Select(
+	'copyr_dstif',
+	'*Destination Interface',
+	$if,
+	filter_get_interface_list()
+))->setHelp('Select the destination interface where the rules should be copied. Rules will be added after existing rules on that interface.');
+$modal->addInput(new Form_Checkbox(
+	'copyr_convertif',
+	'Convert interface definitions',
+	'Enable Interface Address/Net conversion',
+	false
+))->setHelp('Convert source Interface Address/Net definitions to the destination Interface Address/Net.%1$s' .
+	    'For example: LAN Address -> OPT1 Address, or LAN net -> OPT1 net.%1$s' . 
+	    'Interface groups and some special interfaces (IPsec, OpenVPN), do not support this feature.', '<br />');
+$btncopyrules = new Form_Button(
+	'copyr',
+	'Copy',
+	null,
+	'fa-clone'
+);
+$btncopyrules->setAttribute('type','button')->addClass('btn-success');
+$btncancelcopyrules = new Form_Button(
+	'cancel_copyr',
+	'Cancel',
+	null,
+	'fa-undo'
+);
+$btncancelcopyrules->setAttribute('type','button')->addClass('btn-warning');
+$modal->addInput(new Form_StaticText(
+	null,
+	$btncopyrules . $btncancelcopyrules
+));
+$form->add($modal);
+print($form);
+?>
 <div class="infoblock">
 	<div class="alert alert-info clearfix" role="alert"><div class="pull-left">
 		<dl class="dl-horizontal responsive">
@@ -1003,7 +1084,7 @@ if ($seprows[$nrules]) {
 	}
 
 	printf(gettext('%1$sClick the anchor icon %2$s to move checked rules before the clicked row. Hold down ' .
-			'the shift key and click to move the rules after the clicked row.'), '<br /><br />', '<i class="fa fa-anchor"></i>')
+			'the shift key and click to move the rules after the clicked row.'), '<br /><br />', '<i class="fa fa-anchor"></i>');
 ?>
 	</div>
 	</div>
@@ -1142,6 +1223,18 @@ events.push(function() {
 		$(this).prop('checked', checkedStatus);
 		});
 	});
+
+	$("#copyr").click(function() {
+		$("#rulescopy").modal('hide');
+		$("#dstif").val($("#copyr_dstif").val());
+		$("#convertif").val($("#copyr_convertif").val());
+		document.getElementById('mainform').submit();
+	});
+
+	$("#cancel_copyr").click(function() {
+		$("#rulescopy").modal('hide');
+	});
+
 });
 //]]>
 </script>

@@ -1337,8 +1337,12 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 				$gatewayip = "";
 				if (is_ipaddr($gateway['gateway'])) {
 					$gatewayip = $gateway['gateway'];
-				} else if (!empty($int)) {
-					$gatewayip = get_interface_gateway($gateway['friendlyiface']);
+				} elseif (!empty($int)) {
+					if ($gateway['ipprotocol'] == 'inet') {
+						$gatewayip = get_interface_gateway($gateway['friendlyiface']);
+					} else {
+						$gatewayip = get_interface_gateway_v6($gateway['friendlyiface']);
+					}
 				}
 
 				if (!empty($int)) {

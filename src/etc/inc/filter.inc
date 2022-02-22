@@ -951,8 +951,10 @@ function filter_generate_gateways() {
 			$int = $gateway['interface'];
 			$gwip = $gateway['gateway'];
 			$route = "";
-			if (!is_ipaddr($gwip)) {
+			if (($gateway['ipprotocol'] == 'inet') && !is_ipaddrv4($gwip)) {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
+			} elseif (($gateway['ipprotocol'] == 'inet6') && !is_ipaddrv6($gwip)) {
+				$gwip = get_interface_gateway_v6($gateway['friendlyiface']);
 			}
 			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down']) &&
 			    (($GatewaysStatus[$gwname]['status'] != 'down') || isset($gateway['action_disable']))) {

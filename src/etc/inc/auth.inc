@@ -36,6 +36,15 @@ if (!$do_not_include_config_gui_inc) {
 // Will be changed to false if security checks fail
 $security_passed = true;
 
+/* Possible user password hash types.
+ * See https://redmine.pfsense.org/issues/12855
+ */
+global $auth_password_hash_types;
+$auth_password_hash_types = array(
+	'bcrypt' => gettext('bcrypt -- Blowfish-based crypt'),
+	'sha512' => gettext('SHA-512 -- SHA-512-based crypt')
+);
+
 /* If this function doesn't exist, we're being called from Captive Portal or
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form")) {
@@ -431,15 +440,14 @@ function local_backed($username, $passwd) {
 		return false;
 	}
 
-	if ($user['sha512-hash']) {
-		if (hash_equals($user['sha512-hash'], crypt($passwd, $user['sha512-hash']))) {
+	if ($user['bcrypt-hash']) {
+		if (password_verify($passwd, $user['bcrypt-hash'])) {
 			return true;
 		}
 	}
 
-	//for backwards compatibility
-	if ($user['bcrypt-hash']) {
-		if (password_verify($passwd, $user['bcrypt-hash'])) {
+	if ($user['sha512-hash']) {
+		if (hash_equals($user['sha512-hash'], crypt($passwd, $user['sha512-hash']))) {
 			return true;
 		}
 	}
@@ -683,10 +691,10 @@ function local_user_set(& $user) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		$fd = popen($cmd, "w");
-		if (isset($user['sha512-hash'])) {
-			fwrite($fd, $user['sha512-hash']);
-		} elseif (isset($user['bcrypt-hash'])) {
+		if (isset($user['bcrypt-hash'])) {
 			fwrite($fd, $user['bcrypt-hash']);
+		} elseif (isset($user['sha512-hash'])) {
+			fwrite($fd, $user['sha512-hash']);
 		} else {
 			fwrite($fd, $user['password']);
 		}
@@ -727,10 +735,10 @@ function local_user_set(& $user) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	$fd = popen($cmd, "w");
-	if (isset($user['sha512-hash'])) {
-		fwrite($fd, $user['sha512-hash']);
-	} elseif (isset($user['bcrypt-hash'])) {
+	if (isset($user['bcrypt-hash'])) {
 		fwrite($fd, $user['bcrypt-hash']);
+	} elseif (isset($user['sha512-hash'])) {
+		fwrite($fd, $user['sha512-hash']);
 	} else {
 		fwrite($fd, $user['password']);
 	}
@@ -815,9 +823,25 @@ function local_user_set_password(&$user, $password) {
 
 	unset($user['password']);
 	unset($user['md5-hash']);
+	unset($user['sha512-hash']);
 	unset($user['bcrypt-hash']);
-	$salt = substr(bin2hex(random_bytes(16)),0,16);
-	$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
+
+	/* Default to bcrypt hashing if unset.
+	 * See https://redmine.pfsense.org/issues/12855
+	 */
+	$hashalgo = isset($config['system']['webgui']['pwhash']) ? $config['system']['webgui']['pwhash'] : 'bcrypt';
+
+	switch ($hashalgo) {
+		case 'sha512':
+			$salt = substr(bin2hex(random_bytes(16)),0,16);
+			$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
+			break;
+		case 'bcrypt':
+		default:
+			$user['bcrypt-hash'] = password_hash($password, PASSWORD_BCRYPT);
+			break;
+	}
+
 	if (($user['name'] == $config['hasync']['username']) &&
 	    ($config['hasync']['adminsync'] == 'on')) {
 		$config['hasync']['new_password'] = $password;

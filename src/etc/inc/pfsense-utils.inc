@@ -1135,13 +1135,13 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
 	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
 	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
-	    "hw.hn.use_if_start", "net.link.ifqmaxlen");
+	    "hw.hn.use_if_start");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
 		    array("autoboot_delay", "console", "comconsole_speed", "comconsole_port",
 		    "boot_multicons", "boot_serial", "hint.uart.0.flags",
-		    "hint.uart.1.flags"));
+		    "hint.uart.1.flags", "net.link.ifqmaxlen"));
 	}
 	foreach ($input_split as $line) {
 		if (empty($line)) {

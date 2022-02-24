@@ -28,6 +28,8 @@ require_once("pfsense-utils.inc");
 require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("itemid.inc");
+require_once("shaper.inc");
+require_once("guiconfig.inc");
 
 $list = array('' => 'none');
 if (!is_array($qlist)) {
@@ -98,6 +100,9 @@ function saveFilterRule($post, $id, $json = false) {
   init_config_arr(array('filter', 'rule'));
   filter_rules_sort();
   $a_filter = &$config['filter']['rule'];
+  if ($json) {
+    $post = json_decode($post, true);
+  }
   $if = $post['interface'];
 
   if (isset($a_filter[$id]['protocol'])) {

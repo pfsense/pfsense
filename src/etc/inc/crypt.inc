@@ -26,7 +26,9 @@
  * limitations under the License.
  */
 
-	function crypt_data($val, $pass, $opt, $legacy = false) {
+define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
+
+	function crypt_data($val, $pass, $opt, $legacy = false, $iterations = PFS_OPENSSL_DEFAULT_ITERATIONS) {
 		$file = tempnam("/tmp", "php-encrypt");
 		/* Ensure the files do not already exist */
 		unlink_if_exists($file);
@@ -39,13 +41,18 @@
 		 *  unless we need to read old data encrypted without it. */
 		$keyder = ($legacy) ? "" : "-pbkdf2";
 		$md = ($legacy) ? "md5" : "sha256";
+		$iter = ($legacy) ? '' : ' -iter ' . escapeshellarg($iterations);
 
 		$output = "";
 		$exitcode = "";
-		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md ${md} {$keyder} 2> /dev/null", $output, $exitcode);
+		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md ${md} {$keyder} {$iter} 2> /dev/null", $output, $exitcode);
 
 		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");
+		} elseif ($iterations == PFS_OPENSSL_DEFAULT_ITERATIONS) {
+			/* If it failed with the current default iterations,
+			 * next try with previous default number of iterations. */
+			$result = crypt_data($val, $pass, $opt, false, '10000');
 		} elseif ($legacy === false) {
 			/* Operation failed without new options, try old. */
 			$result = crypt_data($val, $pass, $opt, true);

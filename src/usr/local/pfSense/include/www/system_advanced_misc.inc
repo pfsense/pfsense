@@ -298,8 +298,13 @@ function saveSystemAdvancedMisc($post, $json = false) {
 
 		// If the "use ramdisk" setting has changed, or if it is being enabled while an
 		// error is present, indicate that a reboot will be needed.
-		$rv['reboot'] = ($tmpvar_enabled != $tmpvar_set) ||
-		   (file_exists('/conf/ram_disks_failed') && $post['use_mfs_tmpvar'] == "yes");
+		if (($tmpvar_enabled != $tmpvar_set) ||
+		    (file_exists('/conf/ram_disks_failed') && $post['use_mfs_tmpvar'] == "yes") ||
+		    (($post['use_mfs_tmpvar'] == "yes") &&
+		    (($config['system']['use_mfs_tmp_size'] != $post['use_mfs_tmp_size']) ||
+		    ($config['system']['use_mfs_var_size'] != $post['use_mfs_var_size'])))) {
+			$rv['reboot'] = true;
+		}
 
 		$config['system']['use_mfs_tmp_size'] = $post['use_mfs_tmp_size'];
 		$config['system']['use_mfs_var_size'] = $post['use_mfs_var_size'];

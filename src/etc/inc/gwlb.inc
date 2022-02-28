@@ -1128,7 +1128,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		$gateways_arr = order_gateways_as_configured($gateways_arr);
 		$fallback = "";
 		foreach($gateways_arr as $gwname => $gwsttng) {
-			if ($gwsttng['ipprotocol'] != $ipprotocol) {
+			if (($gwsttng['ipprotocol'] != $ipprotocol) || isset($gwsttng['force_down'])) {
 				continue;
 			}
 
@@ -1141,9 +1141,11 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				$fallback = $gwname;
 			}
 		}
-		if (empty($set_dfltgwname)) {
+		if (empty($set_dfltgwname) && !empty($fallback)) {
 			log_error(sprintf("Gateway, none 'available' for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
 			$set_dfltgwname = $fallback;
+		} else {
+			log_error("Gateway, NONE AVAILABLE");
 		}
 	} else {
 		// a gwgroup is selected
@@ -1182,6 +1184,8 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	}
 	if (!empty($set_dfltgwname) && isset($gateways_arr[$set_dfltgwname])) {
 		setdefaultgateway($gateways_arr[$set_dfltgwname]);
+	} elseif (empty($set_dfltgwname)) {
+		route_del('default', $ipprotocol); 
 	}
 }
 

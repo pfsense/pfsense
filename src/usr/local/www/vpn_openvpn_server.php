@@ -608,6 +608,9 @@ if ($_POST['save']) {
 		if (!empty($pconfig['serverbridge_interface']) &&
 		    !array_key_exists($pconfig['serverbridge_interface'], openvpn_build_bridge_list())) {
 			$input_errors[] = gettext("The selected Server Bridge Interface is not valid.");
+		} elseif (empty($pconfig['serverbridge_interface']) && empty($pconfig["tunnel_network"]) &&
+		    empty($pconfig["tunnel_networkv6"])) {
+			$input_errors[] = gettext("TAP server mode requires an IPv4/IPv6 Tunnel Network or Bridge Interface to work.");
 		}
 
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {

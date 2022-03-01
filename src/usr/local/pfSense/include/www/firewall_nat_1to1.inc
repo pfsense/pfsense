@@ -303,6 +303,31 @@ function toggle1to1NATrule($post, $json = false) {
 	}
 }
 
+// Toggle enabled/disabled status for multiple 1 to 1 rules
+function toggleMultiple1to1NATrules($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'onetoone'));
+	$a_1to1 = &$config['nat']['onetoone'];
+
+	foreach ($post['rule'] as $rulei) {
+		if (isset($a_1to1[$rulei]['disabled'])) {
+			unset($a_1to1[$rulei]['disabled']);
+		} else {
+			$a_1to1[$rulei]['disabled'] = true;
+		}
+	}
+
+	if (write_config(gettext("Firewall: NAT: 1:1 - toggle enable/disable for selected NAT 1:1 mappings.")) && !$json) {
+		mark_subsystem_dirty('natconf');
+	}
+
+	if (!$json) {
+		header("Location: firewall_nat_1to1.php");
+		exit;
+	}
+}
+
 // Delete multiple 1 to 1 rules
 function deleteMultiple1to1NATrules($post, $json = false) {
 	global $config;

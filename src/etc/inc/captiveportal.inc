@@ -586,8 +586,8 @@ function captiveportal_init_general_rules($flush = false) {
 
 	$cprules = <<<EOD
 {$flush_rule}
-# Allow traffic that's been passed by layer2
-add 999 allow tagged 1
+# Allow all layer3 so the chain is only evaluated once at layer 2
+add 999 allow all from any to any not layer2
 
 # Table with interfaces that have CP enabled
 table cp_ifaces create type iface valtype skipto
@@ -689,7 +689,7 @@ function captiveportal_init_rules($reinit = false) {
 	$rulenum = $skipto;
 	$cprules .= "table {$cpzone}_pipe_mac create type mac valtype pipe\n";
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg tag 1 MAC table({$cpzone}_pipe_mac)");
+	    "pipe tablearg MAC table({$cpzone}_pipe_mac)");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
 	    "allow pfsync from any to any");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
@@ -741,9 +741,9 @@ function captiveportal_init_rules($reinit = false) {
 		$cprules .= "table {$cpzone}_auth_down create type addr valtype pipe\n";
 	}
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg tag 1 ip from table({$cpzone}_auth_up) to any layer2 in");
+	    "pipe tablearg ip from table({$cpzone}_auth_up) to any in");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg tag 1 ip from any to table({$cpzone}_auth_down) layer2 out");
+	    "pipe tablearg ip from any to table({$cpzone}_auth_down) out");
 
 	if (!empty($config['captiveportal'][$cpzone]['listenporthttp'])) {
 		$listenporthttp = $config['captiveportal'][$cpzone]['listenporthttp'];

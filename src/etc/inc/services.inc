@@ -543,6 +543,8 @@ function services_dhcpdv4_configure() {
 
 	$custoptions = "";
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		$idx = 0;
+		$httpclient = false;
 		if (is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				if (!empty($item['type'])) {
@@ -551,10 +553,21 @@ function services_dhcpdv4_configure() {
 					$itemtype = "text";
 				}
 				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+				if (($item['type'] == "text") &&
+				    ($item['number'] == 60) &&
+				    (base64_decode($item['value']) == "HTTPClient")) {
+					$httpclient = true;
+				} 
+				$idx++;
 			}
+		}
+		if (!empty($dhcpifconf['uefihttpboot']) && !$httpclient) {
+			$custoptions .= "option custom-{$dhcpif}-{$idx} code 60 = text;\n";
 		}
 		if (is_array($dhcpifconf['pool'])) {
 			foreach ($dhcpifconf['pool'] as $poolidx => $poolconf) {
+				$idx = 0;
+				$httpclient = false;
 				if (is_array($poolconf['numberoptions']) && is_array($poolconf['numberoptions']['item'])) {
 					foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
 						if (!empty($item['type'])) {
@@ -563,7 +576,16 @@ function services_dhcpdv4_configure() {
 							$itemtype = "text";
 						}
 						$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+						if (($item['type'] == "text") &&
+						    ($item['number'] == 60) &&
+						    (base64_decode($item['value']) == "HTTPClient")) {
+							$httpclient = true;
+						} 
+						$idx++;
 					}
+				}
+				if (!empty($poolconf['uefihttpboot']) && !$httpclient) {
+					$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$idx} code 60 = text;\n";
 				}
 			}
 		}
@@ -987,6 +1009,8 @@ EOPP;
 			// Handle pool-specific options
 			$dhcpdconf .= "\n";
 			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
+			$idx = 0;
+			$httpclient = false;
 			if (isset($poolconf['numberoptions']['item']) && is_array($poolconf['numberoptions']['item']) && ($all_pools_idx > 0)) {
 				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
 				// This matches the way $poolidx was used when generating the $custoptions string earlier.
@@ -998,7 +1022,18 @@ EOPP;
 					} else {
 						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} {$item_value};\n";
 					}
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					} 
+					$idx++;
 				}
+			}
+			if (!empty($poolconf['uefihttpboot']) && !$httpclient &&
+			    (!isset($dhcpifconf['uefihttpboot']) ||
+			    ($poolconf['uefihttpboot'] != $dhcpifconf['uefihttpboot']))) {
+				$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$idx} \"HTTPClient\";\n";
 			}
 
 			// ldap-server
@@ -1133,6 +1168,8 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdconf .= "\n";
+		$idx = 0;
+		$httpclient = false;
 		if (isset($dhcpifconf['numberoptions']['item']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				$item_value = base64_decode($item['value']);
@@ -1141,7 +1178,16 @@ EOD;
 				} else {
 					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} {$item_value};\n";
 				}
+				if (($item['type'] == "text") &&
+				    ($item['number'] == 60) &&
+				    (base64_decode($item['value']) == "HTTPClient")) {
+					$httpclient = true;
+				} 
+				$idx++;
 			}
+		}
+		if (!empty($dhcpifconf['uefihttpboot']) && !$httpclient) {
+			$dhcpdconf .= "	option custom-{$dhcpif}-{$idx} \"HTTPClient\";\n";
 		}
 
 		// ldap-server

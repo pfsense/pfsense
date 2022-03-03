@@ -1035,7 +1035,7 @@ $modal->addInput(new Form_Checkbox(
 	    'Interface groups and some special interfaces (IPsec, OpenVPN), do not support this feature.', '<br />');
 $btncopyrules = new Form_Button(
 	'copyr',
-	'Copy',
+	'Paste',
 	null,
 	'fa-clone'
 );

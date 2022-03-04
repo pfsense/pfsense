@@ -49,7 +49,7 @@ define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 
 		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");
-		} elseif ($iterations == PFS_OPENSSL_DEFAULT_ITERATIONS) {
+		} elseif (($legacy === false) && ($iterations == PFS_OPENSSL_DEFAULT_ITERATIONS)) {
 			/* If it failed with the current default iterations,
 			 * next try with previous default number of iterations. */
 			$result = crypt_data($val, $pass, $opt, false, '10000');

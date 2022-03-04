@@ -592,6 +592,8 @@ function services_dhcpdv4_configure() {
 		if (is_array($dhcpifconf['staticmap'])) {
 			$i = 0;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
+				$idx = 0;
+				$httpclient = false;
 				if (is_array($sm['numberoptions']) && is_array($sm['numberoptions']['item'])) {
 					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
 						if (!empty($item['type'])) {
@@ -601,6 +603,15 @@ function services_dhcpdv4_configure() {
 						}
 						$custoptions .= "option custom-s_{$dhcpif}_{$i}-{$itemidx} code {$item['number']} = {$itemtype};\n";
 					}
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					} 
+					$idx++;
+				}
+				if (!empty($sm['uefihttpboot']) && !$httpclient) {
+					$custoptions .= "option custom-s_{$dhcpif}_{$i}-{$idx} code 60 = text;\n";
 				}
 				$i++;
 			}
@@ -1352,6 +1363,8 @@ EOD;
 
 				// Handle option, number rowhelper values
 				$dhcpdconf .= "\n";
+				$idx = 0;
+				$httpclient = false;
 				if (isset($sm['numberoptions']['item']) && is_array($sm['numberoptions']['item'])) {
 					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
 						$item_value = base64_decode($item['value']);
@@ -1361,6 +1374,15 @@ EOD;
 							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} {$item_value};\n";
 						}
 					}
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					} 
+					$idx++;
+				}
+				if (!empty($poolconf['uefihttpboot']) && !$httpclient) {
+					$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$idx} \"HTTPClient\";\n";
 				}
 
 				// ldap-server
@@ -1377,6 +1399,9 @@ EOD;
 					$pxe_files = array();
 					if (!empty($sm['filename'])) {
 						$filename = $sm['filename'];
+					}
+					if (!empty($sm['uefihttpboot'])) {
+						$pxe_files[] = array('HTTPClient', $sm['uefihttpboot']);
 					}
 					if (!empty($sm['filename32'])) {
 						$pxe_files[] = array('00:06', $sm['filename32']);
@@ -1395,11 +1420,16 @@ EOD;
 					$pxeif = false;
 					if (is_array($pxe_files) && !empty($pxe_files)) {
 						foreach ($pxe_files as $pxe) {
+							if ($pxe[0] == 'HTTPClient') {
+								$expr = "substring (option vendor-class-identifier, 0, 10) = \"HTTPClient\" {\n";
+							} else {
+								$expr = "option arch = {$pxe[0]} {\n";
+							}
 							if (!$pxeif) {
-								$dhcpdconf .= "	if option arch = {$pxe[0]} {\n";
+								$dhcpdconf .= "	if " . $expr; 
 								$pxeif = true;
 							} else {
-								$dhcpdconf .= " else if option arch = {$pxe[0]} {\n";
+								$dhcpdconf .= " else if " . $expr; 
 							}
 							$dhcpdconf .= "		filename \"{$pxe[1]}\";\n";
 							$dhcpdconf .= "	}";

@@ -304,6 +304,15 @@ $section->addInput(new Form_Checkbox(
 	'down, the rule is created omitting the gateway. This option overrides that '.
 	'behavior by omitting the entire rule instead.');
 
+$section->addInput(new Form_Checkbox(
+	'dpinger_dont_add_static_routes',
+	'Static routes',
+	'Do not add static routes for gateway monitor IP addresses',
+	$pconfig['dpinger_dont_add_static_routes']
+))->setHelp('By default the firewall adds static routes for gateway monitor IP addresses '.
+	'to ensure traffic to the monitor IP address leaves via the correct interface. '.
+	'Enabling this checkbox overrides that behavior.');
+
 $form->add($section);
 $section = new Form_Section('RAM Disk Settings (Reboot to Apply Changes)');
 

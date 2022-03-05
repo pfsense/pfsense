@@ -2599,6 +2599,15 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 			}
 		}
 
+		/* avoid 127.0.0.1 dns loop,
+		 * see https://redmine.pfsense.org/issues/12902 */
+		$args .= ' --no-resolv';
+		foreach (get_dns_nameservers(false, true) as $dns) {
+			if ($dns != '127.0.0.1') {
+				$args .= ' --server=' . $dns;
+			}
+		}
+
 		/* Allow DNS Rebind for forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {

@@ -192,6 +192,24 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);
 			showDef($ifinfo['media'], gettext("Media"), $ifinfo['media']);
+			if ($ifinfo['plugged']) {
+				showDef($ifinfo['plugged'], gettext("Plugged"), $ifinfo['plugged']);
+			}
+			if ($ifinfo['vendor']) {
+				showDef($ifinfo['vendor'], gettext("Vendor"), $ifinfo['vendor']);
+			}
+			if ($ifinfo['temperature']) {
+				showDef($ifinfo['temperature'], gettext("Temperature"), $ifinfo['temperature']);
+			}
+			if ($ifinfo['voltage']) {
+				showDef($ifinfo['voltage'], gettext("voltage"), $ifinfo['voltage']);
+			}
+			if ($ifinfo['RX']) {
+				showDef($ifinfo['rx'], gettext("RX"), $ifinfo['rx']);
+			}
+			if ($ifinfo['TX']) {
+				showDef($ifinfo['tx'], gettext("TX"), $ifinfo['tx']);
+			}
 			showDef($ifinfo['laggproto'], gettext("LAGG Protocol"), $ifinfo['laggproto']);
 			showDef($ifinfo['laggport'], gettext("LAGG Ports"), $laggport);
 			showDef($ifinfo['channel'], gettext("Channel"), $ifinfo['channel']);

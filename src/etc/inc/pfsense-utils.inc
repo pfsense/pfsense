@@ -1721,7 +1721,7 @@ function get_interface_info($ifdescr) {
 	if ($ifinfo['status'] == "up") {
 		/* try to determine media with ifconfig */
 		unset($ifconfiginfo);
-		exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
+		exec("/sbin/ifconfig -v " . $ifinfo['if'], $ifconfiginfo);
 		$wifconfiginfo = array();
 		if (is_interface_wireless($ifdescr)) {
 			exec("/sbin/ifconfig {$ifinfo['if']} list sta", $wifconfiginfo);
@@ -1764,6 +1764,20 @@ function get_interface_info($ifdescr) {
 			}
 			if (preg_match("/laggport: (.*)$/", $ici, $matches)) {
 				$ifinfo['laggport'][] = $matches[1];
+			}
+			if (preg_match("/plugged: (.*)$/", $ici, $matches)) {
+				$ifinfo['plugged'][] = $matches[1];
+			}
+			if (preg_match("/vendor: (.*)$/", $ici, $matches)) {
+				$ifinfo['vendor'][] = $matches[1];
+			}
+			if (preg_match("/module temperature: (.*) Voltage: (.*)$/", $ici, $matches)) {
+				$ifinfo['temperature'][] = $matches[1];
+				$ifinfo['voltage'][] = $matches[2];
+			}
+			if (preg_match("/RX: (.*) TX: (.*)$/", $ici, $matches)) {
+				$ifinfo['rx'][] = $matches[1];
+				$ifinfo['tx'][] = $matches[2];
 			}
 		}
 		foreach ($wifconfiginfo as $ici) {

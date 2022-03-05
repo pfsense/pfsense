@@ -233,8 +233,6 @@ $section->addInput(new Form_Checkbox(
 	'to ensure traffic to the monitor IP address leaves via the correct interface. '.
 	'Enabling this checkbox overrides that behavior.');
 
-$form->add($section);
-
 $section->addInput(new Form_Checkbox(
 	'force_down',
 	'Force state',

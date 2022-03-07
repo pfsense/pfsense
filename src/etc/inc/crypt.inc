@@ -28,13 +28,17 @@
 
 define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 
-	function crypt_data($val, $pass, $opt, $legacy = false, $iterations = PFS_OPENSSL_DEFAULT_ITERATIONS) {
-		$file = tempnam("/tmp", "php-encrypt");
-		/* Ensure the files do not already exist */
+	function crypt_cleanup($file) {
 		unlink_if_exists($file);
 		unlink_if_exists("{$file}.dec");
 		unlink_if_exists("{$file}.enc");
+	}
 
+	function crypt_data($val, $pass, $opt, $legacy = false, $iterations = PFS_OPENSSL_DEFAULT_ITERATIONS) {
+		$file = tempnam("/tmp", "php-encrypt");
+		/* Ensure the files do not already exist */
+
+		crypt_cleanup($file);
 		file_put_contents("{$file}.dec", $val);
 
 		/* Use PBKDF2 Key Derivation (https://en.wikipedia.org/wiki/PBKDF2)
@@ -49,12 +53,14 @@ define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 
 		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");
-		} elseif (($legacy === false) && ($iterations == PFS_OPENSSL_DEFAULT_ITERATIONS)) {
+		} elseif (($opt == "-d") && ($legacy === false) && ($iterations == PFS_OPENSSL_DEFAULT_ITERATIONS)) {
 			/* If it failed with the current default iterations,
 			 * next try with previous default number of iterations. */
+			crypt_cleanup($file);
 			$result = crypt_data($val, $pass, $opt, false, '10000');
-		} elseif ($legacy === false) {
+		} elseif (($opt == "-d") && ($legacy === false)) {
 			/* Operation failed without new options, try old. */
+			crypt_cleanup($file);
 			$result = crypt_data($val, $pass, $opt, true);
 		} else {
 			$result = "";
@@ -62,9 +68,7 @@ define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 		}
 
 		/* Cleanup */
-		unlink_if_exists($file);
-		unlink_if_exists("{$file}.dec");
-		unlink_if_exists("{$file}.enc");
+		crypt_cleanup($file);
 		return $result;
 	}
 

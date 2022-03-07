@@ -49,12 +49,18 @@ define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 
 		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");
-		} elseif (($legacy === false) && ($iterations == PFS_OPENSSL_DEFAULT_ITERATIONS)) {
-			/* If it failed with the current default iterations,
-			 * next try with previous default number of iterations. */
+		} elseif (($opt == "-d") && ($legacy === false) && ($iterations == PFS_OPENSSL_DEFAULT_ITERATIONS)) {
+			/* If decryption failed with the current default iterations,
+			 * next try with pfsense version ≤ 2.6.0 default number of iterations. */
+			unlink_if_exists($file);
+			unlink_if_exists("{$file}.dec");
+			unlink_if_exists("{$file}.enc");
 			$result = crypt_data($val, $pass, $opt, false, '10000');
-		} elseif ($legacy === false) {
-			/* Operation failed without new options, try old. */
+		} elseif (($opt == "-d") && ($legacy === false)) {
+			/* Decryption failed with new options, try legacy options. */
+			unlink_if_exists($file);
+			unlink_if_exists("{$file}.dec");
+			unlink_if_exists("{$file}.enc");
 			$result = crypt_data($val, $pass, $opt, true);
 		} else {
 			$result = "";

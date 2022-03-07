@@ -64,7 +64,7 @@ if ($_REQUEST['getactivity']) {
 	if (empty($text)) {
 		echo "Invalid filter, check syntax";
 	} else {
-		echo trim($text);
+		echo trim(htmlentities($text));
 	}
 	exit;
 }

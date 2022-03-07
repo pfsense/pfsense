@@ -1889,12 +1889,11 @@ function openvpn_get_active_servers($type="multipoint") {
 			list($tn, $sm) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 
 			if ((($server['mode'] == "p2p_shared_key") ||
-			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) ||
+			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network']) && ($server['mode'] == 'p2p_tls')) ||
 			    ($sm >= 30)) &&
 			    ($type == "p2p")) {
 				$servers[] = openvpn_get_client_status($server, $socket);
 			} elseif (($server['mode'] != "p2p_shared_key") &&
-			    !(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) &&
 			    ($type == "multipoint") &&
 			    ($sm < 30)) {
 				$servers[] = openvpn_get_server_status($server, $socket);

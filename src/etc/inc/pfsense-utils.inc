@@ -1766,18 +1766,18 @@ function get_interface_info($ifdescr) {
 				$ifinfo['laggport'][] = $matches[1];
 			}
 			if (preg_match("/plugged: (.*)$/", $ici, $matches)) {
-				$ifinfo['plugged'][] = $matches[1];
+				$ifinfo['plugged'] = $matches[1];
 			}
 			if (preg_match("/vendor: (.*)$/", $ici, $matches)) {
-				$ifinfo['vendor'][] = $matches[1];
+				$ifinfo['vendor'] = $matches[1];
 			}
 			if (preg_match("/module temperature: (.*) Voltage: (.*)$/", $ici, $matches)) {
-				$ifinfo['temperature'][] = $matches[1];
-				$ifinfo['voltage'][] = $matches[2];
+				$ifinfo['temperature'] = $matches[1];
+				$ifinfo['voltage'] = $matches[2];
 			}
 			if (preg_match("/RX: (.*) TX: (.*)$/", $ici, $matches)) {
-				$ifinfo['rx'][] = $matches[1];
-				$ifinfo['tx'][] = $matches[2];
+				$ifinfo['rx'] = $matches[1];
+				$ifinfo['tx'] = $matches[2];
 			}
 		}
 		foreach ($wifconfiginfo as $ici) {

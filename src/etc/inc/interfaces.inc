@@ -1905,6 +1905,15 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		}
 	}
 
+	/* check all gateways, including dynamic,
+	 * see https://redmine.pfsense.org/issues/12920 */
+	foreach (return_gateways_array(true) as $gw) {
+		if ($gw['friendlyiface'] == $interface) {
+			$restart_gateways_monitor = true;
+			break;
+		}
+	}
+
 	switch ($ifcfg['ipaddr']) {
 		case "ppp":
 		case "pppoe":
@@ -2055,12 +2064,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	}
 
 	/* If interface has a gateway, we need to bounce dpinger to keep dpinger happy */
-	foreach (return_gateways_array(true) as $gw) {
-		if ($gw['friendlyiface'] !== $interface) {
-			continue;
-		}
+	if ($restart_gateways_monitor) {
 		setup_gateways_monitor();
-		break;
 	}
 
 	return;

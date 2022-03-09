@@ -650,7 +650,9 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				unset($gateway['defaultgw']);
 			}
 
-			if (empty($config['interfaces'][$gateway['interface']])) {
+			$ifinfo = get_interface_info($gateway['interface']);
+			if (empty($config['interfaces'][$gateway['interface']]) ||
+			    ($ifinfo['status'] == 'down') || ($ifinfo['status'] == 'no carrier')) {
 				if ($inactive === false) {
 					continue;
 				} else {

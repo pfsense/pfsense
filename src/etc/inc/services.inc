@@ -935,7 +935,7 @@ EOPP;
 				if (empty($mac)) {
 					continue;
 				}
-				$dhcpdconf .= "		$deny_action members of \"" . str_replace(':', '', $mac) . "\";\n";
+				$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
 
 			if ($poolconf['failover_peerip'] <> "") {

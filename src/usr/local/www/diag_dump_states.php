@@ -134,6 +134,14 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'Simple filter such as 192.168, v6, icmp or ESTABLISHED']
 ));
 
+$section->addInput(new Form_Input(
+	'ruleid',
+	'Rule ID',
+	'text',
+	$_POST['ruleid'],
+	['placeholder' => 'Comma separated list of integer rule IDs']
+));
+
 $filterbtn = new Form_Button(
 	'filterbtn',
 	'Filter',

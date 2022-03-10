@@ -47,8 +47,8 @@ function process_state_req($post, $request, $json = false) {
 
 	$arr = array();
 	/* RuleId filter. */
-	if (isset($request['ruleid'])) {
-		$ids = explode(",", $request['ruleid']);
+	if (isset($post['ruleid']) && strlen($post['ruleid']) > 0) {
+		$ids = explode(",", $post['ruleid']);
 		for ($i = 0; $i < count($ids); $i++) {
 			$arr[] = array("ruleid" => intval($ids[$i]));
 		}
@@ -63,7 +63,7 @@ function process_state_req($post, $request, $json = false) {
 		$arr[] = array("filter" => $post['filter']);
 	}
 
-	if (isset($post['filter']) || isset($request['ruleid']) ||
+	if (isset($post['filter']) || isset($post['ruleid']) ||
 	    !isset($config['system']['webgui']['requirestatefilter'])) {
 		if (count($arr) > 0) {
 			$res = pfSense_get_pf_states($arr);

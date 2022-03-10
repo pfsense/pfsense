@@ -647,7 +647,7 @@ function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv
 	}
 
 	if ($error) {
-		return sprintf(gettext("The field '%1\$s' must contain only valid %2\$s CIDR range(s) separated by commas."), $name, $ipproto);
+		return sprintf(gettext("The field '%1\$s' must contain only valid %2\$s CIDR range(s) or FQDN(s) separated by commas."), $name, $ipproto);
 	} else {
 		return false;
 	}
@@ -657,8 +657,8 @@ function openvpn_validate_cidr_ipv4($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
 		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
-			foreach (alias_to_subnets_recursive($value) as $net) {
-				if (!is_subnetv4($net)) {
+			foreach (alias_to_subnets_recursive($value, true) as $net) {
+				if (!is_subnetv4($net) && !is_fqdn($net)) {
 					return false;
 				}
 			}
@@ -676,8 +676,8 @@ function openvpn_validate_cidr_ipv6($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
 		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
-			foreach (alias_to_subnets_recursive($value) as $net) {
-				if (!is_subnetv6($net)) {
+			foreach (alias_to_subnets_recursive($value, true) as $net) {
+				if (!is_subnetv6($net) && !is_fqdn($net)) {
 					return false;
 				}
 			}
@@ -2272,10 +2272,17 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 	$tmpnetworks = explode(',', $value);
 	foreach ($tmpnetworks as $network) {
 		if (is_alias($network)) {
-			foreach (alias_to_subnets_recursive($network) as $net) {
+			foreach (alias_to_subnets_recursive($network, true) as $net) {
 				if ((($ipproto == "ipv4") && is_subnetv4($net)) ||
 				    (($ipproto == "ipv6") && is_subnetv6($net))) {
 					$networks[] = $net;
+				} elseif (is_fqdn($net)) {
+					if ($ipproto == "ipv4" ) {
+						$recordtypes = array(DNS_A);
+					} else {
+						$recordtypes = array(DNS_AAAA);
+					}
+					$networks = array_merge($networks, resolve_host_addresses($net, $recordtypes, false));
 				}
 			}
 		} else {

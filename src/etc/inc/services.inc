@@ -561,7 +561,7 @@ function services_dhcpdv4_configure() {
 				$idx++;
 			}
 		}
-		if (!empty($dhcpifconf['uefihttpboot']) && !$httpclient) {
+		if (!empty($dhcpifconf['uefihttpboot']) && isset($dhcpifconf['netboot']) && !$httpclient) {
 			$custoptions .= "option custom-{$dhcpif}-{$idx} code 60 = text;\n";
 		}
 		if (is_array($dhcpifconf['pool'])) {
@@ -584,7 +584,7 @@ function services_dhcpdv4_configure() {
 						$idx++;
 					}
 				}
-				if (!empty($poolconf['uefihttpboot']) && !$httpclient) {
+				if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient) {
 					$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$idx} code 60 = text;\n";
 				}
 			}
@@ -610,7 +610,7 @@ function services_dhcpdv4_configure() {
 					} 
 					$idx++;
 				}
-				if (!empty($sm['uefihttpboot']) && !$httpclient) {
+				if (!empty($sm['uefihttpboot']) && isset($sm['netboot']) && !$httpclient) {
 					$custoptions .= "option custom-s_{$dhcpif}_{$i}-{$idx} code 60 = text;\n";
 				}
 				$i++;
@@ -1041,7 +1041,7 @@ EOPP;
 					$idx++;
 				}
 			}
-			if (!empty($poolconf['uefihttpboot']) && !$httpclient &&
+			if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient &&
 			    (!isset($dhcpifconf['uefihttpboot']) ||
 			    ($poolconf['uefihttpboot'] != $dhcpifconf['uefihttpboot']))) {
 				$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$idx} \"HTTPClient\";\n";
@@ -1197,7 +1197,7 @@ EOD;
 				$idx++;
 			}
 		}
-		if (!empty($dhcpifconf['uefihttpboot']) && !$httpclient) {
+		if (!empty($dhcpifconf['uefihttpboot']) && isset($dhcpifconf['netboot']) && !$httpclient) {
 			$dhcpdconf .= "	option custom-{$dhcpif}-{$idx} \"HTTPClient\";\n";
 		}
 
@@ -1381,7 +1381,7 @@ EOD;
 					} 
 					$idx++;
 				}
-				if (!empty($poolconf['uefihttpboot']) && !$httpclient) {
+				if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient) {
 					$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$idx} \"HTTPClient\";\n";
 				}
 

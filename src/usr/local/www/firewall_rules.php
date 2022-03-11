@@ -1003,16 +1003,16 @@ if ($seprows[$nrules]) {
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" title="<?=gettext('Delete selected rules')?>">
+		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" disabled title="<?=gettext('Delete selected rules')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" title="<?=gettext('Toggle selected rules')?>">
+		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" disabled title="<?=gettext('Toggle selected rules')?>">
 			<i class="fa fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
 		<?php if ($if != 'FloatingRules'):?>
-		<button name="copy_x" type="button" class="btn btn-primary btn-sm" value="<?=gettext("Copy selected rules"); ?>" title="<?=gettext('Copy selected rules')?>" data-toggle="modal" data-target="#rulescopy" style="cursor:pointer;">
+		<button id="copy_x" name="copy_x" type="button" class="btn btn-primary btn-sm" value="<?=gettext("Copy selected rules"); ?>" disabled title="<?=gettext('Copy selected rules')?>" data-toggle="modal" data-target="#rulescopy">
 			<i class="fa fa-clone icon-embed-btn"></i>
 			<?=gettext("Copy"); ?>
 		</button>
@@ -1212,6 +1212,22 @@ events.push(function() {
 		saving = true;
 	});
 
+	function buttonsmode() {
+		var buttonsdisable = true;
+		$('[id^=frc]').each(function () {
+			if ($(this).prop("checked")) {
+				buttonsdisable = false;
+			}
+		});
+		$('#del_x').prop('disabled', buttonsdisable);
+		$('#toggle_x').prop('disabled', buttonsdisable);
+		$('#copy_x').prop('disabled', buttonsdisable);
+	}
+
+	$('[id^=fr]').click(function () {
+		buttonsmode();
+	});
+
 	// Provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if ((!saving && dirty) || newSeperator) {
@@ -1234,6 +1250,7 @@ events.push(function() {
 		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
 		$(this).prop('checked', checkedStatus);
 		});
+		buttonsmode();
 	});
 
 	$("#copyr").click(function() {

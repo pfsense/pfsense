@@ -27,6 +27,13 @@ require_once("rrd.inc");
 require_once("ipsec.inc");
 require_once("interfaces.inc");
 
+global $gateway_state_kill_modes;
+$gateway_state_kill_modes = array(
+	'' => gettext("Use global behavior (default)"),
+	'none' => gettext("Do not kill states on gateway failure"),
+	'down' => gettext("Kill states using this gateway when it is down"),
+);
+
 /* Returns an array of default values used for dpinger */
 function return_dpinger_defaults() {
 	return array(
@@ -1735,7 +1742,7 @@ function gateway_is_gwgroup_member($name, $detail=false) {
   Otherwise return an empty $input_errors array
 */
 function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_sn = "") {
-	global $config;
+	global $config, $gateway_state_kill_modes;
 
 	$a_gateways = return_gateways_array(true, false, true, true);
 	$input_errors = array();
@@ -1876,6 +1883,9 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 	}
 	if (isset($gateway_settings['data_payload']) && is_numeric($gateway_settings['data_payload']) && $gateway_settings['data_payload'] < 0) {
 		$input_errors[] = gettext("A valid data payload must be specified.");
+	}
+	if (!empty($gateway_settings['skip_rules_gw_down']) && !array_key_exists($gateway_settings['skip_rules_gw_down'], $gateway_state_kill_modes)) {
+		$input_errors[] = gettext("Please select a valid State Killing on Gateway Failure mode.");
 	}
 	/* only allow correct IPv4 and IPv6 gateway addresses */
 	if (($gateway_settings['gateway'] <> "") && is_ipaddr($gateway_settings['gateway']) && $gateway_settings['gateway'] != "dynamic") {
@@ -2110,6 +2120,7 @@ function save_gateway($gateway_settings, $realid = "") {
 	if ($gateway_settings['force_down'] == "yes") {
 		$gateway['force_down'] = true;
 	}
+	$gateway['gw_down_kill_states'] = $gateway_settings['gw_down_kill_states'];
 	if (is_ipaddr($gateway_settings['monitor'])) {
 		$gateway['monitor'] = $gateway_settings['monitor'];
 	}

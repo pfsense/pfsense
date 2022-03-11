@@ -27,6 +27,13 @@ require_once("system.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 
+global $global_gateway_state_kill_modes;
+$global_gateway_state_kill_modes = array(
+	'none' => gettext("Do not kill states on gateway failure"),
+	'down' => gettext("Kill states for all gateways which are down"),
+	'all' => gettext("Flush all states on gateway failure"),
+);
+
 // Functions included by system_advanced_misc.php =============================
 function getSystemAdvancedMisc($json = false) {
 	global $config;
@@ -54,7 +61,7 @@ function getSystemAdvancedMisc($json = false) {
 	$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
 	$pconfig['mds_disable'] = $config['system']['mds_disable'];
 	$pconfig['schedule_states'] = isset($config['system']['schedule_states']);
-	$pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
+	$pconfig['gw_down_kill_states'] = $config['system']['gw_down_kill_states'];
 	$pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 	$pconfig['dpinger_dont_add_static_routes'] = isset($config['system']['dpinger_dont_add_static_routes']);
 	$pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
@@ -83,7 +90,7 @@ function getSystemAdvancedMisc($json = false) {
 }
 
 function saveSystemAdvancedMisc($post, $json = false) {
-	global $config;
+	global $config, $global_gateway_state_kill_modes;
 
 	$rv = array();
 
@@ -127,6 +134,10 @@ function saveSystemAdvancedMisc($post, $json = false) {
 
 	if (!empty($post['thermal_hardware']) && !array_key_exists($post['thermal_hardware'], $thermal_hardware_modules)) {
 		$input_errors[] = gettext("Please select a valid Thermal Hardware Sensor.");
+	}
+
+	if (!empty($post['gw_down_kill_states']) && !array_key_exists($post['gw_down_kill_states'], $global_gateway_state_kill_modes)) {
+		$input_errors[] = gettext("Please select a valid State Killing on Gateway Failure mode.");
 	}
 
 	if (!empty($post['use_mfs_tmp_size']) && (!is_numeric($post['use_mfs_tmp_size']) || ($post['use_mfs_tmp_size'] < 40))) {
@@ -275,8 +286,8 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			unset($config['system']['schedule_states']);
 		}
 
-		if ($post['gw_down_kill_states'] == "yes") {
-			$config['system']['gw_down_kill_states'] = true;
+		if ($post['gw_down_kill_states']) {
+			$config['system']['gw_down_kill_states'] = $post['gw_down_kill_states'];
 		} else {
 			unset($config['system']['gw_down_kill_states']);
 		}

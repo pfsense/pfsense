@@ -228,34 +228,65 @@ function filter_configure() {
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
 
-	if (!isset($config['system']['gw_down_kill_states'])) {
-		return;
-	}
-
 	$any_gateway_down = false;
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
-			if (empty($gateway['monitor'])) {
+			/* Skip irrelevant or invalid gateway entries */
+			if (empty($gateway['monitor']) ||
+			    !is_ipaddr($gateway['monitor']) ||
+			    strstr($gateway['monitor'], "127.0.0.") ||
+			    empty($a_gateways[$gateway['monitor']])) {
 				continue;
 			}
-			if (!is_ipaddr($gateway['monitor'])) {
+			/* Do not trigger these actions if:
+			 * The gateway is configured to not kill states when down
+			 * Gateway monitoring is disabled
+			 * Gateway monitoring action is disabled
+			 * The gateway is forced down. */
+			if (($gateway['gw_down_kill_states'] == 'none') ||
+			    (isset($gateway['monitor_disable'])) ||
+			    (isset($gateway['action_disable'])) ||
+			    (isset($gateway['force_down']))) {
 				continue;
 			}
-			if (strstr($gateway['monitor'], "127.0.0.")) {
-				continue;
-			}
-			if (empty($a_gateways[$gateway['monitor']])) {
-				continue;
-			}
+
 			$gwstatus = &$a_gateways[$gateway['monitor']];
 			if (strstr($gwstatus['status'], "down")) {
-				$any_gateway_down = true;
-				break;
+				$any_gateway_down = $gateway['name'];
+				if ($config['system']['gw_down_kill_states'] == 'all') {
+					/* All states will be killed, no need to continue searching. */
+					break;
+				}
+
+				$gwip = lookup_gateway_ip_by_name($gateway['name']);
+				/* Cannot locate the gateway IP address, so we
+				 * cannot proceed. */
+				if (!is_ipaddr($gwip)) {
+					$message = gettext("GW States: Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
+					update_filter_reload_status($message);
+					log_error($message);
+					continue;
+				}
+
+				/* Kill states for the down gateway if the flag is on globally
+				 * or configured to do so on a specific gateway. */
+				if (($config['system']['gw_down_kill_states'] == 'down') ||
+				    ($gateway['gw_down_kill_states'] == 'down')) {
+					$message = gettext("GW States: Killing states for down gateway") . ": {$gateway['name']}, {$gwip}";
+					update_filter_reload_status($message);
+					log_error($message);
+					mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));
+				}
 			}
 		}
 	}
-	if ($any_gateway_down == true) {
+
+	if (($config['system']['gw_down_kill_states'] == 'all') &&
+	    ($any_gateway_down !== false)) {
+		$message = gettext("GW States: One or more gateways is down, flushing all states") . ": {$gateway['name']} ";
+		update_filter_reload_status($message);
+		log_error($message);
 		mwexec("/sbin/pfctl -Fs");
 	}
 }
@@ -3147,6 +3178,7 @@ function filter_generate_user_rule($rule) {
 	/* set the gateway interface */
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
+	$aline['gwlabel'] = "";
 	/* do not process reply-to for gateway'd rules */
 	if ($rule['gateway'] == "" && $aline['direction'] <> "" && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
 		if ($rule['ipprotocol'] == "inet6") {
@@ -3166,6 +3198,7 @@ function filter_generate_user_rule($rule) {
 		if (isset($GatewaysList[$rule['gateway']])) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
+			$aline['gwlabel'] = " label \"gw:{$rule['gateway']}\" ";
 		} else if (isset($config['system']['skip_rules_gw_down'])) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {
@@ -3466,8 +3499,10 @@ function filter_generate_user_rule($rule) {
 		}
 	}
 
+	$aline['trackerlabel'] = "";
 	if (!empty($rule['tracker'])) {
 		$aline['tracker'] = "ridentifier {$rule['tracker']} ";
+		$aline['trackerlabel'] = " label \"id:{$rule['tracker']}\" ";
 	}
 
 	$line = "";
@@ -3480,7 +3515,7 @@ function filter_generate_user_rule($rule) {
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] .
 			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . filter_negaterule_tracker() . $aline['allowopts'] . $aline['flags'] .
-			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
+			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] . $aline['trackerlabel'] . $aline['gwlabel'] .
 			" label \"NEGATE_ROUTE: Negate policy routing for destination\"\n";
 
 	}
@@ -3488,7 +3523,7 @@ function filter_generate_user_rule($rule) {
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
 		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
-		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
+		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] . $aline['trackerlabel'] . $aline['gwlabel'];
 
 	unset($aline);
 

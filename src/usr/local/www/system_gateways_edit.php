@@ -37,6 +37,8 @@ if (isset($_POST['referer'])) {
 	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateways.php');
 }
 
+global $gateway_state_kill_modes;
+
 $a_gateways = return_gateways_array(true, false, true, true);
 
 init_config_arr(array('gateways', 'gateway_item'));
@@ -75,6 +77,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['dpinger_dont_add_static_route'] = isset($a_gateways[$id]['dpinger_dont_add_static_route']);
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['action_disable'] = isset($a_gateways[$id]['action_disable']);
+	$pconfig['gw_down_kill_states'] = $a_gateways[$id]['gw_down_kill_states'];
 	$pconfig['data_payload'] = $a_gateways[$id]['data_payload'];
 	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
@@ -239,6 +242,16 @@ $section->addInput(new Form_Checkbox(
 	'Mark Gateway as Down',
 	$pconfig['force_down']
 ))->setHelp('This will force this gateway to be considered down.');
+
+$section->addInput(new Form_Select(
+	'gw_down_kill_states',
+	'State Killing on Gateway Failure',
+	$pconfig['gw_down_kill_states'],
+	$gateway_state_kill_modes
+))->setHelp('Controls the state killing behavior when this specific gateway goes down. ' .
+	'Killing states for specific down gateways only affects states created by policy routing rules and reply-to. ' .
+	'Has no effect if gateway monitoring or its action are disabled or if the gateway is forced down. ' .
+	'May not have any effect on dynamic gateways during a link loss event.');
 
 $section->addInput(new Form_Input(
 	'descr',

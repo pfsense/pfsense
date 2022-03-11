@@ -181,6 +181,14 @@ if ($_POST['act'] == "del") {
 	}
 }
 
+if (($_POST['act'] == 'killid') &&
+    (!empty($_POST['tracker'])) &&
+    (!empty($if))) {
+	mwexec("/sbin/pfctl -k label -k " . escapeshellarg("id:{$_POST['tracker']}"));
+	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
+	exit;
+}
+
 // Handle save msg if defined
 if ($_REQUEST['savemsg']) {
 	$savemsg = htmlentities($_REQUEST['savemsg']);
@@ -951,6 +959,10 @@ foreach ($a_filter as $filteri => $filterent):
 <?php }
 ?>
 							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>" usepost></a>
+<?php if (($filterent['type'] == 'pass') &&
+	    !empty($filterent['tracker'])): ?>
+							<a href="?act=killid&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>&amp;tracker=<?=$filterent['tracker']?>" class="fa fa-times do-confirm" title="<?=gettext('Kill states on this interface created by this rule')?>" usepost></a>
+<?php endif; ?>
 						</td>
 					</tr>
 <?php

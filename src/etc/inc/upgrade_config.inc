@@ -6638,6 +6638,17 @@ function upgrade_224_to_225() {
 	}
 }
 
+function upgrade_225_to_226() {
+	global $config;
+
+	/* Update value of state killing on gateway failure.
+	 * https://redmine.pfsense.org/issues/12092
+	 */
+	if (isset($config['system']['gw_down_kill_states'])) {
+		$config['system']['gw_down_kill_states'] = 'all';
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

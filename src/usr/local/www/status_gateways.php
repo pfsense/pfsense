@@ -31,6 +31,22 @@
 
 require_once("guiconfig.inc");
 
+if ($_POST['act'] == 'killgw') {
+	if (!empty($_POST['gwname'])) {
+		mwexec("/sbin/pfctl -k label -k " . escapeshellarg("gw:{$_POST['gwname']}"));
+	} elseif (!empty($_POST['gwip']) && is_ipaddr($_POST['gwip'])) {
+		list($ipaddr, $scope) = explode('%', $_POST['gwip']);
+		mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($ipaddr));
+	} elseif (!empty($_POST['gwdef4'])) {
+		mwexec("/sbin/pfctl -k gateway -k '0.0.0.0'");
+	} elseif (!empty($_POST['gwdef6'])) {
+		mwexec("/sbin/pfctl -k gateway -k '::'");
+	}
+
+	header("Location: status_gateways.php");
+	exit;
+}
+
 $a_gateways = return_gateways_array();
 $gateways_status = return_gateways_status(true);
 
@@ -61,10 +77,12 @@ display_top_tabs($tab_array);
 				<th><?=gettext("Loss"); ?></th>
 				<th><?=gettext("Status"); ?></th>
 				<th><?=gettext("Description"); ?></th>
+				<th><?=gettext("Action"); ?></th>
 			</tr>
 		</thead>
 		<tbody>
 <?php		foreach ($a_gateways as $i => $gateway) {
+			$gwip = lookup_gateway_ip_by_name($i);
 ?>
 			<tr>
 				<td>
@@ -76,7 +94,7 @@ display_top_tabs($tab_array);
 ?>			
 				</td>
 				<td>
-					<?=lookup_gateway_ip_by_name($i);?>
+					<?=$gwip;?>
 				</td>
 				<td>
 <?php
@@ -175,6 +193,19 @@ display_top_tabs($tab_array);
 				</td>
 				<td>
 					<?=htmlspecialchars($gateway['descr']); ?>
+				</td>
+				<td>
+					<a href="?act=killgw&amp;gwname=<?=urlencode($gateway['name']);?>" class="fa fa-times-circle do-confirm" title="<?=gettext('Kill all firewall states created by policy routing rules using this specific gateway by name.')?>" usepost></a>
+<?php if (!empty($gwip) && is_ipaddr($gwip)): ?>
+					<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa fa-times-circle-o do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
+<?php endif; ?>
+<?php if (isset($gateway['isdefaultgw'])): ?>
+	<?php if ($gateway['ipprotocol'] != 'inet6'): ?>
+					<a href="?act=killgw&amp;gwdef4=true" class="fa fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv4 gateway (0.0.0.0) and not policy routing or reply-to rules.')?>" usepost></a>
+	<?php else: ?>
+					<a href="?act=killgw&amp;gwdef6=true" class="fa fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv6 gateway (::) and not policy routing or reply-to rules.')?>" usepost></a>
+	<?php endif; ?>
+<?php endif; ?>
 				</td>
 			</tr>
 <?php	} ?>	<!-- End-of-foreach -->

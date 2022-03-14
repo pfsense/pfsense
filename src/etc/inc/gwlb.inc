@@ -657,9 +657,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				unset($gateway['defaultgw']);
 			}
 
-			$ifinfo = get_interface_info($gateway['interface']);
-			if (empty($config['interfaces'][$gateway['interface']]) ||
-			    ($ifinfo['status'] == 'down') || ($ifinfo['status'] == 'no carrier')) {
+			if (empty($config['interfaces'][$gateway['interface']])) {
 				if ($inactive === false) {
 					continue;
 				} else {

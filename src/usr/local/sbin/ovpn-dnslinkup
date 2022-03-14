@@ -47,6 +47,13 @@ else
 	fi
 fi
 
+if [ -f "/tmp/${1}_router" ]; then
+	/bin/rm -f /tmp/${1}_router.last
+fi
+if [ -f "/tmp/${1}_routerv6" ]; then
+	/bin/rm -f /tmp/${1}_routerv6.last
+fi
+
 # use OpenVPN provided DNS, see https://redmine.pfsense.org/issues/11140
 /bin/rm -f /var/etc/nameserver_${1}
 /bin/rm -f /var/etc/nameserver_v6${1}

@@ -1186,9 +1186,11 @@ function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 	}
 	if (in_array($tunnel_type, array('v4', 'v4v6'))) {
 		file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
+		unlink_if_exists("{$g['tmp_path']}/{$greif}_router.last");
 	}
 	if (in_array($tunnel_type, array('v6', 'v4v6'))) {
 		file_put_contents("{$g['tmp_path']}/{$greif}_routerv6", $gre['tunnel-remote-addr6']);
+		unlink_if_exists("{$g['tmp_path']}/{$greif}_routerv6.last");
 	}
 
 	if ($flush) {
@@ -1367,9 +1369,11 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 	if (is_ipaddrv4($gif['tunnel-remote-addr'])) {
 		file_put_contents("{$g['tmp_path']}/{$gifif}_router",
 		    $gif['tunnel-remote-addr']);
+		unlink_if_exists("{$g['tmp_path']}/{$gifif}_router.last");
 	} elseif (is_ipaddrv6($gif['tunnel-remote-addr'])) {
 		file_put_contents("{$g['tmp_path']}/{$gifif}_routerv6",
 		    $gif['tunnel-remote-addr']);
+		unlink_if_exists("{$g['tmp_path']}/{$gifif}_routerv6.last");
 	}
 
 	route_add_or_change($gif['remote-addr'], $realifgw);
@@ -1590,6 +1594,7 @@ function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
 			/* If alias is empty, this is the first address on the interface and should be used as the gateway. */
 			if (empty($addr['alias'])) {
 				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);
+				unlink_if_exists("/tmp/{$ipsecif}_router{$gwtype}.last");
 			}
 		}
 		/* Check/set the MTU if the user configured a custom value.
@@ -2036,8 +2041,12 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
 	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
 	unlink_if_exists("{$g['vardb_path']}/{$interface}ipv6");
-	unlink_if_exists("{$g['tmp_path']}/{$realif}_router");
-	unlink_if_exists("{$g['tmp_path']}/{$realif}_routerv6");
+	if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
+		rename("{$g['tmp_path']}/{$realif}_router", "{$g['tmp_path']}/{$realif}_router.last");
+	}
+	if (file_exists("{$g['tmp_path']}/{$realif}_routerv6")) {
+		rename("{$g['tmp_path']}/{$realif}_routerv6", "{$g['tmp_path']}/{$realif}_routerv6.last");
+	}
 	unlink_if_exists("{$g['varetc_path']}/nameserver_{$realif}");
 	unlink_if_exists("{$g['varetc_path']}/nameserver_v6{$interface}");
 	unlink_if_exists("{$g['varetc_path']}/searchdomain_{$realif}");
@@ -4707,6 +4716,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$rd6brgw}\n");
+	unlink_if_exists("{$g['tmp_path']}/{$wanif}_routerv6.last");
 	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$rd6brgw}\n");
 
 	$ip4gateway = get_interface_gateway($interface);
@@ -4820,6 +4830,7 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$stfbrgw}");
+	unlink_if_exists("{$g['tmp_path']}/{$wanif}_routerv6.last");
 	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$stfbrgw}");
 
 	$ip4gateway = get_interface_gateway($interface);
@@ -5092,9 +5103,11 @@ function interface_dhcpv6_configure($ifconf = "wan", $ifcfg, $destroy = false) {
 if [ -n "\$2" ]; then
 	if [ -n "$(echo \$2 | /usr/bin/grep '^fe80')" ]; then
 		echo \$2\%{$wanif} > {$g['tmp_path']}/{$wanif}_routerv6
+		/bin/rm -f {$g['tmp_path']}/{$wanif}_routerv6.last
 		echo \$2\%{$wanif} > {$g['tmp_path']}/{$wanif}_defaultgwv6
 	else
 		echo \$2 > {$g['tmp_path']}/{$wanif}_routerv6
+		/bin/rm -f {$g['tmp_path']}/{$wanif}_routerv6.last
 		echo \$2 > {$g['tmp_path']}/{$wanif}_defaultgwv6
 	fi
 	/usr/bin/logger -t rtsold "Received RA specifying route \$2 for interface {$interface}({$wanif})"

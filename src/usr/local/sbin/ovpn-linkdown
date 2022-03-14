@@ -22,8 +22,13 @@
 
 /sbin/pfctl -i $1 -Fs
 /bin/rm -f /var/etc/searchdomain_$1
-/bin/rm -f /tmp/$1_router
-/bin/rm -f /tmp/$1_routerv6
+
+if [ -f "/tmp/${1}_router" ]; then
+	/bin/mv /tmp/${1}_router /tmp/${1}_router.last
+fi
+if [ -f "/tmp/${1}_routerv6" ]; then
+	/bin/mv /tmp/${1}_routerv6 /tmp/${1}_routerv6.last
+fi
 /bin/rm -f /tmp/$1up
 /usr/local/sbin/pfSctl -c 'filter reload'
 

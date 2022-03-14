@@ -233,11 +233,15 @@ function filter_delete_states_for_down_gateways() {
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
 			/* Skip irrelevant or invalid gateway entries */
+			$last_gw = '';
 			if (empty($gateway['monitor']) ||
 			    !is_ipaddr($gateway['monitor']) ||
 			    strstr($gateway['monitor'], "127.0.0.") ||
 			    empty($a_gateways[$gateway['monitor']])) {
-				continue;
+				$last_gw = get_interface_gateway_last($gateway['interface'], $gateway['ipprotocol']);
+				if (!is_ipaddr($last_gw)) {
+					continue;
+				}
 			}
 			/* Do not trigger these actions if:
 			 * The gateway is configured to not kill states when down
@@ -252,14 +256,19 @@ function filter_delete_states_for_down_gateways() {
 			}
 
 			$gwstatus = &$a_gateways[$gateway['monitor']];
-			if (strstr($gwstatus['status'], "down")) {
+			if (strstr($gwstatus['status'], "down") || is_ipaddr($last_gw)) {
 				$any_gateway_down = $gateway['name'];
 				if ($config['system']['gw_down_kill_states'] == 'all') {
 					/* All states will be killed, no need to continue searching. */
 					break;
 				}
 
+				$what_to_kill = gettext("down gateway");
 				$gwip = lookup_gateway_ip_by_name($gateway['name']);
+				if (!is_ipaddr($gwip) && is_ipaddr($last_gw)) {
+					$gwip = $last_gw;
+					$what_to_kill = gettext("dynamic down gateway");
+				}
 				/* Cannot locate the gateway IP address, so we
 				 * cannot proceed. */
 				if (!is_ipaddr($gwip)) {
@@ -273,7 +282,7 @@ function filter_delete_states_for_down_gateways() {
 				 * or configured to do so on a specific gateway. */
 				if (($config['system']['gw_down_kill_states'] == 'down') ||
 				    ($gateway['gw_down_kill_states'] == 'down')) {
-					$message = gettext("GW States: Killing states for down gateway") . ": {$gateway['name']}, {$gwip}";
+					$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
 					update_filter_reload_status($message);
 					log_error($message);
 					mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));

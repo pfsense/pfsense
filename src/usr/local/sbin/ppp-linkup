@@ -43,6 +43,7 @@ if [ "${PROTOCOL}" == "inet" ]; then
 
 	# let the configuration system know that the ipv4 has changed.
 	echo ${REMOTE_IP} > /tmp/${IF}_router
+	/bin/rm -f /tmp/${IF}_router.last
 	echo ${LOCAL_IP} > /tmp/${IF}_ip
 	touch /tmp/${IF}up
 	touch /tmp/${IF}_upstart4
@@ -71,6 +72,7 @@ elif [ "${PROTOCOL}" == "inet6" ]; then
 	/usr/local/sbin/ppp-ipv6 ${IF} up
 	# let the configuration system know that the ipv6 has changed.
 	echo ${REMOTE_IP} |cut -d% -f1 > /tmp/${IF}_routerv6
+	/bin/rm -f /tmp/${IF}_routerv6.last
 	echo ${LOCAL_IP} |cut -d% -f1 > /tmp/${IF}_ipv6
 	touch /tmp/${IF}upv6
 	touch /tmp/${IF}_upstart6

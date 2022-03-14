@@ -1579,6 +1579,17 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	return ($gw);
 }
 
+function get_interface_gateway_last($interface, $family = 'inet') {
+	global $config, $g;
+	$interface = get_root_interface($interface);
+	$realif = get_real_interface($interface);
+	$suffix = ($family == 'inet6') ? 'v6' : '';
+	if (file_exists("{$g['tmp_path']}/{$realif}_router{$suffix}.last")) {
+		return trim(@file_get_contents("{$g['tmp_path']}/{$realif}_router{$suffix}.last"), " \n");
+	}
+	return '';
+}
+
 function get_interface_gateway_v6($interface, &$dynamic = false) {
 	global $config, $g;
 

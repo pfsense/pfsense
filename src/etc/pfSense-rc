@@ -162,6 +162,9 @@ if /sbin/kldstat -qm zfs; then
 		if [ -d /bootpool ]; then
 			/sbin/zpool import -f bootpool
 		fi
+		# We need to handle ZFS boot environments here
+		echo "Enabling ZFS boot environment..."
+		/etc/rc.d/zfsbe onestart
 	fi
 fi
 

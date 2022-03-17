@@ -699,7 +699,7 @@ $section->addInput(new Form_Select(
 	'*Protocol',
 	$pconfig['proto'],
 	$p2_protos
-))->setHelp('Encapsulating Security Payload (ESP) is encryption, Authentication Header (AH) is authentication only.');
+))->setHelp('Encapsulating Security Payload (ESP) performs encryption and authentication, Authentication Header (AH) is authentication only.');
 
 $i = 0;
 $rows = count($p2_ealgos) - 1;

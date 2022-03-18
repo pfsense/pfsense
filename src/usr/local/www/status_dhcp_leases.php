@@ -105,6 +105,8 @@ if ($_REQUEST['order']) {
 	usort($leases['lease'], function($a, $b) {
 		return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
 	});
+} else {
+	sort($leases['lease']);
 }
 
 /* only print pool status when we have one */

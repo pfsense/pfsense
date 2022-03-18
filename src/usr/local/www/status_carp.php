@@ -233,22 +233,34 @@ if ($carpcount == 0) {
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('State Synchronization Status')?></h2></div>
-	<div class="panel-body">
+	<div class="panel-body"><div class="content">
+		<?= gettext("State Creator Host IDs") ?>:
 		<ul>
 <?php
-        echo "<br />" . gettext("State Creator IDs") . ":<br />";
-        echo "<pre>";
-        system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
-        echo "</pre>";
+	$my_id = strtolower(ltrim(filter_get_host_id(), '0'));
+	exec("/sbin/pfctl -vvss | /usr/bin/awk '/creatorid:/ {print $4;}' | /usr/bin/sort -u", $hostids);
+	if (!is_array($hostids)) {
+		$hostids = array();
+	}
 ?>
-
+<?php	foreach ($hostids as $hid):
+		$hid = strtolower(ltrim($hid, '0')); ?>
+			<li>
+				<?= $hid ?>
+<?php		if ($hid == $my_id): ?>
+				(<?= gettext("This node") ?>)
+<?php		endif; ?>
+			</li>
+<?php	endforeach; ?>
 		</ul>
-	</div>
-</div>
-<div class="infoblock blockopen">
+		<?= gettext("When state synchronization is enabled and functioning properly the list of state creator IDs will be nearly identical on each node participating in state synchronization.") ?>
+
+		<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("When state synchronization is enabled and functioning properly the list of state creator IDs will be nearly identical on each node participating in state synchronization."), 'info', false);
+	print_info_box(gettext("If the host ID has recently changed, the old ID will remain until all states using the old ID expire or are removed."), 'info', false);
 ?>
+		</div>
+	</div></div>
 </div>
 
 <?php

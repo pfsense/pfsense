@@ -373,7 +373,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		return;
 	}
 
-	$limitrules = "";
+	$pfhostid = filter_get_host_id();
+	if (!empty($pfhostid)) {
+		$limitrules = "set hostid 0x{$pfhostid}\n";
+	} else {
+		$limitrules = "";
+	}
+
 	/* User defined maximum table entries in Advanced menu. */
 	if ($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
 		$limitrules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
@@ -4870,6 +4876,24 @@ function filter_get_interface_list() {
 		$filter_ifs[$ifent] = $ifname;
 	}
 	return $filter_ifs;
+}
+
+function filter_get_host_id() {
+	global $config;
+	/* Custom pf host ID, hex string up to 8 characters in length */
+	if (!empty($config['hasync']['pfhostid']) &&
+	    ctype_xdigit($config['hasync']['pfhostid']) &&
+	    (strlen($config['hasync']['pfhostid']) <= 8)) {
+		$pfhostid = $config['hasync']['pfhostid'];
+	} else {
+		/* If the user has not set one manually, use the last 8 characters of the NDI */
+		$pfhostid = substr(system_get_uniqueid(), -8);
+		/* Extra safety belt in case the NDI cannot be determined. */
+		if (!ctype_xdigit($pfhostid) || (strlen($pfhostid) > 8)) {
+			$pfhostid = "";
+		}
+	}
+	return $pfhostid;
 }
 
 ?>

@@ -61,6 +61,8 @@ if ($_POST) {
 	foreach ($checkbox_names as $name) {
 		$a_hasync[$name] = $pconfig[$name] ? $pconfig[$name] : false;
 	}
+	$old_pfhostid = isset($a_hasync['pfhostid']) ? $a_hasync['pfhostid'] : '';
+	$a_hasync['pfhostid'] = strtolower(trim($pconfig['pfhostid']));
 	$a_hasync['pfsyncpeerip'] = $pconfig['pfsyncpeerip'];
 	$a_hasync['pfsyncinterface'] = $pconfig['pfsyncinterface'];
 	$a_hasync['synchronizetoip'] = $pconfig['synchronizetoip'];
@@ -74,6 +76,13 @@ if ($_POST) {
 		$input_errors[] = gettext("Password and confirmation must match.");
 	}
 
+	if ((!empty($pconfig['pfhostid']) &&
+	    !(ctype_xdigit($pconfig['pfhostid']) &&
+	    (strlen($pconfig['pfhostid']) <= 8))) ||
+	    ($pconfig['pfhostid'] === "0")) {
+		$input_errors[] = gettext("Invalid Host ID. Must be a non-zero hexadecimal string 8 characters or less.");
+	}
+
 	if (!empty($pconfig['pfsyncpeerip']) && !is_ipaddrv4($pconfig['pfsyncpeerip'])) {
 		$input_errors[] = gettext("pfsync Synchronize Peer IP must be an IPv4 IP.");
 	}
@@ -85,6 +94,9 @@ if ($_POST) {
 	if (!$input_errors) {
 		write_config("Updated High Availability Sync configuration");
 		interfaces_sync_setup();
+		if ($old_pfhostid != $a_hasync['pfhostid']) {
+			filter_configure();
+		}
 		header("Location: system_hasync.php");
 		exit();
 	}
@@ -93,6 +105,7 @@ if ($_POST) {
 foreach ($checkbox_names as $name) {
 	$pconfig[$name] = $a_hasync[$name];
 }
+$pconfig['pfhostid']	= $a_hasync['pfhostid'];
 $pconfig['pfsyncpeerip']	= $a_hasync['pfsyncpeerip'];
 $pconfig['pfsyncinterface'] = $a_hasync['pfsyncinterface'];
 $pconfig['synchronizetoip'] = $a_hasync['synchronizetoip'];
@@ -141,6 +154,16 @@ $section->addInput(new Form_Select(
 			'It is recommended to set this to an interface other than LAN! A dedicated interface works the best.%1$s' .
 			'An IP must be defined on each machine participating in this failover group.%1$s' .
 			'An IP must be assigned to the interface on any participating sync nodes.', '<br />');
+
+$section->addInput(new Form_Input(
+	'pfhostid',
+	'Filter Host ID',
+	'text',
+	$pconfig['pfhostid'],
+	['placeholder' => substr(system_get_uniqueid(), -8)]
+))->setHelp('Custom pf host identifier carried in state data to uniquely identify which host created a firewall state.%1$s' .
+		'Must be a non-zero hexadecimal string 8 characters or less (e.g. 1, 2, ff01, abcdef01).%1$s' .
+		'Each node participating in state synchronization must have a different ID.', '<br />');
 
 $section->addInput(new Form_Input(
 	'pfsyncpeerip',

@@ -772,10 +772,10 @@ function local_user_set(& $user) {
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 	}
 
-	if ($user['keephistory'] && $shell_access &&
+	if (isset($user['keephistory']) && $shell_access &&
 	    !file_exists("{$user_home}/.keephistory")) {
 		@touch("{$user_home}/.keephistory");
-	} elseif (!$user['keephistory']) {
+	} elseif (!isset($user['keephistory'])) {
 		unlink_if_exists("{$user_home}/.keephistory");
 	}
 

@@ -86,6 +86,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['priv'] = $a_user[$id]['priv'];
 	$pconfig['ipsecpsk'] = $a_user[$id]['ipsecpsk'];
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
+	$pconfig['keephistory'] = isset($a_user[$id]['keephistory']);
 }
 
 /*
@@ -415,6 +416,12 @@ if ($_POST['save'] && !$read_only) {
 			$userent['pagenamefirst'] = true;
 		} else {
 			unset($userent['pagenamefirst']);
+		}
+
+		if ($_POST['keephistory']) {
+			$userent['keephistory'] = true;
+		} else {
+			unset($userent['keephistory']);
 		}
 
 		if (isset($id) && $a_user[$id]) {
@@ -1062,6 +1069,19 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ipsecpsk']
 ));
+
+$form->add($section);
+
+$section = new Form_Section('Shell Behavior');
+
+$section->addInput(new Form_Checkbox(
+	'keephistory',
+	'Keep Command History',
+	'Keep shell command history between login sessions',
+	$pconfig['keephistory']
+))->setHelp('If this user has shell access, this option preserves the last 1000 unique commands entered at a shell prompt between login sessions. ' .
+		'The user can access history using the up and down arrows at an SSH or console shell prompt ' .
+		'and search the history by typing a partial command and then using the up or down arrows.');
 
 $form->add($section);
 

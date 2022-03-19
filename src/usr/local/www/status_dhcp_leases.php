@@ -106,7 +106,12 @@ if ($_REQUEST['order']) {
 		return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
 	});
 } else {
-	sort($leases['lease']);
+	usort($leases['lease'], function($a, $b) {
+		if ($a['type'] === $b['type']) {
+			return strnatcmp($a['ip'], $b['ip']);
+		}
+		return strcmp($a['type'], $b['type']);
+	});
 }
 
 /* only print pool status when we have one */

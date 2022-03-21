@@ -280,7 +280,6 @@ if ($_POST) {
 			if (file_exists($fp.$fn)) {
 				unlink ($fp.$fn);
 			}
-
 		} elseif ($_POST['stopbtn'] != "") {
 			$action = gettext("Stop");
 			$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'"));
@@ -297,6 +296,11 @@ if ($_POST) {
 		} elseif ($_POST['downloadbtn'] != "") {
 			//download file
 			send_user_download('file', $fp.$fn);
+		} elseif ($_POST['clearbtn'] != "") {
+			//clear log file
+			if (file_exists($fp.$fn)) {
+				unlink ($fp.$fn);
+			}
 		}
 	}
 } else {
@@ -491,6 +495,13 @@ if (file_exists($fp.$fn) and $processisrunning != true) {
 		null,
 		'fa-download'
 	))->addClass('btn-primary');
+
+	$form->addGlobal(new Form_Button(
+		'clearbtn',
+		'Clear Log',
+		null,
+		'fa-undo'
+	))->addClass('btn-danger restore');
 
 	if (file_exists($fp.$fns)) {
 		$section->addInput(new Form_StaticText(

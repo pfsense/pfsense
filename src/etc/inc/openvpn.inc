@@ -2279,10 +2279,14 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 				} elseif (is_fqdn($net)) {
 					if ($ipproto == "ipv4" ) {
 						$recordtypes = array(DNS_A);
+						$mask = "/32";
 					} else {
 						$recordtypes = array(DNS_AAAA);
+						$mask = "/128";
 					}
-					$networks = array_merge($networks, resolve_host_addresses($net, $recordtypes, false));
+					foreach (resolve_host_addresses($net, $recordtypes, false) as $net) {
+						$networks[] = $net . $mask;
+					}
 				}
 			}
 		} else {

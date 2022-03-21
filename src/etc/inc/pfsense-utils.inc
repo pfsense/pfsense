@@ -3227,6 +3227,15 @@ function calculate_ipv6_delegation_length($if) {
 }
 
 function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
+	/* convert zero-value prefix IPv6 addresses with IPv4 mapping to hex
+	 * see https://redmine.pfsense.org/issues/12440 */
+	$suffix_list = explode(':', $suffix);
+	if (is_ipaddrv4($suffix_list[count($suffix_list) - 1])) {
+		$hexsuffix = dechex(ip2long($suffix_list[count($suffix_list) - 1]));
+		$suffix_list[count($suffix_list) - 1] = substr($hexsuffix, 0, 4);
+		$suffix_list[] = substr($hexsuffix, 4, 8);
+		$suffix = implode(':', $suffix_list);
+	}	
 	$prefix = Net_IPv6::uncompress($prefix, true);
 	$suffix = Net_IPv6::uncompress($suffix, true);
 

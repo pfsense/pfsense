@@ -1,3 +1,4 @@
+#!/usr/local/bin/php-cgi -q
 <?php
 /*
  * ecl.php
@@ -88,7 +89,9 @@ function test_config($file_location) {
 	}
 	// config.xml was found.  ensure it is sound.
 	$root_obj = trim("<{$g['xml_rootobj']}>");
+	$enc_root_obj = "---- BEGIN config.xml ----";
 	$xml_file_head = exec("/usr/bin/head -2 " . escapeshellarg($file_location) . " | /usr/bin/tail -n1");
+	$enc_file_head = exec("/usr/bin/head -1 " . escapeshellarg($file_location));
 	if ($debug) {
 		echo "\nroot obj  = $root_obj";
 		echo "\nfile head = $xml_file_head";
@@ -97,8 +100,10 @@ function test_config($file_location) {
 		// Now parse config to make sure
 		$config_status = config_validate($file_location);
 		if ($config_status) {
-			return true;
+			return 'xml';
 		}
+	} elseif ($enc_file_head == $enc_root_obj) {
+		return 'enc';
 	}
 	return false;
 }
@@ -154,9 +159,16 @@ function find_config_xml() {
 					// Item was mounted - look for config.xml file
 					$config_location = discover_config($slice);
 					if ($config_location) {
-						if (test_config($config_location)) {
-							// We have a valid configuration.  Install it.
-							echo " -> found config.xml\n";
+						$config_type = test_config($config_location);
+						if ($config_type) {
+							if (($config_type == 'enc') && !password_prompt($config_location)) {
+								exec("/sbin/umount /tmp/mnt/cf");
+								rmdir("/tmp/mnt/cf");
+								exit;
+							} elseif ($config_type == 'xml') {
+								// We have a valid configuration.  Install it.
+								echo " -> found config.xml\n";
+							}
 							echo "Backing up old configuration...\n";
 							backup_config();
 							echo "Restoring [{$slice}] {$config_location}...\n";
@@ -168,6 +180,7 @@ function find_config_xml() {
 							}
 							echo "Cleaning up...\n";
 							exec("/sbin/umount /tmp/mnt/cf");
+							rmdir("/tmp/mnt/cf");
 							exit;
 						}
 					}
@@ -175,6 +188,46 @@ function find_config_xml() {
 				}
 			}
 		}
+	}
+	rmdir("/tmp/mnt/cf");
+}
+
+function password_prompt($config_location) {
+	echo " -> found encrypted config.xml\n";
+
+	$configtxt = file_get_contents($config_location);
+
+	if (tagfile_deformat($configtxt, $configtxt, "config.xml")) {
+		$fp = fopen('php://stdin', 'r');
+		$read = array($fp);
+		$write = $except = array();
+		$timeout = 30; // skip after 30s of inactivity
+		do {
+			echo gettext("Enter the password to decrypt config.xml, or press <ENTER> to skip:") . "\n";
+			if (stream_select($read, $write, $except, $timeout)) {
+				$decrypt_password = chop(fgets($fp));
+			} else {
+				echo gettext("Input timeout, skipping config.xml restore...") . "\n";
+				return false;
+			}
+			$data = decrypt_data($configtxt, $decrypt_password);
+			if (!empty($decrypt_password)) {
+				$decrypted_data = decrypt_data($configtxt, $decrypt_password);
+				if (empty($decrypted_data)) {
+					echo gettext("Invalid password entered. Please try again.") . "\n";
+				}
+			}
+		} while (!empty($decrypt_password) && empty($data));
+		fclose($fp);
+	}
+
+	if (!empty($data)) {
+		echo gettext("Config.xml unlocked.") . "\n";
+		file_put_contents($config_location, $decrypted_data);
+		return true;
+	} else {
+		echo gettext("Skipping config.xml restore...") . "\n";
+		return false;
 	}
 }
 

@@ -320,7 +320,7 @@ function crypto_accel_get_algs($crypto) {
 		$algs_str .= $alg;
 	}
 
-	return ($algs_str);
+	return (!empty($algs_str) ? $algs_str : gettext("Inactive"));
 }
 
 

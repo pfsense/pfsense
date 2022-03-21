@@ -33,6 +33,8 @@
 require_once("guiconfig.inc");
 require_once("auth.inc");
 
+global $auth_password_hash_types;
+
 // Test LDAP settings in response to an AJAX request from this page.
 if ($_REQUEST['ajax']) {
 
@@ -104,6 +106,11 @@ if (isset($config['system']['webgui']['authmode'])) {
 	$pconfig['authmode'] = "Local Database";
 }
 
+/* Default to bcrypt hashing if unset.
+ * See https://redmine.pfsense.org/issues/12855
+ */
+$pconfig['pwhash'] = isset($config['system']['webgui']['pwhash']) ? $config['system']['webgui']['pwhash'] : 'bcrypt';
+
 $pconfig['shellauth'] = isset($config['system']['webgui']['shellauth']) ? true : false;
 
 $pconfig['backend'] = $config['system']['webgui']['backend'];
@@ -149,6 +156,10 @@ if ($_POST) {
 		$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
 	}
 
+	if ($_POST['pwhash'] && !array_key_exists($_POST['pwhash'], $auth_password_hash_types)) {
+		$input_errors[] = gettext("Invalid password hash algorithm value.");
+	}
+
 	if (!$input_errors) {
 		if ($_POST['authmode'] != "Local Database") {
 			$authsrv = auth_get_authserver($_POST['authmode']);
@@ -172,6 +183,8 @@ if ($_POST) {
 		} else {
 			unset($config['system']['webgui']['authmode']);
 		}
+
+		$config['system']['webgui']['pwhash'] = $_POST['pwhash'] ? $_POST['pwhash'] : 'bcrypt';
 
 		if (isset($_POST['shellauth'])) {
 			$config['system']['webgui']['shellauth'] = true;
@@ -241,6 +254,16 @@ $section->addInput(new Form_Select(
 	$pconfig['authmode'],
 	$auth_servers
 ));
+
+$section->addInput(new Form_Select(
+	'pwhash',
+	'*Password Hash Algorithm',
+	$pconfig['pwhash'],
+	$auth_password_hash_types
+))->setHelp('Selects which algorithm the firewall will use when creating hashes for local ' .
+	    'user passwords.%1$s' .
+	    'The most secure option is currently bcrypt. Some users may prefer SHA-512-based ' .
+	    'crypt hashes for compatibility or compliance purposes. ', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'shellauth',

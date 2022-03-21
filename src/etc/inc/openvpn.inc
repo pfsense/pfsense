@@ -647,7 +647,7 @@ function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv
 	}
 
 	if ($error) {
-		return sprintf(gettext("The field '%1\$s' must contain only valid %2\$s CIDR range(s) separated by commas."), $name, $ipproto);
+		return sprintf(gettext("The field '%1\$s' must contain only valid %2\$s CIDR range(s) or FQDN(s) separated by commas."), $name, $ipproto);
 	} else {
 		return false;
 	}
@@ -657,8 +657,8 @@ function openvpn_validate_cidr_ipv4($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
 		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
-			foreach (alias_to_subnets_recursive($value) as $net) {
-				if (!is_subnetv4($net)) {
+			foreach (alias_to_subnets_recursive($value, true) as $net) {
+				if (!is_subnetv4($net) && !is_fqdn($net)) {
 					return false;
 				}
 			}
@@ -676,8 +676,8 @@ function openvpn_validate_cidr_ipv6($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
 		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
-			foreach (alias_to_subnets_recursive($value) as $net) {
-				if (!is_subnetv6($net)) {
+			foreach (alias_to_subnets_recursive($value, true) as $net) {
+				if (!is_subnetv6($net) && !is_fqdn($net)) {
 					return false;
 				}
 			}
@@ -719,11 +719,11 @@ function openvpn_validate_tunnel_network($value, $ipproto) {
 function openvpn_gen_tunnel_network($tunnel_network) {
 	if (is_alias($tunnel_network)) {
 		$net = alias_to_subnets_recursive($tunnel_network);
-		$pair = $net[0];
+		$pair = openvpn_tunnel_network_fix($net[0]);
 	} else {
 		$pair = $tunnel_network;
 	}
-	return explode('/', trim($pair));
+	return explode('/', $pair);
 }
 
 function openvpn_add_dhcpopts(& $settings, & $conf) {
@@ -1739,6 +1739,7 @@ function openvpn_resync_csc(& $settings) {
 
 function openvpn_resync_csc_all() {
 	global $config;
+	init_config_arr(array('openvpn', 'openvpn-csc'));
 	if (is_array($config['openvpn']['openvpn-csc'])) {
 		foreach ($config['openvpn']['openvpn-csc'] as & $settings) {
 			openvpn_resync_csc($settings);
@@ -1779,12 +1780,6 @@ function openvpn_resync($mode, $settings) {
 function openvpn_resync_all($interface = "") {
 	global $g, $config;
 
-	openvpn_create_dirs();
-
-	if (!is_array($config['openvpn'])) {
-		$config['openvpn'] = array();
-	}
-
 	if ($interface <> "") {
 		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
 	} else {
@@ -1792,11 +1787,16 @@ function openvpn_resync_all($interface = "") {
 	}
 
 	// Check if OpenVPN clients and servers require a resync.
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
 	foreach (array("server", "client") as $type) {
 		if (!is_array($config['openvpn']["openvpn-{$type}"])) {
 			continue;
 		}
 		foreach ($config['openvpn']["openvpn-{$type}"] as & $settings) {
+			if (isset($settings['disable'])) {
+				continue;
+			}
 			$fpath = "{$g['openvpn_base']}/{$type}{$settings['vpnid']}/interface";
 			$gw_group_change = FALSE;
 			$ip_change = ($interface === "") ||
@@ -1810,17 +1810,24 @@ function openvpn_resync_all($interface = "") {
 			}
 
 			if ($ip_change || $gw_group_change) {
+				if (!$dirs) {
+					openvpn_create_dirs();
+				}
 				openvpn_resync($type, $settings);
+				$restarted = true;
+				$dirs = true;
 			}
 		}
 	}
 
-	openvpn_resync_csc_all();
+	if ($restarted) {
+		openvpn_resync_csc_all();
 
-	/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
-	 * see https://redmine.pfsense.org/issues/11662 */
-	if (platform_booting()) {
-		interfaces_qinq_configure(true);
+		/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
+		 * see https://redmine.pfsense.org/issues/11662 */
+		if (platform_booting()) {
+			interfaces_qinq_configure(true);
+		}
 	}
 }
 
@@ -1882,12 +1889,12 @@ function openvpn_get_active_servers($type="multipoint") {
 			list($tn, $sm) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 
 			if ((($server['mode'] == "p2p_shared_key") ||
-			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) ||
+			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network']) && ($server['mode'] == 'p2p_tls')) ||
 			    ($sm >= 30)) &&
 			    ($type == "p2p")) {
 				$servers[] = openvpn_get_client_status($server, $socket);
 			} elseif (($server['mode'] != "p2p_shared_key") &&
-			    !(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) &&
+			    !(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network']) && ($server['mode'] == 'p2p_tls')) &&
 			    ($type == "multipoint") &&
 			    ($sm < 30)) {
 				$servers[] = openvpn_get_server_status($server, $socket);
@@ -2190,15 +2197,15 @@ function openvpn_create_dirs() {
 	init_config_arr(array('openvpn', 'openvpn-client'));
 	foreach(array('server', 'client') as $mode) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $settings) {
+			if (isset($settings['disable'])) {
+				continue;
+			}
 			$target = "{$g['openvpn_base']}/{$mode}{$settings['vpnid']}";
+			$csctarget = "{$target}/csc/";
 			@unlink_if_exists($csctarget);
 			@safe_mkdir($target);
 			if (in_array($settings['mode'], $openvpn_tls_server_modes)) {
-				if ($settings['vpnid']) {
-					$csctarget = "{$target}/csc/";
-					@unlink_if_exists($csctarget);
-					@safe_mkdir($csctarget);
-				}
+				@safe_mkdir($csctarget);
 			}
 		}
 	}
@@ -2265,10 +2272,17 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 	$tmpnetworks = explode(',', $value);
 	foreach ($tmpnetworks as $network) {
 		if (is_alias($network)) {
-			foreach (alias_to_subnets_recursive($network) as $net) {
+			foreach (alias_to_subnets_recursive($network, true) as $net) {
 				if ((($ipproto == "ipv4") && is_subnetv4($net)) ||
 				    (($ipproto == "ipv6") && is_subnetv6($net))) {
 					$networks[] = $net;
+				} elseif (is_fqdn($net)) {
+					if ($ipproto == "ipv4" ) {
+						$recordtypes = array(DNS_A);
+					} else {
+						$recordtypes = array(DNS_AAAA);
+					}
+					$networks = array_merge($networks, resolve_host_addresses($net, $recordtypes, false));
 				}
 			}
 		} else {
@@ -2411,6 +2425,17 @@ function openvpn_clean_rules($mode, $id) {
 	if ($mode == "server") {
 		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
 	}
+}
+
+function openvpn_tunnel_network_fix($tunnel_network) {
+	$tunnel_network = trim($tunnel_network);
+	if (is_subnet($tunnel_network)) {
+		/* convert to correct network address,
+		 * see https://redmine.pfsense.org/issues/11416 */
+		list($tunnel_ip, $tunnel_netmask) = explode('/', $tunnel_network);
+		$tunnel_network = gen_subnet($tunnel_ip, $tunnel_netmask) . '/' . $tunnel_netmask;
+	}
+	return $tunnel_network;
 }
 
 ?>

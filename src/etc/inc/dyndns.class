@@ -321,6 +321,7 @@
 				case 'custom-v6':
 				case 'desec-v6':
 				case 'digitalocean-v6':
+				case 'dnsimple-v6':
 				case 'domeneshop-v6':
 				case 'dreamhost-v6':
 				case 'duiadns-v6':
@@ -413,6 +414,7 @@
 					case 'digitalocean-v6':
 					case 'dnsexit':
 					case 'dnsimple':
+					case 'dnsimple-v6':
 					case 'dnsmadeeasy':
 					case 'dnsomatic':
 					case 'domeneshop':
@@ -1171,6 +1173,7 @@
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'dnsimple':
+				case 'dnsimple-v6':
 					/* Uses DNSimple's v2 REST API
 					   Requires the Account ID as the username (found in the URL when pull up the domain)
 					   And an API Token for the password (generated in the User Settings -> API tokens area of the website)
@@ -1213,7 +1216,9 @@
 					$port = "";
 					curl_setopt($ch, CURLOPT_URL, 'https://domains.google.com/nic/update');
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					curl_setopt($ch, CURLOPT_POST, 1);
 					break;
 				case 'dnsmadeeasy':
 					$needsIP = TRUE;
@@ -1973,7 +1978,7 @@
 					break;
 				case 'glesys':
 					$status_intro = "GleSYS ({$this->_dnsHost}): ";
-					if (preg_match('/Record updated/i', $data)) {
+					if (preg_match("/OK/i", $data)) {
 						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
 						$successful_update = true;
 					} else {
@@ -2410,6 +2415,10 @@
 				case 'namecheap':
 					$tmp = str_replace("^M", "", $data);
 					$ncresponse = @xml2array($tmp);
+					/* If XML parsing failed, it may be due to mismatched encoding on the response, drop the xml line. */
+					if (empty($ncresponse)) {
+						$ncresponse = @xml2array(substr($tmp, strpos($tmp, "\n") + 1));
+					}
 					if (preg_match("/internal server error/i", $data)) {
 						$status = $status_intro . $error_str . gettext("Server side error.");
 					} else if (preg_match("/request is badly formed/i", $data)) {
@@ -2629,6 +2638,7 @@
 					}
 					break;
 				case 'dnsimple':
+				case 'dnsimple-v6':
 					/* Responds with HTTP 200 on success.
 					   Responds with HTTP 4xx on error.
 					   Returns JSON data as body */

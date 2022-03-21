@@ -228,34 +228,74 @@ function filter_configure() {
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
 
-	if (!isset($config['system']['gw_down_kill_states'])) {
-		return;
-	}
-
 	$any_gateway_down = false;
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
-			if (empty($gateway['monitor'])) {
+			/* Skip irrelevant or invalid gateway entries */
+			$last_gw = '';
+			if (empty($gateway['monitor']) ||
+			    !is_ipaddr($gateway['monitor']) ||
+			    strstr($gateway['monitor'], "127.0.0.") ||
+			    empty($a_gateways[$gateway['monitor']])) {
+				$last_gw = get_interface_gateway_last($gateway['interface'], $gateway['ipprotocol']);
+				if (!is_ipaddr($last_gw)) {
+					continue;
+				}
+			}
+			/* Do not trigger these actions if:
+			 * The gateway is configured to not kill states when down
+			 * Gateway monitoring is disabled
+			 * Gateway monitoring action is disabled
+			 * The gateway is forced down. */
+			if (($gateway['gw_down_kill_states'] == 'none') ||
+			    (isset($gateway['monitor_disable'])) ||
+			    (isset($gateway['action_disable'])) ||
+			    (isset($gateway['force_down']))) {
 				continue;
 			}
-			if (!is_ipaddr($gateway['monitor'])) {
-				continue;
-			}
-			if (strstr($gateway['monitor'], "127.0.0.")) {
-				continue;
-			}
-			if (empty($a_gateways[$gateway['monitor']])) {
-				continue;
-			}
+
 			$gwstatus = &$a_gateways[$gateway['monitor']];
-			if (strstr($gwstatus['status'], "down")) {
-				$any_gateway_down = true;
-				break;
+			if (strstr($gwstatus['status'], "down") || is_ipaddr($last_gw)) {
+				$any_gateway_down = $gateway['name'];
+				if ($config['system']['gw_down_kill_states'] == 'all') {
+					/* All states will be killed, no need to continue searching. */
+					break;
+				}
+
+				$what_to_kill = gettext("down gateway");
+				$gwip = lookup_gateway_ip_by_name($gateway['name']);
+				if (!is_ipaddr($gwip) && is_ipaddr($last_gw)) {
+					$gwip = $last_gw;
+					$what_to_kill = gettext("dynamic down gateway");
+				}
+				/* Cannot locate the gateway IP address, so we
+				 * cannot proceed. */
+				if (!is_ipaddr($gwip)) {
+					$message = gettext("GW States: Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
+					update_filter_reload_status($message);
+					log_error($message);
+					continue;
+				}
+
+				/* Kill states for the down gateway if the flag is on globally
+				 * or configured to do so on a specific gateway. */
+				if (($config['system']['gw_down_kill_states'] == 'down') ||
+				    ($gateway['gw_down_kill_states'] == 'down')) {
+					$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
+					update_filter_reload_status($message);
+					log_error($message);
+					mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));
+				}
 			}
 		}
 	}
-	if ($any_gateway_down == true) {
+
+	if (($config['system']['gw_down_kill_states'] == 'all') &&
+	    ($any_gateway_down !== false)) {
+		$message = gettext("GW States: One or more gateways is down, flushing all states") . ": {$gateway['name']} ";
+		update_filter_reload_status($message);
+		log_error($message);
 		mwexec("/sbin/pfctl -Fs");
 	}
 }
@@ -333,7 +373,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		return;
 	}
 
-	$limitrules = "";
+	$pfhostid = filter_get_host_id();
+	if (!empty($pfhostid)) {
+		$limitrules = "set hostid 0x{$pfhostid}\n";
+	} else {
+		$limitrules = "";
+	}
+
 	/* User defined maximum table entries in Advanced menu. */
 	if ($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
 		$limitrules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
@@ -619,6 +665,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if (platform_booting() == true) {
 		echo gettext("done.") . "\n";
 	}
+
+	clear_filter_subsystems_dirty();
 
 	unlock($filterlck);
 	return 0;
@@ -949,8 +997,10 @@ function filter_generate_gateways() {
 			$int = $gateway['interface'];
 			$gwip = $gateway['gateway'];
 			$route = "";
-			if (!is_ipaddr($gwip)) {
+			if (($gateway['ipprotocol'] == 'inet') && !is_ipaddrv4($gwip)) {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
+			} elseif (($gateway['ipprotocol'] == 'inet6') && !is_ipaddrv6($gwip)) {
+				$gwip = get_interface_gateway_v6($gateway['friendlyiface']);
 			}
 			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down']) &&
 			    (($GatewaysStatus[$gwname]['status'] != 'down') || isset($gateway['action_disable']))) {
@@ -1824,6 +1874,15 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
+	// OpenVPN CSO
+	init_config_arr(array('openvpn', 'openvpn-csc'));
+	foreach ($config['openvpn']['openvpn-csc'] as $ovpnent) {
+		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
+			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
+			$descriptions[] = gettext("OpenVPN CSO");
+		}
+	}
+
 	/* IPsec mode_cfg subnet */
 	if ((isset($config['ipsec']['client']['enable'])) &&
 	    (!empty($config['ipsec']['client']['pool_address'])) &&
@@ -1978,7 +2037,10 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 		} else {
 			$ifip = get_interface_ipv6($if);
 			if (is_ipaddrv6($ifip)) {
-				$tgt6 = "{$ifip}/128";
+				/* remove link-local scope (%realif) from IPv6 address
+				 * see https://redmine.pfsense.org/issues/11984 */
+				preg_match('/^([0-9a-fA-F:]+)%?.*$/', $ifip, $matches);
+				$tgt6 = "{$matches[1]}/128";
 			} else {
 				$tgt6 = "(" . $FilterIflist[$if]['if'] . ")";
 			}
@@ -2091,6 +2153,8 @@ function filter_nat_rules_generate() {
 
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
+	$natrules .= "binat-anchor \"miniupnpd\"\n";
+	$natrules .= "nat-anchor \"miniupnpd\"\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
@@ -2199,6 +2263,7 @@ function filter_nat_rules_generate() {
 			if (isset($rule['disabled'])) {
 				continue;
 			}
+			$rule['ipprotocol'] = 'inet6';
 
 			if (!$rule['interface']) {
 				$natif = "wan";
@@ -3128,6 +3193,7 @@ function filter_generate_user_rule($rule) {
 	/* set the gateway interface */
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
+	$aline['gwlabel'] = "";
 	/* do not process reply-to for gateway'd rules */
 	if ($rule['gateway'] == "" && $aline['direction'] <> "" && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
 		if ($rule['ipprotocol'] == "inet6") {
@@ -3147,6 +3213,7 @@ function filter_generate_user_rule($rule) {
 		if (isset($GatewaysList[$rule['gateway']])) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
+			$aline['gwlabel'] = " label \"gw:{$rule['gateway']}\" ";
 		} else if (isset($config['system']['skip_rules_gw_down'])) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {
@@ -3207,31 +3274,31 @@ function filter_generate_user_rule($rule) {
 	if (!empty($rule['dscp'])) {
 		switch (strtolower($rule['dscp'])) {
 			case 'va':
-				$aline['dscp'] = " tos \"44\" ";
+				$aline['dscp'] = " tos 44 ";
 				break;
 			case 'VA':
-				$aline['dscp'] = " tos \"44\" ";
+				$aline['dscp'] = " tos 44 ";
 				break;
 			case 'cs1':
-				$aline['dscp'] = " tos \"8\" ";
+				$aline['dscp'] = " tos 8 ";
 				break;
 			case 'cs2':
-				$aline['dscp'] = " tos \"16\" ";
+				$aline['dscp'] = " tos 16 ";
 				break;
 			case 'cs3':
-				$aline['dscp'] = " tos \"24\" ";
+				$aline['dscp'] = " tos 24 ";
 				break;
 			case 'cs4':
-				$aline['dscp'] = " tos \"32\" ";
+				$aline['dscp'] = " tos 32 ";
 				break;
 			case 'cs5':
-				$aline['dscp'] = " tos \"40\" ";
+				$aline['dscp'] = " tos 40 ";
 				break;
 			case 'cs6':
-				$aline['dscp'] = " tos \"48\" ";
+				$aline['dscp'] = " tos 48 ";
 				break;
 			case 'cs7':
-				$aline['dscp'] = " tos \"56\" ";
+				$aline['dscp'] = " tos 56 ";
 				break;
 			default:
 				$aline['dscp'] = " tos " . $rule['dscp'] . " ";
@@ -3447,8 +3514,10 @@ function filter_generate_user_rule($rule) {
 		}
 	}
 
+	$aline['trackerlabel'] = "";
 	if (!empty($rule['tracker'])) {
 		$aline['tracker'] = "ridentifier {$rule['tracker']} ";
+		$aline['trackerlabel'] = " label \"id:{$rule['tracker']}\" ";
 	}
 
 	$line = "";
@@ -3461,7 +3530,7 @@ function filter_generate_user_rule($rule) {
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] .
 			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . filter_negaterule_tracker() . $aline['allowopts'] . $aline['flags'] .
-			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
+			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] . $aline['trackerlabel'] . $aline['gwlabel'] .
 			" label \"NEGATE_ROUTE: Negate policy routing for destination\"\n";
 
 	}
@@ -3469,7 +3538,7 @@ function filter_generate_user_rule($rule) {
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
 		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
-		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
+		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] . $aline['trackerlabel'] . $aline['gwlabel'];
 
 	unset($aline);
 
@@ -4807,6 +4876,24 @@ function filter_get_interface_list() {
 		$filter_ifs[$ifent] = $ifname;
 	}
 	return $filter_ifs;
+}
+
+function filter_get_host_id() {
+	global $config;
+	/* Custom pf host ID, hex string up to 8 characters in length */
+	if (!empty($config['hasync']['pfhostid']) &&
+	    ctype_xdigit($config['hasync']['pfhostid']) &&
+	    (strlen($config['hasync']['pfhostid']) <= 8)) {
+		$pfhostid = $config['hasync']['pfhostid'];
+	} else {
+		/* If the user has not set one manually, use the last 8 characters of the NDI */
+		$pfhostid = substr(system_get_uniqueid(), -8);
+		/* Extra safety belt in case the NDI cannot be determined. */
+		if (!ctype_xdigit($pfhostid) || (strlen($pfhostid) > 8)) {
+			$pfhostid = "";
+		}
+	}
+	return $pfhostid;
 }
 
 ?>

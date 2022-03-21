@@ -28,7 +28,7 @@
 			<descr><![CDATA[System Administrator]]></descr>
 			<scope>system</scope>
 			<groupname>admins</groupname>
-			<sha512-hash>$6$11c32b48b6beed58$pRfzPhqaAeAxQhkz.6N4TbOeAFe9/oau7UGKzNo9iZA91fDTuUNeIcPvnyz72SpMJ4wrWMcHH9t7jY3QIQPEQ.</sha512-hash>
+			<bcrypt-hash>$2b$10$13u6qwCOwODv34GyCMgdWub6oQF3RX0rG7c3d3X4JvzuEmAXLYDd2</bcrypt-hash>
 			<uid>0</uid>
 			<priv>user-shell-access</priv>
 		</user>

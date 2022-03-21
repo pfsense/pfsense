@@ -116,6 +116,7 @@ $shortcut_section = "interfaces";
 include("head.inc");
 
 $ifdescrs = get_configured_interface_with_descr(true);
+$ifinterrupts = interfaces_interrupts();
 
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
@@ -191,6 +192,24 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);
 			showDef($ifinfo['media'], gettext("Media"), $ifinfo['media']);
+			if ($ifinfo['plugged']) {
+				showDef($ifinfo['plugged'], gettext("Plugged"), $ifinfo['plugged']);
+			}
+			if ($ifinfo['vendor']) {
+				showDef($ifinfo['vendor'], gettext("Vendor"), $ifinfo['vendor']);
+			}
+			if ($ifinfo['temperature']) {
+				showDef($ifinfo['temperature'], gettext("Temperature"), $ifinfo['temperature']);
+			}
+			if ($ifinfo['voltage']) {
+				showDef($ifinfo['voltage'], gettext("voltage"), $ifinfo['voltage']);
+			}
+			if ($ifinfo['RX']) {
+				showDef($ifinfo['rx'], gettext("RX"), $ifinfo['rx']);
+			}
+			if ($ifinfo['TX']) {
+				showDef($ifinfo['tx'], gettext("TX"), $ifinfo['tx']);
+			}
 			showDef($ifinfo['laggproto'], gettext("LAGG Protocol"), $ifinfo['laggproto']);
 			showDef($ifinfo['laggport'], gettext("LAGG Ports"), $laggport);
 			showDef($ifinfo['channel'], gettext("Channel"), $ifinfo['channel']);
@@ -210,23 +229,10 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 		showDef($ifinfo['bridge'], sprintf(gettext('Bridge (%1$s)'), $ifinfo['bridgeint']), $ifinfo['bridge']);
 
-		if (file_exists("/usr/bin/vmstat")) {
-			$real_interface = "";
-			$interrupt_total = "";
-			$interrupt_sec = "";
-			$real_interface = $ifinfo['hwif'];
-			$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
-			$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
-
-			if (strstr($interrupt_total, "hci")) {
-				$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
-				$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $5 }'`;
-			}
-
-			unset($interrupt_total);
-
-			showDef($interrupt_total, gettext('Total interrupts'), $interrupt_total);
-			showDef($interrupt_total, '', $interrupt_sec . " " . $interrupt_total);
+		if (is_array($ifinterrupts[$ifinfo['hwif']])) {
+			$interrupt_total = $ifinterrupts[$ifinfo['hwif']]['total'];
+			$interrupt_sec = $ifinterrupts[$ifinfo['hwif']]['rate'];
+			showDef($interrupt_total, gettext('Interrupts'), $interrupt_total . " (" . $interrupt_sec . "/s)");
 		}
 ?>
 		</dl>

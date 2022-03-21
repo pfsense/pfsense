@@ -1,0 +1,118 @@
+/*
+ * cryptconfig
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2022 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+require_once("config.inc");
+require_once("crypt.inc");
+
+function usage() {
+        echo "Usage: playback cryptconfig <action> <input filename> <output filename>\n\n";
+        echo "Script will prompt for password input.\n\n";
+        echo "Examples:\n";
+        echo "playback crypt encrypt /conf/config.xml /root/config-backup.xml\n";
+        echo "playback crypt decrypt /root/config-backup.xml /root/config.xml\n";
+        echo "\n";
+}
+
+global $g, $config, $argv, $command_split;
+
+if (is_array($command_split)) {
+        $args = array_slice($command_split, 2);
+} else {
+        $args = array_slice($argv, 3);
+}
+
+if (empty($args[0])) {
+        usage();
+}
+
+$extras = array();
+
+// encrypt, decrypt
+$action = $args[0];
+
+// input file
+$in_file = $args[1];
+
+if (!file_exists($in_file)) {
+	echo gettext("Input file does not exist.") . "\n";
+	exit(-1);
+}
+
+// input file
+$out_file = $args[2];
+
+if (file_exists($out_file)) {
+	echo gettext("Output file already exists.") . "\n";
+	exit(-1);
+}
+
+$password = "";
+$confpassword = "";
+
+$fp = fopen('php://stdin', 'r');
+while (empty($password)) {
+	echo gettext("Enter the encryption password") . ": ";
+	exec('/bin/stty -echo');
+	$password = trim(fgets($fp));
+	exec('/bin/stty echo');
+	echo "\n";
+}
+
+if ($action == 'encrypt') {
+	// Confirm password
+	while (empty($confpassword)) {
+		echo gettext("Confirm encryption password") . ": ";
+		exec('/bin/stty -echo');
+		$confpassword = trim(fgets($fp));
+		exec('/bin/stty echo');
+		echo "\n";
+	}
+	if ($password != $confpassword) {
+		echo gettext("New and Confirm passwords did not match.") . "\n";
+		exit(-1);
+	}
+}
+
+$data = file_get_contents($in_file);
+
+if (!$data) {
+	echo gettext("Could not read input file, or input file is empty.") . "\n";
+	exit(-1);
+}
+
+if ($action == 'decrypt') {
+	if (!tagfile_deformat($data, $data, "config.xml")) {
+		echo gettext("The input file does not appear to contain an ecnrypted config.xml.") . "\n";
+		exit(-1);
+	} else {
+		echo gettext("Decrypting data...");
+		$data = decrypt_data($data, $password);
+		if (empty($data)) {
+			echo gettext("File decryption failed. Incorrect password or file is invalid.") . "\n";
+			exit(-1);
+		}
+	}
+} elseif ($action == 'encrypt') {
+	echo gettext("Encrypting data...");
+	$data = encrypt_data($data, $password);
+	tagfile_reformat($data, $data, "config.xml");
+}
+file_put_contents($out_file, $data);
+echo gettext("Done") . "\n";

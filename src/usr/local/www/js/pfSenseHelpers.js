@@ -799,7 +799,7 @@ function interceptGET() {
 		if (typeof attr !== typeof undefined && attr !== false) {
 			// Automatically apply a confirmation dialog to "Delete" icons
 			if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
-			   ($(this).hasClass('fa-trash'))) {
+			   (($(this).hasClass('do-confirm')) || ($(this).hasClass('fa-trash')))) {
 				var msg = $.trim(this.textContent).toLowerCase();
 
 				if (!msg)

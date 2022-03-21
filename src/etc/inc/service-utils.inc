@@ -279,7 +279,8 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] != 'disabled')) {
+	init_config_arr(array('ntpd'));
+	if ($config['ntpd']['enable'] != 'disabled') {
 		$pconfig = array();
 		$pconfig['name'] = "ntpd";
 		$pconfig['description'] = gettext("NTP clock sync");

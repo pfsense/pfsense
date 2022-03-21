@@ -6595,6 +6595,60 @@ function upgrade_220_to_221() {
 function upgrade_221_to_222() {
 }
 
+function upgrade_222_to_223() {
+	global $config;
+
+	foreach ($config['system']['user'] as & $user) {
+		if ($user['name'] == 'admin') {
+			$user_home = "/root";
+		} else {
+			$user_home = "/home/{$user_name}";
+		}
+		if (file_exists("{$user_home}/.keephistory")) {
+			$user['keephistory'] = true;
+		}
+	}
+}
+
+function upgrade_223_to_224() {
+	global $config;
+
+	init_config_arr(array('filter', 'rule'));
+	foreach ($config['filter']['rule'] as & $rule) {
+		if (isset($rule['floating']) && !isset($rule['interface'])) {
+			$rule['interface'] = 'any';
+		}
+	}
+}
+
+function upgrade_224_to_225() {
+	global $config;
+
+	/* DHCP6 now uses single config for all interfaces
+	 * see https://redmine.pfsense.org/issues/6880 */
+	foreach ($config['interfaces'] as & $inf) {
+		if (isset($inf['dhcp6debug'])) {
+			$config['system']['dhcp6debug'] = true;
+			unset($inf['dhcp6debug']);
+		}
+		if (isset($inf['dhcp6norelease'])) {
+			$config['system']['dhcp6norelease'] = true;
+			unset($inf['dhcp6norelease']);
+		}
+	}
+}
+
+function upgrade_225_to_226() {
+	global $config;
+
+	/* Update value of state killing on gateway failure.
+	 * https://redmine.pfsense.org/issues/12092
+	 */
+	if (isset($config['system']['gw_down_kill_states'])) {
+		$config['system']['gw_down_kill_states'] = 'all';
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

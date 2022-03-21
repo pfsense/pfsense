@@ -694,9 +694,13 @@ function saveFilterRule($post, $id, $json = false) {
 
 		$filterent['type'] = $post['type'];
 
-		if (isset($post['interface'])) {
+		if (isset($post['floating']) && (!isset($post['interface']) ||
+		    in_array('any', $post['interface']))) {
+			$post['interface'] = array('any');
+		} else {
 			$filterent['interface'] = $post['interface'];
-		} // FIXME: can $post['interface'] be unset at this point, if so then what?
+		}
+
 
 		$filterent['ipprotocol'] = $post['ipprotocol'];
 
@@ -976,6 +980,67 @@ function toggleFilterRule($post, $if, $json = false) {
 	}
 }
 
+function copyRule($post, $if, $json = false) {
+  global $config;
+  $a_filter = &$config['filter']['rule'];
+  
+  $confiflist = get_configured_interface_list();
+	foreach ($post['rule'] as $rulei) {
+		$filterent = $a_filter[$rulei];
+		$filterent['tracker'] = (int)microtime(true);
+		$filterent['interface'] = $post['dstif'];
+		if ($post['convertif'] && ($if != $post['dstif']) &&
+		    in_array($post['dstif'], $confiflist)) {
+			if (isset($filterent['source']['network']) &&
+			    ($filterent['source']['network'] == $if)) {
+				$filterent['source']['network'] = $post['dstif'];
+			}
+			if (isset($filterent['destination']['network']) &&
+			    ($filterent['destination']['network'] == $if)) {
+				$filterent['destination']['network'] = $post['dstif'];
+			}
+			if (isset($filterent['source']['network']) &&
+			    ($filterent['source']['network'] == ($if . 'ip'))) {
+				$filterent['source']['network'] = $post['dstif'] . $ip;
+			}
+			if (isset($filterent['destination']['network']) &&
+			    ($filterent['destination']['network'] == ($if . 'ip'))) {
+				$filterent['destination']['network'] = $post['dstif'] . $ip;
+			}
+		}
+		$a_filter[] = $filterent;
+	}
+	if (write_config(gettext("Firewall: Rules - copying selected firewall rules."))) {
+		mark_subsystem_dirty('filter');
+	}
+  if (!$json) {
+	  header("Location: firewall_rules.php?if=" . htmlspecialchars($post['dstif']));
+	  exit;
+  }
+}
+
+function toggleMultipleFilterRules($post, $if, $json = false) {
+  global $config;
+  $a_filter = &$config['filter']['rule'];
+  if (is_array($post['rule']) && count($post['rule'])) {
+		foreach ($post['rule'] as $rulei) {
+			if (isset($a_filter[$rulei]['disabled'])) {
+				unset($a_filter[$rulei]['disabled']);
+			} else {
+				$a_filter[$rulei]['disabled'] = true;
+			}
+		}
+		if (write_config(gettext("Firewall: Rules - toggle selected firewall rules."))) {
+			mark_subsystem_dirty('filter');
+		}
+
+    if (!$json){
+		  header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
+		  exit;
+    }
+  }
+}
+
 function deleteMultipleFilterRules($post, $if, $json = false) {
   global $config;
   $a_filter = &$config['filter']['rule'];
@@ -1058,7 +1123,6 @@ function reorderFilterRules($post, $if, $json = false) {
   $a_filter = &$config['filter']['rule'];
   $updated = false;
 	$dirty = false;
-
 
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($post['rule']) && !empty($post['rule'])) {

@@ -73,7 +73,7 @@ $g = array(
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"debug" => false,
-	"latest_config" => "22.2",
+	"latest_config" => "22.6",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -356,5 +356,16 @@ $ssh_keys = array(
 
 global $sshConfigDir;
 $sshConfigDir = "/etc/ssh";
+
+global $lagg_hash_list;
+$lagg_hash_list = array(
+	'l2,l3,l4' => 'Layer 2/3/4 (default)',
+	'l2' => 'Layer 2 (MAC Address)',
+	'l3' => 'Layer 3 (IP Address)',
+	'l4' => 'Layer 4 (Port Number)',
+	'l2,l3' => 'Layer 2/3 (MAC + IP)',
+	'l3,l4' => 'Layer 3/4 (IP + Port)',
+	'l2,l4' => 'Layer 2/4 (MAC + Port)'
+);
 
 ?>

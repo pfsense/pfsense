@@ -55,7 +55,10 @@ if [ -f "/var/etc/nameserver_${IF}" ]; then
 	/bin/rm -f /var/etc/nameserver_${IF}
 fi
 # Do not remove gateway used during filter reload.
-/bin/rm -f /tmp/${IF}_router
+
+if [ -f "/tmp/${IF}_router" ]; then
+	/bin/mv /tmp/${IF}_router /tmp/${IF}_router.last
+fi
 /bin/rm -f /tmp/${IF}up
 /bin/rm -f /tmp/${IF}_ip
 /usr/local/sbin/pfSctl -c 'service reload dns'

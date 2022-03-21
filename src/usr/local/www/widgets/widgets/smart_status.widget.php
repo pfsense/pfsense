@@ -81,8 +81,8 @@ if (count($devs) > 0)  {
 		}
 
 		$smartdrive_is_displayed = true;
-		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
-		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
+		$dev_ident = exec("/usr/sbin/diskinfo -v /dev/$dev | /usr/bin/grep ident   | /usr/bin/awk '{print $1}'"); ## get identifier from drive
+		$dev_state = trim(exec("/usr/local/sbin/smartctl -H /dev/$dev | /usr/bin/awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
 		switch ($dev_state) {
 			case "PASSED":

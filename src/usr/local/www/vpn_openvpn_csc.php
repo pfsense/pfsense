@@ -266,8 +266,9 @@ if ($_POST['save']) {
 		$csc['common_name'] = $pconfig['common_name'];
 		$csc['block'] = $pconfig['block'];
 		$csc['description'] = $pconfig['description'];
-		$csc['tunnel_network'] = $pconfig['tunnel_network'];
-		$csc['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
+		foreach (array('', 'v6') as $ntype) {
+			$csc["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
+		}
 		$csc['local_network'] = $pconfig['local_network'];
 		$csc['local_networkv6'] = $pconfig['local_networkv6'];
 		$csc['remote_network'] = $pconfig['remote_network'];

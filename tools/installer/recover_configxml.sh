@@ -41,7 +41,7 @@ done
 if [ -n "${target_list}" ]; then
 	exec 3>&1
 	recover_disk_choice=`echo ${target_list} | xargs dialog --backtitle "pfSense Installer" \
-		--title "Recover config.xml" \
+		--title "Recover config.xml and SSH keys" \
 		--menu "Select the partition containing config.xml" \
 		0 0 0 2>&1 1>&3` || exit 1
 	exec 3>&-
@@ -103,6 +103,13 @@ if [ -n "${recover_disk}" ] ; then
 	if [ -r ${recovery_mount}/cf/conf/config.xml -a -s ${recovery_mount}/cf/conf/config.xml ]; then
 		/bin/cp ${recovery_mount}/cf/conf/config.xml ${recovery_dir}/config.xml
 		echo "Recovered config.xml from ${recover_disk}, stored in ${recovery_dir}."
+		for keytype in "rsa ed25519"; do
+			if [ -s {$recovery_mount}/etc/ssh/ssh_host_{$keytype}_key -a -s {$recovery_mount}/etc/ssh/ssh_host_{$keytype}_key.pub ]; then
+				/bin/cp ${recovery_mount}/etc/ssh/ssh_host_${keytype}_key ${recovery_dir}/ssh_host_${keytype}_key
+				/bin/cp ${recovery_mount}/etc/ssh/ssh_host_${keytype}_key.pub ${recovery_dir}/ssh_host_${keytype}_key.pub
+				echo "Recovered ${keytype} SSH key from ${recover_disk}, stored in ${recovery_dir}."
+			fi
+		done
 	else
 		echo "${recover_disk} does not contain a readable config.xml for recovery."
 		exit 1

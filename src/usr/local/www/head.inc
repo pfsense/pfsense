@@ -318,7 +318,7 @@ $firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),
 
 // Services
 $services_menu = array();
-$services_menu[] = array(gettext("Auto Config Backup"), "/services_acb.php");
+$services_menu[] = array(gettext("Auto Config Backup"), "/services_acb_settings.php");
 $services_menu[] = array(gettext("Captive Portal"), "/services_captiveportal.php");
 $services_menu[] = array(gettext("DNS Forwarder"), "/services_dnsmasq.php");
 $services_menu[] = array(gettext("DNS Resolver"), "/services_unbound.php");

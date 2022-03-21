@@ -69,6 +69,8 @@ $thermal_hardware_modules = array(
 	'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
 );
 
+global $global_gateway_state_kill_modes;
+
 $rebootneeded = false;
 
 if ($_POST) {
@@ -287,13 +289,16 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 $section = new Form_Section('Gateway Monitoring');
 
-$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Select(
 	'gw_down_kill_states',
 	'State Killing on Gateway Failure',
-	'Flush all states when a gateway goes down',
-	$pconfig['gw_down_kill_states']
-))->setHelp('The monitoring process will flush all states when a gateway goes down '.
-	'if this box is checked.');
+	$pconfig['gw_down_kill_states'],
+	$global_gateway_state_kill_modes
+))->setHelp('Controls the state killing behavior when a gateway is down during a filter reload. '.
+	'Killing states for specific down gateways only affects states created by policy routing rules and reply-to. ' .
+	'Behaviors except "Flush all" can be overridden on a per-gateway basis. Not triggered by '.
+	'gateways with monitoring disabled, monitoring action disabled, or which have been forced down. ' .
+	'May not have any effect on dynamic gateways during a link loss event.');
 
 $section->addInput(new Form_Checkbox(
 	'skip_rules_gw_down',
@@ -303,6 +308,15 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default, when a rule has a gateway specified and this gateway is '.
 	'down, the rule is created omitting the gateway. This option overrides that '.
 	'behavior by omitting the entire rule instead.');
+
+$section->addInput(new Form_Checkbox(
+	'dpinger_dont_add_static_routes',
+	'Static routes',
+	'Do not add static routes for gateway monitor IP addresses',
+	$pconfig['dpinger_dont_add_static_routes']
+))->setHelp('By default the firewall adds static routes for gateway monitor IP addresses '.
+	'to ensure traffic to the monitor IP address leaves via the correct interface. '.
+	'Enabling this checkbox overrides that behavior.');
 
 $form->add($section);
 $section = new Form_Section('RAM Disk Settings (Reboot to Apply Changes)');

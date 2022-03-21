@@ -58,6 +58,7 @@ net/mosh
 net/py-speedtest-cli
 net/trafshow
 net/trafshow3
+net/udpbroadcastrelay
 net/vnstat
 security/%%PRODUCT_NAME%%-pkg-acme
 security/%%PRODUCT_NAME%%-pkg-nmap

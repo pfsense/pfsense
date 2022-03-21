@@ -160,6 +160,14 @@ if ($_POST['act'] == "del") {
 	deleteFilterRule($_POST, $if);
 }
 
+if (($_POST['act'] == 'killid') &&
+    (!empty($_POST['tracker'])) &&
+    (!empty($if))) {
+	mwexec("/sbin/pfctl -k label -k " . escapeshellarg("id:{$_POST['tracker']}"));
+	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
+	exit;
+}
+
 // Handle save msg if defined
 if ($_REQUEST['savemsg']) {
 	$savemsg = htmlentities($_REQUEST['savemsg']);
@@ -167,10 +175,17 @@ if ($_REQUEST['savemsg']) {
 
 if (isset($_POST['del_x'])) {
 	deleteMultipleFilterRules($_POST, $if);
-} else if ($_POST['act'] == "toggle") {
+} else if (isset($_POST['toggle_x'])) {
+  toggleMultipleFilterRules($_POST, $if);
+}
+else if ($_POST['act'] == "toggle") {
 	toggleFilterRule($_POST, $if);
 } else if ($_POST['order-store']) {
 	reorderFilterRules($_POST, $if);
+} elseif (isset($_POST['dstif']) && !empty($_POST['dstif']) &&
+    isset($iflist[$_POST['dstif']]) && have_ruleint_access($_POST['dstif']) && 
+    is_array($_POST['rule']) && count($_POST['rule'])) {
+      copyRule($_POST, $if);
 }
 
 $tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));
@@ -253,8 +268,10 @@ if ($if == "FloatingRules") {
 }
 </style>
 
-<form method="post">
+<form id="mainform" method="post">
 	<input name="if" id="if" type="hidden" value="<?=$if?>" />
+	<input name="dstif" id="dstif" type="hidden" value="" />
+	<input name="convertif" id="convertif" type="hidden" value="" />
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=$rules_header_text?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
@@ -599,6 +616,9 @@ foreach ($a_filter as $filteri => $filterent):
 							if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client'])
 								$selected_descs[] = 'OpenVPN';
 							break;
+						case 'any':
+							$selected_descs[] = 'Any';
+							break;
 						default:
 							$selected_descs[] = $interface;
 							break;
@@ -767,6 +787,10 @@ foreach ($a_filter as $filteri => $filterent):
 <?php }
 ?>
 							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>" usepost></a>
+<?php if (($filterent['type'] == 'pass') &&
+	    !empty($filterent['tracker'])): ?>
+							<a href="?act=killid&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>&amp;tracker=<?=$filterent['tracker']?>" class="fa fa-times do-confirm" title="<?=gettext('Kill states on this interface created by this rule')?>" usepost></a>
+<?php endif; ?>
 						</td>
 					</tr>
 <?php
@@ -807,10 +831,20 @@ if ($seprows[$nrules]) {
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" title="<?=gettext('Delete selected rules')?>">
+		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" disabled title="<?=gettext('Delete selected rules')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
+		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" disabled title="<?=gettext('Toggle selected rules')?>">
+			<i class="fa fa-ban icon-embed-btn"></i>
+			<?=gettext("Toggle"); ?>
+		</button>
+		<?php if ($if != 'FloatingRules'):?>
+		<button id="copy_x" name="copy_x" type="button" class="btn btn-primary btn-sm" value="<?=gettext("Copy selected rules"); ?>" disabled title="<?=gettext('Copy selected rules')?>" data-toggle="modal" data-target="#rulescopy">
+			<i class="fa fa-clone icon-embed-btn"></i>
+			<?=gettext("Copy"); ?>
+		</button>
+		<?php endif;?>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled title="<?=gettext('Save rule order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
@@ -821,7 +855,45 @@ if ($seprows[$nrules]) {
 		</button>
 	</nav>
 </form>
-
+<?php
+// Create a Modal object to display Rules Copy window
+$form = new Form(false);
+$modal = new Modal('Copy selected rules', 'rulescopy', true);
+$modal->addInput(new Form_Select(
+	'copyr_dstif',
+	'*Destination Interface',
+	$if,
+	filter_get_interface_list()
+))->setHelp('Select the destination interface where the rules should be copied. Rules will be added after existing rules on that interface.');
+$modal->addInput(new Form_Checkbox(
+	'copyr_convertif',
+	'Convert interface definitions',
+	'Enable Interface Address/Net conversion',
+	false
+))->setHelp('Convert source Interface Address/Net definitions to the destination Interface Address/Net.%1$s' .
+	    'For example: LAN Address -> OPT1 Address, or LAN net -> OPT1 net.%1$s' . 
+	    'Interface groups and some special interfaces (IPsec, OpenVPN), do not support this feature.', '<br />');
+$btncopyrules = new Form_Button(
+	'copyr',
+	'Paste',
+	null,
+	'fa-clone'
+);
+$btncopyrules->setAttribute('type','button')->addClass('btn-success');
+$btncancelcopyrules = new Form_Button(
+	'cancel_copyr',
+	'Cancel',
+	null,
+	'fa-undo'
+);
+$btncancelcopyrules->setAttribute('type','button')->addClass('btn-warning');
+$modal->addInput(new Form_StaticText(
+	null,
+	$btncopyrules . $btncancelcopyrules
+));
+$form->add($modal);
+print($form);
+?>
 <div class="infoblock">
 	<div class="alert alert-info clearfix" role="alert"><div class="pull-left">
 		<dl class="dl-horizontal responsive">
@@ -852,7 +924,7 @@ if ($seprows[$nrules]) {
 	}
 
 	printf(gettext('%1$sClick the anchor icon %2$s to move checked rules before the clicked row. Hold down ' .
-			'the shift key and click to move the rules after the clicked row.'), '<br /><br />', '<i class="fa fa-anchor"></i>')
+			'the shift key and click to move the rules after the clicked row.'), '<br /><br />', '<i class="fa fa-anchor"></i>');
 ?>
 	</div>
 	</div>
@@ -968,6 +1040,22 @@ events.push(function() {
 		saving = true;
 	});
 
+	function buttonsmode() {
+		var buttonsdisable = true;
+		$('[id^=frc]').each(function () {
+			if ($(this).prop("checked")) {
+				buttonsdisable = false;
+			}
+		});
+		$('#del_x').prop('disabled', buttonsdisable);
+		$('#toggle_x').prop('disabled', buttonsdisable);
+		$('#copy_x').prop('disabled', buttonsdisable);
+	}
+
+	$('[id^=fr]').click(function () {
+		buttonsmode();
+	});
+
 	// Provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if ((!saving && dirty) || newSeperator) {
@@ -990,7 +1078,20 @@ events.push(function() {
 		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
 		$(this).prop('checked', checkedStatus);
 		});
+		buttonsmode();
 	});
+
+	$("#copyr").click(function() {
+		$("#rulescopy").modal('hide');
+		$("#dstif").val($("#copyr_dstif").val());
+		$("#convertif").val($("#copyr_convertif").val());
+		document.getElementById('mainform').submit();
+	});
+
+	$("#cancel_copyr").click(function() {
+		$("#rulescopy").modal('hide');
+	});
+
 });
 //]]>
 </script>

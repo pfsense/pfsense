@@ -80,6 +80,42 @@ $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("E
 $pglinks = array("", "firewall_nat.php", "firewall_nat_npt.php", "@self");
 include("head.inc");
 
+function dsttype_selected() {
+	global $pconfig;
+
+	if ($pconfig['dsttype']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		return $pconfig['dsttype'];
+	}
+
+	$sel = is_specialnet($pconfig['dst']);
+
+	if (!$sel) {
+		return('network');
+	}
+
+	return($pconfig['dst']);
+}
+
+function build_dsttype_list() {
+	global $pconfig, $config;
+
+	$sel = is_specialnet($pconfig['dst']);
+	$list = array('network' => gettext('Prefix'));
+
+	foreach (get_configured_interface_with_descr() as $if => $ifdesc) {
+		if (($config['interfaces'][$if]['ipaddrv6'] == 'track6') && 
+		    get_interface_track6ip($if)) {
+			$track6ip = get_interface_track6ip($if);
+			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+			$sntext .= " ({$pdsubnet}/{$track6ip[1]})";
+			$list[$if] = $ifdesc . $sntext;
+		}
+	}
+
+	return($list);
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -103,34 +139,58 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose which interface this rule applies to.%s' .
 			'Hint: Typically the "WAN" is used here.', '<br />');
 
-$section->addInput(new Form_Checkbox(
+$group = new Form_Group('*Source IPv6 prefix');
+
+$group->add(new Form_Checkbox(
 	'srcnot',
 	'Internal IPv6 prefix',
 	'Not',
 	$pconfig['srcnot']
-))->setHelp('Use this option to invert the sense of the match. ');
+))->setHelp('Invert the sense of the match.')->setWidth(2);
 
-$section->addInput(new Form_IpAddress(
+$group->add(new Form_StaticText(
+	null,
+	null
+))->setWidth(3);
+
+$group->add(new Form_IpAddress(
 	'src',
-	'*Address',
+	'*Source prefix',
 	$pconfig['src'],
 	'V6'
-))->addMask('srcmask', $pconfig['srcmask'])->setHelp('Internal (LAN) ULA IPv6 Prefix for the Network Prefix translation. ' .
-													 'The prefix size specified for the internal IPv6 prefix will be applied to the external prefix.');
+))->addMask('srcmask', $pconfig['srcmask'], 128, 1, false);
 
-$section->addInput(new Form_Checkbox(
+$group->setHelp('Internal (LAN) ULA IPv6 Prefix for the Network Prefix translation. ' .
+		'The prefix size specified for the internal IPv6 prefix will be applied to the external prefix.');
+
+$section->add($group);
+
+$group = new Form_Group('*Destination IPv6 prefix');
+
+$group->add(new Form_Checkbox(
 	'dstnot',
-	'Destination IPv6 prefix',
+	null,
 	'Not',
 	$pconfig['dstnot']
-))->setHelp('Use this option to invert the sense of the match. ');
+))->setHelp('Invert the sense of the match.')->setWidth(2);
 
-$section->addInput(new Form_IpAddress(
+$group->add(new Form_Select(
+	'dsttype',
+	null,
+	dsttype_selected(),
+	build_dsttype_list()
+))->setHelp('Type')->setWidth(3);
+
+$group->add(new Form_IpAddress(
 	'dst',
-	'*Address',
+	'*Destination prefix',
 	$pconfig['dst'],
 	'V6'
-))->addMask('dstmask', $pconfig['dstmask'])->setHelp('Global Unicast routable IPv6 prefix');
+))->addMask('dstmask', $pconfig['dstmask'], 128, 1, false);
+
+$group->setHelp('Global Unicast routable IPv6 prefix');
+
+$section->add($group);
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -150,5 +210,39 @@ if (isset($id) && $a_npt[$id]) {
 
 $form->add($section);
 print($form);
+?>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	function typesel_change() {
+		switch ($('#dsttype').find(":selected").index()) {
+			case 0: // prefix
+				disableInput('dst', false);
+				disableInput('dstmask', false);
+				break;
+			default:
+				$('#dst').val('');
+				disableInput('dst', true);
+				$('#dstmask').val('');
+				disableInput('dstmask', true);
+				break;
+		}
+	}
+
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	$('#dsttype').change(function () {
+		typesel_change();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	typesel_change();
+
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

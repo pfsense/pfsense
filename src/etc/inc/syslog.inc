@@ -1209,7 +1209,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	if ($trackernum == "0") {
 		$lookup_pattern = "^@{$rulenum}\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
 	} else {
-		$lookup_pattern = "^@[0-9]+\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]].*[[:space:]]ridentifier[[:space:]]{$trackernum}";
+		$lookup_pattern = "^@[0-9]+[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]].*[[:space:]]ridentifier[[:space:]]{$trackernum}";
 	}
 
 	/* At the moment, miniupnpd is the only thing I know of that
@@ -1243,7 +1243,7 @@ function buffer_rules_load() {
 		}
 	}
 	unset($buffer, $_gb);
-	$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
+	$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
 
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {

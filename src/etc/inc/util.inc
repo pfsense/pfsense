@@ -115,6 +115,13 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
+function clear_filter_subsystems_dirty() {
+	clear_subsystem_dirty('aliases');
+	clear_subsystem_dirty('filter');
+	clear_subsystem_dirty('natconf');
+	clear_subsystem_dirty('shaper');
+}
+
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
 	global $g;
@@ -2691,6 +2698,23 @@ function route_table() {
 	return $result;
 }
 
+/* check if route is static (not BGP/OSPF) */
+function is_static_route($target, $ipprotocol = '') {
+	if (is_v4($target) || (($target == 'default') && ($ipprotocol == 'inet'))) {
+		$inet = '4';
+	} elseif (is_v6($target) || (($target == 'default') && ($ipprotocol == 'inet6'))) {
+		$inet = '6';
+	} else {
+		return false;
+	}
+
+	if (exec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | egrep 'flags: <.*STATIC.*>'")) {
+		return true;
+	}
+
+	return false;
+}
+
 /* Get static route for specific destination */
 function route_get($target, $ipprotocol = '', $useroute = false) {
 	global $config;
@@ -3320,6 +3344,7 @@ function unixnewlines($text) {
 }
 
 function array_remove_duplicate($array, $field) {
+	$cmp = array();
 	foreach ($array as $sub) {
 		if (isset($sub[$field])) {
 			$cmp[] = $sub[$field];
@@ -3875,6 +3900,30 @@ function ip6_to_asn1($addr) {
 	}
 
 	return $octstr;
+}
+
+function interfaces_interrupts() {
+	exec("/usr/bin/vmstat -i --libxo json", $rawdata, $rc);
+	$interrupts = array();
+	if ($rc == 0) {
+		$vnstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+		$interruptarr = $vnstatarr['interrupt-statistics']['interrupt'];
+
+		foreach ($interruptarr as $int){
+			preg_match("/irq\d+: ([a-z0-9]+)/", $int['name'], $matches);
+			$name = $matches[1];
+			if (array_key_exists($name, $interrupts)) {
+				/* interface with multiple queues */
+				$interrupts[$name]['total'] += $int['total'];
+				$interrupts[$name]['rate'] += $int['rate'];
+			} else {
+				$interrupts[$name]['total'] = $int['total'];
+				$interrupts[$name]['rate'] = $int['rate'];
+			}
+		}
+	}
+
+	return $interrupts;
 }
 
 ?>

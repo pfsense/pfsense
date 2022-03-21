@@ -1189,22 +1189,25 @@ function package_reinstall_all() {
 		return false;
 	}
 
-	$package_list = array();
-	foreach ($config['installedpackages']['package'] as $package) {
-		$package_list[] = get_package_internal_name($package);
-	}
-
-	if (!empty($package_list)) {
+	init_config_arr(array('installedpackages', 'package'));
+	if (!empty($config['installedpackages']['package'])) { 
 		$pkg_info = get_pkg_info();
 	}
 
-	foreach ($package_list as $package) {
+	foreach ($config['installedpackages']['package'] as $package) {
 		$found = false;
 		foreach ($pkg_info as $pkg) {
 			pkg_remove_prefix($pkg['name']);
-			if ($pkg['name'] == $package) {
-				pkg_install($g['pkg_prefix'] . $package, true);
+			if ($pkg['name'] == $package['internal_name']) {
+				pkg_install($g['pkg_prefix'] . $package['internal_name'], true);
 				$found = true;
+			} elseif ($pkg['name'] == $package['name']) {
+				/* some packages use 'name' as the package name,
+				 * see https://redmine.pfsense.org/issues/12766 */
+				pkg_install($g['pkg_prefix'] . $package['name'], true);
+				$found = true;
+			}
+			if ($found) {
 				break;
 			}
 		}

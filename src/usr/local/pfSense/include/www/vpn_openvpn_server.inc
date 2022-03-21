@@ -301,7 +301,7 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
     $input_errors = array();
 	$pconfig = $post;
 
-	if (isset($id) && $a_server[$id]) {
+  if (isset($id) && $a_server[$id]) {
 		$vpnid = $a_server[$id]['vpnid'];
 	} else {
 		$vpnid = 0;
@@ -315,11 +315,36 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 
 	if (isset($pconfig['custom_options']) &&
 	    ($pconfig['custom_options'] != $a_server[$id]['custom_options']) &&
-	    !$user_can_edit_advanced && !$json) {
+	    !$user_can_edit_advanced) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
-	if (!$user_can_edit_advanced && !$json && !empty($a_server[$id]['custom_options'])) {
+	if (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
 		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
+	}
+
+	if (!empty($pconfig['mode']) &&
+	    !array_key_exists($pconfig['mode'], openvpn_build_mode_list())) {
+		$input_errors[] = gettext("The selected Server Mode is not valid.");
+	}
+
+	if (!empty($pconfig['dev_mode']) &&
+	    !array_key_exists($pconfig['dev_mode'], $openvpn_dev_mode)) {
+		$input_errors[] = gettext("The selected Device Mode is not valid.");
+	}
+
+	if (!empty($pconfig['protocol']) &&
+	    !array_key_exists($pconfig['protocol'], $openvpn_prots)) {
+		$input_errors[] = gettext("The selected Protocol is not valid.");
+	}
+
+	if (!empty($pconfig['interface']) &&
+	    !array_key_exists($pconfig['interface'], openvpn_build_if_list())) {
+		$input_errors[] = gettext("The selected Interface is not valid.");
+	}
+
+	if (!empty($pconfig['ecdh_curve']) &&
+	    !array_key_exists($pconfig['ecdh_curve'], openvpn_get_curvelist())) {
+		$input_errors[] = gettext("The selected ECDH Curve is not valid.");
 	}
 
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
@@ -330,6 +355,32 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 	/* Maximum option line length = 256, see https://redmine.pfsense.org/issues/11559 */
 	if (!empty($pconfig['data_ciphers']) && (strlen("data-ciphers " . implode(",", $pconfig['data_ciphers'])) > 254)) {
 		$input_errors[] = gettext("Too many Data Encryption Algorithms have been selected.");
+	}
+
+	if (!empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
+		foreach ($pconfig['data_ciphers'] as $dc) {
+			if (!in_array(trim($dc), $cipher_validation_list)) {
+				$input_errors[] = gettext("One or more of the selected Data Encryption Algorithms is not valid.");
+			}
+		}
+	} else {
+		/* If data_ciphers is not empty and also not an array, it can't be valid. */
+		$input_errors[] = gettext("The Data Encryption Algorithm list is not valid.");
+	}
+
+	if (!empty($pconfig['digest']) &&
+	    !array_key_exists($pconfig['digest'], openvpn_get_digestlist())) {
+		$input_errors[] = gettext("The selected Auth Digest Algorithm is not valid.");
+	}
+
+	if (!empty($pconfig['engine']) &&
+	    !array_key_exists($pconfig['engine'], openvpn_get_engines())) {
+		$input_errors[] = gettext("The selected Hardware Crypto engine is not valid.");
+	}
+
+	if (!empty($pconfig['cert_depth']) &&
+	    !array_key_exists($pconfig['cert_depth'], $openvpn_cert_depths)) {
+		$input_errors[] = gettext("The selected Certificate Depth is not valid.");
 	}
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
@@ -353,6 +404,22 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$tls_mode = true;
+
+		if (!empty($pconfig['caref']) &&
+		    !array_key_exists($pconfig['caref'], cert_build_list('ca', 'OpenVPN'))) {
+			$input_errors[] = gettext("The selected Peer Certificate Authority is not valid.");
+		}
+
+		if (!empty($pconfig['crlref']) &&
+		    !array_key_exists($pconfig['crlref'], openvpn_build_crl_list())) {
+			$input_errors[] = gettext("The selected Peer Certificate Revocation List is not valid.");
+		}
+
+		if (!empty($pconfig['certref']) &&
+		    !array_key_exists($pconfig['certref'], $certlist['server'] + $certlist['non-server'])) {
+			$input_errors[] = gettext("The selected Server Certificate is not valid.");
+		}
+
 	} else {
 		$tls_mode = false;
 	}
@@ -417,6 +484,16 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 		$input_errors[] = $result;
 	}
 
+	if (!empty($pconfig['allow_compression']) &&
+	    !array_key_exists($pconfig['allow_compression'], $openvpn_allow_compression)) {
+		$input_errors[] = gettext("The selected Allow Compression value is not valid.");
+	}
+
+	if (!empty($pconfig['compression']) &&
+	    !array_key_exists($pconfig['compression'], $openvpn_compression_modes)) {
+		$input_errors[] = gettext("The selected Compression is not valid.");
+	}
+
 	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['interface'], $pconfig['local_port'], $vpnid);
 	if (($portused != $vpnid) && ($portused != 0)) {
 		$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
@@ -440,6 +517,10 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 		}
 		if (!in_array($pconfig['tls_type'], array_keys($openvpn_tls_modes))) {
 			$input_errors[] = gettext("The field 'TLS Key Usage Mode' is not valid");
+		}
+		if (!empty($pconfig['tlsauth_keydir']) &&
+		    !array_key_exists($pconfig['tlsauth_keydir'], openvpn_get_keydirlist())) {
+			$input_errors[] = gettext("The selected TLS Key Direction is not valid.");
 		}
 	}
 
@@ -487,14 +568,15 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
 		}
+
+		if (!empty($pconfig['netbios_ntype']) &&
+		    !array_key_exists($pconfig['netbios_ntype'], $netbios_nodetypes)) {
+			$input_errors[] = gettext("The selected NetBIOS Node Type is not valid.");
+		}
 	}
 
 	if ($pconfig['maxclients'] && !is_numericint($pconfig['maxclients'])) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
-	}
-
-	if ($pconfig['connlimit'] && !is_numericint($pconfig['connlimit'])) {
-		$input_errors[] = gettext("The field 'Duplicate Connection Limit' must be numeric.");
 	}
 
 	if (!array_key_exists($pconfig['topology'], $openvpn_topologies)) {
@@ -517,14 +599,6 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 		}
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
-
-		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
-			foreach ($pconfig['data_ciphers'] as $dc) {
-				if (!in_array(trim($dc), $cipher_validation_list)) {
-					$input_errors[] = gettext("One or more of the selected Data Encryption Algorithms is not valid.");
-				}
-			}
-		}
 	} elseif (!$pconfig['autokey_enable']) {
 		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
 		$reqdfields = array('shared_key');
@@ -536,6 +610,14 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 	}
 
 	if ($pconfig['dev_mode'] == "tap") {
+		if (!empty($pconfig['serverbridge_interface']) &&
+		    !array_key_exists($pconfig['serverbridge_interface'], openvpn_build_bridge_list())) {
+			$input_errors[] = gettext("The selected Server Bridge Interface is not valid.");
+		} elseif (empty($pconfig['serverbridge_interface']) && empty($pconfig["tunnel_network"]) &&
+		    empty($pconfig["tunnel_networkv6"])) {
+			$input_errors[] = gettext("TAP server mode requires an IPv4/IPv6 Tunnel Network or Bridge Interface to work.");
+		}
+
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
 		}
@@ -602,6 +684,10 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 	}
 	if (!empty($pconfig['ocspurl']) && !is_URL($pconfig['ocspurl'])) {
 		$input_errors[] = gettext("OCSP URL must be a valid URL address.");
+	}
+	if (!empty($pconfig['verbosity_level']) &&
+	    !array_key_exists($pconfig['verbosity_level'], $openvpn_verbosity_level)) {
+		$input_errors[] = gettext("The selected Verbosity Level is not valid.");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -670,8 +756,9 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 		$server['digest'] = $pconfig['digest'];
 		$server['engine'] = $pconfig['engine'];
 
-		$server['tunnel_network'] = trim($pconfig['tunnel_network']);
-		$server['tunnel_networkv6'] = trim($pconfig['tunnel_networkv6']);
+		foreach (array('', 'v6') as $ntype) {
+			$server["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
+		}
 		$server['remote_network'] = $pconfig['remote_network'];
 		$server['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$server['gwredir'] = $pconfig['gwredir'];
@@ -679,7 +766,6 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 		$server['local_network'] = $pconfig['local_network'];
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
 		$server['maxclients'] = $pconfig['maxclients'];
-		$server['connlimit'] = $pconfig['connlimit'];
 		$server['allow_compression'] = $pconfig['allow_compression'];
 		$server['compression'] = $pconfig['compression'];
 		$server['compression_push'] = $pconfig['compression_push'];
@@ -792,7 +878,6 @@ function saveOpenVPNServer($vpnid, $id, $post, $json=false) {
 	if (!empty($pconfig['authmode'])) {
 		$pconfig['authmode'] = implode(",", $pconfig['authmode']);
 	}
-
     $rv = array();
     $rv['pconfig'] = $pconfig;
     $rv['input_errors'] = $input_errors;

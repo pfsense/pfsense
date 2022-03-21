@@ -27,6 +27,13 @@ require_once("rrd.inc");
 require_once("ipsec.inc");
 require_once("interfaces.inc");
 
+global $gateway_state_kill_modes;
+$gateway_state_kill_modes = array(
+	'' => gettext("Use global behavior (default)"),
+	'none' => gettext("Do not kill states on gateway failure"),
+	'down' => gettext("Kill states using this gateway when it is down"),
+);
+
 /* Returns an array of default values used for dpinger */
 function return_dpinger_defaults() {
 	return array(
@@ -239,18 +246,21 @@ function setup_gateways_monitor() {
 			 * Add static routes for each gateway with their monitor IP
 			 * not strictly necessary but is a added level of protection.
 			 */
-			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-				if (interface_isppp_type($gateway['friendlyiface'])) {
-					route_add_or_change($gateway['monitor'],
-					    '', $gateway['interface']);
-					system_staticroutes_configure($gateway['friendlyiface']);
-				} else {
-					route_add_or_change($gateway['monitor'],
-					    $gateway['gateway']);
-				}
+			if (!isset($config['system']['dpinger_dont_add_static_routes']) &&
+					!isset($gateway['dpinger_dont_add_static_route'])) {
+				if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
+					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+					if (interface_isppp_type($gateway['friendlyiface'])) {
+						route_add_or_change($gateway['monitor'],
+						    '', $gateway['interface']);
+						system_staticroutes_configure($gateway['friendlyiface']);
+					} else {
+						route_add_or_change($gateway['monitor'],
+						    $gateway['gateway']);
+					}
 
-				pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
+					pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
+				}
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if (is_linklocal($gateway['gateway']) &&
@@ -282,18 +292,22 @@ function setup_gateways_monitor() {
 			 * Add static routes for each gateway with their monitor IP
 			 * not strictly necessary but is a added level of protection.
 			 */
-			if ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) {
-				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-				if (interface_isppp_type($gateway['friendlyiface'])) {
-					route_add_or_change($gateway['monitor'],
-					    '', $gateway['interface']);
-					system_staticroutes_configure($gateway['friendlyiface']);
-				} else {
-					route_add_or_change($gateway['monitor'],
-					    $gateway['gateway']);
-				}
 
-				pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
+			if (!isset($config['system']['dpinger_dont_add_static_routes']) &&
+					!isset($gateway['dpinger_dont_add_static_route'])) {
+				if ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) {
+					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+					if (interface_isppp_type($gateway['friendlyiface'])) {
+						route_add_or_change($gateway['monitor'],
+						    '', $gateway['interface']);
+						system_staticroutes_configure($gateway['friendlyiface']);
+					} else {
+						route_add_or_change($gateway['monitor'],
+						    $gateway['gateway']);
+					}
+
+					pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
+				}
 			}
 		} else {
 			continue;
@@ -1112,8 +1126,12 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	} else {
 		$gwdefault = $config['gateways']['defaultgw6'];
 	}
+	/* do not delete dynamic (frr/bgp/ospf) route
+	 * see https://redmine.pfsense.org/issues/12536 */
 	if ($gwdefault == "-") {
-		// 'none', dont set the default gateway, useful if routes are managed by frr/bgp/ospf or similar
+		if (is_static_route('default', $ipprotocol)) {
+			route_del('default', $ipprotocol); 
+		}
 		return;
 	}
 	if (isset($gateways_arr[$gwdefault])) {
@@ -1124,7 +1142,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		$gateways_arr = order_gateways_as_configured($gateways_arr);
 		$fallback = "";
 		foreach($gateways_arr as $gwname => $gwsttng) {
-			if ($gwsttng['ipprotocol'] != $ipprotocol) {
+			if (($gwsttng['ipprotocol'] != $ipprotocol) || isset($gwsttng['force_down'])) {
 				continue;
 			}
 
@@ -1137,9 +1155,11 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				$fallback = $gwname;
 			}
 		}
-		if (empty($set_dfltgwname)) {
+		if (empty($set_dfltgwname) && !empty($fallback)) {
 			log_error(sprintf("Gateway, none 'available' for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
 			$set_dfltgwname = $fallback;
+		} else {
+			log_error("Gateway, NONE AVAILABLE");
 		}
 	} else {
 		// a gwgroup is selected
@@ -1178,6 +1198,8 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	}
 	if (!empty($set_dfltgwname) && isset($gateways_arr[$set_dfltgwname])) {
 		setdefaultgateway($gateways_arr[$set_dfltgwname]);
+	} elseif (empty($set_dfltgwname)) {
+		route_del('default', $ipprotocol); 
 	}
 }
 
@@ -1333,8 +1355,12 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 				$gatewayip = "";
 				if (is_ipaddr($gateway['gateway'])) {
 					$gatewayip = $gateway['gateway'];
-				} else if (!empty($int)) {
-					$gatewayip = get_interface_gateway($gateway['friendlyiface']);
+				} elseif (!empty($int)) {
+					if ($gateway['ipprotocol'] == 'inet') {
+						$gatewayip = get_interface_gateway($gateway['friendlyiface']);
+					} else {
+						$gatewayip = get_interface_gateway_v6($gateway['friendlyiface']);
+					}
 				}
 
 				if (!empty($int)) {
@@ -1344,6 +1370,11 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 						$groupmember['gw'] = $member;
 						$groupmember['int'] = $int;
 						$groupmember['gwip'] = $gatewayip;
+						/* set correct linklocal gateway address,
+						 * see https://redmine.pfsense.org/issues/12721 */
+						if (is_ipaddrv6($gatewayip) && is_linklocal($gatewayip) && empty(get_ll_scope($gatewayip))) {
+							$groupmember['gwip'] .= '%' . $int;
+						}
 						$groupmember['weight'] = isset($gateway['weight']) ? $gateway['weight'] : 1;
 						if (is_array($gwvip_arr[$group['name']]) && !empty($gwvip_arr[$group['name']][$member])) {
 							$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
@@ -1548,6 +1579,17 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	return ($gw);
 }
 
+function get_interface_gateway_last($interface, $family = 'inet') {
+	global $config, $g;
+	$interface = get_root_interface($interface);
+	$realif = get_real_interface($interface);
+	$suffix = ($family == 'inet6') ? 'v6' : '';
+	if (file_exists("{$g['tmp_path']}/{$realif}_router{$suffix}.last")) {
+		return trim(@file_get_contents("{$g['tmp_path']}/{$realif}_router{$suffix}.last"), " \n");
+	}
+	return '';
+}
+
 function get_interface_gateway_v6($interface, &$dynamic = false) {
 	global $config, $g;
 
@@ -1709,7 +1751,7 @@ function gateway_is_gwgroup_member($name, $detail=false) {
   Otherwise return an empty $input_errors array
 */
 function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_sn = "") {
-	global $config;
+	global $config, $gateway_state_kill_modes;
 
 	$a_gateways = return_gateways_array(true, false, true, true);
 	$input_errors = array();
@@ -1850,6 +1892,9 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 	}
 	if (isset($gateway_settings['data_payload']) && is_numeric($gateway_settings['data_payload']) && $gateway_settings['data_payload'] < 0) {
 		$input_errors[] = gettext("A valid data payload must be specified.");
+	}
+	if (!empty($gateway_settings['skip_rules_gw_down']) && !array_key_exists($gateway_settings['skip_rules_gw_down'], $gateway_state_kill_modes)) {
+		$input_errors[] = gettext("Please select a valid State Killing on Gateway Failure mode.");
 	}
 	/* only allow correct IPv4 and IPv6 gateway addresses */
 	if (($gateway_settings['gateway'] <> "") && is_ipaddr($gateway_settings['gateway']) && $gateway_settings['gateway'] != "dynamic") {
@@ -2078,9 +2123,13 @@ function save_gateway($gateway_settings, $realid = "") {
 	if ($gateway_settings['nonlocalgateway'] == "yes") {
 		$gateway['nonlocalgateway'] = true;
 	}
+	if ($gateway_settings['dpinger_dont_add_static_route'] == "yes") {
+		$gateway['dpinger_dont_add_static_route'] = true;
+	}
 	if ($gateway_settings['force_down'] == "yes") {
 		$gateway['force_down'] = true;
 	}
+	$gateway['gw_down_kill_states'] = $gateway_settings['gw_down_kill_states'];
 	if (is_ipaddr($gateway_settings['monitor'])) {
 		$gateway['monitor'] = $gateway_settings['monitor'];
 	}

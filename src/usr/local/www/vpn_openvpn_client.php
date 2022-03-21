@@ -592,8 +592,9 @@ if ($_POST['save']) {
 		$client['digest'] = $pconfig['digest'];
 		$client['engine'] = $pconfig['engine'];
 
-		$client['tunnel_network'] = $pconfig['tunnel_network'];
-		$client['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
+		foreach (array('', 'v6') as $ntype) {
+			$client["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
+		}
 		$client['remote_network'] = $pconfig['remote_network'];
 		$client['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$client['use_shaper'] = $pconfig['use_shaper'];

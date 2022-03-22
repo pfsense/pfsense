@@ -205,7 +205,7 @@ events.push(function(){
 
 	// Create an object defining the widget refresh AJAX call
 	var logsObject = new Object();
-	logsObject.name = "Gateways";
+	logsObject.name = "Firewall Logs";
 	logsObject.url = "/widgets/widgets/log.widget.php";
 	logsObject.callback = logs_callback;
 	logsObject.parms = postdata;

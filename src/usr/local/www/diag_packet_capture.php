@@ -277,9 +277,7 @@ if ($_POST) {
 			$action = gettext("Start");
 
 			//delete previous packet capture if it exists
-			if (file_exists($fp.$fn)) {
-				unlink ($fp.$fn);
-			}
+			unlink_if_exists($fp.$fn);
 		} elseif ($_POST['stopbtn'] != "") {
 			$action = gettext("Stop");
 			$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'"));
@@ -297,10 +295,8 @@ if ($_POST) {
 			//download file
 			send_user_download('file', $fp.$fn);
 		} elseif ($_POST['clearbtn'] != "") {
-			//clear log file
-			if (file_exists($fp.$fn)) {
-				unlink ($fp.$fn);
-			}
+			//delete previous packet capture if it exists
+			unlink_if_exists($fp.$fn);
 		}
 	}
 } else {

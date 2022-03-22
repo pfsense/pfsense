@@ -482,6 +482,12 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		} else if ($user['uid'] < 2000 && !in_array($user, $u2add)) {
 			continue;
 		}
+		/* Don't remove /root */
+		if ($user['uid'] != 0) {
+			$rmhome = escapeshellarg('-r');
+		} else {
+			$rmhome = '';
+		}
 
 		/*
 		 * If a crontab was created to user, pw userdel will be
@@ -489,8 +495,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		 * before run it when necessary
 		 */
 		unlink_if_exists("/var/cron/tabs/{$user['name']}");
-		$cmd = "/usr/sbin/pw userdel -n " .
-		    escapeshellarg($user['name']);
+		$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . $rmhome;
 		if ($debug) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}

@@ -494,7 +494,7 @@ if (file_exists($fp.$fn) and $processisrunning != true) {
 
 	$form->addGlobal(new Form_Button(
 		'clearbtn',
-		'Clear Log',
+		'Clear Capture',
 		null,
 		'fa-undo'
 	))->addClass('btn-danger restore');

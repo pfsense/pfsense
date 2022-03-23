@@ -765,10 +765,14 @@ function local_user_set(& $user) {
 	}
 
 	/* write out ssh authorized key file */
+	$sshdir = "{$user_home}/.ssh"
 	if ($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
-			@mkdir("{$user_home}/.ssh", 0700);
-			@chown("{$user_home}/.ssh", $user_name);
+			@mkdir($sshdir, 0700);
+			@chown($sshdir, $user_name);
+		} elseif (file_exists($sshdir) && (fileowner($sshdir) != $user['uid'])) {
+			@chown($sshdir, $user_name);
+			@chown("{$sshdir}/*", $user_name);
 		}
 		$keys = base64_decode($user['authorizedkeys']);
 		@file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
@@ -777,11 +781,15 @@ function local_user_set(& $user) {
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 	}
 
+	$keephistory = "{$user_home}/.keephistory"
 	if (isset($user['keephistory']) && $shell_access &&
-	    !file_exists("{$user_home}/.keephistory")) {
-		@touch("{$user_home}/.keephistory");
+	    !file_exists($keephistory)) {
+		@touch($keephistory);
+		@chown($keephistory, $user_name);
 	} elseif (!isset($user['keephistory'])) {
-		unlink_if_exists("{$user_home}/.keephistory");
+		unlink_if_exists($keephistory);
+	} elseif (file_exists($keephistory) && (fileowner($keephistory) != $user['uid'])) {
+		@chown($keephistory, $user_name);
 	}
 
 	$un = $lock_account ? "" : "un";

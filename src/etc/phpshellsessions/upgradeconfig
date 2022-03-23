@@ -1,0 +1,146 @@
+/*
+ * upgradeconfig
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2022 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+function usage() {
+	echo "Usage: playback upgradeconfig <input filename> <output filename>\n\n";
+	echo "When run without parameters, will upgrade current config.xml.\n";
+	echo "When given one file, will overwrite in place with new content.\n";
+	echo "When given two files, will write new content to output file only.\n";
+	echo "Examples:\n";
+	echo "playback upgradeconfig\n";
+	echo "playback upgradeconfig /root/oldconfig.xml /root/newconfig.xml\n";
+	echo "\n";
+}
+
+global $g, $config, $argv, $command_split;
+
+if (is_array($command_split)) {
+	$args = array_slice($command_split, 2);
+} else {
+	$args = array_slice($argv, 3);
+}
+
+/* No arguments, upgrade live config */
+if (empty($args[0])) {
+	echo gettext("Upgrading current live configuration.") . "\n";
+	require_once('config.inc');
+	global $config;
+	parse_config(true);
+	convert_config();
+	exit(0);
+}
+
+if ($args[0] == '-h') {
+	usage();
+	exit(1);
+}
+
+/* Input file */
+$in_file = $args[0];
+
+if (!file_exists($in_file)) {
+	echo gettext("Input file does not exist.") . "\n\n";
+	usage();
+	exit(-1);
+}
+
+if (isset($args[1])) {
+	/* Output file */
+	$out_file = $args[1];
+
+	if (file_exists($out_file)) {
+		echo gettext("Output file already exists.") . "\n\n";
+		usage();
+		exit(-1);
+	}
+} else {
+	/* Only given one file, so use it for input and output. */
+	$out_file = $in_file;
+}
+
+if (!config_validate($in_file)) {
+	echo gettext("Could not validate input file. Ensure it is a properly formatted config.xml file.") . "\n\n";
+	usage();
+	exit(-1);
+}
+
+require_once('config.lib.inc');
+include_once('auth.inc');
+include_once('upgrade_config.inc');
+if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
+	include_once("upgrade_config_custom.inc");
+}
+
+/* We want to work with our local content, not the global running config */
+$oldconfig = $config;
+unset($config);
+/* Re-declare global after unset or functions can't see our new content. */
+global $config;
+
+/* Read in the desired config */
+$config = parse_xml_config($in_file, array($g['xml_rootobj'], 'pfsense'));
+$prev_version = $config['version'];
+
+/* If it's already current, there is nothing to do. */
+if ($config['version'] == $g['latest_config']) {
+	echo gettext("Input file is already at the latest version.") . "\n";
+	exit(0);
+}
+
+if (!is_array($config['system']['already_run_config_upgrade'])) {
+	$config['system']['already_run_config_upgrade'] = array();
+}
+$already_run = $config['system']['already_run_config_upgrade'];
+
+/* Loop and run upgrade_VER_to_VER() until we're at current version */
+while ($config['version'] < $g['latest_config']) {
+	$cur = $config['version'] * 10;
+	$next = $cur + 1;
+	$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
+
+	foreach (array("", "_custom") as $suffix) {
+		$migration_function .= $suffix;
+		if (!function_exists($migration_function)) {
+			continue;
+		}
+		if (isset($already_run[$migration_function])) {
+			/* Already executed, skip now */
+			unset($config['system']
+			    ['already_run_config_upgrade']
+			    [$migration_function]);
+		} else {
+			$migration_function();
+		}
+	}
+	$config['version'] = sprintf('%.1f', $next / 10);
+}
+
+if ($prev_version != $config['version']) {
+	$desc = sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']);
+	$config['revision'] = make_config_revision_entry($desc, 'console');
+	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
+	file_put_contents($out_file, $xmlconfig);
+	echo $desc . "\n";
+}
+
+/* Restore old content */
+$config = $oldconfig;
+
+echo gettext("Done") . "\n";

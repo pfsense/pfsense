@@ -765,7 +765,7 @@ function local_user_set(& $user) {
 	}
 
 	/* write out ssh authorized key file */
-	$sshdir = "{$user_home}/.ssh"
+	$sshdir = "{$user_home}/.ssh";
 	if ($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
 			@mkdir($sshdir, 0700);
@@ -781,7 +781,7 @@ function local_user_set(& $user) {
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 	}
 
-	$keephistory = "{$user_home}/.keephistory"
+	$keephistory = "{$user_home}/.keephistory";
 	if (isset($user['keephistory']) && $shell_access &&
 	    !file_exists($keephistory)) {
 		@touch($keephistory);

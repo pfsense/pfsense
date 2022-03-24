@@ -496,8 +496,8 @@ if (file_exists($fp.$fn) and $processisrunning != true) {
 		'clearbtn',
 		'Clear Capture',
 		null,
-		'fa-undo'
-	))->addClass('btn-danger restore');
+		'fa-trash'
+	))->addClass('btn-danger');
 
 	if (file_exists($fp.$fns)) {
 		$section->addInput(new Form_StaticText(

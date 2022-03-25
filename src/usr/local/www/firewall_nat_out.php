@@ -376,11 +376,11 @@ print($form);
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>" title="<?=gettext('Delete selected maps')?>">
+		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>" disabled title="<?=gettext('Delete selected maps')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" title="<?=gettext('Toggle selected rules')?>">
+		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" disabled title="<?=gettext('Toggle selected rules')?>">
 			<i class="fa fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
@@ -547,6 +547,10 @@ events.push(function() {
 		saving = true;
 	});
 
+	$('[id^=fr]').click(function () {
+		buttonsmode('frc', ['del_x', 'toggle_x']);
+	});
+
 	// Globals
 	saving = false;
 	dirty = false;
@@ -565,6 +569,7 @@ events.push(function() {
 		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
 		$(this).prop('checked', checkedStatus);
 		});
+		buttonsmode('frc', ['del_x', 'toggle_x']);
 	});
 });
 //]]>

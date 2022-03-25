@@ -863,3 +863,18 @@ function postSubmit(data, target) {
 		.appendTo('body')
 		.submit();
 }
+
+function buttonsmode(tag, buttons) {
+	var buttonsdisable = true;
+	$('[id^=' + tag + ']').each(function () {
+		if ($(this).prop("checked")) {
+			buttonsdisable = false;
+		}
+	});
+	for (let button in buttons) {
+		$('#' + button).prop('disabled', buttonsdisable);
+	}
+	buttons.forEach(function(button) {
+		$('#' + button).prop('disabled', buttonsdisable);
+	})
+}

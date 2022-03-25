@@ -1212,20 +1212,8 @@ events.push(function() {
 		saving = true;
 	});
 
-	function buttonsmode() {
-		var buttonsdisable = true;
-		$('[id^=frc]').each(function () {
-			if ($(this).prop("checked")) {
-				buttonsdisable = false;
-			}
-		});
-		$('#del_x').prop('disabled', buttonsdisable);
-		$('#toggle_x').prop('disabled', buttonsdisable);
-		$('#copy_x').prop('disabled', buttonsdisable);
-	}
-
 	$('[id^=fr]').click(function () {
-		buttonsmode();
+		buttonsmode('frc', ['del_x', 'toggle_x', 'copy_x']);
 	});
 
 	// Provide a warning message if the user tries to change page before saving
@@ -1250,7 +1238,7 @@ events.push(function() {
 		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
 		$(this).prop('checked', checkedStatus);
 		});
-		buttonsmode();
+		buttonsmode('frc', ['del_x', 'toggle_x', 'copy_x']);
 	});
 
 	$("#copyr").click(function() {

@@ -2284,8 +2284,13 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 						$recordtypes = array(DNS_AAAA);
 						$mask = "/128";
 					}
-					foreach (resolve_host_addresses($net, $recordtypes, false) as $net) {
-						$networks[] = $net . $mask;
+					$domips = resolve_host_addresses($net, $recordtypes, false);
+					if (!empty($domips)) {
+						foreach ($domips as $net) {
+							$networks[] = $net . $mask;
+						}
+					} else {
+						log_error(gettext("Failed to resolve {$net}. Skipping OpenVPN route entry."));
 					}
 				}
 			}

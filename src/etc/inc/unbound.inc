@@ -631,7 +631,7 @@ function unbound_get_next_id() {
 
 // Execute commands as the user unbound
 function do_as_unbound_user($cmd, $param1 = "") {
-	global $g;
+	global $g, $config;
 
 	switch ($cmd) {
 		case "start":
@@ -644,6 +644,11 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload'", true);
 			break;
 		case "unbound-anchor":
+			if (!isset($config['unbound']['dnssec'])) {
+				/* do not sync root.key file if DNSSEC is not enabled,
+				 * see https://redmine.pfsense.org/issues/12985 */
+				break;
+			}
 			$root_key_file = "{$g['unbound_chroot_path']}{$param1}/root.key";
 			// sanity check root.key because unbound-anchor will fail without manual removal otherwise. redmine #5334
 			if (file_exists($root_key_file)) {

@@ -626,6 +626,14 @@ if ($_POST['save']) {
 		$client['ping_action_seconds'] = $pconfig['ping_action_seconds'];
 		$client['inactive_seconds'] = $pconfig['inactive_seconds'];
 
+		if (($act == 'new') || ($client['disable'] ^ $a_client[$id]['disable']) ||
+		    ($client['tunnel_network'] != $a_client[$id]['tunnel_network']) ||
+		    ($client['tunnel_networkv6'] != $a_client[$id]['tunnel_networkv6']) ||
+		    ($client['remote_network'] != $a_client[$id]['remote_network']) ||
+		    ($client['remote_networkv6'] != $a_client[$id]['remote_networkv6'])) {
+			$client['unbound_restart'] = true;
+		}
+
 		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
 			$wc_msg = sprintf(gettext('Updated OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);

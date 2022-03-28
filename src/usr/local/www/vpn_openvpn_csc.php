@@ -308,6 +308,16 @@ if ($_POST['save']) {
 			}
 		}
 
+		if (($act == 'new') || ($csc['disable'] ^ $a_csc[$id]['disable']) ||
+		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
+		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6']) ||
+		    ($csc['local_network'] != $a_csc[$id]['local_network']) ||
+		    ($csc['local_networkv6'] != $a_csc[$id]['local_networkv6']) ||
+		    ($csc['remote_network'] != $a_csc[$id]['remote_network']) ||
+		    ($csc['remote_networkv6'] != $a_csc[$id]['remote_networkv6'])) {
+			$csc['unbound_restart'] = true;
+		}
+
 		if (isset($id) && $a_csc[$id]) {
 			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;

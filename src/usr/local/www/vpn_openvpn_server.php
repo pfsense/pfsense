@@ -192,6 +192,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['local_network'] = $a_server[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
 		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
+		$pconfig['connlimit'] = $a_server[$id]['connlimit'];
 		$pconfig['allow_compression'] = $a_server[$id]['allow_compression'];
 		$pconfig['compression'] = $a_server[$id]['compression'];
 		$pconfig['compression_push'] = $a_server[$id]['compression_push'];
@@ -575,6 +576,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
 	}
 
+	if ($pconfig['connlimit'] && !is_numericint($pconfig['connlimit'])) {
+		$input_errors[] = gettext("The field 'Duplicate Connection Limit' must be numeric.");
+	}
+
 	if (!array_key_exists($pconfig['topology'], $openvpn_topologies)) {
 		$input_errors[] = gettext("The field 'Topology' contains an invalid selection");
 	}
@@ -762,6 +767,7 @@ if ($_POST['save']) {
 		$server['local_network'] = $pconfig['local_network'];
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
 		$server['maxclients'] = $pconfig['maxclients'];
+		$server['connlimit'] = $pconfig['connlimit'];
 		$server['allow_compression'] = $pconfig['allow_compression'];
 		$server['compression'] = $pconfig['compression'];
 		$server['compression_push'] = $pconfig['compression_push'];
@@ -848,16 +854,6 @@ if ($_POST['save']) {
 		$server['ping_action_seconds'] = $pconfig['ping_action_seconds'];
 		$server['ping_action_push'] = $pconfig['ping_action_push'];
 		$server['inactive_seconds'] = $pconfig['inactive_seconds'];
-
-		if (($act == 'new') || ($server['disable'] ^ $a_server[$id]['disable']) ||
-		    ($server['tunnel_network'] != $a_server[$id]['tunnel_network']) ||
-		    ($server['tunnel_networkv6'] != $a_server[$id]['tunnel_networkv6']) ||
-		    ($server['local_network'] != $a_server[$id]['local_network']) ||
-		    ($server['local_networkv6'] != $a_server[$id]['local_networkv6']) ||
-		    ($server['remote_network'] != $a_server[$id]['remote_network']) ||
-		    ($server['remote_networkv6'] != $a_server[$id]['remote_networkv6'])) {
-			$server['unbound_restart'] = true;
-		}
 
 		if (isset($id) && $a_server[$id]) {
 			$a_server[$id] = $server;
@@ -1445,6 +1441,13 @@ if ($act=="new" || $act=="edit"):
 			'When unset, a new connection from a user will disconnect the previous session. %1$s%1$s' .
 			'Users are identified by their username or certificate properties, depending on the VPN configuration. ' .
 			'This practice is discouraged security reasons, but may be necessary in some environments.', '<br />');
+	
+	$section->addInput(new Form_Input(
+		'connlimit',
+		'Duplicate Connection Limit',
+		'number',
+		$pconfig['connlimit']
+	))->setHelp('Limit the number of concurrent connections from the same user.');
 
 	$form->add($section);
 

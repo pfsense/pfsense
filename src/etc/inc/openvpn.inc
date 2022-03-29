@@ -1203,9 +1203,13 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				break;
 		}
+		$connlimit = "0";
 		if ($settings['mode'] != 'p2p_shared_key' &&
 		    isset($settings['duplicate_cn'])) {
 			$conf .= "duplicate-cn\n";
+			if ($settings['connlimit']) {
+				$connlimit = "{$settings['connlimit']}";
+			}
 		}
 		if (($settings['mode'] != 'p2p_shared_key') &&
 		    isset($settings['remote_cert_tls'])) {
@@ -1546,6 +1550,8 @@ function openvpn_reconfigure($mode, $settings) {
 	unset($conf);
 	$fpath = "{$g['openvpn_base']}/{$mode_id}/interface";
 	file_put_contents($fpath, $interface);
+	$fpath = "{$g['openvpn_base']}/{$mode_id}/connuserlimit";
+	file_put_contents($fpath, $connlimit);
 	//chown($fpath, 'nobody');
 	//chgrp($fpath, 'nobody');
 	@chmod("{$g['openvpn_base']}/{$mode_id}/config.ovpn", 0600);
@@ -1553,6 +1559,7 @@ function openvpn_reconfigure($mode, $settings) {
 	@chmod("{$g['openvpn_base']}/{$mode_id}/key", 0600);
 	@chmod("{$g['openvpn_base']}/{$mode_id}/tls-auth", 0600);
 	@chmod("{$g['openvpn_base']}/{$mode_id}/conf", 0600);
+	@chmod("{$g['openvpn_base']}/{$mode_id}/connuserlimit", 0600);
 
 	if ($wait_tentative) {
 		interface_wait_tentative($interface);
@@ -1640,7 +1647,7 @@ function openvpn_restart($mode, $settings) {
 		syslog(LOG_ERR, "OpenVPN failed to start");
 	}
 	if (!platform_booting()) {
-		if (isset($settings['unbound_restart'])) {
+				if (isset($settings['unbound_restart'])) {
 			services_unbound_configure(false);
 		}
 		send_event("filter reload");

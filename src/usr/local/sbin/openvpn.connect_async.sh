@@ -103,6 +103,31 @@ elif [ "${script_type}" = "client-connect" ]; then
 	# Use php-cgi - see https://redmine.pfsense.org/issues/12382
 	active_sessions=$("/usr/local/bin/php-cgi" -f "/usr/local/sbin/openvpn_connect_async.php")
 
+	# Process "Duplicate Connection Limit" setting
+	if [ -n "${active_sessions}" ]; then
+		vpnid=$(/bin/echo ${dev} | /usr/bin/sed -e 's/ovpns//g')
+		if [ -f "/var/etc/openvpn/server${vpnid}/connuserlimit" ]; then
+			sessionlimit=$(/usr/bin/head -1 "/var/etc/openvpn/server${vpnid}/connuserlimit" | /usr/bin/sed -e 's/[[:space:]]//g')
+			if [ "${sessionlimit}" -ge 1 ]; then
+				if [ -z "${username}" ]; then
+					usersession="${dev}_'${X509_0_CN}'"
+				else
+					usersession="${dev}_'${username}'"
+				fi
+				sessioncount=$(/bin/echo "${active_sessions}" | /usr/bin/grep -o "${usersession}" | /usr/bin/wc -l | /usr/bin/sed -e 's/[[:space:]]//g')
+
+				if [ ${sessioncount} -gt ${sessionlimit} ]; then
+					log_session "active connection limit of '${sessionlimit}' reached"
+					/bin/echo 0 > ${client_connect_deferred_file}
+					if [ -n "${username}" ]; then
+						/bin/rm "${rulesfile}"
+					fi
+					exit 1
+				fi
+			fi
+		fi
+	fi
+
 	if [ -n "${username}" ]; then
 		i=1
 		while

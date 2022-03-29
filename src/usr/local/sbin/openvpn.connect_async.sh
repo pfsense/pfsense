@@ -98,6 +98,11 @@ elif [ "${script_type}" = "client-connect" ]; then
 		exit 1
 	fi
 
+	# Get active sessions
+	# active_sessions :: ovpns1_'user_01'_30001|ovpns1_'user_01'_30002|ovpns1_'user_01'_30003|
+	# Use php-cgi - see https://redmine.pfsense.org/issues/12382
+	active_sessions=$("/usr/local/bin/php-cgi" -f "/usr/local/sbin/openvpn_connect_async.php")
+
 	if [ -n "${username}" ]; then
 		i=1
 		while
@@ -116,8 +121,20 @@ elif [ "${script_type}" = "client-connect" ]; then
 		else
 			/usr/bin/touch "${lockfile}"
 
-			/bin/cat "${rulesfile}" | /usr/bin/sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" | /usr/bin/sed "s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" > "${rulesfile}.tmp" && /bin/mv "${rulesfile}.tmp" "${rulesfile}"
-			/sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
+			# for each of this user's anchors loaded in pf
+			# $session :: ovpns3_'user_01'_61468
+			# $anchor  :: openvpn/ovpns3_user_01_61468
+			anchors=$(/sbin/pfctl -s Anchors)
+			for anchor in $(/bin/echo "${anchors}" | /usr/bin/grep "${dev}_${username}"); do
+				session=$(/bin/echo "${anchor}" | /usr/bin/sed -r -e 's/.+'"${dev}_${username}"'/'"${dev}_\'${username}\'"'/')
+				# if no active session exists for the anchor, remove it from pf
+				if ! (/bin/echo "${active_sessions}" | /usr/bin/grep -q "${session}"); then
+					eval "/sbin/pfctl -a '${anchor}' -F rules"
+				fi
+			done
+
+			/bin/echo "$(/usr/bin/sed -e "s/{clientip}/${ifconfig_pool_remote_ip}/g;s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" "${rulesfile}")" > "${rulesfile}"
+			eval "/sbin/pfctl -a '${anchorname}' -f '${rulesfile}'"
 
 			/bin/rm "${lockfile}"
 		fi

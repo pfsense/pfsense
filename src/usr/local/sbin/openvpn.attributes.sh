@@ -20,7 +20,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Handle 'client-connect' and 'client-disconnect'
-/usr/local/sbin/openvpn.connect_async.sh
+# Signal deferred handler
+if [ "${script_type}" = "client-connect" ]; then
+	/bin/echo 2 > "${client_connect_deferred_file}"
+	if [ -f /tmp/"${common_name}" ]; then
+		/bin/cat /tmp/"${common_name}" > "${client_connect_config_file}"
+		/bin/rm /tmp/"${common_name}"
+	fi
+fi
 
+# Handle 'client-connect' and 'client-disconnect'
+/usr/bin/nohup /usr/local/sbin/openvpn.connect_async.sh > /dev/null &
+
+# Signal "deferred handler started OK" for client-connect
 exit 0

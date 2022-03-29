@@ -28,6 +28,24 @@ fi
 if [ -z "${username}" ]; then
 	if [ "$script_type" = "client-connect" ]; then
 		/usr/bin/logger -t openvpn "openvpn server '${dev}' user cert CN '${X509_0_CN}' address '${ipaddress}' - connected"
+		# Verify defer status code before continuing
+		i=1
+		while
+			deferstatus=$(/usr/bin/head -1 "${client_connect_deferred_file}")
+			if [ "${deferstatus}" -ne 2 ]; then
+				/bin/sleep 1
+				i="$((i+1))"
+			else
+				break
+			fi
+			[ "${i}" -lt 3 ]
+		do :;  done
+		if [ ${i} -ge 3 ]; then
+			/bin/echo 0 > ${client_connect_deferred_file}
+			exit 1
+		fi
+		# success; allow client connection
+		/bin/echo 1 > ${client_connect_deferred_file}
 	elif [ "$script_type" = "client-disconnect" ]; then
 		/usr/bin/logger -t openvpn "openvpn server '${dev}' user cert CN '${X509_0_CN}' address '${ipaddress}' - disconnected"
 		/sbin/pfctl -k $ifconfig_pool_remote_ip
@@ -44,10 +62,29 @@ anchorname="openvpn/${dev}_${username}_${trusted_port}"
 
 if [ "$script_type" = "client-connect" ]; then
 	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - connected"
+
+	# Verify defer status code before continuing
+	i=1
+	while
+		deferstatus=$(/usr/bin/head -1 "${client_connect_deferred_file}")
+		if [ "${deferstatus}" -ne 2 ]; then
+			/bin/sleep 1
+			i="$((i+1))"
+		else
+			break
+		fi
+		[ "${i}" -lt 3 ]
+	do :;  done
+	if [ ${i} -ge 3 ]; then
+		/bin/echo 0 > ${client_connect_deferred_file}
+		exit 1
+	fi
+
 	i=1
 	while [ -f "${lockfile}" ]; do
 		if [ $i -ge 30 ]; then
 			/bin/echo "Timeout while waiting for lockfile"
+			/bin/echo 0 > ${client_connect_deferred_file}
 			exit 1
 		fi
 
@@ -59,12 +96,10 @@ if [ "$script_type" = "client-connect" ]; then
 	/bin/cat "${rulesfile}" | /usr/bin/sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" | /usr/bin/sed "s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" > "${rulesfile}.tmp" && /bin/mv "${rulesfile}.tmp" "${rulesfile}"
 	/sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
 
-	if [ -f /tmp/$common_name ]; then
-		/bin/cat /tmp/$common_name > $1
-		/bin/rm /tmp/$common_name
-	fi
-
 	/bin/rm "${lockfile}"
+
+	# success; allow client connection
+	/bin/echo 1 > ${client_connect_deferred_file}
 elif [ "$script_type" = "client-disconnect" ]; then
 	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - disconnected"
 	i=1

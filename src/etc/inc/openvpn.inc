@@ -828,6 +828,27 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 	$conf .= "{$directive} {$fpath} {$opt}\n";
 }
 
+function openvpn_delete_tmp($mode, $id) {
+	global $g;
+
+	/* delete temporary files created by connect script */
+	if (($mode == "server") && (isset($id))) {
+		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
+	}
+
+	/* delete temporary files created by OpenVPN; only delete old files to
+	 * avoid deleting files potentially still in use by another OpenVPN process
+	*/
+	$tmpfiles = array_filter(glob("{$g['tmp_path']}/openvpn_cc*.tmp"),'is_file');
+	if (!empty($tmpfiles)) {
+		foreach ($tmpfiles as $tmpfile) {
+			if ((time() - filemtime($tmpfile)) > 60) {
+				@unlink_if_exists($tmpfile);
+			}
+		}
+	}
+}
+
 function openvpn_reconfigure($mode, $settings) {
 	global $g, $config, $openvpn_tls_server_modes, $openvpn_dh_lengths, $openvpn_default_keepalive_interval, $openvpn_default_keepalive_timeout;
 
@@ -1544,7 +1565,6 @@ function openvpn_restart($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
-	openvpn_clean_rules($mode, $vpnid);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
@@ -1576,6 +1596,8 @@ function openvpn_restart($mode, $settings) {
 		unlock($lockhandle);
 		return;
 	}
+
+	openvpn_delete_tmp($mode, $vpnid);
 
 	/* Do not start an instance if we are not CARP master on this vip! */
 	if (strstr($settings['interface'], "_vip")) {
@@ -1659,7 +1681,7 @@ function openvpn_delete($mode, $settings) {
 	/* remove the configuration files */
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
-	openvpn_clean_rules($mode, $vpnid);
+	openvpn_delete_tmp($mode, $vpnid);
 	services_unbound_configure(false);
 }
 
@@ -2441,14 +2463,6 @@ function openvpn_inuse($id, $mode) {
 	}
 
 	return false;
-}
-
-function openvpn_clean_rules($mode, $id) {
-	global $g;
-
-	if ($mode == "server") {
-		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
-	}
 }
 
 function openvpn_tunnel_network_fix($tunnel_network) {

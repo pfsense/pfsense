@@ -1503,8 +1503,13 @@ function apply_all_chosen_items() {
 			/* create VOIP rules */
 			$rule = array();
 			$rule['type'] = "match";
-			//$rule['interface'] = $interfacelist;
-			$rule['ipprotocol'] = "inet46";
+			if (is_ipaddrv4($config['ezshaper']['step3']['address'])) {
+				$rule['ipprotocol'] = "inet";
+			} elseif (is_ipaddrv6($config['ezshaper']['step3']['address'])) {
+				$rule['ipprotocol'] = "inet6";
+			} else {
+				$rule['ipprotocol'] = "inet46";
+			}
 			$rule['descr'] = gettext("Connections From Upstream SIP Server");
 			$rule['protocol'] = "udp";
 			$rule['defaultqueue'] = "qVoIP";

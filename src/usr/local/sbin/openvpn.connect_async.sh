@@ -18,50 +18,67 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ -z "${untrusted_ip6}" ]; then
-	ipaddress="${untrusted_ip}"
-else
-	ipaddress="${untrusted_ip6}"
+log_session() {
+	if [ -z "${1}" ]; then
+		logmsg=""
+	else
+		logmsg=" - ${1}"
+	fi
+
+	if [ -z "${untrusted_ip6}" ]; then
+		hostaddress="${untrusted_ip}:${untrusted_port}"
+	else
+		hostaddress="${untrusted_ip6}:${untrusted_port}"
+	fi
+	
+	if [ -z "${username}" ]; then
+		hostuser="user cert CN '${X509_0_CN}'"
+	else
+		hostuser="user '${username}'"
+	fi
+
+	/usr/bin/logger -t openvpn "openvpn server '${dev}' ${hostuser} address '${hostaddress}'${logmsg}"
+}
+
+if [ -n "${username}" ]; then
+	lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
+	rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
+	anchorname="openvpn/${dev}_${username}_${trusted_port}"
 fi
 
-# Remote Access (SSL/TLS) mode
-if [ -z "${username}" ]; then
-	if [ "$script_type" = "client-connect" ]; then
-		/usr/bin/logger -t openvpn "openvpn server '${dev}' user cert CN '${X509_0_CN}' address '${ipaddress}' - connected"
-		# Verify defer status code before continuing
+if [ "${script_type}" = "client-disconnect" ]; then
+	log_session "disconnected"
+
+	if [ -n "${username}" ]; then
+		# Avoid race condition. See https://redmine.pfsense.org/issues/9206
 		i=1
 		while
-			deferstatus=$(/usr/bin/head -1 "${client_connect_deferred_file}")
-			if [ "${deferstatus}" -ne 2 ]; then
+			if [ -f "${lockfile}" ]; then
 				/bin/sleep 1
 				i="$((i+1))"
 			else
 				break
 			fi
-			[ "${i}" -lt 3 ]
+			[ "${i}" -lt 30 ]
 		do :;  done
-		if [ ${i} -ge 3 ]; then
-			/bin/echo 0 > ${client_connect_deferred_file}
-			exit 1
+
+		if [ ${i} -ge 30 ]; then
+			log_session "Timeout while waiting for lockfile"
+		else
+			/usr/bin/touch "${lockfile}"
+			eval "/sbin/pfctl -a '${anchorname}' -F rules"
+			/bin/rm "${lockfile}"
+
+			/bin/rm "${rulesfile}"
 		fi
-		# success; allow client connection
-		/bin/echo 1 > ${client_connect_deferred_file}
-	elif [ "$script_type" = "client-disconnect" ]; then
-		/usr/bin/logger -t openvpn "openvpn server '${dev}' user cert CN '${X509_0_CN}' address '${ipaddress}' - disconnected"
-		/sbin/pfctl -k $ifconfig_pool_remote_ip
-		/sbin/pfctl -K $ifconfig_pool_remote_ip
-		/sbin/pfctl -k $ifconfig_pool_remote_ip6
-		/sbin/pfctl -K $ifconfig_pool_remote_ip6
 	fi
-	exit 0
-fi
 
-lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
-rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
-anchorname="openvpn/${dev}_${username}_${trusted_port}"
-
-if [ "$script_type" = "client-connect" ]; then
-	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - connected"
+	/sbin/pfctl -k $ifconfig_pool_remote_ip
+	/sbin/pfctl -K $ifconfig_pool_remote_ip
+	/sbin/pfctl -k $ifconfig_pool_remote_ip6
+	/sbin/pfctl -K $ifconfig_pool_remote_ip6
+elif [ "${script_type}" = "client-connect" ]; then
+	log_session "connecting"
 
 	# Verify defer status code before continuing
 	i=1
@@ -76,53 +93,39 @@ if [ "$script_type" = "client-connect" ]; then
 		[ "${i}" -lt 3 ]
 	do :;  done
 	if [ ${i} -ge 3 ]; then
+		log_session "server write to defer file failed"
 		/bin/echo 0 > ${client_connect_deferred_file}
 		exit 1
 	fi
 
-	i=1
-	while [ -f "${lockfile}" ]; do
-		if [ $i -ge 30 ]; then
-			/bin/echo "Timeout while waiting for lockfile"
+	if [ -n "${username}" ]; then
+		i=1
+		while
+			if [ -f "${lockfile}" ]; then
+				/bin/sleep 1
+				i="$((i+1))"
+			else
+				break
+			fi
+			[ "${i}" -lt 30 ]
+		do :;  done
+		if [ ${i} -ge 30 ]; then
+			log_session "Timeout while waiting for lockfile"
 			/bin/echo 0 > ${client_connect_deferred_file}
 			exit 1
+		else
+			/usr/bin/touch "${lockfile}"
+
+			/bin/cat "${rulesfile}" | /usr/bin/sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" | /usr/bin/sed "s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" > "${rulesfile}.tmp" && /bin/mv "${rulesfile}.tmp" "${rulesfile}"
+			/sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
+
+			/bin/rm "${lockfile}"
 		fi
-
-		/bin/sleep 1
-		i=$(( i + 1 ))
-	done
-	/usr/bin/touch "${lockfile}"
-
-	/bin/cat "${rulesfile}" | /usr/bin/sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" | /usr/bin/sed "s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" > "${rulesfile}.tmp" && /bin/mv "${rulesfile}.tmp" "${rulesfile}"
-	/sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
-
-	/bin/rm "${lockfile}"
+	fi
 
 	# success; allow client connection
 	/bin/echo 1 > ${client_connect_deferred_file}
-elif [ "$script_type" = "client-disconnect" ]; then
-	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - disconnected"
-	i=1
-	while [ -f "${lockfile}" ]; do
-		if [ $i -ge 30 ]; then
-			/bin/echo "Timeout while waiting for lockfile"
-			exit 1
-		fi
-
-		/bin/sleep 1
-		i=$(( i + 1 ))
-	done
-	/usr/bin/touch "${lockfile}"
-
-	command="/sbin/pfctl -a '${anchorname}' -F rules"
-	eval $command
-	/sbin/pfctl -k $ifconfig_pool_remote_ip
-	/sbin/pfctl -K $ifconfig_pool_remote_ip
-	/sbin/pfctl -k $ifconfig_pool_remote_ip6
-	/sbin/pfctl -K $ifconfig_pool_remote_ip6
-
-	/bin/rm "${rulesfile}"
-	/bin/rm "${lockfile}"
+	log_session "connected"
 fi
 
 exit 0

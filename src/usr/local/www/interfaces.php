@@ -3995,10 +3995,16 @@ events.push(function() {
 			}
 		}
 		show_wpaoptions();
+		updateeapclientmode($('#wpa_eap_client_mode').val());
+		updatewpakeymgmt($('#wpa_key_mgmt').val());
 	}
 
 	function updateeapclientmode(m) {
-		var wpa = !($('#wpa_enable').prop('checked'));
+		if ($('#mode').val() == 'bss') {
+			var wpa = !($('#wpa_enable').prop('checked'));
+		} else {
+			var wpa = true;
+		}
 		switch (m) {
 			case "PEAP": {
 				hideInput('wpa_eap_cert', true);
@@ -4028,23 +4034,35 @@ events.push(function() {
 	}
 
 	function updatewpakeymgmt(m) {
-		var wpa = !($('#wpa_enable').prop('checked'));
-		if ((m == "WPA-EAP") && ($('#mode').val() == 'bss')) {
+		hideInput('passphrase', false);
+		hideInput('wpa_eap_client_mode', true);
+		hideInput('wpa_eap_ca', true);
+		hideInput('wpa_eap_cert', true);
+		hideInput('wpa_eap_inner_auth', true);
+		hideInput('wpa_eap_inner_id', true);
+		hideInput('wpa_eap_inner_password', true);
+		hideClass('ieee8021x_group', true);
+		if (m == "WPA-EAP") {
 			hideInput('passphrase', true);
-			hideInput('wpa_eap_client_mode', false);
-			hideInput('wpa_eap_ca', false);
-			updateeapclientmode($('#wpa_eap_client_mode').val());
-		} else if ((m != "WPA-PSK") && ($('#mode').val() == 'hostap')) {
-			hideClass('ieee8021x_group', false);
-		} else {
-			hideInput('passphrase', wpa);
-			hideInput('wpa_eap_client_mode', true);
-			hideInput('wpa_eap_ca', true);
-			hideInput('wpa_eap_cert', true);
-			hideInput('wpa_eap_inner_auth', true);
-			hideInput('wpa_eap_inner_id', true);
-			hideInput('wpa_eap_inner_password', true);
-			hideClass('ieee8021x_group', true);
+			if ($('#mode').val() == 'bss') {
+				hideInput('wpa_eap_client_mode', false);
+				hideInput('wpa_eap_ca', false);
+				updateeapclientmode($('#wpa_eap_client_mode').val());
+			} else if ($('#mode').val() == 'hostap') {
+				hideClass('ieee8021x_group', false);
+			}
+		} else if (m != "WPA-PSK") {
+			hideInput('passphrase', false);
+			if ($('#mode').val() == 'bss') {
+				hideInput('wpa_eap_client_mode', false);
+				hideInput('wpa_eap_ca', false);
+				hideInput('wpa_eap_cert', false);
+				hideInput('wpa_eap_inner_auth', false);
+				hideInput('wpa_eap_inner_id', false);
+				hideInput('wpa_eap_inner_password', false);
+			} else if ($('#mode').val() == 'hostap') {
+				hideClass('ieee8021x_group', false);
+			}
 		}
 	}
 
@@ -4062,8 +4080,6 @@ events.push(function() {
 	show_wpaoptions();
 	updatewifistandard($('#standard').val());
 	updatewifimode($('#mode').val());
-	updatewpakeymgmt($('#wpa_key_mgmt').val());
-	updateeapclientmode($('#wpa_eap_client_mode').val());
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";

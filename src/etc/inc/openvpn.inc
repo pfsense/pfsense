@@ -34,6 +34,13 @@ require_once("certs.inc");
 require_once('pfsense-utils.inc');
 require_once("auth.inc");
 
+global $openvpn_sharedkey_warning;
+$openvpn_sharedkey_warning = gettext(
+	'OpenVPN has deprecated shared key mode as it does not meet current security standards. ' .
+	'Shared key mode will be removed from future versions. ' .
+	'Convert any existing shared key VPNs to TLS and do not configure any new shared key OpenVPN instances.'
+);
+
 global $openvpn_prots;
 $openvpn_prots = array(
 	"UDP4" => "UDP on IPv4 only",

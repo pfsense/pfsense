@@ -128,7 +128,7 @@
 			<fielddescr>Enable STUN</fielddescr>
 			<fieldname>enable_stun</fieldname>
 			<type>checkbox</type>
-			<description>Enable retvieving external IP address from STUN server.</description>
+			<description>Enable retrieving external IP address from STUN server.</description>
 			<enablefields>stun_host,stun_port</enablefields>
 		</field>
 		<field>

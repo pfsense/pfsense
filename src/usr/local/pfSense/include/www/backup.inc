@@ -291,8 +291,9 @@ function execPost($post, $postfiles, $ui = true) {
 							$input_errors[] = sprintf(gettext("A full configuration restore was selected but a %s tag could not be located."), $g['xml_rootobj']);
 						} else {
 							/* restore the entire configuration */
-							file_put_contents($postfiles['conffile']['tmp_name'], $data);
-							if (config_install($postfiles['conffile']['tmp_name']) == 0) {
+							$tempPath = $ui ? $postfiles['conffile']['tmp_name'] : "/var/tmp/conf_temp.xml";
+							file_put_contents($tempPath, $data);
+							if (config_install($tempPath) == 0) {
 								/* Save current pkg repo to re-add on new config */
 								unset($pkg_repo_conf_path);
 								if (isset($config['system']['pkg_repo_conf_path'])) {

@@ -674,6 +674,8 @@ function interfaces_create_wireless_clones() {
 		if (platform_booting()) {
 			echo gettext("Creating wireless clone interfaces...");
 		}
+		/* Invalidate cache */
+		get_interface_arr(true);
 		foreach ($config['wireless']['clone'] as $clone) {
 			if (empty($clone['cloneif'])) {
 				continue;

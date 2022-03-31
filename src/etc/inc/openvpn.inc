@@ -1646,7 +1646,7 @@ function openvpn_restart($mode, $settings) {
 	} else {
 		syslog(LOG_ERR, "OpenVPN failed to start");
 	}
-	if (!platform_booting()) 
+	if (!platform_booting()) {
 		if (isset($settings['unbound_restart'])) {
 			services_unbound_configure(false);
 		}

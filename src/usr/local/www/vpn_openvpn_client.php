@@ -629,9 +629,7 @@ if ($_POST['save']) {
 
 		if (($act == 'new') || ($client['disable'] ^ $a_client[$id]['disable']) ||
 		    ($client['tunnel_network'] != $a_client[$id]['tunnel_network']) ||
-		    ($client['tunnel_networkv6'] != $a_client[$id]['tunnel_networkv6']) ||
-		    ($client['remote_network'] != $a_client[$id]['remote_network']) ||
-		    ($client['remote_networkv6'] != $a_client[$id]['remote_networkv6'])) {
+		    ($client['tunnel_networkv6'] != $a_client[$id]['tunnel_networkv6'])) {
 			$client['unbound_restart'] = true;
 		}
 

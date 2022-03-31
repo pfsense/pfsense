@@ -1646,8 +1646,8 @@ function openvpn_restart($mode, $settings) {
 	} else {
 		syslog(LOG_ERR, "OpenVPN failed to start");
 	}
-	if (!platform_booting()) {
-				if (isset($settings['unbound_restart'])) {
+	if (!platform_booting()) 
+		if (isset($settings['unbound_restart'])) {
 			services_unbound_configure(false);
 		}
 		send_event("filter reload");
@@ -1775,7 +1775,7 @@ function openvpn_resync_csc(& $settings) {
 			}
 		}
 	}
-	if (isset($settings['unbound_restart'])) {
+	if (!platform_booting() && isset($settings['unbound_restart'])) {
 		services_unbound_configure(false);
 	}
 }

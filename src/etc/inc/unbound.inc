@@ -129,7 +129,9 @@ function test_unbound_config($unboundcfg, &$output) {
 
 	unbound_generate_config($unboundcfg, $cfgsubdir);
 	unbound_remote_control_setup($cfgsubdir);
-	do_as_unbound_user("unbound-anchor", $cfgsubdir);
+	if (isset($unboundcfg['dnssec'])) {
+		do_as_unbound_user("unbound-anchor", $cfgsubdir);
+	}
 
 	$rv = 0;
 	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
@@ -596,7 +598,11 @@ function sync_unbound_service() {
 	create_unbound_chroot_path();
 
 	// Configure our Unbound service
-	do_as_unbound_user("unbound-anchor");
+	if (isset($config['unbound']['dnssec'])) {
+		/* do not sync root.key file if DNSSEC is not enabled,
+		 * see https://redmine.pfsense.org/issues/12985 */
+		do_as_unbound_user("unbound-anchor");
+	}
 	unbound_remote_control_setup();
 	unbound_generate_config();
 	do_as_unbound_user("start");
@@ -644,11 +650,6 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload'", true);
 			break;
 		case "unbound-anchor":
-			if (!isset($config['unbound']['dnssec'])) {
-				/* do not sync root.key file if DNSSEC is not enabled,
-				 * see https://redmine.pfsense.org/issues/12985 */
-				break;
-			}
 			$root_key_file = "{$g['unbound_chroot_path']}{$param1}/root.key";
 			// sanity check root.key because unbound-anchor will fail without manual removal otherwise. redmine #5334
 			if (file_exists($root_key_file)) {

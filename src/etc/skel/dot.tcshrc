@@ -19,9 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# If the user touches ~/.keephistory, enable command history storage and related
-# settings. See https://redmine.pfsense.org/issues/11029
-if ( $?prompt && -f ~/.keephistory ) then
+# Enable command history storage and related settings if the user is configured
+# to do so. See https://redmine.pfsense.org/issues/11029
+set keephistory=`/usr/local/sbin/read_xml_tag.sh boolean system/user\[uid=\'${uid}\'\]/keephistory`
+if ( $?prompt && ($keephistory == "true")) then
 	set history = 1000
 	set savehist = (1000 merge)
 	bindkey -k down history-search-forward

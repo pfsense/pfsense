@@ -781,17 +781,6 @@ function local_user_set(& $user) {
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 	}
 
-	$keephistory = "{$user_home}/.keephistory";
-	if (isset($user['keephistory']) && $shell_access &&
-	    !file_exists($keephistory)) {
-		@touch($keephistory);
-		@chown($keephistory, $user_name);
-	} elseif (!isset($user['keephistory'])) {
-		unlink_if_exists($keephistory);
-	} elseif (file_exists($keephistory) && (fileowner($keephistory) != $user['uid'])) {
-		@chown($keephistory, $user_name);
-	}
-
 	$un = $lock_account ? "" : "un";
 	exec("/usr/sbin/pw {$un}lock " . escapeshellarg($user_name) . " -q 2>/dev/null");
 

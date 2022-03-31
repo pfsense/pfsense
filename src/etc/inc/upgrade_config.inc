@@ -6604,8 +6604,10 @@ function upgrade_222_to_223() {
 		} else {
 			$user_home = "/home/{$user_name}";
 		}
-		if (file_exists("{$user_home}/.keephistory")) {
+		$fn = "{$user_home}/.keephistory";
+		if (file_exists($fn)) {
 			$user['keephistory'] = true;
+			@unlink($fn);
 		}
 	}
 }

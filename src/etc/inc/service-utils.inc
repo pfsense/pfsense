@@ -64,9 +64,18 @@ function write_rcfile($params) {
 	$towrite .= "rc_stop() {\n";
 	$towrite .= "\t{$tokill}\n";
 	$towrite .= "}\n\n";
+	if (!empty($params['restart'])) {
+		$torestart = &$params['restart'];
+	} else {
+		$torestart = "\trc_stop()\n";
+		$torestart .= "\trc_start()\n";
+	}
+	$towrite .= "rc_restart() {\n";
+	$towrite .= "\t{$torestart}\n";
+	$towrite .= "}\n\n";
 
 	/* begin rcfile logic */
-	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
+	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_restart\n\t\t;;\nesac\n\n";
 
 	@file_put_contents($rcfile_fullname, $towrite);
 	unset($towrite);

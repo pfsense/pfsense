@@ -4184,6 +4184,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		$mac_addr = $mac_if_cfg['spoofmac'] ?: $vendor_mac;
 
 		interface_set_macaddr($realhwif, $mac_addr);
+
+		/* Regenerate link-local address on MAC change.
+		 *
+		 * Some network devices respond to a DHCPv6 Solicit message only when
+		 * the IPv6 source address is consistent with what they expect.
+		 *
+		 * See https://redmine.pfsense.org/issues/12794 */
+		if ($mac_addr != $current_mac) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 ifdisabled");
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 " . get_interface_linklocal($interface) . " delete");
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -ifdisabled");
+		}
 	} else {
 		/*
 		 * this is not a valid mac address.  generate a

@@ -644,22 +644,27 @@ if ($do_tcpdump) {
 		} else {
 			$iscarp = "";
 		}
-		$detail_args = "";
+
+		$options_args = "";
 		switch ($detail) {
 			case "full":
-				$detail_args = "-vv -e";
+				$options_args = "-vv -e";
 				break;
 			case "high":
-				$detail_args = "-vv";
+				$options_args = "-vv";
 				break;
 			case "medium":
-				$detail_args = "-v";
+				$options_args = "-v";
 				break;
 			case "normal":
 			default:
-				$detail_args = "-q";
+				$options_args = "-q";
 				break;
 		}
+
+        if ($dnsquery !== true) {
+            $options_args .= " -n";
+        }
 
 		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
 		if (file_exists($fp.$fn) && (filesize($fp.$fn) > $max_display_size)) {
@@ -673,7 +678,7 @@ if ($do_tcpdump) {
 		} elseif ($detail === 'none') {
 			print(gettext("Select a detail level to view the contents of the packet capture."));
 		} else {
-			system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
+			system("/usr/sbin/tcpdump {$options_args} {$iscarp} -r {$fp}{$fn}");
 		}
 		print('</textarea>');
 

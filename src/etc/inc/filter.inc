@@ -1520,6 +1520,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 	}
 
 	/* Search for matching subnets in the routing table */
+	$natsubnets = array();
 	foreach ($route_table as $route) {
 		$subnet = $route['subnet'];
 		$subnet_split = explode("/", $subnet);
@@ -1556,7 +1557,10 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 				    (!empty(get_interface_ipv6($subnet_if)) && is_ipaddrv6($target))) {
 					$natrules .= "no nat on {$subnet_if}{$protocol_text} from ({$subnet_if}) to {$target}\n";
 				}
-				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+				if (!$natsubnets[$subnet]) {
+					$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+					$natsubnets[$subnet] = true;
+				}
 			}
 		}
 	}

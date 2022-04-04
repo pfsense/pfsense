@@ -90,6 +90,12 @@ $pconfig['num_queries_per_thread'] = $config['unbound']['num_queries_per_thread'
 $pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $config['unbound']['jostle_timeout'] : '200';
 $pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
 $pconfig['cache_min_ttl'] = isset($config['unbound']['cache_min_ttl']) ? $config['unbound']['cache_min_ttl'] : '0';
+
+/* default to enabled if not explicitly set */
+if (!isset($config['unbound']['infra_keep_probing']) || $config['unbound']['infra_keep_probing'] == "enabled") {
+	$pconfig['infra_keep_probing'] = true;
+}
+
 $pconfig['infra_host_ttl'] = isset($config['unbound']['infra_host_ttl']) ? $config['unbound']['infra_host_ttl'] : '900';
 $pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhosts']) ? $config['unbound']['infra_cache_numhosts'] : '10000';
 $pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
@@ -225,6 +231,11 @@ if ($_POST) {
 			$config['unbound']['jostle_timeout'] = $_POST['jostle_timeout'];
 			$config['unbound']['cache_max_ttl'] = $_POST['cache_max_ttl'];
 			$config['unbound']['cache_min_ttl'] = $_POST['cache_min_ttl'];
+			if (isset($_POST['infra_keep_probing'])) {
+				$config['unbound']['infra_keep_probing'] = "enabled";
+			} else {
+				$config['unbound']['infra_keep_probing'] = "disabled";
+			}
 			$config['unbound']['infra_host_ttl'] = $_POST['infra_host_ttl'];
 			$config['unbound']['infra_cache_numhosts'] = $_POST['infra_cache_numhosts'];
 			$config['unbound']['unwanted_reply_threshold'] = $_POST['unwanted_reply_threshold'];
@@ -421,6 +432,13 @@ $section->addInput(new Form_Input(
 ))->setHelp('The Minimum Time to Live for RRsets and messages in the cache. ' .
 			'The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. ' .
 			'The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.');
+
+$section->addInput(new Form_Checkbox(
+	'infra_keep_probing',
+	'Keep Probing',
+	'Keep probing servers that are down',
+	$pconfig['infra_keep_probing']
+))->setHelp('When disabled, it may take up to "TTL for Host Cache Entries" for a server to be used again after being marked as down.');
 
 $mnt = gettext("minutes");
 $section->addInput(new Form_Select(

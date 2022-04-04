@@ -708,7 +708,7 @@ if ($_POST['save']) {
 		} else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] <> "?") {
 			$input_errors[] = gettext("A queue and a virtual interface cannot be selected for IN and Out. Both must be from the same type.");
 		}
-		if ($_POST['direction'] == "out" && empty($_POST['gateway'])) {
+		if ($_POST['direction'] == "out" && empty($_POST['gateway']) && $_POST['type'] == "pass") {
 			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
 		}
 	}

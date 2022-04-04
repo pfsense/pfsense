@@ -2514,6 +2514,7 @@ function filter_nat_rules_generate() {
 		/* start reflection redirects on port 19000 of localhost */
 		$starting_localhost_port = 19000;
 		$natrules .= "# NAT Inbound Redirects\n";
+		$nonatrule = array();
 		foreach ($config['nat']['rule'] as $rule) {
 			update_filter_reload_status(sprintf(gettext("Creating NAT rule %s"), $rule['descr']));
 
@@ -2709,12 +2710,15 @@ function filter_nat_rules_generate() {
 					}
 					if (!empty($rule_interface_ip) && !empty($rule_interface_subnet)) {
 						$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
+						$nonatnet = $rule_subnet . '/' . $rule_interface_subnet;
 						$natrules .= "\n";
 						/* Do not generate a rule with an interface source if that interface has no IP address.
 						 * See https://redmine.pfsense.org/issues/8604 */
-						if ((($ipproto == 'inet') && !empty(get_interface_ip($natif))) || 
-						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) {
-							$natrules .= "no nat on {$rdrif} {$ipproto} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						if (((($ipproto == 'inet') && !empty(get_interface_ip($natif))) ||
+						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) &&
+						    (!$nonatrule[$natif])) {
+							$natrules .= "no nat on {$rdrif} {$ipproto} proto tcp from ({$natif}) to {$nonatnet}\n";
+							$nonatrule[$natif] = true;
 						}
 						$natrules .= "nat on {$rdrif} {$ipproto} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 					}

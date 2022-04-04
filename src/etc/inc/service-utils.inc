@@ -67,11 +67,11 @@ function write_rcfile($params) {
 	if (!empty($params['restart'])) {
 		$torestart = &$params['restart'];
 	} else {
-		$torestart = "\trc_stop()\n";
-		$torestart .= "\trc_start()\n";
+		$torestart = "\trc_stop\n";
+		$torestart .= "\trc_start\n";
 	}
 	$towrite .= "rc_restart() {\n";
-	$towrite .= "\t{$torestart}\n";
+	$towrite .= "{$torestart}\n";
 	$towrite .= "}\n\n";
 
 	/* begin rcfile logic */

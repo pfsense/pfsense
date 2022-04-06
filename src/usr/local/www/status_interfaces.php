@@ -204,10 +204,10 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			if ($ifinfo['voltage']) {
 				showDef($ifinfo['voltage'], gettext("voltage"), $ifinfo['voltage']);
 			}
-			if ($ifinfo['RX']) {
+			if ($ifinfo['rx']) {
 				showDef($ifinfo['rx'], gettext("RX"), $ifinfo['rx']);
 			}
-			if ($ifinfo['TX']) {
+			if ($ifinfo['tx']) {
 				showDef($ifinfo['tx'], gettext("TX"), $ifinfo['tx']);
 			}
 			showDef($ifinfo['laggproto'], gettext("LAGG Protocol"), $ifinfo['laggproto']);

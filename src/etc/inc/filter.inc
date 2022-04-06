@@ -1520,6 +1520,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 	}
 
 	/* Search for matching subnets in the routing table */
+	$natsubnets = array();
 	foreach ($route_table as $route) {
 		$subnet = $route['subnet'];
 		$subnet_split = explode("/", $subnet);
@@ -1556,7 +1557,10 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 				    (!empty(get_interface_ipv6($subnet_if)) && is_ipaddrv6($target))) {
 					$natrules .= "no nat on {$subnet_if}{$protocol_text} from ({$subnet_if}) to {$target}\n";
 				}
-				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+				if (!$natsubnets[$subnet]) {
+					$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+					$natsubnets[$subnet] = true;
+				}
 			}
 		}
 	}
@@ -2510,6 +2514,7 @@ function filter_nat_rules_generate() {
 		/* start reflection redirects on port 19000 of localhost */
 		$starting_localhost_port = 19000;
 		$natrules .= "# NAT Inbound Redirects\n";
+		$nonatrule = array();
 		foreach ($config['nat']['rule'] as $rule) {
 			update_filter_reload_status(sprintf(gettext("Creating NAT rule %s"), $rule['descr']));
 
@@ -2705,12 +2710,15 @@ function filter_nat_rules_generate() {
 					}
 					if (!empty($rule_interface_ip) && !empty($rule_interface_subnet)) {
 						$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
+						$nonatnet = $rule_subnet . '/' . $rule_interface_subnet;
 						$natrules .= "\n";
 						/* Do not generate a rule with an interface source if that interface has no IP address.
 						 * See https://redmine.pfsense.org/issues/8604 */
-						if ((($ipproto == 'inet') && !empty(get_interface_ip($natif))) || 
-						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) {
-							$natrules .= "no nat on {$rdrif} {$ipproto} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						if (((($ipproto == 'inet') && !empty(get_interface_ip($natif))) ||
+						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) &&
+						    (!$nonatrule[$natif])) {
+							$natrules .= "no nat on {$rdrif} {$ipproto} proto tcp from ({$natif}) to {$nonatnet}\n";
+							$nonatrule[$natif] = true;
 						}
 						$natrules .= "nat on {$rdrif} {$ipproto} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 					}

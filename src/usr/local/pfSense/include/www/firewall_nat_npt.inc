@@ -174,6 +174,31 @@ function togglenptNATrule($post, $json = false) {
 	}
 }
 
+// Toggle multiple NPt rules
+function toggleMultiplenptNATrules($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'npt'));
+	$a_npt = &$config['nat']['npt'];
+
+	foreach ($post['rule'] as $rulei) {
+		if (isset($a_npt[$rulei]['disabled'])) {
+			unset($a_npt[$rulei]['disabled']);
+		} else {
+			$a_npt[$rulei]['disabled'] = true;
+		}
+	}
+
+	if (write_config(gettext("Firewall: NAT: NPt - toggle enable/disable for selected NPt mappings.")) && !$json) {
+		mark_subsystem_dirty('natconf');
+	}
+
+	if (!$json) {
+		header("Location: firewall_nat_npt.php");
+		exit;
+	}
+}
+
 // Delete multiple NPt rules
 function deleteMultiplenptNATrules($post, $json = false) {
 	global $config;

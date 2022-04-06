@@ -35,6 +35,7 @@ require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
+global $openvpn_sharedkey_warning;
 
 init_config_arr(array('openvpn', 'openvpn-client'));
 $a_client = &$config['openvpn']['openvpn-client'];
@@ -626,6 +627,12 @@ if ($_POST['save']) {
 		$client['ping_action_seconds'] = $pconfig['ping_action_seconds'];
 		$client['inactive_seconds'] = $pconfig['inactive_seconds'];
 
+		if (($act == 'new') || ($client['disable'] ^ $a_client[$id]['disable']) ||
+		    ($client['tunnel_network'] != $a_client[$id]['tunnel_network']) ||
+		    ($client['tunnel_networkv6'] != $a_client[$id]['tunnel_networkv6'])) {
+			$client['unbound_restart'] = true;
+		}
+
 		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
 			$wc_msg = sprintf(gettext('Updated OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
@@ -713,6 +720,14 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['mode'],
 		$openvpn_client_modes
 		));
+
+	$group = new Form_Group('WARNING:');
+	$group->add(new Form_StaticText(
+		'',
+		$openvpn_sharedkey_warning
+	));
+	$group->addClass('text-danger')->addClass('sharedkeywarning');
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'dev_mode',
@@ -1317,8 +1332,12 @@ else:
 
 			<tbody>
 <?php
+	$print_sk_warning = false;
 	$i = 0;
 	foreach ($a_client as $client):
+		if ($client['mode'] == 'p2p_shared_key') {
+			$print_sk_warning = true;
+		}
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 		$ncp = (($client['mode'] != "p2p_shared_key") && ($client['ncp_enable'] != 'disabled'));
 		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], $ncp);
@@ -1382,6 +1401,12 @@ else:
 </nav>
 
 <?php
+if ($print_sk_warning) {
+	print_info_box(gettext('WARNING:') . ' ' . $openvpn_sharedkey_warning, 'warning', false);
+}
+?>
+
+<?php
 endif;
 
 // Note:
@@ -1396,6 +1421,7 @@ events.push(function() {
 	function mode_change() {
 		switch ($('#mode').val()) {
 			case "p2p_tls":
+				hideClass('sharedkeywarning', true);
 				hideCheckbox('tlsauth_enable', false);
 				hideInput('tlsauth_keydir', false);
 				hideInput('caref', false);
@@ -1412,6 +1438,7 @@ events.push(function() {
 				hideInput('exit_notify', false);
 				break;
 			case "p2p_shared_key":
+				hideClass('sharedkeywarning', false);
 				hideCheckbox('tlsauth_enable', true);
 				hideInput('tlsauth_keydir', true);
 				hideInput('caref', true);

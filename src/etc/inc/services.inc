@@ -1257,8 +1257,9 @@ EOD;
 				}
 				$dhcpdconf .= "\n\n";
 			} elseif (!empty($filename)) {
-				$dhcpdconf .= "		filename \"{$filename}\";\n";
+				$dhcpdconf .= "	filename \"{$filename}\";\n";
 			}
+			unset($filename);
 			if (!empty($dhcpifconf['rootpath'])) {
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
 			}
@@ -1441,8 +1442,9 @@ EOD;
 						}
 						$dhcpdconf .= "\n\n";
 					} elseif (!empty($filename)) {
-						$dhcpdconf .= "		filename \"{$filename}\";\n";
+						$dhcpdconf .= "	filename \"{$filename}\";\n";
 					}
+					unset($filename);
 					if (!empty($dhcpifconf['rootpath'])) {
 						$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
 					}

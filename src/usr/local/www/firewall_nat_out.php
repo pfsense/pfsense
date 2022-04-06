@@ -58,18 +58,21 @@ $mode = $config['nat']['outbound']['mode'];
 
 if ($_POST['apply']) {
 	$retval = applyoutNATrules();
-} else if ($_POST['save']) {
+} elseif ($_POST['save']) {
 	saveNAToutMode($_POST);
-} else if ($_POST['act'] == "del") {
+} elseif ($_POST['act'] == "del") {
 	deleteoutNATrule($_POST);
-} else if (isset($_POST['del_x']) &&
-    isset($_POST['rule']) &&
+} elseif (isset($_POST['rule']) &&
     !empty($_POST['rule']) &&
     is_array($_POST['rule'])) {
-	/* Delete selected rules, but only when given valid data
-	 * See https://redmine.pfsense.org/issues/12694 */
-	deleteMultipleoutNATrules($_POST);
-} else if ($_POST['act'] == "toggle") {
+	if (isset($_POST['del_x'])) {
+		/* Delete selected rules, but only when given valid data
+		 * See https://redmine.pfsense.org/issues/12694 */
+		deleteMultipleoutNATrules($_POST);
+	} elseif (isset($_POST['toggle_x'])) {
+		toggleMultipleoutNATrules($_POST);
+	}
+} elseif ($_POST['act'] == "toggle") {
 	toggleoutNATrule($_POST);
 }
 
@@ -373,9 +376,13 @@ print($form);
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>" title="<?=gettext('Delete selected maps')?>">
+		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>" disabled title="<?=gettext('Delete selected maps')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
+		</button>
+		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" disabled title="<?=gettext('Toggle selected rules')?>">
+			<i class="fa fa-ban icon-embed-btn"></i>
+			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled name="order-store" title="<?=gettext('Save mapping order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
@@ -540,6 +547,10 @@ events.push(function() {
 		saving = true;
 	});
 
+	$('[id^=fr]').click(function () {
+		buttonsmode('frc', ['del_x', 'toggle_x']);
+	});
+
 	// Globals
 	saving = false;
 	dirty = false;
@@ -558,6 +569,7 @@ events.push(function() {
 		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
 		$(this).prop('checked', checkedStatus);
 		});
+		buttonsmode('frc', ['del_x', 'toggle_x']);
 	});
 });
 //]]>

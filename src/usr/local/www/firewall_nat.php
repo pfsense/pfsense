@@ -60,6 +60,10 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		deleteMultipleNATrules($_POST);
 	}
+} else if (isset($_POST['toggle_x']) && have_natpfruleint_access($natent['interface'])) {
+	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		toggleMultipleNATrules($_POST);
+	}
 } elseif (($_POST['act'] == "toggle") && have_natpfruleint_access($natent['interface'])) {
 	if ($a_nat[$_POST['id']]) {
 		toggleNATrule($_POST);
@@ -364,9 +368,13 @@ if ($seprows[$nnats]) {
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected rules')?>">
+		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected rules')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
+		</button>
+		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected rules"); ?>" title="<?=gettext('Toggle selected rules')?>">
+			<i class="fa fa-ban icon-embed-btn"></i>
+			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save rule order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
@@ -417,6 +425,10 @@ events.push(function() {
 
 	});
 
+	$('[id^=fr]').click(function () {
+		buttonsmode('frc', ['del_x', 'toggle_x']);
+	});
+
 	// Globals
 	saving = false;
 	dirty = false;
@@ -437,6 +449,7 @@ events.push(function() {
 		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
 		$(this).prop('checked', checkedStatus);
 		});
+		buttonsmode('frc', ['del_x', 'toggle_x']);
 	});
 });
 //]]>

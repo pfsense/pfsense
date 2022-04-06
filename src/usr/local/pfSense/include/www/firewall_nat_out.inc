@@ -486,6 +486,40 @@ function toggleoutNATrule($post, $json = false) {
 	}
 }
 
+// Toggle multiple Outbound rules
+function toggleMultipleoutNATrules($post, $json = false) {
+	global $config;
+
+	if (empty($post) ||
+	    !is_array($post) ||
+	    !isset($post['rule']) ||
+	    !is_array($post['rule'])) {
+		/* Nothing to do.
+		 * See https://redmine.pfsense.org/issues/12694 */
+		return;
+	}
+
+	init_config_arr(array('nat', 'outbound', 'rule'));
+	$a_out = &$config['nat']['outbound']['rule'];
+
+	foreach ($post['rule'] as $rulei) {
+		if (isset($a_out[$rulei]['disabled'])) {
+			unset($a_out[$rulei]['disabled']);
+		} else {
+			$a_out[$rulei]['disabled'] = true;
+		}
+	}
+
+	if (write_config(gettext("Firewall: NAT: Outbound - toggle enable/disable for selected outbound mappings.")) && !$json) {
+		mark_subsystem_dirty('natconf');
+	}
+
+	if (!$json) {
+		header("Location: firewall_nat_out.php");
+		exit;
+	}
+}
+
 // Delete multiple Outbound rules
 function deleteMultipleoutNATrules($post, $json = false) {
 	global $config;

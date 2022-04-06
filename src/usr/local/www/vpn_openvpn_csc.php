@@ -308,6 +308,12 @@ if ($_POST['save']) {
 			}
 		}
 
+		if (($act == 'new') || ($csc['disable'] ^ $a_csc[$id]['disable']) ||
+		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
+		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
+			$csc['unbound_restart'] = true;
+		}
+
 		if (isset($id) && $a_csc[$id]) {
 			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;

@@ -36,6 +36,7 @@ require_once("pkg-utils.inc");
 require_once("vpn_openvpn_server.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes, $openvpn_exit_notify_server;
+global $openvpn_sharedkey_warning;
 
 init_config_arr(array('openvpn', 'openvpn-server'));
 $a_server = &$config['openvpn']['openvpn-server'];
@@ -179,6 +180,14 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['mode'],
 		openvpn_build_mode_list()
 		));
+
+	$group = new Form_Group('WARNING:');
+	$group->add(new Form_StaticText(
+		'',
+		$openvpn_sharedkey_warning
+	));
+	$group->addClass('text-danger')->addClass('sharedkeywarning');
+	$section->add($group);
 
 	$options = array();
 	$authmodes = array();
@@ -663,6 +672,13 @@ if ($act=="new" || $act=="edit"):
 			'When unset, a new connection from a user will disconnect the previous session. %1$s%1$s' .
 			'Users are identified by their username or certificate properties, depending on the VPN configuration. ' .
 			'This practice is discouraged security reasons, but may be necessary in some environments.', '<br />');
+	
+	$section->addInput(new Form_Input(
+		'connlimit',
+		'Duplicate Connection Limit',
+		'number',
+		$pconfig['connlimit']
+	))->setHelp('Limit the number of concurrent connections from the same user.');
 
 	$form->add($section);
 
@@ -1040,8 +1056,12 @@ else:
 
 			<tbody>
 <?php
+	$print_sk_warning = false;
 	$i = 0;
 	foreach ($a_server as $server):
+		if ($server['mode'] == 'p2p_shared_key') {
+			$print_sk_warning = true;
+		}
 		$ncp = (($server['mode'] != "p2p_shared_key") && ($server['ncp_enable'] != 'disabled'));
 		$dc = openvpn_build_data_cipher_list($server['data_ciphers'], $server['data_ciphers_fallback'], $ncp);
 		$dca = explode(',', $dc);
@@ -1107,6 +1127,12 @@ else:
 </nav>
 
 <?php
+if ($print_sk_warning) {
+	print_info_box(gettext('WARNING:') . ' ' . $openvpn_sharedkey_warning, 'warning', false);
+}
+?>
+
+<?php
 endif;
 
 // Note:
@@ -1140,6 +1166,7 @@ events.push(function() {
 		hideInput('crlref', false);
 		hideCheckbox('ocspcheck', false);
 		hideLabel('Peer Certificate Revocation list', false);
+		hideClass('sharedkeywarning', true);
 
 		switch (value) {
 			case "p2p_tls":
@@ -1175,6 +1202,7 @@ events.push(function() {
 				hideInput('inactive_seconds', false);
 			break;
 			case "p2p_shared_key":
+				hideClass('sharedkeywarning', false);
 				hideInput('tls', true);
 				hideInput('caref', true);
 				hideInput('crlref', true);

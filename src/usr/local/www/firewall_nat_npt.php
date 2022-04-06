@@ -49,16 +49,20 @@ if ($_REQUEST['savemsg']) {
 
 if (array_key_exists('order-store', $_REQUEST)) {
 	reordernptNATrules($_POST);
-} else if ($_POST['apply']) {
+} elseif ($_POST['apply']) {
 	$retval = applynptNATrules();
-} else if (($_POST['act'] == "del")) {
+} elseif (($_POST['act'] == "del")) {
 	if ($a_npt[$_POST['id']]) {
 		deletenptNATrule($_POST);
 	}
-} else if (isset($_POST['del_x'])) {
+} elseif (isset($_POST['del_x'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		deleteMultiplenptNATrules($_POST);
+	}
+} elseif (isset($_POST['toggle_x'])) {
+	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		toggleMultiplenptNATrules($_POST);
 	}
 } elseif (($_POST['act'] == "toggle")) {
 	if ($a_npt[$_POST['id']]) {
@@ -185,9 +189,13 @@ endforeach;
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected mappings')?>">
+		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected mappings')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
+		</button>
+		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected mappings"); ?>" title="<?=gettext('Toggle selected rules')?>">
+			<i class="fa fa-ban icon-embed-btn"></i>
+			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save mapping order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
@@ -219,6 +227,10 @@ events.push(function() {
 		saving = true;
 	});
 
+	$('[id^=fr]').click(function () {
+		buttonsmode('frc', ['del_x', 'toggle_x']);
+	});
+
 	// Globals
 	saving = false;
 	dirty = false;
@@ -237,6 +249,7 @@ events.push(function() {
 		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
 		$(this).prop('checked', checkedStatus);
 		});
+		buttonsmode('frc', ['del_x', 'toggle_x']);
 	});
 });
 //]]>

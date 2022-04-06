@@ -129,7 +129,9 @@ function test_unbound_config($unboundcfg, &$output) {
 
 	unbound_generate_config($unboundcfg, $cfgsubdir);
 	unbound_remote_control_setup($cfgsubdir);
-	do_as_unbound_user("unbound-anchor", $cfgsubdir);
+	if (isset($unboundcfg['dnssec'])) {
+		do_as_unbound_user("unbound-anchor", $cfgsubdir);
+	}
 
 	$rv = 0;
 	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
@@ -386,6 +388,7 @@ EOF;
 	$jostle_timeout = (!empty($unboundcfg['jostle_timeout'])) ? $unboundcfg['jostle_timeout'] : "200";
 	$cache_max_ttl = (!empty($unboundcfg['cache_max_ttl'])) ? $unboundcfg['cache_max_ttl'] : "86400";
 	$cache_min_ttl = (!empty($unboundcfg['cache_min_ttl'])) ? $unboundcfg['cache_min_ttl'] : "0";
+	$infra_keep_probing = (!isset($unboundcfg['infra_keep_probing']) || $unboundcfg['infra_keep_probing'] == "enabled") ? "yes" : "no";
 	$infra_host_ttl = (!empty($unboundcfg['infra_host_ttl'])) ? $unboundcfg['infra_host_ttl'] : "900";
 	$infra_cache_numhosts = (!empty($unboundcfg['infra_cache_numhosts'])) ? $unboundcfg['infra_cache_numhosts'] : "10000";
 	$unwanted_reply_threshold = (!empty($unboundcfg['unwanted_reply_threshold'])) ? $unboundcfg['unwanted_reply_threshold'] : "0";
@@ -499,6 +502,7 @@ module-config: "{$module_config}"
 unwanted-reply-threshold: {$unwanted_reply_threshold}
 num-queries-per-thread: {$num_queries_per_thread}
 jostle-timeout: {$jostle_timeout}
+infra-keep-probing: {$infra_keep_probing}
 infra-host-ttl: {$infra_host_ttl}
 infra-cache-numhosts: {$infra_cache_numhosts}
 outgoing-num-tcp: {$outgoing_num_tcp}
@@ -596,7 +600,11 @@ function sync_unbound_service() {
 	create_unbound_chroot_path();
 
 	// Configure our Unbound service
-	do_as_unbound_user("unbound-anchor");
+	if (isset($config['unbound']['dnssec'])) {
+		/* do not sync root.key file if DNSSEC is not enabled,
+		 * see https://redmine.pfsense.org/issues/12985 */
+		do_as_unbound_user("unbound-anchor");
+	}
 	unbound_remote_control_setup();
 	unbound_generate_config();
 	do_as_unbound_user("start");
@@ -631,7 +639,7 @@ function unbound_get_next_id() {
 
 // Execute commands as the user unbound
 function do_as_unbound_user($cmd, $param1 = "") {
-	global $g;
+	global $g, $config;
 
 	switch ($cmd) {
 		case "start":

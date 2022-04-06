@@ -482,6 +482,12 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		} else if ($user['uid'] < 2000 && !in_array($user, $u2add)) {
 			continue;
 		}
+		/* Don't remove /root */
+		if ($user['uid'] != 0) {
+			$rmhome = escapeshellarg('-r');
+		} else {
+			$rmhome = '';
+		}
 
 		/*
 		 * If a crontab was created to user, pw userdel will be
@@ -489,8 +495,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		 * before run it when necessary
 		 */
 		unlink_if_exists("/var/cron/tabs/{$user['name']}");
-		$cmd = "/usr/sbin/pw userdel -n " .
-		    escapeshellarg($user['name']);
+		$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . $rmhome;
 		if ($debug) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
@@ -760,23 +765,20 @@ function local_user_set(& $user) {
 	}
 
 	/* write out ssh authorized key file */
+	$sshdir = "{$user_home}/.ssh";
 	if ($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
-			@mkdir("{$user_home}/.ssh", 0700);
-			@chown("{$user_home}/.ssh", $user_name);
+			@mkdir($sshdir, 0700);
+			@chown($sshdir, $user_name);
+		} elseif (file_exists($sshdir) && (fileowner($sshdir) != $user['uid'])) {
+			@chown($sshdir, $user_name);
+			@chown("{$sshdir}/*", $user_name);
 		}
 		$keys = base64_decode($user['authorizedkeys']);
 		@file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 		@chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	} else {
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
-	}
-
-	if (isset($user['keephistory']) && $shell_access &&
-	    !file_exists("{$user_home}/.keephistory")) {
-		@touch("{$user_home}/.keephistory");
-	} elseif (!isset($user['keephistory'])) {
-		unlink_if_exists("{$user_home}/.keephistory");
 	}
 
 	$un = $lock_account ? "" : "un";

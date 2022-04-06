@@ -725,6 +725,31 @@ function toggleNATrule($post, $json = false) {
 	}
 }
 
+function toggleMultipleNATrules($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'rule'));
+	$a_nat = &$config['nat']['rule'];
+
+	foreach ($post['rule'] as $rulei) {
+		if (isset($a_nat[$rulei]['disabled'])) {
+			unset($a_nat[$rulei]['disabled']);
+		} else {
+			$a_nat[$rulei]['disabled'] = true;
+		}
+	}
+
+	if (write_config(gettext("Firewall: NAT: Port forward, enable/disable multiple NAT rule"))) {
+		if ($json) {
+			filter_configure();
+		} else {
+			mark_subsystem_dirty('natconf');
+			header("Location: firewall_nat.php");
+			exit;
+		}
+	}
+}
+
 function deleteMultipleNATrules($post, $json = false) {
 	global $config;
 

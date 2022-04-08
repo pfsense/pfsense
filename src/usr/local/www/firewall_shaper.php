@@ -34,12 +34,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 
-if ($_GET['reset'] != "") {
-	/* XXX: Huh, why are we killing php? */
-	mwexec("/usr/bin/killall -9 pfctl php");
-	exit;
-}
-
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Interface"));
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "trafficshaper";

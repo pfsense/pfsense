@@ -33,11 +33,6 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if ($_GET['reset'] != "") {
-	mwexec("/usr/bin/killall -9 pfctl");
-	exit;
-}
-
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Limiters"));
 $pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper-limiters";

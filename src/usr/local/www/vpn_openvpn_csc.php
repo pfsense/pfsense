@@ -106,9 +106,9 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['dns_server4'] = $a_csc[$id]['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
-		    $pconfig['dns_server2'] ||
-		    $pconfig['dns_server3'] ||
-		    $pconfig['dns_server4']) {
+				$pconfig['dns_server2'] ||
+				$pconfig['dns_server3'] ||
+				$pconfig['dns_server4']) {
 			$pconfig['dns_server_enable'] = true;
 		}
 
@@ -116,7 +116,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['ntp_server2'] = $a_csc[$id]['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
-		    $pconfig['ntp_server2']) {
+				$pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
 		}
 
@@ -128,7 +128,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['wins_server2'] = $a_csc[$id]['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
-		    $pconfig['wins_server2']) {
+				$pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
 		}
 
@@ -151,8 +151,8 @@ if ($_POST['save']) {
 
 	/* input validation */
 	if (isset($pconfig['custom_options']) &&
-	    ($pconfig['custom_options'] != $a_csc[$id]['custom_options']) &&
-	    !$user_can_edit_advanced) {
+		($pconfig['custom_options'] != $a_csc[$id]['custom_options']) &&
+		!$user_can_edit_advanced) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
 	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
@@ -241,7 +241,7 @@ if ($_POST['save']) {
 		}
 
 		if (!empty($pconfig['netbios_ntype']) &&
-		    !array_key_exists($pconfig['netbios_ntype'], $netbios_nodetypes)) {
+			!array_key_exists($pconfig['netbios_ntype'], $netbios_nodetypes)) {
 			$input_errors[] = gettext("The selected NetBIOS Node Type is not valid.");
 		}
 	}
@@ -309,8 +309,8 @@ if ($_POST['save']) {
 		}
 
 		if (($act == 'new') || ($csc['disable'] ^ $a_csc[$id]['disable']) ||
-		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
-		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
+			($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
+			($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
 			$csc['unbound_restart'] = true;
 		}
 
@@ -432,8 +432,8 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('The virtual IPv4 network or network type alias with a single entry used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). %1$s' .
-		    'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. %1$s' .
-		    'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.',
+			'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. %1$s' .
+			'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.',
 			'<br />');
 
 	$section->addInput(new Form_Input(
@@ -442,7 +442,7 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('The virtual IPv6 network or network type alias with a single entry used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
-		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
+			'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
 			'<br />');
 
 	$section->addInput(new Form_Checkbox(
@@ -458,7 +458,7 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['local_network']
 	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR ranges or host/network type aliases. %1$s' .
-		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
+			'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
 			'<br />');
 
 	$section->addInput(new Form_Input(
@@ -467,7 +467,7 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['local_networkv6']
 	))->setHelp('These are the IPv6 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.%1$s' .
-		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
+			'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
 			'<br />');
 
 	$section->addInput(new Form_Input(
@@ -476,8 +476,8 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['remote_network']
 	))->setHelp('These are the IPv4 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-		    'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.%1$s' .
-		    'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.',
+			'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.%1$s' .
+			'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.',
 			'<br />');
 
 	$section->addInput(new Form_Input(
@@ -486,8 +486,8 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['remote_networkv6']
 	))->setHelp('These are the IPv6 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-		    'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.%1$s' .
-		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.',
+			'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.%1$s' .
+			'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.',
 			'<br />');
 
 	$form->add($section);
@@ -499,7 +499,7 @@ if ($act == "new" || $act == "edit"):
 		'DNS Default Domain',
 		'Provide a default domain name to clients',
 		$pconfig['dns_domain_enable']
-	))->toggles('.dnsdomain');
+	));
 
 	$group = new Form_Group('DNS Domain');
 	$group->addClass('dnsdomain');
@@ -519,7 +519,7 @@ if ($act == "new" || $act == "edit"):
 		'DNS Servers',
 		'Provide a DNS server list to clients',
 		$pconfig['dns_server_enable']
-	))->toggles('.dnsservers');
+	));
 
 	$group = new Form_Group(null);
 	$group->addClass('dnsservers');
@@ -560,7 +560,7 @@ if ($act == "new" || $act == "edit"):
 		'NTP Servers',
 		'Provide an NTP server list to clients',
 		$pconfig['ntp_server_enable']
-	))->toggles('.ntpservers');
+	));
 
 	$group = new Form_Group(null);
 	$group->addClass('ntpservers');
@@ -581,7 +581,7 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
-	// NTP servers - For this section we need to use Javascript hiding since there
+	// Netbios - For this section we need to use Javascript hiding since there
 	// are nested toggles
 	$section->addInput(new Form_Checkbox(
 		'netbios_enable',
@@ -671,6 +671,30 @@ if ($act == "new" || $act == "edit"):
 //<![CDATA[
 events.push(function() {
 
+	function dnsdomain_change() {
+		if ($('#dns_domain_enable').prop('checked')) {
+			hideClass('dnsdomain', false);
+		} else {
+			hideClass('dnsdomain', true);
+		}
+	}
+
+	function dnsservers_change() {
+		if ($('#dns_server_enable').prop('checked')) {
+			hideClass('dnsservers', false);
+		} else {
+			hideClass('dnsservers', true);
+		}
+	}
+
+	function ntpservers_change() {
+		if ($('#ntp_server_enable').prop('checked')) {
+			hideClass('ntpservers', false);
+		} else {
+			hideClass('ntpservers', true);
+		}
+	}
+
 	// Hide/show that section, but have to also respect the wins_server_enable checkbox
 	function setNetbios() {
 		if ($('#netbios_enable').prop('checked')) {
@@ -692,6 +716,21 @@ events.push(function() {
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
+	 // On clicking DNS Default Domain
+	$('#dns_domain_enable').click(function () {
+		dnsdomain_change();
+	});
+
+	 // On clicking DNS Servers
+	$('#dns_server_enable').click(function () {
+		dnsservers_change();
+	});
+
+	 // On clicking NTP Servers
+	$('#ntp_server_enable').click(function () {
+		ntpservers_change();
+	});
+
 	// On clicking the netbios_enable checkbox
 	$('#netbios_enable').click(function () {
 		setNetbios();
@@ -705,6 +744,10 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setNetbios();
+	dnsdomain_change();
+	dnsservers_change();
+	ntpservers_change();
+
 });
 //]]>
 </script>

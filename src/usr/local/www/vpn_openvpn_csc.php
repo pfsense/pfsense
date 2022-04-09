@@ -86,14 +86,14 @@ if (($act == "edit") || ($act == "dup")) {
 
 		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
 		$pconfig['tunnel_networkv6'] = $a_csc[$id]['tunnel_networkv6'];
+
+		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
+		$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
+		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
 		$pconfig['local_network'] = $a_csc[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
 		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
 		$pconfig['remote_networkv6'] = $a_csc[$id]['remote_networkv6'];
-		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
-
-		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
-		$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
 
 		$pconfig['dns_domain'] = $a_csc[$id]['dns_domain'];
 		if ($pconfig['dns_domain']) {
@@ -269,13 +269,13 @@ if ($_POST['save']) {
 		foreach (array('', 'v6') as $ntype) {
 			$csc["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
 		}
+		$csc['push_reset'] = $pconfig['push_reset'];
+		$csc['remove_route'] = $pconfig['remove_route'];
+		$csc['gwredir'] = $pconfig['gwredir'];
 		$csc['local_network'] = $pconfig['local_network'];
 		$csc['local_networkv6'] = $pconfig['local_networkv6'];
 		$csc['remote_network'] = $pconfig['remote_network'];
 		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
-		$csc['gwredir'] = $pconfig['gwredir'];
-		$csc['push_reset'] = $pconfig['push_reset'];
-		$csc['remove_route'] = $pconfig['remove_route'];
 
 		if ($pconfig['dns_domain_enable']) {
 			$csc['dns_domain'] = $pconfig['dns_domain'];
@@ -406,6 +406,22 @@ if ($act == "new" || $act == "edit"):
 		true
 		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
 
+	$section->addInput(new Form_Checkbox(
+		'push_reset',
+		'Server Definitions',
+		'Prevent this client from receiving any server-defined client settings. ',
+		$pconfig['push_reset']
+	));
+
+	/* as "push-reset" can break subnet topology, 
+	 * "push-remove route" removes only IPv4/IPv6 routes, see #9702 */
+	$section->addInput(new Form_Checkbox(
+		'remove_route',
+		'Remove Server Routes',
+		'Prevent this client from receiving any server-defined routes without removing any other options. ',
+		$pconfig['remove_route']
+	));
+
 	$form->add($section);
 
 	$section = new Form_Section('Tunnel Settings');
@@ -428,6 +444,13 @@ if ($act == "new" || $act == "edit"):
 	))->setHelp('The virtual IPv6 network or network type alias with a single entry used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
 		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
 			'<br />');
+
+	$section->addInput(new Form_Checkbox(
+		'gwredir',
+		'Redirect Gateway',
+		'Force all client generated traffic through the tunnel.',
+		$pconfig['gwredir']
+	));
 
 	$section->addInput(new Form_Input(
 		'local_network',
@@ -467,32 +490,9 @@ if ($act == "new" || $act == "edit"):
 		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.',
 			'<br />');
 
-	$section->addInput(new Form_Checkbox(
-		'gwredir',
-		'Redirect Gateway',
-		'Force all client generated traffic through the tunnel.',
-		$pconfig['gwredir']
-	));
-
 	$form->add($section);
 
 	$section = new Form_Section('Client Settings');
-
-	$section->addInput(new Form_Checkbox(
-		'push_reset',
-		'Server Definitions',
-		'Prevent this client from receiving any server-defined client settings. ',
-		$pconfig['push_reset']
-	));
-
-	/* as "push-reset" can break subnet topology, 
-	 * "push-remove route" removes only IPv4/IPv6 routes, see #9702 */
-	$section->addInput(new Form_Checkbox(
-		'remove_route',
-		'Remove Server Routes',
-		'Prevent this client from receiving any server-defined routes without removing any other options. ',
-		$pconfig['remove_route']
-	));
 
 	$section->addInput(new Form_Checkbox(
 		'dns_domain_enable',

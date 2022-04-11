@@ -34,11 +34,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 
-if ($_GET['reset'] != "") {
-	mwexec("/usr/bin/killall -9 pfctl");
-	exit;
-}
-
 $qname = gettext("No Queue Configured/Selected");
 
 $shaperIFlist = get_configured_interface_with_descr();

@@ -914,14 +914,11 @@ function filter_generate_aliases() {
 	$vpns_list = filter_get_vpns_list();
 	if ($vpns_list) {
 		$aliases .= "table <vpn_networks> { $vpns_list }\n";
+		/* add a Negate_networks table */
+		if (!isset($config['system']['disablenegate'])) {
+			$aliases .= "table <negate_networks> { $vpns_list }\n";
+		}
 	}
-
-	/* add a Negate_networks table */
-	$aliases .= "table <negate_networks> ";
-	if ($vpns_list) {
-		$aliases .= "{ $vpns_list }";
-	}
-	$aliases .= "\n";
 
 	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
@@ -3529,9 +3526,11 @@ function filter_generate_user_rule($rule) {
 	}
 
 	$line = "";
+	$vpns_list = filter_get_vpns_list();
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to vpns */
-	if ((($aline['route'] <> "") && (trim($aline['type']) == "pass") && strstr($dst, "any")) && (!isset($config['system']['disablenegate']))) {
+	if (!empty($aline['route']) && (trim($aline['type']) == "pass") && strstr($dst, "any") &&
+	    !isset($config['system']['disablenegate']) && $vpns_list) {
 		/* negate VPN/PPTP/PPPoE/Static Route networks for load balancer/gateway rules */
 		$negate_networks = " to <negate_networks> " . filter_generate_port($rule, "destination");
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .

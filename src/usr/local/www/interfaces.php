@@ -464,31 +464,16 @@ if ($_POST['apply']) {
 						$wancfg = $config['interfaces'][$ifapply];
 						interface_track6_configure($ifapply, $wancfg, true);
 					}
-					/* restart RADVD to announce correct IPv6 prefix
-					 * see https://redmine.pfsense.org/issues/12604 */ 
-					if ((($ifcfg['ipaddrv6'] == "staticv6") || ($ifcfg['ipaddrv6'] == "track6")) &&
-					    is_array($config['dhcpdv6'][$ifapply]) &&
-					    isset($config['dhcpdv6'][$ifapply]['ramode']) &&
-					    ($config['dhcpdv6'][$ifapply]['ramode'] != "disabled")) {
-						services_radvd_configure();
-					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
-					if (isset($config['dhcpd'][$ifapply]['enable']) ||
-					    isset($config['dhcpdv6'][$ifapply]['enable'])) {
-						services_dhcpd_configure();
-					}
 				}
+				restart_interface_services($ifapply, $ifcfg['ipaddrv6']);
 				if (interface_has_clones($realif) &&
 				    (isset($config['interfaces'][$ifapply]['mtu']) &&
 				    ($config['interfaces'][$ifapply]['mtu'] != $ifmtu)) ||
 				    (!isset($config['interfaces'][$ifapply]['mtu']) &&
 				    (get_interface_default_mtu() != $ifmtu))) { 
 					$vlan_redo[] = $realif;
-				}
-				/* restart OpenVPN server & clients */
-				if (substr($realif, 0, 4) != "ovpn") {
-					openvpn_resync_all($ifapply);
 				}
 			}
 		}
@@ -502,9 +487,6 @@ if ($_POST['apply']) {
 				interfaces_vlan_configure_mtu($vlredo);
 			}
 		}
-
-		/* restart snmp so that it binds to correct address */
-		$retval |= services_snmpd_configure($ifapply);
 
 		/* sync filter configuration */
 		setup_gateways_monitor();
@@ -521,12 +503,7 @@ if ($_POST['apply']) {
 			clear_subsystem_dirty('staticroutes');
 		}
 
-		init_config_arr(array('syslog'));
-		if (isset($config['syslog']['enable']) && ($ifapply == $config['syslog']['sourceip'])) {
-			system_syslogd_start();
-		}
-
-		services_igmpproxy_configure($ifapply);
+		restart_packages();
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
 } else if ($_POST['save']) {

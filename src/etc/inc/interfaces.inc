@@ -7677,4 +7677,37 @@ function is_stf_interface($inf) {
 	return false;
 }
 
+function restart_interface_services($interface, $ipv6type) {
+	global $config;
+
+	services_unbound_configure(true, $interface);
+
+	services_igmpproxy_configure($interface);
+	services_snmpd_configure($interface);
+
+	if (substr($realif, 0, 4) != "ovpn") {
+		openvpn_resync_all($interface);
+	}
+	ipsec_force_reload($interface);
+
+	/* restart RADVD to announce correct IPv6 prefix
+	 * see https://redmine.pfsense.org/issues/12604 */ 
+	if ((($ipv6type == "staticv6") || ($ipv6type == "track6")) &&
+	    is_array($config['dhcpdv6'][$interface]) &&
+	    isset($config['dhcpdv6'][$interface]['ramode']) &&
+	    ($config['dhcpdv6'][$interface]['ramode'] != "disabled")) {
+		services_radvd_configure();
+	}
+
+	if (isset($config['dhcpd'][$interface]['enable']) ||
+	    isset($config['dhcpdv6'][$interface]['enable'])) {
+		services_dhcpd_configure();
+	}
+
+	init_config_arr(array('syslog'));
+	if (isset($config['syslog']['enable']) && ($interface == $config['syslog']['sourceip'])) {
+		system_syslogd_start();
+	}
+}
+
 ?>

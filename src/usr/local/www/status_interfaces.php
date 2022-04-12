@@ -46,6 +46,10 @@ if ($_POST['ifdescr'] && $_POST['submit']) {
 			dhcp_relinquish_lease($_POST['if'], $_POST['ifdescr'], $_POST['ipv']);
 		}
 		interface_bring_down($interface);
+		restart_interface_services($interface);
+		filter_configure();
+		system_routing_configure();
+		restart_packages();
 	} else {
 		interface_configure($interface);
 	}

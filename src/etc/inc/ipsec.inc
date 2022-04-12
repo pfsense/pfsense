@@ -1887,8 +1887,10 @@ function ipsec_setup_strongswan() {
 		}
 
 		if (!empty($a_client['dns_split'])) {
-			$ssconf['charon']['plugins']['attr'][] = "# Split DNS";
+			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (UNITY_SPLITDNS_NAME)";
 			$ssconf['charon']['plugins']['attr']['28675'] = "\"{$a_client['dns_split']}\"";
+			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (INTERNAL_DNS_DOMAIN, RFC 8598)";
+			$ssconf['charon']['plugins']['attr']['25'] = "\"{$a_client['dns_split']}\"";
 		}
 
 		if (!empty($a_client['login_banner'])) {

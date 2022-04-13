@@ -627,7 +627,7 @@ if ($_POST['save']) {
 		$client['ping_action_seconds'] = $pconfig['ping_action_seconds'];
 		$client['inactive_seconds'] = $pconfig['inactive_seconds'];
 
-		if (($act == 'new') || ($client['disable'] ^ $a_client[$id]['disable']) ||
+		if (($act == 'new') || (!empty($client['disable']) ^ !empty($a_client[$id]['disable'])) ||
 		    ($client['tunnel_network'] != $a_client[$id]['tunnel_network']) ||
 		    ($client['tunnel_networkv6'] != $a_client[$id]['tunnel_networkv6'])) {
 			$client['unbound_restart'] = true;

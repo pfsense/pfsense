@@ -543,7 +543,12 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
 		if (!platform_booting()) {
-			return resolve_retry($rg, $ph1ent['protocol']);
+			$result = resolve_retry($rg, $ph1ent['protocol']);
+			if (!empty($result)) {
+				return $result;
+			} else {
+				return false;
+			}
 		}
 	}
 	if (!is_ipaddr($rg)) {

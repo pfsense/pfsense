@@ -52,6 +52,7 @@ $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencrypte
 $pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 $pconfig['filtermode'] = $config['ipsec']['filtermode'];
+$pconfig['dns-interval'] = $config['ipsec']['dns-interval'];
 $pconfig['ikev2_retransmit_tries'] = $config['ipsec']['ikev2_retransmit_tries'];
 $pconfig['ikev2_retransmit_timeout'] = $config['ipsec']['ikev2_retransmit_timeout'];
 $pconfig['ikev2_retransmit_base'] = $config['ipsec']['ikev2_retransmit_base'];
@@ -83,6 +84,11 @@ if ($_POST['save']) {
 	if ($_POST['maxexchange'] && (!is_numeric($_POST['maxexchange']) ||
 	    ($_POST['maxexchange'] < 3) || ($_POST['maxexchange'] > 64))) {
 		$input_errors[] = gettext("The number of IKEv1 phase 2 exchanges must be between 3 and 64.");
+	}
+
+	if ($_POST['dns-interval'] && (!is_numeric($_POST['dns-interval']) ||
+	    ($_POST['dns-interval'] < 1))) {
+		$input_errors[] = gettext("The FQDN Endpoints Resolve Interval must be more than 0.");
 	}
 
 	if (!isset($_POST['ikev2_retransmit_enable'])) {
@@ -285,6 +291,17 @@ if ($_POST['save']) {
 			unset($config['ipsec']['maxexchange']);
 		}
 
+		if (isset($_POST['dns-interval']) && !empty($_POST['dns-interval'])) {
+			if (!isset($config['ipsec']['dns-interval']) || ($pconfig['dns-interval'] != $config['ipsec']['dns-interval'])) {
+				$needsfilterdnsrestart = true;
+			}
+			$config['ipsec']['dns-interval'] = (int)$_POST['dns-interval'];
+			$pconfig['dns-interval'] = $config['ipsec']['dns-interval'];
+		} elseif (isset($config['ipsec']['dns-interval'])) {
+			$needsfilterdnsrestart = true;
+			unset($config['ipsec']['dns-interval']);
+		}
+
 		if (!empty($_POST['uniqueids'])) {
 			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
 		} else if (isset($config['ipsec']['uniqueids'])) {
@@ -363,7 +380,7 @@ if ($_POST['save']) {
 		$retval = 0;
 		$retval |= filter_configure();
 
-		ipsec_configure($needsrestart);
+		ipsec_configure($needsrestart, $needsfilterdnsrestart);
 		system_setup_sysctl();
 		clear_subsystem_dirty('sysctl');
 	}
@@ -577,6 +594,14 @@ $section->addInput(new Form_Checkbox(
 	'Enable strict Certificate Revocation List checking',
 	$pconfig['strictcrlpolicy']
 ))->setHelp('Check this to require availability of a fresh CRL for peer authentication based on certificate signatures to succeed.');
+
+$section->addInput(new Form_Input(
+	'dns-interval',
+	'FQDN Endpoints Resolve Interval',
+	'number',
+	$pconfig['dns-interval'],
+	['placeholder' => '60']
+))->setHelp('Interval, in seconds, that will be used to resolve FQDN remote gateways.');
 
 $section->addInput(new Form_Checkbox(
 	'makebeforebreak',

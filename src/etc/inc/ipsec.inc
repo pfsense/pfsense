@@ -3128,7 +3128,7 @@ function ipsec_setup_secrets($gateways_status = false) {
  *   IPsec-related configuration files are written, daemon is started or stopped
  *   appropriately.
  ******/
-function ipsec_configure($restart = false) {
+function ipsec_configure($restart = false, $filterdns_restart = false) {
 	global $aggressive_mode_psk, $a_client, $a_phase1, $a_phase2, $config,
 		$filterdns_list, $g, $ifacesuse, $ipsec_idhandling, $ipsec_log_cats,
 		$ipsec_log_sevs, $ipsec_swanctl_basedir, $ipsec_swanctl_dirs,
@@ -3324,7 +3324,13 @@ function ipsec_configure($restart = false) {
 		unset($hostnames);
 
 		if (isvalidpid("{$g['varrun_path']}/filterdns-ipsec.pid")) {
-			sigkillbypid("{$g['varrun_path']}/filterdns-ipsec.pid", "HUP");
+			if ($filterdns_restart) {
+				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
+				sleep(2);
+				mwexec_bg("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/ipsec/filterdns-ipsec.hosts -d 1");
+			} else {
+				sigkillbypid("{$g['varrun_path']}/filterdns-ipsec.pid", "HUP");
+			}
 		} else {
 			mwexec_bg("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/ipsec/filterdns-ipsec.hosts -d 1");
 		}

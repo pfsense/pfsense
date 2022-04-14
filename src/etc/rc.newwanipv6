@@ -178,7 +178,7 @@ if ($srvupdate) {
 }
 
 /* reconfigure IPsec tunnels */
-ipsec_force_reload($interface);
+ipsec_force_reload($interface, 'inet6');
 
 /* start OpenVPN server & clients */
 if (substr($interface_real, 0, 4) != "ovpn") {

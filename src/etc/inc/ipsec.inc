@@ -1335,7 +1335,7 @@ function ipsec_convert_to_modp($index) {
  * For all other occasions the normal ipsec_configure()
  * will gracefully reload the settings without restarting
  */
-function ipsec_force_reload($interface = "") {
+function ipsec_force_reload($interface = "", $protocol = "") {
 	global $g, $config;
 
 	if (!ipsec_enabled()) {
@@ -1351,6 +1351,11 @@ function ipsec_force_reload($interface = "") {
 		$ifcache = array();
 		foreach ($ipseccfg['phase1'] as $ipsec) {
 			if (isset($ipsec['disabled'])) {
+				continue;
+			}
+			if (!empty($protocol) &&
+			    ($ipsec['protocol'] != $protocol) &&
+			    ($ipsec['protocol'] != 'both')) {
 				continue;
 			}
 			if ($ipsec['interface'] == $interface) {

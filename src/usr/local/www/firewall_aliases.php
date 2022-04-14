@@ -148,11 +148,11 @@ display_top_tabs($tab_array);
 			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 <?php
 	if ($alias["url"]) {
-		echo $alias["url"] . "<br />";
+		echo htmlspecialchars($alias["url"]) . "<br />";
 	} else {
 		if (is_array($alias["aliasurl"])) {
 			$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
-			echo $aliasurls;
+			echo htmlspecialchars($aliasurls);
 			if (is_array($aliasurls) && (count($aliasurls) > 10)) {
 				echo "&hellip;<br />";
 			}
@@ -163,7 +163,7 @@ display_top_tabs($tab_array);
 			$tmpaddr = array_map('alias_idn_to_utf8', $tmpaddr);
 		}
 		$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
-		echo $addresses;
+		echo htmlspecialchars($addresses);
 		if (count($tmpaddr) > 10) {
 			echo '&hellip;';
 		}

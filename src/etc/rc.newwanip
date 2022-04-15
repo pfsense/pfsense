@@ -258,7 +258,7 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 
 	/* start OpenVPN server & clients */
 	if (substr($interface_real, 0, 4) != "ovpn") {
-		openvpn_resync_all($interface);
+		openvpn_resync_all($interface, 'inet');
 	}
 
 	/* reload graphing functions */

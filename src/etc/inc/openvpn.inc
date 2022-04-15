@@ -1822,7 +1822,7 @@ function openvpn_resync($mode, $settings) {
 }
 
 // Resync and restart all VPNs
-function openvpn_resync_all($interface = "") {
+function openvpn_resync_all($interface = "", $protocol = "") {
 	global $g, $config;
 
 	if ($interface <> "") {
@@ -1840,6 +1840,11 @@ function openvpn_resync_all($interface = "") {
 		}
 		foreach ($config['openvpn']["openvpn-{$type}"] as & $settings) {
 			if (isset($settings['disable'])) {
+				continue;
+			}
+			if (!empty($protocol) &&
+			    ((($protocol == 'inet') && strstr($settings['protocol'], "6")) ||
+			    (($protocol == 'inet6') && strstr($settings['protocol'], "4")))) {
 				continue;
 			}
 			$fpath = "{$g['openvpn_base']}/{$type}{$settings['vpnid']}/interface";

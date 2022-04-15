@@ -182,7 +182,7 @@ ipsec_force_reload($interface, 'inet6');
 
 /* start OpenVPN server & clients */
 if (substr($interface_real, 0, 4) != "ovpn") {
-	openvpn_resync_all($interface);
+	openvpn_resync_all($interface, 'inet6');
 }
 
 /* reconfigure GRE/GIF tunnels */

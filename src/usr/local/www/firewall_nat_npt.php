@@ -144,11 +144,20 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 <?php
+		$dst_arr = explode("/", $natent['destination']['network']);
+		if (count($dst_arr) > 1) {
+			$natent['destination']['network'] = $dst_arr[0];
+		}
 		if (is_array($config['interfaces'][$natent['destination']['network']]) &&
 		    ($config['interfaces'][$natent['destination']['network']]['ipaddrv6'] == 'track6')) {
 			$track6ip = get_interface_track6ip($natent['destination']['network']);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
-			$dst = "{$config['interfaces'][$natent['destination']['network']]['descr']} ({$pdsubnet}/{$track6ip[1]})";
+			if ($dst_arr[1]) {
+				$mask = $dst_arr[1];
+			} else {
+				$mask = $track6ip[1];
+			}
+			$dst = "{$config['interfaces'][$natent['destination']['network']]['descr']} ({$pdsubnet}/{$mask})";
 		} else {
 			$dst = pprint_address($natent['destination']);
 		}

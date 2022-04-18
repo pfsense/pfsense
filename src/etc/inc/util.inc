@@ -3754,12 +3754,15 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
 	}
 }
 
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0) {
+function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0, $addmask = false) {
 	$adr = array();
 
 	if ($padr == "any") {
 		$adr['any'] = true;
 	} else if (is_specialnet($padr)) {
+		if ($addmask) {
+			$padr .= "/" . $pmask;
+		}
 		$adr['network'] = $padr;
 	} else {
 		$adr['address'] = $padr;

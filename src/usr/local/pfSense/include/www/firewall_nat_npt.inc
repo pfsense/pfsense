@@ -68,7 +68,9 @@ function savenptNATrule($post, $id, $json = false) {
 	}
 	if (is_specialnet($post['dsttype'])) {
 		$track6ip = get_interface_track6ip($post['dsttype']);
-		$post['dstmask'] = $track6ip[1];
+		if ($post['dstmask'] < $track6ip[1]) {
+			$input_errors[] = gettext("The specified destination prefix size must be greater or equal to the track interface prefix size.");
+		}
 	}
 	if (!empty($post['dstmask']) && ($post['srcmask'] != $post['dstmask'])) {
 		$input_errors[] = gettext("The specified source prefix size must be equal to the destination prefix size.");
@@ -86,14 +88,13 @@ function savenptNATrule($post, $id, $json = false) {
 		}
 		if (is_specialnet($post['dsttype'])) {
 			$post['dst'] = $post['dsttype'];
-			$post['dstmask'] = 0;
 		} elseif ($post['dst']) {
 			$post['dst'] = trim($post['dst']);
 		}
 
 		pconfig_to_address($natent['source'], $post['src'], $post['srcmask'], $post['srcnot']);
 
-		pconfig_to_address($natent['destination'], $post['dst'], $post['dstmask'], $post['dstnot']);
+		pconfig_to_address($natent['destination'], $post['dst'], $post['dstmask'], $post['dstnot'], 0, 0, true);
 
 		if (isset($id) && $a_npt[$id]) {
 			$a_npt[$id] = $natent;
@@ -135,6 +136,12 @@ function getnptNATRule($id, $json = false) {
 		address_to_pconfig($a_npt[$id]['destination'], $pconfig['dst'],
 			$pconfig['dstmask'], $pconfig['dstnot'],
 			$pconfig['dstbeginport'], $pconfig['dstendport']);
+
+		$dst_arr = explode("/", $pconfig['dst']);
+		if (count($dst_arr) > 1) {
+			$pconfig['dst'] = $dst_arr[0];
+			$pconfig['dstmask'] = $dst_arr[1];
+		}
 
 		$pconfig['interface'] = $a_npt[$id]['interface'];
 		if (!$pconfig['interface']) {

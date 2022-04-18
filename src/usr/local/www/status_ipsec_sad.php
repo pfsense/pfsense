@@ -40,8 +40,6 @@ $pglinks = array("", "status_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 include("head.inc");
 
-$sad = ipsec_dump_sad();
-
 /* delete any SA? */
 if ($_POST['act'] == "del") {
 	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
@@ -51,6 +49,8 @@ if ($_POST['act'] == "del") {
 		sleep(1);
 	}
 }
+
+$sad = ipsec_dump_sad();
 
 $tab_array = array();
 $tab_array[] = array(gettext("Overview"), false, "status_ipsec.php");
@@ -105,7 +105,7 @@ if (count($sad)) {
 						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
 						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
 					?>
-					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>"><i class="fa fa-trash" title="<?=gettext("Remove this SPD Entry")?>" usepost></i></a>
+					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>" usepost><i class="fa fa-trash" title="<?=gettext("Remove this SPD Entry")?>"></i></a>
 				</td>
 			</tr>
 

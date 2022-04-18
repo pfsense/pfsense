@@ -686,6 +686,14 @@ function is_ipaddrv6($ipaddr) {
 		$tmpip = explode("%", $ipaddr);
 		$ipaddr = $tmpip[0];
 	}
+	/*
+	 * Net_IPv6::checkIPv6 does not reject multiple attempts at compression
+	 * so we must check it beforehand.
+	 * https://redmine.pfsense.org/issues/13069
+	 */
+	if (substr_count($ipaddr, '::') > 1) {
+		return false;
+	}
 	return Net_IPv6::checkIPv6($ipaddr);
 }
 

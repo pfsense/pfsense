@@ -270,6 +270,9 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 	/* restart snmp */
 	services_snmpd_configure($interface);
 
+	/* restart L2TP VPN */
+	vpn_l2tp_configure($interface);
+
 	restart_packages();
 
 	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");

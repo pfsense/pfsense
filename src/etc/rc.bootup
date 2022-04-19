@@ -470,6 +470,20 @@ unset($g['booting']);
 if ($ipsec_dynamic_hosts) {
 	echo gettext("Configuring IPsec VPN for dynamic hosts... ");
 	ipsec_configure();
+
+	/* restart dpinger if PH1 remote gateway == fqdn and PH2 mode == VTI
+	 * see https://redmine.pfsense.org/issues/12763 */
+	foreach ($config['ipsec']['phase1'] as $p1) {
+		if (!isset($p1['mobile']) && !isset($p1['disabled']) && is_fqdn($p1['remote-gateway'])) {
+			foreach ($config['ipsec']['phase2'] as $p2) {
+				if (!isset($p2['disabled']) && ($p2['mode'] == 'vti')) {
+					setup_gateways_monitor();
+					break 2;
+				}
+			}
+		}
+	}
+
 	echo gettext("done") . "\n";
 }
 if ($ipsec_dynamic_hosts || !empty($filterdns)) {

@@ -71,11 +71,11 @@ if ($_POST['apply']) {
 
 	$retval = 0;
 
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
 	$retval |= system_routing_configure();
 	$retval |= system_resolvconf_generate();
 	$retval |= filter_configure();
-	/* reconfigure our gateway monitor */
-	setup_gateways_monitor();
 	/* Dynamic DNS on gw groups may have changed */
 	send_event("service reload dyndnsall");
 

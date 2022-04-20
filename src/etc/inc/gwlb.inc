@@ -2155,6 +2155,17 @@ function save_gateway($gateway_settings, $realid = "") {
 		route_del($a_gateway_item[$realid]['monitor']);
 	}
 
+	/* reload IPsec and OpenVPN on gateway IP or 'Mark Gateway as Down' option change
+	 * see https://redmine.pfsense.org/issues/13076 */
+	if (!empty($a_gateway_item[$realid]) &&
+	    (($gateway_settings['monitor'] != "dynamic" &&
+	    is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+	    $gateway['gateway'] != $a_gateway_item[$realid]['gateway']) ||
+	    (isset($gateway['force_down']) ^ isset($a_gateway_item[$realid]['gateway'])))) {
+		send_event("service reload ipsec " . escapeshellarg($a_gateway_item[$realid]['gateway']));
+		send_event("service reload openvpn " . escapeshellarg($a_gateway_item[$realid]['gateway']));
+	}
+
 	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
 		// a new default gateway is being saved.
 		$i = 0;

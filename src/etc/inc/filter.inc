@@ -304,7 +304,7 @@ function filter_delete_states_for_down_gateways() {
 function filter_configure_sync($delete_states_if_needed = true) {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases, $dummynet_name_list;
-	global $tracker, $negate_tracker;
+	global $tracker, $negate_tracker, $vpns_list;
 	$tracker = TRACKER_DEFAULT;
 	$negate_tracker = NEGATE_TRACKER_DEFAULT;
 
@@ -332,6 +332,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Creating aliases"));
+	$vpns_list = filter_get_vpns_list();
 	$aliases = filter_generate_aliases();
 	$gateways = filter_generate_gateways();
 	if (platform_booting() == true) {
@@ -849,7 +850,7 @@ function filter_expand_alias_array($alias_name) {
 }
 
 function filter_generate_aliases() {
-	global $g, $config, $FilterIflist, $after_filter_configure_run;
+	global $g, $config, $FilterIflist, $after_filter_configure_run, $vpns_list;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -911,7 +912,6 @@ function filter_generate_aliases() {
 		}
 	}
 
-	$vpns_list = filter_get_vpns_list();
 	if ($vpns_list) {
 		$aliases .= "table <vpn_networks> { $vpns_list }\n";
 		/* add a Negate_networks table */
@@ -2793,7 +2793,7 @@ function filter_nat_rules_generate() {
 }
 
 function filter_generate_user_rule_arr($rule) {
-	global $config;
+	global $config, $vpns_list;
 	update_filter_reload_status(sprintf(gettext("Creating filter rule %s ..."), $rule['descr']));
 	$ret = array();
 	$line = filter_generate_user_rule($rule);
@@ -3067,7 +3067,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 }
 
 function filter_generate_user_rule($rule) {
-	global $config, $g, $FilterIflist, $GatewaysList;
+	global $config, $g, $FilterIflist, $GatewaysList, $vpns_list;
 	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
 	if (isset($config['system']['developerspew'])) {
@@ -3540,7 +3540,6 @@ function filter_generate_user_rule($rule) {
 	}
 
 	$line = "";
-	$vpns_list = filter_get_vpns_list();
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to vpns */
 	if (!empty($aline['route']) && (trim($aline['type']) == "pass") && strstr($dst, "any") &&

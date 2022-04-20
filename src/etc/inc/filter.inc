@@ -2280,7 +2280,7 @@ function filter_nat_rules_generate() {
 				$dst_arr = explode("/", $rule['destination']['network']);
 				if (count($dst_arr) > 1) {
 					$track6ip = get_interface_track6ip($dst_arr[0]);
-					$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+					$pdsubnet = gen_subnetv6($track6ip[0], $dst_arr[1]);
 					$rule['destination']['address'] = $pdsubnet . "/" . $dst_arr[1];
 					unset($rule['destination']['network']);
 				}

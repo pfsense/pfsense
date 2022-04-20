@@ -151,12 +151,12 @@ display_top_tabs($tab_array);
 		if (is_array($config['interfaces'][$natent['destination']['network']]) &&
 		    ($config['interfaces'][$natent['destination']['network']]['ipaddrv6'] == 'track6')) {
 			$track6ip = get_interface_track6ip($natent['destination']['network']);
-			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
 			if ($dst_arr[1]) {
 				$mask = $dst_arr[1];
 			} else {
 				$mask = $track6ip[1];
 			}
+			$pdsubnet = gen_subnetv6($track6ip[0], $mask);
 			$dst = "{$config['interfaces'][$natent['destination']['network']]['descr']} ({$pdsubnet}/{$mask})";
 		} else {
 			$dst = pprint_address($natent['destination']);

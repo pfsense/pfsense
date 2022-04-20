@@ -1483,7 +1483,13 @@ function apply_all_chosen_items() {
 			$rule = array();
 			$rule['type'] = "match";
 			$rule['interface'] = $interfacelist;
-			$rule['ipprotocol'] = "inet46";
+			if (is_ipaddrv4($config['ezshaper']['step4']['address'])) {
+				$rule['ipprotocol'] = "inet";
+			} elseif (is_ipaddrv6($config['ezshaper']['step4']['address'])) {
+				$rule['ipprotocol'] = "inet6";
+			} else {
+				$rule['ipprotocol'] = "inet46";
+			}
 			$rule['descr'] = gettext("Penalty Box");
 			if ($otherpriority) {
 				$rule['defaultqueue'] = "qOthersLow";
@@ -1532,7 +1538,6 @@ function apply_all_chosen_items() {
 			$rule['type'] = "match";
 			$rule['interface'] = "any";
 			$rule['ipprotocol'] = $ipprotocol;
-			$rule['ipprotocol'] = "inet46";
 			$rule['descr'] = gettext("Connections To Upstream SIP Server");
 			$rule['protocol'] = "udp";
 			$rule['defaultqueue'] = "qVoIP";

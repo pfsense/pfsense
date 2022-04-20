@@ -42,7 +42,7 @@ require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
-require_once("pkg-utils.inc");
+require_once("util.inc");
 
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
@@ -504,7 +504,7 @@ if ($_POST['apply']) {
 			clear_subsystem_dirty('staticroutes');
 		}
 
-		restart_packages();
+		send_event("service reload packages");
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
 } else if ($_POST['save']) {

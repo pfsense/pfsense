@@ -156,7 +156,7 @@ if (($act == "edit") || ($act == "dup")) {
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
 				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
 			}
-			$pconfig['remote_cert_tls'] = $a_client[$id]['remote_cert_tls'];
+			$pconfig['remote_cert_tls'] = isset($a_client[$id]['remote_cert_tls']);
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		}
@@ -585,7 +585,9 @@ if ($_POST['save']) {
 				$client['tls_type'] = $pconfig['tls_type'];
 				$client['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
-			$client['remote_cert_tls'] = $pconfig['remote_cert_tls'];
+			if (isset($client['remote_cert_tls'])) {
+				$client['remote_cert_tls'] = true;
+			}
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
 		}

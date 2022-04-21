@@ -585,7 +585,7 @@ if ($_POST['save']) {
 				$client['tls_type'] = $pconfig['tls_type'];
 				$client['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
-			if (isset($client['remote_cert_tls'])) {
+			if (isset($pconfig['remote_cert_tls'])) {
 				$client['remote_cert_tls'] = true;
 			}
 		} else {

@@ -30,6 +30,7 @@ require_once("globals.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 require_once("ipsec.inc");
+require_once("vpn.inc");
 
 function interfaces_bring_up($interface) {
 	if (!$interface) {
@@ -7686,6 +7687,7 @@ function restart_interface_services($interface, $ipv6type) {
 
 	services_igmpproxy_configure($interface);
 	services_snmpd_configure($interface);
+	vpn_l2tp_configure($interface);
 
 	if (substr($realif, 0, 4) != "ovpn") {
 		openvpn_resync_all($interface);

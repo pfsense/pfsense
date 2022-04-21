@@ -1473,7 +1473,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$static_port = " port 1024:65535";
 	}
 
-	if (!empty($protocol)) {
+	if (!empty($protocol) && ($protocol != 'any')) {
 		$protocol_text = " proto {$protocol}";
 	} else {
 		$protocol_text = "";
@@ -2703,7 +2703,12 @@ function filter_nat_rules_generate() {
 			}
 
 			if ($srcaddr <> "" && $dstaddr <> "" && $natif) {
-				$natrules .= "{$nordr}rdr {$rdrpass}on {$rdrif} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+				if ($protocol == 'any') {
+					$proto = '';
+				} else {
+					$proto = "proto {$protocol}";
+				}
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$rdrif} {$ipproto} {$proto} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
 				if (isset($rule['destination']['any']) && !isset($rule['nordr']) && !isset($config['system']['enablenatreflectionhelper']) && !interface_has_gateway($rule['interface'])) {
@@ -2743,7 +2748,7 @@ function filter_nat_rules_generate() {
 							$rdr_if_list = "{ {$rdr_if_list} }";
 						}
 						$natrules .= "\n# Reflection redirect\n";
-						$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+						$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} {$ipproto} {$proto} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 						$nat_if_list = array_merge(array($natif), $nat_if_list);
 					}
 				}

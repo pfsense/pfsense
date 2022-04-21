@@ -3134,7 +3134,7 @@ function interface_ipalias_configure(&$vip) {
 	unset($iface, $af, $realif, $carpvip, $vhid, $gateway);
 }
 
-function interface_carp_configure(&$vip, $maintenancemode_only = false) {
+function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias_reload = false) {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -3196,8 +3196,10 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false) {
 		}
 	}
 
-	/* reconfigure stacked IP Aliases after CARP VIP changes, see https://redmine.pfsense.org/issues/12227 */
-	if (!platform_booting()) {
+	/* reconfigure stacked IP Aliases after CARP VIP changes
+	 * see https://redmine.pfsense.org/issues/12227
+	 * and https://redmine.pfsense.org/issues/12961 */
+	if ($ipalias_reload) {
 		foreach ($config['virtualip']['vip'] as $viface) {
 			if (($viface['mode'] == 'ipalias') &&
 			    (get_root_interface($viface['interface']) == $vip['interface'])) { 

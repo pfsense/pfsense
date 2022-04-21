@@ -588,7 +588,7 @@ class pfsense_xmlrpc_server {
 					$realif = get_real_interface($vip['interface']);
 					mwexec("/sbin/ifconfig {$realif} " .
 					    escapeshellarg($vip['subnet']) . " -alias");
-					interface_carp_configure($vip);
+					interface_carp_configure($vip, false, true);
 					break;
 				}
 				$force_filterconfigure = true;

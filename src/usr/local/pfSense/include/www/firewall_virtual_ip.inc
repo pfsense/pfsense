@@ -306,7 +306,7 @@ function applyVIP() {
 						break;
 					case "carp":
 						$check_carp = true;
-						interface_carp_configure($a_vip[$vid]);
+						interface_carp_configure($a_vip[$vid], false, true);
 						break;
 					default:
 						break;

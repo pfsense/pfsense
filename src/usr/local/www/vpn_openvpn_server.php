@@ -246,7 +246,10 @@ if (($act == "edit") || ($act == "dup")) {
 		}
 
 		$pconfig['nbdd_server1'] = $a_server[$id]['nbdd_server1'];
-		if ($pconfig['nbdd_server1']) {
+		$pconfig['nbdd_server2'] = $a_server[$id]['nbdd_server2'];
+
+		if ($pconfig['nbdd_server1'] ||
+			$pconfig['nbdd_server2']) {
 			$pconfig['nbdd_server_enable'] = true;
 		}
 
@@ -560,9 +563,13 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("The field 'WINS Server #2' must contain a valid IP address");
 			}
 		}
+
 		if ($pconfig['nbdd_server_enable']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
+			}
+			if (!empty($pconfig['nbdd_server2']) && !is_ipaddr(trim($pconfig['nbdd_server2']))) {
+				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #2' must contain a valid IP address");
 			}
 		}
 
@@ -819,23 +826,23 @@ if ($_POST['save']) {
 		}
 
 		$server['netbios_enable'] = $pconfig['netbios_enable'];
-		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
-		$server['netbios_scope'] = $pconfig['netbios_scope'];
-
-		$server['create_gw'] = $pconfig['create_gw'];
-		$server['verbosity_level'] = $pconfig['verbosity_level'];
-
 		if ($pconfig['netbios_enable']) {
+			$server['netbios_ntype'] = $pconfig['netbios_ntype'];
+			$server['netbios_scope'] = $pconfig['netbios_scope'];
 
 			if ($pconfig['wins_server_enable']) {
 				$server['wins_server1'] = $pconfig['wins_server1'];
 				$server['wins_server2'] = $pconfig['wins_server2'];
 			}
 
-			if ($pconfig['dns_server_enable']) {
+			if ($pconfig['nbdd_server_enable']) {
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
+				$server['nbdd_server2'] = $pconfig['nbdd_server2'];
 			}
 		}
+
+		$server['create_gw'] = $pconfig['create_gw'];
+		$server['verbosity_level'] = $pconfig['verbosity_level'];
 
 		if ($_POST['duplicate_cn'] == "yes") {
 			$server['duplicate_cn'] = true;
@@ -1682,24 +1689,57 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Checkbox(
 		'wins_server_enable',
-		'WINS server enable',
+		'WINS servers',
 		'Provide a WINS server list to clients',
 		$pconfig['wins_server_enable']
 	));
 
-	$section->addInput(new Form_Input(
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Input(
 		'wins_server1',
-		'WINS Server 1',
+		null,
 		'text',
 		$pconfig['wins_server1']
-	));
+	))->setHelp('Server 1');
 
-	$section->addInput(new Form_Input(
+	$group->add(new Form_Input(
 		'wins_server2',
-		'WINS Server 2',
+		null,
 		'text',
 		$pconfig['wins_server2']
+	))->setHelp('Server 2');
+
+	$group->addClass('winsservers');
+
+	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'nbdd_server_enable',
+		'NBDD servers',
+		'Provide a NetBIOS over TCP/IP Datagram Distribution Servers list to clients',
+		$pconfig['nbdd_server_enable']
 	));
+
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Input(
+		'nbdd_server1',
+		null,
+		'text',
+		$pconfig['nbdd_server1']
+	))->setHelp('Server 1');
+
+	$group->add(new Form_Input(
+		'nbdd_server2',
+		null,
+		'text',
+		$pconfig['nbdd_server2']
+	))->setHelp('Server 2');
+
+	$group->addClass('nbddservers');
+
+	$section->add($group);
 
 	$form->add($section);
 
@@ -2151,12 +2191,12 @@ events.push(function() {
 	}
 
 	function wins_server_change() {
-		var hide  = ! $('#wins_server_enable').prop('checked')
-
-		hideInput('wins_server1', hide);
-		hideInput('wins_server2', hide);
+		hideClass('winsservers', ! $('#wins_server_enable').prop('checked'));
 	}
 
+	function nbdd_server_change() {
+		hideClass('nbddservers', ! $('#nbdd_server_enable').prop('checked'));
+	}
 
 	function ntp_server_change() {
 		var hide  = ! $('#ntp_server_enable').prop('checked')
@@ -2166,12 +2206,21 @@ events.push(function() {
 	}
 
 	function netbios_change() {
-		var hide  = ! $('#netbios_enable').prop('checked')
-
-		hideInput('netbios_ntype', hide);
-		hideInput('netbios_scope', hide);
-		hideCheckbox('wins_server_enable', hide);
-		wins_server_change();
+		if ($('#netbios_enable').prop('checked')) {
+			hideInput('netbios_ntype', false);
+			hideInput('netbios_scope', false);
+			hideCheckbox('wins_server_enable', false);
+			wins_server_change();
+			hideCheckbox('nbdd_server_enable', false);
+			nbdd_server_change();
+		} else {
+			hideInput('netbios_ntype', true);
+			hideInput('netbios_scope', true);
+			hideCheckbox('wins_server_enable', true);
+			hideClass('winsservers', true);
+			hideCheckbox('nbdd_server_enable', true);
+			hideClass('nbddservers', true);
+		}
 	}
 
 	function tuntap_change() {
@@ -2300,6 +2349,11 @@ events.push(function() {
 	 // Wins server port
 	$('#wins_server_enable').click(function () {
 		wins_server_change();
+	});
+
+	// NBDD server port
+	$('#nbdd_server_enable').click(function () {
+		nbdd_server_change();
 	});
 
 	 // DNS server port
@@ -2438,6 +2492,7 @@ events.push(function() {
 	dns_domain_change();
 	dns_server_change();
 	wins_server_change();
+	nbdd_server_change
 	ntp_server_change();
 	netbios_change();
 	tuntap_change();

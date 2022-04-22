@@ -133,7 +133,10 @@ if (($act == "edit") || ($act == "dup")) {
 		}
 
 		$pconfig['nbdd_server1'] = $a_csc[$id]['nbdd_server1'];
-		if ($pconfig['nbdd_server1']) {
+		$pconfig['nbdd_server2'] = $a_csc[$id]['nbdd_server2'];
+
+		if ($pconfig['nbdd_server1'] ||
+			$pconfig['nbdd_server2']) {
 			$pconfig['nbdd_server_enable'] = true;
 		}
 	}
@@ -234,9 +237,13 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("The field 'WINS Server #2' must contain a valid IP address");
 			}
 		}
+
 		if ($pconfig['nbdd_server_enable']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
+			}
+			if (!empty($pconfig['nbdd_server2']) && !is_ipaddr(trim($pconfig['nbdd_server2']))) {
+				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #2' must contain a valid IP address");
 			}
 		}
 
@@ -294,17 +301,19 @@ if ($_POST['save']) {
 		}
 
 		$csc['netbios_enable'] = $pconfig['netbios_enable'];
-		$csc['netbios_ntype'] = $pconfig['netbios_ntype'];
-		$csc['netbios_scope'] = $pconfig['netbios_scope'];
 
 		if ($pconfig['netbios_enable']) {
+			$csc['netbios_ntype'] = $pconfig['netbios_ntype'];
+			$csc['netbios_scope'] = $pconfig['netbios_scope'];
+
 			if ($pconfig['wins_server_enable']) {
 				$csc['wins_server1'] = $pconfig['wins_server1'];
 				$csc['wins_server2'] = $pconfig['wins_server2'];
 			}
 
-			if ($pconfig['dns_server_enable']) {
+			if ($pconfig['nbdd_server_enable']) {
 				$csc['nbdd_server1'] = $pconfig['nbdd_server1'];
+				$csc['nbdd_server2'] = $pconfig['nbdd_server2'];
 			}
 		}
 
@@ -499,7 +508,7 @@ if ($act == "new" || $act == "edit"):
 		'DNS Default Domain',
 		'Provide a default domain name to clients',
 		$pconfig['dns_domain_enable']
-	))->toggles('.dnsdomain');
+	));
 
 	$group = new Form_Group('DNS Domain');
 	$group->addClass('dnsdomain');
@@ -519,7 +528,7 @@ if ($act == "new" || $act == "edit"):
 		'DNS Servers',
 		'Provide a DNS server list to clients',
 		$pconfig['dns_server_enable']
-	))->toggles('.dnsservers');
+	));
 
 	$group = new Form_Group(null);
 	$group->addClass('dnsservers');
@@ -560,7 +569,7 @@ if ($act == "new" || $act == "edit"):
 		'NTP Servers',
 		'Provide an NTP server list to clients',
 		$pconfig['ntp_server_enable']
-	))->toggles('.ntpservers');
+	));
 
 	$group = new Form_Group(null);
 	$group->addClass('ntpservers');
@@ -581,7 +590,7 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
-	// NTP servers - For this section we need to use Javascript hiding since there
+	// Netbios - For this section we need to use Javascript hiding since there
 	// are nested toggles
 	$section->addInput(new Form_Checkbox(
 		'netbios_enable',
@@ -633,6 +642,33 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
+	$section->addInput(new Form_Checkbox(
+		'nbdd_server_enable',
+		'NBDD servers',
+		'Provide a NetBIOS over TCP/IP Datagram Distribution Servers list to clients',
+		$pconfig['nbdd_server_enable']
+	));
+
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Input(
+		'nbdd_server1',
+		null,
+		'text',
+		$pconfig['nbdd_server1']
+	))->setHelp('Server 1');
+
+	$group->add(new Form_Input(
+		'nbdd_server2',
+		null,
+		'text',
+		$pconfig['nbdd_server2']
+	))->setHelp('Server 2');
+
+	$group->addClass('nbddservers');
+
+	$section->add($group);
+
 	$custops = new Form_Textarea(
 		'custom_options',
 		'Advanced',
@@ -670,19 +706,46 @@ if ($act == "new" || $act == "edit"):
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	function dnsdomain_change() {
+		if ($('#dns_domain_enable').prop('checked')) {
+			hideClass('dnsdomain', false);
+		} else {
+			hideClass('dnsdomain', true);
+		}
+	}
 
-	// Hide/show that section, but have to also respect the wins_server_enable checkbox
+	function dnsservers_change() {
+		if ($('#dns_server_enable').prop('checked')) {
+			hideClass('dnsservers', false);
+		} else {
+			hideClass('dnsservers', true);
+		}
+	}
+
+	function ntpservers_change() {
+		if ($('#ntp_server_enable').prop('checked')) {
+			hideClass('ntpservers', false);
+		} else {
+			hideClass('ntpservers', true);
+		}
+	}
+
+	// Hide/show that section, but have to also respect the wins_server_enable and nbdd_server_enable checkboxes
 	function setNetbios() {
 		if ($('#netbios_enable').prop('checked')) {
 			hideInput('netbios_ntype', false);
 			hideInput('netbios_scope', false);
 			hideCheckbox('wins_server_enable', false);
 			setWins();
+			hideCheckbox('nbdd_server_enable', false);
+			setNbdds();
 		} else {
 			hideInput('netbios_ntype', true);
 			hideInput('netbios_scope', true);
 			hideCheckbox('wins_server_enable', true);
 			hideClass('winsservers', true);
+			hideCheckbox('nbdd_server_enable', true);
+			hideClass('nbddservers', true);
 		}
 	}
 
@@ -690,7 +753,26 @@ events.push(function() {
 		hideClass('winsservers', ! $('#wins_server_enable').prop('checked'));
 	}
 
+	function setNbdds() {
+		hideClass('nbddservers', ! $('#nbdd_server_enable').prop('checked'));
+	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	 // On clicking DNS Default Domain
+	$('#dns_domain_enable').click(function () {
+		dnsdomain_change();
+	});
+
+	 // On clicking DNS Servers
+	$('#dns_server_enable').click(function () {
+		dnsservers_change();
+	});
+
+	 // On clicking NTP Servers
+	$('#ntp_server_enable').click(function () {
+		ntpservers_change();
+	});
 
 	// On clicking the netbios_enable checkbox
 	$('#netbios_enable').click(function () {
@@ -702,9 +784,18 @@ events.push(function() {
 		setWins();
 	});
 
+	// On clicking the nbdd_server_enable checkbox
+	$('#nbdd_server_enable').click(function () {
+		setNbdds();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setNetbios();
+	dnsdomain_change();
+	dnsservers_change();
+	ntpservers_change();
+
 });
 //]]>
 </script>

@@ -306,7 +306,13 @@ function applyVIP() {
 						break;
 					case "carp":
 						$check_carp = true;
-						interface_carp_configure($a_vip[$vid], false, true);
+						if (does_vip_exist($a_vip[$vid]) && isset($ovip['vhid']) &&
+						    ($ovip['vhid'] ^ $a_vip[$vid]['vhid'])) {
+							$ipalias_reload = true;
+						} else {
+							$ipalias_reload = false;
+						}
+						interface_carp_configure($a_vip[$vid], false, $ipalias_reload);
 						break;
 					default:
 						break;

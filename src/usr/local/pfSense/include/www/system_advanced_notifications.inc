@@ -291,8 +291,11 @@ function saveAdvancedNotifications($post, $json = false) {
 		if (preg_replace("/[^a-zA-Z0-9:\-]/", "", $config['notifications']['slack']['api']) !== $config['notifications']['slack']['api']) {
 			$input_errors[] = gettext("The only special characters permitted in the Slack API string are - and :");
 		}
-		if (preg_replace("/[^a-zA-Z0-9\-]/", "", $config['notifications']['slack']['channel']) !== $config['notifications']['slack']['channel']) {
-			$input_errors[] = gettext("The Slack Channel name can only contain - as special characters");
+		if (preg_replace("/[^a-z0-9\-_]/", "", $config['notifications']['slack']['channel']) !== $config['notifications']['slack']['channel']) {
+			$input_errors[] = gettext("The Slack Channel name may only contain lowercase letters, numbers, hyphens, and underscores.");
+		}
+		if (strlen($config['notifications']['slack']['channel']) > 80) {
+			$input_errors[] = gettext("The Slack Channel name must be 80 characters or less.");
 		}
 
 		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack) {

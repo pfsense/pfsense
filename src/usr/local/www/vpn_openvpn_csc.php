@@ -294,10 +294,11 @@ if ($_POST['save']) {
 		}
 
 		$csc['netbios_enable'] = $pconfig['netbios_enable'];
-		$csc['netbios_ntype'] = $pconfig['netbios_ntype'];
-		$csc['netbios_scope'] = $pconfig['netbios_scope'];
 
 		if ($pconfig['netbios_enable']) {
+			$csc['netbios_ntype'] = $pconfig['netbios_ntype'];
+			$csc['netbios_scope'] = $pconfig['netbios_scope'];
+
 			if ($pconfig['wins_server_enable']) {
 				$csc['wins_server1'] = $pconfig['wins_server1'];
 				$csc['wins_server2'] = $pconfig['wins_server2'];

@@ -1682,24 +1682,31 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Checkbox(
 		'wins_server_enable',
-		'WINS server enable',
+		'WINS servers',
 		'Provide a WINS server list to clients',
 		$pconfig['wins_server_enable']
 	));
 
-	$section->addInput(new Form_Input(
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Input(
 		'wins_server1',
-		'WINS Server 1',
+		null,
 		'text',
 		$pconfig['wins_server1']
-	));
+	))->setHelp('Server 1');
 
-	$section->addInput(new Form_Input(
+	$group->add(new Form_Input(
 		'wins_server2',
-		'WINS Server 2',
+		null,
 		'text',
 		$pconfig['wins_server2']
-	));
+	))->setHelp('Server 2');
+
+	$group->addClass('winsservers');
+
+	$section->add($group);
+
 
 	$form->add($section);
 
@@ -2151,12 +2158,8 @@ events.push(function() {
 	}
 
 	function wins_server_change() {
-		var hide  = ! $('#wins_server_enable').prop('checked')
-
-		hideInput('wins_server1', hide);
-		hideInput('wins_server2', hide);
+		hideClass('winsservers', ! $('#wins_server_enable').prop('checked'));
 	}
-
 
 	function ntp_server_change() {
 		var hide  = ! $('#ntp_server_enable').prop('checked')
@@ -2166,12 +2169,17 @@ events.push(function() {
 	}
 
 	function netbios_change() {
-		var hide  = ! $('#netbios_enable').prop('checked')
-
-		hideInput('netbios_ntype', hide);
-		hideInput('netbios_scope', hide);
-		hideCheckbox('wins_server_enable', hide);
-		wins_server_change();
+		if ($('#netbios_enable').prop('checked')) {
+			hideInput('netbios_ntype', false);
+			hideInput('netbios_scope', false);
+			hideCheckbox('wins_server_enable', false);
+			wins_server_change();
+		} else {
+			hideInput('netbios_ntype', true);
+			hideInput('netbios_scope', true);
+			hideCheckbox('wins_server_enable', true);
+			hideClass('winsservers', true);
+		}
 	}
 
 	function tuntap_change() {

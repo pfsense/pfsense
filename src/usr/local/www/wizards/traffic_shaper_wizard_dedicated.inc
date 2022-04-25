@@ -1078,8 +1078,8 @@ function apply_all_chosen_items() {
 
 			$altq->SetInterface($config['ezshaper']['step2']["local{$i}interface"]);
 			$altq->SetScheduler($config['ezshaper']['step2']["local{$i}downloadscheduler"]);
-			$altq->SetBandwidth($downbw / 1000);
-			$altq->SetBwscale("Kb");
+			$altq->SetBandwidth(floatval($config['ezshaper']['step2']["conn{$i}download"]));
+			$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
 			$altq->SetEnabled("on");
 			$altq_list_queues[$altq->GetQname()] =& $altq;
 			array_push($tmppath, $config['ezshaper']['step2']["local{$i}interface"]);

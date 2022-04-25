@@ -2473,6 +2473,7 @@ startup:
 default:
 {$ppp['type']}client:
 	create bundle static {$interface}
+	set bundle no noretry
 	{$ipv6cp}
 	set iface name {$pppif}
 

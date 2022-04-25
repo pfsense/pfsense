@@ -2161,7 +2161,7 @@ function save_gateway($gateway_settings, $realid = "") {
 	    (($gateway_settings['monitor'] != "dynamic" &&
 	    is_ipaddr($a_gateway_item[$realid]['gateway']) &&
 	    $gateway['gateway'] != $a_gateway_item[$realid]['gateway']) ||
-	    (isset($gateway['force_down']) ^ isset($a_gateway_item[$realid]['gateway'])))) {
+	    (isset($gateway['force_down']) ^ isset($a_gateway_item[$realid]['force_down'])))) {
 		send_event("service reload ipsec " . escapeshellarg($a_gateway_item[$realid]['gateway']));
 		send_event("service reload openvpn " . escapeshellarg($a_gateway_item[$realid]['gateway']));
 	}

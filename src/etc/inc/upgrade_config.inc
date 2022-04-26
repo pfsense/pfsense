@@ -6401,6 +6401,26 @@ function upgrade_215_to_216() {
 		return;
 	}
 
+	/* Deprecated method. */
+	function upgrade216_ipsec_create_vtimap($ikeid, $idx) {
+		$assigned = array_column($config['ipsec']['vtimaps']['item'], 'ifnum');
+		asort($assigned, SORT_NUMERIC);
+		$new = 1;
+		foreach ($assigned as $ipsecifnum) {
+			if ($ipsecifnum != $new) {
+				break;
+			}
+			if ($new++ > 32767) {
+				return(NULL);
+			}
+		}
+		return array(
+			"reqid" => $ikeid,
+			"index" => $idx,
+			"ifnum" => $new
+		);
+	}
+
 	$iflist = get_configured_interface_list_by_realif(true);
 
 	foreach ($config['ipsec']['vtimaps']['item'] as $idx => $vtimap) {
@@ -6408,7 +6428,7 @@ function upgrade_215_to_216() {
 			continue;
 		}
 
-		$new_vtimap = ipsec_create_vtimap($vtimap['reqid'],
+		$new_vtimap = upgrade216_ipsec_create_vtimap($vtimap['reqid'],
 		    $vtimap['index']);
 
 		/*

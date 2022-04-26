@@ -21,3 +21,4 @@
 # limitations under the License.
 
 /usr/local/sbin/vpn-linkup l2tps $1 $2 $3 $4 $5
+/usr/local/bin/php-cgi -q /usr/local/sbin/vpn-linkup-l2tp-route $1

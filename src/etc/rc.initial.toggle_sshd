@@ -31,6 +31,12 @@ require_once("filter.inc");
 $fp = fopen('php://stdin', 'r');
 
 if (isset($config['system']['ssh']['enable'])) {
+	if (!empty(getenv('SSH_CONNECTION'))) {
+		echo gettext("!!! WARNING !!!");
+		echo "\n\n";
+		echo gettext("This session is currently established via SSH. Disabling SSH will terminate this session and prevent future SSH connections from any user. Before disabling SSH, ensure that administrators have alternate means of accessing the firewall, such as the GUI or serial console.");
+		echo "\n\n";
+	}
 	echo "SSHD is currently enabled.  Would you like to disable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {

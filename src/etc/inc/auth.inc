@@ -1320,7 +1320,6 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapauthcont = $authcfg['ldap_authcn'];
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
 		$ldapgroupattribute = strtolower($authcfg['ldap_attr_member']);
-		$ldaptype = "";
 		$ldapver = $authcfg['ldap_protver'];
 		if (empty($ldapbindun) || empty($ldapbindpw)) {
 			$ldapanon = true;
@@ -1503,8 +1502,9 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
 		$ldapgroupattribute = $authcfg['ldap_attr_member'];
 		$ldapextendedqueryenabled = $authcfg['ldap_extended_enabled'];
-		$ldapextendedquery = $authcfg['ldap_extended_query'];
-		$ldapfilter = "";
+		if ($ldapextendedqueryenabled) {
+			$ldapextendedquery = $authcfg['ldap_extended_query'];
+		}
 		if (!$ldapextendedqueryenabled) {
 			$ldapfilter = "({$ldapnameattribute}={$username})";
 		} else {
@@ -1515,7 +1515,6 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 				$ldapfilter = "(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
 			}
 		}
-		$ldaptype = "";
 		$ldapver = $authcfg['ldap_protver'];
 		$ldapname = $authcfg['name'];
 		$ldapscope = $authcfg['ldap_scope'];

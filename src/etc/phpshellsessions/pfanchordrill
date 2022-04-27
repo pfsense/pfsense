@@ -24,7 +24,7 @@ function anchor_recurse($name = '') {
 	if ($name) {
 		$name = ' -a ' . escapeshellarg($name);
 	}
-	exec("/sbin/pfctl -sA{$name} 2>&1", $anchor_list);
+	exec("/sbin/pfctl -sA{$name} 2>/dev/null", $anchor_list);
 	foreach ($anchor_list as $anchor) {
 		$anchor = trim($anchor);
 		echo "\n{$anchor} rules/nat contents:\n";

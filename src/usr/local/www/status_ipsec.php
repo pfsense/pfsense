@@ -341,7 +341,7 @@ function print_ipsec_body() {
 					/* IKEv1 or IKEv2+Split */
 					$p2descr = $cmap[$childikeid]['p2'][$childreqid]['descr'];
 					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
-				} else {
+				} elseif (is_array($cmap[$childikeid]) && is_array($cmap[$childikeid]['p2'])) {
 					$childreqid = array_key_first($cmap[$childikeid]['p2']);
 					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
 					if (count($cmap[$childikeid]['p2']) > 1) {

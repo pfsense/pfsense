@@ -65,33 +65,7 @@ $shortcut_section = "captiveportal";
 
 if ($_POST['act'] == "del" && !empty($cpzone)) {
 	if ($a_allowedhostnames[$_POST['id']]) {
-		$ipent = $a_allowedhostnames[$_POST['id']];
-
-		$ipaddress = array();
-		if (isset($a_cp[$cpzone]['enable'])) {
-			if (is_ipaddr($ipent['hostname'])) {
-				$ipaddress = $ipent['hostname'];
-			} else {
-				$ipaddress = resolve_host_addresses($ipent['hostname'], array(DNS_A, DNS_AAAA), false);
-			}
-
-			foreach ($ipaddress as $ip) {
-				if (is_ipaddr($ip)) {
-					$sn = (is_ipaddrv6($ip)) ? 128 : 32;
-					$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$ip}/{$sn}");
-
-					pfSense_ipfw_table("{$cpzone}_allowed_up", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
-					pfSense_ipfw_table("{$cpzone}_allowed_down", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
-				}
-			}
-
-			if (is_array($rule) && !empty($rule['pipe'])) {
-				captiveportal_free_dn_ruleno($rule['pipe']);
-				pfSense_ipfw_pipe("pipe delete {$rule['pipe']}");
-				pfSense_ipfw_pipe("pipe delete " . ($rule['pipe']+1));
-			}
-		}
-
+		captiveportal_allowedhostname_cleanup();
 		unset($a_allowedhostnames[$_POST['id']]);
 		write_config("Captive portal allowed hostnames saved");
 		captiveportal_allowedhostname_configure();

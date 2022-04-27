@@ -127,14 +127,10 @@ if ($_POST['save']) {
 			$a_allowedhostnames[] = $ip;
 		}
 
+		captiveportal_allowedhostname_cleanup();
 		allowedhostnames_sort();
-
 		write_config("Captive portal allowed hostnames added");
-
-		$rules = captiveportal_allowedhostname_configure();
-		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
-		mwexec("/sbin/ipfw {$g['tmp_path']}/hostname_rules", true);
-		unset($rules);
+		captiveportal_allowedhostname_configure();
 
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;

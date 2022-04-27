@@ -805,6 +805,8 @@ function service_control_restart($name, $extras) {
 			$zone = htmlspecialchars($extras['zone']);
 			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
 			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
+			/* see https://redmine.pfsense.org/issues/12651 */
+			sleep(1);
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':

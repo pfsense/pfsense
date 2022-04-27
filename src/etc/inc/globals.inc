@@ -40,6 +40,9 @@ define("IF_NAMESIZE", 15);	/* 16 minus the terminating NULL */
 // AddPassword method defines
 define('DMYPWD', "********");
 
+// Captive Portal aliases prefix
+define('CPPREFIX', "cpzoneid_");
+
 global $g;
 $g = array(
 	"acbbackuppath" => "/cf/conf/acb/",
@@ -98,7 +101,8 @@ $g = array(
 		'dhcpd' => "/var/dhcpd/var/db/dhcpd.leases",
 		'dhcpdv6' => "/var/dhcpd/var/db/dhcpd6.leases",
 		'voucher' => "/var/db/voucher_*.db"
-	)
+	),
+	"cp_prefix" => 'cpzoneid'
 );
 
 /* IP TOS flags */

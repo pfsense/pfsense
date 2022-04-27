@@ -50,10 +50,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 
 init_config_arr(array('captiveportal'));
 $a_cp = &$config['captiveportal'];
-
-if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
-	$cpzoneid = $a_cp[$cpzone]['zoneid'];
-}
+$cpzoneid = $a_cp[$cpzone]['zoneid'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed IP Addresses"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
@@ -67,18 +64,7 @@ if ($_POST['act'] == "del" && !empty($cpzone)) {
 		$ipent = $a_allowedips[$_POST['id']];
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
-			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
-
-			$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$ipent['ip']}/{$mask}");
-
-			pfSense_ipfw_table("{$cpzone}_allowed_up", IP_FW_TABLE_XDEL, "{$ipent['ip']}/{$mask}");
-			pfSense_ipfw_table("{$cpzone}_allowed_down", IP_FW_TABLE_XDEL, "{$ipent['ip']}/{$mask}");
-
-			if (is_array($rule) && !empty($rule['pipe'])) {
-				captiveportal_free_dn_ruleno($rule['pipe']);
-				pfSense_ipfw_pipe("pipe delete {$rule['pipe']}");
-				pfSense_ipfw_pipe("pipe delete " . ($rule['pipe']+1));
-			}
+			captiveportal_ether_delete_entry($ipent, 'allowedhostsmac');
 		}
 
 		unset($a_allowedips[$_POST['id']]);

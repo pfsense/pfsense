@@ -35,7 +35,7 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Connection: close");
 
-global $cpzone, $cpzoneid;
+global $cpzone, $cpzoneid, $cpzoneprefix;
 
 $cpzone = strtolower($_REQUEST['zone']);
 $cpcfg = $config['captiveportal'][$cpzone];
@@ -64,6 +64,7 @@ if (empty($cpcfg)) {
 }
 
 $cpzoneid = $cpcfg['zoneid'];
+$cpzoneprefix = CPPREFIX . $cpzoneid;
 $orig_host = $_SERVER['HTTP_HOST'];
 $clientip = $_SERVER['REMOTE_ADDR'];
 
@@ -154,12 +155,10 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 	return;
 }
 
-$macfilter = !isset($cpcfg['nomacfilter']);
-
 /* find MAC address for client */
-if ($macfilter || isset($cpcfg['passthrumacadd'])) {
-	$tmpres = pfSense_ip_to_mac($clientip);
-	if (!is_array($tmpres)) {
+$tmpres = pfSense_ip_to_mac($clientip);
+if (!is_array($tmpres)) {
+	if (!isset($cpcfg['nomacfilter']) || isset($cpcfg['passthrumacadd'])) {
 		/* unable to find MAC address - shouldn't happen! - bail out */
 		captiveportal_logportalauth("unauthenticated", "noclientmac", $clientip, "ERROR");
 		echo "An error occurred.  Please check the system logs for more information.";
@@ -167,14 +166,16 @@ if ($macfilter || isset($cpcfg['passthrumacadd'])) {
 		ob_flush();
 		return;
 	}
+} else {
+	/* always save MAC address in DB to allow macfilter/nomacfilter switching without flushing all clients */
 	$clientmac = $tmpres['macaddr'];
-	unset($tmpres);
 }
+unset($tmpres);
 
 if ($_POST['logout_id']) {
 	$safe_logout_id = SQLite3::escapeString($_POST['logout_id']);
 	captiveportal_disconnect_client($safe_logout_id);
-	header("Location: index.php?zone=".$cpzone);
+	header("Location: index.php?zone=" . $cpzone);
 	ob_flush();
 	return;
 } elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {

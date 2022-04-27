@@ -3937,4 +3937,42 @@ function interfaces_interrupts() {
 	return $interrupts;
 }
 
+function dummynet_load_module($max_qlimit) {
+	global $config;
+
+	if (!is_module_loaded("dummynet.ko")) {
+		mute_kernel_msgs();
+		mwexec("/sbin/kldload dummynet");
+		unmute_kernel_msgs();
+	}
+	$sysctls = (array(
+			"net.inet.ip.dummynet.io_fast" => "1",
+			"net.inet.ip.dummynet.hash_size" => "256",
+			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
+	));
+	init_config_arr(array('sysctl', 'item'));
+	if (!empty($config['sysctl']['item'])) {
+		foreach ($config['sysctl']['item'] as $item) {
+			if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
+				$sysctls[$item['tunable']] = $item['value'];
+			}
+		}
+	}
+	set_sysctl($sysctls);
+}
+
+function get_interface_vip_ips($interface) {
+	global $config;
+	$vipips = '';
+
+	init_config_arr(array('virtualip', 'vip'));
+	foreach ($config['virtualip']['vip'] as $vip) {
+		if (($vip['interface'] == $interface) &&
+		    (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
+			$vipips .= $vip['subnet'] . ' ';
+		}
+	}
+	return $vipips;
+}
+
 ?>

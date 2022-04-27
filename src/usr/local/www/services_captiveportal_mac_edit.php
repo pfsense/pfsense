@@ -61,6 +61,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 
 init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
 $a_cp = &$config['captiveportal'];
+$cpzoneid = $a_cp[$cpzone]['zoneid'];
 $a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"), gettext("Edit"));
@@ -166,12 +167,8 @@ if ($_POST['save']) {
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
-			$rules = captiveportal_passthrumac_delete_entry($oldmac);
-			$rules .= captiveportal_passthrumac_configure_entry($mac);
-			$uniqid = uniqid("{$cpzone}_macedit");
-			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
-			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
+			captiveportal_passthru_delete_entry($oldmac);
+			captiveportal_ether_configure_entry($mac, 'passthrumac');
 			unset($cpzoneid);
 		}
 

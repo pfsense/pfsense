@@ -28,6 +28,7 @@
  */
 
 require_once("openvpn.inc");
+require_once("captiveportal.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -125,6 +126,8 @@ define("BOGONS_TRACKER_START", 11000);
 define("BOGONS_TRACKER_END", 11999);
 define("RFC1918_TRACKER_START", 12000);
 define("RFC1918_TRACKER_END", 12999);
+define("CAPTIVEPORTAL_TRACKER_START", 13000);
+define("CAPTIVEPORTAL_TRACKER_END", 13999);
 define("PFLABEL_MAXLEN", 63);
 define("USER_LABEL_INTRO", "USER_RULE: ");
 
@@ -133,6 +136,7 @@ $negate_tracker = NEGATE_TRACKER_DEFAULT;
 $antilockout_tracker = ANTILOCKOUT_TRACKER_START;
 $bogons_tracker = BOGONS_TRACKER_START;
 $rfc1918_tracker = RFC1918_TRACKER_START;
+$captiveportal_tracker = CAPTIVEPORTAL_TRACKER_START;
 
 function filter_antilockout_tracker() {
 	global $antilockout_tracker;
@@ -156,6 +160,12 @@ function filter_rule_tracker() {
 	global $tracker;
 
 	return (++$tracker);
+}
+
+function filter_captiveportal_tracker() {
+        global $captiveportal_tracker;
+
+        return ++$captiveportal_tracker;
 }
 
 function filter_negaterule_tracker() {
@@ -479,6 +489,14 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= "set skip on pfsync0\n";
 	$rules .= "set keepcounters\n";
 	$rules .= "\n";
+
+	/* Captive Portal ether anchors:
+	 * 'cpzoneid_X_passthrumac' - add PASS tag to MAC passthru entries 
+	 * 'cpzoneid_X_allowedhostsmac' - add PASS tag for Allowed IP/Hostnames to bypass captive portal redirection
+	 * 'cpzoneid_X_auth' - add PASS tag to authenticated client
+	 */
+	$rules .= filter_captiveportal_ether();
+
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";
@@ -577,6 +595,10 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	foreach ($config['aliases']['alias'] as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
+	/* Captive Portal aliases array (prevents removal):
+	 * 'cpzoneid_X_host_Y' tables inside 'cpzoneid_X_allowedhosts/hostname_X' anchor - Allowed Hostnames
+	 */
+	$aliasesnames = array_merge($aliasesnames, filter_captiveportal_aliases());
 	// get aliases names from pfctl -sT
 	exec("/sbin/pfctl -sT", $pftables);
 	// compare config with pfctl aliases and reserved table names
@@ -919,6 +941,20 @@ function filter_generate_aliases() {
 			$aliases .= "table <negate_networks> { $vpns_list }\n";
 		}
 	}
+
+	/* add a Negate_networks table */
+	$aliases .= "table <negate_networks> ";
+	if ($vpns_list) {
+		$aliases .= "{ $vpns_list }";
+	}
+	$aliases .= "\n";
+
+	/* Captive Portal tables
+	 * 'cpzoneid_X_cpips' - all portal interfaces IPv4 addresses (including VIPs) 
+	 * 'cpzoneid_X_authip' - authenticated clients IPv4 addresses
+	 */
+
+	$aliases .= filter_captiveportal_tables();
 
 	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
@@ -2490,6 +2526,9 @@ function filter_nat_rules_generate() {
 		}
 	}
 
+	/* captive portal redirection */
+	$natrules .= filter_captiveportal_rdr();
+
 	/* DIAG: add ipv6 NAT, if requested */
 	if ((isset($config['diag']['ipv6nat']['enable'])) &&
 	    (is_ipaddr($config['diag']['ipv6nat']['ipaddr'])) &&
@@ -3731,55 +3770,6 @@ EOD;
 	 */
 	$ipfrules .= "block in {$log['block']} quick from <virusprot> to any ridentifier 1000000400 label \"virusprot overload table\"\n";
 
-	$saved_tracker += 100;
-	$tracker = $saved_tracker;
-
-	/* if captive portal is enabled, ensure that access to this port
-	 * is allowed on a locked down interface
-	 */
-	if (is_array($config['captiveportal'])) {
-		foreach ($config['captiveportal'] as $cpcfg) {
-			if (!isset($cpcfg['enable'])) {
-				continue;
-			}
-			$cpinterfaces = explode(",", $cpcfg['interface']);
-			$cpiflist = array();
-			$cpiplist = array();
-			foreach ($cpinterfaces as $cpifgrp) {
-				if (!isset($FilterIflist[$cpifgrp])) {
-					continue;
-				}
-				$tmpif = get_real_interface($cpifgrp);
-				if (!empty($tmpif)) {
-					$cpiflist[] = "{$tmpif}";
-					$cpipm = get_interface_ip($cpifgrp);
-					if (is_ipaddr($cpipm)) {
-						$cpiplist[] = $cpipm;
-						if (!is_array($config['virtualip']) || !is_array($config['virtualip']['vip'])) {
-							continue;
-						}
-						foreach ($config['virtualip']['vip'] as $vip) {
-							if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
-								$cpiplist[] = $vip['subnet'];
-							}
-						}
-					}
-				}
-			}
-			if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-				$cpinterface = implode(" ", $cpiflist);
-				$cpaddresses = implode(" ", $cpiplist);
-				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : 8000 + ($cpcfg['zoneid'] + 1);
-				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : 8000 + $cpcfg['zoneid'];
-				$portalias = $listenporthttps;
-				$portalias .= " {$listenporthttp}";
-				$ipfrules .= "pass in {$log['pass']} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } ridentifier {$increment_tracker()} keep state(sloppy)\n";
-				$ipfrules .= "pass out {$log['pass']} quick on { {$cpinterface} } proto tcp from any to any flags any ridentifier {$increment_tracker()} keep state(sloppy)\n";
-			}
-		}
-	}
-
-	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {
 		$saved_tracker += 10;
 		$tracker = $saved_tracker;
@@ -4083,7 +4073,6 @@ EOD;
 		}
 	}
 
-
 	$saved_tracker += 300;
 	$tracker = $saved_tracker;
 	/* add ipsec interfaces */
@@ -4136,6 +4125,14 @@ EOD;
 			}
 		}
 	}
+
+	$saved_tracker += 10;
+	$tracker = $saved_tracker;
+
+	/* if captive portal is enabled, ensure that access to this port
+	 * is allowed on a locked down interface
+	 */
+	$ipfrules .= filter_captiveportal_pass();
 
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */

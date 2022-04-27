@@ -495,9 +495,9 @@ if ($_POST['save']) {
 
 		write_config("Captive portal settings saved");
 
+		filter_configure();
 		captiveportal_configure_zone($newcp);
 		unset($newcp);
-		filter_configure();
 		header("Location: services_captiveportal_zones.php");
 		exit;
 	} else {

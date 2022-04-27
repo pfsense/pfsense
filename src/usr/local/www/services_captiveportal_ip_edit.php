@@ -58,6 +58,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 
 init_config_arr(array('captiveportal', $cpzone, 'allowedip'));
 $a_cp = &$config['captiveportal'];
+$cpzoneid = $a_cp[$cpzone]['zoneid'];
 $a_allowedips = &$config['captiveportal'][$cpzone]['allowedip'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed IP Addresses"), gettext("Edit"));
@@ -134,12 +135,13 @@ if ($_POST['save']) {
 			$ip['bw_down'] = $_POST['bw_down'];
 		}
 
+		$oldip = array();
 		if (isset($id) && $a_allowedips[$id]) {
-			$oldip = $a_allowedips[$id]['ip'];
+			$oldip['ip'] = $a_allowedips[$id]['ip'];
 			if (!empty($a_allowedips[$id]['sn'])) {
-				$oldmask = $a_allowedips[$id]['sn'];
+				$oldip['sn'] = $a_allowedips[$id]['sn'];
 			} else {
-				$oldmask = 32;
+				$oldip['sn'] = 32;
 			}
 
 			$a_allowedips[$id] = $ip;
@@ -151,32 +153,11 @@ if ($_POST['save']) {
 
 		write_config("Captive portal allowed IPs added");
 
-		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
-			$rules = "";
-			$cpzoneid = $a_cp[$cpzone]['zoneid'];
-
-			unset($rule);
-			if (isset($oldip) && isset($oldmask)) {
-				$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$oldip}/{$oldmask}");
-
-				$rules .= "table {$cpzone}_allowed_up delete {$oldip}/{$oldmask}\n";
-				$rules .= "table {$cpzone}_allowed_down delete {$oldip}/{$oldmask}\n";
-
-				if (is_array($rule) && !empty($rule['pipe'])) {
-					$rules .= "pipe delete {$rule['pipe']}\n";
-					$rules .= "pipe delete " . ($rule['pipe']+1 . "\n");
-				}
+		if (isset($a_cp[$cpzone]['enable'])) {
+			if (!empty($oldip)) {
+				captiveportal_ether_delete_entry($oldip, 'allowedhostsmac');
 			}
-
-			$rules .= captiveportal_allowedip_configure_entry($ip);
-			if (is_array($rule) && !empty($rule['pipe'])) {
-				captiveportal_free_dn_ruleno($rule['pipe']);
-			}
-
-			$uniqid = uniqid("{$cpzone}_allowed");
-			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
-			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
+			captiveportal_allowedip_configure_entry($ip);
 		}
 
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");

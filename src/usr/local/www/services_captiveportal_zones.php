@@ -54,6 +54,7 @@ if ($_POST['act'] == "del" && !empty($_POST['zone'])) {
 		unlink_if_exists("/var/db/captiveportal_usedmacs_{$cpzone}.db");
 		unlink_if_exists("/var/db/voucher_{$cpzone}_*.db");
 		write_config("Captive portal zone deleted");
+		filter_configure();
 	}
 	header("Location: services_captiveportal_zones.php");
 	exit;

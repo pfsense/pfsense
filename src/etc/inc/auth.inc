@@ -1762,24 +1762,10 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
 	} else {
 		$nasid = $attributes['nas_identifier'];
-		$nasip = $authcfg['radius_nasip_attribute'];
 		if (empty($nasid)) {
 			$nasid = gethostname(); //If no RADIUS NAS-Identifier is given : we use pfsense's hostname as NAS-Identifier
 		}
-		if (!is_ipaddr($nasip)) {
-			$nasip = get_interface_ip($nasip);
-
-			if (!is_ipaddr($nasip)) {
-				/* use first interface with IP as fallback for NAS-IP-Address
-				 * see https://redmine.pfsense.org/issues/11109 */
-				foreach (get_configured_interface_list() as $if) {
-					$nasip = get_interface_ip($if);
-					if (is_ipaddr($nasip)) {
-						break;
-					}
-				}
-			}
-		}
+		$nasip = nasip_fallback($acctcfg['radius_nasip_attribute']);
 		$nasmac = get_interface_mac(find_ip_interface($nasip));
 
 		$rauth->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
@@ -1834,6 +1820,27 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 	$rauth->close();
 
 	return $ret;
+}
+
+function nasip_fallback($ip) {
+	if (!is_ipaddr($ip)) {
+		$nasip = get_interface_ip($ip);
+
+		if (!is_ipaddr($nasip)) {
+			/* use first interface with IP as fallback for NAS-IP-Address
+			 * see https://redmine.pfsense.org/issues/11109 */
+			foreach (get_configured_interface_list() as $if) {
+				$nasip = get_interface_ip($if);
+				if (is_ipaddr($nasip)) {
+					break;
+				}
+			}
+		}
+	} else {
+		$nasip = $ip;
+	}
+
+	return $nasip;
 }
 
 /*

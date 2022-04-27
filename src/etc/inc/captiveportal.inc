@@ -554,7 +554,7 @@ function captiveportal_delete_rules($pipes_to_remove = array(), $clear_auth_rule
 /*
  * Remove clients that have been around for longer than the specified amount of time
  * db file structure:
- * timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time,interim_interval,traffic_quota,auth_method,context
+ * timestamp,ipfw_rule_no(deprecated),clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time,interim_interval,traffic_quota,auth_method,context
  * (password is in Base64 and only saved when reauthentication is enabled)
  */
 function captiveportal_prune_old() {
@@ -634,7 +634,7 @@ function captiveportal_prune_old() {
 
 		/* check if an idle_timeout has been set and if its set change the idletimeout to this value */
 		$uidletimeout = (is_numeric($cpentry[8])) ? $cpentry[8] : $idletimeout;
-		/* if an idle timeout is specified, get last activity timestamp from ipfw */
+		/* if an idle timeout is specified, get last activity timestamp from pf */
 		if (!$timedout && $uidletimeout > 0) {
 			$lastact = captiveportal_get_last_activity($cpentry[2]);
 			/*	If the user has logged on but not sent any traffic they will never be logged out.

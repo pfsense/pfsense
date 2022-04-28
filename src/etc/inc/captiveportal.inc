@@ -1049,8 +1049,7 @@ function captiveportal_passthrumac_delete_entry($hostent) {
 		return;
 	}
 
-	/* XXX OPTIMIZE: pfSense_pf_flush_anchor($anchor, $type = 'rules/nat/ether') */
-	mwexec("/sbin/pfctl -a {$cpzoneprefix}_passthrumac/{$host} -F ethernet");
+	pfSense_pf_cp_flush("{$cpzoneprefix}_passthrumac/{$host}", "ether");
 }
 
 function captiveportal_passthrumac_configure($startindex = 0, $stopindex = 0) {
@@ -1107,14 +1106,13 @@ function captiveportal_ether_delete_entry($hostent, $anchor = 'allowedhosts') {
 		$host = $hostent['ip'] . '_32';
 	}
 
-	/* XXX OPTIMIZE: list($pipeup, $pipedown) = pfSense_pf_get_cp_anchor_pipes($anchor); */
-	$pipeup = mwexec("/sbin/pfctl -a {$cpzoneprefix}_{$anchor}/{$host} -se | cut -d' ' -f 17 | head -n1");
+	$result = pfSense_pf_cp_get_eth_pipes($anchor);
+	if (!empty($result)) {
+		list($pipeup, $pipedown) = $result;
 
-	/* flush anchor rules
-	/* XXX OPTIMIZE: pfSense_pf_flush_anchor($anchor, $type = 'rules/nat/ether') */
-	mwexec("/sbin/pfctl -a {$cpzoneprefix}_{$anchor}/{$host} -F ether");
+		/* flush anchor rules */
+		pfSense_pf_cp_flush("{$cpzoneprefix}_{$anchor}/{$host}", "ether");
 
-	if (!empty($pipeup)) {
 		captiveportal_free_dn_ruleno($pipeup);
 	}
 }
@@ -1181,21 +1179,16 @@ function captiveportal_get_last_activity($ip) {
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$anchor = $cpzoneprefix . '_auth';
 
-	/* XXX OPTIMIZE: pfSense_pf_get_last_activity($a) = array(inactivity, outactivity) */
-	$tables = array("{$cpzone}_allowed_up", "{$cpzone}_auth_up");
-	exec("/sbin/pfctl -a {$anchor}/{$ip}_32 -se -vv 2>/dev/null | grep Active", $result);
-
-	if (!empty($result)) {
-		preg_match('/Last Active Time: (.+) ]/', $result[0], $in);
-		preg_match('/Last Active Time: (.+) ]/', $result[1], $out);
-		if ($in) {
-			return strtotime($in[1]);
-		} elseif ($out) {
-			return strtotime($out[1]);
-		}
+	$active_times = pfSense_pf_cp_get_eth_last_active("{$anchor}/{$ip}_32");
+	$time = 0;
+	if (!empty($active_times)) {
+		foreach ($active_times as $active_time) {
+			if ( $active_time > $time)
+				$time = $active_time;
+	   }
 	}
 
-	return 0;
+	return $time;
 }
 
 
@@ -1690,23 +1683,14 @@ function captiveportal_get_dn_passthru_ruleno($mac, $anchor = 'passthrumac') {
 	$ruleno = NULL;
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$host = str_replace(":", "", $mac);
-		/* XXX OPTIMIZE: list($pipeup, $pipedown) = pfSense_pf_get_cp_anchor_pipes($anchor) */
-		exec("/sbin/pfctl -a {$cpzoneprefix}_{$anchor}mac/{$host} -se | awk -F'[()]' '{print $2; exit}'", $result, $retval);
-		if (!empty($result)) {
-			$pipes = explode(',', $result[0]);
-			if ($pipes[0] < $pipes[1]) {
-				$ruleno = $pipes[0];
-			} else {
-				$ruleno = $pipes[1];
-			}
-		} else {
-			unlock($cpruleslck);
-			return NULL;
-		}
 
-		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
-		if (!$rules[$ruleno]) {
-			$ruleno = NULL;
+		$result = pfSense_pf_cp_get_anchor_pipes("{$cpzoneprefix}_{$anchor}mac/$host");
+		if (!empty($result)) {
+			list($pipeup, $pipedown) = $result;
+			$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+			if (!$rules[$pipeup]) {
+				$ruleno = NULL;
+			}
 		}
 	}
 	unlock($cpruleslck);
@@ -1738,21 +1722,20 @@ function getVolume($ip) {
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$anchor = $cpzoneprefix . '_auth';
 
-	/* XXX OPTIMIZE: array('output_pkts', 'output_bytes', 'input_pkts', 'input_bytes') = pfSense_pf_get_table_counters($table) */
-	exec("/sbin/pfctl -a {$anchor}/{$ip} -se -v 2>/dev/null | grep Bytes", $result);
+	$result = pfSense_pf_get_eth_rule_counters("{$anchor}/{$ip}");
 	if (!empty($result)) {
-		preg_match('/Packets: (\d+) .* Bytes: (\d+)/', $result[1], $out);
-		preg_match('/Packets: (\d+) .* Bytes: (\d+)/', $result[3], $in);
+	   list($output_pkts, $output_bytes, $input_pkts, $input_bytes) = $result;
+
 		if ($reverse) {
-			$volume['output_pkts'] = $in[1];
-			$volume['output_bytes'] = $in[2];
-			$volume['input_pkts'] = $out[1];
-			$volume['input_bytes'] = $out[2];
+			$volume['output_pkts'] = $input_pkts;
+			$volume['output_bytes'] = $input_bytes;
+			$volume['input_pkts'] = $output_pkts;
+			$volume['input_bytes'] = $output_bytes;
 		} else {
-			$volume['output_pkts'] = $out[1];
-			$volume['output_bytes'] = $out[2];
-			$volume['input_pkts'] = $in[1];
-			$volume['input_bytes'] = $in[2];
+			$volume['output_pkts'] = $output_pkts;
+			$volume['output_bytes'] = $output_bytes;
+			$volume['input_pkts'] = $input_pkts;
+			$volume['input_bytes'] = $input_bytes;
 		}
 	}
 
@@ -2574,13 +2557,8 @@ function captiveportal_allowedhostname_cleanup() {
 	init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
 	foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $id => $hostnameent) {
 		$result = array();
-
-		/* XXX OPTIMIZE: list($pipeup, $pipedown) = pfSense_pf_get_cp_anchor_pipes($anchor); */
-		$pipeup = mwexec("/sbin/pfctl -a {$cpzoneprefix}_allowedhosts/hostname_{$id} -se | cut -d' ' -f 17 | head -n1");
-
-		/* XXX OPTIMIZE: pfSense_pf_flush_anchor($anchor, $type = 'inet/nat/ether') */
-		mwexec("/sbin/pfctl -a {$cpzoneprefix}_allowedhosts/hostname_{$id} -F ether");
-
+		list($pipeup, $pipedown) = pfSense_pf_cp_get_anchor_pipes("{$cpzoneprefix}__allowedhosts/hostname_{$id}");
+		pfSense_pf_cp_flush("{$cpzoneprefix}_allowedhosts/hostname_{$id}", "ether");
 		if (!empty($pipeup)) {
 			captiveportal_pipe_delete($pipeup);
 		}
@@ -2944,7 +2922,7 @@ function captiveportal_anchor_zerocnt($ip, $anchor = 'auth') {
 	global $config, $cpzone;
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 
-	mwexec("/sbin/pfctl -z -a {$cpzoneprefix}_{$anchor}/{$ip}");
+	pfSense_pf_cp_zerocnt("{$cpzoneprefix}_{$anchor}/{$ip}");
 }
 
 ?>

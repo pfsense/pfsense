@@ -6671,6 +6671,17 @@ function upgrade_225_to_226() {
 	}
 }
 
+function upgrade_226_to_227() {
+	global $config;
+
+	/* Convert dnsmasq (forwarder) custom options to base64.
+	 * https://redmine.pfsense.org/issues/13105
+	 */
+	if (is_array($config['dnsmasq']) && !empty($config['dnsmasq']['custom_options'])) {
+		$config['dnsmasq']['custom_options'] = base64_encode($config['dnsmasq']['custom_options']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

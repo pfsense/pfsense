@@ -1646,8 +1646,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'enc',
 				'tun',
 				'lagg',
-				'vip',
-				'ipfw'
+				'vip'
 		);
 	} else {
 		$vfaces = array(
@@ -1666,7 +1665,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'tun',
 				'lagg',
 				'vip',
-				'ipfw',
 				'l2tps'
 		);
 	}

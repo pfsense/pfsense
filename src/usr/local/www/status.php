@@ -333,10 +333,8 @@ defCmdT("Firewall-pftop Queue", "/usr/local/sbin/pftop -w 150 -a -b -v queue");
 defCmdT("Firewall-pftop Rules", "/usr/local/sbin/pftop -w 150 -a -b -v rules");
 defCmdT("Firewall-pftop Size", "/usr/local/sbin/pftop -w 150 -a -b -v size");
 defCmdT("Firewall-pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
-defCmdT("Firewall-IPFW Rules for Captive Portal", "/sbin/ipfw show");
-defCmdT("Firewall-IPFW Limiter Info", "/sbin/ipfw pipe show");
-defCmdT("Firewall-IPFW Queue Info", "/sbin/ipfw queue show");
-defCmdT("Firewall-IPFW Tables", "/sbin/ipfw table all list");
+defCmdT("Firewall-Limiter Info", "/sbin/dnctl pipe show");
+defCmdT("Firewall-Queue Info", "/sbin/dnctl queue show");
 
 /* Configuration Files */
 defCmdT("Disk-Contents of var run", "/bin/ls /var/run");

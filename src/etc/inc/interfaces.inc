@@ -2473,7 +2473,12 @@ startup:
 default:
 {$ppp['type']}client:
 	create bundle static {$interface}
-	set bundle no noretry
+	set bundle period 6
+	set bundle lowat 0
+	set bundle hiwat 0
+	set bundle min-con 3
+	set bundle min-dis 6
+	set bundle enable bw-manage
 	{$ipv6cp}
 	set iface name {$pppif}
 

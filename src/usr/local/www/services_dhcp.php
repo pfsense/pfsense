@@ -390,7 +390,7 @@ if (isset($_POST['save'])) {
 	}
 
 	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] < $_POST['deftime']))) {
-		$input_errors[] = gettext("The maximum lease time must be at least 60 seonds, and the same value or greater than the default lease time.");
+		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds, and the same value or greater than the default lease time.");
 	}
 	if ($_POST['ddnsupdate']) {
 		if (!is_domain($_POST['ddnsdomain'])) {

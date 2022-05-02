@@ -1221,13 +1221,10 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if ($mode == 'client') {
 
+		$add_pull = false;
 		// configure p2p mode
-		switch ($settings['mode']) {
-			case 'p2p_tls':
-				$conf .= "tls-client\n";
-			case 'shared_key':
-				$conf .= "client\n";
-				break;
+		if ($settings['mode'] == 'p2p_tls') {
+			$conf .= "tls-client\n";
 		}
 
 		// If there is no bind option at all (ip and/or port), add "nobind" directive
@@ -1263,6 +1260,9 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "ifconfig {$ip2} {$ip1}\n";
 			} else {
 				$conf .= "ifconfig {$ip2} {$mask}\n";
+				if ($settings['mode'] == 'p2p_tls') {
+					$add_pull = true;
+				}
 			}
 		}
 
@@ -1273,7 +1273,22 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "ifconfig-ipv6 {$ipv6_2} {$ipv6_1}\n";
 			} else {
 				$conf .= "ifconfig-ipv6 {$ipv6_1}/{$prefix} {$ipv6_2}\n";
+				if ($settings['mode'] == 'p2p_tls') {
+					$add_pull = true;
+				}
 			}
+		}
+
+		/* If both tunnel networks are empty, then pull from server. */
+		if (empty($settings['tunnel_network']) &&
+		    empty($settings['tunnel_networkv6'])) {
+			$add_pull = true;
+		}
+
+		/* Only add "pull" if the tunnel network is undefined or using tap mode.
+		   OpenVPN can't pull settings from a server in point-to-point mode. */
+		if (($settings['mode'] == 'p2p_tls') && $add_pull) {
+			$conf .= "pull\n";
 		}
 
 		if (($settings['auth_user'] || $settings['auth_pass']) && $settings['mode'] == "p2p_tls") {

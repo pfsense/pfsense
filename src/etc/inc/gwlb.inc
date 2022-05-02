@@ -26,6 +26,7 @@ require_once("config.inc");
 require_once("rrd.inc");
 require_once("ipsec.inc");
 require_once("interfaces.inc");
+require_once("util.inc");
 
 global $gateway_state_kill_modes;
 $gateway_state_kill_modes = array(
@@ -1236,7 +1237,7 @@ function setdefaultgateway($gw) {
 		} else {
 			$inet = 'v6';
 		}
-		array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw{$inet}", GLOB_BRACE));
+		unlink_if_exists("{$g['tmp_path']}/*_defaultgw{$inet}");
 		$defaultif = get_real_interface($gw['interface']);
 		if ($defaultif) {
 			@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw{$inet}", $gw['gateway']);

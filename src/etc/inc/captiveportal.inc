@@ -1722,7 +1722,7 @@ function getVolume($ip) {
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$anchor = $cpzoneprefix . '_auth';
 
-	$result = pfSense_pf_get_eth_rule_counters("{$anchor}/{$ip}");
+	$result = pfSense_pf_cp_get_eth_rule_counters("{$anchor}/{$ip}");
 	if (!empty($result)) {
 	   list($output_pkts, $output_bytes, $input_pkts, $input_bytes) = $result;
 

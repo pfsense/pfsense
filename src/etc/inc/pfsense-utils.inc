@@ -487,7 +487,7 @@ function gen_requirefirewallinterface_field(&$section, $value) {
 		'when entering Firewall > Rules. This option requires an interface to be '.
 		'explicitly selected before any rules are displayed. Useful for systems with '.
 		'a large number of rules on the WAN interface, causing firewall slowdown when '.
-		'navigating to the Firewall > Rules.');
+		'navigating to Firewall > Rules.');
 }
 
 /****f* pfsense-utils/gen_created_updated_fields

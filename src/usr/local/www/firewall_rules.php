@@ -145,7 +145,9 @@ $iflist = filter_get_interface_list();
 
 if (!$if || !isset($iflist[$if])) {
 	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {
-		$if = "wan";
+		if (!isset($config['system']['webgui']['requirefirewallinterface'])){
+			$if = "wan";
+		}
 	} else {
 		$if = "FloatingRules";
 	}
@@ -429,6 +431,9 @@ $columns_in_table = 13;
 if ($if == "FloatingRules") {
 	$columns_in_table++;
 }
+
+// Only show rules table if interface is set.
+if (isset($if)):
 
 ?>
 <!-- Allow table to scroll when dragging outside of the display window -->
@@ -1065,7 +1070,17 @@ $modal->addInput(new Form_StaticText(
 ));
 $form->add($modal);
 print($form);
+
+else:
 ?>
+	<div class="alert alert-warning" role="alert">
+		<p>Select an interface to view firewall rules.<br />
+			See System > General Setup, Require Firewall Interface.
+		</p>
+	</div>
+
+<?php endif; ?>
+
 <div class="infoblock">
 	<div class="alert alert-info clearfix" role="alert"><div class="pull-left">
 		<dl class="dl-horizontal responsive">

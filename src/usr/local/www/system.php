@@ -91,6 +91,7 @@ $pconfig['dnslocalhost'] = $config['system']['dnslocalhost'];
 $pconfig['roworderdragging'] = isset($config['system']['webgui']['roworderdragging']);
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
 $pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
+$pconfig['requirefirewallinterface'] = isset($config['system']['webgui']['requirefirewallinterface']);
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
@@ -350,6 +351,8 @@ if ($_POST) {
 		}
 
 		$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
+		
+		$config['system']['webgui']['requirefirewallinterface'] = $_POST['requirefirewallinterface'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -686,6 +689,7 @@ gen_associatedpanels_fields(
 	$pconfig['systemlogsmanagelogpanel'],
 	$pconfig['statusmonitoringsettingspanel']);
 gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
+gen_requirefirewallinterface_field($section, $pconfig['requirefirewallinterface']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
 gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
 

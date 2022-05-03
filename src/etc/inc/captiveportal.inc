@@ -1684,7 +1684,7 @@ function captiveportal_get_dn_passthru_ruleno($mac, $anchor = 'passthrumac') {
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$host = str_replace(":", "", $mac);
 
-		$result = pfSense_pf_cp_get_anchor_pipes("{$cpzoneprefix}_{$anchor}mac/$host");
+		$result = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}mac/$host");
 		if (!empty($result)) {
 			list($pipeup, $pipedown) = $result;
 			$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
@@ -2557,7 +2557,7 @@ function captiveportal_allowedhostname_cleanup() {
 	init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
 	foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $id => $hostnameent) {
 		$result = array();
-		list($pipeup, $pipedown) = pfSense_pf_cp_get_anchor_pipes("{$cpzoneprefix}__allowedhosts/hostname_{$id}");
+		list($pipeup, $pipedown) = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}__allowedhosts/hostname_{$id}");
 		pfSense_pf_cp_flush("{$cpzoneprefix}_allowedhosts/hostname_{$id}", "ether");
 		if (!empty($pipeup)) {
 			captiveportal_pipe_delete($pipeup);

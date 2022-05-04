@@ -72,6 +72,7 @@ if ($_POST['act'] == "del") {
 		unset($a_csc[$id]);
 		write_config($wc_msg);
 		$savemsg = gettext("Client specific override successfully deleted.");
+		services_unbound_configure(false);
 	}
 }
 
@@ -328,6 +329,7 @@ if ($_POST['save']) {
 		}
 		openvpn_resync_csc($csc);
 		write_config($wc_msg);
+		services_unbound_configure(false);
 
 		header("Location: vpn_openvpn_csc.php");
 		exit;

@@ -95,6 +95,7 @@ if ($_POST['act'] == "del") {
 		unset($a_server[$id]);
 		write_config($wc_msg);
 		$savemsg = gettext("Server successfully deleted.");
+		services_unbound_configure(false);
 	}
 }
 
@@ -874,6 +875,7 @@ if ($_POST['save']) {
 		write_config($wc_msg);
 		openvpn_resync('server', $server);
 		openvpn_resync_csc_all();
+		services_unbound_configure(false);
 
 		header("Location: vpn_openvpn_server.php");
 		exit;

@@ -1662,9 +1662,6 @@ function openvpn_restart($mode, $settings) {
 		syslog(LOG_ERR, "OpenVPN failed to start");
 	}
 	if (!platform_booting()) {
-		if (isset($settings['unbound_restart'])) {
-			services_unbound_configure(false);
-		}
 		send_event("filter reload");
 	}
 	unlock($lockhandle);
@@ -1704,7 +1701,6 @@ function openvpn_delete($mode, $settings) {
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
 	openvpn_delete_tmp($mode, $vpnid);
-	services_unbound_configure(false);
 	filter_configure();
 }
 
@@ -1791,9 +1787,6 @@ function openvpn_resync_csc(& $settings) {
 			}
 		}
 	}
-	if (!platform_booting() && isset($settings['unbound_restart'])) {
-		services_unbound_configure(false);
-	}
 }
 
 function openvpn_resync_csc_all() {
@@ -1828,7 +1821,6 @@ function openvpn_delete_csc(& $settings) {
 			}
 		}
 	}
-	services_unbound_configure(false);
 }
 
 // Resync the configuration and restart the VPN

@@ -1242,21 +1242,12 @@ function buffer_rules_load() {
 			$buffer_rules_rdr[$key] = $value;
 		}
 	}
-	unset($buffer, $_gb);
-	$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
 
-	if (is_array($buffer)) {
-		foreach ($buffer as $line) {
-			list($key, $value) = explode (" ", $line, 2);
-			$matches = array();
-			if (preg_match('/\@(?P<rulenum>\d+).*ridentifier (?<trackernum>\d+)/', $line, $matches) == 1) {
-				if ($matches['trackernum'] > 0) {
-					$key = $matches['trackernum'];
-				} else {
-					$key = "@{$matches['rulenum']}";
-				}
-			}
-			$buffer_rules_normal[$key] = $value;
+	$rules = pfSense_get_pf_rules();
+	if (is_array($rules)) {
+		foreach($rules as $rule) {
+			$key = sprintf("%d",$rule['tracker']);
+			$buffer_rules_normal[$key] = $rule['labels'];
 		}
 	}
 	unset($_gb, $buffer);
@@ -1282,8 +1273,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 		$rulename = substr($ruleString, 0, 30);
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
-		list(,$rulename,) = explode("\"", $ruleString);
-		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $rulename);
+		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $ruleString);
 	}
 	return "{$rulename} ({$lookup_key})";
 }

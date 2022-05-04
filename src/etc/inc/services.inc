@@ -2632,7 +2632,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		}
 
 		if ($config['dnsmasq']['custom_options']) {
-			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+			foreach (preg_split('/\s+/', base64_decode($config['dnsmasq']['custom_options'])) as $c) {
 				$args .= " " . escapeshellarg("--{$c}");
 				$p = explode('=', $c);
 				if (array_key_exists($p[0], $standard_args)) {

@@ -93,7 +93,7 @@ if ($_POST['save']) {
 
 	$macfull = explode('/', $_POST['mac']);
 	$macmask = $macfull[1] ? $macfull[1] : false; 
-	$_POST['mac'] = strtolower(str_replace("-", ":", $macfull[0]));
+	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $macfull[0])));
 
 	if ($_POST['mac']) {
 		if (is_macaddr($_POST['mac'])) {

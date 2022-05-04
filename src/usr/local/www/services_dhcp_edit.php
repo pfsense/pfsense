@@ -189,7 +189,7 @@ if ($_POST['save']) {
 	}
 
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
+	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $_POST['mac'])));
 
 	if ($_POST['hostname']) {
 		preg_match("/\-\$/", $_POST['hostname'], $matches);

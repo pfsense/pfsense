@@ -1245,9 +1245,9 @@ function buffer_rules_load() {
 
 	$rules = pfSense_get_pf_rules();
 	if (is_array($rules)) {
-		foreach($rules as $rule) {
-			$key = sprintf("%d",$rule['tracker']);
-			$buffer_rules_normal[$key] = $rule['labels'];
+		foreach ($rules as $rule) {
+			$key = sprintf("%d", $rule['tracker']);
+			$buffer_rules_normal[$key] = $rule['label'];
 		}
 	}
 	unset($_gb, $buffer);

@@ -517,8 +517,7 @@ function saveNATrule($post, $id, $json = false) {
 
 		if (!isset($natent['nordr'])) {
 			$natent['target'] = $post['localip'];
-			if (($natent['protocol'] == 'tcp') ||
-			    ($natent['protocol'] == 'udp')) {
+			if (in_array($natent['protocol'], array("tcp", "udp", "tcp/udp"))) {
 				$natent['local-port'] = $post['localbeginport'];
 			}
 		}

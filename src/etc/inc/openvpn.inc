@@ -2090,34 +2090,75 @@ function openvpn_get_client_status($client, $socket) {
 			}
 
 			/* Get the client state */
-			if (strstr($line, "CONNECTED")) {
-				$client['status'] = "up";
-				$list = explode(",", $line);
+			if (substr_count($line, ',') >= 7) {
+				$list = explode(",", trim($line));
+				$list = array_map('trim', $list);
 
 				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
+				$client['state'] = $list[1];
+				$client['state_detail'] = $list[2];
 				$client['virtual_addr'] = $list[3];
 				$client['remote_host'] = $list[4];
 				$client['remote_port'] = $list[5];
 				$client['local_host'] = $list[6];
 				$client['local_port'] = $list[7];
 				$client['virtual_addr6'] = $list[8];
-			}
-			if (strstr($line, "CONNECTING")) {
-				$client['status'] = "connecting";
-			}
-			if (strstr($line, "ASSIGN_IP")) {
-				$client['status'] = "waiting";
-				$list = explode(",", $line);
 
-				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
-				$client['virtual_addr'] = $list[3];
-			}
-			if (strstr($line, "RECONNECTING")) {
-				$client['status'] = "reconnecting";
-				$list = explode(",", $line);
+				switch (trim($client['state'])) {
+					case 'CONNECTED':
+						$client['status'] = gettext("Connected");
+						break;
+					case 'CONNECTING':
+						$client['status'] = gettext("Connecting");
+						break;
+					case 'TCP_CONNECT':
+						$client['status'] = gettext("Connecting to TCP Server");
+						break;
+					case 'ASSIGN_IP':
+						$client['status'] = gettext("Configuring Interface/Waiting");
+						break;
+					case 'WAIT':
+						$client['status'] = gettext("Waiting for response from peer");
+						break;
+					case 'RECONNECTING':
+						switch ($client['state_detail']) {
+							case 'server_poll':
+								$client['status'] = gettext("Waiting for peer connection");
+								$client['state_detail'] = '';
+								break;
+							case 'tls-error':
+								$client['status'] = gettext("TLS Error, reconnecting");
+								$client['state_detail'] = '';
+								break;
+							default:
+								$client['status'] = gettext("Reconnecting");
+								break;
+						}
+						break;
+					case 'AUTH':
+						$client['status'] = gettext("Authenticating");
+						break;
+					case 'AUTH_PENDING':
+						$client['status'] = gettext("Authentication pending");
+						break;
+					case 'GET_CONFIG':
+						$client['status'] = gettext("Pulling configuration from server");
+						break;
+					case 'ADD_ROUTES':
+						$client['status'] = gettext("Adding routes to system");
+						break;
+					case 'RESOLVE':
+						$client['status'] = gettext("Resolving peer hostname via DNS");
+						break;
+					default:
+						$client['status'] = ucwords(strtolower(str_replace(array('_', '-'), ' ', $client['state'])));
+						break;
+				}
 
-				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
-				$client['status'] .= "; " . $list[2];
+				if (!empty($client['state_detail'])) {
+					$client['status'] .= " (" . ucwords(strtolower(str_replace(array('_', '-'), ' ', $client['state_detail']))) . ")";
+				}
+
 			}
 			/* parse end of output line */
 			if (strstr($line, "END") || strstr($line, "ERROR")) {
@@ -2126,7 +2167,7 @@ function openvpn_get_client_status($client, $socket) {
 		}
 
 		/* If up, get read/write stats */
-		if (strcmp($client['status'], "up") == 0) {
+		if (strcmp($client['state'], "CONNECTED") == 0) {
 			fputs($fp, "status 2\n");
 			/* recv all response lines */
 			while (!feof($fp)) {

@@ -247,11 +247,14 @@ function execPost($post, $postfiles, $ui = true) {
 						}
 					}
 
-					/* If the config on disk had empty rrddata tags, remove them to
+					/* If the config on disk had empty rrddata/sshdata tags, remove them to
 					 * avoid an XML parsing error.
-					 * See https://redmine.pfsense.org/issues/8994 */
-					$data = preg_replace("/<rrddata><\\/rrddata>/", "", $data);
-					$data = preg_replace("/<rrddata\\/>/", "", $data);
+					 * See https://redmine.pfsense.org/issues/8994 
+					 * and https://redmine.pfsense.org/issues/13132 */
+					foreach (array('rrd', 'ssh') as $tag) {
+						$data = preg_replace("/<{$tag}data><\\/{$tag}data>/", "", $data);
+						$data = preg_replace("/<{$tag}data\\/>/", "", $data);
+					}
 
 					if ($post['restorearea'] && !$input_errors) {
 						/* restore a specific area of the configuration */

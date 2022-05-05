@@ -4351,7 +4351,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 		default:
 			/* XXX: Kludge for now related to #3280 */
-			if (!in_array($tunnelif, array("gif", "gre", "ovp", "ips"))) {
+			if (!in_array($tunnelif, array("gif", "gre", "ovp", "ips", "l2t"))) {
 				if (is_ipaddrv4($wancfg['ipaddr']) && $wancfg['subnet'] <> "") {
 					pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
 				}
@@ -4383,7 +4383,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 		default:
 			/* XXX: Kludge for now related to #3280 */
-			if (!in_array($tunnelif, array("gif", "gre", "ovp", "ips"))) {
+			if (!in_array($tunnelif, array("gif", "gre", "ovp", "ips", "l2t"))) {
 				if (is_ipaddrv6($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
 					//pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
 					// FIXME: Add IPv6 Support to the pfSense module
@@ -4443,7 +4443,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* update dyndns */
 			send_event("service reload dyndns {$interface}");
 		}
-	}
+	} 
+
+	if (!platform_booting() && (substr($realif, 0, 5) == 'l2tps')) {
+		vpn_l2tp_configure();
+	};
 
 	if (!empty($wancfg['descr'])) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " description " . escapeshellarg($wancfg['descr']));

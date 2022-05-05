@@ -1632,7 +1632,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'poes',
 				'pptp',
 				'l2tp',
-				'l2tps',
 				'sl',
 				'gif',
 				'gre',

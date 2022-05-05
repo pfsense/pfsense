@@ -2156,17 +2156,6 @@ function save_gateway($gateway_settings, $realid = "") {
 		route_del($a_gateway_item[$realid]['monitor']);
 	}
 
-	/* reload IPsec and OpenVPN on gateway IP or 'Mark Gateway as Down' option change
-	 * see https://redmine.pfsense.org/issues/13076 */
-	if (!empty($a_gateway_item[$realid]) &&
-	    (($gateway_settings['monitor'] != "dynamic" &&
-	    is_ipaddr($a_gateway_item[$realid]['gateway']) &&
-	    $gateway['gateway'] != $a_gateway_item[$realid]['gateway']) ||
-	    (isset($gateway['force_down']) ^ isset($a_gateway_item[$realid]['force_down'])))) {
-		send_event("service reload ipsec " . escapeshellarg($a_gateway_item[$realid]['gateway']));
-		send_event("service reload openvpn " . escapeshellarg($a_gateway_item[$realid]['gateway']));
-	}
-
 	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
 		// a new default gateway is being saved.
 		$i = 0;
@@ -2205,6 +2194,19 @@ function save_gateway($gateway_settings, $realid = "") {
 	if ($gateway_settings['loss_interval']) {
 		$gateway['loss_interval'] = $gateway_settings['loss_interval'];
 	}
+
+	/* reload IPsec and OpenVPN on gateway IP, 'Mark Gateway as Down', or 'Disabled' option change
+	 * see https://redmine.pfsense.org/issues/13076 */
+	if (!empty($a_gateway_item[$realid]) &&
+	    (isset($gateway['disabled']) ^ isset($a_gateway_item[$realid]['disabled'])) ||
+	    (!isset($a_gateway_item[$realid]['disabled']) &&
+	    ((($gateway['monitor'] != "dynamic") &&
+	    is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+	    ($gateway['gateway'] != $a_gateway_item[$realid]['gateway'])) ||
+	    (isset($gateway['force_down']) ^ isset($a_gateway_item[$realid]['force_down']))))) {
+		$reloadvpn = true;
+	}
+
 	/* when saving the manual gateway we use the attribute which has the corresponding id */
 	if (isset($realid) && $a_gateway_item[$realid]) {
 		$preserve_disabled = isset($a_gateway_item[$realid]['disabled']);
@@ -2220,6 +2222,11 @@ function save_gateway($gateway_settings, $realid = "") {
 	mark_subsystem_dirty('staticroutes');
 
 	write_config("Gateway settings changed");
+
+	if ($reloadvpn) {
+		send_event("service reload ipsec " . escapeshellarg($gateway['name']));
+		send_event("service reload openvpn " . escapeshellarg($gateway['name']));
+	}
 
 	if (!empty($reloadif)) {
 		send_event("interface reconfigure {$reloadif}");

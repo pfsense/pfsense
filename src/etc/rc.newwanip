@@ -120,6 +120,12 @@ if (is_ipaddr($curwanip)) {
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 }
 
+/* cleanup PPPoE VIPs to fix IP address order
+ * see https://redmine.pfsense.org/issues/11629 */
+if (!platform_booting() && (substr($interface_real, 0, 5) == "pppoe")) {
+	interface_vip_cleanup($interface, "inet4", VIP_IPALIAS);
+}
+
 link_interface_to_vips($interface, "update");
 
 $gre = link_interface_to_tunnelif($interface, 'gre', 'inet');

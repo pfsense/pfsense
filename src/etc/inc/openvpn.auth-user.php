@@ -148,10 +148,8 @@ if (is_array($attributes['routes'])) {
 
 if (isset($attributes['framed_ip'])) {
 	if (isset($attributes['framed_mask'])) {
-		$content .= "topology subnet\n";
 		$content .= "ifconfig-push {$attributes['framed_ip']} {$attributes['framed_mask']}";
 	} else {
-		$content .= "topology net30\n";
 		$content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) - 1));
 	}
 }

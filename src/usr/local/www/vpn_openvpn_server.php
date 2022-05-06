@@ -858,7 +858,7 @@ if ($_POST['save']) {
 		$server['ping_action_push'] = $pconfig['ping_action_push'];
 		$server['inactive_seconds'] = $pconfig['inactive_seconds'];
 
-		if (($act == 'new') || ($server['disable'] ^ $a_server[$id]['disable']) ||
+		if (($act == 'new') || (!empty($server['disable']) ^ !empty($a_server[$id]['disable'])) ||
 		    ($server['tunnel_network'] != $a_server[$id]['tunnel_network']) ||
 		    ($server['tunnel_networkv6'] != $a_server[$id]['tunnel_networkv6'])) {
 			$server['unbound_restart'] = true;

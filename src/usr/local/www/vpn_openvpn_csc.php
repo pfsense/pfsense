@@ -309,7 +309,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (($act == 'new') || ($csc['disable'] ^ $a_csc[$id]['disable']) ||
+		if (($act == 'new') || (!empty($csc['disable']) ^ !empty($a_csc[$id]['disable'])) ||
 		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
 		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
 			$csc['unbound_restart'] = true;

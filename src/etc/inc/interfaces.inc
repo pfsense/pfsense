@@ -7684,7 +7684,7 @@ function is_stf_interface($inf) {
 	return false;
 }
 
-function restart_interface_services($interface, $ipv6type) {
+function restart_interface_services($interface, $ipv6type = "") {
 	global $config;
 
 	services_unbound_configure(true, $interface);

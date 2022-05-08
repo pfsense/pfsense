@@ -49,7 +49,7 @@ if ($_POST['ifdescr'] && $_POST['submit']) {
 		restart_interface_services($interface);
 		filter_configure();
 		system_routing_configure();
-		restart_packages();
+		send_event("service reload packages");
 	} else {
 		interface_configure($interface);
 	}

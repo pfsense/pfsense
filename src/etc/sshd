@@ -146,7 +146,7 @@ if ($config['ssh']['dsa_key'] <> "") {
 }
 
 /* are we already running?  if so exit */
-if (is_subsystem_dirty('sshdkeys')) {
+if (is_subsystem_dirty('sshdkeys') && is_process_running("ssh-keygen")) {
 	unset($keyfiles);
 	return;
 }

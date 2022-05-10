@@ -43,6 +43,7 @@ log_session() {
 if [ -n "${username}" ]; then
 	lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
 	rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
+	routesfile="/tmp/${username}"
 	anchorname="openvpn/${dev}_${username}_${trusted_port}"
 fi
 
@@ -70,6 +71,7 @@ if [ "${script_type}" = "client-disconnect" ]; then
 			/bin/rm "${lockfile}"
 
 			/bin/rm "${rulesfile}"
+			/bin/rm "${routesfile}"
 		fi
 	fi
 

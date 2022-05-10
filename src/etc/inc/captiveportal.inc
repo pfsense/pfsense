@@ -541,7 +541,7 @@ function captiveportal_delete_rules($pipes_to_remove = array(), $clear_auth_rule
 	$connected_users = captiveportal_read_db();
 	if (!empty($connected_users) && $clear_auth_rules) {
 		foreach ($connected_users as $user) {
-			captiveportal_ether_delete_entry($ipent, 'auth');
+			captiveportal_ether_delete_entry($user, 'auth');
 		}
 	}
 
@@ -874,7 +874,7 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null, $c
 
 	if (is_ipaddrv4($dbent[2])) {
 		/*
-		 * Delete client's anchor entry from tables auth_up and auth_down.
+		 * Delete client's anchor entry from auth and authmac anchors
 		 */
 		$cpsession = captiveportal_isip_logged($dbent[2]);
 		if (!empty($cpsession)) {
@@ -987,6 +987,9 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 	captiveportal_radius_stop_all($term_cause, $logoutReason);
 
+	/* reinit captiveportal pipes and anchors */
+	captiveportal_init_rules(true);
+
 	/* remove users from the database */
 	$cpdb = captiveportal_read_db();
 	$unsetindexes = array_column($cpdb,5);
@@ -994,9 +997,6 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 		// High Availability : do not sync removed entries
 		captiveportal_remove_entries($unsetindexes, true);
 	}
-
-	/* reinit captiveportal pipes and anchors */
-	captiveportal_init_rules(true);
 
 	unlock($cpdblck);
 	unlock($rcprunelock);
@@ -1106,15 +1106,13 @@ function captiveportal_ether_delete_entry($hostent, $anchor = 'allowedhosts') {
 		$host = $hostent['ip'] . '_32';
 	}
 
-	$result = pfSense_pf_cp_get_eth_pipes($anchor);
+	$result = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/$host");
 	if (!empty($result)) {
 		list($pipeup, $pipedown) = $result;
-
-		/* flush anchor rules */
-		pfSense_pf_cp_flush("{$cpzoneprefix}_{$anchor}/{$host}", "ether");
-
 		captiveportal_free_dn_ruleno($pipeup);
 	}
+	/* flush anchor rules */
+	pfSense_pf_cp_flush("{$cpzoneprefix}_{$anchor}/{$host}", "ether");
 }
 
 function captiveportal_allowedhostname_configure() {

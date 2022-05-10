@@ -156,7 +156,7 @@ if (!function_exists('printPanel')) {
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
 
-						if ($sk_server['status'] == "up") {
+						if (strtolower($sk_server['state']) == "connected") {
 							/* tunnel is up */
 		$opstring .=						"<i class=\"fa fa-arrow-up text-success\"></i>";
 						} else {
@@ -233,7 +233,7 @@ if (!function_exists('printPanel')) {
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
 
-						if ($client['status'] == "up") {
+						if (strtolower($client['state']) == "connected") {
 							/* tunnel is up */
 		$opstring .=						"<i class=\"fa fa-arrow-up text-success\"></i>";
 						} else {

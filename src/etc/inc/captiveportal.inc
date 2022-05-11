@@ -1172,7 +1172,7 @@ function captiveportal_allowedip_configure() {
 
 /* get last activity timestamp given client IP address */
 function captiveportal_get_last_activity($ip) {
-	global $cpzone;
+	global $config, $cpzone;
 
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$anchor = $cpzoneprefix . '_auth';

@@ -591,6 +591,10 @@ $(function(){
 		var act = args[1];
 		var ipsectype = args[2];
 		var conid = args[3];
+		if (args[4] == 'mobile') {
+			conid += '-mobile';
+			args.shift();
+		}
 		var uniqueid;
 		if (args.length > 4) {
 			uniqueid = args[4];

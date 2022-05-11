@@ -2848,9 +2848,9 @@ function captiveportal_pipe_configure($host) {
 		$pipeup = captiveportal_get_next_dn_ruleno('pipe_mac');
 	}
 
-	mwexec("/sbin/dnctl pipe {$pipeup} config bw {$Bwup}Kbit/s queue 100 buckets 16");
+	mwexec("/sbin/dnctl pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100 buckets 16");
 	$pipedown = $pipeup + 1;
-	mwexec("/sbin/dnctl pipe {$pipedown} config bw {$Bwdown}Kbit/s queue 100 buckets 16");
+	mwexec("/sbin/dnctl pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
 
 	return array($pipeup, $pipedown);
 }
@@ -2866,7 +2866,7 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	}
 
 	$host = $ipent['ip'] . '_' . $ipent['sn'];
-	list($pipeup, $pipedown) = captiveportal_pipe_configure($hostent);
+	list($pipeup, $pipedown) = captiveportal_pipe_configure($ipent);
 
 	$rules = '';
 	if (($ipent['dir'] == 'to') || ($ipent['dir'] == 'both')) {

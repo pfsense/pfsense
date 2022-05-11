@@ -59,6 +59,15 @@ fi
 if [ -f "/tmp/${IF}_router" ]; then
 	/bin/mv /tmp/${IF}_router /tmp/${IF}_router.last
 fi
+
+# cleanup all VIPs, see https://redmine.pfsense.org/issues/11629
+while
+	aliases=$(/sbin/ifconfig ${IF} | /usr/bin/grep netmask)
+	if [ -z "${aliases}" ]; then
+		break
+	fi
+do ifconfig ${IF} -alias ;  done
+
 /bin/rm -f /tmp/${IF}up
 /bin/rm -f /tmp/${IF}_ip
 /usr/local/sbin/pfSctl -c 'service reload dns'

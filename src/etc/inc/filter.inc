@@ -2835,7 +2835,8 @@ function filter_generate_user_rule_arr($rule) {
 	global $config, $vpns_list;
 	update_filter_reload_status(sprintf(gettext("Creating filter rule %s ..."), $rule['descr']));
 	$ret = array();
-	$line = filter_generate_user_rule($rule);
+	$extralabels = "";
+	$line = filter_generate_user_rule($rule, $extralabels);
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if ($rule['descr'] != "" and $line != "") {
@@ -2843,6 +2844,7 @@ function filter_generate_user_rule_arr($rule) {
 	} else {
 		$ret['descr'] = "label \"USER_RULE\"";
 	}
+	$ret['extralabels'] = $extralabels;
 
 	return $ret;
 }
@@ -3105,7 +3107,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	return $src;
 }
 
-function filter_generate_user_rule($rule) {
+function filter_generate_user_rule($rule, & $extralabels = null) {
 	global $config, $g, $FilterIflist, $GatewaysList, $vpns_list;
 	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
@@ -3271,7 +3273,7 @@ function filter_generate_user_rule($rule) {
 		if (isset($GatewaysList[$rule['gateway']])) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
-			$aline['gwlabel'] = " label \"gw:{$rule['gateway']}\" ";
+			$aline['gwlabel'] = "label \"gw:{$rule['gateway']}\"";
 		} else if (isset($config['system']['skip_rules_gw_down'])) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {
@@ -3535,7 +3537,7 @@ function filter_generate_user_rule($rule) {
 					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
 				}
 
-				$aline['schedlabel'] = " label \"s:{$sched['schedlabel']}\" ";
+				$aline['schedlabel'] = "label \"s:{$sched['schedlabel']}\"";
 				break;
 			}
 		}
@@ -3544,10 +3546,12 @@ function filter_generate_user_rule($rule) {
 	$aline['trackerlabel'] = "";
 	if (!empty($rule['tracker'])) {
 		$aline['tracker'] = "ridentifier {$rule['tracker']} ";
-		$aline['trackerlabel'] = " label \"id:{$rule['tracker']}\" ";
+		$aline['trackerlabel'] = "label \"id:{$rule['tracker']}\"";
 	}
 
 	$line = "";
+	$extralabels = implode(' ', array_filter(array($aline['trackerlabel'], $aline['schedlabel'], $aline['gwlabel'])));
+
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to vpns */
 	if (!empty($aline['route']) && (trim($aline['type']) == "pass") && strstr($dst, "any") &&
@@ -3558,15 +3562,15 @@ function filter_generate_user_rule($rule) {
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] .
 			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . filter_negaterule_tracker() . $aline['allowopts'] . $aline['flags'] .
-			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] . $aline['trackerlabel'] . $aline['gwlabel'] .
-			" label \"NEGATE_ROUTE: Negate policy routing for destination\"\n";
+			$aline['queue'] . $aline['dnpipe'] .
+			" label \"NEGATE_ROUTE: Negate policy routing for destination\" " . $extralabels . "\n";
 
 	}
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
 		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
-		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] . $aline['trackerlabel'] . $aline['gwlabel'];
+		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 
 	unset($aline);
 
@@ -4157,32 +4161,15 @@ EOD;
 		$ipfrules .= "\n# User-defined rules follow\n";
 		$ipfrules .= "\nanchor \"userrules/*\"\n";
 		/* Generate user rule lines */
-		foreach ($rule_arr1 as $rule) {
+		foreach (array_merge($rule_arr1, $rule_arr2, $rule_arr3) as $rule) {
 			if (isset($rule['disabled'])) {
 				continue;
 			}
 			if (!$rule['rule']) {
 				continue;
 			}
-			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
-		}
-		foreach ($rule_arr2 as $rule) {
-			if (isset($rule['disabled'])) {
-				continue;
-			}
-			if (!$rule['rule']) {
-				continue;
-			}
-			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
-		}
-		foreach ($rule_arr3 as $rule) {
-			if (isset($rule['disabled'])) {
-				continue;
-			}
-			if (!$rule['rule']) {
-				continue;
-			}
-			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+			$ipfrules .= implode(' ', array_filter(array(trim($rule['rule']), trim($rule['descr']), trim($rule['extralabels']))));
+			$ipfrules .= "\n";
 		}
 		unset($rule_arr1, $rule_arr2, $rule_arr3);
 	}

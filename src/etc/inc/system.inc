@@ -2817,8 +2817,10 @@ function check_dnsavailable($proto='inet') {
 
 	if ($proto == 'inet') {
 		$gdns = array('8.8.8.8', '8.8.4.4');
-	} else {
+	} elseif ($proto == 'inet6') {
 		$gdns = array('2001:4860:4860::8888', '2001:4860:4860::8844');
+	} else {
+		$gdns = array('8.8.8.8', '8.8.4.4', '2001:4860:4860::8888', '2001:4860:4860::8844');
 	}
 	$nameservers = array_merge($gdns, get_dns_nameservers());
 	$test = 0;

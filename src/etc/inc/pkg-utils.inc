@@ -1336,7 +1336,7 @@ function get_base_pkg_name() {
 function get_system_pkg_version($baseonly = false, $use_cache = true) {
 	global $g;
 
-	if (!check_dnsavailable()) {
+	if (!check_dnsavailable('any')) {
 		return false;
 	}
 

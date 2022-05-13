@@ -79,6 +79,7 @@ $pconfig['logincss'] = $config['system']['webgui']['logincss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
+$pconfig['rrd_tabs_sort'] = isset($config['rrd']['rrd_tabs_sort']);
 $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
 $pconfig['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
 $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
@@ -292,6 +293,9 @@ if ($_POST) {
 
 		unset($config['system']['webgui']['interfacessort']);
 		$config['system']['webgui']['interfacessort'] = $_POST['interfacessort'] ? true : false;
+
+		unset($config['rrd']['rrd_tabs_sort']);
+		$config['rrd']['rrd_tabs_sort'] = $_POST['rrd_tabs_sort'] ? true : false;
 
 		unset($config['system']['webgui']['webguileftcolumnhyper']);
 		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
@@ -679,6 +683,14 @@ gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
 gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
 gen_interfacessort_field($section, $pconfig['interfacessort']);
+
+$section->addInput(new Form_Checkbox(
+	'rrd_tabs_sort',
+	'RRD Tab Sorting',
+	'Sort Monitoring (RRD) Tabs',
+	$pconfig['rrd_tabs_sort']
+))->setHelp('If selected, <a href="/status_monitoring.php">Status &gt; Monitoring</a> tabs will be sorted alphabetically, otherwise they are shown in creation order.');
+
 gen_associatedpanels_fields(
 	$section,
 	$pconfig['dashboardavailablewidgetspanel'],

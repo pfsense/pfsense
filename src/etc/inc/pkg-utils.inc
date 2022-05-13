@@ -1217,10 +1217,16 @@ function package_reinstall_all() {
 				require_once("notices.inc");
 			}
 
+			/* Name of the package that cannot be found. If it has
+			 * an internal name, include that as well. */
+			$pkgname = $package['name'];
+			if (!empty($package['internal_name'])) {
+				$pkgname .= " ({$package['internal_name']})";
+			}
 			file_notice(gettext("Package reinstall"),
 			    sprintf(gettext("Package %s does not exist in " .
 			    "current %s version and it has been removed."),
-			    $package, $g['product_label']));
+			    $pkgname, $g['product_label']));
 			uninstall_package($package);
 		}
 	}

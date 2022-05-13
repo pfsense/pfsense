@@ -261,6 +261,9 @@ function restore_xmldatafile($type='voucher', $conf = false) {
 		$basename = basename($file['filename']);
 		$dirname = dirname($g['backuppath'][$type]);
 		$xmldata_file = "{$dirname}/{$basename}";
+		if (!is_dir($dirname)) {
+			safe_mkdir($dirname);
+		}
 		if (file_put_contents($xmldata_file, gzinflate(base64_decode($file['data']))) === false) {
 			log_error(sprintf(gettext("Cannot write %s"), $xmldata_file));
 			continue;

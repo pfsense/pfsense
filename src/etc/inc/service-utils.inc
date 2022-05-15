@@ -587,55 +587,56 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false,
 	return $output;
 }
 
-function get_service_control_links($service, $addname = false) {
+function get_service_control_links($service, $addname = false, $widgetkey = null) {
 	global $g;
+	$callingpage = basename($_SERVER['SCRIPT_FILENAME']);
+	$widgetkey = isset($widgetkey) ? $widgetkey : preg_replace('/[^a-z]/i','', $callingpage);
 	$output = "";
 	$stitle = ($addname) ? $service['name'] . " " : "";
-
-	switch ($service['name']) {
-		case "openvpn":
-			$link = '<a title="%s" href="#" id="openvpn-%s-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
-		break;
-		case "captiveportal":
-			$link = '<a title="%s" href="#" id="captiveportal-%s-' . $service['zone'] . '">';
-		break;
-		default:
-			$link = '<a title="%s" href="#" id="%s-' . $service['name'] . '">';
-	}
 
 	if (get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= '<a href="#" id="openvpn-restartservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
+				$output .= '<a href="#" id="' . $widgetkey . '|openvpn|restartservice|' . $service['mode'] . '|' . $service['vpnid'] . '">';
 				break;
 			case "captiveportal":
-				$output .= '<a href="#" id="captiveportal-restartservice-' . $service['zone'] . '">';
+				$output .= '<a href="#" id="' . $widgetkey . '|captiveportal|restartservice|' . $service['zone'] . '">';
 				break;
 			default:
-				$output .= '<a href="#" id="restartservice-' . $service['name'] . '" >';
+				$output .= '<a href="#" id="' . $widgetkey . '|restartservice|' . $service['name'] . '">';
 		}
 
-		$output .= "<i class=\"fa fa-repeat\" title=\"" . sprintf(gettext("Restart %sService"), $stitle) . "\"></i></a>\n";
+		$output .= '<i class="fa fa-repeat" title="' . sprintf(gettext("Restart %sService"), $stitle) . '"></i></a> ';
 
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= '<a href="#" id="openvpn-stopservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
+				$output .= '<a href="#" id="' . $widgetkey . '|openvpn|stopservice|' . $service['mode'] . '|' . $service['vpnid'] . '">';
 				break;
 			case "captiveportal":
-				$output .= '<a href="#" id="captiveportal-stopservice-' . $service['zone'] . '">';
+				$output .= '<a href="#" id="' . $widgetkey . '|captiveportal|stopservice|' . $service['zone'] . '">';
 				break;
 			default:
-				$output .= '<a href="#" id="stopservice-' . $service['name'] . '">';
+				$output .= '<a href="#" id="' . $widgetkey . '|stopservice|' . $service['name'] . '">';
 		}
 
-		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
+		$output .= '<i class="fa fa-stop-circle-o" title="' . sprintf(gettext("Stop %sService"), $stitle) . '"></i></a>';
 
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 
 		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
-			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
-			$output .= '<i class="fa fa-play-circle"></i></a> ';
+			switch ($service['name']) {
+				case "openvpn":
+					$output .= '<a href="#" id="' . $widgetkey . '|openvpn|startservice|' . $service['mode'] . '|' . $service['vpnid'] . '">';
+					break;
+				case "captiveportal":
+					$output .= '<a href="#" id="' . $widgetkey . '|captiveportal|startservice|' . $service['zone'] . '">';
+					break;
+				default:
+					$output .= '<a href="#" id="' . $widgetkey . '|startservice|' . $service['name'] . '">';
+			}
+
+			$output .= '<i class="fa fa-play-circle" title="' . sprintf(gettext("Start %sService"), $stitle) . '"></i></a> ';
 		}
 	}
 

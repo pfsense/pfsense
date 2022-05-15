@@ -742,49 +742,68 @@ function moveOptions(From, To)	{
 
 // ------------- Service start/stop/restart functions.
 // If a start/stop/restart button is clicked, parse the button name and make a POST via AJAX
-$('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(function(event) {
-	var args = this.id.split('-');
+function addServiceControlClickHandlers(widgetkey, rp) {
+	$('[id^=' + widgetkey + '][id*=restartservice],[id^=' + widgetkey + '][id*=stopservice],[id^=' + widgetkey + '][id*=startservice]').click(
+		{ rp: rp, wk: widgetkey },
+		serviceControlClicked
+	);
+}
+
+function serviceControlClicked(event) {
+	if ($(this).prop('disabled')) {
+		return false;
+	}
+	var reload_page = event.data.rp;
+	var widgetkey = event.data.wk;
+	var args = this.id.split('|');
 	var action, name, mode_zone, id;
 
-	if (args[0] == "openvpn") {
-		action = args[1];
-		name = args[0];
-		mode_zone = args[2];
-		id = args[3];
-	} else if (args[0] == "captiveportal") {
-		action = args[1];
-		name = args[0];
-		mode_zone = args[2];
-		id = args[3];
+	if (args[1] == "openvpn") {
+		name = args[1];
+		action = args[2];
+		mode_zone = args[3];
+		id = args[4];
+	} else if (args[1] == "captiveportal") {
+		name = args[1];
+		action = args[2];
+		mode_zone = args[3];
+		id = args[4];
 	} else {
-		action = args[0];
-		args.shift();
-		name = args.join('-');
+		action = args[1];
+		name = args[2];
 	}
+	//console.log('action:%s service:%s vpnmode/cpzone:%s id:%s reload_page:%s', action, name, mode_zone, id, reload_page);
 
 	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
-	this.blur();
+	//Mutex: disable further actions for this service until this operation is complete
+	$('[id^=' + widgetkey + '][id*=' + name + ']').prop('disabled', true).css('opacity', 0.3);
+	$(this).css('opacity', 1.0);
 
 	ajaxRequest = $.ajax(
 		{
 			url: "/status_services.php",
 			type: "post",
 			data: {
-				ajax: 		"ajax",
-				mode: 		action,
-				service: 	name,
-				vpnmode: 	mode_zone,
-				zone: 		mode_zone,
-				id: 		id
+				ajax: "ajax",
+				mode: action,
+				service: name,
+				vpnmode: mode_zone,
+				zone: mode_zone,
+				id: id
 			}
 		}
 	);
 
-	// Once the AJAX call has returned, refresh the page to show the new service
-	ajaxRequest.done(function (response, textStatus, jqXHR) {
-		location.reload(true);
-	});
-});
+	// Once the AJAX call has returned, refresh the page or clear the icon depending on the reload_page bool
+	if (reload_page === true) {
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			location.reload(true);
+		});
+	} else {
+		//console.log('AJAX call completed');
+	}
+	event.preventDefault();
+}
 
 // The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
 // GET calls to POST calls

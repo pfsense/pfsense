@@ -145,5 +145,13 @@ if (count($services) > 0) {
 } else {
 	print_info_box(gettext("No services found."), 'danger');
 }
+$callingpage = preg_replace('/[^a-z]/i','', basename($_SERVER['SCRIPT_FILENAME']));
+echo <<<EOD
+<script type="text/javascript">
+window.onload=function() {
+	addServiceControlClickHandlers("{$callingpage}", true);
+}
+</script>
+EOD;
 
 include("foot.inc");

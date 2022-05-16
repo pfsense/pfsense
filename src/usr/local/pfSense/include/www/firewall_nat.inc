@@ -594,8 +594,14 @@ function saveNATrule($post, $id, $json = false) {
 			$filterent['protocol'] = $post['proto'];
 			if (is_specialnet($post['localtype'])) {
 				$filterent['destination']['network'] = $post['localtype'];
+				if (isset($filterent['destination']['address'])) {
+					unset($filterent['destination']['address']);
+				}
 			} else {
 				$filterent['destination']['address'] = $post['localip'];
+				if (isset($filterent['destination']['network'])) {
+					unset($filterent['destination']['network']);
+				}
 			}
 
 			if (isset($post['disabled'])) {

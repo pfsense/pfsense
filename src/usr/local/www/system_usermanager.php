@@ -690,12 +690,12 @@ foreach ($a_user as $i => $userent):
 						<td>
 <?php
 	if ($userent['scope'] != "user") {
-		$usrimg = 'eye-open';
+		$usrimg = 'eye';
 	} else {
 		$usrimg = 'user';
 	}
 ?>
-							<i class="fa fa-<?=$usrimg?>"></i>
+							<i class="fa fa-<?=$usrimg?>" title="<?= gettext("Scope") . ": {$userent['scope']}" ?>"></i>
 							<?=htmlspecialchars($userent['name'])?>
 						</td>
 						<td><?=htmlspecialchars($userent['descr'])?></td>

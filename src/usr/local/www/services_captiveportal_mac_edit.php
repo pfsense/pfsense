@@ -167,7 +167,7 @@ if ($_POST['save']) {
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
-			captiveportal_passthru_delete_entry($oldmac);
+			captiveportal_passthrumac_delete_entry($oldmac);
 			captiveportal_ether_configure_entry($mac, 'passthrumac');
 			unset($cpzoneid);
 		}

@@ -238,7 +238,7 @@ foreach ($leases['lease'] as $data):
 
 	if ($data['act'] != $static_string) {
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-			if (!is_array($dhcpifconf['range'])) {
+			if (!is_array($dhcpifconf['range']) || !isset($dhcpifconf['enable'])) {
 				continue;
 			}
 			if (is_inrange_v4($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {

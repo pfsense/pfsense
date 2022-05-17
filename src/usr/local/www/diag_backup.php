@@ -79,6 +79,7 @@ function build_area_list($showall) {
 		"aliases" => gettext("Aliases"),
 		"captiveportal" => gettext("Captive Portal"),
 		"voucher" => gettext("Captive Portal Vouchers"),
+		"widgets" => gettext("Dashboard Widgets"),
 		"dnsmasq" => gettext("DNS Forwarder"),
 		"unbound" => gettext("DNS Resolver"),
 		"dhcpd" => gettext("DHCP Server"),

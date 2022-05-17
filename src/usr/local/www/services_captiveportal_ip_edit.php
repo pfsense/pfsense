@@ -155,7 +155,7 @@ if ($_POST['save']) {
 
 		if (isset($a_cp[$cpzone]['enable'])) {
 			if (!empty($oldip)) {
-				captiveportal_ether_delete_entry($oldip, 'allowedhostsmac');
+				captiveportal_ether_delete_entry($oldip, 'allowedhosts');
 			}
 			captiveportal_allowedip_configure_entry($ip);
 		}

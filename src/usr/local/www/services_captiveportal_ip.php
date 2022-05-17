@@ -64,7 +64,7 @@ if ($_POST['act'] == "del" && !empty($cpzone)) {
 		$ipent = $a_allowedips[$_POST['id']];
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
-			captiveportal_ether_delete_entry($ipent, 'allowedhostsmac');
+			captiveportal_ether_delete_entry($ipent, 'allowedhosts');
 		}
 
 		unset($a_allowedips[$_POST['id']]);

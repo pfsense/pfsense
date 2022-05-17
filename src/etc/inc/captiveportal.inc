@@ -1106,10 +1106,10 @@ function captiveportal_ether_delete_entry($hostent, $anchor = 'allowedhosts') {
 		$host = $hostent['ip'] . '_32';
 	}
 
-	$result = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/$host");
+	$result = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/{$host}");
 	if (!empty($result)) {
 		list($pipeup, $pipedown) = $result;
-		captiveportal_free_dn_ruleno($pipeup);
+		captiveportal_pipe_delete($pipeup);
 	}
 	/* flush anchor rules */
 	pfSense_pf_cp_flush("{$cpzoneprefix}_{$anchor}/{$host}", "ether");

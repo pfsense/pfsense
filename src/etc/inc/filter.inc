@@ -492,7 +492,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	/* Captive Portal ether anchors:
 	 * 'cpzoneid_X_passthrumac' - add PASS tag to MAC passthru entries 
-	 * 'cpzoneid_X_allowedhostsmac' - add PASS tag for Allowed IP/Hostnames to bypass captive portal redirection
+	 * 'cpzoneid_X_allowedhosts' - add PASS tag for Allowed IP/Hostnames to bypass captive portal redirection
 	 * 'cpzoneid_X_auth' - add PASS tag to authenticated client
 	 */
 	$rules .= filter_captiveportal_ether();

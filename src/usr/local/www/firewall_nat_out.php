@@ -494,14 +494,12 @@ if ($mode == "automatic" || $mode == "hybrid"):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 					</tr>
-<?php
-	endforeach;
-endif;
-?>
+<?php endforeach; ?>
 				</tbody>
 			</table>
 		</div>
 	</div>
+<?php endif; ?>
 </form>
 
 <div class="infoblock">

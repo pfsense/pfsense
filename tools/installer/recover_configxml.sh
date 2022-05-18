@@ -84,17 +84,31 @@ if [ -n "${recover_disk}" ] ; then
 		if [ "${fs_type}" == "zfs" ]; then
 			# Load KLD for ZFS support
 			/sbin/kldload zfs
-			# Import pool with alternate mount. Try zoot first, then pfSense
-			/sbin/zpool import -R ${recovery_mount} -f zroot
+
+			# Import pool with alternate mount.
+			if /sbin/zpool import | /usr/bin/awk '/pool:/ {print $2}' | /usr/bin/grep -q pfSense; then
+				# If the pool name is pfSense, it's the new style layout
+				pool_name="pfSense"
+			else
+				# Old pool name
+				pool_name="zroot"
+			fi
+
+			/sbin/zpool import -R ${recovery_mount} -f ${pool_name}
 			zpool_import=$?
 			if [ ${zpool_import} -eq 0 ]; then
 				# Mount the default root directory of the previous install
-				/sbin/mount -t zfs zroot/ROOT/default ${recovery_mount}
-			else
-				# If the pool name is pfSense, it's the new style layout
-				/sbin/zpool import -R ${recovery_mount} -f pfSense
-				# New layout has /cf/conf as its own dataset and doesn't need
-				# its root mounted manually to reach it.
+				# to get /etc for SSH keys (new and old) and config.xml (old)
+				/sbin/mount -t zfs ${pool_name}/ROOT/default ${recovery_mount}
+
+				if [ ! -d ${recovery_mount}/cf/conf ]; then
+					# New layout has /cf as its own dataset and doesn't need its
+					# root mounted manually to reach it, but it may not be mounted
+					# automatically
+					unmount_cf="yes"
+					/bin/mkdir -p ${recovery_mount}/cf
+					/sbin/mount -t zfs ${pool_name}/ROOT/default/cf ${recovery_mount}/cf
+				fi
 			fi
 		fi
 	fi
@@ -103,24 +117,29 @@ if [ -n "${recover_disk}" ] ; then
 	if [ -r ${recovery_mount}/cf/conf/config.xml -a -s ${recovery_mount}/cf/conf/config.xml ]; then
 		/bin/cp ${recovery_mount}/cf/conf/config.xml ${recovery_dir}/config.xml
 		echo "Recovered config.xml from ${recover_disk}, stored in ${recovery_dir}."
-		for keytype in "rsa ed25519"; do
-			if [ -s {$recovery_mount}/etc/ssh/ssh_host_{$keytype}_key -a -s {$recovery_mount}/etc/ssh/ssh_host_{$keytype}_key.pub ]; then
+	else
+		echo "${recover_disk} does not contain a readable config.xml for recovery."
+	fi
+
+	if [ -d ${recovery_mount}/etc/ssh ]; then
+		for keytype in rsa ed25519; do
+			if [ -s ${recovery_mount}/etc/ssh/ssh_host_${keytype}_key -a -s ${recovery_mount}/etc/ssh/ssh_host_${keytype}_key.pub ]; then
 				/bin/cp ${recovery_mount}/etc/ssh/ssh_host_${keytype}_key ${recovery_dir}/ssh_host_${keytype}_key
 				/bin/cp ${recovery_mount}/etc/ssh/ssh_host_${keytype}_key.pub ${recovery_dir}/ssh_host_${keytype}_key.pub
 				echo "Recovered ${keytype} SSH key from ${recover_disk}, stored in ${recovery_dir}."
 			fi
 		done
-	else
-		echo "${recover_disk} does not contain a readable config.xml for recovery."
-		exit 1
 	fi
 
 	# Cleanup. Unmount the disk partition.
-	/sbin/umount ${recovery_mount}
+	if [ -n "${unmount_cf}" ]; then
+		/sbin/umount ${recovery_mount}/cf 2>/dev/null
+	fi
+	/sbin/umount ${recovery_mount} 2>/dev/null
 
 	# ZFS cleanup, export the pool and then unload ZFS KLD.
 	if [ "${fs_type}" == "zfs" ]; then
-		/sbin/zpool export -f zroot pfSense
+		/sbin/zpool export -f ${pool_name}
 		/sbin/kldunload zfs
 	fi
 fi

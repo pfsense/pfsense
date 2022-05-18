@@ -3288,6 +3288,8 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 			$aline['prot'] = " proto ipv6-icmp ";
 		} elseif ($rule['protocol'] == "icmp") {
 			$aline['prot'] = " proto icmp ";
+		} elseif ($rule['protocol'] == "any") {
+			$aline['prot'] = "";
 		} else {
 			$aline['prot'] = " proto {$rule['protocol']} ";
 		}

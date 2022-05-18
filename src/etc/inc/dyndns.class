@@ -784,7 +784,7 @@
 								break;
 						}
 					}
-					$this->_checkStatus(0, $code);
+					$this->_checkStatus(null, null, $code, null);
 					break;
 				case 'freedns':
 				case 'freedns-v6':
@@ -1716,8 +1716,10 @@
 				  	}
 					log_error(sprintf("Response Data: %s", $data));
 				}
-				$this->_checkStatus($ch, $data, $header);
+				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				$curl_error = @curl_error($ch);
 				@curl_close($ch);
+				$this->_checkStatus($http_code, $curl_error, $data, $header);
 			}
 		}
 
@@ -1786,8 +1788,10 @@
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
-				$this->_checkStatus($ch, $data, $header);
+				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				$curl_error = @curl_error($ch);
 				@curl_close($ch);
+				$this->_checkStatus($http_code, $curl_error, $data, $header);
 			}
 		}
 
@@ -1910,7 +1914,7 @@
 		 * Private Function (added 12 July 2005) [beta]
 		 *   Retrieve Update Status
 		 */
-		function _checkStatus($ch, $data, $header) {
+		function _checkStatus($http_code, $curl_error, $data, $header) {
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() starting.'), $this->_dnsService, $this->_FQDN));
 			}
@@ -1919,8 +1923,8 @@
 			$error_str = "(" . gettext("Error") . ") ";
 			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
 
-			if ($this->_dnsService != 'ods' && @curl_error($ch)) {
-				$status = gettext("Curl error occurred:") . " " . curl_error($ch);
+			if ($this->_dnsService != 'ods' && !empty($curl_error)) {
+				$status = gettext("Curl error occurred:") . " {$curl_error}";
 				log_error($status);
 				$this->status = $status;
 				return;
@@ -2019,26 +2023,23 @@
 					/* Responds with HTTP 204 on success.
 					 * see https://api.domeneshop.no/docs/index.html#tag/ddns/paths/~1dyndns~1update/get */
 
-                                        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-					if ($code == "204") {
+					if ($http_code == "204") {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {
-						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code . ")";
+						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $http_code . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
 					}
 					break;
 				case 'onecom':
 				case 'onecom-v6':
-                                        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-					if (($code == "200") || ($code == "204")) {
+					if (($http_code == "200") || ($http_code == "204")) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {
-						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code . ")";
+						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $http_code . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
 					}
@@ -2403,7 +2404,6 @@
 					break;
 				case 'name.com':
 				case 'name.com-v6':
-					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code == "200") {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
@@ -2643,12 +2643,10 @@
 					   Responds with HTTP 4xx on error.
 					   Returns JSON data as body */
 ;
-                                        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-					if ($code == "200") {
+					if ($http_code == "200") {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
-					} else if (preg_match("/4\d\d/i", $code)) {
+					} else if (preg_match("/4\d\d/i", $http_code)) {
 						$arrbody = json_decode($data, true);
 						$message = $arrbody['message'] . ".";
 						if (isset($arrbody['errors']['content'])) {
@@ -2658,7 +2656,7 @@
 						}
 						$status = $status_intro . $error_str . $message;
 					} else {
-						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code . ")";
+						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $http_code . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
 					}
@@ -2870,7 +2868,6 @@
 					}
 				case 'azure':
 				case 'azurev6':
-					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code == 401) {
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else if ($http_code == 201) {
@@ -2888,7 +2885,6 @@
 				case 'linode':
 				case 'linode-v6':
 					$status_intro = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): ";
-					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					$result = json_decode($data,true);
 					if ($this->_dnsVerboseLog) {
 						log_error(sprintf(gettext('_checkStatus() results: %1$s'), $data));
@@ -2905,7 +2901,6 @@
 					break;
 				case 'gandi-livedns':
 				case 'gandi-livedns-v6':
-					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code == 401) {
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else if ($http_code == 200 || $http_code == 201) {
@@ -2919,7 +2914,6 @@
 					break;
 				case 'desec':
 				case 'desec-v6':
-					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					switch ($http_code) {
 						case '200':
 							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
@@ -3017,9 +3011,7 @@
 		 *      | work with other systems. pfSense base is FreeBSD.
 		 */
 		function _detectChange() {
-			global $debug;
-
-			if ($debug) {
+			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _detectChange() starting.'), $this->_dnsService, $this->_FQDN));
 			}
 
@@ -3120,9 +3112,7 @@
 			fclose($file);
 		}
 		function _checkIP() {
-			global $debug;
-
-			if ($debug) {
+			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkIP() starting.'), $this->_dnsService, $this->_FQDN));
 			}
 

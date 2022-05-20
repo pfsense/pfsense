@@ -755,7 +755,7 @@ function ipsec_status() {
 						$cmap['connected']['p2'][$childreqid] = $childsa['name'];
 						$cmap[$childikeid]['p2'][$childreqid]['connected'] = true;
 					}
-				} elseif (is_array($cmap[$ikeid]) && is_array($cmap[$ikeid]['p2'])) {
+				} else {
 					/* If this is IKEv2 w/o Split, mark all reqids for the P1 as connected */
 					if ($cmap[$childikeid]['p1']['iketype'] == 'ikev2' &&
 					    !isset($cmap[$childikeid]['p1']['splitconn'])) {
@@ -3180,48 +3180,6 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 
 	if (platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
-	} else {
-		/* terminate disabled/deleted SA
-		 * see https://redmine.pfsense.org/issues/13102
-		 * and https://redmine.pfsense.org/issues/6624#note-5 */
-		$cmap = ipsec_map_config_by_id();
-		$status = ipsec_list_sa();
-		if (!is_array($status)) {
-			$status = array();
-		}
-		foreach ($status as $ikesa) {
-			$terminate_ph1 = false;
-			list($ikeid, $reqid) = ipsec_id_by_conid($ikesa['con-id']);
-			foreach ($config['ipsec']['phase1'] as $p1) {
-				if (($p1['ikeid'] == $ikeid) && isset($p1['disabled'])) {
-					$terminate_ph1 = true;
-					break;
-				}
-			}
-			if ($terminate_ph1 || !array_key_exists($ikeid, $cmap)) {
-				/* terminate disabled/deleted PH1 SA */
-				ipsec_terminate_by_conid('ike', $ikesa['con-id'], $ikesa['uniqueid']);
-				continue;
-			}
-			if (array_key_exists('child-sas', $ikesa) && is_array($ikesa['child-sas'])) {
-				foreach ($ikesa['child-sas'] as $childid => $childsa) {
-					list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
-					if (!is_array($cmap[$childikeid]['p2']) ||
-					    !array_key_exists($childreqid, $cmap[$childikeid]['p2'])) {
-						/* terminate deleted PH2 SA */
-						ipsec_terminate_by_conid('child', $childid, $childsa['uniqueid']);
-						continue;
-					}
-					foreach ($config['ipsec']['phase2'] as $p1) {
-						if (($p1['ikeid'] == $ikeid) && isset($p2['disabled'])) {
-							/* terminate disabled PH2 SA */
-							ipsec_terminate_by_conid('child', $childid, $childsa['uniqueid']);
-							break;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	$ipsecstartlock = lock('ipsec', LOCK_EX);

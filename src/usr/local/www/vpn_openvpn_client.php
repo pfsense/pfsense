@@ -1030,9 +1030,13 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network or network type alias with a single entry used for private ' .
-		    'communications between this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). ' .
-		    'The second usable address in the network will be assigned to the client virtual interface. ' .
-		    'Leave blank if the server is capable of providing addresses to clients.');
+			'communications between this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). ' .
+			'The second usable address in the network will be assigned to the client virtual interface. ' .
+			'Leave blank if the server is capable of providing addresses to clients.%1$s%1$s' .
+			'A tunnel network of /30 or smaller puts OpenVPN into a special peer-to-peer mode which ' .
+			'cannot receive settings from the server dynamically. This mode is not compatible with several options, ' .
+			'including Exit Notify, and Inactive.',
+			'<br/>');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -1040,9 +1044,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network or network alias with a single entry used for private ' .
-        	    'communications between this client and the server expressed using CIDR notation (e.g. fe80::/64). ' .
-		    'When set static using this field, the ::2 address in the network will be assigned to the client ' .
-		    'virtual interface. Leave blank if the server is capable of providing addresses to clients.');
+			'communications between this client and the server expressed using CIDR notation (e.g. fe80::/64). ' .
+			'When set static using this field, the ::2 address in the network will be assigned to the client ' .
+			'virtual interface. Leave blank if the server is capable of providing addresses to clients.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',

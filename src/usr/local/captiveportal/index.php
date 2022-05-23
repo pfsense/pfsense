@@ -246,7 +246,7 @@ if ($_POST['logout_id']) {
 			$context = 'first';
 		}
 	
-	$pipeno = captiveportal_get_next_dn_ruleno('auth');
+	$pipeno = captiveportal_get_next_dn_ruleno('auth', 2000, 64500, true);
 	/* if the pool is empty, return appropriate message and exit */
 	if (is_null($pipeno)) {
 		$replymsg = gettext("System reached maximum login capacity");
@@ -266,7 +266,6 @@ if ($_POST['logout_id']) {
 	if ($auth_result['result']) {
 		captiveportal_logportalauth($user, $clientmac, $clientip, $auth_result['login_status']);
 		portal_allow($clientip, $clientmac, $user, $passwd, $redirurl, $auth_result['attributes'], $pipeno, $auth_result['auth_method'], $context);
-
 	} else {
 		captiveportal_free_dn_ruleno($pipeno);
 		$type = "error";

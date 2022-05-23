@@ -3125,7 +3125,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 
 	/* Check to see if the interface is in our list */
 	if (isset($rule['floating'])) {
-		if (isset($rule['interface']) && $rule['interface'] <> "") {
+		if (isset($rule['interface']) && $rule['interface'] <> "" && $rule['interface'] <> "any") {
 			$interfaces = explode(",", $rule['interface']);
 			$ifliste = "";
 			foreach ($interfaces as $iface) {

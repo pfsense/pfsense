@@ -385,7 +385,7 @@ EOD;
 					echo "Reconnecting users to captive portal {$cpcfg['zone']}... ";
 					foreach ($connected_users as $user) {
 						captiveportal_reserve_ruleno($user['pipeno']);
-						captiveportal_ether_configure_entry($user, 'auth');
+						captiveportal_ether_configure_entry($user, 'auth', true);
 					}
 					echo "done\n";
 				}
@@ -2106,7 +2106,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 				$config['captiveportal'][$cpzone]['passthrumac'][] = $mac;
 			}
 			unlock($cpdblck);
-			captiveportal_passthrumac_configure_entry($mac);
+			captiveportal_ether_configure_entry($mac, 'passthrumac', true);
 			$writecfg = true;
 		} else {
 			/* See if a pipeno is passed, if not start sessions because this means there isn't one atm */
@@ -2125,7 +2125,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
 				$mac['mac'] = $clientmac;
 			}
-			captiveportal_ether_configure_entry($mac, 'auth');
+			captiveportal_ether_configure_entry($mac, 'auth', true);
 
 			if ($attributes['voucher']) {
 				$attributes['session_timeout'] = $remaining_time;
@@ -2779,7 +2779,7 @@ function captiveportal_pipes_delete($pipes) {
 	}
 }
 
-function captiveportal_ether_configure_entry($hostent, $anchor='passthrumac') {
+function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = false) {
 	global $config, $g, $cpzone;
 
 	if (($hostent['action'] == 'block') && ($anchor == 'passthrumac')) {
@@ -2793,7 +2793,7 @@ function captiveportal_ether_configure_entry($hostent, $anchor='passthrumac') {
 		$tag = $cpzoneprefix . '_' . $anchor;
 	}
 
-	list($pipeup, $pipedown) = captiveportal_pipe_configure($hostent);
+	list($pipeup, $pipedown) = captiveportal_pipe_configure($hostent, $user_auth);
 
 	if ($anchor == 'passthrumac') {
 		$host = str_replace("/", "_", str_replace(":", "", $hostent['mac']));
@@ -2824,20 +2824,22 @@ function captiveportal_ether_configure_entry($hostent, $anchor='passthrumac') {
 	captiveportal_load_pfctl("{$cpzoneprefix}_{$anchor}", $host, $rules);
 }
 
-function captiveportal_pipe_configure($host) {
+function captiveportal_pipe_configure($host, $user_auth = true) {
 	global $config, $cpzone;
 
 	$bwUp = 0;
 	if (!empty($host['bw_up'])) {
 		$bwUp = $host['bw_up'];
-	} elseif (isset($config['captiveportal'][$cpzone]['peruserbw']) &&
+	} elseif ($user_auth &&
+		isset($config['captiveportal'][$cpzone]['peruserbw']) &&
 	    !empty($config['captiveportal'][$cpzone]['bwdefaultup'])) {
 		$bwUp = $config['captiveportal'][$cpzone]['bwdefaultup'];
 	}
 	$bwDown = 0;
 	if (!empty($host['bw_down'])) {
 		$bwDown = $host['bw_down'];
-	} elseif (isset($config['captiveportal'][$cpzone]['peruserbw']) &&
+	} elseif ($user_auth &&
+		isset($config['captiveportal'][$cpzone]['peruserbw']) &&
 	    !empty($config['captiveportal'][$cpzone]['bwdefaultdn'])) {
 		$bwDown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 	}
@@ -2866,7 +2868,7 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	}
 
 	$host = $ipent['ip'] . '_' . $ipent['sn'];
-	list($pipeup, $pipedown) = captiveportal_pipe_configure($ipent);
+	list($pipeup, $pipedown) = captiveportal_pipe_configure($ipent, false);
 
 	$rules = '';
 	if (($ipent['dir'] == 'to') || ($ipent['dir'] == 'both')) {
@@ -2890,7 +2892,7 @@ function captiveportal_allowedhostname_configure_entry($ipent, $hostnameid = 1) 
 	$tag = $cpzoneprefix . '_passthru';
 	$table = $cpzoneprefix . '_hostname_' . $hostnameid;
 	$host = 'hostname_' . $hostnameid;
-	list($pipeup, $pipedown) = captiveportal_pipe_configure($ipent);
+	list($pipeup, $pipedown) = captiveportal_pipe_configure($ipent, false);
 
 	$rules = "table <{$table}> persist\n";
 	if (($ipent['dir'] == 'to') || ($ipent['dir'] == 'both')) {

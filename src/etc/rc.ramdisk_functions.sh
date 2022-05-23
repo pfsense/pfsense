@@ -26,6 +26,31 @@ RAMDISK_FLAG_FILE=/conf/ram_disks_failed
 RAMDISK_DEFAULT_SIZE_tmp=40
 RAMDISK_DEFAULT_SIZE_var=60
 
+_be_remount_ds() {
+	local _dataset="${1}"
+
+	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${_dataset}" | \
+	while read _mp _name _canmount _mounted ; do
+		# skip filesystems that must not be mounted
+		[ "${_canmount}" = "off" -o "${_mp}" = "/" ] && continue
+		# skip filesystems that are already mounted
+		[ "$_mounted" = "yes" ] && \
+			/sbin/umount -f "${_name}"
+		# filesystems with mountpoint elsewhere
+		/sbin/zfs mount "${_name}"
+	done
+}
+
+_be_mount_zfs() {
+	/sbin/mount -p | while read _dev _mp _type _rest; do
+		[ "${_mp}"  = "/" ] || continue
+		if [ "${_type}" = "zfs" ] ; then
+			_be_remount_ds $_dev
+		fi
+		break
+	done
+}
+
 # Check if RAM disks are enabled in config.xml
 ramdisk_check_enabled () {
 	[ "$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)" = "true" ]
@@ -103,7 +128,9 @@ ramdisk_try_mount () {
 	if [ ramdisk_check_size ]; then
 		SIZE=$(eval echo \${${NAME}size})m
 		/sbin/mount -o rw,size=${SIZE},mode=1777 -t tmpfs tmpfs /${NAME}
-		return $?
+		_rc=$?
+		_be_mount_zfs
+		return ${_rc}
 	else
 		return 1;
 	fi
@@ -157,6 +184,7 @@ ramdisk_relocate_pkgdb () {
 ramdisk_relocate_pkgdb_all () {
 	unset MOVE_PKG_DATA
 	unset USE_RAMDISK
+
 	if ramdisk_check_enabled; then
 		USE_RAMDISK=true
 	fi
@@ -188,20 +216,26 @@ ramdisk_link_pkgdb () {
 	fi
 }
 
-# Either unmount or mount /var and /tmp in ZFS as needed to avoid conflicts with
-#   active RAM disk options.
-ramdisk_fixup_zfs () {
-	# Mount /var and /tmp on ZFS filesystems when necessary
-	if [ ${1} = "mount" ]; then
-		echo "Remounting ZFS volumes"
-		zfs mount -a
-	else
-		zfs list -H -o name,mountpoint |
-		    while read volume mountpoint; do
-			[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
-				&& continue
-			echo "Dismounting ZFS volume ${volume} for RAM disk"
-			/sbin/zfs umount ${volume}
-		done
-	fi
+ramdisk_zfs_deep_unmount() {
+	local _path="${1}"
+
+	/sbin/zfs list -rH -o name,mountpoint -S mountpoint -t filesystem "${_path}" | \
+	while read _name _mp; do
+		echo -n "Dismounting ZFS volume ${_name} at ${_mp} for RAM disk..."
+		/sbin/zfs unmount -f "${_name}" 1>/dev/null 2>&1
+		echo " done."
+	done
+}
+
+ramdisk_fixup_zfs_mount() {
+	echo -n "Remounting ZFS volumes..."
+	/sbin/zfs mount -a 1>/dev/null 2>&1
+	_be_mount_zfs
+	echo " done."
+}
+
+ramdisk_fixup_zfs_unmount() {
+	ramdisk_zfs_deep_unmount "/tmp"
+	ramdisk_zfs_deep_unmount "/var"
+	_be_mount_zfs
 }

@@ -2553,8 +2553,7 @@ function captiveportal_allowedhostname_cleanup() {
 
 	init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
 	foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $id => $hostnameent) {
-		$result = array();
-		$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}__allowedhosts/hostname_{$id}");
+		$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_allowedhosts/hostname_{$id}");
 		pfSense_pf_cp_flush("{$cpzoneprefix}_allowedhosts/hostname_{$id}", "ether");
 		if (!empty($pipes)) {
 			captiveportal_pipes_delete($pipes);

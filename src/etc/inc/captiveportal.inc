@@ -546,9 +546,7 @@ function captiveportal_delete_rules($pipes_to_remove = array(), $clear_auth_rule
 	}
 
 	/* delete pipes */
-	foreach ($pipes_to_remove as $pipeno) {
-		captiveportal_pipe_delete($pipeno);
-	}
+	captiveportal_pipes_delete($pipes_to_remove);
 }
 
 /*
@@ -823,8 +821,8 @@ function captiveportal_prune_old_automac() {
 			if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
 				if (isset($tmpvoucherdb[$emac['username']])) {
 					$temac = $config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]];
-					$pipeno = captiveportal_get_dn_passthru_ruleno($temac['mac']);
-					if ($pipeno) {
+					$pipes = captiveportal_get_dn_passthru_pipes($temac['mac']);
+					if ($pipes) {
 						captiveportal_ether_delete_entry($temac['mac'], 'auth');
 					}
 					$writecfg = true;
@@ -906,7 +904,7 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null, $c
 		    $dbent[1]+1, true);
 
 		if (!empty($removed_pipes)) {
-			captiveportal_pipe_delete($dbent[1]);
+			captiveportal_pipes_delete($removed_pipes);
 		}
 	}
 
@@ -1033,16 +1031,16 @@ function captiveportal_radius_stop_all($term_cause = 6, $logoutReason = "DISCONN
 	unset($cpdb);
 }
 
-function captiveportal_passthrumac_delete_entry($hostent) {
+function captiveportal_passthrumac_delete_entry($macent) {
 	global $g, $cpzone, $config;
 
-	$host = str_replace("/", "_", str_replace(":", "", $hostent['mac']));
+	$host = str_replace("/", "_", str_replace(":", "", $macent['mac']));
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 
 	if ($macent['action'] == 'pass') {
-		$pipeno = captiveportal_get_dn_passthru_ruleno($mac['mac']);
-		if (!empty($pipeno)) {
-			captiveportal_pipe_delete($pipeno);
+		$pipes = captiveportal_get_dn_passthru_pipes($macent['mac']);
+		if (!empty($pipes)) {
+			captiveportal_pipes_delete($pipes);
 		}
 	} else {
 		/* no rules on passthru block */
@@ -1106,10 +1104,9 @@ function captiveportal_ether_delete_entry($hostent, $anchor = 'allowedhosts') {
 		$host = $hostent['ip'] . '_32';
 	}
 
-	$result = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/{$host}");
-	if (!empty($result)) {
-		list($pipeup, $pipedown) = $result;
-		captiveportal_pipe_delete($pipeup);
+	$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/{$host}");
+	if (!empty($pipes)) {
+		captiveportal_pipes_delete($pipes);
 	}
 	/* flush anchor rules */
 	pfSense_pf_cp_flush("{$cpzoneprefix}_{$anchor}/{$host}", "ether");
@@ -1668,7 +1665,22 @@ function captiveportal_free_dn_ruleno($ruleno) {
 	unlock($cpruleslck);
 }
 
-function captiveportal_get_dn_passthru_ruleno($mac, $anchor = 'passthrumac') {
+function captiveportal_free_dn_rulenos($rulenos) {
+	global $config, $g;
+
+	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		foreach ($rulenos as $ruleno) {
+		   $rules[$ruleno] = false;
+		}
+		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+		unset($rules);
+	}
+	unlock($cpruleslck);
+}
+
+function captiveportal_get_dn_passthru_pipes($mac, $anchor = 'passthrumac') {
 	global $config, $g, $cpzone, $cpzoneid;
 
 	$cpcfg = $config['captiveportal'][$cpzone];
@@ -1677,23 +1689,10 @@ function captiveportal_get_dn_passthru_ruleno($mac, $anchor = 'passthrumac') {
 		return NULL;
 	}
 
-	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
-	$ruleno = NULL;
-	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
-		$host = str_replace(":", "", $mac);
+	$host = str_replace(":", "", $mac);
+	$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/$host");
 
-		$result = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}mac/$host");
-		if (!empty($result)) {
-			list($pipeup, $pipedown) = $result;
-			$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
-			if (!$rules[$pipeup]) {
-				$ruleno = NULL;
-			}
-		}
-	}
-	unlock($cpruleslck);
-
-	return $ruleno;
+	return $pipes;
 }
 
 /**
@@ -2555,10 +2554,10 @@ function captiveportal_allowedhostname_cleanup() {
 	init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
 	foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $id => $hostnameent) {
 		$result = array();
-		list($pipeup, $pipedown) = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}__allowedhosts/hostname_{$id}");
+		$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}__allowedhosts/hostname_{$id}");
 		pfSense_pf_cp_flush("{$cpzoneprefix}_allowedhosts/hostname_{$id}", "ether");
-		if (!empty($pipeup)) {
-			captiveportal_pipe_delete($pipeup);
+		if (!empty($pipes)) {
+			captiveportal_pipes_delete($pipes);
 		}
 	}
 }
@@ -2771,11 +2770,12 @@ function captiveportal_zone_portalports($cpcfg) {
 	return array($portalias, $cprdrport);
 }
 
-function captiveportal_pipe_delete($pipeup) {
-	if (!empty($pipeup)) {
-		mwexec("/sbin/dnctl pipe delete {$pipeup}");
-		mwexec("/sbin/dnctl pipe delete " . ($pipeup+1));
-		captiveportal_free_dn_ruleno($pipeup);
+function captiveportal_pipes_delete($pipes) {
+	if (!empty($pipes)) {
+		foreach ($pipes as $pipe) {
+			mwexec("/sbin/dnctl pipe delete {$pipe}");
+		}
+		captiveportal_free_dn_rulenos($pipes);
 	}
 }
 

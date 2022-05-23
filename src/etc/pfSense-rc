@@ -144,8 +144,6 @@ if [ ${mount_rc} -ne 0 ]; then
 	/sbin/reboot
 fi
 
-. /etc/rc.ramdisk_functions.sh
-
 # Handle ZFS read-only case
 unset USE_ZFS
 if /sbin/kldstat -qm zfs; then
@@ -165,7 +163,8 @@ if /sbin/kldstat -qm zfs; then
 			/sbin/zpool import -f bootpool
 		fi
 		# We need to handle ZFS boot environments here
-		_be_mount_zfs
+		echo "Enabling ZFS boot environment..."
+		/etc/rc.d/zfsbe onestart
 	fi
 fi
 
@@ -182,19 +181,19 @@ fi
 # Sanity check the clock
 /etc/rc.checkclock
 
+. /etc/rc.ramdisk_functions.sh
+
 # Check if RAM disks are enabled, store for repeated use
 if ramdisk_check_enabled; then
 	USE_RAMDISK=true
 fi
 
-# Relocate pkgdb on UFS based on desired RAM disk settings
-if [ -z "${USE_ZFS}" ]; then
-	ramdisk_relocate_pkgdb_all
-fi
+# Relocate pkgdb based on desired RAM disk settings
+ramdisk_relocate_pkgdb_all
 
 # Dismount /tmp and /var on ZFS if using RAM disks and they are separate volumes
 if [ -n "${USE_ZFS}" -a -n "${USE_RAMDISK}" ]; then
-	ramdisk_fixup_zfs_unmount
+	ramdisk_fixup_zfs umount
 fi
 
 # Attempt to create and mount RAM disks
@@ -202,19 +201,15 @@ if [ -n "${USE_RAMDISK}" ]; then
 	/etc/rc.embedded
 fi
 
-# If RAM disks are active, make symlinks for pkg database on UFS
+# If RAM disks are active, make symlinks for pkg database
 if [ -n "${USE_RAMDISK}" -o -n "${MOVE_PKG_DATA}" ]; then
-	if [ -z "${USE_ZFS}" ]; then
-		ramdisk_link_pkgdb
-	fi
+	ramdisk_link_pkgdb
 fi
 
 # If activating RAM disks failed, then undo some of the above actions
 if [ -n "${USE_RAMDISK}" ] && ramdisk_failed; then
-	ramdisk_fixup_zfs_mount
-	if [ -z "${USE_ZFS}" ]; then
-		ramdisk_relocate_pkgdb disk
-	fi
+	ramdisk_fixup_zfs mount
+	ramdisk_relocate_pkgdb disk
 else
 	ramdisk_reset_status
 fi

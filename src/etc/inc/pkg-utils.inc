@@ -114,11 +114,11 @@ function pkg_env($extra_env = array()) {
 		}
 	}
 
-#	if (isset($config['system']['use_mfs_tmpvar']) &&
-#	    !file_exists("/conf/ram_disks_failed")) {
-#		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
-#		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
-#	}
+	if (isset($config['system']['use_mfs_tmpvar']) &&
+	    !file_exists("/conf/ram_disks_failed")) {
+		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
+		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
+	}
 
 	foreach ($extra_env as $key => $value) {
 		$pkg_env_vars[$key] = $value;

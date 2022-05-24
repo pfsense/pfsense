@@ -54,6 +54,11 @@ get_version ()
 
 get_version
 
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product_name=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+product_label=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_label pfSense)
+
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
 /etc/rc.dumpon
@@ -200,6 +205,10 @@ fi
 # Attempt to create and mount RAM disks
 if [ -n "${USE_RAMDISK}" ]; then
 	/etc/rc.embedded
+	# Remount the correct subordinate ZFS datasets to ensure they are used properly
+	if [ -n "${USE_ZFS}" ]; then
+		_be_mount_zfs
+	fi
 fi
 
 # If RAM disks are active, make symlinks for pkg database on UFS
@@ -218,12 +227,6 @@ if [ -n "${USE_RAMDISK}" ] && ramdisk_failed; then
 else
 	ramdisk_reset_status
 fi
-
-
-# Read product_name from $g, defaults to pfSense
-# Use php -n here because we are not ready to load extensions yet
-product_name=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
-product_label=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_label pfSense)
 
 # Setup ddb on all platforms.
 if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then

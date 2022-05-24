@@ -267,7 +267,7 @@ if ($_POST['logout_id']) {
 		captiveportal_logportalauth($user, $clientmac, $clientip, $auth_result['login_status']);
 		portal_allow($clientip, $clientmac, $user, $passwd, $redirurl, $auth_result['attributes'], $pipeno, $auth_result['auth_method'], $context);
 	} else {
-		captiveportal_free_dn_ruleno($pipeno);
+		captiveportal_free_dn_rulenos(array($pipeno, $pipeno+1));
 		$type = "error";
 			
 		if (is_URL($auth_result['attributes']['url_redirection'], true)) {

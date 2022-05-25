@@ -2755,6 +2755,7 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 	}
 
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
+	$rdrtag = $cpzoneprefix . '_rdr';
 	if ($anchor == 'passthrumac') {
 		$tag = $cpzoneprefix . '_passthru';
 	} else {
@@ -2786,8 +2787,8 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 		}
 	}
 
-	$rules = "ether pass in quick {$macfrom} {$l3from} tag {$tag} dnpipe {$pipeup}\n";
-	$rules .= "ether pass out quick {$macto} {$l3to} tag {$tag} dnpipe {$pipedown}\n";
+	$rules = "ether pass in quick {$macfrom} {$l3from} tagged {$rdrtag} tag {$tag} dnpipe {$pipeup}\n";
+	$rules .= "ether pass out quick {$macto} {$l3to} tagged {$rdrtag} tag {$tag} dnpipe {$pipedown}\n";
 
 	captiveportal_load_pfctl("{$cpzoneprefix}_{$anchor}", $host, $rules);
 }
@@ -2830,6 +2831,7 @@ function captiveportal_allowedip_configure_entry($ipent) {
 
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$tag = $cpzoneprefix . '_passthru';
+	$rdrtag = $cpzoneprefix . '_rdr';
 
 	if (empty($ipent['sn'])) {
 		$ipent['sn'] = '32';
@@ -2840,10 +2842,10 @@ function captiveportal_allowedip_configure_entry($ipent) {
 
 	$rules = '';
 	if (($ipent['dir'] == 'to') || ($ipent['dir'] == 'both')) {
-		$rules = "ether pass in quick l3 to {$ipent['ip']}/{$ipent['sn']} tag {$tag} dnpipe {$pipeup}\n";
+		$rules = "ether pass in quick l3 to {$ipent['ip']}/{$ipent['sn']} tagged {$rdrtag} tag {$tag} dnpipe {$pipeup}\n";
 	}
 	if (($ipent['dir'] == 'from') || ($ipent['dir'] == 'both')) {
-		$rules .= "ether pass in quick l3 from {$ipent['ip']}/{$ipent['sn']} tag {$tag} dnpipe {$pipedown}\n";
+		$rules .= "ether pass in quick l3 from {$ipent['ip']}/{$ipent['sn']} tagged {$rdrtag} tag {$tag} dnpipe {$pipedown}\n";
 	}
 
 	captiveportal_load_pfctl("{$cpzoneprefix}_allowedhosts", $host, $rules);
@@ -2858,16 +2860,17 @@ function captiveportal_allowedhostname_configure_entry($ipent, $hostnameid = 1) 
 
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$tag = $cpzoneprefix . '_passthru';
+	$rdrtag = $cpzoneprefix . '_rdr';
 	$table = $cpzoneprefix . '_hostname_' . $hostnameid;
 	$host = 'hostname_' . $hostnameid;
 	list($pipeup, $pipedown) = captiveportal_pipe_configure($ipent, 'allowed', false);
 
 	$rules = "table <{$table}> persist\n";
 	if (($ipent['dir'] == 'to') || ($ipent['dir'] == 'both')) {
-		$rules .= "ether pass in quick l3 to <{$table}> tag {$tag} dnpipe {$pipeup}\n";
+		$rules .= "ether pass in quick l3 to <{$table}> tagged {$rdrtag} tag {$tag} dnpipe {$pipeup}\n";
 	}
 	if (($ipent['dir'] == 'from') || ($ipent['dir'] == 'both')) {
-		$rules .= "ether pass in quick l3 from <{$table}> tag {$tag} dnpipe {$pipedown}\n";
+		$rules .= "ether pass in quick l3 from <{$table}> tagged {$rdrtag} tag {$tag} dnpipe {$pipedown}\n";
 	}
 
 	captiveportal_load_pfctl("{$cpzoneprefix}_allowedhosts", $host, $rules);

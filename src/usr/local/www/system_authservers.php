@@ -610,28 +610,19 @@ $section->addInput(new Form_Select(
 	array_combine(array_keys($ldap_urltypes), array_keys($ldap_urltypes))
 ));
 
-if (empty($a_ca))
-{
-	$section->addInput(new Form_StaticText(
-		'Peer Certificate Authority',
-		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert. Manager</a>.'
-	));
+$ldapCaRef = array('global' => 'Global Root CA List');
+foreach ($a_ca as $ca) {
+	$ldapCaRef[$ca['refid']] = $ca['descr'];
 }
-else
-{
-	$ldapCaRef = array( 'global' => 'Global Root CA List' );
-	foreach ($a_ca as $ca)
-		$ldapCaRef[ $ca['refid'] ] = $ca['descr'];
 
-	$section->addInput(new Form_Select(
-		'ldap_caref',
-		'Peer Certificate Authority',
-		$pconfig['ldap_caref'],
-		$ldapCaRef
-	))->setHelp('This CA is used to validate the LDAP server certificate when '.
-		'\'SSL/TLS Encrypted\' or \'STARTTLS Encrypted\' Transport is active. '.
-		'This CA must match the CA used by the LDAP server.');
-}
+$section->addInput(new Form_Select(
+	'ldap_caref',
+	'Peer Certificate Authority',
+	$pconfig['ldap_caref'],
+	$ldapCaRef
+))->setHelp('This CA is used to validate the LDAP server certificate when '.
+	'\'SSL/TLS Encrypted\' or \'STARTTLS Encrypted\' Transport is active. '.
+	'This CA must match the CA used by the LDAP server.');
 
 $section->addInput(new Form_Select(
 	'ldap_protver',

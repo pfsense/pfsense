@@ -2636,16 +2636,16 @@ function filter_captiveportal_rdr() {
 		$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 		$rdrtag = $cpzoneprefix . '_rdr';
 		$cpips = $cpzoneprefix . '_cpips';
-		$interfaces = captiveportal_zone_interfaces($cpcfg);
-		list($portalias, $cprdrport) = captiveportal_zone_portalports($cpcfg);
-
+		$rdr_ports = captiveportal_zone_portalports($cpcfg);
 		foreach (explode(",", $cpcfg['interface']) as $cpifgrp) {
 			if (isset($FilterIflist[$cpifgrp])) {
 				$realif = get_real_interface($cpifgrp);
 				if (!empty($realif)) {
 					$cpip = get_interface_ip($cpifgrp);
 					if (is_ipaddrv4($cpip)) {
-						$rules .= "rdr on {$realif} inet proto tcp from any to ! <{$cpips}> port {$cprdrport}  tagged {$rdrtag} -> {$cpip} port {$portalias}\n";
+						foreach ($rdr_ports as list($portalias, $cprdrport)) {
+							$rules .= "rdr on {$realif} inet proto tcp from any to ! <{$cpips}> port {$cprdrport}  tagged {$rdrtag} -> {$cpip} port {$portalias}\n";
+						}
 					}
 				}
 			}
@@ -2674,7 +2674,7 @@ function filter_captiveportal_pass() {
 		$cpips = $cpzoneprefix . '_cpips';
 		$authtag = $cpzoneprefix . '_auth';
 		$passthrutag = $cpzoneprefix . '_passthru';
-		list($portalias, $cprdrport) = captiveportal_zone_portalports($cpcfg);
+		$rdr_ports = captiveportal_zone_portalports($cpcfg);
 
 		foreach (explode(",", $cpcfg['interface']) as $cpifgrp) {
 			if (!isset($FilterIflist[$cpifgrp])) {
@@ -2684,12 +2684,13 @@ function filter_captiveportal_pass() {
 			if (!empty($realif)) {
 				$cpip = get_interface_ip($cpifgrp);
 				if (is_ipaddrv4($cpip)) {
-					/* pass non-authenticated clients to captive portal */
-					$rules .= "pass in quick on {$realif} proto tcp from any to <{$cpips}> port {$portalias} ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
-					/* without this rule captive portal doesn't show login page after manual disconnect */
-					$rules .= "pass out quick on {$realif} proto tcp from {$cpip} port {$portalias} to any flags any ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
-					/* Allowed IP/MAC passthrough */
-					$rules .= "pass in quick from any to any tagged {$passthrutag} ridentifier {$captiveportal_increment()} keep state\n";
+					foreach ($rdr_ports as list($portalias, $cprdrport)) {						/* pass non-authenticated clients to captive portal */
+						$rules .= "pass in quick on {$realif} proto tcp from any to <{$cpips}> port {$portalias} ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
+						/* without this rule captive portal doesn't show login page after manual disconnect */
+						$rules .= "pass out quick on {$realif} proto tcp from {$cpip} port {$portalias} to any flags any ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
+						/* Allowed IP/MAC passthrough */
+						$rules .= "pass in quick from any to any tagged {$passthrutag} ridentifier {$captiveportal_increment()} keep state\n";
+					}
 					/* block non-authenticated clients access to internet */
 					$rules .= "block in quick on {$realif} from any to ! <{$cpips}> ! tagged {$authtag} ridentifier {$captiveportal_increment()}\n";
 				}
@@ -2720,15 +2721,21 @@ function captiveportal_zone_interfaces($cpcfg) {
 	return $interfaces;
 }
 
+/*
+ * Returns an array of (alias, rdrport) pairs describing ports to be forwarded for the captive portal
+ */
 function captiveportal_zone_portalports($cpcfg) {
+	$rdr_ports = array();
 	if (isset($cpcfg['httpslogin']) && !isset($cpcfg['nohttpsforwards'])) {
 		$portalias = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : 8001 + $cpcfg['zoneid'];
 		$cprdrport = '443';
-	} else {
-		$portalias = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : 8000 + $cpcfg['zoneid'];
-		$cprdrport = '80';
+		array_push($rdr_ports, array($portalias, $cprdrport));
 	}
-	return array($portalias, $cprdrport);
+	$portalias = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : 8000 + $cpcfg['zoneid'];
+	$cprdrport = '80';
+	array_push($rdr_ports, array($portalias, $cprdrport));
+
+	return $rdr_ports;
 }
 
 function captiveportal_pipes_delete($pipes) {

@@ -218,7 +218,7 @@ function captiveportal_configure() {
 	}
 }
 
-function captiveportal_configure_zone($cpcfg) {
+function captiveportal_configure_zone($cpcfg, $reload_rules = false) {
 	global $config, $g, $cpzone, $cpzoneid;
 
 	$captiveportallck = lock("captiveportal{$cpzone}", LOCK_EX);
@@ -232,7 +232,7 @@ function captiveportal_configure_zone($cpcfg) {
 		}
 
 		/* init captive portal pipes and anchors */
-		captiveportal_init_rules();
+		captiveportal_init_rules($reload_rules);
 
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
@@ -372,12 +372,12 @@ EOD;
 		/* delete outdated radius server database if exist */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 
-		if (platform_booting()) {
+		if (platform_booting() || $reload_rules) {
 			/* send Accounting-On to server */
 			captiveportal_send_server_accounting('on');
 			echo "done\n";
 
-			if (isset($cpcfg['preservedb']) ||
+			if (isset($cpcfg['preservedb']) || $reload_rules ||
 			    captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass)) {
 
 				$connected_users = captiveportal_read_db();

@@ -316,6 +316,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 						/* Mark this to be reconfigured in any case. */
 						$reloadif = true;
 						$filter_reload = true;
+						$gateway_monitor_reload = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (isset($portlist[$ifport]['isppp'])) {
@@ -359,6 +360,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		 * see https://redmine.pfsense.org/issues/12949 */
 		if ($filter_reload) {
 			filter_configure();
+		}
+		if ($gateway_monitor_reload) {
+			setup_gateways_monitor();
 		}
 		write_config("Interfaces assignment settings changed");
 

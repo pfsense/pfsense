@@ -2688,9 +2688,9 @@ function filter_captiveportal_pass() {
 						$rules .= "pass in quick on {$realif} proto tcp from any to <{$cpips}> port {$portalias} ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
 						/* without this rule captive portal doesn't show login page after manual disconnect */
 						$rules .= "pass out quick on {$realif} proto tcp from {$cpip} port {$portalias} to any flags any ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
-						/* Allowed IP/MAC passthrough */
-						$rules .= "pass in quick from any to any tagged {$passthrutag} ridentifier {$captiveportal_increment()} keep state\n";
 					}
+					/* Allowed IP/MAC passthrough */
+					$rules .= "pass in quick from any to any tagged {$passthrutag} ridentifier {$captiveportal_increment()} keep state\n";
 					/* block non-authenticated clients access to internet */
 					$rules .= "block in quick on {$realif} from any to ! <{$cpips}> ! tagged {$authtag} ridentifier {$captiveportal_increment()}\n";
 				}

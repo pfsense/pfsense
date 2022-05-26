@@ -5496,7 +5496,7 @@ EOD;
 	kill_dhclient_process($realif);
 
 	/* fire up dhclient */
-	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$realif} > {$g['tmp_path']}/{$realif}_output 2> {$g['tmp_path']}/{$realif}_error_output");
+	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf -p {$g['varrun_path']}/dhclient.{$realif}.pid {$realif} > {$g['tmp_path']}/{$realif}_output 2> {$g['tmp_path']}/{$realif}_error_output");
 
 	return 0;
 }

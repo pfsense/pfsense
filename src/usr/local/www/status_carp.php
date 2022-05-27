@@ -253,11 +253,14 @@ if ($carpcount == 0) {
 			</li>
 <?php	endforeach; ?>
 		</ul>
-		<?= gettext("When state synchronization is enabled and functioning properly the list of state creator IDs will be nearly identical on each node participating in state synchronization.") ?>
 
 		<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("If the host ID has recently changed, the old ID will remain until all states using the old ID expire or are removed."), 'info', false);
+	print_info_box(sprintf(gettext(
+		'When state synchronization is enabled and functioning properly the list of state creator host IDs will be identical on each node participating in state synchronization.%1$s%1$s' .
+		'The state creator host ID for this node can be set to a custom value under System > High Avail Sync. ' .
+		'If the state creator host ID has recently changed, the old ID will remain until all states using the old ID expire or are removed.'
+		), '<br/>'), 'info', false);
 ?>
 		</div>
 	</div></div>

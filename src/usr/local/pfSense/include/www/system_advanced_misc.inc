@@ -298,6 +298,12 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			unset($config['system']['skip_rules_gw_down']);
 		}
 
+		if ($post['dpinger_dont_add_static_routes'] == "yes") {
+			$config['system']['dpinger_dont_add_static_routes'] = true;
+		} else {
+			unset($config['system']['dpinger_dont_add_static_routes']);
+		}
+
 		$tmpvar_set = (isset($config['system']['use_mfs_tmpvar']) ? true:false);
 
 		if ($post['use_mfs_tmpvar'] == "yes") {

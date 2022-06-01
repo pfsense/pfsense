@@ -223,6 +223,8 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 		write_config("New interface assigned");
 
+		filter_configure();
+
 		$action_msg = gettext("Interface has been added.");
 		$class = "success";
 	}
@@ -302,6 +304,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 	if (!$input_errors) {
 		/* No errors detected, so update the config */
+		$filter_reload = false;
 		foreach ($_POST as $ifname => $ifport) {
 
 			if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
@@ -312,6 +315,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 						interface_bring_down($ifname);
 						/* Mark this to be reconfigured in any case. */
 						$reloadif = true;
+						$filter_reload = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (isset($portlist[$ifport]['isppp'])) {
@@ -346,9 +350,15 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 						}
 						/* Reload all for the interface. */
 						interface_configure($ifname, true);
+						$filter_reload = true;
 					}
 				}
 			}
+		}
+		/* regenerated ruleset after re-assigning the interface,
+		 * see https://redmine.pfsense.org/issues/12949 */
+		if ($filter_reload) {
+			filter_configure();
 		}
 		write_config("Interfaces assignment settings changed");
 
@@ -421,6 +431,8 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			}
 
 			link_interface_to_vlans($realid, "update");
+
+			filter_configure();
 
 			$action_msg = gettext("Interface has been deleted.");
 			$class = "success";

@@ -22,23 +22,18 @@
 
 /sbin/pfctl -i $1 -Fs
 /bin/rm -f /var/etc/searchdomain_$1
-/bin/rm -f /tmp/$1_router
-/bin/rm -f /tmp/$1_routerv6
+
+if [ -f "/tmp/${1}_router" ]; then
+	/bin/mv /tmp/${1}_router /tmp/${1}_router.last
+fi
+if [ -f "/tmp/${1}_routerv6" ]; then
+	/bin/mv /tmp/${1}_routerv6 /tmp/${1}_routerv6.last
+fi
 /bin/rm -f /tmp/$1up
 /usr/local/sbin/pfSctl -c 'filter reload'
 
 if [ -f "/var/etc/nameserver_${1}" -o -f "/var/etc/nameserver_v6${1}" ]; then
-	if [ -f "/var/etc/nameserver_${1}" ]; then
-		for nameserver in `/bin/cat /var/etc/nameserver_${1}`; do
-			/sbin/route -q delete -inet -host ${nameserver} -iface ${1} >/dev/null 2>&1
-		done
-	fi
 	/bin/rm -f /var/etc/nameserver_$1
-	if [ -f "/var/etc/nameserver_v6${1}" ]; then
-		for nameserver in `/bin/cat /var/etc/nameserver_v6${1}`; do
-			/sbin/route -q delete -inet6 -host ${nameserver} -iface ${1} >/dev/null 2>&1
-		done
-	fi
 	/bin/rm -f /var/etc/nameserver_v6$1
 	if /usr/bin/pgrep -q -a -F /var/run/unbound.pid unbound >/dev/null 2>&1; then
 		/usr/local/sbin/pfSsh.php playback svc restart unbound

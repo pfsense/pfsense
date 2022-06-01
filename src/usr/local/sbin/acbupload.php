@@ -70,6 +70,14 @@ function upload($basename) {
 
     $upload_url = "https://acb.netgate.com/save";
 
+    if (!is_url_hostname_resolvable($upload_url)) {
+	$data = " Unable to resolve " . parse_url($upload_url, PHP_URL_HOST) . " ";
+	acb_error_log($upload_url, $data);
+	unlink_if_exists($acbuploadpath . $basename . ".data");
+	unlink_if_exists($acbuploadpath . $basename . ".form");
+	return;
+    }
+
     // Retrieve the data to send
     // Retrieve the form data
     $formdata = file_get_contents($acbuploadpath . $basename . ".form");
@@ -80,6 +88,7 @@ function upload($basename) {
     // Ensure there are no backups from systems we do not allow
     foreach ($badreasons as $term) {
         if (strpos(strtolower($post_fields['reason']), $term) !== false) {
+            log_error("Skipping ACB backup for " . strtolower($post_fields['reason']) . '.');
             unlink_if_exists($acbuploadpath . $basename . ".data");
             unlink_if_exists($acbuploadpath . $basename . ".form");
             return;
@@ -101,12 +110,14 @@ function upload($basename) {
     set_curlproxy($curl_session);
 
     $data = curl_exec($curl_session);
+    $httpcode = curl_getinfo($curl_session, CURLINFO_RESPONSE_CODE);
 
     if (curl_errno($curl_session)) {
         $fd = fopen("/tmp/backupdebug.txt", "w");
+        $acb_curl_error = curl_error($curl_session);
         fwrite($fd, $upload_url . "" . $fields_string . "\n\n");
         fwrite($fd, $data);
-        fwrite($fd, curl_error($curl_session));
+        fwrite($fd, $acb_curl_error);
         fclose($fd);
     } else {
         curl_close($curl_session);
@@ -116,13 +127,13 @@ function upload($basename) {
     unlink_if_exists($acbuploadpath . $basename . ".data");
     unlink_if_exists($acbuploadpath . $basename . ".form");
 
-    if (strpos($data, "500") != false) {
-        $notice_text = sprintf(gettext(
-            "An error occurred while uploading your %s configuration to "), $g['product_label']) .
-            $upload_url . " (" . htmlspecialchars($data) . ")";
-        log_error($notice_text . " - " . $data);
-        file_notice("AutoConfigBackup", $notice_text);
-        update_filter_reload_status($notice_text);
+    if (strpos(strval($httpcode), '20') === false) {
+	if (empty($data) && $acb_curl_error) {
+		$data = $acb_curl_error;
+	} else {
+		$data = "Unknown error";
+	}
+	acb_error_log($upload_url, $data);
     } else {
         // Update last pfS backup time
         $fd = fopen("/cf/conf/lastpfSbackup.txt", "w");
@@ -132,4 +143,13 @@ function upload($basename) {
         log_error($notice_text);
         update_filter_reload_status($notice_text);
     }
+}
+
+function acb_error_log($upload_url, $data) {
+        $notice_text = sprintf(gettext(
+            "An error occurred while uploading the encrypted %s configuration to "), $g['product_label']) .
+            $upload_url . " (" . htmlspecialchars($data) . ")";
+        log_error($notice_text . " - " . $data);
+        file_notice("AutoConfigBackup", $notice_text);
+        update_filter_reload_status($notice_text);
 }

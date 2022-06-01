@@ -216,7 +216,7 @@ set_pam_auth();
 
 /* Log the RAM disk restore messages. */
 if (file_exists("/var/log/restore_ramdisk_store.boot")) {
-	exec("logger -f /var/log/restore_ramdisk_store.boot");
+	exec("/usr/bin/logger -f /var/log/restore_ramdisk_store.boot");
 }
 
 init_config_arr(array('system', 'ssh'));
@@ -236,15 +236,14 @@ if (isset($config['system']['mds_disable']) &&
 	set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);
 }
 
-/* remove leftover dhcp6c lock files if they exist */
-foreach ($config['interfaces'] as $interface) {
-        if ($interface['ipaddrv6'] == "dhcp6") {
-            if (file_exists("/tmp/dhcp6c_" . $interface['if'] . "_lock")) {
-                @unlink("/tmp/dhcp6c_" . $interface['if'] . "_lock");
-                echo("Removed leftover dhcp6c lock file: " . "/tmp/dhcp6c_" . $interface['if'] . "_lock\n");
-            }
-         }
-     }
+/* remove leftover dhcp6c lock file if it exist */
+if (file_exists("/tmp/dhcp6c_lock")) {
+	@unlink("/tmp/dhcp6c_lock");
+	echo("Removed leftover dhcp6c lock file: /tmp/dhcp6c_lock\n");
+}
+if (file_exists("/tmp/dhcp6c_ifs")) {
+	@unlink("/tmp/dhcp6c_ifs");
+}
 
 /* set up interfaces */
 if (!$debugging) {
@@ -299,15 +298,6 @@ echo "Synchronizing user settings...";
 local_reset_accounts();
 echo "done.\n";
 
-if ($realmem > 0 and $realmem < 65) {
-	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
-	/* start webConfigurator up on final pass */
-	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
-} else {
-	/* start web server */
-	system_webgui_start();
-}
-
 /* configure cron service */
 echo "Configuring CRON...";
 configure_cron();
@@ -316,8 +306,56 @@ echo "done.\n";
 /* enable routing */
 system_routing_enable();
 
+/* Set initial time by using IP addresses in case DNS is not available
+ * This works around issues with DNSSEC and gives the firewall a better chance
+ * of having a highly accurate clock at boot.
+ * NG 7352, NG 7447
+ */
+
+/* Default to Google Public NTP servers */
+$ntp_boot_time_servers = '216.239.35.0 216.239.35.4 216.239.35.8 216.239.35.12';
+/* File to allow users to override default behavior.
+ * Servers must be a single line with space-separated IP address entries ONLY as
+ * DNS may not be functional. */
+$ntp_boot_time_servers_override = '/conf/ntp-boot-time-servers';
+
+/* Handle user override of NTP bootstrap behavior */
+if (file_exists($ntp_boot_time_servers_override)) {
+	if (filesize($ntp_boot_time_servers_override) > 0) {
+		/* Read servers from file if the file is not empty. */
+		$servers = file_get_contents($ntp_boot_time_servers_override);
+		$checkservers = explode(' ', trim($servers));
+		$goodservers = array();
+		/* Only add entries which are valid IP addresses. */
+		foreach ($checkservers as $ntpserver) {
+			if (is_ipaddr($ntpserver)) {
+				$goodservers[] = escapeshellarg($ntpserver);
+			}
+		}
+		$ntp_boot_time_servers = implode(' ', $goodservers);
+	} else {
+		/* Disable check if the file exists but is empty. */
+		$ntp_boot_time_servers = '';
+	}
+}
+
+if (!empty($ntp_boot_time_servers)) {
+	echo gettext("Bootstrapping clock...");
+	mwexec("/usr/bin/timeout -k 45 30 /usr/local/sbin/ntpd -g -q -c /dev/null {$ntp_boot_time_servers}");
+	echo gettext("done.") . "\n";
+}
+
 /* Enable ntpd */
 system_ntp_configure();
+
+if ($realmem > 0 and $realmem < 65) {
+	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
+	/* start webConfigurator up on final pass */
+	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
+} else {
+	/* start web server */
+	system_webgui_start();
+}
 
 /* Configure console (and serial port - if necessary). */
 console_configure();
@@ -432,6 +470,20 @@ unset($g['booting']);
 if ($ipsec_dynamic_hosts) {
 	echo gettext("Configuring IPsec VPN for dynamic hosts... ");
 	ipsec_configure();
+
+	/* restart dpinger if PH1 remote gateway == fqdn and PH2 mode == VTI
+	 * see https://redmine.pfsense.org/issues/12763 */
+	foreach ($config['ipsec']['phase1'] as $p1) {
+		if (!isset($p1['mobile']) && !isset($p1['disabled']) && is_fqdn($p1['remote-gateway'])) {
+			foreach ($config['ipsec']['phase2'] as $p2) {
+				if (!isset($p2['disabled']) && ($p2['mode'] == 'vti')) {
+					setup_gateways_monitor();
+					break 2;
+				}
+			}
+		}
+	}
+
 	echo gettext("done") . "\n";
 }
 if ($ipsec_dynamic_hosts || !empty($filterdns)) {

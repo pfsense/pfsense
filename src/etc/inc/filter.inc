@@ -28,6 +28,7 @@
  */
 
 require_once("openvpn.inc");
+require_once("captiveportal.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -125,6 +126,8 @@ define("BOGONS_TRACKER_START", 11000);
 define("BOGONS_TRACKER_END", 11999);
 define("RFC1918_TRACKER_START", 12000);
 define("RFC1918_TRACKER_END", 12999);
+define("CAPTIVEPORTAL_TRACKER_START", 13000);
+define("CAPTIVEPORTAL_TRACKER_END", 13999);
 define("PFLABEL_MAXLEN", 63);
 define("USER_LABEL_INTRO", "USER_RULE: ");
 
@@ -133,6 +136,7 @@ $negate_tracker = NEGATE_TRACKER_DEFAULT;
 $antilockout_tracker = ANTILOCKOUT_TRACKER_START;
 $bogons_tracker = BOGONS_TRACKER_START;
 $rfc1918_tracker = RFC1918_TRACKER_START;
+$captiveportal_tracker = CAPTIVEPORTAL_TRACKER_START;
 
 function filter_antilockout_tracker() {
 	global $antilockout_tracker;
@@ -156,6 +160,12 @@ function filter_rule_tracker() {
 	global $tracker;
 
 	return (++$tracker);
+}
+
+function filter_captiveportal_tracker() {
+        global $captiveportal_tracker;
+
+        return ++$captiveportal_tracker;
 }
 
 function filter_negaterule_tracker() {
@@ -228,34 +238,74 @@ function filter_configure() {
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
 
-	if (!isset($config['system']['gw_down_kill_states'])) {
-		return;
-	}
-
 	$any_gateway_down = false;
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
-			if (empty($gateway['monitor'])) {
+			/* Skip irrelevant or invalid gateway entries */
+			$last_gw = '';
+			if (empty($gateway['monitor']) ||
+			    !is_ipaddr($gateway['monitor']) ||
+			    strstr($gateway['monitor'], "127.0.0.") ||
+			    empty($a_gateways[$gateway['monitor']])) {
+				$last_gw = get_interface_gateway_last($gateway['interface'], $gateway['ipprotocol']);
+				if (!is_ipaddr($last_gw)) {
+					continue;
+				}
+			}
+			/* Do not trigger these actions if:
+			 * The gateway is configured to not kill states when down
+			 * Gateway monitoring is disabled
+			 * Gateway monitoring action is disabled
+			 * The gateway is forced down. */
+			if (($gateway['gw_down_kill_states'] == 'none') ||
+			    (isset($gateway['monitor_disable'])) ||
+			    (isset($gateway['action_disable'])) ||
+			    (isset($gateway['force_down']))) {
 				continue;
 			}
-			if (!is_ipaddr($gateway['monitor'])) {
-				continue;
-			}
-			if (strstr($gateway['monitor'], "127.0.0.")) {
-				continue;
-			}
-			if (empty($a_gateways[$gateway['monitor']])) {
-				continue;
-			}
+
 			$gwstatus = &$a_gateways[$gateway['monitor']];
-			if (strstr($gwstatus['status'], "down")) {
-				$any_gateway_down = true;
-				break;
+			if (strstr($gwstatus['status'], "down") || is_ipaddr($last_gw)) {
+				$any_gateway_down = $gateway['name'];
+				if ($config['system']['gw_down_kill_states'] == 'all') {
+					/* All states will be killed, no need to continue searching. */
+					break;
+				}
+
+				$what_to_kill = gettext("down gateway");
+				$gwip = lookup_gateway_ip_by_name($gateway['name']);
+				if (!is_ipaddr($gwip) && is_ipaddr($last_gw)) {
+					$gwip = $last_gw;
+					$what_to_kill = gettext("dynamic down gateway");
+				}
+				/* Cannot locate the gateway IP address, so we
+				 * cannot proceed. */
+				if (!is_ipaddr($gwip)) {
+					$message = gettext("GW States: Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
+					update_filter_reload_status($message);
+					log_error($message);
+					continue;
+				}
+
+				/* Kill states for the down gateway if the flag is on globally
+				 * or configured to do so on a specific gateway. */
+				if (($config['system']['gw_down_kill_states'] == 'down') ||
+				    ($gateway['gw_down_kill_states'] == 'down')) {
+					$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
+					update_filter_reload_status($message);
+					log_error($message);
+					mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));
+				}
 			}
 		}
 	}
-	if ($any_gateway_down == true) {
+
+	if (($config['system']['gw_down_kill_states'] == 'all') &&
+	    ($any_gateway_down !== false)) {
+		$message = gettext("GW States: One or more gateways is down, flushing all states") . ": {$gateway['name']} ";
+		update_filter_reload_status($message);
+		log_error($message);
 		mwexec("/sbin/pfctl -Fs");
 	}
 }
@@ -264,7 +314,7 @@ function filter_delete_states_for_down_gateways() {
 function filter_configure_sync($delete_states_if_needed = true) {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases, $dummynet_name_list;
-	global $tracker, $negate_tracker;
+	global $tracker, $negate_tracker, $vpns_list;
 	$tracker = TRACKER_DEFAULT;
 	$negate_tracker = NEGATE_TRACKER_DEFAULT;
 
@@ -292,6 +342,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Creating aliases"));
+	$vpns_list = filter_get_vpns_list();
 	$aliases = filter_generate_aliases();
 	$gateways = filter_generate_gateways();
 	if (platform_booting() == true) {
@@ -333,7 +384,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		return;
 	}
 
-	$limitrules = "";
+	$pfhostid = filter_get_host_id();
+	if (!empty($pfhostid)) {
+		$limitrules = "set hostid 0x{$pfhostid}\n";
+	} else {
+		$limitrules = "";
+	}
+
 	/* User defined maximum table entries in Advanced menu. */
 	if ($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
 		$limitrules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
@@ -432,6 +489,14 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= "set skip on pfsync0\n";
 	$rules .= "set keepcounters\n";
 	$rules .= "\n";
+
+	/* Captive Portal ether anchors:
+	 * 'cpzoneid_X_passthrumac' - add PASS tag to MAC passthru entries 
+	 * 'cpzoneid_X_allowedhosts' - add PASS tag for Allowed IP/Hostnames to bypass captive portal redirection
+	 * 'cpzoneid_X_auth' - add PASS tag to authenticated client
+	 */
+	$rules .= filter_captiveportal_ether();
+
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";
@@ -530,6 +595,10 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	foreach ($config['aliases']['alias'] as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
+	/* Captive Portal aliases array (prevents removal):
+	 * 'cpzoneid_X_host_Y' tables inside 'cpzoneid_X_allowedhosts/hostname_X' anchor - Allowed Hostnames
+	 */
+	$aliasesnames = array_merge($aliasesnames, filter_captiveportal_aliases());
 	// get aliases names from pfctl -sT
 	exec("/sbin/pfctl -sT", $pftables);
 	// compare config with pfctl aliases and reserved table names
@@ -619,6 +688,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if (platform_booting() == true) {
 		echo gettext("done.") . "\n";
 	}
+
+	clear_filter_subsystems_dirty();
 
 	unlock($filterlck);
 	return 0;
@@ -801,7 +872,7 @@ function filter_expand_alias_array($alias_name) {
 }
 
 function filter_generate_aliases() {
-	global $g, $config, $FilterIflist, $after_filter_configure_run;
+	global $g, $config, $FilterIflist, $after_filter_configure_run, $vpns_list;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -863,9 +934,12 @@ function filter_generate_aliases() {
 		}
 	}
 
-	$vpns_list = filter_get_vpns_list();
 	if ($vpns_list) {
 		$aliases .= "table <vpn_networks> { $vpns_list }\n";
+		/* add a Negate_networks table */
+		if (!isset($config['system']['disablenegate'])) {
+			$aliases .= "table <negate_networks> { $vpns_list }\n";
+		}
 	}
 
 	/* add a Negate_networks table */
@@ -874,6 +948,13 @@ function filter_generate_aliases() {
 		$aliases .= "{ $vpns_list }";
 	}
 	$aliases .= "\n";
+
+	/* Captive Portal tables
+	 * 'cpzoneid_X_cpips' - all portal interfaces IPv4 addresses (including VIPs) 
+	 * 'cpzoneid_X_authip' - authenticated clients IPv4 addresses
+	 */
+
+	$aliases .= filter_captiveportal_tables();
 
 	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
@@ -949,8 +1030,10 @@ function filter_generate_gateways() {
 			$int = $gateway['interface'];
 			$gwip = $gateway['gateway'];
 			$route = "";
-			if (!is_ipaddr($gwip)) {
+			if (($gateway['ipprotocol'] == 'inet') && !is_ipaddrv4($gwip)) {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
+			} elseif (($gateway['ipprotocol'] == 'inet6') && !is_ipaddrv6($gwip)) {
+				$gwip = get_interface_gateway_v6($gateway['friendlyiface']);
 			}
 			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down']) &&
 			    (($GatewaysStatus[$gwname]['status'] != 'down') || isset($gateway['action_disable']))) {
@@ -1426,7 +1509,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$static_port = " port 1024:65535";
 	}
 
-	if (!empty($protocol)) {
+	if (!empty($protocol) && ($protocol != 'any')) {
 		$protocol_text = " proto {$protocol}";
 	} else {
 		$protocol_text = "";
@@ -1470,6 +1553,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 	}
 
 	/* Search for matching subnets in the routing table */
+	$natsubnets = array();
 	foreach ($route_table as $route) {
 		$subnet = $route['subnet'];
 		$subnet_split = explode("/", $subnet);
@@ -1506,7 +1590,10 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 				    (!empty(get_interface_ipv6($subnet_if)) && is_ipaddrv6($target))) {
 					$natrules .= "no nat on {$subnet_if}{$protocol_text} from ({$subnet_if}) to {$target}\n";
 				}
-				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+				if (!$natsubnets[$subnet]) {
+					$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+					$natsubnets[$subnet] = true;
+				}
 			}
 		}
 	}
@@ -1824,6 +1911,15 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
+	// OpenVPN CSO
+	init_config_arr(array('openvpn', 'openvpn-csc'));
+	foreach ($config['openvpn']['openvpn-csc'] as $ovpnent) {
+		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
+			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
+			$descriptions[] = gettext("OpenVPN CSO");
+		}
+	}
+
 	/* IPsec mode_cfg subnet */
 	if ((isset($config['ipsec']['client']['enable'])) &&
 	    (!empty($config['ipsec']['client']['pool_address'])) &&
@@ -1978,7 +2074,10 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 		} else {
 			$ifip = get_interface_ipv6($if);
 			if (is_ipaddrv6($ifip)) {
-				$tgt6 = "{$ifip}/128";
+				/* remove link-local scope (%realif) from IPv6 address
+				 * see https://redmine.pfsense.org/issues/11984 */
+				preg_match('/^([0-9a-fA-F:]+)%?.*$/', $ifip, $matches);
+				$tgt6 = "{$matches[1]}/128";
 			} else {
 				$tgt6 = "(" . $FilterIflist[$if]['if'] . ")";
 			}
@@ -2091,6 +2190,8 @@ function filter_nat_rules_generate() {
 
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
+	$natrules .= "binat-anchor \"miniupnpd\"\n";
+	$natrules .= "nat-anchor \"miniupnpd\"\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
@@ -2199,6 +2300,7 @@ function filter_nat_rules_generate() {
 			if (isset($rule['disabled'])) {
 				continue;
 			}
+			$rule['ipprotocol'] = 'inet6';
 
 			if (!$rule['interface']) {
 				$natif = "wan";
@@ -2210,6 +2312,15 @@ function filter_nat_rules_generate() {
 			}
 
 			$srcaddr = filter_generate_address($rule, 'source');
+			if (isset($rule['destination']['network']) && !is_subnetv6($rule['destination']['network'])) {
+				$dst_arr = explode("/", $rule['destination']['network']);
+				if (count($dst_arr) > 1) {
+					$track6ip = get_interface_track6ip($dst_arr[0]);
+					$pdsubnet = gen_subnetv6($track6ip[0], $dst_arr[1]);
+					$rule['destination']['address'] = $pdsubnet . "/" . $dst_arr[1];
+					unset($rule['destination']['network']);
+				}
+			}
 			$dstaddr = filter_generate_address($rule, 'destination');
 
 			$srcaddr = trim($srcaddr);
@@ -2415,6 +2526,9 @@ function filter_nat_rules_generate() {
 		}
 	}
 
+	/* captive portal redirection */
+	$natrules .= filter_captiveportal_rdr();
+
 	/* DIAG: add ipv6 NAT, if requested */
 	if ((isset($config['diag']['ipv6nat']['enable'])) &&
 	    (is_ipaddr($config['diag']['ipv6nat']['ipaddr'])) &&
@@ -2445,6 +2559,7 @@ function filter_nat_rules_generate() {
 		/* start reflection redirects on port 19000 of localhost */
 		$starting_localhost_port = 19000;
 		$natrules .= "# NAT Inbound Redirects\n";
+		$nonatrule = array();
 		foreach ($config['nat']['rule'] as $rule) {
 			update_filter_reload_status(sprintf(gettext("Creating NAT rule %s"), $rule['descr']));
 
@@ -2627,7 +2742,12 @@ function filter_nat_rules_generate() {
 			}
 
 			if ($srcaddr <> "" && $dstaddr <> "" && $natif) {
-				$natrules .= "{$nordr}rdr {$rdrpass}on {$rdrif} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+				if ($protocol == 'any') {
+					$proto = '';
+				} else {
+					$proto = "proto {$protocol}";
+				}
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$rdrif} {$ipproto} {$proto} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
 				if (isset($rule['destination']['any']) && !isset($rule['nordr']) && !isset($config['system']['enablenatreflectionhelper']) && !interface_has_gateway($rule['interface'])) {
@@ -2640,12 +2760,15 @@ function filter_nat_rules_generate() {
 					}
 					if (!empty($rule_interface_ip) && !empty($rule_interface_subnet)) {
 						$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
+						$nonatnet = $rule_subnet . '/' . $rule_interface_subnet;
 						$natrules .= "\n";
 						/* Do not generate a rule with an interface source if that interface has no IP address.
 						 * See https://redmine.pfsense.org/issues/8604 */
-						if ((($ipproto == 'inet') && !empty(get_interface_ip($natif))) || 
-						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) {
-							$natrules .= "no nat on {$rdrif} {$ipproto} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						if (((($ipproto == 'inet') && !empty(get_interface_ip($natif))) ||
+						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) &&
+						    (!$nonatrule[$natif])) {
+							$natrules .= "no nat on {$rdrif} {$ipproto} proto tcp from ({$natif}) to {$nonatnet}\n";
+							$nonatrule[$natif] = true;
 						}
 						$natrules .= "nat on {$rdrif} {$ipproto} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 					}
@@ -2664,7 +2787,7 @@ function filter_nat_rules_generate() {
 							$rdr_if_list = "{ {$rdr_if_list} }";
 						}
 						$natrules .= "\n# Reflection redirect\n";
-						$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+						$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} {$ipproto} {$proto} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 						$nat_if_list = array_merge(array($natif), $nat_if_list);
 					}
 				}
@@ -2709,10 +2832,11 @@ function filter_nat_rules_generate() {
 }
 
 function filter_generate_user_rule_arr($rule) {
-	global $config;
+	global $config, $vpns_list;
 	update_filter_reload_status(sprintf(gettext("Creating filter rule %s ..."), $rule['descr']));
 	$ret = array();
-	$line = filter_generate_user_rule($rule);
+	$extralabels = "";
+	$line = filter_generate_user_rule($rule, $extralabels);
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if ($rule['descr'] != "" and $line != "") {
@@ -2720,6 +2844,7 @@ function filter_generate_user_rule_arr($rule) {
 	} else {
 		$ret['descr'] = "label \"USER_RULE\"";
 	}
+	$ret['extralabels'] = $extralabels;
 
 	return $ret;
 }
@@ -2982,8 +3107,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	return $src;
 }
 
-function filter_generate_user_rule($rule) {
-	global $config, $g, $FilterIflist, $GatewaysList;
+function filter_generate_user_rule($rule, & $extralabels = null) {
+	global $config, $g, $FilterIflist, $GatewaysList, $vpns_list;
 	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
 	if (isset($config['system']['developerspew'])) {
@@ -3000,7 +3125,7 @@ function filter_generate_user_rule($rule) {
 
 	/* Check to see if the interface is in our list */
 	if (isset($rule['floating'])) {
-		if (isset($rule['interface']) && $rule['interface'] <> "") {
+		if (isset($rule['interface']) && $rule['interface'] <> "" && $rule['interface'] <> "any") {
 			$interfaces = explode(",", $rule['interface']);
 			$ifliste = "";
 			foreach ($interfaces as $iface) {
@@ -3128,6 +3253,7 @@ function filter_generate_user_rule($rule) {
 	/* set the gateway interface */
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
+	$aline['gwlabel'] = "";
 	/* do not process reply-to for gateway'd rules */
 	if ($rule['gateway'] == "" && $aline['direction'] <> "" && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
 		if ($rule['ipprotocol'] == "inet6") {
@@ -3147,6 +3273,7 @@ function filter_generate_user_rule($rule) {
 		if (isset($GatewaysList[$rule['gateway']])) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
+			$aline['gwlabel'] = "label \"gw:{$rule['gateway']}\"";
 		} else if (isset($config['system']['skip_rules_gw_down'])) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {
@@ -3161,6 +3288,8 @@ function filter_generate_user_rule($rule) {
 			$aline['prot'] = " proto ipv6-icmp ";
 		} elseif ($rule['protocol'] == "icmp") {
 			$aline['prot'] = " proto icmp ";
+		} elseif ($rule['protocol'] == "any") {
+			$aline['prot'] = "";
 		} else {
 			$aline['prot'] = " proto {$rule['protocol']} ";
 		}
@@ -3205,38 +3334,7 @@ function filter_generate_user_rule($rule) {
 		$aline['tagged'] = " tagged \"" .$rule['tagged']. "\" ";
 	}
 	if (!empty($rule['dscp'])) {
-		switch (strtolower($rule['dscp'])) {
-			case 'va':
-				$aline['dscp'] = " tos \"44\" ";
-				break;
-			case 'VA':
-				$aline['dscp'] = " tos \"44\" ";
-				break;
-			case 'cs1':
-				$aline['dscp'] = " tos \"8\" ";
-				break;
-			case 'cs2':
-				$aline['dscp'] = " tos \"16\" ";
-				break;
-			case 'cs3':
-				$aline['dscp'] = " tos \"24\" ";
-				break;
-			case 'cs4':
-				$aline['dscp'] = " tos \"32\" ";
-				break;
-			case 'cs5':
-				$aline['dscp'] = " tos \"40\" ";
-				break;
-			case 'cs6':
-				$aline['dscp'] = " tos \"48\" ";
-				break;
-			case 'cs7':
-				$aline['dscp'] = " tos \"56\" ";
-				break;
-			default:
-				$aline['dscp'] = " tos " . $rule['dscp'] . " ";
-				break;
-		}
+		$aline['dscp'] = " tos " . $rule['dscp'] . " ";
 	}
 	if (!empty($rule['vlanprio']) && ($rule['vlanprio'] != "none")) {
 		$aline['vlanprio'] = " prio " . $vlanprio_values[$rule['vlanprio']] . " ";
@@ -3441,35 +3539,40 @@ function filter_generate_user_rule($rule) {
 					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
 				}
 
-				$aline['schedlabel'] = " label \"s:{$sched['schedlabel']}\" ";
+				$aline['schedlabel'] = "label \"s:{$sched['schedlabel']}\"";
 				break;
 			}
 		}
 	}
 
+	$aline['trackerlabel'] = "";
 	if (!empty($rule['tracker'])) {
 		$aline['tracker'] = "ridentifier {$rule['tracker']} ";
+		$aline['trackerlabel'] = "label \"id:{$rule['tracker']}\"";
 	}
 
 	$line = "";
+	$extralabels = implode(' ', array_filter(array($aline['trackerlabel'], $aline['schedlabel'], $aline['gwlabel'])));
+
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to vpns */
-	if ((($aline['route'] <> "") && (trim($aline['type']) == "pass") && strstr($dst, "any")) && (!isset($config['system']['disablenegate']))) {
+	if (!empty($aline['route']) && (trim($aline['type']) == "pass") && strstr($dst, "any") &&
+	    !isset($config['system']['disablenegate']) && $vpns_list) {
 		/* negate VPN/PPTP/PPPoE/Static Route networks for load balancer/gateway rules */
 		$negate_networks = " to <negate_networks> " . filter_generate_port($rule, "destination");
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] .
 			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . filter_negaterule_tracker() . $aline['allowopts'] . $aline['flags'] .
-			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
-			" label \"NEGATE_ROUTE: Negate policy routing for destination\"\n";
+			$aline['queue'] . $aline['dnpipe'] .
+			" label \"NEGATE_ROUTE: Negate policy routing for destination\" " . $extralabels . "\n";
 
 	}
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
 		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
-		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
+		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 
 	unset($aline);
 
@@ -3642,55 +3745,6 @@ EOD;
 	 */
 	$ipfrules .= "block in {$log['block']} quick from <virusprot> to any ridentifier 1000000400 label \"virusprot overload table\"\n";
 
-	$saved_tracker += 100;
-	$tracker = $saved_tracker;
-
-	/* if captive portal is enabled, ensure that access to this port
-	 * is allowed on a locked down interface
-	 */
-	if (is_array($config['captiveportal'])) {
-		foreach ($config['captiveportal'] as $cpcfg) {
-			if (!isset($cpcfg['enable'])) {
-				continue;
-			}
-			$cpinterfaces = explode(",", $cpcfg['interface']);
-			$cpiflist = array();
-			$cpiplist = array();
-			foreach ($cpinterfaces as $cpifgrp) {
-				if (!isset($FilterIflist[$cpifgrp])) {
-					continue;
-				}
-				$tmpif = get_real_interface($cpifgrp);
-				if (!empty($tmpif)) {
-					$cpiflist[] = "{$tmpif}";
-					$cpipm = get_interface_ip($cpifgrp);
-					if (is_ipaddr($cpipm)) {
-						$cpiplist[] = $cpipm;
-						if (!is_array($config['virtualip']) || !is_array($config['virtualip']['vip'])) {
-							continue;
-						}
-						foreach ($config['virtualip']['vip'] as $vip) {
-							if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
-								$cpiplist[] = $vip['subnet'];
-							}
-						}
-					}
-				}
-			}
-			if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-				$cpinterface = implode(" ", $cpiflist);
-				$cpaddresses = implode(" ", $cpiplist);
-				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : 8000 + ($cpcfg['zoneid'] + 1);
-				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : 8000 + $cpcfg['zoneid'];
-				$portalias = $listenporthttps;
-				$portalias .= " {$listenporthttp}";
-				$ipfrules .= "pass in {$log['pass']} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } ridentifier {$increment_tracker()} keep state(sloppy)\n";
-				$ipfrules .= "pass out {$log['pass']} quick on { {$cpinterface} } proto tcp from any to any flags any ridentifier {$increment_tracker()} keep state(sloppy)\n";
-			}
-		}
-	}
-
-	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {
 		$saved_tracker += 10;
 		$tracker = $saved_tracker;
@@ -3994,7 +4048,6 @@ EOD;
 		}
 	}
 
-
 	$saved_tracker += 300;
 	$tracker = $saved_tracker;
 	/* add ipsec interfaces */
@@ -4047,6 +4100,14 @@ EOD;
 			}
 		}
 	}
+
+	$saved_tracker += 10;
+	$tracker = $saved_tracker;
+
+	/* if captive portal is enabled, ensure that access to this port
+	 * is allowed on a locked down interface
+	 */
+	$ipfrules .= filter_captiveportal_pass();
 
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
@@ -4102,32 +4163,15 @@ EOD;
 		$ipfrules .= "\n# User-defined rules follow\n";
 		$ipfrules .= "\nanchor \"userrules/*\"\n";
 		/* Generate user rule lines */
-		foreach ($rule_arr1 as $rule) {
+		foreach (array_merge($rule_arr1, $rule_arr2, $rule_arr3) as $rule) {
 			if (isset($rule['disabled'])) {
 				continue;
 			}
 			if (!$rule['rule']) {
 				continue;
 			}
-			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
-		}
-		foreach ($rule_arr2 as $rule) {
-			if (isset($rule['disabled'])) {
-				continue;
-			}
-			if (!$rule['rule']) {
-				continue;
-			}
-			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
-		}
-		foreach ($rule_arr3 as $rule) {
-			if (isset($rule['disabled'])) {
-				continue;
-			}
-			if (!$rule['rule']) {
-				continue;
-			}
-			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+			$ipfrules .= implode(' ', array_filter(array(trim($rule['rule']), trim($rule['descr']), trim($rule['extralabels']))));
+			$ipfrules .= "\n";
 		}
 		unset($rule_arr1, $rule_arr2, $rule_arr3);
 	}
@@ -4807,6 +4851,24 @@ function filter_get_interface_list() {
 		$filter_ifs[$ifent] = $ifname;
 	}
 	return $filter_ifs;
+}
+
+function filter_get_host_id() {
+	global $config;
+	/* Custom pf host ID, hex string up to 8 characters in length */
+	if (!empty($config['hasync']['pfhostid']) &&
+	    ctype_xdigit($config['hasync']['pfhostid']) &&
+	    (strlen($config['hasync']['pfhostid']) <= 8)) {
+		$pfhostid = $config['hasync']['pfhostid'];
+	} else {
+		/* If the user has not set one manually, use the last 8 characters of the NDI */
+		$pfhostid = substr(system_get_uniqueid(), -8);
+		/* Extra safety belt in case the NDI cannot be determined. */
+		if (!ctype_xdigit($pfhostid) || (strlen($pfhostid) > 8)) {
+			$pfhostid = "";
+		}
+	}
+	return $pfhostid;
 }
 
 ?>

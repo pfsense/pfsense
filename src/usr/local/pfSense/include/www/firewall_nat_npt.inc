@@ -47,8 +47,10 @@ function savenptNATrule($post, $id, $json = false) {
 	$reqdfieldsn = array(gettext("Interface"));
 	$reqdfields[] = "src";
 	$reqdfieldsn[] = gettext("Source prefix");
-	$reqdfields[] = "dst";
-	$reqdfieldsn[] = gettext("Destination prefix");
+	if (!is_specialnet($post['dsttype'])) {
+		$reqdfields[] = "dst";
+		$reqdfieldsn[] = gettext("Destination prefix");
+	}
 
 	if (!$json) {
 		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
@@ -57,12 +59,21 @@ function savenptNATrule($post, $id, $json = false) {
 	if (!is_ipaddrv6(trim($post['src']))) {
 		$input_errors[] = gettext("The specified source address is not a valid IPv6 prefix");
 	}
-	if (!is_ipaddrv6(trim($post['dst']))) {
+	if (!is_ipaddrv6(trim($post['dst'])) && !is_specialnet(trim($post['dsttype']))) {
 		$input_errors[] = gettext("The specified destination address is not a valid IPv6 prefix");
 	}
 	if (check_subnetsv6_overlap(get_interface_ipv6($post['interface']), 128, trim($post['dst']), $post['dstmask']) &&
 	    !$post['dstnot']) {
 		$input_errors[] = gettext("The specified destination address and interface IPv6 address cannot overlap");
+	}
+	if (is_specialnet($post['dsttype'])) {
+		$track6ip = get_interface_track6ip($post['dsttype']);
+		if ($post['dstmask'] < $track6ip[1]) {
+			$input_errors[] = gettext("The specified destination prefix size must be greater or equal to the track interface prefix size.");
+		}
+	}
+	if (!empty($post['dstmask']) && ($post['srcmask'] != $post['dstmask'])) {
+		$input_errors[] = gettext("The specified source prefix size must be equal to the destination prefix size.");
 	}
 
 	if (!$input_errors) {
@@ -75,13 +86,15 @@ function savenptNATrule($post, $id, $json = false) {
 		if ($post['src']) {
 			$post['src'] = trim($post['src']);
 		}
-		if ($post['dst']) {
+		if (is_specialnet($post['dsttype'])) {
+			$post['dst'] = $post['dsttype'];
+		} elseif ($post['dst']) {
 			$post['dst'] = trim($post['dst']);
 		}
 
 		pconfig_to_address($natent['source'], $post['src'], $post['srcmask'], $post['srcnot']);
 
-		pconfig_to_address($natent['destination'], $post['dst'], $post['dstmask'], $post['dstnot']);
+		pconfig_to_address($natent['destination'], $post['dst'], $post['dstmask'], $post['dstnot'], 0, 0, true);
 
 		if (isset($id) && $a_npt[$id]) {
 			$a_npt[$id] = $natent;
@@ -124,6 +137,12 @@ function getnptNATRule($id, $json = false) {
 			$pconfig['dstmask'], $pconfig['dstnot'],
 			$pconfig['dstbeginport'], $pconfig['dstendport']);
 
+		$dst_arr = explode("/", $pconfig['dst']);
+		if (count($dst_arr) > 1) {
+			$pconfig['dst'] = $dst_arr[0];
+			$pconfig['dstmask'] = $dst_arr[1];
+		}
+
 		$pconfig['interface'] = $a_npt[$id]['interface'];
 		if (!$pconfig['interface']) {
 			$pconfig['interface'] = "wan";
@@ -153,6 +172,31 @@ function togglenptNATrule($post, $json = false) {
 	}
 
 	if (write_config($wc_msg) && !$json) {
+		mark_subsystem_dirty('natconf');
+	}
+
+	if (!$json) {
+		header("Location: firewall_nat_npt.php");
+		exit;
+	}
+}
+
+// Toggle multiple NPt rules
+function toggleMultiplenptNATrules($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'npt'));
+	$a_npt = &$config['nat']['npt'];
+
+	foreach ($post['rule'] as $rulei) {
+		if (isset($a_npt[$rulei]['disabled'])) {
+			unset($a_npt[$rulei]['disabled']);
+		} else {
+			$a_npt[$rulei]['disabled'] = true;
+		}
+	}
+
+	if (write_config(gettext("Firewall: NAT: NPt - toggle enable/disable for selected NPt mappings.")) && !$json) {
 		mark_subsystem_dirty('natconf');
 	}
 

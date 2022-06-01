@@ -374,6 +374,12 @@ if ($_POST['save']) {
 		$newcp['httpsname'] = $_POST['httpsname'];
 		$newcp['preauthurl'] = $_POST['preauthurl'];
 		$newcp['blockedmacsurl'] = $_POST['blockedmacsurl'];
+		if ((isset($newcp['nomacfilter']) ^ isset($_POST['nomacfilter'])) ||
+		    (isset($newcp['peruserbw']) ^ isset($_POST['peruserbw'])) ||
+		    (isset($newcp['bwdefaultdn']) && ($newcp['bwdefaultdn'] != $_POST['peruserbw'])) ||
+		    (isset($newcp['bwdefaultup']) && ($newcp['bwdefaultup'] != $_POST['peruserup']))) {
+			$reload_rules = true;
+		}
 		if ($_POST['peruserbw']) {
 			$newcp['peruserbw'] = true;
 			if (isset($_POST['bwdefaultdn'])) {
@@ -495,9 +501,9 @@ if ($_POST['save']) {
 
 		write_config("Captive portal settings saved");
 
-		captiveportal_configure_zone($newcp);
-		unset($newcp);
 		filter_configure();
+		captiveportal_configure_zone($newcp, $reload_rules);
+		unset($newcp);
 		header("Location: services_captiveportal_zones.php");
 		exit;
 	} else {

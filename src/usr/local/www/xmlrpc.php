@@ -583,12 +583,18 @@ class pfsense_xmlrpc_server {
 					break;
 				case "carp":
 					$carp_setuped = true;
-					/* properly remove the old VHID
-					 * see https://redmine.pfsense.org/issues/12202 */
-					$realif = get_real_interface($vip['interface']);
-					mwexec("/sbin/ifconfig {$realif} " .
-					    escapeshellarg($vip['subnet']) . " -alias");
-					interface_carp_configure($vip);
+					if (does_vip_exist($vip) && isset($oldvips[$key]['vhid']) &&
+					    ($oldvips[$key]['vhid'] ^ $vip['vhid'])) {
+						/* properly remove the old VHID
+						 * see https://redmine.pfsense.org/issues/12202 */
+						$realif = get_real_interface($vip['interface']);
+						mwexec("/sbin/ifconfig {$realif} " .
+							escapeshellarg($vip['subnet']) . " -alias");
+						$ipalias_reload = true;
+					} else {
+						$ipalias_reload = false;
+					}
+					interface_carp_configure($vip, false, $ipalias_reload);
 					break;
 				}
 				$force_filterconfigure = true;

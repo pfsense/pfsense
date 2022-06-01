@@ -112,6 +112,7 @@ add_new_address() {
 	# This is necessary otherwise dpinger will try to ping all 1s address
 	if [ -n "$new_routers" ] && [ "$new_routers" != "255.255.255.255" ]; then
 		echo $new_routers > /tmp/${interface}_router
+		/bin/rm -f /tmp/${interface}_router.last
 	fi
 	echo $new_ip_address > /var/db/${interface}_ip
 }
@@ -177,8 +178,10 @@ delete_old_routes() {
 			$ROUTE delete -host $router -iface $interface
 
 			$ROUTE delete default $router >/dev/null 2>&1
-			/bin/rm -f /tmp/${interface}_router
 		done
+		if [ -f "/tmp/${interface}_router" ]; then
+			/bin/mv /tmp/${interface}_router /tmp/${interface}_router.last
+		fi
 	fi
 
 	if [ -n "$old_static_routes" ]; then
@@ -186,8 +189,10 @@ delete_old_routes() {
 		while [ $# -gt 1 ]; do
 			$ROUTE delete "$1" "$2"
 			shift; shift
-			/bin/rm -f /tmp/${interface}_router
 		done
+		if [ -f "/tmp/${interface}_router" ]; then
+			/bin/mv /tmp/${interface}_router /tmp/${interface}_router.last
+		fi
 	fi
 
 	arp_flush
@@ -231,6 +236,7 @@ add_new_routes() {
 				# NOTE: Do not activate this for all ones address since pf(4) will try to forward packets to it.
 				if [ "$new_ip_address" = "$router" ]; then
 					echo $router > /tmp/${interface}_router
+					/bin/rm -f /tmp/${interface}_router.last
 				fi
 			else
 				#  add local route to the router ip address.
@@ -243,6 +249,7 @@ add_new_routes() {
 				$ROUTE add default $router
 				echo $ROUTE add default $router | $LOGGER
 				echo $router > /tmp/${interface}_router
+				/bin/rm -f /tmp/${interface}_router.last
 			fi
 			ADDED_ROUTE=yes
 			# 2nd and subsequent default routers error out, so explicitly
@@ -258,6 +265,7 @@ add_new_routes() {
 			$ROUTE add $1 $2
 			if [ "$ADDED_ROUTE" = "no" ]; then
 				echo $2 > /tmp/${interface}_router
+				/bin/rm -f /tmp/${interface}_router.last
 			fi
 			shift; shift
 		done
@@ -322,7 +330,10 @@ MEDIUM)
 PREINIT)
 	delete_old_alias
 	$IFCONFIG $interface inet 0.0.0.0 netmask 255.0.0.0 broadcast 255.255.255.255 up
-	/bin/rm -f /tmp/${interface}_router
+
+	if [ -f "/tmp/${interface}_router" ]; then
+		/bin/mv /tmp/${interface}_router /tmp/${interface}_router.last
+	fi
 	;;
 
 ARPCHECK|ARPSEND)

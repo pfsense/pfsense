@@ -1115,10 +1115,10 @@ function delete_static_route($id, $delete = false) {
 		$delgw = lookup_gateway_ip_by_name(unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}_gw")));
 		if (count($delete_targets)) {
 			foreach ($delete_targets as $dts) {
-				if (is_ipaddrv6($dts)) {
-					$family = "-inet6";
-				} else {
+				if (is_subnetv4($dts)) {
 					$family = "-inet";
+				} else {
+					$family = "-inet6";
 				}
 				$route = route_get($dts, '', true);
 				if (!count($route)) {
@@ -1813,7 +1813,7 @@ function system_ntp_setup_gps($serialport) {
 
 	/* XXX: Why not file_put_contents to the device */
 	@file_put_contents('/tmp/gps.init', $gps_init);
-	mwexec("cat /tmp/gps.init > {$serialport}");
+	mwexec("/bin/cat /tmp/gps.init > {$serialport}");
 
 	if ($found && $config['ntpd']['gps']['autobaudinit']) {
 		system_ntp_setup_rawspeed($serialport, $gpsbaud);
@@ -2294,7 +2294,7 @@ function system_reboot() {
 
 	system_reboot_cleanup();
 
-	mwexec("nohup /etc/rc.reboot > /dev/null 2>&1 &");
+	mwexec("/usr/bin/nohup /etc/rc.reboot > /dev/null 2>&1 &");
 }
 
 function system_reboot_sync($reroot=false) {
@@ -2817,8 +2817,10 @@ function check_dnsavailable($proto='inet') {
 
 	if ($proto == 'inet') {
 		$gdns = array('8.8.8.8', '8.8.4.4');
-	} else {
+	} elseif ($proto == 'inet6') {
 		$gdns = array('2001:4860:4860::8888', '2001:4860:4860::8844');
+	} else {
+		$gdns = array('8.8.8.8', '8.8.4.4', '2001:4860:4860::8888', '2001:4860:4860::8844');
 	}
 	$nameservers = array_merge($gdns, get_dns_nameservers());
 	$test = 0;

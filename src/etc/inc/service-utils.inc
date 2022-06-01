@@ -64,9 +64,18 @@ function write_rcfile($params) {
 	$towrite .= "rc_stop() {\n";
 	$towrite .= "\t{$tokill}\n";
 	$towrite .= "}\n\n";
+	if (!empty($params['restart'])) {
+		$torestart = &$params['restart'];
+	} else {
+		$torestart = "\trc_stop\n";
+		$torestart .= "\trc_start\n";
+	}
+	$towrite .= "rc_restart() {\n";
+	$towrite .= "{$torestart}\n";
+	$towrite .= "}\n\n";
 
 	/* begin rcfile logic */
-	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
+	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_restart\n\t\t;;\nesac\n\n";
 
 	@file_put_contents($rcfile_fullname, $towrite);
 	unset($towrite);
@@ -279,7 +288,8 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] != 'disabled')) {
+	init_config_arr(array('ntpd'));
+	if ($config['ntpd']['enable'] != 'disabled') {
 		$pconfig = array();
 		$pconfig['name'] = "ntpd";
 		$pconfig['description'] = gettext("NTP clock sync");
@@ -763,7 +773,7 @@ function service_control_stop($name, $extras) {
 				$id = htmlspecialchars($extras['id']);
 				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
 				killbypid($pidfile);
-				openvpn_clean_rules($vpnmode, $id);
+				openvpn_delete_tmp($vpnmode, $id);
 			}
 			break;
 		case 'syslogd':
@@ -795,6 +805,8 @@ function service_control_restart($name, $extras) {
 			$zone = htmlspecialchars($extras['zone']);
 			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
 			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
+			/* see https://redmine.pfsense.org/issues/12651 */
+			sleep(1);
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':

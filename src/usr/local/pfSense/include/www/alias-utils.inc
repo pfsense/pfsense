@@ -272,6 +272,11 @@ function saveAlias($post, $id) {
 		}
 	}
 
+	/* Check for captive portal prefix */
+	if (substr($post['name'], 0, strlen(CPPREFIX)) == CPPREFIX) {
+		$data_errors[] = sprintf(gettext("Cannot use Captive Portal reserved prefix: %s"), CPPREFIX);
+	}
+
 	/*
 	 * Packages (e.g. tinc) create interface groups, reserve this
 	 * namespace pkg_ for them.

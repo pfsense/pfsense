@@ -192,7 +192,7 @@ $section->addInput(new Form_Select(
 	filter_get_interface_list()
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
 
-$protocols = "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF";
+$protocols = "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF Any";
 
 $section->addInput(new Form_Select(
 	'ipprotocol',

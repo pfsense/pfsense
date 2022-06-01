@@ -591,6 +591,10 @@ $(function(){
 		var act = args[1];
 		var ipsectype = args[2];
 		var conid = args[3];
+		if (args[4] == 'mobile') {
+			conid += '-mobile';
+			args.shift();
+		}
 		var uniqueid;
 		if (args.length > 4) {
 			uniqueid = args[4];
@@ -799,7 +803,7 @@ function interceptGET() {
 		if (typeof attr !== typeof undefined && attr !== false) {
 			// Automatically apply a confirmation dialog to "Delete" icons
 			if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
-			   ($(this).hasClass('fa-trash'))) {
+			   (($(this).hasClass('do-confirm')) || ($(this).hasClass('fa-trash')))) {
 				var msg = $.trim(this.textContent).toLowerCase();
 
 				if (!msg)
@@ -862,4 +866,19 @@ function postSubmit(data, target) {
 		)
 		.appendTo('body')
 		.submit();
+}
+
+function buttonsmode(tag, buttons) {
+	var buttonsdisable = true;
+	$('[id^=' + tag + ']').each(function () {
+		if ($(this).prop("checked")) {
+			buttonsdisable = false;
+		}
+	});
+	for (let button in buttons) {
+		$('#' + button).prop('disabled', buttonsdisable);
+	}
+	buttons.forEach(function(button) {
+		$('#' + button).prop('disabled', buttonsdisable);
+	})
 }

@@ -1135,13 +1135,13 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
 	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
 	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
-	    "hw.hn.use_if_start", "net.link.ifqmaxlen");
+	    "hw.hn.use_if_start");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
 		    array("autoboot_delay", "console", "comconsole_speed", "comconsole_port",
 		    "boot_multicons", "boot_serial", "hint.uart.0.flags",
-		    "hint.uart.1.flags"));
+		    "hint.uart.1.flags", "net.link.ifqmaxlen"));
 	}
 	foreach ($input_split as $line) {
 		if (empty($line)) {
@@ -1721,7 +1721,7 @@ function get_interface_info($ifdescr) {
 	if ($ifinfo['status'] == "up") {
 		/* try to determine media with ifconfig */
 		unset($ifconfiginfo);
-		exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
+		exec("/sbin/ifconfig -v " . $ifinfo['if'], $ifconfiginfo);
 		$wifconfiginfo = array();
 		if (is_interface_wireless($ifdescr)) {
 			exec("/sbin/ifconfig {$ifinfo['if']} list sta", $wifconfiginfo);
@@ -1764,6 +1764,20 @@ function get_interface_info($ifdescr) {
 			}
 			if (preg_match("/laggport: (.*)$/", $ici, $matches)) {
 				$ifinfo['laggport'][] = $matches[1];
+			}
+			if (preg_match("/plugged: (.*)$/", $ici, $matches)) {
+				$ifinfo['plugged'] = $matches[1];
+			}
+			if (preg_match("/vendor: (.*)$/", $ici, $matches)) {
+				$ifinfo['vendor'] = $matches[1];
+			}
+			if (preg_match("/module temperature: (.*) Voltage: (.*)$/", $ici, $matches)) {
+				$ifinfo['temperature'] = $matches[1];
+				$ifinfo['voltage'] = $matches[2];
+			}
+			if (preg_match("/RX: (.*) TX: (.*)$/", $ici, $matches)) {
+				$ifinfo['rx'] = $matches[1];
+				$ifinfo['tx'] = $matches[2];
 			}
 		}
 		foreach ($wifconfiginfo as $ici) {
@@ -2246,6 +2260,25 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
 	// Alias in an alias
 	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name);
+	// Static routes
+	update_alias_names_upon_change(array('staticroutes', 'route'), array('network'), $new_alias_name, $orig_alias_name);
+	// OpenVPN
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('tunnel_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('tunnel_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('local_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('local_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('remote_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-server'), array('remote_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('tunnel_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('tunnel_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('remote_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-client'), array('remote_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('tunnel_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('tunnel_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('local_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('local_networkv6'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('remote_network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('remote_networkv6'), $new_alias_name, $orig_alias_name);
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
@@ -3194,6 +3227,15 @@ function calculate_ipv6_delegation_length($if) {
 }
 
 function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
+	/* convert zero-value prefix IPv6 addresses with IPv4 mapping to hex
+	 * see https://redmine.pfsense.org/issues/12440 */
+	$suffix_list = explode(':', $suffix);
+	if (is_ipaddrv4($suffix_list[count($suffix_list) - 1])) {
+		$hexsuffix = dechex(ip2long($suffix_list[count($suffix_list) - 1]));
+		$suffix_list[count($suffix_list) - 1] = substr($hexsuffix, 0, 4);
+		$suffix_list[] = substr($hexsuffix, 4, 8);
+		$suffix = implode(':', $suffix_list);
+	}	
 	$prefix = Net_IPv6::uncompress($prefix, true);
 	$suffix = Net_IPv6::uncompress($suffix, true);
 

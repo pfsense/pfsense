@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# rc.checkclock
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2022 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+# originally based on m0n0wall (http://neon1.net/m0n0wall)
+# Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+get_best_time() {
+  if [ -e ${2} ]; then
+    FILETIME=`/usr/bin/stat -t "%Y%m%d%H%M" -f '%Sm' ${2}`
+    if [ ${1} -lt ${FILETIME} ]; then
+      echo "${FILETIME}"
+      return 0
+    fi
+  fi
+
+  echo "${1}"
+  return 0
+}
+
+BESTTIME=0
+FILELIST="/conf/config.xml /conf.default/config.xml /var/log/system.log /conf/rules.debug.old /cf/conf/RAM_Disk_Store /var/db/ntpd.drift /conf/upgrade_log.txt"
+for filename in ${FILELIST}
+do
+  BESTTIME=$( get_best_time ${BESTTIME} ${filename} )
+done
+
+CURRENTTIME=`/bin/date "+%Y%m%d%H%M"`
+
+if [ ${CURRENTTIME} -lt ${BESTTIME} ]; then
+  echo "Current time is older than key file time, using file time instead."
+  /bin/date ${BESTTIME} 2>/dev/null >/dev/null
+fi

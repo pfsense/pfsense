@@ -34,11 +34,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("util.inc");
 
-if ($_GET['reset'] != "") {
-	sigkillbyname('pfctl', SIGKILL);
-	exit;
-}
-
 if ($_POST['apply']) {
 	write_config("Traffic Shaper Wizard settings applied");
 

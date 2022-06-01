@@ -6401,6 +6401,26 @@ function upgrade_215_to_216() {
 		return;
 	}
 
+	/* Deprecated method. */
+	function upgrade216_ipsec_create_vtimap($ikeid, $idx) {
+		$assigned = array_column($config['ipsec']['vtimaps']['item'], 'ifnum');
+		asort($assigned, SORT_NUMERIC);
+		$new = 1;
+		foreach ($assigned as $ipsecifnum) {
+			if ($ipsecifnum != $new) {
+				break;
+			}
+			if ($new++ > 32767) {
+				return(NULL);
+			}
+		}
+		return array(
+			"reqid" => $ikeid,
+			"index" => $idx,
+			"ifnum" => $new
+		);
+	}
+
 	$iflist = get_configured_interface_list_by_realif(true);
 
 	foreach ($config['ipsec']['vtimaps']['item'] as $idx => $vtimap) {
@@ -6408,7 +6428,7 @@ function upgrade_215_to_216() {
 			continue;
 		}
 
-		$new_vtimap = ipsec_create_vtimap($vtimap['reqid'],
+		$new_vtimap = upgrade216_ipsec_create_vtimap($vtimap['reqid'],
 		    $vtimap['index']);
 
 		/*
@@ -6593,6 +6613,73 @@ function upgrade_220_to_221() {
 
 /* No functional changes. */
 function upgrade_221_to_222() {
+}
+
+function upgrade_222_to_223() {
+	global $config;
+
+	foreach ($config['system']['user'] as & $user) {
+		if ($user['name'] == 'admin') {
+			$user_home = "/root";
+		} else {
+			$user_home = "/home/{$user_name}";
+		}
+		$fn = "{$user_home}/.keephistory";
+		if (file_exists($fn)) {
+			$user['keephistory'] = true;
+			@unlink($fn);
+		}
+	}
+}
+
+function upgrade_223_to_224() {
+	global $config;
+
+	init_config_arr(array('filter', 'rule'));
+	foreach ($config['filter']['rule'] as & $rule) {
+		if (isset($rule['floating']) && !isset($rule['interface'])) {
+			$rule['interface'] = 'any';
+		}
+	}
+}
+
+function upgrade_224_to_225() {
+	global $config;
+
+	/* DHCP6 now uses single config for all interfaces
+	 * see https://redmine.pfsense.org/issues/6880 */
+	foreach ($config['interfaces'] as & $inf) {
+		if (isset($inf['dhcp6debug'])) {
+			$config['system']['dhcp6debug'] = true;
+			unset($inf['dhcp6debug']);
+		}
+		if (isset($inf['dhcp6norelease'])) {
+			$config['system']['dhcp6norelease'] = true;
+			unset($inf['dhcp6norelease']);
+		}
+	}
+}
+
+function upgrade_225_to_226() {
+	global $config;
+
+	/* Update value of state killing on gateway failure.
+	 * https://redmine.pfsense.org/issues/12092
+	 */
+	if (isset($config['system']['gw_down_kill_states'])) {
+		$config['system']['gw_down_kill_states'] = 'all';
+	}
+}
+
+function upgrade_226_to_227() {
+	global $config;
+
+	/* Convert dnsmasq (forwarder) custom options to base64.
+	 * https://redmine.pfsense.org/issues/13105
+	 */
+	if (is_array($config['dnsmasq']) && !empty($config['dnsmasq']['custom_options'])) {
+		$config['dnsmasq']['custom_options'] = base64_encode($config['dnsmasq']['custom_options']);
+	}
 }
 
 /*

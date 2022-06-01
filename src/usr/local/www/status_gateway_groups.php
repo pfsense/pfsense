@@ -37,6 +37,18 @@ define('COLOR', true);
 
 require_once("guiconfig.inc");
 
+if ($_POST['act'] == 'killgw') {
+	if (!empty($_POST['gwname'])) {
+		mwexec("/sbin/pfctl -k label -k " . escapeshellarg("gw:{$_POST['gwname']}"));
+	} elseif (!empty($_POST['gwip']) && is_ipaddr($_POST['gwip'])) {
+		list($ipaddr, $scope) = explode('%', $_POST['gwip']);
+		mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($ipaddr));
+	}
+
+	header("Location: status_gateways.php");
+	exit;
+}
+
 init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $changedesc = gettext("Gateway Groups") . ": ";
@@ -63,6 +75,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext("Group Name"); ?></th>
 						<th><?=gettext("Gateways"); ?></th>
 						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext("Action"); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -113,6 +126,7 @@ display_top_tabs($tab_array);
 									$c = 1;
 									while ($c <= $priority_count) {
 										$monitor = lookup_gateway_monitor_ip_by_name($member);
+										$gwip = lookup_gateway_ip_by_name($member);
 										if ($p == $c) {
 											$status = $gateways_status[$monitor];
 											if (stristr($status['status'], "online")) {
@@ -166,7 +180,11 @@ display_top_tabs($tab_array);
 											}
 ?>
 										<td class="<?=$bgcolor?>">
-											<?=htmlspecialchars($member);?><br/><?=$online?>
+											<?=htmlspecialchars($member);?>
+<?php if (!empty($gwip) && is_ipaddr($gwip)): ?>
+											<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa fa-times-circle-o do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
+<?php endif; ?>
+											<br/><?=$online?>
 										</td>
 
 <?php
@@ -189,6 +207,9 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<?=htmlspecialchars($gateway_group['descr'])?>
+						</td>
+						<td>
+							<a href="?act=killgwg&amp;gwgname=<?=urlencode($gateway_group['name']);?>" class="fa fa-times-circle do-confirm" title="<?=gettext('Kill firewall states created by policy routing rules using this specific gateway group.')?>" usepost></a>
 						</td>
 					</tr>
 			<?php endforeach; ?>

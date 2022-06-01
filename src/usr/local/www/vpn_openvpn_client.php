@@ -35,6 +35,7 @@ require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
+global $openvpn_sharedkey_warning;
 
 init_config_arr(array('openvpn', 'openvpn-client'));
 $a_client = &$config['openvpn']['openvpn-client'];
@@ -87,6 +88,7 @@ if ($_POST['act'] == "del") {
 		unset($a_client[$id]);
 		write_config($wc_msg);
 		$savemsg = gettext("Client successfully deleted.");
+		services_unbound_configure(false);
 	}
 }
 
@@ -155,7 +157,7 @@ if (($act == "edit") || ($act == "dup")) {
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
 				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
 			}
-			$pconfig['remote_cert_tls'] = $a_client[$id]['remote_cert_tls'];
+			$pconfig['remote_cert_tls'] = isset($a_client[$id]['remote_cert_tls']);
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		}
@@ -584,7 +586,9 @@ if ($_POST['save']) {
 				$client['tls_type'] = $pconfig['tls_type'];
 				$client['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
-			$client['remote_cert_tls'] = $pconfig['remote_cert_tls'];
+			if (isset($pconfig['remote_cert_tls'])) {
+				$client['remote_cert_tls'] = true;
+			}
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -592,8 +596,9 @@ if ($_POST['save']) {
 		$client['digest'] = $pconfig['digest'];
 		$client['engine'] = $pconfig['engine'];
 
-		$client['tunnel_network'] = $pconfig['tunnel_network'];
-		$client['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
+		foreach (array('', 'v6') as $ntype) {
+			$client["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
+		}
 		$client['remote_network'] = $pconfig['remote_network'];
 		$client['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$client['use_shaper'] = $pconfig['use_shaper'];
@@ -625,6 +630,12 @@ if ($_POST['save']) {
 		$client['ping_action_seconds'] = $pconfig['ping_action_seconds'];
 		$client['inactive_seconds'] = $pconfig['inactive_seconds'];
 
+		if (($act == 'new') || (!empty($client['disable']) ^ !empty($a_client[$id]['disable'])) ||
+		    ($client['tunnel_network'] != $a_client[$id]['tunnel_network']) ||
+		    ($client['tunnel_networkv6'] != $a_client[$id]['tunnel_networkv6'])) {
+			$client['unbound_restart'] = true;
+		}
+
 		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
 			$wc_msg = sprintf(gettext('Updated OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
@@ -635,6 +646,7 @@ if ($_POST['save']) {
 
 		write_config($wc_msg);
 		openvpn_resync('client', $client);
+		services_unbound_configure(false);
 
 		header("Location: vpn_openvpn_client.php");
 		exit;
@@ -712,6 +724,14 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['mode'],
 		$openvpn_client_modes
 		));
+
+	$group = new Form_Group('WARNING:');
+	$group->add(new Form_StaticText(
+		'',
+		$openvpn_sharedkey_warning
+	));
+	$group->addClass('text-danger')->addClass('sharedkeywarning');
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'dev_mode',
@@ -1010,9 +1030,13 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network or network type alias with a single entry used for private ' .
-		    'communications between this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). ' .
-		    'The second usable address in the network will be assigned to the client virtual interface. ' .
-		    'Leave blank if the server is capable of providing addresses to clients.');
+			'communications between this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). ' .
+			'The second usable address in the network will be assigned to the client virtual interface. ' .
+			'Leave blank if the server is capable of providing addresses to clients.%1$s%1$s' .
+			'A tunnel network of /30 or smaller puts OpenVPN into a special peer-to-peer mode which ' .
+			'cannot receive settings from the server dynamically. This mode is not compatible with several options, ' .
+			'including Exit Notify, and Inactive.',
+			'<br/>');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -1020,9 +1044,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network or network alias with a single entry used for private ' .
-        	    'communications between this client and the server expressed using CIDR notation (e.g. fe80::/64). ' .
-		    'When set static using this field, the ::2 address in the network will be assigned to the client ' .
-		    'virtual interface. Leave blank if the server is capable of providing addresses to clients.');
+			'communications between this client and the server expressed using CIDR notation (e.g. fe80::/64). ' .
+			'When set static using this field, the ::2 address in the network will be assigned to the client ' .
+			'virtual interface. Leave blank if the server is capable of providing addresses to clients.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
@@ -1316,8 +1340,12 @@ else:
 
 			<tbody>
 <?php
+	$print_sk_warning = false;
 	$i = 0;
 	foreach ($a_client as $client):
+		if ($client['mode'] == 'p2p_shared_key') {
+			$print_sk_warning = true;
+		}
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 		$ncp = (($client['mode'] != "p2p_shared_key") && ($client['ncp_enable'] != 'disabled'));
 		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], $ncp);
@@ -1381,6 +1409,12 @@ else:
 </nav>
 
 <?php
+if ($print_sk_warning) {
+	print_info_box(gettext('WARNING:') . ' ' . $openvpn_sharedkey_warning, 'warning', false);
+}
+?>
+
+<?php
 endif;
 
 // Note:
@@ -1395,6 +1429,7 @@ events.push(function() {
 	function mode_change() {
 		switch ($('#mode').val()) {
 			case "p2p_tls":
+				hideClass('sharedkeywarning', true);
 				hideCheckbox('tlsauth_enable', false);
 				hideInput('tlsauth_keydir', false);
 				hideInput('caref', false);
@@ -1411,6 +1446,7 @@ events.push(function() {
 				hideInput('exit_notify', false);
 				break;
 			case "p2p_shared_key":
+				hideClass('sharedkeywarning', false);
 				hideCheckbox('tlsauth_enable', true);
 				hideInput('tlsauth_keydir', true);
 				hideInput('caref', true);

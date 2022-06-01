@@ -26,8 +26,8 @@
  */
 
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 desec desec-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyfi dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 name.com name.com-v6 namecheap nicru nicru-v6 noip noip-v6 noip-free noip-free-v6 onecom onecom-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 strato yandex yandex-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),deSEC,deSEC (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DY.fi,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Mythic Beasts,Mythic Beasts (v6),Name.com,Name.com (v6),Namecheap,NIC.RU,NIC.RU (v6),No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),One.com,One.com (v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),Strato,Yandex,Yandex (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 desec desec-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsimple-v6 dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyfi dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 name.com name.com-v6 namecheap nicru nicru-v6 noip noip-v6 noip-free noip-free-v6 onecom onecom-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 strato yandex yandex-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),deSEC,deSEC (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNSimple (v6),DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DY.fi,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Mythic Beasts,Mythic Beasts (v6),Name.com,Name.com (v6),Namecheap,NIC.RU,NIC.RU (v6),No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),One.com,One.com (v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),Strato,Yandex,Yandex (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -79,17 +79,16 @@ function services_radvd_configure($blacklist = array()) {
 		$racarpif = false;
 		$rasrcaddr = "";
 		/* check if binding to CARP IP */
-		if (!empty($dhcpv6ifconf['rainterface'])) {
-			if (strstr($dhcpv6ifconf['rainterface'], "_vip")) {
+		if (!empty($dhcpv6ifconf['rainterface']) && strstr($dhcpv6ifconf['rainterface'], "_vip")) {
+			if (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
 				if (is_linklocal(get_configured_vip_ipv6($dhcpv6ifconf['rainterface']))) {
 					$rasrcaddr = get_configured_vip_ipv6($dhcpv6ifconf['rainterface']);
-				}
-				elseif (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
+				} else {
 					$dhcpv6if = $dhcpv6ifconf['rainterface'];
 					$racarpif = true;
-				} else {
-					continue;
 				}
+			} else {
+				continue;
 			}
 		}
 
@@ -544,6 +543,8 @@ function services_dhcpdv4_configure() {
 
 	$custoptions = "";
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		$idx = 0;
+		$httpclient = false;
 		if (is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				if (!empty($item['type'])) {
@@ -552,10 +553,21 @@ function services_dhcpdv4_configure() {
 					$itemtype = "text";
 				}
 				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+				if (($item['type'] == "text") &&
+				    ($item['number'] == 60) &&
+				    (base64_decode($item['value']) == "HTTPClient")) {
+					$httpclient = true;
+				} 
+				$idx++;
 			}
+		}
+		if (!empty($dhcpifconf['uefihttpboot']) && isset($dhcpifconf['netboot']) && !$httpclient) {
+			$custoptions .= "option custom-{$dhcpif}-{$idx} code 60 = text;\n";
 		}
 		if (is_array($dhcpifconf['pool'])) {
 			foreach ($dhcpifconf['pool'] as $poolidx => $poolconf) {
+				$idx = 0;
+				$httpclient = false;
 				if (is_array($poolconf['numberoptions']) && is_array($poolconf['numberoptions']['item'])) {
 					foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
 						if (!empty($item['type'])) {
@@ -564,13 +576,24 @@ function services_dhcpdv4_configure() {
 							$itemtype = "text";
 						}
 						$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+						if (($item['type'] == "text") &&
+						    ($item['number'] == 60) &&
+						    (base64_decode($item['value']) == "HTTPClient")) {
+							$httpclient = true;
+						} 
+						$idx++;
 					}
+				}
+				if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient) {
+					$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$idx} code 60 = text;\n";
 				}
 			}
 		}
 		if (is_array($dhcpifconf['staticmap'])) {
 			$i = 0;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
+				$idx = 0;
+				$httpclient = false;
 				if (is_array($sm['numberoptions']) && is_array($sm['numberoptions']['item'])) {
 					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
 						if (!empty($item['type'])) {
@@ -580,6 +603,15 @@ function services_dhcpdv4_configure() {
 						}
 						$custoptions .= "option custom-s_{$dhcpif}_{$i}-{$itemidx} code {$item['number']} = {$itemtype};\n";
 					}
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					} 
+					$idx++;
+				}
+				if (!empty($sm['uefihttpboot']) && isset($sm['netboot']) && !$httpclient) {
+					$custoptions .= "option custom-s_{$dhcpif}_{$i}-{$idx} code 60 = text;\n";
 				}
 				$i++;
 			}
@@ -903,7 +935,7 @@ EOPP;
 				if (empty($mac)) {
 					continue;
 				}
-				$dhcpdconf .= "		$deny_action members of \"" . str_replace(':', '', $mac) . "\";\n";
+				$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
 
 			if ($poolconf['failover_peerip'] <> "") {
@@ -988,6 +1020,8 @@ EOPP;
 			// Handle pool-specific options
 			$dhcpdconf .= "\n";
 			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
+			$idx = 0;
+			$httpclient = false;
 			if (isset($poolconf['numberoptions']['item']) && is_array($poolconf['numberoptions']['item']) && ($all_pools_idx > 0)) {
 				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
 				// This matches the way $poolidx was used when generating the $custoptions string earlier.
@@ -999,7 +1033,18 @@ EOPP;
 					} else {
 						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} {$item_value};\n";
 					}
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					} 
+					$idx++;
 				}
+			}
+			if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient &&
+			    (!isset($dhcpifconf['uefihttpboot']) ||
+			    ($poolconf['uefihttpboot'] != $dhcpifconf['uefihttpboot']))) {
+				$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$idx} \"HTTPClient\";\n";
 			}
 
 			// ldap-server
@@ -1134,6 +1179,8 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdconf .= "\n";
+		$idx = 0;
+		$httpclient = false;
 		if (isset($dhcpifconf['numberoptions']['item']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				$item_value = base64_decode($item['value']);
@@ -1142,7 +1189,16 @@ EOD;
 				} else {
 					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} {$item_value};\n";
 				}
+				if (($item['type'] == "text") &&
+				    ($item['number'] == 60) &&
+				    (base64_decode($item['value']) == "HTTPClient")) {
+					$httpclient = true;
+				} 
+				$idx++;
 			}
+		}
+		if (!empty($dhcpifconf['uefihttpboot']) && isset($dhcpifconf['netboot']) && !$httpclient) {
+			$dhcpdconf .= "	option custom-{$dhcpif}-{$idx} \"HTTPClient\";\n";
 		}
 
 		// ldap-server
@@ -1201,8 +1257,9 @@ EOD;
 				}
 				$dhcpdconf .= "\n\n";
 			} elseif (!empty($filename)) {
-				$dhcpdconf .= "		filename \"{$filename}\";\n";
+				$dhcpdconf .= "	filename \"{$filename}\";\n";
 			}
+			unset($filename);
 			if (!empty($dhcpifconf['rootpath'])) {
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
 			}
@@ -1307,6 +1364,8 @@ EOD;
 
 				// Handle option, number rowhelper values
 				$dhcpdconf .= "\n";
+				$idx = 0;
+				$httpclient = false;
 				if (isset($sm['numberoptions']['item']) && is_array($sm['numberoptions']['item'])) {
 					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
 						$item_value = base64_decode($item['value']);
@@ -1316,6 +1375,15 @@ EOD;
 							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} {$item_value};\n";
 						}
 					}
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					} 
+					$idx++;
+				}
+				if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient) {
+					$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$idx} \"HTTPClient\";\n";
 				}
 
 				// ldap-server
@@ -1332,6 +1400,9 @@ EOD;
 					$pxe_files = array();
 					if (!empty($sm['filename'])) {
 						$filename = $sm['filename'];
+					}
+					if (!empty($sm['uefihttpboot'])) {
+						$pxe_files[] = array('HTTPClient', $sm['uefihttpboot']);
 					}
 					if (!empty($sm['filename32'])) {
 						$pxe_files[] = array('00:06', $sm['filename32']);
@@ -1350,11 +1421,16 @@ EOD;
 					$pxeif = false;
 					if (is_array($pxe_files) && !empty($pxe_files)) {
 						foreach ($pxe_files as $pxe) {
+							if ($pxe[0] == 'HTTPClient') {
+								$expr = "substring (option vendor-class-identifier, 0, 10) = \"HTTPClient\" {\n";
+							} else {
+								$expr = "option arch = {$pxe[0]} {\n";
+							}
 							if (!$pxeif) {
-								$dhcpdconf .= "	if option arch = {$pxe[0]} {\n";
+								$dhcpdconf .= "	if " . $expr; 
 								$pxeif = true;
 							} else {
-								$dhcpdconf .= " else if option arch = {$pxe[0]} {\n";
+								$dhcpdconf .= " else if " . $expr; 
 							}
 							$dhcpdconf .= "		filename \"{$pxe[1]}\";\n";
 							$dhcpdconf .= "	}";
@@ -1366,8 +1442,9 @@ EOD;
 						}
 						$dhcpdconf .= "\n\n";
 					} elseif (!empty($filename)) {
-						$dhcpdconf .= "		filename \"{$filename}\";\n";
+						$dhcpdconf .= "	filename \"{$filename}\";\n";
 					}
+					unset($filename);
 					if (!empty($dhcpifconf['rootpath'])) {
 						$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
 					}
@@ -1641,6 +1718,16 @@ EOD;
 		// of each subnet here is always /64.
 		$pdlen = 64;
 
+		if (is_ipaddrv6($ifcfgipv6)) {
+			$subnet_start = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+			$subnet_end = gen_subnetv6_max($ifcfgipv6, $ifcfgsnv6);
+			if ((!is_inrange_v6($dhcpv6ifconf['range']['from'], $subnet_start, $subnet_end)) ||
+			    (!is_inrange_v6($dhcpv6ifconf['range']['to'], $subnet_start, $subnet_end))) {
+				log_error(gettext("The specified range lies outside of the current subnet. Skipping DHCP6 entry."));
+				continue;
+			}
+		}
+
 		$dnscfgv6 = "";
 
 		if ($dhcpv6ifconf['domain']) {
@@ -1911,17 +1998,39 @@ EOD;
 	return 0;
 }
 
-function services_igmpproxy_configure() {
+function services_igmpproxy_configure($interface='') {
 	global $config, $g;
 
-	/* kill any running igmpproxy */
-	killbyname("igmpproxy");
+	if (!empty($interface) && is_array($config['igmpproxy']['igmpentry'])) { 
+		foreach ($config['igmpproxy']['igmpentry'] as $igmpentry) {
+			if ($igmpentry['ifname'] == $interface) {
+				$igmpinf = true;
+				break;
+			}
+		}
+		if (!$igmpinf) {
+			return false;
+		}
+	}
 
 	if (!isset($config['igmpproxy']['enable'])) {
-		return 0;
+		if (isvalidproc("igmpproxy")) {
+			log_error(gettext("Stopping IGMP Proxy service."));
+			killbyname("igmpproxy");
+		}
+		return true;
 	}
 	if (!is_array($config['igmpproxy']['igmpentry']) || (count($config['igmpproxy']['igmpentry']) == 0)) {
-		return 1;
+		return false;
+	}
+
+	if (platform_booting()) {
+		echo gettext("Starting IGMP Proxy service...");
+	}
+
+	if (isvalidproc("igmpproxy")) {
+		log_error(gettext("Restarting IGMP Proxy service."));
+		killbyname("igmpproxy");
 	}
 
 	$iflist = get_configured_interface_list();
@@ -1936,6 +2045,9 @@ quickleave
 EOD;
 
 	foreach ($config['igmpproxy']['igmpentry'] as $igmpcf) {
+		if (empty($config['interfaces'][$igmpcf['ifname']]['ipaddr'])) {
+			continue;
+		}
 		unset($iflist[$igmpcf['ifname']]);
 		$realif = get_real_interface($igmpcf['ifname']);
 		if (empty($igmpcf['threshold'])) {
@@ -1952,6 +2064,11 @@ EOD;
 			}
 		}
 		$igmpconf .= "\n";
+		if ($igmpcf['type'] == 'upstream') {
+		       $upstream = true;	
+		} else {
+		       $downstream = true;	
+		}
 	}
 	foreach ($iflist as $ifn) {
 		$realif = get_real_interface($ifn);
@@ -1959,9 +2076,14 @@ EOD;
 	}
 	$igmpconf .= "\n";
 
+	if (!$upstream || !$downstream) {
+		log_error(gettext("Could not find upstream or downstream IGMP Proxy interfaces!"));
+		return;
+	}
+
 	$igmpfl = fopen($g['varetc_path'] . "/igmpproxy.conf", "w");
 	if (!$igmpfl) {
-		log_error(gettext("Could not write Igmpproxy configuration file!"));
+		log_error(gettext("Could not write IGMP Proxy configuration file!"));
 		return;
 	}
 	fwrite($igmpfl, $igmpconf);
@@ -1974,9 +2096,13 @@ EOD;
 		mwexec_bg("/usr/local/sbin/igmpproxy {$g['varetc_path']}/igmpproxy.conf");
 	}
 
-	log_error(gettext("Started IGMP proxy service."));
+	log_error(gettext("Started IGMP Proxy service."));
 
-	return 0;
+	if (platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
+
+	return true;
 }
 
 function services_dhcrelay_configure() {
@@ -2475,6 +2601,15 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 			}
 		}
 
+		/* avoid 127.0.0.1 dns loop,
+		 * see https://redmine.pfsense.org/issues/12902 */
+		$args .= ' --no-resolv';
+		foreach (get_dns_nameservers(false, true) as $dns) {
+			if ($dns != '127.0.0.1') {
+				$args .= ' --server=' . $dns;
+			}
+		}
+
 		/* Allow DNS Rebind for forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {
@@ -2497,7 +2632,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		}
 
 		if ($config['dnsmasq']['custom_options']) {
-			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+			foreach (preg_split('/\s+/', base64_decode($config['dnsmasq']['custom_options'])) as $c) {
 				$args .= " " . escapeshellarg("--{$c}");
 				$p = explode('=', $c);
 				if (array_key_exists($p[0], $standard_args)) {
@@ -2529,13 +2664,19 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 	return $return;
 }
 
-function services_unbound_configure($restart_dhcp = true) {
+function services_unbound_configure($restart_dhcp = true, $interface = '') {
 	global $config, $g;
 	$return = 0;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_unbound_configure() being called $mt\n";
+	}
+
+	if (!empty($interface) && isset($config['unbound']['enable']) &&
+	    !in_array($interface, explode(',', $config['unbound']['active_interface'])) &&
+	    !in_array($interface, explode(',', $config['unbound']['outgoing_interface']))) {
+		return $return;
 	}
 
 	if (isset($config['unbound']['enable'])) {
@@ -2677,11 +2818,25 @@ function services_unbound_configure($restart_dhcp = true) {
 	return $return;
 }
 
-function services_snmpd_configure() {
+function services_snmpd_configure($interface='') {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_snmpd_configure() being called $mt\n";
+	}
+
+	if (!empty($interface) &&
+	    !empty($config['snmpd']['bindip']) &&
+	    isset($config['snmpd']['enable'])) {
+		foreach (explode(",", $config['snmpd']['bindip']) as $bind_to_ip) {
+			if ($bind_to_ip == $interface) {
+				$interface_restart = true;
+				break;
+			}
+		}
+		if (!$interface_restart) {
+			return 0;
+		}
 	}
 
 	/* kill any running snmpd */

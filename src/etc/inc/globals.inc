@@ -40,6 +40,9 @@ define("IF_NAMESIZE", 15);	/* 16 minus the terminating NULL */
 // AddPassword method defines
 define('DMYPWD', "********");
 
+// Captive Portal aliases prefix
+define('CPPREFIX', "cpzoneid_");
+
 global $g;
 $g = array(
 	"acbbackuppath" => "/cf/conf/acb/",
@@ -73,7 +76,7 @@ $g = array(
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"debug" => false,
-	"latest_config" => "22.2",
+	"latest_config" => "22.7",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -98,7 +101,8 @@ $g = array(
 		'dhcpd' => "/var/dhcpd/var/db/dhcpd.leases",
 		'dhcpdv6' => "/var/dhcpd/var/db/dhcpd6.leases",
 		'voucher' => "/var/db/voucher_*.db"
-	)
+	),
+	"cp_prefix" => 'cpzoneid'
 );
 
 /* IP TOS flags */
@@ -356,5 +360,16 @@ $ssh_keys = array(
 
 global $sshConfigDir;
 $sshConfigDir = "/etc/ssh";
+
+global $lagg_hash_list;
+$lagg_hash_list = array(
+	'l2,l3,l4' => 'Layer 2/3/4 (default)',
+	'l2' => 'Layer 2 (MAC Address)',
+	'l3' => 'Layer 3 (IP Address)',
+	'l4' => 'Layer 4 (Port Number)',
+	'l2,l3' => 'Layer 2/3 (MAC + IP)',
+	'l3,l4' => 'Layer 3/4 (IP + Port)',
+	'l2,l4' => 'Layer 2/4 (MAC + Port)'
+);
 
 ?>

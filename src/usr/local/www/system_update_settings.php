@@ -173,7 +173,7 @@ if (file_exists("/usr/local/bin/git")) {
 		))->setHelp('After updating, sync with the following repository/branch before reboot.');
 
 	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
-		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str);
+		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && /usr/local/bin/git config remote.origin.url", $output_str);
 		if (is_array($output_str) && !empty($output_str[0])) {
 			$lastrepositoryurl = $output_str[0];
 		}
@@ -188,7 +188,7 @@ if (file_exists("/usr/local/bin/git")) {
 		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', $lastrepositoryurl);
 
 	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
-		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git branch", $output_str);
+		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && /usr/local/bin/git branch", $output_str);
 		if (is_array($output_str)) {
 			foreach ($output_str as $output_line) {
 				if (strstr($output_line, '* ')) {

@@ -36,6 +36,15 @@ if (!$do_not_include_config_gui_inc) {
 // Will be changed to false if security checks fail
 $security_passed = true;
 
+/* Possible user password hash types.
+ * See https://redmine.pfsense.org/issues/12855
+ */
+global $auth_password_hash_types;
+$auth_password_hash_types = array(
+	'bcrypt' => gettext('bcrypt -- Blowfish-based crypt'),
+	'sha512' => gettext('SHA-512 -- SHA-512-based crypt')
+);
+
 /* If this function doesn't exist, we're being called from Captive Portal or
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form")) {
@@ -431,15 +440,14 @@ function local_backed($username, $passwd) {
 		return false;
 	}
 
-	if ($user['sha512-hash']) {
-		if (hash_equals($user['sha512-hash'], crypt($passwd, $user['sha512-hash']))) {
+	if ($user['bcrypt-hash']) {
+		if (password_verify($passwd, $user['bcrypt-hash'])) {
 			return true;
 		}
 	}
 
-	//for backwards compatibility
-	if ($user['bcrypt-hash']) {
-		if (password_verify($passwd, $user['bcrypt-hash'])) {
+	if ($user['sha512-hash']) {
+		if (hash_equals($user['sha512-hash'], crypt($passwd, $user['sha512-hash']))) {
 			return true;
 		}
 	}
@@ -474,6 +482,12 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		} else if ($user['uid'] < 2000 && !in_array($user, $u2add)) {
 			continue;
 		}
+		/* Don't remove /root */
+		if ($user['uid'] != 0) {
+			$rmhome = escapeshellarg('-r');
+		} else {
+			$rmhome = '';
+		}
 
 		/*
 		 * If a crontab was created to user, pw userdel will be
@@ -481,8 +495,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		 * before run it when necessary
 		 */
 		unlink_if_exists("/var/cron/tabs/{$user['name']}");
-		$cmd = "/usr/sbin/pw userdel -n " .
-		    escapeshellarg($user['name']);
+		$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . $rmhome;
 		if ($debug) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
@@ -656,6 +669,7 @@ function local_user_set(& $user) {
 	/* Cases here should be ordered by most privileged to least privileged. */
 	if (userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all")) {
 		$user_shell = "/bin/tcsh";
+		$shell_access = true;
 	} elseif (userHasPrivilege($user, "user-copy-files-chroot")) {
 		$user_shell = "/usr/local/sbin/scponlyc";
 	} elseif (userHasPrivilege($user, "user-copy-files")) {
@@ -682,10 +696,10 @@ function local_user_set(& $user) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		$fd = popen($cmd, "w");
-		if (isset($user['sha512-hash'])) {
-			fwrite($fd, $user['sha512-hash']);
-		} elseif (isset($user['bcrypt-hash'])) {
+		if (isset($user['bcrypt-hash'])) {
 			fwrite($fd, $user['bcrypt-hash']);
+		} elseif (isset($user['sha512-hash'])) {
+			fwrite($fd, $user['sha512-hash']);
 		} else {
 			fwrite($fd, $user['password']);
 		}
@@ -693,6 +707,7 @@ function local_user_set(& $user) {
 		$user_group = "wheel";
 		$user_home = "/root";
 		$user_shell = "/etc/rc.initial";
+		$shell_access = true;
 	}
 
 	/* read from pw db */
@@ -725,10 +740,10 @@ function local_user_set(& $user) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	$fd = popen($cmd, "w");
-	if (isset($user['sha512-hash'])) {
-		fwrite($fd, $user['sha512-hash']);
-	} elseif (isset($user['bcrypt-hash'])) {
+	if (isset($user['bcrypt-hash'])) {
 		fwrite($fd, $user['bcrypt-hash']);
+	} elseif (isset($user['sha512-hash'])) {
+		fwrite($fd, $user['sha512-hash']);
 	} else {
 		fwrite($fd, $user['password']);
 	}
@@ -750,10 +765,14 @@ function local_user_set(& $user) {
 	}
 
 	/* write out ssh authorized key file */
+	$sshdir = "{$user_home}/.ssh";
 	if ($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
-			@mkdir("{$user_home}/.ssh", 0700);
-			@chown("{$user_home}/.ssh", $user_name);
+			@mkdir($sshdir, 0700);
+			@chown($sshdir, $user_name);
+		} elseif (file_exists($sshdir) && (fileowner($sshdir) != $user['uid'])) {
+			@chown($sshdir, $user_name);
+			@chown("{$sshdir}/*", $user_name);
 		}
 		$keys = base64_decode($user['authorizedkeys']);
 		@file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
@@ -806,9 +825,25 @@ function local_user_set_password(&$user, $password) {
 
 	unset($user['password']);
 	unset($user['md5-hash']);
+	unset($user['sha512-hash']);
 	unset($user['bcrypt-hash']);
-	$salt = substr(bin2hex(openssl_random_pseudo_bytes(16)),0,16);
-	$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
+
+	/* Default to bcrypt hashing if unset.
+	 * See https://redmine.pfsense.org/issues/12855
+	 */
+	$hashalgo = isset($config['system']['webgui']['pwhash']) ? $config['system']['webgui']['pwhash'] : 'bcrypt';
+
+	switch ($hashalgo) {
+		case 'sha512':
+			$salt = substr(bin2hex(random_bytes(16)),0,16);
+			$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
+			break;
+		case 'bcrypt':
+		default:
+			$user['bcrypt-hash'] = password_hash($password, PASSWORD_BCRYPT);
+			break;
+	}
+
 	if (($user['name'] == $config['hasync']['username']) &&
 	    ($config['hasync']['adminsync'] == 'on')) {
 		$config['hasync']['new_password'] = $password;
@@ -1250,11 +1285,11 @@ function ldap_get_groups($username, $authcfg) {
 	global $debug, $config;
 
 	if (!function_exists("ldap_connect")) {
-		return;
+		return array();
 	}
 
 	if (!$username) {
-		return false;
+		return array();
 	}
 
 	if (!isset($authcfg['ldap_nostrip_at']) && stristr($username, "@")) {
@@ -1285,7 +1320,6 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapauthcont = $authcfg['ldap_authcn'];
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
 		$ldapgroupattribute = strtolower($authcfg['ldap_attr_member']);
-		$ldaptype = "";
 		$ldapver = $authcfg['ldap_protver'];
 		if (empty($ldapbindun) || empty($ldapbindpw)) {
 			$ldapanon = true;
@@ -1297,7 +1331,7 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapscope = $authcfg['ldap_scope'];
 		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
-		return false;
+		return array();
 	}
 
 	if (isset($authcfg['ldap_rfc2307'])) {
@@ -1334,7 +1368,7 @@ function ldap_get_groups($username, $authcfg) {
 		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
-			return false;
+			return array();
 		}
 	}
 
@@ -1345,7 +1379,7 @@ function ldap_get_groups($username, $authcfg) {
 		if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
 			@ldap_close($ldap);
-			return false;
+			return array();
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s."), $ldapname));
@@ -1468,8 +1502,9 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
 		$ldapgroupattribute = $authcfg['ldap_attr_member'];
 		$ldapextendedqueryenabled = $authcfg['ldap_extended_enabled'];
-		$ldapextendedquery = $authcfg['ldap_extended_query'];
-		$ldapfilter = "";
+		if ($ldapextendedqueryenabled) {
+			$ldapextendedquery = $authcfg['ldap_extended_query'];
+		}
 		if (!$ldapextendedqueryenabled) {
 			$ldapfilter = "({$ldapnameattribute}={$username})";
 		} else {
@@ -1480,7 +1515,6 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 				$ldapfilter = "(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
 			}
 		}
-		$ldaptype = "";
 		$ldapver = $authcfg['ldap_protver'];
 		$ldapname = $authcfg['name'];
 		$ldapscope = $authcfg['ldap_scope'];
@@ -1728,24 +1762,10 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
 	} else {
 		$nasid = $attributes['nas_identifier'];
-		$nasip = $authcfg['radius_nasip_attribute'];
 		if (empty($nasid)) {
 			$nasid = gethostname(); //If no RADIUS NAS-Identifier is given : we use pfsense's hostname as NAS-Identifier
 		}
-		if (!is_ipaddr($nasip)) {
-			$nasip = get_interface_ip($nasip);
-
-			if (!is_ipaddr($nasip)) {
-				/* use first interface with IP as fallback for NAS-IP-Address
-				 * see https://redmine.pfsense.org/issues/11109 */
-				foreach (get_configured_interface_list() as $if) {
-					$nasip = get_interface_ip($if);
-					if (is_ipaddr($nasip)) {
-						break;
-					}
-				}
-			}
-		}
+		$nasip = nasip_fallback($acctcfg['radius_nasip_attribute']);
 		$nasmac = get_interface_mac(find_ip_interface($nasip));
 
 		$rauth->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
@@ -1800,6 +1820,27 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 	$rauth->close();
 
 	return $ret;
+}
+
+function nasip_fallback($ip) {
+	if (!is_ipaddr($ip)) {
+		$nasip = get_interface_ip($ip);
+
+		if (!is_ipaddr($nasip)) {
+			/* use first interface with IP as fallback for NAS-IP-Address
+			 * see https://redmine.pfsense.org/issues/11109 */
+			foreach (get_configured_interface_list() as $if) {
+				$nasip = get_interface_ip($if);
+				if (is_ipaddr($nasip)) {
+					break;
+				}
+			}
+		}
+	} else {
+		$nasip = $ip;
+	}
+
+	return $nasip;
 }
 
 /*

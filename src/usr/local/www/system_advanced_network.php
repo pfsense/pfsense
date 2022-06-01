@@ -123,6 +123,19 @@ $section->addInput(new Form_Checkbox(
 	'unintentionally when accessing the firewall by hostname, since by default both IPv4 and IPv6 entries are added '.
 	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
 
+$section->addInput(new Form_Checkbox(
+	'dhcp6debug',
+	'DHCP6 Debug',
+	'Start DHCP6 client in debug mode',
+	$pconfig['dhcp6debug']
+));
+$section->addInput(new Form_Checkbox(
+	'dhcp6norelease',
+	'Do not allow PD/Address release',
+	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
+	$pconfig['dhcp6norelease']
+));
+
 $section->addInput(new Form_Select(
 	'ipv6duidtype',
 	'DHCP6 DUID',

@@ -34,6 +34,13 @@ require_once("certs.inc");
 require_once('pfsense-utils.inc');
 require_once("auth.inc");
 
+global $openvpn_sharedkey_warning;
+$openvpn_sharedkey_warning = gettext(
+	'OpenVPN has deprecated shared key mode as it does not meet current security standards. ' .
+	'Shared key mode will be removed from future versions. ' .
+	'Convert any existing shared key VPNs to TLS and do not configure any new shared key OpenVPN instances.'
+);
+
 global $openvpn_prots;
 $openvpn_prots = array(
 	"UDP4" => "UDP on IPv4 only",
@@ -647,7 +654,7 @@ function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv
 	}
 
 	if ($error) {
-		return sprintf(gettext("The field '%1\$s' must contain only valid %2\$s CIDR range(s) separated by commas."), $name, $ipproto);
+		return sprintf(gettext("The field '%1\$s' must contain only valid %2\$s CIDR range(s) or FQDN(s) separated by commas."), $name, $ipproto);
 	} else {
 		return false;
 	}
@@ -657,8 +664,8 @@ function openvpn_validate_cidr_ipv4($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
 		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
-			foreach (alias_to_subnets_recursive($value) as $net) {
-				if (!is_subnetv4($net)) {
+			foreach (alias_to_subnets_recursive($value, true) as $net) {
+				if (!is_subnetv4($net) && !is_fqdn($net)) {
 					return false;
 				}
 			}
@@ -676,8 +683,8 @@ function openvpn_validate_cidr_ipv6($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
 		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
-			foreach (alias_to_subnets_recursive($value) as $net) {
-				if (!is_subnetv6($net)) {
+			foreach (alias_to_subnets_recursive($value, true) as $net) {
+				if (!is_subnetv6($net) && !is_fqdn($net)) {
 					return false;
 				}
 			}
@@ -719,11 +726,11 @@ function openvpn_validate_tunnel_network($value, $ipproto) {
 function openvpn_gen_tunnel_network($tunnel_network) {
 	if (is_alias($tunnel_network)) {
 		$net = alias_to_subnets_recursive($tunnel_network);
-		$pair = $net[0];
+		$pair = openvpn_tunnel_network_fix($net[0]);
 	} else {
 		$pair = $tunnel_network;
 	}
-	return explode('/', trim($pair));
+	return explode('/', $pair);
 }
 
 function openvpn_add_dhcpopts(& $settings, & $conf) {
@@ -819,6 +826,27 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 	@chmod($fpath, 0600);
 
 	$conf .= "{$directive} {$fpath} {$opt}\n";
+}
+
+function openvpn_delete_tmp($mode, $id) {
+	global $g;
+
+	/* delete temporary files created by connect script */
+	if (($mode == "server") && (isset($id))) {
+		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
+	}
+
+	/* delete temporary files created by OpenVPN; only delete old files to
+	 * avoid deleting files potentially still in use by another OpenVPN process
+	*/
+	$tmpfiles = array_filter(glob("{$g['tmp_path']}/openvpn_cc*.tmp"),'is_file');
+	if (!empty($tmpfiles)) {
+		foreach ($tmpfiles as $tmpfile) {
+			if ((time() - filemtime($tmpfile)) > 60) {
+				@unlink_if_exists($tmpfile);
+			}
+		}
+	}
 }
 
 function openvpn_reconfigure($mode, $settings) {
@@ -1175,9 +1203,13 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				break;
 		}
+		$connlimit = "0";
 		if ($settings['mode'] != 'p2p_shared_key' &&
 		    isset($settings['duplicate_cn'])) {
 			$conf .= "duplicate-cn\n";
+			if ($settings['connlimit']) {
+				$connlimit = "{$settings['connlimit']}";
+			}
 		}
 		if (($settings['mode'] != 'p2p_shared_key') &&
 		    isset($settings['remote_cert_tls'])) {
@@ -1189,13 +1221,10 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if ($mode == 'client') {
 
+		$add_pull = false;
 		// configure p2p mode
-		switch ($settings['mode']) {
-			case 'p2p_tls':
-				$conf .= "tls-client\n";
-			case 'shared_key':
-				$conf .= "client\n";
-				break;
+		if ($settings['mode'] == 'p2p_tls') {
+			$conf .= "tls-client\n";
 		}
 
 		// If there is no bind option at all (ip and/or port), add "nobind" directive
@@ -1231,6 +1260,9 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "ifconfig {$ip2} {$ip1}\n";
 			} else {
 				$conf .= "ifconfig {$ip2} {$mask}\n";
+				if ($settings['mode'] == 'p2p_tls') {
+					$add_pull = true;
+				}
 			}
 		}
 
@@ -1241,7 +1273,22 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "ifconfig-ipv6 {$ipv6_2} {$ipv6_1}\n";
 			} else {
 				$conf .= "ifconfig-ipv6 {$ipv6_1}/{$prefix} {$ipv6_2}\n";
+				if ($settings['mode'] == 'p2p_tls') {
+					$add_pull = true;
+				}
 			}
+		}
+
+		/* If both tunnel networks are empty, then pull from server. */
+		if (empty($settings['tunnel_network']) &&
+		    empty($settings['tunnel_networkv6'])) {
+			$add_pull = true;
+		}
+
+		/* Only add "pull" if the tunnel network is undefined or using tap mode.
+		   OpenVPN can't pull settings from a server in point-to-point mode. */
+		if (($settings['mode'] == 'p2p_tls') && $add_pull) {
+			$conf .= "pull\n";
 		}
 
 		if (($settings['auth_user'] || $settings['auth_pass']) && $settings['mode'] == "p2p_tls") {
@@ -1518,6 +1565,8 @@ function openvpn_reconfigure($mode, $settings) {
 	unset($conf);
 	$fpath = "{$g['openvpn_base']}/{$mode_id}/interface";
 	file_put_contents($fpath, $interface);
+	$fpath = "{$g['openvpn_base']}/{$mode_id}/connuserlimit";
+	file_put_contents($fpath, $connlimit);
 	//chown($fpath, 'nobody');
 	//chgrp($fpath, 'nobody');
 	@chmod("{$g['openvpn_base']}/{$mode_id}/config.ovpn", 0600);
@@ -1525,6 +1574,7 @@ function openvpn_reconfigure($mode, $settings) {
 	@chmod("{$g['openvpn_base']}/{$mode_id}/key", 0600);
 	@chmod("{$g['openvpn_base']}/{$mode_id}/tls-auth", 0600);
 	@chmod("{$g['openvpn_base']}/{$mode_id}/conf", 0600);
+	@chmod("{$g['openvpn_base']}/{$mode_id}/connuserlimit", 0600);
 
 	if ($wait_tentative) {
 		interface_wait_tentative($interface);
@@ -1537,7 +1587,6 @@ function openvpn_restart($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
-	openvpn_clean_rules($mode, $vpnid);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
@@ -1569,6 +1618,8 @@ function openvpn_restart($mode, $settings) {
 		unlock($lockhandle);
 		return;
 	}
+
+	openvpn_delete_tmp($mode, $vpnid);
 
 	/* Do not start an instance if we are not CARP master on this vip! */
 	if (strstr($settings['interface'], "_vip")) {
@@ -1649,7 +1700,8 @@ function openvpn_delete($mode, $settings) {
 	/* remove the configuration files */
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
 	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
-	openvpn_clean_rules($mode, $vpnid);
+	openvpn_delete_tmp($mode, $vpnid);
+	filter_configure();
 }
 
 function openvpn_resync_csc(& $settings) {
@@ -1739,6 +1791,7 @@ function openvpn_resync_csc(& $settings) {
 
 function openvpn_resync_csc_all() {
 	global $config;
+	init_config_arr(array('openvpn', 'openvpn-csc'));
 	if (is_array($config['openvpn']['openvpn-csc'])) {
 		foreach ($config['openvpn']['openvpn-csc'] as & $settings) {
 			openvpn_resync_csc($settings);
@@ -1776,14 +1829,8 @@ function openvpn_resync($mode, $settings) {
 }
 
 // Resync and restart all VPNs
-function openvpn_resync_all($interface = "") {
+function openvpn_resync_all($interface = "", $protocol = "") {
 	global $g, $config;
-
-	openvpn_create_dirs();
-
-	if (!is_array($config['openvpn'])) {
-		$config['openvpn'] = array();
-	}
 
 	if ($interface <> "") {
 		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
@@ -1792,11 +1839,21 @@ function openvpn_resync_all($interface = "") {
 	}
 
 	// Check if OpenVPN clients and servers require a resync.
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
 	foreach (array("server", "client") as $type) {
 		if (!is_array($config['openvpn']["openvpn-{$type}"])) {
 			continue;
 		}
 		foreach ($config['openvpn']["openvpn-{$type}"] as & $settings) {
+			if (isset($settings['disable'])) {
+				continue;
+			}
+			if (!empty($protocol) &&
+			    ((($protocol == 'inet') && strstr($settings['protocol'], "6")) ||
+			    (($protocol == 'inet6') && strstr($settings['protocol'], "4")))) {
+				continue;
+			}
 			$fpath = "{$g['openvpn_base']}/{$type}{$settings['vpnid']}/interface";
 			$gw_group_change = FALSE;
 			$ip_change = ($interface === "") ||
@@ -1810,17 +1867,24 @@ function openvpn_resync_all($interface = "") {
 			}
 
 			if ($ip_change || $gw_group_change) {
+				if (!$dirs) {
+					openvpn_create_dirs();
+				}
 				openvpn_resync($type, $settings);
+				$restarted = true;
+				$dirs = true;
 			}
 		}
 	}
 
-	openvpn_resync_csc_all();
+	if ($restarted) {
+		openvpn_resync_csc_all();
 
-	/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
-	 * see https://redmine.pfsense.org/issues/11662 */
-	if (platform_booting()) {
-		interfaces_qinq_configure(true);
+		/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
+		 * see https://redmine.pfsense.org/issues/11662 */
+		if (platform_booting()) {
+			interfaces_qinq_configure(true);
+		}
 	}
 }
 
@@ -1882,12 +1946,12 @@ function openvpn_get_active_servers($type="multipoint") {
 			list($tn, $sm) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 
 			if ((($server['mode'] == "p2p_shared_key") ||
-			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) ||
+			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network']) && ($server['mode'] == 'p2p_tls')) ||
 			    ($sm >= 30)) &&
 			    ($type == "p2p")) {
 				$servers[] = openvpn_get_client_status($server, $socket);
 			} elseif (($server['mode'] != "p2p_shared_key") &&
-			    !(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) &&
+			    !(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network']) && ($server['mode'] == 'p2p_tls')) &&
 			    ($type == "multipoint") &&
 			    ($sm < 30)) {
 				$servers[] = openvpn_get_server_status($server, $socket);
@@ -2026,34 +2090,75 @@ function openvpn_get_client_status($client, $socket) {
 			}
 
 			/* Get the client state */
-			if (strstr($line, "CONNECTED")) {
-				$client['status'] = "up";
-				$list = explode(",", $line);
+			if (substr_count($line, ',') >= 7) {
+				$list = explode(",", trim($line));
+				$list = array_map('trim', $list);
 
 				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
+				$client['state'] = $list[1];
+				$client['state_detail'] = $list[2];
 				$client['virtual_addr'] = $list[3];
 				$client['remote_host'] = $list[4];
 				$client['remote_port'] = $list[5];
 				$client['local_host'] = $list[6];
 				$client['local_port'] = $list[7];
 				$client['virtual_addr6'] = $list[8];
-			}
-			if (strstr($line, "CONNECTING")) {
-				$client['status'] = "connecting";
-			}
-			if (strstr($line, "ASSIGN_IP")) {
-				$client['status'] = "waiting";
-				$list = explode(",", $line);
 
-				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
-				$client['virtual_addr'] = $list[3];
-			}
-			if (strstr($line, "RECONNECTING")) {
-				$client['status'] = "reconnecting";
-				$list = explode(",", $line);
+				switch (trim($client['state'])) {
+					case 'CONNECTED':
+						$client['status'] = gettext("Connected");
+						break;
+					case 'CONNECTING':
+						$client['status'] = gettext("Connecting");
+						break;
+					case 'TCP_CONNECT':
+						$client['status'] = gettext("Connecting to TCP Server");
+						break;
+					case 'ASSIGN_IP':
+						$client['status'] = gettext("Configuring Interface/Waiting");
+						break;
+					case 'WAIT':
+						$client['status'] = gettext("Waiting for response from peer");
+						break;
+					case 'RECONNECTING':
+						switch ($client['state_detail']) {
+							case 'server_poll':
+								$client['status'] = gettext("Waiting for peer connection");
+								$client['state_detail'] = '';
+								break;
+							case 'tls-error':
+								$client['status'] = gettext("TLS Error, reconnecting");
+								$client['state_detail'] = '';
+								break;
+							default:
+								$client['status'] = gettext("Reconnecting");
+								break;
+						}
+						break;
+					case 'AUTH':
+						$client['status'] = gettext("Authenticating");
+						break;
+					case 'AUTH_PENDING':
+						$client['status'] = gettext("Authentication pending");
+						break;
+					case 'GET_CONFIG':
+						$client['status'] = gettext("Pulling configuration from server");
+						break;
+					case 'ADD_ROUTES':
+						$client['status'] = gettext("Adding routes to system");
+						break;
+					case 'RESOLVE':
+						$client['status'] = gettext("Resolving peer hostname via DNS");
+						break;
+					default:
+						$client['status'] = ucwords(strtolower(str_replace(array('_', '-'), ' ', $client['state'])));
+						break;
+				}
 
-				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
-				$client['status'] .= "; " . $list[2];
+				if (!empty($client['state_detail'])) {
+					$client['status'] .= " (" . ucwords(strtolower(str_replace(array('_', '-'), ' ', $client['state_detail']))) . ")";
+				}
+
 			}
 			/* parse end of output line */
 			if (strstr($line, "END") || strstr($line, "ERROR")) {
@@ -2062,7 +2167,7 @@ function openvpn_get_client_status($client, $socket) {
 		}
 
 		/* If up, get read/write stats */
-		if (strcmp($client['status'], "up") == 0) {
+		if (strcmp($client['state'], "CONNECTED") == 0) {
 			fputs($fp, "status 2\n");
 			/* recv all response lines */
 			while (!feof($fp)) {
@@ -2190,15 +2295,15 @@ function openvpn_create_dirs() {
 	init_config_arr(array('openvpn', 'openvpn-client'));
 	foreach(array('server', 'client') as $mode) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $settings) {
+			if (isset($settings['disable'])) {
+				continue;
+			}
 			$target = "{$g['openvpn_base']}/{$mode}{$settings['vpnid']}";
+			$csctarget = "{$target}/csc/";
 			@unlink_if_exists($csctarget);
 			@safe_mkdir($target);
 			if (in_array($settings['mode'], $openvpn_tls_server_modes)) {
-				if ($settings['vpnid']) {
-					$csctarget = "{$target}/csc/";
-					@unlink_if_exists($csctarget);
-					@safe_mkdir($csctarget);
-				}
+				@safe_mkdir($csctarget);
 			}
 		}
 	}
@@ -2265,10 +2370,26 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 	$tmpnetworks = explode(',', $value);
 	foreach ($tmpnetworks as $network) {
 		if (is_alias($network)) {
-			foreach (alias_to_subnets_recursive($network) as $net) {
+			foreach (alias_to_subnets_recursive($network, true) as $net) {
 				if ((($ipproto == "ipv4") && is_subnetv4($net)) ||
 				    (($ipproto == "ipv6") && is_subnetv6($net))) {
 					$networks[] = $net;
+				} elseif (is_fqdn($net)) {
+					if ($ipproto == "ipv4" ) {
+						$recordtypes = array(DNS_A);
+						$mask = "/32";
+					} else {
+						$recordtypes = array(DNS_AAAA);
+						$mask = "/128";
+					}
+					$domips = resolve_host_addresses($net, $recordtypes, false);
+					if (!empty($domips)) {
+						foreach ($domips as $net) {
+							$networks[] = $net . $mask;
+						}
+					} else {
+						log_error(gettext("Failed to resolve {$net}. Skipping OpenVPN route entry."));
+					}
 				}
 			}
 		} else {
@@ -2405,12 +2526,15 @@ function openvpn_inuse($id, $mode) {
 	return false;
 }
 
-function openvpn_clean_rules($mode, $id) {
-	global $g;
-
-	if ($mode == "server") {
-		unlink_if_exists("{$g['tmp_path']}/ovpn_ovpns{$id}_*.rules");
+function openvpn_tunnel_network_fix($tunnel_network) {
+	$tunnel_network = trim($tunnel_network);
+	if (is_subnet($tunnel_network)) {
+		/* convert to correct network address,
+		 * see https://redmine.pfsense.org/issues/11416 */
+		list($tunnel_ip, $tunnel_netmask) = explode('/', $tunnel_network);
+		$tunnel_network = gen_subnet($tunnel_ip, $tunnel_netmask) . '/' . $tunnel_netmask;
 	}
+	return $tunnel_network;
 }
 
 ?>

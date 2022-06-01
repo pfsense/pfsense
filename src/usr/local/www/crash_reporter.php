@@ -32,6 +32,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 require_once("system.inc");
+require_once("util.inc");
 
 define("FILE_SIZE", 450000);
 
@@ -65,7 +66,7 @@ $crash_report_header .= php_uname("v") . "\n";
 $crash_report_header .= "\nCrash report details:\n";
 
 if ($_POST['Submit'] == "No") {
-	array_map('unlink', glob("/var/crash/*"));
+	unlink_if_exists("/var/crash/*");
 	// Erase the contents of the PHP error log
 	fclose(fopen("/tmp/PHP_errors.log", 'w'));
 	header("Location: /");

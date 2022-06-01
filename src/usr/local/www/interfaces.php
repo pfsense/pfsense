@@ -42,6 +42,7 @@ require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
+require_once("util.inc");
 
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
@@ -87,7 +88,7 @@ $a_gateways = &$config['gateways']['gateway_item'];
 $interfaces = get_configured_interface_with_descr();
 /* Interfaces which have addresses configured elsewhere and should not be
  * configured here. See https://redmine.pfsense.org/issues/8687 */
-$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre");
+$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre", "l2tps");
 $show_address_controls = true;
 $realifname = get_real_interface($if);
 foreach ($no_address_interfaces as $ifbl) {
@@ -301,9 +302,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "dhcp6";
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
-		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
-		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
 		$pconfig['dhcp6vlanenable'] = isset($wancfg['dhcp6vlanenable']);
 		$pconfig['dhcp6cvpt'] = $wancfg['dhcp6cvpt'];
 		break;
@@ -452,7 +451,8 @@ if ($_POST['apply']) {
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
-				$ifmtu = get_interface_mtu(get_real_interface($ifapply));
+				$realif = get_real_interface($ifapply);
+				$ifmtu = get_interface_mtu($realif);
 				if (isset($config['interfaces'][$ifapply]['enable'])) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply, true);
@@ -465,27 +465,16 @@ if ($_POST['apply']) {
 						$wancfg = $config['interfaces'][$ifapply];
 						interface_track6_configure($ifapply, $wancfg, true);
 					}
-					/* restart RADVD to announce correct IPv6 prefix
-					 * see https://redmine.pfsense.org/issues/12604 */ 
-					if ((($ifcfg['ipaddrv6'] == "staticv6") || ($ifcfg['ipaddrv6'] == "track6")) &&
-					    is_array($config['dhcpdv6'][$ifapply]) &&
-					    isset($config['dhcpdv6'][$ifapply]['ramode']) &&
-					    ($config['dhcpdv6'][$ifapply]['ramode'] != "disabled")) {
-						services_radvd_configure();
-					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
-					if (isset($config['dhcpd'][$ifapply]['enable']) ||
-					    isset($config['dhcpdv6'][$ifapply]['enable'])) {
-						services_dhcpd_configure();
-					}
 				}
-				if (interface_has_clones(get_real_interface($ifapply)) &&
+				restart_interface_services($ifapply, $ifcfg['ipaddrv6']);
+				if (interface_has_clones($realif) &&
 				    (isset($config['interfaces'][$ifapply]['mtu']) &&
 				    ($config['interfaces'][$ifapply]['mtu'] != $ifmtu)) ||
 				    (!isset($config['interfaces'][$ifapply]['mtu']) &&
 				    (get_interface_default_mtu() != $ifmtu))) { 
-					$vlan_redo[] = get_real_interface($ifapply);
+					$vlan_redo[] = $realif;
 				}
 			}
 		}
@@ -499,9 +488,6 @@ if ($_POST['apply']) {
 				interfaces_vlan_configure_mtu($vlredo);
 			}
 		}
-
-		/* restart snmp so that it binds to correct address */
-		$retval |= services_snmpd_configure();
 
 		/* sync filter configuration */
 		setup_gateways_monitor();
@@ -518,10 +504,7 @@ if ($_POST['apply']) {
 			clear_subsystem_dirty('staticroutes');
 		}
 
-		init_config_arr(array('syslog'));
-		if (isset($config['syslog']['enable']) && ($ifapply == $config['syslog']['sourceip'])) {
-			system_syslogd_start();
-		}
+		send_event("service reload packages");
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
 } else if ($_POST['save']) {
@@ -1148,8 +1131,8 @@ if ($_POST['apply']) {
 			} else if ($wancfg['ipaddr'] == "dhcp") {
 				kill_dhclient_process($wancfg['if']);
 			}
-			if ($wancfg['ipaddrv6'] == "dhcp6") {
-				kill_dhcp6client_process($wancfg['if'],true);
+			if (($wancfg['ipaddrv6'] == "dhcp6") && ($_POST['type6'] != "dhcp6")) {
+				interface_dhcpv6_configure($if, $wancfg, true);
 			}
 		}
 		$ppp = array();
@@ -1172,11 +1155,9 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6usev4iface']);
 		unset($wancfg['slaacusev4iface']);
 		unset($wancfg['ipv6usev4iface']);
-		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['dhcp6withoutra']);
-		unset($wancfg['dhcp6norelease']);
 		unset($wancfg['dhcp6vlanenable']);
 		unset($wancfg['dhcp6cvpt']);
 		unset($wancfg['prefix-6rd']);
@@ -1453,15 +1434,8 @@ if ($_POST['apply']) {
 				if ($_POST['dhcp6usev4iface'] == "yes") {
 					$wancfg['dhcp6usev4iface'] = true;
 				}
-				if ($_POST['dhcp6debug'] == "yes") {
-					$wancfg['dhcp6debug'] = true;
-				}
-
 				if ($_POST['dhcp6withoutra'] == "yes") {
 					$wancfg['dhcp6withoutra'] = true;
-				}
-				if ($_POST['dhcp6norelease'] == "yes") {
-					$wancfg['dhcp6norelease'] = true;
 				}
 				if ($_POST['dhcp6vlanenable'] == "yes") {
 					$wancfg['dhcp6vlanenable'] = true;
@@ -2449,22 +2423,10 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'dhcp6debug',
-	'Debug',
-	'Start DHCP6 client in debug mode',
-	$pconfig['dhcp6debug']
-));
-$section->addInput(new Form_Checkbox(
 	'dhcp6withoutra',
 	'Do not wait for a RA',
 	'Required by some ISPs, especially those not using PPPoE',
 	$pconfig['dhcp6withoutra']
-));
-$section->addInput(new Form_Checkbox(
-	'dhcp6norelease',
-	'Do not allow PD/Address release',
-	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
-	$pconfig['dhcp6norelease']
 ));
 
 if (interface_is_vlan($wancfg['if']) != NULL) {
@@ -3076,14 +3038,14 @@ $section->add($group);
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
 	'*Local IP address',
-	$pconfig['pptp_localip'][0],
+	$_POST['pptp_local0'] ? $_POST['pptp_local0'] : $pconfig['pptp_localip'][0],
 	'V4'
-))->addMask('pptp_subnet0', $pconfig['pptp_subnet'][0]);
+))->addMask('pptp_subnet0', $_POST['pptp_subnet0'] ? $_POST['pptp_subnet0'] : $pconfig['pptp_subnet'][0]);
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'*Remote IP address',
-	$pconfig['pptp_remote'][0],
+	$_POST['pptp_remote0'] ? $_POST['pptp_remote0'] : $pconfig['pptp_remote'][0],
 	'HOSTV4'
 ));
 
@@ -4011,10 +3973,16 @@ events.push(function() {
 			}
 		}
 		show_wpaoptions();
+		updateeapclientmode($('#wpa_eap_client_mode').val());
+		updatewpakeymgmt($('#wpa_key_mgmt').val());
 	}
 
 	function updateeapclientmode(m) {
-		var wpa = !($('#wpa_enable').prop('checked'));
+		if ($('#mode').val() == 'bss') {
+			var wpa = !($('#wpa_enable').prop('checked'));
+		} else {
+			var wpa = true;
+		}
 		switch (m) {
 			case "PEAP": {
 				hideInput('wpa_eap_cert', true);
@@ -4044,23 +4012,35 @@ events.push(function() {
 	}
 
 	function updatewpakeymgmt(m) {
-		var wpa = !($('#wpa_enable').prop('checked'));
-		if ((m == "WPA-EAP") && ($('#mode').val() == 'bss')) {
+		hideInput('passphrase', false);
+		hideInput('wpa_eap_client_mode', true);
+		hideInput('wpa_eap_ca', true);
+		hideInput('wpa_eap_cert', true);
+		hideInput('wpa_eap_inner_auth', true);
+		hideInput('wpa_eap_inner_id', true);
+		hideInput('wpa_eap_inner_password', true);
+		hideClass('ieee8021x_group', true);
+		if (m == "WPA-EAP") {
 			hideInput('passphrase', true);
-			hideInput('wpa_eap_client_mode', false);
-			hideInput('wpa_eap_ca', false);
-			updateeapclientmode($('#wpa_eap_client_mode').val());
-		} else if ((m != "WPA-PSK") && ($('#mode').val() == 'hostap')) {
-			hideClass('ieee8021x_group', false);
-		} else {
-			hideInput('passphrase', wpa);
-			hideInput('wpa_eap_client_mode', true);
-			hideInput('wpa_eap_ca', true);
-			hideInput('wpa_eap_cert', true);
-			hideInput('wpa_eap_inner_auth', true);
-			hideInput('wpa_eap_inner_id', true);
-			hideInput('wpa_eap_inner_password', true);
-			hideClass('ieee8021x_group', true);
+			if ($('#mode').val() == 'bss') {
+				hideInput('wpa_eap_client_mode', false);
+				hideInput('wpa_eap_ca', false);
+				updateeapclientmode($('#wpa_eap_client_mode').val());
+			} else if ($('#mode').val() == 'hostap') {
+				hideClass('ieee8021x_group', false);
+			}
+		} else if (m != "WPA-PSK") {
+			hideInput('passphrase', false);
+			if ($('#mode').val() == 'bss') {
+				hideInput('wpa_eap_client_mode', false);
+				hideInput('wpa_eap_ca', false);
+				hideInput('wpa_eap_cert', false);
+				hideInput('wpa_eap_inner_auth', false);
+				hideInput('wpa_eap_inner_id', false);
+				hideInput('wpa_eap_inner_password', false);
+			} else if ($('#mode').val() == 'hostap') {
+				hideClass('ieee8021x_group', false);
+			}
 		}
 	}
 
@@ -4078,8 +4058,6 @@ events.push(function() {
 	show_wpaoptions();
 	updatewifistandard($('#standard').val());
 	updatewifimode($('#mode').val());
-	updatewpakeymgmt($('#wpa_key_mgmt').val());
-	updateeapclientmode($('#wpa_eap_client_mode').val());
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";

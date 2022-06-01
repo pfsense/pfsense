@@ -30,6 +30,8 @@
 
 require_once("guiconfig.inc");
 
+global $lagghash_list;
+
 init_config_arr(array('laggs', 'lagg'));
 $a_laggs = &$config['laggs']['lagg'];
 
@@ -81,6 +83,20 @@ $protohelp =
 	'</li>' .
 '</ul>';
 
+$lagghashhelp =
+'Hash algorithms for the packet layers: ' .
+'<ul>' .
+	'<li>' .
+		'<strong>Layer 2</strong><br />' . gettext('Source/Destination MAC Address and optional VLAN number.') .
+	'</li>' .
+	'<li>' .
+		'<strong>Layer 3</strong><br />' .  gettext('Source/Destination IPv4/IPv6 Address.') .
+	'</li>' .
+	'<li>' .
+		'<strong>Layer 4</strong><br />' . gettext('Source/Destination TCP/UDP port.') .
+	'</li>' .
+'</ul>';
+
 $realifchecklist = array();
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
@@ -114,6 +130,9 @@ if (isset($id) && $a_laggs[$id]) {
 	}
 	if (isset($a_laggs[$id]['lacptimeout'])) {
 		$pconfig['lacptimeout'] = $a_laggs[$id]['lacptimeout'];
+	}
+	if (isset($a_laggs[$id]['lagghash'])) {
+		$pconfig['lagghash'] = $a_laggs[$id]['lagghash'];
 	}
 	$pconfig['descr'] = $a_laggs[$id]['descr'];
 }
@@ -151,6 +170,11 @@ if ($_POST['save']) {
 			$input_errors[] = sprintf(gettext("Failover Master Interface must be selected as member."));
 	}
 
+	if ((($_POST['proto'] == 'lacp') || ($_POST['proto'] == 'loadbalance')) &&
+	    isset($_POST['lagghash']) && !array_key_exists($_POST['lagghash'], $lagg_hash_list)) {
+		$input_errors[] = gettext("Hash Algorithm is invalid.");
+	}
+
 	if (!$input_errors) {
 		$lagg = array();
 		$lagg['members'] = implode(',', $_POST['members']);
@@ -166,6 +190,12 @@ if ($_POST['save']) {
 			$lagg['lacptimeout'] = $_POST['lacptimeout'];
 		} else {
 			unset($lagg['lacptimeout']);
+		}
+		if ((($_POST['proto'] == 'lacp') || ($_POST['proto'] == 'loadbalance')) &&
+		    isset($_POST['lagghash']) && array_key_exists($_POST['lagghash'], $lagg_hash_list)) {
+			$lagg['lagghash'] = $_POST['lagghash'];
+		} else {
+			unset($lagg['lagghash']);
 		}
 		if (isset($id) && $a_laggs[$id]) {
 			$lagg['laggif'] = $a_laggs[$id]['laggif'];
@@ -285,6 +315,16 @@ $group->add(new Form_Select(
 	    'seconds (3x1 second).');
 $section->add($group);
 
+$group = new Form_Group('Hash Algorithm');
+$group->addClass('lagghash');
+$group->add(new Form_Select(
+	'lagghash',
+	'Hash',
+	$pconfig['lagghash'],
+	$lagg_hash_list
+))->setHelp($lagghashhelp);
+$section->add($group);
+
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
@@ -318,6 +358,7 @@ events.push(function() {
 	function change_proto() {
 		hideClass('fomaster', ($('#proto').val() != 'failover'));
 		hideClass('lacptimeout', ($('#proto').val() != 'lacp'));
+		hideClass('lagghash', (($('#proto').val() != 'lacp') && ($('#proto').val() != 'loadbalance')));
 	}
 
 	$('#proto').change(function () {

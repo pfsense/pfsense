@@ -115,6 +115,13 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
+function clear_filter_subsystems_dirty() {
+	clear_subsystem_dirty('aliases');
+	clear_subsystem_dirty('filter');
+	clear_subsystem_dirty('natconf');
+	clear_subsystem_dirty('shaper');
+}
+
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
 	global $g;
@@ -678,6 +685,14 @@ function is_ipaddrv6($ipaddr) {
 	if (strstr($ipaddr, "%") && is_linklocal($ipaddr)) {
 		$tmpip = explode("%", $ipaddr);
 		$ipaddr = $tmpip[0];
+	}
+	/*
+	 * Net_IPv6::checkIPv6 does not reject multiple attempts at compression
+	 * so we must check it beforehand.
+	 * https://redmine.pfsense.org/issues/13069
+	 */
+	if (substr_count($ipaddr, '::') > 1) {
+		return false;
 	}
 	return Net_IPv6::checkIPv6($ipaddr);
 }
@@ -1617,7 +1632,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'poes',
 				'pptp',
 				'l2tp',
-				'l2tps',
 				'sl',
 				'gif',
 				'gre',
@@ -1632,8 +1646,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'enc',
 				'tun',
 				'lagg',
-				'vip',
-				'ipfw'
+				'vip'
 		);
 	} else {
 		$vfaces = array(
@@ -1652,7 +1665,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'tun',
 				'lagg',
 				'vip',
-				'ipfw',
 				'l2tps'
 		);
 	}
@@ -2400,7 +2412,7 @@ function is_interface_mismatch() {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
-			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
+			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|^ue|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;
@@ -2689,6 +2701,23 @@ function route_table() {
 	unset($netstatarr);
 
 	return $result;
+}
+
+/* check if route is static (not BGP/OSPF) */
+function is_static_route($target, $ipprotocol = '') {
+	if (is_v4($target) || (($target == 'default') && ($ipprotocol == 'inet'))) {
+		$inet = '4';
+	} elseif (is_v6($target) || (($target == 'default') && ($ipprotocol == 'inet6'))) {
+		$inet = '6';
+	} else {
+		return false;
+	}
+
+	if (exec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | egrep 'flags: <.*STATIC.*>'")) {
+		return true;
+	}
+
+	return false;
 }
 
 /* Get static route for specific destination */
@@ -3320,6 +3349,7 @@ function unixnewlines($text) {
 }
 
 function array_remove_duplicate($array, $field) {
+	$cmp = array();
 	foreach ($array as $sub) {
 		if (isset($sub[$field])) {
 			$cmp[] = $sub[$field];
@@ -3721,12 +3751,15 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
 	}
 }
 
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0) {
+function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0, $addmask = false) {
 	$adr = array();
 
 	if ($padr == "any") {
 		$adr['any'] = true;
 	} else if (is_specialnet($padr)) {
+		if ($addmask) {
+			$padr .= "/" . $pmask;
+		}
 		$adr['network'] = $padr;
 	} else {
 		$adr['address'] = $padr;
@@ -3875,6 +3908,68 @@ function ip6_to_asn1($addr) {
 	}
 
 	return $octstr;
+}
+
+function interfaces_interrupts() {
+	exec("/usr/bin/vmstat -i --libxo json", $rawdata, $rc);
+	$interrupts = array();
+	if ($rc == 0) {
+		$vnstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+		$interruptarr = $vnstatarr['interrupt-statistics']['interrupt'];
+
+		foreach ($interruptarr as $int){
+			preg_match("/irq\d+: ([a-z0-9]+)/", $int['name'], $matches);
+			$name = $matches[1];
+			if (array_key_exists($name, $interrupts)) {
+				/* interface with multiple queues */
+				$interrupts[$name]['total'] += $int['total'];
+				$interrupts[$name]['rate'] += $int['rate'];
+			} else {
+				$interrupts[$name]['total'] = $int['total'];
+				$interrupts[$name]['rate'] = $int['rate'];
+			}
+		}
+	}
+
+	return $interrupts;
+}
+
+function dummynet_load_module($max_qlimit) {
+	global $config;
+
+	if (!is_module_loaded("dummynet.ko")) {
+		mute_kernel_msgs();
+		mwexec("/sbin/kldload dummynet");
+		unmute_kernel_msgs();
+	}
+	$sysctls = (array(
+			"net.inet.ip.dummynet.io_fast" => "1",
+			"net.inet.ip.dummynet.hash_size" => "256",
+			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
+	));
+	init_config_arr(array('sysctl', 'item'));
+	if (!empty($config['sysctl']['item'])) {
+		foreach ($config['sysctl']['item'] as $item) {
+			if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
+				$sysctls[$item['tunable']] = $item['value'];
+			}
+		}
+	}
+	set_sysctl($sysctls);
+}
+
+function get_interface_vip_ips($interface) {
+	global $config;
+	$vipips = '';
+
+	init_config_arr(array('virtualip', 'vip'));
+	foreach ($config['virtualip']['vip'] as $vip) {
+		if (($vip['interface'] == $interface) &&
+		    (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
+			$vipips .= $vip['subnet'] . ' ';
+		}
+	}
+	return $vipips;
 }
 
 ?>

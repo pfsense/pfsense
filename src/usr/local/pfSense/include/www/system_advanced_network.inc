@@ -33,6 +33,8 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['ipv6nat_ipaddr'] = isset($config['diag']['ipv6nat']['ipaddr']) ? $config['diag']['ipv6nat']['ipaddr'] : null;
 	$pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 	$pconfig['ipv6dontcreatelocaldns'] = isset($config['system']['ipv6dontcreatelocaldns']);
+	$pconfig['dhcp6debug'] = isset($config['system']['dhcp6debug']);
+	$pconfig['dhcp6norelease'] = isset($config['system']['dhcp6norelease']);
 	$pconfig['global-v6duid'] = isset($config['system']['global-v6duid']) ? $config['system']['global-v6duid'] : null;
 	$pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
 	$pconfig['sharednet'] = isset($config['system']['sharednet']) ? $config['system']['sharednet'] : null;
@@ -127,6 +129,23 @@ function saveAdvancedNetworking($post, $json = false) {
 			unset($config['system']['ipv6dontcreatelocaldns']);
 		}
 
+		if ($post['dhcp6debug'] == "yes") {
+			$config['system']['dhcp6debug'] = true;
+		} else {
+			unset($config['system']['dhcp6debug']);
+		}
+
+		if ($post['dhcp6norelease'] == "yes") {
+			$config['system']['dhcp6norelease'] = true;
+		} else {
+			unset($config['system']['dhcp6norelease']);
+		}
+
+		if ((isset($post['dhcp6debug']) xor isset($config['system']['dhcp6debug'])) ||
+		    (isset($post['dhcp6norelease']) xor isset($config['system']['dhcp6norelease']))) { 
+			$dhcp6restart = true;
+		}
+
 		if ($post['prefer_ipv4'] == "yes") {
 			$config['system']['prefer_ipv4'] = true;
 		} else {
@@ -200,6 +219,14 @@ function saveAdvancedNetworking($post, $json = false) {
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
+
+		if ($dhcp6restart) {
+			foreach ($config['interfaces'] as $ifname => $ifcfg) {
+				if (isset($ifcfg['enable']) && ($ifcfg['ipaddrv6'] == 'dhcp6')) {
+					interface_dhcpv6_configure($ifname, $ifcfg);
+				}
+			}
+		}
 
 		$rv['input_errors'] = $input_errors;
 		$rv['retval'] = $retval;

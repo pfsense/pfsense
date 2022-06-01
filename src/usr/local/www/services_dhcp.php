@@ -389,8 +389,8 @@ if (isset($_POST['save'])) {
 		}
 	}
 
-	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
-		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
+	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] < $_POST['deftime']))) {
+		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds, and the same value or greater than the default lease time.");
 	}
 	if ($_POST['ddnsupdate']) {
 		if (!is_domain($_POST['ddnsdomain'])) {
@@ -695,7 +695,7 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['nonak'] = ($_POST['nonak']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
 		$dhcpdconf['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
-		$dhcpdconf['ddnsdomainsecondary'] = (!empty($_POST['ddnsdomainsecondary'])) ? $_POST['ddnsdomainsecondary'] : ''; 
+		$dhcpdconf['ddnsdomainsecondary'] = (!empty($_POST['ddnsdomainsecondary'])) ? $_POST['ddnsdomainsecondary'] : '';
 		$dhcpdconf['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$dhcpdconf['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$dhcpdconf['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
@@ -727,14 +727,17 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['filename64arm'] = $_POST['filename64arm'];
 		$dhcpdconf['uefihttpboot'] = $_POST['uefihttpboot'];
 		$dhcpdconf['rootpath'] = $_POST['rootpath'];
-		unset($dhcpdconf['statsgraph']);
-		if ($_POST['statsgraph']) {
-			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
-			enable_rrd_graphing();
+
+		if (empty($_POST['statsgraph']) == isset($dhcpdconf['statsgraph'])) {
+			$enable_rrd_graphing = true;
 		}
-		unset($dhcpdconf['disablepingcheck']);
-		if ($_POST['disablepingcheck']) {
-			$dhcpdconf['disablepingcheck'] = $_POST['disablepingcheck'];
+		if (!empty($_POST['statsgraph'])) {
+			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
+		} elseif (isset($dhcpdconf['statsgraph'])) {
+			unset($dhcpdconf['statsgraph']);
+		}
+		if ($enable_rrd_graphing) {
+			enable_rrd_graphing();
 		}
 
 		// Handle the custom options rowhelper

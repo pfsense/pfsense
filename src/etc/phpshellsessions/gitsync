@@ -95,17 +95,17 @@ while (!empty($temp_args)) {
 if (!function_exists('post_cvssync_commands')) {
 function post_cvssync_commands() {
 	echo "===> Removing FAST-CGI temporary files...\n";
-	exec("find /tmp -name \"php-fastcgi.socket*\" -exec rm -rf {} \;");
-	exec("find /tmp -name \"*.tmp\" -exec rm -rf {} \;");
+	exec("/usr/bin/find /tmp -name \"php-fastcgi.socket*\" -exec rm -rf {} \;");
+	exec("/usr/bin/find /tmp -name \"*.tmp\" -exec rm -rf {} \;");
 
-	exec("rm -rf /tmp/xcache/* 2>/dev/null");
+	exec("/bin/rm -rf /tmp/xcache/* 2>/dev/null");
 
 	echo "===> Upgrading configuration (if needed)...\n";
 	convert_config();
 
 	echo "===> Configuring filter...";
 	exec("/etc/rc.filter_configure_sync");
-	exec("pfctl -f /tmp/rules.debug");
+	exec("/sbin/pfctl -f /tmp/rules.debug");
 	echo "\n";
 
 	if (file_exists("/etc/rc.php_ini_setup")) {
@@ -124,7 +124,7 @@ function post_cvssync_commands() {
 	fwrite($fd, "sleep 5\n");
 	fwrite($fd, "/usr/local/sbin/pfSctl -c 'service restart webgui'\n");
 	fclose($fd);
-	mwexec_bg("sh /tmp/restart_nginx");
+	mwexec_bg("/bin/sh /tmp/restart_nginx");
 	echo "\n";
 }
 }
@@ -168,17 +168,17 @@ if (!file_exists($GIT_BIN)) {
 
 # Remove mainline if exists (older)
 if (is_dir("/root/pfsense/mainline")) {
-	exec("rm -rf /root/pfsense/mainline");
+	exec("/bin/rm -rf /root/pfsense/mainline");
 }
 
 # Remove RELENG_1_2 if exists (older)
 if (is_dir("/root/pfsense/RELENG_1_2")) {
-	exec("rm -rf /root/pfsense/RELENG_1_2");
+	exec("/bin/rm -rf /root/pfsense/RELENG_1_2");
 }
 
 # Remove HEAD if exists (older)
 if (is_dir("/root/pfsense/HEAD")) {
-	exec("rm -rf /root/pfsense/HEAD");
+	exec("/bin/rm -rf /root/pfsense/HEAD");
 }
 
 if (file_exists("/root/cvssync_backup.tgz")) {
@@ -308,7 +308,7 @@ if ($branch == "RESTORE") {
 		exit();
 	}
 	echo "===> Restoring previous CVSSync backup... Please wait...\n";
-	exec("tar Uxpf /root/cvssync_backup.tgz -C /");
+	exec("/usr/bin/tar Uxpf /root/cvssync_backup.tgz -C /");
 	post_cvssync_commands();
 	exit();
 } else {
@@ -318,7 +318,7 @@ if ($branch == "RESTORE") {
 if ($nobackup == false) {
 	echo "===> Backing up current pfSense information...\n";
 	echo "===> Please wait... ";
-	exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run --exclude /var/empty /");
+	exec("/usr/bin/tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run --exclude /var/empty /");
 	$size = filesize("/root/cvssync_backup.tgz");
 	echo "{$size} bytes.\n\n";
 	sleep(5);
@@ -349,14 +349,14 @@ if (is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} clean -f -x -d");
 	run_cmds($git_cmd);
 } else {
-	exec("mkdir -p $CODIR/pfSenseGITREPO");
+	exec("/bin/mkdir -p $CODIR/pfSenseGITREPO");
 	echo "Executing cd $CODIR/pfSenseGITREPO && {$GIT_BIN} clone $GIT_REPO pfSenseGITREPO\n";
 	exec("cd $CODIR/pfSenseGITREPO && {$GIT_BIN} clone " . escapeshellarg($GIT_REPO) . " pfSenseGITREPO");
 	if (is_dir("$CODIR/pfSenseGITREPO/pfSense")) {
-		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
+		exec("/bin/mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	}
 	if (is_dir("$CODIR/pfSenseGITREPO/mainline")) {
-		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
+		exec("/bin/mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	}
 	run_cmds($git_cmd);
 }
@@ -412,8 +412,8 @@ if(!isset($args["--dry-run"])) {
 @unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/syslog.conf");
 @unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.shrc");
 @unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.tcshrc");
-exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
-exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
+exec("/bin/rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
+exec("/bin/rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
 @chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/tmp", 01777);
 
 $different_files_array[1] = array();
@@ -482,7 +482,7 @@ $tar_options = '-C ./src';
 
 echo "===> Installing $qty_files_to_copy new files...\n";
 
-$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -Uxpf -)";
+$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; /usr/bin/tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; /usr/bin/tar -Uxpf -)";
 
 if (!empty($files_to_copy)) {
 	if(isset($args["--show-command"])) {

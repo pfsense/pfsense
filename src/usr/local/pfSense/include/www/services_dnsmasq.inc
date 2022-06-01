@@ -44,7 +44,7 @@ function getDNSMasqConfig($json = false) {
     $pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
     $pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
     $pconfig['port'] = $config['dnsmasq']['port'];
-    $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
+    $pconfig['custom_options'] = base64_decode($config['dnsmasq']['custom_options']);
     $pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
 
     if (!empty($config['dnsmasq']['interface'])) {
@@ -176,8 +176,14 @@ function saveDNSMasqConfig($post, $json=false) {
 	$config['dnsmasq']['strict_order'] = ($post['strict_order']) ? true : false;
 	$config['dnsmasq']['domain_needed'] = ($post['domain_needed']) ? true : false;
 	$config['dnsmasq']['no_private_reverse'] = ($post['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $post['custom_options']);
 	$config['dnsmasq']['strictbind'] = ($post['strictbind']) ? true : false;
+
+	if (!empty(trim($post['custom_options']))) {
+		$custom_options_source = str_replace("\r\n", "\n", trim($post['custom_options']));
+		$config['dnsmasq']['custom_options'] = base64_encode($custom_options_source);
+	} else {
+		unset($config['dnsmasq']['custom_options']);
+	}
 
 	if (isset($post['enable']) && isset($config['unbound']['enable'])) {
 		if ($post['port'] == $config['unbound']['port']) {
@@ -205,9 +211,9 @@ function saveDNSMasqConfig($post, $json=false) {
 		unset($config['dnsmasq']['interface']);
 	}
 
-	if ($config['dnsmasq']['custom_options']) {
+	if (isset($custom_options_source)) {
 		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+		foreach (preg_split('/\s+/', $custom_options_source) as $c) {
 			$args .= escapeshellarg("--{$c}") . " ";
 		}
 

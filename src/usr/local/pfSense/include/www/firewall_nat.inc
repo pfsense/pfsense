@@ -481,7 +481,9 @@ function saveNATrule($post, $id, $json = false) {
 	}
 
 	/* https://redmine.pfsense.org/issues/12319 */
-	if (($post['ipprotocol'] == 'inet6') && ($post['natreflection'] == 'enable')) {
+	if (($post['ipprotocol'] == 'inet6') && (($post['natreflection'] == 'enable') ||
+	    (($post['natreflection'] == 'default') && !isset($config['system']['disablenatreflection']) &&
+	    !isset($config['system']['enablenatreflectionpurenat'])))) {
 		$input_errors[] = gettext("IPv6 address family doesn't support NAT + Proxy reflection mode.");
 	}
 
@@ -515,7 +517,9 @@ function saveNATrule($post, $id, $json = false) {
 
 		if (!isset($natent['nordr'])) {
 			$natent['target'] = $post['localip'];
-			$natent['local-port'] = $post['localbeginport'];
+			if (in_array($natent['protocol'], array("tcp", "udp", "tcp/udp"))) {
+				$natent['local-port'] = $post['localbeginport'];
+			}
 		}
 
 		$natent['interface'] = $post['interface'];
@@ -590,8 +594,14 @@ function saveNATrule($post, $id, $json = false) {
 			$filterent['protocol'] = $post['proto'];
 			if (is_specialnet($post['localtype'])) {
 				$filterent['destination']['network'] = $post['localtype'];
+				if (isset($filterent['destination']['address'])) {
+					unset($filterent['destination']['address']);
+				}
 			} else {
 				$filterent['destination']['address'] = $post['localip'];
+				if (isset($filterent['destination']['network'])) {
+					unset($filterent['destination']['network']);
+				}
 			}
 
 			if (isset($post['disabled'])) {
@@ -720,6 +730,31 @@ function toggleNATrule($post, $json = false) {
 	} else {
 		$a_nat = &$config['nat']['rule'];
 		return isset($a_nat[$post['id']]['disabled']) ? "disabled":"enabled";
+	}
+}
+
+function toggleMultipleNATrules($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'rule'));
+	$a_nat = &$config['nat']['rule'];
+
+	foreach ($post['rule'] as $rulei) {
+		if (isset($a_nat[$rulei]['disabled'])) {
+			unset($a_nat[$rulei]['disabled']);
+		} else {
+			$a_nat[$rulei]['disabled'] = true;
+		}
+	}
+
+	if (write_config(gettext("Firewall: NAT: Port forward, enable/disable multiple NAT rule"))) {
+		if ($json) {
+			filter_configure();
+		} else {
+			mark_subsystem_dirty('natconf');
+			header("Location: firewall_nat.php");
+			exit;
+		}
 	}
 }
 

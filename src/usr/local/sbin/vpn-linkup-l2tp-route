@@ -1,0 +1,19 @@
+<?php
+
+require_once("globals.inc");
+require_once("config.inc");
+require_once("functions.inc");
+
+$interface = convert_real_interface_to_friendly_interface_name(str_replace("\n", "", $argv[1]));
+
+init_config_arr(array('gateways', 'gateway_item'));
+foreach ($config['gateways']['gateway_item'] as $gate) {
+	if (($gate['interface'] == $interface) && 
+	    !isset($gate['monitor_disable']) &&
+	    !isset($gate['disabled'])) {
+		setup_gateways_monitor();
+	}
+}
+system_staticroutes_configure($interface, false);
+
+?>

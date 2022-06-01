@@ -127,8 +127,10 @@ function prepare_ARP_table($json = false) {
 		// Fix dnsresolve
 		$entry['dnsresolve'] = trim(str_replace("Z_ ", "", $entry['dnsresolve']));
 
-		// Fix interface
-		$entry['interface'] = $hwif[$entry['interface']];
+		// Use the interface friendly name only if it is assigned
+		if (array_key_exists($entry['interface'], $hwif)) {
+			$entry['interface'] = $hwif[$entry['interface']];
+		}
 	}
 
 	// Sort the data alpha first

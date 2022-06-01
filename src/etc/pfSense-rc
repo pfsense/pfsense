@@ -54,11 +54,21 @@ get_version ()
 
 get_version
 
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product_name=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+product_label=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_label pfSense)
+
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
 /etc/rc.dumpon
 
 if [ -e /root/force_growfs ]; then
+	/sbin/zpool status pfSense | grep -q mmcsd0 > /dev/null
+	if [ $? -eq 0 ]; then
+		echo "Clearing ZFS label before expanding"
+		/sbin/zpool labelclear /dev/mmcsd0
+	fi
 	/etc/rc.d/growfs onestart
 fi
 
@@ -139,6 +149,8 @@ if [ ${mount_rc} -ne 0 ]; then
 	/sbin/reboot
 fi
 
+. /etc/rc.ramdisk_functions.sh
+
 # Handle ZFS read-only case
 unset USE_ZFS
 if /sbin/kldstat -qm zfs; then
@@ -157,6 +169,8 @@ if /sbin/kldstat -qm zfs; then
 		if [ -d /bootpool ]; then
 			/sbin/zpool import -f bootpool
 		fi
+		# We need to handle ZFS boot environments here
+		_be_mount_zfs
 	fi
 fi
 
@@ -170,43 +184,49 @@ if [ -d "/conf" ]; then
 	fi
 fi
 
-. /etc/rc.ramdisk_functions.sh
+# Sanity check the clock
+/etc/rc.checkclock
 
 # Check if RAM disks are enabled, store for repeated use
 if ramdisk_check_enabled; then
 	USE_RAMDISK=true
 fi
 
-# Relocate pkgdb based on desired RAM disk settings
-ramdisk_relocate_pkgdb_all
+# Relocate pkgdb on UFS based on desired RAM disk settings
+if [ -z "${USE_ZFS}" ]; then
+	ramdisk_relocate_pkgdb_all
+fi
 
 # Dismount /tmp and /var on ZFS if using RAM disks and they are separate volumes
 if [ -n "${USE_ZFS}" -a -n "${USE_RAMDISK}" ]; then
-	ramdisk_fixup_zfs umount
+	ramdisk_fixup_zfs_unmount
 fi
 
 # Attempt to create and mount RAM disks
 if [ -n "${USE_RAMDISK}" ]; then
 	/etc/rc.embedded
+	# Remount the correct subordinate ZFS datasets to ensure they are used properly
+	if [ -n "${USE_ZFS}" ]; then
+		_be_mount_zfs
+	fi
 fi
 
-# If RAM disks are active, make symlinks for pkg database
+# If RAM disks are active, make symlinks for pkg database on UFS
 if [ -n "${USE_RAMDISK}" -o -n "${MOVE_PKG_DATA}" ]; then
-	ramdisk_link_pkgdb
+	if [ -z "${USE_ZFS}" ]; then
+		ramdisk_link_pkgdb
+	fi
 fi
 
 # If activating RAM disks failed, then undo some of the above actions
 if [ -n "${USE_RAMDISK}" ] && ramdisk_failed; then
-	ramdisk_fixup_zfs mount
-	ramdisk_relocate_pkgdb disk
+	ramdisk_fixup_zfs_mount
+	if [ -z "${USE_ZFS}" ]; then
+		ramdisk_relocate_pkgdb disk
+	fi
 else
 	ramdisk_reset_status
 fi
-
-# Read product_name from $g, defaults to pfSense
-# Use php -n here because we are not ready to load extensions yet
-product_name=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
-product_label=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_label pfSense)
 
 # Setup ddb on all platforms.
 if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
@@ -395,7 +415,7 @@ ln -sf /etc/ssl/openssl.cnf \
 /usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader
-/usr/local/sbin/fcgicli -f /etc/ecl.php
+/etc/rc.ecl
 
 if [ -f /etc/rc.custom_boot_early ]; then
 	/bin/echo -n "Launching /etc/rc.custom_boot_early...";

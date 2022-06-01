@@ -1600,7 +1600,7 @@ $cert_strict_values = array(
  *   Does NOT run write_config(), that must be performed by the caller.
  ******/
 
-function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
+function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reuseserial = false) {
 	global $cert_strict_values, $cert_curve_compatible, $curve_compatible_list;
 
 	/* If there is no certificate or private key string, this entry is either
@@ -1777,6 +1777,9 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		/* Use random serial from this CA/Self-Signed Cert */
 		$ca_serial    = cert_get_random_serial($cert['refid']);
 	}
+
+	/* Did the user choose to keep the serial? */
+	$ca_serial = ($reuseserial) ? cert_get_serial($cert['crt']) : $ca_serial;
 
 	/* Sign the CSR */
 	$res_crt = openssl_csr_sign($res_csr, $ca_res_crt, $ca_res_key, $lifetime,

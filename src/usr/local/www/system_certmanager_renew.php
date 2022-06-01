@@ -69,7 +69,7 @@ $old_serial = cert_get_serial($torenew['crt']);
 if ($_POST['renew']) {
 	$input_errors = array();
 	$old_serial = cert_get_serial($torenew['crt']);
-	if (cert_renew($torenew, ($_POST['reusekey'] == "yes"), ($_POST['strictsecurity'] == "yes"))) {
+	if (cert_renew($torenew, ($_POST['reusekey'] == "yes"), ($_POST['strictsecurity'] == "yes"), ($_POST['reuseserial'] == "yes"))) {
 		$new_serial = cert_get_serial($torenew['crt']);
 		$message = sprintf(gettext("Renewed %s %s (%s) - Serial %s -> %s"),
 					$typestring,
@@ -167,6 +167,16 @@ $section->addInput(new Form_Checkbox(
 	'Use the existing key',
 	true
 ))->setHelp('Set this option to retain the existing keys when reissuing. Uncheck to generate a new key.');
+
+$section->addInput(new Form_Checkbox(
+	'reuseserial',
+	'Reuse Serial',
+	'Use the existing serial number',
+	($type == 'ca')
+))->setHelp('Set this option to retain the existing serial number when reissuing. Uncheck to generate a new serial. ' .
+		'For a CA, retaining the serial allows existing certificates to remain valid, '.
+		'though some clients may not respect the new CA if the serial does not change. ' .
+		'Certificates should have a new serial every time they are renewed or some clients will reject them.');
 
 $section->addInput(new Form_Checkbox(
 	'strictsecurity',

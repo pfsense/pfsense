@@ -72,6 +72,7 @@ if ($_POST['act'] == "del") {
 		unset($a_csc[$id]);
 		write_config($wc_msg);
 		$savemsg = gettext("Client specific override successfully deleted.");
+		services_unbound_configure(false);
 	}
 }
 
@@ -266,8 +267,9 @@ if ($_POST['save']) {
 		$csc['common_name'] = $pconfig['common_name'];
 		$csc['block'] = $pconfig['block'];
 		$csc['description'] = $pconfig['description'];
-		$csc['tunnel_network'] = $pconfig['tunnel_network'];
-		$csc['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
+		foreach (array('', 'v6') as $ntype) {
+			$csc["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
+		}
 		$csc['local_network'] = $pconfig['local_network'];
 		$csc['local_networkv6'] = $pconfig['local_networkv6'];
 		$csc['remote_network'] = $pconfig['remote_network'];
@@ -307,6 +309,12 @@ if ($_POST['save']) {
 			}
 		}
 
+		if (($act == 'new') || (!empty($csc['disable']) ^ !empty($a_csc[$id]['disable'])) ||
+		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
+		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
+			$csc['unbound_restart'] = true;
+		}
+
 		if (isset($id) && $a_csc[$id]) {
 			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;
@@ -321,6 +329,7 @@ if ($_POST['save']) {
 		}
 		openvpn_resync_csc($csc);
 		write_config($wc_msg);
+		services_unbound_configure(false);
 
 		header("Location: vpn_openvpn_csc.php");
 		exit;

@@ -26,6 +26,34 @@ RAMDISK_FLAG_FILE=/conf/ram_disks_failed
 RAMDISK_DEFAULT_SIZE_tmp=40
 RAMDISK_DEFAULT_SIZE_var=60
 
+# Replacement for /etc/rc.d/zfsbe onestart
+_be_remount_ds() {
+	local _dataset="${1}"
+
+	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${_dataset}" | \
+	while read _mp _name _canmount _mounted ; do
+		# skip filesystems that must *not* be mounted
+		[ "${_canmount}" = "off" -o "${_mp}" = "/" ] && continue
+		# unmount the dataset if mounted...
+		[ "$_mounted" = "yes" ] && /sbin/umount -f "${_name}"
+		# mount the dataset
+		/sbin/zfs mount "${_name}"
+	done
+}
+
+# Replacement for /etc/rc.d/zfsbe onestart
+_be_mount_zfs() {
+	echo -n "Mounting ZFS boot environment..."
+	/sbin/mount -p | while read _dev _mp _type _rest; do
+		[ "${_mp}"  = "/" ] || continue
+		if [ "${_type}" = "zfs" ] ; then
+			_be_remount_ds "${_dev}"
+		fi
+		break
+	done
+	echo " done."
+}
+
 # Check if RAM disks are enabled in config.xml
 ramdisk_check_enabled () {
 	[ "$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)" = "true" ]
@@ -118,7 +146,7 @@ ramdisk_make_backup () {
 		/etc/rc.backup_dhcpleases.sh
 		/etc/rc.backup_logs.sh
 		/etc/rc.backup_captiveportal.sh
-		/etc/rc.backup_voucher.sh
+		# /etc/rc.backup_voucher.sh
 	fi
 }
 
@@ -188,20 +216,29 @@ ramdisk_link_pkgdb () {
 	fi
 }
 
-# Either unmount or mount /var and /tmp in ZFS as needed to avoid conflicts with
-#   active RAM disk options.
-ramdisk_fixup_zfs () {
-	# Mount /var and /tmp on ZFS filesystems when necessary
-	if [ ${1} = "mount" ]; then
-		echo "Remounting ZFS volumes"
-		zfs mount -a
-	else
-		zfs list -H -o name,mountpoint |
-		    while read volume mountpoint; do
-			[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
-				&& continue
-			echo "Dismounting ZFS volume ${volume} for RAM disk"
-			/sbin/zfs umount ${volume}
-		done
-	fi
+# Unmounts parent and subordinate datasets
+ramdisk_zfs_deep_unmount() {
+	local _path="${1}"
+
+	/sbin/zfs list -rH -o name,mountpoint -S mountpoint -t filesystem "${_path}" | \
+	while read _name _mp; do
+		echo -n "Unmounting ZFS volume ${_name} at ${_mp} for RAM disk..."
+		/sbin/zfs unmount -f "${_name}" 1>/dev/null 2>&1
+		echo " done."
+	done
+}
+
+# Mounts ZFS datasets and BE datasets
+ramdisk_fixup_zfs_mount() {
+	echo -n "Mounting ZFS volumes..."
+	/sbin/zfs mount -a 1>/dev/null 2>&1
+	_be_mount_zfs
+	echo " done."
+}
+
+# Unmounts ZFS datasets and remounts BE datasets
+ramdisk_fixup_zfs_unmount() {
+	ramdisk_zfs_deep_unmount "/tmp"
+	ramdisk_zfs_deep_unmount "/var"
+	_be_mount_zfs
 }

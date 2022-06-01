@@ -148,11 +148,8 @@ if (!$_REQUEST['ajax']) {
 		$dstIP = str_replace(':', ':<wbr>', $dstIP);
 ?>
 		<tr>
-			<td><a href="#" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
-			role="button" data-toggle="popover" data-trigger="hover"
-				data-title="<?=gettext("Rule that triggered this action")?>"
-				data-content="<?=htmlspecialchars($rule)?>"> <i
-					class="fa fa-<?=$iconfn?>"></i>
+			<td><i class="fa fa-<?=$iconfn?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
+			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($rule)?>">
 			</a></td>
 			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
 			<td><?=htmlspecialchars($filterent['interface']);?></td>
@@ -208,7 +205,7 @@ events.push(function(){
 
 	// Create an object defining the widget refresh AJAX call
 	var logsObject = new Object();
-	logsObject.name = "Gateways";
+	logsObject.name = "Firewall Logs";
 	logsObject.url = "/widgets/widgets/log.widget.php";
 	logsObject.callback = logs_callback;
 	logsObject.parms = postdata;
@@ -239,7 +236,7 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets'][$widgetkey]['filt
 			<label for="filterlogentries" class="col-sm-4 control-label"><?=gettext('Number of entries')?></label>
 			<div class="col-sm-6">
 				<input type="number" name="filterlogentries" id="filterlogentries" value="<?=$pconfig['nentries']?>" placeholder="5"
-					min="1" max="20" class="form-control" />
+					min="1" max="50" class="form-control" />
 			</div>
 		</div>
 

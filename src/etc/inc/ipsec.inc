@@ -543,7 +543,12 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
 		if (!platform_booting()) {
-			return resolve_retry($rg, $ph1ent['protocol']);
+			$result = resolve_retry($rg, $ph1ent['protocol']);
+			if (!empty($result)) {
+				return $result;
+			} else {
+				return false;
+			}
 		}
 	}
 	if (!is_ipaddr($rg)) {
@@ -1330,7 +1335,7 @@ function ipsec_convert_to_modp($index) {
  * For all other occasions the normal ipsec_configure()
  * will gracefully reload the settings without restarting
  */
-function ipsec_force_reload($interface = "") {
+function ipsec_force_reload($interface = "", $protocol = "") {
 	global $g, $config;
 
 	if (!ipsec_enabled()) {
@@ -1346,6 +1351,11 @@ function ipsec_force_reload($interface = "") {
 		$ifcache = array();
 		foreach ($ipseccfg['phase1'] as $ipsec) {
 			if (isset($ipsec['disabled'])) {
+				continue;
+			}
+			if (!empty($protocol) &&
+			    ($ipsec['protocol'] != $protocol) &&
+			    ($ipsec['protocol'] != 'both')) {
 				continue;
 			}
 			if ($ipsec['interface'] == $interface) {
@@ -1554,7 +1564,6 @@ function ipsec_setup_gwifs($gateways_status = false) {
 			$rg = $ph1ent['remote-gateway'];
 			if (!is_ipaddr($rg)) {
 				$filterdns_list[] = "{$rg}";
-				add_hostname_to_watch($rg);
 				if (!platform_booting()) {
 					$rg = resolve_retry($rg, $ph1ent['protocol']);
 				}
@@ -1888,8 +1897,10 @@ function ipsec_setup_strongswan() {
 		}
 
 		if (!empty($a_client['dns_split'])) {
-			$ssconf['charon']['plugins']['attr'][] = "# Split DNS";
+			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (UNITY_SPLITDNS_NAME)";
 			$ssconf['charon']['plugins']['attr']['28675'] = "\"{$a_client['dns_split']}\"";
+			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (INTERNAL_DNS_DOMAIN, RFC 8598)";
+			$ssconf['charon']['plugins']['attr']['25'] = "\"{$a_client['dns_split']}\"";
 		}
 
 		if (!empty($a_client['login_banner'])) {
@@ -3122,7 +3133,7 @@ function ipsec_setup_secrets($gateways_status = false) {
  *   IPsec-related configuration files are written, daemon is started or stopped
  *   appropriately.
  ******/
-function ipsec_configure($restart = false) {
+function ipsec_configure($restart = false, $filterdns_restart = false) {
 	global $aggressive_mode_psk, $a_client, $a_phase1, $a_phase2, $config,
 		$filterdns_list, $g, $ifacesuse, $ipsec_idhandling, $ipsec_log_cats,
 		$ipsec_log_sevs, $ipsec_swanctl_basedir, $ipsec_swanctl_dirs,
@@ -3318,7 +3329,13 @@ function ipsec_configure($restart = false) {
 		unset($hostnames);
 
 		if (isvalidpid("{$g['varrun_path']}/filterdns-ipsec.pid")) {
-			sigkillbypid("{$g['varrun_path']}/filterdns-ipsec.pid", "HUP");
+			if ($filterdns_restart) {
+				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
+				sleep(2);
+				mwexec_bg("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/ipsec/filterdns-ipsec.hosts -d 1");
+			} else {
+				sigkillbypid("{$g['varrun_path']}/filterdns-ipsec.pid", "HUP");
+			}
 		} else {
 			mwexec_bg("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/ipsec/filterdns-ipsec.hosts -d 1");
 		}

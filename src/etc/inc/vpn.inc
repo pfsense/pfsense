@@ -273,7 +273,7 @@ function vpn_pppoe_updatesecret(&$pppoecfg) {
 	}
 }
 
-function vpn_l2tp_configure() {
+function vpn_l2tp_configure($interface = '') {
 	global $config, $g;
 
 	$syscfg = $config['system'];
@@ -286,6 +286,9 @@ function vpn_l2tp_configure() {
 
 		echo gettext("Configuring l2tp VPN service... ");
 	} else {
+		if (!empty($interface) && ($l2tpcfg['interface'] != $interface)) {
+			return 0;
+		}
 		/* kill mpd */
 		if (isvalidpid("{$g['varrun_path']}/l2tp-vpn.pid")) {
 			killbypid("{$g['varrun_path']}/l2tp-vpn.pid");

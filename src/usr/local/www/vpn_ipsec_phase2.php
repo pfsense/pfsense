@@ -355,9 +355,16 @@ if ($_POST['save']) {
 							$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
 							break;
 						}
-					} else if ($pconfig['mode'] == "tunnel6") {
+					} elseif ($pconfig['mode'] == "tunnel6") {
 						if (check_subnetsv6_overlap($interfaceip, 128, $entered_local_network, $entered_local_mask) && check_subnets_overlap($phase1['remote-gateway'], 128, $entered_remote_network, $entered_remote_mask)) {
 							$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
+							break;
+						}
+					} elseif ($pconfig['mode'] == "vti") {
+						if (($phase1['remote-gateway'] == '0.0.0.0') ||
+						    (is_ipaddrv6($phase1['remote-gateway']) &&
+						    (text_to_compressed_ip6($phase1['remote-gateway']) == '::'))) { 
+							$input_errors[] = gettext("A remote gateway address of \"0.0.0.0\" or \"::\" is not compatible with a child Phase 2 in VTI mode.");
 							break;
 						}
 					}
@@ -692,7 +699,7 @@ $section->addInput(new Form_Select(
 	'*Protocol',
 	$pconfig['proto'],
 	$p2_protos
-))->setHelp('Encapsulating Security Payload (ESP) is encryption, Authentication Header (AH) is authentication only.');
+))->setHelp('Encapsulating Security Payload (ESP) performs encryption and authentication, Authentication Header (AH) is authentication only.');
 
 $i = 0;
 $rows = count($p2_ealgos) - 1;
@@ -891,12 +898,18 @@ events.push(function() {
 			hideClass('opt_localid', false);
 			hideClass('opt_natid', true);
 			hideClass('opt_remoteid', false);
-			$('#localid_type').val('address');
-			disableInput('localid_type', false);
-			typesel_change_local(30);
-			$('#remoteid_type').val('address');
-			disableInput('remoteid_type', false);
-			typesel_change_remote(30);
+			address_is_blank = !/\S/.test($('#localid_type').val());
+			if (address_is_blank) {
+				$('#localid_type').val('address');
+				disableInput('localid_type', false);
+				typesel_change_remote(0);
+			}
+			address_is_blank = !/\S/.test($('#remoteid_address').val());
+			if (address_is_blank) {
+				$('#remoteid_type').val('address');
+				disableInput('remoteid_type', false);
+				typesel_change_remote(0);
+			}
 			$('#opt_localid_help').html("<?=$localid_help_vti?>");
 			$('#opt_remoteid_help').html("<?=$remoteid_help_vti?>");
 		} else {

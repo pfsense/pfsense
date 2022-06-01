@@ -35,6 +35,7 @@ require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes, $openvpn_exit_notify_server;
+global $openvpn_sharedkey_warning;
 
 init_config_arr(array('openvpn', 'openvpn-server'));
 $a_server = &$config['openvpn']['openvpn-server'];
@@ -94,6 +95,7 @@ if ($_POST['act'] == "del") {
 		unset($a_server[$id]);
 		write_config($wc_msg);
 		$savemsg = gettext("Server successfully deleted.");
+		services_unbound_configure(false);
 	}
 }
 
@@ -173,7 +175,7 @@ if (($act == "edit") || ($act == "dup")) {
 			if ($pconfig['mode'] == "server_tls_user") {
 				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
 			}
-			$pconfig['remote_cert_tls'] = $a_server[$id]['remote_cert_tls'];
+			$pconfig['remote_cert_tls'] = isset($a_server[$id]['remote_cert_tls']);
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		}
@@ -191,6 +193,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['local_network'] = $a_server[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
 		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
+		$pconfig['connlimit'] = $a_server[$id]['connlimit'];
 		$pconfig['allow_compression'] = $a_server[$id]['allow_compression'];
 		$pconfig['compression'] = $a_server[$id]['compression'];
 		$pconfig['compression_push'] = $a_server[$id]['compression_push'];
@@ -574,6 +577,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
 	}
 
+	if ($pconfig['connlimit'] && !is_numericint($pconfig['connlimit'])) {
+		$input_errors[] = gettext("The field 'Duplicate Connection Limit' must be numeric.");
+	}
+
 	if (!array_key_exists($pconfig['topology'], $openvpn_topologies)) {
 		$input_errors[] = gettext("The field 'Topology' contains an invalid selection");
 	}
@@ -608,6 +615,9 @@ if ($_POST['save']) {
 		if (!empty($pconfig['serverbridge_interface']) &&
 		    !array_key_exists($pconfig['serverbridge_interface'], openvpn_build_bridge_list())) {
 			$input_errors[] = gettext("The selected Server Bridge Interface is not valid.");
+		} elseif (empty($pconfig['serverbridge_interface']) && empty($pconfig["tunnel_network"]) &&
+		    empty($pconfig["tunnel_networkv6"])) {
+			$input_errors[] = gettext("TAP server mode requires an IPv4/IPv6 Tunnel Network or Bridge Interface to work.");
 		}
 
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {
@@ -739,7 +749,9 @@ if ($_POST['save']) {
 			if ($pconfig['mode'] == "server_tls_user") {
 				$server['strictusercn'] = $pconfig['strictusercn'];
 			}
-			$server['remote_cert_tls'] = $pconfig['remote_cert_tls'];
+			if (isset($pconfig['remote_cert_tls'])) {
+				$server['remote_cert_tls'] = true;
+			}
 		} else {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -748,8 +760,9 @@ if ($_POST['save']) {
 		$server['digest'] = $pconfig['digest'];
 		$server['engine'] = $pconfig['engine'];
 
-		$server['tunnel_network'] = trim($pconfig['tunnel_network']);
-		$server['tunnel_networkv6'] = trim($pconfig['tunnel_networkv6']);
+		foreach (array('', 'v6') as $ntype) {
+			$server["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
+		}
 		$server['remote_network'] = $pconfig['remote_network'];
 		$server['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$server['gwredir'] = $pconfig['gwredir'];
@@ -757,6 +770,7 @@ if ($_POST['save']) {
 		$server['local_network'] = $pconfig['local_network'];
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
 		$server['maxclients'] = $pconfig['maxclients'];
+		$server['connlimit'] = $pconfig['connlimit'];
 		$server['allow_compression'] = $pconfig['allow_compression'];
 		$server['compression'] = $pconfig['compression'];
 		$server['compression_push'] = $pconfig['compression_push'];
@@ -844,6 +858,12 @@ if ($_POST['save']) {
 		$server['ping_action_push'] = $pconfig['ping_action_push'];
 		$server['inactive_seconds'] = $pconfig['inactive_seconds'];
 
+		if (($act == 'new') || (!empty($server['disable']) ^ !empty($a_server[$id]['disable'])) ||
+		    ($server['tunnel_network'] != $a_server[$id]['tunnel_network']) ||
+		    ($server['tunnel_networkv6'] != $a_server[$id]['tunnel_networkv6'])) {
+			$server['unbound_restart'] = true;
+		}
+
 		if (isset($id) && $a_server[$id]) {
 			$a_server[$id] = $server;
 			$wc_msg = sprintf(gettext('Updated OpenVPN server on %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($server['interface']), $server['local_port'], $server['description']);
@@ -855,6 +875,7 @@ if ($_POST['save']) {
 		write_config($wc_msg);
 		openvpn_resync('server', $server);
 		openvpn_resync_csc_all();
+		services_unbound_configure(false);
 
 		header("Location: vpn_openvpn_server.php");
 		exit;
@@ -938,6 +959,14 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['mode'],
 		openvpn_build_mode_list()
 		));
+
+	$group = new Form_Group('WARNING:');
+	$group->add(new Form_StaticText(
+		'',
+		$openvpn_sharedkey_warning
+	));
+	$group->addClass('text-danger')->addClass('sharedkeywarning');
+	$section->add($group);
 
 	$options = array();
 	$authmodes = array();
@@ -1255,10 +1284,14 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network or network type alias with a single entry used for private ' .
-				'communications between this server and client hosts expressed using CIDR notation ' .
-       				'(e.g. 10.0.8.0/24). The first usable address in the network will be assigned to ' .
-				'the server virtual interface. The remaining usable addresses will be assigned ' .
-				'to connecting clients.');
+			'communications between this server and client hosts expressed using CIDR notation ' .
+			'(e.g. 10.0.8.0/24). The first usable address in the network will be assigned to ' .
+			'the server virtual interface. The remaining usable addresses will be assigned ' .
+			'to connecting clients.%1$s%1$s' .
+			'A tunnel network of /30 or smaller puts OpenVPN into a special peer-to-peer mode which ' .
+			'cannot push settings to clients. This mode is not compatible with several options, ' .
+			'including Exit Notify, and Inactive.',
+			'<br/>');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -1266,9 +1299,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network or network type alias with a single entry used for private ' .
-				'communications between this server and client hosts expressed using CIDR notation ' .
-				'(e.g. fe80::/64). The ::1 address in the network will be assigned to the server ' .
-			        'virtual interface. The remaining addresses will be assigned to connecting clients.');
+			'communications between this server and client hosts expressed using CIDR notation ' .
+			'(e.g. fe80::/64). The ::1 address in the network will be assigned to the server ' .
+			'virtual interface. The remaining addresses will be assigned to connecting clients.');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -1422,6 +1455,13 @@ if ($act=="new" || $act=="edit"):
 			'When unset, a new connection from a user will disconnect the previous session. %1$s%1$s' .
 			'Users are identified by their username or certificate properties, depending on the VPN configuration. ' .
 			'This practice is discouraged security reasons, but may be necessary in some environments.', '<br />');
+	
+	$section->addInput(new Form_Input(
+		'connlimit',
+		'Duplicate Connection Limit',
+		'number',
+		$pconfig['connlimit']
+	))->setHelp('Limit the number of concurrent connections from the same user.');
 
 	$form->add($section);
 
@@ -1799,8 +1839,12 @@ else:
 
 			<tbody>
 <?php
+	$print_sk_warning = false;
 	$i = 0;
 	foreach ($a_server as $server):
+		if ($server['mode'] == 'p2p_shared_key') {
+			$print_sk_warning = true;
+		}
 		$ncp = (($server['mode'] != "p2p_shared_key") && ($server['ncp_enable'] != 'disabled'));
 		$dc = openvpn_build_data_cipher_list($server['data_ciphers'], $server['data_ciphers_fallback'], $ncp);
 		$dca = explode(',', $dc);
@@ -1866,6 +1910,12 @@ else:
 </nav>
 
 <?php
+if ($print_sk_warning) {
+	print_info_box(gettext('WARNING:') . ' ' . $openvpn_sharedkey_warning, 'warning', false);
+}
+?>
+
+<?php
 endif;
 
 // Note:
@@ -1899,6 +1949,7 @@ events.push(function() {
 		hideInput('crlref', false);
 		hideCheckbox('ocspcheck', false);
 		hideLabel('Peer Certificate Revocation list', false);
+		hideClass('sharedkeywarning', true);
 
 		switch (value) {
 			case "p2p_tls":
@@ -1934,6 +1985,7 @@ events.push(function() {
 				hideInput('inactive_seconds', false);
 			break;
 			case "p2p_shared_key":
+				hideClass('sharedkeywarning', false);
 				hideInput('tls', true);
 				hideInput('caref', true);
 				hideInput('crlref', true);

@@ -114,11 +114,11 @@ function pkg_env($extra_env = array()) {
 		}
 	}
 
-	if (isset($config['system']['use_mfs_tmpvar']) &&
-	    !file_exists("/conf/ram_disks_failed")) {
-		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
-		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
-	}
+#	if (isset($config['system']['use_mfs_tmpvar']) &&
+#	    !file_exists("/conf/ram_disks_failed")) {
+#		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
+#		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
+#	}
 
 	foreach ($extra_env as $key => $value) {
 		$pkg_env_vars[$key] = $value;
@@ -1189,22 +1189,25 @@ function package_reinstall_all() {
 		return false;
 	}
 
-	$package_list = array();
-	foreach ($config['installedpackages']['package'] as $package) {
-		$package_list[] = get_package_internal_name($package);
-	}
-
-	if (!empty($package_list)) {
+	init_config_arr(array('installedpackages', 'package'));
+	if (!empty($config['installedpackages']['package'])) { 
 		$pkg_info = get_pkg_info();
 	}
 
-	foreach ($package_list as $package) {
+	foreach ($config['installedpackages']['package'] as $package) {
 		$found = false;
 		foreach ($pkg_info as $pkg) {
 			pkg_remove_prefix($pkg['name']);
-			if ($pkg['name'] == $package) {
-				pkg_install($g['pkg_prefix'] . $package, true);
+			if ($pkg['name'] == $package['internal_name']) {
+				pkg_install($g['pkg_prefix'] . $package['internal_name'], true);
 				$found = true;
+			} elseif ($pkg['name'] == $package['name']) {
+				/* some packages use 'name' as the package name,
+				 * see https://redmine.pfsense.org/issues/12766 */
+				pkg_install($g['pkg_prefix'] . $package['name'], true);
+				$found = true;
+			}
+			if ($found) {
 				break;
 			}
 		}
@@ -1214,10 +1217,16 @@ function package_reinstall_all() {
 				require_once("notices.inc");
 			}
 
+			/* Name of the package that cannot be found. If it has
+			 * an internal name, include that as well. */
+			$pkgname = $package['name'];
+			if (!empty($package['internal_name'])) {
+				$pkgname .= " ({$package['internal_name']})";
+			}
 			file_notice(gettext("Package reinstall"),
 			    sprintf(gettext("Package %s does not exist in " .
 			    "current %s version and it has been removed."),
-			    $package, $g['product_label']));
+			    $pkgname, $g['product_label']));
 			uninstall_package($package);
 		}
 	}
@@ -1327,7 +1336,7 @@ function get_base_pkg_name() {
 function get_system_pkg_version($baseonly = false, $use_cache = true) {
 	global $g;
 
-	if (!check_dnsavailable()) {
+	if (!check_dnsavailable('any')) {
 		return false;
 	}
 
@@ -1661,14 +1670,14 @@ function update_repos() {
 
 // Parse the received JSON data and save the custom repository information
 function save_repo($json) {
-	global $repopath, $g;
+	global $repopath, $g, $config;
 
 	$repo = json_decode($json, true);
+	$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
 	if (($repo != NULL) && isset($repo['abi']) && isset($repo['altabi']) &&
 	    isset($repo['conf']) && isset($repo['descr']) &&
 	    isset($repo['name']) && (strlen($repo['conf']) > 10)) {
-		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
 		if (!empty($repo['conf']))		{file_put_contents($basename . "conf", base64_decode($repo['conf']));}
 		if (!empty($repo['descr']))		{file_put_contents($basename . "descr", $repo['descr']);}
@@ -1699,10 +1708,17 @@ function save_repo($json) {
 	} else {
 		/*
 		 * If there was anything wrong with the custom repository
-		 * definition, remove the help text to avoid possible confusion
+		 * definition, remove the custom files to avoid possible confusion
 		 */
-		if (file_exists($basename . "help")) {
-			unlink($basename . "help");
+		foreach (glob($basename . "*") as $f) {
+			unlink($f);
+		}
+
+		// If config.xml still contains a reference to the custom repo, replace it with the "stable" repository definition
+		if (strpos($config['system']['pkg_repo_conf_path'], "custom") !== false) {
+			$config['system']['pkg_repo_conf_path'] = "/usr/local/share/pfSense/pkg/repos/pfSense-repo.conf";
+			write_config("-NoReMoTeBaCkUp");
+			pkg_switch_repo("/usr/local/share/pfSense/pkg/repos/pfSense-repo.conf");
 		}
 	}
 }

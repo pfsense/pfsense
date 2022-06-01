@@ -34,18 +34,18 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Limiter Info"));
 $shortcut_section = "trafficshaper-limiters";
 
 if ($_REQUEST['getactivity']) {
-	$text = `/sbin/ipfw pipe show`;
+	$text = `/sbin/dnctl pipe show`;
 	if ($text == "") {
 		$text = gettext("No limiters were found on this system.");
 	}
 	echo gettext("Limiters:") . "\n";
 	echo $text;
-	$text = `/sbin/ipfw sched show`;
+	$text = `/sbin/dnctl sched show`;
 	if ($text != "") {
 		echo "\n\n" . gettext("Schedulers") . ":\n";
 		echo $text;
 	}
-	$text = `/sbin/ipfw queue show`;
+	$text = `/sbin/dnctl queue show`;
 	if ($text != "") {
 		echo "\n\n" . gettext("Queues") . ":\n";
 		echo $text;

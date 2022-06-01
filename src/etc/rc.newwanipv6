@@ -152,9 +152,9 @@ filter_configure();
 
 $srvupdate = true;
 if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
-	if ($curwanipv6 == $oldipv6) {
+	if (($curwanipv6 == $oldipv6) && !file_exists("{$g['tmp_path']}/{$interface}_upstart6")) {
 		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-		if (!in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
+		if (!in_array($config['interfaces'][$interface]['ipaddr'], array('pppoe', 'pptp', 'ppp'))) {
 			return;
 		} else {
 			$srvupdate = false;
@@ -178,11 +178,11 @@ if ($srvupdate) {
 }
 
 /* reconfigure IPsec tunnels */
-ipsec_force_reload($interface);
+ipsec_force_reload($interface, 'inet6');
 
 /* start OpenVPN server & clients */
 if (substr($interface_real, 0, 4) != "ovpn") {
-	openvpn_resync_all($interface);
+	openvpn_resync_all($interface, 'inet6');
 }
 
 /* reconfigure GRE/GIF tunnels */
@@ -212,6 +212,11 @@ if ($srvupdate) {
 	enable_rrd_graphing();
 
 	restart_packages();
+}
+
+unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart6");
+if (empty($config['interfaces'][$interface]['ipaddr'])) {
+	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
 }
 
 ?>

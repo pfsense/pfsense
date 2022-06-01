@@ -501,12 +501,19 @@ if ($_POST['save']) {
 			}
 		}
 	}
-	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent, false, false) && $pconfig['disabled']) {
+	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent, false, false)) {
 		foreach ($a_phase2 as $p2index => $ph2tmp) {
-			if (($ph2tmp['ikeid'] == $old_ph1ent['ikeid']) &&
-			    is_interface_ipsec_vti_assigned($ph2tmp)) {
-				$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
-				break;
+			if ($ph2tmp['ikeid'] == $old_ph1ent['ikeid']) {
+				if (!$vtidisablecheck && $pconfig['disabled'] &&
+				    is_interface_ipsec_vti_assigned($ph2tmp)) {
+					$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+					$vtidisablecheck = true;
+				} 
+				if (!$vtigwcheck && (($pconfig['remotegw'] == '0.0.0.0') ||
+				    (is_ipaddrv6($pconfig['remotegw']) && (text_to_compressed_ip6($pconfig['remotegw']) == '::')))) {
+					$input_errors[] = gettext("A remote gateway address of \"0.0.0.0\" or \"::\" is not compatible with a child Phase 2 in VTI mode.");
+					$vtigwcheck = true;
+				}
 			}
 		}
 	}
@@ -827,7 +834,8 @@ if (!$pconfig['mobile']) {
 	    '<div class="infoblock">',
 	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' .
 	    'to allow connections from any IPv6 address.' . '<br/>' . 'Child SA Start Action must be set to None and ' .
-	    'Peer IP Address cannot be used for Remote Identifier.'), 'info', false),
+	    'Peer IP Address cannot be used for Remote Identifier. A remote gateway address of \'0.0.0.0\' or \'::\' is not ' .
+	    'compatible with VTI, use an FQDN instead.'), 'info', false),
 	    '</div>');
 
 	$section->add($group);

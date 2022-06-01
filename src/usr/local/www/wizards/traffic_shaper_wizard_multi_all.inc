@@ -133,7 +133,7 @@ function step2_stepbeforeformdisplay() {
 		$fields[] = $field;
 
 		$field = array();
-		$field['displayname'] = "Interface & Scheduler";
+		$field['displayname'] = "Interface";
 		$field['name'] = "local{$i}interface";
 		$field['type'] = "select";
 		$field['options']['option'] = array();
@@ -157,6 +157,7 @@ function step2_stepbeforeformdisplay() {
 		$field['combinefieldsend'] = "true";
 		$field['dontdisplayname'] = "true";
 		$field['dontcombinecells'] = "true";
+		$field['displayname'] = "Interface Scheduler";
 		$field['name'] = "local{$i}downloadscheduler";
 		$field['type'] = "select";
 		$field['typehint'] = "Queueing discipline to apply on this local interface.";
@@ -185,7 +186,7 @@ function step2_stepbeforeformdisplay() {
 		$fields[] = $field;
 
 		$field = array();
-		$field['displayname'] = "Interface & Scheduler";
+		$field['displayname'] = "Interface";
 		$field['name'] = "conn{$i}interface";
 		$field['type'] = "select";
 		$interface_real = $i+1;
@@ -211,6 +212,7 @@ function step2_stepbeforeformdisplay() {
 		$field['combinefieldsend'] = "true";
 		$field['dontdisplayname'] = "true";
 		$field['dontcombinecells'] = "true";
+		$field['displayname'] = "Interface Scheduler";
 		$field['name'] = "conn{$i}uploadscheduler";
 		$field['type'] = "select";
 		$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
@@ -793,9 +795,6 @@ function apply_all_chosen_items() {
 					$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
 				$remainbw += $penaltybw * $factor;
 			}
-		} else {
-			$penalty = false;
-			$penaltybw = 0;
 		}
 		if ($config['ezshaper']['step5']['enable']) {
 			$p2p = true;
@@ -1206,9 +1205,6 @@ function apply_all_chosen_items() {
 					$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
 				$remainbw += floatval($penaltybw) * $factor;
 			}
-		} else {
-			$penalty = false;
-			$penaltybw = 0;
 		}
 		if ($config['ezshaper']['step5']['enable']) {
 			$p2p = true;
@@ -1560,7 +1556,11 @@ function apply_all_chosen_items() {
 	if (!is_array($config['filter']['rule']))
 		$config['filter']['rule'] = array();
 
-	$interfacelist = implode(",", $interfacelist);
+	if (!empty($interfacelist)) {
+		$interfacelist = implode(",", $interfacelist);
+	} else {
+		$interfacelist = "any";
+	}
 
 	/* Rules */
 	$tracker = (int)microtime(true);
@@ -1569,9 +1569,19 @@ function apply_all_chosen_items() {
 			$rule = array();
 			$rule['type'] = "match";
 			$rule['interface'] = $interfacelist;
-			$rule['ipprotocol'] = "inet46";
+			if (is_ipaddrv4($config['ezshaper']['step4']['address'])) {
+				$rule['ipprotocol'] = "inet";
+			} elseif (is_ipaddrv6($config['ezshaper']['step4']['address'])) {
+				$rule['ipprotocol'] = "inet6";
+			} else {
+				$rule['ipprotocol'] = "inet46";
+			}
 			$rule['descr'] = gettext("Penalty Box");
-			$rule['defaultqueue'] = "qOthersLow";
+			if ($otherpriority) {
+				$rule['defaultqueue'] = "qOthersLow";
+			} else {
+				$rule['defaultqueue'] = "qDefault";
+			}
 			$rule['source']['address'] = $config['ezshaper']['step4']['address'];
 			$rule['destination']['any'] = TRUE;
 			$rule['floating'] = "yes";
@@ -1590,8 +1600,15 @@ function apply_all_chosen_items() {
 					/* create VOIP rules */
 					$rule = array();
 					$rule['type'] = "match";
-					//$rule['interface'] = $interfacelist;
-					$rule['ipprotocol'] = "inet46";
+					if (is_ipaddrv4($config['ezshaper']['step3']['address'])) {
+						$ipprotocol = "inet";
+					} elseif (is_ipaddrv6($config['ezshaper']['step3']['address'])) {
+						$ipprotocol = "inet6";
+					} else {
+						$ipprotocol = "inet46";
+					}
+					$rule['interface'] = "any";
+					$rule['ipprotocol'] = $ipprotocol;
 					$rule['descr'] = gettext("Connections From Upstream SIP Server");
 					$rule['protocol'] = "udp";
 					$rule['defaultqueue'] = "qVoIP";
@@ -1606,8 +1623,8 @@ function apply_all_chosen_items() {
 
 					$rule = array();
 					$rule['type'] = "match";
-					//$rule['interface'] = $interfacelist;
-					$rule['ipprotocol'] = "inet46";
+					$rule['interface'] = "any";
+					$rule['ipprotocol'] = $ipprotocol;
 					$rule['descr'] = gettext("Connections To Upstream SIP Server");
 					$rule['protocol'] = "udp";
 					$rule['defaultqueue'] = "qVoIP";

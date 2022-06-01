@@ -5137,6 +5137,7 @@ fi
 EOD;
 
 			/* non ipoe Process */
+			$rtsoldscript = $rtsoldscript_header;
 			if (!isset($wancfg['dhcp6withoutra'])) {
 				/*
 				 * We only want this script to run once, and if it runs twice
@@ -5146,7 +5147,6 @@ EOD;
 				 * Check for a lock file, trying to prevent multiple instances
 				 * of dhcp6c being launched
 				 */
-				$rtsoldscript = $rtsoldscript_header;
 				$rtsoldscript .= "if [ ! -f /tmp/dhcp6c_lock ]; then\n";
 				/*
 				 * Create the lock file, trying to prevent multiple instances

@@ -52,7 +52,7 @@ net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel
 net/%%PRODUCT_NAME%%-pkg-pimd
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/%%PRODUCT_NAME%%-pkg-WireGuard
-net/hping
+net/hping3
 net/librdkafka
 net/mosh
 net/py-speedtest-cli

@@ -190,6 +190,100 @@ function start_dpinger($gateway) {
 	return mwexec("/usr/local/bin/dpinger {$params} {$gateway['monitor']} >/dev/null");
 }
 
+/* Remove temporary static routes that were dynamically added for dpinger */
+function delete_temporary_static_routes($gateway) {
+	global $config;
+	if (empty($gateway)) {
+		return false;
+	}
+	$ipprotocol = $gateway['ipprotocol'];
+	$rtable = route_table()[$ipprotocol];
+	if (empty($rtable)) {
+		return false;
+	}
+	$gwname = $gateway['name'];
+	$friendly = $gateway['interface'];
+	$ifname = get_real_interface($friendly);
+	$routes_ughs = array_filter($rtable, fn($r) => (
+		$r['flags'] == 'UGHS' &&
+		$r['interface-name'] == $ifname
+	));
+	$staticroutes = get_staticroutes();
+	foreach ($routes_ughs as $r) {
+		$tgt = $r['destination'];
+		if (is_ipaddrv4($tgt)) {
+			$cidr = "{$tgt}/32";
+		} elseif (is_ipaddrv6($tgt)) {
+			$cidr = "{$tgt}/128";
+		} else {
+			continue;
+		}
+		// check to see if we can safely remove this route
+		$test_sr = array_filter($staticroutes, fn($sr) => (
+			$sr['network'] == $cidr &&
+			$sr['gateway'] == $gwname
+		));
+		if (empty($test_sr)) {
+			$rkey = implode('_', array($ifname, $tgt));
+			if (is_array($GLOBALS['inuse_static_routes']) &&
+				in_array($rkey, $GLOBALS['inuse_static_routes'])) {
+				continue;
+			}
+			route_del($tgt, $ipprotocol);
+		}
+	}
+}
+
+/* helper function to reduce duplicate code in setup_gateways_monitor() */
+function remove_and_add_routes($gateway) {
+	log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+	if (interface_isppp_type($gateway['friendlyiface'])) {
+		route_add_or_change($gateway['monitor'], '', $gateway['interface']);
+		system_staticroutes_configure($gateway['friendlyiface']);
+	} else {
+		route_add_or_change($gateway['monitor'], $gateway['gateway']);
+	}
+	return;
+}
+
+/* Configure static routes for Gateway Monitor IPs */
+function setup_dpinger_static_routes($gateway) {
+	global $config, $g;
+	delete_temporary_static_routes($gateway);
+	if (isset($config['system']['dpinger_dont_add_static_routes']) || isset($gateway['dpinger_dont_add_static_route'])) {
+		/* config dictates that we don't create a static route for this monitor IP */
+		return;
+	}
+	/* If monitor IP is the gateway itself, do not add a route as this would break the routing table */
+	if ($gateway['monitor'] == $gateway['gateway']) {
+		return;
+	}
+	$rkey = implode('_', array(get_real_interface($gateway['interface']), $gateway['monitor']));
+	$GLOBALS['inuse_static_routes'][] = $rkey;
+
+	switch ($gateway['ipprotocol']) {
+		case 'inet':
+			if (is_ipaddrv4($gateway['monitor'])) {
+				remove_and_add_routes($gateway);
+				pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
+			} else {
+				log_error(sprintf(gettext('Skipped adding static route for gateway %1$s because %2$s is not a valid IPv4 address'), $gateway['name'], $gateway['monitor']));
+			}
+			break;
+		case 'inet6':
+			if (is_ipaddrv6($gateway['monitor'])) {
+				remove_and_add_routes($gateway);
+				pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
+			} else {
+				log_error(sprintf(gettext('Skipped adding static route for gateway %1$s because %2$s is not a valid IPv6 address'), $gateway['name'], $gateway['monitor']));
+			}
+			break;
+		default:
+			log_error(sprintf(gettext('Gateway %1$s is of unknown type: %2$s, skipping'), $gateway['name'], $gateway['ipprotocol']));
+			break;
+	}
+}
+
 /*
  * Starts dpinger processes and adds appropriate static routes for monitor IPs
  */
@@ -206,6 +300,7 @@ function setup_gateways_monitor() {
 		echo "Setting up gateway monitors...";
 	}
 	$monitor_ips = array();
+	$GLOBALS['inuse_static_routes'][] = array();
 	foreach ($gateways_arr as $gwname => $gateway) {
 		/* Do not monitor if such was requested */
 		if (isset($gateway['monitor_disable'])) {
@@ -236,84 +331,33 @@ function setup_gateways_monitor() {
 			if (!is_ipaddrv4($gwifip)) {
 				continue; //Skip this target
 			}
-
 			if ($gwifip == "0.0.0.0") {
 				continue; //Skip this target - the gateway is still waiting for DHCP
 			}
-
-			/*
-			 * If the gateway is the same as the monitor we do not add a
-			 * route as this will break the routing table.
-			 * Add static routes for each gateway with their monitor IP
-			 * not strictly necessary but is a added level of protection.
-			 */
-			if (!isset($config['system']['dpinger_dont_add_static_routes']) &&
-					!isset($gateway['dpinger_dont_add_static_route'])) {
-				if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-					if (interface_isppp_type($gateway['friendlyiface'])) {
-						route_add_or_change($gateway['monitor'],
-						    '', $gateway['interface']);
-						system_staticroutes_configure($gateway['friendlyiface']);
-					} else {
-						route_add_or_change($gateway['monitor'],
-						    $gateway['gateway']);
-					}
-
-					pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
-				}
-			}
-		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
+		} elseif ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if (is_linklocal($gateway['gateway']) &&
 			    get_ll_scope($gateway['gateway']) == '') {
 				$gateway['gateway'] .= '%' . $gateway['interface'];
 			}
-
 			if (is_linklocal($gateway['monitor'])) {
 				if (get_ll_scope($gateway['monitor']) == '') {
 					$gateways_arr[$gwname]['monitor'] .= '%' . $gateway['interface'];
 				}
-
 				$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
-
 				if (get_ll_scope($gwifip) == '') {
 					$gwifip .= '%' . $gateway['interface'];
 				}
 			} else {
 				$gwifip = find_interface_ipv6($gateway['interface'], true);
 			}
-
 			if (!is_ipaddrv6($gwifip)) {
 				continue; //Skip this target
-			}
-
-			/*
-			 * If the gateway is the same as the monitor we do not add a
-			 * route as this will break the routing table.
-			 * Add static routes for each gateway with their monitor IP
-			 * not strictly necessary but is a added level of protection.
-			 */
-
-			if (!isset($config['system']['dpinger_dont_add_static_routes']) &&
-					!isset($gateway['dpinger_dont_add_static_route'])) {
-				if ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) {
-					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-					if (interface_isppp_type($gateway['friendlyiface'])) {
-						route_add_or_change($gateway['monitor'],
-						    '', $gateway['interface']);
-						system_staticroutes_configure($gateway['friendlyiface']);
-					} else {
-						route_add_or_change($gateway['monitor'],
-						    $gateway['gateway']);
-					}
-
-					pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
-				}
 			}
 		} else {
 			continue;
 		}
 
+		setup_dpinger_static_routes($gateway);
 		$monitor_ips[] = $gateway['monitor'];
 		$gateways_arr[$gwname]['enable_dpinger'] = true;
 		$gateways_arr[$gwname]['gwifip'] = $gwifip;

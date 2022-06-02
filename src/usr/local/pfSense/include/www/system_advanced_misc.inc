@@ -298,10 +298,18 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			unset($config['system']['skip_rules_gw_down']);
 		}
 
+		// if the configuration of this setting changes, re-run the gw monitoring setup so routes get updated without requiring a reboot
+		$old_dpinger_dasr = (isset($config['system']['dpinger_dont_add_static_routes']));
 		if ($post['dpinger_dont_add_static_routes'] == "yes") {
 			$config['system']['dpinger_dont_add_static_routes'] = true;
+			if (!$old_dpinger_dasr) {
+				setup_gateways_monitor();
+			}
 		} else {
 			unset($config['system']['dpinger_dont_add_static_routes']);
+			if ($old_dpinger_dasr) {
+				setup_gateways_monitor();
+			}
 		}
 
 		$tmpvar_set = (isset($config['system']['use_mfs_tmpvar']) ? true:false);

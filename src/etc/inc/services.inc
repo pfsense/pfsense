@@ -1718,11 +1718,18 @@ EOD;
 		// of each subnet here is always /64.
 		$pdlen = 64;
 
+		$range_from = $dhcpv6ifconf['range']['from'];
+		$range_to = $dhcpv6ifconf['range']['to'];
+		if ($ifcfgv6['ipaddrv6'] == 'track6') {
+			$range_from = merge_ipv6_delegated_prefix($ifcfgipv6, $range_from, $pdlen);
+			$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to, $pdlen);
+		}
+
 		if (is_ipaddrv6($ifcfgipv6)) {
 			$subnet_start = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 			$subnet_end = gen_subnetv6_max($ifcfgipv6, $ifcfgsnv6);
-			if ((!is_inrange_v6($dhcpv6ifconf['range']['from'], $subnet_start, $subnet_end)) ||
-			    (!is_inrange_v6($dhcpv6ifconf['range']['to'], $subnet_start, $subnet_end))) {
+			if ((!is_inrange_v6($range_from, $subnet_start, $subnet_end)) ||
+			    (!is_inrange_v6($range_to, $subnet_start, $subnet_end))) {
 				log_error(gettext("The specified range lies outside of the current subnet. Skipping DHCP6 entry."));
 				continue;
 			}
@@ -1779,7 +1786,7 @@ EOD;
 
 		if (!is_ipaddrv6($ifcfgipv6)) {
 			$ifcfgsnv6 = "64";
-			$subnetv6 = gen_subnetv6($dhcpv6ifconf['range']['from'], $ifcfgsnv6);
+			$subnetv6 = gen_subnetv6($range_from, $ifcfgsnv6);
 		}
 
 		$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
@@ -1807,14 +1814,7 @@ EOD;
 
 		$dhcpdv6conf .= " {\n";
 
-		$range_from = $dhcpv6ifconf['range']['from'];
-		$range_to = $dhcpv6ifconf['range']['to'];
-		if ($ifcfgv6['ipaddrv6'] == 'track6') {
-			$range_from = merge_ipv6_delegated_prefix($ifcfgipv6, $range_from, $pdlen);
-			$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to, $pdlen);
-		}
-
-		if (!empty($dhcpv6ifconf['range']['from']) && !empty($dhcpv6ifconf['range']['to'])) {
+		if (!empty($range_from) && !empty($range_to)) {
 			$dhcpdv6conf .= "	range6 {$range_from} {$range_to};\n";
 		}
 

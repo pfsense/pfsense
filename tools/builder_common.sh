@@ -2132,7 +2132,7 @@ EOF
 
 	if [ "${AWS}" = 1 ]; then
 		echo ">>> Run poudriere distclean to prune old distfiles..." | tee -a ${LOGFILE}
-		if ! poudriere distclean -f ${_bulk} -p ${POUDRIERE_PORTS_NAME} -y; then
+		if ! poudriere distclean -f ${_bulk} -p ${POUDRIERE_PORTS_NAME} -n; then
 			echo ">>> ERROR: Something went wrong..."
 			print_error_pfS
 		fi

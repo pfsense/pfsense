@@ -171,15 +171,7 @@ if ($_POST['save']) {
 
 include("head.inc");
 
-$section_str = array(
-	'network' => gettext("Network(s)"),
-	'host'	=> gettext("Host(s)"),
-	'port' => gettext("Port(s)"),
-	'url' => gettext("URL (IPs)"),
-	'url_ports' => gettext("URL (Ports)"),
-	'urltable' => gettext("URL Table (IPs)"),
-	'urltable_ports' => gettext("URL Table (Ports)")
-);
+$section_str = $alias_types;
 
 $btn_str = array(
 	'network' => gettext("Add Network"),
@@ -251,16 +243,6 @@ $placeholder_str = array(
 	'urltable_ports'	=> 'URL'
 );
 
-$types = array(
-	'host'	=> gettext("Host(s)"),
-	'network' => gettext("Network(s)"),
-	'port' => gettext("Port(s)"),
-	'url' => gettext("URL (IPs)"),
-	'url_ports' => gettext("URL (Ports)"),
-	'urltable' => gettext("URL Table (IPs)"),
-	'urltable_ports' => gettext("URL Table (Ports)"),
-);
-
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -320,7 +302,7 @@ $section->addInput(new Form_Select(
 	'type',
 	'*Type',
 	isset($pconfig['type']) ? $pconfig['type'] : $tab,
-	$types
+	$alias_types
 ));
 
 $form->add($section);

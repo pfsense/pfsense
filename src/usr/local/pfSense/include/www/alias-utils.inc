@@ -34,6 +34,16 @@ require_once("openvpn.inc");
 init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
+$alias_types = array(
+	'host'	=> gettext("Host(s)"),
+	'network' => gettext("Network(s)"),
+	'port' => gettext("Port(s)"),
+	'url' => gettext("URL (IPs)"),
+	'url_ports' => gettext("URL (Ports)"),
+	'urltable' => gettext("URL Table (IPs)"),
+	'urltable_ports' => gettext("URL Table (Ports)"),
+);
+
 function deleteAlias($id, $apply = false) {
 	global $config;
 

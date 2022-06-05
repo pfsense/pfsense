@@ -1484,7 +1484,7 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Checkbox(
 	'netboot',
 	'Enable',
-	'Enables network booting',
+	'Enable network booting',
 	$pconfig['netboot']
 ));
 

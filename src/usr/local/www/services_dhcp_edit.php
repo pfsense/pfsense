@@ -226,6 +226,11 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("This MAC address or Client identifier already exists.");
 			break;
 		}
+		if (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr']) {
+			set_flash_message('alert-info', sprintf(gettext('The IP address %1$s is in use by another static DHCP mapping. ' .
+			'This has the potential to cause an IP conflict.'), $mapent['ipaddr']));
+			break;
+		}
 	}
 
 	/* make sure it's not within the dynamic subnet */
@@ -497,8 +502,7 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['ipaddr'],
 	'V4'
 ))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.%1$s%1$s' .
-			'The same IP address may be assigned to multiple mappings.', '<br />');
+			'If no IPv4 address is given, one will be dynamically allocated from the pool.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',

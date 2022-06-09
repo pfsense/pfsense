@@ -59,12 +59,12 @@ log_error("rc.newwanipv6: Info: starting on {$argument}.");
 if (empty($argument)) {
 	$interface = "wan";
 	$interface_real = get_real_interface($interface, "inet6");
-	$curwanipv6 = get_interface_ipv6($interface, true);
 } else {
 	$interface_real = $argument;
 	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
-	$curwanipv6 = get_interface_ipv6($interface, true);
 }
+remove_all_detached_or_deprecated_ipv6_addresses($interface, 'both');
+$curwanipv6 = get_usable_interface_ipv6($interface, true)[0];
 
 $interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
@@ -115,6 +115,7 @@ if (!empty($new_domain_name)) {
 /* write current WAN IPv6 to file */
 if (is_ipaddrv6($curwanipv6)) {
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+	create_interface_ipv6_cfgcache($interface);
 }
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");

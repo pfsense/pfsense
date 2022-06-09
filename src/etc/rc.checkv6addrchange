@@ -1,0 +1,44 @@
+#!/usr/local/bin/php-cgi -f
+<?php
+/*
+ * rc.checkv6addrchange
+ *
+ * part of pfSense (https://www.pfsense.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+require_once("globals.inc");
+require_once("config.inc");
+
+$dhcp6_ifs = array_filter($config['interfaces'], fn($interface) => ($interface['ipaddrv6'] == 'dhcp6'));
+$slaac_ifs = array_filter($config['interfaces'], fn($interface) => ($interface['ipaddrv6'] == 'slaac'));
+
+foreach ($dhcp6_ifs as $interface => $ifcfg) {
+	if (!compare_interface_ipv6_cfgcache($interface)) {
+		log_error(sprintf(gettext('IPv6 configuration change detected on interface %1$s, sending SIGHUP to dhcp6c'), $interface));
+		reset_dhcp6client_process();
+		break;
+	}
+}
+
+foreach ($slaac_ifs as $interface => $ifcfg) {
+	if (!compare_interface_ipv6_cfgcache($interface)) {
+		log_error(sprintf(gettext('IPv6 configuration change detected on interface %1$s, starting rc.newwanipv6'), $interface));
+		$realifv6 = get_real_interface($interface, "inet6", true);
+		mwexec("/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d interface={$realifv6}", false);
+		break;
+	}
+}
+
+?>

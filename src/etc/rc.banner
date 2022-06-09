@@ -87,8 +87,7 @@ foreach ($iflist as $ifname => $friendly) {
 	}
 	$ipaddr = get_interface_ip($ifname);
 	$subnet = get_interface_subnet($ifname);
-	$ipaddr6 = get_interface_ipv6($ifname);
-	$subnet6 = get_interface_subnetv6($ifname);
+	list($ipaddr6, $subnet6) = get_usable_interface_ipv6($ifname, true, true);
 	$realif = get_real_interface($ifname);
 	$tobanner = "{$friendly} ({$ifname})";
 

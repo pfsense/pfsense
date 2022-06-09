@@ -6499,6 +6499,58 @@ function link_interface_to_ppp_tunnelif($interface) {
 	return $result;
 }
 
+/* is_v6_bogon($ipaddr): returns true if the supplied address is a bogon
+ * https://en.wikipedia.org/wiki/IPv6_address#Special_addresses
+ */
+function is_v6_bogon($ipaddr) {
+	$is_bogon = false;
+	$addr_els = Net_IPv6::separate($ipaddr);
+	$bogon_ranges = array(
+		'fc00::/7',   // Unique local addresses (ULA)
+		'fe80::/10',  // Link-local unicast
+		'fec0::/10'   // Site-local unicast (deprecated)
+	);
+	foreach ($bogon_ranges as $range) {
+		if (Net_IPv6::isInNetmask($addr_els[0], $range)) {
+			$is_bogon = true;
+			break;
+		}
+	}
+	return $is_bogon;
+}
+
+/* get_usable_interface_ipv6($interface): returns an array of usable, non-bogon (LL/ULA) IPv6 addresses
+ * if $fallback = true then function will return LL address if there is no other available
+ * https://github.com/pear/Net_IPv6/blob/master/Net/IPv6.php
+ */
+function get_usable_interface_ipv6($interface, $firstonly = false, $fallback = false) {
+	$interface = trim($interface);
+	$realifv6 = get_real_interface($interface, "inet6", true);
+	if (!$realifv6) {
+		return;
+	}
+	$ifaddrs = pfSense_getall_interface_addresses($realifv6);
+	if (!is_array($ifaddrs)) {
+		return;
+	}
+	$all_ipv6_addresses = array_filter($ifaddrs, fn($ipaddr) => (
+		is_v6($ipaddr) &&
+		!is_v6_bogon($ipaddr)
+	));
+	if (empty($all_ipv6_addresses) && $fallback == true) {
+		$all_ipv6_addresses = array_filter($ifaddrs, fn($ipaddr) => (is_v6($ipaddr)));
+	}
+	$usable_ipv6_addresses = array();
+	foreach ($all_ipv6_addresses as $ipaddr) {
+		$addr_els = Net_IPv6::separate($ipaddr);
+		$usable_ipv6_addresses[] = array(
+			'address'   => $addr_els[0],
+			'prefixlen' => $addr_els[1]
+		);
+	}
+	return ($firstonly ? array($usable_ipv6_addresses[0]['address'], $usable_ipv6_addresses[0]['prefixlen']) : $usable_ipv6_addresses);
+}
+
 /*
  * find_interface_ip($interface): return the interface ip (first found)
  */
@@ -7715,6 +7767,115 @@ function restart_interface_services($interface, $ipv6type = "") {
 	init_config_arr(array('syslog'));
 	if (isset($config['syslog']['enable']) && ($interface == $config['syslog']['sourceip'])) {
 		system_syslogd_start();
+	}
+}
+
+function get_detached_or_deprecated_ipv6_addresses($interface = "wan", $rtype = "detached") {
+	$realifv6 = get_real_interface($interface, "inet6", true);
+	if (!does_interface_exist($realifv6)) {
+		return array();
+	}
+	switch ($rtype) {
+		case "detached":
+			$re = 'detached';
+			break;
+		case "deprecated":
+			$re = 'deprecated';
+			break;
+		case "both":
+			$re = '(detached|deprecated)';
+			break;
+		default:
+			return array();
+	}
+	exec("/sbin/ifconfig {$realifv6} | /usr/bin/awk '/[\t ]+?inet6 .* {$re}/ { print $2 }'", $output, $ret);
+	return $output;
+}
+
+function remove_detached_or_deprecated_ipv6_address($address, $interface = "wan", $rtype) {
+	if (!is_v6($address)) {
+		log_error(sprintf(gettext('Ignoring request to remove %1$s from %2$s (not an IPv6 address)'), $address, $interface));
+		return false;
+	}
+	$realifv6 = get_real_interface($interface, "inet6", true);
+	if (!does_interface_exist($realifv6)) {
+		log_error(sprintf(gettext('Ignoring request to remove %1$s from %2$s (invalid interface)'), $address, $interface));
+		return false;
+	}
+	list($ipaddr, $prefix) = Net_IPv6::separate($address);
+	if ($ipaddr == $config['interfaces'][$interface]['ipaddrv6']) {
+		log_error(sprintf(gettext('Not removing address %1$s from interface %2$s because it is assigned in config.xml'), $address, $interface));
+		return false;
+	}
+	$all_ipv6_addresses = array_map('Net_IPv6::removeNetmaskSpec', array_filter(
+		pfSense_getall_interface_addresses($realifv6), fn($ipaddr) => (is_v6($ipaddr)))
+	);
+	if (!in_array($ipaddr, $all_ipv6_addresses)) {
+		log_error(sprintf(gettext('Not removing address %1$s (address does not exist on interface %2$s)'), $address, $interface));
+		return false;
+	}
+	if ($rtype && !in_array($ipaddr, get_detached_or_deprecated_ipv6_addresses($interface, $rtype))) {
+		log_error(sprintf(gettext('Not removing address %1$s from interface %2$s (detached/deprecated flag not present)'), $address, $interface));
+		return false;
+	}
+	exec("/sbin/ifconfig {$realifv6} inet6 {$ipaddr} delete", $output, $ret);
+	log_error(sprintf(gettext('Removing address %1$s from interface %2$s, result: %3$s'), $address, $interface, $ret));
+	return $ret;
+}
+
+function remove_all_detached_or_deprecated_ipv6_addresses($interface = "wan", $rtype = "detached") {
+	$detached_or_deprecated_addrs = get_detached_or_deprecated_ipv6_addresses($interface, $rtype);
+	foreach ($detached_or_deprecated_addrs as $address) {
+		remove_detached_or_deprecated_ipv6_address($address, $interface, $rtype);
+	}
+	remove_orphan_ipv6_addresses($interface);
+}
+
+function remove_orphan_ipv6_addresses($interface = "wan") {
+	// loop thru all /128 IPs and remove any that are not contained by another assigned subnet and not assigned by config.xml
+	$all_ips = array_filter(pfSense_getall_interface_addresses($interface), fn($ipaddr) => (is_v6($ipaddr)));
+	$checkips = array_filter($all_ips, fn($ipaddr) => (Net_IPv6::getNetmaskSpec($ipaddr) == 128));
+	$all_ipv6_nets = array_filter($all_ips, fn($ipaddr) => (Net_IPv6::getNetmaskSpec($ipaddr) < 128));
+	foreach ($checkips as $ipaddr) {
+		$addr_els = Net_IPv6::separate($ipaddr);
+		$orphan_test = array_filter($all_ipv6_nets, fn($net) => (Net_IPv6::isInNetmask($addr_els[0], $net)));
+		if (empty($orphan_test)) {
+			log_error(sprintf(gettext('Removing orphan address %1$s from interface %2$s'), $ipaddr, $interface));
+			remove_detached_or_deprecated_ipv6_address($ipaddr, $interface, false);
+		}
+	}
+}
+
+function get_interface_ipv6_cfg($interface) {
+	$realifv6 = get_real_interface($interface, "inet6", true);
+	if (!does_interface_exist($realifv6)) {
+		return false;
+	}
+	$all_ipv6_addresses = array_filter(pfSense_getall_interface_addresses($realifv6), fn($ipaddr) => (is_v6($ipaddr)));
+	sort($all_ipv6_addresses);
+	$all_ipv6_addresses = implode("\n", $all_ipv6_addresses) . "\n";
+	return ($all_ipv6_addresses);
+}
+
+function create_interface_ipv6_cfgcache($interface) {
+	global $g;
+	$curipv6cfg = get_interface_ipv6_cfg($interface);
+	if ($curipv6cfg) {
+		file_put_contents("{$g['vardb_path']}/{$interface}_ipv6_cfgcache", $curipv6cfg);
+	} else {
+		unlink_if_exists("{$g['vardb_path']}/{$interface}_ipv6_cfgcache");
+		return false;
+	}
+}
+
+function compare_interface_ipv6_cfgcache($interface) {
+	global $g;
+	if (!file_exists("{$g['vardb_path']}/{$interface}_ipv6_cfgcache")) {
+		create_interface_ipv6_cfgcache($interface);
+	} else {
+		$oldipv6cfg = file_get_contents("{$g['vardb_path']}/{$interface}_ipv6_cfgcache");
+		$curipv6cfg = get_interface_ipv6_cfg($interface);
+		return ($curipv6cfg == $oldipv6cfg);
 	}
 }
 

@@ -280,7 +280,7 @@ function setup_gateways_monitor() {
 					$gwifip .= '%' . $gateway['interface'];
 				}
 			} else {
-				$gwifip = find_interface_ipv6($gateway['interface'], true);
+				$gwifip = get_usable_interface_ipv6($gateway['interface'], true)[0];
 			}
 
 			if (!is_ipaddrv6($gwifip)) {

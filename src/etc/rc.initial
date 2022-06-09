@@ -24,47 +24,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# make sure the user can't kill us by pressing Ctrl-C,
-# ctrl-z, etc.
-trap : 2
-trap : 3
-trap : 4
+# make sure the user can't kill us by pressing Ctrl-C, ctrl-z, etc.
+trap : INT
+trap : QUIT
+trap : ILL
 
 unset do_sleep
 if [ -f /etc/rc.local ]; then
-	if ! ps auxwww | egrep -q '[r]c.local$'; then
+	if ! /bin/pgrep -qf 'rc.local$'; then
 		echo ">>> Launching rc.local in background..."
-		sh /etc/rc.local &
+		/bin/sh /etc/rc.local &
 		do_sleep=1
 	fi
-	if [ -f /etc/rc.local.running ] && \
-	    ! ps auxwww | egrep -q '[r]c.local.running$'; then
+	if [ -f /etc/rc.local.running ] &&
+	! /bin/pgrep -qf 'rc.local.running$'; then
 		[ -n "${do_sleep}" ] && sleep 1
 		echo ">>> Launching rc.local.running in background..."
-		sh /etc/rc.local.running &
+		/bin/sh /etc/rc.local.running &
 	fi
 fi
 
 # Parse command line parameters
 while [ $# -gt 0 ]; do
 	case $1 in
-		-c )	shift
+		-c)
+			shift
 			/bin/sh -c "$@"
 			exit
 			;;
-		* )
+		*) : ;;
 	esac
 	shift
 done
-
-CONFIG="/cf/conf/config.xml"
-WORD="https"
 
 # endless loop
 while : ; do
 
 if [ -f /tmp/ttybug ]; then
-	rm /tmp/ttybug
+	/bin/rm /tmp/ttybug
 	exit && exit && logout
 fi
 
@@ -75,20 +72,20 @@ product_name=$(/usr/local/sbin/read_global_var product_name pfSense)
 product_label=$(/usr/local/sbin/read_global_var product_label pfSense)
 
 # Check to see if SSH is running.
-if pgrep -q -a -F /var/run/sshd.pid sshd >/dev/null 2>&1; then
-	sshd_option="14) Disable Secure Shell (sshd)";
+if /bin/pgrep -qaF /var/run/sshd.pid sshd 2>/dev/null; then
+	sshd_option='Disable'
 else
-	sshd_option="14) Enable Secure Shell (sshd)";
+	sshd_option='Enable'
 fi
 
-# display a cheap menu
+# display console menu
 echo ""
 echo " 0) Logout (SSH only)                  9) pfTop"
 echo " 1) Assign Interfaces                 10) Filter Logs"
 echo " 2) Set interface(s) IP address       11) Restart webConfigurator"
 echo " 3) Reset webConfigurator password    12) PHP shell + ${product_label} tools"
 echo " 4) Reset to factory defaults         13) Update from console"
-echo " 5) Reboot system                     ${sshd_option}"
+echo " 5) Reboot system                     14) ${sshd_option} Secure Shell (sshd)"
 echo " 6) Halt system                       15) Restore recent configuration"
 echo " 7) Ping host                         16) Restart PHP-FPM"
 echo " 8) Shell"
@@ -132,7 +129,7 @@ case ${opmode} in
 10)
 	/usr/bin/tail -F /var/log/filter.log
 	;;
-11 | 111)
+11)
 	/etc/rc.restart_webgui
 	;;
 12)
@@ -142,7 +139,7 @@ case ${opmode} in
 	/bin/sh /usr/local/sbin/${product_name}-upgrade
 	;;
 14)
-	php -f /etc/rc.initial.toggle_sshd
+	/usr/local/bin/php -f /etc/rc.initial.toggle_sshd
 	;;
 15)
 	/etc/rc.restore_config_backup
@@ -151,18 +148,22 @@ case ${opmode} in
 	/etc/rc.php-fpm_restart
 	;;
 100)
-	if grep "$WORD" "$CONFIG"; then
-		links "https://localhost"
-	else
-		links "http://localhost"
+	protocol=$(/usr/local/sbin/read_xml_tag.sh string system/webgui/protocol)
+	port=$(/usr/local/sbin/read_xml_tag.sh string system/webgui/port)
+	[ -z "$protocol" ] && protocol='http'
+	if [ -z "$port" ]; then
+		case $protocol in
+			https) port=443;;
+			*)     port=80;;
+		esac
 	fi
+	links "${protocol}://localhost:${port}"
 	;;
-"")
-	ps -o command='' -c -p $PPID | grep -E '^sshd$' > /dev/null
-	if [ $? -eq 0 ]; then
+'')
+	if [ -n "$SSH_CONNECTION" ]; then
 		exit
 	else
-		kill $PPID ; exit
+		/bin/kill $PPID ; exit
 	fi
 	;;
 esac

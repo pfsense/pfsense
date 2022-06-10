@@ -152,7 +152,7 @@ foreach ($files as $file):
 			<?php $filename = htmlspecialchars(addslashes(str_replace("//","/", "{$path}/{$file}"))); ?>
 			<div onClick="$('#fbTarget').val('<?=$filename?>'); loadFile(); $('#fbBrowser').fadeOut();">
 				<img src="/vendor/filebrowser/images/file_<?=$type;?>.gif" alt="" title="">
-				&nbsp;<?=$file;?>
+				&nbsp;<?=htmlspecialchars($file);?>
 			</div>
 		</td>
 		<td class="vexpl text-right">

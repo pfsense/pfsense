@@ -92,7 +92,7 @@ foreach ($iflist as $ifname => $friendly) {
 	$realif = get_real_interface($ifname);
 	$tobanner = "{$friendly} ({$ifname})";
 
-	printf("\n %-15s -> %-10s -> ",
+	printf("\n %-24s -> %-10s -> ",
 		$tobanner,
 		$realif
 	);
@@ -108,7 +108,7 @@ foreach ($iflist as $ifname => $friendly) {
 	}
 	if (!empty($ipaddr6) && !empty($subnet6)) {
 		if (!$v6first) {
-			printf("\n%s", str_repeat(" ", 34));
+			printf("\n%s", str_repeat(" ", 26));
 		}
 		printf("v6%s: %s/%s",
 			$class6,

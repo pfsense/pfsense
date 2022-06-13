@@ -166,7 +166,7 @@ if ($_POST['act'] == "del") {
 						" " . escapeshellarg($number) .
 						" " . escapeshellarg($count);
 					send_user_download('data',
-						shell_exec($cmd),
+						preg_replace('/" /', '"', shell_exec($cmd)),
 						"vouchers_{$cpzone}_roll{$number}.csv");
 				}
 				@unlink("{$g['varetc_path']}/voucher_{$cpzone}.private");

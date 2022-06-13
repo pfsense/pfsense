@@ -2077,17 +2077,17 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 			$writecfg = true;
 		} else {
 			/* See if a pipeno is passed, if not start sessions because this means there isn't one atm */
-			if (is_null($mac['pipeno'])) {
-				$mac['pipeno'] = captiveportal_get_next_dn_ruleno('auth');
+			if (is_null($pipeno)) {
+				$pipeno = captiveportal_get_next_dn_ruleno('auth');
 			}
-
 			/* if the pool is empty, return appropriate message and exit */
-			if (is_null($mac['pipeno'])) {
+			if (is_null($pipeno)) {
 				captiveportal_syslog("Zone: {$cpzone} - WARNING!  Captive portal has reached maximum login capacity");
 				unlock($cpdblck);
 				return false;
 			}
 
+			$mac['pipeno'] = $pipeno;
 			$mac['ip'] = $clientip;
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
 				$mac['mac'] = $clientmac;

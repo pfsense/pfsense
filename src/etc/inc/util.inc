@@ -3739,11 +3739,12 @@ function parse_cisco_acl($attribs, $dev) {
 			}
 
 			$tmprule = parse_cisco_acl_rule($rule[1], $dev, $dir, $proto);
-
-			if ($dir == "in") {
-				$inrules[$proto][$rindex] = $tmprule;
-			} else if ($dir == "out") {
-				$outrules[$proto][$rindex] = $tmprule;
+			if (!empty($tmprule)) {
+				if ($dir == "in") {
+					$inrules[$proto][$rindex] = $tmprule;
+				} else if ($dir == "out") {
+					$outrules[$proto][$rindex] = $tmprule;
+				}
 			}
 		}
 

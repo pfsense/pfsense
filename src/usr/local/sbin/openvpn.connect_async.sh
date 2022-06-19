@@ -160,8 +160,10 @@ elif [ "${script_type}" = "client-connect" ]; then
 				fi
 			done
 
-			/bin/echo "$(/usr/bin/sed -e "s/{clientip}/${ifconfig_pool_remote_ip}/g;s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" "${rulesfile}")" > "${rulesfile}"
-			eval "/sbin/pfctl -a '${anchorname}' -f '${rulesfile}'"
+			if [ -f "${rulesfile}"]; then
+				/bin/echo "$(/usr/bin/sed -e "s/{clientip}/${ifconfig_pool_remote_ip}/g;s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" "${rulesfile}")" > "${rulesfile}"
+				eval "/sbin/pfctl -a '${anchorname}' -f '${rulesfile}'"
+			fi
 
 			/bin/rm "${lockfile}"
 		fi

@@ -82,6 +82,14 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 	$_SESSION['Post_Login'] = true;
 }
 
+/* redirect if user requested a specific page */
+if (!empty($_SESSION['redirecturi'])) {
+	require_once("functions.inc");
+	pfSenseHeader($_SESSION['redirecturi']);
+	unset($_SESSION['redirecturi']);
+	exit;
+}
+
 /*
  * redirect browsers post-login to avoid pages
  * taking action in response to a POST request
@@ -351,6 +359,7 @@ function display_login_form() {
 			                <p class="form-title">Sign In</p>
 			                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" autocorrect="off" autocapitalize="none"/>
 			                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
+							<input name="redirecturi" id="redirecturi" type="hidden" value="<?=htmlspecialchars($_SERVER['REQUEST_URI'])?>" />
 			                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
 		                </form>
 					</div>

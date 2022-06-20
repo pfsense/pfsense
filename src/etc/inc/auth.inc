@@ -2116,6 +2116,7 @@ function session_auth() {
 				$_SESSION['authsource'] = 'Local Database Fallback';
 			}
 			$_SESSION['Username'] = $_POST['usernamefld'];
+			$_SESSION['redirecturi'] = htmlspecialchars_decode($_POST['redirecturi']);
 			$_SESSION['user_radius_attributes'] = $attributes;
 			$_SESSION['last_access'] = time();
 			$_SESSION['protocol'] = $config['system']['webgui']['protocol'];

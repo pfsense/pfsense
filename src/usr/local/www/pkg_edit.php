@@ -54,7 +54,12 @@ if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/u
 }
 
 if ($pkg['include_file'] != "") {
-	require_once($pkg['include_file']);
+	$ext = strstr($pkg['include_file'], "inc");
+	if($ext) {
+		require_once($pkg['include_file']);
+	} else {
+		die("Don't be stupid!");
+	}
 }
 
 if (!isset($pkg['adddeleteeditpagefields'])) {

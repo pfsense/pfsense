@@ -476,7 +476,7 @@ function return_gateways_status($byname = false, $gways = false) {
 		 * down would be misleading (gateway action is disabled)
 		 */
 		$action_disable = $gateways_arr[$gwname]['action_disable'];
-		$dpinger_status = get_dpinger_status($gwname, $action_disable);
+		$dpinger_status = get_dpinger_status($gwname, false, $action_disable);
 		if ($dpinger_status === false) {
 			continue;
 		}

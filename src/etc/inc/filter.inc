@@ -498,7 +498,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= filter_captiveportal_ether();
 
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
-	$rules .= filter_generate_scrubing();
+	$rules .= filter_generate_scrubbing();
 	$rules .= "\n";
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
@@ -695,7 +695,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	return 0;
 }
 
-function filter_generate_scrubing() {
+function filter_generate_scrubbing() {
 	global $config, $FilterIflist;
 	$scrubrules = "";
 

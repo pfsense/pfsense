@@ -2929,6 +2929,22 @@
 							break;
 					}
 					break;
+				case 'dynv6':
+					switch ($http_code) {
+						case '200':
+							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+							$successful_update = true;
+							break;
+						case '401':
+							$status = $status_intro . $error_str . gettext("User Authorization Failed");
+							break;
+						default:
+							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+							log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+							$this->_debug($data);
+							break;
+					}
+					break;
 				default:
 					break;
 			}

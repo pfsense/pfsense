@@ -79,7 +79,7 @@ EOD;
 		$ifsmallist = " ";
 		foreach ($iflist as $iface => $ifa) {
 			$friendly = convert_real_interface_to_friendly_interface_name($iface);
-			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
+			$ifstatus = get_interface_addresses($config['interfaces'][$friendly]['if']);
 			if (is_array($ifstatus) && $ifstatus['linkstateup'])
 				$status = "  (up)";
 			else

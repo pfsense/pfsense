@@ -2111,7 +2111,7 @@ function interface_wait_tentative($interface, $timeout = 10) {
 
 	$time = 0;
 	while ($time <= $timeout) {
-		$if = pfSense_get_interface_addresses($interface);
+		$if = get_interface_addresses($interface);
 		if (!isset($if['tentative'])) {
 			return true;
 		}
@@ -3780,7 +3780,7 @@ EOD;
 		/* find which clones are up and bring them down */
 		$clones_up = array();
 		foreach ($clone_list as $clone_if) {
-			$clone_status = pfSense_get_interface_addresses($clone_if);
+			$clone_status = get_interface_addresses($clone_if);
 			if ($clone_status['status'] == 'up') {
 				$clones_up[] = $clone_if;
 				mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " down");
@@ -6527,7 +6527,7 @@ function find_interface_ip($interface, $flush = false) {
 			}
 		}
 		if (!isset($interface_ip_arr_cache[$interface])) {
-			$ifinfo = pfSense_get_interface_addresses($interface);
+			$ifinfo = get_interface_addresses($interface);
 			$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
 			$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
 		}
@@ -6553,7 +6553,7 @@ function find_interface_ipv6($interface, $flush = false) {
 
 	/* Setup IP cache */
 	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
+		$ifinfo = get_interface_addresses($interface);
 		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddr6'];
 		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbits6'];
 	}
@@ -6600,7 +6600,7 @@ function find_interface_subnet($interface, $flush = false) {
 	}
 
 	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
+		$ifinfo = get_interface_addresses($interface);
 		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
 		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
 	}
@@ -6618,7 +6618,7 @@ function find_interface_subnetv6($interface, $flush = false) {
 	}
 
 	if (!isset($interface_snv6_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
+		$ifinfo = get_interface_addresses($interface);
 		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddr6'];
 		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbits6'];
 	}
@@ -7259,14 +7259,14 @@ function get_interface_mtu($interface) {
 }
 
 function get_interface_mac($interface) {
-	$macinfo = pfSense_get_interface_addresses($interface);
+	$macinfo = get_interface_addresses($interface);
 	return $macinfo["macaddr"];
 }
 
 function get_interface_vendor_mac($interface) {
 	global $config, $g;
 
-	$macinfo = pfSense_get_interface_addresses($interface);
+	$macinfo = get_interface_addresses($interface);
 	if (isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] !=
 	    "00:00:00:00:00:00") {
 		return ($macinfo["hwaddr"]);
@@ -7718,4 +7718,86 @@ function restart_interface_services($interface, $ipv6type = "") {
 	}
 }
 
+/**
+ * Return interface parameters and primary ipv4 and ipv6 addresses for the real iface
+ * $interface, identified by exclusion of VIPs. Deprecates pfSense_get_interface_addresses()
+ *
+ * Result array contains keyed values:
+ * - ipaddr: ipv4 address
+ * - subnetbits: ipv4 subnet bits
+ * - subnet: ipv4 subnet
+ * - broadcast: ipv4 broadcast addr (if applicable)
+ * - tunnel: ipv4 PPP endpoint (if applicable)
+ * - ipaddr6: ipv6 address
+ * - tentative: ipv6 tentative flag (if applicable)
+ * - subnetbits6: ipv6 subnet bits
+ * - tunnel6: ipv6 tunnel endpoint
+ * - status: up or down interface status
+ * - link0: per link layer defined flag
+ * - link1: per link layer defined flag
+ * - link2: per link layer defined flag
+ * - multicast: multicast support
+ * - loopback: interface is a loopback interface
+ * - pointtopoint: interface is point-to-point
+ * - promisc: interface in promisc mode
+ * - permanentpromisc: interface permanently in promisc mode
+ * - oactive: interface tx hardware queue is full
+ * - allmulti: interface receives all multicast packets
+ * - simplex: interface is simplex
+ * - linkstateup: interface link is up
+ * - iftype: wireless, ether, vlan, bridge, virtual, other
+ * - mtu: mtu of interface
+ * - caps: interface capabilities array
+ * - encaps: enabled capabilities array
+ * - macaddr: interface configured ethernet address
+ * - hwaddr: hardware ethernet address
+ */
+function get_interface_addresses($interface) {
+	$v4vips = array();
+	$v6vips = array();
+	$ifaddrs = pfSense_get_ifaddrs($interface);
+	$friendly_name = convert_real_interface_to_friendly_interface_name($interface);
+
+	foreach (array_keys(get_configured_vip_list()) as $viface) {
+		$vip = get_configured_vip($viface);
+		if (is_ipaddrv4($vip['subnet'])) {
+			array_push($v4vips, $vip['subnet']);
+		} else if (is_ipaddrv6($vip['subnet'])) {
+			array_push($v6vips, $vip['subnet']);
+		}
+	}
+
+	$v4addrs = array_filter($ifaddrs['addrs'], function($addr) use ($v4vips){
+		return (array_search($addr['addr'], $v4vips) === false);
+	});
+	$v6addrs = array_filter($ifaddrs['addrs6'], function($addr) use ($v6vips){
+		return (array_search($addr['addr'], $v6vips) === false);
+	});
+
+	/* Transform output to conform to pfSense_get_interface_addresses() */
+
+	if (!empty($v4addrs)) {
+		$v4addr = array_pop($v4addrs);
+		$ifaddrs['ipaddr'] = $v4addr['addr'];
+		foreach(array("subnetbits", "subnet", "broadcast", "tunnel") as $key) {
+			if (array_key_exists($key, $v4addr)) {
+				$ifaddrs[$key] = $v4addr[$key];
+			}
+		}
+	}
+
+	if (!empty($v6addrs)) {
+		$v6addr = array_pop($v6addrs);
+		$ifaddrs['ipaddr6'] = $v6addr['addr'];
+		foreach(array("subnetbits6", "tentative", "tunnel6") as $key) {
+			if (array_key_exists($key, $v6addrs)) {
+				$ifaddrs[$key] = $v6addr[$key];
+			}
+		}
+	}
+	unset($ifaddrs['addrs']);
+	unset($ifaddrs['addrs6']);
+
+	return($ifaddrs);
+}
 ?>

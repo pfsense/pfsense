@@ -314,7 +314,7 @@ function display_login_form() {
 						<!-- Header right message box (hostname or msg)-->
 						<div class="col-sm-4 nowarning msgbox text-center">
 							<span id="hostspan">
-								<a><h4><?=$loginbannerstr?></h4></a>
+								<h4><?=$loginbannerstr?></h4>
 							</span>
 						</div>
 					</div>

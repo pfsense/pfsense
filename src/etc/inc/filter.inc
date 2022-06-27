@@ -942,13 +942,6 @@ function filter_generate_aliases() {
 		}
 	}
 
-	/* add a Negate_networks table */
-	$aliases .= "table <negate_networks> ";
-	if ($vpns_list) {
-		$aliases .= "{ $vpns_list }";
-	}
-	$aliases .= "\n";
-
 	/* Captive Portal tables
 	 * 'cpzoneid_X_cpips' - all portal interfaces IPv4 addresses (including VIPs) 
 	 * 'cpzoneid_X_authip' - authenticated clients IPv4 addresses

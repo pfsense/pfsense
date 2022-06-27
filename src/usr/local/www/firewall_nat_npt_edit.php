@@ -108,7 +108,7 @@ function build_dsttype_list() {
 		    get_interface_track6ip($if)) {
 			$track6ip = get_interface_track6ip($if);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
-			$sntext .= " ({$pdsubnet}/{$track6ip[1]})";
+			$sntext = " ({$pdsubnet}/{$track6ip[1]})";
 			$list[$if] = $ifdesc . $sntext;
 		}
 	}

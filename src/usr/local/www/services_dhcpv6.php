@@ -607,7 +607,9 @@ if ($dhcrelay_enabled) {
 if (is_ipaddrv6($ifcfgip)) {
 
 	if ($ifcfgip == "::") {
-		$sntext = "Prefix Delegation";
+		$sntext = gettext("Delegated Prefix") . ':';
+		$sntext .= ' ' . convert_friendly_interface_to_friendly_descr($config['interfaces'][$if]['track6-interface']);
+		$sntext .= "/{$config['interfaces'][$if]['track6-prefix-id']}";
 		if (get_interface_track6ip($if)) {
 			$track6ip = get_interface_track6ip($if);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);

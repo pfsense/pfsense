@@ -103,13 +103,17 @@ function build_dsttype_list() {
 	$sel = is_specialnet($pconfig['dst']);
 	$list = array('network' => gettext('Prefix'));
 
-	foreach (get_configured_interface_with_descr() as $if => $ifdesc) {
+	$iflist = get_configured_interface_with_descr();
+	foreach ($iflist as $if => $ifdesc) {
 		if (($config['interfaces'][$if]['ipaddrv6'] == 'track6') && 
 		    get_interface_track6ip($if)) {
 			$track6ip = get_interface_track6ip($if);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+			$sntext = gettext('Delegated Prefix') . ": ";
+			$sntext .= "{$iflist[$config['interfaces'][$if]['track6-interface']]}/";
+			$sntext .= "{$config['interfaces'][$if]['track6-prefix-id']}";
 			$sntext .= " ({$pdsubnet}/{$track6ip[1]})";
-			$list[$if] = $ifdesc . $sntext;
+			$list[$if] = "{$ifdesc} {$sntext}";
 		}
 	}
 

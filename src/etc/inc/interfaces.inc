@@ -7753,10 +7753,11 @@ function restart_interface_services($interface, $ipv6type = "") {
  * - hwaddr: hardware ethernet address
  */
 function get_interface_addresses($interface) {
+	$v4addrs = array();
+	$v6addrs = array();
 	$v4vips = array();
 	$v6vips = array();
 	$ifaddrs = pfSense_get_ifaddrs($interface);
-	$friendly_name = convert_real_interface_to_friendly_interface_name($interface);
 
 	foreach (array_keys(get_configured_vip_list()) as $viface) {
 		$vip = get_configured_vip($viface);
@@ -7767,16 +7768,19 @@ function get_interface_addresses($interface) {
 		}
 	}
 
-	$v4addrs = array_filter($ifaddrs['addrs'], function($addr) use ($v4vips){
-		return (array_search($addr['addr'], $v4vips) === false);
-	});
-	$v6addrs = array_filter($ifaddrs['addrs6'], function($addr) use ($v6vips){
-		return (array_search($addr['addr'], $v6vips) === false);
-	});
+	if ($ifaddrs['addrs']) {
+	   $v4addrs = array_filter($ifaddrs['addrs'], function($addr) use ($v4vips){
+		  return (array_search($addr['addr'], $v4vips) === false);
+	   });
+	}
 
+	if ($ifaddrs['addrs']) {
+	   $v6addrs = array_filter($ifaddrs['addrs6'], function($addr) use ($v6vips){
+		  return (array_search($addr['addr'], $v6vips) === false);
+	   });
+	}
 	/* Transform output to conform to pfSense_get_interface_addresses() */
-
-	if (!empty($v4addrs)) {
+	if ($v4addrs) {
 		$v4addr = array_pop($v4addrs);
 		$ifaddrs['ipaddr'] = $v4addr['addr'];
 		foreach(array("subnetbits", "subnet", "broadcast", "tunnel") as $key) {
@@ -7786,7 +7790,7 @@ function get_interface_addresses($interface) {
 		}
 	}
 
-	if (!empty($v6addrs)) {
+	if ($v6addrs) {
 		$v6addr = array_pop($v6addrs);
 		$ifaddrs['ipaddr6'] = $v6addr['addr'];
 		foreach(array("subnetbits6", "tentative", "tunnel6") as $key) {

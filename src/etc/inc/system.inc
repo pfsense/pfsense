@@ -2802,8 +2802,7 @@ function _getHostName($mac, $ip) {
 	} else if ($dhcpip[$ip]) {
 		return $dhcpip[$ip];
 	} else {
-		$ipproto = (is_ipaddrv4($ip)) ? '-4 ' : '-6 ';
-		exec("/usr/bin/host -W 1 " . $ipproto . escapeshellarg($ip), $output);
+		exec("/usr/bin/host -W 1 " . escapeshellarg($ip), $output);
 		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
 			if ($matches[1] <> $ip) {
 				return $matches[1];

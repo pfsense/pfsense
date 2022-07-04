@@ -2673,7 +2673,6 @@ function filter_captiveportal_pass() {
 		$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 		$cpips = $cpzoneprefix . '_cpips';
 		$authtag = $cpzoneprefix . '_auth';
-		$passthrutag = $cpzoneprefix . '_passthru';
 		$rdr_ports = captiveportal_zone_portalports($cpcfg);
 
 		foreach (explode(",", $cpcfg['interface']) as $cpifgrp) {
@@ -2690,8 +2689,6 @@ function filter_captiveportal_pass() {
 						$rules .= "pass out quick on {$realif} proto tcp from {$cpip} port {$portalias} to any flags any ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
 					}
 					/* Allowed IP/MAC passthrough */
-					$rules .= "pass in quick from any to any tagged {$passthrutag} ridentifier {$captiveportal_increment()} keep state\n";
-					/* block non-authenticated clients access to internet */
 					$rules .= "block in quick on {$realif} from any to ! <{$cpips}> ! tagged {$authtag} ridentifier {$captiveportal_increment()}\n";
 				}
 			}
@@ -2756,7 +2753,7 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	if ($anchor == 'passthrumac') {
-		$tag = $cpzoneprefix . '_passthru';
+		$tag = $cpzoneprefix . '_auth';
 	} else {
 		$tag = $cpzoneprefix . '_' . $anchor;
 	}
@@ -2829,7 +2826,7 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	global $g, $config, $cpzone;
 
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
-	$tag = $cpzoneprefix . '_passthru';
+	$tag = $cpzoneprefix . '_auth';
 
 	if (empty($ipent['sn'])) {
 		$ipent['sn'] = '32';
@@ -2857,7 +2854,7 @@ function captiveportal_allowedhostname_configure_entry($ipent, $hostnameid = 1) 
 	}
 
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
-	$tag = $cpzoneprefix . '_passthru';
+	$tag = $cpzoneprefix . '_auth';
 	$table = $cpzoneprefix . '_hostname_' . $hostnameid;
 	$host = 'hostname_' . $hostnameid;
 	list($pipeup, $pipedown) = captiveportal_pipe_configure($ipent, 'allowed', false);

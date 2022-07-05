@@ -279,9 +279,10 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 	if (empty($config['interfaces'][$interface]['ipaddrv6'])) {
 		unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart6");
 	}
-} else {
-	/* signal filter reload */
-	filter_configure();
 }
 
+/* Unconditional filter reload to ensure the correct rules and gateways are
+ * active after this script has processed all changes.
+ * See https://redmine.pfsense.org/issues/13228 */
+filter_configure();
 ?>

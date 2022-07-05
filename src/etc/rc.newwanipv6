@@ -219,4 +219,8 @@ if (empty($config['interfaces'][$interface]['ipaddr'])) {
 	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
 }
 
+/* Unconditional filter reload to ensure the correct rules and gateways are
+ * active after this script has processed all changes.
+ * See https://redmine.pfsense.org/issues/13228 */
+filter_configure();
 ?>

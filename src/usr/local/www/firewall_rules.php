@@ -199,19 +199,27 @@ if (isset($_POST['del_x'])) {
 		init_config_arr(array('filter', 'separator', strtolower($if)));
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
 
-		$first_idx = 0;		
 		$num_deleted = 0;
+
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
 
-			// Capture first changed filter index for later separator shifting
-			if (!$first_idx) $first_idx = ifridx($if, $rulei);
+			// Update the separators
+			// As rules are deleted, $ridx has to be decremented or separator position will break
+			if (count($_POST['rule']) == 1) { // Need special handling of single rule deletion
+				$ridx = ifridx($if, $rulei);
+			} else {
+				$ridx = ifridx($if, $rulei) - $num_deleted + 1;
+			}
+
+			$mvnrows = -1;
+			move_separators($a_separators, $ridx, $mvnrows);
+
 			$num_deleted++;
 		}
 
 		if ($num_deleted) {
-			move_separators($a_separators, $first_idx, -$num_deleted);
 			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
 				mark_subsystem_dirty('filter');
 			}

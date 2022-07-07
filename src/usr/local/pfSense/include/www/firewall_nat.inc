@@ -766,7 +766,6 @@ function deleteMultipleNATrules($post, $json = false) {
 	init_config_arr(array('nat', 'separator'));
 	$a_separators = &$config['nat']['separator'];
 
-	$first_idx = 0;
 	$num_deleted = 0;
 
 	foreach ($post['rule'] as $rulei) {
@@ -780,16 +779,21 @@ function deleteMultipleNATrules($post, $json = false) {
 
 		unset($a_nat[$rulei]);
 
-		// Capture first changed filter index for later separator shifting
-		if (!$first_idx) {
-			$first_idx = $rulei;
+		// Update the separators
+		// As rules are deleted, $ridx has to be decremented or separator position will break
+		if (count($post['rule']) == 1) { // Need special handling of single rule deletion
+			$ridx = $rulei;
+		} else {
+			$ridx = $rulei - $num_deleted;
 		}
+
+		$mvnrows = -1;
+		move_separators($a_separators, $ridx, $mvnrows);
 
 		$num_deleted++;
 	}
 
 	if ($num_deleted) {
-		move_separators($a_separators, $first_idx, -$num_deleted);
 		if (write_config("NAT: Rule deleted")) {
 			if ($json) {
 				filter_configure();

@@ -117,7 +117,7 @@ if ($_GET) {
 			}
 		}
 
-		if (write_config("Traffic Shapper: Reset all")) {
+		if (write_config("Traffic Shaper: Reset all")) {
 			$changes_applied = true;
 			$retval = 0;
 			$retval |= filter_configure();

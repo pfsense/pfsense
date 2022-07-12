@@ -814,7 +814,7 @@ function checkForRanges() {
 
 function processEntries() {
 	var tempstr, starttimehour, starttimemin, stoptimehour, stoptimemin, errors = "";
-	var passedValidiation = true;
+	var passedValidation = true;
 
 	//get time specified
 	starttimehour = parseInt(document.getElementById("starttimehour").value);
@@ -825,16 +825,16 @@ function processEntries() {
 	//do time checks
 	if (starttimehour > stoptimehour) {
 		errors = "Error: Start Hour cannot be greater than Stop Hour.";
-		passedValidiation = false;
+		passedValidation = false;
 
 	} else if (starttimehour == stoptimehour) {
 		if (starttimemin > stoptimemin) {
 			errors = "Error: Start Minute cannot be greater than Stop Minute.";
-			passedValidiation = false;
+			passedValidation = false;
 		}
 	}
 
-	if (passedValidiation) {
+	if (passedValidation) {
 		addTimeRange();
 	} else {
 		if (errors != "") {

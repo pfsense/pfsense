@@ -245,7 +245,7 @@ function deletenptNATrule($post, $json = false) {
 	}
 }
 
-// Re-order the NPtNAT rules per the array of iindicies passed in $post
+// Re-order the NPtNAT rules per the array of indices passed in $post
 function reordernptNATrules($post, $json = false) {
 	global $config;
 

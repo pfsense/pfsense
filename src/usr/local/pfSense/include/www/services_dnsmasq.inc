@@ -419,7 +419,7 @@ function getDomainOverride($id, $json = false) {
     return $pconfig;
 }
 
-// Domin override table update
+// Domain override table update
 function saveDomainOverride($post, $id, $json=false) {
     global $config;
 

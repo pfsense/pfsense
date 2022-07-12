@@ -1226,7 +1226,7 @@ events.push(function() {
 
 	// Provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
-		if ((!saving && dirty) || newSeperator) {
+		if ((!saving && dirty) || newSeparator) {
 			return ("<?=gettext('One or more rules have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;

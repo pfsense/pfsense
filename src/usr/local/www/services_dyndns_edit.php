@@ -455,7 +455,7 @@ $section->addPassword(new Form_Input(
 			'Linode: Enter the Personal Access Token.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
 			'Yandex: Yandex PDD Token.%1$s' .
-			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.%1$s' .
+			'Cloudflare: Enter the Global API Key or API token with DNS edit permission on the provided zone.%1$s' .
 			'deSEC: Enter the API token.', '<br />');
 
 $section->addInput(new Form_Input(

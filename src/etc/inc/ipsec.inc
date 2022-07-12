@@ -879,12 +879,12 @@ function ipsec_initiate_by_conid($type = 'ike', $conid) {
 	}
 	switch ($type) {
 		case 'all':
-			/* Find relevant P2s and initaite all of them */
+			/* Find relevant P2s and initiate all of them */
 			$cmap = ipsec_map_config_by_id();
 			list($ikeid, $reqid) = ipsec_id_by_conid($conid);
 			if (array_key_exists($ikeid, $cmap)) {
 				if ($cmap[$ikeid]['p1']['iketype'] == 'ikev2' && !isset($cmap[$ikeid]['p1']['splitconn'])) {
-					/* IKEv2 without split only has one P2, named the same as the the P1 */
+					/* IKEv2 without split only has one P2, named the same as the P1 */
 					ipsec_initiate_by_conid('child', ipsec_conid($cmap[$ikeid]['p1']));
 				} else {
 					foreach ($cmap[$ikeid]['p2'] as $p2) {
@@ -2320,7 +2320,7 @@ function ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $prfalgo, $modp) {
 
 	/* Add the hash algorithm (if present) */
 	if (!empty($halgo)) {
-		/* If there is some content in the propsal already, add a
+		/* If there is some content in the proposal already, add a
 		 * separator */
 		if (!empty($palgo)) {
 			$palgo .= "-";
@@ -2872,7 +2872,7 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		}
 
 		/* For IKEv2 without Split Connections, setup combined sets of
-		 * local/remote traffic selectors and propsals */
+		 * local/remote traffic selectors and proposals */
 		if (!(!isset($ph1ent['mobile']) && (($ikeversion == 1) || isset($ph1ent['splitconn'])))) {
 			if (!isset($ph1ent['mobile']) && !empty($remote_ts_spec)) {
 				$children[$cname]['remote_ts'] = implode(",", $remote_ts_spec);
@@ -3291,7 +3291,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		}
 	}
 
-	/* set default MTU to 1400 for GRE over IPsec, othewise to 1476 */
+	/* set default MTU to 1400 for GRE over IPsec, otherwise to 1476 */
 	ipsec_gre_default_mtu(); 
 
 	/* Manage process */

@@ -3717,7 +3717,7 @@ function alias_idn_to_ascii($alias) {
 	}
 }
 
-// These funtions were in guiconfig.inc but have been moved here so non GUI processes can use them
+// These functions were in guiconfig.inc but have been moved here so non GUI processes can use them
 function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendport) {
 	if (isset($adr['any'])) {
 		$padr = "any";

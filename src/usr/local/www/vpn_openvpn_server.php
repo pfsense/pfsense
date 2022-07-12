@@ -1919,7 +1919,7 @@ if ($print_sk_warning) {
 endif;
 
 // Note:
-// The following *_change() functions were converted from Javascript/DOM to JQuery but otherwise
+// The following *_change() functions were converted from JavaScript/DOM to JQuery but otherwise
 // mostly left unchanged. The logic on this form is complex and this works!
 ?>
 

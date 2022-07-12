@@ -396,7 +396,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		load_thermal_hardware();
 	}
 
-	// Compose the structure to retuen
+	// Compose the structure to return
 	$rv['input_errors'] = $input_errors;
 	$post['pti'] = get_single_sysctl('vm.pmap.pti');
 	$post['mds'] = get_single_sysctl('hw.mds_disable_state');

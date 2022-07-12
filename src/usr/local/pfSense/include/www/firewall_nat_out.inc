@@ -568,7 +568,7 @@ function deleteoutNATrule($post, $json = false) {
 	}
 }
 
-// Re-order the NPtNAT rules per the array of iindicies passed in $post
+// Re-order the NPtNAT rules per the array of indices passed in $post
 function outNATrulesreorder($post, $json = false) {
 	global $config;
 
@@ -662,7 +662,7 @@ function build_target_list() {
 		$list['H' . $alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
 
-	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
+	$list['Other-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);
 }

@@ -447,7 +447,7 @@ function services_radvd_configure($blacklist = array()) {
 		/* we need to shut down the radvd cleanly, it will send out the prefix
 		 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
 		if (isvalidpid("{$g['varrun_path']}/radvd.pid")) {
-			log_error(gettext("Shutting down Router Advertisment daemon cleanly"));
+			log_error(gettext("Shutting down Router Advertisement daemon cleanly"));
 			killbypid("{$g['varrun_path']}/radvd.pid");
 			@unlink("{$g['varrun_path']}/radvd.pid");
 		}

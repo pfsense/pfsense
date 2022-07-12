@@ -476,7 +476,7 @@ function updateWidgets(newWidget) {
 			var isOpen = $('.panel-body', widget).hasClass('in');
 			var widget_basename = widget.id.split('-')[1];
 
-			// Only save details for panels that have id's like'widget-*'
+			// Only save details for panels that have id's like 'widget-*'
 			// Some widgets create other panels, so ignore any of those.
 			if ((widget.id.split('-')[0] == 'widget') && (typeof widget_basename !== 'undefined')) {
 				sequence += widget_basename + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ':' + widget.id.split('-')[2] + ',';

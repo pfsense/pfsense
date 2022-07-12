@@ -1220,7 +1220,7 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 	The $authlevel variable is a flag indicating the status of authentication
 	0 = failed server auth
 	1 = failed user auth
-	2 = failed user auth with custom server reply recieved
+	2 = failed user auth with custom server reply received
 	3 = successful auth
 	*/
 	$authlevel = 0;
@@ -1923,7 +1923,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 	$allow_time = time();
 
 	if ($existing_sessionid !== null) {
-		// If we recieved this connection through XMLRPC sync :
+		// If we received this connection through XMLRPC sync :
 		// we fetch allow_time from the info given by the other node
 		$allow_time = $attributes['allow_time'];
 	}
@@ -2606,7 +2606,7 @@ function filter_captiveportal_ether() {
 		$interfaces = captiveportal_zone_interfaces($cpcfg);
 
 		if (!empty($interfaces)) {
-			/* set 'rdr' tag for futher captive portal web portal redirection */
+			/* set 'rdr' tag for further captive portal web portal redirection */
 			$rules .= "ether pass on { {$interfaces} } tag \"{$rdrtag}\"\n";
 			/* anchor to set the PASS tag for authenticated clients */
 			$rules .= "ether anchor \"{$cpzoneprefix}_auth/*\" on { {$interfaces} }\n";

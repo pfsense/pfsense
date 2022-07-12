@@ -41,7 +41,7 @@ require_once("captiveportal.inc");
 /*
 Return true if multiple servers type are selected in captiveportal config, false otherwise
 */
-function mutiple_auth_server_type() {
+function multiple_auth_server_type() {
 	global $config, $cpzone;
 	
 	$auth_types = array();
@@ -225,7 +225,7 @@ if (!empty($cpzone)): ?>
 					<th><?=gettext("Username")?></th>
 <?php
 	 // if multiple auth method are selected
-	if (mutiple_auth_server_type()): 
+	if (multiple_auth_server_type()): 
 ?>
 					<th><?=gettext("Authentication method")?></th>
 <?php
@@ -268,7 +268,7 @@ if (!empty($cpzone)): ?>
 ?>
 					<td><?php print_details($cpent); ?></td>
 <?php
-	if (mutiple_auth_server_type()):
+	if (multiple_auth_server_type()):
 ?>
 					<td><?=htmlspecialchars($cpent['authmethod']);?></td>
 <?php

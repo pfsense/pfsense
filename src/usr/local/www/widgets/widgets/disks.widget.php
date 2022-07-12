@@ -32,7 +32,7 @@ global $disks_widget_defaults;
 
 $widgetkey = (isset($_POST['widgetkey'])) ? $_POST['widgetkey'] : $widgetkey;
 
-// Now overide any defaults with user settings
+// Now override any defaults with user settings
 $widget_config = array_replace($disks_widget_defaults, (array) $user_settings['widgets'][$widgetkey]);
 
 // Randomly invalidate the cache, 25% chance.

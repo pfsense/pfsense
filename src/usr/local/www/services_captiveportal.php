@@ -1251,7 +1251,7 @@ events.push(function() {
 		disableInput("logoutwin_enable", !hide);
 	}
 
-	function hidePerUserBandwith(hide) {
+	function hidePerUserBandwidth(hide) {
 		if(!$('#enable').prop('checked')) {
 			hide = true;
 		}
@@ -1354,7 +1354,7 @@ events.push(function() {
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 	$("#enable").click(function() {
 		hideSections(!this.checked);
-		hidePerUserBandwith(!$("#peruserbw").prop('checked'));
+		hidePerUserBandwidth(!$("#peruserbw").prop('checked'));
 		hidePassthru(!$("#passthrumacadd").prop('checked'));
 		triggerChangesAuthMethod();
 		triggerChangesAuthServer();
@@ -1392,7 +1392,7 @@ events.push(function() {
 
 
 	$("#peruserbw").click(function() {
-		hidePerUserBandwith(!this.checked);
+		hidePerUserBandwidth(!this.checked);
 	});
 
 	$("#passthrumacadd").click(function() {
@@ -1406,7 +1406,7 @@ events.push(function() {
 
 	// ---------- On initial page load ------------------------------------------------------------
 	hideSections(!$('#enable').prop('checked'));
-	hidePerUserBandwith(!$("#peruserbw").prop('checked'));
+	hidePerUserBandwidth(!$("#peruserbw").prop('checked'));
 	hidePassthru(!$("#passthrumacadd").prop('checked'));
 	triggerChangesAuthMethod();
 	triggerChangesAuthServer();

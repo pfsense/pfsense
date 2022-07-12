@@ -1141,7 +1141,7 @@ function get_flash_message() {
 }
 
 /* Retrieve GET or POST Value/State
- * Eample Usage:
+ * Example Usage:
  * $value = getGETPOSTsettingvalue('get/post parameter name', "");
  * $value = getGETPOSTsettingvalue('get/post parameter name', null);
  * $state = getGETPOSTsettingvalue('get/post parameter name', null);

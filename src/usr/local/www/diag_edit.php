@@ -206,7 +206,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 		// as specified in this function
 		function jumpToLine(line) {
 			var lineht = <?=$lineheight?>; // Line height in pixels
-			console.log("Jumpting to line " + line);
+			console.log("Jumping to line " + line);
 			var ta = document.getElementById("fileContent");
 			ta.scrollTop = lineht * (line - 1);
 		}

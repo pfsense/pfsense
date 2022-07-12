@@ -1210,7 +1210,7 @@ function cert_validate_serial($serial, $returnvalue = false, $allowlarge = false
 		$asn1serial = new \Ukrbublik\openssl_x509_crl\ASN1_INT( $serial );
 		return ($returnvalue) ? $asn1serial->content : true;
 	} catch (Exception $ex) {
-		/* No mattter what the error is, return null or false depending
+		/* No matter what the error is, return null or false depending
 		 * on what was requested. */
 		return ($returnvalue) ? null : false;
 	}
@@ -1261,7 +1261,7 @@ function ca_has_serial($caref, $serial) {
 		}
 	}
 
-	/* Check the CA iteself */
+	/* Check the CA itself */
 	$this_ca = lookup_ca($caref);
 	$this_serial = cert_get_serial($this_ca['crt'], true);
 	if ($serial == $this_serial) {

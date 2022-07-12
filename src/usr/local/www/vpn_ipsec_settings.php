@@ -100,19 +100,19 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['ikev2_retransmit_tries'] && !is_numericint($_POST['ikev2_retransmit_tries'])) {
-		$input_errors[] = gettext("An integer must be specified for IKEv2 Retrasmit Tries.");
+		$input_errors[] = gettext("An integer must be specified for IKEv2 Retransmit Tries.");
 	}
 	if ($_POST['ikev2_retransmit_timeout'] && !is_numeric($_POST['ikev2_retransmit_timeout'])) {
-		$input_errors[] = gettext("A number must be specified for IKEv2 Retrasmit Timeout.");
+		$input_errors[] = gettext("A number must be specified for IKEv2 Retransmit Timeout.");
 	}
 	if ($_POST['ikev2_retransmit_base'] && !is_numeric($_POST['ikev2_retransmit_base'])) {
-		$input_errors[] = gettext("A number must be specified for IKEv2 Retrasmit Base.");
+		$input_errors[] = gettext("A number must be specified for IKEv2 Retransmit Base.");
 	}
 	if ($_POST['ikev2_retransmit_jitter'] && !is_numericint($_POST['ikev2_retransmit_jitter'])) {
-		$input_errors[] = gettext("An integer must be specified for IKEv2 Retrasmit Jitter.");
+		$input_errors[] = gettext("An integer must be specified for IKEv2 Retransmit Jitter.");
 	}
 	if ($_POST['ikev2_retransmit_limit'] && !is_numericint($_POST['ikev2_retransmit_limit'])) {
-		$input_errors[] = gettext("An integer must be specified for IKEv2 Retrasmit Limit.");
+		$input_errors[] = gettext("An integer must be specified for IKEv2 Retransmit Limit.");
 	}
 
 	if ($_POST['ipsecbypass']) {

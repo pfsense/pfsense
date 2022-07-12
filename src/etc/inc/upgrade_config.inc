@@ -5475,7 +5475,7 @@ function upgrade_173_to_174() {
 }
 
 /* IPsec Phase1 now supports multiple authentication ciphers to be specified from the webgui.
- * This is usefull for mobile users using different OS's supporting different ciphers.
+ * This is useful for mobile users using different OS's supporting different ciphers.
  */
 function upgrade_174_to_175() {
 	global $config;
@@ -5755,7 +5755,7 @@ function upgrade_183_to_184() {
 	}
 }
 
-// Migrate AutoConfigBackup package settings to integtrated ACB system
+// Migrate AutoConfigBackup package settings to integrated ACB system
 // and remove package
 function upgrade_184_to_185() {
 	global $config;
@@ -5940,7 +5940,7 @@ function upgrade_188_to_189() {
 	}
 }
 
-/* Older pre-existing IPsec P1 entries may not have had the protocol explicitly
+/* Older preexisting IPsec P1 entries may not have had the protocol explicitly
  * defined. Fill in the default value of 'inet'.
  * https://redmine.pfsense.org/issues/9207 */
 function upgrade_189_to_190() {

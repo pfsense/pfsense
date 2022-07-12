@@ -142,7 +142,7 @@ function voucher_expire($voucher_received, $carp_loop = false) {
 					}
 					$cpentry = $cpentry[0];
 					captiveportal_disconnect($cpentry, 13);
-					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "FORCLY TERMINATING VOUCHER {$voucher} SESSION");
+					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "FORCEFULLY TERMINATING VOUCHER {$voucher} SESSION");
 					$unsetindexes[] = $cpentry[5];
 				}
 			} else {

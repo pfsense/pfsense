@@ -88,7 +88,7 @@ display_top_tabs($tab_array);
 		</thead>
 		<tbody>
 <?php
-			$voucherlck = lock("vouche{$cpzone}r");
+			$voucherlck = lock("voucher{$cpzone}");
 			$i = 0;
 			foreach ($a_roll as $rollent):
 				$used = voucher_used_count($rollent['number']);

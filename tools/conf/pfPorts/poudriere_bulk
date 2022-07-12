@@ -70,6 +70,7 @@ security/%%PRODUCT_NAME%%-pkg-suricata
 security/%%PRODUCT_NAME%%-pkg-tinc
 security/%%PRODUCT_NAME%%-pkg-zeek
 security/%%PRODUCT_NAME%%
+security/tailscale
 sysutils/%%PRODUCT_NAME%%-pkg-Backup
 sysutils/%%PRODUCT_NAME%%-pkg-Cron
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc

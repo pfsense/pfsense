@@ -3791,11 +3791,11 @@ function kill_dhcp6client_process($force, $release = false) {
 	If we have Taken the WAN interface down, then dhcp6c sits there sending
 	a release and waiting for the response that never comes.
 	So we need to tell it that the interface is down and to just die quickly
-	otherwise a new client may launch and we have duplicate proceses.
+	otherwise a new client may launch and we have duplicate processes.
 	In this case use SIGUSR1.
 
 	If we want to exit normally obeying the no release flag then use SIGTERM.
-	If we want to exit with a release overiding the no release flag then
+	If we want to exit with a release overriding the no release flag then
 	use SIGUSR2.
 
 	If $Force is true it will use SIGUSR1, thus forcing dhcp6c to
@@ -5264,7 +5264,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 		$key_info_statement .= "\trealm \"{$wancfg['adv_dhcp6_key_info_statement_realm']}\";\n";
 		$key_info_statement .= "\tkeyid {$wancfg['adv_dhcp6_key_info_statement_keyid']};\n";
 		$key_info_statement .= "\tsecret \"{$wancfg['adv_dhcp6_key_info_statement_secret']}\";\n";
-		if (preg_match("/((([0-9]{4}-)?[0-9]{2}[0-9]{2} )?[0-9]{2}:[0-9]{2})||(foreever)/", $wancfg['adv_dhcp6_key_info_statement_expire'])) {
+		if (preg_match("/((([0-9]{4}-)?[0-9]{2}[0-9]{2} )?[0-9]{2}:[0-9]{2})||(forever)/", $wancfg['adv_dhcp6_key_info_statement_expire'])) {
 			$key_info_statement .= "\texpire \"{$wancfg['adv_dhcp6_key_info_statement_expire']}\";\n";
 		}
 		$key_info_statement .= "};\n";
@@ -6521,7 +6521,7 @@ function get_interface_ip($interface = "wan", $gateways_status = false) {
 	}
 
 	/*
-	 * Beaware that find_interface_ip() is our last option, it will
+	 * Beware that find_interface_ip() is our last option, it will
 	 * return the first IP it find on interface, not necessarily the
 	 * main IP address.
 	 */
@@ -6579,7 +6579,7 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 	}
 
 	/*
-	 * Beaware that find_interface_ip() is our last option, it will
+	 * Beware that find_interface_ip() is our last option, it will
 	 * return the first IP it find on interface, not necessarily the
 	 * main IP address.
 	 */

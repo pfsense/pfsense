@@ -123,7 +123,7 @@ function get_dns_servers() {
  * INPUTS
  *   none
  * RESULT
- *   Javascript header change or browser Location:
+ *   JavaScript header change or browser Location:
  ******/
 function pfSenseHeader($text) {
 	global $_SERVER;

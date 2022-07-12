@@ -582,7 +582,7 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
-	// NTP servers - For this section we need to use Javascript hiding since there
+	// NTP servers - For this section we need to use JavaScript hiding since there
 	// are nested toggles
 	$section->addInput(new Form_Checkbox(
 		'netbios_enable',

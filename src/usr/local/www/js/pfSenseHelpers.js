@@ -786,11 +786,11 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 	});
 });
 
-// The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
+// The scripts that follow are an EXPERIMENT in using jQuery/JavaScript to automatically convert
 // GET calls to POST calls
 // Any anchor with the attribute "usepost" usses these functions.
 
-// Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
+// Any time an anchor is clicked and the "usepost" attribute is present, convert the href attribute
 // to POST format, make a POST form and submit it
 
 interceptGET();

@@ -367,7 +367,7 @@ function delete1to1NATrule($post, $json = false) {
 	}
 }
 
-// Re-order the 1 to 1 NAT rules per the array of iindicies passed in $post
+// Re-order the 1 to 1 NAT rules per the array of indices passed in $post
 function reorder1to1NATrules($post, $json = false) {
 	global $config;
 

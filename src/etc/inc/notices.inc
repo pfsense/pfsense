@@ -49,7 +49,7 @@ $pushover_sounds = array(
 	'cosmic' => 'Cosmic',
 	'falling' => 'Falling',
 	'gamelan' => 'Gamelan',
-	'incoming' => 'Incomming',
+	'incoming' => 'Incoming',
 	'intermission' => 'Intermission',
 	'magic' => 'Magic',
 	'mechanical' => 'Mechanical',
@@ -252,7 +252,7 @@ function notices_sendqueue() {
 	while(true) {
 		$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 		$nothing_done_count++;
-		$smptcount = 0;
+		$smtpcount = 0;
 		$messages = array();
 		if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
 			$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
@@ -269,7 +269,7 @@ function notices_sendqueue() {
 			foreach($messagequeue['mails']['item'] as $mail) {
 				switch ($mail['type']) {
 					case 'mail':
-						$smptcount++;
+						$smtpcount++;
 						$smtpmessage .= "\r\n" . date("G:i:s",$mail['time']) . " " . $mail['msg'];
 						break;
 					default:
@@ -277,7 +277,7 @@ function notices_sendqueue() {
 				}
 			}
 			if (!empty($smtpmessage)) {
-				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smptcount);
+				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smtpcount);
 				$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
 				$nothing_done_count = 0;
 				notify_via_smtp($smtpmessageheader . $smtpmessage, true);

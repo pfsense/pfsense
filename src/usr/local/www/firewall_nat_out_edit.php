@@ -228,7 +228,7 @@ $section->addInput(new Form_Input(
 	'Source Hash Key',
 	'text',
 	$pconfig['source_hash_key']
-))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
+))->setHelp('The key that is fed to the hashing algorithm in hex format, preceded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
 
 $group = new Form_Group('Port or Range');
 $group->addClass('natportgrp');

@@ -461,7 +461,7 @@ $othersplist = array();
 		/* virtual network control */
 		$othersplist['vnc'][] = array('VNC', 'tcp', '5900', '5930', 'both');
 
-	/* Messanger Clients */
+	/* Messenger Clients */
 
 	$othersplist['aolinstantmessenger'] = array();
 		/* AIM */

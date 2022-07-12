@@ -53,7 +53,7 @@ Environment:
 	KERNCONF         -- Kernel names
 	MODULES_OVERRIDE -- List of kernel modules to install
 	TARGET           -- Machine hardware name
-	TARGET_ARCH      -- Machine processor arquitecture name
+	TARGET_ARCH      -- Machine processor architecture name
 END
 	exit 1
 }

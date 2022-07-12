@@ -398,7 +398,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 ?>
 			</th>
 			<td>
-				<!-- The color of the progress bar is changed to 'warniing' to indicate adaptive state handling is in use -->
+				<!-- The color of the progress bar is changed to 'warning' to indicate adaptive state handling is in use -->
 				<div class="progress">
 					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>
@@ -688,7 +688,7 @@ function updateState(x) {
 	if ($('#pfstate')) {
 		$('[id="pfstate"]').html('(' + x + ')');
 
-		// get numeric part of string before hte '/'
+		// get numeric part of string before the '/'
 		x = x.split('/')[0]
 
 		if (x > adaptivestart) {

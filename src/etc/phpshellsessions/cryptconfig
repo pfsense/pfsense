@@ -99,7 +99,7 @@ if (!$data) {
 
 if ($action == 'decrypt') {
 	if (!tagfile_deformat($data, $data, "config.xml")) {
-		echo gettext("The input file does not appear to contain an ecnrypted config.xml.") . "\n";
+		echo gettext("The input file does not appear to contain an encrypted config.xml.") . "\n";
 		exit(-1);
 	} else {
 		echo gettext("Decrypting data...");

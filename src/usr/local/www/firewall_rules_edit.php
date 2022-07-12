@@ -2168,7 +2168,7 @@ events.push(function() {
 	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [
-			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbeginport', 'srcbeginport_cust', 'srcendport',
 			'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
 
 		for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {

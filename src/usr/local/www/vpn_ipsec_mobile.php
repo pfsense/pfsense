@@ -210,13 +210,13 @@ if ($_POST['save']) {
 		unset($pconfig['radius_retransmit_sockets']);
 	}
 	if ($pconfig['radius_retransmit_base'] && !is_numeric($pconfig['radius_retransmit_base'])) {
-		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Base.");
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retransmit Base.");
 	}
 	if ($pconfig['radius_retransmit_timeout'] && !is_numeric($pconfig['radius_retransmit_timeout'])) {
-		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Timeout.");
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retransmit Timeout.");
 	}
 	if ($pconfig['radius_retransmit_tries'] && !is_numericint($pconfig['radius_retransmit_tries'])) {
-		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Tries.");
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retransmit Tries.");
 	}
 	if ($pconfig['radius_sockets'] && !is_numericint($pconfig['radius_sockets'])) {
 		$input_errors[] = gettext("An integer must be specified for RADIUS Sockets.");
@@ -295,7 +295,7 @@ if ($_POST['save']) {
 
 	if ($pconfig['radius_ip_priority_enable']) {
 		if (!(isset($mobileph1) && ($mobileph1['authentication_method'] == 'eap-radius'))) {
-			$input_errors[] = gettext("RADIUS IP may only take prioriy when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
+			$input_errors[] = gettext("RADIUS IP may only take priority when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
 			$pconfig['user_source'] = implode(',', $pconfig['user_source']);
 		}
 	}
@@ -699,7 +699,7 @@ if (!empty($pconfig['radius_advanced'])) {
 
 $group->add(new Form_Input(
 	'radius_retransmit_base',
-	'Retrasmit Base',
+	'Retransmit Base',
 	'text',
 	$pconfig['radius_retransmit_base'],
 	['placeholder' => 1.4]
@@ -708,7 +708,7 @@ $group->add(new Form_Input(
 
 $group->add(new Form_Input(
 	'radius_retransmit_timeout',
-	'Retrasmit Timeout',
+	'Retransmit Timeout',
 	'text',
 	$pconfig['radius_retransmit_timeout'],
 	['placeholder' => 2.0]

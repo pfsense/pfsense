@@ -383,7 +383,7 @@ if ($_POST['save']) {
 }
 
 // port list with the exception of assigned bridge interfaces to prevent invalid configs
-function build_port_list($selecton) {
+function build_port_list($selection) {
 	global $config, $ifacelist;
 
 	$portlist = array('list' => array(), 'selected' => array());
@@ -392,7 +392,7 @@ function build_port_list($selecton) {
 		if (substr($config['interfaces'][$ifn]['if'], 0, 6) != "bridge") {
 			$portlist['list'][$ifn] = $ifdescr;
 
-			if (in_array($ifn, explode(',', $selecton))) {
+			if (in_array($ifn, explode(',', $selection))) {
 				array_push($portlist['selected'], $ifn);
 			}
 		}

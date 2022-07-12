@@ -787,7 +787,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$onchange = "";
 				foreach ($field['options']['option'] as $opt) {
 					if ($opt['enablefields'] != "") {
-						$onchange = "Javascript:enableitems(this.selectedIndex);";
+						$onchange = "javascript:enableitems(this.selectedIndex);";
 					}
 				}
 

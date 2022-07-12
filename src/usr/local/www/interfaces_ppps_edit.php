@@ -602,7 +602,7 @@ if ($pconfig['type'] == 'l2tp') {
 	$section->add($group);
 }
 
-// These elements are hidden by default, and un-hidden in Javascript
+// These elements are hidden by default, and un-hidden in JavaScript
 if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	foreach ($linklist['list'] as $ifnm => $nm) {
 

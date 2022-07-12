@@ -39,7 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system_advanced_firewall.inc");
 
-// Retrieve furewall settings
+// Retrieve firewall settings
 $pconfig = getSystemAdvancedFirewall();
 $old_maximumtableentries = $pconfig['maximumtableentries'];
 $old_aliasesresolveinterval = $pconfig['aliasesresolveinterval'];

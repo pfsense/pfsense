@@ -2,7 +2,7 @@
 
 The pfSense project welcomes contributions, big or small. Members of the pfSense community frequently contribute bug fixes, enhancements, and documentation changes to improve the functionality and usability of the software.
 
-All of the pfSense project source code is on Github. We recommend potential contributors familiarize themselves with [the pfSense project git repositories](https://github.com/pfsense) and [Github in general](https://help.github.com).
+All of the pfSense project source code is on GitHub. We recommend potential contributors familiarize themselves with [the pfSense project git repositories](https://github.com/pfsense) and [GitHub in general](https://help.github.com).
 
 If you want to contribute but do not have a specific topic in mind, review the [list of open bug reports and other issues that are in need of attention](https://redmine.pfsense.org/projects/pfsense/issues).
 
@@ -28,9 +28,9 @@ If you are submitting a pull request, locate or create a corresponding Redmine e
 
 ### **Submitting Changes**
 
-The easiest and best way to contribute code changes to the project is through pull requests on Github.
+The easiest and best way to contribute code changes to the project is through pull requests on GitHub.
 
-For an outline of the process and guidelines to follow, see [Submitting a Pull Request via Github](https://doc.pfsense.org/index.php/Submitting_a_Pull_Request_via_Github)
+For an outline of the process and guidelines to follow, see [Submitting a Pull Request via GitHub](https://doc.pfsense.org/index.php/Submitting_a_Pull_Request_via_Github)
 
 Contributed code must conform to the [pfSense project Developer Style Guide](https://doc.pfsense.org/index.php/Developer_Style_Guide).
 

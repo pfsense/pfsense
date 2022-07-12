@@ -67,7 +67,7 @@ if [ -n "${recover_disk}" ] ; then
 		mount_rc=$?
 		attempts=0
 
-		# Try to run fsck up to 10 times and remount, in case the parition is dirty and needs cleanup
+		# Try to run fsck up to 10 times and remount, in case the partition is dirty and needs cleanup
 		while [ ${mount_rc} -ne 0 -a ${attempts} -lt 10 ]; do
 			echo "Unable to mount ${recover_disk}, running a disk check and retrying."
 			/sbin/fsck -y -t ${fs_type} ${recover_disk}

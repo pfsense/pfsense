@@ -819,7 +819,7 @@ function applyNATrules() {
 	return $retval;
 }
 
-// Re-order the NAT rules per the array of iindicies passed in $post
+// Re-order the NAT rules per the array of indices passed in $post
 function reorderNATrules($post, $json = false) {
 	global $config;
 

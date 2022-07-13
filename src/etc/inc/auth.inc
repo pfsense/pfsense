@@ -2072,6 +2072,9 @@ function session_auth() {
 			if (isset($_POST['postafterlogin'])) {
 				return true;
 			} else {
+			    	if (isset($_POST['redir'])) {
+				    $page = (string)$_POST['redir'];
+				}
 				if (empty($page)) {
 					$page = "/";
 				}
@@ -2264,7 +2267,7 @@ EOD;
 				$radius_conf .= "acct {$authcfg['host']}:{$authcfg['radius_acct_port']} " .
 					"{$authcfg['radius_secret']} {$authcfg['radius_timeout']}\n";
 			}
-			
+
 			$pam_sshd =<<<EOD
 # auth
 auth            sufficient      pam_radius.so
@@ -2324,7 +2327,7 @@ EOD;
 					$ldappamcafile = "/var/etc/pam_ldap_ca.crt";
 					$ca['caref'] = $authcfg['ldap_caref'];
 					$cacrt = ca_chain($ca);
-					@file_put_contents($ldappamcafile, $cacrt); 
+					@file_put_contents($ldappamcafile, $cacrt);
 					$ldapconf .= "tls_cacertfile {$ldappamcafile}\n";
 				}
 				$ldapconf .= "tls_checkpeer yes\n";

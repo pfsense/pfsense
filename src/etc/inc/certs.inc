@@ -2533,7 +2533,7 @@ $cert_curve_compatible = array(
 	/* OpenVPN bug limits usable curves, see https://redmine.pfsense.org/issues/9744 */
 	'OpenVPN' => array('prime256v1', 'secp384r1', 'secp521r1'),
 );
-$curve_compatible_list = array_unique(call_user_func_array('array_merge', $cert_curve_compatible));
+$curve_compatible_list = array_unique(call_user_func_array('array_merge', array_values($cert_curve_compatible)));
 
 /****f* certs/cert_build_curve_list
  * NAME

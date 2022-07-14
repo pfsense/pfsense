@@ -68,6 +68,7 @@ security/%%PRODUCT_NAME%%-pkg-snort
 security/%%PRODUCT_NAME%%-pkg-stunnel
 security/%%PRODUCT_NAME%%-pkg-sudo
 security/%%PRODUCT_NAME%%-pkg-suricata
+security/%%PRODUCT_NAME%%-pkg-Tailscale
 security/%%PRODUCT_NAME%%-pkg-tinc
 security/%%PRODUCT_NAME%%-pkg-zeek
 security/%%PRODUCT_NAME%%

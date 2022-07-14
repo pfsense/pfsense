@@ -1765,7 +1765,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		if (empty($nasid)) {
 			$nasid = gethostname(); //If no RADIUS NAS-Identifier is given : we use pfsense's hostname as NAS-Identifier
 		}
-		$nasip = nasip_fallback($acctcfg['radius_nasip_attribute']);
+		$nasip = nasip_fallback($authcfg['radius_nasip_attribute']);
 		$nasmac = get_interface_mac(find_ip_interface($nasip));
 
 		$rauth->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");

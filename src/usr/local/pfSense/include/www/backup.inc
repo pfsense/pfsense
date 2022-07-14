@@ -229,20 +229,25 @@ function execPost($post, $postfiles, $ui = true) {
 
 			if (!$input_errors) {
 				if (!$ui || is_uploaded_file($postfiles['conffile']['tmp_name'])) {
+					/* check for empty file */
+					if (!filesize($postfiles['conffile']['tmp_name'])) {
+						$input_errors[] = gettext("The uploaded file is empty.");
+					} else {
 
-					/* read the file contents */
-					$data = $ui ? file_get_contents($postfiles['conffile']['tmp_name']) : $postfiles['conffile']['tmp_name'];
-					if (!$data) {
-						$input_errors[] = gettext("Warning, could not read file {$postfiles['conffile']['tmp_name']}");
-					} elseif ($post['decrypt']) {
-						if (!tagfile_deformat($data, $data, "config.xml")) {
-							$input_errors[] = sprintf(gettext(
-							    "The uploaded file does not appear to contain an encrypted %s configuration."),
-							    $g['product_label']);
-						} else {
-							$data = decrypt_data($data, $post['decrypt_password']);
-							if (empty($data)) {
-								$input_errors[] = gettext("File decryption failed. Incorrect password or file is invalid.");
+						/* read the file contents */
+						$data = $ui ? file_get_contents($postfiles['conffile']['tmp_name']) : $postfiles['conffile']['tmp_name'];
+						if (!$data) {
+							$input_errors[] = gettext("Warning, could not read file {$postfiles['conffile']['tmp_name']}");
+						} elseif ($post['decrypt']) {
+							if (!tagfile_deformat($data, $data, "config.xml")) {
+								$input_errors[] = sprintf(gettext(
+								    "The uploaded file does not appear to contain an encrypted %s configuration."),
+								    $g['product_label']);
+							} else {
+								$data = decrypt_data($data, $post['decrypt_password']);
+								if (empty($data)) {
+									$input_errors[] = gettext("File decryption failed. Incorrect password or file is invalid.");
+								}
 							}
 						}
 					}

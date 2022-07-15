@@ -1,4 +1,4 @@
-#!/usr/local/bin/php -f
+#!/usr/local/bin/php -d display_startup_errors=0
 <?php
 /*
  * read_global_var

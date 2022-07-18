@@ -30,7 +30,7 @@ If you are submitting a pull request, locate or create a corresponding Redmine e
 
 The easiest and best way to contribute code changes to the project is through pull requests on GitHub.
 
-For an outline of the process and guidelines to follow, see [Submitting a Pull Request via GitHub](https://doc.pfsense.org/index.php/Submitting_a_Pull_Request_via_Github)
+For an outline of the process and guidelines to follow, see [Submitting a Pull Request via GitHub](https://docs.netgate.com/pfsense/en/latest/development/pull-request.html#submitting-a-pull-request-via-github)
 
 Contributed code must conform to the [pfSense project Developer Style Guide](https://doc.pfsense.org/index.php/Developer_Style_Guide).
 

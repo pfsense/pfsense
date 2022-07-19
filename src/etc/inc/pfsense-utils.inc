@@ -1981,8 +1981,15 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+	if ($verify_ssl) {
+		curl_setopt($ch, CURLOPT_CAPATH, "/etc/ssl/certs/");
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+	} else {
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYSTATUS, false);
+	}
 	curl_setopt($ch, CURLOPT_FILE, $fp);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
@@ -2026,8 +2033,15 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	 */
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+	if ($verify_ssl) {
+		curl_setopt($ch, CURLOPT_CAPATH, "/etc/ssl/certs/");
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+	} else {
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYSTATUS, false);
+	}
 	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);

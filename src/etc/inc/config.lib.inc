@@ -1201,6 +1201,50 @@ function init_config_arr($keys) {
 	}
 }
 
+/**
+ * Return a value specified by path in the config, if it exists
+ * @param $path string path with '/' separators
+ * @param $default mixed value to return if the path is not found
+ * @returns mixed value at path or $default if the path does not exist
+ */
+function config_get_path(string $path, $default = null) {
+	global $config;
+	$vpath = mb_split('/', $path);
+	$el = $config;
+	foreach ($vpath as $key) {
+		if (is_array($el) && array_key_exists($key, $el)) {
+			$el = $el[$key];
+		} else {
+			return ($default);
+		}
+	}
+	return ($el);
+}
+
+/**
+ * Set a value by path in the config. If the path cannot be reached because an
+ * intermediary does not exist, return null
+ * @param $path string path with '/' separators
+ * @param $val mixed 
+ * @param $default mixed value to return if the path is not found
+ * @returns mixed $val or $default if the path prefix does not exist
+ */
+function config_set_path(string $path, $value, $default = null) {
+	global $config;
+	$vpath = mb_split('/', $path);
+	$vkey = array_pop($vpath);
+	$el =& $config;
+	foreach ($vpath as $key) {
+		if (is_array($el) && array_key_exists($key, $el)) {
+			$el =& $el[$key];
+		} else {
+			return ($default);
+		}
+	}
+	$el[$vkey] =& $value;
+	return ($value);
+}
+
 register_shutdown_function('pfSense_clear_globals');
 
 ?>

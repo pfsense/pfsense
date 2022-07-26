@@ -1525,8 +1525,8 @@ function pkg_conf_setup($repo_path) {
 		$altabi = file_get_contents($altabi_file);
 
 		$pkg_conf = array(
-			"ABI={$abi}",
-			"ALTABI={$altabi}"
+			"ABI={$abi}\n",
+			"ALTABI={$altabi}\n"
 		);
 	}
 

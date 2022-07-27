@@ -102,7 +102,8 @@ $g = array(
 		'dhcpdv6' => "/var/dhcpd/var/db/dhcpd6.leases",
 		'voucher' => "/var/db/voucher_*.db"
 	),
-	"cp_prefix" => 'cpzoneid'
+	"cp_prefix" => 'cpzoneid',
+	"booting" => false
 );
 
 /* IP TOS flags */

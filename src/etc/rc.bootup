@@ -463,7 +463,7 @@ if (file_exists("{$g['conf_path']}/needs_package_sync")) {
 system_syslogd_start();
 
 /* done */
-unset($g['booting']);
+$g['booting'] = false;
 @unlink("{$g['varrun_path']}/booting");
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */

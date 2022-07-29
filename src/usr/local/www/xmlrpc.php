@@ -128,7 +128,7 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return array
 	 */
-	public function host_firmware_version($dummy = 1, $timeout) {
+	public function host_firmware_version($dummy, $timeout) {
 		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 		return host_firmware_version();

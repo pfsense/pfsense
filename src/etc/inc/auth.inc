@@ -1162,7 +1162,7 @@ function ldap_test_bind($authcfg) {
 	return true;
 }
 
-function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
+function ldap_get_user_ous($show_complete_ou, $authcfg) {
 	global $debug, $config, $g;
 
 	if (!function_exists("ldap_connect")) {

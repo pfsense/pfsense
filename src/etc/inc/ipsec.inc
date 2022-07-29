@@ -798,7 +798,7 @@ function ipsec_status() {
 	return $cmap;
 }
 
-function ipsec_status_button($req = 'post', $act = 'connect', $type = 'ike', $conid, $uniqueid = null, $full = true) {
+function ipsec_status_button($req, $act, $type, $conid, $uniqueid, $full) {
 	$btn = '<a href="';
 	if ($act == 'disconnect') {
 		$buttonclass = ($type == 'ike') ? 'danger' : 'warning';
@@ -873,7 +873,7 @@ function ipsec_initiate($type = 'ike', $p1 = null, $p2 = null) {
 	return ipsec_initiate_by_conid($type, ipsec_conid($p1, $p2));
 }
 
-function ipsec_initiate_by_conid($type = 'ike', $conid) {
+function ipsec_initiate_by_conid($type, $conid) {
 	if (empty($conid)) {
 		return false;
 	}

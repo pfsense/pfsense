@@ -3550,7 +3550,7 @@ function &getarraybyref(&$array) {
  *   Sends the data to the browser as a file to download.
  ******/
 
-function send_user_download($type = 'data', $content, $userfilename = "", $contenttype = "application/octet-stream") {
+function send_user_download($type, $content, $userfilename = "", $contenttype = "application/octet-stream") {
 	/* If the type is 'file', then use the file size, otherwise use the size of the data to send */
 	$size = ($type == 'file') ? filesize($content) : strlen($content);
 

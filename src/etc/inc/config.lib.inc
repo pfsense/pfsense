@@ -243,7 +243,7 @@ function restore_backup($file) {
  * See https://redmine.pfsense.org/issues/8994,
  *     https://redmine.pfsense.org/issues/10508, 
  *     https://redmine.pfsense.org/issues/11050 */
-function clear_tagdata($tag = "rrd", $data) {
+function clear_tagdata($tag, $data) {
 	$data = preg_replace("/[[:blank:]]*<{$tag}data>.*<\\/{$tag}data>[[:blank:]]*\n*/s", "", $data);
 	$data = preg_replace("/[[:blank:]]*<{$tag}data\\/>[[:blank:]]*\n*/", "", $data);
 

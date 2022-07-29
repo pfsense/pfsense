@@ -1205,7 +1205,7 @@ function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 	return $greif;
 }
 
-function interface_is_type($if = NULL, $type) {
+function interface_is_type($if, $type) {
 	global $config;
 	switch ($type) {
 		case "gre":
@@ -4457,7 +4457,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	return 0;
 }
 
-function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = false) {
+function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 	global $config, $g;
 
 	if (!is_array($wancfg)) {
@@ -4535,7 +4535,7 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 	return 0;
 }
 
-function interface_track6_6rd_configure($interface = "lan", $lancfg) {
+function interface_track6_6rd_configure($interface, $lancfg) {
 	global $config, $g;
 	global $interface_ipv6_arr_cache;
 	global $interface_snv6_arr_cache;
@@ -4599,7 +4599,7 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 	return 0;
 }
 
-function interface_track6_6to4_configure($interface = "lan", $lancfg) {
+function interface_track6_6to4_configure($interface, $lancfg) {
 	global $config, $g;
 	global $interface_ipv6_arr_cache;
 	global $interface_snv6_arr_cache;
@@ -4659,7 +4659,7 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 	return 0;
 }
 
-function interface_6rd_configure($interface = "wan", $wancfg) {
+function interface_6rd_configure($interface, $wancfg) {
 	global $config, $g;
 
 	/* because this is a tunnel interface we can only function
@@ -4753,7 +4753,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	return 0;
 }
 
-function interface_6to4_configure($interface = "wan", $wancfg) {
+function interface_6to4_configure($interface, $wancfg) {
 	global $config, $g;
 
 	/* because this is a tunnel interface we can only function
@@ -4866,7 +4866,7 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 	return 0;
 }
 
-function interface_dhcpv6_configure($ifconf = "wan", $ifcfg, $destroy = false) {
+function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 	global $config, $g;
 
 	$dhcp6cconf = "";
@@ -5442,7 +5442,7 @@ function DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf) {
 }
 
 
-function interface_dhcp_configure($interface = "wan") {
+function interface_dhcp_configure($interface) {
 	global $config, $g, $vlanprio_values;
 
 	$ifcfg = $config['interfaces'][$interface];

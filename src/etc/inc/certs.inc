@@ -469,7 +469,7 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 	return true;
 }
 
-function csr_sign($csr, & $ca, $duration, $type = "user", $altnames, $digest_alg = "sha256") {
+function csr_sign($csr, & $ca, $duration, $type, $altnames, $digest_alg = "sha256") {
 	global $config;
 	$old_err_level = error_reporting(0);
 

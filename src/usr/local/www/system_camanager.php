@@ -153,6 +153,10 @@ if ($_POST['save']) {
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate data"));
+			/* Make sure we do not have invalid characters in the fields for the certificate */
+			if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+				array_push($input_errors, gettext("The field 'Descriptive Name' contains invalid characters."));
+			}
 			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
@@ -439,7 +443,7 @@ foreach ($a_ca as $ca):
 
 	$issuer_ca = lookup_ca($ca['caref']);
 	if ($issuer_ca) {
-		$issuer_name = $issuer_ca['descr'];
+		$issuer_name = htmlspecialchars($issuer_ca['descr']);
 	}
 
 	foreach ($a_cert as $cert) {

@@ -246,6 +246,10 @@ if ($_POST['save'] == gettext("Save")) {
 			break;
 		case 'edit':
 		case 'import':
+			/* Make sure we do not have invalid characters in the fields for the certificate */
+			if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+				$input_errors[] = gettext("The field 'Descriptive Name' contains invalid characters.");
+			}
 			$pkcs12_data = '';
 			if ($_POST['import_type'] == 'x509') {
 				$reqdfields = explode(" ",
@@ -448,7 +452,7 @@ if ($_POST['save'] == gettext("Save")) {
 				$ucert = lookup_cert($pconfig['certref']);
 				if ($ucert && $a_user) {
 					$a_user[$userid]['cert'][] = $ucert['refid'];
-					$savemsg = sprintf(gettext("Added certificate %s to user %s"), $ucert['descr'], $a_user[$userid]['name']);
+					$savemsg = sprintf(gettext("Added certificate %s to user %s"), htmlspecialchars($ucert['descr']), $a_user[$userid]['name']);
 				}
 				unset($cert);
 				break;
@@ -484,13 +488,15 @@ if ($_POST['save'] == gettext("Save")) {
 					}
 					// Add it to the config file
 					$config['cert'][] = $newcert;
-					$savemsg = sprintf(gettext("Signed certificate %s"), $newcert['descr']);
+					$savemsg = sprintf(gettext("Signed certificate %s"), htmlspecialchars($newcert['descr']));
+					unset($act);
 				}
 				unset($cert);
 				break;
 			case 'edit':
 				cert_import($cert, $pconfig['cert'], $pconfig['key']);
-				$savemsg = sprintf(gettext("Edited certificate %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Edited certificate %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			case 'import':
 				/* Import an external certificate+key */
@@ -510,7 +516,8 @@ if ($_POST['save'] == gettext("Save")) {
 					}
 				}
 				cert_import($cert, $pconfig['cert'], $pconfig['key']);
-				$savemsg = sprintf(gettext("Imported certificate %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Imported certificate %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			case 'internal':
 				/* Create an internal certificate */
@@ -554,7 +561,8 @@ if ($_POST['save'] == gettext("Save")) {
 						}
 					}
 				}
-				$savemsg = sprintf(gettext("Created internal certificate %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Created internal certificate %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			case 'external':
 				/* Create a certificate signing request */
@@ -598,7 +606,8 @@ if ($_POST['save'] == gettext("Save")) {
 						}
 					}
 				}
-				$savemsg = sprintf(gettext("Created certificate signing request %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Created certificate signing request %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			default:
 				break;
@@ -656,7 +665,7 @@ if ($_POST['save'] == gettext("Save")) {
 		$cert['descr'] = $pconfig['descr'];
 		csr_complete($cert, $pconfig['cert']);
 		$thiscert = $cert;
-		$savemsg = sprintf(gettext("Updated certificate signing request %s"), $pconfig['descr']);
+		$savemsg = sprintf(gettext("Updated certificate signing request %s"), htmlspecialchars($pconfig['descr']));
 		write_config($savemsg);
 		pfSenseHeader("system_certmanager.php");
 	}
@@ -705,6 +714,15 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			null,
 			'hidden',
 			$id
+		));
+	}
+
+	if ($act) {
+		$form->addGlobal(new Form_Input(
+			'act',
+			null,
+			'hidden',
+			$act
 		));
 	}
 
@@ -1402,7 +1420,7 @@ foreach ($a_cert as $cert):
 
 	$ca = lookup_ca($cert['caref']);
 	if ($ca) {
-		$caname = $ca['descr'];
+		$caname = htmlspecialchars($ca['descr']);
 	}
 ?>
 				<tr>

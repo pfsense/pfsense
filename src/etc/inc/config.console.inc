@@ -79,7 +79,7 @@ EOD;
 		$ifsmallist = " ";
 		foreach ($iflist as $iface => $ifa) {
 			$friendly = convert_real_interface_to_friendly_interface_name($iface);
-			$ifstatus = get_interface_addresses($config['interfaces'][$friendly]['if']);
+			$ifstatus = get_interface_addresses(config_get_path("interfaces{$friendly}/if", ""));
 			if (is_array($ifstatus) && $ifstatus['linkstateup'])
 				$status = "  (up)";
 			else
@@ -105,14 +105,12 @@ EOD;
 		vlan_setup();
 	}
 
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-
+	$vlans = config_get_path('vlans/vlan', []);
+	if (is_array($vlans) && count($vlans)) {
 		echo "\n\n" . gettext("VLAN interfaces:") . "\n\n";
-		foreach ($config['vlans']['vlan'] as $vlan) {
-
+		foreach ($vlans as $vlan) {
 			echo sprintf("% -16s%s\n", vlan_interface($vlan),
 				"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
-
 			$iflist[vlan_interface($vlan)] = array();
 			$ifsmallist = $ifsmallist . vlan_interface($vlan) . " ";
 		}
@@ -394,9 +392,9 @@ EOD;
 		}
 
 		echo gettext(" done!") . "\n";
-
 		return (0);
 	}
+	return (1);
 }
 
 function autodetect_interface($ifname, $fp) {

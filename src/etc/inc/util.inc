@@ -24,7 +24,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+require_once('interfaces.inc');
 define('VIP_ALL', 1);
 define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
@@ -1620,7 +1620,7 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
  *           "media"  - use ifconfig to check physical connection
  *			status (much slower)
  */
-function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "") {
+function get_interface_list($mode = "active", $keyby = "physical", $vfaces = false) {
 	global $config;
 	$upints = array();
 	/* get a list of virtual interface types */

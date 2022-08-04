@@ -1429,7 +1429,7 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['enc0'] = $oic;
 	}
 	/* add openvpn interfaces */
-	if ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
+	if (config_get_path('openvpn/openvpn-server') || config_get_path('openvpn/openvpn-client')) {
 		$oic = array();
 		$oic['if'] = "openvpn";
 		$oic['descr'] = 'OpenVPN';
@@ -1438,8 +1438,9 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['openvpn'] = $oic;
 	}
 	/* add interface groups */
-	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+	$ifgroupentry = config_get_path('ifgroups/ifgroupentry');
+	if (is_array($ifgroupentry)) {
+		foreach ($ifgroupentry as $ifgen) {
 			$oc = array();
 			$oc['if'] = $ifgen['ifname'];
 			$oc['descr'] = $ifgen['ifname'];

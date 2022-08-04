@@ -7384,8 +7384,9 @@ function interfaces_staticarp_configure($if) {
 	}
 
 	/* Enable static arp entries */
-	if (is_array($config['dhcpd'][$if]) && is_array($config['dhcpd'][$if]['staticmap'])) {
-		foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
+	$staticmap = config_get_path("dhcpd/{$if}/staticmap", []);
+	if (is_array($staticmap)) {
+		foreach ($staticmap as $arpent) {
 			if (empty($arpent['ipaddr']) || empty($arpent['mac'])) {
 				continue;
 			}

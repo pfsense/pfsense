@@ -3938,7 +3938,8 @@ EOD;
 				}
 				break;
 			default:
-				if ((is_array($config['dhcpdv6'][$on]) && isset($config['dhcpdv6'][$on]['enable'])) ||
+				$onif = config_get_path("dhcpv6/{$on}");
+				if (is_array($onif) && isset($onif['enable']) ||
 				    (isset($oc['track6-interface'])) ||
 				    (is_array($config['dhcrelay6']) && !empty($config['dhcrelay6']['interface']) && in_array($on, explode(',', $config['dhcrelay6']['interface'])))) {
 					$ipfrules .= <<<EOD

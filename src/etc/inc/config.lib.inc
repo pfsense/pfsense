@@ -1245,6 +1245,25 @@ function config_set_path(string $path, $value, $default = null) {
 	return ($value);
 }
 
+/**
+ * Determine whether a section of the config has a non-null value keyed
+ * 'enabled'. Some parts of the config historically identify services as enabled
+ * by having a key to a non-null value named 'enable', and checking it with
+ * isset(). This can be counter-intuitive as isset() will return true if the
+ * array element is any non-null value that evaluates to false.
+ * @param $path string path with '/' separators
+ * @param $enable_key string an optional alternative key value for the enable key
+ * @returns bool true if $enable_key exists in the array at $path, and has a
+ * non-null value, otherwise false
+ */
+function config_path_enabled(string $path, $enable_key = "enable") {
+	$el = config_get_path($path, []);
+	if (is_array($el) && isset($el[$enable_key])) {
+		return (true);
+	}
+	return (false);
+}
+
 register_shutdown_function('pfSense_clear_globals');
 
 ?>

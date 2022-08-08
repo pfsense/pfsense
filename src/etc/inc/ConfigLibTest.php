@@ -27,7 +27,7 @@ class ConfigLibTest extends TestCase {
 		// Parent doesn't exist, non-null default return
 		$this->assertEquals(-1, config_set_path("barbang/baz", "bang", -1));
 		$this->assertNull(config_get_path("barbang/baz", null));
-		
+
 		// Subarray
 		$this->assertIsArray(config_set_path("barbang", Array()));
 		$this->assertEquals("bang", config_set_path("barbang/baz", "bang"));
@@ -42,6 +42,20 @@ class ConfigLibTest extends TestCase {
 		$this->assertEquals("barbaz", config_set_path("bar/baz", "barbaz"));
 		$this->assertEquals("barbaz", config_get_path("bar/baz", null));
 	}
+
+	public function test_config_path_enabled(): void {
+		// True value in enable
+		$this->assertTrue(config_path_enabled('servicefoo'));
+		// False value in enable
+		$this->assertTrue(config_path_enabled('servicebar'));
+		// null value in enable
+		$this->assertFalse(config_path_enabled('servicebaz'));
+		// Alternate enable key
+		$this->assertTrue(config_path_enabled('servicebang', 'otherkey'));
+		// nonexistent path
+		$this->assertFalse(config_path_enabled('servicebazbang'));
+	}
+
 	public function setUp(): void {
 		global $config;
 		$config = array(
@@ -49,6 +63,18 @@ class ConfigLibTest extends TestCase {
 			"bar" => array(
 				"baz" => "bang",
 				"foobar" => "foobaz"
+			),
+			"servicefoo" => array(
+				"enable" => true
+			),
+			"servicebar" => array(
+				"enable" => false
+			),
+			"servicebaz" => array(
+				"enable" => null
+			),
+			"servicebang" => array(
+				"otherkey" => true
 			)
 		);
 	}

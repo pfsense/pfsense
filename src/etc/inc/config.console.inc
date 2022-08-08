@@ -431,7 +431,8 @@ function vlan_setup() {
 
 	$iflist = get_interface_list();
 
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+	$vlancfg = config_get_path('vlans/vlan');
+	if (is_array($vlancfg) && count($vlancfg)) {
 		echo "\n" . gettext("WARNING: all existing VLANs will be cleared if you proceed!") . "\n";
 		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 

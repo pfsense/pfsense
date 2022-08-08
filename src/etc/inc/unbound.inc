@@ -952,9 +952,10 @@ function unbound_acls_config($cfgsubdir = "") {
 		}
 
 		// OpenVPN IPv6 Tunnel Networks
-		foreach (array('openvpn-client', 'openvpn-server') as $ovpnentry) {
-			if (is_array($config['openvpn'][$ovpnentry])) {
-				foreach ($config['openvpn'][$ovpnentry] as $ovpnent) {
+		foreach (['openvpn-client', 'openvpn-server'] as $ovpnentry) {
+			$ovpncfg = config_get_path("openvpn/{$ovpnentry}");
+			if (is_array($ovpncfg)) {
+				foreach ($ovpncfg as $ovpnent) {
 					if (!isset($ovpnent['disable']) && !empty($ovpnent['tunnel_networkv6'])) {
 						$aclnets[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_networkv6']));
 					}
@@ -963,7 +964,7 @@ function unbound_acls_config($cfgsubdir = "") {
 		}
 		// OpenVPN CSO
 		init_config_arr(array('openvpn', 'openvpn-csc'));
-		foreach ($config['openvpn']['openvpn-csc'] as $ovpnent) {
+		foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 			if (is_array($ovpnent) && !isset($ovpnent['disable'])) {
 				if (!empty($ovpnent['tunnel_network'])) {
 					$aclnets[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
@@ -1061,13 +1062,14 @@ function unbound_auto_ednsbufsize() {
 	global $config;
 
 	$active_ipv6_inf = false;
-	if ($config['unbound']['active_interface'] != 'all') {
+	if ($config['unbound']['active_interface'] &&
+		$config['unbound']['active_interface'] != 'all') {
 		$active_interfaces = explode(",", $config['unbound']['active_interface']);
 	} else {
 		$active_interfaces = get_configured_interface_list();
 	}
 
-	$min_mtu = get_interface_mtu(get_real_interface($active_interfaces[0]));
+	$min_mtu = PHP_INT_MAX;
 	foreach ($active_interfaces as $ubif) {
 		$ubif_mtu = get_interface_mtu(get_real_interface($ubif));
 		if (get_interface_ipv6($ubif)) {

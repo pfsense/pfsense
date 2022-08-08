@@ -1178,9 +1178,10 @@ function filter_get_vpns_list() {
 	}
 
 	/* openvpn */
-	foreach (array('client', 'server') as $type) {
-		if (is_array($config['openvpn']["openvpn-$type"])) {
-			foreach ($config['openvpn']["openvpn-$type"] as $settings) {
+	foreach (['client', 'server'] as $type) {
+		$ovpncfg = config_get_path("openvpn/{$type}");
+		if (is_array($ovpncfg)) {
+			foreach ($ovpncfg as $settings) {
 				if (is_array($settings)) {
 					if (!isset($settings['disable'])) {
 						$remote_networks = explode(',', $settings['remote_network']);
@@ -1206,8 +1207,9 @@ function filter_get_vpns_list() {
 		}
 	}
 	/* pppoe */
-	if (is_array($config['pppoes']['pppoe'])) {
-		foreach ($config['pppoes']['pppoe'] as $pppoe) {
+	$pppoecfg = config_get_path('pppoes/pppoe');
+	if (is_array($pppoecfg)) {
+		foreach ($pppoecfg as $pppoe) {
 			if ($pppoe['mode'] == "server") {
 				if (is_ipaddr($pppoe['remoteip'])) {
 					$pppoesub = gen_subnet($pppoe['remoteip'], $pppoe['pppoe_subnet']);

@@ -1123,9 +1123,9 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	$set_dfltgwname = '';
 
 	if ($ipprotocol == 'inet') {
-		$gwdefault = $config['gateways']['defaultgw4'];
+		$gwdefault = config_get_path('gateways/defaultgw4', "");
 	} else {
-		$gwdefault = $config['gateways']['defaultgw6'];
+		$gwdefault = config_get_path('gateways/defaultgw6', "");
 	}
 	/* do not delete dynamic (frr/bgp/ospf) route
 	 * see https://redmine.pfsense.org/issues/12536 */
@@ -1427,8 +1427,8 @@ function return_gateway_groups_array($fixup = false, $gways = false) {
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
 	if ($fixup == true) {
-		$gw4 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4'], $gways);
-		$gw6 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6'], $gways);
+		$gw4 = lookup_gateway_or_group_by_name(config_get_path('gateways/defaultgw4', ""), $gways);
+		$gw6 = lookup_gateway_or_group_by_name(config_get_path('gateways/defaultgw6', ""), $gways);
 		if ($gw4 && $gw4['type'] == 'gatewaygroup') {
 			fixup_default_gateway("inet", $gateways_status, $gateways_arr);
 		}
@@ -2164,7 +2164,8 @@ function save_gateway($gateway_settings, $realid = "") {
 			foreach ($a_gateway_item as $gw) {
 				if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
 					if ($gw['interface'] != $gateway_settings['interface'] &&
-						($gw['name'] == $config['gateways']['defaultgw4'] || $gw['name'] == $config['gateways']['defaultgw6'])) {
+						($gw['name'] == config_get_path('gateways/defaultgw4', "") ||
+						 $gw['name'] == config_get_path('gateways/defaultgw6', ""))) {
 						// remember the old default gateway interface to call with a "interface reconfigure" event.
 						$reloadif = $gw['interface'];
 					}
@@ -2173,9 +2174,9 @@ function save_gateway($gateway_settings, $realid = "") {
 			}
 		}
 		if ($gateway['ipprotocol'] == "inet") {
-			$config['gateways']['defaultgw4'] = $gateway['name'];
+			config_set_path('gateways/defaultgw4', $gateway['name']);
 		} elseif ($gateway['ipprotocol'] == "inet6") {
-			$config['gateways']['defaultgw6'] = $gateway['name'];
+			config_set_path('gateways/defaultgw4', $gateway['name']);
 		}
 	}
 
@@ -2295,14 +2296,17 @@ function gateway_getgwtiername($gways, $idx) {
 	$gwname = $gways[$idx]['name'];
 
 	$gw = get_gateway_or_group_by_name($gwname, $gways);
+	
 	init_config_arr(array('gateways'));
-	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
+	$gw4 = config_get_path('gateways/defaultgw4', "");
+	$gw6 = config_get_path('gateways/defaultgw6', "");
+	if ($gw4 == $gwname || $gw6 == $gwname) {
 		$result = "Default";
 	} else {
 		if ($gw['ipprotocol'] == 'inet') {
-			$defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw4'], $gways);
+			$defgw = get_gateway_or_group_by_name($gw4, $gways);
 		} else {
-			$defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw6'], $gways);
+			$defgw = get_gateway_or_group_by_name($gw6, $gways);
 		}
 
 		if ($defgw['type'] == "gatewaygroup") {
@@ -2385,8 +2389,8 @@ function available_default_gateways() {
 	$defaults = array();
 	$defaults['v4'] = $items4;
 	$defaults['v6'] = $items6;
-	$defaults['defaultgw4'] = $config['gateways']['defaultgw4'];
-	$defaults['defaultgw6'] = $config['gateways']['defaultgw6'];
+	$defaults['defaultgw4'] = config_get_path('gateways/defaultgw4', "");
+	$defaults['defaultgw6'] = config_get_path('gateways/defaultgw6', "");
 
 	return $defaults;
 }

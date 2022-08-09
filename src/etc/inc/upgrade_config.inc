@@ -5747,11 +5747,13 @@ function upgrade_183_to_184() {
 	/* 'none' was kinda confusing and didnt really do none
 	 * now use the new 'automatic' mode if it was set to none. */
 	global $config;
-	if ($config['gateways']['defaultgw4'] === "-") {
-		$config['gateways']['defaultgw4'] = "";
+	$gw4 = config_get_path('gateways/defaultgw4', "");
+	$gw6 = config_get_path('gateways/defaultgw6', "");
+	if ($gw4 === "-") {
+		$gw4 = "";
 	}
-	if ($config['gateways']['defaultgw6'] === "-") {
-		$config['gateways']['defaultgw6'] = "";
+	if ($gw6 === "-") {
+		$gw6 = "";
 	}
 }
 

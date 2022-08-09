@@ -3723,14 +3723,15 @@ EOD;
 	$tracker = $saved_tracker;
 
 	$ipfrules .= "\n# webConfigurator lockout\n";
-	if (!$config['system']['webgui']['port']) {
-		if ($config['system']['webgui']['protocol'] == "http") {
+	$webguiport = config_get_path('system/webgui/port');
+	if (!$webguiport) {
+		if (config_get_path('system/webgui/protocol') == "http") {
 			$webConfiguratorlockoutport = "80";
 		} else {
 			$webConfiguratorlockoutport = "443";
 		}
 	} else {
-		$webConfiguratorlockoutport = $config['system']['webgui']['port'];
+		$webConfiguratorlockoutport = $webguiport;
 	}
 	if ($webConfiguratorlockoutport) {
 		$ipfrules .= "block in {$log['block']} quick proto tcp from <sshguard> to (self) port {$webConfiguratorlockoutport} ridentifier {$increment_tracker()} label \"GUI Lockout\"\n";

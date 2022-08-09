@@ -193,7 +193,7 @@ function is_bogonsv6_used($force = false) {
 	global $config, $g;
 	# Only use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled.
 	$usebogonsv6 = false;
-	if (isset($config['system']['ipv6allow']) || $force) {
+	if (config_path_enabled('system','ipv6allow') || $force) {
 		foreach ($config['interfaces'] as $ifacedata) {
 			if (isset($ifacedata['enable']) && isset($ifacedata['blockbogons'])) {
 				$usebogonsv6 = true;
@@ -1889,8 +1889,9 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	/* add openvpn interfaces */
-	if (is_array($config['openvpn']['openvpn-server'])) {
-		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
+	$ovpncfg = config_get_path('openvpn/openvpn-server');
+	if (is_array($ovpncfg)) {
+		foreach ($ovpncfg as $ovpnsrv) {
 			if (!isset($ovpnsrv['disable']) && !empty($ovpnsrv['tunnel_network'])) {
 				$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnsrv['tunnel_network']));
 				$descriptions[] = gettext("OpenVPN server");
@@ -1898,8 +1899,9 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
-	if (is_array($config['openvpn']['openvpn-client'])) {
-		foreach ($config['openvpn']['openvpn-client'] as $ovpncli) {
+	$ovpncfg = config_get_path('openvpn/openvpn-client');
+	if (is_array($ovpncfg)) {
+		foreach ($ovpncfg as $ovpncli) {
 			if (!isset($ovpncli['disable']) && !empty($ovpncli['tunnel_network'])) {
 				$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpncli['tunnel_network']));
 				$descriptions[] = gettext("OpenVPN client");
@@ -1917,13 +1919,13 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	/* IPsec mode_cfg subnet */
-	if ((isset($config['ipsec']['client']['enable'])) &&
+	if (config_path_enabled('ipsec/client') &&
 	    (!empty($config['ipsec']['client']['pool_address'])) &&
 	    (!empty($config['ipsec']['client']['pool_netbits']))) {
 		$tonathosts[] = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
 		$descriptions[] = gettext("IPsec client");
 	}
-	if (isset($config['ipsec']['client']['enable']) &&
+	if (config_path_enabled('ipsec/client') &&
 	    isset($config['ipsec']['mobilekey'])) {
 		foreach ($config['ipsec']['mobilekey'] as $key) {
 			if (in_array("{$key['pool_address']}/{$key['pool_netbits']}", $tonathosts)) {
@@ -3611,7 +3613,7 @@ function filter_rules_generate() {
 
 	$saved_tracker = $tracker;
 
-	if (!isset($config['system']['ipv6allow'])) {
+	if (!config_path_enabled('system','ipv6allow')) {
 		$ipfrules .= "# Allow IPv6 on loopback\n";
 		$ipfrules .= "pass in {$log['pass']} quick on \$loopback inet6 all ridentifier {$increment_tracker()} label \"pass IPv6 loopback\"\n";
 		$ipfrules .= "pass out {$log['pass']} quick on \$loopback inet6 all ridentifier {$increment_tracker()} label \"pass IPv6 loopback\"\n";
@@ -3645,7 +3647,7 @@ block out {$log['block']} inet6 all ridentifier {$increment_tracker()} label "De
 
 EOD;
 
-	if (isset($config['system']['ipv6allow'])) {
+	if (config_path_enabled('system','ipv6allow')) {
 		$ipfrules .= <<<EOD
 
 # IPv6 ICMP is not auxiliary, it is required for operation
@@ -3676,7 +3678,7 @@ block {$log['block']} quick inet proto { tcp, udp } from any port = 0 to any rid
 block {$log['block']} quick inet proto { tcp, udp } from any to any port = 0 ridentifier {$increment_tracker()} label "Block traffic to port 0"
 
 EOD;
-	if (isset($config['system']['ipv6allow'])) {
+	if (config_path_enabled('system','ipv6allow')) {
 		$ipfrules .= <<<EOD
 block {$log['block']} quick inet6 proto { tcp, udp } from any port = 0 to any ridentifier {$increment_tracker()} label "Block traffic from port 0"
 block {$log['block']} quick inet6 proto { tcp, udp } from any to any port = 0 ridentifier {$increment_tracker()} label "Block traffic to port 0"
@@ -3700,13 +3702,15 @@ EOD;
 	$tracker = $saved_tracker;
 
 	$ipfrules .= "\n# SSH lockout\n";
-	if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
+
+	$cfgsshport= config_get_path('system/ssh/port');
+	if (!empty($cfgsshport)) {
 		$ipfrules .= "block in {$log['block']} quick proto tcp from <sshguard> to (self) port ";
-		$ipfrules .= $config['system']['ssh']['port'];
+		$ipfrules .= $cfgsshport;
 		$ipfrules .= " ridentifier {$increment_tracker()} label \"sshguard\"\n";
 	} else {
-		if ($config['system']['ssh']['port'] <> "") {
-			$sshport = $config['system']['ssh']['port'];
+		if ($cfgsshport <> "") {
+			$sshport = $cfgsshport;
 		} else {
 			$sshport = 22;
 		}
@@ -3756,7 +3760,7 @@ pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 t
 EOD;
 		}
 
-		if (isset($config['system']['ipv6allow']) && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
+		if (config_path_enabled('system','ipv6allow') && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
 			// The DHCPv6 client rules ***MUST BE ABOVE BOGONSV6!***  https://redmine.pfsense.org/issues/3395
 			$vlantag = isset($config['interfaces'][$on]['dhcp6vlanenable']) ? "set prio {$vlanprio_values[$config['interfaces'][$on]['dhcp6cvpt']]}" : "";
 
@@ -3791,7 +3795,7 @@ block in $bogonlog quick on \${$oc['descr']} from <bogons> to any ridentifier {$
 
 EOD;
 
-			if (isset($config['system']['ipv6allow'])) {
+			if (config_path_enabled('system','ipv6allow')) {
 				$ipfrules .= <<<EOD
 # block bogon networks (IPv6)
 # http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
@@ -3980,7 +3984,7 @@ pass in {$log['pass']} on \$loopback inet all ridentifier {$increment_tracker()}
 pass out {$log['pass']} on \$loopback inet all ridentifier {$increment_tracker()} label "pass IPv4 loopback"
 
 EOD;
-	if (isset($config['system']['ipv6allow'])) {
+	if (config_path_enabled('system','ipv6allow')) {
 		$ipfrules .= <<<EOD
 pass in {$log['pass']} on \$loopback inet6 all ridentifier {$increment_tracker()} label "pass IPv6 loopback"
 pass out {$log['pass']} on \$loopback inet6 all ridentifier {$increment_tracker()} label "pass IPv6 loopback"
@@ -3992,7 +3996,7 @@ EOD;
 pass out {$log['pass']} inet all keep state allow-opts ridentifier {$increment_tracker()} label "let out anything IPv4 from firewall host itself"
 
 EOD;
-	if (isset($config['system']['ipv6allow'])) {
+	if (config_path_enabled('system','ipv6allow')) {
 		$ipfrules .= <<<EOD
 pass out {$log['pass']} inet6 all keep state allow-opts ridentifier {$increment_tracker()} label "let out anything IPv6 from firewall host itself"
 

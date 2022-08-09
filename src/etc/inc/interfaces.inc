@@ -450,7 +450,7 @@ function interface_vlan_configure(&$vlan, $flush = true) {
 	/* configure interface if assigned */
 	$assignedif = convert_real_interface_to_friendly_interface_name($vlanif);
 	if ($assignedif) {
-		if (isset($config['interfaces'][$assignedif]['enable'])) {
+		if (config_path_enabled("interfaces/{$assignedif}/enable")) {
 			interface_configure($assignedif, true);
 		}
 	}
@@ -3118,8 +3118,7 @@ function interface_ipalias_configure(&$vip) {
 	$realif = get_real_interface("_vip{$vip['uniqid']}");
 	if ($realif != "lo0") {
 		$if = convert_real_interface_to_friendly_interface_name($realif);
-		if (!isset($config['interfaces'][$if]) ||
-		    !isset($config['interfaces'][$if]['enable'])) {
+		if (config_path_enabled("interfaces/{$if}")) {
 			return;
 		}
 		if (is_pseudo_interface($realif)) {
@@ -3165,8 +3164,7 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias
 		return;
 	}
 	if ($realif != "lo0") {
-		if (!isset($config['interfaces'][$vip['interface']]) ||
-		    !isset($config['interfaces'][$vip['interface']]['enable'])) {
+		if (!config_path_enabled("interfaces/{$vip['interface']}")) {
 			return;
 		}
 	}
@@ -3809,7 +3807,7 @@ EOD;
 				$friendly_if = convert_real_interface_to_friendly_interface_name($clone_if);
 				if ((!empty($friendly_if)) &&
 				    ($config['interfaces'][$friendly_if]['wireless']['mode'] == "bss") &&
-				    (isset($config['interfaces'][$friendly_if]['wireless']['wpa']['enable']))) {
+				    config_path_enabled("interfaces/{$friendly_if}/wireless/wpa")) {
 					mwexec("/bin/sh {$g['tmp_path']}/" . escapeshellarg($clone_if) . "_setup.sh");
 				}
 			}
@@ -4437,11 +4435,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* reload ipsec tunnels */
 			send_event("service reload ipsecdns");
 
-			if (isset($config['dnsmasq']['enable'])) {
+			if (config_path_enabled('dnsmasq')) {
 				services_dnsmasq_configure();
 			}
 
-			if (isset($config['unbound']['enable'])) {
+			if (config_path_enabled('unbound')) {
 				services_unbound_configure();
 			}
 
@@ -4526,10 +4524,10 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 		}
 
 		/* restart dns servers (defering dhcpd reload) */
-		if (isset($config['unbound']['enable'])) {
+		if (config_path_enabled('unbound')) {
 			services_unbound_configure(false);
 		}
-		if (isset($config['dnsmasq']['enable'])) {
+		if (config_path_enabled('dnsmasq')) {
 			services_dnsmasq_configure(false);
 		}
 
@@ -7709,13 +7707,13 @@ function restart_interface_services($interface, $ipv6type = "") {
 		services_radvd_configure();
 	}
 
-	if (isset($config['dhcpd'][$interface]['enable']) ||
-	    isset($config['dhcpdv6'][$interface]['enable'])) {
+	if (config_path_enabled("dhcpd/{$interface}") ||
+	    config_path_enabled("dhcpdv6/{$interface}")) {
 		services_dhcpd_configure();
 	}
 
 	init_config_arr(array('syslog'));
-	if (isset($config['syslog']['enable']) && ($interface == $config['syslog']['sourceip'])) {
+	if (config_path_enabled('syslog') && ($interface == config_get_path('syslog/sourceip'))) {
 		system_syslogd_start();
 	}
 }

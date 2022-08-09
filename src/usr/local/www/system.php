@@ -112,7 +112,7 @@ function is_timezone($elt) {
 }
 
 if ($pconfig['timezone'] <> $_POST['timezone']) {
-	filter_pflog_start(true);
+	filter_pflog_start();
 }
 
 $timezonelist = system_get_timezone_list();

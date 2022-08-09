@@ -190,7 +190,7 @@ function fix_rule_label($descr) {
 }
 
 function is_bogonsv6_used($force = false) {
-	global $config, $g;
+	global $config;
 	# Only use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled.
 	$usebogonsv6 = false;
 	if (config_path_enabled('system','ipv6allow') || $force) {
@@ -204,7 +204,7 @@ function is_bogonsv6_used($force = false) {
 	return $usebogonsv6;
 }
 
-function filter_pflog_start($kill_first = false) {
+function filter_pflog_start() {
 	global $config, $g;
 
 	if (isset($config['system']['developerspew'])) {
@@ -219,8 +219,6 @@ function filter_pflog_start($kill_first = false) {
 
 /* reload filter async */
 function filter_configure() {
-	global $g;
-
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure() being called $mt\n";
@@ -240,8 +238,9 @@ function filter_delete_states_for_down_gateways() {
 
 	$any_gateway_down = false;
 	$a_gateways = return_gateways_status();
+	$gateway = "";
 	if (is_array($GatewaysList)) {
-		foreach ($GatewaysList as $gwname => $gateway) {
+		foreach ($GatewaysList as $gateway) {
 			/* Skip irrelevant or invalid gateway entries */
 			$last_gw = '';
 			if (empty($gateway['monitor']) ||
@@ -312,7 +311,7 @@ function filter_delete_states_for_down_gateways() {
 
 /* reload filter sync */
 function filter_configure_sync($delete_states_if_needed = true) {
-	global $config, $g, $after_filter_configure_run, $FilterIflist;
+	global $config, $g, $after_filter_configure_run;
 	global $time_based_rules, $filterdns, $aliases, $dummynet_name_list;
 	global $tracker, $negate_tracker, $vpns_list;
 	$tracker = TRACKER_DEFAULT;
@@ -349,7 +348,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Generating Limiter rules"));
-	$dummynet_rules = filter_generate_dummynet_rules();
+	filter_generate_dummynet_rules();
 	$dummynet_name_list = get_unique_dnqueue_list();
 	update_filter_reload_status(gettext("Generating NAT rules"));
 	/* generate nat rules */
@@ -727,7 +726,7 @@ function filter_generate_scrubing() {
 	}
 
 	/* disable scrub option */
-	foreach ($FilterIflist as $scrubif => $scrubcfg) {
+	foreach ($FilterIflist as $scrubcfg) {
 		if (isset($scrubcfg['virtual']) || empty($scrubcfg['descr'])) {
 			continue;
 		}
@@ -1059,7 +1058,7 @@ function filter_generate_gateways() {
 				}
 				/* see "Load balancing fails when one gateway has a weight of 1 
 				* and another gateway has a weight >1", https://redmine.pfsense.org/issues/6025 */
-				foreach ($members as $idx => $member) {
+				foreach ($members as $member) {
 					if ((int) $member['weight'] == 1) {
 						$weight1 = true;
 					} elseif ((int) $member['weight'] > 1) {
@@ -1071,7 +1070,7 @@ function filter_generate_gateways() {
 				} else {
 					$mult = 1;
 				}
-				foreach ($members as $idx => $member) {
+				foreach ($members as $member) {
 					$int = $member['int'];
 					$gatewayip = $member['gwip'];
 					if (!empty($int) && is_ipaddr($gatewayip) &&
@@ -1232,7 +1231,7 @@ function filter_get_vpns_list() {
  * optionally returns an array instead, including friendly interface and gateway (if applicable)
  */
 function filter_get_direct_networks_list($returnsubnetsonly = true) {
-	global $config, $FilterIflist, $GatewaysList;
+	global $FilterIflist, $GatewaysList;
 	/* build list of directly connected interfaces and networks */
 	$networks = "";
 	$networks_arr = array();
@@ -1264,7 +1263,7 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 		}
 	}
 	$viplist = get_configured_vip_list();
-	foreach ($viplist as $vid => $address) {
+	foreach (array_keys($viplist) as $vid) {
 		$vip = get_configured_vip($vid);
 		$subnet = "{$vip['subnet']}/{$vip['subnet_bits']}";
 		if (is_subnet($subnet) && !(is_subnetv4($subnet) && $vip['subnet_bits'] == 32) && !(is_subnetv6($subnet) && $vip['subnet_bits'] == 128)) {
@@ -1453,7 +1452,7 @@ function filter_generate_optcfg_array() {
 }
 
 function filter_flush_nat_table() {
-	global $config, $g;
+	global $config;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_flush_nat_table() being called $mt\n";
@@ -1970,7 +1969,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 }
 
 function filter_nat_rules_outbound_automatic($src) {
-	global $config, $FilterIflist;
+	global $FilterIflist;
 
 	$rules = array();
 	foreach ($FilterIflist as $if => $ifcfg) {
@@ -2011,7 +2010,7 @@ function filter_nat_rules_outbound_automatic($src) {
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
 function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
-	global $config, $FilterIflist;
+	global $FilterIflist;
 
 	/* XXX: billm - any idea if this code is needed? */
 	if ($src == "/32" || $src == "/128" || $src[0] == "/") {
@@ -2181,7 +2180,7 @@ EOD;
 }
 
 function filter_nat_rules_generate() {
-	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $aliases;
+	global $config, $g, $FilterIflist;
 
 	init_config_arr(array('ipsec', 'client'));
 	$ipsec_client = $config['ipsec']['client'];
@@ -2830,7 +2829,6 @@ function filter_nat_rules_generate() {
 }
 
 function filter_generate_user_rule_arr($rule) {
-	global $config, $vpns_list;
 	update_filter_reload_status(sprintf(gettext("Creating filter rule %s ..."), $rule['descr']));
 	$ret = array();
 	$extralabels = "";
@@ -2939,7 +2937,7 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 }
 
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
-	global $FilterIflist, $config;
+	global $FilterIflist;
 	$src = "";
 
 	if (isset($rule[$target]['any'])) {
@@ -3118,7 +3116,6 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		return "# rule " . $rule['descr'] . " disabled \n";
 	}
 	update_filter_reload_status(sprintf(gettext("Creating filter rules %s ..."), $rule['descr']));
-	$int = "";
 	$aline = array();
 
 	/* Check to see if the interface is in our list */
@@ -3578,9 +3575,8 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 }
 
 function filter_rules_generate() {
-	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList,
-	       $tracker, $vlanprio_values, $antilockout_tracker,
-	       $bogons_tracker, $rfc1918_tracker, $vpn_and_ppp_ifs;
+	global $config, $FilterIflist, $time_based_rules, $GatewaysList,
+	       $tracker, $vlanprio_values, $vpn_and_ppp_ifs;
 
 	$fix_rule_label = 'fix_rule_label';
 	$increment_tracker = 'filter_rule_tracker';
@@ -4264,10 +4260,10 @@ EOD;
 }
 
 function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
-	global $g, $config, $tracker;
+	global $config, $tracker;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "filter_rules_spoofcheck_generate() being called $mt\n";
+		echo "filter_rules_spoofcheck_generate() being called for ${ifname} at {$mt}\n";
 	}
 	$ipfrules = "antispoof {$log['block']} for \${$ifcfg['descr']} ridentifier {$tracker}\n";
 	$tracker++;
@@ -4285,7 +4281,7 @@ function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
  *   none
  ******/
 function filter_tdr_install_cron($should_install) {
-	global $config, $g;
+	global $config;
 
 	if (platform_booting() == true) {
 		return;
@@ -4500,7 +4496,7 @@ function filter_setup_logging_interfaces() {
 }
 
 function filter_process_carp_rules($log) {
-	global $g, $config, $tracker;
+	global $config;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -4520,7 +4516,7 @@ function filter_process_carp_rules($log) {
 
 /* Generate IPsec Filter Items */
 function filter_generate_ipsec_rules($log = array()) {
-	global $config, $g, $FilterIflist, $tracker;
+	global $config, $FilterIflist, $tracker;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -4788,7 +4784,7 @@ function ifridx($if, $ridx) {
 
 	$i = $ifridx = 0;
 	if (is_array($config['filter']['rule'])) {
-		foreach ($config['filter']['rule'] as $rulen => $filterent) {
+		foreach ($config['filter']['rule'] as $filterent) {
 			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
 				if ($i == $ridx) {
 					return $ifridx;
@@ -4804,7 +4800,7 @@ function ifridx($if, $ridx) {
 /* display rules separators */
 function display_separator($separators, $nrules, $columns_in_table) {
 	if (is_array($separators)) {
-		foreach ($separators as $sepn => $separator) {
+		foreach ($separators as $separator) {
 			if ($separator['row'][0] == "fr" . $nrules) {
 				$cellcolor = $separator['color'];
 				print('<tr class="ui-sortable-handle separator">' .
@@ -4818,9 +4814,8 @@ function display_separator($separators, $nrules, $columns_in_table) {
 
 /* Return a list of separator rows */
 function separator_rows($separators) {
-	$seprowns = array();
 	if (is_array($separators)) {
-		foreach ($separators as $sepn => $separator) {
+		foreach ($separators as $separator) {
 			$seprows[substr($separator['row']['0'], 2)] = true;
 		}
 	}

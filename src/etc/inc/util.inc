@@ -421,6 +421,7 @@ function text_to_compressed_ip6($text) {
 	// but maybe the user entered it like that.
 	// The "force" parameter will ensure it is returned as:
 	// 2001:0:0:4::1
+	$text = explode('%', $text)[0]; //remove %ifname from address
 	return Net_IPv6::compress($text, true);
 }
 

@@ -252,8 +252,9 @@ function enable_rrd_graphing() {
 		/* IPsec counters */
 		$ifdescrs['ipsec'] = "IPsec";
 		/* OpenVPN server counters */
-		if (is_array($config['openvpn']['openvpn-server'])) {
-			foreach ($config['openvpn']['openvpn-server'] as $server) {
+		$ovpncfg = config_get_path('openvpn/openvpn-server');
+		if (is_array($ovpncfg)) {
+			foreach ($ovpncfg as $server) {
 				$serverid = "ovpns" . $server['vpnid'];
 				$ifdescrs[$serverid] = "{$server['description']}";
 			}
@@ -378,8 +379,9 @@ function enable_rrd_graphing() {
 					mwexec("$rrdtool update $rrddbpath$ifname$vpnusers N:U");
 				}
 
-				if (is_array($config['openvpn']['openvpn-server'])) {
-					foreach ($config['openvpn']['openvpn-server'] as $server) {
+				$ovpncfg = config_get_path('openvpn/openvpn-server');
+				if (is_array($ovpncfg)) {
+					foreach ($ovpncfg as $server) {
 						if ("ovpns{$server['vpnid']}" == $ifname) {
 							$port = $server['local_port'];
 							$vpnid = $server['vpnid'];

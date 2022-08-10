@@ -4114,7 +4114,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
 	global $interface_snv6_arr_cache, $interface_ipv6_arr_cache;
 
-	$wancfg = config_get_path('interfaces/{$interface}');
+	$wancfg = config_get_path("interfaces/{$interface}");
 
 	if (!isset($wancfg['enable'])) {
 		return;

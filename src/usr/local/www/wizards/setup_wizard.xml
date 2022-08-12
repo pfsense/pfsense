@@ -133,8 +133,8 @@
 	<stepbeforeformdisplay>
 		<![CDATA[
 		init_config_arr(array('wizardtemp', 'system'));
-		$config['wizardtemp']['system']['hostname'] = $config['system']['hostname'];
-		$config['wizardtemp']['system']['domain'] = $config['system']['domain'];
+		config_set_path('wizardtemp/system/hostname', config_get_path('system/hostname'));
+		config_set_path('wizardtemp/system/domain', config_get_path('system/domain'));
 		]]>
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
@@ -467,15 +467,23 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
-		if (empty($config['interfaces']['wan']['gateway'])) {
+		$wangw = config_get_path('interfaces/wan/gateway');
+		$wizard_wangw = config_get_path('wizardtemp/wangateway');
+		$gws = config_get_path('gateways/gateway_item');
+		if (empty($wangw)) {
 			$wangw_name = "WANGW";
 		} else {
-			$wangw_name = $config['interfaces']['wan']['gateway'];
+			$wangw_name = $wangw;
 		}
-		if (is_array($config['gateways']['gateway_item']))
-			foreach ($config['gateways']['gateway_item'] as $gw)
-				if ($gw['name'] == $wangw_name || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway']))
-					$config['wizardtemp']['wangateway'] = $gw['gateway'];
+
+		if (is_array($gws)) {
+			foreach ($gws as $gw) {
+				if ($gw['name'] == $wangw_name ||
+				    (!empty($wizard_wangw) && $gw['gateway'] == $wizard_wangw)) {
+				    	$wizard_wangw = $gw['gateway'];
+				}
+			}
+		}
 		]]>
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>

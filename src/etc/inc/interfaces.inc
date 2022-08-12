@@ -7774,7 +7774,7 @@ function get_interface_addresses($interface) {
 	   });
 	}
 
-	if ($ifaddrs['addrs']) {
+	if ($ifaddrs['addrs6']) {
 	   $v6addrs = array_filter($ifaddrs['addrs6'], function($addr) use ($v6vips){
 		  return (array_search($addr['addr'], $v6vips) === false);
 	   });
@@ -7793,10 +7793,13 @@ function get_interface_addresses($interface) {
 	if ($v6addrs) {
 		$v6addr = array_pop($v6addrs);
 		$ifaddrs['ipaddr6'] = $v6addr['addr'];
-		foreach(array("subnetbits6", "tentative", "tunnel6") as $key) {
-			if (array_key_exists($key, $v6addrs)) {
-				$ifaddrs[$key] = $v6addr[$key];
+		foreach(array("subnetbits", "tunnel") as $key) {
+			if (array_key_exists($key, $v6addr)) {
+				$ifaddrs[$key.'6'] = $v6addr[$key];
 			}
+		}
+		if (array_key_exists('tentative', $v6addr)) {
+			$ifaddrs['tentative'] = $v6addr['tentative'];
 		}
 	}
 	unset($ifaddrs['addrs']);

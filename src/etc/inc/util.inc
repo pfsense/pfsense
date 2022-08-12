@@ -1365,7 +1365,8 @@ function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
 	$list = array();
-	if (!is_array($config['virtualip']) ||
+	if (!array_key_exists('virtualip', $config) ||
+		!is_array($config['virtualip']) ||
 	    !is_array($config['virtualip']['vip']) ||
 	    empty($config['virtualip']['vip'])) {
 		return ($list);
@@ -1541,7 +1542,7 @@ function get_configured_interface_with_descr($withdisabled = false) {
 		}
 	}
 
-	if ($user_settings['webgui']['interfacessort']) {
+	if (is_array($user_settings) && array_get_path($user_settings, 'webgui/interfacessort')) {
 		asort($iflist);
 	}
 
@@ -3361,6 +3362,70 @@ function array_remove_duplicate($array, $field) {
 		$new[] = $array[$k];
 	}
 	return $new;
+}
+
+/**
+ * Return a value specified by a path of keys in a nested array, if it exists
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @param $default mixed value to return if the path is not found
+ * @returns mixed value at path or $default if the path does not exist
+ */
+function array_get_path(array &$arr, string $path, $default = null) {
+	$vpath = mb_split('/', $path);
+	$el = $arr;
+	foreach ($vpath as $key) {
+		if (is_array($el) && array_key_exists($key, $el)) {
+			$el = $el[$key];
+		} else {
+			return ($default);
+		}
+	}
+	return ($el);
+}
+
+/**
+ * Set a value by path in the config. If the path cannot be reached because an
+ * intermediary does not exist, return null
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @param $val mixed 
+ * @param $default mixed value to return if the path is not found
+ * @returns mixed $val or $default if the path prefix does not exist
+ */
+function array_set_path(array &$arr, string $path, $value, $default = null) {
+	$vpath = mb_split('/', $path);
+	$vkey = array_pop($vpath);
+	$el =& $arr;
+	foreach ($vpath as $key) {
+		if (is_array($el) && array_key_exists($key, $el)) {
+			$el =& $el[$key];
+		} else {
+			return ($default);
+		}
+	}
+	$el[$vkey] =& $value;
+	return ($value);
+}
+
+/**
+ * Determine whether a path in a nested array has a non-null value keyed
+ * 'enabled'. Some parts of the config historically identify services as enabled
+ * by having a key to a non-null value named 'enable', and checking it with
+ * isset(). This can be counter-intuitive as isset() will return true if the
+ * array element is any non-null value that evaluates to false.
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @param $enable_key string an optional alternative key value for the enable key
+ * @returns bool true if $enable_key exists in the array at $path, and has a
+ * non-null value, otherwise false
+ */
+function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
+	$el = config_get_path($path, []);
+	if (is_array($el) && isset($el[$enable_key])) {
+		return (true);
+	}
+	return (false);
 }
 
 function dhcpd_date_adjust_gmt($dt) {

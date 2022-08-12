@@ -26,6 +26,8 @@
  * limitations under the License.
  */
 
+require_once('util.inc');
+
 /****f* config/encrypted_configxml
  * NAME
  *   encrypted_configxml - Checks to see if config.xml is encrypted and if so, prompts to unlock.
@@ -1209,16 +1211,7 @@ function init_config_arr($keys) {
  */
 function config_get_path(string $path, $default = null) {
 	global $config;
-	$vpath = mb_split('/', $path);
-	$el = $config;
-	foreach ($vpath as $key) {
-		if (is_array($el) && array_key_exists($key, $el)) {
-			$el = $el[$key];
-		} else {
-			return ($default);
-		}
-	}
-	return ($el);
+	return(array_get_path($config, $path, $default));
 }
 
 /**
@@ -1231,18 +1224,7 @@ function config_get_path(string $path, $default = null) {
  */
 function config_set_path(string $path, $value, $default = null) {
 	global $config;
-	$vpath = mb_split('/', $path);
-	$vkey = array_pop($vpath);
-	$el =& $config;
-	foreach ($vpath as $key) {
-		if (is_array($el) && array_key_exists($key, $el)) {
-			$el =& $el[$key];
-		} else {
-			return ($default);
-		}
-	}
-	$el[$vkey] =& $value;
-	return ($value);
+	return (array_set_path($config, $path, $default));
 }
 
 /**
@@ -1257,11 +1239,8 @@ function config_set_path(string $path, $value, $default = null) {
  * non-null value, otherwise false
  */
 function config_path_enabled(string $path, $enable_key = "enable") {
-	$el = config_get_path($path, []);
-	if (is_array($el) && isset($el[$enable_key])) {
-		return (true);
-	}
-	return (false);
+	global $config;
+	return (array_path_enabled($config, $path, $enable_key));
 }
 
 register_shutdown_function('pfSense_clear_globals');

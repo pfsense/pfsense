@@ -252,7 +252,9 @@ function interface_is_vlan($if = NULL) {
 	}
 
 	/* Check basic format. */
-	list($vlanif, $vlantag) = explode(".", $if);
+	$items = explode(".", $if, 2);
+	$vlanif = array_shift($items);
+	$vlantag = array_shift($items);
 	if (empty($vlanif) || empty($vlantag) || !vlan_valid_tag($vlantag)) {
 		return (NULL);
 	}

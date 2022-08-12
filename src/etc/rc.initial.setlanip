@@ -27,6 +27,7 @@
  */
 
 $options = getopt("hn", array("dry-run", "help"));
+$restart_webgui = false;
 
 if (isset($options["h"]) || isset($options["help"])) {
 	echo "usage: /etc/rc.initial.setlanip [option ...]\n";

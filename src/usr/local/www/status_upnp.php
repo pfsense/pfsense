@@ -70,6 +70,7 @@ if (!$config['installedpackages'] ||
 					<tr>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Protocol")?></th>
+						<th><?=gettext("Source IP")?></th>
 						<th><?=gettext("Ext IP")?></th>
 						<th><?=gettext("Port")?></th>
 						<th><?=gettext("Int IP")?></th>
@@ -84,7 +85,7 @@ $i = 0;
 foreach ($rdr_entries as $rdr_entry) {
 	/* rdr log quick on igb2 inet proto tcp from any to any port = xxxxx keep state label "xxxxx" rtable 0 -> xxx.xxx.xxx.xxx port xxxxx */
 	/* rdr log quick on igb2 inet proto udp from any to xxx.xxx.xxx.xxx port = xxxxxx keep state label "xxxxx" rtable 0 -> xxx.xxx.xxx.xxx port xxxxx */
-	if (preg_match("/on (?P<iface>.*) inet proto (?P<proto>.*) from any to (?P<extaddr>.*) port = (?P<extport>.*) keep state label \"(?P<descr>.*)\" rtable [0-9] -> (?P<intaddr>.*) port (?P<intport>.*)/", $rdr_entry, $matches)) {
+	if (preg_match("/on (?P<iface>.*) inet proto (?P<proto>.*) from (?P<srcaddr>.*) to (?P<extaddr>.*) port = (?P<extport>.*) keep state (label \"(?P<descr>.*)\" )?rtable [0-9] -> (?P<intaddr>.*) port (?P<intport>.*)/", $rdr_entry, $matches)) {
 ?>
 					<tr>
 						<td>
@@ -92,6 +93,9 @@ foreach ($rdr_entries as $rdr_entry) {
 						</td>
 						<td>
 							<?= htmlspecialchars($matches['proto']) ?>
+						</td>
+						<td>
+							<?= htmlspecialchars($matches['srcaddr']) ?>
 						</td>
 						<td>
 							<?= htmlspecialchars($matches['extaddr']) ?>

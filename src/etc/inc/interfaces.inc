@@ -7611,16 +7611,13 @@ function build_ppps_link_list() {
 }
 
 function create_interface_list($open = false) {
-	global $config;
-
 	$iflist = array();
 
 	// add group interfaces
-	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-			if ($open || have_ruleint_access($ifgen['ifname'])) {
-				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-			}
+	config_get_path('ifgroups/ifgroupentry', []);
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+		if ($open || have_ruleint_access($ifgen['ifname'])) {
+			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 		}
 	}
 
@@ -7630,7 +7627,7 @@ function create_interface_list($open = false) {
 		}
 	}
 
-	if ($config['l2tp']['mode'] == "server" && ($open || have_ruleint_access("l2tp"))) {
+	if (config_get_path('l2tp/mode', "") == "server" && ($open || have_ruleint_access("l2tp"))) {
 		$iflist['l2tp'] = gettext('L2TP VPN');
 	}
 
@@ -7644,7 +7641,7 @@ function create_interface_list($open = false) {
 	}
 
 	// add openvpn/tun interfaces
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+	if (config_get_path('openvpn/openvpn-server') || config_get_path('openvpn/openvpn-client')) {
 		$iflist["openvpn"] = gettext("OpenVPN");
 	}
 

@@ -39,7 +39,7 @@ if (!$nocsrf) {
 	function csrf_startup() {
 		global $config;
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
+		$timeout_minutes = config_get_path('system/webgui/session_timeout', 240);
 		csrf_conf('expires', $timeout_minutes * 60);
 		csrf_conf('callback', 'pfSense_csrf_callback');
 	}
@@ -904,13 +904,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 }
 
 function add_package_tabs($tabgroup, &$tab_array) {
-	global $config, $g;
-
-	if (!isset($config['installedpackages']['package'])) {
-		return;
-	}
-
-	foreach ($config['installedpackages']['package'] as $pkg) {
+	foreach (config_get_path('installedpackages/package', []) as $pkg) {
 		if (!is_array($pkg['tabs']['tab'])) {
 			continue;
 		}
@@ -933,12 +927,12 @@ function add_package_tabs($tabgroup, &$tab_array) {
 function alias_info_popup($alias_id) {
 	global $config, $user_settings;
 
-	if (!is_array($config['aliases']['alias'][$alias_id])) {
+	$alias = config_get_path("aliases/alias/{$alias_id}");
+	if (!is_array($alias)) {
 		return;
 	}
 
 	$maxlength = 60;
-	$alias = $config['aliases']['alias'][$alias_id];
 	$content = "";
 
 	if ($user_settings['webgui']['disablealiaspopupdetail']) {
@@ -995,8 +989,6 @@ function alias_info_popup($alias_id) {
 }
 
 function gateway_info_popup($showgw, $gateways_status = false) {
-	global $config, $user_settings;
-
 	init_config_arr(array('gateways', 'gateway_group'));
 	$a_gateways = return_gateways_array(true, false, true, true);
 
@@ -1022,16 +1014,14 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 			}
 		}
 	}
-	if (is_array($config['gateways']['gateway_group'])) {
-		foreach($config['gateways']['gateway_group'] as $i => $gwgroup) {
-			if ($gwgroup['name'] == $showgw) {
-				foreach ($gwgroup['item'] as $member) {
-					$membersplit = explode("|", $member);
-					$gws[] = $membersplit[0];
-				}
-				$link = "system_gateway_groups_edit.php?id={$i}";
-				break;
+	foreach(config_get_path('gateways/gateway_group') as $i => $gwgroup) {
+		if ($gwgroup['name'] == $showgw) {
+			foreach ($gwgroup['item'] as $member) {
+				$membersplit = explode("|", $member);
+				$gws[] = $membersplit[0];
 			}
+			$link = "system_gateway_groups_edit.php?id={$i}";
+			break;
 		}
 	}
 
@@ -1057,12 +1047,13 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 					}
 				}
 			}
+			$iface = lookup_gateway_interface_by_name($gw);
 			$content .= "	<tr class='{$bgcolor}'>\n";
 			$content .= "		<td>\n";
 			$content .= 			$gw;
 			$content .=	"		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
-			$content .= 			$config['interfaces'][lookup_gateway_interface_by_name($gw)]['descr'];
+			$content .= 			config_get_path('interfaces/{$iface}/descr', "");
 			$content .=	"		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
 			$content .= 			lookup_gateway_ip_by_name($gw);
@@ -1080,14 +1071,8 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 }
 
 function rule_columns_with_alias($src, $srcport, $dst, $dstport, $target="", $targetport="") {
-	global $config;
-
-	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias'])) {
-		return;
-	}
-
 	$columns = array();
-	foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
+	foreach (config_get_path('aliases/alias', []) as $alias_id => $alias_name) {
 		if ($alias_name['name'] == $src) {
 			$columns['src'] = $alias_id;
 		}
@@ -1159,9 +1144,9 @@ function getGETPOSTsettingvalue($settingname, $default) {
 }
 
 /* set timezone */
-if (isset($config['system']['timezone']) &&
-    !empty($config['system']['timezone'])) {
-	$timezone = $config['system']['timezone'];
+$cfgtz = config_get_path('system/timezone');
+if ($cfgtz) {
+	$timezone = $cfgtz;
 } elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
 	$timezone = $g['default_timezone'];
 } else {

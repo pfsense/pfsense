@@ -363,10 +363,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
 <?php }
 
 function fixup_string($string) {
-	global $config, $g, $myurl, $title;
+	global $g, $myurl, $title;
 	$newstring = $string;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
-	switch ($config['system']['webgui']['protocol']) {
+	switch (config_get_path('system/webgui/protocol')) {
 		case "http":
 			$proto = "http";
 			break;
@@ -377,7 +377,7 @@ function fixup_string($string) {
 			$proto = "http";
 			break;
 	}
-	$port = $config['system']['webgui']['port'];
+	$port = config_get_path('system/webgui/port', "");
 	if ($port != "") {
 		if (($port == "443" and $proto != "https") or ($port == "80" and $proto != "http")) {
 			$urlport = ":" . $port;
@@ -390,20 +390,25 @@ function fixup_string($string) {
 
 	$http_host = $_SERVER['HTTP_HOST'];
 	$urlhost = $http_host;
+	$hostname = config_get_path('system/hostname');
+	$fqdn = $hostname . '.' . config_get_path('system/domain');
+	$wizard_hostname = config_get_path('wizardtemp/system/hostname');
+	$wizard_fqdn = $wizard_hostname . '.' . config_get_path('wizardtempsystem/domain');
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if ($title == "Reload in progress") {
 		if (is_ipaddr($urlhost)) {
 			$host_if = find_ip_interface($urlhost);
 			if ($host_if) {
 				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
-				if ($host_if && is_ipaddr($config['interfaces'][$host_if]['ipaddr'])) {
-					$urlhost = $config['interfaces'][$host_if]['ipaddr'];
+				$host_if_ip = config_get_path("interfaces/{$host_if}/ipaddr");
+				if ($host_if && is_ipaddr($host_if_ip)) {
+					$urlhost = $host_if_ip;
 				}
 			}
-		} else if ($urlhost == $config['system']['hostname']) {
-			$urlhost = $config['wizardtemp']['system']['hostname'];
-		} else if ($urlhost == $config['system']['hostname'] . '.' . $config['system']['domain']) {
-			$urlhost = $config['wizardtemp']['system']['hostname'] . '.' . $config['wizardtemp']['system']['domain'];
+		} else if ($urlhost == $hostname) {
+			$urlhost = $wizard_hostname;
+		} else if ($urlhost == $fqdn)  {
+			$urlhost = $wizard_fqdn;
 		}
 	}
 
@@ -1002,14 +1007,12 @@ print($form);
 		$aliases = "";
 		$addrisfirst = 0;
 		$aliasesaddr = "";
-		if ($config['aliases']['alias'] != "" and is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias_name) {
-				if ($isfirst == 1) {
-					$aliases .= ",";
-				}
-				$aliases .= "'" . $alias_name['name'] . "'";
-				$isfirst = 1;
+		foreach (config_get_path('aliases/alias', []) as $alias_name) {
+			if ($isfirst == 1) {
+				$aliases .= ",";
 			}
+			$aliases .= "'" . $alias_name['name'] . "'";
+			$isfirst = 1;
 		}
 	?>
 

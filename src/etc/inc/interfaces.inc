@@ -6272,10 +6272,9 @@ function interface_find_child_cfgmtu($realiface) {
 			if (empty($ifass)) {
 				continue;
 			}
-			if (!empty($config['interfaces'][$ifass]['mtu'])) {
-				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
-					$mtu = intval($config['interfaces'][$ifass]['mtu']);
-				}
+			$vlanmtu = config_get_path("interfaces/{$ifass}/mtu");
+			if ($vlanmtu && (intval($vlanmtu) > $mtu)) {
+				$mtu = $vlanmtu;
 			}
 		}
 	}
@@ -6285,10 +6284,10 @@ function interface_find_child_cfgmtu($realiface) {
 			if (empty($ifass)) {
 				continue;
 			}
-			if (!empty($config['interfaces'][$ifass]['mtu'])) {
-				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
-					$mtu = intval($config['interfaces'][$ifass]['mtu']);
-				}
+
+			$qinqmtu = config_get_path("interfaces/{$ifass}/mtu");
+			if ($qinqmtu && (intval($qinqmtu) > $mtu)) {
+				$mtu = $qinqmtu;
 			}
 		}
 	}
@@ -6297,10 +6296,10 @@ function interface_find_child_cfgmtu($realiface) {
 		if (empty($ifass)) {
 			continue;
 		}
-		if (!empty($config['interfaces'][$ifass]['mtu'])) {
-			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
-				$mtu = intval($config['interfaces'][$ifass]['mtu']);
-			}
+
+		$gifmtu = config_get_path("interfaces/{$ifass}/mtu");
+		if ($gifmtu && (intval($gifmtu) > $mtu)) {
+			$mtu = $gifmtu;
 		}
 	}
 	foreach ($gres as $gre) {
@@ -6308,16 +6307,16 @@ function interface_find_child_cfgmtu($realiface) {
 		if (empty($ifass)) {
 			continue;
 		}
-		if (!empty($config['interfaces'][$ifass]['mtu'])) {
-			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
-				$mtu = intval($config['interfaces'][$ifass]['mtu']);
-			}
+		$gremtu = config_get_path("interfaces/{$ifass}/mtu");
+		if ($gremtu && (intval($gremtu) > $mtu)) {
+			$mtu = $gremtu;
 		}
 	}
 	$ifass = convert_real_interface_to_friendly_interface_name($bridge);
-	if (!empty($ifass) && !empty($config['interfaces'][$ifass]['mtu'])) {
-		if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
-			$mtu = intval($config['interfaces'][$ifass]['mtu']);
+	$ifassmtu = config_get_path("interfaces/{$ifass}/mtu");
+	if (!empty($ifass) && !empty($ifassmtu)) {
+		if ($ifassmtu > $mtu) {
+			$mtu = $ifassmtu;
 		}
 	}
 	unset($vlans, $bridge, $gifs, $gres, $ifass, $vlan);
@@ -6326,82 +6325,71 @@ function interface_find_child_cfgmtu($realiface) {
 }
 
 function link_interface_to_vlans($int, $action = "") {
-	global $config;
-
 	if (empty($int)) {
 		return;
 	}
 
-	if (is_array($config['vlans']['vlan'])) {
-		$ifaces = array();
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if ($int == $vlan['if']) {
-				if ($action == "update") {
-					interfaces_bring_up($int);
-				} else {
-					$ifaces[$vlan['tag']] = $vlan;
-				}
+	$ifaces = array();
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if ($int == $vlan['if']) {
+			if ($action == "update") {
+				interfaces_bring_up($int);
+			} else {
+				$ifaces[$vlan['tag']] = $vlan;
 			}
 		}
-		if (!empty($ifaces)) {
-			return $ifaces;
-		}
+	}
+	if (!empty($ifaces)) {
+		return $ifaces;
 	}
 }
 
 function link_interface_to_qinqs($int, $action = "") {
-	global $config;
-
 	if (empty($int)) {
 		return;
 	}
 
-	if (is_array($config['qinqs']['qinqentry'])) {
-		$ifaces = array();
-		foreach ($config['qinqs']['qinqentry'] as $qinq) {
-			if ($int == $qinq['if']) {
-				if ($action == "update") {
-					interfaces_bring_up($int);
-				} else {
-					$ifaces[$qinq['tag']] = $qinq;
-				}
+	$ifaces = array();
+	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
+		if ($int == $qinq['if']) {
+			if ($action == "update") {
+				interfaces_bring_up($int);
+			} else {
+				$ifaces[$qinq['tag']] = $qinq;
 			}
 		}
-		if (!empty($ifaces)) {
-			return $ifaces;
-		}
+	}
+	if (!empty($ifaces)) {
+		return $ifaces;
 	}
 }
 
 function link_interface_to_vips($int, $action = "", $vhid = '') {
-	global $config;
-
 	$updatevips = false;
-	if (is_array($config['virtualip']['vip'])) {
-		$result = array();
-		foreach ($config['virtualip']['vip'] as $vip) {
-			if (substr($vip['interface'], 0, 4) == "_vip") {
-				$iface = get_configured_vip_interface($vip['interface']);
-			} else {
-				$iface = $vip['interface'];
-			}
-			if ($int != $iface) {
-				continue;
-			}
-			if ($action == "update") {
-				$updatevips = true;
-			} else {
-				if (empty($vhid) || ($vhid == $vip['vhid']) ||
-				    substr($vip['interface'], 0, 4) == "_vip") {
-					$result[] = $vip;
-				}
+
+	$result = array();
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
+		if (substr($vip['interface'], 0, 4) == "_vip") {
+			$iface = get_configured_vip_interface($vip['interface']);
+		} else {
+			$iface = $vip['interface'];
+		}
+		if ($int != $iface) {
+			continue;
+		}
+		if ($action == "update") {
+			$updatevips = true;
+		} else {
+			if (empty($vhid) || ($vhid == $vip['vhid']) ||
+				substr($vip['interface'], 0, 4) == "_vip") {
+				$result[] = $vip;
 			}
 		}
-		if ($updatevips === true) {
-			interfaces_vips_configure($int);
-		}
-		return $result;
 	}
+	if ($updatevips === true) {
+		interfaces_vips_configure($int);
+	}
+	return $result;
 
 	return NULL;
 }
@@ -6415,39 +6403,27 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
  *   bridge[0-99]
  ******/
 function link_interface_to_bridge($int) {
-	global $config;
-
-	if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged'])) {
-		foreach ($config['bridges']['bridged'] as $bridge) {
-			if (in_array($int, explode(',', $bridge['members']))) {
-				return "{$bridge['bridgeif']}";
-			}
+	foreach (config_get_path('bridges/bridged', []) as $bridge) {
+		if (in_array($int, explode(',', $bridge['members']))) {
+			return "{$bridge['bridgeif']}";
 		}
 	}
 }
 
 function link_interface_to_lagg($int) {
-	global $config;
-
-	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
-		foreach ($config['laggs']['lagg'] as $lagg) {
-			if (in_array($int, explode(',', $lagg['members']))) {
-				return "{$lagg['laggif']}";
-			}
+	foreach (config_get_path('laggs/lagg', []) as $lagg) {
+		if (in_array($int, explode(',', $lagg['members']))) {
+			return "{$lagg['laggif']}";
 		}
 	}
 }
 
 function link_interface_to_group($int) {
-	global $config;
-
 	$result = array();
 
-	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $group) {
-			if (in_array($int, explode(" ", $group['members']))) {
-				$result[$group['ifname']] = $int;
-			}
+	foreach (config_get_path('ifgroups/ifgroupentry') as $group) {
+		if (in_array($int, explode(" ", $group['members']))) {
+			$result[$group['ifname']] = $int;
 		}
 	}
 
@@ -6455,8 +6431,6 @@ function link_interface_to_group($int) {
 }
 
 function link_interface_to_tunnelif($interface, $type, $remote = 'any') {
-	global $config;
-
 	$result = array();
 
 	if (empty($interface)) {
@@ -6467,13 +6441,12 @@ function link_interface_to_tunnelif($interface, $type, $remote = 'any') {
 		return $result;
 	}
 
-	if (is_array($config["{$type}s"][$type])) {
-		foreach ($config["{$type}s"][$type] as $tunnel) {
-			if (($tunnel['if'] == $interface) && (($remote == 'any') ||
-			    (is_ipaddrv4($tunnel['remote-addr']) && ($remote == 'inet')) ||
-			    (is_ipaddrv6($tunnel['remote-addr']) && ($remote == 'inet6')))) { 
-				$result[] = $tunnel;
-			}
+	foreach (config_get_path("{$type}s/{$type}", []) as $tunnel) {
+		if (($tunnel['if'] == $interface) &&
+			(($remote == 'any') ||
+			 (is_ipaddrv4($tunnel['remote-addr']) && ($remote == 'inet')) ||
+			 (is_ipaddrv6($tunnel['remote-addr']) && ($remote == 'inet6')))) { 
+			$result[] = $tunnel;
 		}
 	}
 
@@ -6481,8 +6454,6 @@ function link_interface_to_tunnelif($interface, $type, $remote = 'any') {
 }
 
 function link_interface_to_ppp_tunnelif($interface) {
-	global $config;
-
 	$result = array();
 
 	if (empty($interface)) {
@@ -6490,12 +6461,10 @@ function link_interface_to_ppp_tunnelif($interface) {
 	}
 
 	init_config_arr(array('ppps', 'ppp'));
-	if (!empty($config['ppps']['ppp'])) {
-		$realif = get_real_interface($interface);
-		foreach ($config['ppps']['ppp'] as $ppp) {
-			if (($ppp['ports'] == $realif) && in_array($ppp['type'], array('l2tp', 'pptp'))) { 
-				$result[] = $ppp;
-			}
+	$realif = get_real_interface($interface);
+	foreach (config_get_path('ppps/ppp', []) as $ppp) {
+		if (($ppp['ports'] == $realif) && in_array($ppp['type'], array('l2tp', 'pptp'))) { 
+			$result[] = $ppp;
 		}
 	}
 
@@ -6630,24 +6599,20 @@ function find_interface_subnetv6($interface, $flush = false) {
 }
 
 function ip_in_interface_alias_subnet($interface, $ipalias) {
-	global $config;
-
 	if (empty($interface) || !is_ipaddr($ipalias)) {
 		return false;
 	}
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $vip) {
-			switch ($vip['mode']) {
-				case "ipalias":
-					if ($vip['interface'] <> $interface) {
-						break;
-					}
-					$subnet = is_ipaddrv6($ipalias) ? gen_subnetv6($vip['subnet'], $vip['subnet_bits']) : gen_subnet($vip['subnet'], $vip['subnet_bits']);
-					if (ip_in_subnet($ipalias, $subnet . "/" . $vip['subnet_bits'])) {
-						return true;
-					}
-					break;
+	foreach (config_get_path('virtualip/vip',[]) as $vip) {
+		switch ($vip['mode']) {
+		case "ipalias":
+			if ($vip['interface'] <> $interface) {
+				break;
 			}
+			$subnet = is_ipaddrv6($ipalias) ? gen_subnetv6($vip['subnet'], $vip['subnet_bits']) : gen_subnet($vip['subnet'], $vip['subnet_bits']);
+			if (ip_in_subnet($ipalias, $subnet . "/" . $vip['subnet_bits'])) {
+				return true;
+			}
+			break;
 		}
 	}
 
@@ -6683,22 +6648,18 @@ function get_possible_listen_ips($include_ipv6_link_local=false) {
 }
 
 function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
-	global $config;
-
 	$sourceips = get_possible_listen_ips($include_ipv6_link_local);
 	foreach (array('server', 'client') as $mode) {
-		if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-			foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-				if (!isset($setting['disable'])) {
-					$sourceips_key = 'ovpn' . substr($mode, 0, 1) . $setting['vpnid'];
-					$sourceips[$sourceips_key] = gettext("OpenVPN") . " " . $mode . ": " . htmlspecialchars($setting['description']);
-				}
+		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $id => $setting) {
+			if (!isset($setting['disable'])) {
+				$sourceips_key = 'ovpn' . substr($mode, 0, 1) . $setting['vpnid'];
+				$sourceips[$sourceips_key] = gettext("OpenVPN") . " " . $mode . ": " . htmlspecialchars($setting['description']);
 			}
 		}
 	}
 
 	init_config_arr(array('ipsec', 'phase1'));
-	foreach ($config['ipsec']['phase1'] as $p1) {
+	foreach (config_get_path('ipsec/phase1') as $p1) {
 		if ($p1['disabled']) {
 			continue;
 		}
@@ -6753,8 +6714,6 @@ function get_interface_ip($interface = "wan", $gateways_status = false) {
 }
 
 function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallback = false, $gateways_status = false) {
-	global $config;
-
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_vip_ipv6($interface);
 	} elseif (substr($interface, 0, 5) == '_lloc') {
@@ -6792,7 +6751,7 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 
 	/* try to find track6 address, see https://redmine.pfsense.org/issues/5999 */
 	$checkif = is_array($iface) ? $interface : convert_real_interface_to_friendly_interface_name($interface);
-	if (is_array($config['interfaces'][$checkif]) && ($config['interfaces'][$checkif]['ipaddrv6'] == 'track6')) { 
+	if (config_get_path("interfaces/{$checkif}/ipaddrv6'", "") == 'track6') { 
 		$curip = get_interface_track6ip($checkif);
 		if ($curip) {
 			return $curip[0];

@@ -453,27 +453,26 @@ if ($_POST['apply']) {
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
 				$realif = get_real_interface($ifapply);
 				$ifmtu = get_interface_mtu($realif);
-				if (isset($config['interfaces'][$ifapply]['enable'])) {
+				if (config_path_enabled("interfaces/{$ifapply}")) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply, true);
-					if ($config['interfaces'][$ifapply]['ipaddrv6'] == "track6") {
+					if (config_get_path("interfaces/{$ifapply}/ipaddrv6") == "track6") {
 						/* call interface_track6_configure with linkup true so
 						   IPv6 IPs are added back. dhcp6c needs a HUP. Can't
 						   just call interface_configure with linkup true as
 						   that skips bridge membership addition.
 						*/
-						$wancfg = $config['interfaces'][$ifapply];
+						$wancfg = config_get_path("interfaces/{$ifapply}");
 						interface_track6_configure($ifapply, $wancfg, true);
 					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 				}
 				restart_interface_services($ifapply, $ifcfg['ipaddrv6']);
+				$mtu = config_get_path("interfaces/{$ifapply}/mtu");
 				if (interface_has_clones($realif) &&
-				    (isset($config['interfaces'][$ifapply]['mtu']) &&
-				    ($config['interfaces'][$ifapply]['mtu'] != $ifmtu)) ||
-				    (!isset($config['interfaces'][$ifapply]['mtu']) &&
-				    (get_interface_default_mtu() != $ifmtu))) { 
+				    ($mtu && ($mtu != $ifmtu)) ||
+				    (!$mtu && (get_interface_default_mtu() != $ifmtu))) { 
 					$vlan_redo[] = $realif;
 				}
 			}
@@ -550,20 +549,16 @@ if ($_POST['apply']) {
 		}
 
 		/* Is the description already used as an alias name? */
-		if (is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias) {
-				if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
-					$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
-				}
+		foreach (config_get_path('aliases/alias', []) as $alias) {
+			if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
+				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
 			}
 		}
 
 		/* Is the description already used as an interface group name? */
-		if (is_array($config['ifgroups']['ifgroupentry'])) {
-			foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-				if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
-					$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
-				}
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgroupentry) {
+			if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
+				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
 			}
 		}
 
@@ -592,16 +587,15 @@ if ($_POST['apply']) {
 	}
 
 	if ($_POST['blockbogons'] == "yes" &&
-	    isset($config['system']['ipv6allow']) &&
-	    (!isset($config['system']['maximumtableentries']) ||
-	     $config['system']['maximumtableentries'] <
+	    config_path_enabled('system','ipv6allow') &&
+	    (config_get_path('system/maximumtableentries', 0) <
 	     $g['minimumtableentries_bogonsv6'])) {
 		$input_errors[] = sprintf(gettext(
 		    "In order to block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
 		    $g['minimumtableentries_bogonsv6']);
 	}
 
-	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
+	if (config_path_enabled("dhcpd/{$if}")) {
 		if (!preg_match("/^staticv4/", $_POST['type'])) {
 			$input_errors[] = gettext("The DHCP Server is active " .
 			    "on this interface and it can be used only with " .
@@ -617,12 +611,12 @@ if ($_POST['apply']) {
 		}
 	}
 	if (isset($config['dhcpdv6']) && ($_POST['type6'] != "staticv6" && $_POST['type6'] != "track6")) {
-		if (isset($config['dhcpdv6'][$if]['enable'])) {
+		if (config_path_enabled("dhcpdv6/{$if}")) {
 			$input_errors[] = gettext("The DHCP6 Server is active on this interface and it can be used only " .
 			    "with a static IPv6 configuration. Please disable the DHCPv6 Server service on this " .
 			    "interface first, then change the interface configuration.");
 		}
-		if (isset($config['dhcpdv6'][$if]['ramode']) && ($config['dhcpdv6'][$if]['ramode'] != "disabled")) {
+		if (config_get_path("dhcpdv6/{$if}/ramode", "disabled") != "disabled") {
 			$input_errors[] = gettext("The Router Advertisements Server is active on this interface and it can " .
 			    "be used only with a static IPv6 configuration. Please disable the Router Advertisements " .
 			    "Server service on this interface first, then change the interface configuration.");
@@ -636,11 +630,9 @@ if ($_POST['apply']) {
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "none":
-			if (is_array($config['virtualip']['vip'])) {
-				foreach ($config['virtualip']['vip'] as $vip) {
-					if (is_ipaddrv4($vip['subnet']) && $vip['interface'] == $if) {
-						$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
-					}
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
+				if (is_ipaddrv4($vip['subnet']) && $vip['interface'] == $if) {
+					$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
 			break;
@@ -687,11 +679,9 @@ if ($_POST['apply']) {
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "none":
-			if (is_array($config['virtualip']['vip'])) {
-				foreach ($config['virtualip']['vip'] as $vip) {
-					if (is_ipaddrv6($vip['subnet']) && $vip['interface'] == $if) {
-						$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
-					}
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
+				if (is_ipaddrv6($vip['subnet']) && $vip['interface'] == $if) {
+					$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
 			break;
@@ -705,8 +695,8 @@ if ($_POST['apply']) {
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
-					if ($config['interfaces'][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
+				if ($if != $ifent && (config_get_path("interfaces/{$ifent}/ipaddrv6") == $_POST['type6'])) {
+					if (config_get_path("interfaces/{$ifent}/prefix-6rd") == $_POST['prefix-6rd']) {
 						$input_errors[] = gettext("Only one interface can be configured within a single 6rd prefix.");
 						break;
 					}
@@ -724,7 +714,7 @@ if ($_POST['apply']) {
 			break;
 		case "6to4":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+				if ($if != $ifent && (config_get_path("interfaces/{$ifent}/ipaddrv6") == $_POST['type6'])) {
 					$input_errors[] = sprintf(gettext("Only one interface can be configured as 6to4."), $_POST['type6']);
 					break;
 				}
@@ -755,9 +745,9 @@ if ($_POST['apply']) {
 						if ($if == $ifent) {
 							continue;
 						}
-						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
-						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
-						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
+						if (config_get_path("interfaces{$ifent}/ipaddrv6") == 'track6' &&
+						    config_get_path("interfaces{$ifent}/track6-interface") == $_POST['track6-interface'] &&
+						    config_get_path("interfaces{$ifent}/track6-prefix-id") == $track6_prefix_id) {
 							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 						}
 					}
@@ -932,8 +922,8 @@ if ($_POST['apply']) {
 			$parent_realhwif = $realhwif_array[0];
 			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
 			$mtu = 0;
-			if (!empty($parent_if) && !empty($config['interfaces'][$parent_if]['mtu']))
-				$mtu = intval($config['interfaces'][$parent_if]['mtu']);
+			if (!empty($parent_if) && !(config_get_path("interfaces/{$parent_if}/mtu")))
+				$mtu = intval(config_get_path("interfaces/{$parent_if}/mtu"));
 			if ($mtu == 0)
 				$mtu = get_interface_mtu($parent_realhwif);
 			if ($_POST['mtu'] > $mtu)
@@ -1646,7 +1636,7 @@ if ($_POST['apply']) {
 } // end if ($_POST['save'])
 
 function handle_wireless_post() {
-	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr, $wlanbaseif;
+	global $_POST, $config, $wancfg, $if, $wl_countries_attr, $wlanbaseif;
 	if (!is_array($wancfg['wireless'])) {
 		$wancfg['wireless'] = array();
 	}
@@ -1698,7 +1688,7 @@ function handle_wireless_post() {
 		if (!is_array($config['wireless'])) {
 			$config['wireless'] = array();
 		}
-		if (!is_array($config['wireless']['interfaces'])) {
+		if (!is_array(config_get_path('wireless/interfaces'))) {
 			$config['wireless']['interfaces'] = array();
 		}
 		if (!is_array($config['wireless']['interfaces'][$wlanbaseif])) {
@@ -1817,11 +1807,9 @@ function check_wireless_mode() {
 		$clone_count = 0;
 	}
 
-	if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone'])) {
-		foreach ($config['wireless']['clone'] as $clone) {
-			if ($clone['if'] == $wlanbaseif) {
+	foreach (config_get_path('wireless/clone', []) as $clone) {
+		if ($clone['if'] == $wlanbaseif) {
 				$clone_count++;
-			}
 		}
 	}
 
@@ -1839,7 +1827,7 @@ function check_wireless_mode() {
 
 // Find all possible media options for the interface
 $mediaopts_list = array();
-$intrealname = $config['interfaces'][$if]['if'];
+$intrealname = config_get_path("interfaces/{$if}/if");
 exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
 foreach ($mediaopts as $mediaopt) {
 	preg_match("/media (.*)/", $mediaopt, $matches);
@@ -2017,8 +2005,8 @@ if (count($mediaopts_list) > 0) {
 	$section->addInput(new Form_Select(
 		'mediaopt',
 		'Speed and Duplex',
-		rtrim($config['interfaces'][$if]['media'] . ' ' . $config['interfaces'][$if]['mediaopt']),
-		build_mediaopts_list()
+		rtrim(config_get_path("interfaces/{$if}/media", "") . ' ' . config_get_path("interfaces/{$if}/mediaopt"), ""),
+		build_mediaopts_list() 
 	))->setHelp('Explicitly set speed and duplex mode for this interface.%s' .
 				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.', '<br />');
 }
@@ -2725,7 +2713,7 @@ function build_ipv6interface_list() {
 	$dynv6ifs = array();
 
 	foreach ($interfaces as $iface => $ifacename) {
-		switch ($config['interfaces'][$iface]['ipaddrv6']) {
+		switch (config_get_path("interfaces/{$iface}/ipaddrv6")) {
 			case "6to4":
 			case "6rd":
 			case "dhcp6":

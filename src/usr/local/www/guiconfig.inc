@@ -37,7 +37,6 @@ function pfSense_csrf_callback() {
 
 if (!$nocsrf) {
 	function csrf_startup() {
-		global $config;
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
 		$timeout_minutes = config_get_path('system/webgui/session_timeout', 240);
 		csrf_conf('expires', $timeout_minutes * 60);
@@ -647,10 +646,8 @@ function update_if_changed($varname, & $orig, $new) {
 //function to create widget tabs when called
 function display_widget_tabs(& $tab_array) {
 	echo "<div id=\"tabs\">";
-	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
 		$dashpos = strpos($ta[2], '-');
-		$tabname = $ta[2] . "-tab";
 		$tabclass = substr($ta[2], 0, $dashpos);
 		$tabclass = $tabclass . "-class";
 		if ($ta[1] == true) {
@@ -780,6 +777,7 @@ function print_rfc2616_select($tag, $current) {
 
 // Useful debugging function, much cleaner than print_r
 function echo_array($array, $return_me = false) {
+	$return = "";
 	if (is_array($array) == false) {
 		$return = "The provided variable is not an array.";
 	} else {
@@ -814,8 +812,6 @@ function echo_array($array, $return_me = false) {
  *	 null
  ******/
 function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', $usepost = "") {
-	global $config;
-	global $g;
 	global $tab_array_indent;
 	global $tab_array_space;
 	global $tab_array_char_limit;
@@ -844,11 +840,6 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 			unset ($tab_array[$tab_id]);
 		}
 	}
-
-	$tab_active_bg	 = "#EEEEEE";
-	$tab_inactive_bg = "#777777";
-	$nifty_tabs_corners = "#FFF";
-	$font_color = "white";
 
 	$tabcharcount = 0;
 	foreach ($tab_array as $ta) {
@@ -925,7 +916,7 @@ function add_package_tabs($tabgroup, &$tab_array) {
 }
 
 function alias_info_popup($alias_id) {
-	global $config, $user_settings;
+	global $user_settings;
 
 	$alias = config_get_path("aliases/alias/{$alias_id}");
 	if (!is_array($alias)) {
@@ -1004,6 +995,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 	$bgwarning = array('loss', 'delay');
 	$bgsuccess = array('none');
 	$bgcolor = "bg-info";
+	$link = "";
 
 	if (is_array($a_gateways)) {
 		foreach ($a_gateways as $i => $gateway) {
@@ -1053,13 +1045,12 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 			$content .= 			$gw;
 			$content .=	"		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
-			$content .= 			config_get_path('interfaces/{$iface}/descr', "");
+			$content .= 			config_get_path("interfaces/{$iface}/descr", "");
 			$content .=	"		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
 			$content .= 			lookup_gateway_ip_by_name($gw);
 			$content .=	"		</td>\n";
 			$content .= "	</tr>\n";
-			$idx++;
 		}
 		$content .= "</tbody>\n";
 		$content .= "</table>\n";

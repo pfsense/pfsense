@@ -669,7 +669,7 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 		} elseif (!$start_polling) {
 			/* Remove last line, used to provide return code */
 			unset($log[count($log)-1]);
-			$failmsg = implode($log, "\n");
+			$failmsg = implode("\n", $log);
 			/* Make javascript happy not sending any \n */
 			$failmsg = preg_replace("/\n/", '%%', $failmsg);
 			file_put_contents("/tmp/lala", $failmsg, FILE_APPEND);

@@ -54,6 +54,9 @@ $cert_altname_types = array(
 global $cert_max_lifetime;
 $cert_max_lifetime = 12000;
 
+global $crl_max_lifetime;
+$crl_max_lifetime = 9999;
+
 function & lookup_ca($refid) {
 	global $config;
 
@@ -978,9 +981,31 @@ function cert_get_max_lifetime() {
 	return min($max, $cert_max_lifetime);
 }
 
+/* Detect a rollover at 2050 with UTCTime
+ * See: https://redmine.pfsense.org/issues/9098 */
+function crl_get_max_lifetime() {
+	global $crl_max_lifetime;
+	$max = $crl_max_lifetime;
+
+	$now = new DateTime("now");
+	$utctime_before_roll = DateTime::createFromFormat('Ymd', '20491231');
+	if ($date !== false) {
+		$interval = $now->diff($utctime_before_roll);
+		$max_days = abs($interval->days);
+		/* Reduce the max well below the rollover time */
+		if ($max_days > 1000) {
+			$max_days -= 1000;
+		}
+		return min($max_days, cert_get_max_lifetime());
+	}
+
+	/* Cannot use date functions, so use a lower default max. */
+	return min(7000, cert_get_max_lifetime());
+}
+
 function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	global $config;
-	$max_lifetime = cert_get_max_lifetime();
+	$max_lifetime = crl_get_max_lifetime();
 	$ca =& lookup_ca($caref);
 	if (!$ca) {
 		return false;
@@ -1017,7 +1042,7 @@ function crl_update(& $crl) {
 	require_once('X509_CRL.php');
 
 	global $config;
-	$max_lifetime = cert_get_max_lifetime();
+	$max_lifetime = crl_get_max_lifetime();
 	$ca =& lookup_ca($crl['caref']);
 	if (!$ca) {
 		return false;

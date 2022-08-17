@@ -132,7 +132,7 @@ function doCmdT($title, $command, $method) {
 	} else {
 		$execOutput = "";
 		$execStatus = "";
-		$fn = "{$output_path}/{$title}.txt";
+		$fn = "{$output_path}/" . basename("{$title}.txt");
 		if ($method == "exec") {
 			exec($command . " > " . escapeshellarg($fn) . " 2>&1", $execOutput, $execStatus);
 			if ($show_output) {
@@ -305,7 +305,7 @@ defCmdT("Firewall-Generated Ruleset Limiters", "/bin/cat {$g['tmp_path']}/rules.
 defCmdT("Firewall-Generated Ruleset Limits", "/bin/cat {$g['tmp_path']}/rules.limits");
 foreach (glob("{$g['tmp_path']}/rules.packages.*") as $pkgrules) {
 	$pkgname = substr($pkgrules, strrpos($pkgrules, '.') + 1);
-	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat {$pkgrules}");
+	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat " . escapeshellarg($pkgrules));
 }
 $ovpnradrules = array();
 foreach (glob("{$g['tmp_path']}/ovpn_ovpns*.rules") as $ovpnrules) {

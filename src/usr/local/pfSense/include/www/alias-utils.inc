@@ -310,6 +310,9 @@ function saveAlias($post, $id) {
 			}
 	}
 
+	if ($data_errors) {
+		$data_errors[] = gettext("There may be additional errors. Fix the noted problems and try again.");
+	}
 	$alias = array();
 	$address = array();
 	$final_address_details = array();
@@ -320,7 +323,7 @@ function saveAlias($post, $id) {
 		$address = array();
 
 		/* item is a url table type */
-		if ($post['address0']) {
+		if ($post['address0'] && empty($data_errors)) {
 			/* fetch down and add in */
 			$address[] = $post['address0'];
 			$alias['url'] = $post['address0'];

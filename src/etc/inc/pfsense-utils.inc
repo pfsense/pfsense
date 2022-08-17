@@ -2599,8 +2599,12 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $validateonly=false) {
 	global $g, $config;
 
+	if (!is_validaliasname($name) || !isURL($url)) {
+		return false;
+	}
+
 	$urltable_prefix = "/var/db/aliastables/";
-	$urltable_filename = $urltable_prefix . $name . ".txt";
+	$urltable_filename = $urltable_prefix . basename($name) . ".txt";
 	$tmp_urltable_filename = $urltable_filename . ".tmp";
 
 	// Make the aliases directory if it doesn't exist

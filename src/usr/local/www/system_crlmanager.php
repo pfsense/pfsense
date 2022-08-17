@@ -34,8 +34,8 @@ require_once("openvpn.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-$max_lifetime = cert_get_max_lifetime();
-$default_lifetime = min(9999, $max_lifetime);
+$max_lifetime = crl_get_max_lifetime();
+$default_lifetime = min(730, $max_lifetime);
 
 global $openssl_crl_status;
 
@@ -255,7 +255,7 @@ if ($_POST['save']) {
 		}
 
 		if ($pconfig['method'] == "internal") {
-			$crl['serial'] = empty($pconfig['serial']) ? 9999 : $pconfig['serial'];
+			$crl['serial'] = empty($pconfig['serial']) ? '0' : $pconfig['serial'];
 			$crl['lifetime'] = empty($pconfig['lifetime']) ? $default_lifetime : $pconfig['lifetime'];
 			$crl['cert'] = array();
 		}

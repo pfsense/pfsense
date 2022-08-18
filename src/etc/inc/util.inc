@@ -25,6 +25,7 @@
  * limitations under the License.
  */
 require_once('interfaces.inc');
+require_once('Net/IPv6.php');
 define('VIP_ALL', 1);
 define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
@@ -169,7 +170,6 @@ function try_lock($lock, $timeout = 5) {
 
 /* unlock configuration file */
 function unlock($cfglckkey = 0) {
-	global $g;
 	if (!is_null($cfglckkey)) {
 		@flock($cfglckkey, LOCK_UN);
 		@fclose($cfglckkey);
@@ -220,6 +220,7 @@ function send_multiple_events($cmds) {
 		return;
 	}
 
+	$try = 0;
 	while ($try < 3) {
 		$fd = @fsockopen($g['event_address']);
 		if ($fd) {
@@ -475,10 +476,10 @@ function ip_greater_than($ip1, $ip2) {
 /* compare two IP addresses */
 function ipcmp($a, $b) {
 	if (is_subnet($a)) {
-		list($a, $amask) = explode('/', $a);
+		$a = explode('/', $a)[0];
 	}
 	if (is_subnet($b)) {
-		list($b, $bmask) = explode('/', $b);
+		$b = explode('/', $b)[0];
 	}
 	if (ip_less_than($a, $b)) {
 		return -1;
@@ -761,7 +762,7 @@ function get_ll_scope($addr) {
 	if (!is_linklocal($addr) || !strstr($addr, "%")) {
 		return "";
 	}
-	list ($ll, $scope) = explode("%", $addr);
+	$scope = explode("%", $addr)[1];
 	return $scope;
 }
 
@@ -1146,7 +1147,7 @@ function is_validaliasname($name, $return_message = false, $object = "alias") {
 		}
 	}
 	if ($return_message) {
-		return sprintf(gettext("The %1$s name is valid."), $object);
+		return sprintf(gettext('The %1$s name is valid.'), $object);
 	} else {
 		return true;
 	}
@@ -1205,7 +1206,7 @@ function is_port_in_use($port, $proto = "tcp", $ip_version = 4) {
 		$netstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
 		$netstatarr = $netstatarr['statistics']['socket'];
 
-		foreach($netstatarr as $index => $portstats){
+		foreach($netstatarr as $portstats){
 			array_push($port_info, $portstats['local']['port']);
 		}
 	}
@@ -1676,9 +1677,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 			break;
 		case "media":
 			$intlist = pfSense_interface_listget();
-			$ifconfig = "";
+			$ifconfig = [];
 			exec("/sbin/ifconfig -a", $ifconfig);
-			$regexp = '/(' . implode('|', $intlist) . '):\s/';
 			$ifstatus = preg_grep('/status:/', $ifconfig);
 			foreach ($ifstatus as $status) {
 				$int = array_shift($intlist);
@@ -1692,11 +1692,11 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 			break;
 	}
 	/* build interface list with netstat */
-	$linkinfo = "";
+	$linkinfo = [];
 	exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 }'", $linkinfo);
 	array_shift($linkinfo);
 	/* build ip address list with netstat */
-	$ipinfo = "";
+	$ipinfo = [];
 	exec("/usr/bin/netstat -inW -f inet | awk '{ print $1, $4 }'", $ipinfo);
 	array_shift($ipinfo);
 	foreach ($linkinfo as $link) {
@@ -1783,7 +1783,7 @@ function log_error($error) {
 	}
 	syslog(LOG_ERR, "$page: $error");
 	if ($g['debug']) {
-		syslog(LOG_WARNING, var_dump(debug_backtrace()));
+		syslog(LOG_WARNING, var_export(debug_backtrace()));
 	}
 	return;
 }
@@ -1801,7 +1801,7 @@ function log_auth($error) {
 	$page = $_SERVER['SCRIPT_NAME'];
 	syslog(LOG_AUTH, "$page: $error");
 	if ($g['debug']) {
-		syslog(LOG_WARNING, var_dump(debug_backtrace()));
+		syslog(LOG_WARNING, var_export(debug_backtrace()));
 	}
 	return;
 }
@@ -2051,7 +2051,6 @@ function resolve_retry($hostname, $protocol = 'inet') {
 	$retries = 10;
 	$numrecords = 1;
 	$recresult = array();
-	$returnres = array();
 
 	switch ($protocol) {
 		case 'any':
@@ -2080,7 +2079,7 @@ function resolve_retry($hostname, $protocol = 'inet') {
 		$dnsresult = @dns_get_record($hostname, $dnsproto);
 
 		if (!empty($dnsresult)) {
-			foreach ($dnsresult as $dnsrec => $ip) {
+			foreach ($dnsresult as $ip) {
 				if (is_array($ip)) {
 					if (in_array($ip['type'], $dnstype)) {
 						if ($checkproto($ip['ip'])) { 
@@ -2193,8 +2192,6 @@ function return_dir_as_array($dir, $filter_regex = '') {
 }
 
 function run_plugins($directory) {
-	global $config, $g;
-
 	/* process packager manager custom rules */
 	$files = return_dir_as_array($directory);
 	if (is_array($files)) {
@@ -2213,8 +2210,6 @@ function run_plugins($directory) {
  *    create directory if it doesn't already exist and isn't a file!
  */
 function safe_mkdir($path, $mode = 0755) {
-	global $g;
-
 	if (!is_file($path) && !is_dir($path)) {
 		return @mkdir($path, $mode, true);
 	} else {
@@ -2340,17 +2335,13 @@ function get_memory() {
 }
 
 function mute_kernel_msgs() {
-	global $g, $config;
-
-	if ($config['system']['enableserial']) {
+	if (config_path_enabled('system','enableserial')) {
 		return;
 	}
 	exec("/sbin/conscontrol mute on");
 }
 
 function unmute_kernel_msgs() {
-	global $g;
-
 	exec("/sbin/conscontrol mute off");
 }
 
@@ -2359,7 +2350,7 @@ function start_devd() {
 
 	/* Generate hints for the kernel loader. */
 	$module_paths = explode(";", get_single_sysctl("kern.module_path"));
-	foreach ($module_paths as $id => $path) {
+	foreach ($module_paths as $path) {
 		if (!is_dir($path) || file_exists("{$path}/linker.hints")) {
 			continue;
 		}
@@ -2367,7 +2358,7 @@ function start_devd() {
 			continue;
 		}
 		$found = false;
-		foreach ($files as $id => $file) {
+		foreach ($files as $file) {
 			if (strlen($file) > 3 &&
 			    strcasecmp(substr($file, -3), ".ko") == 0) {
 				$found = true;
@@ -2388,16 +2379,12 @@ function start_devd() {
 }
 
 function is_interface_vlan_mismatch() {
-	global $config, $g;
-
-	if (is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if (substr($vlan['if'], 0, 4) == "lagg") {
-				return false;
-			}
-			if (does_interface_exist($vlan['if']) == false) {
-				return true;
-			}
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if (substr($vlan['if'], 0, 4) == "lagg") {
+			return false;
+		}
+		if (does_interface_exist($vlan['if']) == false) {
+			return true;
 		}
 	}
 
@@ -2411,7 +2398,7 @@ function is_interface_mismatch() {
 	$i = 0;
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $ifname => $ifcfg) {
+		foreach ($config['interfaces'] as $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
 			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|^ue|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
@@ -2461,7 +2448,6 @@ function is_interface_mismatch() {
 
 /* sync carp entries to other firewalls */
 function carp_sync_client() {
-	global $g;
 	send_event("filter sync");
 }
 
@@ -2680,7 +2666,7 @@ function replace_element_in_list($text, $delimiter, $element, $replacement) {
 
 /* Return system's route table */
 function route_table() {
-	$_gb = exec("/usr/bin/netstat --libxo json -nWr", $rawdata, $rc);
+	exec("/usr/bin/netstat --libxo json -nWr", $rawdata, $rc);
 
 	if ($rc != 0) {
 		return array();
@@ -2749,7 +2735,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 			return array();
 		} elseif ($interface == 'lo0') {
 			// interface assigned IP address
-			foreach ($config['interfaces'] as $intf => $infconf) {
+			foreach (array_keys($config['interfaces']) as $intf) {
 				if ((($inet == '4') && (get_interface_ip($intf) == $target)) ||
 				    (($inet == '6') && (get_interface_ipv6($intf) == $target))) {
 					$interface = convert_friendly_interface_to_real_interface_name($intf);
@@ -2848,7 +2834,7 @@ function route_del($target, $ipprotocol = '') {
 			$gw = $item['gateway'];
 		}
 
-		$_gb = exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
+		exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
 		    "{$target} {$gw}"), $output, $rc);
 
 		if (isset($config['system']['route-debug'])) {
@@ -2927,7 +2913,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 		return false;
 	}
 
-	$_gb = exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
+	exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
 	    "{$target} {$args} {$params}"), $output, $rc);
 
 	if (isset($config['system']['route-debug'])) {
@@ -2942,7 +2928,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 }
 
 function set_ipv6routes_mtu($interface, $mtu) {
-	global $config, $g;
+	global $config;
 
 	$ipv6mturoutes = array();
 	$if = convert_real_interface_to_friendly_interface_name($interface);
@@ -3001,7 +2987,7 @@ function alias_to_subnets_recursive($name, $returnhostnames = false) {
 }
 
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
-	global $config, $aliastable;
+	global $config;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
 	init_config_arr(array('staticroutes', 'route'));
@@ -3358,7 +3344,7 @@ function array_remove_duplicate($array, $field) {
 		}
 	}
 	$unique = array_unique(array_reverse($cmp, true));
-	foreach ($unique as $k => $rien) {
+	foreach (array_keys($unique) as $k) {
 		$new[] = $array[$k];
 	}
 	return $new;
@@ -3421,7 +3407,7 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
  * non-null value, otherwise false
  */
 function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
-	$el = config_get_path($path, []);
+	$el = array_get_path($arr, $path, []);
 	if (is_array($el) && isset($el[$enable_key])) {
 		return (true);
 	}
@@ -3573,7 +3559,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_ipaddrv4($network) && ($proto == "inet")) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
-			} catch(Exception $e) {
+			} catch(Exception) {
 				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask'.");
 				return;
 			}
@@ -3646,7 +3632,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_ipaddrv4($network) && ($proto == "inet")) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
-			} catch(Exception $e) {
+			} catch(Exception) {
 				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination network '$network'.");
 				return;
 			}
@@ -3965,7 +3951,8 @@ function ip6_to_asn1($addr) {
 	if (!is_ipaddrv6($addr)) {
 		return false;
 	}
-
+	$ipv6str = "";
+	$octstr = "";
 	foreach (explode(':', Net_IPv6::uncompress($addr)) as $v) {
 		$ipv6str .= str_pad($v, 4, '0', STR_PAD_LEFT);
 	}

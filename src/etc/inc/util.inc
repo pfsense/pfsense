@@ -762,8 +762,7 @@ function get_ll_scope($addr) {
 	if (!is_linklocal($addr) || !strstr($addr, "%")) {
 		return "";
 	}
-	$scope = explode("%", $addr)[1];
-	return $scope;
+	return explode("%", $addr)[1];
 }
 
 /* returns true if $ipaddr is a valid literal IPv6 address */

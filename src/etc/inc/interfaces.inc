@@ -6696,7 +6696,7 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 
 	/* try to find track6 address, see https://redmine.pfsense.org/issues/5999 */
 	$checkif = is_array($iface) ? $interface : convert_real_interface_to_friendly_interface_name($interface);
-	if (config_get_path("interfaces/{$checkif}/ipaddrv6'", "") == 'track6') { 
+	if (config_get_path("interfaces/{$checkif}/ipaddrv6", "") == 'track6') { 
 		$curip = get_interface_track6ip($checkif);
 		if ($curip) {
 			return $curip[0];

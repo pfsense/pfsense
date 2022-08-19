@@ -435,7 +435,7 @@ function interface_vlan_configure(&$vlan, $flush = true) {
 	/* configure interface if assigned */
 	$assignedif = convert_real_interface_to_friendly_interface_name($vlanif);
 	if ($assignedif) {
-		if (config_path_enabled("interfaces/{$assignedif}/enable")) {
+		if (config_path_enabled("interfaces/{$assignedif}")) {
 			interface_configure($assignedif, true);
 		}
 	}

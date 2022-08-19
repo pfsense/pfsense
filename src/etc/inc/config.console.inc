@@ -38,7 +38,6 @@ require_once("util.inc");
  *  1: user quit
  */
 function set_networking_interfaces_ports() {
-	global $noreboot;
 	global $config;
 	global $g;
 	global $fp;
@@ -421,13 +420,13 @@ EOD;
 }
 
 function interfaces_setup() {
-	global $iflist, $config, $g, $fp;
+	global $iflist;
 
 	$iflist = get_interface_list();
 }
 
 function vlan_setup() {
-	global $iflist, $config, $g, $fp;
+	global $iflist, $config, $fp;
 
 	$iflist = get_interface_list();
 

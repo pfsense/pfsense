@@ -745,9 +745,9 @@ if ($_POST['apply']) {
 						if ($if == $ifent) {
 							continue;
 						}
-						if (config_get_path("interfaces{$ifent}/ipaddrv6") == 'track6' &&
-						    config_get_path("interfaces{$ifent}/track6-interface") == $_POST['track6-interface'] &&
-						    config_get_path("interfaces{$ifent}/track6-prefix-id") == $track6_prefix_id) {
+						if (config_get_path("interfaces/{$ifent}/ipaddrv6") == 'track6' &&
+						    config_get_path("interfaces/{$ifent}/track6-interface") == $_POST['track6-interface'] &&
+						    config_get_path("interfaces/{$ifent}/track6-prefix-id") == $track6_prefix_id) {
 							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 						}
 					}

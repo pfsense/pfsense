@@ -3917,7 +3917,7 @@ function reset_dhcp6client_process() {
 	}
 }
 
-function run_dhcp6client_process($interfaces, $debugOptions, $noreleaseOption) {
+function run_dhcp6client_process($interfaces, $debugOption, $noreleaseOption) {
 	global $g;
 
 	/*
@@ -3933,7 +3933,7 @@ function run_dhcp6client_process($interfaces, $debugOptions, $noreleaseOption) {
 		kill_dhcp6client_process(true);
 		/* Lock it to avoid multiple runs */
 		touch("/tmp/dhcp6c_lock");
-		mwexec("/usr/local/sbin/dhcp6c {$debugOptions} " .
+		mwexec("/usr/local/sbin/dhcp6c {$debugOption} " .
 		    "{$noreleaseOption} " .
 		    "-c {$g['varetc_path']}/dhcp6c.conf " .
 		    "-p {$g['varrun_path']}/dhcp6c.pid " .

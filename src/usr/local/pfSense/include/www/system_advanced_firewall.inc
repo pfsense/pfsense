@@ -93,17 +93,14 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 	if (isset($post['adaptivestart']) && (strlen($post['adaptivestart']) > 0) && !is_numericint($post['adaptivestart'])) {
 		$input_errors[] = gettext("The Firewall Adaptive Start value must be an integer.");
 	}
-	if (isset($post['adaptive-end']) && (strlen($post['adaptive-end']) > 0) && !is_numericint($post['adaptive-end'])) {
+	if (isset($post['adaptiveend']) && (strlen($post['adaptiveend']) > 0) && !is_numericint($post['adaptiveend'])) {
 		$input_errors[] = gettext("The Firewall Adaptive End value must be an integer.");
 	}
-	if ($post['firewall-maximum-states'] && !is_numericint($post['firewall-maximum-states'])) {
+	if ($post['maximumstates'] && !is_numericint($post['maximumstates'])) {
 		$input_errors[] = gettext("The Firewall Maximum States value must be an integer.");
 	}
-	if ($post['aliases-hostnames-resolve-interval'] && !is_numericint($post['aliases-hostnames-resolve-interval'])) {
+	if ($post['aliasesresolveinterval'] && !is_numericint($post['aliasesresolveinterval'])) {
 		$input_errors[] = gettext("The Aliases Hostname Resolve Interval value must be an integer.");
-	}
-	if ($post['firewall-maximum-table-entries'] && !is_numericint($post['firewall-maximum-table-entries'])) {
-		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
 	}
 	if ($post['maximumfrags'] && !is_numericint($post['maximumfrags'])) {
 		$input_errors[] = gettext("The Firewall Maximum Fragment Entries value must be an integer.");

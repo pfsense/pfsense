@@ -26,10 +26,8 @@ require_once("pfsense-utils.inc");
 
 // Functions included by firewall_virtual_ip.php =============================
 function find_last_used_vhid() {
-	global $config, $g;
-
 	$vhid = 0;
-	foreach ($config['virtualip']['vip'] as $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if ($vip['vhid'] > $vhid) {
 			$vhid = $vip['vhid'];
 		}
@@ -40,11 +38,9 @@ function find_last_used_vhid() {
 
 // Get VIP configuration
 function getVIPs($json = false) {
-	global $config;
-
 	$vips = array();
 
-	foreach ($config['virtualip']['vip'] as $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		$vips[] = $vip;
 	}
 
@@ -56,10 +52,10 @@ function getVIPs($json = false) {
 
 // Save virtual IP changes
 function saveVIP($post, $json = false) {
-	global $config, $g;
+	global $g;
 
 	init_config_arr(array('virtualip', 'vip'));
-	$a_vip = &$config['virtualip']['vip'];
+	$a_vip = config_get_path('virtualip/vip');
 	$rv = array();
 	$id = $post['id'];
 
@@ -115,7 +111,9 @@ function saveVIP($post, $json = false) {
 
 	$natiflist = get_configured_interface_with_descr();
 	foreach ($natiflist as $natif => $natdescr) {
-		if ($post['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6']))) {
+		if ($post['interface'] == $natif &&
+			(empty(config_get_path("interfaces/{$natif}/ipaddr")) &&
+			 empty(config_get_path("interfaces/{$natif}/ipaddrv6")))) {
 			$input_errors[] = gettext("The interface chosen for the VIP has no IPv4 or IPv6 address configured so it cannot be used as a parent for the VIP.");
 		}
 	}
@@ -144,7 +142,7 @@ function saveVIP($post, $json = false) {
 		case 'carp':
 			/* verify against reusage of vhids */
 			$idtracker = 0;
-			foreach ($config['virtualip']['vip'] as $vip) {
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
 				if ($vip['vhid'] == $post['vhid'] && $vip['interface'] == $post['interface'] && $idtracker != $id) {
 					$input_errors[] = sprintf(gettext("VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface."), $post['vhid'], convert_friendly_interface_to_friendly_descr($post['interface']));
 				}
@@ -254,15 +252,14 @@ function saveVIP($post, $json = false) {
 
 		if (!empty($a_vip[$id])) {
 			/* modify all virtual IP rules with this address */
-			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
-				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet']) {
-					$config['nat']['rule'][$i]['destination']['address'] = $vipent['subnet'];
+			for ($i = 0; !empty(config_get_path("nat/rule/{$i}")); $i++) {
+				if (config_get_path("nat/rule/{$i}/destination/address") == $a_vip[$id]['subnet']) {
+					config_set_path("nat/rule/{$i}/destination/address", $vipent['subnet']);
 				}
 			}
 		}
 
-		$a_vip[$id] = $vipent;
-
+		config_set_path("virtualip/vip/{$id}", $vipent);
 		if (write_config(gettext("Saved/edited a virtual IP."))) {
 			mark_subsystem_dirty('vip');
 			file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
@@ -283,10 +280,10 @@ function saveVIP($post, $json = false) {
 
 // Apply changes
 function applyVIP() {
-	global $config, $g;
+	global $g;
 
 	init_config_arr(array('virtualip', 'vip'));
-	$a_vip = &$config['virtualip']['vip'];
+	$a_vip = config_get_path('virtualip/vip');
 	$rv = array();
 
 	$check_carp = false;
@@ -348,49 +345,44 @@ function applyVIP() {
 
 // Delete a VIP
 function deleteVIP($id, $json = false) {
-	global $config;
-
 	$rv = array();
 	$input_errors = array();
 
 	init_config_arr(array('virtualip', 'vip'));
-	$a_vip = &$config['virtualip']['vip'];
+	$a_vip = config_get_path('virtualip/vip');
 
 	if ($a_vip[$id]) {
 		/* make sure no inbound NAT mappings reference this entry */
-		if (is_array($config['nat']['rule'])) {
-			foreach ($config['nat']['rule'] as $rule) {
-				if ($rule['destination']['address'] != "") {
-					if ($rule['destination']['address'] == $a_vip[$id]['subnet']) {
-						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
+		foreach (config_get_path('nat/rule', []) as $rule) {
+			if ($rule['destination']['address'] != "") {
+				if ($rule['destination']['address'] == $a_vip[$id]['subnet']) {
+					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
+					break;
+				}
+			}
+		}
+
+
+		/* make sure no OpenVPN server or client references this entry */
+		$openvpn_types_a = array("openvpn-server" => gettext("server"), "openvpn-client" => gettext("client"));
+		foreach ($openvpn_types_a as $openvpn_type => $openvpn_type_text) {
+			foreach (config_get_path("openvpn/{$openvpn_type}", []) as $openvpn) {
+				if ($openvpn['ipaddr'] <> "") {
+					if ($openvpn['ipaddr'] == $a_vip[$id]['subnet']) {
+						if (strlen($openvpn['description'])) {
+							$openvpn_desc = $openvpn['description'];
+						} else {
+							$openvpn_desc = $openvpn['ipaddr'] . ":" . $openvpn['local_port'];
+						}
+						$input_errors[] = sprintf(gettext('This entry cannot be deleted because it is still referenced by OpenVPN %1$s %2$s.'), $openvpn_type_text, $openvpn_desc);
 						break;
 					}
 				}
 			}
 		}
 
-		/* make sure no OpenVPN server or client references this entry */
-		$openvpn_types_a = array("openvpn-server" => gettext("server"), "openvpn-client" => gettext("client"));
-		foreach ($openvpn_types_a as $openvpn_type => $openvpn_type_text) {
-			if (is_array($config['openvpn'][$openvpn_type])) {
-				foreach ($config['openvpn'][$openvpn_type] as $openvpn) {
-					if ($openvpn['ipaddr'] <> "") {
-						if ($openvpn['ipaddr'] == $a_vip[$id]['subnet']) {
-							if (strlen($openvpn['description'])) {
-								$openvpn_desc = $openvpn['description'];
-							} else {
-								$openvpn_desc = $openvpn['ipaddr'] . ":" . $openvpn['local_port'];
-							}
-							$input_errors[] = sprintf(gettext('This entry cannot be deleted because it is still referenced by OpenVPN %1$s %2$s.'), $openvpn_type_text, $openvpn_desc);
-							break;
-						}
-					}
-				}
-			}
-		}
-
 		init_config_arr(array('ipsec', 'phase1'));
-		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 			if (!isset($ph1ent['disabled'])) {
 				foreach (explode(',', ipsec_get_phase1_src($ph1ent)) as $ifip) {
 					if ($ifip == $a_vip[$id]['subnet']) {
@@ -427,23 +419,21 @@ function deleteVIP($id, $json = false) {
 		/* Determine if this VIP is in the same subnet as any gateway
 		 * which can only be reached by VIPs */
 		$viponlygws = array();
-		if (is_array($config['gateways']['gateway_item'])) {
-			foreach ($config['gateways']['gateway_item'] as $gateway) {
-				if ($a_vip[$id]['interface'] != $gateway['interface']) {
-					continue;
-				}
-				if ($is_ipv6 && $gateway['ipprotocol'] == 'inet') {
-					continue;
-				}
-				if (!$is_ipv6 && $gateway['ipprotocol'] == 'inet6') {
-					continue;
-				}
-				if (ip_in_subnet($gateway['gateway'], $if_subnet)) {
-					continue;
-				}
-				if (ip_in_subnet($gateway['gateway'], $subnet)) {
-					$viponlygws[] = $gateway;
-				}
+		foreach (config_get_path('gateways/gateway_item', []) as $gateway) {
+			if ($a_vip[$id]['interface'] != $gateway['interface']) {
+				continue;
+			}
+			if ($is_ipv6 && $gateway['ipprotocol'] == 'inet') {
+				continue;
+			}
+			if (!$is_ipv6 && $gateway['ipprotocol'] == 'inet6') {
+				continue;
+			}
+			if (ip_in_subnet($gateway['gateway'], $if_subnet)) {
+				continue;
+			}
+			if (ip_in_subnet($gateway['gateway'], $subnet)) {
+				$viponlygws[] = $gateway;
 			}
 		}
 
@@ -526,16 +516,15 @@ function deleteVIP($id, $json = false) {
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$id]['mode'] == "proxyarp") {
 				$viface = $a_vip[$id]['interface'];
-				unset($a_vip[$id]);
 				interface_proxyarp_configure($viface);
 			} else {
 				interface_vip_bring_down($a_vip[$id]);
-				unset($a_vip[$id]);
-			}
-			if (count($config['virtualip']['vip']) == 0) {
-				unset($config['virtualip']['vip']);
 			}
 
+			config_del_path("virtualip/vip/{$id}");
+			if (count($a_vip) == 0) {
+				config_del_path("virtualip/vip");
+			}
 			write_config(gettext("Deleted a virtual IP."));
 
 			if (!$json) {

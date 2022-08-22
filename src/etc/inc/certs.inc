@@ -1601,7 +1601,7 @@ $cert_strict_values = array(
 	'max_server_cert_lifetime' => 398,
 	'digest_blacklist' => array('md4', 'RSA-MD4',  'md5', 'RSA-MD5', 'md5-sha1',
 					'mdc2', 'RSA-MDC2', 'sha1', 'RSA-SHA1',
-					'RSA-SHA1-2'),
+					'RSA-SHA1-2', 'sha224', 'RSA-SHA224'),
 	'min_private_key_bits' => 2048,
 	'ec_curve' => 'prime256v1',
 );
@@ -1712,9 +1712,18 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reusese
 		putenv("SAN={$sans}");
 	}
 
+	/* Determine current digest algorithm. */
+	$digest_alg = strtolower($cert_details['signatureTypeSN']);
+
+	/* Check for and remove unnecessary ECDSA digest prefix
+	 * See https://redmine.pfsense.org/issues/13437 */
+	$ecdsa_prefix = 'ecdsa-with-';
+	if (substr($digest_alg, 0, strlen($ecdsa_prefix)) == $ecdsa_prefix) {
+		$digest_alg = substr($digest_alg, strlen($ecdsa_prefix));
+	}
+
 	/* If we are enforcing strict security, then check the digest against a
 	 * blacklist of insecure digest methods. */
-	$digest_alg = $cert_details['signatureTypeSN'];
 	if ($strictsecurity &&
 	    (in_array($digest_alg, $cert_strict_values['digest_blacklist']))) {
 		$digest_alg = 'sha256';

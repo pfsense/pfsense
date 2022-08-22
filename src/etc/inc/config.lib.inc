@@ -1224,7 +1224,7 @@ function config_get_path(string $path, $default = null) {
  */
 function config_set_path(string $path, $value, $default = null) {
 	global $config;
-	return (array_set_path($config, $path, $default));
+	return (array_set_path($config, $path, $value, $default));
 }
 
 /**
@@ -1243,6 +1243,15 @@ function config_path_enabled(string $path, $enable_key = "enable") {
 	return (array_path_enabled($config, $path, $enable_key));
 }
 
+/**
+ * Remove a key from the config by path
+ * @param $path string path with '/' separators
+ * @returns array copy of the removed value or null
+ */
+function config_del_path(string $path) {
+	global $config;
+	return (array_del_path($config, $path));
+}
 register_shutdown_function('pfSense_clear_globals');
 
 ?>

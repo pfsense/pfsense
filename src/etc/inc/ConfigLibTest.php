@@ -56,6 +56,19 @@ class ConfigLibTest extends TestCase {
 		$this->assertFalse(config_path_enabled('servicebazbang'));
 	}
 
+	public function test_config_del_path(): void {
+		global $config;
+		// Path not in config
+		$this->assertNull(config_del_path("foobang/fooband"));
+		// Scalar value
+		$this->assertEquals('bar', config_del_path('foo'));
+		$this->assertArrayNotHasKey('foo', $config);
+		// Subarray
+		$expect = $config['bar'];
+		$val = config_del_path('bar');
+		$this->assertSame($expect, $val);
+	}
+
 	public function setUp(): void {
 		global $config;
 		$config = array(

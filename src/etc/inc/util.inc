@@ -24,7 +24,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require_once('interfaces.inc');
+//require_once('interfaces.inc');
 require_once('Net/IPv6.php');
 define('VIP_ALL', 1);
 define('VIP_CARP', 2);
@@ -3374,7 +3374,7 @@ function array_get_path(array &$arr, string $path, $default = null) {
  * intermediary does not exist, return null
  * @param $arr array value to search
  * @param $path string path with '/' separators
- * @param $val mixed 
+ * @param $value mixed 
  * @param $default mixed value to return if the path is not found
  * @returns mixed $val or $default if the path prefix does not exist
  */
@@ -3389,7 +3389,7 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
 			return ($default);
 		}
 	}
-	$el[$vkey] =& $value;
+	$el[$vkey] = $value;
 	return ($value);
 }
 
@@ -3412,6 +3412,29 @@ function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
 	}
 	return (false);
 }
+
+/**
+ * Remove a key from the nested array by path
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @returns array copy of the removed value or null
+ */
+function array_del_path(array &$arr, string $path) {
+	$vpath = mb_split('/', $path);
+	$vkey = array_pop($vpath);
+	$el =& $arr;
+	foreach($vpath as $key) {
+		if (is_array($el) && array_key_exists($key, $el)) {
+			$el =& $el[$key];
+		} else {
+			return null;
+		}
+	}
+	$ret = $el[$vkey];
+	unset($el[$vkey]);
+	return ($ret);
+}
+
 
 function dhcpd_date_adjust_gmt($dt) {
 	global $config;

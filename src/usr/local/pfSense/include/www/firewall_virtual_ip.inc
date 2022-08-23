@@ -110,7 +110,7 @@ function saveVIP($post, $json = false) {
 	}
 
 	$natiflist = get_configured_interface_with_descr();
-	foreach ($natiflist as $natif => $natdescr) {
+	foreach (array_keys($natiflist) as $natif) {
 		if ($post['interface'] == $natif &&
 			(empty(config_get_path("interfaces/{$natif}/ipaddr")) &&
 			 empty(config_get_path("interfaces/{$natif}/ipaddrv6")))) {
@@ -144,7 +144,7 @@ function saveVIP($post, $json = false) {
 			$idtracker = 0;
 			foreach (config_get_path('virtualip/vip', []) as $vip) {
 				if ($vip['vhid'] == $post['vhid'] && $vip['interface'] == $post['interface'] && $idtracker != $id) {
-					$input_errors[] = sprintf(gettext("VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface."), $post['vhid'], convert_friendly_interface_to_friendly_descr($post['interface']));
+					$input_errors[] = sprintf(gettext('VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface.'), $post['vhid'], convert_friendly_interface_to_friendly_descr($post['interface']));
 				}
 				$idtracker++;
 			}
@@ -334,12 +334,12 @@ function applyVIP() {
 		set_single_sysctl("net.inet.carp.allow", "1");
 	}
 
-	$retval = 0;
-	$retval |= filter_configure();
 
+	filter_configure();
 	clear_subsystem_dirty('vip');
 
-	$rv['retval'] = $retval;
+	/* NB: retval here is historical */
+	$rv['retval'] = 0;
 	return $rv;
 }
 

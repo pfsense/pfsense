@@ -909,7 +909,7 @@ function manage_log_section() {
 		$pconfig['logfilesize'],
 		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : $g['default_log_size']]
 	))->setWidth(2);
-	$group->setHelp('This field controls the size at which logs will be rotated. By default this is %1 per log file, and there are nearly 20 such log files. ' .
+	$group->setHelp('This field controls the size at which logs will be rotated. By default this is %1$s per log file, and there are nearly 20 such log files. ' .
 				'Rotated log files consume additional disk space, which varies depending on compression and retention count.%2$s' .
 				'NOTE: Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value. ',
 				format_bytes($g['default_log_size']), '<br /><br />');

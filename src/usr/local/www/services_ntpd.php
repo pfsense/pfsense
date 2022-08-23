@@ -494,7 +494,7 @@ $section->addInput(new Form_StaticText(
 	'should only be needed if the server is a stratum 1 NTP server, but many NTP servers do not advertise an upcoming leap ' .
 	'second when other NTP servers synchronise to them.%3$s%4$sIf the leap second is important to your network services, ' .
 	'it is %6$sgood practice%2$s to download and add the leap second file at least a day in advance of any time correction%5$s.%3$s ' .
-	'More information and files for downloading can be found on their %1$swebsite%2$s, and also on the %7$NIST%2$s and %8$sNTP%2$s websites.',
+	'More information and files for downloading can be found on their %1$swebsite%2$s, and also on the %7$sNIST%2$s and %8$sNTP%2$s websites.',
 	'<a target="_blank" href="https://www.iers.org">',
 	'</a>',
 	'<br />',

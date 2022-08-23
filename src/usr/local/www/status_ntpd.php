@@ -33,20 +33,20 @@
 ##|*MATCH=status_ntpd.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once('confib.inc');
+require_once('config.lib.inc');
+require_once('guiconfig.inc');
 
-$allow_query = !isset($config['ntpd']['noquery']);
-if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
-	foreach ($config['ntpd']['restrictions']['row'] as $v) {
-		if (ip_in_subnet('127.0.0.1', "{$v['acl_network']}/{$v['mask']}") || 
-		    ip_in_subnet('::1', "{$v['acl_network']}/{$v['mask']}")) {
-			$allow_query = !isset($v['noquery']);
-		}
+$allow_query = !config_path_enabled('ntpd','noquery');
+foreach (config_get_path('ntpd/restrictions/row') as $v) {
+	if (ip_in_subnet('127.0.0.1', "{$v['acl_network']}/{$v['mask']}") || 
+		ip_in_subnet('::1', "{$v['acl_network']}/{$v['mask']}")) {
+		$allow_query = !isset($v['noquery']);
 	}
 }
 
-if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
-	if (isset($config['system']['ipv6allow'])) {
+if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
+	if (config_path_enabled('system','ipv6allow')) {
 		$inet_version = "";
 	} else {
 		$inet_version = " -4";
@@ -171,22 +171,24 @@ if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 	}
 }
 
-if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
-	$lookfor['GPGSV'] = $config['ntpd']['gps']['nmeaset']['gpgsv'];
-	$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
+if (isset($gps_ok) && config_path_enabled('ntpd/gps','extstatus') &&
+	(config_path_enabled('ntpd/gps/nmeaset','gpgsv') ||
+	 config_path_enabled('ntpd/gps/nmeaset','gpgga'))) {
+	$lookfor['GPGSV'] = config_path_enabled('ntpd/gps/nmeaset','gpgsv');
+	$lookfor['GPGGA'] = !isset($gps_sat) && config_path_enabled('ntpd/gps/nmeaset','gpgga');
 	$gpsport = fopen('/dev/gps0', 'r+');
 	while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {
 		$buffer = fgets($gpsport);
 		if ($lookfor['GPGSV'] && substr($buffer, 0, 6) == '$GPGSV') {
 			$gpgsv = explode(',', $buffer);
 			$gps_satview = (int)$gpgsv[3];
-			$lookfor['GPGSV'] = 0;
+			$lookfor['GPGSV'] = false;
 		} elseif ($lookfor['GPGGA'] && substr($buffer, 0, 6) == '$GPGGA') {
 			$gpgga = explode(',', $buffer);
 			$gps_sat = (int)$gpgga[7];
 			$gps_alt = $gpgga[9];
 			$gps_alt_unit = $gpgga[10];
-			$lookfor['GPGGA'] = 0;
+			$lookfor['GPGGA'] = false;
 		}
 	}
 }
@@ -204,9 +206,9 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $config, $ntpq_servers, $allow_query;
+	global $ntpq_servers, $allow_query;
 
-	if ($config['ntpd']['enable'] == 'disabled'):
+	if (config_get_path('ntpd/enable') == 'disabled'):
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
 		printf(gettext('NTP Server is disabled'));

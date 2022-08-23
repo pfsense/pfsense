@@ -28,6 +28,9 @@
 ##|*MATCH=diag_packet_capture.php*
 ##|-PRIV
 
+require_once('config.inc');
+require_once('config.lib.inc');
+
 $allowautocomplete = true;
 
 function fixup_logic($value) {
@@ -164,11 +167,9 @@ if (ipsec_enabled()) {
 $interfaces['lo0'] = "Localhost";
 
 foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenVPN Client')) as $mode => $mode_descr) {
-	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-			if (!isset($setting['disable'])) {
-				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = $mode_descr . ": ".htmlspecialchars($setting['description']);
-			}
+	foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $id => $setting) {
+		if (!isset($setting['disable'])) {
+			$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = $mode_descr . ": ".htmlspecialchars($setting['description']);
 		}
 	}
 }

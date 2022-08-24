@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 class ConfigLibTest extends TestCase {
 	public function test_config_get_path(): void {
 		// Root element access
-		$this->assertEquals("bar", config_get_path("foo", null));
+		$this->assertEquals("bar", config_get_path("foo"));
 		// Unfound element returns default, even if non-null
 		$this->assertNull(config_get_path("foobaz", null));
 		$this->assertEquals("test", config_get_path("foobaz", "test"));
@@ -22,25 +22,33 @@ class ConfigLibTest extends TestCase {
 		$this->assertEquals("barbaz", config_set_path("bar", "barbaz"));
 		$this->assertEquals("barbaz", config_get_path("bar", "barbaz"));
 		// Parent doesn't exist
-		$this->assertNull(config_set_path("barbang/baz", "bang"));
-		$this->assertNull(config_get_path("barbang/baz", null));
-		// Parent doesn't exist, non-null default return
-		$this->assertEquals(-1, config_set_path("barbang/baz", "bang", -1));
-		$this->assertNull(config_get_path("barbang/baz", null));
-
-		// Subarray
-		$this->assertIsArray(config_set_path("barbang", Array()));
 		$this->assertEquals("bang", config_set_path("barbang/baz", "bang"));
-		$this->assertEquals("bang", config_get_path("barbang/baz", null));
+		$this->assertEquals("bang", config_get_path("barbang/baz"));
+		// Path doesn't exist
+		$this->assertEquals("bang", config_set_path("foobar/foobaz/foobang", "bang"));
+		$this->assertEquals("bang", config_get_path("foobar/foobaz/foobang"));
+		// Parent is scalar, no changes are made
+		$this->assertNull(config_set_path("barbang/baz/foo", "bar"));
+		$this->assertEquals("bang", config_get_path("barbang/baz"));
+		// Parent is scalar, non-null default return and no changes are made
+		$this->assertEquals(-1, config_set_path("barbang/baz/foo", "bang", -1));
+		$this->assertEquals("bang", config_get_path("barbang/baz"));
+		// Parent is empty scalar, replaced with array
+		$this->assertEquals("bang", config_set_path("emptybar/baz", "bang"));
+		$this->assertEquals("bang", config_get_path("emptybar/baz"));
+		// Subarray
+		$this->assertIsArray(config_set_path("barbang", []));
+		$this->assertEquals("bang", config_set_path("barbang/baz", "bang"));
+		$this->assertEquals("bang", config_get_path("barbang/baz"));
 		// Key exists, replace with array
-		$this->assertNotNull(config_get_path("foo", null));
+		$this->assertNotNull(config_get_path("foo"));
 		$this->assertNotNull(config_set_path("foo", ["bar" => "barbaz", "baz" => "barbaz"]));
-		$this->assertEquals("barbaz", config_get_path("foo/bar", null));
-		$this->assertEquals("barbaz", config_get_path("foo/baz", null));
+		$this->assertEquals("barbaz", config_get_path("foo/bar"));
+		$this->assertEquals("barbaz", config_get_path("foo/baz"));
 		// Key in subarray exists
-		$this->assertIsArray(config_set_path("bar", Array()));
+		$this->assertIsArray(config_set_path("bar", []));
 		$this->assertEquals("barbaz", config_set_path("bar/baz", "barbaz"));
-		$this->assertEquals("barbaz", config_get_path("bar/baz", null));
+		$this->assertEquals("barbaz", config_get_path("bar/baz"));
 	}
 
 	public function test_config_path_enabled(): void {
@@ -77,6 +85,7 @@ class ConfigLibTest extends TestCase {
 				"baz" => "bang",
 				"foobar" => "foobaz"
 			),
+			"emptybar" => null,
 			"servicefoo" => array(
 				"enable" => true
 			),

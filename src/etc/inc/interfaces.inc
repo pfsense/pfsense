@@ -2151,7 +2151,7 @@ function handle_pppoe_reset($post_array) {
 
 	if (!is_array(config_get_path('cron/item'))) {
 		if (config_set_path('cron/item', array()) === null)
-			log_error(gettext('Cron section missing from config root.'));
+			log_error(gettext('Cron section in config root is invalid.'));
 			return;
 	}
 

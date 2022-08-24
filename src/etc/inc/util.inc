@@ -3349,7 +3349,7 @@ function array_remove_duplicate($array, $field) {
 }
 
 /**
- * Return a value specified by a path of keys in a nested array, if it exists
+ * Return a value specified by a path of keys in a nested array, if it exists.
  * @param $arr array value to search
  * @param $path string path with '/' separators
  * @param $default mixed value to return if the path is not found
@@ -3369,8 +3369,9 @@ function array_get_path(array &$arr, string $path, $default = null) {
 }
 
 /**
- * Set a value by path in the config. If the path cannot be reached because an
- * intermediary does not exist, return null
+ * Set a value by path in a nested array, creating arrays for intermediary keys
+ * as necessary. If the path cannot be reached because an intermediary exists
+ * but is not empty or an array, return $default.
  * @param $arr array value to search
  * @param $path string path with '/' separators
  * @param $value mixed 
@@ -3382,22 +3383,22 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
 	$vkey = array_pop($vpath);
 	$el =& $arr;
 	foreach ($vpath as $key) {
-		if (is_array($el) && array_key_exists($key, $el)) {
-			$el =& $el[$key];
+		if (array_key_exists($key, $el) && !empty($el[$key])) {
+			if (!is_array($el[$key])) {
+					return ($default);
+			}
 		} else {
-			return ($default);
+				$el[$key] = [];
 		}
+		$el =& $el[$key];
 	}
 	$el[$vkey] = $value;
 	return ($value);
 }
 
 /**
- * Determine whether a path in a nested array has a non-null value keyed
- * 'enabled'. Some parts of the config historically identify services as enabled
- * by having a key to a non-null value named 'enable', and checking it with
- * isset(). This can be counter-intuitive as isset() will return true if the
- * array element is any non-null value that evaluates to false.
+ * Determine whether a path in a nested array has a non-null value keyed by
+ * $enable_key. 
  * @param $arr array value to search
  * @param $path string path with '/' separators
  * @param $enable_key string an optional alternative key value for the enable key
@@ -3413,7 +3414,7 @@ function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
 }
 
 /**
- * Remove a key from the nested array by path
+ * Remove a key from the nested array by path.
  * @param $arr array value to search
  * @param $path string path with '/' separators
  * @returns array copy of the removed value or null

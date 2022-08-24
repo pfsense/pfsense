@@ -1204,7 +1204,7 @@ function init_config_arr($keys) {
 }
 
 /**
- * Return a value specified by path in the config, if it exists
+ * Return a value specified by path in the config, if it exists.
  * @param $path string path with '/' separators
  * @param $default mixed value to return if the path is not found
  * @returns mixed value at path or $default if the path does not exist
@@ -1215,8 +1215,9 @@ function config_get_path(string $path, $default = null) {
 }
 
 /**
- * Set a value by path in the config. If the path cannot be reached because an
- * intermediary does not exist, return null
+ * Set a value by path in the config, creating arrays for intermediary keys as
+ * necessary. If the path cannot be reached because an intermediary exists but
+ * is not empty or an array, return $default.
  * @param $path string path with '/' separators
  * @param $val mixed 
  * @param $default mixed value to return if the path is not found
@@ -1228,15 +1229,15 @@ function config_set_path(string $path, $value, $default = null) {
 }
 
 /**
- * Determine whether a section of the config has a non-null value keyed
- * 'enabled'. Some parts of the config historically identify services as enabled
- * by having a key to a non-null value named 'enable', and checking it with
- * isset(). This can be counter-intuitive as isset() will return true if the
- * array element is any non-null value that evaluates to false.
+ * Determine whether a path in the config has a non-null value keyed by
+ * $enable_key. Some parts of the config historically identify services as
+ * enabled by having a key to a non-null value named 'enable', and checking it
+ * with isset(). This can be counter-intuitive as isset() will return true if
+ * the array element is any non-null value that evaluates to false.
  * @param $path string path with '/' separators
  * @param $enable_key string an optional alternative key value for the enable key
  * @returns bool true if $enable_key exists in the array at $path, and has a
- * non-null value, otherwise false
+ * non-null value, otherwise false.
  */
 function config_path_enabled(string $path, $enable_key = "enable") {
 	global $config;

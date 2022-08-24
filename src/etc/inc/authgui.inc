@@ -235,17 +235,15 @@ function display_login_form() {
 	unset($iflist);
 
 	if ($local_ip == false) {
-		if (is_array($config['openvpn']['openvpn-server'])) {
-			foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-				if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
-					$local_ip = true;
-				} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
-					$local_ip = true;
-				}
+		foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
+			if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
+				$local_ip = true;
+			} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
+				$local_ip = true;
+			}
 
-				if ($local_ip == true) {
-					break;
-				}
+			if ($local_ip == true) {
+				break;
 			}
 		}
 	}

@@ -105,8 +105,6 @@ phpsession_end(true);
  * determine if the user is allowed access to the requested page
  */
 function display_error_form($http_code, $desc) {
-	global $user_settings, $g;
-
 	if (isAjax()) {
 		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
 		return;
@@ -195,7 +193,7 @@ function display_login_form() {
 
 	/* Check against locally configured IP addresses, which will catch when someone
 	   port forwards WebGUI access from WAN to an internal IP on the router. */
-	global $FilterIflist, $nifty_background;
+	global $FilterIflist;
 
 	$local_ip = false;
 
@@ -253,14 +251,6 @@ function display_login_form() {
 	// For the login form, get the settings of no particular user.
 	// That ensures we will use the system default theme for the login form.
 	$user_settings = get_user_settings("");
-	$cssfile = "/css/pfSense.css";
-
-	if (isset($user_settings['webgui']['webguicss'])) {
-		if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
-			$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
-		}
-	}
-
 	$logincssfile = "#1e3f75";
 
 	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
@@ -272,7 +262,7 @@ function display_login_form() {
 								  htmlspecialchars(config_get_path('system/hostname', "")),
 								  htmlspecialchars(config_get_path('system/domain', "")));
 		$login_title = gettext(htmlspecialchars(config_get_path('system/hostname', "") . " - Login"));
-	} else {
+	} Else {
 		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_label']);
 		$login_title = sprintf(gettext("%s - Login"), $g['product_label']);
 	}

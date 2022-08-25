@@ -25,6 +25,8 @@
  */
 
 include_once("auth.inc");
+include_once("config.inc");
+include_once("config.lib.inc");
 include_once("priv.inc");
 if (!function_exists('platform_booting')) {
 	require_once('globals.inc');
@@ -103,7 +105,7 @@ phpsession_end(true);
  * determine if the user is allowed access to the requested page
  */
 function display_error_form($http_code, $desc) {
-	global $config, $user_settings, $g;
+	global $user_settings, $g;
 
 	if (isAjax()) {
 		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
@@ -170,7 +172,7 @@ function display_error_form($http_code, $desc) {
 
 function display_login_form() {
 	require_once("globals.inc");
-	global $config, $g;
+	global $g;
 
 	unset($input_errors);
 
@@ -265,17 +267,20 @@ function display_login_form() {
 		$logincssfile = "#" . $user_settings['webgui']['logincss'];
 	}
 
-	if (isset($config['system']['webgui']['loginshowhost'])) {
-		$loginbannerstr = sprintf(gettext('%1$s.%2$s'), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
-		$login_title = gettext(htmlspecialchars($config['system']['hostname'] . " - Login"));
+	if (config_path_enabled('system/webgui','loginshowhost')) {
+		$loginbannerstr = sprintf(gettext('%1$s.%2$s'),
+								  htmlspecialchars(config_get_path('system/hostname', "")),
+								  htmlspecialchars(config_get_path('system/domain', "")));
+		$login_title = gettext(htmlspecialchars(config_get_path('system/hostname', "") . " - Login"));
 	} else {
 		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_label']);
 		$login_title = sprintf(gettext("%s - Login"), $g['product_label']);
 	}
 
-	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
+	$loginautocomplete = config_path_enabled('system/webgui','loginautocomplete') ? '' : 'autocomplete="off"';
 
-	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+	if (is_ipaddr($http_host) && !$local_ip &&
+		!config_path_enabled('system/webgui','nohttpreferercheck')) {
 		$warnclass = "pagebodywarn";	// Make room for a warning display row
 	} else {
 		$warnclass = "pagebody";
@@ -393,7 +398,7 @@ function display_login_form() {
 		events.push(function() {
 			document.cookie=
 				"cookie_test=1" +
-				"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
+				"<?php echo config_get_path('system/webgui/protocol') == 'https' ? '; secure' : '';?>";
 
 			if (document.cookie.indexOf("cookie_test") == -1) {
 				alert("<?=gettext('The browser must support cookies to login.')?>");

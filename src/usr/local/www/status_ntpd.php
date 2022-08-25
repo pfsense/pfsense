@@ -33,7 +33,7 @@
 ##|*MATCH=status_ntpd.php*
 ##|-PRIV
 
-require_once('confib.inc');
+require_once('config.inc');
 require_once('config.lib.inc');
 require_once('guiconfig.inc');
 

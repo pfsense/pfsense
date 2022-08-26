@@ -3032,19 +3032,16 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, 
  *   If $type is an array, all aliases of any type specified in any element of $type are returned.
  */
 function get_alias_list($type = null) {
-	global $config;
 	$result = array();
-	if ($config['aliases']['alias'] <> "" && is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($type === null) {
-				$result[] = $alias['name'];
-			} else if (is_array($type)) {
-				if (in_array($alias['type'], $type)) {
-					$result[] = $alias['name'];
-				}
-			} else if ($type === $alias['type']) {
+	foreach (config_get_path('aliases/alias', []) as $alias) {
+		if ($type === null) {
+			$result[] = $alias['name'];
+		} else if (is_array($type)) {
+			if (in_array($alias['type'], $type)) {
 				$result[] = $alias['name'];
 			}
+		} else if ($type === $alias['type']) {
+			$result[] = $alias['name'];
 		}
 	}
 	return $result;
@@ -3065,9 +3062,7 @@ function array_exclude($needle, $haystack) {
 
 /* Define what is preferred, IPv4 or IPv6 */
 function prefer_ipv4_or_ipv6() {
-	global $config;
-
-	if (isset($config['system']['prefer_ipv4'])) {
+	if (config_path_enabled('system', 'prefer_ipv4')) {
 		mwexec("/etc/rc.d/ip6addrctl prefer_ipv4");
 	} else {
 		mwexec("/etc/rc.d/ip6addrctl prefer_ipv6");
@@ -3437,11 +3432,9 @@ function array_del_path(array &$arr, string $path) {
 
 
 function dhcpd_date_adjust_gmt($dt) {
-	global $config;
-
 	init_config_arr(array('dhcpd'));
 
-	foreach ($config['dhcpd'] as $dhcpditem) {
+	foreach (config_get_path('dhcpd', []) as $dhcpditem) {
 		if ($dhcpditem['dhcpleaseinlocaltime'] == "yes") {
 			$ts = strtotime($dt . " GMT");
 			if ($ts !== false) {
@@ -3886,22 +3879,14 @@ function is_specialnet($net) {
 }
 
 function is_interface_ipaddr($interface) {
-	global $config;
-
-	if (is_array($config['interfaces'][$interface]) &&
-	    isset($config['interfaces'][$interface]['ipaddr']) &&
-	    !empty($config['interfaces'][$interface]['ipaddr'])) {
+	if (!empty(config_get_path("interfaces/{$interface}/ipaddr"))) {
 		return true;
 	}
 	return false;
 }
 
 function is_interface_ipaddrv6($interface) {
-	global $config;
-
-	if (is_array($config['interfaces'][$interface]) &&
-	    isset($config['interfaces'][$interface]['ipaddrv6']) &&
-	    !empty($config['interfaces'][$interface]['ipaddrv6'])) {
+	if (!empty(config_get_path("interfaces/{$interface}/ipaddrv6"))) {
 		return true;
 	}
 	return false;
@@ -4010,8 +3995,6 @@ function interfaces_interrupts() {
 }
 
 function dummynet_load_module($max_qlimit) {
-	global $config;
-
 	if (!is_module_loaded("dummynet.ko")) {
 		mute_kernel_msgs();
 		mwexec("/sbin/kldload dummynet");
@@ -4023,11 +4006,9 @@ function dummynet_load_module($max_qlimit) {
 			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 	));
 	init_config_arr(array('sysctl', 'item'));
-	if (!empty($config['sysctl']['item'])) {
-		foreach ($config['sysctl']['item'] as $item) {
-			if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
-				$sysctls[$item['tunable']] = $item['value'];
-			}
+	foreach (config_get_path('sysctl/item', []) as $item) {
+		if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
+			$sysctls[$item['tunable']] = $item['value'];
 		}
 	}
 	set_sysctl($sysctls);

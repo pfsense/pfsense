@@ -34,7 +34,7 @@ require_once("config.lib.inc");
  ******/
 function have_natpfruleint_access($if) {
 	$security_url = "firewall_nat_edit.php?if=". strtolower($if);
-	if (isAllowedPage($security_url, $allowed)) {
+	if (isAllowedPage($security_url)) {
 		return true;
 	}
 	return false;
@@ -584,8 +584,6 @@ function hardware_offloading_applyflags($iface) {
  *   This function only supports the fxp driver's loadable microcode.
  ******/
 function enable_hardware_offloading($interface) {
-	global $g;
-
 	$int = get_real_interface($interface);
 	if (empty($int)) {
 		return;
@@ -623,8 +621,6 @@ function enable_hardware_offloading($interface) {
  *
  ******/
 function is_alias_inuse($alias) {
-	global $g;
-
 	if ($alias == "") {
 		return false;
 	}
@@ -658,8 +654,6 @@ function is_alias_inuse($alias) {
  *
  ******/
 function is_schedule_inuse($schedule) {
-	global $g;
-
 	if ($schedule == "") {
 		return false;
 	}
@@ -687,7 +681,7 @@ function setup_microcode() {
 
 	/* if list */
 	$iflist = get_configured_interface_list(true);
-	foreach ($iflist as $if => $ifdescr) {
+	foreach (array_keys($iflist) as $if) {
 		enable_hardware_offloading($if);
 	}
 	unset($iflist);
@@ -731,8 +725,8 @@ function get_carp_interface_status($carpid) {
 		return "";
 
 	$vhid = $vip['vhid'];
-	$carp_query = '';
-	$_gb = exec("/sbin/ifconfig {$interface} | /usr/bin/grep \"carp:.* vhid {$vhid} \"", $carp_query);
+	$carp_query = [];
+	exec("/sbin/ifconfig {$interface} | /usr/bin/grep \"carp:.* vhid {$vhid} \"", $carp_query);
 	foreach ($carp_query as $int) {
 		if (stripos($int, "MASTER"))
 			return "MASTER";
@@ -801,12 +795,13 @@ function WakeOnLan($addr, $mac) {
 	$s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 	if ($s == false) {
 		log_error(gettext("Error creating socket!"));
-		log_error(sprintf(gettext("Error code is '%1\$s' - %2\$s"), socket_last_error($s), socket_strerror(socket_last_error($s))));
+		log_error(sprintf(gettext("Error code is '%1\$s' - %2\$s"), socket_last_error(), socket_strerror(socket_last_error())));
 	} else {
 		// setting a broadcast option to socket:
 		$opt_ret = socket_set_option($s, 1, 6, TRUE);
 		if ($opt_ret < 0) {
-			log_error(sprintf(gettext("setsockopt() failed, error: %s"), strerror($opt_ret)));
+			log_error(sprintf(gettext("setsockopt() failed, error: %s"),
+							  socket_strerror(socket_last_error($s))));
 		}
 		$e = socket_sendto($s, $msg, strlen($msg), 0, $addr, 2050);
 		socket_close($s);
@@ -899,7 +894,7 @@ function restore_config_section($section_name, $new_contents) {
  * 													structure if needed
  */
 function merge_config_section($section_name, $new_contents) {
-	$fname = get_tmp_filename();
+	$fname = get_tmp_file();
 	$fout = fopen($fname, "w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
@@ -945,7 +940,7 @@ function rmdir_recursive($path, $follow_links=false) {
 /*
  * host_firmware_version(): Return the versions used in this install
  */
-function host_firmware_version($tocheck = "") {
+function host_firmware_version() {
 	global $g;
 
 	$os_version = trim(substr(php_uname("r"), 0, strpos(php_uname("r"), '-')));
@@ -1046,7 +1041,7 @@ function reload_interfaces() {
  *   none
  ******/
 function reload_all_sync() {
-	global $config, $g;
+	global $config;
 
 	/* parse config.xml again */
 	$config = parse_config(true);
@@ -1125,8 +1120,8 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 			continue;
 		}
 		$skip = false;
-		list($name, $value) = explode('=', $line, 2);
-		foreach($remove as $rid => $rkey) {
+		$name = explode('=', $line, 2)[0];
+		foreach($remove as $rkey) {
 			if (strncasecmp(trim($name), $rkey, strlen($rkey)) == 0) {
 				$skip = true;
 				break;
@@ -1185,7 +1180,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 
 	if (empty($data)) {
-		@unlink($boot_conf_file);
+		@unlink($boot_config_file);
 	} else {
 		safe_write_file($boot_config_file, $data);
 	}
@@ -1362,13 +1357,13 @@ function reload_ttys() {
 }
 
 function print_value_list($list, $count = 10, $separator = ",") {
-	$list = implode($separator, array_slice($list, 0, $count));
+	$ret = implode($separator, array_slice($list, 0, $count));
 	if (count($list) < $count) {
-		$list .= ".";
+		$ret .= ".";
 	} else {
-		$list .= "...";
+		$ret .= "...";
 	}
-	return $list;
+	return $ret;
 }
 
 /* DHCP enabled on any interfaces? */
@@ -1430,7 +1425,7 @@ function is_radvd_enabled() {
 	}
 
 	/* handle DHCP-PD prefixes and 6RD dynamic interfaces */
-	foreach ($Iflist as $if => $ifdescr) {
+	foreach (array_keys($Iflist) as $if) {
 		if (!config_path_enabled("interfaces/{$if}", 'track6-interface')) {
 			continue;
 		}
@@ -1578,7 +1573,6 @@ function get_interface_info($ifdescr) {
 	$ifinfo['inpkts'] = $in4_pass_packets + $in6_pass_packets;
 	$ifinfo['outpkts'] = $out4_pass_packets + $out6_pass_packets;
 
-	$ifconfiginfo = "";
 	$link_type = config_get_path("interfaces/{$ifdescr}/ipaddr");
 	switch ($link_type) {
 		/* DHCP? -> see if dhclient is up */
@@ -1615,7 +1609,7 @@ function get_interface_info($ifdescr) {
 				$ifinfo['status'] = "down";
 			}
 
-			foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+			foreach (config_get_path('ppps/ppp', []) as $ppp) {
 				if (config_get_path("interfaces/{$ifdescr}/if") == $ppp['if']) {
 					break;
 				}
@@ -1671,9 +1665,9 @@ function get_interface_info($ifdescr) {
 
 	if ($ifinfo['status'] == "up") {
 		/* try to determine media with ifconfig */
-		unset($ifconfiginfo);
+		$ifconfiginfo = [];
 		exec("/sbin/ifconfig -v " . $ifinfo['if'], $ifconfiginfo);
-		$wifconfiginfo = array();
+		$wifconfiginfo = [];
 		if (is_interface_wireless($ifdescr)) {
 			exec("/sbin/ifconfig {$ifinfo['if']} list sta", $wifconfiginfo);
 			array_shift($wifconfiginfo);
@@ -1876,6 +1870,7 @@ function pfsense_default_table_entries_size() {
  * if it has changed we return the old records
  * if no change we return false */
 function compare_hostname_to_dnscache($hostname) {
+	global $g;
 	if (!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
 	}
@@ -1909,7 +1904,6 @@ function compare_hostname_to_dnscache($hostname) {
  * load_crypto() - Load crypto modules if enabled in config.
  */
 function load_crypto() {
-	global $g;
 	$crypto_modules = array('aesni', 'cryptodev');
 
 	$enabled_modules = explode('_', config_get_path('system/crypto_hardware'));
@@ -1931,7 +1925,6 @@ function load_crypto() {
  * load_thermal_hardware() - Load temperature monitor kernel module
  */
 function load_thermal_hardware() {
-	global $g;
 	$thermal_hardware_modules = array('coretemp', 'amdtemp');
 	$thermal_hardware = config_get_path('system/thermal_hardware');
 
@@ -1957,7 +1950,7 @@ function load_thermal_hardware() {
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86", "VirtualBox");
-	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $output, $rc);
+	exec('/bin/kenv -q smbios.system.product 2>/dev/null', $output, $rc);
 
 	if ($rc != 0 || !isset($output[0])) {
 		return false;
@@ -2063,7 +2056,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 }
 
 function read_header($ch, $string) {
-	global $file_size, $fout;
+	global $file_size;
 	$length = strlen($string);
 	$regs = "";
 	preg_match("/(Content-Length:) (.*)/", $string, $regs);
@@ -2253,7 +2246,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 	}
 
 	if (is_array($sectionref)) {
-		foreach ($sectionref as $itemkey => $item) {
+		foreach (array_keys($sectionref) as $itemkey) {
 			if ($debug) {
 				fwrite($fd, "$itemkey\n");
 			}
@@ -2309,8 +2302,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	}
 	$items = array();
 	$comments = array();
-	/* NOTE: fgetss() is not a typo RTFM before being smart */
-	while (($fc = fgetss($fd)) !== FALSE) {
+	while (($fc = strip_tags(fgets($fd))) !== FALSE) {
 		$tmp = alias_idn_to_ascii(trim($fc, " \t\n\r"));
 		if (empty($tmp)) {
 			continue;
@@ -2582,7 +2574,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $validateonly=false) {
 	global $g;
 
-	if (!is_validaliasname($name) || !isURL($url)) {
+	if (!is_validaliasname($name) || !filter_var($url, FILTER_VALIDATE_URL)) {
 		return false;
 	}
 
@@ -3583,5 +3575,4 @@ function set_curlproxy(&$ch) {
 		}
 	}
 }
-
 ?>

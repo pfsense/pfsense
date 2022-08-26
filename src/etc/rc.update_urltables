@@ -23,17 +23,19 @@
  */
 
 require_once("config.inc");
+require_once("config.lib.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 
-if (!is_array($config['aliases']['alias'])) {
+$aliases = config_get_path('aliases/alias');
+if (!is_array($aliases)) {
 	// No aliases
 	return;
 }
 
 // Gather list of urltable aliases
 $todo = array();
-foreach ($config['aliases']['alias'] as $alias) {
+foreach ($aliases as $alias) {
 	if (preg_match('/urltable/i', $alias['type'])) {
 		$tmp = array();
 		$tmp['type'] = $alias['type'];

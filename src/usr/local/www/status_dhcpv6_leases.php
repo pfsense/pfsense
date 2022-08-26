@@ -346,14 +346,14 @@ foreach ($leases as $data):
 				<td>n/a</td>
 				<td>n/a</td>
 <?php endif; ?>
-                <td>
+				<td>
 <?php if ($data['online'] == $online_string):?>
-							<p style="font-weight: bold; color:green;">
+							<span style="color:green; white-space: nowrap;"><i class="fa fa-arrow-up"></i>
 <?php else: ?>
-							<p style="font-style: italic; color:red;">
+							<span style="white-space: nowrap;"><i class="fa fa-arrow-down"></i>
 <?php endif; ?>
-                            <?=$data['online']?>
-						</p>
+							<?=$data['online']?>
+							</span>
 					</td>
 				<td><?=$data['act']?></td>
 				<td>

@@ -293,7 +293,16 @@ foreach ($leases['lease'] as $data):
 						<td><?=gettext("n/a")?></td>
 						<td><?=gettext("n/a")?></td>
 					<? endif; ?>
-					<td><?=htmlspecialchars($data['online'])?></td>
+					<td>
+<?php if ($data['online'] == $online_string):?>
+							<p style="font-weight: bold; color:green;">
+<?php else: ?>
+							<p style="font-style: italic; color:red;">
+<?php endif; ?>
+							<?=htmlspecialchars($data['online'])?>
+						</p>
+					</td>
+
 					<td><?=htmlspecialchars($data['act'])?></td>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>

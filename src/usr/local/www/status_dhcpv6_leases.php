@@ -346,7 +346,15 @@ foreach ($leases as $data):
 				<td>n/a</td>
 				<td>n/a</td>
 <?php endif; ?>
-				<td><?=$data['online']?></td>
+                <td>
+<?php if ($data['online'] == $online_string):?>
+							<p style="font-weight: bold; color:green;">
+<?php else: ?>
+							<p style="font-style: italic; color:red;">
+<?php endif; ?>
+                            <?=$data['online']?>
+						</p>
+					</td>
 				<td><?=$data['act']?></td>
 				<td>
 <?php if ($data['type'] == $dynamic_string): ?>

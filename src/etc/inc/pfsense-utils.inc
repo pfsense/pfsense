@@ -21,6 +21,9 @@
  * limitations under the License.
  */
 
+require_once("config.inc");
+require_once("config.lib.inc");
+
 /****f* pfsense-utils/have_natpfruleint_access
  * NAME
  *   have_natpfruleint_access
@@ -517,15 +520,13 @@ function gen_created_updated_fields(&$form, $created, $updated, $tracker = 0) {
 }
 
 function hardware_offloading_applyflags($iface) {
-	global $config;
-
 	$flags_on = 0;
 	$flags_off = 0;
 	$options = get_interface_addresses($iface);
 
 	/* disable hardware checksum offloading for VirtIO network drivers,
 	 * see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=165059 */
-	if (isset($config['system']['disablechecksumoffloading']) ||
+	if (config_path_enabled('system','disablechecksumoffloading') ||
 	    stristr($iface, "vtnet") || stristr($iface, "ena")) { 
 		if (isset($options['encaps']['txcsum'])) {
 			$flags_off |= IFCAP_TXCSUM;
@@ -554,7 +555,7 @@ function hardware_offloading_applyflags($iface) {
 		}
 	}
 
-	if (isset($config['system']['disablesegmentationoffloading'])) {
+	if (config_path_enabled('system','disablesegmentationoffloading')) {
 		$flags_off |= IFCAP_TSO;
 		$flags_off |= IFCAP_VLAN_HWTSO;
 	} else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6'])) {
@@ -562,7 +563,7 @@ function hardware_offloading_applyflags($iface) {
 		$flags_on |= IFCAP_VLAN_HWTSO;
 	}
 
-	if (isset($config['system']['disablelargereceiveoffloading'])) {
+	if (config_path_enabled('system','disablelargereceiveoffloading')) {
 		$flags_off |= IFCAP_LRO;
 	} else if (isset($options['caps']['lro'])) {
 		$flags_on |= IFCAP_LRO;
@@ -583,14 +584,14 @@ function hardware_offloading_applyflags($iface) {
  *   This function only supports the fxp driver's loadable microcode.
  ******/
 function enable_hardware_offloading($interface) {
-	global $g, $config;
+	global $g;
 
 	$int = get_real_interface($interface);
 	if (empty($int)) {
 		return;
 	}
 
-	if (!isset($config['system']['do_not_use_nic_microcode'])) {
+	if (!config_path_enabled('system','do_not_use_nic_microcode')) {
 		/* translate wan, lan, opt -> real interface if needed */
 		$int_family = preg_split("/[0-9]+/", $int);
 		$supported_ints = array('fxp');
@@ -622,36 +623,23 @@ function enable_hardware_offloading($interface) {
  *
  ******/
 function is_alias_inuse($alias) {
-	global $g, $config;
+	global $g;
 
 	if ($alias == "") {
 		return false;
 	}
 	/* loop through firewall rules looking for alias in use */
-	if (is_array($config['filter']['rule'])) {
-		foreach ($config['filter']['rule'] as $rule) {
-			if ($rule['source']['address']) {
-				if ($rule['source']['address'] == $alias) {
-					return true;
-				}
-			}
-			if ($rule['destination']['address']) {
-				if ($rule['destination']['address'] == $alias) {
-					return true;
-				}
+	foreach (config_get_path('filter/rule', []) as $rule) {
+		foreach (['source', 'destination'] as $origin) {
+			if (array_get_path($rule, "{$origin}/address") == $alias) {
+				return true;
 			}
 		}
 	}
 	/* loop through nat rules looking for alias in use */
-	if (is_array($config['nat']['rule'])) {
-		foreach ($config['nat']['rule'] as $rule) {
-			if ($rule['target'] && $rule['target'] == $alias) {
-				return true;
-			}
-			if ($rule['source']['address'] && $rule['source']['address'] == $alias) {
-				return true;
-			}
-			if ($rule['destination']['address'] && $rule['destination']['address'] == $alias) {
+	foreach (config_get_path('nat/rule', []) as $rule) {
+		foreach (['target', 'source/address', 'destination/address'] as $property) {
+			if (array_get_path($rule, $property) == $alias) {
 				return true;
 			}
 		}
@@ -670,17 +658,15 @@ function is_alias_inuse($alias) {
  *
  ******/
 function is_schedule_inuse($schedule) {
-	global $g, $config;
+	global $g;
 
 	if ($schedule == "") {
 		return false;
 	}
 	/* loop through firewall rules looking for schedule in use */
-	if (is_array($config['filter']['rule'])) {
-		foreach ($config['filter']['rule'] as $rule) {
-			if ($rule['sched'] == $schedule) {
-				return true;
-			}
+	foreach (config_get_path('filter/rule', []) as $rule) {
+		if ($rule['sched'] == $schedule) {
+			return true;
 		}
 	}
 	return false;
@@ -760,13 +746,11 @@ function get_carp_interface_status($carpid) {
 }
 
 function get_carp_bind_status($interface) {
-	global $config;
-
 	$carpstatus = get_carp_interface_status($interface);
 	if (!empty($carpstatus)) {
 		return $carpstatus;
 	} else {
-		foreach ($config['virtualip']['vip'] as $vip) {
+		foreach (config_get_path('virtualip/vip', []) as $vip) {
 			if ($interface == "_vip{$vip['uniqid']}") { 
 				return get_carp_interface_status($vip['interface']);
 			}
@@ -779,17 +763,13 @@ function get_carp_bind_status($interface) {
  * This function return false if CARP is not enabled on any interface of the captive portal zone
  */
 function captiveportal_ha_is_node_in_backup_mode($cpzone) {
-	global $config;
+	$cpinterfaces = explode(",", config_get_path("captiveportal/{$cpzone}/interface", ""));
 
-	$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
-
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($cpinterfaces as $interface) {
-			foreach ($config['virtualip']['vip'] as $vip) {
-				if (($vip['interface'] == $interface) && ($vip['mode'] == "carp")) {
-					if (get_carp_interface_status("_vip{$vip['uniqid']}") != "MASTER") {
-						return true;
-					}
+	foreach ($cpinterfaces as $interface) {
+		foreach (config_get_path('virtualip/vip', []) as $vip) {
+			if (($vip['interface'] == $interface) && ($vip['mode'] == "carp")) {
+				if (get_carp_interface_status("_vip{$vip['uniqid']}") != "MASTER") {
+					return true;
 				}
 			}
 		}
@@ -853,8 +833,7 @@ function reverse_strrchr($haystack, $needle) {
  *                                   the configuration section
  */
 function backup_config_section($section_name) {
-	global $config;
-	$new_section = &$config[$section_name];
+	$new_section = config_get_path($section_name, []);
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($new_section, $section_name);
 	$xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
@@ -867,7 +846,7 @@ function backup_config_section($section_name) {
  *                                                  to disk/cf.
  */
 function restore_config_section($section_name, $new_contents) {
-	global $config, $g;
+	global $g;
 	$fout = fopen("{$g['tmp_path']}/tmpxml", "w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
@@ -890,11 +869,11 @@ function restore_config_section($section_name, $new_contents) {
 	/* Save current pkg repo to re-add on new config */
 	unset($pkg_repo_conf_path);
 	if ($section_name == "system" &&
-	    isset($config['system']['pkg_repo_conf_path'])) {
-		$pkg_repo_conf_path = $config['system']['pkg_repo_conf_path'];
+	    config_get_path('system/pkg_repo_conf_path')) {
+		$pkg_repo_conf_path = config_get_path('system/pkg_repo_conf_path');
 	}
 
-	$config[$section_name] = &$section_xml;
+	config_set_path($section_name, $section_xml);
 	if (file_exists("{$g['tmp_path']}/config.cache")) {
 		unlink("{$g['tmp_path']}/config.cache");
 	}
@@ -902,10 +881,9 @@ function restore_config_section($section_name, $new_contents) {
 	/* Restore previously pkg repo configured */
 	if ($section_name == "system") {
 		if (isset($pkg_repo_conf_path)) {
-			$config['system']['pkg_repo_conf_path'] =
-			    $pkg_repo_conf_path;
-		} elseif (isset($config['system']['pkg_repo_conf_path'])) {
-			unset($config['system']['pkg_repo_conf_path']);
+			config_set_path('system/pkg_repo_conf_path', $pkg_repo_conf_path);
+		} elseif (config_get_path('system/pkg_repo_conf_path')) {
+			config_del_path(('system/pkg_repo_conf_path'));
 		}
 	}
 
@@ -921,13 +899,12 @@ function restore_config_section($section_name, $new_contents) {
  * 													structure if needed
  */
 function merge_config_section($section_name, $new_contents) {
-	global $config;
 	$fname = get_tmp_filename();
 	$fout = fopen($fname, "w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
 	$section_xml = parse_xml_config($fname, $section_name);
-	$config[$section_name] = $section_xml;
+	config_set_path($section_name, $section_xml);
 	unlink($fname);
 	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section_name));
 	disable_security_checks();
@@ -969,7 +946,7 @@ function rmdir_recursive($path, $follow_links=false) {
  * host_firmware_version(): Return the versions used in this install
  */
 function host_firmware_version($tocheck = "") {
-	global $g, $config;
+	global $g;
 
 	$os_version = trim(substr(php_uname("r"), 0, strpos(php_uname("r"), '-')));
 
@@ -978,7 +955,7 @@ function host_firmware_version($tocheck = "") {
 		"kernel"   => array("version" => $os_version),
 		"base"     => array("version" => $os_version),
 		"platform" => $g['product_label'],
-		"config_version" => $config['version']
+		"config_version" => config_get_path('version')
 	);
 }
 
@@ -1164,12 +1141,12 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 }
 
 function setup_loader_settings($path = "", $upgrade = false) {
-	global $g, $config;
+	global $g;
 
 	$boot_config_file = "{$path}/boot.config";
 	$loader_conf_file = "{$path}/boot/loader.conf";
 
-	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
+	$serialspeed = (config_get_path('system/serialspeed', 115200));
 
 	$vga_only = false;
 	$serial_only = false;
@@ -1231,7 +1208,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'boot_serial="YES"';
 		$primaryconsole = isset($g['primaryconsole_force']) ?
 		    $g['primaryconsole_force'] :
-		    $config['system']['primaryconsole'];
+		    config_get_path('system/primaryconsole');
 		switch ($primaryconsole) {
 			case "video":
 				$data[] = "console=\"{$video_console_type},comconsole\"";
@@ -1251,12 +1228,12 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hint.uart.1.flags="0x10"';
 	}
 	$data[] = 'autoboot_delay="3"';
-	if (isset($config['system']['pti_disabled'])) {
+	if (config_path_enabled('system','pti_disabled')) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
 
 	/* Enable ALTQ support for hnX NICs. */
-	if (isset($config['system']['hn_altq_enable'])) {
+	if (config_path_enabled('system','hn_altq_enable')) {
 		$data[] = 'hw.hn.vf_transparent="0"';
 		$data[] = 'hw.hn.use_if_start="1"';
 	}
@@ -1278,7 +1255,6 @@ function setup_loader_settings($path = "", $upgrade = false) {
 }
 
 function console_configure($when = "save", $path = "") {
-	global $config;
 	$ttys_file = "{$path}/etc/ttys";
 
 	/* Update the loader settings. */
@@ -1291,7 +1267,7 @@ function console_configure($when = "save", $path = "") {
 
 	$on_off = (is_serial_enabled() ? 'onifconsole' : 'off');
 
-	if (isset($config['system']['disableconsolemenu'])) {
+	if (config_path_enabled('system','disableconsolemenu')) {
 		$console_type = 'Pc';
 		$serial_type = '3wire';
 	} else {
@@ -1370,10 +1346,10 @@ function console_configure($when = "save", $path = "") {
 }
 
 function is_serial_enabled() {
-	global $g, $config;
+	global $g;
 
 	if (!isset($g['enableserial_force']) &&
-	    !isset($config['system']['enableserial'])) {
+	    !config_path_enabled('system','enableserial')) {
 		return false;
 	}
 
@@ -1397,14 +1373,9 @@ function print_value_list($list, $count = 10, $separator = ",") {
 
 /* DHCP enabled on any interfaces? */
 function is_dhcp_server_enabled() {
-	global $config;
-
-	if (!is_array($config['dhcpd'])) {
-		return false;
-	}
-
-	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-		if (isset($dhcpifconf['enable']) && !empty($config['interfaces'][$dhcpif])) {
+	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpifconf) {
+		if (isset($dhcpifconf['enable']) &&
+			!empty(config_get_path("interfaces/{$dhcpif}"))) {
 			return true;
 		}
 	}
@@ -1414,22 +1385,15 @@ function is_dhcp_server_enabled() {
 
 /* DHCP enabled on any interfaces? */
 function is_dhcpv6_server_enabled() {
-	global $config;
-
-	if (is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $ifcfg) {
-			if (isset($ifcfg['enable']) && !empty($ifcfg['track6-interface'])) {
-				return true;
-			}
+	foreach (config_get_path('interfaces', []) as $ifcfg) {
+		if (isset($ifcfg['enable']) && !empty($ifcfg['track6-interface'])) {
+			return true;
 		}
 	}
 
-	if (!is_array($config['dhcpdv6'])) {
-		return false;
-	}
-
-	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-		if (isset($dhcpv6ifconf['enable']) && !empty($config['interfaces'][$dhcpv6if])) {
+	foreach (config_get_path('dhcpdv6', []) as $dhcpv6if => $dhcpv6ifconf) {
+		if (isset($dhcpv6ifconf['enable']) &&
+			!empty(config_get_path("interfaces/{$dhcpv6if}"))) {
 			return true;
 		}
 	}
@@ -1439,18 +1403,13 @@ function is_dhcpv6_server_enabled() {
 
 /* radvd enabled on any interfaces? */
 function is_radvd_enabled() {
-	global $config;
-
-	if (!is_array($config['dhcpdv6'])) {
-		$config['dhcpdv6'] = array();
-	}
-
-	$dhcpdv6cfg = $config['dhcpdv6'];
+	init_config_arr(['dhcpdv6']);
+	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 
 	/* handle manually configured DHCP6 server settings first */
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
-		if (!isset($config['interfaces'][$dhcpv6if]['enable'])) {
+		if (config_path_enabled("interfaces/{$dhcpv6if}")) {
 			continue;
 		}
 
@@ -1472,10 +1431,10 @@ function is_radvd_enabled() {
 
 	/* handle DHCP-PD prefixes and 6RD dynamic interfaces */
 	foreach ($Iflist as $if => $ifdescr) {
-		if (!isset($config['interfaces'][$if]['track6-interface'])) {
+		if (!config_path_enabled("interfaces/{$if}", 'track6-interface')) {
 			continue;
 		}
-		if (!isset($config['interfaces'][$if]['enable'])) {
+		if (!config_path_enabled("interfaces/{$if}")) {
 			continue;
 		}
 
@@ -1499,15 +1458,9 @@ function is_radvd_enabled() {
 
 /* Any PPPoE servers enabled? */
 function is_pppoe_server_enabled() {
-	global $config;
-
 	$pppoeenable = false;
 
-	if (!is_array($config['pppoes']) || !is_array($config['pppoes']['pppoe'])) {
-		return false;
-	}
-
-	foreach ($config['pppoes']['pppoe'] as $pppoes) {
+	foreach (config_get_path('pppoes/pppoe', []) as $pppoes) {
 		if ($pppoes['mode'] == 'server') {
 			$pppoeenable = true;
 		}
@@ -1549,14 +1502,14 @@ function get_ppp_uptime($port) {
 
 //returns interface information
 function get_interface_info($ifdescr) {
-	global $config, $g;
+	global $g;
 
 	$ifinfo = array();
-	if (empty($config['interfaces'][$ifdescr])) {
+	if (empty(config_get_path("interfaces/{$ifdescr}"))) {
 		return;
 	}
-	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
-	$ifinfo['enable'] = isset($config['interfaces'][$ifdescr]['enable']);
+	$ifinfo['hwif'] = config_get_path("interfaces/{$ifdescr}/if");
+	$ifinfo['enable'] = config_path_enabled("interfaces/{$ifdescr}");
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];
@@ -1626,7 +1579,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo['outpkts'] = $out4_pass_packets + $out6_pass_packets;
 
 	$ifconfiginfo = "";
-	$link_type = $config['interfaces'][$ifdescr]['ipaddr'];
+	$link_type = config_get_path("interfaces/{$ifdescr}/ipaddr");
 	switch ($link_type) {
 		/* DHCP? -> see if dhclient is up */
 		case "dhcp":
@@ -1662,15 +1615,13 @@ function get_interface_info($ifdescr) {
 				$ifinfo['status'] = "down";
 			}
 
-			if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-					if ($config['interfaces'][$ifdescr]['if'] == $ppp['if']) {
-						break;
-					}
+			foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+				if (config_get_path("interfaces/{$ifdescr}/if") == $ppp['if']) {
+					break;
 				}
 			}
 			$dev = $ppp['ports'];
-			if ($config['interfaces'][$ifdescr]['if'] != $ppp['if'] || empty($dev)) {
+			if (config_get_path("interfaces/{$ifdescr}/if") != $ppp['if'] || empty($dev)) {
 				break;
 			}
 			if (!file_exists($dev)) {
@@ -1958,10 +1909,10 @@ function compare_hostname_to_dnscache($hostname) {
  * load_crypto() - Load crypto modules if enabled in config.
  */
 function load_crypto() {
-	global $config, $g;
+	global $g;
 	$crypto_modules = array('aesni', 'cryptodev');
 
-	$enabled_modules = explode('_', $config['system']['crypto_hardware']);
+	$enabled_modules = explode('_', config_get_path('system/crypto_hardware'));
 
 	foreach ($enabled_modules as $enmod) {
 		if (empty($enmod) || !in_array($enmod, $crypto_modules)) {
@@ -1980,17 +1931,18 @@ function load_crypto() {
  * load_thermal_hardware() - Load temperature monitor kernel module
  */
 function load_thermal_hardware() {
-	global $config, $g;
+	global $g;
 	$thermal_hardware_modules = array('coretemp', 'amdtemp');
+	$thermal_hardware = config_get_path('system/thermal_hardware');
 
-	if (!in_array($config['system']['thermal_hardware'], $thermal_hardware_modules)) {
+	if (!in_array($thermal_hardware, $thermal_hardware_modules)) {
 		return false;
 	}
 
-	if (!empty($config['system']['thermal_hardware']) && !is_module_loaded($config['system']['thermal_hardware'])) {
-		log_error(sprintf(gettext("Loading %s thermal monitor module."), $config['system']['thermal_hardware']));
+	if (!empty($thermal_hardware) && !is_module_loaded($thermal_hardware)) {
+		log_error(sprintf(gettext("Loading %s thermal monitor module."), $thermal_hardware));
 		mute_kernel_msgs();
-		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
+		mwexec("/sbin/kldload {$thermal_hardware}");
 		unmute_kernel_msgs();
 	}
 }
@@ -2026,7 +1978,7 @@ function get_freebsd_version() {
 }
 
 function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 5, $timeout = 0) {
-	global $config, $g;
+	global $g;
 
 	$fp = fopen($destination, "wb");
 
@@ -2043,7 +1995,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	if (!isset($config['system']['do_not_send_uniqueid'])) {
+	if (!config_path_enabled('system','do_not_send_uniqueid')) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
@@ -2065,8 +2017,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 }
 
 function download_file_with_progress_bar($url, $destination, $verify_ssl = true, $readbody = 'read_body', $connect_timeout = 5, $timeout = 0) {
-	global $config, $g;
-	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
+	global $g, $ch, $fout, $file_size, $downloaded, $first_progress_update;
 	$file_size = 1;
 	$downloaded = 1;
 	$first_progress_update = TRUE;
@@ -2090,7 +2041,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	if (!isset($config['system']['do_not_send_uniqueid'])) {
+	if (!config_path_enabled('system','do_not_send_uniqueid')) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
@@ -2413,85 +2364,84 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 }
 
 function update_alias_url_data() {
-	global $config, $g, $aliastable;
+	global $g, $aliastable;
 
 	$updated = false;
 
 	/* item is a url type */
 	$lockkey = lock('aliasurl');
-	if (is_array($config['aliases']['alias'])) {
-		$aliases = array();
-		$aliases_nested = array();
+	$aliases = array();
+	$aliases_nested = array();
 
-		foreach ($config['aliases']['alias'] as $x => $alias) {
-			if (empty($alias['aliasurl'])) {
-				continue;
-			}
-			foreach ($alias['aliasurl'] as $alias_url) {
-				if (is_alias($alias_url)) {
-					// process nested URL aliases after URL-only aliases
-					$aliases_nested[] = $x;
-					continue 2;
-				}
-			}
-			$aliases[] = $x;
+	foreach (config_get_path('aliases/alias', []) as $x => $alias) {
+		if (empty($alias['aliasurl'])) {
+			continue;
 		}
+		foreach ($alias['aliasurl'] as $alias_url) {
+			if (is_alias($alias_url)) {
+				// process nested URL aliases after URL-only aliases
+				$aliases_nested[] = $x;
+				continue 2;
+			}
+		}
+		$aliases[] = $x;
+	}
 
-		foreach (array_merge($aliases, $aliases_nested) as $x) {
+	foreach (array_merge($aliases, $aliases_nested) as $x) {
 
-			$address = array();
-			$type = $config['aliases']['alias'][$x]['type'];
-			foreach ($config['aliases']['alias'][$x]['aliasurl'] as $alias_url) {
-				/* fetch down and add in */
-				if (is_URL($alias_url)) {
-					$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+		$address = array();
+		$type = config_get_path("aliases/alias/{$x}/type");
+		foreach (config_get_path("aliases/alias/{$x}/aliasurl") as $alias_url) {
+			/* fetch down and add in */
+			if (is_URL($alias_url)) {
+				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+				rmdir_recursive($temp_filename);
+				$verify_ssl = config_path_enabled('system','checkaliasesurlcert');
+				mkdir($temp_filename);
+				if (!download_file($alias_url, $temp_filename . "/aliases", $verify_ssl)) {
+					log_error(sprintf(gettext("Failed to download alias %s"), $alias_url));
 					rmdir_recursive($temp_filename);
-					$verify_ssl = isset($config['system']['checkaliasesurlcert']);
-					mkdir($temp_filename);
-					if (!download_file($alias_url, $temp_filename . "/aliases", $verify_ssl)) {
-						log_error(sprintf(gettext("Failed to download alias %s"), $alias_url));
-						rmdir_recursive($temp_filename);
-						continue;
-					}
+					continue;
+				}
 
-					/* if the item is tar gzipped then extract */
-					if (stripos($alias_url, '.tgz') && !process_alias_tgz($temp_filename)) {
-						log_error(sprintf(gettext("Could not unpack tgz from the URL '%s'."), $alias_url));
-						rmdir_recursive($temp_filename);
-						continue;
-					}
-					if (file_exists("{$temp_filename}/aliases")) {
-						$t_address = parse_aliases_file("{$temp_filename}/aliases", $type, 5000);
-						if ($t_address == null) {
-							/* nothing was found */
-							log_error(sprintf(gettext("Could not fetch usable data from '%s'."), $alias_url));
-							//rmdir_recursive($temp_filename);
-							continue;
-						} else {
-							array_push($address, ...$t_address);
-						}
-						unset($t_address);
-					}
+				/* if the item is tar gzipped then extract */
+				if (stripos($alias_url, '.tgz') && !process_alias_tgz($temp_filename)) {
+					log_error(sprintf(gettext("Could not unpack tgz from the URL '%s'."), $alias_url));
 					rmdir_recursive($temp_filename);
-				} elseif (is_alias($alias_url)) {
-					/* nested URL alias, see https://redmine.pfsense.org/issues/11863 */
-					if (!$aliastable) {
-						alias_make_table();
-					}
-					$t_address = explode(" ", $aliastable[$alias_url]);
+					continue;
+				}
+				if (file_exists("{$temp_filename}/aliases")) {
+					$t_address = parse_aliases_file("{$temp_filename}/aliases", $type, 5000);
 					if ($t_address == null) {
-						log_error(sprintf(gettext("Could not get usable data from '%s' URL alias."), $alias_url));
+						/* nothing was found */
+						log_error(sprintf(gettext("Could not fetch usable data from '%s'."), $alias_url));
+						//rmdir_recursive($temp_filename);
 						continue;
+					} else {
+						array_push($address, ...$t_address);
 					}
-					array_push($address, ...$t_address);
+					unset($t_address);
 				}
-				if (!empty($address)) {
-					$config['aliases']['alias'][$x]['address'] = implode(" ", $address);
-					$updated = true;
+				rmdir_recursive($temp_filename);
+			} elseif (is_alias($alias_url)) {
+				/* nested URL alias, see https://redmine.pfsense.org/issues/11863 */
+				if (!$aliastable) {
+					alias_make_table();
 				}
+				$t_address = explode(" ", $aliastable[$alias_url]);
+				if ($t_address == null) {
+					log_error(sprintf(gettext("Could not get usable data from '%s' URL alias."), $alias_url));
+					continue;
+				}
+				array_push($address, ...$t_address);
+			}
+			if (!empty($address)) {
+				config_set_path("aliases/alias/{$x}/address", implode(" ", $address));
+				$updated = true;
 			}
 		}
 	}
+
 	unlock($lockkey);
 
 	/* Report status to callers as well */
@@ -2630,7 +2580,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	return $v;
 }
 function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $validateonly=false) {
-	global $g, $config;
+	global $g;
 
 	if (!is_validaliasname($name) || !isURL($url)) {
 		return false;
@@ -2655,7 +2605,7 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 
 		// Try to fetch the URL supplied
 		unlink_if_exists($tmp_urltable_filename);
-		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
+		$verify_ssl = config_path_enabled('system','checkaliasesurlcert');
 		if (download_file($url, $tmp_urltable_filename, $verify_ssl)) {
 			// Convert lines that begin with '$' or ';' to comments '#' instead of deleting them.
 			mwexec("/usr/bin/sed -i \"\" -E 's/^[[:space:]]*($|#|;)/#/g; /^#/!s/\;.*//g;' ". escapeshellarg($tmp_urltable_filename));
@@ -2674,7 +2624,7 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 
 			/* Remove existing archive and create an up to date archive if RAM disk is enabled. */
 			unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz");
-			if (isset($config['system']['use_mfs_tmpvar']) && !file_exists("/conf/ram_disks_failed")) {
+			if (config_path_enabled('system','use_mfs_tmpvar') && !file_exists("/conf/ram_disks_failed")) {
 				mwexec("/usr/bin/tar -czf " . escapeshellarg("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz") . " -C / " . escapeshellarg($urltable_filename));
 			}
 
@@ -2865,23 +2815,22 @@ function get_cert_country_codes() {
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
-	global $config;
-
 	init_config_arr(array('filter', 'rule'));
-	/* mark each rule with the sequence number (to retain the order while sorting) */
-	for ($i = 0; isset($config['filter']['rule'][$i]); $i++) {
-		if (!is_array($config['filter']['rule'][$i])) {
-			$config['filter']['rule'][$i] = array();
-		}
-		$config['filter']['rule'][$i]['seq'] = $i;
-	}
+	$rules = config_get_path('filter/rule', []);
 
-	usort($config['filter']['rule'], "filter_rules_compare");
+	/* mark each rule with the sequence number (to retain the order while sorting) */
+	for ($i = 0; isset($rules[$i]); $i++) {
+		$rules[$i]['seq'] =$i;
+	}
+	usort($rules, "filter_rules_compare");
 
 	/* strip the sequence numbers again */
-	for ($i = 0; isset($config['filter']['rule'][$i]); $i++) {
-		unset($config['filter']['rule'][$i]['seq']);
+	for ($i = 0; isset($rules[$i]); $i++) {
+		unset($rules[$i]['seq']);
 	}
+
+	/* commit changes */
+	config_set_path('filter/rule', $rules);
 }
 function filter_rules_compare($a, $b) {
 	if (isset($a['floating']) && isset($b['floating'])) {
@@ -2994,8 +2943,6 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
  *   If there are no matches then an empty array is returned.
 */
 function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false, $cidrprefix = "") {
-	global $config;
-
 	$where_configured = array();
 
 	$pos = strpos($ignore_if, '_virtualip');
@@ -3036,7 +2983,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 				/* do not check subnet overlapping on 6rd interfaces,
 				 * see https://redmine.pfsense.org/issues/12371 */ 
 				if ($if_ipv6 && $if_snbitsv6 &&
-				    (($config['interfaces'][$if]['ipaddrv6'] != '6rd') || ($cidrprefix > $if_snbitsv6)) &&
+				    ((config_get_path("interfaces/{$if}/ipaddrv6") != '6rd') || ($cidrprefix > $if_snbitsv6)) &&
 				    check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
 					$where_entry = array();
 					$where_entry['if'] = $if;
@@ -3075,10 +3022,10 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	}
 
 	if ($check_localip) {
-		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, text_to_compressed_ip6($config['l2tp']['localip'])) == 0)) {
+		if (strcasecmp($ipaddr, text_to_compressed_ip6(config_get_path('l2tp/localip', ""))) == 0) {
 			$where_entry = array();
 			$where_entry['if'] = 'l2tp';
-			$where_entry['ip_or_subnet'] = $config['l2tp']['localip'];
+			$where_entry['ip_or_subnet'] = config_get_path('l2tp/localip');
 			$where_configured[] = $where_entry;
 		}
 	}
@@ -3109,10 +3056,11 @@ function pfSense_handle_custom_code($src_dir) {
 }
 
 function set_language() {
-	global $config, $g;
+	global $g;
 
-	if (!empty($config['system']['language'])) {
-		$lang = $config['system']['language'];
+	$lang = "";
+	if (!empty(config_get_path('system/language'))) {
+		$lang = config_get_path('system/language');
 	} elseif (!empty($g['language'])) {
 		$lang = $g['language'];
 	}
@@ -3204,24 +3152,21 @@ function convert_128bit_to_ipv6($ip6bin) {
 /* 6rd is variable, calculate from 64 - (v6 prefixlen - (32 - v4 prefixlen)) */
 /* 6to4 is 16 bits, e.g. 65535 */
 function calculate_ipv6_delegation_length($if) {
-	global $config;
-
-	if (!is_array($config['interfaces'][$if])) {
+	$cfg = config_get_path("interfaces/{$if}");
+	if (!is_array($cfg)) {
 		return false;
 	}
 
-	switch ($config['interfaces'][$if]['ipaddrv6']) {
+	switch ($cfg['ipaddrv6']) {
 		case "6to4":
 			$pdlen = 16;
 			break;
 		case "6rd":
-			$rd6cfg = $config['interfaces'][$if];
-			$rd6plen = explode("/", $rd6cfg['prefix-6rd']);
-			$pdlen = (64 - ((int) $rd6plen[1] + (32 - (int) $rd6cfg['prefix-6rd-v4plen'])));
+			$rd6plen = explode("/", $cfg['prefix-6rd']);
+			$pdlen = (64 - ((int) $rd6plen[1] + (32 - (int) $cfg['prefix-6rd-v4plen'])));
 			break;
 		case "dhcp6":
-			$dhcp6cfg = $config['interfaces'][$if];
-			$pdlen = $dhcp6cfg['dhcp6-ia-pd-len'];
+			$pdlen = $cfg['dhcp6-ia-pd-len'];
 			break;
 		default:
 			$pdlen = 0;
@@ -3424,14 +3369,11 @@ function zte_simstate_to_string($state) {
 }
 
 function get_configured_pppoe_server_interfaces() {
-	global $config;
 	$iflist = array();
-	if (is_array($config['pppoes']['pppoe'])) {
-		foreach ($config['pppoes']['pppoe'] as $pppoe) {
-			if ($pppoe['mode'] == "server") {
-				$int = "poes". $pppoe['pppoeid'];
-				$iflist[$int] = strtoupper($int);
-			}
+	foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
+		if ($pppoe['mode'] == "server") {
+			$int = "poes". $pppoe['pppoeid'];
+			$iflist[$int] = strtoupper($int);
 		}
 	}
 	return $iflist;
@@ -3465,12 +3407,9 @@ function get_pppoes_child_interfaces($ifpattern) {
  *   This generic function can be used to notify or retrieve results from functions that are defined in packages.
  ******/
 function pkg_call_plugins($plugin_type, $plugin_params) {
-	global $g, $config;
+	global $g;
 	$results = array();
-	if (!is_array($config['installedpackages']['package'])) {
-		return $results;
-	}
-	foreach ($config['installedpackages']['package'] as $package) {
+	foreach (config_get_path('installedpackages/package') as $package) {
 		if (is_array($package['plugins']['item'])) {
 			foreach ($package['plugins']['item'] as $plugin) {
 				if ($plugin['type'] == $plugin_type) {
@@ -3631,16 +3570,16 @@ function get_pf_timeouts () {
 }
 
 function set_curlproxy(&$ch) {
-	global $config;
-
-	if (!empty($config['system']['proxyurl'])) {
-		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
-		if (!empty($config['system']['proxyport'])) {
-			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
+	if (!empty(config_get_path('system/proxyurl'))) {
+		curl_setopt($ch, CURLOPT_PROXY, config_get_path('system/proxyurl'));
+		if (!empty(config_get_path('system/proxyport'))) {
+			curl_setopt($ch, CURLOPT_PROXYPORT, config_get_path('system/proxyport'));
 		}
-		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+		$proxyuser = config_get_path('system/proxyuser');
+		$proxypass = config_get_path('system/proxypass');
+		if (!empty($proxyuser) && !empty($proxypass)) {
 			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$proxyuser}:{$proxypass}");
 		}
 	}
 }

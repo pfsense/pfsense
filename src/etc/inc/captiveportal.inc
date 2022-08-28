@@ -1686,7 +1686,7 @@ function getVolume($ip) {
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$anchor = $cpzoneprefix . '_auth';
 
-	$result = pfSense_pf_cp_get_eth_rule_counters("{$anchor}/{$ip}");
+	$result = pfSense_pf_cp_get_eth_rule_counters("{$anchor}/{$ip}_32");
 	if (!empty($result)) {
 	   list($output_pkts, $output_bytes, $input_pkts, $input_bytes) = $result;
 
@@ -2887,7 +2887,7 @@ function captiveportal_anchor_zerocnt($ip, $anchor = 'auth') {
 	global $config, $cpzone;
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 
-	pfSense_pf_cp_zerocnt("{$cpzoneprefix}_{$anchor}/{$ip}");
+	pfSense_pf_cp_zerocnt("{$cpzoneprefix}_{$anchor}/{$ip}_32");
 }
 
 ?>

@@ -441,9 +441,9 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	if (is_numericint(config_get_path('system/adaptivestart')) &&
 		is_numericint(config_get_path('system/adaptiveend'))) {
-		$limitrules .= sprintf("set timeout { adaptive.start %, adaptive.end %d }\n",
-							   config_get_path('system/adaptivestart'),
-							   config_get_path('system/adaptiveend')); 
+		$limitrules .= sprintf("set timeout { adaptive.start %d, adaptive.end %d }\n",
+					config_get_path('system/adaptivestart'),
+					config_get_path('system/adaptiveend'));
 	}
 
 	$max_states = 0;

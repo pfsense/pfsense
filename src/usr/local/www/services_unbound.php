@@ -613,8 +613,7 @@ foreach ($a_hosts as $hostent):
 				</tr>
 
 <?php
-	if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])):
-		foreach ($hostent['aliases']['item'] as $alias):
+	foreach (array_get_path($hostent, 'aliases/item', []) as $alias):
 ?>
 				<tr>
 					<td>
@@ -635,8 +634,7 @@ foreach ($a_hosts as $hostent):
 					</td>
 				</tr>
 <?php
-		endforeach;
-	endif;
+	endforeach;
 	$i++;
 endforeach;
 ?>

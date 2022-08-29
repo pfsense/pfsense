@@ -1050,6 +1050,9 @@ function filter_generate_gateways() {
 					$mult = 1;
 				}
 				foreach ($members as $member) {
+					if (!is_array($member)) {
+						continue;
+					}
 					$int = $member['int'];
 					$gatewayip = $member['gwip'];
 					if (!empty($int) && is_ipaddr($gatewayip) &&

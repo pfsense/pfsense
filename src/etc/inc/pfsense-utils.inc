@@ -2632,7 +2632,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $validateonly=false) {
 	global $g, $config;
 
-	if (!is_validaliasname($name) || !isURL($url)) {
+	if (!is_validaliasname($name) || !is_URL($url)) {
 		return false;
 	}
 

@@ -678,8 +678,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		return -1;
 	}
 
-	init_config_arr('syslog');
-	if ($config['syslog']['logconfigchanges'] != "disabled") {
+	if (config_get_path('syslog/logconfigchanges') != "disabled") {
 		log_error(gettext("Configuration Change") . ": {$config['revision']['description']}");
 	}
 

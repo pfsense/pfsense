@@ -1019,8 +1019,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			update_status(gettext("Menu items... "));
 			foreach ($pkg_config['menu'] as $menu) {
 				foreach ($menus as $key => $instmenu) {
-					if ($instmenu['name'] ==
-					    $menu['name']) {
+					if (empty($instmenu) || ($instmenu['name'] ==
+					    $menu['name'])) {
 						unset($menus[$key]);
 						break;
 					}

@@ -1875,6 +1875,9 @@ function build_gateway_list() {
 
 	$list = array("none" => gettext("None"));
 	foreach ($a_gateways as $gateway) {
+		if (empty($gateway)) {
+			continue;
+		}
 		if (($gateway['interface'] == $if) && (is_ipaddrv4($gateway['gateway']))) {
 			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
 		}
@@ -1888,6 +1891,9 @@ function build_gatewayv6_list() {
 
 	$list = array("none" => gettext("None"));
 	foreach ($a_gateways as $gateway) {
+		if (empty($gateway)) {
+			continue;
+		}
 		if (($gateway['interface'] == $if) && (is_ipaddrv6($gateway['gateway']))) {
 			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
 		}

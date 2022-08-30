@@ -358,6 +358,11 @@ tr.disabled a {
 
 }
 
+option:checked {
+    color: white;
+    background: #009688;
+}
+
 /** Page footer */
 .footer {
     background-color: #000;

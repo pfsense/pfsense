@@ -338,7 +338,7 @@ function upload_config($manual = false) {
 // Create a crontab entry for scheduled backups
 // if frequency == "cron", a new crontab entry is created, otherwise any existing
 // ACB entry is removed
-function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $pwd) {
+function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $reverse, $pwd) {
 	global $config;
 
 	init_config_arr(array('system', 'acb'));
@@ -357,6 +357,7 @@ function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $d
 	$config['system']['acb']['day'] = $day;
 	$config['system']['acb']['dow'] = $dow;
 	$config['system']['acb']['numman'] = $numman;
+	$config['system']['acb']['reverse'] = $reverse;
 	if (strlen($pwd) >= 8) {
 		$config['system']['acb']['encryption_password'] = $pwd;
 	}

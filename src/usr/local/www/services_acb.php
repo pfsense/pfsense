@@ -412,6 +412,10 @@ print('</div>');
 
 			<?php
 				$counter = 0;
+				if ($config['system']['acb']['reverse'] == "yes"){
+					$confvers = array_reverse($confvers);
+				}
+
 				foreach ($confvers as $cv):
 			?>
 					<tr>

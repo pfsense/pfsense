@@ -92,6 +92,7 @@ if (isset($_POST['save'])) {
 			$pconfig['day'],
 			$pconfig['dow'],
 			$pconfig['numman'],
+			$pconfig['reverse'],
 			$pwd
 		);
 	}
@@ -206,6 +207,13 @@ $section->addInput(new Form_Input(
 	$pconfig['numman']
 ))->setHelp("It may be useful to specify how many manual backups are retained on the server so that automatic backups do not overwrite them." .
 			"A maximum of 50 retained manual backups (of the 100 total backups) is permitted.");
+
+$section->addInput(new Form_Checkbox(
+	'reverse',
+	'Descending Order by Date',
+	'List backups in descending order',
+	($pconfig['reverse'] == "yes")
+))->setHelp("List backups in descending order (newest first) when viewing the restore section.");
 
 $form->add($section);
 

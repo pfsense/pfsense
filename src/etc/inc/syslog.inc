@@ -53,7 +53,7 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	$remote_servers = "";
 	$pad_to  = max(strlen($facility), 56);
 	$padding = ceil(($pad_to - strlen($facility))/8)+1;
-	if (array_path_enabled($syslogcfg)) {
+	if (config_path_enabled('syslog')) {
 		if (array_get_path($syslogcfg, 'remoteserver')) {
 			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server(array_get_path($syslogcfg, 'remoteserver')) . "\n";
 		}

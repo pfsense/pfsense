@@ -7416,19 +7416,22 @@ function get_interface_ports() {
 	global $config;
 	$linklist = array();
 	$portlist = get_interface_list();
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			$portlist[$vlan['vlanif']] = $vlan;
+
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if (empty($vlan)) {
+			continue;
 		}
+		$portlist[$vlan['vlanif']] = $vlan;
 	}
 
-	if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
-		foreach ($config['qinqs']['qinqentry'] as $qinq) {
-			$members = explode(" ", $qinq['members']);
-			foreach ($members as $mem) {
-				$qentry = $qinq['vlanif'] . "." . $mem;
-				$portlist[$qentry] = $qentry;
-			}
+	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
+		if (empty($qinq)) {
+			continue;
+		}
+		$members = explode(" ", $qinq['members']);
+		foreach ($members as $mem) {
+			$qentry = $qinq['vlanif'] . "." . $mem;
+			$portlist[$qentry] = $qentry;
 		}
 	}
 

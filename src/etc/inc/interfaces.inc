@@ -467,7 +467,7 @@ function interfaces_vlan_configure_mtu($parentif = "") {
 	}
 }
 
-function interface_qinq_configure(&$qinq, $fd = NULL, $flush = true) {
+function interface_qinq_configure(&$qinq, $flush = true) {
 	global $g;
 
 	if (!is_array($qinq)) {
@@ -492,12 +492,8 @@ function interface_qinq_configure(&$qinq, $fd = NULL, $flush = true) {
 		return;
 	}
 
-	if ($fd == NULL) {
-		$exec = true;
-		$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
-	} else {
-		$exec = false;
-	}
+	$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
+
 	/* make sure the parent is converted to ng_vlan(4) and is up */
 	interfaces_bring_up($qinqif);
 
@@ -541,10 +537,9 @@ function interface_qinq_configure(&$qinq, $fd = NULL, $flush = true) {
 			fwrite($fd, $qinqcmdbuf);
 		}
 	}
-	if ($exec == true) {
-		fclose($fd);
-		mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd > /dev/null 2>&1");
-	}
+
+	fclose($fd);
+	mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd > /dev/null 2>&1");
 
 	interfaces_bring_up($qinqif);
 	if (!empty($qinq['members'])) {
@@ -568,7 +563,7 @@ function interfaces_qinq_configure($ovpn=false) {
 		foreach ($qinqentry as $qinq) {
 			if (($ovpn && strstr($qinq['if'], "ovpn")) ||
 			    (!$ovpn && !strstr($qinq['if'], "ovpn"))) {
-				interface_qinq_configure($qinq, NULL, false);
+				interface_qinq_configure($qinq, false);
 			}
 		}
 		/* Invalidate cache */

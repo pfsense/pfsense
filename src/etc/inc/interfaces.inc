@@ -492,25 +492,10 @@ function interface_qinq_configure(&$qinq, $flush = true) {
 		return;
 	}
 
-	$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
+	exec("/sbin/ifconfig {$vlanif} vlanproto 802.1ad > /dev/null 2>&1");
 
-	/* make sure the parent is converted to ng_vlan(4) and is up */
+	/* make sure the parent is up */
 	interfaces_bring_up($qinqif);
-
-	$ngif = str_replace(".", "_", $vlanif);
-	if (!empty($vlanif) && does_interface_exist($vlanif)) {
-		exec("/usr/sbin/ngctl shutdown {$ngif}qinq: > /dev/null 2>&1");
-		exec("/usr/sbin/ngctl msg {$ngif}qinq: gettable > /dev/null 2>&1", $result);
-		if (empty($result)) {
-			fwrite($fd, "mkpeer {$ngif}: vlan lower downstream\n");
-			fwrite($fd, "name {$ngif}:lower {$ngif}qinq\n");
-			fwrite($fd, "connect {$ngif}: {$ngif}qinq: upper nomatch\n");
-		}
-	} else {
-		fwrite($fd, "mkpeer {$ngif}: vlan lower downstream\n");
-		fwrite($fd, "name {$ngif}:lower {$ngif}qinq\n");
-		fwrite($fd, "connect {$ngif}: {$ngif}qinq: upper nomatch\n");
-	}
 
 	/* invalidate interface cache */
 	if ($flush) {
@@ -523,23 +508,15 @@ function interface_qinq_configure(&$qinq, $flush = true) {
 
 	$macaddr = get_interface_mac($qinqif);
 	if (!empty($qinq['members'])) {
-		$qinqcmdbuf = "";
 		$members = explode(" ", $qinq['members']);
 		foreach ($members as $qtag) {
 			$qinq2 = array();
 			$qinq2['tag'] = $qtag;
 			$qinq2['if'] = $vlanif;
-			interface_qinq2_configure($qinq2, $qinqcmdbuf, $macaddr,
-			    false);
+			interface_qinq2_configure($qinq2, $macaddr);
 			unset($qinq2);
 		}
-		if (strlen($qinqcmdbuf) > 0) {
-			fwrite($fd, $qinqcmdbuf);
-		}
 	}
-
-	fclose($fd);
-	mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd > /dev/null 2>&1");
 
 	interfaces_bring_up($qinqif);
 	if (!empty($qinq['members'])) {
@@ -574,7 +551,7 @@ function interfaces_qinq_configure($ovpn=false) {
 	}
 }
 
-function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr, $flush = true) {
+function interface_qinq2_configure(&$qinq, $macaddr) {
 	if (!is_array($qinq)) {
 		log_error(sprintf(gettext("QinQ compat VLAN: called with wrong options. Problems with config!%s"), "\n"));
 		return;
@@ -594,17 +571,7 @@ function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr, $flush = true) {
 		return;
 	}
 
-	exec("/usr/sbin/ngctl shutdown {$ngif}h{$tag}: > /dev/null 2>&1");
-	$cmdbuf .= "mkpeer {$ngif}qinq: eiface {$ngif}{$tag} ether\n";
-	$cmdbuf .= "name {$ngif}qinq:{$ngif}{$tag} {$ngif}h{$tag}\n";
-	$cmdbuf .= "msg {$ngif}qinq: addfilter { vlan={$tag} hook=\"{$ngif}{$tag}\" }\n";
-	$cmdbuf .= "msg {$ngif}h{$tag}: setifname \"{$vlanif}\"\n";
-	$cmdbuf .= "msg {$ngif}h{$tag}: set {$macaddr}\n";
-
-	/* invalidate interface cache */
-	if ($flush) {
-		get_interface_arr(true);
-	}
+	exec("/sbin/ifconfig vlan create vlandev {$if} vlan {$tag} name {$vlanif}");
 
 	return $vlanif;
 }

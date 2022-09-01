@@ -57,13 +57,10 @@ if ($_POST['act'] == "del") {
 	if (empty($input_errors)) {
 		$qinq =& $a_qinqs[$id];
 
-		$ngif = str_replace(".", "_", $qinq['vlanif']);
 		$delmembers = explode(" ", $qinq['members']);
 		foreach ($delmembers as $tag) {
-			mwexec("/usr/sbin/ngctl shutdown {$ngif}h{$tag}:  > /dev/null 2>&1");
+			exec("/sbin/ifconfig {$qinq['vlanif']}.{$tag} destroy");
 		}
-		mwexec("/usr/sbin/ngctl shutdown {$ngif}qinq: > /dev/null 2>&1");
-		mwexec("/usr/sbin/ngctl shutdown {$ngif}: > /dev/null 2>&1");
 		pfSense_interface_destroy($qinq['vlanif']);
 		unset($a_qinqs[$id]);
 

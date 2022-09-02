@@ -449,7 +449,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$max_states = 0;
 	if (is_numeric(config_get_path('system/maximumstates'))) {
 		/* User defined maximum states in Advanced menu. */
-		$max_states = is_numeric(config_get_path('system/maximumstates'));
+		$max_states = config_get_path('system/maximumstates');
 	} else {
 		$max_states = pfsense_default_state_size();
 	}

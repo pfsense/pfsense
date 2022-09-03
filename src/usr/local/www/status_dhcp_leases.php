@@ -104,7 +104,7 @@ unset($arp_table);
  * Translate these once so we don't do it over and over in the loops
  * below.
  */
-$online_string = gettext("online");
+$online_string = gettext("active");
 $active_string = gettext("active");
 $expired_string = gettext("expired");
 $dynamic_string = gettext("dynamic");

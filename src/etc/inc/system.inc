@@ -709,8 +709,8 @@ function system_get_dhcpleases($dnsavailable=null) {
 	 * Translate these once so we don't do it over and over in the loops
 	 * below.
 	 */
-	$online_string = gettext("online");
-	$offline_string = gettext("offline");
+	$online_string = gettext("active");
+	$offline_string = gettext("idle/offline");
 	$active_string = gettext("active");
 	$expired_string = gettext("expired");
 	$reserved_string = gettext("reserved");

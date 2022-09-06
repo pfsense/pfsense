@@ -944,7 +944,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 
 		foreach ($static_routes as $rtent) {
 			/* Do not delete disabled routes,
-			 * see https://redmine.pfsense.org/issues/3709 
+			 * see https://redmine.pfsense.org/issues/3709
 			 * and https://redmine.pfsense.org/issues/10706 */
 			if (isset($rtent['disabled'])) {
 				continue;
@@ -1768,11 +1768,11 @@ function system_ntp_setup_gps($serialport) {
 
 	$gpsbaud = '4800';
 	$speeds = array(
-		0 => '4800', 
-		16 => '9600', 
-		32 => '19200', 
-		48 => '38400', 
-		64 => '57600', 
+		0 => '4800',
+		16 => '9600',
+		32 => '19200',
+		48 => '38400',
+		64 => '57600',
 		80 => '115200'
 	);
 	if (!empty($config['ntpd']['gps']['speed']) && array_key_exists($config['ntpd']['gps']['speed'], $speeds)) {
@@ -2612,6 +2612,13 @@ function system_identify_specific_platform() {
 	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
 
 	$vm = get_single_sysctl('kern.vm_guest');
+	// Google GCP returns kvm from this so we must detect it first.
+
+	if ($maker[0] == "QEMU") {
+		return (array('name' => 'QEMU', 'descr' => 'QEMU Guest'));
+	} else  if ($maker[0] == "Google") {
+		return (array('name' => 'Google', 'descr' => 'Google Cloud Platform'));
+	}
 
 	// This switch needs to be expanded to include other virtualization systems
 	switch ($vm) {
@@ -2621,10 +2628,6 @@ function system_identify_specific_platform() {
 		case "kvm" :
 			return (array('name' => 'KVM', 'descr' => 'KVM Guest'));
 		break;
-	}
-
-	if ($maker[0] == "QEMU") {
-		return (array('name' => 'QEMU', 'descr' => 'QEMU'));
 	}
 
 	// AWS can only be identified via the bios version
@@ -2638,6 +2641,7 @@ function system_identify_specific_platform() {
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
 			break;
+		case 'apu1':
 		case 'APU':
 			return (array('name' => 'APU', 'descr' => 'Netgate APU'));
 			break;
@@ -2832,7 +2836,7 @@ function check_dnsavailable($proto='inet') {
 			if (($test == '2') && ($dns_result == "")) {
 				return false;
 			} elseif ($dns_result == "") {
-				$test++; 
+				$test++;
 				continue;
 			} else {
 				return true;

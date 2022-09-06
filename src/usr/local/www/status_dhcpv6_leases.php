@@ -135,8 +135,8 @@ $prefixes = array();
 $mappings = array();
 
 // Translate these once so we don't do it over and over in the loops below.
-$online_string = gettext("online");
-$offline_string = gettext("offline");
+$online_string = gettext("active");
+$offline_string = gettext("idle/offline");
 $active_string = gettext("active");
 $expired_string = gettext("expired");
 $reserved_string = gettext("reserved");
@@ -346,7 +346,15 @@ foreach ($leases as $data):
 				<td>n/a</td>
 				<td>n/a</td>
 <?php endif; ?>
-				<td><?=$data['online']?></td>
+				<td>
+<?php if ($data['online'] == $online_string):?>
+							<span style="color:green; white-space: nowrap;"><i class="fa fa-arrow-up"></i>
+<?php else: ?>
+							<span style="white-space: nowrap;"><i class="fa fa-arrow-down"></i>
+<?php endif; ?>
+							<?=$data['online']?>
+							</span>
+					</td>
 				<td><?=$data['act']?></td>
 				<td>
 <?php if ($data['type'] == $dynamic_string): ?>

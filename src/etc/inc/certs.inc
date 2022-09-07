@@ -773,11 +773,7 @@ function cert_get_sigtype($str_crt, $decode = true) {
 }
 
 function is_openvpn_server_ca($caref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-server'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+	foreach(config_get_path('openvpn/openvpn-server', []) as $opvns) {
 		if ($ovpns['caref'] == $caref) {
 			return true;
 		}
@@ -786,11 +782,7 @@ function is_openvpn_server_ca($caref) {
 }
 
 function is_openvpn_client_ca($caref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-client'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
+	foreach(config_get_path('openvpn/openvpn-client', []) as $ovpnc) {
 		if ($ovpnc['caref'] == $caref) {
 			return true;
 		}

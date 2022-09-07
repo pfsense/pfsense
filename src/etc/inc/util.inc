@@ -3354,6 +3354,9 @@ function array_get_path(array &$arr, string $path, $default = null) {
 	$vpath = mb_split('/', $path);
 	$el = $arr;
 	foreach ($vpath as $key) {
+		if (empty($key)) {
+			continue;
+		}
 		if (is_array($el) && array_key_exists($key, $el)) {
 			$el = $el[$key];
 		} else {
@@ -3400,6 +3403,9 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
 	$vkey = array_pop($vpath);
 	$el =& $arr;
 	foreach ($vpath as $key) {
+		if (empty($key)) {
+			continue;
+		}
 		if (array_key_exists($key, $el) && !empty($el[$key])) {
 			if (!is_array($el[$key])) {
 					return ($default);
@@ -3441,6 +3447,9 @@ function array_del_path(array &$arr, string $path) {
 	$vkey = array_pop($vpath);
 	$el =& $arr;
 	foreach($vpath as $key) {
+		if (empty($key)) {
+			continue;
+		}
 		if (is_array($el) && array_key_exists($key, $el)) {
 			$el =& $el[$key];
 		} else {

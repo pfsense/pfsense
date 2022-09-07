@@ -6,12 +6,16 @@ class ConfigLibTest extends TestCase {
 	public function test_config_get_path(): void {
 		// Root element access
 		$this->assertEquals("bar", config_get_path("foo"));
+		// With leading /
+		$this->assertEquals("bar", config_get_path("/foo"));
 		// Unfound element returns default, even if non-null
 		$this->assertNull(config_get_path("foobaz", null));
 		$this->assertEquals("test", config_get_path("foobaz", "test"));
 		// Subarray
 		$this->assertIsArray(config_get_path("bar", null));
 		$this->assertEquals("bang", config_get_path("bar/baz", null));
+		// Root
+		$this->assertIsArray(config_get_path("/"));
 	}
 
 	public function test_config_set_path(): void {
@@ -62,6 +66,9 @@ class ConfigLibTest extends TestCase {
 		$this->assertTrue(config_path_enabled('servicebang', 'otherkey'));
 		// nonexistent path
 		$this->assertFalse(config_path_enabled('servicebazbang'));
+		// Key in root
+		$this->assertTrue(config_path_enabled('', 'rootkey'));
+		$this->assertTrue(config_path_enabled('/', 'rootkey'));
 	}
 
 	public function test_config_del_path(): void {
@@ -97,7 +104,8 @@ class ConfigLibTest extends TestCase {
 			),
 			"servicebang" => array(
 				"otherkey" => true
-			)
+			),
+			"rootkey" => true
 		);
 	}
 }

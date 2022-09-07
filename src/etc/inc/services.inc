@@ -2672,7 +2672,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 		}
 
 		$python_mode = false;
-		python_script = config_get_path('unbound/python_script');
+		$python_script = config_get_path('unbound/python_script');
 		if (config_path_enabled('unbound','python') && !empty($python_script)) {
 			$python_mode = true;
 		}

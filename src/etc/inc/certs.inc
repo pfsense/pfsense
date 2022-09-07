@@ -843,11 +843,7 @@ function is_user_cert($certref) {
 }
 
 function is_openvpn_server_cert($certref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-server'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+	foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 		if ($ovpns['certref'] == $certref) {
 			return true;
 		}
@@ -856,11 +852,7 @@ function is_openvpn_server_cert($certref) {
 }
 
 function is_openvpn_client_cert($certref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-client'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
+	foreach (config_get_path('openvpn/openvpn-client', []) as $ovpnc) {
 		if ($ovpnc['certref'] == $certref) {
 			return true;
 		}
@@ -869,11 +861,7 @@ function is_openvpn_client_cert($certref) {
 }
 
 function is_ipsec_cert($certref) {
-	global $config;
-	if (!is_array($config['ipsec']['phase1'])) {
-		return;
-	}
-	foreach ($config['ipsec']['phase1'] as $ipsec) {
+	foreach(config_get_path('ipsec/phase1', []) as $ipsec) {
 		if ($ipsec['certref'] == $certref) {
 			return true;
 		}
@@ -906,11 +894,7 @@ function is_package_cert($certref) {
 }
 
 function is_captiveportal_cert($certref) {
-	global $config;
-	if (!is_array($config['captiveportal'])) {
-		return;
-	}
-	foreach ($config['captiveportal'] as $portal) {
+	foreach (config_get_path('captiveportal', []) as $portal) {
 		if (isset($portal['enable']) && isset($portal['httpslogin']) && ($portal['certref'] == $certref)) {
 			return true;
 		}
@@ -1442,11 +1426,7 @@ function is_cert_revoked($cert, $crlref = "") {
 }
 
 function is_openvpn_server_crl($crlref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-server'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+	foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 		if (!empty($ovpns['crlref']) && ($ovpns['crlref'] == $crlref)) {
 			return true;
 		}

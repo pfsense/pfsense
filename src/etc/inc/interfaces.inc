@@ -26,6 +26,7 @@
  */
 
 /* include all configuration functions */
+require_once("config.lib.inc");
 require_once("globals.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
@@ -164,8 +165,6 @@ function vlan_valid_tag($tag = NULL) {
 }
 
 function qinq_inuse($qinq = NULL, $inqtag = NULL) {
-        global $config;
-
 	if ($qinq == NULL || $inqtag == NULL ||
 	    !is_array($qinq) || !vlan_valid_tag($inqtag)) {
 		return (false);
@@ -173,7 +172,7 @@ function qinq_inuse($qinq = NULL, $inqtag = NULL) {
 
         $iflist = get_configured_interface_list(true);
         foreach ($iflist as $if) {
-                if ($config['interfaces'][$if]['if'] == qinq_interface($qinq, $inqtag)) {
+                if (config_get_path("interfaces/{$if}/if") == qinq_interface($qinq, $inqtag)) {
                         return (true);
                 }
         }
@@ -221,15 +220,13 @@ function interface_is_qinq($if = NULL) {
 }
 
 function vlan_inuse($vlan) {
-	global $config;
-
 	if ($vlan == NULL || !is_array($vlan)) {
 		return (false);
 	}
 
 	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $vlan['vlanif']) {
+		if (config_get_path("interfaces/{$if}/if") == $vlan['vlanif']) {
 			return (true);
 		}
 	}
@@ -318,35 +315,24 @@ function interface_is_parent($if, $parent_check) {
 }
 
 function interface_has_clones($if) {
-	global $config;
-
 	/* Check LAGGs. */
-	if (isset($config['laggs']) && isset($config['laggs']['lagg']) &&
-	    is_array($config['laggs']['lagg'])) {
-		foreach ($config['laggs']['lagg'] as $lagg) {
-			if (interface_is_parent($lagg['laggif'], $if)) {
-				return (TRUE);
-			}
+	foreach (config_get_path('laggs/lagg', []) as $lagg) {
+		if (interface_is_parent($lagg['laggif'], $if)) {
+			return (TRUE);
 		}
 	}
 	/* Check VLANs. */
-	if (isset($config['vlans']) && isset($config['vlans']['vlan']) &&
-	    is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if (interface_is_parent($vlan['if'], $if)) {
-				return (TRUE);
-			}
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if (interface_is_parent($vlan['if'], $if)) {
+			return (TRUE);
 		}
 	}
 	/* Check bridges. */
-	if (isset($config['bridges']) && isset($config['bridges']['bridged']) &&
-	    is_array($config['bridges']['bridged'])) {
-		foreach ($config['bridges']['bridged'] as $bridge) {
-			$members = explode(',', $bridge['members']);
-			foreach ($members as $member) {
-				if (interface_is_parent($member, $if)) {
-					return (TRUE);
-				}
+	foreach (config_get_path('bridges/bridged', []) as $bridge) {
+		$members = explode(',', $bridge['members']);
+		foreach ($members as $member) {
+			if (interface_is_parent($member, $if)) {
+				return (TRUE);
 			}
 		}
 	}
@@ -455,15 +441,8 @@ function interface_vlan_configure(&$vlan, $flush = true) {
  * https://redmine.pfsense.org/issues/11035
  */
 function interfaces_vlan_configure_mtu($parentif = "") {
-	global $config;
-
 	init_config_arr(array('ppps', 'ppp'));
-	if (!is_array($config['vlans']['vlan']) ||
-	    !count($config['vlans']['vlan'])) {
-		return;
-	}
-
-	foreach ($config['vlans']['vlan'] as $vlan) {
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if ($parentif != $vlan['if']) {
 			continue;
 		}
@@ -471,7 +450,7 @@ function interfaces_vlan_configure_mtu($parentif = "") {
 		       set_interface_mtu($vlan['vlanif'],
 			   interface_vlan_mtu_configured($vlan['vlanif']));
 		}
-		if (empty($config['ppps']['ppp'])) {
+		if (empty(config_get_path('ppps/ppp'))) {
 			continue;
 		}
 		// PPP interfaces must be restarted to adjust MTU changes
@@ -636,17 +615,15 @@ function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr, $flush = true) {
 }
 
 function interfaces_create_wireless_clones() {
-	global $config;
-
 	$iflist = get_configured_interface_list();
 
 	foreach ($iflist as $if) {
-		$realif = $config['interfaces'][$if]['if'];
+		$realif = config_get_path("interfaces/{$if}/if");
 		if (!is_interface_wireless($realif)) {
 			continue;
 		}
 		interface_wireless_clone(interface_get_wireless_clone($realif),
-		    $config['interfaces'][$if]);
+								 config_get_path("interfaces/{$if}"));
 	}
 
 	$wclone = config_get_path('wireless/clone');
@@ -673,8 +650,6 @@ function interfaces_create_wireless_clones() {
 }
 
 function interfaces_bridge_configure($checkmember = 0, $realif = "") {
-	global $config;
-
 	$bridged = config_get_path('bridges/bridged');
 	if (!is_array($bridged) || !count($bridged)) {
 		return;
@@ -689,7 +664,7 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 			continue;
 		}
 		$ifname = false;
-		foreach ($config['interfaces'] as $intname => $intpar) {
+		foreach (config_get_path('interfaces', []) as $intname => $intpar) {
 			if ($intpar['if'] == $bridge['bridgeif']) {
 				$ifname = $intname;
 				break;
@@ -1007,8 +982,6 @@ function interfaces_lagg_configure($realif = "") {
 }
 
 function interface_lagg_configure($lagg, $flush = true) {
-	global $config;
-
 	if (!is_array($lagg)) {
 		return -1;
 	}
@@ -1028,9 +1001,8 @@ function interface_lagg_configure($lagg, $flush = true) {
 
 	/* Check if MTU was defined for this lagg interface */
 	$lagg_mtu = interface_find_child_cfgmtu($laggif);
-	if ($lagg_mtu == 0 &&
-	    is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $tmpinterface) {
+	if ($lagg_mtu == 0) {
+		foreach (config_get_path('interfaces', []) as $tmpinterface) {
 			if ($tmpinterface['if'] == $lagg['laggif'] &&
 			    !empty($tmpinterface['mtu'])) {
 				$lagg_mtu = $tmpinterface['mtu'];
@@ -1214,14 +1186,10 @@ function interface_is_type($if, $type) {
 }
 
 function is_greipsec($if) {
-	global $config;
-
-	if (ipsec_enabled() && is_array($config['gres']) &&
-	    is_array($config['gres']['gre']) &&
-	    is_array($config['ipsec']['phase2'])) {
-		foreach ($config['gres']['gre'] as $gre) {
-			foreach ($config['ipsec']['phase1'] as $ph1ent) {
-				foreach ($config['ipsec']['phase2'] as $ph2ent) {
+	if (ipsec_enabled()) {
+		foreach (config_get_path('gres/gre', []) as $gre) {
+			foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+				foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
 					if (($ph1ent['ikeid'] == $ph2ent['ikeid']) && ($ph2ent['mode'] == 'transport') &&
 					    !isset($ph1ent['disabled']) && !isset($ph2ent['disabled']) &&
 					    ($ph1ent['interface'] == $gre['if']) && ($gre['greif'] == $if) &&
@@ -1237,8 +1205,6 @@ function is_greipsec($if) {
 
 /* NOTE: $gifkey is not used but useful for passing this function to array_walk. */
 function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
-	global $config, $g;
-
 	if (!is_array($gif)) {
 		return -1;
 	}
@@ -1310,7 +1276,7 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 		interfaces_bring_up($gifif);
 		$gifmtu = "";
 		$currentgifmtu = get_interface_mtu($gifif);
-		foreach ($config['interfaces'] as $tmpinterface) {
+		foreach (config_get_path('interfaces', []) as $tmpinterface) {
 			if ($tmpinterface['if'] == $gifif) {
 				if (isset($tmpinterface['mtu']) && is_numericint($tmpinterface['mtu'])) {
 					$gifmtu = $tmpinterface['mtu'];
@@ -1474,9 +1440,9 @@ function is_interface_ipsec_vti_assigned($phase2) {
 	return (does_interface_exist($vti_interface) && (convert_real_interface_to_friendly_interface_name($vti_interface) != null));
 }
 function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
-	global $config, $ipsec_reqid_base;
+	global $ipsec_reqid_base;
 
-	if (empty($ph1ent) || !is_array($ph1ent) || !is_array($config['ipsec']['phase2'])) {
+	if (empty($ph1ent) || !is_array($ph1ent) || empty(config_get_path('ipsec/phase2'))) {
 		return false;
 	}
 
@@ -1574,7 +1540,7 @@ function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
 		/* Check/set the MTU if the user configured a custom value.
 		 * https://redmine.pfsense.org/issues/9111 */
 		$currentvtimtu = get_interface_mtu($ipsecif);
-		foreach ($config['interfaces'] as $tmpinterface) {
+		foreach (config_get_path('interfaces', []) as $tmpinterface) {
 			if ($tmpinterface['if'] == $ipsecif) {
 				if (isset($tmpinterface['mtu']) && is_numericint($tmpinterface['mtu'])) {
 					$vtimtu = $tmpinterface['mtu'];
@@ -1592,25 +1558,20 @@ function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
 }
 
 function interfaces_ipsec_vti_configure($gateways_status = false) {
-	global $config;
 	$bootmsg = false;
 
 	/* Fetch gateway status if not passed */
 	if (!is_array($gateways_status)) {
 		$gateways_status = return_gateways_status(true);
 	}
-	if (is_array($config['ipsec']) &&
-	    is_array($config['ipsec']['phase1']) &&
-	    is_array($config['ipsec']['phase2'])) {
-		foreach ($config['ipsec']['phase1'] as $ph1ent) {
-			if ($ph1ent['disabled']) {
-				continue;
-			}
-			if (interface_ipsec_vti_configure($ph1ent, $gateways_status) &&
-			    !$bootmsg && platform_booting()) {
-				echo gettext("Configuring IPsec VTI interfaces...");
-				$bootmsg = true;
-			}
+	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+		if ($ph1ent['disabled']) {
+			continue;
+		}
+		if (interface_ipsec_vti_configure($ph1ent, $gateways_status) &&
+			!$bootmsg && platform_booting()) {
+			echo gettext("Configuring IPsec VTI interfaces...");
+			$bootmsg = true;
 		}
 	}
 	if (platform_booting() && $bootmsg) {
@@ -1845,7 +1806,7 @@ function interface_vip_bring_down($vip) {
 }
 
 function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = false) {
-	global $config, $g;
+	global $g;
 
 	$iface = config_get_path("interfaces/{$interface}");
 	if (!$iface) {
@@ -2051,22 +2012,18 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 }
 
 function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
-	global $config;
-	if (isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == false) {
-		unset($config["virtualip_carp_maintenancemode"]);
+	if (config_path_enabled('/','virtualip_carp_maintenancemode') && ($carp_maintenancemode == false)) {
+		config_del_path('virtualip_carp_maintenancemode');
 		write_config("Leave CARP maintenance mode");
-	} elseif (!isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == true) {
-		$config["virtualip_carp_maintenancemode"] = true;
+	} elseif (!config_path_enabled('/','virtualip_carp_maintenancemode') && ($carp_maintenancemode == true)) {
+		config_set_path('virtualip_carp_maintenancemode', true);
 		write_config(gettext("Enter CARP maintenance mode"));
 	}
 	init_config_arr(array('virtualip', 'vip'));
-	$viparr = &$config['virtualip']['vip'];
 
-	if (is_array($viparr)) {
-		foreach ($viparr as $vip) {
-			if ($vip['mode'] == "carp") {
-				interface_carp_configure($vip, true);
-			}
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
+		if ($vip['mode'] == "carp") {
+			interface_carp_configure($vip, true);
 		}
 	}
 }
@@ -2144,7 +2101,7 @@ function getMPDCRONSettings($pppif) {
 }
 
 function handle_pppoe_reset($post_array) {
-	global $config, $g;
+	global $g;
 
 	$pppif = "{$post_array['type']}{$post_array['ptpid']}";
 	$cron_cmd_file = "{$g['varetc_path']}/pppoe_restart_{$pppif}";
@@ -2160,7 +2117,7 @@ function handle_pppoe_reset($post_array) {
 	// reset cron items if necessary and return
 	if (empty($post_array['pppoe-reset-type'])) {
 		if (isset($itemhash)) {
-			unset($config['cron']['item'][$itemhash['ID']]);
+			config_del_path("cron/item/{$itemhash['ID']}");
 		}
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 		return;
@@ -2222,9 +2179,11 @@ function handle_pppoe_reset($post_array) {
 		return;
 	}
 	if (isset($itemhash['ID'])) {
-		$config['cron']['item'][$itemhash['ID']] = $item;
+		config_set_path("cron/item/{$itemhash['ID']}", $item);
 	} else {
-		$config['cron']['item'][] = $item;
+		$items = config_get_path('cron/item', []);
+		$items[] = $item;
+		config_set_path('cron/item', $items);
 	}
 }
 
@@ -2251,7 +2210,7 @@ function restart_ppp_interfaces_using_interfaces($triggerinterfaces) {
  * It writes the mpd config file to /var/etc every time the link is opened.
  */
 function interface_ppps_configure($interface) {
-	global $config, $g;
+	global $g;
 
 	$iface = config_get_path("interfaces/{$interface}");
 	/* Return for unassigned interfaces. This is a minimum requirement. */
@@ -2759,9 +2718,9 @@ EOD;
 	/* Set temporary bogon (RFC 5737) IPv4 addresses to work round mpd5 IPv6CP issue causing */
 	/* random IPv6 interface identifier during boot. More details at */
 	/* https://forum.netgate.com/post/592474 */
-	if (platform_booting() && is_array($config['interfaces'])) {
+	if (platform_booting()) {
 		$count = 0;
-		foreach ($config['interfaces'] as $tempifacename => $tempiface) {
+		foreach (config_get_path('interfaces', []) as $tempifacename => $tempiface) {
 			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type($tempifacename)) {
 				$tempaddr[$count]['if'] = $tempiface['if'];
 				$tempaddr[$count]['ipaddr'] = '192.0.2.' . strval (10 + ($count * 2)) . '/31';
@@ -2833,7 +2792,6 @@ EOD;
 }
 
 function interfaces_sync_setup() {
-	global $config;
 
 	if (config_get_path('system/developerspew')) {
 		$mt = microtime();
@@ -2846,10 +2804,10 @@ function interfaces_sync_setup() {
 	}
 
 	/* suck in configuration items */
-	if ($config['hasync']) {
-		$pfsyncenabled = $config['hasync']['pfsyncenabled'];
-		$pfsyncinterface = $config['hasync']['pfsyncinterface'];
-		$pfsyncpeerip = $config['hasync']['pfsyncpeerip'];
+	if (!empty(config_get_path('hasync'))) {
+		$pfsyncenabled = config_get_path('hasync/pfsyncenabled');
+		$pfsyncinterface = config_get_path('hasync/pfsyncinterface');
+		$pfsyncpeerip = config_get_path('hasync/pfsyncpeerip');
 	}
 
 	set_sysctl(array(
@@ -3103,7 +3061,6 @@ function interface_ipalias_configure(&$vip) {
 }
 
 function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias_reload = false) {
-	global $config;
 	if (config_get_path('system/developerspew')) {
 		$mt = microtime();
 		echo "interface_carp_configure() being called $mt\n";
@@ -3138,8 +3095,7 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias
 		$advbase = "advbase " . escapeshellarg($vip['advbase']);
 	}
 
-	$carp_maintenancemode = isset(
-	    $config["virtualip_carp_maintenancemode"]);
+	$carp_maintenancemode = config_path_enabled('/','virtualip_carp_maintenancemode');
 	if ($carp_maintenancemode) {
 		$advskew = "advskew 254";
 	} else {
@@ -3167,7 +3123,7 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias
 	 * see https://redmine.pfsense.org/issues/12227
 	 * and https://redmine.pfsense.org/issues/12961 */
 	if ($ipalias_reload) {
-		foreach ($config['virtualip']['vip'] as $viface) {
+		foreach (config_get_path('virtualip/vip', []) as $viface) {
 			if (($viface['mode'] == 'ipalias') &&
 			    (get_root_interface($viface['interface']) == $vip['interface'])) { 
 				interface_vip_bring_down($viface);
@@ -3247,7 +3203,6 @@ function interface_wireless_clone($realif, $wlcfg) {
 }
 
 function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
-	global $config;
 
 	$shared_settings = array('standard', 'turbo', 'protmode', 'txpower', 'channel',
 				 'diversity', 'txantenna', 'rxantenna', 'distance',
@@ -3262,18 +3217,21 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	// Sync shared settings for assigned clones
 	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
-		if ($baseif == interface_get_wireless_base($config['interfaces'][$if]['if']) && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
-			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {
+		if (($baseif == interface_get_wireless_base(config_get_path("interfaces/{$if}/if"))) &&
+			($ifcfg['if'] != config_get_path("interfaces/{$if}/if"))) {
+			if (config_path_enabled("interfaces/{$if}/wireless", 'standard') || $sync_changes) {
 				foreach ($shared_settings as $setting) {
 					if ($sync_changes) {
 						if (isset($ifcfg['wireless'][$setting])) {
-							$config['interfaces'][$if]['wireless'][$setting] = $ifcfg['wireless'][$setting];
-						} elseif (isset($config['interfaces'][$if]['wireless'][$setting])) {
-							unset($config['interfaces'][$if]['wireless'][$setting]);
+							config_set_path("interfaces/{$if}/wireless/{$setting}",
+											$ifcfg['wireless'][$setting]);
+						} elseif (!empty(config_get_path("interfaces/{$if}/wireless/{$setting}"))) {
+							config_del_path("interfaces/{$if}/wireless/{$setting}");
 						}
 					} else {
-						if (isset($config['interfaces'][$if]['wireless'][$setting])) {
-							$ifcfg['wireless'][$setting] = $config['interfaces'][$if]['wireless'][$setting];
+						if (!empty(config_get_path("interfaces/{$if}/wireless/{$setting}"))) {
+							$ifcfg['wireless'][$setting] =
+							    config_get_path("interfaces/{$if}/wireless/{$setting}");
 						} elseif (isset($ifcfg['wireless'][$setting])) {
 							unset($ifcfg['wireless'][$setting]);
 						}
@@ -3287,17 +3245,18 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	}
 
 	// Read or write settings at shared area
-	if (isset($config['wireless']['interfaces'][$baseif]) && is_array($config['wireless']['interfaces'][$baseif])) {
+	if (!empty(config_get_path("wireless/interfaces/{$baseif}"))) {
 		foreach ($shared_settings as $setting) {
 			if ($sync_changes) {
 				if (isset($ifcfg['wireless'][$setting])) {
-					$config['wireless']['interfaces'][$baseif][$setting] = $ifcfg['wireless'][$setting];
-				} elseif (isset($config['wireless']['interfaces'][$baseif][$setting])) {
-					unset($config['wireless']['interfaces'][$baseif][$setting]);
+					config_set_path("wireless/interfaces/{$baseif}/{$setting}",
+									$ifcfg['wireless'][$setting]);
+				} elseif (!empty(config_get_path("wireless/interfaces/{$baseif}/{$setting}"))) {
+					config_del_path("wireless/interfaces/{$baseif}/{$setting}");
 				}
-			} elseif (isset($config['wireless']['interfaces'][$baseif][$setting])) {
-				if (isset($config['wireless']['interfaces'][$baseif][$setting])) {
-					$ifcfg['wireless'][$setting] = $config['wireless']['interfaces'][$baseif][$setting];
+			} else {
+				if (!empty(config_get_path("wireless/interfaces/{$baseif}/{$setting}"))) {
+					$ifcfg['wireless'][$setting] = config_get_path("wireless/interfaces/{$baseif}/{$setting}");
 				} elseif (isset($ifcfg['wireless'][$setting])) {
 					unset($ifcfg['wireless'][$setting]);
 				}
@@ -3306,11 +3265,11 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	}
 
 	// Sync the mode on the clone creation page with the configured mode on the interface
-	if (interface_is_wireless_clone($ifcfg['if']) && isset($config['wireless']['clone']) && is_array($config['wireless']['clone'])) {
-		foreach ($config['wireless']['clone'] as &$clone) {
+	if (interface_is_wireless_clone($ifcfg['if'])) {
+		foreach (config_get_path('wireless/clone', []) as $key => $clone) {
 			if ($clone['cloneif'] == $ifcfg['if']) {
 				if ($sync_changes) {
-					$clone['mode'] = $ifcfg['wireless']['mode'];
+					config_set_path("wireless/clone/{$key}/mode)", $ifcfg['wireless']['mode']);
 				} else {
 					$ifcfg['wireless']['mode'] = $clone['mode'];
 				}
@@ -3322,7 +3281,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 }
 
 function interface_wireless_configure($if, &$wl, &$wlcfg) {
-	global $config, $g;
+	global $g;
 
 	/*    open up a shell script that will be used to output the commands.
 	 *    since wireless is changing a lot, these series of commands are fragile
@@ -3731,11 +3690,9 @@ EOD;
 		if (does_interface_exist(interface_get_wireless_clone($baseif))) {
 			$clone_list[] = interface_get_wireless_clone($baseif);
 		}
-		if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone'])) {
-			foreach ($config['wireless']['clone'] as $clone) {
-				if ($clone['if'] == $baseif) {
-					$clone_list[] = $clone['cloneif'];
-				}
+		foreach (config_get_path('wireless/clone', []) as $clone) {
+			if ($clone['if'] == $baseif) {
+				$clone_list[] = $clone['cloneif'];
 			}
 		}
 
@@ -3765,7 +3722,7 @@ EOD;
 			if ($clone_if != $if) {
 				$friendly_if = convert_real_interface_to_friendly_interface_name($clone_if);
 				if ((!empty($friendly_if)) &&
-				    ($config['interfaces'][$friendly_if]['wireless']['mode'] == "bss") &&
+				    (config_get_path("interfaces/{$friendly_if}/wireless/mode") == "bss") &&
 				    config_path_enabled("interfaces/{$friendly_if}/wireless/wpa")) {
 					mwexec("/bin/sh {$g['tmp_path']}/" . escapeshellarg($clone_if) . "_setup.sh");
 				}
@@ -3945,7 +3902,6 @@ function run_dhcp6client_process($interfaces, $debugOption, $noreleaseOption) {
 }
 
 function interface_virtual_create($interface, $gateways_status = false) {
-	global $config;
 
 	/* Fetch gateway status if not passed */
 	if (!is_array($gateways_status)) {
@@ -3959,39 +3915,33 @@ function interface_virtual_create($interface, $gateways_status = false) {
 	} elseif (substr($interface, 0, 3) == "gif") {
 		interfaces_tunnel_configure(0, $interface, 'gif');
 	} elseif (substr($interface, 0, 5) == "ovpns") {
-		if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
-			foreach ($config['openvpn']['openvpn-server'] as $server) {
-				if ($interface == "ovpns{$server['vpnid']}") {
-					if (!function_exists('openvpn_resync')) {
-						require_once('openvpn.inc');
-					}
-					log_error(sprintf(gettext("OpenVPN: Resync server %s"), $server['description']));
-					openvpn_resync('server', $server);
+		foreach (config_get_path('openvpn/openvpn-server', []) as $server) {
+			if ($interface == "ovpns{$server['vpnid']}") {
+				if (!function_exists('openvpn_resync')) {
+					require_once('openvpn.inc');
 				}
+				log_error(sprintf(gettext("OpenVPN: Resync server %s"), $server['description']));
+				openvpn_resync('server', $server);
 			}
-			unset($server);
 		}
+		unset($server);
 	} elseif (substr($interface, 0, 5) == "ovpnc") {
-		if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
-			foreach ($config['openvpn']['openvpn-client'] as $client) {
-				if ($interface == "ovpnc{$client['vpnid']}") {
-					if (!function_exists('openvpn_resync')) {
-						require_once('openvpn.inc');
-					}
-					log_error(sprintf(gettext("OpenVPN: Resync client %s"), $client['description']));
-					openvpn_resync('client', $client);
+		foreach (config_get_path('openvpn/openvpn-client', []) as $client) {
+			if ($interface == "ovpnc{$client['vpnid']}") {
+				if (!function_exists('openvpn_resync')) {
+					require_once('openvpn.inc');
 				}
+				log_error(sprintf(gettext("OpenVPN: Resync client %s"), $client['description']));
+				openvpn_resync('client', $client);
 			}
-			unset($client);
 		}
+		unset($client);
 	} elseif (substr($interface, 0, 5) == "ipsec") {
-		if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
-			foreach ($config['ipsec']['phase1'] as $ph1ent) {
-				if ($ph1ent['disabled']) {
-					continue;
-				}
-				interface_ipsec_vti_configure($ph1ent, $gateways_status);
+		foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+			if ($ph1ent['disabled']) {
+				continue;
 			}
+			interface_ipsec_vti_configure($ph1ent, $gateways_status);
 		}
 	} elseif (substr($interface, 0, 4) == "lagg") {
 		interfaces_lagg_configure($interface);
@@ -4001,24 +3951,21 @@ function interface_virtual_create($interface, $gateways_status = false) {
 }
 
 function interface_vlan_mtu_configured($iface) {
-	global $config;
 
 	$mtu = 0;
-	if (is_array($config['vlans']) && is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 
-			if ($vlan['vlanif'] != $iface)
-				continue;
+		if ($vlan['vlanif'] != $iface)
+			continue;
 
-			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-			$parentinf = convert_real_interface_to_friendly_interface_name($vlan['if']);
-			if (!empty($assignedport) && !empty($config['interfaces'][$assignedport]['mtu'])) {
-				/* VLAN MTU */
-				$mtu = $config['interfaces'][$assignedport]['mtu'];
-			} elseif (!empty($config['interfaces'][$parentinf]['mtu'])) {
-				/* Parent MTU */
-				$mtu = $config['interfaces'][$parentinf]['mtu'];
-			}
+		$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+		$parentinf = convert_real_interface_to_friendly_interface_name($vlan['if']);
+		if (!empty($assignedport) && !empty(config_get_path("interfaces/{$assignedport}/mtu"))) {
+			/* VLAN MTU */
+			$mtu = config_get_path("interfaces/{$assignedport}/mtu");
+		} elseif (!empty(config_get_path("interfaces/{$parentinf}/mtu"))) {
+			/* Parent MTU */
+			$mtu = config_get_path("interfaces/{$parentinf}/mtu");
 		}
 	}
 
@@ -4026,13 +3973,9 @@ function interface_vlan_mtu_configured($iface) {
 }
 
 function interface_mtu_wanted_for_pppoe($realif) {
-	global $config;
-
-	if (!is_array($config['ppps']) || !is_array($config['ppps']['ppp']))
-		return 0;
 
 	$mtu = 0;
-	foreach ($config['ppps']['ppp'] as $ppp) {
+	foreach (config_get_path('ppps/ppp', []) as $ppp) {
 		if ($ppp['type'] != "pppoe") {
 			continue;
 		}
@@ -4053,8 +3996,8 @@ function interface_mtu_wanted_for_pppoe($realif) {
 			if (!empty($mtus[$pid])) {
 				$mtu = intval($mtus[$pid]) + 8;
 			// or use the MTU configured on the interface ...
-			} elseif (is_array($config['interfaces'])) {
-				foreach ($config['interfaces'] as $interface) {
+			} else {
+				foreach (config_get_path('interfaces', []) as $interface) {
 					if ($interface['if'] == $ppp['if'] &&
 					    !empty($interface['mtu'])) {
 						$mtu = intval($interface['mtu']) + 8;
@@ -4069,7 +4012,7 @@ function interface_mtu_wanted_for_pppoe($realif) {
 }
 
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
-	global $config, $g;
+	global $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
 	global $interface_snv6_arr_cache, $interface_ipv6_arr_cache;
 
@@ -4175,7 +4118,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		echo gettext("Generating new MAC address.");
 		$random_mac = generate_random_mac_address();
 		interface_set_macaddr($realhwif, $random_mac);
-		$config['interfaces'][$mac_if]['spoofmac'] = $random_mac;
+		config_set_path("interfaces/{$mac_if}/spoofmac", $random_mac);
 		write_config(sprintf(gettext('The invalid MAC address ' .
 		    '(ff:ff:ff:ff:ff:ff) on interface %1$s has been ' .
 		    'automatically replaced with %2$s'), $mac_if, $random_mac));
@@ -4220,12 +4163,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	$wantedmtu = 0;
-	if (is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $tmpinterface) {
-			if ($tmpinterface['if'] == $mtuif && !empty($tmpinterface['mtu'])) {
-				$wantedmtu = $tmpinterface['mtu'];
-				break;
-			}
+	foreach (config_get_path('interfaces', []) as $tmpinterface) {
+		if ($tmpinterface['if'] == $mtuif && !empty($tmpinterface['mtu'])) {
+			$wantedmtu = $tmpinterface['mtu'];
+			break;
 		}
 	}
 
@@ -4255,8 +4196,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	if (interface_is_vlan($mtuif) != NULL) {
 		$assignedparent = convert_real_interface_to_friendly_interface_name($mtuhwif);
-		if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
-			$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
+		if (!empty($assignedparent) && !empty(config_get_path("interfaces/{$assignedparent}/mtu"))) {
+			$parentmtu = config_get_path("interfaces/{$assignedparent}/mtu");
 			if ($wancfg['mtu'] > $parentmtu) {
 				log_error(sprintf(gettext('There is a conflict on MTU between parent %1$s and VLAN(%2$s)'), $mtuhwif, $mtuif));
 			}
@@ -4280,12 +4221,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	} elseif (substr($mtuif, 0, 4) == 'lagg') {
 		/* LAGG interface must be destroyed and re-created to change MTU */
 		if ($wantedmtu != get_interface_mtu($mtuif)) {
-			if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
-				foreach ($config['laggs']['lagg'] as $lagg) {
-					if ($lagg['laggif'] == $mtuif) {
-						interface_lagg_configure($lagg);
-						break;
-					}
+			foreach (config_get_path('laggs/lagg', []) as $lagg) {
+				if ($lagg['laggif'] == $mtuif) {
+					interface_lagg_configure($lagg);
+					break;
 				}
 			}
 		}
@@ -4420,7 +4359,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 }
 
 function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
-	global $config, $g;
+	global $g;
 
 	if (!is_array($wancfg)) {
 		return;
@@ -4442,7 +4381,7 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 		mwexec("/sbin/ifconfig {$realif} inet6 fe80::1:1%{$realif} alias");
 	}
 
-	$trackcfg = $config['interfaces'][$wancfg['track6-interface']];
+	$trackcfg = config_get_path("interfaces/{$wancfg['track6-interface']}");
 	if (!isset($trackcfg['enable'])) {
 		log_error(sprintf(gettext('Interface %1$s tracking non-existent interface %2$s'), $interface, $wancfg['track6-interface']));
 		return;
@@ -4499,7 +4438,6 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 }
 
 function interface_track6_6rd_configure($interface, $lancfg) {
-	global $config;
 	global $interface_ipv6_arr_cache;
 	global $interface_snv6_arr_cache;
 
@@ -4512,7 +4450,7 @@ function interface_track6_6rd_configure($interface, $lancfg) {
 		return;
 	}
 
-	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
+	$wancfg = config_get_path("interfaces/{$lancfg['track6-interface']}");
 	if (empty($wancfg)) {
 		log_error(sprintf(gettext('Interface %1$s tracking non-existent interface %2$s'), $interface, $lancfg['track6-interface']));
 		return;
@@ -4563,7 +4501,6 @@ function interface_track6_6rd_configure($interface, $lancfg) {
 }
 
 function interface_track6_6to4_configure($interface, $lancfg) {
-	global $config;
 	global $interface_ipv6_arr_cache;
 	global $interface_snv6_arr_cache;
 
@@ -4576,7 +4513,7 @@ function interface_track6_6to4_configure($interface, $lancfg) {
 		return;
 	}
 
-	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
+	$wancfg = config_get_path("interfaces/{$lancfg['track6-interface']}");
 	if (empty($wancfg)) {
 		log_error(sprintf(gettext('Interface %1$s tracking non-existent interface %2$s'), $interface, $lancfg['track6-interface']));
 		return;
@@ -4829,7 +4766,7 @@ function interface_6to4_configure($interface, $wancfg) {
 }
 
 function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
-	global $config, $g;
+	global $g;
 
 	$dhcp6cconf = "";
 	$id = "0";
@@ -4839,14 +4776,14 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 	$debugOption = "-d";
 	$noreleaseOption = "";
 
-	if (!empty($config['system']['global-v6duid'])) {
+	if (!empty(config_get_path('system/global-v6duid'))) {
 		// Write the DUID file
-		if(!write_dhcp6_duid($config['system']['global-v6duid'])) {
+		if(!write_dhcp6_duid(config_get_path('system/global-v6duid'))) {
 		    log_error(gettext("Failed to write user DUID file!"));
 		}
 	}
 
-	foreach ($config['interfaces'] as $interface => $wancfg) {
+	foreach (config_get_path('interfaces', []) as $interface => $wancfg) {
 		$wanif = get_real_interface($interface, "inet6");
 
 		if (($ifconf == $interface) && $destroy) {
@@ -4863,10 +4800,10 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 
 		$dhcp6cinterfaces[$interface] = $wancfg;
 
-		if (isset($config['system']['dhcp6debug'])) {
+		if (config_path_enabled('system','dhcp6debug')) {
 			$debugOption = "-D";
 		}
-		if (isset($config['system']['dhcp6norelease'])) {
+		if (config_path_enabled('system','dhcp6norelease')) {
 			$noreleaseOption = "-n";
 		}
 
@@ -5647,14 +5584,7 @@ function DHCP_Config_File_Substitutions($ifcfg, $realif, $dhclientconf) {
 }
 
 function interfaces_group_setup() {
-	global $config;
-
-	if (!isset($config['ifgroups']['ifgroupentry']) ||
-	    !is_array($config['ifgroups']['ifgroupentry'])) {
-		return;
-	}
-
-	foreach ($config['ifgroups']['ifgroupentry'] as $groupar) {
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $groupar) {
 		interface_group_setup($groupar);
 	}
 
@@ -5677,13 +5607,9 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 }
 
 function is_interface_group($if) {
-	global $config;
-
-	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $groupentry) {
-			if ($groupentry['ifname'] === $if) {
-				return true;
-			}
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $groupentry) {
+		if ($groupentry['ifname'] === $if) {
+			return true;
 		}
 	}
 
@@ -5716,11 +5642,10 @@ function get_current_wan_address($interface = "wan") {
  * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
  */
 function convert_real_interface_to_friendly_interface_name($interface = "wan", $checkparent = false) {
-	global $config;
 
 	/* XXX: For speed reasons reference directly the interface array */
 	init_config_arr(array('interfaces'));
-	$ifdescrs = &$config['interfaces'];
+	$ifdescrs = config_get_path('interfaces');
 	//$ifdescrs = get_configured_interface_list(true);
 
 	foreach ($ifdescrs as $if => $ifname) {
@@ -5753,7 +5678,6 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan", $
 
 /* attempt to resolve interface to friendly descr */
 function convert_friendly_interface_to_friendly_descr($interface) {
-	global $config;
 
 	$iface = config_get_path("interfaces/{$interface}");
 	switch ($interface) {
@@ -5803,11 +5727,9 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			} elseif (substr($interface, 0, 5) == '_lloc') {
 				return get_interface_linklocal($interface);
 			} else {
-				if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
-					foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-						if ($ifgen['ifname'] === $interface) {
-							return $ifgen['ifname'];
-						}
+				foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+					if ($ifgen['ifname'] === $interface) {
+						return $ifgen['ifname'];
 					}
 				}
 
@@ -5919,12 +5841,11 @@ function get_parent_interface($interface, $avoidrecurse = false) {
  *  differs from get_parent_interface in that it traverses to find the physical NICs on lagg
  */
 function get_parent_physical_interface($interface) {
-	global $config;
 
 	$realif = get_parent_interface($interface);
 
 	if (substr($realif[0], 0, 4) == "lagg") {
-		foreach ($config['laggs']['lagg'] as $lagg) {
+		foreach (config_get_path('laggs/lagg', []) as $lagg) {
 			if ($realif[0] == $lagg['laggif']) {
 				return explode(",", $lagg['members']);
 			}
@@ -6150,18 +6071,14 @@ function find_ip_interface($ip, $bits = null) {
  *   (or if $bits is specified, where an IP within the subnet is found)
  */
 function find_virtual_ip_alias($ip, $bits = null) {
-	global $config;
 
-	if (!is_array($config['virtualip']['vip'])) {
-		return false;
-	}
 	if (!is_ipaddr($ip)) {
 		return false;
 	}
 
 	$isv6ip = is_ipaddrv6($ip);
 
-	foreach ($config['virtualip']['vip'] as $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if ($vip['mode'] === "ipalias") {
 			if (is_ipaddrv6($vip['subnet']) != $isv6ip) {
 				continue;
@@ -6182,28 +6099,24 @@ function find_virtual_ip_alias($ip, $bits = null) {
 }
 
 function link_interface_to_track6($int, $action = "") {
-	global $config;
-
+	$list = array();
 	if (empty($int)) {
-		return;
-	}
-
-	if (is_array($config['interfaces'])) {
-		$list = array();
-		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (!isset($ifcfg['enable'])) {
-				continue;
-			}
-			if (!empty($ifcfg['ipaddrv6']) && $ifcfg['track6-interface'] == $int) {
-				if ($action == "update") {
-					interface_track6_configure($ifname, $ifcfg);
-				} elseif ($action == "") {
-					$list[$ifname] = $ifcfg;
-				}
-			}
-		}
 		return $list;
 	}
+
+	foreach (config_get_path('interfaces', []) as $ifname => $ifcfg) {
+		if (!isset($ifcfg['enable'])) {
+			continue;
+		}
+		if (!empty($ifcfg['ipaddrv6']) && $ifcfg['track6-interface'] == $int) {
+			if ($action == "update") {
+				interface_track6_configure($ifname, $ifcfg);
+			} elseif ($action == "") {
+				$list[$ifname] = $ifcfg;
+			}
+		}
+	}
+	return $list;
 }
 
 function interface_find_child_cfgmtu($realiface) {
@@ -6827,12 +6740,11 @@ function get_interface_subnetv6($interface = "wan") {
 
 /* return outside interfaces with a gateway */
 function get_interfaces_with_gateway() {
-	global $config;
 
 	$ints = array();
 
 	/* loop interfaces, check config for outbound */
-	foreach ($config['interfaces'] as $ifdescr => $ifname) {
+	foreach (config_get_path('interfaces', []) as $ifdescr => $ifname) {
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
 			case "pppoe":
@@ -6858,10 +6770,8 @@ function get_interfaces_with_gateway() {
 
 /* return true if interface has a gateway */
 function interface_has_gateway($friendly) {
-	global $config;
-
-	if (!empty($config['interfaces'][$friendly])) {
-		$ifname = &$config['interfaces'][$friendly];
+	$ifname = config_get_path("interfaces/{$friendly}");
+	if (!empty($ifname)) {
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
 				/* see https://redmine.pfsense.org/issues/5135 */
@@ -6898,10 +6808,8 @@ function interface_has_gateway($friendly) {
 
 /* return true if interface has a gateway */
 function interface_has_gatewayv6($friendly) {
-	global $config;
-
-	if (!empty($config['interfaces'][$friendly])) {
-		$ifname = &$config['interfaces'][$friendly];
+	$ifname = config_get_path("interfaces/{$friendly}");
+	if (!empty($ifname)) {
 		switch ($ifname['ipaddrv6']) {
 			case "slaac":
 			case "dhcp6":
@@ -6976,14 +6884,12 @@ function is_altq_capable($int) {
  *   $tmp       - Returns if an interface is wireless
  ******/
 function is_interface_wireless($interface) {
-	global $config, $g;
+	global $g;
 
 	$friendly = convert_real_interface_to_friendly_interface_name($interface);
-	if (!isset($config['interfaces'][$friendly]['wireless'])) {
+	if (config_get_path("interfaces/{$friendly}/wireless") === null) {
 		if (preg_match($g['wireless_regex'], $interface)) {
-			if (isset($config['interfaces'][$friendly])) {
-				$config['interfaces'][$friendly]['wireless'] = array();
-			}
+			init_config_arr(['interfaces', $friendly, 'wireless']);
 			return true;
 		}
 		return false;
@@ -7135,13 +7041,10 @@ function set_interface_mtu($interface, $mtu) {
 	/* LAGG interface must be destroyed and re-created to change MTU */
 	if ((substr($interface, 0, 4) == 'lagg') &&
 	    (!strstr($interface, "."))) {
-		if (isset($config['laggs']['lagg']) &&
-		    is_array($config['laggs']['lagg'])) {
-			foreach ($config['laggs']['lagg'] as $lagg) {
-				if ($lagg['laggif'] == $interface) {
-					interface_lagg_configure($lagg);
-					break;
-				}
+		foreach (config_get_path('laggs/lagg', []) as $lagg) {
+			if ($lagg['laggif'] == $interface) {
+				interface_lagg_configure($lagg);
+				break;
 			}
 		}
 	} else {
@@ -7248,9 +7151,8 @@ function get_interface_default_mtu($type = "ethernet") {
 }
 
 function get_vip_descr($ipaddress) {
-	global $config;
 
-	foreach ($config['virtualip']['vip'] as $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if ($vip['subnet'] == $ipaddress) {
 			return ($vip['descr']);
 		}
@@ -7413,7 +7315,6 @@ function get_serial_ports($short=false) {
 }
 
 function get_interface_ports() {
-	global $config;
 	$linklist = array();
 	$portlist = get_interface_list();
 
@@ -7541,14 +7442,13 @@ function create_interface_list($open = false) {
 }
 
 function is_pseudo_interface($inf, $tap=true) {
-	global $config;
 	$psifs = array('ovpn', 'ipsec', 'l2tp', 'pptp', 'gif', 'gre', 'ppp', 'pppoe');
 	foreach ($psifs as $pif) {
 		if (substr($inf, 0, strlen($pif)) == $pif) {
 			if (($pif == 'ovpn') && $tap) {
 				preg_match('/ovpn([cs])([1-9]+)/', $inf, $m);
 				$type = ($m[1] == 'c') ? 'client' : 'server';
-				foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
+				foreach (config_get_path("openvpn/openvpn-{$type}", []) as $ovpn) {
 					if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tap')) {
 						return false;
 					} elseif ($ovpn['vpnid'] == $m[2]) {
@@ -7564,19 +7464,16 @@ function is_pseudo_interface($inf, $tap=true) {
 }
 
 function is_stf_interface($inf) {
-	global $config;
-
-	if (is_array($config['interfaces'][$inf]) &&
-	    (($config['interfaces'][$inf]['ipaddrv6'] == '6rd') ||
-	    ($config['interfaces'][$inf]['ipaddrv6'] == '6to4'))) {
-	    return true;
+	switch (config_get_path("interfaces/{$inf}/ipaddrv6")) {
+		case '6rd':
+		case '6to4':
+			return true;
+		default:
+			return false;
 	}
-
-	return false;
 }
 
 function restart_interface_services($interface, $ipv6type = "") {
-	global $config;
 
 	services_unbound_configure(true, $interface);
 
@@ -7592,9 +7489,7 @@ function restart_interface_services($interface, $ipv6type = "") {
 	/* restart RADVD to announce correct IPv6 prefix
 	 * see https://redmine.pfsense.org/issues/12604 */ 
 	if ((($ipv6type == "staticv6") || ($ipv6type == "track6")) &&
-	    is_array($config['dhcpdv6'][$interface]) &&
-	    isset($config['dhcpdv6'][$interface]['ramode']) &&
-	    ($config['dhcpdv6'][$interface]['ramode'] != "disabled")) {
+	    (config_get_path("dhcpdv6/{$interface}/ramode", "disabled") != "disabled")) {
 		services_radvd_configure();
 	}
 

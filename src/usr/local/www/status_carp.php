@@ -121,12 +121,10 @@ if ($savemsg) {
 }
 
 $carpcount = 0;
-if (is_array($config['virtualip']['vip'])) {
-	foreach ($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] == "carp") {
-			$carpcount++;
-			break;
-		}
+foreach(config_get_path('virtualip/vip', []) as $carp) {
+	if ($carp['mode'] == "carp") {
+		$carpcount++;
+		break;
 	}
 }
 

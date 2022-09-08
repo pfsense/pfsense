@@ -55,6 +55,9 @@ if (file_exists("/debugging")) {
 
 $config = parse_config();
 
+/* make alias table (for faster lookups) */
+alias_make_table();
+
 /* set timezone */
 if (isset($config['system']['timezone']) &&
     !empty($config['system']['timezone'])) {

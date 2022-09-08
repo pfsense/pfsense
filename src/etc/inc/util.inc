@@ -3363,6 +3363,28 @@ function array_get_path(array &$arr, string $path, $default = null) {
 	return ($el);
 }
 
+/*
+ * Initialize an arbitrary array multiple levels deep only if unset
+ * @param $arr top of array
+ * @param $path string path with '/' separators
+ */
+function array_init_path(mixed &$arr, ?string $path)
+{
+	if (!is_array($arr)) {
+		$arr = [];
+	}
+	if (is_null($path)) {
+		return;
+	}
+	$tmp = &$arr;
+	foreach (explode('/', $path) as $key) {
+		if (!is_array($tmp[$key])) {
+			$tmp[$key] = [];
+		}
+		$tmp = &$tmp[$key];
+	}
+}
+
 /**
  * Set a value by path in a nested array, creating arrays for intermediary keys
  * as necessary. If the path cannot be reached because an intermediary exists

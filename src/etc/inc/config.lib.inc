@@ -154,8 +154,6 @@ function parse_config($parse = false) {
 	$config_parsed = true;
 	unlock($lockkey);
 
-	alias_make_table();
-
 	return $config;
 }
 
@@ -1187,19 +1185,13 @@ function pfSense_clear_globals() {
 /* Initialize a config array multiple levels deep only if unset
  * Pass it an array of keys to test and create
  * init_config_arr(array('virtualip', 'vip'));
+ * 
+ * This is now defined in terms of array_init_path()
  */
-function init_config_arr($keys) {
+function init_config_arr($keys)
+{
 	global $config;
-	$c = &$config;
-	if (!is_array($keys)) {
-		return null;
-	}
-	foreach ($keys as $k) {
-		if (!is_array($c[$k])) {
-			$c[$k] = array();
-		}
-		$c = &$c[$k];
-	}
+	array_init_path($config, implode('/', $keys));
 }
 
 /**

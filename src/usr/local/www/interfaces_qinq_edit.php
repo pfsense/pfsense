@@ -103,11 +103,9 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("QinQ level already exists for this interface, edit it!");
 			}
 		}
-		if (is_array($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan) {
-				if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if']) {
-					$input_errors[] = gettext("A normal VLAN exists with this tag please remove it to use this tag for QinQ first level.");
-				}
+		foreach (config_get_path('vlans/vlan', []) as $vlan) {
+			if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if']) {
+				$input_errors[] = gettext("A normal VLAN exists with this tag please remove it to use this tag for QinQ first level.");
 			}
 		}
 	}

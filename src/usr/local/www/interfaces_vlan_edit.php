@@ -119,11 +119,10 @@ if ($_POST['save']) {
 			break;
 		}
 	}
-	if (is_array($config['qinqs']['qinqentry'])) {
-		foreach ($config['qinqs']['qinqentry'] as $qinq) {
-			if ($qinq['tag'] == $_POST['tag'] && $qinq['if'] == $_POST['if']) {
-				$input_errors[] = sprintf(gettext('A QinQ VLAN exists on %s with this tag. Please remove it to use this tag for a normal VLAN.'), $_POST['if']);
-			}
+
+	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
+		if ($qinq['tag'] == $_POST['tag'] && $qinq['if'] == $_POST['if']) {
+			$input_errors[] = sprintf(gettext('A QinQ VLAN exists on %s with this tag. Please remove it to use this tag for a normal VLAN.'), $_POST['if']);
 		}
 	}
 

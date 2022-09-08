@@ -1145,10 +1145,10 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
-		if (is_array($config['system']['user'][$userid]['cert'])) { // Could be MIA!
-			if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert'])) {
-				continue;
-			}
+
+		if (isset($userid) &&
+		    in_array($cert['refid'], config_get_path("system/user/{$userid}/cert", []))) {
+			continue;
 		}
 
 		$ca = lookup_ca($cert['caref']);

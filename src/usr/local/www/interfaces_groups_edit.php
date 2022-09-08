@@ -101,11 +101,9 @@ if ($_POST['save']) {
 		}
 
 		/* Is the description already used as an alias name? */
-		if (is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias) {
-				if ($alias['name'] == $_POST['ifname']) {
-					$input_errors[] = gettext("An alias with this name already exists.");
-				}
+		foreach(config_get_path('aliases/alias', []) as $alias) {
+			if ($alias['name'] == $_POST['ifname']) {
+				$input_errors[] = gettext("An alias with this name already exists.");
 			}
 		}
 	}

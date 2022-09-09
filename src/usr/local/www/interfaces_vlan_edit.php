@@ -32,12 +32,11 @@
 ##|*MATCH=interfaces_vlan_edit.php*
 ##|-PRIV
 
+require_once("config.lib.inc");
 require_once("guiconfig.inc");
 
-global $config;
-
 init_config_arr(array('vlans', 'vlan'));
-$a_vlans = &$config['vlans']['vlan'];
+$a_vlans = config_get_path('vlans/vlan', []);
 
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
@@ -60,7 +59,7 @@ foreach ($portlist as $portname => $port) {
 	if (strstr($portname, "ovpn")) {
 		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
 		$type = ($m[1] == 'c') ? 'client' : 'server';
-		foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
+		foreach (config_get_path("openvpn/openvpn-{$type}") as $ovpn) {
 			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
 				unset($portlist[$portname]);
 			}
@@ -138,7 +137,7 @@ if ($_POST['save']) {
 					$confif = convert_real_interface_to_friendly_interface_name(vlan_interface($a_vlans[$id]));
 				}
 				if ($confif != "") {
-					$config['interfaces'][$confif]['if'] = vlan_interface($_POST);
+					config_set_path("interfaces/{$confif}/if", vlan_interface($_POST));
 				}
 			}
 		}
@@ -159,6 +158,7 @@ if ($_POST['save']) {
 				$a_vlans[] = $vlan;
 			}
 
+			config_set_path('vlans/vlan', $a_vlans);
 			write_config("VLAN interface added");
 
 			if ($confif != "") {

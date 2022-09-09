@@ -949,8 +949,14 @@ function install_package_xml($package_name) {
 	if (is_array($pkg_config['service'])) {
 		update_status(gettext("Services... "));
 		foreach ($pkg_config['service'] as $service) {
+			if (empty($service)) {
+				continue;
+			}
 			foreach ($config['installedpackages']['service'] as
 			    $aservice) {
+				if (empty($aservice)) {
+					continue;
+				}
 				if ($aservice['name'] == $service['name']) {
 					continue 2;
 				}
@@ -1032,9 +1038,13 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		if (is_array($pkg_config['service']) && is_array($services)) {
 			update_status(gettext("Services... "));
 			foreach ($pkg_config['service'] as $service) {
+				if (empty($service)) {
+					continue;
+				}
 				foreach ($services as $key => $instservice) {
-					if ($instservice['name'] !=
-					    $service['name']) {
+					if (empty($instservice) ||
+					    ($instservice['name'] !=
+					    $service['name'])) {
 						continue;
 					}
 					if (platform_booting() != true) {

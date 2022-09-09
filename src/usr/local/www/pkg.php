@@ -90,7 +90,9 @@ if ($_REQUEST['display_maximum_rows']) {
 	}
 }
 
-$evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
+$config_path = sprintf('installedpackages/%s/config', xml_safe_fieldname($pkg['name']));
+
+$evaledvar = config_get_path($config_path, []);
 
 if ($_REQUEST['act'] == "update") {
 
@@ -147,7 +149,7 @@ if ($_REQUEST['act'] == "del") {
 ob_start();
 
 $iflist = get_configured_interface_with_descr(true);
-$evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
+$evaledvar = config_get_path($config_path, []);
 
 if ($pkg['custom_php_global_functions'] != "") {
 	eval($pkg['custom_php_global_functions']);

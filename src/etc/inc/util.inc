@@ -3351,10 +3351,10 @@ function array_remove_duplicate($array, $field) {
  * @returns mixed value at path or $default if the path does not exist
  */
 function array_get_path(array &$arr, string $path, $default = null) {
-	$vpath = mb_split('/', $path);
+	$vpath = explode('/', $path);
 	$el = $arr;
 	foreach ($vpath as $key) {
-		if (empty($key)) {
+		if (mb_strlen($key) == 0) {
 			continue;
 		}
 		if (is_array($el) && array_key_exists($key, $el)) {
@@ -3399,11 +3399,17 @@ function array_init_path(mixed &$arr, ?string $path)
  * @returns mixed $val or $default if the path prefix does not exist
  */
 function array_set_path(array &$arr, string $path, $value, $default = null) {
-	$vpath = mb_split('/', $path);
-	$vkey = array_pop($vpath);
+	$vpath = explode('/', $path);
+	$vkey = null;
+	do {
+		$vkey = array_pop($vpath);
+	} while (mb_strlen($vkey) == 0);
+	if ($vkey == null) {
+		return ($default);
+	}
 	$el =& $arr;
 	foreach ($vpath as $key) {
-		if (empty($key)) {
+		if (mb_strlen($key) == 0) {
 			continue;
 		}
 		if (array_key_exists($key, $el) && !empty($el[$key])) {
@@ -3443,11 +3449,11 @@ function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
  * @returns array copy of the removed value or null
  */
 function array_del_path(array &$arr, string $path) {
-	$vpath = mb_split('/', $path);
+	$vpath = explode('/', $path);
 	$vkey = array_pop($vpath);
 	$el =& $arr;
 	foreach($vpath as $key) {
-		if (empty($key)) {
+		if (mb_strlen($key) == 0) {
 			continue;
 		}
 		if (is_array($el) && array_key_exists($key, $el)) {

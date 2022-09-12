@@ -16,6 +16,8 @@ class ConfigLibTest extends TestCase {
 		$this->assertEquals("bang", config_get_path("bar/baz", null));
 		// Root
 		$this->assertIsArray(config_get_path("/"));
+		// Sublist
+		$this->assertEquals('one', config_get_path("sublist/0"));
 	}
 
 	public function test_config_set_path(): void {
@@ -53,6 +55,9 @@ class ConfigLibTest extends TestCase {
 		$this->assertIsArray(config_set_path("bar", []));
 		$this->assertEquals("barbaz", config_set_path("bar/baz", "barbaz"));
 		$this->assertEquals("barbaz", config_get_path("bar/baz"));
+		// Sublist
+		$this->assertIsArray(config_set_path('sublist/0', ['0_foo' => '0_bar']));
+		$this->assertEquals('0_bar', config_get_path('sublist/0/0_foo'));
 	}
 
 	public function test_config_path_enabled(): void {
@@ -82,6 +87,12 @@ class ConfigLibTest extends TestCase {
 		$expect = $config['bar'];
 		$val = config_del_path('bar');
 		$this->assertSame($expect, $val);
+		$this->assertArrayNotHasKey('bar', $config);
+		// Sublist
+		$expect = $config['sublist'][0];
+		$val = config_del_path('sublist/0');
+		$this->assertSame($expect, $val);
+		$this->assertArrayNotHasKey('0', $config['sublist']);
 	}
 
 	public function setUp(): void {
@@ -105,7 +116,8 @@ class ConfigLibTest extends TestCase {
 			"servicebang" => array(
 				"otherkey" => true
 			),
-			"rootkey" => true
+			"rootkey" => true,
+			"sublist" => ["one", "two", "three"]
 		);
 	}
 }

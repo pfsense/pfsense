@@ -586,6 +586,9 @@ function services_dhcpdv4_configure() {
 		if (is_array($dhcpifconf['staticmap'])) {
 			$i = 0;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
+				if (empty($sm)) {
+					continue;
+				}
 				$idx = 0;
 				$httpclient = false;
 				if (is_array($sm['numberoptions']) && is_array($sm['numberoptions']['item'])) {
@@ -1273,6 +1276,9 @@ EOD;
 			$sm_newzone[] = array();
 			$need_sm_ddns_updates = false;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
+				if (empty($sm)) {
+					continue;
+				}
 				$cid = '';
 				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
 
@@ -1892,6 +1898,9 @@ EOD;
 		if (is_array($dhcpv6ifconf['staticmap'])) {
 			$i = 0;
 			foreach ($dhcpv6ifconf['staticmap'] as $sm) {
+				if (empty($sm)) {
+					continue;
+				}
 				$dhcpdv6conf .= <<<EOD
 host s_{$dhcpv6if}_{$i} {
 	host-identifier option dhcp6.client-id {$sm['duid']};

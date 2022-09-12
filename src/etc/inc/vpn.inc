@@ -40,20 +40,56 @@ function vpn_setup() {
 	vpn_l2tp_configure();
 }
 
-function vpn_pppoes_configure() {
-	global $config;
+function vpn_ppp_server_get_dns($dns1 = '', $dns2 = '') {
+	$ipcp_dns = '';
+	$dns_servers = [];
 
-	if (is_array($config['pppoes']['pppoe'])) {
-		foreach ($config['pppoes']['pppoe'] as $pppoe) {
+	if (is_ipaddrv4($dns1)) {
+		/* Use manual DNS servers if they are valid */
+		$dns_servers[] = $dns1;
+		if (is_ipaddrv4($dns2)) {
+			$dns_servers[] = $dns2;
+		}
+	} else {
+		/* Get system defined DNS servers */
+		$host_dns_servers = get_dns_nameservers(false, true);
+
+		/* Add LAN address if the Resolver or Forwarder are enabled */
+		if (config_path_enabled('unbound') ||
+		    config_path_enabled('dnsmasq')) {
+			$dns_servers[] = get_interface_ip("lan");
+		}
+
+		/* Add host DNS servers if they are usable */
+		foreach ($host_dns_servers as $dns) {
+			if (is_ipaddrv4($dns) &&
+			    ($dns != '127.0.0.1')) {
+				$dns_servers[] = $dns;
+			}
+		}
+	}
+
+	if (!empty($dns_servers)) {
+		/* Use the first two DNS servers since that is all MPD currently allows */
+		$ipcp_dns = 'set ipcp dns ' . join(' ', array_slice($dns_servers, 0, 2));
+	}
+	return $ipcp_dns;
+}
+
+function vpn_pppoes_configure() {
+	foreach (config_get_path("pppoes/pppoe", []) as $pppoe) {
+		if (!empty($pppoe)) {
 			vpn_pppoe_configure($pppoe);
 		}
 	}
 }
 
 function vpn_pppoe_configure(&$pppoecfg) {
-	global $config, $g;
+	global $g;
 
-	$syscfg = $config['system'];
+	if (empty($pppoecfg) || !is_array($pppoecfg)) {
+		return false;
+	}
 
 	/* create directory if it does not exist */
 	if (!is_dir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn")) {
@@ -77,58 +113,48 @@ function vpn_pppoe_configure(&$pppoecfg) {
 
 	}
 
-	switch ($pppoecfg['mode']) {
+	if ($pppoecfg['mode'] != 'server') {
+		if (platform_booting()) {
+			echo gettext("done") . "\n";
+		}
+		return true;
+	}
 
-		case 'server':
+	$pppoe_interface = get_real_interface($pppoecfg['interface']);
 
-			$pppoe_interface = get_real_interface($pppoecfg['interface']);
+	if ($pppoecfg['paporchap'] == "chap") {
+		$paporchap = "set link enable chap";
+	} else {
+		$paporchap = "set link enable pap";
+	}
 
-			if ($pppoecfg['paporchap'] == "chap") {
-				$paporchap = "set link enable chap";
-			} else {
-				$paporchap = "set link enable pap";
-			}
+	/* write mpd.conf */
+	$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.conf", "w");
+	if (!$fd) {
+		printf(gettext("Error: cannot open mpd.conf in vpn_pppoe_configure().") . "\n");
+		return 1;
+	}
 
-			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.conf", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open mpd.conf in vpn_pppoe_configure().") . "\n");
-				return 1;
-			}
+	$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 ";
 
-			$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 ";
-			if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
-				$issue_ip_type .= "0.0.0.0/0";
-			} else {
-				$issue_ip_type .= "ippool p0";
-			}
+	if (array_path_enabled($pppoecfg, 'radius', 'radiusissueips') &&
+	    array_path_enabled($pppoecfg, 'radius/server')) {
+		$issue_ip_type .= "0.0.0.0/0";
+	} else {
+		$issue_ip_type .= "ippool p0";
+	}
 
-			$ippool_p0 = ip_after($pppoecfg['remoteip'], $pppoecfg['n_pppoe_units'] - 1);
+	$ippool_p0 = ip_after($pppoecfg['remoteip'], $pppoecfg['n_pppoe_units'] - 1);
 
-			if (is_numeric($pppoecfg['n_pppoe_maxlogin']) && ($pppoecfg['n_pppoe_maxlogin'] > 0)) {
-				$pppoemaxlogins = $pppoecfg['n_pppoe_maxlogin'];
-			} else {
-				$pppoemaxlogins = 1;
-			}
+	if (is_numeric($pppoecfg['n_pppoe_maxlogin']) && ($pppoecfg['n_pppoe_maxlogin'] > 0)) {
+		$pppoemaxlogins = $pppoecfg['n_pppoe_maxlogin'];
+	} else {
+		$pppoemaxlogins = 1;
+	}
 
-			$ipcp_dns = '';
-			if (!empty($pppoecfg['dns1'])) {
-				$ipcp_dns = "set ipcp dns " . $pppoecfg['dns1'];
-				if (!empty($pppoecfg['dns2'])) {
-					$ipcp_dns .= " " . $pppoecfg['dns2'];
-				}
-			} elseif (isset($config['dnsmasq']['enable']) ||
-			    isset ($config['unbound']['enable'])) {
-				$ipcp_dns = "set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$ipcp_dns .= " " . $syscfg['dnsserver'][0];
-				}
-			} elseif (is_array($syscfg['dnsserver']) &&
-			    ($syscfg['dnsserver'][0])) {
-				$ipcp_dns = "set ipcp dns " . join(" ", $syscfg['dnsserver']);
-			}
+	$ipcp_dns = vpn_ppp_server_get_dns($pppoecfg['dns1'], $pppoecfg['dns2']);
 
-			$mpdconf = <<<EOD
+	$mpdconf = <<<EOD
 startup:
 
 poes:
@@ -174,65 +200,57 @@ poes:
 
 EOD;
 
-			if (isset ($pppoecfg['radius']['server']['enable'])) {
-				$radiusport = "";
-				$radiusacctport = "";
-				if (isset($pppoecfg['radius']['server']['port'])) {
-					$radiusport = $pppoecfg['radius']['server']['port'];
-				}
-				if (isset($pppoecfg['radius']['server']['acctport'])) {
-					$radiusacctport = $pppoecfg['radius']['server']['acctport'];
-				}
-				$mpdconf .= "\tset radius server {$pppoecfg['radius']['server']['ip']} \"{$pppoecfg['radius']['server']['secret']}\" {$radiusport} {$radiusacctport}\n";
-				if (isset($pppoecfg['radius']['server2']['enable'])) {
-					$radiusport = "";
-					$radiusacctport = "";
-					if (isset($pppoecfg['radius']['server2']['port'])) {
-						$radiusport = $pppoecfg['radius']['server2']['port'];
-					}
-					if (isset($pppoecfg['radius']['server2']['acctport'])) {
-						$radiusacctport = $pppoecfg['radius']['server2']['acctport'];
-					}
-					$mpdconf .= "\tset radius server {$pppoecfg['radius']['server2']['ip']} \"{$pppoecfg['radius']['server2']['secret2']}\" {$radiusport} {$radiusacctport}\n";
-				}
+	if (array_path_enabled($pppoecfg, 'radius/server')) {
+		$radiusport = array_get_path($pppoecfg, 'radius/server/port', '');
+		$radiusacctport = array_get_path($pppoecfg, 'radius/server/acctport', '');
+		$radiusip = array_get_path($pppoecfg, 'radius/server/ip', '');
+		$radiussecret = array_get_path($pppoecfg, 'radius/server/secret', '');
+		$mpdconf .= "\tset radius server {$radiusip} \"{$radiussecret}\" {$radiusport} {$radiusacctport}\n";
 
-				$mpdconf .=<<<EOD
+		if (array_path_enabled($pppoecfg, 'radius/server2')) {
+			$radiusport = array_get_path($pppoecfg, 'radius/server2/port', '');
+			$radiusacctport = array_get_path($pppoecfg, 'radius/server2/acctport', '');
+			$radiusip = array_get_path($pppoecfg, 'radius/server2/ip', '');
+			$radiussecret = array_get_path($pppoecfg, 'radius/server2/secret', '');
+			$mpdconf .= "\tset radius server {$radiusip} \"{$radiussecret}\" {$radiusport} {$radiusacctport}\n";
+		}
+
+		$mpdconf .=<<<EOD
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
 
 EOD;
 
-				if (isset ($pppoecfg['radius']['accounting'])) {
-					$mpdconf .=<<<EOD
+		if (array_path_enabled($pppoecfg, 'radius', 'accounting')) {
+			$mpdconf .=<<<EOD
 	set auth enable radius-acct
 
 EOD;
-				}
-				if (!empty($pppoecfg['radius']['acct_update'])) {
-					$mpdconf .= "\tset auth acct-update {$pppoecfg['radius']['acct_update']}\n";
-				}
-				if (!empty($pppoecfg['radius']['nasip'])) {
-					$mpdconf .= "\tset radius me {$pppoecfg['radius']['nasip']}\n";
-				}
-			}
-
-			fwrite($fd, $mpdconf);
-			fclose($fd);
-			unset($mpdconf);
-
-			vpn_pppoe_updatesecret($pppoecfg);
-
-			/* Check if previous instance is still up */
-			while (file_exists("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid") && isvalidpid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid")) {
-				killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
-			}
-
-			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
-
-			break;
+		}
+		$radiusacctupdate = array_get_path($pppoecfg, 'radius/server/acct_update', '');
+		if (!empty($radiusacctupdate)) {
+			$mpdconf .= "\tset auth acct-update {$radiusacctupdate}\n";
+		}
+		$radiusnasip = array_get_path($pppoecfg, 'radius/server/nasip', '');
+		if (!empty($radiusnasip)) {
+			$mpdconf .= "\tset radius me {$radiusnasip}\n";
+		}
 	}
+
+	fwrite($fd, $mpdconf);
+	fclose($fd);
+	unset($mpdconf);
+
+	vpn_pppoe_updatesecret($pppoecfg);
+
+	/* Check if previous instance is still up */
+	while (file_exists("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid") && isvalidpid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid")) {
+		killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
+	}
+
+	/* fire up mpd */
+	mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
 	if (platform_booting()) {
 		echo gettext("done") . "\n";
@@ -242,7 +260,7 @@ EOD;
 }
 
 function vpn_pppoe_updatesecret(&$pppoecfg) {
-	global $config, $g;
+	global $g;
 
 	if ($pppoecfg['username']) {
 		/* write mpd.secret */
@@ -274,19 +292,29 @@ function vpn_pppoe_updatesecret(&$pppoecfg) {
 }
 
 function vpn_l2tp_configure($interface = '') {
-	global $config, $g;
+	global $g;
 
-	$syscfg = $config['system'];
-	$l2tpcfg = $config['l2tp'];
+	$l2tpcfg = config_get_path('l2tp', []);
+	if (empty($l2tpcfg)) {
+		return false;
+	}
 
+	$dns_servers = get_dns_nameservers(false, true);
+	if (empty($dns_servers) || !is_array($dns_servers)) {
+		$dns_servers = ['127.0.0.1'];
+	}
+
+	$mode = array_get_path($l2tpcfg, 'mode', 'off');
 	if (platform_booting()) {
-		if (!$l2tpcfg['mode'] || ($l2tpcfg['mode'] == "off")) {
+		if ($mode == 'off') {
+			rmdir_recursive("{$g['varetc_path']}/l2tp-vpn");
 			return 0;
 		}
 
 		echo gettext("Configuring l2tp VPN service... ");
 	} else {
-		if (!empty($interface) && ($l2tpcfg['interface'] != $interface)) {
+		if (!empty($interface) &&
+		    (array_get_path($l2tpcfg, 'interface') != $interface)) {
 			return 0;
 		}
 		/* kill mpd */
@@ -299,68 +327,62 @@ function vpn_l2tp_configure($interface = '') {
 
 	}
 
-	switch ($l2tpcfg['mode']) {
+	if ($mode != 'server') {
+		rmdir_recursive("{$g['varetc_path']}/l2tp-vpn");
+		if (platform_booting()) {
+			echo gettext("done") . "\n";
+		}
+		return true;
+	}
 
-		case 'server':
-			$l2tp_listen="";
-			$ipaddr = get_interface_ip(get_failover_interface($l2tpcfg['interface']));
-			if (is_ipaddrv4($ipaddr)) {
-				$l2tp_listen="set l2tp self $ipaddr";
-			}
+	$l2tp_listen="";
+	$ipaddr = get_interface_ip(get_failover_interface(array_get_path($l2tpcfg, 'interface')));
+	if (is_ipaddrv4($ipaddr)) {
+		$l2tp_listen="set l2tp self {$ipaddr}";
+	}
 
-			switch ($l2tpcfg['paporchap']) {
-				case 'chap':
-					$paporchap = "set link enable chap";
-					break;
-				case 'chap-msv2':
-					$paporchap = "set link enable chap-msv2";
-					break;
-				default:
-					$paporchap = "set link enable pap";
-					break;
-			}
+	switch (array_get_path($l2tpcfg, 'paporchap')) {
+		case 'chap':
+			$paporchap = "set link enable chap";
+			break;
+		case 'chap-msv2':
+			$paporchap = "set link enable chap-msv2";
+			break;
+		default:
+			$paporchap = "set link enable pap";
+			break;
+	}
 
-			/* create directory if it does not exist */
-			if (!is_dir("{$g['varetc_path']}/l2tp-vpn")) {
-				mkdir("{$g['varetc_path']}/l2tp-vpn");
-			}
+	/* create directory if it does not exist */
+	if (!is_dir("{$g['varetc_path']}/l2tp-vpn")) {
+		mkdir("{$g['varetc_path']}/l2tp-vpn");
+	}
 
-			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.conf", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open mpd.conf in vpn_l2tp_configure().") . "\n");
-				return 1;
-			}
+	/* write mpd.conf */
+	$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.conf", "w");
+	if (!$fd) {
+		printf(gettext("Error: cannot open mpd.conf in vpn_l2tp_configure().") . "\n");
+		return 1;
+	}
 
-			$ippool_p0 = ip_after($l2tpcfg['remoteip'], $l2tpcfg['n_l2tp_units'] - 1);
 
-			$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 ";
-			if (isset($l2tpcfg['radius']['radiusissueips']) && isset($l2tpcfg['radius']['enable'])) {
-				$issue_ip_type .= "0.0.0.0/0";
-				$ippool = "";
-			} else {
-				$issue_ip_type .= "ippool p0";
-				$ippool = "set ippool add p0 {$l2tpcfg['remoteip']} {$ippool_p0}";
-			}
+	$remoteip = array_get_path($l2tpcfg, 'remoteip');
+	$ippool_p0 = ip_after($remoteip, (array_get_path($l2tpcfg, 'n_l2tp_units') - 1));
 
-			$ipcp_dns = '';
-			if (is_ipaddr($l2tpcfg['dns1'])) {
-				$ipcp_dns = "set ipcp dns " . $l2tpcfg['dns1'];
-				if (is_ipaddr($l2tpcfg['dns2'])) {
-					$ipcp_dns .= " " . $l2tpcfg['dns2'];
-				}
-			} elseif (isset ($config['dnsmasq']['enable']) ||
-			    isset ($config['unbound']['enable'])) {
-				$ipcp_dns = "set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$ipcp_dns .= " " . $syscfg['dnsserver'][0];
-				}
-			} elseif (is_array($syscfg['dnsserver']) &&
-			    ($syscfg['dnsserver'][0])) {
-				$ipcp_dns = "set ipcp dns " . join(" ", $syscfg['dnsserver']);
-			}
+	$issue_ip_type = 'set ipcp ranges ' . array_get_path($l2tpcfg, 'localip') . '/32 ';
 
-			$mpdconf =<<<EOD
+	if (array_path_enabled($l2tpcfg, 'radius', 'radiusissueips') &&
+	    array_path_enabled($l2tpcfg, 'radius')) {
+		$issue_ip_type .= "0.0.0.0/0";
+		$ippool = "";
+	} else {
+		$issue_ip_type .= "ippool p0";
+		$ippool = "set ippool add p0 {$remoteip} {$ippool_p0}";
+	}
+
+	$ipcp_dns = vpn_ppp_server_get_dns($l2tpcfg['dns1'], $l2tpcfg['dns2']);
+
+	$mpdconf =<<<EOD
 
 startup:
 
@@ -397,24 +419,26 @@ l2tps:
 
 EOD;
 
-			if (!empty($l2tpcfg['mtu'])) {
-				$mpdconf .=<<<EOD
+	if (!empty($l2tpcfg['mtu'])) {
+		$mpdconf .=<<<EOD
 	set link mtu {$l2tpcfg['mtu']}
 
 EOD;
-			}
+	}
 
-			if (!empty($l2tpcfg['secret'])) {
-				$secret = str_replace('"', '\"', $l2tpcfg['secret']);
-				$mpdconf .=<<<EOD
+	if (!empty($l2tpcfg['secret'])) {
+		$secret = str_replace('"', '\"', $l2tpcfg['secret']);
+		$mpdconf .=<<<EOD
 	set l2tp secret "{$secret}"
 
 EOD;
-			}
+	}
 
-			if (isset ($l2tpcfg['radius']['enable'])) {
-				$mpdconf .=<<<EOD
-	set radius server {$l2tpcfg['radius']['server']} "{$l2tpcfg['radius']['secret']}"
+	if (array_path_enabled($l2tpcfg, 'radius')) {
+		$radiusip = array_get_path($l2tpcfg, 'radius/server', '');
+		$radiussecret = array_get_path($l2tpcfg, 'radius/secret', '');
+		$mpdconf .=<<<EOD
+	set radius server {$radiusip} "{$radiussecret}"
 	set radius retries 3
 	set radius timeout 10
 	set auth disable internal
@@ -422,27 +446,22 @@ EOD;
 
 EOD;
 
-				if (isset ($l2tpcfg['radius']['accounting'])) {
-					$mpdconf .=<<<EOD
+		if (array_path_enabled($l2tpcfg, 'radius', 'accounting')) {
+			$mpdconf .=<<<EOD
 	set auth enable radius-acct
 
 EOD;
-				}
-			}
-
-			fwrite($fd, $mpdconf);
-			fclose($fd);
-			unset($mpdconf);
-
-			vpn_l2tp_updatesecret();
-
-			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
-			break;
-		default:
-			rmdir_recursive("{$g['varetc_path']}/l2tp-vpn");
-			break;
+		}
 	}
+
+	fwrite($fd, $mpdconf);
+	fclose($fd);
+	unset($mpdconf);
+
+	vpn_l2tp_updatesecret();
+
+	/* fire up mpd */
+	mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
 
 	if (platform_booting()) {
 		echo "done\n";
@@ -452,10 +471,14 @@ EOD;
 }
 
 function vpn_l2tp_updatesecret() {
-	global $config, $g;
-	$l2tpcfg = $config['l2tp'];
+	global $g;
+	$l2tpcfg = config_get_path('l2tp', []);
 
-	if ($l2tpcfg['mode'] != 'server') {
+	if (empty($l2tpcfg)) {
+		return false;
+	}
+
+	if (array_get_path($l2tpcfg, 'mode', 'off') != 'server') {
 		return 0;
 	}
 
@@ -467,13 +490,14 @@ function vpn_l2tp_updatesecret() {
 
 	$mpdsecret = "\n\n";
 
-	if (is_array($l2tpcfg['user'])) {
-		foreach ($l2tpcfg['user'] as $user) {
-			/* Escape double quotes, do not allow password to start with '!'
-			 * https://redmine.pfsense.org/issues/10275 */
-			$pass = str_replace('"', '\"', ltrim($user['password'], '!'));
-			$mpdsecret .= "{$user['name']} \"{$pass}\" {$user['ip']}\n";
+	foreach (array_get_path($l2tpcfg, 'user', []) as $user) {
+		if (empty($user)) {
+			continue;
 		}
+		/* Escape double quotes, do not allow password to start with '!'
+		 * https://redmine.pfsense.org/issues/10275 */
+		$pass = str_replace('"', '\"', ltrim($user['password'], '!'));
+		$mpdsecret .= "{$user['name']} \"{$pass}\" {$user['ip']}\n";
 	}
 
 	fwrite($fd, $mpdsecret);
@@ -489,13 +513,14 @@ function l2tpusercmp($a, $b) {
 }
 
 function l2tp_users_sort() {
-	global $config;
+	$users = config_get_path('l2tp/user', []);
 
-	if (!is_array($config['l2tp']['user'])) {
+	if (empty($users)) {
 		return;
 	}
 
-	usort($config['l2tp']['user'], "l2tpusercmp");
+	usort($users, "l2tpusercmp");
+	config_set_path('l2tp/user', $users);
 }
 
 ?>

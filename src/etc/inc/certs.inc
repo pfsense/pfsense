@@ -62,6 +62,9 @@ function & lookup_ca($refid) {
 
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $ca) {
+			if (empty($ca)) {
+				continue;
+			}
 			if ($ca['refid'] == $refid) {
 				return $ca;
 			}
@@ -76,6 +79,9 @@ function & lookup_ca_by_subject($subject) {
 
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $ca) {
+			if (empty($ca)) {
+				continue;
+			}
 			$ca_subject = cert_get_subject($ca['crt']);
 			if ($ca_subject == $subject) {
 				return $ca;
@@ -91,6 +97,9 @@ function & lookup_cert($refid) {
 
 	if (is_array($config['cert'])) {
 		foreach ($config['cert'] as & $cert) {
+			if (empty($cert)) {
+				continue;
+			}
 			if ($cert['refid'] == $refid) {
 				return $cert;
 			}
@@ -104,6 +113,9 @@ function & lookup_cert_by_name($name) {
 	global $config;
 	if (is_array($config['cert'])) {
 		foreach ($config['cert'] as & $cert) {
+			if (empty($cert)) {
+				continue;
+			}
 			if ($cert['descr'] == $name) {
 				return $cert;
 			}
@@ -116,6 +128,9 @@ function & lookup_crl($refid) {
 
 	if (is_array($config['crl'])) {
 		foreach ($config['crl'] as & $crl) {
+			if (empty($crl)) {
+				continue;
+			}
 			if ($crl['refid'] == $refid) {
 				return $crl;
 			}

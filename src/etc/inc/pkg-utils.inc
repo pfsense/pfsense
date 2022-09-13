@@ -813,8 +813,8 @@ function install_package_xml($package_name) {
 	update_status($to_output);
 
 	if (($pkgid = get_package_id($package_name)) == -1) {
-		update_status(sprintf(gettext('The %1$s package is not " .
-		    "installed.%2$sInstallation aborted.'), $package_name,
+		update_status(sprintf(gettext('The %1$s package is not ' .
+		    'installed.%2$sInstallation aborted.'), $package_name,
 		    "\n\n"));
 
 		uninstall_package($package_name);
@@ -979,8 +979,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 
 	$pkgid = get_package_id($package_name);
 	if ($pkgid == -1) {
-		update_status(sprintf(gettext('The %1$s package is not " .
-		    "installed.%2$sDeletion aborted.'), $package_name, "\n\n"));
+		update_status(sprintf(gettext('The %1$s package is not ' .
+		    'installed.%2$sDeletion aborted.'), $package_name, "\n\n"));
 		ob_flush();
 		sleep(1);
 		return;

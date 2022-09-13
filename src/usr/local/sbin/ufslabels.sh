@@ -43,7 +43,7 @@ get_ufsid() {
 		exit -1
 	fi
 
-	# Safety check to avoid http://www.freebsd.org/cgi/query-pr.cgi?pr=156908
+	# Safety check to avoid https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=156908
 	string_length "${ID_PART1}"
 	if [ ${LEN} -ne 8 ]; then
 		ID_PART1=$(printf "%08s" "${ID_PART1}")

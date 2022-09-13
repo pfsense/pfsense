@@ -2578,7 +2578,7 @@ function array_replace_values_recursive($data, $match, $replace) {
 
 /*
 	This function was borrowed from a comment on PHP.net at the following URL:
-	http://www.php.net/manual/en/function.array-merge-recursive.php#73843
+	https://www.php.net/manual/en/function.array-merge-recursive.php#73843
  */
 function array_merge_recursive_unique($array0, $array1) {
 

@@ -387,7 +387,7 @@ function resolve_ip_callback(transport) {
 	$('span.RESOLVE-' + resolve_class).html(resolve_text);
 }
 
-// From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
+// From https://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
 function htmlspecialchars(str) {
 	return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }

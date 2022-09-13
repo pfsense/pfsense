@@ -130,7 +130,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 
 	if ($found_host == false) {
 		if (!security_checks_disabled()) {
-			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br />Try accessing the router by IP address instead of by hostname."));
+			display_error_form("501", gettext("Potential DNS Rebind attack detected, see https://en.wikipedia.org/wiki/DNS_rebinding<br />Try accessing the router by IP address instead of by hostname."));
 			exit;
 		}
 		$security_passed = false;

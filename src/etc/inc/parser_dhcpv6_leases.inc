@@ -317,8 +317,8 @@ function gui_parse_single_failover($content, &$entry) {
 				      function () use (&$val) {return $val['PDATE'] . ' ' . $val['PTIME'];});
 		/* Does not seem to be used by lease gui so we do not set anything; we just debug.
 		 * mclt (Maximum Client Lead Time):
-		 * https://kb.isc.org/article/AA-00502/0/A-Basic-Guide-to-Configuring-DHCP-Failover.html
-		 * https://kb.isc.org/article/AA-00268/0/DHCP-Failover-and-MCLT-configuration-implications.html
+		 * https://kb.isc.org/docs/aa-00502
+		 * https://kb.isc.org/docs/aa-00268
 		 */
 		check_value_set_entry($val, 'MCLT');
 	}
@@ -350,8 +350,8 @@ function gui_parse_single_failover($content, &$entry) {
  *	 1. See ascii table that includes hex values:
  *	    https://en.wikipedia.org/wiki/ASCII#Printable_characters
  *	    https://en.wikipedia.org/wiki/ASCII#Character_set
- *	 2. Check: https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=common/print.c
- *	 3. isprint is more limited than isascii: http://www.cplusplus.com/reference/cctype/isprint/
+ *	 2. Check: https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/common/print.c
+ *	 3. isprint is more limited than isascii: https://cplusplus.com/reference/cctype/isprint/
  */
 
 /* Notice (?x) must be a the beginning of the line - cannot be tabbed in,
@@ -408,14 +408,14 @@ BASE;
  * \ \n has been substituted with \s to cover more white space characters!
  */
 
-/* https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=includes/dhcpd.h
+/* https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/includes/dhcpd.h
  * struct lease etc. and various write_lease methods
  *
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/db.c
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/server/db.c
  * method for write lease file content is found here e.g. write_lease()
  *
  * Notice lease time entries are written with C gmtime() as UTC:
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=common/print.c
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/common/print.c
  * const char * print_time(TIME t) last else clause:
  * if (strftime(buf, sizeof(buf), "%w %Y/%m/%d %H:%M:%S;",
  *                              gmtime(&t)) == 0)
@@ -462,11 +462,11 @@ COMMON;
 
 /* Level 2 stuff
  * binding state names defined in array binding_state_names
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/stables.c
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/server/stables.c
  * "free", "active", "expired", "released", "abandoned", "reset", "backup"
  * write_lease and write_ia use binding_state_names in:
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/db.c
- * defined in https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/stables.c
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/server/db.c
+ * defined in https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/server/stables.c
  */
 const ia_regex =
 '(?x)
@@ -487,15 +487,15 @@ const na_regex = common_napd_top."\n".na_specific."\n".common_napd_bottom;
  * Handling of failover base - level 0
  * Documentation is misleading so the source of ISC DHCP server is the best
  * resource combined with this article:
- * https://deepthought.isc.org/article/AA-00252/31/Putting-the-working-server-in-a-failover-pair-into-partner-down-state.html
+ * https://kb.isc.org/docs/aa-00252
  * , that seems to be right! Whereas the documentation tells something different
- * in: https://www.isc.org/wp-content/uploads/2017/08/dhcp43leases.html
+ * in: https://kb.isc.org/docs/isc-dhcp-44-manual-pages-dhcpdleases
  * , it writes: peer state state at date;
  * For more about how we implement see under level 1 below.
  *
  * FPN = failover pair name
  * Relevant source places:
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/db.c
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/server/db.c
  * method: write_failover_state
  *
  * Same idea as with base_regex above, but not expanded to save space.
@@ -516,14 +516,14 @@ FAILOVERBASE;
  * Handling of failover statements - level 1
  *
  * Definition of state names:
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/failover.c;h=25e1b72b5ed1705981fa7867d7c6172daa27f5a0;hb=HEAD
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/server/failover.c;h=25e1b72b5ed1705981fa7867d7c6172daa27f5a0;hb=HEAD
  * const char *dhcp_failover_state_name_print (enum failover_state state)
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=includes/failover.h
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/includes/failover.h
  * enum failover_state, that holds the enumerated state names and the typedef
  * of dhcp_failover_state_t with references to dhcp_failover_config_t me,
  * partner and the enumerated failover_state for saved_state that is used by
  * int write_failover_state (dhcp_failover_state_t *state) in:
- * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/db.c
+ * https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/server/db.c
  * to write the actual failover info in our lease file!
  *
  */

@@ -1508,7 +1508,7 @@ EOD;
 		location ~ \.php$ {
 			try_files \$uri =404; #  This line closes a potential security hole
 			# ensuring users can't execute uploaded files
-			# see: http://forum.nginx.org/read.php?2,88845,page=3
+			# see: https://forum.nginx.org/read.php?2,88845,page=3
 			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
 			fastcgi_index  index.php;
 			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;

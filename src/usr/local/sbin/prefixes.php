@@ -131,7 +131,7 @@ if (count($expires) > 0) {
 	}
 }
 
-/* handle quotify_buf - https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=common/print.c */
+/* handle quotify_buf - https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/common/print.c */
 function extract_duid($ia_string) {
 	for ($i = 0, $iaid_counter = 0, $len = strlen($ia_string); $i < $len && $iaid_counter < 4; $i++, $iaid_counter++) {
 		if ($ia_string[$i] !== '\\') {

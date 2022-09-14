@@ -1200,7 +1200,6 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = "console=\"{$video_console_type}\"";
 	} elseif (is_serial_enabled()) {
 		$data[] = 'boot_multicons="YES"';
-		$data[] = 'boot_serial="YES"';
 		$primaryconsole = isset($g['primaryconsole_force']) ?
 		    $g['primaryconsole_force'] :
 		    config_get_path('system/primaryconsole');
@@ -1210,6 +1209,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 				break;
 			case "serial":
 			default:
+				$data[] = 'boot_serial="YES"';
 				$data[] = "console=\"comconsole,{$video_console_type}\"";
 		}
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';

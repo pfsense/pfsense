@@ -382,7 +382,7 @@ if (!$g['enableserial_force'] && !$g['primaryconsole_force']) {
 		$pconfig['primaryconsole'],
 		array(
 			'serial' => gettext('Serial Console'),
-			'video' => gettext('VGA Console'),
+			'video' => gettext('Video Console'),
 		)
 	))->setHelp('Select the preferred console if multiple consoles are present. '.
 		'The preferred console will show %1$s boot script output. All consoles '.

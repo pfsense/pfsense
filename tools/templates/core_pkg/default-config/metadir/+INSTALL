@@ -4,19 +4,19 @@ if [ "${2}" != "POST-INSTALL" ]; then
 	exit 0
 fi
 
-if [ ! -f /cf/conf/config.xml ]; then
-	cp /conf.default/config.xml /cf/conf/config.xml
+if [ ! -f ${PKG_ROOTDIR}/cf/conf/config.xml ]; then
+	cp ${PKG_ROOTDIR}/conf.default/config.xml ${PKG_ROOTDIR}/cf/conf/config.xml
 fi
 
-if [ ! -L /conf ]; then
-	ln -sf /cf/conf /conf
+if [ ! -L ${PKG_ROOTDIR}/conf ]; then
+	ln -sf ${PKG_ROOTDIR}/cf/conf ${PKG_ROOTDIR}/conf
 fi
 
-if [ ! -d /cf/conf/backup ]; then
-	mkdir /cf/conf/backup
+if [ ! -d ${PKG_ROOTDIR}/cf/conf/backup ]; then
+	mkdir ${PKG_ROOTDIR}/cf/conf/backup
 fi
 
 FLAVOR="%%FLAVOR%%"
-echo ${FLAVOR##-} > /etc/default-config-flavor
+echo ${FLAVOR##-} > ${PKG_ROOTDIR}/etc/default-config-flavor
 
 exit 0

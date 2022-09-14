@@ -2417,6 +2417,7 @@ function services_dyndns_configure($int = "") {
 function dyndnsCheckIP($int) {
 	global $factory_default_checkipservice;
 	$ip_address = get_interface_ip($int);
+
 	if (is_private_ip($ip_address)) {
 		$gateways_status = return_gateways_status(true);
 		// If the gateway for this interface is down, then the external check cannot work.
@@ -2431,7 +2432,7 @@ function dyndnsCheckIP($int) {
 		}
 
 		// Use the first enabled check IP service as the default.
-		foreach (config_get_path('checkipservices/checkipservice', []) as $i => $checkipservice) {
+		foreach (config_get_path('checkipservices', []) as $checkipservice) {
 			if (isset($checkipservice['enable'])) {
 				$url = $checkipservice['url'];
 				$username = $checkipservice['username'];

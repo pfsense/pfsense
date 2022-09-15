@@ -2606,4 +2606,136 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
 	return $list;
 }
 
+/****f* certs/cert_pkcs12_export
+ * NAME
+ *   cert_pkcs12_export - Export a PKCS#12 archive file for a given certificate
+ *                        and optional CA and passphrase.
+ * INPUTS
+ *   $cert      : Certificate entry array.
+ *   $passphrase: Optional passphrase used to encrypt the archive contents and
+ *                private key.
+ *   $add_ca    : Boolean flag which determines whether or not the certificate
+ *                CA is included in the archive (if available)
+ *   $delivery  : Delivery method for the result: "file", "download", or "data".
+ *                See RESULT section for details.
+ * RESULT
+ *   Returns false on failure, otherwise result depends upon the value passed in
+ *   $delivery:
+ *       "file"    : Returns the path to the output archive file.
+ *                   NOTE: Does not clean up path, caller must clean up the
+ *                         entire directory containing the output file.
+ *       "download": Sends the archive data to the current GUI browser session.
+ *                   Must be called before any output is sent to the user
+ *                   session.
+ *       "data"    : Returns the contents of the PKCS#12 archive as a string.
+ * NOTES
+ *   If the certificate entry does not contain a private key, the archive will
+ *   also not contain a key.
+ ******/
+
+function cert_pkcs12_export($cert, $passphrase = '', $add_ca = true, $delivery = 'download') {
+	global $g;
+
+	/* Unusable certificate entry, bail early. */
+	if (!is_array($cert) || empty($cert)) {
+		return false;
+	}
+
+	/* Encryption and Digest */
+	$algo = '-aes256 -certpbe AES-256-CBC -keypbe AES-256-CBC';
+	$hash = '-macalg sha256';
+
+	/* Make a secure temporary directory */
+	$workdir = tempnam("{$g['tmp_path']}/", "p12export");
+	@unlink_if_exists($workdir);
+	mkdir($workdir, 0600);
+
+	/* Set the friendly name to the certificate description, if available */
+	$descr = "";
+	if (!empty($cert['descr'])) {
+		$edescr = escapeshellarg($cert['descr']);
+		$descr = "-name {$edescr} -CSP {$edescr}";
+		$fileprefix = basename($cert['descr']);
+	}
+
+	/* If there isn't a usable portion of the description, use the refid */
+	if (empty($fileprefix)) {
+		$fileprefix = $cert['refid'];
+	}
+
+	/* Exported output archive filename */
+	$outpath = "{$workdir}/{$fileprefix}.p12";
+	$eoutpath = escapeshellarg($outpath);
+
+	/* Passphrase handling */
+	if (!empty($passphrase)) {
+		/* Use passphrase text file so the passphrase is not visible in
+		 * process list. */
+		$passfile = "{$workdir}/passphrase.txt";
+		file_put_contents($passfile, $passphrase . "\n");
+		$pass = '-passout file:' . escapeshellarg($passfile);
+	} else {
+		/* Null password + disable encryption of the keys */
+		$pass = '-passout pass: -nodes';
+	}
+
+	/* Certificate file */
+	$crtpath = "{$workdir}/cert.pem";
+	$ecrtpath = escapeshellarg($crtpath);
+	file_put_contents($crtpath, base64_decode($cert['crt']));
+
+	/* Private key (if present) */
+	if (!empty($cert['prv'])) {
+		$keypath = "{$workdir}/key.pem";
+		/* Write key to a secure temporary name */
+		file_put_contents($keypath, base64_decode($cert['prv']));
+		$key = '-inkey ' . escapeshellarg($keypath);
+	} else {
+		$key = '-nokeys';
+	}
+
+	/* Add CA if one is defined and requested */
+	$eca = '';
+	if ($add_ca && !empty($cert['caref'])) {
+		$ca = lookup_ca($cert['caref']);
+		if ($ca) {
+			$capath = "{$workdir}/ca.pem";
+			file_put_contents($capath, base64_decode($ca['crt']));
+			$eca = '-certfile ' . escapeshellarg($capath);
+		}
+	}
+
+	/* Export a PKCS#12 archive using these components and settings */
+	exec("/usr/bin/openssl pkcs12 -export -in {$ecrtpath} {$eca} {$key} -out {$eoutpath} {$pass} {$descr} {$algo} {$hash}");
+
+	/* Bail if the output is invalid */
+	if (!file_exists($outpath) ||
+	    (filesize($outpath) == 0)) {
+		return false;
+	}
+
+	/* Tailor output as requested by the caller */
+	switch ($delivery) {
+		case 'file':
+			/* Return path to export file, do not clean up, caller must clean up. */
+			return $outpath;
+			break;
+		case 'download':
+			/* Send file to user and cleanup */
+			$p12_data = file_get_contents($outpath);
+			rmdir_recursive($workdir);
+			send_user_download('data', $p12_data, "{$cert['descr']}.p12");
+			return true;
+			break;
+		case 'data':
+		default:
+			/* Return PKCS#12 archive data and cleanup */
+			$p12_data = file_get_contents($outpath);
+			rmdir_recursive($workdir);
+			return $p12_data;
+			break;
+	}
+
+	return null;
+}
 ?>

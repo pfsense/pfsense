@@ -195,19 +195,7 @@ switch ($act) {
 		} else {
 			$password = null;
 		}
-		$args = array();
-		$args['friendly_name'] = $thiscert['descr'];
-		$args['encrypt_key_cipher'] = OPENSSL_CIPHER_AES_256_CBC;
-		$ca = lookup_ca($thiscert['caref']);
-		if ($ca) {
-			/* If the CA can be found, then add the CA to the container */
-			$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
-		}
-		$res_crt = openssl_x509_read(base64_decode($thiscert['crt']));
-		$res_key = openssl_pkey_get_private(base64_decode($thiscert['prv']));
-		$exp_data = "";
-		openssl_pkcs12_export($res_crt, $exp_data, $res_key, $password, $args);
-		send_user_download('data', $exp_data, "{$thiscert['descr']}.p12");
+		cert_pkcs12_export($thiscert, $password, true, 'download');
 		break;
 	default:
 		break;
@@ -1473,7 +1461,7 @@ foreach ($a_cert as $cert):
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
 							<?php if ($cert['prv']): ?>
 								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
-								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
+								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
 								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>

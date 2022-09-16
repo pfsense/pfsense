@@ -51,6 +51,13 @@ $cert_altname_types = array(
 	'email' => gettext('email address'),
 );
 
+global $p12_encryption_levels;
+$p12_encryption_levels = array(
+	'high'   => gettext('High: AES-256 + SHA256 (pfSense Software, FreeBSD, Linux, Windows 10)'),
+	'low'    => gettext('Low: 3DES + SHA1 (macOS, older Windows versions)'),
+	'legacy' => gettext('Legacy: RC2-40 + SHA1 (legacy OS versions)'),
+);
+
 global $cert_max_lifetime;
 $cert_max_lifetime = 12000;
 
@@ -2612,6 +2619,10 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
  *                        and optional CA and passphrase.
  * INPUTS
  *   $cert      : Certificate entry array.
+ *   $encryption: Strength of encryption to use:
+ *                "high" (AES-256 + SHA256)
+ *                "low" (3DES + SHA1)
+ *                "legacy" (RC2-40 + SHA1)
  *   $passphrase: Optional passphrase used to encrypt the archive contents and
  *                private key.
  *   $add_ca    : Boolean flag which determines whether or not the certificate
@@ -2633,7 +2644,7 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
  *   also not contain a key.
  ******/
 
-function cert_pkcs12_export($cert, $passphrase = '', $add_ca = true, $delivery = 'download') {
+function cert_pkcs12_export($cert, $encryption = 'high', $passphrase = '', $add_ca = true, $delivery = 'download') {
 	global $g;
 
 	/* Unusable certificate entry, bail early. */
@@ -2642,8 +2653,20 @@ function cert_pkcs12_export($cert, $passphrase = '', $add_ca = true, $delivery =
 	}
 
 	/* Encryption and Digest */
-	$algo = '-aes256 -certpbe AES-256-CBC -keypbe AES-256-CBC';
-	$hash = '-macalg sha256';
+	switch ($encryption) {
+		case 'legacy':
+			$algo = '-certpbe PBE-SHA1-RC2-40 -keypbe PBE-SHA1-RC2-40';
+			$hash = '';
+			break;
+		case 'low':
+			$algo = '-certpbe PBE-SHA1-3DES -keypbe PBE-SHA1-3DES';
+			$hash = '-macalg SHA1';
+			break;
+		case 'high':
+		default:
+			$algo = '-aes256 -certpbe AES-256-CBC -keypbe AES-256-CBC';
+			$hash = '-macalg sha256';
+	}
 
 	/* Make a secure temporary directory */
 	$workdir = tempnam("{$g['tmp_path']}/", "p12export");

@@ -49,6 +49,8 @@ $cert_types = array(
 global $cert_altname_types;
 global $openssl_digest_algs;
 global $cert_strict_values;
+global $p12_encryption_levels;
+
 $max_lifetime = cert_get_max_lifetime();
 $default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = cert_build_curve_list();
@@ -195,7 +197,13 @@ switch ($act) {
 		} else {
 			$password = null;
 		}
-		cert_pkcs12_export($thiscert, $password, true, 'download');
+		if (isset($_POST['p12encryption']) &&
+		    array_key_exists($_POST['p12encryption'], $p12_encryption_levels)) {
+			$encryption = $_POST['p12encryption'];
+		} else {
+			$encryption = 'high';
+		}
+		cert_pkcs12_export($thiscert, $encryption, $password, true, 'download');
 		break;
 	default:
 		break;
@@ -898,6 +906,13 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			null,
 			['placeholder' => gettext('Export Password'), 'autocomplete' => 'new-password']
 		))->setHelp('Enter the password to use when using the export buttons below (not stored)')->addClass('toggle-edit collapse');
+		$section->addInput(new Form_Select(
+		'p12encryption',
+		'PKCS#12 Encryption',
+		'high',
+		$p12_encryption_levels
+		))->setHelp('Select the level of encryption to use when exporting a PKCS#12 archive. ' .
+				'Encryption support varies by Operating System and program');
 	}
 
 	$form->add($section);

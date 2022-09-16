@@ -1182,16 +1182,27 @@ function pfSense_clear_globals() {
 	unset($config);
 }
 
-/* Initialize a config array multiple levels deep only if unset
+/*
+ * Same semantics as init_config_arr(), but with the new
+ * path string interface.
+ */
+function config_init_path(string $path) {
+	global $config;
+	array_init_path($config, $path);
+}
+
+/* 
+ * Notice: Use config_init_path() instead, if you must...
+ *
+ * This is retained for compatibility with older code
+ *
+ * Initialize a config array multiple levels deep only if unset
  * Pass it an array of keys to test and create
  * init_config_arr(array('virtualip', 'vip'));
- * 
- * This is now defined in terms of array_init_path()
  */
-function init_config_arr($keys)
-{
-	global $config;
-	array_init_path($config, implode('/', $keys));
+function init_config_arr($keys) {
+	// just translate the old signature to the new one
+	config_init_path(implode('/', $keys));
 }
 
 /**

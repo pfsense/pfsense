@@ -925,11 +925,11 @@ function install_package_xml($package_name) {
 	init_config_arr(array('installedpackages', 'service'));
 	if (is_array($pkg_config['service'])) {
 		update_status(gettext("Services... "));
+		$services = config_get_path('installedpackages/service', []);
 		foreach ($pkg_config['service'] as $service) {
 			if (empty($service)) {
 				continue;
 			}
-			$services = config_get_path('installedpackages/service', []);
 			foreach ($services as $aservice) {
 				if (empty($aservice)) {
 					continue;

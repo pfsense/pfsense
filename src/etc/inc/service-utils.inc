@@ -194,13 +194,69 @@ function restart_service_if_running($service) {
 }
 
 function is_service_enabled($service_name) {
-	if ($service_name == "") {
+	switch ($service_name) {
+		case 'bsnmpd':
+			return config_path_enabled('snmpd');
+			break;
+		case 'dhcrelay':
+			return config_path_enabled('dhcrelay');
+			break;
+		case 'dhcrelay6':
+			return config_path_enabled('dhcrelay6');
+			break;
+		case 'dhcpd':
+			return is_dhcp_server_enabled();
+			break;
+		case 'dnsmasq':
+			return config_path_enabled('dnsmasq');
+			break;
+		case 'dpinger':
+			/* TODO: Should loop through gateways and check to make
+			 *       sure they don't all have monitoring disabled. */
+			$gateways_arr = return_gateways_array();
+			return is_array($gateways_arr) && !empty($gateways_arr);
+			break;
+		case 'igmpproxy':
+			return (config_path_enabled('igmpproxy') && !empty(config_get_path('igmpproxy/igmpentry', [])));
+			break;
+		case 'ipsec':
+			return ipsec_enabled();
+			break;
+		case 'miniupnpd':
+			return config_path_enabled('installedpackages/miniupnpd/config/0');
+			break;
+		case 'ntpd':
+			return (config_get_path('ntpd/enable') != 'disabled');
+			break;
+		case 'pcscd':
+			return config_path_enabled('ipsec', 'pkcs11support');
+			break;
+		case 'radvd':
+			return is_radvd_enabled();
+			break;
+		case 'sshd':
+			return config_path_enabled('system/ssh');
+			break;
+		case 'syslogd':
+			$local_enabled = !config_path_enabled('syslog', 'disablelocallogging');
+			$remote_enabled = !empty(system_syslogd_get_remote_servers(config_get_path('syslog', [])));
+			return ($local_enabled || $remote_enabled);
+			break;
+		case 'unbound':
+			return config_path_enabled('unbound');
+			break;
+		default:
+			return false;
+	}
+	/* TODO: The service name isn't likely to match the config tag,
+	 *       needs better logic or pkg plugin to probe */
+	$pkg_enabled = config_get_path("installedpackages/{$service_name}/config/0/enable", null);
+	if (($pkg_enabled !== null) &&
+	    (empty($pkg_enabled) || ($pkg_enabled === 'off'))) {
 		return false;
 	}
-	$pkg_enabled = config_get_path("installedpackages/{$service_name}/config/0/enable");
-	if (empty($pkg_enabled) || ($pkg_enabled === 'off')) {
-		return false;
-	}
+
+	/* Unknown service, for compatibility reasons, return true. */
 	return true;
 }
 
@@ -247,7 +303,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "radvd";
 		$pconfig['description'] = gettext("Router Advertisement Daemon");
-		$pconfig['enabled'] = is_service_enabled("radvd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -256,7 +312,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "dnsmasq";
 		$pconfig['description'] = gettext("DNS Forwarder");
-		$pconfig['enabled'] = is_service_enabled("dnsmasq");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -265,7 +321,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "unbound";
 		$pconfig['description'] = gettext("DNS Resolver");
-		$pconfig['enabled'] = is_service_enabled("unbound");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -274,7 +330,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "pcscd";
 		$pconfig['description'] = gettext("PC/SC Smart Card Daemon");
-		$pconfig['enabled'] = is_service_enabled("pcscd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -283,7 +339,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "ntpd";
 		$pconfig['description'] = gettext("NTP clock sync");
-		$pconfig['enabled'] = is_service_enabled("ntpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -303,6 +359,7 @@ function get_services() {
 			$pconfig = array();
 			$pconfig['name'] = "captiveportal";
 			$pconfig['zone'] = $zone;
+			$pconfig['enabled'] = true;
 			$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($setting['zone']);
 			$services[] = $pconfig;
 		}
@@ -321,7 +378,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
 		$pconfig['description'] = gettext("DHCP Relay");
-		$pconfig['enabled'] = is_service_enabled("dhcprelay");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -330,7 +387,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay6";
 		$pconfig['description'] = gettext("DHCPv6 Relay");
-		$pconfig['enabled'] = is_service_enabled("dhcrelay6");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -339,7 +396,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
 		$pconfig['description'] = gettext("DHCP Service");
-		$pconfig['enabled'] = is_service_enabled("dhcpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -358,7 +415,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "bsnmpd";
 		$pconfig['description'] = gettext("SNMP Service");
-		$pconfig['enabled'] = is_service_enabled("bsnmpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -376,7 +433,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "miniupnpd";
 		$pconfig['description'] = gettext("UPnP Service");
-		$pconfig['enabled'] = is_service_enabled("miniupnpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -385,7 +442,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");
-		$pconfig['enabled'] = is_service_enabled("ipsec");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -394,7 +451,7 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "sshd";
 		$pconfig['description'] = gettext("Secure Shell Daemon");
-		$pconfig['enabled'] = is_service_enabled("sshd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -408,7 +465,7 @@ function get_services() {
 				$pconfig['id'] = $id;
 				$pconfig['vpnid'] = $setting['vpnid'];
 				$pconfig['description'] = gettext("OpenVPN") . " " . $mode . ": " . htmlspecialchars($setting['description']);
-				$pconfig['enabled'] = is_service_enabled("openvpn");
+				$pconfig['enabled'] = true;
 				$pconfig['status'] = get_service_status($pconfig);
 				$services[] = $pconfig;
 			}

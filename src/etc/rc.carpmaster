@@ -52,7 +52,7 @@ if (!is_array($vips)) {
 }
 foreach ($vips as $vip) {
 	$notificationmsg = sprintf('HA cluster member "(%1$s@%2$s): (%3$s)" has resumed CARP state "MASTER" for vhid %4$s',
-	    $vip['subnet'], $iface, $friendly_descr, $vhid);
+					$vip['subnet'], $iface, $friendly_descr, $vhid);
 
 	notify_all_remote($notificationmsg);
 	log_error($notificationmsg);
@@ -62,112 +62,99 @@ restart_ppp_interfaces_using_interfaces($vips);
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;
 $a_groups = return_gateway_groups_array(true);
-if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
-	foreach ($config['openvpn']['openvpn-client'] as $settings) {
+
+foreach (array('server', 'client') as $mode) {
+	foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
+		if (empty($settings)) {
+			continue;
+		}
 		if (substr($settings['interface'], 0, 4) == '_vip') {
 			$openvpn_vip = $settings['interface'];
 		} else if (is_array($a_groups[$settings['interface']])) {
 			// interface is a gateway group, check CARP VIP
-			if (substr($a_groups[$settings['interface']][0]['vip'], 0, 4) == '_vip') {
-				$openvpn_vip = $a_groups[$settings['interface']][0]['vip'];
+			$vip = array_get_path($a_groups, "{$settings['interface']}/0/vip");
+			if (substr($vip, 0, 4) == '_vip') {
+				$openvpn_vip = $vip;
 			}
 		} else {
-			// this OpenVPN instance not on a CARP IP
+			// this OpenVPN instance not on a CARP VIP
 			continue;
 		}
 		foreach ($vips as $vip) {
 			if ($openvpn_vip == "_vip{$vip['uniqid']}") {
-				log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
-				openvpn_restart('client', $settings);
+				log_error("Starting OpenVPN {$mode} instance on {$friendly_descr} because of transition to CARP master.");
+				openvpn_restart($mode, $settings);
 			}
 		}
 	}
 }
-if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
-	foreach ($config['openvpn']['openvpn-server'] as $settings) {
-		if (substr($settings['interface'], 0, 4) == '_vip') {
-			$openvpn_vip = $settings['interface'];
-		} else if (is_array($a_groups[$settings['interface']])) {
-			// interface is a gateway group, check CARP VIP
-			if (substr($a_groups[$settings['interface']][0]['vip'], 0, 4) == '_vip') {
-				$openvpn_vip = $a_groups[$settings['interface']][0]['vip'];
-			}
-		} else {
-			// this OpenVPN instance not on a CARP IP
-			continue;
-		}
-		foreach ($vips as $vip) {
-			if ($openvpn_vip == "_vip{$vip['uniqid']}") {
-				log_error("Starting OpenVPN server instance on {$friendly_descr} because of transition to CARP master.");
-				openvpn_restart('server', $settings);
-			}
-		}
+
+foreach (config_get_path("ipsec/phase1", []) as $ph1ent) {
+	if (empty($ph1ent)) {
+		continue;
 	}
-}
-if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1'])) {
-	foreach ($config['ipsec']['phase1'] as $ph1ent) {
-		if ((substr($ph1ent['interface'], 0, 4) == '_vip') && (in_array($ph1ent['interface'], $vips))) {
-			log_error("Reconfiguring IPsec because of transition to CARP master.");
-			ipsec_configure();
-			break;
-		}
+	if ((substr($ph1ent['interface'], 0, 4) == '_vip') && (in_array($ph1ent['interface'], $vips))) {
+		log_error("Reconfiguring IPsec because of transition to CARP master.");
+		ipsec_configure();
+		break;
 	}
 }
 
 /* Reconfigure radvd when necessary */
-if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
-	$rafound = false;
-	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-		foreach ($vips as $vip) {
-			if ($dhcpv6ifconf['rainterface'] == "_vip{$vip['uniqid']}") {
-				log_error("Starting radvd instance on {$friendly_descr} because of transition to CARP master.");
-				$rafound = true;
-			}
+$rafound = false;
+foreach (config_get_path("dhcpdv6", []) as $dhcpv6if => $dhcpv6ifconf) {
+	if (empty($dhcpv6ifconf)) {
+		continue;
+	}
+	foreach ($vips as $vip) {
+		if ($dhcpv6ifconf['rainterface'] == "_vip{$vip['uniqid']}") {
+			log_error("Starting radvd instance on {$friendly_descr} because of transition to CARP master.");
+			$rafound = true;
 		}
 	}
-	if ($rafound) {
-		services_radvd_configure();
-	}
+}
+if ($rafound) {
+	services_radvd_configure();
 }
 
 /* Reconfigure DHCP Relay when necessary */
-if (isset($config['dhcrelay']) && is_array($config['dhcrelay']) && isset($config['dhcrelay']['enable']) &&
-    isset($config['dhcrelay']['carpstatusvip']) && ($config['dhcrelay']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+if (config_path_enabled('dhcrelay') &&
+    (config_get_path('dhcrelay/carpstatusvip') == "_vip{$vip['uniqid']}")) {
 	log_error("Starting DHCP Relay service because of transition to CARP master.");
 	services_dhcrelay_configure();
 }
 
 /* Reconfigure DHCPv6 Relay when necessary */
-if (isset($config['dhcrelay6']) && is_array($config['dhcrelay6']) && isset($config['dhcrelay6']['enable']) &&
-    isset($config['dhcrelay6']['carpstatusvip']) && ($config['dhcrelay6']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+if (config_path_enabled('dhcrelay6') &&
+    (config_get_path('dhcrelay6/carpstatusvip') == "_vip{$vip['uniqid']}")) {
 	log_error("Starting DHCPv6 Relay service because of transition to CARP master.");
 	services_dhcrelay6_configure();
 }
 
 /* Reconfigure captive portal when necessary :
    If we are the primary node, and we are switching back from backup to master : Get user list from the backup node */
-if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($config['hasync']['synchronizetoip']) &&
-    $config['hasync']['synchronizecaptiveportal'] != "") {
-	if (empty($config['hasync']['username'])) {
+if (!empty(config_get_path('captiveportal')) &&
+    !empty(config_get_path('hasync/synchronizetoip')) &&
+    !empty(config_get_path('hasync/synchronizecaptiveportal'))) {
+	$xmlrpc_username = config_get_path('hasync/username');
+	if (empty($xmlrpc_username)) {
 		$xmlrpc_username = "admin";
-	} else {
-		$xmlrpc_username = $config['hasync']['username'];
 	}
-	$xmlrpc_port = $config['system']['webgui']['port'];
+	$xmlrpc_port = config_get_path('system/webgui/port');
 	if (empty($xmlrpc_port)) {
-		if ($config['system']['webgui']['protocol'] == "http") {
+		if (config_get_path('system/webgui/protocol') == "http") {
 			$xmlrpc_port = "80";
 		} else {
 			$xmlrpc_port = "443";
 		}
 	}
 
-	foreach ($config['captiveportal'] as $cpzone=>$cp) {
+	foreach (array_keys(config_get_path('captiveportal')) as $cpzone) {
 		$rpc_client = new pfsense_xmlrpc_client();
-		$rpc_client->setConnectionData($config['hasync']['synchronizetoip'], $xmlrpc_port, $xmlrpc_username, $config['hasync']['password']);
+		$rpc_client->setConnectionData(config_get_path('hasync/synchronizetoip'), $xmlrpc_port, $xmlrpc_username, config_get_path('hasync/password'));
 		$resp = $rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'get_databases', 'zone' => $cpzone));
 
-		if (is_array($resp)) { // $resp will be an array only if the communication was successful
+		if (is_array($resp) || !empty($resp)) { // $resp will be an array only if the communication was successful
 			// Contains array of connected users (will be stored in SQLite DB)
 			$connected_users = unserialize(base64_decode($resp['connected_users']));
 			// Contains array of active vouchers (will be stored in active vouchers db)
@@ -184,7 +171,10 @@ if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($c
 			}
 			captiveportal_free_dnrules();
 
-			foreach ($connected_users as $id => $user) {
+			foreach ($connected_users as $user) {
+				if (!is_array($user) || empty($user)) {
+					continue;
+				}
 				$pipeno = captiveportal_get_next_dn_ruleno('auth');
 				$attributes = array();
 				$attributes['allow_time'] = $user['allow_time'];

@@ -25,28 +25,27 @@
  * limitations under the License.
  */
 
+require_once('config.lib.inc');
 require_once('syslog.inc');
 
 function activate_powerd() {
-	global $config, $g;
-
 	if (is_process_running("powerd")) {
 		exec("/usr/bin/killall powerd");
 	}
-	if (isset($config['system']['powerd_enable'])) {
+	if (config_path_enabled('system', 'powerd_enable')) {
 		$ac_mode = "hadp";
-		if (!empty($config['system']['powerd_ac_mode'])) {
-			$ac_mode = $config['system']['powerd_ac_mode'];
+		if (!empty(config_get_path('system/powerd_ac_mode'))) {
+			$ac_mode = config_get_path('system/powerd_ac_mode');
 		}
 
 		$battery_mode = "hadp";
-		if (!empty($config['system']['powerd_battery_mode'])) {
-			$battery_mode = $config['system']['powerd_battery_mode'];
+		if (!empty(config_get_path('system/powerd_battery_mode'))) {
+			$battery_mode = config_get_path('system/powerd_battery_mode');
 		}
 
 		$normal_mode = "hadp";
-		if (!empty($config['system']['powerd_normal_mode'])) {
-			$normal_mode = $config['system']['powerd_normal_mode'];
+		if (!empty(config_get_path('system/powerd_normal_mode'))) {
+			$normal_mode = config_get_path('system/powerd_normal_mode');
 		}
 
 		mwexec("/usr/sbin/powerd" .
@@ -72,22 +71,20 @@ function get_sysctl_descr($sysctl) {
 }
 
 function system_get_sysctls() {
-	global $config, $sysctls;
+	global $sysctls;
 
 	$disp_sysctl = array();
 	$disp_cache = array();
-	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
-		foreach ($config['sysctl']['item'] as $id => $tunable) {
-			if ($tunable['value'] == "default") {
-				$value = get_default_sysctl_value($tunable['tunable']);
-			} else {
-				$value = $tunable['value'];
-			}
-
-			$disp_sysctl[$id] = $tunable;
-			$disp_sysctl[$id]['modified'] = true;
-			$disp_cache[$tunable['tunable']] = 'set';
+	foreach (config_get_path('sysctl/item', []) as $id => $tunable) {
+		if ($tunable['value'] == "default") {
+			$value = get_default_sysctl_value($tunable['tunable']);
+		} else {
+			$value = $tunable['value'];
 		}
+
+		$disp_sysctl[$id] = $tunable;
+		$disp_sysctl[$id]['modified'] = true;
+		$disp_cache[$tunable['tunable']] = 'set';
 	}
 
 	foreach ($sysctls as $sysctl => $value) {
@@ -102,36 +99,32 @@ function system_get_sysctls() {
 }
 
 function activate_sysctls() {
-	global $config, $g, $sysctls, $ipsec_filter_sysctl;
+	global $sysctls, $ipsec_filter_sysctl;
 
 	if (!is_array($sysctls)) {
 		$sysctls = array();
 	}
 
-	$ipsec_filtermode = empty($config['ipsec']['filtermode']) ? 'enc' : $config['ipsec']['filtermode'];
+	$ipsec_filtermode = config_get_path('ipsec/filtermode', 'enc');
 	$sysctls = array_merge($sysctls, $ipsec_filter_sysctl[$ipsec_filtermode]);
 
-	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
-		foreach ($config['sysctl']['item'] as $tunable) {
-			if ($tunable['value'] == "default") {
-				$value = get_default_sysctl_value($tunable['tunable']);
-			} else {
-				$value = $tunable['value'];
-			}
-
-			$sysctls[$tunable['tunable']] = $value;
+	foreach (config_get_path('sysctl/item', []) as $tunable) {
+		if ($tunable['value'] == "default") {
+			$value = get_default_sysctl_value($tunable['tunable']);
+		} else {
+			$value = $tunable['value'];
 		}
+
+		$sysctls[$tunable['tunable']] = $value;
 	}
 
 	/* Set net.pf.request_maxcount via sysctl since it is no longer a loader
 	 *   tunable. See https://redmine.pfsense.org/issues/10861
 	 *   Set the value dynamically since its default is not static, yet this
 	 *   still could be overridden by a user tunable. */
-	if (isset($config['system']['maximumtableentries'])) {
-		$maximumtableentries = $config['system']['maximumtableentries'];
-	} else {
-		$maximumtableentries = pfsense_default_table_entries_size();
-	}
+	$maximumtableentries = config_get_path('system/maximumtableentries',
+										   pfsense_default_table_entries_size());
+
 	/* Set the default when there is no tunable or when the tunable is set
 	 * too low. */
 	if (empty($sysctls['net.pf.request_maxcount']) ||
@@ -143,14 +136,14 @@ function activate_sysctls() {
 }
 
 function system_resolvconf_generate($dynupdate = false) {
-	global $config, $g;
+	global $g;
 
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_resolvconf_generate() being called $mt\n";
 	}
 
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system', []);
 
 	foreach(get_dns_nameservers(false, false) as $dns_ns) {
 		$resolvconf .= "nameserver $dns_ns\n";
@@ -174,7 +167,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	}
 
 	// Add EDNS support
-	if (isset($config['unbound']['enable']) && isset($config['unbound']['edns'])) {
+	if (config_path_enabled('unbound') && (config_get_path('unbound', 'edns') != null)) {
 		$resolvconf .= "options edns0\n";
 	}
 
@@ -209,10 +202,9 @@ function system_resolvconf_generate($dynupdate = false) {
 	// set up or tear down static routes for DNS servers
 	$dnscounter = 1;
 	$dnsgw = "dns{$dnscounter}gw";
-	while (isset($config['system'][$dnsgw])) {
+	while (!empty(config_get_path('system/{$dnsgw}'))) {
 		/* setup static routes for dns servers */
-		$gwname = $config['system'][$dnsgw];
-		unset($gatewayip);
+		$gwname = config_get_path('system/{$dnsgw}');		unset($gatewayip);
 		unset($inet6);
 		if ((!empty($gwname)) && ($gwname != "none")) {
 			$gatewayip = lookup_gateway_ip_by_name($gwname);
@@ -246,8 +238,6 @@ function system_resolvconf_generate($dynupdate = false) {
 }
 
 function get_searchdomains() {
-	global $config, $g;
-
 	$master_list = array();
 
 	// Read in dhclient nameservers
@@ -284,7 +274,6 @@ function get_nameservers() {
  *   $master_list - Array containing DNS servers
  ******/
 function get_dynamic_nameservers($iface = '') {
-	global $config, $g;
 	$master_list = array();
 
 	if (!empty($iface)) {
@@ -312,9 +301,7 @@ function get_dynamic_nameservers($iface = '') {
 
 /* Create localhost + local interfaces entries for /etc/hosts */
 function system_hosts_local_entries() {
-	global $config;
-
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system', []);
 
 	$hosts = array();
 	$hosts[] = array(
@@ -330,7 +317,7 @@ function system_hosts_local_entries() {
 	    'domain' => $syscfg['domain']
 	);
 
-	if ($config['interfaces']['lan']) {
+	if (config_get_path('interfaces/lan')) {
 		$sysiflist = array('lan' => "lan");
 	} else {
 		$sysiflist = get_configured_interface_list();
@@ -426,16 +413,10 @@ function system_hosts_override_entries($dnscfg) {
 
 /* Read all dhcpd/dhcpdv6 staticmap entries */
 function system_hosts_dhcpd_entries() {
-	global $config;
-
 	$hosts = array();
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system');
 
-	if (is_array($config['dhcpd'])) {
-		$conf_dhcpd = $config['dhcpd'];
-	} else {
-		$conf_dhcpd = array();
-	}
+	$conf_dhcpd = config_get_path('dhcpd', []);
 
 	foreach ($conf_dhcpd as $dhcpif => $dhcpifconf) {
 		if (!is_array($dhcpifconf['staticmap']) ||
@@ -468,11 +449,7 @@ function system_hosts_dhcpd_entries() {
 	}
 	unset($conf_dhcpd);
 
-	if (is_array($config['dhcpdv6'])) {
-		$conf_dhcpdv6 = $config['dhcpdv6'];
-	} else {
-		$conf_dhcpdv6 = array();
-	}
+	$conf_dhcpdv6 = config_get_path('dhcpdv6', []);
 
 	foreach ($conf_dhcpdv6 as $dhcpif => $dhcpifconf) {
 		if (!is_array($dhcpifconf['staticmap']) ||
@@ -480,8 +457,7 @@ function system_hosts_dhcpd_entries() {
 			continue;
 		}
 
-		if (isset($config['interfaces'][$dhcpif]['ipaddrv6']) &&
-		    $config['interfaces'][$dhcpif]['ipaddrv6'] ==
+		if (config_get_path("interfaces/{$dhcpif}/ipaddrv6") ==
 		    'track6') {
 			$isdelegated = true;
 		} else {
@@ -553,21 +529,21 @@ function system_hosts_entries($dnscfg) {
 }
 
 function system_hosts_generate() {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
+	global $g;
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_hosts_generate() being called $mt\n";
 	}
 
 	// prefer dnsmasq for hosts generation where it's enabled. It relies
 	// on hosts for name resolution of its overrides, unbound does not.
-	if (isset($config['dnsmasq']) && isset($config['dnsmasq']['enable'])) {
-		$dnsmasqcfg = $config['dnsmasq'];
+	if (config_path_enabled('dnsmasq')) {
+		$dnsmasqcfg = config_get_path('dnsmasq');
 	} else {
-		$dnsmasqcfg = $config['unbound'];
+		$dnsmasqcfg = config_get_path('unbound');
 	}
 
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system');
 	$hosts = "";
 	$lhosts = "";
 	$dhosts = "";
@@ -604,7 +580,7 @@ function system_hosts_generate() {
 	fwrite($fd, $hosts);
 	fclose($fd);
 
-	if (isset($config['unbound']['enable'])) {
+	if (config_path_enabled('unbound')) {
 		require_once("unbound.inc");
 		unbound_hosts_generate();
 	}
@@ -618,15 +594,15 @@ function system_hosts_generate() {
 }
 
 function system_dhcpleases_configure() {
-	global $config, $g;
+	global $g;
 	if (!function_exists('is_dhcp_server_enabled')) {
 		require_once('pfsense-utils.inc');
 	}
 	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 
 	/* Start the monitoring process for dynamic dhcpclients. */
-	if (((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
-	    (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcp']))) &&
+	if (((config_path_enabled('dnsmasq') && (config_get_path('dnsmasq', 'regdhcp') != null)) ||
+	    (config_path_enabled('unbound') && (config_get_path('unbound', 'regdhcp') != null))) &&
 	    (is_dhcp_server_enabled())) {
 		/* Make sure we do not error out */
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
@@ -634,7 +610,7 @@ function system_dhcpleases_configure() {
 			@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 		}
 
-		if (isset($config['unbound']['enable'])) {
+		if (config_path_enabled('unbound')) {
 			$dns_pid = "unbound.pid";
 			$unbound_conf = "-u {$g['unbound_chroot_path']}/dhcpleases_entries.conf";
 		} else {
@@ -658,7 +634,9 @@ function system_dhcpleases_configure() {
 			sigkillbyname('dhcpleases', "TERM");
 		}
 		@unlink($pidfile);
-		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['etc_path']}/hosts");
+		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d " .
+			   config_get_path('system/domain', '') .
+			   " -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['etc_path']}/hosts");
 	} else {
 		if (isvalidpid($pidfile)) {
 			sigkillbypid($pidfile, "TERM");
@@ -673,7 +651,7 @@ function system_dhcpleases_configure() {
 }
 
 function system_get_dhcpleases($dnsavailable=null) {
-	global $config, $g;
+	global $g;
 
 	$leases = array();
 	$leases['lease'] = array();
@@ -838,13 +816,8 @@ function system_get_dhcpleases($dnsavailable=null) {
 		}
 	}
 
-	foreach ($config['interfaces'] as $ifname => $ifarr) {
-		if (!is_array($config['dhcpd'][$ifname]) ||
-		    !is_array($config['dhcpd'][$ifname]['staticmap'])) {
-			continue;
-		}
-
-		foreach ($config['dhcpd'][$ifname]['staticmap'] as $idx =>
+	foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
+		foreach (config_get_path("dhcpd/{$ifname}/staticmap", []) as $idx =>
 		    $static) {
 			if (empty($static['mac']) && empty($static['cid'])) {
 				continue;
@@ -885,13 +858,12 @@ function system_get_dhcpleases($dnsavailable=null) {
 }
 
 function system_hostname_configure() {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_hostname_configure() being called $mt\n";
 	}
 
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system');
 
 	/* set hostname */
 	$status = mwexec("/bin/hostname " .
@@ -904,9 +876,7 @@ function system_hostname_configure() {
 }
 
 function system_routing_configure($interface = "") {
-	global $config, $g;
-
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";
 	}
@@ -934,7 +904,7 @@ function system_routing_configure($interface = "") {
 }
 
 function system_staticroutes_configure($interface = "", $update_dns = false) {
-	global $config, $g, $aliastable;
+	global $g, $aliastable;
 
 	$filterdns_list = array();
 
@@ -1045,7 +1015,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 		/* keep static routes cache,
 		 * see https://redmine.pfsense.org/issues/11599 */
 		$id = 0;
-		foreach ($config['staticroutes']['route'] as $sroute) {
+		foreach (config_get_path('staticroutes/route', []) as $sroute) {
 			$targets = array();
 			if (is_subnet($sroute['network'])) {
 				$targets[] = $sroute['network'];
@@ -1097,9 +1067,9 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 }
 
 function delete_static_route($id, $delete = false) {
-	global $g, $config, $changedesc_prefix, $a_gateways;
+	global $g, $changedesc_prefix, $a_gateways;
 
-	if (!isset($config['staticroutes']['route'][$id])) {
+	if (empty(config_get_path("staticroutes/route/{$id}"))) {
 		return;
 	}
 
@@ -1143,8 +1113,7 @@ function delete_static_route($id, $delete = false) {
 }
 
 function system_routing_enable() {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_routing_enable() being called $mt\n";
 	}
@@ -1158,18 +1127,19 @@ function system_routing_enable() {
 }
 
 function system_webgui_create_certificate() {
-	global $config, $g, $cert_strict_values;
+	global $g, $cert_strict_values;
 
 	init_config_arr(array('ca'));
-	$a_ca = &$config['ca'];
+	$a_ca = config_get_path('ca');
 	init_config_arr(array('cert'));
-	$a_cert = &$config['cert'];
+	$a_cert = config_get_path('cert');
 	log_error(gettext("Creating SSL/TLS Certificate for this host"));
 
 	$cert = array();
 	$cert['refid'] = uniqid();
 	$cert['descr'] = sprintf(gettext("webConfigurator default (%s)"), $cert['refid']);
-	$cert_hostname = "{$config['system']['hostname']}-{$cert['refid']}";
+	$hostname = config_get_path('system/hostname');
+	$cert_hostname = "{$hostname}-{$cert['refid']}";
 
 	$dn = array(
 		'organizationName' => "{$g['product_label']} webConfigurator Self-Signed Certificate",
@@ -1186,13 +1156,14 @@ function system_webgui_create_certificate() {
 	error_reporting($old_err_level);
 
 	$a_cert[] = $cert;
-	$config['system']['webgui']['ssl-certref'] = $cert['refid'];
+	config_set_path('cert', $a_cert);
+	config_set_path('system/webgui/ssl-certref', $cert['refid']);
 	write_config(sprintf(gettext("Generated new self-signed SSL/TLS certificate for HTTPS (%s)"), $cert['refid']));
 	return $cert;
 }
 
 function system_webgui_start() {
-	global $config, $g;
+	global $g;
 
 	if (platform_booting()) {
 		echo gettext("Starting webConfigurator...");
@@ -1201,30 +1172,23 @@ function system_webgui_start() {
 	chdir($g['www_path']);
 
 	/* defaults */
-	$portarg = "80";
+	$portarg = config_get_path('system/webgui/port', '80');
 	$crt = "";
 	$key = "";
 	$ca = "";
 
-	/* non-standard port? */
-	if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "") {
-		$portarg = "{$config['system']['webgui']['port']}";
-	}
-
-	if ($config['system']['webgui']['protocol'] == "https") {
+	if (config_get_path('system/webgui/protocol') == "https") {
 		// Ensure that we have a webConfigurator CERT
-		$cert =& lookup_cert($config['system']['webgui']['ssl-certref']);
+		$cert =& lookup_cert(config_get_path('system/webgui/ssl-certref'));
 		if (!is_array($cert) || !$cert['crt'] || !$cert['prv']) {
 			$cert = system_webgui_create_certificate();
 		}
 		$crt = base64_decode($cert['crt']);
 		$key = base64_decode($cert['prv']);
 
-		if (!$config['system']['webgui']['port']) {
-			$portarg = "443";
-		}
+		$portarg = config_get_path('system/webgui/port', '443');
 		$ca = ca_chain($cert);
-		$hsts = isset($config['system']['webgui']['disablehsts']) ? false : true;
+		$hsts = !config_path_enabled('system/webgui', 'disablehsts');
 	}
 
 	/* generate nginx configuration */
@@ -1269,30 +1233,26 @@ function system_webgui_start() {
  *   $dns_nameservers - An array of the requested DNS servers
  ******/
 function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
-	global $config;
-
 	$dns_nameservers = array();
 
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "get_dns_nameservers() being called $mt\n";
 	}
 
-	$syscfg = $config['system'];
-	if ((((isset($config['dnsmasq']['enable'])) &&
-	    (empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
-	    (empty($config['dnsmasq']['interface']) ||
-	    in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
-	    ((isset($config['unbound']['enable'])) &&
-	    (empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
-	    (empty($config['unbound']['active_interface']) ||
-	    in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
-	    in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
-	    ($config['system']['dnslocalhost'] != 'remote')) {
+	$syscfg = config_get_path('system');
+	if ((((config_path_enabled('dnsmasq')) &&
+		  (config_get_path('dnsmasq/port', '53') == '53') &&
+		  in_array("lo0", explode(",", config_get_path('dnsmasq/interface', 'lo0'))))) ||
+	    (config_path_enabled('unbound') &&
+		 (config_get_path('unbound/port', '53') == '53') &&
+		 (in_array("lo0", explode(",", config_get_path('unbound/active_interface', 'lo0'))) ||
+		  in_array("all", explode(",", config_get_path('unbound/active_interface', 'all')), true))) &&
+	    (config_get_path('system/dnslocalhost') != 'remote')) {
 		$dns_nameservers[] = "127.0.0.1";
 	}
 
-	if ($hostns || ($config['system']['dnslocalhost'] != 'local')) {
+	if ($hostns || (config_get_path('system/dnslocalhost') != 'local')) {
 		if (isset($syscfg['dnsallowoverride'])) {
 			/* get dynamically assigned DNS servers (if any) */
 			foreach (array_unique(get_dynamic_nameservers()) as $nameserver) {
@@ -1330,15 +1290,15 @@ function system_generate_nginx_config($filename,
 	$captive_portal = false,
 	$hsts = true) {
 
-	global $config, $g;
+	global $g;
 
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_generate_nginx_config() being called $mt\n";
 	}
 
 	if ($captive_portal !== false) {
-		$cp_interfaces = explode(",", $config['captiveportal'][$captive_portal]['interface']);
+		$cp_interfaces = explode(",", config_get_path('captiveportal/{$captive_portal}/interface'));
 		$cp_hostcheck = "";
 		foreach ($cp_interfaces as $cpint) {
 			$cpint_ip = get_interface_ip($cpint);
@@ -1348,9 +1308,10 @@ function system_generate_nginx_config($filename,
 				$cp_hostcheck .= "\t\t}\n";
 			}
 		}
-		if (isset($config['captiveportal'][$captive_portal]['httpsname']) &&
-		    is_domain($config['captiveportal'][$captive_portal]['httpsname'])) {
-			$cp_hostcheck .= "\t\tif (\$http_host ~* {$config['captiveportal'][$captive_portal]['httpsname']}) {\n";
+		$httpsname = config_get_path('captiveportal/{$captive_portal}/httpsname');
+		if (!empty($httpsname) &&
+		    is_domain($httpsname)) {
+			$cp_hostcheck .= "\t\tif (\$http_host ~* {$httpsname}) {\n";
 			$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
 			$cp_hostcheck .= "\t\t}\n";
 		}
@@ -1358,7 +1319,7 @@ function system_generate_nginx_config($filename,
 		$cp_rewrite .= "\t\t\trewrite	^ /index.php?zone=$captive_portal&redirurl=\$request_uri break;\n";
 		$cp_rewrite .= "\t\t}\n";
 
-		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];
+		$maxprocperip = config_get_path('captiveportal/{$captive_portal}/maxprocperip');
 		if (empty($maxprocperip)) {
 			$maxprocperip = 10;
 		}
@@ -1378,7 +1339,7 @@ function system_generate_nginx_config($filename,
 	if ($realmem < 255) {
 		$max_procs = 1;
 	} else {
-		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
+		$max_procs = config_get_path('system/webgui/max_procs', 2);
 	}
 
 	// Ramp up captive portal max procs, assuming each PHP process can consume up to 64MB RAM
@@ -1405,7 +1366,7 @@ EOD;
 
 	/* Disable file logging */
 	$nginx_config .= "error_log /dev/null;\n";
-	if (!isset($config['syslog']['nolognginx'])) {
+	if (!config_path_enabled('syslog', 'nolognginx')) {
 		/* Send nginx error log to syslog */
 		$nginx_config .= "error_log  syslog:server=unix:/var/run/log,facility=local5;\n";
 	}
@@ -1460,8 +1421,8 @@ EOD;
 		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
-		$cert_temp = lookup_cert($config['system']['webgui']['ssl-certref']);
-		if (($config['system']['webgui']['ocsp-staple'] == true) or
+		$cert_temp = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		if ((config_get_path('system/webgui/ocsp-staple') == true) or
 		    (cert_get_ocspstaple($cert_temp['crt']) == true)) {
 			$nginx_config .= "\t\tssl_stapling on;\n";
 			$nginx_config .= "\t\tssl_stapling_verify on;\n";
@@ -1563,7 +1524,7 @@ EOD;
 	}
 
 	// Add HTTP to HTTPS redirect
-	if ($captive_portal === false && $config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
+	if ($captive_portal === false && config_get_path('system/webgui/protocol') == "https" && !(config_path_enabled('system/webgui', 'disablehttpredirect') != null)) {
 		if ($nginx_port != "443") {
 			$redirectport = ":{$nginx_port}";
 		}
@@ -1621,13 +1582,13 @@ function system_get_timezone_list() {
 }
 
 function system_timezone_configure() {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
+	global $g;
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_timezone_configure() being called $mt\n";
 	}
 
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system');
 
 	if (platform_booting()) {
 		echo gettext("Setting timezone...");
@@ -1742,9 +1703,7 @@ function system_ntp_fixup_poll_value($type, $configvalue, $default) {
 }
 
 function system_ntp_setup_gps($serialport) {
-	global $config, $g;
-
-	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] == 'disabled')) {
+	if (config_get_path('ntpd/enable') == 'disabled') {
 		return false;
 	}
 
@@ -1766,7 +1725,6 @@ function system_ntp_setup_gps($serialport) {
 	unlink_if_exists($gps_device);
 	@symlink($serialport, $gps_device);
 
-	$gpsbaud = '4800';
 	$speeds = array(
 		0 => '4800',
 		16 => '9600',
@@ -1775,21 +1733,21 @@ function system_ntp_setup_gps($serialport) {
 		64 => '57600',
 		80 => '115200'
 	);
-	if (!empty($config['ntpd']['gps']['speed']) && array_key_exists($config['ntpd']['gps']['speed'], $speeds)) {
-		$gpsbaud = $speeds[$config['ntpd']['gps']['speed']];
-	}
+	// $gpsbaud defaults to '4800' if ntpd/gps/speed is unset or does not exist in $speeds
+	$gpsbaud = array_get_path($speeds, config_get_path('ntpd/gps/speed', 0), '4800');
 
 	system_ntp_setup_rawspeed($serialport, $gpsbaud);
 
-	$autospeed = ($config['ntpd']['gps']['speed'] == 'autoalways' || $config['ntpd']['gps']['speed'] == 'autoset');
-	if ($autospeed || ($config['ntpd']['gps']['autobaudinit'] && !check_gps_speed($gps_device))) {
+	$gpsspeed = config_get_path('ntpd/gps/speed');
+	$autospeed = ($gpsspeed == 'autoalways' || $gpsspeed == 'autoset');
+	if ($autospeed || (config_get_path('ntpd/gps/autobaudinit') && !check_gps_speed($gps_device))) {
 		$found = false;
 		foreach ($speeds as $baud) {
 			system_ntp_setup_rawspeed($serialport, $baud);
 			if ($found = check_gps_speed($gps_device)) {
 				if ($autospeed) {
-					$saveconfig = ($config['ntpd']['gps']['speed'] == 'autoset');
-					$config['ntpd']['gps']['speed'] = array_search($baud, $speeds);
+					$saveconfig = (config_get_path('ntpd/gps/speed') == 'autoset');
+					config_set_path('ntpd/gps/speed', array_search($baud, $speeds));
 					$gpsbaud = $baud;
 					if ($saveconfig) {
 						write_config(sprintf(gettext('Autoset GPS baud rate to %s'), $baud));
@@ -1805,8 +1763,8 @@ function system_ntp_setup_gps($serialport) {
 	}
 
 	/* Send the following to the GPS port to initialize the GPS */
-	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['type'])) {
-		$gps_init = base64_decode($config['ntpd']['gps']['initcmd']);
+	if (!empty(config_get_path('ntpd/gps/type'))) {
+		$gps_init = base64_decode(config_get_path('ntpd/gps/initcmd'));
 	} else {
 		$gps_init = base64_decode('JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ==');
 	}
@@ -1815,7 +1773,7 @@ function system_ntp_setup_gps($serialport) {
 	@file_put_contents('/tmp/gps.init', $gps_init);
 	mwexec("/bin/cat /tmp/gps.init > {$serialport}");
 
-	if ($found && $config['ntpd']['gps']['autobaudinit']) {
+	if ($found && config_get_path('ntpd/gps/autobaudinit')) {
 		system_ntp_setup_rawspeed($serialport, $gpsbaud);
 	}
 
@@ -1839,8 +1797,6 @@ function system_ntp_setup_rawspeed($serialport, $baud) {
 }
 
 function system_ntp_setup_pps($serialport) {
-	global $config, $g;
-
 	$serialports = get_serial_ports(true);
 
 	if (!array_key_exists($serialport, $serialports)) {
@@ -1854,7 +1810,7 @@ function system_ntp_setup_pps($serialport) {
 		return false;
 	}
 	// If ntpd is disabled, just return
-	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] == 'disabled')) {
+	if (config_get_path('ntpd/enable') == 'disabled') {
 		return false;
 	}
 
@@ -1867,7 +1823,7 @@ function system_ntp_setup_pps($serialport) {
 }
 
 function system_ntp_configure() {
-	global $config, $g;
+	global $g;
 	global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
 	global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
 	global $ntp_poll_min_default, $ntp_poll_max_default;
@@ -1878,11 +1834,10 @@ function system_ntp_configure() {
 
 	safe_mkdir($statsdir);
 
-	if (!is_array($config['ntpd'])) {
-		$config['ntpd'] = array();
-	}
+	init_config_arr('ntpd');
+
 	// ntpd is disabled, just stop it and return
-	if ($config['ntpd']['enable'] == 'disabled') {
+	if (config_get_path('ntpd/enable') == 'disabled') {
 		while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
 			killbypid("{$g['varrun_path']}/ntpd.pid");
 		}
@@ -1904,8 +1859,8 @@ function system_ntp_configure() {
 	@unlink("{$g['varrun_path']}/ntpd.pid");
 
 	/* set NTP server authentication key */
-	if ($config['ntpd']['serverauth'] == 'yes') {
-		$ntpkeyscfg = "1 " . strtoupper($config['ntpd']['serverauthalgo']) . " " . base64_decode($config['ntpd']['serverauthkey']) . "\n";
+	if (config_get_path('ntpd/serverauth') == 'yes') {
+		$ntpkeyscfg = "1 " . strtoupper(config_get_path('ntpd/serverauthalgo')) . " " . base64_decode(config_get_path('ntpd/serverauthkey')) . "\n";
 		if (!@file_put_contents("{$g['varetc_path']}/ntp.keys", $ntpkeyscfg)) {
 			log_error(sprintf(gettext("Could not open %s/ntp.keys for writing"), $g['varetc_path']));
 			return;
@@ -1919,7 +1874,7 @@ function system_ntp_configure() {
 	$ntpcfg .= "# \n\n";
 	$ntpcfg .= "tinker panic 0 \n\n";
 
-	if ($config['ntpd']['serverauth'] == 'yes') {
+	if (config_get_path('ntpd/serverauth') == 'yes') {
 		$ntpcfg .= "# Authentication settings \n";
 		$ntpcfg .= "keys /var/etc/ntp.keys \n";
 		$ntpcfg .= "trustedkey 1 \n";
@@ -1931,129 +1886,128 @@ function system_ntp_configure() {
 	/* Add Orphan mode */
 	$ntpcfg .= "# Orphan mode stratum and Maximum candidate NTP peers\n";
 	$ntpcfg .= 'tos orphan ';
-	if (!empty($config['ntpd']['orphan'])) {
-		$ntpcfg .= $config['ntpd']['orphan'];
+	if (!empty(config_get_path('ntpd/orphan'))) {
+		$ntpcfg .= config_get_path('ntpd/orphan');
 	} else {
 		$ntpcfg .= '12';
 	}
 	/* Add Maximum candidate NTP peers */
 	$ntpcfg .= ' maxclock ';
-	if (!empty($config['ntpd']['ntpmaxpeers'])) {
-		$ntpcfg .= $config['ntpd']['ntpmaxpeers'];
+	if (!empty(config_get_path('ntpd/ntpmaxpeers'))) {
+		$ntpcfg .= config_get_path('ntpd/ntpmaxpeers');
 	} else {
 		$ntpcfg .= '5';
 	}
 	$ntpcfg .= "\n";
 
 	/* Add PPS configuration */
-	if (is_array($config['ntpd']['pps']) && !empty($config['ntpd']['pps']['port']) &&
-	    file_exists('/dev/'.$config['ntpd']['pps']['port']) &&
-	    system_ntp_setup_pps($config['ntpd']['pps']['port'])) {
+	if (!empty(config_get_path('ntpd/pps/port')) &&
+	    file_exists('/dev/'.config_get_path('ntpd/pps/port')) &&
+	    system_ntp_setup_pps(config_get_path('ntpd/pps/port'))) {
 		$ntpcfg .= "\n";
 		$ntpcfg .= "# PPS Setup\n";
 		$ntpcfg .= 'server 127.127.22.0';
-		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['pps']['ppsminpoll'], $ntp_poll_min_default_pps);
-		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['pps']['ppsmaxpoll'], $ntp_poll_max_default_pps);
-		if (empty($config['ntpd']['pps']['prefer'])) { /*note: this one works backwards */
+		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', config_get_path('ntpd/pps/ppsminpoll'), $ntp_poll_min_default_pps);
+		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', config_get_path('ntpd/pps/ppsmaxpoll'), $ntp_poll_max_default_pps);
+		if (empty(config_get_path('ntpd/pps/prefer'))) { /*note: this one works backwards */
 			$ntpcfg .= ' prefer';
 		}
-		if (!empty($config['ntpd']['pps']['noselect'])) {
+		if (!empty(config_get_path('ntpd/pps/noselect'))) {
 			$ntpcfg .= ' noselect ';
 		}
 		$ntpcfg .= "\n";
 		$ntpcfg .= 'fudge 127.127.22.0';
-		if (!empty($config['ntpd']['pps']['fudge1'])) {
+		if (!empty(config_get_path('ntpd/pps/fudge1'))) {
 			$ntpcfg .= ' time1 ';
-			$ntpcfg .= $config['ntpd']['pps']['fudge1'];
+			$ntpcfg .= config_get_path('ntpd/pps/fudge1');
 		}
-		if (!empty($config['ntpd']['pps']['flag2'])) {
+		if (!empty(config_get_path('ntpd/pps/flag2'))) {
 			$ntpcfg .= ' flag2 1';
 		}
-		if (!empty($config['ntpd']['pps']['flag3'])) {
+		if (!empty(config_get_path('ntpd/pps/flag3'))) {
 			$ntpcfg .= ' flag3 1';
 		} else {
 			$ntpcfg .= ' flag3 0';
 		}
-		if (!empty($config['ntpd']['pps']['flag4'])) {
+		if (!empty(config_get_path('ntpd/pps/flag4'))) {
 			$ntpcfg .= ' flag4 1';
 		}
-		if (!empty($config['ntpd']['pps']['refid'])) {
+		if (!empty(config_get_path('ntpd/pps/refid'))) {
 			$ntpcfg .= ' refid ';
-			$ntpcfg .= $config['ntpd']['pps']['refid'];
+			$ntpcfg .= config_get_path('ntpd/pps/refid');
 		}
 		$ntpcfg .= "\n";
 	}
 	/* End PPS configuration */
 
 	/* Add GPS configuration */
-	if (is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['port']) &&
-	    system_ntp_setup_gps($config['ntpd']['gps']['port'])) {
+	if (!empty(config_get_path('ntpd/gps/port')) &&
+	    system_ntp_setup_gps(config_get_path('ntpd/gps/port'))) {
 		$ntpcfg .= "\n";
 		$ntpcfg .= "# GPS Setup\n";
 		$ntpcfg .= 'server 127.127.20.0 mode ';
-		if (!empty($config['ntpd']['gps']['nmea']) || !empty($config['ntpd']['gps']['speed']) || !empty($config['ntpd']['gps']['subsec']) || !empty($config['ntpd']['gps']['processpgrmf'])) {
-			if (!empty($config['ntpd']['gps']['nmea'])) {
-				$ntpmode = (int) $config['ntpd']['gps']['nmea'];
+		if (!empty(config_get_path('ntpd/gps/nmea')) || !empty(config_get_path('ntpd/gps/speed')) || !empty(config_get_path('ntpd/gps/subsec')) || !empty(config_get_path('ntpd/gps/processpgrmf'))) {
+			if (!empty(config_get_path('ntpd/gps/nmea'))) {
+				$ntpmode = (int) config_get_path('ntpd/gps/nmea');
 			}
-			if (!empty($config['ntpd']['gps']['speed'])) {
-				$ntpmode += (int) $config['ntpd']['gps']['speed'];
+			if (!empty(config_get_path('ntpd/gps/speed'))) {
+				$ntpmode += (int) config_get_path('ntpd/gps/speed');
 			}
-			if (!empty($config['ntpd']['gps']['subsec'])) {
+			if (!empty(config_get_path('ntpd/gps/subsec'))) {
 				$ntpmode += 128;
 			}
-			if (!empty($config['ntpd']['gps']['processpgrmf'])) {
+			if (!empty(config_get_path('ntpd/gps/processpgrmf'))) {
 				$ntpmode += 256;
 			}
 			$ntpcfg .= (string) $ntpmode;
 		} else {
 			$ntpcfg .= '0';
 		}
-		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['gps']['gpsminpoll'], $ntp_poll_min_default_gps);
-		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['gps']['gpsmaxpoll'], $ntp_poll_max_default_gps);
+		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', config_get_path('ntpd/gps/gpsminpoll'), $ntp_poll_min_default_gps);
+		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', config_get_path('ntpd/gps/gpsmaxpoll'), $ntp_poll_max_default_gps);
 
-		if (empty($config['ntpd']['gps']['prefer'])) { /*note: this one works backwards */
+		if (empty(config_get_path('ntpd/gps/prefer'))) { /*note: this one works backwards */
 			$ntpcfg .= ' prefer';
 		}
-		if (!empty($config['ntpd']['gps']['noselect'])) {
+		if (!empty(config_get_path('ntpd/gps/noselect'))) {
 			$ntpcfg .= ' noselect ';
 		}
 		$ntpcfg .= "\n";
 		$ntpcfg .= 'fudge 127.127.20.0';
-		if (!empty($config['ntpd']['gps']['fudge1'])) {
+		if (!empty(config_get_path('ntpd/gps/fudge1'))) {
 			$ntpcfg .= ' time1 ';
-			$ntpcfg .= $config['ntpd']['gps']['fudge1'];
+			$ntpcfg .= config_get_path('ntpd/gps/fudge1');
 		}
-		if (!empty($config['ntpd']['gps']['fudge2'])) {
+		if (!empty(config_get_path('ntpd/gps/fudge2'))) {
 			$ntpcfg .= ' time2 ';
-			$ntpcfg .= $config['ntpd']['gps']['fudge2'];
+			$ntpcfg .= config_get_path('ntpd/gps/fudge2');
 		}
-		if (!empty($config['ntpd']['gps']['flag1'])) {
+		if (!empty(config_get_path('ntpd/gps/flag1'))) {
 			$ntpcfg .= ' flag1 1';
 		} else {
 			$ntpcfg .= ' flag1 0';
 		}
-		if (!empty($config['ntpd']['gps']['flag2'])) {
+		if (!empty(config_get_path('ntpd/gps/flag2'))) {
 			$ntpcfg .= ' flag2 1';
 		}
-		if (!empty($config['ntpd']['gps']['flag3'])) {
+		if (!empty(config_get_path('ntpd/gps/flag3'))) {
 			$ntpcfg .= ' flag3 1';
 		} else {
 			$ntpcfg .= ' flag3 0';
 		}
-		if (!empty($config['ntpd']['gps']['flag4'])) {
+		if (!empty(config_get_path('ntpd/gps/flag4'))) {
 			$ntpcfg .= ' flag4 1';
 		}
-		if (!empty($config['ntpd']['gps']['refid'])) {
+		if (!empty(config_get_path('ntpd/gps/refid'))) {
 			$ntpcfg .= ' refid ';
-			$ntpcfg .= $config['ntpd']['gps']['refid'];
+			$ntpcfg .= config_get_path('ntpd/gps/refid');
 		}
-		if (!empty($config['ntpd']['gps']['stratum'])) {
+		if (!empty(config_get_path('ntpd/gps/stratum'))) {
 			$ntpcfg .= ' stratum ';
-			$ntpcfg .= $config['ntpd']['gps']['stratum'];
+			$ntpcfg .= config_get_path('ntpd/gps/stratum');
 		}
 		$ntpcfg .= "\n";
-	} elseif (is_array($config['ntpd']) && !empty($config['ntpd']['gpsport']) &&
-	    system_ntp_setup_gps($config['ntpd']['gpsport'])) {
+	} elseif (system_ntp_setup_gps(config_get_path('ntpd/gpsport'))) {
 		/* This handles a 2.1 and earlier config */
 		$ntpcfg .= "# GPS Setup\n";
 		$ntpcfg .= "server 127.127.20.0 mode 0 minpoll 4 maxpoll 4 prefer\n";
@@ -2067,36 +2021,36 @@ function system_ntp_configure() {
 	$have_pools = false;
 	$ntpcfg .= "\n\n# Upstream Servers\n";
 	/* foreach through ntp servers and write out to ntpd.conf */
-	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
+	foreach (explode(' ', config_get_path('system/timeservers')) as $ts) {
 		if ((substr_compare($ts, $auto_pool_suffix, strlen($ts) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0)
-		    || substr_count($config['ntpd']['ispool'], $ts)) {
+		    || substr_count(config_get_path('ntpd/ispool'), $ts)) {
 			$ntpcfg .= 'pool ';
 			$have_pools = true;
 		} else {
-			if (substr_count($config['ntpd']['ispeer'], $ts)) {
+			if (substr_count(config_get_path('ntpd/ispeer'), $ts)) {
 				$ntpcfg .= 'peer ';
 			} else {
 				$ntpcfg .= 'server ';
 			}
-			if ($config['ntpd']['dnsresolv'] == 'inet') {
+			if (config_get_path('ntpd/dnsresolv') == 'inet') {
 				$ntpcfg .= '-4 ';
-			} elseif ($config['ntpd']['dnsresolv'] == 'inet6') {
+			} elseif (config_get_path('ntpd/dnsresolv') == 'inet6') {
 				$ntpcfg .= '-6 ';
 			}
 		}
 
 		$ntpcfg .= "{$ts}";
-		if (!substr_count($config['ntpd']['ispeer'], $ts)) {
+		if (!substr_count(config_get_path('ntpd/ispeer'), $ts)) {
 			$ntpcfg .= " iburst";
 		}
 
-		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['ntpminpoll'], $ntp_poll_min_default);
-		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['ntpmaxpoll'], $ntp_poll_max_default);
+		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', config_get_path('ntpd/ntpminpoll'), $ntp_poll_min_default);
+		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', config_get_path('ntpd/ntpmaxpoll'), $ntp_poll_max_default);
 
-		if (substr_count($config['ntpd']['prefer'], $ts)) {
+		if (substr_count(config_get_path('ntpd/prefer'), $ts)) {
 			$ntpcfg .= ' prefer';
 		}
-		if (substr_count($config['ntpd']['noselect'], $ts)) {
+		if (substr_count(config_get_path('ntpd/noselect'), $ts)) {
 			$ntpcfg .= ' noselect';
 		}
 		$ntpcfg .= "\n";
@@ -2104,26 +2058,26 @@ function system_ntp_configure() {
 	unset($ts);
 
 	$ntpcfg .= "\n\n";
-	if (!empty($config['ntpd']['clockstats']) || !empty($config['ntpd']['loopstats']) || !empty($config['ntpd']['peerstats'])) {
+	if (!empty(config_get_path('ntpd/clockstats')) || !empty(config_get_path('ntpd/loopstats')) || !empty(config_get_path('ntpd/peerstats'))) {
 		$ntpcfg .= "enable stats\n";
 		$ntpcfg .= 'statistics';
-		if (!empty($config['ntpd']['clockstats'])) {
+		if (!empty(config_get_path('ntpd/clockstats'))) {
 			$ntpcfg .= ' clockstats';
 		}
-		if (!empty($config['ntpd']['loopstats'])) {
+		if (!empty(config_get_path('ntpd/loopstats'))) {
 			$ntpcfg .= ' loopstats';
 		}
-		if (!empty($config['ntpd']['peerstats'])) {
+		if (!empty(config_get_path('ntpd/peerstats'))) {
 			$ntpcfg .= ' peerstats';
 		}
 		$ntpcfg .= "\n";
 	}
 	$ntpcfg .= "statsdir {$statsdir}\n";
 	$ntpcfg .= 'logconfig =syncall +clockall';
-	if (!empty($config['ntpd']['logpeer'])) {
+	if (!empty(config_get_path('ntpd/logpeer'))) {
 		$ntpcfg .= ' +peerall';
 	}
-	if (!empty($config['ntpd']['logsys'])) {
+	if (!empty(config_get_path('ntpd/logsys'))) {
 		$ntpcfg .= ' +sysall';
 	}
 	$ntpcfg .= "\n";
@@ -2131,64 +2085,64 @@ function system_ntp_configure() {
 
 	/* Default Access restrictions */
 	$ntpcfg .= 'restrict default';
-	if (empty($config['ntpd']['kod'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/kod'))) { /*note: this one works backwards */
 		$ntpcfg .= ' kod limited';
 	}
-	if (empty($config['ntpd']['nomodify'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/nomodify'))) { /*note: this one works backwards */
 		$ntpcfg .= ' nomodify';
 	}
-	if (!empty($config['ntpd']['noquery'])) {
+	if (!empty(config_get_path('ntpd/noquery'))) {
 		$ntpcfg .= ' noquery';
 	}
-	if (empty($config['ntpd']['nopeer'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/nopeer'))) { /*note: this one works backwards */
 		$ntpcfg .= ' nopeer';
 	}
-	if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/notrap'))) { /*note: this one works backwards */
 		$ntpcfg .= ' notrap';
 	}
-	if (!empty($config['ntpd']['noserve'])) {
+	if (!empty(config_get_path('ntpd/noserve'))) {
 		$ntpcfg .= ' noserve';
 	}
 	$ntpcfg .= "\nrestrict -6 default";
-	if (empty($config['ntpd']['kod'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/kod'))) { /*note: this one works backwards */
 		$ntpcfg .= ' kod limited';
 	}
-	if (empty($config['ntpd']['nomodify'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/nomodify'))) { /*note: this one works backwards */
 		$ntpcfg .= ' nomodify';
 	}
-	if (!empty($config['ntpd']['noquery'])) {
+	if (!empty(config_get_path('ntpd/noquery'))) {
 		$ntpcfg .= ' noquery';
 	}
-	if (empty($config['ntpd']['nopeer'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/nopeer'))) { /*note: this one works backwards */
 		$ntpcfg .= ' nopeer';
 	}
-	if (!empty($config['ntpd']['noserve'])) {
+	if (!empty(config_get_path('ntpd/noserve'))) {
 		$ntpcfg .= ' noserve';
 	}
-	if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
+	if (empty(config_get_path('ntpd/notrap'))) { /*note: this one works backwards */
 		$ntpcfg .= ' notrap';
 	}
 
 	/* Pools require "restrict source" and cannot contain "nopeer" and "noserve". */
 	if ($have_pools) {
 		$ntpcfg .= "\nrestrict source";
-		if (empty($config['ntpd']['kod'])) { /*note: this one works backwards */
+		if (empty(config_get_path('ntpd/kod'))) { /*note: this one works backwards */
 			$ntpcfg .= ' kod limited';
 		}
-		if (empty($config['ntpd']['nomodify'])) { /*note: this one works backwards */
+		if (empty(config_get_path('ntpd/nomodify'))) { /*note: this one works backwards */
 			$ntpcfg .= ' nomodify';
 		}
-		if (!empty($config['ntpd']['noquery'])) {
+		if (!empty(config_get_path('ntpd/noquery'))) {
 			$ntpcfg .= ' noquery';
 		}
-		if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
+		if (empty(config_get_path('ntpd/notrap'))) { /*note: this one works backwards */
 			$ntpcfg .= ' notrap';
 		}
 	}
 
 	/* Custom Access Restrictions */
-	if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
-		$networkacl = $config['ntpd']['restrictions']['row'];
+	if (is_array(config_get_path('ntpd/restrictions/row'))) {
+		$networkacl = config_get_path('ntpd/restrictions/row');
 		foreach ($networkacl as $acl) {
 			$restrict = "";
 			if (is_ipaddrv6($acl['acl_network'])) {
@@ -2225,21 +2179,19 @@ function system_ntp_configure() {
 
 	/* A leapseconds file is really only useful if this clock is stratum 1 */
 	$ntpcfg .= "\n";
-	if (!empty($config['ntpd']['leapsec'])) {
-		$leapsec .= base64_decode($config['ntpd']['leapsec']);
+	if (!empty(config_get_path('ntpd/leapsec'))) {
+		$leapsec .= base64_decode(config_get_path('ntpd/leapsec'));
 		file_put_contents('/var/db/leap-seconds', $leapsec);
 		$ntpcfg .= "leapfile /var/db/leap-seconds\n";
 	}
 
 
-	if (empty($config['ntpd']['interface'])) {
-		if (is_array($config['installedpackages']['openntpd']) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
-			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
-		} else {
-			$interfaces = array();
-		}
+	if (empty(config_get_path('ntpd/interface'))) {
+		$interfaces =
+			explode(",",
+					config_get_path('installedpackages/openntpd/config/0/interface', ''));
 	} else {
-		$interfaces = explode(",", $config['ntpd']['interface']);
+		$interfaces = explode(",", config_get_path('ntpd/interface'));
 	}
 
 	if (is_array($interfaces) && count($interfaces)) {
@@ -2310,24 +2262,27 @@ function system_reboot_sync($reroot=false) {
 }
 
 function system_reboot_cleanup() {
-	global $config, $g, $cpzone;
+	global $g, $cpzone;
 
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
-	if (is_array($config['captiveportal'])) {
-		foreach ($config['captiveportal'] as $cpzone=>$cp) {
-			if (!isset($cp['preservedb'])) {
-				/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
-				captiveportal_radius_stop_all(7); // Admin-Reboot
-				unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-				captiveportal_free_dnrules();
-			}
-			/* Send Accounting-Off packet to the RADIUS server */
-			captiveportal_send_server_accounting('off');
+	$cps = config_get_path('captiveportal', []);
+	foreach ($cps as $cpzone=>$cp) {
+		if (!isset($cp['preservedb'])) {
+			/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
+			captiveportal_radius_stop_all(7); // Admin-Reboot
+			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+			captiveportal_free_dnrules();
 		}
+		/* Send Accounting-Off packet to the RADIUS server */
+		captiveportal_send_server_accounting('off');
+	}
+
+	if (count($cps)> 0) {
 		/* Remove the pipe database */
 		unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
 	}
+	
 	require_once("voucher.inc");
 	voucher_save_db_to_config();
 	require_once("pkg-utils.inc");
@@ -2335,8 +2290,7 @@ function system_reboot_cleanup() {
 }
 
 function system_do_shell_commands($early = 0) {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_do_shell_commands() being called $mt\n";
 	}
@@ -2347,24 +2301,23 @@ function system_do_shell_commands($early = 0) {
 		$cmdn = "shellcmd";
 	}
 
-	if (is_array($config['system'][$cmdn])) {
-
+	$syscmd = config_get_path('system/{$cmdn}', '');
+	if (is_array($syscmd)) {
 		/* *cmd is an array, loop through */
-		foreach ($config['system'][$cmdn] as $cmd) {
+		foreach ($syscmd as $cmd) {
 			exec($cmd);
 		}
 
-	} elseif ($config['system'][$cmdn] <> "") {
-
+	} elseif ($syscmd <> "") {
 		/* execute single item */
-		exec($config['system'][$cmdn]);
+		exec($syscmd);
 
 	}
 }
 
 function system_dmesg_save() {
 	global $g;
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_dmesg_save() being called $mt\n";
 	}
@@ -2401,19 +2354,17 @@ function system_dmesg_save() {
 }
 
 function system_set_harddisk_standby() {
-	global $g, $config;
-
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_set_harddisk_standby() being called $mt\n";
 	}
 
-	if (isset($config['system']['harddiskstandby'])) {
+	if (config_path_enabled('system', 'harddiskstandby')) {
 		if (platform_booting()) {
 			echo gettext('Setting hard disk standby... ');
 		}
 
-		$standby = $config['system']['harddiskstandby'];
+		$standby = config_get_path('system/harddiskstandby');
 		// Check for a numeric value
 		if (is_numeric($standby)) {
 			// Get only suitable candidates for standby; using get_smart_drive_list()
@@ -2440,22 +2391,20 @@ function system_set_harddisk_standby() {
 }
 
 function system_setup_sysctl() {
-	global $config;
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_setup_sysctl() being called $mt\n";
 	}
 
 	activate_sysctls();
 
-	if (isset($config['system']['sharednet'])) {
+	if (config_path_enabled('system', 'sharednet')) {
 		system_disable_arp_wrong_if();
 	}
 }
 
 function system_disable_arp_wrong_if() {
-	global $config;
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_disable_arp_wrong_if() being called $mt\n";
 	}
@@ -2466,8 +2415,7 @@ function system_disable_arp_wrong_if() {
 }
 
 function system_enable_arp_wrong_if() {
-	global $config;
-	if (isset($config['system']['developerspew'])) {
+	if (config_path_enabled('system', 'developerspew')) {
 		$mt = microtime();
 		echo "system_enable_arp_wrong_if() being called $mt\n";
 	}
@@ -2478,7 +2426,6 @@ function system_enable_arp_wrong_if() {
 }
 
 function enable_watchdog() {
-	global $config;
 	return;
 	$install_watchdog = false;
 	$supported_watchdogs = array("Geode");

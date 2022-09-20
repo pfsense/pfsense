@@ -1209,7 +1209,8 @@ function init_config_arr($keys) {
  * Return a value specified by path in the config, if it exists.
  * @param $path string path with '/' separators
  * @param $default mixed value to return if the path is not found
- * @returns mixed value at path or $default if the path does not exist
+ * @returns mixed value at path or $default if the path does not exist or if the
+ *          path keys an empty element and $default is non-null
  */
 function config_get_path(string $path, $default = null) {
 	global $config;

@@ -1834,7 +1834,7 @@ function system_ntp_configure() {
 
 	safe_mkdir($statsdir);
 
-	init_config_arr('ntpd');
+	init_config_arr(array('ntpd'));
 
 	// ntpd is disabled, just stop it and return
 	if (config_get_path('ntpd/enable') == 'disabled') {

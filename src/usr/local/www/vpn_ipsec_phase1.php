@@ -627,7 +627,7 @@ if ($_POST['save']) {
 		}
 
 		/* generate unique phase1 ikeid */
-		if ($ph1ent['ikeid'] == 0) {
+		if (empty($ph1ent['ikeid'])) {
 			$ph1ent['ikeid'] = ipsec_ikeid_next();
 		}
 

@@ -1524,6 +1524,11 @@ function pkg_conf_setup($repo_path) {
 		$pkg_conf[] = "}\n";
 	}
 
+
+	/* https://redmine.pfsense.org/issues/13394 */
+	$pkg_conf[] = 'FILES_IGNORE_GLOB []';
+	$pkg_conf[] = 'FILES_IGNORE_REGEX []';
+
 	file_put_contents($pkg_conf_path, $pkg_conf);
 }
 

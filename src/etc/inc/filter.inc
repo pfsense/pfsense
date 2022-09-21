@@ -478,7 +478,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= "\n";
 
 	/* Captive Portal ether anchors:
-	 * 'cpzoneid_X_passthrumac' - add PASS tag to MAC passthru entries 
+	 * 'cpzoneid_X_passthrumac' - add PASS tag to MAC passthru entries
 	 * 'cpzoneid_X_allowedhosts' - add PASS tag for Allowed IP/Hostnames to bypass captive portal redirection
 	 * 'cpzoneid_X_auth' - add PASS tag to authenticated client
 	 */
@@ -922,7 +922,7 @@ function filter_generate_aliases() {
 	}
 
 	/* Captive Portal tables
-	 * 'cpzoneid_X_cpips' - all portal interfaces IPv4 addresses (including VIPs) 
+	 * 'cpzoneid_X_cpips' - all portal interfaces IPv4 addresses (including VIPs)
 	 * 'cpzoneid_X_authip' - authenticated clients IPv4 addresses
 	 */
 
@@ -1035,7 +1035,7 @@ function filter_generate_gateways() {
 						break;
 					}
 				}
-				/* see "Load balancing fails when one gateway has a weight of 1 
+				/* see "Load balancing fails when one gateway has a weight of 1
 				* and another gateway has a weight >1", https://redmine.pfsense.org/issues/6025 */
 				foreach ($members as $member) {
 					if ((int) $member['weight'] == 1) {
@@ -1552,7 +1552,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 				}
 				/* Do not generate a rule with an interface source if that interface has no IP address.
 				 * See https://redmine.pfsense.org/issues/8604 */
-				if ((!empty(get_interface_ip($subnet_if)) && is_ipaddrv4($target)) || 
+				if ((!empty(get_interface_ip($subnet_if)) && is_ipaddrv4($target)) ||
 				    (!empty(get_interface_ipv6($subnet_if)) && is_ipaddrv6($target))) {
 					$natrules .= "no nat on {$subnet_if}{$protocol_text} from ({$subnet_if}) to {$target}\n";
 				}
@@ -2552,7 +2552,7 @@ function filter_nat_rules_generate() {
 		} else {
 			if (($dstport[1]) && ($dstport[0] != $dstport[1])) {
 				$localendport = $localport + ($dstport[1] - $dstport[0]);
-				
+
 				$localport .= ":$localendport";
 			}
 
@@ -2647,12 +2647,12 @@ function filter_nat_rules_generate() {
 		}
 		$dstaddr_reflect = $dstaddr;
 		$natref_disabled = config_path_enabled('system','disablenatreflection');
-		if (isset($rule['destination']['any']) && 
+		if (isset($rule['destination']['any']) &&
 			((!isset($rule['natreflection']) && !$natref_disabled) ||
-			 ($rule['natreflection'] == "purenat") || ($rule['natreflection'] == "enable"))) { 
+			 ($rule['natreflection'] == "purenat") || ($rule['natreflection'] == "enable"))) {
 			/* With reflection enabled, destination of 'any' has side effects
 			 * that most people would not expect, so change it on reflection rules. */
-			
+
 			if (!empty($FilterIflist[$natif]['ip'])) {
 				$dstaddr_reflect = $FilterIflist[$natif]['ip'];
 			} else {
@@ -2674,7 +2674,7 @@ function filter_nat_rules_generate() {
 		}
 
 		$reflection_type = "none";
-		if (($rule['natreflection'] != "disable") && ($dstaddr_port[0] != "0.0.0.0") && 
+		if (($rule['natreflection'] != "disable") && ($dstaddr_port[0] != "0.0.0.0") &&
 			($dstaddr_port[0] != "::")) {
 			if ($rule['natreflection'] == "enable") {
 				$reflection_type = "proxy";
@@ -3426,15 +3426,15 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 				}
 				if (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") {
 					if (in_array($rule['protocol'], array("tcp", "tcp/udp")) ||
-					    empty($rule['protocol'])) { 
+					    empty($rule['protocol'])) {
 						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
 					}
 					if (in_array($rule['protocol'], array("udp", "tcp/udp")) ||
-					    empty($rule['protocol'])) { 
+					    empty($rule['protocol'])) {
 						$aline['flags'] .= "udp.multiple " . $rule['statetimeout'] . " ";
 					}
 					if (!in_array($rule['protocol'], array("udp", "tcp", "tcp/udp")) ||
-					    empty($rule['protocol'])) { 
+					    empty($rule['protocol'])) {
 						$aline['flags'] .= "other.multiple " . $rule['statetimeout'] . " ";
 					}
 				}
@@ -3719,7 +3719,7 @@ EOD;
 			$vlantag = config_path_enabled("interfaces/{$on}/dhcpvlanenable") ? "set prio {$vlanprio_values[$dhcpcvpt]}" : "";
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
-pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 67 to any port = 68 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
+pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 67 to any port = 68 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp replies in {$oc['descr']}")}"
 pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 to any port = 67 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}" {$vlantag}
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
 

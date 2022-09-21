@@ -167,7 +167,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	}
 
 	// Add EDNS support
-	if (config_path_enabled('unbound') && (config_get_path('unbound', 'edns') != null)) {
+	if (config_path_enabled('unbound') && (config_get_path('unbound/edns') != null)) {
 		$resolvconf .= "options edns0\n";
 	}
 

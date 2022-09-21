@@ -29,45 +29,33 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("/usr/local/www/widgets/include/services_status.inc");
 
-$services = get_services();
+$widgetkey = (isset($_POST['widgetkey'])) ? $_POST['widgetkey'] : $widgetkey;
+$widget_config = $user_settings['widgets'][$widgetkey];
+$services = get_services_array();
 
-$numsvcs = count($services);
-
-for ($idx=0; $idx<$numsvcs; $idx++) {
-	if (!is_array($services[$idx])) {
-		$services[$idx] = array();
-	}
-	$services[$idx]['dispname'] = $services[$idx]['name'];
+// Are we handling an ajax refresh?
+if (isset($_POST['ajax'])) {
+	print(services_compose_widget_body($widgetkey));
+	// We are done here...
+	exit();
 }
 
-// If there are any duplicated names, add an incrementing suffix
-for ($idx=1; $idx < $numsvcs; $idx++) {
-	$name = $services[$idx]['name'];
-
-	for ($chk = $idx +1, $sfx=2; $chk <$numsvcs; $chk++) {
-		if ($services[$chk]['dispname'] == $name) {
-			$services[$chk]['dispname'] .= '_' . $sfx++;
-		}
-	}
-}
-
-if ($_POST['widgetkey']) {
+if (isset($_POST['save'])) {
 	set_customwidgettitle($user_settings);
-
 	$validNames = array();
-
+	$showArrName = ($widgetkey . '_show');
+	$showArr = (isset($_POST[$showArrName])) ? $_POST[$showArrName] : null;
 	foreach ($services as $service) {
 		array_push($validNames, $service['dispname']);
 	}
-
-	if (is_array($_POST['show'])) {
-		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+	if (is_array($showArr)) {
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $showArr));
 	} else {
 		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
 	}
-
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Service Status Filter via Dashboard."));
-	header("Location: /index.php");
+	header('Location: /');
+	exit();
 }
 
 ?>
@@ -81,54 +69,21 @@ if ($_POST['widgetkey']) {
 				<th><?=gettext('Action')?></th>
 			</tr>
 		</thead>
-		<tbody>
-<?php
-$skipservices = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
-
-if (count($services) > 0) {
-	uasort($services, "service_dispname_compare");
-	$service_is_displayed = false;
-
-	foreach ($services as $service) {
-		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
-			continue;
-		}
-
-		$service_is_displayed = true;
-
-		if (empty($service['description'])) {
-			$service['description'] = get_pkg_descr($service['name']);
-		}
-
-		$service_desc = explode(". ",$service['description']);
-?>
-			<tr>
-				<td><?=get_service_status_icon($service, false, true, false, "state")?></td>
-				<td><?=$service['dispname']?></td>
-				<td><?=$service_desc[0]?></td>
-				<td><?=get_service_control_links($service)?></td>
-			</tr>
-<?php
-	}
-
-	if (!$service_is_displayed) {
-		echo "<tr><td colspan=\"4\" class=\"text-center\">" . gettext("All services are hidden") . ". </td></tr>\n";
-	}
-} else {
-	echo "<tr><td colspan=\"4\" class=\"text-center\">" . gettext("No services found") . ". </td></tr>\n";
-}
-?>
+		<tbody id="<?=htmlspecialchars($widgetkey)?>">
+			<?=services_compose_widget_body($widgetkey)?>
 		</tbody>
 	</table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
+</div>
+<div id="widget-<?=htmlspecialchars($widgetkey)?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
+	<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey)?>" />
+	<input type="hidden" name="save" value="save" />
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -140,14 +95,13 @@ if (count($services) > 0) {
 					<tbody>
 <?php
 				$skipservices = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
-				$idx = 0;
 
 				foreach ($services as $service):
 					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
 ?>
 						<tr>
 							<td><?=$service['dispname']?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$service['dispname']?>" type="checkbox" <?=(!in_array($service['dispname'], $skipservices) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="<?=htmlspecialchars($widgetkey)?>_show[]" name="<?=htmlspecialchars($widgetkey)?>_show[]" value="<?=$service['dispname']?>" type="checkbox" <?=(!in_array($service['dispname'], $skipservices) ? 'checked':'')?>></td>
 						</tr>
 <?php
 					}
@@ -169,8 +123,44 @@ if (count($services) > 0) {
 
 <script type="text/javascript">
 //<![CDATA[
+
 	events.push(function(){
-		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
+
+		/// --------------------- Centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function services_callback(s) {
+			$(<?=json_encode("#{$widgetkey}")?>).html(s);
+			// The click handler has to be attached after the div is updated
+			addServiceControlClickHandlers(<?=json_encode($widgetkey)?>, false);
+		}
+
+		// POST data to send via AJAX
+		var postdata = {
+			ajax: "ajax",
+			widgetkey: <?=json_encode($widgetkey)?>
+		};
+
+		// Create an object defining the widget refresh AJAX call
+		var servicesObject = new Object();
+		servicesObject.name = "services";
+		servicesObject.url = "/widgets/widgets/services_status.widget.php";
+		servicesObject.callback = services_callback;
+		servicesObject.parms = postdata;
+		servicesObject.freq = 2;
+
+		// Register the AJAX object
+		register_ajax(servicesObject);
+
+		// ---------------------------------------------------------------------------------------------------
+
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=<?=htmlspecialchars($widgetkey)?>_show]", "<?=$widget_showallnone_id?>");
+		
 	});
+
+	window.onload=function() {
+		addServiceControlClickHandlers("<?=htmlspecialchars($widgetkey)?>", false);
+	}
+
 //]]>
 </script>

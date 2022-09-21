@@ -202,9 +202,9 @@ function system_resolvconf_generate($dynupdate = false) {
 	// set up or tear down static routes for DNS servers
 	$dnscounter = 1;
 	$dnsgw = "dns{$dnscounter}gw";
-	while (!empty(config_get_path('system/{$dnsgw}'))) {
+	while (!empty(config_get_path("system/{$dnsgw}"))) {
 		/* setup static routes for dns servers */
-		$gwname = config_get_path('system/{$dnsgw}');		unset($gatewayip);
+		$gwname = config_get_path("system/{$dnsgw}");		unset($gatewayip);
 		unset($inet6);
 		if ((!empty($gwname)) && ($gwname != "none")) {
 			$gatewayip = lookup_gateway_ip_by_name($gwname);
@@ -601,8 +601,8 @@ function system_dhcpleases_configure() {
 	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 
 	/* Start the monitoring process for dynamic dhcpclients. */
-	if (((config_path_enabled('dnsmasq') && (config_get_path('dnsmasq', 'regdhcp') != null)) ||
-	    (config_path_enabled('unbound') && (config_get_path('unbound', 'regdhcp') != null))) &&
+	if (((config_path_enabled('dnsmasq') && (config_get_path('dnsmasq/regdhcp') != null)) ||
+	    (config_path_enabled('unbound') && (config_get_path('unbound/regdhcp') != null))) &&
 	    (is_dhcp_server_enabled())) {
 		/* Make sure we do not error out */
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
@@ -1298,7 +1298,7 @@ function system_generate_nginx_config($filename,
 	}
 
 	if ($captive_portal !== false) {
-		$cp_interfaces = explode(",", config_get_path('captiveportal/{$captive_portal}/interface'));
+		$cp_interfaces = explode(",", config_get_path("captiveportal/{$captive_portal}/interface"));
 		$cp_hostcheck = "";
 		foreach ($cp_interfaces as $cpint) {
 			$cpint_ip = get_interface_ip($cpint);
@@ -1308,7 +1308,7 @@ function system_generate_nginx_config($filename,
 				$cp_hostcheck .= "\t\t}\n";
 			}
 		}
-		$httpsname = config_get_path('captiveportal/{$captive_portal}/httpsname');
+		$httpsname = config_get_path("captiveportal/{$captive_portal}/httpsname");
 		if (!empty($httpsname) &&
 		    is_domain($httpsname)) {
 			$cp_hostcheck .= "\t\tif (\$http_host ~* {$httpsname}) {\n";
@@ -1319,7 +1319,7 @@ function system_generate_nginx_config($filename,
 		$cp_rewrite .= "\t\t\trewrite	^ /index.php?zone=$captive_portal&redirurl=\$request_uri break;\n";
 		$cp_rewrite .= "\t\t}\n";
 
-		$maxprocperip = config_get_path('captiveportal/{$captive_portal}/maxprocperip');
+		$maxprocperip = config_get_path("captiveportal/{$captive_portal}/maxprocperip");
 		if (empty($maxprocperip)) {
 			$maxprocperip = 10;
 		}
@@ -1366,7 +1366,7 @@ EOD;
 
 	/* Disable file logging */
 	$nginx_config .= "error_log /dev/null;\n";
-	if (!config_path_enabled('syslog', 'nolognginx')) {
+	if (!config_path_enabled('syslog/nolognginx')) {
 		/* Send nginx error log to syslog */
 		$nginx_config .= "error_log  syslog:server=unix:/var/run/log,facility=local5;\n";
 	}
@@ -2301,7 +2301,7 @@ function system_do_shell_commands($early = 0) {
 		$cmdn = "shellcmd";
 	}
 
-	$syscmd = config_get_path('system/{$cmdn}', '');
+	$syscmd = config_get_path("system/{$cmdn}", '');
 	if (is_array($syscmd)) {
 		/* *cmd is an array, loop through */
 		foreach ($syscmd as $cmd) {

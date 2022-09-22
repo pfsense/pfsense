@@ -118,7 +118,9 @@ if (file_exists($dhcpdlogfile)) {
 			if (in_array($expire[1], $routes)) {
 				continue;
 			}
-			$expires[$expire[1]] = $expire[1];
+			if (!in_array($expire[1], $expires)) {
+				$expires[] = $expire[1];
+			}
 		}
 	}
 	pclose($fd);
@@ -127,7 +129,7 @@ if (file_exists($dhcpdlogfile)) {
 // echo "remove routes\n";
 if (count($expires) > 0) {
 	foreach ($expires as $prefix) {
-		route_del($prefix['prefix']);
+		route_del($prefix);
 	}
 }
 

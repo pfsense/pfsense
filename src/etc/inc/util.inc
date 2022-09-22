@@ -3365,7 +3365,7 @@ function array_get_path(array &$arr, string $path, $default = null) {
 		}
 	}
 
-	if (($default != null) && empty($el)) {
+	if (($default !== null) && empty($el)) {
 		return ($default);
 	}
 	

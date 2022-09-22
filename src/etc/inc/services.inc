@@ -2422,7 +2422,7 @@ function dyndnsCheckIP($int) {
 		$gateways_status = return_gateways_status(true);
 		// If the gateway for this interface is down, then the external check cannot work.
 		// Avoid the long wait for the external check to timeout.
-		if (stristr($gateways_status[config_get_path("interfaces/{$int}/gateway")], "down")) {
+		if (stristr(array_get_path($gateways_status, config_get_path("interfaces/{$int}/gateway") . "/status"), "down")) {
 			return "down";
 		}
 

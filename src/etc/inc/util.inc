@@ -3349,7 +3349,7 @@ function array_remove_duplicate($array, $field) {
  * @param $path string path with '/' separators
  * @param $default mixed value to return if the path is not found
  * @returns mixed value at path or $default if the path does not exist or if the
- *          path keys an empty value and $default is non-null
+ *          path keys an empty string and $default is non-null
  */
 function array_get_path(array &$arr, string $path, $default = null) {
 	$vpath = explode('/', $path);
@@ -3365,7 +3365,7 @@ function array_get_path(array &$arr, string $path, $default = null) {
 		}
 	}
 
-	if (($default !== null) && empty($el)) {
+	if (($default !== null) && ($el === '')) {
 		return ($default);
 	}
 	

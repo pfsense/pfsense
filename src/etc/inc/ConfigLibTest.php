@@ -18,9 +18,13 @@ class ConfigLibTest extends TestCase {
 		$this->assertIsArray(config_get_path("/"));
 		// Sublist
 		$this->assertEquals('one', config_get_path("sublist/0"));
-		// Non-null default returned for key to empty element
+		// Non-null default returned for key to empty string element
 		$this->assertEquals('', config_get_path('bar/foobang'));
 		$this->assertEquals('foo', config_get_path('bar/foobang', 'foo'));
+		// Non-null default not returned for key to 0
+		$this->assertEquals(0, config_get_path('bar/foobaz'));
+		$this->assertEquals(0, config_get_path('bar/foobaz', 'foo'));
+
 	}
 
 	public function test_config_set_path(): void {
@@ -105,7 +109,8 @@ class ConfigLibTest extends TestCase {
 			"bar" => array(
 				"baz" => "bang",
 				"foobar" => "foobaz",
-				"foobang" => ""
+				"foobang" => "",
+				"foobaz" => 0
 			),
 			"emptybar" => null,
 			"servicefoo" => array(

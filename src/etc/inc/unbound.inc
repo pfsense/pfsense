@@ -255,14 +255,17 @@ EOF;
 	}
 
 	// Determine interfaces where unbound will bind
-	$tlsport = is_numeric($unboundcfg['tlsport']) ? $unboundcfg['tlsport'] : "853";
-	$bindintcfg = "";
+	$port = (is_port($unboundcfg['port'])) ? $unboundcfg['port'] : "53";
+	$tlsport = is_port($unboundcfg['tlsport']) ? $unboundcfg['tlsport'] : "853";
+	$bindintcfg = "interface-automatic: yes" . PHP_EOL;
+	if (isset($unboundcfg['enablessl'])) {
+		$bindintcfg .= sprintf('interface-automatic-ports: "%1$s %2$s"%3$s', $port, $tlsport, PHP_EOL);
+	}
 	$bindints = array();
 	$active_interfaces = explode(",", $unboundcfg['active_interface']);
 	if (empty($unboundcfg['active_interface']) || in_array("all", $active_interfaces, true)) {
 		$bindints[] = "0.0.0.0";
 		$bindints[] = "::0";
-		$bindintcfg .= "interface-automatic: " . (isset($unboundcfg['enablessl']) ? "no" : "yes") . "\n";
 	} else {
 		foreach ($active_interfaces as $ubif) {
 			/* Do not bind to disabled/nocarrier interfaces,
@@ -368,7 +371,6 @@ EOF;
 	}
 
 	// Server configuration variables
-	$port = (is_port($unboundcfg['port'])) ? $unboundcfg['port'] : "53";
 	$hide_identity = isset($unboundcfg['hideidentity']) ? "yes" : "no";
 	$hide_version = isset($unboundcfg['hideversion']) ? "yes" : "no";
 	$ipv6_allow = isset($config['system']['ipv6allow']) ? "yes" : "no";

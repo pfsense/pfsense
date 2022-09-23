@@ -54,6 +54,7 @@ net/hping3
 net/librdkafka
 net/mosh
 net/py-speedtest-cli
+net/realtek-re-kmod
 net/trafshow
 net/trafshow3
 net/udpbroadcastrelay

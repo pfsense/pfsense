@@ -40,7 +40,7 @@ get_ufsid() {
 
 	if [ -z "${ID_PART1}" -o -z  "${ID_PART2}" ]; then
 		echo "Invalid ufsid on ${1} (${ID_PARTS}), cannot continue"
-		exit -1
+		exit 1
 	fi
 
 	# Safety check to avoid https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=156908
@@ -81,7 +81,7 @@ do
 		fi
 	else
 		echo "Unable to find device for ${FS}"
-		exit -1
+		exit 1
 	fi
 	echo "FS: ${FS} on device ${DEV} with ufsid ${UFSID}"
 done

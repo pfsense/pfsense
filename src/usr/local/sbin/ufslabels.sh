@@ -38,7 +38,7 @@ get_ufsid() {
 	ID_PART2=$(echo ${ID_PARTS} | /usr/bin/awk '{print $2}')
 	# "f288b35d"
 
-	if [ -z "${ID_PART1}" -o -z  "${ID_PART2}" ]; then
+	if [ -z "${ID_PART1}" ] || [ -z "${ID_PART2}" ]; then
 		echo "Invalid ufsid on ${1} (${ID_PARTS}), cannot continue"
 		exit 1
 	fi
@@ -122,7 +122,7 @@ else
 fi
 
 # Commit changes
-if [ "${COMMIT}" = "y" -o "${COMMIT}" = "Y" ]; then
+if [ "${COMMIT}" = "y" ] || [ "${COMMIT}" = "Y" ]; then
 
 	echo "Applying label to swap partition"
 	SWAPNUM=0

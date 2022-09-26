@@ -51,7 +51,7 @@ ramdisk_make_backup
 scripts=/usr/local/etc/rc.d/shutdown.*.sh
 for script in $scripts
 do
-	if [ -f "$script" -a -x "$script" ]
+	if [ -f "$script" ] && [ -x "$script" ]
 	then
 		$script
 	fi

@@ -27,15 +27,15 @@ get_ufsid() {
 		return
 	fi
 
-	ID_PARTS=$(/sbin/dumpfs /dev/${_dev} | \
+	ID_PARTS=$(/sbin/dumpfs "/dev/${_dev}" | \
 		/usr/bin/head -n 2 | \
 		/usr/bin/tail -n 1 | \
 		/usr/bin/cut -f2 -d'[' | \
 		/usr/bin/cut -f1 -d ']')
 	# " 51110eb0 f288b35d " (note it has more spaces than we need/want)
-	ID_PART1=$(echo ${ID_PARTS} | /usr/bin/awk '{print $1}')
+	ID_PART1=$(echo "${ID_PARTS}" | /usr/bin/awk '{print $1}')
 	# "51110eb0"
-	ID_PART2=$(echo ${ID_PARTS} | /usr/bin/awk '{print $2}')
+	ID_PART2=$(echo "${ID_PARTS}" | /usr/bin/awk '{print $2}')
 	# "f288b35d"
 
 	if [ -z "${ID_PART1}" ] || [ -z "${ID_PART2}" ]; then
@@ -45,11 +45,11 @@ get_ufsid() {
 
 	# Safety check to avoid https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=156908
 	string_length "${ID_PART1}"
-	if [ ${LEN} -ne 8 ]; then
+	if [ "${LEN}" -ne 8 ]; then
 		ID_PART1=$(printf "%08s" "${ID_PART1}")
 	fi
 	string_length "${ID_PART2}"
-	if [ ${LEN} -ne 8 ]; then
+	if [ "${LEN}" -ne 8 ]; then
 		ID_PART2=$(printf "%08s" "${ID_PART2}")
 	fi
 	UFSID="${ID_PART1}${ID_PART2}"
@@ -57,26 +57,26 @@ get_ufsid() {
 
 find_fs_device() {
 	unset DEV
-	DEV=$(/usr/bin/grep -e "[[:blank:]]*${1}[[:blank:]]" ${FSTAB} | /usr/bin/awk '{print $1}')
+	DEV=$(/usr/bin/grep -e "[[:blank:]]*${1}[[:blank:]]" "${FSTAB}" | /usr/bin/awk '{print $1}')
 	DEV=${DEV##/dev/}
 }
 
-FSTAB=${DESTDIR}/etc/fstab
+FSTAB="${DESTDIR}/etc/fstab"
 unset NEED_CHANGES
-cp ${FSTAB} ${FSTAB}.tmp
+cp "${FSTAB}" "${FSTAB}.tmp"
 
-ALL_FILESYSTEMS=$(/usr/bin/awk '/ufs/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $2}' ${DESTDIR}/etc/fstab)
+ALL_FILESYSTEMS=$(/usr/bin/awk '/ufs/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $2}' "${DESTDIR}/etc/fstab")
 
 for FS in ${ALL_FILESYSTEMS}
 do
 	find_fs_device "${FS}"
 	if [ "${DEV}" != "" ]; then
-		get_ufsid ${DEV}
+		get_ufsid "${DEV}"
 		string_length "${UFSID}"
-		if [ ${LEN} -ne 16 ]; then
+		if [ "${LEN}" -ne 16 ]; then
 			echo "Invalid UFS ID for FS ${FS} ($UFSID), skipping"
 		else
-			/usr/bin/sed -i '' -e "s/${DEV}/ufsid\/${UFSID}/g" ${FSTAB}.tmp
+			/usr/bin/sed -i '' -e "s/${DEV}/ufsid\/${UFSID}/g" "${FSTAB}.tmp"
 			NEED_CHANGES=1
 		fi
 	else
@@ -86,7 +86,7 @@ do
 	echo "FS: ${FS} on device ${DEV} with ufsid ${UFSID}"
 done
 
-ALL_SWAPFS=$(/usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1}' ${DESTDIR}/etc/fstab)
+ALL_SWAPFS=$(/usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1}' "${DESTDIR}/etc/fstab")
 SWAPNUM=0
 for SFS in ${ALL_SWAPFS}
 do
@@ -95,7 +95,7 @@ do
 		SWAPDEV=${DEV}
 		echo "FS: Swap slice ${SWAPNUM} on device ${SWAPDEV}"
 		if [ "${SWAPDEV}" != "" ]; then
-			/usr/bin/sed -i '' -e "s/${SWAPDEV}/label\/swap${SWAPNUM}/g" ${FSTAB}.tmp
+			/usr/bin/sed -i '' -e "s/${SWAPDEV}/label\/swap${SWAPNUM}/g" "${FSTAB}.tmp"
 			NEED_CHANGES=1
 		fi
 		SWAPNUM=$((SWAPNUM+1))
@@ -109,10 +109,10 @@ fi
 
 echo "===================="
 echo "Current fstab:"
-cat ${FSTAB}
+cat "${FSTAB}"
 echo "===================="
 echo "New fstab:"
-cat ${FSTAB}.tmp
+cat "${FSTAB}.tmp"
 
 if [ "${1}" = "commit" ]; then
 	COMMIT=y
@@ -133,16 +133,16 @@ if [ "${COMMIT}" = "y" ] || [ "${COMMIT}" = "Y" ]; then
 			SWAPDEV=${DEV}
 			if [ -n "${SWAPDEV}" ]; then
 				echo "Disabling swap ${SWAPDEV} to apply label"
-				/sbin/swapoff /dev/${SWAPDEV}
-				/sbin/glabel label swap${SWAPNUM} /dev/${SWAPDEV}
+				/sbin/swapoff "/dev/${SWAPDEV}"
+				/sbin/glabel label "swap${SWAPNUM}" "/dev/${SWAPDEV}"
 			fi
 			SWAPNUM=$((SWAPNUM+1))
 		fi
 	done
 
 	echo "Activating new fstab"
-	/bin/mv -f ${FSTAB} ${FSTAB}.old
-	/bin/mv -f ${FSTAB}.tmp ${FSTAB}
+	/bin/mv -f "${FSTAB}" "${FSTAB}.old"
+	/bin/mv -f "${FSTAB}.tmp" "${FSTAB}"
 
 	echo "Re-enabling swap"
 	/sbin/swapon -a 2>/dev/null >/dev/null

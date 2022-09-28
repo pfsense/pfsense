@@ -15,6 +15,7 @@ emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 emulators/qemu-guest-agent
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd
+net/intel-em-kmod
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net-mgmt/%%PRODUCT_NAME%%-pkg-arpwatch

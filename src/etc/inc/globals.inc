@@ -224,22 +224,35 @@ $factory_default_checkipservice = array(
 
 $dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6", "linode", "linode-v6");
 
-/* pf tokens from FreeBSD source sbin/pfctl/parse.y (plus our custom entries at the end)*/
+// pf tokens from FreeBSD source /sbin/pfctl/parse.y
 global $pf_reserved_keywords;
 $pf_reserved_keywords = array(
-	"pass", "block", "scrub", "return", "in", "os", "out", "log", "quick", "on", "from", "to", "flags", "returnrst",
-	"returnicmp", "returnicmp6", "proto", "inet", "inet6", "all", "any", "icmptype", "icmp6type", "code", "keep",
-	"modulate", "state", "port", "rdr", "nat", "binat", "arrow", "nodf", "minttl", "error", "allowopts", "fastroute",
-	"filename", "routeto", "dupto", "replyto", "no", "label", "noroute", "urpffailed", "fragment", "user", "group",
-	"maxmss", "maximum", "ttl", "tos", "drop", "table", "reassemble", "fragdrop", "fragcrop", "anchor", "natanchor",
-	"rdranchor", "binatanchor", "set", "optimization", "timeout", "limit", "loginterface", "blockpolicy", "randomid",
-	"requireorder", "synproxy", "fingerprints", "nosync", "debug", "skip", "hostid", "antispoof", "for", "include",
-	"bitmask", "random", "sourcehash", "roundrobin", "staticport", "probability", "altq", "cbq", "codel", "priq",
-	"hfsc", "fairq", "bandwidth", "tbrsize", "linkshare", "realtime", "upperlimit", "queue", "priority", "qlimit",
-	"hogs", "buckets", "rtable", "target", "interval", "load", "ruleset_optimization", "prio", "stickyaddress",
-	"maxsrcstates", "maxsrcnodes", "sourcetrack", "global", "rule", "maxsrcconn", "maxsrcconnrate", "overload",
-	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
-	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+	// Original tokens
+	'all', 'allow-opts', 'altq', 'anchor', 'antispoof', 'any', 'bandwidth', 'binat', 'binat-anchor', 'bitmask',
+	'block', 'block-policy', 'buckets', 'cbq', 'code', 'codelq', 'crop', 'debug', 'divert-reply', 'divert-to',
+	'dnpipe', 'dnqueue', 'drop', 'drop-ovl', 'dup-to', 'ether', 'fail-policy', 'fairq', 'fastroute', 'file',
+	'fingerprints', 'flags', 'floating', 'flush', 'for', 'fragment', 'from', 'global', 'group', 'hfsc', 'hogs',
+	'hostid', 'icmp-type', 'icmp6-type', 'if-bound', 'in', 'include', 'inet', 'inet6', 'interval', 'keep',
+	'keepcounters', 'l3', 'label', 'limit', 'linkshare', 'load', 'log', 'loginterface', 'map-e-portset', 'match',
+	'max', 'max-mss', 'max-src-conn', 'max-src-conn-rate', 'max-src-nodes', 'max-src-states', 'min-ttl', 'modulate',
+	'nat', 'nat-anchor', 'no', 'no-df', 'no-route', 'no-sync', 'on', 'optimization', 'os', 'out', 'overload',
+	'pass', 'port', 'prio', 'priority', 'priq', 'probability', 'proto', 'qlimit', 'queue', 'quick', 'random',
+	'random-id', 'rdr', 'rdr-anchor', 'realtime', 'reassemble', 'reply-to', 'require-order', 'return', 'return-icmp',
+	'return-icmp6', 'return-rst', 'ridentifier', 'round-robin', 'route', 'route-to', 'rtable', 'rule',
+	'ruleset-optimization', 'scrub', 'set', 'set-tos', 'skip', 'sloppy', 'source-hash', 'source-track', 'state',
+	'state-defaults', 'state-policy', 'static-port', 'sticky-address', 'syncookies', 'synproxy', 'table', 'tag',
+	'tagged', 'target', 'tbrsize', 'timeout', 'to', 'tos', 'ttl', 'upperlimit', 'urpf-failed', 'user',
+	// Original tokens in fuzzy format
+	'allowopts', 'binatanchor', 'blockpolicy', 'divertreply', 'divertto', 'duptoicmptype', 'icmp6type', 'ifboundmaxmss',
+	'maxsrcconn', 'maxsrcconnrate', 'maxsrcnodes', 'maxsrcstates', 'minttl', 'natanchornodf', 'noroute', 'nosync',
+	'randomidrdranchor', 'replyto', 'requireorderreturnicmp', 'returnicmp6', 'returnrstroundrobinrouteto',
+	'ruleset_optimization', 'settos', 'sourcehash', 'sourcetrackstatedefaults', 'statepolicy', 'staticport',
+	'stickyaddress', 'urpffailed', 'crop', 'dnpipe', 'dnqueue', 'dropovl', 'ether', 'failpolicy', 'file', 'keepcounters',
+	'l3', 'mapeportset', 'match', 'ridentifier', 'syncookies',
+	// Custom tokens
+	'arrow', 'codel', 'error', 'filename', 'fragcrop', 'fragdrop', 'IPsec', 'L2TP', 'maximummin', 'OpenVPN',
+	'pppoe', 'pptp'
+);
 
 /* Reserved table names to avoid collision */
 global $reserved_table_names;

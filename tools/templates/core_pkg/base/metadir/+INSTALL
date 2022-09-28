@@ -4,45 +4,45 @@ if [ "${2}" != "POST-INSTALL" ]; then
 	exit 0
 fi
 
-if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/base.txz ]; then
+if [ ! -f ${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/base.txz ]; then
 	echo "===> ERROR: base tarball not found!"
 	exit 1
 fi
 
 # Save a copy of /etc/version to trigger copynotice.inc show when it's needed
-if [ ! -f /cf/conf/copynotice_version ]; then
+if [ ! -f ${PKG_ROOTDIR}/cf/conf/copynotice_version ]; then
 	# Create empty file to force it to differ and show notice once
-	echo "" > /cf/conf/copynotice_version
+	echo "" > ${PKG_ROOTDIR}/cf/conf/copynotice_version
 else
-	/bin/cp -f /etc/version /cf/conf/copynotice_version
+	/bin/cp -f ${PKG_ROOTDIR}/etc/version ${PKG_ROOTDIR}/cf/conf/copynotice_version
 fi
 
-echo %%PRODUCT_NAME%% > /etc/platform
+echo %%PRODUCT_NAME%% > ${PKG_ROOTDIR}/etc/platform
 
 echo "===> Removing schg flag from base files"
 
 # Cleanup schg flags
 chflags -R noschg \
-	/boot \
-	/bin \
-	/sbin \
-	/usr/bin \
-	/usr/sbin \
-	/libexec \
-	/lib \
-	/usr/lib >/dev/null 2>&1
+	${PKG_ROOTDIR}/boot \
+	${PKG_ROOTDIR}/bin \
+	${PKG_ROOTDIR}/sbin \
+	${PKG_ROOTDIR}/usr/bin \
+	${PKG_ROOTDIR}/usr/sbin \
+	${PKG_ROOTDIR}/libexec \
+	${PKG_ROOTDIR}/lib \
+	${PKG_ROOTDIR}/usr/lib >/dev/null 2>&1
 
 echo "===> Extracting new base tarball"
 
 # Install new base files
-tar -C / --exclude ./var/empty -xJPUf \
+tar -C ${PKG_ROOTDIR}/ --exclude ./var/empty -xJPUf \
 	/usr/local/share/%%PRODUCT_NAME%%/base.txz
 
 # Create/remove trigger to show copynotice when version changes
-if /usr/bin/cmp -s /etc/version /cf/conf/copynotice_version; then
-	/bin/rm -f /cf/conf/copynotice_display >/dev/null 2>&1
+if /usr/bin/cmp -s ${PKG_ROOTDIR}/etc/version ${PKG_ROOTDIR}/cf/conf/copynotice_version; then
+	/bin/rm -f ${PKG_ROOTDIR}/cf/conf/copynotice_display >/dev/null 2>&1
 else
-	/usr/bin/touch /cf/conf/copynotice_display
+	/usr/bin/touch ${PKG_ROOTDIR}/cf/conf/copynotice_display
 fi
 
 echo "===> Removing static obsoleted files"
@@ -53,16 +53,16 @@ IFS="
 "
 
 # Process obsolete files
-if [ -f /etc/%%PRODUCT_NAME%%.obsoletedfiles ]; then
-	for f in $(cat /etc/%%PRODUCT_NAME%%.obsoletedfiles); do
-		if [ -n "${f}" -a -d "${f}" ]; then
-			chflags -R noschg "${f}"
-			rm -rf "${f}"
-		elif [ -n "${f}" -a -f "${f}" ]; then
-			chflags noschg "${f}"
-			rm -f "${f}"
-		elif [ -n "${f}" -a -L "${f}" ]; then
-			rm -f "${f}"
+if [ -f ${PKG_ROOTDIR}/etc/%%PRODUCT_NAME%%.obsoletedfiles ]; then
+	for f in $(cat ${PKG_ROOTDIR}/etc/%%PRODUCT_NAME%%.obsoletedfiles); do
+		if [ -n "${f}" -a -d "${PKG_ROOTDIR}${f}" ]; then
+			chflags -R noschg "${PKG_ROOTDIR}${f}"
+			rm -rf "${PKG_ROOTDIR}${f}"
+		elif [ -n "${f}" -a -f "${PKG_ROOTDIR}${f}" ]; then
+			chflags noschg "${PKG_ROOTDIR}${f}"
+			rm -f "${PKG_ROOTDIR}${f}"
+		elif [ -n "${f}" -a -L "${PKG_ROOTDIR}${f}" ]; then
+			rm -f "${PKG_ROOTDIR}${f}"
 		fi
 	done
 fi
@@ -71,6 +71,6 @@ fi
 IFS=${oIFS}
 
 # Save current pkg_set_version
-cp -f /etc/version /usr/local/share/%%PRODUCT_NAME%%/running_pkg_set_version
+cp -f ${PKG_ROOTDIR}/etc/version ${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/running_pkg_set_version
 
 exit 0

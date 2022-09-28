@@ -294,11 +294,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		}
 	}
 
-	if (is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if (does_interface_exist($vlan['if']) == false) {
-				$input_errors[] = sprintf(gettext('Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be created please fix the issue before continuing.'), $vlan['if'], $vlan['tag']);
-			}
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if (does_interface_exist($vlan['if']) == false) {
+			$input_errors[] = sprintf(gettext('Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be created please fix the issue before continuing.'), $vlan['if'], $vlan['tag']);
 		}
 	}
 
@@ -316,6 +314,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 						/* Mark this to be reconfigured in any case. */
 						$reloadif = true;
 						$filter_reload = true;
+						$gateway_monitor_reload = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (isset($portlist[$ifport]['isppp'])) {
@@ -359,6 +358,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		 * see https://redmine.pfsense.org/issues/12949 */
 		if ($filter_reload) {
 			filter_configure();
+		}
+		if ($gateway_monitor_reload) {
+			setup_gateways_monitor();
 		}
 		write_config("Interfaces assignment settings changed");
 
@@ -426,8 +428,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			 * then ensure that we are not running DHCP on the wan which
 			 * will make a lot of ISPs unhappy.
 			 */
-			if ($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
-				unset($config['dhcpd']['wan']);
+			if (config_path_enabled('interfaces', 'lan')
+				&& config_path_enabled('dhcpd', 'wan')) {
+					config_del_path('dhcp/wan');
 			}
 
 			link_interface_to_vlans($realid, "update");

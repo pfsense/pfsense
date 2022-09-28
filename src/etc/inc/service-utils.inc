@@ -85,73 +85,69 @@ function write_rcfile($params) {
 }
 
 function start_service($name, $after_sync = false) {
-	global $config;
-
 	if (empty($name)) {
 		return;
 	}
 
-	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
-		foreach ($config['installedpackages']['service'] as $service) {
-			if (isset($service['name']) && (strtolower($service['name']) == strtolower($name))) {
-				/* Avoid starting twice if this is called just after a
-				 * package sync which starts the service itself. */
-				if ($after_sync && isset($service['starts_on_sync'])) {
-					break;
-				}
-				if ($service['rcfile']) {
-					$prefix = RCFILEPREFIX;
-					if (!empty($service['prefix'])) {
-						$prefix = &$service['prefix'];
-					}
-					if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
-						mwexec_bg("{$prefix}{$service['rcfile']} start");
-					}
-				}
-				if (!empty($service['startcmd'])) {
-					eval($service['startcmd']);
-				}
+	foreach (config_get_path('installedpackages/service', []) as $service) {
+		if (empty($service)) {
+			continue;
+		}
+		if (isset($service['name']) && (strtolower($service['name']) == strtolower($name))) {
+			/* Avoid starting twice if this is called just after a
+			 * package sync which starts the service itself. */
+			if ($after_sync && isset($service['starts_on_sync'])) {
 				break;
 			}
+			if ($service['rcfile']) {
+				$prefix = RCFILEPREFIX;
+				if (!empty($service['prefix'])) {
+					$prefix = &$service['prefix'];
+				}
+				if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
+					mwexec_bg("{$prefix}{$service['rcfile']} start");
+				}
+			}
+			if (!empty($service['startcmd'])) {
+				eval($service['startcmd']);
+			}
+			break;
 		}
 	}
 }
 
 function stop_service($name) {
-	global $config;
-
 	if (empty($name)) {
 		return;
 	}
 
-	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
-		foreach ($config['installedpackages']['service'] as $service) {
-			if (strtolower($service['name']) == strtolower($name)) {
-				if ($service['rcfile']) {
-					$prefix = RCFILEPREFIX;
-					if (!empty($service['prefix'])) {
-						$prefix = &$service['prefix'];
-					}
-					if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
-						mwexec("{$prefix}{$service['rcfile']} stop");
-					}
-					return;
+	foreach (config_get_path('installedpackages/service', []) as $service) {
+		if (empty($service)) {
+			continue;
+		}
+		if (strtolower($service['name']) == strtolower($name)) {
+			if ($service['rcfile']) {
+				$prefix = RCFILEPREFIX;
+				if (!empty($service['prefix'])) {
+					$prefix = &$service['prefix'];
 				}
-				if (!empty($service['stopcmd'])) {
-					eval($service['stopcmd']);
-				} elseif (!empty($service['executable'])) {
-					mwexec("/usr/bin/killall " . escapeshellarg($service['executable']));
+				if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
+					mwexec("{$prefix}{$service['rcfile']} stop");
 				}
-
-				break;
+				return;
 			}
+			if (!empty($service['stopcmd'])) {
+				eval($service['stopcmd']);
+			} elseif (!empty($service['executable'])) {
+				mwexec("/usr/bin/killall " . escapeshellarg($service['executable']));
+			}
+
+			break;
 		}
 	}
 }
 
 function restart_service($name) {
-	global $config;
-
 	if (empty($name)) {
 		return;
 	}
@@ -161,14 +157,15 @@ function restart_service($name) {
 	}
 	start_service($name);
 
-	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
-		foreach ($config['installedpackages']['service'] as $service) {
-			if (strtolower($service['name']) == strtolower($name)) {
-				if ($service['restartcmd']) {
-					eval($service['restartcmd']);
-				}
-				break;
+	foreach (config_get_path('installedpackages/service', []) as $service) {
+		if (empty($service)) {
+			continue;
+		}
+		if (strtolower($service['name']) == strtolower($name)) {
+			if ($service['restartcmd']) {
+				eval($service['restartcmd']);
 			}
+			break;
 		}
 	}
 }
@@ -190,7 +187,6 @@ function is_dhcp_running($interface) {
 }
 
 function restart_service_if_running($service) {
-	global $config;
 	if (is_service_running($service)) {
 		restart_service($service);
 	}
@@ -198,55 +194,106 @@ function restart_service_if_running($service) {
 }
 
 function is_service_enabled($service_name) {
-	global $config;
-	if ($service_name == "") {
+	switch ($service_name) {
+		case 'bsnmpd':
+			return config_path_enabled('snmpd');
+			break;
+		case 'dhcrelay':
+			return config_path_enabled('dhcrelay');
+			break;
+		case 'dhcrelay6':
+			return config_path_enabled('dhcrelay6');
+			break;
+		case 'dhcpd':
+			return is_dhcp_server_enabled();
+			break;
+		case 'dnsmasq':
+			return config_path_enabled('dnsmasq');
+			break;
+		case 'dpinger':
+			/* TODO: Should loop through gateways and check to make
+			 *       sure they don't all have monitoring disabled. */
+			$gateways_arr = return_gateways_array();
+			return is_array($gateways_arr) && !empty($gateways_arr);
+			break;
+		case 'igmpproxy':
+			return (config_path_enabled('igmpproxy') && !empty(config_get_path('igmpproxy/igmpentry', [])));
+			break;
+		case 'ipsec':
+			return ipsec_enabled();
+			break;
+		case 'miniupnpd':
+			return config_path_enabled('installedpackages/miniupnpd/config/0');
+			break;
+		case 'ntpd':
+			return (config_get_path('ntpd/enable') != 'disabled');
+			break;
+		case 'pcscd':
+			return config_path_enabled('ipsec', 'pkcs11support');
+			break;
+		case 'radvd':
+			return is_radvd_enabled();
+			break;
+		case 'sshd':
+			return config_path_enabled('system/ssh');
+			break;
+		case 'syslogd':
+			$local_enabled = !config_path_enabled('syslog', 'disablelocallogging');
+			$remote_enabled = !empty(system_syslogd_get_remote_servers(config_get_path('syslog', [])));
+			return ($local_enabled || $remote_enabled);
+			break;
+		case 'unbound':
+			return config_path_enabled('unbound');
+			break;
+		default:
+			return false;
+	}
+	/* TODO: The service name isn't likely to match the config tag,
+	 *       needs better logic or pkg plugin to probe */
+	$pkg_enabled = config_get_path("installedpackages/{$service_name}/config/0/enable", null);
+	if (($pkg_enabled !== null) &&
+	    (empty($pkg_enabled) || ($pkg_enabled === 'off'))) {
 		return false;
 	}
-	if (is_array($config['installedpackages'])) {
-		if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) &&
-		    ((empty($config['installedpackages'][$service_name]['config'][0]['enable'])) ||
-		    ($config['installedpackages'][$service_name]['config'][0]['enable'] === 'off'))) {
-			return false;
-		}
-	}
+
+	/* Unknown service, for compatibility reasons, return true. */
 	return true;
 }
 
 function is_service_running($service, $ps = "") {
-	global $config;
-
-	if (is_array($config['installedpackages']['service'])) {
-		foreach ($config['installedpackages']['service'] as $aservice) {
-			if (isset($aservice['name']) && (strtolower($service) == strtolower($aservice['name']))) {
-				if ($aservice['custom_php_service_status_command'] <> "") {
-					eval("\$rc={$aservice['custom_php_service_status_command']};");
-					return $rc;
-				}
-				if (empty($aservice['executable'])) {
-					return false;
-				}
-				if (is_process_running($aservice['executable'])) {
-					return true;
-				}
-
+	foreach (config_get_path('installedpackages/service', []) as $aservice) {
+		if (empty($aservice)) {
+			continue;
+		}
+		if (isset($aservice['name']) && (strtolower($service) == strtolower($aservice['name']))) {
+			if ($aservice['custom_php_service_status_command'] <> "") {
+				eval("\$rc={$aservice['custom_php_service_status_command']};");
+				return $rc;
+			}
+			if (empty($aservice['executable'])) {
 				return false;
 			}
+			if (is_process_running($aservice['executable'])) {
+				return true;
+			}
+			return false;
 		}
 	}
-
 	if (is_process_running($service)) {
 		return true;
 	}
-
 	return false;
 }
 
 function get_services() {
-	global $config;
-	if (is_array($config['installedpackages']['service'])) {
-		$services = $config['installedpackages']['service'];
-	} else {
-		$services = array();
+	$services = config_get_path('installedpackages/service', []);
+
+	/* Clean up any empty services */
+	foreach ($services as $k => &$s) {
+		if (empty($s)) {
+			config_del_path('installedpackages/services/' . $k);
+			unset($s);
+		}
 	}
 
 	/*
@@ -256,44 +303,43 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "radvd";
 		$pconfig['description'] = gettext("Router Advertisement Daemon");
-		$pconfig['enabled'] = is_service_enabled("radvd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['dnsmasq']['enable'])) {
+	if (config_path_enabled('dnsmasq')) {
 		$pconfig = array();
 		$pconfig['name'] = "dnsmasq";
 		$pconfig['description'] = gettext("DNS Forwarder");
-		$pconfig['enabled'] = is_service_enabled("dnsmasq");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['unbound']['enable'])) {
+	if (config_path_enabled('unbound')) {
 		$pconfig = array();
 		$pconfig['name'] = "unbound";
 		$pconfig['description'] = gettext("DNS Resolver");
-		$pconfig['enabled'] = is_service_enabled("unbound");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['ipsec']['pkcs11support'])) {
+	if (config_path_enabled('ipsec', 'pkcs11support')) {
 		$pconfig = array();
 		$pconfig['name'] = "pcscd";
 		$pconfig['description'] = gettext("PC/SC Smart Card Daemon");
-		$pconfig['enabled'] = is_service_enabled("pcscd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	init_config_arr(array('ntpd'));
-	if ($config['ntpd']['enable'] != 'disabled') {
+	if (config_get_path('ntpd/enable') != 'disabled') {
 		$pconfig = array();
 		$pconfig['name'] = "ntpd";
 		$pconfig['description'] = gettext("NTP clock sync");
-		$pconfig['enabled'] = is_service_enabled("ntpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -305,41 +351,43 @@ function get_services() {
 	$pconfig['status'] = get_service_status($pconfig);
 	$services[] = $pconfig;
 
-	if (is_array($config['captiveportal'])) {
-		foreach ($config['captiveportal'] as $zone => $setting) {
-			if (isset($setting['enable'])) {
-				$pconfig = array();
-				$pconfig['name'] = "captiveportal";
-				$pconfig['zone'] = $zone;
-				$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($setting['zone']);
-				$services[] = $pconfig;
-			}
+	foreach (config_get_path('captiveportal', []) as $zone => $setting) {
+		if (empty($setting)) {
+			continue;
+		}
+		if (isset($setting['enable'])) {
+			$pconfig = array();
+			$pconfig['name'] = "captiveportal";
+			$pconfig['zone'] = $zone;
+			$pconfig['enabled'] = true;
+			$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($setting['zone']);
+			$services[] = $pconfig;
 		}
 	}
 
 	$iflist = array();
 	$ifdescrs = get_configured_interface_list();
 	foreach ($ifdescrs as $if) {
-		$oc = $config['interfaces'][$if];
-		if ($oc['if'] && (!link_interface_to_bridge($if))) {
+		if (config_get_path("interfaces/{$if}/if") &&
+		    !link_interface_to_bridge($if)) {
 			$iflist[$if] = $if;
 		}
 	}
 
-	if (isset($config['dhcrelay']['enable'])) {
+	if (config_path_enabled('dhcrelay')) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
 		$pconfig['description'] = gettext("DHCP Relay");
-		$pconfig['enabled'] = is_service_enabled("dhcprelay");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['dhcrelay6']['enable'])) {
+	if (config_path_enabled('dhcrelay6')) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay6";
 		$pconfig['description'] = gettext("DHCPv6 Relay");
-		$pconfig['enabled'] = is_service_enabled("dhcrelay6");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -348,13 +396,13 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
 		$pconfig['description'] = gettext("DHCP Service");
-		$pconfig['enabled'] = is_service_enabled("dhcpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
 	$gateways_arr = return_gateways_array();
-	if (is_array($gateways_arr)) {
+	if (is_array($gateways_arr) && !empty($gateways_arr)) {
 		$pconfig = array();
 		$pconfig['name'] = "dpinger";
 		$pconfig['description'] = gettext("Gateway Monitoring Daemon");
@@ -363,16 +411,16 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['snmpd']['enable'])) {
+	if (config_path_enabled('snmpd')) {
 		$pconfig = array();
 		$pconfig['name'] = "bsnmpd";
 		$pconfig['description'] = gettext("SNMP Service");
-		$pconfig['enabled'] = is_service_enabled("bsnmpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
+	if (!empty(config_get_path('igmpproxy/igmpentry', []))) {
 		$pconfig = array();
 		$pconfig['name'] = "igmpproxy";
 		$pconfig['description'] = gettext("IGMP proxy");
@@ -381,11 +429,11 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['installedpackages']['miniupnpd']) && $config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+	if (config_path_enabled('installedpackages/miniupnpd/config/0')) {
 		$pconfig = array();
 		$pconfig['name'] = "miniupnpd";
 		$pconfig['description'] = gettext("UPnP Service");
-		$pconfig['enabled'] = is_service_enabled("miniupnpd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
@@ -394,35 +442,32 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");
-		$pconfig['enabled'] = is_service_enabled("ipsec");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['system']['ssh']['enable'])) {
+	if (config_path_enabled('system/ssh')) {
 		$pconfig = array();
 		$pconfig['name'] = "sshd";
 		$pconfig['description'] = gettext("Secure Shell Daemon");
-		$pconfig['enabled'] = is_service_enabled("sshd");
+		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
 	foreach (array('server', 'client') as $mode) {
-		init_config_arr(array('openvpn'));
-		if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-			foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-				if (!isset($setting['disable'])) {
-					$pconfig = array();
-					$pconfig['name'] = "openvpn";
-					$pconfig['mode'] = $mode;
-					$pconfig['id'] = $id;
-					$pconfig['vpnid'] = $setting['vpnid'];
-					$pconfig['description'] = gettext("OpenVPN") . " " . $mode . ": " . htmlspecialchars($setting['description']);
-					$pconfig['enabled'] = is_service_enabled("openvpn");
-					$pconfig['status'] = get_service_status($pconfig);
-					$services[] = $pconfig;
-				}
+		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $id => $setting) {
+			if (!isset($setting['disable'])) {
+				$pconfig = array();
+				$pconfig['name'] = "openvpn";
+				$pconfig['mode'] = $mode;
+				$pconfig['id'] = $id;
+				$pconfig['vpnid'] = $setting['vpnid'];
+				$pconfig['description'] = gettext("OpenVPN") . " " . $mode . ": " . htmlspecialchars($setting['description']);
+				$pconfig['enabled'] = true;
+				$pconfig['status'] = get_service_status($pconfig);
+				$services[] = $pconfig;
 			}
 		}
 	}
@@ -499,12 +544,9 @@ function service_dispname_compare($a, $b) {
 }
 
 function get_pkg_descr($package_name) {
-	global $config;
-	if (is_array($config['installedpackages']['package'])) {
-		foreach ($config['installedpackages']['package'] as $pkg) {
-			if ($pkg['name'] == $package_name) {
-				return $pkg['descr'];
-			}
+	foreach (config_get_path('installedpackages/package', []) as $pkg) {
+		if ($pkg['name'] == $package_name) {
+			return $pkg['descr'];
 		}
 	}
 	return gettext("Not available.");
@@ -518,7 +560,7 @@ function get_service_status($service) {
 			break;
 		case "captiveportal":
 			$running = is_pid_running("{$g['varrun_path']}/nginx-{$service['zone']}-CaptivePortal.pid");
-			if (isset($config['captiveportal'][$service['zone']]['httpslogin'])) {
+			if (config_path_enabled("captiveportal/{$service['zone']}", 'httpslogin')) {
 				$running = $running && is_pid_running("{$g['varrun_path']}/nginx-{$service['zone']}-CaptivePortal-SSL.pid");
 			}
 			break;
@@ -855,7 +897,7 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'openvpn':
 			$vpnmode = htmlspecialchars($extras['vpnmode']);
-			if ($vpnmode == "server" || $vpnmode == "client") {
+			if (($vpnmode == "server") || ($vpnmode == "client")) {
 				$id = htmlspecialchars($extras['id']);
 				$configfile = "{$g['openvpn_base']}/{$vpnmode}{$id}/config.ovpn";
 				if (file_exists($configfile)) {

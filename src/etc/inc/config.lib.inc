@@ -154,8 +154,6 @@ function parse_config($parse = false) {
 	$config_parsed = true;
 	unlock($lockkey);
 
-	alias_make_table();
-
 	return $config;
 }
 
@@ -1184,29 +1182,35 @@ function pfSense_clear_globals() {
 	unset($config);
 }
 
-/* Initialize a config array multiple levels deep only if unset
+/*
+ * Same semantics as init_config_arr(), but with the new
+ * path string interface.
+ */
+function config_init_path(string $path) {
+	global $config;
+	array_init_path($config, $path);
+}
+
+/* 
+ * Notice: Use config_init_path() instead, if you must...
+ *
+ * This is retained for compatibility with older code
+ *
+ * Initialize a config array multiple levels deep only if unset
  * Pass it an array of keys to test and create
  * init_config_arr(array('virtualip', 'vip'));
  */
 function init_config_arr($keys) {
-	global $config;
-	$c = &$config;
-	if (!is_array($keys)) {
-		return null;
-	}
-	foreach ($keys as $k) {
-		if (!is_array($c[$k])) {
-			$c[$k] = array();
-		}
-		$c = &$c[$k];
-	}
+	// just translate the old signature to the new one
+	config_init_path(implode('/', $keys));
 }
 
 /**
  * Return a value specified by path in the config, if it exists.
  * @param $path string path with '/' separators
  * @param $default mixed value to return if the path is not found
- * @returns mixed value at path or $default if the path does not exist
+ * @returns mixed value at path or $default if the path does not exist or if the
+ *          path keys an empty string and $default is non-null
  */
 function config_get_path(string $path, $default = null) {
 	global $config;

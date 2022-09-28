@@ -449,7 +449,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$max_states = 0;
 	if (is_numeric(config_get_path('system/maximumstates'))) {
 		/* User defined maximum states in Advanced menu. */
-		$max_states = is_numeric(config_get_path('system/maximumstates'));
+		$max_states = config_get_path('system/maximumstates');
 	} else {
 		$max_states = pfsense_default_state_size();
 	}
@@ -3747,7 +3747,7 @@ EOD;
 		$tracker = $saved_tracker;
 
 		/* block bogon networks */
-		/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */
+		/* https://www.team-cymru.org/Services/Bogons/bogon-bn-nonagg.txt */
 		/* file is automatically in cron every 3000 minutes */
 		if (!config_path_enabled('syslog','nologbogons')) {
 			$bogonlog = "log";
@@ -3758,7 +3758,7 @@ EOD;
 		if (config_path_enabled("interfaces/{$on}/blockbogons")) {
 			$ipfrules .= <<<EOD
 # block bogon networks (IPv4)
-# http://www.cymru.com/Documents/bogon-bn-nonagg.txt
+# https://www.team-cymru.org/Services/Bogons/bogon-bn-nonagg.txt
 block in $bogonlog quick on \${$oc['descr']} from <bogons> to any ridentifier {$bogons_increment()} label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
 
 EOD;
@@ -3766,7 +3766,7 @@ EOD;
 			if (config_path_enabled('system','ipv6allow')) {
 				$ipfrules .= <<<EOD
 # block bogon networks (IPv6)
-# http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
+# https://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
 block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any ridentifier {$bogons_increment()} label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
 
 EOD;

@@ -51,6 +51,13 @@ $cert_altname_types = array(
 	'email' => gettext('email address'),
 );
 
+global $p12_encryption_levels;
+$p12_encryption_levels = array(
+	'high'   => gettext('High: AES-256 + SHA256 (pfSense Software, FreeBSD, Linux, Windows 10)'),
+	'low'    => gettext('Low: 3DES + SHA1 (macOS, older Windows versions)'),
+	'legacy' => gettext('Legacy: RC2-40 + SHA1 (legacy OS versions)'),
+);
+
 global $cert_max_lifetime;
 $cert_max_lifetime = 12000;
 
@@ -62,6 +69,9 @@ function & lookup_ca($refid) {
 
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $ca) {
+			if (empty($ca)) {
+				continue;
+			}
 			if ($ca['refid'] == $refid) {
 				return $ca;
 			}
@@ -76,6 +86,9 @@ function & lookup_ca_by_subject($subject) {
 
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $ca) {
+			if (empty($ca)) {
+				continue;
+			}
 			$ca_subject = cert_get_subject($ca['crt']);
 			if ($ca_subject == $subject) {
 				return $ca;
@@ -91,6 +104,9 @@ function & lookup_cert($refid) {
 
 	if (is_array($config['cert'])) {
 		foreach ($config['cert'] as & $cert) {
+			if (empty($cert)) {
+				continue;
+			}
 			if ($cert['refid'] == $refid) {
 				return $cert;
 			}
@@ -104,6 +120,9 @@ function & lookup_cert_by_name($name) {
 	global $config;
 	if (is_array($config['cert'])) {
 		foreach ($config['cert'] as & $cert) {
+			if (empty($cert)) {
+				continue;
+			}
 			if ($cert['descr'] == $name) {
 				return $cert;
 			}
@@ -116,6 +135,9 @@ function & lookup_crl($refid) {
 
 	if (is_array($config['crl'])) {
 		foreach ($config['crl'] as & $crl) {
+			if (empty($crl)) {
+				continue;
+			}
 			if ($crl['refid'] == $refid) {
 				return $crl;
 			}
@@ -773,11 +795,7 @@ function cert_get_sigtype($str_crt, $decode = true) {
 }
 
 function is_openvpn_server_ca($caref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-server'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+	foreach(config_get_path('openvpn/openvpn-server', []) as $opvns) {
 		if ($ovpns['caref'] == $caref) {
 			return true;
 		}
@@ -786,11 +804,7 @@ function is_openvpn_server_ca($caref) {
 }
 
 function is_openvpn_client_ca($caref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-client'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
+	foreach(config_get_path('openvpn/openvpn-client', []) as $ovpnc) {
 		if ($ovpnc['caref'] == $caref) {
 			return true;
 		}
@@ -799,11 +813,7 @@ function is_openvpn_client_ca($caref) {
 }
 
 function is_ipsec_peer_ca($caref) {
-	global $config;
-	if (!is_array($config['ipsec']['phase1'])) {
-		return;
-	}
-	foreach ($config['ipsec']['phase1'] as $ipsec) {
+	foreach (config_get_path('ipsec/phase1', []) as $ipsec) {
 		if ($ipsec['caref'] == $caref) {
 			return true;
 		}
@@ -812,11 +822,7 @@ function is_ipsec_peer_ca($caref) {
 }
 
 function is_ldap_peer_ca($caref) {
-	global $config;
-	if (!is_array($config['system']['authserver'])) {
-		return;
-	}
-	foreach ($config['system']['authserver'] as $authserver) {
+	foreach (config_get_path('system/authserver', []) as $authserver) {
 		if (($authserver['ldap_caref'] == $caref) &&
 		    ($authserver['ldap_urltype'] != 'Standard TCP')) {
 			return true;
@@ -833,11 +839,7 @@ function ca_in_use($caref) {
 }
 
 function is_user_cert($certref) {
-	global $config;
-	if (!is_array($config['system']['user'])) {
-		return;
-	}
-	foreach ($config['system']['user'] as $user) {
+	foreach (config_get_path('system/user', []) as $user) {
 		if (!is_array($user['cert'])) {
 			continue;
 		}
@@ -851,11 +853,7 @@ function is_user_cert($certref) {
 }
 
 function is_openvpn_server_cert($certref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-server'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+	foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 		if ($ovpns['certref'] == $certref) {
 			return true;
 		}
@@ -864,11 +862,7 @@ function is_openvpn_server_cert($certref) {
 }
 
 function is_openvpn_client_cert($certref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-client'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
+	foreach (config_get_path('openvpn/openvpn-client', []) as $ovpnc) {
 		if ($ovpnc['certref'] == $certref) {
 			return true;
 		}
@@ -877,11 +871,7 @@ function is_openvpn_client_cert($certref) {
 }
 
 function is_ipsec_cert($certref) {
-	global $config;
-	if (!is_array($config['ipsec']['phase1'])) {
-		return;
-	}
-	foreach ($config['ipsec']['phase1'] as $ipsec) {
+	foreach(config_get_path('ipsec/phase1', []) as $ipsec) {
 		if ($ipsec['certref'] == $certref) {
 			return true;
 		}
@@ -890,9 +880,8 @@ function is_ipsec_cert($certref) {
 }
 
 function is_webgui_cert($certref) {
-	global $config;
-	if (($config['system']['webgui']['ssl-certref'] == $certref) &&
-	    ($config['system']['webgui']['protocol'] != "http")) {
+	if ((config_get_path('system/webgui/ssl-certref') == $certref) &&
+	    (config_get_path('system/webgui/protocol') != "http")) {
 		return true;
 	}
 }
@@ -914,11 +903,7 @@ function is_package_cert($certref) {
 }
 
 function is_captiveportal_cert($certref) {
-	global $config;
-	if (!is_array($config['captiveportal'])) {
-		return;
-	}
-	foreach ($config['captiveportal'] as $portal) {
+	foreach (config_get_path('captiveportal', []) as $portal) {
 		if (isset($portal['enable']) && isset($portal['httpslogin']) && ($portal['certref'] == $certref)) {
 			return true;
 		}
@@ -927,10 +912,9 @@ function is_captiveportal_cert($certref) {
 }
 
 function is_unbound_cert($certref) {
-	global $config;
-	if (($config['unbound']['sslcertref'] == $certref) &&
-	    isset($config['unbound']['enablessl']) &&
-	    isset($config['unbound']['enable'])) {
+	if (config_path_enabled('unbound') &&
+	    config_path_enabled('unbound','enablessl') &&
+	    (config_get_path('unbound/sslcertref') == $certref)) {
 		return true;
 	}
 }
@@ -1015,7 +999,10 @@ function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	$crl['serial'] = $serial;
 	$crl['lifetime'] = ($lifetime > $max_lifetime) ? $max_lifetime : $lifetime;
 	$crl['cert'] = array();
-	$config['crl'][] = $crl;
+
+	$crls = config_get_path('crl', []);
+	$crls[] = $crl;
+	config_set_path('crl', $crls);
 	return $crl;
 }
 
@@ -1450,11 +1437,7 @@ function is_cert_revoked($cert, $crlref = "") {
 }
 
 function is_openvpn_server_crl($crlref) {
-	global $config;
-	if (!is_array($config['openvpn']['openvpn-server'])) {
-		return;
-	}
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+	foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 		if (!empty($ovpns['crlref']) && ($ovpns['crlref'] == $crlref)) {
 			return true;
 		}
@@ -1851,7 +1834,6 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reusese
  ******/
 
 function cert_get_all_services($refid) {
-	global $config;
 	$services = array();
 	$services['services'] = array();
 	$services['packages'] = array();
@@ -1861,11 +1843,9 @@ function cert_get_all_services($refid) {
 		$services['webgui'] = true;
 	}
 
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
 	/* Find all OpenVPN clients and servers which use this certificate */
-	foreach(array('server', 'client') as $mode) {
-		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
+	foreach (array('server', 'client') as $mode) {
+		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $ovpn) {
 			if ($ovpn['certref'] == $refid) {
 				/* OpenVPN instances are restarted individually,
 				 * so we need to note the mode and ID. */
@@ -1882,8 +1862,8 @@ function cert_get_all_services($refid) {
 
 	/* If any one IPsec tunnel uses this certificate then the whole service
 	 * needs a bump. */
-	init_config_arr(array('ipsec', 'phase1'));
-	foreach ($config['ipsec']['phase1'] as $ipsec) {
+
+	foreach (config_get_path('ipsec/phase1', []) as $ipsec) {
 		if (($ipsec['authentication_method'] == 'cert') &&
 		    ($ipsec['certref'] == $refid)) {
 			$services['services'][] = array('name' => 'ipsec');
@@ -1894,8 +1874,7 @@ function cert_get_all_services($refid) {
 
 	/* Check to see if any HTTPS-enabled Captive Portal zones use this
 	 * certificate. */
-	init_config_arr(array('captiveportal'));
-	foreach ($config['captiveportal'] as $zone => $portal) {
+	foreach (config_get_path('captiveportal', []) as $zone => $portal) {
 		if (isset($portal['enable']) && isset($portal['httpslogin']) &&
 		    ($portal['certref'] == $refid)) {
 			/* Captive Portal zones are restarted individually, so
@@ -1940,14 +1919,11 @@ function cert_get_all_services($refid) {
  *   usage.
  ******/
 function ca_get_all_services($refid) {
-	global $config;
 	$services = array();
 	$services['services'] = array();
 
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
-	foreach(array('server', 'client') as $mode) {
-		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
+	foreach (array('server', 'client') as $mode) {
+		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $ovpn) {
 			if ($ovpn['caref'] == $refid) {
 				$services['services'][] = array(
 					'name' => 'openvpn',
@@ -1959,13 +1935,14 @@ function ca_get_all_services($refid) {
 			}
 		}
 	}
-	init_config_arr(array('ipsec', 'phase1'));
-	foreach ($config['ipsec']['phase1'] as $ipsec) {
+
+	foreach (config_get_path('ipsec/phase1', []) as $ipsec) {
 		if ($ipsec['certref'] == $refid) {
 			break;
 		}
 	}
-	foreach ($config['ipsec']['phase1'] as $ipsec) {
+
+	foreach (config_get_path('ipsec/phase1', []) as $ipsec) {
 		if (($ipsec['authentication_method'] == 'cert') &&
 		    ($ipsec['caref'] == $refid)) {
 			$services['services'][] = array('name' => 'ipsec');
@@ -1974,16 +1951,14 @@ function ca_get_all_services($refid) {
 	}
 
 	/* Loop through all certs and get their services as well */
-	init_config_arr(array('cert'));
-	foreach ($config['cert'] as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if ($cert['caref'] == $refid) {
 			$services = array_merge_recursive_unique($services, cert_get_all_services($cert['refid']));
 		}
 	}
 
 	/* Look for intermediate certs and services */
-	init_config_arr(array('ca'));
-	foreach ($config['ca'] as $cert) {
+	foreach (config_get_path('ca', []) as $cert) {
 		if ($cert['caref'] == $refid) {
 			$services = array_merge_recursive_unique($services, ca_get_all_services($cert['refid']));
 		}
@@ -2095,15 +2070,9 @@ function cert_get_lifetime($cert, $untilexpire = false) {
  ******/
 
 function cert_analyze_lifetime($expiredays) {
-	global $config, $g;
+	global $g;
 	/* Number of days at which to warn of expiration. */
-	init_config_arr(array('notifications', 'certexpire'));
-	if (!isset($config['notifications']['certexpire']['expiredays']) ||
-	    empty($config['notifications']['certexpire']['expiredays'])) {
-		$warning_days = $g['default_cert_expiredays'];
-	} else {
-		$warning_days = $config['notifications']['certexpire']['expiredays'];
-	}
+	$warning_days = config_get_path('notifications/certexpire/expiredays', $g['default_cert_expiredays']);
 
 	if ($expiredays > $warning_days) {
 		/* Not expiring soon */
@@ -2335,8 +2304,7 @@ function cert_notify_expiring() {
 	global $config;
 
 	/* If certificate expiration notifications are disabled, there is nothing to do. */
-	init_config_arr(array('notifications', 'certexpire'));
-	if ($config['notifications']['certexpire']['enable'] == "disabled") {
+	if (config_get_path('notifications/certexpire/enable') == "disabled") {
 		return;
 	}
 
@@ -2352,7 +2320,8 @@ function cert_notify_expiring() {
 			continue;
 		}
 		/* Proceed only for not revoked certificate if ignore setting enabled */
-		if (($config['notifications']['certexpire']['ignore_revoked'] == "enabled") && is_cert_revoked($cert)) {
+		if ((config_get_path('notifications/certexpire/ignore_revoked') == "enabled") &&
+		    is_cert_revoked($cert)) {
 			continue;
 		}
 		/* Fetch and analyze expiration */
@@ -2388,8 +2357,6 @@ function cert_notify_expiring() {
  ******/
 
 function ca_setup_trust_store() {
-	global $config;
-
 	/* This directory is trusted by OpenSSL on FreeBSD by default */
 	$trust_store_directory = '/etc/ssl/certs';
 
@@ -2397,8 +2364,7 @@ function ca_setup_trust_store() {
 	safe_mkdir($trust_store_directory);
 	unlink_if_exists("{$trust_store_directory}/*.0");
 
-	init_config_arr(array('ca'));
-	foreach ($config['ca'] as $ca) {
+	foreach (config_get_path('ca', []) as $ca) {
 		/* If the entry is invalid or is not trusted, skip it. */
 		if (!is_array($ca) ||
 		    empty($ca['crt']) ||
@@ -2428,7 +2394,6 @@ function ca_setup_trust_store() {
  ******/
 
 function ca_setup_capath($ca, $basedir, $crl = "", $refresh = false) {
-	global $config;
 	/* Check for an invalid CA */
 	if (!$ca || !is_array($ca)) {
 		return false;
@@ -2616,17 +2581,12 @@ function cert_check_pkey_compatibility($pkey, $consumer) {
  ******/
 
 function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, $addnone = false) {
-	global $config;
-
 	/* Ensure that $type is valid */
 	if (!in_array($type, array('ca', 'cert'))) {
 		return array();
 	}
 
-	/* Initialize arrays */
-	init_config_arr(array($type));
 	$list = array();
-
 	if ($addnone) {
 		if ($selectsource) {
 			$list[] = array('refid' => 'none', 'descr' => 'None');
@@ -2637,7 +2597,7 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
 
 	/* Create a hashed array with the certificate refid as the key and
 	 * descriptive name as the value. Exclude incompatible certificates. */
-	foreach ($config[$type] as $cert) {
+	foreach (config_get_path($type, []) as $cert) {
 		if (empty($cert['prv']) && ($type == 'cert')) {
 			continue;
 		} else if (cert_check_pkey_compatibility($cert['prv'], $consumer)) {
@@ -2653,4 +2613,152 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
 	return $list;
 }
 
+/****f* certs/cert_pkcs12_export
+ * NAME
+ *   cert_pkcs12_export - Export a PKCS#12 archive file for a given certificate
+ *                        and optional CA and passphrase.
+ * INPUTS
+ *   $cert      : Certificate entry array.
+ *   $encryption: Strength of encryption to use:
+ *                "high" (AES-256 + SHA256)
+ *                "low" (3DES + SHA1)
+ *                "legacy" (RC2-40 + SHA1)
+ *   $passphrase: Optional passphrase used to encrypt the archive contents and
+ *                private key.
+ *   $add_ca    : Boolean flag which determines whether or not the certificate
+ *                CA is included in the archive (if available)
+ *   $delivery  : Delivery method for the result: "file", "download", or "data".
+ *                See RESULT section for details.
+ * RESULT
+ *   Returns false on failure, otherwise result depends upon the value passed in
+ *   $delivery:
+ *       "file"    : Returns the path to the output archive file.
+ *                   NOTE: Does not clean up path, caller must clean up the
+ *                         entire directory containing the output file.
+ *       "download": Sends the archive data to the current GUI browser session.
+ *                   Must be called before any output is sent to the user
+ *                   session.
+ *       "data"    : Returns the contents of the PKCS#12 archive as a string.
+ * NOTES
+ *   If the certificate entry does not contain a private key, the archive will
+ *   also not contain a key.
+ ******/
+
+function cert_pkcs12_export($cert, $encryption = 'high', $passphrase = '', $add_ca = true, $delivery = 'download') {
+	global $g;
+
+	/* Unusable certificate entry, bail early. */
+	if (!is_array($cert) || empty($cert)) {
+		return false;
+	}
+
+	/* Encryption and Digest */
+	switch ($encryption) {
+		case 'legacy':
+			$algo = '-certpbe PBE-SHA1-RC2-40 -keypbe PBE-SHA1-RC2-40';
+			$hash = '';
+			break;
+		case 'low':
+			$algo = '-certpbe PBE-SHA1-3DES -keypbe PBE-SHA1-3DES';
+			$hash = '-macalg SHA1';
+			break;
+		case 'high':
+		default:
+			$algo = '-aes256 -certpbe AES-256-CBC -keypbe AES-256-CBC';
+			$hash = '-macalg sha256';
+	}
+
+	/* Make a secure temporary directory */
+	$workdir = tempnam("{$g['tmp_path']}/", "p12export");
+	@unlink_if_exists($workdir);
+	mkdir($workdir, 0600);
+
+	/* Set the friendly name to the certificate description, if available */
+	$descr = "";
+	if (!empty($cert['descr'])) {
+		$edescr = escapeshellarg($cert['descr']);
+		$descr = "-name {$edescr} -CSP {$edescr}";
+		$fileprefix = basename($cert['descr']);
+	}
+
+	/* If there isn't a usable portion of the description, use the refid */
+	if (empty($fileprefix)) {
+		$fileprefix = $cert['refid'];
+	}
+
+	/* Exported output archive filename */
+	$outpath = "{$workdir}/{$fileprefix}.p12";
+	$eoutpath = escapeshellarg($outpath);
+
+	/* Passphrase handling */
+	if (!empty($passphrase)) {
+		/* Use passphrase text file so the passphrase is not visible in
+		 * process list. */
+		$passfile = "{$workdir}/passphrase.txt";
+		file_put_contents($passfile, $passphrase . "\n");
+		$pass = '-passout file:' . escapeshellarg($passfile);
+	} else {
+		/* Null password + disable encryption of the keys */
+		$pass = '-passout pass: -nodes';
+	}
+
+	/* Certificate file */
+	$crtpath = "{$workdir}/cert.pem";
+	$ecrtpath = escapeshellarg($crtpath);
+	file_put_contents($crtpath, base64_decode($cert['crt']));
+
+	/* Private key (if present) */
+	if (!empty($cert['prv'])) {
+		$keypath = "{$workdir}/key.pem";
+		/* Write key to a secure temporary name */
+		file_put_contents($keypath, base64_decode($cert['prv']));
+		$key = '-inkey ' . escapeshellarg($keypath);
+	} else {
+		$key = '-nokeys';
+	}
+
+	/* Add CA if one is defined and requested */
+	$eca = '';
+	if ($add_ca && !empty($cert['caref'])) {
+		$ca = lookup_ca($cert['caref']);
+		if ($ca) {
+			$capath = "{$workdir}/ca.pem";
+			file_put_contents($capath, base64_decode($ca['crt']));
+			$eca = '-certfile ' . escapeshellarg($capath);
+		}
+	}
+
+	/* Export a PKCS#12 archive using these components and settings */
+	exec("/usr/bin/openssl pkcs12 -export -in {$ecrtpath} {$eca} {$key} -out {$eoutpath} {$pass} {$descr} {$algo} {$hash}");
+
+	/* Bail if the output is invalid */
+	if (!file_exists($outpath) ||
+	    (filesize($outpath) == 0)) {
+		return false;
+	}
+
+	/* Tailor output as requested by the caller */
+	switch ($delivery) {
+		case 'file':
+			/* Return path to export file, do not clean up, caller must clean up. */
+			return $outpath;
+			break;
+		case 'download':
+			/* Send file to user and cleanup */
+			$p12_data = file_get_contents($outpath);
+			rmdir_recursive($workdir);
+			send_user_download('data', $p12_data, "{$cert['descr']}.p12");
+			return true;
+			break;
+		case 'data':
+		default:
+			/* Return PKCS#12 archive data and cleanup */
+			$p12_data = file_get_contents($outpath);
+			rmdir_recursive($workdir);
+			return $p12_data;
+			break;
+	}
+
+	return null;
+}
 ?>

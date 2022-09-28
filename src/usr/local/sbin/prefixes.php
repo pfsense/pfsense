@@ -118,7 +118,9 @@ if (file_exists($dhcpdlogfile)) {
 			if (in_array($expire[1], $routes)) {
 				continue;
 			}
-			$expires[$expire[1]] = $expire[1];
+			if (!in_array($expire[1], $expires)) {
+				$expires[] = $expire[1];
+			}
 		}
 	}
 	pclose($fd);
@@ -127,11 +129,11 @@ if (file_exists($dhcpdlogfile)) {
 // echo "remove routes\n";
 if (count($expires) > 0) {
 	foreach ($expires as $prefix) {
-		route_del($prefix['prefix']);
+		route_del($prefix);
 	}
 }
 
-/* handle quotify_buf - https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=common/print.c */
+/* handle quotify_buf - https://gitlab.isc.org/isc-projects/dhcp/-/blob/master/common/print.c */
 function extract_duid($ia_string) {
 	for ($i = 0, $iaid_counter = 0, $len = strlen($ia_string); $i < $len && $iaid_counter < 4; $i++, $iaid_counter++) {
 		if ($ia_string[$i] !== '\\') {

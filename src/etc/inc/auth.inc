@@ -28,6 +28,7 @@
  * NOTE : Portions of the mschapv2 support was based on the BSD licensed CHAP.php
  * file courtesy of Michael Retterklieber.
  */
+require_once("config.lib.inc");
 include_once('phpsessionmanager.inc');
 if (!$do_not_include_config_gui_inc) {
 	require_once("config.gui.inc");
@@ -73,7 +74,7 @@ if (function_exists("display_error_form")) {
 	}
 }
 
-if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
+if (function_exists("display_error_form") && !config_path_enabled('system/webgui', 'nodnsrebindcheck')) {
 	/* DNS ReBinding attack prevention.  https://redmine.pfsense.org/issues/708 */
 	$found_host = false;
 
@@ -95,13 +96,13 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		strcasecmp($http_host, "localhost") == 0 or $_SERVER['SERVER_ADDR'] == "::1") {
 		$found_host = true;
 	}
-	if (strcasecmp($http_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 or
-		strcasecmp($http_host, $config['system']['hostname']) == 0) {
+	if (strcasecmp($http_host, config_get_path('system/hostname') . "." . config_get_path('system/domain')) == 0 or
+		strcasecmp($http_host, config_get_path('system/hostname')) == 0) {
 		$found_host = true;
 	}
 
-	if (is_array($config['dyndnses']['dyndns']) && !$found_host) {
-		foreach ($config['dyndnses']['dyndns'] as $dyndns) {
+	if (!$found_host) {
+		foreach (config_get_path('dyndnses/dyndns', []) as $dyndns) {
 			if (strcasecmp($dyndns['host'], $http_host) == 0) {
 				$found_host = true;
 				break;
@@ -109,8 +110,8 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		}
 	}
 
-	if (is_array($config['dnsupdates']['dnsupdate']) && !$found_host) {
-		foreach ($config['dnsupdates']['dnsupdate'] as $rfc2136) {
+	if (!$found_host) {
+		foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136) {
 			if (strcasecmp($rfc2136['host'], $http_host) == 0) {
 				$found_host = true;
 				break;
@@ -118,8 +119,8 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		}
 	}
 
-	if (!empty($config['system']['webgui']['althostnames']) && !$found_host) {
-		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
+	if (!$found_host) {
+		$althosts = explode(" ", config_get_path('system/webgui/althostnames', ""));
 		foreach ($althosts as $ah) {
 			if (strcasecmp($ah, $http_host) == 0 or strcasecmp($ah, $_SERVER['SERVER_ADDR']) == 0) {
 				$found_host = true;
@@ -130,7 +131,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 
 	if ($found_host == false) {
 		if (!security_checks_disabled()) {
-			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br />Try accessing the router by IP address instead of by hostname."));
+			display_error_form("501", gettext("Potential DNS Rebind attack detected, see https://en.wikipedia.org/wiki/DNS_rebinding<br />Try accessing the router by IP address instead of by hostname."));
 			exit;
 		}
 		$security_passed = false;
@@ -138,7 +139,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 }
 
 // If the HTTP_REFERER is something other than ourselves then disallow.
-if (function_exists("display_error_form") && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+if (function_exists("display_error_form") && !config_path_enabled('system/webgui', 'nohttpreferercheck')) {
 	if ($_SERVER['HTTP_REFERER']) {
 		if (file_exists("{$g['tmp_path']}/setupwizard_lastreferrer")) {
 			if ($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
@@ -169,13 +170,13 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$referrer_host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
 		$referrer_host = str_replace(array("[", "]"), "", $referrer_host);
 		if ($referrer_host) {
-			if (strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 ||
-			    strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
+			if (strcasecmp($referrer_host, config_get_path('system/hostname') . "." . config_get_path('system/domain')) == 0 ||
+			    strcasecmp($referrer_host, config_get_path('system/hostname')) == 0) {
 				$found_host = true;
 			}
 
-			if (!empty($config['system']['webgui']['althostnames']) && !$found_host) {
-				$althosts = explode(" ", $config['system']['webgui']['althostnames']);
+			if (!$found_host) {
+				$althosts = explode(" ", config_get_path('system/webgui/althostnames', ""));
 				foreach ($althosts as $ah) {
 					if (strcasecmp($referrer_host, $ah) == 0) {
 						$found_host = true;
@@ -184,8 +185,8 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 				}
 			}
 
-			if (is_array($config['dyndnses']['dyndns']) && !$found_host) {
-				foreach ($config['dyndnses']['dyndns'] as $dyndns) {
+			if (!$found_host) {
+				foreach (config_get_path('dyndnses/dyndns', []) as $dyndns) {
 					if (strcasecmp($dyndns['host'], $referrer_host) == 0) {
 						$found_host = true;
 						break;
@@ -193,8 +194,8 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 				}
 			}
 
-			if (is_array($config['dnsupdates']['dnsupdate']) && !$found_host) {
-				foreach ($config['dnsupdates']['dnsupdate'] as $rfc2136) {
+			if (!$found_host) {
+				foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136) {
 					if (strcasecmp($rfc2136['host'], $referrer_host) == 0) {
 						$found_host = true;
 						break;
@@ -262,30 +263,24 @@ $groupindex = index_groups();
 $userindex = index_users();
 
 function index_groups() {
-	global $g, $debug, $config, $groupindex;
+	global $g, $debug, $groupindex;
 
 	$groupindex = array();
 
-	if (is_array($config['system']['group'])) {
-		$i = 0;
-		foreach ($config['system']['group'] as $groupent) {
-			$groupindex[$groupent['name']] = $i;
-			$i++;
-		}
+	$i = 0;
+	foreach (config_get_path('system/group', []) as $groupent) {
+		$groupindex[$groupent['name']] = $i;
+		$i++;
 	}
 
 	return ($groupindex);
 }
 
 function index_users() {
-	global $g, $debug, $config;
-
-	if (is_array($config['system']['user'])) {
-		$i = 0;
-		foreach ($config['system']['user'] as $userent) {
-			$userindex[$userent['name']] = $i;
-			$i++;
-		}
+	$i = 0;
+	foreach (config_get_path('system/user', []) as $userent) {
+		$userindex[$userent['name']] = $i;
+		$i++;
 	}
 
 	return ($userindex);
@@ -340,9 +335,9 @@ function & getGroupEntryByGID($gid) {
 }
 
 function get_user_privileges(& $user) {
-	global $config, $_SESSION;
+	global $_SESSION;
 
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+	$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 	$allowed_groups = array();
 
 	$privs = $user['priv'];
@@ -351,11 +346,7 @@ function get_user_privileges(& $user) {
 	}
 
 	// cache auth results for a short time to ease load on auth services & logs
-	if (isset($config['system']['webgui']['auth_refresh_time'])) {
-		$recheck_time = $config['system']['webgui']['auth_refresh_time'];
-	} else {
-		$recheck_time = 30;
-	}
+	$recheck_time = config_get_path('system/webgui/auth_refresh_time', 30);
 
 	if ($authcfg['type'] == "ldap") {
 		if (isset($_SESSION["ldap_allowed_groups"]) &&
@@ -398,8 +389,6 @@ function get_user_privileges(& $user) {
 }
 
 function userHasPrivilege($userent, $privid = false) {
-	global $config;
-
 	if (!$privid || !is_array($userent)) {
 		return false;
 	}
@@ -419,7 +408,7 @@ function userHasPrivilege($userent, $privid = false) {
 	 * bad privilege config.
 	 * https://redmine.pfsense.org/issues/10492 */
 	$userGroups = getUserGroups($userent['name'],
-			auth_get_authserver($config['system']['webgui']['authmode']),
+			auth_get_authserver(config_get_path('system/webgui/authmode')),
 			$_SESSION['user_radius_attributes']);
 	if (($privid == 'user-config-readonly') &&
 	    (($userent['uid'] === "0") || (in_array('admins', $userGroups)))) {
@@ -469,12 +458,14 @@ function local_backed($username, $passwd) {
 }
 
 function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
-	global $config, $debug;
+	global $debug;
 
 	if (empty($u2add) && empty($u2del) && empty($g2add) && empty($g2del)) {
 		/* Nothing to be done here */
 		return;
 	}
+	$users = config_get_path('system/user', []);
+	$groups = config_get_path('system/group', []);
 
 	foreach($u2del as $user) {
 		if ($user['uid'] > 65000) {
@@ -502,11 +493,10 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		mwexec($cmd);
 		local_group_del_user($user);
 
-		$system_user = $config['system']['user'];
-		for ($i = 0; $i < count($system_user); $i++) {
-			if ($system_user[$i]['name'] == $user['name']) {
+		for ($i = 0; $i < count($users); $i++) {
+			if ($users[$i]['name'] == $user['name']) {
 				log_error("Removing user: {$user['name']}");
-				unset($config['system']['user'][$i]);
+				unset($users[$i]);
 				break;
 			}
 		}
@@ -524,11 +514,10 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		}
 		mwexec($cmd);
 
-		$system_group = $config['system']['group'];
-		for ($i = 0; $i < count($system_group); $i++) {
-			if ($system_group[$i]['name'] == $group['name']) {
+		for ($i = 0; $i < count($groups); $i++) {
+			if ($groups[$i]['name'] == $group['name']) {
 				log_error("Removing group: {$group['name']}");
-				unset($config['system']['group'][$i]);
+				unset($groups[$i]);
 				break;
 			}
 		}
@@ -536,22 +525,25 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 
 	foreach ($u2add as $user) {
 		log_error("Adding user: {$user['name']}");
-		$config['system']['user'][] = $user;
+
+		$users[] = $user;
 	}
 
 	foreach ($g2add as $group) {
 		log_error("Adding group: {$group['name']}");
-		$config['system']['group'][] = $group;
+		$groups[] = $group;
 	}
 
 	/* Sort it alphabetically */
-	usort($config['system']['user'], function($a, $b) {
+	usort($users, function($a, $b) {
 		return strcmp($a['name'], $b['name']);
 	});
-	usort($config['system']['group'], function($a, $b) {
+	usort($groups, function($a, $b) {
 		return strcmp($a['name'], $b['name']);
 	});
 
+	config_set_path('system/user', $users);
+	config_set_path('system/group', $groups);
 	write_config("Sync'd users and groups via XMLRPC");
 
 	/* make sure the all group exists */
@@ -568,7 +560,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 }
 
 function local_reset_accounts() {
-	global $debug, $config;
+	global $debug;
 
 	/* remove local users to avoid uid conflicts */
 	$fd = popen("/usr/sbin/pw usershow -a", "r");
@@ -629,17 +621,13 @@ function local_reset_accounts() {
 	local_group_set($allgrp, true);
 
 	/* sync all local users */
-	if (is_array($config['system']['user'])) {
-		foreach ($config['system']['user'] as $user) {
-			local_user_set($user);
-		}
+	foreach (config_get_path('system/user', []) as $user) {
+		local_user_set($user);
 	}
 
 	/* sync all local groups */
-	if (is_array($config['system']['group'])) {
-		foreach ($config['system']['group'] as $group) {
-			local_group_set($group);
-		}
+	foreach (config_get_path('system/group', []) as $group) {
+		local_group_set($group);
 	}
 }
 
@@ -789,9 +777,6 @@ function local_user_set(& $user) {
 function local_user_del($user) {
 	global $debug;
 
-	/* remove all memberships */
-	local_user_set_groups($user);
-
 	/* Don't remove /root */
 	if ($user['uid'] != 0) {
 		$rmhome = "-r";
@@ -821,8 +806,6 @@ function local_user_del($user) {
 }
 
 function local_user_set_password(&$user, $password) {
-	global $config;
-
 	unset($user['password']);
 	unset($user['md5-hash']);
 	unset($user['sha512-hash']);
@@ -831,7 +814,7 @@ function local_user_set_password(&$user, $password) {
 	/* Default to bcrypt hashing if unset.
 	 * See https://redmine.pfsense.org/issues/12855
 	 */
-	$hashalgo = isset($config['system']['webgui']['pwhash']) ? $config['system']['webgui']['pwhash'] : 'bcrypt';
+	$hashalgo = config_get_path('system/webgui/pwhash', 'bcrypt');
 
 	switch ($hashalgo) {
 		case 'sha512':
@@ -844,21 +827,19 @@ function local_user_set_password(&$user, $password) {
 			break;
 	}
 
-	if (($user['name'] == $config['hasync']['username']) &&
-	    ($config['hasync']['adminsync'] == 'on')) {
-		$config['hasync']['new_password'] = $password;
+	if (($user['name'] == config_get_path('hasync/username')) &&
+	    (config_get_path('hasync/adminsync') == 'on')) {
+		config_set_path('hasync/new_password', $password);
 	}
 }
 
 function local_user_get_groups($user, $all = false) {
-	global $debug, $config;
-
-	$groups = array();
-	if (!is_array($config['system']['group'])) {
-		return $groups;
+	$sysgroups = config_get_path('system/group', []);
+	if(empty($sysgroups)) {
+		return [];
 	}
 
-	foreach ($config['system']['group'] as $group) {
+	foreach ($sysgroups as $group) {
 		if ($all || (!$all && ($group['name'] != "all"))) {
 			if (is_array($group['member'])) {
 				if (in_array($user['uid'], $group['member'])) {
@@ -879,9 +860,10 @@ function local_user_get_groups($user, $all = false) {
 }
 
 function local_user_set_groups($user, $new_groups = NULL) {
-	global $debug, $config, $groupindex, $userindex;
+	global $debug, $groupindex, $userindex;
 
-	if (!is_array($config['system']['group'])) {
+	$groups = config_get_path('system/group', []);
+	if (empty($groups)) {
 		return;
 	}
 
@@ -901,7 +883,7 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		if ($groupname == '' || in_array($groupname, $cur_groups)) {
 			continue;
 		}
-		$group = &$config['system']['group'][$groupindex[$groupname]];
+		$group = &$groups[$groupindex[$groupname]];
 		$group['member'][] = $user['uid'];
 		$mod_groups[] = $group;
 
@@ -913,24 +895,24 @@ function local_user_set_groups($user, $new_groups = NULL) {
 			local_user_set($user);
 		}
 	}
-	unset($group);
 
 	/* determine which memberships to remove */
 	foreach ($cur_groups as $groupname) {
 		if (in_array($groupname, $new_groups)) {
 			continue;
 		}
-		if (!isset($config['system']['group'][$groupindex[$groupname]])) {
+		if (!isset($groups[$groupindex[$groupname]])) {
 			continue;
 		}
-		$group = &$config['system']['group'][$groupindex[$groupname]];
+		$group = &$groups[$groupindex[$groupname]];
 		if (is_array($group['member'])) {
 			$index = array_search($user['uid'], $group['member']);
 			array_splice($group['member'], $index, 1);
 			$mod_groups[] = $group;
 		}
 	}
-	unset($group);
+
+	config_set_path('system/group', $groups);
 
 	/* sync all modified groups */
 	foreach ($mod_groups as $group) {
@@ -939,18 +921,11 @@ function local_user_set_groups($user, $new_groups = NULL) {
 }
 
 function local_group_del_user($user) {
-	global $config;
-
-	if (!is_array($config['system']['group'])) {
-		return;
-	}
-
-	foreach ($config['system']['group'] as $group) {
-		if (is_array($group['member'])) {
-			foreach ($group['member'] as $idx => $uid) {
-				if ($user['uid'] == $uid) {
-					unset($config['system']['group']['member'][$idx]);
-				}
+	foreach (config_get_path('system/group', []) as $gid => $group) {
+		foreach (array_get_path($group, 'member', []) as $idx => $uid) {
+			if ($user['uid'] == $uid) {
+				config_del_path("system/group/{$gid}/member/{$idx}");
+				break;
 			}
 		}
 	}
@@ -1085,8 +1060,6 @@ function ldap_setup_caenv($ldap, $authcfg) {
 }
 
 function ldap_test_bind($authcfg) {
-	global $debug, $config, $g;
-
 	if ($authcfg) {
 		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
@@ -1163,8 +1136,6 @@ function ldap_test_bind($authcfg) {
 }
 
 function ldap_get_user_ous($show_complete_ou, $authcfg) {
-	global $debug, $config, $g;
-
 	if (!function_exists("ldap_connect")) {
 		return;
 	}
@@ -1282,8 +1253,6 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 }
 
 function ldap_get_groups($username, $authcfg) {
-	global $debug, $config;
-
 	if (!function_exists("ldap_connect")) {
 		return array();
 	}
@@ -1450,7 +1419,7 @@ function ldap_format_host($host) {
 }
 
 function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
-	global $debug, $config;
+	global $debug;
 
 	if (!$username) {
 		$attributes['error_message'] = gettext("Invalid Login.");
@@ -1693,7 +1662,6 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 }
 
 function radius_backed($username, $password, $authcfg, &$attributes = array()) {
-	global $debug, $config;
 	$ret = false;
 
 	require_once("Auth/RADIUS.php");
@@ -1896,22 +1864,21 @@ function is_account_disabled($username) {
 }
 
 function get_user_settings($username) {
-	global $config;
 	$settings = array();
-	$settings['widgets'] = $config['widgets'];
-	$settings['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
-	$settings['webgui']['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
-	$settings['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
-	$settings['webgui']['logincss'] = $config['system']['webgui']['logincss'];
-	$settings['webgui']['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
-	$settings['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
-	$settings['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
-	$settings['webgui']['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
-	$settings['webgui']['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
-	$settings['webgui']['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
-	$settings['webgui']['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
-	$settings['webgui']['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
-	$settings['webgui']['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
+	$settings['widgets'] = config_get_path('widgets');
+	$settings['webgui']['dashboardcolumns'] = config_get_path('system/webgui/dashboardcolumns');
+	$settings['webgui']['webguihostnamemenu'] = config_get_path('system/webgui/webguihostnamemenu');
+	$settings['webgui']['webguicss'] = config_get_path('system/webgui/webguicss');
+	$settings['webgui']['logincss'] = config_get_path('system/webgui/logincss');
+	$settings['webgui']['interfacessort'] = config_path_enabled('system/webgui', 'interfacessort');
+	$settings['webgui']['dashboardavailablewidgetspanel'] = config_path_enabled('system/webgui', 'dashboardavailablewidgetspanel');
+	$settings['webgui']['webguifixedmenu'] = config_path_enabled('system/webgui', 'webguifixedmenu');
+	$settings['webgui']['webguileftcolumnhyper'] = config_path_enabled('system/webgui', 'webguileftcolumnhyper');
+	$settings['webgui']['disablealiaspopupdetail'] = config_path_enabled('system/webgui', 'disablealiaspopupdetail');
+	$settings['webgui']['systemlogsfilterpanel'] = config_path_enabled('system/webgui', 'systemlogsfilterpanel');
+	$settings['webgui']['systemlogsmanagelogpanel'] = config_path_enabled('system/webgui', 'systemlogsmanagelogpanel');
+	$settings['webgui']['statusmonitoringsettingspanel'] = config_path_enabled('system/webgui', 'statusmonitoringsettingspanel');
+	$settings['webgui']['pagenamefirst'] = config_path_enabled('system/webgui', 'pagenamefirst');
 	$user = getUserEntry($username);
 	if (isset($user['customsettings'])) {
 		$settings['customsettings'] = true;
@@ -1949,7 +1916,7 @@ function get_user_settings($username) {
 }
 
 function save_widget_settings($username, $settings, $message = "") {
-	global $config, $userindex;
+	global $userindex;
 	$user = getUserEntry($username);
 
 	if (strlen($message) > 0) {
@@ -1959,48 +1926,38 @@ function save_widget_settings($username, $settings, $message = "") {
 	}
 
 	if (isset($user['customsettings'])) {
-		$config['system']['user'][$userindex[$username]]['widgets'] = $settings;
+		config_set_path("system/user/{$userindex[$username]}/widgets", $settings);
 		write_config($msgout . " " . sprintf(gettext("(User %s)"), $username));
 	} else {
-		$config['widgets'] = $settings;
+		config_set_path('widgets', $settings);
 		write_config($msgout);
 	}
 }
 
 function auth_get_authserver($name) {
-	global $config;
-
-	if (is_array($config['system']['authserver'])) {
-		foreach ($config['system']['authserver'] as $authcfg) {
-			if ($authcfg['name'] == $name) {
-				return $authcfg;
-			}
+	foreach (config_get_path('system/authserver', []) as $authcfg) {
+		if ($authcfg['name'] == $name) {
+			return $authcfg;
 		}
 	}
 	if ($name == "Local Database") {
-		return array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
+		return array("name" => "Local Database", "type" => "Local Auth", "host" => config_get_path('system/hostname'));
 	}
 }
 
 function auth_get_authserver_list() {
-	global $config;
-
 	$list = array();
 
-	if (is_array($config['system']['authserver'])) {
-		foreach ($config['system']['authserver'] as $authcfg) {
-			/* Add support for disabled entries? */
-			$list[$authcfg['name']] = $authcfg;
-		}
+	foreach (config_get_path('system/authserver', []) as $authcfg) {
+		/* Add support for disabled entries? */
+		$list[$authcfg['name']] = $authcfg;
 	}
 
-	$list["Local Database"] = array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
+	$list["Local Database"] = array("name" => "Local Database", "type" => "Local Auth", "host" => config_get_path('system/hostname'));
 	return $list;
 }
 
 function getUserGroups($username, $authcfg, &$attributes = array()) {
-	global $config;
-
 	$allowed_groups = array();
 
 	switch ($authcfg['type']) {
@@ -2017,11 +1974,9 @@ function getUserGroups($username, $authcfg, &$attributes = array()) {
 	}
 
 	$member_groups = array();
-	if (is_array($config['system']['group'])) {
-		foreach ($config['system']['group'] as $group) {
-			if (in_array($group['name'], $allowed_groups)) {
-				$member_groups[] = $group['name'];
-			}
+	foreach (config_get_path('system/group', []) as $group) {
+		if (in_array($group['name'], $allowed_groups)) {
+			$member_groups[] = $group['name'];
 		}
 	}
 
@@ -2076,7 +2031,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 }
 
 function session_auth() {
-	global $config, $_SESSION, $page;
+	global $_SESSION, $page;
 
 	// Handle HTTPS httponly and secure flags
 	$currentCookieParams = session_get_cookie_params();
@@ -2084,14 +2039,14 @@ function session_auth() {
 		$currentCookieParams["lifetime"],
 		$currentCookieParams["path"],
 		NULL,
-		($config['system']['webgui']['protocol'] == "https"),
+		(config_get_path('system/webgui/protocol') == "https"),
 		true
 	);
 
 	phpsession_begin();
 
 	// Detect protocol change
-	if (!isset($_POST['login']) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != $config['system']['webgui']['protocol']) {
+	if (!isset($_POST['login']) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != config_get_path('system/webgui/protocol')) {
 		phpsession_end();
 		return false;
 	}
@@ -2099,7 +2054,7 @@ function session_auth() {
 	/* Validate incoming login request */
 	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
 	if (isset($_POST['login']) && !empty($_POST['usernamefld'])) {
-		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 		$remoteauth = authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes);
 		if ($remoteauth || authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
 			// Generate a new id to avoid session fixation
@@ -2118,9 +2073,9 @@ function session_auth() {
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['user_radius_attributes'] = $attributes;
 			$_SESSION['last_access'] = time();
-			$_SESSION['protocol'] = $config['system']['webgui']['protocol'];
+			$_SESSION['protocol'] = config_get_path('system/webgui/protocol');
 			phpsession_end(true);
-			if (!isset($config['system']['webgui']['quietlogin'])) {
+			if (!config_path_enabled('system/webgui', 'quietlogin')) {
 				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()));
 			}
 			if (isset($_POST['postafterlogin'])) {
@@ -2149,23 +2104,16 @@ function session_auth() {
 		return false;
 	}
 
+	$session_timeout = config_get_path('system/webgui/session_timeout', 240);
 	/* If session timeout isn't set, we don't mark sessions stale */
-	if (!isset($config['system']['webgui']['session_timeout'])) {
-		/* Default to 4 hour timeout if one is not set */
-		if ($_SESSION['last_access'] < (time() - 14400)) {
-			$_POST['logout'] = true;
-			$_SESSION['Logout'] = true;
-		} else {
-			$_SESSION['last_access'] = time();
-		}
-	} else if (intval($config['system']['webgui']['session_timeout']) == 0) {
+	if (intval($session_timeout) == 0) {
 		/* only update if it wasn't ajax */
 		if (!isAjax()) {
 			$_SESSION['last_access'] = time();
 		}
 	} else {
 		/* Check for stale session */
-		if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {
+		if ($_SESSION['last_access'] < (time() - ($session_timeout * 60))) {
 			$_POST['logout'] = true;
 			$_SESSION['Logout'] = true;
 		} else {
@@ -2255,9 +2203,7 @@ function get_user_remote_authsource() {
 }
 
 function set_pam_auth() {
-	global $config;
-
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+	$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 
 	unlink_if_exists("/etc/radius.conf");
 	unlink_if_exists("/var/etc/pam_ldap.conf");
@@ -2310,7 +2256,7 @@ rpc: files
 
 EOD;
 
-	if (isset($config['system']['webgui']['shellauth'])) {
+	if (config_path_enabled('system/webgui', 'shellauth')) {
 		if (($authcfg['type'] == "radius") && isset($authcfg['radius_auth_port'])) {
 			$radius_conf = "auth {$authcfg['host']}:{$authcfg['radius_auth_port']} " .
 					"{$authcfg['radius_secret']} {$authcfg['radius_timeout']}\n";

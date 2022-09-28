@@ -300,6 +300,12 @@ tr.disabled a {
     color: rgba(0, 150, 136,.5);
 }
 
+.fieldset[disabled] .form-control, .form-control[disabled], .form-control[disabled]::placeholder, .form-control[readonly], .input-group-inbetween {
+    color: #555;
+    background-color: #aaa;
+    border-color: #999;
+}
+
 .table-striped>tbody>tr.disabled>td:first-child {
     border-left: 3px solid #F44336;
     padding-left: 7px;
@@ -350,6 +356,11 @@ tr.disabled a {
     background-color: #303030;
     border-color: #212121;
 
+}
+
+option:checked {
+    color: white;
+    background: #009688;
 }
 
 /** Page footer */

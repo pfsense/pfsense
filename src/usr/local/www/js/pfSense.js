@@ -308,7 +308,7 @@ $(function() {
 });
 
 // Implement data-toggle=disable
-// Source: https://github.com/synergic-cz/synergic-ui/blob/master/src/js/disable.js
+// Source: https://github.com/visionappscz/bootstrap-ui/blob/master/src/js/disable.js
 ;(function($, window, document) {
 	'use strict';
 

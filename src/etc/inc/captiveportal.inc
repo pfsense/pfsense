@@ -1686,9 +1686,34 @@ function getVolume($ip) {
 	$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 	$anchor = $cpzoneprefix . '_auth';
 
+	// It is presumed that a list of arrays is returned, each containing rule direction, and packet and bytes counters.
 	$result = pfSense_pf_cp_get_eth_rule_counters("{$anchor}/{$ip}_32");
-	if (!empty($result)) {
-	   list($output_pkts, $output_bytes, $input_pkts, $input_bytes) = $result;
+	if (!empty($result) && is_array($result)) {
+		$input_pkts = 0;
+		$input_bytes = 0;
+		$output_pkts = 0;
+		$output_bytes = 0;
+
+		foreach ($result as $rule_counters) {
+			switch ($rule_counters[0]) {
+				case 1: // rule direction 'PF_IN'
+					$input_pkts += $rule_counters[1];
+					$input_bytes += $rule_counters[2];
+					break;
+				case 2: // rule direction 'PF_OUT'
+					$output_pkts += $rule_counters[1];
+					$output_bytes += $rule_counters[2];
+					break;
+				case 0: // rule direction 'PF_INOUT'
+					$input_pkts += $rule_counters[1];
+					$input_bytes += $rule_counters[2];
+					$output_pkts += $rule_counters[3];
+					$output_bytes += $rule_counters[4];
+					break;
+				default:
+					break;
+			}
+		}
 
 		if ($reverse) {
 			$volume['output_pkts'] = $input_pkts;

@@ -68,10 +68,10 @@ if ($type == "loggedin") {
 				$previous_user_timestamp = 0;
 			}
 		}
+		@fclose($fd);
 	} else {
 		$previous_user_timestamp = 0;
 	}
-	@fclose($fd);
 
 	foreach ($cpdb as $user) {
 		$user_ip = $user[2];
@@ -87,8 +87,8 @@ if ($type == "loggedin") {
 		$fd = @fopen($tmpfile, "w");
 		if ($fd) {
 			fwrite($fd, $timestamp);
+			@fclose($fd);
 		}
-		@fclose($fd);
 	}
 
 	/* If $timestamp is less than or equal to previous_user_timestamp return 0,

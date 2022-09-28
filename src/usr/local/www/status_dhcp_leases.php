@@ -104,7 +104,7 @@ unset($arp_table);
  * Translate these once so we don't do it over and over in the loops
  * below.
  */
-$online_string = gettext("online");
+$online_string = gettext("active");
 $active_string = gettext("active");
 $expired_string = gettext("expired");
 $dynamic_string = gettext("dynamic");
@@ -293,7 +293,15 @@ foreach ($leases['lease'] as $data):
 						<td><?=gettext("n/a")?></td>
 						<td><?=gettext("n/a")?></td>
 					<? endif; ?>
-					<td><?=htmlspecialchars($data['online'])?></td>
+					<td>
+<?php if ($data['online'] == $online_string):?>
+							<span style="color:green; white-space: nowrap;"><i class="fa fa-arrow-up"></i>
+<?php else: ?>
+							<span style="white-space: nowrap;"><i class="fa fa-arrow-down"></i>
+<?php endif; ?>
+							<?=htmlspecialchars($data['online'])?>
+							</span>
+					</td>
 					<td><?=htmlspecialchars($data['act'])?></td>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>

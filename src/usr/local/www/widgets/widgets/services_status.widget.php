@@ -61,9 +61,9 @@ if ($_POST['widgetkey']) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+		array_set_path($user_settings, "widgets/{$_POST['widgetkey']}/filter", implode(',', array_diff($validNames, $_POST['show'])));
 	} else {
-		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
+		array_set_path($user_settings, "widgets/{$_POST['widgetkey']}/filter", implode(',', $validNames));
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Service Status Filter via Dashboard."));
@@ -83,14 +83,17 @@ if ($_POST['widgetkey']) {
 		</thead>
 		<tbody>
 <?php
-$skipservices = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
+$skipservices = explode(",", array_get_path($user_settings, "widgets/{$widgetkey}/filter", ''));
 
 if (count($services) > 0) {
 	uasort($services, "service_dispname_compare");
 	$service_is_displayed = false;
 
 	foreach ($services as $service) {
-		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
+		if ((!$service['dispname']) ||
+		    (in_array($service['dispname'], $skipservices)) ||
+		    (!get_service_status($service) &&
+		    !is_service_enabled($service['name']))) {
 			continue;
 		}
 
@@ -139,9 +142,7 @@ if (count($services) > 0) {
 					</thead>
 					<tbody>
 <?php
-				$skipservices = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 				$idx = 0;
-
 				foreach ($services as $service):
 					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
 ?>

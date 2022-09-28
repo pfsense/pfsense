@@ -49,6 +49,8 @@ $cert_types = array(
 global $cert_altname_types;
 global $openssl_digest_algs;
 global $cert_strict_values;
+global $p12_encryption_levels;
+
 $max_lifetime = cert_get_max_lifetime();
 $default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = cert_build_curve_list();
@@ -195,19 +197,13 @@ switch ($act) {
 		} else {
 			$password = null;
 		}
-		$args = array();
-		$args['friendly_name'] = $thiscert['descr'];
-		$args['encrypt_key_cipher'] = OPENSSL_CIPHER_AES_256_CBC;
-		$ca = lookup_ca($thiscert['caref']);
-		if ($ca) {
-			/* If the CA can be found, then add the CA to the container */
-			$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
+		if (isset($_POST['p12encryption']) &&
+		    array_key_exists($_POST['p12encryption'], $p12_encryption_levels)) {
+			$encryption = $_POST['p12encryption'];
+		} else {
+			$encryption = 'high';
 		}
-		$res_crt = openssl_x509_read(base64_decode($thiscert['crt']));
-		$res_key = openssl_pkey_get_private(base64_decode($thiscert['prv']));
-		$exp_data = "";
-		openssl_pkcs12_export($res_crt, $exp_data, $res_key, $password, $args);
-		send_user_download('data', $exp_data, "{$thiscert['descr']}.p12");
+		cert_pkcs12_export($thiscert, $encryption, $password, true, 'download');
 		break;
 	default:
 		break;
@@ -910,6 +906,13 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			null,
 			['placeholder' => gettext('Export Password'), 'autocomplete' => 'new-password']
 		))->setHelp('Enter the password to use when using the export buttons below (not stored)')->addClass('toggle-edit collapse');
+		$section->addInput(new Form_Select(
+		'p12encryption',
+		'PKCS#12 Encryption',
+		'high',
+		$p12_encryption_levels
+		))->setHelp('Select the level of encryption to use when exporting a PKCS#12 archive. ' .
+				'Encryption support varies by Operating System and program');
 	}
 
 	$form->add($section);
@@ -1145,10 +1148,10 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
-		if (is_array($config['system']['user'][$userid]['cert'])) { // Could be MIA!
-			if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert'])) {
-				continue;
-			}
+
+		if (isset($userid) &&
+		    in_array($cert['refid'], config_get_path("system/user/{$userid}/cert", []))) {
+			continue;
 		}
 
 		$ca = lookup_ca($cert['caref']);
@@ -1473,7 +1476,7 @@ foreach ($a_cert as $cert):
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
 							<?php if ($cert['prv']): ?>
 								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
-								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
+								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
 								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>

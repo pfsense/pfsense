@@ -37,7 +37,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-if (substr($_REQUEST['act'], 0, 3) == "get") {
+$act = array_get_path($_REQUEST, 'act');
+if (!empty($act) && substr($act, 0, 3) == "get") {
 	$nocsrf = true;
 }
 
@@ -48,138 +49,137 @@ global $cpzoneid;
 
 $concurrentlogins_list = array("disabled" => "Disabled", "multiple" => "Multiple", "last" => "Last login", "first" => "First login");
 $cpzoneid = 1; /* Just a default */
-$cpzone = $_REQUEST['zone'];
 
-$cpzone = strtolower($cpzone);
-
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+$cpzone = strtolower(array_get_path($_REQUEST, 'zone'));
+if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
+$a_cp = config_get_path("captiveportal", []);
+$a_zone = config_get_path("captiveportal/{$cpzone}", []);
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Configuration"));
+if (empty($a_cp) || empty($a_zone)) {
+	header("Location: services_captiveportal_zones.php");
+	exit;
+}
+
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Configuration"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self", "@self");
 $shortcut_section = "captiveportal";
 
-if ($_REQUEST['act'] == "viewhtml") {
-	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
-		echo base64_decode($a_cp[$cpzone]['page']['htmltext']);
-	}
-	exit;
-} else if ($_REQUEST['act'] == "gethtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
-	send_user_download('data', base64_decode($a_cp[$cpzone]['page']['htmltext']), "portal.html", "text/html");
-} else if ($_REQUEST['act'] == "delhtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
-	unset($a_cp[$cpzone]['page']['htmltext']);
-	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default portal page"), $cpzone));
-	header("Location: services_captiveportal.php?zone={$cpzone}");
-	exit;
-} else if ($_REQUEST['act'] == "viewerrhtml") {
-	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
-		echo base64_decode($a_cp[$cpzone]['page']['errtext']);
-	}
-	exit;
-} else if ($_REQUEST['act'] == "geterrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
-	send_user_download('data', base64_decode($a_cp[$cpzone]['page']['errtext']), "err.html", "text/html");
-} else if ($_REQUEST['act'] == "delerrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
-	unset($a_cp[$cpzone]['page']['errtext']);
-	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default error page"), $cpzone));
-	header("Location: services_captiveportal.php?zone={$cpzone}");
-	exit;
-} else if ($_REQUEST['act'] == "viewlogouthtml") {
-	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
-		echo base64_decode($a_cp[$cpzone]['page']['logouttext']);
-	}
-	exit;
-} else if ($_REQUEST['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
-	send_user_download('data', base64_decode($a_cp[$cpzone]['page']['logouttext']), "logout.html", "text/html");
-} else if ($_REQUEST['act'] == "dellogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
-	unset($a_cp[$cpzone]['page']['logouttext']);
-	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default logout page"), $cpzone));
-	header("Location: services_captiveportal.php?zone={$cpzone}");
-	exit;
-}
-
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-
-if ($a_cp[$cpzone]) {
-	$cpzoneid = $pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
-	$pconfig['descr'] = $a_cp[$cpzone]['descr'];
-	$pconfig['cinterface'] = $a_cp[$cpzone]['interface'];
-	$pconfig['maxproc'] = $a_cp[$cpzone]['maxproc'];
-	$pconfig['maxprocperip'] = $a_cp[$cpzone]['maxprocperip'];
-	$pconfig['timeout'] = $a_cp[$cpzone]['timeout'];
-	$pconfig['idletimeout'] = $a_cp[$cpzone]['idletimeout'];
-	$pconfig['trafficquota'] = $a_cp[$cpzone]['trafficquota'];
-	$pconfig['freelogins_count'] = $a_cp[$cpzone]['freelogins_count'];
-	$pconfig['freelogins_resettimeout'] = $a_cp[$cpzone]['freelogins_resettimeout'];
-	$pconfig['freelogins_updatetimeouts'] = isset($a_cp[$cpzone]['freelogins_updatetimeouts']);
-	$pconfig['enable'] = isset($a_cp[$cpzone]['enable']);
-	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
-	$pconfig['auth_server'] = explode(",", $a_cp[$cpzone]['auth_server']);
-	$pconfig['auth_server2'] = explode(",", $a_cp[$cpzone]['auth_server2']);
-	$pconfig['localauth_priv'] = isset($a_cp[$cpzone]['localauth_priv']);
-	$pconfig['radacct_server'] = $a_cp[$cpzone]['radacct_server'];
-	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
-	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
-	$pconfig['radmac_fallback'] = isset($a_cp[$cpzone]['radmac_fallback']);
-	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
-	$pconfig['preservedb'] = isset($a_cp[$cpzone]['preservedb']);
-	$pconfig['reauthenticateacct'] = $a_cp[$cpzone]['reauthenticateacct'];
-	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
-	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
-	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
-	$pconfig['blockedmacsurl'] = strtolower($a_cp[$cpzone]['blockedmacsurl']);
-	$pconfig['certref'] = $a_cp[$cpzone]['certref'];
-	$pconfig['nohttpsforwards'] = isset($a_cp[$cpzone]['nohttpsforwards']);
-	$pconfig['logoutwin_enable'] = isset($a_cp[$cpzone]['logoutwin_enable']);
-	$pconfig['peruserbw'] = isset($a_cp[$cpzone]['peruserbw']);
-	$pconfig['bwdefaultdn'] = $a_cp[$cpzone]['bwdefaultdn'];
-	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
-	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
-	if (isset($a_cp[$cpzone]['noconcurrentlogins'])) {
-		if (!empty($a_cp[$cpzone]['noconcurrentlogins'])) {
-			$pconfig['noconcurrentlogins'] = $a_cp[$cpzone]['noconcurrentlogins'];
-		} else {
-			$pconfig['noconcurrentlogins'] = 'disabled';
-		}
+if (!empty($act)) {
+	$actparts = [];
+	preg_match('/(get|view|del)(html|err|logout)html/', $act, $actparts);
+	if (count($actparts) > 1) {
+		$action = $actparts[1];
+		$atype = $actparts[2];
 	} else {
-		$pconfig['noconcurrentlogins'] = 'multiple';
+		/* Invalid action, redirect. */
+		header("Location: services_captiveportal_zones.php");
+		exit;
 	}
-	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
-	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
-	$pconfig['radiustraffic_quota'] = isset($a_cp[$cpzone]['radiustraffic_quota']);
-	$pconfig['radiusperuserbw'] = isset($a_cp[$cpzone]['radiusperuserbw']);
-	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
-	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
-	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
-	$pconfig['includeidletime'] = isset($a_cp[$cpzone]['includeidletime']);
-	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
-	$pconfig['page'] = array();
-	if ($a_cp[$cpzone]['page']['htmltext']) {
-		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
-	}
-	if ($a_cp[$cpzone]['page']['errtext']) {
-		$pconfig['page']['errtext'] = $a_cp[$cpzone]['page']['errtext'];
-	}
-	if ($a_cp[$cpzone]['page']['logouttext']) {
-		$pconfig['page']['logouttext'] = $a_cp[$cpzone]['page']['logouttext'];
-	}
-	$pconfig['customlogo'] = isset($a_cp[$cpzone]['customlogo']);
-	$pconfig['custombg'] = isset($a_cp[$cpzone]['custombg']);
-	$pconfig['customhtml'] = isset($pconfig['page']['htmltext']);
-	$pconfig['termsconditions'] = base64_decode($a_cp[$cpzone]['termsconditions']);
 }
+
+switch ($action) {
+	case 'view':
+		$html = config_get_path("captiveportal/{$cpzone}/page/{$atype}text");
+		if (!empty($html)) {
+			echo base64_decode($html);
+			exit;
+		}
+		break;
+	case 'get':
+		$html = config_get_path("captiveportal/{$cpzone}/page/{$atype}text");
+		if (!empty($html)) {
+			send_user_download('data', base64_decode($html), "{$atype}.html", "text/html");
+			exit;
+		}
+		break;
+	case 'del':
+		config_del_path("captiveportal/{$cpzone}/page/{$atype}text");
+		write_config(sprintf(gettext("Captive Portal: zone %s: Restore default {$atype} page"), $cpzone));
+		header("Location: services_captiveportal.php?zone={$cpzone}");
+		exit;
+		break;
+	default:
+		/* Do nothing, no match */
+}
+
+$a_ca = config_get_path('ca', []);
+$a_cert = config_get_path('cert', []);
+
+$cpzoneid = $pconfig['zoneid'] = config_get_path("captiveportal/{$cpzone}/zoneid");
+$pconfig['descr'] = config_get_path("captiveportal/{$cpzone}/descr");
+$pconfig['cinterface'] = config_get_path("captiveportal/{$cpzone}/interface");
+$pconfig['maxproc'] = config_get_path("captiveportal/{$cpzone}/maxproc");
+$pconfig['maxprocperip'] = config_get_path("captiveportal/{$cpzone}/maxprocperip");
+$pconfig['timeout'] = config_get_path("captiveportal/{$cpzone}/timeout");
+$pconfig['idletimeout'] = config_get_path("captiveportal/{$cpzone}/idletimeout");
+$pconfig['trafficquota'] = config_get_path("captiveportal/{$cpzone}/trafficquota");
+$pconfig['freelogins_count'] = config_get_path("captiveportal/{$cpzone}/freelogins_count");
+$pconfig['freelogins_resettimeout'] = config_get_path("captiveportal/{$cpzone}/freelogins_resettimeout");
+$pconfig['freelogins_updatetimeouts'] = config_path_enabled("captiveportal/{$cpzone}", 'freelogins_updatetimeouts');
+$pconfig['enable'] = config_path_enabled("captiveportal/{$cpzone}");
+$pconfig['auth_method'] = config_get_path("captiveportal/{$cpzone}/auth_method");
+$pconfig['auth_server'] = explode(",", config_get_path("captiveportal/{$cpzone}/auth_server"));
+$pconfig['auth_server2'] = explode(",", config_get_path("captiveportal/{$cpzone}/auth_server2"));
+$pconfig['localauth_priv'] = config_path_enabled("captiveportal/{$cpzone}", 'localauth_priv');
+$pconfig['radacct_server'] = config_get_path("captiveportal/{$cpzone}/radacct_server");
+$pconfig['radacct_enable'] = config_path_enabled("captiveportal/{$cpzone}", 'radacct_enable');
+$pconfig['radmac_secret'] = config_get_path("captiveportal/{$cpzone}/radmac_secret");
+$pconfig['radmac_fallback'] = config_path_enabled("captiveportal/{$cpzone}", 'radmac_fallback');
+$pconfig['reauthenticate'] = config_path_enabled("captiveportal/{$cpzone}", 'reauthenticate');
+$pconfig['preservedb'] = config_path_enabled("captiveportal/{$cpzone}", 'preservedb');
+$pconfig['reauthenticateacct'] = config_get_path("captiveportal/{$cpzone}/reauthenticateacct");
+$pconfig['httpslogin_enable'] = config_path_enabled("captiveportal/{$cpzone}", 'httpslogin');
+$pconfig['httpsname'] = config_get_path("captiveportal/{$cpzone}/httpsname");
+$pconfig['preauthurl'] = strtolower(config_get_path("captiveportal/{$cpzone}/preauthurl"));
+$pconfig['blockedmacsurl'] = strtolower(config_get_path("captiveportal/{$cpzone}/blockedmacsurl"));
+$pconfig['certref'] = config_get_path("captiveportal/{$cpzone}/certref");
+$pconfig['nohttpsforwards'] = config_path_enabled("captiveportal/{$cpzone}", 'nohttpsforwards');
+$pconfig['logoutwin_enable'] = config_path_enabled("captiveportal/{$cpzone}", 'logoutwin_enable');
+$pconfig['peruserbw'] = config_path_enabled("captiveportal/{$cpzone}", 'peruserbw');
+$pconfig['bwdefaultdn'] = config_get_path("captiveportal/{$cpzone}/bwdefaultdn");
+$pconfig['bwdefaultup'] = config_get_path("captiveportal/{$cpzone}/bwdefaultup");
+$pconfig['nomacfilter'] = config_path_enabled("captiveportal/{$cpzone}", 'nomacfilter');
+if (array_key_exists('noconcurrentlogins', $a_zone)) {
+	if (!empty(config_get_path("captiveportal/{$cpzone}/noconcurrentlogins"))) {
+		$pconfig['noconcurrentlogins'] = config_get_path("captiveportal/{$cpzone}/noconcurrentlogins");
+	} else {
+		$pconfig['noconcurrentlogins'] = 'disabled';
+	}
+} else {
+	$pconfig['noconcurrentlogins'] = 'multiple';
+}
+$pconfig['redirurl'] = config_get_path("captiveportal/{$cpzone}/redirurl");
+$pconfig['radiussession_timeout'] = config_path_enabled("captiveportal/{$cpzone}", 'radiussession_timeout');
+$pconfig['radiustraffic_quota'] = config_path_enabled("captiveportal/{$cpzone}", 'radiustraffic_quota');
+$pconfig['radiusperuserbw'] = config_path_enabled("captiveportal/{$cpzone}", 'radiusperuserbw');
+$pconfig['passthrumacadd'] = config_path_enabled("captiveportal/{$cpzone}", 'passthrumacadd');
+$pconfig['radmac_format'] = config_get_path("captiveportal/{$cpzone}/radmac_format");
+$pconfig['reverseacct'] = config_path_enabled("captiveportal/{$cpzone}", 'reverseacct');
+$pconfig['includeidletime'] = config_path_enabled("captiveportal/{$cpzone}", 'includeidletime');
+$pconfig['radiusnasid'] = config_get_path("captiveportal/{$cpzone}/radiusnasid");
+$pconfig['page'] = array();
+if (!empty(config_get_path("captiveportal/{$cpzone}/page/htmltext"))) {
+	$pconfig['page']['htmltext'] = config_get_path("captiveportal/{$cpzone}/page/htmltext");
+	$pconfig['customhtml'] = true;
+} else {
+	$pconfig['customhtml'] = false;
+}
+if (!empty(config_get_path("captiveportal/{$cpzone}/page/errtext"))) {
+	$pconfig['page']['errtext'] = config_get_path("captiveportal/{$cpzone}/page/errtext");
+}
+if (!empty(config_get_path("captiveportal/{$cpzone}/page/logouttext"))) {
+	$pconfig['page']['logouttext'] = config_get_path("captiveportal/{$cpzone}/page/logouttext");
+}
+$pconfig['customlogo'] = config_path_enabled("captiveportal/{$cpzone}", 'customlogo');
+$pconfig['custombg'] = config_path_enabled("captiveportal/{$cpzone}", 'custombg');
+$pconfig['termsconditions'] = base64_decode(config_get_path("captiveportal/{$cpzone}/termsconditions"));
 
 if ($_POST['save']) {
-
-	unset($input_errors);
+	$input_errors = [];
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -190,16 +190,14 @@ if ($_POST['save']) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		/* make sure no interfaces are bridged or used on other zones */
-		if (is_array($_POST['cinterface'])) {
-			foreach ($pconfig['cinterface'] as $cpbrif) {
-				if (link_interface_to_bridge($cpbrif)) {
-					$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is part of a bridge."), $cpbrif);
-				}
-				foreach ($a_cp as $cpkey => $cp) {
-					if ($cpkey != $cpzone || empty($cpzone)) {
-						if (in_array($cpbrif, explode(",", $cp['interface']))) {
-							$input_errors[] = sprintf(gettext('The captive portal cannot be used on interface %1$s since it is used already on %2$s instance.'), $cpbrif, $cp['zone']);
-						}
+		foreach (array_get_path($_POST, 'cinterface', []) as $cpbrif) {
+			if (link_interface_to_bridge($cpbrif)) {
+				$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is part of a bridge."), $cpbrif);
+			}
+			foreach ($a_cp as $cpkey => $cp) {
+				if ($cpkey != $cpzone || empty($cpzone)) {
+					if (in_array($cpbrif, explode(",", $cp['interface']))) {
+						$input_errors[] = sprintf(gettext('The captive portal cannot be used on interface %1$s since it is used already on %2$s instance.'), $cpbrif, $cp['zone']);
 					}
 				}
 			}
@@ -222,21 +220,23 @@ if ($_POST['save']) {
 	if ($_POST['timeout']) {
 		if (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1)) {
 			$input_errors[] = gettext("The timeout must be at least 1 minute.");
-		} else if (isset($config['dhcpd']) && is_array($config['dhcpd'])) {
-			foreach ($config['dhcpd'] as $dhcpd_if => $dhcpd_data) {
-				if (!isset($dhcpd_data['enable'])) {
-					continue;
-				}
-				if (!is_array($_POST['cinterface']) || !in_array($dhcpd_if, $_POST['cinterface'])) {
+		} else {
+			foreach (config_get_path('dhcpd', []) as $dhcpd_if => $dhcpd_data) {
+				if (empty($dhcp_data) ||
+				    !array_key_exists('enable', $dhcpd_data) ||
+				    !array_key_exists('cinterface', $_POST) ||
+				    !is_array($_POST['cinterface']) ||
+				    !in_array($dhcpd_if, $_POST['cinterface'])) {
 					continue;
 				}
 
 				$deftime = 7200; // Default lease time
-				if (isset($dhcpd_data['defaultleasetime']) && is_numeric($dhcpd_data['defaultleasetime'])) {
+				if (array_key_exists('defaultleasetime', $dhcpd_data) &&
+				    is_numeric($dhcpd_data['defaultleasetime'])) {
 					$deftime = $dhcpd_data['defaultleasetime'];
 				}
 
-				if ($_POST['timeout'] > $deftime) {
+				if ($timeout > $deftime) {
 					$input_errors[] = gettext("Hard timeout must be less than or equal to the Default lease time set on DHCP Server");
 				}
 			}
@@ -300,13 +300,17 @@ if ($_POST['save']) {
 	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
 		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
 	}
-	if (is_uploaded_file($_FILES['logo-img']['tmp_name']) &&
-	    (is_supported_image($_FILES['logo-img']['tmp_name']) === false)) {
-		$input_errors[] = gettext("Unsupported logo image type.");
+	if (isset($_FILES['logo-img']) && is_array($_FILES['logo-img'])) {
+		if (is_uploaded_file($_FILES['logo-img']['tmp_name']) &&
+		    (is_supported_image($_FILES['logo-img']['tmp_name']) === false)) {
+			$input_errors[] = gettext("Unsupported logo image type.");
+		}
 	}
-	if (is_uploaded_file($_FILES['background-img']['tmp_name']) &&
-	    (is_supported_image($_FILES['background-img']['tmp_name']) === false)) {
-		$input_errors[] = gettext("Unsupported background image type.");
+	if (isset($_FILES['background-img']) && is_array($_FILES['background-img'])) {
+		if (is_uploaded_file($_FILES['background-img']['tmp_name']) &&
+		    (is_supported_image($_FILES['background-img']['tmp_name']) === false)) {
+			$input_errors[] = gettext("Unsupported background image type.");
+		}
 	}
 	if (!empty($_POST['preauthurl']) && !is_URL($_POST['preauthurl'])) {
 		$input_errors[] = gettext("Pre-authentication redirect URL contents must be a valid URL");
@@ -319,9 +323,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		init_config_arr(array('captiveportal', $cpzone));
-		$newcp = &$a_cp[$cpzone];
-		//$newcp['zoneid'] = $a_cp[$cpzone]['zoneid'];
+		$newcp = $a_zone;
 		if (empty($newcp['zoneid'])) {
 			$newcp['zoneid'] = 2;
 			foreach ($a_cp as $keycpzone => $cp) {
@@ -438,18 +440,26 @@ if ($_POST['save']) {
 		}
 
 		/* file upload? */
-		if (is_uploaded_file($_FILES['htmlfile']['tmp_name'])) {
+		if (isset($_FILES['htmlfile']) &&
+		    is_array($_FILES['htmlfile']) &&
+		    is_uploaded_file($_FILES['htmlfile']['tmp_name'])) {
 			$newcp['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
 		}
-		if (is_uploaded_file($_FILES['errfile']['tmp_name'])) {
+		if (isset($_FILES['errfile']) &&
+		    is_array($_FILES['errfile']) &&
+		    is_uploaded_file($_FILES['errfile']['tmp_name'])) {
 			$newcp['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
 		}
-		if (is_uploaded_file($_FILES['logoutfile']['tmp_name'])) {
+		if (isset($_FILES['logoutfile']) &&
+		    is_array($_FILES['logoutfile']) &&
+		    is_uploaded_file($_FILES['logoutfile']['tmp_name'])) {
 			$newcp['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
 		}
 
 		// Check for uploaded images for the default CP login
-		if (is_uploaded_file($_FILES['logo-img']['tmp_name'])) {
+		if (isset($_FILES['logo-img']) &&
+		    is_array($_FILES['logo-img']) &&
+		    is_uploaded_file($_FILES['logo-img']['tmp_name'])) {
 
 			/* Validated above, so returned value is OK */
 			$logo_name = "captiveportal-logo." . image_type_to_extension(is_supported_image($_FILES['logo-img']['tmp_name']));
@@ -473,7 +483,9 @@ if ($_POST['save']) {
 			$target = "{$g['captiveportal_path']}/" . $logo_name;
 			move_uploaded_file( $_FILES['logo-img']['tmp_name'], $target);
 		}
-		if (is_uploaded_file($_FILES['background-img']['tmp_name'])) {
+		if (isset($_FILES['background-img']) &&
+		    is_array($_FILES['background-img']) &&
+		    is_uploaded_file($_FILES['background-img']['tmp_name'])) {
 			/* Validated above, so returned value is OK */
 			$background_name = "captiveportal-background." . image_type_to_extension(is_supported_image($_FILES['background-img']['tmp_name']));
 			// is there already a file with that name?
@@ -499,6 +511,7 @@ if ($_POST['save']) {
 			move_uploaded_file( $_FILES['background-img']['tmp_name'], $target);
 		}
 
+		config_set_path("captiveportal/{$cpzone}", $newcp);
 		write_config("Captive portal settings saved");
 
 		filter_configure();

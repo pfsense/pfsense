@@ -841,12 +841,12 @@
 						$this->_dnsWildcard = "ON";
 					}
 					/*
-					Reference: https://www.dnsomatic.com/wiki/api
+					Reference: https://www.dnsomatic.com/docs/api
 						DNS-O-Matic usernames are 3-25 characters.
 						DNS-O-Matic passwords are 6-20 characters.
 						All ASCII letters and numbers accepted.
 						Dots, dashes, and underscores allowed, but not at the beginning or end of the string.
-					Required: "rawurlencode" http://www.php.net/manual/en/function.rawurlencode.php
+					Required: "rawurlencode" https://www.php.net/manual/en/function.rawurlencode.php
 						Encodes the given string according to RFC 3986.
 					*/
 					$server = "https://" . rawurlencode($this->_dnsUser) . ":" . rawurlencode($this->_dnsPass) . "@updates.dnsomatic.com/nic/update?hostname=";
@@ -886,7 +886,7 @@
 					break;
 				case 'name.com':
 				case 'name.com-v6':
-					// API documentation: https://www.name.com/api-docs/ & https://www.name.com/api-docs/DNS
+					// API documentation: https://www.name.com/api-docs/ & https://www.name.com/api-docs/dns
 					$namedotcom_api = "https://api.name.com/v4/domains/{$this->_dnsDomain}/records";
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$record_type = $this->_useIPv6 ? "AAAA" : "A";
@@ -2415,9 +2415,19 @@
 				case 'namecheap':
 					$tmp = str_replace("^M", "", $data);
 					$ncresponse = @xml2array($tmp);
-					/* If XML parsing failed, it may be due to mismatched encoding on the response, drop the xml line. */
+					/* If XML parsing failed, it may be due to unsupported encoding on the response. */
 					if (empty($ncresponse)) {
-						$ncresponse = @xml2array(substr($tmp, strpos($tmp, "\n") + 1));
+						mb_convert_encoding($tmp, 'UTF-8', 'UTF-16');
+						$tmp = str_ireplace('utf-16', 'utf-8', $tmp);
+						$ncresponse = @xml2array($tmp);
+					}
+					/* If it's still empty, try parsing without the XML definition */
+					if (empty($ncresponse)) {
+						$matches = [];
+						preg_match("/(<?xml.*?>)(.*)/", $tmp, $matches);
+						if (count($matches) == 3) {
+							$ncresponse = @xml2array($matches[2]);
+						}
 					}
 					if (preg_match("/internal server error/i", $data)) {
 						$status = $status_intro . $error_str . gettext("Server side error.");

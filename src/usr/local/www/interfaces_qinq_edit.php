@@ -103,11 +103,9 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("QinQ level already exists for this interface, edit it!");
 			}
 		}
-		if (is_array($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan) {
-				if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if']) {
-					$input_errors[] = gettext("A normal VLAN exists with this tag please remove it to use this tag for QinQ first level.");
-				}
+		foreach (config_get_path('vlans/vlan', []) as $vlan) {
+			if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if']) {
+				$input_errors[] = gettext("A normal VLAN exists with this tag please remove it to use this tag for QinQ first level.");
 			}
 		}
 	}
@@ -186,28 +184,17 @@ if ($_POST['save']) {
 			$addmembers = array_diff($nmembers, $omembers);
 
 			if ((count($delmembers) > 0) || (count($addmembers) > 0)) {
+				$parent = $qinqentry['vlanif'];
 				foreach ($delmembers as $tag) {
-					$ngif = str_replace(".", "_", $qinqentry['vlanif']);
-					exec("/usr/sbin/ngctl shutdown {$ngif}h{$tag}: > /dev/null 2>&1");
-					exec("/usr/sbin/ngctl msg {$ngif}qinq: delfilter \\\"{$ngif}{$tag}\\\" > /dev/null 2>&1");
+					exec("/sbin/ifconfig {$parent}.{$tag} destroy");
 				}
 
-				$qinqcmdbuf = "";
 				foreach ($addmembers as $member) {
 					$qinq = array();
 					$qinq['if'] = $qinqentry['vlanif'];
 					$qinq['tag'] = $member;
 					$macaddr = get_interface_mac($qinqentry['vlanif']);
-					interface_qinq2_configure($qinq, $qinqcmdbuf, $macaddr);
-				}
-
-				if (strlen($qinqcmdbuf) > 0) {
-					$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
-					if ($fd) {
-						fwrite($fd, $qinqcmdbuf);
-						fclose($fd);
-						mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd > /dev/null 2>&1");
-					}
+					interface_qinq2_configure($qinq, $macaddr);
 				}
 			}
 			$a_qinqs[$id] = $qinqentry;

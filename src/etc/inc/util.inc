@@ -2578,7 +2578,7 @@ function array_replace_values_recursive($data, $match, $replace) {
 
 /*
 	This function was borrowed from a comment on PHP.net at the following URL:
-	http://www.php.net/manual/en/function.array-merge-recursive.php#73843
+	https://www.php.net/manual/en/function.array-merge-recursive.php#73843
  */
 function array_merge_recursive_unique($array0, $array1) {
 
@@ -3348,19 +3348,50 @@ function array_remove_duplicate($array, $field) {
  * @param $arr array value to search
  * @param $path string path with '/' separators
  * @param $default mixed value to return if the path is not found
- * @returns mixed value at path or $default if the path does not exist
+ * @returns mixed value at path or $default if the path does not exist or if the
+ *          path keys an empty string and $default is non-null
  */
 function array_get_path(array &$arr, string $path, $default = null) {
-	$vpath = mb_split('/', $path);
+	$vpath = explode('/', $path);
 	$el = $arr;
 	foreach ($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
+		}
 		if (is_array($el) && array_key_exists($key, $el)) {
 			$el = $el[$key];
 		} else {
 			return ($default);
 		}
 	}
+
+	if (($default !== null) && ($el === '')) {
+		return ($default);
+	}
+	
 	return ($el);
+}
+
+/*
+ * Initialize an arbitrary array multiple levels deep only if unset
+ * @param $arr top of array
+ * @param $path string path with '/' separators
+ */
+function array_init_path(mixed &$arr, ?string $path)
+{
+	if (!is_array($arr)) {
+		$arr = [];
+	}
+	if (is_null($path)) {
+		return;
+	}
+	$tmp = &$arr;
+	foreach (explode('/', $path) as $key) {
+		if (!is_array($tmp[$key])) {
+			$tmp[$key] = [];
+		}
+		$tmp = &$tmp[$key];
+	}
 }
 
 /**
@@ -3374,10 +3405,19 @@ function array_get_path(array &$arr, string $path, $default = null) {
  * @returns mixed $val or $default if the path prefix does not exist
  */
 function array_set_path(array &$arr, string $path, $value, $default = null) {
-	$vpath = mb_split('/', $path);
-	$vkey = array_pop($vpath);
+	$vpath = explode('/', $path);
+	$vkey = null;
+	do {
+		$vkey = array_pop($vpath);
+	} while (mb_strlen($vkey) == 0);
+	if ($vkey == null) {
+		return ($default);
+	}
 	$el =& $arr;
 	foreach ($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
+		}
 		if (array_key_exists($key, $el) && !empty($el[$key])) {
 			if (!is_array($el[$key])) {
 					return ($default);
@@ -3415,10 +3455,13 @@ function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
  * @returns array copy of the removed value or null
  */
 function array_del_path(array &$arr, string $path) {
-	$vpath = mb_split('/', $path);
+	$vpath = explode('/', $path);
 	$vkey = array_pop($vpath);
 	$el =& $arr;
 	foreach($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
+		}
 		if (is_array($el) && array_key_exists($key, $el)) {
 			$el =& $el[$key];
 		} else {
@@ -3739,11 +3782,12 @@ function parse_cisco_acl($attribs, $dev) {
 			}
 
 			$tmprule = parse_cisco_acl_rule($rule[1], $dev, $dir, $proto);
-
-			if ($dir == "in") {
-				$inrules[$proto][$rindex] = $tmprule;
-			} else if ($dir == "out") {
-				$outrules[$proto][$rindex] = $tmprule;
+			if (!empty($tmprule)) {
+				if ($dir == "in") {
+					$inrules[$proto][$rindex] = $tmprule;
+				} else if ($dir == "out") {
+					$outrules[$proto][$rindex] = $tmprule;
+				}
 			}
 		}
 

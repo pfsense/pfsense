@@ -52,14 +52,11 @@ $iflist = get_configured_interface_with_descr();
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
-		$oc = $config['interfaces'][$ifent];
-		$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
-		    (is_ipaddrv6($oc['ipaddrv6']) &&
-		    !is_linklocal($oc['ipaddrv6'])));
-
-		if ((!is_array($config['dhcpdv6'][$ifent]) ||
-		    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
-		    !$valid_if_ipaddrv6) {
+		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6");
+		if (!config_path_enabled("dhcpdv6/{$ifent}") &&
+		    !(($ifaddr == 'track6') ||
+		    (is_ipaddrv6($ifaddr) &&
+		    !is_linklocal($ifaddr)))) {
 			continue;
 		}
 		$if = $ifent;
@@ -67,7 +64,7 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-if (is_array($config['dhcpdv6'][$if])) {
+if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	/* RA specific */
 	$pconfig['ramode'] = $config['dhcpdv6'][$if]['ramode'];
 	$pconfig['rapriority'] = $config['dhcpdv6'][$if]['rapriority'];

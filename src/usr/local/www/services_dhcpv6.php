@@ -47,13 +47,15 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 	// dhcp_clean_leases();
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
-	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
+	if (config_path_enabled('dnsmasq') &&
+	    config_path_enabled('dnsmasq', 'regdhcpstatic')) {
 		$retvaldns |= services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
-	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+	} elseif (config_path_enabled('unbound') &&
+		  config_path_enabled('unbound', 'regdhcpstatic')) {
 		$retvaldns |= services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');
@@ -69,13 +71,11 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 	if (!function_exists('is_package_installed')) {
 		require_once('pkg-utils.inc');
 	}
-	if (is_package_installed('pfSense-pkg-bind') && isset($config['installedpackages']['bind']['config'][0]['enable_bind'])) {
+	if (is_package_installed('pfSense-pkg-bind') &&
+	    config_path_enabled('installedpackages/bind/config/0', 'enable_bind')) {
 		$reloadbind = false;
-		if (is_array($config['installedpackages']['bindzone'])) {
-			$bindzone = $config['installedpackages']['bindzone']['config'];
-		} else {
-			$bindzone = array();
-		}
+		$bindzone = config_get_path('installedpackages/bindzone/config', []);
+
 		for ($x = 0; $x < sizeof($bindzone); $x++) {
 			$zone = $bindzone[$x];
 			if ($zone['regdhcpstatic'] == 'on') {
@@ -111,14 +111,12 @@ $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
-		$oc = $config['interfaces'][$ifent];
-		$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
-		    (is_ipaddrv6($oc['ipaddrv6']) &&
-		    !is_linklocal($oc['ipaddrv6'])));
+		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6");
 
-		if ((!is_array($config['dhcpdv6'][$ifent]) ||
-		    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
-		    !$valid_if_ipaddrv6) {
+		if (!config_path_enabled("dhcpdv6/{$ifent}") &&
+		    !(($ifaddr == 'track6') ||
+		    (is_ipaddrv6($ifaddr) &&
+		    !is_linklocal($ifaddr)))) {
 			continue;
 		}
 		$if = $ifent;
@@ -126,7 +124,7 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-if (is_array($config['dhcpdv6'][$if])) {
+if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	/* DHCPv6 */
 	if (is_array($config['dhcpdv6'][$if]['range'])) {
 		$pconfig['range_from'] = $config['dhcpdv6'][$if]['range']['from'];
@@ -170,9 +168,9 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 
-if ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
-	$trackifname = $config['interfaces'][$if]['track6-interface'];
-	$trackcfg = $config['interfaces'][$trackifname];
+if (config_get_path("interfaces/{$if}/ipaddrv6") == 'track6') {
+	$trackifname = config_get_path("interfaces/{$if}/track6-interface");
+	$trackcfg = config_get_path("interfaces/{$trackifname}");
 	$ifcfgsn = "64";
 	$ifcfgip = '::';
 
@@ -605,7 +603,6 @@ if ($dhcrelay_enabled) {
 }
 
 if (is_ipaddrv6($ifcfgip)) {
-
 	if ($ifcfgip == "::") {
 		$sntext = gettext("Delegated Prefix") . ':';
 		$sntext .= ' ' . convert_friendly_interface_to_friendly_descr($config['interfaces'][$if]['track6-interface']);

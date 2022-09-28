@@ -52,11 +52,10 @@ $iflist = get_configured_interface_with_descr();
 if (!$if || !isset($iflist[$if])) {
 	$found_starting_if = false;
 	// First look for an interface with DHCP already enabled.
-	foreach ($iflist as $ifent => $ifname) {
-		$oc = $config['interfaces'][$ifent];
-		if (is_array($config['dhcpd'][$ifent]) &&
-		    isset($config['dhcpd'][$ifent]['enable']) &&
-		    is_ipaddrv4($oc['ipaddr']) && $oc['subnet'] < 31) {
+	foreach (array_keys($iflist) as $ifent) {
+		if (config_path_enabled("dhcpd/{$ifent}") &&
+		    is_ipaddrv4(config_get_path("interfaces/{$ifent}/ipaddr")) &&
+		    ((int) config_get_path("interfaces/{$ifent}/subnet", 0) < 31)) {
 			$if = $ifent;
 			$found_starting_if = true;
 			break;
@@ -67,26 +66,25 @@ if (!$if || !isset($iflist[$if])) {
 	 * If there is no DHCP-enabled interface and LAN is a candidate,
 	 * then choose LAN.
 	 */
-	if (!$found_starting_if && isset($iflist['lan']) &&
-	    is_ipaddrv4($config['interfaces']['lan']['ipaddr']) &&
-	    $config['interfaces']['lan']['subnet'] < 31) {
+	if (!$found_starting_if &&
+	    !empty(array_get_path($iflist, 'lan')) &&
+	    is_ipaddrv4(config_get_path("interfaces/lan/ipaddr")) &&
+	    ((int) config_get_path("interfaces/lan/subnet", 0) < 31)) {
 		$if = 'lan';
 		$found_starting_if = true;
 	}
 
 	// At the last select whatever can be found.
 	if (!$found_starting_if) {
-		foreach ($iflist as $ifent => $ifname) {
-			$oc = $config['interfaces'][$ifent];
-
+		foreach (array_keys($iflist) as $ifent) {
 			/* Not static IPv4 or subnet >= 31 */
-			if (!is_ipaddrv4($oc['ipaddr']) ||
-			    empty($oc['subnet']) || $oc['subnet'] < 31) {
+			if (!is_ipaddrv4(config_get_path("interfaces/{$ifent}/ipaddr")) ||
+			    empty($oc['subnet']) ||
+			    ((int) config_get_path("interfaces/{$ifent}/subnet", 0) < 31)) {
 				continue;
 			}
 
-			if (!is_array($config['dhcpd'][$ifent]) ||
-			    !isset($config['dhcpd'][$ifent]['enable'])) {
+			if (!config_path_enabled("dhcpd/{$ifent}")) {
 				continue;
 			}
 
@@ -100,7 +98,7 @@ $act = $_REQUEST['act'];
 
 $a_pools = array();
 
-if (is_array($config['dhcpd'][$if])) {
+if (!empty(config_get_path("dhcpd/{$if}"))) {
 	$pool = $_REQUEST['pool'];
 	if (is_numeric($_POST['pool'])) {
 		$pool = $_POST['pool'];
@@ -781,13 +779,15 @@ if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 	$retvaldns = 0;
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
-	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
+	if (config_path_enabled('dnsmasq') &&
+	    config_path_enabled('dnsmasq', 'regdhcpstatic')) {
 		$retvaldns |= services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
-	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+	} elseif (config_path_enabled('unbound') &&
+		  config_path_enabled('unbound', 'regdhcpstatic')) {
 		$retvaldns |= services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');
@@ -804,13 +804,11 @@ if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 	if (!function_exists('is_package_installed')) {
 		require_once('pkg-utils.inc');
 	}
-	if (is_package_installed('pfSense-pkg-bind') && isset($config['installedpackages']['bind']['config'][0]['enable_bind'])) {
+	if (is_package_installed('pfSense-pkg-bind') &&
+	    config_path_enabled('installedpackages/bind/config/0', 'enable_bind')) {
 		$reloadbind = false;
-		if (is_array($config['installedpackages']['bindzone'])) {
-			$bindzone = $config['installedpackages']['bindzone']['config'];
-		} else {
-			$bindzone = array();
-		}
+		$bindzone = config_get_path('installedpackages/bindzone/config', []);
+
 		for ($x = 0; $x < sizeof($bindzone); $x++) {
 			$zone = $bindzone[$x];
 			if ($zone['regdhcpstatic'] == 'on') {
@@ -1059,13 +1057,15 @@ $rangestr = ip_after($subnet_start) . ' - ' . ip_before($subnet_end);
 
 if (is_numeric($pool) || ($act == "newpool")) {
 	$rangestr .= '<br />' . gettext('In-use DHCP Pool Ranges:');
-	if (is_array($config['dhcpd'][$if]['range'])) {
-		$rangestr .= '<br />' . $config['dhcpd'][$if]['range']['from'] . ' - ' . $config['dhcpd'][$if]['range']['to'];
+	$rangearr = config_get_path("dhcpd/{$if}/range", []);
+	if (!empty($rangearr)) {
+		$rangestr .= '<br />' . array_get_path($rangearr, 'from') . ' - ' . array_get_path($rangearr, 'to');
 	}
 
 	foreach ($a_pools as $p) {
-		if (is_array($p['range'])) {
-			$rangestr .= '<br />' . $p['range']['from'] . ' - ' . $p['range']['to'];
+		$pa = array_get_path($p, 'range', []);
+		if (!empty($pa)) {
+			$rangestr .= '<br />' . array_get_path($pa, 'from') . ' - ' . array_get_path($pa, 'to');
 		}
 	}
 }

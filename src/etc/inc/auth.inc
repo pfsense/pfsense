@@ -835,8 +835,9 @@ function local_user_set_password(&$user, $password) {
 
 function local_user_get_groups($user, $all = false) {
 	$sysgroups = config_get_path('system/group', []);
+	$groups = [];
 	if(empty($sysgroups)) {
-		return [];
+		return $groups;
 	}
 
 	foreach ($sysgroups as $group) {

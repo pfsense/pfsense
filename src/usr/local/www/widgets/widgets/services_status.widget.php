@@ -90,7 +90,10 @@ if (count($services) > 0) {
 	$service_is_displayed = false;
 
 	foreach ($services as $service) {
-		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
+		if ((!$service['dispname']) ||
+		    (in_array($service['dispname'], $skipservices)) ||
+		    (!get_service_status($service) &&
+		    !is_service_enabled($service['name']))) {
 			continue;
 		}
 

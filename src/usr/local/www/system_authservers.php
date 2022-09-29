@@ -443,22 +443,21 @@ function build_radiusnas_list() {
 		}
 	}
 
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $sn) {
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
-				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
+	foreach (config_get_path('virtualip/vip', [] as $sn) {
+		if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+			$len = $end - $start;
 
-				for ($i = 0; $i <= $len; $i++) {
-					$snip = long2ip32($start+$i);
-					$list[$snip] = $sn['descr'] . ' - ' . $snip;
-				}
-			} else {
-				$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
+			for ($i = 0; $i <= $len; $i++) {
+				$snip = long2ip32($start+$i);
+				$list[$snip] = $sn['descr'] . ' - ' . $snip;
 			}
+		} else {
+			$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
 		}
 	}
+
 
 	return($list);
 }

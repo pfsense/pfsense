@@ -443,7 +443,7 @@ function build_radiusnas_list() {
 		}
 	}
 
-	foreach (config_get_path('virtualip/vip', [] as $sn) {
+	foreach (config_get_path('virtualip/vip', []) as $sn) {
 		if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));

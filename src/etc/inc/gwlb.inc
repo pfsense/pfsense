@@ -1786,7 +1786,7 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 
 		// Check if the gateway name is used in any enabled Static Route.
 		if (is_array($config['staticroutes']['route'])) {
-			foreach ($config['staticroutes']['route'] as $route) {
+			foreach (config_get_path('staticroutes/route', []) as $route) {
 				if ($route['gateway'] == $gateway_settings['name']) {
 					if (!isset($route['disabled'])) {
 						// There is a static route that uses this gateway and is enabled (not disabled).

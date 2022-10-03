@@ -95,11 +95,11 @@ function deleteAlias($id, $apply = false) {
 		}
 		unset($a_aliases[$id]);
 		if (write_config(gettext("Deleted firewall alias " . $a_aliases[$id]['name']))) {
-			filter_configure();
-
 			if (!$apply) {
 				mark_subsystem_dirty('aliases');
-			} 
+			} else {
+				filter_configure();
+			}
 		}
 	}
 

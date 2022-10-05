@@ -3,7 +3,8 @@
     "require": {
         "mikehaertl/php-shellcommand": "^1.6",
         "symfony/cache": "^5.3",
-        "nette/utils": "^3.2"
+        "nette/utils": "^3.2",
+        "simplepie/simplepie": "^1.7"
     },
     "autoload": {
         "psr-4": {

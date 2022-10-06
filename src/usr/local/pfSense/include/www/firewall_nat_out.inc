@@ -629,26 +629,25 @@ function build_target_list() {
 
 	//Temporary array so we can sort IPs
 	$templist = array();
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $sn) {
-			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-				if (isset($sn['noexpand'])) {
-					continue;
-				}
-				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
-				for ($i = 0; $i <= $len; $i++) {
-					$snip = long2ip32($start+$i);
-
-					$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
-				}
-			} else {
-				$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+	foreach (config_get_path('virtualip/vip', []) as $sn) {
+		if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+			$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+			if (isset($sn['noexpand'])) {
+				continue;
 			}
+			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+			$len = $end - $start;
+			for ($i = 0; $i <= $len; $i++) {
+				$snip = long2ip32($start+$i);
+
+				$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
+			}
+		} else {
+			$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 		}
 	}
+
 	asort($templist);
 	//Append sorted IP array onto main array
 	$list = array_merge($list, $templist);

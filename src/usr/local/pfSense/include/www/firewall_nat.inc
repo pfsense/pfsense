@@ -82,26 +82,24 @@ function build_dsttype_list($json = false) {
 
 	//Temporary array so we can sort IPs
 	$templist = array();
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $sn) {
-			if ((($sn['mode'] == "proxyarp") || ($sn['mode'] == "other")) &&
-			    ($sn['type'] == "network") && is_subnetv4($sn['subnet'] . "/" . $sn['subnet_bits'])) {
-				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-				if (isset($sn['noexpand'])) {
-					continue;
-				}
-				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
-
-				for ($i = 0; $i <= $len; $i++) {
-					$snip = long2ip32($start+$i);
-
-					$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
-				}
-			} else {
-				$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+	foreach (config_get_path('virtualip/vip', []) as $sn) {
+		if ((($sn['mode'] == "proxyarp") || ($sn['mode'] == "other")) &&
+			($sn['type'] == "network") && is_subnetv4($sn['subnet'] . "/" . $sn['subnet_bits'])) {
+			$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+			if (isset($sn['noexpand'])) {
+				continue;
 			}
+			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+			$len = $end - $start;
+
+			for ($i = 0; $i <= $len; $i++) {
+				$snip = long2ip32($start+$i);
+
+				$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
+			}
+		} else {
+			$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 		}
 	}
 

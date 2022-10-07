@@ -295,11 +295,9 @@ function saveAlias($post, $id) {
 	}
 
 	/* Is the description already used as an interface group name? */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-			if ($ifgroupentry['ifname'] == $post['name']) {
-				$data_errors[] = gettext("Sorry, an interface group with this name already exists.");
-			}
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgroupentry) {
+		if ($ifgroupentry['ifname'] == $post['name']) {
+			$data_errors[] = gettext("Sorry, an interface group with this name already exists.");
 		}
 	}
 

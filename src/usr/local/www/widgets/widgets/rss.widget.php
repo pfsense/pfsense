@@ -25,6 +25,11 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
+/* bring in the Composer autoloader */
+require_once('vendor/autoload.php');
+
+use SimplePie\SimplePie;
+
 if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
 	$user_settings['widgets'][$_POST['widgetkey']]['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
@@ -87,7 +92,6 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 	}
 	exec("/bin/chmod a+rw /tmp/simplepie/.");
 	exec("/bin/chmod a+rw /tmp/simplepie/cache/.");
-	require_once("simplepie/simplepie.inc");
 	if (!function_exists('textLimit')) {
 		function textLimit($string, $length, $replacer = '...') {
 			if (strlen($string) > $length) {

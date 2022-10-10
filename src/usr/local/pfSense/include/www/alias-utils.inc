@@ -35,57 +35,79 @@ init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 function deleteAlias($id, $apply = false) {
-	global $config;
-
 	/* make sure rule is not being referenced by any nat or filter rules */
 	init_config_arr(array('aliases', 'alias'));
-	$a_aliases = &$config['aliases']['alias'];
+	$a_aliases = config_get_path('aliases/alias', []);
 
 	$delete_error = "";
 	$is_alias_referenced = false;
 	$referenced_by = array();
 	$alias_name = $a_aliases[$id]['name'];
-	// Firewall rules
-	find_alias_reference(array('filter', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('filter', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('filter', 'rule'), array('source', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('filter', 'rule'), array('destination', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-	// NAT Rules
-	find_alias_reference(array('nat', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'rule'), array('source', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'rule'), array('destination', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'rule'), array('local-port'), $alias_name, $is_alias_referenced, $referenced_by);
-	// NAT 1:1 Rules
-	find_alias_reference(array('nat', 'onetoone'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-	// NAT Outbound Rules
-	find_alias_reference(array('nat', 'outbound', 'rule'), array('source', 'network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'outbound', 'rule'), array('sourceport'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'outbound', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'outbound', 'rule'), array('dstport'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('nat', 'outbound', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
-	// Alias in an alias
-	find_alias_reference(array('aliases', 'alias'), array('address'), $alias_name, $is_alias_referenced, $referenced_by);
-	// Static routes
-	find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
-	// OpenVPN
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	$section_fields = [
+		// Firewall rules
+		'filter/rule' => [
+			'source/address',
+			'destination/address',
+			'destination/port'
+		],
+		// NAT Rules
+		'nat/rule' => [
+			'source/address',
+			'source/port',
+			'destination/address',
+			'destination/port',
+			'target',
+			'local-port'
+		],
+		// NAT 1:1 Rules
+		'nat/onetoone' => [
+			'destination/address'
+		],
+		// NAT Outbound Rules
+		'nat/outbound/rule' => [
+			'source/network',
+			'sourceport',
+			'destination/address',
+			'dstport',
+			'target'
+		],
+		// Alias in an alias
+		'aliases/alias' => [
+			'address'
+		],
+		// Static routes
+		'staticroutes/route' => [
+			'network'
+		],
+		// OpenVPN
+		'openvpn/openvpn-server' => [
+			'tunnel_network',
+			'tunnel_networkv6',
+			'local_network',
+			'local_networkv6',
+			'remote_network',
+			'remote_networkv6',
+			'tunnel_network',
+			'tunnel_networkv6',
+			'remote_network',
+			'remote_networkv6'
+		],
+		'openvpn/openvpn-csc' => [
+			'tunnel_network',
+			'tunnel_networkv6',
+			'local_network',
+			'local_networkv6',
+			'remote_network',
+			'remote_networkv6'
+		],
+	];
+
+	foreach ($section_fields as $section => $fields) {
+		foreach ($fields as $field) {
+			find_alias_reference_by_path($section, $field, $alias_name, $is_alias_referenced, $referenced_by);
+		}
+	}
+
 	if ($is_alias_referenced == true) {
 		$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars(implode(", ", $referenced_by)));
 	} else {
@@ -94,6 +116,7 @@ function deleteAlias($id, $apply = false) {
 			unlink_if_exists("/var/db/aliastables/" . $a_aliases[$id]['name'] . ".txt");
 		}
 		unset($a_aliases[$id]);
+		config_set_path('aliases/alias', $a_aliases);
 		if (write_config(gettext("Deleted firewall alias " . $a_aliases[$id]['name']))) {
 			if (!$apply) {
 				mark_subsystem_dirty('aliases');
@@ -121,22 +144,37 @@ function openvpnAlias ($id) {
 		return false;
 	}
 
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
-	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	$section_fields = [
+		'openvpn/openvpn-server' => [
+			'tunnel_network',
+			'tunnel_networkv6',
+			'local_network',
+			'local_networkv6',
+			'remote_network',
+			'remote_networkv6'
+		],
+		'openvpn/openvpn-client' => [
+			'tunnel_network',
+			'tunnel_networkv6',
+			'remote_network',
+			'remote_networkv6'
+		],
+		'openvpn/openvpn-csc' => [
+			'tunnel_network',
+			'tunnel_networkv6',
+			'local_network',
+			'local_networkv6',
+			'remote_network',
+			'remote_networkv6'
+		]
+	];
+
+	foreach ($section_fields as $section => $fields) {
+		foreach ($fields as $field) {
+			find_alias_reference_by_path($section, $field, $alias_name, $is_alias_referenced, $referenced_by);
+		}
+	}
+
 	if ($is_alias_referenced == true) {
 		$alarm_message = sprintf(gettext("Alias is in use by OpenVPN. Pressing save will restart instances: %s."), htmlspecialchars(implode(", ", $referenced_by)));
 	}
@@ -144,47 +182,55 @@ function openvpnAlias ($id) {
 	return $alarm_message;
 }
 
-function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
-	global $config;
+/**
+ * Find references to an alias by path.
+ *
+ * @param  string   $section             Section part of path, slash delimited. The section must identify an indexed array of items 
+ * @param  string   $field               Field part of path, slash delimited. The part is appended to each element in the section to search for an alias.
+ * @param  string   $origname            Alias name.
+ * @param  bool	    $is_alias_referenced Set to true if a match is found.
+ * @param  string[] $referenced_by       Array recording descriptions of paths referencing the alias.
+ */
+function find_alias_reference_by_path($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
 	if (!$origname) {
 		return;
 	}
 
-	$sectionref = &$config;
-	foreach ($section as $sectionname) {
-		if (is_array($sectionref) && isset($sectionref[$sectionname])) {
-			$sectionref = &$sectionref[$sectionname];
-		} else {
-			return;
-		}
-	}
+	$items = config_get_path($section, []);
 
-	if (is_array($sectionref)) {
-		foreach ($sectionref as $itemkey => $item) {
-			$fieldfound = true;
-			$fieldref = &$sectionref[$itemkey];
-			foreach ($field as $fieldname) {
-				if (is_array($fieldref) && isset($fieldref[$fieldname])) {
-					$fieldref = &$fieldref[$fieldname];
-				} else {
-					$fieldfound = false;
-					break;
-				}
+	foreach ($items as $id => $item) {
+		if (array_get_path($item, $field) == $origname) {
+			$is_alias_referenced = true;
+			/* This is a bad hack to make rule descriptions more verbose,
+			 * ideally the object should be providing its own text presentation,
+			 * but our values are arrays at this time
+			 */
+			if (basename($section) == 'rule') {
+				$descr = str_replace('/', ' ', $section) . ' ';
+			} else {
+				$descr = basename($section) . ' ';
 			}
-			/* explode() alias address string, see https://redmine.pfsense.org/issues/11372 */
-			if ($fieldfound && (in_array($origname, explode(' ', $fieldref)) ||
-			    in_array($origname, explode(',', $fieldref)))) {
-				$is_alias_referenced = true;
-				if (is_array($item)) {
-					if (!empty($item['descr'])) {
-						$referenced_by[] = $item['descr'];
-					} elseif (!empty($item['description'])) {
-						$referenced_by[] = $item['description'];
-					}
-				}
+			if (!empty($item['descr'])) {
+				$descr .= "'{$item['descr']}'";
+			} elseif (!empty($item['description'])) {
+				$descr .= "'{$item['description']}'";
+			} elseif (!empty($item['name'])) {
+				$descr .= "'{$item['name']}'";
+			} else {
+				$descr .= "id {$id}";
 			}
+
+			$referenced_by[] = $descr;
 		}
 	}
+}
+
+
+function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
+	$section_path = join('/', $section);
+	$field_path = join('/', $field);
+
+	return (find_alias_reference_by_path($section_path, $field_path, $origname, $is_alias_referenced, $referenced_by));
 }
 
 function staticrouteAlias($id) {
@@ -202,7 +248,7 @@ function staticrouteAlias($id) {
 		return false;
 	}
 
-	find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference_by_path('staticroutes/route', 'network', $alias_name, $is_alias_referenced, $referenced_by);
 
 	if ($is_alias_referenced) {
 		$alarm_message = sprintf(gettext("Alias is used in static routes. Pressing save will reload static routes: %s."), htmlspecialchars(implode(", ", $referenced_by)));

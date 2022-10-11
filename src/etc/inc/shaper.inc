@@ -33,6 +33,12 @@ require_once("util.inc");
 require_once("notices.inc");
 include_once("interfaces.inc");//required for convert_real_interface_to_friendly_interface_name() in get_queue_stats() to get altq interface name.
 
+// Try to ceil $value, otherwise return $default is unable to do so
+function ceil2($value, $default = NULL)
+{
+    return (is_numeric($value) ? ceil($value) : $default);
+}
+
 /* Limiter patch */
 // I need this crazy looking model/struct to specify various algos, ecn caps, and params.
 // update as needed when dummynet changes
@@ -4367,7 +4373,7 @@ EOD;
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= '<tr>';
 				$form .= '<td class="col-xs-4">';
-				$form .= "<input class='form-control' onchange=\"ceil_func(this)\" type=\"number\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"" . ceil($bw['bw']) ."\" min=\"0\" step=\"1\"/>";
+				$form .= "<input class='form-control' onchange=\"ceil_func(this)\" type=\"number\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"" . ceil2($bw['bw']) ."\" min=\"0\" step=\"1\"/>";
 				//$form .= "</td><td width='20%'>";
 				//$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
 				$form .= "</td>";

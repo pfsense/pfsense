@@ -462,10 +462,10 @@ if ($_POST['save']) {
 		    is_uploaded_file($_FILES['logo-img']['tmp_name'])) {
 
 			/* Validated above, so returned value is OK */
-			$logo_name = "captiveportal-logo." . image_type_to_extension(is_supported_image($_FILES['logo-img']['tmp_name']));
+			$logo_name = "captiveportal-logo" . image_type_to_extension(is_supported_image($_FILES['logo-img']['tmp_name']), true);
 			if (is_array($a_cp[$cpzone]['element']) && !empty($a_cp[$cpzone]['element'])) {
 				for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
-					if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-logo.") !== false){
+					if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-logo") !== false){
 						// remove old image before replacing it.
 						@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
 						@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
@@ -487,11 +487,11 @@ if ($_POST['save']) {
 		    is_array($_FILES['background-img']) &&
 		    is_uploaded_file($_FILES['background-img']['tmp_name'])) {
 			/* Validated above, so returned value is OK */
-			$background_name = "captiveportal-background." . image_type_to_extension(is_supported_image($_FILES['background-img']['tmp_name']));
+			$background_name = "captiveportal-background" . image_type_to_extension(is_supported_image($_FILES['background-img']['tmp_name']), true);
 			// is there already a file with that name?
 			if (is_array($a_cp[$cpzone]['element']) && !empty($a_cp[$cpzone]['element'])) {
 				for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
-					if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-background.") !== false){
+					if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-background") !== false){
 						// remove old image and replace it.
 						@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
 						@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);

@@ -1227,26 +1227,31 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 		$ldapfunc = "ldap_search";
 	}
 
-	$search = @$ldapfunc($ldap, $ldapbasedn, $ldapfilter);
-	$info = @ldap_get_entries($ldap, $search);
+	if (!($search = @$ldapfunc($ldap, $ldapbasedn, $ldapfilter))) {
+		goto errout;
+	}
 
-	if (is_array($info)) {
-		foreach ($info as $inf) {
-			if (!$show_complete_ou) {
-				$inf_split = explode(",", $inf['dn']);
-				$ou = $inf_split[0];
-				$ou = str_replace("OU=", "", $ou);
-				$ou = str_replace("CN=", "", $ou);
-			} else {
-				if ($inf['dn']) {
-					$ou = $inf['dn'];
-				}
-			}
-			if ($ou) {
-				$ous[] = $ou;
+	if (!is_array($info = @ldap_get_entries($ldap, $search))) {
+		goto errout;
+	}
+
+	foreach ($info as $inf) {
+		if (!$show_complete_ou) {
+			$inf_split = explode(",", $inf['dn']);
+			$ou = $inf_split[0];
+			$ou = str_replace("OU=", "", $ou);
+			$ou = str_replace("CN=", "", $ou);
+		} else {
+			if ($inf['dn']) {
+				$ou = $inf['dn'];
 			}
 		}
+		if ($ou) {
+			$ous[] = $ou;
+		}
 	}
+
+errout: // goto to bailout early
 
 	@ldap_unbind($ldap);
 
@@ -1369,6 +1374,7 @@ function ldap_get_groups($username, $authcfg) {
 
 	if (isset($authcfg['ldap_rfc2307'])) {
 		if (isset($authcfg['ldap_rfc2307_userdn'])) {
+			$has_userinfo = false;
 			$ldac_splits = explode(";", $ldapauthcont);
 			foreach ($ldac_splits as $i => $ldac_split) {
 				$ldac_split = isset($authcfg['ldap_utf8']) ? utf8_encode($ldac_split) : $ldac_split;
@@ -1379,8 +1385,14 @@ function ldap_get_groups($username, $authcfg) {
 				} else {
 					$ldapdn = $ldapsearchbasedn;
 				}
-				$usersearch = @$ldapfunc($ldap, $ldapdn, $ldapfilter);
-				$userinfo = @ldap_get_entries($ldap, $usersearch);
+				if (($usersearch = @$ldapfunc($ldap, $ldapdn, $ldapfilter))) {
+					$userinfo = @ldap_get_entries($ldap, $usersearch);
+					$has_userinfo = true;
+				}
+			}
+			/* we can bailout early if the above query fails in rfc2307 mode */
+			if (!$has_userinfo) {
+				goto errout;
 			}
 			$username = $userinfo[0]['dn'];
 		}
@@ -1389,9 +1401,11 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapfilter = "({$ldapnameattribute}={$username})";
 	}
 
-	$search = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
-	$info = @ldap_get_entries($ldap, $search);
+	if (!($search = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute)))) {
+		goto errout;
+	}
 
+	$info = @ldap_get_entries($ldap, $search);
 	$gresults = isset($authcfg['ldap_rfc2307']) ? $info : $info[0][$ldapgroupattribute];
 
 	if (is_array($gresults)) {
@@ -1405,12 +1419,12 @@ function ldap_get_groups($username, $authcfg) {
 		}
 	}
 
+errout: // goto to bailout early
+
 	/* Time to close LDAP connection */
 	@ldap_unbind($ldap);
 
 	$groups = print_r($memberof, true);
-
-	//log_error("Returning groups ".$groups." for user $username");
 
 	return $memberof;
 }
@@ -1585,8 +1599,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		} else {
 			$ldapdn = $ldapsearchbasedn;
 		}
-		$search = @$ldapfunc($ldap, $ldapdn, $ldapfilter);
-		if (!$search) {
+		if (!($search = @$ldapfunc($ldap, $ldapdn, $ldapfilter))) {
 			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
 			continue;
 		}

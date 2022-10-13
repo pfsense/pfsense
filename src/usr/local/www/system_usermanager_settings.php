@@ -129,7 +129,7 @@ if ($_POST) {
 
 	if (isset($_POST['session_timeout'])) {
 		$timeout = intval($_POST['session_timeout']);
-		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0)) {
+		if ($timeout != "" && (!is_numeric($timeout) || $timeout < 0)) {
 			$input_errors[] = gettext("Session timeout must be an integer value.");
 		}
 	}

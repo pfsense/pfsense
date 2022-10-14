@@ -31,12 +31,10 @@
  * RESULT
  *   boolean   - true if item was found and deleted
  ******/
-function delete_id($id, &$array) {
+function delete_id($id) {
 	global $config;
 
-	if (!is_array($array)) {
-		return false;
-	}
+	$array = config_get_path('filter/rule', []);
 
 	// Search for the item in the array
 	$delete_index = get_id($id, $array);
@@ -57,6 +55,7 @@ function delete_id($id, &$array) {
 	$mvnrows = -1;
 	move_separators($a_separators, $ridx, $mvnrows);
 
+	config_set_path('filter/rule', $array);
 	return true;
 }
 
@@ -70,12 +69,8 @@ function delete_id($id, &$array) {
  * RESULT
  *   boolean   - true if item was found and set
  ******/
-function toggle_id($id, &$array, $status) {
-	global $config;
-
-	if (!is_array($array)) {
-		return false;
-	}
+function toggle_id($id, $status) {
+	$array = config_get_path('filter/rule', []);
 
 	// Search for the item in the array
 	$toggle_index = get_id($id, $array);
@@ -90,6 +85,8 @@ function toggle_id($id, &$array, $status) {
 	} else {
 		$array[$toggle_index]['disabled'] = true;
 	}
+
+	config_set_path('filter/rule', $array);
 
 	return true;
 }

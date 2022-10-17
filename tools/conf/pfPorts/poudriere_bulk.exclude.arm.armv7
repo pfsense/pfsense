@@ -1,4 +1,5 @@
 devel/aws-sdk-php
+devel/valgrind
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net/realtek-re-kmod

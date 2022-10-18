@@ -2104,7 +2104,7 @@ function session_auth() {
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
-			log_auth(sprintf(gettext("webConfigurator authentication error for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()));
+			log_auth(sprintf(gettext("webConfigurator authentication error for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address(false)));
 			if (isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;
@@ -2199,12 +2199,17 @@ function print_credit() {
 			'<a target="_blank" href="https://pfsense.org/license">' .
 			gettext(' View license.') . '</a>';
 }
-function get_user_remote_address() {
+function get_user_remote_address($print_all=true) {
 	$remote_address = $_SERVER['REMOTE_ADDR'];
-	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-		$remote_address .= "[{$_SERVER['HTTP_CLIENT_IP']}]";
-	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		$remote_address .= "[{$_SERVER['HTTP_X_FORWARDED_FOR']}]";
+	/* Add extra identifying header information upon request */
+	if ($print_all) {
+		if (!empty($_SERVER['HTTP_CLIENT_IP'] &&
+		    is_ipaddr($_SERVER['HTTP_CLIENT_IP']))) {
+			$remote_address .= "[{$_SERVER['HTTP_CLIENT_IP']}]";
+		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) &&
+			  is_ipaddr($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$remote_address .= "[{$_SERVER['HTTP_X_FORWARDED_FOR']}]";
+		}
 	}
 	return $remote_address;
 }

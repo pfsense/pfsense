@@ -1773,25 +1773,21 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 	} else if (isset($gateway_settings['disabled'])) {
 		// We have a valid gateway name that the user wants to mark as disabled.
 		// Check if the gateway name is used in any gateway group.
-		if (is_array($config['gateways']['gateway_group'])) {
-			foreach ($config['gateways']['gateway_group'] as $group) {
-				foreach ($group['item'] as $item) {
-					$items = explode("|", $item);
-					if ($items[0] == $gateway_settings['name']) {
-						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $gateway_settings['name'], $group['name']);
-					}
+		foreach (config_get_path('gateways/gateway_group', []) as $group) {
+			foreach ($group['item'] as $item) {
+				$items = explode("|", $item);
+				if ($items[0] == $gateway_settings['name']) {
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $gateway_settings['name'], $group['name']);
 				}
 			}
 		}
 
 		// Check if the gateway name is used in any enabled Static Route.
-		if (is_array($config['staticroutes']['route'])) {
-			foreach (config_get_path('staticroutes/route', []) as $route) {
-				if ($route['gateway'] == $gateway_settings['name']) {
-					if (!isset($route['disabled'])) {
-						// There is a static route that uses this gateway and is enabled (not disabled).
-						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $gateway_settings['name'], $route['network']);
-					}
+		foreach (config_get_path('staticroutes/route', []) as $route) {
+			if ($route['gateway'] == $gateway_settings['name']) {
+				if (!isset($route['disabled'])) {
+					// There is a static route that uses this gateway and is enabled (not disabled).
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $gateway_settings['name'], $route['network']);
 				}
 			}
 		}

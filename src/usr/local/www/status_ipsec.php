@@ -644,7 +644,7 @@ if (ipsec_enabled()) {
 	print('<div class="infoblock blockopen">');
 }
 
-print_info_box(sprintf(gettext('IPsec is not enabled. %1$sConfigure IPsec%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+print_info_box(sprintf(gettext('%1$sConfigure IPsec%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>
 

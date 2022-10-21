@@ -72,12 +72,10 @@ function console_prompt_for_yn ($prompt_text) {
 function console_get_interface_from_ppp($realif) {
 	global $config;
 
-	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-			if ($realif == $ppp['if']) {
-				$ifaces = explode(",", $ppp['ports']);
-				return $ifaces[0];
-			}
+	foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+		if ($realif == $ppp['if']) {
+			$ifaces = explode(",", $ppp['ports']);
+			return $ifaces[0];
 		}
 	}
 
@@ -461,46 +459,38 @@ if (console_configure_dhcpd(6) == 0) {
 //*****************************************************************************
 
 if ($config['system']['webgui']['protocol'] == "https") {
-
 	if (console_prompt_for_yn (gettext("Do you want to revert to HTTP as the webConfigurator protocol?"))) {
 		$config['system']['webgui']['protocol'] = "http";
 		$restart_webgui = true;
 	}
 }
 
-if (isset($config['system']['webgui']['noantilockout'])) {
+if (config_path_enabled('system/webgui', 'noantilockout')) {
 	echo "\n" . sprintf(gettext("Note: the anti-lockout rule on %s has been re-enabled."), $interface) . "\n";
-	unset($config['system']['webgui']['noantilockout']);
+	config_del_path('system/webgui/noantilockout');
 }
 
-if ($config['interfaces']['lan']) {
-	if ($config['dhcpd']) {
-		if ($config['dhcpd']['wan']) {
-			unset($config['dhcpd']['wan']);
+if (config_get_path('interfaces/lan')) {
+	$paths = ['dhcpd/wan', 'dhcpdv6/wan'];
+	foreach ($paths as $path) {
+		if (config_get_path($path)) {
+			config_del_path($path);
 		}
-	}
-	if ($config['dhcpdv6']) {
-		if ($config['dhcpdv6']['wan']) {
-			unset($config['dhcpdv6']['wan']);
-		}
-	}
+    	}
 }
 
-if (!$config['interfaces']['lan']) {
-	unset($config['interfaces']['lan']);
-	if ($config['dhcpd']['lan']) {
-		unset($config['dhcpd']['lan']);
-	}
-	if ($config['dhcpdv6']['lan']) {
-		unset($config['dhcpdv6']['lan']);
-	}
-	unset($config['shaper']);
-	unset($config['ezshaper']);
-	unset($config['nat']);
-	if (!$dry_run) {
+if (!config_get_path('interfaces/lan')) {
+	$paths = ['interfaces/lan', 'dhcpd/lan', 'dhcpdv6/lan',
+			'shaper', 'ezshaper', 'nat'];
+    	foreach ($paths as $path) {
+		if (config_get_path($path)) {
+			config_del_path($path);
+		}
+    	}
+    	if (!$dry_run) {
 		system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
 		$restart_dhcpd = true;
-	}
+    	}
 }
 
 $upperifname = strtoupper($interface);

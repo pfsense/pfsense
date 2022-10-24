@@ -430,10 +430,6 @@ events.push(function() {
 <?php
 include("foot.inc");
 
-if ($restart_webgui) {
-	echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
-}
-
 if ($restart_sshd) {
 	restart_SSHD();
 }

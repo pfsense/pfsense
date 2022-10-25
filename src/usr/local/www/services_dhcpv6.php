@@ -717,7 +717,7 @@ $section->addInput(new Form_Checkbox(
 	'dhcp6c-dns',
 	null,
 	'Provide DNS servers to DHCPv6 clients',
-	($pconfig['dhcp6c-dns'] == "enabled")
+	(($pconfig['dhcp6c-dns'] == 'enabled') || ($pconfig['dhcp6c-dns'] == 'yes'))
 ))->setHelp('Unchecking this box disables the dhcp6.name-servers option. ' .
 			'Use with caution, as the resulting behavior may violate RFCs and lead to unintended client behavior.');
 

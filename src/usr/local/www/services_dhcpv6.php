@@ -357,8 +357,8 @@ if (isset($_POST['apply'])) {
 	}
 
 	// Disallow a range that includes the virtualip
-	if ($range_from_to_ok && is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $vip) {
+	if ($range_from_to_ok) {
+		foreach (config_get_path('virtualip/vip', []) as $vip) {
 			if ($vip['interface'] == $if) {
 				if ($vip['subnetv6'] && is_inrange_v6($vip['subnetv6'], $_POST['range_from'], $_POST['range_to'])) {
 					$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IPv6 address %s."), $vip['subnetv6']);

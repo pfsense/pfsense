@@ -334,6 +334,35 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid IPv4 address must be specified for use with static ARP.");
 	}
 
+	/* Redmine #13584 */
+	if (is_array($pconfig['numberoptions']['item'])) {
+		foreach ($pconfig['numberoptions']['item'] as $numberoption) {
+			$numberoption_value = base64_decode($numberoption['value']);
+			if ($numberoption['type'] == 'text' && strstr($numberoption_value, '"')) {
+				$input_errors[] = gettext("Text type cannot include quotation marks.");
+			} else if ($numberoption['type'] == 'string' && !preg_match('/^"[^"]*"$/', $numberoption_value) && !preg_match('/^[0-9a-f]{2}(?:\:[0-9a-f]{2})*$/i', $numberoption_value)) {
+				$input_errors[] = gettext("String type must be enclosed in quotes like \"this\" or must be a series of octets specified in hexadecimal, separated by colons, like 01:23:45:67:89:ab:cd:ef");
+			} else if ($numberoption['type'] == 'boolean' && $numberoption_value != 'true' && $numberoption_value != 'false' && $numberoption_value != 'on' && $numberoption_value != 'off') {
+				$input_errors[] = gettext("Boolean type must be true, false, on, or off.");
+			} else if ($numberoption['type'] == 'unsigned integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 255)) {
+				$input_errors[] = gettext("Unsigned 8-bit integer type must be a number in the range 0 to 255.");
+			} else if ($numberoption['type'] == 'unsigned integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 65535)) {
+				$input_errors[] = gettext("Unsigned 16-bit integer type must be a number in the range 0 to 65535.");
+			} else if ($numberoption['type'] == 'unsigned integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 4294967295)) {
+				$input_errors[] = gettext("Unsigned 32-bit integer type must be a number in the range 0 to 4294967295.");
+			} else if ($numberoption['type'] == 'signed integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < -128 || $numberoption_value > 127)) {
+				$input_errors[] = gettext("Signed 8-bit integer type must be a number in the range -128 to 127.");
+			} else if ($numberoption['type'] == 'signed integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < -32768 || $numberoption_value > 32767)) {
+				$input_errors[] = gettext("Signed 16-bit integer type must be a number in the range -32768 to 32767.");
+			} else if ($numberoption['type'] == 'signed integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < -2147483648 || $numberoption_value > 2147483647)) {
+				$input_errors[] = gettext("Signed 32-bit integer type must be a number in the range -2147483648 to 2147483647.");
+			} else if ($numberoption['type'] == 'ip-address' && !is_ipaddrv4($numberoption_value) && !is_hostname($numberoption_value)) {
+				$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
+			}
+		}
+	}
+
+
 	if (!$input_errors) {
 		$mapent = array();
 		$mapent['mac'] = $_POST['mac'];

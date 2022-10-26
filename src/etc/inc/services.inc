@@ -2621,6 +2621,9 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		}
 
 		foreach (preg_split('/\s+/', base64_decode(config_get_path('dnsmasq/custom_options', ""))) as $c) {
+			if (empty($c)) {
+				continue;
+			}
 			$args .= " " . escapeshellarg("--{$c}");
 			$p = explode('=', $c);
 			if (array_key_exists($p[0], $standard_args)) {

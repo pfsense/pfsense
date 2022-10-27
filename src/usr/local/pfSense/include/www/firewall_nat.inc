@@ -607,7 +607,12 @@ function saveNATrule($post, $id, $json = false) {
 			}
 
 			$dstpfrom = $post['localbeginport'];
-			$dstpto = (int) $dstpfrom + (int) $post['dstendport'] - (int) $post['dstbeginport'];
+			
+			/*
+			 * See Redmine #13601
+			 * If $dstpfrom is an alias, we want $dstpto to be an alias as well... 
+			 */
+			$dstpto = is_alias($dstpfrom) ? $dstpfrom : ((int) $dstpfrom + (int) $post['dstendport'] - (int) $post['dstbeginport']);
 
 			if ($dstpfrom == $dstpto) {
 				$filterent['destination']['port'] = $dstpfrom;

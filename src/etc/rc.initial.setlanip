@@ -243,7 +243,7 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type, $nonlocalgate
 	}
 
 	//set the new GW as the default if there isnt one set yet
-	init_config_arr('gateways');
+	init_config_arr(array('gateways'));
 	if ($item['ipprotocol'] == "inet" && empty(config_get_path('gateways/defaultgw4', ''))) {
 		config_set_path('gateways/defaultgw4', $new_name);
 	}

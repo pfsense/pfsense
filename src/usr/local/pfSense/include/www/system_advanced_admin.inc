@@ -417,7 +417,7 @@ function restart_SSHD() {
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
-	if ($config['system']['ssh']['enable']) {
+	if (config_path_enabled('system/ssh', 'enable')) {
 		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
 		send_event("service restart sshd");
 	}

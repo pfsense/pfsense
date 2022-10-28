@@ -1,7 +1,8 @@
-# Administrator <sbeaver@netgate.com>, 2019. #zanata
-# Administrator <sbeaver@netgate.com>, 2020. #zanata
+# Administrator <itops@netgate.com>, 2019. #zanata
+# Administrator <itops@netgate.com>, 2020. #zanata
 # Renato Botelho do Couto <renato@netgate.com>, 2020. #zanata
 # Sweety <l.mail458@protonmail.com>, 2021. #zanata
+# cmcdonald <cmcdonald@netgate.com>, 2022. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -10,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2021-03-01 08:02+0000\n"
+"PO-Revision-Date: 2022-10-28 07:26+0000\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -4367,16 +4368,16 @@ msgstr "Haut"
 #: src/usr/local/www/services_router_advertisements.php:109
 msgid ""
 "Subnets are specified in CIDR format.  Select the CIDR mask that pertains to "
-"each entry.\t/128 specifies a single IPv6 host; /64 specifies a normal IPv6 "
+"each entry.	/128 specifies a single IPv6 host; /64 specifies a normal IPv6 "
 "network; etc.  If no subnets are specified here, the Router Advertisement "
 "(RA) Daemon will advertise to the subnet to which the router's interface is "
 "assigned."
 msgstr ""
 "Les sous-réseaux sont spécifiés au format CIDR. Sélectionnez le masque CIDR "
-"correspondant à chaque entrée.\t/128 spécifie un seul hôte IPv6; /64 "
-"spécifie un réseau IPv6 normal; etc. Si aucun sous-réseau n'est spécifié "
-"ici, le Daemon du Router Advertisement (RA) fera l'annonce sur le sous-"
-"réseau auquel l'interface du routeur est affectée."
+"correspondant à chaque entrée.	/128 spécifie un seul hôte IPv6; /64 spécifie "
+"un réseau IPv6 normal; etc. Si aucun sous-réseau n'est spécifié ici, le "
+"Daemon du Router Advertisement (RA) fera l'annonce sur le sous-réseau auquel "
+"l'interface du routeur est affectée."
 
 #: src/usr/local/www/services_router_advertisements.php:116
 msgid "Select the Operating Mode for the Router Advertisement (RA) Daemon."
@@ -4968,8 +4969,8 @@ msgid ""
 "The upstream network interface is the outgoing interface which is "
 "responsible for communicating to available multicast data sources. There can "
 "only be one upstream interface.%1$sDownstream network interfaces are the "
-"distribution\tinterfaces to the destination networks, where multicast "
-"clients can join groups and receive multicast data. One or more downstream "
+"distribution	interfaces to the destination networks, where multicast clients "
+"can join groups and receive multicast data. One or more downstream "
 "interfaces must be configured."
 msgstr ""
 "L'interface réseau en amont est l'interface de départ qui est responsable de "
@@ -5029,13 +5030,13 @@ msgstr ""
 #: src/usr/local/www/interfaces_lagg_edit.php:49
 msgid ""
 "Supports the IEEE 802.3ad Link Aggregation Control Protocol (LACP) and the "
-"Marker Protocol.\tLACP will negotiate a set of aggregable links with the "
-"peer in to one or more Link Aggregated Groups.  Each LAG is composed of "
-"ports of the same speed, set to full-duplex operation.  The traffic will be "
-"balanced across the ports in the LAG with the greatest total speed, in most "
-"cases there will only be one LAG which contains all ports.\tIn the event of "
-"changes in physical connectivity, Link Aggregation will quickly converge to "
-"a new configuration."
+"Marker Protocol.	LACP will negotiate a set of aggregable links with the peer "
+"in to one or more Link Aggregated Groups.  Each LAG is composed of ports of "
+"the same speed, set to full-duplex operation.  The traffic will be balanced "
+"across the ports in the LAG with the greatest total speed, in most cases "
+"there will only be one LAG which contains all ports.	In the event of changes "
+"in physical connectivity, Link Aggregation will quickly converge to a new "
+"configuration."
 msgstr ""
 "Supporte le IEEE 802.3ad Link Aggregation Control Protocol (LACP) et le "
 "Marker Protocol. LACP  négociera un ensemble de lien agrégé entre un ou "
@@ -5055,7 +5056,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_lagg_edit.php:68
 msgid ""
 "Balances outgoing traffic across the active ports based on hashed protocol "
-"header information and accepts incoming traffic from any active port.\t This "
+"header information and accepts incoming traffic from any active port.	 This "
 "is a static setup and does not negotiate aggregation with the peer or "
 "exchange frames to monitor the link.  The hash includes the Ethernet source "
 "and destination address, and, if available, the VLAN tag, and the IP source "
@@ -8643,7 +8644,7 @@ msgstr "Changement de format de l'heure"
 
 #: src/usr/local/www/services_dhcp.php:1252
 msgid ""
-"By default DHCP leases are displayed in UTC time.\tBy checking this box DHCP "
+"By default DHCP leases are displayed in UTC time.	By checking this box DHCP "
 "lease time will be displayed in local time and set to the time zone selected."
 " This will be used for all DHCP interfaces lease time."
 msgstr ""
@@ -9527,12 +9528,12 @@ msgstr ""
 msgid ""
 "If this option is set %s DNS Forwarder (dnsmasq) will not forward A or AAAA "
 "queries for plain names, without dots or domain parts, to upstream name "
-"servers.\t If the name is not known from /etc/hosts or DHCP then a \"not "
+"servers.	 If the name is not known from /etc/hosts or DHCP then a \"not "
 "found\" answer is returned. "
 msgstr ""
 "Si cette option est active, %s DNS Forwarder (dnsmasq) ne transfèrera pas "
 "les requêtes de type A ou AAAA pour les noms simples, sans points ou parties "
-"des domaines, vers les serveurs de noms en aval.\t Si le nom est inconnu du "
+"des domaines, vers les serveurs de noms en aval.	 Si le nom est inconnu du "
 "fichier /etc/hosts ou du DHCP alors une réponse \"non trouvé\" sera renvoyée."
 " "
 
@@ -11877,15 +11878,15 @@ msgid ""
 "options accordingly.  It offers four modes (maximum, minimum, adaptive and "
 "hiadaptive) that can be individually selected while on AC power or batteries."
 " The modes maximum, minimum, adaptive and hiadaptive may be abbreviated max, "
-"min, adp, hadp.\t Maximum mode chooses the highest performance values.  "
+"min, adp, hadp.	 Maximum mode chooses the highest performance values.  "
 "Minimum mode selects the lowest performance values to get the most power "
 "savings. Adaptive mode attempts to strike a balance by degrading performance "
 "when the system appears idle and increasing it when the system is busy.  It "
 "offers a good balance between a small performance loss for greatly increased "
 "power savings.  Hiadaptive mode is alike adaptive mode, but tuned for "
 "systems where performance and interactivity are more important than power "
-"consumption.\t It raises frequency faster, drops slower and keeps twice "
-"lower CPU load."
+"consumption.	 It raises frequency faster, drops slower and keeps twice lower "
+"CPU load."
 msgstr ""
 "L'utilitaire powerd surveille l'état du système et définit différentes "
 "options de contrôle de puissance en conséquence. Il offre quatre modes "
@@ -12337,7 +12338,7 @@ msgid ""
 "By default, the admin account does not synchronize, and each node may have a "
 "different admin password.%1$sThis option automatically updates XMLRPC Remote "
 "System Password when the password is changed on \n"
-"\t\t\tthe Remote System Username account."
+"			the Remote System Username account."
 msgstr ""
 
 #: src/usr/local/www/system_hasync.php:192
@@ -13933,48 +13934,47 @@ msgstr "L'information listée pour chaque socket est :"
 
 #: src/usr/local/www/diag_sockets.php:117
 #, php-format
-msgid "%1$sUSER%2$s\t%3$sThe user who owns the socket.%4$s"
+msgid "%1$sUSER%2$s	%3$sThe user who owns the socket.%4$s"
 msgstr "%1$sUSER%2$s    %3$sL'utilisateur propriétaire du socket.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:118
 #, php-format
-msgid "%1$sCOMMAND%2$s\t%3$sThe command which holds the socket.%4$s"
-msgstr "%1$sCOMMAND%2$s\t%3$sLa commande propriétaire du socket.%4$s"
+msgid "%1$sCOMMAND%2$s	%3$sThe command which holds the socket.%4$s"
+msgstr "%1$sCOMMAND%2$s	%3$sLa commande propriétaire du socket.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:119
 #, php-format
 msgid ""
-"%1$sPID%2$s\t%3$sThe process ID of the command which holds the socket.%4$s"
+"%1$sPID%2$s	%3$sThe process ID of the command which holds the socket.%4$s"
 msgstr ""
-"%1$sPID%2$s\t%3$sL'ID de processus de la commande propriétaire du socket."
-"%4$s"
+"%1$sPID%2$s	%3$sL'ID de processus de la commande propriétaire du socket.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:120
 #, php-format
-msgid "%1$sFD%2$s\t%3$sThe file descriptor number of the socket.%4$s"
-msgstr "%1$sFD%2$s\t%3$sLe fichier de description du numéro du socket.%4$s"
+msgid "%1$sFD%2$s	%3$sThe file descriptor number of the socket.%4$s"
+msgstr "%1$sFD%2$s	%3$sLe fichier de description du numéro du socket.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:121
 #, php-format
 msgid ""
-"%1$sPROTO%2$s\t%3$sThe transport protocol associated with the socket.%4$s"
-msgstr "%1$sPROTO%2$s\t%3$sLe procotocole de transport associé au  socket.%4$s"
+"%1$sPROTO%2$s	%3$sThe transport protocol associated with the socket.%4$s"
+msgstr "%1$sPROTO%2$s	%3$sLe procotocole de transport associé au  socket.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:122
 #, php-format
 msgid ""
-"%1$sLOCAL ADDRESS%2$s\t%3$sThe address the local end of the socket is bound "
+"%1$sLOCAL ADDRESS%2$s	%3$sThe address the local end of the socket is bound "
 "to.%4$s"
 msgstr ""
-"%1$sLOCAL ADDRESS%2$s\t%3$sL'adresse liée à la face interne du socket.%4$s"
+"%1$sLOCAL ADDRESS%2$s	%3$sL'adresse liée à la face interne du socket.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:123
 #, php-format
 msgid ""
-"%1$sFOREIGN ADDRESS%2$s\t%3$sThe address the foreign end of the socket is "
+"%1$sFOREIGN ADDRESS%2$s	%3$sThe address the foreign end of the socket is "
 "bound to.%4$s"
 msgstr ""
-"%1$sFOREIGN ADDRESS%2$s\t%3$sL'adresse liée à la face externe du socket.%4$s"
+"%1$sFOREIGN ADDRESS%2$s	%3$sL'adresse liée à la face externe du socket.%4$s"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:73
 #: src/usr/local/www/interfaces_vlan_edit.php:74
@@ -14003,10 +14003,10 @@ msgstr ""
 #: src/usr/local/www/interfaces_wireless_edit.php:116
 #, php-format
 msgid ""
-"Error creating interface with mode %1$s.\t The %2$s interface may not "
-"support creating more clones with the selected mode."
+"Error creating interface with mode %1$s.	 The %2$s interface may not support "
+"creating more clones with the selected mode."
 msgstr ""
-"Erreur lors de la création de l'interface avec le mode %1$s.\t L'interface "
+"Erreur lors de la création de l'interface avec le mode %1$s.	 L'interface "
 "%2$s ne doit sans doute pas supporter la création de plus de clones avec le "
 "mode sélectionné."
 
@@ -14807,7 +14807,7 @@ msgid ""
 "Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not "
 "complete successfully."
 msgstr ""
-"Merci de cocher  %$sjournaux système%2$s, la commande WOL pour %3$s (%4$s) "
+"Merci de cocher  %1$sjournaux système%2$s, la commande WOL pour %3$s (%4$s) "
 "ne s'est pas déroulé correctement."
 
 #: src/usr/local/www/services_wol.php:84
@@ -15497,7 +15497,7 @@ msgstr "Alias de valeur d'intervalle de résolution de nom d'hôte"
 #, php-format
 msgid ""
 "Interval, in seconds, that will be used to resolve hostnames configured on "
-"aliases. %1$sNote:\t Leave this blank for the default (300s)."
+"aliases. %1$sNote:	 Leave this blank for the default (300s)."
 msgstr ""
 "L'intervalle, en secondes, qui sera utilisé pour résoudre les noms d'hôtes "
 "configurés sur les alias. %1$s Remarque: Laissez ce champ vide pour la "
@@ -18644,10 +18644,10 @@ msgstr "Terminal série"
 #: src/usr/local/www/system_advanced_admin.php:365
 #, php-format
 msgid ""
-"Note:\tThis will redirect the console output and messages to the serial port."
-" The console menu can still be accessed from the internal video card/"
-"keyboard. A %1$snull modem%2$s serial cable or adapter is required to use "
-"the serial console."
+"Note:	This will redirect the console output and messages to the serial port. "
+"The console menu can still be accessed from the internal video card/keyboard."
+" A %1$snull modem%2$s serial cable or adapter is required to use the serial "
+"console."
 msgstr ""
 "Remarque: Cela redirige la sortie de la console et les messages vers le port "
 "série. Le menu de la console peut encore être consulté à partir de la carte "
@@ -28500,14 +28500,14 @@ msgstr ""
 #, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
-"configuration file.\t [/[dirname/[.../]]filename[.ext]] %1$sValue "
+"configuration file.	 [/[dirname/[.../]]filename[.ext]] %1$sValue "
 "Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, "
 "{mac_addr_hexCD} %1$sWhere C is U(pper) or L(ower) Case, and D is \" :-.\" "
 "Delimiter (space, colon, hyphen, or period) (omitted for none).%1$sSome ISPs "
 "may require certain options be or not be sent."
 msgstr ""
 "La valeur dans ce champs est le chemin absolue vers le fichier de "
-"configuration du client DHCP.\t  [/[dirname/[.../]]filename[.ext]] %1$sValue "
+"configuration du client DHCP.	  [/[dirname/[.../]]filename[.ext]] %1$sValue "
 "Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, "
 "{mac_addr_hexCD} %1$sWhere C is U(pper) or L(ower) Case, and D is \" :-.\" "
 "Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s. Certain "
@@ -28617,8 +28617,8 @@ msgid ""
 "(Delegated) IPv6 prefix ID. This determines the configurable network ID "
 "based on the dynamic IPv6 connection. The default value is 0."
 msgstr ""
-"(%1$shexadécimal%2$s de 0 à %$3$s) La valeur dans ce champ représente l'ID "
-"du préfixe Ipv6 (délégué). Ceci détermine le réseau configurable basé sur la "
+"(%1$shexadécimal%2$s de 0 à %3$s) La valeur dans ce champ représente l'ID du "
+"préfixe Ipv6 (délégué). Ceci détermine le réseau configurable basé sur la "
 "connexion IPv6 dynamique. La valeur par défaut est 0."
 
 #: src/usr/local/www/interfaces.php:2851
@@ -28923,7 +28923,7 @@ msgid ""
 "comply with local regulatory requirements is recommended.%1$sAll wireless "
 "networks on this interface will be temporarily brought down when changing "
 "regulatory settings.  Some of the regulatory domains or country codes may "
-"not be allowed by some cards.\tThese settings may not be able to add "
+"not be allowed by some cards.	These settings may not be able to add "
 "additional channels that are not already supported."
 msgstr ""
 "Ces réglages peuvent affecter quels canaux sont disponibles et la puissance "
@@ -30912,19 +30912,19 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_settings.php:92
 #, php-format
 msgid "%s is not valid source IP address for\n"
-"\t\t\t\t\t       \tIPsec bypass rule"
+"					       	IPsec bypass rule"
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:96
 #, php-format
 msgid "%s is not valid destination IP address \n"
-"\t\t\t\t\t\tfor IPsec bypass rule"
+"						for IPsec bypass rule"
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:101
 msgid ""
 "IPsec bypass source and destination addresses\n"
-"\t\t\t\t\t\tmust belong to the same IP family."
+"						must belong to the same IP family."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:282
@@ -32351,7 +32351,7 @@ msgstr "*Addresse MAC"
 #: src/usr/local/www/services_captiveportal_mac_edit.php:231
 msgid ""
 "It is also possible to add a mask value (like /24),\n"
-"\tfor example, to allow all phones of a certain manufacturer to bypass the "
+"	for example, to allow all phones of a certain manufacturer to bypass the "
 "portal"
 msgstr ""
 
@@ -32620,9 +32620,8 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:260
 msgid ""
-"In addition, .php files can also be uploaded for execution.\tThe filename "
-"can be passed to the custom page from the initial page by using text similar "
-"to:"
+"In addition, .php files can also be uploaded for execution.	The filename can "
+"be passed to the custom page from the initial page by using text similar to:"
 msgstr ""
 "De plus, des fichiers avec l'extension .php peuvent être ajoutés    pour "
 "pouvoir être exécutés. Le nom du fichier peut être passé à la page "
@@ -32776,7 +32775,7 @@ msgstr ""
 #, php-format
 msgid ""
 "Reinstalling package %1$s \" .\n"
-"\t\t\t    \"because its include file(%2$s) is missing!"
+"			    \"because its include file(%2$s) is missing!"
 msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:715
@@ -32822,7 +32821,7 @@ msgstr ""
 #: src/etc/inc/pkg-utils.inc:839
 #, php-format
 msgid "The %1$s package is not \" .\n"
-"\t\t    \"installed.%2$sInstallation aborted."
+"		    \"installed.%2$sInstallation aborted."
 msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:845 src/etc/inc/pkg-utils.inc:860
@@ -32902,7 +32901,7 @@ msgstr "Paquet installé avec succès : %s."
 #: src/etc/inc/pkg-utils.inc:997
 #, php-format
 msgid "The %1$s package is not \" .\n"
-"\t\t    \"installed.%2$sDeletion aborted."
+"		    \"installed.%2$sDeletion aborted."
 msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:1003
@@ -37319,14 +37318,14 @@ msgstr ""
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
-"\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
-"a man-in-the-middle attack is not taking place."
+"								If this forwarding is unexpected, it should be verified that a man-"
+"in-the-middle attack is not taking place."
 msgstr ""
 "L'adresse IP utilisée pour se connecter à ce routeur n'est pas configurée "
 "localement, cela signifie qu'elle peut-être transmise par NAT ou par "
 "d'autres moyens.\n"
-"\t\t\t\t\t\t\t\tSi cette transmission n'est pas souhaitée, vérifier qu'une "
-"attaque de type l'homme du milieu n'est pas en cours."
+"								Si cette transmission n'est pas souhaitée, vérifier qu'une attaque "
+"de type l'homme du milieu n'est pas en cours."
 
 #: src/etc/inc/authgui.inc:401
 msgid "The browser must support cookies to login."
@@ -43582,3 +43581,4 @@ msgstr "Afficher le nom de la page en premier dans l'onglet du navigateur"
 #: src/etc/inc/pfsense-utils.inc:464
 msgid "Do not display state table without a filter"
 msgstr "Ne pas afficher les tables d'état sans filtre(s)"
+

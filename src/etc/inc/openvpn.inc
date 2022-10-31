@@ -878,8 +878,8 @@ function openvpn_reconfigure($mode, $settings) {
 		/* rename the device */
 		mwexec("/sbin/ifconfig " . escapeshellarg($tunname) . " name " . escapeshellarg($devname));
 
-		/* add the device to the openvpn group and make sure it's UP*/
-		mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " group openvpn up");
+		/* add the device to the openvpn group */
+		mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " group openvpn");
 
 		$ifname = convert_real_interface_to_friendly_interface_name($devname);
 		$grouptmp = link_interface_to_group($ifname);

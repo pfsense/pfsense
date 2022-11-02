@@ -137,7 +137,8 @@ $p1_ealgos = array(
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128')
+	'cast128' => array('name' => 'CAST128'),
+	'chacha20poly1305' => array('name' => 'CHACHA20-POLY1305')
 );
 
 global $p2_ealgos;
@@ -146,6 +147,7 @@ $p2_ealgos = array(
 	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'chacha20poly1305' => array('name' => 'CHACHA20-POLY1305'),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
 	'cast128' => array('name' => 'CAST128')
@@ -2361,7 +2363,7 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 
 	/* If multiple hash algorithms are present, loop through and add them all. */
 	if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option']) 
-	    && !strpos($ealg_id, "gcm")) {
+	    && !(strpos($ealg_id, "gcm") || $ealg_id == "chacha20poly1305")) {
 		foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
 			$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, false, $ph2ent['pfsgroup']);
 		}

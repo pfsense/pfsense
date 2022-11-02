@@ -382,7 +382,7 @@ if ($_POST['save']) {
 		} else {
 			foreach ($ealgos as $ealgo) {
 				if (empty($pconfig['halgos'])) {
-					if (!strpos($ealgo['name'], "gcm")) {
+					if (!(strpos($ealgo['name'], "gcm") || $ealgo['name'] == "chacha20poly1305")) {
 						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");
 						break;
 					}

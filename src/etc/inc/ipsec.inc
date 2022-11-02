@@ -134,10 +134,6 @@ $p1_ealgos = array(
 	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
-	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128'),
 	'chacha20poly1305' => array('name' => 'CHACHA20-POLY1305')
 );
 
@@ -147,15 +143,11 @@ $p2_ealgos = array(
 	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'chacha20poly1305' => array('name' => 'CHACHA20-POLY1305'),
-	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
-	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128')
+	'chacha20poly1305' => array('name' => 'CHACHA20-POLY1305')
 );
 
 global $p1_halgos;
 $p1_halgos = array(
-	'md5' => 'MD5',
 	'sha1' => 'SHA1',
 	'sha256' => 'SHA256',
 	'sha384' => 'SHA384',
@@ -191,7 +183,6 @@ $p1_dhgroups = array(
 
 global $p2_halgos;
 $p2_halgos = array(
-	'hmac_md5' => 'MD5',
 	'hmac_sha1' => 'SHA1',
 	'hmac_sha256' => 'SHA256',
 	'hmac_sha384' => 'SHA384',

@@ -734,11 +734,6 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		));
 	}
 
-
-	if ($i == $rows) {
-		$group->setHelp('Note: Blowfish, 3DES, and CAST128 provide weak security and should be avoided.');
-	}
-
 	$i++;
 	$section->add($group);
 }
@@ -755,7 +750,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 		$algo
 	))->addClass('multi')->setAttribute('id');
 
-	$group->setHelp('Note: Hash is ignored with GCM algorithms. MD5 and SHA1 provide weak security and should be avoided.');
+	$group->setHelp('Note: Hash is ignored with GCM algorithms. SHA1 provides weak security and should be avoided.');
 }
 
 $section->add($group);
@@ -1085,7 +1080,7 @@ events.push(function() {
 	}
 
 	function change_aead() {
-		var notaead = ['AES', 'Blowfish', '3DES', 'CAST128'];
+		var notaead = ['AES'];
 		var arrayLength = notaead.length;
 		for (var i = 0; i < arrayLength; i++) {
 			if ($('#' + notaead[i]).prop('checked') || ($('#proto').val() != 'esp')) {

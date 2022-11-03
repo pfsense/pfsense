@@ -6684,6 +6684,54 @@ function upgrade_226_to_227() {
 	}
 }
 
+function upgrade_227_to_228() {
+	global $config;
+
+	/* We no longer support 3des, blowfish, cast128 or md5 and sha1
+	 * authentication for IPSec. */
+	if (is_array($config['ipsec'])) {
+		if (is_array($config['ipsec']['phase1'])) {
+			foreach ($config['ipsec']['phase1'] as & $phase1) {
+				if (! isset($phase1['encryption']) || !is_array($phase1['encryption']['item']))
+					continue;
+
+				foreach ($phase1['encryption']['item'] as $enc) {
+					if (isset($enc['encryption-algorithm']['name']) &&
+					    in_array($enc['encryption-algorithm']['name'],
+					    array("blowfish", "3des", "cast128"))) {
+						$phase1['disabled'] = true;
+						file_notice("IPsec", sprintf(gettext("3DES, Blowfish and CAST128 are no longer supported, IPsec phase1 item '%s' is being disabled."), $phase1['descr']));
+					}
+					if (isset($enc['hash-algorithm']) && $enc['hash-algorithm'] == "md5") {
+						$phase1['disabled'] = true;
+						file_notice("IPsec", sprintf(gettext("MD5 is no longer supported, IPsec phase1 item '%s' is being disabled."), $phase1['descr']));
+					}
+				}
+			}
+		}
+		if (is_array($config['ipsec']['phase2'])) {
+			foreach ($config['ipsec']['phase2'] as & $phase2) {
+				if (is_array($phase2['encryption-algorithm-option'])) {
+					foreach ($phase2['encryption-algorithm-option'] as & $opt) {
+						if (in_array($opt['name'], array("blowfish", "3des", "cast128"))) {
+							$phase2['disabled'] = true;
+							file_notice("IPsec", sprintf(gettext("3DES, Blowfish and CAST128 are no longer supported, IPsec phase2 item '%s' is being disabled."), $phase2['descr']));
+						}
+					}
+				}
+				if (is_array($phase2['hash-algorithm-option'])) {
+					foreach ($phase2['hash-algorithm-option'] as & $opt) {
+						if ($opt == "hmac_md5") {
+							$phase2['disabled'] = true;
+							file_notice("IPsec", sprintf(gettext("MD5 is no longer supported, IPsec phase2 item '%s' is being disabled."), $phase2['descr']));
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

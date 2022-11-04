@@ -162,7 +162,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 
 init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
-$a_filter = &$config['filter']['rule'];
+$a_filter = config_get_path('filter/rule', []);
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -381,16 +381,14 @@ if ($_POST['save']) {
 	}
 
 	if (isset($_POST['ipprotocol']) && $_POST['gateway'] <> '') {
-		if (is_array($config['gateways']['gateway_group'])) {
-			foreach ($config['gateways']['gateway_group'] as $gw_group) {
-				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
-					if ($_POST['ipprotocol'] == "inet46") {
-						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
-					} elseif ($_POST['ipprotocol'] == "inet6") {
-						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
-					} elseif ($_POST['ipprotocol'] == "inet") {
-						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
-					}
+		foreach (config_get_path('gateways/gateway_group',[]) as $gw_group) {
+			if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
+				if ($_POST['ipprotocol'] == "inet46") {
+					$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+				} elseif ($_POST['ipprotocol'] == "inet6") {
+					$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
+				} elseif ($_POST['ipprotocol'] == "inet") {
+					$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
 				}
 			}
 		}
@@ -1057,22 +1055,23 @@ if ($_POST['save']) {
 			} else {							// rule moved to different interface
 				// Update the separators of previous interface.
 				init_config_arr(array('filter', 'separator', strtolower($if)));
-				$a_separators = &$config['filter']['separator'][strtolower($if)];
+				$a_separators = config_get_path('filter/separator/' . strtolower($if));
 				$ridx = ifridx($if, $id);		// get rule index within interface
 				$mvnrows = -1;
 				move_separators($a_separators, $ridx, $mvnrows);
-
+				config_set_path('filter/separator/' . strtolower($if), $a_separators);
 				$a_filter[$id] = $filterent;	// save edited rule to new interface
 
 				// Update the separators of new interface.
 				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
-				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif));
 				$ridx = ifridx($tmpif, $id);	// get rule index within interface
 				if ($ridx == 0) {				// rule was placed at the top
 					$ridx = -1;					// move all separators
 				}
 				$mvnrows = +1;
 				move_separators($a_separators, $ridx, $mvnrows);
+				config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
 			}
 
 		} else {
@@ -1098,17 +1097,18 @@ if ($_POST['save']) {
 
 				// Update the separators
 				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
-				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif));
 				$ridx = ifridx($tmpif, $after);	// get rule index within interface
 				$mvnrows = +1;
 				move_separators($a_separators, $ridx, $mvnrows);
+				config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
 			} else {
 				$a_filter[] = $filterent;
 			}
 		}
 
 		filter_rules_sort();
-
+		config_set_path('filter/rule', $a_filter);
 		if (write_config(gettext("Firewall: Rules - saved/edited a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}
@@ -1268,7 +1268,7 @@ $edit_disabled = isset($pconfig['associated-rule-id']);
 
 if ($edit_disabled) {
 	$extra = '';
-	foreach ($config['nat']['rule'] as $index => $nat_rule) {
+	foreach (config_get_path('nat/rule', []) as $index => $nat_rule) {
 		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id']) {
 			$extra = '<br/><a href="firewall_nat_edit.php?id='. $index .'">'. gettext('View the NAT rule') .'</a>';
 		}
@@ -1706,7 +1706,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose 802.1p priority to apply.');
 
 $schedules = array();
-foreach ((array)$config['schedules']['schedule'] as $schedule) {
+foreach (config_get_path('schedules/schedule', []) as $schedule) {
 	if ($schedule['name'] != "") {
 		$schedules[] = $schedule['name'];
 	}

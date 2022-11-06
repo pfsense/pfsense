@@ -247,8 +247,7 @@ $pf_reserved_keywords = array(
 	'maxsrcconn', 'maxsrcconnrate', 'maxsrcnodes', 'maxsrcstates', 'minttl', 'natanchornodf', 'noroute', 'nosync',
 	'randomidrdranchor', 'replyto', 'requireorderreturnicmp', 'returnicmp6', 'returnrstroundrobinrouteto',
 	'ruleset_optimization', 'settos', 'sourcehash', 'sourcetrackstatedefaults', 'statepolicy', 'staticport',
-	'stickyaddress', 'urpffailed', 'crop', 'dnpipe', 'dnqueue', 'dropovl', 'ether', 'failpolicy', 'file', 'keepcounters',
-	'l3', 'mapeportset', 'match', 'ridentifier', 'syncookies',
+	'stickyaddress', 'urpffailed', 'dropovl', 'failpolicy', 'mapeportset',
 	// Custom tokens
 	'arrow', 'codel', 'error', 'filename', 'fragcrop', 'fragdrop', 'IPsec', 'L2TP', 'maximummin', 'OpenVPN',
 	'pppoe', 'pptp'

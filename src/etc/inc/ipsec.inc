@@ -1883,22 +1883,22 @@ function ipsec_setup_strongswan() {
 
 		if (!empty($a_client['dns_domain'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Search domain and default domain";
-			$ssconf['charon']['plugins']['attr']['27674'] = "\"{$a_client['dns_domain']}\"";
+			$ssconf['charon']['plugins']['attr']['27674'] = $a_client['dns_domain'];
 			if (empty($a_client['dns_split'])) {
-				$ssconf['charon']['plugins']['attr']['27675'] = "\"{$a_client['dns_domain']}\"";
+				$ssconf['charon']['plugins']['attr']['27675'] = $a_client['dns_domain'];
 			}
 		}
 
 		if (!empty($a_client['dns_split'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (UNITY_SPLITDNS_NAME)";
-			$ssconf['charon']['plugins']['attr']['28675'] = "\"{$a_client['dns_split']}\"";
+			$ssconf['charon']['plugins']['attr']['28675'] = $a_client['dns_split'];
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (INTERNAL_DNS_DOMAIN, RFC 8598)";
-			$ssconf['charon']['plugins']['attr']['25'] = "\"{$a_client['dns_split']}\"";
+			$ssconf['charon']['plugins']['attr']['25'] = str_replace(' ', ',', $a_client['dns_split']);
 		}
 
 		if (!empty($a_client['login_banner'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Login Banner";
-			$ssconf['charon']['plugins']['attr']['28672'] = "\"{$a_client['login_banner']}\"";
+			$ssconf['charon']['plugins']['attr']['28672'] = $a_client['login_banner'];
 		}
 
 		if (isset($a_client['save_passwd'])) {
@@ -1908,7 +1908,7 @@ function ipsec_setup_strongswan() {
 
 		if ($a_client['pfs_group']) {
 			$ssconf['charon']['plugins']['attr'][] = "# Phase2 PFS Group";
-			$ssconf['charon']['plugins']['attr']['28679'] = "\"{$a_client['pfs_group']}\"";
+			$ssconf['charon']['plugins']['attr']['28679'] = $a_client['pfs_group'];
 		}
 	}
 

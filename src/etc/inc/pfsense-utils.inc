@@ -1197,6 +1197,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'console="comconsole"';
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';
 	} elseif ($vga_only === true) {
+		if ($video_console_type == 'efi') {
+			$data[] = 'boot_serial="NO"';
+		}
 		$data[] = "console=\"{$video_console_type}\"";
 	} elseif (is_serial_enabled()) {
 		$data[] = 'boot_multicons="YES"';
@@ -1205,6 +1208,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		    config_get_path('system/primaryconsole');
 		switch ($primaryconsole) {
 			case "video":
+				if ($video_console_type == 'efi') {
+					$data[] = 'boot_serial="NO"';
+				}
 				$data[] = "console=\"{$video_console_type},comconsole\"";
 				break;
 			case "serial":
@@ -1213,6 +1219,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 				$data[] = "console=\"comconsole,{$video_console_type}\"";
 		}
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';
+	} elseif ($video_console_type == 'efi') {
+		$data[] = 'boot_serial="NO"';
 	}
 
 	if ($specific_platform['name'] == 'RCC-VE' ||

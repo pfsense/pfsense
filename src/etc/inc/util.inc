@@ -807,14 +807,10 @@ function is_hostnamewithport($hostport) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
-	global $config;
-
 	if (is_alias($ipaddr)) {
-		if (is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias) {
-				if ($alias['name'] == $ipaddr && !preg_match("/port/i", $alias['type'])) {
-					return true;
-				}
+		foreach (config_get_path('aliases/alias', []) as $alias) {
+			if ($alias['name'] == $ipaddr && !preg_match("/port/i", $alias['type'])) {
+				return true;
 			}
 		}
 		return false;
@@ -1226,14 +1222,10 @@ function is_port_or_range($port) {
 
 /* returns true if $port is an alias that is a port type */
 function is_portalias($port) {
-	global $config;
-
 	if (is_alias($port)) {
-		if (is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias) {
-				if ($alias['name'] == $port && preg_match("/port/i", $alias['type'])) {
-					return true;
-				}
+		foreach (config_get_path('aliases/alias', []) as $alias) {
+			if ($alias['name'] == $port && preg_match("/port/i", $alias['type'])) {
+				return true;
 			}
 		}
 	}
@@ -1887,12 +1879,12 @@ function unlink_if_exists($fn) {
 
 /* make a global alias table (for faster lookups) */
 function alias_make_table() {
-	global $aliastable, $config;
+	global $aliastable;
 
 	$aliastable = array();
 
 	init_config_arr(array('aliases', 'alias'));
-	foreach ($config['aliases']['alias'] as $alias) {
+	foreach (config_get_path('aliases/alias', []) as $alias) {
 		if ($alias['name']) {
 			$aliastable[$alias['name']] = $alias['address'];
 		}
@@ -1907,13 +1899,10 @@ function is_alias($name) {
 }
 
 function alias_get_type($name) {
-	global $config;
 
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($name == $alias['name']) {
-				return $alias['type'];
-			}
+	foreach (config_get_path('aliases/alias', []) as $alias) {
+		if ($name == $alias['name']) {
+			return $alias['type'];
 		}
 	}
 
@@ -1922,7 +1911,7 @@ function alias_get_type($name) {
 
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
-	global $config, $aliastable;
+	global $aliastable;
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
@@ -1935,7 +1924,7 @@ function alias_expand($name) {
 		 * make sure if it's a ports alias, it actually exists.
 		 * redmine #5845
 		 */
-		foreach ($config['aliases']['alias'] as $alias) {
+		foreach (config_get_path('aliases/alias', []) as $alias) {
 			if ($alias['name'] == $name) {
 				if ($alias['type'] == "urltable_ports") {
 					if (is_URL($alias['url']) &&
@@ -1958,15 +1947,10 @@ function alias_expand($name) {
 }
 
 function alias_expand_urltable($name) {
-	global $config;
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
-	if (!is_array($config['aliases']['alias'])) {
-		return null;
-	}
-
-	foreach ($config['aliases']['alias'] as $alias) {
+	foreach (config_get_path('aliases/alias', []) as $alias) {
 		if (!preg_match("/urltable/i", $alias['type']) ||
 		    ($alias['name'] != $name)) {
 			continue;

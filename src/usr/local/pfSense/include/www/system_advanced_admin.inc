@@ -52,10 +52,10 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['enableserial'] = $config['system']['enableserial'];
 	$pconfig['serialspeed'] = $config['system']['serialspeed'];
 	$pconfig['primaryconsole'] = $config['system']['primaryconsole'];
-	$pconfig['enablesshd'] = $config['system']['ssh']['enable'];
-	$pconfig['sshport'] = $config['system']['ssh']['port'];
-	$pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
-	$pconfig['sshdagentforwarding'] = isset($config['system']['ssh']['sshdagentforwarding']);
+	$pconfig['enablesshd'] = config_get_path('system/ssh/enable');
+	$pconfig['sshport'] = config_get_path('system/ssh/port');
+	$pconfig['sshdkeyonly'] = config_get_path('system/ssh/sshdkeyonly');
+	$pconfig['sshdagentforwarding'] = config_path_enabled('system/ssh', 'sshdagentforwarding');
 	$pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 	$pconfig['sshguard_threshold'] = $config['system']['sshguard_threshold'] ?? '';
 	$pconfig['sshguard_blocktime'] = $config['system']['sshguard_blocktime'] ?? '';
@@ -272,40 +272,40 @@ function doAdvancedAdminPOST($post, $json = false) {
 			unset($config['system']['webgui']['althostnames']);
 		}
 
-		$sshd_enabled = $config['system']['ssh']['enable'];
+		$sshd_enabled = config_path_enabled('system/ssh');
 		if ($post['enablesshd']) {
-			$config['system']['ssh']['enable'] = "enabled";
+			config_set_path('system/ssh/enable', 'enabled');
 		} else {
-			unset($config['system']['ssh']['enable']);
+			config_del_path('system/ssh/enable');
 		}
 
-		$sshd_keyonly = $config['system']['ssh']['sshdkeyonly'];
+		$sshd_keyonly = config_get_path('system/ssh/sshdkeyonly');
 		if ($post['sshdkeyonly'] == "enabled") {
-			$config['system']['ssh']['sshdkeyonly'] = "enabled";
+			config_set_path('system/ssh/sshdkeyonly', 'enabled');
 		} else if ($post['sshdkeyonly'] == "both") {
-			$config['system']['ssh']['sshdkeyonly'] = "both";
-		} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
-			unset($config['system']['ssh']['sshdkeyonly']);
+			config_set_path('system/ssh/sshdkeyonly', 'both');
+		} else {
+			config_del_path('system/ssh/sshdkeyonly');
 		}
 
-		$sshd_agentforwarding = isset($config['system']['ssh']['sshdagentforwarding']);
+		$sshd_agentforwarding = config_path_enabled('system/ssh', 'sshdagentforwarding');
 		if ($post['sshdagentforwarding']) {
-			$config['system']['ssh']['sshdagentforwarding'] = 'enabled';
-		} else if (isset($config['system']['ssh']['sshdagentforwarding'])) {
-			unset($config['system']['ssh']['sshdagentforwarding']);
+			config_set_path('system/ssh/sshdagentforwarding', 'enabled');
+		} else {
+			config_del_path('system/ssh/sshdagentforwarding');
 		}
 
-		$sshd_port = $config['system']['ssh']['port'];
+		$sshd_port = config_get_path('system/ssh/port');
 		if ($post['sshport']) {
-			$config['system']['ssh']['port'] = $post['sshport'];
-		} else if (isset($config['system']['ssh']['port'])) {
-			unset($config['system']['ssh']['port']);
+			config_set_path('system/ssh/port', $post['sshport']);
+		} else {
+			config_del_path('system/ssh/port');
 		}
 
-		if (($sshd_enabled != $config['system']['ssh']['enable']) ||
-		    ($sshd_keyonly != $config['system']['ssh']['sshdkeyonly']) ||
-		    ($sshd_agentforwarding != $config['system']['ssh']['sshdagentforwarding']) ||
-		    ($sshd_port != $config['system']['ssh']['port'])) {
+		if (($sshd_enabled != config_path_enabled('system/ssh')) ||
+		    ($sshd_keyonly != config_get_path('system/ssh/sshdkeyonly')) ||
+		    ($sshd_agentforwarding != config_path_enabled('system/ssh', 'sshdagentforwarding')) ||
+		    ($sshd_port != config_get_path('system/ssh/port'))) {
 			$restart_sshd = true;
 		}
 

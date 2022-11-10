@@ -40,7 +40,6 @@ require_once("shaper.inc");
 require_once("system_advanced_admin.inc");
 
 init_config_arr(array('system', 'webgui'));
-init_config_arr(array('system', 'ssh'));
 
 $pconfig = getAdvancedAdminConfig();
 init_config_arr(array('cert'));

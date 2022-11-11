@@ -6687,6 +6687,7 @@ function upgrade_226_to_227() {
 function upgrade_227_to_228() {
 	global $config;
 
+	$any_removed = false;
 	/* We no longer support 3des, blowfish, cast128 or md5 and sha1
 	 * authentication for IPSec. */
 	if (is_array($config['ipsec'])) {
@@ -6695,40 +6696,80 @@ function upgrade_227_to_228() {
 				if (! isset($phase1['encryption']) || !is_array($phase1['encryption']['item']))
 					continue;
 
-				foreach ($phase1['encryption']['item'] as $enc) {
+				$bad_count = 0;
+				foreach ($phase1['encryption']['item'] as $k => $enc) {
+					$bad = false;
 					if (isset($enc['encryption-algorithm']['name']) &&
 					    in_array($enc['encryption-algorithm']['name'],
 					    array("blowfish", "3des", "cast128"))) {
-						$phase1['disabled'] = true;
-						file_notice("IPsec", sprintf(gettext("3DES, Blowfish and CAST128 are no longer supported, IPsec phase1 item '%s' is being disabled."), $phase1['descr']));
+						$bad = true;
 					}
 					if (isset($enc['hash-algorithm']) && $enc['hash-algorithm'] == "md5") {
+						$bad = true;
+					}
+					if ($bad) {
+						/* Remove this item as it contains deprecated encryption or hashing */
+						unset($phase1['encryption']['item'][$k]);
+						$bad_count++;
+					}
+				}
+				if ($bad_count > 0) {
+					$any_removed = true;
+					/* Only notify once per P1 */
+					if (count($phase1['encryption']['item']) == 0) {
+						/* Only disable P1 if there are no valid encryption options left. */
 						$phase1['disabled'] = true;
-						file_notice("IPsec", sprintf(gettext("MD5 is no longer supported, IPsec phase1 item '%s' is being disabled."), $phase1['descr']));
+						file_notice("IPsec", sprintf(gettext("IPsec Phase 1 '%s' disabled after removing deprecated encryption and hashing algorithms as it has no remaining valid entries."), $phase1['descr']));
+					} else {
+						/* Let the user know that the P1 was adjusted */
+						file_notice("IPsec", sprintf(gettext("Removed deprecated encryption options from IPsec Phase 1 '%s'."), $phase1['descr']));
 					}
 				}
 			}
 		}
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as & $phase2) {
+
+				$bad_count = 0;
 				if (is_array($phase2['encryption-algorithm-option'])) {
-					foreach ($phase2['encryption-algorithm-option'] as & $opt) {
+					foreach ($phase2['encryption-algorithm-option'] as $k => $opt) {
 						if (in_array($opt['name'], array("blowfish", "3des", "cast128"))) {
-							$phase2['disabled'] = true;
-							file_notice("IPsec", sprintf(gettext("3DES, Blowfish and CAST128 are no longer supported, IPsec phase2 item '%s' is being disabled."), $phase2['descr']));
+							/* Remove this item as it contains deprecated encryption */
+							unset($phase2['encryption-algorithm-option'][$k]);
+							$bad_count++;
 						}
 					}
 				}
 				if (is_array($phase2['hash-algorithm-option'])) {
-					foreach ($phase2['hash-algorithm-option'] as & $opt) {
+					foreach ($phase2['hash-algorithm-option'] as $k => $opt) {
 						if ($opt == "hmac_md5") {
-							$phase2['disabled'] = true;
-							file_notice("IPsec", sprintf(gettext("MD5 is no longer supported, IPsec phase2 item '%s' is being disabled."), $phase2['descr']));
+							/* Remove this item as it contains deprecated hashing */
+							unset($phase2['hash-algorithm-option'][$k]);
+							$bad_count++;
 						}
+					}
+				}
+
+				if ($bad_count > 0) {
+					$any_removed = true;
+					/* Only notify once per P2 */
+					if ((count($phase2['encryption-algorithm-option']) == 0) ||
+					    (count($phase2['hash-algorithm-option']) == 0)) {
+						/* Only disable P2 if there are no valid encryption options left. */
+						$phase2['disabled'] = true;
+						file_notice("IPsec", sprintf(gettext("IPsec Phase 2 '%s' disabled after removing deprecated encryption and hashing algorithms as it has no remaining valid combinations of options."), $phase2['descr']));
+					} else {
+						/* Let the user know that the P2 was adjusted */
+						file_notice("IPsec", sprintf(gettext("Removed deprecated encryption options from IPsec Phase 2 '%s'."), $phase2['descr']));
 					}
 				}
 			}
 		}
+	}
+
+	/* Only list deprecated types once */
+	if ($any_removed) {
+		file_notice("IPsec", gettext("One or more IPsec entries contained deprecated algorithms. The following are no longer supported: 3DES encryption, Blowfish encryption, CAST128 encryption, MD5 hashing."));
 	}
 }
 

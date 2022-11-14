@@ -3452,6 +3452,11 @@ function array_del_path(array &$arr, string $path) {
 			return null;
 		}
 	}
+
+	if (!(is_array($el) && array_key_exists($vkey, $el))) {
+		return null;
+	}
+
 	$ret = $el[$vkey];
 	unset($el[$vkey]);
 	return ($ret);

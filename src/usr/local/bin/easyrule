@@ -57,13 +57,17 @@ print("{$message}\n");
 exit($ret_code);
 
 function easyrule_print_usage() {
+	global $specialsrcdst, $argv;
 	$script = basename($argv[0]);
 	foreach (array(
 		"Usage:\n",
-		" Blocking only requires an IP to block, block rules can be shown with showblock and revoked using unblock\n",
-		"     {$script} block <interface> <source IP>\n\n",
+		" Blocking only requires an interface and source to block. Block rules can be shown with showblock and revoked using unblock\n",
+		"     {$script} block <interface> <source>\n\n",
 		" Passing requires more detail, as it must be as specific as possible. The destination port is optional if you're using a protocol without a port (e.g. ICMP, OSPF, etc).\n",
-		"     {$script} pass <interface> <protocol> <source IP> <destination ip> [destination port]\n\n",
+		"     {$script} pass <interface> <protocol> <source> <destination> [destination port]\n\n",
+		" Interfaces can be passed as assigned internal names, descriptive names, group names, or OS names.\n",
+		" Protocol can be a protocol name, protocol number, or 'any'.\n",
+		" Sources and destinations can be IP addresses, subnets, aliase names, or special networks ['" . implode("', '", $specialsrcdst) . "']\n\n",
 		" Block example:\n",
 		"     {$script} block wan 1.2.3.4\n\n",
 		" Show active blocks example:\n",
@@ -72,8 +76,10 @@ function easyrule_print_usage() {
 		"     {$script} unblock wan 1.2.3.4\n\n",
 		" Pass example (protocol with port):\n",
 		"     {$script} pass wan tcp 1.2.3.4 192.168.0.4 80\n\n",
+		" Pass example (protocol with port to This Firewall):\n",
+		"     {$script} pass wan tcp 1.2.3.4 '(self)' 80\n\n",
 		" Pass example (protocol without port):\n",
-		"     {$script} pass wan icmp 1.2.3.4 192.168.0.4\n\n"
+		"     {$script} pass wan icmp 1.2.3.4 192.168.0.4\n\n",
 	) as $line) { print($line); }
 }
 

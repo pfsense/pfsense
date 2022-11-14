@@ -24,8 +24,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-easyrule
-##|*NAME=Firewall: Easy Rule add/status
-##|*DESCR=Allow access to the 'Firewall: Easy Rule' add/status page.
+##|*NAME=Firewall: EasyRule add/status
+##|*DESCR=Allow access to the 'Firewall: EasyRule' add/status page.
 ##|*MATCH=easyrule.php*
 ##|-PRIV
 
@@ -60,7 +60,7 @@ if (stristr($retval, "error") == true) {
 	$message = $retval;
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Easy Rule"));
+$pgtitle = array(gettext("Firewall"), gettext("EasyRule"));
 include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -70,7 +70,7 @@ if ($input_errors) {
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h2 class="panel-title">
-				<?=gettext("Confirmation Required to Add Easy Rule");?>
+				<?=gettext("Confirmation Required to Add EasyRule");?>
 			</h2>
 		</div>
 		<div class="panel-body">
@@ -117,7 +117,7 @@ if ($message) {
 	print_info_box($message);
 } elseif (empty($_REQUEST['action'])) {
 	print_info_box(
-		gettext('This is the Easy Rule status page, mainly used to display errors when adding rules.') . ' ' .
+		gettext('This is the EasyRule status page, mainly used to display errors when adding rules.') . ' ' .
 		gettext('There apparently was not an error, and this page was navigated to directly without any instructions for what it should do.') .
 		'<br /><br />' .
 		gettext('This page is meant to be called from the block/pass buttons on the Firewall Logs page') .

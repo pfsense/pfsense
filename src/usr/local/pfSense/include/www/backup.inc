@@ -195,6 +195,19 @@ function execPost($post, $postfiles, $ui = true) {
 					}
 				}
 
+				/* If the config on disk contains any rrddata/sshdata tags, remove them to
+				 * avoid forming invalid XML in the resulting backup.
+				 * See Redmine issues:
+				 * https://redmine.pfsense.org/issues/8994
+				 * https://redmine.pfsense.org/issues/10508
+				 * https://redmine.pfsense.org/issues/13132
+				 */
+				foreach (array('rrd', 'ssh') as $tag) {
+					/* Match across multiple lines for the tags and data within to remove */
+					$data = preg_replace("/[[:blank:]]*<{$tag}data>.*<\\/{$tag}data>[[:blank:]]*\n*/s", "", $data);
+					$data = preg_replace("/[[:blank:]]*<{$tag}data\\/>[[:blank:]]*\n*/", "", $data);
+				}
+
 				if (($post['backuparea'] != "rrddata") && !$post['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
@@ -252,13 +265,28 @@ function execPost($post, $postfiles, $ui = true) {
 						}
 					}
 
-					/* If the config on disk had empty rrddata/sshdata tags, remove them to
-					 * avoid an XML parsing error.
-					 * See https://redmine.pfsense.org/issues/8994 
-					 * and https://redmine.pfsense.org/issues/13132 */
+					/* If the config on disk contains duplicate or empty rrddata/sshdata
+					 * tags, remove them to avoid XML parsing errors.
+					 * See Redmine issues
+					 * https://redmine.pfsense.org/issues/8994
+					 * https://redmine.pfsense.org/issues/10508
+					 * https://redmine.pfsense.org/issues/13132
+					 */
 					foreach (array('rrd', 'ssh') as $tag) {
+						/* Look for empty tags (no data) */
 						$data = preg_replace("/<{$tag}data><\\/{$tag}data>/", "", $data);
 						$data = preg_replace("/<{$tag}data\\/>/", "", $data);
+						/* Match across multiple lines for the tags and data within to remove,
+						 * but use an ungreedy match and a limit to ensure only the most
+						 * recent entry is retained.
+						 */
+						$data_pattern = "/[[:blank:]]*<{$tag}data>.*<\\/{$tag}data>[[:blank:]]*\n*/sU";
+						$dmatch = [];
+						preg_match_all($data_pattern, $data, $dmatch);
+						/* More than one match, so remove all but one. */
+						if (count($dmatch[0]) > 1) {
+							$data = preg_replace($data_pattern, "", $data, (count($dmatch[0]) - 1));
+						}
 					}
 
 					if ($post['restorearea'] && !$input_errors) {

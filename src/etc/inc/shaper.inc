@@ -526,7 +526,7 @@ function get_hfsc_bandwidth($object, $bw) {
 */
 
 function get_queue_bandwidth($obj) {
-	$bw = $obj->GetBandwidth();
+	$bw = (int)$obj->GetBandwidth();
 	$scale = $obj->GetBwscale();
 
 	$pattern= "/(b|Kb|Mb|Gb|%)/";
@@ -556,7 +556,7 @@ function get_interface_bandwidth($object) {
 	$int = $object->GetInterface();
 	if (isset($altq_list_queues[$int])) {
 		$altq = &$altq_list_queues[$int];
-		$bw_3 = $altq->GetBandwidth();
+		$bw_3 = (int)$altq->GetBandwidth();
 		$bw_3 = $bw_3 * get_bandwidthtype_scale($altq->GetBwscale());
 		return floatval($bw_3);
 	} else {
@@ -758,6 +758,7 @@ class altq_root_queue {
 	}
 
 	function CheckBandwidth($bw, $bwtype) {
+		$bw = (int)$bw;
 		$sum = $this->GetTotalBw();
 		if ($sum > ($bw * get_bandwidthtype_scale($bwtype))) {
 			return 1;
@@ -792,14 +793,15 @@ class altq_root_queue {
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (!isset($data['bandwidth']) || strlen($data['bandwidth']) == 0) {
+		if ($data['bandwidth'] == null) {
 			$input_errors[] = gettext("Bandwidth must be set.  This is usually the interface speed.");
-		}
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
-			$input_errors[] = gettext("Bandwidth must be an integer.");
-		}
-		if ($data['bandwidth'] < 0) {
-			$input_errors[] = gettext("Bandwidth cannot be negative.");
+		} else {
+			if ((!is_numeric($data['bandwidth']))) {
+				$input_errors[] = gettext("Bandwidth must be an integer.");
+			}
+			if ((int)$data['bandwidth'] < 0) {
+				$input_errors[] = gettext("Bandwidth cannot be negative.");
+			}
 		}
 		if ($data['bandwidthtype'] == "%") {
 			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
@@ -809,19 +811,19 @@ class altq_root_queue {
 		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype'])) {
 			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		}
-		if ($data['qlimit'] && ($data['scheduler'] == 'CODELQ')) {
+		if (($data['qlimit'] != null) && ($data['scheduler'] == 'CODELQ')) {
 			$input_errors[] = gettext("CODELQ scheduler doesn't support Qlimit parameter.");
 		}
-		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
+		if (($data['qlimit'] != null) && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Qlimit must be an integer.");
 		}
-		if ($data['qlimit'] < 0) {
+		if (($data['qlimit'] != null) && (int)$data['qlimit'] < 1) {
 			$input_errors[] = gettext("Qlimit must be positive.");
 		}
-		if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig']))) {
+		if (($data['tbrconfig'] != null) && (!is_numeric($data['tbrconfig']))) {
 			$input_errors[] = gettext("Tbrsize must be an integer.");
 		}
-		if ($data['tbrconfig'] < 0) {
+		if (($data['tbrconfig'] != null) && (int)$data['tbrconfig'] < 1) {
 			$input_errors[] = gettext("Tbrsize must be positive.");
 		}
 	}

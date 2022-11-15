@@ -15,5 +15,8 @@
     "config": {
         "vendor-dir": "src/usr/local/pfSense/include/vendor",
         "optimize-autoloader": true
+    },
+    "require-dev": {
+        "rector/rector": "^0.14.8"
     }
 }

@@ -510,7 +510,7 @@ $group->add($macaddress);
 if (!empty($mymac)) {
 	$group->add($btnmymac);
 }
-$group->setHelp('MAC address (6 hex octets separated by colons)');
+$group->setHelp('MAC address of the client to match (6 hex octets separated by colons).');
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -518,23 +518,24 @@ $section->addInput(new Form_Input(
 	'Client Identifier',
 	'text',
 	$pconfig['cid']
-));
+))->setHelp('An optional identifier to match based on the value sent by the client (RFC 2132)');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IP Address',
 	$pconfig['ipaddr'],
 	'V4'
-))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.%1$s%1$s' .
-			'The same IP address may be assigned to multiple mappings.', '<br />');
+))->setHelp('IPv4 address to assign this client.%1$s%1$s' .
+		'Address must be outside of any defined pools. ' .
+		'If no IPv4 address is given, one will be dynamically allocated from a pool.%1$s' .
+		'The same IP address may be assigned to multiple mappings.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',
 	'Hostname',
 	'text',
 	$pconfig['hostname']
-))->setHelp('Name of the host, without domain part.');
+))->setHelp('Name of the client host without the domain part.');
 
 if ($netboot_enabled) {
 	$section->addInput(new Form_Input(
@@ -557,7 +558,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+))->setHelp('A description for administrative reference.');
 
 $section->addInput(new Form_Checkbox(
 	'arp_table_static_entry',
@@ -619,7 +620,7 @@ $group->add(new Form_Input(
 	['placeholder' => 'DNS 4']
 ));
 
-$group->setHelp('Note: leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.');
+$group->setHelp('Note: Leave blank to use the system default DNS servers: The IP address of this firewall interface if DNS Resolver or Forwarder is enabled, otherwise the servers configured in General settings or those obtained dynamically.');
 
 $section->add($group);
 
@@ -628,14 +629,14 @@ $section->addInput(new Form_Input(
 	'Gateway',
 	'text',
 	$pconfig['gateway']
-))->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network.');
+))->setHelp('The default is to use the IP address of this firewall interface as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
+))->setHelp('The default is to use the domain name of this firewall as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
@@ -835,7 +836,7 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Checkbox(
 	'netboot',
 	'Enable',
-	'Enables network booting',
+	'Enable network booting',
 	$pconfig['netboot']
 ));
 

@@ -710,7 +710,7 @@ for ($i=1;$i<=4; $i++) {
 	));
 }
 
-$group->setHelp('Leave blank to use the system default DNS servers, this interface\'s IP if DNS forwarder is enabled, or the servers configured on the "General" page.');
+$group->setHelp('Leave blank to use the system default DNS servers: The IP address of this firewall interface if DNS Resolver or Forwarder is enabled, otherwise the servers configured in General settings or those obtained dynamically.');
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
@@ -726,7 +726,7 @@ $section->addInput(new Form_Input(
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
+))->setHelp('The default is to use the domain name of this firewall as the default domain name provided by DHCP. An alternate domain name may be specified here.');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',

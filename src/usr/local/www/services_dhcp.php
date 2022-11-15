@@ -1014,21 +1014,21 @@ $section->addInput(new Form_Select(
 		"class" => "Allow known clients from only this interface",
 	)
 ))->setHelp('When set to %3$sAllow all clients%4$s, any DHCP client will get an IP address within this scope/range on this interface. '.
-	'If set to %3$sAllow known clients from any interface%4$s, any DHCP client with a MAC address listed on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
-	'If set to %3$sAllow known clients from only this interface%4$s, only MAC addresses listed below (i.e. for this interface) will get an IP address within this scope/range.',
+	'If set to %3$sAllow known clients from any interface%4$s, any DHCP client with a MAC address listed in a static mapping on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
+	'If set to %3$sAllow known clients from only this interface%4$s, only MAC addresses listed in static mappings on this interface will get an IP address within this scope/range.',
 	'<i>', '</i>', '<b>', '</b>');
 
 $section->addInput(new Form_Checkbox(
 	'nonak',
 	'Ignore denied clients',
-	'Denied clients will be ignored rather than rejected.',
+	'Ignore denied clients rather than reject',
 	$pconfig['nonak']
 ))->setHelp("This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.");
 
 $section->addInput(new Form_Checkbox(
 	'ignoreclientuids',
 	'Ignore client identifiers',
-	'If a client includes a unique identifier in its DHCP request, that UID will not be recorded in its lease.',
+	'Do not record a unique identifier (UID) in client lease data if present in the client DHCP request',
 	$pconfig['ignoreclientuids']
 ))->setHelp("This option may be useful when a client can dual boot using different client identifiers but the same hardware (MAC) address.  Note that the resulting server behavior violates the official DHCP specification.");
 
@@ -1143,7 +1143,7 @@ for ($idx=1; $idx<=4; $idx++) {
 		($idx == 1) ? 'DNS servers':null,
 		$pconfig['dns' . $idx],
 		'V4'
-	))->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
+	))->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: The IP address of this firewall interface if DNS Resolver or Forwarder is enabled, otherwise the servers configured in General settings or those obtained dynamically.':'');
 }
 
 $form->add($section);
@@ -1203,14 +1203,14 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['gateway'],
 	'V4'
 ))->setPattern('[.a-zA-Z0-9_]+')
-  ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Type "none" for no gateway assignment.');
+  ->setHelp('The default is to use the IP address of this firewall interface as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Enter "none" for no gateway assignment.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here.');
+))->setHelp('The default is to use the domain name of this firewall as the default domain name provided by DHCP. An alternate domain name may be specified here.');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
@@ -1239,15 +1239,18 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		'Failover peer IP',
 		$pconfig['failover_peerip'],
 		'V4'
-	))->setHelp('Leave blank to disable. Enter the interface IP address of the other machine. Machines must be using CARP. ' .
-				'Interface\'s advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine\'s advskew &lt; 20 (and the other is &gt; 20).');
+	))->setHelp('Leave blank to disable. Enter the interface IP address of the other firewall (failover peer) in this subnet. Firewalls must be using CARP. ' .
+			'Advertising skew of the CARP VIP on this interface determines whether the DHCP daemon is Primary or Secondary. ' .
+			'Ensure the advertising skew for the VIP on one firewall is &lt; 20 and the other is &gt; 20.');
 
 	$section->addInput(new Form_Checkbox(
 		'staticarp',
 		'Static ARP',
 		'Enable Static ARP entries',
 		$pconfig['staticarp']
-	))->setHelp('This option persists even if DHCP server is disabled. Only the machines listed below will be able to communicate with the firewall on this interface.');
+	))->setHelp('Restricts communication with the firewall to only hosts listed in static mappings containing both IP addresses and MAC addresses. ' .
+			'No other hosts will be able to communicate with the firewall on this interface. ' .
+			'This behavior is enforced even when DHCP server is disabled.');
 
 	$section->addInput(new Form_Checkbox(
 		'dhcpleaseinlocaltime',
@@ -1260,9 +1263,9 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_Checkbox(
 		'statsgraph',
 		'Statistics graphs',
-		'Enable RRD statistics graphs',
+		'Enable monitoring graphs for DHCP lease statistics',
 		$pconfig['statsgraph']
-	))->setHelp('Enable this to add DHCP leases statistics to the RRD graphs. Disabled by default.');
+	))->setHelp('Enable this to add DHCP leases statistics to the Monitoring graphs. Disabled by default.');
 
 	$section->addInput(new Form_Checkbox(
 		'disablepingcheck',
@@ -1377,14 +1380,14 @@ $section->addInput(new Form_Input(
 	'MAC Allow',
 	'text',
 	$pconfig['mac_allow']
-))->setHelp('List of partial MAC addresses to allow, comma separated, no spaces, e.g.: 00:00:00,01:E5:FF');
+))->setHelp('List of full or partial MAC addresses to allow in this scope/pool. Implicitly denies any MACs not listed. Does not define known/unknown clients. Enter addresses as comma separated without spaces, e.g.: 00:00:00,01:E5:FF');
 
 $section->addInput(new Form_Input(
 	'mac_deny',
 	'MAC Deny',
 	'text',
 	$pconfig['mac_deny']
-))->setHelp('List of partial MAC addresses to deny access, comma separated, no spaces, e.g.: 00:00:00,01:E5:FF');
+))->setHelp('List of full or partial MAC addresses to deny access in this scope/pool. Implicitly allows any MACs not listed. Does not define known/unknown clients. Enter addresses as comma separated without spaces, e.g.: 00:00:00,01:E5:FF');
 
 // Advanced NTP
 $btnadv = new Form_Button(
@@ -1484,7 +1487,7 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Checkbox(
 	'netboot',
 	'Enable',
-	'Enables network booting',
+	'Enable network booting',
 	$pconfig['netboot']
 ));
 

@@ -3912,13 +3912,10 @@ EOD;
 				}
 				break;
 			default:
-				$onif = config_get_path("dhcpv6/{$on}");
-				if (is_array($onif) && isset($onif['enable']) ||
-				    (isset($oc['track6-interface'])) ||
-					 in_array($on, explode(',', config_get_path('dhcrelay6/interface', "")))) {
+				if (config_path_enabled("dhcpdv6/{$on}") || (config_path_enabled("dhcrelay6") &&
+				    in_array($on, explode(',', config_get_path('dhcrelay6/interface', ""))))) {
 					$ipfrules .= <<<EOD
 # allow access to DHCPv6 server on {$oc['descr']}
-# We need inet6 icmp for stateless autoconfig and dhcpv6
 pass {$log['pass']} quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to fe80::/10 port = 546 ridentifier {$increment_tracker()} label "allow access to DHCPv6 server"
 pass {$log['pass']} quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 ridentifier {$increment_tracker()} label "allow access to DHCPv6 server"
 pass {$log['pass']} quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 ridentifier {$increment_tracker()} label "allow access to DHCPv6 server"

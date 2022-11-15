@@ -1423,16 +1423,8 @@ function filter_generate_optcfg_array() {
 	}
 }
 
-function filter_flush_nat_table() {
-	if (config_path_enabled('system','developerspew')) {
-		$mt = microtime();
-		echo "filter_flush_nat_table() being called $mt\n";
-	}
-	return mwexec("/sbin/pfctl -F nat");
-}
-
 function filter_flush_state_table() {
-	return mwexec("/sbin/pfctl -F state");
+	return mwexec("/sbin/pfctl -F states");
 }
 
 function filter_get_reflection_interfaces($natif = "") {

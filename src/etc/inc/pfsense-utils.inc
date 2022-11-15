@@ -1164,7 +1164,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$serial_only = false;
 	$specific_platform = system_identify_specific_platform();
 	$video_console_type = (get_single_sysctl("machdep.bootmethod") == "UEFI") ? "efi" : "vidconsole";
-	if ($specific_platform['name'] == '1540') {
+	if ($specific_platform['name'] == '1540' ||
+	    $specific_platform['name'] == '1541') {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
 		$g['primaryconsole_force'] = "video";
@@ -1184,9 +1185,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$boot_config_split = explode("\n", $boot_config);
 	$data = array();
 	foreach ($boot_config_split as $bcs) {
-		/* Ignore -D and -h lines now */
-		if (!empty($bcs) && !stristr($bcs, "-D") &&
-		    !stristr($bcs, "-h")) {
+		/* Ignore -S, -D and -h lines now */
+		if (!empty($bcs) && !strstr($bcs, "-S") &&
+		    !strstr($bcs, "-D") && !strstr($bcs, "-h")) {
 			$data[] = $bcs;
 		}
 	}

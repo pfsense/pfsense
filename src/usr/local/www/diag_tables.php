@@ -43,7 +43,6 @@ if ($_REQUEST['type'] && in_array($_REQUEST['type'], $tables)) {
 } else {
 	/* Invalid 'type' passed, do not take any actions that use the 'type' field. */
 	unset($_REQUEST['type']);
-	$_REQUEST['delete'];
 }
 
 // Gather selected alias metadata.

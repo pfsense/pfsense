@@ -3231,7 +3231,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 		foreach (config_get_path('wireless/clone', []) as $key => $clone) {
 			if ($clone['cloneif'] == $ifcfg['if']) {
 				if ($sync_changes) {
-					config_set_path("wireless/clone/{$key}/mode)", $ifcfg['wireless']['mode']);
+					config_set_path("wireless/clone/{$key}/mode", $ifcfg['wireless']['mode']);
 				} else {
 					$ifcfg['wireless']['mode'] = $clone['mode'];
 				}

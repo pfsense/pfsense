@@ -107,6 +107,7 @@ if ($_POST['save'] || $_POST['force']) {
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"yandex" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"yandex-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"dnsexit" => array("apex" => false, "wildcard" => false, "username_none" => true),
 	);
 
 	if (isset($ddns_attr[$pconfig['type']]['username_none']) &&
@@ -452,6 +453,7 @@ $section->addPassword(new Form_Input(
 			'Gandi LiveDNS: Enter API token%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
+			'DNSExit: Enter the API Key.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
 			'Yandex: Yandex PDD Token.%1$s' .

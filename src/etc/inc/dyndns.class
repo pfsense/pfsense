@@ -105,7 +105,7 @@
 	 *  DigitalOcean    - Not Yet Tested
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
-	 *  DNSexit         - Last Tested: 20 July 2008
+	 *  DNSexit         - Last Tested: 27 June 2022
 	 *  DNSimple        - Last Tested: 09 February 2015
 	 *  DreamHost       - Last Tested: 30 April 2017
 	 *  DreamHost IPv6  - Not Yet Tested
@@ -154,7 +154,7 @@
 	 * @version 	0.8
 	 * @updated	13 October 05 at 21:02:42 GMT
 	 *
-	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luçi
+	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luçi and Koen Zomers
 	 * Custom DNS support by Matt Corallo
 	 *
 	 */
@@ -801,7 +801,7 @@
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_URL, 'https://update.dnsexit.com/RemoteUpdate.sv?login=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&host=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, 'https://api.dnsexit.com/dns/ud/?apikey=' . $this->_dnsPass . '&host=' . $this->_dnsHost . '&ip=' . $this->_dnsIP);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
@@ -2321,7 +2321,7 @@
 					}
 					break;
 				case 'dnsexit':
-					if (preg_match("/is the same/i", $data)) {
+					if (preg_match("/IP not changed/i", $data)) {
 						$status = $status_intro . $success_str . gettext("No Change In IP Address");
 						$successful_update = true;
 					} else if (preg_match("/Success/i", $data)) {

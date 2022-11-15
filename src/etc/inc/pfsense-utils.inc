@@ -1104,16 +1104,33 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	$data = array();
 	/* These values should be removed from loader.conf and loader.conf.local
 	 * As they will be replaced when necessary. */
-	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
-	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
-	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
-	    "hw.hn.use_if_start");
+	$remove = array(
+	    "hint.cordbuc.0",
+	    "hint.e6000sw.0",
+	    "hint.gpioled",
+	    "hint.mdio.0.at",
+	    "hint-model.",
+	    "hw.e6000sw.default_disabled",
+	    "hw.hn.vf_transparent",
+	    "hw.hn.use_if_start",
+	    "hw.usb.no_pf",
+	    "net.pf.request_maxcount",
+	    "vm.pmap.pti",
+	);
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
-		$remove = array_merge($remove,
-		    array("autoboot_delay", "console", "comconsole_speed", "comconsole_port",
-		    "boot_multicons", "boot_serial", "hint.uart.0.flags",
-		    "hint.uart.1.flags", "net.link.ifqmaxlen"));
+		$remove = array_merge($remove, array(
+		    "autoboot_delay",
+		    "boot_multicons",
+		    "boot_serial",
+		    "comconsole_speed",
+		    "comconsole_port",
+		    "console",
+		    "debug.ddb.capture.bufsize",
+		    "hint.uart.0.flags",
+		    "hint.uart.1.flags",
+		    "net.link.ifqmaxlen"
+		));
 	}
 	foreach ($input_split as $line) {
 		if (empty($line)) {

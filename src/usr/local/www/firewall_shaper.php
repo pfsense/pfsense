@@ -95,7 +95,6 @@ if ($_GET) {
 
 		header("Location: firewall_shaper.php");
 		exit;
-		break;
 	case "resetall":
 		foreach ($altq_list_queues as $altq) {
 			$altq->delete_all();

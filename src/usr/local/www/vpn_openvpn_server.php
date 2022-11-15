@@ -1455,7 +1455,7 @@ if ($act=="new" || $act=="edit"):
 			'When unset, a new connection from a user will disconnect the previous session. %1$s%1$s' .
 			'Users are identified by their username or certificate properties, depending on the VPN configuration. ' .
 			'This practice is discouraged security reasons, but may be necessary in some environments.', '<br />');
-	
+
 	$section->addInput(new Form_Input(
 		'connlimit',
 		'Duplicate Connection Limit',

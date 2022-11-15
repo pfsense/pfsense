@@ -81,7 +81,6 @@ if ($_GET) {
 			}
 			header("Location: firewall_shaper_queues.php");
 			exit;
-			break;
 		case "add":
 			/*
 			 * XXX: WARNING: This returns the first it finds.
@@ -130,7 +129,6 @@ if ($_GET) {
 
 			header("Location: firewall_shaper_queues.php?queue=".$qname."&action=show");
 			exit;
-		break;
 		case "show":
 			foreach ($config['interfaces'] as $if => $ifdesc) {
 				$altq = $altq_list_queues[$if];

@@ -101,7 +101,6 @@ switch ($action) {
 		write_config(sprintf(gettext("Captive Portal: zone %s: Restore default {$atype} page"), $cpzone));
 		header("Location: services_captiveportal.php?zone={$cpzone}");
 		exit;
-		break;
 	default:
 		/* Do nothing, no match */
 }

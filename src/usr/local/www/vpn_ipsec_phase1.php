@@ -502,7 +502,7 @@ if ($_POST['save']) {
 		}
 	}
 	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent, false, false)) {
-		foreach ($a_phase2 as $p2index => $ph2tmp) {
+		foreach ($a_phase2 as $ph2tmp) {
 			if ($ph2tmp['ikeid'] == $old_ph1ent['ikeid']) {
 				if (!$vtidisablecheck && $pconfig['disabled'] &&
 				    is_interface_ipsec_vti_assigned($ph2tmp)) {
@@ -1350,7 +1350,7 @@ events.push(function() {
 		switch ($('#ealgo_algo'+id).find(":selected").index().toString()) {
 <?php
 	$i = 0;
-	foreach ($p1_ealgos as $algo => $algodata) {
+	foreach ($p1_ealgos as $algodata) {
 		if (is_array($algodata['keysel'])) {
 ?>
 			case '<?=$i?>':

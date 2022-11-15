@@ -106,7 +106,7 @@ function print_ipsec_body() {
 					$p2uniqueids, SORT_NUMERIC,
 					$ikesa['child-sas']);
 
-			foreach ($ikesa['child-sas'] as $childid => $childsa) {
+			foreach ($ikesa['child-sas'] as $childsa) {
 				list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
 				if ($childreqid != null) {
 					$p2connected[$childreqid] = $childsa['name'];
@@ -325,7 +325,7 @@ function print_ipsec_body() {
 	</thead>
 	<tbody>
 <?php		if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
-			foreach ($ikesa['child-sas'] as $childid => $childsa) {
+			foreach ($ikesa['child-sas'] as $childsa) {
 				list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
 ?>
 	<tr>

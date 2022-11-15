@@ -41,7 +41,7 @@ $a_vlans = config_get_path('vlans/vlan', []);
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
 $portlist = array_merge($portlist, $lagglist);
-foreach ($lagglist as $laggif => $lagg) {
+foreach ($lagglist as $lagg) {
 	/* LAGG members cannot be assigned */
 	$laggmembers = explode(',', $lagg['members']);
 	foreach ($laggmembers as $lagm) {

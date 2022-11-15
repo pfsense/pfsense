@@ -504,7 +504,7 @@ if ($act == "new" || $act == gettext("Save")) {
 				</thead>
 				<tbody>
 <?php
-		foreach ($crl['cert'] as $i => $cert):
+		foreach ($crl['cert'] as $cert):
 			$name = empty($cert['descr']) ? gettext('Revoked by Serial') : htmlspecialchars($cert['descr']);
 			$serial = crl_get_entry_serial($cert);
 			if (strlen($serial) == 0) {

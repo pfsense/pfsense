@@ -203,7 +203,7 @@ $section->add($group);
 // just in case any have been removed and so have no family (orphans?)
 
 if (is_array($pconfig['item'])) {
-	foreach ($pconfig['item'] as $idx => $item) {
+	foreach ($pconfig['item'] as $item) {
 		$itemsplit = explode("|", $item);
 
 		$family = get_gw_family($itemsplit[0]);

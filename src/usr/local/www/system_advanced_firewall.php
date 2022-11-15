@@ -409,8 +409,8 @@ if (count($config['interfaces']) > 1) {
 
 $section = new Form_Section('State Timeouts (seconds - blank for default)');
 
-foreach ($pftimeouts as $proto => $tm) {
-	foreach ($tm as $type => $item) {
+foreach ($pftimeouts as $tm) {
+	foreach ($tm as $item) {
 		$section->addInput(new Form_Input(
 			$item['keyname'],
 			$item['name'],

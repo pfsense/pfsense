@@ -466,7 +466,7 @@ class pfsense_xmlrpc_server {
 			if (!is_array($item['roll'])) {
 				continue;
 			}
-			foreach ($item['roll'] as $idx => $roll) {
+			foreach ($item['roll'] as $roll) {
 				if (!isset($l_rolls[$zone][$roll['number']])) {
 					$config['voucher'][$zone]['roll'][] =
 					    $roll;
@@ -494,7 +494,7 @@ class pfsense_xmlrpc_server {
 		 * present on primary node. They must be removed
 		 */
 		foreach ($l_rolls as $zone => $item) {
-			foreach ($item as $number => $idx) {
+			foreach ($item as $idx) {
 				unset($config['voucher'][$zone][$idx]);
 			}
 		}
@@ -867,7 +867,7 @@ class pfsense_xmlrpc_server {
 			$usedmacs = '';
 
 			if (is_array($config['voucher'][$cpzone]['roll'])) {
-				foreach($config['voucher'][$cpzone]['roll'] as $id => $roll) {
+				foreach($config['voucher'][$cpzone]['roll'] as $roll) {
 					$expired_vouchers[$roll['number']] = base64_encode(voucher_read_used_db($roll['number']));
 					$active_vouchers[$roll['number']] = voucher_read_active_db($roll['number']);
 				}

@@ -230,7 +230,7 @@ if (!empty($pkg['tabs'])) {
 
 include("head.inc");
 if (isset($tab_array)) {
-	foreach ($tab_array as $tabid => $tab) {
+	foreach ($tab_array as $tab) {
 		display_top_tabs($tab);
 	}
 }

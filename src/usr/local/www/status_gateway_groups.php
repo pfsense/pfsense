@@ -116,7 +116,7 @@ display_top_tabs($tab_array);
 							}
 							ksort($priority_arr);
 							$p = 1;
-							foreach ($priority_arr as $number => $tier) {
+							foreach ($priority_arr as $tier) {
 								/* for each priority process the gateways */
 								foreach ($tier as $member) {
 									/* we always have $priority_count fields */

@@ -269,7 +269,7 @@ if (isset($_POST['del_x'])) {
 		$a_filter_new = array();
 
 		// Include the rules of other interfaces listed in config before this (the selected) interface.
-		foreach ($a_filter as $filteri_before => $filterent) {
+		foreach ($a_filter as $filterent) {
 			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
 				break;
 			} else {
@@ -808,7 +808,7 @@ foreach ($a_filter as $filteri => $filterent):
 				if (!empty($selected_descs)) {
 					$desclist = '';
 					$desclength = 0;
-					foreach ($selected_descs as $descid => $desc) {
+					foreach ($selected_descs as $desc) {
 						$desclength += strlen($desc);
 						if ($desclength > 18) {
 							$desclist .= ',<br/>';

@@ -266,7 +266,7 @@ function crypto_accel_init() {
 
 function crypto_accel_set_flags($crypto, $name, $present = false, $enabled = false) {
 
-	foreach ($crypto["accel"] as $id => &$accel) {
+	foreach ($crypto["accel"] as &$accel) {
 		if ($accel["name"] != $name) {
 			continue;
 		}
@@ -279,7 +279,7 @@ function crypto_accel_set_flags($crypto, $name, $present = false, $enabled = fal
 
 function crypto_accel_get($crypto, $name, $key) {
 
-	foreach ($crypto["accel"] as $id => $accel) {
+	foreach ($crypto["accel"] as $accel) {
 		if ($accel["name"] != $name) {
 			continue;
 		}
@@ -291,7 +291,7 @@ function crypto_accel_get($crypto, $name, $key) {
 
 function crypto_accel_set_algs($crypto, $name, $algs) {
 
-	foreach ($crypto["accel"] as $id => &$accel) {
+	foreach ($crypto["accel"] as &$accel) {
 		if ($accel["name"] != $name) {
 			continue;
 		}
@@ -307,13 +307,13 @@ function crypto_accel_get_algs($crypto) {
 	$algs = array();
 	$algs_str = "";
 
-	foreach ($crypto["accel"] as $id => $accel) {
+	foreach ($crypto["accel"] as $accel) {
 		if (!$accel["present"] || !$accel["enabled"]) {
 			continue;
 		}
 		$algs = array_merge($accel["algs"], $algs);
 	}
-	foreach (array_unique($algs, SORT_STRING) as $id => $alg) {
+	foreach (array_unique($algs, SORT_STRING) as $alg) {
 		if (strlen($algs_str) > 0) {
 			$algs_str .= ",";
 		}
@@ -350,7 +350,7 @@ function get_cpu_crypto_support() {
 		}
 		exec("/usr/sbin/pciconf -l | /usr/bin/awk '{ printf \"%s\\n\", $4 }' | /usr/bin/cut -f2 -d=", $pciids);
 		if (isset($pciids) && is_array($pciids)) {
-			foreach ($pciids as $id => $pciid) {
+			foreach ($pciids as $pciid) {
 				if (in_array($pciid, $QATIDS)) {
 					$crypto = crypto_accel_set_flags($crypto, "QAT", true, (is_module_loaded('qat')) ? true : false);
 					break;

@@ -131,7 +131,7 @@ if ($_POST['save']) {
 				// Contains array of usedmacs (will be stored in usedmacs db)
 				$usedmacs = unserialize(base64_decode($resp['usedmacs']));
 
-				foreach ($connected_users as $id => $user) {
+				foreach ($connected_users as $user) {
 					$pipeno = captiveportal_get_next_dn_ruleno('auth');
 					$attributes = array();
 					$attributes['allow_time'] = $user['allow_time'];

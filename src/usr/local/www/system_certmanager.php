@@ -338,7 +338,7 @@ if ($_POST['save'] == gettext("Save")) {
 		$pconfig['altnames']['item'] = $altnames;
 
 		/* Input validation for subjectAltNames */
-		foreach ($altnames as $idx => $altname) {
+		foreach ($altnames as $altname) {
 			switch ($altname['type']) {
 				case "DNS":
 					if (!is_hostname($altname['value'], true) || is_ipaddr($altname['value'])) {

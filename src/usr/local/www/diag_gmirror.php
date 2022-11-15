@@ -227,7 +227,7 @@ else:
 				</thead>
 				<tbody>
 <?php
-		foreach ($mirror_status as $mirror => $name):
+		foreach ($mirror_status as $name):
 								$components = count($name["components"]); ?>
 					<tr>
 						<td rowspan="<?=$components; ?>">

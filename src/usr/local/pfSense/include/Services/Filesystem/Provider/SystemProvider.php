@@ -40,7 +40,7 @@ final class SystemProvider extends AbstractProvider {
 	public function getFilesystems() {
 		$roots = [];
 
-		foreach ($this->_queryFilesystemProvider() as $idx => $filesystem) {
+		foreach ($this->_queryFilesystemProvider() as $filesystem) {
 			$path = Arrays::get($filesystem, 'mounted-on', '');
 
 			$filesystems[$path] = $filesystem;

@@ -118,7 +118,7 @@ $i = 0;
 
 
 if (is_array($a_ppps)) {
-	foreach ($a_ppps as $id => $ppp) {
+	foreach ($a_ppps as $ppp) {
 ?>
 					<tr>
 						<td>

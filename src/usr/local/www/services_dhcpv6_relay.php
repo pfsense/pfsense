@@ -100,7 +100,7 @@ if ($_POST) {
 		$svrlist = '';
 
 		if ($_POST['server']) {
-			foreach ($_POST['server'] as $checksrv => $srv) {
+			foreach ($_POST['server'] as $srv) {
 				if (!empty($srv[0])) { // Filter out any empties
 					if (!is_ipaddrv6($srv[0])) {
 						$input_errors[] = sprintf(gettext("Destination Server IP address %s is not a valid IPv6 address."), $srv[0]);

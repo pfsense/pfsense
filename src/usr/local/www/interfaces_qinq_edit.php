@@ -40,7 +40,7 @@ $a_qinqs = &$config['qinqs']['qinqentry'];
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
 $portlist = array_merge($portlist, $lagglist);
-foreach ($lagglist as $laggif => $lagg) {
+foreach ($lagglist as $lagg) {
 	/* LAGG members cannot be assigned */
 	$laggmembers = explode(',', $lagg['members']);
 	foreach ($laggmembers as $lagm) {
@@ -206,7 +206,7 @@ if ($_POST['save']) {
 			if (!is_array($config['ifgroups']['ifgroupentry'])) {
 				$config['ifgroups']['ifgroupentry'] = array();
 			}
-			foreach ($config['ifgroups']['ifgroupentry'] as $gid => $group) {
+			foreach ($config['ifgroups']['ifgroupentry'] as $group) {
 				if ($group['ifname'] == "QinQ") {
 					$found = true;
 					break;

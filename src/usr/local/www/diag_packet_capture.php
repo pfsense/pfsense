@@ -167,7 +167,7 @@ if (ipsec_enabled()) {
 $interfaces['lo0'] = "Localhost";
 
 foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenVPN Client')) as $mode => $mode_descr) {
-	foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $id => $setting) {
+	foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $setting) {
 		if (!isset($setting['disable'])) {
 			$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = $mode_descr . ": ".htmlspecialchars($setting['description']);
 		}

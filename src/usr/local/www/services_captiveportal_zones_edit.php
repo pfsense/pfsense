@@ -60,7 +60,7 @@ if ($_POST['Submit']) {
 		$input_errors[] = sprintf(gettext("The zone name [%s] is reserved."), $_POST['zone']);
 	}
 
-	foreach ($a_cp as $cpkey => $cpent) {
+	foreach ($a_cp as $cpent) {
 		if ($cpent['zone'] == $_POST['zone']) {
 			$input_errors[] = sprintf(gettext("Zone [%s] already exists."), $_POST['zone']);
 			break;

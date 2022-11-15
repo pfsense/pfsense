@@ -95,7 +95,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 	if ($orientation_type == "if_columns") {
 		// Put interface names as column headings
-		foreach ($ifinfo_arr as $ifdescr => $ifinfo) {
+		foreach ($ifinfo_arr as $ifinfo) {
 			print("<th>" . $ifinfo['name'] . "</th>");
 		}
 
@@ -106,7 +106,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		}
 	} else {
 		// Put stats item names as column headings
-		foreach ($ifstats_arr as $key => $name) {
+		foreach ($ifstats_arr as $name) {
 			print("<th>" . $name . "</th>");
 		}
 
@@ -125,7 +125,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			print("<tr>");
 			print("<td><b>" . $name . "</b></td>");
 
-			foreach ($ifinfo_arr as $ifdescr => $ifinfo) {
+			foreach ($ifinfo_arr as $ifinfo) {
 				print("<td>" . (isset($ifinfo[$key]) ? htmlspecialchars($ifinfo[$key]) : 'n/a') . "</td>");
 			}
 
@@ -137,7 +137,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		}
 	} else {
 		//Construct the table with interfaces as rows and stats as columns
-		foreach ($ifinfo_arr as $ifdescr => $ifinfo) {
+		foreach ($ifinfo_arr as $ifinfo) {
 			print("<tr>");
 			print("<td><b>" . $ifinfo['name'] . "</b></td>");
 

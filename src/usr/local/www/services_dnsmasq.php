@@ -273,7 +273,7 @@ endforeach;
 
 			<tbody>
 <?php
-foreach ($a_domainOverrides as $i => $doment):
+foreach ($a_domainOverrides as $doment):
 ?>
 				<tr>
 					<td>

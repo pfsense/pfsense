@@ -531,7 +531,7 @@ function build_authserver_list() {
 	$options = array();
 
 	/* auth types are used by javascript */
-	foreach ($authlist as $i => $auth) {
+	foreach ($authlist as $auth) {
 		if ($auth['type'] != 'radius' || $auth['type'] == 'radius' && !empty($auth['radius_auth_port'])) {
 			$options[$auth['type'].' - '.$auth['name']] = $auth['name'];
 		}
@@ -1059,7 +1059,7 @@ $section->addInput(new Form_Checkbox(
 
 $options = array();
 
-foreach (auth_get_authserver_list() as $i => $auth) {
+foreach (auth_get_authserver_list() as $auth) {
 	if ($auth['type'] == 'radius' && !empty($auth['radius_acct_port'])) {
 		$options[$auth['name']] = $auth['name'];
 	}

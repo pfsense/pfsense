@@ -59,7 +59,7 @@ if (!empty($_REQUEST['dup'])) {
 
 $ph2found = false;
 if (isset($uindex)) {
-	foreach ($a_phase2 as $p2index => $ph2) {
+	foreach ($a_phase2 as $ph2) {
 		if ($ph2['uniqid'] == $uindex) {
 			$ph2found = true;
 			break;
@@ -255,7 +255,7 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("VTI is not compatible with mobile IPsec.");
 		}
 
-		foreach ($a_phase2 as $key => $name) {
+		foreach ($a_phase2 as $name) {
 			if (isset($name['mobile']) && $name['uniqid'] != $pconfig['uniqid']) {
 				/* check duplicate localids only for mobile clients */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
@@ -281,7 +281,7 @@ if ($_POST['save']) {
 	} else {
 		/* User is adding phase 2 for site-to-site phase1 */
 		$input_error = 0;
-		foreach ($a_phase2 as $key => $name) {
+		foreach ($a_phase2 as $name) {
 			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid'] && $pconfig['uniqid'] != $name['uniqid']) {
 				/* check duplicate subnets only for given phase1 */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);

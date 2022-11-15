@@ -140,7 +140,7 @@ if (isset($config['qinqs']['qinqentry']) && is_array($config['qinqs']['qinqentry
 
 /* add PPP interfaces */
 if (isset($config['ppps']['ppp']) && is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+	foreach ($config['ppps']['ppp'] as $ppp) {
 		$portname = $ppp['if'];
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
@@ -185,7 +185,7 @@ $ifdescrs = interface_assign_description_fast($portlist,$friendlyifnames);
 if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	/* Be sure this port is not being used */
 	$portused = false;
-	foreach ($config['interfaces'] as $ifname => $ifdata) {
+	foreach ($config['interfaces'] as $ifdata) {
 		if ($ifdata['if'] == $_REQUEST['if_add']) {
 			$portused = true;
 			break;

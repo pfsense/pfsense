@@ -137,7 +137,7 @@ function get_root_priv_item_text() {
 
 	$priv_text = "";
 
-	foreach ($priv_list as $pname => $pdata) {
+	foreach ($priv_list as $pdata) {
 		if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
 			$priv_text .= '<br/>' . $pdata['name'];
 		}

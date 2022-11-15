@@ -333,7 +333,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 $available = $known_widgets;
 uasort($available, function($a, $b){ return strcasecmp($a['title'], $b['title']); });
 
-foreach ($available as $widgetkey => $widgetconfig):
+foreach ($available as $widgetconfig):
 	// If the widget supports multiple copies, or no copies are displayed yet, then it is available to add
 	if (($widgetconfig['multicopy']) || ($widgetconfig['display'] == 'none')):
 ?>

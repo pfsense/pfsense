@@ -599,7 +599,7 @@ if ($pkg['custom_php_after_head_command']) {
 	eval($pkg['custom_php_after_head_command']);
 }
 if (isset($tab_array)) {
-	foreach ($tab_array as $tabid => $tab) {
+	foreach ($tab_array as $tab) {
 		display_top_tabs($tab);
 	}
 }

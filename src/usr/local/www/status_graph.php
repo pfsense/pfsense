@@ -50,7 +50,7 @@ if (ipsec_enabled()) {
 }
 
 foreach (array('server', 'client') as $mode) {
-	foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $id => $setting) {
+	foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $setting) {
 		if (isset($setting['disable'])) {
 			continue;
 		}

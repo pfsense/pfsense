@@ -348,7 +348,7 @@ function get_cpu_crypto_support() {
 		if ($fd) {
 			fclose($fd);
 		}
-		exec("/usr/sbin/pciconf -l | /usr/bin/awk '{ printf \"%s\\n\", $4 }' | /usr/bin/cut -f2 -d=", $pciids);
+		exec("/usr/sbin/pciconf -l -l | /usr/bin/awk '{ printf \"0x%s%s\\n\", $6, $5 }'", $pciids);
 		if (isset($pciids) && is_array($pciids)) {
 			foreach ($pciids as $pciid) {
 				if (in_array($pciid, $QATIDS)) {

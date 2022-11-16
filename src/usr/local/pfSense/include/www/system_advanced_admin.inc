@@ -35,20 +35,20 @@ function getAdvancedAdminConfig($json = false) {
 
 	$pconfig = array();
 
-	$pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
-	$pconfig['webguiport'] = $config['system']['webgui']['port'];
-	$pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
-	$pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
-	$pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
-	$pconfig['disablehsts'] = isset($config['system']['webgui']['disablehsts']);
-	$pconfig['ocsp-staple'] = $config['system']['webgui']['ocsp-staple'];
+	$pconfig['webguiproto'] = config_get_path('system/webgui/protocol');
+	$pconfig['webguiport'] = config_get_path('system/webgui/port');
+	$pconfig['max_procs'] = config_get_path('system/webgui/max_procs', 2);
+	$pconfig['ssl-certref'] = config_get_path('system/webgui/ssl-certref');
+	$pconfig['disablehttpredirect'] = config_path_enabled('system/webgui', 'disablehttpredirect');
+	$pconfig['disablehsts'] = config_path_enabled('system/webgui', 'disablehsts');
+	$pconfig['ocsp-staple'] = config_path_enabled('system/webgui', 'ocsp-staple');
 	$pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
-	$pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
-	$pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
-	$pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
-	$pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
-	$pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
-	$pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
+	$pconfig['noantilockout'] = config_path_enabled('system/webgui', 'noantilockout');
+	$pconfig['nodnsrebindcheck'] = config_path_enabled('system/webgui', 'nodnsrebindcheck');
+	$pconfig['nohttpreferercheck'] = config_path_enabled('system/webgui', 'nohttpreferercheck');
+	$pconfig['pagenamefirst'] = config_path_enabled('system/webgui', 'pagenamefirst');
+	$pconfig['loginautocomplete'] = config_path_enabled('system/webgui', 'loginautocomplete');
+	$pconfig['althostnames'] = config_get_path('system/webgui/althostnames');
 	$pconfig['enableserial'] = $config['system']['enableserial'];
 	$pconfig['serialspeed'] = $config['system']['serialspeed'];
 	$pconfig['primaryconsole'] = $config['system']['primaryconsole'];
@@ -61,8 +61,11 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['sshguard_blocktime'] = $config['system']['sshguard_blocktime'] ?? '';
 	$pconfig['sshguard_detection_time'] = $config['system']['sshguard_detection_time'] ?? '';
 	$pconfig['sshguard_whitelist'] = $config['system']['sshguard_whitelist'] ?? '';
-	$a_cert = &$config['cert'];
+	$a_cert = config_get_path('cert');
 	$pconfig['certsavailable'] = (is_array($a_cert) && count($a_cert));
+	if (!$pconfig['webguiproto'] || !$pconfig['certsavailable']) {
+		$pconfig['webguiproto'] = 'http';
+	}
 	if ($json) {
 		// When outputting in JSON, make the certs an array of objects each containing the id and description
 		$l = cert_build_list('cert', 'HTTPS');
@@ -89,7 +92,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 
 	/* input validation */
 
-	if (!in_array($pconfig['webguiproto'], $valid_webguiproto)) {
+	if ($post['webguiproto'] && !in_array($pconfig['webguiproto'], $valid_webguiproto)) {
 		$input_errors[] = gettext("A valid webConfigurator protocol must be specified");
 	}
 
@@ -147,7 +150,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 	}
 
 	if (!$input_errors) {
-		if (l_update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $post['webguiproto'])) {
+		if ($post['webguiproto'] && l_update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $post['webguiproto'])) {
 			$restart_webgui = true;
 		}
 
@@ -155,73 +158,73 @@ function doAdvancedAdminPOST($post, $json = false) {
 			$restart_webgui = true;
 		}
 
-		if (l_update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $post['ssl-certref'])) {
+		if ($post['ssl-certref'] && l_update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $post['ssl-certref'])) {
 			$restart_webgui = true;
 		}
 
-		if (l_update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $post['max_procs'])) {
+		if ($post['max_procs'] && l_update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $post['max_procs'])) {
 			$restart_webgui = true;
 		}
 
 		// Restart the webgui only if this actually changed
 		if ($post['webgui-redirect'] == "yes") {
-			if ($config['system']['webgui']['disablehttpredirect'] != true) {
+			if (config_get_path('system/webgui/disablehttpredirect') != true) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['disablehttpredirect'] = true;
+			config_set_path('system/webgui/disablehttpredirect', true);
 		} else {
-			if (isset($config['system']['webgui']['disablehttpredirect'])) {
+			if (config_get_path('system/webgui/disablehttpredirect')) {
 				$restart_webgui = true;
 			}
 
-			unset($config['system']['webgui']['disablehttpredirect']);
+			config_del_path('system/webgui/disablehttpredirect');
 		}
 
 		if ($post['webgui-hsts'] == "yes") {
-			if ($config['system']['webgui']['disablehsts'] != true) {
+			if (config_get_path('system/webgui/disablehsts') != true) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['disablehsts'] = true;
+			config_set_path('system/webgui/disablehsts', true);
 		} else {
-			if (isset($config['system']['webgui']['disablehsts'])) {
+			if (config_get_path('system/webgui/disablehsts')) {
 				$restart_webgui = true;
 			}
 
-			unset($config['system']['webgui']['disablehsts']);
+			config_del_path('system/webgui/disablehsts');
 		}
 
 		if ($post['ocsp-staple'] == "yes") {
-			if ($config['system']['webgui']['ocsp-staple'] != true) {
+			if (config_get_path('system/webgui/ocsp-staple') != true) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['ocsp-staple'] = true;
+			config_set_path('system/webgui/ocsp-staple', true);
 		} else {
-			if (isset($config['system']['webgui']['ocsp-staple'])) {
+			if (config_get_path('system/webgui/ocsp-staple')) {
 				$restart_webgui = true;
 			}
 
-			unset($config['system']['webgui']['ocsp-staple']);
+			config_del_path('system/webgui/ocsp-staple');
 		}
 		
 		if ($post['webgui-login-messages'] == "yes") {
-			$config['system']['webgui']['quietlogin'] = true;
+			config_set_path('system/webgui/quietlogin', true);
 		} else {
-			unset($config['system']['webgui']['quietlogin']);
+			config_del_path('system/webgui/quietlogin');
 		}
 
 		if ($post['disableconsolemenu'] == "yes") {
-			$config['system']['disableconsolemenu'] = true;
+			config_set_path('system/disableconsolemenu', true);
 		} else {
-			unset($config['system']['disableconsolemenu']);
+			config_del_path('system/disableconsolemenu');
 		}
 
 		if ($post['noantilockout'] == "yes") {
-			$config['system']['webgui']['noantilockout'] = true;
+			config_set_path('system/webgui/noantilockout', true);
 		} else {
-			unset($config['system']['webgui']['noantilockout']);
+			config_del_path('system/webgui/noantilockout');
 		}
 
 		if ($post['enableserial'] == "yes" || $g['enableserial_force']) {
@@ -243,33 +246,33 @@ function doAdvancedAdminPOST($post, $json = false) {
 		}
 
 		if ($post['nodnsrebindcheck'] == "yes") {
-			$config['system']['webgui']['nodnsrebindcheck'] = true;
+			config_set_path('system/webgui/nodnsrebindcheck', true);
 		} else {
-			unset($config['system']['webgui']['nodnsrebindcheck']);
+			config_del_path('system/webgui/nodnsrebindcheck');
 		}
 
 		if ($post['nohttpreferercheck'] == "yes") {
-			$config['system']['webgui']['nohttpreferercheck'] = true;
+			config_set_path('system/webgui/nohttpreferercheck', true);
 		} else {
-			unset($config['system']['webgui']['nohttpreferercheck']);
+			config_del_path('system/webgui/nohttpreferercheck');
 		}
 
 		if ($post['pagenamefirst'] == "yes") {
-			$config['system']['webgui']['pagenamefirst'] = true;
+			config_set_path('system/webgui/pagenamefirst', true);
 		} else {
-			unset($config['system']['webgui']['pagenamefirst']);
+			config_del_path('system/webgui/pagenamefirst');
 		}
 
 		if ($post['loginautocomplete'] == "yes") {
-			$config['system']['webgui']['loginautocomplete'] = true;
+			config_set_path('system/webgui/loginautocomplete', true);
 		} else {
-			unset($config['system']['webgui']['loginautocomplete']);
+			config_del_path('system/webgui/loginautocomplete');
 		}
 
 		if ($post['althostnames']) {
-			$config['system']['webgui']['althostnames'] = $post['althostnames'];
+			config_set_path('system/webgui/althostnames', $post['althostnames']);
 		} else {
-			unset($config['system']['webgui']['althostnames']);
+			config_del_path('system/webgui/althostnames');
 		}
 
 		$sshd_enabled = config_path_enabled('system/ssh');

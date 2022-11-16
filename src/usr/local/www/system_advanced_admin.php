@@ -39,15 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system_advanced_admin.inc");
 
-init_config_arr(array('system', 'webgui'));
-
 $pconfig = getAdvancedAdminConfig();
-init_config_arr(array('cert'));
-$certs_available = $pconfig['certsavailable'];
-
-if (!$pconfig['webguiproto'] || !$certs_available) {
-	$pconfig['webguiproto'] = "http";
-}
 
 if ($_POST) {
 	$rv = doAdvancedAdminPOST($_POST);
@@ -104,7 +96,7 @@ $group->add(new Form_Checkbox(
 	'https'
 ))->displayAsRadio();
 
-if (!$certs_available) {
+if (!$pconfig['certsavailable']) {
 	$group->setHelp('No Certificates have been defined. A certificate is required before SSL/TLS can be enabled. %1$s Create or Import %2$s a Certificate.',
 		'<a href="system_certmanager.php">', '</a>');
 }

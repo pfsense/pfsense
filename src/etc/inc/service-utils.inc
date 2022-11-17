@@ -246,13 +246,15 @@ function is_service_enabled($service_name) {
 			return config_path_enabled('unbound');
 			break;
 		default:
-			return false;
+			/* Do nothing since we can't determine for certain. */
 	}
 	/* TODO: The service name isn't likely to match the config tag,
 	 *       needs better logic or pkg plugin to probe */
 	$pkg_enabled = config_get_path("installedpackages/{$service_name}/config/0/enable", null);
 	if (($pkg_enabled !== null) &&
 	    (empty($pkg_enabled) || ($pkg_enabled === 'off'))) {
+		/* Only return false for cases where the config area exists and
+		 * appears to be disabled. */
 		return false;
 	}
 

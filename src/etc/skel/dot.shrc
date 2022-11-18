@@ -34,6 +34,11 @@ if [ "${HTTP_PROXY_AUTH_USER}" != "" ] && [ "${HTTP_PROXY_AUTH_PASS}" != "" ]; t
 	export HTTP_PROXY_AUTH
 fi
 
+# Define CA Path for local globally trusted CAs
+# https://redmine.pfsense.org/issues/12737
+SSL_CERT_DIR=/etc/ssl/certs/
+export SSL_CERT_DIR
+
 USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
 # if [ "${USE_MFS_TMPVAR}" = "true" ] && [ ! -f /conf/ram_disks_failed ]; then
 #	export PKG_DBDIR='/root/var/db/pkg'

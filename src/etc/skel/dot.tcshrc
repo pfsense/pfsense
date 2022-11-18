@@ -75,6 +75,10 @@ if ( "${http_proxy_auth_user}" != "" && "${http_proxy_auth_pass}" != "" ) then
 	setenv HTTP_PROXY_AUTH "${http_proxy_auth}"
 endif
 
+# Define CA Path for local globally trusted CAs
+# https://redmine.pfsense.org/issues/12737
+setenv SSL_CERT_DIR /etc/ssl/certs/
+
 set use_mfs_tmpvar=`/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar`
 # if ( $use_mfs_tmpvar == "true" && ! -f "/conf/ram_disks_failed" ) then
 #	setenv PKG_DBDIR '/root/var/db/pkg'

@@ -84,11 +84,7 @@ function console_get_interface_from_ppp($realif) {
 
 function prompt_for_enable_dhcp_server($version = 4) {
 	global $config, $fp, $interface;
-	if ($interface == "wan") {
-		if ($config['interfaces']['lan']) {
-			return false;
-		}
-	}
+
 	/* only allow DHCP server to be enabled when static IP is
 	   configured on this interface */
 	if ($version === 6) {
@@ -244,11 +240,13 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type, $nonlocalgate
 
 	//set the new GW as the default if there isnt one set yet
 	init_config_arr(array('gateways'));
-	if ($item['ipprotocol'] == "inet" && empty(config_get_path('gateways/defaultgw4', ''))) {
-		config_set_path('gateways/defaultgw4', $new_name);
-	}
-	if ($item['ipprotocol'] == "inet6" && empty(config_get_path('gateways/defaultgw4', ''))) {
-		config_set_path('gateways/defaultgw4', $new_name);
+	if (console_prompt_for_yn (gettext("Should this gateway be set as the default gateway?"))) {
+		if ($item['ipprotocol'] == "inet") {
+			config_set_path('gateways/defaultgw4', $new_name);
+		}
+		if ($item['ipprotocol'] == "inet6") {
+			config_set_path('gateways/defaultgw6', $new_name);
+		}
 	}
 
 	return $new_name;
@@ -263,20 +261,18 @@ function console_configure_ip_address($version) {
 
 	$upperifname = strtoupper($interface);
 
-	if ($interface == "wan") {
-		if (console_prompt_for_yn (sprintf(gettext('Configure %1$s address %2$s interface via %3$s?'), $label_IPvX, $upperifname, $label_DHCP))) {
-			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
-			if (!empty($ifppp)) {
-				$ifaceassigned = $ifppp;
-			}
-			$intip = ($version === 6) ? "dhcp6" : "dhcp";
-			$intbits = "";
-			$isintdhcp = true;
-			$restart_dhcpd = true;
+	if (console_prompt_for_yn (sprintf(gettext('Configure %1$s address %2$s interface via %3$s?'), $label_IPvX, $upperifname, $label_DHCP))) {
+		$ifppp = console_get_interface_from_ppp(get_real_interface($interface));
+		if (!empty($ifppp)) {
+			$ifaceassigned = $ifppp;
 		}
+		$intip = ($version === 6) ? "dhcp6" : "dhcp";
+		$intbits = "";
+		$isintdhcp = true;
+		$restart_dhcpd = true;
 	}
 
-	if ($isintdhcp == false or $interface <> "wan") {
+	if ($isintdhcp == false) {
 		while (true) {
 			do {
 				echo "\n" . sprintf(gettext('Enter the new %1$s %2$s address.  Press <ENTER> for none:'),
@@ -534,7 +530,8 @@ if ($intip6 != '') {
 }
 
 if ($intip != '' || $intip6 != '') {
-	if (count($ifdescrs) == "1" or $interface == "lan") {
+	if ((count($ifdescrs) == "1") ||
+	    (!interface_has_gateway($interface) && !interface_has_gatewayv6($interface))) {
 		if ($debug) {
 			echo "ifdescrs count is " . count($ifdescrs) . "\n";
 			echo "interface is {$interface} \n";

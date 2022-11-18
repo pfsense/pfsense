@@ -1167,6 +1167,7 @@ function is_greipsec($if) {
 
 /* NOTE: $gifkey is not used but useful for passing this function to array_walk. */
 function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
+	global $g;
 	if (!is_array($gif)) {
 		return -1;
 	}

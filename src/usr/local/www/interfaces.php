@@ -111,8 +111,10 @@ if ($if == "wan" && !$wancfg['descr']) {
 }
 
 /* NOTE: The code here is used to set the $pppid for the curious */
-foreach ($a_ppps as $ppp) {
+$pppid = null;
+foreach ($a_ppps as $pid => $ppp) {
 	if ($wancfg['if'] == $ppp['if']) {
+		$pppid = $pid;
 		break;
 	}
 }

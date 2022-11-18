@@ -2930,17 +2930,17 @@ $group->add(new Form_Input(
 	'pppoe_resethour',
 	null,
 	'number',
-	$pconfig['pppoe_resethour'],
+	(strlen($pconfig['pppoe_resethour']) > 0) ? $pconfig['pppoe_resethour'] : "0",
 	['min' => 0, 'max' => 23]
-))->setHelp('Hour (0-23)');
+))->setHelp('Hour (0-23), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetminute',
 	null,
 	'number',
-	$pconfig['pppoe_resetminute'],
+	(strlen($pconfig['pppoe_resetminute']) > 0) ? $pconfig['pppoe_resetminute'] : "0",
 	['min' => 0, 'max' => 59]
-))->setHelp('Minutes (0-59)');
+))->setHelp('Minute (0-59), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetdate',

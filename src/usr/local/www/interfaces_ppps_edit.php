@@ -727,15 +727,15 @@ $group->add(new Form_Input(
 	'pppoe_resethour',
 	null,
 	'text',
-	$pconfig['pppoe_resethour']
-))->setHelp('Hour');
+	(strlen($pconfig['pppoe_resethour']) > 0) ? $pconfig['pppoe_resethour'] : "0",
+))->setHelp('Hour (0-23), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetminute',
 	null,
 	'text',
-	$pconfig['pppoe_resetminute']
-))->setHelp('Minute');
+	(strlen($pconfig['pppoe_resetminute']) > 0) ? $pconfig['pppoe_resetminute'] : "0",
+))->setHelp('Minute (0-59), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetdate',

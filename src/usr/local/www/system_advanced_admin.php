@@ -366,11 +366,21 @@ $section->addInput(new Form_Select(
 	array_combine(array(115200, 57600, 38400, 19200, 14400, 9600), array(115200, 57600, 38400, 19200, 14400, 9600))
 ))->setHelp('Allows selection of different speeds for the serial console port.');
 
+/* Get the current console list from the kernel environment */
+$current_consoles = [];
+exec('/bin/kenv -q console 2>/dev/null', $current_consoles);
+$current_consoles = explode(',', $current_consoles[0]);
+/* The first console in the list is the current active primary console.
+ * Use this as the default value if the user has not stored their own preference.
+ * See https://redmine.pfsense.org/issues/12960
+ */
+$active_primary = ($current_consoles[0] == 'comconsole') ? 'serial' : 'video';
+
 if (!$g['enableserial_force'] && !$g['primaryconsole_force']) {
 	$section->addInput(new Form_Select(
 		'primaryconsole',
 		'Primary Console',
-		$pconfig['primaryconsole'],
+		(!empty($pconfig['primaryconsole'])) ? $pconfig['primaryconsole'] : $active_primary,
 		array(
 			'serial' => gettext('Serial Console'),
 			'video' => gettext('Video Console'),

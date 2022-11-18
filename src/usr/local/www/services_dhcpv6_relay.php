@@ -32,17 +32,13 @@
 
 require_once("guiconfig.inc");
 
-$pconfig['enable'] = isset($config['dhcrelay6']['enable']);
+$pconfig['enable'] = config_path_enabled('dhcrelay6');
 
-if (empty($config['dhcrelay6']['interface'])) {
-	$pconfig['interface'] = array();
-} else {
-	$pconfig['interface'] = explode(",", $config['dhcrelay6']['interface']);
-}
+$pconfig['interface'] = explode(",", config_get_path('dhcrelay6/interface', ""));
 
-$pconfig['agentoption'] = isset($config['dhcrelay6']['agentoption']);
-$pconfig['server'] = $config['dhcrelay6']['server'];
-$pconfig['carpstatusvip'] = isset($config['dhcrelay6']['carpstatusvip']) ? $config['dhcrelay6']['carpstatusvip'] : 'none';
+$pconfig['agentoption'] = config_path_enabled('dhcrelay6', 'agentoption');
+$pconfig['server'] = config_get_path('dhcrelay6/server');
+$pconfig['carpstatusvip'] = config_get_path('dhcrelay6/carpstatusvip', 'none');
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -75,12 +71,10 @@ $carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
  *   the two are not compatible with each other.
  */
 $dhcpd_enabled = false;
-if (is_array($config['dhcpdv6'])) {
-	foreach ($config['dhcpdv6'] as $dhcpif => $dhcp) {
-		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
-			$dhcpd_enabled = true;
-			break;
-		}
+foreach (config_get_path('dhcpdv6', []) as $dhcpif => $dhcp) {
+	if (isset($dhcp['enable']) && config_path_enabled("interfaces/{$dhcpif}")) {
+		$dhcpd_enabled = true;
+		break;
 	}
 }
 
@@ -126,17 +120,16 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		init_config_arr(array('dhcrelay6'));
-		$config['dhcrelay6']['enable'] = $_POST['enable'] ? true : false;
+		config_set_path('dhcrelay6/enable', $_POST['enable'] ? true : false);
 		if (isset($_POST['interface']) &&
 		    is_array($_POST['interface'])) {
-			$config['dhcrelay6']['interface'] = implode(",",
-			    $_POST['interface']);
+			config_set_path('dhcrelay6/interface', implode(",", $_POST['interface']));
 		} else {
-			unset($config['dhcrelay6']['interface']);
+			config_del_path('dhcrelay6/interface');
 		}
-		$config['dhcrelay6']['agentoption'] = $_POST['agentoption'] ? true : false;
-		$config['dhcrelay6']['server'] = $svrlist;
-		$config['dhcrelay6']['carpstatusvip'] = $_POST['carpstatusvip'];
+		config_set_path('dhcrelay6/agentoption', $_POST['agentoption'] ? true : false);
+		config_set_path('dhcrelay6/server', $svrlist);
+		config_set_path('dhcrelay6/carpstatusvip', $_POST['carpstatusvip']);
 
 		write_config("DHCPv6 Relay settings saved");
 

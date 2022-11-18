@@ -2922,7 +2922,8 @@ function set_ipv6routes_mtu($interface, $mtu) {
 	foreach ($a_gateways as $gate) {
 		foreach ($a_staticroutes as $sroute) {
 			if (($gate['interface'] == $interface) &&
-			    ($sroute['gateway'] == $gate['name'])) {
+			    ($sroute['gateway'] == $gate['name']) &&
+			    (is_ipaddrv6($gate['gateway']))) {
 				$tgt = $sroute['network'];
 				$gateway = $gate['gateway'];
 				$ipv6mturoutes[$tgt] = $gateway;

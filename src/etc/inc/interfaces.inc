@@ -4778,10 +4778,10 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 
 		if ($wancfg['adv_dhcp6_config_file_override']) {
 			// DHCP6 Config File Override
-			$dhcp6cconf = DHCP6_Config_File_Override($wancfg, $wanif);
+			$dhcp6cconf .= DHCP6_Config_File_Override($wancfg, $wanif);
 		} elseif ($wancfg['adv_dhcp6_config_advanced']) {
 			// DHCP6 Config File Advanced
-			$dhcp6cconf = DHCP6_Config_File_Advanced($interface, $wancfg, $wanif);
+			$dhcp6cconf .= DHCP6_Config_File_Advanced($interface, $wancfg, $wanif);
 		} else {
 			// DHCP6 Config File Basic
 			$dhcp6cconf .= "interface {$wanif} {\n";

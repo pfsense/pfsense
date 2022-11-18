@@ -4300,7 +4300,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			}
 
 			if (config_path_enabled('unbound')) {
-				services_unbound_configure();
+				services_unbound_configure(true, $interface);
 			}
 
 			/* update dyndns */
@@ -4386,7 +4386,7 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 
 		/* restart dns servers (defering dhcpd reload) */
 		if (config_path_enabled('unbound')) {
-			services_unbound_configure(false);
+			services_unbound_configure(false, $interface);
 		}
 		if (config_path_enabled('dnsmasq')) {
 			services_dnsmasq_configure(false);

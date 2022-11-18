@@ -168,7 +168,7 @@ if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 
 if ($srvupdate) {
 	/* reload unbound */
-	services_unbound_configure();
+	services_unbound_configure(true, $interface);
 
 	/* perform RFC 2136 DNS update */
 	services_dnsupdate_process($interface);

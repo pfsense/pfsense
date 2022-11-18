@@ -361,7 +361,7 @@ $section->addInput(new Form_Select(
 	$activeiflist['selected'],
 	$activeiflist['options'],
 	true
-))->addClass('general', 'resizable')->setHelp('Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. ' .
+))->addClass('general', 'resizable')->setHelp('Interface IP addresses used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 addresses, both are used. Queries to addresses not selected in this list are discarded. ' .
 			'The default behavior is to respond to queries on every available IPv4 and IPv6 address.');
 
 $outiflist = build_if_list($pconfig['outgoing_interface']);

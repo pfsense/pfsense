@@ -234,7 +234,8 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dpinger_dont_add_static_route']
 ))->setHelp('By default the firewall adds static routes for gateway monitor IP addresses '.
 	'to ensure traffic to the monitor IP address leaves via the correct interface. '.
-	'Enabling this checkbox overrides that behavior.');
+	'Enabling this checkbox overrides that behavior. %1$s',
+	isset($config['system']['dpinger_dont_add_static_routes']) ? '(Currently being <b>overridden</b> by the global setting at <a href=/system_advanced_misc.php>System > Advanced > Miscellaneous</a>)' : '');
 
 $section->addInput(new Form_Checkbox(
 	'force_down',

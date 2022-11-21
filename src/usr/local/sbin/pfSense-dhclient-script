@@ -53,39 +53,6 @@ arp_flush() {
 		/bin/sh >/dev/null 2>&1
 }
 
-# NOTE: use of the below has been disabled because rc.newwanip handles this correctly and this
-# unnecessarily killed states in multiple circumstances. Leaving here for now, should be safe
-# to remove later.  -cmb 20141105
-delete_old_states() {
-	$LOGGER "Starting delete_old_states()"
-	_FLUSHED=0
-	# If the IP changed, remove states from the old one
-	if [ -f /var/db/${interface}_ip ]; then
-		OLD_IP=`/bin/cat /var/db/${interface}_ip`
-		$LOGGER "Comparing IPs: Old: ${OLD_IP} New: ${new_ip_address}"
-		if [ -n "${OLD_IP}" ] && [ "${OLD_IP}" != "${new_ip_address}" ]; then
-			$LOGGER "Removing states from old IP '${OLD_IP}' (new IP '${new_ip_address}')"
-			${PFCTL} -i $interface -Fs
-			${PFCTL} -K ${OLD_IP}/32
-			_FLUSHED=1
-		fi
-	fi
-	# Delete states through old gateway if it's not the same
-	OLD_ROUTER=""
-	if [ -n "${old_routers}" ]; then
-		OLD_ROUTER=$old_routers
-	elif [ -f /tmp/${interface}_router ]; then
-		OLD_ROUTER=`/bin/cat /tmp/${interface}_router`
-	fi
-	if [ ${_FLUSHED} -eq 0 -a -n "${OLD_ROUTER}" ]; then
-		$LOGGER "Comparing Routers: Old: ${OLD_ROUTER} New: ${new_routers}"
-		if [ "${OLD_ROUTER}" != "${new_routers}" ]; then
-			$LOGGER "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')"
-			${PFCTL} -i $interface -Fs
-		fi
-	fi
-}
-
 delete_old_address() {
 	/bin/rm -f /var/db/${interface}_ip
 	$IFCONFIG $interface inet -alias $old_ip_address $medium

@@ -206,9 +206,10 @@ if ($_POST['save']) {
 			if (!is_array($config['ifgroups']['ifgroupentry'])) {
 				$config['ifgroups']['ifgroupentry'] = array();
 			}
-			foreach ($config['ifgroups']['ifgroupentry'] as $group) {
+			$gid = null;
+			foreach ($config['ifgroups']['ifgroupentry'] as $idx => $group) {
 				if ($group['ifname'] == "QinQ") {
-					$found = true;
+					$gid = $idx;
 					break;
 				}
 			}
@@ -217,7 +218,7 @@ if ($_POST['save']) {
 				$additions .= qinq_interface($qinqentry, $qtag) . " ";
 			}
 			$additions .= "{$qinqentry['vlanif']}";
-			if ($found == true) {
+			if ($gid !== null) {
 				$config['ifgroups']['ifgroupentry'][$gid]['members'] .= " {$additions}";
 			} else {
 				$gentry = array();

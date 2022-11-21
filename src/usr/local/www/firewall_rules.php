@@ -269,8 +269,10 @@ if (isset($_POST['del_x'])) {
 		$a_filter_new = array();
 
 		// Include the rules of other interfaces listed in config before this (the selected) interface.
-		foreach ($a_filter as $filterent) {
+		$filteri_before = null;
+		foreach ($a_filter as $idx => $filterent) {
 			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+				$filteri_before = $idx;
 				break;
 			} else {
 				$a_filter_new[] = $filterent;

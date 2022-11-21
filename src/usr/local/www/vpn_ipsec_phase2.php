@@ -57,17 +57,17 @@ if (!empty($_REQUEST['dup'])) {
 	$uindex = $_REQUEST['dup'];
 }
 
-$ph2found = false;
+$p2index = null;
 if (isset($uindex)) {
-	foreach ($a_phase2 as $ph2) {
+	foreach ($a_phase2 as $idx => $ph2) {
 		if ($ph2['uniqid'] == $uindex) {
-			$ph2found = true;
+			$p2index = $idx;
 			break;
 		}
 	}
 }
 
-if ($ph2found === true) {
+if ($p2index !== null) {
 	$pconfig['ikeid'] = $ph2['ikeid'];
 	$pconfig['disabled'] = isset($ph2['disabled']);
 	$pconfig['mode'] = $ph2['mode'];
@@ -130,7 +130,7 @@ if ($_POST['save']) {
 	unset($input_errors);
 
 	/* Check if the user is switching away from VTI */
-	$vti_switched = ($ph2found && ($pconfig['mode'] == "vti") && ($_POST['mode'] != "vti"));
+	$vti_switched = (($p2index !== null) && ($pconfig['mode'] == "vti") && ($_POST['mode'] != "vti"));
 
 	$pconfig = $_POST;
 
@@ -453,7 +453,7 @@ if ($_POST['save']) {
 			$ph2ent['mobile'] = true;
 		}
 
-		if ($ph2found === true && $a_phase2[$p2index]) {
+		if (($p2index !== null) && $a_phase2[$p2index]) {
 			$a_phase2[$p2index] = $ph2ent;
 		} else {
 			$a_phase2[] = $ph2ent;

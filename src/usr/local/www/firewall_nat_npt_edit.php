@@ -229,6 +229,7 @@ events.push(function() {
 			default:
 				$('#dst').val('');
 				disableInput('dst', true);
+				disableInput('dstmask', true);
 				break;
 		}
 	}

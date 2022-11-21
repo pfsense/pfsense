@@ -2267,12 +2267,10 @@ function filter_nat_rules_generate() {
 		$srcaddr = filter_generate_address($rule, 'source');
 		if (isset($rule['destination']['network']) && !is_subnetv6($rule['destination']['network'])) {
 			$dst_arr = explode("/", $rule['destination']['network']);
-			if (count($dst_arr) > 1) {
-				$track6ip = get_interface_track6ip($dst_arr[0]);
-				$pdsubnet = gen_subnetv6($track6ip[0], $dst_arr[1]);
-				$rule['destination']['address'] = $pdsubnet . "/" . $dst_arr[1];
-				unset($rule['destination']['network']);
-			}
+			$track6ip = get_interface_track6ip($dst_arr[0]);
+			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+			$rule['destination']['address'] = $pdsubnet . "/" . $track6ip[1];
+			unset($rule['destination']['network']);
 		}
 		$dstaddr = filter_generate_address($rule, 'destination');
 

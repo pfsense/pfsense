@@ -33,49 +33,29 @@ if (platform_booting()) {
 	return;
 }
 
-function handle_argument_group($iface, $argument2) {
+function handle_argument_group($iface, $action) {
 	global $g, $config;
 
-	if (!is_array($config['interfaces'][$iface])) {
+	if (empty(config_get_path("interfaces/{$iface}"))) {
 		log_error("Cannot find interface configuration for {$iface}");
 		return;
 	}
 
-	if (!isset($config['interfaces'][$iface]['enable'])) {
+	if (!config_path_enabled("interfaces/{$iface}")) {
 		log_error("Linkup detected on disabled interface...Ignoring");
 		return;
 	}
 
-	if (empty($config['interfaces'][$iface]['ipaddr'])) {
-		$ipaddr = '';
-	} else {
-		$ipaddr = $config['interfaces'][$iface]['ipaddr'];
-	}
+	$ipaddr = config_get_path("interfaces/{$iface}/ipaddr", '');
+	$ip6addr = config_get_path("interfaces/{$iface}/ipaddrv6", '');
 
-	if (empty($config['interfaces'][$iface]['ipaddrv6'])) {
-		$ip6addr = '';
-	} else {
-		$ip6addr = $config['interfaces'][$iface]['ipaddrv6'];
-	}
-
-	$staticv4 = false;
-	if (empty($ipaddr)) {
-		$staticv4 = true;
-	} else {
-		$staticv4 = is_ipaddrv4($ipaddr);
-	}
-	$staticv6 = false;
-	if (empty($ip6addr)) {
-		$staticv6 = true;
-	} else {
-		$staticv6 = is_ipaddrv6($ip6addr);
-	}
+	$staticv4 = empty($ipaddr) ? true : is_ipaddrv4($ipaddr);
+	$staticv6 = empty($ip6addr) ? true : is_ipaddrv6($ip6addr);
 
 	/* Take care of events on bridge members when IP is configured on bridge */
 	$bridge_if = link_interface_to_bridge($iface);
 	if (!empty($bridge_if) && empty($ipaddr) && empty($ip6addr)) {
-		log_error("Ignoring link event for bridge member without IP config");
-
+		log_error("Ignoring link event for bridge member without IP address configuration");
 		return;
 	}
 
@@ -83,35 +63,62 @@ function handle_argument_group($iface, $argument2) {
 	$lagg_if = link_interface_to_lagg($iface);
 	if (!empty($lagg_if) && empty($ipaddr) && empty($ip6addr)) {
 		log_error("Ignoring link event for LAGG member without IP address configuration");
-
 		return;
 	}
 
-	if ($staticv4 === true && $staticv6 === true) {
-		$friendly = convert_friendly_interface_to_friendly_descr($iface);
-		log_error("Hotplug event detected for {$friendly}({$iface}) static IP ({$ipaddr} {$ip6addr})");
+	$friendly = convert_friendly_interface_to_friendly_descr($iface);
+	$addrs = [];
+	if (!empty($ipaddr)) {
+		$addrs[] = "4: {$ipaddr}";
+	}
+	if (!empty($ip6addr)) {
+		$addrs[] = "6: {$ip6addr}";
+	}
+	$addrs = implode(', ', $addrs);
+	if (($staticv4 === true) && ($staticv6 === true)) {
+		log_error("Hotplug event detected for {$friendly}({$iface}) static IP address ({$addrs})");
 		interfaces_staticarp_configure($iface);
-		switch ($argument2) {
+		switch ($action) {
+			case "stop":
+				log_error("DEVD Ethernet detached event for {$iface}");
+				/* Restart unbound on interface down (static),
+				 * only when this interface is referenced in resolver configuration.
+				 * https://redmine.pfsense.org/issues/13254
+				 */
+				if (config_path_enabled('unbound')) {
+					services_unbound_configure(true, $iface);
+				}
+				break;
 			case 'start':
-			case 'up':
+				log_error("DEVD Ethernet attached event for {$iface}");
 				$realif = get_real_interface($iface);
 				/* NOTE: Do not generate event for OpenVPN since the daemon does that for us. */
 				if (substr($realif, 0, 4) != "ovpn") {
+					log_error("HOTPLUG: Triggering address refresh on {$iface} ({$realif})");
 					touch("{$g['tmp_path']}/{$iface}_upstart4");
 					touch("{$g['tmp_path']}/{$iface}_upstart6");
 					send_event("interface newip {$realif}");
 				}
 				break;
+			default:
+				/* Do nothing, invalid action */
 		}
 	} else {
-		switch ($argument2) {
+		log_error("Hotplug event detected for {$friendly}({$iface}) dynamic IP address ({$addrs})");
+		switch ($action) {
 			case "stop":
-			case "down":
 				log_error("DEVD Ethernet detached event for {$iface}");
 				interface_bring_down($iface);
+				/* Restart unbound on interface down (dynamic),
+				 * only when this interface is referenced in resolver configuration.
+				 * https://redmine.pfsense.org/issues/11547
+				 * https://redmine.pfsense.org/issues/13254
+				 */
+				if (config_path_enabled('unbound')) {
+					services_unbound_configure(true, $iface);
+				}
 				break;
 			case "start":
-			case "up":
 				log_error("DEVD Ethernet attached event for {$iface}");
 				log_error("HOTPLUG: Configuring interface {$iface}");
 				/* trigger services restart
@@ -122,16 +129,14 @@ function handle_argument_group($iface, $argument2) {
 				}
 				// Do not try to readd to bridge otherwise em(4) has problems
 				interface_configure($iface, true, true);
-
 				/* Make sure gw monitor is configured */
 				if ($ip6addr == 'slaac' ||
 				    $ip6addr == 'dhcp6') {
 					setup_gateways_monitor();
 				}
-				/* restart unbound on interface recover,
-				 * https://redmine.pfsense.org/issues/11547 */
-				services_unbound_configure(true, $iface);
 				break;
+			default:
+				/* Do nothing, invalid action */
 		}
 	}
 }
@@ -152,20 +157,14 @@ if (isset($_GET['interface'])) {
 $action = ltrim($action, '$');
 $realiface = ltrim($realiface, '$');
 
-switch ($action) {
-	case "start":
-	case "stop":
-		break;
-	default:
-		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop/up/down are allowed!");
+if (!in_array($action, ['start', 'stop'])) {
+		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop are allowed!");
 		return;
-		/* NOTREACHED */
-		break;
 }
 
 if (!empty($realiface)) {
 	if (substr($realiface, 0, 4) == 'ovpn') {
-		log_error("Ignoring link event for ovpn interface");
+		log_error("Ignoring link event for OpenVPN interface");
 		return;
 	}
 	$rclinkuplock = lock("rclinkup{$realiface}", LOCK_EX);
@@ -174,26 +173,27 @@ if (!empty($realiface)) {
 		handle_argument_group($interface, $action);
 	}
 	/* Check if there is any child on this one as ppp types and trigger them */
-	init_config_arr(array('ppps', 'ppp'));
-	if (is_array($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
-			if ($ppp['type'] == 'ppp') {
+	foreach(config_get_path('ppps/ppp', []) as $ppp) {
+		if (array_get_path($ppp, 'type') == 'ppp') {
+			continue;
+		}
+		foreach (explode(',', array_get_path($ppp, 'ports', '')) as $parent_if) {
+			/* The loop here is because ppp types can have real and assigned interfaces as members */
+			$tmpiface = get_real_interface($parent_if);
+			if ($tmpiface != $realiface) {
 				continue;
 			}
-			$ports = explode(',', $ppp['ports']);
-			foreach ($ports as $pid => $parent_if) {
-				/* The loop here is because ppp types can have real and assigned interfaces as members */
-				$tmpiface = get_real_interface($parent_if);
-				if ($tmpiface != $realiface) {
-					continue;
-				}
-				$tmpiface = convert_real_interface_to_friendly_interface_name($ppp['if']);
-				if (!empty($tmpiface)) {
-					if (($action == 'start') || ($action == 'up')) {
-						interface_configure($tmpiface, true, true);
-					} elseif (($action == 'stop') || ($action == 'down')) {
+			$tmpiface = convert_real_interface_to_friendly_interface_name(array_get_path($ppp, 'if'));
+			if (!empty($tmpiface)) {
+				switch ($action) {
+					case "stop":
 						interface_bring_down($tmpiface);
-					}
+						break;
+					case "start":
+						interface_configure($tmpiface, true, true);
+						break;
+					default:
+						/* Do nothing, invalid action */
 				}
 			}
 		}

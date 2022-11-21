@@ -148,9 +148,13 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MiB.");
 	}
 
-	if (is_numericint($post['use_mfs_tmp_size']) && is_numericint($post['use_mfs_var_size']) &&
-	    ((($post['use_mfs_tmp_size'] + $post['use_mfs_var_size']) * 1024 * 1024) > $post['available_kernel_memory'])) {
-		$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available kernel memory.");
+	/* Do not check that size would exceed RAM unless RAM disks would be enabled.
+	 * https://redmine.pfsense.org/issues/13479 */
+	if ($post['use_mfs_tmpvar'] == "yes") {
+		if (is_numericint($post['use_mfs_tmp_size']) && is_numericint($post['use_mfs_var_size']) &&
+		    ((($post['use_mfs_tmp_size'] + $post['use_mfs_var_size']) * 1024 * 1024) > $post['available_kernel_memory'])) {
+			$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available kernel memory.");
+		}
 	}
 
 	if (!empty($post['proxyport']) && !is_port($post['proxyport'])) {

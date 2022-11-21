@@ -357,11 +357,11 @@ if (isset($_POST['del_x'])) {
 			}
 			if (isset($filterent['source']['network']) &&
 			    ($filterent['source']['network'] == ($if . 'ip'))) {
-				$filterent['source']['network'] = $_POST['dstif'] . $ip;
+				$filterent['source']['network'] = $_POST['dstif'] . 'ip';
 			}
 			if (isset($filterent['destination']['network']) &&
 			    ($filterent['destination']['network'] == ($if . 'ip'))) {
-				$filterent['destination']['network'] = $_POST['dstif'] . $ip;
+				$filterent['destination']['network'] = $_POST['dstif'] . 'ip';
 			}
 		}
 		$a_filter[] = $filterent;

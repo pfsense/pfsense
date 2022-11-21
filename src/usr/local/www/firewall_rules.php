@@ -336,10 +336,14 @@ if (isset($_POST['del_x'])) {
 } elseif (isset($_POST['dstif']) && !empty($_POST['dstif']) &&
     isset($iflist[$_POST['dstif']]) && have_ruleint_access($_POST['dstif']) && 
     is_array($_POST['rule']) && count($_POST['rule'])) {
-    	$confiflist = get_configured_interface_list();
+	$confiflist = get_configured_interface_list();
+	/* Use this as a starting point and increase as we go, otherwise if the
+	 * loop runs fast there can be duplicates.
+	 * https://redmine.pfsense.org/issues/13507 */
+	$tracker = (int)microtime(true);
 	foreach ($_POST['rule'] as $rulei) {
 		$filterent = $a_filter[$rulei];
-		$filterent['tracker'] = (int)microtime(true);
+		$filterent['tracker'] = $tracker++;
 		$filterent['interface'] = $_POST['dstif'];
 		if ($_POST['convertif'] && ($if != $_POST['dstif']) &&
 		    in_array($_POST['dstif'], $confiflist)) {

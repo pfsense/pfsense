@@ -748,7 +748,10 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'*Descriptive name',
 		'text',
 		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
-	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse');
+	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse')
+	->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
+		'This name can contain spaces but it cannot contain any of the ' .
+		'following characters: %s', '<br/>', "?, >, <, &, /, \, \", '");
 
 	if (!empty($pconfig['cert'])) {
 		$section->addInput(new Form_StaticText(
@@ -1289,7 +1292,9 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'*Descriptive name',
 		'text',
 		$pconfig['descr']
-	));
+	))->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
+		'This name can contain spaces but it cannot contain any of the ' .
+		'following characters: %s', '<br/>', "?, >, <, &, /, \, \", '");
 
 	$section->addInput(new Form_Textarea(
 		'csr',

@@ -596,7 +596,9 @@ $section->addInput(new Form_Input(
 	'*Descriptive name',
 	'text',
 	$pconfig['descr']
-));
+))->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
+		'This name can contain spaces but it cannot contain any of the ' .
+		'following characters: %s', '<br/>', "?, >, <, &, /, \, \", '");
 
 if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(

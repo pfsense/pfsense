@@ -2342,7 +2342,8 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	}
 	$items = array();
 	$comments = array();
-	while (($fc = strip_tags(fgets($fd))) !== FALSE) {
+	while (($fc = fgets($fd)) !== FALSE) {
+		$fc = strip_tags($fc);
 		$tmp = alias_idn_to_ascii(trim($fc, " \t\n\r"));
 		if (empty($tmp)) {
 			continue;

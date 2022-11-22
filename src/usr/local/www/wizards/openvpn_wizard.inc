@@ -46,7 +46,7 @@ function step1_stepsubmitbeforesave() {
 	global $stepid, $config;
 	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != $config['ovpnserver']['step1']['type'])) {
 		if (isset($config['ovpnserver']['step2'])) {
-			unset($config['ovpnserver']['step2']);
+			config_del_path('ovpnserver/step2');
 		}
 	}
 }
@@ -62,7 +62,7 @@ function step1_submitphpaction() {
 		$stepid = 2;
 		$config['ovpnserver']['step1']['type'] = "radius";
 		if (isset($config['ovpnserver']['step1']['uselist'])) {
-			unset($config['ovpnserver']['step1']['uselist']);
+			config_del_path('ovpnserver/step1/uselist');
 		}
 	}
 }
@@ -199,7 +199,7 @@ function step6_submitphpaction() {
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
 		if (isset($config['ovpnserver']['step6']['uselist'])) {
-			unset($config['ovpnserver']['step6']['uselist']);
+			config_del_path('ovpnserver/step6/uselist');
 		}
 		$stepid++;
 	} else {
@@ -255,7 +255,7 @@ function step8_submitphpaction() {
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
 		if (isset($config['ovpnserver']['step9']['uselist'])) {
-			unset($config['ovpnserver']['step9']['uselist']);
+			config_del_path('ovpnserver/step9/uselist');
 		}
 		$stepid++;
 	} else {
@@ -338,10 +338,10 @@ function step10_stepbeforeformdisplay() {
 	global $pkg, $stepid, $netbios_nodetypes, $config;
 
 	if (isset($config['ovpnserver']['step10']['localport'])) {
-		unset($config['ovpnserver']['step10']['localport']);
+		config_del_path('ovpnserver/step10/localport');
 	}
 	if (isset($config['ovpnserver']['step10']['tunnelnet'])) {
-		unset($config['ovpnserver']['step10']['tunnelnet']);
+		config_del_path('ovpnserver/step10/tunnelnet');
 	}
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $idx => $field) {
 		if ($field['name'] == "dataciphersfallback") {

@@ -300,12 +300,12 @@ function execPost($post, $postfiles, $ui = true) {
 								$conf_change = false;
 								if ($config['rrddata']) {
 									restore_rrddata();
-									unset($config['rrddata']);
+									config_del_path('rrddata');
 									$conf_change = true;
 								}
 								if ($config['sshdata']) {
 									restore_sshdata();
-									unset($config['sshdata']);
+									config_del_path('sshdata');
 									$conf_change = true;
 								}
 								if (!empty($config[$post['restorearea']][$post['restorearea'].'data'])) {
@@ -351,7 +351,7 @@ function execPost($post, $postfiles, $ui = true) {
 									    $pkg_repo_conf_path;
 									$pkg_repo_restored = true;
 								} elseif (isset($config['system']['pkg_repo_conf_path'])) {
-									unset($config['system']['pkg_repo_conf_path']);
+									config_del_path('system/pkg_repo_conf_path');
 									$pkg_repo_restored = true;
 								}
 
@@ -382,12 +382,12 @@ function execPost($post, $postfiles, $ui = true) {
 								$conf_change = false;
 								if ($config['rrddata']) {
 									restore_rrddata();
-									unset($config['rrddata']);
+									config_del_path('rrddata');
 									$conf_change = true;
 								}
 								if ($config['sshdata']) {
 									restore_sshdata();
-									unset($config['sshdata']);
+									config_del_path('sshdata');
 									$conf_change = true;
 								}
 								foreach ($g['backuppath'] as $bk => $path) {

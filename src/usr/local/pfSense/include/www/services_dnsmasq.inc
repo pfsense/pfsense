@@ -182,7 +182,7 @@ function saveDNSMasqConfig($post, $json=false) {
 		$custom_options_source = str_replace("\r\n", "\n", trim($post['custom_options']));
 		$config['dnsmasq']['custom_options'] = base64_encode($custom_options_source);
 	} else {
-		unset($config['dnsmasq']['custom_options']);
+		config_del_path('dnsmasq/custom_options');
 	}
 
 	if (isset($post['enable']) && config_path_enabled('unbound')) {
@@ -202,13 +202,13 @@ function saveDNSMasqConfig($post, $json=false) {
 			$input_errors[] = gettext("A valid port number must be specified.");
 		}
 	} else if (config_get_path('dnsmasq/port')) {
-		unset($config['dnsmasq']['port']);
+		config_del_path('dnsmasq/port');
 	}
 
 	if (is_array($post['interface'])) {
 		$config['dnsmasq']['interface'] = implode(",", $post['interface']);
 	} elseif (config_get_path('dnsmasq/interface')) {
-		unset($config['dnsmasq']['interface']);
+		config_del_path('dnsmasq/interface');
 	}
 
 	if (isset($custom_options_source)) {

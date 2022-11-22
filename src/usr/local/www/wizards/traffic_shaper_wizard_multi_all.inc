@@ -360,8 +360,7 @@ function step2_stepsubmitphpaction() {
 		}
 	}
 
-	/* This is necessary since the wizard expects predefined fields. */
-	unset($config['ezshaper']['step2']);
+	config_del_path('ezshaper/step2');
 	$config['ezshaper']['step2'] = array();
 
 	for ($i = 0; $i < $localint; $i++) {
@@ -606,8 +605,7 @@ function step3_stepsubmitphpaction() {
 		}
 	}
 
-	/* This is necessary since the wizard expects predefined fields. */
-	unset($config['ezshaper']['step3']);
+	config_del_path('ezshaper/step3');
 	$config['ezshaper']['step3'] = array();
 
 	if (!empty($_POST['upstream_sip_server']))
@@ -722,10 +720,10 @@ function apply_all_chosen_items() {
 	 * the user decides to do so, finishing the wizard.
 	 */
 	if (isset($config['shaper']['queue']))
-		unset($config['shaper']['queue']);
+		config_del_path('shaper/queue');
 	/* XXX: This is redundant, because this should be handled by converter at startup. */
 	if (isset($config['shaper']['rule']))
-		unset($config['shaper']['rule']);
+		config_del_path('shaper/rule');
 	foreach ($config['filter']['rule'] as $key => $rule)
 		if ($rule['wizard'] == "yes")
 			unset($config['filter']['rule'][$key]);

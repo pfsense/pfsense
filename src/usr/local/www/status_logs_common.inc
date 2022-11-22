@@ -768,7 +768,7 @@ function manage_log_code() {
 				if (is_numeric($filterdescriptions) && $filterdescriptions > 0) {
 					$config['syslog']['filterdescriptions'] = $filterdescriptions;
 				} else {
-					unset($config['syslog']['filterdescriptions']);
+					config_del_path('syslog/filterdescriptions');
 				}
 
 				if (

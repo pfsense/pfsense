@@ -190,47 +190,47 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		if ($post['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";
 		} else {
-			unset($config['system']['disablefilter']);
+			config_del_path('system/disablefilter');
 		}
 
 		if ($post['disablevpnrules'] == "yes") {
 			$config['system']['disablevpnrules'] = true;
 		} else {
-			unset($config['system']['disablevpnrules']);
+			config_del_path('system/disablevpnrules');
 		}
 		if ($post['rfc959workaround'] == "yes") {
 			$config['system']['rfc959workaround'] = "enabled";
 		} else {
-			unset($config['system']['rfc959workaround']);
+			config_del_path('system/rfc959workaround');
 		}
 
 		if ($post['scrubnodf'] == "yes") {
 			$config['system']['scrubnodf'] = "enabled";
 		} else {
-			unset($config['system']['scrubnodf']);
+			config_del_path('system/scrubnodf');
 		}
 
 		if ($post['scrubrnid'] == "yes") {
 			$config['system']['scrubrnid'] = "enabled";
 		} else {
-			unset($config['system']['scrubrnid']);
+			config_del_path('system/scrubrnid');
 		}
 
 		if (is_numericint($post['adaptiveend'])) {
 			$config['system']['adaptiveend'] = $post['adaptiveend'];
 		} else {
-			unset($config['system']['adaptiveend']);
+			config_del_path('system/adaptiveend');
 		}
 		if (is_numericint($post['adaptivestart'])) {
 			$config['system']['adaptivestart'] = $post['adaptivestart'];
 		} else {
-			unset($config['system']['adaptivestart']);
+			config_del_path('system/adaptivestart');
 		}
 
 		if ($post['checkaliasesurlcert'] == "yes") {
 			$config['system']['checkaliasesurlcert'] = true;
 		} else {
-			unset($config['system']['checkaliasesurlcert']);
+			config_del_path('system/checkaliasesurlcert');
 		}
 
 		$config['system']['optimization'] = $post['optimization'];
@@ -244,140 +244,140 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 			$config['system']['maxmss'] = $post['maxmss'];
 		} else {
 			if (isset($config['system']['maxmss_enable'])) {
-				unset($config['system']['maxmss_enable']);
+				config_del_path('system/maxmss_enable');
 			}
 			if (isset($config['system']['maxmss'])) {
-				unset($config['system']['maxmss']);
+				config_del_path('system/maxmss');
 			}
 		}
 
 		if ($post['vpn_scrubnodf'] == "yes") {
 			$config['system']['vpn_scrubnodf'] = true;
 		} else {
-			unset($config['system']['vpn_scrubnodf']);
+			config_del_path('system/vpn_scrubnodf');
 		}
 
 		if ($post['vpn_fragment_reassemble'] == "yes") {
 			$config['system']['vpn_fragment_reassemble'] = true;
 		} else {
-			unset($config['system']['vpn_fragment_reassemble']);
+			config_del_path('system/vpn_fragment_reassemble');
 		}
 
 		if (!empty($post['tcpfirsttimeout'])) {
 			$config['system']['tcpfirsttimeout'] = $post['tcpfirsttimeout'];
 		} else {
-			unset($config['system']['tcpfirsttimeout']);
+			config_del_path('system/tcpfirsttimeout');
 		}
 		if (!empty($post['tcpopeningtimeout'])) {
 			$config['system']['tcpopeningtimeout'] = $post['tcpopeningtimeout'];
 		} else {
-			unset($config['system']['tcpopeningtimeout']);
+			config_del_path('system/tcpopeningtimeout');
 		}
 		if (!empty($post['tcpestablishedtimeout'])) {
 			$config['system']['tcpestablishedtimeout'] = $post['tcpestablishedtimeout'];
 		} else {
-			unset($config['system']['tcpestablishedtimeout']);
+			config_del_path('system/tcpestablishedtimeout');
 		}
 		if (!empty($post['tcpclosingtimeout'])) {
 			$config['system']['tcpclosingtimeout'] = $post['tcpclosingtimeout'];
 		} else {
-			unset($config['system']['tcpclosingtimeout']);
+			config_del_path('system/tcpclosingtimeout');
 		}
 		if (!empty($post['tcpfinwaittimeout'])) {
 			$config['system']['tcpfinwaittimeout'] = $post['tcpfinwaittimeout'];
 		} else {
-			unset($config['system']['tcpfinwaittimeout']);
+			config_del_path('system/tcpfinwaittimeout');
 		}
 		if (!empty($post['tcpclosedtimeout'])) {
 			$config['system']['tcpclosedtimeout'] = $post['tcpclosedtimeout'];
 		} else {
-			unset($config['system']['tcpclosedtimeout']);
+			config_del_path('system/tcpclosedtimeout');
 		}
 		if (!empty($post['tcptsdifftimeout'])) {
 			$config['system']['tcptsdifftimeout'] = $post['tcptsdifftimeout'];
 		} else {
-			unset($config['system']['tcptsdifftimeout']);
+			config_del_path('system/tcptsdifftimeout');
 		}
 		if (!empty($post['udpfirsttimeout'])) {
 			$config['system']['udpfirsttimeout'] = $post['udpfirsttimeout'];
 		} else {
-			unset($config['system']['udpfirsttimeout']);
+			config_del_path('system/udpfirsttimeout');
 		}
 		if (!empty($post['udpsingletimeout'])) {
 			$config['system']['udpsingletimeout'] = $post['udpsingletimeout'];
 		} else {
-			unset($config['system']['udpsingletimeout']);
+			config_del_path('system/udpsingletimeout');
 		}
 		if (!empty($post['udpmultipletimeout'])) {
 			$config['system']['udpmultipletimeout'] = $post['udpmultipletimeout'];
 		} else {
-			unset($config['system']['udpmultipletimeout']);
+			config_del_path('system/udpmultipletimeout');
 		}
 		if (!empty($post['icmpfirsttimeout'])) {
 			$config['system']['icmpfirsttimeout'] = $post['icmpfirsttimeout'];
 		} else {
-			unset($config['system']['icmpfirsttimeout']);
+			config_del_path('system/icmpfirsttimeout');
 		}
 		if (!empty($post['icmperrortimeout'])) {
 			$config['system']['icmperrortimeout'] = $post['icmperrortimeout'];
 		} else {
-			unset($config['system']['icmperrortimeout']);
+			config_del_path('system/icmperrortimeout');
 		}
 		if (!empty($post['otherfirsttimeout'])) {
 			$config['system']['otherfirsttimeout'] = $post['otherfirsttimeout'];
 		} else {
-			unset($config['system']['otherfirsttimeout']);
+			config_del_path('system/otherfirsttimeout');
 		}
 		if (!empty($post['othersingletimeout'])) {
 			$config['system']['othersingletimeout'] = $post['othersingletimeout'];
 		} else {
-			unset($config['system']['othersingletimeout']);
+			config_del_path('system/othersingletimeout');
 		}
 		if (!empty($post['othermultipletimeout'])) {
 			$config['system']['othermultipletimeout'] = $post['othermultipletimeout'];
 		} else {
-			unset($config['system']['othermultipletimeout']);
+			config_del_path('system/othermultipletimeout');
 		}
 
 		if ($post['natreflection'] == "proxy") {
-			unset($config['system']['disablenatreflection']);
-			unset($config['system']['enablenatreflectionpurenat']);
+			config_del_path('system/disablenatreflection');
+			config_del_path('system/enablenatreflectionpurenat');
 		} else if ($post['natreflection'] == "purenat") {
-			unset($config['system']['disablenatreflection']);
+			config_del_path('system/disablenatreflection');
 			$config['system']['enablenatreflectionpurenat'] = "yes";
 		} else {
 			$config['system']['disablenatreflection'] = "yes";
-			unset($config['system']['enablenatreflectionpurenat']);
+			config_del_path('system/enablenatreflectionpurenat');
 		}
 
 		if ($post['enablebinatreflection'] == "yes") {
 			$config['system']['enablebinatreflection'] = "yes";
 		} else {
-			unset($config['system']['enablebinatreflection']);
+			config_del_path('system/enablebinatreflection');
 		}
 
 		if ($post['disablereplyto'] == "yes") {
 			$config['system']['disablereplyto'] = $post['disablereplyto'];
 		} else {
-			unset($config['system']['disablereplyto']);
+			config_del_path('system/disablereplyto');
 		}
 
 		if ($post['disablenegate'] == "yes") {
 			$config['system']['disablenegate'] = $post['disablenegate'];
 		} else {
-			unset($config['system']['disablenegate']);
+			config_del_path('system/disablenegate');
 		}
 
 		if ($post['no_apipa_block'] == "yes") {
 			$config['system']['no_apipa_block'] = "enabled";
 		} else {
-			unset($config['system']['no_apipa_block']);
+			config_del_path('system/no_apipa_block');
 		}
 
 		if ($post['enablenatreflectionhelper'] == "yes") {
 			$config['system']['enablenatreflectionhelper'] = "yes";
 		} else {
-			unset($config['system']['enablenatreflectionhelper']);
+			config_del_path('system/enablenatreflectionhelper');
 		}
 
 		$config['system']['reflectiontimeout'] = $post['reflectiontimeout'];
@@ -385,19 +385,19 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		if ($post['bypassstaticroutes'] == "yes") {
 			$config['filter']['bypassstaticroutes'] = $post['bypassstaticroutes'];
 		} elseif (isset($config['filter']['bypassstaticroutes'])) {
-			unset($config['filter']['bypassstaticroutes']);
+			config_del_path('filter/bypassstaticroutes');
 		}
 
 		if ($post['disablescrub'] == "yes") {
 			$config['system']['disablescrub'] = $post['disablescrub'];
 		} else {
-			unset($config['system']['disablescrub']);
+			config_del_path('system/disablescrub');
 		}
 
 		if ($post['tftpinterface']) {
 			$config['system']['tftpinterface'] = implode(",", $post['tftpinterface']);
 		} else {
-			unset($config['system']['tftpinterface']);
+			config_del_path('system/tftpinterface');
 		}
 
 		if ($post['bogonsinterval'] != $config['system']['bogons']['interval']) {

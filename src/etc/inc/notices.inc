@@ -503,7 +503,7 @@ function notify_via_pushover($message, $force = false) {
 		return;
 	}
 	if (strcasecmp($config['notifications']['pushover']['sound'], 'devicedefault') == 0) {
-		unset($config['notifications']['pushover']['sound']);
+		config_del_path('notifications/pushover/sound');
 	}
 
 	$url = "https://api.pushover.net/1/messages.json";

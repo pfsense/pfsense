@@ -260,56 +260,56 @@ EOD;
 				}
 			}
 			if (isset($config['interfaces']['lan'])) {
-				unset($config['interfaces']['lan']);
+				config_del_path('interfaces/lan');
 			}
 			if (isset($config['dhcpd']['lan'])) {
-				unset($config['dhcpd']['lan']);
+				config_del_path('dhcpd/lan');
 			}
 			if (isset($config['dhcpdv6']['lan'])) {
-				unset($config['dhcpdv6']['lan']);
+				config_del_path('dhcpdv6/lan');
 			}
 			if (isset($config['interfaces']['lan']['if'])) {
-				unset($config['interfaces']['lan']['if']);
+				config_del_path('interfaces/lan/if');
 			}
 			if (isset($config['interfaces']['wan']['blockpriv'])) {
-				unset($config['interfaces']['wan']['blockpriv']);
+				config_del_path('interfaces/wan/blockpriv');
 			}
 			if (isset($config['shaper'])) {
-				unset($config['shaper']);
+				config_del_path('shaper');
 			}
 			if (isset($config['ezshaper'])) {
-				unset($config['ezshaper']);
+				config_del_path('ezshaper');
 			}
 			if (isset($config['nat'])) {
-				unset($config['nat']);
+				config_del_path('nat');
 			}
 		} else {
 			if (isset($config['interfaces']['lan']['if'])) {
 				mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
 			}
 			if (isset($config['interfaces']['lan'])) {
-				unset($config['interfaces']['lan']);
+				config_del_path('interfaces/lan');
 			}
 			if (isset($config['dhcpd']['lan'])) {
-				unset($config['dhcpd']['lan']);
+				config_del_path('dhcpd/lan');
 			}
 			if (isset($config['dhcpdv6']['lan'])) {
-				unset($config['dhcpdv6']['lan']);
+				config_del_path('dhcpdv6/lan');
 			}
 			if (isset($config['interfaces']['lan']['if'])) {
-				unset($config['interfaces']['lan']['if']);
+				config_del_path('interfaces/lan/if');
 			}
 			if (isset($config['interfaces']['wan']['blockpriv'])) {
-				unset($config['interfaces']['wan']['blockpriv']);
+				config_del_path('interfaces/wan/blockpriv');
 			}
 			if (isset($config['shaper'])) {
-				unset($config['shaper']);
+				config_del_path('shaper');
 			}
 			if (isset($config['ezshaper'])) {
-				unset($config['ezshaper']);
+				config_del_path('ezshaper');
 			}
 			if (isset($config['nat'])) {
-				unset($config['nat']);
+				config_del_path('nat');
 			}
 		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
@@ -319,7 +319,7 @@ EOD;
 			}
 		} else {
 			if (isset($config['interfaces']['lan'])) {
-				unset($config['interfaces']['lan']['wireless']);
+				config_del_path('interfaces/lan/wireless');
 			}
 		}
 
@@ -340,7 +340,7 @@ EOD;
 			}
 		} else {
 			if (isset($config['interfaces']['wan'])) {
-				unset($config['interfaces']['wan']['wireless']);
+				config_del_path('interfaces/wan/wireless');
 			}
 		}
 

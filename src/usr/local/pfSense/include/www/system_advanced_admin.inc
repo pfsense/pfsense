@@ -230,19 +230,19 @@ function doAdvancedAdminPOST($post, $json = false) {
 		if ($post['enableserial'] == "yes" || $g['enableserial_force']) {
 			$config['system']['enableserial'] = true;
 		} else {
-			unset($config['system']['enableserial']);
+			config_del_path('system/enableserial');
 		}
 
 		if (is_numericint($post['serialspeed'])) {
 			$config['system']['serialspeed'] = $post['serialspeed'];
 		} else {
-			unset($config['system']['serialspeed']);
+			config_del_path('system/serialspeed');
 		}
 
 		if ($post['primaryconsole']) {
 			$config['system']['primaryconsole'] = $post['primaryconsole'];
 		} else {
-			unset($config['system']['primaryconsole']);
+			config_del_path('system/primaryconsole');
 		}
 
 		if ($post['nodnsrebindcheck'] == "yes") {

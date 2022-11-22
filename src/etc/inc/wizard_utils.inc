@@ -71,13 +71,13 @@ function save_setupwizard_config(
 	if ($bogons == "on") {
 		$config['interfaces']['wan']['blockbogons'] = "on";
 	} else {
-		unset($config['interfaces']['wan']['blockbogons']);
+		config_del_path('interfaces/wan/blockbogons');
 	}
 
 	if ($rfc1918 == "on") {
 		$config['interfaces']['wan']['blockpriv'] = "on";
 	} else {
-		unset($config['interfaces']['wan']['blockpriv']);
+		config_del_path('interfaces/wan/blockpriv');
 	}
 
 	if (strlen($wangateway) > 0) {
@@ -198,7 +198,7 @@ function save_setupwizard_config(
 	if ($dnsoverride == "on") {
 		$config['system']['dnsallowoverride'] = "on";
 	} else {
-		unset($config['system']['dnsallowoverride']);
+		config_del_path('system/dnsallowoverride');
 	}
 
 	$config['system']['dnsserver'] = array($primarydns, $secondarydns);

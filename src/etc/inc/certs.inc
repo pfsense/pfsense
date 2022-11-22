@@ -2129,7 +2129,7 @@ function cert_print_dates($cert) {
 	<b><?=$enddate ?></b>
 	</span>
 	</small>
-	<?php
+<?php
 }
 
 /****f* certs/cert_print_infoblock

@@ -60,7 +60,7 @@ function upgrade_010_to_011() {
 			$opti++;
 		}
 
-		unset($config['interfaces']['dmz']);
+		config_del_path('interfaces/dmz');
 	}
 
 	/* convert WLAN1/2 to optional, if necessary */
@@ -254,15 +254,15 @@ function upgrade_014_to_015() {
 		if ($config['interfaces']['wan']['gateway'] <> "") {
 			$config['system']['gateway'] = $config['interfaces']['wan']['gateway'];
 		}
-		unset($config['interfaces']['wan']['gateway']);
+		config_del_path('interfaces/wan/gateway');
 	}
 
 	/* Queues are no longer interface specific */
 	if (isset($config['interfaces']['lan']['schedulertype'])) {
-		unset($config['interfaces']['lan']['schedulertype']);
+		config_del_path('interfaces/lan/schedulertype');
 	}
 	if (isset($config['interfaces']['wan']['schedulertype'])) {
-		unset($config['interfaces']['wan']['schedulertype']);
+		config_del_path('interfaces/wan/schedulertype');
 	}
 
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -283,10 +283,10 @@ function upgrade_015_to_016() {
 		$config['system']['alt_firmware_url']['firmware_filename'] = $config['system']['firmwarename'];
 	}
 	if (isset($config['system']['firmwareurl'])) {
-		unset($config['system']['firmwareurl']);
+		config_del_path('system/firmwareurl');
 	}
 	if (isset($config['system']['firmwarename'])) {
-		unset($config['system']['firmwarename']);
+		config_del_path('system/firmwarename');
 	}
 }
 
@@ -295,22 +295,22 @@ function upgrade_016_to_017() {
 	global $config;
 	/* wipe previous shaper configuration */
 	if (isset($config['shaper']['queue'])) {
-		unset($config['shaper']['queue']);
+		config_del_path('shaper/queue');
 	}
 	if (isset($config['shaper']['rule'])) {
-		unset($config['shaper']['rule']);
+		config_del_path('shaper/rule');
 	}
 	if (isset($config['interfaces']['wan']['bandwidth'])) {
-		unset($config['interfaces']['wan']['bandwidth']);
+		config_del_path('interfaces/wan/bandwidth');
 	}
 	if (isset($config['interfaces']['wan']['bandwidthtype'])) {
-		unset($config['interfaces']['wan']['bandwidthtype']);
+		config_del_path('interfaces/wan/bandwidthtype');
 	}
 	if (isset($config['interfaces']['lan']['bandwidth'])) {
-		unset($config['interfaces']['lan']['bandwidth']);
+		config_del_path('interfaces/lan/bandwidth');
 	}
 	if (isset($config['interfaces']['lan']['bandwidthtype'])) {
-		unset($config['interfaces']['lan']['bandwidthtype']);
+		config_del_path('interfaces/lan/bandwidthtype');
 	}
 	$config['shaper']['enable'] = FALSE;
 }
@@ -341,7 +341,7 @@ function upgrade_017_to_018() {
 			}
 			$config['virtualip']['vip'][] = $vip;
 		}
-		unset($config['proxyarp']);
+		config_del_path('proxyarp');
 	}
 	if (isset($config['installedpackages']) && isset($config['installedpackages']['carp']) && is_array($config['installedpackages']['carp']['config'])) {
 		$carp = &$config['installedpackages']['carp']['config'];
@@ -358,11 +358,11 @@ function upgrade_017_to_018() {
 			$vip['subnet_bits'] = $carpent['netmask'];
 			$config['virtualip']['vip'][] = $vip;
 		}
-		unset($config['installedpackages']['carp']);
+		config_del_path('installedpackages/carp');
 	}
 	/* Server NAT is no longer needed */
 	if (isset($config['nat']['servernat'])) {
-		unset($config['nat']['servernat']);
+		config_del_path('nat/servernat');
 	}
 
 	/* enable SSH */
@@ -396,7 +396,7 @@ function upgrade_020_to_021() {
 	/* shaper scheduler moved */
 	if (isset($config['system']['schedulertype'])) {
 		$config['shaper']['schedulertype'] = $config['system']['schedulertype'];
-		unset($config['system']['schedulertype']);
+		config_del_path('system/schedulertype');
 	}
 }
 
@@ -410,8 +410,7 @@ function upgrade_021_to_022() {
 function upgrade_022_to_023() {
 	global $config;
 	if (isset($config['shaper'])) {
-		/* wipe previous shaper configuration */
-		unset($config['shaper']);
+		config_del_path('shaper');
 	}
 }
 
@@ -425,7 +424,7 @@ function upgrade_024_to_025() {
 	global $config;
 	$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
 	if (isset($config['system']['use_rrd_gateway'])) {
-		unset($config['system']['use_rrd_gateway']);
+		config_del_path('system/use_rrd_gateway');
 	}
 }
 
@@ -641,10 +640,9 @@ function upgrade_039_to_040() {
 		$config['system']['nextuid'] = "111";
 		$config['system']['nextgid'] = "111";
 
-		/* wipe previous auth configuration */
-		unset($config['system']['username']);
+		config_del_path('system/username');
 		if (isset($config['system']['password'])) {
-			unset($config['system']['password']);
+			config_del_path('system/password');
 		}
 	}
 }
@@ -741,10 +739,10 @@ function upgrade_040_to_041() {
 function upgrade_041_to_042() {
 	global $config;
 	if (isset($config['shaper'])) {
-		unset($config['shaper']);
+		config_del_path('shaper');
 	}
 	if (isset($config['ezshaper'])) {
-		unset($config['ezshaper']);
+		config_del_path('ezshaper');
 	}
 }
 
@@ -945,7 +943,7 @@ function upgrade_045_to_046() {
 		}
 	}
 	if (count($config['load_balancer']) == 0) {
-		unset($config['load_balancer']);
+		config_del_path('load_balancer');
 	}
 }
 
@@ -1165,7 +1163,7 @@ function upgrade_046_to_047() {
 			$a_phase2[] = $ph2ent;
 		}
 
-		unset($config['ipsec']['tunnel']);
+		config_del_path('ipsec/tunnel');
 		$config['ipsec']['phase1'] = $a_phase1;
 		$config['ipsec']['phase2'] = $a_phase2;
 	}
@@ -1309,7 +1307,7 @@ function upgrade_046_to_047() {
 
 		$config['ipsec']['phase1'][] = $ph1ent;
 		$config['ipsec']['phase2'][] = $ph2ent;
-		unset($config['ipsec']['mobileclients']);
+		config_del_path('ipsec/mobileclients');
 	}
 }
 
@@ -1332,7 +1330,7 @@ function upgrade_047_to_048() {
 			$tempdyn['descr'] = sprintf(gettext("Upgraded Dyndns %s"), $tempdyn['type']);
 			$config['dyndnses']['dyndns'][] = $tempdyn;
 		}
-		unset($config['dyndns']);
+		config_del_path('dyndns');
 	}
 	if (!empty($config['dnsupdate'])) {
 		$pconfig = $config['dnsupdate'][0];
@@ -1344,7 +1342,7 @@ function upgrade_047_to_048() {
 		}
 		$pconfig['interface'] = "wan";
 		$config['dnsupdates']['dnsupdate'][] = $pconfig;
-		unset($config['dnsupdate']);
+		config_del_path('dnsupdate');
 	}
 
 	if (is_array($config['pppoe']) && is_array($config['pppoe'][0])) {
@@ -1354,7 +1352,7 @@ function upgrade_047_to_048() {
 		$pconfig['provider'] = $config['pppoe'][0]['provider'];
 		$pconfig['ondemand'] = isset($config['pppoe'][0]['ondemand']);
 		$pconfig['timeout'] = $config['pppoe'][0]['timeout'];
-		unset($config['pppoe']);
+		config_del_path('pppoe');
 		$config['interfaces']['wan']['pppoe_username'] = $pconfig['username'];
 		$config['interfaces']['wan']['pppoe_password'] = $pconfig['password'];
 		$config['interfaces']['wan']['provider'] = $pconfig['provider'];
@@ -1368,7 +1366,7 @@ function upgrade_047_to_048() {
 		$pconfig['provider'] = $config['pptp']['provider'];
 		$pconfig['ondemand'] = isset($config['pptp']['ondemand']);
 		$pconfig['timeout'] = $config['pptp']['timeout'];
-		unset($config['pptp']);
+		config_del_path('pptp');
 		$config['interfaces']['wan']['pptp_username'] = $pconfig['username'];
 		$config['interfaces']['wan']['pptp_password'] = $pconfig['password'];
 		$config['interfaces']['wan']['provider'] = $pconfig['provider'];
@@ -1508,7 +1506,7 @@ function upgrade_050_to_051() {
 	$config['sysctl']['item'][] = $pconfig;
 
 	if (isset($config['bridge'])) {
-		unset($config['bridge']);
+		config_del_path('bridge');
 	}
 
 	$convert_bridges = false;
@@ -1719,7 +1717,7 @@ function upgrade_051_to_052() {
 
 			$config['openvpn']['openvpn-server'][] = $server;
 		}
-		unset($config['installedpackages']['openvpnserver']);
+		config_del_path('installedpackages/openvpnserver');
 	}
 
 	/* openvpn client configurations */
@@ -1831,7 +1829,7 @@ function upgrade_051_to_052() {
 			$config['openvpn']['openvpn-client'][] = $client;
 		}
 
-		unset($config['installedpackages']['openvpnclient']);
+		config_del_path('installedpackages/openvpnclient');
 	}
 
 	/* openvpn client specific configurations */
@@ -1904,7 +1902,7 @@ function upgrade_051_to_052() {
 			$config['openvpn']['openvpn-csc'][] = $csc;
 		}
 
-		unset($config['installedpackages']['openvpncsc']);
+		config_del_path('installedpackages/openvpncsc');
 	}
 
 	if (count($config['openvpn']['openvpn-server']) > 0 ||
@@ -1956,9 +1954,8 @@ function upgrade_052_to_053() {
 		$cert['prv'] = $config['system']['webgui']['private-key'];
 		$config['cert'][] = $cert;
 
-		/* create cert reference */
-		unset($config['system']['webgui']['certificate']);
-		unset($config['system']['webgui']['private-key']);
+		config_del_path('system/webgui/certificate');
+		config_del_path('system/webgui/private-key');
 		$config['system']['webgui']['ssl-certref'] = $cert['refid'];
 	}
 
@@ -1966,7 +1963,7 @@ function upgrade_052_to_053() {
 	if ($config['system']['ssh']['authorizedkeys']) {
 		$admin_user =& getUserEntryByUID(0);
 		$admin_user['authorizedkeys'] = $config['system']['ssh']['authorizedkeys'];
-		unset($config['system']['ssh']['authorizedkeys']);
+		config_del_path('system/ssh/authorizedkeys');
 	}
 }
 
@@ -2034,10 +2031,10 @@ function upgrade_053_to_054() {
 	// Unset lbpool if we no longer have any server pools
 	if (count($lbpool_srv_arr) == 0) {
 		if (empty($config['load_balancer'])) {
-			unset($config['load_balancer']);
+			config_del_path('load_balancer');
 		} else {
 			if (isset($config['load_balancer']['lbpool'])) {
-				unset($config['load_balancer']['lbpool']);
+				config_del_path('load_balancer/lbpool');
 			}
 		}
 	} else {
@@ -2223,7 +2220,7 @@ function upgrade_055_to_056() {
 			$ca['descr'] = $cacert['ident'];
 			$config['ca'][] = $ca;
 		}
-		unset($config['ipsec']['cacert']);
+		config_del_path('ipsec/cacert');
 	}
 
 	/* migrate phase1 certificates to cert manager */
@@ -2286,7 +2283,7 @@ function upgrade_056_to_057() {
 			$user['uid'] = $config['system']['nextuid']++;
 			$config['system']['user'][] = $user;
 		}
-		unset($config['captiveportal']['user']);
+		config_del_path('captiveportal/user');
 	}
 }
 
@@ -2543,11 +2540,11 @@ function upgrade_066_to_067() {
 	global $config;
 	if (isset($config['system']['ca'])) {
 		$config['ca'] = $config['system']['ca'];
-		unset($config['system']['ca']);
+		config_del_path('system/ca');
 	}
 	if (isset($config['system']['cert'])) {
 		$config['cert'] = $config['system']['cert'];
-		unset($config['system']['cert']);
+		config_del_path('system/cert');
 	}
 }
 
@@ -2570,7 +2567,7 @@ function upgrade_067_to_068() {
 			}
 			$config['pppoes']['pppoe'][0]['username'] = implode(" ", $username);
 		}
-		unset($config['pppoe']);
+		config_del_path('pppoe');
 	}
 }
 
@@ -2756,7 +2753,7 @@ function upgrade_079_to_080() {
 	if (!empty($config['system']['username']) && is_array($config['installedpackages']['carpsettings']) &&
 	    is_array($config['installedpackages']['carpsettings']['config'])) {
 		$config['installedpackages']['carpsettings']['config'][0]['username'] = $config['system']['username'];
-		unset($config['system']['username']);
+		config_del_path('system/username');
 	}
 }
 
@@ -2964,13 +2961,13 @@ function upgrade_083_to_084() {
 		    !empty($config['installedpackages']['carpsettings']) &&
 		    !empty($config['installedpackages']['carpsettings']['config'])) {
 			$config['hasync'] = $config['installedpackages']['carpsettings']['config'][0];
-			unset($config['installedpackages']['carpsettings']);
+			config_del_path('installedpackages/carpsettings');
 		}
 		if (empty($config['installedpackages']['carpsettings']) && isset($config['installedpackages']['carpsettings'])) {
-			unset($config['installedpackages']['carpsettings']);
+			config_del_path('installedpackages/carpsettings');
 		}
 		if (empty($config['installedpackages']) && isset($config['installedpackages'])) {
-			unset($config['installedpackages']);
+			config_del_path('installedpackages');
 		}
 	}
 }
@@ -3097,7 +3094,7 @@ function upgrade_086_to_087() {
 function upgrade_087_to_088() {
 	global $config;
 	if (isset($config['system']['glxsb_enable'])) {
-		unset($config['system']['glxsb_enable']);
+		config_del_path('system/glxsb_enable');
 		$config['system']['crypto_hardware'] = "glxsb";
 	}
 }
@@ -3218,7 +3215,7 @@ function upgrade_093_to_094() {
 	if (isset($config['system']['powerd_mode'])) {
 		$config['system']['powerd_ac_mode'] = $config['system']['powerd_mode'];
 		$config['system']['powerd_battery_mode'] = $config['system']['powerd_mode'];
-		unset($config['system']['powerd_mode']);
+		config_del_path('system/powerd_mode');
 	}
 }
 
@@ -3366,7 +3363,7 @@ function upgrade_102_to_103() {
 
 	if (isset($config['nat']['advancedoutbound']['enable'])) {
 		$config['nat']['advancedoutbound']['mode'] = "advanced";
-		unset($config['nat']['advancedoutbound']['enable']);
+		config_del_path('nat/advancedoutbound/enable');
 	} else {
 		$config['nat']['advancedoutbound']['mode'] = "automatic";
 	}
@@ -3374,10 +3371,10 @@ function upgrade_102_to_103() {
 	$config['nat']['outbound'] = $config['nat']['advancedoutbound'];
 
 	if (isset($config['nat']['ipsecpassthru'])) {
-		unset($config['nat']['ipsecpassthru']);
+		config_del_path('nat/ipsecpassthru');
 	}
 	if (isset($config['nat']['advancedoutbound'])) {
-		unset($config['nat']['advancedoutbound']);
+		config_del_path('nat/advancedoutbound');
 	}
 }
 
@@ -3470,7 +3467,7 @@ function upgrade_107_to_108() {
 	global $config;
 
 	if (isset($config['system']['webgui']['noautocomplete'])) {
-		unset($config['system']['webgui']['noautocomplete']);
+		config_del_path('system/webgui/noautocomplete');
 	} else {
 		$config['system']['webgui']['loginautocomplete'] = true;
 	}
@@ -3640,13 +3637,13 @@ function upgrade_110_to_111() {
 	$config['unbound'] = $new;
 
 	if (isset($config['installedpackages']['unbound'])) {
-		unset($config['installedpackages']['unbound']);
+		config_del_path('installedpackages/unbound');
 	}
 	if (isset($config['installedpackages']['unboundadvanced'])) {
-		unset($config['installedpackages']['unboundadvanced']);
+		config_del_path('installedpackages/unboundadvanced');
 	}
 	if (isset($config['installedpackages']['unboundacls'])) {
-		unset($config['installedpackages']['unboundacls']);
+		config_del_path('installedpackages/unboundacls');
 	}
 
 	unset($pkg, $new);
@@ -3673,7 +3670,7 @@ function upgrade_112_to_113() {
 		if ($config['notifications']['smtp']['ssl'] == "checked") {
 			$config['notifications']['smtp']['ssl'] = true;
 		} else {
-			unset($config['notifications']['smtp']['ssl']);
+			config_del_path('notifications/smtp/ssl');
 		}
 	}
 
@@ -3681,7 +3678,7 @@ function upgrade_112_to_113() {
 		if ($config['notifications']['smtp']['tls'] == "checked") {
 			$config['notifications']['smtp']['tls'] = true;
 		} else {
-			unset($config['notifications']['smtp']['tls']);
+			config_del_path('notifications/smtp/tls');
 		}
 	}
 }
@@ -3742,10 +3739,10 @@ function upgrade_117_to_118() {
 
 	// Unset any old CA and Cert in the system section that might still be there from when upgrade_066_to_067 did not unset them.
 	if (isset($config['system']['ca'])) {
-		unset($config['system']['ca']);
+		config_del_path('system/ca');
 	}
 	if (isset($config['system']['cert'])) {
-		unset($config['system']['cert']);
+		config_del_path('system/cert');
 	}
 
 	init_config_arr(array('ipsec', 'phase1'));
@@ -3833,7 +3830,7 @@ function upgrade_122_to_123() {
 
 	// PPTP server was removed
 	if (isset($config['pptpd'])) {
-		unset($config['pptpd']);
+		config_del_path('pptpd');
 	}
 
 	// Cleanup firewall rules
@@ -3928,11 +3925,11 @@ function upgrade_122_to_123() {
 
 function upgrade_123_to_124() {
 	if (isset($config['system']['altpkgrepo'])) {
-		unset($config['system']['altpkgrepo']);
+		config_del_path('system/altpkgrepo');
 	}
 
 	if (isset($config['theme'])) {
-		unset($config['theme']);
+		config_del_path('theme');
 	}
 }
 
@@ -3987,7 +3984,7 @@ function upgrade_125_to_126() {
 		} else {
 			$config['ipsec']['logging'][$cat] = $def_loglevel;
 		}
-		unset($config['ipsec']["ipsec_{$cat}"]);
+		config_del_path("ipsec/ipsec_{$cat}");
 	}
 }
 
@@ -4040,7 +4037,7 @@ function upgrade_127_to_128() {
 		if (!isset($config['snmpd']['bindip'])) {
 			$config['snmpd']['bindip'] = 'lan';
 		}
-		unset($config['snmpd']['bindlan']);
+		config_del_path('snmpd/bindlan');
 	}
 }
 
@@ -4064,7 +4061,7 @@ function upgrade_128_to_129() {
 
 	/* IPSEC is always on in 2.3. */
 	if (isset($config['ipsec']['enable'])) {
-		unset($config['ipsec']['enable']);
+		config_del_path('ipsec/enable');
 	} else if (is_array($config['ipsec']['phase1'])) {
 		/*
 		 * If IPsec was globally disabled, disable all
@@ -4103,11 +4100,11 @@ function upgrade_130_to_131() {
 
 	if (isset($config['syslog']['apinger'])) {
 		$config['syslog']['dpinger'] = true;
-		unset($config['syslog']['apinger']);
+		config_del_path('syslog/apinger');
 	}
 
 	if (isset($config['system']['apinger_debug'])) {
-		unset($config['system']['apinger_debug']);
+		config_del_path('system/apinger_debug');
 	}
 
 	if (!isset($config['gateways']['gateway_item']) ||
@@ -4192,7 +4189,7 @@ function upgrade_130_to_131() {
 function upgrade_131_to_132() {
 	global $config;
 	if (isset($config['system']['usefifolog'])) {
-		unset($config['system']['usefifolog']);
+		config_del_path('system/usefifolog');
 		clear_all_log_files(false);
 	}
 }
@@ -4260,7 +4257,7 @@ function upgrade_134_to_135() {
 	global $config;
 
 	if (isset($config['syslog']['nologlighttpd'])) {
-		unset($config['syslog']['nologlighttpd']);
+		config_del_path('syslog/nologlighttpd');
 		$config['syslog']['nolognginx'] = true;
 	}
 }
@@ -4270,7 +4267,7 @@ function upgrade_135_to_136() {
 
 	$l7_active = false;
 	if (isset($config['l7shaper'])) {
-		unset($config['l7shaper']);
+		config_del_path('l7shaper');
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $idx => $rule) {
 				if (isset($rule['l7container'])) {
@@ -4320,7 +4317,7 @@ function upgrade_137_to_138() {
 	// it's now disabled by default, and config tag is to enable. Unset accordingly.
 	if (is_array($config['ipsec'])) {
 		if (isset($config['ipsec']['unityplugin'])) {
-			unset($config['ipsec']['unityplugin']);
+			config_del_path('ipsec/unityplugin');
 		}
 	}
 }
@@ -4333,7 +4330,7 @@ function upgrade_138_to_139() {
 	if (!isset($config['system']['kill_states'])) {
 		$config['system']['gw_down_kill_states'] = true;
 	} else {
-		unset($config['system']['kill_states']);
+		config_del_path('system/kill_states');
 	}
 }
 
@@ -4991,7 +4988,7 @@ function upgrade_158_to_159() {
 	global $config;
 
 	if ($config['system']['crypto_hardware'] == "glxsb") {
-		unset($config['system']['crypto_hardware']);
+		config_del_path('system/crypto_hardware');
 	}
 }
 
@@ -5148,7 +5145,7 @@ function upgrade_162_to_163() {
 			$config['widgets']['traffic_graphs']['filter'] = implode(',', array_diff($validNames, $config['widgets']['trafficgraphs']['shown']['item']));
 		}
 
-		unset($config['widgets']['trafficgraphs']['shown']);
+		config_del_path('widgets/trafficgraphs/shown');
 	}
 }
 
@@ -5328,8 +5325,7 @@ function upgrade_167_to_168() {
 function upgrade_168_to_169() {
 	global $config;
 
-	/* Remove workaround added in 2.3 */
-	unset($config['cron']['rc_update_pkg_metadata']);
+	config_del_path('cron/rc_update_pkg_metadata');
 
 	$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
 	if (!is_array($config['cron'])) {
@@ -5689,7 +5685,7 @@ function upgrade_181_to_182() {
 			$config['gateways']['gateway_group'][] = $newgroup6;
 			$config['gateways']['defaultgw6'] = $newname;
 		}
-		unset($config['system']['gw_switch_default']);// remove old setting, if a group is used switching is already implied
+		config_del_path('system/gw_switch_default');// remove old setting, if a group is used switching is already implied
 	} else {
 		// set new defaultgw selection boxes to old selected default
 		if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
@@ -5779,7 +5775,7 @@ function upgrade_184_to_185() {
 		$acb['gold_password'] = $acbpkg['password'];
 		$acb['gold_username'] = $acbpkg['username'];
 
-		unset($config['installedpackages']['autoconfigbackup']['config']);
+		config_del_path('installedpackages/autoconfigbackup/config');
 	}
 }
 
@@ -5933,12 +5929,12 @@ function upgrade_188_to_189() {
 	if (isset($config['system']['enablesshd'])) {
 		init_config_arr(array('system', 'ssh'));
 		$config['system']['ssh']['enable'] = "enabled";
-		unset($config['system']['enablesshd']);
+		config_del_path('system/enablesshd');
 	}
 	/* Remove accidentally duplicated ssh config
 	 * See https://redmine.pfsense.org/issues/8974 */
 	if (isset($config['system']['sshd'])) {
-		unset($config['system']['sshd']);
+		config_del_path('system/sshd');
 	}
 }
 
@@ -5990,14 +5986,13 @@ function upgrade_191_to_192() {
 		log_error("INFO: {$deprecation_notice}");
 	}
 
-	/* Clear old config */
-	unset($config['load_balancer']);
+	config_del_path('load_balancer');
 
 	/* Remove LB HA Sync Config */
 	if (isset($config['hasync']) &&
 	    is_array($config['hasync']) &&
 	    isset($config['hasync']['synchronizelb'])) {
-		unset($config['hasync']['synchronizelb']);
+		config_del_path('hasync/synchronizelb');
 	}
 
 	/* If the LB widget is present, remove it*/
@@ -6017,7 +6012,7 @@ function upgrade_191_to_192() {
 	if (isset($config['syslog']) &&
 	    is_array($config['syslog']) &&
 	    isset($config['syslog']['relayd_settings'])) {
-		unset($config['syslog']['relayd_settings']);
+		config_del_path('syslog/relayd_settings');
 	}
 }
 
@@ -6026,7 +6021,7 @@ function upgrade_192_to_193() {
 	global $config;
 
 	if (isset($config['notifications']['growl'])) {
-		unset($config['notifications']['growl']);
+		config_del_path('notifications/growl');
 	}
 }
 
@@ -6316,7 +6311,7 @@ function upgrade_211_to_212() {
 	global $config;
 	if (isset($config['unbound']['sslport'])) {
 		$config['unbound']['tlsport'] = $config['unbound']['sslport'];
-		unset($config['unbound']['sslport']);
+		config_del_path('unbound/sslport');
 	}
 }
 
@@ -6380,7 +6375,7 @@ function upgrade_213_to_214() {
 	global $config;
 
 	if (isset($config['vxlans'])) {
-		unset($config['vxlans']);
+		config_del_path('vxlans');
 	}
 }
 
@@ -6389,7 +6384,7 @@ function upgrade_214_to_215() {
 	global $config;
 
 	if (isset($config['wireguard'])) {
-		unset($config['wireguard']);
+		config_del_path('wireguard');
 	}
 }
 
@@ -6566,7 +6561,7 @@ function upgrade_218_to_219() {
 			$ifcfg['if'] = $ipsecifs[$ifcfg['if']];
 		}
 	}
-	unset($config['ipsec']['vtimaps']);
+	config_del_path('ipsec/vtimaps');
 }
 
 /*

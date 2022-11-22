@@ -195,25 +195,25 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			$config['system']['harddiskstandby'] = $post['harddiskstandby'];
 			system_set_harddisk_standby();
 		} else {
-			unset($config['system']['harddiskstandby']);
+			config_del_path('system/harddiskstandby');
 		}
 
 		if ($post['proxyurl'] <> "") {
 			$config['system']['proxyurl'] = $post['proxyurl'];
 		} else {
-			unset($config['system']['proxyurl']);
+			config_del_path('system/proxyurl');
 		}
 
 		if ($post['proxyport'] <> "") {
 			$config['system']['proxyport'] = $post['proxyport'];
 		} else {
-			unset($config['system']['proxyport']);
+			config_del_path('system/proxyport');
 		}
 
 		if ($post['proxyuser'] <> "") {
 			$config['system']['proxyuser'] = $post['proxyuser'];
 		} else {
-			unset($config['system']['proxyuser']);
+			config_del_path('system/proxyuser');
 		}
 
 		if ($post['proxypass'] <> "") {
@@ -221,7 +221,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 				$config['system']['proxypass'] = $post['proxypass'];
 			}
 		} else {
-			unset($config['system']['proxypass']);
+			config_del_path('system/proxypass');
 		}
 
 		if ($post['lb_use_sticky'] == "yes") {
@@ -233,26 +233,26 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			}
 		} else {
 			if (isset($config['system']['lb_use_sticky'])) {
-				unset($config['system']['lb_use_sticky']);
+				config_del_path('system/lb_use_sticky');
 			}
 		}
 
 		if ($post['pkg_nochecksig'] == "yes") {
 			$config['system']['pkg_nochecksig'] = true;
 		} elseif (isset($config['system']['pkg_nochecksig'])) {
-			unset($config['system']['pkg_nochecksig']);
+			config_del_path('system/pkg_nochecksig');
 		}
 
 		if ($post['do_not_send_uniqueid'] == "yes") {
 			$config['system']['do_not_send_uniqueid'] = true;
 		} else {
-			unset($config['system']['do_not_send_uniqueid']);
+			config_del_path('system/do_not_send_uniqueid');
 		}
 
 		if ($post['powerd_enable'] == "yes") {
 			$config['system']['powerd_enable'] = true;
 		} else {
-			unset($config['system']['powerd_enable']);
+			config_del_path('system/powerd_enable');
 		}
 
 		$config['system']['powerd_ac_mode'] = $post['powerd_ac_mode'];
@@ -262,50 +262,50 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		if ($post['crypto_hardware']) {
 			$config['system']['crypto_hardware'] = $post['crypto_hardware'];
 		} else {
-			unset($config['system']['crypto_hardware']);
+			config_del_path('system/crypto_hardware');
 		}
 
 		if ($post['thermal_hardware']) {
 			$config['system']['thermal_hardware'] = $post['thermal_hardware'];
 		} else {
-			unset($config['system']['thermal_hardware']);
+			config_del_path('system/thermal_hardware');
 		}
 
 		$old_pti_state = isset($config['system']['pti_disabled']);
 		if ($post['pti_disabled'] == "yes") {
 			$config['system']['pti_disabled'] = true;
 		} else {
-			unset($config['system']['pti_disabled']);
+			config_del_path('system/pti_disabled');
 		}
 
 		if (isset($post['mds_disable']) && (strlen($post['mds_disable']) > 0)) {
 			$config['system']['mds_disable'] = $post['mds_disable'];
 		} else {
-			unset($config['system']['mds_disable']);
+			config_del_path('system/mds_disable');
 		}
 
 		if ($post['schedule_states'] == "yes") {
 			$config['system']['schedule_states'] = true;
 		} else {
-			unset($config['system']['schedule_states']);
+			config_del_path('system/schedule_states');
 		}
 
 		if ($post['gw_down_kill_states']) {
 			$config['system']['gw_down_kill_states'] = $post['gw_down_kill_states'];
 		} else {
-			unset($config['system']['gw_down_kill_states']);
+			config_del_path('system/gw_down_kill_states');
 		}
 
 		if ($post['skip_rules_gw_down'] == "yes") {
 			$config['system']['skip_rules_gw_down'] = true;
 		} else {
-			unset($config['system']['skip_rules_gw_down']);
+			config_del_path('system/skip_rules_gw_down');
 		}
 
 		if ($post['dpinger_dont_add_static_routes'] == "yes") {
 			$config['system']['dpinger_dont_add_static_routes'] = true;
 		} else {
-			unset($config['system']['dpinger_dont_add_static_routes']);
+			config_del_path('system/dpinger_dont_add_static_routes');
 		}
 
 		$tmpvar_set = (isset($config['system']['use_mfs_tmpvar']) ? true:false);
@@ -314,7 +314,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			$config['system']['use_mfs_tmpvar'] = true;
 			$tmpvar_enabled = true;
 		} else {
-			unset($config['system']['use_mfs_tmpvar']);
+			config_del_path('system/use_mfs_tmpvar');
 			$tmpvar_enabled = false;
 		}
 
@@ -335,7 +335,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['rrdbackup'] > 0) && ($post['rrdbackup'] <= 24)) {
 				$config['system']['rrdbackup'] = intval($post['rrdbackup']);
 			} else {
-				unset($config['system']['rrdbackup']);
+				config_del_path('system/rrdbackup');
 			}
 		}
 
@@ -343,7 +343,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['dhcpbackup'] > 0) && ($post['dhcpbackup'] <= 24)) {
 				$config['system']['dhcpbackup'] = intval($post['dhcpbackup']);
 			} else {
-				unset($config['system']['dhcpbackup']);
+				config_del_path('system/dhcpbackup');
 			}
 		}
 
@@ -351,7 +351,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['logsbackup'] > 0) && ($post['logsbackup'] <= 24)) {
 				$config['system']['logsbackup'] = intval($post['logsbackup']);
 			} else {
-				unset($config['system']['logsbackup']);
+				config_del_path('system/logsbackup');
 			}
 		}
 
@@ -359,7 +359,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['captiveportalbackup'] > 0) && ($post['captiveportalbackup'] <= 24)) {
 				$config['system']['captiveportalbackup'] = intval($post['captiveportalbackup']);
 			} else {
-				unset($config['system']['captiveportalbackup']);
+				config_del_path('system/captiveportalbackup');
 			}
 		}
 

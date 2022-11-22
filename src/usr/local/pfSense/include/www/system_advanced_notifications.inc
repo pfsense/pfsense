@@ -180,7 +180,7 @@ function saveAdvancedNotifications($post, $json = false) {
 		if (isset($post['smtpssl'])) {
 			$config['notifications']['smtp']['ssl'] = true;
 		} else {
-			unset($config['notifications']['smtp']['ssl']);
+			config_del_path('notifications/smtp/ssl');
 		}
 
 		if (isset($post['sslvalidate'])) {
@@ -226,14 +226,14 @@ function saveAdvancedNotifications($post, $json = false) {
 		if ($post['disable_smtp'] == "yes") {
 			$config['notifications']['smtp']['disable'] = true;
 		} else {
-			unset($config['notifications']['smtp']['disable']);
+			config_del_path('notifications/smtp/disable');
 		}
 
 		// System Sounds
 		if ($post['disablebeep'] == "yes") {
 			$config['system']['disablebeep'] = true;
 		} else {
-			unset($config['system']['disablebeep']);
+			config_del_path('system/disablebeep');
 		}
 		// Telegram
 		$config['notifications']['telegram']['enabled'] = ($post['enable_telegram'] == "yes") ? true : false;

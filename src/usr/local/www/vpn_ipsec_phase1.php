@@ -524,8 +524,9 @@ if ($_POST['save']) {
 			if (!cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
 				$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
 			}
-			if (preg_grep('/\*/', cert_get_sans($errchkcert['crt']))) {
-				$input_errors[] = gettext("The selected certificate contains wildcard entries, which are not supported.");
+			$cert_sans = cert_get_sans($errchkcert['crt']);
+			if (count($cert_sans) == count(preg_grep('/\*/', $cert_sans))) {
+				$input_errors[] = gettext("The selected certificate only contains wildcard SAN entries, which are not supported. The certificate must contain at least one non-wildcard SAN.");
 			}
 			$purpose = cert_get_purpose($errchkcert['crt']);
 			if ($pconfig['mobile'] && ($purpose['server'] == 'No')) {
@@ -912,7 +913,7 @@ $section->addInput(new Form_Select(
 	'*My Certificate',
 	$pconfig['certref'],
 	cert_build_list('cert', 'IPsec')
-))->setHelp('Select a certificate previously configured in the Certificate Manager.');
+))->setHelp('Select a certificate which identifies this firewall. The certificate must have at least one non-wildcard SAN.');
 
 $section->addInput(new Form_Select(
 	'pkcs11certref',
@@ -933,7 +934,7 @@ $section->addInput(new Form_Select(
 	'*Peer Certificate Authority',
 	$pconfig['caref'],
 	cert_build_list('ca', 'IPsec')
-))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
+))->setHelp('Select a certificate authority to validate the peer certificate.');
 
 $form->add($section);
 

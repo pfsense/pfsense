@@ -175,13 +175,13 @@ if ($_POST) {
 		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
 		} else {
-			unset($config['system']['webgui']['session_timeout']);
+			config_del_path('system/webgui/session_timeout');
 		}
 
 		if ($_POST['authmode']) {
 			$config['system']['webgui']['authmode'] = $_POST['authmode'];
 		} else {
-			unset($config['system']['webgui']['authmode']);
+			config_del_path('system/webgui/authmode');
 		}
 
 		$config['system']['webgui']['pwhash'] = $_POST['pwhash'] ? $_POST['pwhash'] : 'bcrypt';
@@ -189,13 +189,13 @@ if ($_POST) {
 		if (isset($_POST['shellauth'])) {
 			$config['system']['webgui']['shellauth'] = true;
 		} else {
-			unset($config['system']['webgui']['shellauth']);
+			config_del_path('system/webgui/shellauth');
 		}
 
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
 			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
 		} else {
-			unset($config['system']['webgui']['auth_refresh_time']);
+			config_del_path('system/webgui/auth_refresh_time');
 		}
 
 		write_config("User Manager Settings saved");

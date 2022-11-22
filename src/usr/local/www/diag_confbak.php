@@ -42,7 +42,7 @@ if (isset($_POST['backupcount'])) {
 			$config['system']['backupcount'] = $_POST['backupcount'];
 			$changedescr = $config['system']['backupcount'];
 		} elseif (empty($_POST['backupcount'])) {
-			unset($config['system']['backupcount']);
+			config_del_path('system/backupcount');
 			$changedescr = gettext("(platform default)");
 		}
 		write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));

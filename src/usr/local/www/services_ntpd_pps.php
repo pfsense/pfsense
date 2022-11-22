@@ -68,50 +68,49 @@ if ($_POST) {
 		if (!empty($_POST['ppsport']) && array_key_exists($_POST['ppsport'], $serialports)) {
 			$config['ntpd']['pps']['port'] = $_POST['ppsport'];
 		} else {
-			/* if port is not set, remove all the pps config */
-			unset($config['ntpd']['pps']);
+			config_del_path('ntpd/pps');
 		}
 
 		if (!empty($_POST['ppsfudge1'])) {
 			$config['ntpd']['pps']['fudge1'] = $_POST['ppsfudge1'];
 		} elseif (isset($config['ntpd']['pps']['fudge1'])) {
-			unset($config['ntpd']['pps']['fudge1']);
+			config_del_path('ntpd/pps/fudge1');
 		}
 
 		if (!empty($_POST['ppsstratum']) && ($_POST['ppsstratum']) < 17) {
 			$config['ntpd']['pps']['stratum'] = $_POST['ppsstratum'];
 		} elseif (isset($config['ntpd']['pps']['stratum'])) {
-			unset($config['ntpd']['pps']['stratum']);
+			config_del_path('ntpd/pps/stratum');
 		}
 
 		if (!empty($_POST['ppsselect'])) {
 			$config['ntpd']['pps']['noselect'] = $_POST['ppsselect'];
 		} elseif (isset($config['ntpd']['pps']['noselect'])) {
-			unset($config['ntpd']['pps']['noselect']);
+			config_del_path('ntpd/pps/noselect');
 		}
 
 		if (!empty($_POST['ppsflag2'])) {
 			$config['ntpd']['pps']['flag2'] = $_POST['ppsflag2'];
 		} elseif (isset($config['ntpd']['pps']['flag2'])) {
-			unset($config['ntpd']['pps']['flag2']);
+			config_del_path('ntpd/pps/flag2');
 		}
 
 		if (!empty($_POST['ppsflag3'])) {
 			$config['ntpd']['pps']['flag3'] = $_POST['ppsflag3'];
 		} elseif (isset($config['ntpd']['pps']['flag3'])) {
-			unset($config['ntpd']['pps']['flag3']);
+			config_del_path('ntpd/pps/flag3');
 		}
 
 		if (!empty($_POST['ppsflag4'])) {
 			$config['ntpd']['pps']['flag4'] = $_POST['ppsflag4'];
 		} elseif (isset($config['ntpd']['pps']['flag4'])) {
-			unset($config['ntpd']['pps']['flag4']);
+			config_del_path('ntpd/pps/flag4');
 		}
 
 		if (!empty($_POST['ppsrefid'])) {
 			$config['ntpd']['pps']['refid'] = $_POST['ppsrefid'];
 		} elseif (isset($config['ntpd']['pps']['refid'])) {
-			unset($config['ntpd']['pps']['refid']);
+			config_del_path('ntpd/pps/refid');
 		}
 		$config['ntpd']['pps']['ppsminpoll'] = $_POST['ppsminpoll'];
 		$config['ntpd']['pps']['ppsmaxpoll'] = $_POST['ppsmaxpoll'];

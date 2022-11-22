@@ -107,7 +107,7 @@ if ($_GET) {
 			}
 			unset($dummynet_pipe_list);
 			$dummynet_pipe_list = array();
-			unset($config['dnshaper']['queue']);
+			config_del_path('dnshaper/queue');
 			unset($queue);
 			unset($pipe);
 			$can_add = false;

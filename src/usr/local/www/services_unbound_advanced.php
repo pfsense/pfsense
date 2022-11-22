@@ -181,47 +181,47 @@ if ($_POST) {
 			if (isset($_POST['hideidentity'])) {
 				$config['unbound']['hideidentity'] = true;
 			} else {
-				unset($config['unbound']['hideidentity']);
+				config_del_path('unbound/hideidentity');
 			}
 			if (isset($_POST['hideversion'])) {
 				$config['unbound']['hideversion'] = true;
 			} else {
-				unset($config['unbound']['hideversion']);
+				config_del_path('unbound/hideversion');
 			}
 			if (isset($_POST['qname-minimisation'])) {
 				$config['unbound']['qname-minimisation'] = true;
 			} else {
-				unset($config['unbound']['qname-minimisation']);
+				config_del_path('unbound/qname-minimisation');
 			}
 			if (isset($_POST['qname-minimisation-strict'])) {
 				$config['unbound']['qname-minimisation-strict'] = true;
 			} else {
-				unset($config['unbound']['qname-minimisation-strict']);
+				config_del_path('unbound/qname-minimisation-strict');
 			}
 			if (isset($_POST['prefetch'])) {
 				$config['unbound']['prefetch'] = true;
 			} else {
-				unset($config['unbound']['prefetch']);
+				config_del_path('unbound/prefetch');
 			}
 			if (isset($_POST['prefetchkey'])) {
 				$config['unbound']['prefetchkey'] = true;
 			} else {
-				unset($config['unbound']['prefetchkey']);
+				config_del_path('unbound/prefetchkey');
 			}
 			if (isset($_POST['dnssecstripped'])) {
 				$config['unbound']['dnssecstripped'] = true;
 			} else {
-				unset($config['unbound']['dnssecstripped']);
+				config_del_path('unbound/dnssecstripped');
 			}
 			if (isset($_POST['dnsrecordcache'])) {
 				$config['unbound']['dnsrecordcache'] = true;
 			} else {
-				unset($config['unbound']['dnsrecordcache']);
+				config_del_path('unbound/dnsrecordcache');
 			}
 			if (isset($_POST['aggressivensec'])) {
 				$config['unbound']['aggressivensec'] = true;
 			} else {
-				unset($config['unbound']['aggressivensec']);
+				config_del_path('unbound/aggressivensec');
 			}
 			$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
 			$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
@@ -244,19 +244,19 @@ if ($_POST) {
 			if (isset($_POST['disable_auto_added_access_control'])) {
 				$config['unbound']['disable_auto_added_access_control'] = true;
 			} else {
-				unset($config['unbound']['disable_auto_added_access_control']);
+				config_del_path('unbound/disable_auto_added_access_control');
 			}
 
 			if (isset($_POST['disable_auto_added_host_entries'])) {
 				$config['unbound']['disable_auto_added_host_entries'] = true;
 			} else {
-				unset($config['unbound']['disable_auto_added_host_entries']);
+				config_del_path('unbound/disable_auto_added_host_entries');
 			}
 
 			if (isset($_POST['use_caps'])) {
 				$config['unbound']['use_caps'] = true;
 			} else {
-				unset($config['unbound']['use_caps']);
+				config_del_path('unbound/use_caps');
 			}
 
 			if (isset($_POST['dns64'])) {
@@ -264,7 +264,7 @@ if ($_POST) {
 				$config['unbound']['dns64prefix'] = $_POST['dns64prefix'];
 				$config['unbound']['dns64netbits'] = $_POST['dns64netbits'];
 			} else {
-				unset($config['unbound']['dns64']);
+				config_del_path('unbound/dns64');
 			}
 
 			write_config(gettext("DNS Resolver configured."));

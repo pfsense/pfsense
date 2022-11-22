@@ -50,7 +50,7 @@ if ($_POST['act'] == "del") {
 		$dirty = true;
 	} else if ($_POST['id'] == count($a_checkipservice)) {
 		if (isset($config['checkipservices']['disable_factory_default'])) {
-			unset($config['checkipservices']['disable_factory_default']);
+			config_del_path('checkipservices/disable_factory_default');
 			$wc_msg = gettext('Enabled the default check IP service.');
 		} else {
 			$config['checkipservices']['disable_factory_default'] = true;

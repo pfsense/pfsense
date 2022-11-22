@@ -126,37 +126,37 @@ if ($_POST) {
 		if (empty($_POST['kod'])) {
 			$config['ntpd']['kod'] = 'on';
 		} elseif (isset($config['ntpd']['kod'])) {
-			unset($config['ntpd']['kod']);
+			config_del_path('ntpd/kod');
 		}
 
 		if (empty($_POST['nomodify'])) {
 			$config['ntpd']['nomodify'] = 'on';
 		} elseif (isset($config['ntpd']['nomodify'])) {
-			unset($config['ntpd']['nomodify']);
+			config_del_path('ntpd/nomodify');
 		}
 
 		if (!empty($_POST['noquery'])) {
 			$config['ntpd']['noquery'] = $_POST['noquery'];
 		} elseif (isset($config['ntpd']['noquery'])) {
-			unset($config['ntpd']['noquery']);
+			config_del_path('ntpd/noquery');
 		}
 
 		if (!empty($_POST['noserve'])) {
 			$config['ntpd']['noserve'] = $_POST['noserve'];
 		} elseif (isset($config['ntpd']['noserve'])) {
-			unset($config['ntpd']['noserve']);
+			config_del_path('ntpd/noserve');
 		}
 
 		if (empty($_POST['nopeer'])) {
 			$config['ntpd']['nopeer'] = 'on';
 		} elseif (isset($config['ntpd']['nopeer'])) {
-			unset($config['ntpd']['nopeer']);
+			config_del_path('ntpd/nopeer');
 		}
 
 		if (empty($_POST['notrap'])) {
 			$config['ntpd']['notrap'] = 'on';
 		} elseif (isset($config['ntpd']['notrap'])) {
-			unset($config['ntpd']['notrap']);
+			config_del_path('ntpd/notrap');
 		}
 		/* End Default Access Restrictions */
 		$config['ntpd']['restrictions']['row'] = array();

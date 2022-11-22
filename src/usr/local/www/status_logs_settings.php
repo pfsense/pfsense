@@ -145,7 +145,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$config['syslog']['logfilesize'] = (int)$_POST['logfilesize'];
 			$pconfig['logfilesize'] = $config['syslog']['logfilesize'];
 		} else {
-			unset($config['syslog']['logfilesize']);
+			config_del_path('syslog/logfilesize');
 		}
 
 		if (isset($_POST['logcompressiontype'])) {
@@ -202,13 +202,13 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
 			$config['syslog']['filterdescriptions'] = $_POST['filterdescriptions'];
 		} else {
-			unset($config['syslog']['filterdescriptions']);
+			config_del_path('syslog/filterdescriptions');
 		}
 
 		if ($config['syslog']['enable'] == false) {
-			unset($config['syslog']['remoteserver']);
-			unset($config['syslog']['remoteserver2']);
-			unset($config['syslog']['remoteserver3']);
+			config_del_path('syslog/remoteserver');
+			config_del_path('syslog/remoteserver2');
+			config_del_path('syslog/remoteserver3');
 		}
 
 		write_config(gettext("Changed system logging options."));

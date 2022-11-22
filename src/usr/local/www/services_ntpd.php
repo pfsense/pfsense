@@ -48,7 +48,7 @@ if (empty($config['ntpd']['interface'])) {
 	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
 	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
-		unset($config['installedpackages']['openntpd']);
+		config_del_path('installedpackages/openntpd');
 		write_config(gettext("Upgraded settings from openntpd"));
 	} else {
 		$pconfig['interface'] = array();
@@ -115,13 +115,13 @@ if ($_POST) {
 		if (is_array($_POST['interface'])) {
 			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
 		} elseif (isset($config['ntpd']['interface'])) {
-			unset($config['ntpd']['interface']);
+			config_del_path('ntpd/interface');
 		}
 
-		unset($config['ntpd']['prefer']);
-		unset($config['ntpd']['noselect']);
-		unset($config['ntpd']['ispool']);
-		unset($config['ntpd']['ispeer']);
+		config_del_path('ntpd/prefer');
+		config_del_path('ntpd/noselect');
+		config_del_path('ntpd/ispool');
+		config_del_path('ntpd/ispeer');
 		$timeservers = '';
 
 		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -149,7 +149,7 @@ if ($_POST) {
 		if (!empty($pconfig['ntpmaxpeers'])) {
 			$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
 		} else {
-			unset($config['ntpd']['ntpmaxpeers']);
+			config_del_path('ntpd/ntpmaxpeers');
 		}
 		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
 		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
@@ -159,31 +159,31 @@ if ($_POST) {
 		if (!empty($_POST['logpeer'])) {
 			$config['ntpd']['logpeer'] = $_POST['logpeer'];
 		} elseif (isset($config['ntpd']['logpeer'])) {
-			unset($config['ntpd']['logpeer']);
+			config_del_path('ntpd/logpeer');
 		}
 
 		if (!empty($_POST['logsys'])) {
 			$config['ntpd']['logsys'] = $_POST['logsys'];
 		} elseif (isset($config['ntpd']['logsys'])) {
-			unset($config['ntpd']['logsys']);
+			config_del_path('ntpd/logsys');
 		}
 
 		if (!empty($_POST['clockstats'])) {
 			$config['ntpd']['clockstats'] = $_POST['clockstats'];
 		} elseif (isset($config['ntpd']['clockstats'])) {
-			unset($config['ntpd']['clockstats']);
+			config_del_path('ntpd/clockstats');
 		}
 
 		if (!empty($_POST['loopstats'])) {
 			$config['ntpd']['loopstats'] = $_POST['loopstats'];
 		} elseif (isset($config['ntpd']['loopstats'])) {
-			unset($config['ntpd']['loopstats']);
+			config_del_path('ntpd/loopstats');
 		}
 
 		if (!empty($_POST['peerstats'])) {
 			$config['ntpd']['peerstats'] = $_POST['peerstats'];
 		} elseif (isset($config['ntpd']['peerstats'])) {
-			unset($config['ntpd']['peerstats']);
+			config_del_path('ntpd/peerstats');
 		}
 
 		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph']))) {
@@ -192,7 +192,7 @@ if ($_POST) {
 		if (!empty($_POST['statsgraph'])) {
 			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];
 		} elseif (isset($config['ntpd']['statsgraph'])) {
-			unset($config['ntpd']['statsgraph']);
+			config_del_path('ntpd/statsgraph');
 		}
 		if (isset($enable_rrd_graphing)) {
 			enable_rrd_graphing();
@@ -201,7 +201,7 @@ if ($_POST) {
 		if (!empty($_POST['leaptext'])) {
 			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptext']);
 		} elseif (isset($config['ntpd']['leapsec'])) {
-			unset($config['ntpd']['leapsec']);
+			config_del_path('ntpd/leapsec');
 		}
 
 		if (is_uploaded_file($_FILES['leapfile']['tmp_name'])) {
@@ -213,9 +213,9 @@ if ($_POST) {
 			$config['ntpd']['serverauthkey'] = base64_encode(trim($_POST['serverauthkey']));
 			$config['ntpd']['serverauthalgo'] = $_POST['serverauthalgo'];
 		} elseif (isset($config['ntpd']['serverauth'])) {
-			unset($config['ntpd']['serverauth']);
-			unset($config['ntpd']['serverauthkey']);
-			unset($config['ntpd']['serverauthalgo']);
+			config_del_path('ntpd/serverauth');
+			config_del_path('ntpd/serverauthkey');
+			config_del_path('ntpd/serverauthalgo');
 		}
 
 		write_config("Updated NTP Server Settings");

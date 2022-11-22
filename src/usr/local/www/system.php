@@ -290,25 +290,25 @@ if ($_POST) {
 			set_language();
 		}
 
-		unset($config['system']['webgui']['interfacessort']);
+		config_del_path('system/webgui/interfacessort');
 		$config['system']['webgui']['interfacessort'] = $_POST['interfacessort'] ? true : false;
 
-		unset($config['system']['webgui']['webguileftcolumnhyper']);
+		config_del_path('system/webgui/webguileftcolumnhyper');
 		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
 
-		unset($config['system']['webgui']['disablealiaspopupdetail']);
+		config_del_path('system/webgui/disablealiaspopupdetail');
 		$config['system']['webgui']['disablealiaspopupdetail'] = $_POST['disablealiaspopupdetail'] ? true : false;
 
-		unset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+		config_del_path('system/webgui/dashboardavailablewidgetspanel');
 		$config['system']['webgui']['dashboardavailablewidgetspanel'] = $_POST['dashboardavailablewidgetspanel'] ? true : false;
 
-		unset($config['system']['webgui']['systemlogsfilterpanel']);
+		config_del_path('system/webgui/systemlogsfilterpanel');
 		$config['system']['webgui']['systemlogsfilterpanel'] = $_POST['systemlogsfilterpanel'] ? true : false;
 
-		unset($config['system']['webgui']['systemlogsmanagelogpanel']);
+		config_del_path('system/webgui/systemlogsmanagelogpanel');
 		$config['system']['webgui']['systemlogsmanagelogpanel'] = $_POST['systemlogsmanagelogpanel'] ? true : false;
 
-		unset($config['system']['webgui']['statusmonitoringsettingspanel']);
+		config_del_path('system/webgui/statusmonitoringsettingspanel');
 		$config['system']['webgui']['statusmonitoringsettingspanel'] = $_POST['statusmonitoringsettingspanel'] ? true : false;
 
 //		if ($_POST['dashboardperiod']) {
@@ -318,7 +318,7 @@ if ($_POST) {
 		if ($_POST['webguicss']) {
 			$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
 		} else {
-			unset($config['system']['webgui']['webguicss']);
+			config_del_path('system/webgui/webguicss');
 		}
 
 		$config['system']['webgui']['roworderdragging'] = $_POST['roworderdragging'] ? true:false;
@@ -326,7 +326,7 @@ if ($_POST) {
 		if ($_POST['logincss']) {
 			$config['system']['webgui']['logincss'] = $_POST['logincss'];
 		} else {
-			unset($config['system']['webgui']['logincss']);
+			config_del_path('system/webgui/logincss');
 		}
 
 		$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
@@ -334,26 +334,26 @@ if ($_POST) {
 		if ($_POST['webguifixedmenu']) {
 			$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
 		} else {
-			unset($config['system']['webgui']['webguifixedmenu']);
+			config_del_path('system/webgui/webguifixedmenu');
 		}
 
 		if ($_POST['webguihostnamemenu']) {
 			$config['system']['webgui']['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
 		} else {
-			unset($config['system']['webgui']['webguihostnamemenu']);
+			config_del_path('system/webgui/webguihostnamemenu');
 		}
 
 		if ($_POST['dashboardcolumns']) {
 			$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
 		} else {
-			unset($config['system']['webgui']['dashboardcolumns']);
+			config_del_path('system/webgui/dashboardcolumns');
 		}
 
 		$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
-		unset($config['system']['dnsserver']);
+		config_del_path('system/dnsserver');
 
 		$dnscounter = 0;
 		$dnsname = "dns{$dnscounter}";
@@ -371,13 +371,13 @@ if ($_POST) {
 
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
 
-		unset($config['system']['dnsallowoverride']);
+		config_del_path('system/dnsallowoverride');
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 
 		if ($_POST['dnslocalhost']) {
 			$config['system']['dnslocalhost'] = $_POST['dnslocalhost'];
 		} else {
-			unset($config['system']['dnslocalhost']);
+			config_del_path('system/dnslocalhost');
 		}
 
 		/* which interface should the dns servers resolve through? */

@@ -104,7 +104,7 @@ if ($_GET) {
 		$tree = "<ul class=\"tree\" >";
 		$tree .= get_interface_list_to_show();
 		$tree .= "</ul>";
-		unset($config['shaper']['queue']);
+		config_del_path('shaper/queue');
 		unset($queue);
 		unset($altq);
 		$can_add = false;

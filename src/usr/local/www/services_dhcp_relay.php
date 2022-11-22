@@ -131,7 +131,7 @@ if ($_POST) {
 			$config['dhcrelay']['interface'] = implode(",",
 			    $_POST['interface']);
 		} else {
-			unset($config['dhcrelay']['interface']);
+			config_del_path('dhcrelay/interface');
 		}
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
 		$config['dhcrelay']['server'] = $svrlist;

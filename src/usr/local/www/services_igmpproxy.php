@@ -79,7 +79,7 @@ if ($_POST['save']) {
 		if (isset($pconfig['enable'])) {
 			$config['igmpproxy']['enable'] = true;
 		} else {
-			unset($config['igmpproxy']['enable']);
+			config_del_path('igmpproxy/enable');
 		}
 		$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
 		write_config("IGMP Proxy settings saved");

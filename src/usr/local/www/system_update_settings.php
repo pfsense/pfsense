@@ -40,14 +40,14 @@ if ($_POST) {
 	if ($_POST['disablecheck'] == "yes") {
 		$config['system']['firmware']['disablecheck'] = true;
 	} elseif (isset($config['system']['firmware']['disablecheck'])) {
-		unset($config['system']['firmware']['disablecheck']);
+		config_del_path('system/firmware/disablecheck');
 	}
 
 	init_config_arr(array('system', 'gitsync'));
 	if ($_POST['synconupgrade'] == "yes") {
 		$config['system']['gitsync']['synconupgrade'] = true;
 	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
-		unset($config['system']['gitsync']['synconupgrade']);
+		config_del_path('system/gitsync/synconupgrade');
 	}
 
 	$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
@@ -64,38 +64,38 @@ if ($_POST) {
 	if ($_POST['minimal'] == "yes") {
 		$config['system']['gitsync']['minimal'] = true;
 	} else {
-		unset($config['system']['gitsync']['minimal']);
+		config_del_path('system/gitsync/minimal');
 	}
 
 	if ($_POST['diff'] == "yes") {
 		$config['system']['gitsync']['diff'] = true;
 	} else {
-		unset($config['system']['gitsync']['diff']);
+		config_del_path('system/gitsync/diff');
 	}
 
 	if ($_POST['show_files'] == "yes") {
 		$config['system']['gitsync']['show_files'] = true;
 	} else {
-		unset($config['system']['gitsync']['show_files']);
+		config_del_path('system/gitsync/show_files');
 	}
 
 	if ($_POST['show_command'] == "yes") {
 		$config['system']['gitsync']['show_command'] = true;
 	} else {
-		unset($config['system']['gitsync']['show_command']);
+		config_del_path('system/gitsync/show_command');
 	}
 
 	if ($_POST['dryrun'] == "yes") {
 		$config['system']['gitsync']['dryrun'] = true;
 	} else {
-		unset($config['system']['gitsync']['dryrun']);
+		config_del_path('system/gitsync/dryrun');
 	}
 
 	if (empty($config['system']['firmware'])) {
-		unset($config['system']['firmware']);
+		config_del_path('system/firmware');
 	}
 	if (empty($config['system']['gitsync'])) {
-		unset($config['system']['gitsync']);
+		config_del_path('system/gitsync');
 	}
 	write_config(gettext("Saved system update settings."));
 

@@ -111,6 +111,7 @@ if ($act == "new") {
 	$pconfig['dev_mode'] = "tun";
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
+	$pconfig['pool_enable'] = "yes";
 	$pconfig['cert_depth'] = 1;
 	$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
@@ -201,6 +202,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
 		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
+		$pconfig['pool_enable'] = array_key_exists('pool_enable', $a_server[$id]) ? $a_server[$id]['pool_enable'] : 'yes';
 		$pconfig['topology'] = $a_server[$id]['topology'];
 
 		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
@@ -778,6 +780,7 @@ if ($_POST['save']) {
 		$server['client2client'] = $pconfig['client2client'];
 
 		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
+		$server['pool_enable'] = $pconfig['pool_enable'];
 		$server['topology'] = $pconfig['topology'];
 
 		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
@@ -1286,8 +1289,8 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('This is the IPv4 virtual network or network type alias with a single entry used for private ' .
 			'communications between this server and client hosts expressed using CIDR notation ' .
 			'(e.g. 10.0.8.0/24). The first usable address in the network will be assigned to ' .
-			'the server virtual interface. The remaining usable addresses will be assigned ' .
-			'to connecting clients.%1$s%1$s' .
+			'the server virtual interface. The remaining network addresses can optionally be assigned ' .
+			'to connecting clients (see Address Pool).%1$s%1$s' .
 			'A tunnel network of /30 or smaller puts OpenVPN into a special peer-to-peer mode which ' .
 			'cannot push settings to clients. This mode is not compatible with several options, ' .
 			'including Exit Notify, and Inactive.',
@@ -1301,7 +1304,8 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('This is the IPv6 virtual network or network type alias with a single entry used for private ' .
 			'communications between this server and client hosts expressed using CIDR notation ' .
 			'(e.g. fe80::/64). The ::1 address in the network will be assigned to the server ' .
-			'virtual interface. The remaining addresses will be assigned to connecting clients.');
+			'virtual interface. The remaining network addresses can optionally be assigned ' .
+			'to connecting clients.');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -1473,6 +1477,13 @@ if ($act=="new" || $act=="edit"):
 		'Dynamic IP',
 		'Allow connected clients to retain their connections if their IP address changes.',
 		$pconfig['dynamic_ip']
+	));
+
+	$section->addInput(new Form_Checkbox(
+		'pool_enable',
+		'Address Pool',
+		'Provide a virtual adapter IP address to clients (see Tunnel Network). Only works for IPv4 (OpenVPN limitation).',
+		$pconfig['pool_enable']
 	));
 
 	$section->addInput(new Form_Select(
@@ -2204,6 +2215,7 @@ events.push(function() {
 		switch (value) {
 			case "tun":
 				hideInput('tunnel_network', false);
+				hideCheckbox('pool_enable', false);
 				hideCheckbox('serverbridge_dhcp', true);
 				hideInput('serverbridge_interface', true);
 				hideCheckbox('serverbridge_routegateway', true);
@@ -2240,11 +2252,13 @@ events.push(function() {
 						hideCheckbox('serverbridge_routegateway', false);
 						disableInput('serverbridge_dhcp_start', false);
 						disableInput('serverbridge_dhcp_end', false);
+						hideCheckbox('pool_enable', true);
 					} else {
 						disableInput('serverbridge_interface', true);
 						hideCheckbox('serverbridge_routegateway', true);
 						disableInput('serverbridge_dhcp_start', true);
 						disableInput('serverbridge_dhcp_end', true);
+						hideCheckbox('pool_enable', false);
 					}
 				} else {
 					hideInput('topology', true);
@@ -2253,6 +2267,7 @@ events.push(function() {
 					hideCheckbox('serverbridge_routegateway', true);
 					disableInput('serverbridge_dhcp_start', true);
 					disableInput('serverbridge_dhcp_end', true);
+					hideCheckbox('pool_enable', false);
 				}
 
 				break;

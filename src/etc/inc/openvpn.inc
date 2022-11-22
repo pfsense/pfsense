@@ -700,7 +700,7 @@ function openvpn_validate_tunnel_network($value, $ipproto) {
 			return true;
 		} else {
 			if ((!is_subnetv4($value) && ($ipproto == 'ipv4')) ||
-			    (!is_subnetv6($value) && ($ipproto == 'ipv6'))) { 
+			    (!is_subnetv6($value) && ($ipproto == 'ipv6'))) {
 				return false;
 			}
 		}
@@ -1046,6 +1046,7 @@ function openvpn_reconfigure($mode, $settings) {
 				break;
 		}
 
+		$nopool = empty($settings['pool_enable']) ? 'nopool' : '';
 		// configure p2p/server modes
 		switch ($settings['mode']) {
 			case 'p2p_tls':
@@ -1057,7 +1058,7 @@ function openvpn_reconfigure($mode, $settings) {
 					$add_ccd = false;
 					if (is_ipaddr($ip) && ($cidr < 30)) {
 						$add_ccd = true;
-						$conf .= "server {$ip} {$mask}\n";
+						$conf .= "server {$ip} {$mask} {$nopool}\n";
 					}
 					if (is_ipaddr($ipv6)) {
 						$add_ccd = true;
@@ -1091,7 +1092,7 @@ function openvpn_reconfigure($mode, $settings) {
 				if ((!empty($ip) && !empty($mask)) ||
 				    (!empty($ipv6) && !empty($prefix))) {
 					if (is_ipaddr($ip)) {
-						$conf .= "server {$ip} {$mask}\n";
+						$conf .= "server {$ip} {$mask} {$nopool}\n";
 					}
 					if (is_ipaddr($ipv6)) {
 						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
@@ -1611,11 +1612,11 @@ function openvpn_restart($mode, $settings) {
 	if (strstr($settings['interface'], "_vip")) {
 	       	$carpstatus = get_carp_bind_status($settings['interface']);
 		/* Do not start an instance if vip aliased to BACKUP CARP
-		 * see https://redmine.pfsense.org/issues/11793 */ 
+		 * see https://redmine.pfsense.org/issues/11793 */
 		if (in_array($carpstatus, array('BACKUP', 'INIT'))) {
 			unlock($lockhandle);
 			return;
-		} 
+		}
 	}
 
 	/* Check if client is bound to a gateway group */

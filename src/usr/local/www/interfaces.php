@@ -694,6 +694,22 @@ if ($_POST['apply']) {
 			if ($_POST['dhcp6-ia-pd-send-hint'] && strtolower($_POST['dhcp6-ia-pd-len']) == 'none') {
 				$input_errors[] = gettext('DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint flag is checked');
 			}
+			if (!empty($_POST['adv_dhcp6_id_assoc_statement_address_id']) &&
+			    !is_numericint($_POST['adv_dhcp6_id_assoc_statement_address_id'])) {
+				$input_errors[] = gettext('DHCPv6 advanced id-assoc na ID value must be empty or an integer.');
+			}
+			if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_id']) &&
+			    !is_numericint($_POST['adv_dhcp6_id_assoc_statement_prefix_id'])) {
+				$input_errors[] = gettext('DHCPv6 advanced id-assoc pd ID value must be empty or an integer.');
+			}
+			if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_id']) &&
+			    !is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_id'])) {
+				$input_errors[] = gettext('DHCPv6 advanced Prefix Interface sla-id value must be empty or an integer.');
+			}
+			if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_len']) &&
+			    !is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len'])) {
+				$input_errors[] = gettext('DHCPv6 advanced Prefix Interface sla-len value must be empty or an integer.');
+			}
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {

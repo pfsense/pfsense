@@ -53,18 +53,18 @@ if (!is_array($config['snmpd']['modules'])) {
 }
 
 $pconfig['enable'] = isset($config['snmpd']['enable']);
-$pconfig['pollport'] = $config['snmpd']['pollport'];
-$pconfig['syslocation'] = $config['snmpd']['syslocation'];
-$pconfig['syscontact'] = $config['snmpd']['syscontact'];
-$pconfig['rocommunity'] = $config['snmpd']['rocommunity'];
+$pconfig['pollport'] = config_get_path('snmpd/pollport');
+$pconfig['syslocation'] = config_get_path('snmpd/syslocation');
+$pconfig['syscontact'] = config_get_path('snmpd/syscontact');
+$pconfig['rocommunity'] = config_get_path('snmpd/rocommunity');
 /* disabled until some docs show up on what this does.
 $pconfig['rwenable'] = isset($config['snmpd']['rwenable']);
 $pconfig['rwcommunity'] = $config['snmpd']['rwcommunity'];
 */
 $pconfig['trapenable'] = isset($config['snmpd']['trapenable']);
-$pconfig['trapserver'] = $config['snmpd']['trapserver'];
-$pconfig['trapserverport'] = $config['snmpd']['trapserverport'];
-$pconfig['trapstring'] = $config['snmpd']['trapstring'];
+$pconfig['trapserver'] = config_get_path('snmpd/trapserver');
+$pconfig['trapserverport'] = config_get_path('snmpd/trapserverport');
+$pconfig['trapstring'] = config_get_path('snmpd/trapstring');
 
 $pconfig['mibii'] = isset($config['snmpd']['modules']['mibii']);
 $pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
@@ -74,7 +74,7 @@ $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
 $pconfig['ucd'] = isset($config['snmpd']['modules']['ucd']);
 $pconfig['regex'] = isset($config['snmpd']['modules']['regex']);
 
-$pconfig['ipprotocol'] = $config['snmpd']['ipprotocol'];
+$pconfig['ipprotocol'] = config_get_path('snmpd/ipprotocol');
 if (empty($config['snmpd']['bindip'])) {
 	$pconfig['bindip'] = array();
 } else {

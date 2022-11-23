@@ -218,17 +218,17 @@ function upload_config($manual = false) {
 		$last_backup_date = "";
 	}
 
-	$last_config_change = $config['revision']['time'];
+	$last_config_change = config_get_path('revision/time');
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
-	$reason	= $config['revision']['description'];
+	$reason	= config_get_path('revision/description');
 
 	if ($manual && array_key_exists('numman', $config['system']['acb'])) {
-		$manmax = $config['system']['acb']['numman'];
+		$manmax = config_get_path('system/acb/numman');
 	} else {
 		$manmax = "0";
 	}
 
-	$encryptpw = $config['system']['acb']['encryption_password'];
+	$encryptpw = config_get_path('system/acb/encryption_password');
 
 	// Define upload_url, must be present after other variable definitions due to username, password
 	$upload_url = "https://acb.netgate.com/save";

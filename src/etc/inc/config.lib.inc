@@ -477,7 +477,7 @@ function convert_config() {
 	}
 
 	// Save off config version
-	$prev_version = $config['version'];
+	$prev_version = config_get_path('version');
 
 	include_once('auth.inc');
 	include_once('upgrade_config.inc');
@@ -493,7 +493,7 @@ function convert_config() {
 	if (!is_array($config['system']['already_run_config_upgrade'])) {
 		$config['system']['already_run_config_upgrade'] = array();
 	}
-	$already_run = $config['system']['already_run_config_upgrade'];
+	$already_run = config_get_path('system/already_run_config_upgrade');
 
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {
@@ -1030,13 +1030,13 @@ function backup_config() {
 	if ($config['revision']['time'] == "") {
 		$baktime = 0;
 	} else {
-		$baktime = $config['revision']['time'];
+		$baktime = config_get_path('revision/time');
 	}
 
 	if ($config['revision']['description'] == "") {
 		$bakdesc = "Unknown";
 	} else {
-		$bakdesc = $config['revision']['description'];
+		$bakdesc = config_get_path('revision/description');
 	}
 
 	$bakver = ($config['version'] == "") ? "?" : $config['version'];

@@ -41,12 +41,12 @@ require_once("status_logs_common.inc");
 global $g, $system_log_compression_types, $syslog_formats;
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
-$pconfig['nentries'] = $config['syslog']['nentries'];
-$pconfig['remoteserver'] = $config['syslog']['remoteserver'];
-$pconfig['remoteserver2'] = $config['syslog']['remoteserver2'];
-$pconfig['remoteserver3'] = $config['syslog']['remoteserver3'];
-$pconfig['sourceip'] = $config['syslog']['sourceip'];
-$pconfig['ipproto'] = $config['syslog']['ipproto'];
+$pconfig['nentries'] = config_get_path('syslog/nentries');
+$pconfig['remoteserver'] = config_get_path('syslog/remoteserver');
+$pconfig['remoteserver2'] = config_get_path('syslog/remoteserver2');
+$pconfig['remoteserver3'] = config_get_path('syslog/remoteserver3');
+$pconfig['sourceip'] = config_get_path('syslog/sourceip');
+$pconfig['ipproto'] = config_get_path('syslog/ipproto');
 $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
 $pconfig['auth'] = isset($config['syslog']['auth']);
@@ -67,13 +67,13 @@ $pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 $pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
 $pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
-$pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
+$pconfig['filterdescriptions'] = config_get_path('syslog/filterdescriptions');
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
 $pconfig['logconfigchanges'] = ($config['syslog']['logconfigchanges'] != "disabled");
-$pconfig['logfilesize'] = $config['syslog']['logfilesize'];
+$pconfig['logfilesize'] = config_get_path('syslog/logfilesize');
 $pconfig['logcompressiontype'] = system_log_get_compression();
-$pconfig['rotatecount'] = $config['syslog']['rotatecount'];
-$pconfig['format'] = $config['syslog']['format'];
+$pconfig['rotatecount'] = config_get_path('syslog/rotatecount');
+$pconfig['format'] = config_get_path('syslog/format');
 
 if (!$pconfig['nentries']) {
 	$pconfig['nentries'] = $g['default_log_entries'];
@@ -140,10 +140,10 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		init_config_arr(array('syslog'));
 		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
 		$config['syslog']['nentries'] = (int)$_POST['nentries'];
-		$pconfig['nentries'] = $config['syslog']['nentries'];
+		$pconfig['nentries'] = config_get_path('syslog/nentries');
 		if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
 			$config['syslog']['logfilesize'] = (int)$_POST['logfilesize'];
-			$pconfig['logfilesize'] = $config['syslog']['logfilesize'];
+			$pconfig['logfilesize'] = config_get_path('syslog/logfilesize');
 		} else {
 			config_del_path('syslog/logfilesize');
 		}

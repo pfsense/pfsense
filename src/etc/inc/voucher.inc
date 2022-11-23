@@ -39,7 +39,7 @@ function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$p
 		$syncip = $config['captiveportal'][$cpzone]['backwardsyncip'];
 		$username = $config['captiveportal'][$cpzone]['backwardsyncuser'];
 		$password = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
-		$port = $config['system']['webgui']['port'];
+		$port = config_get_path('system/webgui/port');
 		if (empty($port)) { // if port is empty lets rely on the protocol selection
 			if ($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";
@@ -57,16 +57,16 @@ function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$p
 		return false;
 	}
 
-	$syncip = $config['hasync']['synchronizetoip'];
-	$password = $config['hasync']['password'];
+	$syncip = config_get_path('hasync/synchronizetoip');
+	$password = config_get_path('hasync/password');
 	if (empty($config['hasync']['username'])) {
 		$username = "admin";
 	} else {
-		$username = $config['hasync']['username'];
+		$username = config_get_path('hasync/username');
 	}
 
 	/* if port is empty lets rely on the protocol selection */
-	$port = $config['system']['webgui']['port'];
+	$port = config_get_path('system/webgui/port');
 	if (empty($port)) {
 		if ($config['system']['webgui']['protocol'] == "http") {
 			$port = "80";

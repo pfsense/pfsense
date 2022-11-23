@@ -186,7 +186,7 @@ if (config_get_path("interfaces/{$if}/ipaddrv6") == 'track6') {
  */
 
 $dhcrelay_enabled = false;
-$dhcrelaycfg = $config['dhcrelay6'];
+$dhcrelaycfg = config_get_path('dhcrelay6');
 
 if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycfg['interface']) && !empty($dhcrelaycfg['interface'])) {
 	$dhcrelayifs = explode(",", $dhcrelaycfg['interface']);

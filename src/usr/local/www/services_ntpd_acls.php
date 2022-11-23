@@ -40,7 +40,7 @@ if (!is_array($config['ntpd'])) {
 }
 
 if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
-	$networkacl = $config['ntpd']['restrictions']['row'];
+	$networkacl = config_get_path('ntpd/restrictions/row');
 } else {
 	$networkacl = array('0' => array('acl_network' => '', 'mask' => ''));
 }

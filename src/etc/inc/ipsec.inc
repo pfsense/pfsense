@@ -1336,7 +1336,7 @@ function ipsec_force_reload($interface = "", $protocol = "") {
 		return;
 	}
 
-	$ipseccfg = $config['ipsec'];
+	$ipseccfg = config_get_path('ipsec');
 
 	if (!empty($interface) && is_array($ipseccfg['phase1'])) {
 		$found = false;
@@ -1714,7 +1714,7 @@ function ipsec_setup_strongswan() {
 	}
 
 	if (isset($config['ipsec']['maxexchange'])) {
-		$ssconf['charon']['max_ikev1_exchanges'] = $config['ipsec']['maxexchange'];
+		$ssconf['charon']['max_ikev1_exchanges'] = config_get_path('ipsec/maxexchange');
 	}
 
 	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'yes' : 'no';
@@ -1729,28 +1729,28 @@ function ipsec_setup_strongswan() {
 	}
 
 	if (isset($config['ipsec']['port'])) {
-		$ssconf['charon']['port'] = $config['ipsec']['port'];
+		$ssconf['charon']['port'] = config_get_path('ipsec/port');
 	}
 
 	if (isset($config['ipsec']['port_nat_t'])) {
-		$ssconf['charon']['port_nat_t'] = $config['ipsec']['port_nat_t'];
+		$ssconf['charon']['port_nat_t'] = config_get_path('ipsec/port_nat_t');
 	}
 
 	/* IKEv2 retransmit options, see https://redmine.pfsense.org/issues/12184 */
 	if (isset($config['ipsec']['ikev2_retransmit_tries'])) {
-		$ssconf['charon']['retransmit_tries'] = $config['ipsec']['ikev2_retransmit_tries'];
+		$ssconf['charon']['retransmit_tries'] = config_get_path('ipsec/ikev2_retransmit_tries');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_timeout'])) {
-		$ssconf['charon']['retransmit_timeout'] = $config['ipsec']['ikev2_retransmit_timeout'];
+		$ssconf['charon']['retransmit_timeout'] = config_get_path('ipsec/ikev2_retransmit_timeout');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_base'])) {
-		$ssconf['charon']['retransmit_base'] = $config['ipsec']['ikev2_retransmit_base'];
+		$ssconf['charon']['retransmit_base'] = config_get_path('ipsec/ikev2_retransmit_base');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_jitter'])) {
-		$ssconf['charon']['retransmit_jitter'] = $config['ipsec']['ikev2_retransmit_jitter'];
+		$ssconf['charon']['retransmit_jitter'] = config_get_path('ipsec/ikev2_retransmit_jitter');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_limit'])) {
-		$ssconf['charon']['retransmit_limit'] = $config['ipsec']['ikev2_retransmit_limit'];
+		$ssconf['charon']['retransmit_limit'] = config_get_path('ipsec/ikev2_retransmit_limit');
 	}
 
 	$ssconf['charon']['syslog'] = array();
@@ -1972,7 +1972,7 @@ function ipsec_setup_pools() {
  ******/
 function ipsec_setup_userpools() {
 	global $config, $scconf;
-	$a_mobilekey = $config['ipsec']['mobilekey'];
+	$a_mobilekey = config_get_path('ipsec/mobilekey');
 
 	/* Do not waste time if we do not have all the necessary information. */
 	if (!is_array($a_mobilekey) ||
@@ -2228,7 +2228,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn, $gateways_status = false
 			}
 			if (($config['ipsec']['client']['group_source'] == 'enabled') &&
 			    !empty($config['ipsec']['client']['auth_groups'])) {
-				$remote['groups'] = $config['ipsec']['client']['auth_groups'];
+				$remote['groups'] = config_get_path('ipsec/client/auth_groups');
 			}
 			$remote['auth'] = "eap-radius";
 			break;
@@ -3184,14 +3184,14 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 	$ipsecpinghostsactive = false;
 
 	/* Populate convenience variables */
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system');
 	init_config_arr(array('ipsec', 'phase1'));
-	$ipseccfg = $config['ipsec'];
-	$a_phase1 = $config['ipsec']['phase1'];
+	$ipseccfg = config_get_path('ipsec');
+	$a_phase1 = config_get_path('ipsec/phase1');
 	init_config_arr(array('ipsec', 'phase2'));
-	$a_phase2 = $config['ipsec']['phase2'];
+	$a_phase2 = config_get_path('ipsec/phase2');
 	init_config_arr(array('ipsec', 'client'));
-	$a_client = $config['ipsec']['client'];
+	$a_client = config_get_path('ipsec/client');
 
 	$mobile_configured = false;
 
@@ -3247,7 +3247,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 	 * use it instead. */
 	if (!empty($config['ipsec']['uniqueids']) &&
 	    array_key_exists($config['ipsec']['uniqueids'], $ipsec_idhandling)) {
-		$conn_defaults['unique'] = $config['ipsec']['uniqueids'];
+		$conn_defaults['unique'] = config_get_path('ipsec/uniqueids');
 	}
 	/* Disable ipcomp for now. redmine #6167
 	if (isset($config['ipsec']['compression'])) {

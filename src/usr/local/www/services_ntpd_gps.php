@@ -52,7 +52,7 @@ function set_default_gps() {
 	$config['ntpd']['gps']['type'] = 'Default';
 	/* copy an existing configured GPS port if it exists, the unset may be uncommented post production */
 	if (!empty($config['ntpd']['gpsport']) && empty($config['ntpd']['gps']['port'])) {
-		$config['ntpd']['gps']['port'] = $config['ntpd']['gpsport'];
+		$config['ntpd']['gps']['port'] = config_get_path('ntpd/gpsport');
 		config_del_path('ntpd/gpsport'); /* this removes the original port config from config.xml */
 		$config['ntpd']['gps']['speed'] = 0;
 		$config['ntpd']['gps']['nmea'] = 0;

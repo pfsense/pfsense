@@ -36,11 +36,11 @@ $oper_sep = "\|\|";
 $exp_sep = '||';
 
 // Encryption password
-$decrypt_password = $config['system']['acb']['encryption_password'];
+$decrypt_password = config_get_path('system/acb/encryption_password');
 
 // Defined username. Username must be sent lowercase. See Redmine #7127 and Netgate Redmine #163
 $username = strtolower($config['system']['acb']['gold_username']);
-$password = $config['system']['acb']['gold_password'];
+$password = config_get_path('system/acb/gold_password');
 
 // Set hostname
 if ($_REQUEST['hostname']) {

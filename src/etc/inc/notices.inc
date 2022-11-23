@@ -366,7 +366,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		return;
 	}
 
-	$to = $config['notifications']['smtp']['notifyemailaddress'];
+	$to = config_get_path('notifications/smtp/notifyemailaddress');
 
 	if (empty($config['notifications']['smtp']['username']) ||
 	    empty($config['notifications']['smtp']['password'])) {
@@ -377,8 +377,8 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		$auth = isset($config['notifications']['smtp']['authentication_mechanism'])
 		    ? $config['notifications']['smtp']['authentication_mechanism']
 		    : 'PLAIN';
-		$username = $config['notifications']['smtp']['username'];
-		$password = $config['notifications']['smtp']['password'];
+		$username = config_get_path('notifications/smtp/username');
+		$password = config_get_path('notifications/smtp/password');
 	}
 
 	$params = array(
@@ -410,7 +410,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	}
 
 	if ($config['notifications']['smtp']['fromaddress']) {
-		$from = $config['notifications']['smtp']['fromaddress'];
+		$from = config_get_path('notifications/smtp/fromaddress');
 	} else {
 		$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
 	}

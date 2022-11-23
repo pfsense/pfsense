@@ -49,9 +49,9 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['pagenamefirst'] = config_path_enabled('system/webgui', 'pagenamefirst');
 	$pconfig['loginautocomplete'] = config_path_enabled('system/webgui', 'loginautocomplete');
 	$pconfig['althostnames'] = config_get_path('system/webgui/althostnames');
-	$pconfig['enableserial'] = $config['system']['enableserial'];
-	$pconfig['serialspeed'] = $config['system']['serialspeed'];
-	$pconfig['primaryconsole'] = $config['system']['primaryconsole'];
+	$pconfig['enableserial'] = config_get_path('system/enableserial');
+	$pconfig['serialspeed'] = config_get_path('system/serialspeed');
+	$pconfig['primaryconsole'] = config_get_path('system/primaryconsole');
 	$pconfig['enablesshd'] = config_get_path('system/ssh/enable');
 	$pconfig['sshport'] = config_get_path('system/ssh/port');
 	$pconfig['sshdkeyonly'] = config_get_path('system/ssh/sshdkeyonly');
@@ -330,7 +330,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 				list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			}
 			$prot = in_array($config['system']['webgui']['protocol'], $valid_webguiproto) ? $config['system']['webgui']['protocol'] : 'http' ;
-			$port = $config['system']['webgui']['port'];
+			$port = config_get_path('system/webgui/port');
 			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
 			} else {

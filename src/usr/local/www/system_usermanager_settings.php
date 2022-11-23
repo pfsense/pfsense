@@ -98,10 +98,10 @@ if ($_REQUEST['ajax']) {
 	}
 }
 
-$pconfig['session_timeout'] = $config['system']['webgui']['session_timeout'];
+$pconfig['session_timeout'] = config_get_path('system/webgui/session_timeout');
 
 if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = $config['system']['webgui']['authmode'];
+	$pconfig['authmode'] = config_get_path('system/webgui/authmode');
 } else {
 	$pconfig['authmode'] = "Local Database";
 }
@@ -113,9 +113,9 @@ $pconfig['pwhash'] = isset($config['system']['webgui']['pwhash']) ? $config['sys
 
 $pconfig['shellauth'] = isset($config['system']['webgui']['shellauth']) ? true : false;
 
-$pconfig['backend'] = $config['system']['webgui']['backend'];
+$pconfig['backend'] = config_get_path('system/webgui/backend');
 
-$pconfig['auth_refresh_time'] = $config['system']['webgui']['auth_refresh_time'];
+$pconfig['auth_refresh_time'] = config_get_path('system/webgui/auth_refresh_time');
 
 // Page title for main admin
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));

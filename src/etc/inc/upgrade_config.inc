@@ -191,7 +191,7 @@ function upgrade_010_to_011() {
 function upgrade_011_to_012() {
 	global $config;
 	/* move LAN DHCP server config */
-	$tmp = $config['dhcpd'];
+	$tmp = config_get_path('dhcpd');
 	$config['dhcpd'] = array();
 	$config['dhcpd']['lan'] = $tmp;
 
@@ -252,7 +252,7 @@ function upgrade_014_to_015() {
 	/* Default route moved */
 	if (isset($config['interfaces']['wan']['gateway'])) {
 		if ($config['interfaces']['wan']['gateway'] <> "") {
-			$config['system']['gateway'] = $config['interfaces']['wan']['gateway'];
+			$config['system']['gateway'] = config_get_path('interfaces/wan/gateway');
 		}
 		config_del_path('interfaces/wan/gateway');
 	}
@@ -279,8 +279,8 @@ function upgrade_015_to_016() {
 	if (isset($config['system']['firmwareurl']) && isset($config['system']['firmwarename'])) { // Only convert if *both* are defined.
 		$config['system']['alt_firmware_url'] = array();
 		$config['system']['alt_firmware_url']['enabled'] = "";
-		$config['system']['alt_firmware_url']['firmware_base_url'] = $config['system']['firmwareurl'];
-		$config['system']['alt_firmware_url']['firmware_filename'] = $config['system']['firmwarename'];
+		$config['system']['alt_firmware_url']['firmware_base_url'] = config_get_path('system/firmwareurl');
+		$config['system']['alt_firmware_url']['firmware_filename'] = config_get_path('system/firmwarename');
 	}
 	if (isset($config['system']['firmwareurl'])) {
 		config_del_path('system/firmwareurl');
@@ -395,7 +395,7 @@ function upgrade_020_to_021() {
 	global $config;
 	/* shaper scheduler moved */
 	if (isset($config['system']['schedulertype'])) {
-		$config['shaper']['schedulertype'] = $config['system']['schedulertype'];
+		$config['shaper']['schedulertype'] = config_get_path('system/schedulertype');
 		config_del_path('system/schedulertype');
 	}
 }
@@ -404,7 +404,7 @@ function upgrade_020_to_021() {
 function upgrade_021_to_022() {
 	global $config;
 	/* move gateway to wan interface */
-	$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
+	$config['interfaces']['wan']['gateway'] = config_get_path('system/gateway');
 }
 
 function upgrade_022_to_023() {
@@ -422,7 +422,7 @@ function upgrade_023_to_024() {
 
 function upgrade_024_to_025() {
 	global $config;
-	$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
+	$config['interfaces']['wan']['use_rrd_gateway'] = config_get_path('system/use_rrd_gateway');
 	if (isset($config['system']['use_rrd_gateway'])) {
 		config_del_path('system/use_rrd_gateway');
 	}
@@ -1180,7 +1180,7 @@ function upgrade_046_to_047() {
 			$config['ipsec']['client']['group_source'] = 'system';
 		}
 
-		$mobilecfg = $config['ipsec']['mobileclients'];
+		$mobilecfg = config_get_path('ipsec/mobileclients');
 
 		$ph1ent = array();
 		$ph1ent['ikeid'] = ++$ikeid;
@@ -1320,12 +1320,12 @@ function upgrade_047_to_048() {
 		if (isset($config['dyndns'][0]['host'])) {
 			$tempdyn = array();
 			$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
-			$tempdyn['type'] = $config['dyndns'][0]['type'];
+			$tempdyn['type'] = config_get_path('dyndns/0/type');
 			$tempdyn['wildcard'] = isset($config['dyndns'][0]['wildcard']);
-			$tempdyn['username'] = $config['dyndns'][0]['username'];
-			$tempdyn['password'] = $config['dyndns'][0]['password'];
-			$tempdyn['host'] = $config['dyndns'][0]['host'];
-			$tempdyn['mx'] = $config['dyndns'][0]['mx'];
+			$tempdyn['username'] = config_get_path('dyndns/0/username');
+			$tempdyn['password'] = config_get_path('dyndns/0/password');
+			$tempdyn['host'] = config_get_path('dyndns/0/host');
+			$tempdyn['mx'] = config_get_path('dyndns/0/mx');
 			$tempdyn['interface'] = "wan";
 			$tempdyn['descr'] = sprintf(gettext("Upgraded Dyndns %s"), $tempdyn['type']);
 			$config['dyndnses']['dyndns'][] = $tempdyn;
@@ -1333,7 +1333,7 @@ function upgrade_047_to_048() {
 		config_del_path('dyndns');
 	}
 	if (!empty($config['dnsupdate'])) {
-		$pconfig = $config['dnsupdate'][0];
+		$pconfig = config_get_path('dnsupdate/0');
 		if (!$pconfig['ttl']) {
 			$pconfig['ttl'] = 60;
 		}
@@ -1347,11 +1347,11 @@ function upgrade_047_to_048() {
 
 	if (is_array($config['pppoe']) && is_array($config['pppoe'][0])) {
 		$pconfig = array();
-		$pconfig['username'] = $config['pppoe'][0]['username'];
-		$pconfig['password'] = $config['pppoe'][0]['password'];
-		$pconfig['provider'] = $config['pppoe'][0]['provider'];
+		$pconfig['username'] = config_get_path('pppoe/0/username');
+		$pconfig['password'] = config_get_path('pppoe/0/password');
+		$pconfig['provider'] = config_get_path('pppoe/0/provider');
 		$pconfig['ondemand'] = isset($config['pppoe'][0]['ondemand']);
-		$pconfig['timeout'] = $config['pppoe'][0]['timeout'];
+		$pconfig['timeout'] = config_get_path('pppoe/0/timeout');
 		config_del_path('pppoe');
 		$config['interfaces']['wan']['pppoe_username'] = $pconfig['username'];
 		$config['interfaces']['wan']['pppoe_password'] = $pconfig['password'];
@@ -1361,11 +1361,11 @@ function upgrade_047_to_048() {
 	}
 	if (is_array($config['pptp'])) {
 		$pconfig = array();
-		$pconfig['username'] = $config['pptp']['username'];
-		$pconfig['password'] = $config['pptp']['password'];
-		$pconfig['provider'] = $config['pptp']['provider'];
+		$pconfig['username'] = config_get_path('pptp/username');
+		$pconfig['password'] = config_get_path('pptp/password');
+		$pconfig['provider'] = config_get_path('pptp/provider');
 		$pconfig['ondemand'] = isset($config['pptp']['ondemand']);
-		$pconfig['timeout'] = $config['pptp']['timeout'];
+		$pconfig['timeout'] = config_get_path('pptp/timeout');
 		config_del_path('pptp');
 		$config['interfaces']['wan']['pptp_username'] = $pconfig['username'];
 		$config['interfaces']['wan']['pptp_password'] = $pconfig['password'];
@@ -1950,8 +1950,8 @@ function upgrade_052_to_053() {
 		$cert = array();
 		$cert['refid'] = uniqid();
 		$cert['descr'] = "webConfigurator SSL/TLS Certificate";
-		$cert['crt'] = $config['system']['webgui']['certificate'];
-		$cert['prv'] = $config['system']['webgui']['private-key'];
+		$cert['crt'] = config_get_path('system/webgui/certificate');
+		$cert['prv'] = config_get_path('system/webgui/private-key');
 		$config['cert'][] = $cert;
 
 		config_del_path('system/webgui/certificate');
@@ -1962,7 +1962,7 @@ function upgrade_052_to_053() {
 	/* migrate advanced admin page ssh keys to user manager */
 	if ($config['system']['ssh']['authorizedkeys']) {
 		$admin_user =& getUserEntryByUID(0);
-		$admin_user['authorizedkeys'] = $config['system']['ssh']['authorizedkeys'];
+		$admin_user['authorizedkeys'] = config_get_path('system/ssh/authorizedkeys');
 		config_del_path('system/ssh/authorizedkeys');
 	}
 }
@@ -1971,7 +1971,7 @@ function upgrade_052_to_053() {
 function upgrade_053_to_054() {
 	global $config;
 	if (is_array($config['load_balancer']['lbpool'])) {
-		$lbpool_arr = $config['load_balancer']['lbpool'];
+		$lbpool_arr = config_get_path('load_balancer/lbpool');
 		$lbpool_srv_arr = array();
 		$gateway_group_arr = array();
 		$gateways = return_gateways_array();
@@ -2539,11 +2539,11 @@ function upgrade_065_to_066() {
 function upgrade_066_to_067() {
 	global $config;
 	if (isset($config['system']['ca'])) {
-		$config['ca'] = $config['system']['ca'];
+		$config['ca'] = config_get_path('system/ca');
 		config_del_path('system/ca');
 	}
 	if (isset($config['system']['cert'])) {
-		$config['cert'] = $config['system']['cert'];
+		$config['cert'] = config_get_path('system/cert');
 		config_del_path('system/cert');
 	}
 }
@@ -2554,7 +2554,7 @@ function upgrade_067_to_068() {
 	if (!empty($config['pppoe'])) {
 		$config['pppoes'] = array();
 		$config['pppoes']['pppoe'] = array();
-		$config['pppoes']['pppoe'][] = $config['pppoe'][0];
+		$config['pppoes']['pppoe'][] = config_get_path('pppoe/0');
 
 		if (is_array($config['pppoe']['user'])) {
 			$username = array();
@@ -2724,8 +2724,8 @@ function upgrade_077_to_078() {
 	    !is_array($config['pptpd']['radius']['server'])) {
 		$radarr = array();
 		$radsvr = array();
-		$radsvr['ip'] = $config['pptpd']['radius']['server'];
-		$radsvr['secret'] = $config['pptpd']['radius']['secret'];
+		$radsvr['ip'] = config_get_path('pptpd/radius/server');
+		$radsvr['secret'] = config_get_path('pptpd/radius/secret');
 		$radsvr['port'] = 1812;
 		$radsvr['acctport'] = 1813;
 		$radsvr['enable'] = isset($config['pptpd']['radius']['enable']);
@@ -2752,7 +2752,7 @@ function upgrade_079_to_080() {
 	/* Upgrade config in 1.2.3 specifying a username other than admin for syncing. */
 	if (!empty($config['system']['username']) && is_array($config['installedpackages']['carpsettings']) &&
 	    is_array($config['installedpackages']['carpsettings']['config'])) {
-		$config['installedpackages']['carpsettings']['config'][0]['username'] = $config['system']['username'];
+		$config['installedpackages']['carpsettings']['config'][0]['username'] = config_get_path('system/username');
 		config_del_path('system/username');
 	}
 }
@@ -2936,7 +2936,7 @@ function upgrade_082_to_083() {
 
 	/* Upgrade captiveportal config */
 	if (!empty($config['captiveportal'])) {
-		$tmpcp = $config['captiveportal'];
+		$tmpcp = config_get_path('captiveportal');
 		$config['captiveportal'] = array();
 		$config['captiveportal']['cpzone'] = array();
 		$config['captiveportal']['cpzone'] = $tmpcp;
@@ -2947,7 +2947,7 @@ function upgrade_082_to_083() {
 		}
 	}
 	if (!empty($config['voucher'])) {
-		$tmpcp = $config['voucher'];
+		$tmpcp = config_get_path('voucher');
 		$config['voucher'] = array();
 		$config['voucher']['cpzone'] = array();
 		$config['voucher']['cpzone'] = $tmpcp;
@@ -2960,7 +2960,7 @@ function upgrade_083_to_084() {
 		if (!empty($config['installedpackages']) &&
 		    !empty($config['installedpackages']['carpsettings']) &&
 		    !empty($config['installedpackages']['carpsettings']['config'])) {
-			$config['hasync'] = $config['installedpackages']['carpsettings']['config'][0];
+			$config['hasync'] = config_get_path('installedpackages/carpsettings/config/0');
 			config_del_path('installedpackages/carpsettings');
 		}
 		if (empty($config['installedpackages']['carpsettings']) && isset($config['installedpackages']['carpsettings'])) {
@@ -3213,8 +3213,8 @@ function upgrade_093_to_094() {
 	global $config;
 
 	if (isset($config['system']['powerd_mode'])) {
-		$config['system']['powerd_ac_mode'] = $config['system']['powerd_mode'];
-		$config['system']['powerd_battery_mode'] = $config['system']['powerd_mode'];
+		$config['system']['powerd_ac_mode'] = config_get_path('system/powerd_mode');
+		$config['system']['powerd_battery_mode'] = config_get_path('system/powerd_mode');
 		config_del_path('system/powerd_mode');
 	}
 }
@@ -3368,7 +3368,7 @@ function upgrade_102_to_103() {
 		$config['nat']['advancedoutbound']['mode'] = "automatic";
 	}
 
-	$config['nat']['outbound'] = $config['nat']['advancedoutbound'];
+	$config['nat']['outbound'] = config_get_path('nat/advancedoutbound');
 
 	if (isset($config['nat']['ipsecpassthru'])) {
 		config_del_path('nat/ipsecpassthru');
@@ -3551,7 +3551,7 @@ function upgrade_110_to_111() {
 		return;
 	}
 
-	$pkg = $config['installedpackages']['unbound']['config'][0];
+	$pkg = config_get_path('installedpackages/unbound/config/0');
 
 	if (isset($config['installedpackages']['unboundadvanced']['config'][0])) {
 		$pkg = array_merge($pkg, $config['installedpackages']['unboundadvanced']['config'][0]);
@@ -6310,7 +6310,7 @@ function upgrade_210_to_211() {
 function upgrade_211_to_212() {
 	global $config;
 	if (isset($config['unbound']['sslport'])) {
-		$config['unbound']['tlsport'] = $config['unbound']['sslport'];
+		$config['unbound']['tlsport'] = config_get_path('unbound/sslport');
 		config_del_path('unbound/sslport');
 	}
 }

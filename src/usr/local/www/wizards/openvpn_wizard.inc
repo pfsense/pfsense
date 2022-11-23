@@ -267,7 +267,7 @@ function step8_submitphpaction() {
 function step9_stepbeforeformdisplay() {
 	global $config, $pkg, $stepid;
 
-	$pconfig = $config['ovpnserver'];
+	$pconfig = config_get_path('ovpnserver');
 
 	if (isset($pconfig['step6']['uselist'])) {
 		$country = $pconfig['step6']['country'];
@@ -469,7 +469,7 @@ function step10_submitphpaction() {
 function step12_submitphpaction() {
 	global $config;
 
-	$pconfig = $config['ovpnserver'];
+	$pconfig = config_get_path('ovpnserver');
 
 	if (!is_array($config['ovpnserver'])) {
 		$message = "No configuration found, please try again.";

@@ -1687,7 +1687,7 @@ function interface_gateway_group_member($interface, $gwgroup_name = "") {
 	global $config;
 
 	if (is_array($config['gateways']['gateway_group'])) {
-		$groups = $config['gateways']['gateway_group'];
+		$groups = config_get_path('gateways/gateway_group');
 	} else {
 		return false;
 	}
@@ -1715,7 +1715,7 @@ function gateway_is_gwgroup_member($name, $detail=false) {
 	global $config;
 
 	if (is_array($config['gateways']['gateway_group'])) {
-		$groups = $config['gateways']['gateway_group'];
+		$groups = config_get_path('gateways/gateway_group');
 	} else {
 		return false;
 	}

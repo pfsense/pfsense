@@ -127,7 +127,7 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 	}
 
 	if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
-		$lookfor['GPGSV'] = $config['ntpd']['gps']['nmeaset']['gpgsv'];
+		$lookfor['GPGSV'] = config_get_path('ntpd/gps/nmeaset/gpgsv');
 		$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
 		$gpsport = fopen('/dev/gps0', 'r+');
 		while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {

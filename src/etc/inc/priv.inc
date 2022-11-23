@@ -242,7 +242,7 @@ function getAllowedPages($username, &$attributes = array()) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		// cache auth results for a short time to ease load on auth services & logs
 		if (isset($config['system']['webgui']['auth_refresh_time'])) {
-			$recheck_time = $config['system']['webgui']['auth_refresh_time'];
+			$recheck_time = config_get_path('system/webgui/auth_refresh_time');
 		} else {
 			$recheck_time = 30;
 		}

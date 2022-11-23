@@ -437,7 +437,7 @@ function fixup_string($string) {
 	global $config;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	$https = "";
-	$port = $config['system']['webguiport'];
+	$port = config_get_path('system/webguiport');
 	if ($port != "443" and $port != "80") {
 		$urlport = ":" . $port;
 	} else {
@@ -455,7 +455,7 @@ function fixup_string($string) {
 	$newstring = str_replace("\$wanip", $curwanip, $string);
 	$string = $newstring;
 	// fixup #3: $lanip
-	$lancfg = $config['interfaces']['lan'];
+	$lancfg = config_get_path('interfaces/lan');
 	$lanip = $lancfg['ipaddr'];
 	$newstring = str_replace("\$lanip", $lanip, $string);
 	$string = $newstring;

@@ -40,7 +40,7 @@ if (isset($_POST['backupcount'])) {
 	if (!$input_errors) {
 		if (is_numericint($_POST['backupcount'])) {
 			$config['system']['backupcount'] = $_POST['backupcount'];
-			$changedescr = $config['system']['backupcount'];
+			$changedescr = config_get_path('system/backupcount');
 		} elseif (empty($_POST['backupcount'])) {
 			config_del_path('system/backupcount');
 			$changedescr = gettext("(platform default)");
@@ -79,7 +79,7 @@ if (($_REQUEST['diff'] == 'Diff') && isset($_REQUEST['oldtime']) && isset($_REQU
 	$oldtime = $_REQUEST['oldtime'];
 	if ($_REQUEST['newtime'] == 'current') {
 		$newfile = $g['conf_path'] . '/config.xml';
-		$newtime = $config['revision']['time'];
+		$newtime = config_get_path('revision/time');
 	} else {
 		$newfile = $g['conf_path'] . '/backup/config-' . $_REQUEST['newtime'] . '.xml';
 		$newtime = $_REQUEST['newtime'];

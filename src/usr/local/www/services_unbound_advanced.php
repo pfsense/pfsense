@@ -82,11 +82,11 @@ if (isset($config['unbound']['aggressivensec'])) {
 	$pconfig['aggressivensec'] = true;
 }
 
-$pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
+$pconfig['msgcachesize'] = config_get_path('unbound/msgcachesize');
 $pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
 $pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
 $pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : 'auto';
-$pconfig['num_queries_per_thread'] = $config['unbound']['num_queries_per_thread'];
+$pconfig['num_queries_per_thread'] = config_get_path('unbound/num_queries_per_thread');
 $pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $config['unbound']['jostle_timeout'] : '200';
 $pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
 $pconfig['cache_min_ttl'] = isset($config['unbound']['cache_min_ttl']) ? $config['unbound']['cache_min_ttl'] : '0';

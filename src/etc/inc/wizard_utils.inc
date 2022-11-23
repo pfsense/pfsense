@@ -137,7 +137,7 @@ function save_setupwizard_config(
 		$tmp['ptpid'] = "0";
 		$tmp['type'] = $type;
 		$tmp['if'] = $type . "0";
-		$tmp['ports'] = $config['interfaces']['wan']['if'];
+		$tmp['ports'] = config_get_path('interfaces/wan/if');
 		$config['ppps']['ppp'][] = array_merge($tmp, $pppfg);
 		unset($tmp);
 		$config['interfaces']['wan']['if'] = $type."0";

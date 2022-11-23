@@ -157,7 +157,7 @@
 		global $g, $config;
 		global $input_errors;
 
-		$upnp_config = $config['installedpackages']['miniupnpd']['config'][0];
+		$upnp_config = config_get_path('installedpackages/miniupnpd/config/0');
 		$config_file = '/var/etc/miniupnpd.conf';
 
 		if (!isset($upnp_config['ext_iface']) || empty($upnp_config['ext_iface'])) {

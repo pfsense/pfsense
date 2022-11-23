@@ -95,7 +95,7 @@ if ($_POST['save']) {
 		$newcp['backwardsyncip'] = $pconfig['backwardsyncip'];
 		$newcp['backwardsyncuser'] = $pconfig['backwardsyncuser'];
 
-		$port = $config['system']['webgui']['port'];
+		$port = config_get_path('system/webgui/port');
 		if (empty($port)) { // if port is empty lets rely on the protocol selection
 			if ($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";

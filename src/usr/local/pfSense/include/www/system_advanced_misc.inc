@@ -48,42 +48,42 @@ function getSystemAdvancedMisc($json = false) {
 		$pconfig['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
 	}
 
-	$pconfig['proxyurl'] = $config['system']['proxyurl'];
-	$pconfig['proxyport'] = $config['system']['proxyport'];
-	$pconfig['proxyuser'] = $config['system']['proxyuser'];
-	$pconfig['proxypass'] = $config['system']['proxypass'];
-	$pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
+	$pconfig['proxyurl'] = config_get_path('system/proxyurl');
+	$pconfig['proxyport'] = config_get_path('system/proxyport');
+	$pconfig['proxyuser'] = config_get_path('system/proxyuser');
+	$pconfig['proxypass'] = config_get_path('system/proxypass');
+	$pconfig['harddiskstandby'] = config_get_path('system/harddiskstandby');
 	$pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
-	$pconfig['srctrack'] = $config['system']['srctrack'];
+	$pconfig['srctrack'] = config_get_path('system/srctrack');
 	$pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
-	$pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
-	$pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
+	$pconfig['crypto_hardware'] = config_get_path('system/crypto_hardware');
+	$pconfig['thermal_hardware'] = config_get_path('system/thermal_hardware');
 	$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
-	$pconfig['mds_disable'] = $config['system']['mds_disable'];
+	$pconfig['mds_disable'] = config_get_path('system/mds_disable');
 	$pconfig['schedule_states'] = isset($config['system']['schedule_states']);
-	$pconfig['gw_down_kill_states'] = $config['system']['gw_down_kill_states'];
+	$pconfig['gw_down_kill_states'] = config_get_path('system/gw_down_kill_states');
 	$pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 	$pconfig['dpinger_dont_add_static_routes'] = isset($config['system']['dpinger_dont_add_static_routes']);
 	$pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
-	$pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
-	$pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
+	$pconfig['use_mfs_tmp_size'] = config_get_path('system/use_mfs_tmp_size');
+	$pconfig['use_mfs_var_size'] = config_get_path('system/use_mfs_var_size');
 	$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
 	$pconfig['pti'] = get_single_sysctl('vm.pmap.pti');
 	$pconfig['mds']= get_single_sysctl('hw.mds_disable_state');
 
 	$pconfig['powerd_ac_mode'] = "hadp";
 	if (!empty($config['system']['powerd_ac_mode'])) {
-		$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
+		$pconfig['powerd_ac_mode'] = config_get_path('system/powerd_ac_mode');
 	}
 
 	$pconfig['powerd_battery_mode'] = "hadp";
 	if (!empty($config['system']['powerd_battery_mode'])) {
-		$pconfig['powerd_battery_mode'] = $config['system']['powerd_battery_mode'];
+		$pconfig['powerd_battery_mode'] = config_get_path('system/powerd_battery_mode');
 	}
 
 	$pconfig['powerd_normal_mode'] = "hadp";
 	if (!empty($config['system']['powerd_normal_mode'])) {
-		$pconfig['powerd_normal_mode'] = $config['system']['powerd_normal_mode'];
+		$pconfig['powerd_normal_mode'] = config_get_path('system/powerd_normal_mode');
 	}
 
 	return $json ? json_encode($pconfig) : $pconfig;

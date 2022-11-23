@@ -332,7 +332,7 @@ function execPost($post, $postfiles, $ui = true) {
 								/* Save current pkg repo to re-add on new config */
 								unset($pkg_repo_conf_path);
 								if (isset($config['system']['pkg_repo_conf_path'])) {
-									$pkg_repo_conf_path = $config['system']['pkg_repo_conf_path'];
+									$pkg_repo_conf_path = config_get_path('system/pkg_repo_conf_path');
 								}
 
 								/* this will be picked up by /index.php */

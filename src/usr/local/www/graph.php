@@ -50,7 +50,7 @@ $ifname = @$_REQUEST["ifname"]?$_REQUEST["ifname"]:"Interface $ifnum";  //Interf
 
 /********* Other conf *******/
 if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
-	$scale_type = $config["widgets"]["trafficgraphs"]["scale_type"];
+	$scale_type = config_get_path('widgets/trafficgraphs/scale_type');
 } else {
 	$scale_type = "up";
 }

@@ -27,7 +27,7 @@ require_once("system.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 
 if (isset($config['wol']['wolentry']) && is_array($config['wol']['wolentry'])) {
-	$wolcomputers = $config['wol']['wolentry'];
+	$wolcomputers = config_get_path('wol/wolentry');
 } else {
 	$wolcomputers = array();
 }

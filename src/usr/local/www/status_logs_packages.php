@@ -86,7 +86,7 @@ require_once("pkg-utils.inc");
 require_once("status_logs_common.inc");
 
 global $g;
-if (!($nentries = $config['syslog']['nentries'])) {
+if (!($nentries = config_get_path('syslog/nentries'))) {
 	$nentries = $g['default_log_entries'];
 }
 

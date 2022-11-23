@@ -39,7 +39,7 @@ function saveNAToutMode($post, $json = false) {
 		$config['nat']['outbound']['mode'] = "automatic";
 	}
 	
-	$mode = $config['nat']['outbound']['mode'];
+	$mode = config_get_path('nat/outbound/mode');
 
 	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
 	if ($post['mode'] == "advanced" && ($mode == "automatic" || $mode == "hybrid")) {

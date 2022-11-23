@@ -401,7 +401,7 @@ function getDomainOverride($id, $json = false) {
     global $config;
 
     init_config_arr(array('dnsmasq', 'domainoverrides'));
-    $a_domainOverrides = $config['dnsmasq']['domainoverrides'];
+    $a_domainOverrides = config_get_path('dnsmasq/domainoverrides');
 
     $pconfig = array();
 

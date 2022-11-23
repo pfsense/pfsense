@@ -102,8 +102,8 @@ if ($_POST) {
 	$savemsg = gettext("Changes have been saved successfully");
 }
 
-$curcfg = $config['system']['firmware'];
-$gitcfg = $config['system']['gitsync'];
+$curcfg = config_get_path('system/firmware');
+$gitcfg = config_get_path('system/gitsync');
 
 $pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
 $pglinks = array("", "pkg_mgr_install.php?id=firmware", "@self");

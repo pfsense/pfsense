@@ -49,19 +49,19 @@ $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['pkcs11support'] = isset($config['ipsec']['pkcs11support']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
-$pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
-$pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
-$pconfig['filtermode'] = $config['ipsec']['filtermode'];
-$pconfig['dns-interval'] = $config['ipsec']['dns-interval'];
-$pconfig['ikev2_retransmit_tries'] = $config['ipsec']['ikev2_retransmit_tries'];
-$pconfig['ikev2_retransmit_timeout'] = $config['ipsec']['ikev2_retransmit_timeout'];
-$pconfig['ikev2_retransmit_base'] = $config['ipsec']['ikev2_retransmit_base'];
-$pconfig['ikev2_retransmit_jitter'] = $config['ipsec']['ikev2_retransmit_jitter'];
-$pconfig['ikev2_retransmit_limit'] = $config['ipsec']['ikev2_retransmit_limit'];
+$pconfig['maxexchange'] = config_get_path('ipsec/maxexchange');
+$pconfig['uniqueids'] = config_get_path('ipsec/uniqueids');
+$pconfig['filtermode'] = config_get_path('ipsec/filtermode');
+$pconfig['dns-interval'] = config_get_path('ipsec/dns-interval');
+$pconfig['ikev2_retransmit_tries'] = config_get_path('ipsec/ikev2_retransmit_tries');
+$pconfig['ikev2_retransmit_timeout'] = config_get_path('ipsec/ikev2_retransmit_timeout');
+$pconfig['ikev2_retransmit_base'] = config_get_path('ipsec/ikev2_retransmit_base');
+$pconfig['ikev2_retransmit_jitter'] = config_get_path('ipsec/ikev2_retransmit_jitter');
+$pconfig['ikev2_retransmit_limit'] = config_get_path('ipsec/ikev2_retransmit_limit');
 $pconfig['ipsecbypass'] = isset($config['ipsec']['ipsecbypass']);
-$pconfig['bypassrules'] = $config['ipsec']['bypassrules'];
-$pconfig['port'] = $config['ipsec']['port'];
-$pconfig['port_nat_t'] = $config['ipsec']['port_nat_t'];
+$pconfig['bypassrules'] = config_get_path('ipsec/bypassrules');
+$pconfig['port'] = config_get_path('ipsec/port');
+$pconfig['port_nat_t'] = config_get_path('ipsec/port_nat_t');
 
 if ($pconfig['ikev2_retransmit_tries'] || $pconfig['ikev2_retransmit_timeout'] ||
     $pconfig['ikev2_retransmit_base'] || $pconfig['ikev2_retransmit_jitter'] ||
@@ -285,7 +285,7 @@ if ($_POST['save']) {
 				$needsrestart = true;
 			}
 			$config['ipsec']['maxexchange'] = (int)$_POST['maxexchange'];
-			$pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
+			$pconfig['maxexchange'] = config_get_path('ipsec/maxexchange');
 		} elseif (isset($config['ipsec']['maxexchange'])) {
 			$needsrestart = true;
 			config_del_path('ipsec/maxexchange');
@@ -296,7 +296,7 @@ if ($_POST['save']) {
 				$needsfilterdnsrestart = true;
 			}
 			$config['ipsec']['dns-interval'] = (int)$_POST['dns-interval'];
-			$pconfig['dns-interval'] = $config['ipsec']['dns-interval'];
+			$pconfig['dns-interval'] = config_get_path('ipsec/dns-interval');
 		} elseif (isset($config['ipsec']['dns-interval'])) {
 			$needsfilterdnsrestart = true;
 			config_del_path('ipsec/dns-interval');
@@ -397,7 +397,7 @@ if ($_POST['save']) {
 }
 
 if (isset($config['ipsec']['async_crypto'])) {
-	$pconfig['async_crypto'] = $config['ipsec']['async_crypto'];
+	$pconfig['async_crypto'] = config_get_path('ipsec/async_crypto');
 } else {
 	$pconfig['async_crypto'] = "disabled";
 }

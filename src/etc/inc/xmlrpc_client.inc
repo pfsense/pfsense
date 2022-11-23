@@ -28,7 +28,7 @@ class pfsense_xmlrpc_client {
 
 	public function __construct() {
 		global $config;
-		$hasync = $config['hasync'];
+		$hasync = config_get_path('hasync');
 
 		if (empty($hasync['username'])) {
 			$username = "admin";
@@ -36,7 +36,7 @@ class pfsense_xmlrpc_client {
 			$username = $hasync['username'];
 		}
 		/* if port is empty lets rely on the protocol selection */
-		$port = $config['system']['webgui']['port'];
+		$port = config_get_path('system/webgui/port');
 		if (empty($port)) {
 			if ($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";

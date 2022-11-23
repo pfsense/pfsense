@@ -47,10 +47,10 @@ if (!function_exists('get_dyndns_hostname_text')) {
 }
 
 init_config_arr(array('dyndnses', 'dyndns'));
-$a_dyndns = $config['dyndnses']['dyndns'];
+$a_dyndns = config_get_path('dyndnses/dyndns');
 
 init_config_arr(array('dnsupdates', 'dnsupdate'));
-$a_rfc2136 = $config['dnsupdates']['dnsupdate'];
+$a_rfc2136 = config_get_path('dnsupdates/dnsupdate');
 
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
 

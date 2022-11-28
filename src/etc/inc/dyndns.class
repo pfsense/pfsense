@@ -892,6 +892,7 @@
 					$record_type = $this->_useIPv6 ? "AAAA" : "A";
 					// Check if a record already exists for this host.
 					curl_setopt($ch, CURLOPT_URL, "{$namedotcom_api}?perPage=1000");
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$response = json_decode(curl_exec($ch), true);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code != "200") {
@@ -961,6 +962,7 @@
 					// get record_id
 					curl_setopt($ch, CURLOPT_URL, "https://pddimp.yandex.ru/api2/admin/dns/list?domain={$this->_dnsDomain}");
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('PddToken: ' . $this->_dnsPass));
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = json_decode(curl_exec($ch), true);
 					if (is_array($output["records"])) {
 						foreach($output["records"] as $record) {
@@ -1098,6 +1100,7 @@
 						// Get zone ID
 						$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";
 						curl_setopt($ch, CURLOPT_URL, $getZoneId);
+						curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 						$output = json_decode(curl_exec($ch));
 						$zone = $output->result[0]->id;
 					} else {
@@ -1112,6 +1115,7 @@
 					if ($zone) { // If zone ID was found get host ID
 						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_FQDN}&type={$recordType}";
 						curl_setopt($ch, CURLOPT_URL, $getHostId);
+						curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 						$output = json_decode(curl_exec($ch));
 						$host = $output->result[0]->id;
 						if ($host) { // If host ID was found update host
@@ -1258,6 +1262,7 @@
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/login");
 					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 
 					//extract the cookies
@@ -1273,7 +1278,7 @@
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/dns");
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 					$pregHost = preg_quote($this->_dnsHost);
 					$pregDomain = preg_quote($this->_dnsDomain);
@@ -1305,6 +1310,7 @@
 					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
 					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 					$last_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
 
@@ -1324,6 +1330,7 @@
 					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
 					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 
 					// extract the cookies
@@ -1341,6 +1348,7 @@
 					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 					$result = json_decode($output, true);
 					$records = $result['result']['data'];
@@ -1411,6 +1419,7 @@
 					$url = $server . $this->_dnsDomain . '/records';
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer {$this->_dnsPass}"));
 					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = json_decode(curl_exec($ch));
 					if (!is_array($output->domain_records)) {
 						$output->domain_records = array();
@@ -1444,6 +1453,7 @@
 								if ($_next != '') {
 									echo "getting $_next\n";
 									curl_setopt($ch, CURLOPT_URL, $_next);
+									curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 									$output = json_decode(curl_exec($ch));
 									if (!is_array($output->domain_records)) {
 										$output->domain_records = array();
@@ -1490,6 +1500,7 @@
 					$post_data['type'] = 'a';
 					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = json_decode(curl_exec($ch));
 					$recordID = key(get_object_vars($output));
 
@@ -1531,6 +1542,7 @@
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HEADER, 1);
 					curl_setopt($ch, CURLOPT_NOBODY, 1);
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 					$pattern = '/Bearer authorization_uri="https:\\/\\/login.windows.net\\/(?<tid>[^"]*)/i';
 					preg_match($pattern, $output, $result);
@@ -1546,6 +1558,7 @@
 					$body = "resource=" . urlencode("https://management.core.windows.net/") . "&grant_type=client_credentials&client_id=" . $app_id . "&client_secret=" . urlencode($client_secret);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$server_output = curl_exec($ch);
 					$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					preg_match("/\"access_token\":\"(?<tok>[^\"]*)\"/", $server_output, $result);
@@ -1590,6 +1603,7 @@
 
 					// get domain id
 					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains");
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$domains_output = curl_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ( $http_code == 401 && preg_match('/invalid oauth token/i', $domains_output) ) {
@@ -1620,6 +1634,7 @@
 
 					// get existing record if present
 					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
+					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$records_output = curl_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ( $http_code != 200 )
@@ -1706,6 +1721,7 @@
 				if ($this->_curlProxy == true) {
 					set_curlproxy($ch);
 				}
+				curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
@@ -1713,13 +1729,15 @@
 				if ($this->_dnsVerboseLog) {
 					foreach (explode(PHP_EOL, $header) as $hv) {
 						log_error(sprintf("Response Header: %s", rtrim($hv)));
-				  	}
+					}
 					log_error(sprintf("Response Data: %s", $data));
 				}
 				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 				$curl_error = @curl_error($ch);
-				@curl_close($ch);
 				$this->_checkStatus($http_code, $curl_error, $data, $header);
+			}
+			if ($this->_dnsVerboseLog) {
+				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _update() ending.'), $this->_dnsService, $this->_FQDN));
 			}
 		}
 
@@ -1784,13 +1802,13 @@
 			}
 			if ($remove_allowed) {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
+				curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
 				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 				$curl_error = @curl_error($ch);
-				@curl_close($ch);
 				$this->_checkStatus($http_code, $curl_error, $data, $header);
 			}
 		}
@@ -1850,12 +1868,14 @@
 			}
 			if ($lookup_allowed) {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
+				curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
-				$this->_checkLookupStatus($ch, $data, $header);
-				@curl_close($ch);
+				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				$curl_error = @curl_error($ch);
+				$this->_checkLookupStatus($curl_error, $data, $header);
 			}
 		}
 
@@ -1863,7 +1883,7 @@
 		 * Private Function (added 23 Feb 17)
 		 *   Retrieve Lookup Status from the provided data and/or header
 		 */
-		function _checkLookupStatus($ch, $data, $header) {
+		function _checkLookupStatus($curl_error, $data, $header) {
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting.'), $this->_dnsService, $this->_FQDN));
 			}
@@ -1871,8 +1891,8 @@
 			$error_str = "(" . gettext("Error") . ") ";
 			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
 
-			if ($this->_dnsService != 'ods' && @curl_error($ch)) {
-				$status = gettext("Curl error occurred:") . " " . curl_error($ch);
+			if ($this->_dnsService != 'ods' && !empty($curl_error)) {
+				$status = gettext("Curl error occurred:") . " {$curl_error}";
 				log_error($status);
 				$this->status = $status;
 				return;
@@ -2981,6 +3001,9 @@
 			}
 			$this->status = $status;
 			log_error($status);
+			if ($this->_dnsVerboseLog) {
+				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() ending.'), $this->_dnsService, $this->_FQDN));
+			}
 		}
 
 		/*

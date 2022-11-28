@@ -102,7 +102,7 @@ if ($_REQUEST['ajax']) {
 $id = $_REQUEST['id'];
 
 if (!is_array($config['system']['authserver'])) {
-	$config['system']['authserver'] = array();
+	config_set_path('system/authserver', array());
 }
 
 $a_server = array_values(auth_get_authserver_list());

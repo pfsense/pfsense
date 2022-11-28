@@ -598,7 +598,7 @@ if (isset($_POST['save'])) {
 				$dhcpdconf = array();
 			} else {
 				if (!is_array($config['dhcpd'])) {
-					$config['dhcpd']= array();
+					config_set_path('dhcpd', array());
 				}
 				if (!is_array($config['dhcpd'][$if])) {
 					$config['dhcpd'][$if] = array();

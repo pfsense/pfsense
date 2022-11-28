@@ -44,7 +44,7 @@ if (empty($cpzone)) {
 	exit;
 }
 if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
+	config_set_path('captiveportal', array());
 }
 
 $a_cp =& $config['captiveportal'];

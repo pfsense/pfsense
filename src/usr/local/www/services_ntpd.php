@@ -41,7 +41,7 @@ $max_candidate_peers = 25;
 $min_candidate_peers = 4;
 
 if (!is_array($config['ntpd'])) {
-	$config['ntpd'] = array();
+	config_set_path('ntpd', array());
 }
 
 if (empty($config['ntpd']['interface'])) {
@@ -111,9 +111,9 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['ntpd']['enable'] = isset($_POST['enable']) ? 'enabled' : 'disabled';
+		config_set_path('ntpd/enable', isset($_POST['enable']) ? 'enabled' : 'disabled');
 		if (is_array($_POST['interface'])) {
-			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
+			config_set_path('ntpd/interface', implode(",", $_POST['interface']));
 		} elseif (isset($config['ntpd']['interface'])) {
 			config_del_path('ntpd/interface');
 		}
@@ -144,44 +144,44 @@ if ($_POST) {
 		if (trim($timeservers) == "") {
 			$timeservers = "pool.ntp.org";
 		}
-		$config['system']['timeservers'] = trim($timeservers);
+		config_set_path('system/timeservers', trim($timeservers));
 
 		if (!empty($pconfig['ntpmaxpeers'])) {
-			$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
+			config_set_path('ntpd/ntpmaxpeers', $pconfig['ntpmaxpeers']);
 		} else {
 			config_del_path('ntpd/ntpmaxpeers');
 		}
-		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
-		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
-		$config['ntpd']['ntpmaxpoll'] = $pconfig['ntpmaxpoll'];
-		$config['ntpd']['dnsresolv'] = $pconfig['dnsresolv'];
+		config_set_path('ntpd/orphan', trim($pconfig['ntporphan']));
+		config_set_path('ntpd/ntpminpoll', $pconfig['ntpminpoll']);
+		config_set_path('ntpd/ntpmaxpoll', $pconfig['ntpmaxpoll']);
+		config_set_path('ntpd/dnsresolv', $pconfig['dnsresolv']);
 
 		if (!empty($_POST['logpeer'])) {
-			$config['ntpd']['logpeer'] = $_POST['logpeer'];
+			config_set_path('ntpd/logpeer', $_POST['logpeer']);
 		} elseif (isset($config['ntpd']['logpeer'])) {
 			config_del_path('ntpd/logpeer');
 		}
 
 		if (!empty($_POST['logsys'])) {
-			$config['ntpd']['logsys'] = $_POST['logsys'];
+			config_set_path('ntpd/logsys', $_POST['logsys']);
 		} elseif (isset($config['ntpd']['logsys'])) {
 			config_del_path('ntpd/logsys');
 		}
 
 		if (!empty($_POST['clockstats'])) {
-			$config['ntpd']['clockstats'] = $_POST['clockstats'];
+			config_set_path('ntpd/clockstats', $_POST['clockstats']);
 		} elseif (isset($config['ntpd']['clockstats'])) {
 			config_del_path('ntpd/clockstats');
 		}
 
 		if (!empty($_POST['loopstats'])) {
-			$config['ntpd']['loopstats'] = $_POST['loopstats'];
+			config_set_path('ntpd/loopstats', $_POST['loopstats']);
 		} elseif (isset($config['ntpd']['loopstats'])) {
 			config_del_path('ntpd/loopstats');
 		}
 
 		if (!empty($_POST['peerstats'])) {
-			$config['ntpd']['peerstats'] = $_POST['peerstats'];
+			config_set_path('ntpd/peerstats', $_POST['peerstats']);
 		} elseif (isset($config['ntpd']['peerstats'])) {
 			config_del_path('ntpd/peerstats');
 		}
@@ -190,7 +190,7 @@ if ($_POST) {
 			$enable_rrd_graphing = true;
 		}
 		if (!empty($_POST['statsgraph'])) {
-			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];
+			config_set_path('ntpd/statsgraph', $_POST['statsgraph']);
 		} elseif (isset($config['ntpd']['statsgraph'])) {
 			config_del_path('ntpd/statsgraph');
 		}
@@ -199,19 +199,19 @@ if ($_POST) {
 		}
 
 		if (!empty($_POST['leaptext'])) {
-			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptext']);
+			config_set_path('ntpd/leapsec', base64_encode($_POST['leaptext']));
 		} elseif (isset($config['ntpd']['leapsec'])) {
 			config_del_path('ntpd/leapsec');
 		}
 
 		if (is_uploaded_file($_FILES['leapfile']['tmp_name'])) {
-			$config['ntpd']['leapsec'] = base64_encode(file_get_contents($_FILES['leapfile']['tmp_name']));
+			config_set_path('ntpd/leapsec', base64_encode(file_get_contents($_FILES['leapfile']['tmp_name'])));
 		}
 
 		if (!empty($_POST['serverauth'])) {
-			$config['ntpd']['serverauth'] = $_POST['serverauth'];
-			$config['ntpd']['serverauthkey'] = base64_encode(trim($_POST['serverauthkey']));
-			$config['ntpd']['serverauthalgo'] = $_POST['serverauthalgo'];
+			config_set_path('ntpd/serverauth', $_POST['serverauth']);
+			config_set_path('ntpd/serverauthkey', base64_encode(trim($_POST['serverauthkey'])));
+			config_set_path('ntpd/serverauthalgo', $_POST['serverauthalgo']);
 		} elseif (isset($config['ntpd']['serverauth'])) {
 			config_del_path('ntpd/serverauth');
 			config_del_path('ntpd/serverauthkey');

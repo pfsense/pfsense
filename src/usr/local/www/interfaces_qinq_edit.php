@@ -204,7 +204,7 @@ if ($_POST['save']) {
 		}
 		if ($_POST['autogroup'] == "yes") {
 			if (!is_array($config['ifgroups']['ifgroupentry'])) {
-				$config['ifgroups']['ifgroupentry'] = array();
+				config_set_path('ifgroups/ifgroupentry', array());
 			}
 			$gid = null;
 			foreach ($config['ifgroups']['ifgroupentry'] as $idx => $group) {

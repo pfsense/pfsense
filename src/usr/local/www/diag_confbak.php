@@ -39,7 +39,7 @@ if (isset($_POST['backupcount'])) {
 
 	if (!$input_errors) {
 		if (is_numericint($_POST['backupcount'])) {
-			$config['system']['backupcount'] = $_POST['backupcount'];
+			config_set_path('system/backupcount', $_POST['backupcount']);
 			$changedescr = config_get_path('system/backupcount');
 		} elseif (empty($_POST['backupcount'])) {
 			config_del_path('system/backupcount');

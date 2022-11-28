@@ -138,11 +138,11 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 	if (!$input_errors) {
 		init_config_arr(array('syslog'));
-		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
-		$config['syslog']['nentries'] = (int)$_POST['nentries'];
+		config_set_path('syslog/reverse', $_POST['reverse'] ? true : false);
+		config_set_path('syslog/nentries', (int)$_POST['nentries']);
 		$pconfig['nentries'] = config_get_path('syslog/nentries');
 		if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
-			$config['syslog']['logfilesize'] = (int)$_POST['logfilesize'];
+			config_set_path('syslog/logfilesize', (int)$_POST['logfilesize']);
 			$pconfig['logfilesize'] = config_get_path('syslog/logfilesize');
 		} else {
 			config_del_path('syslog/logfilesize');
@@ -161,46 +161,46 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 					unlink_if_exists("{$g['varlog_path']}/{$lfile}.log.*");
 				}
 			}
-			$config['syslog']['logcompressiontype'] = $_POST['logcompressiontype'];
+			config_set_path('syslog/logcompressiontype', $_POST['logcompressiontype']);
 		}
 
-		$config['syslog']['format'] = $_POST['format'];
-		$config['syslog']['rotatecount'] = $_POST['rotatecount'];
-		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
-		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
-		$config['syslog']['remoteserver3'] = $_POST['remoteserver3'];
-		$config['syslog']['sourceip'] = $_POST['sourceip'];
-		$config['syslog']['ipproto'] = $_POST['ipproto'];
-		$config['syslog']['filter'] = $_POST['filter'] ? true : false;
-		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
-		$config['syslog']['auth'] = $_POST['auth'] ? true : false;
-		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
-		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
-		$config['syslog']['dpinger'] = $_POST['dpinger'] ? true : false;
-		$config['syslog']['hostapd'] = $_POST['hostapd'] ? true : false;
-		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
-		$config['syslog']['system'] = $_POST['system'] ? true : false;
-		$config['syslog']['resolver'] = $_POST['resolver'] ? true : false;
-		$config['syslog']['ppp'] = $_POST['ppp'] ? true : false;
-		$config['syslog']['routing'] = $_POST['routing'] ? true : false;
-		$config['syslog']['ntpd'] = $_POST['ntpd'] ? true : false;
-		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
-		$config['syslog']['logconfigchanges'] = $_POST['logconfigchanges'] ? "enabled" : "disabled";
-		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
+		config_set_path('syslog/format', $_POST['format']);
+		config_set_path('syslog/rotatecount', $_POST['rotatecount']);
+		config_set_path('syslog/remoteserver', $_POST['remoteserver']);
+		config_set_path('syslog/remoteserver2', $_POST['remoteserver2']);
+		config_set_path('syslog/remoteserver3', $_POST['remoteserver3']);
+		config_set_path('syslog/sourceip', $_POST['sourceip']);
+		config_set_path('syslog/ipproto', $_POST['ipproto']);
+		config_set_path('syslog/filter', $_POST['filter'] ? true : false);
+		config_set_path('syslog/dhcp', $_POST['dhcp'] ? true : false);
+		config_set_path('syslog/auth', $_POST['auth'] ? true : false);
+		config_set_path('syslog/portalauth', $_POST['portalauth'] ? true : false);
+		config_set_path('syslog/vpn', $_POST['vpn'] ? true : false);
+		config_set_path('syslog/dpinger', $_POST['dpinger'] ? true : false);
+		config_set_path('syslog/hostapd', $_POST['hostapd'] ? true : false);
+		config_set_path('syslog/logall', $_POST['logall'] ? true : false);
+		config_set_path('syslog/system', $_POST['system'] ? true : false);
+		config_set_path('syslog/resolver', $_POST['resolver'] ? true : false);
+		config_set_path('syslog/ppp', $_POST['ppp'] ? true : false);
+		config_set_path('syslog/routing', $_POST['routing'] ? true : false);
+		config_set_path('syslog/ntpd', $_POST['ntpd'] ? true : false);
+		config_set_path('syslog/disablelocallogging', $_POST['disablelocallogging'] ? true : false);
+		config_set_path('syslog/logconfigchanges', $_POST['logconfigchanges'] ? "enabled" : "disabled");
+		config_set_path('syslog/enable', $_POST['enable'] ? true : false);
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
 		$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
 		$oldnologbogons = isset($config['syslog']['nologbogons']);
 		$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
 		$oldnolognginx = isset($config['syslog']['nolognginx']);
-		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
-		$config['syslog']['nologdefaultpass'] = $_POST['logdefaultpass'] ? true : false;
-		$config['syslog']['nologbogons'] = $_POST['logbogons'] ? false : true;
-		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
-		$config['syslog']['nolognginx'] = $_POST['lognginx'] ? false : true;
-		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
+		config_set_path('syslog/nologdefaultblock', $_POST['logdefaultblock'] ? false : true);
+		config_set_path('syslog/nologdefaultpass', $_POST['logdefaultpass'] ? true : false);
+		config_set_path('syslog/nologbogons', $_POST['logbogons'] ? false : true);
+		config_set_path('syslog/nologprivatenets', $_POST['logprivatenets'] ? false : true);
+		config_set_path('syslog/nolognginx', $_POST['lognginx'] ? false : true);
+		config_set_path('syslog/rawfilter', $_POST['rawfilter'] ? true : false);
 
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
-			$config['syslog']['filterdescriptions'] = $_POST['filterdescriptions'];
+			config_set_path('syslog/filterdescriptions', $_POST['filterdescriptions']);
 		} else {
 			config_del_path('syslog/filterdescriptions');
 		}

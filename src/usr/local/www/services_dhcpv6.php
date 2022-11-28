@@ -420,7 +420,7 @@ if (isset($_POST['apply'])) {
 
 	if (!$input_errors) {
 		if (!is_array($config['dhcpdv6'])) {
-			$config['dhcpdv6'] = array();
+			config_set_path('dhcpdv6', array());
 		}
 		if (!is_array($config['dhcpdv6'][$if])) {
 			$config['dhcpdv6'][$if] = array();

@@ -173,27 +173,27 @@ if ($_POST) {
 		}
 
 		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
-			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
+			config_set_path('system/webgui/session_timeout', intval($_POST['session_timeout']));
 		} else {
 			config_del_path('system/webgui/session_timeout');
 		}
 
 		if ($_POST['authmode']) {
-			$config['system']['webgui']['authmode'] = $_POST['authmode'];
+			config_set_path('system/webgui/authmode', $_POST['authmode']);
 		} else {
 			config_del_path('system/webgui/authmode');
 		}
 
-		$config['system']['webgui']['pwhash'] = $_POST['pwhash'] ? $_POST['pwhash'] : 'bcrypt';
+		config_set_path('system/webgui/pwhash', $_POST['pwhash'] ? $_POST['pwhash'] : 'bcrypt');
 
 		if (isset($_POST['shellauth'])) {
-			$config['system']['webgui']['shellauth'] = true;
+			config_set_path('system/webgui/shellauth', true);
 		} else {
 			config_del_path('system/webgui/shellauth');
 		}
 
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
-			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
+			config_set_path('system/webgui/auth_refresh_time', intval($_POST['auth_refresh_time']));
 		} else {
 			config_del_path('system/webgui/auth_refresh_time');
 		}

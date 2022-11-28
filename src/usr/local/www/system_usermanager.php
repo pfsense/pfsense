@@ -464,7 +464,7 @@ if ($_POST['save'] && !$read_only) {
 					$_POST['ecname']);
 
 				if (!is_array($config['cert'])) {
-					$config['cert'] = array();
+					config_set_path('cert', array());
 				}
 				$config['cert'][] = $cert;
 				$userent['cert'][] = $cert['refid'];

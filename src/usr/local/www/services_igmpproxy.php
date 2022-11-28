@@ -77,11 +77,11 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		if (isset($pconfig['enable'])) {
-			$config['igmpproxy']['enable'] = true;
+			config_set_path('igmpproxy/enable', true);
 		} else {
 			config_del_path('igmpproxy/enable');
 		}
-		$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
+		config_set_path('syslog/igmpxverbose', $_POST['igmpxverbose'] ? true : false);
 		write_config("IGMP Proxy settings saved");
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");

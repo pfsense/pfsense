@@ -38,55 +38,55 @@ if ($_POST) {
 
 	init_config_arr(array('system', 'firmware'));
 	if ($_POST['disablecheck'] == "yes") {
-		$config['system']['firmware']['disablecheck'] = true;
+		config_set_path('system/firmware/disablecheck', true);
 	} elseif (isset($config['system']['firmware']['disablecheck'])) {
 		config_del_path('system/firmware/disablecheck');
 	}
 
 	init_config_arr(array('system', 'gitsync'));
 	if ($_POST['synconupgrade'] == "yes") {
-		$config['system']['gitsync']['synconupgrade'] = true;
+		config_set_path('system/gitsync/synconupgrade', true);
 	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
 		config_del_path('system/gitsync/synconupgrade');
 	}
 
-	$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
-	$config['system']['gitsync']['branch'] = $_POST['branch'];
+	config_set_path('system/gitsync/repositoryurl', $_POST['repositoryurl']);
+	config_set_path('system/gitsync/branch', $_POST['branch']);
 
 	foreach ($repos as $repo) {
 		if ($repo['name'] == $_POST['fwbranch']) {
-			$config['system']['pkg_repo_conf_path'] = $repo['path'];
+			config_set_path('system/pkg_repo_conf_path', $repo['path']);
 			pkg_switch_repo($repo['path']);
 			break;
 		}
 	}
 
 	if ($_POST['minimal'] == "yes") {
-		$config['system']['gitsync']['minimal'] = true;
+		config_set_path('system/gitsync/minimal', true);
 	} else {
 		config_del_path('system/gitsync/minimal');
 	}
 
 	if ($_POST['diff'] == "yes") {
-		$config['system']['gitsync']['diff'] = true;
+		config_set_path('system/gitsync/diff', true);
 	} else {
 		config_del_path('system/gitsync/diff');
 	}
 
 	if ($_POST['show_files'] == "yes") {
-		$config['system']['gitsync']['show_files'] = true;
+		config_set_path('system/gitsync/show_files', true);
 	} else {
 		config_del_path('system/gitsync/show_files');
 	}
 
 	if ($_POST['show_command'] == "yes") {
-		$config['system']['gitsync']['show_command'] = true;
+		config_set_path('system/gitsync/show_command', true);
 	} else {
 		config_del_path('system/gitsync/show_command');
 	}
 
 	if ($_POST['dryrun'] == "yes") {
-		$config['system']['gitsync']['dryrun'] = true;
+		config_set_path('system/gitsync/dryrun', true);
 	} else {
 		config_del_path('system/gitsync/dryrun');
 	}

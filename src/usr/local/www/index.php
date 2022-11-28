@@ -103,7 +103,7 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 
 ##if no config entry found, initialize config entry
 if (!is_array($config['widgets'])) {
-	$config['widgets'] = array();
+	config_set_path('widgets', array());
 }
 
 if (!is_array($user_settings['widgets'])) {

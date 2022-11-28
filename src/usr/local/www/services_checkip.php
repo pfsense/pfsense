@@ -53,7 +53,7 @@ if ($_POST['act'] == "del") {
 			config_del_path('checkipservices/disable_factory_default');
 			$wc_msg = gettext('Enabled the default check IP service.');
 		} else {
-			$config['checkipservices']['disable_factory_default'] = true;
+			config_set_path('checkipservices/disable_factory_default', true);
 			$wc_msg = gettext('Disabled the default check IP service.');
 		}
 		$dirty = true;

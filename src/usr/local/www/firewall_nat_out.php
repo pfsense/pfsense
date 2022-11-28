@@ -51,7 +51,7 @@ if (isset($_REQUEST['order-store'])) {
 }
 
 if (!isset($config['nat']['outbound']['mode'])) {
-	$config['nat']['outbound']['mode'] = "automatic";
+	config_set_path('nat/outbound/mode', "automatic");
 }
 
 $mode = $config['nat']['outbound']['mode'];

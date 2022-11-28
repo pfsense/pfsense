@@ -288,7 +288,7 @@ if (!empty($_REQUEST['id'])) {
 	if ($_REQUEST['refrbranch']) {
 		foreach ($repos as $repo) {
 			if ($repo['name'] == $_POST['fwbranch']) {
-				$config['system']['pkg_repo_conf_path'] = $repo['path'];
+				config_set_path('system/pkg_repo_conf_path', $repo['path']);
 				pkg_switch_repo($repo['path']);
 				write_config(gettext("Saved firmware branch setting."));
 				break;

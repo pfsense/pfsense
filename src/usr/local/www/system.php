@@ -46,12 +46,12 @@ $arr_gateways = return_gateways_array();
 
 // set default columns to two if unset
 if (!isset($config['system']['webgui']['dashboardcolumns'])) {
-	$config['system']['webgui']['dashboardcolumns'] = 2;
+	config_set_path('system/webgui/dashboardcolumns', 2);
 }
 
 // set default language if unset
 if (!isset($config['system']['language'])) {
-	$config['system']['language'] = $g['language'];
+	config_set_path('system/language', $g['language']);
 }
 
 $dnshost_counter = 1;
@@ -286,70 +286,70 @@ if ($_POST) {
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 
 		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
-			$config['system']['language'] = $_POST['language'];
+			config_set_path('system/language', $_POST['language']);
 			set_language();
 		}
 
 		config_del_path('system/webgui/interfacessort');
-		$config['system']['webgui']['interfacessort'] = $_POST['interfacessort'] ? true : false;
+		config_set_path('system/webgui/interfacessort', $_POST['interfacessort'] ? true : false);
 
 		config_del_path('system/webgui/webguileftcolumnhyper');
-		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
+		config_set_path('system/webgui/webguileftcolumnhyper', $_POST['webguileftcolumnhyper'] ? true : false);
 
 		config_del_path('system/webgui/disablealiaspopupdetail');
-		$config['system']['webgui']['disablealiaspopupdetail'] = $_POST['disablealiaspopupdetail'] ? true : false;
+		config_set_path('system/webgui/disablealiaspopupdetail', $_POST['disablealiaspopupdetail'] ? true : false);
 
 		config_del_path('system/webgui/dashboardavailablewidgetspanel');
-		$config['system']['webgui']['dashboardavailablewidgetspanel'] = $_POST['dashboardavailablewidgetspanel'] ? true : false;
+		config_set_path('system/webgui/dashboardavailablewidgetspanel', $_POST['dashboardavailablewidgetspanel'] ? true : false);
 
 		config_del_path('system/webgui/systemlogsfilterpanel');
-		$config['system']['webgui']['systemlogsfilterpanel'] = $_POST['systemlogsfilterpanel'] ? true : false;
+		config_set_path('system/webgui/systemlogsfilterpanel', $_POST['systemlogsfilterpanel'] ? true : false);
 
 		config_del_path('system/webgui/systemlogsmanagelogpanel');
-		$config['system']['webgui']['systemlogsmanagelogpanel'] = $_POST['systemlogsmanagelogpanel'] ? true : false;
+		config_set_path('system/webgui/systemlogsmanagelogpanel', $_POST['systemlogsmanagelogpanel'] ? true : false);
 
 		config_del_path('system/webgui/statusmonitoringsettingspanel');
-		$config['system']['webgui']['statusmonitoringsettingspanel'] = $_POST['statusmonitoringsettingspanel'] ? true : false;
+		config_set_path('system/webgui/statusmonitoringsettingspanel', $_POST['statusmonitoringsettingspanel'] ? true : false);
 
 //		if ($_POST['dashboardperiod']) {
 //			$config['widgets']['period'] = $_POST['dashboardperiod'];
 //		}
 
 		if ($_POST['webguicss']) {
-			$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
+			config_set_path('system/webgui/webguicss', $_POST['webguicss']);
 		} else {
 			config_del_path('system/webgui/webguicss');
 		}
 
-		$config['system']['webgui']['roworderdragging'] = $_POST['roworderdragging'] ? true:false;
+		config_set_path('system/webgui/roworderdragging', $_POST['roworderdragging'] ? true:false);
 
 		if ($_POST['logincss']) {
-			$config['system']['webgui']['logincss'] = $_POST['logincss'];
+			config_set_path('system/webgui/logincss', $_POST['logincss']);
 		} else {
 			config_del_path('system/webgui/logincss');
 		}
 
-		$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
+		config_set_path('system/webgui/loginshowhost', $_POST['loginshowhost'] ? true:false);
 
 		if ($_POST['webguifixedmenu']) {
-			$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
+			config_set_path('system/webgui/webguifixedmenu', $_POST['webguifixedmenu']);
 		} else {
 			config_del_path('system/webgui/webguifixedmenu');
 		}
 
 		if ($_POST['webguihostnamemenu']) {
-			$config['system']['webgui']['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
+			config_set_path('system/webgui/webguihostnamemenu', $_POST['webguihostnamemenu']);
 		} else {
 			config_del_path('system/webgui/webguihostnamemenu');
 		}
 
 		if ($_POST['dashboardcolumns']) {
-			$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
+			config_set_path('system/webgui/dashboardcolumns', $_POST['dashboardcolumns']);
 		} else {
 			config_del_path('system/webgui/dashboardcolumns');
 		}
 
-		$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
+		config_set_path('system/webgui/requirestatefilter', $_POST['requirestatefilter'] ? true : false);
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -372,10 +372,10 @@ if ($_POST) {
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
 
 		config_del_path('system/dnsallowoverride');
-		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
+		config_set_path('system/dnsallowoverride', $_POST['dnsallowoverride'] ? true : false);
 
 		if ($_POST['dnslocalhost']) {
-			$config['system']['dnslocalhost'] = $_POST['dnslocalhost'];
+			config_set_path('system/dnslocalhost', $_POST['dnslocalhost']);
 		} else {
 			config_del_path('system/dnslocalhost');
 		}

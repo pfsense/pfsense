@@ -39,7 +39,7 @@ require_once("voucher.inc");
 $cpzone = strtolower($_REQUEST['zone']);
 
 if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
+	config_set_path('captiveportal', array());
 }
 
 init_config_arr(array('captiveportal'));

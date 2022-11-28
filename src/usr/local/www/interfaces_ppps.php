@@ -68,11 +68,11 @@ if ($_POST['act'] == "del") {
 }
 
 if (!is_array($config['ppps'])) {
-	$config['ppps'] = array();
+	config_set_path('ppps', array());
 }
 
 if (!is_array($config['ppps']['ppp'])) {
-	$config['ppps']['ppp'] = array();
+	config_set_path('ppps/ppp', array());
 }
 
 $a_ppps = config_get_path('ppps/ppp');

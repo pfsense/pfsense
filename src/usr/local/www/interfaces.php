@@ -1704,10 +1704,10 @@ function handle_wireless_post() {
 
 	if ($_POST['persistcommonwireless'] == "yes") {
 		if (!is_array($config['wireless'])) {
-			$config['wireless'] = array();
+			config_set_path('wireless', array());
 		}
 		if (!is_array(config_get_path('wireless/interfaces'))) {
-			$config['wireless']['interfaces'] = array();
+			config_set_path('wireless/interfaces', array());
 		}
 		if (!is_array($config['wireless']['interfaces'][$wlanbaseif])) {
 			$config['wireless']['interfaces'][$wlanbaseif] = array();

@@ -678,7 +678,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				}
 
 				if (!is_array($config['ca'])) {
-					$config['ca'] = array();
+					config_set_path('ca', array());
 				}
 
 				foreach ($config['ca'] as $ca) {
@@ -727,7 +727,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				}
 
 				if (!is_array($config['cert'])) {
-					$config['cert'] = array();
+					config_set_path('cert', array());
 				}
 
 				foreach ($config['cert'] as $ca) {

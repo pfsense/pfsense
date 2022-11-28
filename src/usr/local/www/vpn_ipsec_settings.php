@@ -188,7 +188,7 @@ if ($_POST['save']) {
 			if (!isset($config['ipsec']['compression'])) {
 				$needsrestart = true;
 			}
-			$config['ipsec']['compression'] = true;
+			config_set_path('ipsec/compression', true);
 		} elseif (isset($config['ipsec']['compression'])) {
 			$needsrestart = true;
 			config_del_path('ipsec/compression');
@@ -198,7 +198,7 @@ if ($_POST['save']) {
 			if (!isset($config['ipsec']['pkcs11support'])) {
 				$needsrestart = true;
 			}
-			$config['ipsec']['pkcs11support'] = true;
+			config_set_path('ipsec/pkcs11support', true);
 		} elseif (isset($config['ipsec']['pkcs11support'])) {
 			foreach ($a_phase1 as $ph1ent) {
 				if (($ph1ent['authentication_method'] == 'pkcs11') &&
@@ -220,7 +220,7 @@ if ($_POST['save']) {
 			if (!isset($config['ipsec']['enableinterfacesuse'])) {
 				$needsrestart = true;
 			}
-			$config['ipsec']['enableinterfacesuse'] = true;
+			config_set_path('ipsec/enableinterfacesuse', true);
 		} elseif (isset($config['ipsec']['enableinterfacesuse'])) {
 			$needsrestart = true;
 			config_del_path('ipsec/enableinterfacesuse');
@@ -230,20 +230,20 @@ if ($_POST['save']) {
 			if (!isset($config['ipsec']['unityplugin'])) {
 				$needsrestart = true;
 			}
-			$config['ipsec']['unityplugin'] = true;
+			config_set_path('ipsec/unityplugin', true);
 		} elseif (isset($config['ipsec']['unityplugin'])) {
 			$needsrestart = true;
 			config_del_path('ipsec/unityplugin');
 		}
 
 		if ($_POST['strictcrlpolicy'] == "yes") {
-			$config['ipsec']['strictcrlpolicy'] = true;
+			config_set_path('ipsec/strictcrlpolicy', true);
 		} elseif (isset($config['ipsec']['strictcrlpolicy'])) {
 			config_del_path('ipsec/strictcrlpolicy');
 		}
 
 		if ($_POST['makebeforebreak'] == "yes") {
-			$config['ipsec']['makebeforebreak'] = true;
+			config_set_path('ipsec/makebeforebreak', true);
 		} elseif (isset($config['ipsec']['makebeforebreak'])) {
 			config_del_path('ipsec/makebeforebreak');
 		}
@@ -255,26 +255,26 @@ if ($_POST['save']) {
 				config_del_path('ipsec/noshuntlaninterfaces');
 			}
 		} else {
-			$config['ipsec']['noshuntlaninterfaces'] = true;
+			config_set_path('ipsec/noshuntlaninterfaces', true);
 		}
 
 		if ($_POST['ipsecbypass'] == "yes") {
-			$config['ipsec']['ipsecbypass'] = true;
+			config_set_path('ipsec/ipsecbypass', true);
 		} else {
 			config_del_path('ipsec/ipsecbypass');
 		}
 
 		if ($_POST['async_crypto'] == "yes") {
-			$config['ipsec']['async_crypto'] = "enabled";
+			config_set_path('ipsec/async_crypto', "enabled");
 		} else {
-			$config['ipsec']['async_crypto'] = "disabled";
+			config_set_path('ipsec/async_crypto', "disabled");
 		}
 
 		if ($_POST['acceptunencryptedmainmode'] == "yes") {
 			if (!isset($config['ipsec']['acceptunencryptedmainmode'])) {
 				$needsrestart = true;
 			}
-			$config['ipsec']['acceptunencryptedmainmode'] = true;
+			config_set_path('ipsec/acceptunencryptedmainmode', true);
 		} elseif (isset($config['ipsec']['acceptunencryptedmainmode'])) {
 			$needsrestart = true;
 			config_del_path('ipsec/acceptunencryptedmainmode');
@@ -284,7 +284,7 @@ if ($_POST['save']) {
 			if (!isset($config['ipsec']['maxexchange']) || ($pconfig['maxexchange'] != $config['ipsec']['maxexchange'])) {
 				$needsrestart = true;
 			}
-			$config['ipsec']['maxexchange'] = (int)$_POST['maxexchange'];
+			config_set_path('ipsec/maxexchange', (int)$_POST['maxexchange']);
 			$pconfig['maxexchange'] = config_get_path('ipsec/maxexchange');
 		} elseif (isset($config['ipsec']['maxexchange'])) {
 			$needsrestart = true;
@@ -295,7 +295,7 @@ if ($_POST['save']) {
 			if (!isset($config['ipsec']['dns-interval']) || ($pconfig['dns-interval'] != $config['ipsec']['dns-interval'])) {
 				$needsfilterdnsrestart = true;
 			}
-			$config['ipsec']['dns-interval'] = (int)$_POST['dns-interval'];
+			config_set_path('ipsec/dns-interval', (int)$_POST['dns-interval']);
 			$pconfig['dns-interval'] = config_get_path('ipsec/dns-interval');
 		} elseif (isset($config['ipsec']['dns-interval'])) {
 			$needsfilterdnsrestart = true;
@@ -303,19 +303,19 @@ if ($_POST['save']) {
 		}
 
 		if (!empty($_POST['uniqueids'])) {
-			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
+			config_set_path('ipsec/uniqueids', $_POST['uniqueids']);
 		} else if (isset($config['ipsec']['uniqueids'])) {
 			config_del_path('ipsec/uniqueids');
 		}
 
 		if (!empty($_POST['filtermode'])) {
-			$config['ipsec']['filtermode'] = $_POST['filtermode'];
+			config_set_path('ipsec/filtermode', $_POST['filtermode']);
 		} else if (isset($config['ipsec']['filtermode'])) {
 			config_del_path('ipsec/filtermode');
 		}
 
 		if (!empty($_POST['ikev2_retransmit_tries'])) {
-			$config['ipsec']['ikev2_retransmit_tries'] = $_POST['ikev2_retransmit_tries'];
+			config_set_path('ipsec/ikev2_retransmit_tries', $_POST['ikev2_retransmit_tries']);
 			$needsrestart = false;
 		} else if (isset($config['ipsec']['ikev2_retransmit_tries'])) {
 			config_del_path('ipsec/ikev2_retransmit_tries');
@@ -323,7 +323,7 @@ if ($_POST['save']) {
 		}
 
 		if (!empty($_POST['ikev2_retransmit_timeout'])) {
-			$config['ipsec']['ikev2_retransmit_timeout'] = $_POST['ikev2_retransmit_timeout'];
+			config_set_path('ipsec/ikev2_retransmit_timeout', $_POST['ikev2_retransmit_timeout']);
 			$needsrestart = false;
 		} else if (isset($config['ipsec']['ikev2_retransmit_timeout'])) {
 			config_del_path('ipsec/ikev2_retransmit_timeout');
@@ -331,7 +331,7 @@ if ($_POST['save']) {
 		}
 
 		if (!empty($_POST['ikev2_retransmit_base'])) {
-			$config['ipsec']['ikev2_retransmit_base'] = $_POST['ikev2_retransmit_base'];
+			config_set_path('ipsec/ikev2_retransmit_base', $_POST['ikev2_retransmit_base']);
 			$needsrestart = false;
 		} else if (isset($config['ipsec']['ikev2_retransmit_base'])) {
 			config_del_path('ipsec/ikev2_retransmit_base');
@@ -339,7 +339,7 @@ if ($_POST['save']) {
 		}
 
 		if (!empty($_POST['ikev2_retransmit_jitter'])) {
-			$config['ipsec']['ikev2_retransmit_jitter'] = $_POST['ikev2_retransmit_jitter'];
+			config_set_path('ipsec/ikev2_retransmit_jitter', $_POST['ikev2_retransmit_jitter']);
 			$needsrestart = false;
 		} else if (isset($config['ipsec']['ikev2_retransmit_jitter'])) {
 			config_del_path('ipsec/ikev2_retransmit_jitter');
@@ -347,7 +347,7 @@ if ($_POST['save']) {
 		}
 
 		if (!empty($_POST['ikev2_retransmit_limit'])) {
-			$config['ipsec']['ikev2_retransmit_limit'] = $_POST['ikev2_retransmit_limit'];
+			config_set_path('ipsec/ikev2_retransmit_limit', $_POST['ikev2_retransmit_limit']);
 			$needsrestart = false;
 		} else if (isset($config['ipsec']['ikev2_retransmit_limit'])) {
 			config_del_path('ipsec/ikev2_retransmit_limit');
@@ -358,17 +358,17 @@ if ($_POST['save']) {
 			config_del_path('ipsec/bypassrules/rule');
 		}
 
-		$config['ipsec']['bypassrules'] = $bypassrules;
+		config_set_path('ipsec/bypassrules', $bypassrules);
 
 		if (!empty($_POST['port_nat_t'])) {
-			$config['ipsec']['port_nat_t'] = $_POST['port_nat_t'];
+			config_set_path('ipsec/port_nat_t', $_POST['port_nat_t']);
 		} else {
 			config_del_path('ipsec/port_nat_t');
 			$pconfig['port_nat_t'] = '';
 		}
 
 		if (!empty($_POST['port'])) {
-			$config['ipsec']['port'] = $_POST['port'];
+			config_set_path('ipsec/port', $_POST['port']);
 		} else {
 			config_del_path('ipsec/port');
 			$pconfig['port'] = '';

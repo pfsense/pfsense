@@ -125,17 +125,17 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		init_config_arr(array('dhcrelay'));
-		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
+		config_set_path('dhcrelay/enable', $_POST['enable'] ? true : false);
 		if (isset($_POST['interface']) &&
 		    is_array($_POST['interface'])) {
-			$config['dhcrelay']['interface'] = implode(",",
-			    $_POST['interface']);
+			config_set_path('dhcrelay/interface',
+					implode(",", $_POST['interface']));
 		} else {
 			config_del_path('dhcrelay/interface');
 		}
-		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
-		$config['dhcrelay']['server'] = $svrlist;
-		$config['dhcrelay']['carpstatusvip'] = $_POST['carpstatusvip'];
+		config_set_path('dhcrelay/agentoption', $_POST['agentoption'] ? true : false);
+		config_set_path('dhcrelay/server', $svrlist);
+		config_set_path('dhcrelay/carpstatusvip', $_POST['carpstatusvip']);
 
 		write_config("DHCP Relay settings saved");
 

@@ -1860,9 +1860,15 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 		 * see https://redmine.pfsense.org/issues/11662 */
 		if (platform_booting()) {
 			interfaces_qinq_configure(true);
-			/* reconfigure bridges with QinQ interfaces,
-			 * see https://redmine.pfsense.org/issues/13225 */
-			interfaces_bridge_configure(1);
+			/* Configure all qinq interface addresses and add them to their
+			 * bridges. See https://redmine.pfsense.org/issues/13225,
+			 * https://redmine.pfsense.org/issues/13666 */
+			foreach (config_get_path('interfaces', []) as $ifname => $iface) {
+				$qinq = interface_is_qinq($iface['if']);
+				if ($qinq && strstr($qinq['if'], "ovpn")) {
+					interface_configure($ifname);
+				}
+			}
 		}
 	}
 }

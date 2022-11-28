@@ -897,7 +897,11 @@ function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = fals
 	if ($flagsapplied == false) {
 		$mtu = get_interface_mtu($bridgeif);
 		$mtum = get_interface_mtu($interface);
-		if ($mtu != $mtum && !(substr($interface, 0, 3) == "gif" && $mtu <= 1500)) {
+		/* Reconfigure the bridge mtu if the new member's MTU is lower, or
+		 * reconfigure a non-gif interface MTU if the bridge's MTU is lower */
+		if ($mtu > $mtum) {
+			pfSense_interface_mtu($bridgeif, $mtum);
+		} else if ($mtu < $mtum && !(substr($interface, 0, 3) == "gif" && $mtu <= 1500)) {
 			pfSense_interface_mtu($interface, $mtu);
 		}
 
@@ -4257,6 +4261,13 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 	}
 
+	if (($linkupevent == false) || (substr($realif, 0, 4) == "ovpn") || (substr($realif, 0, 5) == "ipsec")) {
+		$bridgetmp = link_interface_to_bridge($interface);
+		if (!empty($bridgetmp)) {
+			interface_bridge_add_member($bridgetmp, $realif);
+		}
+	}
+
 	if (!platform_booting()) {
 		link_interface_to_vips($interface, "update");
 
@@ -4268,14 +4279,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		if ($tunnelif != 'gif') {
 			$gif = link_interface_to_tunnelif($interface, 'gif');
 			array_walk($gif, 'interface_gif_configure');
-		}
-
-		if (($linkupevent == false) || (substr($realif, 0, 4) == "ovpn") || (substr($realif, 0, 5) == "ipsec")) {
-			unset($bridgetmp);
-			$bridgetmp = link_interface_to_bridge($interface);
-			if (!empty($bridgetmp)) {
-				interface_bridge_add_member($bridgetmp, $realif);
-			}
 		}
 
 		$grouptmp = link_interface_to_group($interface);

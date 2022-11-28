@@ -58,9 +58,9 @@ if ($_POST['act'] == "del") {
 		$input_errors[] = gettext("This point-to-point link cannot be deleted because it is still being used as an interface.");
 	} elseif (is_array($config['ppps']['ppp']) && is_array($config['ppps']['ppp'][$_POST['id']])) {
 
-		unset($config['ppps']['ppp'][$_POST['id']]['pppoe-reset-type']);
+		config_del_path("ppps/ppp/{$_POST['id']}/pppoe-reset-type");
 		handle_pppoe_reset($config['ppps']['ppp'][$_POST['id']]);
-		unset($config['ppps']['ppp'][$_POST['id']]);
+		config_del_path("ppps/ppp/{$_POST['id']}");
 		write_config("PPP interface deleted");
 		header("Location: interfaces_ppps.php");
 		exit;

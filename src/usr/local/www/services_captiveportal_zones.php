@@ -48,7 +48,7 @@ if ($_POST['act'] == "del" && !empty($_POST['zone'])) {
 		captiveportal_configure_zone($a_cp[$cpzone]);
 		unset($a_cp[$cpzone]);
 		if (isset($config['voucher'][$cpzone])) {
-			unset($config['voucher'][$cpzone]);
+			config_del_path("voucher/{$cpzone}");
 		}
 		unlink_if_exists("/var/db/captiveportal{$cpzone}.db");
 		unlink_if_exists("/var/db/captiveportal_usedmacs_{$cpzone}.db");

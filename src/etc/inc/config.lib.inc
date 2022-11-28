@@ -508,10 +508,7 @@ function convert_config() {
 				continue;
 			}
 			if (isset($already_run[$migration_function])) {
-				/* Already executed, skip now */
-				unset($config['system']
-				    ['already_run_config_upgrade']
-				    [$migration_function]);
+				config_del_path("system/already_run_config_upgrade/{$migration_function}");
 			} else {
 				$migration_function();
 			}

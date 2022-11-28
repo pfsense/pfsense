@@ -128,7 +128,7 @@ if ($_POST['act'] == "del") {
 	$serverdeleted = $a_server[$_POST['id']]['name'];
 	foreach ($config['system']['authserver'] as $k => $as) {
 		if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
-			unset($config['system']['authserver'][$k]);
+			config_del_path("system/authserver/{$k}");
 		}
 	}
 

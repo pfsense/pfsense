@@ -177,9 +177,9 @@ function delete_gateway_item($id) {
 	}
 
 	if ($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway'] == $a_gateways[$id]['name']) {
-		unset($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway']);
+		config_del_path("interfaces/{$a_gateways[$id]['friendlyiface']}/gateway");
 	}
-	unset($config['gateways']['gateway_item'][$a_gateways[$id]['attribute']]);
+	config_del_path("gateways/gateway_item/{$a_gateways[$id]['attribute']}");
 }
 
 unset($input_errors);

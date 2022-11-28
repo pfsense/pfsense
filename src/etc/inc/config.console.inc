@@ -362,18 +362,18 @@ EOD;
 					$config['interfaces']['opt' . ($i+1)]['wireless'] = array();
 				}
 			} else {
-				unset($config['interfaces']['opt' . ($i+1)]['wireless']);
+				config_del_path('interfaces/opt' . ($i+1) . '/wireless');
 			}
 
 			if (empty($config['interfaces']['opt' . ($i+1)]['descr'])) {
 				$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
-				unset($config['interfaces']['opt' . ($i+1)]['enable']);
+				config_del_path('interfaces/opt' . ($i+1) . '/enable');
 			}
 		}
 
 		/* remove all other (old) optional interfaces */
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++) {
-			unset($config['interfaces']['opt' . ($i+1)]);
+			config_del_path('interfaces/opt' . ($i+1));
 		}
 
 		printf(gettext("%sWriting configuration..."), "\n");

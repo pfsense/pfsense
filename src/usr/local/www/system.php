@@ -438,7 +438,7 @@ if ($_POST) {
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
 				} else {
 					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
-					unset($config['system'][$outdnsgwconfigname]);
+					config_del_path("system/{$outdnsgwconfigname}");
 					$pconfig[$outdnsgwname] = "";
 				}
 				if ($_POST[$dnshostname]) {
@@ -446,7 +446,7 @@ if ($_POST) {
 					$pconfig[$outdnshostname] = $thisdnshostname;
 				} else {
 					// Note: when no DNS hostname is chosen, unset the value.
-					unset($config['system'][$outdnshostconfigname]);
+					config_del_path("system/{$outdnshostconfigname}");
 					$pconfig[$outdnshostname] = "";
 				}
 				$outdnscounter++;
@@ -462,7 +462,7 @@ if ($_POST) {
 		$olddnsgwconfigname = "dns{$oldgwcounter}gw";
 		while (isset($config['system'][$olddnsgwconfigname])) {
 			if (empty($config['system']['dnsserver'][$oldgwcounter - 1])) {
-				unset($config['system'][$olddnsgwconfigname]);
+				config_del_path("system/{$olddnsgwconfigname}");
 			}
 			$oldgwcounter++;
 			$olddnsgwconfigname = "dns{$oldgwcounter}gw";

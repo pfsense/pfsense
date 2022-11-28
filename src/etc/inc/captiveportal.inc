@@ -828,7 +828,7 @@ function captiveportal_prune_old_automac() {
 					$writecfg = true;
 					captiveportal_logportalauth($temac['username'], $temac['mac'],
 					    $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");
-					unset($config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]]);
+					config_del_path("captiveportal/{$cpzone}/passthrumac/{$tmpvoucherdb[$emac['username']]}");
 				}
 				$tmpvoucherdb[$emac['username']] = $eid;
 			}
@@ -1931,7 +1931,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 				}
 
 				captiveportal_passthrumac_delete_entry($macent);
-				unset($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
+				config_del_path("captiveportal/{$cpzone}/passthrumac/{$idx}");
 			}
 		}
 	}

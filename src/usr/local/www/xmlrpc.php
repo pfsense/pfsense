@@ -242,11 +242,11 @@ class pfsense_xmlrpc_server {
 			foreach ($config['captiveportal'] as $zone => $item) {
 				if (!isset($sections['captiveportal'][$zone])) {
 					$cpzone = $zone;
-					unset($config['captiveportal'][$cpzone]['enable']);
+					config_del_path("captiveportal/{$cpzone}/enable");
 					captiveportal_configure_zone($config['captiveportal'][$cpzone]);
-					unset($config['captiveportal'][$cpzone]);
+					config_del_path("captiveportal/{$cpzone}");
 					if (isset($config['voucher'][$cpzone])) {
-						unset($config['voucher'][$cpzone]);
+						config_del_path("voucher/{$cpzone}");
 					}
 					unlink_if_exists("/var/db/captiveportal{$cpzone}.db");
 					unlink_if_exists("/var/db/captiveportal_usedmacs_{$cpzone}.db");
@@ -440,7 +440,7 @@ class pfsense_xmlrpc_server {
 		foreach ($voucher as $zone => $item) {
 			/* No rolls on master, delete local ones */
 			if (!is_array($item['roll'])) {
-				unset($config['voucher'][$zone]['roll']);
+				config_del_path("voucher/{$zone}/roll");
 			}
 		}
 
@@ -495,7 +495,7 @@ class pfsense_xmlrpc_server {
 		 */
 		foreach ($l_rolls as $zone => $item) {
 			foreach ($item as $idx) {
-				unset($config['voucher'][$zone][$idx]);
+				config_del_path("voucher/{$zone}/{$idx}");
 			}
 		}
 

@@ -310,7 +310,7 @@ function execPost($post, $postfiles, $ui = true) {
 								}
 								if (!empty($config[$post['restorearea']][$post['restorearea'].'data'])) {
 									restore_xmldatafile($post['restorearea']);
-									unset($config[$post['restorearea']][$post['restorearea'].'data']);
+									config_del_path("{$post['restorearea']}/{$post['restorearea']}data");
 									$conf_change = true;
 								}
 								if ($conf_change) {
@@ -393,7 +393,7 @@ function execPost($post, $postfiles, $ui = true) {
 								foreach ($g['backuppath'] as $bk => $path) {
 									if (!empty($config[$bk][$bk.'data'])) {
 										restore_xmldatafile($bk);
-										unset($config[$bk][$bk.'data']);
+										config_del_path("{$bk}/{$bk}data");
 										$conf_change = true;
 									}
 								}

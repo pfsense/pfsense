@@ -1713,7 +1713,7 @@ function handle_wireless_post() {
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
 		}
 	} else if (isset($config['wireless']['interfaces'][$wlanbaseif])) {
-		unset($config['wireless']['interfaces'][$wlanbaseif]);
+		config_del_path("wireless/interfaces/{$wlanbaseif}");
 	}
 	if (isset($_POST['diversity']) && is_numeric($_POST['diversity'])) {
 		$wancfg['wireless']['diversity'] = $_POST['diversity'];

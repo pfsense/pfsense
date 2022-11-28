@@ -112,7 +112,7 @@ if ($_GET) {
 		$dontshow = true;
 		foreach ($config['filter']['rule'] as $key => $rule) {
 			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-				unset($config['filter']['rule'][$key]);
+				config_del_path("filter/rule/{$key}");
 			}
 		}
 

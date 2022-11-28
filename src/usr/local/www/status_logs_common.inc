@@ -718,7 +718,7 @@ function manage_log_code() {
 
 			# Clear out the specific log settings and leave only the applied settings to override the general logging options (global) settings.
 			if (isset($config['syslog'][$specific_log])) {
-				unset($config['syslog'][$specific_log]);
+				config_del_path("syslog/{$specific_log}");
 			}
 			init_config_arr(array('syslog', $specific_log));
 

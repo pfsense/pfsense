@@ -228,7 +228,7 @@ if ($_POST['save']) {
 		$config['dhcpdv6'][$if]['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
 
 		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
-		unset($config['dhcpdv6'][$if]['radnsserver']);
+		config_del_path("dhcpdv6/{$if}/radnsserver");
 		if ($_POST['radns1']) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns1'];
 		}
@@ -245,7 +245,7 @@ if ($_POST['save']) {
 		if (count($pconfig['subnets'])) {
 			$config['dhcpdv6'][$if]['subnets']['item'] = $pconfig['subnets'];
 		} else {
-			unset($config['dhcpdv6'][$if]['subnets']);
+			config_del_path("dhcpdv6/{$if}/subnets");
 		}
 
 		write_config("Router Advertisements settings saved");

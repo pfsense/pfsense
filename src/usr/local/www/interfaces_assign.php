@@ -323,10 +323,10 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 					if ((substr($ifport, 0, 3) == 'gre') ||
 					    (substr($ifport, 0, 5) == 'gif')) {
-						unset($config['interfaces'][$ifname]['ipaddr']);
-						unset($config['interfaces'][$ifname]['subnet']);
-						unset($config['interfaces'][$ifname]['ipaddrv6']);
-						unset($config['interfaces'][$ifname]['subnetv6']);
+						config_del_path("interfaces/{$ifname}/ipaddr");
+						config_del_path("interfaces/{$ifname}/subnet");
+						config_del_path("interfaces/{$ifname}/ipaddrv6");
+						config_del_path("interfaces/{$ifname}/subnetv6");
 					}
 
 					/* check for wireless interfaces, set or clear ['wireless'] */
@@ -335,7 +335,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 							$config['interfaces'][$ifname]['wireless'] = array();
 						}
 					} else {
-						unset($config['interfaces'][$ifname]['wireless']);
+						config_del_path("interfaces/{$ifname}/wireless");
 					}
 
 					/* make sure there is a descr for all interfaces */
@@ -386,23 +386,22 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		} else if (interface_has_queue($id)) {
 			$input_errors[] = gettext("The interface has a traffic shaper queue configured.\nPlease remove all queues on the interface to continue.");
 		} else {
-			unset($config['interfaces'][$id]['enable']);
+			config_del_path("interfaces/{$id}/enable");
 			$realid = get_real_interface($id);
-			interface_bring_down($id);   /* down the interface */
-
-			unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
+			interface_bring_down($id);
+			config_del_path("interfaces/{$id}");	/* delete the specified OPTn or LAN*/
 
 			init_config_arr(['dhcpd', $id]);
 
 			if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
-				unset($config['dhcpd'][$id]);
+				config_del_path("dhcpd/{$id}");
 				services_dhcpd_configure('inet');
 			}
 
 			init_config_arr(['dhcpdv6', $id]);
 
 			if (is_array($config['dhcpdv6']) && is_array($config['dhcpdv6'][$id])) {
-				unset($config['dhcpdv6'][$id]);
+				config_del_path("dhcpdv6/{$id}");
 				services_dhcpd_configure('inet6');
 			}
 
@@ -410,7 +409,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			foreach ($config['filter']['rule'] as $x => $rule) {
 				if ($rule['interface'] == $id) {
-					unset($config['filter']['rule'][$x]);
+					config_del_path("filter/rule/{$x}");
 				}
 			}
 
@@ -418,7 +417,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		
 			foreach ($config['nat']['rule'] as $x => $rule) {
 				if ($rule['interface'] == $id) {
-					unset($config['nat']['rule'][$x]['interface']);
+					config_del_path("nat/rule/{$x}/interface");
 				}
 			}
 

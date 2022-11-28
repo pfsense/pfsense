@@ -441,9 +441,9 @@ if (isset($_POST['apply'])) {
 		$config['dhcpdv6'][$if]['maxleasetime'] = $_POST['maxtime'];
 		$config['dhcpdv6'][$if]['netmask'] = $_POST['netmask'];
 
-		unset($config['dhcpdv6'][$if]['winsserver']);
+		config_del_path("dhcpdv6/{$if}/winsserver");
 
-		unset($config['dhcpdv6'][$if]['dnsserver']);
+		config_del_path("dhcpdv6/{$if}/dnsserver");
 		if ($_POST['dns1']) {
 			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns1'];
 		}
@@ -471,7 +471,7 @@ if (isset($_POST['apply'])) {
 		$config['dhcpdv6'][$if]['ddnsreverse'] = ($_POST['ddnsreverse']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
-		unset($config['dhcpdv6'][$if]['ntpserver']);
+		config_del_path("dhcpdv6/{$if}/ntpserver");
 		if ($_POST['ntp1']) {
 			$config['dhcpdv6'][$if]['ntpserver'][] = $_POST['ntp1'];
 		}
@@ -490,7 +490,7 @@ if (isset($_POST['apply'])) {
 
 		// Handle the custom options rowhelper
 		if (isset($config['dhcpdv6'][$if]['numberoptions']['item'])) {
-			unset($config['dhcpdv6'][$if]['numberoptions']['item']);
+			config_del_path("dhcpdv6/{$if}/numberoptions/item");
 		}
 
 		$config['dhcpdv6'][$if]['numberoptions'] = $numberoptions;

@@ -120,7 +120,7 @@ function save_setupwizard_config(
 					$config['interfaces']['wan']['if'] = $oldif[0];
 				}
 				if ($type == "pppoe" || $type == "pptp")
-					unset($config['ppps']['ppp'][$pppid]);
+					config_del_path("ppps/ppp/{$pppid}");
 			}
 		}
 	}

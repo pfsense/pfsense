@@ -658,7 +658,7 @@ function apply_all_chosen_items() {
 		config_del_path('shaper/rule');
 	foreach ($config['filter']['rule'] as $key => $rule)
 		if ($rule['wizard'] == "yes")
-			unset($config['filter']['rule'][$key]);
+			config_del_path("filter/rule/{$key}");
 
 	/* restart the cached config */
 	unset($altq_list_queues);

@@ -115,10 +115,10 @@ if ($_GET) {
 			$dontshow = true;
 			foreach ($config['filter']['rule'] as $key => $rule) {
 				if (isset($rule['dnpipe'])) {
-					unset($config['filter']['rule'][$key]['dnpipe']);
+					config_del_path("filter/rule/{$key}/dnpipe");
 				}
 				if (isset($rule['pdnpipe'])) {
-					unset($config['filter']['rule'][$key]['pdnpipe']);
+					config_del_path("filter/rule/{$key}/pdnpipe");
 				}
 			}
 			if (write_config("Traffic Shaper: Reset all")) {

@@ -67,7 +67,7 @@ function upgrade_010_to_011() {
 	for ($i = 1; isset($config['interfaces']['wlan' . $i]); $i++) {
 
 		if (!$config['interfaces']['wlan' . $i]['if']) {
-			unset($config['interfaces']['wlan' . $i]);
+			config_del_path("interfaces/wlan{$i}");
 			continue;
 		}
 
@@ -90,7 +90,7 @@ function upgrade_010_to_011() {
 
 		$ifmap['wlan' . $i] = "opt" . $opti;
 
-		unset($config['interfaces']['wlan' . $i]);
+		config_del_path("interfaces/wlan{$i}");
 		$opti++;
 	}
 
@@ -108,7 +108,7 @@ function upgrade_010_to_011() {
 			/* remove the rule */
 			printf(gettext("%sWarning: filter rule removed " .
 				"(interface '%s' does not exist anymore)."), "\n", $fr['interface']);
-			unset($config['filter']['rule'][$i]);
+			config_del_path("filter/rule/{$i}");
 			continue;
 		}
 
@@ -120,7 +120,7 @@ function upgrade_010_to_011() {
 				/* remove the rule */
 				printf(gettext("%sWarning: filter rule removed " .
 					"(source network '%s' does not exist anymore)."), "\n", $fr['source']['network']);
-				unset($config['filter']['rule'][$i]);
+				config_del_path("filter/rule/{$i}");
 				continue;
 			}
 		}
@@ -133,7 +133,7 @@ function upgrade_010_to_011() {
 				/* remove the rule */
 				printf(gettext("%sWarning: filter rule removed " .
 					"(destination network '%s' does not exist anymore)."), "\n", $fr['destination']['network']);
-				unset($config['filter']['rule'][$i]);
+				config_del_path("filter/rule/{$i}");
 				continue;
 			}
 		}
@@ -154,7 +154,7 @@ function upgrade_010_to_011() {
 				/* remove the rule */
 				printf(gettext("%sWarning: traffic shaper rule removed " .
 					"(interface '%s' does not exist anymore)."), "\n", $fr['interface']);
-				unset($config['pfqueueing']['rule'][$i]);
+				config_del_path("pfqueueing/rule/{$i}");
 				continue;
 			}
 
@@ -166,7 +166,7 @@ function upgrade_010_to_011() {
 					/* remove the rule */
 					printf(gettext("%sWarning: traffic shaper rule removed " .
 						"(source network '%s' does not exist anymore)."), "\n", $fr['source']['network']);
-					unset($config['pfqueueing']['rule'][$i]);
+					config_del_path("pfqueueing/rule/{$i}");
 					continue;
 				}
 			}
@@ -179,7 +179,7 @@ function upgrade_010_to_011() {
 					/* remove the rule */
 					printf(gettext("%sWarning: traffic shaper rule removed " .
 						"(destination network '%s' does not exist anymore)."), "\n", $fr['destination']['network']);
-					unset($config['pfqueueing']['rule'][$i]);
+					config_del_path("pfqueueing/rule/{$i}");
 					continue;
 				}
 			}
@@ -267,7 +267,7 @@ function upgrade_014_to_015() {
 
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 		if (isset($config['interfaces']['opt' . $i]['schedulertype'])) {
-			unset($config['interfaces']['opt' . $i]['schedulertype']);
+			config_del_path("interfaces/opt{$i}/schedulertype");
 		}
 	}
 }
@@ -385,7 +385,7 @@ function upgrade_019_to_020() {
 			/* Sanity check on required variables */
 			/* This fixes bogus <tunnel> entries - remnant of bug #393 */
 			if (!isset($tunnel['local-subnet']) && !isset($tunnel['remote-subnet'])) {
-				unset($config['ipsec']['tunnel'][$tunnel]);
+				config_del_path("ipsec/tunnel/{$tunnel}");
 			}
 		}
 	}
@@ -773,7 +773,7 @@ function upgrade_042_to_043() {
 		}
 		if (is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
 			$config['gateways']['gateway_item'][$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
-			unset($config['interfaces'][$ifname]['use_rrd_gateway']);
+			config_del_path("interfaces/{$ifname}/use_rrd_gateway");
 		}
 		$config['interfaces'][$ifname]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
 
@@ -2420,13 +2420,13 @@ function upgrade_063_to_064() {
 			$j++;
 			if (isset($ppp['port'])) {
 				$config['ppps']['ppp'][$pppid]['ports'] = $ppp['port'];
-				unset($config['ppps']['ppp'][$pppid]['port']);
+				config_del_path("ppps/ppp/{$pppid}/port");
 			}
 			if (!isset($ppp['type'])) {
 				$config['ppps']['ppp'][$pppid]['type'] = "ppp";
 			}
 			if (isset($ppp['defaultgw'])) {
-				unset($config['ppps']['ppp'][$pppid]['defaultgw']);
+				config_del_path("ppps/ppp/{$pppid}/defaultgw");
 			}
 		}
 	}
@@ -2615,8 +2615,8 @@ function upgrade_069_to_070() {
 
 			$config['nat']['onetoone'][$nidx]['destination'] = array("any" => true);
 
-			unset($config['nat']['onetoone'][$nidx]['internal']);
-			unset($config['nat']['onetoone'][$nidx]['subnet']);
+			config_del_path("nat/onetoone/{$nidx}/internal");
+			config_del_path("nat/onetoone/{$nidx}/subnet");
 		}
 
 		unset($natent);
@@ -2629,7 +2629,7 @@ function upgrade_070_to_071() {
 	if (is_array($config['cron']['item'])) {
 		foreach ($config['cron']['item'] as $idx => $cronitem) {
 			if (stristr($cronitem['command'], "checkreload.sh")) {
-				unset($config['cron']['item'][$idx]);
+				config_del_path("cron/item/{$idx}");
 				break;
 			}
 		}
@@ -3532,7 +3532,7 @@ function upgrade_110_to_111() {
 				continue;
 			}
 
-			unset($config['installedpackages']['menu'][$idx]);
+			config_del_path("installedpackages/menu/{$idx}");
 			break;
 		}
 	}
@@ -3542,7 +3542,7 @@ function upgrade_110_to_111() {
 			if ($service['name'] != 'unbound') {
 				continue;
 			}
-			unset($config['installedpackages']['service'][$idx]);
+			config_del_path("installedpackages/service/{$idx}");
 			break;
 		}
 	}
@@ -3840,15 +3840,15 @@ function upgrade_122_to_123() {
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
 			if (isset($rules[$i]['interface']) && $rules[$i]['interface'] == 'pptp') {
-				unset($config['filter']['rule'][$i]);
+				config_del_path("filter/rule/{$i}");
 				continue;
 			}
 			if (isset($rules[$i]['source']['network']) && $rules[$i]['source']['network'] == 'pptp') {
-				unset($config['filter']['rule'][$i]);
+				config_del_path("filter/rule/{$i}");
 				continue;
 			}
 			if (isset($rules[$i]['destination']['network']) && $rules[$i]['destination']['network'] == 'pptp') {
-				unset($config['filter']['rule'][$i]);
+				config_del_path("filter/rule/{$i}");
 				continue;
 			}
 		}
@@ -3861,15 +3861,15 @@ function upgrade_122_to_123() {
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
 			if (isset($onetoone[$i]['interface']) && $onetoone[$i]['interface'] == 'pptp') {
-				unset($config['nat']['onetoone'][$i]);
+				config_del_path("nat/onetoone/{$i}");
 				continue;
 			}
 			if (isset($onetoone[$i]['source']['network']) && $onetoone[$i]['source']['network'] == 'pptp') {
-				unset($config['nat']['onetoone'][$i]);
+				config_del_path("nat/onetoone/{$i}");
 				continue;
 			}
 			if (isset($onetoone[$i]['destination']['network']) && $onetoone[$i]['destination']['network'] == 'pptp') {
-				unset($config['nat']['onetoone'][$i]);
+				config_del_path("nat/onetoone/{$i}");
 				continue;
 			}
 		}
@@ -3882,7 +3882,7 @@ function upgrade_122_to_123() {
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
 			if (isset($npt[$i]['interface']) && $npt[$i]['interface'] == 'pptp') {
-				unset($config['nat']['npt'][$i]);
+				config_del_path("nat/npt/{$i}");
 				continue;
 			}
 		}
@@ -3895,15 +3895,15 @@ function upgrade_122_to_123() {
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
 			if (isset($nat_rules[$i]['interface']) && $nat_rules[$i]['interface'] == 'pptp') {
-				unset($config['nat']['rule'][$i]);
+				config_del_path("nat/rule/{$i}");
 				continue;
 			}
 			if (isset($nat_rules[$i]['source']['network']) && $nat_rules[$i]['source']['network'] == 'pptp') {
-				unset($config['nat']['rule'][$i]);
+				config_del_path("nat/rule/{$i}");
 				continue;
 			}
 			if (isset($nat_rules[$i]['destination']['network']) && $nat_rules[$i]['destination']['network'] == 'pptp') {
-				unset($config['nat']['rule'][$i]);
+				config_del_path("nat/rule/{$i}");
 				continue;
 			}
 		}
@@ -3916,7 +3916,7 @@ function upgrade_122_to_123() {
 		// Process in reverse order to be able to unset items
 		for ($i = $last_rule; $i >= 0; $i--) {
 			if (isset($out_rules[$i]['interface']) && $out_rules[$i]['interface'] == 'pptp') {
-				unset($config['nat']['outbound']['rule'][$i]);
+				config_del_path("nat/outbound/rule/{$i}");
 				continue;
 			}
 		}
@@ -3948,9 +3948,9 @@ function upgrade_124_to_125() {
 				require_once("notices.inc");
 			}
 			file_notice("WirelessSettings", sprintf(gettext("WEP is no longer supported. It will be disabled on the %s interface and the interface will be disabled. Please reconfigure the interface."), $ifname));
-			unset($config['interfaces'][$ifname]['wireless']['wep']);
+			config_del_path("interfaces/{$ifname}/wireless/wep");
 			if (isset($intf['enable'])) {
-				unset($config['interfaces'][$ifname]['enable']);
+				config_del_path("interfaces/{$ifname}/enable");
 			}
 		}
 	}
@@ -4052,7 +4052,7 @@ function upgrade_128_to_129() {
 
 	foreach ($config['sysctl']['item'] as $idx => $sysctl) {
 		if ($sysctl['tunable'] == "net.inet.ip.fastforwarding") {
-			unset($config['sysctl']['item'][$idx]);
+			config_del_path("sysctl/item/{$idx}");
 		}
 		if ($sysctl['tunable'] == "net.inet.ipsec.debug") {
 			$config['sysctl']['item'][$idx]['value'] = "0";
@@ -4271,7 +4271,7 @@ function upgrade_135_to_136() {
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $idx => $rule) {
 				if (isset($rule['l7container'])) {
-					unset($config['filter']['rule'][$idx]['l7container']);
+					config_del_path("filter/rule/{$idx}/l7container");
 					$l7_active = true;
 				}
 			}
@@ -4397,7 +4397,7 @@ function upgrade_141_to_142() {
 	if (is_array($config['cron']['item'])) {
 		foreach ($config['cron']['item'] as $idx => $cronitem) {
 			if ($cronitem['command'] == "/etc/pppoerestart") {
-				unset($config['cron']['item'][$idx]);
+				config_del_path("cron/item/{$idx}");
 			}
 		}
 	}
@@ -4922,7 +4922,7 @@ function upgrade_154_to_155() {
 	if (is_array($config['gifs']['gif'])) {
 		foreach ($config['gifs']['gif'] as $idx => $gif) {
 			if (isset($gif['link0'])) {
-				unset($config['gifs']['gif'][$idx]['link0']);
+				config_del_path("gifs/gif/{$idx}/link0");
 			}
 		}
 	}
@@ -4930,10 +4930,10 @@ function upgrade_154_to_155() {
 	if (is_array($config['gres']['gre'])) {
 		foreach ($config['gres']['gre'] as $idx => $gre) {
 			if (isset($gre['link0'])) {
-				unset($config['gres']['gre'][$idx]['link0']);
+				config_del_path("gres/gre/{$idx}/link0");
 			}
 			if (isset($gre['link2'])) {
-				unset($config['gres']['gre'][$idx]['link2']);
+				config_del_path("gres/gre/{$idx}/link2");
 			}
 		}
 	}
@@ -4965,7 +4965,7 @@ function upgrade_156_to_157() {
 	if (is_array($config['cron']['item'])) {
 		foreach ($config['cron']['item'] as $idx => $cronitem) {
 			if ($cronitem['command'] == "/etc/pppoerestart") {
-				unset($config['cron']['item'][$idx]);
+				config_del_path("cron/item/{$idx}");
 			}
 		}
 	}
@@ -5124,7 +5124,7 @@ function upgrade_162_to_163() {
 	foreach (array('refreshinterval', 'invert', 'size', 'backgroundupdate') as $setting) {
 		if (isset($config['widgets']['trafficgraphs'][$setting])) {
 			$config['widgets']['traffic_graphs'][$setting] = $config['widgets']['trafficgraphs'][$setting];
-			unset($config['widgets']['trafficgraphs'][$setting]);
+			config_del_path("widgets/trafficgraphs/{$setting}");
 		}
 	}
 
@@ -5172,7 +5172,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 			// Modify the system-wide entry
 			if (isset($config['widgets'][$oldkey])) {
 				$config['widgets'][$newname][$newkey] = $config['widgets'][$oldkey];
-				unset($config['widgets'][$oldkey]);
+				config_del_path("widgets/{$oldkey}");
 			}
 
 			// Modify any user-specific entries
@@ -5195,7 +5195,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 			// Modify the system-wide entry
 			if (isset($config['widgets'][$oldname][$oldkey])) {
 				$config['widgets'][$newname][$newkey] = $config['widgets'][$oldname][$oldkey];
-				unset($config['widgets'][$oldname][$oldkey]);
+				config_del_path("widgets/{$oldname}/{$oldkey}");
 			}
 
 			// Modify any user-specific entries
@@ -5212,7 +5212,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 		}
 
 		if (isset($config['widgets'][$oldname])) {
-			unset($config['widgets'][$oldname]);
+			config_del_path("widgets/{$oldname}");
 		}
 	}
 }

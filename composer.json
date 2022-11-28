@@ -10,8 +10,8 @@
         "psr-4": {
             "Netgate\\": "//usr/local/pfSense/include/Netgate/",
             "pfSense\\": "//usr/local/pfSense/include/",
-	    "Utils\\Rector\\": "tools/rector/src",
-	    "Utils\\Rector\\Tests\\": "tools/rector/tests"
+	    "Tools\\Rector\\": "tools/rector/src",
+	    "Tools\\Rector\\Tests\\": "tools/rector/tests"
         }
     },
     "config": {

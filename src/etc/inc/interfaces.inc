@@ -4233,7 +4233,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			if ((($wancfg['ipaddrv6'] == 'dhcp6') && !isset($wancfg['dhcp6usev4iface'])) ||
 			    (($wancfg['ipaddrv6'] == 'slaac') && !isset($wancfg['slaacusev4iface'])) ||
 			    !interface_isppp_type($interface)) {
-				interface_dhcpv6_configure($interface, $wancfg);
+				interface_dhcpv6_configure($interface, $wancfg, $reloadall);
 			}
 			break;
 		case '6rd':

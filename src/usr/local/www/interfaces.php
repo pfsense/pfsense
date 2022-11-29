@@ -58,12 +58,9 @@ if (isset($_POST['referer'])) {
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr(true);
+$if = $_REQUEST['if'] ?? 'wan';
+$bridged = link_interface_to_bridge($if);
 
-$if = "wan";
-
-if ($_REQUEST['if']) {
-	$if = $_REQUEST['if'];
-}
 
 if (empty($ifdescrs[$if])) {
 	header("Location: interfaces.php");
@@ -1590,10 +1587,17 @@ if ($_POST['apply']) {
 			unset($wancfg['blockbogons']);
 		}
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
-		if (empty($_POST['mtu'])) {
-			unset($wancfg['mtu']);
-		} else {
-			$wancfg['mtu'] = $_POST['mtu'];
+		/* Only update MTU in the config if the if is not a member of a
+		 * bridge. The display will show the bridge MTU in a disabled input
+		 * field, and we will maintain the user configured MTU for initial
+		 * configuration and in the event that the interface is removed from the
+		 * bridge it will return to its original MTU. */
+		if (!$bridged) {
+			if (empty($_POST['mtu'])) {
+				unset($wancfg['mtu']);
+			} else {
+				$wancfg['mtu'] = $_POST['mtu'];
+			}
 		}
 		if (empty($_POST['mss'])) {
 			unset($wancfg['mss']);
@@ -2009,13 +2013,21 @@ if (!is_pseudo_interface($intrealname, true)) {
 	$section->addInput($macaddress);
 }
 
-$section->addInput(new Form_Input(
+$mtuInput = $section->addInput(new Form_Input(
 	'mtu',
 	'MTU',
 	'number',
-	$pconfig['mtu']
+	$pconfig['mtu'],
 ))->setHelp('If this field is blank, the adapter\'s default MTU will be used. ' .
 			'This is typically 1500 bytes but can vary in some circumstances.');
+/* Do not allow MTU changes for interfaces in a bridge */
+if ($bridged) {
+	$mtuInput->setDisabled();
+	$mtuInput->setHelp('This interface is a bridge member, its MTU is ' .
+					   'controlled by its parent bridge interface');
+	$mtuInput->setPlaceholder(get_interface_mtu($bridged));
+	$mtuInput->setValue(null);
+}
 
 $section->addInput(new Form_Input(
 	'mss',

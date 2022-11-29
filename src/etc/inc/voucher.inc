@@ -36,9 +36,9 @@ function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$p
 
 	if (isset($config['captiveportal'][$cpzone]['enablebackwardsync']) && !$carp_loop
 	    && captiveportal_ha_is_node_in_backup_mode($cpzone)) {
-		$syncip = $config['captiveportal'][$cpzone]['backwardsyncip'];
-		$username = $config['captiveportal'][$cpzone]['backwardsyncuser'];
-		$password = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
+		$syncip = config_get_path("captiveportal/{$cpzone}/backwardsyncip");
+		$username = config_get_path("captiveportal/{$cpzone}/backwardsyncuser");
+		$password = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
 		$port = config_get_path('system/webgui/port');
 		if (empty($port)) { // if port is empty lets rely on the protocol selection
 			if ($config['system']['webgui']['protocol'] == "http") {
@@ -138,7 +138,7 @@ function voucher_expire($voucher_received, $carp_loop = false) {
 				$cpentry = captiveportal_read_db("WHERE username = '{$voucher}'");
 				if (!empty($cpentry) && !empty($cpentry[0])) {
 					if (empty($cpzoneid) && !empty($config['captiveportal'][$cpzone])) {
-						$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+						$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 					}
 					$cpentry = $cpentry[0];
 					captiveportal_disconnect($cpentry, 13);

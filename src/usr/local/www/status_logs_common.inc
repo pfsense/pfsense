@@ -42,7 +42,10 @@ function status_logs_common_code() {
 
 	$specific_log = basename($logfile) . '_settings';
 
-	isset($config['syslog'][$specific_log]['nentries']) ? $nentries = $config['syslog'][$specific_log]['nentries'] : $nentries = $config['syslog']['nentries'];
+	$nentries = config_get_path('syslog/nentries');
+	if (isset($config['syslog'][$specific_log]['nentries'])) {
+		$nentries = config_get_path("syslog/{$specific_log}/nentries");
+	}
 
 	// Override Display Quantity
 	if ($filterlogentries_qty) {

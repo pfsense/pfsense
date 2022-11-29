@@ -286,7 +286,7 @@ if ($user_settings['widgets']['sequence'] != "") {
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($config['widgets'][$widgetname . '-config']) {
-			$pconfig[$widgetname . '-config'] = $config['widgets'][$widgetname . '-config'];
+			$pconfig[$widgetname . '-config'] = config_get_path("widgets/{$widgetname}-config");
 		}
 	}
 }

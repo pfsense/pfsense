@@ -665,7 +665,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$gateway['inactive'] = true;
 				}
 			}
-			$wancfg = $config['interfaces'][$gateway['interface']];
+			$wancfg = config_get_path("interfaces/{$gateway['interface']}");
 
 			/* skip disabled interfaces */
 			if ($disabled === false && (!isset($wancfg['enable']))) {
@@ -1555,7 +1555,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	$interface = get_root_interface($interface);
 
 	$gw = NULL;
-	$gwcfg = $config['interfaces'][$interface];
+	$gwcfg = config_get_path("interfaces/{$interface}");
 	if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
 			if (($gateway['name'] == $gwcfg['gateway']) && (is_ipaddrv4($gateway['gateway']))) {
@@ -1599,7 +1599,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 	$interface = get_root_interface($interface);
 
 	$gw = NULL;
-	$gwcfg = $config['interfaces'][$interface];
+	$gwcfg = config_get_path("interfaces/{$interface}");
 	if (!empty($gwcfg['gatewayv6']) && is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
 			if (($gateway['name'] == $gwcfg['gatewayv6']) && (is_ipaddrv6($gateway['gateway']))) {

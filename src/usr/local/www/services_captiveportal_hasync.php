@@ -59,9 +59,9 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 
 $pconfig['enablebackwardsync'] = isset($config['captiveportal'][$cpzone]['enablebackwardsync']);
-$pconfig['backwardsyncip'] = $config['captiveportal'][$cpzone]['backwardsyncip'];
-$pconfig['backwardsyncpassword'] = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
-$pconfig['backwardsyncuser'] = $config['captiveportal'][$cpzone]['backwardsyncuser'];
+$pconfig['backwardsyncip'] = config_get_path("captiveportal/{$cpzone}/backwardsyncip");
+$pconfig['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
+$pconfig['backwardsyncuser'] = config_get_path("captiveportal/{$cpzone}/backwardsyncuser");
 
 if ($_POST['save']) {
 	$pconfig = $_POST;
@@ -107,7 +107,7 @@ if ($_POST['save']) {
 		if ($_POST['backwardsyncpassword'] != DMYPWD ) {
 			$newcp['backwardsyncpassword'] = $pconfig['backwardsyncpassword'];
 		} else {
-			$newcp['backwardsyncpassword'] = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
+			$newcp['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
 		}
 		if (!empty($newcp['enablebackwardsync'])) {
 			$rpc_client = new pfsense_xmlrpc_client();

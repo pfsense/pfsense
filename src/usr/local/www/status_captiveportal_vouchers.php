@@ -57,7 +57,7 @@ $shortcut_section = "captiveportal-vouchers";
 
 init_config_arr(array('voucher', $cpzone, 'roll'));
 
-$a_roll = $config['voucher'][$cpzone]['roll'];
+$a_roll = config_get_path("voucher/{$cpzone}/roll");
 
 $db = array();
 

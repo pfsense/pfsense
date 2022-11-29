@@ -241,7 +241,7 @@ if (isset($_REQUEST['del_x'])) {
 }
 
 foreach($simplefields as $field) {
-	$pconfig[$field] = $config['gateways'][$field];
+	$pconfig[$field] = config_get_path("gateways/{$field}");
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));

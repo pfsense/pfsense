@@ -98,7 +98,7 @@ if ($_REQUEST['act'] == "update") {
 
 	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_REQUEST['ids'] !="") {
 		// get current values
-		$current_values=$config['installedpackages'][$pkg['name']]['config'];
+		$current_values=config_get_path("installedpackages/{$pkg['name']}/config");
 		// get updated ids
 		parse_str($_REQUEST['ids'], $update_list);
 		// sort ids to know what to change

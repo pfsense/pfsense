@@ -759,7 +759,7 @@ function upgrade_042_to_043() {
 		}
 		$config['gateways']['gateway_item'][$i] = array();
 		if (is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
-			$config['gateways']['gateway_item'][$i]['gateway'] = $config['interfaces'][$ifname]['gateway'];
+			$config['gateways']['gateway_item'][$i]['gateway'] = config_get_path("interfaces/{$ifname}/gateway");
 			$config['gateways']['gateway_item'][$i]['descr'] = sprintf(gettext("Interface %s Static Gateway"), $ifname);
 		} else {
 			$config['gateways']['gateway_item'][$i]['gateway'] = "dynamic";
@@ -772,19 +772,19 @@ function upgrade_042_to_043() {
 			$config['gateways']['gateway_item'][$i]['defaultgw'] = true;
 		}
 		if (is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
-			$config['gateways']['gateway_item'][$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
+			$config['gateways']['gateway_item'][$i]['monitor'] = config_get_path("interfaces/{$ifname}/use_rrd_gateway");
 			config_del_path("interfaces/{$ifname}/use_rrd_gateway");
 		}
-		$config['interfaces'][$ifname]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+		$config['interfaces'][$ifname]['gateway'] = config_get_path("gateways/gateway_item/{$i}/name");
 
 		/* Update all filter rules which might reference this gateway */
 		$j = 0;
 		foreach ($config['filter']['rule'] as $rule) {
 			if (is_ipaddr($rule['gateway'])) {
 				if ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway']) {
-					$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+					$config['filter']['rule'][$j]['gateway'] = config_get_path("gateways/gateway_item/{$i}/name");
 				} else if ($rule['gateway'] == $ifname) {
-					$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+					$config['filter']['rule'][$j]['gateway'] = config_get_path("gateways/gateway_item/{$i}/name");
 				}
 			}
 			$j++;
@@ -2466,7 +2466,7 @@ function upgrade_063_to_064() {
 				$ppp['pppoe-reset-type'] = $ifinfo['pppoe']['pppoe-reset-type'];
 				if (is_array($config['cron']['item'])) {
 					for ($i = 0; $i < count($config['cron']['item']); $i++) {
-						$item = $config['cron']['item'][$i];
+						$item = config_get_path("cron/item/{$i}");
 						if (strpos($item['command'], "/conf/pppoe{$ifname}restart") !== false) {
 							$config['cron']['item'][$i]['command'] = "/var/etc/pppoe_restart_" . $ppp['if'];
 						}
@@ -5123,7 +5123,7 @@ function upgrade_162_to_163() {
 
 	foreach (array('refreshinterval', 'invert', 'size', 'backgroundupdate') as $setting) {
 		if (isset($config['widgets']['trafficgraphs'][$setting])) {
-			$config['widgets']['traffic_graphs'][$setting] = $config['widgets']['trafficgraphs'][$setting];
+			$config['widgets']['traffic_graphs'][$setting] = config_get_path("widgets/trafficgraphs/{$setting}");
 			config_del_path("widgets/trafficgraphs/{$setting}");
 		}
 	}
@@ -5171,7 +5171,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 
 			// Modify the system-wide entry
 			if (isset($config['widgets'][$oldkey])) {
-				$config['widgets'][$newname][$newkey] = $config['widgets'][$oldkey];
+				$config['widgets'][$newname][$newkey] = config_get_path("widgets/{$oldkey}");
 				config_del_path("widgets/{$oldkey}");
 			}
 
@@ -5194,7 +5194,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 
 			// Modify the system-wide entry
 			if (isset($config['widgets'][$oldname][$oldkey])) {
-				$config['widgets'][$newname][$newkey] = $config['widgets'][$oldname][$oldkey];
+				$config['widgets'][$newname][$newkey] = config_get_path("widgets/{$oldname}/{$oldkey}");
 				config_del_path("widgets/{$oldname}/{$oldkey}");
 			}
 
@@ -6193,9 +6193,9 @@ function upgrade_204_to_205() {
 			if (is_array($config['voucher'][$cpzone])) {
 				if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
 					$config['captiveportal'][$cpzone]['enablebackwardsync'] = '';
-					$config['captiveportal'][$cpzone]['backwardsyncip'] = $config['voucher'][$cpzone]['vouchersyncdbip'];
-					$config['captiveportal'][$cpzone]['backwardsyncuser'] = $config['voucher'][$cpzone]['vouchersyncusername'];
-					$config['captiveportal'][$cpzone]['backwardsyncpassword'] = $config['voucher'][$cpzone]['vouchersyncpass'];
+					$config['captiveportal'][$cpzone]['backwardsyncip'] = config_get_path("voucher/{$cpzone}/vouchersyncdbip");
+					$config['captiveportal'][$cpzone]['backwardsyncuser'] = config_get_path("voucher/{$cpzone}/vouchersyncusername");
+					$config['captiveportal'][$cpzone]['backwardsyncpassword'] = config_get_path("voucher/{$cpzone}/vouchersyncpass");
 				}
 			}
 		}

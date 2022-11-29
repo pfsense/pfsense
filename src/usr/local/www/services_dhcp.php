@@ -208,8 +208,8 @@ if (is_array($dhcpdconf)) {
 	}
 }
 
-$ifcfgip = $config['interfaces'][$if]['ipaddr'];
-$ifcfgsn = $config['interfaces'][$if]['subnet'];
+$ifcfgip = config_get_path("interfaces/{$if}/ipaddr");
+$ifcfgsn = config_get_path("interfaces/{$if}/subnet");
 
 $subnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);
 $subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
@@ -603,7 +603,7 @@ if (isset($_POST['save'])) {
 				if (!is_array($config['dhcpd'][$if])) {
 					$config['dhcpd'][$if] = array();
 				}
-				$dhcpdconf = $config['dhcpd'][$if];
+				$dhcpdconf = config_get_path("dhcpd/{$if}");
 			}
 		} else {
 			if (is_array($a_pools[$pool])) {
@@ -937,7 +937,7 @@ $i = 0;
 $have_small_subnet = false;
 
 foreach ($iflist as $ifent => $ifname) {
-	$oc = $config['interfaces'][$ifent];
+	$oc = config_get_path("interfaces/{$ifent}");
 
 	/* Not static IPv4 or subnet >= 31 */
 	if ($oc['subnet'] >= 31) {

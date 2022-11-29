@@ -66,25 +66,25 @@ if (!$if || !isset($iflist[$if])) {
 
 if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	/* RA specific */
-	$pconfig['ramode'] = $config['dhcpdv6'][$if]['ramode'];
-	$pconfig['rapriority'] = $config['dhcpdv6'][$if]['rapriority'];
-	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
+	$pconfig['ramode'] = config_get_path("dhcpdv6/{$if}/ramode");
+	$pconfig['rapriority'] = config_get_path("dhcpdv6/{$if}/rapriority");
+	$pconfig['rainterface'] = config_get_path("dhcpdv6/{$if}/rainterface");
 	if ($pconfig['rapriority'] == "") {
 		$pconfig['rapriority'] = "medium";
 	}
 
-	$pconfig['ravalidlifetime'] = $config['dhcpdv6'][$if]['ravalidlifetime'];
-	$pconfig['rapreferredlifetime'] = $config['dhcpdv6'][$if]['rapreferredlifetime'];
-	$pconfig['raminrtradvinterval'] = $config['dhcpdv6'][$if]['raminrtradvinterval'];
-	$pconfig['ramaxrtradvinterval'] = $config['dhcpdv6'][$if]['ramaxrtradvinterval'];
-	$pconfig['raadvdefaultlifetime'] = $config['dhcpdv6'][$if]['raadvdefaultlifetime'];
+	$pconfig['ravalidlifetime'] = config_get_path("dhcpdv6/{$if}/ravalidlifetime");
+	$pconfig['rapreferredlifetime'] = config_get_path("dhcpdv6/{$if}/rapreferredlifetime");
+	$pconfig['raminrtradvinterval'] = config_get_path("dhcpdv6/{$if}/raminrtradvinterval");
+	$pconfig['ramaxrtradvinterval'] = config_get_path("dhcpdv6/{$if}/ramaxrtradvinterval");
+	$pconfig['raadvdefaultlifetime'] = config_get_path("dhcpdv6/{$if}/raadvdefaultlifetime");
 
-	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
-	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
+	$pconfig['radomainsearchlist'] = config_get_path("dhcpdv6/{$if}/radomainsearchlist");
+	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = config_get_path("dhcpdv6/{$if}/radnsserver");
 	$pconfig['radvd-dns'] = ($config['dhcpdv6'][$if]['radvd-dns'] != 'disabled') ? true : false;
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
-	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
+	$pconfig['subnets'] = config_get_path("dhcpdv6/{$if}/subnets/item");
 }
 if (!is_array($pconfig['subnets'])) {
 	$pconfig['subnets'] = array();
@@ -285,7 +285,7 @@ $tab_array = array();
 $tabscounter = 0;
 $i = 0;
 foreach ($iflist as $ifent => $ifname) {
-	$oc = $config['interfaces'][$ifent];
+	$oc = config_get_path("interfaces/{$ifent}");
 	// We need interfaces configured with a static IPv6 address or track6 for PD.
 	if (!is_ipaddrv6($oc['ipaddrv6']) && $oc['ipaddrv6'] != "track6") {
 		continue;

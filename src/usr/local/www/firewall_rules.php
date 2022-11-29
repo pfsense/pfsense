@@ -556,7 +556,7 @@ if ($if == "FloatingRules") {
 			<tbody class="user-entries">
 <?php
 $nrules = 0;
-$separators = $config['filter']['separator'][strtolower($if)];
+$separators = config_get_path('filter/separator/'.strtolower($if));
 
 // Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
 // More efficient than looping through the list of separators on every row.

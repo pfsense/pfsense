@@ -112,8 +112,8 @@ if ($_POST['save']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
-			$trackifname = $config['interfaces'][$if]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
+			$trackifname = config_get_path("interfaces/{$if}/track6-interface");
+			$trackcfg = config_get_path("interfaces/{$trackifname}");
 			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
 			if (!Net_IPv6::isInNetmask($_POST['ipaddrv6'], '::', $pdlen)) {
 				$input_errors[] = sprintf(gettext(

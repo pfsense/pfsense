@@ -166,7 +166,7 @@ if ($_POST['save']) {
 		write_config("Captive portal passthrough MAC added");
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
-			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+			$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 			captiveportal_passthrumac_delete_entry($oldmac);
 			captiveportal_ether_configure_entry($mac, 'passthrumac');
 			unset($cpzoneid);

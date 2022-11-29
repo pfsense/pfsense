@@ -345,19 +345,19 @@ class pfsense_xmlrpc_server {
 				// Please do not delete this code before
 				if (isset($config['voucher'][$zone]['vouchersyncdbip'])) {
 					$sections['voucher'][$zone]['vouchersyncdbip'] =
-					    $config['voucher'][$zone]['vouchersyncdbip'];
+					    config_get_path("voucher/{$zone}/vouchersyncdbip");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncdbip']);
 				}
 				if (isset($config['voucher'][$zone]['vouchersyncusername'])) {
 					$sections['voucher'][$zone]['vouchersyncusername'] =
-					    $config['voucher'][$zone]['vouchersyncusername'];
+					    config_get_path("voucher/{$zone}/vouchersyncusername");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncusername']);
 				}
 				if (isset($config['voucher'][$zone]['vouchersyncpass'])) {
 					$sections['voucher'][$zone]['vouchersyncpass'] =
-					    $config['voucher'][$zone]['vouchersyncpass'];
+					    config_get_path("voucher/{$zone}/vouchersyncpass");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncpass']);
 				}
@@ -369,22 +369,22 @@ class pfsense_xmlrpc_server {
 			// Captiveportal : Backward HA settings should remain local.
 			foreach ($sections['captiveportal'] as $zone => $cp) {
 				if (isset($config['captiveportal'][$zone]['enablebackwardsync'])) {
-					$sections['captiveportal'][$zone]['enablebackwardsync'] = $config['captiveportal'][$zone]['enablebackwardsync'];
+					$sections['captiveportal'][$zone]['enablebackwardsync'] = config_get_path("captiveportal/{$zone}/enablebackwardsync");
 				} else {
 					unset($sections['captiveportal'][$zone]['enablebackwardsync']);
 				}
 				if (isset($config['captiveportal'][$zone]['backwardsyncip'])) {
-					$sections['captiveportal'][$zone]['backwardsyncip'] = $config['captiveportal'][$zone]['backwardsyncip'];
+					$sections['captiveportal'][$zone]['backwardsyncip'] = config_get_path("captiveportal/{$zone}/backwardsyncip");
 				} else {
 					unset($sections['captiveportal'][$zone]['backwardsyncip']);
 				}
 				if (isset($config['captiveportal'][$zone]['backwardsyncuser'])) {
-					$sections['captiveportal'][$zone]['backwardsyncuser'] = $config['captiveportal'][$zone]['backwardsyncuser'];
+					$sections['captiveportal'][$zone]['backwardsyncuser'] = config_get_path("captiveportal/{$zone}/backwardsyncuser");
 				} else {
 					unset($sections['captiveportal'][$zone]['backwardsyncuser']);
 				}
 				if (isset($config['captiveportal'][$zone]['backwardsyncpassword'])) {
-					$sections['captiveportal'][$zone]['backwardsyncpassword'] = $config['captiveportal'][$zone]['backwardsyncpassword'];
+					$sections['captiveportal'][$zone]['backwardsyncpassword'] = config_get_path("captiveportal/{$zone}/backwardsyncpassword");
 				} else {
 					unset($sections['captiveportal'][$zone]['vouchersyncpass']);
 				}

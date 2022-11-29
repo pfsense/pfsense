@@ -127,40 +127,40 @@ if (!$if || !isset($iflist[$if])) {
 if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	/* DHCPv6 */
 	if (is_array($config['dhcpdv6'][$if]['range'])) {
-		$pconfig['range_from'] = $config['dhcpdv6'][$if]['range']['from'];
-		$pconfig['range_to'] = $config['dhcpdv6'][$if]['range']['to'];
+		$pconfig['range_from'] = config_get_path("dhcpdv6/{$if}/range/from");
+		$pconfig['range_to'] = config_get_path("dhcpdv6/{$if}/range/to");
 	}
 	if (is_array($config['dhcpdv6'][$if]['prefixrange'])) {
-		$pconfig['prefixrange_from'] = $config['dhcpdv6'][$if]['prefixrange']['from'];
-		$pconfig['prefixrange_to'] = $config['dhcpdv6'][$if]['prefixrange']['to'];
-		$pconfig['prefixrange_length'] = $config['dhcpdv6'][$if]['prefixrange']['prefixlength'];
+		$pconfig['prefixrange_from'] = config_get_path("dhcpdv6/{$if}/prefixrange/from");
+		$pconfig['prefixrange_to'] = config_get_path("dhcpdv6/{$if}/prefixrange/to");
+		$pconfig['prefixrange_length'] = config_get_path("dhcpdv6/{$if}/prefixrange/prefixlength");
 	}
-	$pconfig['deftime'] = $config['dhcpdv6'][$if]['defaultleasetime'];
-	$pconfig['maxtime'] = $config['dhcpdv6'][$if]['maxleasetime'];
-	$pconfig['domain'] = $config['dhcpdv6'][$if]['domain'];
-	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
-	list($pconfig['wins1'], $pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
-	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $config['dhcpdv6'][$if]['dnsserver'];
+	$pconfig['deftime'] = config_get_path("dhcpdv6/{$if}/defaultleasetime");
+	$pconfig['maxtime'] = config_get_path("dhcpdv6/{$if}/maxleasetime");
+	$pconfig['domain'] = config_get_path("dhcpdv6/{$if}/domain");
+	$pconfig['domainsearchlist'] = config_get_path("dhcpdv6/{$if}/domainsearchlist");
+	list($pconfig['wins1'], $pconfig['wins2']) = config_get_path("dhcpdv6/{$if}/winsserver");
+	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = config_get_path("dhcpdv6/{$if}/dnsserver");
 	$pconfig['dhcp6c-dns'] = ($config['dhcpdv6'][$if]['dhcp6c-dns'] != 'disabled') ? "enabled" : "disabled";
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
-	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
-	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
-	$pconfig['ddnsdomainsecondary'] = $config['dhcpdv6'][$if]['ddnsdomainsecondary'];
-	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
-	$pconfig['ddnsdomainkeyalgorithm'] = $config['dhcpdv6'][$if]['ddnsdomainkeyalgorithm'];
-	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
+	$pconfig['ddnsdomain'] = config_get_path("dhcpdv6/{$if}/ddnsdomain");
+	$pconfig['ddnsdomainprimary'] = config_get_path("dhcpdv6/{$if}/ddnsdomainprimary");
+	$pconfig['ddnsdomainsecondary'] = config_get_path("dhcpdv6/{$if}/ddnsdomainsecondary");
+	$pconfig['ddnsdomainkeyname'] = config_get_path("dhcpdv6/{$if}/ddnsdomainkeyname");
+	$pconfig['ddnsdomainkeyalgorithm'] = config_get_path("dhcpdv6/{$if}/ddnsdomainkeyalgorithm");
+	$pconfig['ddnsdomainkey'] = config_get_path("dhcpdv6/{$if}/ddnsdomainkey");
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($config['dhcpdv6'][$if]['ddnsforcehostname']);
 	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
-	$pconfig['ddnsclientupdates'] = $config['dhcpdv6'][$if]['ddnsclientupdates'];
-	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = $config['dhcpdv6'][$if]['ntpserver'];
-	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
-	$pconfig['ldap'] = $config['dhcpdv6'][$if]['ldap'];
+	$pconfig['ddnsclientupdates'] = config_get_path("dhcpdv6/{$if}/ddnsclientupdates");
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = config_get_path("dhcpdv6/{$if}/ntpserver");
+	$pconfig['tftp'] = config_get_path("dhcpdv6/{$if}/tftp");
+	$pconfig['ldap'] = config_get_path("dhcpdv6/{$if}/ldap");
 	$pconfig['netboot'] = isset($config['dhcpdv6'][$if]['netboot']);
-	$pconfig['bootfile_url'] = $config['dhcpdv6'][$if]['bootfile_url'];
-	$pconfig['netmask'] = $config['dhcpdv6'][$if]['netmask'];
-	$pconfig['numberoptions'] = $config['dhcpdv6'][$if]['numberoptions'];
-	$pconfig['dhcpv6leaseinlocaltime'] = $config['dhcpdv6'][$if]['dhcpv6leaseinlocaltime'];
+	$pconfig['bootfile_url'] = config_get_path("dhcpdv6/{$if}/bootfile_url");
+	$pconfig['netmask'] = config_get_path("dhcpdv6/{$if}/netmask");
+	$pconfig['numberoptions'] = config_get_path("dhcpdv6/{$if}/numberoptions");
+	$pconfig['dhcpv6leaseinlocaltime'] = config_get_path("dhcpdv6/{$if}/dhcpv6leaseinlocaltime");
 	if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
 		$config['dhcpdv6'][$if]['staticmap'] = array();
 	}
@@ -548,7 +548,7 @@ $tabscounter = 0;
 $i = 0;
 
 foreach ($iflist as $ifent => $ifname) {
-	$oc = $config['interfaces'][$ifent];
+	$oc = config_get_path("interfaces/{$ifent}");
 	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
 	    (is_ipaddrv6($oc['ipaddrv6']) &&
 	    !is_linklocal($oc['ipaddrv6'])));

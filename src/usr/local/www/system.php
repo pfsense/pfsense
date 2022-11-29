@@ -268,8 +268,8 @@ if ($_POST) {
 		if (is_array($config['system']['dnsserver'])) {
 		  	$dns_servers_arr = $config['system']['dnsserver'];
 	 		foreach ($dns_servers_arr as $arr_index => $this_dnsserver) {
-	   			$i = (int)$arr_index + 1;
-	   			$this_dnsgw = $config['system']['dns'.$i.'gw'];
+				$i = (int)$arr_index + 1;
+				$this_dnsgw = config_get_path("system/dns{$i}gw");
 				unset($gatewayip);
 				unset($inet6);
 				if ((!empty($this_dnsgw)) && ($this_dnsgw != 'none') && (!empty($this_dnsserver))) {
@@ -396,8 +396,8 @@ if ($_POST) {
 			$dnsgwconfigname = "dns{$dnsgwconfigcounter}gw";
 			$dnshostconfigname = "dns{$dnshostconfigcounter}host";
 
-			$olddnsgwname = $config['system'][$dnsgwconfigname];
-			$olddnshostname = $config['system'][$dnshostconfigname];
+			$olddnsgwname = config_get_path("system/{$dnsgwconfigname}");
+			$olddnshostname = config_get_path("system/{$dnshostconfigname}");
 
 			if ($ignore_posted_dnsgw[$dnsgwname]) {
 				$thisdnsgwname = "none";

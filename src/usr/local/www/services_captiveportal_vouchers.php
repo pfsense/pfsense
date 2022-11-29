@@ -181,16 +181,16 @@ if ($_POST['act'] == "del") {
 }
 
 $pconfig['enable'] = isset($config['voucher'][$cpzone]['enable']);
-$pconfig['charset'] = $config['voucher'][$cpzone]['charset'];
-$pconfig['rollbits'] = $config['voucher'][$cpzone]['rollbits'];
-$pconfig['ticketbits'] = $config['voucher'][$cpzone]['ticketbits'];
-$pconfig['checksumbits'] = $config['voucher'][$cpzone]['checksumbits'];
-$pconfig['magic'] = $config['voucher'][$cpzone]['magic'];
-$pconfig['exponent'] = $config['voucher'][$cpzone]['exponent'];
+$pconfig['charset'] = config_get_path("voucher/{$cpzone}/charset");
+$pconfig['rollbits'] = config_get_path("voucher/{$cpzone}/rollbits");
+$pconfig['ticketbits'] = config_get_path("voucher/{$cpzone}/ticketbits");
+$pconfig['checksumbits'] = config_get_path("voucher/{$cpzone}/checksumbits");
+$pconfig['magic'] = config_get_path("voucher/{$cpzone}/magic");
+$pconfig['exponent'] = config_get_path("voucher/{$cpzone}/exponent");
 $pconfig['publickey'] = base64_decode($config['voucher'][$cpzone]['publickey']);
 $pconfig['privatekey'] = base64_decode($config['voucher'][$cpzone]['privatekey']);
-$pconfig['msgnoaccess'] = $config['voucher'][$cpzone]['descrmsgnoaccess'];
-$pconfig['msgexpired'] = $config['voucher'][$cpzone]['descrmsgexpired'];
+$pconfig['msgnoaccess'] = config_get_path("voucher/{$cpzone}/descrmsgnoaccess");
+$pconfig['msgexpired'] = config_get_path("voucher/{$cpzone}/descrmsgexpired");
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -240,7 +240,7 @@ if ($_POST['save']) {
 		if (empty($config['voucher'][$cpzone])) {
 			$newvoucher = array();
 		} else {
-			$newvoucher = $config['voucher'][$cpzone];
+			$newvoucher = config_get_path("voucher/{$cpzone}");
 		}
 		if ($_POST['enable'] == "yes") {
 			$newvoucher['enable'] = true;

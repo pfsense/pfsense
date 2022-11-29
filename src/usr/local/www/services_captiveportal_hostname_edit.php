@@ -49,7 +49,7 @@ $cpzone = $_REQUEST['zone'];
 
 $cpzone = strtolower(htmlspecialchars($cpzone));
 
-$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");

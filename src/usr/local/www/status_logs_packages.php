@@ -168,7 +168,7 @@ if ($pkgwithlogging == false) {
 		}
 	}
 	display_top_tabs($tab_array);
-	$logfile = $config['installedpackages']['package'][$apkgid]['logging']['logfilename'];
+	$logfile = config_get_path("installedpackages/package/{$apkgid}/logging/logfilename");
 	$logfile_path = $g['varlog_path'] . '/' . $logfile;
 ?>
 

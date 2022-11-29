@@ -862,9 +862,9 @@ class pfsense_xmlrpc_server {
 		$cpzone = $arguments['zone'];
 
 		if ($arguments['op'] === 'get_databases') {
-			$active_vouchers = array();
-			$expired_vouchers = array();
-			$usedmacs = '';
+			$active_vouchers = [];
+			$expired_vouchers = [];
+			$usedmacs = [];
 
 			if (is_array($config['voucher'][$cpzone]['roll'])) {
 				foreach($config['voucher'][$cpzone]['roll'] as $roll) {

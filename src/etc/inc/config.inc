@@ -52,11 +52,7 @@ require_once("notices.inc");
 require_once("util.inc");
 require_once("Net/IPv6.php");
 require_once('config.lib.inc');
-if (file_exists("/cf/conf/use_xmlreader")) {
-	require_once("xmlreader.inc");
-} else {
-	require_once("xmlparse.inc");
-}
+require_once("xmlparse.inc");
 require_once("crypt.inc");
 
 /* if /debugging exists, lets set $debugging

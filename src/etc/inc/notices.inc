@@ -210,11 +210,7 @@ function close_notice($id) {
  *   Outputs notices in XML formatted text
  ******/
 function dump_xml_notices() {
-	if (file_exists("/cf/conf/use_xmlreader")) {
-		require_once("xmlreader.inc");
-	} else {
-		require_once("xmlparse.inc");
-	}
+	require_once("xmlparse.inc");
 	global $notice_path, $listtags;
 	$listtags[] = 'notice';
 	if (!$notices = get_notices()) {

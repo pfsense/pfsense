@@ -83,7 +83,7 @@ function encrypted_configxml() {
  *   $config      - array containing all configuration variables
  ******/
 function parse_config($parse = false) {
-	global $g, $config_parsed;
+	global $g, $config_parsed, $config_extra;
 
 	$lockkey = lock('config');
 	$config_parsed = false;
@@ -166,11 +166,22 @@ function parse_config($parse = false) {
  *   boolean	- true on completion
  ******/
 function generate_config_cache($config) {
-	global $g;
+	global $g, $config_extra;
 
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
+	//pfSense_fsync("{$g['tmp_path']}/config.cache");
+
+	unset($configcache);
+	/* Used for config.extra.xml */
+	if (file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {
+		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
+		fwrite($configcacheextra, serialize($config_extra));
+		fclose($configcacheextra);
+		//pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
+		unset($configcacheextra);
+	}
 }
 
 function discover_last_backup() {

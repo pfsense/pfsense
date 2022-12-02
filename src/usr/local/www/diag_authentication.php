@@ -35,6 +35,9 @@ if ($_POST) {
 	$pconfig = $_POST;
 	unset($input_errors);
 
+	global $debug;
+	$debug = ($_POST['debug'] == 'yes');
+
 	$authcfg = auth_get_authserver($_POST['authmode']);
 	if (!$authcfg) {
 		$input_errors[] =  sprintf(gettext('%s is not a valid authentication server'), $_POST['authmode']);
@@ -110,6 +113,13 @@ $section->addInput(new Form_Input(
 	$pconfig['password'],
 	['placeholder' => 'Password', 'autocomplete' => 'new-password']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'debug',
+	'Debug',
+	'Set debug flag',
+	($_POST['debug'] == 'yes')
+))->setHelp('Sets the debug flag when performing authentication, which may trigger additional diagnostic entries in the system log (e.g. for LDAP).');
 
 $form->add($section);
 

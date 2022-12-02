@@ -1514,10 +1514,27 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		return null;
 	}
 
+	if ($debug) {
+		log_error(sprintf(gettext("LDAP Debug: Attempting to authenticate %s on %s"), $username, $ldapname));
+		log_error(sprintf(gettext("LDAP Debug: URI: %s (v%s)"), $ldapserver, $ldapver));
+		log_error(sprintf(gettext("LDAP Debug: Base DN: %s"), $ldapbasedn));
+		log_error(sprintf(gettext("LDAP Debug: Scope: %s"), $ldapscope));
+		log_error(sprintf(gettext("LDAP Debug: Auth Bind DN: %s"), $ldapbindun));
+		log_error(sprintf(gettext("LDAP Debug: Container: %s"), $ldapauthcont));
+		log_error(sprintf(gettext("LDAP Debug: Attrs: Name: %s / Group: %s"), $ldapnameattribute, $ldapgroupattribute));
+		log_error(sprintf(gettext("LDAP Debug: Extended Query: %s"), $ldapextendedquery));
+		log_error(sprintf(gettext("LDAP Debug: Filter: %s"), $ldapfilter));
+		log_error(sprintf(gettext("LDAP Debug: Group Filter: %s"), $ldapgroupfilter));
+	}
+
 	/* Make sure we can connect to LDAP */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
+	}
+
+	if ($debug) {
+		log_error(sprintf(gettext("LDAP Debug: LDAP connection error flag: %s"), var_export($error, true)));
 	}
 
 	/* Setup CA environment if needed. */
@@ -1577,7 +1594,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	/*  that way we don't have to search twice.                      */
 	/*****************************************************************/
 	if ($debug) {
-		log_auth(sprintf(gettext("Now Searching for %s in directory."), $username));
+		log_error(sprintf(gettext("LDAP Debug: Now Searching for %s in directory."), $username));
 	}
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
@@ -1586,7 +1603,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? utf8_encode("{$ldac_split},{$ldapbasedn}") : "{$ldac_split},{$ldapbasedn}";
 		/* Make sure we just use the first user we find */
 		if ($debug) {
-			log_auth(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, utf8_decode($ldac_split), utf8_decode($ldapfilter)));
+			log_error(sprintf(gettext('LDAP Debug: Now searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, utf8_decode($ldac_split), utf8_decode($ldapfilter)));
 		}
 		if ($ldapscope == "one") {
 			$ldapfunc = "ldap_list";
@@ -1610,16 +1627,19 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 			}
 			$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
 			$groupsearch = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter);
+			if ($debug) {
+				log_error(sprintf(gettext("LDAP Debug: RFC2307 group filter search: %s"), $ldapgroupfilter));
+			}
 		}
 
 		if (isset($ldapgroupfilter) && !$groupsearch) {
-			log_error(sprintf(gettext("Extended group search resulted in error: %s"), ldap_error($ldap)));
+			log_error(sprintf(gettext("LDAP Debug: Extended group search resulted in error: %s"), ldap_error($ldap)));
 			continue;
 		}
 		if (isset($groupsearch)) {
 			$validgroup = ldap_count_entries($ldap, $groupsearch);
 			if ($debug) {
-				log_auth(sprintf(gettext("LDAP group search: %s results."), $validgroup));
+				log_error(sprintf(gettext("LDAP Debug: Group search contains %s results."), $validgroup));
 			}
 		}
 		$info = ldap_get_entries($ldap, $search);
@@ -1637,9 +1657,9 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		@ldap_unbind($ldap);
 		if ($debug) {
 			if ($usercount === 0) {
-				log_error(sprintf(gettext("ERROR! LDAP search failed, no user matching %s was found."), $username));
+				log_error(sprintf(gettext("LDAP Debug: ERROR! LDAP search failed, no user matching %s was found."), $username));
 			} else {
-				log_error(sprintf(gettext("ERROR! LDAP search failed, multiple users matching %s were found."), $username));
+				log_error(sprintf(gettext("LDAP Debug: ERROR! LDAP search failed, multiple users matching %s were found."), $username));
 			}
 		}
 		$attributes['error_message'] = gettext("Invalid login specified.");
@@ -1650,7 +1670,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	$passwd = isset($authcfg['ldap_utf8']) ? utf8_encode($passwd) : $passwd;
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
 		if ($debug) {
-			log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
+			log_error(sprintf(gettext('LDAP Debug: ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
 		}
 		@ldap_unbind($ldap);
 		return false;
@@ -1658,11 +1678,11 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 
 	if ($debug) {
 		$userdn = isset($authcfg['ldap_utf8']) ? utf8_decode($userdn) : $userdn;
-		log_auth(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
+		log_error(sprintf(gettext('LDAP Debug: Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 	}
 
 	if ($debug && isset($ldapgroupfilter) && $validgroup < 1) {
-		log_auth(sprintf(gettext('Logged in successfully as %1$s but did not match any field in extended query.'), $username));
+		log_error(sprintf(gettext('LDAP Debug: Logged in successfully as %1$s but did not match any field in extended query.'), $username));
 	}
 
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */

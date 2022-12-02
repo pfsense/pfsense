@@ -23,7 +23,7 @@ else
 	unset LOADER_UPDATE
 fi
 if [ -n "${LOADER_UPDATE}" ]; then
-	_echo "Updating the EFI loader"
+	echo "Updating the EFI loader"
 	if [ "${arch}" = "aarch64" ]; then
 		cp ${PKG_ROOTDIR}/boot/loader.efi ${PKG_ROOTDIR}/boot/efi/efi/boot/BOOTaa64.efi
 	elif [ "${arch}" = "amd64" ]; then

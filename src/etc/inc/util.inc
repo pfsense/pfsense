@@ -30,6 +30,52 @@ define('VIP_ALL', 1);
 define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
 
+/**
+ * Check if the global $g variable contains a $key
+ *
+ * @param string $key The key
+ * @param bool $isset Also perform isset check
+ *
+ * @return bool
+ */
+function g_has(string $key, bool $isset = false) : bool
+{
+	global $g;
+	return (array_key_exists($key, $g) && (!$isset || isset($g[$key])));
+}
+
+/**
+ * Get the global $g variable value by $key
+ *
+ * @param string $key The key
+ * @param mixed $default The value to return on a key miss
+ *
+ * @return mixed
+ */
+function g_get(string $key, mixed $default = null) : mixed
+{
+	global $g;
+	return (g_has($key, true) ? $g[$key] : $default); 
+}
+
+/**
+ * Set the global $g variable value by $key
+ *
+ * @param string $key The key
+ * @param mixed $value The value
+ * @param bool $force Force set (can replace) the value
+ *
+ * @return mixed
+ */
+function g_set(string $key, mixed $value, bool $force = false) : mixed
+{
+	global $g;
+	if ($force || !g_has($key, true)) {
+		$g[$key] = $value;
+	}
+	return (g_get($key));
+}
+
 /* kill a process by pid file */
 function killbypid($pidfile, $waitfor = 0) {
 	return sigkillbypid($pidfile, "TERM", $waitfor);

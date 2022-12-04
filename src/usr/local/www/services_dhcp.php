@@ -136,7 +136,7 @@ if (is_array($dhcpdconf)) {
 
 		// dhcpleaseinlocaltime is global to all interfaces. So if it is selected on any interface,
 		// then show it true/checked.
-		foreach ($config['dhcpd'] as $dhcpdifitem) {
+		foreach (config_get_path('dhcpd', []) as $dhcpdifitem) {
 			$dhcpleaseinlocaltime = $dhcpdifitem['dhcpleaseinlocaltime'];
 			if ($dhcpleaseinlocaltime) {
 				break;
@@ -363,27 +363,22 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
 	}
 
-	if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
-		$deftime = 7200; // Default value if it's empty
-		if (is_numeric($_POST['deftime'])) {
-			$deftime = $_POST['deftime'];
+	// Default value if it's empty
+	$deftime = (is_numeric($_POST['deftime'])) ? $_POST['deftime'] : 7200;
+	foreach (config_get_path('captiveportal', []) as $cpZone => $cpdata) {
+		if (!isset($cpdata['enable'])) {
+			continue;
 		}
-
-		foreach ($config['captiveportal'] as $cpZone => $cpdata) {
-			if (!isset($cpdata['enable'])) {
-				continue;
-			}
-			if (!isset($cpdata['timeout']) || !is_numeric($cpdata['timeout'])) {
-				continue;
-			}
-			$cp_ifs = explode(',', $cpdata['interface']);
-			if (!in_array($if, $cp_ifs)) {
-				continue;
-			}
-			if ($cpdata['timeout'] > $deftime) {
-				$input_errors[] = sprintf(gettext(
-					'The Captive Portal zone (%1$s) has Hard Timeout parameter set to a value bigger than Default lease time (%2$s).'), $cpZone, $deftime);
-			}
+		if (!isset($cpdata['timeout']) || !is_numeric($cpdata['timeout'])) {
+			continue;
+		}
+		$cp_ifs = explode(',', $cpdata['interface']);
+		if (!in_array($if, $cp_ifs)) {
+			continue;
+		}
+		if ($cpdata['timeout'] > $deftime) {
+			$input_errors[] = sprintf(gettext(
+				'The Captive Portal zone (%1$s) has Hard Timeout parameter set to a value bigger than Default lease time (%2$s).'), $cpZone, $deftime);
 		}
 	}
 
@@ -451,12 +446,10 @@ if (isset($_POST['save'])) {
 	}
 
 	// Disallow a range that includes the virtualip
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $vip) {
-			if ($vip['interface'] == $if) {
-				if ($vip['subnet'] && is_inrange_v4($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) {
-					$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IP address %s."), $vip['subnet']);
-				}
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
+		if ($vip['interface'] == $if) {
+			if ($vip['subnet'] && is_inrange_v4($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) {
+				$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IP address %s."), $vip['subnet']);
 			}
 		}
 	}
@@ -503,8 +496,8 @@ if (isset($_POST['save'])) {
 
 	if ((!isset($pool) || !is_numeric($pool)) && $act != "newpool") {
 		/* If enabling DHCP Server, make sure that the DHCP Relay isn't enabled on this interface */
-		if ($_POST['enable'] && isset($config['dhcrelay']['enable']) &&
-		    (stristr($config['dhcrelay']['interface'], $if) !== false)) {
+		if ($_POST['enable'] && config_path_enabled('dhcrelay') &&
+		    (stristr(config_get_path('dhcrelay/interface', ''), $if) !== false)) {
 			$input_errors[] = sprintf(gettext(
 			    "The DHCP relay on the %s interface must be disabled before enabling the DHCP server."),
 			    $iflist[$if]);
@@ -514,28 +507,28 @@ if (isset($_POST['save'])) {
 		if (!$_POST['enable']) {
 			/* Find out how many other interfaces have DHCP enabled. */
 			$dhcp_enabled_count = 0;
-			foreach ($config['dhcpd'] as $dhif => $dhcps) {
+			foreach (config_get_path('dhcpd', []) as $dhif => $dhcps) {
 				if ($dhif == $if) {
 					/* Skip this interface, we only want to know how many others are enabled. */
 					continue;
 				}
-				if (isset($dhcps['enable'])) {
+				if (config_path_enabled("dhcpd/{$dhif}")) {
 					$dhcp_enabled_count++;
 				}
 			}
 
-			if (isset($config['dnsmasq']['enable']) &&
+			if (config_path_enabled('dnsmasq') &&
 			    ($dhcp_enabled_count == 0) &&
-			    (isset($config['dnsmasq']['regdhcp']) ||
-			    isset($config['dnsmasq']['regdhcpstatic']) ||
-			    isset($config['dnsmasq']['dhcpfirst']))) {
+			    (config_path_enabled('dnsmasq', 'regdhcp') ||
+			    config_path_enabled('dnsmasq', 'regdhcpstatic') ||
+			    config_path_enabled('dnsmasq', 'dhcpfirst'))) {
 				$input_errors[] = gettext(
 				    "DHCP Registration features in the DNS Forwarder are active and require at least one enabled DHCP Server.");
 			}
-			if (isset($config['unbound']['enable']) &&
+			if (config_path_enabled('unbound') &&
 			    ($dhcp_enabled_count == 0) &&
-			    (isset($config['unbound']['regdhcp']) ||
-			    isset($config['unbound']['regdhcpstatic']))) {
+			    (config_path_enabled('unbound', 'regdhcp') ||
+			    config_path_enabled('unbound', 'regdhcpstatic'))) {
 				$input_errors[] = gettext(
 				    "DHCP Registration features in the DNS Resolver are active and require at least one enabled DHCP Server.");
 			}
@@ -556,11 +549,11 @@ if (isset($_POST['save'])) {
 
 		if (is_numeric($pool) || ($act == "newpool")) {
 			if (is_inrange_v4($_POST['range_from'],
-				$config['dhcpd'][$if]['range']['from'],
-				$config['dhcpd'][$if]['range']['to']) ||
+				config_get_path("dhcpd/{$if}/range/from"),
+				config_get_path("dhcpd/{$if}/range/to") ||
 				is_inrange_v4($_POST['range_to'],
-				$config['dhcpd'][$if]['range']['from'],
-				$config['dhcpd'][$if]['range']['to'])) {
+				config_get_path("dhcpd/{$if}/range/from"),
+				config_get_path("dhcpd/{$if}/range/to")))) {
 				$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
 			}
 		}
@@ -597,12 +590,7 @@ if (isset($_POST['save'])) {
 			if ($act == "newpool") {
 				$dhcpdconf = array();
 			} else {
-				if (!is_array($config['dhcpd'])) {
-					config_set_path('dhcpd', array());
-				}
-				if (!is_array($config['dhcpd'][$if])) {
-					$config['dhcpd'][$if] = array();
-				}
+				config_init_path("dhcpd/{$if}");
 				$dhcpdconf = config_get_path("dhcpd/{$if}");
 			}
 		} else {
@@ -641,8 +629,12 @@ if (isset($_POST['save'])) {
 
 			$dhcpdconf['failover_peerip'] = $_POST['failover_peerip'];
 			// dhcpleaseinlocaltime is global to all interfaces. So update the setting on all interfaces.
-			foreach ($config['dhcpd'] as &$dhcpdifitem) {
-				$dhcpdifitem['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
+			foreach (config_get_path('dhcpd', []) as $dhcpdifkey => $keyvalue) {
+				if (isset($_POST['dhcpleaseinlocaltime'])) {
+					config_set_path("dhcpd/{$dhcpdifkey}/dhcpleaseinlocaltime", $_POST['dhcpleaseinlocaltime']);
+				} else {
+					config_del_path("dhcpd/{$dhcpdifkey}/dhcpleaseinlocaltime");
+				}
 			}
 		} else {
 			// Options that exist only in pools
@@ -750,7 +742,7 @@ if (isset($_POST['save'])) {
 		} elseif ($act == "newpool") {
 			$a_pools[] = $dhcpdconf;
 		} else {
-			$config['dhcpd'][$if] = $dhcpdconf;
+			config_set_path("dhcpd/{$if}", $dhcpdconf);
 		}
 
 		// OMAPI Settings
@@ -849,9 +841,9 @@ if ($act == "del") {
 		}
 		unset($a_maps[$_POST['id']]);
 		write_config("DHCP Server static map deleted");
-		if (isset($config['dhcpd'][$if]['enable'])) {
+		if (config_path_enabled("dhcpd/{$if}")) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
+			if (config_path_enabled('dnsmasq') && config_get_path('dnsmasq/regdhcpstatic', false)) {
 				mark_subsystem_dirty('hosts');
 			}
 		}
@@ -978,7 +970,7 @@ $form = new Form();
 $section = new Form_Section('General Options');
 
 if (!is_numeric($pool) && !($act == "newpool")) {
-	if (isset($config['dhcrelay']['enable'])) {
+	if (config_path_enabled('dhcrelay')) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
 			'Enable',

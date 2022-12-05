@@ -28,18 +28,19 @@
 ##|*MATCH=diag_system_activity.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-
-$pgtitle = array(gettext("Diagnostics"), gettext("System Activity"));
+require_once('guiconfig.inc');
 
 if ($_REQUEST['getactivity']) {
-	$text = `/usr/bin/top -baHS 999`;
 	header('Content-Type: text/plain; charset=UTF-8');
-	echo $text;
+	exec('/usr/bin/top -baHS 999 2>/dev/null', $output, $rc);
+	echo (($rc === 0) ? implode(PHP_EOL, $output) : sprintf(gettext('Unable to gather system activity (%d)'), $rc));
 	exit;
 }
 
-include("head.inc");
+
+$pgtitle = [gettext('Diagnostics'), gettext('System Activity')];
+
+include('head.inc');
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -88,8 +89,9 @@ events.push(function() {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('CPU Activity')?></h2></div>
 	<div class="panel panel-body">
-		<pre id="xhrOutput"><?=gettext("Gathering CPU activity, please wait...")?></pre>
+		<pre id="xhrOutput"><?=gettext('Gathering CPU activity, please wait...')?></pre>
 	</div>
 </div>
 
-<?php include("foot.inc");
+<?php
+include('foot.inc');

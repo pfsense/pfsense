@@ -374,7 +374,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['rapreferredlifetime'],
 	['placeholder' => 14400]
-))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
+))->setHelp('The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
 			'The default is 14400 seconds.', '<br />');
 
 $section->addInput(new Form_Input(

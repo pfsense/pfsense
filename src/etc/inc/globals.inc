@@ -385,4 +385,20 @@ $lagg_hash_list = array(
 	'l2,l4' => 'Layer 2/4 (MAC + Port)'
 );
 
-?>
+/**
+ * Check if a file can be included
+ *
+ * @param string $filename
+ *
+ * @return bool
+ */
+function can_include(string $filename) : bool
+{
+	// short-circuit on absolute paths before checking include paths
+	return (file_exists($filename) || (bool) stream_resolve_include_path($filename));
+}
+
+// source pfSense Plus specific globals last
+if (can_include('globals.plus.inc')) {
+	include_once('globals.plus.inc');
+}

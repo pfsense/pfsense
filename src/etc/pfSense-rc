@@ -396,6 +396,9 @@ if [ -f /cf/conf/needs_package_sync ]; then
 	skip_packages=1
 fi
 
+# Run the php.ini setup file
+/etc/rc.php_ini_setup 2>/tmp/php_errors.txt
+
 # Second upgrade stage
 [ -z "$skip_packages" ] \
 	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 2
@@ -412,9 +415,7 @@ ln -sf /etc/ssl/openssl.cnf \
 [ -f /usr/local/share/${product_name}/ssl/netgate-ca.pem ] \
 	&& cp -f /usr/local/share/${product_name}/ssl/netgate-ca.pem /etc/ssl
 
-# Run the php.ini setup file and populate
-# /usr/local/etc/php.ini
-/etc/rc.php_ini_setup 2>/tmp/php_errors.txt
+# Populate /usr/local/etc/php.ini
 /usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader

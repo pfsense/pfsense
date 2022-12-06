@@ -1527,63 +1527,72 @@ function compare_interface_friendly_names($a, $b) {
 	return strnatcmp($a, $b);
 }
 
-/* return the configured interfaces list. */
-function get_configured_interface_list($withdisabled = false) {
-	global $config;
-
-	$iflist = array();
-
-	/* if list */
-	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if (isset($ifdetail['enable']) || $withdisabled == true) {
+/**
+ * Get the configured interfaces list
+ *
+ * @param bool $with_disabled Include disabled interfaces
+ *
+ * @return array
+ */
+function get_configured_interface_list(bool $with_disabled = false) : array
+{
+	$iflist = [];
+	foreach (config_get_path('interfaces', []) as $if => $if_detail) {
+		if ($with_disabled || isset($if_detail['enable'])) {
 			$iflist[$if] = $if;
 		}
 	}
 
-	return $iflist;
+	return ($iflist);
 }
 
-/* return the configured interfaces list. */
-function get_configured_interface_list_by_realif($withdisabled = false) {
-	global $config;
-
-	$iflist = array();
-
-	/* if list */
-	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if (isset($ifdetail['enable']) || $withdisabled == true) {
+/**
+ * Return the configured (and real) interfaces list.
+ *
+ * @param bool $with_disabled Include disabled interfaces
+ *
+ * @return array
+ */
+function get_configured_interface_list_by_realif(bool $with_disabled = false) : array
+{
+	$iflist = [];
+	foreach (config_get_path('interfaces', []) as $if => $if_detail) {
+		if ($with_disabled || isset($if_detail['enable'])) {
 			$tmpif = get_real_interface($if);
-			if (!empty($tmpif)) {
-				$iflist[$tmpif] = $if;
+			if (empty($tmpif)) {
+				continue;
 			}
+			$iflist[$tmpif] = $if;
 		}
 	}
 
-	return $iflist;
+	return ($iflist);
 }
 
-/* return the configured interfaces list with their description. */
-function get_configured_interface_with_descr($withdisabled = false) {
-	global $config, $user_settings;
+/**
+ * Return the configured interfaces list with their description.
+ *
+ * @param bool $with_disabled Include disabled interfaces
+ *
+ * @return array
+ */
+function get_configured_interface_with_descr(bool $with_disabled = false) : array
+{
+	global $user_settings;
 
-	$iflist = array();
-
-	/* if list */
-	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if (isset($ifdetail['enable']) || $withdisabled == true) {
-			if (empty($ifdetail['descr'])) {
-				$iflist[$if] = strtoupper($if);
-			} else {
-				$iflist[$if] = strtoupper($ifdetail['descr']);
-			}
+	$iflist = [];
+	foreach (config_get_path('interfaces', []) as $if => $if_detail) {
+		if ($with_disabled || isset($if_detail['enable'])) {
+			$iflist[$if] = array_get_path($if_detail, 'descr', $if);
 		}
 	}
 
-	if (is_array($user_settings) && array_get_path($user_settings, 'webgui/interfacessort')) {
+	if (is_array($user_settings)
+	    && array_get_path($user_settings, 'webgui/interfacessort')) {
 		asort($iflist);
 	}
 
-	return $iflist;
+	return ($iflist);
 }
 
 /*

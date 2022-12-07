@@ -278,6 +278,7 @@ if (function_exists("system_get_thothid") &&
 defCmdT("OS-Uptime", "/usr/bin/uptime");
 defCmdT("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
 defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
+defCmdT("Network-Multicast Groups", "/usr/sbin/ifmcstat");
 defCmdT("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
 defCmdT("Process-List", "/bin/ps xauwwd");
 defCmdT("Disk-Mounted Filesystems", "/sbin/mount");

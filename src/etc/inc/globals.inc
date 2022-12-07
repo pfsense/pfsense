@@ -43,6 +43,12 @@ define('DMYPWD', '********');
 // Captive Portal aliases prefix
 define('CPPREFIX', 'cpzoneid_');
 
+$version_file = '/etc/version';
+$version_patch_file = $version_file . 'patch';
+
+$product_version = rtrim(file_get_contents($version_file));
+$present_year = date('Y');
+
 global $g;
 $g = [ 
 	'acbbackuppath' => '/cf/conf/acb/',
@@ -70,8 +76,8 @@ $g = [
 	'product_name' => 'pfSense',
 	'product_label' => 'pfSense',
 	'product_label_html' => 'Netgate pfSense<sup>&#174;</sup>',
-	'product_version' => trim(file_get_contents('/etc/version'), ' \n'),
-	'product_copyright_years' => '2004 - '.date('Y'),
+	'product_version' => $product_version,
+	'product_copyright_years' => '2004 - ' . $present_year,
 	'disablehelpmenu' => false,
 	'disablehelpicon' => false,
 	'disablecrashreporter' => false,
@@ -114,8 +120,8 @@ $iptos = ['lowdelay', 'throughput', 'reliability'];
 global $tcpflags;
 $tcpflags = ['syn', 'ack', 'fin', 'rst', 'psh', 'urg', 'ece', 'cwr'];
 
-if (file_exists('/etc/version.patch')) {
-	$g['product_version_patch'] = trim(file_get_contents('/etc/version.patch'), ' \n');
+if (file_exists($version_patch_file)) {
+	$g['product_version_patch'] = rtrim(file_get_contents($version_patch_file));
 } else {
 	$g['product_version_patch'] = '0';
 }

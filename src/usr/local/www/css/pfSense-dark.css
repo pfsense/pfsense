@@ -246,6 +246,10 @@ caption {
     background-color: #e0e0e0;
 }
 
+select.form-control:focus {
+    background-color: #fff;
+}
+
 .form-group {
     border-bottom: 1px solid #212121;
 }

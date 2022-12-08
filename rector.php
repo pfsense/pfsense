@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 
+use Tools\Rector\Rector\Rules;
+
 return static function (RectorConfig $rectorConfig): void {
     // Recursively check these paths...
     $rectorConfig->paths([
@@ -18,6 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
     // while skipping third-pary code that isn't our concern.
     $rectorConfig->skip([
         __DIR__ . '/src/usr/local/pfSense/include/vendor/*',
+    	__DIR__ . '/src/etc/inc/priv.defs.inc',
     ]);
 
     /*
@@ -32,4 +35,6 @@ return static function (RectorConfig $rectorConfig): void {
      *
      * See https://github.com/rectorphp/rector/blob/main/docs/create_own_rule.md
      */ 
+
+    $rectorConfig->rule(Rules\GlobalGGetExprRector::class);
 };

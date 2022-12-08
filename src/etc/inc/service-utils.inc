@@ -223,7 +223,7 @@ function is_service_enabled($service_name) {
 			return ipsec_enabled();
 			break;
 		case 'miniupnpd':
-			return config_path_enabled('installedpackages/miniupnpd/config/0');
+			return (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on');
 			break;
 		case 'ntpd':
 			return (config_get_path('ntpd/enable') != 'disabled');
@@ -431,7 +431,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (config_path_enabled('installedpackages/miniupnpd/config/0')) {
+	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
 		$pconfig = array();
 		$pconfig['name'] = "miniupnpd";
 		$pconfig['description'] = gettext("UPnP Service");

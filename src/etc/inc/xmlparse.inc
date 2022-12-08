@@ -109,10 +109,24 @@ function endElement($parser, $name) {
 
 	array_pop($curpath);
 
+	/* Special case handling for erroneous empty <config> elements. Pop the most
+	 * recent element off if it is not an array. */
+	if (strtolower($name) == 'config') {
+		$ptr =& $parsedcfg;
+		foreach ($curpath as $path) {
+			$ptr = &$ptr[$path];
+		}
+		log_error(var_dump($curpath));
+		var_dump($ptr);
+		if (!is_array(end($ptr))) {
+			array_pop($ptr);
+		}
+	}
+
 	if (isset($listtags[strtolower($name)])) {
 		array_pop($curpath);
 	}
-
+	
 	$depth--;
 }
 

@@ -166,7 +166,7 @@ function execPost($post, $postfiles, $ui = true) {
 					} else if ($post['backuparea'] === "rrddata") {
 						$data = rrd_data_xml();
 						$name = "{$post['backuparea']}-{$name}";
-					} else if (array_key_exists($post['backuparea'], $g['backuppath']) && $post['backupdata']) {
+					} else if (array_key_exists($post['backuparea'], g_get('backuppath')) && $post['backupdata']) {
 						$data = backup_config_section($post['backuparea']);
 						$data = clear_tagdata($post['backuparea'], $data);
 						$dataxml = backup_xmldatafile(false, $post['backuparea']);
@@ -185,7 +185,7 @@ function execPost($post, $postfiles, $ui = true) {
 				}
 
 				if (!$post['backuparea'] && $post['backupdata']) {
-					foreach ($g['backuppath'] as $bk => $path) {
+					foreach (g_get('backuppath') as $bk => $path) {
 						if (!empty($config[$bk])) {
 							$data = clear_tagdata($bk, $data);
 							$dataxml = backup_xmldatafile(true, $bk);
@@ -210,13 +210,13 @@ function execPost($post, $postfiles, $ui = true) {
 
 				if (($post['backuparea'] != "rrddata") && !$post['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
-					$closing_tag = "</" . $g['xml_rootobj'] . ">";
+					$closing_tag = "</" . g_get('xml_rootobj') . ">";
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
 
 				if ($post['backupssh']) {
 					$ssh_keys_xml = ssh_keys_xml();
-					$closing_tag = "</" . $g['xml_rootobj'] . ">";
+					$closing_tag = "</" . g_get('xml_rootobj') . ">";
 					$data = str_replace($closing_tag, $ssh_keys_xml . $closing_tag, $data);
 				}
 
@@ -255,7 +255,7 @@ function execPost($post, $postfiles, $ui = true) {
 							if (!tagfile_deformat($data, $data, "config.xml")) {
 								$input_errors[] = sprintf(gettext(
 								    "The uploaded file does not appear to contain an encrypted %s configuration."),
-								    $g['product_label']);
+								    g_get('product_label'));
 							} else {
 								$data = decrypt_data($data, $post['decrypt_password']);
 								if (empty($data)) {
@@ -323,8 +323,8 @@ function execPost($post, $postfiles, $ui = true) {
 							}
 						}
 					} elseif (!$input_errors) {
-						if (!stristr($data, "<" . $g['xml_rootobj'] . ">")) {
-							$input_errors[] = sprintf(gettext("A full configuration restore was selected but a %s tag could not be located."), $g['xml_rootobj']);
+						if (!stristr($data, "<" . g_get('xml_rootobj') . ">")) {
+							$input_errors[] = sprintf(gettext("A full configuration restore was selected but a %s tag could not be located."), g_get('xml_rootobj'));
 						} else {
 							/* restore the entire configuration */
 							file_put_contents($postfiles['conffile']['tmp_name'], $data);
@@ -390,7 +390,7 @@ function execPost($post, $postfiles, $ui = true) {
 									config_del_path('sshdata');
 									$conf_change = true;
 								}
-								foreach ($g['backuppath'] as $bk => $path) {
+								foreach (g_get('backuppath') as $bk => $path) {
 									if (!empty($config[$bk][$bk.'data'])) {
 										restore_xmldatafile($bk);
 										config_del_path("{$bk}/{$bk}data");
@@ -451,7 +451,7 @@ function listBackupsJSON() {
 
 	cleanup_backupcache(false);
 
-	$raw = unserialize(file_get_contents($g["cf_conf_path"] . "/backup/backup.cache"));
+	$raw = unserialize(file_get_contents(g_get('cf_conf_path') . "/backup/backup.cache"));
 
 	$backups = array();
 	foreach($raw as $key => $value) {

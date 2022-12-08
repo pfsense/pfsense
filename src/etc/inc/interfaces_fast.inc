@@ -142,7 +142,7 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
 						case 'ppp':
 						case 'l2tp':
 						case 'pptp':
-							if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+							if (is_array($cfg['wireless']) || preg_match(g_get('wireless_regex'), $cfg['if'])) {
 								$wanif = interface_get_wireless_clone($cfg['if']);
 							} else {
 								$wanif = $cfg['if'];
@@ -168,7 +168,7 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
 									}
 									break;
 								default:
-									if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+									if (is_array($cfg['wireless']) || preg_match(g_get('wireless_regex'), $cfg['if'])) {
 										$wanif = interface_get_wireless_clone($cfg['if']);
 									} else {
 										$wanif = $cfg['if'];
@@ -181,7 +181,7 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
 					// Wireless cloned NIC support (FreeBSD 8+)
 					// interface name format: $parentnic_wlanparentnic#
 					// example: ath0_wlan0
-					if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+					if (is_array($cfg['wireless']) || preg_match(g_get('wireless_regex'), $cfg['if'])) {
 						$wanif = interface_get_wireless_clone($cfg['if']);
 					} else {
 						$wanif = $cfg['if'];

@@ -90,7 +90,7 @@ function get_pkg_table() {
 		$pkgtbl .= 	'</td>' . "\n";
 		$pkgtbl .= 	'<td>' . "\n";
 
-		if (!$g['disablepackagehistory']) {
+		if (!g_get('disablepackagehistory')) {
 			$pkgtbl .= '<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($index['changeloglink']) . '">' . "\n";
 			$pkgtbl .= htmlspecialchars($index['version']) . '</a>' . "\n";
 		} else {
@@ -115,7 +115,7 @@ function get_pkg_table() {
 		$pkgtbl .= '<td>' . "\n";
 		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?pkg=' . $index['name'] . '" class="btn btn-success btn-sm"><i class="fa fa-plus icon-embed-btn"></i>Install</a>' . "\n";
 
-		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']) {
+		if (!g_get('disablepackageinfo') && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']) {
 			$pkgtbl .= '<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($index['pkginfolink']) . '" class="btn btn-default btn-sm">info</a>' . "\n";
 		}
 

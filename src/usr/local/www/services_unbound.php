@@ -386,7 +386,7 @@ $section->addInput(new Form_Select(
 	'*System Domain Local Zone Type',
 	$pconfig['system_domain_local_zone_type'],
 	unbound_local_zone_types()
-))->setHelp('The local-zone type used for the %1$s system domain (System | General Setup | Domain).  Transparent is the default.', $g['product_label']);
+))->setHelp('The local-zone type used for the %1$s system domain (System | General Setup | Domain).  Transparent is the default.', g_get('product_label'));
 
 $section->addInput(new Form_Checkbox(
 	'dnssec',

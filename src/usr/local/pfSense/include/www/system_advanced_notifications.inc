@@ -153,7 +153,7 @@ function saveAdvancedNotifications($post, $json = false) {
 		$config['notifications']['certexpire']['enable'] = ($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
 	    	$config['notifications']['certexpire']['ignore_revoked'] = ($post['revoked_cert_ignore_notify'] == "yes") ? "enabled" : "disabled";
 		if (empty($post['certexpiredays'])) {
-			$config['notifications']['certexpire']['expiredays'] = $g['default_cert_expiredays'];
+			$config['notifications']['certexpire']['expiredays'] = g_get('default_cert_expiredays');
 		} elseif (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0)) {
 			$config['notifications']['certexpire']['expiredays'] = $post['certexpiredays'];
 		} else {
@@ -314,7 +314,7 @@ function saveAdvancedNotifications($post, $json = false) {
 			unlink("/var/db/notices_lastmsg.txt");
 		}
 
-		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("SMTP testing e-mail successfully sent");
 			$test_class = 'success';
@@ -325,7 +325,7 @@ function saveAdvancedNotifications($post, $json = false) {
 
 	if ($testtelegram) {
 		// Send test message via telegram
-		$test_result = notify_via_telegram(sprintf(gettext("This is a Telegram test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_telegram(sprintf(gettext("This is a Telegram test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Telegram testing message successfully sent");
 			$test_class = 'success';
@@ -336,7 +336,7 @@ function saveAdvancedNotifications($post, $json = false) {
 
 	if ($testpushover) {
 		// Send test message via pushover
-		$test_result = notify_via_pushover(sprintf(gettext("This is a Pushover test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_pushover(sprintf(gettext("This is a Pushover test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Pushover testing message successfully sent");
 			$test_class = 'success';
@@ -347,7 +347,7 @@ function saveAdvancedNotifications($post, $json = false) {
 
 	if ($testslack) {
 		// Send test message via slack
-		$test_result = notify_via_slack(sprintf(gettext("This is a Slack test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_slack(sprintf(gettext("This is a Slack test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Slack testing message successfully sent");
 			$test_class = 'success';

@@ -165,10 +165,10 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 	if (!is_numericint($maximumtableentries)) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
 	} else if (is_bogonsv6_used() &&
-	    $maximumtableentries < $g['minimumtableentries_bogonsv6']) {
+	    $maximumtableentries < g_get('minimumtableentries_bogonsv6')) {
 		$input_errors[] = sprintf(gettext(
 		    "The Firewall Maximum Table Entries value must be greater than %s when block bogons is enabled."),
-		    $g['minimumtableentries_bogonsv6']);
+		    g_get('minimumtableentries_bogonsv6'));
 	}
 
 	if ($post['maxmss']) {

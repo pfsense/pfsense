@@ -165,7 +165,7 @@ function test_connection($post) {
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl_session, CURLOPT_CONNECTTIMEOUT, 55);
 	curl_setopt($curl_session, CURLOPT_TIMEOUT, 30);
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 
@@ -263,19 +263,19 @@ function upload_config($manual = false) {
 				'file' => curl_file_create($tmpname, 'image/jpg', 'config.jpg'),
 				'userkey' => htmlspecialchars($userkey),
 				'sha256_hash' => $raw_config_sha256_hash,
-				'version' => $g['product_version'],
+				'version' => g_get('product_version'),
 				'hint' => $config['system']['acb']['hint'],
 				'manmax' => $manmax
 			);
 
 			unlink_if_exists($tmpname);
 
-			if (!is_dir($g['acbbackuppath'])) {
-				mkdir($g['acbbackuppath']);
+			if (!is_dir(g_get('acbbackuppath'))) {
+				mkdir(g_get('acbbackuppath'));
 			}
 
-			file_put_contents($g['acbbackuppath'] . $post_fields['sha256_hash'] . ".form", json_encode($post_fields));
-			file_put_contents($g['acbbackuppath'] . $post_fields['sha256_hash'] . ".data", $data);
+			file_put_contents(g_get('acbbackuppath') . $post_fields['sha256_hash'] . ".form", json_encode($post_fields));
+			file_put_contents(g_get('acbbackuppath') . $post_fields['sha256_hash'] . ".data", $data);
 
 			/*
 			This functionality is now provided by a cron job /usr/local/sbin/acbupload.php run once per minute when ACB is enabled.

@@ -817,7 +817,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'keypaste',
 		'Key data',
 		$pconfig['keypaste']
-	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in %1$s', $g['product_label']);
+	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in %1$s', g_get('product_label'));
 
 	$section->addInput(new Form_Input(
 		'csrsign_lifetime',

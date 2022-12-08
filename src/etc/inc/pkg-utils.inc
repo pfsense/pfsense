@@ -63,9 +63,9 @@ function pkg_valid_name($pkgname) {
 function pkg_remove_prefix(&$pkg_name) {
 	global $g;
 
-	if (substr($pkg_name, 0, strlen($g['pkg_prefix'])) ==
-	    $g['pkg_prefix']) {
-		$pkg_name = substr($pkg_name, strlen($g['pkg_prefix']));
+	if (substr($pkg_name, 0, strlen(g_get('pkg_prefix'))) ==
+	    g_get('pkg_prefix')) {
+		$pkg_name = substr($pkg_name, strlen(g_get('pkg_prefix')));
 	}
 }
 
@@ -80,7 +80,7 @@ function pkg_update($force = false) {
 function pkg_env($extra_env = array()) {
 	global $g;
 
-	$user_agent = $g['product_label'] . '/' . $g['product_version'];
+	$user_agent = g_get('product_label') . '/' . g_get('product_version');
 	if (!config_path_enabled('system','do_not_send_uniqueid')) {
 		$user_agent .= ':' . system_get_uniqueid();
 	}
@@ -341,13 +341,13 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 
 	if (is_array($pkgs)) {
 		$pkg_filter = $pkgs;
-		$pkgs = $g['pkg_prefix'] . '*';
+		$pkgs = g_get('pkg_prefix') . '*';
 	} elseif ($pkgs == 'all') {
-		$pkgs = $g['pkg_prefix'] . '*';
+		$pkgs = g_get('pkg_prefix') . '*';
 	}
 
-	$base_packages = (substr($pkgs, 0, strlen($g['pkg_prefix'])) !=
-	    $g['pkg_prefix']);
+	$base_packages = (substr($pkgs, 0, strlen(g_get('pkg_prefix'))) !=
+	    g_get('pkg_prefix'));
 
 	if ($installed_pkgs_only && !is_pkg_installed($pkgs)) {
 		/*
@@ -483,7 +483,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 			$rc = pkg_exec("query %R {$pkg_info['name']}", $out,
 			    $err);
 			if (!$base_packages &&
-			    rtrim($out) != $g['product_name']) {
+			    rtrim($out) != g_get('product_name')) {
 				continue;
 			}
 
@@ -612,7 +612,7 @@ function uninstall_package($package_name) {
 		    config_get_path("installedpackages/package/{$id}"));
 		stop_service($internal_name);
 	}
-	$pkg_name = $g['pkg_prefix'] . $internal_name;
+	$pkg_name = g_get('pkg_prefix') . $internal_name;
 
 	if (is_pkg_installed($pkg_name)) {
 		update_status(gettext("Removing package...") . "\n");
@@ -633,7 +633,7 @@ function reinstall_package($package_name) {
 		$internal_name = get_package_internal_name(
 			config_get_path("installedpackages/package/{$id}"));
 	}
-	$pkg_name = $g['pkg_prefix'] . $internal_name;
+	$pkg_name = g_get('pkg_prefix') . $internal_name;
 	pkg_install($pkg_name);
 }
 
@@ -712,7 +712,7 @@ function sync_package($package_name) {
 function read_package_config($package_name) {
 	global $g;
 
-	$pkg_info_xml = '/usr/local/share/' . $g['pkg_prefix'] . $package_name .
+	$pkg_info_xml = '/usr/local/share/' . g_get('pkg_prefix') . $package_name .
 	    '/info.xml';
 
 	if (!file_exists($pkg_info_xml)) {
@@ -1180,12 +1180,12 @@ function package_reinstall_all() {
 		foreach ($pkg_info as $pkg) {
 			pkg_remove_prefix($pkg['name']);
 			if ($pkg['name'] == $package['internal_name']) {
-				pkg_install($g['pkg_prefix'] . $package['internal_name'], true);
+				pkg_install(g_get('pkg_prefix') . $package['internal_name'], true);
 				$found = true;
 			} elseif ($pkg['name'] == $package['name']) {
 				/* some packages use 'name' as the package name,
 				 * see https://redmine.pfsense.org/issues/12766 */
-				pkg_install($g['pkg_prefix'] . $package['name'], true);
+				pkg_install(g_get('pkg_prefix') . $package['name'], true);
 				$found = true;
 			}
 			if ($found) {
@@ -1207,7 +1207,7 @@ function package_reinstall_all() {
 			file_notice(gettext("Package reinstall"),
 			    sprintf(gettext("Package %s does not exist in " .
 			    "current %s version and it has been removed."),
-			    $pkgname, $g['product_label']));
+			    $pkgname, g_get('product_label')));
 			uninstall_package($package);
 		}
 	}
@@ -1283,12 +1283,12 @@ function get_meta_pkg_name() {
 	global $g;
 
 	/* XXX: Use pkg annotation */
-	if (is_pkg_installed($g['product_name'])) {
-		return $g['product_name'];
+	if (is_pkg_installed(g_get('product_name'))) {
+		return g_get('product_name');
 	}
-	foreach ($g['alternativemetaports'] as $suffix) {
-		if (is_pkg_installed($g['product_name'] . '-' . $suffix)) {
-			return $g['product_name'] . '-' . $suffix;
+	foreach (g_get('alternativemetaports') as $suffix) {
+		if (is_pkg_installed(g_get('product_name') . '-' . $suffix)) {
+			return g_get('product_name') . '-' . $suffix;
 		}
 	}
 	return false;
@@ -1299,10 +1299,10 @@ function get_base_pkg_name() {
 	global $g;
 
 	/* XXX: Use pkg annotation */
-	if (is_pkg_installed($g['product_name'] . '-base-' . $g['product_name'])) {
-		return $g['product_name'] . '-base-' . $g['product_name'];
-	} else if (is_pkg_installed($g['product_name'] . '-base')) {
-		return $g['product_name'] . '-base';
+	if (is_pkg_installed(g_get('product_name') . '-base-' . g_get('product_name'))) {
+		return g_get('product_name') . '-base-' . g_get('product_name');
+	} else if (is_pkg_installed(g_get('product_name') . '-base')) {
+		return g_get('product_name') . '-base';
 	}
 	return false;
 }
@@ -1315,12 +1315,12 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 		return false;
 	}
 
-	$cache_file = $g['version_cache_file'];
+	$cache_file = g_get('version_cache_file');
 	$rc_file = $cache_file . '.rc';
 
 	$rc = "";
 	if ($use_cache && file_exists($rc_file) &&
-	    (time()-filemtime($rc_file) < $g['version_cache_refresh'])) {
+	    (time()-filemtime($rc_file) < g_get('version_cache_refresh'))) {
 		$rc = chop(@file_get_contents($rc_file));
 	}
 
@@ -1575,7 +1575,7 @@ function update_repos() {
 		// Compose a version string in JSON format
 		$os = php_uname('s');
 		$osver = php_uname('r');
-		$ed =  (strpos($g['product_label'], 'Plus') !== false)
+		$ed =  (strpos(g_get('product_label'), 'Plus') !== false)
 		    ? "Plus" : "Community";
 		$pkglist = get_pkg_info("all", false, true);
 		$platform = system_identify_specific_platform();
@@ -1604,8 +1604,8 @@ function update_repos() {
 		$va['os'] = $os;
 		$va['osver'] = $platformname;
 		$va['fstype'] = $fstype;
-		$va['prod'] = $g['product_label'];
-		$va['ver'] = $g['product_version_string'];
+		$va['prod'] = g_get('product_label');
+		$va['ver'] = g_get('product_version_string');
 		$va['ed'] = $ed;
 		$va['pkgs'] = array();
 
@@ -1625,7 +1625,7 @@ function update_repos() {
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_VERBOSE, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
+		curl_setopt($ch, CURLOPT_USERAGENT, g_get('product_label') . '/' . g_get('product_version'));
 		curl_setopt($ch, CURLOPT_URL, $FQDN);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));

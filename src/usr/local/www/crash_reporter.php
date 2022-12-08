@@ -102,7 +102,7 @@ if ($_POST['Submit'] == "No") {
 	<div class="panel-body">
 		<div class="content">
 			<p>
-				<?=sprintf(gettext("Debugging output can be collected to share with %s developers or others providing support or assistance."), $g['product_label'])?>
+				<?=sprintf(gettext("Debugging output can be collected to share with %s developers or others providing support or assistance."), g_get('product_label'))?>
 				<br/><br/>
 				<i><?=gettext("Inspect the contents to ensure this information is acceptable to disclose before distributing these files.")?></i>
 			</p>

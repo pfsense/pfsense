@@ -1169,7 +1169,7 @@ function system_webgui_start() {
 		echo gettext("Starting webConfigurator...");
 	}
 
-	chdir($g['www_path']);
+	chdir(g_get('www_path'));
 
 	/* defaults */
 	$portarg = config_get_path('system/webgui/port', '80');
@@ -1565,7 +1565,7 @@ function system_get_timezone_list() {
 	);
 
 	if (empty($file_list)) {
-		$file_list[] = $g['default_timezone'];
+		$file_list[] = g_get('default_timezone');
 	} else {
 		/* Remove directories from list */
 		$file_list = array_filter($file_list, function($v) {
@@ -1595,7 +1595,7 @@ function system_timezone_configure() {
 	}
 
 	/* extract appropriate timezone file */
-	$timezone = (isset($syscfg['timezone']) ? $syscfg['timezone'] : $g['default_timezone']);
+	$timezone = (isset($syscfg['timezone']) ? $syscfg['timezone'] : g_get('default_timezone'));
 	/* DO NOT remove \n otherwise tzsetup will fail */
 	@file_put_contents("/var/db/zoneinfo", $timezone . "\n");
 	mwexec("/usr/sbin/tzsetup -r");
@@ -1862,7 +1862,7 @@ function system_ntp_configure() {
 	if (config_get_path('ntpd/serverauth') == 'yes') {
 		$ntpkeyscfg = "1 " . strtoupper(config_get_path('ntpd/serverauthalgo')) . " " . base64_decode(config_get_path('ntpd/serverauthkey')) . "\n";
 		if (!@file_put_contents("{$g['varetc_path']}/ntp.keys", $ntpkeyscfg)) {
-			log_error(sprintf(gettext("Could not open %s/ntp.keys for writing"), $g['varetc_path']));
+			log_error(sprintf(gettext("Could not open %s/ntp.keys for writing"), g_get('varetc_path')));
 			return;
 		}
 	} else {
@@ -2213,7 +2213,7 @@ function system_ntp_configure() {
 
 	/* open configuration for writing or bail */
 	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
-		log_error(sprintf(gettext("Could not open %s/ntpd.conf for writing"), $g['varetc_path']));
+		log_error(sprintf(gettext("Could not open %s/ntpd.conf for writing"), g_get('varetc_path')));
 		return;
 	}
 
@@ -2527,7 +2527,7 @@ function system_get_uniqueid() {
 
 	$uniqueid_file="{$g['vardb_path']}/uniqueid";
 
-	if (empty($g['uniqueid'])) {
+	if (empty(g_get('uniqueid'))) {
 		if (!file_exists($uniqueid_file)) {
 			mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid " .
 			    "2>/dev/null");
@@ -2537,7 +2537,7 @@ function system_get_uniqueid() {
 		}
 	}
 
-	return ($g['uniqueid'] ?: '');
+	return (g_get('uniqueid') ?: '');
 }
 
 /*
@@ -2719,7 +2719,7 @@ function system_identify_specific_platform() {
 	}
 	unset($dmesg_boot);
 
-	return array('name' => $g['product_name'], 'descr' => $g['product_label']);
+	return array('name' => g_get('product_name'), 'descr' => g_get('product_label'));
 }
 
 function system_get_dmesg_boot() {

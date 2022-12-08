@@ -102,13 +102,13 @@ function get_pkg_stats() {
 		print(		"<td>\n");
 		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i> ');
 
-		if (!$g['disablepackagehistory']) {
+		if (!g_get('disablepackagehistory')) {
 			print('<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">');
 		}
 
 		print(			htmlspecialchars($pkg['installed_version']));
 
-		if (!$g['disablepackagehistory']) {
+		if (!g_get('disablepackagehistory')) {
 			print("</a>\n");
 		}
 

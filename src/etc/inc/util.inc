@@ -193,7 +193,7 @@ function send_event($cmd) {
 
 	$try = 0;
 	while ($try < 3) {
-		$fd = @fsockopen($g['event_address']);
+		$fd = @fsockopen(g_get('event_address'));
 		if ($fd) {
 			fwrite($fd, $cmd);
 			$resp = fread($fd, 4096);
@@ -222,7 +222,7 @@ function send_multiple_events($cmds) {
 
 	$try = 0;
 	while ($try < 3) {
-		$fd = @fsockopen($g['event_address']);
+		$fd = @fsockopen(g_get('event_address'));
 		if ($fd) {
 			foreach ($cmds as $cmd) {
 				fwrite($fd, $cmd);
@@ -1781,7 +1781,7 @@ function log_error($error) {
 		$page = basename($files[0]);
 	}
 	syslog(LOG_ERR, "$page: $error");
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		syslog(LOG_WARNING, var_export(debug_backtrace()));
 	}
 	return;
@@ -1799,7 +1799,7 @@ function log_auth($error) {
 	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
 	syslog(LOG_AUTH, "$page: $error");
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		syslog(LOG_WARNING, var_export(debug_backtrace()));
 	}
 	return;
@@ -1828,7 +1828,7 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 	global $g;
 	$retval = 0;
 
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		if (!$_SERVER['REMOTE_ADDR']) {
 			echo "mwexec(): $command" . ($background ? " [BG]":"") . "\n";
 		}

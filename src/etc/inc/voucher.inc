@@ -459,7 +459,7 @@ function voucher_write_used_db($roll, $vdb) {
 		fwrite($fd, $vdb . "\n");
 		fclose($fd);
 	} else {
-		voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_%2$s_used_%3$s.db'), $g['vardb_path'], $cpzone, $roll));
+		voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_%2$s_used_%3$s.db'), g_get('vardb_path'), $cpzone, $roll));
 	}
 }
 
@@ -542,7 +542,7 @@ function voucher_read_used_db($roll) {
 			$vdb = trim(fgets($fd));
 			fclose($fd);
 		} else {
-			voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%2$s_used_%3$s.db'), $g['vardb_path'], $cpzone, $roll));
+			voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%2$s_used_%3$s.db'), g_get('vardb_path'), $cpzone, $roll));
 		}
 	}
 	return base64_decode($vdb);

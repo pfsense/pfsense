@@ -889,7 +889,7 @@ function openvpn_reconfigure($mode, $settings) {
 		unset($grouptmp, $ifname);
 	}
 
-	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
+	$pfile = g_get('varrun_path') . "/openvpn_{$mode_id}.pid";
 	$proto = strtolower($settings['protocol']);
 	if (substr($settings['protocol'], 0, 3) == "TCP") {
 			$proto = "{$proto}-{$mode}";
@@ -1575,7 +1575,7 @@ function openvpn_restart($mode, $settings) {
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
-	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
+	$pfile = g_get('varrun_path')."/openvpn_{$mode_id}.pid";
 	if (file_exists($pfile)) {
 
 		/* read the pid file */
@@ -2253,8 +2253,8 @@ function openvpn_refresh_crls() {
 
 function openvpn_create_dirs() {
 	global $g, $openvpn_tls_server_modes;
-	if (!is_dir($g['openvpn_base'])) {
-		safe_mkdir($g['openvpn_base'], 0750);
+	if (!is_dir(g_get('openvpn_base'))) {
+		safe_mkdir(g_get('openvpn_base'), 0750);
 	}
 
 	init_config_arr(array('openvpn', 'openvpn-server'));

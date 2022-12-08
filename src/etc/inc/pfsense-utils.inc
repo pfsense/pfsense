@@ -846,7 +846,7 @@ function restore_config_section($section_name, $new_contents) {
 	fwrite($fout, $new_contents);
 	fclose($fout);
 
-	$xml = parse_xml_config($g['tmp_path'] . "/tmpxml", null);
+	$xml = parse_xml_config(g_get('tmp_path') . "/tmpxml", null);
 	if ($xml['pfsense']) {
 		$xml = $xml['pfsense'];
 	}
@@ -856,7 +856,7 @@ function restore_config_section($section_name, $new_contents) {
 		$section_xml = -1;
 	}
 
-	@unlink($g['tmp_path'] . "/tmpxml");
+	@unlink(g_get('tmp_path') . "/tmpxml");
 	if ($section_xml === -1) {
 		return false;
 	}
@@ -946,10 +946,10 @@ function host_firmware_version() {
 	$os_version = trim(substr(php_uname("r"), 0, strpos(php_uname("r"), '-')));
 
 	return array(
-		"firmware" => array("version" => $g['product_version']),
+		"firmware" => array("version" => g_get('product_version')),
 		"kernel"   => array("version" => $os_version),
 		"base"     => array("version" => $os_version),
-		"platform" => $g['product_label'],
+		"platform" => g_get('product_label'),
 		"config_version" => config_get_path('version')
 	);
 }
@@ -987,7 +987,7 @@ function strncpy(&$dst, $src, $length) {
 function reload_interfaces_sync() {
 	global $config, $g;
 
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error(gettext("reload_interfaces_sync() is starting."));
 	}
 
@@ -996,11 +996,11 @@ function reload_interfaces_sync() {
 
 	/* enable routing */
 	system_routing_enable();
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error(gettext("Enabling system routing"));
 	}
 
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error(gettext("Cleaning up Interfaces"));
 	}
 
@@ -1222,7 +1222,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	} elseif (is_serial_enabled()) {
 		$data[] = 'boot_multicons="YES"';
 		$primaryconsole = isset($g['primaryconsole_force']) ?
-		    $g['primaryconsole_force'] :
+		    g_get('primaryconsole_force') :
 		    config_get_path('system/primaryconsole');
 		switch ($primaryconsole) {
 			case "video":
@@ -1917,7 +1917,7 @@ function compare_hostname_to_dnscache($hostname) {
 	}
 
 	if (trim($oldcontents) != trim($contents)) {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext('DNSCACHE: Found old IP %1$s and new IP %2$s'), $oldcontents, $contents));
 		}
 		return ($oldcontents);
@@ -2022,9 +2022,9 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	if (!config_path_enabled('system','do_not_send_uniqueid')) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
+		curl_setopt($ch, CURLOPT_USERAGENT, g_get('product_label') . '/' . g_get('product_version') . ':' . system_get_uniqueid());
 	} else {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
+		curl_setopt($ch, CURLOPT_USERAGENT, g_get('product_label') . '/' . g_get('product_version'));
 	}
 
 	set_curlproxy($ch);
@@ -2075,9 +2075,9 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	if (!config_path_enabled('system','do_not_send_uniqueid')) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
+		curl_setopt($ch, CURLOPT_USERAGENT, g_get('product_label') . '/' . g_get('product_version') . ':' . system_get_uniqueid());
 	} else {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
+		curl_setopt($ch, CURLOPT_USERAGENT, g_get('product_label') . '/' . g_get('product_version'));
 	}
 
 	set_curlproxy($ch);
@@ -3094,8 +3094,8 @@ function set_language() {
 	$lang = "";
 	if (!empty(config_get_path('system/language'))) {
 		$lang = config_get_path('system/language');
-	} elseif (!empty($g['language'])) {
-		$lang = $g['language'];
+	} elseif (!empty(g_get('language'))) {
+		$lang = g_get('language');
 	}
 	$lang .= ".UTF-8";
 

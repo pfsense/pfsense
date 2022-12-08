@@ -51,7 +51,7 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 
 // set default language if unset
 if (!isset($config['system']['language'])) {
-	config_set_path('system/language', $g['language']);
+	config_set_path('system/language', g_get('language'));
 }
 
 $dnshost_counter = 1;
@@ -93,8 +93,8 @@ $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
 $pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
 
 if (!$pconfig['timezone']) {
-	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-		$pconfig['timezone'] = $g['default_timezone'];
+	if (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+		$pconfig['timezone'] = g_get('default_timezone');
 	} else {
 		$pconfig['timezone'] = "Etc/UTC";
 	}
@@ -627,7 +627,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('If this option is set, %s will use DNS servers '.
 	'assigned by a DHCP/PPP server on WAN or a remote OpenVPN server (if Pull DNS ' .
 	'option is enabled) for its own purposes (including the DNS Forwarder/DNS Resolver). '.
-        'However, they will not be assigned to DHCP clients.', $g['product_label']);
+        'However, they will not be assigned to DHCP clients.', g_get('product_label'));
 
 $section->addInput(new Form_Select(
 	'dnslocalhost',

@@ -58,8 +58,8 @@ alias_make_table();
 if (isset($config['system']['timezone']) &&
     !empty($config['system']['timezone'])) {
 	$timezone = config_get_path('system/timezone');
-} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-	$timezone = $g['default_timezone'];
+} elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+	$timezone = g_get('default_timezone');
 } else {
 	$timezone = "Etc/UTC";
 }

@@ -191,7 +191,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['agentoption']
 ))->setHelp(
 	'If this is checked, the DHCPv6 Relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request.',
-	$g['product_label']
+	g_get('product_label')
 );
 
 function createDestinationServerInputGroup($value = null) {

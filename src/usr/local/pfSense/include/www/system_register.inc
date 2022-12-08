@@ -16,7 +16,7 @@ $idfile = "/var/db/uniqueid";
 function activate_plus($action, $token) {
 	global $g, $FQDN, $idfile;
 
-	$product = (strpos($g['product_label'], 'Plus') === false) ? "CE":"Plus";
+	$product = (strpos(g_get('product_label'), 'Plus') === false) ? "CE":"Plus";
 
 	if (file_exists($idfile)) {
 		if (function_exists('curl_version')) {
@@ -27,7 +27,7 @@ function activate_plus($action, $token) {
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_VERBOSE, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
+			curl_setopt($ch, CURLOPT_USERAGENT, g_get('product_label') . '/' . g_get('product_version'));
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));

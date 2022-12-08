@@ -139,7 +139,7 @@ function get_pkg_table() {
 		$pkgtbl .='					</td>';
 		$pkgtbl .='					<td>';
 
-		if (!$g['disablepackagehistory']) {
+		if (!g_get('disablepackagehistory')) {
 			$pkgtbl .='						<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">' .
 		    htmlspecialchars($pkg['installed_version']) . '</a>';
 		} else {

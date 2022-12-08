@@ -40,7 +40,7 @@ require_once("util.inc");
 
 global $ddnsdomainkeyalgorithms;
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }

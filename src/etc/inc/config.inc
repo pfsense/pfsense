@@ -63,7 +63,7 @@ if (file_exists("/debugging")) {
 }
 
 if (platform_booting(true) &&
-    !file_exists($g['cf_conf_path'] . "/config.xml")) {
+    !file_exists(g_get('cf_conf_path') . "/config.xml")) {
 	echo ".";
 	/* find the device where config.xml resides and write out an fstab */
 	unset($cfgdevice);
@@ -143,8 +143,8 @@ $config = parse_config();
 if (isset($config['system']['timezone']) &&
     !empty($config['system']['timezone'])) {
 	$timezone = config_get_path('system/timezone');
-} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-	$timezone = $g['default_timezone'];
+} elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+	$timezone = g_get('default_timezone');
 } else {
 	$timezone = "Etc/UTC";
 }

@@ -87,7 +87,7 @@ require_once("status_logs_common.inc");
 
 global $g;
 if (!($nentries = config_get_path('syslog/nentries'))) {
-	$nentries = $g['default_log_entries'];
+	$nentries = g_get('default_log_entries');
 }
 
 $i = 0;
@@ -169,7 +169,7 @@ if ($pkgwithlogging == false) {
 	}
 	display_top_tabs($tab_array);
 	$logfile = config_get_path("installedpackages/package/{$apkgid}/logging/logfilename");
-	$logfile_path = $g['varlog_path'] . '/' . $logfile;
+	$logfile_path = g_get('varlog_path') . '/' . $logfile;
 ?>
 
 <div class="panel panel-default">

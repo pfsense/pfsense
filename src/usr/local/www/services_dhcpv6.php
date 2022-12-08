@@ -99,7 +99,7 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 	return $retval;
 }
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }

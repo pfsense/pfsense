@@ -44,7 +44,7 @@ if (file_exists($lockfile)) {
 touch($lockfile);
 
 // Location of backup file pairs
-$acbuploadpath = $g['acbbackuppath'];
+$acbuploadpath = g_get('acbbackuppath');
 // systems we do not allow
 $badreasons = array("snort", "pfblocker", "minicron", "merged in config");
 // List any ACB file pairs that have been created
@@ -105,7 +105,7 @@ function upload($basename) {
     curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
     curl_setopt($curl_session, CURLOPT_CONNECTTIMEOUT, 55);
     curl_setopt($curl_session, CURLOPT_TIMEOUT, 30);
-    curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+    curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
     // Proxy
     set_curlproxy($curl_session);
 
@@ -147,7 +147,7 @@ function upload($basename) {
 
 function acb_error_log($upload_url, $data) {
         $notice_text = sprintf(gettext(
-            "An error occurred while uploading the encrypted %s configuration to "), $g['product_label']) .
+            "An error occurred while uploading the encrypted %s configuration to "), g_get('product_label')) .
             $upload_url . " (" . htmlspecialchars($data) . ")";
         log_error($notice_text . " - " . $data);
         file_notice("AutoConfigBackup", $notice_text);

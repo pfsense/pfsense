@@ -91,9 +91,9 @@ $section->addInput(new Form_Input(
 	'Certificate Expiration Threshold',
 	'number',
 	$pconfig['certexpiredays']
-))->setAttribute('placeholder', $g['default_cert_expiredays'])
+))->setAttribute('placeholder', g_get('default_cert_expiredays'))
   ->setHelp('The number of days at which a certificate lifetime is considered to ' .
-	'be expiring soon and worthy of notification. Default is %d days.', $g['default_cert_expiredays']);
+	'be expiring soon and worthy of notification. Default is %d days.', g_get('default_cert_expiredays'));
 
 $form->add($section);
 

@@ -1140,8 +1140,8 @@ function getGETPOSTsettingvalue($settingname, $default) {
 $cfgtz = config_get_path('system/timezone');
 if ($cfgtz) {
 	$timezone = $cfgtz;
-} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-	$timezone = $g['default_timezone'];
+} elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+	$timezone = g_get('default_timezone');
 } else {
 	$timezone = "Etc/UTC";
 }

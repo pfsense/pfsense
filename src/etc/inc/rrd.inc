@@ -240,7 +240,7 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "export TERM=dumb\n";
 		$rrdupdatesh .= "\n";
-		$rrdupdatesh .= 'echo $$ > ' . $g['varrun_path'] . '/updaterrd.sh.pid';
+		$rrdupdatesh .= 'echo $$ > ' . g_get('varrun_path') . '/updaterrd.sh.pid';
 		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "counter=1\n";
 		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";

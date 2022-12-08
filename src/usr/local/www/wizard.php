@@ -70,7 +70,7 @@ if (empty($xml)) {
 }
 
 if (!is_array($pkg)) {
-	print_info_box(sprintf(gettext('Could not parse %1$s/wizards/%2$s file.'), $g['www_path'], $xml), 'danger');
+	print_info_box(sprintf(gettext('Could not parse %1$s/wizards/%2$s file.'), g_get('www_path'), $xml), 'danger');
 	die;
 }
 
@@ -125,7 +125,7 @@ if ($_POST && !$input_errors) {
 while (!empty($pkg['step'][$stepid]['skip_flavors'])) {
 	$skip = false;
 	foreach (explode(',', $pkg['step'][$stepid]['skip_flavors']) as $flavor) {
-		if ($flavor == $g['default-config-flavor']) {
+		if ($flavor == g_get('default-config-flavor')) {
 			$skip = true;
 			break;
 		}
@@ -952,7 +952,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$section->addInput(new Form_Select(
 					$name,
 					$etitle,
-					($value == "") ? $g['default_timezone'] : $value,
+					($value == "") ? g_get('default_timezone') : $value,
 					array_combine($timezonelist, $timezonelist)
 				))->setHelp($field['description']);
 

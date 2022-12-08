@@ -132,7 +132,7 @@ function read_ext_menu_path_data() {
 
 	$result = array();
 
-	if (!is_dir($g['ext_menu_path'])) {
+	if (!is_dir(g_get('ext_menu_path'))) {
 		return $result;
 	}
 
@@ -253,7 +253,7 @@ $system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
-if  (strpos($g['product_label'], 'Plus') === false) {
+if  (strpos(g_get('product_label'), 'Plus') === false) {
 	$system_menu[] = array(gettext("Register"), "/system_register.php");
 }
 
@@ -324,7 +324,7 @@ $services_menu[] = array(gettext("DNS Resolver"), "/services_unbound.php");
 $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 
-if ($g['services_dhcp_server_enable']) {
+if (g_get('services_dhcp_server_enable')) {
 	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
 	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server & RA")), "/services_dhcpv6.php");
 }
@@ -380,7 +380,7 @@ $wifdescrs = array();
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
-	    preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if'])) {
+	    preg_match(g_get('wireless_regex'), $config['interfaces'][$ent]['if'])) {
 		$wifdescrs[$ent] = $entdesc;
 	}
 }
@@ -425,10 +425,10 @@ $diagnostics_menu[] = array(gettext("Packet Capture"), "/diag_packet_capture.php
 
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")), 0);
 
-if (!$g['disablehelpmenu']) {
+if (!g_get('disablehelpmenu')) {
 	$help_menu = array();
 	$help_menu[] = array(gettext("About this Page"), $helpurl);
-	if ($g['product_name'] == "pfSense") {
+	if (g_get('product_name') == "pfSense") {
 		$help_menu[] = array(gettext("Bug Database"), "https://redirects.netgate.com/issues");
 	}
 
@@ -438,7 +438,7 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("pfSense Book"), "https://redirects.netgate.com/book");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://redirects.netgate.com/fbsdhandbook");
 	$help_menu[] = array(gettext("User survey"), "https://redirects.netgate.com/survey_1");
-	if  (strpos($g['product_label'], 'Plus') === false) {
+	if  (strpos(g_get('product_label'), 'Plus') === false) {
 		$help_menu[] = array(gettext("Upgrade to pfSense Plus"), "https://redirects.netgate.com/upgrade");
 	}
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
@@ -507,7 +507,7 @@ if (are_notices_pending()) {
 					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
                     ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
 				] as $item):
-					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
+					if ($item['name'] == 'Help' && g_get('disablehelpmenu')) {
 						continue;
 					}
 
@@ -556,7 +556,7 @@ if (are_notices_pending()) {
 	if ($_SESSION['Username'] == "admin") {
 		$cu = getUserEntry("admin");
 
-		if (local_backed("admin", $g['factory_shipped_password'])) {
+		if (local_backed("admin", g_get('factory_shipped_password'))) {
 			print('<div class="alert alert-danger">' .
 				sprintf(gettext('%sWARNING:%s The \'admin\' account password is set to the default value. ' .
 				' %s Change the password in the User Manager.%s'),
@@ -678,7 +678,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 }
 
 ?>
-	<?php if (!$g['disablehelpicon'] && isAllowedPage("help.php")): ?>
+	<?php if (!g_get('disablehelpicon') && isAllowedPage("help.php")): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
 				<i class="fa fa-question-circle"></i>
@@ -694,7 +694,7 @@ if (file_exists('/conf/needs_package_sync') && platform_booting()) {
 	$warning_text = sprintf(gettext(
 	    '%1$s%3$s is booting, then packages will be reinstalled in the ' .
 	    'background.%2$s%1$sDo not make changes in the GUI until this is ' .
-	    'complete.%2$s'), '<p>', '</p>', $g['product_label']);
+	    'complete.%2$s'), '<p>', '</p>', g_get('product_label'));
 } elseif (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	$warning_text = sprintf(gettext('%1$sPackages are currently being ' .

@@ -1606,7 +1606,7 @@ function interfaces_configure() {
 				    $ifname);
 			}
 
-			if ($g['debug']) {
+			if (g_get('debug')) {
 				log_error(sprintf(gettext("Configuring %s"),
 				    $ifname));
 			}
@@ -1636,7 +1636,7 @@ function interfaces_configure() {
 		if (platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("Configuring %s"), $ifname));
 		}
 
@@ -1660,7 +1660,7 @@ function interfaces_configure() {
 		if (platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("Configuring %s"), $ifname));
 		}
 
@@ -1678,7 +1678,7 @@ function interfaces_configure() {
 		if (platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("Configuring %s"), $ifname));
 		}
 
@@ -1696,7 +1696,7 @@ function interfaces_configure() {
 		if (platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("Configuring %s"), $ifname));
 		}
 
@@ -1780,7 +1780,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		return;
 	}
 
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext('Calling interface down for interface %1$s, destroy is %2$s'), $interface, (($destroy) ? 'true' : 'false')));
 	}
 
@@ -2267,7 +2267,7 @@ function interface_ppps_configure($interface) {
 					log_error(sprintf(gettext("Could not get a Local IP address for PPTP/L2TP link on %s in interfaces_ppps_configure. Using 0.0.0.0 ip!"), $port));
 					$localips[$pid] = "0.0.0.0";
 				}
-				if (!$g['booting'] && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
+				if (!g_get('booting') && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
 					$gateways[$pid] = gethostbyname($gateways[$pid]);
 				}
 				if (!is_ipaddr($gateways[$pid])) {
@@ -4046,7 +4046,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* Disable Accepting router advertisements unless specifically requested */
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("Deny router advertisements for interface %s"), $interface));
 	}
 	if (isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')
@@ -4356,13 +4356,13 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 	$type = $trackcfg['ipaddrv6'];
 	switch ($type) {
 		case "6to4":
-			if ($g['debug']) {
+			if (g_get('debug')) {
 				log_error(sprintf(gettext('Interface %1$s configured via %2$s type %3$s'), $interface, $wancfg['track6-interface'], $type));
 			}
 			interface_track6_6to4_configure($interface, $wancfg);
 			break;
 		case "6rd":
-			if ($g['debug']) {
+			if (g_get('debug')) {
 				log_error(sprintf(gettext('Interface %1$s configured via %2$s type %3$s'), $interface, $wancfg['track6-interface'], $type));
 			}
 			interface_track6_6rd_configure($interface, $wancfg);
@@ -4597,7 +4597,7 @@ function interface_6rd_configure($interface, $wancfg) {
 	} elseif ($parentmtu > 1300) {
 		set_interface_mtu($stfiface, $parentmtu - 20);
 	}
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error("Created 6rd interface {$stfiface} {$rd6prefix}/{$rd6prefixlen}");
 	}
 
@@ -4710,7 +4710,7 @@ function interface_6to4_configure($interface, $wancfg) {
 	} elseif ($parentmtu > 1300) {
 		set_interface_mtu($stfiface, $parentmtu - 20);
 	}
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for {$stfiface}, route {$stfbrgw}");
 	}
 
@@ -4840,7 +4840,7 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 						$dhcp6cconf .= "\tprefix ::/{$preflen} infinity;\n";
 					}
 					foreach ($trackiflist as $friendly => $ifcfg) {
-						if ($g['debug']) {
+						if (g_get('debug')) {
 							log_error("setting up $interface - {$ifcfg['track6-prefix-id']}");
 						}
 						$realif = get_real_interface($friendly);
@@ -5927,7 +5927,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 					case 'ppp':
 					case 'l2tp':
 					case 'pptp':
-						if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+						if (is_array($cfg['wireless']) || preg_match(g_get('wireless_regex'), $cfg['if'])) {
 							$wanif = interface_get_wireless_clone($cfg['if']);
 						} else {
 							$wanif = $cfg['if'];
@@ -5953,7 +5953,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 								}
 								break;
 							default:
-								if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+								if (is_array($cfg['wireless']) || preg_match(g_get('wireless_regex'), $cfg['if'])) {
 									$wanif = interface_get_wireless_clone($cfg['if']);
 								} else {
 									$wanif = $cfg['if'];
@@ -5966,7 +5966,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 				// Wireless cloned NIC support (FreeBSD 8+)
 				// interface name format: $parentnic_wlanparentnic#
 				// example: ath0_wlan0
-				if (is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
+				if (is_array($cfg['wireless']) || preg_match(g_get('wireless_regex'), $cfg['if'])) {
 					$wanif = interface_get_wireless_clone($cfg['if']);
 				} else {
 					$wanif = $cfg['if'];
@@ -6854,7 +6854,7 @@ function is_interface_wireless($interface) {
 
 	$friendly = convert_real_interface_to_friendly_interface_name($interface);
 	if (config_get_path("interfaces/{$friendly}/wireless") === null) {
-		if (preg_match($g['wireless_regex'], $interface)) {
+		if (preg_match(g_get('wireless_regex'), $interface)) {
 			init_config_arr(['interfaces', $friendly, 'wireless']);
 			return true;
 		}

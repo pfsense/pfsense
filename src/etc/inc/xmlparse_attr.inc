@@ -128,19 +128,19 @@ function parse_xml_regdomain(&$rdattributes, $rdfile = '', $rootobj = 'regulator
 	global $g, $listtags;
 
 	if (empty($rdfile)) {
-		$rdfile = $g['etc_path'] . '/regdomain.xml';
+		$rdfile = g_get('etc_path') . '/regdomain.xml';
 	}
 	$listtags = listtags_rd();
 	$parsed_xml = array();
 
-	if (file_exists($g['tmp_path'] . '/regdomain.cache')) {
-		$parsed_xml = unserialize(file_get_contents($g['tmp_path'] . '/regdomain.cache'));
+	if (file_exists(g_get('tmp_path') . '/regdomain.cache')) {
+		$parsed_xml = unserialize(file_get_contents(g_get('tmp_path') . '/regdomain.cache'));
 		if (!empty($parsed_xml)) {
 			$rdmain = $parsed_xml['main'];
 			$rdattributes = $parsed_xml['attributes'];
 		}
 	}
-	if (empty($parsed_xml) && file_exists($g['etc_path'] . '/regdomain.xml')) {
+	if (empty($parsed_xml) && file_exists(g_get('etc_path') . '/regdomain.xml')) {
 		$rdmain = parse_xml_config_raw_attr($rdfile, $rootobj, $rdattributes);
 
 		// unset parts that aren't used before making cache
@@ -160,7 +160,7 @@ function parse_xml_regdomain(&$rdattributes, $rdfile = '', $rootobj = 'regulator
 		}
 
 		$parsed_xml = array('main' => $rdmain, 'attributes' => $rdattributes);
-		$rdcache = fopen($g['tmp_path'] . '/regdomain.cache', "w");
+		$rdcache = fopen(g_get('tmp_path') . '/regdomain.cache', "w");
 		fwrite($rdcache, serialize($parsed_xml));
 		fclose($rdcache);
 	}

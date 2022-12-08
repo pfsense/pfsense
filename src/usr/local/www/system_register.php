@@ -36,14 +36,14 @@ require_once("system_register.inc");
 
 include("head.inc");
 
-if  (strpos($g['product_label'], 'Plus') !== false) {
+if  (strpos(g_get('product_label'), 'Plus') !== false) {
 	header("Location: /");
 }
 
 // Possible helpblock messages
 $pgtitle = array(gettext("System"), gettext("Register"));
 
-$pghelp = sprintf(gettext('Thank you for choosing %1s%2s'), $g['product_label_html'], '<br /><br />');
+$pghelp = sprintf(gettext('Thank you for choosing %1s%2s'), g_get('product_label_html'), '<br /><br />');
 
 $pghelp_notrequired = gettext("Your device does not require registration, we recognize it already." .
    " You may have already registered, or it may be a pre-registered Netgate appliance.");
@@ -114,7 +114,7 @@ print('</div>');
 
 $form = new Form(false);
 
-$section = new Form_Section('Register ' . $g['product_label']);
+$section = new Form_Section('Register ' . g_get('product_label'));
 
 $section->addInput(new Form_Textarea(
 	'activation_token',

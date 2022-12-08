@@ -904,10 +904,10 @@ function filter_generate_aliases() {
 	if (is_bogonsv6_used()) {
 		$maxtableents = config_get_path('system/maximumtableentries');
 		if (!isset($maxtableents) ||
-			$maxtableents < $g['minimumtableentries_bogonsv6']) {
+			$maxtableents < g_get('minimumtableentries_bogonsv6')) {
 			file_notice("Filter_Reload", sprintf(gettext(
 			    "To block bogon IPv6 networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s"),
-			    $g['minimumtableentries_bogonsv6']));
+			    g_get('minimumtableentries_bogonsv6')));
 		} else {
 			$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
 		}
@@ -1065,7 +1065,7 @@ function filter_generate_gateways() {
 					    stristr($trigger, 'loss')) ||
 					    (($GatewaysStatus[$member['gw']]['substatus'] != 'highdelay') &&
 					    stristr($trigger, 'latency')))))) {
-						if ($g['debug']) {
+						if (g_get('debug')) {
 							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						}
 						if ($routetomembers + ((int) $member['weight'] * $mult) > 384) {
@@ -3488,7 +3488,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 						mwexec("/sbin/pfctl -k label -k s:{$sched['schedlabel']}");
 					}
 					return "# schedule finished - {$rule['descr']}";
-				} else if ($g['debug']) {
+				} else if (g_get('debug')) {
 					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
 				}
 
@@ -4347,7 +4347,7 @@ function filter_get_time_based_rule_status($schedule) {
 function filter_tdr_day($schedule) {
 	global $g;
 
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
 	}
 
@@ -4372,7 +4372,7 @@ function filter_tdr_hour($schedule) {
 	$starting_time = strtotime($tmp[0]);
 	$ending_time = strtotime($tmp[1]);
 	$now = strtotime("now");
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
 	}
 	if ($now >= $starting_time and $now < $ending_time) {
@@ -4392,7 +4392,7 @@ function filter_tdr_position($schedule) {
 	 * ...
 	 */
 	$weekday = date("w");
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
 	}
 	if ($weekday == 0) {
@@ -4415,7 +4415,7 @@ function filter_tdr_month($schedule) {
 	 */
 	$todays_month = date("n");
 	$months = explode(",", $schedule);
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		log_error("[TDR DEBUG] filter_tdr_month($schedule)");
 	}
 	foreach ($months as $month) {

@@ -62,7 +62,7 @@ $state_tt = gettext("Adaptive state handling is enabled, state timeouts are redu
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
-	$cache_file = $g['version_cache_file'];
+	$cache_file = g_get('version_cache_file');
 
 	if (isset($config['system']['firmware']['disablecheck'])) {
 		exit;
@@ -235,11 +235,11 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("Version");?></th>
 			<td>
-				<strong><?=$g['product_version_string']?></strong>
+				<strong><?=g_get('product_version_string')?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>
-			<?php if (!$g['hideuname']): ?>
+			<?php if (!g_get('hideuname')): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>

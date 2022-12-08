@@ -57,16 +57,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'):
 			case 'FSCKReboot':
 				if ((php_uname('m') != 'arm') && !is_module_loaded("zfs.ko")) {
 					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
-					notify_all_remote(sprintf(gettext("%s is rebooting for a filesystem check now."), $g['product_label']));
+					notify_all_remote(sprintf(gettext("%s is rebooting for a filesystem check now."), g_get('product_label')));
 					system_reboot();
 				}
 				break;
 			case 'Reroot':
-				notify_all_remote(sprintf(gettext("%s is rerooting now."), $g['product_label']));
+				notify_all_remote(sprintf(gettext("%s is rerooting now."), g_get('product_label')));
 				system_reboot_sync(true);
 				break;
 			case 'Reboot':
-				notify_all_remote(sprintf(gettext("%s is rebooting now."), $g['product_label']));
+				notify_all_remote(sprintf(gettext("%s is rebooting now."), g_get('product_label')));
 				system_reboot();
 				break;
 			default:

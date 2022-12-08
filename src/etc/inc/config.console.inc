@@ -48,11 +48,11 @@ function set_networking_interfaces_ports() {
 	$physmem = $memory[0];
 	$realmem = $memory[1];
 
-	if ($physmem < $g['minimum_ram_warning']) {
+	if ($physmem < g_get('minimum_ram_warning')) {
 		echo "\n\n\n";
 		echo gettext("DANGER!  WARNING!  ACHTUNG!") . "\n\n";
-		printf(gettext('%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s'), $g['product_label'], $g['minimum_ram_warning_text'], "\n");
-		printf(gettext('Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s'), $realmem, $physmem, $g['product_label'], "\n");
+		printf(gettext('%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s'), g_get('product_label'), g_get('minimum_ram_warning_text'), "\n");
+		printf(gettext('Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s'), $realmem, $physmem, g_get('product_label'), "\n");
 		echo "\n" . gettext("Press ENTER to continue.") . " ";
 		fgets($fp);
 		echo "\n";
@@ -312,7 +312,7 @@ EOD;
 				config_del_path('nat');
 			}
 		}
-		if (preg_match($g['wireless_regex'], $lanif)) {
+		if (preg_match(g_get('wireless_regex'), $lanif)) {
 			if (is_array($config['interfaces']['lan']) &&
 			    !is_array($config['interfaces']['lan']['wireless'])) {
 				$config['interfaces']['lan']['wireless'] = array();
@@ -333,7 +333,7 @@ EOD;
 		}
 		$config['interfaces']['wan']['if'] = $wanif;
 		$config['interfaces']['wan']['enable'] = true;
-		if (preg_match($g['wireless_regex'], $wanif)) {
+		if (preg_match(g_get('wireless_regex'), $wanif)) {
 			if (is_array($config['interfaces']['wan']) &&
 			    !is_array($config['interfaces']['wan']['wireless'])) {
 				$config['interfaces']['wan']['wireless'] = array();
@@ -357,7 +357,7 @@ EOD;
 			$config['interfaces']['opt' . ($i+1)]['if'] = $optif[$i];
 
 			/* wireless interface? */
-			if (preg_match($g['wireless_regex'], $optif[$i])) {
+			if (preg_match(g_get('wireless_regex'), $optif[$i])) {
 				if (!is_array($config['interfaces']['opt' . ($i+1)]['wireless'])) {
 					$config['interfaces']['opt' . ($i+1)]['wireless'] = array();
 				}

@@ -79,12 +79,12 @@ if ($_REQUEST['rmver'] != "") {
 	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/rmbkp");
 	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
 		"&revision=" . urlencode($_REQUEST['rmver']) .
-		"&version=" . $g['product_version'] .
+		"&version=" . g_get('product_version') .
 		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_POST, 3);
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 
@@ -111,12 +111,12 @@ if ($_REQUEST['newver'] != "") {
 	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/getbkp");
 	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
 		"&revision=" . urlencode($_REQUEST['newver']) .
-		"&version=" . $g['product_version'] .
+		"&version=" . g_get('product_version') .
 		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_POST, 3);
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 	$data = curl_exec($curl_session);
@@ -190,7 +190,7 @@ if ($_REQUEST['download']) {
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 	$data = curl_exec($curl_session);
@@ -236,13 +236,13 @@ if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable()) {
 	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/list");
 	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
 		"&uid=eb6a4e6f76c10734b636" .
-		"&version=" . $g['product_version'] .
+		"&version=" . g_get('product_version') .
 		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_POST, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 

@@ -365,7 +365,7 @@ function services_radvd_configure($blacklist = array()) {
 
 		$autotype = config_get_path("interfaces/{$trackif}/ipaddrv6");
 
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 		}
 
@@ -495,7 +495,7 @@ function services_dhcpdv4_configure() {
 	$need_ddns_updates = false;
 	$ddns_zones = array();
 
-	if ($g['services_dhcp_server_enable'] == false) {
+	if (g_get('services_dhcp_server_enable') == false) {
 		return;
 	}
 
@@ -1619,7 +1619,7 @@ function dhcpdzones($ddns_zones) {
 function services_dhcpdv6_configure($blacklist = array()) {
 	global $g;
 
-	if ($g['services_dhcp_server_enable'] == false) {
+	if (g_get('services_dhcp_server_enable') == false) {
 		return;
 	}
 
@@ -2085,7 +2085,7 @@ EOD;
 		return;
 	}
 
-	$igmpfl = fopen($g['varetc_path'] . "/igmpproxy.conf", "w");
+	$igmpfl = fopen(g_get('varetc_path') . "/igmpproxy.conf", "w");
 	if (!$igmpfl) {
 		log_error(gettext("Could not write IGMP Proxy configuration file!"));
 		return;
@@ -2742,7 +2742,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 				exec("/sbin/umount -t nullfs " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir}") . " 2>&1", $output, $retval);
 				if ($retval == 0) {
 					foreach (array( "/usr/local{$dir}", '/usr/local', '/usr') as $folder) {
-						if (!empty($g['unbound_chroot_path']) && $g['unbound_chroot_path'] != '/' && is_dir("{$g['unbound_chroot_path']}{$folder}")) {
+						if (!empty(g_get('unbound_chroot_path')) && g_get('unbound_chroot_path') != '/' && is_dir("{$g['unbound_chroot_path']}{$folder}")) {
 							@rmdir(escapeshellarg("{$g['unbound_chroot_path']}{$folder}"));
 						}
 
@@ -3170,11 +3170,11 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 				break;
 		}
 
-		$cacheFile = $g['conf_path'] .
+		$cacheFile = g_get('conf_path') .
 		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
 		    escapeshellarg($dnsupdate['host']) .
 		    "_{$dnsupdate['server']}.cache";
-		$cacheFilev6 = $g['conf_path'] .
+		$cacheFilev6 = g_get('conf_path') .
 		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
 		    escapeshellarg($dnsupdate['host']) .
 		    "_{$dnsupdate['server']}_v6.cache";

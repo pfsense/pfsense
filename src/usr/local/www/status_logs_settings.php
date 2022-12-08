@@ -76,7 +76,7 @@ $pconfig['rotatecount'] = config_get_path('syslog/rotatecount');
 $pconfig['format'] = config_get_path('syslog/format');
 
 if (!$pconfig['nentries']) {
-	$pconfig['nentries'] = $g['default_log_entries'];
+	$pconfig['nentries'] = g_get('default_log_entries');
 }
 
 function is_valid_syslog_server($target) {
@@ -239,11 +239,11 @@ $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"))
 $pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
-$current_log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : $g['default_log_size'];
+$current_log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : g_get('default_log_size');
 $current_rotate_count = is_numericint($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
 
 $logfilesizeHelp =	sprintf(gettext("This field controls the size at which logs will be rotated. By default this is %s per log file, and there are nearly 20 such log files. " .
-					"Rotated log files consume additional disk space, which varies depending on compression and retention count."), format_bytes($g['default_log_size'])) .
+					"Rotated log files consume additional disk space, which varies depending on compression and retention count."), format_bytes(g_get('default_log_size'))) .
 					'<br /><br />' .
 					gettext("NOTE: Increasing this value allows every log file to grow to the specified size, so disk usage may increase significantly.") . '<br />' .
 					gettext("Logs from packages may consume additional space which is not accounted for in these settings. Check package-specific settings.") . ' ' .
@@ -299,7 +299,7 @@ $section->addInput(new Form_Input(
 	'GUI Log Entries',
 	'number',
 	$pconfig['nentries'],
-	['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : $g['default_log_entries']]
+	['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : g_get('default_log_entries')]
 ))->setHelp('This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.');
 
 $section->addInput(new Form_Checkbox(
@@ -386,7 +386,7 @@ $section->addInput(new Form_Input(
 	'Log Rotation Size (Bytes)',
 	'number',
 	$pconfig['logfilesize'],
-	['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : $g['default_log_size']]
+	['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : g_get('default_log_size')]
 ))->setHelp($logfilesizeHelp);
 
 $section->addInput(new Form_Select(
@@ -561,7 +561,7 @@ $group->add(new Form_MultiCheckbox(
 
 $group->setHelp('Syslog sends UDP datagrams to port 514 on the specified remote '.
 	'syslog server, unless another port is specified. Be sure to set syslogd on '.
-	'the remote server to accept syslog messages from %s.', $g['product_label']);
+	'the remote server to accept syslog messages from %s.', g_get('product_label'));
 
 $section->add($group);
 

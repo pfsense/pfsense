@@ -227,7 +227,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 			config_del_path('system/webgui/noantilockout');
 		}
 
-		if ($post['enableserial'] == "yes" || $g['enableserial_force']) {
+		if ($post['enableserial'] == "yes" || g_get('enableserial_force')) {
 			$config['system']['enableserial'] = true;
 		} else {
 			config_del_path('system/enableserial');

@@ -263,8 +263,8 @@ function display_login_form() {
 								  htmlspecialchars(config_get_path('system/domain', "")));
 		$login_title = gettext(htmlspecialchars(config_get_path('system/hostname', "") . " - Login"));
 	} Else {
-		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_label']);
-		$login_title = sprintf(gettext("%s - Login"), $g['product_label']);
+		$loginbannerstr = sprintf(gettext('Login to %1$s'), g_get('product_label'));
+		$login_title = sprintf(gettext("%s - Login"), g_get('product_label'));
 	}
 
 	$loginautocomplete = config_path_enabled('system/webgui','loginautocomplete') ? '' : 'autocomplete="off"';

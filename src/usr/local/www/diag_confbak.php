@@ -49,10 +49,10 @@ if (isset($_POST['backupcount'])) {
 	}
 }
 
-$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
+$confvers = unserialize(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'));
 
 if ($_POST['newver'] != "") {
-	if (config_restore($g['conf_path'] . '/backup/config-' . $_POST['newver'] . '.xml') == 0) {
+	if (config_restore(g_get('conf_path') . '/backup/config-' . $_POST['newver'] . '.xml') == 0) {
 		$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['newver']), htmlspecialchars($confvers[$_POST['newver']]['description']));
 	} else {
 		$savemsg = gettext("Unable to revert to the selected configuration.");
@@ -60,14 +60,14 @@ if ($_POST['newver'] != "") {
 }
 
 if ($_POST['rmver'] != "") {
-	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_POST['rmver'] . '.xml');
+	unlink_if_exists(g_get('conf_path') . '/backup/config-' . $_POST['rmver'] . '.xml');
 	$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['rmver']), htmlspecialchars($confvers[$_POST['rmver']]['description']));
 }
 
 if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
 	send_user_download('file',
-				$g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml',
+				g_get('conf_path') . '/backup/config-' . $_REQUEST['getcfg'] . '.xml',
 				"config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
 }
 
@@ -75,13 +75,13 @@ if (($_REQUEST['diff'] == 'Diff') && isset($_REQUEST['oldtime']) && isset($_REQU
     (is_numeric($_REQUEST['oldtime'])) &&
     (is_numeric($_REQUEST['newtime']) || ($_REQUEST['newtime'] == 'current'))) {
 	$diff = "";
-	$oldfile = $g['conf_path'] . '/backup/config-' . $_REQUEST['oldtime'] . '.xml';
+	$oldfile = g_get('conf_path') . '/backup/config-' . $_REQUEST['oldtime'] . '.xml';
 	$oldtime = $_REQUEST['oldtime'];
 	if ($_REQUEST['newtime'] == 'current') {
-		$newfile = $g['conf_path'] . '/config.xml';
+		$newfile = g_get('conf_path') . '/config.xml';
 		$newtime = config_get_path('revision/time');
 	} else {
-		$newfile = $g['conf_path'] . '/backup/config-' . $_REQUEST['newtime'] . '.xml';
+		$newfile = g_get('conf_path') . '/backup/config-' . $_REQUEST['newtime'] . '.xml';
 		$newtime = $_REQUEST['newtime'];
 	}
 	if (file_exists($oldfile) && file_exists($newfile)) {
@@ -160,7 +160,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$config['system']['backupcount'],
 	['min' => '0']
-))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', $g['default_config_backup_count']);
+))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', g_get('default_config_backup_count'));
 
 $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");
 

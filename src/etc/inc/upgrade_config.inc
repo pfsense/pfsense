@@ -632,7 +632,7 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['priv'][2]['descr'] = gettext("Indicates whether this user is able to login for example via SSH.");
 		$config['system']['user'][0]['priv'][3]['id'] = "copyfiles";
 		$config['system']['user'][0]['priv'][3]['name'] = "Is allowed to copy files";
-		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP."), $g['product_label']);
+		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP."), g_get('product_label'));
 		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
 		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
 		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (this privilege should only be associated with one single user).");
@@ -1405,7 +1405,7 @@ function upgrade_048_to_049() {
 	/* work around broken gid assignments */
 	$config['system']['nextgid'] = 2000;
 	foreach ($config['system']['group'] as & $group) {
-		if ($group['name'] == $g['admin_group']) {
+		if ($group['name'] == g_get('admin_group')) {
 			$group['gid'] = 1999;
 		} else {
 			$group['gid'] = $config['system']['nextgid']++;
@@ -1431,7 +1431,7 @@ function upgrade_048_to_049() {
 
 	/* reset group scope information */
 	foreach ($config['system']['group'] as & $group) {
-		if ($group['name'] != $g['admin_group']) {
+		if ($group['name'] != g_get('admin_group')) {
 			$group['scope'] = "user";
 		}
 	}
@@ -5548,7 +5548,7 @@ function upgrade_179_to_180() {
 	/* Change default to 400000 to make sure bogonsv6 works */
 	if (empty($config['system']['maximumtableentries'])) {
 		$config['system']['maximumtableentries'] =
-		    $g['minimumtableentries_bogonsv6'];
+		    g_get('minimumtableentries_bogonsv6');
 	}
 }
 

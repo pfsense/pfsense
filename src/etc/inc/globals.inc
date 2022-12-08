@@ -126,12 +126,12 @@ if (file_exists($version_patch_file)) {
 	$g['product_version_patch'] = '0';
 }
 
-$g['product_version_string'] = $g['product_version'];
-if (is_numeric($g['product_version_patch']) && $g['product_version_patch'] != '0') {
-	$g['product_version_string'] .= '-p'. $g['product_version_patch'];
+$g['product_version_string'] = g_get('product_version');
+if (is_numeric(g_get('product_version_patch')) && g_get('product_version_patch') != '0') {
+	$g['product_version_string'] .= '-p'. g_get('product_version_patch');
 }
 
-$flavor_file = $g['etc_path'] . '/default-config-flavor';
+$flavor_file = g_get('etc_path') . '/default-config-flavor';
 if (file_exists($flavor_file)) {
 	$flavor_array = file($flavor_file);
 	$g['default-config-flavor'] = chop($flavor_array[0]);
@@ -139,7 +139,7 @@ if (file_exists($flavor_file)) {
 	$g['default-config-flavor'] = '';
 }
 
-$g['openvpn_base'] = $g['varetc_path'] . '/openvpn';
+$g['openvpn_base'] = g_get('varetc_path') . '/openvpn';
 
 /* Default sysctls */
 global $sysctls;
@@ -193,13 +193,13 @@ if (($machine_type == 'arm') || ($machine_type == 'arm64')) {
 }
 
 /* Read all XML files in following dir and load menu entries */
-$g['ext_menu_path'] = '/usr/local/share/'. $g['product_name'] . '/menu';
+$g['ext_menu_path'] = '/usr/local/share/'. g_get('product_name') . '/menu';
 
 /* Cache file used to store pfSense version */
-$g['version_cache_file'] = $g['varrun_path'] . '/' . $g['product_name'] . '_version';
+$g['version_cache_file'] = g_get('varrun_path') . '/' . g_get('product_name') . '_version';
 $g['version_cache_refresh'] = 7200; /* 2h */
 
-if (file_exists($g['cf_conf_path'] . '/enableserial_force')) {
+if (file_exists(g_get('cf_conf_path') . '/enableserial_force')) {
 	$g['enableserial_force'] = true;
 }
 

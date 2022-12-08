@@ -1115,16 +1115,16 @@ function captiveportal_allowedhostname_configure() {
 function captiveportal_filterdns_configure() {
 	global $config, $g, $cpzone, $cpzoneid;
 
-	$cp_filterdns_filename = $g['varetc_path'] .
+	$cp_filterdns_filename = g_get('varetc_path') .
 	    "/filterdns-{$cpzone}-captiveportal.conf";
 
 	if (isset($config['captiveportal'][$cpzone]['enable']) &&
 	    is_array($config['captiveportal'][$cpzone]['allowedhostname']) &&
 	    file_exists($cp_filterdns_filename) &&
 	    !empty(file_get_contents($cp_filterdns_filename))) {
-		if (isvalidpid($g['varrun_path'] .
+		if (isvalidpid(g_get('varrun_path') .
 		    "/filterdns-{$cpzone}-cpah.pid")) {
-			sigkillbypid($g['varrun_path'] .
+			sigkillbypid(g_get('varrun_path') .
 			    "/filterdns-{$cpzone}-cpah.pid", "HUP");
 		} else {
 			mwexec("/usr/local/sbin/filterdns -p " .
@@ -1502,8 +1502,8 @@ function captiveportal_write_elements() {
 
 	$cpcfg = config_get_path("captiveportal/{$cpzone}");
 
-	if (!is_dir($g['captiveportal_element_path'])) {
-		@mkdir($g['captiveportal_element_path']);
+	if (!is_dir(g_get('captiveportal_element_path'))) {
+		@mkdir(g_get('captiveportal_element_path'));
 	}
 
 	if (is_array($cpcfg['element'])) {

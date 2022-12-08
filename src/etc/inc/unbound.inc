@@ -37,14 +37,14 @@ function create_unbound_chroot_path($cfgsubdir = "") {
 	global $config, $g;
 
 	// Configure chroot
-	if (!is_dir($g['unbound_chroot_path'])) {
-		mkdir($g['unbound_chroot_path']);
-		chown($g['unbound_chroot_path'], "unbound");
-		chgrp($g['unbound_chroot_path'], "unbound");
+	if (!is_dir(g_get('unbound_chroot_path'))) {
+		mkdir(g_get('unbound_chroot_path'));
+		chown(g_get('unbound_chroot_path'), "unbound");
+		chgrp(g_get('unbound_chroot_path'), "unbound");
 	}
 
 	if ($cfgsubdir != "") {
-		$cfgdir = $g['unbound_chroot_path'] . $cfgsubdir;
+		$cfgdir = g_get('unbound_chroot_path') . $cfgsubdir;
 		if (!is_dir($cfgdir)) {
 			mkdir($cfgdir);
 			chown($cfgdir, "unbound");
@@ -171,7 +171,7 @@ function unbound_get_python_scriptname($unboundcfg, $cfgsubdir = '') {
 		return "";
 	}
 
-	$python_path = $g['unbound_chroot_path'];
+	$python_path = g_get('unbound_chroot_path');
 	if (!empty($cfgsubdir)) {
 		$python_path .= "{$cfgsubdir}";
 	}

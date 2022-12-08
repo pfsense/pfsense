@@ -35,7 +35,7 @@
 
 require_once("guiconfig.inc");
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }
@@ -122,7 +122,7 @@ $ramode_help = gettext('Select the Operating Mode for the Router Advertisement (
 	'</dl>' .
 	sprintf(gettext('It is not required to activate DHCPv6 server on %s ' .
 	    'when set to "Managed", "Assisted" or "Stateless DHCP", it can ' .
-	    'be another host on the network.'), $g['product_label']) .
+	    'be another host on the network.'), g_get('product_label')) .
 	'</div>';
 
 if ($_POST['save']) {

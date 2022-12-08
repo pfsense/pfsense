@@ -41,7 +41,7 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 	}
 
 	list($file, $query) = explode('?', $page);
-	$file = realpath( $g['www_path'] . '/' . ltrim($file, '/'));
+	$file = realpath( g_get('www_path') . '/' . ltrim($file, '/'));
 	if (empty($file)) {
 		/* File does not exist, or other path shenanigans */
 
@@ -56,7 +56,7 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 		/* Tried to query a path that does not exist */
 		return false;
 	}
-	$page = str_replace($g['www_path'] . '/', '', $file);
+	$page = str_replace(g_get('www_path') . '/', '', $file);
 	$page .= (!empty($query)) ? "?{$query}" : "";
 
 	/* look for a match */

@@ -588,10 +588,10 @@ if ($_POST['apply']) {
 	if ($_POST['blockbogons'] == "yes" &&
 	    config_path_enabled('system','ipv6allow') &&
 	    (config_get_path('system/maximumtableentries', 0) <
-	     $g['minimumtableentries_bogonsv6'])) {
+	     g_get('minimumtableentries_bogonsv6'))) {
 		$input_errors[] = sprintf(gettext(
 		    "In order to block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
-		    $g['minimumtableentries_bogonsv6']);
+		    g_get('minimumtableentries_bogonsv6'));
 	}
 
 	if (config_path_enabled("dhcpd/{$if}")) {

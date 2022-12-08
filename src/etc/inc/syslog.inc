@@ -520,8 +520,8 @@ EOD;
 	safe_mkdir("{$g['varetc_path']}/newsyslog.conf.d");
 
 	if (!empty($syslogcfg)) {
-		$log_size = config_get_path('syslog/logfilesize', $g['default_log_size']);
-		$log_size = ($log_size < (2**32)/2) ? $log_size : $g['default_log_size'];
+		$log_size = config_get_path('syslog/logfilesize', g_get('default_log_size'));
+		$log_size = ($log_size < (2**32)/2) ? $log_size : g_get('default_log_size');
 		$log_size = (int)$log_size/1024;
 
 		$rotatecount = config_get_path('syslog/rotatecount', 7);
@@ -949,7 +949,7 @@ function parse_vpn_login_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -972,7 +972,7 @@ function parse_vpn_service_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['type']) == "") && (trim($flent['message']) == "") )) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -1010,7 +1010,7 @@ function parse_unknown_log_line($line) {
 	if (!((trim($flent['time']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -1034,7 +1034,7 @@ function parse_system_log_line($line) {
 	if (!((trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -1176,7 +1176,7 @@ function parse_firewall_log_line($line) {
 			$flent['dst'] = $flent['dstip'];
 		}
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing rule number: %s. Please report to mailing list or forum."), $flent['rulenum']));
 		}
 		return "";
@@ -1186,7 +1186,7 @@ function parse_firewall_log_line($line) {
 	if (!((trim($flent['src']) == "") || (trim($flent['dst']) == "") || (trim($flent['time']) == ""))) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";

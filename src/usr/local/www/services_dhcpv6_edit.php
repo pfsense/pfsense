@@ -45,7 +45,7 @@ function staticmaps_sort($ifgui) {
 
 require_once('globals.inc');
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }

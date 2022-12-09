@@ -50,8 +50,11 @@ function get_pf_rules($rules, $tracker_start, $tracker_end) {
 	}
 
 	$arr = array();
-	foreach ($rules as $rule) {
-		if ($rule['tracker'] >= $tracker_start &&
+	foreach ($rules as $key => $rule) {
+		/* key 'error' indicates a call to pfctl_get_rule() returned
+		 * nonzero. We may have a partial list of rules if that is the case */
+		if ($key != 'error' &&
+			$rule['tracker'] >= $tracker_start &&
 		    $rule['tracker'] <= $tracker_end) {
 			$arr[] = $rule;
 		}

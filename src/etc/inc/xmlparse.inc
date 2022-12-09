@@ -116,8 +116,6 @@ function endElement($parser, $name) {
 		foreach ($curpath as $path) {
 			$ptr = &$ptr[$path];
 		}
-		log_error(var_dump($curpath));
-		var_dump($ptr);
 		if (!is_array(end($ptr))) {
 			array_pop($ptr);
 		}

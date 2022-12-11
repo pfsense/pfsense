@@ -2041,7 +2041,7 @@ if (count($mediaopts_list) > 0) {
 	$section->addInput(new Form_Select(
 		'mediaopt',
 		'Speed and Duplex',
-		rtrim(config_get_path("interfaces/{$if}/media", "") . ' ' . config_get_path("interfaces/{$if}/mediaopt"), ""),
+		rtrim(config_get_path("interfaces/{$if}/media", "") . ' ' . config_get_path("interfaces/{$if}/mediaopt")),
 		build_mediaopts_list() 
 	))->setHelp('Explicitly set speed and duplex mode for this interface.%s' .
 				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.', '<br />');

@@ -1537,7 +1537,7 @@ function get_configured_interface_with_descr(bool $with_disabled = false) : arra
 	$iflist = [];
 	foreach (config_get_path('interfaces', []) as $if => $if_detail) {
 		if ($with_disabled || isset($if_detail['enable'])) {
-			$iflist[$if] = array_get_path($if_detail, 'descr', $if);
+			$iflist[$if] = array_get_path($if_detail, 'descr', strtoupper($if));
 		}
 	}
 

@@ -197,17 +197,19 @@ function swap_usage() {
 }
 
 function mem_usage() {
+	$memUsage = "NA";
 	$totalMem = get_single_sysctl("vm.stats.vm.v_page_count");
-	if ($totalMem > 0) {
+	if (is_numeric($totalMem)) {
 		$inactiveMem = get_single_sysctl("vm.stats.vm.v_inactive_count");
 		$cachedMem = get_single_sysctl("vm.stats.vm.v_cache_count");
 		$freeMem = get_single_sysctl("vm.stats.vm.v_free_count");
-		$usedMem = $totalMem - ($inactiveMem + $cachedMem + $freeMem);
-		$memUsage = round(($usedMem * 100) / $totalMem, 0);
-	} else {
-		$memUsage = "NA";
+		if (is_numeric($inactiveMem) &&
+			is_numeric($cachedMem) &&
+			is_numeric($freeMem)) {
+			$usedMem = (int)$totalMem - ((int)$inactiveMem + (int)$cachedMem + (int)$freeMem);
+			$memUsage = round(($usedMem * 100) / $totalMem, 0);
+		}
 	}
-
 	return $memUsage;
 }
 

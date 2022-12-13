@@ -693,6 +693,11 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 		$dhcpdconf['mac_allow'] = $_POST['mac_allow'];
 		$dhcpdconf['mac_deny'] = $_POST['mac_deny'];
+		if ($_POST['disablepingcheck']) {
+			$dhcpdconf['disablepingcheck'] = $_POST['disablepingcheck'];
+		} else {
+			unset($dhcpdconf['disablepingcheck']);
+		}
 		$dhcpdconf['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
 		unset($dhcpdconf['ntpserver']);

@@ -34,76 +34,41 @@ require_once("unbound.inc");
 require_once("pfsense-utils.inc");
 require_once("system.inc");
 
-init_config_arr(array('unbound', 'hosts'));
-init_config_arr(array('unbound', 'domainoverrides'));
-$a_unboundcfg = &$config['unbound'];
-$a_hosts = &$a_unboundcfg['hosts'];
-$a_domainOverrides = &$a_unboundcfg['domainoverrides'];
+$pconfig['enable'] = config_path_enabled('unbound');
+$pconfig['enablessl'] = config_path_enabled('unbound', 'enablessl');
+$pconfig['strictout'] = config_path_enabled('unbound', 'strictout');
+$pconfig['dnssec'] = config_path_enabled('unbound', 'dnssec');
+$pconfig['python'] = config_path_enabled('unbound', 'python');
+$pconfig['forwarding'] = config_path_enabled('unbound', 'forwarding');
+$pconfig['forward_tls_upstream'] = config_path_enabled('unbound', 'forward_tls_upstream');
+$pconfig['regdhcp'] = config_path_enabled('unbound', 'regdhcp');
+$pconfig['regdhcpstatic'] = config_path_enabled('unbound', 'regdhcpstatic');
+$pconfig['regovpnclients'] = config_path_enabled('unbound', 'regovpnclients');
 
-if (isset($a_unboundcfg['enable'])) {
-	$pconfig['enable'] = true;
-}
-if (isset($a_unboundcfg['enablessl'])) {
-	$pconfig['enablessl'] = true;
-}
-if (isset($a_unboundcfg['strictout'])) {
-	$pconfig['strictout'] = true;
-}
-if (isset($a_unboundcfg['dnssec'])) {
-	$pconfig['dnssec'] = true;
-}
-if (isset($a_unboundcfg['python'])) {
-	$pconfig['python'] = true;
-}
-if (isset($a_unboundcfg['forwarding'])) {
-	$pconfig['forwarding'] = true;
-}
-if (isset($a_unboundcfg['forward_tls_upstream'])) {
-	$pconfig['forward_tls_upstream'] = true;
-}
-if (isset($a_unboundcfg['regdhcp'])) {
-	$pconfig['regdhcp'] = true;
-}
-if (isset($a_unboundcfg['regdhcpstatic'])) {
-	$pconfig['regdhcpstatic'] = true;
-}
-if (isset($a_unboundcfg['regovpnclients'])) {
-	$pconfig['regovpnclients'] = true;
-}
+$pconfig['python_order'] = config_get_path('unbound/python_order');
+$pconfig['python_script'] = config_get_path('unbound/python_script');
+$pconfig['port'] = config_get_path('unbound/port');
+$pconfig['tlsport'] = config_get_path('unbound/tlsport');
+$pconfig['sslcertref'] = config_get_path('unbound/sslcertref');
+$pconfig['custom_options'] = base64_decode(config_get_path('unbound/custom_options'));
 
-$pconfig['python_order'] = $a_unboundcfg['python_order'];
-$pconfig['python_script'] = $a_unboundcfg['python_script'];
-$pconfig['port'] = $a_unboundcfg['port'];
-$pconfig['tlsport'] = $a_unboundcfg['tlsport'];
-$pconfig['sslcertref'] = $a_unboundcfg['sslcertref'];
-$pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
-
-if (empty($a_unboundcfg['active_interface'])) {
+if (config_get_path('unbound/active_interface')) {
+	$pconfig['active_interface'] = explode(",", config_get_path('unbound/active_interface'));
+} else {
 	$pconfig['active_interface'] = array();
-} else {
-	$pconfig['active_interface'] = explode(",", $a_unboundcfg['active_interface']);
 }
 
-if (empty($a_unboundcfg['outgoing_interface'])) {
+if (config_get_path('unbound/outgoing_interface')) {
+	$pconfig['outgoing_interface'] = explode(",", config_get_path('unbound/outgoing_interface'));
+} else {
 	$pconfig['outgoing_interface'] = array();
-} else {
-	$pconfig['outgoing_interface'] = explode(",", $a_unboundcfg['outgoing_interface']);
 }
 
-if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
-	$pconfig['system_domain_local_zone_type'] = "transparent";
-} else {
-	$pconfig['system_domain_local_zone_type'] = $a_unboundcfg['system_domain_local_zone_type'];
-}
+$pconfig['system_domain_local_zone_type'] = config_get_path('unbound/system_domain_local_zone_type', 'transparent');
 
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
 $certs_available = false;
-
-if (is_array($a_cert) && count($a_cert)) {
+if (count(config_get_path('cert'))) {
 	$certs_available = true;
-} else {
-	$a_cert = array();
 }
 
 if ($_POST['apply']) {
@@ -122,8 +87,8 @@ if ($_POST['save']) {
 	$pconfig = $_POST;
 	unset($input_errors);
 
-	if (isset($pconfig['enable']) && isset($config['dnsmasq']['enable'])) {
-		if ($pconfig['port'] == $config['dnsmasq']['port']) {
+	if (isset($pconfig['enable']) && config_path_enabled('dnsmasq')) {
+		if ($pconfig['port'] == config_get_path('dnsmasq/port')) {
 			$input_errors[] = gettext("The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.");
 		}
 	}
@@ -147,7 +112,7 @@ if ($_POST['save']) {
 
 	if (empty($pconfig['active_interface'])) {
 		$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
-	} elseif (($config['system']['dnslocalhost'] != 'remote') && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
+	} elseif ((config_get_path('system/dnslocalhost') != 'remote') && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
 		$input_errors[] = gettext("This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.");
 	}
 
@@ -190,36 +155,32 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		$a_unboundcfg['enable'] = isset($pconfig['enable']);
-		$a_unboundcfg['enablessl'] = isset($pconfig['enablessl']);
-		$a_unboundcfg['port'] = $pconfig['port'];
-		$a_unboundcfg['tlsport'] = $pconfig['tlsport'];
-		$a_unboundcfg['sslcertref'] = $pconfig['sslcertref'];
-		$a_unboundcfg['strictout'] = isset($pconfig['strictout']);
-		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
+		config_set_path('unbound/enable', isset($pconfig['enable']));
+		config_set_path('unbound/enablessl', isset($pconfig['enablessl']));
+		config_set_path('unbound/port', $pconfig['port']);
+		config_set_path('unbound/tlsport', $pconfig['tlsport']);
+		config_set_path('unbound/sslcertref', $pconfig['sslcertref']);
+		config_set_path('unbound/strictout', isset($pconfig['strictout']));
+		config_set_path('unbound/dnssec', isset($pconfig['dnssec']));
 
-		$a_unboundcfg['python'] = isset($pconfig['python']);
+		config_set_path('unbound/python', $pconfig['python']);
 		if (isset($pconfig['python'])) {
-			$a_unboundcfg['python_order'] = $pconfig['python_order'];
-			$a_unboundcfg['python_script'] = $pconfig['python_script'];
+			config_set_path('unbound/python_order', $pconfig['python_order']);
+			config_set_path('unbound/python_script', $pconfig['python_script']);
 		} else {
-			if (isset($a_unboundcfg['python_order'])) {
-				unset($a_unboundcfg['python_order']);
-			}
-			if (isset($a_unboundcfg['python_script'])) {
-				unset($a_unboundcfg['python_script']);
-			}
+			config_del_path('unbound/python_order');
+			config_del_path('unbound/python_script');
 		}
 
-		$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
-		$a_unboundcfg['forward_tls_upstream'] = isset($pconfig['forward_tls_upstream']);
-		$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
-		$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
-		$a_unboundcfg['regovpnclients'] = isset($pconfig['regovpnclients']);
-		$a_unboundcfg['active_interface'] = $pconfig['active_interface'];
-		$a_unboundcfg['outgoing_interface'] = $pconfig['outgoing_interface'];
-		$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
-		$a_unboundcfg['custom_options'] = $pconfig['custom_options'];
+		config_set_path('unbound/forwarding', isset($pconfig['forwarding']));
+		config_set_path('unbound/forward_tls_upstream', isset($pconfig['forward_tls_upstream']));
+		config_set_path('unbound/regdhcp', isset($pconfig['regdhcp']));
+		config_set_path('unbound/regdhcpstatic', isset($pconfig['regdhcpstatic']));
+		config_set_path('unbound/regovpnclients', isset($pconfig['regovpnclients']));
+		config_set_path('unbound/active_interface', $pconfig['active_interface']);
+		config_set_path('unbound/outgoing_interface', $pconfig['outgoing_interface']);
+		config_set_path('unbound/system_domain_local_zone_type', $pconfig['system_domain_local_zone_type']);
+		config_set_path('unbound/custom_options', $pconfig['custom_options']);
 
 		write_config(gettext("DNS Resolver configured."));
 		mark_subsystem_dirty('unbound');
@@ -239,16 +200,16 @@ if ($pconfig['custom_options']) {
 
 if ($_POST['act'] == "del") {
 	if ($_POST['type'] == 'host') {
-		if ($a_hosts[$_POST['id']]) {
-			unset($a_hosts[$_POST['id']]);
+		if (config_get_path('unbound/hosts/' . $_POST['id'])) {
+			config_del_path('unbound/hosts/' . $_POST['id']);
 			write_config(gettext("Host override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
 			exit;
 		}
 	} elseif ($_POST['type'] == 'doverride') {
-		if ($a_domainOverrides[$_POST['id']]) {
-			unset($a_domainOverrides[$_POST['id']]);
+		if (config_get_path('unbound/domainoverrides/' . $_POST['id'])) {
+			config_del_path('unbound/domainoverrides/' . $_POST['id']);
 			write_config(gettext("Domain override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
@@ -590,8 +551,7 @@ events.push(function() {
 			</thead>
 			<tbody>
 <?php
-$i = 0;
-foreach ($a_hosts as $hostent):
+foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 ?>
 				<tr>
 					<td>
@@ -607,8 +567,8 @@ foreach ($a_hosts as $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
 					</td>
 				</tr>
 
@@ -630,12 +590,11 @@ foreach ($a_hosts as $hostent):
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
 					</td>
 				</tr>
 <?php
 	endforeach;
-	$i++;
 endforeach;
 ?>
 			</tbody>
@@ -674,7 +633,7 @@ endforeach;
 			<tbody>
 <?php
 $i = 0;
-foreach ($a_domainOverrides as $doment):
+foreach (config_get_path('unbound/domainoverrides') as $doment):
 ?>
 				<tr>
 					<td>

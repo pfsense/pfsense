@@ -1240,7 +1240,6 @@ function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
 		echo "get_dns_nameservers() being called $mt\n";
 	}
 
-	$syscfg = config_get_path('system');
 	if ((((config_path_enabled('dnsmasq')) &&
 		  (config_get_path('dnsmasq/port', '53') == '53') &&
 		  in_array("lo0", explode(",", config_get_path('dnsmasq/interface', 'lo0'))))) ||
@@ -1253,7 +1252,7 @@ function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
 	}
 
 	if ($hostns || (config_get_path('system/dnslocalhost') != 'local')) {
-		if (isset($syscfg['dnsallowoverride'])) {
+		if (config_path_enabled('system', 'dnsallowoverride')) {
 			/* get dynamically assigned DNS servers (if any) */
 			foreach (array_unique(get_dynamic_nameservers()) as $nameserver) {
 				if ($nameserver) {
@@ -1264,14 +1263,12 @@ function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
 				}
 			}
 		}
-		if (is_array($syscfg['dnsserver'])) {
-			foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
-				if ($sys_dnsserver && (!in_array($sys_dnsserver, $dns_nameservers))) {
-					if ($add_v6_brackets && is_ipaddrv6($sys_dnsserver)) {
-						$sys_dnsserver = "[{$sys_dnsserver}]";
-					}
-					$dns_nameservers[] = $sys_dnsserver;
+		foreach (config_get_path('system/dnsserver', []) as $sys_dnsserver) {
+			if ($sys_dnsserver && (!in_array($sys_dnsserver, $dns_nameservers))) {
+				if ($add_v6_brackets && is_ipaddrv6($sys_dnsserver)) {
+					$sys_dnsserver = "[{$sys_dnsserver}]";
 				}
+				$dns_nameservers[] = $sys_dnsserver;
 			}
 		}
 	}

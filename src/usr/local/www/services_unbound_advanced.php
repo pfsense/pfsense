@@ -42,82 +42,41 @@ $unbound_edns_sizes = array(
 	"4096" => "4096: Unbound Default"
 );
 
-if (!is_array($config['unbound'])) {
-	config_set_path('unbound', array());
-}
-
-if (isset($config['unbound']['hideidentity'])) {
-	$pconfig['hideidentity'] = true;
-}
-
-if (isset($config['unbound']['hideversion'])) {
-	$pconfig['hideversion'] = true;
-}
-
-if (isset($config['unbound']['qname-minimisation'])) {
-	$pconfig['qname-minimisation'] = true;
-}
-
-if (isset($config['unbound']['qname-minimisation-strict'])) {
-	$pconfig['qname-minimisation-strict'] = true;
-}
-
-if (isset($config['unbound']['prefetch'])) {
-	$pconfig['prefetch'] = true;
-}
-
-if (isset($config['unbound']['prefetchkey'])) {
-	$pconfig['prefetchkey'] = true;
-}
-
-if (isset($config['unbound']['dnssecstripped'])) {
-	$pconfig['dnssecstripped'] = true;
-}
-
-if (isset($config['unbound']['dnsrecordcache'])) {
-	$pconfig['dnsrecordcache'] = true;
-}
-
-if (isset($config['unbound']['aggressivensec'])) {
-	$pconfig['aggressivensec'] = true;
-}
+$pconfig['hideidentity'] = config_path_enabled('unbound', 'hideidentity');
+$pconfig['hideversion'] = config_path_enabled('unbound', 'hideversion');
+$pconfig['qname-minimisation'] = config_path_enabled('unbound', 'qname-minimisation');
+$pconfig['qname-minimisation-strict'] = config_path_enabled('unbound', 'qname-minimisation-strict');
+$pconfig['prefetch'] = config_path_enabled('unbound', 'prefetch');
+$pconfig['prefetchkey'] = config_path_enabled('unbound', 'prefetchkey');
+$pconfig['dnssecstripped'] = config_path_enabled('unbound', 'dnssecstripped');
+$pconfig['dnsrecordcache'] = config_path_enabled('unbound', 'dnsrecordcache');
+$pconfig['aggressivensec'] = config_path_enabled('unbound', 'aggressivensec');
 
 $pconfig['msgcachesize'] = config_get_path('unbound/msgcachesize');
-$pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
-$pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
-$pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : 'auto';
+$pconfig['outgoing_num_tcp'] = config_get_path('unbound/outgoing_num_tcp', 10);
+$pconfig['incoming_num_tcp'] = config_get_path('unbound/incoming_num_tcp', 10);
+$pconfig['edns_buffer_size'] = config_get_path('unbound/edns_buffer_size', 'auto');
 $pconfig['num_queries_per_thread'] = config_get_path('unbound/num_queries_per_thread');
-$pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $config['unbound']['jostle_timeout'] : '200';
-$pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
-$pconfig['cache_min_ttl'] = isset($config['unbound']['cache_min_ttl']) ? $config['unbound']['cache_min_ttl'] : '0';
+$pconfig['jostle_timeout'] = config_get_path('unbound/jostle_timeout', 200);
+$pconfig['cache_max_ttl'] = config_get_path('unbound/cache_max_ttl', 86400);
+$pconfig['cache_min_ttl'] = config_get_path('unbound/cache_min_ttl', 0);
 
 /* default to enabled if not explicitly set */
 if (!isset($config['unbound']['infra_keep_probing']) || $config['unbound']['infra_keep_probing'] == "enabled") {
 	$pconfig['infra_keep_probing'] = true;
 }
 
-$pconfig['infra_host_ttl'] = isset($config['unbound']['infra_host_ttl']) ? $config['unbound']['infra_host_ttl'] : '900';
-$pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhosts']) ? $config['unbound']['infra_cache_numhosts'] : '10000';
-$pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
-$pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
-$pconfig['dns64prefix'] = isset($config['unbound']['dns64prefix']) ? $config['unbound']['dns64prefix'] : '';
-$pconfig['dns64netbits'] = isset($config['unbound']['dns64netbits']) ? $config['unbound']['dns64netbits'] : '96';
+$pconfig['infra_host_ttl'] = config_get_path('unbound/infra_host_ttl', 900);
+$pconfig['infra_cache_numhosts'] = config_get_path('unbound/infra_cache_numhosts', 10000);
+$pconfig['unwanted_reply_threshold'] = config_get_path('unbound/unwanted_reply_threshold', 'disabled');
+$pconfig['log_verbosity'] = config_get_path('unbound/log_verbosity', 1);
+$pconfig['dns64prefix'] = config_get_path('unbound/dns64prefix', '');
+$pconfig['dns64netbits'] = config_get_path('unbound/dns64netbits', 96);
 
-if (isset($config['unbound']['disable_auto_added_access_control'])) {
-	$pconfig['disable_auto_added_access_control'] = true;
-}
-
-if (isset($config['unbound']['disable_auto_added_host_entries'])) {
-	$pconfig['disable_auto_added_host_entries'] = true;
-}
-
-if (isset($config['unbound']['use_caps'])) {
-	$pconfig['use_caps'] = true;
-}
-
-if (isset($config['unbound']['dns64'])) {
-	$pconfig['dns64'] = true;
-}
+$pconfig['disable_auto_added_access_control'] = config_path_enabled('unbound', 'disable_auto_added_access_control');
+$pconfig['disable_auto_added_host_entries'] = config_path_enabled('unbound', 'disable_auto_added_host_entries');
+$pconfig['use_caps'] = config_path_enabled('unbound', 'use_caps');
+$pconfig['dns64'] = config_path_enabled('unbound', 'dns64');
 
 if ($_POST) {
 	if ($_POST['apply']) {
@@ -166,7 +125,7 @@ if ($_POST) {
 		if (isset($_POST['log_verbosity']) && !in_array($_POST['log_verbosity'], array('0', '1', '2', '3', '4', '5'), true)) {
 			$input_errors[] = gettext("A valid value must be specified for Log Level.");
 		}
-		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
+		if (isset($_POST['dnssecstripped']) && !config_path_enabled('unbound', 'dnssec')) {
 			$input_errors[] = gettext("Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.");
 		}
 		if (isset($_POST['dns64']) && !empty($_POST['dns64prefix']) && !is_ipaddrv6($_POST['dns64prefix'])) {

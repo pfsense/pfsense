@@ -33,9 +33,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("unbound.inc");
 
-init_config_arr(array('unbound', 'acls'));
-$a_acls = &$config['unbound']['acls'];
-
 $id = $_REQUEST['id'];
 
 if (isset($_POST['aclid'])) {
@@ -50,12 +47,12 @@ if (!empty($id) && !is_numeric($id)) {
 $act = $_REQUEST['act'];
 
 if ($_POST['act'] == "del") {
-	if (!$a_acls[$id]) {
+	if (!config_get_path('unbound/acls/' . $id)) {
 		pfSenseHeader("services_unbound_acls.php");
 		exit;
 	}
 
-	unset($a_acls[$id]);
+	config_del_path('unbound/acls/' . $id);
 	write_config(gettext("Access list deleted from DNS Resolver."));
 	mark_subsystem_dirty('unbound');
 }
@@ -65,9 +62,9 @@ if ($act == "new") {
 }
 
 if ($act == "edit") {
-	if (isset($id) && $a_acls[$id]) {
-		$pconfig = $a_acls[$id];
-		$networkacl = $a_acls[$id]['row'];
+	if (isset($id) && config_get_path('unbound/acls/' . $id)) {
+		$pconfig = config_get_path('unbound/acls/' . $id);
+		$networkacl = config_get_path('unbound/acls/' . $id . '/row');
 	}
 }
 
@@ -135,10 +132,10 @@ if ($_POST['save']) {
 				$acl_entry['row'][] = $acl;
 			}
 
-			if (isset($id) && $a_acls[$id]) {
-				$a_acls[$id] = $acl_entry;
+			if (isset($id) && config_get_path('unbound/acls/' . $id)) {
+				config_set_path('unbound/acls/' . $id, $acl_entry);
 			} else {
-				$a_acls[] = $acl_entry;
+				config_set_path('unbound/acls/' . count(config_get_path('unbound/acls', [])) + 1, $acl_entry);
 			}
 
 			mark_subsystem_dirty("unbound");
@@ -290,7 +287,7 @@ if ($act == "new" || $act == "edit") {
 				<tbody>
 <?php
 	$i = 0;
-	foreach ($a_acls as $acl):
+	foreach (config_get_path('unbound/acls', []) as $acl):
 ?>
 					<tr ondblclick="document.location='services_unbound_acls.php?act=edit&amp;id=<?=$i?>'">
 						<td>

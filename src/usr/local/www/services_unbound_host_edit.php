@@ -39,8 +39,6 @@ function hostcmp($a, $b) {
 }
 
 function hosts_sort() {
-	global $g, $config;
-
 	$hosts = config_get_path('unbound/hosts', []);
 	if (empty($hosts)) {
 		return;
@@ -51,18 +49,16 @@ function hosts_sort() {
 
 require_once("guiconfig.inc");
 
-$a_hosts = config_get_path('unbound/hosts', []);
 $id = $_REQUEST['id'];
 $pconfig = [];
 
 if (isset($id) &&
-    array_key_exists($id, $a_hosts) &&
-    is_array($a_hosts[$id])) {
-	$pconfig['host']    = array_get_path($a_hosts, "{$id}/host");
-	$pconfig['domain']  = array_get_path($a_hosts, "{$id}/domain");
-	$pconfig['ip']      = array_get_path($a_hosts, "{$id}/ip");
-	$pconfig['descr']   = array_get_path($a_hosts, "{$id}/descr");
-	$pconfig['aliases'] = array_get_path($a_hosts, "{$id}/aliases");
+    config_get_path('unbound/hosts/' . $id)) {
+	$pconfig['host']    = config_get_path('unbound/hosts/' . $id . '/host');
+	$pconfig['domain']  = config_get_path('unbound/hosts/' . $id . '/domain');
+	$pconfig['ip']      = config_get_path('unbound/hosts/' . $id . '/ip');
+	$pconfig['descr']   = config_get_path('unbound/hosts/' . $id . '/descr');
+	$pconfig['aliases'] = config_get_path('unbound/hosts/' . $id . '/aliases');
 }
 
 if ($_POST['save']) {
@@ -143,8 +139,8 @@ if ($_POST['save']) {
 	}
 
 	/* check for overlaps */
-	foreach ($a_hosts as $hostent) {
-		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
+	foreach (config_get_path('unbound/hosts', []) as $hostent) {
+		if (isset($id) && (config_get_path('unbound/hosts/' . $id) === $hostent)) {
 			continue;
 		}
 
@@ -169,13 +165,12 @@ if ($_POST['save']) {
 		$hostent['descr'] = $_POST['descr'];
 		array_set_path($hostent, 'aliases/item', $aliases);
 
-		if (isset($id) && $a_hosts[$id]) {
-			$a_hosts[$id] = $hostent;
+		if (isset($id) && config_get_path('unbound/hosts/' . $id)) {
+			config_set_path('unbound/hosts/' . $id, $hostent);
 		} else {
-			$a_hosts[] = $hostent;
+			config_set_path('unbound/hosts/' . count(config_get_path('unbound/hosts', [])) + 1, $hostent);
 		}
-		config_set_path('unbound/hosts', $a_hosts);
-		hosts_sort();
+		//hosts_sort();
 
 		mark_subsystem_dirty('unbound');
 
@@ -230,7 +225,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_hosts[$id]) {
+if (isset($id) && config_get_path('unbound/hosts/' . $id)) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

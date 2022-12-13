@@ -34,7 +34,7 @@ require_once("interfaces.inc");
 require_once("util.inc");
 
 function create_unbound_chroot_path($cfgsubdir = "") {
-	global $config, $g;
+	global $g;
 
 	// Configure chroot
 	if (!is_dir(g_get('unbound_chroot_path'))) {
@@ -55,8 +55,6 @@ function create_unbound_chroot_path($cfgsubdir = "") {
 
 /* Optimize Unbound for environment */
 function unbound_optimization() {
-	global $config;
-
 	$optimization_settings = array();
 
 	/*
@@ -82,19 +80,17 @@ function unbound_optimization() {
 	 * Larger socket buffer for busy servers
 	 * Check that it is set to 4MB (by default the OS has it configured to 4MB)
 	 */
-	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
-		foreach ($config['sysctl']['item'] as $tunable) {
-			if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
-				$so = floor((intval($tunable['value'])/1024/1024)-4);
-				// Check to ensure that the number is not a negative
-				if ($so >= 4) {
-					// Limit to 32MB, users might set maxsockbuf very high for other reasons.
-					// We do not want unbound to fail because of that.
-					$so = min($so, 32);
-					$optimization['so_rcvbuf'] = "so-rcvbuf: {$so}m";
-				} else {
-					unset($optimization['so_rcvbuf']);
-				}
+	foreach (config_get_path('sysctl/item', []) as $tunable) {
+		if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
+			$so = floor((intval($tunable['value'])/1024/1024)-4);
+			// Check to ensure that the number is not a negative
+			if ($so >= 4) {
+				// Limit to 32MB, users might set maxsockbuf very high for other reasons.
+				// We do not want unbound to fail because of that.
+				$so = min($so, 32);
+				$optimization['so_rcvbuf'] = "so-rcvbuf: {$so}m";
+			} else {
+				unset($optimization['so_rcvbuf']);
 			}
 		}
 	}
@@ -173,11 +169,11 @@ function unbound_get_python_scriptname($unboundcfg, $cfgsubdir = '') {
 
 	$python_path = g_get('unbound_chroot_path');
 	if (!empty($cfgsubdir)) {
-		$python_path .= "{$cfgsubdir}";
+		$python_path .= $cfgsubdir;
 	}
 
 	/* Full path to the selected script file */
-	$python_script_file = "{$python_path}/{$unboundcfg['python_script']}.py";
+	$python_script_file = $python_path . '/' . $unboundcfg['python_script'] . '.py';
 
 	if (file_exists($python_script_file)) {
 		/* If using a subdir (e.g. testing) use the full path, otherwise
@@ -190,9 +186,9 @@ function unbound_get_python_scriptname($unboundcfg, $cfgsubdir = '') {
 
 function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
-	global $config, $g, $nooutifs;
+	global $g, $nooutifs;
 	if (is_null($unboundcfg)) {
-		$unboundcfg = $config['unbound'];
+		$unboundcfg = config_get_path('unbound');
 	}
 
 	if (platform_booting()) {
@@ -236,7 +232,7 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	$module_config .= 'iterator';
 
 	// Setup DNS Rebinding
-	if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {
+	if (!config_path_enabled('system/webgui','nodnsrebindcheck')) {
 		// Private-addresses for DNS Rebinding
 		$private_addr = <<<EOF
 # For DNS Rebinding prevention
@@ -350,7 +346,7 @@ EOF;
 
 	// Allow DNS Rebind for forwarded domains
 	if (isset($unboundcfg['domainoverrides']) && is_array($unboundcfg['domainoverrides'])) {
-		if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {
+		if (!config_path_enabled('system/webgui', 'nodnsrebindcheck')) {
 			$private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
 			$private_domains .= unbound_add_domain_overrides("private");
 		}
@@ -372,7 +368,7 @@ EOF;
 	// Server configuration variables
 	$hide_identity = isset($unboundcfg['hideidentity']) ? "yes" : "no";
 	$hide_version = isset($unboundcfg['hideversion']) ? "yes" : "no";
-	$ipv6_allow = isset($config['system']['ipv6allow']) ? "yes" : "no";
+	$ipv6_allow = config_path_enabled('system', 'ipv6allow') ? "yes" : "no";
 	$harden_dnssec_stripped = isset($unboundcfg['dnssecstripped']) ? "yes" : "no";
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
@@ -427,11 +423,12 @@ EOD;
 			/* Build DNS server hostname list. See https://redmine.pfsense.org/issues/8602 */
 			$dns_hostnames = array();
 			$dnshost_counter = 1;
-			while (isset($config["system"]["dns{$dnshost_counter}host"])) {
+			while (config_get_path('system/dns' . $dnshost_counter . 'host')) {
 				$pconfig_dnshost_counter = $dnshost_counter - 1;
-				if (!empty($config["system"]["dns{$dnshost_counter}host"]) &&
-				    isset($config["system"]["dnsserver"][$pconfig_dnshost_counter]))
-				$dns_hostnames[$config["system"]["dnsserver"][$pconfig_dnshost_counter]] = $config["system"]["dns{$dnshost_counter}host"];
+				if (config_get_path('system/dns' . $dnshost_counter . 'host') &&
+				    config_get_path('system/dnsserver/' . $pconfig_dnshost_counter)) {
+						$dns_hostnames[config_get_path('system/dnsserver/' . $pconfig_dnshost_counter)] = config_get_path('system/dns' . $dnshost_counter . 'host');
+				}
 				$dnshost_counter++;
 			}
 
@@ -596,12 +593,12 @@ EOF;
 }
 
 function sync_unbound_service() {
-	global $config, $g;
+	global $g;
 
 	create_unbound_chroot_path();
 
 	// Configure our Unbound service
-	if (isset($config['unbound']['dnssec'])) {
+	if (config_path_enabled('unbound', 'dnssec')) {
 		/* do not sync root.key file if DNSSEC is not enabled,
 		 * see https://redmine.pfsense.org/issues/12985 */
 		do_as_unbound_user("unbound-anchor");
@@ -617,13 +614,9 @@ function sync_unbound_service() {
 }
 
 function unbound_acl_id_used($id) {
-	global $config;
-
-	if (is_array($config['unbound']['acls'])) {
-		foreach ($config['unbound']['acls'] as & $acls) {
-			if ($id == $acls['aclid']) {
-				return true;
-			}
+	foreach (config_get_path('unbound/acls', []) as $acls) {
+		if ($id == $acls['aclid']) {
+			return true;
 		}
 	}
 
@@ -640,7 +633,7 @@ function unbound_get_next_id() {
 
 // Execute commands as the user unbound
 function do_as_unbound_user($cmd, $param1 = "") {
-	global $g, $config;
+	global $g;
 
 	switch ($cmd) {
 		case "start":
@@ -677,9 +670,9 @@ function do_as_unbound_user($cmd, $param1 = "") {
 }
 
 function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
-	global $config, $g;
+	global $g;
 
-	$domains = $config['unbound']['domainoverrides'];
+	$domains = config_get_path('unbound/domainoverrides');
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
@@ -741,7 +734,6 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 }
 
 function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "transparent", $write_domain_zone_declaration = false, $always_add_short_names = false) {
-	global $config;
 	if ($write_domain_zone_declaration) {
 		$zone_data = "local-zone: \"{$domain}.\" {$zone_type}\n";
 	} else {
@@ -760,7 +752,7 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 			$added_ptr[$host['ipaddr']] = true;
 		}
 		/* For the system localhost entry, write an entry for just the hostname. */
-		if ((($host['name'] == "localhost") && ($domain == $config['system']['domain'])) || $always_add_short_names) {
+		if ((($host['name'] == 'localhost') && ($domain == config_get_path('system/domain'))) || $always_add_short_names) {
 			$zone_data .= "local-data: \"{$host['name']}. {$type} {$host['ipaddr']}\"\n";
 		}
 		/* Redirect zones must have a zone declaration that matches the
@@ -776,9 +768,9 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 }
 
 function unbound_add_host_entries($cfgsubdir = "") {
-	global $config, $g, $nooutifs;
+	global $g, $nooutifs;
 
-	$hosts = system_hosts_entries($config['unbound']);
+	$hosts = system_hosts_entries(config_get_path('unbound'));
 
 	/* Pass 1: Build domain list and hosts inside domains */
 	$hosts_by_domain = array();
@@ -793,26 +785,26 @@ function unbound_add_host_entries($cfgsubdir = "") {
 	/* Build local zone data */
 	// Check if auto add host entries is not set
 	$system_domain_local_zone_type = "transparent";
-	if (!isset($config['unbound']['disable_auto_added_host_entries'])) {
+	if (!config_path_enabled('unbound', 'disable_auto_added_host_entries')) {
 		// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
-		if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
-			$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
+		if (array_key_exists(config_get_path('unbound/system_domain_local_zone_type'), unbound_local_zone_types())) {
+			$system_domain_local_zone_type = config_get_path('unbound/system_domain_local_zone_type');
 		}
 	}
 	/* disable recursion if the selected outgoing interfaces are available,
 	 * see https://redmine.pfsense.org/issues/12460 */
-	if ($nooutifs && isset($config['unbound']['strictout'])) {
+	if ($nooutifs && config_path_enabled('unbound', 'strictout')) {
 		$unbound_entries = "local-zone: \".\" refuse\n";
 	}
 	/* Add entries for the system domain before all others */
-	if (array_key_exists($config['system']['domain'], $hosts_by_domain)) {
-		$unbound_entries .= unbound_generate_zone_data($config['system']['domain'],
-					$hosts_by_domain[$config['system']['domain']],
+	if (array_key_exists(config_get_path('system/domain'), $hosts_by_domain)) {
+		$unbound_entries .= unbound_generate_zone_data(config_get_path('system/domain'),
+					$hosts_by_domain[config_get_path('system/domain')],
 					$added_ptr,
 					$system_domain_local_zone_type,
 					true);
 		/* Unset this so it isn't processed again by the loop below. */
-		unset($hosts_by_domain[$config['system']['domain']]);
+		unset($hosts_by_domain[config_get_path('system/domain')]);
 	}
 
 	/* Build zone data for other domain */
@@ -822,7 +814,7 @@ function unbound_add_host_entries($cfgsubdir = "") {
 					$added_ptr,
 					"transparent",
 					false,
-					isset($config['unbound']['always_add_short_names']));
+					config_path_enabled('unbound', 'always_add_short_names'));
 	}
 
 	// Write out entries
@@ -834,38 +826,38 @@ function unbound_add_host_entries($cfgsubdir = "") {
 }
 
 function unbound_control($action) {
-	global $config, $g;
+	global $g;
 
 	$cache_dumpfile = "/var/tmp/unbound_cache";
 
 	switch ($action) {
 	case "start":
 		// Start Unbound
-		if ($config['unbound']['enable'] == "on") {
+		if (config_path_enabled('unbound')) {
 			if (!is_service_running("unbound")) {
 				do_as_unbound_user("start");
 			}
 		}
 		break;
 	case "stop":
-		if ($config['unbound']['enable'] == "on") {
+		if (config_path_enabled('unbound')) {
 			do_as_unbound_user("stop");
 		}
 		break;
 	case "reload":
-		if ($config['unbound']['enable'] == "on") {
+		if (config_path_enabled('unbound')) {
 			do_as_unbound_user("reload");
 		}
 		break;
 	case "dump_cache":
 		// Dump Unbound's Cache
-		if ($config['unbound']['dumpcache'] == "on") {
+		if (config_path_enabled('unbound', 'dumpcache')) {
 			do_as_unbound_user("dump_cache");
 		}
 		break;
 	case "restore_cache":
 		// Restore Unbound's Cache
-		if ((is_service_running("unbound")) && ($config['unbound']['dumpcache'] == "on")) {
+		if ((is_service_running("unbound")) && (config_path_enabled('unbound', 'dumpcache'))) {
 			if (file_exists($cache_dumpfile) && filesize($cache_dumpfile) > 0) {
 				do_as_unbound_user("load_cache < /var/tmp/unbound_cache");
 			}
@@ -879,12 +871,10 @@ function unbound_control($action) {
 
 // Generation of Unbound statistics
 function unbound_statistics() {
-	global $config;
-
-	if ($config['stats'] == "on") {
-		$stats_interval = $config['unbound']['stats_interval'];
-		$cumulative_stats = $config['cumulative_stats'];
-		if ($config['extended_stats'] == "on") {
+	if (config_path_enabled('stats')) {
+		$stats_interval = config_get_path('unbound/stats_interval');
+		$cumulative_stats = config_get_path('cumulative_stats');
+		if (config_path_enabled('extended_stats')) {
 			$extended_stats = "yes";
 		} else {
 			$extended_stats = "no";
@@ -908,14 +898,14 @@ EOF;
 
 // Unbound Access lists
 function unbound_acls_config($cfgsubdir = "") {
-	global $g, $config;
+	global $g;
 
-	if (!isset($config['unbound']['disable_auto_added_access_control'])) {
+	if (!config_path_enabled('unbound', 'disable_auto_added_access_control')) {
 		$aclcfg = "access-control: 127.0.0.1/32 allow_snoop\n";
 		$aclcfg .= "access-control: ::1 allow_snoop\n";
 		// Add our networks for active interfaces including localhost
-		if (!empty($config['unbound']['active_interface'])) {
-			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
+		if (config_get_path('unbound/active_interface')) {
+			$active_interfaces = array_flip(explode(",", config_get_path('unbound/active_interface')));
 			if (in_array("all", $active_interfaces)) {
 				$active_interfaces = get_configured_interface_with_descr();
 			}
@@ -976,10 +966,10 @@ function unbound_acls_config($cfgsubdir = "") {
 			}
 		}
 		// IPsec Mobile Virtual IPv6 Address Pool
-		if ((isset($config['ipsec']['client']['enable'])) &&
-		    (!empty($config['ipsec']['client']['pool_address_v6'])) &&
-		    (!empty($config['ipsec']['client']['pool_netbits_v6']))) {
-			$aclnets[] = "{$config['ipsec']['client']['pool_address_v6']}/{$config['ipsec']['client']['pool_netbits_v6']}";
+		if ((config_path_enabled('ipsec/client')) &&
+		    (config_get_path('ipsec/client/pool_address_v6')) &&
+		    (config_get_path('ipsec/client/pool_netbits_v6'))) {
+			$aclnets[] = config_get_path('ipsec/client/pool_address_v6') . '/' . config_get_path('ipsec/client/pool_netbits_v6');
 		}
 
 		// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
@@ -1013,19 +1003,17 @@ function unbound_acls_config($cfgsubdir = "") {
 	}
 
 	// Configure the custom ACLs
-	if (is_array($config['unbound']['acls'])) {
-		foreach ($config['unbound']['acls'] as $unbound_acl) {
-			$aclcfg .= "#{$unbound_acl['aclname']}\n";
-			foreach ($unbound_acl['row'] as $network) {
-				if ($unbound_acl['aclaction'] == "allow snoop") {
-					$unbound_acl['aclaction'] = "allow_snoop";
-				} elseif ($unbound_acl['aclaction'] == "deny nonlocal") {
-					$unbound_acl['aclaction'] = "deny_non_local";
-				} elseif ($unbound_acl['aclaction'] == "refuse nonlocal") {
-					$unbound_acl['aclaction'] = "refuse_non_local";
-				}
-				$aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
+	foreach (config_get_path('unbound/acls', []) as $unbound_acl) {
+		$aclcfg .= "#{$unbound_acl['aclname']}\n";
+		foreach ($unbound_acl['row'] as $network) {
+			if ($unbound_acl['aclaction'] == "allow snoop") {
+				config_set_path('unbound/acls/' . $unbound_acl['aclid'] . '/aclaction', 'allow_snoop');
+			} elseif ($unbound_acl['aclaction'] == "deny nonlocal") {
+				config_set_path('unbound/acls/' . $unbound_acl['aclid'] . '/aclaction', 'deny_non_local');
+			} elseif ($unbound_acl['aclaction'] == "refuse nonlocal") {
+				config_set_path('unbound/acls/' . $unbound_acl['aclid'] . '/aclaction', 'refuse_non_local');
 			}
+			$aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
 		}
 	}
 	// Write out Access list
@@ -1060,12 +1048,9 @@ function unbound_local_zone_types() {
 
 // Autoconfig EDNS buffer size
 function unbound_auto_ednsbufsize() {
-	global $config;
-
 	$active_ipv6_inf = false;
-	if ($config['unbound']['active_interface'] &&
-		$config['unbound']['active_interface'] != 'all') {
-		$active_interfaces = explode(",", $config['unbound']['active_interface']);
+	if (config_get_path('unbound/active_interface') != 'all') {
+		$active_interfaces = explode(",", config_get_path('unbound/active_interface'));
 	} else {
 		$active_interfaces = get_configured_interface_list();
 	}

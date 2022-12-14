@@ -2145,8 +2145,10 @@ function filter_nat_rules_generate() {
 
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
-	$natrules .= "binat-anchor \"miniupnpd\"\n";
-	$natrules .= "nat-anchor \"miniupnpd\"\n";
+	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
+		$natrules .= "binat-anchor \"miniupnpd\"\n";
+		$natrules .= "nat-anchor \"miniupnpd\"\n";
+	}
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
@@ -2762,8 +2764,10 @@ function filter_nat_rules_generate() {
 
 	$natrules .= discover_pkg_rules("nat");
 
-	$natrules .= "# UPnPd rdr anchor\n";
-	$natrules .= "rdr-anchor \"miniupnpd\"\n";
+	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
+		$natrules .= "# UPnPd rdr anchor\n";
+		$natrules .= "rdr-anchor \"miniupnpd\"\n";
+	}
 
 	if (!empty($reflection_txt)) {
 		$natrules .= "\n# Reflection redirects and NAT for 1:1 mappings\n" . $reflection_txt;
@@ -4188,25 +4192,25 @@ EOD;
 
 	$saved_tracker += 200;
 	$tracker = $saved_tracker;
-	update_filter_reload_status("Creating uPNP rules...");
-	if (config_path_enabled('installedpackages/miniupnpd/config/0')) {
+	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
+		update_filter_reload_status("Creating uPNP rules...");
 		$ipfrules .= "anchor \"miniupnpd\"\n";
-	}
 
-	$upnp_interfaces = explode(",", config_get_path('installedpackages/miniupnpd/0/config/iface_array', ""));
-	foreach ($upnp_interfaces as $upnp_if) {
-		if (is_array($FilterIflist[$upnp_if])) {
-			$oc = $FilterIflist[$upnp_if];
-			unset($sa);
-			if ($oc['ip']) {
-				$sa = $oc['sa'];
-				$sn = $oc['sn'];
-			}
-			if ($sa) {
-				$ipfrules .= <<<EOD
-pass in {$log['pass']} on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 ridentifier {$increment_tracker()} keep state label "pass multicast traffic to miniupnpd"
+		$upnp_interfaces = explode(",", config_get_path('installedpackages/miniupnpd/config/0/iface_array', ""));
+		foreach ($upnp_interfaces as $upnp_if) {
+			if (is_array($FilterIflist[$upnp_if])) {
+				$oc = $FilterIflist[$upnp_if];
+				unset($sa);
+				if ($oc['ip']) {
+					$sa = $oc['sa'];
+					$sn = $oc['sn'];
+				}
+				if ($sa) {
+					$ipfrules .= <<<EOD
+pass in {$log['pass']} on \${$oc['descr']} proto udp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 ridentifier {$increment_tracker()} keep state label "pass multicast traffic to miniupnpd"
 
 EOD;
+				}
 			}
 		}
 	}

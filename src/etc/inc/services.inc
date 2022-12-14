@@ -3436,7 +3436,7 @@ function upnp_start() {
 		return;
 	}
 
-	if (config_path_enabled('installedpackages/miniupnpd/config/0')) {
+	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
 		echo gettext("Starting UPnP service... ");
 		require_once('/usr/local/pkg/miniupnpd.inc');
 		sync_package_miniupnpd();

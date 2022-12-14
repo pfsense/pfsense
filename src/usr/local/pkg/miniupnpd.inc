@@ -319,5 +319,7 @@
 				@unlink($config_file);
 			}
 		}
+		/* Reload filter to trigger UPnP rule changes */
+		send_event("filter reload");
 	}
 ?>

@@ -55,7 +55,7 @@ $a_rfc2136 = config_get_path('dnsupdates/dnsupdate');
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
 
 array_walk($all_dyndns, function(&$dyndns) {
-	if (empty($dyndns)) {
+	if (!is_array($dyndns) || empty($dyndns)) {
 		return;
 	}
 	if (empty($dyndns['type'])) {
@@ -244,6 +244,9 @@ if (!function_exists('get_dyndns_service_text')) {
 <?php
 				$skipdyndns = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 				foreach ($all_dyndns as $dyndns):
+					if (!is_array($dyndns) || empty($dyndns)) {
+						continue;
+					}
 ?>
 						<tr>
 							<td><?=get_dyndns_interface_text($dyndns['interface'])?></td>

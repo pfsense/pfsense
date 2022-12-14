@@ -3706,7 +3706,7 @@ EOD;
 
 		if ($oc['type'] == "dhcp") {
 			$dhcpcvpt = config_get_path("interfaces{$on}/dhcpcvpt");
-			$vlantag = config_path_enabled("interfaces/{$on}/dhcpvlanenable") ? "set prio {$vlanprio_values[$dhcpcvpt]}" : "";
+			$vlantag = config_path_enabled("interfaces/{$on}", 'dhcpvlanenable') ? "set prio {$vlanprio_values[$dhcpcvpt]}" : "";
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
 pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 67 to any port = 68 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp replies in {$oc['descr']}")}"
@@ -3720,7 +3720,7 @@ EOD;
 			// The DHCPv6 client rules ***MUST BE ABOVE BOGONSV6!***  https://redmine.pfsense.org/issues/3395
 			$dhcp6cvpt = config_get_path("interfaces{$on}/dhcpc6vpt");
 
-			$vlantag = config_path_enabled("interfaces/{$on}/dhcp6vlanenable") ? "set prio {$vlanprio_values[$dhcp6cvpt]}" : "";
+			$vlantag = config_path_enabled("interfaces/{$on}", 'dhcp6vlanenable') ? "set prio {$vlanprio_values[$dhcp6cvpt]}" : "";
 
 			$ipfrules .= <<<EOD
 # allow our DHCPv6 client out to the {$oc['descr']}
@@ -3745,7 +3745,7 @@ EOD;
 			$bogonlog = "";
 		}
 
-		if (config_path_enabled("interfaces/{$on}/blockbogons")) {
+		if (config_path_enabled("interfaces/{$on}", 'blockbogons')) {
 			$ipfrules .= <<<EOD
 # block bogon networks (IPv4)
 # https://www.team-cymru.org/Services/Bogons/bogon-bn-nonagg.txt
@@ -3788,7 +3788,7 @@ EOD;
 		$saved_tracker += 10;
 		$tracker = $saved_tracker;
 
-		if (config_path_enabled("interfaces/{$on}/blockpriv")) {
+		if (config_path_enabled("interfaces/{$on}", 'blockpriv')) {
 			if ($isbridged == false) {
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
@@ -3819,7 +3819,7 @@ EOD;
 				break;
 			default:
 			/* allow access to DHCP server on interfaces */
-				if (config_path_enabled("dhcpd/{$on}/enable")) {
+				if (config_path_enabled("dhcpd/{$on}")) {
 					$ipfrules .= <<<EOD
 # allow access to DHCP server on {$oc['descr']}
 pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 ridentifier {$increment_tracker()} label "allow access to DHCP server"

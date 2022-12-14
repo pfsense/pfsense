@@ -28,9 +28,10 @@
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
 header("X-Frame-Options: SAMEORIGIN");
-
-/* This includes all necessary files either directly or as depenencies. */
-require_once("authgui.inc");
+include_once('config.inc');
+include_once('config.lib.inc');
+include_once('phpsessionmanager.inc');
+include_once("util.inc");
 
 function pfSense_csrf_callback() {
 	include "csrf_error.php";
@@ -56,6 +57,8 @@ if (!$omit_nocacheheaders) {
 	header("Cache-Control: no-cache, no-store, must-revalidate");
 	header("Pragma: no-cache");
 }
+
+require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */
 require_once("functions.inc");

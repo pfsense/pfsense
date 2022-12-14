@@ -2372,6 +2372,9 @@ function services_dyndns_configure($int = "") {
 		}
 
 		foreach ($dyndnscfg as $dyndns) {
+			if (!is_array($dyndns) || empty($dyndns)) {
+				continue;
+			}
 			/*
 			 * If it's using a gateway group, check if interface is
 			 * the active gateway for that group
@@ -3078,7 +3081,9 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 	$notify_text = "";
 	$gwgroups = return_gateway_groups_array(true);
 	foreach (config_get_path('dnsupdates/dnsupdate', []) as $i => $dnsupdate) {
-		if (!isset($dnsupdate['enable'])) {
+		if (!is_array($dnsupdate) ||
+		    empty($dnsupdate) ||
+		    !isset($dnsupdate['enable'])) {
 			continue;
 		}
 		/*

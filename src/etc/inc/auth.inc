@@ -103,6 +103,9 @@ if (function_exists("display_error_form") && !config_path_enabled('system/webgui
 
 	if (!$found_host) {
 		foreach (config_get_path('dyndnses/dyndns', []) as $dyndns) {
+			if (!is_array($dyndns) || empty($dyndns)) {
+				continue;
+			}
 			if (strcasecmp($dyndns['host'], $http_host) == 0) {
 				$found_host = true;
 				break;
@@ -112,6 +115,9 @@ if (function_exists("display_error_form") && !config_path_enabled('system/webgui
 
 	if (!$found_host) {
 		foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136) {
+			if (!is_array($rfc2136) || empty($rfc2136)) {
+				continue;
+			}
 			if (strcasecmp($rfc2136['host'], $http_host) == 0) {
 				$found_host = true;
 				break;
@@ -187,6 +193,9 @@ if (function_exists("display_error_form") && !config_path_enabled('system/webgui
 
 			if (!$found_host) {
 				foreach (config_get_path('dyndnses/dyndns', []) as $dyndns) {
+					if (!is_array($dyndns) || empty($dyndns)) {
+						continue;
+					}
 					if (strcasecmp($dyndns['host'], $referrer_host) == 0) {
 						$found_host = true;
 						break;
@@ -196,6 +205,9 @@ if (function_exists("display_error_form") && !config_path_enabled('system/webgui
 
 			if (!$found_host) {
 				foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136) {
+					if (!is_array($rfc2136) || empty($rfc2136)) {
+						continue;
+					}
 					if (strcasecmp($rfc2136['host'], $referrer_host) == 0) {
 						$found_host = true;
 						break;

@@ -101,6 +101,9 @@ display_top_tabs($tab_array);
 <?php
 $i = 0;
 foreach ($a_dyndns as $dyndns):
+	if (!is_array($dyndns) || empty($dyndns)) {
+		continue;
+	}
 	if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
 		$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
 	} else {

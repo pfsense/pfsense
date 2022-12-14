@@ -1046,7 +1046,7 @@ function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 	$realifip6 = get_interface_ipv6($gre['if']);
 
 	/* do not run ifconfig without correct $realifip */
-	if ((!$realifip && is_ipaddrv4($gre['remote-addr'])) || 
+	if ((!$realifip && is_ipaddrv4($gre['remote-addr'])) ||
 	    (!$realifip6 && is_ipaddrv6($gre['remote-addr']))) {
 		return -1;
 	}
@@ -1199,7 +1199,7 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 	}
 
 	/* do not run ifconfig without correct $realifip */
-	if ((!is_ipaddrv4($realifip) && is_ipaddrv4($gif['remote-addr'])) || 
+	if ((!is_ipaddrv4($realifip) && is_ipaddrv4($gif['remote-addr'])) ||
 	    (!is_ipaddrv6($realifip) && is_ipaddrv6($gif['remote-addr']))) {
 		return -1;
 	}
@@ -1593,7 +1593,7 @@ function interfaces_configure() {
 		} else {
 			/* do not run dhcp6c if track interface does not exists
 			 * see https://redmine.pfsense.org/issues/3965
-			 * and https://redmine.pfsense.org/issues/11633 */ 
+			 * and https://redmine.pfsense.org/issues/11633 */
 			if ($ipaddrv6 == "dhcp6") {
 				$tr6list = link_interface_to_track6($if);
 				if (is_array($tr6list) && !empty($tr6list)) {
@@ -3092,7 +3092,7 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias
 	if ($ipalias_reload) {
 		foreach (config_get_path('virtualip/vip', []) as $viface) {
 			if (($viface['mode'] == 'ipalias') &&
-			    (get_root_interface($viface['interface']) == $vip['interface'])) { 
+			    (get_root_interface($viface['interface']) == $vip['interface'])) {
 				interface_vip_bring_down($viface);
 				interface_ipalias_configure($viface);
 			}
@@ -3457,13 +3457,13 @@ EOD;
 						$eappass = base64_decode($wlcfg['wpa']['wpa_eap_inner_password']);
 						$wpa .= "password=\"{$eappass}\"\n";
 					}
-					if (strstr($wlcfg['wpa']['wpa_eap_client_mode'], 'TLS')) { 
+					if (strstr($wlcfg['wpa']['wpa_eap_client_mode'], 'TLS')) {
 						$cert = lookup_cert($wlcfg['wpa']['wpa_eap_cert']);
 						$wpa_supplicant_crt = $wpa_supplicant_file . "crt";
 						$wpa_supplicant_key = $wpa_supplicant_file . "key";
 						@file_put_contents($wpa_supplicant_crt, base64_decode($cert['crt']) . "\n" .
-						    ca_chain($cert)); 
-						@file_put_contents($wpa_supplicant_key, base64_decode($cert['prv'])); 
+						    ca_chain($cert));
+						@file_put_contents($wpa_supplicant_key, base64_decode($cert['prv']));
 						@chmod($wpa_supplicant_crt, 0600);
 						@chmod($wpa_supplicant_key, 0600);
 						$wpa .= "client_cert=\"{$wpa_supplicant_crt}\"\n";
@@ -3472,7 +3472,7 @@ EOD;
 					$ca = lookup_ca($wlcfg['wpa']['wpa_eap_ca']);
 					$wpa_supplicant_ca = $wpa_supplicant_file . "ca";
 					@file_put_contents($wpa_supplicant_ca, base64_decode($ca['crt']) . "\n" .
-					    ca_chain($ca)); 
+					    ca_chain($ca));
 					$wpa .= "ca_cert=\"{$wpa_supplicant_ca}\"\n";
 					$wpa .= "eap={$wlcfg['wpa']['wpa_eap_client_mode']}\n";
 				} else {
@@ -4310,7 +4310,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* update dyndns */
 			send_event("service reload dyndns {$interface}");
 		}
-	} 
+	}
 
 	if (!platform_booting() && (substr($realif, 0, 5) == 'l2tps')) {
 		vpn_l2tp_configure();
@@ -6273,7 +6273,7 @@ function link_interface_to_tunnelif($interface, $type, $remote = 'any') {
 		if (($tunnel['if'] == $interface) &&
 			(($remote == 'any') ||
 			 (is_ipaddrv4($tunnel['remote-addr']) && ($remote == 'inet')) ||
-			 (is_ipaddrv6($tunnel['remote-addr']) && ($remote == 'inet6')))) { 
+			 (is_ipaddrv6($tunnel['remote-addr']) && ($remote == 'inet6')))) {
 			$result[] = $tunnel;
 		}
 	}
@@ -6291,7 +6291,7 @@ function link_interface_to_ppp_tunnelif($interface) {
 	init_config_arr(array('ppps', 'ppp'));
 	$realif = get_real_interface($interface);
 	foreach (config_get_path('ppps/ppp', []) as $ppp) {
-		if (($ppp['ports'] == $realif) && in_array($ppp['type'], array('l2tp', 'pptp'))) { 
+		if (($ppp['ports'] == $realif) && in_array($ppp['type'], array('l2tp', 'pptp'))) {
 			$result[] = $ppp;
 		}
 	}
@@ -6575,7 +6575,7 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 
 	/* try to find track6 address, see https://redmine.pfsense.org/issues/5999 */
 	$checkif = is_array($iface) ? $interface : convert_real_interface_to_friendly_interface_name($interface);
-	if (config_get_path("interfaces/{$checkif}/ipaddrv6", "") == 'track6') { 
+	if (config_get_path("interfaces/{$checkif}/ipaddrv6", "") == 'track6') {
 		$curip = get_interface_track6ip($checkif);
 		if ($curip) {
 			return $curip[0];
@@ -7453,7 +7453,7 @@ function restart_interface_services($interface, $ipv6type = "") {
 	ipsec_force_reload($interface);
 
 	/* restart RADVD to announce correct IPv6 prefix
-	 * see https://redmine.pfsense.org/issues/12604 */ 
+	 * see https://redmine.pfsense.org/issues/12604 */
 	if ((($ipv6type == "staticv6") || ($ipv6type == "track6")) &&
 	    (config_get_path("dhcpdv6/{$interface}/ramode", "disabled") != "disabled")) {
 		services_radvd_configure();

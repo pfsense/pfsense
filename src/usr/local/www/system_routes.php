@@ -32,28 +32,28 @@
 ##|*MATCH=system_routes.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once('guiconfig.inc');
+require_once('functions.inc');
+require_once('filter.inc');
+require_once('shaper.inc');
 
-init_config_arr(array('staticroutes', 'route'));
+init_config_arr(['staticroutes', 'route']);
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true, true);
-$changedesc_prefix = gettext("Static Routes") . ": ";
-unset($input_errors);
+$changedesc_prefix = gettext('Static Routes') . ": ";
 
 if ($_POST['apply']) {
 	$pconfig = $_POST;
 	$retval = 0;
-
-	if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
-		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+	
+	$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
+	if (file_exists($routes_apply_file)) {
+		$toapplylist = unserialize(file_get_contents($routes_apply_file));
 		foreach ($toapplylist as $toapply) {
-			mwexec("{$toapply}");
+			mwexec($toapply);
 		}
 
-		@unlink("{$g['tmp_path']}/.system_routes.apply");
+		unlink($routes_apply_file);
 	}
 
 	$retval |= system_routing_configure();
@@ -66,14 +66,14 @@ if ($_POST['apply']) {
 	}
 }
 
-if ($_POST['act'] == "del") {
+if ($_POST['act'] === 'del') {
 	if ($a_routes[$_POST['id']]) {
-		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to %s"), $a_routes[$_POST['id']]['network']);
+		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), $a_routes[$_POST['id']]['network']);
 		delete_static_route($_POST['id'], true);
 		unset($a_routes[$_POST['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
-		header("Location: system_routes.php");
+		header('Location: system_routes.php');
 		exit;
 	}
 }
@@ -81,43 +81,43 @@ if ($_POST['act'] == "del") {
 if (isset($_POST['del_x'])) {
 	/* delete selected routes */
 	if (is_array($_POST['route']) && count($_POST['route'])) {
-		$deleted_routes = "";
+		$deleted_routes = '';
 		foreach ($_POST['route'] as $routei) {
-			$deleted_routes .= " " . $a_routes[$routei]['network'];
+			$deleted_routes .= ' ' . $a_routes[$routei]['network'];
 			delete_static_route($routei, true);
 			unset($a_routes[$routei]);
 		}
-		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to%s"), $deleted_routes);
+		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), $deleted_routes);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
-		header("Location: system_routes.php");
+		header('Location: system_routes.php');
 		exit;
 	}
 }
 
-if ($_POST['act'] == "toggle") {
+if ($_POST['act'] === 'toggle') {
 	if ($a_routes[$_POST['id']]) {
 		$do_update_config = true;
 		if (isset($a_routes[$_POST['id']]['disabled'])) {
 			// Do not enable a route whose gateway is disabled
 			if (isset($a_gateways[$a_routes[$_POST['id']]['gateway']]['disabled'])) {
 				$do_update_config = false;
-				$input_errors[] = $changedesc_prefix . sprintf(gettext("gateway is disabled, cannot enable route to %s"), $a_routes[$_POST['id']]['network']);
+				$input_errors[] = $changedesc_prefix . sprintf(gettext('gateway is disabled, cannot enable route to %s'), $a_routes[$_POST['id']]['network']);
 			} else {
 				unset($a_routes[$_POST['id']]['disabled']);
-				$changedesc = $changedesc_prefix . sprintf(gettext("enabled route to %s"), $a_routes[$_POST['id']]['network']);
+				$changedesc = $changedesc_prefix . sprintf(gettext('enabled route to %s'), $a_routes[$_POST['id']]['network']);
 			}
 		} else {
 			delete_static_route($_POST['id']);
 			$a_routes[$_POST['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . sprintf(gettext("disabled route to %s"), $a_routes[$_POST['id']]['network']);
+			$changedesc = $changedesc_prefix . sprintf(gettext('disabled route to %s'), $a_routes[$_POST['id']]['network']);
 		}
 
 		if ($do_update_config) {
 			if (write_config($changedesc)) {
 				mark_subsystem_dirty('staticroutes');
 			}
-			header("Location: system_routes.php");
+			header('Location: system_routes.php');
 			exit;
 		}
 	}
@@ -168,19 +168,20 @@ if($_POST['save']) {
 			$a_routes = $a_routes_new;
 		}
 
-		if (write_config(gettext("Saved static routes configuration."))) {
+		if (write_config(gettext('Saved static routes configuration.'))) {
 			mark_subsystem_dirty('staticroutes');
 		}
-		header("Location: system_routes.php");
+		header('Location: system_routes.php');
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Static Routes"));
-$pglinks = array("", "system_gateways.php", "@self");
-$shortcut_section = "routing";
 
-include("head.inc");
+$pgtitle = [gettext('System'), gettext('Routing'), gettext('Static Routes')];
+$pglinks = ['', 'system_gateways.php', '@self'];
+$shortcut_section = 'routing';
+
+include('head.inc');
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -189,13 +190,13 @@ if ($_POST['apply']) {
 	print_apply_result_box($retval);
 }
 if (is_subsystem_dirty('staticroutes')) {
-	print_apply_box(gettext("The static route configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+	print_apply_box(gettext('The static route configuration has been changed.') . '<br />' . gettext('The changes must be applied for them to take effect.'));
 }
 
-$tab_array = array();
-$tab_array[0] = array(gettext("Gateways"), false, "system_gateways.php");
-$tab_array[1] = array(gettext("Static Routes"), true, "system_routes.php");
-$tab_array[2] = array(gettext("Gateway Groups"), false, "system_gateway_groups.php");
+$tab_array = [];
+$tab_array[0] = [gettext('Gateways'), false, 'system_gateways.php'];
+$tab_array[1] = [gettext('Static Routes'), true, 'system_routes.php'];
+$tab_array[2] = [gettext('Gateway Groups'), false, 'system_gateway_groups.php'];
 display_top_tabs($tab_array);
 
 ?>
@@ -207,11 +208,11 @@ display_top_tabs($tab_array);
 				<thead>
 					<tr>
 						<th></th>
-						<th><?=gettext("Network")?></th>
-						<th><?=gettext("Gateway")?></th>
-						<th><?=gettext("Interface")?></th>
-						<th><?=gettext("Description")?></th>
-						<th><?=gettext("Actions")?></th>
+						<th><?=gettext('Network')?></th>
+						<th><?=gettext('Gateway')?></th>
+						<th><?=gettext('Interface')?></th>
+						<th><?=gettext('Description')?></th>
+						<th><?=gettext('Actions')?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -219,13 +220,13 @@ display_top_tabs($tab_array);
 foreach ($a_routes as $i => $route):
 	if (isset($a_gateways[$route['gateway']]['inactive'])) {
 		$icon = 'fa-times-circle-o';
-		$title = gettext("Route inactive, gateway interface is missing");
+		$title = gettext('Route inactive, gateway interface is missing');
 	} elseif (isset($route['disabled'])) {
 		$icon = 'fa-ban';
-		$title = gettext("Route disabled");
+		$title = gettext('Route disabled');
 	} else {
 		$icon = 'fa-check-circle-o';
-		$title = gettext("Route enabled");
+		$title = gettext('Route enabled');
 	}
 ?>
 				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
@@ -268,7 +269,7 @@ foreach ($a_routes as $i => $route):
 <nav class="action-buttons">
 	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
-		<?=gettext("Add")?>
+		<?=gettext('Add')?>
 	</a>
 </nav>
 <div class="infoblock">
@@ -282,4 +283,4 @@ print_info_box(
 </div>
 <?php
 
-include("foot.inc");
+include('foot.inc');

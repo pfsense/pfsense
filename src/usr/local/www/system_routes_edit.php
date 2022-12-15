@@ -246,8 +246,8 @@ $section->addInput(new Form_IpAddress(
 ))->addMask('network_subnet', $pconfig['network_subnet'])->setHelp('Destination network for this static route');
 
 $allGateways = array_combine(
-	array_map(function($g){ return g_get('name'); }, $a_gateways),
-	array_map(function($g){ return g_get('name') .' - '. g_get('gateway'); }, $a_gateways)
+	array_map(function($gw){ return $gw['name']; }, $a_gateways),
+	array_map(function($gw){ return $gw['name'] .' - '. $gw['gateway']; }, $a_gateways)
 );
 $section->addInput(new Form_Select(
 	'gateway',

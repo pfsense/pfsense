@@ -28,8 +28,6 @@
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
 header("X-Frame-Options: SAMEORIGIN");
-include_once('config.inc');
-include_once('config.lib.inc');
 include_once('phpsessionmanager.inc');
 include_once("util.inc");
 
@@ -40,7 +38,10 @@ function pfSense_csrf_callback() {
 if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = config_get_path('system/webgui/session_timeout', 240);
+		/* Loading the configuration to get this value breaks other
+		 * functions. See https://redmine.pfsense.org/issues/13757 */
+		// $timeout_minutes = config_get_path('system/webgui/session_timeout', 240);
+		$timeout_minutes = 240;
 		csrf_conf('expires', $timeout_minutes * 60);
 		csrf_conf('callback', 'pfSense_csrf_callback');
 	}
@@ -59,6 +60,10 @@ if (!$omit_nocacheheaders) {
 }
 
 require_once("authgui.inc");
+/* Load config.inc after authgui.inc
+ * See https://redmine.pfsense.org/issues/13757 */
+include_once('config.inc');
+include_once('config.lib.inc');
 
 /* parse the configuration and include all configuration functions */
 require_once("functions.inc");

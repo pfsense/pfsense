@@ -37,8 +37,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("system_advanced_sysctl.inc");
 
-init_config_arr(array('sysctl', 'item'));
-$a_tunable = &$config['sysctl']['item'];
 $tunables = getTunables();
 
 if (isset($_REQUEST['id'])) {
@@ -72,10 +70,10 @@ if ($_POST['save'] == gettext("Save")) {
 $act = $_REQUEST['act'];
 
 if ($act == "edit") {
-	if (isset($a_tunable[$id])) {
-		$pconfig['tunable'] = $a_tunable[$id]['tunable'];
-		$pconfig['value'] = $a_tunable[$id]['value'];
-		$pconfig['descr'] = $a_tunable[$id]['descr'];
+	if (config_get_path('sysctl/item/' . $id)) {
+		$pconfig['tunable'] = config_get_path('sysctl/item/' . $id . '/tunable');
+		$pconfig['value'] = config_get_path('sysctl/item/' . $id . '/value');
+		$pconfig['descr'] = config_get_path('sysctl/item/' . $id . '/descr');
 
 	} else if (isset($tunables[$id])) {
 		$pconfig['tunable'] = $tunables[$id]['tunable'];
@@ -189,7 +187,7 @@ if ($act != "edit"): ?>
 		$pconfig['descr']
 	))->setWidth(4);
 
-	if (isset($id) && $a_tunable[$id]) {
+	if (isset($id) && config_get_path('sysctl/item/' . $id)) {
 		$form->addGlobal(new Form_Input(
 			'id',
 			'id',

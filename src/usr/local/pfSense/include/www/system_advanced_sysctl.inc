@@ -48,13 +48,8 @@ function getTunables($json = false) {
 
 // Delete a system tunable
 function deleteTunable($id, $complete = false) {
-	global $config;
-
-	init_config_arr(array('sysctl', 'item'));
-	$a_tunable = &$config['sysctl']['item'];
-
-	if ($a_tunable[$id]) {
-		unset($a_tunable[$id]);
+	if (config_get_path('sysctl/item/' . $id)) {
+		config_del_path('sysctl/item/' . $id);
 		write_config("Custom System Tunables deleted");
 		if ($complete) {
 			system_setup_sysctl();
@@ -70,11 +65,6 @@ function deleteTunable($id, $complete = false) {
 
 // Update tunable if it exists, otherwise create a new one
 function saveTunable($post, $id, $json = false) {
-	global $config;
-
-	init_config_arr(array('sysctl', 'item'));
-	$a_tunable = &$config['sysctl']['item'];
-
 	$rv = array();
 
 	$rv['pconfig'] = $post;
@@ -90,10 +80,10 @@ function saveTunable($post, $id, $json = false) {
 		$tunableent['value'] = htmlspecialchars($post['value']);
 		$tunableent['descr'] = strip_tags($post['descr']);
 
-		if (isset($id) && isset($a_tunable[$id])) {
-			$a_tunable[$id] = $tunableent;
+		if (isset($id)) {
+			config_set_path('sysctl/item/' . $id, $tunableent);
 		} else {
-			$a_tunable[] = $tunableent;
+			config_set_path('sysctl/item/' . count(config_get_path('sysctl/item', [])) + 1, $tunableent);
 		}
 
 		if (!$json) {

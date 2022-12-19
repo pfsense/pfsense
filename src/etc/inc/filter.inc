@@ -3709,8 +3709,8 @@ EOD;
 		$tracker = $saved_tracker;
 
 		if ($oc['type'] == "dhcp") {
-			$dhcpcvpt = config_get_path("interfaces{$on}/dhcpcvpt");
-			$vlantag = config_path_enabled("interfaces/{$on}", 'dhcpvlanenable') ? "set prio {$vlanprio_values[$dhcpcvpt]}" : "";
+			$vlantag = array_get_path($vlanprio_values, config_get_path("interfaces/{$on}/dhcpcvpt"), '');
+			$vlantag = ($vlantag != '' && config_path_enabled("interfaces/{$on}", 'dhcpvlanenable')) ? 'set prio ' . $vlantag : '';
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
 pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 67 to any port = 68 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp replies in {$oc['descr']}")}"
@@ -3722,10 +3722,8 @@ EOD;
 
 		if (config_path_enabled('system','ipv6allow') && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
 			// The DHCPv6 client rules ***MUST BE ABOVE BOGONSV6!***  https://redmine.pfsense.org/issues/3395
-			$dhcp6cvpt = config_get_path("interfaces{$on}/dhcpc6vpt");
-
-			$vlantag = config_path_enabled("interfaces/{$on}", 'dhcp6vlanenable') ? "set prio {$vlanprio_values[$dhcp6cvpt]}" : "";
-
+			$vlantag = array_get_path($vlanprio_values, config_get_path("interfaces/{$on}/dhcpc6vpt"), '');
+			$vlantag = ($vlantag != '' && config_path_enabled("interfaces/{$on}", 'dhcp6vlanenable')) ? 'set prio ' . $vlantag : '';
 			$ipfrules .= <<<EOD
 # allow our DHCPv6 client out to the {$oc['descr']}
 pass in {$log['pass']} quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"

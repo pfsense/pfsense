@@ -1006,14 +1006,20 @@ function unbound_acls_config($cfgsubdir = "") {
 	foreach (config_get_path('unbound/acls', []) as $unbound_acl) {
 		$aclcfg .= "#{$unbound_acl['aclname']}\n";
 		foreach ($unbound_acl['row'] as $network) {
-			if ($unbound_acl['aclaction'] == "allow snoop") {
-				config_set_path('unbound/acls/' . $unbound_acl['aclid'] . '/aclaction', 'allow_snoop');
-			} elseif ($unbound_acl['aclaction'] == "deny nonlocal") {
-				config_set_path('unbound/acls/' . $unbound_acl['aclid'] . '/aclaction', 'deny_non_local');
-			} elseif ($unbound_acl['aclaction'] == "refuse nonlocal") {
-				config_set_path('unbound/acls/' . $unbound_acl['aclid'] . '/aclaction', 'refuse_non_local');
+			switch ($unbound_acl['aclaction']) {
+				case 'allow snoop':
+					$action = 'allow_snoop';
+					break;
+				case 'deny nonlocal':
+					$action = 'deny_non_local';
+					break;
+				case 'refuse nonlocal':
+					$action = 'refuse_non_local';
+					break;
+				default:
+					$action = $unbound_acl['aclaction'];
 			}
-			$aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
+			$aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$action}\n";
 		}
 	}
 	// Write out Access list

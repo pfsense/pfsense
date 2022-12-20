@@ -36,8 +36,7 @@
 require_once("guiconfig.inc");
 require_once("services_dnsmasq.inc");
 
-init_config_arr(array('dnsmasq', 'hosts'));
-$a_hosts = &$config['dnsmasq']['hosts'];
+$a_hosts = config_get_path('dnsmasq/hosts', []);
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -55,24 +54,6 @@ if ($_POST['save']) {
 	$rv = saveDNSMasqHost($_POST, $id);
 	$pconfig = $rv['config'];
 	$input_errors = $rv['input_errors'];
-}
-
-// Delete a row in the options table
-if ($_POST['act'] == "delopt") {
-	$idx = $_POST['id'];
-
-	if ($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
-	   unset($pconfig['aliases']['item'][$idx]);
-	}
-}
-
-// Add an option row
-if ($_REQUEST['act'] == "addopt") {
-    if (!is_array($pconfig['aliases']['item'])) {
-        $pconfig['aliases']['item'] = array();
-	}
-
-	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"), gettext("Edit Host Override"));
@@ -131,53 +112,48 @@ $form->add($section);
 
 $section = new Form_Section('Additional Names for this Host');
 
-if (!is_array($pconfig['aliases'])) {
-	$pconfig['aliases'] = array();
+array_init_path($pconfig, 'aliases/item');
+if (empty($pconfig['aliases']['item'])) {
+	$pconfig['aliases']['item'] = [['host' => ""]];
 }
 
-if (!$pconfig['aliases']['item']) {
-	$pconfig['aliases']['item'] = array('host' => "");
-}
+$counter = 0;
+$last = count($pconfig['aliases']['item']) - 1;
 
-if ($pconfig['aliases']['item']) {
-	$counter = 0;
-	$last = count($pconfig['aliases']['item']) - 1;
+foreach ($pconfig['aliases']['item'] as $item) {
+	$group = new Form_Group(null);
+	$group->addClass('repeatable');
 
-	foreach ($pconfig['aliases']['item'] as $item) {
-		$group = new Form_Group(null);
-		$group->addClass('repeatable');
+	$group->add(new Form_Input(
+		'aliashost' . $counter,
+		null,
+		'text',
+		$item['host']
+	))->setHelp($counter == $last ? 'Host name':null);
 
-		$group->add(new Form_Input(
-			'aliashost' . $counter,
-			null,
-			'text',
-			$item['host']
-		))->setHelp($counter == $last ? 'Host name':null);
+	$group->add(new Form_Input(
+		'aliasdomain' . $counter,
+		null,
+		'text',
+		$item['domain']
+	))->setHelp($counter == $last ? 'Domain':null);
 
-		$group->add(new Form_Input(
-			'aliasdomain' . $counter,
-			null,
-			'text',
-			$item['domain']
-		))->setHelp($counter == $last ? 'Domain':null);
+	$group->add(new Form_Input(
+		'aliasdescription' . $counter,
+		null,
+		'text',
+		$item['description']
+	))->setHelp($counter == $last ? 'Description':null);
 
-		$group->add(new Form_Input(
-			'aliasdescription' . $counter,
-			null,
-			'text',
-			$item['description']
-		))->setHelp($counter == $last ? 'Description':null);
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning')->addClass('nowarn');
 
-		$group->add(new Form_Button(
-			'deleterow' . $counter,
-			'Delete',
-			null,
-			'fa-trash'
-		))->addClass('btn-warning')->addClass('nowarn');
-
-		$section->add($group);
-		$counter++;
-	}
+	$section->add($group);
+	$counter++;
 }
 
 $form->addGlobal(new Form_Button(

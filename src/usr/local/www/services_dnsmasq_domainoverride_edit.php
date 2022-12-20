@@ -36,8 +36,7 @@
 require_once("guiconfig.inc");
 require_once("services_dnsmasq.inc");
 
-init_config_arr(array('dnsmasq', 'domainoverrides'));
-$a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+$a_domainOverrides = config_get_path('dnsmasq/domainoverrides', []);
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -52,7 +51,6 @@ if ($_POST['save']) {
 	$pconfig = $rv['config'];
 	$input_errors = $rv['input_errors'];
 }
-
 
 $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"), gettext("Edit Domain Override"));
 $pglinks = array("", "services_dnsmasq.php", "@self");

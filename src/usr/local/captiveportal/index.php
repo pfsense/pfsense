@@ -178,7 +178,7 @@ if ($_POST['logout_id']) {
 	header("Location: index.php?zone=" . $cpzone);
 	ob_flush();
 	return;
-} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
+} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && !isset($cpcfg['nomacfilter']) && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl'])) {
 		portal_reply_page($cpcfg['blockedmacsurl'], "redir");

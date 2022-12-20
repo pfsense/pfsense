@@ -601,8 +601,8 @@ function system_dhcpleases_configure() {
 	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 
 	/* Start the monitoring process for dynamic dhcpclients. */
-	if (((config_path_enabled('dnsmasq') && (config_get_path('dnsmasq/regdhcp') != null)) ||
-	    (config_path_enabled('unbound') && (config_get_path('unbound/regdhcp') != null))) &&
+	if (((config_path_enabled('dnsmasq') && (config_get_path('dnsmasq/regdhcp') !== null)) ||
+	    (config_path_enabled('unbound') && (config_get_path('unbound/regdhcp') !== null))) &&
 	    (is_dhcp_server_enabled())) {
 		/* Make sure we do not error out */
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");

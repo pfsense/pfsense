@@ -33,6 +33,7 @@ require_once("guiconfig.inc");
 require_once("acb.inc");
 
 if ($_POST) {
+	global $config;
 
 	if ($_REQUEST['nooverwrite']) {
 		touch("/tmp/acb_nooverwrite");

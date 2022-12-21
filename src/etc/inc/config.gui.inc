@@ -49,6 +49,7 @@ if (file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
+global $config;
 $config = parse_config();
 
 /* make alias table (for faster lookups) */

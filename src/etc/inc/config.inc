@@ -137,6 +137,7 @@ if (platform_booting(true) &&
 	echo ".";
 }
 
+global $config;
 $config = parse_config();
 
 /* set timezone */

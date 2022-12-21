@@ -2435,7 +2435,7 @@ function dyndnsCheckIP($int) {
 		}
 
 		// Use the first enabled check IP service as the default.
-		foreach (config_get_path('checkipservices', []) as $checkipservice) {
+		foreach (config_get_path('checkipservices/checkipservice', []) as $checkipservice) {
 			if (isset($checkipservice['enable'])) {
 				$url = $checkipservice['url'];
 				$username = $checkipservice['username'];

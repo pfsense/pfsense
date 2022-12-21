@@ -68,9 +68,9 @@ function startElement($parser, $name, $attrs) {
 
 	array_push($curpath, strtolower($name));
 
-	$ptr =& $parsedcfg;
+	$ptr = &$parsedcfg;
 	foreach ($curpath as $path) {
-		$ptr =& $ptr[$path];
+		$ptr = &$ptr[$path];
 	}
 
 	/* is it an element that belongs to a list? */
@@ -100,23 +100,24 @@ function endElement($parser, $name) {
 	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
 
 	if ($havedata == $depth) {
-		$ptr =& $parsedcfg;
+		$ptr = &$parsedcfg;
 		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
+			$ptr = &$ptr[$path];
 		}
 		$ptr = "";
 	}
 
 	array_pop($curpath);
 
-	/* Special case handling for erroneous empty <config> elements. Pop the most
-	 * recent element off if it is not an array. */
-	if (strtolower($name) == 'config') {
-		$ptr =& $parsedcfg;
+	/* Special case handling for erroneous empty $listtag elements. Pop the most
+	 * recent $listtag element off if it is a string AND is zero length. */
+	if (isset($listtags[strtolower($name)])) {
+		$ptr = &$parsedcfg;
 		foreach ($curpath as $path) {
 			$ptr = &$ptr[$path];
 		}
-		if (!is_array(end($ptr))) {
+
+		if (!(is_array(end($ptr)) || strlen(end($ptr)))) {
 			array_pop($ptr);
 		}
 	}
@@ -134,9 +135,9 @@ function cData($parser, $data) {
 	$data = trim($data, "\t\n\r");
 
 	if ($data != "") {
-		$ptr =& $parsedcfg;
+		$ptr = &$parsedcfg;
 		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
+			$ptr = &$ptr[$path];
 		}
 
 		if (is_string($ptr)) {
@@ -344,5 +345,3 @@ function dump_xml_config_raw($arr, $rootobj) {
 
 	return $xmlconfig;
 }
-
-?>

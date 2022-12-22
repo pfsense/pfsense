@@ -404,14 +404,14 @@ EOD;
 
 		captiveportal_radius_stop_all(10); // NAS-Request
 
+		/* Release allocated pipes for this zone */
+		$pipes_to_remove = captiveportal_free_dnrules();
+		captiveportal_delete_rules($pipes_to_remove);
+
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
-		/* Release allocated pipes for this zone */
-		$pipes_to_remove = captiveportal_free_dnrules();
-
-		captiveportal_delete_rules($pipes_to_remove);
 	}
 
 	unlock($captiveportallck);

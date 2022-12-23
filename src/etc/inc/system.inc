@@ -2281,7 +2281,7 @@ function system_reboot_cleanup() {
 		/* Remove the pipe database */
 		unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
 	}
-	
+
 	require_once("voucher.inc");
 	voucher_save_db_to_config();
 	require_once("pkg-utils.inc");
@@ -2624,6 +2624,8 @@ function system_identify_specific_platform() {
 		case 'Minnowboard Turbot D0/D1 PLATFORM':
 			$result = array();
 			$result['name'] = 'Turbot Dual-E';
+			/* Ensure the graphics driver is loaded */
+			system("kldload -nq i915kms");
 			/* Detect specific model */
 			switch ($hw_ncpu) {
 			case '4':

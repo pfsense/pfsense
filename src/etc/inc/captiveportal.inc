@@ -2577,7 +2577,7 @@ function filter_captiveportal_aliases() {
 
 function filter_captiveportal_tables() {
 	/* return pf rules which defines tables used in captive portal zones */
-	global $g, $config, $FilterIflist;
+	global $config, $FilterIflist;
 
 	$rules = '';
 	init_config_arr(array('captiveportal'));
@@ -2588,8 +2588,7 @@ function filter_captiveportal_tables() {
 
 		$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 		$cpips = $cpzoneprefix . '_cpips';
-		$hosttable = $cpzoneprefix . '_host_';
-		$cpiplist = '';
+		$cpiplist = array();
 
 		foreach (explode(",", $cpcfg['interface']) as $cpifgrp) {
 			if (isset($FilterIflist[$cpifgrp])) {
@@ -2597,15 +2596,18 @@ function filter_captiveportal_tables() {
 				if (!empty($realif)) {
 					$cpip = get_interface_ip($cpifgrp);
 					if (is_ipaddrv4($cpip)) {
-						$cpiplist = $cpip . ' ';
-						$cpiplist .= get_interface_vip_ips($cpifgrp);
+						$cpipliststring = $cpip . ' ' . get_interface_vip_ips($cpifgrp);
+						$cpiplist = array_filter(array_merge($cpiplist, explode(' ', $cpipliststring)),
+												 function ($val) {
+													 return (trim($val) != "");
+												 });
 					}
 				}
 			}
 		}
 		if (!empty($cpiplist)) {
 			/* captive portal web server IP addresses */
-			$rules .= "table <{$cpips}> { {$cpiplist} }\n";
+			$rules .= "table <{$cpips}> { " . join(' ', $cpiplist)  . "}\n";
 		}
 	}
 

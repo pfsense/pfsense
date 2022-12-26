@@ -36,10 +36,8 @@ unset($interface_ip_arr_cache);
 
 
 function find_ipalias($carpif) {
-	global $config;
-
 	$ips = array();
-	foreach ($config['virtualip']['vip'] as $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if ($vip['mode'] != "ipalias") {
 			continue;
 		}
@@ -55,52 +53,70 @@ function find_ipalias($carpif) {
 $status = get_carp_status();
 
 if ($_POST['carp_maintenancemode'] != "") {
-	if (!isset($config["virtualip_carp_maintenancemode"])) {
-		$maintenancemode = true;
-		$savemsg = gettext("Entering Persistent CARP Maintenance Mode.");
+	if (!config_path_enabled('', 'virtualip_carp_maintenancemode')) {
+		if ($_POST['carp_maintenancemode'] == "disable"){
+			$errmsg = gettext("Persistent CARP Maintenance Mode is already disabled.");
+		} else {
+			$maintenancemode = true;
+			$savemsg = gettext("Entering Persistent CARP Maintenance Mode.");
+		}
 	} else {
-		$maintenancemode = false;
-		$savemsg = gettext("Leaving Persistent CARP Maintenance Mode.");
+		if ($_POST['carp_maintenancemode'] == "enable"){
+			$errmsg = gettext("Persistent CARP Maintenance Mode is already enabled.");
+		} else {
+			$maintenancemode = false;
+			$savemsg = gettext("Leaving Persistent CARP Maintenance Mode.");
+		}
 	}
+
 	/* allow to switch to Persistent Maintenance Mode if CARP is disabled
 	 * see https://redmine.pfsense.org/issues/11727 */
-	interfaces_carp_set_maintenancemode($maintenancemode);
+	if (!$errmsg) {
+		interfaces_carp_set_maintenancemode($maintenancemode);
+	}
 	if ($status == 0) {
 		$_POST['disablecarp'] = "off";
 	}
 }
 
 if ($_POST['disablecarp'] != "") {
-	init_config_arr(array('virtualip', 'vip'));
-	$viparr = &$config['virtualip']['vip'];
+	$viparr = config_get_path('virtualip/vip', []);
 	if ($status != 0) {
-		enable_carp(false);
-		foreach ($viparr as $vip) {
-			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
-				continue;
-			if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
-				continue;
-			interface_vip_bring_down($vip);
-		}
-		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);
-		$status = 0;
-	} else {
-		$savemsg .= gettext("CARP has been enabled.");
-		foreach ($viparr as $vip) {
-			switch ($vip['mode']) {
-				case "carp":
-					interface_carp_configure($vip);
-					break;
-				case 'ipalias':
-					if (substr($vip['interface'], 0, 4) == "_vip") {
-						interface_ipalias_configure($vip);
-					}
-					break;
+		if ($_POST['disablecarp'] == "enable"){
+			$errmsg = gettext("CARP is already enabled.");
+		} else {
+			enable_carp(false);
+			foreach ($viparr as $vip) {
+				if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+					continue;
+				if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
+					continue;
+				interface_vip_bring_down($vip);
 			}
+			$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);
+			$status = 0;
 		}
-		interfaces_sync_setup();
-		enable_carp();
-		$status = 1;
+	} else {
+		if ($_POST['disablecarp'] == "disable"){
+			$errmsg = gettext("CARP is already disabled.");
+		} else {
+			$savemsg .= gettext("CARP has been enabled.");
+			foreach ($viparr as $vip) {
+				switch ($vip['mode']) {
+					case "carp":
+						interface_carp_configure($vip);
+						break;
+					case 'ipalias':
+						if (substr($vip['interface'], 0, 4) == "_vip") {
+							interface_ipalias_configure($vip);
+						}
+						break;
+				}
+			}
+			interfaces_sync_setup();
+			enable_carp();
+			$status = 1;
+		}
 	}
 }
 
@@ -118,6 +134,8 @@ $shortcut_section = "carp";
 include("head.inc");
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
+} else if ($errmsg) {
+	print_info_box($errmsg);
 }
 
 $carpcount = 0;
@@ -168,8 +186,8 @@ if ($carpcount == 0) {
 	}
 
 ?>
-				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" ><i class="fa fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
-				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" ><i class="fa fa-wrench icon-embed-btn"></i><?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
+				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? 'disable' : 'enable')?>" ><i class="fa fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
+				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? 'disable' : 'enable')?>" ><i class="fa fa-wrench icon-embed-btn"></i><?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
 			</div>
 		</div>
 	</div>
@@ -188,7 +206,7 @@ if ($carpcount == 0) {
 					</thead>
 					<tbody>
 <?php
-	foreach ($config['virtualip']['vip'] as $carp) {
+	foreach (config_get_path('virtualip/vip', []) as $carp) {
 		if ($carp['mode'] != "carp") {
 			continue;
 		}

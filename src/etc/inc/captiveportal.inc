@@ -1697,18 +1697,18 @@ function getVolume($ip) {
 		foreach ($result as $rule_counters) {
 			switch ($rule_counters[0]) {
 				case 1: // rule direction 'PF_IN'
-					$input_pkts += $rule_counters[1];
-					$input_bytes += $rule_counters[2];
+					$input_pkts += $rule_counters['input_pkts'];
+					$input_bytes += $rule_counters['input_bytes'];
 					break;
 				case 2: // rule direction 'PF_OUT'
-					$output_pkts += $rule_counters[1];
-					$output_bytes += $rule_counters[2];
+					$output_pkts += $rule_counters['output_pkts'];
+					$output_bytes += $rule_counters['output_bytes'];
 					break;
 				case 0: // rule direction 'PF_INOUT'
-					$input_pkts += $rule_counters[1];
-					$input_bytes += $rule_counters[2];
-					$output_pkts += $rule_counters[3];
-					$output_bytes += $rule_counters[4];
+					$input_pkts += $rule_counters['input_pkts'];
+					$input_bytes += $rule_counters['input_bytes'];
+					$output_pkts += $rule_counters['output_pkts'];
+					$output_bytes += $rule_counters['output_bytes'];
 					break;
 				default:
 					break;

@@ -590,7 +590,7 @@ if ($dhcrelay_enabled) {
 	$section->addInput(new Form_Checkbox(
 		'enable',
 		'DHCPv6 Server',
-		gettext("DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the DHCPv6 Relay is enabled on any interface."),
+		gettext("DHCPv6 Relay is currently enabled. DHCPv6 Server cannot be enabled while the DHCPv6 Relay is enabled on any interface."),
 		$pconfig['enable']
 	))->setAttribute('disabled', true);
 } else {

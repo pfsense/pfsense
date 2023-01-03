@@ -852,7 +852,7 @@ class pfsense_xmlrpc_server {
 		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 		// Note : no protection against CARP loop is done here, and this is in purpose.
-		// This function is used for bi-directionnal sync, which is precisely what CARP loop protection is supposed to prevent.
+		// This function is used for bi-directional sync, which is precisely what CARP loop protection is supposed to prevent.
 		// CARP loop has to be managed within functions using captive_portal_sync()
 		global $g, $config, $cpzone;
 

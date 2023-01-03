@@ -2369,7 +2369,7 @@ msgstr "DHCP V6選項"
 
 #: src/usr/local/www/services_dhcpv6.php:600
 msgid ""
-"DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the "
+"DHCPv6 Relay is currently enabled. DHCPv6 Server cannot be enabled while the "
 "DHCPv6 Relay is enabled on any interface."
 msgstr "DHCPv6中繼當前已啟用。 在任何接口上啟用DHCPv6中繼時，不能啟用DHCPv6服務器。"
 
@@ -7574,7 +7574,7 @@ msgstr "常規選項"
 
 #: src/usr/local/www/services_dhcp.php:963
 msgid ""
-"DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP "
+"DHCP Relay is currently enabled. DHCP Server cannot be enabled while the DHCP "
 "Relay is enabled on any interface."
 msgstr "DHCP中繼當前已啟用。 在任何接口上啟用DHCP中繼時，不能啟用DHCP服務器。"
 
@@ -13766,7 +13766,7 @@ msgid ""
 "Key.%1$sGandi LiveDNS: Enter API token%1$sGoDaddy: Enter the API secret."
 "%1$sDNSimple: Enter the API token.%1$sLinode: Enter the Personal Access "
 "Token.%1$sCloudflare: Enter the Global API Key or API token with DNS edit "
-"permisson on the provided zone."
+"permission on the provided zone."
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:412
@@ -18008,7 +18008,7 @@ msgstr ""
 msgid ""
 "Unauthenticated binds are bind with an existing login but with an empty "
 "password. Some LDAP servers (Microsoft AD) allow this type of bind without "
-"any possiblity to disable it."
+"any possibility to disable it."
 msgstr ""
 
 #: src/usr/local/www/system_authservers.php:785
@@ -18045,7 +18045,7 @@ msgstr "RADIUS NAS IP屬性"
 #: src/usr/local/www/system_authservers.php:846
 msgid ""
 "Enter the IP to use for the \"NAS-IP-Address\" attribute during RADIUS "
-"Acccess-Requests.<br />Please note that this choice won't change the "
+"Access-Requests.<br />Please note that this choice won't change the "
 "interface used for contacting the RADIUS server."
 msgstr ""
 
@@ -21176,7 +21176,7 @@ msgid "Crash Reporter"
 msgstr "崩潰報告"
 
 #: src/usr/local/www/crash_reporter.php:96
-msgid "The firewall has enountered an error"
+msgid "The firewall has encountered an error"
 msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:100
@@ -21925,7 +21925,7 @@ msgstr "源哈希值"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:608
 msgid ""
-"The key that is fed to the hashing algorithm in hex format, preceeded by "
+"The key that is fed to the hashing algorithm in hex format, preceded by "
 "\"0x\", or any string. A non-hex string is hashed using md5 to a hexadecimal "
 "key. Defaults to a randomly generated value."
 msgstr ""
@@ -30553,7 +30553,7 @@ msgid "Error: cannot open radvd.conf in services_radvd_configure()."
 msgstr "錯誤：無法在services_radvd_configure（）中打開radvd.conf。"
 
 #: src/etc/inc/services.inc:417
-msgid "Shutting down Router Advertisment daemon cleanly"
+msgid "Shutting down Router Advertisement daemon cleanly"
 msgstr "完全關閉路由器廣播守護程序"
 
 #: src/etc/inc/services.inc:506
@@ -37530,7 +37530,7 @@ msgid "Add this Certificate Authority to the Operating System Trust Store"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:603
-msgid "Use random serial numbers when signing certifices"
+msgid "Use random serial numbers when signing certificates"
 msgstr ""
 
 #: src/usr/local/www/services_snmp.php:216

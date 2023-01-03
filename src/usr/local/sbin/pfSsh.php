@@ -48,7 +48,7 @@ $shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break",
 	 "printenv", "pushd", "pwd", "read", "readonly", "rehash", "repeat", "return", "sched", "set",
 	 "setenv", "settc", "setty", "setvar", "shift", "source", "stop", "suspend", "switch",
 	 "telltc", "test", "then", "time", "trap", "true", "type", "ulimit", "umask", "unalias",
-	 "uncomplete", "unhash", "unlimit", "unset", "unsetenv", "until", "wait", "where", "which",
+	 "incomplete", "unhash", "unlimit", "unset", "unsetenv", "until", "wait", "where", "which",
 	 "while");
 
 function pipe_cmd($command, $text_to_pipe) {

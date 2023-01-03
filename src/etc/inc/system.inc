@@ -1615,7 +1615,7 @@ function check_gps_speed($device) {
 		do {
 			$c = fread($fp, $buffersize - $cnt);
 
-			// Wait for data to arive
+			// Wait for data to arrive
 			if (($c === false) || (strlen($c) == 0)) {
 				usleep(500);
 				continue;

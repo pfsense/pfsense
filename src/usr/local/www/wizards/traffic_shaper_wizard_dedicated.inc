@@ -349,7 +349,7 @@ function step3_stepbeforeformdisplay() {
 	$field['type'] = "checkbox";
 	$field['typehint'] = "Prioritize Voice over IP traffic.";
 	$field['bindstofield'] = "ezshaper->step3->enable";
-	$field['descritpion'] = "This will raise the priority of VOIP traffic above all other traffic.";
+	$field['description'] = "This will raise the priority of VOIP traffic above all other traffic.";
 	$voipfields[] = $field;
 
 	$field = array();

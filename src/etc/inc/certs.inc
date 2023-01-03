@@ -1902,7 +1902,7 @@ function cert_get_all_services($refid) {
 
 /****f* certs/ca_get_all_services
  * NAME
- *   ca_get_all_services - Locate services using a given certificate authority or its decendents
+ *   ca_get_all_services - Locate services using a given certificate authority or its descendents
  * INPUTS
  *   $refid: The refid of a certificate authority to check
  * RESULT

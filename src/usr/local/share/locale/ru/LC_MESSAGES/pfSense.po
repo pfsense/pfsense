@@ -2560,7 +2560,7 @@ msgstr "Опции DHCPv6"
 
 #: src/usr/local/www/services_dhcpv6.php:616
 msgid ""
-"DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the "
+"DHCPv6 Relay is currently enabled. DHCPv6 Server cannot be enabled while the "
 "DHCPv6 Relay is enabled on any interface."
 msgstr ""
 "DHCPv6-ретрансляци в настоящее время включена. Сервер DHCPv6 нельзя "
@@ -8370,7 +8370,7 @@ msgstr "Основные Опции"
 
 #: src/usr/local/www/services_dhcp.php:982
 msgid ""
-"DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP "
+"DHCP Relay is currently enabled. DHCP Server cannot be enabled while the DHCP "
 "Relay is enabled on any interface."
 msgstr ""
 "DHCP Релей  в текущий момент активирован. Сервер DHCP не может быть включён "
@@ -15084,7 +15084,7 @@ msgid ""
 "secret.%1$sDreamhost: Enter the API Key.%1$sGandi LiveDNS: Enter API "
 "token%1$sGoDaddy: Enter the API secret.%1$sDNSimple: Enter the API token."
 "%1$sLinode: Enter the Personal Access Token.%1$sCloudflare: Enter the Global "
-"API Key or API token with DNS edit permisson on the provided zone."
+"API Key or API token with DNS edit permission on the provided zone."
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:430
@@ -19538,7 +19538,7 @@ msgstr ""
 msgid ""
 "Unauthenticated binds are bind with an existing login but with an empty "
 "password. Some LDAP servers (Microsoft AD) allow this type of bind without "
-"any possiblity to disable it."
+"any possibility to disable it."
 msgstr ""
 
 #: src/usr/local/www/system_authservers.php:837
@@ -19578,7 +19578,7 @@ msgstr "RADIUS NAS IP Атрибут"
 #: src/usr/local/www/system_authservers.php:898
 msgid ""
 "Enter the IP to use for the \"NAS-IP-Address\" attribute during RADIUS "
-"Acccess-Requests.<br />Please note that this choice won't change the "
+"Access-Requests.<br />Please note that this choice won't change the "
 "interface used for contacting the RADIUS server."
 msgstr ""
 
@@ -23026,7 +23026,7 @@ msgid "Crash Reporter"
 msgstr "Сообщение об аварии"
 
 #: src/usr/local/www/crash_reporter.php:96
-msgid "The firewall has enountered an error"
+msgid "The firewall has encountered an error"
 msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:100
@@ -23872,7 +23872,7 @@ msgstr "Исходный хэш ключ"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:608
 msgid ""
-"The key that is fed to the hashing algorithm in hex format, preceeded by "
+"The key that is fed to the hashing algorithm in hex format, preceded by "
 "\"0x\", or any string. A non-hex string is hashed using md5 to a hexadecimal "
 "key. Defaults to a randomly generated value."
 msgstr ""
@@ -33569,7 +33569,7 @@ msgid "Error: cannot open radvd.conf in services_radvd_configure()."
 msgstr "Ошибка: не могу открыть radvd.conf в services_radvd_configure()."
 
 #: src/etc/inc/services.inc:431
-msgid "Shutting down Router Advertisment daemon cleanly"
+msgid "Shutting down Router Advertisement daemon cleanly"
 msgstr "Останавливаю службу Объявления Маршрутизатора (RA) "
 
 #: src/etc/inc/services.inc:520
@@ -41837,7 +41837,7 @@ msgid "Add this Certificate Authority to the Operating System Trust Store"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:601
-msgid "Use random serial numbers when signing certifices"
+msgid "Use random serial numbers when signing certificates"
 msgstr ""
 
 #: src/usr/local/www/services_snmp.php:216

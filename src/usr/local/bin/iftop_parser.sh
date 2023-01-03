@@ -29,7 +29,7 @@ if [ -f $pid_file ]; then
         pidTS=`$STAT -r $pid_file | $CUT -d " " -f 10`
         # if more than 10 seconds,
         # it must be a dead pid file (process killed?)
-        # or a stucked process that we should kill
+        # or a stuck process that we should kill
         if [ $(( curTS - pidTS )) -gt 10 ]; then
                 oldPID=`$CAT $pid_file`
                 # test if pid still exist

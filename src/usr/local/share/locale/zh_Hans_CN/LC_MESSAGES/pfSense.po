@@ -2493,7 +2493,7 @@ msgstr "DHCPv6选项"
 
 #: src/usr/local/www/services_dhcpv6.php:616
 msgid ""
-"DHCPv6 Relay is currently enabled. DHCPv6 Server cannot be enabled while the "
+"DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the "
 "DHCPv6 Relay is enabled on any interface."
 msgstr "DHCPv6中继当前已启用。 在任何接口上启用DHCPv6中继时，不能再启用DHCPv6服务器。"
 
@@ -7955,7 +7955,7 @@ msgstr "常规选项"
 
 #: src/usr/local/www/services_dhcp.php:982
 msgid ""
-"DHCP Relay is currently enabled. DHCP Server cannot be enabled while the DHCP "
+"DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP "
 "Relay is enabled on any interface."
 msgstr "DHCP中继当前已启用。 在任何接口上启用DHCP中继时，不能启用DHCP服务器。"
 
@@ -14167,7 +14167,7 @@ msgid ""
 "secret.%1$sDreamhost: Enter the API Key.%1$sGandi LiveDNS: Enter API "
 "token%1$sGoDaddy: Enter the API secret.%1$sDNSimple: Enter the API token."
 "%1$sLinode: Enter the Personal Access Token.%1$sCloudflare: Enter the Global "
-"API Key or API token with DNS edit permission on the provided zone."
+"API Key or API token with DNS edit permisson on the provided zone."
 msgstr ""
 "FreeDNS (freedns.afraid.org): 输入FreeDNS提供的“令牌”。 对于API v1或u /之后的v2，令牌是在update."
 "php之后。 %1$sAzure: AD应用程序的客户端密钥。%1$sDNS Made Easy: 动态DNS密码。%1$sDigitalOcean: "
@@ -18247,7 +18247,7 @@ msgstr "允许未经身份验证的绑定"
 msgid ""
 "Unauthenticated binds are bind with an existing login but with an empty "
 "password. Some LDAP servers (Microsoft AD) allow this type of bind without "
-"any possibility to disable it."
+"any possiblity to disable it."
 msgstr "未经身份验证的绑定与现有登录名绑定，但密码为空。 某些LDAP服务器(Microsoft AD)允许这种类型的绑定。"
 
 #: src/usr/local/www/system_authservers.php:837
@@ -18284,7 +18284,7 @@ msgstr "RADIUS NAS IP属性"
 #: src/usr/local/www/system_authservers.php:898
 msgid ""
 "Enter the IP to use for the \"NAS-IP-Address\" attribute during RADIUS "
-"Access-Requests.<br />Please note that this choice won't change the "
+"Acccess-Requests.<br />Please note that this choice won't change the "
 "interface used for contacting the RADIUS server."
 msgstr ""
 "在RADIUS访问请求期间输入用于“NAS-IP-Address”属性的IP。。<br />请注意，此选项不会更改用于连接RADIUS服务器的接口。"
@@ -21429,7 +21429,7 @@ msgid "Crash Reporter"
 msgstr "崩溃报告"
 
 #: src/usr/local/www/crash_reporter.php:96
-msgid "The firewall has encountered an error"
+msgid "The firewall has enountered an error"
 msgstr "防火墙遇到了错误"
 
 #: src/usr/local/www/crash_reporter.php:100
@@ -22202,7 +22202,7 @@ msgstr "源哈希密钥"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:608
 msgid ""
-"The key that is fed to the hashing algorithm in hex format, preceded by "
+"The key that is fed to the hashing algorithm in hex format, preceeded by "
 "\"0x\", or any string. A non-hex string is hashed using md5 to a hexadecimal "
 "key. Defaults to a randomly generated value."
 msgstr "以十六进制格式填充的哈希算法的密钥，前面加上“0x”或任意字符串。 使用md5将非十六进制字符串哈希到十六进制密钥。 默认为随机生成的值。"
@@ -31363,7 +31363,7 @@ msgid "Error: cannot open radvd.conf in services_radvd_configure()."
 msgstr "错误：无法在services_radvd_configure()中打开radvd.conf。"
 
 #: src/etc/inc/services.inc:431
-msgid "Shutting down Router Advertisement daemon cleanly"
+msgid "Shutting down Router Advertisment daemon cleanly"
 msgstr "完全关闭路由器通告程序"
 
 #: src/etc/inc/services.inc:520
@@ -39127,7 +39127,7 @@ msgid "Add this Certificate Authority to the Operating System Trust Store"
 msgstr "将此证书颁发机构添加到操作系统信任库"
 
 #: src/usr/local/www/system_camanager.php:601
-msgid "Use random serial numbers when signing certificates"
+msgid "Use random serial numbers when signing certifices"
 msgstr "签署证书时使用随机序列号"
 
 #: src/usr/local/www/services_snmp.php:216

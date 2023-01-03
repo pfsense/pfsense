@@ -2567,10 +2567,10 @@ msgstr "opciones DHCPv6"
 
 #: src/usr/local/www/services_dhcpv6.php:616
 msgid ""
-"DHCPv6 Relay is currently enabled. DHCPv6 Server cannot be enabled while the "
+"DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the "
 "DHCPv6 Relay is enabled on any interface."
 msgstr ""
-"DHCPv6 Relay está habilitado. DHCPv6 servidor cannot ser habilitado mientras "
+"DHCPv6 Relay está habilitado. DHCPv6 servidor canot ser habilitado mientras "
 "que el relé está activado DHCPv6 en cualquier interfaz."
 
 #: src/usr/local/www/services_dhcpv6.php:641
@@ -8411,10 +8411,10 @@ msgstr "Opciones generales"
 
 #: src/usr/local/www/services_dhcp.php:982
 msgid ""
-"DHCP Relay is currently enabled. DHCP Server cannot be enabled while the DHCP "
+"DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP "
 "Relay is enabled on any interface."
 msgstr ""
-"DHCP Relay está habilitado. Servidor DHCP cannot ser habilitado mientras que "
+"DHCP Relay está habilitado. Servidor DHCP canot ser habilitado mientras que "
 "el relé DHCP está activado en cualquier interfaz."
 
 #: src/usr/local/www/services_dhcp.php:989
@@ -15198,7 +15198,7 @@ msgid ""
 "secret.%1$sDreamhost: Enter the API Key.%1$sGandi LiveDNS: Enter API "
 "token%1$sGoDaddy: Enter the API secret.%1$sDNSimple: Enter the API token."
 "%1$sLinode: Enter the Personal Access Token.%1$sCloudflare: Enter the Global "
-"API Key or API token with DNS edit permission on the provided zone."
+"API Key or API token with DNS edit permisson on the provided zone."
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:430
@@ -19768,7 +19768,7 @@ msgstr ""
 msgid ""
 "Unauthenticated binds are bind with an existing login but with an empty "
 "password. Some LDAP servers (Microsoft AD) allow this type of bind without "
-"any possibility to disable it."
+"any possiblity to disable it."
 msgstr ""
 
 #: src/usr/local/www/system_authservers.php:837
@@ -19809,7 +19809,7 @@ msgstr "Atributo RADIUS NAS IP"
 #: src/usr/local/www/system_authservers.php:898
 msgid ""
 "Enter the IP to use for the \"NAS-IP-Address\" attribute during RADIUS "
-"Access-Requests.<br />Please note that this choice won't change the "
+"Acccess-Requests.<br />Please note that this choice won't change the "
 "interface used for contacting the RADIUS server."
 msgstr ""
 "Introduce la IP para usar para el atributo \"NAS-IP-Address\" durante las "
@@ -23275,7 +23275,7 @@ msgid "Crash Reporter"
 msgstr "Reporte de accidente"
 
 #: src/usr/local/www/crash_reporter.php:96
-msgid "The firewall has encountered an error"
+msgid "The firewall has enountered an error"
 msgstr "El cortafuegos ha encontrado un error"
 
 #: src/usr/local/www/crash_reporter.php:100
@@ -24130,7 +24130,7 @@ msgstr "Fuente Hash Key"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:608
 msgid ""
-"The key that is fed to the hashing algorithm in hex format, preceded by "
+"The key that is fed to the hashing algorithm in hex format, preceeded by "
 "\"0x\", or any string. A non-hex string is hashed using md5 to a hexadecimal "
 "key. Defaults to a randomly generated value."
 msgstr ""
@@ -34069,7 +34069,7 @@ msgid "Error: cannot open radvd.conf in services_radvd_configure()."
 msgstr "Error: No se puede abrir radvd.conf en services_radvd_configure ()."
 
 #: src/etc/inc/services.inc:431
-msgid "Shutting down Router Advertisement daemon cleanly"
+msgid "Shutting down Router Advertisment daemon cleanly"
 msgstr "Cerrando Advertencias del Enrutador y limpiando demonio"
 
 #: src/etc/inc/services.inc:520
@@ -42408,7 +42408,7 @@ msgid "Add this Certificate Authority to the Operating System Trust Store"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:601
-msgid "Use random serial numbers when signing certificates"
+msgid "Use random serial numbers when signing certifices"
 msgstr ""
 
 #: src/usr/local/www/services_snmp.php:216

@@ -163,7 +163,7 @@ if ($_POST['save']) {
 		config_set_path('unbound/strictout', isset($pconfig['strictout']));
 		config_set_path('unbound/dnssec', isset($pconfig['dnssec']));
 
-		config_set_path('unbound/python', $pconfig['python']);
+		config_set_path('unbound/python', isset($pconfig['python']));
 		if (isset($pconfig['python'])) {
 			config_set_path('unbound/python_order', $pconfig['python_order']);
 			config_set_path('unbound/python_script', $pconfig['python_script']);

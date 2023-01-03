@@ -170,7 +170,7 @@ if ($_POST['save']) {
 		} else {
 			config_set_path('unbound/hosts/' . count(config_get_path('unbound/hosts', [])) + 1, $hostent);
 		}
-		//hosts_sort();
+		hosts_sort();
 
 		mark_subsystem_dirty('unbound');
 

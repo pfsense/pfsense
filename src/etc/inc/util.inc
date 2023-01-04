@@ -3690,7 +3690,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
 			} catch(Exception $e) {
-				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask' (" . $e->getMessage() . ").");
+				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination netmask '$netmask' (" . $e->getMessage() . ").");
 				return;
 			}
 			$tmprule .= "to {$network}/{$netmask} ";

@@ -3533,7 +3533,7 @@ function get_lagg_ports ($laggport) {
 
 function cisco_to_cidr($addr) {
 	if (!is_ipaddr($addr)) {
-		throw new Exception('Invalid IP Addr');
+		throw new Exception('Value is not in dotted quad notation.');
 	}
 
 	$mask = decbin(~ip2long($addr));
@@ -3616,8 +3616,8 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_ipaddrv4($network) && ($proto == "inet")) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
-			} catch(Exception) {
-				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask'.");
+			} catch(Exception $e) {
+				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask' (" . $e->getMessage() . ").");
 				return;
 			}
 			$tmprule .= "from {$network}/{$netmask} ";
@@ -3689,8 +3689,8 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_ipaddrv4($network) && ($proto == "inet")) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
-			} catch(Exception) {
-				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination network '$network'.");
+			} catch(Exception $e) {
+				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask' (" . $e->getMessage() . ").");
 				return;
 			}
 			$tmprule .= "to {$network}/{$netmask} ";

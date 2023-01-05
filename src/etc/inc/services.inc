@@ -3456,13 +3456,13 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 
 	init_config_arr(['cron','item']);
 
-	$x = 0;
-	foreach (config_get_path('cron/item', []) as $item) {
+	$job = null;
+	foreach (config_get_path('cron/item', []) as $idx => $item) {
 		if (strstr($item['command'], $command)) {
 			$is_installed = true;
+			$job = $idx;
 			break;
 		}
-		$x++;
 	}
 
 	if ($active) {
@@ -3480,16 +3480,16 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 			config_set_path('cron/item', $cron_items);
 			$change_message = "Installed cron job for %s";
 		} else {
-			if (config_get_path("cron/item/{$x}") == $cron_item) {
+			if (config_get_path("cron/item/{$job}") == $cron_item) {
 				$cron_changed = false;
 			} else {
-				config_set_path("cron/item/{$x}", $cron_item);
+				config_set_path("cron/item/{$job}", $cron_item);
 				$change_message = "Updated cron job for %s";
 			}
 		}
 	} else {
 		if ($is_installed == true) {
-			config_del_path("cron/item/{$x}");
+			config_del_path("cron/item/{$job}");
 			$change_message = "Removed cron job for %s";
 		} else {
 			$cron_changed = false;

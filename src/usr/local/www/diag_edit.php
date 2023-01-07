@@ -253,21 +253,26 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 	}
 
 	function loadComplete(req) {
-		$("#fileContent").show(1000);
 		var values = req.responseText.split("|");
 		values.shift(); values.pop();
+
+		var fbBrowserVisible = $("#fbBrowser").is(":visible");
 
 		if (values.shift() == "0") {
 			var file = values.shift();
 			var fileContent = window.Base64.decode(values.join("|"));
 
+			$("#fbBrowser").fadeOut();
+			fbBrowserVisible = false;
 			$("#fileContent").val(fileContent);
 		} else {
 			$("#fileStatus").html(values[0]);
 			$("#fileContent").val("");
 		}
 
-		$("#fileContent").show(1000);
+		if (!fbBrowserVisible) {
+			$("#fileContent").show(1000);
+		}
 	}
 
 	function saveFile(file) {

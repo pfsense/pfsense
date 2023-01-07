@@ -2,6 +2,7 @@ $(document).ready(
 	function() {
 		$("#fbOpen").click(
 			function() {
+				$(".alert").remove();
 				$("#fbBrowser").fadeIn(750);
 				fbBrowse($("#fbTarget").val());
 			}

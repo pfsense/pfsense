@@ -2066,6 +2066,12 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 		$mac['action'] = 'pass';
 		$mac['ip'] = $clientip;
 		$mac['username'] = $username;
+		if (!empty($bw_up)) {
+			$mac['bw_up'] = $bw_up;
+		}
+		if (!empty($bw_down)) {
+			$mac['bw_down'] = $bw_down;
+		}
 		if (isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 			$mac['mac'] = $clientmac;
 			if ($attributes['voucher']) {
@@ -2077,12 +2083,6 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 				$mac['descr'] = "Auto-added for voucher {$username}";
 			} else {
 				$mac['descr'] = "Auto-added for user {$username}";
-			}
-			if (!empty($bw_up)) {
-				$mac['bw_up'] = $bw_up;
-			}
-			if (!empty($bw_down)) {
-				$mac['bw_down'] = $bw_down;
 			}
 			if (!is_array($config['captiveportal'][$cpzone]['passthrumac'])) {
 				$config['captiveportal'][$cpzone]['passthrumac'] = array();

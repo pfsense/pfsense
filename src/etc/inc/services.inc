@@ -2429,13 +2429,14 @@ function dyndnsCheckIP($int) {
 			return "down";
 		}
 
+		$available_ci_services = config_get_path('checkipservices/checkipservice', []);
 		// Append the factory default check IP service to the list (if not disabled).
 		if (!config_path_enabled('checkipservices','disable_factory_default')) {
-			config_set_path('checkipservices/checkipservice', $factory_default_checkipservice);
+			$available_ci_services[] = $factory_default_checkipservice;
 		}
 
 		// Use the first enabled check IP service as the default.
-		foreach (config_get_path('checkipservices/checkipservice', []) as $checkipservice) {
+		foreach ($available_ci_services as $checkipservice) {
 			if (isset($checkipservice['enable'])) {
 				$url = $checkipservice['url'];
 				$username = $checkipservice['username'];

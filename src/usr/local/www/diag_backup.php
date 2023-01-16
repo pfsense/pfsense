@@ -268,10 +268,12 @@ $section->add($group);
 
 $form->add($section);
 
-if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {
+$has_installed_packages = !empty(config_get_path('installedpackages/package', []));
+
+if ($has_installed_packages || (is_subsystem_dirty("packagelock"))) {
 	$section = new Form_Section('Package Functions');
 
-	if ($config['installedpackages']['package'] != "") {
+	if ($has_installed_packages) {
 		$group = new Form_Group('');
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(

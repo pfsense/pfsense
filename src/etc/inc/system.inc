@@ -2558,12 +2558,14 @@ function system_identify_specific_platform() {
 	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
 
 	$vm = get_single_sysctl('kern.vm_guest');
-	// Google GCP returns kvm from this so we must detect it first.
+	// Google GCP and newer AWS instances return kvm from this so we must detect them first.
 
 	if ($maker[0] == "QEMU") {
 		return (array('name' => 'QEMU', 'descr' => 'QEMU Guest'));
 	} else  if ($maker[0] == "Google") {
 		return (array('name' => 'Google', 'descr' => 'Google Cloud Platform'));
+	} else  if ($maker[0] == "Amazon EC2") {
+		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));
 	}
 
 	// This switch needs to be expanded to include other virtualization systems
@@ -2576,7 +2578,7 @@ function system_identify_specific_platform() {
 		break;
 	}
 
-	// AWS can only be identified via the bios version
+	// AWS and GCP can also be identified via the bios version
 	if (stripos($bios[0], "amazon") !== false) {
 		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));
 	} else  if (stripos($bios[0], "Google") !== false) {

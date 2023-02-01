@@ -3305,7 +3305,8 @@ function system_identify_specific_platform() {
 			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
-				if (stripos($bios[0], "Hyper") !== false) {
+				if ((stripos($bios[0], "Hyper") !== false) &&
+				    ($g['default-config-flavor'] != 'azure')) {
 					return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
 				} else {
 					return (array('name' => 'Azure', 'descr' => 'Microsoft Azure'));

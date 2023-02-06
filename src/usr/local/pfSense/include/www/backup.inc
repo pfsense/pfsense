@@ -51,7 +51,7 @@ function rrd_data_xml() {
 	foreach ($rrd_files as $rrd_file) {
 		$basename = basename($rrd_file);
 		$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
-		exec("$rrdtool dump '{$rrd_file}' '{$xml_file}'");
+		exec("{$rrdtool} dump " . escapeshellarg($rrd_file) . ' ' . escapeshellarg($xml_file));
 		$xml_data = file_get_contents($xml_file);
 		unlink($xml_file);
 		if ($xml_data !== false) {

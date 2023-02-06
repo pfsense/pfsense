@@ -280,7 +280,7 @@ function restore_rrddata($conf = false) {
 
 	foreach ($conf['rrddata']['rrddatafile'] as $rrd) {
 		if ($rrd['xmldata']) {
-			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
+			$rrd_file = "{$g['vardb_path']}/rrd/" . basename($rrd['filename']);
 			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
 			if (file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata']))) === false) {
 				log_error(sprintf(gettext("Cannot write %s"), $xml_file));
@@ -288,14 +288,14 @@ function restore_rrddata($conf = false) {
 			}
 			$output = array();
 			$status = null;
-			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			exec("{$rrdtool} restore -f " . escapeshellarg($xml_file) . ' ' . escapeshellarg($rrd_file), $output, $status);
 			if ($status) {
 				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
 				continue;
 			}
 			unlink($xml_file);
 		} else if ($rrd['data']) {
-			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
+			$rrd_file = "{$g['vardb_path']}/rrd/" . basename($rrd['filename']);
 			$rrd_fd = fopen($rrd_file, "w");
 			if (!$rrd_fd) {
 				log_error(sprintf(gettext("Cannot write %s"), $rrd_file));

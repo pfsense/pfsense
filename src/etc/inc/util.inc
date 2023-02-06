@@ -169,12 +169,13 @@ function try_lock($lock, $timeout = 5) {
 }
 
 /* unlock configuration file */
-function unlock($cfglckkey = 0) {
-	if (!is_null($cfglckkey)) {
-		@flock($cfglckkey, LOCK_UN);
-		@fclose($cfglckkey);
-	}
-	return;
+function unlock($cfglckkey = 0)
+{
+	if (!is_resource($cfglckkey))
+		return;
+
+	flock($cfglckkey, LOCK_UN);
+	fclose($cfglckkey);
 }
 
 /* unlock forcefully configuration file */

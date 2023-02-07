@@ -194,7 +194,7 @@ IPV6;
  * It means that AFTER the check what we MATCH
  * will be the opposite of .*\b:[some character NOT in \da-f:]
  * meaning something that does not have the same features.
- * The reason why whe have the character class in the end is that it refers to
+ * The reason why we have the character class in the end is that it refers to
  * our characters that we use as building blocks in an ipv6 address and anything
  * else can be considered as separators between addresses. So if these building
  * block characters indeed show up the colon would not be the end of the address

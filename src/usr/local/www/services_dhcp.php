@@ -979,7 +979,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
 			'Enable',
-			gettext("DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface."),
+			gettext("DHCP Relay is currently enabled. DHCP Server cannot be enabled while the DHCP Relay is enabled on any interface."),
 			$pconfig['enable']
 		))->setAttribute('disabled', true);
 	} else {

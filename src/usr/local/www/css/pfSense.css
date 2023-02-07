@@ -1005,7 +1005,7 @@ a[href]:after {
 }
 
 /* Disable 300 ms click delay so event handlers are effective. */
-/* Makes posible for non-touch compatible features to work; e.g. double tap rule to edit. */
+/* Makes possible for non-touch compatible features to work; e.g. double tap rule to edit. */
 body{
     touch-action: manipulation;
 }

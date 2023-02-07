@@ -5291,7 +5291,7 @@ function upgrade_166_to_167() {
 		$col2 = $cnt;
 		$newsequence = array();
 
-		// Locate the firt column 2 widget
+		// Locate the first column 2 widget
 		for ($idx=0;$idx<$cnt;$idx++) {
 			if (strpos($widgets[$idx], 'col2') !== false) {
 				$col2 = $idx;
@@ -6094,7 +6094,7 @@ function upgrade_198_to_199() {
 	}
 }
 
-/* Superceded. See https://redmine.pfsense.org/issues/11219 and upgrade_212_to_213() */
+/* Superseded. See https://redmine.pfsense.org/issues/11219 and upgrade_212_to_213() */
 function upgrade_199_to_200() {
 	global $config;
 }

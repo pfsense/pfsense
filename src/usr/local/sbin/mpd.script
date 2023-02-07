@@ -1150,7 +1150,7 @@ AdtranXRTDialError:
 	failure
 
 ##
-## Check the last status bufffer entry for what the problem is
+## Check the last status buffer entry for what the problem is
 ## XXX Figure out more stuff to look for and when it can happen
 ##
 

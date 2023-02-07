@@ -2117,7 +2117,7 @@ EOF
 			fi
 			print_error_pfS
 		fi
-		echo ">>> Poudriere bulk complated at `date "+%Y/%m/%d %H:%M:%S"` for ${jail_arch}"
+		echo ">>> Poudriere bulk completed at `date "+%Y/%m/%d %H:%M:%S"` for ${jail_arch}"
 
 		echo ">>> Cleaning up old packages from repo..."
 		if ! poudriere pkgclean -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME} -y; then

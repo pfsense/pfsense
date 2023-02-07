@@ -854,7 +854,7 @@
 					<value>dummy</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;The algorithm used to encrypt traffic between endpoints when data encryption negotiation is diabled or fails.</description>
+			<description>&lt;br/&gt;The algorithm used to encrypt traffic between endpoints when data encryption negotiation is disabled or fails.</description>
 		</field>
 		<field>
 			<name>digest</name>

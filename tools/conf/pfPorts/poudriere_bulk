@@ -57,6 +57,7 @@ net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/%%PRODUCT_NAME%%-pkg-WireGuard
 net/hping3
 net/intel-em-kmod
+net/kea
 net/librdkafka
 net/mosh
 net/py-speedtest-cli

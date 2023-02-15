@@ -22,6 +22,7 @@
 declare(strict_types=1);
 namespace Tools\Rector\Rector\Rules;
 
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\NodeManipulator\AssignManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -48,8 +49,20 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 
 use Tools\Rector\Rector\Helpers;
  
-final class GlobalGGetExprRector extends AbstractRector
+final class GlobalGGetExprRector extends AbstractRector implements ConfigurableRectorInterface
 {
+	/**
+	 * The name of the global variable we wish to replace
+	 * @var string
+	 */
+	private $global_var = "";
+
+	/**
+	 * The name of the get function to replace the array dim with
+	 * @var string
+	 */
+	private $global_getfunc = "";
+
 	/**
 	 * Internal state to set when traversing an array access
 	 *
@@ -69,6 +82,11 @@ final class GlobalGGetExprRector extends AbstractRector
 	public function __construct(AssignManipulator $assignManipulator)
 	{
 		$this->assignManipulator = $assignManipulator;
+	}
+
+	public function configure(array $configuration): void {
+		$this->global_var = $configuration['var'];
+		$this->global_getfunc = $configuration['func'];
 	}
 
 	/**
@@ -94,7 +112,7 @@ final class GlobalGGetExprRector extends AbstractRector
 	 */
 	public function getRuleDefinition() : RuleDefinition
     	{
-		return new RuleDefinition('Convert direct $g access to g_get()', [new CodeSample(<<<'CODE_SAMPLE'
+		return new RuleDefinition('Convert direct variable array access to a get function call', [new CodeSample(<<<'CODE_SAMPLE'
 $a = $g['scalar'];
 $b = some_function($g['scalar']);
 CODE_SAMPLE
@@ -117,6 +135,10 @@ CODE_SAMPLE
 	 */
 	public function refactor(Node $node) : ?Node
 	{
+		if (empty($this->global_var) || empty($this->global_getfunc)) {
+			return null;
+		}
+
 		// dispatch to Variable node visitor
 		if ($node instanceof Variable) {
 			return ($this->onVariableNode($node));
@@ -201,7 +223,7 @@ CODE_SAMPLE
 		}
 
 		// is the variable named 'g'?
-		if (!$this->isName($var, 'g')) {
+		if (!$this->isName($var, $this->global_var)) {
 			// skip
 			return null;
 		}
@@ -223,7 +245,7 @@ CODE_SAMPLE
 		$pathArgument = $this->buildPathArgNode($arrayPathNodes);
 
 		// return a new function call node
-		return ($this->nodeFactory->createFuncCall('g_get', [$pathArgument]));
+		return ($this->nodeFactory->createFuncCall($this->global_getfunc, [$pathArgument]));
 	}
 
 	/**

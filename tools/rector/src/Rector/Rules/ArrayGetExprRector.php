@@ -1,6 +1,6 @@
 <?php
 /*
- * GlobalGGetExprRector.php
+ * ArrayGetExprRector.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2022-2023 Rubicon Communications, LLC (Netgate)
@@ -49,7 +49,7 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 
 use Tools\Rector\Rector\Helpers;
  
-final class GlobalGGetExprRector extends AbstractRector implements ConfigurableRectorInterface
+final class ArrayGetExprRector extends AbstractRector implements ConfigurableRectorInterface
 {
 	/**
 	 * The name of the global variable we wish to replace

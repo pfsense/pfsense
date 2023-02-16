@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
-namespace Tools\Rector\Tests\Rector\ConfigGetExprRector;
+namespace Tools\Rector\Tests\Rector\ArrayGetExprRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Iterator;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-final class GGetExprRectorTest extends AbstractRectorTestCase {
+final class ArrayGetExprRectorTest extends AbstractRectorTestCase {
 	/**
 	 * @dataProvider provideData()
 	 */

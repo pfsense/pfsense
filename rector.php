@@ -36,6 +36,6 @@ return static function (RectorConfig $rectorConfig): void {
      * See https://github.com/rectorphp/rector/blob/main/docs/create_own_rule.md
      */ 
 
-	$rectorConfig->ruleWithConfiguration(Rules\ConfigGetExprRector::class,
+	$rectorConfig->ruleWithConfiguration(Rules\ArrayGetExprRector::class,
 										 ['var' => 'g', 'func' => 'g_get']);
 };

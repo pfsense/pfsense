@@ -429,7 +429,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			 */
 			if (config_path_enabled('interfaces', 'lan')
 				&& config_path_enabled('dhcpd', 'wan')) {
-					config_del_path('dhcp/wan');
+					config_del_path('dhcpd/wan');
 			}
 
 			link_interface_to_vlans($realid, "update");

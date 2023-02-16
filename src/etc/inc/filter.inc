@@ -3841,7 +3841,7 @@ pass out {$log['pass']} quick on \${$oc['descr']} proto udp from {$oc['ip']} por
 EOD;
 					}
 
-					$failover_peerip = config_get_path("dhcp/{$on}/failover_peerip", "");
+					$failover_peerip = config_get_path("dhcpd/{$on}/failover_peerip", "");
 					if (is_ipaddrv4($oc['ip']) && $failover_peerip <> "") {
 						$ipfrules .= <<<EOD
 # allow access to DHCP failover on {$oc['descr']} from {$failover_peerip}

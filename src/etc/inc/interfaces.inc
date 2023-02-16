@@ -2458,7 +2458,7 @@ EOD;
 EOD;
 	}
 
-	if (config_get_path('system/dnsallowoverride')) {
+	if (config_path_enabled('system', 'dnsallowoverride')) {
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
 	set ipcp enable req-sec-dns

@@ -59,7 +59,9 @@ net/hping3
 net/intel-em-kmod
 net/kea
 net/librdkafka
+net/mcjoin
 net/mosh
+net/mrouted
 net/py-speedtest-cli
 net/realtek-re-kmod
 net/trafshow

@@ -2343,10 +2343,8 @@ function start_devd() {
 	/* Generate hints for the kernel loader. */
 	$module_paths = explode(";", get_single_sysctl("kern.module_path"));
 	foreach ($module_paths as $path) {
-		if (!is_dir($path) || file_exists("{$path}/linker.hints")) {
-			continue;
-		}
-		if (($files = scandir($path)) == false) {
+		if (!is_dir($path) ||
+		    (($files = scandir($path)) == false)) {
 			continue;
 		}
 		$found = false;

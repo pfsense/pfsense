@@ -407,29 +407,29 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	$timeoutlist = "";
 	// TCP timeouts
-	foreach (["first", "opening","established", "closing", "finwait", "closed", "tsdiff"] as $typ) {
-		$timeo = config_get_path('system/tcp{$typ}timeout');
+	foreach (["first", "opening", "established", "closing", "finwait", "closed", "tsdiff"] as $typ) {
+		$timeo = config_get_path("system/tcp{$typ}timeout");
 		if (is_numericint($timeo)) {
 				$timeoutlist .= " tcp.{$typ} {$timeo} ";
 			}
 	}
 	// UDP timeouts
 	foreach (["first", "single", "multiple"] as $typ) {
-		$timeo = config_get_path('system/udp{$typ}timeout');
+		$timeo = config_get_path("system/udp{$typ}timeout");
 		if(is_numericint($timeo)) {
 			$timeoutlist .= " udp.{$typ} {$timeo} ";
 		}
 	}
 	// ICMP timeouts
 	foreach (["first", "error"] as $typ) {
-		$timeo = config_get_path('system/icmp{$typ}timeout');
+		$timeo = config_get_path("system/icmp{$typ}timeout");
 		if(is_numericint($timeo)) {
 			$timeoutlist .= " icmp.{$typ} {$timeo} ";
 		}
 	}
 	// other timeouts
 	foreach (["first", "single", "multiple"] as $typ) {
-		$timeo = config_get_path('system/other{$typ}timeout');
+		$timeo = config_get_path("system/other{$typ}timeout");
 		if(is_numericint($timeo)) {
 			$timeoutlist .= " other.{$typ} {$timeo} ";
 		}

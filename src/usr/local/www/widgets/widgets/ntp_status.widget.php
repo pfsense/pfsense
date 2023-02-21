@@ -74,9 +74,9 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 				$gps_lat_min = substr($gps_vars[3], 2);
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
 				$gps_lon_min = substr($gps_vars[5], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[4];
 				$gps_lon_dir = $gps_vars[6];
@@ -87,9 +87,9 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 				$gps_lat_min = substr($gps_vars[2], 2);
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
 				$gps_lon_min = substr($gps_vars[4], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
@@ -103,9 +103,9 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 				$gps_lat_min = substr($gps_vars[1], 2);
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
 				$gps_lon_min = substr($gps_vars[3], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[2];
 				$gps_lon_dir = $gps_vars[4];
@@ -116,9 +116,9 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 				$gps_lat_min = substr($gps_vars[6], 2);
 				$gps_lon_deg = substr($gps_vars[8], 0, 3);
 				$gps_lon_min = substr($gps_vars[8], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[7] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[9] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[7];
 				$gps_lon_dir = $gps_vars[9];
@@ -126,7 +126,7 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 		}
 	}
 
-	if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
+	if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus'])) {
 		$lookfor['GPGSV'] = config_get_path('ntpd/gps/nmeaset/gpgsv');
 		$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
 		$gpsport = fopen('/dev/gps0', 'r+');

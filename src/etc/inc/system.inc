@@ -1130,9 +1130,9 @@ function system_webgui_create_certificate() {
 	global $g, $cert_strict_values;
 
 	init_config_arr(array('ca'));
-	$a_ca = config_get_path('ca');
+	$a_ca = config_get_path('ca', []);
 	init_config_arr(array('cert'));
-	$a_cert = config_get_path('cert');
+	$a_cert = config_get_path('cert', []);
 	log_error(gettext("Creating SSL/TLS Certificate for this host"));
 
 	$cert = array();

@@ -67,7 +67,7 @@ if (config_get_path('unbound/outgoing_interface')) {
 $pconfig['system_domain_local_zone_type'] = config_get_path('unbound/system_domain_local_zone_type', 'transparent');
 
 $certs_available = false;
-if (count(config_get_path('cert'))) {
+if (count(config_get_path('cert', []))) {
 	$certs_available = true;
 }
 

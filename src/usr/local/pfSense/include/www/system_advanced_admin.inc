@@ -61,7 +61,7 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['sshguard_blocktime'] = $config['system']['sshguard_blocktime'] ?? '';
 	$pconfig['sshguard_detection_time'] = $config['system']['sshguard_detection_time'] ?? '';
 	$pconfig['sshguard_whitelist'] = $config['system']['sshguard_whitelist'] ?? '';
-	$a_cert = config_get_path('cert');
+	$a_cert = config_get_path('cert', []);
 	$pconfig['certsavailable'] = (is_array($a_cert) && count($a_cert));
 	if (!$pconfig['webguiproto'] || !$pconfig['certsavailable']) {
 		$pconfig['webguiproto'] = 'http';

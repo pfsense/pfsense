@@ -114,8 +114,7 @@ display_top_tabs($tab_array);
 	</thead>
 	<tbody>
 <?php
-	asort($a_aliases);
-	foreach ($a_aliases as $i => $alias):
+	foreach (msort($a_aliases, 'name') as $i => $alias):
 		unset ($show_alias);
 		switch ($tab) {
 		case "all":

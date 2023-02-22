@@ -3727,7 +3727,7 @@ EOD;
 			// The DHCPv6 client rules ***MUST BE ABOVE BOGONSV6!***  https://redmine.pfsense.org/issues/3395
 			$vlantag = '';
 			if (is_array($vlanprio_values)) {
-				$vlantag = array_get_path($vlanprio_values, config_get_path("interfaces/{$on}/dhcpc6vpt", ''), '');
+				$vlantag = array_get_path($vlanprio_values, config_get_path("interfaces/{$on}/dhcp6cvpt", ''), '');
 				$vlantag = ($vlantag != '' && config_path_enabled("interfaces/{$on}", 'dhcp6vlanenable')) ? 'set prio ' . $vlantag : '';
 			}
 			$ipfrules .= <<<EOD

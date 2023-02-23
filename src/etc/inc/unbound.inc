@@ -906,7 +906,7 @@ function unbound_acls_config($cfgsubdir = "") {
 		// Add our networks for active interfaces including localhost
 		if (config_get_path('unbound/active_interface')) {
 			$active_interfaces = array_flip(explode(",", config_get_path('unbound/active_interface')));
-			if (in_array("all", $active_interfaces)) {
+			if (array_key_exists("all", $active_interfaces)) {
 				$active_interfaces = get_configured_interface_with_descr();
 			}
 		} else {

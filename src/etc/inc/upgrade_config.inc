@@ -6768,6 +6768,24 @@ function upgrade_227_to_228() {
 	}
 }
 
+function upgrade_228_to_229() {
+	global $g;
+	/* Update System Memory RRD file with new data sources
+	 * https://redmine.pfsense.org/issues/14011
+	 */
+	$rrddbpath = "/var/db/rrd/";
+	$database = "system-memory.rrd";
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+	$rrdinterval = 60;
+	$valid = $rrdinterval * 2;
+	if (platform_booting()) {
+		echo "Migrating System Memory RRD file to new format\n";
+	}
+	mwexec("$rrdtool tune {$rrddbpath}{$database} DS:userwire:GAUGE:{$valid}:0:10000000 2>&1");
+	mwexec("$rrdtool tune {$rrddbpath}{$database} DS:laundry:GAUGE:{$valid}:0:10000000 2>&1");
+	mwexec("$rrdtool tune {$rrddbpath}{$database} DS:buffers:GAUGE:{$valid}:0:10000000 2>&1");
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

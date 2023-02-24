@@ -617,6 +617,9 @@ function enable_rrd_graphing() {
 			$rrdcreate .= "DS:free:GAUGE:$memvalid:0:10000000 ";
 			$rrdcreate .= "DS:cache:GAUGE:$memvalid:0:10000000 ";
 			$rrdcreate .= "DS:wire:GAUGE:$memvalid:0:10000000 ";
+			$rrdcreate .= "DS:userwire:GAUGE:$memvalid:0:10000000 ";
+			$rrdcreate .= "DS:laundry:GAUGE:$memvalid:0:10000000 ";
+			$rrdcreate .= "DS:buffers:GAUGE:$memvalid:0:10000000 ";
 			$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
 			$rrdcreate .= "RRA:MIN:0.5:5:720 ";
 			$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
@@ -639,10 +642,62 @@ function enable_rrd_graphing() {
 			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
 		}
 
-		/* the Memory stats gathering function. */
-		$rrdupdatesh .= "MEM=`$sysctl -qn vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
-		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf ";
-		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n";
+		/* Memory stats gathering function. */
+		$rrdupdatesh .= "MEM=`$sysctl -qn ";
+		/* Total pages */
+		$rrdupdatesh .= "vm.stats.vm.v_page_count ";
+		/* Active pages  */
+		$rrdupdatesh .= "vm.stats.vm.v_active_count ";
+		/* Inactive pages */
+		$rrdupdatesh .= "vm.stats.vm.v_inactive_count ";
+		/* Free pages  */
+		$rrdupdatesh .= "vm.stats.vm.v_free_count ";
+		if (is_module_loaded('zfs.ko')) {
+			/* If the system is using ZFS, use ARC size as "cache" (value is bytes, not pages) */
+			$rrdupdatesh .= "kstat.zfs.misc.arcstats.size ";
+		} else {
+			/* If the system is using UFS, use dirhash memory as "cache" (value is bytes, not pages) */
+			$rrdupdatesh .= "vfs.ufs.dirhash_mem ";
+		}
+		/* Wired pages */
+		$rrdupdatesh .= "vm.stats.vm.v_wire_count ";
+		/* User wired pages */
+		$rrdupdatesh .= "vm.stats.vm.v_user_wire_count ";
+		/* Laundy pages */
+		$rrdupdatesh .= "vm.stats.vm.v_laundry_count ";
+		/* UFS Buffer space (value is in bytes, not pages) */
+		$rrdupdatesh .= "vfs.bufspace ";
+		/* Page size for calculations */
+		$rrdupdatesh .= "hw.pagesize ";
+		$rrdupdatesh .= " | ";
+		/* Start the AWK code */
+		$rrdupdatesh .= " $awk '{";
+		/* Assign sysctl output to named variables */
+		$rrdupdatesh .= "getline active;getline inactive;getline free;getline cache;getline wire;getline userwire;getline laundry;getline buffers;getline pagesize;";
+		/* Divide cache and buffer values by page size so all values are in the same units */
+		$rrdupdatesh .= "cache=(cache/pagesize);buffers=(buffers/pagesize);";
+		/* Start of RRD-friendly output */
+		$rrdupdatesh .= "printf ";
+		/* Calculate values as a percentage of total pages */
+		/* Active pages */
+		$rrdupdatesh .= "((active/$0) * 100)";
+		/* Inactive pages */
+		$rrdupdatesh .= "\":\"((inactive/$0) * 100)";
+		/* Free pages */
+		$rrdupdatesh .= "\":\"((free/$0) * 100)";
+		/* Cache (previously converted to pages) */
+		$rrdupdatesh .= "\":\"((cache/$0) * 100)";
+		/* Wired pages less cache and buffer pages (which are included in wired pages) */
+		$rrdupdatesh .= "\":\"((wire - (cache + buffers))/$0 * 100)";
+		/* User wired pages */
+		$rrdupdatesh .= "\":\"((userwire/$0) * 100)";
+		/* Laundry pages */
+		$rrdupdatesh .= "\":\"((laundry/$0) * 100)";
+		/* UFS Buffer space (previously converted to pages) */
+		$rrdupdatesh .= "\":\"((buffers/$0) * 100)";
+		/* Finish the AWK code */
+		$rrdupdatesh .= "}'`\n";
+		/* Update the database with new values */
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";
 
 		/* End Memory statistics */

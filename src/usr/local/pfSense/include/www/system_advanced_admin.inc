@@ -31,8 +31,6 @@ require_once("pfsense-utils.inc");
 
 // Retrieve an array of advanced admin settings
 function getAdvancedAdminConfig($json = false) {
-	global $config;
-
 	$pconfig = array();
 
 	$pconfig['webguiproto'] = config_get_path('system/webgui/protocol');
@@ -42,7 +40,7 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['disablehttpredirect'] = config_path_enabled('system/webgui', 'disablehttpredirect');
 	$pconfig['disablehsts'] = config_path_enabled('system/webgui', 'disablehsts');
 	$pconfig['ocsp-staple'] = config_path_enabled('system/webgui', 'ocsp-staple');
-	$pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
+	$pconfig['disableconsolemenu'] = config_path_enabled('system/webgui', 'disableconsolemenu');
 	$pconfig['noantilockout'] = config_path_enabled('system/webgui', 'noantilockout');
 	$pconfig['nodnsrebindcheck'] = config_path_enabled('system/webgui', 'nodnsrebindcheck');
 	$pconfig['nohttpreferercheck'] = config_path_enabled('system/webgui', 'nohttpreferercheck');
@@ -56,11 +54,12 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['sshport'] = config_get_path('system/ssh/port');
 	$pconfig['sshdkeyonly'] = config_get_path('system/ssh/sshdkeyonly');
 	$pconfig['sshdagentforwarding'] = config_path_enabled('system/ssh', 'sshdagentforwarding');
-	$pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
-	$pconfig['sshguard_threshold'] = $config['system']['sshguard_threshold'] ?? '';
-	$pconfig['sshguard_blocktime'] = $config['system']['sshguard_blocktime'] ?? '';
-	$pconfig['sshguard_detection_time'] = $config['system']['sshguard_detection_time'] ?? '';
-	$pconfig['sshguard_whitelist'] = $config['system']['sshguard_whitelist'] ?? '';
+	$pconfig['quietlogin'] = config_path_enabled('system/webgui', 'quietlogin');
+	$pconfig['sshguard_threshold'] = config_get_path('system/sshguard_threshold', '');
+	$pconfig['sshguard_blocktime'] = config_get_path('system/sshguard_blocktime', '');
+	$pconfig['sshguard_detection_time'] = config_get_path('system/sshguard_detection_time', '');
+	$pconfig['sshguard_whitelist'] = config_get_path('system/sshguard_whitelist', '');
+	$pconfig['interfaces_lan'] = config_get_path('interfaces/lan');
 	$a_cert = config_get_path('cert', []);
 	$pconfig['certsavailable'] = (is_array($a_cert) && count($a_cert));
 	if (!$pconfig['webguiproto'] || !$pconfig['certsavailable']) {
@@ -84,8 +83,6 @@ function getAdvancedAdminConfig($json = false) {
 }
 
 function doAdvancedAdminPOST($post, $json = false) {
-	global $config;
-
 	$valid_webguiproto = array('http', 'https');
 	$input_errors = array();
 	$pconfig = $post;
@@ -150,19 +147,23 @@ function doAdvancedAdminPOST($post, $json = false) {
 	}
 
 	if (!$input_errors) {
-		if ($post['webguiproto'] && l_update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $post['webguiproto'])) {
+		if ($post['webguiproto']) {
+			config_set_path('system/webgui/protocol', $post['webguiproto']);
 			$restart_webgui = true;
 		}
 
-		if (l_update_if_changed("webgui port", $config['system']['webgui']['port'], $post['webguiport'])) {
+		if ($post['webguiport']) {
+			config_set_path('system/webgui/port', $post['webguiport']);
 			$restart_webgui = true;
 		}
 
-		if ($post['ssl-certref'] && l_update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $post['ssl-certref'])) {
+		if ($post['ssl-certref']) {
+			config_set_path('system/webgui/ssl-certref', $post['ssl-certref']);
 			$restart_webgui = true;
 		}
 
-		if ($post['max_procs'] && l_update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $post['max_procs'])) {
+		if ($post['max_procs']) {
+			config_set_path('system/webgui/max_proc', $post['max_proc']);
 			$restart_webgui = true;
 		}
 
@@ -228,19 +229,19 @@ function doAdvancedAdminPOST($post, $json = false) {
 		}
 
 		if ($post['enableserial'] == "yes" || g_get('enableserial_force')) {
-			$config['system']['enableserial'] = true;
+			config_set_path('system/enableserial', true);
 		} else {
 			config_del_path('system/enableserial');
 		}
 
 		if (is_numericint($post['serialspeed'])) {
-			$config['system']['serialspeed'] = $post['serialspeed'];
+			config_set_path('system/serialspeed', $post['serialspeed']);
 		} else {
 			config_del_path('system/serialspeed');
 		}
 
 		if ($post['primaryconsole']) {
-			$config['system']['primaryconsole'] = $post['primaryconsole'];
+			config_set_path('system/primaryconsole', $post['primaryconsole']);
 		} else {
 			config_del_path('system/primaryconsole');
 		}
@@ -329,7 +330,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 			} else {
 				list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			}
-			$prot = in_array($config['system']['webgui']['protocol'], $valid_webguiproto) ? $config['system']['webgui']['protocol'] : 'http' ;
+			$prot = config_get_path('system/webgui/protocol', 'http');
 			$port = config_get_path('system/webgui/port');
 			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
@@ -339,24 +340,20 @@ function doAdvancedAdminPOST($post, $json = false) {
 		}
 
 		$restart_sshguard = false;
-		if (l_update_if_changed("login protection threshold",
-		    $config['system']['sshguard_threshold'],
-		    $pconfig['sshguard_threshold'])) {
+		if (config_get_path('system/sshguard_threshold') != $pconfig['sshguard_threshold']) {
+			config_set_path('system/sshguard_threshold', $pconfig['sshguard_threshold']);
 			$restart_sshguard = true;
 		}
-		if (l_update_if_changed("login protection blocktime",
-		    $config['system']['sshguard_blocktime'],
-		    $pconfig['sshguard_blocktime'])) {
+		if (config_get_path('system/sshguard_blocktime') != $pconfig['sshguard_blocktime']) {
+			config_set_path('system/sshguard_blocktime', $pconfig['sshguard_blocktime']);
 			$restart_sshguard = true;
 		}
-		if (l_update_if_changed("login protection detection_time",
-		    $config['system']['sshguard_detection_time'],
-		    $pconfig['sshguard_detection_time'])) {
+		if (config_get_path('system/sshguard_detection_time') != $pconfig['sshguard_detection_time']) {
+			config_set_path('system/sshguard_detection_time', $pconfig['sshguard_detection_time']);
 			$restart_sshguard = true;
 		}
-		if (l_update_if_changed("login protection whitelist",
-		    $config['system']['sshguard_whitelist'],
-		    $pconfig['sshguard_whitelist'])) {
+		if (config_get_path('system/sshguard_whitelist') != $pconfig['sshguard_whitelist']) {
+			config_set_path('system/sshguard_whitelist', $pconfig['sshguard_whitelist']);
 			$restart_sshguard = true;
 		}
 
@@ -375,9 +372,9 @@ function doAdvancedAdminPOST($post, $json = false) {
 
 		console_configure();
 		// Restart DNS in case dns rebinding toggled
-		if (isset($config['dnsmasq']['enable'])) {
+		if (config_path_enabled('dnsmasq', 'enable')) {
 			services_dnsmasq_configure();
-		} elseif (isset($config['unbound']['enable'])) {
+		} elseif (config_path_enabled('unbound', 'enable')) {
 			services_unbound_configure();
 		}
 	}
@@ -415,8 +412,6 @@ function restart_GUI() {
 }
 
 function restart_SSHD() {
-	global $config;
-
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
@@ -424,44 +419,6 @@ function restart_SSHD() {
 		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
 		send_event("service restart sshd");
 	}
-}
-
-/* update the changedesc and changecount(er) variables */
-function l_update_changedesc($update) {
-	global $changedesc;
-	global $changecount;
-
-	$changedesc .= " {$update}";
-	$changecount++;
-}
-
-/* Check if variable has changed, update and log if it has
- * returns true if var changed
- * varname = variable name in plain text
- * orig = original value
- * new = new value
- */
-function l_update_if_changed($varname, & $orig, $new) {
-	if (is_array($orig) && is_array($new)) {
-		$a_diff = array_diff($orig, $new);
-		foreach ($a_diff as $diff) {
-			l_update_changedesc("removed {$varname}: \"{$diff}\"");
-		}
-		$a_diff = array_diff($new, $orig);
-		foreach ($a_diff as $diff) {
-			l_update_changedesc("added {$varname}: \"{$diff}\"");
-		}
-		$orig = $new;
-		return true;
-
-	} else {
-		if ($orig != $new) {
-			l_update_changedesc("{$varname}: \"{$orig}\" -> \"{$new}\"");
-			$orig = $new;
-			return true;
-		}
-	}
-	return false;
 }
 
 ?>

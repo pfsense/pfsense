@@ -114,7 +114,7 @@ $section->addInput(new Form_Input(
 	'webguiport',
 	'TCP port',
 	'number',
-	$config['system']['webgui']['port'],
+	$pconfig['webguiport'],
 	['min' => 1, 'max' => 65535]
 ))->setHelp('Enter a custom port number for the webConfigurator '.
 	'above to override the default (80 for HTTP, 443 for HTTPS). '.
@@ -177,7 +177,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When this is checked, successful logins to the webConfigurator will '.
 	'not be logged.');
 
-if ($config['interfaces']['lan']) {
+if ($pconfig['interfaces_lan']) {
 	$lockout_interface = "LAN";
 } else {
 	$lockout_interface = "WAN";
@@ -415,7 +415,7 @@ events.push(function() {
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('ocsp-staple', "<?php 
-			$cert_temp = lookup_cert($config['system']['webgui']['ssl-certref']);
+			$cert_temp = lookup_cert($pconfig['ssl-certref']);
 			echo (cert_get_ocspstaple($cert_temp['crt']) ? "true" : "false");
 			?>" === "true");
 

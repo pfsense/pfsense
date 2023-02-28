@@ -50,7 +50,7 @@ $product_version = rtrim(file_get_contents($version_file));
 $present_year = date('Y');
 
 global $g;
-$g = [ 
+$g = [
 	'acbbackuppath' => '/cf/conf/acb/',
 	'event_address' => 'unix:///var/run/check_reload_status',
 	'factory_shipped_username' => 'admin',
@@ -91,7 +91,7 @@ $g = [
 	'captiveportal_element_sizelimit' => 1048576,
 	'captiveportal_rules_interval' => 50,
 	'services_dhcp_server_enable' => true,
-	'wireless_regex' => '/^(ath|athp|bwi|bwn|ipw|iwi|iwm|iwn|malo|mwl|ral|rsu|rtwn|rum|run|uath|upgt|ural|urtw|urtwn|wi|wpi|wtap|zyd)[0-9]+/',
+	'wireless_regex' => '/^(ath|athp|bwi|bwn|ipw|iwi|iwlwifi|iwm|iwn|malo|mwl|ral|rsu|rtwn|rum|run|uath|upgt|ural|urtw|urtwn|wi|wpi|wtap|zyd)[0-9]+/',
 	'help_base_url' => '/help.php',
 	'pkg_prefix' => 'pfSense-pkg-',
 	'default_timezone' => 'Etc/UTC',
@@ -208,7 +208,7 @@ $config_parsed = false;
 
 /* Factory default check IP service. */
 global $factory_default_checkipservice;
-$factory_default_checkipservice = [ 
+$factory_default_checkipservice = [
 	'enable' => true,
 	'name' => 'Default',
 	'url' => 'http://checkip.dyndns.org',
@@ -220,7 +220,7 @@ $dyndns_split_domain_types = ['namecheap', 'cloudflare', 'cloudflare-v6', 'grati
 
 // pf tokens from FreeBSD source /sbin/pfctl/parse.y
 global $pf_reserved_keywords;
-$pf_reserved_keywords = [ 
+$pf_reserved_keywords = [
 	// Original tokens
 	'all', 'allow-opts', 'altq', 'anchor', 'antispoof', 'any', 'bandwidth', 'binat', 'binat-anchor', 'bitmask',
 	'block', 'block-policy', 'buckets', 'cbq', 'code', 'codelq', 'crop', 'debug', 'divert-reply', 'divert-to',
@@ -249,7 +249,7 @@ $pf_reserved_keywords = [
 
 /* Reserved table names to avoid collision */
 global $reserved_table_names;
-$reserved_table_names = [ 
+$reserved_table_names = [
 	'bogons',
 	'bogonsv6',
 	'negate_networks',
@@ -262,7 +262,7 @@ $reserved_table_names = [
 
 /* VLAN Prio values. */
 global $vlanprio_values;
-$vlanprio_values = [ 
+$vlanprio_values = [
 	'bk' => 0,
 	'be' => 1,
 	'ee' => 2,
@@ -274,7 +274,7 @@ $vlanprio_values = [
 ];
 
 global $vlanprio;
-$vlanprio = [ 
+$vlanprio = [
 	'bk' => 'Background (BK, 0)',
 	'be' => 'Best Effort (BE, 1)',
 	'ee' => 'Excellent Effort (EE, 2)',
@@ -286,7 +286,7 @@ $vlanprio = [
 ];
 
 global $system_log_files;
-$system_log_files = [ 
+$system_log_files = [
 	'system', 'filter', 'dhcpd', 'vpn', 'poes', 'l2tps', 'openvpn',
 	'portalauth', 'ipsec', 'ppp', 'wireless', 'nginx', 'ntpd', 'gateways',
 	'resolver', 'routing', 'auth'
@@ -296,7 +296,7 @@ global $system_log_non_syslog_files;
 $system_log_non_syslog_files = ['dmesg.boot', 'utx.log', 'userlog'];
 
 global $system_log_compression_types;
-$system_log_compression_types = [ 
+$system_log_compression_types = [
 	'bzip2' => [
 			'flag' => 'J',
 			'cat' => '/usr/bin/bzcat -qf',
@@ -341,7 +341,7 @@ $ipsec_filtermodes = [
 ];
 
 global $ipsec_filter_sysctl;
-$ipsec_filter_sysctl = [ 
+$ipsec_filter_sysctl = [
 	'enc' => [
 		'net.inet.ipsec.filtertunnel'   => '0x0000',
 		'net.inet6.ipsec6.filtertunnel' => '0x0000',
@@ -408,7 +408,7 @@ function g_has(string $key, bool $isset = false) : bool
 function g_get(string $key, mixed $default = null) : mixed
 {
 	global $g;
-	return (g_has($key, true) ? $g[$key] : $default); 
+	return (g_has($key, true) ? $g[$key] : $default);
 }
 
 /**

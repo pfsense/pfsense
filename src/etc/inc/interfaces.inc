@@ -753,7 +753,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0, $flush = true) {
 
 function interface_bridge_configure_stp($bridge) {
 	if (isset($bridge['enablestp'])) {
-		$bridgeif = trim($bridge['bridgeif']);
+		$bridgeif = escapeshellarg(trim($bridge['bridgeif']));
 		/* configure spanning tree proto */
 		mwexec("/sbin/ifconfig {$bridgeif} proto " . escapeshellarg($bridge['proto']));
 
@@ -811,7 +811,7 @@ function interface_bridge_configure_stp($bridge) {
 }
 
 function interface_bridge_configure_advanced($bridge) {
-	$bridgeif = trim($bridge['bridgeif']);
+	$bridgeif = escapeshellarg(trim($bridge['bridgeif']));
 
 	if ($bridge['maxaddr'] <> "") {
 		mwexec("/sbin/ifconfig {$bridgeif} maxaddr " . escapeshellarg($bridge['maxaddr']));
@@ -871,7 +871,7 @@ function interface_bridge_configure_advanced($bridge) {
 }
 
 function interface_bridge_configure_ip6linklocal($bridge) {
-	$bridgeif = trim($bridge['bridgeif']);
+	$bridgeif = escapeshellarg(trim($bridge['bridgeif']));
 
 	$members = explode(',', $bridge['members']);
 	if (!count($members)) {
@@ -884,7 +884,7 @@ function interface_bridge_configure_ip6linklocal($bridge) {
 
 	mwexec("/usr/sbin/ndp -i {$bridgeif} -- {$bridgeop}auto_linklocal");
 	foreach ($members as $member) {
-		$realif = get_real_interface($member);
+		$realif = escapeshellarg(get_real_interface($member));
 		mwexec("/usr/sbin/ndp -i {$realif} -- {$memberop}auto_linklocal");
 	}
 }

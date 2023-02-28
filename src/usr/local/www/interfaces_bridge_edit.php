@@ -356,10 +356,19 @@ if ($_POST['save']) {
 			$bridge['autoptp'] = implode(',', $_POST['autoptp']);
 		}
 
-		$bridge['bridgeif'] = $_POST['bridgeif'];
+		if (empty($_POST['bridgeif']) ||
+		    preg_match("/^bridge[0-9]+$/", $_POST['bridgeif'])) {
+			/* Attempt initial configuration of the bridge if the
+			 * submitted interface is empty or looks like a bridge
+			 * interface. */
+			$bridge['bridgeif'] = $_POST['bridgeif'];
+			interface_bridge_configure($bridge);
+		} else {
+			$input_errors[] = gettext("Invalid bridge interface.");
+		}
 
-		interface_bridge_configure($bridge);
-		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge")) {
+		if (empty($bridge['bridgeif']) ||
+		    !preg_match("/^bridge[0-9]+$/", $bridge['bridgeif'])) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 

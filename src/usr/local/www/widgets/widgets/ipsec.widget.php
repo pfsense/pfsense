@@ -28,7 +28,7 @@
  * limitations under the License.
  */
 
-require_once("auth_check.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("service-utils.inc");
 require_once("ipsec.inc");

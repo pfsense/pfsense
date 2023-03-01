@@ -6714,6 +6714,7 @@ function upgrade_227_to_228() {
 					if (count($phase1['encryption']['item']) == 0) {
 						/* Only disable P1 if there are no valid encryption options left. */
 						$phase1['disabled'] = true;
+						unset($phase1['encryption']);
 						file_notice("IPsec", sprintf(gettext("IPsec Phase 1 '%s' disabled after removing deprecated encryption and hashing algorithms as it has no remaining valid entries."), $phase1['descr']));
 					} else {
 						/* Let the user know that the P1 was adjusted */

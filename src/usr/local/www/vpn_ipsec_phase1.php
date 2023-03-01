@@ -183,13 +183,14 @@ if ($p1) {
 	}
 }
 // default value for new P1 and failsafe to always have at least 1 encryption item for the Form_ListItem
-if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['item']) == 0) {
+
+if (count(array_get_path($pconfig, 'encryption/item', [])) == 0) {
 	$item = array();
 	$item['encryption-algorithm'] = array('name' => "aes", 'keylen' => 128);
 	$item['hash-algorithm'] = "sha256";
 	$item['prf-algorithm'] = "sha256";
 	$item['dhgroup'] = "14";
-	$pconfig['encryption']['item'][] = $item;
+	array_set_path($pconfig, 'encryption/item', [$item]);
 }
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
@@ -200,17 +201,20 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	$eitems = array_get_path($pconfig, 'encryption/item', []);
 	for($i = 0; $i < 100; $i++) {
 		if (isset($_POST['ealgo_algo'.$i])) {
-			$item = array();
-			$item['encryption-algorithm']['name'] = $_POST['ealgo_algo'.$i];
-			$item['encryption-algorithm']['keylen'] = $_POST['ealgo_keylen'.$i];
-			$item['hash-algorithm'] = $_POST['halgo'.$i];
-			$item['prf-algorithm'] = $_POST['prfalgo'.$i];
-			$item['dhgroup'] = $_POST['dhgroup'.$i];
-			$pconfig['encryption']['item'][] = $item;
+			$item = [];
+			array_set_path($item, 'encryption-algorithm', []);
+			array_set_path($item, 'encryption-algorithm/name', $_POST['ealgo_algo'.$i]);
+			array_set_path($item, 'encryption-algorithm/keylen', $_POST['ealgo_keylen'.$i]);
+			array_set_path($item, 'hash-algorithm', $_POST['halgo'.$i]);
+			array_set_path($item, 'prf-algorithm', $_POST['prfalgo'.$i]);
+			array_set_path($item, 'dhgroup', $_POST['dhgroup'.$i]);
+			$eitems[] = $item;
 		}
 	}
+	array_set_path($pconfig, 'encryption/item', $eitems);
 
 	/* input validation */
 
@@ -484,8 +488,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
 
-	foreach($pconfig['encryption']['item'] as $p1algo) {
-		if (preg_match("/aes\d+gcm/", $p1algo['encryption-algorithm']['name']) && $_POST['iketype'] != "ikev2") {
+	foreach(array_get_path($pconfig, 'encryption/item', []) as $p1algo) {
+		if (preg_match("/aes\d+gcm/", array_get_path($p1algo, 'encryption-algorithm/name', '')) && $_POST['iketype'] != "ikev2") {
 			$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
 		}
 	}
@@ -938,9 +942,10 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$rowcount = count($pconfig['encryption']['item']);
+$eitems = array_get_path($pconfig, 'encryption/item', []);
+$rowcount = count($eitems);
 $section = new Form_Section('Phase 1 Proposal (Encryption Algorithm)');
-foreach($pconfig['encryption']['item'] as $key => $p1enc) {
+foreach($eitems as $key => $p1enc) {
 	$lastrow = ($counter == $rowcount - 1);
 	$group = new Form_Group($counter == 0 ? '*Encryption Algorithm' : '');
 	$group->addClass("repeatable");
@@ -948,28 +953,28 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	$group->add(new Form_Select(
 		'ealgo_algo'.$key,
 		null,
-		$p1enc['encryption-algorithm']['name'],
+		array_get_path($p1enc, 'encryption-algorithm/name', []),
 		build_eal_list()
 	))->setHelp($lastrow ? 'Algorithm' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'ealgo_keylen'.$key,
 		null,
-		$p1enc['encryption-algorithm']['keylen'],
+		array_get_path($p1enc, 'encryption-algorithm/keylen', []),
 		array()
 	))->setHelp($lastrow ? 'Key length' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'halgo'.$key,
 		'*Hash Algorithm',
-		$p1enc['hash-algorithm'],
+		array_get_path($p1enc, 'hash-algorithm'),
 		$p1_halgos
 	))->setHelp($lastrow ? 'Hash' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'dhgroup'.$key,
 		'*DH Group',
-		$p1enc['dhgroup'],
+		array_get_path($p1enc, 'dhgroup'),
 		$p1_dhgroups
 	))->setHelp($lastrow ? 'DH Group' : '')->setWidth(2);
 
@@ -988,7 +993,7 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	$group->add(new Form_Select(
 		'prfalgo'.$key,
 		'*PRF Algorithm',
-		$p1enc['prf-algorithm'],
+		array_get_path($p1enc, 'prf-algorithm'),
 		$p1_halgos
 	))->setHelp($lastrow ? 'PRF' : '')->setWidth(2);
 

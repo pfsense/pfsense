@@ -1395,6 +1395,9 @@ function print_value_list($list, $count = 10, $separator = ",") {
 /* DHCP enabled on any interfaces? */
 function is_dhcp_server_enabled() {
 	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 		if (isset($dhcpifconf['enable']) &&
 			!empty(config_get_path("interfaces/{$dhcpif}"))) {
 			return true;
@@ -1413,6 +1416,9 @@ function is_dhcpv6_server_enabled() {
 	}
 
 	foreach (config_get_path('dhcpdv6', []) as $dhcpv6if => $dhcpv6ifconf) {
+		if (empty($dhcpv6ifconf)) {
+			continue;
+		}
 		if (isset($dhcpv6ifconf['enable']) &&
 			!empty(config_get_path("interfaces/{$dhcpv6if}"))) {
 			return true;
@@ -1430,6 +1436,9 @@ function is_radvd_enabled() {
 
 	/* handle manually configured DHCP6 server settings first */
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		if (empty($dhcpv6ifconf)) {
+			continue;
+		}
 		if (config_path_enabled("interfaces/{$dhcpv6if}")) {
 			continue;
 		}

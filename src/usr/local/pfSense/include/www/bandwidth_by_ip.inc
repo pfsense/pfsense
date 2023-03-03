@@ -77,6 +77,9 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 		if (is_array($config['dhcpd'])) {
 			// Build an array of static-mapped DHCP entries keyed by IP address.
 			foreach ($config['dhcpd'] as $ifdata) {
+				if (empty($ifdata)) {
+					continue;
+				}
 				if (is_array($ifdata['staticmap'])) {
 					foreach ($ifdata['staticmap'] as $hostent) {
 						if (($hostent['ipaddr'] != "") && ($hostent['hostname'] != "")) {

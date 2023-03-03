@@ -3476,6 +3476,9 @@ function dhcpd_date_adjust_gmt($dt) {
 	init_config_arr(array('dhcpd'));
 
 	foreach (config_get_path('dhcpd', []) as $dhcpditem) {
+		if (empty($dhcpditem)) {
+			continue;
+		}
 		if ($dhcpditem['dhcpleaseinlocaltime'] == "yes") {
 			$ts = strtotime($dt . " GMT");
 			if ($ts !== false) {

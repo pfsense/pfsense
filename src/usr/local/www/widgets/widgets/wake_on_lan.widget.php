@@ -141,6 +141,9 @@ endif;
 $dhcpd_enabled = false;
 if (is_array($config['dhcpd'])) {
 	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
+		if (empty($dhcp)) {
+			continue;
+		}
 		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
 			break;

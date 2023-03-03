@@ -137,6 +137,9 @@ if (is_array($dhcpdconf)) {
 		// dhcpleaseinlocaltime is global to all interfaces. So if it is selected on any interface,
 		// then show it true/checked.
 		foreach (config_get_path('dhcpd', []) as $dhcpdifitem) {
+			if (empty($dhcpdifitem)) {
+				continue;
+			}
 			$dhcpleaseinlocaltime = $dhcpdifitem['dhcpleaseinlocaltime'];
 			if ($dhcpleaseinlocaltime) {
 				break;
@@ -630,6 +633,9 @@ if (isset($_POST['save'])) {
 			$dhcpdconf['failover_peerip'] = $_POST['failover_peerip'];
 			// dhcpleaseinlocaltime is global to all interfaces. So update the setting on all interfaces.
 			foreach (config_get_path('dhcpd', []) as $dhcpdifkey => $keyvalue) {
+				if (empty($keyvalue)) {
+					continue;
+				}
 				if (isset($_POST['dhcpleaseinlocaltime'])) {
 					config_set_path("dhcpd/{$dhcpdifkey}/dhcpleaseinlocaltime", $_POST['dhcpleaseinlocaltime']);
 				} else {

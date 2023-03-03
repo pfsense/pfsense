@@ -72,6 +72,9 @@ $carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
  */
 $dhcpd_enabled = false;
 foreach (config_get_path('dhcpdv6', []) as $dhcpif => $dhcp) {
+	if (empty($dhcp)) {
+		continue;
+	}
 	if (isset($dhcp['enable']) && config_path_enabled("interfaces/{$dhcpif}")) {
 		$dhcpd_enabled = true;
 		break;

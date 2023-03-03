@@ -103,6 +103,9 @@ function adjust_gmt($dt) {
 	if (is_array($config['dhcpdv6'])) {
 		$dhcpdv6 = config_get_path('dhcpdv6');
 		foreach ($dhcpdv6 as $dhcpdv6params) {
+			if (empty($dhcpdv6params)) {
+				continue;
+			}
 			$dhcpv6leaseinlocaltime = $dhcpdv6params['dhcpv6leaseinlocaltime'];
 			if ($dhcpv6leaseinlocaltime == "yes") {
 				break;
@@ -312,6 +315,9 @@ foreach ($leases as $data):
 
 	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
+			if (empty($dhcpifconf)) {
+				continue;
+			}
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddrv6']) {
@@ -405,6 +411,9 @@ foreach ($prefixes as $data):
 
 	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
+			if (empty($dhcpifconf)) {
+				continue;
+			}
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddrv6']) {

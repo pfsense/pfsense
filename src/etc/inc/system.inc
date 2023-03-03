@@ -419,6 +419,9 @@ function system_hosts_dhcpd_entries() {
 	$conf_dhcpd = config_get_path('dhcpd', []);
 
 	foreach ($conf_dhcpd as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 		if (!is_array($dhcpifconf['staticmap']) ||
 		    !isset($dhcpifconf['enable'])) {
 			continue;
@@ -452,6 +455,9 @@ function system_hosts_dhcpd_entries() {
 	$conf_dhcpdv6 = config_get_path('dhcpdv6', []);
 
 	foreach ($conf_dhcpdv6 as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 		if (!is_array($dhcpifconf['staticmap']) ||
 		    !isset($dhcpifconf['enable'])) {
 			continue;

@@ -924,6 +924,9 @@ function enable_rrd_graphing() {
 		/* Start dhcpd statistics */
 		if (is_array($config['dhcpd'])) {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+				if (empty($dhcpifconf)) {
+					continue;
+				}
 				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {
 					if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
 						$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";

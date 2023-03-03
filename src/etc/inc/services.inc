@@ -50,6 +50,9 @@ function services_radvd_configure($blacklist = array()) {
 
 	/* handle manually configured DHCP6 server settings first */
 	foreach (config_get_path('dhcpdv6', []) as $dhcpv6if => $dhcpv6ifconf) {
+		if (empty($dhcpv6ifconf)) {
+			continue;
+		}
 		if (!config_path_enabled("interfaces/{$dhcpv6if}")) {
 			continue;
 		}
@@ -537,6 +540,9 @@ function services_dhcpdv4_configure() {
 
 	$custoptions = "";
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 		$idx = 0;
 		$httpclient = false;
 		if (is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
@@ -635,6 +641,9 @@ EOD;
 	 * see https://redmine.pfsense.org/issues/10270 
 	 * TODO: Global Settings tab, see https://redmine.pfsense.org/issues/5080 */
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 		if (!isset($dhcpifconf['disableauthoritative'])) {
 			$dhcpdconf .= "authoritative;\n";
 		}
@@ -676,6 +685,9 @@ EOD;
 	 *    failover peer "bleh" entries
 	 */
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 
 		if (!config_path_enabled("interfaces/{$dhcpif}")) {
 			continue;
@@ -750,6 +762,9 @@ EOPP;
 	}
 
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 
 		$newzone = array();
 		$ifcfg = config_get_path("interfaces/{$dhcpif}");
@@ -1656,6 +1671,9 @@ function services_dhcpdv6_configure($blacklist = array()) {
 
 	$custoptionsv6 = "";
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		if (empty($dhcpv6ifconf)) {
+			continue;
+		}
 		if (is_array($dhcpv6ifconf['numberoptions']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
 			foreach ($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
 				$custoptionsv6 .= "option custom-{$dhcpv6if}-{$itemv6idx} code {$itemv6['number']} = text;\n";
@@ -1697,6 +1715,9 @@ EOD;
 	$nsupdate = false;
 
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		if (empty($dhcpv6ifconf)) {
+			continue;
+		}
 
 		$ddns_zones = array();
 

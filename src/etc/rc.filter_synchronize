@@ -126,6 +126,9 @@ function carp_sync_xml($rpc_client, $sections) {
 	}
 
 	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
 		$dhcpif_addr = array_get_path($config, "interfaces/{$dhcpif}/ipaddr");
 		if (($dhcpifconf['failover_peerip'] <> "") && 
 			$dhcpif_addr != null) {

@@ -45,9 +45,10 @@ if (!is_array($config['ntpd'])) {
 }
 
 if (empty($config['ntpd']['interface'])) {
-	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
-	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
-		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
+	$old_ifs = config_get_path('installedpackages/openntpd/config/0/interface');
+	if (!empty($old_ifs)) {
+		config_set_path('ntpd/interface', $old_ifs);
+		$pconfig['interface'] = explode(",", $old_ifs);
 		config_del_path('installedpackages/openntpd');
 		write_config(gettext("Upgraded settings from openntpd"));
 	} else {

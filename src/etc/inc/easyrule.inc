@@ -331,14 +331,14 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 		unset($filterent['protocol']);
 	}
 
+	if ((strtolower($proto) == "icmp6") || (strtolower($proto) == "icmpv6")) {
+		$filterent['protocol'] = "icmp";
+	}
+
 	/* Default to only allow echo requests, since that's what most people want and
 	 *  it should be a safe choice. */
 	if ($proto == "icmp") {
 		$filterent['icmptype'] = 'echoreq';
-	}
-
-	if ((strtolower($proto) == "icmp6") || (strtolower($proto) == "icmpv6")) {
-		$filterent['protocol'] = "icmp";
 	}
 
 	if (is_subnet($srchost)) {
@@ -505,9 +505,12 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 		if ($int === false) {
 			return gettext("Invalid interface for pass rule:") . ' ' . htmlspecialchars($int);
 		}
+		if ((strtolower($proto) == "icmp6") || (strtolower($proto) == "icmpv6")) {
+			$proto = "icmp";
+		}
 		if (($proto != 'any') &&
 		    (getprotobyname($proto) === false) &&
-		    (getprotobynumber($proto) === false)) {
+		    (!is_numericint($proto) || (getprotobynumber($proto) === false))) {
 			return gettext("Invalid protocol for pass rule:") . ' ' . htmlspecialchars($proto);
 		}
 		if (!is_ipaddr($src) && !is_subnet($src) && !is_ipaddroralias($src) && !is_specialnet($src)) {

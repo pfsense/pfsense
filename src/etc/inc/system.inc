@@ -2019,6 +2019,9 @@ function system_ntp_configure() {
 	$ntpcfg .= "\n\n# Upstream Servers\n";
 	/* foreach through ntp servers and write out to ntpd.conf */
 	foreach (explode(' ', config_get_path('system/timeservers')) as $ts) {
+		if (empty($ts)) {
+			continue;
+		}
 		if ((substr_compare($ts, $auto_pool_suffix, strlen($ts) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0)
 		    || substr_count(config_get_path('ntpd/ispool'), $ts)) {
 			$ntpcfg .= 'pool ';

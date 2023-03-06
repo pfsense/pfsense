@@ -2459,6 +2459,10 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		if (isset($ph1ent['disabled'])) {
 			continue;
 		}
+		/* If the tunnel has no encryption algorithms, it isn't valid. */
+		if (count(array_get_path($ph1ent, 'encryption/item', [])) == 0) {
+			continue;
+		}
 		/* If the local source is invalid, skip this entry. */
 		$local_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
 		if (!$local_spec) {
@@ -2543,23 +2547,23 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		}
 
 		/* Setup IKE proposals */
-		if (is_array($ph1ent['encryption']['item'])) {
-			$ciphers = array();
-			foreach($ph1ent['encryption']['item'] as $p1enc) {
-				if (!is_array($p1enc['encryption-algorithm']) ||
-						empty($p1enc['encryption-algorithm']['name']) ||
-						empty($p1enc['hash-algorithm'])) {
-					continue;
-				}
-				if ($ph1ent['prfselect_enable'] != 'yes') {
-					$p1enc['prf-algorithm'] = false;
-				}
-				$ciphers[] = ipsec_setup_proposal_algo($p1enc['encryption-algorithm']['name'],
-									$p1enc['encryption-algorithm']['keylen'],
-									$p1enc['hash-algorithm'],
-									$p1enc['prf-algorithm'],
-									$p1enc['dhgroup']);
+		$ciphers = array();
+		foreach(array_get_path($ph1ent, 'encryption/item', []) as $p1enc) {
+			if (empty($p1enc) ||
+			    empty(array_get_path($p1enc, 'encryption-algorithm/name', '')) ||
+			    empty(array_get_path($p1enc, 'hash-algorithm'))) {
+				continue;
 			}
+			if ($ph1ent['prfselect_enable'] != 'yes') {
+				$p1enc['prf-algorithm'] = false;
+			}
+			$ciphers[] = ipsec_setup_proposal_algo($p1enc['encryption-algorithm']['name'],
+								$p1enc['encryption-algorithm']['keylen'],
+								$p1enc['hash-algorithm'],
+								$p1enc['prf-algorithm'],
+								$p1enc['dhgroup']);
+		}
+		if (!empty($ciphers)) {
 			$conn['proposals'] = implode(",", $ciphers);
 		}
 

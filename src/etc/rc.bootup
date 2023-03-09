@@ -219,13 +219,6 @@ if (file_exists("/var/log/restore_ramdisk_store.boot")) {
 	exec("/usr/bin/logger -f /var/log/restore_ramdisk_store.boot");
 }
 
-init_config_arr(array('system', 'ssh'));
-if (isset($config['system']['ssh']['enable'])) {
-	echo "Starting Secure Shell Services...";
-	send_event("service reload sshd");
-	echo "done.\n";
-}
-
 /* setup interface microcode which improves tcp/ip speed */
 echo "Setting up interfaces microcode...";
 setup_microcode();
@@ -257,6 +250,14 @@ if (!$debugging) {
 
 /* re-make hosts file after configuring interfaces */
 system_hosts_generate();
+
+/* start sshd */
+init_config_arr(array('system', 'ssh'));
+if (isset($config['system']['ssh']['enable'])) {
+	echo "Starting Secure Shell Services...";
+	send_event("service reload sshd");
+	echo "done.\n";
+}
 
 /* start OpenVPN server & clients */
 echo "Syncing OpenVPN settings...";

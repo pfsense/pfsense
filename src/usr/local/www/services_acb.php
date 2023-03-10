@@ -129,41 +129,41 @@ if ($_REQUEST['newver'] != "") {
 	}
 
 	$out = decrypt_data($data, $decrypt_password);
-
-	$pos = stripos($out, "</pfsense>");
-	$data = substr($out, 0, $pos);
-	$data = $data . "</pfsense>\n";
-
-	$fd = fopen("/tmp/config_restore.xml", "w");
-	fwrite($fd, $data);
-	fclose($fd);
-
-	if (strlen($data) < 50) {
-		$input_errors[] = "The decrypted config.xml is under 50 characters, something went wrong. Aborting.";
-	}
-
-	$ondisksha256 = trim(shell_exec("/sbin/sha256 /tmp/config_restore.xml | /usr/bin/awk '{ print $4 }'"));
-	// We might not have a sha256 on file for older backups
-	if ($sha256 != "0" && $sha256 != "") {
-		if ($ondisksha256 != $sha256) {
-			$input_errors[] = "SHA256 values do not match, cannot restore. $ondisksha256 != $sha256";
-		}
-	}
-	if (curl_errno($curl_session)) {
-		/* If an error occurred, log the error in /tmp/ */
-		$fd = fopen("/tmp/acb_restoredebug.txt", "w");
-		fwrite($fd, "https://acb.netgate.com/getbkp" . "" . "action=restore&hostname={$hostname}&revision=" . urlencode($_REQUEST['newver']) . "\n\n");
-		fwrite($fd, $data);
-		fwrite($fd, curl_error($curl_session));
-		fclose($fd);
+	if (!strstr($out, "pfsense") ||
+	    (strlen($out) < 50)) {
+		$out = "Could not decrypt. Different encryption key?";
+		$input_errors[] = "Could not decrypt config.xml. Check the encryption key and try again: {$out}";
 	} else {
-		curl_close($curl_session);
-	}
+		$pos = stripos($out, "</pfsense>");
+		$data = substr($out, 0, $pos);
+		$data = $data . "</pfsense>\n";
 
-	if (!$input_errors && $data) {
-		if (config_restore("/tmp/config_restore.xml") == 0) {
-			$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
-			$savemsg .= <<<EOF
+		$fd = fopen("/tmp/config_restore.xml", "w");
+		fwrite($fd, $data);
+		fclose($fd);
+
+		$ondisksha256 = trim(shell_exec("/sbin/sha256 /tmp/config_restore.xml | /usr/bin/awk '{ print $4 }'"));
+		// We might not have a sha256 on file for older backups
+		if ($sha256 != "0" && $sha256 != "") {
+			if ($ondisksha256 != $sha256) {
+				$input_errors[] = "SHA256 values do not match, cannot restore. $ondisksha256 != $sha256";
+			}
+		}
+		if (curl_errno($curl_session)) {
+			/* If an error occurred, log the error in /tmp/ */
+			$fd = fopen("/tmp/acb_restoredebug.txt", "w");
+			fwrite($fd, "https://acb.netgate.com/getbkp" . "" . "action=restore&hostname={$hostname}&revision=" . urlencode($_REQUEST['newver']) . "\n\n");
+			fwrite($fd, $data);
+			fwrite($fd, curl_error($curl_session));
+			fclose($fd);
+		} else {
+			curl_close($curl_session);
+		}
+
+		if (!$input_errors && $data) {
+			if (config_restore("/tmp/config_restore.xml") == 0) {
+				$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
+				$savemsg .= <<<EOF
 			<br />
 		<form action="diag_reboot.php" method="post">
 			Reboot the firewall to full activate changes?
@@ -171,13 +171,14 @@ if ($_REQUEST['newver'] != "") {
 			<input name="Submit" type="submit" class="formbtn" value=" Yes " />
 		</form>
 EOF;
+			} else {
+				$savemsg = "Unable to revert to the selected configuration.";
+			}
 		} else {
-			$savemsg = "Unable to revert to the selected configuration.";
+			log_error("There was an error when restoring the AutoConfigBackup item");
 		}
-	} else {
-		log_error("There was an error when restoring the AutoConfigBackup item");
+		unlink_if_exists("/tmp/config_restore.xml");
 	}
-	unlink_if_exists("/tmp/config_restore.xml");
 }
 
 if ($_REQUEST['download']) {
@@ -222,7 +223,7 @@ if ($_REQUEST['download']) {
 		$data = decrypt_data($data, $decrypt_password);
 		if (!strstr($data, "pfsense")) {
 			$data = "Could not decrypt. Different encryption key?";
-			$input_errors[] = "Could not decrypt config.xml";
+			$input_errors[] = "Could not decrypt config.xml. Check the encryption key and try again.";
 		}
 	}
 }

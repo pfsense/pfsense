@@ -1116,8 +1116,6 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		'</div>' +
 	'</div>';
 
-	$('.help-block').hide();
-
 	var node = $('.noranges').parent().parent();
 	$(rowhtml.replace(/@/g, counter)).insertBefore(node);
 

@@ -38,7 +38,7 @@ require_once("pfsense-utils.inc");
 require_once("services.inc");
 require_once("acb.inc");
 
-$pconfig = config_get_path('system/acb');
+$pconfig = config_get_path('system/acb', []);
 
 if (isset($_POST['save'])) {
 	unset($input_errors);

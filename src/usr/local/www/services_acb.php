@@ -39,18 +39,18 @@ $exp_sep = '||';
 $decrypt_password = config_get_path('system/acb/encryption_password');
 
 // Defined username. Username must be sent lowercase. See Redmine #7127 and Netgate Redmine #163
-$username = strtolower($config['system']['acb']['gold_username']);
+$username = strtolower(config_get_path('system/acb/gold_username'));
 $password = config_get_path('system/acb/gold_password');
 
 // Set hostname
 if ($_REQUEST['hostname']) {
 	$hostname = $_REQUEST['hostname'];
 } else {
-	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$hostname = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 }
 
 // Hostname of local machine
-$myhostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+$myhostname = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 
 if (!$decrypt_password) {
 	Header("Location: /services_acb_settings.php");
@@ -412,7 +412,7 @@ print('</div>');
 
 			<?php
 				$counter = 0;
-				if ($config['system']['acb']['reverse'] == "yes"){
+				if (config_get_path('system/acb/reverse') == "yes"){
 					$confvers = array_reverse($confvers);
 				}
 

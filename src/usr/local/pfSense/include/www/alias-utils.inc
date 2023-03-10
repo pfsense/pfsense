@@ -31,18 +31,12 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-init_config_arr(array('aliases', 'alias'));
-$a_aliases = &$config['aliases']['alias'];
-
 function deleteAlias($id, $apply = false) {
 	/* make sure rule is not being referenced by any nat or filter rules */
-	init_config_arr(array('aliases', 'alias'));
-	$a_aliases = config_get_path('aliases/alias', []);
-
 	$delete_error = "";
 	$is_alias_referenced = false;
 	$referenced_by = array();
-	$alias_name = $a_aliases[$id]['name'];
+	$alias_name = config_get_path('aliases/alias/' . $id . '/name');
 	$section_fields = [
 		// Firewall rules
 		'filter/rule' => [
@@ -111,13 +105,12 @@ function deleteAlias($id, $apply = false) {
 	if ($is_alias_referenced == true) {
 		$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars(implode(", ", $referenced_by)));
 	} else {
-		if (preg_match("/urltable/i", $a_aliases[$id]['type'])) {
+		if (preg_match("/urltable/i", config_get_path('aliases/alias/' . $id . '/type'))) {
 			// this is a URL table type alias, delete its file as well
-			unlink_if_exists("/var/db/aliastables/" . $a_aliases[$id]['name'] . ".txt");
+			unlink_if_exists("/var/db/aliastables/" . config_get_path('aliases/alias/' . $id . '/name') . ".txt");
 		}
-		unset($a_aliases[$id]);
-		config_set_path('aliases/alias', $a_aliases);
-		if (write_config(gettext("Deleted firewall alias " . $a_aliases[$id]['name']))) {
+		config_del_path('aliases/alias/' . $id);
+		if (write_config(gettext("Deleted firewall alias " . config_get_path('aliases/alias/' . $id . '/name')))) {
 			if (!$apply) {
 				mark_subsystem_dirty('aliases');
 			} else {
@@ -130,17 +123,12 @@ function deleteAlias($id, $apply = false) {
 }
 
 function openvpnAlias ($id) {
-	global $config;
-
-	init_config_arr(array('aliases', 'alias'));
-	$a_aliases = &$config['aliases']['alias'];
-
 	$alarm_message = "";
 	$is_alias_referenced = false;
 	$referenced_by = array();
-	$alias_name = $a_aliases[$id]['name'];
+	$alias_name = config_get_path('aliases/alias/' . $id . '/name');
 
-	if ($a_aliases[$id]['type'] != 'network') {
+	if (config_get_path('aliases/alias/' . $id . '/type') != 'network') {
 		return false;
 	}
 
@@ -234,17 +222,12 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 }
 
 function staticrouteAlias($id) {
-	global $config;
-
-	init_config_arr(array('aliases', 'alias'));
-	$a_aliases = &$config['aliases']['alias'];
-
 	$alarm_message = "";
 	$is_alias_referenced = false;
 	$referenced_by = array();
-	$alias_name = $a_aliases[$id]['name'];
+	$alias_name = config_get_path('aliases/alias/' . $id . '/name');
 
-	if ($a_aliases[$id]['type'] != 'host') {
+	if (config_get_path('aliases/alias/' . $id . '/type') != 'host') {
 		return false;
 	}
 
@@ -258,9 +241,7 @@ function staticrouteAlias($id) {
 }
 
 function alias_same_type($name, $type) {
-	global $config;
-
-	foreach ($config['aliases']['alias'] as $alias) {
+	foreach (config_get_path('aliases/alias', []) as $alias) {
 		if ($name == $alias['name']) {
 			if (in_array($type, array("host", "network")) &&
 			    in_array($alias['type'], array("host", "network"))) {
@@ -278,15 +259,12 @@ function alias_same_type($name, $type) {
 }
 
 function saveAlias($post, $id) {
-	global $config, $g, $pf_reserved_keywords, $reserved_table_names, $pconfig, $aliastable;
+	global $g, $pf_reserved_keywords, $reserved_table_names, $pconfig, $aliastable;
 
 	$origname = $post['origname'];
 	$reserved_ifs = get_configured_interface_list(true);
 	$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 	$max_alias_addresses = 5000;
-
-	init_config_arr(array('aliases', 'alias'));
-	$a_aliases = &$config['aliases']['alias'];
 
 	$data_errors = array();
 
@@ -304,8 +282,8 @@ function saveAlias($post, $id) {
 	}
 
 	/* check for name conflicts */
-	foreach ($a_aliases as $key => $alias) {
-		if (($alias['name'] == $post['name']) && (empty($a_aliases[$id]) || ($key != $id))) {
+	foreach (config_get_path('aliases/alias', []) as $key => $alias) {
+		if (($alias['name'] == $post['name']) && (empty(config_get_path('aliases/alias/' . $id)) || ($key != $id))) {
 			$data_errors[] = gettext("An alias with this name already exists.");
 			break;
 		}
@@ -333,7 +311,7 @@ function saveAlias($post, $id) {
 	}
 
 	/* check for name interface description conflicts */
-	foreach ($config['interfaces'] as $interface) {
+	foreach (config_get_path('interfaces', []) as $interface) {
 		if (strcasecmp($interface['descr'], $post['name']) == 0) {
 			$data_errors[] = gettext("An interface description with this name already exists.");
 			break;
@@ -397,9 +375,9 @@ function saveAlias($post, $id) {
 		for ($x = 0; $x < $max_alias_addresses - 1; $x++) {
 			if (is_URL($post['address' . $x])) {
 				/* fetch down and add in */
-				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+				$temp_filename = tempnam($g['tmp_path'] . '/', "alias_import");
 				rmdir_recursive($temp_filename);
-				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
+				$verify_ssl = config_path_enabled('system', 'checkaliasesurlcert');
 				mkdir($temp_filename);
 				if (!download_file($post['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
 					$data_errors[] = sprintf(gettext("Could not fetch the URL '%s'."), $post['address' . $x]);
@@ -673,41 +651,38 @@ function saveAlias($post, $id) {
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_write_config");
 
-		if (isset($id) && $a_aliases[$id]) {
-			if ($a_aliases[$id]['name'] <> $alias['name']) {
-				foreach ($a_aliases as $aliasid => $aliasd) {
+		if (isset($id) && config_get_path('aliases/alias/' . $id)) {
+			if (config_get_path('aliases/alias/' . $id . '/name') <> $alias['name']) {
+				foreach (config_get_path('aliases/alias', []) as $aliasid => $aliasd) {
 					if ($aliasd['address'] <> "") {
 						$tmpdirty = false;
 						$tmpaddr = explode(" ", $aliasd['address']);
 						foreach ($tmpaddr as $tmpidx => $tmpalias) {
-							if ($tmpalias == $a_aliases[$id]['name']) {
+							if ($tmpalias == config_get_path('aliases/alias/' . $id . '/name')) {
 								$tmpaddr[$tmpidx] = $alias['name'];
 								$tmpdirty = true;
 							}
 						}
 						if ($tmpdirty == true) {
-							$a_aliases[$aliasid]['address'] = implode(" ", $tmpaddr);
+							config_set_path('aliases/alias/' . $aliasid . '/address', implode(" ", $tmpaddr));
 						}
 					}
 				}
 			}
-			$a_aliases[$id] = $alias;
+			config_set_path('aliases/alias/' . $id, $alias);
 		} else {
-			$a_aliases[] = $alias;
+			$alias_count = 0;
+			while(config_get_path('aliases/alias/' . $alias_count)) {
+				$alias_count++;
+			}
+			config_set_path('aliases/alias/' . $alias_count, $alias);
 		}
-
-		// Sort list
-		$a_aliases = msort($a_aliases, "name");
 
 		write_config(gettext("Edited a firewall alias."));
 
 		/* restart related OpenVPN instances, see https://redmine.pfsense.org/issues/2668
 		 * reload related static routes, see https://redmine.pfsense.org/issues/7547 */
 		if (in_array($alias['type'], array('host', 'network', 'url'))) {
-			$config = parse_config(true);
-			init_config_arr(array('openvpn', 'openvpn-server'));
-			init_config_arr(array('openvpn', 'openvpn-client'));
-			init_config_arr(array('openvpn', 'openvpn-csc'));
 			$ovpnnets = array(
 				'tunnel_network',
 				'tunnel_networkv6',
@@ -716,7 +691,7 @@ function saveAlias($post, $id) {
 				'remote_network',
 			       	'remote_networkv6');
 			foreach (array("server", "client", "csc") as $type) {
-				foreach ($config['openvpn']['openvpn-'.$type] as & $settings) {
+				foreach (config_get_path('openvpn/openvpn-' . $type, []) as $settings) {
 					if (!isset($settings['disable'])) {
 						foreach ($ovpnnets as $nettype) {
 							foreach (explode(',', $settings[$nettype]) as $net) {
@@ -736,9 +711,8 @@ function saveAlias($post, $id) {
 				}
 			}
 
-			init_config_arr(array('staticroutes', 'route'));
 			$srid = 0;
-			foreach ($config['staticroutes']['route'] as $sroute) {
+			foreach (config_get_path('staticroutes/route', []) as $sroute) {
 				if (!isset($sroute['disabled']) &&
 				    ($alias['name'] == $sroute['network'])) {
 					delete_static_route($srid);
@@ -746,12 +720,12 @@ function saveAlias($post, $id) {
 				}
 				$srid++;
 			}
-			if ($reload_static_route && file_exists("{$g['tmp_path']}/.system_routes.apply")) {
-				$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+			if ($reload_static_route && file_exists($g['tmp_path'] . '/.system_routes.apply')) {
+				$toapplylist = unserialize(file_get_contents($g['tmp_path'] . '/.system_routes.apply'));
 				foreach ($toapplylist as $toapply) {
 					mwexec("{$toapply}");
 				}
-				@unlink("{$g['tmp_path']}/.system_routes.apply");
+				@unlink($g['tmp_path'] . '/.system_routes.apply');
 
 				$retval |= system_routing_configure();
 				$retval |= filter_configure();

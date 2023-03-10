@@ -1893,7 +1893,6 @@ function alias_make_table() {
 
 	$aliastable = array();
 
-	init_config_arr(array('aliases', 'alias'));
 	foreach (config_get_path('aliases/alias', []) as $alias) {
 		if ($alias['name']) {
 			$aliastable[$alias['name']] = $alias['address'];

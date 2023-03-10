@@ -51,12 +51,9 @@ $reserved_ifs = get_configured_interface_list(true);
 $pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;
 
-init_config_arr(array('aliases', 'alias'));
-$a_aliases = &$config['aliases']['alias'];
-
 // Debugging
 if ($debug) {
-	unlink_if_exists("{$g['tmp_path']}/alias_rename_log.txt");
+	unlink_if_exists($g['tmp_path'] . '/alias_rename_log.txt');
 }
 
 $singular_types = array(
@@ -79,25 +76,25 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$dup = true;
 }
 
-if (isset($id) && $a_aliases[$id]) {
-	$original_alias_name = $a_aliases[$id]['name'];
+if (isset($id) && config_get_path('aliases/alias/' . $id)) {
+	$original_alias_name = config_get_path('aliases/alias/' . $id . '/name');
 	if (!$dup) {
-		$pconfig['name'] = $a_aliases[$id]['name'];
+		$pconfig['name'] = config_get_path('aliases/alias/' . $id . '/name');
 	}
-	$pconfig['detail'] = $a_aliases[$id]['detail'];
-	$pconfig['address'] = $a_aliases[$id]['address'];
-	$pconfig['type'] = $a_aliases[$id]['type'];
-	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
+	$pconfig['detail'] = config_get_path('aliases/alias/' . $id . '/detail');
+	$pconfig['address'] = config_get_path('aliases/alias/' . $id . '/address');
+	$pconfig['type'] = config_get_path('aliases/alias/' . $id . '/type');
+	$pconfig['descr'] = html_entity_decode(config_get_path('aliases/alias/' . $id . '/descr'));
 
-	if (preg_match("/urltable/i", $a_aliases[$id]['type'])) {
-		$pconfig['address'] = $a_aliases[$id]['url'];
-		$pconfig['updatefreq'] = $a_aliases[$id]['updatefreq'];
+	if (preg_match("/urltable/i", config_get_path('aliases/alias/' . $id . '/type'))) {
+		$pconfig['address'] = config_get_path('aliases/alias/' . $id . '/url');
+		$pconfig['updatefreq'] = config_get_path('aliases/alias/' . $id . '/updatefreq');
 	}
-	if ($a_aliases[$id]['aliasurl'] <> "") {
-		if (is_array($a_aliases[$id]['aliasurl'])) {
-			$pconfig['address'] = implode(" ", $a_aliases[$id]['aliasurl']);
+	if (config_get_path('aliases/alias/' . $id . '/aliasurl') <> "") {
+		if (is_array(config_get_path('aliases/alias/' . $id . '/aliasurl'))) {
+			$pconfig['address'] = implode(" ", config_get_path('aliases/alias/' . $id . '/aliasurl'));
 		} else {
-			$pconfig['address'] = $a_aliases[$id]['aliasurl'];
+			$pconfig['address'] = config_get_path('aliases/alias/' . $id . '/aliasurl');
 		}
 	}
 }
@@ -288,7 +285,7 @@ $form->addGlobal(new Form_Input(
 	$origname
 ));
 
-if (isset($id) && $a_aliases[$id]) {
+if (isset($id) && config_get_path('aliases/alias/' . $id)) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -388,7 +385,7 @@ while ($counter < count($addresses)) {
 	$counter++;
 }
 
-if ((isset($id) && $a_aliases[$id]) && !preg_match("/url/i", $pconfig['type'])) {
+if ((isset($id) && config_get_path('aliases/alias/' . $id)) && !preg_match("/url/i", $pconfig['type'])) {
 	$form->addGlobal(new Form_Button(
 		'exportaliases',
 		'Export to file',

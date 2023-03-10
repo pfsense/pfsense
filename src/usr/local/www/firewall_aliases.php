@@ -38,9 +38,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("alias-utils.inc");
 
-init_config_arr(array('aliases', 'alias'));
-$a_aliases = &$config['aliases']['alias'];
-
 $tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/", "", $_REQUEST['tab']));
 
 if ($_POST['apply']) {
@@ -114,8 +111,10 @@ display_top_tabs($tab_array);
 	</thead>
 	<tbody>
 <?php
-	foreach (msort($a_aliases, 'name') as $i => $alias):
-		unset ($show_alias);
+	$aliases = config_get_path('aliases/alias', []);
+	asort($aliases);
+	foreach ($aliases as $i => $alias):
+		unset($show_alias);
 		switch ($tab) {
 		case "all":
 			$show_alias= true;

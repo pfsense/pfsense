@@ -50,8 +50,6 @@ if (empty($tab)) {
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 $pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
-$a_aliases = config_get_path('aliases/alias', []);
-
 if ($_POST) {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"), gettext("Aliases to import"));
@@ -168,11 +166,12 @@ if ($_POST) {
 		$alias['type'] = $alias_type;
 		$alias['descr'] = $_POST['descr'];
 		unset($imported_ips, $imported_descs);
-		$a_aliases[] = $alias;
 
-		// Sort list
-		$a_aliases = msort($a_aliases, "name");
-		config_set_path('aliases/alias', $a_aliases);
+		$alias_count = 0;
+		while (config_get_path('aliases/alias/' . $alias_count)) {
+			$alias_count++;
+		}
+		config_set_path('aliases/alias', $alias_count, $alias);
 
 		if (write_config(gettext("Imported a firewall alias."))) {
 			mark_subsystem_dirty('aliases');

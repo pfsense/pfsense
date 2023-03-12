@@ -1386,7 +1386,7 @@ http {
 	add_header X-Frame-Options SAMEORIGIN;
 	server_tokens off;
 
-	sendfile        on;
+	sendfile        off;
 
 	access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
 

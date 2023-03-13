@@ -790,20 +790,25 @@ foreach ($a_filter as $filteri => $filterent):
 					} else {
 						switch ($interface) {
 						case 'l2tp':
-							if ($config['l2tp']['mode'] == 'server')
+							if (config_get_path('l2tp/mode') == 'server') {
 								$selected_descs[] = 'L2TP VPN';
+							}
 							break;
 						case 'pppoe':
-							if (is_pppoe_server_enabled())
+							if (is_pppoe_server_enabled()) {
 								$selected_descs[] = 'PPPoE Server';
+							}
 							break;
 						case 'enc0':
-							if (ipsec_enabled())
+							if (ipsec_enabled()) {
 								$selected_descs[] = 'IPsec';
+							}
 							break;
 						case 'openvpn':
-							if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client'])
+							if (!empty(config_get_path('openvpn/openvpn-server', [])) ||
+							    !empty(config_get_path('openvpn/openvpn-client', []))) {
 								$selected_descs[] = 'OpenVPN';
+							}
 							break;
 						case 'any':
 							$selected_descs[] = 'Any';

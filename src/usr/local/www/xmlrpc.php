@@ -228,12 +228,14 @@ class pfsense_xmlrpc_server {
 		$syncd_full_sections = array();
 
 		foreach ($sync_full_sections as $section) {
-			if (!isset($sections[$section])) {
+			/* Do not test for empty here or removing final entry
+			 * from a section will not work */
+			if (!array_key_exists($section, $sections)) {
 				continue;
 			}
 
-			$config[$section] = $sections[$section];
-			unset($sections[$section]);
+			config_set_path($section, array_get_path($sections, $section));
+			array_del_path($sections, $section);
 			$syncd_full_sections[] = $section;
 		}
 
@@ -395,9 +397,11 @@ class pfsense_xmlrpc_server {
 
 		$vipbackup = array();
 		$oldvips = array();
-		if (isset($sections['virtualip']) &&
-		    is_array($config['virtualip']['vip'])) {
-			foreach ($config['virtualip']['vip'] as $vip) {
+		if (array_key_exists('virtualip', $sections)) {
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
+				if (empty($vip)) {
+					continue;
+				}
 				if ($vip['mode'] == "carp") {
 					$key = $vip['interface'] .
 					    "_vip" . $vip['vhid'];
@@ -434,7 +438,6 @@ class pfsense_xmlrpc_server {
 
 		/* For vip section, first keep items sent from the master */
 		$config = array_merge_recursive_unique($config, $sections);
-
 
 		/* Remove locally items removed remote */
 		foreach ($voucher as $zone => $item) {
@@ -504,15 +507,11 @@ class pfsense_xmlrpc_server {
 		 * on the backup
 		 */
 		if (is_array($vipbackup) && !empty($vipbackup)) {
-			if (!is_array($config['virtualip'])) {
-				$config['virtualip'] = array();
-			}
-			if (!is_array($config['virtualip']['vip'])) {
-				$config['virtualip']['vip'] = array();
-			}
+			$vips = config_get_path('virtualip/vip', []);
 			foreach ($vipbackup as $vip) {
-				array_unshift($config['virtualip']['vip'], $vip);
+				array_unshift($vips, $vip);
 			}
+			config_set_path('virtualip/vip', $vips);
 		}
 
 		/* Log what happened */

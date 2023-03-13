@@ -245,7 +245,7 @@ $group->add(new Form_IpAddress(
 	'*Remote Tunnel Address',
 	$pconfig['tunnel-remote-addr'],
 	'V4'
-))->setHelp('Remote IPv4 address address.');
+))->setHelp('Remote IPv4 tunnel address.');
 
 $group->add(new Form_Select(
 	'tunnel-remote-net',
@@ -270,7 +270,7 @@ $group->add(new Form_IpAddress(
 	'*Remote Tunnel address',
 	$pconfig['tunnel-remote-addr6'],
 	'V6'
-))->setHelp('Remote IPv6 address address.');
+))->setHelp('Remote IPv6 tunnel address.');
 
 $group->add(new Form_Select(
 	'tunnel-remote-net6',

@@ -29,10 +29,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("interfaces.inc");
 
-if (platform_booting()) {
-	return;
-}
-
 function handle_argument_group($iface, $action) {
 	global $g, $config;
 
@@ -160,6 +156,23 @@ $realiface = ltrim($realiface, '$');
 if (!in_array($action, ['start', 'stop'])) {
 		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop are allowed!");
 		return;
+}
+
+if (platform_booting()) {
+	if (!empty($realiface)) {
+		$interface = convert_real_interface_to_friendly_interface_name($realiface);
+	}
+	if (!empty($interface) &&
+	    (config_get_path("interfaces/{$interface}/ipaddr", '') == 'dhcp')) {
+		if (find_dhclient_process($realiface) == 0) {
+			/* dhclient is not running */
+			log_error("DHCP Client not running on {$interface} ($realiface), reconfiguring dhclient.");
+			interface_dhcp_configure($interface);
+		}
+	} else {
+		log_error("Ignoring link event during boot sequence.");
+	}
+	return;
 }
 
 if (!empty($realiface)) {

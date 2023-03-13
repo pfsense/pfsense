@@ -539,6 +539,15 @@ if ($_POST['apply']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
+		/* Reserved name? */
+		global $pf_reserved_keywords, $reserved_table_names;
+		$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_table_names);
+		foreach ($pf_reserved_keywords as $rk) {
+			if (strcasecmp($rk, $_POST['descr']) == 0) {
+				$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $rk);
+			}
+		}
+
 		/* description unique? */
 		foreach ($ifdescrs as $ifent => $ifdescr) {
 			if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {

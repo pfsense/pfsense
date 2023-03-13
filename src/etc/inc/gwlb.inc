@@ -801,26 +801,28 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
-					if (is_array($config['openvpn'][$ovpntype])) {
-						foreach ($config['openvpn'][$ovpntype] as & $ovpnconf) {
-							if ($ovpnconf['vpnid'] == $ovpnid) {
-								// skip IPv6-only interfaces
-								if ($ovpnconf['create_gw'] == "v6only") {
-									continue 3;
-								}
-								// skip tap interfaces
-								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 3;
-								}
+					foreach (config_get_path("openvpn/{$ovpntype}", []) as $ovpnconf) {
+						if (empty($ovpnconf)) {
+							continue;
+						}
+						if ($ovpnconf['vpnid'] == $ovpnid) {
+							// skip IPv6-only interfaces
+							if ($ovpnconf['create_gw'] == "v6only") {
+								continue 3;
+							}
+							// skip tap interfaces
+							if ($ovpnconf['dev_mode'] == "tap") {
+								continue 3;
 							}
 						}
 					}
 					$ctype = "VPNv4";
 				} elseif (substr($ifcfg['if'], 0, 5) == "ipsec") {
 					$ikeid = substr($ifcfg['if'], 5);
-					if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
-						foreach ($config['ipsec']['phase1'] as $ph1ent) {
-							if ($ph1ent['disabled']) {
+					if (!empty(config_get_path('ipsec/phase1', [])) &&
+					    !empty(config_get_path('ipsec/phase2', []))) {
+						foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+							if (empty($ph1ent) || $ph1ent['disabled']) {
 								continue;
 							}
 							$vtisubnet_spec = ipsec_vti($ph1ent, true);
@@ -944,26 +946,28 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
-					if (is_array($config['openvpn'][$ovpntype])) {
-						foreach ($config['openvpn'][$ovpntype] as & $ovpnconf) {
-							if ($ovpnconf['vpnid'] == $ovpnid) {
-								// skip IPv4-only interfaces
-								if ($ovpnconf['create_gw'] == "v4only") {
-									continue 3;
-								}
-								// skip tap interfaces
-								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 3;
-								}
+					foreach (config_get_path("openvpn/{$ovpntype}", []) as $ovpnconf) {
+						if (empty($ovpnconf)) {
+							continue;
+						}
+						if ($ovpnconf['vpnid'] == $ovpnid) {
+							// skip IPv4-only interfaces
+							if ($ovpnconf['create_gw'] == "v4only") {
+								continue 3;
+							}
+							// skip tap interfaces
+							if ($ovpnconf['dev_mode'] == "tap") {
+								continue 3;
 							}
 						}
 					}
 					$ctype = "VPNv6";
 				} elseif (substr($ifcfg['if'], 0, 5) == "ipsec") {
 					$ikeid = substr($ifcfg['if'], 5);
-					if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
-						foreach ($config['ipsec']['phase1'] as $ph1ent) {
-							if ($ph1ent['disabled']) {
+					if (!empty(config_get_path('ipsec/phase1', [])) &&
+					    !empty(config_get_path('ipsec/phase2', []))) {
+						foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+							if (empty($ph1ent) || $ph1ent['disabled']) {
 								continue;
 							}
 							$vtisubnet_spec = ipsec_vti($ph1ent, true);

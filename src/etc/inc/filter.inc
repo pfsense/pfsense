@@ -695,7 +695,7 @@ function filter_generate_scrubing() {
 	if (config_path_enabled('system','vpn_fragment_reassemble')) {
 		$fragreassemble = "fragment reassemble";
 	} else {
-		$fragreassemble = "";
+		$fragreassemble = "fragment no reassemble";
 	}
 
 	if (config_path_enabled('system','maxmss_enable')) {
@@ -746,8 +746,8 @@ function filter_generate_scrubing() {
 			$scrubrules .= "scrub on \${$scrubifname6} inet6 all {$scrubnodf} {$scrubrnid} {$mssclamp6} " .
 			    "fragment reassemble\n";
 		} else if (!empty($mssclamp4)) {
-			$scrubrules .= "scrub on \${$scrubcfg['descr']} inet {$mssclamp4}\n";
-			$scrubrules .= "scrub on \${$scrubifname6} inet6 {$mssclamp6}\n";
+			$scrubrules .= "scrub on \${$scrubcfg['descr']} inet {$mssclamp4} fragment no reassemble\n";
+			$scrubrules .= "scrub on \${$scrubifname6} inet6 {$mssclamp6} fragment no reassemble\n";
 		}
 	}
 	return $scrubrules;

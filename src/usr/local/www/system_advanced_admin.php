@@ -171,11 +171,12 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'webgui-login-messages',
-	'WebGUI login messages',
-	'Disable logging of webConfigurator successful logins',
+	'GUI login messages',
+	'Lower syslog level for successful GUI login events',
 	$pconfig['quietlogin']
-))->setHelp('When this is checked, successful logins to the webConfigurator will '.
-	'not be logged.');
+))->setHelp('When this is checked, successful logins to the GUI will '.
+	'be logged as a lower non-emergency level. Note: The console bell ' .
+	'behavior can be controlled independently on the Notifications tab.');
 
 if ($pconfig['interfaces_lan']) {
 	$lockout_interface = "LAN";

@@ -1799,7 +1799,8 @@ function log_error($error) {
 function log_auth($error) {
 	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
-	syslog(LOG_AUTH, "$page: $error");
+	$level = config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE|LOG_AUTH : LOG_AUTH;
+	syslog($level, "{$page}: {$error}");
 	if (g_get('debug')) {
 		syslog(LOG_WARNING, var_export(debug_backtrace()));
 	}

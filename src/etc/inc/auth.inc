@@ -2121,9 +2121,7 @@ function session_auth() {
 			$_SESSION['last_access'] = time();
 			$_SESSION['protocol'] = config_get_path('system/webgui/protocol');
 			phpsession_end(true);
-			if (!config_path_enabled('system/webgui', 'quietlogin')) {
-				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()));
-			}
+			log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()));
 			if (isset($_POST['postafterlogin'])) {
 				return true;
 			} else {

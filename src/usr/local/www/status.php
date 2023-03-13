@@ -441,12 +441,22 @@ defCmdT("OS-Package Manager Configuration", "/usr/local/sbin/pkg-static -vv");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
 
+defCmdT("Disk-Filesystem Table", "/bin/cat /etc/fstab");
+defCmdT("Disk-Swap Information", "/usr/sbin/swapinfo");
+
 if (is_module_loaded("zfs.ko")) {
 	defCmdT("Disk-ZFS List", "/sbin/zfs list");
 	defCmdT("Disk-ZFS Properties", "/sbin/zfs get all");
 	defCmdT("Disk-ZFS Pool List", "/sbin/zpool list");
 	defCmdT("Disk-ZFS Pool Status", "/sbin/zpool status");
 }
+
+defCmdT("Disk-GEOM Tree", "/sbin/geom -t");
+defCmdT("Disk-GEOM Disk List", "/sbin/geom disk list -a");
+defCmdT("Disk-GEOM Partition Summary", "/sbin/geom part show -p");
+defCmdT("Disk-GEOM Partition Details", "/sbin/geom part list");
+defCmdT("Disk-GEOM Label Status", "/sbin/geom label status");
+defCmdT("Disk-GEOM Label Details", "/sbin/geom label list");
 defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
 exec("/bin/date", $dateOutput, $dateStatus);

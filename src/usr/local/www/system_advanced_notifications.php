@@ -97,7 +97,6 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-
 $section = new Form_Section('E-Mail');
 
 $section->addInput(new Form_Checkbox(
@@ -201,12 +200,22 @@ $form->add($section);
 $section = new Form_Section('Sounds');
 
 $section->addInput(new Form_Checkbox(
+	'consolebell',
+	'Console Bell',
+	'Enable the console bell',
+	($pconfig['consolebell'] == 'enabled')
+))->setHelp('When checked, emergency console messages, such as from a GUI login, '.
+	'will trigger a bell in connected consoles including serial terminals. ' .
+	'On devices with a speaker, such messages can trigger an audible beep.');
+
+$section->addInput(new Form_Checkbox(
 	'disablebeep',
 	'Startup/Shutdown Sound',
 	'Disable the startup/shutdown beep',
 	$pconfig['disablebeep']
 ))->setHelp('When this is checked, startup and shutdown sounds will no longer '.
-	'play.');
+	'play through the built-in PC speaker. Has no effect on devices without ' .
+	'a speaker.');
 
 $form->add($section);
 

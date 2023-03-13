@@ -108,6 +108,12 @@ function activate_sysctls() {
 	$ipsec_filtermode = config_get_path('ipsec/filtermode', 'enc');
 	$sysctls = array_merge($sysctls, $ipsec_filter_sysctl[$ipsec_filtermode]);
 
+	if (config_get_path('system/consolebell', 'enabled') == 'enabled') {
+		$sysctls['kern.vt.enable_bell'] = '1';
+	} else {
+		$sysctls['kern.vt.enable_bell'] = '0';
+	}
+
 	foreach (config_get_path('sysctl/item', []) as $tunable) {
 		if ($tunable['value'] == "default") {
 			$value = get_default_sysctl_value($tunable['tunable']);

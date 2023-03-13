@@ -89,6 +89,7 @@ function getAdvancedNotifications($json = false) {
 	}
 
 	// System Sounds
+	$nconfig['consolebell'] = config_get_path('system/consolebell', 'enabled');
 	$nconfig['disablebeep'] = isset($config['system']['disablebeep']);
 
 	// Telegram
@@ -230,11 +231,19 @@ function saveAdvancedNotifications($post, $json = false) {
 		}
 
 		// System Sounds
+		if ($post['consolebell'] == "yes") {
+			config_set_path('system/consolebell', 'enabled');
+			set_single_sysctl('kern.vt.enable_bell', '1');
+		} else {
+			config_set_path('system/consolebell', 'disabled');
+			set_single_sysctl('kern.vt.enable_bell', '0');
+		}
 		if ($post['disablebeep'] == "yes") {
 			$config['system']['disablebeep'] = true;
 		} else {
 			config_del_path('system/disablebeep');
 		}
+
 		// Telegram
 		$config['notifications']['telegram']['enabled'] = ($post['enable_telegram'] == "yes") ? true : false;
 		$config['notifications']['telegram']['api'] = $post['api'];

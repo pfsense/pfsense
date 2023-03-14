@@ -6,6 +6,6 @@ use Tools\Rector\Rector\Rules\ArrayGetExprRector;
 
 return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->ruleWithConfiguration(ArrayGetExprRector::class,
-										 ['var' => 'g', 'func' => 'g_get']);
+										 ['g' => 'g_get']);
 };
 ?>

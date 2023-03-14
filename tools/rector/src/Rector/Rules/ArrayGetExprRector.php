@@ -52,16 +52,11 @@ use Tools\Rector\Rector\Helpers;
 final class ArrayGetExprRector extends AbstractRector implements ConfigurableRectorInterface
 {
 	/**
-	 * The name of the global variable we wish to replace
-	 * @var string
+	 * Dictionary of var => get function pairs
+	 * @var array
 	 */
-	private $global_var = "";
+	private $vars = [];
 
-	/**
-	 * The name of the get function to replace the array dim with
-	 * @var string
-	 */
-	private $global_getfunc = "";
 
 	/**
 	 * Internal state to set when traversing an array access
@@ -85,8 +80,7 @@ final class ArrayGetExprRector extends AbstractRector implements ConfigurableRec
 	}
 
 	public function configure(array $configuration): void {
-		$this->global_var = $configuration['var'];
-		$this->global_getfunc = $configuration['func'];
+		$this->vars = $configuration;
 	}
 
 	/**
@@ -135,7 +129,7 @@ CODE_SAMPLE
 	 */
 	public function refactor(Node $node) : ?Node
 	{
-		if (empty($this->global_var) || empty($this->global_getfunc)) {
+		if (empty($this->vars)) {
 			return null;
 		}
 
@@ -222,8 +216,15 @@ CODE_SAMPLE
 			return null;
 		}
 
-		// is the variable named 'g'?
-		if (!$this->isName($var, $this->global_var)) {
+		// is the variable named in our dict?
+		$var_getter = null;
+		foreach  ($this->vars as $_var_name => $_var_getter) {
+			if ($this->isName($var, $_var_name)) {
+				$var_getter = $_var_getter;
+				break;
+			}
+		}
+		if ($var_getter === null) {
 			// skip
 			return null;
 		}
@@ -245,7 +246,7 @@ CODE_SAMPLE
 		$pathArgument = $this->buildPathArgNode($arrayPathNodes);
 
 		// return a new function call node
-		return ($this->nodeFactory->createFuncCall($this->global_getfunc, [$pathArgument]));
+		return ($this->nodeFactory->createFuncCall($var_getter, [$pathArgument]));
 	}
 
 	/**

@@ -2,27 +2,29 @@
 declare(strict_types=1);
 namespace Tools\Rector\Tests\Rector\ArrayGetExprRector;
 
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Iterator;
+use Rector\Testing\Contract\RectorTestInterface;
+use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-final class ArrayGetExprRectorTest extends AbstractRectorTestCase {
+final class ArrayGetExprRectorTest extends AbstractRectorTestCase implements RectorTestInterface {
 	/**
+	 * @test
 	 * @dataProvider provideData()
 	 */
-	public function test(string $file) : void {
+	public function g(string $file) : void {
 		$this->doTestFile($file);
 	}
 
 	/**
 	 * @return Iterator<SmartFileInfo>
 	 */
-	public function provideData(): Iterator {
-		return $this->yieldFilesFromDirectory(__DIR__ . '/var_g/Fixture');
+	public static function provideData(string $test_name): Iterator {
+		return AbstractRectorTestCase::yieldFilesFromDirectory(__DIR__ . "/var_{$test_name}/Fixture");
 	}
 
 	public function provideConfigFilePath(): string {
-		return __DIR__ . '/var_g/Config/config.php';
+		return __DIR__ . "/Config/config.php";
 	}
 }
 ?>

@@ -35,18 +35,37 @@ $global_gateway_state_kill_modes = array(
 );
 
 // Functions included by system_advanced_misc.php =============================
+function ramdisk_current_usage($mnt, $ramonly = true) {
+	if (is_array($mnt)) {
+		$disks = implode(' ', array_map('escapeshellarg', $mnt));
+	} else {
+		$disks = escapeshellarg($mnt);
+	}
+	$filter = ($ramonly) ? '/tmpfs/' : '';
+	return (int) trim(exec("/bin/df -k {$disks} | /usr/bin/awk '{$filter} {sum += \$3 * 1024} END {print sum+0}'"));
+}
+function ramdisk_available_memory($includeswap = true) {
+	/* Current free RAM, converted from page count to bytes. */
+	$free = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");
+
+	/* Adjust available memory to account for existing RAM disk contents
+	 * https://redmine.pfsense.org/issues/10420 */
+	if (config_path_enabled('system','use_mfs_tmpvar')) {
+		$free += ramdisk_current_usage(['/var', '/tmp'], true);
+	}
+
+	if ($includeswap) {
+		/* Also include total swap space in calculation since tmpfs data can be swapped */
+		$free += (int) trim(exec("/usr/sbin/swapinfo -k | /usr/bin/tail -1 | /usr/bin/awk '{print \$2 * 1024}'"));
+	}
+
+	return $free;
+}
+
 function getSystemAdvancedMisc($json = false) {
 	global $config;
 
 	$pconfig = array();
-
-	$pconfig['available_kernel_memory'] = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");
-
-	/* Adjust available kernel memory to account for existing RAM disks
-	 * https://redmine.pfsense.org/issues/10420 */
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		$pconfig['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
-	}
 
 	$pconfig['proxyurl'] = config_get_path('system/proxyurl');
 	$pconfig['proxyport'] = config_get_path('system/proxyport');
@@ -120,14 +139,6 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
 	);
 
-	$post['available_kernel_memory'] = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");;
-
-	/* Adjust available kernel memory to account for existing RAM disks
-	 * https://redmine.pfsense.org/issues/10420 */
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		$post['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
-	}
-
 	if (!empty($post['crypto_hardware']) && !array_key_exists($post['crypto_hardware'], $crypto_modules)) {
 		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
 	}
@@ -152,8 +163,8 @@ function saveSystemAdvancedMisc($post, $json = false) {
 	 * https://redmine.pfsense.org/issues/13479 */
 	if ($post['use_mfs_tmpvar'] == "yes") {
 		if (is_numericint($post['use_mfs_tmp_size']) && is_numericint($post['use_mfs_var_size']) &&
-		    ((($post['use_mfs_tmp_size'] + $post['use_mfs_var_size']) * 1024 * 1024) > $post['available_kernel_memory'])) {
-			$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available kernel memory.");
+		    ((($post['use_mfs_tmp_size'] + $post['use_mfs_var_size']) * 1024 * 1024) > ramdisk_available_memory())) {
+			$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available memory and swap space.");
 		}
 	}
 

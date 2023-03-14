@@ -326,11 +326,12 @@ $section->addInput(new Form_Checkbox(
 	'Use RAM Disks',
 	'Use memory file system for /tmp and /var',
 	$pconfig['use_mfs_tmpvar']
-))->setHelp('Set this to use /tmp and /var as RAM disks (memory file '.
-	'system disks) on a full install rather than use the hard disk. Setting this will '.
-	'cause the data in /tmp and /var to be lost. RRD, '.
+))->setHelp('Check this option to use /tmp and /var as RAM disks (in-memory '.
+	'file system disks) rather than the hard disk. %s' .
+	'NOTE: Setting this will erase the current data in /tmp and /var. RRD, '.
 	'DHCP leases, log directory and Captive Portal data will be retained. ' .
-       	'Changing this setting will cause the firewall to reboot after clicking "Save".');
+	'Changing this setting will cause the firewall to reboot after saving.',
+	'<br/><br/>');
 
 $group = new Form_Group('RAM Disk Size');
 
@@ -340,7 +341,10 @@ $group->add(new Form_Input(
 	'number',
 	$pconfig['use_mfs_tmp_size'],
 	['placeholder' => 40]
-))->setHelp('/tmp RAM Disk<br />Do not set lower than 40.');
+))->setHelp('/tmp RAM Disk%1$sDo not set lower than 40.%1$s' .
+	'Current usage: %2$s',
+	'<br/>',
+	format_bytes(ramdisk_current_usage('/tmp', false)));
 
 $group->add(new Form_Input(
 	'use_mfs_var_size',
@@ -348,12 +352,17 @@ $group->add(new Form_Input(
 	'number',
 	$pconfig['use_mfs_var_size'],
 	['placeholder' => 60]
-))->setHelp('/var RAM Disk<br />Do not set lower than 60.');
+))->setHelp('/var RAM Disk%1$sDo not set lower than 60.%1$s' .
+	'Current usage: %2$s',
+	'<br/>',
+	format_bytes(ramdisk_current_usage('/var', false)));
 
 $group->setHelp('Sets the size, in MiB, for the RAM disks. ' .
-	'Ensure each RAM disk is large enough to contain the current contents of the directories in question. %s' .
-	'Maximum total size of all RAM disks cannot exceed available memory: %s',
-	'<br/>', format_bytes( $pconfig['available_kernel_memory']));
+	'Ensure each RAM disk is large enough to contain the current contents of the directories in question. %1$s' .
+	'Maximum total size of all RAM disks cannot exceed available memory and swap space: %2$s' .
+	'%1$s%1$sNOTE: If /tmp and /var RAM disk usage exceeds the available free RAM (%3$s), the RAM disks will use ' .
+	'swap memory which leads to disk activity.',
+	'<br/>', format_bytes( ramdisk_available_memory() ), format_bytes(ramdisk_available_memory(false)));
 
 $section->add($group);
 
@@ -427,7 +436,7 @@ $form->add($section);
 
 print $form;
 
-$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This requires the firewall\nto reboot.\n\nReboot now ?');
+$ramdisk_msg = gettext('The \"Use RAM Disks\" setting has been changed.\nThis requires the firewall to reboot.\n\nReboot now ?');
 $use_mfs_tmpvar_changed = $rebootneeded;
 ?>
 

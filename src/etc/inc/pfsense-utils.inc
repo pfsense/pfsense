@@ -1521,7 +1521,11 @@ function get_ppp_uptime($port) {
 		$uptime_data = explode("\n", $saved_time);
 		$sec = 0;
 		foreach ($uptime_data as $upt) {
-			$sec += substr($upt, 1 + strpos($upt, " "));
+			/* Skip blank lines, trim, and cast to int to ensure type matches.
+			 * https://redmine.pfsense.org/issues/14117 */
+			if (!empty($upt)) {
+				$sec += (int) trim(substr($upt, 1 + strpos($upt, " ")));
+			}
 		}
 		return convert_seconds_to_dhms($sec);
 	} else {

@@ -37,6 +37,7 @@ return static function (RectorConfig $rectorConfig): void {
      */ 
 
 	$rectorConfig->ruleWithConfiguration(Rules\ArrayGetExprRector::class,
-										 ['g' => 'g_get']);
+										 ['g' => 'g_get',
+										  'config' => 'config_get_path']);
 
 };

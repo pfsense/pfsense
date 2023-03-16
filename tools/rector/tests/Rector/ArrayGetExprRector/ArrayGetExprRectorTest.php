@@ -17,6 +17,14 @@ final class ArrayGetExprRectorTest extends AbstractRectorTestCase implements Rec
 	}
 
 	/**
+	 * @test
+	 * @dataProvider provideData()
+	 */
+	public function config(string $file) : void {
+		$this->doTestFile($file);
+	}
+
+	/**
 	 * @return Iterator<SmartFileInfo>
 	 */
 	public static function provideData(string $test_name): Iterator {

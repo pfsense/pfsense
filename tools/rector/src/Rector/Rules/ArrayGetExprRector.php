@@ -34,12 +34,15 @@ use PhpParser\Node\Arg;
 
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\BinaryOp\Concat;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\ShellExec;
 use PhpParser\Node\Expr\Variable;
 
 use PhpParser\Node\Scalar;
 use PhpPArser\Node\Scalar\Encapsed;
+use PhpParser\Node\Scalar\EncapsedStringPart;
 use PhpParser\Node\Scalar\String_;
 
 use PhpParser\Node\Stmt\Expression;
@@ -232,47 +235,204 @@ CODE_SAMPLE
 		// resolve the array keys	
 		$arrayPathNodes = $this->resolveArrayDimFetchPathNodes($node);
 
-		// this rector only handles array accesses with one level
-		if (count($arrayPathNodes) > 1) {
-			return null;
-		}
-		// skip if any are not scalars, this is the simple case
-		if (!$this->areScalarNodes($arrayPathNodes)) {
-			// skip
-		    	return null;
-		}
-		
 		// build the path argument
 		$pathArgument = $this->buildPathArgNode($arrayPathNodes);
+
+		if ($pathArgument === null) {
+			// skip
+			return null;
+		}
 
 		// return a new function call node
 		return ($this->nodeFactory->createFuncCall($var_getter, [$pathArgument]));
 	}
 
 	/**
-	 * @param Node[] $nodes
+	 * 
+	 * @param &Node[] $nodes
 	 * @param string $delimiter
 	 *
-	 * @return String_
+	 * @return String_|Null
 	 */
-	public function buildPathStringNode(array $nodes, string $delimiter = '/') : String_ 
+	public function buildPathStringNode(array &$nodes, string $delimiter = '/') : ?String_
 	{
-		array_walk($nodes, function(&$node) {
-			$node = $node->value;
-		});
-
-		return (new String_(implode($delimiter, $nodes)));		
+		$strtmp = [];
+		while(!empty($nodes) && $nodes[0] instanceof Scalar) {
+			$strtmp[] = array_shift($nodes)->value;
+		}
+		if (!empty($strtmp)) {
+			$node = new String_(implode($delimiter, $strtmp));
+			return $node;
+		} else {
+			return null;
+		}
+	}
+		
+	/**
+	 * @param &Node[] $nodes
+	 * @param string $delimiter
+	 *
+	 * @return Encapsed|Null
+	 */
+	public function buildPathEncapsedNode(array &$nodes, string $delimiter = '/') : ?Encapsed
+	{
+		$parts = [];
+		$last_var = false;
+		while(!empty($nodes)) {
+			if ($nodes[0] instanceof String_) {
+				$part = $this->buildPathStringNode($nodes, $delimiter);
+				if ($part !== null) {
+					/* Prepend slash if part follows variable */
+					if ($last_var) {
+						$part->value = $delimiter . $part->value;
+						$last_var = false;
+					}
+					/* Append slash if more follows */
+					if (!empty($nodes)) {
+						$part->value .= $delimiter;
+					}
+ 					$parts[] = new EncapsedStringPart($part->value);
+				} else {
+					return null;
+				}
+			} else if ($nodes[0] instanceof Variable) {
+				$last_var = true;
+				$parts[] = array_shift($nodes);
+			} else {
+				$parts[] = new EncapsedStringPart(array_shift($nodes)->getType());
+			}
+		}
+		return (new Encapsed($parts));
 	}
 
+	/**
+	 * @param &Node[] $nodes
+	 * @param string $delimiter
+	 *
+	 * @return Scalar|null
+	 */
+	public function buildPathEncapsedOrStringNode(array &$nodes, string $delimiter = '/') : ?Scalar
+	{
+		$node = null;
+		$strnode = null;
+
+		while(!empty($nodes)) {
+			if ($nodes[0] instanceof String_) {
+				$strnode = $this->buildPathStringNode($nodes, $delimiter);
+			} else if ($nodes[0] instanceof Variable) {
+				if ($strnode != null) {
+					array_unshift($nodes, $strnode);
+					$strnode = null;
+				}
+				/* Start encapsed node */
+				$node = $this->buildPathEncapsedNode($nodes, $delimiter);
+			} else {
+				break;
+			}
+		}
+		
+		if ($strnode !== null) {
+			return $strnode;
+		}
+		return $node;
+	}
+
+	/**
+	 * @param &Node[] $nodes
+	 * @param string $delimiter
+	 *
+	 * @return Concat|Null
+	 */
+	public function buildPathConcatNode(array &$nodes, string $delimiter = '/') : ?Concat
+	{
+		/* expect nodes[0] is the lhs */
+		$lhs = array_shift($nodes);
+		if ($nodes[0] instanceof String_ || $nodes[0] instanceof Variable) {
+			$rhs = $this->buildPathEncapsedOrStringNode($nodes, $delimiter);
+		} else {
+			$rhs = array_shift($nodes);
+		}
+		return new Concat($lhs, $rhs);
+	}
+	
+	/**
+	 * @param &Node node
+	 * @param string delimiter
+	 *
+	 * @return void
+	 */
+	public function appendDelimiter(Node &$node, $delimiter = '/'): void
+	{
+		if ($node instanceof String_) {
+			$node->value .= $delimiter;
+		} else if ($node instanceof Encapsed) {
+			$lastnode = &$node->parts[count($node->parts) - 1];
+			if ($lastnode instanceof String_) {
+				$lastnode->value .= $delimiter;
+			} else {
+				$node->parts[] = new String_($delimiter);
+			}
+		}
+	}
+
+	/**
+	 * @param &Node node
+	 * @param string delimiter
+	 *
+	 * @return void
+	 */
+	public function prependDelimiter(Node &$node, $delimiter = '/'): void
+	{
+		if ($node instanceof String_) {
+			$node->value = $delimiter . $node->value;
+		} else if ($node instanceof Encapsed) {
+			$firstnode = &$node->parts[0];
+			if ($firstnode instanceof String_) {
+				$firstnode->value .= $delimiter;
+			} else {
+				array_unshift($node->parts, new String_($delimiter));
+			}
+		}
+
+	}
+	
 	/**
 	 * @param Node[] $nodes
 	 * @param string $delimiter
 	 *
-	 * @return Arg
+	 * @return Arg|Null
 	 */
-	public function buildPathArgNode(array $nodes, string $delimiter = '/') : Arg
+	public function buildPathArgNode(array $nodes, string $delimiter = '/') : ?Arg
 	{
-		return (new Arg($this->buildPathStringNode($nodes, $delimiter)));
+		$rootnode = null;
+		do {
+			if ($nodes[0] instanceof String_ || $nodes[0] instanceof Variable) {
+				$node = $this->buildPathEncapsedOrStringNode($nodes, $delimiter);
+				if ($rootnode !== null) {
+					$this->prependDelimiter($node, $delimiter);
+				}
+				if (!empty($nodes)) {
+					$this->appendDelimiter($node, $delimiter);
+				}
+				if ($rootnode instanceof Concat) {
+					array_unshift($nodes, $node);
+					array_unshift($nodes, $rootnode);
+					$rootnode = $this->buildPathConcatNode($nodes, $delimiter);
+				} else {
+					$rootnode = $node;
+				}
+			} else if ($nodes[0] instanceof FuncCall) {
+				if ($rootnode !== null) {
+					array_unshift($nodes, $rootnode);
+				}
+				$rootnode = $this->buildPathConcatNode($nodes, $delimiter);
+			} else {
+				/* unhandled type */
+				return null;
+			}
+		} while ($rootnode !== null && !empty($nodes));
+
+		return ($rootnode !== null ? new Arg($rootnode) : null);
 	}
 
 	/**
@@ -331,7 +491,7 @@ CODE_SAMPLE
 	/**
 	 * @param Node $node The top-level ArraydimFetch node
 	 *
-	 * @return Node|null
+	 * @return Node[]|null
 	 */
 	public function resolveArrayDimFetchPathNodes(Node $node) : ?array
 	{

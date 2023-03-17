@@ -930,7 +930,8 @@ function filter_generate_aliases() {
 
 	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
-	foreach (config_get_path('aliases/alias', []) as $aliased) {
+
+	foreach (get_sorted_aliases() as $aliased) {
 		if (is_numericint($aliased['name'])) {
 			// skip aliases with numeric-only names. redmine #4289
 			file_notice("Filter_Reload", sprintf(gettext("Aliases with numeric-only names are not valid. Skipping alias %s"), $aliased['name']));

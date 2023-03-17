@@ -3040,6 +3040,15 @@ function get_alias_list($type = null) {
 	return $result;
 }
 
+/* Returns the current alias contents sorted by name in case insensitive and
+ * natural order.
+ * https://redmine.pfsense.org/issues/14015 */
+function get_sorted_aliases() {
+	$aliases = config_get_path('aliases/alias', []);
+	uasort($aliases, function ($a, $b) { return strnatcasecmp($a['name'], $b['name']); });
+	return $aliases;
+}
+
 /* returns an array consisting of every element of $haystack that is not equal to $needle. */
 function array_exclude($needle, $haystack) {
 	$result = array();

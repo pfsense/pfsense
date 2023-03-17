@@ -111,8 +111,11 @@ display_top_tabs($tab_array);
 	</thead>
 	<tbody>
 <?php
-	$aliases = config_get_path('aliases/alias', []);
-	asort($aliases);
+	/* Ensure aliases are presented in natural sort order so they are easier to locate.
+	 * and preserve keys so that the IDs match in the config and the list.
+	 * https://redmine.pfsense.org/issues/14015 */
+	$aliases = get_sorted_aliases();
+
 	foreach ($aliases as $i => $alias):
 		unset($show_alias);
 		switch ($tab) {

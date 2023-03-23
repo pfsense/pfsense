@@ -491,7 +491,7 @@ $section->addInput(new Form_Input(
 	'TTL',
 	'text',
 	$pconfig['ttl']
-))->setHelp('Choose TTL for the dns record.');
+))->setHelp('Choose TTL for the DNS record.');
 
 $section->addInput(new Form_Input(
 	'maxcacheage',

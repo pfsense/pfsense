@@ -426,17 +426,17 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
-))->setHelp('Username is required for all types except DNS Made Easy, Namecheap, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), DigitalOcean, Linode, Cloudflare and Custom Entries.%1$s' .
+))->setHelp('Username is required for all providers except Cloudflare, Custom Entries, DigitalOcean, DNS Made Easy, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), Linode and Namecheap.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
+			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
+			'Custom Entries: Username and Password represent HTTP Authentication username and passwords.%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
-			'Route 53: Enter the Access Key ID.%1$s' .
-			'GleSYS: Enter the API user.%1$s' .
 			'Domeneshop: Enter the API token.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
+			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
-			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
 			'NoIP: For group authentication, replace semicolon (:) with pound-key (#).%1$s' .
-			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
+			'Route 53: Enter the Access Key ID.', '<br />');
 
 $section->addPassword(new Form_Input(
 	'passwordfld',

@@ -78,7 +78,7 @@ function get_uptime() {
 		$minutes = "s";
 	}
 
-	if ($upmins > 1) {
+	if ($upsecs > 1) {
 		$seconds = "s";
 	}
 

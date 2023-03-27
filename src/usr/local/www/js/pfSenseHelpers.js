@@ -263,10 +263,11 @@ function decrStringInt( str )	{
 
 // Called after a delete so that there are no gaps in the numbering. Most of the time the config system doesn't care about
 // gaps, but I do :)
-function renumber() {
+function renumber(element_id) {
 	var idx = 0;
+	var groupName = getRowGroupName(element_id);
 
-	$('.repeatable').each(function() {
+	$('.repeatable' + groupName).each(function() {
 
 		$(this).find('input').each(function() {
 			$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
@@ -289,11 +290,23 @@ function renumber() {
 	});
 }
 
+// Return the repeatable group number, if it is defined (=added as number to the end of the control's id, e.g. "addrow2")
+function getRowGroupName(element_id) {
+	var groupName = ''; // Always make sure we du return an empty string, so we can use it in a concatenation without doing additional if checks
+	var regexString = /^[a-zA-Z]+(_[a-zA-Z]+)[0-9]*$/; // match any string that begins with one or more characters, has a group name after a '_' and ends with nothing or numbers
+	var regexResult = regexString.exec(element_id);
+	if (regexResult != null) { // the capture inside the parentheses has succeeded, so we have successfully captured a group name
+		groupName = regexResult[1]; // only then, assign the second value to groupName
+	}
+	return groupName;
+}
+
 function delete_row(rowDelBtn) {
 	var rowLabel;
+	var groupName = getRowGroupName(rowDelBtn);
 
 	// If we are deleting row zero, we need to save/restore the label
-	if ( (rowDelBtn == "deleterow0") && ((typeof retainhelp) == "undefined")) {
+	if ((rowDelBtn == "deleterow" + groupName + "0") && ((typeof retainhelp) == "undefined")) {
 		rowLabel = $('#' + rowDelBtn).parent('div').parent('div').find('label:first').text();
 	}
 
@@ -301,17 +314,20 @@ function delete_row(rowDelBtn) {
 
 	renumber();
 	checkLastRow();
+	renumber(rowDelBtn);
+	checkLastRow(rowDelBtn);
 
-	if (rowDelBtn == "deleterow0") {
+	if (rowDelBtn == "deleterow" + groupName + "0") {
 		$('#' + rowDelBtn).parent('div').parent('div').find('label:first').text(rowLabel);
 	}
 }
 
-function checkLastRow() {
-	if (($('.repeatable').length <= 1) && (! $('#deleterow0').hasClass("nowarn"))) {
-		$('#deleterow0').hide();
+function checkLastRow(element_id) {
+	var groupName = getRowGroupName(element_id);
+	if($('.repeatable' + groupName).length <= 1 && (! $('#deleterow' + groupName + '0').hasClass("nowarn"))) {
+		$('#deleterow' + groupName + '0').hide();
 	} else {
-		$('[id^=deleterow]').show();
+		$('[id^=deleterow' + groupName + ']').show();
 	}
 }
 
@@ -346,9 +362,11 @@ function bump_input_id(newGroup) {
 		}
 	});
 }
-function add_row() {
+function add_row(rowAddBtn) {
+	var groupName = getRowGroupName(rowAddBtn);
+	
 	// Find the last repeatable group
-	var lastRepeatableGroup = $('.repeatable:last');
+	var lastRepeatableGroup = $('.repeatable' + groupName + ':last');
 
 	// If the number of repeats exceeds the maximum, do not add another clone
 	if ($('.repeatable').length >= lastRepeatableGroup.attr('max_repeats')) {
@@ -365,6 +383,11 @@ function add_row() {
 	// Increment the suffix number for each input element in the new group
 	bump_input_id(newGroup);
 
+	// Somehow delete button IDs did not increment, so increment the suffix number for delete buttons also
+	$(newGroup).find('button').each(function() {
+		$(this).prop("id", bumpStringInt(this.id));
+		$(this).prop("name", bumpStringInt(this.name));
+	});
 	// And for "for" tags
 //	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
 
@@ -381,7 +404,7 @@ function add_row() {
 
 	setMasks();
 
-	checkLastRow();
+	checkLastRow(rowAddBtn);
 
 	// Autocomplete
 	if ( typeof addressarray !== 'undefined') {
@@ -397,12 +420,13 @@ function add_row() {
 	// Now that we are no longer cloning the event handlers, we need to remove and re-add after a new row
 	// has been added to the table
 	$('[id^=delete]').unbind();
-	$('[id^=delete]').click(function(event) {
-		if ($('.repeatable').length > 1) {
+	$('[id^=delete]').click(function() {
+		var groupName = getRowGroupName(this.id);
+		if($('.repeatable' + groupName).length > 1) {
 			if ((typeof retainhelp) == "undefined")
-				moveHelpText($(this).attr("id"));
+				moveHelpText(this.id);
 
-			delete_row($(this).attr("id"));
+			delete_row(this.id);
 		} else if ($(this).hasClass("nowarn")) {
 			clearRow0();
 		} else {
@@ -417,11 +441,12 @@ $('[id^=delete]').prop('type','button');
 
 // on click . .
 $('[id^=addrow]').click(function() {
-	add_row();
+	add_row(this.id);
 });
 
-$('[id^=delete]').click(function(event) {
-	if ($('.repeatable').length > 1) {
+$('[id^=delete]').click(function() {
+	var groupName = getRowGroupName(this.id);
+	if($('.repeatable' + groupName).length > 1) {
 		if ((typeof retainhelp) == "undefined")
 			moveHelpText($(this).attr("id"));
 

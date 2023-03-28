@@ -1439,7 +1439,7 @@ function is_radvd_enabled() {
 		if (empty($dhcpv6ifconf)) {
 			continue;
 		}
-		if (config_path_enabled("interfaces/{$dhcpv6if}")) {
+		if (!config_path_enabled("interfaces/{$dhcpv6if}")) {
 			continue;
 		}
 

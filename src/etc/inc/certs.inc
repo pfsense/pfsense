@@ -273,7 +273,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256", $keyt
 	// return our ca information
 	$ca['crt'] = base64_encode($str_crt);
 	$ca['prv'] = base64_encode($str_key);
-	$ca['serial'] = 0;
+	$ca['serial'] = 1;
 
 	return true;
 }

@@ -246,16 +246,26 @@ function notices_sendqueue() {
 	$messagequeue = array();
 
 	while(true) {
-		$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 		$nothing_done_count++;
 		$smtpcount = 0;
 		$messages = array();
-		if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+		if (file_exists("{$g['vardb_path']}/notifyqueue.messages") &&
+		    is_writable("{$g['vardb_path']}/notifyqueue.messages")) {
+			$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 			$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
 			$messagequeue = $messages;
 			$messages['mails']['item'] = array(); // clear all items to be send
-			file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+			$ret = file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+			if ($ret === false) {
+				log_error("ERROR: Failed to write notify message queue!");
+				return;
+			}
 			unset($messages);
+		} else {
+			/* Queue does not exist or is not writable, so no action can be taken
+			 * https://redmine.pfsense.org/issues/14031
+			 */
+			return;
 		}
 		// clear lock before trying to send messages, so new one's can be added
 		unlock($notifyqueue_lck);
@@ -296,11 +306,21 @@ function notify_via_queue_add($message, $type='mail') {
 	$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 	$messages = array();
 	if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+		if (!is_writable("{$g['vardb_path']}/notifyqueue.messages")) {
+			/* Cannot write to notify queue, so exit early
+			 * https://redmine.pfsense.org/issues/14031
+			 */
+			return;
+		}
 		$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
 	}
-	if(is_array($messages)) {
+	if (is_array($messages)) {
 		$messages['mails']['item'][] = $mail;
-		file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+		$ret = file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+		if ($ret === false) {
+			log_error("ERROR: Failed to write notify message queue!");
+			return;
+		}
 	}
 	unset($messages);
 

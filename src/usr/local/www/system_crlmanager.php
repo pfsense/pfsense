@@ -114,12 +114,32 @@ switch ($act) {
 	case 'addcert':
 		unset($input_errors);
 		$pconfig = $_REQUEST;
+
+		/* input validation */
+		$reqdfields = explode(" ", "descr id");
+		$reqdfieldsn = array(
+			gettext("Descriptive name"),
+			gettext("CRL ID"));
+
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+		if (preg_match("/[\?\>\<\&\/\\\"\']/", $pconfig['descr'])) {
+			array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+		}
+		if ($pconfig['lifetime'] > $max_lifetime) {
+			$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
+		}
+		if ((strlen($pconfig['serial']) > 0) && !cert_validate_serial($pconfig['serial'])) {
+			$input_errors[] = gettext("Please enter a valid integer serial number.");
+		}
+
 		$revoke_list = array();
-		if (!$pconfig['crlref'] || (!$pconfig['certref'] && (strlen($pconfig['revokeserial']) == 0))) {
+		if (!$pconfig['crlref']) {
 			pfSenseHeader("system_crlmanager.php");
 			exit;
 		}
 		$crl =& lookup_crl($pconfig['crlref']);
+
 		if (!is_array($pconfig['certref'])) {
 			$pconfig['certref'] = array();
 		}
@@ -136,7 +156,7 @@ switch ($act) {
 				}
 			}
 		}
-		if (empty($pconfig['certref']) && empty($revoke_list)) {
+		if (empty($pconfig['save']) && empty($pconfig['certref']) && empty($revoke_list)) {
 			$input_errors[] = gettext("Select one or more certificates or enter a serial number to revoke.");
 		}
 		foreach ($pconfig['certref'] as $rcert) {
@@ -147,15 +167,24 @@ switch ($act) {
 				$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
 			}
 		}
+
 		if (!$input_errors) {
-			$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
-			foreach ($revoke_list as $cert) {
-				cert_revoke($cert, $crl, $reason);
+			$crl['descr'] = $pconfig['descr'];
+			$crl['lifetime'] = $pconfig['lifetime'];
+			$crl['serial'] = $pconfig['serial'];
+			if (!empty($revoke_list)) {
+				$savemsg = "Revoked certificate(s) in CRL {$crl['descr']}.";
+				$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
+				foreach ($revoke_list as $cert) {
+					cert_revoke($cert, $crl, $reason);
+				}
+				// refresh IPsec and OpenVPN CRLs
+				openvpn_refresh_crls();
+				ipsec_configure();
+			} else {
+				$savemsg = "Saved CRL {$crl['descr']}.";
 			}
-			// refresh IPsec and OpenVPN CRLs
-			openvpn_refresh_crls();
-			ipsec_configure();
-			write_config("Revoked certificate(s) in CRL {$crl['descr']}.");
+			write_config($savemsg);
 			pfSenseHeader("system_crlmanager.php");
 			exit;
 		} else {
@@ -202,7 +231,7 @@ switch ($act) {
 		break;
 }
 
-if ($_POST['save']) {
+if ($_POST['save'] && empty($input_errors)) {
 	$input_errors = array();
 	$pconfig = $_POST;
 
@@ -213,7 +242,8 @@ if ($_POST['save']) {
 			gettext("Descriptive name"),
 			gettext("Certificate Revocation List data"));
 	}
-	if ($pconfig['method'] == "internal") {
+	if (($pconfig['method'] == "internal") ||
+	    ($act == "addcert")) {
 		$reqdfields = explode(" ", "descr caref");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
@@ -451,13 +481,13 @@ if ($act == "new" || $act == gettext("Save")) {
 		'descr',
 		'*Descriptive name',
 		'text',
-		$pconfig['descr']
+		$thiscrl['descr']
 	));
 
 	$section->addInput(new Form_Textarea(
 		'crltext',
 		'*CRL data',
-		$pconfig['crltext']
+		!empty($thiscrl['text']) ? base64_decode($thiscrl['text']) : ''
 	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 
 	$form->addGlobal(new Form_Input(
@@ -481,7 +511,34 @@ if ($act == "new" || $act == gettext("Save")) {
 } elseif ($act == "edit") {
 	$crl = $thiscrl;
 
-	$form = new Form(false);
+	$form = new Form();
+
+	$section = new Form_Section('Edit Internal Certificate Revocation List');
+
+	$section->addInput(new Form_Input(
+		'descr',
+		'*Descriptive name',
+		'text',
+		$crl['descr']
+	));
+
+	$section->addInput(new Form_Input(
+		'lifetime',
+		'CRL Lifetime (Days)',
+		'number',
+		$crl['lifetime'],
+		['max' => $max_lifetime]
+	));
+
+	$section->addInput(new Form_Input(
+		'serial',
+		'CRL Serial',
+		'number',
+		$crl['serial'],
+		['min' => '0']
+	));
+
+	$form->add($section);
 ?>
 
 	<div class="panel panel-default">

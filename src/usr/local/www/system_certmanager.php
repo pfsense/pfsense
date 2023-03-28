@@ -338,7 +338,14 @@ if ($_POST['save'] == gettext("Save")) {
 		$pconfig['altnames']['item'] = $altnames;
 
 		/* Input validation for subjectAltNames */
-		foreach ($altnames as $altname) {
+		foreach ($altnames as $idx => $altname) {
+			/* Skip SAN entries with empty values
+			 * https://redmine.pfsense.org/issues/14183
+			 */
+			if (empty($altname['value'])) {
+				unset($altnames[$idx]);
+				continue;
+			}
 			switch ($altname['type']) {
 				case "DNS":
 					if (!is_hostname($altname['value'], true) || is_ipaddr($altname['value'])) {
@@ -1257,7 +1264,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	$section->addInput(new Form_Button(
 		'addrow',
-		'Add',
+		'Add SAN Row',
 		null,
 		'fa-plus'
 	))->addClass('btn-success');

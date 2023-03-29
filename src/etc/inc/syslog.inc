@@ -378,7 +378,8 @@ EOD;
 		unset($syslogconf);
 
 		$sourceip = config_get_path('syslog/sourceip');
-		if (!empty($sourceip)) {
+		if (config_path_enabled('syslog') &&
+		    !empty($sourceip)) {
 			if (config_get_path('syslog/ipproto') == "ipv6") {
 				$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
 				if (!is_ipaddr($ifaddr)) {
@@ -390,11 +391,10 @@ EOD;
 					$ifaddr = get_interface_ipv6($sourceip);
 				}
 			}
-			if (is_ipaddr($ifaddr)) {
-				$sourceip = "-b {$ifaddr}";
-			}
+			$sourceip = is_ipaddr($ifaddr) ? "-b {$ifaddr}" : '';
+		} else {
+			$sourceip = '';
 		}
-
 		$syslogd_extra = "-f {$g['etc_path']}/syslog.conf {$sourceip}";
 	}
 

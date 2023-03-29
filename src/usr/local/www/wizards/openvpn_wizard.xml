@@ -448,10 +448,19 @@
 		<field>
 			<name>descr</name>
 			<displayname>Descriptive name</displayname>
-			<description>A name for administrative reference, to identify this certificate. This is the same as common-name field for other Certificates.</description>
+			<description>A name for administrative reference, to identify this certificate.</description>
 			<type>input</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step6->certca</bindstofield>
+		</field>
+		<field>
+			<name>randomserial</name>
+			<displayname>Randomize Serial</displayname>
+			<type>checkbox</type>
+			<typehint>Use random serial numbers when signing certificates.</typehint>
+			<value>on</value>
+			<description>When enabled, serial numbers for certificates signed by this CA will be automatically randomized and checked for uniqueness instead of using sequential values.</description>
+			<bindstofield>ovpnserver->step6->randomserial</bindstofield>
 		</field>
 		<field>
 			<name>keylength</name>
@@ -509,6 +518,14 @@
 			<bindstofield>ovpnserver->step6->lifetime</bindstofield>
 		</field>
 		<field>
+			<name>commonname</name>
+			<displayname>Common Name</displayname>
+			<description>The internal name of the CA, used as a part of the CA subject. If left blank, the descriptive name will be used instead.</description>
+			<type>input</type>
+			<size>20</size>
+			<bindstofield>ovpnserver->step6->commonname</bindstofield>
+		</field>
+		<field>
 			<name>country</name>
 			<displayname>Country Code</displayname>
 			<description>Two-letter ISO country code (e.g. US, AU, CA) </description>
@@ -519,7 +536,7 @@
 		<field>
 			<name>state</name>
 			<displayname>State or Province</displayname>
-			<description>Full State or Province name, not abbreviated (e.g. Kentucky, Indiana, Ontario).</description>
+			<description>Full State or Province name, not abbreviated (e.g. Texas, Indiana, Ontario).</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step6->state</bindstofield>
@@ -527,7 +544,7 @@
 		<field>
 			<name>city</name>
 			<displayname>City</displayname>
-			<description>City or other Locality name (e.g. Louisville, Indianapolis, Toronto).</description>
+			<description>City or other Locality name (e.g. Austin, Indianapolis, Toronto).</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step6->city</bindstofield>
@@ -535,10 +552,18 @@
 		<field>
 			<name>organization</name>
 			<displayname>Organization</displayname>
-			<description>Organization name, often the Company or Group name.</description>
+			<description>Organization name, often the company or group name.</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step6->organization</bindstofield>
+		</field>
+		<field>
+			<name>organizationalunit</name>
+			<displayname>Organizational Unit</displayname>
+			<description>Organizational Unit name, often a department or team name.</description>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step6->organizationalunit</bindstofield>
 		</field>
 		<field>
 			<name>Add new CA</name>
@@ -591,7 +616,7 @@
 		<field>
 			<name>descr</name>
 			<displayname>Descriptive name</displayname>
-			<description>A name for administrative reference, to identify this certificate. This is also known as the certificate's "Common Name."</description>
+			<description>A name for administrative reference, to identify this certificate.</description>
 			<type>input</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step9->certname</bindstofield>
@@ -652,6 +677,14 @@
 			<bindstofield>ovpnserver->step9->lifetime</bindstofield>
 		</field>
 		<field>
+			<name>commonname</name>
+			<displayname>Common Name</displayname>
+			<description>The internal name of the server certificate, used as a part of the certificate subject. Typically set to the hostname of this system. This value is also used as a Subject Alternative Name (SAN). If left blank, the Descriptive Name value will be used for the Common Name and SAN instead.</description>
+			<type>input</type>
+			<size>20</size>
+			<bindstofield>ovpnserver->step9->commonname</bindstofield>
+		</field>
+		<field>
 			<name>country</name>
 			<displayname>Country Code</displayname>
 			<description>Two-letter ISO country code (e.g. US, AU, CA) </description>
@@ -662,7 +695,7 @@
 		<field>
 			<name>state</name>
 			<displayname>State or Province</displayname>
-			<description>Full State of Province name, not abbreviated (e.g. Kentucky, Indiana, Ontario).</description>
+			<description>Full State of Province name, not abbreviated (e.g. Texas, Indiana, Ontario).</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step9->state</bindstofield>
@@ -670,7 +703,7 @@
 		<field>
 			<name>city</name>
 			<displayname>City</displayname>
-			<description>City or other Locality name (e.g. Louisville, Indianapolis, Toronto).</description>
+			<description>City or other Locality name (e.g. Austin, Indianapolis, Toronto).</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step9->city</bindstofield>
@@ -678,10 +711,18 @@
 		<field>
 			<name>organization</name>
 			<displayname>Organization</displayname>
-			<description>Organization name, often the Company or Group name.</description>
+			<description>Organization name, often the company or group name.</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step9->organization</bindstofield>
+		</field>
+		<field>
+			<name>organizationalunit</name>
+			<displayname>Organizational Unit</displayname>
+			<description>Organizational Unit name, often a department or team name.</description>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step9->organizationalunit</bindstofield>
 		</field>
 		<field>
 			<name>Create new Certificate</name>
@@ -703,14 +744,16 @@
 			<name>General OpenVPN Server Information</name>
 		</field>
 		<field>
-			<name>interface</name>
-			<type>select_source</type>
-			<source><![CDATA[openvpn_wizard_build_if_list()]]></source>
-			<source_name>name</source_name>
-			<source_value>value</source_value>
-			<description>The interface where OpenVPN will listen for incoming connections (typically WAN.)</description>
-			<displayname>Interface</displayname>
-			<bindstofield>ovpnserver->step10->interface</bindstofield>
+			<name>description</name>
+			<displayname>Description</displayname>
+			<description>A name for this OpenVPN instance, for administrative reference. It can be set however desired, but is often used to distinguish the purpose of the service (e.g. "Remote Technical Staff"). It is also used by OpenVPN Client Export to identify this VPN on clients.</description>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step10->descr</bindstofield>
+		</field>
+		<field>
+			<type>listtopic</type>
+			<name>Endpoint Configuration</name>
 		</field>
 		<field>
 			<name>Protocol</name>
@@ -745,6 +788,16 @@
 			<description>&lt;br/&gt;Protocol to use for OpenVPN connections. If unsure, leave this set to UDP.</description>
 		</field>
 		<field>
+			<name>interface</name>
+			<type>select_source</type>
+			<source><![CDATA[openvpn_wizard_build_if_list()]]></source>
+			<source_name>name</source_name>
+			<source_value>value</source_value>
+			<description>The interface where OpenVPN will listen for incoming connections (typically WAN.)</description>
+			<displayname>Interface</displayname>
+			<bindstofield>ovpnserver->step10->interface</bindstofield>
+		</field>
+		<field>
 			<name>localport</name>
 			<displayname>Local Port</displayname>
 			<description>Local port upon which OpenVPN will listen for connections. The default port is 1194. This can be left at its default unless a different port needs to be used.</description>
@@ -753,22 +806,14 @@
 			<bindstofield>ovpnserver->step10->localport</bindstofield>
 		</field>
 		<field>
-			<name>description</name>
-			<displayname>Description</displayname>
-			<description>A name for this OpenVPN instance, for administrative reference. It can be set however desired, but is often used to distinguish the purpose of the service (e.g. "Remote Technical Staff"). It is also used by OpenVPN Client Export to identify this VPN on clients.</description>
-			<type>input</type>
-			<size>30</size>
-			<bindstofield>ovpnserver->step10->descr</bindstofield>
-		</field>
-		<field>
 			<type>listtopic</type>
 			<name>Cryptographic Settings</name>
 		</field>
 		<field>
 			<name>TLS Authentication</name>
 			<type>checkbox</type>
+			<typehint>Enable authentication of TLS packets.</typehint>
 			<value>on</value>
-			<description>Enable authentication of TLS packets.</description>
 			<bindstofield>ovpnserver->step10->tlsauth</bindstofield>
 		</field>
 		<field>
@@ -777,7 +822,7 @@
 			<disablefields>tlssharedkey</disablefields>
 			<value>on</value>
 			<type>checkbox</type>
-			<description>Automatically generate a shared TLS authentication key.</description>
+			<typehint>Automatically generate a shared TLS authentication key.</typehint>
 			<bindstofield>ovpnserver->step10->gentlskey</bindstofield>
 		</field>
 		<field>
@@ -799,17 +844,6 @@
 			<value>2048</value>
 			<bindstofield>ovpnserver->step10->dhkey</bindstofield>
 			<description>&lt;br/&gt;Length of Diffie-Hellman (DH) key exchange parameters, used for establishing a secure communications channel. The DH parameters are different from key sizes, but as with other such settings, the larger the key, the more security it offers, but larger keys take considerably more time to generate. As of 2016, 2048 bit is a common and typical selection.</description>
-		</field>
-		<field>
-			<name>ncpenable</name>
-			<displayname>Data Encryption Negotiation</displayname>
-			<type>checkbox</type>
-			<value>on</value>
-			<description>
-				Enable negotiation of Data Encryption Algorithms between client and server.
-				The best practice is keep this setting enabled.
-			</description>
-			<bindstofield>ovpnserver->step10->ncpenable</bindstofield>
 		</field>
 		<field>
 			<name>dataciphers</name>
@@ -888,7 +922,7 @@
 			<name>Tunnel Settings</name>
 		</field>
 		<field>
-			<displayname>Tunnel Network</displayname>
+			<displayname>IPv4 Tunnel Network</displayname>
 			<name>tunnelnet</name>
 			<type>input</type>
 			<size>20</size>
@@ -896,14 +930,14 @@
 			<description>This is the virtual network used for private communications between this server and client hosts expressed using CIDR notation (eg. 10.0.8.0/24). The first network address will be assigned to the server virtual interface. The remaining network addresses will be assigned to connecting clients.</description>
 		</field>
 		<field>
-			<displayname>Redirect Gateway</displayname>
+			<displayname>Redirect IPv4 Gateway</displayname>
 			<name>redirectgw</name>
 			<type>checkbox</type>
-			<description>Force all client generated traffic through the tunnel.</description>
+			<typehint>Force all client generated traffic through the tunnel.</typehint>
 			<bindstofield>ovpnserver->step10->rdrgw</bindstofield>
 		</field>
 		<field>
-			<displayname>Local Network</displayname>
+			<displayname>IPv4 Local Network</displayname>
 			<name>localnet</name>
 			<type>input</type>
 			<size>20</size>
@@ -954,21 +988,22 @@
 			<displayname>Type-of-Service</displayname>
 			<name>tos</name>
 			<type>checkbox</type>
-			<description>Set the TOS IP header value of tunnel packets to match the encapsulated packet's TOS value.</description>
+			<typehint>Set the TOS IP header value of tunnel packets to match the encapsulated packet's TOS value.</typehint>
 			<bindstofield>ovpnserver->step10->tos</bindstofield>
 		</field>
 		<field>
 			<displayname>Inter-Client Communication</displayname>
 			<name>interclient</name>
 			<type>checkbox</type>
-			<description>Allow communication between clients connected to this server.</description>
+			<typehint>Allow communication between clients connected to this server.</typehint>
 			<bindstofield>ovpnserver->step10->interclient</bindstofield>
 		</field>
 		<field>
 			<displayname>Duplicate Connections</displayname>
 			<name>duplicate_cn</name>
 			<type>checkbox</type>
-			<description>Allow multiple concurrent connections from clients using the same Common Name.&lt;br/&gt;NOTE: This is not generally recommended, but may be needed for some scenarios.</description>
+			<typehint>Allow multiple concurrent connections from clients using the same Common Name.</typehint>
+			<description>NOTE: This is not generally recommended, but may be needed for some scenarios.</description>
 			<bindstofield>ovpnserver->step10->duplicate_cn</bindstofield>
 		</field>
 		<field>
@@ -987,8 +1022,8 @@
 			<displayname>Dynamic IP</displayname>
 			<name>dynip</name>
 			<type>checkbox</type>
+			<typehint>Allow connected clients to retain their connections if their IP address changes.</typehint>
 			<value>on</value>
-			<description>Allow connected clients to retain their connections if their IP address changes.</description>
 			<bindstofield>ovpnserver->step10->dynip</bindstofield>
 		</field>
 		<field>
@@ -1008,6 +1043,10 @@
 				</option>
 			</options>
 			<description>Specifies the method used to supply a virtual adapter IP address to clients when using tun mode on IPv4.&lt;br /&gt;Some clients may require this be set to &quot;subnet&quot; even for IPv6, such as OpenVPN Connect (iOS/Android).&lt;br /&gt;Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require &quot;net30&quot;.</description>
+		</field>
+		<field>
+			<type>listtopic</type>
+			<name>Advanced Client Settings</name>
 		</field>
 		<field>
 			<displayname>DNS Default Domain</displayname>
@@ -1061,9 +1100,10 @@
 		<field>
 			<name>nbtenable</name>
 			<type>checkbox</type>
+			<typehint>Enable NetBIOS over TCP/IP.</typehint>
 			<displayname>NetBIOS Options</displayname>
 			<bindstofield>ovpnserver->step10->nbtenable</bindstofield>
-			<description>Enable NetBIOS over TCP/IP. &lt;br/&gt;If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled. </description>
+			<description>If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled. </description>
 		</field>
 		<field>
 			<displayname>NetBIOS Node Type</displayname>
@@ -1111,16 +1151,22 @@
 <step>
 	<id>11</id>
 	<title>Firewall Rule Configuration</title>
-	<description>OpenVPN Remote Access Server Setup Wizard</description>
+	<description>OpenVPN Remote Access Server Firewall Rules</description>
 	<disableheader>true</disableheader>
 	<fields>
 		<field>
-			<type>listtopic</type>
-			<name>Firewall Rule Configuration</name>
-		</field>
-		<field>
 			<type>text</type>
-			<description>Firewall rules control what network traffic is permitted. Rules must be added to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be automatically added here, or configured manually after completing the wizard.</description>
+			<description>
+				Rules control passing or blocking network traffic as it flows
+				through the firewall.
+				&lt;br/&gt;&lt;br/&gt;
+				Rules must be added which allow traffic to reach the OpenVPN server
+				IP address and port, as well as to allow traffic from connected clients
+				inside the OpenVPN tunnel.
+				&lt;br/&gt;&lt;br/&gt;
+				The options on this step can add automatic rules to pass this traffic,
+				or rules can be configured manually after completing the wizard.
+			</description>
 		</field>
 		<field>
 			<type>listtopic</type>
@@ -1129,8 +1175,8 @@
 		<field>
 			<name>ovpnrule</name>
 			<displayname>Firewall Rule</displayname>
-			<description>Add a rule to permit connections to this OpenVPN server process from clients anywhere on the Internet.</description>
 			<type>checkbox</type>
+			<typehint>Add a rule to permit connections to this OpenVPN server instance from clients anywhere on the Internet.</typehint>
 			<bindstofield>ovpnserver->step11->ovpnrule</bindstofield>
 		</field>
 		<field>
@@ -1140,8 +1186,8 @@
 		<field>
 			<name>ovpnallow</name>
 			<displayname>OpenVPN rule</displayname>
-			<description>Add a rule to allow all traffic from connected clients to pass inside the VPN tunnel.</description>
 			<type>checkbox</type>
+			<typehint>Add a rule to allow all traffic from connected clients to pass inside the VPN tunnel.</typehint>
 			<bindstofield>ovpnserver->step11->ovpnallow</bindstofield>
 		</field>
 		<field>
@@ -1162,11 +1208,15 @@
 		</field>
 		<field>
 			<type>text</type>
-			<description>The configuration is now complete.</description>
-		</field>
-		<field>
-			<type>text</type>
-			<description>To be able to export client configurations, browse to System->Packages and install the OpenVPN Client Export package.</description>
+			<description>
+				The configuration is now complete.
+				&lt;br/&gt;&lt;br/&gt;
+				Adding users for the VPN depends on the chosen authentication method.
+				For example, add local users with certificates under &lt;a href=&quot;system_usermanager.php&quot;&gt;&lt;strong&gt;System > User Manager&lt;/strong&gt;&lt;/a&gt;.
+				For remote authentication servers, add certificates directly in &lt;a href=&quot;system_certmanager.php&quot;&gt;&lt;strong&gt;System > Certificate Manager&lt;/strong&gt;&lt;/a&gt;.
+				&lt;br/&gt;&lt;br/&gt;
+				To easily export client configurations, browse to &lt;a href=&quot;pkg_mgr_installed.php&quot;&gt;&lt;strong&gt;System > Packages&lt;/strong&gt;&lt;/a&gt; and install the OpenVPN Client Export package.
+			</description>
 		</field>
 		<field>
 			<type>submit</type>

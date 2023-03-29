@@ -108,6 +108,14 @@ function activate_sysctls() {
 	$ipsec_filtermode = config_get_path('ipsec/filtermode', 'enc');
 	$sysctls = array_merge($sysctls, $ipsec_filter_sysctl[$ipsec_filtermode]);
 
+	/*
+	 * See https://redmine.pfsense.org/issues/13938
+	 *
+	 * We need to disable unmapped mbufs to work around a bug
+	 * that can cause sendfile to crash.
+	 */
+	$sysctls['kern.ipc.mb_use_ext_pgs'] = '0';
+
 	if (config_get_path('system/consolebell', 'enabled') == 'enabled') {
 		$sysctls['kern.vt.enable_bell'] = '1';
 	} else {

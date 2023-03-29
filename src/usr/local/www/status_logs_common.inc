@@ -82,7 +82,7 @@ function status_logs_common_code() {
 	} elseif (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'raw')) {
 		$rawfilter = true;
 	} else {	//  Use the general logging options setting (global).
-		$rawfilter = isset($config['syslog']['rawfilter']);
+		$rawfilter = config_path_enabled('syslog', 'rawfilter');
 	}
 }
 
@@ -648,15 +648,15 @@ function manage_log_code() {
 
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
-		$pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
+		$pconfig['lognginx'] = !config_path_enabled('syslog', 'nolognginx');
 	}
 
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
-		$pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
-		$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
-		$pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
-		$pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
+		$pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock');
+		$pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
+		$pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
+		$pconfig['logprivatenets'] = !config_path_enabled('syslog', 'nologprivatenets');
 		$pconfig['filterdescriptions'] = isset($config['syslog']['filterdescriptions']) ? $config['syslog']['filterdescriptions'] : null;
 	}
 
@@ -748,7 +748,7 @@ function manage_log_code() {
 
 		// Specific to System General (main) Log
 			if ($logfile == 'system') {
-				$oldnolognginx = isset($config['syslog']['nolognginx']);
+				$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
 				$config['syslog']['nolognginx'] = $lognginx ? false : true;
 
 				if ($oldnolognginx !== $config['syslog']['nolognginx']) {
@@ -758,10 +758,10 @@ function manage_log_code() {
 
 		// Specific to  Firewall Log
 			if ($logfile == 'filter') {
-				$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
-				$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
-				$oldnologbogons = isset($config['syslog']['nologbogons']);
-				$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
+				$oldnologdefaultblock = config_path_enabled('syslog', 'nologdefaultblock');
+				$oldnologdefaultpass = config_path_enabled('syslog', 'nologdefaultpass');
+				$oldnologbogons = config_path_enabled('syslog', 'nologbogons');
+				$oldnologprivatenets = config_path_enabled('syslog', 'nologprivatenets');
 
 				$config['syslog']['nologdefaultblock'] = $logdefaultblock ? false : true;
 				$config['syslog']['nologdefaultpass'] = $logdefaultpass ? true : false;

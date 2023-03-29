@@ -93,7 +93,6 @@ if ($_POST['act'] == "del") {
 }
 
 if ($act == "new") {
-	$pconfig['ncp_enable'] = "enabled";
 	$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
 	$pconfig['data_ciphers_fallback'] = 'AES-256-CBC';
 	$pconfig['autokey_enable'] = "yes";
@@ -140,11 +139,6 @@ if (($act == "edit") || ($act == "dup")) {
 			$pconfig['data_ciphers'] = $a_client[$id]['data_ciphers'];
 		} else {
 			$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
-		}
-		if (isset($a_client[$id]['ncp_enable'])) {
-			$pconfig['ncp_enable'] = $a_client[$id]['ncp_enable'];
-		} else {
-			$pconfig['ncp_enable'] = "enabled";
 		}
 		$pconfig['dev_mode'] = $a_client[$id]['dev_mode'];
 
@@ -225,8 +219,6 @@ if ($_POST['save']) {
 	} else {
 		$vpnid = 0;
 	}
-
-	$pconfig['ncp_enable'] = ($pconfig['ncp_enable'] == 'yes') ? 'enabled' : 'disabled';
 
 	if ($pconfig['disable'] && openvpn_inuse($vpnid, 'client')) {
 		$input_errors[] = gettext("Cannot disable an OpenVPN instance while the interface is assigned. Remove the interface assignment first.");
@@ -620,8 +612,6 @@ if ($_POST['save']) {
 			$client['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 		}
 
-		$client['ncp_enable'] = $pconfig['ncp_enable'];
-
 		$client['ping_method'] = $pconfig['ping_method'];
 		$client['keepalive_interval'] = $pconfig['keepalive_interval'];
 		$client['keepalive_timeout'] = $pconfig['keepalive_timeout'];
@@ -944,15 +934,6 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['certref'],
 		$certlist['server']
 		));
-
-	$section->addInput(new Form_Checkbox(
-		'ncp_enable',
-		'Data Encryption Negotiation',
-		'Enable Data Encryption Negotiation',
-		($pconfig['ncp_enable'] == "enabled")
-	))->setHelp('This option allows OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
-			'data encryption algorithms from those selected in the Data Encryption Algorithms list below. ' .
-			'Disabling this feature is deprecated.');
 
 	foreach (explode(",", $pconfig['data_ciphers']) as $cipher) {
 		$data_ciphers_list[$cipher] = $cipher;
@@ -1347,8 +1328,7 @@ else:
 			$print_sk_warning = true;
 		}
 		$server = "{$client['server_addr']}:{$client['server_port']}";
-		$ncp = (($client['mode'] != "p2p_shared_key") && ($client['ncp_enable'] != 'disabled'));
-		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback'], $ncp);
+		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback']);
 		$dca = explode(',', $dc);
 		if (count($dca) > 5) {
 			$dca = array_slice($dca, 0, 5);

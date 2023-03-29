@@ -1415,12 +1415,7 @@ function openvpn_reconfigure($mode, $settings) {
 	/* Data encryption cipher support.
 	 * If it is not set, assume enabled since that is OpenVPN's default.
 	 * Note that diabling this is now deprecated and will be removed in a future version of OpenVPN */
-	if (($settings['ncp_enable'] == "disabled") ||
-	    ($settings['mode'] == "p2p_shared_key")) {
-		if ($settings['mode'] != "p2p_shared_key") {
-			/* Do not include this option for shared key as it is redundant. */
-			$conf .= "ncp-disable\n";
-		}
+	if ($settings['mode'] == "p2p_shared_key") {
 		$conf .= "cipher {$fbcipher}\n";
 	} else {
 		$conf .= "data-ciphers " . str_replace(',', ':', openvpn_build_data_cipher_list($settings['data_ciphers'], $fbcipher)) . "\n";
@@ -2448,9 +2443,9 @@ function openvpn_is_tunnel_network_in_use($net) {
 	return false;
 }
 
-function openvpn_build_data_cipher_list($data_ciphers = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305', $fallback_cipher = 'AES-256-GBC', $ncp_enabled = true) {
+function openvpn_build_data_cipher_list($data_ciphers = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305', $fallback_cipher = 'AES-256-GCM') {
 	/* If the data_ciphers list is empty, populate it with the fallback cipher. */
-	if (empty($data_ciphers) || !$ncp_enabled) {
+	if (empty($data_ciphers)) {
 		$data_ciphers = $fallback_cipher;
 	}
 	/* Add the fallback cipher to the data ciphers list if it isn't already present */

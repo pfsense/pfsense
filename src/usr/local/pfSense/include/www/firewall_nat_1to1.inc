@@ -222,6 +222,11 @@ function save1to1NATrule($post, $id, $json = false) {
 
 		if (write_config(gettext("Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping.")) && !$json) {
 			mark_subsystem_dirty('natconf');
+
+			if (isset($config['unbound']['enable']) && isset($config['unbound']['replace1to1'])) {
+				mark_subsystem_dirty('unbound');
+			}
+
 		}
 	}
 
@@ -380,6 +385,15 @@ function reorder1to1NATrules($post, $json = false) {
 function apply1to1NATrules() {
 	$retval = 0;
 	$retval |= filter_configure();
+
+	if (config_path_enabled('unbound') && config_path_enabled('unbound', 'replace1to1')) {
+		require_once("unbound.inc");
+
+		$retval |= unbound_1to1nat_generate();
+		if ($retval == 0) {
+			clear_subsystem_dirty('unbound');
+		}
+	}
 
 	if ($retval == 0) {
 		clear_subsystem_dirty('natconf');

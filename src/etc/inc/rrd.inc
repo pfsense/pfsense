@@ -639,7 +639,7 @@ function enable_rrd_graphing() {
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 		if (platform_booting()) {
-			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
+			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U:U:U:U");
 		}
 
 		/* Memory stats gathering function. */

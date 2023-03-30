@@ -56,6 +56,7 @@ $pconfig['forward_tls_upstream'] = config_path_enabled('unbound', 'forward_tls_u
 $pconfig['regdhcp'] = config_path_enabled('unbound', 'regdhcp');
 $pconfig['regdhcpstatic'] = config_path_enabled('unbound', 'regdhcpstatic');
 $pconfig['regovpnclients'] = config_path_enabled('unbound', 'regovpnclients');
+$pconfig['replace1to1'] = config_path_enabled('unbound', 'replace1to1');
 
 $pconfig['python_order'] = config_get_path('unbound/python_order');
 $pconfig['python_script'] = config_get_path('unbound/python_script');
@@ -195,6 +196,7 @@ if ($_POST['save']) {
 		config_set_path('unbound/regdhcp', isset($pconfig['regdhcp']));
 		config_set_path('unbound/regdhcpstatic', isset($pconfig['regdhcpstatic']));
 		config_set_path('unbound/regovpnclients', isset($pconfig['regovpnclients']));
+		config_set_path('unbound/replace1to1', isset($pconfig['replace1to1']));
 		config_set_path('unbound/active_interface', $pconfig['active_interface']);
 		config_set_path('unbound/outgoing_interface', $pconfig['outgoing_interface']);
 		config_set_path('unbound/system_domain_local_zone_type', $pconfig['system_domain_local_zone_type']);
@@ -444,6 +446,14 @@ $section->addInput(new Form_Checkbox(
 	    'servers (Remote Access SSL/TLS or User Auth with Username as Common Name option) operating ' .
 	    'in "tun" mode. The domain in %sSystem: General Setup%s should also be set to the proper value.',
 	    '<a href="system.php">','</a>'));
+
+$section->addInput(new Form_Checkbox(
+	'replace1to1',
+	'1:1 NAT Addresses',
+	'Replace 1:1 NAT IP Addresses in Responses',
+	$pconfig['replace1to1']
+))->setHelp('If this option is set, then when an A record is returned with an IP address from the 1:1 NAT table, the value will be replaced'.
+					' with the internal IP address. This is an alternative to manually creating split-DNS.');
 
 $btnadv = new Form_Button(
 	'btnadvcustom',

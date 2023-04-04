@@ -446,6 +446,37 @@ form .btn + .btn {
     }
 }
 
+.inputselectcombo {
+    margin-bottom: 0!important;
+}
+div.inputselectcombo {
+    display: table;
+    font-size: 0px;
+}
+div.inputselectcombo select {
+    display: table-cell;
+    width: auto;
+    max-width: 95px;
+    margin-bottom: 0!important;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+div.inputselectcombo span {
+    display: table-cell;
+    width: 100%;
+}
+div.inputselectcombo span input {
+    display: table-cell;
+    width: 100%;
+    margin-bottom: 0!important;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.no-separator {
+    border-bottom: 0!important;
+}
+
 /** Page footer */
 .footer {
     position: absolute;

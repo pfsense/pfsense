@@ -385,8 +385,8 @@ function add_row(rowAddBtn) {
 
 	// Somehow delete button IDs did not increment, so increment the suffix number for delete buttons also
 	$(newGroup).find('button').each(function() {
-		$(this).prop("id", bumpStringInt(this.id));
-		$(this).prop("name", bumpStringInt(this.name));
+		$(this).prop("id", bumpStringInt($(this).attr("id")));
+		$(this).prop("name", bumpStringInt($(this).attr("name")));
 	});
 	// And for "for" tags
 //	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
@@ -421,7 +421,7 @@ function add_row(rowAddBtn) {
 	// has been added to the table
 	$('[id^=delete]').unbind();
 	$('[id^=delete]').click(function(event) {
-		var groupName = getRowGroupName(this.id);
+		var groupName = getRowGroupName($(this).attr("id"));
 		if($('.repeatable' + groupName).length > 1) {
 			if ((typeof retainhelp) == "undefined")
 				moveHelpText($(this).attr("id"));

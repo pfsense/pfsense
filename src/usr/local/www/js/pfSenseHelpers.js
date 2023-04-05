@@ -420,13 +420,13 @@ function add_row(rowAddBtn) {
 	// Now that we are no longer cloning the event handlers, we need to remove and re-add after a new row
 	// has been added to the table
 	$('[id^=delete]').unbind();
-	$('[id^=delete]').click(function() {
+	$('[id^=delete]').click(function(event) {
 		var groupName = getRowGroupName(this.id);
 		if($('.repeatable' + groupName).length > 1) {
 			if ((typeof retainhelp) == "undefined")
-				moveHelpText(this.id);
+				moveHelpText($(this).attr("id"));
 
-			delete_row(this.id);
+			delete_row($(this).attr("id"));
 		} else if ($(this).hasClass("nowarn")) {
 			clearRow0();
 		} else {
@@ -441,11 +441,11 @@ $('[id^=delete]').prop('type','button');
 
 // on click . .
 $('[id^=addrow]').click(function() {
-	add_row(this.id);
+	add_row($(this).attr("id"));
 });
 
 $('[id^=delete]').click(function() {
-	var groupName = getRowGroupName(this.id);
+	var groupName = getRowGroupName($(this).attr("id"));
 	if($('.repeatable' + groupName).length > 1) {
 		if ((typeof retainhelp) == "undefined")
 			moveHelpText($(this).attr("id"));

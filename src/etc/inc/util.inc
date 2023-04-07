@@ -2119,15 +2119,14 @@ function format_number($num, $precision = 3) {
 	$units = array('', 'K', 'M', 'G', 'T');
 
 	$i = 0;
-	while ($num > 1000 && $i < count($units)) {
-		$num /= 1000;
+	while ((float) $num > 1000 && $i < count($units)) {
+		(float) $num /= 1000;
 		$i++;
 	}
-	$num = round($num, $precision);
+	$num = round((float) $num, $precision);
 
-	return ("$num {$units[$i]}");
+	return ("{$num} {$units[$i]}");
 }
-
 
 function unformat_number($formated_num) {
 	$num = strtoupper($formated_num);

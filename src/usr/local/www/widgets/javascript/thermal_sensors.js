@@ -149,6 +149,7 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 function getSensorFriendlyName(sensorFullName) {
 	var rzone = /^hw\.acpi\.thermal\.tz([0-9]+)\.temperature$/;
 	var rcore = /^dev\.cpu\.([0-9]+)\.temperature$/;
+	var rpch = /^dev\.pchtherm\.([0-9]+)\.temperature$/;
 
 	if (rzone.test(sensorFullName)) {
 		return "Zone " + rzone.exec(sensorFullName)[1];
@@ -156,6 +157,10 @@ function getSensorFriendlyName(sensorFullName) {
 
 	if (rcore.test(sensorFullName)) {
 		return "Core " + rcore.exec(sensorFullName)[1];
+	}
+
+	if (rpch.test(sensorFullName)) {
+		return "PCH " + rpch.exec(sensorFullName)[1];
 	}
 
 	return sensorFullName;

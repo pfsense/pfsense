@@ -401,7 +401,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* QUEUES, set up the queues databases */
-			if (($altq_list_queues[$ifname]) && 
+			if (($altq_list_queues[$ifname]) &&
 			    !empty($altq_list_queues[$ifname]->get_queue_list())) {
 				$altq =& $altq_list_queues[$ifname];
 				/* NOTE: Is it worth as its own function?! */
@@ -744,7 +744,7 @@ function enable_rrd_graphing() {
 		$unknown = "";
 		$rrdupdateds = "";
 		$rrdsensors = "";
-		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc | /usr/bin/grep temperature | /usr/bin/cut -d':' -f1", $sensors_array);
+		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc dev.pchtherm | /usr/bin/grep temperature | /usr/bin/cut -d':' -f1", $sensors_array);
 
 		if (!empty($sensors_array)) {
 			foreach ($sensors_array as $sensor) {

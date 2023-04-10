@@ -653,7 +653,7 @@ $section->addInput(new Form_Input(
 	$pconfig['serial']
 ))->setHelp('Enter a decimal number to be used as a sequential serial number for ' .
 	'the next certificate to be signed by this CA. This value is ignored ' .
-	'when Randomize Serial is checked');
+	'when Randomize Serial is checked.');
 
 $form->add($section);
 

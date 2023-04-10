@@ -1013,6 +1013,12 @@ function get_v6_ptr_zones($subnet, $bits) {
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr, $subnet) {
 	if (is_ipaddrv6($addr) && is_subnetv6($subnet)) {
+		/* Normalize IPv6 prefix to its start address to avoid PHP errors
+		 * https://redmine.pfsense.org/issues/14256
+		 */
+		list($prefix, $length) = explode("/", $subnet);
+		$prefix = gen_subnetv6($prefix, $length);
+		$subnet = "{$prefix}/{$length}";
 		return (Net_IPv6::isInNetmask($addr, $subnet));
 	} else if (is_ipaddrv4($addr) && is_subnetv4($subnet)) {
 		list($ip, $mask) = explode('/', $subnet);

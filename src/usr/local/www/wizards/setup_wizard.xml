@@ -84,7 +84,12 @@
 			<name>Hostname</name>
 			<type>input</type>
 			<bindstofield>wizardtemp->system->hostname</bindstofield>
-			<description>EXAMPLE: myserver</description>
+			<description>
+				<![CDATA[
+				Name of the firewall host, without domain part.&lt;br/&gt;&lt;br/&gt;
+				Examples: pfsense, firewall, edgefw
+				]]>
+			</description>
 			<validate>^[a-zA-Z0-9-]+$</validate>
 			<message>Invalid Hostname</message>
 		</field>
@@ -92,7 +97,15 @@
 			<name>Domain</name>
 			<type>input</type>
 			<bindstofield>wizardtemp->system->domain</bindstofield>
-			<description>EXAMPLE: mydomain.com</description>
+			<description>
+				<![CDATA[
+				Domain name for the firewall.&lt;br/&gt;&lt;br/&gt;
+				Examples: home.arpa, example.com&lt;br/&gt;&lt;br/&gt;
+				Do not end the domain name with '.local' as the final part (Top Level Domain, TLD).
+				The 'local' TLD is widely used by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) and some Windows systems and networked devices.
+				These will not network correctly if the router uses 'local' as its TLD. Alternatives such as 'home.arpa', 'local.lan', or 'mylocal' are safe.
+				]]>
+			</description>
 			<validate>^[a-zA-Z0-9.-]+$</validate>
 			<message>Domain name field is invalid</message>
 		</field>

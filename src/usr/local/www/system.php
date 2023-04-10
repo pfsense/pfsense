@@ -520,19 +520,21 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['hostname'],
 	['placeholder' => 'pfSense']
-))->setHelp('Name of the firewall host, without domain part');
+))->setHelp('Name of the firewall host, without domain part.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'*Domain',
 	'text',
 	$pconfig['domain'],
-	['placeholder' => 'example.com, home, office, private, etc.']
-))->setHelp('Do not end the domain name with \'.local\' as the final part (Top Level Domain, TLD), ' .
-	'The \'local\' TLD is %1$swidely used%2$s by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) ' .
+	['placeholder' => 'home.arpa, example.com, home, office, private, etc.']
+))->setHelp('Domain name for the firewall.%1$s%1$s' .
+	'Do not end the domain name with \'.local\' as the final part (Top Level Domain, TLD). ' .
+	'The \'local\' TLD is %2$swidely used%3$s by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) ' .
 	'and some Windows systems and networked devices. ' .
 	'These will not network correctly if the router uses \'local\' as its TLD. ' .
-	'Alternative TLDs such as \'local.lan\' or \'mylocal\' are safe.',
+	'Alternatives such as \'home.arpa\', \'local.lan\', or \'mylocal\' are safe.',
+	'<br/>',
 	'<a target="_blank" href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html">',
 	'</a>'
 );

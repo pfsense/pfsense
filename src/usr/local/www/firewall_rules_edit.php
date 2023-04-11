@@ -482,7 +482,9 @@ if ($_POST['save']) {
 		$pconfig['ipprotocol'] = "inet";
 	}
 
-	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
+	if (($_POST['proto'] == "icmp") &&
+	    is_array($_POST['icmptype']) &&
+	    count($_POST['icmptype'])) {
 		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
 	} else {
 		unset($pconfig['icmptype']);

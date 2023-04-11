@@ -616,7 +616,7 @@ function saveNATrule($post, $id, $json = false) {
 
 			if ($dstpfrom == $dstpto) {
 				$filterent['destination']['port'] = $dstpfrom;
-			} else {
+			} elseif (is_port($dstpfrom) && is_port($dstpto)) {
 				$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
 			}
 

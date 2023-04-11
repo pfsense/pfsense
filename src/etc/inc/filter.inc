@@ -3150,8 +3150,9 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
 	}
-	if ($rule['source']['port']
-	    && !is_port_or_range(str_replace("-", ":", $rule['source']['port']))) {
+	if ($rule['source']['port'] &&
+	    in_array(strtolower($rule['protocol']), array("tcp", "udp", "tcp/udp")) &&
+	    !is_port_or_range(str_replace("-", ":", $rule['source']['port']))) {
 		$error_text = "";
 
 		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
@@ -3166,8 +3167,9 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 			return "# {$error_text}";
 		}
 	}
-	if ($rule['destination']['port']
-	    && !is_port_or_range(str_replace("-", ":", $rule['destination']['port']))) {
+	if ($rule['destination']['port'] &&
+	    in_array(strtolower($rule['protocol']), array("tcp", "udp", "tcp/udp")) &&
+	    !is_port_or_range(str_replace("-", ":", $rule['destination']['port']))) {
 		$error_text = "";
 
 		// It is not a literal port or port range, so alias should exist, and expand to something non-empty

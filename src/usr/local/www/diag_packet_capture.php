@@ -32,7 +32,6 @@ require_once('util.inc');
 require_once('interfaces_fast.inc');
 require_once('guiconfig.inc');
 require_once('pfsense-utils.inc');
-
 require_once('live_logs.inc');
 require_once('diag_packet_capture.inc');
 
@@ -94,7 +93,7 @@ $max_view_size = 50 * 1024 * 1024; // Avoid timeout by only requesting 50MB at a
 
 $run_capture = false;
 $expression_string = '';
-$input_error = '';
+$input_error = [];
 
 /* Actions taken on form button click */
 if ($_POST) {
@@ -115,7 +114,7 @@ if ($_POST) {
 	// capture options
 	$input_interface = $_POST['interface'];
 	if (!array_key_exists($input_interface, $available_interfaces)) {
-		$input_error = 'No valid interface selected.';
+		$input_error[] = 'No valid interface selected.';
 	}
 	$input_filter = ($_POST['filter'] !== null) ? intval($_POST['filter']) : null;
 	if ($_POST['count'] == '0') {
@@ -126,65 +125,67 @@ if ($_POST) {
 	$input_length = empty($_POST['length']) ? 0 : $_POST['length'];
 	$input_promiscuous = empty($_POST['promiscuous']) ? false : $_POST['promiscuous'];
 	// view options
-	$input_detail = empty($_POST['detail']) ? 'normal' : $_POST['detail'];
+	$input_viewdetail = empty($_POST['viewdetail']) ? 'normal' : $_POST['viewdetail'];
+	$input_viewtype = empty($_POST['viewtype']) ? 'default' : $_POST['viewtype'];
 	$input_lookup = empty($_POST['lookup']) ? false : $_POST['lookup'];
 
 	// filter options
 	$filterattributes = [];
-	if ($input_filter == PCAP_FTYPE_CUSTOM) {
+	if ($input_filter == PCAP_FPRESET_CUSTOM) {
 		foreach ($_POST as $key => $value) {
-			/* Only the match (select element) values need to be checked. Determine
-			 * the corresponding Filter Section and Filter Attribute from the ID. */
+			/* Only the "match" select element values need to be checked. Determine
+			 * the corresponding Section and Type from the element ID. */
 			if (preg_match('/^untagged_[a-z]+_match$/i', $key)) {
-				$fa_section = PCAP_FSECTION_UNTAGGED;
+				$fa_section = PCAP_SECTION_UNTAGGED;
 				$fa_type_name = substr_replace(substr($key, 9), '', -6);
 			} elseif (preg_match('/^singletagged_[a-z]+_match$/i', $key)) {
-				$fa_section = PCAP_FSECTION_SINGLETAGGED;
+				$fa_section = PCAP_SECTION_SINGLETAGGED;
 				$fa_type_name = substr_replace(substr($key, 13), '', -6);
 			} elseif (preg_match('/^doubletagged_[a-z]+_match$/i', $key)) {
-				$fa_section = PCAP_FSECTION_DOUBLETAGGED;
+				$fa_section = PCAP_SECTION_DOUBLETAGGED;
 				$fa_type_name = substr_replace(substr($key, 13), '', -6);
 			} else {
 				continue;
 			}
+
 			switch ($fa_type_name) {
 				case 'ethertype':
-					$fa_type = PCAP_FATTR_ETHERTYPE;
+					$fa_type = PCAP_TYPE_ETHERTYPE;
 					break;
 				case 'protocol':
-					$fa_type = PCAP_FATTR_PROTOCOL;
+					$fa_type = PCAP_TYPE_PROTOCOL;
 					break;
 				case 'ipaddress':
-					$fa_type = PCAP_FATTR_IPADDRESS;
+					$fa_type = PCAP_TYPE_IPADDRESS;
 					break;
 				case 'macaddress':
-					$fa_type = PCAP_FATTR_MACADDRESS;
+					$fa_type = PCAP_TYPE_MACADDRESS;
 					break;
 				case 'port':
-					$fa_type = PCAP_FATTR_PORT;
+					$fa_type = PCAP_TYPE_PORT;
 					break;
 				case 'tag':
-					$fa_type = PCAP_FATTR_VLAN;
+					$fa_type = PCAP_TYPE_VLAN;
 					break;
 				case 'section':
-					$fa_type = PCAP_FATTR_FSECTION_MATCH;
+					$fa_type = PCAP_TYPE_SMATCH;
 					break;
 				default:
-					// Other Filter Attribute types don't need to be checked.
+					// Other Types don't need to be checked.
 					continue;
 			}
 
 			// Get this match's corresponding input element ID to retrieve its value
 			$fa_id = substr_replace($key, '', -6);
 
-			/* Filter Section matches use the match for both the input value
+			/* A Section's "match" select element is used for both the input value
 			 * and match operator. */
-			if ($fa_type == PCAP_FATTR_FSECTION_MATCH) {
+			if ($fa_type == PCAP_TYPE_SMATCH) {
 				$fa_input = $fa_match = $value;
 			} else {
 				/* Check whether this match's selected value is the match operator or
 				 * the input value. */
-				if (in_array($value, array(PCAP_MATCH_NONEOF, PCAP_MATCH_AND_ANYOF, PCAP_MATCH_OR_ANYOF))) {
+				if (in_array($value, PCAP_LIST_MATCH)) {
 					/* Get the match operator from the match, and the input
 					 * value from the corresponding input field. */
 					$fa_input = isset($_POST[$fa_id]) ? $_POST[$fa_id] : '';
@@ -193,7 +194,7 @@ if ($_POST) {
 					/* Get the input value from the match and explicitly set
 					 * the match operator. */
 					$fa_input = $value;
-					$fa_match = PCAP_MATCH_AND_ANYOF;
+					$fa_match = PCAP_MATCH_ATTR_ANYOF;
 				}
 			}
 
@@ -202,35 +203,36 @@ if ($_POST) {
 			${'input_' . $fa_id} = $_POST[$fa_id];
 
 			try {
-				// Create a FilterAttribute object for a Filter Section or Attribute
+				// Create a FilterAttribute object for a Section or Type
 				$fa = new FilterAttribute($fa_section, $fa_match, $fa_type);
 				$fa->setInputString($fa_input);
 			} catch (Exception $e) {
-				$input_error = $e->getMessage();
+				$input_error[] = $e->getMessage();
 				break;
 			}
 			$filterattributes[] = $fa;
 		}
 	} else {
 		try {
-			// Create a FilterAttribute object for the filter preset
+			// Create a FilterAttribute object for the Filter Preset
 			if (is_int($input_filter)) {
-				$filterattributes[] = new FilterAttribute(PCAP_FSECTION_PRESET, $input_filter, PCAP_FATTR_PRESET);
+				$filterattributes[] = new FilterAttribute(PCAP_SECTION_FPRESET, $input_filter, PCAP_TYPE_APRESET);
 			} else {
 				throw new Exception("Invalid filter option given.");
 			}
 		} catch (Exception $e) {
-			$input_error = $e->getMessage();
+			$input_error[] = $e->getMessage();
 		}
 	}
 
 	try {
 		$expression_string = get_expression_string($filterattributes);
-		if (empty($expression_string) && $input_filter == PCAP_FTYPE_CUSTOM) {
-			$input_error = 'Custom filter cannot be empty.';
+		if (empty($expression_string) && $input_filter == PCAP_FPRESET_CUSTOM && empty($input_error)) {
+			// If the expression string is empty due to previous errors, don't show this error
+			$input_error[] = 'Custom filter cannot be empty. Use the "Everything" preset instead.';
 		}
 	} catch (Exception $e) {
-		$input_error = $e->getMessage();
+		$input_error[] = $e->getMessage();
 	}
 
 	if (!empty($input_error)) {
@@ -243,7 +245,7 @@ include('head.inc');
 
 // Show input validation errors only when trying to start the packet capture
 if (!empty($input_error) && $action == 'start') {
-	print_input_errors(array(gettext($input_error)));
+	print_input_errors($input_error);
 }
 
 // Prepare the form buttons
@@ -327,29 +329,61 @@ if ($process_running || $run_capture) {
 // Prepare the form variables
 // Packet capture filter options
 $form_filters = array(
-	PCAP_FTYPE_ANY => 'Everything',
-	PCAP_FTYPE_UNTAGGED => 'Only Untagged',
-	PCAP_FTYPE_TAGGED => 'Only Tagged',
-	PCAP_FTYPE_CUSTOM => 'Custom Filter'
+	PCAP_FPRESET_CUSTOM => gettext('Custom Filter'),
+	PCAP_FPRESET_ANY => gettext('Everything'),
+	PCAP_FPRESET_UNTAGGED => gettext('Only Untagged'),
+	PCAP_FPRESET_TAGGED => gettext('Only Tagged')
 );
 // View detail options
-$form_detail = array(
+$form_viewdetail = array(
 	'normal' => gettext('Normal'),
 	'medium' => gettext('Medium'),
 	'high' => gettext('High'),
-	'full' => gettext('Full'),
+	'full' => gettext('Full')
 );
-// Filter Section selection fields
+// View type options
+$form_viewtype = array(
+	'default' => gettext('Default Type'),
+	'aodv' => 'AODV',
+	'carp' => 'CARP',
+	'cnfp' => 'CNFP',
+	'lmp' => 'LMP',
+	'pgm' => 'PGM',
+	'pgm_zmtp1' => 'PGM_ZMTP1',
+	'resp' => 'RESP',
+	'radius' => 'RADIUS',
+	'rpc' => 'RPC',
+	'rtp' => 'RTP',
+	'rtcp' => 'RTCP',
+	'snmp' => 'SNMP',
+	'tftp' => 'TFTP',
+	'vat' => 'VAT',
+	'wb' => 'WB',
+	'zmtp1' => 'ZMTP1',
+	'vxlan' => 'VXLAN'
+);
+// Section match selection fields
 $form_fsmatch = array(
-	PCAP_MATCH_NONE => 'exclude all',
-	PCAP_MATCH_OR_ANYOF => 'include any of'
+	PCAP_MATCH_SECT_NONE => gettext('exclude all'),
+	PCAP_MATCH_SECT_ANYOF => gettext('include any of')
 );
-// Filter Attributes
-$form_match_tag = $form_match_ipaddress = $form_match_macaddress =
-$form_match_protocol = $form_match_port = $form_match_ethertype = array(
-	PCAP_MATCH_AND_ANYOF => 'any of',
-	PCAP_MATCH_OR_ANYOF => 'any of [OR]',
-	PCAP_MATCH_NONEOF => 'none of'
+$form_fsmatch_tagged = array(
+	PCAP_MATCH_SECT_NONE => gettext('exclude all'),
+	//PCAP_MATCH_SECT_ALLOF => gettext('include all of'),
+	PCAP_MATCH_SECT_ANYOF => gettext('include any of')
+);
+// Type match selection fields
+$form_match_ipaddress = $form_match_macaddress = $form_match_port = array(
+	PCAP_MATCH_ATTR_ALLOF => gettext('all of'),
+	PCAP_MATCH_ATTR_ANYOF => gettext('any of'),
+	PCAP_MATCH_ATTR_NONEOF => gettext('none of'),
+	PCAP_MATCH_TYPE_ALLOF => gettext('[OR] all of'),
+	PCAP_MATCH_TYPE_ANYOF => gettext('[OR] any of')
+);
+$form_match_tag = $form_match_protocol = $form_match_ethertype = array(
+	PCAP_MATCH_ATTR_ANYOF => gettext('any of'),
+	PCAP_MATCH_ATTR_NONEOF => gettext('none of'),
+	PCAP_MATCH_TYPE_ANYOF => gettext('[OR] any of')
 );
 $form_match_ethertype +=  array(
 	'ipv4' => 'IPv4',
@@ -366,77 +400,80 @@ $form_match_protocol += array(
 	'pfsync' => 'pfsync',
 	'ospf' => 'OSPF'
 );
-// Variables for each Filter Section
+// Variables for each Section
 $form_filter_section_begin_row = array('ipaddress', 'protocol');
 $form_filter_section_end_row = array('tag', 'macaddress', 'ethertype');
 $form_filter_sections = array(
 	0 => array(
 		'name' => 'untagged',
-		'sectionlabel' => 'Untagged Filter',
-		'sectiondescription' => 'Filter options for packets without any VLAN tags.',
-		'matchdescription' => 'UNTAGGED PACKETS'
+		'sectionlabel' => gettext('Untagged Filter'),
+		'sectiondescription' => gettext('Filter options for packets without any VLAN tags.'),
+		'matchdescription' => gettext('UNTAGGED PACKETS')
 	),
 	1 => array(
 		'name' => 'singletagged',
-		'sectionlabel' => 'Single-Tagged Filter',
-		'sectiondescription' => 'Filter options for packets which have a VLAN tag set.',
-		'matchdescription' => 'SINGLE-TAGGED PACKETS'
+		'sectionlabel' => gettext('Single-Tagged Filter'),
+		'sectiondescription' => gettext('Filter options for packets which have a VLAN tag set.'),
+		'matchdescription' => gettext('SINGLE-TAGGED PACKETS')
 	),
 	2 => array(
 		'name' => 'doubletagged',
-		'sectionlabel' => 'Double-Tagged Filter',
-		'sectiondescription' => 'Filter options for packets with both an outer and inner VLAN tag, such as QinQ.',
-		'matchdescription' => 'DOUBLE-TAGGED PACKETS'
+		'sectionlabel' => gettext('Double-Tagged Filter'),
+		'sectiondescription' => gettext('Filter options for packets with both an outer and inner VLAN tag, such as QinQ.'),
+		'matchdescription' => gettext('DOUBLE-TAGGED PACKETS')
 	)
 );
 $form_filter_section_attributes_properties = array(
 	'tag' => array(
-		'placeholder' => 'EXAMPLE: 100 200',
-		'description' => 'VLAN TAG',
+		'placeholder' => gettext('EXAMPLE: 100 200'),
+		'description' => gettext('VLAN TAG'),
 		'width' => 4
 	),
 	'ipaddress' => array(
-		'placeholder' => 'EXAMPLE: 10.1.1.0/24 192.168.1.1',
-		'description' => 'HOST IP ADDRESS OR SUBNET',
+		'placeholder' => gettext('EXAMPLE: 10.1.1.0/24 192.168.1.1'),
+		'description' => gettext('HOST IP ADDRESS OR SUBNET'),
 		'width' => 6
 	),
 	'macaddress' => array(
-		'placeholder' => 'EXAMPLE: 00:02 11:22:33:44:55:66',
-		'description' => 'HOST MAC ADDRESS',
+		'placeholder' => gettext('EXAMPLE: 00:02 11:22:33:44:55:66'),
+		'description' => gettext('HOST MAC ADDRESS'),
 		'width' => 4
 	),
 	'protocol' => array(
-		'placeholder' => 'EXAMPLE: 17 tcp',
-		'description' => 'PROTOCOL',
+		'placeholder' => gettext('EXAMPLE: 17 tcp'),
+		'description' => gettext('PROTOCOL'),
 		'width' => 3
 	),
 	'port' => array(
-		'placeholder' => 'EXAMPLE: 80 443',
-		'description' => 'PORT NUMBER',
+		'placeholder' => gettext('EXAMPLE: 80 443'),
+		'description' => gettext('PORT NUMBER'),
 		'width' => 3
 	),
 	'ethertype' => array(
-		'placeholder' => 'EXAMPLE: arp 8100 0x8200',
-		'description' => 'ETHERTYPE',
+		'placeholder' => gettext('EXAMPLE: arp 8100 0x8200'),
+		'description' => gettext('ETHERTYPE'),
 		'width' => 4
 	)
 );
 
 // Default form input values
 if (!isset($input_filter)) {
-	$input_filter = PCAP_FTYPE_ANY;
+	$input_filter = PCAP_FPRESET_ANY;
 }
 if (!isset($input_promiscuous)) {
 	$input_promiscuous = true;
 }
-if (!isset($input_detail)) {
-	$input_detail = 'normal';
+if (!isset($input_viewdetail)) {
+	$input_viewdetail = 'normal';
+}
+if (!isset($input_viewtype)) {
+	$input_viewtype = 'default';
 }
 if (!isset($input_lookup)) {
 	$input_lookup = false;
 }
 if (!isset($input_untagged_section_match)) {
-	$input_untagged_section_match = PCAP_MATCH_OR_ANYOF;
+	$input_untagged_section_match = PCAP_MATCH_SECT_ANYOF;
 }
 
 // Create the form
@@ -455,7 +492,7 @@ $group->add(new Form_Select(
 	null,
 	$input_filter,
 	$form_filters
-))->setHelp('Packet capture filter.')->addClass('match-selection')->setWidth(2);
+))->setHelp('Filter preset.')->addClass('match-selection')->setWidth(2);
 $section->add($group);
 $group = new Form_Group('');
 $group->add(new Form_Input(
@@ -485,20 +522,25 @@ $group->add(new Form_Checkbox(
 $section->add($group);
 $group = new Form_Group('View Options');
 $group->add(new Form_Select(
-	'detail',
+	'viewdetail',
 	'View Detail',
-	$input_detail,
-	$form_detail
-))->setHelp('The level of detail shown when viewing the packet capture. ' .
-            'Does not affect the packet capture itself.')->setWidth(4);
+	$input_viewdetail,
+	$form_viewdetail
+))->setHelp('The level of detail shown when viewing the packet capture.')->setWidth(2);
+$group->add(new Form_Select(
+	'viewtype',
+	'View Type',
+	$input_viewtype,
+	$form_viewtype
+))->setHelp('Force the captured traffic to be interpreted as a specified type.')->setWidth(2);
 $group->add(new Form_Checkbox(
 	'lookup',
 	null,
 	'Name Lookup',
 	$input_lookup
-))->setHelp('Perform a name lookup for the port and host address, ' .
-            'including MAC OUI. This can cause delays when viewing ' .
-			'large packet captures.')->setWidth(5);
+))->setHelp('Perform a name lookup for port, host, and MAC addresses when ' .
+            'viewing the packet capture. This can cause significant delays ' .
+			'due to reverse DNS lookups.')->setWidth(5);
 $section->add($group);
 
 // Show the last capture details on the main form section
@@ -521,53 +563,53 @@ $section = new Form_Section('Custom Filter Options');
 $section->addClass('custom-options');
 $section->addInput(new Form_StaticText(
 	'Hint',
-	sprintf('All input is %1$sspace-separated%2$s. When selecting ' .
-	        '%1$sany of [OR]%2$s, at least two filter attributes should be ' .
+	sprintf('All input is %1$sspace-separated%2$s. When selecting a match ' .
+	        'that specifies %1$s[OR]%2$s, at least two Types should be ' .
 	        'specified (e.g. Ethertype and Port). This will capture packets ' .
 	        'that match either attribute input instead of explicitly both.',
 			'<b>', '</b>')
 ));
-// Add each Filter Section
+// Add each Section
 foreach ($form_filter_sections as $fs_key => $fs_var) {
 	$fs_name = $fs_var['name'];
 	$fs_match_id           =       "{$fs_name}_section_match";
 	$fs_match_input_varvar = "input_{$fs_name}_section_match";
 
-	// Filter Section header
+	// Section header
 	$section->addInput(new Form_StaticText(
 		$fs_var['sectionlabel'],
 		$fs_var['sectiondescription']
 	));
 
-	// Filter Section match field
+	// Section match field
 	$group = new Form_Group('');
 	$group->addClass('no-separator');
 	$group->add(new Form_Select(
 		$fs_match_id,
 		null,
 		${$fs_match_input_varvar},
-		$form_fsmatch
+		($fs_key == array_key_first($form_filter_sections) ? $form_fsmatch : $form_fsmatch_tagged)
 	))->setHelp($fs_var['matchdescription'])->addClass('match-selection inputselectcombo')->setWidth(3);
 	$group->add(new Form_StaticText(
 		null,
 		null
 	))->setWidth(3);
 
-	// Filter Section attribute fields
+	// Type fields
 	foreach ($form_filter_section_attributes_properties as $attribute_name => $attribute_strings) {
-		// Don't add a VLAN Tag Filter Attribute in an untagged Filter Section
+		// Don't add a VLAN Type in an untagged Section
 		if ($fs_key == array_key_first($form_filter_sections) && $attribute_name == 'tag') {
 			$section->add($group);
 			continue;
 		}
-		// Variable variables for the Filter Attribute fields
+		// Variable variables for the Type fields
 		$attribute_input_id     =       "{$fs_name}_{$attribute_name}";       // input element ID
 		$attribute_match_id     =       "{$fs_name}_{$attribute_name}_match"; // select element ID
 		$attribute_input_varvar = "input_{$fs_name}_{$attribute_name}";       // input element value
 		$attribute_match_varvar = "input_{$fs_name}_{$attribute_name}_match"; // select element selected value
 		$form_match_varvar = "form_match_{$attribute_name}";                  // select element options
 
-		// Start a new row within this Filter Section
+		// Start a new row within this Section
 		if (in_array($attribute_name, $form_filter_section_begin_row)) {
 			$group = new Form_Group('');
 			// Hide the row seperator for all but the last row.
@@ -576,7 +618,7 @@ foreach ($form_filter_sections as $fs_key => $fs_var) {
 			}
 		}
 
-		// Add the Filter Attribute field to the group
+		// Add the Type field to the group
 		$attribute_field = new Form_SelectInputCombo(
 			$attribute_input_id,
 			$attribute_strings['placeholder'],
@@ -586,7 +628,7 @@ foreach ($form_filter_sections as $fs_key => $fs_var) {
 		$attribute_field->setHelp($attribute_strings['description'])->setWidth($attribute_strings['width']);
 		$group->add($attribute_field);
 
-		// Add the fields group to the form section when on the last Filter Attribute of the row
+		// Add the fields group to the form section when on the last Type of the row
 		if (in_array($attribute_name, $form_filter_section_end_row)) {
 			$section->add($group);
 		}
@@ -610,25 +652,82 @@ echo $form;
 /* Show the capture */
 if ($action == 'stop' || $action == 'view' || $process_running || $run_capture) :
 	$cmd_part_lookup = $input_lookup ? '' : ' -n';
-	switch ($input_detail) {
+	switch ($input_viewdetail) {
 		case 'full':
-			$cmd_part_detail = ' -vv -e';
+			$cmd_part_viewdetail = ' -vv -e';
 			break;
 		case 'high':
-			$cmd_part_detail = ' -vv';
+			$cmd_part_viewdetail = ' -vv';
 			break;
 		case 'medium':
-			$cmd_part_detail = ' -v';
+			$cmd_part_viewdetail = ' -v';
 			break;
 		default:
-			$input_detail = 'normal';
-			$cmd_part_detail = ' -q';
+			$input_viewdetail = 'normal';
+			$cmd_part_viewdetail = ' -q';
+			break;
+	}
+	switch ($input_viewtype) {
+		case 'aodv': // Ad-hoc On-demand Distance Vector protocol
+			$cmd_part_viewtype = ' -T aodv';
+			break;
+		case 'carp': // Common Address Redundancy Protocol
+			$cmd_part_viewtype = ' -T carp';
+			break;
+		case 'cnfp': // Cisco NetFlow Protocol
+			$cmd_part_viewtype = ' -T cnfp';
+			break;
+		case 'lmp': // Link Management Protocol
+			$cmd_part_viewtype = ' -T lmp';
+			break;
+		case 'pgm': // Pragmatic General Multicast
+			$cmd_part_viewtype = ' -T pgm';
+			break;
+		case 'pgm_zmtp1': // ZMTP/1.0 inside PGM/EPGM
+			$cmd_part_viewtype = ' -T pgm_zmtp1';
+			break;
+		case 'resp': // REdis Serialization Protocol
+			$cmd_part_viewtype = ' -T resp';
+			break;
+		case 'radius': // RADIUS
+			$cmd_part_viewtype = ' -T radius';
+			break;
+		case 'rpc': // Remote Procedure Call
+			$cmd_part_viewtype = ' -T rpc';
+			break;
+		case 'rtp': // Real-Time Applications Protocol
+			$cmd_part_viewtype = ' -T rtp';
+			break;
+		case 'rtcp': // Real-Time Applications control Protocol
+			$cmd_part_viewtype = ' -T rtcp';
+			break;
+		case 'snmp': // Simple Network Management Protocol
+			$cmd_part_viewtype = ' -T snmp';
+			break;
+		case 'tftp': // Trivial File Transfer Protocol
+			$cmd_part_viewtype = ' -T tftp';
+			break;
+		case 'vat': // Visual Audio Tool
+			$cmd_part_viewtype = ' -T vat';
+			break;
+		case 'wb': // distributed White Board
+			$cmd_part_viewtype = ' -T wb';
+			break;
+		case 'zmtp1': // ZeroMQ Message Transport Protocol 1.0
+			$cmd_part_viewtype = ' -T zmtp1';
+			break;
+		case 'vxlan': // Virtual eXtensible Local Area Network
+			$cmd_part_viewtype = ' -T vxlan';
+			break;
+		default: // Do not force a view type
+			$input_viewtype = 'default';
+			$cmd_part_viewtype = '';
 			break;
 	}
 
 	/* Run tcpdump */
 	$pcap_file_suffix = '-' . date('YmdHis');
-	$plog_file_current = $pcap_files_root . '/packetcapture-'. $input_detail . (empty($cmd_part_lookup) ? '' : '-lookup') . $pcap_file_suffix . '.plog';
+	$plog_file_current = $pcap_files_root . '/packetcapture-'. $input_viewdetail . (empty($cmd_part_lookup) ? '' : '-lookup') . (empty($cmd_part_viewtype) ? '' : '-' . $input_viewtype) . $pcap_file_suffix . '.plog';
 	if ($run_capture) {
 		// Generate the file name to write to
 		$pcap_file_current = $pcap_files_root . '/packetcapture-' . $input_interface . $pcap_file_suffix . '.pcap';
@@ -645,17 +744,18 @@ if ($action == 'stop' || $action == 'view' || $process_running || $run_capture) 
 		* use tee to write the binary file and pipe the output,
 		* use a second tcpdump process to parse the binary output,
 		* lastly save the parsed output to a text file to read later. */
-		$cmd_run = sprintf('/usr/sbin/tcpdump -ni %1$s%2$s%3$s%4$s -U -w - %6$s | /usr/bin/tee %5$s | /usr/sbin/tcpdump -l%7$s%8$s -r - | /usr/bin/tee %9$s',
+		$cmd_run = sprintf('/usr/sbin/tcpdump -ni %1$s%2$s%3$s%4$s -U -w - %6$s | /usr/bin/tee %5$s | /usr/sbin/tcpdump -l%7$s%8$s%9$s -r - | /usr/bin/tee %10$s',
 		                $input_interface, $cmd_part_promiscuous, $cmd_part_count,
 		                $cmd_part_length, $pcap_file_current, $cmd_expression_string,
-		                $cmd_part_lookup, $cmd_part_detail, $plog_file_current);
+		                $cmd_part_lookup, $cmd_part_viewdetail, $cmd_part_viewtype,
+		                $plog_file_current);
 		$process_running_cmd = strstr($cmd_run, ' |', TRUE);
 		mwexec_bg($cmd_run);
 	} else {
 		$pcap_file_current = $pcap_file_last;
 		if (!$process_running && !file_exists($plog_file_current)) {
 			// Make sure the pcap log file is generated
-			$cmd_run = sprintf('/usr/sbin/tcpdump%1$s%2$s -r %3$s | /usr/bin/tee %4$s', $cmd_part_lookup, $cmd_part_detail, $pcap_file_current, $plog_file_current);
+			$cmd_run = sprintf('/usr/sbin/tcpdump%1$s%2$s%3$s -r %4$s | /usr/bin/tee %5$s', $cmd_part_lookup, $cmd_part_viewdetail, $cmd_part_viewtype, $pcap_file_current, $plog_file_current);
 			mwexec_bg($cmd_run);
 		}
 	}
@@ -791,11 +891,15 @@ endif;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	const PCAP_MATCH_NONE = <?=PCAP_MATCH_NONE?>; 
-	const PCAP_MATCH_NONEOF = <?=PCAP_MATCH_NONEOF?>;
-	const PCAP_MATCH_AND_ANYOF = <?=PCAP_MATCH_AND_ANYOF?>;
-	const PCAP_MATCH_OR_ANYOF = <?=PCAP_MATCH_OR_ANYOF?>;
-	const PCAP_FTYPE_CUSTOM = <?=PCAP_FTYPE_CUSTOM?>;
+	const PCAP_FPRESET_CUSTOM = <?=PCAP_FPRESET_CUSTOM?>;
+	const PCAP_MATCH_SECT_NONE = <?=PCAP_MATCH_SECT_NONE?>;
+	const PCAP_MATCH_SECT_ALLOF = <?=PCAP_MATCH_SECT_ALLOF?>;
+	const PCAP_MATCH_SECT_ANYOF = <?=PCAP_MATCH_SECT_ANYOF?>;
+	const PCAP_MATCH_TYPE_ALLOF = <?=PCAP_MATCH_TYPE_ALLOF?>;
+	const PCAP_MATCH_TYPE_ANYOF = <?=PCAP_MATCH_TYPE_ANYOF?>;
+	const PCAP_MATCH_ATTR_ANYOF = <?=PCAP_MATCH_ATTR_ANYOF?>;
+	const PCAP_MATCH_ATTR_ALLOF = <?=PCAP_MATCH_ATTR_ALLOF?>;
+	const PCAP_MATCH_ATTR_NONEOF = <?=PCAP_MATCH_ATTR_NONEOF?>;
 
 	const idUntaggedList = ['untagged_section_match', 'untagged_ethertype_match', 'untagged_ethertype',
 	    'untagged_protocol_match', 'untagged_protocol', 'untagged_ipaddress_match', 'untagged_ipaddress',
@@ -823,15 +927,17 @@ events.push(function() {
 		for (let element of idList) {
 			if (element == 'untagged_section_match' || element == 'singletagged_section_match' ||
 			    element == 'doubletagged_section_match') {
-				// Handle the Filter Section match
+				// Handle the Section match
 				disableElement(element, isSectionDisabled);
 			} else if (element.indexOf('_match') == -1) {
 				// Element ID does not contain "_match" - it must be an input field.
 				var elementMatch = '#' + element + '_match';
 				// Disable the input field depending on the respective section and input match
-				if (!isElementDisabled && ($(elementMatch).val() == PCAP_MATCH_NONEOF ||
-				    $(elementMatch).val() == PCAP_MATCH_AND_ANYOF ||
-				    $(elementMatch).val() == PCAP_MATCH_OR_ANYOF)) {
+				if (!isElementDisabled && ($(elementMatch).val() == PCAP_MATCH_ATTR_NONEOF ||
+				    $(elementMatch).val() == PCAP_MATCH_ATTR_ANYOF ||
+				    $(elementMatch).val() == PCAP_MATCH_ATTR_ALLOF ||
+				    $(elementMatch).val() == PCAP_MATCH_TYPE_ALLOF ||
+				    $(elementMatch).val() == PCAP_MATCH_TYPE_ANYOF)) {
 					disableElement(element, false);
 				} else {
 					disableElement(element, true);
@@ -852,45 +958,46 @@ events.push(function() {
 		if ((this.id).indexOf('_match') != -1 || (this.id) == 'filter') {
 			switch (this.id) {
 				case 'filter':
-					// On selecting a simple filter option
-					hideClass('custom-options', (this.value != PCAP_FTYPE_CUSTOM));
-					var isDisableAll = (this.value != PCAP_FTYPE_CUSTOM);
-					var isDisableSingletagged = ($('#singletagged_section_match').val() == PCAP_MATCH_NONE);
-					var isDisableDoubletagged = ($('#doubletagged_section_match').val() == PCAP_MATCH_NONE);
+					// On selecting a filter preset
+					hideClass('custom-options', (this.value != PCAP_FPRESET_CUSTOM));
+					var isDisableAll = (this.value != PCAP_FPRESET_CUSTOM);
+					var isDisableSingletagged = ($('#singletagged_section_match').val() == PCAP_MATCH_SECT_NONE);
+					var isDisableDoubletagged = ($('#doubletagged_section_match').val() == PCAP_MATCH_SECT_NONE);
 					disableInput(idAllList, isDisableAll, isDisableAll);
 					disableInput(idSingletaggedList, isDisableSingletagged, false);
 					disableInput(idDoubletaggedList, isDisableDoubletagged, false);
 					break;
 				case 'untagged_section_match':
-					// On selecting an untagged section match
-					disableInput(idUntaggedList, (this.value == PCAP_MATCH_NONE), false);
+					// On selecting an untagged Section match
+					disableInput(idUntaggedList, (this.value == PCAP_MATCH_SECT_NONE), false);
 					break;
 				case 'singletagged_section_match':
-					// On selecting a single-tagged section match
-					disableInput(idSingletaggedList, (this.value == PCAP_MATCH_NONE), false);
+					// On selecting a single-tagged Section match
+					disableInput(idSingletaggedList, (this.value == PCAP_MATCH_SECT_NONE), false);
 					break
 				case 'doubletagged_section_match':
-					// On selecting a double-tagged section match
-					disableInput(idDoubletaggedList, (this.value == PCAP_MATCH_NONE), false);
+					// On selecting a double-tagged Section match
+					disableInput(idDoubletaggedList, (this.value == PCAP_MATCH_SECT_NONE), false);
 					break;
 				default:
-					// On selecting a filter Attribute Match, handle the respective input field
-					disableElement((this.id).replace('_match', ''), !((this.value == PCAP_MATCH_NONEOF ||
-					               this.value == PCAP_MATCH_AND_ANYOF || this.value == PCAP_MATCH_OR_ANYOF)));
+					// On selecting a Type Match, handle the respective input field
+					disableElement((this.id).replace('_match', ''), !(this.value == PCAP_MATCH_ATTR_NONEOF ||
+					    this.value == PCAP_MATCH_ATTR_ANYOF || this.value == PCAP_MATCH_ATTR_ALLOF ||
+					    this.value == PCAP_MATCH_TYPE_ALLOF || this.value == PCAP_MATCH_TYPE_ANYOF));
 					break;
 			}
 		}
 	});
 
 	// On initial page load
-	if ($('#filter').val() != PCAP_FTYPE_CUSTOM) {
+	if ($('#filter').val() != PCAP_FPRESET_CUSTOM) {
 		hideClass('custom-options', true);
 		disableInput(idAllList, true, true);
 	} else {
 		hideClass('custom-options', false);
-		disableInput(idUntaggedList, ($('#untagged_section_match').val() == PCAP_MATCH_NONE), false);
-		disableInput(idSingletaggedList, ($('#singletagged_section_match').val() == PCAP_MATCH_NONE), false);
-		disableInput(idDoubletaggedList, ($('#doubletagged_section_match').val() == PCAP_MATCH_NONE), false);
+		disableInput(idUntaggedList, ($('#untagged_section_match').val() == PCAP_MATCH_SECT_NONE), false);
+		disableInput(idSingletaggedList, ($('#singletagged_section_match').val() == PCAP_MATCH_SECT_NONE), false);
+		disableInput(idDoubletaggedList, ($('#doubletagged_section_match').val() == PCAP_MATCH_SECT_NONE), false);
 	}
 });
 //]]>

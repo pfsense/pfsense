@@ -2639,6 +2639,8 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 
 		if (config_path_enabled('dnsmasq','strict_order')) {
 			$args .= " --strict-order ";
+		} else {
+			$args .= " --all-servers ";
 		}
 
 		if (config_path_enabled('dnsmasq','domain_needed')) {
@@ -2658,7 +2660,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		$args .= ' ' . implode(' ', array_values($standard_args));
 
 		/* run dnsmasq. Use "-C /dev/null" since we use command line args only (Issue #6730) */
-		$cmd = "/usr/local/sbin/dnsmasq --all-servers -C /dev/null {$dns_rebind} {$args}";
+		$cmd = "/usr/local/sbin/dnsmasq -C /dev/null {$dns_rebind} {$args}";
 		//log_error("dnsmasq command: {$cmd}");
 		mwexec_bg($cmd);
 		unset($args);

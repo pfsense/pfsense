@@ -124,11 +124,14 @@ if ($_POST['widgetkey']) {
 		$_POST["thermal_sensors_widget_zone_critical_threshold"] = floor(($_POST["thermal_sensors_widget_zone_critical_threshold"] - 32) / 1.8);
 		$_POST["thermal_sensors_widget_core_warning_threshold"] = floor(($_POST["thermal_sensors_widget_core_warning_threshold"] - 32) / 1.8);
 		$_POST["thermal_sensors_widget_core_critical_threshold"] = floor(($_POST["thermal_sensors_widget_core_critical_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_pch_warning_threshold"] = floor(($_POST["thermal_sensors_widget_pch_warning_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_pch_critical_threshold"] = floor(($_POST["thermal_sensors_widget_pch_critical_threshold"] - 32) / 1.8);
 	}
 
 	set_customwidgettitle($user_settings);
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_zone_warning_threshold", "thermal_sensors_widget_zone_critical_threshold");
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_core_warning_threshold", "thermal_sensors_widget_core_critical_threshold");
+	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_pch_warning_threshold", "thermal_sensors_widget_pch_critical_threshold");
 
 	//handle checkboxes separately
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_raw_output");
@@ -150,6 +153,8 @@ $thermal_sensors_widget_zoneWarningTempThreshold = getThresholdValueFromConfig($
 $thermal_sensors_widget_zoneCriticalTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_zone_critical_threshold", DEFAULT_CRITICAL_THRESHOLD, $widgetkey);
 $thermal_sensors_widget_coreWarningTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_core_warning_threshold", DEFAULT_WARNING_THRESHOLD, $widgetkey);
 $thermal_sensors_widget_coreCriticalTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_core_critical_threshold", DEFAULT_CRITICAL_THRESHOLD, $widgetkey);
+$thermal_sensors_widget_pchWarningTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_pch_warning_threshold", DEFAULT_WARNING_THRESHOLD, $widgetkey);
+$thermal_sensors_widget_pchCriticalTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_pch_critical_threshold", DEFAULT_CRITICAL_THRESHOLD, $widgetkey);
 
 //get display settings from config (apply defaults if missing)
 $thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_raw_output", false, $widgetkey);
@@ -171,6 +176,8 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 			zoneCriticalTempThreshold:<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>,
 			coreWarningTempThreshold:<?= $thermal_sensors_widget_coreWarningTempThreshold; ?>,
 			coreCriticalTempThreshold:<?= $thermal_sensors_widget_coreCriticalTempThreshold; ?>,
+			pchWarningTempThreshold:<?= $thermal_sensors_widget_pchWarningTempThreshold; ?>,
+			pchCriticalTempThreshold:<?= $thermal_sensors_widget_pchCriticalTempThreshold; ?>,
 			showRawOutput:<?= $thermal_sensors_widget_showRawOutput ? "true" : "false"; ?>,
 			showFullSensorName:<?= $thermal_sensors_widget_showFullSensorName ? "true" : "false"; ?>,
 			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
@@ -187,6 +194,8 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 				$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
 				$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
 				$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_pch_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_pch_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
 			} else {
 				$(".thermal_sensors_widget_unit").html('<?=gettext("&deg;C")?>');
 				$(".thermal_sensors_widget_range").html('<?=gettext("(1&ndash;100)")?>');
@@ -194,6 +203,8 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 				$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getCelsiusValue(this.value);});
 				$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getCelsiusValue(this.value);});
 				$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_pch_warning_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_pch_critical_threshold").val(function(){return getCelsiusValue(this.value);});
 			}
 		});
 		// --------------------- Centralized widget refresh system ------------------------------
@@ -233,6 +244,8 @@ if ($thermal_sensors_widget_showFahrenheit) {
 	$thermal_sensors_widget_zoneCriticalTempThreshold = ceil($thermal_sensors_widget_zoneCriticalTempThreshold * 1.8 + 32);
 	$thermal_sensors_widget_coreWarningTempThreshold = ceil($thermal_sensors_widget_coreWarningTempThreshold * 1.8 + 32);
 	$thermal_sensors_widget_coreCriticalTempThreshold = ceil($thermal_sensors_widget_coreCriticalTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_pchWarningTempThreshold = ceil($thermal_sensors_widget_pchWarningTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_pchCriticalTempThreshold = ceil($thermal_sensors_widget_pchCriticalTempThreshold * 1.8 + 32);
 }
 ?>
 <div style="padding: 5px">
@@ -278,6 +291,20 @@ if ($thermal_sensors_widget_showFahrenheit) {
 			<label class="col-sm-4 control-label"><?=gettext('Core Critical')?></label>
 			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_core_critical_threshold" id="thermal_sensors_widget_core_critical_threshold" value="<?= $thermal_sensors_widget_coreCriticalTempThreshold; ?>" class="form-control" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><?=gettext('PCH Warning')?></label>
+			<div class="col-sm-4">
+				<input type="text" name="thermal_sensors_widget_pch_warning_threshold" id="thermal_sensors_widget_pch_warning_threshold" value="<?= $thermal_sensors_widget_pchWarningTempThreshold; ?>" class="form-control" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><?=gettext('PCH Critical')?></label>
+			<div class="col-sm-4">
+				<input type="text" name="thermal_sensors_widget_pch_critical_threshold" id="thermal_sensors_widget_pch_critical_threshold" value="<?= $thermal_sensors_widget_pchCriticalTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
 

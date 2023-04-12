@@ -80,6 +80,9 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
 			warningTemp = tsParams.coreWarningTempThreshold;
 			criticalTemp = tsParams.coreCriticalTempThreshold;
+		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
+			warningTemp = tsParams.pchWarningTempThreshold;
+			criticalTemp = tsParams.pchCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
 			warningTemp = tsParams.zoneWarningTempThreshold;
 			criticalTemp = tsParams.zoneCriticalTempThreshold;
@@ -133,6 +136,9 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
 			warningTemp = tsParams.coreWarningTempThreshold;
 			criticalTemp = tsParams.coreCriticalTempThreshold;
+		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
+			warningTemp = tsParams.pchWarningTempThreshold;
+			criticalTemp = tsParams.pchCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
 			warningTemp = tsParams.zoneWarningTempThreshold;
 			criticalTemp = tsParams.zoneCriticalTempThreshold;

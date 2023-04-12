@@ -75,21 +75,31 @@ if (!$if || !isset($iflist[$if])) {
 	}
 
 	// At the last select whatever can be found.
+	$fallback = "";
 	if (!$found_starting_if) {
 		foreach (array_keys($iflist) as $ifent) {
 			/* Not static IPv4 or subnet >= 31 */
 			if (!is_ipaddrv4(config_get_path("interfaces/{$ifent}/ipaddr")) ||
-			    empty($oc['subnet']) ||
-			    ((int) config_get_path("interfaces/{$ifent}/subnet", 0) < 31)) {
+			    empty(config_get_path("interfaces/{$ifent}/subnet")) ||
+			    ((int) config_get_path("interfaces/{$ifent}/subnet", 0) >= 31)) {
 				continue;
+			} elseif (empty($fallback)) {
+				/* First potential fallback in case no interfaces
+				 * have DHCP enabled. */
+				$fallback = $ifent;
 			}
 
+			/* If this interface has does not have DHCP enabled,
+			 * skip it for now. */
 			if (!config_path_enabled("dhcpd/{$ifent}")) {
 				continue;
 			}
 
 			$if = $ifent;
 			break;
+		}
+		if (empty($if) || !empty($fallback)) {
+			$if = $fallback;
 		}
 	}
 }

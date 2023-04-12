@@ -4462,11 +4462,17 @@ function filter_process_carp_rules($log) {
 
 	$increment_tracker = 'filter_rule_tracker';
 	$lines = "";
-	/* return if there are no carp configured items */
-	if (!empty(config_get_path('hasync')) or !empty(config_get_path('virtualip/vip'))) {
-		$lines .= "\n# CARP rules\n";
-		$lines .= "block in {$log['block']} quick proto carp from (self) to any ridentifier {$increment_tracker()}\n";
-		$lines .= "pass {$log['pass']} quick proto carp ridentifier {$increment_tracker()} no state\n";
+	/* Only add CARP rules if there are CARP VIPs
+	 * https://redmine.pfsense.org/issues/13908 */
+	foreach (config_get_path('virtualip/vip', []) as $vip) {
+		if (!empty($vip) &&
+		    is_array($vip) &&
+		    ($vip['mode'] == 'carp')) {
+			$lines .= "\n# CARP rules\n";
+			$lines .= "block in {$log['block']} quick proto carp from (self) to any ridentifier {$increment_tracker()}\n";
+			$lines .= "pass {$log['pass']} quick proto carp ridentifier {$increment_tracker()} no state\n";
+			break;
+		}
 	}
 	return $lines;
 }

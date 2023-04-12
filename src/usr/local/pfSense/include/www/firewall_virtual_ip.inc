@@ -527,6 +527,10 @@ function deleteVIP($id, $json = false) {
 			}
 			write_config(gettext("Deleted a virtual IP."));
 
+			/* Reload filter since removed address may trigger changes in rules
+			 * https://redmine.pfsense.org/issues/13908 */
+			filter_configure();
+
 			if (!$json) {
 				header("Location: firewall_virtual_ip.php");
 				exit;

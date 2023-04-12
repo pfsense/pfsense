@@ -28,7 +28,13 @@ class pfsense_xmlrpc_client {
 
 	public function __construct() {
 		global $config;
-		$hasync = config_get_path('hasync');
+		$hasync = config_get_path('hasync', []);
+		/* XMLRPC sync is not configured, nothing to do.
+		 * https://redmine.pfsense.org/issues/14182 */
+		if (empty($hasync)) {
+			$this->error = "XMLRPC Synchronization is not configured.";
+			return;
+		}
 
 		if (empty($hasync['username'])) {
 			$username = "admin";
@@ -78,6 +84,13 @@ class pfsense_xmlrpc_client {
 	}
 
 	private function xmlrpc_internal($method, $parameter, $timeout = 240) {
+		/* XMLRPC sync is not configured, nothing to do.
+		 * https://redmine.pfsense.org/issues/14182 */
+		if (empty($this->url) ||
+		    empty($this->logurl)) {
+			$this->error = "XMLRPC Synchronization is not configured.";
+			return;
+		}
 		$options = array(
 			'prefix' => 'pfsense.',
 			'sslverify' => false,

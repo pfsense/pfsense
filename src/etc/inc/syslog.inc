@@ -314,7 +314,7 @@ EOD;
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
-		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6\n";
+		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases\n";
 		if (!config_path_enabled('syslog', 'disablelocallogging')) {
 			$syslogconf .= "*.*								{$g['varlog_path']}/dhcpd.log\n";
 		}

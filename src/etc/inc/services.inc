@@ -285,11 +285,11 @@ function services_radvd_configure($blacklist = array()) {
 			if (count($dnslist) > 0) {
 				$dnsstring = implode(" ", $dnslist);
 				if ($dnsstring <> "") {
-					/* 
+					/*
 					 * The value of Lifetime SHOULD by default be at least
 					 * 3 * MaxRtrAdvInterval, where MaxRtrAdvInterval is the
 					 * maximum RA interval as defined in [RFC4861].
-					 * see https://redmine.pfsense.org/issues/11105 
+					 * see https://redmine.pfsense.org/issues/11105
 					 */
 					$radvdconf .= "\tRDNSS {$dnsstring} {\n";
 					$radvdconf .= "\t\tAdvRDNSSLifetime {$raadvdnsslifetime};\n";
@@ -312,9 +312,9 @@ function services_radvd_configure($blacklist = array()) {
 			}
 			$domain = config_get_path('system/domain');
 			if (!empty($dhcpv6ifconf['domain'])) {
-				/* 
+				/*
 				 * Lifetime SHOULD by default be at least 3 * MaxRtrAdvInterval
-				 * see https://redmine.pfsense.org/issues/12173 
+				 * see https://redmine.pfsense.org/issues/12173
 				 */
 				$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} {\n";
 				$radvdconf .= "\t\tAdvDNSSLLifetime {$raadvdnsslifetime};\n";
@@ -557,7 +557,7 @@ function services_dhcpdv4_configure() {
 				    ($item['number'] == 60) &&
 				    (base64_decode($item['value']) == "HTTPClient")) {
 					$httpclient = true;
-				} 
+				}
 				$idx++;
 			}
 		}
@@ -580,7 +580,7 @@ function services_dhcpdv4_configure() {
 						    ($item['number'] == 60) &&
 						    (base64_decode($item['value']) == "HTTPClient")) {
 							$httpclient = true;
-						} 
+						}
 						$idx++;
 					}
 				}
@@ -610,7 +610,7 @@ function services_dhcpdv4_configure() {
 					    ($item['number'] == 60) &&
 					    (base64_decode($item['value']) == "HTTPClient")) {
 						$httpclient = true;
-					} 
+					}
 					$idx++;
 				}
 				if (!empty($sm['uefihttpboot']) && isset($sm['netboot']) && !$httpclient) {
@@ -638,7 +638,7 @@ update-conflict-detection false;
 EOD;
 
 	/* take these settings from the first DHCP configured interface,
-	 * see https://redmine.pfsense.org/issues/10270 
+	 * see https://redmine.pfsense.org/issues/10270
 	 * TODO: Global Settings tab, see https://redmine.pfsense.org/issues/5080 */
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 		if (empty($dhcpifconf)) {
@@ -1051,7 +1051,7 @@ EOPP;
 					    ($item['number'] == 60) &&
 					    (base64_decode($item['value']) == "HTTPClient")) {
 						$httpclient = true;
-					} 
+					}
 					$idx++;
 				}
 			}
@@ -1207,7 +1207,7 @@ EOD;
 				    ($item['number'] == 60) &&
 				    (base64_decode($item['value']) == "HTTPClient")) {
 					$httpclient = true;
-				} 
+				}
 				$idx++;
 			}
 		}
@@ -1256,10 +1256,10 @@ EOD;
 						$expr = "option arch = {$pxe[0]} {\n";
 					}
 					if (!$pxeif) {
-						$dhcpdconf .= "	if " . $expr; 
+						$dhcpdconf .= "	if " . $expr;
 						$pxeif = true;
 					} else {
-						$dhcpdconf .= " else if " . $expr; 
+						$dhcpdconf .= " else if " . $expr;
 					}
 					$dhcpdconf .= "		filename \"{$pxe[1]}\";\n";
 					$dhcpdconf .= "	}";
@@ -1343,7 +1343,7 @@ EOD;
 				if (isset($sm['ddnsupdate'])) {
 					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
 						$smdnscfg .= "	ddns-domainname \"{$sm['ddnsdomain']}\";\n";
-				 		$need_sm_ddns_updates = true;	
+				 		$need_sm_ddns_updates = true;
 					}
 					$smdnscfg .= "	ddns-update-style interim;\n";
 				}
@@ -1396,7 +1396,7 @@ EOD;
 					    ($item['number'] == 60) &&
 					    (base64_decode($item['value']) == "HTTPClient")) {
 						$httpclient = true;
-					} 
+					}
 					$idx++;
 				}
 				if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient) {
@@ -1444,10 +1444,10 @@ EOD;
 								$expr = "option arch = {$pxe[0]} {\n";
 							}
 							if (!$pxeif) {
-								$dhcpdconf .= "	if " . $expr; 
+								$dhcpdconf .= "	if " . $expr;
 								$pxeif = true;
 							} else {
-								$dhcpdconf .= " else if " . $expr; 
+								$dhcpdconf .= " else if " . $expr;
 							}
 							$dhcpdconf .= "		filename \"{$pxe[1]}\";\n";
 							$dhcpdconf .= "	}";
@@ -1646,9 +1646,6 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	/* kill any running dhcpd */
 	if (isvalidpid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid")) {
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
-	}
-	if (isvalidpid("{$g['varrun_path']}/dhcpleases6.pid")) {
-		killbypid("{$g['varrun_path']}/dhcpleases6.pid");
 	}
 
 	/* DHCP enabled on any interfaces? */
@@ -2011,9 +2008,7 @@ EOD;
 
 	/* fire up dhcpd in a chroot */
 	if (count($dhcpdv6ifs) > 0) {
-		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " .
-			join(" ", $dhcpdv6ifs));
-		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php-cgi -f /usr/local/sbin/prefixes.php\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
+		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " . join(" ", $dhcpdv6ifs));
 	}
 	if (platform_booting()) {
 		print gettext("done.") . "\n";
@@ -2090,9 +2085,9 @@ EOD;
 		}
 		$igmpconf .= "\n";
 		if ($igmpcf['type'] == 'upstream') {
-		       $upstream = true;	
+		       $upstream = true;
 		} else {
-		       $downstream = true;	
+		       $downstream = true;
 		}
 	}
 	foreach ($iflist as $ifn) {
@@ -3157,7 +3152,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			$wanip = get_interface_ip($if);
 			$bindipv4 = $wanip;
 		}
-		if (is_stf_interface($dnsupdate['interface'])) { 
+		if (is_stf_interface($dnsupdate['interface'])) {
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface'] . '_stf');
 		} else {
 			$wanipv6 = get_interface_ipv6($if);
@@ -3172,7 +3167,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		} elseif (!empty($dnsupdate['updatesource'])) {
 			/* Find the alternate binding address */
 			$bindipv4 = get_interface_ip($dnsupdate['updatesource']);
-			if (is_stf_interface($dnsupdate['interface'])) { 
+			if (is_stf_interface($dnsupdate['interface'])) {
 				$bindipv6 = get_interface_ipv6($dnsupdate['updatesource'] . '_stf');
 			} else {
 				$bindipv6 = get_interface_ipv6($dnsupdate['updatesource']);

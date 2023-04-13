@@ -1306,53 +1306,41 @@
 					/* see https://redmine.pfsense.org/issues/11293
 					 * and https://redmine.pfsense.org/issues/12352 */
 
+					$cookieFile = "/var/tmp/one.com.cookie";
 					curl_setopt($ch, CURLOPT_URL, "https://www.one.com/admin/");
-					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					curl_setopt($ch, CURLOPT_HEADER, 0);
+					curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
-					$last_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+					$dom = new DOMDocument;
+					$dom->loadHTML($output);
+					$formTag = $dom->getElementsByTagName("form")[0];
+					$login_url = $formTag->getAttribute("action");
 
-					// extract the cookies
-					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
-					if (count($cookies[1]) > 0) {
-						$cookie_data = implode("; ", $cookies[1]);
-					}
-
-					// login in
-					$post_data['username'] = $this->_dnsUser;
-					$post_data['password'] = $this->_dnsPass;
-					$post_data['credentialId'] = '';
-
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-					curl_setopt($ch, CURLOPT_URL, $last_url);
-					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
-					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					// login
+					curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, 'username=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&credentialId=');
+					curl_setopt($ch, CURLOPT_URL, $login_url);
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 
-					// extract the cookies
-					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
-					if (count($cookies[1]) > 0) {
-						$cookie_data = implode("; ", $cookies[1]);
-					}
-
 					// gets all DNS records of the domain.
 					$post_data = null;
-					$url = "https://www.one.com/admin/api/domains/" . $this->_dnsDomain + "/dns/custom_records";
+					$url = "https://www.one.com/admin/api/domains/" . $this->_dnsDomain . "/dns/custom_records";
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
+					curl_setopt($ch, CURLOPT_POST, 0);
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_URL, $url);
-					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$output = curl_exec($ch);
 					$result = json_decode($output, true);
 					$records = $result['result']['data'];
 
+					$this->_dnsHostname = $this->_dnsHostname == "@" ? "" : $this->_dnsHostname; // Allow "@" to indicate root domain
 					// finds the record id of a record from it's subdomain
 					foreach ($records as $rec) {
 						if ($rec['attributes']['prefix'] == $this->_dnsHostname) {
@@ -1362,6 +1350,7 @@
 					}
 					if (!$id) {
 						log_error("Could not find one.com hostname record id");
+						unlink($cookieFile);
 						return false;
 					}
 
@@ -1810,6 +1799,10 @@
 				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 				$curl_error = @curl_error($ch);
 				$this->_checkStatus($http_code, $curl_error, $data, $header);
+			}
+
+			if (isset($cookieFile)) {
+				unlink($cookieFile);
 			}
 		}
 

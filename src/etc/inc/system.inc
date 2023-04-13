@@ -1474,6 +1474,18 @@ EOD;
 
 	}
 
+	$plugin_locations = "";
+	if ($captive_portal == false) {
+		$pluginparams = [ 'section' => 'location' ];
+		foreach (pkg_call_plugins('plugin_nginx', $pluginparams) as $pkgname => $location) {
+			if (empty($location)) {
+				continue;
+			}
+			$plugin_locations .= "# Plugin Locations ({$pkgname})\n";
+			$plugin_locations .= "{$location}\n";
+		}
+	}
+
 	$nginx_config .= <<<EOD
 		root "{$document_root}";
 		location / {
@@ -1506,6 +1518,7 @@ EOD;
 			fastcgi_read_timeout 360;
 			include        /usr/local/etc/nginx/fastcgi_params;
 		}
+		{$plugin_locations}
 	}
 
 EOD;
@@ -1553,6 +1566,17 @@ EOD;
 	}
 
 EOD;
+	}
+
+	if ($captive_portal == false) {
+		$pluginparams = [ 'section' => 'server' ];
+		foreach (pkg_call_plugins('plugin_nginx', $pluginparams) as $pkgname => $server) {
+			if (empty($server)) {
+				continue;
+			}
+			$nginx_config .= "	# Plugin Servers ({$pkgname})\n";
+			$nginx_config .= "{$server}\n";
+		}
 	}
 
 	$nginx_config .= "}\n";

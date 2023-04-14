@@ -198,7 +198,6 @@ if (!empty(config_get_path('captiveportal')) &&
 		captiveportal_syslog(sprintf(gettext('Connected users, used vouchers and used MACs have been synchronized from %1$s'), $config['hasync']['synchronizetoip']));
 	}
 }
-openlog("", LOG_PID, LOG_LOCAL0);
 $pluginparams = array();
 $pluginparams['type'] = 'carp';
 $pluginparams['event'] = 'rc.carpmaster';

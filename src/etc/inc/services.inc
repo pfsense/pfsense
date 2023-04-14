@@ -1399,7 +1399,7 @@ EOD;
 					}
 					$idx++;
 				}
-				if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient) {
+				if (!empty($sm['uefihttpboot']) && isset($sm['netboot']) && !$httpclient) {
 					$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$idx} \"HTTPClient\";\n";
 				}
 

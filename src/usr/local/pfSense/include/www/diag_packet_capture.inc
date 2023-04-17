@@ -74,21 +74,9 @@
  *  it signifies that a Filter Preset is being used.
  */
 define('PCAP_SECTION_UNTAGGED', 0);
-define('PCAP_SECTION_SINGLETAGGED', 1);
-define('PCAP_SECTION_DOUBLETAGGED', 2);
-define('PCAP_SECTION_FPRESET', 9);
-define('PCAP_LIST_SECTION', [
-	PCAP_SECTION_UNTAGGED,
-	PCAP_SECTION_SINGLETAGGED,
-	PCAP_SECTION_DOUBLETAGGED
-]);
-define('PCAP_LIST_SECTION_SPECIAL', [
-	PCAP_SECTION_FPRESET
-]);
-define('PCAP_LIST_SECTION_ALL', array_merge(
-	PCAP_LIST_SECTION,
-	PCAP_LIST_SECTION_SPECIAL
-));
+define('PCAP_SECTION_TAGGED_MIN', 1);
+define('PCAP_SECTION_TAGGED_MAX', 9);
+define('PCAP_SECTION_FPRESET', 99);
 
 /**
  * Packet Capture Match
@@ -114,20 +102,6 @@ define('PCAP_LIST_MATCH_SECTION', [
 	PCAP_MATCH_SECT_ALLOF,
 	PCAP_MATCH_SECT_ANYOF
 ]);
-define('PCAP_LIST_MATCH_TYPE', [
-	PCAP_MATCH_TYPE_ALLOF,
-	PCAP_MATCH_TYPE_ANYOF
-]);
-define('PCAP_LIST_MATCH_ATTRIBUTE', [
-	PCAP_MATCH_ATTR_ANYOF,
-	PCAP_MATCH_ATTR_ALLOF,
-	PCAP_MATCH_ATTR_NONEOF
-]);
-define('PCAP_LIST_MATCH_ALL', array_merge(
-	PCAP_LIST_MATCH_SECTION,
-	PCAP_LIST_MATCH_TYPE,
-	PCAP_LIST_MATCH_ATTRIBUTE
-));
 
 /**
  * Packet Capture Filter Preset
@@ -144,13 +118,6 @@ define('PCAP_LIST_FPRESET', [
 	PCAP_FPRESET_UNTAGGED,
 	PCAP_FPRESET_TAGGED
 ]);
-define('PCAP_LIST_FPRESET_SPECIAL', [
-	PCAP_FPRESET_CUSTOM
-]);
-define('PCAP_LIST_FPRESET_ALL', array_merge(
-	PCAP_LIST_FPRESET,
-	PCAP_LIST_FPRESET_SPECIAL
-));
 
 /**
  * Packet Capture Types
@@ -174,14 +141,8 @@ define('PCAP_LIST_TYPE', [
 	PCAP_TYPE_MACADDRESS,
 	PCAP_TYPE_PORT
 ]);
-define('PCAP_LIST_TYPE_SPECIAL', [
-	PCAP_TYPE_APRESET,
-	PCAP_TYPE_SMATCH
-]);
 define('PCAP_LIST_TYPE_ALL', array_merge(
-	PCAP_LIST_TYPE,
-	PCAP_LIST_TYPE_SPECIAL
-));
+    PCAP_LIST_TYPE, array(PCAP_TYPE_APRESET, PCAP_TYPE_SMATCH)));
 
 /**
  * The FilterAttribute class defines an Attribute and contains the associated
@@ -214,7 +175,8 @@ class FilterAttribute {
 		}
 
 		// Validate and set the Attribute's Section
-		if (in_array($filter_section, PCAP_LIST_SECTION_ALL)) {
+		if ($filter_section == PCAP_SECTION_UNTAGGED || $filter_section == PCAP_SECTION_FPRESET || (
+		    $filter_section >= PCAP_SECTION_TAGGED_MIN && $filter_section <= PCAP_SECTION_TAGGED_MAX)) {
 			$this->section = $filter_section;
 		} else {
 			throw new Exception("Invalid Section given: " .
@@ -360,10 +322,8 @@ class FilterAttribute {
 		switch ($this->type) {
 			case PCAP_TYPE_VLAN:
 				// Determine search offset of the VLAN tag
-				if ($this->getFilterSection() == PCAP_SECTION_SINGLETAGGED) {
-					$vlan_offset = 'ether[14:2]';
-				} else {
-					$vlan_offset = 'ether[18:2]';
+				if ($this->getFilterSection() >= PCAP_SECTION_TAGGED_MIN) {
+					$vlan_offset = 'ether['.(10+4*$this->section).':2]';
 				}
 				foreach ($string_values as $value) {
 					// Validate input values
@@ -637,6 +597,13 @@ function get_expression_string(array $filterattributes) {
 			$expression_string = 'vlan';
 			break;
 		default:
+			// Fill in and exclude missing sections
+			if (!empty($fs_strings)) {
+				$last_section = max(array_keys($fs_strings));
+				$fs_strings = array_replace(array_fill_keys(range(0, $last_section), ''), $fs_strings);
+				$fs_exclude = array_replace(array_fill_keys(range(0, $last_section), true), $fs_exclude);
+			}
+
 			/* Save the offsets of the last Sections to be excluded, included,
 			 * or have some value to be filtered for; used to avoid incorrect
 			 * or redundant Section strings. */
@@ -667,6 +634,7 @@ function get_expression_string(array $filterattributes) {
 			 * and construct the final expression string. */
 			$fs_last = false;
 			$fs_match_next = null;
+			$fs_prepend = false;
 			foreach ($fs_strings as $fs => $string) {
 				/* Assume the Section is to be excluded if that has not yet
 				 * been specified. */
@@ -756,6 +724,16 @@ function get_expression_string(array $filterattributes) {
 
 				// Add the Section filter string to the filter expression
 				if (!empty($fs_string)) {
+					// Logically separate unttaged and tagged sections
+					if ($fs == 0) {
+						$fs_prepend = true;
+					} elseif ($fs_prepend) {
+						$fs_prepend = false;
+						$fs_string = '(' . $fs_string;
+					}
+					if ($fs == $last_section || $fs_last) {
+						$fs_string = $fs_string . ')';
+					}
 					$expression_string .= sprintf('%1$s(%2$s)', $fs_match, $fs_string);
 				}
 

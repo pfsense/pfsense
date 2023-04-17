@@ -132,18 +132,21 @@ if ($_POST) {
 	// filter options
 	$filterattributes = [];
 	if ($input_filter == PCAP_FPRESET_CUSTOM) {
+		// Variables to pre-fill form input based on POST data
+		if (isset($_POST['tagged_taglevel'])) {
+			$input_tagged_taglevel = $_POST['tagged_taglevel'];
+		}
+
 		foreach ($_POST as $key => $value) {
 			/* Only the "match" select element values need to be checked. Determine
 			 * the corresponding Section and Type from the element ID. */
 			if (preg_match('/^untagged_[a-z]+_match$/i', $key)) {
 				$fa_section = PCAP_SECTION_UNTAGGED;
 				$fa_type_name = substr_replace(substr($key, 9), '', -6);
-			} elseif (preg_match('/^singletagged_[a-z]+_match$/i', $key)) {
-				$fa_section = PCAP_SECTION_SINGLETAGGED;
-				$fa_type_name = substr_replace(substr($key, 13), '', -6);
-			} elseif (preg_match('/^doubletagged_[a-z]+_match$/i', $key)) {
-				$fa_section = PCAP_SECTION_DOUBLETAGGED;
-				$fa_type_name = substr_replace(substr($key, 13), '', -6);
+			} elseif (preg_match('/^tagged_[a-z]+_match$/i', $key)) {
+				// The Section is determined by the tag level
+				$fa_section = empty($_POST['tagged_taglevel']) ? PCAP_SECTION_TAGGED_MIN : $_POST['tagged_taglevel'];
+				$fa_type_name = substr_replace(substr($key, 7), '', -6);
 			} else {
 				continue;
 			}
@@ -229,7 +232,7 @@ if ($_POST) {
 		$expression_string = get_expression_string($filterattributes);
 		if (empty($expression_string) && $input_filter == PCAP_FPRESET_CUSTOM && empty($input_error)) {
 			// If the expression string is empty due to previous errors, don't show this error
-			$input_error[] = 'Custom filter cannot be empty. Use the "Everything" preset instead.';
+			$input_error[] = 'Custom filter should not be empty. Use the "Everything" preset instead.';
 		}
 	} catch (Exception $e) {
 		$input_error[] = $e->getMessage();
@@ -369,7 +372,6 @@ $form_fsmatch = array(
 );
 $form_fsmatch_tagged = array(
 	PCAP_MATCH_SECT_NONE => gettext('exclude all'),
-	//PCAP_MATCH_SECT_ALLOF => gettext('include all of'),
 	PCAP_MATCH_SECT_ANYOF => gettext('include any of')
 );
 // Type match selection fields
@@ -377,32 +379,32 @@ $form_match_ipaddress = $form_match_macaddress = $form_match_port = array(
 	PCAP_MATCH_ATTR_ALLOF => gettext('all of'),
 	PCAP_MATCH_ATTR_ANYOF => gettext('any of'),
 	PCAP_MATCH_ATTR_NONEOF => gettext('none of'),
-	PCAP_MATCH_TYPE_ALLOF => gettext('[OR] all of'),
-	PCAP_MATCH_TYPE_ANYOF => gettext('[OR] any of')
+	PCAP_MATCH_TYPE_ALLOF => gettext('OR all of'),
+	PCAP_MATCH_TYPE_ANYOF => gettext('OR any of')
 );
 $form_match_tag = $form_match_protocol = $form_match_ethertype = array(
 	PCAP_MATCH_ATTR_ANYOF => gettext('any of'),
 	PCAP_MATCH_ATTR_NONEOF => gettext('none of'),
-	PCAP_MATCH_TYPE_ANYOF => gettext('[OR] any of')
+	PCAP_MATCH_TYPE_ANYOF => gettext('OR any of')
 );
 $form_match_ethertype +=  array(
-	'ipv4' => 'IPv4',
-	'ipv6' => 'IPv6',
-	'arp' => 'ARP'
+	'ipv4' => '[IPv4]',
+	'ipv6' => '[IPv6]',
+	'arp' => '[ARP]'
 );
 $form_match_protocol += array(
-	'icmp' => 'ICMPv4',
-	'icmp6' => 'ICMPv6',
-	'tcp' => 'TCP',
-	'udp' => 'UDP',
-	'ipsec' => 'IPsec',
-	'carp' => 'CARP',
-	'pfsync' => 'pfsync',
-	'ospf' => 'OSPF'
+	'icmp' => '[ICMPv4]',
+	'icmp6' => '[ICMPv6]',
+	'tcp' => '[TCP]',
+	'udp' => '[UDP]',
+	'ipsec' => '[IPsec]',
+	'carp' => '[CARP]',
+	'pfsync' => '[pfsync]',
+	'ospf' => '[OSPF]'
 );
 // Variables for each Section
 $form_filter_section_begin_row = array('ipaddress', 'protocol');
-$form_filter_section_end_row = array('tag', 'macaddress', 'ethertype');
+$form_filter_section_end_row = array('taglevel', 'macaddress', 'ethertype');
 $form_filter_sections = array(
 	0 => array(
 		'name' => 'untagged',
@@ -411,23 +413,23 @@ $form_filter_sections = array(
 		'matchdescription' => gettext('UNTAGGED PACKETS')
 	),
 	1 => array(
-		'name' => 'singletagged',
-		'sectionlabel' => gettext('Single-Tagged Filter'),
-		'sectiondescription' => gettext('Filter options for packets which have a VLAN tag set.'),
-		'matchdescription' => gettext('SINGLE-TAGGED PACKETS')
-	),
-	2 => array(
-		'name' => 'doubletagged',
-		'sectionlabel' => gettext('Double-Tagged Filter'),
-		'sectiondescription' => gettext('Filter options for packets with both an outer and inner VLAN tag, such as QinQ.'),
-		'matchdescription' => gettext('DOUBLE-TAGGED PACKETS')
+		'name' => 'tagged',
+		'sectionlabel' => gettext('Tagged Filter'),
+		'sectiondescription' => gettext('Filter options for packets that have a VLAN tag set. ' .
+		    'Specify a tag level to match stacked VLAN packets (such as QinQ).'),
+		'matchdescription' => gettext('TAGGED PACKETS')
 	)
 );
 $form_filter_section_attributes_properties = array(
 	'tag' => array(
 		'placeholder' => gettext('EXAMPLE: 100 200'),
 		'description' => gettext('VLAN TAG'),
-		'width' => 4
+		'width' => 3
+	),
+	'taglevel' => array(
+		'placeholder' => 1,
+		'description' => gettext('LEVEL'),
+		'width' => 1
 	),
 	'ipaddress' => array(
 		'placeholder' => gettext('EXAMPLE: 10.1.1.0/24 192.168.1.1'),
@@ -458,7 +460,7 @@ $form_filter_section_attributes_properties = array(
 
 // Default form input values
 if (!isset($input_filter)) {
-	$input_filter = PCAP_FPRESET_ANY;
+	$input_filter = PCAP_FPRESET_CUSTOM;
 }
 if (!isset($input_promiscuous)) {
 	$input_promiscuous = true;
@@ -564,9 +566,9 @@ $section->addClass('custom-options');
 $section->addInput(new Form_StaticText(
 	'Hint',
 	sprintf('All input is %1$sspace-separated%2$s. When selecting a match ' .
-	        'that specifies %1$s[OR]%2$s, at least two Types should be ' .
-	        'specified (e.g. Ethertype and Port). This will capture packets ' .
-	        'that match either attribute input instead of explicitly both.',
+	        'that specifies "%1$sOR%2$s", at least two Types should be ' .
+	        'specified (such as Ethertype and Port). This will capture packets ' .
+	        'that match either Type instead of exclusively both.',
 			'<b>', '</b>')
 ));
 // Add each Section
@@ -597,10 +599,15 @@ foreach ($form_filter_sections as $fs_key => $fs_var) {
 
 	// Type fields
 	foreach ($form_filter_section_attributes_properties as $attribute_name => $attribute_strings) {
-		// Don't add a VLAN Type in an untagged Section
-		if ($fs_key == array_key_first($form_filter_sections) && $attribute_name == 'tag') {
-			$section->add($group);
-			continue;
+		// Don't add VLAN Types in an untagged Section
+		if ($fs_key == array_key_first($form_filter_sections)) {
+			if ($attribute_name == 'tag') {
+				continue;
+			}
+			if ($attribute_name == 'taglevel') {
+				$section->add($group);
+				continue;
+			}
 		}
 		// Variable variables for the Type fields
 		$attribute_input_id     =       "{$fs_name}_{$attribute_name}";       // input element ID
@@ -619,12 +626,25 @@ foreach ($form_filter_sections as $fs_key => $fs_var) {
 		}
 
 		// Add the Type field to the group
-		$attribute_field = new Form_SelectInputCombo(
-			$attribute_input_id,
-			$attribute_strings['placeholder'],
-			${$attribute_input_varvar}
-		);
-		$attribute_field->addSelect($attribute_match_id, ${$attribute_match_varvar}, ${$form_match_varvar});
+		switch ($attribute_name) {
+			case 'taglevel':
+				$attribute_field = new Form_Input(
+					$attribute_input_id,
+					$attribute_strings['placeholder'],
+					null,
+					${$attribute_input_varvar},
+					array('type' => 'number', 'min' => 1, 'max' => 9, 'step' => 1)
+				);
+				break;
+			default:
+				$attribute_field = new Form_SelectInputCombo(
+					$attribute_input_id,
+					$attribute_strings['placeholder'],
+					${$attribute_input_varvar}
+				);
+				$attribute_field->addSelect($attribute_match_id, ${$attribute_match_varvar}, ${$form_match_varvar});
+				break;
+		}
 		$attribute_field->setHelp($attribute_strings['description'])->setWidth($attribute_strings['width']);
 		$group->add($attribute_field);
 
@@ -848,7 +868,7 @@ if ($action == 'stop' || $action == 'view' || $process_running || $run_capture) 
 								overrideScroll = false;
 							}
 
-							setTimeout(function() { refreshOutput(bytesRead) }, 3000);
+							setTimeout(function() { refreshOutput(bytesRead) }, 2500);
 							<?php
 							if (!$process_running && !$run_capture) {
 								echo "}";
@@ -905,17 +925,12 @@ events.push(function() {
 	    'untagged_protocol_match', 'untagged_protocol', 'untagged_ipaddress_match', 'untagged_ipaddress',
 	    'untagged_macaddress_match', 'untagged_macaddress', 'untagged_port_match', 'untagged_port'];
 
-	const idSingletaggedList = ['singletagged_section_match', 'singletagged_tag_match', 'singletagged_tag',
-	    'singletagged_ethertype_match', 'singletagged_ethertype', 'singletagged_protocol_match',
-	    'singletagged_protocol', 'singletagged_ipaddress_match', 'singletagged_ipaddress',
-	    'singletagged_macaddress_match', 'singletagged_macaddress', 'singletagged_port_match', 'singletagged_port'];
+	const idTaggedList = ['tagged_section_match', 'tagged_taglevel', 'tagged_tag_match', 'tagged_tag',
+	    'tagged_ethertype_match', 'tagged_ethertype', 'tagged_protocol_match',
+	    'tagged_protocol', 'tagged_ipaddress_match', 'tagged_ipaddress',
+	    'tagged_macaddress_match', 'tagged_macaddress', 'tagged_port_match', 'tagged_port'];
 
-	const idDoubletaggedList = ['doubletagged_section_match', 'doubletagged_tag_match', 'doubletagged_tag',
-	    'doubletagged_ethertype_match', 'doubletagged_ethertype', 'doubletagged_protocol_match',
-	    'doubletagged_protocol', 'doubletagged_ipaddress_match', 'doubletagged_ipaddress',
-	    'doubletagged_macaddress_match', 'doubletagged_macaddress', 'doubletagged_port_match', 'doubletagged_port'];
-
-	const idAllList = idUntaggedList.concat(idSingletaggedList, idDoubletaggedList);
+	const idAllList = idUntaggedList.concat(idTaggedList);
 
 	// Disables the given input element
 	function disableElement(id, isDisabled) {
@@ -925,11 +940,10 @@ events.push(function() {
 	// Disable input elements depending on filter and match selections
 	function disableInput(idList, isElementDisabled, isSectionDisabled) {
 		for (let element of idList) {
-			if (element == 'untagged_section_match' || element == 'singletagged_section_match' ||
-			    element == 'doubletagged_section_match') {
+			if (element == 'untagged_section_match' || element == 'tagged_section_match') {
 				// Handle the Section match
 				disableElement(element, isSectionDisabled);
-			} else if (element.indexOf('_match') == -1) {
+			} else if (element.indexOf('_match') == -1 && $('#' + element + '_match').length > 0) {
 				// Element ID does not contain "_match" - it must be an input field.
 				var elementMatch = '#' + element + '_match';
 				// Disable the input field depending on the respective section and input match
@@ -961,24 +975,18 @@ events.push(function() {
 					// On selecting a filter preset
 					hideClass('custom-options', (this.value != PCAP_FPRESET_CUSTOM));
 					var isDisableAll = (this.value != PCAP_FPRESET_CUSTOM);
-					var isDisableSingletagged = ($('#singletagged_section_match').val() == PCAP_MATCH_SECT_NONE);
-					var isDisableDoubletagged = ($('#doubletagged_section_match').val() == PCAP_MATCH_SECT_NONE);
+					var isDisableTagged = ($('#tagged_section_match').val() == PCAP_MATCH_SECT_NONE);
 					disableInput(idAllList, isDisableAll, isDisableAll);
-					disableInput(idSingletaggedList, isDisableSingletagged, false);
-					disableInput(idDoubletaggedList, isDisableDoubletagged, false);
+					disableInput(idTaggedList, isDisableTagged, false);
 					break;
 				case 'untagged_section_match':
 					// On selecting an untagged Section match
 					disableInput(idUntaggedList, (this.value == PCAP_MATCH_SECT_NONE), false);
 					break;
-				case 'singletagged_section_match':
-					// On selecting a single-tagged Section match
-					disableInput(idSingletaggedList, (this.value == PCAP_MATCH_SECT_NONE), false);
+				case 'tagged_section_match':
+					// On selecting a tagged Section match
+					disableInput(idTaggedList, (this.value == PCAP_MATCH_SECT_NONE), false);
 					break
-				case 'doubletagged_section_match':
-					// On selecting a double-tagged Section match
-					disableInput(idDoubletaggedList, (this.value == PCAP_MATCH_SECT_NONE), false);
-					break;
 				default:
 					// On selecting a Type Match, handle the respective input field
 					disableElement((this.id).replace('_match', ''), !(this.value == PCAP_MATCH_ATTR_NONEOF ||
@@ -996,8 +1004,7 @@ events.push(function() {
 	} else {
 		hideClass('custom-options', false);
 		disableInput(idUntaggedList, ($('#untagged_section_match').val() == PCAP_MATCH_SECT_NONE), false);
-		disableInput(idSingletaggedList, ($('#singletagged_section_match').val() == PCAP_MATCH_SECT_NONE), false);
-		disableInput(idDoubletaggedList, ($('#doubletagged_section_match').val() == PCAP_MATCH_SECT_NONE), false);
+		disableInput(idTaggedList, ($('#tagged_section_match').val() == PCAP_MATCH_SECT_NONE), false);
 	}
 });
 //]]>

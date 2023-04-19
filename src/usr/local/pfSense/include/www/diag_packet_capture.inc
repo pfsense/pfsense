@@ -634,7 +634,7 @@ function get_expression_string(array $filterattributes) {
 			 * and construct the final expression string. */
 			$fs_last = false;
 			$fs_match_next = null;
-			$fs_prepend = false;
+			$fs_prepend = 0;
 			foreach ($fs_strings as $fs => $string) {
 				/* Assume the Section is to be excluded if that has not yet
 				 * been specified. */
@@ -726,12 +726,14 @@ function get_expression_string(array $filterattributes) {
 				if (!empty($fs_string)) {
 					// Logically separate unttaged and tagged sections
 					if ($fs == 0) {
-						$fs_prepend = true;
-					} elseif ($fs_prepend) {
-						$fs_prepend = false;
+						$fs_prepend = 1;
+					} elseif ($fs_prepend == 1) {
+						// The previous section was untagged, tagged sections must be matched with "or"
+						$fs_prepend = 2;
 						$fs_string = '(' . $fs_string;
+						$fs_match = ' or ';
 					}
-					if ($fs == $last_section || $fs_last) {
+					if ($fs_prepend == 2 && ($fs == $last_section || $fs_last)) {
 						$fs_string = $fs_string . ')';
 					}
 					$expression_string .= sprintf('%1$s(%2$s)', $fs_match, $fs_string);

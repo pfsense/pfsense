@@ -649,7 +649,7 @@ EOD;
 		}
 
 		if (isset($dhcpifconf['alwaysbroadcast'])) {
-			$dhcpdconf .= "always-broadcast on\n";
+			$dhcpdconf .= "always-broadcast on;\n";
 		}
 
 		// OMAPI Settings
@@ -991,6 +991,10 @@ EOPP;
 					$pdnscfg .= "		ddns-domainname \"{$poolconf['ddnsdomain']}\";\n";
 				}
 				$pdnscfg .= "		ddns-update-style interim;\n";
+
+				if (isset($poolconf['disableupdateoptimization'])) {
+					$pdnscfg .= "		update-optimization false;\n";
+				}
 			}
 
 			$dhcpdconf .= "{$pdnscfg}";
@@ -1346,6 +1350,10 @@ EOD;
 				 		$need_sm_ddns_updates = true;
 					}
 					$smdnscfg .= "	ddns-update-style interim;\n";
+
+					if (isset($sm['disableupdateoptimization'])) {
+						$smdnscfg .= "  update-optimization false;\n";
+					}
 				}
 
 				if (is_array($sm['dnsserver']) && ($sm['dnsserver'][0]) && ($sm['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
@@ -1519,7 +1527,9 @@ EOD;
 	if ($need_ddns_updates) {
 		$dhcpdconf .= "ddns-update-style interim;\n";
 		$dhcpdconf .= "update-static-leases on;\n";
-
+		if (isset($dhcpifconf['disableupdateoptimization'])) {
+			$dhcpdconf .= "update-optimization false;\n";
+		}
 		$dhcpdconf .= dhcpdzones($ddns_zones);
 	}
 
@@ -1703,7 +1713,7 @@ EOD;
 	}
 
 	if (isset($dhcpv6ifconf['alwaysbroadcast'])) {
-		$dhcpdv6conf .= "always-broadcast on\n";
+		$dhcpdv6conf .= "always-broadcast on;\n";
 	}
 
 	$dhcpdv6ifs = array();
@@ -1982,6 +1992,10 @@ EOD;
 	if ($nsupdate) {
 		$dhcpdv6conf .= "ddns-update-style interim;\n";
 		$dhcpdv6conf .= "update-static-leases on;\n";
+		if (isset($dhcpv6ifconf['disableupdateoptimization'])) {
+			$dhcpdv6conf .= "update-optimization false;\n";
+		}
+
 	} else {
 		$dhcpdv6conf .= "ddns-update-style none;\n";
 	}

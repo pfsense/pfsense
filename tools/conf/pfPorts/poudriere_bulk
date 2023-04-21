@@ -54,6 +54,7 @@ net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel
 net/%%PRODUCT_NAME%%-pkg-pimd
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
+net/%%PRODUCT_NAME%%-pkg-udpbroadcastrelay
 net/%%PRODUCT_NAME%%-pkg-WireGuard
 net/hping3
 net/intel-em-kmod

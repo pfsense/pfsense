@@ -1132,12 +1132,20 @@ function filter_get_vpns_list() {
 		   See https://redmine.pfsense.org/issues/7005 */
 		$pool_address = config_get_path('ipsec/client/pool_address');
 		$pool_netbits = config_get_path('ipsec/client/pool_netbits');
-		if (config_path_enabled('ipsec/client')
-			&& isset($pool_address)
-			&& isset($pool_netbits)) {
-			$client_subnet = "{$pool_address}/{$pool_netbits}";
-			if (is_subnet($client_subnet)) {
-				 $vpns_arr[] = $client_subnet;
+		$pool_address_v6 = config_get_path('ipsec/client/pool_address_v6');
+		$pool_netbits_v6 = config_get_path('ipsec/client/pool_netbits_v6');
+		if (config_path_enabled('ipsec/client')) {
+			if (isset($pool_address) && isset($pool_netbits)) {
+				$client_subnet = "{$pool_address}/{$pool_netbits}";
+				if (is_subnet($client_subnet)) {
+					 $vpns_arr[] = $client_subnet;
+				}
+			}
+			if (isset($pool_address_v6) && isset($pool_netbits_v6)) {
+				$client_subnet = "{$pool_address_v6}/{$pool_netbits_v6}";
+				if (is_subnet($client_subnet)) {
+					 $vpns_arr[] = $client_subnet;
+				}
 			}
 		}
 		foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {

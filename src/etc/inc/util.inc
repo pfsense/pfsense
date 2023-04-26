@@ -244,7 +244,7 @@ function send_multiple_events($cmds) {
 function is_module_loaded($module_name) {
 	$module_name = str_replace(".ko", "", $module_name);
 	$running = 0;
-	$_gb = exec("/sbin/kldstat -qn {$module_name} 2>&1", $_gb, $running);
+	$_gb = exec("/sbin/kldstat -qm {$module_name} 2>&1", $_gb, $running);
 	if (intval($running) == 0) {
 		return true;
 	} else {

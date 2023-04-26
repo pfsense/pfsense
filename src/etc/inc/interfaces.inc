@@ -1212,6 +1212,11 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 		log_error(gettext("could not bring parentif up -- variable not defined -- interface_gif_configure()"));
 	}
 
+	/* some kernels may need to load if_gif */
+	if (!is_module_loaded("if_gif")) {
+		mwexec("/sbin/kldload if_gif");
+	}
+
 	if (platform_booting() || !(empty($gif['gifif']))) {
 		pfSense_interface_destroy($gif['gifif']);
 		pfSense_interface_create2($gif['gifif']);

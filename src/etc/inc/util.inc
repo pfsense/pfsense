@@ -2061,7 +2061,7 @@ function resolve_retry($hostname, $protocol = 'inet') {
 			$dnsproto = DNS_AAAA;
 			$dnstype = array('AAAA');
 			break;
-		case 'inet': 
+		case 'inet':
 		default:
 			$checkproto = 'is_ipaddrv4';
 			$dnsproto = DNS_A;
@@ -2080,11 +2080,11 @@ function resolve_retry($hostname, $protocol = 'inet') {
 			foreach ($dnsresult as $ip) {
 				if (is_array($ip)) {
 					if (in_array($ip['type'], $dnstype)) {
-						if ($checkproto($ip['ip'])) { 
+						if ($checkproto($ip['ip'])) {
 							$recresult[] = $ip['ip'];
 						}
 
-						if ($checkproto($ip['ipv6'])) { 
+						if ($checkproto($ip['ipv6'])) {
 							$recresult[] = $ip['ipv6'];
 						}
 					}
@@ -2121,22 +2121,18 @@ function format_bytes($bytes) {
 	}
 }
 
-function format_number($num, $precision = 3) {
-	$units = array('', 'K', 'M', 'G', 'T');
-
-	$i = 0;
-	while ((float) $num > 1000 && $i < count($units)) {
-		(float) $num /= 1000;
-		$i++;
-	}
-	$num = round((float) $num, $precision);
-
-	return ("{$num} {$units[$i]}");
+function format_number(int $num, int $precision = 3): string
+{
+    $units = ['', 'K', 'M', 'G', 'T'];
+    for ($i = 0; $num >= 1000; $i++) {
+        $num /= 1000;
+    }
+    return (round($num, $precision) . $units[$i]);
 }
 
 function unformat_number($formated_num) {
 	$num = strtoupper($formated_num);
-    
+
 	if ( strpos($num,"T") !== false ) {
 		$num = str_replace("T","",$num) * 1000 * 1000 * 1000 * 1000;
 	} else if ( strpos($num,"G") !== false ) {
@@ -2146,7 +2142,7 @@ function unformat_number($formated_num) {
 	} else if ( strpos($num,"K") !== false ) {
 		$num = str_replace("K","",$num) * 1000;
 	}
-    
+
 	return $num;
 }
 
@@ -2413,7 +2409,7 @@ function is_interface_mismatch() {
 	 * see https://redmine.pfsense.org/issues/12170 */
 	init_config_arr(array('vlans', 'vlan'));
 	foreach ($config['vlans']['vlan'] as $vlan) {
-		if (!does_interface_exist($vlan['if']) && 
+		if (!does_interface_exist($vlan['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
 			$missing_interfaces[] = $vlan['if'];
 			$do_assign = true;
@@ -2893,7 +2889,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	}
 	if (is_ipaddr($gw)) {
 		/* set correct linklocal gateway address,
-		 * see https://redmine.pfsense.org/issues/11713 
+		 * see https://redmine.pfsense.org/issues/11713
 		 * and https://redmine.pfsense.org/issues/11806 */
 		if (is_ipaddrv6($gw) && is_linklocal($gw) && empty(get_ll_scope($gw))) {
 			$routeget = route_get($gw, 'inet6', true);
@@ -3375,7 +3371,7 @@ function array_get_path(array &$arr, string $path, $default = null) {
 	if (($default !== null) && ($el === '')) {
 		return ($default);
 	}
-	
+
 	return ($el);
 }
 
@@ -3407,7 +3403,7 @@ function array_init_path(mixed &$arr, ?string $path)
  * but is not empty or an array, return $default.
  * @param $arr array value to search
  * @param $path string path with '/' separators
- * @param $value mixed 
+ * @param $value mixed
  * @param $default mixed value to return if the path is not found
  * @returns mixed $val or $default if the path prefix does not exist
  */
@@ -3440,7 +3436,7 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
 
 /**
  * Determine whether a path in a nested array has a non-null value keyed by
- * $enable_key. 
+ * $enable_key.
  * @param $arr array value to search
  * @param $path string path with '/' separators
  * @param $enable_key string an optional alternative key value for the enable key
@@ -4010,7 +4006,7 @@ function cleanup_regex_pattern($filtertext) {
 function ip6_to_asn1($addr) {
 	/* IPv6 MIB uses an OCTET STRING of length 16 to represent
 	 * 128-bit IPv6 address in network byte order.
-	 * see https://datatracker.ietf.org/doc/html/rfc2465#section-3 
+	 * see https://datatracker.ietf.org/doc/html/rfc2465#section-3
 	 * i.e. fc00:3::4 = 252.0.0.3.0.0.0.0.0.0.0.0.0.0.0.4
 	 */
 

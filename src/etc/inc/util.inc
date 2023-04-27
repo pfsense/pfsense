@@ -241,15 +241,71 @@ function send_multiple_events($cmds) {
 	}
 }
 
-function is_module_loaded($module_name) {
-	$module_name = str_replace(".ko", "", $module_name);
-	$running = 0;
-	$_gb = exec("/sbin/kldstat -qm {$module_name} 2>&1", $_gb, $running);
-	if (intval($running) == 0) {
-		return true;
-	} else {
-		return false;
+/**
+ * Test if a kernel module exists on disk in well-known locations
+ *
+ * Locations:
+ *   > /boot/kernel
+ *   > /bood/modules
+ *
+ * @param string $module_name		The name of the kernel module
+ * @param string ...$add_dirs		Additional directories to search
+ *
+ * @return bool
+ */
+function is_module_available(string $module_name, string ...$add_dirs): bool
+{
+	/* bail if module is already loaded */
+	if (is_module_loaded($module_name)) {
+		return (true);
 	}
+
+	/* ensure the $module_name ends with .ko */
+	if (!str_ends_with($module_name, '.ko')) {
+		$module_name .= '.ko';
+	}
+
+	/* build list of well-known locations */
+	$mod_dirs = [
+		'/boot/kernel',
+		'/boot/modules',
+		...$add_dirs
+	];
+
+	/* filter list of well-known locations and cast to bool */
+	return ((bool) array_filter($mod_dirs, function($mod_dir) use ($module_name) {
+		return (file_exists($mod_dir . '/' . $module_name));
+	}));
+}
+
+/**
+ * Test if a kernel module is loaded
+ *
+ * @param string $module_name	The name of the kernel module
+ *
+ * @param bool
+ */
+function is_module_loaded(string $module_name): bool
+{
+	/* sanitize input */
+	$module_name = escapeshellarg(rtrim($module_name, '.ko'));
+
+	$base_cmd = ['/sbin/kldstat', '-q'];
+
+	/* first pass test by module name, tests for in-kernel modules */
+	$cmd = implode(' ', [...$base_cmd, '-m', $module_name]);
+	exec($cmd, $out, $rc);
+
+	/* bailout early if we found it */
+	if ($rc === 0) {
+		return (true);
+	}
+
+	/* last pass test by file name */
+	$cmd = implode(' ', [...$base_cmd, '-n', $module_name]);
+	exec($cmd, $out, $rc);
+
+	return ($rc === 0);
 }
 
 /* validate non-negative numeric string, or equivalent numeric variable */

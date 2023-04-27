@@ -58,6 +58,7 @@ function step1_stepbeforeformdisplay() {
 			}
 		}
 	}
+
 	if (!empty($fields)) {
 		array_set_path($pkg, 'step/0/fields/field', $fields);
 	}
@@ -127,6 +128,7 @@ function step2_stepbeforeformdisplay() {
 		$stepid--;
 		return;
 	}
+
 	$cfgname = "traffic_shaper_wizard_multi_all.xml";
 
 	$fields = [];
@@ -218,11 +220,11 @@ function step2_stepbeforeformdisplay() {
 		$fields[] = $field;
 
 		$field = [];
+		$field['displayname'] = "Interface Scheduler";
+		$field['name'] = "conn{$i}uploadscheduler";
 		$field['combinefieldsend'] = "true";
 		$field['dontdisplayname'] = "true";
 		$field['dontcombinecells'] = "true";
-		$field['displayname'] = "Interface Scheduler";
-		$field['name'] = "conn{$i}uploadscheduler";
 		$field['type'] = "select";
 		$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
 		$field['options'] = [];
@@ -351,7 +353,8 @@ function step2_stepsubmitphpaction() {
 					$stepid--;
 					return;
 				}
-				if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") {
+				if ((trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") &&
+				    (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb")) {
 					$savemsg=gettext("Uploads smaller than 128Kbit/s is not supported for connection {$i} on CBQ scheduler.");
 					$stepid--;
 					return;
@@ -406,7 +409,7 @@ function step3_stepbeforeformdisplay() {
 	$enablefields = [];
 
 	$field = [];
-	$field['name'] = "enable";
+	$field['name'] = "Enable";
 	$field['type'] = "checkbox";
 	$field['typehint'] = "Prioritize Voice over IP traffic.";
 	$field['bindstofield'] = "ezshaper->step3->enable";
@@ -418,6 +421,7 @@ function step3_stepbeforeformdisplay() {
 	$field['type'] = "listtopic";
 	$voipfields[] = $field;
 
+	$field = [];
 	$field['name'] = "Provider";
 	$enablefields[] = "Provider";
 	$field['type'] = "select";
@@ -454,14 +458,14 @@ function step3_stepbeforeformdisplay() {
 	$voipfields[] = $field;
 
 	for ($i = 0; $i < $numberofconnections; $i++) {
-		$field = [];
 		$interface_friendly = $i+1;
+		$field = [];
 		$field['name'] = "Connection WAN #{$interface_friendly}";
 		$field['type'] = "listtopic";
 		$voipfields[] = $field;
 
 		$field = [];
-		$field['displayname'] = "Upload";
+		$field['displayname'] = "Upload rate";
 		$field['name'] = "conn{$i}upload";
 		$enablefields[] = "conn{$i}upload";
 		$field['type'] = "input";
@@ -470,13 +474,13 @@ function step3_stepbeforeformdisplay() {
 		$voipfields[] = $field;
 
 		$field = [];
+		$field['displayname'] = "Units";
 		$field['combinefieldsend'] = "true";
 		$field['dontdisplayname'] = "true";
 		$field['dontcombinecells'] = "true";
 		$field['name'] = "conn{$i}uploadspeed";
 		$enablefields[] = "conn{$i}uploadspeed";
 		$field['typehint'] = "Upload bandwidth guarantee for VOIP phone(s) on connection {$i}.";
-		$field['displayname'] = "Units";
 		$field['type'] = "select";
 		$field['options'] = [];
 		$field['options']['option'] = [];
@@ -504,7 +508,7 @@ function step3_stepbeforeformdisplay() {
 		$voipfields[] = $field;
 
 		$field = [];
-		$field['displayname'] = "Download";
+		$field['displayname'] = "Download rate";
 		$field['name'] = "local{$i}download";
 		$enablefields[] = "local{$i}download";
 		$field['type'] = "input";
@@ -513,13 +517,13 @@ function step3_stepbeforeformdisplay() {
 		$voipfields[] = $field;
 
 		$field = [];
+		$field['displayname'] = "Units";
 		$field['combinefieldsend'] = "true";
 		$field['dontdisplayname'] = "true";
 		$field['dontcombinecells'] = "true";
 		$field['name'] = "local{$i}downloadspeed";
 		$enablefields[] = "local{$i}downloadspeed";
 		$field['typehint'] = "Download bandwidth guarantee for VOIP phone(s) on connections.";
-		$field['displayname'] = "Units";
 		$field['type'] = "select";
 		$field['options'] = [];
 		$field['options']['option'] = [];
@@ -656,7 +660,6 @@ function step4_stepsubmitphpaction() {
 	if ( $_POST['enable'] ) {
 		if (!$_POST['bandwidth']) {
 			$savemsg="A value for bandwidth must be specified.";
-
 			$stepid--;
 			return;
 		}
@@ -691,6 +694,7 @@ function step5_stepsubmitphpaction() {
 			if (!is_numeric($_POST['bandwidth'])) {
 				$savemsg="Posted value is not a valid bandwidth.";
 				$stepid--;
+				return;
 			}
 			if ($_POST['bandwidthspeed'] <> "%") {
 				$savemsg = gettext("Only percentage bandwidth specification is allowed.");
@@ -860,10 +864,13 @@ function apply_all_chosen_items() {
 			}
 
 			if ($sched == "CBQ") {
-				$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
 			} elseif ($sched == "HFSC") {
-				$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
 			}
+
 			$tmpcf = [];
 			$tmpcf['name'] = "qInternet";
 			//$tmpcf['priority'] = 6;
@@ -873,14 +880,12 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidth'] = floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0));
 				$tmpcf['bandwidthtype'] = config_get_path("ezshaper/step2/conn${i}uploadspeed");
 			} elseif ($sched == "HFSC") {
-				$tmpcf['linkshare3'] =
-					floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0)) . config_get_path("ezshaper/step2/conn${i}uploadspeed");
-				$tmpcf['upperlimit3'] =
-					floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0)) . config_get_path("ezshaper/step2/conn${i}uploadspeed");
 				$tmpcf['upperlimit'] = "on";
-
-
+				$tmpcf['upperlimit3'] = floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0)) .
+							config_get_path("ezshaper/step2/conn${i}uploadspeed");
 				$tmpcf['linkshare'] = "on";
+				$tmpcf['linkshare3'] = floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0)) .
+							config_get_path("ezshaper/step2/conn${i}uploadspeed");
 				$tmpcf['bandwidth'] =  floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0));
 				$tmpcf['bandwidthtype'] = config_get_path("ezshaper/step2/conn${i}uploadspeed");
 			}
@@ -888,8 +893,6 @@ function apply_all_chosen_items() {
 			array_push($tmppath, "qInternet");
 			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 			//array_pop($tmppath);
-			//echo "qInternet <br />";
-			//var_dump($input_errors);
 			$qtmp->wconfig();
 			$altq =& $qtmp;
 		}
@@ -920,16 +923,17 @@ function apply_all_chosen_items() {
 		array_push($tmppath, "qACK");
 		$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 		array_pop($tmppath);
-		//echo "qACK <br />";
-		//var_dump($input_errors);
 		$qtmp->wconfig();
 
 		if ($sched == "PRIQ") {
-			$__tmp_q = new priq_queue(); $q =& $__tmp_q;
+			$__tmp_q = new priq_queue();
+			$q =& $__tmp_q;
 		} elseif ($sched == "CBQ") {
-			$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
+			$__tmp_q = new cbq_queue();
+			$q =& $__tmp_q;
 		} elseif ($sched == "HFSC") {
-			$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
+			$__tmp_q = new hfsc_queue();
+			$q =& $__tmp_q;
 		}
 		$tmpcf = [];
 		if ($p2pcatchall) {
@@ -954,209 +958,210 @@ function apply_all_chosen_items() {
 		array_push($tmppath, $tmpcf['name']);
 		$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 		array_pop($tmppath);
-		//echo "qDefault <br />";
-			//var_dump($input_errors);
+		$qtmp->wconfig();
+
+		if ($p2p) {
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qP2P";
+			$tmpcf['priority'] = 1;
+			$tmpcf['ecn'] = "on";
+			$tmpcf['enabled'] = "on";
+			if ($p2pcatchall) {
+				if ($sched == "CBQ") {
+					$tmpcf['borrow'] = "on";
+					$tmpcf['bandwidth'] = $p2pcatchbw;
+					$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
+				} elseif ($sched == "HFSC") {
+					$tmpcf['linkshare'] = "on";
+					$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
+					$tmpcf['upperlimit'] = "on";
+					$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
+					$tmpcf['bandwidth'] = $p2pcatchbw;
+					$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
+				}
+				$tmpcf['default'] = "on";
+			} else {
+				if ($sched == "CBQ") {
+					$tmpcf['borrow'] = "on";
+					$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
+					$tmpcf['bandwidthtype'] = "%";
+				} elseif ($sched == "HFSC") {
+					$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
+					$tmpcf['linkshare'] = "on";
+					$tmpcf['linkshare3'] = "{$tmpbw}%";
+					$tmpcf['upperlimit'] = "on";
+					$tmpcf['upperlimit3'] = "{$tmpbw}%";
+					$tmpcf['bandwidth'] = $tmpbw;
+					$tmpcf['bandwidthtype'] = "%";
+				}
+			}
+			array_push($tmppath, "qP2P");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			array_pop($tmppath);
 			$qtmp->wconfig();
+		}
 
-			if ($p2p) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qP2P";
-				$tmpcf['priority'] = 1;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($p2pcatchall) {
-					if ($sched == "CBQ") {
-						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = $p2pcatchbw;
-						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
-					} elseif ($sched == "HFSC") {
-						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
-						$tmpcf['upperlimit'] = "on";
-						$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
-						$tmpcf['bandwidth'] = $p2pcatchbw;
-						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
-					}
-					$tmpcf['default'] = "on";
-
+		if ($voip) {
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qVoIP";
+			$tmpcf['priority'] = 7;
+			$tmpcf['ecn'] = "on";
+			$tmpcf['enabled'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				if ($voipbw > 0) {
+					$tmpcf['bandwidth'] = $voipbw;
+					$tmpcf['bandwidthtype'] = $voipbwunit;
 				} else {
-					if ($sched == "CBQ") {
-						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
-						$tmpcf['bandwidthtype'] = "%";
-					} elseif ($sched == "HFSC") {
-						$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
-						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare3'] = "{$tmpbw}%";
-						$tmpcf['upperlimit'] = "on";
-						$tmpcf['upperlimit3'] = "{$tmpbw}%";
-						$tmpcf['bandwidth'] = $tmpbw;
-						$tmpcf['bandwidthtype'] = "%";
-					}
-				}
-				array_push($tmppath, "qP2P");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qP2P <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-			}
-
-			if ($voip) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qVoIP";
-				$tmpcf['priority'] = 7;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
-					if ($voipbw > 0) {
-						$tmpcf['bandwidth'] = $voipbw;
-						$tmpcf['bandwidthtype'] = $voipbwunit;
-					} else {
-						$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
-						$tmpcf['bandwidthtype'] = "%";
-					}
-				} elseif ($sched == "HFSC") {
-					if ($voipbw > 0) {
-						$tmpcf['realtime3'] = "{$voipbw}{$voipbwunit}";
-					} else {
-						$voipbw = $remainbw * 0.20; /* 20% bandwidth */
-						$tmpcf['realtime3'] = "{$voipbw}%";
-					}
-					$tmpcf['realtime'] = "on";
-					$tmpcf['bandwidth'] = 32;
-					$tmpcf['bandwidthtype'] = "Kb";
-				}
-				array_push($tmppath, "qVoIP");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qVoIP <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-			}
-
-			if ($games) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qGames";
-				$tmpcf['priority'] = 5;
-				$tmpcf['enabled'] = "on";
-				$tmpcf['ecn'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
 					$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
-				} elseif ($sched == "HFSC") {
-					$gamesbw = $remainbw * 0.2; /* 20% bandwidth */
-					$tmpcf['linkshare'] = "on";
-					$tmpcf['linkshare3'] = "{$gamesbw}%";
-					$tmpcf['bandwidth'] = "{$gamesbw}";
-					$tmpcf['bandwidthtype'] = "%";
 				}
-				array_push($tmppath, "qGames");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qGames <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
+			} elseif ($sched == "HFSC") {
+				if ($voipbw > 0) {
+					$tmpcf['realtime3'] = "{$voipbw}{$voipbwunit}";
+				} else {
+					$voipbw = $remainbw * 0.20; /* 20% bandwidth */
+					$tmpcf['realtime3'] = "{$voipbw}%";
+				}
+				$tmpcf['realtime'] = "on";
+				$tmpcf['bandwidth'] = 32;
+				$tmpcf['bandwidthtype'] = "Kb";
 			}
-
-			if ($otherpriority) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qOthersHigh";
-				$tmpcf['priority'] = 4;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * 0.1; /* 10% bandwidth */
-					$tmpcf['bandwidthtype'] = "%";
-				} elseif ($sched == "HFSC") {
-					$tmpcf['linkshare'] = "on";
-					$otherbw = $remainbw * 0.1; /* 10% bandwidth */
-					$tmpcf['linkshare3'] = "{$otherbw}%";
-					$tmpcf['bandwidth'] = $otherbw;
-					$tmpcf['bandwidthtype'] = "%";
-				}
-				array_push($tmppath, "qOthersHigh");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qHigh <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-
-
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qOthersLow";
-				$tmpcf['priority'] = 2;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
-					if ($penalty) {
-						$tmpcf['bandwidthtype'] = $penaltybwunit;
-						$tmpcf['bandwidth'] = $penaltybw;
-					} else {
-						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
-						$tmpcf['bandwidthtype'] = "%";
-					}
-				} elseif ($sched == "HFSC") {
-					if ($penalty) {
-						$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
-						$tmpcf['bandwidth'] = $penaltybw;
-						$tmpcf['bandwidthtype'] = $penaltybwunit;
-					} else {
-						$lsbw = $remainbw * 0.05;
-						$tmpcf['linkshare3'] = "{$lsbw}%"; /* 5% bandwidth */
-						$tmpcf['bandwidth'] = $lsbw;
-						$tmpcf['bandwidthtype'] = "%";
-					}
-					$tmpcf['linkshare'] = "on";
-				}
-				array_push($tmppath, "qOthersLow");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qLow <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-			}
+			array_push($tmppath, "qVoIP");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
+			$qtmp->wconfig();
 		}
+
+		if ($games) {
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qGames";
+			$tmpcf['priority'] = 5;
+			$tmpcf['enabled'] = "on";
+			$tmpcf['ecn'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
+				$tmpcf['bandwidthtype'] = "%";
+			} elseif ($sched == "HFSC") {
+				$gamesbw = $remainbw * 0.2; /* 20% bandwidth */
+				$tmpcf['linkshare'] = "on";
+				$tmpcf['linkshare3'] = "{$gamesbw}%";
+				$tmpcf['bandwidth'] = "{$gamesbw}";
+				$tmpcf['bandwidthtype'] = "%";
+			}
+			array_push($tmppath, "qGames");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			array_pop($tmppath);
+			$qtmp->wconfig();
+		}
+
+		if ($otherpriority) {
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qOthersHigh";
+			$tmpcf['priority'] = 4;
+			$tmpcf['ecn'] = "on";
+			$tmpcf['enabled'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				$tmpcf['bandwidth'] = $remainbw * 0.1; /* 10% bandwidth */
+				$tmpcf['bandwidthtype'] = "%";
+			} elseif ($sched == "HFSC") {
+				$tmpcf['linkshare'] = "on";
+				$otherbw = $remainbw * 0.1; /* 10% bandwidth */
+				$tmpcf['linkshare3'] = "{$otherbw}%";
+				$tmpcf['bandwidth'] = $otherbw;
+				$tmpcf['bandwidthtype'] = "%";
+			}
+			array_push($tmppath, "qOthersHigh");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			array_pop($tmppath);
+			$qtmp->wconfig();
+
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qOthersLow";
+			$tmpcf['priority'] = 2;
+			$tmpcf['ecn'] = "on";
+			$tmpcf['enabled'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				if ($penalty) {
+					$tmpcf['bandwidthtype'] = $penaltybwunit;
+					$tmpcf['bandwidth'] = $penaltybw;
+				} else {
+					$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
+					$tmpcf['bandwidthtype'] = "%";
+				}
+			} elseif ($sched == "HFSC") {
+				if ($penalty) {
+					$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
+					$tmpcf['bandwidth'] = $penaltybw;
+					$tmpcf['bandwidthtype'] = $penaltybwunit;
+				} else {
+					$lsbw = $remainbw * 0.05;
+					$tmpcf['linkshare3'] = "{$lsbw}%"; /* 5% bandwidth */
+					$tmpcf['bandwidth'] = $lsbw;
+					$tmpcf['bandwidthtype'] = "%";
+				}
+				$tmpcf['linkshare'] = "on";
+			}
+			array_push($tmppath, "qOthersLow");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			array_pop($tmppath);
+			$qtmp->wconfig();
+		}
+		array_pop($tmppath);
+	}
 
 	/* LAN bandwidth ----------------------------------------------------------------------------------------- */
 	$localint = intval(config_get_path('ezshaper/step1/numberoflocalinterfaces', 0));
@@ -1168,7 +1173,6 @@ function apply_all_chosen_items() {
 	}
 
 	for ($i = 0; $i < $localint; $i++) {
-
 		$tmppath = [];
 		$__tmp_altq = new altq_root_queue(); $altq =& $__tmp_altq;
 
@@ -1180,7 +1184,6 @@ function apply_all_chosen_items() {
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, config_get_path("ezshaper/step2/local${i}interface"));
 		$altq->SetLink($tmppath);
-		//var_dump($input_errors);
 		$altq->wconfig();
 
 		$sched = config_get_path("ezshaper/step2/local{$i}downloadscheduler");
@@ -1255,7 +1258,6 @@ function apply_all_chosen_items() {
 		} else {
 			$games = false;
 		}
-
 		if (config_path_enabled('ezshaper/step7')) {
 			$otherpriority = true;
 		} else  {
@@ -1263,7 +1265,6 @@ function apply_all_chosen_items() {
 		}
 		if ($sched != "PRIQ") {
 			$remainbw = round($remainbw / $lanbw * 100, 2);
-
 			if (intval($remainbw) > 0 && intval($remainbw) > 40) {
 				$savemsg=gettext("Custom Bandwidths are greater than 40%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
@@ -1271,16 +1272,18 @@ function apply_all_chosen_items() {
 			} else {
 				$remainbw = 100 - $remainbw;
 			}
-
 			$lanqbw = $lanbw;
 		}
 		if (!$p2pcatchall) {
 			if ($sched == "PRIQ") {
-				$__tmp_q = new priq_queue(); $q =& $__tmp_q;
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
 			} elseif ($sched == "CBQ") {
-				$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
 			} elseif ($sched == "HFSC") {
-				$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
 			}
 			$tmpcf = [];
 			$tmpcf['name'] = "qLink";
@@ -1300,8 +1303,6 @@ function apply_all_chosen_items() {
 			array_push($tmppath, $tmpcf['name']);
 			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
-			//echo "qDefault <br />";
-			//var_dump($input_errors);
 			$qtmp->wconfig();
 
 			if ($sched != "PRIQ") {
@@ -1311,9 +1312,11 @@ function apply_all_chosen_items() {
 
 		if ($sched != "PRIQ") {
 			if ($sched == "CBQ") {
-				$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
 			} elseif ($sched == "HFSC") {
-				$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
 			}
 			$tmpcf = [];
 			$tmpcf['name'] = "qInternet";
@@ -1324,250 +1327,253 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidth'] = $lanqbw/1000;
 				$tmpcf['bandwidthtype'] = "Kb";
 			} elseif ($sched == "HFSC") {
-				$tmpcf['linkshare3'] = ($lanqbw/1000) . "Kb";
-				$tmpcf['upperlimit3'] = ($lanqbw/1000) . "Kb";
 				$tmpcf['upperlimit'] = "on";
+				$tmpcf['upperlimit3'] = ($lanqbw/1000) . "Kb";
 				$tmpcf['linkshare'] = "on";
+				$tmpcf['linkshare3'] = ($lanqbw/1000) . "Kb";
 				$tmpcf['bandwidth'] =  $lanqbw/1000;
 				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			array_push($tmppath, "qInternet");
 			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 			//array_pop($tmppath);
-			//echo "qInternet <br />";
-			//var_dump($input_errors);
 			$qtmp->wconfig();
 			$altq =& $qtmp;
 		}
 
+		if ($sched == "PRIQ") {
+			$__tmp_q = new priq_queue();
+			$q =& $__tmp_q;
+		} elseif ($sched == "CBQ") {
+			$__tmp_q = new cbq_queue();
+			$q =& $__tmp_q;
+		} elseif ($sched == "HFSC") {
+			$__tmp_q = new hfsc_queue();
+			$q =& $__tmp_q;
+		}
+		$tmpcf = [];
+		$tmpcf['name'] = "qACK";
+		$tmpcf['priority'] = 6;
+		$tmpcf['ecn'] = "on";
+		$tmpcf['enabled'] = "on";
+		If ($sched == "CBQ") {
+			$tmpcf['borrow'] = "on";
+			$tmpcf['bandwidth'] = $remainbw * 0.2;
+			$tmpcf['bandwidthtype'] = "%";
+		} elseif ($sched == "HFSC") {
+			$lkbw = 0.20 * $remainbw;
+			$tmpcf['linkshare3'] = "{$lkbw}%";
+			$tmpcf['linkshare'] = "on";
+			$tmpcf['bandwidth'] = $lkbw;
+			$tmpcf['bandwidthtype'] = "%";
+		}
+		array_push($tmppath, "qACK");
+		$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+		array_pop($tmppath);
+		$qtmp->wconfig();
+
+		if ($p2p) {
 			if ($sched == "PRIQ") {
-				$__tmp_q = new priq_queue(); $q =& $__tmp_q;
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
 			} elseif ($sched == "CBQ") {
-				$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
 			} elseif ($sched == "HFSC") {
-				$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
 			}
 			$tmpcf = [];
-			$tmpcf['name'] = "qACK";
-			$tmpcf['priority'] = 6;
+			$tmpcf['name'] = "qP2P";
+			$tmpcf['priority'] = 1;
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
-			If ($sched == "CBQ") {
-				$tmpcf['borrow'] = "on";
-				$tmpcf['bandwidth'] = $remainbw * 0.2;
-				$tmpcf['bandwidthtype'] = "%";
-			} elseif ($sched == "HFSC") {
-				$lkbw = 0.20 * $remainbw;
-				$tmpcf['linkshare3'] = "{$lkbw}%";
-				$tmpcf['linkshare'] = "on";
-				$tmpcf['bandwidth'] = $lkbw;
-				$tmpcf['bandwidthtype'] = "%";
+			if ($p2pcatchall) {
+				if ($sched == "CBQ") {
+					$tmpcf['borrow'] = "on";
+					$tmpcf['bandwidth'] = $p2pcatchbw;
+					$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
+				} elseif ($sched == "HFSC") {
+					$tmpcf['linkshare'] = "on";
+					$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
+					$tmpcf['upperlimit'] = "on";
+					$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
+					$tmpcf['bandwidth'] = $p2pcatchbw;
+					$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
+				}
+				$tmpcf['default'] = "on";
+				$tmpcf['qlimit'] = 500;
+			} else {
+				if ($sched == "CBQ") {
+					$tmpcf['borrow'] = "on";
+					$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
+					$tmpcf['bandwidthtype'] = "%";
+				} elseif ($sched == "HFSC") {
+					$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
+					$tmpcf['linkshare'] = "on";
+					$tmpcf['linkshare3'] = "{$tmpbw}%";
+					$tmpcf['upperlimit'] = "on";
+					$tmpcf['upperlimit3'] = "{$tmpbw}%";
+					$tmpcf['bandwidth'] = $tmpbw;
+					$tmpcf['bandwidthtype'] = "%";
+				}
 			}
-			array_push($tmppath, "qACK");
+			array_push($tmppath, "qP2P");
 			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
-			//echo "qACK <br />";
-			//var_dump($input_errors);
 			$qtmp->wconfig();
+		}
 
-			if ($p2p) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qP2P";
-				$tmpcf['priority'] = 1;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($p2pcatchall) {
-					if ($sched == "CBQ") {
-						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = $p2pcatchbw;
-						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
-					} elseif ($sched == "HFSC") {
-						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
-						$tmpcf['upperlimit'] = "on";
-						$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
-						$tmpcf['bandwidth'] = $p2pcatchbw;
-						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
-					}
-					$tmpcf['default'] = "on";
-					$tmpcf['qlimit'] = 500;
+		if ($voip) {
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qVoIP";
+			$tmpcf['priority'] = 7;
+			$tmpcf['ecn'] = "on";
+			$tmpcf['enabled'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				if ($voipbw > 0) {
+					$tmpcf['bandwidth'] = $voipbw;
+					$tmpcf['bandwidthtype'] = $voipbwunit;
 				} else {
-					if ($sched == "CBQ") {
-						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
-						$tmpcf['bandwidthtype'] = "%";
-					} elseif ($sched == "HFSC") {
-						$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
-						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare3'] = "{$tmpbw}%";
-						$tmpcf['upperlimit'] = "on";
-						$tmpcf['upperlimit3'] = "{$tmpbw}%";
-						$tmpcf['bandwidth'] = $tmpbw;
-						$tmpcf['bandwidthtype'] = "%";
-					}
-				}
-				array_push($tmppath, "qP2P");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qP2P <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-			}
-
-			if ($voip) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qVoIP";
-				$tmpcf['priority'] = 7;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
-					if ($voipbw > 0) {
-						$tmpcf['bandwidth'] = $voipbw;
-						$tmpcf['bandwidthtype'] = $voipbwunit;
-					} else {
-						$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
-						$tmpcf['bandwidthtype'] = "%";
-					}
-				} elseif ($sched == "HFSC") {
-					if ($voipbw > 0) {
-						$tmpcf['realtime3'] = "{$voipbw}{$voipbwunit}";
-					} else {
-						$voipbw = $remainbw * 0.20; /* 20% bandwidth */
-						$tmpcf['realtime3'] = "{$voipbw}%";
-					}
-					$tmpcf['realtime'] = "on";
-					$tmpcf['bandwidth'] = 32;
-					$tmpcf['bandwidthtype'] = "Kb";
-				}
-				array_push($tmppath, "qVoIP");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qVoIP <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-			}
-
-			if ($games) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qGames";
-				$tmpcf['priority'] = 5;
-				$tmpcf['enabled'] = "on";
-				$tmpcf['ecn'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
 					$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
-				} elseif ($sched == "HFSC") {
-					$gamesbw = $remainbw * 0.2; /* 20% bandwidth */
-					$tmpcf['linkshare'] = "on";
-					$tmpcf['linkshare3'] = "{$gamesbw}%";
-					$tmpcf['bandwidth'] = "{$gamesbw}";
-					$tmpcf['bandwidthtype'] = "%";
 				}
-				array_push($tmppath, "qGames");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qGames <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
+			} elseif ($sched == "HFSC") {
+				if ($voipbw > 0) {
+					$tmpcf['realtime3'] = "{$voipbw}{$voipbwunit}";
+				} else {
+					$voipbw = $remainbw * 0.20; /* 20% bandwidth */
+					$tmpcf['realtime3'] = "{$voipbw}%";
+				}
+				$tmpcf['realtime'] = "on";
+				$tmpcf['bandwidth'] = 32;
+				$tmpcf['bandwidthtype'] = "Kb";
 			}
-
-			if ($otherpriority) {
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qOthersHigh";
-				$tmpcf['priority'] = 4;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * 0.1; /* 10% bandwidth */
-					$tmpcf['bandwidthtype'] = "%";
-				} elseif ($sched == "HFSC") {
-					$tmpcf['linkshare'] = "on";
-					$otherbw = $remainbw * 0.1; /* 10% bandwidth */
-					$tmpcf['linkshare3'] = "{$otherbw}%";
-					$tmpcf['bandwidth'] = $otherbw;
-					$tmpcf['bandwidthtype'] = "%";
-				}
-				array_push($tmppath, "qOthersHigh");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qHigh <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-
-
-				if ($sched == "PRIQ") {
-					$__tmp_q = new priq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "CBQ") {
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				} elseif ($sched == "HFSC") {
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
-				}
-				$tmpcf = [];
-				$tmpcf['name'] = "qOthersLow";
-				$tmpcf['priority'] = 3;
-				$tmpcf['ecn'] = "on";
-				$tmpcf['enabled'] = "on";
-				if ($sched == "CBQ") {
-					$tmpcf['borrow'] = "on";
-					if ($penalty) {
-						$tmpcf['bandwidth'] = $penaltybw;
-						$tmpcf['bandwidthtype'] = $penaltybwunit;
-					} else {
-						$tmpcf['bandwidthtype'] = "%";
-						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
-					}
-				} elseif ($sched == "HFSC") {
-					if ($penalty) {
-						$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
-						$tmpcf['bandwidth'] = $penaltybw;
-						$tmpcf['bandwidthtype'] = $penaltybwunit;
-					} else {
-						$lsbw = $remainbw * 0.05;
-						$tmpcf['linkshare3'] = "{$lsbw}%"; /* 5% bandwidth */
-						$tmpcf['bandwidth'] = $lsbw;
-						$tmpcf['bandwidthtype'] = "%";
-					}
-					$tmpcf['linkshare'] = "on";
-				}
-				array_push($tmppath, "qOthersLow");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
-				array_pop($tmppath);
-				//echo "qLow <br />";
-				//var_dump($input_errors);
-				$qtmp->wconfig();
-			}
+			array_push($tmppath, "qVoIP");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
+			$qtmp->wconfig();
+		}
+
+		if ($games) {
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qGames";
+			$tmpcf['priority'] = 5;
+			$tmpcf['enabled'] = "on";
+			$tmpcf['ecn'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
+				$tmpcf['bandwidthtype'] = "%";
+			} elseif ($sched == "HFSC") {
+				$gamesbw = $remainbw * 0.2; /* 20% bandwidth */
+				$tmpcf['linkshare'] = "on";
+				$tmpcf['linkshare3'] = "{$gamesbw}%";
+				$tmpcf['bandwidth'] = "{$gamesbw}";
+				$tmpcf['bandwidthtype'] = "%";
+			}
+			array_push($tmppath, "qGames");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			array_pop($tmppath);
+			$qtmp->wconfig();
+		}
+
+		if ($otherpriority) {
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qOthersHigh";
+			$tmpcf['priority'] = 4;
+			$tmpcf['ecn'] = "on";
+			$tmpcf['enabled'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				$tmpcf['bandwidth'] = $remainbw * 0.1; /* 10% bandwidth */
+				$tmpcf['bandwidthtype'] = "%";
+			} elseif ($sched == "HFSC") {
+				$tmpcf['linkshare'] = "on";
+				$otherbw = $remainbw * 0.1; /* 10% bandwidth */
+				$tmpcf['linkshare3'] = "{$otherbw}%";
+				$tmpcf['bandwidth'] = $otherbw;
+				$tmpcf['bandwidthtype'] = "%";
+			}
+			array_push($tmppath, "qOthersHigh");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			array_pop($tmppath);
+			$qtmp->wconfig();
+
+			if ($sched == "PRIQ") {
+				$__tmp_q = new priq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "CBQ") {
+				$__tmp_q = new cbq_queue();
+				$q =& $__tmp_q;
+			} elseif ($sched == "HFSC") {
+				$__tmp_q = new hfsc_queue();
+				$q =& $__tmp_q;
+			}
+			$tmpcf = [];
+			$tmpcf['name'] = "qOthersLow";
+			$tmpcf['priority'] = 3;
+			$tmpcf['ecn'] = "on";
+			$tmpcf['enabled'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				if ($penalty) {
+					$tmpcf['bandwidth'] = $penaltybw;
+					$tmpcf['bandwidthtype'] = $penaltybwunit;
+				} else {
+					$tmpcf['bandwidthtype'] = "%";
+					$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
+				}
+			} elseif ($sched == "HFSC") {
+				if ($penalty) {
+					$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
+					$tmpcf['bandwidth'] = $penaltybw;
+					$tmpcf['bandwidthtype'] = $penaltybwunit;
+				} else {
+					$lsbw = $remainbw * 0.05;
+					$tmpcf['linkshare3'] = "{$lsbw}%"; /* 5% bandwidth */
+					$tmpcf['bandwidth'] = $lsbw;
+					$tmpcf['bandwidthtype'] = "%";
+				}
+				$tmpcf['linkshare'] = "on";
+			}
+			array_push($tmppath, "qOthersLow");
+			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			array_pop($tmppath);
+			$qtmp->wconfig();
+		}
+		array_pop($tmppath);
 	}
 
 /* End LAN bandwidth ------------------------------------------------------------------------------------- */
@@ -1611,169 +1617,166 @@ function apply_all_chosen_items() {
 			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
 			$rule['tracker'] = $tracker++;
 			$filter_rules[] = $rule;
-
 		}
 	}
 
-			/* If user specifies an IP, we don't bother with providers */
-			if ($voip) {
-				if (is_ipaddr(config_get_path('ezshaper/step3/address')) ||
-				    is_alias(config_get_path('ezshaper/step3/address'))) {
-					/* create VOIP rules */
-					$rule = [];
-					$rule['type'] = "match";
-					if (is_ipaddrv4(config_get_path('ezshaper/step3/address'))) {
-						$ipprotocol = "inet";
-					} elseif (is_ipaddrv6(config_get_path('ezshaper/step3/address'))) {
-						$ipprotocol = "inet6";
-					} else {
-						$ipprotocol = "inet46";
-					}
-					$rule['interface'] = "any";
-					$rule['ipprotocol'] = $ipprotocol;
-					$rule['descr'] = gettext("Connections From Upstream SIP Server");
-					$rule['protocol'] = "udp";
-					$rule['defaultqueue'] = "qVoIP";
-					$rule['source'] = [];
-					$rule['source']['address'] = config_get_path('ezshaper/step3/address');
-					$rule['destination'] = [];
-					$rule['destination']['any'] = TRUE;
-					$rule['floating'] = "yes";
-					$rule['wizard'] = "yes";
-					$rule['enabled'] = "on";
-					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
-					$rule['tracker'] = $tracker++;
-					$filter_rules[] = $rule;
-
-					$rule = [];
-					$rule['type'] = "match";
-					$rule['interface'] = "any";
-					$rule['ipprotocol'] = $ipprotocol;
-					$rule['descr'] = gettext("Connections To Upstream SIP Server");
-					$rule['protocol'] = "udp";
-					$rule['defaultqueue'] = "qVoIP";
-					$rule['source'] = [];
-					$rule['source']['any'] = TRUE;
-					$rule['destination'] = [];
-					$rule['destination']['address'] = config_get_path('ezshaper/step3/address');
-					$rule['floating'] = "yes";
-					$rule['wizard'] = "yes";
-					$rule['enabled'] = "on";
-					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
-					$rule['tracker'] = $tracker++;
-					$filter_rules[] = $rule;
-
-				} elseif (config_get_path('ezshaper/step3/provider') == "Generic") {
-					/* create VOIP rules */
-					$rule = [];
-					$rule['type'] = "match";
-					$rule['interface'] = $interfacelist;
-					$rule['ipprotocol'] = "inet46";
-					$rule['descr'] = "DiffServ/Lowdelay/Upload";
-					$rule['protocol'] = "udp";
-					$rule['source'] = [];
-					$rule['source']['any'] = TRUE;
-					$rule['defaultqueue'] = "qVoIP";
-					$rule['destination'] = [];
-					$rule['destination']['any'] = TRUE;
-					$rule['iptos'] = "lowdelay";
-					$rule['floating'] = "yes";
-					$rule['wizard'] = "yes";
-					$rule['enabled'] = "on";
-					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
-					$rule['tracker'] = $tracker++;
-					$filter_rules[] = $rule;
-
-				} else {
-					/* loop through voiplist[] */
-					foreach ($voiplist[config_get_path('ezshaper/step3/provider')] as $voip) {
-						$rule = [];
-						$rule['type'] = "match";
-						$rule['interface'] = $interfacelist;
-						$rule['ipprotocol'] = "inet46";
-						$rule['defaultqueue'] = 'qVoIP';
-						$rule['source'] = [];
-						$rule['source']['any'] = TRUE;
-						$rule['destination'] = [];
-						$rule['destination']['any'] = TRUE;
-						$rule['descr'] = "m_voip {$voip[0]} outbound";
-						$rule['floating'] = "yes";
-						$rule['wizard'] = "yes";
-						$rule['enabled'] = "on";
-						$rule['destination']['port'] = $voip[2]."-".$voip[3];
-						if ($voip[1] != '') {
-							$rule['protocol'] = $voip[1];
-						}
-						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
-						$rule['tracker'] = $tracker++;
-						$filter_rules[] = $rule;
-					}
-				}
+	/* If user specifies an IP, we don't bother with providers */
+	if ($voip) {
+		if (is_ipaddr(config_get_path('ezshaper/step3/address')) ||
+		    is_alias(config_get_path('ezshaper/step3/address'))) {
+			/* create VOIP rules */
+			$rule = [];
+			$rule['type'] = "match";
+			if (is_ipaddrv4(config_get_path('ezshaper/step3/address'))) {
+				$ipprotocol = "inet";
+			} elseif (is_ipaddrv6(config_get_path('ezshaper/step3/address'))) {
+				$ipprotocol = "inet6";
+			} else {
+				$ipprotocol = "inet46";
 			}
+			$rule['interface'] = "any";
+			$rule['ipprotocol'] = $ipprotocol;
+			$rule['descr'] = gettext("Connections From Upstream SIP Server");
+			$rule['protocol'] = "udp";
+			$rule['defaultqueue'] = "qVoIP";
+			$rule['source'] = [];
+			$rule['source']['address'] = config_get_path('ezshaper/step3/address');
+			$rule['destination'] = [];
+			$rule['destination']['any'] = TRUE;
+			$rule['floating'] = "yes";
+			$rule['wizard'] = "yes";
+			$rule['enabled'] = "on";
+			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			$rule['tracker'] = $tracker++;
+			$filter_rules[] = $rule;
 
-			/* loop through p2plist[] */
-			if ($p2p) {
-				foreach (config_get_path('ezshaper/step5', []) as $key => $val) {
-					if (!is_array($p2plist[$key])) {
-						continue;
-					}
-					foreach ($p2plist[$key] as $p2pclient) {
-						$rule = [];
-						$rule['type'] = "match";
-						$rule['interface'] = $interfacelist;
-						$rule['ipprotocol'] = "inet46";
-						$rule['defaultqueue'] = 'qP2P';
-						$rule['source'] = [];
-						$rule['source']['any'] = TRUE;
-						$rule['destination'] = [];
-						$rule['destination']['any'] = TRUE;
-						$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
-						$rule['floating'] = "yes";
-						$rule['wizard'] = "yes";
-						$rule['destination']['port'] = $p2pclient[2]."-".$p2pclient[3];
-						if ($p2pclient[1] != '') {
-							$rule['protocol'] = $p2pclient[1];
-						}
-						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
-						$rule['tracker'] = $tracker++;
-						$filter_rules[] = $rule;
-					}
+			$rule = [];
+			$rule['type'] = "match";
+			$rule['interface'] = "any";
+			$rule['ipprotocol'] = $ipprotocol;
+			$rule['descr'] = gettext("Connections To Upstream SIP Server");
+			$rule['protocol'] = "udp";
+			$rule['defaultqueue'] = "qVoIP";
+			$rule['source'] = [];
+			$rule['source']['any'] = TRUE;
+			$rule['destination'] = [];
+			$rule['destination']['address'] = config_get_path('ezshaper/step3/address');
+			$rule['floating'] = "yes";
+			$rule['wizard'] = "yes";
+			$rule['enabled'] = "on";
+			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			$rule['tracker'] = $tracker++;
+			$filter_rules[] = $rule;
+		} elseif (config_get_path('ezshaper/step3/provider') == "Generic") {
+			/* create VOIP rules */
+			$rule = [];
+			$rule['type'] = "match";
+			$rule['interface'] = $interfacelist;
+			$rule['ipprotocol'] = "inet46";
+			$rule['descr'] = "DiffServ/Lowdelay/Upload";
+			$rule['protocol'] = "udp";
+			$rule['source'] = [];
+			$rule['source']['any'] = TRUE;
+			$rule['defaultqueue'] = "qVoIP";
+			$rule['destination'] = [];
+			$rule['destination']['any'] = TRUE;
+			$rule['iptos'] = "lowdelay";
+			$rule['floating'] = "yes";
+			$rule['wizard'] = "yes";
+			$rule['enabled'] = "on";
+			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			$rule['tracker'] = $tracker++;
+			$filter_rules[] = $rule;
+		} elseif (array_key_exists(config_get_path('ezshaper/step3/provider'), $voiplist)) {
+			/* loop through voiplist[] */
+			foreach ($voiplist[config_get_path('ezshaper/step3/provider')] as $voip) {
+				$rule = [];
+				$rule['type'] = "match";
+				$rule['interface'] = $interfacelist;
+				$rule['ipprotocol'] = "inet46";
+				$rule['defaultqueue'] = 'qVoIP';
+				$rule['source'] = [];
+				$rule['source']['any'] = TRUE;
+				$rule['destination'] = [];
+				$rule['destination']['any'] = TRUE;
+				$rule['descr'] = "m_voip {$voip[0]} outbound";
+				$rule['floating'] = "yes";
+				$rule['wizard'] = "yes";
+				$rule['enabled'] = "on";
+				$rule['destination']['port'] = $voip[2]."-".$voip[3];
+				if ($voip[1] != '') {
+					$rule['protocol'] = $voip[1];
 				}
+				$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+				$rule['tracker'] = $tracker++;
+				$filter_rules[] = $rule;
 			}
+		}
+	}
 
-			/* loop through gamesplist[] */
-			if ($games) {
-				foreach (config_get_path('ezshaper/step6', []) as $key => $val) {
-					if (!is_array($gamesplist[$key])) {
-						continue;
-					}
-					foreach ($gamesplist[$key] as $Gameclient) {
-						$rule = [];
-						$rule['type'] = "match";
-						$rule['interface'] = $interfacelist;
-						$rule['ipprotocol'] = "inet46";
-						$rule['defaultqueue'] = 'qGames';
-						if ($Gameclient[1] == "tcp") {
-							$rule['ackqueue'] = 'qACK';
-						}
-						$rule['source'] = [];
-						$rule['source']['any'] = TRUE;
-						$rule['destination'] = [];
-						$rule['destination']['any'] = TRUE;
-						$rule['floating'] = "yes";
-						$rule['wizard'] = "yes";
-						$rule['enabled'] = "on";
-						$rule['descr'] = "m_Game {$Gameclient[0]} outbound";
-						$rule['destination']['port'] = $Gameclient[2]."-".$Gameclient[3];
-						if ($Gameclient[1] != '') {
-							$rule['protocol'] = $Gameclient[1];
-						}
-						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
-						$rule['tracker'] = $tracker++;
-						$filter_rules[] = $rule;
-					}
-				}
+	/* loop through p2plist[] */
+	if ($p2p) {
+		foreach (config_get_path('ezshaper/step5', []) as $key => $val) {
+			if (!is_array($p2plist[$key])) {
+				continue;
 			}
+			foreach ($p2plist[$key] as $p2pclient) {
+				$rule = [];
+				$rule['type'] = "match";
+				$rule['interface'] = $interfacelist;
+				$rule['ipprotocol'] = "inet46";
+				$rule['defaultqueue'] = 'qP2P';
+				$rule['source'] = [];
+				$rule['source']['any'] = TRUE;
+				$rule['destination'] = [];
+				$rule['destination']['any'] = TRUE;
+				$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
+				$rule['floating'] = "yes";
+				$rule['wizard'] = "yes";
+				$rule['destination']['port'] = $p2pclient[2]."-".$p2pclient[3];
+				if ($p2pclient[1] != '') {
+					$rule['protocol'] = $p2pclient[1];
+				}
+				$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+				$rule['tracker'] = $tracker++;
+				$filter_rules[] = $rule;
+			}
+		}
+	}
+
+	/* loop through gamesplist[] */
+	if ($games) {
+		foreach (config_get_path('ezshaper/step6', []) as $key => $val) {
+			if (!is_array($gamesplist[$key])) {
+				continue;
+			}
+			foreach ($gamesplist[$key] as $Gameclient) {
+				$rule = [];
+				$rule['type'] = "match";
+				$rule['interface'] = $interfacelist;
+				$rule['ipprotocol'] = "inet46";
+				$rule['defaultqueue'] = 'qGames';
+				if ($Gameclient[1] == "tcp") {
+					$rule['ackqueue'] = 'qACK';
+				}
+				$rule['source'] = [];
+				$rule['source']['any'] = TRUE;
+				$rule['destination'] = [];
+				$rule['destination']['any'] = TRUE;
+				$rule['floating'] = "yes";
+				$rule['wizard'] = "yes";
+				$rule['enabled'] = "on";
+				$rule['descr'] = "m_Game {$Gameclient[0]} outbound";
+				$rule['destination']['port'] = $Gameclient[2]."-".$Gameclient[3];
+				if ($Gameclient[1] != '') {
+					$rule['protocol'] = $Gameclient[1];
+				}
+				$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+				$rule['tracker'] = $tracker++;
+				$filter_rules[] = $rule;
+			}
+		}
+	}
 
 	/* loop through othersplist[] */
 	if ($otherpriority) {

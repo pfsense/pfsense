@@ -1399,6 +1399,29 @@ function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
 }
 
+/**
+ * Check if an ethertype is valid
+ *
+ * @param string $ethertype	The ethertype as hex string
+ *
+ * @return bool
+ */
+function is_ethertype(string $ethertype): bool {
+	$ethertype = strtolower($ethertype);
+
+	if (!str_starts_with($ethertype, '0x')) {
+		return (false);
+	}
+
+	$ethertype = substr($ethertype, 2);
+
+	if (!ctype_xdigit($ethertype)) {
+		return (false);
+	}
+
+	return (filter_var(hexdec($ethertype), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0x1, 'max_range' => 0xffff]]));
+}
+
 function build_vip_list($fif, $family = "all") {
 	$list = array('address' => gettext('Interface Address'));
 

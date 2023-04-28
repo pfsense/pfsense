@@ -699,9 +699,20 @@ function get_carp_status() {
 	return (intval($status) > 0);
 }
 
+/**
+ * Enable or disable CARP by toggling net.inet.carp.allow if necessary, enabling
+ * only if CARP VIPs are configured
+ */
+function enable_carp(bool $enable=true) {
+	$carp_enabled = get_carp_status();
+	$carplist = get_configured_vip_list('all', VIP_CARP);
+	if (($enable != $carp_enabled) && (!$enable || count($carplist) > 0)) {
+		set_single_sysctl("net.inet.carp.allow", $enable?"1":"0");
+	}
+}
+	
 /*
  * convert_ip_to_network_format($ip, $subnet): converts an ip address to network form
-
  */
 function convert_ip_to_network_format($ip, $subnet) {
 	$ipsplit = explode('.', $ip);

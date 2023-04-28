@@ -190,6 +190,9 @@ system_hostname_configure();
 /* make hosts file */
 system_hosts_generate();
 
+/* disable CARP prior to configuring interfaces */
+enable_carp(false);
+
 /* configure loopback interface */
 interfaces_loopback_configure();
 
@@ -466,6 +469,9 @@ system_syslogd_start();
 /* done */
 $g['booting'] = false;
 @unlink("{$g['varrun_path']}/booting");
+
+/* re-enable CARP */
+enable_carp();
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {

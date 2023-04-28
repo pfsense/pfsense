@@ -40,4 +40,5 @@ ramdisk_make_backup
 
 sleep 1
 
+sysctl net.inet.carp.allow=0
 /sbin/reboot ${REROOT}

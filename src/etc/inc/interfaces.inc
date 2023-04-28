@@ -2825,11 +2825,9 @@ function interfaces_sync_setup() {
 		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer down");
 	}
 
-	$carplist = get_configured_vip_list('all', VIP_CARP);
-	if (is_array($carplist) && count($carplist) > 0) {
-		set_single_sysctl("net.inet.carp.allow", "1");
-	} else {
-		set_single_sysctl("net.inet.carp.allow", "0");
+	/* Don't enable CARP if we haven't booted */
+	if (!is_platform_booting()) {
+		enable_carp();
 	}
 
 	if (platform_booting()) {
@@ -2962,7 +2960,7 @@ function interfaces_vips_configure($interface = "") {
 		return;
 	}
 
-	$carp_setuped = false;
+	$carp_configured = false;
 	$anyproxyarp = false;
 	foreach ($vips as $vip) {
 		if ($interface <> "" &&
@@ -2981,14 +2979,15 @@ function interfaces_vips_configure($interface = "") {
 				interface_ipalias_configure($vip);
 				break;
 			case "carp":
-				if ($carp_setuped == false) {
-					$carp_setuped = true;
+				if ($carp_configured == false) {
+					$carp_configured = true;
 				}
 				interface_carp_configure($vip);
 				break;
 		}
 	}
-	if ($carp_setuped == true) {
+	/* interfaces_sync_setup() is directly called in rc.bootup*/
+	if (!is_platform_booting() && $carp_configured == true) {
 		interfaces_sync_setup();
 	}
 	if ($anyproxyarp == true) {

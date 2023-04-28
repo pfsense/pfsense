@@ -47,6 +47,9 @@ export PATH
 . /etc/rc.ramdisk_functions.sh
 ramdisk_make_backup
 
+# Drop out of all CARP vhids before interrupting services for clean HA transition
+sysctl net.inet.carp.allow=0
+
 # Invoke shutdown scripts if present
 scripts=/usr/local/etc/rc.d/shutdown.*.sh
 for script in $scripts

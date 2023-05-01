@@ -353,13 +353,8 @@ class FilterAttribute {
 							$string_part = 'arp';
 							break;
 						default:
-							if (preg_match('/^(?:0x)?[0-9a-f]{4}$/i', $value)) {
-								if (mb_stripos($value, '0x') === false) {
-									$string_part = '0x' . strtolower($value);
-								} else {
-									$string_part = strtolower($value);
-								}
-							} else {
+							$string_part = strtolower(str_starts_with($value, '0x') ? $value : '0x' . $value);
+							if (!is_ethertype($string_part)) {
 								$input_error = "Invalid ethertype: {$value}";
 								break 2;
 							}
@@ -636,12 +631,6 @@ function get_expression_string(array $filterattributes) {
 			$fs_match_next = null;
 			$fs_prepend = 0;
 			foreach ($fs_strings as $fs => $string) {
-				/* Assume the Section is to be excluded if that has not yet
-				 * been specified. */
-				if (!array_key_exists($fs, $fs_exclude)) {
-					$fs_exclude[$fs] = true;
-				}
-
 				/* Override this Section's logical operator depending on the
 				 * previous Section's filter string. Also reset the variables
 				 * for this loop. */
@@ -715,8 +704,9 @@ function get_expression_string(array $filterattributes) {
 					// Use the override match instead
 					$fs_match = $fs_match_current;
 					$fs_match_current = null;
-				} elseif ($fs_exclude[$fs]) {
-					// Excluded Sections are always matched with 'and'
+				} elseif ($fs_exclude[$fs] && !(!$fs_exclude[0] && $last_included > $fs)) {
+					/* Excluded Sections are always matched with "and", unless the untagged
+					 * section is included and there are included tagged sections after this. */
 					$fs_match = ' and ';
 				} else {
 					$fs_match = ' or ';
@@ -728,10 +718,9 @@ function get_expression_string(array $filterattributes) {
 					if ($fs == 0) {
 						$fs_prepend = 1;
 					} elseif ($fs_prepend == 1) {
-						// The previous section was untagged, tagged sections must be matched with "or"
+						// The previous section was untagged
 						$fs_prepend = 2;
 						$fs_string = '(' . $fs_string;
-						$fs_match = ' or ';
 					}
 					if ($fs_prepend == 2 && ($fs == $last_section || $fs_last)) {
 						$fs_string = $fs_string . ')';

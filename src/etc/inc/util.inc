@@ -241,15 +241,71 @@ function send_multiple_events($cmds) {
 	}
 }
 
-function is_module_loaded($module_name) {
-	$module_name = str_replace(".ko", "", $module_name);
-	$running = 0;
-	$_gb = exec("/sbin/kldstat -qn {$module_name} 2>&1", $_gb, $running);
-	if (intval($running) == 0) {
-		return true;
-	} else {
-		return false;
+/**
+ * Test if a kernel module exists on disk in well-known locations
+ *
+ * Locations:
+ *   > /boot/kernel
+ *   > /bood/modules
+ *
+ * @param string $module_name		The name of the kernel module
+ * @param string ...$add_dirs		Additional directories to search
+ *
+ * @return bool
+ */
+function is_module_available(string $module_name, string ...$add_dirs): bool
+{
+	/* bail if module is already loaded */
+	if (is_module_loaded($module_name)) {
+		return (true);
 	}
+
+	/* ensure the $module_name ends with .ko */
+	if (!str_ends_with($module_name, '.ko')) {
+		$module_name .= '.ko';
+	}
+
+	/* build list of well-known locations */
+	$mod_dirs = [
+		'/boot/kernel',
+		'/boot/modules',
+		...$add_dirs
+	];
+
+	/* filter list of well-known locations and cast to bool */
+	return ((bool) array_filter($mod_dirs, function($mod_dir) use ($module_name) {
+		return (file_exists($mod_dir . '/' . $module_name));
+	}));
+}
+
+/**
+ * Test if a kernel module is loaded
+ *
+ * @param string $module_name	The name of the kernel module
+ *
+ * @param bool
+ */
+function is_module_loaded(string $module_name): bool
+{
+	/* sanitize input */
+	$module_name = escapeshellarg(rtrim($module_name, '.ko'));
+
+	$base_cmd = ['/sbin/kldstat', '-q'];
+
+	/* first pass test by module name, tests for in-kernel modules */
+	$cmd = implode(' ', [...$base_cmd, '-m', $module_name]);
+	exec($cmd, $out, $rc);
+
+	/* bailout early if we found it */
+	if ($rc === 0) {
+		return (true);
+	}
+
+	/* last pass test by file name */
+	$cmd = implode(' ', [...$base_cmd, '-n', $module_name]);
+	exec($cmd, $out, $rc);
+
+	return ($rc === 0);
 }
 
 /* validate non-negative numeric string, or equivalent numeric variable */
@@ -1343,6 +1399,29 @@ function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
 }
 
+/**
+ * Check if an ethertype is valid
+ *
+ * @param string $ethertype	The ethertype as hex string
+ *
+ * @return bool
+ */
+function is_ethertype(string $ethertype): bool {
+	$ethertype = strtolower($ethertype);
+
+	if (!str_starts_with($ethertype, '0x')) {
+		return (false);
+	}
+
+	$ethertype = substr($ethertype, 2);
+
+	if (!ctype_xdigit($ethertype)) {
+		return (false);
+	}
+
+	return (filter_var(hexdec($ethertype), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0x1, 'max_range' => 0xffff]]));
+}
+
 function build_vip_list($fif, $family = "all") {
 	$list = array('address' => gettext('Interface Address'));
 
@@ -2061,7 +2140,7 @@ function resolve_retry($hostname, $protocol = 'inet') {
 			$dnsproto = DNS_AAAA;
 			$dnstype = array('AAAA');
 			break;
-		case 'inet': 
+		case 'inet':
 		default:
 			$checkproto = 'is_ipaddrv4';
 			$dnsproto = DNS_A;
@@ -2080,11 +2159,11 @@ function resolve_retry($hostname, $protocol = 'inet') {
 			foreach ($dnsresult as $ip) {
 				if (is_array($ip)) {
 					if (in_array($ip['type'], $dnstype)) {
-						if ($checkproto($ip['ip'])) { 
+						if ($checkproto($ip['ip'])) {
 							$recresult[] = $ip['ip'];
 						}
 
-						if ($checkproto($ip['ipv6'])) { 
+						if ($checkproto($ip['ipv6'])) {
 							$recresult[] = $ip['ipv6'];
 						}
 					}
@@ -2121,22 +2200,18 @@ function format_bytes($bytes) {
 	}
 }
 
-function format_number($num, $precision = 3) {
-	$units = array('', 'K', 'M', 'G', 'T');
-
-	$i = 0;
-	while ((float) $num > 1000 && $i < count($units)) {
-		(float) $num /= 1000;
-		$i++;
-	}
-	$num = round((float) $num, $precision);
-
-	return ("{$num} {$units[$i]}");
+function format_number(int $num, int $precision = 3): string
+{
+    $units = ['', 'K', 'M', 'G', 'T'];
+    for ($i = 0; $num >= 1000; $i++) {
+        $num /= 1000;
+    }
+    return (round($num, $precision) . $units[$i]);
 }
 
 function unformat_number($formated_num) {
 	$num = strtoupper($formated_num);
-    
+
 	if ( strpos($num,"T") !== false ) {
 		$num = str_replace("T","",$num) * 1000 * 1000 * 1000 * 1000;
 	} else if ( strpos($num,"G") !== false ) {
@@ -2146,7 +2221,7 @@ function unformat_number($formated_num) {
 	} else if ( strpos($num,"K") !== false ) {
 		$num = str_replace("K","",$num) * 1000;
 	}
-    
+
 	return $num;
 }
 
@@ -2413,7 +2488,7 @@ function is_interface_mismatch() {
 	 * see https://redmine.pfsense.org/issues/12170 */
 	init_config_arr(array('vlans', 'vlan'));
 	foreach ($config['vlans']['vlan'] as $vlan) {
-		if (!does_interface_exist($vlan['if']) && 
+		if (!does_interface_exist($vlan['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
 			$missing_interfaces[] = $vlan['if'];
 			$do_assign = true;
@@ -2893,7 +2968,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	}
 	if (is_ipaddr($gw)) {
 		/* set correct linklocal gateway address,
-		 * see https://redmine.pfsense.org/issues/11713 
+		 * see https://redmine.pfsense.org/issues/11713
 		 * and https://redmine.pfsense.org/issues/11806 */
 		if (is_ipaddrv6($gw) && is_linklocal($gw) && empty(get_ll_scope($gw))) {
 			$routeget = route_get($gw, 'inet6', true);
@@ -3375,7 +3450,7 @@ function array_get_path(array &$arr, string $path, $default = null) {
 	if (($default !== null) && ($el === '')) {
 		return ($default);
 	}
-	
+
 	return ($el);
 }
 
@@ -3407,7 +3482,7 @@ function array_init_path(mixed &$arr, ?string $path)
  * but is not empty or an array, return $default.
  * @param $arr array value to search
  * @param $path string path with '/' separators
- * @param $value mixed 
+ * @param $value mixed
  * @param $default mixed value to return if the path is not found
  * @returns mixed $val or $default if the path prefix does not exist
  */
@@ -3440,7 +3515,7 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
 
 /**
  * Determine whether a path in a nested array has a non-null value keyed by
- * $enable_key. 
+ * $enable_key.
  * @param $arr array value to search
  * @param $path string path with '/' separators
  * @param $enable_key string an optional alternative key value for the enable key
@@ -4010,7 +4085,7 @@ function cleanup_regex_pattern($filtertext) {
 function ip6_to_asn1($addr) {
 	/* IPv6 MIB uses an OCTET STRING of length 16 to represent
 	 * 128-bit IPv6 address in network byte order.
-	 * see https://datatracker.ietf.org/doc/html/rfc2465#section-3 
+	 * see https://datatracker.ietf.org/doc/html/rfc2465#section-3
 	 * i.e. fc00:3::4 = 252.0.0.3.0.0.0.0.0.0.0.0.0.0.0.4
 	 */
 

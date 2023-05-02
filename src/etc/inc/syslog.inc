@@ -1255,7 +1255,7 @@ function buffer_rules_load() {
 	if (is_array($rules)) {
 		foreach ($rules as $rule) {
 			$key = sprintf("%d", $rule['tracker']);
-			$buffer_rules_normal[$key] = $rule['label'];
+			$buffer_rules_normal[$key] = is_array($rule['labels']) ? array_pop($rule['labels']) : $rule['labels'];
 		}
 	}
 	unset($_gb, $buffer);

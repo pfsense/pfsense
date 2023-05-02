@@ -260,7 +260,7 @@ function setup_gateways_monitor() {
 						    $gateway['gateway']);
 					}
 
-					pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
+					pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
 				}
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
@@ -307,7 +307,7 @@ function setup_gateways_monitor() {
 						    $gateway['gateway']);
 					}
 
-					pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
+					pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
 				}
 			}
 		} else {
@@ -1135,7 +1135,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	 * see https://redmine.pfsense.org/issues/12536 */
 	if ($gwdefault == "-") {
 		if (is_static_route('default', $ipprotocol)) {
-			route_del('default', $ipprotocol); 
+			route_del('default', $ipprotocol);
 		}
 		return;
 	}
@@ -1206,7 +1206,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	if (!empty($set_dfltgwname) && isset($gateways_arr[$set_dfltgwname])) {
 		setdefaultgateway($gateways_arr[$set_dfltgwname]);
 	} elseif (empty($set_dfltgwname)) {
-		route_del('default', $ipprotocol); 
+		route_del('default', $ipprotocol);
 	}
 }
 
@@ -2298,7 +2298,7 @@ function gateway_getgwtiername($gways, $idx) {
 	$gwname = $gways[$idx]['name'];
 
 	$gw = get_gateway_or_group_by_name($gwname, $gways);
-	
+
 	init_config_arr(array('gateways'));
 	$gw4 = config_get_path('gateways/defaultgw4', "");
 	$gw6 = config_get_path('gateways/defaultgw6', "");

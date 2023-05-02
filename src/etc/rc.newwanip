@@ -232,11 +232,11 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 	if ($curwanip != $oldip) {
 		if (isset($config['system']['ip_change_kill_states'])) {
 			log_error("IP Address has changed, killing all states (ip_change_kill_states is set).");
-			pfSense_kill_states(utf8_encode($oldip));
+			pfSense_kill_states($oldip);
 			filter_flush_state_table();
 		} else {
 			log_error("IP Address has changed, killing states on former IP Address $oldip.");
-			pfSense_kill_states(utf8_encode($oldip));
+			pfSense_kill_states($oldip);
 		}
 	}
 

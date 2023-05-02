@@ -118,11 +118,12 @@ function carp_sync_xml($rpc_client, $sections) {
 		if (!$sect) {
 			continue;
 		}
-		array_set_path($config_copy, $path,
-					   array_filter($sect,
-									function ($v) {
-										return (!array_path_enabled($v, 'nosync'));
-									}));
+		array_set_path($config_copy,
+				$path,
+				array_filter($sect,
+						function ($v) {
+							return (!array_path_enabled($v, '', 'nosync'));
+						}));
 	}
 
 	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpifconf) {

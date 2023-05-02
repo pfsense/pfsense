@@ -988,7 +988,9 @@ function alias_info_popup($alias_id) {
 
 function gateway_info_popup($showgw, $gateways_status = false) {
 	init_config_arr(array('gateways', 'gateway_group'));
-	$a_gateways = return_gateways_array(true, false, true, true);
+	/* Get groups indexed by name so we can avoid re-scanning the array
+	 * multiple times later unnecessarily. */
+	$a_gateways = return_gateways_array(true, false, true, false);
 
 	/* Use cached gateway status if available.
 	 * See https://redmine.pfsense.org/issues/12174 */
@@ -1000,25 +1002,47 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 	$gws = array();
 	$bgdanger = array('force_down', 'down', 'highloss', 'highdelay');
 	$bgwarning = array('loss', 'delay');
-	$bgsuccess = array('none');
+	$bgsuccess = array('online', 'none');
 	$bgcolor = "bg-info";
 	$link = "";
 
 	if (is_array($a_gateways)) {
-		foreach ($a_gateways as $i => $gateway) {
+		/* Since gw array is hashed by name, we need to count the
+		 * index number manually for links since those are by position.
+		 */
+		$i = 0;
+		foreach ($a_gateways as $gateway) {
 			if ($gateway['name'] == $showgw) {
 				$gws[] = $gateway['name'];
 				$link = "/system_gateways_edit.php?id={$i}";
 				break;
 			}
+			$i++;
 		}
 	}
+	$grouptiermap = [];
 	foreach(config_get_path('gateways/gateway_group') as $i => $gwgroup) {
 		if ($gwgroup['name'] == $showgw) {
+			$groupinfo = [];
 			foreach ($gwgroup['item'] as $member) {
 				$membersplit = explode("|", $member);
-				$gws[] = $membersplit[0];
+				$groupinfo[] = [
+					'gw' => $membersplit[0],
+					'tier' => $membersplit[1],
+					'type' => $membersplit[2]
+				];
+				/* Store tier separately */
+				$grouptiermap[$membersplit[0]] = $membersplit[1];
 			}
+			/* Sort group info array by tier (number) and then by
+			 * name (natural) */
+			$gws = array_column($groupinfo, 'gw');
+			$tiers = array_column($groupinfo, 'tier');
+			array_multisort($tiers, SORT_NUMERIC,
+					$gws, SORT_NATURAL,
+					$groupinfo);
+			/* Re-slice member gateways which are now sorted */
+			$gws = array_column($groupinfo, 'gw');
 			$link = "system_gateway_groups_edit.php?id={$i}";
 			break;
 		}
@@ -1028,35 +1052,57 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 		$content .= "<table>\n";
 		$content .= "<thead>\n";
 		$content .= "<tr>\n";
-		$content .= "<th>" . gettext("Name") . "</th><th style='padding-left: 10px;'>" . gettext("Interface") . "</th>";
+		/* Only add Tier column if this is a group */
+		if (!empty($grouptiermap)) {
+			$content .= "<th>" . gettext("Tier") . "</th>";
+			$content .= "<th style='padding-left: 10px;'>";
+		} else {
+			$content .= "<th>";
+		}
+		$content .= gettext("Name") . "</th>";
+		$content .= "<th style='padding-left: 10px;'>" . gettext("Interface") . "</th>";
 		$content .= "<th style='padding-left: 10px;'>" . gettext("Gateway") . "</th></tr>\n";
 		$content .= "</thead>\n";
 		$content .= "<tbody>\n";
 		foreach ($gws as $gw) {
 			foreach ($gateways_status as $gwstatus) {
-				if ($gwstatus['name'] == $gw) {
-					if (in_array($gwstatus['status'], $bgdanger)) {
+				if ($gwstatus['name'] != $gw) {
+					continue;
+				}
+				/* Distinguish between online/offline in general */
+				if (stristr($gwstatus['status'], "online")) {
+					/* Use substatus to indicate warnings as needed */
+					if (in_array($gwstatus['substatus'], $bgdanger)) {
 						$bgcolor = "bg-danger";
-					} elseif (in_array($gwstatus['status'], $bgwarning)) {
+					} elseif (in_array($gwstatus['substatus'], $bgwarning)) {
 						$bgcolor = "bg-warning";
-					} elseif (in_array($gwstatus['status'], $bgsuccess)) {
+					} elseif (in_array($gwstatus['substatus'], $bgsuccess)) {
 						$bgcolor = "bg-success";
-					} else {
-						$bgcolor = "bg-info";
 					}
+				} elseif (stristr($gwstatus['status'], "down")) {
+					/* Anything down is danger, no need to check substatus. */
+					$bgcolor = "bg-danger";
+				} else {
+					/* Unknown status */
+					$bgcolor = "bg-info";
 				}
 			}
-			$iface = lookup_gateway_interface_by_name($gw);
 			$content .= "	<tr class='{$bgcolor}'>\n";
+			/* Only print Tier if this is a group */
+			if (!empty($grouptiermap)) {
+				$content .= "		<td>\n";
+				$content .= 			$grouptiermap[$gw];
+				$content .= "		</td>\n";
+			}
 			$content .= "		<td>\n";
 			$content .= 			$gw;
-			$content .=	"		</td>\n";
+			$content .= "		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
-			$content .= 			config_get_path("interfaces/{$iface}/descr", "");
-			$content .=	"		</td>\n";
+			$content .= 			$a_gateways[$gw]['friendlyifdescr'];
+			$content .= "		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
-			$content .= 			lookup_gateway_ip_by_name($gw);
-			$content .=	"		</td>\n";
+			$content .= 			$a_gateways[$gw]['gateway'];
+			$content .= "		</td>\n";
 			$content .= "	</tr>\n";
 		}
 		$content .= "</tbody>\n";

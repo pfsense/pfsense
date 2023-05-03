@@ -56,7 +56,7 @@ function ramdisk_available_memory($includeswap = true) {
 
 	if ($includeswap) {
 		/* Also include total swap space in calculation since tmpfs data can be swapped */
-		$free += (int) trim(exec("/usr/sbin/swapinfo -k | /usr/bin/tail -1 | /usr/bin/awk '{print \$2 * 1024}'"));
+		$free += (int) trim(exec("/usr/sbin/swapinfo -k | /usr/bin/grep -v 'Capacity\$' | /usr/bin/tail -1 | /usr/bin/awk '{print \$2 * 1024}'"));
 	}
 
 	return $free;

@@ -114,8 +114,9 @@ ramdisk_check_size () {
 	PAGES_FREE=$( /sbin/sysctl -n vm.stats.vm.v_free_count )
 	PAGE_SIZE=$( /sbin/sysctl -n vm.stats.vm.v_page_size )
 	MEM_FREE=$( /bin/expr ${PAGES_FREE} \* ${PAGE_SIZE} )
+	SWAP_FREE=$( /usr/sbin/swapinfo -k | /usr/bin/grep -v 'Capacity$' | /usr/bin/tail -1 | /usr/bin/awk '{print $2 * 1024}' )
 	# Convert to MB
-	MEM_FREE=$( /bin/expr ${MEM_FREE} / 1024 / 1024 )
+	MEM_FREE=$( /bin/expr \( ${MEM_FREE} + ${SWAP_FREE} \) / 1024 / 1024 )
 	# Total size of desired RAM disks
 	MEM_NEED=$( /bin/expr ${tmpsize} + ${varsize} )
 	[ ${MEM_FREE} -gt ${MEM_NEED} ]

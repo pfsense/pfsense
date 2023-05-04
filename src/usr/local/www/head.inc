@@ -255,6 +255,16 @@ $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
 $system_menu[] = array(gettext("Register"), "/system_register.php");
 
+// Display "Cert. Manager" on System menu, even if user does not have 
+// "WebCfg - System: CA Manager" privileges
+if (!isAllowedPage("system_camanager.php")) {
+  if (isAllowedPage("system_certmanager.php")) {
+   $system_menu[] = array(gettext("Cert. manager"), "/system_certmanager.php");
+  } else if (isAllowedPage("system_crlmanager.php")) {
+   $system_menu[] = array(gettext("Cert. manager"), "/system_crlmanager.php");
+  }
+}
+
 if (!isAllowedPage("system_usermanager.php")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
 } else {

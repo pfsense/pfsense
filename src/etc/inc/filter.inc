@@ -4759,7 +4759,10 @@ function ifridx($if, $ridx) {
 function display_separator($separators, $nrules, $columns_in_table) {
 	if (is_array($separators)) {
 		foreach ($separators as $separator) {
-			if ($separator['row'][0] == "fr" . $nrules) {
+			if (empty($separator)) {
+				continue;
+			}
+			if (array_get_path($separator, 'row/0') == "fr" . $nrules) {
 				$cellcolor = $separator['color'];
 				print('<tr class="ui-sortable-handle separator">' .
 					'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . htmlspecialchars($separator['text']) . '</span></td>' .
@@ -4772,9 +4775,13 @@ function display_separator($separators, $nrules, $columns_in_table) {
 
 /* Return a list of separator rows */
 function separator_rows($separators) {
+	$seprows = [];
 	if (is_array($separators)) {
 		foreach ($separators as $separator) {
-			$seprows[substr($separator['row']['0'], 2)] = true;
+			if (empty($separator)) {
+				continue;
+			}
+			$seprows[substr(array_get_path($separator, 'row/0'), 2)] = true;
 		}
 	}
 	return $seprows;
@@ -4784,9 +4791,12 @@ function separator_rows($separators) {
 function move_separators(&$a_separators, $ridx, $mvnrows) {
 	if (is_array($a_separators)) {
 		foreach ($a_separators as $sepi => $separator) {
-			$seprow = substr($separator['row']['0'], 2);
+			if (empty($separator)) {
+				continue;
+			}
+			$seprow = substr(array_get_path($separator, 'row/0'), 2);
 			if ($seprow > $ridx) {
-				$a_separators[$sepi]['row']['0'] = 'fr' . ($seprow + $mvnrows);
+				array_set_path($a_separators, "{$sepi}/row/0", 'fr' . ($seprow + $mvnrows));
 			}
 		}
 	}

@@ -493,6 +493,16 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 	echo gettext("done") . "\n";
 }
 
+/* Leaving CARP maintenance mode, which was enabled during boot*/
+echo gettext("Leaving CARP maintenance mode if required...");
+init_config_arr(array('virtualip', 'vip'));
+foreach (config_get_path('virtualip/vip', []) as $vip) {
+	if ($vip['mode'] == "carp") {
+		interface_carp_configure($vip, true);
+	}
+}
+echo gettext("done") . "\n";
+
 led_normalize();
 
 notify_all_remote("Bootup complete");

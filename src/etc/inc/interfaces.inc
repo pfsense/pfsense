@@ -3033,6 +3033,8 @@ function interface_ipalias_configure(&$vip) {
 }
 
 function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias_reload = false) {
+	global $g;
+
 	if (config_get_path('system/developerspew')) {
 		$mt = microtime();
 		echo "interface_carp_configure() being called $mt\n";
@@ -3067,7 +3069,13 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias
 		$advbase = "advbase " . escapeshellarg($vip['advbase']);
 	}
 
-	$carp_maintenancemode = config_path_enabled('/','virtualip_carp_maintenancemode');
+	if ($g['booting']) {
+		// stay in CARP maintenance mode if system is currently booting.
+		$carp_maintenancemode = true;
+	} else {
+		$carp_maintenancemode = config_path_enabled('/', 'virtualip_carp_maintenancemode');
+	}
+
 	if ($carp_maintenancemode) {
 		$advskew = "advskew 254";
 	} else {

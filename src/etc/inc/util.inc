@@ -2611,14 +2611,11 @@ function msort($array, $id = "id", $sort_ascending = true) {
  *   Returns true if item is a URL
  ******/
 function is_URL($url, $httponly = false) {
-	$match = preg_match("'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))'", $url);
-	if ($match) {
+	if (filter_var($url, FILTER_VALIDATE_URL)) {
 		if ($httponly) {
-			$urlparts = parse_url($url);
-			return in_array(strtolower($urlparts['scheme']), array('http', 'https'));
-		} else {
-			return true;
+			return in_array(strtolower(parse_url($url, PHP_URL_SCHEME)), ['http', 'https']);
 		}
+		return true;
 	}
 	return false;
 }

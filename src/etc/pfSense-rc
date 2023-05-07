@@ -547,6 +547,9 @@ fi
 # Update pkg metadata
 /etc/rc.update_pkg_metadata now
 
+# Leave Carp maintenance mode
+/etc/rc.carpbootcompleted
+
 # Log product version to syslog
 get_version
 BUILDTIME=`cat /etc/version.buildtime`

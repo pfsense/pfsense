@@ -896,9 +896,9 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		if ($groupname == '' || in_array($groupname, $cur_groups)) {
 			continue;
 		}
-		$group = &$groups[$groupindex[$groupname]];
-		$group['member'][] = $user['uid'];
-		$mod_groups[] = $group;
+		$ngroup = &$groups[$groupindex[$groupname]];
+		$ngroup['member'][] = $user['uid'];
+		$mod_groups[] = $ngroup;
 
 		/*
 		 * If it's a new user, make sure it is added before try to
@@ -908,6 +908,9 @@ function local_user_set_groups($user, $new_groups = NULL) {
 			local_user_set($user);
 		}
 	}
+	/* Clear $ngroup reference.
+	 * https://redmine.pfsense.org/issues/14363 */
+	unset($ngroup);
 
 	/* determine which memberships to remove */
 	foreach ($cur_groups as $groupname) {
@@ -917,19 +920,22 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		if (!isset($groups[$groupindex[$groupname]])) {
 			continue;
 		}
-		$group = &$groups[$groupindex[$groupname]];
-		if (is_array($group['member'])) {
-			$index = array_search($user['uid'], $group['member']);
-			array_splice($group['member'], $index, 1);
-			$mod_groups[] = $group;
+		$cgroup = &$groups[$groupindex[$groupname]];
+		if (is_array($cgroup['member'])) {
+			$index = array_search($user['uid'], $cgroup['member']);
+			array_splice($cgroup['member'], $index, 1);
+			$mod_groups[] = $cgroup;
 		}
 	}
+	/* Clear $cgroup reference.
+	 * https://redmine.pfsense.org/issues/14363 */
+	unset($cgroup);
 
 	config_set_path('system/group', $groups);
 
 	/* sync all modified groups */
-	foreach ($mod_groups as $group) {
-		local_group_set($group);
+	foreach ($mod_groups as $mgroup) {
+		local_group_set($mgroup);
 	}
 }
 

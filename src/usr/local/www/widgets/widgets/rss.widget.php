@@ -46,15 +46,15 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 }
 
 if ($user_settings['widgets'][$widgetkey]['rssmaxitems']) {
-	$max_items =  $user_settings['widgets'][$widgetkey]['rssmaxitems'];
+	$max_items =  (int) $user_settings['widgets'][$widgetkey]['rssmaxitems'];
 }
 
 if (is_numeric($user_settings['widgets'][$widgetkey]['rsswidgetheight'])) {
-	$rsswidgetheight =	$user_settings['widgets'][$widgetkey]['rsswidgetheight'];
+	$rsswidgetheight = (int) $user_settings['widgets'][$widgetkey]['rsswidgetheight'];
 }
 
 if (is_numeric($user_settings['widgets'][$widgetkey]['rsswidgettextlength'])) {
-	$rsswidgettextlength =	$user_settings['widgets'][$widgetkey]['rsswidgettextlength'];
+	$rsswidgettextlength = (int) $user_settings['widgets'][$widgetkey]['rsswidgettextlength'];
 }
 
 // Set a default feed if none exists

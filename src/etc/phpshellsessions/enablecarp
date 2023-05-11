@@ -42,4 +42,4 @@ if (is_array($config['virtualip']['vip'])) {
 	}
 }
 interfaces_sync_setup();
-set_single_sysctl("net.inet.carp.allow", "1");
+enable_carp();

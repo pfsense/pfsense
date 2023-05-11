@@ -74,7 +74,7 @@ if ($_POST['disablecarp'] != "") {
 	init_config_arr(array('virtualip', 'vip'));
 	$viparr = &$config['virtualip']['vip'];
 	if ($status != 0) {
-		set_single_sysctl('net.inet.carp.allow', '0');
+		disable_carp();
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
 				continue;
@@ -99,7 +99,7 @@ if ($_POST['disablecarp'] != "") {
 			}
 		}
 		interfaces_sync_setup();
-		set_single_sysctl('net.inet.carp.allow', '1');
+		enable_carp();
 		$status = 1;
 	}
 }

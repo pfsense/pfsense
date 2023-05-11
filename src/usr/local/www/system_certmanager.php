@@ -228,8 +228,8 @@ if ($_POST['save'] == gettext("Save")) {
 				$input_errors[] = gettext("This signing request does not appear to be valid.");
 			}
 
-			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) && 
-			    ((!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY")) || 
+			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) &&
+			    ((!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY")) ||
 			    (strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "END PRIVATE KEY")) ||
 			    (strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY") && !strstr($_POST['keypaste'], "END EC PRIVATE KEY")))) {
 				$input_errors[] = gettext("This private does not appear to be valid.");
@@ -674,7 +674,7 @@ if ($_POST['save'] == gettext("Save")) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificates"));
+$pgtitle = array(gettext('System'), gettext('Certificates'), gettext('Certificates'));
 $pglinks = array("", "system_camanager.php", "system_certmanager.php");
 
 if (($act == "new" || ($_POST['save'] == gettext("Save") && $input_errors)) ||
@@ -693,9 +693,9 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
-$tab_array[] = array(gettext("Certificates"), true, "system_certmanager.php");
-$tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
+$tab_array[] = array(gettext('Authorities'), false, 'system_camanager.php');
+$tab_array[] = array(gettext('Certificates'), true, 'system_certmanager.php');
+$tab_array[] = array(gettext('Certificate Revocation'), false, 'system_crlmanager.php');
 display_top_tabs($tab_array);
 
 if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save")) && $input_errors)) {

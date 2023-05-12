@@ -522,11 +522,12 @@ class FilterAttribute {
  * Constructs the full filter expression used in the tcpdump command.
  * 
  * @param array $filterattributes A list of FilterAttribute objects
+ * @param bool $vlan_supported Set this to false if VLANs are not supported
  * 
  * @throws Exception If the resulting filter expression would be invalid.
  * @return string Filter expression - an empty string means capture all.
  */
-function get_expression_string(array $filterattributes) {
+function get_expression_string(array $filterattributes, bool $vlan_supported = true) {
 	$expression_string = '';
 	$expression_preset = PCAP_FPRESET_CUSTOM;
 	/* The index of the following arrays corresponds to the offset of the
@@ -586,9 +587,13 @@ function get_expression_string(array $filterattributes) {
 			$expression_string = '';
 			break;
 		case PCAP_FPRESET_UNTAGGED:
-			$expression_string = 'not vlan';
+			$expression_string = $vlan_supported ? 'not vlan' : '';
 			break;
 		case PCAP_FPRESET_TAGGED:
+			if (!$vlan_supported) {
+				// Cannot filter for tagged packets
+				throw new Exception('No VLAN support on loopback or encapsulated IP.');
+			}
 			$expression_string = 'vlan';
 			break;
 		default:
@@ -631,6 +636,11 @@ function get_expression_string(array $filterattributes) {
 			$fs_match_next = null;
 			$fs_prepend = 0;
 			foreach ($fs_strings as $fs => $string) {
+				// Skip tagged sections when omitting vlan filters
+				if (!$vlan_supported && $fs != 0) {
+					continue;
+				}
+
 				/* Override this Section's logical operator depending on the
 				 * previous Section's filter string. Also reset the variables
 				 * for this loop. */
@@ -641,6 +651,10 @@ function get_expression_string(array $filterattributes) {
 					// This Section has been excluded
 					if (isset($last_included) && $fs < $last_included) {
 						if ($fs == 0) {
+							if (!$vlan_supported) {
+								// Cannot filter for tagged packets
+								throw new Exception('No VLAN support on loopback or encapsulated IP.');
+							}
 							/* Exclude this untagged Section using other included
 							 * tagged Sections. */
 							$fs_string = '';
@@ -653,7 +667,7 @@ function get_expression_string(array $filterattributes) {
 					} else {
 						$fs_last = true;
 						if ($fs == 0) {
-							if ($fs == $last_excluded) {
+							if ($fs == $last_excluded && $vlan_supported) {
 								// Only this untagged Section exists, and it's excluded.
 								$fs_string = 'vlan';
 							} else {
@@ -673,9 +687,13 @@ function get_expression_string(array $filterattributes) {
 						if ($fs == 0) {
 							if ($fs == $last_included) {
 								// This is the only included Section
-								$fs_string = 'not vlan';
+								$fs_string = $vlan_supported ? 'not vlan' : '';
 								$fs_last = true;
 							} else {
+								if (!$vlan_supported) {
+									// Cannot filter for tagged packets
+									throw new Exception('No VLAN support on loopback or encapsulated IP.');
+								}
 								// Equivalent to 'not vlan' without offsetting the search
 								$fs_string = 'not ether proto 0x8100 and not ether proto 0x88a8';
 								$fs_match_next = ' or ';
@@ -779,7 +797,7 @@ function get_interfaces_sorted() {
 		$assigned = false;
 		$description = "unassigned ({$i})";
 
-		if (preg_match('/(enc0|lo0|ovpn[sc]\d+|tun_wg\d+|ipsec\d+)/i', $i)) {
+		if (preg_match('/^(lo\d+|gif\d+|gre\d+|ppp\d+|pppoe\d+|pptp\d+|l2tp\d+|enc\d+|ipsec\d+|ovpn[sc]\d+|tun_wg\d+)/i', $i)) {
 			$append = true;
 			if ($i == 'enc0') {
 				$assigned = true;

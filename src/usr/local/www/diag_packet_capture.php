@@ -228,12 +228,9 @@ if ($_POST) {
 		}
 	}
 
+	$vlan_supported = !preg_match('/^(lo\d+|gif\d+|gre\d+|ppp\d+|pppoe\d+|pptp\d+|l2tp\d+|enc\d+|ipsec\d+|ovpn[sc]\d+|tun_wg\d+)/i', $input_interface);
 	try {
-		$expression_string = get_expression_string($filterattributes);
-		if (empty($expression_string) && $input_filter == PCAP_FPRESET_CUSTOM && empty($input_error)) {
-			// If the expression string is empty due to previous errors, don't show this error
-			$input_error[] = 'Custom filter should not be empty. Use the "Everything" preset instead.';
-		}
+		$expression_string = get_expression_string($filterattributes, $vlan_supported);
 	} catch (Exception $e) {
 		$input_error[] = $e->getMessage();
 	}

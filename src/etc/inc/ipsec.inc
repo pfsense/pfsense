@@ -313,18 +313,18 @@ function ipsec_ikeid_next() {
 	$ikeids = array();
 
 	foreach ($config['ipsec']['phase1'] as $ph1) {
-		$keyids[$ph1['ikeid']] = $ph1['ikeid'];
+		$ikeids[$ph1['ikeid']] = $ph1['ikeid'];
 	}
 
 	for ($i = 1; $i < 16000; $i++) {
-		if (!isset($keyids[$i])) {
-			$keyid = $i;
+		if (!isset($ikeids[$i])) {
+			$ikeid = $i;
 			break;
 		}
 	}
 
-	unlock($ipsecreqid);
-	return $keyid;
+	unlock($ipsecikeid);
+	return $ikeid;
 }
 
 function ipsec_new_reqid() {

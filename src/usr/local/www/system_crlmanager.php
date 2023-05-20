@@ -302,7 +302,7 @@ if ($_POST['save'] && empty($input_errors)) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificate Revocation"));
+$pgtitle = array(gettext('System'), gettext('Certificates'), gettext('Revocation'));
 $pglinks = array("", "system_camanager.php", "system_crlmanager.php");
 
 if ($act == "new" || $act == gettext("Save") || $input_errors || $act == "edit") {
@@ -388,9 +388,9 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
-$tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
-$tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager.php");
+$tab_array[] = array(gettext('Authorities'), false, 'system_camanager.php');
+$tab_array[] = array(gettext('Certificates'), false, 'system_certmanager.php');
+$tab_array[] = array(gettext('Revocation'), true, 'system_crlmanager.php');
 display_top_tabs($tab_array);
 
 if ($act == "new" || $act == gettext("Save")) {

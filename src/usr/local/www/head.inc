@@ -244,15 +244,14 @@ $ext_menu_path_data = read_ext_menu_path_data();
 
 // System
 $system_menu = array();
-$system_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . ")", "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
-$system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
+$system_menu[] = array(gettext("High Availability"), "/system_hasync.php");
 $system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
-$system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
+$system_menu[] = array(gettext("Certificates"), "/system_camanager.php");
 $system_menu[] = array(gettext("Register"), "/system_register.php");
 
 if (!isAllowedPage("system_usermanager.php")) {
@@ -266,6 +265,9 @@ if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php"
 }
 
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
+
+/* ensure Logout is the last item in the menu */
+$system_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . ")", "/index.php?logout");
 
 // Interfaces
 // NOTE:

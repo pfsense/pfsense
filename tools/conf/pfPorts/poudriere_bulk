@@ -61,6 +61,7 @@ net/frr8-pythontools
 net/hping3
 net/intel-em-kmod
 net/kea
+net/keama
 net/librdkafka
 net/mcjoin
 net/mosh

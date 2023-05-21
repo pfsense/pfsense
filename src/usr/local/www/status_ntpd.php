@@ -250,7 +250,7 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $ntpq_servers, $allow_query;
+	global $ntpq_servers, $allow_query, $ntpq_server_responses;
 
 	if (config_get_path('ntpd/enable') == 'disabled'):
 		print("<tr>\n");
@@ -286,6 +286,9 @@ function print_status() {
 			print("<td>" . $server['delay'] . "</td>\n");
 			print("<td>" . $server['offset'] . "</td>\n");
 			print("<td>" . $server['jitter'] . "</td>\n");
+			print("<td>" . $server['assid'] . "</td>\n");
+			print("<td>" . $server['status_word'] . "</td>\n");
+			print("<td>" . $server['auth'] . "</td>\n");
 			print("</tr>\n");
 			$i++;
 		endforeach;
@@ -366,6 +369,9 @@ include("head.inc");
 					<th><?=gettext("Delay (ms)")?></th>
 					<th><?=gettext("Offset (ms)")?></th>
 					<th><?=gettext("Jitter (ms)")?></th>
+					<th><?=gettext("AssocID")?></th>
+                                        <th><?=gettext("Status Word")?></th>
+                                        <th><?=gettext("Auth")?></th>
 				</tr>
 			</thead>
 			<tbody id="ntpbody">

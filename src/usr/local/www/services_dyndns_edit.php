@@ -155,7 +155,7 @@ if ($_POST['save'] || $_POST['force']) {
 		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6")) {
+		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6") || ($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
@@ -364,13 +364,13 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Linode: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Cloudflare, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
 				'GleSYS: Enter the record ID.%1$s' .
 				'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
-				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, Name.com, Namecheap: Enter the hostname and domain name separately.
+				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
 					The domain name is the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
@@ -436,6 +436,7 @@ $section->addInput(new Form_Input(
 			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
 			'NoIP: For group authentication, replace semicolon (:) with pound-key (#).%1$s' .
+			'Porkbun: Enter the API key.%1$s' .
 			'Route 53: Enter the Access Key ID.', '<br />');
 
 $section->addPassword(new Form_Input(
@@ -458,6 +459,7 @@ $section->addPassword(new Form_Input(
 			'GoDaddy: Enter the API secret.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
+			'Porkbun: Enter the API secret.%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'Yandex: Yandex PDD Token.', '<br />');
 
@@ -636,6 +638,8 @@ events.push(function() {
 			case "name.com-v6":
 			case "onecom":
 			case "onecom-v6":
+			case "porkbun":
+			case "porkbun-v6":
 				hideGroupInput('domainname', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);

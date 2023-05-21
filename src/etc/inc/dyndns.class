@@ -71,6 +71,7 @@
 	 *    - Namecheap (namecheap.com)
 	 *    - No-IP (no-ip.com)
 	 *    - OpenDNS (opendns.com)
+	 *    - Porkbun (porkbun.com)
 	 *    - SelfHost (selfhost.de)
 	 *    - SPDYN (spdyn.de)
 	 *    - SPDYN IPv6 (spdyn.de)
@@ -141,6 +142,7 @@
 	 *  ODS             - Last Tested: 02 August 2005
 	 *  OpenDNS         - Last Tested: 4 August 2008
 	 *  OVH DynHOST     - Last Tested: NEVER
+	 *  Porkbun         - Last Tested: 26 June 2023
 	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  SPDYN           - Last Tested: 02 July 2016
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
@@ -309,6 +311,13 @@
 				if (!$dnsZoneID) $this->_error(8);
 				if (!$dnsTTL) $this->_error(9);
 				break;
+			case 'porkbun':
+			case 'porkbun-v6':
+				if (!$dnsUser) $this->_error(3);
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
 			default:
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
@@ -337,6 +346,7 @@
 				case 'name.com-v6':
 				case 'noip-free-v6':
 				case 'noip-v6':
+				case 'porkbun-v6':
 				case 'route53-v6':
 				case 'spdyn-v6':
 				case 'yandex-v6':
@@ -464,6 +474,8 @@
 					case 'ods':
 					case 'opendns':
 					case 'ovh-dynhost':
+					case 'porkbun':
+					case 'porkbun-v6':
 					case 'route53':
 					case 'route53-v6':
 					case 'selfhost':
@@ -948,6 +960,73 @@
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://api.nic.ru/dyndns/update?hostname={$this->_dnsHost}&{$iptype}={$this->_dnsIP}";
 					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				case 'porkbun':
+				case 'porkbun-v6':
+					// API documentation: https://porkbun.com/api/json/v3/documentation
+					$porkbun_api = "https://porkbun.com/api/json/v3/dns/retrieve/{$this->_dnsDomain}";
+					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					// Check if a record already exists for this host.
+					$post_data['apikey'] = $this->_dnsUser;
+					$post_data['secretapikey'] = $this->_dnsPass;
+					curl_setopt($ch, CURLOPT_URL, "{$porkbun_api}");
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+					$response = json_decode(curl_exec($ch), true);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code != "200") {
+						log_error(gettext("Error message: ") . $response);
+						return false;
+					}
+					if (!is_array($response["records"])) {
+						log_error(gettext("Unexpected response: ") . $response);
+						return false;
+					}
+					foreach($response["records"] as $record) {
+						if (($this->_dnsHost == "@" || $this->_dnsHost == "") &&
+							($record["name"] == $this->_dnsDomain) &&
+							($record["type"] == $record_type)) {
+								$record_id = $record["id"];
+								break;
+						}
+						else if (($record["name"] == "{$this->_dnsHost}.{$this->_dnsDomain}") &&
+							($record["type"] == $record_type)) {
+								$record_id = $record["id"];
+								break;
+						}
+					}
+					// No record exists for this host, add one.
+					if (!$record_id)
+					{
+						$porkbun_api = "https://porkbun.com/api/json/v3/dns/create/{$this->_dnsDomain}";
+						if ($this->_dnsHost == "@" || $this->_dnsHost == "")
+							$post_data['name'] = "";
+						else
+							$post_data['name'] = $this->_dnsHost;
+					} else {
+						$porkbun_api = "https://porkbun.com/api/json/v3/dns/edit/{$this->_dnsDomain}/{$record_id}";
+						$post_data['name'] = $this->_dnsHost;
+					}
+					$post_data['type'] = $record_type;
+					// Porkbun doesn't allow you to "update" an existing record with the same IP
+					if (($record_id) &&
+					    ($this->_forceUpdateNeeded == true) &&
+					    ($this->_dnsDummyUpdateDone == false)) {
+						$post_data['content'] = $this->_useIPv6 ? "fd00:d::1" : "127.0.0.1";
+						$this->_dnsDummyUpdateDone = true;
+						$log_message = 'Dynamic DNS %1$s (%2$s): ';
+						$log_message .= 'Performing forced update. ';
+						$log_message .= 'IP temporarily set to %3$s';
+						log_error(sprintf(gettext($log_message), $this->_dnsService, $this->_dnsHost, $post_data['content']));
+					} else {
+						$post_data['content'] = $this->_dnsIP;
+					}
+					if (intval($this->_dnsTTL)) $post_data['ttl'] = $this->_dnsTTL;
+					curl_setopt($ch, CURLOPT_URL, "{$porkbun_api}");
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 					break;
 				case 'yandex':
 				case 'yandex-v6':
@@ -2973,6 +3052,16 @@
 							log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 							$this->_debug($data);
 							break;
+					}
+					break;
+				case 'porkbun':
+				case 'porkbun-v6':
+					$result = json_decode($data, true);
+					if ($result['status'] == 'SUCCESS') {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else {
+						log_error($status_intro . " ( " . gettext("Error message: ") . $result['status'] . " )");
 					}
 					break;
 				default:

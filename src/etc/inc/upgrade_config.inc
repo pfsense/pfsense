@@ -6224,7 +6224,7 @@ function upgrade_207_to_208() {
 	$config['system']['hn_altq_enable'] = true;
 }
 
-/* Update IPsec VTI to new VTIMAP format 
+/* Update IPsec VTI to new VTIMAP format
  * https://redmine.pfsense.org/issues/9592
  */
 function upgrade_208_to_209() {
@@ -6390,17 +6390,13 @@ function upgrade_214_to_215() {
 
 /* Fix VTI interface numbers */
 function upgrade_215_to_216() {
-	global $config;
-
-	init_config_arr(array('ipsec', 'vtimaps', 'item'));
-
-	if (count($config['ipsec']['vtimaps']['item']) == 0) {
+	if (count(config_get_path('ipsec/vtimaps/item', [])) == 0) {
 		return;
 	}
 
 	/* Deprecated method. */
 	function upgrade216_ipsec_create_vtimap($ikeid, $idx) {
-		$assigned = array_column($config['ipsec']['vtimaps']['item'], 'ifnum');
+		$assigned = array_column(config_get_path('ipsec/vtimaps/item', []), 'ifnum');
 		asort($assigned, SORT_NUMERIC);
 		$new = 1;
 		foreach ($assigned as $ipsecifnum) {
@@ -6420,7 +6416,7 @@ function upgrade_215_to_216() {
 
 	$iflist = get_configured_interface_list_by_realif(true);
 
-	foreach ($config['ipsec']['vtimaps']['item'] as $idx => $vtimap) {
+	foreach (config_get_path('ipsec/vtimaps/item', []) as $idx => $vtimap) {
 		if ($vtimap['ifnum'] <= 32767) {
 			continue;
 		}
@@ -6440,11 +6436,10 @@ function upgrade_215_to_216() {
 
 		/* Interface is assigned */
 		if (isset($iflist[$old_if])) {
-			$config['interfaces'][$iflist[$old_if]]['if'] =
-			    'ipsec' . $new_vtimap['ifnum'];
+			config_set_path('interfaces/' . $iflist[$old_if] . '/if', 'ipsec' . $new_vtimap['ifnum']);
 		}
 
-		$config['ipsec']['vtimaps']['item'][$idx] = $new_vtimap;
+		config_set_path('ipsec/vtimaps/item/' . $idx, $new_vtimap);
 	}
 }
 

@@ -171,7 +171,7 @@ if ($_POST) {
 		while (config_get_path('aliases/alias/' . $alias_count)) {
 			$alias_count++;
 		}
-		config_set_path('aliases/alias', $alias_count, $alias);
+		config_set_path('aliases/alias/' . $alias_count, $alias);
 
 		if (write_config(gettext("Imported a firewall alias."))) {
 			mark_subsystem_dirty('aliases');

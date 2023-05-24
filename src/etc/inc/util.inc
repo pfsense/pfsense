@@ -1980,6 +1980,9 @@ function alias_make_table() {
 	$aliastable = array();
 
 	foreach (config_get_path('aliases/alias', []) as $alias) {
+		if (!is_array($alias) || empty($alias)) {
+			continue;
+		}
 		if ($alias['name']) {
 			$aliastable[$alias['name']] = $alias['address'];
 		}

@@ -2490,7 +2490,7 @@ function filter_nat_rules_generate() {
 	    (is_ipaddr($ipv6nataddr)) &&
 	    (is_array($FilterIflist['wan']))) {
 		/* XXX: FIX ME!	 IPV6 */
-		$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto ipv6 from any to any -> {$pv6nataddr}\n";
+		$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto ipv6 from any to any -> {$ipv6nataddr}\n";
 	}
 
 	unlink_if_exists("{$g['varetc_path']}/xinetd.conf");

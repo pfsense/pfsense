@@ -163,7 +163,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 		}
 
 		if ($post['max_procs']) {
-			config_set_path('system/webgui/max_proc', $post['max_proc']);
+			config_set_path('system/webgui/max_procs', $post['max_procs']);
 			$restart_webgui = true;
 		}
 

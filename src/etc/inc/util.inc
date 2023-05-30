@@ -1980,6 +1980,9 @@ function alias_make_table() {
 	$aliastable = array();
 
 	foreach (config_get_path('aliases/alias', []) as $alias) {
+		if (!is_array($alias) || empty($alias)) {
+			continue;
+		}
 		if ($alias['name']) {
 			$aliastable[$alias['name']] = $alias['address'];
 		}
@@ -2471,7 +2474,7 @@ function is_interface_mismatch() {
 		foreach ($config['interfaces'] as $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
-			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|^ue|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
+			    preg_match("/^bridge|^cua|^enc|^gif|^gre|^ipsec|^l2tp|^lagg|^ngeth|^ovpn|^ppp|^pptp|^tap|^tun|^ue|vlan|^wg|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;

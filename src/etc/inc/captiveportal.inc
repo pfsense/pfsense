@@ -2350,8 +2350,7 @@ function captiveportal_read_usedmacs_db() {
 function captiveportal_write_usedmacs_db($usedmacs) {
 	global $g, $cpzone;
 
-	if (!is_array($usedmacs) ||
-	    empty(trim($usedmacs))) {
+	if (!is_array($usedmacs)) {
 		$usedmacs = [];
 	}
 	$cpumaclck = lock("captiveusedmacs{$cpzone}", LOCK_EX);

@@ -661,7 +661,9 @@ function build_target_list() {
 		$list['H' . $alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
 
-	$list['Other-subnet'] = gettext('Other Subnet (Enter Below)');
+	/* First character is the type code, remainder is the internal name.
+	 * See https://redmine.pfsense.org/issues/14354 */
+	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);
 }

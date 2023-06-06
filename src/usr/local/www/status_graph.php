@@ -294,7 +294,7 @@ function updateBandwidth() {
 	$.ajax(
 		'/bandwidth_by_ip.php',
 		{
-			type: 'get',
+			type: 'post',
 			data: $(document.forms[0]).serialize(),
 			success: function (data) {
 				var hosts_split = data.split("|");

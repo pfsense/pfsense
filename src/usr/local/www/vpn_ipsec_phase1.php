@@ -40,7 +40,7 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if ($_REQUEST['generatekey']) {
+if ($_POST['generatekey']) {
 	$keyoutput = "";
 	$keystatus = "";
 	exec("/bin/dd status=none if=/dev/random bs=4096 count=1 | /usr/bin/openssl sha224 | /usr/bin/cut -f2 -d' '", $keyoutput, $keystatus);
@@ -1485,8 +1485,11 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
-			type: 'get',
-			url: 'vpn_ipsec_phase1.php?generatekey=true',
+			type: 'post',
+			url: 'vpn_ipsec_phase1.php',
+			data: {
+				generatekey:           true,
+			},
 			dataType: 'json',
 			success: function(data) {
 				$('#pskey').val(data.pskey.replace(/\\n/g, '\n'));

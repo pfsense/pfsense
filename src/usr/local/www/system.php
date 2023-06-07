@@ -351,7 +351,7 @@ if ($_POST) {
 		}
 
 		config_set_path('system/webgui/requirestatefilter', $_POST['requirestatefilter'] ? true : false);
-    config_set_path('system/webgui/requirefirewallinterface', $_POST['requirefirewallinterface'] ? true : false);
+		config_set_path('system/webgui/requirefirewallinterface', $_POST['requirefirewallinterface'] ? true : false);
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];

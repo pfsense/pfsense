@@ -408,9 +408,10 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 					if (!$first) {
 						echo "<br/>";
 					}
-					echo $p1_ealgos[$p1algo['encryption-algorithm']['name']]['name'];
-					if ($p1algo['encryption-algorithm']['keylen']) {
-						echo " ({$p1algo['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+
+					echo array_get_path($p1_ealgos, array_get_path($p1algo, 'encryption-algorithm/name', '') . '/name', '');
+					if (array_get_path($p1algo, 'encryption-algorithm/keylen')) {
+						echo " (" . array_get_path($p1algo, 'encryption-algorithm/keylen') . " " . gettext("bits") . ")";
 					}
 					$first = false;
 				}

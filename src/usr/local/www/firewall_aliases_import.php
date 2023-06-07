@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,9 +50,6 @@ if (empty($tab)) {
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 $pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
-init_config_arr(array('aliases', 'alias'));
-$a_aliases = &$config['aliases']['alias'];
-
 if ($_POST) {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"), gettext("Aliases to import"));
@@ -77,7 +74,7 @@ if ($_POST) {
 	}
 
 	/* check for name interface description conflicts */
-	foreach ($config['interfaces'] as $interface) {
+	foreach (config_get_path('interfaces', []) as $interface) {
 		if ($interface['descr'] == $_POST['name']) {
 			$input_errors[] = gettext("An interface description with this name already exists.");
 			break;
@@ -85,11 +82,9 @@ if ($_POST) {
 	}
 
 	/* Is the description already used as an interface group name? */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-			if ($ifgroupentry['ifname'] == $_POST['name']) {
-				$input_errors[] = gettext("Sorry, an interface group with this name already exists.");
-			}
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgroupentry) {
+		if ($ifgroupentry['ifname'] == $_POST['name']) {
+			$input_errors[] = gettext("An interface group with this name already exists.");
 		}
 	}
 
@@ -171,10 +166,12 @@ if ($_POST) {
 		$alias['type'] = $alias_type;
 		$alias['descr'] = $_POST['descr'];
 		unset($imported_ips, $imported_descs);
-		$a_aliases[] = $alias;
 
-		// Sort list
-		$a_aliases = msort($a_aliases, "name");
+		$alias_count = 0;
+		while (config_get_path('aliases/alias/' . $alias_count)) {
+			$alias_count++;
+		}
+		config_set_path('aliases/alias/' . $alias_count, $alias);
 
 		if (write_config(gettext("Imported a firewall alias."))) {
 			mark_subsystem_dirty('aliases');

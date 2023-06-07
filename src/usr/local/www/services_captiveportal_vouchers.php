@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -42,7 +42,7 @@ require_once("voucher.inc");
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if ($_REQUEST['generatekey']) {
+if ($_POST['generatekey']) {
 	include_once("phpseclib/Math/BigInteger.php");
 	include_once("phpseclib/Crypt/Hash.php");
 	include_once("phpseclib/Crypt/RSA.php");
@@ -166,7 +166,7 @@ if ($_POST['act'] == "del") {
 						" " . escapeshellarg($number) .
 						" " . escapeshellarg($count);
 					send_user_download('data',
-						shell_exec($cmd),
+						preg_replace('/" /', '"', shell_exec($cmd)),
 						"vouchers_{$cpzone}_roll{$number}.csv");
 				}
 				@unlink("{$g['varetc_path']}/voucher_{$cpzone}.private");
@@ -181,16 +181,16 @@ if ($_POST['act'] == "del") {
 }
 
 $pconfig['enable'] = isset($config['voucher'][$cpzone]['enable']);
-$pconfig['charset'] = $config['voucher'][$cpzone]['charset'];
-$pconfig['rollbits'] = $config['voucher'][$cpzone]['rollbits'];
-$pconfig['ticketbits'] = $config['voucher'][$cpzone]['ticketbits'];
-$pconfig['checksumbits'] = $config['voucher'][$cpzone]['checksumbits'];
-$pconfig['magic'] = $config['voucher'][$cpzone]['magic'];
-$pconfig['exponent'] = $config['voucher'][$cpzone]['exponent'];
+$pconfig['charset'] = config_get_path("voucher/{$cpzone}/charset");
+$pconfig['rollbits'] = config_get_path("voucher/{$cpzone}/rollbits");
+$pconfig['ticketbits'] = config_get_path("voucher/{$cpzone}/ticketbits");
+$pconfig['checksumbits'] = config_get_path("voucher/{$cpzone}/checksumbits");
+$pconfig['magic'] = config_get_path("voucher/{$cpzone}/magic");
+$pconfig['exponent'] = config_get_path("voucher/{$cpzone}/exponent");
 $pconfig['publickey'] = base64_decode($config['voucher'][$cpzone]['publickey']);
 $pconfig['privatekey'] = base64_decode($config['voucher'][$cpzone]['privatekey']);
-$pconfig['msgnoaccess'] = $config['voucher'][$cpzone]['descrmsgnoaccess'];
-$pconfig['msgexpired'] = $config['voucher'][$cpzone]['descrmsgexpired'];
+$pconfig['msgnoaccess'] = config_get_path("voucher/{$cpzone}/descrmsgnoaccess");
+$pconfig['msgexpired'] = config_get_path("voucher/{$cpzone}/descrmsgexpired");
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -240,7 +240,7 @@ if ($_POST['save']) {
 		if (empty($config['voucher'][$cpzone])) {
 			$newvoucher = array();
 		} else {
-			$newvoucher = $config['voucher'][$cpzone];
+			$newvoucher = config_get_path("voucher/{$cpzone}");
 		}
 		if ($_POST['enable'] == "yes") {
 			$newvoucher['enable'] = true;
@@ -477,8 +477,11 @@ events.push(function() {
 	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new keys");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
-			type: 'get',
-			url: 'services_captiveportal_vouchers.php?generatekey=true',
+			type: 'post',
+			url: 'services_captiveportal_vouchers.php',
+			data: {
+				generatekey:           true,
+			},
 			dataType: 'json',
 			success: function(data) {
 				$('#publickey').val(data.public.replace(/\\n/g, '\n'));

@@ -8,7 +8,7 @@
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,8 @@
  */
 
 include_once("auth.inc");
+include_once("config.inc");
+include_once("config.lib.inc");
 include_once("priv.inc");
 if (!function_exists('platform_booting')) {
 	require_once('globals.inc');
@@ -103,8 +105,6 @@ phpsession_end(true);
  * determine if the user is allowed access to the requested page
  */
 function display_error_form($http_code, $desc) {
-	global $config, $user_settings, $g;
-
 	if (isAjax()) {
 		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
 		return;
@@ -170,7 +170,7 @@ function display_error_form($http_code, $desc) {
 
 function display_login_form() {
 	require_once("globals.inc");
-	global $config, $g;
+	global $g;
 
 	unset($input_errors);
 
@@ -193,7 +193,7 @@ function display_login_form() {
 
 	/* Check against locally configured IP addresses, which will catch when someone
 	   port forwards WebGUI access from WAN to an internal IP on the router. */
-	global $FilterIflist, $nifty_background;
+	global $FilterIflist;
 
 	$local_ip = false;
 
@@ -235,17 +235,15 @@ function display_login_form() {
 	unset($iflist);
 
 	if ($local_ip == false) {
-		if (is_array($config['openvpn']['openvpn-server'])) {
-			foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-				if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
-					$local_ip = true;
-				} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
-					$local_ip = true;
-				}
+		foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
+			if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
+				$local_ip = true;
+			} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
+				$local_ip = true;
+			}
 
-				if ($local_ip == true) {
-					break;
-				}
+			if ($local_ip == true) {
+				break;
 			}
 		}
 	}
@@ -253,31 +251,26 @@ function display_login_form() {
 	// For the login form, get the settings of no particular user.
 	// That ensures we will use the system default theme for the login form.
 	$user_settings = get_user_settings("");
-	$cssfile = "/css/pfSense.css";
-
-	if (isset($user_settings['webgui']['webguicss'])) {
-		if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
-			$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
-		}
-	}
-
 	$logincssfile = "#1e3f75";
 
 	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
 		$logincssfile = "#" . $user_settings['webgui']['logincss'];
 	}
 
-	if (isset($config['system']['webgui']['loginshowhost'])) {
-		$loginbannerstr = sprintf(gettext('%1$s.%2$s'), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
-		$login_title = gettext(htmlspecialchars($config['system']['hostname'] . " - Login"));
-	} else {
-		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_label']);
-		$login_title = sprintf(gettext("%s - Login"), $g['product_label']);
+	if (config_path_enabled('system/webgui','loginshowhost')) {
+		$loginbannerstr = sprintf(gettext('%1$s.%2$s'),
+								  htmlspecialchars(config_get_path('system/hostname', "")),
+								  htmlspecialchars(config_get_path('system/domain', "")));
+		$login_title = gettext(htmlspecialchars(config_get_path('system/hostname', "") . " - Login"));
+	} Else {
+		$loginbannerstr = sprintf(gettext('Login to %1$s'), g_get('product_label'));
+		$login_title = sprintf(gettext("%s - Login"), g_get('product_label'));
 	}
 
-	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
+	$loginautocomplete = config_path_enabled('system/webgui','loginautocomplete') ? '' : 'autocomplete="off"';
 
-	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+	if (is_ipaddr($http_host) && !$local_ip &&
+		!config_path_enabled('system/webgui','nohttpreferercheck')) {
 		$warnclass = "pagebodywarn";	// Make room for a warning display row
 	} else {
 		$warnclass = "pagebody";
@@ -321,7 +314,7 @@ function display_login_form() {
 						<!-- Header right message box (hostname or msg)-->
 						<div class="col-sm-4 nowarning msgbox text-center">
 							<span id="hostspan">
-								<a><h4><?=$loginbannerstr?></h4></a>
+								<h4><?=$loginbannerstr?></h4>
 							</span>
 						</div>
 					</div>
@@ -395,7 +388,7 @@ function display_login_form() {
 		events.push(function() {
 			document.cookie=
 				"cookie_test=1" +
-				"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
+				"<?php echo config_get_path('system/webgui/protocol') == 'https' ? '; secure' : '';?>";
 
 			if (document.cookie.indexOf("cookie_test") == -1) {
 				alert("<?=gettext('The browser must support cookies to login.')?>");

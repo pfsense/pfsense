@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,6 +32,7 @@
 ##|*MATCH=firewall_nat_1to1_edit.php*
 ##|-PRIV
 
+require_once("config.lib.inc");
 require_once("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
@@ -103,7 +104,8 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Excludes the address from a later, more general, rule.');
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+if	(config_get_path('openvpn/openvpn-server') ||
+	 config_get_path('openvpn/openvpn-client')) {
 	$interfaces["openvpn"] = gettext("OpenVPN");
 }
 

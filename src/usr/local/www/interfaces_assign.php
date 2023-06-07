@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -140,7 +140,7 @@ if (isset($config['qinqs']['qinqentry']) && is_array($config['qinqs']['qinqentry
 
 /* add PPP interfaces */
 if (isset($config['ppps']['ppp']) && is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+	foreach ($config['ppps']['ppp'] as $ppp) {
 		$portname = $ppp['if'];
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
@@ -185,7 +185,7 @@ $ifdescrs = interface_assign_description_fast($portlist,$friendlyifnames);
 if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	/* Be sure this port is not being used */
 	$portused = false;
-	foreach ($config['interfaces'] as $ifname => $ifdata) {
+	foreach ($config['interfaces'] as $ifdata) {
 		if ($ifdata['if'] == $_REQUEST['if_add']) {
 			$portused = true;
 			break;
@@ -210,7 +210,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 		$config['interfaces'][$newifname]['if'] = $_POST['if_add'];
-		if (preg_match($g['wireless_regex'], $_POST['if_add'])) {
+		if (preg_match(g_get('wireless_regex'), $_POST['if_add'])) {
 			$config['interfaces'][$newifname]['wireless'] = array();
 			interface_sync_wireless_clones($config['interfaces'][$newifname], false);
 		}
@@ -294,11 +294,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		}
 	}
 
-	if (is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if (does_interface_exist($vlan['if']) == false) {
-				$input_errors[] = sprintf(gettext('Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be created please fix the issue before continuing.'), $vlan['if'], $vlan['tag']);
-			}
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if (does_interface_exist($vlan['if']) == false) {
+			$input_errors[] = sprintf(gettext('Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be created please fix the issue before continuing.'), $vlan['if'], $vlan['tag']);
 		}
 	}
 
@@ -316,6 +314,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 						/* Mark this to be reconfigured in any case. */
 						$reloadif = true;
 						$filter_reload = true;
+						$gateway_monitor_reload = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (isset($portlist[$ifport]['isppp'])) {
@@ -324,19 +323,19 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 					if ((substr($ifport, 0, 3) == 'gre') ||
 					    (substr($ifport, 0, 5) == 'gif')) {
-						unset($config['interfaces'][$ifname]['ipaddr']);
-						unset($config['interfaces'][$ifname]['subnet']);
-						unset($config['interfaces'][$ifname]['ipaddrv6']);
-						unset($config['interfaces'][$ifname]['subnetv6']);
+						config_del_path("interfaces/{$ifname}/ipaddr");
+						config_del_path("interfaces/{$ifname}/subnet");
+						config_del_path("interfaces/{$ifname}/ipaddrv6");
+						config_del_path("interfaces/{$ifname}/subnetv6");
 					}
 
 					/* check for wireless interfaces, set or clear ['wireless'] */
-					if (preg_match($g['wireless_regex'], $ifport)) {
+					if (preg_match(g_get('wireless_regex'), $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless'])) {
 							$config['interfaces'][$ifname]['wireless'] = array();
 						}
 					} else {
-						unset($config['interfaces'][$ifname]['wireless']);
+						config_del_path("interfaces/{$ifname}/wireless");
 					}
 
 					/* make sure there is a descr for all interfaces */
@@ -345,7 +344,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 					}
 
 					if ($reloadif == true) {
-						if (preg_match($g['wireless_regex'], $ifport)) {
+						if (preg_match(g_get('wireless_regex'), $ifport)) {
 							interface_sync_wireless_clones($config['interfaces'][$ifname], false);
 						}
 						/* Reload all for the interface. */
@@ -359,6 +358,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		 * see https://redmine.pfsense.org/issues/12949 */
 		if ($filter_reload) {
 			filter_configure();
+		}
+		if ($gateway_monitor_reload) {
+			setup_gateways_monitor();
 		}
 		write_config("Interfaces assignment settings changed");
 
@@ -384,23 +386,22 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		} else if (interface_has_queue($id)) {
 			$input_errors[] = gettext("The interface has a traffic shaper queue configured.\nPlease remove all queues on the interface to continue.");
 		} else {
-			unset($config['interfaces'][$id]['enable']);
+			config_del_path("interfaces/{$id}/enable");
 			$realid = get_real_interface($id);
-			interface_bring_down($id);   /* down the interface */
-
-			unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
+			interface_bring_down($id);
+			config_del_path("interfaces/{$id}");	/* delete the specified OPTn or LAN*/
 
 			init_config_arr(['dhcpd', $id]);
 
 			if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
-				unset($config['dhcpd'][$id]);
+				config_del_path("dhcpd/{$id}");
 				services_dhcpd_configure('inet');
 			}
 
 			init_config_arr(['dhcpdv6', $id]);
 
 			if (is_array($config['dhcpdv6']) && is_array($config['dhcpdv6'][$id])) {
-				unset($config['dhcpdv6'][$id]);
+				config_del_path("dhcpdv6/{$id}");
 				services_dhcpd_configure('inet6');
 			}
 
@@ -408,7 +409,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			foreach ($config['filter']['rule'] as $x => $rule) {
 				if ($rule['interface'] == $id) {
-					unset($config['filter']['rule'][$x]);
+					config_del_path("filter/rule/{$x}");
 				}
 			}
 
@@ -416,7 +417,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		
 			foreach ($config['nat']['rule'] as $x => $rule) {
 				if ($rule['interface'] == $id) {
-					unset($config['nat']['rule'][$x]['interface']);
+					config_del_path("nat/rule/{$x}/interface");
 				}
 			}
 
@@ -426,8 +427,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			 * then ensure that we are not running DHCP on the wan which
 			 * will make a lot of ISPs unhappy.
 			 */
-			if ($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
-				unset($config['dhcpd']['wan']);
+			if (config_path_enabled('interfaces', 'lan')
+				&& config_path_enabled('dhcpd', 'wan')) {
+					config_del_path('dhcpd/wan');
 			}
 
 			link_interface_to_vlans($realid, "update");

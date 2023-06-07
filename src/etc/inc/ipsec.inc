@@ -6,7 +6,7 @@
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2007-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -135,9 +135,7 @@ $p1_ealgos = array(
 	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
-	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128')
+	'chacha20poly1305' => array('name' => 'CHACHA20-POLY1305')
 );
 
 global $p2_ealgos;
@@ -146,14 +144,11 @@ $p2_ealgos = array(
 	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
-	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128')
+	'chacha20poly1305' => array('name' => 'CHACHA20-POLY1305')
 );
 
 global $p1_halgos;
 $p1_halgos = array(
-	'md5' => 'MD5',
 	'sha1' => 'SHA1',
 	'sha256' => 'SHA256',
 	'sha384' => 'SHA384',
@@ -189,7 +184,6 @@ $p1_dhgroups = array(
 
 global $p2_halgos;
 $p2_halgos = array(
-	'hmac_md5' => 'MD5',
 	'hmac_sha1' => 'SHA1',
 	'hmac_sha256' => 'SHA256',
 	'hmac_sha384' => 'SHA384',
@@ -319,18 +313,18 @@ function ipsec_ikeid_next() {
 	$ikeids = array();
 
 	foreach ($config['ipsec']['phase1'] as $ph1) {
-		$keyids[$ph1['ikeid']] = $ph1['ikeid'];
+		$ikeids[$ph1['ikeid']] = $ph1['ikeid'];
 	}
 
 	for ($i = 1; $i < 16000; $i++) {
-		if (!isset($keyids[$i])) {
-			$keyid = $i;
+		if (!isset($ikeids[$i])) {
+			$ikeid = $i;
 			break;
 		}
 	}
 
-	unlock($ipsecreqid);
-	return $keyid;
+	unlock($ipsecikeid);
+	return $ikeid;
 }
 
 function ipsec_new_reqid() {
@@ -755,7 +749,7 @@ function ipsec_status() {
 						$cmap['connected']['p2'][$childreqid] = $childsa['name'];
 						$cmap[$childikeid]['p2'][$childreqid]['connected'] = true;
 					}
-				} elseif (is_array($cmap[$ikeid]) && is_array($cmap[$ikeid]['p2'])) {
+				} else {
 					/* If this is IKEv2 w/o Split, mark all reqids for the P1 as connected */
 					if ($cmap[$childikeid]['p1']['iketype'] == 'ikev2' &&
 					    !isset($cmap[$childikeid]['p1']['splitconn'])) {
@@ -798,7 +792,7 @@ function ipsec_status() {
 	return $cmap;
 }
 
-function ipsec_status_button($req = 'post', $act = 'connect', $type = 'ike', $conid, $uniqueid = null, $full = true) {
+function ipsec_status_button($req, $act, $type, $conid, $uniqueid, $full) {
 	$btn = '<a href="';
 	if ($act == 'disconnect') {
 		$buttonclass = ($type == 'ike') ? 'danger' : 'warning';
@@ -873,18 +867,18 @@ function ipsec_initiate($type = 'ike', $p1 = null, $p2 = null) {
 	return ipsec_initiate_by_conid($type, ipsec_conid($p1, $p2));
 }
 
-function ipsec_initiate_by_conid($type = 'ike', $conid) {
+function ipsec_initiate_by_conid($type, $conid) {
 	if (empty($conid)) {
 		return false;
 	}
 	switch ($type) {
 		case 'all':
-			/* Find relevant P2s and initaite all of them */
+			/* Find relevant P2s and initiate all of them */
 			$cmap = ipsec_map_config_by_id();
 			list($ikeid, $reqid) = ipsec_id_by_conid($conid);
 			if (array_key_exists($ikeid, $cmap)) {
 				if ($cmap[$ikeid]['p1']['iketype'] == 'ikev2' && !isset($cmap[$ikeid]['p1']['splitconn'])) {
-					/* IKEv2 without split only has one P2, named the same as the the P1 */
+					/* IKEv2 without split only has one P2, named the same as the P1 */
 					ipsec_initiate_by_conid('child', ipsec_conid($cmap[$ikeid]['p1']));
 				} else {
 					foreach ($cmap[$ikeid]['p2'] as $p2) {
@@ -1228,7 +1222,7 @@ function ipsec_get_loglevels() {
 
 	foreach (array_keys($ipsec_log_cats) as $cat) {
 		if (isset($config['ipsec']['logging'][$cat])) {
-			$levels[$cat] = $config['ipsec']['logging'][$cat];
+			$levels[$cat] = config_get_path("ipsec/logging/{$cat}");
 		} elseif (in_array($cat, array('ike', 'chd', 'cfg'))) {
 			$levels[$cat] = "2";
 		} else {
@@ -1342,7 +1336,7 @@ function ipsec_force_reload($interface = "", $protocol = "") {
 		return;
 	}
 
-	$ipseccfg = $config['ipsec'];
+	$ipseccfg = config_get_path('ipsec');
 
 	if (!empty($interface) && is_array($ipseccfg['phase1'])) {
 		$found = false;
@@ -1720,7 +1714,7 @@ function ipsec_setup_strongswan() {
 	}
 
 	if (isset($config['ipsec']['maxexchange'])) {
-		$ssconf['charon']['max_ikev1_exchanges'] = $config['ipsec']['maxexchange'];
+		$ssconf['charon']['max_ikev1_exchanges'] = config_get_path('ipsec/maxexchange');
 	}
 
 	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'yes' : 'no';
@@ -1735,28 +1729,28 @@ function ipsec_setup_strongswan() {
 	}
 
 	if (isset($config['ipsec']['port'])) {
-		$ssconf['charon']['port'] = $config['ipsec']['port'];
+		$ssconf['charon']['port'] = config_get_path('ipsec/port');
 	}
 
 	if (isset($config['ipsec']['port_nat_t'])) {
-		$ssconf['charon']['port_nat_t'] = $config['ipsec']['port_nat_t'];
+		$ssconf['charon']['port_nat_t'] = config_get_path('ipsec/port_nat_t');
 	}
 
 	/* IKEv2 retransmit options, see https://redmine.pfsense.org/issues/12184 */
 	if (isset($config['ipsec']['ikev2_retransmit_tries'])) {
-		$ssconf['charon']['retransmit_tries'] = $config['ipsec']['ikev2_retransmit_tries'];
+		$ssconf['charon']['retransmit_tries'] = config_get_path('ipsec/ikev2_retransmit_tries');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_timeout'])) {
-		$ssconf['charon']['retransmit_timeout'] = $config['ipsec']['ikev2_retransmit_timeout'];
+		$ssconf['charon']['retransmit_timeout'] = config_get_path('ipsec/ikev2_retransmit_timeout');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_base'])) {
-		$ssconf['charon']['retransmit_base'] = $config['ipsec']['ikev2_retransmit_base'];
+		$ssconf['charon']['retransmit_base'] = config_get_path('ipsec/ikev2_retransmit_base');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_jitter'])) {
-		$ssconf['charon']['retransmit_jitter'] = $config['ipsec']['ikev2_retransmit_jitter'];
+		$ssconf['charon']['retransmit_jitter'] = config_get_path('ipsec/ikev2_retransmit_jitter');
 	}
 	if (isset($config['ipsec']['ikev2_retransmit_limit'])) {
-		$ssconf['charon']['retransmit_limit'] = $config['ipsec']['ikev2_retransmit_limit'];
+		$ssconf['charon']['retransmit_limit'] = config_get_path('ipsec/ikev2_retransmit_limit');
 	}
 
 	$ssconf['charon']['syslog'] = array();
@@ -1890,22 +1884,22 @@ function ipsec_setup_strongswan() {
 
 		if (!empty($a_client['dns_domain'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Search domain and default domain";
-			$ssconf['charon']['plugins']['attr']['27674'] = "\"{$a_client['dns_domain']}\"";
+			$ssconf['charon']['plugins']['attr']['27674'] = $a_client['dns_domain'];
 			if (empty($a_client['dns_split'])) {
-				$ssconf['charon']['plugins']['attr']['27675'] = "\"{$a_client['dns_domain']}\"";
+				$ssconf['charon']['plugins']['attr']['27675'] = $a_client['dns_domain'];
 			}
 		}
 
 		if (!empty($a_client['dns_split'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (UNITY_SPLITDNS_NAME)";
-			$ssconf['charon']['plugins']['attr']['28675'] = "\"{$a_client['dns_split']}\"";
+			$ssconf['charon']['plugins']['attr']['28675'] = $a_client['dns_split'];
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (INTERNAL_DNS_DOMAIN, RFC 8598)";
-			$ssconf['charon']['plugins']['attr']['25'] = "\"{$a_client['dns_split']}\"";
+			$ssconf['charon']['plugins']['attr']['25'] = str_replace(' ', ',', $a_client['dns_split']);
 		}
 
 		if (!empty($a_client['login_banner'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Login Banner";
-			$ssconf['charon']['plugins']['attr']['28672'] = "\"{$a_client['login_banner']}\"";
+			$ssconf['charon']['plugins']['attr']['28672'] = $a_client['login_banner'];
 		}
 
 		if (isset($a_client['save_passwd'])) {
@@ -1915,7 +1909,7 @@ function ipsec_setup_strongswan() {
 
 		if ($a_client['pfs_group']) {
 			$ssconf['charon']['plugins']['attr'][] = "# Phase2 PFS Group";
-			$ssconf['charon']['plugins']['attr']['28679'] = "\"{$a_client['pfs_group']}\"";
+			$ssconf['charon']['plugins']['attr']['28679'] = $a_client['pfs_group'];
 		}
 	}
 
@@ -1978,7 +1972,7 @@ function ipsec_setup_pools() {
  ******/
 function ipsec_setup_userpools() {
 	global $config, $scconf;
-	$a_mobilekey = $config['ipsec']['mobilekey'];
+	$a_mobilekey = config_get_path('ipsec/mobilekey');
 
 	/* Do not waste time if we do not have all the necessary information. */
 	if (!is_array($a_mobilekey) ||
@@ -2234,7 +2228,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn, $gateways_status = false
 			}
 			if (($config['ipsec']['client']['group_source'] == 'enabled') &&
 			    !empty($config['ipsec']['client']['auth_groups'])) {
-				$remote['groups'] = $config['ipsec']['client']['auth_groups'];
+				$remote['groups'] = config_get_path('ipsec/client/auth_groups');
 			}
 			$remote['auth'] = "eap-radius";
 			break;
@@ -2320,7 +2314,7 @@ function ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $prfalgo, $modp) {
 
 	/* Add the hash algorithm (if present) */
 	if (!empty($halgo)) {
-		/* If there is some content in the propsal already, add a
+		/* If there is some content in the proposal already, add a
 		 * separator */
 		if (!empty($palgo)) {
 			$palgo .= "-";
@@ -2361,7 +2355,7 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 
 	/* If multiple hash algorithms are present, loop through and add them all. */
 	if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option']) 
-	    && !strpos($ealg_id, "gcm")) {
+	    && !(strpos($ealg_id, "gcm") || $ealg_id == "chacha20poly1305")) {
 		foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
 			$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, false, $ph2ent['pfsgroup']);
 		}
@@ -2465,6 +2459,10 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		if (isset($ph1ent['disabled'])) {
 			continue;
 		}
+		/* If the tunnel has no encryption algorithms, it isn't valid. */
+		if (count(array_get_path($ph1ent, 'encryption/item', [])) == 0) {
+			continue;
+		}
 		/* If the local source is invalid, skip this entry. */
 		$local_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
 		if (!$local_spec) {
@@ -2549,23 +2547,23 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		}
 
 		/* Setup IKE proposals */
-		if (is_array($ph1ent['encryption']['item'])) {
-			$ciphers = array();
-			foreach($ph1ent['encryption']['item'] as $p1enc) {
-				if (!is_array($p1enc['encryption-algorithm']) ||
-						empty($p1enc['encryption-algorithm']['name']) ||
-						empty($p1enc['hash-algorithm'])) {
-					continue;
-				}
-				if ($ph1ent['prfselect_enable'] != 'yes') {
-					$p1enc['prf-algorithm'] = false;
-				}
-				$ciphers[] = ipsec_setup_proposal_algo($p1enc['encryption-algorithm']['name'],
-									$p1enc['encryption-algorithm']['keylen'],
-									$p1enc['hash-algorithm'],
-									$p1enc['prf-algorithm'],
-									$p1enc['dhgroup']);
+		$ciphers = array();
+		foreach(array_get_path($ph1ent, 'encryption/item', []) as $p1enc) {
+			if (empty($p1enc) ||
+			    empty(array_get_path($p1enc, 'encryption-algorithm/name', '')) ||
+			    empty(array_get_path($p1enc, 'hash-algorithm'))) {
+				continue;
 			}
+			if ($ph1ent['prfselect_enable'] != 'yes') {
+				$p1enc['prf-algorithm'] = false;
+			}
+			$ciphers[] = ipsec_setup_proposal_algo($p1enc['encryption-algorithm']['name'],
+								$p1enc['encryption-algorithm']['keylen'],
+								$p1enc['hash-algorithm'],
+								$p1enc['prf-algorithm'],
+								$p1enc['dhgroup']);
+		}
+		if (!empty($ciphers)) {
 			$conn['proposals'] = implode(",", $ciphers);
 		}
 
@@ -2872,7 +2870,7 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		}
 
 		/* For IKEv2 without Split Connections, setup combined sets of
-		 * local/remote traffic selectors and propsals */
+		 * local/remote traffic selectors and proposals */
 		if (!(!isset($ph1ent['mobile']) && (($ikeversion == 1) || isset($ph1ent['splitconn'])))) {
 			if (!isset($ph1ent['mobile']) && !empty($remote_ts_spec)) {
 				$children[$cname]['remote_ts'] = implode(",", $remote_ts_spec);
@@ -3180,48 +3178,6 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 
 	if (platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
-	} else {
-		/* terminate disabled/deleted SA
-		 * see https://redmine.pfsense.org/issues/13102
-		 * and https://redmine.pfsense.org/issues/6624#note-5 */
-		$cmap = ipsec_map_config_by_id();
-		$status = ipsec_list_sa();
-		if (!is_array($status)) {
-			$status = array();
-		}
-		foreach ($status as $ikesa) {
-			$terminate_ph1 = false;
-			list($ikeid, $reqid) = ipsec_id_by_conid($ikesa['con-id']);
-			foreach ($config['ipsec']['phase1'] as $p1) {
-				if (($p1['ikeid'] == $ikeid) && isset($p1['disabled'])) {
-					$terminate_ph1 = true;
-					break;
-				}
-			}
-			if ($terminate_ph1 || !array_key_exists($ikeid, $cmap)) {
-				/* terminate disabled/deleted PH1 SA */
-				ipsec_terminate_by_conid('ike', $ikesa['con-id'], $ikesa['uniqueid']);
-				continue;
-			}
-			if (array_key_exists('child-sas', $ikesa) && is_array($ikesa['child-sas'])) {
-				foreach ($ikesa['child-sas'] as $childid => $childsa) {
-					list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
-					if (!is_array($cmap[$childikeid]['p2']) ||
-					    !array_key_exists($childreqid, $cmap[$childikeid]['p2'])) {
-						/* terminate deleted PH2 SA */
-						ipsec_terminate_by_conid('child', $childid, $childsa['uniqueid']);
-						continue;
-					}
-					foreach ($config['ipsec']['phase2'] as $p1) {
-						if (($p1['ikeid'] == $ikeid) && isset($p2['disabled'])) {
-							/* terminate disabled PH2 SA */
-							ipsec_terminate_by_conid('child', $childid, $childsa['uniqueid']);
-							break;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	$ipsecstartlock = lock('ipsec', LOCK_EX);
@@ -3232,14 +3188,14 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 	$ipsecpinghostsactive = false;
 
 	/* Populate convenience variables */
-	$syscfg = $config['system'];
+	$syscfg = config_get_path('system');
 	init_config_arr(array('ipsec', 'phase1'));
-	$ipseccfg = $config['ipsec'];
-	$a_phase1 = $config['ipsec']['phase1'];
+	$ipseccfg = config_get_path('ipsec');
+	$a_phase1 = config_get_path('ipsec/phase1');
 	init_config_arr(array('ipsec', 'phase2'));
-	$a_phase2 = $config['ipsec']['phase2'];
+	$a_phase2 = config_get_path('ipsec/phase2');
 	init_config_arr(array('ipsec', 'client'));
-	$a_client = $config['ipsec']['client'];
+	$a_client = config_get_path('ipsec/client');
 
 	$mobile_configured = false;
 
@@ -3295,7 +3251,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 	 * use it instead. */
 	if (!empty($config['ipsec']['uniqueids']) &&
 	    array_key_exists($config['ipsec']['uniqueids'], $ipsec_idhandling)) {
-		$conn_defaults['unique'] = $config['ipsec']['uniqueids'];
+		$conn_defaults['unique'] = config_get_path('ipsec/uniqueids');
 	}
 	/* Disable ipcomp for now. redmine #6167
 	if (isset($config['ipsec']['compression'])) {
@@ -3333,7 +3289,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		}
 	}
 
-	/* set default MTU to 1400 for GRE over IPsec, othewise to 1476 */
+	/* set default MTU to 1400 for GRE over IPsec, otherwise to 1476 */
 	ipsec_gre_default_mtu(); 
 
 	/* Manage process */

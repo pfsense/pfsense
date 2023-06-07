@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -128,7 +128,7 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return array
 	 */
-	public function host_firmware_version($dummy = 1, $timeout) {
+	public function host_firmware_version($dummy, $timeout) {
 		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 		return host_firmware_version();
@@ -228,12 +228,14 @@ class pfsense_xmlrpc_server {
 		$syncd_full_sections = array();
 
 		foreach ($sync_full_sections as $section) {
-			if (!isset($sections[$section])) {
+			/* Do not test for empty here or removing final entry
+			 * from a section will not work */
+			if (!array_key_exists($section, $sections)) {
 				continue;
 			}
 
-			$config[$section] = $sections[$section];
-			unset($sections[$section]);
+			config_set_path($section, array_get_path($sections, $section));
+			array_del_path($sections, $section);
 			$syncd_full_sections[] = $section;
 		}
 
@@ -242,11 +244,11 @@ class pfsense_xmlrpc_server {
 			foreach ($config['captiveportal'] as $zone => $item) {
 				if (!isset($sections['captiveportal'][$zone])) {
 					$cpzone = $zone;
-					unset($config['captiveportal'][$cpzone]['enable']);
+					config_del_path("captiveportal/{$cpzone}/enable");
 					captiveportal_configure_zone($config['captiveportal'][$cpzone]);
-					unset($config['captiveportal'][$cpzone]);
+					config_del_path("captiveportal/{$cpzone}");
 					if (isset($config['voucher'][$cpzone])) {
-						unset($config['voucher'][$cpzone]);
+						config_del_path("voucher/{$cpzone}");
 					}
 					unlink_if_exists("/var/db/captiveportal{$cpzone}.db");
 					unlink_if_exists("/var/db/captiveportal_usedmacs_{$cpzone}.db");
@@ -345,19 +347,19 @@ class pfsense_xmlrpc_server {
 				// Please do not delete this code before
 				if (isset($config['voucher'][$zone]['vouchersyncdbip'])) {
 					$sections['voucher'][$zone]['vouchersyncdbip'] =
-					    $config['voucher'][$zone]['vouchersyncdbip'];
+					    config_get_path("voucher/{$zone}/vouchersyncdbip");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncdbip']);
 				}
 				if (isset($config['voucher'][$zone]['vouchersyncusername'])) {
 					$sections['voucher'][$zone]['vouchersyncusername'] =
-					    $config['voucher'][$zone]['vouchersyncusername'];
+					    config_get_path("voucher/{$zone}/vouchersyncusername");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncusername']);
 				}
 				if (isset($config['voucher'][$zone]['vouchersyncpass'])) {
 					$sections['voucher'][$zone]['vouchersyncpass'] =
-					    $config['voucher'][$zone]['vouchersyncpass'];
+					    config_get_path("voucher/{$zone}/vouchersyncpass");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncpass']);
 				}
@@ -369,22 +371,22 @@ class pfsense_xmlrpc_server {
 			// Captiveportal : Backward HA settings should remain local.
 			foreach ($sections['captiveportal'] as $zone => $cp) {
 				if (isset($config['captiveportal'][$zone]['enablebackwardsync'])) {
-					$sections['captiveportal'][$zone]['enablebackwardsync'] = $config['captiveportal'][$zone]['enablebackwardsync'];
+					$sections['captiveportal'][$zone]['enablebackwardsync'] = config_get_path("captiveportal/{$zone}/enablebackwardsync");
 				} else {
 					unset($sections['captiveportal'][$zone]['enablebackwardsync']);
 				}
 				if (isset($config['captiveportal'][$zone]['backwardsyncip'])) {
-					$sections['captiveportal'][$zone]['backwardsyncip'] = $config['captiveportal'][$zone]['backwardsyncip'];
+					$sections['captiveportal'][$zone]['backwardsyncip'] = config_get_path("captiveportal/{$zone}/backwardsyncip");
 				} else {
 					unset($sections['captiveportal'][$zone]['backwardsyncip']);
 				}
 				if (isset($config['captiveportal'][$zone]['backwardsyncuser'])) {
-					$sections['captiveportal'][$zone]['backwardsyncuser'] = $config['captiveportal'][$zone]['backwardsyncuser'];
+					$sections['captiveportal'][$zone]['backwardsyncuser'] = config_get_path("captiveportal/{$zone}/backwardsyncuser");
 				} else {
 					unset($sections['captiveportal'][$zone]['backwardsyncuser']);
 				}
 				if (isset($config['captiveportal'][$zone]['backwardsyncpassword'])) {
-					$sections['captiveportal'][$zone]['backwardsyncpassword'] = $config['captiveportal'][$zone]['backwardsyncpassword'];
+					$sections['captiveportal'][$zone]['backwardsyncpassword'] = config_get_path("captiveportal/{$zone}/backwardsyncpassword");
 				} else {
 					unset($sections['captiveportal'][$zone]['vouchersyncpass']);
 				}
@@ -395,9 +397,11 @@ class pfsense_xmlrpc_server {
 
 		$vipbackup = array();
 		$oldvips = array();
-		if (isset($sections['virtualip']) &&
-		    is_array($config['virtualip']['vip'])) {
-			foreach ($config['virtualip']['vip'] as $vip) {
+		if (array_key_exists('virtualip', $sections)) {
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
+				if (empty($vip)) {
+					continue;
+				}
 				if ($vip['mode'] == "carp") {
 					$key = $vip['interface'] .
 					    "_vip" . $vip['vhid'];
@@ -435,12 +439,11 @@ class pfsense_xmlrpc_server {
 		/* For vip section, first keep items sent from the master */
 		$config = array_merge_recursive_unique($config, $sections);
 
-
 		/* Remove locally items removed remote */
 		foreach ($voucher as $zone => $item) {
 			/* No rolls on master, delete local ones */
 			if (!is_array($item['roll'])) {
-				unset($config['voucher'][$zone]['roll']);
+				config_del_path("voucher/{$zone}/roll");
 			}
 		}
 
@@ -466,7 +469,7 @@ class pfsense_xmlrpc_server {
 			if (!is_array($item['roll'])) {
 				continue;
 			}
-			foreach ($item['roll'] as $idx => $roll) {
+			foreach ($item['roll'] as $roll) {
 				if (!isset($l_rolls[$zone][$roll['number']])) {
 					$config['voucher'][$zone]['roll'][] =
 					    $roll;
@@ -494,8 +497,8 @@ class pfsense_xmlrpc_server {
 		 * present on primary node. They must be removed
 		 */
 		foreach ($l_rolls as $zone => $item) {
-			foreach ($item as $number => $idx) {
-				unset($config['voucher'][$zone][$idx]);
+			foreach ($item as $idx) {
+				config_del_path("voucher/{$zone}/{$idx}");
 			}
 		}
 
@@ -504,15 +507,11 @@ class pfsense_xmlrpc_server {
 		 * on the backup
 		 */
 		if (is_array($vipbackup) && !empty($vipbackup)) {
-			if (!is_array($config['virtualip'])) {
-				$config['virtualip'] = array();
-			}
-			if (!is_array($config['virtualip']['vip'])) {
-				$config['virtualip']['vip'] = array();
-			}
+			$vips = config_get_path('virtualip/vip', []);
 			foreach ($vipbackup as $vip) {
-				array_unshift($config['virtualip']['vip'], $vip);
+				array_unshift($vips, $vip);
 			}
+			config_set_path('virtualip/vip', $vips);
 		}
 
 		/* Log what happened */
@@ -862,12 +861,12 @@ class pfsense_xmlrpc_server {
 		$cpzone = $arguments['zone'];
 
 		if ($arguments['op'] === 'get_databases') {
-			$active_vouchers = array();
-			$expired_vouchers = array();
-			$usedmacs = '';
+			$active_vouchers = [];
+			$expired_vouchers = [];
+			$usedmacs = [];
 
 			if (is_array($config['voucher'][$cpzone]['roll'])) {
-				foreach($config['voucher'][$cpzone]['roll'] as $id => $roll) {
+				foreach($config['voucher'][$cpzone]['roll'] as $roll) {
 					$expired_vouchers[$roll['number']] = base64_encode(voucher_read_used_db($roll['number']));
 					$active_vouchers[$roll['number']] = voucher_read_active_db($roll['number']);
 				}

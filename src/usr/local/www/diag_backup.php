@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -79,6 +79,7 @@ function build_area_list($showall) {
 		"aliases" => gettext("Aliases"),
 		"captiveportal" => gettext("Captive Portal"),
 		"voucher" => gettext("Captive Portal Vouchers"),
+		"widgets" => gettext("Dashboard Widgets"),
 		"dnsmasq" => gettext("DNS Forwarder"),
 		"unbound" => gettext("DNS Resolver"),
 		"dhcpd" => gettext("DHCP Server"),
@@ -222,7 +223,7 @@ $section = new Form_Section('Restore Backup');
 
 $section->addInput(new Form_StaticText(
 	null,
-	sprintf(gettext("Open a %s configuration XML file and click the button below to restore the configuration."), $g['product_label'])
+	sprintf(gettext("Open a %s configuration XML file and click the button below to restore the configuration."), g_get('product_label'))
 ));
 
 $section->addInput(new Form_Select(
@@ -267,10 +268,12 @@ $section->add($group);
 
 $form->add($section);
 
-if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {
+$has_installed_packages = !empty(config_get_path('installedpackages/package', []));
+
+if ($has_installed_packages || (is_subsystem_dirty("packagelock"))) {
 	$section = new Form_Section('Package Functions');
 
-	if ($config['installedpackages']['package'] != "") {
+	if ($has_installed_packages) {
 		$group = new Form_Group('');
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(

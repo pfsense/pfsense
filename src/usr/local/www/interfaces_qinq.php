@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,13 +57,10 @@ if ($_POST['act'] == "del") {
 	if (empty($input_errors)) {
 		$qinq =& $a_qinqs[$id];
 
-		$ngif = str_replace(".", "_", $qinq['vlanif']);
 		$delmembers = explode(" ", $qinq['members']);
 		foreach ($delmembers as $tag) {
-			mwexec("/usr/sbin/ngctl shutdown {$ngif}h{$tag}:  > /dev/null 2>&1");
+			exec("/sbin/ifconfig {$qinq['vlanif']}.{$tag} destroy");
 		}
-		mwexec("/usr/sbin/ngctl shutdown {$ngif}qinq: > /dev/null 2>&1");
-		mwexec("/usr/sbin/ngctl shutdown {$ngif}: > /dev/null 2>&1");
 		pfSense_interface_destroy($qinq['vlanif']);
 		unset($a_qinqs[$id]);
 
@@ -153,7 +150,7 @@ endforeach;
 <div class="infoblock">
 	<?php print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that do not explicitly support it, ' .
 		'QinQ tagging will still work, but the reduced MTU may cause problems.%1$s' .
-		'See the %2$s handbook for information on supported cards.'), '<br />', $g['product_label']), 'info', false); ?>
+		'See the %2$s handbook for information on supported cards.'), '<br />', g_get('product_label')), 'info', false); ?>
 </div>
 
 <?php

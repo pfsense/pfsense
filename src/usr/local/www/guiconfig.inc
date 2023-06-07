@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,9 +37,11 @@ function pfSense_csrf_callback() {
 
 if (!$nocsrf) {
 	function csrf_startup() {
-		global $config;
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
+		/* Loading the configuration to get this value breaks other
+		 * functions. See https://redmine.pfsense.org/issues/13757 */
+		// $timeout_minutes = config_get_path('system/webgui/session_timeout', 240);
+		$timeout_minutes = 240;
 		csrf_conf('expires', $timeout_minutes * 60);
 		csrf_conf('callback', 'pfSense_csrf_callback');
 	}
@@ -58,6 +60,10 @@ if (!$omit_nocacheheaders) {
 }
 
 require_once("authgui.inc");
+/* Load config.inc after authgui.inc
+ * See https://redmine.pfsense.org/issues/13757 */
+include_once('config.inc');
+include_once('config.lib.inc');
 
 /* parse the configuration and include all configuration functions */
 require_once("functions.inc");
@@ -647,10 +653,8 @@ function update_if_changed($varname, & $orig, $new) {
 //function to create widget tabs when called
 function display_widget_tabs(& $tab_array) {
 	echo "<div id=\"tabs\">";
-	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
 		$dashpos = strpos($ta[2], '-');
-		$tabname = $ta[2] . "-tab";
 		$tabclass = substr($ta[2], 0, $dashpos);
 		$tabclass = $tabclass . "-class";
 		if ($ta[1] == true) {
@@ -780,6 +784,7 @@ function print_rfc2616_select($tag, $current) {
 
 // Useful debugging function, much cleaner than print_r
 function echo_array($array, $return_me = false) {
+	$return = "";
 	if (is_array($array) == false) {
 		$return = "The provided variable is not an array.";
 	} else {
@@ -814,8 +819,6 @@ function echo_array($array, $return_me = false) {
  *	 null
  ******/
 function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', $usepost = "") {
-	global $config;
-	global $g;
 	global $tab_array_indent;
 	global $tab_array_space;
 	global $tab_array_char_limit;
@@ -844,11 +847,6 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 			unset ($tab_array[$tab_id]);
 		}
 	}
-
-	$tab_active_bg	 = "#EEEEEE";
-	$tab_inactive_bg = "#777777";
-	$nifty_tabs_corners = "#FFF";
-	$font_color = "white";
 
 	$tabcharcount = 0;
 	foreach ($tab_array as $ta) {
@@ -904,13 +902,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 }
 
 function add_package_tabs($tabgroup, &$tab_array) {
-	global $config, $g;
-
-	if (!isset($config['installedpackages']['package'])) {
-		return;
-	}
-
-	foreach ($config['installedpackages']['package'] as $pkg) {
+	foreach (config_get_path('installedpackages/package', []) as $pkg) {
 		if (!is_array($pkg['tabs']['tab'])) {
 			continue;
 		}
@@ -931,14 +923,14 @@ function add_package_tabs($tabgroup, &$tab_array) {
 }
 
 function alias_info_popup($alias_id) {
-	global $config, $user_settings;
+	global $user_settings;
 
-	if (!is_array($config['aliases']['alias'][$alias_id])) {
+	$alias = config_get_path("aliases/alias/{$alias_id}");
+	if (!is_array($alias)) {
 		return;
 	}
 
 	$maxlength = 60;
-	$alias = $config['aliases']['alias'][$alias_id];
 	$content = "";
 
 	if ($user_settings['webgui']['disablealiaspopupdetail']) {
@@ -995,10 +987,10 @@ function alias_info_popup($alias_id) {
 }
 
 function gateway_info_popup($showgw, $gateways_status = false) {
-	global $config, $user_settings;
-
 	init_config_arr(array('gateways', 'gateway_group'));
-	$a_gateways = return_gateways_array(true, false, true, true);
+	/* Get groups indexed by name so we can avoid re-scanning the array
+	 * multiple times later unnecessarily. */
+	$a_gateways = return_gateways_array(true, false, true, false);
 
 	/* Use cached gateway status if available.
 	 * See https://redmine.pfsense.org/issues/12174 */
@@ -1010,28 +1002,49 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 	$gws = array();
 	$bgdanger = array('force_down', 'down', 'highloss', 'highdelay');
 	$bgwarning = array('loss', 'delay');
-	$bgsuccess = array('none');
+	$bgsuccess = array('online', 'none');
 	$bgcolor = "bg-info";
+	$link = "";
 
 	if (is_array($a_gateways)) {
-		foreach ($a_gateways as $i => $gateway) {
+		/* Since gw array is hashed by name, we need to count the
+		 * index number manually for links since those are by position.
+		 */
+		$i = 0;
+		foreach ($a_gateways as $gateway) {
 			if ($gateway['name'] == $showgw) {
 				$gws[] = $gateway['name'];
 				$link = "/system_gateways_edit.php?id={$i}";
 				break;
 			}
+			$i++;
 		}
 	}
-	if (is_array($config['gateways']['gateway_group'])) {
-		foreach($config['gateways']['gateway_group'] as $i => $gwgroup) {
-			if ($gwgroup['name'] == $showgw) {
-				foreach ($gwgroup['item'] as $member) {
-					$membersplit = explode("|", $member);
-					$gws[] = $membersplit[0];
-				}
-				$link = "system_gateway_groups_edit.php?id={$i}";
-				break;
+	$grouptiermap = [];
+	foreach(config_get_path('gateways/gateway_group') as $i => $gwgroup) {
+		if ($gwgroup['name'] == $showgw) {
+			$groupinfo = [];
+			foreach ($gwgroup['item'] as $member) {
+				$membersplit = explode("|", $member);
+				$groupinfo[] = [
+					'gw' => $membersplit[0],
+					'tier' => $membersplit[1],
+					'type' => $membersplit[2]
+				];
+				/* Store tier separately */
+				$grouptiermap[$membersplit[0]] = $membersplit[1];
 			}
+			/* Sort group info array by tier (number) and then by
+			 * name (natural) */
+			$gws = array_column($groupinfo, 'gw');
+			$tiers = array_column($groupinfo, 'tier');
+			array_multisort($tiers, SORT_NUMERIC,
+					$gws, SORT_NATURAL,
+					$groupinfo);
+			/* Re-slice member gateways which are now sorted */
+			$gws = array_column($groupinfo, 'gw');
+			$link = "system_gateway_groups_edit.php?id={$i}";
+			break;
 		}
 	}
 
@@ -1039,36 +1052,58 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 		$content .= "<table>\n";
 		$content .= "<thead>\n";
 		$content .= "<tr>\n";
-		$content .= "<th>" . gettext("Name") . "</th><th style='padding-left: 10px;'>" . gettext("Interface") . "</th>";
+		/* Only add Tier column if this is a group */
+		if (!empty($grouptiermap)) {
+			$content .= "<th>" . gettext("Tier") . "</th>";
+			$content .= "<th style='padding-left: 10px;'>";
+		} else {
+			$content .= "<th>";
+		}
+		$content .= gettext("Name") . "</th>";
+		$content .= "<th style='padding-left: 10px;'>" . gettext("Interface") . "</th>";
 		$content .= "<th style='padding-left: 10px;'>" . gettext("Gateway") . "</th></tr>\n";
 		$content .= "</thead>\n";
 		$content .= "<tbody>\n";
 		foreach ($gws as $gw) {
 			foreach ($gateways_status as $gwstatus) {
-				if ($gwstatus['name'] == $gw) {
-					if (in_array($gwstatus['status'], $bgdanger)) {
+				if ($gwstatus['name'] != $gw) {
+					continue;
+				}
+				/* Distinguish between online/offline in general */
+				if (stristr($gwstatus['status'], "online")) {
+					/* Use substatus to indicate warnings as needed */
+					if (in_array($gwstatus['substatus'], $bgdanger)) {
 						$bgcolor = "bg-danger";
-					} elseif (in_array($gwstatus['status'], $bgwarning)) {
+					} elseif (in_array($gwstatus['substatus'], $bgwarning)) {
 						$bgcolor = "bg-warning";
-					} elseif (in_array($gwstatus['status'], $bgsuccess)) {
+					} elseif (in_array($gwstatus['substatus'], $bgsuccess)) {
 						$bgcolor = "bg-success";
-					} else {
-						$bgcolor = "bg-info";
 					}
+				} elseif (stristr($gwstatus['status'], "down")) {
+					/* Anything down is danger, no need to check substatus. */
+					$bgcolor = "bg-danger";
+				} else {
+					/* Unknown status */
+					$bgcolor = "bg-info";
 				}
 			}
 			$content .= "	<tr class='{$bgcolor}'>\n";
+			/* Only print Tier if this is a group */
+			if (!empty($grouptiermap)) {
+				$content .= "		<td>\n";
+				$content .= 			$grouptiermap[$gw];
+				$content .= "		</td>\n";
+			}
 			$content .= "		<td>\n";
 			$content .= 			$gw;
-			$content .=	"		</td>\n";
+			$content .= "		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
-			$content .= 			$config['interfaces'][lookup_gateway_interface_by_name($gw)]['descr'];
-			$content .=	"		</td>\n";
+			$content .= 			$a_gateways[$gw]['friendlyifdescr'];
+			$content .= "		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
-			$content .= 			lookup_gateway_ip_by_name($gw);
-			$content .=	"		</td>\n";
+			$content .= 			$a_gateways[$gw]['gateway'];
+			$content .= "		</td>\n";
 			$content .= "	</tr>\n";
-			$idx++;
 		}
 		$content .= "</tbody>\n";
 		$content .= "</table>\n";
@@ -1080,14 +1115,8 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 }
 
 function rule_columns_with_alias($src, $srcport, $dst, $dstport, $target="", $targetport="") {
-	global $config;
-
-	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias'])) {
-		return;
-	}
-
 	$columns = array();
-	foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
+	foreach (config_get_path('aliases/alias', []) as $alias_id => $alias_name) {
 		if ($alias_name['name'] == $src) {
 			$columns['src'] = $alias_id;
 		}
@@ -1141,7 +1170,7 @@ function get_flash_message() {
 }
 
 /* Retrieve GET or POST Value/State
- * Eample Usage:
+ * Example Usage:
  * $value = getGETPOSTsettingvalue('get/post parameter name', "");
  * $value = getGETPOSTsettingvalue('get/post parameter name', null);
  * $state = getGETPOSTsettingvalue('get/post parameter name', null);
@@ -1159,11 +1188,11 @@ function getGETPOSTsettingvalue($settingname, $default) {
 }
 
 /* set timezone */
-if (isset($config['system']['timezone']) &&
-    !empty($config['system']['timezone'])) {
-	$timezone = $config['system']['timezone'];
-} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-	$timezone = $g['default_timezone'];
+$cfgtz = config_get_path('system/timezone');
+if ($cfgtz) {
+	$timezone = $cfgtz;
+} elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+	$timezone = g_get('default_timezone');
 } else {
 	$timezone = "Etc/UTC";
 }

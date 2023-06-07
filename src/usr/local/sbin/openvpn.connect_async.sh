@@ -3,7 +3,7 @@
 # openvpn.connect_async.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2021-2022 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2021-2023 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +43,7 @@ log_session() {
 if [ -n "${username}" ]; then
 	lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
 	rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
+	routesfile="/tmp/${username}"
 	anchorname="openvpn/${dev}_${username}_${trusted_port}"
 fi
 
@@ -70,13 +71,14 @@ if [ "${script_type}" = "client-disconnect" ]; then
 			/bin/rm "${lockfile}"
 
 			/bin/rm "${rulesfile}"
+			/bin/rm "${routesfile}"
 		fi
 	fi
 
-	/sbin/pfctl -k $ifconfig_pool_remote_ip
-	/sbin/pfctl -K $ifconfig_pool_remote_ip
-	/sbin/pfctl -k $ifconfig_pool_remote_ip6
-	/sbin/pfctl -K $ifconfig_pool_remote_ip6
+	/sbin/pfctl -k "$ifconfig_pool_remote_ip"
+	/sbin/pfctl -K "$ifconfig_pool_remote_ip"
+	/sbin/pfctl -k "$ifconfig_pool_remote_ip6"
+	/sbin/pfctl -K "$ifconfig_pool_remote_ip6"
 elif [ "${script_type}" = "client-connect" ]; then
 	log_session "connecting"
 
@@ -94,7 +96,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 	do :;  done
 	if [ ${i} -ge 3 ]; then
 		log_session "server write to defer file failed"
-		/bin/echo 0 > ${client_connect_deferred_file}
+		/bin/echo 0 > "${client_connect_deferred_file}"
 		exit 1
 	fi
 
@@ -105,7 +107,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 
 	# Process "Duplicate Connection Limit" setting
 	if [ -n "${active_sessions}" ]; then
-		vpnid=$(/bin/echo ${dev} | /usr/bin/sed -e 's/ovpns//g')
+		vpnid=$(/bin/echo "${dev}" | /usr/bin/sed -e 's/ovpns//g')
 		if [ -f "/var/etc/openvpn/server${vpnid}/connuserlimit" ]; then
 			sessionlimit=$(/usr/bin/head -1 "/var/etc/openvpn/server${vpnid}/connuserlimit" | /usr/bin/sed -e 's/[[:space:]]//g')
 			if [ "${sessionlimit}" -ge 1 ]; then
@@ -116,9 +118,9 @@ elif [ "${script_type}" = "client-connect" ]; then
 				fi
 				sessioncount=$(/bin/echo "${active_sessions}" | /usr/bin/grep -o "${usersession}" | /usr/bin/wc -l | /usr/bin/sed -e 's/[[:space:]]//g')
 
-				if [ ${sessioncount} -gt ${sessionlimit} ]; then
+				if [ "${sessioncount}" -gt "${sessionlimit}" ]; then
 					log_session "active connection limit of '${sessionlimit}' reached"
-					/bin/echo 0 > ${client_connect_deferred_file}
+					/bin/echo 0 > "${client_connect_deferred_file}"
 					if [ -n "${username}" ]; then
 						/bin/rm "${rulesfile}"
 					fi
@@ -141,7 +143,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 		do :;  done
 		if [ ${i} -ge 30 ]; then
 			log_session "Timeout while waiting for lockfile"
-			/bin/echo 0 > ${client_connect_deferred_file}
+			/bin/echo 0 > "${client_connect_deferred_file}"
 			exit 1
 		else
 			/usr/bin/touch "${lockfile}"
@@ -158,15 +160,17 @@ elif [ "${script_type}" = "client-connect" ]; then
 				fi
 			done
 
-			/bin/echo "$(/usr/bin/sed -e "s/{clientip}/${ifconfig_pool_remote_ip}/g;s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" "${rulesfile}")" > "${rulesfile}"
-			eval "/sbin/pfctl -a '${anchorname}' -f '${rulesfile}'"
+			if [ -f "${rulesfile}" ]; then
+				/bin/echo "$(/usr/bin/sed -e "s/{clientip}/${ifconfig_pool_remote_ip}/g;s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" "${rulesfile}")" > "${rulesfile}"
+				eval "/sbin/pfctl -a '${anchorname}' -f '${rulesfile}'"
+			fi
 
 			/bin/rm "${lockfile}"
 		fi
 	fi
 
 	# success; allow client connection
-	/bin/echo 1 > ${client_connect_deferred_file}
+	/bin/echo 1 > "${client_connect_deferred_file}"
 	log_session "connected"
 fi
 

@@ -6,7 +6,7 @@
  * Copyright (c) 2008 Bill Marquette, Seth Mos
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,7 @@ require_once("config.inc");
 require_once("rrd.inc");
 require_once("ipsec.inc");
 require_once("interfaces.inc");
+require_once("util.inc");
 
 global $gateway_state_kill_modes;
 $gateway_state_kill_modes = array(
@@ -259,7 +260,7 @@ function setup_gateways_monitor() {
 						    $gateway['gateway']);
 					}
 
-					pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
+					pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
 				}
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
@@ -306,7 +307,7 @@ function setup_gateways_monitor() {
 						    $gateway['gateway']);
 					}
 
-					pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
+					pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
 				}
 			}
 		} else {
@@ -475,7 +476,7 @@ function return_gateways_status($byname = false, $gways = false) {
 		 * down would be misleading (gateway action is disabled)
 		 */
 		$action_disable = $gateways_arr[$gwname]['action_disable'];
-		$dpinger_status = get_dpinger_status($gwname, $action_disable);
+		$dpinger_status = get_dpinger_status($gwname, false, $action_disable);
 		if ($dpinger_status === false) {
 			continue;
 		}
@@ -664,7 +665,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$gateway['inactive'] = true;
 				}
 			}
-			$wancfg = $config['interfaces'][$gateway['interface']];
+			$wancfg = config_get_path("interfaces/{$gateway['interface']}");
 
 			/* skip disabled interfaces */
 			if ($disabled === false && (!isset($wancfg['enable']))) {
@@ -800,26 +801,28 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
-					if (is_array($config['openvpn'][$ovpntype])) {
-						foreach ($config['openvpn'][$ovpntype] as & $ovpnconf) {
-							if ($ovpnconf['vpnid'] == $ovpnid) {
-								// skip IPv6-only interfaces
-								if ($ovpnconf['create_gw'] == "v6only") {
-									continue 3;
-								}
-								// skip tap interfaces
-								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 3;
-								}
+					foreach (config_get_path("openvpn/{$ovpntype}", []) as $ovpnconf) {
+						if (empty($ovpnconf)) {
+							continue;
+						}
+						if ($ovpnconf['vpnid'] == $ovpnid) {
+							// skip IPv6-only interfaces
+							if ($ovpnconf['create_gw'] == "v6only") {
+								continue 3;
+							}
+							// skip tap interfaces
+							if ($ovpnconf['dev_mode'] == "tap") {
+								continue 3;
 							}
 						}
 					}
 					$ctype = "VPNv4";
 				} elseif (substr($ifcfg['if'], 0, 5) == "ipsec") {
 					$ikeid = substr($ifcfg['if'], 5);
-					if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
-						foreach ($config['ipsec']['phase1'] as $ph1ent) {
-							if ($ph1ent['disabled']) {
+					if (!empty(config_get_path('ipsec/phase1', [])) &&
+					    !empty(config_get_path('ipsec/phase2', []))) {
+						foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+							if (empty($ph1ent) || $ph1ent['disabled']) {
 								continue;
 							}
 							$vtisubnet_spec = ipsec_vti($ph1ent, true);
@@ -943,26 +946,28 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
-					if (is_array($config['openvpn'][$ovpntype])) {
-						foreach ($config['openvpn'][$ovpntype] as & $ovpnconf) {
-							if ($ovpnconf['vpnid'] == $ovpnid) {
-								// skip IPv4-only interfaces
-								if ($ovpnconf['create_gw'] == "v4only") {
-									continue 3;
-								}
-								// skip tap interfaces
-								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 3;
-								}
+					foreach (config_get_path("openvpn/{$ovpntype}", []) as $ovpnconf) {
+						if (empty($ovpnconf)) {
+							continue;
+						}
+						if ($ovpnconf['vpnid'] == $ovpnid) {
+							// skip IPv4-only interfaces
+							if ($ovpnconf['create_gw'] == "v4only") {
+								continue 3;
+							}
+							// skip tap interfaces
+							if ($ovpnconf['dev_mode'] == "tap") {
+								continue 3;
 							}
 						}
 					}
 					$ctype = "VPNv6";
 				} elseif (substr($ifcfg['if'], 0, 5) == "ipsec") {
 					$ikeid = substr($ifcfg['if'], 5);
-					if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
-						foreach ($config['ipsec']['phase1'] as $ph1ent) {
-							if ($ph1ent['disabled']) {
+					if (!empty(config_get_path('ipsec/phase1', [])) &&
+					    !empty(config_get_path('ipsec/phase2', []))) {
+						foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+							if (empty($ph1ent) || $ph1ent['disabled']) {
 								continue;
 							}
 							$vtisubnet_spec = ipsec_vti($ph1ent, true);
@@ -1122,15 +1127,15 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	$set_dfltgwname = '';
 
 	if ($ipprotocol == 'inet') {
-		$gwdefault = $config['gateways']['defaultgw4'];
+		$gwdefault = config_get_path('gateways/defaultgw4', "");
 	} else {
-		$gwdefault = $config['gateways']['defaultgw6'];
+		$gwdefault = config_get_path('gateways/defaultgw6', "");
 	}
 	/* do not delete dynamic (frr/bgp/ospf) route
 	 * see https://redmine.pfsense.org/issues/12536 */
 	if ($gwdefault == "-") {
 		if (is_static_route('default', $ipprotocol)) {
-			route_del('default', $ipprotocol); 
+			route_del('default', $ipprotocol);
 		}
 		return;
 	}
@@ -1179,7 +1184,9 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			$currentdefaultgwip = route_get_default($ipprotocol);
 			$found_current = false;
 			foreach($gwg_members as $gwgroupitem) {
-				if (!empty($currentdefaultgwip) && ($gwgroupitem['gwip'] == $currentdefaultgwip)) {
+				if (!empty($currentdefaultgwip) &&
+				    is_array($gwgroupitem) &&
+				    ($gwgroupitem['gwip'] == $currentdefaultgwip)) {
 					$set_dfltgwname = $gwgroupitem['gw'];
 					$found_current = true;
 					if (isset($config['system']['gw-debug'])) {
@@ -1199,7 +1206,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	if (!empty($set_dfltgwname) && isset($gateways_arr[$set_dfltgwname])) {
 		setdefaultgateway($gateways_arr[$set_dfltgwname]);
 	} elseif (empty($set_dfltgwname)) {
-		route_del('default', $ipprotocol); 
+		route_del('default', $ipprotocol);
 	}
 }
 
@@ -1236,7 +1243,7 @@ function setdefaultgateway($gw) {
 		} else {
 			$inet = 'v6';
 		}
-		array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw{$inet}", GLOB_BRACE));
+		unlink_if_exists("{$g['tmp_path']}/*_defaultgw{$inet}");
 		$defaultif = get_real_interface($gw['interface']);
 		if ($defaultif) {
 			@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw{$inet}", $gw['gateway']);
@@ -1426,8 +1433,8 @@ function return_gateway_groups_array($fixup = false, $gways = false) {
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
 	if ($fixup == true) {
-		$gw4 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4'], $gways);
-		$gw6 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6'], $gways);
+		$gw4 = lookup_gateway_or_group_by_name(config_get_path('gateways/defaultgw4', ""), $gways);
+		$gw6 = lookup_gateway_or_group_by_name(config_get_path('gateways/defaultgw6', ""), $gways);
 		if ($gw4 && $gw4['type'] == 'gatewaygroup') {
 			fixup_default_gateway("inet", $gateways_status, $gateways_arr);
 		}
@@ -1552,7 +1559,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	$interface = get_root_interface($interface);
 
 	$gw = NULL;
-	$gwcfg = $config['interfaces'][$interface];
+	$gwcfg = config_get_path("interfaces/{$interface}");
 	if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
 			if (($gateway['name'] == $gwcfg['gateway']) && (is_ipaddrv4($gateway['gateway']))) {
@@ -1596,7 +1603,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 	$interface = get_root_interface($interface);
 
 	$gw = NULL;
-	$gwcfg = $config['interfaces'][$interface];
+	$gwcfg = config_get_path("interfaces/{$interface}");
 	if (!empty($gwcfg['gatewayv6']) && is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
 			if (($gateway['name'] == $gwcfg['gatewayv6']) && (is_ipaddrv6($gateway['gateway']))) {
@@ -1684,7 +1691,7 @@ function interface_gateway_group_member($interface, $gwgroup_name = "") {
 	global $config;
 
 	if (is_array($config['gateways']['gateway_group'])) {
-		$groups = $config['gateways']['gateway_group'];
+		$groups = config_get_path('gateways/gateway_group');
 	} else {
 		return false;
 	}
@@ -1712,7 +1719,7 @@ function gateway_is_gwgroup_member($name, $detail=false) {
 	global $config;
 
 	if (is_array($config['gateways']['gateway_group'])) {
-		$groups = $config['gateways']['gateway_group'];
+		$groups = config_get_path('gateways/gateway_group');
 	} else {
 		return false;
 	}
@@ -1770,25 +1777,21 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 	} else if (isset($gateway_settings['disabled'])) {
 		// We have a valid gateway name that the user wants to mark as disabled.
 		// Check if the gateway name is used in any gateway group.
-		if (is_array($config['gateways']['gateway_group'])) {
-			foreach ($config['gateways']['gateway_group'] as $group) {
-				foreach ($group['item'] as $item) {
-					$items = explode("|", $item);
-					if ($items[0] == $gateway_settings['name']) {
-						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $gateway_settings['name'], $group['name']);
-					}
+		foreach (config_get_path('gateways/gateway_group', []) as $group) {
+			foreach ($group['item'] as $item) {
+				$items = explode("|", $item);
+				if ($items[0] == $gateway_settings['name']) {
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $gateway_settings['name'], $group['name']);
 				}
 			}
 		}
 
 		// Check if the gateway name is used in any enabled Static Route.
-		if (is_array($config['staticroutes']['route'])) {
-			foreach ($config['staticroutes']['route'] as $route) {
-				if ($route['gateway'] == $gateway_settings['name']) {
-					if (!isset($route['disabled'])) {
-						// There is a static route that uses this gateway and is enabled (not disabled).
-						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $gateway_settings['name'], $route['network']);
-					}
+		foreach (config_get_path('staticroutes/route', []) as $route) {
+			if ($route['gateway'] == $gateway_settings['name']) {
+				if (!isset($route['disabled'])) {
+					// There is a static route that uses this gateway and is enabled (not disabled).
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $gateway_settings['name'], $route['network']);
 				}
 			}
 		}
@@ -2155,17 +2158,6 @@ function save_gateway($gateway_settings, $realid = "") {
 		route_del($a_gateway_item[$realid]['monitor']);
 	}
 
-	/* reload IPsec and OpenVPN on gateway IP or 'Mark Gateway as Down' option change
-	 * see https://redmine.pfsense.org/issues/13076 */
-	if (!empty($a_gateway_item[$realid]) &&
-	    (($gateway_settings['monitor'] != "dynamic" &&
-	    is_ipaddr($a_gateway_item[$realid]['gateway']) &&
-	    $gateway['gateway'] != $a_gateway_item[$realid]['gateway']) ||
-	    (isset($gateway['force_down']) ^ isset($a_gateway_item[$realid]['force_down'])))) {
-		send_event("service reload ipsec " . escapeshellarg($a_gateway_item[$realid]['gateway']));
-		send_event("service reload openvpn " . escapeshellarg($a_gateway_item[$realid]['gateway']));
-	}
-
 	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
 		// a new default gateway is being saved.
 		$i = 0;
@@ -2174,7 +2166,8 @@ function save_gateway($gateway_settings, $realid = "") {
 			foreach ($a_gateway_item as $gw) {
 				if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
 					if ($gw['interface'] != $gateway_settings['interface'] &&
-						($gw['name'] == $config['gateways']['defaultgw4'] || $gw['name'] == $config['gateways']['defaultgw6'])) {
+						($gw['name'] == config_get_path('gateways/defaultgw4', "") ||
+						 $gw['name'] == config_get_path('gateways/defaultgw6', ""))) {
 						// remember the old default gateway interface to call with a "interface reconfigure" event.
 						$reloadif = $gw['interface'];
 					}
@@ -2183,9 +2176,9 @@ function save_gateway($gateway_settings, $realid = "") {
 			}
 		}
 		if ($gateway['ipprotocol'] == "inet") {
-			$config['gateways']['defaultgw4'] = $gateway['name'];
+			config_set_path('gateways/defaultgw4', $gateway['name']);
 		} elseif ($gateway['ipprotocol'] == "inet6") {
-			$config['gateways']['defaultgw6'] = $gateway['name'];
+			config_set_path('gateways/defaultgw4', $gateway['name']);
 		}
 	}
 
@@ -2204,6 +2197,19 @@ function save_gateway($gateway_settings, $realid = "") {
 	if ($gateway_settings['loss_interval']) {
 		$gateway['loss_interval'] = $gateway_settings['loss_interval'];
 	}
+
+	/* reload IPsec and OpenVPN on gateway IP, 'Mark Gateway as Down', or 'Disabled' option change
+	 * see https://redmine.pfsense.org/issues/13076 */
+	if (!empty($a_gateway_item[$realid]) &&
+	    (isset($gateway['disabled']) ^ isset($a_gateway_item[$realid]['disabled'])) ||
+	    (!isset($a_gateway_item[$realid]['disabled']) &&
+	    ((($gateway['monitor'] != "dynamic") &&
+	    is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+	    ($gateway['gateway'] != $a_gateway_item[$realid]['gateway'])) ||
+	    (isset($gateway['force_down']) ^ isset($a_gateway_item[$realid]['force_down']))))) {
+		$reloadvpn = true;
+	}
+
 	/* when saving the manual gateway we use the attribute which has the corresponding id */
 	if (isset($realid) && $a_gateway_item[$realid]) {
 		$preserve_disabled = isset($a_gateway_item[$realid]['disabled']);
@@ -2219,6 +2225,11 @@ function save_gateway($gateway_settings, $realid = "") {
 	mark_subsystem_dirty('staticroutes');
 
 	write_config("Gateway settings changed");
+
+	if ($reloadvpn) {
+		send_event("service reload ipsec " . escapeshellarg($gateway['name']));
+		send_event("service reload openvpn " . escapeshellarg($gateway['name']));
+	}
 
 	if (!empty($reloadif)) {
 		send_event("interface reconfigure {$reloadif}");
@@ -2287,14 +2298,17 @@ function gateway_getgwtiername($gways, $idx) {
 	$gwname = $gways[$idx]['name'];
 
 	$gw = get_gateway_or_group_by_name($gwname, $gways);
+
 	init_config_arr(array('gateways'));
-	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
+	$gw4 = config_get_path('gateways/defaultgw4', "");
+	$gw6 = config_get_path('gateways/defaultgw6', "");
+	if ($gw4 == $gwname || $gw6 == $gwname) {
 		$result = "Default";
 	} else {
 		if ($gw['ipprotocol'] == 'inet') {
-			$defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw4'], $gways);
+			$defgw = get_gateway_or_group_by_name($gw4, $gways);
 		} else {
-			$defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw6'], $gways);
+			$defgw = get_gateway_or_group_by_name($gw6, $gways);
 		}
 
 		if ($defgw['type'] == "gatewaygroup") {
@@ -2377,8 +2391,8 @@ function available_default_gateways() {
 	$defaults = array();
 	$defaults['v4'] = $items4;
 	$defaults['v6'] = $items6;
-	$defaults['defaultgw4'] = $config['gateways']['defaultgw4'];
-	$defaults['defaultgw6'] = $config['gateways']['defaultgw6'];
+	$defaults['defaultgw4'] = config_get_path('gateways/defaultgw4', "");
+	$defaults['defaultgw6'] = config_get_path('gateways/defaultgw6', "");
 
 	return $defaults;
 }

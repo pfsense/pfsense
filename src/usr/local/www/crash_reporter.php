@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 require_once("system.inc");
+require_once("util.inc");
 
 define("FILE_SIZE", 450000);
 
@@ -65,7 +66,7 @@ $crash_report_header .= php_uname("v") . "\n";
 $crash_report_header .= "\nCrash report details:\n";
 
 if ($_POST['Submit'] == "No") {
-	array_map('unlink', glob("/var/crash/*"));
+	unlink_if_exists("/var/crash/*");
 	// Erase the contents of the PHP error log
 	fclose(fopen("/tmp/PHP_errors.log", 'w'));
 	header("Location: /");
@@ -101,7 +102,7 @@ if ($_POST['Submit'] == "No") {
 	<div class="panel-body">
 		<div class="content">
 			<p>
-				<?=sprintf(gettext("Debugging output can be collected to share with %s developers or others providing support or assistance."), $g['product_label'])?>
+				<?=sprintf(gettext("Debugging output can be collected to share with %s developers or others providing support or assistance."), g_get('product_label'))?>
 				<br/><br/>
 				<i><?=gettext("Inspect the contents to ensure this information is acceptable to disclose before distributing these files.")?></i>
 			</p>

@@ -5,7 +5,7 @@
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2013 BSD Perimeter
 # Copyright (c) 2013-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Based on src/etc/rc.d/savecore from FreeBSD
@@ -95,7 +95,7 @@ if [ -f /var/etc/bogon_custom ]; then
 	. /var/etc/bogon_custom
 fi
 
-# Set default values if not overriden
+# Set default values if not overridden
 v4url=${v4url:-"https://files.netgate.com/lists/fullbogons-ipv4.txt"}
 v6url=${v6url:-"https://files.netgate.com/lists/fullbogons-ipv6.txt"}
 v4urlcksum=${v4urlcksum:-"${v4url}.md5"}

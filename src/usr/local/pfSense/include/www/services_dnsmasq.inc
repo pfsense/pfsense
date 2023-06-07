@@ -3,7 +3,7 @@
  * firewall_nat_out.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,19 +36,19 @@ function getDNSMasqConfig($json = false) {
 
     $pconfig = array();
 
-    $pconfig['enable'] = isset($config['dnsmasq']['enable']);
-    $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
-    $pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
-    $pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
-    $pconfig['strict_order'] = isset($config['dnsmasq']['strict_order']);
-    $pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
-    $pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
-    $pconfig['port'] = $config['dnsmasq']['port'];
-    $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
-    $pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
+    $pconfig['enable'] = config_path_enabled('dnsmasq');
+    $pconfig['regdhcp'] = config_path_enabled('dnsmasq','regdhcp');
+    $pconfig['regdhcpstatic'] = config_path_enabled('dnsmasq','regdhcpstatic');
+    $pconfig['dhcpfirst'] = config_path_enabled('dnsmasq', 'dhcpfirst');
+    $pconfig['strict_order'] = config_path_enabled('dnsmasq', 'strict_order');
+    $pconfig['domain_needed'] = config_path_enabled('dnsmasq', 'domain_needed');
+    $pconfig['no_private_reverse'] = config_path_enabled('dnsmasq', 'no_private_reverse');
+    $pconfig['port'] = config_get_path('dnsmasq/port', "");
+    $pconfig['custom_options'] = base64_decode(config_get_path('dnsmasq/custom_options', ""));
+    $pconfig['strictbind'] = config_path_enabled('dnsmasq', 'strictbind');
 
-    if (!empty($config['dnsmasq']['interface'])) {
-        $pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
+    if (!empty(config_get_path('dnsmasq/interface'))) {
+        $pconfig['interface'] = explode(",", config_get_path('dnsmasq/interface', ""));
     } else {
         $pconfig['interface'] = array();
     }
@@ -176,11 +176,17 @@ function saveDNSMasqConfig($post, $json=false) {
 	$config['dnsmasq']['strict_order'] = ($post['strict_order']) ? true : false;
 	$config['dnsmasq']['domain_needed'] = ($post['domain_needed']) ? true : false;
 	$config['dnsmasq']['no_private_reverse'] = ($post['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $post['custom_options']);
 	$config['dnsmasq']['strictbind'] = ($post['strictbind']) ? true : false;
 
-	if (isset($post['enable']) && isset($config['unbound']['enable'])) {
-		if ($post['port'] == $config['unbound']['port']) {
+	if (!empty(trim($post['custom_options']))) {
+		$custom_options_source = str_replace("\r\n", "\n", trim($post['custom_options']));
+		$config['dnsmasq']['custom_options'] = base64_encode($custom_options_source);
+	} else {
+		config_del_path('dnsmasq/custom_options');
+	}
+
+	if (isset($post['enable']) && config_path_enabled('unbound')) {
+		if ($post['port'] == config_get_path('unbound/port')) {
 			$input_errors[] = gettext("The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.");
 		}
 	}
@@ -195,19 +201,19 @@ function saveDNSMasqConfig($post, $json=false) {
 		} else {
 			$input_errors[] = gettext("A valid port number must be specified.");
 		}
-	} else if (isset($config['dnsmasq']['port'])) {
-		unset($config['dnsmasq']['port']);
+	} else if (config_get_path('dnsmasq/port')) {
+		config_del_path('dnsmasq/port');
 	}
 
 	if (is_array($post['interface'])) {
 		$config['dnsmasq']['interface'] = implode(",", $post['interface']);
-	} elseif (isset($config['dnsmasq']['interface'])) {
-		unset($config['dnsmasq']['interface']);
+	} elseif (config_get_path('dnsmasq/interface')) {
+		config_del_path('dnsmasq/interface');
 	}
 
-	if ($config['dnsmasq']['custom_options']) {
+	if (isset($custom_options_source)) {
 		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+		foreach (preg_split('/\s+/', $custom_options_source) as $c) {
 			$args .= escapeshellarg("--{$c}") . " ";
 		}
 
@@ -395,7 +401,7 @@ function getDomainOverride($id, $json = false) {
     global $config;
 
     init_config_arr(array('dnsmasq', 'domainoverrides'));
-    $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+    $a_domainOverrides = config_get_path('dnsmasq/domainoverrides');
 
     $pconfig = array();
 
@@ -413,7 +419,7 @@ function getDomainOverride($id, $json = false) {
     return $pconfig;
 }
 
-// Domin override table update
+// Domain override table update
 function saveDomainOverride($post, $id, $json=false) {
     global $config;
 
@@ -423,7 +429,7 @@ function saveDomainOverride($post, $id, $json=false) {
     $input_errors = array();
     $pconfig = $post;
 
-    if (!$JSON) {
+    if (!$json) {
         /* input validation */
         $reqdfields = explode(" ", "domain ip");
         $reqdfieldsn = array(gettext("Domain"), gettext("IP address"));

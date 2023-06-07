@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -106,7 +106,7 @@ function print_ipsec_body() {
 					$p2uniqueids, SORT_NUMERIC,
 					$ikesa['child-sas']);
 
-			foreach ($ikesa['child-sas'] as $childid => $childsa) {
+			foreach ($ikesa['child-sas'] as $childsa) {
 				list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
 				if ($childreqid != null) {
 					$p2connected[$childreqid] = $childsa['name'];
@@ -325,7 +325,7 @@ function print_ipsec_body() {
 	</thead>
 	<tbody>
 <?php		if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
-			foreach ($ikesa['child-sas'] as $childid => $childsa) {
+			foreach ($ikesa['child-sas'] as $childsa) {
 				list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
 ?>
 	<tr>
@@ -341,7 +341,7 @@ function print_ipsec_body() {
 					/* IKEv1 or IKEv2+Split */
 					$p2descr = $cmap[$childikeid]['p2'][$childreqid]['descr'];
 					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
-				} elseif (is_array($cmap[$childikeid]) && is_array($cmap[$childikeid]['p2'])) {
+				} else {
 					$childreqid = array_key_first($cmap[$childikeid]['p2']);
 					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
 					if (count($cmap[$childikeid]['p2']) > 1) {
@@ -644,7 +644,7 @@ if (ipsec_enabled()) {
 	print('<div class="infoblock blockopen">');
 }
 
-print_info_box(sprintf(gettext('IPsec is not enabled. %1$sConfigure IPsec%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+print_info_box(sprintf(gettext('%1$sConfigure IPsec%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>
 

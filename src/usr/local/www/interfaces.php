@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -58,12 +58,9 @@ if (isset($_POST['referer'])) {
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr(true);
+$if = $_REQUEST['if'] ?? 'wan';
+$bridged = link_interface_to_bridge($if);
 
-$if = "wan";
-
-if ($_REQUEST['if']) {
-	$if = $_REQUEST['if'];
-}
 
 if (empty($ifdescrs[$if])) {
 	header("Location: interfaces.php");
@@ -88,7 +85,7 @@ $a_gateways = &$config['gateways']['gateway_item'];
 $interfaces = get_configured_interface_with_descr();
 /* Interfaces which have addresses configured elsewhere and should not be
  * configured here. See https://redmine.pfsense.org/issues/8687 */
-$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre");
+$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre", "l2tps");
 $show_address_controls = true;
 $realifname = get_real_interface($if);
 foreach ($no_address_interfaces as $ifbl) {
@@ -111,8 +108,10 @@ if ($if == "wan" && !$wancfg['descr']) {
 }
 
 /* NOTE: The code here is used to set the $pppid for the curious */
-foreach ($a_ppps as $pppid => $ppp) {
+$pppid = null;
+foreach ($a_ppps as $pid => $ppp) {
 	if ($wancfg['if'] == $ppp['if']) {
+		$pppid = $pid;
 		break;
 	}
 }
@@ -453,27 +452,26 @@ if ($_POST['apply']) {
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
 				$realif = get_real_interface($ifapply);
 				$ifmtu = get_interface_mtu($realif);
-				if (isset($config['interfaces'][$ifapply]['enable'])) {
+				if (config_path_enabled("interfaces/{$ifapply}")) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply, true);
-					if ($config['interfaces'][$ifapply]['ipaddrv6'] == "track6") {
+					if (config_get_path("interfaces/{$ifapply}/ipaddrv6") == "track6") {
 						/* call interface_track6_configure with linkup true so
 						   IPv6 IPs are added back. dhcp6c needs a HUP. Can't
 						   just call interface_configure with linkup true as
 						   that skips bridge membership addition.
 						*/
-						$wancfg = $config['interfaces'][$ifapply];
+						$wancfg = config_get_path("interfaces/{$ifapply}");
 						interface_track6_configure($ifapply, $wancfg, true);
 					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 				}
 				restart_interface_services($ifapply, $ifcfg['ipaddrv6']);
+				$mtu = config_get_path("interfaces/{$ifapply}/mtu");
 				if (interface_has_clones($realif) &&
-				    (isset($config['interfaces'][$ifapply]['mtu']) &&
-				    ($config['interfaces'][$ifapply]['mtu'] != $ifmtu)) ||
-				    (!isset($config['interfaces'][$ifapply]['mtu']) &&
-				    (get_interface_default_mtu() != $ifmtu))) { 
+				    ($mtu && ($mtu != $ifmtu)) ||
+				    (!$mtu && (get_interface_default_mtu() != $ifmtu))) { 
 					$vlan_redo[] = $realif;
 				}
 			}
@@ -541,6 +539,15 @@ if ($_POST['apply']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
+		/* Reserved name? */
+		global $pf_reserved_keywords, $reserved_table_names;
+		$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_table_names);
+		foreach ($pf_reserved_keywords as $rk) {
+			if (strcasecmp($rk, $_POST['descr']) == 0) {
+				$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $rk);
+			}
+		}
+
 		/* description unique? */
 		foreach ($ifdescrs as $ifent => $ifdescr) {
 			if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
@@ -550,20 +557,16 @@ if ($_POST['apply']) {
 		}
 
 		/* Is the description already used as an alias name? */
-		if (is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias) {
-				if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
-					$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
-				}
+		foreach (config_get_path('aliases/alias', []) as $alias) {
+			if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
+				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
 			}
 		}
 
 		/* Is the description already used as an interface group name? */
-		if (is_array($config['ifgroups']['ifgroupentry'])) {
-			foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-				if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
-					$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
-				}
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgroupentry) {
+			if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
+				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
 			}
 		}
 
@@ -592,16 +595,15 @@ if ($_POST['apply']) {
 	}
 
 	if ($_POST['blockbogons'] == "yes" &&
-	    isset($config['system']['ipv6allow']) &&
-	    (!isset($config['system']['maximumtableentries']) ||
-	     $config['system']['maximumtableentries'] <
-	     $g['minimumtableentries_bogonsv6'])) {
+	    config_path_enabled('system','ipv6allow') &&
+	    (config_get_path('system/maximumtableentries', 0) <
+	     g_get('minimumtableentries_bogonsv6'))) {
 		$input_errors[] = sprintf(gettext(
 		    "In order to block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
-		    $g['minimumtableentries_bogonsv6']);
+		    g_get('minimumtableentries_bogonsv6'));
 	}
 
-	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
+	if (config_path_enabled("dhcpd/{$if}")) {
 		if (!preg_match("/^staticv4/", $_POST['type'])) {
 			$input_errors[] = gettext("The DHCP Server is active " .
 			    "on this interface and it can be used only with " .
@@ -617,12 +619,12 @@ if ($_POST['apply']) {
 		}
 	}
 	if (isset($config['dhcpdv6']) && ($_POST['type6'] != "staticv6" && $_POST['type6'] != "track6")) {
-		if (isset($config['dhcpdv6'][$if]['enable'])) {
+		if (config_path_enabled("dhcpdv6/{$if}")) {
 			$input_errors[] = gettext("The DHCP6 Server is active on this interface and it can be used only " .
 			    "with a static IPv6 configuration. Please disable the DHCPv6 Server service on this " .
 			    "interface first, then change the interface configuration.");
 		}
-		if (isset($config['dhcpdv6'][$if]['ramode']) && ($config['dhcpdv6'][$if]['ramode'] != "disabled")) {
+		if (config_get_path("dhcpdv6/{$if}/ramode", "disabled") != "disabled") {
 			$input_errors[] = gettext("The Router Advertisements Server is active on this interface and it can " .
 			    "be used only with a static IPv6 configuration. Please disable the Router Advertisements " .
 			    "Server service on this interface first, then change the interface configuration.");
@@ -636,11 +638,9 @@ if ($_POST['apply']) {
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "none":
-			if (is_array($config['virtualip']['vip'])) {
-				foreach ($config['virtualip']['vip'] as $vip) {
-					if (is_ipaddrv4($vip['subnet']) && $vip['interface'] == $if) {
-						$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
-					}
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
+				if (is_ipaddrv4($vip['subnet']) && $vip['interface'] == $if) {
+					$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
 			break;
@@ -687,11 +687,9 @@ if ($_POST['apply']) {
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "none":
-			if (is_array($config['virtualip']['vip'])) {
-				foreach ($config['virtualip']['vip'] as $vip) {
-					if (is_ipaddrv6($vip['subnet']) && $vip['interface'] == $if) {
-						$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
-					}
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
+				if (is_ipaddrv6($vip['subnet']) && $vip['interface'] == $if) {
+					$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
 			break;
@@ -702,11 +700,27 @@ if ($_POST['apply']) {
 			if ($_POST['dhcp6-ia-pd-send-hint'] && strtolower($_POST['dhcp6-ia-pd-len']) == 'none') {
 				$input_errors[] = gettext('DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint flag is checked');
 			}
+			if (!empty($_POST['adv_dhcp6_id_assoc_statement_address_id']) &&
+			    !is_numericint($_POST['adv_dhcp6_id_assoc_statement_address_id'])) {
+				$input_errors[] = gettext('DHCPv6 advanced id-assoc na ID value must be empty or an integer.');
+			}
+			if (!empty($_POST['adv_dhcp6_id_assoc_statement_prefix_id']) &&
+			    !is_numericint($_POST['adv_dhcp6_id_assoc_statement_prefix_id'])) {
+				$input_errors[] = gettext('DHCPv6 advanced id-assoc pd ID value must be empty or an integer.');
+			}
+			if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_id']) &&
+			    !is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_id'])) {
+				$input_errors[] = gettext('DHCPv6 advanced Prefix Interface sla-id value must be empty or an integer.');
+			}
+			if (!empty($_POST['adv_dhcp6_prefix_interface_statement_sla_len']) &&
+			    !is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len'])) {
+				$input_errors[] = gettext('DHCPv6 advanced Prefix Interface sla-len value must be empty or an integer.');
+			}
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
-					if ($config['interfaces'][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
+				if ($if != $ifent && (config_get_path("interfaces/{$ifent}/ipaddrv6") == $_POST['type6'])) {
+					if (config_get_path("interfaces/{$ifent}/prefix-6rd") == $_POST['prefix-6rd']) {
 						$input_errors[] = gettext("Only one interface can be configured within a single 6rd prefix.");
 						break;
 					}
@@ -724,7 +738,7 @@ if ($_POST['apply']) {
 			break;
 		case "6to4":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+				if ($if != $ifent && (config_get_path("interfaces/{$ifent}/ipaddrv6") == $_POST['type6'])) {
 					$input_errors[] = sprintf(gettext("Only one interface can be configured as 6to4."), $_POST['type6']);
 					break;
 				}
@@ -755,9 +769,9 @@ if ($_POST['apply']) {
 						if ($if == $ifent) {
 							continue;
 						}
-						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
-						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
-						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
+						if (config_get_path("interfaces/{$ifent}/ipaddrv6") == 'track6' &&
+						    config_get_path("interfaces/{$ifent}/track6-interface") == $_POST['track6-interface'] &&
+						    config_get_path("interfaces/{$ifent}/track6-prefix-id") == $track6_prefix_id) {
 							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 						}
 					}
@@ -770,6 +784,7 @@ if ($_POST['apply']) {
 	$staticroutes = get_staticroutes(true);
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
 	if (($_POST['type'] == 'staticv4') && $_POST['ipaddr']) {
+		$_POST['ipaddr'] = trim($_POST['ipaddr']);
 		if (!is_ipaddrv4($_POST['ipaddr'])) {
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
 		} else {
@@ -802,7 +817,7 @@ if ($_POST['apply']) {
 		}
 	}
 	if (($_POST['type6'] == 'staticv6') && $_POST['ipaddrv6']) {
-		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
+		$_POST['ipaddrv6'] = trim(addrtolower($_POST['ipaddrv6']));
 
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
@@ -932,8 +947,8 @@ if ($_POST['apply']) {
 			$parent_realhwif = $realhwif_array[0];
 			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
 			$mtu = 0;
-			if (!empty($parent_if) && !empty($config['interfaces'][$parent_if]['mtu']))
-				$mtu = intval($config['interfaces'][$parent_if]['mtu']);
+			if (!empty($parent_if) && !(config_get_path("interfaces/{$parent_if}/mtu")))
+				$mtu = intval(config_get_path("interfaces/{$parent_if}/mtu"));
 			if ($mtu == 0)
 				$mtu = get_interface_mtu($parent_realhwif);
 			if ($_POST['mtu'] > $mtu)
@@ -1582,10 +1597,17 @@ if ($_POST['apply']) {
 			unset($wancfg['blockbogons']);
 		}
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
-		if (empty($_POST['mtu'])) {
-			unset($wancfg['mtu']);
-		} else {
-			$wancfg['mtu'] = $_POST['mtu'];
+		/* Only update MTU in the config if the if is not a member of a
+		 * bridge. The display will show the bridge MTU in a disabled input
+		 * field, and we will maintain the user configured MTU for initial
+		 * configuration and in the event that the interface is removed from the
+		 * bridge it will return to its original MTU. */
+		if (!$bridged) {
+			if (empty($_POST['mtu'])) {
+				unset($wancfg['mtu']);
+			} else {
+				$wancfg['mtu'] = $_POST['mtu'];
+			}
 		}
 		if (empty($_POST['mss'])) {
 			unset($wancfg['mss']);
@@ -1646,7 +1668,7 @@ if ($_POST['apply']) {
 } // end if ($_POST['save'])
 
 function handle_wireless_post() {
-	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr, $wlanbaseif;
+	global $_POST, $config, $wancfg, $if, $wl_countries_attr, $wlanbaseif;
 	if (!is_array($wancfg['wireless'])) {
 		$wancfg['wireless'] = array();
 	}
@@ -1696,16 +1718,16 @@ function handle_wireless_post() {
 
 	if ($_POST['persistcommonwireless'] == "yes") {
 		if (!is_array($config['wireless'])) {
-			$config['wireless'] = array();
+			config_set_path('wireless', array());
 		}
-		if (!is_array($config['wireless']['interfaces'])) {
-			$config['wireless']['interfaces'] = array();
+		if (!is_array(config_get_path('wireless/interfaces'))) {
+			config_set_path('wireless/interfaces', array());
 		}
 		if (!is_array($config['wireless']['interfaces'][$wlanbaseif])) {
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
 		}
 	} else if (isset($config['wireless']['interfaces'][$wlanbaseif])) {
-		unset($config['wireless']['interfaces'][$wlanbaseif]);
+		config_del_path("wireless/interfaces/{$wlanbaseif}");
 	}
 	if (isset($_POST['diversity']) && is_numeric($_POST['diversity'])) {
 		$wancfg['wireless']['diversity'] = $_POST['diversity'];
@@ -1817,11 +1839,9 @@ function check_wireless_mode() {
 		$clone_count = 0;
 	}
 
-	if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone'])) {
-		foreach ($config['wireless']['clone'] as $clone) {
-			if ($clone['if'] == $wlanbaseif) {
+	foreach (config_get_path('wireless/clone', []) as $clone) {
+		if ($clone['if'] == $wlanbaseif) {
 				$clone_count++;
-			}
 		}
 	}
 
@@ -1839,7 +1859,7 @@ function check_wireless_mode() {
 
 // Find all possible media options for the interface
 $mediaopts_list = array();
-$intrealname = $config['interfaces'][$if]['if'];
+$intrealname = config_get_path("interfaces/{$if}/if");
 exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
 foreach ($mediaopts as $mediaopt) {
 	preg_match("/media (.*)/", $mediaopt, $matches);
@@ -1887,6 +1907,9 @@ function build_gateway_list() {
 
 	$list = array("none" => gettext("None"));
 	foreach ($a_gateways as $gateway) {
+		if (empty($gateway)) {
+			continue;
+		}
 		if (($gateway['interface'] == $if) && (is_ipaddrv4($gateway['gateway']))) {
 			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
 		}
@@ -1900,6 +1923,9 @@ function build_gatewayv6_list() {
 
 	$list = array("none" => gettext("None"));
 	foreach ($a_gateways as $gateway) {
+		if (empty($gateway)) {
+			continue;
+		}
 		if (($gateway['interface'] == $if) && (is_ipaddrv6($gateway['gateway']))) {
 			$list[$gateway['name']] = $gateway['name'] . " - " . $gateway['gateway'];
 		}
@@ -1997,13 +2023,21 @@ if (!is_pseudo_interface($intrealname, true)) {
 	$section->addInput($macaddress);
 }
 
-$section->addInput(new Form_Input(
+$mtuInput = $section->addInput(new Form_Input(
 	'mtu',
 	'MTU',
 	'number',
-	$pconfig['mtu']
+	$pconfig['mtu'],
 ))->setHelp('If this field is blank, the adapter\'s default MTU will be used. ' .
 			'This is typically 1500 bytes but can vary in some circumstances.');
+/* Do not allow MTU changes for interfaces in a bridge */
+if ($bridged) {
+	$mtuInput->setDisabled();
+	$mtuInput->setHelp('This interface is a bridge member, its MTU is ' .
+					   'controlled by its parent bridge interface');
+	$mtuInput->setPlaceholder(get_interface_mtu($bridged));
+	$mtuInput->setValue(null);
+}
 
 $section->addInput(new Form_Input(
 	'mss',
@@ -2017,8 +2051,8 @@ if (count($mediaopts_list) > 0) {
 	$section->addInput(new Form_Select(
 		'mediaopt',
 		'Speed and Duplex',
-		rtrim($config['interfaces'][$if]['media'] . ' ' . $config['interfaces'][$if]['mediaopt']),
-		build_mediaopts_list()
+		rtrim(config_get_path("interfaces/{$if}/media", "") . ' ' . config_get_path("interfaces/{$if}/mediaopt")),
+		build_mediaopts_list() 
 	))->setHelp('Explicitly set speed and duplex mode for this interface.%s' .
 				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.', '<br />');
 }
@@ -2725,7 +2759,7 @@ function build_ipv6interface_list() {
 	$dynv6ifs = array();
 
 	foreach ($interfaces as $iface => $ifacename) {
-		switch ($config['interfaces'][$iface]['ipaddrv6']) {
+		switch (config_get_path("interfaces/{$iface}/ipaddrv6")) {
 			case "6to4":
 			case "6rd":
 			case "dhcp6":
@@ -2934,17 +2968,17 @@ $group->add(new Form_Input(
 	'pppoe_resethour',
 	null,
 	'number',
-	$pconfig['pppoe_resethour'],
+	(strlen($pconfig['pppoe_resethour']) > 0) ? $pconfig['pppoe_resethour'] : "0",
 	['min' => 0, 'max' => 23]
-))->setHelp('Hour (0-23)');
+))->setHelp('Hour (0-23), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetminute',
 	null,
 	'number',
-	$pconfig['pppoe_resetminute'],
+	(strlen($pconfig['pppoe_resetminute']) > 0) ? $pconfig['pppoe_resetminute'] : "0",
 	['min' => 0, 'max' => 59]
-))->setHelp('Minutes (0-59)');
+))->setHelp('Minute (0-59), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetdate',

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -146,7 +146,7 @@ display_top_tabs($tab_array);
 	<?php print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q '.
 		'VLAN tagging properly. %1$sOn cards that do not explicitly support it, VLAN '.
 		'tagging will still work, but the reduced MTU may cause problems.%1$sSee the '.
-		'%2$s handbook for information on supported cards.'), '<br />', $g['product_label']), 'info', false); ?>
+		'%2$s handbook for information on supported cards.'), '<br />', g_get('product_label')), 'info', false); ?>
 </div>
 
 <?php

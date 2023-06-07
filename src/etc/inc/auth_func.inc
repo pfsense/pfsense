@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
  * Copyright (c) 2008 Shrew Soft Inc
@@ -25,6 +25,8 @@
  * limitations under the License.
  */
 
+require_once('globals.inc');
+
 /*
  * Function put in separate file to avoid processing priv.inc which is cpu intensive
  * cmp_page_matches is used by both auth_check.inc and priv.inc which is used by guiconfig.inc
@@ -41,7 +43,7 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 	}
 
 	list($file, $query) = explode('?', $page);
-	$file = realpath( $g['www_path'] . '/' . ltrim($file, '/'));
+	$file = realpath( g_get('www_path') . '/' . ltrim($file, '/'));
 	if (empty($file)) {
 		/* File does not exist, or other path shenanigans */
 
@@ -56,7 +58,7 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 		/* Tried to query a path that does not exist */
 		return false;
 	}
-	$page = str_replace($g['www_path'] . '/', '', $file);
+	$page = str_replace(g_get('www_path') . '/', '', $file);
 	$page .= (!empty($query)) ? "?{$query}" : "";
 
 	/* look for a match */

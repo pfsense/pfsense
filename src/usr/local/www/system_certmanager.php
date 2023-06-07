@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -49,6 +49,8 @@ $cert_types = array(
 global $cert_altname_types;
 global $openssl_digest_algs;
 global $cert_strict_values;
+global $p12_encryption_levels;
+
 $max_lifetime = cert_get_max_lifetime();
 $default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = cert_build_curve_list();
@@ -195,19 +197,13 @@ switch ($act) {
 		} else {
 			$password = null;
 		}
-		$args = array();
-		$args['friendly_name'] = $thiscert['descr'];
-		$args['encrypt_key_cipher'] = OPENSSL_CIPHER_AES_256_CBC;
-		$ca = lookup_ca($thiscert['caref']);
-		if ($ca) {
-			/* If the CA can be found, then add the CA to the container */
-			$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
+		if (isset($_POST['p12encryption']) &&
+		    array_key_exists($_POST['p12encryption'], $p12_encryption_levels)) {
+			$encryption = $_POST['p12encryption'];
+		} else {
+			$encryption = 'high';
 		}
-		$res_crt = openssl_x509_read(base64_decode($thiscert['crt']));
-		$res_key = openssl_pkey_get_private(base64_decode($thiscert['prv']));
-		$exp_data = "";
-		openssl_pkcs12_export($res_crt, $exp_data, $res_key, $password, $args);
-		send_user_download('data', $exp_data, "{$thiscert['descr']}.p12");
+		cert_pkcs12_export($thiscert, $encryption, $password, true, 'download');
 		break;
 	default:
 		break;
@@ -232,8 +228,8 @@ if ($_POST['save'] == gettext("Save")) {
 				$input_errors[] = gettext("This signing request does not appear to be valid.");
 			}
 
-			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) && 
-			    ((!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY")) || 
+			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) &&
+			    ((!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY")) ||
 			    (strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "END PRIVATE KEY")) ||
 			    (strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY") && !strstr($_POST['keypaste'], "END EC PRIVATE KEY")))) {
 				$input_errors[] = gettext("This private does not appear to be valid.");
@@ -246,6 +242,10 @@ if ($_POST['save'] == gettext("Save")) {
 			break;
 		case 'edit':
 		case 'import':
+			/* Make sure we do not have invalid characters in the fields for the certificate */
+			if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+				$input_errors[] = gettext("The field 'Descriptive Name' contains invalid characters.");
+			}
 			$pkcs12_data = '';
 			if ($_POST['import_type'] == 'x509') {
 				$reqdfields = explode(" ",
@@ -339,6 +339,13 @@ if ($_POST['save'] == gettext("Save")) {
 
 		/* Input validation for subjectAltNames */
 		foreach ($altnames as $idx => $altname) {
+			/* Skip SAN entries with empty values
+			 * https://redmine.pfsense.org/issues/14183
+			 */
+			if (empty($altname['value'])) {
+				unset($altnames[$idx]);
+				continue;
+			}
 			switch ($altname['type']) {
 				case "DNS":
 					if (!is_hostname($altname['value'], true) || is_ipaddr($altname['value'])) {
@@ -448,7 +455,7 @@ if ($_POST['save'] == gettext("Save")) {
 				$ucert = lookup_cert($pconfig['certref']);
 				if ($ucert && $a_user) {
 					$a_user[$userid]['cert'][] = $ucert['refid'];
-					$savemsg = sprintf(gettext("Added certificate %s to user %s"), $ucert['descr'], $a_user[$userid]['name']);
+					$savemsg = sprintf(gettext("Added certificate %s to user %s"), htmlspecialchars($ucert['descr']), $a_user[$userid]['name']);
 				}
 				unset($cert);
 				break;
@@ -484,13 +491,15 @@ if ($_POST['save'] == gettext("Save")) {
 					}
 					// Add it to the config file
 					$config['cert'][] = $newcert;
-					$savemsg = sprintf(gettext("Signed certificate %s"), $newcert['descr']);
+					$savemsg = sprintf(gettext("Signed certificate %s"), htmlspecialchars($newcert['descr']));
+					unset($act);
 				}
 				unset($cert);
 				break;
 			case 'edit':
 				cert_import($cert, $pconfig['cert'], $pconfig['key']);
-				$savemsg = sprintf(gettext("Edited certificate %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Edited certificate %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			case 'import':
 				/* Import an external certificate+key */
@@ -510,7 +519,8 @@ if ($_POST['save'] == gettext("Save")) {
 					}
 				}
 				cert_import($cert, $pconfig['cert'], $pconfig['key']);
-				$savemsg = sprintf(gettext("Imported certificate %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Imported certificate %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			case 'internal':
 				/* Create an internal certificate */
@@ -554,7 +564,8 @@ if ($_POST['save'] == gettext("Save")) {
 						}
 					}
 				}
-				$savemsg = sprintf(gettext("Created internal certificate %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Created internal certificate %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			case 'external':
 				/* Create a certificate signing request */
@@ -598,7 +609,8 @@ if ($_POST['save'] == gettext("Save")) {
 						}
 					}
 				}
-				$savemsg = sprintf(gettext("Created certificate signing request %s"), $cert['descr']);
+				$savemsg = sprintf(gettext("Created certificate signing request %s"), htmlspecialchars($cert['descr']));
+				unset($act);
 				break;
 			default:
 				break;
@@ -656,13 +668,13 @@ if ($_POST['save'] == gettext("Save")) {
 		$cert['descr'] = $pconfig['descr'];
 		csr_complete($cert, $pconfig['cert']);
 		$thiscert = $cert;
-		$savemsg = sprintf(gettext("Updated certificate signing request %s"), $pconfig['descr']);
+		$savemsg = sprintf(gettext("Updated certificate signing request %s"), htmlspecialchars($pconfig['descr']));
 		write_config($savemsg);
 		pfSenseHeader("system_certmanager.php");
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificates"));
+$pgtitle = array(gettext('System'), gettext('Certificates'), gettext('Certificates'));
 $pglinks = array("", "system_camanager.php", "system_certmanager.php");
 
 if (($act == "new" || ($_POST['save'] == gettext("Save") && $input_errors)) ||
@@ -681,9 +693,9 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
-$tab_array[] = array(gettext("Certificates"), true, "system_certmanager.php");
-$tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
+$tab_array[] = array(gettext('Authorities'), false, 'system_camanager.php');
+$tab_array[] = array(gettext('Certificates'), true, 'system_certmanager.php');
+$tab_array[] = array(gettext('Certificate Revocation'), false, 'system_crlmanager.php');
 display_top_tabs($tab_array);
 
 if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save")) && $input_errors)) {
@@ -705,6 +717,15 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			null,
 			'hidden',
 			$id
+		));
+	}
+
+	if ($act) {
+		$form->addGlobal(new Form_Input(
+			'act',
+			null,
+			'hidden',
+			$act
 		));
 	}
 
@@ -734,7 +755,10 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'*Descriptive name',
 		'text',
 		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
-	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse');
+	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse')
+	->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
+		'This name can contain spaces but it cannot contain any of the ' .
+		'following characters: %s', '<br/>', "?, >, <, &, /, \, \", '");
 
 	if (!empty($pconfig['cert'])) {
 		$section->addInput(new Form_StaticText(
@@ -800,7 +824,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'keypaste',
 		'Key data',
 		$pconfig['keypaste']
-	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in %1$s', $g['product_label']);
+	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in %1$s', g_get('product_label'));
 
 	$section->addInput(new Form_Input(
 		'csrsign_lifetime',
@@ -892,6 +916,13 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			null,
 			['placeholder' => gettext('Export Password'), 'autocomplete' => 'new-password']
 		))->setHelp('Enter the password to use when using the export buttons below (not stored)')->addClass('toggle-edit collapse');
+		$section->addInput(new Form_Select(
+		'p12encryption',
+		'PKCS#12 Encryption',
+		'high',
+		$p12_encryption_levels
+		))->setHelp('Select the level of encryption to use when exporting a PKCS#12 archive. ' .
+				'Encryption support varies by Operating System and program');
 	}
 
 	$form->add($section);
@@ -1127,10 +1158,10 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
-		if (is_array($config['system']['user'][$userid]['cert'])) { // Could be MIA!
-			if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert'])) {
-				continue;
-			}
+
+		if (isset($userid) &&
+		    in_array($cert['refid'], config_get_path("system/user/{$userid}/cert", []))) {
+			continue;
 		}
 
 		$ca = lookup_ca($cert['caref']);
@@ -1233,7 +1264,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	$section->addInput(new Form_Button(
 		'addrow',
-		'Add',
+		'Add SAN Row',
 		null,
 		'fa-plus'
 	))->addClass('btn-success');
@@ -1268,7 +1299,9 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'*Descriptive name',
 		'text',
 		$pconfig['descr']
-	));
+	))->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
+		'This name can contain spaces but it cannot contain any of the ' .
+		'following characters: %s', '<br/>', "?, >, <, &, /, \, \", '");
 
 	$section->addInput(new Form_Textarea(
 		'csr',
@@ -1402,7 +1435,7 @@ foreach ($a_cert as $cert):
 
 	$ca = lookup_ca($cert['caref']);
 	if ($ca) {
-		$caname = $ca['descr'];
+		$caname = htmlspecialchars($ca['descr']);
 	}
 ?>
 				<tr>
@@ -1455,7 +1488,7 @@ foreach ($a_cert as $cert):
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
 							<?php if ($cert['prv']): ?>
 								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
-								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
+								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
 								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>

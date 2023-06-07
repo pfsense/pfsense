@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -77,11 +77,11 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		if (isset($pconfig['enable'])) {
-			$config['igmpproxy']['enable'] = true;
+			config_set_path('igmpproxy/enable', true);
 		} else {
-			unset($config['igmpproxy']['enable']);
+			config_del_path('igmpproxy/enable');
 		}
-		$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
+		config_set_path('syslog/igmpxverbose', $_POST['igmpxverbose'] ? true : false);
 		write_config("IGMP Proxy settings saved");
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");

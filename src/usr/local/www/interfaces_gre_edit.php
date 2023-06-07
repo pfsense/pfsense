@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -245,7 +245,7 @@ $group->add(new Form_IpAddress(
 	'*Remote Tunnel Address',
 	$pconfig['tunnel-remote-addr'],
 	'V4'
-))->setHelp('Remote IPv4 address address.');
+))->setHelp('Remote IPv4 tunnel address.');
 
 $group->add(new Form_Select(
 	'tunnel-remote-net',
@@ -270,7 +270,7 @@ $group->add(new Form_IpAddress(
 	'*Remote Tunnel address',
 	$pconfig['tunnel-remote-addr6'],
 	'V6'
-))->setHelp('Remote IPv6 address address.');
+))->setHelp('Remote IPv6 tunnel address.');
 
 $group->add(new Form_Select(
 	'tunnel-remote-net6',

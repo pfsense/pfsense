@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -36,7 +36,7 @@ if (!function_exists('platform_booting')) {
 // Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels
 // the parser needs quite a bit of ram.   Do not remove this line unless you
 // know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
-if (!$ARCH) {
+if (!isset($ARCH)) {
 	$ARCH = php_uname("m");
 }
 
@@ -52,11 +52,7 @@ require_once("notices.inc");
 require_once("util.inc");
 require_once("Net/IPv6.php");
 require_once('config.lib.inc');
-if (file_exists("/cf/conf/use_xmlreader")) {
-	require_once("xmlreader.inc");
-} else {
-	require_once("xmlparse.inc");
-}
+require_once("xmlparse.inc");
 require_once("crypt.inc");
 
 /* if /debugging exists, lets set $debugging
@@ -67,7 +63,7 @@ if (file_exists("/debugging")) {
 }
 
 if (platform_booting(true) &&
-    !file_exists($g['cf_conf_path'] . "/config.xml")) {
+    !file_exists(g_get('cf_conf_path') . "/config.xml")) {
 	echo ".";
 	/* find the device where config.xml resides and write out an fstab */
 	unset($cfgdevice);
@@ -141,14 +137,15 @@ if (platform_booting(true) &&
 	echo ".";
 }
 
+global $config;
 $config = parse_config();
 
 /* set timezone */
 if (isset($config['system']['timezone']) &&
     !empty($config['system']['timezone'])) {
-	$timezone = $config['system']['timezone'];
-} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-	$timezone = $g['default_timezone'];
+	$timezone = config_get_path('system/timezone');
+} elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+	$timezone = g_get('default_timezone');
 } else {
 	$timezone = "Etc/UTC";
 }

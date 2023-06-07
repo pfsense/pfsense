@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -51,21 +51,12 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 	reorderNATrules($_POST);
 } else if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
 	$retval = applyNATrules();
-} else if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) {
-	if ($a_nat[$_POST['id']]) {
+} else if (($_POST['act'] == "del" || isset($_POST['del_x'])) && have_natpfruleint_access($natent['interface'])) {
+	if ($a_nat[$_POST['id']] || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		deleteNATrule($_POST);
 	}
-} else if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
-	/* delete selected rules */
-	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		deleteMultipleNATrules($_POST);
-	}
-} else if (isset($_POST['toggle_x']) && have_natpfruleint_access($natent['interface'])) {
-	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		toggleMultipleNATrules($_POST);
-	}
-} elseif (($_POST['act'] == "toggle") && have_natpfruleint_access($natent['interface'])) {
-	if ($a_nat[$_POST['id']]) {
+} elseif (($_POST['act'] == "toggle" || isset($_POST['toggle_x'])) && have_natpfruleint_access($natent['interface'])) {
+	if ($a_nat[$_POST['id']] || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		toggleNATrule($_POST);
 	}
 }

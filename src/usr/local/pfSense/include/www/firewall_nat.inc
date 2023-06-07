@@ -3,7 +3,7 @@
  * firewall_nat.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,26 +82,24 @@ function build_dsttype_list($json = false) {
 
 	//Temporary array so we can sort IPs
 	$templist = array();
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $sn) {
-			if ((($sn['mode'] == "proxyarp") || ($sn['mode'] == "other")) &&
-			    ($sn['type'] == "network") && is_subnetv4($sn['subnet'] . "/" . $sn['subnet_bits'])) {
-				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-				if (isset($sn['noexpand'])) {
-					continue;
-				}
-				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
-
-				for ($i = 0; $i <= $len; $i++) {
-					$snip = long2ip32($start+$i);
-
-					$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
-				}
-			} else {
-				$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+	foreach (config_get_path('virtualip/vip', []) as $sn) {
+		if ((($sn['mode'] == "proxyarp") || ($sn['mode'] == "other")) &&
+			($sn['type'] == "network") && is_subnetv4($sn['subnet'] . "/" . $sn['subnet_bits'])) {
+			$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+			if (isset($sn['noexpand'])) {
+				continue;
 			}
+			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+			$len = $end - $start;
+
+			for ($i = 0; $i <= $len; $i++) {
+				$snip = long2ip32($start+$i);
+
+				$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
+			}
+		} else {
+			$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 		}
 	}
 
@@ -517,8 +515,7 @@ function saveNATrule($post, $id, $json = false) {
 
 		if (!isset($natent['nordr'])) {
 			$natent['target'] = $post['localip'];
-			if (($natent['protocol'] == 'tcp') ||
-			    ($natent['protocol'] == 'udp')) {
+			if (in_array($natent['protocol'], array("tcp", "udp", "tcp/udp"))) {
 				$natent['local-port'] = $post['localbeginport'];
 			}
 		}
@@ -546,7 +543,7 @@ function saveNATrule($post, $id, $json = false) {
 		// If we used to have an associated filter rule, but no-longer should have one
 		if (!empty($a_nat[$id]) && (empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'])) {
 			// Delete the previous rule
-			delete_id($a_nat[$id]['associated-rule-id'], $config['filter']['rule']);
+			delete_id($a_nat[$id]['associated-rule-id']);
 			if (!$json) {
 				mark_subsystem_dirty('filter');
 			}
@@ -595,8 +592,14 @@ function saveNATrule($post, $id, $json = false) {
 			$filterent['protocol'] = $post['proto'];
 			if (is_specialnet($post['localtype'])) {
 				$filterent['destination']['network'] = $post['localtype'];
+				if (isset($filterent['destination']['address'])) {
+					unset($filterent['destination']['address']);
+				}
 			} else {
 				$filterent['destination']['address'] = $post['localip'];
+				if (isset($filterent['destination']['network'])) {
+					unset($filterent['destination']['network']);
+				}
 			}
 
 			if (isset($post['disabled'])) {
@@ -604,11 +607,16 @@ function saveNATrule($post, $id, $json = false) {
 			}
 
 			$dstpfrom = $post['localbeginport'];
-			$dstpto = (int) $dstpfrom + (int) $post['dstendport'] - (int) $post['dstbeginport'];
+			
+			/*
+			 * See Redmine #13601
+			 * If $dstpfrom is an alias, we want $dstpto to be an alias as well... 
+			 */
+			$dstpto = is_alias($dstpfrom) ? $dstpfrom : ((int) $dstpfrom + (int) $post['dstendport'] - (int) $post['dstbeginport']);
 
 			if ($dstpfrom == $dstpto) {
 				$filterent['destination']['port'] = $dstpfrom;
-			} else {
+			} elseif (is_port($dstpfrom) && is_port($dstpto)) {
 				$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
 			}
 
@@ -621,6 +629,9 @@ function saveNATrule($post, $id, $json = false) {
 			// If this is a new rule, create an ID and add the rule
 			if ($post['filter-rule-association'] == 'add-associated') {
 				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
+				if ($natent['nosync']) {
+					$filterent['nosync'] = true;
+				}
 				$filterent['tracker'] = (int)microtime(true);
 				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
 				$config['filter']['rule'][] = $filterent;
@@ -647,9 +658,7 @@ function saveNATrule($post, $id, $json = false) {
 			if (isset($natent['associated-rule-id']) &&
 			    (isset($a_nat[$id]['disabled']) !== isset($natent['disabled']))) {
 				// Check for filter rule associations
-				toggle_id($natent['associated-rule-id'],
-				    $config['filter']['rule'],
-				    !isset($natent['disabled']));
+				toggle_id($natent['associated-rule-id'], !isset($natent['disabled']));
 				
 				if (!$json) {
 					mark_subsystem_dirty('filter');
@@ -687,146 +696,107 @@ function saveNATrule($post, $id, $json = false) {
 }
 
 function toggleNATrule($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'rule'));
-	$a_nat = &$config['nat']['rule'];
-	init_config_arr(array('nat', 'separator'));
-	$a_separators = &$config['nat']['separator'];
-
-	if (isset($a_nat[$post['id']]['disabled'])) {
-		unset($a_nat[$post['id']]['disabled']);
-		$rule_status = true;
-	} else {
-		$a_nat[$post['id']]['disabled'] = true;
-		$rule_status = false;
+	// Check for single rule
+	if (!(is_array($post['rule']) && count($post['rule']))) {
+		$post['rule'] = array( $post['id'] => $post['id'] );
 	}
 
-	// Check for filter rule associations
-	if (isset($a_nat[$post['id']]['associated-rule-id'])) {
-		toggle_id($a_nat[$post['id']]['associated-rule-id'],
-		    $config['filter']['rule'], $rule_status);
-		unset($rule_status);
+	foreach ($post['rule'] as $rulei) {
+		if (config_path_enabled("nat/rule/{$rulei}", 'disabled')) {
+			config_del_path("nat/rule/{$rulei}/disabled");
+			$rule_status = true;
+		} else {
+			config_set_path("nat/rule/{$rulei}/disabled", true);
+			$rule_status = false;
+		}
 
-		if(!$json) {
-			mark_subsystem_dirty('filter');
+		// Check for filter rule associations
+		$associated_rule_id = config_get_path("nat/rule/{$rulei}/associated-rule-id");
+
+		if ($associated_rule_id != null) {
+			toggle_id($associated_rule_id, $rule_status);
+			unset($rule_status);
+			$want_dirty_filter = true;
 		}
 	}
 
-	if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
+	if (count($post['rule']) == 1) {
+		$action = config_path_enabled("nat/rule/{$post['rule'][0]}", "disabled") ? "disabled":"enabled";
+		$write_ret = write_config(gettext("Firewall: NAT: Port forward - {$action} a NAT rule"));
+	} else if (count($post['rule']) > 1) {
+		$write_ret = write_config(gettext("Firewall: NAT: Port forward - enable/disable for selected NAT rules"));
+	}
+
+	if ($write_ret) {
 		if (!$json) {
 			mark_subsystem_dirty('natconf');
-		}
-	}
-
-	if(!$json) {
-		header("Location: firewall_nat.php");
-		exit;
-	} else {
-		$a_nat = &$config['nat']['rule'];
-		return isset($a_nat[$post['id']]['disabled']) ? "disabled":"enabled";
-	}
-}
-
-function toggleMultipleNATrules($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'rule'));
-	$a_nat = &$config['nat']['rule'];
-
-	foreach ($post['rule'] as $rulei) {
-		if (isset($a_nat[$rulei]['disabled'])) {
-			unset($a_nat[$rulei]['disabled']);
-		} else {
-			$a_nat[$rulei]['disabled'] = true;
-		}
-	}
-
-	if (write_config(gettext("Firewall: NAT: Port forward, enable/disable multiple NAT rule"))) {
-		if ($json) {
-			filter_configure();
-		} else {
-			mark_subsystem_dirty('natconf');
-			header("Location: firewall_nat.php");
-			exit;
-		}
-	}
-}
-
-function deleteMultipleNATrules($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'rule'));
-	$a_nat = &$config['nat']['rule'];
-	init_config_arr(array('nat', 'separator'));
-	$a_separators = &$config['nat']['separator'];
-
-	$first_idx = 0;
-	$num_deleted = 0;
-
-	foreach ($post['rule'] as $rulei) {
-		// Check for filter rule associations
-		if (isset($a_nat[$rulei]['associated-rule-id'])) {
-			delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
-			if (!$json) {
+			if ($want_dirty_filter) {
 				mark_subsystem_dirty('filter');
 			}
-		}
-
-		unset($a_nat[$rulei]);
-
-		// Capture first changed filter index for later separator shifting
-		if (!$first_idx) {
-			$first_idx = $rulei;
-		}
-
-		$num_deleted++;
-	}
-
-	if ($num_deleted) {
-		move_separators($a_separators, $first_idx, -$num_deleted);
-		if (write_config("NAT: Rule deleted")) {
-			if ($json) {
-				filter_configure();
+			header("Location: firewall_nat.php");
+			exit;
+		} else {
+			if (isset($post['id'])) {
+				return $action;
 			} else {
-				mark_subsystem_dirty('natconf');
+				filter_configure();
 			}
 		}
-	}
-
-	if(!$json) {
-		header("Location: firewall_nat.php");
-		exit;
 	}
 }
 
 function deleteNATrule($post, $json = false) {
 	global $config;
 
-	init_config_arr(array('nat', 'rule'));
-	$a_nat = &$config['nat']['rule'];
 	init_config_arr(array('nat', 'separator'));
 	$a_separators = &$config['nat']['separator'];
 
-	if (isset($a_nat[$post['id']]['associated-rule-id'])) {
-		delete_id($a_nat[$post['id']]['associated-rule-id'], $config['filter']['rule']);
-		$want_dirty_filter = true;
+	// Check for single rule
+	if (!(is_array($post['rule']) && count($post['rule']))) {
+		$post['rule'] = array( $post['id'] => $post['id'] );
 	}
 
-	unset($a_nat[$post['id']]);
+	$num_deleted = 0;
 
-	// Update the separators
-	$ridx = $post['id'];
-	$mvnrows = -1;
-	move_separators($a_separators, $ridx, $mvnrows);
+	foreach ($post['rule'] as $rulei) {
+		$associated_rule_id = config_get_path("nat/rule/{$rulei}/associated-rule-id");
 
-	if (write_config("NAT: Rule deleted")) {
-		if ($json) {
-			filter_configure();
+		if ($associated_rule_id != null) {
+			delete_id($associated_rule_id);
+			$want_dirty_filter = true;
+		}
+
+		config_del_path("/nat/rule/{$rulei}");
+
+		// Update the separators
+		// As rules are deleted, $ridx has to be decremented or separator position will break
+		if (count($post['rule']) == 1) { // Need special handling of single rule deletion
+			$ridx = $rulei;
 		} else {
-			mark_subsystem_dirty('natconf');
-			if ($want_dirty_filter) {
-				mark_subsystem_dirty('filter');
+			$ridx = $rulei - $num_deleted;
+		}
+
+		$mvnrows = -1;
+		move_separators($a_separators, $ridx, $mvnrows);
+
+		$num_deleted++;
+	}
+
+	if ($num_deleted) {
+		if ($num_deleted == 1) {
+			$write_ret = write_config("Firewall: NAT: Port forward - rule deleted");
+		} else {
+			$write_ret = write_config("Firewall: NAT: Port forward - Multiple rules deleted");
+		}
+
+		if ($write_ret) {
+			if ($json) {
+				filter_configure();
+			} else {
+				mark_subsystem_dirty('natconf');
+				if ($want_dirty_filter) {
+					mark_subsystem_dirty('filter');
+				}
 			}
 		}
 	}
@@ -852,7 +822,7 @@ function applyNATrules() {
 	return $retval;
 }
 
-// Re-order the NAT rules per the array of iindicies passed in $post
+// Re-order the NAT rules per the array of indices passed in $post
 function reorderNATrules($post, $json = false) {
 	global $config;
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -116,7 +116,7 @@ display_top_tabs($tab_array);
 							}
 							ksort($priority_arr);
 							$p = 1;
-							foreach ($priority_arr as $number => $tier) {
+							foreach ($priority_arr as $tier) {
 								/* for each priority process the gateways */
 								foreach ($tier as $member) {
 									/* we always have $priority_count fields */

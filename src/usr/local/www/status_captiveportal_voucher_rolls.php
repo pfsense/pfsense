@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -88,11 +88,11 @@ display_top_tabs($tab_array);
 		</thead>
 		<tbody>
 <?php
-			$voucherlck = lock("vouche{$cpzone}r");
+			$voucherlck = lock("voucher{$cpzone}");
 			$i = 0;
 			foreach ($a_roll as $rollent):
 				$used = voucher_used_count($rollent['number']);
-				$active = count(voucher_read_active_db($rollent['number']), $rollent['minutes']);
+				$active = count(voucher_read_active_db($rollent['number']));
 				$ready = $rollent['count'] - $used;
 				/* used also count active vouchers, remove them */
 				$used = $used - $active;

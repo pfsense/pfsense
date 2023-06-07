@@ -3,7 +3,7 @@
  * system_advanced_notifications.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,18 +46,18 @@ function getAdvancedNotifications($json = false) {
     	$nconfig['revoked_cert_ignore_notify'] = ($config['notifications']['certexpire']['ignore_revoked'] == "enabled");
 
 	if ($config['notifications']['certexpire']['expiredays']) {
-		$nconfig['certexpiredays'] = $config['notifications']['certexpire']['expiredays'];
+		$nconfig['certexpiredays'] = config_get_path('notifications/certexpire/expiredays');
 	}
 
 	// SMTP
 	$nconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
 
 	if ($config['notifications']['smtp']['ipaddress']) {
-		$nconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
+		$nconfig['smtpipaddress'] = config_get_path('notifications/smtp/ipaddress');
 	}
 
 	if ($config['notifications']['smtp']['port']) {
-		$nconfig['smtpport'] = $config['notifications']['smtp']['port'];
+		$nconfig['smtpport'] = config_get_path('notifications/smtp/port');
 	}
 
 	$nconfig['smtpssl'] = isset($config['notifications']['smtp']['ssl']);
@@ -65,59 +65,60 @@ function getAdvancedNotifications($json = false) {
 	$nconfig['sslvalidate'] = ($config['notifications']['smtp']['sslvalidate'] != "disabled");
 
 	if (!empty($config['notifications']['smtp']['timeout'])) {
-		$nconfig['smtptimeout'] = $config['notifications']['smtp']['timeout'];
+		$nconfig['smtptimeout'] = config_get_path('notifications/smtp/timeout');
 	}
 
 	if ($config['notifications']['smtp']['notifyemailaddress']) {
-		$nconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
+		$nconfig['smtpnotifyemailaddress'] = config_get_path('notifications/smtp/notifyemailaddress');
 	}
 
 	if ($config['notifications']['smtp']['username']) {
-		$nconfig['smtpusername'] = $config['notifications']['smtp']['username'];
+		$nconfig['smtpusername'] = config_get_path('notifications/smtp/username');
 	}
 
 	if ($config['notifications']['smtp']['password']) {
-		$nconfig['smtppassword'] = $config['notifications']['smtp']['password'];
+		$nconfig['smtppassword'] = config_get_path('notifications/smtp/password');
 	}
 
 	if ($config['notifications']['smtp']['authentication_mechanism']) {
-		$nconfig['smtpauthmech'] = $config['notifications']['smtp']['authentication_mechanism'];
+		$nconfig['smtpauthmech'] = config_get_path('notifications/smtp/authentication_mechanism');
 	}
 
 	if ($config['notifications']['smtp']['fromaddress']) {
-		$nconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
+		$nconfig['smtpfromaddress'] = config_get_path('notifications/smtp/fromaddress');
 	}
 
 	// System Sounds
+	$nconfig['consolebell'] = config_get_path('system/consolebell', 'enabled');
 	$nconfig['disablebeep'] = isset($config['system']['disablebeep']);
 
 	// Telegram
 	$nconfig['enable_telegram'] = isset($config['notifications']['telegram']['enabled']);
 
 	if ($config['notifications']['telegram']['api']) {
-		$nconfig['api'] = $config['notifications']['telegram']['api'];
+		$nconfig['api'] = config_get_path('notifications/telegram/api');
 	}
 
 	if ($config['notifications']['telegram']['chatid']) {
-		$nconfig['chatid'] = $config['notifications']['telegram']['chatid'];
+		$nconfig['chatid'] = config_get_path('notifications/telegram/chatid');
 	}
 	// Pushover
 	$nconfig['enable_pushover'] = isset($config['notifications']['pushover']['enabled']);
 
 	if ($config['notifications']['pushover']['apikey']) {
-		$nconfig['pushoverapikey'] = $config['notifications']['pushover']['apikey'];
+		$nconfig['pushoverapikey'] = config_get_path('notifications/pushover/apikey');
 	}
 
 	if ($config['notifications']['pushover']['userkey']) {
-		$nconfig['pushoveruserkey'] = $config['notifications']['pushover']['userkey'];
+		$nconfig['pushoveruserkey'] = config_get_path('notifications/pushover/userkey');
 	}
 
 	if ($config['notifications']['pushover']['sound']) {
-		$nconfig['pushoversound'] = $config['notifications']['pushover']['sound'];
+		$nconfig['pushoversound'] = config_get_path('notifications/pushover/sound');
 	}
 
 	if ($config['notifications']['pushover']['priority']) {
-		$nconfig['pushoverpriority'] = $config['notifications']['pushover']['priority'];
+		$nconfig['pushoverpriority'] = config_get_path('notifications/pushover/priority');
 	}
 
 	$nconfig['pushoverretry'] = ($config['notifications']['pushover']['retry']) ? $config['notifications']['pushover']['retry'] : 60;
@@ -126,11 +127,11 @@ function getAdvancedNotifications($json = false) {
 	$nconfig['enable_slack'] = isset($config['notifications']['slack']['enabled']);
 
 	if ($config['notifications']['slack']['api']) {
-		$nconfig['slack_api'] = $config['notifications']['slack']['api'];
+		$nconfig['slack_api'] = config_get_path('notifications/slack/api');
 	}
 
 	if ($config['notifications']['slack']['channel']) {
-		$nconfig['slack_channel'] = $config['notifications']['slack']['channel'];
+		$nconfig['slack_channel'] = config_get_path('notifications/slack/channel');
 	}
 
 	return $json? json_encode($nconfig):$nconfig;
@@ -153,7 +154,7 @@ function saveAdvancedNotifications($post, $json = false) {
 		$config['notifications']['certexpire']['enable'] = ($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
 	    	$config['notifications']['certexpire']['ignore_revoked'] = ($post['revoked_cert_ignore_notify'] == "yes") ? "enabled" : "disabled";
 		if (empty($post['certexpiredays'])) {
-			$config['notifications']['certexpire']['expiredays'] = $g['default_cert_expiredays'];
+			$config['notifications']['certexpire']['expiredays'] = g_get('default_cert_expiredays');
 		} elseif (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0)) {
 			$config['notifications']['certexpire']['expiredays'] = $post['certexpiredays'];
 		} else {
@@ -180,7 +181,7 @@ function saveAdvancedNotifications($post, $json = false) {
 		if (isset($post['smtpssl'])) {
 			$config['notifications']['smtp']['ssl'] = true;
 		} else {
-			unset($config['notifications']['smtp']['ssl']);
+			config_del_path('notifications/smtp/ssl');
 		}
 
 		if (isset($post['sslvalidate'])) {
@@ -226,15 +227,23 @@ function saveAdvancedNotifications($post, $json = false) {
 		if ($post['disable_smtp'] == "yes") {
 			$config['notifications']['smtp']['disable'] = true;
 		} else {
-			unset($config['notifications']['smtp']['disable']);
+			config_del_path('notifications/smtp/disable');
 		}
 
 		// System Sounds
+		if ($post['consolebell'] == "yes") {
+			config_set_path('system/consolebell', 'enabled');
+			set_single_sysctl('kern.vt.enable_bell', '1');
+		} else {
+			config_set_path('system/consolebell', 'disabled');
+			set_single_sysctl('kern.vt.enable_bell', '0');
+		}
 		if ($post['disablebeep'] == "yes") {
 			$config['system']['disablebeep'] = true;
 		} else {
-			unset($config['system']['disablebeep']);
+			config_del_path('system/disablebeep');
 		}
+
 		// Telegram
 		$config['notifications']['telegram']['enabled'] = ($post['enable_telegram'] == "yes") ? true : false;
 		$config['notifications']['telegram']['api'] = $post['api'];
@@ -314,7 +323,7 @@ function saveAdvancedNotifications($post, $json = false) {
 			unlink("/var/db/notices_lastmsg.txt");
 		}
 
-		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("SMTP testing e-mail successfully sent");
 			$test_class = 'success';
@@ -325,7 +334,7 @@ function saveAdvancedNotifications($post, $json = false) {
 
 	if ($testtelegram) {
 		// Send test message via telegram
-		$test_result = notify_via_telegram(sprintf(gettext("This is a Telegram test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_telegram(sprintf(gettext("This is a Telegram test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Telegram testing message successfully sent");
 			$test_class = 'success';
@@ -336,7 +345,7 @@ function saveAdvancedNotifications($post, $json = false) {
 
 	if ($testpushover) {
 		// Send test message via pushover
-		$test_result = notify_via_pushover(sprintf(gettext("This is a Pushover test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_pushover(sprintf(gettext("This is a Pushover test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Pushover testing message successfully sent");
 			$test_class = 'success';
@@ -347,7 +356,7 @@ function saveAdvancedNotifications($post, $json = false) {
 
 	if ($testslack) {
 		// Send test message via slack
-		$test_result = notify_via_slack(sprintf(gettext("This is a Slack test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		$test_result = notify_via_slack(sprintf(gettext("This is a Slack test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Slack testing message successfully sent");
 			$test_class = 'success';

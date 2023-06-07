@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -39,11 +39,7 @@ require_once('config.lib.inc');
 require_once("notices.inc");
 require_once("util.inc");
 require_once("Net/IPv6.php");
-if (file_exists("/cf/conf/use_xmlreader")) {
-	require_once("xmlreader.inc");
-} else {
-	require_once("xmlparse.inc");
-}
+require_once("xmlparse.inc");
 require_once("crypt.inc");
 
 /* if /debugging exists, lets set $debugging
@@ -53,14 +49,18 @@ if (file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
+global $config;
 $config = parse_config();
+
+/* make alias table (for faster lookups) */
+alias_make_table();
 
 /* set timezone */
 if (isset($config['system']['timezone']) &&
     !empty($config['system']['timezone'])) {
-	$timezone = $config['system']['timezone'];
-} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-	$timezone = $g['default_timezone'];
+	$timezone = config_get_path('system/timezone');
+} elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+	$timezone = g_get('default_timezone');
 } else {
 	$timezone = "Etc/UTC";
 }

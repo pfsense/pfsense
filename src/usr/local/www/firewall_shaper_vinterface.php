@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,7 +107,7 @@ if ($_GET) {
 			}
 			unset($dummynet_pipe_list);
 			$dummynet_pipe_list = array();
-			unset($config['dnshaper']['queue']);
+			config_del_path('dnshaper/queue');
 			unset($queue);
 			unset($pipe);
 			$can_add = false;
@@ -115,10 +115,10 @@ if ($_GET) {
 			$dontshow = true;
 			foreach ($config['filter']['rule'] as $key => $rule) {
 				if (isset($rule['dnpipe'])) {
-					unset($config['filter']['rule'][$key]['dnpipe']);
+					config_del_path("filter/rule/{$key}/dnpipe");
 				}
 				if (isset($rule['pdnpipe'])) {
-					unset($config['filter']['rule'][$key]['pdnpipe']);
+					config_del_path("filter/rule/{$key}/pdnpipe");
 				}
 			}
 			if (write_config("Traffic Shaper: Reset all")) {

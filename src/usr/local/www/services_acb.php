@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,21 +36,21 @@ $oper_sep = "\|\|";
 $exp_sep = '||';
 
 // Encryption password
-$decrypt_password = $config['system']['acb']['encryption_password'];
+$decrypt_password = config_get_path('system/acb/encryption_password');
 
 // Defined username. Username must be sent lowercase. See Redmine #7127 and Netgate Redmine #163
-$username = strtolower($config['system']['acb']['gold_username']);
-$password = $config['system']['acb']['gold_password'];
+$username = strtolower(config_get_path('system/acb/gold_username'));
+$password = config_get_path('system/acb/gold_password');
 
 // Set hostname
 if ($_REQUEST['hostname']) {
 	$hostname = $_REQUEST['hostname'];
 } else {
-	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$hostname = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 }
 
 // Hostname of local machine
-$myhostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+$myhostname = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 
 if (!$decrypt_password) {
 	Header("Location: /services_acb_settings.php");
@@ -79,12 +79,12 @@ if ($_REQUEST['rmver'] != "") {
 	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/rmbkp");
 	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
 		"&revision=" . urlencode($_REQUEST['rmver']) .
-		"&version=" . $g['product_version'] .
+		"&version=" . g_get('product_version') .
 		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_POST, 3);
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 
@@ -111,12 +111,12 @@ if ($_REQUEST['newver'] != "") {
 	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/getbkp");
 	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
 		"&revision=" . urlencode($_REQUEST['newver']) .
-		"&version=" . $g['product_version'] .
+		"&version=" . g_get('product_version') .
 		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_POST, 3);
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 	$data = curl_exec($curl_session);
@@ -129,41 +129,41 @@ if ($_REQUEST['newver'] != "") {
 	}
 
 	$out = decrypt_data($data, $decrypt_password);
-
-	$pos = stripos($out, "</pfsense>");
-	$data = substr($out, 0, $pos);
-	$data = $data . "</pfsense>\n";
-
-	$fd = fopen("/tmp/config_restore.xml", "w");
-	fwrite($fd, $data);
-	fclose($fd);
-
-	if (strlen($data) < 50) {
-		$input_errors[] = "The decrypted config.xml is under 50 characters, something went wrong. Aborting.";
-	}
-
-	$ondisksha256 = trim(shell_exec("/sbin/sha256 /tmp/config_restore.xml | /usr/bin/awk '{ print $4 }'"));
-	// We might not have a sha256 on file for older backups
-	if ($sha256 != "0" && $sha256 != "") {
-		if ($ondisksha256 != $sha256) {
-			$input_errors[] = "SHA256 values do not match, cannot restore. $ondisksha256 != $sha256";
-		}
-	}
-	if (curl_errno($curl_session)) {
-		/* If an error occurred, log the error in /tmp/ */
-		$fd = fopen("/tmp/acb_restoredebug.txt", "w");
-		fwrite($fd, "https://acb.netgate.com/getbkp" . "" . "action=restore&hostname={$hostname}&revision=" . urlencode($_REQUEST['newver']) . "\n\n");
-		fwrite($fd, $data);
-		fwrite($fd, curl_error($curl_session));
-		fclose($fd);
+	if (!strstr($out, "pfsense") ||
+	    (strlen($out) < 50)) {
+		$out = "Could not decrypt. Different encryption key?";
+		$input_errors[] = "Could not decrypt config.xml. Check the encryption key and try again: {$out}";
 	} else {
-		curl_close($curl_session);
-	}
+		$pos = stripos($out, "</pfsense>");
+		$data = substr($out, 0, $pos);
+		$data = $data . "</pfsense>\n";
 
-	if (!$input_errors && $data) {
-		if (config_restore("/tmp/config_restore.xml") == 0) {
-			$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
-			$savemsg .= <<<EOF
+		$fd = fopen("/tmp/config_restore.xml", "w");
+		fwrite($fd, $data);
+		fclose($fd);
+
+		$ondisksha256 = trim(shell_exec("/sbin/sha256 /tmp/config_restore.xml | /usr/bin/awk '{ print $4 }'"));
+		// We might not have a sha256 on file for older backups
+		if ($sha256 != "0" && $sha256 != "") {
+			if ($ondisksha256 != $sha256) {
+				$input_errors[] = "SHA256 values do not match, cannot restore. $ondisksha256 != $sha256";
+			}
+		}
+		if (curl_errno($curl_session)) {
+			/* If an error occurred, log the error in /tmp/ */
+			$fd = fopen("/tmp/acb_restoredebug.txt", "w");
+			fwrite($fd, "https://acb.netgate.com/getbkp" . "" . "action=restore&hostname={$hostname}&revision=" . urlencode($_REQUEST['newver']) . "\n\n");
+			fwrite($fd, $data);
+			fwrite($fd, curl_error($curl_session));
+			fclose($fd);
+		} else {
+			curl_close($curl_session);
+		}
+
+		if (!$input_errors && $data) {
+			if (config_restore("/tmp/config_restore.xml") == 0) {
+				$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
+				$savemsg .= <<<EOF
 			<br />
 		<form action="diag_reboot.php" method="post">
 			Reboot the firewall to full activate changes?
@@ -171,13 +171,14 @@ if ($_REQUEST['newver'] != "") {
 			<input name="Submit" type="submit" class="formbtn" value=" Yes " />
 		</form>
 EOF;
+			} else {
+				$savemsg = "Unable to revert to the selected configuration.";
+			}
 		} else {
-			$savemsg = "Unable to revert to the selected configuration.";
+			log_error("There was an error when restoring the AutoConfigBackup item");
 		}
-	} else {
-		log_error("There was an error when restoring the AutoConfigBackup item");
+		unlink_if_exists("/tmp/config_restore.xml");
 	}
-	unlink_if_exists("/tmp/config_restore.xml");
 }
 
 if ($_REQUEST['download']) {
@@ -190,7 +191,7 @@ if ($_REQUEST['download']) {
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 	$data = curl_exec($curl_session);
@@ -222,7 +223,7 @@ if ($_REQUEST['download']) {
 		$data = decrypt_data($data, $decrypt_password);
 		if (!strstr($data, "pfsense")) {
 			$data = "Could not decrypt. Different encryption key?";
-			$input_errors[] = "Could not decrypt config.xml";
+			$input_errors[] = "Could not decrypt config.xml. Check the encryption key and try again.";
 		}
 	}
 }
@@ -236,13 +237,13 @@ if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable()) {
 	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/list");
 	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
 		"&uid=eb6a4e6f76c10734b636" .
-		"&version=" . $g['product_version'] .
+		"&version=" . g_get('product_version') .
 		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_POST, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 
@@ -412,6 +413,10 @@ print('</div>');
 
 			<?php
 				$counter = 0;
+				if (config_get_path('system/acb/reverse') == "yes"){
+					$confvers = array_reverse($confvers);
+				}
+
 				foreach ($confvers as $cv):
 			?>
 					<tr>

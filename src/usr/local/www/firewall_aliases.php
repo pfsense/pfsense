@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,9 +37,6 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("alias-utils.inc");
-
-init_config_arr(array('aliases', 'alias'));
-$a_aliases = &$config['aliases']['alias'];
 
 $tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/", "", $_REQUEST['tab']));
 
@@ -114,9 +111,13 @@ display_top_tabs($tab_array);
 	</thead>
 	<tbody>
 <?php
-	asort($a_aliases);
-	foreach ($a_aliases as $i => $alias):
-		unset ($show_alias);
+	/* Ensure aliases are presented in natural sort order so they are easier to locate.
+	 * and preserve keys so that the IDs match in the config and the list.
+	 * https://redmine.pfsense.org/issues/14015 */
+	$aliases = get_sorted_aliases();
+
+	foreach ($aliases as $i => $alias):
+		unset($show_alias);
 		switch ($tab) {
 		case "all":
 			$show_alias= true;

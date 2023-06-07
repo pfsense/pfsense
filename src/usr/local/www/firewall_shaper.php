@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,7 +95,6 @@ if ($_GET) {
 
 		header("Location: firewall_shaper.php");
 		exit;
-		break;
 	case "resetall":
 		foreach ($altq_list_queues as $altq) {
 			$altq->delete_all();
@@ -105,7 +104,7 @@ if ($_GET) {
 		$tree = "<ul class=\"tree\" >";
 		$tree .= get_interface_list_to_show();
 		$tree .= "</ul>";
-		unset($config['shaper']['queue']);
+		config_del_path('shaper/queue');
 		unset($queue);
 		unset($altq);
 		$can_add = false;
@@ -113,11 +112,11 @@ if ($_GET) {
 		$dontshow = true;
 		foreach ($config['filter']['rule'] as $key => $rule) {
 			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-				unset($config['filter']['rule'][$key]);
+				config_del_path("filter/rule/{$key}");
 			}
 		}
 
-		if (write_config("Traffic Shapper: Reset all")) {
+		if (write_config("Traffic Shaper: Reset all")) {
 			$changes_applied = true;
 			$retval = 0;
 			$retval |= filter_configure();

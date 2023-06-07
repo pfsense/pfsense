@@ -6,7 +6,7 @@
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * Copyright (c) 2010-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -240,7 +240,7 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "export TERM=dumb\n";
 		$rrdupdatesh .= "\n";
-		$rrdupdatesh .= 'echo $$ > ' . $g['varrun_path'] . '/updaterrd.sh.pid';
+		$rrdupdatesh .= 'echo $$ > ' . g_get('varrun_path') . '/updaterrd.sh.pid';
 		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "counter=1\n";
 		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";
@@ -252,8 +252,9 @@ function enable_rrd_graphing() {
 		/* IPsec counters */
 		$ifdescrs['ipsec'] = "IPsec";
 		/* OpenVPN server counters */
-		if (is_array($config['openvpn']['openvpn-server'])) {
-			foreach ($config['openvpn']['openvpn-server'] as $server) {
+		$ovpncfg = config_get_path('openvpn/openvpn-server');
+		if (is_array($ovpncfg)) {
+			foreach ($ovpncfg as $server) {
 				$serverid = "ovpns" . $server['vpnid'];
 				$ifdescrs[$serverid] = "{$server['description']}";
 			}
@@ -378,8 +379,9 @@ function enable_rrd_graphing() {
 					mwexec("$rrdtool update $rrddbpath$ifname$vpnusers N:U");
 				}
 
-				if (is_array($config['openvpn']['openvpn-server'])) {
-					foreach ($config['openvpn']['openvpn-server'] as $server) {
+				$ovpncfg = config_get_path('openvpn/openvpn-server');
+				if (is_array($ovpncfg)) {
+					foreach ($ovpncfg as $server) {
 						if ("ovpns{$server['vpnid']}" == $ifname) {
 							$port = $server['local_port'];
 							$vpnid = $server['vpnid'];
@@ -399,7 +401,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* QUEUES, set up the queues databases */
-			if (($altq_list_queues[$ifname]) && 
+			if (($altq_list_queues[$ifname]) &&
 			    !empty($altq_list_queues[$ifname]->get_queue_list())) {
 				$altq =& $altq_list_queues[$ifname];
 				/* NOTE: Is it worth as its own function?! */
@@ -564,14 +566,15 @@ function enable_rrd_graphing() {
 		}
 
 		/* the pf states gathering function. */
+		$nat_match_pattern = '\(([0-9a-f:.]|\[|\])+\) (\->|<\-)';
 		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "pfctl_si_out=\"` $pfctl -si > /tmp/pfctl_si_out `\"\n";
 		$rrdupdatesh .= "pfctl_ss_out=\"` $pfctl -ss > /tmp/pfctl_ss_out`\"\n";
 		$rrdupdatesh .= "pfrate=\"` cat /tmp/pfctl_si_out | egrep \"inserts|removals\" | awk '{ pfrate = \$3 + pfrate } {print pfrate}'|tail -1 `\"\n";
-		$rrdupdatesh .= "pfstates=\"` cat /tmp/pfctl_ss_out | egrep -v \"<\\-.*?<\\-|\\->.*?\\->\" | wc -l|sed 's/ //g'`\"\n";
-		$rrdupdatesh .= "pfnat=\"` cat /tmp/pfctl_ss_out | egrep '<\\-.*?<\\-|\\->.*?\\->' | wc -l|sed 's/ //g' `\"\n";
-		$rrdupdatesh .= "srcip=\"` cat /tmp/pfctl_ss_out | egrep -v '<\\-.*?<\\-|\\->.*?\\->' | grep '\\->' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"\n";
-		$rrdupdatesh .= "dstip=\"` cat /tmp/pfctl_ss_out | egrep -v '<\\-.*?<\\-|\\->.*?\\->' | grep '<\\-' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"\n";
+		$rrdupdatesh .= "pfstates=\"` cat /tmp/pfctl_ss_out | egrep -v '{$nat_match_pattern}' | wc -l|sed 's/ //g'`\"\n";
+		$rrdupdatesh .= "pfnat=\"` cat /tmp/pfctl_ss_out | egrep '{$nat_match_pattern}' | wc -l|sed 's/ //g' `\"\n";
+		$rrdupdatesh .= "srcip=\"` cat /tmp/pfctl_ss_out | egrep -v '{$nat_match_pattern}' | grep '\\->' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"\n";
+		$rrdupdatesh .= "dstip=\"` cat /tmp/pfctl_ss_out | egrep -v '{$nat_match_pattern}' | grep '<\\-' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"\n";
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$states N:\$pfrate:\$pfstates:\$pfnat:\$srcip:\$dstip\n\n";
 
 		/* End pf states statistics */
@@ -614,6 +617,9 @@ function enable_rrd_graphing() {
 			$rrdcreate .= "DS:free:GAUGE:$memvalid:0:10000000 ";
 			$rrdcreate .= "DS:cache:GAUGE:$memvalid:0:10000000 ";
 			$rrdcreate .= "DS:wire:GAUGE:$memvalid:0:10000000 ";
+			$rrdcreate .= "DS:userwire:GAUGE:$memvalid:0:10000000 ";
+			$rrdcreate .= "DS:laundry:GAUGE:$memvalid:0:10000000 ";
+			$rrdcreate .= "DS:buffers:GAUGE:$memvalid:0:10000000 ";
 			$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
 			$rrdcreate .= "RRA:MIN:0.5:5:720 ";
 			$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
@@ -633,13 +639,65 @@ function enable_rrd_graphing() {
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 		if (platform_booting()) {
-			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
+			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U:U:U:U");
 		}
 
-		/* the Memory stats gathering function. */
-		$rrdupdatesh .= "MEM=`$sysctl -qn vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
-		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf ";
-		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n";
+		/* Memory stats gathering function. */
+		$rrdupdatesh .= "MEM=`$sysctl -qn ";
+		/* Total pages */
+		$rrdupdatesh .= "vm.stats.vm.v_page_count ";
+		/* Active pages  */
+		$rrdupdatesh .= "vm.stats.vm.v_active_count ";
+		/* Inactive pages */
+		$rrdupdatesh .= "vm.stats.vm.v_inactive_count ";
+		/* Free pages  */
+		$rrdupdatesh .= "vm.stats.vm.v_free_count ";
+		if (is_module_loaded('zfs.ko')) {
+			/* If the system is using ZFS, use ARC size as "cache" (value is bytes, not pages) */
+			$rrdupdatesh .= "kstat.zfs.misc.arcstats.size ";
+		} else {
+			/* If the system is using UFS, use dirhash memory as "cache" (value is bytes, not pages) */
+			$rrdupdatesh .= "vfs.ufs.dirhash_mem ";
+		}
+		/* Wired pages */
+		$rrdupdatesh .= "vm.stats.vm.v_wire_count ";
+		/* User wired pages */
+		$rrdupdatesh .= "vm.stats.vm.v_user_wire_count ";
+		/* Laundy pages */
+		$rrdupdatesh .= "vm.stats.vm.v_laundry_count ";
+		/* UFS Buffer space (value is in bytes, not pages) */
+		$rrdupdatesh .= "vfs.bufspace ";
+		/* Page size for calculations */
+		$rrdupdatesh .= "hw.pagesize ";
+		$rrdupdatesh .= " | ";
+		/* Start the AWK code */
+		$rrdupdatesh .= " $awk '{";
+		/* Assign sysctl output to named variables */
+		$rrdupdatesh .= "getline active;getline inactive;getline free;getline cache;getline wire;getline userwire;getline laundry;getline buffers;getline pagesize;";
+		/* Divide cache and buffer values by page size so all values are in the same units */
+		$rrdupdatesh .= "cache=(cache/pagesize);buffers=(buffers/pagesize);";
+		/* Start of RRD-friendly output */
+		$rrdupdatesh .= "printf ";
+		/* Calculate values as a percentage of total pages */
+		/* Active pages */
+		$rrdupdatesh .= "((active/$0) * 100)";
+		/* Inactive pages */
+		$rrdupdatesh .= "\":\"((inactive/$0) * 100)";
+		/* Free pages */
+		$rrdupdatesh .= "\":\"((free/$0) * 100)";
+		/* Cache (previously converted to pages) */
+		$rrdupdatesh .= "\":\"((cache/$0) * 100)";
+		/* Wired pages less cache and buffer pages (which are included in wired pages) */
+		$rrdupdatesh .= "\":\"((wire - (cache + buffers))/$0 * 100)";
+		/* User wired pages */
+		$rrdupdatesh .= "\":\"((userwire/$0) * 100)";
+		/* Laundry pages */
+		$rrdupdatesh .= "\":\"((laundry/$0) * 100)";
+		/* UFS Buffer space (previously converted to pages) */
+		$rrdupdatesh .= "\":\"((buffers/$0) * 100)";
+		/* Finish the AWK code */
+		$rrdupdatesh .= "}'`\n";
+		/* Update the database with new values */
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";
 
 		/* End Memory statistics */
@@ -686,7 +744,7 @@ function enable_rrd_graphing() {
 		$unknown = "";
 		$rrdupdateds = "";
 		$rrdsensors = "";
-		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc | /usr/bin/grep temperature | /usr/bin/cut -d':' -f1", $sensors_array);
+		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc dev.pchtherm | /usr/bin/grep temperature | /usr/bin/cut -d':' -f1", $sensors_array);
 
 		if (!empty($sensors_array)) {
 			foreach ($sensors_array as $sensor) {
@@ -866,6 +924,9 @@ function enable_rrd_graphing() {
 		/* Start dhcpd statistics */
 		if (is_array($config['dhcpd'])) {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+				if (empty($dhcpifconf)) {
+					continue;
+				}
 				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {
 					if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
 						$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";

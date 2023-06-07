@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -38,7 +38,7 @@ header("Connection: close");
 global $cpzone, $cpzoneid, $cpzoneprefix;
 
 $cpzone = strtolower($_REQUEST['zone']);
-$cpcfg = $config['captiveportal'][$cpzone];
+$cpcfg = config_get_path("captiveportal/{$cpzone}");
 
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
 $orig_request = trim($_REQUEST['redirurl'], " /");
@@ -178,7 +178,7 @@ if ($_POST['logout_id']) {
 	header("Location: index.php?zone=" . $cpzone);
 	ob_flush();
 	return;
-} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
+} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && !isset($cpcfg['nomacfilter']) && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl'])) {
 		portal_reply_page($cpcfg['blockedmacsurl'], "redir");
@@ -246,7 +246,7 @@ if ($_POST['logout_id']) {
 			$context = 'first';
 		}
 	
-	$pipeno = captiveportal_get_next_dn_ruleno('auth');
+	$pipeno = captiveportal_get_next_dn_ruleno('auth', 2000, 64500, true);
 	/* if the pool is empty, return appropriate message and exit */
 	if (is_null($pipeno)) {
 		$replymsg = gettext("System reached maximum login capacity");
@@ -265,10 +265,8 @@ if ($_POST['logout_id']) {
 	
 	if ($auth_result['result']) {
 		captiveportal_logportalauth($user, $clientmac, $clientip, $auth_result['login_status']);
-		portal_allow($clientip, $clientmac, $user, $passwd, $redirurl, $auth_result['attributes'], $pipeno, $auth_result['auth_method'], $context);
-
+		portal_allow($clientip, $clientmac, $user, $passwd, $redirurl, $auth_result['attributes'], null, $auth_result['auth_method'], $context);
 	} else {
-		captiveportal_free_dn_ruleno($pipeno);
 		$type = "error";
 			
 		if (is_URL($auth_result['attributes']['url_redirection'], true)) {

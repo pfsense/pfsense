@@ -7,14 +7,14 @@ fi
 echo "===> Keeping a copy of current kernel in /boot/kernel.old"
 
 # Check if there is a current kernel to be moved
-if [ ! -f /boot/kernel/kernel.gz ] \
-    && [ ! -f /boot/kernel/kernel ]; then
+if [ ! -f ${PKG_ROOTDIR}/boot/kernel/kernel.gz ] \
+    && [ ! -f ${PKG_ROOTDIR}/boot/kernel/kernel ]; then
 	echo "ERROR: Current kernel not found"
 	exit 1
 fi
 
-[ -d /boot/kernel.old ] \
-	&& rm -rf /boot/kernel.old
+[ -d ${PKG_ROOTDIR}/boot/kernel.old ] \
+	&& rm -rf ${PKG_ROOTDIR}/boot/kernel.old
 
-cp -Rp /boot/kernel /boot/kernel.old
+cp -Rp ${PKG_ROOTDIR}/boot/kernel ${PKG_ROOTDIR}/boot/kernel.old
 exit $?

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -91,12 +91,11 @@ $section->addInput(new Form_Input(
 	'Certificate Expiration Threshold',
 	'number',
 	$pconfig['certexpiredays']
-))->setAttribute('placeholder', $g['default_cert_expiredays'])
+))->setAttribute('placeholder', g_get('default_cert_expiredays'))
   ->setHelp('The number of days at which a certificate lifetime is considered to ' .
-	'be expiring soon and worthy of notification. Default is %d days.', $g['default_cert_expiredays']);
+	'be expiring soon and worthy of notification. Default is %d days.', g_get('default_cert_expiredays'));
 
 $form->add($section);
-
 
 $section = new Form_Section('E-Mail');
 
@@ -201,12 +200,22 @@ $form->add($section);
 $section = new Form_Section('Sounds');
 
 $section->addInput(new Form_Checkbox(
+	'consolebell',
+	'Console Bell',
+	'Enable the console bell',
+	($pconfig['consolebell'] == 'enabled')
+))->setHelp('When checked, emergency console messages, such as from a GUI login, '.
+	'will trigger a bell in connected consoles including serial terminals. ' .
+	'On devices with a speaker, such messages can trigger an audible beep.');
+
+$section->addInput(new Form_Checkbox(
 	'disablebeep',
 	'Startup/Shutdown Sound',
 	'Disable the startup/shutdown beep',
 	$pconfig['disablebeep']
 ))->setHelp('When this is checked, startup and shutdown sounds will no longer '.
-	'play.');
+	'play through the built-in PC speaker. Has no effect on devices without ' .
+	'a speaker.');
 
 $form->add($section);
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -62,8 +62,8 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
-$gui_pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade-GUI.pid';
-$gui_mode = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade-GUI.mode';
+$gui_pidfile = g_get('varrun_path') . '/' . g_get('product_name') . '-upgrade-GUI.pid';
+$gui_mode = g_get('varrun_path') . '/' . g_get('product_name') . '-upgrade-GUI.mode';
 $sock_file = "{$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
 $pfsense_upgrade = "/usr/local/sbin/{$g['product_name']}-upgrade";
 $repos = pkg_list_repos();
@@ -81,11 +81,11 @@ if ($_REQUEST['ajax']) {
 
 	if (isset($_REQUEST['logfilename'])) {
 		if ($_REQUEST['logfilename'] == "UPGR") {
-			$postlog = $g['cf_conf_path'] . '/upgrade_log';
+			$postlog = g_get('cf_conf_path') . '/upgrade_log';
 		}
 
 		if ($_REQUEST['logfilename'] == "PKG") {
-			$postlog = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+			$postlog = g_get('cf_conf_path') . '/pkg_log_' . $pkgname;
 		}
 	}
 
@@ -261,13 +261,13 @@ if (isvalidpid($gui_pidfile) && file_exists($sock_file)) {
 	}
 	switch ($mode) {
 	case 'firmwareupdate':
-		$logfilename = $g['cf_conf_path'] . '/upgrade_log';
+		$logfilename = g_get('cf_conf_path') . '/upgrade_log';
 		$postlog = "UPGR";
 		break;
 	case 'reinstallall':
 		$progbar = false;
 	default:
-		$logfilename = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+		$logfilename = g_get('cf_conf_path') . '/pkg_log_' . $pkgname;
 		$postlog = "PKG";
 	}
 
@@ -288,8 +288,8 @@ if (!empty($_REQUEST['id'])) {
 	if ($_REQUEST['refrbranch']) {
 		foreach ($repos as $repo) {
 			if ($repo['name'] == $_POST['fwbranch']) {
-				$config['system']['pkg_repo_conf_path'] = $repo['path'];
-				pkg_switch_repo($repo['path']);
+				config_set_path('system/pkg_repo_conf_path', $repo['path']);
+				pkg_switch_repo(g_get('pkg_repos_path'), $repo['name']);
 				write_config(gettext("Saved firmware branch setting."));
 				break;
 			}
@@ -368,7 +368,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 <?php
 			elseif ($firmwareupdate):
 ?>
-				<?=sprintf(gettext('Confirmation Required to update %s system.'), $g['product_label'])?>
+				<?=sprintf(gettext('Confirmation Required to update %s system.'), g_get('product_label'))?>
 <?php
 			else:
 ?>
@@ -467,10 +467,10 @@ endif;
 
 if ($_POST) {
 	if ($firmwareupdate) {
-		$logfilename = $g['cf_conf_path'] . '/upgrade_log';
+		$logfilename = g_get('cf_conf_path') . '/upgrade_log';
 		$postlog = "UPGR";
 	} else {
-		$logfilename = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+		$logfilename = g_get('cf_conf_path') . '/pkg_log_' . $pkgname;
 		$postlog = "PKG";
 	}
 }
@@ -665,11 +665,11 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 		if ($another_instance) {
 			$failmsg = gettext(sprintf("Another instance of %s " .
 			    "is running.  Try again later",
-			    $g['product_name'] . "-upgrade"));
+			    g_get('product_name') . "-upgrade"));
 		} elseif (!$start_polling) {
 			/* Remove last line, used to provide return code */
 			unset($log[count($log)-1]);
-			$failmsg = implode($log, "\n");
+			$failmsg = implode("\n", $log);
 			/* Make javascript happy not sending any \n */
 			$failmsg = preg_replace("/\n/", '%%', $failmsg);
 			file_put_contents("/tmp/lala", $failmsg, FILE_APPEND);

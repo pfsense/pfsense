@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -45,7 +45,7 @@ function staticmaps_sort($ifgui) {
 
 require_once('globals.inc');
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }
@@ -112,8 +112,8 @@ if ($_POST['save']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
-			$trackifname = $config['interfaces'][$if]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
+			$trackifname = config_get_path("interfaces/{$if}/track6-interface");
+			$trackcfg = config_get_path("interfaces/{$trackifname}");
 			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
 			if (!Net_IPv6::isInNetmask($_POST['ipaddrv6'], '::', $pdlen)) {
 				$input_errors[] = sprintf(gettext(
@@ -203,33 +203,35 @@ $section->addInput(new Form_Input(
 	'*DUID',
 	'text',
 	$pconfig['duid'],
-	['placeholder' => 'DUID-LLT - ETH -- TIME --- ---- address ---- xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
-))->setHelp('Enter a DUID in the following format: %1$s %2$s', '<br />',
-			'DUID-LLT - ETH -- TIME --- ---- address ---- ' .
-			'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx ---- ' .
-			'xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx');
+	['placeholder' => 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
+))->setHelp('DHCP Unique Identifier (DUID) of a client to match.%1$s%1$s' .
+		'Enter a DUID in the following format: %1$s' .
+		'DUID-LLT - ETH -- TIME --- ---- address ----%1$s' .
+		'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx%1$s' .
+		'xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx', '<br />');
 
 $section->addInput(new Form_Input(
 	'ipaddrv6',
 	'IPv6 address',
 	'text',
 	$pconfig['ipaddrv6']
-))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.%1$s' .
-			'If no IPv6 address is given, one will be dynamically allocated from the pool.', '<br />');
+))->setHelp('IPv6 address to assign this client.%1$s%1$s' .
+		'Address must be outside of the pool. ' .
+		'If no IPv6 address is given, one will be dynamically allocated from the pool.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',
 	'Hostname',
 	'text',
 	$pconfig['hostname']
-))->setHelp('Name of the host, without domain part.');
+))->setHelp('Name of the client host without the domain part.');
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+))->setHelp('A description for administrative reference.');
 
 if ($netboot_enabled) {
 	$section->addInput(new Form_Input(

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -38,72 +38,72 @@ if ($_POST) {
 
 	init_config_arr(array('system', 'firmware'));
 	if ($_POST['disablecheck'] == "yes") {
-		$config['system']['firmware']['disablecheck'] = true;
+		config_set_path('system/firmware/disablecheck', true);
 	} elseif (isset($config['system']['firmware']['disablecheck'])) {
-		unset($config['system']['firmware']['disablecheck']);
+		config_del_path('system/firmware/disablecheck');
 	}
 
 	init_config_arr(array('system', 'gitsync'));
 	if ($_POST['synconupgrade'] == "yes") {
-		$config['system']['gitsync']['synconupgrade'] = true;
+		config_set_path('system/gitsync/synconupgrade', true);
 	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
-		unset($config['system']['gitsync']['synconupgrade']);
+		config_del_path('system/gitsync/synconupgrade');
 	}
 
-	$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
-	$config['system']['gitsync']['branch'] = $_POST['branch'];
+	config_set_path('system/gitsync/repositoryurl', $_POST['repositoryurl']);
+	config_set_path('system/gitsync/branch', $_POST['branch']);
 
 	foreach ($repos as $repo) {
 		if ($repo['name'] == $_POST['fwbranch']) {
-			$config['system']['pkg_repo_conf_path'] = $repo['path'];
+			config_set_path('system/pkg_repo_conf_path', $repo['path']);
 			pkg_switch_repo($repo['path']);
 			break;
 		}
 	}
 
 	if ($_POST['minimal'] == "yes") {
-		$config['system']['gitsync']['minimal'] = true;
+		config_set_path('system/gitsync/minimal', true);
 	} else {
-		unset($config['system']['gitsync']['minimal']);
+		config_del_path('system/gitsync/minimal');
 	}
 
 	if ($_POST['diff'] == "yes") {
-		$config['system']['gitsync']['diff'] = true;
+		config_set_path('system/gitsync/diff', true);
 	} else {
-		unset($config['system']['gitsync']['diff']);
+		config_del_path('system/gitsync/diff');
 	}
 
 	if ($_POST['show_files'] == "yes") {
-		$config['system']['gitsync']['show_files'] = true;
+		config_set_path('system/gitsync/show_files', true);
 	} else {
-		unset($config['system']['gitsync']['show_files']);
+		config_del_path('system/gitsync/show_files');
 	}
 
 	if ($_POST['show_command'] == "yes") {
-		$config['system']['gitsync']['show_command'] = true;
+		config_set_path('system/gitsync/show_command', true);
 	} else {
-		unset($config['system']['gitsync']['show_command']);
+		config_del_path('system/gitsync/show_command');
 	}
 
 	if ($_POST['dryrun'] == "yes") {
-		$config['system']['gitsync']['dryrun'] = true;
+		config_set_path('system/gitsync/dryrun', true);
 	} else {
-		unset($config['system']['gitsync']['dryrun']);
+		config_del_path('system/gitsync/dryrun');
 	}
 
 	if (empty($config['system']['firmware'])) {
-		unset($config['system']['firmware']);
+		config_del_path('system/firmware');
 	}
 	if (empty($config['system']['gitsync'])) {
-		unset($config['system']['gitsync']);
+		config_del_path('system/gitsync');
 	}
 	write_config(gettext("Saved system update settings."));
 
 	$savemsg = gettext("Changes have been saved successfully");
 }
 
-$curcfg = $config['system']['firmware'];
-$gitcfg = $config['system']['gitsync'];
+$curcfg = config_get_path('system/firmware');
+$gitcfg = config_get_path('system/gitsync');
 
 $pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
 $pglinks = array("", "pkg_mgr_install.php?id=firmware", "@self");
@@ -246,7 +246,7 @@ if (file_exists("/usr/local/bin/git")) {
 		isset($gitcfg['dryrun'])
 		))->setHelp('Dry-run only.%1$sNo files copied.', '<br />');
 
-	$group->setHelp('See "playback gitsync --help" in console "PHP Shell + %s tools" for additional information.', $g['product_label']);
+	$group->setHelp('See "playback gitsync --help" in console "PHP Shell + %s tools" for additional information.', g_get('product_label'));
 	$section->add($group);
 
 	$form->add($section);

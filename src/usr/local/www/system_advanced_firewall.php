@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -39,7 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system_advanced_firewall.inc");
 
-// Retrieve furewall settings
+// Retrieve firewall settings
 $pconfig = getSystemAdvancedFirewall();
 $old_maximumtableentries = $pconfig['maximumtableentries'];
 $old_aliasesresolveinterval = $pconfig['aliasesresolveinterval'];
@@ -248,7 +248,7 @@ $section->addInput(new Form_Checkbox(
 	isset($config['system']['disablefilter'])
 ))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
 	'Note: This will also turn off NAT! To only disable NAT, '.
-	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', $g["product_label"], '<br/>', '<a href="firewall_nat_out.php">', '</a>');
+	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', g_get('product_label'), '<br/>', '<a href="firewall_nat_out.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'bypassstaticroutes',
@@ -409,8 +409,8 @@ if (count($config['interfaces']) > 1) {
 
 $section = new Form_Section('State Timeouts (seconds - blank for default)');
 
-foreach ($pftimeouts as $proto => $tm) {
-	foreach ($tm as $type => $item) {
+foreach ($pftimeouts as $tm) {
+	foreach ($tm as $item) {
 		$section->addInput(new Form_Input(
 			$item['keyname'],
 			$item['name'],

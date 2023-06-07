@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,11 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
+/* bring in the Composer autoloader */
+require_once('vendor/autoload.php');
+
+use SimplePie\SimplePie;
+
 if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
 	$user_settings['widgets'][$_POST['widgetkey']]['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
@@ -41,15 +46,15 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 }
 
 if ($user_settings['widgets'][$widgetkey]['rssmaxitems']) {
-	$max_items =  $user_settings['widgets'][$widgetkey]['rssmaxitems'];
+	$max_items =  (int) $user_settings['widgets'][$widgetkey]['rssmaxitems'];
 }
 
 if (is_numeric($user_settings['widgets'][$widgetkey]['rsswidgetheight'])) {
-	$rsswidgetheight =	$user_settings['widgets'][$widgetkey]['rsswidgetheight'];
+	$rsswidgetheight = (int) $user_settings['widgets'][$widgetkey]['rsswidgetheight'];
 }
 
 if (is_numeric($user_settings['widgets'][$widgetkey]['rsswidgettextlength'])) {
-	$rsswidgettextlength =	$user_settings['widgets'][$widgetkey]['rsswidgettextlength'];
+	$rsswidgettextlength = (int) $user_settings['widgets'][$widgetkey]['rsswidgettextlength'];
 }
 
 // Set a default feed if none exists
@@ -87,7 +92,6 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 	}
 	exec("/bin/chmod a+rw /tmp/simplepie/.");
 	exec("/bin/chmod a+rw /tmp/simplepie/cache/.");
-	require_once("simplepie/simplepie.inc");
 	if (!function_exists('textLimit')) {
 		function textLimit($string, $length, $replacer = '...') {
 			if (strlen($string) > $length) {

@@ -8,7 +8,7 @@
  * Copyright (c) 2009 Erik Kristensen
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -190,6 +190,9 @@ system_hostname_configure();
 /* make hosts file */
 system_hosts_generate();
 
+/* disable CARP prior to configuring interfaces */
+enable_carp(false);
+
 /* configure loopback interface */
 interfaces_loopback_configure();
 
@@ -217,13 +220,6 @@ set_pam_auth();
 /* Log the RAM disk restore messages. */
 if (file_exists("/var/log/restore_ramdisk_store.boot")) {
 	exec("/usr/bin/logger -f /var/log/restore_ramdisk_store.boot");
-}
-
-init_config_arr(array('system', 'ssh'));
-if (isset($config['system']['ssh']['enable'])) {
-	echo "Starting Secure Shell Services...";
-	send_event("service reload sshd");
-	echo "done.\n";
 }
 
 /* setup interface microcode which improves tcp/ip speed */
@@ -257,6 +253,14 @@ if (!$debugging) {
 
 /* re-make hosts file after configuring interfaces */
 system_hosts_generate();
+
+/* start sshd */
+init_config_arr(array('system', 'ssh'));
+if (isset($config['system']['ssh']['enable'])) {
+	echo "Starting Secure Shell Services...";
+	send_event("service reload sshd");
+	echo "done.\n";
+}
 
 /* start OpenVPN server & clients */
 echo "Syncing OpenVPN settings...";
@@ -463,8 +467,11 @@ if (file_exists("{$g['conf_path']}/needs_package_sync")) {
 system_syslogd_start();
 
 /* done */
-unset($g['booting']);
+$g['booting'] = false;
 @unlink("{$g['varrun_path']}/booting");
+
+/* re-enable CARP */
+enable_carp();
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {

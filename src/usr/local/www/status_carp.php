@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,7 +74,7 @@ if ($_POST['disablecarp'] != "") {
 	init_config_arr(array('virtualip', 'vip'));
 	$viparr = &$config['virtualip']['vip'];
 	if ($status != 0) {
-		set_single_sysctl('net.inet.carp.allow', '0');
+		disable_carp();
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
 				continue;
@@ -99,7 +99,7 @@ if ($_POST['disablecarp'] != "") {
 			}
 		}
 		interfaces_sync_setup();
-		set_single_sysctl('net.inet.carp.allow', '1');
+		enable_carp();
 		$status = 1;
 	}
 }
@@ -121,12 +121,10 @@ if ($savemsg) {
 }
 
 $carpcount = 0;
-if (is_array($config['virtualip']['vip'])) {
-	foreach ($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] == "carp") {
-			$carpcount++;
-			break;
-		}
+foreach(config_get_path('virtualip/vip', []) as $carp) {
+	if ($carp['mode'] == "carp") {
+		$carpcount++;
+		break;
 	}
 }
 
@@ -253,11 +251,14 @@ if ($carpcount == 0) {
 			</li>
 <?php	endforeach; ?>
 		</ul>
-		<?= gettext("When state synchronization is enabled and functioning properly the list of state creator IDs will be nearly identical on each node participating in state synchronization.") ?>
 
 		<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("If the host ID has recently changed, the old ID will remain until all states using the old ID expire or are removed."), 'info', false);
+	print_info_box(sprintf(gettext(
+		'When state synchronization is enabled and functioning properly the list of state creator host IDs will be identical on each node participating in state synchronization.%1$s%1$s' .
+		'The state creator host ID for this node can be set to a custom value under System > High Avail Sync. ' .
+		'If the state creator host ID has recently changed, the old ID will remain until all states using the old ID expire or are removed.'
+		), '<br/>'), 'info', false);
 ?>
 		</div>
 	</div></div>

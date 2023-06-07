@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,13 @@ class pfsense_xmlrpc_client {
 
 	public function __construct() {
 		global $config;
-		$hasync = $config['hasync'];
+		$hasync = config_get_path('hasync', []);
+		/* XMLRPC sync is not configured, nothing to do.
+		 * https://redmine.pfsense.org/issues/14182 */
+		if (empty($hasync)) {
+			$this->error = "XMLRPC Synchronization is not configured.";
+			return;
+		}
 
 		if (empty($hasync['username'])) {
 			$username = "admin";
@@ -36,7 +42,7 @@ class pfsense_xmlrpc_client {
 			$username = $hasync['username'];
 		}
 		/* if port is empty lets rely on the protocol selection */
-		$port = $config['system']['webgui']['port'];
+		$port = config_get_path('system/webgui/port');
 		if (empty($port)) {
 			if ($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";
@@ -78,6 +84,13 @@ class pfsense_xmlrpc_client {
 	}
 
 	private function xmlrpc_internal($method, $parameter, $timeout = 240) {
+		/* XMLRPC sync is not configured, nothing to do.
+		 * https://redmine.pfsense.org/issues/14182 */
+		if (empty($this->url) ||
+		    empty($this->logurl)) {
+			$this->error = "XMLRPC Synchronization is not configured.";
+			return;
+		}
 		$options = array(
 			'prefix' => 'pfsense.',
 			'sslverify' => false,

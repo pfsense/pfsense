@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,6 +107,7 @@ if ($_POST['save'] || $_POST['force']) {
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"yandex" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"yandex-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"dnsexit" => array("apex" => false, "wildcard" => false, "username_none" => true),
 	);
 
 	if (isset($ddns_attr[$pconfig['type']]['username_none']) &&
@@ -363,13 +364,14 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-			'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
-			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
-			'GleSYS: Enter the record ID.%1$s' .
-			'DNSimple: Enter only the domain name.%1$s' .
-			'Name.com, Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode, DigitalOcean: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
-			'Cloudflare, Linode: Enter @ as the hostname to indicate an empty field.%1$s' .
-			'deSEC: Enter the FQDN.', '<br />');
+				'Cloudflare, Linode: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'deSEC: Enter the FQDN.%1$s' .
+				'DNSimple: Enter only the domain name.%1$s' .
+				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
+				'GleSYS: Enter the record ID.%1$s' .
+				'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
+				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, Name.com, Namecheap: Enter the hostname and domain name separately.
+					The domain name is the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
 
@@ -424,48 +426,49 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
-))->setHelp('Username is required for all types except DNS Made Easy, Namecheap, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), DigitalOcean, Linode, Cloudflare and Custom Entries.%1$s' .
+))->setHelp('Username is required for all providers except Cloudflare, Custom Entries, DigitalOcean, DNS Made Easy, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), Linode and Namecheap.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
+			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
+			'Custom Entries: Username and Password represent HTTP Authentication username and passwords.%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
-			'Route 53: Enter the Access Key ID.%1$s' .
-			'GleSYS: Enter the API user.%1$s' .
 			'Domeneshop: Enter the API token.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
+			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
-			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
 			'NoIP: For group authentication, replace semicolon (:) with pound-key (#).%1$s' .
-			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
+			'Route 53: Enter the Access Key ID.', '<br />');
 
 $section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
-			'Azure: client secret of the AD application%1$s' .
-			'DNS Made Easy: Dynamic DNS Password%1$s' .
+))->setHelp('Azure: client secret of the AD application%1$s' .
+			'Cloudflare: Enter the Global API Key or API token with DNS edit permission on the provided zone.%1$s' .
+			'deSEC: Enter the API token.%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
-			'Route 53: Enter the Secret Access Key.%1$s' .
-			'GleSYS: Enter the API key.%1$s' .
+			'DNSExit: Enter the API Key.%1$s' .
+			'DNSimple: Enter the API token.%1$s' .
+			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
+			'FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Gandi LiveDNS: Enter API token%1$s' .
+			'GleSYS: Enter the API key.%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
-			'DNSimple: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
-			'Yandex: Yandex PDD Token.%1$s' .
-			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.%1$s' .
-			'deSEC: Enter the API token.', '<br />');
+			'Route 53: Enter the Secret Access Key.%1$s' .
+			'Yandex: Yandex PDD Token.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
-			'Azure: Enter the resource id of the of the DNS Zone%1$s' .
-			'DNSimple: Enter the Record ID of record to update.', '<br />');
+))->setHelp('Azure: Enter the resource id of the of the DNS Zone%1$s' .
+			'DNSimple: Enter the Record ID of record to update.%1$s' .
+			'Route53: Enter AWS Zone ID.', '<br />');
 
 $section->addInput(new Form_Input(
 	'updateurl',
@@ -488,7 +491,7 @@ $section->addInput(new Form_Input(
 	'TTL',
 	'text',
 	$pconfig['ttl']
-))->setHelp('Choose TTL for the dns record.');
+))->setHelp('Choose TTL for the DNS record.');
 
 $section->addInput(new Form_Input(
 	'maxcacheage',

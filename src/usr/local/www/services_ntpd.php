@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -41,14 +41,15 @@ $max_candidate_peers = 25;
 $min_candidate_peers = 4;
 
 if (!is_array($config['ntpd'])) {
-	$config['ntpd'] = array();
+	config_set_path('ntpd', array());
 }
 
 if (empty($config['ntpd']['interface'])) {
-	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
-	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
-		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
-		unset($config['installedpackages']['openntpd']);
+	$old_ifs = config_get_path('installedpackages/openntpd/config/0/interface');
+	if (!empty($old_ifs)) {
+		config_set_path('ntpd/interface', $old_ifs);
+		$pconfig['interface'] = explode(",", $old_ifs);
+		config_del_path('installedpackages/openntpd');
 		write_config(gettext("Upgraded settings from openntpd"));
 	} else {
 		$pconfig['interface'] = array();
@@ -111,17 +112,17 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['ntpd']['enable'] = isset($_POST['enable']) ? 'enabled' : 'disabled';
+		config_set_path('ntpd/enable', isset($_POST['enable']) ? 'enabled' : 'disabled');
 		if (is_array($_POST['interface'])) {
-			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
+			config_set_path('ntpd/interface', implode(",", $_POST['interface']));
 		} elseif (isset($config['ntpd']['interface'])) {
-			unset($config['ntpd']['interface']);
+			config_del_path('ntpd/interface');
 		}
 
-		unset($config['ntpd']['prefer']);
-		unset($config['ntpd']['noselect']);
-		unset($config['ntpd']['ispool']);
-		unset($config['ntpd']['ispeer']);
+		config_del_path('ntpd/prefer');
+		config_del_path('ntpd/noselect');
+		config_del_path('ntpd/ispool');
+		config_del_path('ntpd/ispeer');
 		$timeservers = '';
 
 		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -144,78 +145,78 @@ if ($_POST) {
 		if (trim($timeservers) == "") {
 			$timeservers = "pool.ntp.org";
 		}
-		$config['system']['timeservers'] = trim($timeservers);
+		config_set_path('system/timeservers', trim($timeservers));
 
 		if (!empty($pconfig['ntpmaxpeers'])) {
-			$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
+			config_set_path('ntpd/ntpmaxpeers', $pconfig['ntpmaxpeers']);
 		} else {
-			unset($config['ntpd']['ntpmaxpeers']);
+			config_del_path('ntpd/ntpmaxpeers');
 		}
-		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
-		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
-		$config['ntpd']['ntpmaxpoll'] = $pconfig['ntpmaxpoll'];
-		$config['ntpd']['dnsresolv'] = $pconfig['dnsresolv'];
+		config_set_path('ntpd/orphan', trim($pconfig['ntporphan']));
+		config_set_path('ntpd/ntpminpoll', $pconfig['ntpminpoll']);
+		config_set_path('ntpd/ntpmaxpoll', $pconfig['ntpmaxpoll']);
+		config_set_path('ntpd/dnsresolv', $pconfig['dnsresolv']);
 
 		if (!empty($_POST['logpeer'])) {
-			$config['ntpd']['logpeer'] = $_POST['logpeer'];
+			config_set_path('ntpd/logpeer', $_POST['logpeer']);
 		} elseif (isset($config['ntpd']['logpeer'])) {
-			unset($config['ntpd']['logpeer']);
+			config_del_path('ntpd/logpeer');
 		}
 
 		if (!empty($_POST['logsys'])) {
-			$config['ntpd']['logsys'] = $_POST['logsys'];
+			config_set_path('ntpd/logsys', $_POST['logsys']);
 		} elseif (isset($config['ntpd']['logsys'])) {
-			unset($config['ntpd']['logsys']);
+			config_del_path('ntpd/logsys');
 		}
 
 		if (!empty($_POST['clockstats'])) {
-			$config['ntpd']['clockstats'] = $_POST['clockstats'];
+			config_set_path('ntpd/clockstats', $_POST['clockstats']);
 		} elseif (isset($config['ntpd']['clockstats'])) {
-			unset($config['ntpd']['clockstats']);
+			config_del_path('ntpd/clockstats');
 		}
 
 		if (!empty($_POST['loopstats'])) {
-			$config['ntpd']['loopstats'] = $_POST['loopstats'];
+			config_set_path('ntpd/loopstats', $_POST['loopstats']);
 		} elseif (isset($config['ntpd']['loopstats'])) {
-			unset($config['ntpd']['loopstats']);
+			config_del_path('ntpd/loopstats');
 		}
 
 		if (!empty($_POST['peerstats'])) {
-			$config['ntpd']['peerstats'] = $_POST['peerstats'];
+			config_set_path('ntpd/peerstats', $_POST['peerstats']);
 		} elseif (isset($config['ntpd']['peerstats'])) {
-			unset($config['ntpd']['peerstats']);
+			config_del_path('ntpd/peerstats');
 		}
 
 		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph']))) {
 			$enable_rrd_graphing = true;
 		}
 		if (!empty($_POST['statsgraph'])) {
-			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];
+			config_set_path('ntpd/statsgraph', $_POST['statsgraph']);
 		} elseif (isset($config['ntpd']['statsgraph'])) {
-			unset($config['ntpd']['statsgraph']);
+			config_del_path('ntpd/statsgraph');
 		}
 		if (isset($enable_rrd_graphing)) {
 			enable_rrd_graphing();
 		}
 
 		if (!empty($_POST['leaptext'])) {
-			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptext']);
+			config_set_path('ntpd/leapsec', base64_encode($_POST['leaptext']));
 		} elseif (isset($config['ntpd']['leapsec'])) {
-			unset($config['ntpd']['leapsec']);
+			config_del_path('ntpd/leapsec');
 		}
 
 		if (is_uploaded_file($_FILES['leapfile']['tmp_name'])) {
-			$config['ntpd']['leapsec'] = base64_encode(file_get_contents($_FILES['leapfile']['tmp_name']));
+			config_set_path('ntpd/leapsec', base64_encode(file_get_contents($_FILES['leapfile']['tmp_name'])));
 		}
 
 		if (!empty($_POST['serverauth'])) {
-			$config['ntpd']['serverauth'] = $_POST['serverauth'];
-			$config['ntpd']['serverauthkey'] = base64_encode(trim($_POST['serverauthkey']));
-			$config['ntpd']['serverauthalgo'] = $_POST['serverauthalgo'];
+			config_set_path('ntpd/serverauth', $_POST['serverauth']);
+			config_set_path('ntpd/serverauthkey', base64_encode(trim($_POST['serverauthkey'])));
+			config_set_path('ntpd/serverauthalgo', $_POST['serverauthalgo']);
 		} elseif (isset($config['ntpd']['serverauth'])) {
-			unset($config['ntpd']['serverauth']);
-			unset($config['ntpd']['serverauthkey']);
-			unset($config['ntpd']['serverauthalgo']);
+			config_del_path('ntpd/serverauth');
+			config_del_path('ntpd/serverauthkey');
+			config_del_path('ntpd/serverauthalgo');
 		}
 
 		write_config("Updated NTP Server Settings");
@@ -288,7 +289,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	'Enable NTP Server',
 	($pconfig['enable'] == 'enabled')
-))->setHelp('You may need to disable NTP if %1$s is running in a virtual machine and the host is responsible for the clock.', $g['product_label']);
+))->setHelp('You may need to disable NTP if %1$s is running in a virtual machine and the host is responsible for the clock.', g_get('product_label'));
 
 $iflist = build_interface_list();
 
@@ -494,7 +495,7 @@ $section->addInput(new Form_StaticText(
 	'should only be needed if the server is a stratum 1 NTP server, but many NTP servers do not advertise an upcoming leap ' .
 	'second when other NTP servers synchronise to them.%3$s%4$sIf the leap second is important to your network services, ' .
 	'it is %6$sgood practice%2$s to download and add the leap second file at least a day in advance of any time correction%5$s.%3$s ' .
-	'More information and files for downloading can be found on their %1$swebsite%2$s, and also on the %7$NIST%2$s and %8$sNTP%2$s websites.',
+	'More information and files for downloading can be found on their %1$swebsite%2$s, and also on the %7$sNIST%2$s and %8$sNTP%2$s websites.',
 	'<a target="_blank" href="https://www.iers.org">',
 	'</a>',
 	'<br />',

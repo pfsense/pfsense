@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,17 +19,24 @@
  * limitations under the License.
  */
 /* Recursively check anchors for rules/nat and also for anchors inside anchors (like those used by UPnP) */
+
+include_once('globals.inc');
+
 function anchor_recurse($name = '') {
 	$anchor_list = "";
 	if ($name) {
 		$name = ' -a ' . escapeshellarg($name);
 	}
-	exec("/sbin/pfctl -sA{$name} 2>/dev/null", $anchor_list);
+	exec("/sbin/pfctl -vsA{$name} 2>/dev/null", $anchor_list);
 	foreach ($anchor_list as $anchor) {
 		$anchor = trim($anchor);
 		echo "\n{$anchor} rules/nat contents:\n";
-		system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sn");
-		system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sr");
+		if (strpos($anchor, CPPREFIX) !== false) {
+			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -se");
+		} else {
+			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sn");
+			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sr");
+		}
 		anchor_recurse($anchor);
 	}
 }

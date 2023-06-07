@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -68,9 +68,9 @@ function startElement($parser, $name, $attrs) {
 
 	array_push($curpath, strtolower($name));
 
-	$ptr =& $parsedcfg;
+	$ptr = &$parsedcfg;
 	foreach ($curpath as $path) {
-		$ptr =& $ptr[$path];
+		$ptr = &$ptr[$path];
 	}
 
 	/* is it an element that belongs to a list? */
@@ -100,19 +100,32 @@ function endElement($parser, $name) {
 	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
 
 	if ($havedata == $depth) {
-		$ptr =& $parsedcfg;
+		$ptr = &$parsedcfg;
 		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
+			$ptr = &$ptr[$path];
 		}
 		$ptr = "";
 	}
 
 	array_pop($curpath);
 
+	/* Special case handling for erroneous empty $listtag elements. Pop the most
+	 * recent $listtag element off if it is a string AND is zero length. */
+	if (isset($listtags[strtolower($name)])) {
+		$ptr = &$parsedcfg;
+		foreach ($curpath as $path) {
+			$ptr = &$ptr[$path];
+		}
+
+		if (!(is_array(end($ptr)) || strlen(end($ptr)))) {
+			array_pop($ptr);
+		}
+	}
+
 	if (isset($listtags[strtolower($name)])) {
 		array_pop($curpath);
 	}
-
+	
 	$depth--;
 }
 
@@ -122,9 +135,9 @@ function cData($parser, $data) {
 	$data = trim($data, "\t\n\r");
 
 	if ($data != "") {
-		$ptr =& $parsedcfg;
+		$ptr = &$parsedcfg;
 		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
+			$ptr = &$ptr[$path];
 		}
 
 		if (is_string($ptr)) {
@@ -219,7 +232,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 function is_cdata_entity($ent) {
 	$cdata_fields = array(
 		'aclname', 'auth_pass', 'auth_prompt', 'auth_user', 'certca', 'certname', 'city', 'common_name',
-		'descr', 'detail', 'email', 'encryption_password', 'ldap_attr',
+		'descr', 'detail', 'email', 'encryption_password', 'hint', 'ldap_attr',
 		'ldap_authcn', 'ldap_basedn', 'ldap_basedomain', 'ldap_bind', 'ldapbinddn',
 		'ldapbindpass', 'ldap_extended_query', 'ldap_filter', 'ldap_pam_groupdn', 'ldap_pass', 'ldap_user',
 		'login_banner', 'organization', 'password', 'rangedescr', 'state', 'text',
@@ -332,5 +345,3 @@ function dump_xml_config_raw($arr, $rootobj) {
 
 	return $xmlconfig;
 }
-
-?>

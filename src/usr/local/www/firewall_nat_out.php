@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -51,7 +51,7 @@ if (isset($_REQUEST['order-store'])) {
 }
 
 if (!isset($config['nat']['outbound']['mode'])) {
-	$config['nat']['outbound']['mode'] = "automatic";
+	config_set_path('nat/outbound/mode', "automatic");
 }
 
 $mode = $config['nat']['outbound']['mode'];
@@ -395,7 +395,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 	$automatic_rules = getAutoRules();
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Automatic Rules:")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Automatic Rules")?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-hover table-striped table-condensed">
 				<thead>
@@ -494,14 +494,12 @@ if ($mode == "automatic" || $mode == "hybrid"):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 					</tr>
-<?php
-	endforeach;
-endif;
-?>
+<?php endforeach; ?>
 				</tbody>
 			</table>
 		</div>
 	</div>
+<?php endif; ?>
 </form>
 
 <div class="infoblock">

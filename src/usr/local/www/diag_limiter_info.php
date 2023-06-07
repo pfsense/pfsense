@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,18 +34,18 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Limiter Info"));
 $shortcut_section = "trafficshaper-limiters";
 
 if ($_REQUEST['getactivity']) {
-	$text = `/sbin/ipfw pipe show`;
+	$text = `/sbin/dnctl pipe show`;
 	if ($text == "") {
 		$text = gettext("No limiters were found on this system.");
 	}
 	echo gettext("Limiters:") . "\n";
 	echo $text;
-	$text = `/sbin/ipfw sched show`;
+	$text = `/sbin/dnctl sched show`;
 	if ($text != "") {
 		echo "\n\n" . gettext("Schedulers") . ":\n";
 		echo $text;
 	}
-	$text = `/sbin/ipfw queue show`;
+	$text = `/sbin/dnctl queue show`;
 	if ($text != "") {
 		echo "\n\n" . gettext("Queues") . ":\n";
 		echo $text;

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (DEBUG) {
 	   printf(gettext("Not actually halting (DEBUG is set true)%s"), "<br />");
 	} else {
-		notify_all_remote(sprintf(gettext("%s will shutdown and halt system now."), $g['product_label']));
+		notify_all_remote(sprintf(gettext("%s will shutdown and halt system now."), g_get('product_label')));
 		print('<pre>');
 		system_halt();
 		print('</pre>');

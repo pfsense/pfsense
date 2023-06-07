@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,6 +77,9 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 		if (is_array($config['dhcpd'])) {
 			// Build an array of static-mapped DHCP entries keyed by IP address.
 			foreach ($config['dhcpd'] as $ifdata) {
+				if (empty($ifdata)) {
+					continue;
+				}
 				if (is_array($ifdata['staticmap'])) {
 					foreach ($ifdata['staticmap'] as $hostent) {
 						if (($hostent['ipaddr'] != "") && ($hostent['hostname'] != "")) {

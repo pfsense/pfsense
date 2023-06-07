@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -53,22 +53,22 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	$remote_servers = "";
 	$pad_to  = max(strlen($facility), 56);
 	$padding = ceil(($pad_to - strlen($facility))/8)+1;
-	if (isset($syslogcfg['enable'])) {
-		if ($syslogcfg['remoteserver']) {
-			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver']) . "\n";
+	if (config_path_enabled('syslog')) {
+		if (array_get_path($syslogcfg, 'remoteserver')) {
+			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server(array_get_path($syslogcfg, 'remoteserver')) . "\n";
 		}
-		if ($syslogcfg['remoteserver2']) {
-			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver2']) . "\n";
+		if (array_get_path($syslogcfg, 'remoteserver2')) {
+			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server(array_get_path($syslogcfg, 'remoteserver2')) . "\n";
 		}
-		if ($syslogcfg['remoteserver3']) {
-			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver3']) . "\n";
+		if (array_get_path($syslogcfg, 'remoteserver3')) {
+			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server(array_get_path($syslogcfg, 'remoteserver3')) . "\n";
 		}
 	}
 	return $remote_servers;
 }
 
 function system_syslogd_get_all_logfilenames($add_extension = false) {
-	global $config, $g, $system_log_files;
+	global $g, $system_log_files;
 
 	if ($add_extension) {
 		$all_syslog_files = array();
@@ -79,11 +79,10 @@ function system_syslogd_get_all_logfilenames($add_extension = false) {
 		$all_syslog_files = $system_log_files;
 	}
 
-	if ($config['installedpackages']['package']) {
-		foreach ($config['installedpackages']['package'] as $package) {
-			if (isset($package['logging']['logfilename'])) {
-				$all_syslog_files[] = $package['logging']['logfilename'];
-			}
+	foreach (config_get_path('installedpackages/package', []) as $key => $package) {
+		if (!empty(config_get_path("installedpackages/package/{$key}/logging", [])) &&
+		    !empty(config_get_path("installedpackages/package/{$key}/logging/logfilename"))) {
+			$all_syslog_files[] = config_get_path("installedpackages/package/{$key}/logging/logfilename");
 		}
 	}
 
@@ -135,7 +134,7 @@ function rsort_log_filename($a, $b) {
 }
 
 function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true, $remove_rotated = true) {
-	global $config, $g;
+	global $g;
 
 	if ($restart_syslogd) {
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
@@ -183,15 +182,15 @@ function clear_all_log_files($restart = false) {
 }
 
 function system_syslogd_start($sighup = false) {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
+	global $g;
+	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
 		echo "system_syslogd_start() being called $mt\n";
 	}
 
 	mwexec("/etc/rc.d/hostid start");
 
-	$syslogcfg = $config['syslog'];
+	$syslogcfg = config_get_path('syslog', []);
 
 	if (platform_booting()) {
 		echo gettext("Starting syslog...");
@@ -214,140 +213,141 @@ EOD;
 	safe_mkdir("{$g['varetc_path']}/syslog.d");
 
 	$syslogd_extra = "";
-	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
-		$syslogconf = "# Automatically generated, do not edit!\n";
+	$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
+	$syslogconf = "# Automatically generated, do not edit!\n";
 
-		if ($config['installedpackages']['package']) {
-			foreach ($config['installedpackages']['package'] as $package) {
-				if (isset($package['logging']['facilityname']) && isset($package['logging']['logfilename'])) {
-					array_push($separatelogfacilities, $package['logging']['facilityname']);
-					if (!is_file($g['varlog_path'].'/'.$package['logging']['logfilename'])) {
-						mwexec("/usr/bin/touch {$g['varlog_path']}/{$package['logging']['logfilename']}");
-					}
-					$pkgsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
-					$pkgsyslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
-					@file_put_contents("{$g['varetc_path']}/syslog.d/" . basename($package['logging']['logfilename']) . ".conf", $pkgsyslogconf);
-				}
+	foreach (config_get_path('installedpackages/package', []) as $key => $package) {
+		$pkg_log_facility = config_get_path("installedpackages/package/{$key}/logging/facilityname");
+		$pkg_log_filename = basename(config_get_path("installedpackages/package/{$key}/logging/logfilename"));
+
+		if (!empty($pkg_log_facility) && !empty($pkg_log_filename)) {
+			array_push($separatelogfacilities, $pkg_log_facility);
+			$fn = "{$g['varlog_path']}/{$pkg_log_filename}";
+			if (!is_file($fn)) {
+				mwexec('/usr/bin/touch ' . escapeshellarg($fn));
 			}
+			$pkgsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
+			$pkgsyslogconf .= "!{$pkg_log_facility}\n*.*\t\t\t\t\t\t {$fn}\n";
+			@file_put_contents("{$g['varetc_path']}/syslog.d/" . basename($pkg_log_filename) . ".conf", $pkgsyslogconf);
 		}
-		$facilitylist = implode(',', array_unique($separatelogfacilities));
+	}
+	$facilitylist = implode(',', array_unique($separatelogfacilities));
 
-		$syslogconf .= "!*\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "auth.*;authpriv.* 						{$g['varlog_path']}/auth.log\n";
-		}
-		if (isset($syslogcfg['auth'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
-		}
+	$syslogconf .= "!*\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "auth.*;authpriv.* 						{$g['varlog_path']}/auth.log\n";
+	}
+	if (config_path_enabled('syslog', 'auth')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
+	}
 
-		$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/routing.log\n";
-		}
-		if (isset($syslogcfg['routing'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/routing.log\n";
+	}
+	if (config_path_enabled('syslog', 'routing')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!ntp,ntpd,ntpdate\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/ntpd.log\n";
-		}
-		if (isset($syslogcfg['ntpd'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!ntp,ntpd,ntpdate\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/ntpd.log\n";
+	}
+	if (config_path_enabled('syslog', 'ntpd')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!ppp\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/ppp.log\n";
-		}
-		if (isset($syslogcfg['ppp'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!ppp\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/ppp.log\n";
+	}
+	if (config_path_enabled('syslog', 'ppp')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!poes\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/poes.log\n";
-		}
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!poes\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/poes.log\n";
+	}
+	if (config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!l2tps\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/l2tps.log\n";
-		}
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!l2tps\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/l2tps.log\n";
+	}
+	if (config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!charon,ipsec_starter\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/ipsec.log\n";
-		}
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!charon,ipsec_starter\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/ipsec.log\n";
+	}
+	if (config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!openvpn\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/openvpn.log\n";
-		}
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!openvpn\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/openvpn.log\n";
+	}
+	if (config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!dpinger\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/gateways.log\n";
-		}
-		if (isset($syslogcfg['dpinger'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!dpinger\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/gateways.log\n";
+	}
+	if (config_path_enabled('syslog', 'dpinger')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/resolver.log\n";
-		}
-		if (isset($syslogcfg['resolver'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/resolver.log\n";
+	}
+	if (config_path_enabled('syslog', 'resolver')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$g['varlog_path']}/dhcpd.log\n";
-		}
-		if (isset($syslogcfg['dhcp'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*								{$g['varlog_path']}/dhcpd.log\n";
+	}
+	if (config_path_enabled('syslog', 'dhcp')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!hostapd\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.* 								{$g['varlog_path']}/wireless.log\n";
-		}
-		if (isset($syslogcfg['hostapd'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!hostapd\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.* 								{$g['varlog_path']}/wireless.log\n";
+	}
+	if (config_path_enabled('syslog', 'hostapd')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!filterlog\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.* 								{$g['varlog_path']}/filter.log\n";
-		}
-		if (isset($syslogcfg['filter'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!filterlog\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.* 								{$g['varlog_path']}/filter.log\n";
+	}
+	if (config_path_enabled('syslog', 'filter')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!logportalauth\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.* 								{$g['varlog_path']}/portalauth.log\n";
-		}
-		if (isset($syslogcfg['portalauth'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
+	$syslogconf .= "!logportalauth\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.* 								{$g['varlog_path']}/portalauth.log\n";
+	}
+	if (config_path_enabled('syslog', 'portalauth')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
 
-		$syslogconf .= "!-{$facilitylist}\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= <<<EOD
+	$syslogconf .= "!-{$facilitylist}\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= <<<EOD
 local3.*							{$g['varlog_path']}/vpn.log
 local5.*							{$g['varlog_path']}/nginx.log
 *.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log
@@ -355,60 +355,58 @@ auth.info;authpriv.info 					|exec /usr/local/sbin/sshguard -i /var/run/sshguard
 *.emerg								*
 
 EOD;
-		}
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.*");
-		}
-		if (isset($syslogcfg['system'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local7.none;security.*;auth.info;authpriv.info;daemon.info");
-		}
-		if (isset($syslogcfg['logall'])) {
-			// Make everything mean everything, including facilities excluded above.
-			$syslogconf .= "!*\n";
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
-		}
-
-		/* write syslog config to pfSense.conf */
-		if (!@file_put_contents("{$g['varetc_path']}/syslog.d/pfSense.conf", $syslogconf)) {
-			printf(gettext("Error: cannot open syslog config file in system_syslogd_start().%s"), "\n");
-			unset($syslogconf);
-			return 1;
-		}
-		unset($syslogconf);
-
-		$sourceip = "";
-		if (!empty($syslogcfg['sourceip'])) {
-			if ($syslogcfg['ipproto'] == "ipv6") {
-				$ifaddr = is_ipaddr($syslogcfg['sourceip']) ? $syslogcfg['sourceip'] : get_interface_ipv6($syslogcfg['sourceip']);
-				if (!is_ipaddr($ifaddr)) {
-					$ifaddr = get_interface_ip($syslogcfg['sourceip']);
-				}
-			} else {
-				$ifaddr = is_ipaddr($syslogcfg['sourceip']) ? $syslogcfg['sourceip'] : get_interface_ip($syslogcfg['sourceip']);
-				if (!is_ipaddr($ifaddr)) {
-					$ifaddr = get_interface_ipv6($syslogcfg['sourceip']);
-				}
-			}
-			if (is_ipaddr($ifaddr)) {
-				$sourceip = "-b {$ifaddr}";
-			}
-		}
-
-		$syslogd_extra = "-f {$g['etc_path']}/syslog.conf {$sourceip}";
 	}
+	if (config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.*");
+	}
+	if (config_path_enabled('syslog', 'system')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local7.none;security.*;auth.info;authpriv.info;daemon.info");
+	}
+	if (config_path_enabled('syslog', 'logall')) {
+		// Make everything mean everything, including facilities excluded above.
+		$syslogconf .= "!*\n";
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	}
+
+	/* write syslog config to pfSense.conf */
+	if (!@file_put_contents("{$g['varetc_path']}/syslog.d/pfSense.conf", $syslogconf)) {
+		printf(gettext("Error: cannot open syslog config file in system_syslogd_start().%s"), "\n");
+		unset($syslogconf);
+		return 1;
+	}
+	unset($syslogconf);
+
+	$sourceip = config_get_path('syslog/sourceip');
+	if (config_path_enabled('syslog') &&
+	    !empty($sourceip)) {
+		if (config_get_path('syslog/ipproto') == "ipv6") {
+			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+			if (!is_ipaddr($ifaddr)) {
+				$ifaddr = get_interface_ip($sourceip);
+			}
+		} else {
+			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
+			if (!is_ipaddr($ifaddr)) {
+				$ifaddr = get_interface_ipv6($sourceip);
+			}
+		}
+		$sourceip = is_ipaddr($ifaddr) ? "-b {$ifaddr}" : '';
+	} else {
+		$sourceip = '';
+	}
+	$syslogd_extra = "-f {$g['etc_path']}/syslog.conf {$sourceip}";
 
 	$log_sockets = array("{$g['dhcpd_chroot_path']}/var/run/log");
 
-	if (isset($config['installedpackages']['package'])) {
-		foreach ($config['installedpackages']['package'] as $package) {
-			if (isset($package['logging']['logsocket']) && $package['logging']['logsocket'] != '' &&
-			    !in_array($package['logging']['logsocket'], $log_sockets)) {
-				$log_sockets[] = $package['logging']['logsocket'];
-			}
+	foreach (config_get_path('installedpackages/package', []) as $key => $package) {
+		$pkg_log_socket = config_get_path("installedpackages/package/{$key}/logging/logsocket");
+		if (!empty($pkg_log_socket) &&
+		    !in_array($pkg_log_socket, $log_sockets)) {
+			$log_sockets[] = $package['logging']['logsocket'];
 		}
 	}
 
-	$syslogd_format = empty($config['syslog']['format']) ? '' : '-O ' . escapeshellarg($config['syslog']['format']);
+	$syslogd_format = empty(config_get_path('syslog/format')) ? '' : '-O ' . escapeshellarg(config_get_path('syslog/format'));
 
 	$syslogd_sockets = "";
 	foreach ($log_sockets as $log_socket) {
@@ -427,25 +425,25 @@ EOD;
 	}
 
 	$sshguard_whitelist = array();
-	if (!empty($config['system']['sshguard_whitelist'])) {
+	if (!empty(config_get_path('system/sshguard_whitelist'))) {
 		$sshguard_whitelist = explode(' ',
-		    $config['system']['sshguard_whitelist']);
+		    config_get_path('system/sshguard_whitelist'));
 	}
 
 	$sshguard_config = array();
 	$sshguard_config[] = 'LOGREADER="/bin/cat"' . "\n";
 	$sshguard_config[] = 'BACKEND="/usr/local/libexec/sshg-fw-pf"' . "\n";
-	if (!empty($config['system']['sshguard_threshold'])) {
+	if (!empty(config_get_path('system/sshguard_threshold'))) {
 		$sshguard_config[] = 'THRESHOLD=' .
-		    $config['system']['sshguard_threshold'] . "\n";
+		    config_get_path('system/sshguard_threshold') . "\n";
 	}
-	if (!empty($config['system']['sshguard_blocktime'])) {
+	if (!empty(config_get_path('system/sshguard_blocktime'))) {
 		$sshguard_config[] = 'BLOCK_TIME=' .
-		    $config['system']['sshguard_blocktime'] . "\n";
+		    config_get_path('system/sshguard_blocktime') . "\n";
 	}
-	if (!empty($config['system']['sshguard_detection_time'])) {
+	if (!empty(config_get_path('system/sshguard_detection_time'))) {
 		$sshguard_config[] = 'DETECTION_TIME=' .
-		    $config['system']['sshguard_detection_time'] . "\n";
+		    config_get_path('system/sshguard_detection_time') . "\n";
 	}
 	if (!empty($sshguard_whitelist)) {
 		@file_put_contents("/usr/local/etc/sshguard.whitelist",
@@ -483,18 +481,17 @@ EOD;
 }
 
 function system_log_get_compression() {
-	global $config, $g, $system_log_compression_types;
-	/* Default is bzip2 */
-	if (empty($config['syslog']['logcompressiontype']) ||
-	    !array_key_exists($config['syslog']['logcompressiontype'], $system_log_compression_types)) {
+	global $g, $system_log_compression_types;
+	$compressiontype = config_get_path('syslog/logcompressiontype');
+	if (empty($compressiontype) ||
+	    !array_key_exists($compressiontype, $system_log_compression_types)) {
 		if (file_exists("{$g['conf_path']}/syslog_default_uncompressed")) {
 			/* Disable log compression by default when flag file is present. */
 			$compressiontype = 'none';
 		} else {
+			/* Default is bzip2 */
 			$compressiontype = 'bzip2';
 		}
-	} else {
-		$compressiontype = $config['syslog']['logcompressiontype'];
 	}
 	return $compressiontype;
 }
@@ -506,8 +503,8 @@ function system_log_get_cat() {
 
 /* Setup newsyslog log rotation */
 function system_log_rotation_setup() {
-	global $config, $g, $system_log_files, $system_log_compression_types;
-	$syslogcfg = $config['syslog'];
+	global $g, $system_log_files, $system_log_compression_types;
+	$syslogcfg = config_get_path('syslog', []);
 
 	$mainnewsyslogconf = <<<EOD
 # Automatically generated, do not edit!
@@ -519,16 +516,17 @@ EOD;
 
 	file_put_contents("{$g['etc_path']}/newsyslog.conf", $mainnewsyslogconf);
 	safe_mkdir("{$g['varetc_path']}/newsyslog.conf.d");
-	$log_size = isset($syslogcfg['logfilesize']) ? $syslogcfg['logfilesize'] : $g['default_log_size'];
-	$log_size = ($log_size < (2**32)/2) ? $log_size : $g['default_log_size'];
-	$log_size = (int)$log_size/1024;
 
-	$rotatecount = is_numericint($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
+	if (!empty($syslogcfg)) {
+		$log_size = config_get_path('syslog/logfilesize', g_get('default_log_size'));
+		$log_size = ($log_size < (2**32)/2) ? $log_size : g_get('default_log_size');
+		$log_size = (int)$log_size/1024;
 
-	$compression_flag = $system_log_compression_types[system_log_get_compression()]['flag'];
+		$rotatecount = config_get_path('syslog/rotatecount', 7);
+		$rotatecount = is_numericint($rotatecount) ? $rotatecount : 7;
 
+		$compression_flag = $system_log_compression_types[system_log_get_compression()]['flag'];
 
-	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
 		$newsyslogconf = <<<EOD
 /var/log/userlog		root:wheel	600	3	{$log_size}	*	B
@@ -536,38 +534,38 @@ EOD;
 
 EOD;
 
-		if ($config['installedpackages']['package']) {
-			foreach ($config['installedpackages']['package'] as $package) {
+		foreach (config_get_path('installedpackages/package', []) as $key => $package) {
+			if (!empty(config_get_path("installedpackages/package/{$key}/logging", [])) &&
+			    !empty(config_get_path("installedpackages/package/{$key}/logging/logfilename"))) {
+				$pkg_log_filename = config_get_path("installedpackages/package/{$key}/logging/logfilename");
+				$pkg_log_owner = config_get_path("installedpackages/package/{$key}/logging/logowner", 'root:wheel');
+				$pkg_log_mode = config_get_path("installedpackages/package/{$key}/logging/logmode", '600');
+				$pkg_rotate_count = (int) config_get_path("installedpackages/package/{$key}/logging/rotatecount", $rotatecount);
+				$pkg_log_size = (int) config_get_path("installedpackages/package/{$key}/logging/logfilesize", 0);
+				$pkg_log_size = ($pkg_log_size > 0) ? $pkg_log_size / 1024 : $log_size;
+				$pkg_rotate_time = config_get_path("installedpackages/package/{$key}/logging/rotatetime", '*');
+				$pkg_extra_flags = config_get_path("installedpackages/package/{$key}/logging/rotateflags", '');
+				$pkg_pidcmd = config_get_path("installedpackages/package/{$key}/logging/pidcmd", '');
+				$pkg_signal = config_get_path("installedpackages/package/{$key}/logging/signal", '');
 
-				if (isset($package['logging']['logfilename'])) {
-
-					$pkg_log_owner = isset($package['logging']['logowner']) ? $package['logging']['logowner'] : 'root:wheel';
-					$pkg_log_mode = isset($package['logging']['logmode']) ? $package['logging']['logmode'] : 600;
-					$pkg_rotate_count = isset($package['logging']['rotatecount']) ? (int) $package['logging']['rotatecount'] : $rotatecount;
-					$pkg_log_size = isset($package['logging']['logfilesize']) ? (int) $package['logging']['logfilesize'] / 1024: $log_size;
-					$pkg_rotate_time = isset($package['logging']['rotatetime']) ? $package['logging']['rotatetime'] : '*';
-					$pkg_extra_flags = isset($package['logging']['rotateflags']) ? $package['logging']['rotateflags'] : '';
-					$pkg_pidcmd = isset($package['logging']['pidcmd']) ? $package['logging']['pidcmd'] : '';
-					$pkg_signal = isset($package['logging']['signal']) ? $package['logging']['signal'] : '';
-
-					$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
-					$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$package['logging']['logfilename']}",
-												$pkg_log_owner,
-												$pkg_log_mode,
-												$pkg_rotate_count,
-												$pkg_log_size,
-												$pkg_rotate_time,
-												"{$compression_flag}C{$pkg_extra_flags}",
-												$pkg_pidcmd,
-												$pkg_signal);
-					@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/" . basename($package['logging']['logfilename']) . ".conf", $pkgnewsyslogconf);
-				}
+				$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
+				$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$pkg_log_filename}",
+											$pkg_log_owner,
+											$pkg_log_mode,
+											$pkg_rotate_count,
+											$pkg_log_size,
+											$pkg_rotate_time,
+											"{$compression_flag}C{$pkg_extra_flags}",
+											$pkg_pidcmd,
+											$pkg_signal);
+				@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/" . basename($pkg_log_filename) . ".conf", $pkgnewsyslogconf);
 			}
 		}
 
 		foreach($system_log_files as $logfile) {
-			$local_log_size = isset($syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize'] / 1024: $log_size;
-			$local_rotate_count = isset($syslogcfg[basename($logfile, '.log') . '_settings']['rotatecount']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['rotatecount'] : $rotatecount;
+			$local_log_size = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/logfilesize", 0);
+			$local_log_size = ($local_log_size > 0) ? $local_log_size / 1024 : $log_size;
+			$local_rotate_count = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/rotatecount", $rotatecount);
 
 			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 'root:wheel', 600, $local_rotate_count, $local_log_size, '*', "{$compression_flag}C");
 		}
@@ -599,11 +597,16 @@ function system_log_rotation_make_line($filename, $owner = 'root:wheel', $mode='
 }
 
 function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $format = 'table', $grepreverse = false) {
-	global $g, $config;
-	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
+	global $g;
+	$sor = (config_path_enabled('syslog/reverse') || $grepreverse) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
-	if (($config['syslog'][$specific_log]['cronorder'] == 'forward') && !$grepreverse) $sor = "";
-	if (($config['syslog'][$specific_log]['cronorder'] == 'reverse') ||  $grepreverse) $sor = "-r";
+	$cronorder = config_get_path("syslog/{$specific_log}/cronorder");
+	if (($cronorder == 'forward') && !$grepreverse) {
+		$sor = "";
+	}
+	if (($cronorder == 'reverse') ||  $grepreverse) {
+		$sor = "-r";
+	}
 	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
@@ -657,11 +660,11 @@ function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert 
 		} elseif ($withorig) {
 			if ($syslogformat == 'rfc3164') {
 				$entry_date_time = htmlspecialchars(join(" ", array_slice($splitlogent, 0, 3)));
-				$entry_text = ($splitlogent[3] == $config['system']['hostname']) ? "" : $splitlogent[3] . " ";
+				$entry_text = ($splitlogent[3] == config_get_path('system/hostname')) ? "" : $splitlogent[3] . " ";
 				$entry_text .= implode(' ', array_slice($splitlogent, 4));
 			} else {
 				$entry_date_time = htmlspecialchars($splitlogent[1]);
-				$entry_text = ($splitlogent[2] == "{$config['system']['hostname']}.{$config['system']['domain']}" ) ? '' : $splitlogent[2] . ' ';
+				$entry_text = ($splitlogent[2] == config_get_path('system/hostname') . '.' . config_get_path('system/domain')) ? '' : $splitlogent[2] . ' ';
 				$entry_text .= implode(' ', array_slice($splitlogent, 3));
 			}
 		} else {
@@ -693,7 +696,7 @@ function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert 
 
 /* format filter logs */
 function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $filterinterface = null) {
-	global $config, $g, $pattern;
+	global $g, $pattern;
 
 	/* Make sure this is a number before using it in a system call */
 	if (!(is_numeric($tail))) {
@@ -869,10 +872,15 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 	}
 	/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
 	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
-	$reverse = isset($config['syslog']['reverse']);
+	$reverse = config_path_enabled('syslog','reverse');
 	$specific_log = basename($logfile, '.log') . '_settings';
-	if (isset($config['syslog'][$specific_log]['cronorder']) && ($config['syslog'][$specific_log]['cronorder'] == 'forward')) $reverse = false;
-	if (isset($config['syslog'][$specific_log]['cronorder']) && ($config['syslog'][$specific_log]['cronorder'] == 'reverse')) $reverse = true;
+	$cronorder = config_get_path("syslog/{$specific_log}/cronorder");
+	if ($cronorder == 'forward') {
+		$reverse = false;
+	}
+	if ($cronorder == 'reverse') {
+		$reverse = true;
+	}
 
 	return ($reverse) ? $filterlog : array_reverse($filterlog);
 }
@@ -924,7 +932,7 @@ function in_arrayi($needle, $haystack) {
 }
 
 function parse_vpn_login_log_line($line) {
-	global $config, $g, $pattern;
+	global $g, $pattern;
 
 	$flent = array();
 	$log_split = "";
@@ -939,7 +947,7 @@ function parse_vpn_login_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -947,7 +955,7 @@ function parse_vpn_login_log_line($line) {
 }
 
 function parse_vpn_service_log_line($line) {
-	global $config, $g, $pattern;
+	global $g, $pattern;
 
 	$flent = array();
 	$log_split = "";
@@ -962,7 +970,7 @@ function parse_vpn_service_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['type']) == "") && (trim($flent['message']) == "") )) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -984,7 +992,7 @@ function parse_utx_log_line($line) {
 }
 
 function parse_unknown_log_line($line) {
-	global $config, $g, $pattern;
+	global $g, $pattern;
 
 	$flent = array();
 	$log_split = "";
@@ -1000,7 +1008,7 @@ function parse_unknown_log_line($line) {
 	if (!((trim($flent['time']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -1008,7 +1016,7 @@ function parse_unknown_log_line($line) {
 }
 
 function parse_system_log_line($line) {
-	global $config, $g, $pattern;
+	global $g, $pattern;
 
 	$flent = array();
 	$log_split = "";
@@ -1024,7 +1032,7 @@ function parse_system_log_line($line) {
 	if (!((trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == ""))) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -1032,7 +1040,7 @@ function parse_system_log_line($line) {
 }
 
 function parse_firewall_log_line($line) {
-	global $config, $g;
+	global $g;
 
 	$flent = array();
 	$log_split = "";
@@ -1088,85 +1096,91 @@ function parse_firewall_log_line($line) {
 		$flent['srcip'] = $rule_data[$field++];
 		$flent['dstip'] = $rule_data[$field++];
 
-		if ($flent['protoid'] == '6' || $flent['protoid'] == '17') { // TCP or UDP
-			$flent['srcport'] = $rule_data[$field++];
-			$flent['dstport'] = $rule_data[$field++];
+		switch($flent['protoid']) {
+			case '6':
+			case '17': // TCP or UDP
+				$flent['srcport'] = $rule_data[$field++];
+				$flent['dstport'] = $rule_data[$field++];
 
-			$flent['src'] = $flent['srcip'] . ':' . $flent['srcport'];
-			$flent['dst'] = $flent['dstip'] . ':' . $flent['dstport'];
+				$flent['src'] = $flent['srcip'] . ':' . $flent['srcport'];
+				$flent['dst'] = $flent['dstip'] . ':' . $flent['dstport'];
 
-			$flent['datalen'] = $rule_data[$field++];
-			if ($flent['protoid'] == '6') { // TCP
-				$flent['tcpflags'] = $rule_data[$field++];
-				$flent['seq'] = $rule_data[$field++];
-				$flent['ack'] = $rule_data[$field++];
-				$flent['window'] = $rule_data[$field++];
-				$flent['urg'] = $rule_data[$field++];
-				$flent['options'] = explode(";", $rule_data[$field++]);
-			}
-		} else if ($flent['protoid'] == '1' || $flent['protoid'] == '58') {	// ICMP (IPv4 & IPv6)
-			$flent['src'] = $flent['srcip'];
-			$flent['dst'] = $flent['dstip'];
+				$flent['datalen'] = $rule_data[$field++];
+				if ($flent['protoid'] == '6') { // TCP
+					$flent['tcpflags'] = $rule_data[$field++];
+					$flent['seq'] = $rule_data[$field++];
+					$flent['ack'] = $rule_data[$field++];
+					$flent['window'] = $rule_data[$field++];
+					$flent['urg'] = $rule_data[$field++];
+					$flent['options'] = explode(";", $rule_data[$field++]);
+				}
+				break;
+			case '1':
+			case '58': // ICMP (IPv4 & IPv6)
+				$flent['src'] = $flent['srcip'];
+				$flent['dst'] = $flent['dstip'];
 
-			$flent['icmp_type'] = $rule_data[$field++];
+				$flent['icmp_type'] = $rule_data[$field++];
 
-			switch ($flent['icmp_type']) {
-				case "request":
-				case "reply":
-					$flent['icmp_id'] = $rule_data[$field++];
-					$flent['icmp_seq'] = $rule_data[$field++];
-					break;
-				case "unreachproto":
-					$flent['icmp_dstip'] = $rule_data[$field++];
-					$flent['icmp_protoid'] = $rule_data[$field++];
-					break;
-				case "unreachport":
-					$flent['icmp_dstip'] = $rule_data[$field++];
-					$flent['icmp_protoid'] = $rule_data[$field++];
-					$flent['icmp_port'] = $rule_data[$field++];
-					break;
-				case "unreach":
-				case "timexceed":
-				case "paramprob":
-				case "redirect":
-				case "maskreply":
-					$flent['icmp_descr'] = $rule_data[$field++];
-					break;
-				case "needfrag":
-					$flent['icmp_dstip'] = $rule_data[$field++];
-					$flent['icmp_mtu'] = $rule_data[$field++];
-					break;
-				case "tstamp":
-					$flent['icmp_id'] = $rule_data[$field++];
-					$flent['icmp_seq'] = $rule_data[$field++];
-					break;
-				case "tstampreply":
-					$flent['icmp_id'] = $rule_data[$field++];
-					$flent['icmp_seq'] = $rule_data[$field++];
-					$flent['icmp_otime'] = $rule_data[$field++];
-					$flent['icmp_rtime'] = $rule_data[$field++];
-					$flent['icmp_ttime'] = $rule_data[$field++];
-					break;
-				default :
-					$flent['icmp_descr'] = $rule_data[$field++];
-					break;
-			}
-
-		} else if ($flent['protoid'] == '2') { // IGMP
-			$flent['src'] = $flent['srcip'];
-			$flent['dst'] = $flent['dstip'];
-		} else if ($flent['protoid'] == '112') { // CARP
-			$flent['type'] = $rule_data[$field++];
-			$flent['ttl'] = $rule_data[$field++];
-			$flent['vhid'] = $rule_data[$field++];
-			$flent['version'] = $rule_data[$field++];
-			$flent['advskew'] = $rule_data[$field++];
-			$flent['advbase'] = $rule_data[$field++];
-			$flent['src'] = $flent['srcip'];
-			$flent['dst'] = $flent['dstip'];
+				switch ($flent['icmp_type']) {
+					case "request":
+					case "reply":
+						$flent['icmp_id'] = $rule_data[$field++];
+						$flent['icmp_seq'] = $rule_data[$field++];
+						break;
+					case "unreachproto":
+						$flent['icmp_dstip'] = $rule_data[$field++];
+						$flent['icmp_protoid'] = $rule_data[$field++];
+						break;
+					case "unreachport":
+						$flent['icmp_dstip'] = $rule_data[$field++];
+						$flent['icmp_protoid'] = $rule_data[$field++];
+						$flent['icmp_port'] = $rule_data[$field++];
+						break;
+					case "unreach":
+					case "timexceed":
+					case "paramprob":
+					case "redirect":
+					case "maskreply":
+						$flent['icmp_descr'] = $rule_data[$field++];
+						break;
+					case "needfrag":
+						$flent['icmp_dstip'] = $rule_data[$field++];
+						$flent['icmp_mtu'] = $rule_data[$field++];
+						break;
+					case "tstamp":
+						$flent['icmp_id'] = $rule_data[$field++];
+						$flent['icmp_seq'] = $rule_data[$field++];
+						break;
+					case "tstampreply":
+						$flent['icmp_id'] = $rule_data[$field++];
+						$flent['icmp_seq'] = $rule_data[$field++];
+						$flent['icmp_otime'] = $rule_data[$field++];
+						$flent['icmp_rtime'] = $rule_data[$field++];
+						$flent['icmp_ttime'] = $rule_data[$field++];
+						break;
+					default :
+						$flent['icmp_descr'] = $rule_data[$field++];
+						break;
+				}
+				break;
+			case '112': // CARP
+				$flent['type'] = $rule_data[$field++];
+				$flent['ttl'] = $rule_data[$field++];
+				$flent['vhid'] = $rule_data[$field++];
+				$flent['version'] = $rule_data[$field++];
+				$flent['advskew'] = $rule_data[$field++];
+				$flent['advbase'] = $rule_data[$field++];
+				$flent['src'] = $flent['srcip'];
+				$flent['dst'] = $flent['dstip'];
+				break;
+			default:
+				$flent['src'] = $flent['srcip'];
+				$flent['dst'] = $flent['dstip'];
+				break;
 		}
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing rule number: %s. Please report to mailing list or forum."), $flent['rulenum']));
 		}
 		return "";
@@ -1176,7 +1190,7 @@ function parse_firewall_log_line($line) {
 	if (!((trim($flent['src']) == "") || (trim($flent['dst']) == "") || (trim($flent['time']) == ""))) {
 		return $flent;
 	} else {
-		if ($g['debug']) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -1242,21 +1256,12 @@ function buffer_rules_load() {
 			$buffer_rules_rdr[$key] = $value;
 		}
 	}
-	unset($buffer, $_gb);
-	$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
 
-	if (is_array($buffer)) {
-		foreach ($buffer as $line) {
-			list($key, $value) = explode (" ", $line, 2);
-			$matches = array();
-			if (preg_match('/\@(?P<rulenum>\d+).*ridentifier (?<trackernum>\d+)/', $line, $matches) == 1) {
-				if ($matches['trackernum'] > 0) {
-					$key = $matches['trackernum'];
-				} else {
-					$key = "@{$matches['rulenum']}";
-				}
-			}
-			$buffer_rules_normal[$key] = $value;
+	$rules = pfSense_get_pf_rules();
+	if (is_array($rules)) {
+		foreach ($rules as $rule) {
+			$key = sprintf("%d", $rule['tracker']);
+			$buffer_rules_normal[$key] = is_array($rule['labels']) ? array_shift($rule['labels']) : $rule['labels'];
 		}
 	}
 	unset($_gb, $buffer);
@@ -1282,8 +1287,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 		$rulename = substr($ruleString, 0, 30);
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
-		list(,$rulename,) = explode("\"", $ruleString);
-		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $rulename);
+		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $ruleString);
 	}
 	return "{$rulename} ({$lookup_key})";
 }
@@ -1301,7 +1305,6 @@ function find_action_image($action) {
 
 /* AJAX specific handlers */
 function handle_ajax() {
-	global $config;
 	if ($_REQUEST['lastsawtime'] && $_REQUEST['logfile']) {
 
 		$lastsawtime = getGETPOSTsettingvalue('lastsawtime', null);
@@ -1326,10 +1329,15 @@ function handle_ajax() {
 		/* We need this to always be in forward order for the AJAX update to work properly */
 		/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
 		# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
-		$reverse = isset($config['syslog']['reverse']);
+		$reverse = config_path_enabled('syslog', 'reverse');
 		$specific_log = basename($logfile, '.log') . '_settings';
-		if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
-		if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+		$cronorder = config_get_path("syslog/{$specific_log}/cronorder");
+		if ($cronorder == 'forward') {
+			$reverse = false;
+		}
+		if ($cronorder == 'reverse') {
+			$reverse = true;
+		}
 
 		$filterlog = ($reverse) ? array_reverse($filterlog) : $filterlog;
 

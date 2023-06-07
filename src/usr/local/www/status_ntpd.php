@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -33,20 +33,20 @@
 ##|*MATCH=status_ntpd.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once('config.inc');
+require_once('config.lib.inc');
+require_once('guiconfig.inc');
 
-$allow_query = !isset($config['ntpd']['noquery']);
-if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
-	foreach ($config['ntpd']['restrictions']['row'] as $v) {
-		if (ip_in_subnet('127.0.0.1', "{$v['acl_network']}/{$v['mask']}") || 
-		    ip_in_subnet('::1', "{$v['acl_network']}/{$v['mask']}")) {
-			$allow_query = !isset($v['noquery']);
-		}
+$allow_query = !config_path_enabled('ntpd','noquery');
+foreach (config_get_path('ntpd/restrictions/row') as $v) {
+	if (ip_in_subnet('127.0.0.1', "{$v['acl_network']}/{$v['mask']}") || 
+		ip_in_subnet('::1', "{$v['acl_network']}/{$v['mask']}")) {
+		$allow_query = !isset($v['noquery']);
 	}
 }
 
-if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
-	if (isset($config['system']['ipv6allow'])) {
+if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
+	if (config_path_enabled('system','ipv6allow')) {
 		$inet_version = "";
 	} else {
 		$inet_version = " -4";
@@ -118,9 +118,9 @@ if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 				$gps_lat_min = substr($gps_vars[3], 2);
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
 				$gps_lon_min = substr($gps_vars[5], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[4];
 				$gps_lon_dir = $gps_vars[6];
@@ -131,9 +131,9 @@ if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 				$gps_lat_min = substr($gps_vars[2], 2);
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
 				$gps_lon_min = substr($gps_vars[4], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
@@ -147,9 +147,9 @@ if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 				$gps_lat_min = substr($gps_vars[1], 2);
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
 				$gps_lon_min = substr($gps_vars[3], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[2];
 				$gps_lon_dir = $gps_vars[4];
@@ -160,9 +160,9 @@ if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 				$gps_lat_min = substr($gps_vars[6], 2);
 				$gps_lon_deg = substr($gps_vars[8], 0, 3);
 				$gps_lon_min = substr($gps_vars[8], 3);
-				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + (float) $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[7] == "N") ? 1 : -1);
-				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + (float) $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[9] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[7];
 				$gps_lon_dir = $gps_vars[9];
@@ -171,22 +171,34 @@ if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 	}
 }
 
-if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
-	$lookfor['GPGSV'] = $config['ntpd']['gps']['nmeaset']['gpgsv'];
-	$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
+global $showgps;
+$showgps = 0;
+
+global $gps_goo_lnk;
+$gps_goo_lnk = 1;
+
+// GPS satellite information (if available)
+if (($gps_ok) && ($gps_lat) && ($gps_lon)) {
+	$gps_goo_lnk = 2;
+	$showgps = 1;
+}
+
+if (isset($gps_ok) && config_path_enabled('ntpd/gps','extstatus')) {
+	$lookfor['GPGSV'] = config_path_enabled('ntpd/gps/nmeaset','gpgsv');
+	$lookfor['GPGGA'] = !isset($gps_sat) && config_path_enabled('ntpd/gps/nmeaset','gpgga');
 	$gpsport = fopen('/dev/gps0', 'r+');
 	while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {
 		$buffer = fgets($gpsport);
 		if ($lookfor['GPGSV'] && substr($buffer, 0, 6) == '$GPGSV') {
 			$gpgsv = explode(',', $buffer);
 			$gps_satview = (int)$gpgsv[3];
-			$lookfor['GPGSV'] = 0;
+			$lookfor['GPGSV'] = false;
 		} elseif ($lookfor['GPGGA'] && substr($buffer, 0, 6) == '$GPGGA') {
 			$gpgga = explode(',', $buffer);
 			$gps_sat = (int)$gpgga[7];
 			$gps_alt = $gpgga[9];
 			$gps_alt_unit = $gpgga[10];
-			$lookfor['GPGGA'] = 0;
+			$lookfor['GPGGA'] = false;
 		}
 	}
 }
@@ -204,9 +216,9 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $config, $ntpq_servers, $allow_query;
+	global $ntpq_servers, $allow_query;
 
-	if ($config['ntpd']['enable'] == 'disabled'):
+	if (config_get_path('ntpd/enable') == 'disabled'):
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
 		printf(gettext('NTP Server is disabled'));
@@ -331,8 +343,6 @@ include("head.inc");
 
 
 <?php
-
-$showgps = 0;
 
 // GPS satellite information (if available)
 if (($gps_ok) && ($gps_lat) && ($gps_lon)):

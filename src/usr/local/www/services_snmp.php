@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -36,35 +36,35 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 
 if (!is_array($config['snmpd'])) {
-	$config['snmpd'] = array();
-	$config['snmpd']['rocommunity'] = "public";
-	$config['snmpd']['pollport'] = "161";
+	config_set_path('snmpd', array());
+	config_set_path('snmpd/rocommunity', "public");
+	config_set_path('snmpd/pollport', "161");
 }
 
 if (!is_array($config['snmpd']['modules'])) {
-	$config['snmpd']['modules'] = array();
-	$config['snmpd']['modules']['mibii'] = true;
-	$config['snmpd']['modules']['netgraph'] = true;
-	$config['snmpd']['modules']['pf'] = true;
-	$config['snmpd']['modules']['hostres'] = true;
-	$config['snmpd']['modules']['bridge'] = true;
-	$config['snmpd']['modules']['ucd'] = true;
-	$config['snmpd']['modules']['regex'] = true;
+	config_set_path('snmpd/modules', array());
+	config_set_path('snmpd/modules/mibii', true);
+	config_set_path('snmpd/modules/netgraph', true);
+	config_set_path('snmpd/modules/pf', true);
+	config_set_path('snmpd/modules/hostres', true);
+	config_set_path('snmpd/modules/bridge', true);
+	config_set_path('snmpd/modules/ucd', true);
+	config_set_path('snmpd/modules/regex', true);
 }
 
 $pconfig['enable'] = isset($config['snmpd']['enable']);
-$pconfig['pollport'] = $config['snmpd']['pollport'];
-$pconfig['syslocation'] = $config['snmpd']['syslocation'];
-$pconfig['syscontact'] = $config['snmpd']['syscontact'];
-$pconfig['rocommunity'] = $config['snmpd']['rocommunity'];
+$pconfig['pollport'] = config_get_path('snmpd/pollport');
+$pconfig['syslocation'] = config_get_path('snmpd/syslocation');
+$pconfig['syscontact'] = config_get_path('snmpd/syscontact');
+$pconfig['rocommunity'] = config_get_path('snmpd/rocommunity');
 /* disabled until some docs show up on what this does.
 $pconfig['rwenable'] = isset($config['snmpd']['rwenable']);
 $pconfig['rwcommunity'] = $config['snmpd']['rwcommunity'];
 */
 $pconfig['trapenable'] = isset($config['snmpd']['trapenable']);
-$pconfig['trapserver'] = $config['snmpd']['trapserver'];
-$pconfig['trapserverport'] = $config['snmpd']['trapserverport'];
-$pconfig['trapstring'] = $config['snmpd']['trapstring'];
+$pconfig['trapserver'] = config_get_path('snmpd/trapserver');
+$pconfig['trapserverport'] = config_get_path('snmpd/trapserverport');
+$pconfig['trapstring'] = config_get_path('snmpd/trapstring');
 
 $pconfig['mibii'] = isset($config['snmpd']['modules']['mibii']);
 $pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
@@ -74,7 +74,7 @@ $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
 $pconfig['ucd'] = isset($config['snmpd']['modules']['ucd']);
 $pconfig['regex'] = isset($config['snmpd']['modules']['regex']);
 
-$pconfig['ipprotocol'] = $config['snmpd']['ipprotocol'];
+$pconfig['ipprotocol'] = config_get_path('snmpd/ipprotocol');
 if (empty($config['snmpd']['bindip'])) {
 	$pconfig['bindip'] = array();
 } else {
@@ -138,31 +138,31 @@ if ($_POST) {
 
 
 	if (!$input_errors) {
-		$config['snmpd']['enable'] = $_POST['enable'] ? true : false;
-		$config['snmpd']['pollport'] = $_POST['pollport'];
-		$config['snmpd']['syslocation'] = $_POST['syslocation'];
-		$config['snmpd']['syscontact'] = $_POST['syscontact'];
-		$config['snmpd']['rocommunity'] = $_POST['rocommunity'];
+		config_set_path('snmpd/enable', $_POST['enable'] ? true : false);
+		config_set_path('snmpd/pollport', $_POST['pollport']);
+		config_set_path('snmpd/syslocation', $_POST['syslocation']);
+		config_set_path('snmpd/syscontact', $_POST['syscontact']);
+		config_set_path('snmpd/rocommunity', $_POST['rocommunity']);
 		/* disabled until some docs show up on what this does.
 		$config['snmpd']['rwenable'] = $_POST['rwenable'] ? true : false;
 		$config['snmpd']['rwcommunity'] = $_POST['rwcommunity'];
 		*/
-		$config['snmpd']['trapenable'] = $_POST['trapenable'] ? true : false;
-		$config['snmpd']['trapserver'] = $_POST['trapserver'];
-		$config['snmpd']['trapserverport'] = $_POST['trapserverport'];
-		$config['snmpd']['trapstring'] = $_POST['trapstring'];
+		config_set_path('snmpd/trapenable', $_POST['trapenable'] ? true : false);
+		config_set_path('snmpd/trapserver', $_POST['trapserver']);
+		config_set_path('snmpd/trapserverport', $_POST['trapserverport']);
+		config_set_path('snmpd/trapstring', $_POST['trapstring']);
 
-		$config['snmpd']['modules']['mibii'] = $_POST['mibii'] ? true : false;
-		$config['snmpd']['modules']['netgraph'] = $_POST['netgraph'] ? true : false;
-		$config['snmpd']['modules']['pf'] = $_POST['pf'] ? true : false;
-		$config['snmpd']['modules']['hostres'] = $_POST['hostres'] ? true : false;
-		$config['snmpd']['modules']['bridge'] = $_POST['bridge'] ? true : false;
-		$config['snmpd']['modules']['ucd'] = $_POST['ucd'] ? true : false;
-		$config['snmpd']['modules']['regex'] = $_POST['regex'] ? true : false;
+		config_set_path('snmpd/modules/mibii', $_POST['mibii'] ? true : false);
+		config_set_path('snmpd/modules/netgraph', $_POST['netgraph'] ? true : false);
+		config_set_path('snmpd/modules/pf', $_POST['pf'] ? true : false);
+		config_set_path('snmpd/modules/hostres', $_POST['hostres'] ? true : false);
+		config_set_path('snmpd/modules/bridge', $_POST['bridge'] ? true : false);
+		config_set_path('snmpd/modules/ucd', $_POST['ucd'] ? true : false);
+		config_set_path('snmpd/modules/regex', $_POST['regex'] ? true : false);
 
-		$config['snmpd']['ipprotocol'] = $_POST['ipprotocol'];
+		config_set_path('snmpd/ipprotocol', $_POST['ipprotocol']);
 		if (is_array($_POST['bindip']) && !empty($_POST['bindip'])) {
-			$config['snmpd']['bindip'] = implode(",", $_POST['bindip']);
+			config_set_path('snmpd/bindip', implode(",", $_POST['bindip']));
 		}
 
 		write_config("SNMP settings saved");

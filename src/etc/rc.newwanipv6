@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2006-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -168,7 +168,7 @@ if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 
 if ($srvupdate) {
 	/* reload unbound */
-	services_unbound_configure();
+	services_unbound_configure(true, $interface);
 
 	/* perform RFC 2136 DNS update */
 	services_dnsupdate_process($interface);
@@ -219,4 +219,8 @@ if (empty($config['interfaces'][$interface]['ipaddr'])) {
 	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
 }
 
+/* Unconditional filter reload to ensure the correct rules and gateways are
+ * active after this script has processed all changes.
+ * See https://redmine.pfsense.org/issues/13228 */
+filter_configure();
 ?>

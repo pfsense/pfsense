@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -206,7 +206,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 		// as specified in this function
 		function jumpToLine(line) {
 			var lineht = <?=$lineheight?>; // Line height in pixels
-			console.log("Jumpting to line " + line);
+			console.log("Jumping to line " + line);
 			var ta = document.getElementById("fileContent");
 			ta.scrollTop = lineht * (line - 1);
 		}

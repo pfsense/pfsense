@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Gabriel B. <gnoahb@gmail.com>
  * All rights reserved.
  *
@@ -602,7 +602,7 @@ if ($pconfig['type'] == 'l2tp') {
 	$section->add($group);
 }
 
-// These elements are hidden by default, and un-hidden in Javascript
+// These elements are hidden by default, and un-hidden in JavaScript
 if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	foreach ($linklist['list'] as $ifnm => $nm) {
 
@@ -727,15 +727,15 @@ $group->add(new Form_Input(
 	'pppoe_resethour',
 	null,
 	'text',
-	$pconfig['pppoe_resethour']
-))->setHelp('Hour');
+	(strlen($pconfig['pppoe_resethour']) > 0) ? $pconfig['pppoe_resethour'] : "0",
+))->setHelp('Hour (0-23), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetminute',
 	null,
 	'text',
-	$pconfig['pppoe_resetminute']
-))->setHelp('Minute');
+	(strlen($pconfig['pppoe_resetminute']) > 0) ? $pconfig['pppoe_resetminute'] : "0",
+))->setHelp('Minute (0-59), blank for * (every)');
 
 $group->add(new Form_Input(
 	'pppoe_resetdate',

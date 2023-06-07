@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -132,7 +132,7 @@ function doCmdT($title, $command, $method) {
 	} else {
 		$execOutput = "";
 		$execStatus = "";
-		$fn = "{$output_path}/{$title}.txt";
+		$fn = "{$output_path}/" . basename("{$title}.txt");
 		if ($method == "exec") {
 			exec($command . " > " . escapeshellarg($fn) . " 2>&1", $execOutput, $execStatus);
 			if ($show_output) {
@@ -201,7 +201,7 @@ function execCmds() {
 function get_firewall_info() {
 	global $g, $output_path;
 	/* Firewall Platform/Serial */
-	$firewall_info = "Product Name: " . htmlspecialchars($g['product_label']);
+	$firewall_info = "Product Name: " . htmlspecialchars(g_get('product_label'));
 	$platform = system_identify_specific_platform();
 	if (!empty($platform['descr'])) {
 		$firewall_info .= "<br/>Platform: " . htmlspecialchars($platform['descr']);
@@ -227,9 +227,9 @@ function get_firewall_info() {
 		$firewall_info .= "<br/>Serial: " . htmlspecialchars($serial);
 	}
 
-	if (!empty($g['product_version_string'])) {
-		$firewall_info .= "<br/>" . htmlspecialchars($g['product_label']) .
-		    " version: " . htmlspecialchars($g['product_version_string']);
+	if (!empty(g_get('product_version_string'))) {
+		$firewall_info .= "<br/>" . htmlspecialchars(g_get('product_label')) .
+		    " version: " . htmlspecialchars(g_get('product_version_string'));
 	}
 
 	if (file_exists('/etc/version.buildtime')) {
@@ -278,6 +278,7 @@ if (function_exists("system_get_thothid") &&
 defCmdT("OS-Uptime", "/usr/bin/uptime");
 defCmdT("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
 defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
+defCmdT("Network-Multicast Groups", "/usr/sbin/ifmcstat");
 defCmdT("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
 defCmdT("Process-List", "/bin/ps xauwwd");
 defCmdT("Disk-Mounted Filesystems", "/sbin/mount");
@@ -305,7 +306,7 @@ defCmdT("Firewall-Generated Ruleset Limiters", "/bin/cat {$g['tmp_path']}/rules.
 defCmdT("Firewall-Generated Ruleset Limits", "/bin/cat {$g['tmp_path']}/rules.limits");
 foreach (glob("{$g['tmp_path']}/rules.packages.*") as $pkgrules) {
 	$pkgname = substr($pkgrules, strrpos($pkgrules, '.') + 1);
-	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat {$pkgrules}");
+	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat " . escapeshellarg($pkgrules));
 }
 $ovpnradrules = array();
 foreach (glob("{$g['tmp_path']}/ovpn_ovpns*.rules") as $ovpnrules) {
@@ -333,10 +334,8 @@ defCmdT("Firewall-pftop Queue", "/usr/local/sbin/pftop -w 150 -a -b -v queue");
 defCmdT("Firewall-pftop Rules", "/usr/local/sbin/pftop -w 150 -a -b -v rules");
 defCmdT("Firewall-pftop Size", "/usr/local/sbin/pftop -w 150 -a -b -v size");
 defCmdT("Firewall-pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
-defCmdT("Firewall-IPFW Rules for Captive Portal", "/sbin/ipfw show");
-defCmdT("Firewall-IPFW Limiter Info", "/sbin/ipfw pipe show");
-defCmdT("Firewall-IPFW Queue Info", "/sbin/ipfw queue show");
-defCmdT("Firewall-IPFW Tables", "/sbin/ipfw table all list");
+defCmdT("Firewall-Limiter Info", "/sbin/dnctl pipe show");
+defCmdT("Firewall-Queue Info", "/sbin/dnctl queue show");
 
 /* Configuration Files */
 defCmdT("Disk-Contents of var run", "/bin/ls /var/run");
@@ -442,18 +441,28 @@ defCmdT("OS-Package Manager Configuration", "/usr/local/sbin/pkg-static -vv");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
 
+defCmdT("Disk-Filesystem Table", "/bin/cat /etc/fstab");
+defCmdT("Disk-Swap Information", "/usr/sbin/swapinfo");
+
 if (is_module_loaded("zfs.ko")) {
 	defCmdT("Disk-ZFS List", "/sbin/zfs list");
 	defCmdT("Disk-ZFS Properties", "/sbin/zfs get all");
 	defCmdT("Disk-ZFS Pool List", "/sbin/zpool list");
 	defCmdT("Disk-ZFS Pool Status", "/sbin/zpool status");
 }
+
+defCmdT("Disk-GEOM Tree", "/sbin/geom -t");
+defCmdT("Disk-GEOM Disk List", "/sbin/geom disk list -a");
+defCmdT("Disk-GEOM Partition Summary", "/sbin/geom part show -p");
+defCmdT("Disk-GEOM Partition Details", "/sbin/geom part list");
+defCmdT("Disk-GEOM Label Status", "/sbin/geom label status");
+defCmdT("Disk-GEOM Label Details", "/sbin/geom label list");
 defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
-$pgtitle = array($g['product_label'], "Status");
+$pgtitle = array(g_get('product_label'), "Status");
 
 if (!$console):
 include("head.inc"); ?>

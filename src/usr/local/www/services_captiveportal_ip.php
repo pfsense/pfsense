@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -64,7 +64,7 @@ if ($_POST['act'] == "del" && !empty($cpzone)) {
 		$ipent = $a_allowedips[$_POST['id']];
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
-			captiveportal_ether_delete_entry($ipent, 'allowedhostsmac');
+			captiveportal_ether_delete_entry($ipent, 'allowedhosts');
 		}
 
 		unset($a_allowedips[$_POST['id']]);

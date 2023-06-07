@@ -1,0 +1,14 @@
+name: "%%PRODUCT_NAME%%-boot"
+version: "%%VERSION%%"
+origin: "security/%%PRODUCT_NAME%%-boot"
+comment: <<EOD
+%%PRODUCT_NAME%% boot files
+EOD
+maintainer: development@pfsense.org
+prefix: /
+vital: true
+deps: { }
+categories [ security,  ]
+licenselogic: single
+licenses: [ APACHE20,  ]
+options: {  }

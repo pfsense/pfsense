@@ -202,8 +202,8 @@ $priv_list['page-diagnostics-traceroute']['match'] = array();
 $priv_list['page-diagnostics-traceroute']['match'][] = "diag_traceroute.php*";
 
 $priv_list['page-firewall-easyrule'] = array();
-$priv_list['page-firewall-easyrule']['name'] = gettext("WebCfg - Firewall: Easy Rule add/status");
-$priv_list['page-firewall-easyrule']['descr'] = gettext("Allow access to the 'Firewall: Easy Rule' add/status page.");
+$priv_list['page-firewall-easyrule']['name'] = gettext("WebCfg - Firewall: EasyRule add/status");
+$priv_list['page-firewall-easyrule']['descr'] = gettext("Allow access to the 'Firewall: EasyRule' add/status page.");
 $priv_list['page-firewall-easyrule']['match'] = array();
 $priv_list['page-firewall-easyrule']['match'][] = "easyrule.php*";
 

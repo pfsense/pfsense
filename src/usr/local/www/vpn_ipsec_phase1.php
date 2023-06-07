@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -40,7 +40,7 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if ($_REQUEST['generatekey']) {
+if ($_POST['generatekey']) {
 	$keyoutput = "";
 	$keystatus = "";
 	exec("/bin/dd status=none if=/dev/random bs=4096 count=1 | /usr/bin/openssl sha224 | /usr/bin/cut -f2 -d' '", $keyoutput, $keystatus);
@@ -183,13 +183,14 @@ if ($p1) {
 	}
 }
 // default value for new P1 and failsafe to always have at least 1 encryption item for the Form_ListItem
-if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['item']) == 0) {
+
+if (count(array_get_path($pconfig, 'encryption/item', [])) == 0) {
 	$item = array();
 	$item['encryption-algorithm'] = array('name' => "aes", 'keylen' => 128);
 	$item['hash-algorithm'] = "sha256";
 	$item['prf-algorithm'] = "sha256";
 	$item['dhgroup'] = "14";
-	$pconfig['encryption']['item'][] = $item;
+	array_set_path($pconfig, 'encryption/item', [$item]);
 }
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
@@ -200,17 +201,20 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	$eitems = array_get_path($pconfig, 'encryption/item', []);
 	for($i = 0; $i < 100; $i++) {
 		if (isset($_POST['ealgo_algo'.$i])) {
-			$item = array();
-			$item['encryption-algorithm']['name'] = $_POST['ealgo_algo'.$i];
-			$item['encryption-algorithm']['keylen'] = $_POST['ealgo_keylen'.$i];
-			$item['hash-algorithm'] = $_POST['halgo'.$i];
-			$item['prf-algorithm'] = $_POST['prfalgo'.$i];
-			$item['dhgroup'] = $_POST['dhgroup'.$i];
-			$pconfig['encryption']['item'][] = $item;
+			$item = [];
+			array_set_path($item, 'encryption-algorithm', []);
+			array_set_path($item, 'encryption-algorithm/name', $_POST['ealgo_algo'.$i]);
+			array_set_path($item, 'encryption-algorithm/keylen', $_POST['ealgo_keylen'.$i]);
+			array_set_path($item, 'hash-algorithm', $_POST['halgo'.$i]);
+			array_set_path($item, 'prf-algorithm', $_POST['prfalgo'.$i]);
+			array_set_path($item, 'dhgroup', $_POST['dhgroup'.$i]);
+			$eitems[] = $item;
 		}
 	}
+	array_set_path($pconfig, 'encryption/item', $eitems);
 
 	/* input validation */
 
@@ -484,8 +488,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
 
-	foreach($pconfig['encryption']['item'] as $p1algo) {
-		if (preg_match("/aes\d+gcm/", $p1algo['encryption-algorithm']['name']) && $_POST['iketype'] != "ikev2") {
+	foreach(array_get_path($pconfig, 'encryption/item', []) as $p1algo) {
+		if (preg_match("/aes\d+gcm/", array_get_path($p1algo, 'encryption-algorithm/name', '')) && $_POST['iketype'] != "ikev2") {
 			$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
 		}
 	}
@@ -502,7 +506,7 @@ if ($_POST['save']) {
 		}
 	}
 	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent, false, false)) {
-		foreach ($a_phase2 as $p2index => $ph2tmp) {
+		foreach ($a_phase2 as $ph2tmp) {
 			if ($ph2tmp['ikeid'] == $old_ph1ent['ikeid']) {
 				if (!$vtidisablecheck && $pconfig['disabled'] &&
 				    is_interface_ipsec_vti_assigned($ph2tmp)) {
@@ -524,8 +528,9 @@ if ($_POST['save']) {
 			if (!cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
 				$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
 			}
-			if (preg_grep('/\*/', cert_get_sans($errchkcert['crt']))) {
-				$input_errors[] = gettext("The selected certificate contains wildcard entries, which are not supported.");
+			$cert_sans = cert_get_sans($errchkcert['crt']);
+			if (count($cert_sans) == count(preg_grep('/\*/', $cert_sans))) {
+				$input_errors[] = gettext("The selected certificate only contains wildcard SAN entries, which are not supported. The certificate must contain at least one non-wildcard SAN.");
 			}
 			$purpose = cert_get_purpose($errchkcert['crt']);
 			if ($pconfig['mobile'] && ($purpose['server'] == 'No')) {
@@ -627,7 +632,7 @@ if ($_POST['save']) {
 		}
 
 		/* generate unique phase1 ikeid */
-		if ($ph1ent['ikeid'] == 0) {
+		if (empty($ph1ent['ikeid'])) {
 			$ph1ent['ikeid'] = ipsec_ikeid_next();
 		}
 
@@ -912,7 +917,7 @@ $section->addInput(new Form_Select(
 	'*My Certificate',
 	$pconfig['certref'],
 	cert_build_list('cert', 'IPsec')
-))->setHelp('Select a certificate previously configured in the Certificate Manager.');
+))->setHelp('Select a certificate which identifies this firewall. The certificate must have at least one non-wildcard SAN.');
 
 $section->addInput(new Form_Select(
 	'pkcs11certref',
@@ -933,13 +938,14 @@ $section->addInput(new Form_Select(
 	'*Peer Certificate Authority',
 	$pconfig['caref'],
 	cert_build_list('ca', 'IPsec')
-))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
+))->setHelp('Select a certificate authority to validate the peer certificate.');
 
 $form->add($section);
 
-$rowcount = count($pconfig['encryption']['item']);
+$eitems = array_get_path($pconfig, 'encryption/item', []);
+$rowcount = count($eitems);
 $section = new Form_Section('Phase 1 Proposal (Encryption Algorithm)');
-foreach($pconfig['encryption']['item'] as $key => $p1enc) {
+foreach($eitems as $key => $p1enc) {
 	$lastrow = ($counter == $rowcount - 1);
 	$group = new Form_Group($counter == 0 ? '*Encryption Algorithm' : '');
 	$group->addClass("repeatable");
@@ -947,28 +953,28 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	$group->add(new Form_Select(
 		'ealgo_algo'.$key,
 		null,
-		$p1enc['encryption-algorithm']['name'],
+		array_get_path($p1enc, 'encryption-algorithm/name', []),
 		build_eal_list()
 	))->setHelp($lastrow ? 'Algorithm' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'ealgo_keylen'.$key,
 		null,
-		$p1enc['encryption-algorithm']['keylen'],
+		array_get_path($p1enc, 'encryption-algorithm/keylen', []),
 		array()
 	))->setHelp($lastrow ? 'Key length' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'halgo'.$key,
 		'*Hash Algorithm',
-		$p1enc['hash-algorithm'],
+		array_get_path($p1enc, 'hash-algorithm'),
 		$p1_halgos
 	))->setHelp($lastrow ? 'Hash' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'dhgroup'.$key,
 		'*DH Group',
-		$p1enc['dhgroup'],
+		array_get_path($p1enc, 'dhgroup'),
 		$p1_dhgroups
 	))->setHelp($lastrow ? 'DH Group' : '')->setWidth(2);
 
@@ -987,14 +993,14 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	$group->add(new Form_Select(
 		'prfalgo'.$key,
 		'*PRF Algorithm',
-		$p1enc['prf-algorithm'],
+		array_get_path($p1enc, 'prf-algorithm'),
 		$p1_halgos
 	))->setHelp($lastrow ? 'PRF' : '')->setWidth(2);
 
 	$section->add($group);
 	$counter += 1;
 }
-$section->addInput(new Form_StaticText('', ''))->setHelp('Note: Blowfish, 3DES, CAST128, MD5, SHA1, and DH groups 1, 2, 5, 22, 23, and 24 provide weak security and should be avoided.');
+$section->addInput(new Form_StaticText('', ''))->setHelp('Note: SHA1 and DH groups 1, 2, 5, 22, 23, and 24 provide weak security and should be avoided.');
 
 $btnaddopt = new Form_Button(
 	'algoaddrow',
@@ -1096,7 +1102,7 @@ if (!isset($pconfig['mobile'])) {
 		'Gateway duplicates',
 		sprintf(gettext('Enable this to allow multiple phase 1 configurations with the same endpoint. ' .
 		    'When enabled, %s does not manage routing to the remote gateway and traffic will follow the default route ' .
-		    'without regard for the chosen interface. Static routes can override this behavior.'), $g['product_label']),
+		    'without regard for the chosen interface. Static routes can override this behavior.'), g_get('product_label')),
 		$pconfig['gw_duplicates']
 	));
 }
@@ -1350,7 +1356,7 @@ events.push(function() {
 		switch ($('#ealgo_algo'+id).find(":selected").index().toString()) {
 <?php
 	$i = 0;
-	foreach ($p1_ealgos as $algo => $algodata) {
+	foreach ($p1_ealgos as $algodata) {
 		if (is_array($algodata['keysel'])) {
 ?>
 			case '<?=$i?>':
@@ -1479,8 +1485,11 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
-			type: 'get',
-			url: 'vpn_ipsec_phase1.php?generatekey=true',
+			type: 'post',
+			url: 'vpn_ipsec_phase1.php',
+			data: {
+				generatekey:           true,
+			},
 			dataType: 'json',
 			success: function(data) {
 				$('#pskey').val(data.pskey.replace(/\\n/g, '\n'));

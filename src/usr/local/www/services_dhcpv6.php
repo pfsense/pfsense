@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -47,13 +47,15 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 	// dhcp_clean_leases();
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
-	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
+	if (config_path_enabled('dnsmasq') &&
+	    config_path_enabled('dnsmasq', 'regdhcpstatic')) {
 		$retvaldns |= services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
-	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+	} elseif (config_path_enabled('unbound') &&
+		  config_path_enabled('unbound', 'regdhcpstatic')) {
 		$retvaldns |= services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');
@@ -69,13 +71,11 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 	if (!function_exists('is_package_installed')) {
 		require_once('pkg-utils.inc');
 	}
-	if (is_package_installed('pfSense-pkg-bind') && isset($config['installedpackages']['bind']['config'][0]['enable_bind'])) {
+	if (is_package_installed('pfSense-pkg-bind') &&
+	    config_path_enabled('installedpackages/bind/config/0', 'enable_bind')) {
 		$reloadbind = false;
-		if (is_array($config['installedpackages']['bindzone'])) {
-			$bindzone = $config['installedpackages']['bindzone']['config'];
-		} else {
-			$bindzone = array();
-		}
+		$bindzone = config_get_path('installedpackages/bindzone/config', []);
+
 		for ($x = 0; $x < sizeof($bindzone); $x++) {
 			$zone = $bindzone[$x];
 			if ($zone['regdhcpstatic'] == 'on') {
@@ -99,7 +99,7 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 	return $retval;
 }
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }
@@ -111,14 +111,12 @@ $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
-		$oc = $config['interfaces'][$ifent];
-		$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
-		    (is_ipaddrv6($oc['ipaddrv6']) &&
-		    !is_linklocal($oc['ipaddrv6'])));
+		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6");
 
-		if ((!is_array($config['dhcpdv6'][$ifent]) ||
-		    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
-		    !$valid_if_ipaddrv6) {
+		if (!config_path_enabled("dhcpdv6/{$ifent}") &&
+		    !(($ifaddr == 'track6') ||
+		    (is_ipaddrv6($ifaddr) &&
+		    !is_linklocal($ifaddr)))) {
 			continue;
 		}
 		$if = $ifent;
@@ -126,43 +124,43 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-if (is_array($config['dhcpdv6'][$if])) {
+if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	/* DHCPv6 */
 	if (is_array($config['dhcpdv6'][$if]['range'])) {
-		$pconfig['range_from'] = $config['dhcpdv6'][$if]['range']['from'];
-		$pconfig['range_to'] = $config['dhcpdv6'][$if]['range']['to'];
+		$pconfig['range_from'] = config_get_path("dhcpdv6/{$if}/range/from");
+		$pconfig['range_to'] = config_get_path("dhcpdv6/{$if}/range/to");
 	}
 	if (is_array($config['dhcpdv6'][$if]['prefixrange'])) {
-		$pconfig['prefixrange_from'] = $config['dhcpdv6'][$if]['prefixrange']['from'];
-		$pconfig['prefixrange_to'] = $config['dhcpdv6'][$if]['prefixrange']['to'];
-		$pconfig['prefixrange_length'] = $config['dhcpdv6'][$if]['prefixrange']['prefixlength'];
+		$pconfig['prefixrange_from'] = config_get_path("dhcpdv6/{$if}/prefixrange/from");
+		$pconfig['prefixrange_to'] = config_get_path("dhcpdv6/{$if}/prefixrange/to");
+		$pconfig['prefixrange_length'] = config_get_path("dhcpdv6/{$if}/prefixrange/prefixlength");
 	}
-	$pconfig['deftime'] = $config['dhcpdv6'][$if]['defaultleasetime'];
-	$pconfig['maxtime'] = $config['dhcpdv6'][$if]['maxleasetime'];
-	$pconfig['domain'] = $config['dhcpdv6'][$if]['domain'];
-	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
-	list($pconfig['wins1'], $pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
-	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $config['dhcpdv6'][$if]['dnsserver'];
+	$pconfig['deftime'] = config_get_path("dhcpdv6/{$if}/defaultleasetime");
+	$pconfig['maxtime'] = config_get_path("dhcpdv6/{$if}/maxleasetime");
+	$pconfig['domain'] = config_get_path("dhcpdv6/{$if}/domain");
+	$pconfig['domainsearchlist'] = config_get_path("dhcpdv6/{$if}/domainsearchlist");
+	list($pconfig['wins1'], $pconfig['wins2']) = config_get_path("dhcpdv6/{$if}/winsserver");
+	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = config_get_path("dhcpdv6/{$if}/dnsserver");
 	$pconfig['dhcp6c-dns'] = ($config['dhcpdv6'][$if]['dhcp6c-dns'] != 'disabled') ? "enabled" : "disabled";
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
-	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
-	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
-	$pconfig['ddnsdomainsecondary'] = $config['dhcpdv6'][$if]['ddnsdomainsecondary'];
-	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
-	$pconfig['ddnsdomainkeyalgorithm'] = $config['dhcpdv6'][$if]['ddnsdomainkeyalgorithm'];
-	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
+	$pconfig['ddnsdomain'] = config_get_path("dhcpdv6/{$if}/ddnsdomain");
+	$pconfig['ddnsdomainprimary'] = config_get_path("dhcpdv6/{$if}/ddnsdomainprimary");
+	$pconfig['ddnsdomainsecondary'] = config_get_path("dhcpdv6/{$if}/ddnsdomainsecondary");
+	$pconfig['ddnsdomainkeyname'] = config_get_path("dhcpdv6/{$if}/ddnsdomainkeyname");
+	$pconfig['ddnsdomainkeyalgorithm'] = config_get_path("dhcpdv6/{$if}/ddnsdomainkeyalgorithm");
+	$pconfig['ddnsdomainkey'] = config_get_path("dhcpdv6/{$if}/ddnsdomainkey");
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($config['dhcpdv6'][$if]['ddnsforcehostname']);
 	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
-	$pconfig['ddnsclientupdates'] = $config['dhcpdv6'][$if]['ddnsclientupdates'];
-	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = $config['dhcpdv6'][$if]['ntpserver'];
-	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
-	$pconfig['ldap'] = $config['dhcpdv6'][$if]['ldap'];
+	$pconfig['ddnsclientupdates'] = config_get_path("dhcpdv6/{$if}/ddnsclientupdates");
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = config_get_path("dhcpdv6/{$if}/ntpserver");
+	$pconfig['tftp'] = config_get_path("dhcpdv6/{$if}/tftp");
+	$pconfig['ldap'] = config_get_path("dhcpdv6/{$if}/ldap");
 	$pconfig['netboot'] = isset($config['dhcpdv6'][$if]['netboot']);
-	$pconfig['bootfile_url'] = $config['dhcpdv6'][$if]['bootfile_url'];
-	$pconfig['netmask'] = $config['dhcpdv6'][$if]['netmask'];
-	$pconfig['numberoptions'] = $config['dhcpdv6'][$if]['numberoptions'];
-	$pconfig['dhcpv6leaseinlocaltime'] = $config['dhcpdv6'][$if]['dhcpv6leaseinlocaltime'];
+	$pconfig['bootfile_url'] = config_get_path("dhcpdv6/{$if}/bootfile_url");
+	$pconfig['netmask'] = config_get_path("dhcpdv6/{$if}/netmask");
+	$pconfig['numberoptions'] = config_get_path("dhcpdv6/{$if}/numberoptions");
+	$pconfig['dhcpv6leaseinlocaltime'] = config_get_path("dhcpdv6/{$if}/dhcpv6leaseinlocaltime");
 	if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
 		$config['dhcpdv6'][$if]['staticmap'] = array();
 	}
@@ -170,9 +168,9 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 
-if ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
-	$trackifname = $config['interfaces'][$if]['track6-interface'];
-	$trackcfg = $config['interfaces'][$trackifname];
+if (config_get_path("interfaces/{$if}/ipaddrv6") == 'track6') {
+	$trackifname = config_get_path("interfaces/{$if}/track6-interface");
+	$trackcfg = config_get_path("interfaces/{$trackifname}");
 	$ifcfgsn = "64";
 	$ifcfgip = '::';
 
@@ -188,7 +186,7 @@ if ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
  */
 
 $dhcrelay_enabled = false;
-$dhcrelaycfg = $config['dhcrelay6'];
+$dhcrelaycfg = config_get_path('dhcrelay6');
 
 if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycfg['interface']) && !empty($dhcrelaycfg['interface'])) {
 	$dhcrelayifs = explode(",", $dhcrelaycfg['interface']);
@@ -310,8 +308,8 @@ if (isset($_POST['apply'])) {
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
 		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
 	}
-	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
-		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
+	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] < $_POST['deftime']))) {
+		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds, and the same value or greater than the default lease time.");
 	}
 	if ($_POST['ddnsupdate']) {
 		if (!is_domain($_POST['ddnsdomain'])) {
@@ -359,8 +357,8 @@ if (isset($_POST['apply'])) {
 	}
 
 	// Disallow a range that includes the virtualip
-	if ($range_from_to_ok && is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $vip) {
+	if ($range_from_to_ok) {
+		foreach (config_get_path('virtualip/vip', []) as $vip) {
 			if ($vip['interface'] == $if) {
 				if ($vip['subnetv6'] && is_inrange_v6($vip['subnetv6'], $_POST['range_from'], $_POST['range_to'])) {
 					$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IPv6 address %s."), $vip['subnetv6']);
@@ -422,7 +420,7 @@ if (isset($_POST['apply'])) {
 
 	if (!$input_errors) {
 		if (!is_array($config['dhcpdv6'])) {
-			$config['dhcpdv6'] = array();
+			config_set_path('dhcpdv6', array());
 		}
 		if (!is_array($config['dhcpdv6'][$if])) {
 			$config['dhcpdv6'][$if] = array();
@@ -443,9 +441,9 @@ if (isset($_POST['apply'])) {
 		$config['dhcpdv6'][$if]['maxleasetime'] = $_POST['maxtime'];
 		$config['dhcpdv6'][$if]['netmask'] = $_POST['netmask'];
 
-		unset($config['dhcpdv6'][$if]['winsserver']);
+		config_del_path("dhcpdv6/{$if}/winsserver");
 
-		unset($config['dhcpdv6'][$if]['dnsserver']);
+		config_del_path("dhcpdv6/{$if}/dnsserver");
 		if ($_POST['dns1']) {
 			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns1'];
 		}
@@ -464,7 +462,7 @@ if (isset($_POST['apply'])) {
 		$config['dhcpdv6'][$if]['enable'] = ($_POST['enable']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
 		$config['dhcpdv6'][$if]['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
-		$config['dhcpdv6'][$if]['ddnsdomainsecondary'] = (!empty($_POST['ddnsdomainsecondary'])) ? $_POST['ddnsdomainsecondary'] : ''; 
+		$config['dhcpdv6'][$if]['ddnsdomainsecondary'] = (!empty($_POST['ddnsdomainsecondary'])) ? $_POST['ddnsdomainsecondary'] : '';
 		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$config['dhcpdv6'][$if]['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
@@ -473,7 +471,7 @@ if (isset($_POST['apply'])) {
 		$config['dhcpdv6'][$if]['ddnsreverse'] = ($_POST['ddnsreverse']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
-		unset($config['dhcpdv6'][$if]['ntpserver']);
+		config_del_path("dhcpdv6/{$if}/ntpserver");
 		if ($_POST['ntp1']) {
 			$config['dhcpdv6'][$if]['ntpserver'][] = $_POST['ntp1'];
 		}
@@ -492,7 +490,7 @@ if (isset($_POST['apply'])) {
 
 		// Handle the custom options rowhelper
 		if (isset($config['dhcpdv6'][$if]['numberoptions']['item'])) {
-			unset($config['dhcpdv6'][$if]['numberoptions']['item']);
+			config_del_path("dhcpdv6/{$if}/numberoptions/item");
 		}
 
 		$config['dhcpdv6'][$if]['numberoptions'] = $numberoptions;
@@ -550,7 +548,7 @@ $tabscounter = 0;
 $i = 0;
 
 foreach ($iflist as $ifent => $ifname) {
-	$oc = $config['interfaces'][$ifent];
+	$oc = config_get_path("interfaces/{$ifent}");
 	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
 	    (is_ipaddrv6($oc['ipaddrv6']) &&
 	    !is_linklocal($oc['ipaddrv6'])));
@@ -605,9 +603,10 @@ if ($dhcrelay_enabled) {
 }
 
 if (is_ipaddrv6($ifcfgip)) {
-
 	if ($ifcfgip == "::") {
-		$sntext = "Prefix Delegation";
+		$sntext = gettext("Delegated Prefix") . ':';
+		$sntext .= ' ' . convert_friendly_interface_to_friendly_descr($config['interfaces'][$if]['track6-interface']);
+		$sntext .= "/{$config['interfaces'][$if]['track6-prefix-id']}";
 		if (get_interface_track6ip($if)) {
 			$track6ip = get_interface_track6ip($if);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
@@ -711,14 +710,14 @@ for ($i=1;$i<=4; $i++) {
 	));
 }
 
-$group->setHelp('Leave blank to use the system default DNS servers, this interface\'s IP if DNS forwarder is enabled, or the servers configured on the "General" page.');
+$group->setHelp('Leave blank to use the system default DNS servers: The IP address of this firewall interface if DNS Resolver or Forwarder is enabled, otherwise the servers configured in General settings or those obtained dynamically.');
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'dhcp6c-dns',
 	null,
 	'Provide DNS servers to DHCPv6 clients',
-	($pconfig['dhcp6c-dns'] == "enabled")
+	(($pconfig['dhcp6c-dns'] == 'enabled') || ($pconfig['dhcp6c-dns'] == 'yes'))
 ))->setHelp('Unchecking this box disables the dhcp6.name-servers option. ' .
 			'Use with caution, as the resulting behavior may violate RFCs and lead to unintended client behavior.');
 
@@ -727,7 +726,7 @@ $section->addInput(new Form_Input(
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
+))->setHelp('The default is to use the domain name of this firewall as the default domain name provided by DHCP. An alternate domain name may be specified here.');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',

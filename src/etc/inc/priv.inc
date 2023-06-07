@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
  * Copyright (c) 2008 Shrew Soft Inc
@@ -242,7 +242,7 @@ function getAllowedPages($username, &$attributes = array()) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		// cache auth results for a short time to ease load on auth services & logs
 		if (isset($config['system']['webgui']['auth_refresh_time'])) {
-			$recheck_time = $config['system']['webgui']['auth_refresh_time'];
+			$recheck_time = config_get_path('system/webgui/auth_refresh_time');
 		} else {
 			$recheck_time = 30;
 		}

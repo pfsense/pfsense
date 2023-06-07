@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -104,7 +104,7 @@ unset($arp_table);
  * Translate these once so we don't do it over and over in the loops
  * below.
  */
-$online_string = gettext("online");
+$online_string = gettext("active");
 $active_string = gettext("active");
 $expired_string = gettext("expired");
 $dynamic_string = gettext("dynamic");
@@ -238,7 +238,10 @@ foreach ($leases['lease'] as $data):
 
 	if ($data['act'] != $static_string) {
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-			if (!is_array($dhcpifconf['range'])) {
+			if (empty($dhcpifconf)) {
+				continue;
+			}
+			if (!is_array($dhcpifconf['range']) || !isset($dhcpifconf['enable'])) {
 				continue;
 			}
 			if (is_inrange_v4($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {
@@ -293,7 +296,15 @@ foreach ($leases['lease'] as $data):
 						<td><?=gettext("n/a")?></td>
 						<td><?=gettext("n/a")?></td>
 					<? endif; ?>
-					<td><?=htmlspecialchars($data['online'])?></td>
+					<td>
+<?php if ($data['online'] == $online_string):?>
+							<span style="color:green; white-space: nowrap;"><i class="fa fa-arrow-up"></i>
+<?php else: ?>
+							<span style="white-space: nowrap;"><i class="fa fa-arrow-down"></i>
+<?php endif; ?>
+							<?=htmlspecialchars($data['online'])?>
+							</span>
+					</td>
 					<td><?=htmlspecialchars($data['act'])?></td>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>

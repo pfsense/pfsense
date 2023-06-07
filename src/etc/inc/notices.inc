@@ -6,7 +6,7 @@
  * Copyright (c) 2005 Colin Smith (ethethlay@gmail.com)
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("led.inc");
 
-$notice_path = $g['tmp_path'] . '/notices';
+$notice_path = g_get('tmp_path') . '/notices';
 global $smtp_authentication_mechanisms;
 $smtp_authentication_mechanisms = array(
 	'PLAIN' => 'PLAIN',
@@ -49,7 +49,7 @@ $pushover_sounds = array(
 	'cosmic' => 'Cosmic',
 	'falling' => 'Falling',
 	'gamelan' => 'Gamelan',
-	'incoming' => 'Incomming',
+	'incoming' => 'Incoming',
 	'intermission' => 'Intermission',
 	'magic' => 'Magic',
 	'mechanical' => 'Mechanical',
@@ -210,11 +210,7 @@ function close_notice($id) {
  *   Outputs notices in XML formatted text
  ******/
 function dump_xml_notices() {
-	if (file_exists("/cf/conf/use_xmlreader")) {
-		require_once("xmlreader.inc");
-	} else {
-		require_once("xmlparse.inc");
-	}
+	require_once("xmlparse.inc");
 	global $notice_path, $listtags;
 	$listtags[] = 'notice';
 	if (!$notices = get_notices()) {
@@ -250,16 +246,26 @@ function notices_sendqueue() {
 	$messagequeue = array();
 
 	while(true) {
-		$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 		$nothing_done_count++;
-		$smptcount = 0;
+		$smtpcount = 0;
 		$messages = array();
-		if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+		if (file_exists("{$g['vardb_path']}/notifyqueue.messages") &&
+		    is_writable("{$g['vardb_path']}/notifyqueue.messages")) {
+			$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 			$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
 			$messagequeue = $messages;
 			$messages['mails']['item'] = array(); // clear all items to be send
-			file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+			$ret = file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+			if ($ret === false) {
+				log_error("ERROR: Failed to write notify message queue!");
+				return;
+			}
 			unset($messages);
+		} else {
+			/* Queue does not exist or is not writable, so no action can be taken
+			 * https://redmine.pfsense.org/issues/14031
+			 */
+			return;
 		}
 		// clear lock before trying to send messages, so new one's can be added
 		unlock($notifyqueue_lck);
@@ -269,7 +275,7 @@ function notices_sendqueue() {
 			foreach($messagequeue['mails']['item'] as $mail) {
 				switch ($mail['type']) {
 					case 'mail':
-						$smptcount++;
+						$smtpcount++;
 						$smtpmessage .= "\r\n" . date("G:i:s",$mail['time']) . " " . $mail['msg'];
 						break;
 					default:
@@ -277,7 +283,7 @@ function notices_sendqueue() {
 				}
 			}
 			if (!empty($smtpmessage)) {
-				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smptcount);
+				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smtpcount);
 				$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
 				$nothing_done_count = 0;
 				notify_via_smtp($smtpmessageheader . $smtpmessage, true);
@@ -300,11 +306,21 @@ function notify_via_queue_add($message, $type='mail') {
 	$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 	$messages = array();
 	if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+		if (!is_writable("{$g['vardb_path']}/notifyqueue.messages")) {
+			/* Cannot write to notify queue, so exit early
+			 * https://redmine.pfsense.org/issues/14031
+			 */
+			return;
+		}
 		$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
 	}
-	if(is_array($messages)) {
+	if (is_array($messages)) {
 		$messages['mails']['item'][] = $mail;
-		file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+		$ret = file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+		if ($ret === false) {
+			log_error("ERROR: Failed to write notify message queue!");
+			return;
+		}
 	}
 	unset($messages);
 
@@ -366,7 +382,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		return;
 	}
 
-	$to = $config['notifications']['smtp']['notifyemailaddress'];
+	$to = config_get_path('notifications/smtp/notifyemailaddress');
 
 	if (empty($config['notifications']['smtp']['username']) ||
 	    empty($config['notifications']['smtp']['password'])) {
@@ -377,8 +393,8 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		$auth = isset($config['notifications']['smtp']['authentication_mechanism'])
 		    ? $config['notifications']['smtp']['authentication_mechanism']
 		    : 'PLAIN';
-		$username = $config['notifications']['smtp']['username'];
-		$password = $config['notifications']['smtp']['password'];
+		$username = config_get_path('notifications/smtp/username');
+		$password = config_get_path('notifications/smtp/password');
 	}
 
 	$params = array(
@@ -410,7 +426,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	}
 
 	if ($config['notifications']['smtp']['fromaddress']) {
-		$from = $config['notifications']['smtp']['fromaddress'];
+		$from = config_get_path('notifications/smtp/fromaddress');
 	} else {
 		$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
 	}
@@ -503,7 +519,7 @@ function notify_via_pushover($message, $force = false) {
 		return;
 	}
 	if (strcasecmp($config['notifications']['pushover']['sound'], 'devicedefault') == 0) {
-		unset($config['notifications']['pushover']['sound']);
+		config_del_path('notifications/pushover/sound');
 	}
 
 	$url = "https://api.pushover.net/1/messages.json";

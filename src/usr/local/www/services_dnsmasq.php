@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -124,7 +124,7 @@ $group->add(new Form_Checkbox(
 	$pconfig['strict_order']
 ))->setHelp('If this option is set %1$s DNS Forwarder (dnsmasq) will '.
 					'query the DNS servers sequentially in the order specified (%2$sSystem - General Setup - DNS Servers%3$s), '.
-					'rather than all at once in parallel. ', $g['product_label'], '<i>', '</i>');
+					'rather than all at once in parallel. ', g_get('product_label'), '<i>', '</i>');
 
 $group->add(new Form_Checkbox(
 	'domain_needed',
@@ -133,7 +133,7 @@ $group->add(new Form_Checkbox(
 	$pconfig['domain_needed']
 ))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
 					"not forward A or AAAA queries for plain names, without dots or domain parts, to upstream name servers.	 ".
-					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", $g['product_label']);
+					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", g_get('product_label'));
 
 $group->add(new Form_Checkbox(
 	'no_private_reverse',
@@ -143,7 +143,7 @@ $group->add(new Form_Checkbox(
 ))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
 					"not forward reverse DNS lookups (PTR) for private addresses (RFC 1918) to upstream name servers.  ".
 					"Any entries in the Domain Overrides section forwarding private \"n.n.n.in-addr.arpa\" names to a specific server are still forwarded. ".
-					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", $g['product_label']);
+					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", g_get('product_label'));
 
 $section->add($group);
 
@@ -222,8 +222,7 @@ foreach ($a_hosts as $i => $hostent):
 				</tr>
 
 <?php
-	if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])):
-		foreach ($hostent['aliases']['item'] as $alias):
+	foreach (array_get_path($hostent, 'aliases/item', []) as $alias):
 ?>
 				<tr>
 					<td>
@@ -244,8 +243,7 @@ foreach ($a_hosts as $i => $hostent):
 					</td>
 				</tr>
 <?php
-		endforeach;
-	endif;
+	endforeach;
 endforeach;
 ?>
 			</tbody>
@@ -275,7 +273,7 @@ endforeach;
 
 			<tbody>
 <?php
-foreach ($a_domainOverrides as $i => $doment):
+foreach ($a_domainOverrides as $doment):
 ?>
 				<tr>
 					<td>

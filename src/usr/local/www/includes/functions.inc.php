@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2013-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,7 +78,7 @@ function get_uptime() {
 		$minutes = "s";
 	}
 
-	if ($upmins > 1) {
+	if ($upsecs > 1) {
 		$seconds = "s";
 	}
 
@@ -197,17 +197,21 @@ function swap_usage() {
 }
 
 function mem_usage() {
-	$totalMem = get_single_sysctl("vm.stats.vm.v_page_count");
-	if ($totalMem > 0) {
-		$inactiveMem = get_single_sysctl("vm.stats.vm.v_inactive_count");
-		$cachedMem = get_single_sysctl("vm.stats.vm.v_cache_count");
-		$freeMem = get_single_sysctl("vm.stats.vm.v_free_count");
-		$usedMem = $totalMem - ($inactiveMem + $cachedMem + $freeMem);
-		$memUsage = round(($usedMem * 100) / $totalMem, 0);
-	} else {
-		$memUsage = "NA";
+	$memUsage = "NA";
+	$totalMem = (int) get_single_sysctl("vm.stats.vm.v_page_count");
+	if (is_numeric($totalMem)) {
+		/* Include inactive and laundry with free memory since they
+		 * could be freed under pressure. */
+		$inactiveMem = (int) get_single_sysctl("vm.stats.vm.v_inactive_count");
+		$laundryMem = (int) get_single_sysctl("vm.stats.vm.v_laundry_count");
+		$freeMem = (int) get_single_sysctl("vm.stats.vm.v_free_count");
+		if (is_numeric($inactiveMem) &&
+		    is_numeric($laundryMem) &&
+		    is_numeric($freeMem)) {
+			$usedMem = $totalMem - ($inactiveMem + $laundryMem + $freeMem);
+			$memUsage = round(($usedMem * 100) / $totalMem, 0);
+		}
 	}
-
 	return $memUsage;
 }
 
@@ -266,7 +270,7 @@ function crypto_accel_init() {
 
 function crypto_accel_set_flags($crypto, $name, $present = false, $enabled = false) {
 
-	foreach ($crypto["accel"] as $id => &$accel) {
+	foreach ($crypto["accel"] as &$accel) {
 		if ($accel["name"] != $name) {
 			continue;
 		}
@@ -279,7 +283,7 @@ function crypto_accel_set_flags($crypto, $name, $present = false, $enabled = fal
 
 function crypto_accel_get($crypto, $name, $key) {
 
-	foreach ($crypto["accel"] as $id => $accel) {
+	foreach ($crypto["accel"] as $accel) {
 		if ($accel["name"] != $name) {
 			continue;
 		}
@@ -291,7 +295,7 @@ function crypto_accel_get($crypto, $name, $key) {
 
 function crypto_accel_set_algs($crypto, $name, $algs) {
 
-	foreach ($crypto["accel"] as $id => &$accel) {
+	foreach ($crypto["accel"] as &$accel) {
 		if ($accel["name"] != $name) {
 			continue;
 		}
@@ -307,13 +311,13 @@ function crypto_accel_get_algs($crypto) {
 	$algs = array();
 	$algs_str = "";
 
-	foreach ($crypto["accel"] as $id => $accel) {
+	foreach ($crypto["accel"] as $accel) {
 		if (!$accel["present"] || !$accel["enabled"]) {
 			continue;
 		}
 		$algs = array_merge($accel["algs"], $algs);
 	}
-	foreach (array_unique($algs, SORT_STRING) as $id => $alg) {
+	foreach (array_unique($algs, SORT_STRING) as $alg) {
 		if (strlen($algs_str) > 0) {
 			$algs_str .= ",";
 		}
@@ -348,11 +352,14 @@ function get_cpu_crypto_support() {
 		if ($fd) {
 			fclose($fd);
 		}
-		exec("/usr/sbin/pciconf -l | /usr/bin/awk '{ printf \"%s\\n\", $4 }' | /usr/bin/cut -f2 -d=", $pciids);
+		exec("/usr/sbin/pciconf -l -l | /usr/bin/awk '{ printf \"%s|0x%s%s\\n\", $1, $6, $5 }'", $pciids);
 		if (isset($pciids) && is_array($pciids)) {
-			foreach ($pciids as $id => $pciid) {
-				if (in_array($pciid, $QATIDS)) {
-					$crypto = crypto_accel_set_flags($crypto, "QAT", true, (is_module_loaded('qat')) ? true : false);
+			foreach ($pciids as $pciid) {
+				list($devid, $pid) = explode('|', $pciid, 2);
+				if (in_array($pid, $QATIDS)) {
+					list($devname, $busloc) = explode('@', $devid);
+					$active = ((substr($devname, 0, 3) == 'qat') && is_module_loaded('qat'));
+					$crypto = crypto_accel_set_flags($crypto, "QAT", true, $active);
 					break;
 				}
 			}

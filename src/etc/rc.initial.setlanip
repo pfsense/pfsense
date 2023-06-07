@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -27,6 +27,7 @@
  */
 
 $options = getopt("hn", array("dry-run", "help"));
+$restart_webgui = false;
 
 if (isset($options["h"]) || isset($options["help"])) {
 	echo "usage: /etc/rc.initial.setlanip [option ...]\n";
@@ -71,12 +72,10 @@ function console_prompt_for_yn ($prompt_text) {
 function console_get_interface_from_ppp($realif) {
 	global $config;
 
-	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-			if ($realif == $ppp['if']) {
-				$ifaces = explode(",", $ppp['ports']);
-				return $ifaces[0];
-			}
+	foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+		if ($realif == $ppp['if']) {
+			$ifaces = explode(",", $ppp['ports']);
+			return $ifaces[0];
 		}
 	}
 
@@ -85,11 +84,7 @@ function console_get_interface_from_ppp($realif) {
 
 function prompt_for_enable_dhcp_server($version = 4) {
 	global $config, $fp, $interface;
-	if ($interface == "wan") {
-		if ($config['interfaces']['lan']) {
-			return false;
-		}
-	}
+
 	/* only allow DHCP server to be enabled when static IP is
 	   configured on this interface */
 	if ($version === 6) {
@@ -244,11 +239,14 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type, $nonlocalgate
 	}
 
 	//set the new GW as the default if there isnt one set yet
-	if ($item['ipprotocol'] == "inet" && empty(isset($config['gateways']['defaultgw4']))) {
-		$config['gateways']['defaultgw4'] = $new_name;
-	}
-	if ($item['ipprotocol'] == "inet6" && empty(isset($config['gateways']['defaultgw6']))) {
-		$config['gateways']['defaultgw6'] = $new_name;
+	init_config_arr(array('gateways'));
+	if (console_prompt_for_yn (gettext("Should this gateway be set as the default gateway?"))) {
+		if ($item['ipprotocol'] == "inet") {
+			config_set_path('gateways/defaultgw4', $new_name);
+		}
+		if ($item['ipprotocol'] == "inet6") {
+			config_set_path('gateways/defaultgw6', $new_name);
+		}
 	}
 
 	return $new_name;
@@ -263,20 +261,18 @@ function console_configure_ip_address($version) {
 
 	$upperifname = strtoupper($interface);
 
-	if ($interface == "wan") {
-		if (console_prompt_for_yn (sprintf(gettext('Configure %1$s address %2$s interface via %3$s?'), $label_IPvX, $upperifname, $label_DHCP))) {
-			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
-			if (!empty($ifppp)) {
-				$ifaceassigned = $ifppp;
-			}
-			$intip = ($version === 6) ? "dhcp6" : "dhcp";
-			$intbits = "";
-			$isintdhcp = true;
-			$restart_dhcpd = true;
+	if (console_prompt_for_yn (sprintf(gettext('Configure %1$s address %2$s interface via %3$s?'), $label_IPvX, $upperifname, $label_DHCP))) {
+		$ifppp = console_get_interface_from_ppp(get_real_interface($interface));
+		if (!empty($ifppp)) {
+			$ifaceassigned = $ifppp;
 		}
+		$intip = ($version === 6) ? "dhcp6" : "dhcp";
+		$intbits = "";
+		$isintdhcp = true;
+		$restart_dhcpd = true;
 	}
 
-	if ($isintdhcp == false or $interface <> "wan") {
+	if ($isintdhcp == false) {
 		while (true) {
 			do {
 				echo "\n" . sprintf(gettext('Enter the new %1$s %2$s address.  Press <ENTER> for none:'),
@@ -459,46 +455,38 @@ if (console_configure_dhcpd(6) == 0) {
 //*****************************************************************************
 
 if ($config['system']['webgui']['protocol'] == "https") {
-
 	if (console_prompt_for_yn (gettext("Do you want to revert to HTTP as the webConfigurator protocol?"))) {
 		$config['system']['webgui']['protocol'] = "http";
 		$restart_webgui = true;
 	}
 }
 
-if (isset($config['system']['webgui']['noantilockout'])) {
+if (config_path_enabled('system/webgui', 'noantilockout')) {
 	echo "\n" . sprintf(gettext("Note: the anti-lockout rule on %s has been re-enabled."), $interface) . "\n";
-	unset($config['system']['webgui']['noantilockout']);
+	config_del_path('system/webgui/noantilockout');
 }
 
-if ($config['interfaces']['lan']) {
-	if ($config['dhcpd']) {
-		if ($config['dhcpd']['wan']) {
-			unset($config['dhcpd']['wan']);
+if (config_get_path('interfaces/lan')) {
+	$paths = ['dhcpd/wan', 'dhcpdv6/wan'];
+	foreach ($paths as $path) {
+		if (config_get_path($path)) {
+			config_del_path($path);
 		}
-	}
-	if ($config['dhcpdv6']) {
-		if ($config['dhcpdv6']['wan']) {
-			unset($config['dhcpdv6']['wan']);
-		}
-	}
+    	}
 }
 
-if (!$config['interfaces']['lan']) {
-	unset($config['interfaces']['lan']);
-	if ($config['dhcpd']['lan']) {
-		unset($config['dhcpd']['lan']);
-	}
-	if ($config['dhcpdv6']['lan']) {
-		unset($config['dhcpdv6']['lan']);
-	}
-	unset($config['shaper']);
-	unset($config['ezshaper']);
-	unset($config['nat']);
-	if (!$dry_run) {
+if (!config_get_path('interfaces/lan')) {
+	$paths = ['interfaces/lan', 'dhcpd/lan', 'dhcpdv6/lan',
+			'shaper', 'ezshaper', 'nat'];
+    	foreach ($paths as $path) {
+		if (config_get_path($path)) {
+			config_del_path($path);
+		}
+    	}
+    	if (!$dry_run) {
 		system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
 		$restart_dhcpd = true;
-	}
+    	}
 }
 
 $upperifname = strtoupper($interface);
@@ -542,7 +530,8 @@ if ($intip6 != '') {
 }
 
 if ($intip != '' || $intip6 != '') {
-	if (count($ifdescrs) == "1" or $interface == "lan") {
+	if ((count($ifdescrs) == "1") ||
+	    (!interface_has_gateway($interface) && !interface_has_gatewayv6($interface))) {
 		if ($debug) {
 			echo "ifdescrs count is " . count($ifdescrs) . "\n";
 			echo "interface is {$interface} \n";

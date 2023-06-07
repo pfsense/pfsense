@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -219,14 +219,12 @@ if ($_POST['save']) {
 			}
 
 			// reconfigure any VLANs with this lagg as their parent
-			if (is_array($config['vlans']['vlan'])) {
-				foreach ($config['vlans']['vlan'] as $vlan) {
-					if ($vlan['if'] == $lagg['laggif']) {
-						interface_vlan_configure($vlan);
-						$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-						if ($confif != "") {
-							interface_configure($confif);
-						}
+			foreach (config_get_path('vlans/vlan', []) as $vlan) {
+				if ($vlan['if'] == $lagg['laggif']) {
+					interface_vlan_configure($vlan);
+					$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+					if ($confif != "") {
+						interface_configure($confif);
 					}
 				}
 			}

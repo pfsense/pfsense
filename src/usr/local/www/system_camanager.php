@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -153,6 +153,10 @@ if ($_POST['save']) {
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate data"));
+			/* Make sure we do not have invalid characters in the fields for the certificate */
+			if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+				array_push($input_errors, gettext("The field 'Descriptive Name' contains invalid characters."));
+			}
 			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
@@ -341,7 +345,7 @@ if ($_POST['save']) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("CAs"));
+$pgtitle = array(gettext('System'), gettext('Certificate'), gettext('Authorities'));
 $pglinks = array("", "system_camanager.php", "system_camanager.php");
 
 if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors) {
@@ -359,9 +363,9 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("CAs"), true, "system_camanager.php");
-$tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
-$tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
+$tab_array[] = array(gettext('Authorities'), true, 'system_camanager.php');
+$tab_array[] = array(gettext('Certificates'), false, 'system_certmanager.php');
+$tab_array[] = array(gettext('Revocation'), false, 'system_crlmanager.php');
 display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors)) {
@@ -439,7 +443,7 @@ foreach ($a_ca as $ca):
 
 	$issuer_ca = lookup_ca($ca['caref']);
 	if ($issuer_ca) {
-		$issuer_name = $issuer_ca['descr'];
+		$issuer_name = htmlspecialchars($issuer_ca['descr']);
 	}
 
 	foreach ($a_cert as $cert) {
@@ -592,7 +596,9 @@ $section->addInput(new Form_Input(
 	'*Descriptive name',
 	'text',
 	$pconfig['descr']
-));
+))->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
+		'This name can contain spaces but it cannot contain any of the ' .
+		'following characters: %s', '<br/>', "?, >, <, &, /, \, \", '");
 
 if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(
@@ -646,7 +652,8 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['serial']
 ))->setHelp('Enter a decimal number to be used as a sequential serial number for ' .
-	'the next certificate to be signed by this CA.');
+	'the next certificate to be signed by this CA. This value is ignored ' .
+	'when Randomize Serial is checked.');
 
 $form->add($section);
 

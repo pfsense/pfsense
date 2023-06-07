@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -42,7 +42,10 @@ function status_logs_common_code() {
 
 	$specific_log = basename($logfile) . '_settings';
 
-	isset($config['syslog'][$specific_log]['nentries']) ? $nentries = $config['syslog'][$specific_log]['nentries'] : $nentries = $config['syslog']['nentries'];
+	$nentries = config_get_path('syslog/nentries');
+	if (isset($config['syslog'][$specific_log]['nentries'])) {
+		$nentries = config_get_path("syslog/{$specific_log}/nentries");
+	}
 
 	// Override Display Quantity
 	if ($filterlogentries_qty) {
@@ -50,7 +53,7 @@ function status_logs_common_code() {
 	}
 
 	if (!$nentries || !is_numeric($nentries)) {
-		$nentries = $g['default_log_entries'];
+		$nentries = g_get('default_log_entries');
 	}
 
 	if ($_POST['clear']) {
@@ -79,7 +82,7 @@ function status_logs_common_code() {
 	} elseif (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'raw')) {
 		$rawfilter = true;
 	} else {	//  Use the general logging options setting (global).
-		$rawfilter = isset($config['syslog']['rawfilter']);
+		$rawfilter = config_path_enabled('syslog', 'rawfilter');
 	}
 }
 
@@ -645,15 +648,15 @@ function manage_log_code() {
 
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
-		$pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
+		$pconfig['lognginx'] = !config_path_enabled('syslog', 'nolognginx');
 	}
 
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
-		$pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
-		$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
-		$pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
-		$pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
+		$pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock');
+		$pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
+		$pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
+		$pconfig['logprivatenets'] = !config_path_enabled('syslog', 'nologprivatenets');
 		$pconfig['filterdescriptions'] = isset($config['syslog']['filterdescriptions']) ? $config['syslog']['filterdescriptions'] : null;
 	}
 
@@ -718,7 +721,7 @@ function manage_log_code() {
 
 			# Clear out the specific log settings and leave only the applied settings to override the general logging options (global) settings.
 			if (isset($config['syslog'][$specific_log])) {
-				unset($config['syslog'][$specific_log]);
+				config_del_path("syslog/{$specific_log}");
 			}
 			init_config_arr(array('syslog', $specific_log));
 
@@ -745,7 +748,7 @@ function manage_log_code() {
 
 		// Specific to System General (main) Log
 			if ($logfile == 'system') {
-				$oldnolognginx = isset($config['syslog']['nolognginx']);
+				$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
 				$config['syslog']['nolognginx'] = $lognginx ? false : true;
 
 				if ($oldnolognginx !== $config['syslog']['nolognginx']) {
@@ -755,10 +758,10 @@ function manage_log_code() {
 
 		// Specific to  Firewall Log
 			if ($logfile == 'filter') {
-				$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
-				$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
-				$oldnologbogons = isset($config['syslog']['nologbogons']);
-				$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
+				$oldnologdefaultblock = config_path_enabled('syslog', 'nologdefaultblock');
+				$oldnologdefaultpass = config_path_enabled('syslog', 'nologdefaultpass');
+				$oldnologbogons = config_path_enabled('syslog', 'nologbogons');
+				$oldnologprivatenets = config_path_enabled('syslog', 'nologprivatenets');
 
 				$config['syslog']['nologdefaultblock'] = $logdefaultblock ? false : true;
 				$config['syslog']['nologdefaultpass'] = $logdefaultpass ? true : false;
@@ -768,7 +771,7 @@ function manage_log_code() {
 				if (is_numeric($filterdescriptions) && $filterdescriptions > 0) {
 					$config['syslog']['filterdescriptions'] = $filterdescriptions;
 				} else {
-					unset($config['syslog']['filterdescriptions']);
+					config_del_path('syslog/filterdescriptions');
 				}
 
 				if (
@@ -893,7 +896,7 @@ function manage_log_section() {
 		'GUI Log Entries',
 		'number',
 		$pconfig['nentries'],
-		['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : $g['default_log_entries']]
+		['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : g_get('default_log_entries')]
 	))->setWidth(2);
 
 	$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');
@@ -907,12 +910,12 @@ function manage_log_section() {
 		'Log Rotation Size (Bytes)',
 		'number',
 		$pconfig['logfilesize'],
-		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : $g['default_log_size']]
+		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : g_get('default_log_size')]
 	))->setWidth(2);
-	$group->setHelp('This field controls the size at which logs will be rotated. By default this is %1 per log file, and there are nearly 20 such log files. ' .
+	$group->setHelp('This field controls the size at which logs will be rotated. By default this is %1$s per log file, and there are nearly 20 such log files. ' .
 				'Rotated log files consume additional disk space, which varies depending on compression and retention count.%2$s' .
 				'NOTE: Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value. ',
-				format_bytes($g['default_log_size']), '<br /><br />');
+				format_bytes(g_get('default_log_size')), '<br /><br />');
 	$section->add($group);
 
 	$group = new Form_Group('Log Retention Count');

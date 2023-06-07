@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,6 +32,12 @@ require_once("functions.inc");
 require_once("util.inc");
 require_once("notices.inc");
 include_once("interfaces.inc");//required for convert_real_interface_to_friendly_interface_name() in get_queue_stats() to get altq interface name.
+
+// Try to ceil $value, otherwise return $default is unable to do so
+function ceil2($value, $default = NULL)
+{
+    return (is_numeric($value) ? ceil($value) : $default);
+}
 
 /* Limiter patch */
 // I need this crazy looking model/struct to specify various algos, ecn caps, and params.
@@ -520,7 +526,7 @@ function get_hfsc_bandwidth($object, $bw) {
 */
 
 function get_queue_bandwidth($obj) {
-	$bw = $obj->GetBandwidth();
+	$bw = (int)$obj->GetBandwidth();
 	$scale = $obj->GetBwscale();
 
 	$pattern= "/(b|Kb|Mb|Gb|%)/";
@@ -550,7 +556,7 @@ function get_interface_bandwidth($object) {
 	$int = $object->GetInterface();
 	if (isset($altq_list_queues[$int])) {
 		$altq = &$altq_list_queues[$int];
-		$bw_3 = $altq->GetBandwidth();
+		$bw_3 = (int)$altq->GetBandwidth();
 		$bw_3 = $bw_3 * get_bandwidthtype_scale($altq->GetBwscale());
 		return floatval($bw_3);
 	} else {
@@ -752,6 +758,7 @@ class altq_root_queue {
 	}
 
 	function CheckBandwidth($bw, $bwtype) {
+		$bw = (int)$bw;
 		$sum = $this->GetTotalBw();
 		if ($sum > ($bw * get_bandwidthtype_scale($bwtype))) {
 			return 1;
@@ -786,14 +793,15 @@ class altq_root_queue {
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (!isset($data['bandwidth']) || strlen($data['bandwidth']) == 0) {
+		if ($data['bandwidth'] == null) {
 			$input_errors[] = gettext("Bandwidth must be set.  This is usually the interface speed.");
-		}
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
-			$input_errors[] = gettext("Bandwidth must be an integer.");
-		}
-		if ($data['bandwidth'] < 0) {
-			$input_errors[] = gettext("Bandwidth cannot be negative.");
+		} else {
+			if ((!is_numeric($data['bandwidth']))) {
+				$input_errors[] = gettext("Bandwidth must be an integer.");
+			}
+			if ((int)$data['bandwidth'] < 0) {
+				$input_errors[] = gettext("Bandwidth cannot be negative.");
+			}
 		}
 		if ($data['bandwidthtype'] == "%") {
 			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
@@ -803,19 +811,19 @@ class altq_root_queue {
 		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype'])) {
 			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		}
-		if ($data['qlimit'] && ($data['scheduler'] == 'CODELQ')) {
+		if (($data['qlimit'] != null) && ($data['scheduler'] == 'CODELQ')) {
 			$input_errors[] = gettext("CODELQ scheduler doesn't support Qlimit parameter.");
 		}
-		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
+		if (($data['qlimit'] != null) && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Qlimit must be an integer.");
 		}
-		if ($data['qlimit'] < 0) {
+		if (($data['qlimit'] != null) && (int)$data['qlimit'] < 1) {
 			$input_errors[] = gettext("Qlimit must be positive.");
 		}
-		if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig']))) {
+		if (($data['tbrconfig'] != null) && (!is_numeric($data['tbrconfig']))) {
 			$input_errors[] = gettext("Tbrsize must be an integer.");
 		}
-		if ($data['tbrconfig'] < 0) {
+		if (($data['tbrconfig'] != null) && (int)$data['tbrconfig'] < 1) {
 			$input_errors[] = gettext("Tbrsize must be positive.");
 		}
 	}
@@ -3862,8 +3870,8 @@ class dnpipe_class extends dummynet_class {
 			$q->delete_queue();
 		}
 		unset_dn_object_by_reference($this->GetLink());
-		@pfSense_ipfw_pipe("pipe delete " . $this->GetNumber());
-		@pfSense_ipfw_pipe("sched delete " . $this->GetNumber());
+		mwexec("/sbin/dnctl pipe delete " . $this->GetNumber());
+		mwexec("/sbin/dnctl sched delete " . $this->GetNumber());
 	}
 	function GetBandwidth() {
 		return $this->qbandwidth;
@@ -4367,7 +4375,7 @@ EOD;
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= '<tr>';
 				$form .= '<td class="col-xs-4">';
-				$form .= "<input class='form-control' onchange=\"ceil_func(this)\" type=\"number\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"" . ceil($bw['bw']) ."\" min=\"0\" step=\"1\"/>";
+				$form .= "<input class='form-control' onchange=\"ceil_func(this)\" type=\"number\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"" . ceil2($bw['bw']) ."\" min=\"0\" step=\"1\"/>";
 				//$form .= "</td><td width='20%'>";
 				//$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
 				$form .= "</td>";
@@ -4785,7 +4793,7 @@ class dnqueue_class extends dummynet_class {
 	function delete_queue() {
 		cleanup_dnqueue_from_rules($this->GetQname());
 		unset_dn_object_by_reference($this->GetLink());
-		@pfSense_ipfw_pipe("queue delete " . $this->GetNumber());
+		mwexec("/sbin/dnctl queue delete " . $this->GetNumber());
 	}
 
 	function validate_input($data, &$input_errors) {
@@ -5552,7 +5560,7 @@ function filter_generate_dummynet_rules() {
 	if (!empty($dn_rules)) {
 		dummynet_load_module($max_qlimit);
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
-		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
+		mwexec("/sbin/dnctl {$g['tmp_path']}/rules.limiter");
 	}
 }
 
@@ -5592,7 +5600,7 @@ function build_iface_without_this_queue($iface, $qname) {
 
 }
 
-$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_label']) . "<br />";
+$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), g_get('product_label')) . "<br />";
 $dn_default_shaper_msg = $default_shaper_msg;
 
 $shaper_msg = gettext("The tree on the left navigates through the %s.");

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -437,7 +437,7 @@ function fixup_string($string) {
 	global $config;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	$https = "";
-	$port = $config['system']['webguiport'];
+	$port = config_get_path('system/webguiport');
 	if ($port != "443" and $port != "80") {
 		$urlport = ":" . $port;
 	} else {
@@ -455,7 +455,7 @@ function fixup_string($string) {
 	$newstring = str_replace("\$wanip", $curwanip, $string);
 	$string = $newstring;
 	// fixup #3: $lanip
-	$lancfg = $config['interfaces']['lan'];
+	$lancfg = config_get_path('interfaces/lan');
 	$lanip = $lancfg['ipaddr'];
 	$newstring = str_replace("\$lanip", $lanip, $string);
 	$string = $newstring;
@@ -599,7 +599,7 @@ if ($pkg['custom_php_after_head_command']) {
 	eval($pkg['custom_php_after_head_command']);
 }
 if (isset($tab_array)) {
-	foreach ($tab_array as $tabid => $tab) {
+	foreach ($tab_array as $tab) {
 		display_top_tabs($tab);
 	}
 }

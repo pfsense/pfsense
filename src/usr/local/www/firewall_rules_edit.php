@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -162,7 +162,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 
 init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
-$a_filter = &$config['filter']['rule'];
+$a_filter = config_get_path('filter/rule', []);
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -381,16 +381,14 @@ if ($_POST['save']) {
 	}
 
 	if (isset($_POST['ipprotocol']) && $_POST['gateway'] <> '') {
-		if (is_array($config['gateways']['gateway_group'])) {
-			foreach ($config['gateways']['gateway_group'] as $gw_group) {
-				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
-					if ($_POST['ipprotocol'] == "inet46") {
-						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
-					} elseif ($_POST['ipprotocol'] == "inet6") {
-						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
-					} elseif ($_POST['ipprotocol'] == "inet") {
-						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
-					}
+		foreach (config_get_path('gateways/gateway_group',[]) as $gw_group) {
+			if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
+				if ($_POST['ipprotocol'] == "inet46") {
+					$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+				} elseif ($_POST['ipprotocol'] == "inet6") {
+					$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
+				} elseif ($_POST['ipprotocol'] == "inet") {
+					$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
 				}
 			}
 		}
@@ -484,7 +482,9 @@ if ($_POST['save']) {
 		$pconfig['ipprotocol'] = "inet";
 	}
 
-	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
+	if (($_POST['proto'] == "icmp") &&
+	    is_array($_POST['icmptype']) &&
+	    count($_POST['icmptype'])) {
 		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
 	} else {
 		unset($pconfig['icmptype']);
@@ -708,7 +708,7 @@ if ($_POST['save']) {
 		} else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] <> "?") {
 			$input_errors[] = gettext("A queue and a virtual interface cannot be selected for IN and Out. Both must be from the same type.");
 		}
-		if ($_POST['direction'] == "out" && empty($_POST['gateway'])) {
+		if ($_POST['direction'] == "out" && empty($_POST['gateway']) && $_POST['type'] == "pass") {
 			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
 		}
 	}
@@ -1057,22 +1057,23 @@ if ($_POST['save']) {
 			} else {							// rule moved to different interface
 				// Update the separators of previous interface.
 				init_config_arr(array('filter', 'separator', strtolower($if)));
-				$a_separators = &$config['filter']['separator'][strtolower($if)];
+				$a_separators = config_get_path('filter/separator/' . strtolower($if));
 				$ridx = ifridx($if, $id);		// get rule index within interface
 				$mvnrows = -1;
 				move_separators($a_separators, $ridx, $mvnrows);
-
+				config_set_path('filter/separator/' . strtolower($if), $a_separators);
 				$a_filter[$id] = $filterent;	// save edited rule to new interface
 
 				// Update the separators of new interface.
 				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
-				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif));
 				$ridx = ifridx($tmpif, $id);	// get rule index within interface
 				if ($ridx == 0) {				// rule was placed at the top
 					$ridx = -1;					// move all separators
 				}
 				$mvnrows = +1;
 				move_separators($a_separators, $ridx, $mvnrows);
+				config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
 			}
 
 		} else {
@@ -1098,17 +1099,18 @@ if ($_POST['save']) {
 
 				// Update the separators
 				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
-				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif));
 				$ridx = ifridx($tmpif, $after);	// get rule index within interface
 				$mvnrows = +1;
 				move_separators($a_separators, $ridx, $mvnrows);
+				config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
 			} else {
 				$a_filter[] = $filterent;
 			}
 		}
 
 		filter_rules_sort();
-
+		config_set_path('filter/rule', $a_filter);
 		if (write_config(gettext("Firewall: Rules - saved/edited a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}
@@ -1268,7 +1270,7 @@ $edit_disabled = isset($pconfig['associated-rule-id']);
 
 if ($edit_disabled) {
 	$extra = '';
-	foreach ($config['nat']['rule'] as $index => $nat_rule) {
+	foreach (config_get_path('nat/rule', []) as $index => $nat_rule) {
 		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id']) {
 			$extra = '<br/><a href="firewall_nat_edit.php?id='. $index .'">'. gettext('View the NAT rule') .'</a>';
 		}
@@ -1706,7 +1708,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose 802.1p priority to apply.');
 
 $schedules = array();
-foreach ((array)$config['schedules']['schedule'] as $schedule) {
+foreach (config_get_path('schedules/schedule', []) as $schedule) {
 	if ($schedule['name'] != "") {
 		$schedules[] = $schedule['name'];
 	}
@@ -2168,7 +2170,7 @@ events.push(function() {
 	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [
-			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbeginport', 'srcbeginport_cust', 'srcendport',
 			'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
 
 		for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {

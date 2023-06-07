@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,13 +71,13 @@ function save_setupwizard_config(
 	if ($bogons == "on") {
 		$config['interfaces']['wan']['blockbogons'] = "on";
 	} else {
-		unset($config['interfaces']['wan']['blockbogons']);
+		config_del_path('interfaces/wan/blockbogons');
 	}
 
 	if ($rfc1918 == "on") {
 		$config['interfaces']['wan']['blockpriv'] = "on";
 	} else {
-		unset($config['interfaces']['wan']['blockpriv']);
+		config_del_path('interfaces/wan/blockpriv');
 	}
 
 	if (strlen($wangateway) > 0) {
@@ -120,7 +120,7 @@ function save_setupwizard_config(
 					$config['interfaces']['wan']['if'] = $oldif[0];
 				}
 				if ($type == "pppoe" || $type == "pptp")
-					unset($config['ppps']['ppp'][$pppid]);
+					config_del_path("ppps/ppp/{$pppid}");
 			}
 		}
 	}
@@ -137,7 +137,7 @@ function save_setupwizard_config(
 		$tmp['ptpid'] = "0";
 		$tmp['type'] = $type;
 		$tmp['if'] = $type . "0";
-		$tmp['ports'] = $config['interfaces']['wan']['if'];
+		$tmp['ports'] = config_get_path('interfaces/wan/if');
 		$config['ppps']['ppp'][] = array_merge($tmp, $pppfg);
 		unset($tmp);
 		$config['interfaces']['wan']['if'] = $type."0";
@@ -198,7 +198,7 @@ function save_setupwizard_config(
 	if ($dnsoverride == "on") {
 		$config['system']['dnsallowoverride'] = "on";
 	} else {
-		unset($config['system']['dnsallowoverride']);
+		config_del_path('system/dnsallowoverride');
 	}
 
 	$config['system']['dnsserver'] = array($primarydns, $secondarydns);

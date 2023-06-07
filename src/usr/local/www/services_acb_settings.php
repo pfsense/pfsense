@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,7 +38,7 @@ require_once("pfsense-utils.inc");
 require_once("services.inc");
 require_once("acb.inc");
 
-$pconfig = $config['system']['acb'];
+$pconfig = config_get_path('system/acb', []);
 
 if (isset($_POST['save'])) {
 	unset($input_errors);
@@ -92,6 +92,7 @@ if (isset($_POST['save'])) {
 			$pconfig['day'],
 			$pconfig['dow'],
 			$pconfig['numman'],
+			$pconfig['reverse'],
 			$pwd
 		);
 	}
@@ -206,6 +207,13 @@ $section->addInput(new Form_Input(
 	$pconfig['numman']
 ))->setHelp("It may be useful to specify how many manual backups are retained on the server so that automatic backups do not overwrite them." .
 			"A maximum of 50 retained manual backups (of the 100 total backups) is permitted.");
+
+$section->addInput(new Form_Checkbox(
+	'reverse',
+	'Descending Order by Date',
+	'List backups in descending order',
+	($pconfig['reverse'] == "yes")
+))->setHelp("List backups in descending order (newest first) when viewing the restore section.");
 
 $form->add($section);
 

@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2011 Warren Baker
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2013-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,10 +68,10 @@ if ($type == "loggedin") {
 				$previous_user_timestamp = 0;
 			}
 		}
+		@fclose($fd);
 	} else {
 		$previous_user_timestamp = 0;
 	}
-	@fclose($fd);
 
 	foreach ($cpdb as $user) {
 		$user_ip = $user[2];
@@ -87,8 +87,8 @@ if ($type == "loggedin") {
 		$fd = @fopen($tmpfile, "w");
 		if ($fd) {
 			fwrite($fd, $timestamp);
+			@fclose($fd);
 		}
-		@fclose($fd);
 	}
 
 	/* If $timestamp is less than or equal to previous_user_timestamp return 0,

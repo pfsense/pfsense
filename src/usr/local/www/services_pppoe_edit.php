@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -237,12 +237,12 @@ if ($_POST['save']) {
 		$users = array();
 		for ($x = 0; $x < 4999; $x++) {
 			if ($_POST["username{$x}"]) {
-				$usernam = $_POST["username{$x}"] . ":" . base64_encode($_POST["password{$x}"]);
+				$username = $_POST["username{$x}"] . ":" . base64_encode($_POST["password{$x}"]);
 				if ($_POST["ip{$x}"]) {
-					$usernam .= ":" . $_POST["ip{$x}"];
+					$username .= ":" . $_POST["ip{$x}"];
 				}
 
-				$users[] = $usernam;
+				$users[] = $username;
 			}
 		}
 

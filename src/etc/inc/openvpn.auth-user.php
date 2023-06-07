@@ -6,7 +6,7 @@
  * Copyright (c) 2008 Shrew Soft Inc
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -148,10 +148,8 @@ if (is_array($attributes['routes'])) {
 
 if (isset($attributes['framed_ip'])) {
 	if (isset($attributes['framed_mask'])) {
-		$content .= "topology subnet\n";
 		$content .= "ifconfig-push {$attributes['framed_ip']} {$attributes['framed_mask']}";
 	} else {
-		$content .= "topology net30\n";
 		$content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) - 1));
 	}
 }

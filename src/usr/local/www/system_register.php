@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -36,14 +36,10 @@ require_once("system_register.inc");
 
 include("head.inc");
 
-if  (strpos($g['product_label'], 'Plus') !== false) {
-	header("Location: /");
-}
-
 // Possible helpblock messages
 $pgtitle = array(gettext("System"), gettext("Register"));
 
-$pghelp = sprintf(gettext('Thank you for choosing %1s%2s'), $g['product_label_html'], '<br /><br />');
+$pghelp = sprintf(gettext('Thank you for choosing %1s%2s'), g_get('product_label_html'), '<br /><br />');
 
 $pghelp_notrequired = gettext("Your device does not require registration, we recognize it already." .
    " You may have already registered, or it may be a pre-registered Netgate appliance.");
@@ -59,7 +55,7 @@ $pghelp_ok = gettext('pfSense<sup>&reg;</sup> Community Edition software may be 
 
 $pghelp_exists = sprintf(gettext("This device has already been registered. " .
    "If you believe that to be incorrect, please contact Netgate TAC support for assistance by visiting %1s."),
-   '<a href="go.netgate.com", target="_blank">go.netgate.com</a>');
+   '<a href="https://go.netgate.com", target="_blank">https://go.netgate.com</a>');
 
 $pghelp_notready = sprintf(gettext("The registration service is not available yet. Please watch %1s, %2s, %3s,  for updates."),
    '<a href="https://www.netgate.com/blog/" target="_blank">our blog</a>',
@@ -70,7 +66,7 @@ $pghelp_notready = sprintf(gettext("The registration service is not available ye
 $pghelp_success = gettext("Your firewall has been successfully registered. On your next visit to the System/Update page, select pfSense<sup>&reg;</sup> Plus software from the list of repositories.");
 
 $pghelp_notfound = sprintf(gettext("This activation token is not valid. " .
-   "Please contact Netgate TAC support for assistance by visiting %1s"), '<a href="https://go.netgate.com" target="_blank">go.netgate.com</a>');
+   "Please contact Netgate TAC support for assistance by visiting %1s"), '<a href="https://go.netgate.com" target="_blank">https://go.netgate.com</a>');
 
 $disabled = "disabled";
 $activation_token = "";
@@ -114,7 +110,7 @@ print('</div>');
 
 $form = new Form(false);
 
-$section = new Form_Section('Register ' . $g['product_label']);
+$section = new Form_Section('Register ' . g_get('product_label'));
 
 $section->addInput(new Form_Textarea(
 	'activation_token',

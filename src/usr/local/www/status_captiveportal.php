@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,7 +41,7 @@ require_once("captiveportal.inc");
 /*
 Return true if multiple servers type are selected in captiveportal config, false otherwise
 */
-function mutiple_auth_server_type() {
+function multiple_auth_server_type() {
 	global $config, $cpzone;
 	
 	$auth_types = array();
@@ -225,7 +225,7 @@ if (!empty($cpzone)): ?>
 					<th><?=gettext("Username")?></th>
 <?php
 	 // if multiple auth method are selected
-	if (mutiple_auth_server_type()): 
+	if (multiple_auth_server_type()): 
 ?>
 					<th><?=gettext("Authentication method")?></th>
 <?php
@@ -268,7 +268,7 @@ if (!empty($cpzone)): ?>
 ?>
 					<td><?php print_details($cpent); ?></td>
 <?php
-	if (mutiple_auth_server_type()):
+	if (multiple_auth_server_type()):
 ?>
 					<td><?=htmlspecialchars($cpent['authmethod']);?></td>
 <?php

@@ -3,7 +3,7 @@
  * system_advanced_admin.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,38 +31,40 @@ require_once("pfsense-utils.inc");
 
 // Retrieve an array of advanced admin settings
 function getAdvancedAdminConfig($json = false) {
-	global $config;
-
 	$pconfig = array();
 
-	$pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
-	$pconfig['webguiport'] = $config['system']['webgui']['port'];
-	$pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
-	$pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
-	$pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
-	$pconfig['disablehsts'] = isset($config['system']['webgui']['disablehsts']);
-	$pconfig['ocsp-staple'] = $config['system']['webgui']['ocsp-staple'];
-	$pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
-	$pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
-	$pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
-	$pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
-	$pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
-	$pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
-	$pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
-	$pconfig['enableserial'] = $config['system']['enableserial'];
-	$pconfig['serialspeed'] = $config['system']['serialspeed'];
-	$pconfig['primaryconsole'] = $config['system']['primaryconsole'];
-	$pconfig['enablesshd'] = $config['system']['ssh']['enable'];
-	$pconfig['sshport'] = $config['system']['ssh']['port'];
-	$pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
-	$pconfig['sshdagentforwarding'] = isset($config['system']['ssh']['sshdagentforwarding']);
-	$pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
-	$pconfig['sshguard_threshold'] = $config['system']['sshguard_threshold'] ?? '';
-	$pconfig['sshguard_blocktime'] = $config['system']['sshguard_blocktime'] ?? '';
-	$pconfig['sshguard_detection_time'] = $config['system']['sshguard_detection_time'] ?? '';
-	$pconfig['sshguard_whitelist'] = $config['system']['sshguard_whitelist'] ?? '';
-	$a_cert = &$config['cert'];
+	$pconfig['webguiproto'] = config_get_path('system/webgui/protocol');
+	$pconfig['webguiport'] = config_get_path('system/webgui/port');
+	$pconfig['max_procs'] = config_get_path('system/webgui/max_procs', 2);
+	$pconfig['ssl-certref'] = config_get_path('system/webgui/ssl-certref');
+	$pconfig['disablehttpredirect'] = config_path_enabled('system/webgui', 'disablehttpredirect');
+	$pconfig['disablehsts'] = config_path_enabled('system/webgui', 'disablehsts');
+	$pconfig['ocsp-staple'] = config_path_enabled('system/webgui', 'ocsp-staple');
+	$pconfig['disableconsolemenu'] = config_path_enabled('system', 'disableconsolemenu');
+	$pconfig['noantilockout'] = config_path_enabled('system/webgui', 'noantilockout');
+	$pconfig['nodnsrebindcheck'] = config_path_enabled('system/webgui', 'nodnsrebindcheck');
+	$pconfig['nohttpreferercheck'] = config_path_enabled('system/webgui', 'nohttpreferercheck');
+	$pconfig['pagenamefirst'] = config_path_enabled('system/webgui', 'pagenamefirst');
+	$pconfig['loginautocomplete'] = config_path_enabled('system/webgui', 'loginautocomplete');
+	$pconfig['althostnames'] = config_get_path('system/webgui/althostnames');
+	$pconfig['enableserial'] = config_get_path('system/enableserial');
+	$pconfig['serialspeed'] = config_get_path('system/serialspeed');
+	$pconfig['primaryconsole'] = config_get_path('system/primaryconsole');
+	$pconfig['enablesshd'] = config_get_path('system/ssh/enable');
+	$pconfig['sshport'] = config_get_path('system/ssh/port');
+	$pconfig['sshdkeyonly'] = config_get_path('system/ssh/sshdkeyonly');
+	$pconfig['sshdagentforwarding'] = config_path_enabled('system/ssh', 'sshdagentforwarding');
+	$pconfig['quietlogin'] = config_path_enabled('system/webgui', 'quietlogin');
+	$pconfig['sshguard_threshold'] = config_get_path('system/sshguard_threshold', '');
+	$pconfig['sshguard_blocktime'] = config_get_path('system/sshguard_blocktime', '');
+	$pconfig['sshguard_detection_time'] = config_get_path('system/sshguard_detection_time', '');
+	$pconfig['sshguard_whitelist'] = config_get_path('system/sshguard_whitelist', '');
+	$pconfig['interfaces_lan'] = config_get_path('interfaces/lan');
+	$a_cert = config_get_path('cert', []);
 	$pconfig['certsavailable'] = (is_array($a_cert) && count($a_cert));
+	if (!$pconfig['webguiproto'] || !$pconfig['certsavailable']) {
+		$pconfig['webguiproto'] = 'http';
+	}
 	if ($json) {
 		// When outputting in JSON, make the certs an array of objects each containing the id and description
 		$l = cert_build_list('cert', 'HTTPS');
@@ -81,15 +83,13 @@ function getAdvancedAdminConfig($json = false) {
 }
 
 function doAdvancedAdminPOST($post, $json = false) {
-	global $config;
-
 	$valid_webguiproto = array('http', 'https');
 	$input_errors = array();
 	$pconfig = $post;
 
 	/* input validation */
 
-	if (!in_array($pconfig['webguiproto'], $valid_webguiproto)) {
+	if ($post['webguiproto'] && !in_array($pconfig['webguiproto'], $valid_webguiproto)) {
 		$input_errors[] = gettext("A valid webConfigurator protocol must be specified");
 	}
 
@@ -147,165 +147,169 @@ function doAdvancedAdminPOST($post, $json = false) {
 	}
 
 	if (!$input_errors) {
-		if (l_update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $post['webguiproto'])) {
+		if ($post['webguiproto']) {
+			config_set_path('system/webgui/protocol', $post['webguiproto']);
 			$restart_webgui = true;
 		}
 
-		if (l_update_if_changed("webgui port", $config['system']['webgui']['port'], $post['webguiport'])) {
+		if ($post['webguiport']) {
+			config_set_path('system/webgui/port', $post['webguiport']);
 			$restart_webgui = true;
 		}
 
-		if (l_update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $post['ssl-certref'])) {
+		if ($post['ssl-certref']) {
+			config_set_path('system/webgui/ssl-certref', $post['ssl-certref']);
 			$restart_webgui = true;
 		}
 
-		if (l_update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $post['max_procs'])) {
+		if ($post['max_procs']) {
+			config_set_path('system/webgui/max_procs', $post['max_procs']);
 			$restart_webgui = true;
 		}
 
 		// Restart the webgui only if this actually changed
 		if ($post['webgui-redirect'] == "yes") {
-			if ($config['system']['webgui']['disablehttpredirect'] != true) {
+			if (config_get_path('system/webgui/disablehttpredirect') != true) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['disablehttpredirect'] = true;
+			config_set_path('system/webgui/disablehttpredirect', true);
 		} else {
-			if (isset($config['system']['webgui']['disablehttpredirect'])) {
+			if (config_get_path('system/webgui/disablehttpredirect')) {
 				$restart_webgui = true;
 			}
 
-			unset($config['system']['webgui']['disablehttpredirect']);
+			config_del_path('system/webgui/disablehttpredirect');
 		}
 
 		if ($post['webgui-hsts'] == "yes") {
-			if ($config['system']['webgui']['disablehsts'] != true) {
+			if (config_get_path('system/webgui/disablehsts') != true) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['disablehsts'] = true;
+			config_set_path('system/webgui/disablehsts', true);
 		} else {
-			if (isset($config['system']['webgui']['disablehsts'])) {
+			if (config_get_path('system/webgui/disablehsts')) {
 				$restart_webgui = true;
 			}
 
-			unset($config['system']['webgui']['disablehsts']);
+			config_del_path('system/webgui/disablehsts');
 		}
 
 		if ($post['ocsp-staple'] == "yes") {
-			if ($config['system']['webgui']['ocsp-staple'] != true) {
+			if (config_get_path('system/webgui/ocsp-staple') != true) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['ocsp-staple'] = true;
+			config_set_path('system/webgui/ocsp-staple', true);
 		} else {
-			if (isset($config['system']['webgui']['ocsp-staple'])) {
+			if (config_get_path('system/webgui/ocsp-staple')) {
 				$restart_webgui = true;
 			}
 
-			unset($config['system']['webgui']['ocsp-staple']);
+			config_del_path('system/webgui/ocsp-staple');
 		}
 		
 		if ($post['webgui-login-messages'] == "yes") {
-			$config['system']['webgui']['quietlogin'] = true;
+			config_set_path('system/webgui/quietlogin', true);
 		} else {
-			unset($config['system']['webgui']['quietlogin']);
+			config_del_path('system/webgui/quietlogin');
 		}
 
 		if ($post['disableconsolemenu'] == "yes") {
-			$config['system']['disableconsolemenu'] = true;
+			config_set_path('system/disableconsolemenu', true);
 		} else {
-			unset($config['system']['disableconsolemenu']);
+			config_del_path('system/disableconsolemenu');
 		}
 
 		if ($post['noantilockout'] == "yes") {
-			$config['system']['webgui']['noantilockout'] = true;
+			config_set_path('system/webgui/noantilockout', true);
 		} else {
-			unset($config['system']['webgui']['noantilockout']);
+			config_del_path('system/webgui/noantilockout');
 		}
 
-		if ($post['enableserial'] == "yes" || $g['enableserial_force']) {
-			$config['system']['enableserial'] = true;
+		if ($post['enableserial'] == "yes" || g_get('enableserial_force')) {
+			config_set_path('system/enableserial', true);
 		} else {
-			unset($config['system']['enableserial']);
+			config_del_path('system/enableserial');
 		}
 
 		if (is_numericint($post['serialspeed'])) {
-			$config['system']['serialspeed'] = $post['serialspeed'];
+			config_set_path('system/serialspeed', $post['serialspeed']);
 		} else {
-			unset($config['system']['serialspeed']);
+			config_del_path('system/serialspeed');
 		}
 
 		if ($post['primaryconsole']) {
-			$config['system']['primaryconsole'] = $post['primaryconsole'];
+			config_set_path('system/primaryconsole', $post['primaryconsole']);
 		} else {
-			unset($config['system']['primaryconsole']);
+			config_del_path('system/primaryconsole');
 		}
 
 		if ($post['nodnsrebindcheck'] == "yes") {
-			$config['system']['webgui']['nodnsrebindcheck'] = true;
+			config_set_path('system/webgui/nodnsrebindcheck', true);
 		} else {
-			unset($config['system']['webgui']['nodnsrebindcheck']);
+			config_del_path('system/webgui/nodnsrebindcheck');
 		}
 
 		if ($post['nohttpreferercheck'] == "yes") {
-			$config['system']['webgui']['nohttpreferercheck'] = true;
+			config_set_path('system/webgui/nohttpreferercheck', true);
 		} else {
-			unset($config['system']['webgui']['nohttpreferercheck']);
+			config_del_path('system/webgui/nohttpreferercheck');
 		}
 
 		if ($post['pagenamefirst'] == "yes") {
-			$config['system']['webgui']['pagenamefirst'] = true;
+			config_set_path('system/webgui/pagenamefirst', true);
 		} else {
-			unset($config['system']['webgui']['pagenamefirst']);
+			config_del_path('system/webgui/pagenamefirst');
 		}
 
 		if ($post['loginautocomplete'] == "yes") {
-			$config['system']['webgui']['loginautocomplete'] = true;
+			config_set_path('system/webgui/loginautocomplete', true);
 		} else {
-			unset($config['system']['webgui']['loginautocomplete']);
+			config_del_path('system/webgui/loginautocomplete');
 		}
 
 		if ($post['althostnames']) {
-			$config['system']['webgui']['althostnames'] = $post['althostnames'];
+			config_set_path('system/webgui/althostnames', $post['althostnames']);
 		} else {
-			unset($config['system']['webgui']['althostnames']);
+			config_del_path('system/webgui/althostnames');
 		}
 
-		$sshd_enabled = $config['system']['ssh']['enable'];
+		$sshd_enabled = config_path_enabled('system/ssh');
 		if ($post['enablesshd']) {
-			$config['system']['ssh']['enable'] = "enabled";
+			config_set_path('system/ssh/enable', 'enabled');
 		} else {
-			unset($config['system']['ssh']['enable']);
+			config_del_path('system/ssh/enable');
 		}
 
-		$sshd_keyonly = $config['system']['ssh']['sshdkeyonly'];
+		$sshd_keyonly = config_get_path('system/ssh/sshdkeyonly');
 		if ($post['sshdkeyonly'] == "enabled") {
-			$config['system']['ssh']['sshdkeyonly'] = "enabled";
+			config_set_path('system/ssh/sshdkeyonly', 'enabled');
 		} else if ($post['sshdkeyonly'] == "both") {
-			$config['system']['ssh']['sshdkeyonly'] = "both";
-		} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
-			unset($config['system']['ssh']['sshdkeyonly']);
+			config_set_path('system/ssh/sshdkeyonly', 'both');
+		} else {
+			config_del_path('system/ssh/sshdkeyonly');
 		}
 
-		$sshd_agentforwarding = isset($config['system']['ssh']['sshdagentforwarding']);
+		$sshd_agentforwarding = config_path_enabled('system/ssh', 'sshdagentforwarding');
 		if ($post['sshdagentforwarding']) {
-			$config['system']['ssh']['sshdagentforwarding'] = 'enabled';
-		} else if (isset($config['system']['ssh']['sshdagentforwarding'])) {
-			unset($config['system']['ssh']['sshdagentforwarding']);
+			config_set_path('system/ssh/sshdagentforwarding', 'enabled');
+		} else {
+			config_del_path('system/ssh/sshdagentforwarding');
 		}
 
-		$sshd_port = $config['system']['ssh']['port'];
+		$sshd_port = config_get_path('system/ssh/port');
 		if ($post['sshport']) {
-			$config['system']['ssh']['port'] = $post['sshport'];
-		} else if (isset($config['system']['ssh']['port'])) {
-			unset($config['system']['ssh']['port']);
+			config_set_path('system/ssh/port', $post['sshport']);
+		} else {
+			config_del_path('system/ssh/port');
 		}
 
-		if (($sshd_enabled != $config['system']['ssh']['enable']) ||
-		    ($sshd_keyonly != $config['system']['ssh']['sshdkeyonly']) ||
-		    ($sshd_agentforwarding != $config['system']['ssh']['sshdagentforwarding']) ||
-		    ($sshd_port != $config['system']['ssh']['port'])) {
+		if (($sshd_enabled != config_path_enabled('system/ssh')) ||
+		    ($sshd_keyonly != config_get_path('system/ssh/sshdkeyonly')) ||
+		    ($sshd_agentforwarding != config_path_enabled('system/ssh', 'sshdagentforwarding')) ||
+		    ($sshd_port != config_get_path('system/ssh/port'))) {
 			$restart_sshd = true;
 		}
 
@@ -326,8 +330,8 @@ function doAdvancedAdminPOST($post, $json = false) {
 			} else {
 				list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			}
-			$prot = in_array($config['system']['webgui']['protocol'], $valid_webguiproto) ? $config['system']['webgui']['protocol'] : 'http' ;
-			$port = $config['system']['webgui']['port'];
+			$prot = config_get_path('system/webgui/protocol', 'http');
+			$port = config_get_path('system/webgui/port');
 			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
 			} else {
@@ -336,24 +340,20 @@ function doAdvancedAdminPOST($post, $json = false) {
 		}
 
 		$restart_sshguard = false;
-		if (l_update_if_changed("login protection threshold",
-		    $config['system']['sshguard_threshold'],
-		    $pconfig['sshguard_threshold'])) {
+		if (config_get_path('system/sshguard_threshold') != $pconfig['sshguard_threshold']) {
+			config_set_path('system/sshguard_threshold', $pconfig['sshguard_threshold']);
 			$restart_sshguard = true;
 		}
-		if (l_update_if_changed("login protection blocktime",
-		    $config['system']['sshguard_blocktime'],
-		    $pconfig['sshguard_blocktime'])) {
+		if (config_get_path('system/sshguard_blocktime') != $pconfig['sshguard_blocktime']) {
+			config_set_path('system/sshguard_blocktime', $pconfig['sshguard_blocktime']);
 			$restart_sshguard = true;
 		}
-		if (l_update_if_changed("login protection detection_time",
-		    $config['system']['sshguard_detection_time'],
-		    $pconfig['sshguard_detection_time'])) {
+		if (config_get_path('system/sshguard_detection_time') != $pconfig['sshguard_detection_time']) {
+			config_set_path('system/sshguard_detection_time', $pconfig['sshguard_detection_time']);
 			$restart_sshguard = true;
 		}
-		if (l_update_if_changed("login protection whitelist",
-		    $config['system']['sshguard_whitelist'],
-		    $pconfig['sshguard_whitelist'])) {
+		if (config_get_path('system/sshguard_whitelist') != $pconfig['sshguard_whitelist']) {
+			config_set_path('system/sshguard_whitelist', $pconfig['sshguard_whitelist']);
 			$restart_sshguard = true;
 		}
 
@@ -372,9 +372,9 @@ function doAdvancedAdminPOST($post, $json = false) {
 
 		console_configure();
 		// Restart DNS in case dns rebinding toggled
-		if (isset($config['dnsmasq']['enable'])) {
+		if (config_path_enabled('dnsmasq', 'enable')) {
 			services_dnsmasq_configure();
-		} elseif (isset($config['unbound']['enable'])) {
+		} elseif (config_path_enabled('unbound', 'enable')) {
 			services_unbound_configure();
 		}
 	}
@@ -412,53 +412,13 @@ function restart_GUI() {
 }
 
 function restart_SSHD() {
-	global $config;
-
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
-	if ($config['system']['ssh']['enable']) {
+	if (config_path_enabled('system/ssh', 'enable')) {
 		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
 		send_event("service restart sshd");
 	}
-}
-
-/* update the changedesc and changecount(er) variables */
-function l_update_changedesc($update) {
-	global $changedesc;
-	global $changecount;
-
-	$changedesc .= " {$update}";
-	$changecount++;
-}
-
-/* Check if variable has changed, update and log if it has
- * returns true if var changed
- * varname = variable name in plain text
- * orig = original value
- * new = new value
- */
-function l_update_if_changed($varname, & $orig, $new) {
-	if (is_array($orig) && is_array($new)) {
-		$a_diff = array_diff($orig, $new);
-		foreach ($a_diff as $diff) {
-			l_update_changedesc("removed {$varname}: \"{$diff}\"");
-		}
-		$a_diff = array_diff($new, $orig);
-		foreach ($a_diff as $diff) {
-			l_update_changedesc("added {$varname}: \"{$diff}\"");
-		}
-		$orig = $new;
-		return true;
-
-	} else {
-		if ($orig != $new) {
-			l_update_changedesc("{$varname}: \"{$orig}\" -> \"{$new}\"");
-			$orig = $new;
-			return true;
-		}
-	}
-	return false;
 }
 
 ?>

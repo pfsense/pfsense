@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -39,35 +39,35 @@ if (isset($_POST['backupcount'])) {
 
 	if (!$input_errors) {
 		if (is_numericint($_POST['backupcount'])) {
-			$config['system']['backupcount'] = $_POST['backupcount'];
-			$changedescr = $config['system']['backupcount'];
+			config_set_path('system/backupcount', $_POST['backupcount']);
+			$changedescr = config_get_path('system/backupcount');
 		} elseif (empty($_POST['backupcount'])) {
-			unset($config['system']['backupcount']);
+			config_del_path('system/backupcount');
 			$changedescr = gettext("(platform default)");
 		}
 		write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));
 	}
 }
 
-$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
+$confvers = unserialize(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'));
 
 if ($_POST['newver'] != "") {
-	if (config_restore($g['conf_path'] . '/backup/config-' . $_POST['newver'] . '.xml') == 0) {
-		$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['newver']), htmlspecialchars($confvers[$_POST['newver']]['description']));
+	if (config_restore(g_get('conf_path') . '/backup/config-' . $_POST['newver'] . '.xml') == 0) {
+		$savemsg = sprintf(gettext('Successfully reverted configuration to timestamp %1$s with description "%2$s".%3$s%3$sTo activate the changes, manually reboot or apply/reload relevant features.'), date(gettext("n/j/y H:i:s"), $_POST['newver']), htmlspecialchars($confvers[$_POST['newver']]['description']), '<br/>');
 	} else {
 		$savemsg = gettext("Unable to revert to the selected configuration.");
 	}
 }
 
 if ($_POST['rmver'] != "") {
-	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_POST['rmver'] . '.xml');
+	unlink_if_exists(g_get('conf_path') . '/backup/config-' . $_POST['rmver'] . '.xml');
 	$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['rmver']), htmlspecialchars($confvers[$_POST['rmver']]['description']));
 }
 
 if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
 	send_user_download('file',
-				$g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml',
+				g_get('conf_path') . '/backup/config-' . $_REQUEST['getcfg'] . '.xml',
 				"config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
 }
 
@@ -75,13 +75,13 @@ if (($_REQUEST['diff'] == 'Diff') && isset($_REQUEST['oldtime']) && isset($_REQU
     (is_numeric($_REQUEST['oldtime'])) &&
     (is_numeric($_REQUEST['newtime']) || ($_REQUEST['newtime'] == 'current'))) {
 	$diff = "";
-	$oldfile = $g['conf_path'] . '/backup/config-' . $_REQUEST['oldtime'] . '.xml';
+	$oldfile = g_get('conf_path') . '/backup/config-' . $_REQUEST['oldtime'] . '.xml';
 	$oldtime = $_REQUEST['oldtime'];
 	if ($_REQUEST['newtime'] == 'current') {
-		$newfile = $g['conf_path'] . '/config.xml';
-		$newtime = $config['revision']['time'];
+		$newfile = g_get('conf_path') . '/config.xml';
+		$newtime = config_get_path('revision/time');
 	} else {
-		$newfile = $g['conf_path'] . '/backup/config-' . $_REQUEST['newtime'] . '.xml';
+		$newfile = g_get('conf_path') . '/backup/config-' . $_REQUEST['newtime'] . '.xml';
 		$newtime = $_REQUEST['newtime'];
 	}
 	if (file_exists($oldfile) && file_exists($newfile)) {
@@ -160,7 +160,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$config['system']['backupcount'],
 	['min' => '0']
-))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', $g['default_config_backup_count']);
+))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', g_get('default_config_backup_count'));
 
 $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");
 
@@ -259,9 +259,9 @@ if (is_array($confvers)):
 					<td><?= format_bytes($version['filesize']) ?></td>
 					<td><?= htmlspecialchars($version['description']) ?></td>
 					<td>
-						<a class="fa fa-undo"		title="<?=gettext('Revert config')?>"	href="diag_confbak.php?newver=<?=$version['time']?>" onclick="return confirm('<?=gettext("Confirmation Required to replace the current configuration with this backup.")?>')" usepost></a>
-						<a class="fa fa-download"	title="<?=gettext('Download config')?>"	href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
-						<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="diag_confbak.php?rmver=<?=$version['time']?>" usepost></a>
+						<a class="fa fa-undo do-confirm"	title="<?=gettext('Replace the current configuration with this backup')?>"	href="diag_confbak.php?newver=<?=$version['time']?>" usepost></a>
+						<a class="fa fa-download"		title="<?=gettext('Download this configuration revision')?>"			href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
+						<a class="fa fa-trash"			title="<?=gettext('Delete this configuration revision')?>"			href="diag_confbak.php?rmver=<?=$version['time']?>" usepost></a>
 					</td>
 				</tr>
 <?php

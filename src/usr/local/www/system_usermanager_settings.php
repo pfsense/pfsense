@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -98,10 +98,10 @@ if ($_REQUEST['ajax']) {
 	}
 }
 
-$pconfig['session_timeout'] = $config['system']['webgui']['session_timeout'];
+$pconfig['session_timeout'] = config_get_path('system/webgui/session_timeout');
 
 if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = $config['system']['webgui']['authmode'];
+	$pconfig['authmode'] = config_get_path('system/webgui/authmode');
 } else {
 	$pconfig['authmode'] = "Local Database";
 }
@@ -113,9 +113,9 @@ $pconfig['pwhash'] = isset($config['system']['webgui']['pwhash']) ? $config['sys
 
 $pconfig['shellauth'] = isset($config['system']['webgui']['shellauth']) ? true : false;
 
-$pconfig['backend'] = $config['system']['webgui']['backend'];
+$pconfig['backend'] = config_get_path('system/webgui/backend');
 
-$pconfig['auth_refresh_time'] = $config['system']['webgui']['auth_refresh_time'];
+$pconfig['auth_refresh_time'] = config_get_path('system/webgui/auth_refresh_time');
 
 // Page title for main admin
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));
@@ -129,7 +129,7 @@ if ($_POST) {
 
 	if (isset($_POST['session_timeout'])) {
 		$timeout = intval($_POST['session_timeout']);
-		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0)) {
+		if ($timeout != "" && (!is_numeric($timeout) || $timeout < 0)) {
 			$input_errors[] = gettext("Session timeout must be an integer value.");
 		}
 	}
@@ -173,29 +173,29 @@ if ($_POST) {
 		}
 
 		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
-			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
+			config_set_path('system/webgui/session_timeout', intval($_POST['session_timeout']));
 		} else {
-			unset($config['system']['webgui']['session_timeout']);
+			config_del_path('system/webgui/session_timeout');
 		}
 
 		if ($_POST['authmode']) {
-			$config['system']['webgui']['authmode'] = $_POST['authmode'];
+			config_set_path('system/webgui/authmode', $_POST['authmode']);
 		} else {
-			unset($config['system']['webgui']['authmode']);
+			config_del_path('system/webgui/authmode');
 		}
 
-		$config['system']['webgui']['pwhash'] = $_POST['pwhash'] ? $_POST['pwhash'] : 'bcrypt';
+		config_set_path('system/webgui/pwhash', $_POST['pwhash'] ? $_POST['pwhash'] : 'bcrypt');
 
 		if (isset($_POST['shellauth'])) {
-			$config['system']['webgui']['shellauth'] = true;
+			config_set_path('system/webgui/shellauth', true);
 		} else {
-			unset($config['system']['webgui']['shellauth']);
+			config_del_path('system/webgui/shellauth');
 		}
 
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
-			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
+			config_set_path('system/webgui/auth_refresh_time', intval($_POST['auth_refresh_time']));
 		} else {
-			unset($config['system']['webgui']['auth_refresh_time']);
+			config_del_path('system/webgui/auth_refresh_time');
 		}
 
 		write_config("User Manager Settings saved");
@@ -298,7 +298,7 @@ $modal = new Modal("LDAP settings", "testresults", true);
 
 $modal->addInput(new Form_StaticText(
 	'Test results',
-	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>', $g['product_label']
+	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>', g_get('product_label')
 ));
 
 $form->add($modal);

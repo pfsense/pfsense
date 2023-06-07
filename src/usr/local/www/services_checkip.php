@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,10 +50,10 @@ if ($_POST['act'] == "del") {
 		$dirty = true;
 	} else if ($_POST['id'] == count($a_checkipservice)) {
 		if (isset($config['checkipservices']['disable_factory_default'])) {
-			unset($config['checkipservices']['disable_factory_default']);
+			config_del_path('checkipservices/disable_factory_default');
 			$wc_msg = gettext('Enabled the default check IP service.');
 		} else {
-			$config['checkipservices']['disable_factory_default'] = true;
+			config_set_path('checkipservices/disable_factory_default', true);
 			$wc_msg = gettext('Disabled the default check IP service.');
 		}
 		$dirty = true;

@@ -3,7 +3,7 @@
  * system_advanced_misc.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,55 +35,74 @@ $global_gateway_state_kill_modes = array(
 );
 
 // Functions included by system_advanced_misc.php =============================
+function ramdisk_current_usage($mnt, $ramonly = true) {
+	if (is_array($mnt)) {
+		$disks = implode(' ', array_map('escapeshellarg', $mnt));
+	} else {
+		$disks = escapeshellarg($mnt);
+	}
+	$filter = ($ramonly) ? '/tmpfs/' : '';
+	return (int) trim(exec("/bin/df -k {$disks} | /usr/bin/awk '{$filter} {sum += \$3 * 1024} END {print sum+0}'"));
+}
+function ramdisk_available_memory($includeswap = true) {
+	/* Current free RAM, converted from page count to bytes. */
+	$free = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");
+
+	/* Adjust available memory to account for existing RAM disk contents
+	 * https://redmine.pfsense.org/issues/10420 */
+	if (config_path_enabled('system','use_mfs_tmpvar')) {
+		$free += ramdisk_current_usage(['/var', '/tmp'], true);
+	}
+
+	if ($includeswap) {
+		/* Also include total swap space in calculation since tmpfs data can be swapped */
+		$free += (int) trim(exec("/usr/sbin/swapinfo -k | /usr/bin/tail -1 | /usr/bin/awk '{print \$2 * 1024}'"));
+	}
+
+	return $free;
+}
+
 function getSystemAdvancedMisc($json = false) {
 	global $config;
 
 	$pconfig = array();
 
-	$pconfig['available_kernel_memory'] = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");
-
-	/* Adjust available kernel memory to account for existing RAM disks
-	 * https://redmine.pfsense.org/issues/10420 */
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		$pconfig['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
-	}
-
-	$pconfig['proxyurl'] = $config['system']['proxyurl'];
-	$pconfig['proxyport'] = $config['system']['proxyport'];
-	$pconfig['proxyuser'] = $config['system']['proxyuser'];
-	$pconfig['proxypass'] = $config['system']['proxypass'];
-	$pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
+	$pconfig['proxyurl'] = config_get_path('system/proxyurl');
+	$pconfig['proxyport'] = config_get_path('system/proxyport');
+	$pconfig['proxyuser'] = config_get_path('system/proxyuser');
+	$pconfig['proxypass'] = config_get_path('system/proxypass');
+	$pconfig['harddiskstandby'] = config_get_path('system/harddiskstandby');
 	$pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
-	$pconfig['srctrack'] = $config['system']['srctrack'];
+	$pconfig['srctrack'] = config_get_path('system/srctrack');
 	$pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
-	$pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
-	$pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
+	$pconfig['crypto_hardware'] = config_get_path('system/crypto_hardware');
+	$pconfig['thermal_hardware'] = config_get_path('system/thermal_hardware');
 	$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
-	$pconfig['mds_disable'] = $config['system']['mds_disable'];
+	$pconfig['mds_disable'] = config_get_path('system/mds_disable');
 	$pconfig['schedule_states'] = isset($config['system']['schedule_states']);
-	$pconfig['gw_down_kill_states'] = $config['system']['gw_down_kill_states'];
+	$pconfig['gw_down_kill_states'] = config_get_path('system/gw_down_kill_states');
 	$pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 	$pconfig['dpinger_dont_add_static_routes'] = isset($config['system']['dpinger_dont_add_static_routes']);
 	$pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
-	$pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
-	$pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
+	$pconfig['use_mfs_tmp_size'] = config_get_path('system/use_mfs_tmp_size');
+	$pconfig['use_mfs_var_size'] = config_get_path('system/use_mfs_var_size');
 	$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
 	$pconfig['pti'] = get_single_sysctl('vm.pmap.pti');
 	$pconfig['mds']= get_single_sysctl('hw.mds_disable_state');
 
 	$pconfig['powerd_ac_mode'] = "hadp";
 	if (!empty($config['system']['powerd_ac_mode'])) {
-		$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
+		$pconfig['powerd_ac_mode'] = config_get_path('system/powerd_ac_mode');
 	}
 
 	$pconfig['powerd_battery_mode'] = "hadp";
 	if (!empty($config['system']['powerd_battery_mode'])) {
-		$pconfig['powerd_battery_mode'] = $config['system']['powerd_battery_mode'];
+		$pconfig['powerd_battery_mode'] = config_get_path('system/powerd_battery_mode');
 	}
 
 	$pconfig['powerd_normal_mode'] = "hadp";
 	if (!empty($config['system']['powerd_normal_mode'])) {
-		$pconfig['powerd_normal_mode'] = $config['system']['powerd_normal_mode'];
+		$pconfig['powerd_normal_mode'] = config_get_path('system/powerd_normal_mode');
 	}
 
 	return $json ? json_encode($pconfig) : $pconfig;
@@ -120,14 +139,6 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
 	);
 
-	$post['available_kernel_memory'] = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");;
-
-	/* Adjust available kernel memory to account for existing RAM disks
-	 * https://redmine.pfsense.org/issues/10420 */
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		$post['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
-	}
-
 	if (!empty($post['crypto_hardware']) && !array_key_exists($post['crypto_hardware'], $crypto_modules)) {
 		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
 	}
@@ -148,9 +159,13 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MiB.");
 	}
 
-	if (is_numericint($post['use_mfs_tmp_size']) && is_numericint($post['use_mfs_var_size']) &&
-	    ((($post['use_mfs_tmp_size'] + $post['use_mfs_var_size']) * 1024 * 1024) > $post['available_kernel_memory'])) {
-		$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available kernel memory.");
+	/* Do not check that size would exceed RAM unless RAM disks would be enabled.
+	 * https://redmine.pfsense.org/issues/13479 */
+	if ($post['use_mfs_tmpvar'] == "yes") {
+		if (is_numericint($post['use_mfs_tmp_size']) && is_numericint($post['use_mfs_var_size']) &&
+		    ((($post['use_mfs_tmp_size'] + $post['use_mfs_var_size']) * 1024 * 1024) > ramdisk_available_memory())) {
+			$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available memory and swap space.");
+		}
 	}
 
 	if (!empty($post['proxyport']) && !is_port($post['proxyport'])) {
@@ -191,25 +206,25 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			$config['system']['harddiskstandby'] = $post['harddiskstandby'];
 			system_set_harddisk_standby();
 		} else {
-			unset($config['system']['harddiskstandby']);
+			config_del_path('system/harddiskstandby');
 		}
 
 		if ($post['proxyurl'] <> "") {
 			$config['system']['proxyurl'] = $post['proxyurl'];
 		} else {
-			unset($config['system']['proxyurl']);
+			config_del_path('system/proxyurl');
 		}
 
 		if ($post['proxyport'] <> "") {
 			$config['system']['proxyport'] = $post['proxyport'];
 		} else {
-			unset($config['system']['proxyport']);
+			config_del_path('system/proxyport');
 		}
 
 		if ($post['proxyuser'] <> "") {
 			$config['system']['proxyuser'] = $post['proxyuser'];
 		} else {
-			unset($config['system']['proxyuser']);
+			config_del_path('system/proxyuser');
 		}
 
 		if ($post['proxypass'] <> "") {
@@ -217,7 +232,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 				$config['system']['proxypass'] = $post['proxypass'];
 			}
 		} else {
-			unset($config['system']['proxypass']);
+			config_del_path('system/proxypass');
 		}
 
 		if ($post['lb_use_sticky'] == "yes") {
@@ -229,26 +244,26 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			}
 		} else {
 			if (isset($config['system']['lb_use_sticky'])) {
-				unset($config['system']['lb_use_sticky']);
+				config_del_path('system/lb_use_sticky');
 			}
 		}
 
 		if ($post['pkg_nochecksig'] == "yes") {
 			$config['system']['pkg_nochecksig'] = true;
 		} elseif (isset($config['system']['pkg_nochecksig'])) {
-			unset($config['system']['pkg_nochecksig']);
+			config_del_path('system/pkg_nochecksig');
 		}
 
 		if ($post['do_not_send_uniqueid'] == "yes") {
 			$config['system']['do_not_send_uniqueid'] = true;
 		} else {
-			unset($config['system']['do_not_send_uniqueid']);
+			config_del_path('system/do_not_send_uniqueid');
 		}
 
 		if ($post['powerd_enable'] == "yes") {
 			$config['system']['powerd_enable'] = true;
 		} else {
-			unset($config['system']['powerd_enable']);
+			config_del_path('system/powerd_enable');
 		}
 
 		$config['system']['powerd_ac_mode'] = $post['powerd_ac_mode'];
@@ -258,44 +273,50 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		if ($post['crypto_hardware']) {
 			$config['system']['crypto_hardware'] = $post['crypto_hardware'];
 		} else {
-			unset($config['system']['crypto_hardware']);
+			config_del_path('system/crypto_hardware');
 		}
 
 		if ($post['thermal_hardware']) {
 			$config['system']['thermal_hardware'] = $post['thermal_hardware'];
 		} else {
-			unset($config['system']['thermal_hardware']);
+			config_del_path('system/thermal_hardware');
 		}
 
 		$old_pti_state = isset($config['system']['pti_disabled']);
 		if ($post['pti_disabled'] == "yes") {
 			$config['system']['pti_disabled'] = true;
 		} else {
-			unset($config['system']['pti_disabled']);
+			config_del_path('system/pti_disabled');
 		}
 
 		if (isset($post['mds_disable']) && (strlen($post['mds_disable']) > 0)) {
 			$config['system']['mds_disable'] = $post['mds_disable'];
 		} else {
-			unset($config['system']['mds_disable']);
+			config_del_path('system/mds_disable');
 		}
 
 		if ($post['schedule_states'] == "yes") {
 			$config['system']['schedule_states'] = true;
 		} else {
-			unset($config['system']['schedule_states']);
+			config_del_path('system/schedule_states');
 		}
 
 		if ($post['gw_down_kill_states']) {
 			$config['system']['gw_down_kill_states'] = $post['gw_down_kill_states'];
 		} else {
-			unset($config['system']['gw_down_kill_states']);
+			config_del_path('system/gw_down_kill_states');
 		}
 
 		if ($post['skip_rules_gw_down'] == "yes") {
 			$config['system']['skip_rules_gw_down'] = true;
 		} else {
-			unset($config['system']['skip_rules_gw_down']);
+			config_del_path('system/skip_rules_gw_down');
+		}
+
+		if ($post['dpinger_dont_add_static_routes'] == "yes") {
+			$config['system']['dpinger_dont_add_static_routes'] = true;
+		} else {
+			config_del_path('system/dpinger_dont_add_static_routes');
 		}
 
 		$tmpvar_set = (isset($config['system']['use_mfs_tmpvar']) ? true:false);
@@ -304,7 +325,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			$config['system']['use_mfs_tmpvar'] = true;
 			$tmpvar_enabled = true;
 		} else {
-			unset($config['system']['use_mfs_tmpvar']);
+			config_del_path('system/use_mfs_tmpvar');
 			$tmpvar_enabled = false;
 		}
 
@@ -325,7 +346,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['rrdbackup'] > 0) && ($post['rrdbackup'] <= 24)) {
 				$config['system']['rrdbackup'] = intval($post['rrdbackup']);
 			} else {
-				unset($config['system']['rrdbackup']);
+				config_del_path('system/rrdbackup');
 			}
 		}
 
@@ -333,7 +354,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['dhcpbackup'] > 0) && ($post['dhcpbackup'] <= 24)) {
 				$config['system']['dhcpbackup'] = intval($post['dhcpbackup']);
 			} else {
-				unset($config['system']['dhcpbackup']);
+				config_del_path('system/dhcpbackup');
 			}
 		}
 
@@ -341,7 +362,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['logsbackup'] > 0) && ($post['logsbackup'] <= 24)) {
 				$config['system']['logsbackup'] = intval($post['logsbackup']);
 			} else {
-				unset($config['system']['logsbackup']);
+				config_del_path('system/logsbackup');
 			}
 		}
 
@@ -349,7 +370,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			if (($post['captiveportalbackup'] > 0) && ($post['captiveportalbackup'] <= 24)) {
 				$config['system']['captiveportalbackup'] = intval($post['captiveportalbackup']);
 			} else {
-				unset($config['system']['captiveportalbackup']);
+				config_del_path('system/captiveportalbackup');
 			}
 		}
 
@@ -390,7 +411,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		load_thermal_hardware();
 	}
 
-	// Compose the structure to retuen
+	// Compose the structure to return
 	$rv['input_errors'] = $input_errors;
 	$post['pti'] = get_single_sysctl('vm.pmap.pti');
 	$post['mds'] = get_single_sysctl('hw.mds_disable_state');

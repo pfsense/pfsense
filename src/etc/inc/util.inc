@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -24,7 +24,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+//require_once('interfaces.inc');
+require_once('Net/IPv6.php');
 define('VIP_ALL', 1);
 define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
@@ -168,13 +169,13 @@ function try_lock($lock, $timeout = 5) {
 }
 
 /* unlock configuration file */
-function unlock($cfglckkey = 0) {
-	global $g;
-	if (!is_null($cfglckkey)) {
-		@flock($cfglckkey, LOCK_UN);
-		@fclose($cfglckkey);
-	}
-	return;
+function unlock($cfglckkey = 0)
+{
+	if (!is_resource($cfglckkey))
+		return;
+
+	flock($cfglckkey, LOCK_UN);
+	fclose($cfglckkey);
 }
 
 /* unlock forcefully configuration file */
@@ -193,7 +194,7 @@ function send_event($cmd) {
 
 	$try = 0;
 	while ($try < 3) {
-		$fd = @fsockopen($g['event_address']);
+		$fd = @fsockopen(g_get('event_address'));
 		if ($fd) {
 			fwrite($fd, $cmd);
 			$resp = fread($fd, 4096);
@@ -220,8 +221,9 @@ function send_multiple_events($cmds) {
 		return;
 	}
 
+	$try = 0;
 	while ($try < 3) {
-		$fd = @fsockopen($g['event_address']);
+		$fd = @fsockopen(g_get('event_address'));
 		if ($fd) {
 			foreach ($cmds as $cmd) {
 				fwrite($fd, $cmd);
@@ -239,15 +241,71 @@ function send_multiple_events($cmds) {
 	}
 }
 
-function is_module_loaded($module_name) {
-	$module_name = str_replace(".ko", "", $module_name);
-	$running = 0;
-	$_gb = exec("/sbin/kldstat -qn {$module_name} 2>&1", $_gb, $running);
-	if (intval($running) == 0) {
-		return true;
-	} else {
-		return false;
+/**
+ * Test if a kernel module exists on disk in well-known locations
+ *
+ * Locations:
+ *   > /boot/kernel
+ *   > /bood/modules
+ *
+ * @param string $module_name		The name of the kernel module
+ * @param string ...$add_dirs		Additional directories to search
+ *
+ * @return bool
+ */
+function is_module_available(string $module_name, string ...$add_dirs): bool
+{
+	/* bail if module is already loaded */
+	if (is_module_loaded($module_name)) {
+		return (true);
 	}
+
+	/* ensure the $module_name ends with .ko */
+	if (!str_ends_with($module_name, '.ko')) {
+		$module_name .= '.ko';
+	}
+
+	/* build list of well-known locations */
+	$mod_dirs = [
+		'/boot/kernel',
+		'/boot/modules',
+		...$add_dirs
+	];
+
+	/* filter list of well-known locations and cast to bool */
+	return ((bool) array_filter($mod_dirs, function($mod_dir) use ($module_name) {
+		return (file_exists($mod_dir . '/' . $module_name));
+	}));
+}
+
+/**
+ * Test if a kernel module is loaded
+ *
+ * @param string $module_name	The name of the kernel module
+ *
+ * @param bool
+ */
+function is_module_loaded(string $module_name): bool
+{
+	/* sanitize input */
+	$module_name = escapeshellarg(rtrim($module_name, '.ko'));
+
+	$base_cmd = ['/sbin/kldstat', '-q'];
+
+	/* first pass test by module name, tests for in-kernel modules */
+	$cmd = implode(' ', [...$base_cmd, '-m', $module_name]);
+	exec($cmd, $out, $rc);
+
+	/* bailout early if we found it */
+	if ($rc === 0) {
+		return (true);
+	}
+
+	/* last pass test by file name */
+	$cmd = implode(' ', [...$base_cmd, '-n', $module_name]);
+	exec($cmd, $out, $rc);
+
+	return ($rc === 0);
 }
 
 /* validate non-negative numeric string, or equivalent numeric variable */
@@ -474,10 +532,10 @@ function ip_greater_than($ip1, $ip2) {
 /* compare two IP addresses */
 function ipcmp($a, $b) {
 	if (is_subnet($a)) {
-		list($a, $amask) = explode('/', $a);
+		$a = explode('/', $a)[0];
 	}
 	if (is_subnet($b)) {
-		list($b, $bmask) = explode('/', $b);
+		$b = explode('/', $b)[0];
 	}
 	if (ip_less_than($a, $b)) {
 		return -1;
@@ -760,8 +818,7 @@ function get_ll_scope($addr) {
 	if (!is_linklocal($addr) || !strstr($addr, "%")) {
 		return "";
 	}
-	list ($ll, $scope) = explode("%", $addr);
-	return $scope;
+	return explode("%", $addr)[1];
 }
 
 /* returns true if $ipaddr is a valid literal IPv6 address */
@@ -807,14 +864,10 @@ function is_hostnamewithport($hostport) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
-	global $config;
-
 	if (is_alias($ipaddr)) {
-		if (is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias) {
-				if ($alias['name'] == $ipaddr && !preg_match("/port/i", $alias['type'])) {
-					return true;
-				}
+		foreach (config_get_path('aliases/alias', []) as $alias) {
+			if ($alias['name'] == $ipaddr && !preg_match("/port/i", $alias['type'])) {
+				return true;
 			}
 		}
 		return false;
@@ -1016,6 +1069,12 @@ function get_v6_ptr_zones($subnet, $bits) {
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr, $subnet) {
 	if (is_ipaddrv6($addr) && is_subnetv6($subnet)) {
+		/* Normalize IPv6 prefix to its start address to avoid PHP errors
+		 * https://redmine.pfsense.org/issues/14256
+		 */
+		list($prefix, $length) = explode("/", $subnet);
+		$prefix = gen_subnetv6($prefix, $length);
+		$subnet = "{$prefix}/{$length}";
 		return (Net_IPv6::isInNetmask($addr, $subnet));
 	} else if (is_ipaddrv4($addr) && is_subnetv4($subnet)) {
 		list($ip, $mask) = explode('/', $subnet);
@@ -1145,7 +1204,7 @@ function is_validaliasname($name, $return_message = false, $object = "alias") {
 		}
 	}
 	if ($return_message) {
-		return sprintf(gettext("The %1$s name is valid."), $object);
+		return sprintf(gettext('The %1$s name is valid.'), $object);
 	} else {
 		return true;
 	}
@@ -1204,7 +1263,7 @@ function is_port_in_use($port, $proto = "tcp", $ip_version = 4) {
 		$netstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
 		$netstatarr = $netstatarr['statistics']['socket'];
 
-		foreach($netstatarr as $index => $portstats){
+		foreach($netstatarr as $portstats){
 			array_push($port_info, $portstats['local']['port']);
 		}
 	}
@@ -1226,14 +1285,10 @@ function is_port_or_range($port) {
 
 /* returns true if $port is an alias that is a port type */
 function is_portalias($port) {
-	global $config;
-
 	if (is_alias($port)) {
-		if (is_array($config['aliases']['alias'])) {
-			foreach ($config['aliases']['alias'] as $alias) {
-				if ($alias['name'] == $port && preg_match("/port/i", $alias['type'])) {
-					return true;
-				}
+		foreach (config_get_path('aliases/alias', []) as $alias) {
+			if ($alias['name'] == $port && preg_match("/port/i", $alias['type'])) {
+				return true;
 			}
 		}
 	}
@@ -1344,6 +1399,29 @@ function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
 }
 
+/**
+ * Check if an ethertype is valid
+ *
+ * @param string $ethertype	The ethertype as hex string
+ *
+ * @return bool
+ */
+function is_ethertype(string $ethertype): bool {
+	$ethertype = strtolower($ethertype);
+
+	if (!str_starts_with($ethertype, '0x')) {
+		return (false);
+	}
+
+	$ethertype = substr($ethertype, 2);
+
+	if (!ctype_xdigit($ethertype)) {
+		return (false);
+	}
+
+	return (filter_var(hexdec($ethertype), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0x1, 'max_range' => 0xffff]]));
+}
+
 function build_vip_list($fif, $family = "all") {
 	$list = array('address' => gettext('Interface Address'));
 
@@ -1364,7 +1442,8 @@ function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
 	$list = array();
-	if (!is_array($config['virtualip']) ||
+	if (!array_key_exists('virtualip', $config) ||
+		!is_array($config['virtualip']) ||
 	    !is_array($config['virtualip']['vip']) ||
 	    empty($config['virtualip']['vip'])) {
 		return ($list);
@@ -1488,63 +1567,72 @@ function compare_interface_friendly_names($a, $b) {
 	return strnatcmp($a, $b);
 }
 
-/* return the configured interfaces list. */
-function get_configured_interface_list($withdisabled = false) {
-	global $config;
-
-	$iflist = array();
-
-	/* if list */
-	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if (isset($ifdetail['enable']) || $withdisabled == true) {
+/**
+ * Get the configured interfaces list
+ *
+ * @param bool $with_disabled Include disabled interfaces
+ *
+ * @return array
+ */
+function get_configured_interface_list(bool $with_disabled = false) : array
+{
+	$iflist = [];
+	foreach (config_get_path('interfaces', []) as $if => $if_detail) {
+		if ($with_disabled || isset($if_detail['enable'])) {
 			$iflist[$if] = $if;
 		}
 	}
 
-	return $iflist;
+	return ($iflist);
 }
 
-/* return the configured interfaces list. */
-function get_configured_interface_list_by_realif($withdisabled = false) {
-	global $config;
-
-	$iflist = array();
-
-	/* if list */
-	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if (isset($ifdetail['enable']) || $withdisabled == true) {
+/**
+ * Return the configured (and real) interfaces list.
+ *
+ * @param bool $with_disabled Include disabled interfaces
+ *
+ * @return array
+ */
+function get_configured_interface_list_by_realif(bool $with_disabled = false) : array
+{
+	$iflist = [];
+	foreach (config_get_path('interfaces', []) as $if => $if_detail) {
+		if ($with_disabled || isset($if_detail['enable'])) {
 			$tmpif = get_real_interface($if);
-			if (!empty($tmpif)) {
-				$iflist[$tmpif] = $if;
+			if (empty($tmpif)) {
+				continue;
 			}
+			$iflist[$tmpif] = $if;
 		}
 	}
 
-	return $iflist;
+	return ($iflist);
 }
 
-/* return the configured interfaces list with their description. */
-function get_configured_interface_with_descr($withdisabled = false) {
-	global $config, $user_settings;
+/**
+ * Return the configured interfaces list with their description.
+ *
+ * @param bool $with_disabled Include disabled interfaces
+ *
+ * @return array
+ */
+function get_configured_interface_with_descr(bool $with_disabled = false) : array
+{
+	global $user_settings;
 
-	$iflist = array();
-
-	/* if list */
-	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if (isset($ifdetail['enable']) || $withdisabled == true) {
-			if (empty($ifdetail['descr'])) {
-				$iflist[$if] = strtoupper($if);
-			} else {
-				$iflist[$if] = strtoupper($ifdetail['descr']);
-			}
+	$iflist = [];
+	foreach (config_get_path('interfaces', []) as $if => $if_detail) {
+		if ($with_disabled || isset($if_detail['enable'])) {
+			$iflist[$if] = strtoupper(array_get_path($if_detail, 'descr', $if));
 		}
 	}
 
-	if ($user_settings['webgui']['interfacessort']) {
+	if (is_array($user_settings)
+	    && array_get_path($user_settings, 'webgui/interfacessort')) {
 		asort($iflist);
 	}
 
-	return $iflist;
+	return ($iflist);
 }
 
 /*
@@ -1620,7 +1708,7 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
  *           "media"  - use ifconfig to check physical connection
  *			status (much slower)
  */
-function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "") {
+function get_interface_list($mode = "active", $keyby = "physical", $vfaces = false) {
 	global $config;
 	$upints = array();
 	/* get a list of virtual interface types */
@@ -1632,7 +1720,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'poes',
 				'pptp',
 				'l2tp',
-				'l2tps',
 				'sl',
 				'gif',
 				'gre',
@@ -1647,8 +1734,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'enc',
 				'tun',
 				'lagg',
-				'vip',
-				'ipfw'
+				'vip'
 		);
 	} else {
 		$vfaces = array(
@@ -1667,7 +1753,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'tun',
 				'lagg',
 				'vip',
-				'ipfw',
 				'l2tps'
 		);
 	}
@@ -1677,9 +1762,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 			break;
 		case "media":
 			$intlist = pfSense_interface_listget();
-			$ifconfig = "";
+			$ifconfig = [];
 			exec("/sbin/ifconfig -a", $ifconfig);
-			$regexp = '/(' . implode('|', $intlist) . '):\s/';
 			$ifstatus = preg_grep('/status:/', $ifconfig);
 			foreach ($ifstatus as $status) {
 				$int = array_shift($intlist);
@@ -1693,11 +1777,11 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 			break;
 	}
 	/* build interface list with netstat */
-	$linkinfo = "";
+	$linkinfo = [];
 	exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 }'", $linkinfo);
 	array_shift($linkinfo);
 	/* build ip address list with netstat */
-	$ipinfo = "";
+	$ipinfo = [];
 	exec("/usr/bin/netstat -inW -f inet | awk '{ print $1, $4 }'", $ipinfo);
 	array_shift($ipinfo);
 	foreach ($linkinfo as $link) {
@@ -1783,8 +1867,8 @@ function log_error($error) {
 		$page = basename($files[0]);
 	}
 	syslog(LOG_ERR, "$page: $error");
-	if ($g['debug']) {
-		syslog(LOG_WARNING, var_dump(debug_backtrace()));
+	if (g_get('debug')) {
+		syslog(LOG_WARNING, var_export(debug_backtrace()));
 	}
 	return;
 }
@@ -1800,9 +1884,10 @@ function log_error($error) {
 function log_auth($error) {
 	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
-	syslog(LOG_AUTH, "$page: $error");
-	if ($g['debug']) {
-		syslog(LOG_WARNING, var_dump(debug_backtrace()));
+	$level = config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE|LOG_AUTH : LOG_AUTH;
+	syslog($level, "{$page}: {$error}");
+	if (g_get('debug')) {
+		syslog(LOG_WARNING, var_export(debug_backtrace()));
 	}
 	return;
 }
@@ -1830,7 +1915,7 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 	global $g;
 	$retval = 0;
 
-	if ($g['debug']) {
+	if (g_get('debug')) {
 		if (!$_SERVER['REMOTE_ADDR']) {
 			echo "mwexec(): $command" . ($background ? " [BG]":"") . "\n";
 		}
@@ -1890,12 +1975,14 @@ function unlink_if_exists($fn) {
 
 /* make a global alias table (for faster lookups) */
 function alias_make_table() {
-	global $aliastable, $config;
+	global $aliastable;
 
 	$aliastable = array();
 
-	init_config_arr(array('aliases', 'alias'));
-	foreach ($config['aliases']['alias'] as $alias) {
+	foreach (config_get_path('aliases/alias', []) as $alias) {
+		if (!is_array($alias) || empty($alias)) {
+			continue;
+		}
 		if ($alias['name']) {
 			$aliastable[$alias['name']] = $alias['address'];
 		}
@@ -1910,13 +1997,10 @@ function is_alias($name) {
 }
 
 function alias_get_type($name) {
-	global $config;
 
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($name == $alias['name']) {
-				return $alias['type'];
-			}
+	foreach (config_get_path('aliases/alias', []) as $alias) {
+		if ($name == $alias['name']) {
+			return $alias['type'];
 		}
 	}
 
@@ -1925,7 +2009,7 @@ function alias_get_type($name) {
 
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
-	global $config, $aliastable;
+	global $aliastable;
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
@@ -1938,7 +2022,7 @@ function alias_expand($name) {
 		 * make sure if it's a ports alias, it actually exists.
 		 * redmine #5845
 		 */
-		foreach ($config['aliases']['alias'] as $alias) {
+		foreach (config_get_path('aliases/alias', []) as $alias) {
 			if ($alias['name'] == $name) {
 				if ($alias['type'] == "urltable_ports") {
 					if (is_URL($alias['url']) &&
@@ -1961,15 +2045,10 @@ function alias_expand($name) {
 }
 
 function alias_expand_urltable($name) {
-	global $config;
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
-	if (!is_array($config['aliases']['alias'])) {
-		return null;
-	}
-
-	foreach ($config['aliases']['alias'] as $alias) {
+	foreach (config_get_path('aliases/alias', []) as $alias) {
 		if (!preg_match("/urltable/i", $alias['type']) ||
 		    ($alias['name'] != $name)) {
 			continue;
@@ -2052,7 +2131,6 @@ function resolve_retry($hostname, $protocol = 'inet') {
 	$retries = 10;
 	$numrecords = 1;
 	$recresult = array();
-	$returnres = array();
 
 	switch ($protocol) {
 		case 'any':
@@ -2065,7 +2143,7 @@ function resolve_retry($hostname, $protocol = 'inet') {
 			$dnsproto = DNS_AAAA;
 			$dnstype = array('AAAA');
 			break;
-		case 'inet': 
+		case 'inet':
 		default:
 			$checkproto = 'is_ipaddrv4';
 			$dnsproto = DNS_A;
@@ -2081,14 +2159,14 @@ function resolve_retry($hostname, $protocol = 'inet') {
 		$dnsresult = @dns_get_record($hostname, $dnsproto);
 
 		if (!empty($dnsresult)) {
-			foreach ($dnsresult as $dnsrec => $ip) {
+			foreach ($dnsresult as $ip) {
 				if (is_array($ip)) {
 					if (in_array($ip['type'], $dnstype)) {
-						if ($checkproto($ip['ip'])) { 
+						if ($checkproto($ip['ip'])) {
 							$recresult[] = $ip['ip'];
 						}
 
-						if ($checkproto($ip['ipv6'])) { 
+						if ($checkproto($ip['ipv6'])) {
 							$recresult[] = $ip['ipv6'];
 						}
 					}
@@ -2125,23 +2203,18 @@ function format_bytes($bytes) {
 	}
 }
 
-function format_number($num, $precision = 3) {
-	$units = array('', 'K', 'M', 'G', 'T');
-
-	$i = 0;
-	while ($num > 1000 && $i < count($units)) {
-		$num /= 1000;
-		$i++;
-	}
-	$num = round($num, $precision);
-
-	return ("$num {$units[$i]}");
+function format_number(int $num, int $precision = 3): string
+{
+    $units = ['', 'K', 'M', 'G', 'T'];
+    for ($i = 0; $num >= 1000; $i++) {
+        $num /= 1000;
+    }
+    return (round($num, $precision) . $units[$i]);
 }
-
 
 function unformat_number($formated_num) {
 	$num = strtoupper($formated_num);
-    
+
 	if ( strpos($num,"T") !== false ) {
 		$num = str_replace("T","",$num) * 1000 * 1000 * 1000 * 1000;
 	} else if ( strpos($num,"G") !== false ) {
@@ -2151,7 +2224,7 @@ function unformat_number($formated_num) {
 	} else if ( strpos($num,"K") !== false ) {
 		$num = str_replace("K","",$num) * 1000;
 	}
-    
+
 	return $num;
 }
 
@@ -2194,8 +2267,6 @@ function return_dir_as_array($dir, $filter_regex = '') {
 }
 
 function run_plugins($directory) {
-	global $config, $g;
-
 	/* process packager manager custom rules */
 	$files = return_dir_as_array($directory);
 	if (is_array($files)) {
@@ -2214,8 +2285,6 @@ function run_plugins($directory) {
  *    create directory if it doesn't already exist and isn't a file!
  */
 function safe_mkdir($path, $mode = 0755) {
-	global $g;
-
 	if (!is_file($path) && !is_dir($path)) {
 		return @mkdir($path, $mode, true);
 	} else {
@@ -2341,17 +2410,13 @@ function get_memory() {
 }
 
 function mute_kernel_msgs() {
-	global $g, $config;
-
-	if ($config['system']['enableserial']) {
+	if (config_path_enabled('system','enableserial')) {
 		return;
 	}
 	exec("/sbin/conscontrol mute on");
 }
 
 function unmute_kernel_msgs() {
-	global $g;
-
 	exec("/sbin/conscontrol mute off");
 }
 
@@ -2360,15 +2425,13 @@ function start_devd() {
 
 	/* Generate hints for the kernel loader. */
 	$module_paths = explode(";", get_single_sysctl("kern.module_path"));
-	foreach ($module_paths as $id => $path) {
-		if (!is_dir($path) || file_exists("{$path}/linker.hints")) {
-			continue;
-		}
-		if (($files = scandir($path)) == false) {
+	foreach ($module_paths as $path) {
+		if (!is_dir($path) ||
+		    (($files = scandir($path)) == false)) {
 			continue;
 		}
 		$found = false;
-		foreach ($files as $id => $file) {
+		foreach ($files as $file) {
 			if (strlen($file) > 3 &&
 			    strcasecmp(substr($file, -3), ".ko") == 0) {
 				$found = true;
@@ -2389,16 +2452,12 @@ function start_devd() {
 }
 
 function is_interface_vlan_mismatch() {
-	global $config, $g;
-
-	if (is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if (substr($vlan['if'], 0, 4) == "lagg") {
-				return false;
-			}
-			if (does_interface_exist($vlan['if']) == false) {
-				return true;
-			}
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if (substr($vlan['if'], 0, 4) == "lagg") {
+			return false;
+		}
+		if (does_interface_exist($vlan['if']) == false) {
+			return true;
 		}
 	}
 
@@ -2412,10 +2471,10 @@ function is_interface_mismatch() {
 	$i = 0;
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $ifname => $ifcfg) {
+		foreach ($config['interfaces'] as $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
-			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|^ue|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
+			    preg_match("/^bridge|^cua|^enc|^gif|^gre|^ipsec|^l2tp|^lagg|^ngeth|^ovpn|^ppp|^pptp|^tap|^tun|^ue|vlan|^wg|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;
@@ -2432,7 +2491,7 @@ function is_interface_mismatch() {
 	 * see https://redmine.pfsense.org/issues/12170 */
 	init_config_arr(array('vlans', 'vlan'));
 	foreach ($config['vlans']['vlan'] as $vlan) {
-		if (!does_interface_exist($vlan['if']) && 
+		if (!does_interface_exist($vlan['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
 			$missing_interfaces[] = $vlan['if'];
 			$do_assign = true;
@@ -2462,7 +2521,6 @@ function is_interface_mismatch() {
 
 /* sync carp entries to other firewalls */
 function carp_sync_client() {
-	global $g;
 	send_event("filter sync");
 }
 
@@ -2553,14 +2611,11 @@ function msort($array, $id = "id", $sort_ascending = true) {
  *   Returns true if item is a URL
  ******/
 function is_URL($url, $httponly = false) {
-	$match = preg_match("'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))'", $url);
-	if ($match) {
+	if (filter_var($url, FILTER_VALIDATE_URL)) {
 		if ($httponly) {
-			$urlparts = parse_url($url);
-			return in_array(strtolower($urlparts['scheme']), array('http', 'https'));
-		} else {
-			return true;
+			return in_array(strtolower(parse_url($url, PHP_URL_SCHEME)), ['http', 'https']);
 		}
+		return true;
 	}
 	return false;
 }
@@ -2595,7 +2650,7 @@ function array_replace_values_recursive($data, $match, $replace) {
 
 /*
 	This function was borrowed from a comment on PHP.net at the following URL:
-	http://www.php.net/manual/en/function.array-merge-recursive.php#73843
+	https://www.php.net/manual/en/function.array-merge-recursive.php#73843
  */
 function array_merge_recursive_unique($array0, $array1) {
 
@@ -2681,7 +2736,7 @@ function replace_element_in_list($text, $delimiter, $element, $replacement) {
 
 /* Return system's route table */
 function route_table() {
-	$_gb = exec("/usr/bin/netstat --libxo json -nWr", $rawdata, $rc);
+	exec("/usr/bin/netstat --libxo json -nWr", $rawdata, $rc);
 
 	if ($rc != 0) {
 		return array();
@@ -2750,7 +2805,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 			return array();
 		} elseif ($interface == 'lo0') {
 			// interface assigned IP address
-			foreach ($config['interfaces'] as $intf => $infconf) {
+			foreach (array_keys($config['interfaces']) as $intf) {
 				if ((($inet == '4') && (get_interface_ip($intf) == $target)) ||
 				    (($inet == '6') && (get_interface_ipv6($intf) == $target))) {
 					$interface = convert_friendly_interface_to_real_interface_name($intf);
@@ -2849,7 +2904,7 @@ function route_del($target, $ipprotocol = '') {
 			$gw = $item['gateway'];
 		}
 
-		$_gb = exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
+		exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
 		    "{$target} {$gw}"), $output, $rc);
 
 		if (isset($config['system']['route-debug'])) {
@@ -2913,7 +2968,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	}
 	if (is_ipaddr($gw)) {
 		/* set correct linklocal gateway address,
-		 * see https://redmine.pfsense.org/issues/11713 
+		 * see https://redmine.pfsense.org/issues/11713
 		 * and https://redmine.pfsense.org/issues/11806 */
 		if (is_ipaddrv6($gw) && is_linklocal($gw) && empty(get_ll_scope($gw))) {
 			$routeget = route_get($gw, 'inet6', true);
@@ -2928,7 +2983,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 		return false;
 	}
 
-	$_gb = exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
+	exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
 	    "{$target} {$args} {$params}"), $output, $rc);
 
 	if (isset($config['system']['route-debug'])) {
@@ -2943,7 +2998,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 }
 
 function set_ipv6routes_mtu($interface, $mtu) {
-	global $config, $g;
+	global $config;
 
 	$ipv6mturoutes = array();
 	$if = convert_real_interface_to_friendly_interface_name($interface);
@@ -2955,7 +3010,8 @@ function set_ipv6routes_mtu($interface, $mtu) {
 	foreach ($a_gateways as $gate) {
 		foreach ($a_staticroutes as $sroute) {
 			if (($gate['interface'] == $interface) &&
-			    ($sroute['gateway'] == $gate['name'])) {
+			    ($sroute['gateway'] == $gate['name']) &&
+			    (is_ipaddrv6($gate['gateway']))) {
 				$tgt = $sroute['network'];
 				$gateway = $gate['gateway'];
 				$ipv6mturoutes[$tgt] = $gateway;
@@ -3002,7 +3058,7 @@ function alias_to_subnets_recursive($name, $returnhostnames = false) {
 }
 
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
-	global $config, $aliastable;
+	global $config;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
 	init_config_arr(array('staticroutes', 'route'));
@@ -3049,22 +3105,28 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, 
  *   If $type is an array, all aliases of any type specified in any element of $type are returned.
  */
 function get_alias_list($type = null) {
-	global $config;
 	$result = array();
-	if ($config['aliases']['alias'] <> "" && is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($type === null) {
-				$result[] = $alias['name'];
-			} else if (is_array($type)) {
-				if (in_array($alias['type'], $type)) {
-					$result[] = $alias['name'];
-				}
-			} else if ($type === $alias['type']) {
+	foreach (config_get_path('aliases/alias', []) as $alias) {
+		if ($type === null) {
+			$result[] = $alias['name'];
+		} else if (is_array($type)) {
+			if (in_array($alias['type'], $type)) {
 				$result[] = $alias['name'];
 			}
+		} else if ($type === $alias['type']) {
+			$result[] = $alias['name'];
 		}
 	}
 	return $result;
+}
+
+/* Returns the current alias contents sorted by name in case insensitive and
+ * natural order.
+ * https://redmine.pfsense.org/issues/14015 */
+function get_sorted_aliases() {
+	$aliases = config_get_path('aliases/alias', []);
+	uasort($aliases, function ($a, $b) { return strnatcasecmp($a['name'], $b['name']); });
+	return $aliases;
 }
 
 /* returns an array consisting of every element of $haystack that is not equal to $needle. */
@@ -3082,9 +3144,7 @@ function array_exclude($needle, $haystack) {
 
 /* Define what is preferred, IPv4 or IPv6 */
 function prefer_ipv4_or_ipv6() {
-	global $config;
-
-	if (isset($config['system']['prefer_ipv4'])) {
+	if (config_path_enabled('system', 'prefer_ipv4')) {
 		mwexec("/etc/rc.d/ip6addrctl prefer_ipv4");
 	} else {
 		mwexec("/etc/rc.d/ip6addrctl prefer_ipv6");
@@ -3359,18 +3419,155 @@ function array_remove_duplicate($array, $field) {
 		}
 	}
 	$unique = array_unique(array_reverse($cmp, true));
-	foreach ($unique as $k => $rien) {
+	foreach (array_keys($unique) as $k) {
 		$new[] = $array[$k];
 	}
 	return $new;
 }
 
-function dhcpd_date_adjust_gmt($dt) {
-	global $config;
+/**
+ * Return a value specified by a path of keys in a nested array, if it exists.
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @param $default mixed value to return if the path is not found
+ * @returns mixed value at path or $default if the path does not exist or if the
+ *          path keys an empty string and $default is non-null
+ */
+function array_get_path(array &$arr, string $path, $default = null) {
+	$vpath = explode('/', $path);
+	$el = $arr;
+	foreach ($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
+		}
+		if (is_array($el) && array_key_exists($key, $el)) {
+			$el = $el[$key];
+		} else {
+			return ($default);
+		}
+	}
 
+	if (($default !== null) && ($el === '')) {
+		return ($default);
+	}
+
+	return ($el);
+}
+
+/*
+ * Initialize an arbitrary array multiple levels deep only if unset
+ * @param $arr top of array
+ * @param $path string path with '/' separators
+ */
+function array_init_path(mixed &$arr, ?string $path)
+{
+	if (!is_array($arr)) {
+		$arr = [];
+	}
+	if (is_null($path)) {
+		return;
+	}
+	$tmp = &$arr;
+	foreach (explode('/', $path) as $key) {
+		if (!is_array($tmp[$key])) {
+			$tmp[$key] = [];
+		}
+		$tmp = &$tmp[$key];
+	}
+}
+
+/**
+ * Set a value by path in a nested array, creating arrays for intermediary keys
+ * as necessary. If the path cannot be reached because an intermediary exists
+ * but is not empty or an array, return $default.
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @param $value mixed
+ * @param $default mixed value to return if the path is not found
+ * @returns mixed $val or $default if the path prefix does not exist
+ */
+function array_set_path(array &$arr, string $path, $value, $default = null) {
+	$vpath = explode('/', $path);
+	$vkey = null;
+	do {
+		$vkey = array_pop($vpath);
+	} while (mb_strlen($vkey) == 0);
+	if ($vkey == null) {
+		return ($default);
+	}
+	$el =& $arr;
+	foreach ($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
+		}
+		if (array_key_exists($key, $el) && !empty($el[$key])) {
+			if (!is_array($el[$key])) {
+					return ($default);
+			}
+		} else {
+				$el[$key] = [];
+		}
+		$el =& $el[$key];
+	}
+	$el[$vkey] = $value;
+	return ($value);
+}
+
+/**
+ * Determine whether a path in a nested array has a non-null value keyed by
+ * $enable_key.
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @param $enable_key string an optional alternative key value for the enable key
+ * @returns bool true if $enable_key exists in the array at $path, and has a
+ * non-null value, otherwise false
+ */
+function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
+	$el = array_get_path($arr, $path, []);
+	if (is_array($el) && isset($el[$enable_key])) {
+		return (true);
+	}
+	return (false);
+}
+
+/**
+ * Remove a key from the nested array by path.
+ * @param $arr array value to search
+ * @param $path string path with '/' separators
+ * @returns array copy of the removed value or null
+ */
+function array_del_path(array &$arr, string $path) {
+	$vpath = explode('/', $path);
+	$vkey = array_pop($vpath);
+	$el =& $arr;
+	foreach($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
+		}
+		if (is_array($el) && array_key_exists($key, $el)) {
+			$el =& $el[$key];
+		} else {
+			return null;
+		}
+	}
+
+	if (!(is_array($el) && array_key_exists($vkey, $el))) {
+		return null;
+	}
+
+	$ret = $el[$vkey];
+	unset($el[$vkey]);
+	return ($ret);
+}
+
+
+function dhcpd_date_adjust_gmt($dt) {
 	init_config_arr(array('dhcpd'));
 
-	foreach ($config['dhcpd'] as $dhcpditem) {
+	foreach (config_get_path('dhcpd', []) as $dhcpditem) {
+		if (empty($dhcpditem)) {
+			continue;
+		}
 		if ($dhcpditem['dhcpleaseinlocaltime'] == "yes") {
 			$ts = strtotime($dt . " GMT");
 			if ($ts !== false) {
@@ -3427,7 +3624,7 @@ function get_lagg_ports ($laggport) {
 
 function cisco_to_cidr($addr) {
 	if (!is_ipaddr($addr)) {
-		throw new Exception('Invalid IP Addr');
+		throw new Exception('Value is not in dotted quad notation.');
 	}
 
 	$mask = decbin(~ip2long($addr));
@@ -3511,7 +3708,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
 			} catch(Exception $e) {
-				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask'.");
+				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask' (" . $e->getMessage() . ").");
 				return;
 			}
 			$tmprule .= "from {$network}/{$netmask} ";
@@ -3584,7 +3781,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
 			} catch(Exception $e) {
-				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination network '$network'.");
+				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination netmask '$netmask' (" . $e->getMessage() . ").");
 				return;
 			}
 			$tmprule .= "to {$network}/{$netmask} ";
@@ -3675,11 +3872,12 @@ function parse_cisco_acl($attribs, $dev) {
 			}
 
 			$tmprule = parse_cisco_acl_rule($rule[1], $dev, $dir, $proto);
-
-			if ($dir == "in") {
-				$inrules[$proto][$rindex] = $tmprule;
-			} else if ($dir == "out") {
-				$outrules[$proto][$rindex] = $tmprule;
+			if (!empty($tmprule)) {
+				if ($dir == "in") {
+					$inrules[$proto][$rindex] = $tmprule;
+				} else if ($dir == "out") {
+					$outrules[$proto][$rindex] = $tmprule;
+				}
 			}
 		}
 
@@ -3720,7 +3918,7 @@ function alias_idn_to_ascii($alias) {
 	}
 }
 
-// These funtions were in guiconfig.inc but have been moved here so non GUI processes can use them
+// These functions were in guiconfig.inc but have been moved here so non GUI processes can use them
 function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendport) {
 	if (isset($adr['any'])) {
 		$padr = "any";
@@ -3815,22 +4013,14 @@ function is_specialnet($net) {
 }
 
 function is_interface_ipaddr($interface) {
-	global $config;
-
-	if (is_array($config['interfaces'][$interface]) &&
-	    isset($config['interfaces'][$interface]['ipaddr']) &&
-	    !empty($config['interfaces'][$interface]['ipaddr'])) {
+	if (!empty(config_get_path("interfaces/{$interface}/ipaddr"))) {
 		return true;
 	}
 	return false;
 }
 
 function is_interface_ipaddrv6($interface) {
-	global $config;
-
-	if (is_array($config['interfaces'][$interface]) &&
-	    isset($config['interfaces'][$interface]['ipaddrv6']) &&
-	    !empty($config['interfaces'][$interface]['ipaddrv6'])) {
+	if (!empty(config_get_path("interfaces/{$interface}/ipaddrv6"))) {
 		return true;
 	}
 	return false;
@@ -3895,14 +4085,15 @@ function cleanup_regex_pattern($filtertext) {
 function ip6_to_asn1($addr) {
 	/* IPv6 MIB uses an OCTET STRING of length 16 to represent
 	 * 128-bit IPv6 address in network byte order.
-	 * see https://datatracker.ietf.org/doc/html/rfc2465#section-3 
+	 * see https://datatracker.ietf.org/doc/html/rfc2465#section-3
 	 * i.e. fc00:3::4 = 252.0.0.3.0.0.0.0.0.0.0.0.0.0.0.4
 	 */
 
 	if (!is_ipaddrv6($addr)) {
 		return false;
 	}
-
+	$ipv6str = "";
+	$octstr = "";
 	foreach (explode(':', Net_IPv6::uncompress($addr)) as $v) {
 		$ipv6str .= str_pad($v, 4, '0', STR_PAD_LEFT);
 	}
@@ -3938,8 +4129,6 @@ function interfaces_interrupts() {
 }
 
 function dummynet_load_module($max_qlimit) {
-	global $config;
-
 	if (!is_module_loaded("dummynet.ko")) {
 		mute_kernel_msgs();
 		mwexec("/sbin/kldload dummynet");
@@ -3951,11 +4140,9 @@ function dummynet_load_module($max_qlimit) {
 			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 	));
 	init_config_arr(array('sysctl', 'item'));
-	if (!empty($config['sysctl']['item'])) {
-		foreach ($config['sysctl']['item'] as $item) {
-			if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
-				$sysctls[$item['tunable']] = $item['value'];
-			}
+	foreach (config_get_path('sysctl/item', []) as $item) {
+		if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
+			$sysctls[$item['tunable']] = $item['value'];
 		}
 	}
 	set_sysctl($sysctls);

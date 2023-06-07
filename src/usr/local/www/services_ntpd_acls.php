@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -36,11 +36,11 @@ require_once('rrd.inc');
 require_once("shaper.inc");
 
 if (!is_array($config['ntpd'])) {
-	$config['ntpd'] = array();
+	config_set_path('ntpd', array());
 }
 
 if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
-	$networkacl = $config['ntpd']['restrictions']['row'];
+	$networkacl = config_get_path('ntpd/restrictions/row');
 } else {
 	$networkacl = array('0' => array('acl_network' => '', 'mask' => ''));
 }
@@ -124,42 +124,42 @@ if ($_POST) {
 	if (!$input_errors) {
 		/* Default Access Restrictions */
 		if (empty($_POST['kod'])) {
-			$config['ntpd']['kod'] = 'on';
+			config_set_path('ntpd/kod', 'on');
 		} elseif (isset($config['ntpd']['kod'])) {
-			unset($config['ntpd']['kod']);
+			config_del_path('ntpd/kod');
 		}
 
 		if (empty($_POST['nomodify'])) {
-			$config['ntpd']['nomodify'] = 'on';
+			config_set_path('ntpd/nomodify', 'on');
 		} elseif (isset($config['ntpd']['nomodify'])) {
-			unset($config['ntpd']['nomodify']);
+			config_del_path('ntpd/nomodify');
 		}
 
 		if (!empty($_POST['noquery'])) {
-			$config['ntpd']['noquery'] = $_POST['noquery'];
+			config_set_path('ntpd/noquery', $_POST['noquery']);
 		} elseif (isset($config['ntpd']['noquery'])) {
-			unset($config['ntpd']['noquery']);
+			config_del_path('ntpd/noquery');
 		}
 
 		if (!empty($_POST['noserve'])) {
-			$config['ntpd']['noserve'] = $_POST['noserve'];
+			config_set_path('ntpd/noserve', $_POST['noserve']);
 		} elseif (isset($config['ntpd']['noserve'])) {
-			unset($config['ntpd']['noserve']);
+			config_del_path('ntpd/noserve');
 		}
 
 		if (empty($_POST['nopeer'])) {
-			$config['ntpd']['nopeer'] = 'on';
+			config_set_path('ntpd/nopeer', 'on');
 		} elseif (isset($config['ntpd']['nopeer'])) {
-			unset($config['ntpd']['nopeer']);
+			config_del_path('ntpd/nopeer');
 		}
 
 		if (empty($_POST['notrap'])) {
-			$config['ntpd']['notrap'] = 'on';
+			config_set_path('ntpd/notrap', 'on');
 		} elseif (isset($config['ntpd']['notrap'])) {
-			unset($config['ntpd']['notrap']);
+			config_del_path('ntpd/notrap');
 		}
 		/* End Default Access Restrictions */
-		$config['ntpd']['restrictions']['row'] = array();
+		config_set_path('ntpd/restrictions/row', array());
 		foreach ($networkacl as $acl) {
 			$config['ntpd']['restrictions']['row'][] = $acl;
 		}

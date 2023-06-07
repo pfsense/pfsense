@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * All rights reserved.
  *
@@ -62,7 +62,7 @@ $state_tt = gettext("Adaptive state handling is enabled, state timeouts are redu
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
-	$cache_file = $g['version_cache_file'];
+	$cache_file = g_get('version_cache_file');
 
 	if (isset($config['system']['firmware']['disablecheck'])) {
 		exit;
@@ -235,11 +235,11 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("Version");?></th>
 			<td>
-				<strong><?=$g['product_version_string']?></strong>
+				<strong><?=g_get('product_version_string')?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>
-			<?php if (!$g['hideuname']): ?>
+			<?php if (!g_get('hideuname')): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
@@ -398,7 +398,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 ?>
 			</th>
 			<td>
-				<!-- The color of the progress bar is changed to 'warniing' to indicate adaptive state handling is in use -->
+				<!-- The color of the progress bar is changed to 'warning' to indicate adaptive state handling is in use -->
 				<div class="progress">
 					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>
@@ -688,7 +688,7 @@ function updateState(x) {
 	if ($('#pfstate')) {
 		$('[id="pfstate"]').html('(' + x + ')');
 
-		// get numeric part of string before hte '/'
+		// get numeric part of string before the '/'
 		x = x.split('/')[0]
 
 		if (x > adaptivestart) {

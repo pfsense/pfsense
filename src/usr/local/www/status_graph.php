@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,12 +35,14 @@
 ##|*MATCH=ifstats.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("ipsec.inc");
+require_once('config.inc');
+require_once('config.lib.inc');
+require_once('guiconfig.inc');
+require_once('ipsec.inc');
 
-if (is_array($config["traffic_graphs"])){
-	$pconfig = $config["traffic_graphs"];
-}
+
+$pconfig = config_get_path('traffic_graphs');
+
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
@@ -48,10 +50,7 @@ if (ipsec_enabled()) {
 }
 
 foreach (array('server', 'client') as $mode) {
-	if (!is_array($config['openvpn']["openvpn-{$mode}"])) {
-		continue;
-	}
-	foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+	foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $setting) {
 		if (isset($setting['disable'])) {
 			continue;
 		}
@@ -96,8 +95,7 @@ if (!empty($_POST)) {
 		$pconfig["smoothfactor"] = $cursmoothing;
 		$pconfig["invert"] = $curinvert;
 		$pconfig["mode"] = $curmode;
-		$config["traffic_graphs"] = array();
-		$config["traffic_graphs"] = $pconfig;
+		config_set_path("traffic_graphs", $pconfig);
 		write_config("Traffic Graphs settings updated");
 	}
 } else {
@@ -296,7 +294,7 @@ function updateBandwidth() {
 	$.ajax(
 		'/bandwidth_by_ip.php',
 		{
-			type: 'get',
+			type: 'post',
 			data: $(document.forms[0]).serialize(),
 			success: function (data) {
 				var hosts_split = data.split("|");

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +33,7 @@ require_once("guiconfig.inc");
 require_once("acb.inc");
 
 if ($_POST) {
+	global $config;
 
 	if ($_REQUEST['nooverwrite']) {
 		touch("/tmp/acb_nooverwrite");
@@ -71,7 +72,7 @@ $tab_array[] = array("Restore", false, "/services_acb.php");
 $tab_array[] = array("Backup now", true, "/services_acb_backup.php");
 display_top_tabs($tab_array);
 
-$form = new Form("Backup", $config['system']['acb']['enable'] === "yes");
+$form = new Form("Backup", config_get_path('system/acb/enable') === "yes");
 
 $section = new Form_Section('Backup Details');
 
@@ -104,7 +105,7 @@ print($form);
 events.push(function() {
 	$(form).submit(function(e) {
 		e.preventDefault();
-		encpwd = '<?=$config['system']['acb']['encryption_password']?>';
+		encpwd = '<?=config_get_path("system/acb/encryption_password")?>';
 		if ( encpwd.length === 0) {
 			alert('<?=gettext("No encryption password has been set")?>');
 		} else if ($('#devkey').val().length === 0 ) {

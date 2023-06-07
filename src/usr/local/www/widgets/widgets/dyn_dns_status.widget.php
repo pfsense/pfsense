@@ -6,7 +6,7 @@
  * Copyright (c) 2013 Stanley P. Miller \ stan-qaz
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,15 +47,15 @@ if (!function_exists('get_dyndns_hostname_text')) {
 }
 
 init_config_arr(array('dyndnses', 'dyndns'));
-$a_dyndns = $config['dyndnses']['dyndns'];
+$a_dyndns = config_get_path('dyndnses/dyndns');
 
 init_config_arr(array('dnsupdates', 'dnsupdate'));
-$a_rfc2136 = $config['dnsupdates']['dnsupdate'];
+$a_rfc2136 = config_get_path('dnsupdates/dnsupdate');
 
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
 
 array_walk($all_dyndns, function(&$dyndns) {
-	if (empty($dyndns)) {
+	if (!is_array($dyndns) || empty($dyndns)) {
 		return;
 	}
 	if (empty($dyndns['type'])) {
@@ -244,6 +244,9 @@ if (!function_exists('get_dyndns_service_text')) {
 <?php
 				$skipdyndns = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 				foreach ($all_dyndns as $dyndns):
+					if (!is_array($dyndns) || empty($dyndns)) {
+						continue;
+					}
 ?>
 						<tr>
 							<td><?=get_dyndns_interface_text($dyndns['interface'])?></td>

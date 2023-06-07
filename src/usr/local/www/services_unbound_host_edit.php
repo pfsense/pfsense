@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -39,27 +39,26 @@ function hostcmp($a, $b) {
 }
 
 function hosts_sort() {
-	global $g, $config;
-
-	if (!is_array($config['unbound']['hosts'])) {
+	$hosts = config_get_path('unbound/hosts', []);
+	if (empty($hosts)) {
 		return;
 	}
-
-	usort($config['unbound']['hosts'], "hostcmp");
+	usort($hosts, "hostcmp");
+	config_set_path('unbound/hosts', $hosts);
 }
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('unbound', 'hosts'));
-$a_hosts = &$config['unbound']['hosts'];
 $id = $_REQUEST['id'];
+$pconfig = [];
 
-if (isset($id) && $a_hosts[$id]) {
-	$pconfig['host'] = $a_hosts[$id]['host'];
-	$pconfig['domain'] = $a_hosts[$id]['domain'];
-	$pconfig['ip'] = $a_hosts[$id]['ip'];
-	$pconfig['descr'] = $a_hosts[$id]['descr'];
-	$pconfig['aliases'] = $a_hosts[$id]['aliases'];
+if (isset($id) &&
+    config_get_path('unbound/hosts/' . $id)) {
+	$pconfig['host']    = config_get_path('unbound/hosts/' . $id . '/host');
+	$pconfig['domain']  = config_get_path('unbound/hosts/' . $id . '/domain');
+	$pconfig['ip']      = config_get_path('unbound/hosts/' . $id . '/ip');
+	$pconfig['descr']   = config_get_path('unbound/hosts/' . $id . '/descr');
+	$pconfig['aliases'] = config_get_path('unbound/hosts/' . $id . '/aliases');
 }
 
 if ($_POST['save']) {
@@ -111,11 +110,11 @@ if ($_POST['save']) {
 				$field = 'description';
 			}
 			if (ctype_digit($entry)) {
-				$aliases[$entry][$field] = $value;
+				array_set_path($aliases, "{$entry}/{$field}", $value);
 			}
 		}
 
-		$pconfig['aliases']['item'] = $aliases;
+		array_set_path($pconfig, 'aliases/item', $aliases);
 
 		/* validate aliases */
 		foreach ($aliases as $idx => $alias) {
@@ -140,8 +139,8 @@ if ($_POST['save']) {
 	}
 
 	/* check for overlaps */
-	foreach ($a_hosts as $hostent) {
-		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
+	foreach (config_get_path('unbound/hosts', []) as $hostent) {
+		if (isset($id) && (config_get_path('unbound/hosts/' . $id) === $hostent)) {
 			continue;
 		}
 
@@ -164,12 +163,12 @@ if ($_POST['save']) {
 		$hostent['domain'] = $_POST['domain'];
 		$hostent['ip'] = $_POST['ip'];
 		$hostent['descr'] = $_POST['descr'];
-		$hostent['aliases']['item'] = $aliases;
+		array_set_path($hostent, 'aliases/item', $aliases);
 
-		if (isset($id) && $a_hosts[$id]) {
-			$a_hosts[$id] = $hostent;
+		if (isset($id) && config_get_path('unbound/hosts/' . $id)) {
+			config_set_path('unbound/hosts/' . $id, $hostent);
 		} else {
-			$a_hosts[] = $hostent;
+			config_set_path('unbound/hosts/' . count(config_get_path('unbound/hosts', [])) + 1, $hostent);
 		}
 		hosts_sort();
 
@@ -226,7 +225,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_hosts[$id]) {
+if (isset($id) && config_get_path('unbound/hosts/' . $id)) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -251,52 +250,47 @@ $form->add($section);
 
 $section = new Form_Section('Additional Names for this Host');
 
-if (!$pconfig['aliases']) {
-	$pconfig['aliases'] = array();
-}
-if (!$pconfig['aliases']['item']) {
-	$pconfig['aliases']['item'] = array('host' => "");
-}
+$items = array_get_path($pconfig, 'aliases/item', [['host' => '']]);
+$counter = 0;
+$last = count($items) - 1;
 
-if ($pconfig['aliases']['item']) {
-	$counter = 0;
-	$last = count($pconfig['aliases']['item']) - 1;
-
-	foreach ($pconfig['aliases']['item'] as $item) {
-		$group = new Form_Group(null);
-		$group->addClass('repeatable');
-
-		$group->add(new Form_Input(
-			'aliashost' . $counter,
-			null,
-			'text',
-			$item['host']
-		))->setHelp($counter == $last ? 'Host name':null);
-
-		$group->add(new Form_Input(
-			'aliasdomain' . $counter,
-			null,
-			'text',
-			$item['domain']
-		))->setHelp($counter == $last ? 'Domain':null);
-
-		$group->add(new Form_Input(
-			'aliasdescription' . $counter,
-			null,
-			'text',
-			$item['description']
-		))->setHelp($counter == $last ? 'Description':null);
-
-		$group->add(new Form_Button(
-			'deleterow' . $counter,
-			'Delete',
-			null,
-			'fa-trash'
-		))->addClass('btn-warning')->addClass('nowarn');
-
-		$section->add($group);
-		$counter++;
+foreach ($items as $item) {
+	if (!is_array($item) || empty($item)) {
+		continue;
 	}
+	$group = new Form_Group(null);
+	$group->addClass('repeatable');
+
+	$group->add(new Form_Input(
+		'aliashost' . $counter,
+		null,
+		'text',
+		$item['host']
+	))->setHelp($counter == $last ? 'Host name':null);
+
+	$group->add(new Form_Input(
+		'aliasdomain' . $counter,
+		null,
+		'text',
+		$item['domain']
+	))->setHelp($counter == $last ? 'Domain':null);
+
+	$group->add(new Form_Input(
+		'aliasdescription' . $counter,
+		null,
+		'text',
+		$item['description']
+	))->setHelp($counter == $last ? 'Description':null);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning')->addClass('nowarn');
+
+	$section->add($group);
+	$counter++;
 }
 
 $form->addGlobal(new Form_Button(

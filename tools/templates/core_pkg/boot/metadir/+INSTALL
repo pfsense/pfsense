@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ "${2}" != "POST-INSTALL" ]; then
+	exit 0
+fi
+
+if [ ! -f ${PKG_ROOTDIR}/boot/loader.efi ]; then
+	echo "EFI loader not found"
+	exit 1
+fi
+
+if [ ! -d ${PKG_ROOTDIR}/boot/efi ]; then
+	mkdir -p ${PKG_ROOTDIR}/boot/efi
+fi
+
+arch=$(uname -p)
+LOADER_UPDATE=1
+if [ -c ${PKG_ROOTDIR}/dev/msdosfs/EFISYS ]; then
+	(mount_msdosfs ${PKG_ROOTDIR}/dev/msdosfs/EFISYS ${PKG_ROOTDIR}/boot/efi && trap "umount ${PKG_ROOTDIR}/boot/efi" 1 2 17 EXIT) || exit 1
+elif [ -c ${PKG_ROOTDIR}/dev/gpt/EFISYS ]; then
+	(mount_msdosfs ${PKG_ROOTDIR}/dev/gpt/EFISYS ${PKG_ROOTDIR}/boot/efi && trap "umount ${PKG_ROOTDIR}/boot/efi" 1 2 17 EXIT) || exit 1
+else
+	unset LOADER_UPDATE
+fi
+if [ -n "${LOADER_UPDATE}" ]; then
+	echo "Updating the EFI loader"
+	mkdir -p ${PKG_ROOTDIR}/boot/efi/efi/boot/
+	if [ "${arch}" = "aarch64" ]; then
+		install -S ${PKG_ROOTDIR}/boot/loader.efi ${PKG_ROOTDIR}/boot/efi/efi/boot/BOOTaa64.efi
+	elif [ "${arch}" = "amd64" ]; then
+		install -S ${PKG_ROOTDIR}/boot/loader.efi ${PKG_ROOTDIR}/boot/efi/efi/boot/BOOTx64.efi
+	fi
+fi

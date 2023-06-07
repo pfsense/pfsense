@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,6 @@ if ($_REQUEST['type'] && in_array($_REQUEST['type'], $tables)) {
 } else {
 	/* Invalid 'type' passed, do not take any actions that use the 'type' field. */
 	unset($_REQUEST['type']);
-	$_REQUEST['delete'];
 }
 
 // Gather selected alias metadata.

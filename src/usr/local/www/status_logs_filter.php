@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -237,7 +237,7 @@ if (!$rawfilter) {
 						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$rawsrcip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<a class="fa fa-minus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Add to Block List")?>">
+						<a class="fa fa-minus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Add to Block List")?>">
 						</a>
 
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
@@ -246,7 +246,7 @@ if (!$rawfilter) {
 						<i class="fa fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$rawdstip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<a class="fa fa-plus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic")?>">
+						<a class="fa fa-plus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Pass this traffic")?>">
 						</a>
 						<?=$dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>'?>
 					</td>
@@ -387,7 +387,7 @@ function resolve_ip_callback(transport) {
 	$('span.RESOLVE-' + resolve_class).html(resolve_text);
 }
 
-// From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
+// From https://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
 function htmlspecialchars(str) {
 	return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }

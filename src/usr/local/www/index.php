@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -59,8 +59,8 @@ if (isset($_REQUEST['closenotice'])) {
 	sleep(1);
 }
 
-if (($g['disablecrashreporter'] != true) && (system_has_crash_data() || system_has_php_errors())) {
-	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_label']) . " ";
+if ((g_get('disablecrashreporter') != true) && (system_has_crash_data() || system_has_php_errors())) {
+	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), g_get('product_label')) . " ";
 	if (isAllowedPage("/crash_reporter.php")) {
 		$savemsg .= sprintf(gettext('Click %1$shere%2$s for more information.'), '<a href="crash_reporter.php">', '</a>');
 	} else {
@@ -103,7 +103,7 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 
 ##if no config entry found, initialize config entry
 if (!is_array($config['widgets'])) {
-	$config['widgets'] = array();
+	config_set_path('widgets', array());
 }
 
 if (!is_array($user_settings['widgets'])) {
@@ -192,7 +192,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 <html lang="en">
 	<head>
 		<link rel="stylesheet" href="/css/pfSense.css" />
-		<title><?=$g['product_label']?>.home.arpa - <?=$g['product_label']?> first time setup</title>
+		<title><?=g_get('product_label')?>.home.arpa - <?=g_get('product_label')?> first time setup</title>
 		<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
 	</head>
 	<body id="loading-wizard" class="no-menu">
@@ -200,10 +200,10 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 			<div class="container">
 				<div class="col-sm-offset-3 col-sm-6 col-xs-12">
 					<font color="white">
-					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_label'])?></h3></p>
+					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", g_get('product_label'))?></h3></p>
 					<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
 					<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
-					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_label'])?></p>
+					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), g_get('product_label'))?></p>
 					</font>
 				</div>
 			</div>
@@ -286,7 +286,7 @@ if ($user_settings['widgets']['sequence'] != "") {
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($config['widgets'][$widgetname . '-config']) {
-			$pconfig[$widgetname . '-config'] = $config['widgets'][$widgetname . '-config'];
+			$pconfig[$widgetname . '-config'] = config_get_path("widgets/{$widgetname}-config");
 		}
 	}
 }
@@ -333,7 +333,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 $available = $known_widgets;
 uasort($available, function($a, $b){ return strcasecmp($a['title'], $b['title']); });
 
-foreach ($available as $widgetkey => $widgetconfig):
+foreach ($available as $widgetconfig):
 	// If the widget supports multiple copies, or no copies are displayed yet, then it is available to add
 	if (($widgetconfig['multicopy']) || ($widgetconfig['display'] == 'none')):
 ?>
@@ -476,7 +476,7 @@ function updateWidgets(newWidget) {
 			var isOpen = $('.panel-body', widget).hasClass('in');
 			var widget_basename = widget.id.split('-')[1];
 
-			// Only save details for panels that have id's like'widget-*'
+			// Only save details for panels that have id's like 'widget-*'
 			// Some widgets create other panels, so ignore any of those.
 			if ((widget.id.split('-')[0] == 'widget') && (typeof widget_basename !== 'undefined')) {
 				sequence += widget_basename + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ':' + widget.id.split('-')[2] + ',';

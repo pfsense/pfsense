@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -165,7 +165,7 @@ function test_connection($post) {
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl_session, CURLOPT_CONNECTTIMEOUT, 55);
 	curl_setopt($curl_session, CURLOPT_TIMEOUT, 30);
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, g_get('product_label') . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	set_curlproxy($curl_session);
 
@@ -218,17 +218,17 @@ function upload_config($manual = false) {
 		$last_backup_date = "";
 	}
 
-	$last_config_change = $config['revision']['time'];
+	$last_config_change = config_get_path('revision/time');
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
-	$reason	= $config['revision']['description'];
+	$reason	= config_get_path('revision/description');
 
 	if ($manual && array_key_exists('numman', $config['system']['acb'])) {
-		$manmax = $config['system']['acb']['numman'];
+		$manmax = config_get_path('system/acb/numman');
 	} else {
 		$manmax = "0";
 	}
 
-	$encryptpw = $config['system']['acb']['encryption_password'];
+	$encryptpw = config_get_path('system/acb/encryption_password');
 
 	// Define upload_url, must be present after other variable definitions due to username, password
 	$upload_url = "https://acb.netgate.com/save";
@@ -263,19 +263,19 @@ function upload_config($manual = false) {
 				'file' => curl_file_create($tmpname, 'image/jpg', 'config.jpg'),
 				'userkey' => htmlspecialchars($userkey),
 				'sha256_hash' => $raw_config_sha256_hash,
-				'version' => $g['product_version'],
+				'version' => g_get('product_version'),
 				'hint' => $config['system']['acb']['hint'],
 				'manmax' => $manmax
 			);
 
 			unlink_if_exists($tmpname);
 
-			if (!is_dir($g['acbbackuppath'])) {
-				mkdir($g['acbbackuppath']);
+			if (!is_dir(g_get('acbbackuppath'))) {
+				mkdir(g_get('acbbackuppath'));
 			}
 
-			file_put_contents($g['acbbackuppath'] . $post_fields['sha256_hash'] . ".form", json_encode($post_fields));
-			file_put_contents($g['acbbackuppath'] . $post_fields['sha256_hash'] . ".data", $data);
+			file_put_contents(g_get('acbbackuppath') . $post_fields['sha256_hash'] . ".form", json_encode($post_fields));
+			file_put_contents(g_get('acbbackuppath') . $post_fields['sha256_hash'] . ".data", $data);
 
 			/*
 			This functionality is now provided by a cron job /usr/local/sbin/acbupload.php run once per minute when ACB is enabled.
@@ -338,7 +338,7 @@ function upload_config($manual = false) {
 // Create a crontab entry for scheduled backups
 // if frequency == "cron", a new crontab entry is created, otherwise any existing
 // ACB entry is removed
-function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $pwd) {
+function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $reverse, $pwd) {
 	global $config;
 
 	init_config_arr(array('system', 'acb'));
@@ -357,6 +357,7 @@ function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $d
 	$config['system']['acb']['day'] = $day;
 	$config['system']['acb']['dow'] = $dow;
 	$config['system']['acb']['numman'] = $numman;
+	$config['system']['acb']['reverse'] = $reverse;
 	if (strlen($pwd) >= 8) {
 		$config['system']['acb']['encryption_password'] = $pwd;
 	}

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt.
  * All rights reserved.
  *
@@ -137,7 +137,7 @@ function get_root_priv_item_text() {
 
 	$priv_text = "";
 
-	foreach ($priv_list as $pname => $pdata) {
+	foreach ($priv_list as $pdata) {
 		if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
 			$priv_text .= '<br/>' . $pdata['name'];
 		}
@@ -267,7 +267,7 @@ events.push(function() {
 				continue;
 			}
 
-			$desc = preg_replace("/pfSense/i", $g['product_label'], $pdata['descr']);
+			$desc = preg_replace("/pfSense/i", g_get('product_label'), $pdata['descr']);
 			if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
 				$desc .= ' ' . gettext('(This privilege effectively gives administrator-level access to users in the group)');
 			}

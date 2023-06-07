@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -86,8 +86,8 @@ require_once("pkg-utils.inc");
 require_once("status_logs_common.inc");
 
 global $g;
-if (!($nentries = $config['syslog']['nentries'])) {
-	$nentries = $g['default_log_entries'];
+if (!($nentries = config_get_path('syslog/nentries'))) {
+	$nentries = g_get('default_log_entries');
 }
 
 $i = 0;
@@ -168,8 +168,8 @@ if ($pkgwithlogging == false) {
 		}
 	}
 	display_top_tabs($tab_array);
-	$logfile = $config['installedpackages']['package'][$apkgid]['logging']['logfilename'];
-	$logfile_path = $g['varlog_path'] . '/' . $logfile;
+	$logfile = config_get_path("installedpackages/package/{$apkgid}/logging/logfilename");
+	$logfile_path = g_get('varlog_path') . '/' . $logfile;
 ?>
 
 <div class="panel panel-default">

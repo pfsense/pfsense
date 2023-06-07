@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Jonathan De Graeve (jonathan.de.graeve@imelda.be)
  * Copyright (c) 2005-2006 Paul Taylor (paultaylor@winn-dixie.com)
  * All rights reserved.
@@ -106,9 +106,9 @@ if ($_POST['Submit']) {
 		}
 
 		// check total file size
-		if (($total_size + $size) > $g['captiveportal_element_sizelimit']) {
+		if (($total_size + $size) > g_get('captiveportal_element_sizelimit')) {
 			$input_errors[] = sprintf(gettext("The total size of all files uploaded may not exceed %s."),
-				format_bytes($g['captiveportal_element_sizelimit']));
+				format_bytes(g_get('captiveportal_element_sizelimit')));
 		}
 
 		if (!$input_errors) {
@@ -260,7 +260,7 @@ endif;
 	<?=gettext("In addition, .php files can also be uploaded for execution.	The filename can be passed " .
 	"to the custom page from the initial page by using text similar to:")?><br /><br />
 	<pre>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</pre><br />
-	<?=sprintf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']))?>
+	<?=sprintf(gettext("The total size limit for all files is %s."), format_bytes(g_get('captiveportal_element_sizelimit')))?>
 	</div>
 </div>
 <?php

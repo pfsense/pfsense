@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -73,7 +73,7 @@ if ($_POST['act'] == "del") {
 		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
 		foreach ($config['filter']['rule'] as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
-				unset($config['filter']['rule'][$idx]['gateway']);
+				config_del_path("filter/rule/{$idx}/gateway");
 			}
 		}
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -814,7 +814,7 @@ function checkForRanges() {
 
 function processEntries() {
 	var tempstr, starttimehour, starttimemin, stoptimehour, stoptimemin, errors = "";
-	var passedValidiation = true;
+	var passedValidation = true;
 
 	//get time specified
 	starttimehour = parseInt(document.getElementById("starttimehour").value);
@@ -825,16 +825,16 @@ function processEntries() {
 	//do time checks
 	if (starttimehour > stoptimehour) {
 		errors = "Error: Start Hour cannot be greater than Stop Hour.";
-		passedValidiation = false;
+		passedValidation = false;
 
 	} else if (starttimehour == stoptimehour) {
 		if (starttimemin > stoptimemin) {
 			errors = "Error: Start Minute cannot be greater than Stop Minute.";
-			passedValidiation = false;
+			passedValidation = false;
 		}
 	}
 
-	if (passedValidiation) {
+	if (passedValidation) {
 		addTimeRange();
 	} else {
 		if (errors != "") {
@@ -1115,8 +1115,6 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 			'<a class="btn btn-xs btn-warning" name="delete@" id="delete@" type="button" value="@"><i class="fa fa-trash icon-embed-btn"></i><?= gettext("Delete") ?></a>' +
 		'</div>' +
 	'</div>';
-
-	$('.help-block').hide();
 
 	var node = $('.noranges').parent().parent();
 	$(rowhtml.replace(/@/g, counter)).insertBefore(node);

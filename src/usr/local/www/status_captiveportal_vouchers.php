@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -57,7 +57,7 @@ $shortcut_section = "captiveportal-vouchers";
 
 init_config_arr(array('voucher', $cpzone, 'roll'));
 
-$a_roll = $config['voucher'][$cpzone]['roll'];
+$a_roll = config_get_path("voucher/{$cpzone}/roll");
 
 $db = array();
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -50,8 +50,11 @@ function get_pf_rules($rules, $tracker_start, $tracker_end) {
 	}
 
 	$arr = array();
-	foreach ($rules as $rule) {
-		if ($rule['tracker'] >= $tracker_start &&
+	foreach ($rules as $key => $rule) {
+		/* key 'error' indicates a call to pfctl_get_rule() returned
+		 * nonzero. We may have a partial list of rules if that is the case */
+		if ($key != 'error' &&
+			$rule['tracker'] >= $tracker_start &&
 		    $rule['tracker'] <= $tracker_end) {
 			$arr[] = $rule;
 		}
@@ -201,19 +204,27 @@ if (isset($_POST['del_x'])) {
 		init_config_arr(array('filter', 'separator', strtolower($if)));
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
 
-		$first_idx = 0;		
 		$num_deleted = 0;
+
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
 
-			// Capture first changed filter index for later separator shifting
-			if (!$first_idx) $first_idx = ifridx($if, $rulei);
+			// Update the separators
+			// As rules are deleted, $ridx has to be decremented or separator position will break
+			if (count($_POST['rule']) == 1) { // Need special handling of single rule deletion
+				$ridx = ifridx($if, $rulei);
+			} else {
+				$ridx = ifridx($if, $rulei) - $num_deleted + 1;
+			}
+
+			$mvnrows = -1;
+			move_separators($a_separators, $ridx, $mvnrows);
+
 			$num_deleted++;
 		}
 
 		if ($num_deleted) {
-			move_separators($a_separators, $first_idx, -$num_deleted);
 			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
 				mark_subsystem_dirty('filter');
 			}
@@ -263,8 +274,10 @@ if (isset($_POST['del_x'])) {
 		$a_filter_new = array();
 
 		// Include the rules of other interfaces listed in config before this (the selected) interface.
-		foreach ($a_filter as $filteri_before => $filterent) {
+		$filteri_before = null;
+		foreach ($a_filter as $idx => $filterent) {
 			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+				$filteri_before = $idx;
 				break;
 			} else {
 				$a_filter_new[] = $filterent;
@@ -328,10 +341,14 @@ if (isset($_POST['del_x'])) {
 } elseif (isset($_POST['dstif']) && !empty($_POST['dstif']) &&
     isset($iflist[$_POST['dstif']]) && have_ruleint_access($_POST['dstif']) && 
     is_array($_POST['rule']) && count($_POST['rule'])) {
-    	$confiflist = get_configured_interface_list();
+	$confiflist = get_configured_interface_list();
+	/* Use this as a starting point and increase as we go, otherwise if the
+	 * loop runs fast there can be duplicates.
+	 * https://redmine.pfsense.org/issues/13507 */
+	$tracker = (int)microtime(true);
 	foreach ($_POST['rule'] as $rulei) {
 		$filterent = $a_filter[$rulei];
-		$filterent['tracker'] = (int)microtime(true);
+		$filterent['tracker'] = $tracker++;
 		$filterent['interface'] = $_POST['dstif'];
 		if ($_POST['convertif'] && ($if != $_POST['dstif']) &&
 		    in_array($_POST['dstif'], $confiflist)) {
@@ -345,11 +362,11 @@ if (isset($_POST['del_x'])) {
 			}
 			if (isset($filterent['source']['network']) &&
 			    ($filterent['source']['network'] == ($if . 'ip'))) {
-				$filterent['source']['network'] = $_POST['dstif'] . $ip;
+				$filterent['source']['network'] = $_POST['dstif'] . 'ip';
 			}
 			if (isset($filterent['destination']['network']) &&
 			    ($filterent['destination']['network'] == ($if . 'ip'))) {
-				$filterent['destination']['network'] = $_POST['dstif'] . $ip;
+				$filterent['destination']['network'] = $_POST['dstif'] . 'ip';
 			}
 		}
 		$a_filter[] = $filterent;
@@ -547,7 +564,7 @@ if (isset($if)):
 			<tbody class="user-entries">
 <?php
 $nrules = 0;
-$separators = $config['filter']['separator'][strtolower($if)];
+$separators = config_get_path('filter/separator/'.strtolower($if));
 
 // Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
 // More efficient than looping through the list of separators on every row.
@@ -778,20 +795,25 @@ foreach ($a_filter as $filteri => $filterent):
 					} else {
 						switch ($interface) {
 						case 'l2tp':
-							if ($config['l2tp']['mode'] == 'server')
+							if (config_get_path('l2tp/mode') == 'server') {
 								$selected_descs[] = 'L2TP VPN';
+							}
 							break;
 						case 'pppoe':
-							if (is_pppoe_server_enabled())
+							if (is_pppoe_server_enabled()) {
 								$selected_descs[] = 'PPPoE Server';
+							}
 							break;
 						case 'enc0':
-							if (ipsec_enabled())
+							if (ipsec_enabled()) {
 								$selected_descs[] = 'IPsec';
+							}
 							break;
 						case 'openvpn':
-							if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client'])
+							if (!empty(config_get_path('openvpn/openvpn-server', [])) ||
+							    !empty(config_get_path('openvpn/openvpn-client', []))) {
 								$selected_descs[] = 'OpenVPN';
+							}
 							break;
 						case 'any':
 							$selected_descs[] = 'Any';
@@ -805,7 +827,7 @@ foreach ($a_filter as $filteri => $filterent):
 				if (!empty($selected_descs)) {
 					$desclist = '';
 					$desclength = 0;
-					foreach ($selected_descs as $descid => $desc) {
+					foreach ($selected_descs as $desc) {
 						$desclength += strlen($desc);
 						if ($desclength > 18) {
 							$desclist .= ',<br/>';
@@ -1233,7 +1255,7 @@ events.push(function() {
 
 	// Provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
-		if ((!saving && dirty) || newSeperator) {
+		if ((!saving && dirty) || newSeparator) {
 			return ("<?=gettext('One or more rules have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;

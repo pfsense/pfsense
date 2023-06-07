@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -46,7 +46,7 @@ function staticmaps_sort($ifgui) {
 
 require_once('globals.inc');
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }
@@ -189,7 +189,7 @@ if ($_POST['save']) {
 	}
 
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
+	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $_POST['mac'])));
 
 	if ($_POST['hostname']) {
 		preg_match("/\-\$/", $_POST['hostname'], $matches);
@@ -234,7 +234,7 @@ if ($_POST['save']) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 
-		foreach ($a_pools as $pidx => $p) {
+		foreach ($a_pools as $p) {
 			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
 				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
 				break;
@@ -280,8 +280,8 @@ if ($_POST['save']) {
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
 		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
 	}
-	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
-		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
+	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] < $_POST['deftime']))) {
+		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds, and the same value or greater than the default lease time.");
 	}
 	if ($_POST['ddnsupdate']) {
 		if (!is_domain($_POST['ddnsdomain'])) {
@@ -333,6 +333,35 @@ if ($_POST['save']) {
 	if (isset($_POST['arp_table_static_entry']) && empty($_POST['ipaddr'])) {
 		$input_errors[] = gettext("A valid IPv4 address must be specified for use with static ARP.");
 	}
+
+	/* Redmine #13584 */
+	if (is_array($pconfig['numberoptions']['item'])) {
+		foreach ($pconfig['numberoptions']['item'] as $numberoption) {
+			$numberoption_value = base64_decode($numberoption['value']);
+			if ($numberoption['type'] == 'text' && strstr($numberoption_value, '"')) {
+				$input_errors[] = gettext("Text type cannot include quotation marks.");
+			} else if ($numberoption['type'] == 'string' && !preg_match('/^"[^"]*"$/', $numberoption_value) && !preg_match('/^[0-9a-f]{2}(?:\:[0-9a-f]{2})*$/i', $numberoption_value)) {
+				$input_errors[] = gettext("String type must be enclosed in quotes like \"this\" or must be a series of octets specified in hexadecimal, separated by colons, like 01:23:45:67:89:ab:cd:ef");
+			} else if ($numberoption['type'] == 'boolean' && $numberoption_value != 'true' && $numberoption_value != 'false' && $numberoption_value != 'on' && $numberoption_value != 'off') {
+				$input_errors[] = gettext("Boolean type must be true, false, on, or off.");
+			} else if ($numberoption['type'] == 'unsigned integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 255)) {
+				$input_errors[] = gettext("Unsigned 8-bit integer type must be a number in the range 0 to 255.");
+			} else if ($numberoption['type'] == 'unsigned integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 65535)) {
+				$input_errors[] = gettext("Unsigned 16-bit integer type must be a number in the range 0 to 65535.");
+			} else if ($numberoption['type'] == 'unsigned integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 4294967295)) {
+				$input_errors[] = gettext("Unsigned 32-bit integer type must be a number in the range 0 to 4294967295.");
+			} else if ($numberoption['type'] == 'signed integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < -128 || $numberoption_value > 127)) {
+				$input_errors[] = gettext("Signed 8-bit integer type must be a number in the range -128 to 127.");
+			} else if ($numberoption['type'] == 'signed integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < -32768 || $numberoption_value > 32767)) {
+				$input_errors[] = gettext("Signed 16-bit integer type must be a number in the range -32768 to 32767.");
+			} else if ($numberoption['type'] == 'signed integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < -2147483648 || $numberoption_value > 2147483647)) {
+				$input_errors[] = gettext("Signed 32-bit integer type must be a number in the range -2147483648 to 2147483647.");
+			} else if ($numberoption['type'] == 'ip-address' && !is_ipaddrv4($numberoption_value) && !is_hostname($numberoption_value)) {
+				$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
+			}
+		}
+	}
+
 
 	if (!$input_errors) {
 		$mapent = array();
@@ -481,7 +510,7 @@ $group->add($macaddress);
 if (!empty($mymac)) {
 	$group->add($btnmymac);
 }
-$group->setHelp('MAC address (6 hex octets separated by colons)');
+$group->setHelp('MAC address of the client to match (6 hex octets separated by colons).');
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -489,23 +518,24 @@ $section->addInput(new Form_Input(
 	'Client Identifier',
 	'text',
 	$pconfig['cid']
-));
+))->setHelp('An optional identifier to match based on the value sent by the client (RFC 2132)');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IP Address',
 	$pconfig['ipaddr'],
 	'V4'
-))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.%1$s%1$s' .
-			'The same IP address may be assigned to multiple mappings.', '<br />');
+))->setHelp('IPv4 address to assign this client.%1$s%1$s' .
+		'Address must be outside of any defined pools. ' .
+		'If no IPv4 address is given, one will be dynamically allocated from a pool.%1$s' .
+		'The same IP address may be assigned to multiple mappings.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',
 	'Hostname',
 	'text',
 	$pconfig['hostname']
-))->setHelp('Name of the host, without domain part.');
+))->setHelp('Name of the client host without the domain part.');
 
 if ($netboot_enabled) {
 	$section->addInput(new Form_Input(
@@ -528,7 +558,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+))->setHelp('A description for administrative reference.');
 
 $section->addInput(new Form_Checkbox(
 	'arp_table_static_entry',
@@ -590,7 +620,7 @@ $group->add(new Form_Input(
 	['placeholder' => 'DNS 4']
 ));
 
-$group->setHelp('Note: leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page.');
+$group->setHelp('Note: Leave blank to use the system default DNS servers: The IP address of this firewall interface if DNS Resolver or Forwarder is enabled, otherwise the servers configured in General settings or those obtained dynamically.');
 
 $section->add($group);
 
@@ -599,14 +629,14 @@ $section->addInput(new Form_Input(
 	'Gateway',
 	'text',
 	$pconfig['gateway']
-))->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network.');
+))->setHelp('The default is to use the IP address of this firewall interface as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
+))->setHelp('The default is to use the domain name of this firewall as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
@@ -806,7 +836,7 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Checkbox(
 	'netboot',
 	'Enable',
-	'Enables network booting',
+	'Enable network booting',
 	$pconfig['netboot']
 ));
 

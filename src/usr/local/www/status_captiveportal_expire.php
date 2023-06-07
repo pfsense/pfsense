@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -39,7 +39,7 @@ require_once("voucher.inc");
 $cpzone = strtolower($_REQUEST['zone']);
 
 if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
+	config_set_path('captiveportal', array());
 }
 
 init_config_arr(array('captiveportal'));

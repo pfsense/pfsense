@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2010 Yehuda Katz
  * All rights reserved.
  *
@@ -27,7 +27,7 @@ require_once("system.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 
 if (isset($config['wol']['wolentry']) && is_array($config['wol']['wolentry'])) {
-	$wolcomputers = $config['wol']['wolentry'];
+	$wolcomputers = config_get_path('wol/wolentry');
 } else {
 	$wolcomputers = array();
 }
@@ -141,6 +141,9 @@ endif;
 $dhcpd_enabled = false;
 if (is_array($config['dhcpd'])) {
 	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
+		if (empty($dhcp)) {
+			continue;
+		}
 		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
 			break;

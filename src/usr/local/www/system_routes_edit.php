@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -132,11 +132,13 @@ if ($_POST['save']) {
 	$oroute = $a_routes[$id];
 	$old_targets = array();
 	if (!empty($oroute)) {
-		if (file_exists("{$g['tmp_path']}/staticroute_{$id}")) {
-			$old_targets = unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}"));
+		$staticroute_file = g_get('tmp_path') . '/staticroute_' . $id;
+		if (file_exists($staticroute_file)) {
+			$old_targets = unserialize(file_get_contents($staticroute_file));
 		}
-		if (file_exists("{$g['tmp_path']}/staticroute_{$id}_gw")) {
-			$old_gateway = unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}_gw"));
+		$staticroute_gw_file = $staticroute_file . '_gw';
+		if (file_exists($staticroute_gw_file)) {
+			$old_gateway = unserialize(file_get_contents($staticroute_gw_file));
 		}
 	}
 
@@ -174,9 +176,10 @@ if ($_POST['save']) {
 		} else {
 			unset($route['disabled']);
 		}
-
-		if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+		
+		$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
+		if (file_exists($routes_apply_file)) {
+			$toapplylist = unserialize(file_get_contents($routes_apply_file));
 		} else {
 			$toapplylist = array();
 		}
@@ -205,7 +208,8 @@ if ($_POST['save']) {
 				}
 			}
 		}
-		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
+		
+		file_put_contents($routes_apply_file, serialize($toapplylist));
 
 		mark_subsystem_dirty('staticroutes');
 
@@ -246,8 +250,8 @@ $section->addInput(new Form_IpAddress(
 ))->addMask('network_subnet', $pconfig['network_subnet'])->setHelp('Destination network for this static route');
 
 $allGateways = array_combine(
-	array_map(function($g){ return $g['name']; }, $a_gateways),
-	array_map(function($g){ return $g['name'] .' - '. $g['gateway']; }, $a_gateways)
+	array_map(function($gw){ return $gw['name']; }, $a_gateways),
+	array_map(function($gw){ return $gw['name'] .' - '. $gw['gateway']; }, $a_gateways)
 );
 $section->addInput(new Form_Select(
 	'gateway',

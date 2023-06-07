@@ -3,7 +3,7 @@
  * firewall_nat_npt.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,13 +66,13 @@ function savenptNATrule($post, $id, $json = false) {
 	    !$post['dstnot']) {
 		$input_errors[] = gettext("The specified destination address and interface IPv6 address cannot overlap");
 	}
+	$dstmask = $post['dstmask'];
 	if (is_specialnet($post['dsttype'])) {
+		/* Find actual destination mask from track source */
 		$track6ip = get_interface_track6ip($post['dsttype']);
-		if ($post['dstmask'] < $track6ip[1]) {
-			$input_errors[] = gettext("The specified destination prefix size must be greater or equal to the track interface prefix size.");
-		}
+		$dstmask = $track6ip[1];
 	}
-	if (!empty($post['dstmask']) && ($post['srcmask'] != $post['dstmask'])) {
+	if (!empty($dstmask) && ($post['srcmask'] != $dstmask)) {
 		$input_errors[] = gettext("The specified source prefix size must be equal to the destination prefix size.");
 	}
 
@@ -245,7 +245,7 @@ function deletenptNATrule($post, $json = false) {
 	}
 }
 
-// Re-order the NPtNAT rules per the array of iindicies passed in $post
+// Re-order the NPtNAT rules per the array of indices passed in $post
 function reordernptNATrules($post, $json = false) {
 	global $config;
 

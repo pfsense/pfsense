@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -404,46 +404,41 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 				<td id="frd<?=$i?>">
 <?php
 				$first = true;
-				if (is_array($ph1ent['encryption']['item'])) {
-					foreach($ph1ent['encryption']['item'] as $p1algo) {
-						if (!$first) {
-							echo "<br/>";
-						}
-						echo $p1_ealgos[$p1algo['encryption-algorithm']['name']]['name'];
-						if ($p1algo['encryption-algorithm']['keylen']) {
-							echo " ({$p1algo['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
-						}
-						$first = false;
+				foreach(array_get_path($ph1ent, 'encryption/item', []) as $p1algo) {
+					if (!$first) {
+						echo "<br/>";
 					}
+
+					echo array_get_path($p1_ealgos, array_get_path($p1algo, 'encryption-algorithm/name', '') . '/name', '');
+					if (array_get_path($p1algo, 'encryption-algorithm/keylen')) {
+						echo " (" . array_get_path($p1algo, 'encryption-algorithm/keylen') . " " . gettext("bits") . ")";
+					}
+					$first = false;
 				}
 ?>
 						</td>
 						<td>
 <?php			$first = true;
-				if (is_array($ph1ent['encryption']['item'])) {
-					foreach($ph1ent['encryption']['item'] as $p1algo) {
-						if (!$first) {
-							echo "<br/>";
-						}
-						echo $p1_halgos[$p1algo['hash-algorithm']];
-						if (isset($ph1ent['prfselect_enable'])) {
-							echo " / PRF" . $p1_halgos[$p1algo['prf-algorithm']];
-						}
-						$first = false;
+				foreach(array_get_path($ph1ent, 'encryption/item', []) as $p1algo) {
+					if (!$first) {
+						echo "<br/>";
 					}
+					echo $p1_halgos[$p1algo['hash-algorithm']];
+					if (isset($ph1ent['prfselect_enable'])) {
+						echo " / PRF" . $p1_halgos[$p1algo['prf-algorithm']];
+					}
+					$first = false;
 				}
 				?>
 						</td>
 						<td>
 <?php			$first = true;
-				if (is_array($ph1ent['encryption']['item'])) {
-					foreach($ph1ent['encryption']['item'] as $p1algo) {
-						if (!$first) {
-							echo "<br/>";
-						}
-						echo str_replace(" ","&nbsp;",$p1_dhgroups[$p1algo['dhgroup']]);
-						$first = false;
+				foreach(array_get_path($ph1ent, 'encryption/item', []) as $p1algo) {
+					if (!$first) {
+						echo "<br/>";
 					}
+					echo str_replace(" ","&nbsp;",$p1_dhgroups[$p1algo['dhgroup']]);
+					$first = false;
 				}
 				?>
 						</td>

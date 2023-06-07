@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -38,11 +38,11 @@ require_once("shortcuts.inc");
 require_once("service-utils.inc");
 
 /* Handle AJAX */
-if ($_REQUEST['action']) {
-	if ($_REQUEST['action'] == "kill") {
-		$port  = $_REQUEST['port'];
-		$remipp  = $_REQUEST['remipp'];
-		$client_id  = $_REQUEST['client_id'];
+if ($_POST['action']) {
+	if ($_POST['action'] == "kill") {
+		$port  = $_POST['port'];
+		$remipp  = $_POST['remipp'];
+		$client_id  = $_POST['client_id'];
 		if (!empty($port) and !empty($remipp)) {
 			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
@@ -83,9 +83,17 @@ include("head.inc"); ?>
 		$('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 
 		$.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>" +
-				"?action=kill&port=" + mport + "&remipp=" + remipp + "&client_id=" + client_id,
-			{ type: "get", complete: killComplete }
+			"<?=$_SERVER['SCRIPT_NAME'];?>",
+			{
+				type: "post",
+				data: {
+					action:           "kill",
+					port:		  mport,
+					remipp:		  remipp,
+					client_id:	  client_id
+				},
+				complete: killComplete
+			}
 		);
 	}
 
@@ -134,7 +142,7 @@ include("head.inc"); ?>
 ?>
 
 <div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext('Client Connections') . ": " . ($server['conns'][0]['common_name'] != '[error]' ? sizeof($server['conns']) : '0');?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title">ovpns<?= $server['vpnid'] ?>: <?=htmlspecialchars($server['name']);?> / <?=gettext('Client Connections') . ": " . ($server['conns'][0]['common_name'] != '[error]' ? sizeof($server['conns']) : '0');?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
@@ -142,7 +150,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Common Name")?></th>
 						<th><?=gettext("Real Address")?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
-						<th><?=gettext("Connected Since"); ?></th>
+						<th><?=gettext("Last Change"); ?></th>
 						<th><?=gettext("Bytes Sent")?></th>
 						<th><?=gettext("Bytes Received")?></th>
 						<th><?=gettext("Cipher")?></th>
@@ -207,20 +215,12 @@ include("head.inc"); ?>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="2">
-							<table>
-								<tr>
-										<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
-									<td>
-										<?= gettext("Status") . ": " . get_service_status_icon($ssvc, false, true, false, "service_state"); ?>
-									</td>
-									<td>
-										<?= gettext("Actions") . ": " . get_service_control_links($ssvc); ?>
-									</td>
-								</tr>
-							</table>
+						<td colspan="7">
 						</td>
-						<td colspan="5">
+						<td colspan="1">
+							<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
+							<?= get_service_status_icon($ssvc, false, true, false, "service_state"); ?>
+							<?= get_service_control_links($ssvc); ?>
 						</td>
 					</tr>
 				</tfoot>
@@ -294,7 +294,7 @@ include("head.inc"); ?>
 					<tr>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
-						<th><?=gettext("Connected Since"); ?></th>
+						<th><?=gettext("Last Change"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
 						<th><?=gettext("Bytes Sent"); ?></th>
@@ -308,7 +308,10 @@ include("head.inc"); ?>
 		foreach ($sk_servers as $sk_server):
 ?>
 					<tr id="<?php echo "r:{$sk_server['port']}:{$sk_server['vpnid']}"; ?>">
-						<td><?=htmlspecialchars($sk_server['name']);?></td>
+						<td>
+							ovpns<?=$sk_server['vpnid'];?><br/>
+							<?=htmlspecialchars($sk_server['name']);?>
+						</td>
 						<td><?=$sk_server['status'];?></td>
 						<td><?=$sk_server['connect_time'];?></td>
 						<td>
@@ -322,15 +325,9 @@ include("head.inc"); ?>
 						<td data-value="<?=trim($sk_server['bytes_sent'])?>"><?=format_bytes($sk_server['bytes_sent']);?></td>
 						<td data-value="<?=trim($sk_server['bytes_recv'])?>"><?=format_bytes($sk_server['bytes_recv']);?></td>
 						<td>
-							<table>
-								<tr>
-									<td>
-										<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
-										<?= get_service_status_icon($ssvc, false, true); ?>
-										<?= get_service_control_links($ssvc, true); ?>
-									</td>
-								</tr>
-							</table>
+							<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
+							<?= get_service_status_icon($ssvc, false, true); ?>
+							<?= get_service_control_links($ssvc, true); ?>
 						</td>
 					</tr>
 <?php
@@ -356,7 +353,7 @@ include("head.inc"); ?>
 					<tr>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
-						<th><?=gettext("Connected Since"); ?></th>
+						<th><?=gettext("Last Change"); ?></th>
 						<th><?=gettext("Local Address"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
@@ -371,7 +368,10 @@ include("head.inc"); ?>
 		foreach ($clients as $client):
 ?>
 					<tr id="<?php echo "r:{$client['port']}:{$client['vpnid']}"; ?>">
-						<td><?=htmlspecialchars($client['name']);?></td>
+						<td>
+							ovpnc<?= $client['vpnid'] ?><br/>
+							<?=htmlspecialchars($client['name']);?>
+						</td>
 						<td><?=$client['status'];?></td>
 						<td><?=$client['connect_time'];?></td>
 						<td>
@@ -398,15 +398,9 @@ include("head.inc"); ?>
 						<td data-value="<?=trim($client['bytes_sent'])?>"><?=format_bytes($client['bytes_sent']);?></td>
 						<td data-value="<?=trim($client['bytes_recv'])?>"><?=format_bytes($client['bytes_recv']);?></td>
 						<td>
-							<table>
-								<tr>
-									<td>
-										<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
-										<?= get_service_status_icon($ssvc, false, true); ?>
-										<?= get_service_control_links($ssvc, true); ?>
-									</td>
-								</tr>
-							</table>
+							<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
+							<?= get_service_status_icon($ssvc, false, true); ?>
+							<?= get_service_control_links($ssvc, true); ?>
 						</td>
 					</tr>
 <?php

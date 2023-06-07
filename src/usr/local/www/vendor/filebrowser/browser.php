@@ -4,7 +4,7 @@ require_once("guiconfig.inc");
 
 /*
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2013-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  */
 // Fetch a list of directories and files inside a given directory
@@ -148,11 +148,11 @@ foreach ($files as $file):
 ?>
 	<tr>
 		<td></td>
-		<td class="fbFile vexpl text-left" id="<?=$fqpn;?>">
+		<td class="fbFile vexpl text-left" id="<?=htmlspecialchars($fqpn);?>">
 			<?php $filename = htmlspecialchars(addslashes(str_replace("//","/", "{$path}/{$file}"))); ?>
 			<div onClick="$('#fbTarget').val('<?=$filename?>'); loadFile(); $('#fbBrowser').fadeOut();">
 				<img src="/vendor/filebrowser/images/file_<?=$type;?>.gif" alt="" title="">
-				&nbsp;<?=$file;?>
+				&nbsp;<?=htmlspecialchars($file);?>
 			</div>
 		</td>
 		<td class="vexpl text-right">

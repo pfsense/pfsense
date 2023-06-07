@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -246,6 +246,10 @@ caption {
     background-color: #e0e0e0;
 }
 
+select.form-control:focus {
+    background-color: #fff;
+}
+
 .form-group {
     border-bottom: 1px solid #212121;
 }
@@ -300,6 +304,12 @@ tr.disabled a {
     color: rgba(0, 150, 136,.5);
 }
 
+.fieldset[disabled] .form-control, .form-control[disabled], .form-control[disabled]::placeholder, .form-control[readonly], .input-group-inbetween {
+    color: #555;
+    background-color: #aaa;
+    border-color: #999;
+}
+
 .table-striped>tbody>tr.disabled>td:first-child {
     border-left: 3px solid #F44336;
     padding-left: 7px;
@@ -350,6 +360,42 @@ tr.disabled a {
     background-color: #303030;
     border-color: #212121;
 
+}
+
+option:checked {
+    color: white;
+    background: #009688;
+}
+
+.inputselectcombo {
+    margin-bottom: 0!important;
+}
+div.inputselectcombo {
+    display: table;
+    font-size: 0px;
+}
+div.inputselectcombo select {
+    display: table-cell;
+    width: auto;
+    max-width: 95px;
+    margin-bottom: 0!important;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+div.inputselectcombo span {
+    display: table-cell;
+    width: 100%;
+}
+div.inputselectcombo span input {
+    display: table-cell;
+    width: 100%;
+    margin-bottom: 0!important;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.no-separator {
+    border-bottom: 0!important;
 }
 
 /** Page footer */

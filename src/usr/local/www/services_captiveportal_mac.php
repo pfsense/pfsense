@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -64,7 +64,7 @@ $actsmbl = array('pass' => '<i class="fa fa-check text-success"></i>&nbsp;' . ge
 if ($_POST['act'] == "del") {
 	if ($a_passthrumacs[$_POST['id']]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
-		captiveportal_passthru_delete_entry($a_passthrumacs[$_POST['id']]);
+		captiveportal_passthrumac_delete_entry($a_passthrumacs[$_POST['id']]);
 		unset($a_passthrumacs[$_POST['id']]);
 		write_config("Captive portal passthrough MAC deleted");
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");

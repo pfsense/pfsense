@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos
  * All rights reserved.
  *
@@ -101,8 +101,11 @@ function adjust_gmt($dt) {
 
 	$dhcpv6leaseinlocaltime = "no";
 	if (is_array($config['dhcpdv6'])) {
-		$dhcpdv6 = $config['dhcpdv6'];
+		$dhcpdv6 = config_get_path('dhcpdv6');
 		foreach ($dhcpdv6 as $dhcpdv6params) {
+			if (empty($dhcpdv6params)) {
+				continue;
+			}
 			$dhcpv6leaseinlocaltime = $dhcpdv6params['dhcpv6leaseinlocaltime'];
 			if ($dhcpv6leaseinlocaltime == "yes") {
 				break;
@@ -135,8 +138,8 @@ $prefixes = array();
 $mappings = array();
 
 // Translate these once so we don't do it over and over in the loops below.
-$online_string = gettext("online");
-$offline_string = gettext("offline");
+$online_string = gettext("active");
+$offline_string = gettext("idle/offline");
 $active_string = gettext("active");
 $expired_string = gettext("expired");
 $reserved_string = gettext("reserved");
@@ -312,6 +315,9 @@ foreach ($leases as $data):
 
 	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
+			if (empty($dhcpifconf)) {
+				continue;
+			}
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddrv6']) {
@@ -346,7 +352,15 @@ foreach ($leases as $data):
 				<td>n/a</td>
 				<td>n/a</td>
 <?php endif; ?>
-				<td><?=$data['online']?></td>
+				<td>
+<?php if ($data['online'] == $online_string):?>
+							<span style="color:green; white-space: nowrap;"><i class="fa fa-arrow-up"></i>
+<?php else: ?>
+							<span style="white-space: nowrap;"><i class="fa fa-arrow-down"></i>
+<?php endif; ?>
+							<?=$data['online']?>
+							</span>
+					</td>
 				<td><?=$data['act']?></td>
 				<td>
 <?php if ($data['type'] == $dynamic_string): ?>
@@ -397,6 +411,9 @@ foreach ($prefixes as $data):
 
 	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
+			if (empty($dhcpifconf)) {
+				continue;
+			}
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddrv6']) {

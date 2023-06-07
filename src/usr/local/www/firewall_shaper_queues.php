@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,7 +81,6 @@ if ($_GET) {
 			}
 			header("Location: firewall_shaper_queues.php");
 			exit;
-			break;
 		case "add":
 			/*
 			 * XXX: WARNING: This returns the first it finds.
@@ -130,7 +129,6 @@ if ($_GET) {
 
 			header("Location: firewall_shaper_queues.php?queue=".$qname."&action=show");
 			exit;
-		break;
 		case "show":
 			foreach ($config['interfaces'] as $if => $ifdesc) {
 				$altq = $altq_list_queues[$if];

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -90,15 +90,17 @@ if ($_REQUEST['display_maximum_rows']) {
 	}
 }
 
-$evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
+$config_path = sprintf('installedpackages/%s/config', xml_safe_fieldname($pkg['name']));
 
-if ($_REQUEST['act'] == "update") {
+$evaledvar = config_get_path($config_path, []);
 
-	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_REQUEST['ids'] !="") {
+if ($_POST['act'] == "update") {
+
+	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_POST['ids'] !="") {
 		// get current values
-		$current_values=$config['installedpackages'][$pkg['name']]['config'];
+		$current_values=config_get_path("installedpackages/{$pkg['name']}/config");
 		// get updated ids
-		parse_str($_REQUEST['ids'], $update_list);
+		parse_str($_POST['ids'], $update_list);
 		// sort ids to know what to change
 		// useful to do not lose data when using sorting and paging
 		$sort_list=$update_list['ids'];
@@ -147,7 +149,7 @@ if ($_REQUEST['act'] == "del") {
 ob_start();
 
 $iflist = get_configured_interface_with_descr(true);
-$evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
+$evaledvar = config_get_path($config_path, []);
 
 if ($pkg['custom_php_global_functions'] != "") {
 	eval($pkg['custom_php_global_functions']);
@@ -228,7 +230,7 @@ if (!empty($pkg['tabs'])) {
 
 include("head.inc");
 if (isset($tab_array)) {
-	foreach ($tab_array as $tabid => $tab) {
+	foreach ($tab_array as $tab) {
 		display_top_tabs($tab);
 	}
 }
@@ -269,7 +271,7 @@ function save_changes_to_xml(xml) {
 	var strloading="<?=gettext('Saving changes...')?>";
 	if (confirm("<?=gettext("Confirmation Required to save changes.")?>")) {
 		$.ajax({
-			type: 'get',
+			type: 'post',
 			cache: false,
 			url: "<?=$_SERVER['SCRIPT_NAME']?>",
 			data: {xml:'<?=$xml?>', act:'update', ids: ids},

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -36,8 +36,7 @@
 require_once("guiconfig.inc");
 require_once("services_dnsmasq.inc");
 
-init_config_arr(array('dnsmasq', 'domainoverrides'));
-$a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+$a_domainOverrides = config_get_path('dnsmasq/domainoverrides', []);
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -52,7 +51,6 @@ if ($_POST['save']) {
 	$pconfig = $rv['config'];
 	$input_errors = $rv['input_errors'];
 }
-
 
 $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"), gettext("Edit Domain Override"));
 $pglinks = array("", "services_dnsmasq.php", "@self");

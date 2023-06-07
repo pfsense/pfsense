@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,7 @@ function step1_stepsubmitbeforesave() {
 	global $stepid, $config;
 	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != $config['ovpnserver']['step1']['type'])) {
 		if (isset($config['ovpnserver']['step2'])) {
-			unset($config['ovpnserver']['step2']);
+			config_del_path('ovpnserver/step2');
 		}
 	}
 }
@@ -62,7 +62,7 @@ function step1_submitphpaction() {
 		$stepid = 2;
 		$config['ovpnserver']['step1']['type'] = "radius";
 		if (isset($config['ovpnserver']['step1']['uselist'])) {
-			unset($config['ovpnserver']['step1']['uselist']);
+			config_del_path('ovpnserver/step1/uselist');
 		}
 	}
 }
@@ -199,7 +199,7 @@ function step6_submitphpaction() {
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
 		if (isset($config['ovpnserver']['step6']['uselist'])) {
-			unset($config['ovpnserver']['step6']['uselist']);
+			config_del_path('ovpnserver/step6/uselist');
 		}
 		$stepid++;
 	} else {
@@ -255,7 +255,7 @@ function step8_submitphpaction() {
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
 		if (isset($config['ovpnserver']['step9']['uselist'])) {
-			unset($config['ovpnserver']['step9']['uselist']);
+			config_del_path('ovpnserver/step9/uselist');
 		}
 		$stepid++;
 	} else {
@@ -267,13 +267,14 @@ function step8_submitphpaction() {
 function step9_stepbeforeformdisplay() {
 	global $config, $pkg, $stepid;
 
-	$pconfig = $config['ovpnserver'];
+	$pconfig = config_get_path('ovpnserver');
 
 	if (isset($pconfig['step6']['uselist'])) {
 		$country = $pconfig['step6']['country'];
 		$state = $pconfig['step6']['state'];
 		$city = $pconfig['step6']['city'];
 		$org = $pconfig['step6']['organization'];
+		$orgunit = $pconfig['step6']['organizationalunit'];
 	} else {
 		$ca = lookup_ca($pconfig['step6']['authcertca']);
 		$cavl = cert_get_subject_hash($ca['crt']);
@@ -281,6 +282,7 @@ function step9_stepbeforeformdisplay() {
 		$state = $cavl['ST'];
 		$city = $cavl['L'];
 		$org = $cavl['O'];
+		$orgunit = $cavl['OU'];
 	}
 	$fields = &$pkg['step'][$stepid]['fields']['field'];
 
@@ -297,6 +299,9 @@ function step9_stepbeforeformdisplay() {
 			break;
 		case 'organization':
 			$fields[$idx]['value'] = $org;
+			break;
+		case 'organizationalunit':
+			$fields[$idx]['value'] = $orgunit;
 			break;
 		}
 	}
@@ -338,10 +343,10 @@ function step10_stepbeforeformdisplay() {
 	global $pkg, $stepid, $netbios_nodetypes, $config;
 
 	if (isset($config['ovpnserver']['step10']['localport'])) {
-		unset($config['ovpnserver']['step10']['localport']);
+		config_del_path('ovpnserver/step10/localport');
 	}
 	if (isset($config['ovpnserver']['step10']['tunnelnet'])) {
-		unset($config['ovpnserver']['step10']['tunnelnet']);
+		config_del_path('ovpnserver/step10/tunnelnet');
 	}
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $idx => $field) {
 		if ($field['name'] == "dataciphersfallback") {
@@ -469,7 +474,7 @@ function step10_submitphpaction() {
 function step12_submitphpaction() {
 	global $config;
 
-	$pconfig = $config['ovpnserver'];
+	$pconfig = config_get_path('ovpnserver');
 
 	if (!is_array($config['ovpnserver'])) {
 		$message = "No configuration found, please try again.";
@@ -534,8 +539,13 @@ function step12_submitphpaction() {
 		$ca = array();
 		$ca['refid'] = uniqid();
 		$ca['descr'] = $pconfig['step6']['certca'];
+		$ca['randomserial'] = ($pconfig['step6']['randomserial'] == 'on') ? "enabled" : "disabled";
 
-		$dn = array('commonName' => $pconfig['step6']['certca']);
+		if (!empty($pconfig['step6']['commonname'])) {
+			$dn = array('commonName' => $pconfig['step6']['commonname']);
+		} else {
+			$dn = array('commonName' => $pconfig['step6']['certca']);
+		}
 		if (!empty($pconfig['step6']['country'])) {
 			$dn['countryName'] = $pconfig['step6']['country'];
 		}
@@ -547,6 +557,9 @@ function step12_submitphpaction() {
 		}
 		if (!empty($pconfig['step6']['organization'])) {
 			$dn['organizationName'] = $pconfig['step6']['organization'];
+		}
+		if (!empty($pconfig['step6']['organizationalunit'])) {
+			$dn['organizationalUnitName'] = $pconfig['step6']['organizationalunit'];
 		}
 
 		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn, "sha256");
@@ -569,9 +582,14 @@ function step12_submitphpaction() {
 		$cert['refid'] = uniqid();
 		$cert['descr'] = $pconfig['step9']['certname'];
 
+		if (!empty($pconfig['step9']['commonname'])) {
+			$cn = $pconfig['step9']['commonname'];
+		} else {
+			$cn = $pconfig['step9']['certname'];
+		}
 		$dn = array(
-			'commonName' => $pconfig['step9']['certname'],
-			'subjectAltName' => cert_add_altname_type($pconfig['step9']['certname']),
+			'commonName' => $cn,
+			'subjectAltName' => cert_add_altname_type($cn),
 			);
 		if (!empty($pconfig['step9']['country'])) {
 			$dn['countryName'] = $pconfig['step9']['country'];
@@ -584,6 +602,9 @@ function step12_submitphpaction() {
 		}
 		if (!empty($pconfig['step9']['organization'])) {
 			$dn['organizationName'] = $pconfig['step9']['organization'];
+		}
+		if (!empty($pconfig['step9']['organizationalunit'])) {
+			$dn['organizationalUnitName'] = $pconfig['step9']['organizationalunit'];
 		}
 
 		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");
@@ -636,11 +657,6 @@ function step12_submitphpaction() {
 	$server['caref'] = $ca['refid'];
 	$server['certref'] = $cert['refid'];
 	$server['dh_length'] = $pconfig['step10']['dhkey'];
-	if ($pconfig['step10']['ncpenable'] == 'on') {
-		$server['ncp_enable'] = 'enabled';
-	} else {
-		$server['ncp_enable'] = 'disabled';
-	}
 	$server['data_ciphers'] = is_array($pconfig['step10']['dataciphers']) ? implode(',', $pconfig['step10']['dataciphers']) : $pconfig['step10']['dataciphers'];
 	$server['data_ciphers_fallback'] = $pconfig['step10']['dataciphersfallback'];
 	$server['digest'] = $pconfig['step10']['digest'];

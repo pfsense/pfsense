@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -35,7 +35,7 @@
 
 require_once("guiconfig.inc");
 
-if (!$g['services_dhcp_server_enable']) {
+if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
 }
@@ -52,14 +52,11 @@ $iflist = get_configured_interface_with_descr();
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
-		$oc = $config['interfaces'][$ifent];
-		$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
-		    (is_ipaddrv6($oc['ipaddrv6']) &&
-		    !is_linklocal($oc['ipaddrv6'])));
-
-		if ((!is_array($config['dhcpdv6'][$ifent]) ||
-		    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
-		    !$valid_if_ipaddrv6) {
+		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6");
+		if (!config_path_enabled("dhcpdv6/{$ifent}") &&
+		    !(($ifaddr == 'track6') ||
+		    (is_ipaddrv6($ifaddr) &&
+		    !is_linklocal($ifaddr)))) {
 			continue;
 		}
 		$if = $ifent;
@@ -67,27 +64,27 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-if (is_array($config['dhcpdv6'][$if])) {
+if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	/* RA specific */
-	$pconfig['ramode'] = $config['dhcpdv6'][$if]['ramode'];
-	$pconfig['rapriority'] = $config['dhcpdv6'][$if]['rapriority'];
-	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
+	$pconfig['ramode'] = config_get_path("dhcpdv6/{$if}/ramode");
+	$pconfig['rapriority'] = config_get_path("dhcpdv6/{$if}/rapriority");
+	$pconfig['rainterface'] = config_get_path("dhcpdv6/{$if}/rainterface");
 	if ($pconfig['rapriority'] == "") {
 		$pconfig['rapriority'] = "medium";
 	}
 
-	$pconfig['ravalidlifetime'] = $config['dhcpdv6'][$if]['ravalidlifetime'];
-	$pconfig['rapreferredlifetime'] = $config['dhcpdv6'][$if]['rapreferredlifetime'];
-	$pconfig['raminrtradvinterval'] = $config['dhcpdv6'][$if]['raminrtradvinterval'];
-	$pconfig['ramaxrtradvinterval'] = $config['dhcpdv6'][$if]['ramaxrtradvinterval'];
-	$pconfig['raadvdefaultlifetime'] = $config['dhcpdv6'][$if]['raadvdefaultlifetime'];
+	$pconfig['ravalidlifetime'] = config_get_path("dhcpdv6/{$if}/ravalidlifetime");
+	$pconfig['rapreferredlifetime'] = config_get_path("dhcpdv6/{$if}/rapreferredlifetime");
+	$pconfig['raminrtradvinterval'] = config_get_path("dhcpdv6/{$if}/raminrtradvinterval");
+	$pconfig['ramaxrtradvinterval'] = config_get_path("dhcpdv6/{$if}/ramaxrtradvinterval");
+	$pconfig['raadvdefaultlifetime'] = config_get_path("dhcpdv6/{$if}/raadvdefaultlifetime");
 
-	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
-	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
+	$pconfig['radomainsearchlist'] = config_get_path("dhcpdv6/{$if}/radomainsearchlist");
+	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = config_get_path("dhcpdv6/{$if}/radnsserver");
 	$pconfig['radvd-dns'] = ($config['dhcpdv6'][$if]['radvd-dns'] != 'disabled') ? true : false;
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
-	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
+	$pconfig['subnets'] = config_get_path("dhcpdv6/{$if}/subnets/item");
 }
 if (!is_array($pconfig['subnets'])) {
 	$pconfig['subnets'] = array();
@@ -125,7 +122,7 @@ $ramode_help = gettext('Select the Operating Mode for the Router Advertisement (
 	'</dl>' .
 	sprintf(gettext('It is not required to activate DHCPv6 server on %s ' .
 	    'when set to "Managed", "Assisted" or "Stateless DHCP", it can ' .
-	    'be another host on the network.'), $g['product_label']) .
+	    'be another host on the network.'), g_get('product_label')) .
 	'</div>';
 
 if ($_POST['save']) {
@@ -213,7 +210,7 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		if (!is_array($config['dhcpdv6'])) {
-			$config['dhcpdv6'] = array();
+			config_set_path('dhcpdv6', array());
 		}
 
 		if (!is_array($config['dhcpdv6'][$if])) {
@@ -231,7 +228,7 @@ if ($_POST['save']) {
 		$config['dhcpdv6'][$if]['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
 
 		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
-		unset($config['dhcpdv6'][$if]['radnsserver']);
+		config_del_path("dhcpdv6/{$if}/radnsserver");
 		if ($_POST['radns1']) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns1'];
 		}
@@ -248,7 +245,7 @@ if ($_POST['save']) {
 		if (count($pconfig['subnets'])) {
 			$config['dhcpdv6'][$if]['subnets']['item'] = $pconfig['subnets'];
 		} else {
-			unset($config['dhcpdv6'][$if]['subnets']);
+			config_del_path("dhcpdv6/{$if}/subnets");
 		}
 
 		write_config("Router Advertisements settings saved");
@@ -288,7 +285,7 @@ $tab_array = array();
 $tabscounter = 0;
 $i = 0;
 foreach ($iflist as $ifent => $ifname) {
-	$oc = $config['interfaces'][$ifent];
+	$oc = config_get_path("interfaces/{$ifent}");
 	// We need interfaces configured with a static IPv6 address or track6 for PD.
 	if (!is_ipaddrv6($oc['ipaddrv6']) && $oc['ipaddrv6'] != "track6") {
 		continue;
@@ -377,7 +374,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['rapreferredlifetime'],
 	['placeholder' => 14400]
-))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
+))->setHelp('The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
 			'The default is 14400 seconds.', '<br />');
 
 $section->addInput(new Form_Input(

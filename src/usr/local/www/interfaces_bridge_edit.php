@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -356,10 +356,19 @@ if ($_POST['save']) {
 			$bridge['autoptp'] = implode(',', $_POST['autoptp']);
 		}
 
-		$bridge['bridgeif'] = $_POST['bridgeif'];
+		if (empty($_POST['bridgeif']) ||
+		    preg_match("/^bridge[0-9]+$/", $_POST['bridgeif'])) {
+			/* Attempt initial configuration of the bridge if the
+			 * submitted interface is empty or looks like a bridge
+			 * interface. */
+			$bridge['bridgeif'] = $_POST['bridgeif'];
+			interface_bridge_configure($bridge);
+		} else {
+			$input_errors[] = gettext("Invalid bridge interface.");
+		}
 
-		interface_bridge_configure($bridge);
-		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge")) {
+		if (empty($bridge['bridgeif']) ||
+		    !preg_match("/^bridge[0-9]+$/", $bridge['bridgeif'])) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 
@@ -383,7 +392,7 @@ if ($_POST['save']) {
 }
 
 // port list with the exception of assigned bridge interfaces to prevent invalid configs
-function build_port_list($selecton) {
+function build_port_list($selection) {
 	global $config, $ifacelist;
 
 	$portlist = array('list' => array(), 'selected' => array());
@@ -392,7 +401,7 @@ function build_port_list($selecton) {
 		if (substr($config['interfaces'][$ifn]['if'], 0, 6) != "bridge") {
 			$portlist['list'][$ifn] = $ifdescr;
 
-			if (in_array($ifn, explode(',', $selecton))) {
+			if (in_array($ifn, explode(',', $selection))) {
 				array_push($portlist['selected'], $ifn);
 			}
 		}

@@ -4,7 +4,7 @@
  * notify_monitor.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2017-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2017-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* Do not attempt to take any action if this script is invoked by an
+ * unprivileged user. Such users are unable to write to some files such as
+ * the config.cache and the message queue which can lead to PHP errors and/or
+ * duplicate notifications.
+ * https://redmine.pfsense.org/issues/14031
+ * https://redmine.pfsense.org/issues/14061
+ */
+if (posix_geteuid() !== 0) {
+	echo "This script cannot be run by an unprivileged user.\n";
+	exit(1);
+}
 
 include_once('util.inc');
 include_once('notices.inc');

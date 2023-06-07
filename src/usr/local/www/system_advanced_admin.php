@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -39,16 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system_advanced_admin.inc");
 
-init_config_arr(array('system', 'webgui'));
-init_config_arr(array('system', 'ssh'));
-
 $pconfig = getAdvancedAdminConfig();
-init_config_arr(array('cert'));
-$certs_available = $pconfig['certsavailable'];
-
-if (!$pconfig['webguiproto'] || !$certs_available) {
-	$pconfig['webguiproto'] = "http";
-}
 
 if ($_POST) {
 	$rv = doAdvancedAdminPOST($_POST);
@@ -105,7 +96,7 @@ $group->add(new Form_Checkbox(
 	'https'
 ))->displayAsRadio();
 
-if (!$certs_available) {
+if (!$pconfig['certsavailable']) {
 	$group->setHelp('No Certificates have been defined. A certificate is required before SSL/TLS can be enabled. %1$s Create or Import %2$s a Certificate.',
 		'<a href="system_certmanager.php">', '</a>');
 }
@@ -123,7 +114,7 @@ $section->addInput(new Form_Input(
 	'webguiport',
 	'TCP port',
 	'number',
-	$config['system']['webgui']['port'],
+	$pconfig['webguiport'],
 	['min' => 1, 'max' => 65535]
 ))->setHelp('Enter a custom port number for the webConfigurator '.
 	'above to override the default (80 for HTTP, 443 for HTTPS). '.
@@ -180,13 +171,14 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'webgui-login-messages',
-	'WebGUI login messages',
-	'Disable logging of webConfigurator successful logins',
+	'GUI login messages',
+	'Lower syslog level for successful GUI login events',
 	$pconfig['quietlogin']
-))->setHelp('When this is checked, successful logins to the webConfigurator will '.
-	'not be logged.');
+))->setHelp('When this is checked, successful logins to the GUI will '.
+	'be logged as a lower non-emergency level. Note: The console bell ' .
+	'behavior can be controlled independently on the Notifications tab.');
 
-if ($config['interfaces']['lan']) {
+if ($pconfig['interfaces_lan']) {
 	$lockout_interface = "LAN";
 } else {
 	$lockout_interface = "WAN";
@@ -356,7 +348,7 @@ $section->addInput(new Form_Button(
 $form->add($section);
 $section = new Form_Section('Serial Communications');
 
-if (!$g['enableserial_force']) {
+if (!g_get('enableserial_force')) {
 	$section->addInput(new Form_Checkbox(
 		'enableserial',
 		'Serial Terminal',
@@ -375,18 +367,28 @@ $section->addInput(new Form_Select(
 	array_combine(array(115200, 57600, 38400, 19200, 14400, 9600), array(115200, 57600, 38400, 19200, 14400, 9600))
 ))->setHelp('Allows selection of different speeds for the serial console port.');
 
-if (!$g['enableserial_force'] && !$g['primaryconsole_force']) {
+/* Get the current console list from the kernel environment */
+$current_consoles = [];
+exec('/bin/kenv -q console 2>/dev/null', $current_consoles);
+$current_consoles = explode(',', $current_consoles[0]);
+/* The first console in the list is the current active primary console.
+ * Use this as the default value if the user has not stored their own preference.
+ * See https://redmine.pfsense.org/issues/12960
+ */
+$active_primary = ($current_consoles[0] == 'comconsole') ? 'serial' : 'video';
+
+if (!g_get('enableserial_force') && !g_get('primaryconsole_force')) {
 	$section->addInput(new Form_Select(
 		'primaryconsole',
 		'Primary Console',
-		$pconfig['primaryconsole'],
+		(!empty($pconfig['primaryconsole'])) ? $pconfig['primaryconsole'] : $active_primary,
 		array(
 			'serial' => gettext('Serial Console'),
-			'video' => gettext('VGA Console'),
+			'video' => gettext('Video Console'),
 		)
 	))->setHelp('Select the preferred console if multiple consoles are present. '.
 		'The preferred console will show %1$s boot script output. All consoles '.
-		'display OS boot messages, console messages, and the console menu.', $g['product_label']);
+		'display OS boot messages, console messages, and the console menu.', g_get('product_label'));
 }
 
 $form->add($section);
@@ -414,7 +416,7 @@ events.push(function() {
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('ocsp-staple', "<?php 
-			$cert_temp = lookup_cert($config['system']['webgui']['ssl-certref']);
+			$cert_temp = lookup_cert($pconfig['ssl-certref']);
 			echo (cert_get_ocspstaple($cert_temp['crt']) ? "true" : "false");
 			?>" === "true");
 
@@ -429,10 +431,6 @@ events.push(function() {
 
 <?php
 include("foot.inc");
-
-if ($restart_webgui) {
-	echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
-}
 
 if ($restart_sshd) {
 	restart_SSHD();

@@ -4,7 +4,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -591,6 +591,10 @@ $(function(){
 		var act = args[1];
 		var ipsectype = args[2];
 		var conid = args[3];
+		if (args[4] == 'mobile') {
+			conid += '-mobile';
+			args.shift();
+		}
 		var uniqueid;
 		if (args.length > 4) {
 			uniqueid = args[4];
@@ -782,11 +786,11 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 	});
 });
 
-// The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
+// The scripts that follow are an EXPERIMENT in using jQuery/JavaScript to automatically convert
 // GET calls to POST calls
 // Any anchor with the attribute "usepost" usses these functions.
 
-// Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
+// Any time an anchor is clicked and the "usepost" attribute is present, convert the href attribute
 // to POST format, make a POST form and submit it
 
 interceptGET();

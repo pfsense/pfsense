@@ -4,7 +4,7 @@
 #
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2014-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,9 @@
 VERSION=$(/bin/cat /etc/version)
 MIN_REALMEM_FOR_OPCACHE=512
 
-if /usr/local/sbin/pkg-static info -e php74; then
+if /usr/local/sbin/pkg-static info -e php81; then
+	EXTENSIONSDIR="/usr/local/lib/php/20210902/"
+elif /usr/local/sbin/pkg-static info -e php74; then
 	EXTENSIONSDIR="/usr/local/lib/php/20190902/"
 elif /usr/local/sbin/pkg-static info -e php73; then
 	EXTENSIONSDIR="/usr/local/lib/php/20180731/"
@@ -164,7 +166,7 @@ fi
 if echo "${VERSION}" | grep -q RELEASE; then
 	error_reporting="error_reporting = E_ERROR | E_PARSE"
 else
-	error_reporting=""
+	error_reporting="error_reporting = E_ALL ^ (E_WARNING | E_NOTICE | E_DEPRECATED)"
 fi
 
 # Get a loaded module list in the stock php
@@ -192,7 +194,7 @@ html_errors = Off
 zlib.output_compression = Off
 zlib.output_compression_level = 1
 include_path = ".:/etc/inc:/usr/local/pfSense/include:/usr/local/pfSense/include/www:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form:/usr/local/share/pear:/usr/local/share/openssl_x509_crl/"
-display_startup_errors=on
+display_startup_errors=off
 display_errors=on
 log_errors=on
 error_log=/tmp/PHP_errors.log

@@ -3,7 +3,7 @@
  * disks.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2021-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2021-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ global $disks_widget_defaults;
 
 $widgetkey = (isset($_POST['widgetkey'])) ? $_POST['widgetkey'] : $widgetkey;
 
-// Now overide any defaults with user settings
+// Now override any defaults with user settings
 $widget_config = array_replace($disks_widget_defaults, (array) $user_settings['widgets'][$widgetkey]);
 
 // Randomly invalidate the cache, 25% chance.

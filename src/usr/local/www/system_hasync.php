@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -115,8 +115,8 @@ $pconfig['passwordfld']	 = $a_hasync['password'];
 $ifaces = get_configured_interface_with_descr();
 $ifaces["lo0"] = "loopback";
 
-$pgtitle = array(gettext("System"), gettext("High Availability Sync"));
-$shortcut_section = "carp";
+$pgtitle = array(gettext('System'), gettext('High Availability'));
+$shortcut_section = 'carp';
 
 // Build a list of available interfaces
 $iflist = array();
@@ -211,7 +211,7 @@ $section->addInput(new Form_Checkbox(
 	($pconfig['adminsync'] === 'on'),
 	'on'
 ))->setHelp('By default, the admin account does not synchronize, and each node may have a different admin password.%1$s' .
-			'This option automatically updates XMLRPC Remote System Password when the password is changed on 
+			'This option automatically updates XMLRPC Remote System Password when the password is changed on
 			the Remote System Username account.', '<br />');
 
 $group = new Form_MultiCheckboxGroup('Select options to sync');

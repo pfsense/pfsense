@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -108,17 +108,15 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 		}
 	}
 
-	if (is_array($config['staticroutes']['route'])) {
-		foreach ($config['staticroutes']['route'] as $route) {
-			if ($route['gateway'] == $a_gateways[$id]['name']) {
-				if (!$disable) {
-					// The user wants to delete this gateway, but there is a static route (enabled or disabled) that refers to the gateway.
-					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be deleted because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
-				} else if (!isset($route['disabled'])) {
-					// The user wants to disable this gateway.
-					// But there is a static route that uses this gateway and is enabled (not disabled).
-					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
-				}
+	foreach (config_get_path('staticroutes/route', []) as $route) {
+		if ($route['gateway'] == $a_gateways[$id]['name']) {
+			if (!$disable) {
+				// The user wants to delete this gateway, but there is a static route (enabled or disabled) that refers to the gateway.
+				$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be deleted because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
+			} else if (!isset($route['disabled'])) {
+				// The user wants to disable this gateway.
+				// But there is a static route that uses this gateway and is enabled (not disabled).
+				$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
 			}
 		}
 	}
@@ -179,9 +177,9 @@ function delete_gateway_item($id) {
 	}
 
 	if ($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway'] == $a_gateways[$id]['name']) {
-		unset($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway']);
+		config_del_path("interfaces/{$a_gateways[$id]['friendlyiface']}/gateway");
 	}
-	unset($config['gateways']['gateway_item'][$a_gateways[$id]['attribute']]);
+	config_del_path("gateways/gateway_item/{$a_gateways[$id]['attribute']}");
 }
 
 unset($input_errors);
@@ -243,7 +241,7 @@ if (isset($_REQUEST['del_x'])) {
 }
 
 foreach($simplefields as $field) {
-	$pconfig[$field] = $config['gateways'][$field];
+	$pconfig[$field] = config_get_path("gateways/{$field}");
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));

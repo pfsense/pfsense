@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2007-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -36,10 +36,10 @@ function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$p
 
 	if (isset($config['captiveportal'][$cpzone]['enablebackwardsync']) && !$carp_loop
 	    && captiveportal_ha_is_node_in_backup_mode($cpzone)) {
-		$syncip = $config['captiveportal'][$cpzone]['backwardsyncip'];
-		$username = $config['captiveportal'][$cpzone]['backwardsyncuser'];
-		$password = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
-		$port = $config['system']['webgui']['port'];
+		$syncip = config_get_path("captiveportal/{$cpzone}/backwardsyncip");
+		$username = config_get_path("captiveportal/{$cpzone}/backwardsyncuser");
+		$password = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
+		$port = config_get_path('system/webgui/port');
 		if (empty($port)) { // if port is empty lets rely on the protocol selection
 			if ($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";
@@ -57,16 +57,16 @@ function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$p
 		return false;
 	}
 
-	$syncip = $config['hasync']['synchronizetoip'];
-	$password = $config['hasync']['password'];
+	$syncip = config_get_path('hasync/synchronizetoip');
+	$password = config_get_path('hasync/password');
 	if (empty($config['hasync']['username'])) {
 		$username = "admin";
 	} else {
-		$username = $config['hasync']['username'];
+		$username = config_get_path('hasync/username');
 	}
 
 	/* if port is empty lets rely on the protocol selection */
-	$port = $config['system']['webgui']['port'];
+	$port = config_get_path('system/webgui/port');
 	if (empty($port)) {
 		if ($config['system']['webgui']['protocol'] == "http") {
 			$port = "80";
@@ -138,11 +138,11 @@ function voucher_expire($voucher_received, $carp_loop = false) {
 				$cpentry = captiveportal_read_db("WHERE username = '{$voucher}'");
 				if (!empty($cpentry) && !empty($cpentry[0])) {
 					if (empty($cpzoneid) && !empty($config['captiveportal'][$cpzone])) {
-						$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+						$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 					}
 					$cpentry = $cpentry[0];
 					captiveportal_disconnect($cpentry, 13);
-					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "FORCLY TERMINATING VOUCHER {$voucher} SESSION");
+					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "FORCEFULLY TERMINATING VOUCHER {$voucher} SESSION");
 					$unsetindexes[] = $cpentry[5];
 				}
 			} else {
@@ -459,7 +459,7 @@ function voucher_write_used_db($roll, $vdb) {
 		fwrite($fd, $vdb . "\n");
 		fclose($fd);
 	} else {
-		voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_%2$s_used_%3$s.db'), $g['vardb_path'], $cpzone, $roll));
+		voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_%2$s_used_%3$s.db'), g_get('vardb_path'), $cpzone, $roll));
 	}
 }
 
@@ -542,7 +542,7 @@ function voucher_read_used_db($roll) {
 			$vdb = trim(fgets($fd));
 			fclose($fd);
 		} else {
-			voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%2$s_used_%3$s.db'), $g['vardb_path'], $cpzone, $roll));
+			voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%2$s_used_%3$s.db'), g_get('vardb_path'), $cpzone, $roll));
 		}
 	}
 	return base64_decode($vdb);

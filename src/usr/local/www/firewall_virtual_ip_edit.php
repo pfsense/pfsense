@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -249,7 +249,7 @@ print($form);
 	    'firewall (IPsec, OpenVPN, etc.). Use an IP Alias or CARP type ' .
 	    'VIP for these roles.%1$s' .
 	    'For more information, visit the %2$s book section on %3$s'),
-		'<br />', $g['product_label'],
+		'<br />', g_get('product_label'),
 		'<a href="https://docs.netgate.com/pfsense/en/latest/firewall/virtual-ip-addresses.html">Virtual IP Addresses</a>.'),
 	    'info', false);
 	?>

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -133,7 +133,7 @@ system_log_filter();
 
 
 	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
-	$reverse = isset($config['syslog']['reverse']);
+	$reverse = config_path_enabled('syslog', 'reverse');
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
 	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;

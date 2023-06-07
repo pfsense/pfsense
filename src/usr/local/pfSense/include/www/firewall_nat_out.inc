@@ -3,7 +3,7 @@
  * firewall_nat_out.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +39,7 @@ function saveNAToutMode($post, $json = false) {
 		$config['nat']['outbound']['mode'] = "automatic";
 	}
 	
-	$mode = $config['nat']['outbound']['mode'];
+	$mode = config_get_path('nat/outbound/mode');
 
 	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
 	if ($post['mode'] == "advanced" && ($mode == "automatic" || $mode == "hybrid")) {
@@ -568,7 +568,7 @@ function deleteoutNATrule($post, $json = false) {
 	}
 }
 
-// Re-order the NPtNAT rules per the array of iindicies passed in $post
+// Re-order the NPtNAT rules per the array of indices passed in $post
 function outNATrulesreorder($post, $json = false) {
 	global $config;
 
@@ -629,26 +629,25 @@ function build_target_list() {
 
 	//Temporary array so we can sort IPs
 	$templist = array();
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $sn) {
-			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-				if (isset($sn['noexpand'])) {
-					continue;
-				}
-				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
-				for ($i = 0; $i <= $len; $i++) {
-					$snip = long2ip32($start+$i);
-
-					$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
-				}
-			} else {
-				$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+	foreach (config_get_path('virtualip/vip', []) as $sn) {
+		if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+			$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+			if (isset($sn['noexpand'])) {
+				continue;
 			}
+			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+			$len = $end - $start;
+			for ($i = 0; $i <= $len; $i++) {
+				$snip = long2ip32($start+$i);
+
+				$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
+			}
+		} else {
+			$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 		}
 	}
+
 	asort($templist);
 	//Append sorted IP array onto main array
 	$list = array_merge($list, $templist);
@@ -662,6 +661,8 @@ function build_target_list() {
 		$list['H' . $alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
 
+	/* First character is the type code, remainder is the internal name.
+	 * See https://redmine.pfsense.org/issues/14354 */
 	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);

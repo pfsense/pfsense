@@ -3,7 +3,7 @@
  * SystemProvider.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2021-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2021-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ final class SystemProvider extends AbstractProvider {
 	public function getFilesystems() {
 		$roots = [];
 
-		foreach ($this->_queryFilesystemProvider() as $idx => $filesystem) {
+		foreach ($this->_queryFilesystemProvider() as $filesystem) {
 			$path = Arrays::get($filesystem, 'mounted-on', '');
 
 			$filesystems[$path] = $filesystem;

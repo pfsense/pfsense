@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ if (empty($cpzone)) {
 	exit;
 }
 if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
+	config_set_path('captiveportal', array());
 }
 
 $a_cp =& $config['captiveportal'];
@@ -59,9 +59,9 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 
 $pconfig['enablebackwardsync'] = isset($config['captiveportal'][$cpzone]['enablebackwardsync']);
-$pconfig['backwardsyncip'] = $config['captiveportal'][$cpzone]['backwardsyncip'];
-$pconfig['backwardsyncpassword'] = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
-$pconfig['backwardsyncuser'] = $config['captiveportal'][$cpzone]['backwardsyncuser'];
+$pconfig['backwardsyncip'] = config_get_path("captiveportal/{$cpzone}/backwardsyncip");
+$pconfig['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
+$pconfig['backwardsyncuser'] = config_get_path("captiveportal/{$cpzone}/backwardsyncuser");
 
 if ($_POST['save']) {
 	$pconfig = $_POST;
@@ -79,7 +79,7 @@ if ($_POST['save']) {
 	if ($_POST['backwardsyncip'] && (is_ipaddr_configured($_POST['backwardsyncip']))) {
 		$input_errors[] = sprintf(gettext("This IP is currently used " .
 		    "by this %s node. Please enter an IP belonging to the " .
-		    "primary node."), $g['product_label']);
+		    "primary node."), g_get('product_label'));
 	}
 	if ($_POST['backwardsyncpassword'] != $_POST['backwardsyncpassword_confirm']) {
 		$input_errors[] = gettext("Password and confirmed password must match.");
@@ -95,7 +95,7 @@ if ($_POST['save']) {
 		$newcp['backwardsyncip'] = $pconfig['backwardsyncip'];
 		$newcp['backwardsyncuser'] = $pconfig['backwardsyncuser'];
 
-		$port = $config['system']['webgui']['port'];
+		$port = config_get_path('system/webgui/port');
 		if (empty($port)) { // if port is empty lets rely on the protocol selection
 			if ($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";
@@ -107,7 +107,7 @@ if ($_POST['save']) {
 		if ($_POST['backwardsyncpassword'] != DMYPWD ) {
 			$newcp['backwardsyncpassword'] = $pconfig['backwardsyncpassword'];
 		} else {
-			$newcp['backwardsyncpassword'] = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
+			$newcp['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
 		}
 		if (!empty($newcp['enablebackwardsync'])) {
 			$rpc_client = new pfsense_xmlrpc_client();
@@ -119,7 +119,7 @@ if ($_POST['save']) {
 				if ($rpc_client->get_error() != '') {
 					$input_errors[] = $rpc_client->get_error();
 				} else {
-					$input_errors[] = sprintf(gettext('Error during communication with %s primary node.'), $g['product_label']);
+					$input_errors[] = sprintf(gettext('Error during communication with %s primary node.'), g_get('product_label'));
 				}
 			} else {
 				// Contains array of connected users (will be stored in SQLite DB)
@@ -131,7 +131,7 @@ if ($_POST['save']) {
 				// Contains array of usedmacs (will be stored in usedmacs db)
 				$usedmacs = unserialize(base64_decode($resp['usedmacs']));
 
-				foreach ($connected_users as $id => $user) {
+				foreach ($connected_users as $user) {
 					$pipeno = captiveportal_get_next_dn_ruleno('auth');
 					$attributes = array();
 					$attributes['allow_time'] = $user['allow_time'];
@@ -196,7 +196,7 @@ $section->addInput(new Form_Checkbox(
 	))->setHelp('The XMLRPC sync provided by %1$s in <a href="/system_hasync.php">High Availability</a> settings only synchronize a secondary node to its primary node.'.
 	'This checkbox enable a backward sync from the secondary to the primary, in order to have a bi-directional synchronization.%1$s'.
 	'The purpose of this feature is to keep connected users synchronized between servers even if a node does down, thus providing redundancy for the captive portal zone.%2$s%2$s'.
-	'<b>Important: these settings should be set on the secondary node only ! Do not update these settings if this %1$s is the primary node !</b>', $g['product_label'], '<br />');
+	'<b>Important: these settings should be set on the secondary node only ! Do not update these settings if this %1$s is the primary node !</b>', g_get('product_label'), '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'backwardsyncip',
@@ -209,7 +209,7 @@ $section->addInput(new Form_Input(
 	'Primary node username',
 	'text',
 	$pconfig['backwardsyncuser']
-))->setHelp('Please enter the username of the primary node that the secondary node will use for backward sync. This could be any %1$s user on the primary node with "System - HA node sync" privileges.', $g['product_label']);
+))->setHelp('Please enter the username of the primary node that the secondary node will use for backward sync. This could be any %1$s user on the primary node with "System - HA node sync" privileges.', g_get('product_label'));
 
 $section->addPassword(new Form_Input(
 	'backwardsyncpassword',

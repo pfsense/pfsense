@@ -4,7 +4,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,6 +80,9 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
 			warningTemp = tsParams.coreWarningTempThreshold;
 			criticalTemp = tsParams.coreCriticalTempThreshold;
+		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
+			warningTemp = tsParams.pchWarningTempThreshold;
+			criticalTemp = tsParams.pchCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
 			warningTemp = tsParams.zoneWarningTempThreshold;
 			criticalTemp = tsParams.zoneCriticalTempThreshold;
@@ -133,6 +136,9 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
 			warningTemp = tsParams.coreWarningTempThreshold;
 			criticalTemp = tsParams.coreCriticalTempThreshold;
+		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
+			warningTemp = tsParams.pchWarningTempThreshold;
+			criticalTemp = tsParams.pchCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
 			warningTemp = tsParams.zoneWarningTempThreshold;
 			criticalTemp = tsParams.zoneCriticalTempThreshold;
@@ -149,6 +155,7 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 function getSensorFriendlyName(sensorFullName) {
 	var rzone = /^hw\.acpi\.thermal\.tz([0-9]+)\.temperature$/;
 	var rcore = /^dev\.cpu\.([0-9]+)\.temperature$/;
+	var rpch = /^dev\.pchtherm\.([0-9]+)\.temperature$/;
 
 	if (rzone.test(sensorFullName)) {
 		return "Zone " + rzone.exec(sensorFullName)[1];
@@ -156,6 +163,10 @@ function getSensorFriendlyName(sensorFullName) {
 
 	if (rcore.test(sensorFullName)) {
 		return "Core " + rcore.exec(sensorFullName)[1];
+	}
+
+	if (rpch.test(sensorFullName)) {
+		return "PCH " + rpch.exec(sensorFullName)[1];
 	}
 
 	return sensorFullName;

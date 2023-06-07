@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -69,7 +69,7 @@ include("head.inc");
 					<li><?=gettext("Reboot after changes are installed")?></li>
 					<li><?=gettext("WAN interface will be set to obtain an address automatically from a DHCP server")?></li>
 					<li><?=gettext("webConfigurator admin username will be reset to 'admin'")?></li>
-					<li><?=sprintf(gettext("webConfigurator admin password will be reset to '%s'"), $g['factory_shipped_password'])?></li>
+					<li><?=sprintf(gettext("webConfigurator admin password will be reset to '%s'"), g_get('factory_shipped_password'))?></li>
 				</ul>
 				<p><strong><?=gettext("Are you sure you want to proceed?")?></strong></p>
 				<p>

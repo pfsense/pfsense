@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -46,12 +46,12 @@ $arr_gateways = return_gateways_array();
 
 // set default columns to two if unset
 if (!isset($config['system']['webgui']['dashboardcolumns'])) {
-	$config['system']['webgui']['dashboardcolumns'] = 2;
+	config_set_path('system/webgui/dashboardcolumns', 2);
 }
 
 // set default language if unset
 if (!isset($config['system']['language'])) {
-	$config['system']['language'] = $g['language'];
+	config_set_path('system/language', g_get('language'));
 }
 
 $dnshost_counter = 1;
@@ -94,8 +94,8 @@ $pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestate
 $pconfig['requirefirewallinterface'] = isset($config['system']['webgui']['requirefirewallinterface']);
 
 if (!$pconfig['timezone']) {
-	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
-		$pconfig['timezone'] = $g['default_timezone'];
+	if (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
+		$pconfig['timezone'] = g_get('default_timezone');
 	} else {
 		$pconfig['timezone'] = "Etc/UTC";
 	}
@@ -113,7 +113,7 @@ function is_timezone($elt) {
 }
 
 if ($pconfig['timezone'] <> $_POST['timezone']) {
-	filter_pflog_start(true);
+	filter_pflog_start();
 }
 
 $timezonelist = system_get_timezone_list();
@@ -269,8 +269,8 @@ if ($_POST) {
 		if (is_array($config['system']['dnsserver'])) {
 		  	$dns_servers_arr = $config['system']['dnsserver'];
 	 		foreach ($dns_servers_arr as $arr_index => $this_dnsserver) {
-	   			$i = (int)$arr_index + 1;
-	   			$this_dnsgw = $config['system']['dns'.$i.'gw'];
+				$i = (int)$arr_index + 1;
+				$this_dnsgw = config_get_path("system/dns{$i}gw");
 				unset($gatewayip);
 				unset($inet6);
 				if ((!empty($this_dnsgw)) && ($this_dnsgw != 'none') && (!empty($this_dnsserver))) {
@@ -287,76 +287,75 @@ if ($_POST) {
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 
 		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
-			$config['system']['language'] = $_POST['language'];
+			config_set_path('system/language', $_POST['language']);
 			set_language();
 		}
 
-		unset($config['system']['webgui']['interfacessort']);
-		$config['system']['webgui']['interfacessort'] = $_POST['interfacessort'] ? true : false;
+		config_del_path('system/webgui/interfacessort');
+		config_set_path('system/webgui/interfacessort', $_POST['interfacessort'] ? true : false);
 
-		unset($config['system']['webgui']['webguileftcolumnhyper']);
-		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
+		config_del_path('system/webgui/webguileftcolumnhyper');
+		config_set_path('system/webgui/webguileftcolumnhyper', $_POST['webguileftcolumnhyper'] ? true : false);
 
-		unset($config['system']['webgui']['disablealiaspopupdetail']);
-		$config['system']['webgui']['disablealiaspopupdetail'] = $_POST['disablealiaspopupdetail'] ? true : false;
+		config_del_path('system/webgui/disablealiaspopupdetail');
+		config_set_path('system/webgui/disablealiaspopupdetail', $_POST['disablealiaspopupdetail'] ? true : false);
 
-		unset($config['system']['webgui']['dashboardavailablewidgetspanel']);
-		$config['system']['webgui']['dashboardavailablewidgetspanel'] = $_POST['dashboardavailablewidgetspanel'] ? true : false;
+		config_del_path('system/webgui/dashboardavailablewidgetspanel');
+		config_set_path('system/webgui/dashboardavailablewidgetspanel', $_POST['dashboardavailablewidgetspanel'] ? true : false);
 
-		unset($config['system']['webgui']['systemlogsfilterpanel']);
-		$config['system']['webgui']['systemlogsfilterpanel'] = $_POST['systemlogsfilterpanel'] ? true : false;
+		config_del_path('system/webgui/systemlogsfilterpanel');
+		config_set_path('system/webgui/systemlogsfilterpanel', $_POST['systemlogsfilterpanel'] ? true : false);
 
-		unset($config['system']['webgui']['systemlogsmanagelogpanel']);
-		$config['system']['webgui']['systemlogsmanagelogpanel'] = $_POST['systemlogsmanagelogpanel'] ? true : false;
+		config_del_path('system/webgui/systemlogsmanagelogpanel');
+		config_set_path('system/webgui/systemlogsmanagelogpanel', $_POST['systemlogsmanagelogpanel'] ? true : false);
 
-		unset($config['system']['webgui']['statusmonitoringsettingspanel']);
-		$config['system']['webgui']['statusmonitoringsettingspanel'] = $_POST['statusmonitoringsettingspanel'] ? true : false;
+		config_del_path('system/webgui/statusmonitoringsettingspanel');
+		config_set_path('system/webgui/statusmonitoringsettingspanel', $_POST['statusmonitoringsettingspanel'] ? true : false);
 
 //		if ($_POST['dashboardperiod']) {
 //			$config['widgets']['period'] = $_POST['dashboardperiod'];
 //		}
 
 		if ($_POST['webguicss']) {
-			$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
+			config_set_path('system/webgui/webguicss', $_POST['webguicss']);
 		} else {
-			unset($config['system']['webgui']['webguicss']);
+			config_del_path('system/webgui/webguicss');
 		}
 
-		$config['system']['webgui']['roworderdragging'] = $_POST['roworderdragging'] ? true:false;
+		config_set_path('system/webgui/roworderdragging', $_POST['roworderdragging'] ? true:false);
 
 		if ($_POST['logincss']) {
-			$config['system']['webgui']['logincss'] = $_POST['logincss'];
+			config_set_path('system/webgui/logincss', $_POST['logincss']);
 		} else {
-			unset($config['system']['webgui']['logincss']);
+			config_del_path('system/webgui/logincss');
 		}
 
-		$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
+		config_set_path('system/webgui/loginshowhost', $_POST['loginshowhost'] ? true:false);
 
 		if ($_POST['webguifixedmenu']) {
-			$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
+			config_set_path('system/webgui/webguifixedmenu', $_POST['webguifixedmenu']);
 		} else {
-			unset($config['system']['webgui']['webguifixedmenu']);
+			config_del_path('system/webgui/webguifixedmenu');
 		}
 
 		if ($_POST['webguihostnamemenu']) {
-			$config['system']['webgui']['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
+			config_set_path('system/webgui/webguihostnamemenu', $_POST['webguihostnamemenu']);
 		} else {
-			unset($config['system']['webgui']['webguihostnamemenu']);
+			config_del_path('system/webgui/webguihostnamemenu');
 		}
 
 		if ($_POST['dashboardcolumns']) {
-			$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
+			config_set_path('system/webgui/dashboardcolumns', $_POST['dashboardcolumns']);
 		} else {
-			unset($config['system']['webgui']['dashboardcolumns']);
+			config_del_path('system/webgui/dashboardcolumns');
 		}
 
-		$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
-		
-		$config['system']['webgui']['requirefirewallinterface'] = $_POST['requirefirewallinterface'] ? true : false;
+		config_set_path('system/webgui/requirestatefilter', $_POST['requirestatefilter'] ? true : false);
+    config_set_path('system/webgui/requirefirewallinterface', $_POST['requirefirewallinterface'] ? true : false);
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
-		unset($config['system']['dnsserver']);
+		config_del_path('system/dnsserver');
 
 		$dnscounter = 0;
 		$dnsname = "dns{$dnscounter}";
@@ -374,13 +373,13 @@ if ($_POST) {
 
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
 
-		unset($config['system']['dnsallowoverride']);
-		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
+		config_del_path('system/dnsallowoverride');
+		config_set_path('system/dnsallowoverride', $_POST['dnsallowoverride'] ? true : false);
 
 		if ($_POST['dnslocalhost']) {
-			$config['system']['dnslocalhost'] = $_POST['dnslocalhost'];
+			config_set_path('system/dnslocalhost', $_POST['dnslocalhost']);
 		} else {
-			unset($config['system']['dnslocalhost']);
+			config_del_path('system/dnslocalhost');
 		}
 
 		/* which interface should the dns servers resolve through? */
@@ -399,8 +398,8 @@ if ($_POST) {
 			$dnsgwconfigname = "dns{$dnsgwconfigcounter}gw";
 			$dnshostconfigname = "dns{$dnshostconfigcounter}host";
 
-			$olddnsgwname = $config['system'][$dnsgwconfigname];
-			$olddnshostname = $config['system'][$dnshostconfigname];
+			$olddnsgwname = config_get_path("system/{$dnsgwconfigname}");
+			$olddnshostname = config_get_path("system/{$dnshostconfigname}");
 
 			if ($ignore_posted_dnsgw[$dnsgwname]) {
 				$thisdnsgwname = "none";
@@ -441,7 +440,7 @@ if ($_POST) {
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
 				} else {
 					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
-					unset($config['system'][$outdnsgwconfigname]);
+					config_del_path("system/{$outdnsgwconfigname}");
 					$pconfig[$outdnsgwname] = "";
 				}
 				if ($_POST[$dnshostname]) {
@@ -449,7 +448,7 @@ if ($_POST) {
 					$pconfig[$outdnshostname] = $thisdnshostname;
 				} else {
 					// Note: when no DNS hostname is chosen, unset the value.
-					unset($config['system'][$outdnshostconfigname]);
+					config_del_path("system/{$outdnshostconfigname}");
 					$pconfig[$outdnshostname] = "";
 				}
 				$outdnscounter++;
@@ -465,7 +464,7 @@ if ($_POST) {
 		$olddnsgwconfigname = "dns{$oldgwcounter}gw";
 		while (isset($config['system'][$olddnsgwconfigname])) {
 			if (empty($config['system']['dnsserver'][$oldgwcounter - 1])) {
-				unset($config['system'][$olddnsgwconfigname]);
+				config_del_path("system/{$olddnsgwconfigname}");
 			}
 			$oldgwcounter++;
 			$olddnsgwconfigname = "dns{$oldgwcounter}gw";
@@ -523,19 +522,21 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['hostname'],
 	['placeholder' => 'pfSense']
-))->setHelp('Name of the firewall host, without domain part');
+))->setHelp('Name of the firewall host, without domain part.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'*Domain',
 	'text',
 	$pconfig['domain'],
-	['placeholder' => 'example.com, home, office, private, etc.']
-))->setHelp('Do not end the domain name with \'.local\' as the final part (Top Level Domain, TLD), ' .
-	'The \'local\' TLD is %1$swidely used%2$s by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) ' .
+	['placeholder' => 'home.arpa, example.com, home, office, private, etc.']
+))->setHelp('Domain name for the firewall.%1$s%1$s' .
+	'Do not end the domain name with \'.local\' as the final part (Top Level Domain, TLD). ' .
+	'The \'local\' TLD is %2$swidely used%3$s by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) ' .
 	'and some Windows systems and networked devices. ' .
 	'These will not network correctly if the router uses \'local\' as its TLD. ' .
-	'Alternative TLDs such as \'local.lan\' or \'mylocal\' are safe.',
+	'Alternatives such as \'home.arpa\', \'local.lan\', or \'mylocal\' are safe.',
+	'<br/>',
 	'<a target="_blank" href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html">',
 	'</a>'
 );
@@ -630,7 +631,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('If this option is set, %s will use DNS servers '.
 	'assigned by a DHCP/PPP server on WAN or a remote OpenVPN server (if Pull DNS ' .
 	'option is enabled) for its own purposes (including the DNS Forwarder/DNS Resolver). '.
-        'However, they will not be assigned to DHCP clients.', $g['product_label']);
+        'However, they will not be assigned to DHCP clients.', g_get('product_label'));
 
 $section->addInput(new Form_Select(
 	'dnslocalhost',

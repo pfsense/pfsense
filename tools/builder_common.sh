@@ -5,7 +5,7 @@
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2013 BSD Perimeter
 # Copyright (c) 2013-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # FreeSBIE portions of the code
@@ -1377,7 +1377,7 @@ pkg_repo_rsync() {
 
 		local _pkgfile="${_repo_path}/Latest/pkg.pkg"
 		if [ -e ${_pkgfile} ]; then
-			echo -n ">>> Signing Latest/pkg.pkg for bootstraping... " | tee -a ${_logfile}
+			echo -n ">>> Signing Latest/pkg.pkg for bootstrapping... " | tee -a ${_logfile}
 
 			if sha256 -q ${_pkgfile} | ${PKG_REPO_SIGNING_COMMAND} \
 			    > ${_pkgfile}.sig 2>/dev/null; then
@@ -2029,7 +2029,9 @@ poudriere_bulk() {
 	cat <<EOF >>/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
 
 PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL}
+PKG_REPO_BRANCH_NEXT=${PKG_REPO_BRANCH_NEXT}
 PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE}
+PKG_REPO_BRANCH_PREVIOUS=${PKG_REPO_BRANCH_PREVIOUS}
 PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL}
 PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE}
 POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME}
@@ -2132,7 +2134,7 @@ EOF
 
 	if [ "${AWS}" = 1 ]; then
 		echo ">>> Run poudriere distclean to prune old distfiles..." | tee -a ${LOGFILE}
-		if ! poudriere distclean -f ${_bulk} -p ${POUDRIERE_PORTS_NAME} -y; then
+		if ! poudriere distclean -f ${_bulk} -p ${POUDRIERE_PORTS_NAME} -n; then
 			echo ">>> ERROR: Something went wrong..."
 			print_error_pfS
 		fi

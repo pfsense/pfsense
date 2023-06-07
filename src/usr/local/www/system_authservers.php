@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -102,7 +102,7 @@ if ($_REQUEST['ajax']) {
 $id = $_REQUEST['id'];
 
 if (!is_array($config['system']['authserver'])) {
-	$config['system']['authserver'] = array();
+	config_set_path('system/authserver', array());
 }
 
 $a_server = array_values(auth_get_authserver_list());
@@ -128,7 +128,7 @@ if ($_POST['act'] == "del") {
 	$serverdeleted = $a_server[$_POST['id']]['name'];
 	foreach ($config['system']['authserver'] as $k => $as) {
 		if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
-			unset($config['system']['authserver'][$k]);
+			config_del_path("system/authserver/{$k}");
 		}
 	}
 
@@ -309,13 +309,6 @@ if ($_POST['save']) {
 			"Shell Authentication is enabled for appliance.");
 	}
 
-	// https://redmine.pfsense.org/issues/4154
-	if ($pconfig['type'] == "radius") {
-		if (is_ipaddrv6($_POST['radius_host'])) {
-			$input_errors[] = gettext("IPv6 does not work for RADIUS authentication, see Bug #4154.");
-		}
-	}
-
 	if (!$input_errors) {
 		$server = array();
 		$server['refid'] = uniqid();
@@ -450,22 +443,21 @@ function build_radiusnas_list() {
 		}
 	}
 
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $sn) {
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
-				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
+	foreach (config_get_path('virtualip/vip', []) as $sn) {
+		if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+			$len = $end - $start;
 
-				for ($i = 0; $i <= $len; $i++) {
-					$snip = long2ip32($start+$i);
-					$list[$snip] = $sn['descr'] . ' - ' . $snip;
-				}
-			} else {
-				$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
+			for ($i = 0; $i <= $len; $i++) {
+				$snip = long2ip32($start+$i);
+				$list[$snip] = $sn['descr'] . ' - ' . $snip;
 			}
+		} else {
+			$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
 		}
 	}
+
 
 	return($list);
 }
@@ -610,28 +602,19 @@ $section->addInput(new Form_Select(
 	array_combine(array_keys($ldap_urltypes), array_keys($ldap_urltypes))
 ));
 
-if (empty($a_ca))
-{
-	$section->addInput(new Form_StaticText(
-		'Peer Certificate Authority',
-		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert. Manager</a>.'
-	));
+$ldapCaRef = array('global' => 'Global Root CA List');
+foreach ($a_ca as $ca) {
+	$ldapCaRef[$ca['refid']] = $ca['descr'];
 }
-else
-{
-	$ldapCaRef = array( 'global' => 'Global Root CA List' );
-	foreach ($a_ca as $ca)
-		$ldapCaRef[ $ca['refid'] ] = $ca['descr'];
 
-	$section->addInput(new Form_Select(
-		'ldap_caref',
-		'Peer Certificate Authority',
-		$pconfig['ldap_caref'],
-		$ldapCaRef
-	))->setHelp('This CA is used to validate the LDAP server certificate when '.
-		'\'SSL/TLS Encrypted\' or \'STARTTLS Encrypted\' Transport is active. '.
-		'This CA must match the CA used by the LDAP server.');
-}
+$section->addInput(new Form_Select(
+	'ldap_caref',
+	'Peer Certificate Authority',
+	$pconfig['ldap_caref'],
+	$ldapCaRef
+))->setHelp('This CA is used to validate the LDAP server certificate when '.
+	'\'SSL/TLS Encrypted\' or \'STARTTLS Encrypted\' Transport is active. '.
+	'This CA must match the CA used by the LDAP server.');
 
 $section->addInput(new Form_Select(
 	'ldap_protver',
@@ -829,7 +812,7 @@ $section->addInput(new Form_Checkbox(
 	'Allow unauthenticated bind',
 	$pconfig['ldap_allow_unauthenticated']
 ))->setHelp('Unauthenticated binds are bind with an existing login but with an empty password. '.
-         'Some LDAP servers (Microsoft AD) allow this type of bind without any possiblity to disable it.');
+         'Some LDAP servers (Microsoft AD) allow this type of bind without any possibility to disable it.');
 
 $form->add($section);
 
@@ -895,7 +878,7 @@ $section->addInput(new Form_Select(
 	'RADIUS NAS IP Attribute',
 	$pconfig['radius_nasip_attribute'],
 	build_radiusnas_list()
-))->setHelp('Enter the IP to use for the "NAS-IP-Address" attribute during RADIUS Acccess-Requests.<br />'.
+))->setHelp('Enter the IP to use for the "NAS-IP-Address" attribute during RADIUS Access-Requests.<br />'.
 			'Please note that this choice won\'t change the interface used for contacting the RADIUS server.');
 
 if (isset($id) && $a_server[$id])

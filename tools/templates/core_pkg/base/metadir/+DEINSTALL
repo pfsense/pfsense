@@ -7,15 +7,15 @@ fi
 echo "===> Keeping a copy of current version mtree"
 
 # Check if there is a current mtree to be saved
-if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree ]; then
+if [ ! -f ${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/base.mtree ]; then
 	echo "===> Current mtree file not found"
 	exit 1
 fi
 
-[ -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous ] \
-	&& rm -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous
+[ -f ${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous ] \
+	&& rm -f ${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous
 
-cp -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree \
-	/usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous
+cp -f ${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/base.mtree \
+	${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous
 
 exit $?

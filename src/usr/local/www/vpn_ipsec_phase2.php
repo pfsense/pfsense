@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -57,17 +57,17 @@ if (!empty($_REQUEST['dup'])) {
 	$uindex = $_REQUEST['dup'];
 }
 
-$ph2found = false;
+$p2index = null;
 if (isset($uindex)) {
-	foreach ($a_phase2 as $p2index => $ph2) {
+	foreach ($a_phase2 as $idx => $ph2) {
 		if ($ph2['uniqid'] == $uindex) {
-			$ph2found = true;
+			$p2index = $idx;
 			break;
 		}
 	}
 }
 
-if ($ph2found === true) {
+if ($p2index !== null) {
 	$pconfig['ikeid'] = $ph2['ikeid'];
 	$pconfig['disabled'] = isset($ph2['disabled']);
 	$pconfig['mode'] = $ph2['mode'];
@@ -130,7 +130,7 @@ if ($_POST['save']) {
 	unset($input_errors);
 
 	/* Check if the user is switching away from VTI */
-	$vti_switched = ($ph2found && ($pconfig['mode'] == "vti") && ($_POST['mode'] != "vti"));
+	$vti_switched = (($p2index !== null) && ($pconfig['mode'] == "vti") && ($_POST['mode'] != "vti"));
 
 	$pconfig = $_POST;
 
@@ -255,7 +255,7 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("VTI is not compatible with mobile IPsec.");
 		}
 
-		foreach ($a_phase2 as $key => $name) {
+		foreach ($a_phase2 as $name) {
 			if (isset($name['mobile']) && $name['uniqid'] != $pconfig['uniqid']) {
 				/* check duplicate localids only for mobile clients */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
@@ -281,7 +281,7 @@ if ($_POST['save']) {
 	} else {
 		/* User is adding phase 2 for site-to-site phase1 */
 		$input_error = 0;
-		foreach ($a_phase2 as $key => $name) {
+		foreach ($a_phase2 as $name) {
 			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid'] && $pconfig['uniqid'] != $name['uniqid']) {
 				/* check duplicate subnets only for given phase1 */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
@@ -382,7 +382,7 @@ if ($_POST['save']) {
 		} else {
 			foreach ($ealgos as $ealgo) {
 				if (empty($pconfig['halgos'])) {
-					if (!strpos($ealgo['name'], "gcm")) {
+					if (!(strpos($ealgo['name'], "gcm") || $ealgo['name'] == "chacha20poly1305")) {
 						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");
 						break;
 					}
@@ -453,7 +453,7 @@ if ($_POST['save']) {
 			$ph2ent['mobile'] = true;
 		}
 
-		if ($ph2found === true && $a_phase2[$p2index]) {
+		if (($p2index !== null) && $a_phase2[$p2index]) {
 			$a_phase2[$p2index] = $ph2ent;
 		} else {
 			$a_phase2[] = $ph2ent;
@@ -734,11 +734,6 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		));
 	}
 
-
-	if ($i == $rows) {
-		$group->setHelp('Note: Blowfish, 3DES, and CAST128 provide weak security and should be avoided.');
-	}
-
 	$i++;
 	$section->add($group);
 }
@@ -755,7 +750,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 		$algo
 	))->addClass('multi')->setAttribute('id');
 
-	$group->setHelp('Note: Hash is ignored with GCM algorithms. MD5 and SHA1 provide weak security and should be avoided.');
+	$group->setHelp('Note: Hash is ignored with GCM algorithms. SHA1 provides weak security and should be avoided.');
 }
 
 $section->add($group);
@@ -1085,7 +1080,7 @@ events.push(function() {
 	}
 
 	function change_aead() {
-		var notaead = ['AES', 'Blowfish', '3DES', 'CAST128'];
+		var notaead = ['AES'];
 		var arrayLength = notaead.length;
 		for (var i = 0; i < arrayLength; i++) {
 			if ($('#' + notaead[i]).prop('checked') || ($('#proto').val() != 'esp')) {

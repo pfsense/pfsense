@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -38,7 +38,6 @@ require_once("util.inc");
  *  1: user quit
  */
 function set_networking_interfaces_ports() {
-	global $noreboot;
 	global $config;
 	global $g;
 	global $fp;
@@ -49,11 +48,11 @@ function set_networking_interfaces_ports() {
 	$physmem = $memory[0];
 	$realmem = $memory[1];
 
-	if ($physmem < $g['minimum_ram_warning']) {
+	if ($physmem < g_get('minimum_ram_warning')) {
 		echo "\n\n\n";
 		echo gettext("DANGER!  WARNING!  ACHTUNG!") . "\n\n";
-		printf(gettext('%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s'), $g['product_label'], $g['minimum_ram_warning_text'], "\n");
-		printf(gettext('Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s'), $realmem, $physmem, $g['product_label'], "\n");
+		printf(gettext('%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s'), g_get('product_label'), g_get('minimum_ram_warning_text'), "\n");
+		printf(gettext('Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s'), $realmem, $physmem, g_get('product_label'), "\n");
 		echo "\n" . gettext("Press ENTER to continue.") . " ";
 		fgets($fp);
 		echo "\n";
@@ -79,7 +78,7 @@ EOD;
 		$ifsmallist = " ";
 		foreach ($iflist as $iface => $ifa) {
 			$friendly = convert_real_interface_to_friendly_interface_name($iface);
-			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
+			$ifstatus = get_interface_addresses(config_get_path("interfaces/{$friendly}/if", ""));
 			if (is_array($ifstatus) && $ifstatus['linkstateup'])
 				$status = "  (up)";
 			else
@@ -105,14 +104,12 @@ EOD;
 		vlan_setup();
 	}
 
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-
+	$vlans = config_get_path('vlans/vlan', []);
+	if (is_array($vlans) && count($vlans)) {
 		echo "\n\n" . gettext("VLAN interfaces:") . "\n\n";
-		foreach ($config['vlans']['vlan'] as $vlan) {
-
+		foreach ($vlans as $vlan) {
 			echo sprintf("% -16s%s\n", vlan_interface($vlan),
 				"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
-
 			$iflist[vlan_interface($vlan)] = array();
 			$ifsmallist = $ifsmallist . vlan_interface($vlan) . " ";
 		}
@@ -263,66 +260,66 @@ EOD;
 				}
 			}
 			if (isset($config['interfaces']['lan'])) {
-				unset($config['interfaces']['lan']);
+				config_del_path('interfaces/lan');
 			}
 			if (isset($config['dhcpd']['lan'])) {
-				unset($config['dhcpd']['lan']);
+				config_del_path('dhcpd/lan');
 			}
 			if (isset($config['dhcpdv6']['lan'])) {
-				unset($config['dhcpdv6']['lan']);
+				config_del_path('dhcpdv6/lan');
 			}
 			if (isset($config['interfaces']['lan']['if'])) {
-				unset($config['interfaces']['lan']['if']);
+				config_del_path('interfaces/lan/if');
 			}
 			if (isset($config['interfaces']['wan']['blockpriv'])) {
-				unset($config['interfaces']['wan']['blockpriv']);
+				config_del_path('interfaces/wan/blockpriv');
 			}
 			if (isset($config['shaper'])) {
-				unset($config['shaper']);
+				config_del_path('shaper');
 			}
 			if (isset($config['ezshaper'])) {
-				unset($config['ezshaper']);
+				config_del_path('ezshaper');
 			}
 			if (isset($config['nat'])) {
-				unset($config['nat']);
+				config_del_path('nat');
 			}
 		} else {
 			if (isset($config['interfaces']['lan']['if'])) {
 				mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
 			}
 			if (isset($config['interfaces']['lan'])) {
-				unset($config['interfaces']['lan']);
+				config_del_path('interfaces/lan');
 			}
 			if (isset($config['dhcpd']['lan'])) {
-				unset($config['dhcpd']['lan']);
+				config_del_path('dhcpd/lan');
 			}
 			if (isset($config['dhcpdv6']['lan'])) {
-				unset($config['dhcpdv6']['lan']);
+				config_del_path('dhcpdv6/lan');
 			}
 			if (isset($config['interfaces']['lan']['if'])) {
-				unset($config['interfaces']['lan']['if']);
+				config_del_path('interfaces/lan/if');
 			}
 			if (isset($config['interfaces']['wan']['blockpriv'])) {
-				unset($config['interfaces']['wan']['blockpriv']);
+				config_del_path('interfaces/wan/blockpriv');
 			}
 			if (isset($config['shaper'])) {
-				unset($config['shaper']);
+				config_del_path('shaper');
 			}
 			if (isset($config['ezshaper'])) {
-				unset($config['ezshaper']);
+				config_del_path('ezshaper');
 			}
 			if (isset($config['nat'])) {
-				unset($config['nat']);
+				config_del_path('nat');
 			}
 		}
-		if (preg_match($g['wireless_regex'], $lanif)) {
+		if (preg_match(g_get('wireless_regex'), $lanif)) {
 			if (is_array($config['interfaces']['lan']) &&
 			    !is_array($config['interfaces']['lan']['wireless'])) {
 				$config['interfaces']['lan']['wireless'] = array();
 			}
 		} else {
 			if (isset($config['interfaces']['lan'])) {
-				unset($config['interfaces']['lan']['wireless']);
+				config_del_path('interfaces/lan/wireless');
 			}
 		}
 
@@ -336,14 +333,14 @@ EOD;
 		}
 		$config['interfaces']['wan']['if'] = $wanif;
 		$config['interfaces']['wan']['enable'] = true;
-		if (preg_match($g['wireless_regex'], $wanif)) {
+		if (preg_match(g_get('wireless_regex'), $wanif)) {
 			if (is_array($config['interfaces']['wan']) &&
 			    !is_array($config['interfaces']['wan']['wireless'])) {
 				$config['interfaces']['wan']['wireless'] = array();
 			}
 		} else {
 			if (isset($config['interfaces']['wan'])) {
-				unset($config['interfaces']['wan']['wireless']);
+				config_del_path('interfaces/wan/wireless');
 			}
 		}
 
@@ -360,23 +357,23 @@ EOD;
 			$config['interfaces']['opt' . ($i+1)]['if'] = $optif[$i];
 
 			/* wireless interface? */
-			if (preg_match($g['wireless_regex'], $optif[$i])) {
+			if (preg_match(g_get('wireless_regex'), $optif[$i])) {
 				if (!is_array($config['interfaces']['opt' . ($i+1)]['wireless'])) {
 					$config['interfaces']['opt' . ($i+1)]['wireless'] = array();
 				}
 			} else {
-				unset($config['interfaces']['opt' . ($i+1)]['wireless']);
+				config_del_path('interfaces/opt' . ($i+1) . '/wireless');
 			}
 
 			if (empty($config['interfaces']['opt' . ($i+1)]['descr'])) {
 				$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
-				unset($config['interfaces']['opt' . ($i+1)]['enable']);
+				config_del_path('interfaces/opt' . ($i+1) . '/enable');
 			}
 		}
 
 		/* remove all other (old) optional interfaces */
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++) {
-			unset($config['interfaces']['opt' . ($i+1)]);
+			config_del_path('interfaces/opt' . ($i+1));
 		}
 
 		printf(gettext("%sWriting configuration..."), "\n");
@@ -394,9 +391,9 @@ EOD;
 		}
 
 		echo gettext(" done!") . "\n";
-
 		return (0);
 	}
+	return (1);
 }
 
 function autodetect_interface($ifname, $fp) {
@@ -423,17 +420,18 @@ EOD;
 }
 
 function interfaces_setup() {
-	global $iflist, $config, $g, $fp;
+	global $iflist;
 
 	$iflist = get_interface_list();
 }
 
 function vlan_setup() {
-	global $iflist, $config, $g, $fp;
+	global $iflist, $config, $fp;
 
 	$iflist = get_interface_list();
 
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+	$vlancfg = config_get_path('vlans/vlan');
+	if (is_array($vlancfg) && count($vlancfg)) {
 		echo "\n" . gettext("WARNING: all existing VLANs will be cleared if you proceed!") . "\n";
 		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 

@@ -3,7 +3,7 @@
  * system_advanced_network.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -93,10 +93,10 @@ function saveAdvancedNetworking($post, $json = false) {
 	if ($post['ipv6allow'] == "yes" && is_bogonsv6_used(true) &&
 	    (!isset($config['system']['maximumtableentries']) ||
 	     $config['system']['maximumtableentries'] <
-	     $g['minimumtableentries_bogonsv6'])) {
+	     g_get('minimumtableentries_bogonsv6'))) {
 		$input_errors[] = sprintf(gettext(
 		    "In order enable IPv6 and block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
-		    $g['minimumtableentries_bogonsv6']);
+		    g_get('minimumtableentries_bogonsv6'));
 	}
 
 	if (!$json) {
@@ -112,33 +112,33 @@ function saveAdvancedNetworking($post, $json = false) {
 		} else {
 			if (is_array($config['diag']) &&
 			    is_array($config['diag']['ipv6nat'])) {
-				unset($config['diag']['ipv6nat']['enable']);
-				unset($config['diag']['ipv6nat']['ipaddr']);
+				config_del_path('diag/ipv6nat/enable');
+				config_del_path('diag/ipv6nat/ipaddr');
 			}
 		}
 
 		if ($post['ipv6allow'] == "yes") {
 			$config['system']['ipv6allow'] = true;
 		} else {
-			unset($config['system']['ipv6allow']);
+			config_del_path('system/ipv6allow');
 		}
 
 		if ($post['ipv6dontcreatelocaldns'] == "yes") {
 			$config['system']['ipv6dontcreatelocaldns'] = true;
 		} else {
-			unset($config['system']['ipv6dontcreatelocaldns']);
+			config_del_path('system/ipv6dontcreatelocaldns');
 		}
 
 		if ($post['dhcp6debug'] == "yes") {
 			$config['system']['dhcp6debug'] = true;
 		} else {
-			unset($config['system']['dhcp6debug']);
+			config_del_path('system/dhcp6debug');
 		}
 
 		if ($post['dhcp6norelease'] == "yes") {
 			$config['system']['dhcp6norelease'] = true;
 		} else {
-			unset($config['system']['dhcp6norelease']);
+			config_del_path('system/dhcp6norelease');
 		}
 
 		if ((isset($post['dhcp6debug']) xor isset($config['system']['dhcp6debug'])) ||
@@ -149,20 +149,20 @@ function saveAdvancedNetworking($post, $json = false) {
 		if ($post['prefer_ipv4'] == "yes") {
 			$config['system']['prefer_ipv4'] = true;
 		} else {
-			unset($config['system']['prefer_ipv4']);
+			config_del_path('system/prefer_ipv4');
 		}
 
 		if (!empty($post['global-v6duid'])) {
 			$config['system']['global-v6duid'] = $post['global-v6duid'];
 		} else {
-			unset($config['system']['global-v6duid']);
+			config_del_path('system/global-v6duid');
 		}
 
 		if ($post['sharednet'] == "yes") {
 			$config['system']['sharednet'] = true;
 			system_disable_arp_wrong_if();
 		} else {
-			unset($config['system']['sharednet']);
+			config_del_path('system/sharednet');
 			system_enable_arp_wrong_if();
 		}
 
@@ -175,31 +175,31 @@ function saveAdvancedNetworking($post, $json = false) {
 		if ($post['disablechecksumoffloading'] == "yes") {
 			$config['system']['disablechecksumoffloading'] = true;
 		} else {
-			unset($config['system']['disablechecksumoffloading']);
+			config_del_path('system/disablechecksumoffloading');
 		}
 
 		if ($post['disablesegmentationoffloading'] == "yes") {
 			$config['system']['disablesegmentationoffloading'] = true;
 		} else {
-			unset($config['system']['disablesegmentationoffloading']);
+			config_del_path('system/disablesegmentationoffloading');
 		}
 
 		if ($post['disablelargereceiveoffloading'] == "yes") {
 			$config['system']['disablelargereceiveoffloading'] = true;
 		} else {
-			unset($config['system']['disablelargereceiveoffloading']);
+			config_del_path('system/disablelargereceiveoffloading');
 		}
 
 		if ($post['hnaltqenable'] == "yes") {
 			$config['system']['hn_altq_enable'] = true;
 		} else {
-			unset($config['system']['hn_altq_enable']);
+			config_del_path('system/hn_altq_enable');
 		}
 
 		if ($post['ip_change_kill_states'] == "yes") {
 			$config['system']['ip_change_kill_states'] = true;
 		} else {
-			unset($config['system']['ip_change_kill_states']);
+			config_del_path('system/ip_change_kill_states');
 		}
 
 		setup_microcode();

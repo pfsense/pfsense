@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2022 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -72,6 +72,7 @@ if ($_POST['act'] == "del") {
 		unset($a_csc[$id]);
 		write_config($wc_msg);
 		$savemsg = gettext("Client specific override successfully deleted.");
+		services_unbound_configure(false);
 	}
 }
 
@@ -266,9 +267,8 @@ if ($_POST['save']) {
 		$csc['common_name'] = $pconfig['common_name'];
 		$csc['block'] = $pconfig['block'];
 		$csc['description'] = $pconfig['description'];
-		foreach (array('', 'v6') as $ntype) {
-			$csc["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
-		}
+		$csc['tunnel_network'] = $pconfig['tunnel_network'];
+		$csc['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
 		$csc['local_network'] = $pconfig['local_network'];
 		$csc['local_networkv6'] = $pconfig['local_networkv6'];
 		$csc['remote_network'] = $pconfig['remote_network'];
@@ -308,7 +308,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (($act == 'new') || ($csc['disable'] ^ $a_csc[$id]['disable']) ||
+		if (($act == 'new') || (!empty($csc['disable']) ^ !empty($a_csc[$id]['disable'])) ||
 		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
 		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
 			$csc['unbound_restart'] = true;
@@ -328,6 +328,7 @@ if ($_POST['save']) {
 		}
 		openvpn_resync_csc($csc);
 		write_config($wc_msg);
+		services_unbound_configure(false);
 
 		header("Location: vpn_openvpn_csc.php");
 		exit;
@@ -499,7 +500,7 @@ if ($act == "new" || $act == "edit"):
 		'DNS Default Domain',
 		'Provide a default domain name to clients',
 		$pconfig['dns_domain_enable']
-	))->toggles('.dnsdomain');
+	));
 
 	$group = new Form_Group('DNS Domain');
 	$group->addClass('dnsdomain');
@@ -519,7 +520,7 @@ if ($act == "new" || $act == "edit"):
 		'DNS Servers',
 		'Provide a DNS server list to clients',
 		$pconfig['dns_server_enable']
-	))->toggles('.dnsservers');
+	));
 
 	$group = new Form_Group(null);
 	$group->addClass('dnsservers');
@@ -560,7 +561,7 @@ if ($act == "new" || $act == "edit"):
 		'NTP Servers',
 		'Provide an NTP server list to clients',
 		$pconfig['ntp_server_enable']
-	))->toggles('.ntpservers');
+	));
 
 	$group = new Form_Group(null);
 	$group->addClass('ntpservers');
@@ -581,7 +582,7 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
-	// NTP servers - For this section we need to use Javascript hiding since there
+	// NetBIOS - For this section we need to use JavaScript hiding since there
 	// are nested toggles
 	$section->addInput(new Form_Checkbox(
 		'netbios_enable',
@@ -670,8 +671,31 @@ if ($act == "new" || $act == "edit"):
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	function dnsdomain_change() {
+		if ($('#dns_domain_enable').prop('checked')) {
+			hideClass('dnsdomain', false);
+		} else {
+			hideClass('dnsdomain', true);
+		}
+	}
 
-	// Hide/show that section, but have to also respect the wins_server_enable checkbox
+	function dnsservers_change() {
+		if ($('#dns_server_enable').prop('checked')) {
+			hideClass('dnsservers', false);
+		} else {
+			hideClass('dnsservers', true);
+		}
+	}
+
+	function ntpservers_change() {
+		if ($('#ntp_server_enable').prop('checked')) {
+			hideClass('ntpservers', false);
+		} else {
+			hideClass('ntpservers', true);
+		}
+	}
+
+	// Hide/show that section, but have to also respect the wins_server_enable and nbdd_server_enable checkboxes
 	function setNetbios() {
 		if ($('#netbios_enable').prop('checked')) {
 			hideInput('netbios_ntype', false);
@@ -692,6 +716,21 @@ events.push(function() {
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
+	 // On clicking DNS Default Domain
+	$('#dns_domain_enable').click(function () {
+		dnsdomain_change();
+	});
+
+	 // On clicking DNS Servers
+	$('#dns_server_enable').click(function () {
+		dnsservers_change();
+	});
+
+	 // On clicking NTP Servers
+	$('#ntp_server_enable').click(function () {
+		ntpservers_change();
+	});
+
 	// On clicking the netbios_enable checkbox
 	$('#netbios_enable').click(function () {
 		setNetbios();
@@ -705,6 +744,10 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setNetbios();
+	dnsdomain_change();
+	dnsservers_change();
+	ntpservers_change();
+
 });
 //]]>
 </script>

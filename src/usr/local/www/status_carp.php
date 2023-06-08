@@ -74,7 +74,7 @@ if ($_POST['disablecarp'] != "") {
 	init_config_arr(array('virtualip', 'vip'));
 	$viparr = &$config['virtualip']['vip'];
 	if ($status != 0) {
-		disable_carp();
+		enable_carp(false);
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
 				continue;

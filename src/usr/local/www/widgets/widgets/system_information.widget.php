@@ -70,7 +70,8 @@ if ($_REQUEST['getupdatestatus']) {
 
 	/* If $_REQUEST['getupdatestatus'] == 2, force update */
 	$system_version = get_system_pkg_version(false,
-	    ($_REQUEST['getupdatestatus'] == 1));
+		($_REQUEST['getupdatestatus'] == 1),
+		false /* get upgrades from other repos */);
 
 	if ($system_version === false) {
 		print(gettext("<i>Unable to check for updates</i>"));

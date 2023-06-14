@@ -385,11 +385,10 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 <?php
 	// Draw a selector to allow the user to select a different firmware branch
 	// If the selection is changed, the page will be reloaded and the new choice displayed.
-	if ($firmwareupdate):
-
+	elseif ($firmwareupdate):
 		// Check to see if any new repositories have become available. This data is cached and
 		// refreshed every 24 hours
-		update_repos();
+		$repos = update_repos();
 		$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
 		$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
 
@@ -411,6 +410,21 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 
 		$group->add($field);
 		print($group);
+
+		if (isset($repos['messages']) && count($repos['messages']) > 0) {
+			print('<div class="form-group">' .
+				'<label class="col-sm-2 control-label">' .
+					gettext("Messages") .
+				'</label>' .
+				'<div class="col-sm-10" id="netgate_messages">' 
+
+			);
+			foreach ($repos['messages'] as $message) {
+				print(gettext($message));
+			}
+			print('</div></div>');
+
+		}
 ?>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">

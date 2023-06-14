@@ -396,6 +396,8 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 	 */
 	if (!$installed_pkgs_only || !$remote_repo_usage_disabled) {
 		$did_search = true;
+		/* Update the repository access credentials. */
+		mwexec("/usr/local/sbin/{$g['product_name']}-repo-setup");
 		$search_rc = pkg_exec("search {$repo_param} " .
 		    "{$extra_param}-R --raw-format json-compact " .
 		    $pkgs, $search_out, $search_err);
@@ -1152,7 +1154,7 @@ function package_reinstall_all() {
 	if ($current_repo_path != $default_repo['path']) {
 		config_set_path('system/pkg_repo_conf_path', $default_repo['path']);
 		write_config( "Configured default pkg repo after restore");
-		pkg_switch_repo($default_repo['path']);
+		pkg_switch_repo($default_repo['path'], $default_repo['name']);
 	}
 
 	/* wait for internet connection */
@@ -1393,37 +1395,30 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 function pkg_list_repos() {
 	global $g;
 
-	$path = "/usr/local/share/{$g['product_name']}/pkg/repos";
-
-	$default_descr = @file_get_contents($path .
-	    "/{$g['product_name']}-repo.descr");
-
-	$default = array(
-	    'name' => 'Default',
-	    'path' => $path . "/{$g['product_name']}-repo.conf",
-	    'descr' => $default_descr
-	);
-
-	$result = array($default);
-
-	$conf_files = glob("{$path}/{$g['product_name']}-repo-*.conf");
-	foreach ($conf_files as $conf_file) {
-		$descr_file = preg_replace('/.conf$/', '.descr', $conf_file);
+	$repo_base = "{$g['pkg_repos_path']}/{$g['product_name']}-repo";
+	$result = array();
+	$name_files = glob("{$repo_base}-*.name");
+	foreach ($name_files as $name_file) {
+		$repo_name = file_get_contents($name_file);
+		if ($repo_name == false || strlen($repo_name) <= 1) {
+			continue;
+		}
+		$repo_name_base = "{$repo_base}-{$repo_name}";
+		$descr_file = "{$repo_name_base}.descr";
 		if (file_exists($descr_file)) {
-			$descr_content = file($descr_file);
-			$descr = chop($descr_content[0]);
+			$descr = file_get_contents($descr_file);
+			if ($descr == false) {
+				$descr = 'Unknown';
+			}
 		} else {
 			$descr = 'Unknown';
 		}
-		if (!preg_match('/-repo-(.*).conf/', $conf_file, $matches)) {
-			continue;
-		}
 		$entry = array(
-		    'name' => ucfirst(strtolower($matches[1])),
-		    'path' => $conf_file,
+		    'name' => $repo_name,
+		    'path' => "{$repo_name_base}.conf",
 		    'descr' => $descr
 		);
-		if (file_exists($conf_file . ".default")) {
+		if (file_exists("{$repo_name_base}.default")) {
 			$entry['default'] = true;
 		}
 		$result[] = $entry;
@@ -1475,65 +1470,49 @@ function pkg_get_repo_name($path) {
 	return $default;
 }
 
-/* Setup pkg.conf according current repo */
-function pkg_conf_setup($repo_path) {
-	global $g;
-
-	$pkg_conf_path = "/usr/local/etc/pkg.conf";
-	$conf = "/usr/local/etc/pkg/repos/{$g['product_name']}.conf";
-	if (!file_exists($conf)) {
-		return;
-	}
-
-	$real_conf = readlink($conf);
-
-	if (!$real_conf) {
-		return;
-	}
-
-	$abi_file = str_replace('.conf', '.abi', $real_conf);
-	$altabi_file = str_replace('.conf', '.altabi', $real_conf);
-
-	$pkg_conf = array();
-	if (file_exists($abi_file) && file_exists($altabi_file)) {
-		$abi = file_get_contents($abi_file);
-		$altabi = file_get_contents($altabi_file);
-
-		$pkg_conf = array(
-			"ABI={$abi}\n",
-			"ALTABI={$altabi}\n"
-		);
-	}
-
-	$auth_ca = "/etc/ssl/netgate-ca.pem";
-	$auth_cert = "/etc/ssl/pfSense-repo-custom.cert";
-	$auth_key = "/etc/ssl/pfSense-repo-custom.key";
-	if (strpos($repo_path, "{$g['product_name']}-repo-custom") &&
-	    file_exists($auth_ca) && file_exists($auth_cert) &&
-	    file_exists($auth_key)) {
-		$pkg_conf[] = "PKG_ENV {\n";
-		$pkg_conf[] = "\tSSL_CA_CERT_FILE=$auth_ca\n";
-		$pkg_conf[] = "\tSSL_CLIENT_CERT_FILE=$auth_cert\n";
-		$pkg_conf[] = "\tSSL_CLIENT_KEY_FILE=$auth_key\n";
-		$pkg_conf[] = "}\n";
-	}
-
-	file_put_contents($pkg_conf_path, $pkg_conf);
-}
-
 /* Switch between stable and devel repos */
-function pkg_switch_repo($path) {
-	global $g;
+function pkg_switch_repo($repo_path, $repo_name) {
+	global $g, $config;
 
 	safe_mkdir("/usr/local/etc/pkg/repos");
 	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
-	@symlink($path, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
+	$repo = "{$repo_path}/{$g['product_name']}-repo-{$repo_name}.conf";
+	@symlink($repo, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
 
-	pkg_conf_setup($path);
+	/* Do not fetch new settings, only setup the repo pkg.conf. */
+	mwexec("/usr/local/sbin/{$g['product_name']}-repo-setup -U");
 
 	/* Update pfSense_version cache */
 	mwexec_bg("/etc/rc.update_pkg_metadata now");
 	return;
+}
+
+/*
+ * Update the repository settings.
+ */
+function update_repos() {
+
+	/* Load the old custom repo settings. */
+	update_custom_repos();
+
+	$rc = -1;
+	$out = NULL;
+	$product_name = g_get('product_name');
+
+	$res = exec("/usr/local/sbin/{$product_name}-repoc", $out, $rc);
+	if ($res === false || $out === NULL) {
+		return (array( "error" => 1,
+		    "messages" => array("We could not connect to Netgate servers. Please try again later.")));
+	}
+	$rtrn = array( "error" => $rc, "messages" => array() );
+	if (isset($out) && is_array($out) &&
+	    count($out) > 1 && $out[0] === "Messages:") {
+		for ($i = 1; $i < count($out); $i++) {
+			$rtrn['messages'][] = $out[$i];
+		}
+	}
+
+	return ($rtrn);
 }
 
 $FQDN = "https://ews.netgate.com/pfupdate";
@@ -1549,7 +1528,7 @@ $cafile = "/etc/ssl/netgate-ca.pem";
  * migration to another update repository should the existing one become
  * unavailable
  */
-function update_repos() {
+function update_custom_repos() {
 	global $g, $cafile, $cafilesrc, $idfile, $FQDN;
 
 	if (!file_exists($idfile) || !function_exists('curl_version')) {

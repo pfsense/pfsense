@@ -385,7 +385,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 <?php
 	// Draw a selector to allow the user to select a different firmware branch
 	// If the selection is changed, the page will be reloaded and the new choice displayed.
-	elseif ($firmwareupdate):
+	if ($firmwareupdate):
 		// Check to see if any new repositories have become available. This data is cached and
 		// refreshed every 24 hours
 		$repos = update_repos();

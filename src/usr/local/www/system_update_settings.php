@@ -126,8 +126,7 @@ display_top_tabs($tab_array);
 // Check to see if any new repositories have become available. This data is cached and
 // refreshed every 24 hours
 $repos = update_repos();
-$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
-$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
+$helpfilename = pkg_get_repo_help();
 
 $form = new Form();
 

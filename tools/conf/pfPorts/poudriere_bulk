@@ -56,6 +56,7 @@ net/%%PRODUCT_NAME%%-pkg-siproxd
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/%%PRODUCT_NAME%%-pkg-udpbroadcastrelay
 net/%%PRODUCT_NAME%%-pkg-WireGuard
+net/dhcpcd
 net/frr8
 net/frr8-pythontools
 net/hping3

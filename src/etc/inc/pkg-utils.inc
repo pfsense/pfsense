@@ -1470,6 +1470,17 @@ function pkg_get_repo_name($path) {
 	return $default;
 }
 
+/* Find the current or default package help file. */
+function pkg_get_repo_help() {
+	global $g;
+
+	$repo_conf_path = config_get_path('system/pkg_repo_conf_path');
+	/* Get the current or the default repo name. */
+	$repo_name = pkg_get_repo_name($repo_conf_path);
+	$repo_base = "{$g['pkg_repos_path']}/{$g['product_name']}-repo";
+	return "{$repo_base}-{$repo_name}.help";
+}
+
 /* Switch between stable and devel repos */
 function pkg_switch_repo($repo_path, $repo_name) {
 	global $g, $config;

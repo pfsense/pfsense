@@ -405,7 +405,7 @@ $section->addInput(new Form_Select(
 	'TTL for Host Cache Entries',
 	$pconfig['infra_host_ttl'],
 	array_combine(array("60", "120", "300", "600", "900"), array("1 " . $mnt, "2  " . $mnt, "5  " . $mnt, "10 " . $mnt, "15 " . $mnt))
-))->setHelp('Time to Live, in seconds, for entries in the infrastructure host cache. The infrastructure host cache contains round trip timing, lameness, and EDNS support information for DNS servers. The default value is 15 minutes.');
+))->setHelp('Time to Live duration for entries in the infrastructure host cache. The infrastructure host cache contains round trip timing, lameness, and EDNS support information for DNS servers. The default value is 15 minutes.');
 
 $section->addInput(new Form_Select(
 	'infra_cache_numhosts',

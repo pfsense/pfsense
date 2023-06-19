@@ -143,6 +143,10 @@ function led_exists($led) {
  * Sweep across three LEDs in a K.I.T.T.-like way.
  */
 function led_kitt() {
+	if (led_count() != 3) {
+		/* Wrong LED count for this to work, skip. */
+		return;
+	}
 	led_pattern(1, 'AaaaaA');
 	led_pattern(2, 'aAaaAa');
 	led_pattern(3, 'aaAAaa');
@@ -152,6 +156,10 @@ function led_kitt() {
  * Custom pattern for assigning interfaces
  */
 function led_assigninterfaces() {
+	if (led_count() != 3) {
+		/* Wrong LED count for this to work, skip. */
+		return;
+	}
 	led_pattern(1, 'AaaAaaaaaaaaaaaa');
 	led_pattern(2, 'aaaaaAaaAaaaaaaa');
 	led_pattern(3, 'aaaaaaaaaaAaaAaa');
@@ -161,6 +169,10 @@ function led_assigninterfaces() {
  * Return the three LEDs to a standard setup (1=on, 2 and 3 = off)
  */
 function led_normalize() {
+	if (led_count() != 3) {
+		/* Wrong LED count for this to work, skip. */
+		return;
+	}
 	led_on(1);
 	led_off(2);
 	led_off(3);
@@ -170,6 +182,10 @@ function led_normalize() {
  * Shut off ALL LEDs.
  */
 function led_alloff() {
+	if (led_count() != 3) {
+		/* Wrong LED count for this to work, skip. */
+		return;
+	}
 	led_off(1);
 	led_off(2);
 	led_off(3);

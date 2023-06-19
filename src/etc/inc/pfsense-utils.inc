@@ -3467,18 +3467,19 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 	global $g;
 	$results = array();
 	foreach (config_get_path('installedpackages/package') as $package) {
-		if (is_array($package['plugins']['item'])) {
-			foreach ($package['plugins']['item'] as $plugin) {
-				if ($plugin['type'] == $plugin_type) {
-					if (file_exists($package['include_file'])) {
-						require_once($package['include_file']);
-					} else {
-						continue;
-					}
-					$pkgname = substr(reverse_strrchr($package['configurationfile'], "."), 0, -1);
-					$plugin_function = $pkgname . '_'. $plugin_type;
-					$results[$pkgname] = call_user_func($plugin_function, $plugin_params);
+		foreach (array_get_path($package, 'plugins/item', []) as $plugin) {
+			if (!is_array($plugin) || empty($plugin)) {
+				continue;
+			}
+			if ($plugin['type'] == $plugin_type) {
+				if (file_exists($package['include_file'])) {
+					require_once($package['include_file']);
+				} else {
+					continue;
 				}
+				$pkgname = substr(reverse_strrchr($package['configurationfile'], "."), 0, -1);
+				$plugin_function = $pkgname . '_'. $plugin_type;
+				$results[$pkgname] = call_user_func($plugin_function, $plugin_params);
 			}
 		}
 	}

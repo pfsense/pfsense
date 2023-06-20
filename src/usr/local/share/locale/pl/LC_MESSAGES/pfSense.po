@@ -23503,7 +23503,7 @@ msgid ""
 "Alias, or a %4$sVirtual IP%5$s address."
 msgstr ""
 "Połączenia pasujące do tej reguły będą mapowane do określonego %1$s Addresu "
-"%2$s.%3$sTen%1$sAddres%2$s może być interfejsem, aliasem hosta lub, %4$ "
+"%2$s.%3$sTen%1$sAddres%2$s może być interfejsem, aliasem hosta lub, %4$s "
 "Adresem Wirtualnego adresu IP %5$s."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:574

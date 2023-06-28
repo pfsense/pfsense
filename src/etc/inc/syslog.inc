@@ -517,64 +517,62 @@ EOD;
 	file_put_contents("{$g['etc_path']}/newsyslog.conf", $mainnewsyslogconf);
 	safe_mkdir("{$g['varetc_path']}/newsyslog.conf.d");
 
-	if (!empty($syslogcfg)) {
-		$log_size = config_get_path('syslog/logfilesize', g_get('default_log_size'));
-		$log_size = ($log_size < (2**32)/2) ? $log_size : g_get('default_log_size');
-		$log_size = (int)$log_size/1024;
+	$log_size = config_get_path('syslog/logfilesize', g_get('default_log_size'));
+	$log_size = ($log_size < (2**32)/2) ? $log_size : g_get('default_log_size');
+	$log_size = (int)$log_size/1024;
 
-		$rotatecount = config_get_path('syslog/rotatecount', 7);
-		$rotatecount = is_numericint($rotatecount) ? $rotatecount : 7;
+	$rotatecount = config_get_path('syslog/rotatecount', 7);
+	$rotatecount = is_numericint($rotatecount) ? $rotatecount : 7;
 
-		$compression_flag = $system_log_compression_types[system_log_get_compression()]['flag'];
+	$compression_flag = $system_log_compression_types[system_log_get_compression()]['flag'];
 
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
-		$newsyslogconf = <<<EOD
+	$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
+	$newsyslogconf = <<<EOD
 /var/log/userlog		root:wheel	600	3	{$log_size}	*	B
 /var/log/utx.log		root:wheel	644	3	{$log_size}	*	B
 
 EOD;
 
-		foreach (config_get_path('installedpackages/package', []) as $key => $package) {
-			if (!empty(config_get_path("installedpackages/package/{$key}/logging", [])) &&
-			    !empty(config_get_path("installedpackages/package/{$key}/logging/logfilename"))) {
-				$pkg_log_filename = config_get_path("installedpackages/package/{$key}/logging/logfilename");
-				$pkg_log_owner = config_get_path("installedpackages/package/{$key}/logging/logowner", 'root:wheel');
-				$pkg_log_mode = config_get_path("installedpackages/package/{$key}/logging/logmode", '600');
-				$pkg_rotate_count = (int) config_get_path("installedpackages/package/{$key}/logging/rotatecount", $rotatecount);
-				$pkg_log_size = (int) config_get_path("installedpackages/package/{$key}/logging/logfilesize", 0);
-				$pkg_log_size = ($pkg_log_size > 0) ? $pkg_log_size / 1024 : $log_size;
-				$pkg_rotate_time = config_get_path("installedpackages/package/{$key}/logging/rotatetime", '*');
-				$pkg_extra_flags = config_get_path("installedpackages/package/{$key}/logging/rotateflags", '');
-				$pkg_pidcmd = config_get_path("installedpackages/package/{$key}/logging/pidcmd", '');
-				$pkg_signal = config_get_path("installedpackages/package/{$key}/logging/signal", '');
+	foreach (config_get_path('installedpackages/package', []) as $key => $package) {
+		if (!empty(config_get_path("installedpackages/package/{$key}/logging", [])) &&
+		    !empty(config_get_path("installedpackages/package/{$key}/logging/logfilename"))) {
+			$pkg_log_filename = config_get_path("installedpackages/package/{$key}/logging/logfilename");
+			$pkg_log_owner = config_get_path("installedpackages/package/{$key}/logging/logowner", 'root:wheel');
+			$pkg_log_mode = config_get_path("installedpackages/package/{$key}/logging/logmode", '600');
+			$pkg_rotate_count = (int) config_get_path("installedpackages/package/{$key}/logging/rotatecount", $rotatecount);
+			$pkg_log_size = (int) config_get_path("installedpackages/package/{$key}/logging/logfilesize", 0);
+			$pkg_log_size = ($pkg_log_size > 0) ? $pkg_log_size / 1024 : $log_size;
+			$pkg_rotate_time = config_get_path("installedpackages/package/{$key}/logging/rotatetime", '*');
+			$pkg_extra_flags = config_get_path("installedpackages/package/{$key}/logging/rotateflags", '');
+			$pkg_pidcmd = config_get_path("installedpackages/package/{$key}/logging/pidcmd", '');
+			$pkg_signal = config_get_path("installedpackages/package/{$key}/logging/signal", '');
 
-				$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
-				$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$pkg_log_filename}",
-											$pkg_log_owner,
-											$pkg_log_mode,
-											$pkg_rotate_count,
-											$pkg_log_size,
-											$pkg_rotate_time,
-											"{$compression_flag}C{$pkg_extra_flags}",
-											$pkg_pidcmd,
-											$pkg_signal);
-				@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/" . basename($pkg_log_filename) . ".conf", $pkgnewsyslogconf);
-			}
+			$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
+			$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$pkg_log_filename}",
+										$pkg_log_owner,
+										$pkg_log_mode,
+										$pkg_rotate_count,
+										$pkg_log_size,
+										$pkg_rotate_time,
+										"{$compression_flag}C{$pkg_extra_flags}",
+										$pkg_pidcmd,
+										$pkg_signal);
+			@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/" . basename($pkg_log_filename) . ".conf", $pkgnewsyslogconf);
 		}
-
-		foreach($system_log_files as $logfile) {
-			$local_log_size = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/logfilesize", 0);
-			$local_log_size = ($local_log_size > 0) ? $local_log_size / 1024 : $log_size;
-			$local_rotate_count = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/rotatecount", $rotatecount);
-
-			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 'root:wheel', 600, $local_rotate_count, $local_log_size, '*', "{$compression_flag}C");
-		}
-
-		if (!@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/pfSense.conf", $newsyslogconf)) {
-			printf(gettext("Error: cannot open syslog config file in system_log_rotation_setup().%s"), "\n");
-		}
-		unset($newsyslogconf);
 	}
+
+	foreach($system_log_files as $logfile) {
+		$local_log_size = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/logfilesize", 0);
+		$local_log_size = ($local_log_size > 0) ? $local_log_size / 1024 : $log_size;
+		$local_rotate_count = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/rotatecount", $rotatecount);
+
+		$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 'root:wheel', 600, $local_rotate_count, $local_log_size, '*', "{$compression_flag}C");
+	}
+
+	if (!@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/pfSense.conf", $newsyslogconf)) {
+		printf(gettext("Error: cannot open syslog config file in system_log_rotation_setup().%s"), "\n");
+	}
+	unset($newsyslogconf);
 }
 
 function system_log_rotation_make_line($filename, $owner = 'root:wheel', $mode='644', $count=7, $size=1000, $time='*', $flags='C', $pidcmd = '', $signal = '') {

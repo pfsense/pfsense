@@ -55,6 +55,7 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['sshdkeyonly'] = config_get_path('system/ssh/sshdkeyonly');
 	$pconfig['sshdagentforwarding'] = config_path_enabled('system/ssh', 'sshdagentforwarding');
 	$pconfig['quietlogin'] = config_path_enabled('system/webgui', 'quietlogin');
+	$pconfig['roaming'] = (config_get_path('system/webgui/roaming', 'enabled') == 'enabled') ? true : false;
 	$pconfig['sshguard_threshold'] = config_get_path('system/sshguard_threshold', '');
 	$pconfig['sshguard_blocktime'] = config_get_path('system/sshguard_blocktime', '');
 	$pconfig['sshguard_detection_time'] = config_get_path('system/sshguard_detection_time', '');
@@ -214,6 +215,12 @@ function doAdvancedAdminPOST($post, $json = false) {
 			config_set_path('system/webgui/quietlogin', true);
 		} else {
 			config_del_path('system/webgui/quietlogin');
+		}
+
+		if ($post['roaming'] == "yes") {
+			config_set_path('system/webgui/roaming', 'enabled');
+		} else {
+			config_set_path('system/webgui/roaming', 'disabled');
 		}
 
 		if ($post['disableconsolemenu'] == "yes") {

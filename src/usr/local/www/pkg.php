@@ -94,13 +94,13 @@ $config_path = sprintf('installedpackages/%s/config', xml_safe_fieldname($pkg['n
 
 $evaledvar = config_get_path($config_path, []);
 
-if ($_REQUEST['act'] == "update") {
+if ($_POST['act'] == "update") {
 
-	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_REQUEST['ids'] !="") {
+	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_POST['ids'] !="") {
 		// get current values
 		$current_values=config_get_path("installedpackages/{$pkg['name']}/config");
 		// get updated ids
-		parse_str($_REQUEST['ids'], $update_list);
+		parse_str($_POST['ids'], $update_list);
 		// sort ids to know what to change
 		// useful to do not lose data when using sorting and paging
 		$sort_list=$update_list['ids'];
@@ -271,7 +271,7 @@ function save_changes_to_xml(xml) {
 	var strloading="<?=gettext('Saving changes...')?>";
 	if (confirm("<?=gettext("Confirmation Required to save changes.")?>")) {
 		$.ajax({
-			type: 'get',
+			type: 'post',
 			cache: false,
 			url: "<?=$_SERVER['SCRIPT_NAME']?>",
 			data: {xml:'<?=$xml?>', act:'update', ids: ids},

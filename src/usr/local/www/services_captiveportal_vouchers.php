@@ -42,7 +42,7 @@ require_once("voucher.inc");
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if ($_REQUEST['generatekey']) {
+if ($_POST['generatekey']) {
 	include_once("phpseclib/Math/BigInteger.php");
 	include_once("phpseclib/Crypt/Hash.php");
 	include_once("phpseclib/Crypt/RSA.php");
@@ -477,8 +477,11 @@ events.push(function() {
 	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new keys");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
-			type: 'get',
-			url: 'services_captiveportal_vouchers.php?generatekey=true',
+			type: 'post',
+			url: 'services_captiveportal_vouchers.php',
+			data: {
+				generatekey:           true,
+			},
 			dataType: 'json',
 			success: function(data) {
 				$('#publickey').val(data.public.replace(/\\n/g, '\n'));

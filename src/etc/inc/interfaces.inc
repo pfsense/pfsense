@@ -6824,7 +6824,7 @@ function is_altq_capable($int) {
 	$capable = array("ae", "age", "alc", "ale", "an", "aue", "axe", "bce",
 			"bfe", "bge", "bnxt", "bridge", "bxe", "cas", "cpsw", "dc", "de",
 			"ed", "em", "ep", "epair", "et", "fxp", "gem", "hme", "hn",
-			"igb", "igc", "ix", "jme", "l2tp", "le", "lem", "msk", "mxge", "my",
+			"igb", "igc", "ix", "ixv", "jme", "l2tp", "le", "lem", "msk", "mxge", "my",
 			"ndis", "nfe", "ng", "nge", "npe", "nve", "ql", "ovpnc",
 			"ovpns", "ppp", "pppoe", "pptp", "re", "rl", "sf", "sge",
 			"sis", "sk", "ste", "stge", "ti", "tun", "txp", "udav",
@@ -7560,5 +7560,42 @@ function get_interface_addresses($interface) {
 	unset($ifaddrs['addrs6']);
 
 	return($ifaddrs);
+}
+
+/**
+ * Returns all interface addresses, including IPv6 LL addresses.
+ * XXX: Review/refactor functions used to retrieve interfaces addresses.
+ */
+function get_interface_addresses_all(string $interface): array {
+	$addresses = [];
+
+	// Get primary IPv4/6 addresses
+	$addresses_primary = get_interface_addresses($interface);
+	if (!empty($addresses_primary['ipaddr'])) {
+		$addresses[] = $addresses_primary['ipaddr'];
+	}
+	if (!empty($addresses_primary['ipaddr6'])) {
+		$addresses[] = $addresses_primary['ipaddr6'];
+	}
+
+	// Get IPv6 link-local address
+	$addresses_linklocal = find_interface_ipv6_ll($interface);
+	if (!empty($addresses_linklocal)) {
+		$addresses_linklocal_pos = strpos($addresses_linklocal, '%');
+		if ($addresses_linklocal_pos !== false) {
+			$addresses_linklocal = substr($addresses_linklocal, 0, $addresses_linklocal_pos);
+		}
+		$addresses[] = $addresses_linklocal;
+	}
+
+	// Get VIPs
+	foreach (array_keys(get_configured_vip_list()) as $viface) {
+		$vip = get_configured_vip($viface);
+		if ($vip['interface'] == $interface && !empty($vip['subnet'])) {
+			$addresses[] = $vip['subnet'];
+		}
+	}
+
+	return $addresses;
 }
 ?>

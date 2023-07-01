@@ -38,11 +38,11 @@ require_once("shortcuts.inc");
 require_once("service-utils.inc");
 
 /* Handle AJAX */
-if ($_REQUEST['action']) {
-	if ($_REQUEST['action'] == "kill") {
-		$port  = $_REQUEST['port'];
-		$remipp  = $_REQUEST['remipp'];
-		$client_id  = $_REQUEST['client_id'];
+if ($_POST['action']) {
+	if ($_POST['action'] == "kill") {
+		$port  = $_POST['port'];
+		$remipp  = $_POST['remipp'];
+		$client_id  = $_POST['client_id'];
 		if (!empty($port) and !empty($remipp)) {
 			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
@@ -83,9 +83,17 @@ include("head.inc"); ?>
 		$('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 
 		$.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>" +
-				"?action=kill&port=" + mport + "&remipp=" + remipp + "&client_id=" + client_id,
-			{ type: "get", complete: killComplete }
+			"<?=$_SERVER['SCRIPT_NAME'];?>",
+			{
+				type: "post",
+				data: {
+					action:           "kill",
+					port:		  mport,
+					remipp:		  remipp,
+					client_id:	  client_id
+				},
+				complete: killComplete
+			}
 		);
 	}
 

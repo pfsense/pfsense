@@ -38,8 +38,10 @@ require_once("gmirror.inc");
 //<![CDATA[
 function gmirrorStatusUpdateFromServer() {
 	$.ajax({
-		type: 'get',
+		type: 'post',
 		url: '/widgets/widgets/gmirror_status.widget.php',
+		// Need to send some dummy value or else the CSRF token will not be sent either.
+		data: { dummyvalue: true },
 		dataType: 'html',
 		dataFilter: function(raw){
 			// We reload the entire widget, strip this block of javascript from it

@@ -216,6 +216,8 @@ function system_resolvconf_generate($dynupdate = false) {
 	// set up or tear down static routes for DNS servers
 	$dnscounter = 1;
 	$dnsgw = "dns{$dnscounter}gw";
+	$exempt_addresses = array_unique(array_merge(get_interface_addresses_all('lo0'),
+	    get_configured_ip_addresses(), get_configured_ipv6_addresses()));
 	while (!empty(config_get_path("system/{$dnsgw}"))) {
 		/* setup static routes for dns servers */
 		$gwname = config_get_path("system/{$dnsgw}");		unset($gatewayip);
@@ -227,14 +229,16 @@ function system_resolvconf_generate($dynupdate = false) {
 		/* dns server array starts at 0 */
 		$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
 
-		/* specify IP protocol version for correct add/del,
-		 * see https://redmine.pfsense.org/issues/11578 */
-		if (is_ipaddrv4($dnsserver)) {
-			$ipprotocol = 'inet';
-		} else {
-			$ipprotocol = 'inet6';
-		}
-		if (!empty($dnsserver)) {
+		/* Only modify routes for non-interface addresses;
+		 * see https://redmine.pfsense.org/issues/14288 */
+		if (!empty($dnsserver) && !in_array($dnsserver, $exempt_addresses)) {
+			// specify IP protocol version for correct add/del
+			if (is_ipaddrv4($dnsserver)) {
+				$ipprotocol = 'inet';
+			} else {
+				$ipprotocol = 'inet6';
+			}
+
 			if (is_ipaddr($gatewayip)) {
 				route_add_or_change($dnsserver, $gatewayip, '', '', $ipprotocol);
 			} else {

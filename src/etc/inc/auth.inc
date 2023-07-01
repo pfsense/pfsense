@@ -2103,6 +2103,12 @@ function session_auth() {
 		return false;
 	}
 
+	// Detect IP change
+	if ((!isset($_POST['login'])) && (config_get_path('system/webgui/roaming') == 'disabled') && (!empty($_SESSION['REMOTE_ADDR']) && $_SESSION['REMOTE_ADDR'] != $_SERVER['REMOTE_ADDR'])) {
+		phpsession_end();
+		return false;
+	}
+
 	/* Validate incoming login request */
 	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
 	if (isset($_POST['login']) && !empty($_POST['usernamefld'])) {
@@ -2126,6 +2132,7 @@ function session_auth() {
 			$_SESSION['user_radius_attributes'] = $attributes;
 			$_SESSION['last_access'] = time();
 			$_SESSION['protocol'] = config_get_path('system/webgui/protocol');
+			$_SESSION['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
 			phpsession_end(true);
 			log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()));
 			if (isset($_POST['postafterlogin'])) {

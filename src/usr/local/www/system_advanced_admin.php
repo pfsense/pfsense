@@ -178,6 +178,14 @@ $section->addInput(new Form_Checkbox(
 	'be logged as a lower non-emergency level. Note: The console bell ' .
 	'behavior can be controlled independently on the Notifications tab.');
 
+$section->addInput(new Form_Checkbox(
+	'roaming',
+	'Roaming',
+	'Allow GUI administrator client IP address to change during a login session',
+	$pconfig['roaming']
+))->setHelp('When this is checked, the login session to the webConfigurator remains '.
+	'valid if the client source IP address changes.');
+
 if ($pconfig['interfaces_lan']) {
 	$lockout_interface = "LAN";
 } else {

@@ -56,7 +56,7 @@ if ($_POST) {
 	foreach ($repos as $repo) {
 		if ($repo['name'] == $_POST['fwbranch']) {
 			config_set_path('system/pkg_repo_conf_path', $repo['path']);
-			pkg_switch_repo($repo['path']);
+			pkg_switch_repo($repo['path'], $repo['name']);
 			break;
 		}
 	}
@@ -125,9 +125,8 @@ display_top_tabs($tab_array);
 
 // Check to see if any new repositories have become available. This data is cached and
 // refreshed every 24 hours
-update_repos();
-$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
-$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
+$repos = update_repos();
+$helpfilename = pkg_get_repo_help();
 
 $form = new Form();
 

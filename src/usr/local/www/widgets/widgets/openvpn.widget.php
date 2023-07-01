@@ -283,11 +283,11 @@ if (!function_exists('printPanel')) {
 }
 
 /* Handle AJAX */
-if ($_GET['action']) {
-	if ($_GET['action'] == "kill") {
-		$port = $_GET['port'];
-		$remipp = $_GET['remipp'];
-		$client_id  = $_GET['client_id'];
+if ($_POST['action']) {
+	if ($_POST['action'] == "kill") {
+		$port = $_POST['port'];
+		$remipp = $_POST['remipp'];
+		$client_id  = $_POST['client_id'];
 		if (!empty($port) and !empty($remipp)) {
 			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
@@ -409,9 +409,17 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 	function killClient(mport, remipp, client_id) {
 
 		$.ajax(
-			"widgets/widgets/openvpn.widget.php" +
-				"?action=kill&port=" + mport + "&remipp=" + remipp + "&client_id=" + client_id,
-			{ type: "get", complete: killComplete }
+			"widgets/widgets/openvpn.widget.php",
+			{
+				type: "post",
+				data: {
+					action:           "kill",
+					port:             mport,
+					remipp:           remipp,
+					client_id:        client_id
+				},
+				complete: killComplete
+			}
 		);
 	}
 

@@ -141,6 +141,8 @@ if (file_exists($flavor_file)) {
 
 $g['openvpn_base'] = g_get('varetc_path') . '/openvpn';
 
+$g['pkg_repos_path'] = '/usr/local/etc/' . $g['product_name'] . '/pkg/repos';
+
 /* Default sysctls */
 global $sysctls;
 $sysctls = [

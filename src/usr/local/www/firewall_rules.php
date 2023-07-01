@@ -147,10 +147,11 @@ $ifdescs = get_configured_interface_with_descr();
 $iflist = filter_get_interface_list();
 
 if (!$if || !isset($iflist[$if])) {
-	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {
-		$if = "wan";
-	} else {
-		$if = "FloatingRules";
+	if ($if != 'any' &&
+	    $if != 'EthernetRules' &&
+	    $if != 'FloatingRules') {
+		/* default to the first configured interface */
+		$if = array_key_first($ifdescs);
 	}
 }
 
@@ -337,7 +338,7 @@ if (isset($_POST['del_x'])) {
 	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 	exit;
 } elseif (isset($_POST['dstif']) && !empty($_POST['dstif']) &&
-    isset($iflist[$_POST['dstif']]) && have_ruleint_access($_POST['dstif']) && 
+    isset($iflist[$_POST['dstif']]) && have_ruleint_access($_POST['dstif']) &&
     is_array($_POST['rule']) && count($_POST['rule'])) {
 	$confiflist = get_configured_interface_list();
 	/* Use this as a starting point and increase as we go, otherwise if the
@@ -1065,7 +1066,7 @@ $modal->addInput(new Form_Checkbox(
 	'Enable Interface Address/Net conversion',
 	false
 ))->setHelp('Convert source Interface Address/Net definitions to the destination Interface Address/Net.%1$s' .
-	    'For example: LAN Address -> OPT1 Address, or LAN net -> OPT1 net.%1$s' . 
+	    'For example: LAN Address -> OPT1 Address, or LAN net -> OPT1 net.%1$s' .
 	    'Interface groups and some special interfaces (IPsec, OpenVPN), do not support this feature.', '<br />');
 $btncopyrules = new Form_Button(
 	'copyr',

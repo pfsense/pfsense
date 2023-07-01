@@ -31,11 +31,11 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent4
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent5
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent6
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent62
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent64
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy4
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy5
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy6
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy62
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy64
 net-mgmt/dhcp_probe
 net-mgmt/iprange
 net-mgmt/net-snmp
@@ -56,6 +56,7 @@ net/%%PRODUCT_NAME%%-pkg-siproxd
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/%%PRODUCT_NAME%%-pkg-udpbroadcastrelay
 net/%%PRODUCT_NAME%%-pkg-WireGuard
+net/dhcpcd
 net/frr8
 net/frr8-pythontools
 net/hping3

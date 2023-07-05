@@ -1072,16 +1072,16 @@ function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	if (is_ipaddrv6($gre['remote-addr'])) {
-		mwexec("/sbin/ifconfig {$greif} inet6 tunnel {$realifip6} " . escapeshellarg($gre['remote-addr']));
+		mwexec("/sbin/ifconfig " . escapeshellarg($greif) . " inet6 tunnel " . escapeshellarg($realifip6) . " " . escapeshellarg($gre['remote-addr']));
 	} else {
-		mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
+		mwexec("/sbin/ifconfig " . escapeshellarg($greif) . " tunnel " . escapeshellarg($realifip) . " " . escapeshellarg($gre['remote-addr']));
 	}
 	if (in_array($tunnel_type, array('v4', 'v4v6'))) {
-		mwexec("/sbin/ifconfig {$greif} " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
+		mwexec("/sbin/ifconfig " . escapeshellarg($greif) . " " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	}
 	if (in_array($tunnel_type, array('v6', 'v4v6'))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
-		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr6']) . " " . escapeshellarg($gre['tunnel-remote-addr6']) . " prefixlen 128");
+		mwexec("/sbin/ifconfig " . escapeshellarg($greif) . " inet6 " . escapeshellarg($gre['tunnel-local-addr6']) . " " . escapeshellarg($gre['tunnel-remote-addr6']) . " prefixlen 128");
 	}
 
 	$parentif = get_real_interface($gre['if']);
@@ -1227,16 +1227,16 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 
 	/* Do not change the order here for more see gif(4) NOTES section. */
 	if (is_ipaddrv6($gif['remote-addr'])) {
-		mwexec("/sbin/ifconfig {$gifif} inet6 tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
+		mwexec("/sbin/ifconfig " . escapeshellarg($gifif) . " inet6 tunnel " . escapeshellarg($realifip) . " " . escapeshellarg($gif['remote-addr']));
 	} else {
-		mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
+		mwexec("/sbin/ifconfig " . escapeshellarg($gifif) . " tunnel " . escapeshellarg($realifip) . " " . escapeshellarg($gif['remote-addr']));
 	}
 	if ((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
 		//mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
-		mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen 128");
+		mwexec("/sbin/ifconfig " . escapeshellarg($gifif) . " inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen 128");
 	} else {
-		mwexec("/sbin/ifconfig {$gifif} " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
+		mwexec("/sbin/ifconfig " . escapeshellarg($gifif) . " " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	}
 	if (isset($gif['link1'])) {
 		pfSense_interface_flags($gifif, IFF_LINK1);
@@ -1257,7 +1257,7 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 		}
 		if (is_numericint($gifmtu)) {
 			if ($gifmtu != $currentgifmtu) {
-				mwexec("/sbin/ifconfig {$gifif} mtu {$gifmtu}");
+				mwexec("/sbin/ifconfig " . escapeshellarg($gifif) . " mtu {$gifmtu}");
 			}
 		}
 	} else {

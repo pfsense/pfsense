@@ -169,10 +169,20 @@ if ($_POST['save']) {
 		if (isset($_POST['link1']) && $_POST['link1']) {
 			$gre['link1'] = '';
 		}
-		$gre['greif'] = $_POST['greif'];
 
-		$gre['greif'] = interface_gre_configure($gre);
-		if ($gre['greif'] == "" || !stristr($gre['greif'], "gre")) {
+		if (empty($_POST['greif']) ||
+		    preg_match("/^gre[0-9]+$/", $_POST['greif'])) {
+			/* Attempt initial configuration of the GRE if the
+			 * submitted interface is empty or looks like a GRE
+			 * interface. */
+			$gre['greif'] = $_POST['greif'];
+			$gre['greif'] = interface_gre_configure($gre);
+		} else {
+			$input_errors[] = gettext("Invalid GRE interface.");
+		}
+
+		if (empty($gre['greif']) ||
+		    !preg_match("/^gre[0-9]+$/", $gre['greif'])) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 			if (isset($id) && $a_gres[$id]) {

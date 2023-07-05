@@ -120,10 +120,20 @@ if ($_POST['save']) {
 		if (isset($_POST['link2'])) {
 			$gif['link2'] = '';
 		}
-		$gif['gifif'] = $_POST['gifif'];
-		$gif['gifif'] = interface_gif_configure($gif);
 
-		if ($gif['gifif'] == "" || !stristr($gif['gifif'], "gif")) {
+		if (empty($_POST['gifif']) ||
+		    preg_match("/^gif[0-9]+$/", $_POST['gifif'])) {
+			/* Attempt initial configuration of the GIF if the
+			 * submitted interface is empty or looks like a GIF
+			 * interface. */
+			$gif['gifif'] = $_POST['gifif'];
+			$gif['gifif'] = interface_gif_configure($gif);
+		} else {
+			$input_errors[] = gettext("Invalid GIF interface.");
+		}
+
+		if (empty($gif['gifif']) ||
+		    !preg_match("/^gif[0-9]+$/", $gif['gifif'])) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 			if (isset($id) && $a_gifs[$id]) {

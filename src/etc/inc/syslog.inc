@@ -562,9 +562,9 @@ EOD;
 	}
 
 	foreach($system_log_files as $logfile) {
-		$local_log_size = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/logfilesize", 0);
+		$local_log_size = (int) config_get_path("syslog/" . basename($logfile, '.log') . "_settings/logfilesize", 0);
 		$local_log_size = ($local_log_size > 0) ? $local_log_size / 1024 : $log_size;
-		$local_rotate_count = (int) config_get_path("syslog/" . basename($logfile, '.log') . "/rotatecount", $rotatecount);
+		$local_rotate_count = (int) config_get_path("syslog/" . basename($logfile, '.log') . "_settings/rotatecount", $rotatecount);
 
 		$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 'root:wheel', 600, $local_rotate_count, $local_log_size, '*', "{$compression_flag}C");
 	}

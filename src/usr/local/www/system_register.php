@@ -31,6 +31,7 @@
 ##|*MATCH=system_register.php*
 ##|-PRIV
 
+$pgtitle = array(gettext("System"), gettext("Register"));
 require_once("guiconfig.inc");
 require_once("system_register.inc");
 

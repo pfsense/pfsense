@@ -7134,11 +7134,11 @@ function interfaces_staticarp_configure($if) {
 		echo "interfaces_staticarp_configure($if) being called $mt\n";
 	}
 
-	$ifcfg = config_get_path("interfaces/{$if}");
-
-	if (!$ifcfg['if'] || !$ifcfg['enable']) {
+	if (!config_path_enabled("interfaces/{$if}")) {
 		return 0;
 	}
+
+	$ifcfg = config_get_path("interfaces/{$if}");
 
 	/* Enable staticarp, if enabled */
 	$staticarp = config_get_path("dhcpd/{$if}/staticarp");

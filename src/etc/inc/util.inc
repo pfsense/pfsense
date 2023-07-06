@@ -1432,6 +1432,22 @@ function build_vip_list($fif, $family = "all") {
 			if (get_vip_descr($address)) {
 				$list[$vip] .= " (". get_vip_descr($address) .")";
 			}
+		} else {
+			/**
+			 * additional check necessary: Alias-on-CARP VIPs return a "_vip<id>" string
+			 * that needs to be resolved via an additional check to see if that VIP should
+			 * be displayed here or skipped, as the parent isn't configured on this interface
+			 */
+
+			$parentif = get_configured_vip_interface($vip);
+			if (str_starts_with($parentif, "_vip")) {
+				if ($fif == get_configured_vip_interface($parentif)) {
+					$list[$vip] = "$address";
+					if (get_vip_descr($address)) {
+						$list[$vip] .= " (". get_vip_descr($address) .")";
+					}
+				}
+			}
 		}
 	}
 

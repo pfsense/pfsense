@@ -41,8 +41,7 @@ require_once("vpn.inc");
 
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
-$a_phase1 = &$config['ipsec']['phase1'];
-$a_phase2 = &$config['ipsec']['phase2'];
+
 $items_deleted = false;
 
 if ($_POST['apply']) {
@@ -60,7 +59,7 @@ if ($_POST['apply']) {
 	/* delete selected p1 entries */
 	if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
 		foreach ($_POST['p1entry'] as $p1entrydel) {
-			unset($a_phase1[$p1entrydel]);
+			config_del_path('ipsec/phase1/' . $p1entrydel);
 			$items_deleted = true;
 		}
 		if (write_config(gettext("Deleted selected IPsec Phase 1 entries."))) {
@@ -71,10 +70,10 @@ if ($_POST['apply']) {
 	/* delete selected p2 entries */
 	if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
 		foreach ($_POST['p2entry'] as $p2entrydel) {
-			if (is_interface_ipsec_vti_assigned($a_phase2[$p2entrydel]) && ($a_phase2[$p2entrydel]['mode'] == 'vti')) {
+			if (is_interface_ipsec_vti_assigned(config_get_path('ipsec/phase2/' . $p2entrydel)) && (config_get_path('ipsec/phase2/' . $p2entrydel . '/mode') == 'vti')) {
 				$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
 			} else {
-				unset($a_phase2[$p2entrydel]);
+				config_del_path('ipsec/phase2/' . $p2entrydel);
 				$items_deleted = true;
 			}
 		}
@@ -112,33 +111,33 @@ if ($_POST['apply']) {
 		/* copy all p1 entries < $movebtn and not selected */
 		for ($i = 0; $i < $movebtn; $i++) {
 			if (!in_array($i, $_POST['p1entry'])) {
-				$a_phase1_new[] = $a_phase1[$i];
+				$a_phase1_new[] = config_get_path('ipsec/phase1/' . $i);
 			}
 		}
 
 		/* copy all selected p1 entries */
-		for ($i = 0; $i < count($a_phase1); $i++) {
+		for ($i = 0; $i < count(config_get_path('ipsec/phase1', [])); $i++) {
 			if ($i == $movebtn) {
 				continue;
 			}
 			if (in_array($i, $_POST['p1entry'])) {
-				$a_phase1_new[] = $a_phase1[$i];
+				$a_phase1_new[] = config_get_path('ipsec/phase1/' . $i);
 			}
 		}
 
 		/* copy $movebtn p1 entry */
-		if ($movebtn < count($a_phase1)) {
-			$a_phase1_new[] = $a_phase1[$movebtn];
+		if ($movebtn < count(config_get_path('ipsec/phase1', []))) {
+			$a_phase1_new[] = config_get_path('ipsec/phase1/' . $movebtn);
 		}
 
 		/* copy all p1 entries > $movebtn and not selected */
-		for ($i = $movebtn+1; $i < count($a_phase1); $i++) {
+		for ($i = $movebtn+1; $i < count(config_get_path('ipsec/phase1', [])); $i++) {
 			if (!in_array($i, $_POST['p1entry'])) {
-				$a_phase1_new[] = $a_phase1[$i];
+				$a_phase1_new[] = config_get_path('ipsec/phase1/' . $i);
 			}
 		}
 		if (count($a_phase1_new) > 0) {
-			$a_phase1 = $a_phase1_new;
+			config_set_path('ipsec/phase1', $a_phase1_new);
 		}
 
 	} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
@@ -148,45 +147,45 @@ if ($_POST['apply']) {
 		/* copy all p2 entries < $movebtnp2 and not selected */
 		for ($i = 0; $i < $movebtnp2; $i++) {
 			if (!in_array($i, $_POST['p2entry'])) {
-				$a_phase2_new[] = $a_phase2[$i];
+				$a_phase2_new[] = config_get_path('ipsec/phase2/' . $i);
 			}
 		}
 
 		/* copy all selected p2 entries */
-		for ($i = 0; $i < count($a_phase2); $i++) {
+		for ($i = 0; $i < count(config_get_path('ipsec/phase2', [])); $i++) {
 			if ($i == $movebtnp2) {
 				continue;
 			}
 			if (in_array($i, $_POST['p2entry'])) {
-				$a_phase2_new[] = $a_phase2[$i];
+				$a_phase2_new[] = config_get_path('ipsec/phase2/' . $i);
 			}
 		}
 
 		/* copy $movebtnp2 p2 entry */
-		if ($movebtnp2 < count($a_phase2)) {
-			$a_phase2_new[] = $a_phase2[$movebtnp2];
+		if ($movebtnp2 < count(config_get_path('ipsec/phase2', []))) {
+			$a_phase2_new[] = config_get_path('ipsec/phase2/' . $movebtnp2);
 		}
 
 		/* copy all p2 entries > $movebtnp2 and not selected */
-		for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
+		for ($i = $movebtnp2+1; $i < count(config_get_path('ipsec/phase2', [])); $i++) {
 			if (!in_array($i, $_POST['p2entry'])) {
-				$a_phase2_new[] = $a_phase2[$i];
+				$a_phase2_new[] = config_get_path('ipsec/phase2/', $i);
 			}
 		}
 		if (count($a_phase2_new) > 0) {
-			$a_phase2 = $a_phase2_new;
+			config_set_path('ipsec/phase2', $a_phase2_new);
 		}
 
 	} else if (isset($togglebtn)) {
-		if (isset($a_phase1[$togglebtn]['disabled'])) {
-			unset($a_phase1[$togglebtn]['disabled']);
+		if (config_path_enabled('ipsec/phase1/' . $togglebtn, 'disabled')) {
+			config_del_path('ipsec/phase1/' . $togglebtn . '/disabled');
 		} else {
-			if (ipsec_vti($a_phase1[$togglebtn], false, false)) {
+			if (ipsec_vti(config_get_path('ipsec/phase1/' . $togglebtn), false, false)) {
 				/* disable all phase2 entries that match the ikeid */
-				$ikeid = $a_phase1[$toggelebtn]['ikeid'];
+				$ikeid = config_get_path('ipsec/phase1/' . $togglebtn . '/ikeid');
 				$p1_has_vti = false;
 				$disablep2ids = array();
-				foreach ($a_phase2 as $p2index => $ph2tmp) {
+				foreach (config_get_path('ipsec/phase2') as $p2index => $ph2tmp) {
 					if ($ph2tmp['ikeid'] == $ikeid) {
 						if (is_interface_ipsec_vti_assigned($ph2tmp)) {
 							$p1_has_vti = true;
@@ -200,35 +199,35 @@ if ($_POST['apply']) {
 					$input_errors[] = gettext("Cannot disable a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
 				} else {
 					foreach ($disablep2ids as $dp2idx) {
-						$a_phase2[$togglebtnp2]['disabled'] = true;
+						config_set_path('ipsec/phase2/' . $togglebtnp2 . '/disabled', true);
 					}
-					$a_phase1[$togglebtn]['disabled'] = true;
+					config_set_path('ipsec/phase1/' . $togglebtn . '/disabled', true);
 				}
 			} else {
-				$a_phase1[$togglebtn]['disabled'] = true;
+				config_set_path('ipsec/phase1/' . $togglebtn . '/disabled', true);
 			}
 		}
 	} else if (isset($togglebtnp2)) {
-		if (isset($a_phase2[$togglebtnp2]['disabled'])) {
-			unset($a_phase2[$togglebtnp2]['disabled']);
+		if (config_path_enabled('ipsec/phase2/' . $togglebtnp2,  'disabled')) {
+			config_del_path('ipsec/phase2/' . $togglebtnp2 . '/disabled');
 		} else {
-			if (is_interface_ipsec_vti_assigned($a_phase2[$togglebtnp2]) && ($a_phase2[$togglebtnp2]['mode'] == 'vti')) {
+			if (is_interface_ipsec_vti_assigned(config_get_path('ipsec/phase2/' . $togglebtnp2)) && (config_get_path('ipsec/phase2/' . $togglebtnp2 . '/mode') == 'vti')) {
 				$input_errors[] = gettext("Cannot disable a VTI Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 			} else {
-				$a_phase2[$togglebtnp2]['disabled'] = true;
+				config_set_path('ipsec/phase2/' . $togglebtnp2 . '/disabled', true);
 			}
 		}
 	} else if (isset($delbtn)) {
 		/* remove static route if interface is not WAN */
-		if ($a_phase1[$delbtn]['interface'] <> "wan") {
-			route_del($a_phase1[$delbtn]['remote-gateway']);
+		if (config_get_path('ipsec/phase1/' . $delbtn . '/interface') <> "wan") {
+			route_del(config_get_path('ipsec/phase1/' . $delbtn . '/remote-gateway'));
 		}
 
 		/* remove all phase2 entries that match the ikeid */
-		$ikeid = $a_phase1[$delbtn]['ikeid'];
+		$ikeid = config_get_path('ipsec/phase2/' . $delbtn . '/ikeid');
 		$p1_has_vti = false;
 		$delp2ids = array();
-		foreach ($a_phase2 as $p2index => $ph2tmp) {
+		foreach (config_get_path('ipsec/phase2') as $p2index => $ph2tmp) {
 			if ($ph2tmp['ikeid'] == $ikeid) {
 				if (is_interface_ipsec_vti_assigned($ph2tmp)) {
 					$p1_has_vti = true;
@@ -242,17 +241,17 @@ if ($_POST['apply']) {
 			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
 		} else {
 			foreach ($delp2ids as $dp2idx) {
-				unset($a_phase2[$dp2idx]);
+				config_del_path('ipsec/phase2/' . $dp2idx);
 			}
-			unset($a_phase1[$delbtn]);
+			config_del_path('ipsec/phase1/' . $delbtn);
 			$items_deleted = true;
 		}
 
 	} else if (isset($delbtnp2)) {
-		if (is_interface_ipsec_vti_assigned($a_phase2[$delbtnp2]) && ($a_phase2[$delbtnp2]['mode'] == 'vti')) {
+		if (is_interface_ipsec_vti_assigned(config_get_path('ipsec/phase2/' . $delbtnp2)) && (config_get_path('ipsec/phase2/' . $delbtnp2 . '/mode') == 'vti')) {
 			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
 		} else {
-			unset($a_phase2[$delbtnp2]);
+			config_del_path('ipsec/phase2/' . $delbtnp2);
 			$items_deleted = true;
 		}
 	} else {
@@ -264,15 +263,6 @@ if ($_POST['apply']) {
 			mark_subsystem_dirty('ipsec');
 		}
 	}
-}
-
-if ($items_deleted) {
-	/*
-	 * Reindex entries if changes were made since index values could have shifted.
-	 * https://redmine.pfsense.org/issues/11552
-	 */
-	$a_phase1 = array_values($a_phase1);
-	$a_phase2 = array_values($a_phase2);
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"));
@@ -341,7 +331,7 @@ foreach ($grouplist as $name => $group) {
 	$iflabels[$name] = "GW Group {$name}";
 }
 
-$i = 0; foreach ($a_phase1 as $ph1ent):
+$i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 
 	$iconfn = "pass";
 
@@ -472,7 +462,7 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 <?php
 				$phase2count=0;
 
-				foreach ($a_phase2 as $ph2ent) {
+				foreach (config_get_path('ipsec/phase2') as $ph2ent) {
 					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 						continue;
 					}
@@ -501,7 +491,7 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 										</tr>
 									</thead>
 									<tbody class="p2-entries">
-<?php $j = 0; foreach ($a_phase2 as $ph2index => $ph2ent): ?>
+<?php $j = 0; foreach (config_get_path('ipsec/phase2') as $ph2index => $ph2ent): ?>
 <?php
 						if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 							continue;

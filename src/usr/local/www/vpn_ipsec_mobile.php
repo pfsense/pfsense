@@ -40,16 +40,11 @@ require_once("vpn.inc");
 require_once("filter.inc");
 
 init_config_arr(array('ipsec', 'phase1'));
-$a_phase1 = &$config['ipsec']['phase1'];
-
 init_config_arr(array('ipsec', 'client'));
-$a_client = &$config['ipsec']['client'];
-
 init_config_arr(array('system', 'group'));
-$a_group = &$config['system']['group'];
 
 $auth_groups = array();
-foreach ($config['system']['group'] as $group) {
+foreach (config_get_path('system/group', []) as $group) {
 	if (isset($group['priv'])) {
 		foreach ($group['priv'] as $priv) {
 			if (($priv == 'page-all') || ($priv == 'user-ipsec-xauth-dialin')) {
@@ -64,37 +59,37 @@ foreach ($config['system']['group'] as $group) {
 	}
 }
 
-if (count($a_client)) {
+if (count(config_get_path('ipsec/client', []))) {
 
-	$pconfig['enable'] = $a_client['enable'];
-	$pconfig['radiusaccounting'] = ($a_client['radiusaccounting'] == 'enabled');
-	$pconfig['radius_groups'] = $a_client['radius_groups'];
+	$pconfig['enable'] = config_get_path('ipsec/client/enable');
+	$pconfig['radiusaccounting'] = (config_get_path('ipsec/client/radiusaccounting') == 'enabled');
+	$pconfig['radius_groups'] = config_get_path('ipsec/client/radius_groups');
 
-	$pconfig['user_source'] = $a_client['user_source'];
-	$pconfig['group_source'] = $a_client['group_source'];
-	$pconfig['auth_groups'] = $a_client['auth_groups'];
+	$pconfig['user_source'] = config_get_path('ipsec/client/user_source');
+	$pconfig['group_source'] = config_get_path('ipsec/client/group_source');
+	$pconfig['auth_groups'] = config_get_path('ipsec/client/auth_groups');
 
-	$pconfig['pool_address'] = $a_client['pool_address'];
-	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
-	$pconfig['pool_address_v6'] = $a_client['pool_address_v6'];
-	$pconfig['pool_netbits_v6'] = $a_client['pool_netbits_v6'];
-	$pconfig['radius_retransmit_base'] = $a_client['radius_retransmit_base'];
-	$pconfig['radius_retransmit_timeout'] = $a_client['radius_retransmit_timeout'];
-	$pconfig['radius_retransmit_tries'] = $a_client['radius_retransmit_tries'];
-	$pconfig['radius_sockets'] = $a_client['radius_sockets'];
-	$pconfig['net_list'] = $a_client['net_list'];
-	$pconfig['save_passwd'] = $a_client['save_passwd'];
-	$pconfig['dns_domain'] = $a_client['dns_domain'];
-	$pconfig['dns_split'] = $a_client['dns_split'];
-	$pconfig['dns_server1'] = $a_client['dns_server1'];
-	$pconfig['dns_server2'] = $a_client['dns_server2'];
-	$pconfig['dns_server3'] = $a_client['dns_server3'];
-	$pconfig['dns_server4'] = $a_client['dns_server4'];
-	$pconfig['wins_server1'] = $a_client['wins_server1'];
-	$pconfig['wins_server2'] = $a_client['wins_server2'];
-	$pconfig['pfs_group'] = $a_client['pfs_group'];
-	$pconfig['login_banner'] = $a_client['login_banner'];
-	$pconfig['radius_ip_priority_enable'] = $a_client['radius_ip_priority_enable'];
+	$pconfig['pool_address'] = config_get_path('ipsec/client/pool_address');
+	$pconfig['pool_netbits'] = config_get_path('ipsec/client/pool_netbits');
+	$pconfig['pool_address_v6'] = config_get_path('ipsec/client/pool_address_v6');
+	$pconfig['pool_netbits_v6'] = config_get_path('ipsec/client/pool_netbits_v6');
+	$pconfig['radius_retransmit_base'] = config_get_path('ipsec/client/radius_retransmit_base');
+	$pconfig['radius_retransmit_timeout'] = config_get_path('ipsec/client/radius_retransmit_timeout');
+	$pconfig['radius_retransmit_tries'] = config_get_path('ipsec/client/radius_retransmit_tries');
+	$pconfig['radius_sockets'] = config_get_path('ipsec/client/radius_sockets');
+	$pconfig['net_list'] = config_get_path('ipsec/client/net_list');
+	$pconfig['save_passwd'] = config_get_path('ipsec/client/save_passwd');
+	$pconfig['dns_domain'] = config_get_path('ipsec/client/dns_domain');
+	$pconfig['dns_split'] = config_get_path('ipsec/client/dns_split');
+	$pconfig['dns_server1'] = config_get_path('ipsec/client/dns_server1');
+	$pconfig['dns_server2'] = config_get_path('ipsec/client/dns_server2');
+	$pconfig['dns_server3'] = config_get_path('ipsec/client/dns_server3');
+	$pconfig['dns_server4'] = config_get_path('ipsec/client/dns_server4');
+	$pconfig['wins_server1'] = config_get_path('ipsec/client/wins_server1');
+	$pconfig['wins_server2'] = config_get_path('ipsec/client/wins_server2');
+	$pconfig['pfs_group'] = config_get_path('ipsec/client/pfs_group');
+	$pconfig['login_banner'] = config_get_path('ipsec/client/login_banner');
+	$pconfig['radius_ip_priority_enable'] = config_get_path('ipsec/client/radius_ip_priority_enable');
 	
 	if (isset($pconfig['enable'])) {
 		$pconfig['enable'] = true;
@@ -102,7 +97,7 @@ if (count($a_client)) {
 
 	if ($pconfig['group_source'] == 'enabled') {
 		$pconfig['group_source'] = true;
-		$pconfig['auth_groups'] = $a_client['auth_groups'];
+		$pconfig['auth_groups'] = config_get_path('ipsec/client/auth_groups');
 	}
 
 	if ($pconfig['pool_address'] && $pconfig['pool_netbits']) {
@@ -179,7 +174,7 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	foreach ($a_phase1 as $ph1ent) {
+	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if (isset($ph1ent['mobile'])) {
 			$mobileph1 = $ph1ent;
 		}
@@ -301,91 +296,149 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		$client = array();
-
 		if ($pconfig['enable']) {
-			$client['enable'] = true;
+			config_set_path('ipsec/client/enable', true);
+		} else {
+			config_del_path('ipsec/client/enable');
 		}
 
-		$client['radiusaccounting'] = ($pconfig['radiusaccounting'] == 'yes') ? "enabled" : "disabled";
+		config_set_path('ipsec/client/radiusaccounting', ($pconfig['radiusaccounting'] == 'yes') ? "enabled" : "disabled");
 
 		if (!empty($pconfig['user_source'])) {
-			$client['user_source'] = implode(",", $pconfig['user_source']);
-			$client['user_source'] = htmlentities($client['user_source'],ENT_COMPAT,'UTF-8');
+			config_set_path('ipsec/client/user_source', htmlentities(implode(",", $pconfig['user_source']),ENT_COMPAT,'UTF-8'));
+		} else {
+			config_del_path('ipsec/client/user_source');
 		}
 
-		$client['group_source'] = ($pconfig['group_source'] == 'yes') ? "enabled" : "disabled";
-
 		if (($pconfig['group_source'] == 'yes') && !empty($pconfig['auth_groups'])) {
-			$client['auth_groups'] = implode(",", $pconfig['auth_groups']);
+			config_set_path('ipsec/client/auth_groups', implode(",", $pconfig['auth_groups']));
 		} else {
-			unset($client['group_source']);
-			unset($client['auth_groups']);
+			config_del_path('ipsec/client/group_source');
+			config_del_path('ipsec/client/auth_groups');
 		}
 
 		if ($pconfig['pool_enable']) {
-			$client['pool_address'] = $pconfig['pool_address'];
-			$client['pool_netbits'] = $pconfig['pool_netbits'];
+			config_set_path('ipsec/client/pool_address', $pconfig['pool_address']);
+			config_set_path('ipsec/client/pool_netbits', $pconfig['pool_netbits']);
+		} else {
+			config_del_path('ipsec/client/pool_address');
+			config_del_path('ipsec/client/pool_netbits');
 		}
 
 		if ($pconfig['radius_ip_priority_enable']) {
-			$client['radius_ip_priority_enable'] = true;
+			config_set_path('ipsec/client/radius_ip_priority_enable', true);
+		} else {
+			config_del_path('ipsec/client/radius_ip_priority_enable');
 		}
 
 		if ($pconfig['pool_enable_v6']) {
-			$client['pool_address_v6'] = $pconfig['pool_address_v6'];
-			$client['pool_netbits_v6'] = $pconfig['pool_netbits_v6'];
+			config_set_path('ipsec/client/pool_address_v6', $pconfig['pool_address_v6']);
+			config_set_path('ipsec/client/pool_netbits_v6', $pconfig['pool_netbits_v6']);
+		} else {
+			config_del_path('ipsec/client/pool_address_v6');
+			config_del_path('ipsec/client/pool_netbits_v6');
 		}
 
 		if ($pconfig['radius_retransmit_base']) {
-			$client['radius_retransmit_base'] = $pconfig['radius_retransmit_base'];
+			config_set_path('ipsec/client/radius_retransmit_base', $pconfig['radius_retransmit_base']);
+		} else {
+			config_del_path('ipsec/client/radius_retransmit_base');
 		}
 		if ($pconfig['radius_retransmit_timeout']) {
-			$client['radius_retransmit_timeout'] = $pconfig['radius_retransmit_timeout'];
+			config_set_path('ipsec/client/radius_retransmit_timeout', $pconfig['radius_retransmit_timeout']);
+		} else {
+			config_del_path('ipsec/client/radius_retransmit_timeout');
 		}
 		if ($pconfig['radius_retransmit_tries']) {
-			$client['radius_retransmit_tries'] = $pconfig['radius_retransmit_tries'];
+			config_set_path('ipsec/client/radius_retransmit_tries', $pconfig['radius_retransmit_tries']);
+		} else {
+			config_del_path('ipsec/client/radius_retransmit_tries');
 		}
 		if ($pconfig['radius_sockets']) {
-			$client['radius_sockets'] = $pconfig['radius_sockets'];
+			config_set_path('ipsec/client/radius_sockets', $pconfig['radius_sockets']);
+		} else {
+			config_del_path('ipsec/client/radius_sockets');
 		}
 
 		if ($pconfig['net_list_enable']) {
-			$client['net_list'] = true;
+			config_set_path('ipsec/client/net_list', true);
+		} else {
+			config_del_path('ipsec/client/net_list');
 		}
 
 		if ($pconfig['save_passwd_enable']) {
-			$client['save_passwd'] = true;
+			config_set_path('ipsec/client/save_passwd', true);
+		} else {
+			config_del_path('ipsec/client/save_passwd');
 		}
 
 		if ($pconfig['dns_domain_enable']) {
-			$client['dns_domain'] = $pconfig['dns_domain'];
+			config_set_path('ipsec/client/dns_domain', $pconfig['dns_domain']);
+		} else {
+			config_del_path('ipsec/client/dns_domain');
 		}
 
 		if ($pconfig['dns_split_enable']) {
-			$client['dns_split'] = $pconfig['dns_split'];
+			config_set_path('ipsec/client/dns_split', $pconfig['dns_split']);
+		} else {
+			config_del_path('ipsec/client/dns_split', $pconfig['dns_split']);
 		}
 
 		if ($pconfig['dns_server_enable']) {
-			$client['dns_server1'] = $pconfig['dns_server1'];
-			$client['dns_server2'] = $pconfig['dns_server2'];
-			$client['dns_server3'] = $pconfig['dns_server3'];
-			$client['dns_server4'] = $pconfig['dns_server4'];
+			if ($pconfig['dns_server1']) {
+				config_set_path('ipsec/client/dns_server1', $pconfig['dns_server1']);
+			} else {
+				config_del_path('ipsec/client/dns_server1');
+			}
+			if ($pconfig['dns_server2']) {
+				config_set_path('ipsec/client/dns_server2', $pconfig['dns_server2']);
+			} else {
+				config_del_path('ipsec/client/dns_server2');
+			}
+			if ($pconfig['dns_server3']) {
+				config_set_path('ipsec/client/dns_server3', $pconfig['dns_server3']);
+			} else {
+				config_del_path('ipsec/client/dns_server3');
+			}
+			if ($pconfig['dns_server4']) {
+				config_set_path('ipsec/client/dns_server4', $pconfig['dns_server4']);
+			} else {
+				config_del_path('ipsec/client/dns_server4');
+			}
+		} else {
+			config_del_path('ipsec/client/dns_server1');
+			config_del_path('ipsec/client/dns_server2');
+			config_del_path('ipsec/client/dns_server3');
+			config_del_path('ipsec/client/dns_server4');
 		}
 
 		if ($pconfig['wins_server_enable']) {
-			$client['wins_server1'] = $pconfig['wins_server1'];
-			$client['wins_server2'] = $pconfig['wins_server2'];
+			if ($pconfig['wins_server1']) {
+				config_set_path('ipsec/client/wins_server1', $pconfig['wins_server1']);
+			} else {
+				config_del_path('ipsec/client/wins_server1');
+			}
+			if ($pconfig['wins_server2']) {
+				config_set_path('ipsec/client/wins_server2', $pconfig['wins_server2']);
+			} else {
+				config_del_path('ipsec/client/wins_server2');
+			}
+		} else {
+			config_del_path('ipsec/client/wins_server1');
+			config_del_path('ipsec/client/wins_server2');
 		}
 
 		if ($pconfig['pfs_group_enable']) {
-			$client['pfs_group'] = $pconfig['pfs_group'];
+			config_set_path('ipsec/client/pfs_group', $pconfig['pfs_group']);
+		} else {
+			config_del_path('ipsec/client/pfs_group');
 		}
 
 		if ($pconfig['login_banner_enable']) {
-			$client['login_banner'] = $pconfig['login_banner'];
+			config_set_path('ipsec/client/login_banner', $pconfig['login_banner']);
+		} else {
+			config_del_path('ipsec/client/login_banner');
 		}
-		$a_client = $client;
 
 		write_config(gettext("Saved IPsec Mobile Clients configuration."));
 		mark_subsystem_dirty('ipsec');
@@ -514,7 +567,7 @@ if ($_POST['apply']) {
 if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
-foreach ($a_phase1 as $ph1ent) {
+foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 	if (isset($ph1ent['mobile'])) {
 		$ph1found = true;
 	}

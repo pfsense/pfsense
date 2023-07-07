@@ -268,20 +268,12 @@ $p2_pfskeygroups = array(
 );
 
 function ipsec_enabled() {
-	global $config;
-
-	if (!isset($config['ipsec']) || !is_array($config['ipsec'])) {
+	if (!is_array(config_get_path('ipsec'))) {
 		return false;
 	}
 
-	/* Check if we have at least one phase 1 entry. */
-	if (!isset($config['ipsec']['phase1']) ||
-	    !is_array($config['ipsec']['phase1']) ||
-	    empty($config['ipsec']['phase1'])) {
-		return false;
-	}
 	/* Check if at least one phase 1 entry is enabled. */
-	foreach ($config['ipsec']['phase1'] as $phase1) {
+	foreach (config_get_path('ipsec/phase1', []) as $phase1) {
 		if (!isset($phase1['disabled'])) {
 			return true;
 		}
@@ -295,9 +287,8 @@ function ipsec_enabled() {
  */
 
 function ipsec_ikeid_used($ikeid) {
-	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
-	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if ($ikeid == $ph1ent['ikeid']) {
 			return true;
 		}
@@ -306,14 +297,13 @@ function ipsec_ikeid_used($ikeid) {
 }
 
 function ipsec_ikeid_next() {
-	global $config;
 	$ikeid = 1;
 	init_config_arr(array('ipsec', 'phase1'));
 	$ipsecikeid = lock('ipsecikeids', LOCK_EX);
 	$ikeids = array();
 
-	foreach ($config['ipsec']['phase1'] as $ph1) {
-		$ikeids[$ph1['ikeid']] = $ph1['ikeid'];
+	foreach (config_get_path('ipsec/phase1', []) as $ph1) {
+		$keyids[$ph1['ikeid']] = $ph1['ikeid'];
 	}
 
 	for ($i = 1; $i < 16000; $i++) {
@@ -328,13 +318,12 @@ function ipsec_ikeid_next() {
 }
 
 function ipsec_new_reqid() {
-	global $config;
 	init_config_arr(array('ipsec', 'phase2'));
 	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
 	$keyids = array();
 	$keyid = 1;
 
-	foreach ($config['ipsec']['phase2'] as $ph2) {
+	foreach (config_get_path('ipsec/phase2', []) as $ph2) {
 		$keyids[$ph2['reqid']] = $ph2['reqid'];
 	}
 
@@ -350,10 +339,9 @@ function ipsec_new_reqid() {
 }
 
 function ipsec_get_phase1($ikeid) {
-	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 
-	foreach ($config['ipsec']['phase1'] as $p1) {
+	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['ikeid'] == $ikeid) {
 			return $p1;
 		}
@@ -361,22 +349,20 @@ function ipsec_get_phase1($ikeid) {
 }
 
 function ipsec_get_p1_descr($ikeid) {
-	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	$p1 = ipsec_get_phase1($ikeid);
 	return (!empty($p1['descr'])) ? $p1['descr'] : '';
 }
 
 /*
- * Return phase1 by reference for a given phase2
+ * Return copy of phase1 for a given phase2
  */
-function ipsec_lookup_phase1($p2, &$p1ref) {
-	global $config;
+function ipsec_lookup_phase1($p2, &$p1_disabled) {
 	init_config_arr(array('ipsec', 'phase1'));
 
-	foreach ($config['ipsec']['phase1'] as & $p1) {
+	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['ikeid'] == $p2['ikeid']) {
-			$p1ref = $p1;
+			$p1_disabled = $p1['disabled'];
 			return true;
 		}
 	}
@@ -385,10 +371,9 @@ function ipsec_lookup_phase1($p2, &$p1ref) {
 }
 
 function ipsec_get_phase2($reqid) {
-	global $config;
 	init_config_arr(array('ipsec', 'phase2'));
 
-	foreach ($config['ipsec']['phase2'] as $p2) {
+	foreach (config_get_path('ipsec/phase2', []) as $p2) {
 		if ($p2['reqid'] == $reqid) {
 			return $p2;
 		}
@@ -396,10 +381,9 @@ function ipsec_get_phase2($reqid) {
 }
 
 function ipsec_get_phase2_by_ikeid($ikeid) {
-	global $config;
 	init_config_arr(array('ipsec', 'phase2'));
 	$results = array();
-	foreach ($config['ipsec']['phase2'] as $p2) {
+	foreach (config_get_path('ipsec/phase2', []) as $p2) {
 		if ($p2['ikeid'] == $ikeid) {
 			$results[] = $p2;
 		}
@@ -408,22 +392,20 @@ function ipsec_get_phase2_by_ikeid($ikeid) {
 }
 
 function ipsec_get_number_of_phase2($ikeid) {
-	global $config;
 	return count(ipsec_get_phase2_by_ikeid($ikeid));
 }
 
 /* Return a nested hash with P1 indexed by ikeid and P2 indexed by reqid */
 function ipsec_map_config_by_id() {
-	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	init_config_arr(array('ipsec', 'phase2'));
 	$map = array();
 
-	foreach ($config['ipsec']['phase1'] as $p1) {
+	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		$map[$p1['ikeid']] = array();
 		$map[$p1['ikeid']]['p1'] = $p1;
 	}
-	foreach ($config['ipsec']['phase2'] as $p2) {
+	foreach (config_get_path('ipsec/phase2', []) as $p2) {
 		if (!is_array($map[$p2['ikeid']]['p2'])) {
 			$map[$p2['ikeid']]['p2'] = array();
 		}
@@ -462,13 +444,13 @@ function ipsec_conid($p1 = null, $p2 = null) {
 }
 
 function ipsec_id_by_conid($conid) {
-	global $config, $ipsec_conid_prefix, $ipsec_conid_separator;
+	global $ipsec_conid_prefix, $ipsec_conid_separator;
 
 	if ($conid == "{$ipsec_conid_prefix}-mobile") {
 		init_config_arr(array('ipsec', 'phase1'));
-		foreach ($config['ipsec']['phase1'] as $p1) {
+		foreach (config_get_path('ipsec/phase1', []) as $p1) {
 			if (isset($p1['mobile'])) {
-				$conid = "{$ipsec_conid_prefix}{$p1['ikeid']}";
+				$conid = $ipsec_conid_prefix . $p1['ikeid'];
 			}
 		}
 	}
@@ -556,8 +538,6 @@ function ipsec_get_phase1_dst(& $ph1ent) {
  * Return phase2 idinfo in cidr format
  */
 function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
-	global $config;
-
 	switch ($idinfo['type']) {
 		case "address":
 			if ($addrbits) {
@@ -605,8 +585,6 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
  * Return phase2 idinfo in address/netmask format
  */
 function ipsec_idinfo_to_subnet(& $idinfo, $addrbits = false) {
-	global $config;
-
 	switch ($idinfo['type']) {
 		case "address":
 			if ($addrbits) {
@@ -646,8 +624,6 @@ function ipsec_idinfo_to_subnet(& $idinfo, $addrbits = false) {
  *  Return phase2 idinfo in text format
  */
 function ipsec_idinfo_to_text(& $idinfo) {
-	global $config;
-
 	switch ($idinfo['type']) {
 		case "address":
 			return $idinfo['address'];
@@ -662,7 +638,7 @@ function ipsec_idinfo_to_text(& $idinfo) {
 			return gettext("None");
 			break; /* NOTREACHED */
 		default:
-			if (!empty($config['interfaces'][$idinfo['type']])) {
+			if (!(empty(config_get_path('interfaces/' . $idinfo['type'])))) {
 				return convert_friendly_interface_to_friendly_descr($idinfo['type']);
 			} else {
 				return strtoupper($idinfo['type']);
@@ -1040,9 +1016,9 @@ function ipsec_dump_sad() {
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g, $config;
+	global $g;
 
-	if(!isset($config['ipsec']['client']['enable'])) {
+	if(!config_path_enabled('ipsec/client')) {
 		return array();
 	}
 
@@ -1089,8 +1065,6 @@ function ipsec_dump_mobile() {
 }
 
 function ipsec_mobilekey_sort() {
-	global $config;
-
 	function mobilekeycmp($a, $b) {
 		return strcmp($a['ident'][0], $b['ident'][0]);
 	}
@@ -1215,14 +1189,14 @@ function ipsec_fixup_network($network) {
 }
 
 function ipsec_get_loglevels() {
-	global $config, $ipsec_log_cats;
+	global $ipsec_log_cats;
 	$def_loglevel = '1';
 
 	$levels = array();
 
 	foreach (array_keys($ipsec_log_cats) as $cat) {
-		if (isset($config['ipsec']['logging'][$cat])) {
-			$levels[$cat] = config_get_path("ipsec/logging/{$cat}");
+		if (!empty(config_get_path('ipsec/logging/' . $cat))) {
+			$levels[$cat] = config_get_path('ipsec/logging/' . $cat);
 		} elseif (in_array($cat, array('ike', 'chd', 'cfg'))) {
 			$levels[$cat] = "2";
 		} else {
@@ -1233,7 +1207,6 @@ function ipsec_get_loglevels() {
 }
 
 function ipsec_vti($p1, $returnaddresses = false, $skipdisabled = true) {
-	global $config;
 	$is_vti = false;
 	$vtisubnet_spec = array();
 
@@ -1261,10 +1234,10 @@ function ipsec_vti($p1, $returnaddresses = false, $skipdisabled = true) {
  * packages an opportunity to execute custom code when IPsec reloads.
  */
 function ipsec_reload_package_hook() {
-	global $g, $config;
+	global $g;
 
 	init_config_arr(array('installedpackages', 'package'));
-	foreach ($config['installedpackages']['package'] as $package) {
+	foreach (config_get_path('installedpackages/package', []) as $package) {
 		if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 			continue;
 		}
@@ -1330,7 +1303,7 @@ function ipsec_convert_to_modp($index) {
  * will gracefully reload the settings without restarting
  */
 function ipsec_force_reload($interface = "", $protocol = "") {
-	global $g, $config;
+	global $g;
 
 	if (!ipsec_enabled()) {
 		return;
@@ -1467,7 +1440,7 @@ $ipsec_swanctl_dirs = array(
  *   Cleans up and creates strongSwan configuration directories and links.
  ******/
 function ipsec_create_dirs() {
-	global $config, $g, $ipsec_swanctl_basedir, $ipsec_swanctl_dirs;
+	global $g, $ipsec_swanctl_basedir, $ipsec_swanctl_dirs;
 
 	/* Cleanup base paths to ensure old files are not left behind (#5238) */
 	if (!empty($ipsec_swanctl_basedir)) {
@@ -1504,7 +1477,7 @@ function ipsec_create_dirs() {
  *   Sets up VTI interfaces and gateways, populates ipsecpinghosts
  ******/
 function ipsec_setup_gwifs($gateways_status = false) {
-	global $g, $a_phase1, $a_phase2, $rgmap, $filterdns_list,
+	global $g, $rgmap, $filterdns_list,
 		$aggressive_mode_psk, $mobile_ipsec_auth, $ifacesuse,
 		$ipsecpinghostsactive;
 	/* resolve all local, peer addresses and setup pings */
@@ -1514,133 +1487,129 @@ function ipsec_setup_gwifs($gateways_status = false) {
 	}
 
 	unset($iflist);
-	if (is_array($a_phase1) && count($a_phase1)) {
-		$ipsecpinghosts = array();
-		/* step through each phase1 entry */
-		foreach ($a_phase1 as $ph1ent) {
-			if (isset($ph1ent['disabled'])) {
-				continue;
-			}
-			if (substr($ph1ent['interface'], 0, 4) == "_vip") {
-				$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+	$ipsecpinghosts = array();
+	/* step through each phase1 entry */
+	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+		if (isset($ph1ent['disabled'])) {
+			continue;
+		}
+		if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+			$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+			$ifacesuse[] = get_real_interface($vpninterface);
+		} else {
+			$vpninterface = get_failover_interface($ph1ent['interface'], 'all', $gateways_status);
+			if (substr($vpninterface, 0, 4) == "_vip") {
+				$vpninterface = get_configured_vip_interface($vpninterface);
 				$ifacesuse[] = get_real_interface($vpninterface);
-			} else {
-				$vpninterface = get_failover_interface($ph1ent['interface'], 'all', $gateways_status);
-				if (substr($vpninterface, 0, 4) == "_vip") {
-					$vpninterface = get_configured_vip_interface($vpninterface);
-					$ifacesuse[] = get_real_interface($vpninterface);
-				} elseif (!empty($vpninterface)) {
-					$ifacesuse[] = $vpninterface;
-				}
-			}
-			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) {
-				$aggressive_mode_psk = true;
-			}
-
-			$ikeid = $ph1ent['ikeid'];
-
-			$local_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
-			/* When automatically guessing, use the first address. */
-			$local_spec  = explode(',', $local_spec);
-			$local_spec  = $local_spec[0];
-			if (!is_ipaddr($local_spec)) {
-				log_error(sprintf(gettext("IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from configuration file."), $ph1ent['descr']));
-				continue;
-			}
-
-			if (isset($ph1ent['mobile'])) {
-				$mobile_ipsec_auth = $ph1ent['authentication_method'];
-				continue;
-			}
-
-			/* see if this tunnel has a hostname for the remote-gateway. If so,
-			   try to resolve it now and add it to the list for filterdns */
-			$rg = $ph1ent['remote-gateway'];
-			if (!is_ipaddr($rg)) {
-				$filterdns_list[] = "{$rg}";
-				if (!platform_booting()) {
-					$rg = resolve_retry($rg, $ph1ent['protocol']);
-				}
-				if (!is_ipaddr($rg)) {
-					continue;
-				}
-			}
-			if (!isset($ph1ent['gw_duplicates']) && array_search($rg, $rgmap)) {
-				log_error(sprintf(gettext("The remote gateway %s already exists on another phase 1 entry"), $rg));
-				continue;
-			}
-			$rgmap[$ph1ent['remote-gateway']] = $rg;
-
-			$is_vti = false;
-			if (is_array($a_phase2)) {
-				/* step through each phase2 entry */
-				foreach ($a_phase2 as $ph2ent) {
-					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
-						continue;
-					}
-					if ($ph2ent['mode'] == 'vti') {
-						$is_vti = true;
-					}
-					if (isset($ph2ent['disabled']) || ($ikeid != $ph2ent['ikeid'])) {
-						continue;
-					}
-
-					/* add an ipsec pinghosts entry */
-					if ($ph2ent['pinghost']) {
-						if (!is_array($iflist)) {
-							$iflist = get_configured_interface_list();
-						}
-						$srcip = null;
-						$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
-						if (is_ipaddrv6($ph2ent['pinghost'])) {
-							foreach ($iflist as $ifent => $ifname) {
-								$interface_ip = get_interface_ipv6($ifent);
-								if (!is_ipaddrv6($interface_ip)) {
-									continue;
-								}
-								if (ip_in_subnet($interface_ip, $local_subnet)) {
-									$srcip = $interface_ip;
-									break;
-								}
-							}
-						} else {
-							foreach ($iflist as $ifent => $ifname) {
-								$interface_ip = get_interface_ip($ifent, $gateways_status);
-								if (!is_ipaddrv4($interface_ip)) {
-									continue;
-								}
-								if ($local_subnet == "0.0.0.0/0" || ip_in_subnet($interface_ip, $local_subnet)) {
-									$srcip = $interface_ip;
-									break;
-								}
-							}
-						}
-						/* if no valid src IP was found in configured interfaces, try the vips */
-						if (is_null($srcip)) {
-							$viplist = get_configured_vip_list();
-							foreach ($viplist as $vip => $address) {
-								if (ip_in_subnet($address, $local_subnet)) {
-									$srcip = $address;
-									break;
-								}
-							}
-						}
-						$dstip = $ph2ent['pinghost'];
-						$family = "inet" . (is_ipaddrv6($dstip)) ? "6" : "";
-						if (is_ipaddr($srcip)) {
-							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
-							$ipsecpinghostsactive = true;
-						}
-					}
-				}
-			}
-			if ($is_vti) {
-				interface_ipsec_vti_configure($ph1ent, $gateways_status);
+			} elseif (!empty($vpninterface)) {
+				$ifacesuse[] = $vpninterface;
 			}
 		}
-		@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
-		unset($ipsecpinghosts);
+		if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) {
+			$aggressive_mode_psk = true;
+		}
+
+		$ikeid = $ph1ent['ikeid'];
+
+		$local_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
+		/* When automatically guessing, use the first address. */
+		$local_spec  = explode(',', $local_spec);
+		$local_spec  = $local_spec[0];
+		if (!is_ipaddr($local_spec)) {
+			log_error(sprintf(gettext("IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from configuration file."), $ph1ent['descr']));
+			continue;
+		}
+
+		if (isset($ph1ent['mobile'])) {
+			$mobile_ipsec_auth = $ph1ent['authentication_method'];
+			continue;
+		}
+
+		/* see if this tunnel has a hostname for the remote-gateway. If so,
+		   try to resolve it now and add it to the list for filterdns */
+		$rg = $ph1ent['remote-gateway'];
+		if (!is_ipaddr($rg)) {
+			$filterdns_list[] = "{$rg}";
+			if (!platform_booting()) {
+				$rg = resolve_retry($rg, $ph1ent['protocol']);
+			}
+			if (!is_ipaddr($rg)) {
+				continue;
+			}
+		}
+		if (!isset($ph1ent['gw_duplicates']) && array_search($rg, $rgmap)) {
+			log_error(sprintf(gettext("The remote gateway %s already exists on another phase 1 entry"), $rg));
+			continue;
+		}
+		$rgmap[$ph1ent['remote-gateway']] = $rg;
+
+		$is_vti = false;
+		/* step through each phase2 entry */
+		foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
+			if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
+				continue;
+			}
+			if ($ph2ent['mode'] == 'vti') {
+				$is_vti = true;
+			}
+			if (isset($ph2ent['disabled']) || ($ikeid != $ph2ent['ikeid'])) {
+				continue;
+			}
+
+			/* add an ipsec pinghosts entry */
+			if ($ph2ent['pinghost']) {
+				if (!is_array($iflist)) {
+					$iflist = get_configured_interface_list();
+				}
+				$srcip = null;
+				$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
+				if (is_ipaddrv6($ph2ent['pinghost'])) {
+					foreach ($iflist as $ifent => $ifname) {
+						$interface_ip = get_interface_ipv6($ifent);
+						if (!is_ipaddrv6($interface_ip)) {
+							continue;
+						}
+						if (ip_in_subnet($interface_ip, $local_subnet)) {
+							$srcip = $interface_ip;
+							break;
+						}
+					}
+				} else {
+					foreach ($iflist as $ifent => $ifname) {
+						$interface_ip = get_interface_ip($ifent, $gateways_status);
+						if (!is_ipaddrv4($interface_ip)) {
+							continue;
+						}
+						if ($local_subnet == "0.0.0.0/0" || ip_in_subnet($interface_ip, $local_subnet)) {
+							$srcip = $interface_ip;
+							break;
+						}
+					}
+				}
+				/* if no valid src IP was found in configured interfaces, try the vips */
+				if (is_null($srcip)) {
+					$viplist = get_configured_vip_list();
+					foreach ($viplist as $vip => $address) {
+						if (ip_in_subnet($address, $local_subnet)) {
+							$srcip = $address;
+							break;
+						}
+					}
+				}
+				$dstip = $ph2ent['pinghost'];
+				$family = "inet" . (is_ipaddrv6($dstip)) ? "6" : "";
+				if (is_ipaddr($srcip)) {
+					$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
+					$ipsecpinghostsactive = true;
+				}
+			}
+		}
+		if ($is_vti) {
+			interface_ipsec_vti_configure($ph1ent, $gateways_status);
+		}
 	}
+	@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
+	unset($ipsecpinghosts);
 	unset($iflist);
 }
 
@@ -1656,7 +1625,7 @@ function ipsec_setup_gwifs($gateways_status = false) {
  *   in config.xml.
  ******/
 function ipsec_logging_config() {
-	global $config, $ipsec_log_cats, $ipsec_log_sevs;
+	global $ipsec_log_cats, $ipsec_log_sevs;
 	$logcfg = array();
 	$log_levels = ipsec_get_loglevels();
 	foreach (array_keys($ipsec_log_cats) as $cat) {
@@ -1680,7 +1649,7 @@ function ipsec_logging_config() {
  *   Called from ipsec_configure()
  ******/
 function ipsec_setup_strongswan() {
-	global $config, $g, $mobile_ipsec_auth, $a_client, $a_phase2, $aggressive_mode_psk, $ifacesuse;
+	global $g, $mobile_ipsec_auth, $a_client, $aggressive_mode_psk, $ifacesuse;
 
 	/* strongswan.conf array */
 	$ssconf = array();
@@ -1709,47 +1678,47 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['i_dont_care_about_security_and_use_aggressive_mode_psk'] = "yes";
 	}
 
-	if (isset($config['ipsec']['acceptunencryptedmainmode'])) {
+	if (config_path_enabled('ipsec', 'acceptunencryptedmainmode')) {
 		$ssconf['charon']['accept_unencrypted_mainmode_messages'] = "yes";
 	}
 
-	if (isset($config['ipsec']['maxexchange'])) {
+	if (!empty(config_get_path('ipsec/maxexchange'))) {
 		$ssconf['charon']['max_ikev1_exchanges'] = config_get_path('ipsec/maxexchange');
 	}
 
-	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'yes' : 'no';
+	$unity_enabled = config_path_enabled('ipsec', 'unityplugin') ? 'yes' : 'no';
 	$ssconf['charon']['cisco_unity'] = $unity_enabled;
 
-	if (isset($config['ipsec']['enableinterfacesuse']) && !empty($ifacesuse)) {
+	if (config_path_enabled('ipsec', 'enableinterfacesuse') && !empty($ifacesuse)) {
 		$ssconf['charon']['interfaces_use'] = implode(',', array_unique($ifacesuse));
 	}
 
-	if (isset($config['ipsec']['makebeforebreak'])) {
+	if (config_path_enabled('ipsec', 'makebeforebreak')) {
 		$ssconf['charon']['make_before_break'] = "yes";
 	}
 
-	if (isset($config['ipsec']['port'])) {
+	if (!empty(config_get_path('ipsec/port'))) {
 		$ssconf['charon']['port'] = config_get_path('ipsec/port');
 	}
 
-	if (isset($config['ipsec']['port_nat_t'])) {
+	if (!empty(config_get_path('ipsec/port_nat_t'))) {
 		$ssconf['charon']['port_nat_t'] = config_get_path('ipsec/port_nat_t');
 	}
 
 	/* IKEv2 retransmit options, see https://redmine.pfsense.org/issues/12184 */
-	if (isset($config['ipsec']['ikev2_retransmit_tries'])) {
+	if (!empty(config_get_path('ipsec/ikev2_retransmit_tries'))) {
 		$ssconf['charon']['retransmit_tries'] = config_get_path('ipsec/ikev2_retransmit_tries');
 	}
-	if (isset($config['ipsec']['ikev2_retransmit_timeout'])) {
+	if (!empty(config_get_path('ipsec/ikev2_retransmit_timeout'))) {
 		$ssconf['charon']['retransmit_timeout'] = config_get_path('ipsec/ikev2_retransmit_timeout');
 	}
-	if (isset($config['ipsec']['ikev2_retransmit_base'])) {
+	if (!empty(config_get_path('ipsec/ikev2_retransmit_base'))) {
 		$ssconf['charon']['retransmit_base'] = config_get_path('ipsec/ikev2_retransmit_base');
 	}
-	if (isset($config['ipsec']['ikev2_retransmit_jitter'])) {
+	if (!empty(config_get_path('ipsec/ikev2_retransmit_jitter'))) {
 		$ssconf['charon']['retransmit_jitter'] = config_get_path('ipsec/ikev2_retransmit_jitter');
 	}
-	if (isset($config['ipsec']['ikev2_retransmit_limit'])) {
+	if (!empty(config_get_path('ipsec/ikev2_retransmit_limit'))) {
 		$ssconf['charon']['retransmit_limit'] = config_get_path('ipsec/ikev2_retransmit_limit');
 	}
 
@@ -1769,7 +1738,7 @@ function ipsec_setup_strongswan() {
 	$ssconf['charon']['plugins']['unity'] = array('load' => $unity_enabled);
 	$ssconf['charon']['plugins']['curve25519'] = array('load' => "yes");
 
-	if (isset($config['ipsec']['pkcs11support'])) {
+	if (config_path_enabled('ipsec', 'pkcs11support')) {
 		$ssconf['charon']['plugins']['pkcs11'] = array();
 		$ssconf['charon']['plugins']['pkcs11']['load'] = "yes";
 		$ssconf['charon']['plugins']['pkcs11']['modules'] = array();
@@ -1780,7 +1749,7 @@ function ipsec_setup_strongswan() {
 
 	/* Find RADIUS servers designated for Mobile IPsec user auth */
 	$radius_servers = array();
-	foreach (explode(',', $config['ipsec']['client']['user_source']) as $user_source) {
+	foreach (explode(',', config_get_path('ipsec/client/user_source', '')) as $user_source) {
 		$auth_server = auth_get_authserver($user_source);
 		$nice_user_source = strtolower(preg_replace('/[\s\.]+/', '_', $user_source));
 		if ($auth_server && ($auth_server['type'] === 'radius')) {
@@ -1820,8 +1789,8 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['plugins']['eap-radius']['servers'] = $radius_servers;
 	}
 
-	if (is_array($a_client) && isset($a_client['enable'])) {
-		if ($a_client['user_source'] != "none") {
+	if (config_path_enabled('ipsec/client')) {
+		if (config_get_path('ipsec/client/user_source') != "none") {
 			$ssconf['charon']['plugins']['xauth-generic'] = array();
 			$ssconf['charon']['plugins']['xauth-generic']['script'] = "/etc/inc/ipsec.auth-user.php";
 			$authcfgs = array();
@@ -1834,28 +1803,28 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['plugins']['attr'] = array();
 
 		$rightdnsservers = array();
-		if (!empty($a_client['dns_server1'])) {
-			$rightdnsservers[] = $a_client['dns_server1'];
+		if (!empty(config_get_path('ipsec/client/dns_server1'))) {
+			$rightdnsservers[] = config_get_path('ipsec/client/dns_server1');
 		}
-		if (!empty($a_client['dns_server2'])) {
-			$rightdnsservers[] = $a_client['dns_server2'];
+		if (!empty(config_get_path('ipsec/client/dns_server2'))) {
+			$rightdnsservers[] = config_get_path('ipsec/client/dns_server2');
 		}
-		if (!empty($a_client['dns_server3'])) {
-			$rightdnsservers[] = $a_client['dns_server3'];
+		if (!empty(config_get_path('ipsec/client/dns_server3'))) {
+			$rightdnsservers[] = config_get_path('ipsec/client/dns_server3');
 		}
-		if (!empty($a_client['dns_server4'])) {
-			$rightdnsservers[] = $a_client['dns_server4'];
+		if (!empty(config_get_path('ipsec/client/dns_server4'))) {
+			$rightdnsservers[] = config_get_path('ipsec/client/dns_server4');
 		}
 		if (count($rightdnsservers)) {
 			$ssconf['charon']['plugins']['attr']['dns'] = implode(',', $rightdnsservers);
 		}
 
 		$cfgservers = array();
-		if (!empty($a_client['wins_server1'])) {
-			$cfgservers[] = $a_client['wins_server1'];
+		if (!empty(config_get_path('ipsec/client/wins_server1'))) {
+			$cfgservers[] = config_get_path('ipsec/client/wins_server1');
 		}
-		if (!empty($a_client['wins_server2'])) {
-			$cfgservers[] = $a_client['wins_server2'];
+		if (!empty(config_get_path('ipsec/client/wins_server2'))) {
+			$cfgservers[] = config_get_path('ipsec/client/wins_server2');
 		}
 		if (!empty($cfgservers)) {
 			$ssconf['charon']['plugins']['attr']['nbns'] = implode(',', $cfgservers);
@@ -1863,8 +1832,8 @@ function ipsec_setup_strongswan() {
 		unset($cfgservers);
 
 		$net_list = array();
-		if (isset($a_client['net_list']) && is_array($a_phase2)) {
-			foreach ($a_phase2 as $ph2ent) {
+		if (config_path_enabled('ipsec/client', 'net_list')) {
+			foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
 				if (isset($ph2ent['disabled']) ||
 				    !isset($ph2ent['mobile'])) {
 					continue;
@@ -1882,24 +1851,24 @@ function ipsec_setup_strongswan() {
 			$ssconf['charon']['plugins']['attr']['split-include'] = implode(',', $net_list);
 		}
 
-		if (!empty($a_client['dns_domain'])) {
+		if (!empty(config_get_path('ipsec/client/dns_domain'))) {
 			$ssconf['charon']['plugins']['attr'][] = "# Search domain and default domain";
-			$ssconf['charon']['plugins']['attr']['27674'] = $a_client['dns_domain'];
-			if (empty($a_client['dns_split'])) {
-				$ssconf['charon']['plugins']['attr']['27675'] = $a_client['dns_domain'];
+			$ssconf['charon']['plugins']['attr']['27674'] = config_get_path('ipsec/client/dns_domain');
+			if (!empty(config_get_path('ipsec/client/dns_split'))) {
+				$ssconf['charon']['plugins']['attr']['27675'] = config_get_path('ipsec/client/dns_domain');
 			}
 		}
 
 		if (!empty($a_client['dns_split'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (UNITY_SPLITDNS_NAME)";
-			$ssconf['charon']['plugins']['attr']['28675'] = $a_client['dns_split'];
+			$ssconf['charon']['plugins']['attr']['28675'] = config_get_path('ipsec/client/dns_split');
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (INTERNAL_DNS_DOMAIN, RFC 8598)";
-			$ssconf['charon']['plugins']['attr']['25'] = str_replace(' ', ',', $a_client['dns_split']);
+			$ssconf['charon']['plugins']['attr']['25'] = str_replace(' ', ',', config_get_path('ipsec/client/dns_split'));
 		}
 
 		if (!empty($a_client['login_banner'])) {
 			$ssconf['charon']['plugins']['attr'][] = "# Login Banner";
-			$ssconf['charon']['plugins']['attr']['28672'] = $a_client['login_banner'];
+			$ssconf['charon']['plugins']['attr']['28672'] = config_get_path('ipsec/client/login_banner');
 		}
 
 		if (isset($a_client['save_passwd'])) {
@@ -1909,7 +1878,7 @@ function ipsec_setup_strongswan() {
 
 		if ($a_client['pfs_group']) {
 			$ssconf['charon']['plugins']['attr'][] = "# Phase2 PFS Group";
-			$ssconf['charon']['plugins']['attr']['28679'] = $a_client['pfs_group'];
+			$ssconf['charon']['plugins']['attr']['28679'] = config_get_path('ipsec/client/pfs_group');
 		}
 	}
 
@@ -1928,12 +1897,12 @@ function ipsec_setup_strongswan() {
  *   pools, making future expansion to support multiple pools possible.
  ******/
 function ipsec_setup_pools() {
-	global $config, $g, $mobile_ipsec_auth, $a_client, $a_phase2, $scconf;
-	if (!is_array($a_client) || !isset($a_client['enable'])) {
+	global $g, $mobile_ipsec_auth, $scconf;
+	if (!config_path_enabled('ipsec/client')) {
 		return;
 	}
-	if (($mobile_ipsec_auth == "eap-radius") && empty($a_client['pool_address']) &&
-	    empty($a_client['pool_address_v6'])) {
+	if (($mobile_ipsec_auth == "eap-radius") && empty(config_get_path('ipsec/client/pool_address')) &&
+	    empty(config_get_path('ipsec/client/pool_address_v6'))) {
 		return;
 	}
 
@@ -1944,15 +1913,15 @@ function ipsec_setup_pools() {
 	$scconf['pools'] = array();
 	$pool_common =& $scconf['mobile-pool'];
 
-	if (!empty($a_client['pool_address'])) {
+	if (!empty(config_get_path('ipsec/client/pool_address'))) {
 		$scconf['pools']['mobile-pool-v4 : mobile-pool'] = array();
 		$v4pool =& $scconf['pools']['mobile-pool-v4 : mobile-pool'];
-		$v4pool['addrs'] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+		$v4pool['addrs'] = config_get_path('ipsec/client/pool_address') . '/' . config_get_path('ipsec/client/pool_netbits');
 	}
-	if (!empty($a_client['pool_address_v6'])) {
+	if (!empty(config_get_path('ipsec/client/pool_address_v6'))) {
 		$scconf['pools']['mobile-pool-v6 : mobile-pool'] = array();
 		$v6pool =& $scconf['pools']['mobile-pool-v6 : mobile-pool'];
-		$v6pool['addrs'] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
+		$v6pool['addrs'] = config_get_path('ipsec/client/pool_address_v6') . '/' . config_get_path('ipsec/client/pool_netbits_v6');
 	}
 
 	return;
@@ -1971,7 +1940,7 @@ function ipsec_setup_pools() {
  *   pool setting, so future expansion of per-user settings is possible.
  ******/
 function ipsec_setup_userpools() {
-	global $config, $scconf;
+	global $scconf;
 	$a_mobilekey = config_get_path('ipsec/mobilekey');
 
 	/* Do not waste time if we do not have all the necessary information. */
@@ -2035,7 +2004,7 @@ function ipsec_setup_userpools() {
  *   IPsec policies.
  ******/
 function ipsec_setup_bypass($gateways_status) {
-	global $config, $scconf;
+	global $scconf;
 
 	$scconf['connections']['bypass'] = array();
 	/* Prevents the connection from being considered for remote peers */
@@ -2044,7 +2013,7 @@ function ipsec_setup_bypass($gateways_status) {
 
 	/* Locate the LAN IPv4 and IPv6 subnets */
 	$bypassnets = array();
-	if ($config['interfaces']['lan']) {
+	if (!empty(config_get_path('interfaces/lan'))) {
 		$lanip = get_interface_ip("lan", $gateways_status);
 		if (!empty($lanip) && is_ipaddrv4($lanip)) {
 			$lansn = get_interface_subnet("lan");
@@ -2063,7 +2032,7 @@ function ipsec_setup_bypass($gateways_status) {
 		}
 	}
 	/* If we have viable targets, setup a bypass LAN connection */
-	if (!empty($bypassnets) && !isset($config['ipsec']['noshuntlaninterfaces'])) {
+	if (!empty($bypassnets) && !config_path_enabled('ipsec', 'noshuntlaninterfaces')) {
 		$bypass = implode(',', $bypassnets);
 		$scconf['connections']['bypass']['children']['bypasslan'] = array();
 		$scconf['connections']['bypass']['children']['bypasslan']['local_ts'] = $bypass;
@@ -2073,9 +2042,8 @@ function ipsec_setup_bypass($gateways_status) {
 	}
 
 	/* Setup custom bypass rules */
-	if ((isset($config['ipsec']['ipsecbypass']) && $config['ipsec']['bypassrules']) &&
-	    is_array($config['ipsec']['bypassrules'])) {
-		foreach ($config['ipsec']['bypassrules']['rule'] as $id => $rule) {
+	if (config_path_enabled('ipsec', 'ipsecbypass')) {
+		foreach (config_get_path('ipsec/bypassrules/rule', []) as $id => $rule) {
 			$scconf['connections']['bypass']['children']["rule{$id}"] = array();
 			$scconf['connections']['bypass']['children']["rule{$id}"]["local_ts"] = $rule['source'] .
 			       	"/" . $rule['srcmask'];
@@ -2166,7 +2134,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
  *   details.
  ******/
 function ipsec_setup_authentication(& $ph1ent, & $conn, $gateways_status = false) {
-	global $rgmap, $ipsec_swanctl_dirs, $config;
+	global $rgmap, $ipsec_swanctl_dirs;
 	$local = array();
 	$remote = array();
 	$remote2 = array();
@@ -2226,8 +2194,8 @@ function ipsec_setup_authentication(& $ph1ent, & $conn, $gateways_status = false
 			} else {
 				$local['auth'] = "eap-radius";
 			}
-			if (($config['ipsec']['client']['group_source'] == 'enabled') &&
-			    !empty($config['ipsec']['client']['auth_groups'])) {
+			if ((config_get_path('ipsec/client/group_source') == 'enabled') &&
+			    !empty(config_get_path('ipsec/client/auth_groups'))) {
 				$remote['groups'] = config_get_path('ipsec/client/auth_groups');
 			}
 			$remote['auth'] = "eap-radius";
@@ -2268,7 +2236,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn, $gateways_status = false
 	if (in_array($ph1ent['authentication_method'], array('eap-tls', 'xauth_cert_server', 'cert', 'pkcs11')) &&
 	    isset($cafn)) {
 		$remote['cacerts'] = $cafn;
-		if (isset($config['ipsec']['strictcrlpolicy'])) {
+		if (config_path_enabled('ipsec', 'strictcrlpolicy')) {
 			$remote['revocation'] = "strict";
 		}
 	}
@@ -2350,7 +2318,7 @@ function ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $prfalgo, $modp) {
  *   to $algo_arr as well.
  ******/
 function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
-	global $config, $p2_ealgos;
+	global $p2_ealgos;
 	$proposal = array();
 
 	/* If multiple hash algorithms are present, loop through and add them all. */
@@ -2369,7 +2337,6 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 }
 
 function ipsec_get_ifname($p1, $reqid = 0) {
-	global $config;
 	$ifname = "ipsec";
 	if ($reqid > 0) {
 		$ifname .= "{$reqid}";
@@ -2383,7 +2350,6 @@ function ipsec_get_ifname($p1, $reqid = 0) {
 }
 
 function ipsec_get_ifname_by_conf($p1 = array(), $p2 = array()) {
-	global $config;
 	$have_p1 = (!empty($p1) && is_array($p1));
 	$have_p2 = (!empty($p2) && is_array($p2));
 	$reqid = null;
@@ -2440,7 +2406,7 @@ function ipsec_setup_vtireq(& $child, & $ipsec_vti_cleanup_ifs, $p1, $reqid = 0)
  *   their children, authentication, etc.
  ******/
 function ipsec_setup_tunnels($gateways_status = false) {
-	global $aggressive_mode_psk, $a_client, $config,
+	global $aggressive_mode_psk,
 		$filterdns_list, $g, $ifacesuse, $ipsec_idhandling, $ipsec_log_cats,
 		$ipsec_log_sevs, $ipsec_swanctl_basedir, $ipsec_swanctl_dirs,
 		$ipseccfg, $mobile_ipsec_auth, $natfilterrules, $p1_ealgos,
@@ -2632,7 +2598,7 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		} elseif (isset($ph1ent['nattport'])) {
 			/* For an encapsulated connection,
 			 * set local_port to the server NAT-T port value or default (4500) */
-			$conn['local_port'] = isset($config['ipsec']['port_nat_t']) ? $config['ipsec']['port_nat_t'] : 4500;
+			$conn['local_port'] = config_get_path('ipsec/port_nat_t', 4500);
 			$conn['remote_port'] = $ph1ent['nattport'];
 		}
 
@@ -2926,7 +2892,7 @@ function ipsec_setup_tunnels($gateways_status = false) {
  *   necessary CA, CRL, and certificate data.
  ******/
 function ipsec_setup_secrets($gateways_status = false) {
-	global $config, $a_phase1, $ipsec_swanctl_dirs, $ipseccfg, $rgmap, $scconf;
+	global $ipsec_swanctl_dirs, $ipseccfg, $rgmap, $scconf;
 
 	$suffix = 0;
 
@@ -2936,120 +2902,118 @@ function ipsec_setup_secrets($gateways_status = false) {
 	}
 
 	$vpncas = array();
-	if (is_array($a_phase1) && count($a_phase1)) {
-		foreach ($a_phase1 as $ph1ent) {
-			if (isset($ph1ent['disabled'])) {
+	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
+		if (isset($ph1ent['disabled'])) {
+			continue;
+		}
+
+		if (isset($ph1ent['mobile'])) {
+			if ($ph1ent['authentication_method'] == 'pre_shared_key') {
+				$mobilepsk = true;
+			} elseif ($ph1ent['authentication_method'] == 'eap-mschapv2') {
+				$mobileeap = true;
+			}
+		}
+
+		if (strstr($ph1ent['authentication_method'], 'cert') ||
+		    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls', 'eap-radius'))) {
+			/* Write certificate and private key, point to private key */
+			$certline = '';
+
+			$ikeid = $ph1ent['ikeid'];
+			$cert = lookup_cert($ph1ent['certref']);
+
+			if (!$cert) {
+				log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
 				continue;
 			}
 
-			if (isset($ph1ent['mobile'])) {
-				if ($ph1ent['authentication_method'] == 'pre_shared_key') {
-					$mobilepsk = true;
-				} elseif ($ph1ent['authentication_method'] == 'eap-mschapv2') {
-					$mobileeap = true;
+			/* add signing CA cert chain of server cert
+			 * to the list of CAs to write
+			 */
+			$cachain = ca_chain_array($cert);
+			if ($cachain && is_array($cachain)) {
+				foreach ($cachain as $cacrt) {
+					$vpncas[$cacrt['refid']] = $cacrt;
 				}
 			}
 
-			if (strstr($ph1ent['authentication_method'], 'cert') ||
-			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls', 'eap-radius'))) {
-				/* Write certificate and private key, point to private key */
-				$certline = '';
+			@chmod($ipsec_swanctl_dirs['certpath'], 0600);
 
-				$ikeid = $ph1ent['ikeid'];
-				$cert = lookup_cert($ph1ent['certref']);
+			$ph1keyfile = "{$ipsec_swanctl_dirs['keypath']}/cert-{$ikeid}.key";
+			if (!file_put_contents($ph1keyfile, base64_decode($cert['prv']))) {
+				log_error(sprintf(gettext("Error: Cannot write phase1 key file for %s"), $ph1ent['name']));
+				continue;
+			}
+			@chmod($ph1keyfile, 0600);
 
-				if (!$cert) {
-					log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
-					continue;
-				}
+			$ph1certfile = "{$ipsec_swanctl_dirs['certpath']}/cert-{$ikeid}.crt";
+			if (!file_put_contents($ph1certfile, base64_decode($cert['crt']))) {
+				log_error(sprintf(gettext("Error: Cannot write phase1 certificate file for %s"), $ph1ent['name']));
+				@unlink($ph1keyfile);
+				continue;
+			}
+			@chmod($ph1certfile, 0600);
 
-				/* add signing CA cert chain of server cert
-				 * to the list of CAs to write
-				 */
-				$cachain = ca_chain_array($cert);
-				if ($cachain && is_array($cachain)) {
-					foreach ($cachain as $cacrt) {
-						$vpncas[$cacrt['refid']] = $cacrt;
-					}
-				}
-
-				@chmod($ipsec_swanctl_dirs['certpath'], 0600);
-
-				$ph1keyfile = "{$ipsec_swanctl_dirs['keypath']}/cert-{$ikeid}.key";
-				if (!file_put_contents($ph1keyfile, base64_decode($cert['prv']))) {
-					log_error(sprintf(gettext("Error: Cannot write phase1 key file for %s"), $ph1ent['name']));
-					continue;
-				}
-				@chmod($ph1keyfile, 0600);
-
-				$ph1certfile = "{$ipsec_swanctl_dirs['certpath']}/cert-{$ikeid}.crt";
-				if (!file_put_contents($ph1certfile, base64_decode($cert['crt']))) {
-					log_error(sprintf(gettext("Error: Cannot write phase1 certificate file for %s"), $ph1ent['name']));
-					@unlink($ph1keyfile);
-					continue;
-				}
-				@chmod($ph1certfile, 0600);
-
-				$scconf['secrets']['private-' . $suffix++] = array('file' => $ph1keyfile);
-			} else if (strstr($ph1ent['authentication_method'], 'pkcs11')) {
-				$p11_id = array();
-				$output = shell_exec('/usr/local/bin/pkcs15-tool -c');
-				preg_match_all('/ID\s+: (.*)/', $output, $p11_id);
-				if (!empty($ph1ent['pkcs11certref']) && in_array($ph1ent['pkcs11certref'], $p11_id[1])) {
-					$scconf['secrets']['token-' . $suffix++] = array(
-						'handle' => $ph1ent['pkcs11certref'],
-						'pin' => $ph1ent['pkcs11pin'],
-					);
-				} else {
-					log_error(sprintf(gettext("Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not present for %s"), $ph1ent['name']));
-					continue;
-				}
+			$scconf['secrets']['private-' . $suffix++] = array('file' => $ph1keyfile);
+		} else if (strstr($ph1ent['authentication_method'], 'pkcs11')) {
+			$p11_id = array();
+			$output = shell_exec('/usr/local/bin/pkcs15-tool -c');
+			preg_match_all('/ID\s+: (.*)/', $output, $p11_id);
+			if (!empty($ph1ent['pkcs11certref']) && in_array($ph1ent['pkcs11certref'], $p11_id[1])) {
+				$scconf['secrets']['token-' . $suffix++] = array(
+					'handle' => $ph1ent['pkcs11certref'],
+					'pin' => $ph1ent['pkcs11pin'],
+				);
 			} else {
-				/* Setup pre-shared keys */
-				list($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local', array(), $gateways_status);
-				list($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap, $gateways_status);
-				$myid = trim($myid_data);
+				log_error(sprintf(gettext("Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not present for %s"), $ph1ent['name']));
+				continue;
+			}
+		} else {
+			/* Setup pre-shared keys */
+			list($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local', array(), $gateways_status);
+			list($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap, $gateways_status);
+			$myid = trim($myid_data);
 
-				if (empty($peerid_data)) {
-					continue;
-				}
+			if (empty($peerid_data)) {
+				continue;
+			}
 
-				$myid = isset($ph1ent['mobile']) ? ipsec_fixup_id($myid_type, trim($myid_data)) : "%any";
-				$peerid = ($peerid_data != 'allusers') ? ipsec_fixup_id($peerid_type, trim($peerid_data)) : '';
+			$myid = isset($ph1ent['mobile']) ? ipsec_fixup_id($myid_type, trim($myid_data)) : "%any";
+			$peerid = ($peerid_data != 'allusers') ? ipsec_fixup_id($peerid_type, trim($peerid_data)) : '';
 
-				if (!empty($ph1ent['pre-shared-key'])) {
+			if (!empty($ph1ent['pre-shared-key'])) {
+				$scconf['secrets']['ike-' . $suffix++] = array(
+					'secret' => '0s' . base64_encode(trim($ph1ent['pre-shared-key'])),
+					'id-0' => $myid,
+					'id-1' => $peerid,
+				);
+				if (isset($ph1ent['mobile'])) {
 					$scconf['secrets']['ike-' . $suffix++] = array(
 						'secret' => '0s' . base64_encode(trim($ph1ent['pre-shared-key'])),
 						'id-0' => $myid,
-						'id-1' => $peerid,
+						'id-1' => '%any',
 					);
-					if (isset($ph1ent['mobile'])) {
-						$scconf['secrets']['ike-' . $suffix++] = array(
-							'secret' => '0s' . base64_encode(trim($ph1ent['pre-shared-key'])),
-							'id-0' => $myid,
-							'id-1' => '%any',
-						);
-						$scconf['secrets']['ike-' . $suffix++] = array(
-							'secret' => '0s' . base64_encode(trim($ph1ent['pre-shared-key'])),
-						);
-					}
+					$scconf['secrets']['ike-' . $suffix++] = array(
+						'secret' => '0s' . base64_encode(trim($ph1ent['pre-shared-key'])),
+					);
 				}
 			}
+		}
 
-			/* if the client authenticates with a cert add the
-			 * client cert CA chain to the list of CAs to write
-			 */
-			if (in_array($ph1ent['authentication_method'],
-			    array('cert', 'eap-tls', 'xauth_cert_server', 'pkcs11'))) {
-				if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
-					$thisca = lookup_ca($ph1ent['caref']);
-					$vpncas[$ph1ent['caref']] = $thisca;
-					/* follow chain up to root */
-					$cachain = ca_chain_array($thisca);
-					if ($cachain and is_array($cachain)) {
-						foreach ($cachain as $cacrt) {
-							$vpncas[$cacrt['refid']] = $cacrt;
-						}
+		/* if the client authenticates with a cert add the
+		 * client cert CA chain to the list of CAs to write
+		 */
+		if (in_array($ph1ent['authentication_method'],
+		    array('cert', 'eap-tls', 'xauth_cert_server', 'pkcs11'))) {
+			if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
+				$thisca = lookup_ca($ph1ent['caref']);
+				$vpncas[$ph1ent['caref']] = $thisca;
+				/* follow chain up to root */
+				$cachain = ca_chain_array($thisca);
+				if ($cachain and is_array($cachain)) {
+					foreach ($cachain as $cacrt) {
+						$vpncas[$cacrt['refid']] = $cacrt;
 					}
 				}
 			}
@@ -3072,8 +3036,8 @@ function ipsec_setup_secrets($gateways_status = false) {
 	}
 
 	/* write out CRL files */
-	if (is_array($config['crl']) && count($config['crl']) && !empty($vpncas)) {
-		foreach ($config['crl'] as $crl) {
+	if (!empty($vpncas)) {
+		foreach (config_get_path('crl', []) as $crl) {
 			if (!isset($crl['text'])) {
 				log_error(sprintf(gettext("Warning: Missing CRL data for %s"), $crl['descr']));
 				continue;
@@ -3087,8 +3051,8 @@ function ipsec_setup_secrets($gateways_status = false) {
 	}
 
 	/* Add user PSKs */
-	if ($mobilepsk && is_array($config['system']) && is_array($config['system']['user'])) {
-		foreach ($config['system']['user'] as $user) {
+	if ($mobilepsk) {
+		foreach (config_get_path('system/user', []) as $user) {
 			if (!empty($user['ipsecpsk'])) {
 				$scconf['secrets']['ike-' . $suffix++] = array(
 					'secret' => '0s' . base64_encode(trim($user['ipsecpsk'])),
@@ -3132,7 +3096,7 @@ function ipsec_setup_secrets($gateways_status = false) {
  *   appropriately.
  ******/
 function ipsec_configure($restart = false, $filterdns_restart = false) {
-	global $aggressive_mode_psk, $a_client, $a_phase1, $a_phase2, $config,
+	global $aggressive_mode_psk,
 		$filterdns_list, $g, $ifacesuse, $ipsec_idhandling, $ipsec_log_cats,
 		$ipsec_log_sevs, $ipsec_swanctl_basedir, $ipsec_swanctl_dirs,
 		$ipseccfg, $mobile_ipsec_auth, $natfilterrules, $p1_ealgos,
@@ -3161,7 +3125,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		/* Startup enc0 interface */
 		mwexec("/sbin/ifconfig enc0 up");
 		/* PC/SC daemon must be started before strongswan */
-		if (isset($config['ipsec']['pkcs11support']) && !isvalidproc("pcscd")) {
+		if (config_path_enabled('ipsec', 'pkcs11support') && !isvalidproc("pcscd")) {
 			if (platform_booting()) {
 				echo gettext("Starting PC/SC Smart Card Services...");
 			}
@@ -3169,7 +3133,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 			if (platform_booting()) {
 				echo gettext("done.\n");
 			}
-		} elseif (!isset($config['ipsec']['pkcs11support']) && isvalidproc("pcscd")) {
+		} elseif (!config_path_enabled('ipsec', 'pkcs11support') && isvalidproc("pcscd")) {
 			/* strongswan must be stopped first, otherwise it will flood the logs */
 			mwexec("/usr/local/sbin/strongswanrc stop");
 			killbyname("pcscd");
@@ -3249,8 +3213,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 	$conn_defaults['unique'] = 'replace';
 	/* If the configuration has a valid alternate value for unique ID handling,
 	 * use it instead. */
-	if (!empty($config['ipsec']['uniqueids']) &&
-	    array_key_exists($config['ipsec']['uniqueids'], $ipsec_idhandling)) {
+	if (array_key_exists(config_get_path('ipsec/uniqueids', ""), $ipsec_idhandling)) {
 		$conn_defaults['unique'] = config_get_path('ipsec/uniqueids');
 	}
 	/* Disable ipcomp for now. redmine #6167
@@ -3351,9 +3314,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 }
 
 function ipsec_gre_default_mtu() {
-	global $config;
-
-	foreach ($config['interfaces'] as $if => $ifdetail) { 
+	foreach (config_get_path('interfaces', []) as $if => $ifdetail) { 
 		if (interface_is_type($ifdetail['if'], 'gre') && !isset($ifdetail['mtu'])) {
 			if (is_greipsec($ifdetail['if'])) {
 				set_interface_mtu($ifdetail['if'], 1400);

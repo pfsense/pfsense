@@ -39,12 +39,10 @@ require_once("vpn.inc");
 require_once("filter.inc");
 
 init_config_arr(array('ipsec', 'mobilekey'));
-ipsec_mobilekey_sort();
-$a_secret = &$config['ipsec']['mobilekey'];
 
 $userkeys = array();
 init_config_arr(array('system', 'user'));
-foreach ($config['system']['user'] as $id => $user) {
+foreach (config_get_path('system/user', []) as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
 		$userkeys[] = array('ident' => $user['name'], 'type' => 'PSK', 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;
 	}
@@ -61,8 +59,8 @@ if (isset($_POST['apply'])) {
 }
 
 if ($_POST['act'] == "del") {
-	if ($a_secret[$_POST['id']]) {
-		unset($a_secret[$_POST['id']]);
+	if (!empty(config_get_path('ipsec/mobilekey/' . $_POST['id']))) {
+		config_del_path('ipsec/mobilekey/' . $_POST['id']);
 		write_config(gettext("Deleted IPsec Pre-Shared Key"));
 		mark_subsystem_dirty('ipsec');
 		header("Location: vpn_ipsec_keys.php");
@@ -135,7 +133,7 @@ if (is_subsystem_dirty('ipsec')) {
 					</tr>
 <?php $i++; endforeach; ?>
 
-<?php $i = 0; foreach ($a_secret as $secretent): ?>
+<?php $i = 0; foreach (config_get_path('ipsec/mobilekey', []) as $secretent): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($secretent['ident'])?>

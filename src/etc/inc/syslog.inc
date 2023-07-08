@@ -596,7 +596,7 @@ function system_log_rotation_make_line($filename, $owner = 'root:wheel', $mode='
 
 function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $format = 'table', $grepreverse = false) {
 	global $g;
-	$sor = (config_path_enabled('syslog/reverse') || $grepreverse) ? "-r" : "";
+	$sor = (config_path_enabled('syslog', 'reverse') || $grepreverse) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
 	$cronorder = config_get_path("syslog/{$specific_log}/cronorder");
 	if (($cronorder == 'forward') && !$grepreverse) {

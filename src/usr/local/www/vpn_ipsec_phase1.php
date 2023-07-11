@@ -642,7 +642,7 @@ if ($_POST['save']) {
 		} else {
 			$p1s = config_get_path('ipsec/phase1', []);
 			$p1s[] = $ph1ent;
-			config_set_path('ipsec/phase1', $ph1s);
+			config_set_path('ipsec/phase1', $p1s);
 		}
 
 		write_config(gettext("Saved IPsec tunnel Phase 1 configuration."));

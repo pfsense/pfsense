@@ -947,7 +947,7 @@ function alias_info_popup($alias_id) {
 			exec("/sbin/pfctl -t {$alias['name']} -T show | head -10002", $alias_addresses);
 		} else {
 			$urlfn = alias_expand_urltable($alias['name']);
-			$alias_addresses = explode("\n", file_get_contents($urlfn));
+			$alias_addresses = empty($urlfn) ? [] : explode("\n", file_get_contents($urlfn));
 			$counter = count($alias_addresses);
 		}
 

@@ -2023,7 +2023,7 @@ function alias_get_type($name) {
 	return "";
 }
 
-/* expand a host or network alias, if necessary */
+/* expand a url alias, if necessary */
 function alias_expand($name) {
 	global $aliastable;
 	$urltable_prefix = "/var/db/aliastables/";
@@ -2035,12 +2035,12 @@ function alias_expand($name) {
 			return null;
 		}
 		/*
-		 * make sure if it's a ports alias, it actually exists.
-		 * redmine #5845
+		 * make sure if it's a url alias, it actually exists.
+		 * redmine #5845, #13068
 		 */
 		foreach (config_get_path('aliases/alias', []) as $alias) {
 			if ($alias['name'] == $name) {
-				if ($alias['type'] == "urltable_ports") {
+				if (in_array($alias['type'], ['url', 'url_ports', 'urltable', "urltable_ports"])) {
 					if (is_URL($alias['url']) &&
 					    file_exists($urltable_filename) &&
 					    !empty(trim(file_get_contents($urltable_filename)))) {

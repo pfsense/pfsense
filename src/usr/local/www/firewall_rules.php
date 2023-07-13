@@ -349,7 +349,7 @@ if (isset($_POST['del_x'])) {
 		$filterent = $a_filter[$rulei];
 		$filterent['tracker'] = $tracker++;
 		$filterent['interface'] = $_POST['dstif'];
-		if ($_POST['convertif'] && ($if != $_POST['dstif']) &&
+		if (($_POST['convertif'] == 'true') && ($if != $_POST['dstif']) &&
 		    in_array($_POST['dstif'], $confiflist)) {
 			if (isset($filterent['source']['network']) &&
 			    ($filterent['source']['network'] == $if)) {
@@ -1267,7 +1267,7 @@ events.push(function() {
 	$("#copyr").click(function() {
 		$("#rulescopy").modal('hide');
 		$("#dstif").val($("#copyr_dstif").val());
-		$("#convertif").val($("#copyr_convertif").val());
+		$("#convertif").val($("#copyr_convertif").prop('checked'));
 		document.getElementById('mainform').submit();
 	});
 

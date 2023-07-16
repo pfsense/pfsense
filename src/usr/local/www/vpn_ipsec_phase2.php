@@ -39,11 +39,8 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 
 init_config_arr(array('ipsec', 'client'));
-$a_client = &$config['ipsec']['client'];
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
-$a_phase1 = &$config['ipsec']['phase1'];
-$a_phase2 = &$config['ipsec']['phase2'];
 
 if (!empty($_REQUEST['p2index'])) {
 	$uindex = $_REQUEST['p2index'];
@@ -59,7 +56,7 @@ if (!empty($_REQUEST['dup'])) {
 
 $p2index = null;
 if (isset($uindex)) {
-	foreach ($a_phase2 as $idx => $ph2) {
+	foreach (config_get_path('ipsec/phase2', []) as $idx => $ph2) {
 		if ($ph2['uniqid'] == $uindex) {
 			$p2index = $idx;
 			break;
@@ -174,7 +171,7 @@ if ($_POST['save']) {
 
 		}
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
-		if (is_array($config['interfaces'][$pconfig['localid_type']])) {
+		if (is_array(config_get_path('interfaces/' . $pconfig['localid_type']))) {
 			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
 			if ($pconfig['mode'] == 'tunnel6') {
 				$address = get_interface_ipv6($pconfig['localid_type']);
@@ -217,7 +214,7 @@ if ($_POST['save']) {
 					break;
 			}
 
-			if (is_array($config['interfaces'][$pconfig['natlocalid_type']])) {
+			if (is_array(config_get_path('interfaces/' . $pconfig['natlocalid_type']))) {
 				// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
 				$address = get_interface_ip($pconfig['natlocalid_type']);
 				$netbits = get_interface_subnet($pconfig['natlocalid_type']);
@@ -255,7 +252,7 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("VTI is not compatible with mobile IPsec.");
 		}
 
-		foreach ($a_phase2 as $name) {
+		foreach (config_get_path('ipsec/phase2', []) as $name) {
 			if (isset($name['mobile']) && $name['uniqid'] != $pconfig['uniqid']) {
 				/* check duplicate localids only for mobile clients */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
@@ -281,7 +278,7 @@ if ($_POST['save']) {
 	} else {
 		/* User is adding phase 2 for site-to-site phase1 */
 		$input_error = 0;
-		foreach ($a_phase2 as $name) {
+		foreach (config_get_path('ipsec/phase2', []) as $name) {
 			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid'] && $pconfig['uniqid'] != $name['uniqid']) {
 				/* check duplicate subnets only for given phase1 */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
@@ -311,12 +308,12 @@ if ($_POST['save']) {
 				}
 			}
 		}
-		foreach ($a_phase1 as $phase1) {
+		foreach (config_get_path('ipsec/phase1', []) as $phase1) {
 			if ($phase1['ikeid'] == $pconfig['ikeid']) {
 				/* This is the P1 for this entry */
 				if ($vti_switched) {
 					/* Determine what this P2 interface would be */
-					if (is_interface_ipsec_vti_assigned($a_phase2[$p2index])) {
+					if (is_interface_ipsec_vti_assigned(config_get_path('ipsec/phase2/' . $uindex))) {
 						$input_errors[] = gettext("Cannot switch away from VTI while the interface is assigned. Remove the interface assignment before switching away from VTI.");
 					}
 				}
@@ -453,10 +450,12 @@ if ($_POST['save']) {
 			$ph2ent['mobile'] = true;
 		}
 
-		if (($p2index !== null) && $a_phase2[$p2index]) {
-			$a_phase2[$p2index] = $ph2ent;
+		if ($p2index !== null && config_get_path('ipsec/phase2/' . $p2index)) {
+			config_set_path('ipsec/phase2/' . $p2index, $ph2ent);
 		} else {
-			$a_phase2[] = $ph2ent;
+			$ph2s = config_get_path('ipsec/phase2', []);
+			$ph2s[] = $ph2ent;
+			config_set_path('ipsec/phase2', $ph2s);
 		}
 
 		write_config(gettext("Saved IPsec tunnel Phase 2 configuration."));
@@ -756,6 +755,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 $section->add($group);
 
 $sm = (!isset($pconfig['mobile']) || !isset($a_client['pfs_group']));
+$sm = (!isset($pconfig['mobile']) || !empty(config_get_path('ipsec/client/pfs_group')));
 $helpstr = $sm ? '':'Set globally in mobile client options. ';
 $helpstr .= 'Note: Groups 1, 2, 5, 22, 23, and 24 provide weak security and should be avoided.';
 

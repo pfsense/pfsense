@@ -40,8 +40,8 @@ $serviceproviders = &$serviceproviders_attr['serviceproviders']['country'];
 function get_country_providers($country) {
 	global $serviceproviders;
 	foreach ($serviceproviders as $sp) {
-		if ($sp['attr']['code'] == strtolower($country)) {
-			return is_array($sp['provider'][0]) ? $sp['provider'] : array($sp['provider']);
+		if (array_get_path($sp, 'attr/code', '') == strtolower($country)) {
+			return is_array(array_get_path($sp, 'provider/0')) ? array_get_path($sp, 'provider') : [ array_get_path($sp, 'provider') ];
 		}
 	}
 	$provider_list = (is_array($provider_list)) ? $provider_list : array();
@@ -53,8 +53,11 @@ function country_list() {
 	$country_list = get_country_name();
 	foreach ($serviceproviders as $sp) {
 		foreach ($country_list as $country) {
-			if (strtoupper($sp['attr']['code']) == $country['code']) {
-				echo $country['name'] . ":" . $country['code'] . "\n";
+			if (!is_array($country) || empty($country)) {
+				continue;
+			}
+			if (strtoupper(array_get_path($sp, 'attr/code')) == array_get_path($country, 'code')) {
+				echo array_get_path($country, 'name', '') . ":" . array_get_path($country, 'code', '') . "\n";
 			}
 		}
 	}
@@ -64,7 +67,7 @@ function providers_list($country) {
 	$serviceproviders = get_country_providers($country);
 	if (is_array($serviceproviders)) {
 		foreach ($serviceproviders as $sp) {
-			echo $sp['name']['value'] . "\n";
+			echo array_get_path($sp, 'name/value', '') . "\n";
 		}
 	} else {
 		$serviceproviders = array();
@@ -77,15 +80,16 @@ function provider_plan_data($country, $provider, $connection) {
 	echo "<connection>\n";
 	$serviceproviders = get_country_providers($country);
 	foreach ($serviceproviders as $sp) {
-		if (strtolower($sp['name']['value']) == strtolower($provider)) {
+		if (strtolower(array_get_path($sp, 'name/value', '')) == strtolower($provider)) {
 			if (strtoupper($connection) == "CDMA") {
-				$conndata = $sp['cdma'];
+				$conndata = array_get_path($sp, 'cdma');
 			} else {
-				if (!is_array($sp['gsm']['apn'][0])) {
-					$conndata = $sp['gsm']['apn'];
+				if (!is_array(array_get_path($sp, 'gsm/apn/0'))) {
+					$conndata = array_get_path($sp, 'gsm/apn');
+					$connection = array_get_path($sp, 'gsm/apn/attr/value', $connection);
 				} else {
-					foreach ($sp['gsm']['apn'] as $apn) {
-						if ($apn['attr']['value'] == $connection) {
+					foreach (array_get_path($sp, 'gsm/apn', []) as $apn) {
+						if (array_get_path($apn, 'attr/value') == $connection) {
 							$conndata = $apn;
 							break;
 						}
@@ -93,13 +97,15 @@ function provider_plan_data($country, $provider, $connection) {
 				}
 			}
 			if (is_array($conndata)) {
-				echo "<apn>" . $connection . "</apn>\n";
-				echo "<username>" . $conndata['username']['value'] . "</username>\n";
-				echo "<password>" . $conndata['password']['value'] . "</password>\n";
+				echo "<apn>" . htmlentities($connection) . "</apn>\n";
+				echo "<username>" . htmlentities(array_get_path($conndata, 'username/value', '')) . "</username>\n";
+				echo "<password>" . htmlentities(array_get_path($conndata, 'password/value', '')) . "</password>\n";
 
-				$dns_arr = is_array($conndata['dns'][0]) ? $conndata['dns'] : array($conndata['dns']);
+				$dns_arr = is_array(array_get_path($conndata, 'dns/0')) ? array_get_path($conndata, 'dns') : [ array_get_path($conndata, 'dns') ];
 				foreach ($dns_arr as $dns) {
-					echo '<dns>' . $dns['value'] . "</dns>\n";
+					if (is_array($dns) && !empty($dns)) {
+						echo '<dns>' . array_get_path($dns, 'value') . "</dns>\n";
+					}
 				}
 			}
 			break;
@@ -111,37 +117,37 @@ function provider_plan_data($country, $provider, $connection) {
 function provider_plans_list($country, $provider) {
 	$serviceproviders = get_country_providers($country);
 	foreach ($serviceproviders as $sp) {
-		if (strtolower($sp['name']['value']) == strtolower($provider)) {
+		if (strtolower(array_get_path($sp, 'name/value', '')) == strtolower($provider)) {
 			if (array_key_exists('gsm', $sp)) {
-				if (array_key_exists('attr', $sp['gsm']['apn'])) {
-					$name = ($sp['gsm']['apn']['name'] ? $sp['gsm']['apn']['name'] : $sp['name']['value']);
-					echo $name . ":" . $sp['gsm']['apn']['attr']['value'];
+				if (array_key_exists('attr', array_get_path($sp, 'gsm/apn', []))) {
+					$name = array_get_path($sp, 'gsm/apn/name/value', array_get_path($sp, 'name/value', ''));
+					echo $name . ":" . array_get_path($sp, 'gsm/apn/attr/value', '');
 				} else {
-					foreach ($sp['gsm']['apn'] as $apn_info) {
-						$name = ($apn_info['name']['value'] ? $apn_info['name']['value'] : $apn_info['gsm']['apn']['name']);
-						echo $name . ":" . $apn_info['attr']['value'] . "\n";
+					foreach (array_get_path($sp, 'gsm/apn', []) as $apn_info) {
+						$name = array_get_path($apn_info, 'name/value', array_get_path($apn_info, 'gsm/apn/name', ''));
+						echo $name . ":" . array_get_path($apn_info, 'attr/value', '') . "\n";
 					}
 				}
 			}
 			if (array_key_exists('cdma', $sp)) {
-				$name = $sp['cdma']['name']['value'] ? $sp['cdma']['name']['value']:$sp['name']['value'];
+				$name = array_get_path($sp, 'cdma/name/value', array_get_path($sp, 'name/value', ''));
 				echo $name . ":" . "CDMA";
 			}
 		}
 	}
 }
 
-$_REQ_OR_POST = ($_SERVER['REQUEST_METHOD'] === 'POST') ? $_POST : $_REQUEST;
-
-if (isset($_REQ_OR_POST['country']) && !isset($_REQ_OR_POST['provider'])) {
-	providers_list($_REQ_OR_POST['country']);
-} elseif (isset($_REQ_OR_POST['country']) && isset($_REQ_OR_POST['provider'])) {
-	if (isset($_REQ_OR_POST['plan'])) {
-		provider_plan_data($_REQ_OR_POST['country'], $_REQ_OR_POST['provider'], $_REQ_OR_POST['plan']);
+if (!empty($_POST)) {
+	if (isset($_POST['country']) && !isset($_POST['provider'])) {
+		providers_list($_POST['country']);
+	} elseif (isset($_POST['country']) && isset($_POST['provider'])) {
+		if (isset($_POST['plan'])) {
+			provider_plan_data($_POST['country'], $_POST['provider'], $_POST['plan']);
+		} else {
+			provider_plans_list($_POST['country'], $_POST['provider']);
+		}
 	} else {
-		provider_plans_list($_REQ_OR_POST['country'], $_REQ_OR_POST['provider']);
+		country_list();
 	}
-} else {
-	country_list();
 }
 ?>

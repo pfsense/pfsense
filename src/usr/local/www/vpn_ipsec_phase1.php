@@ -50,8 +50,6 @@ if ($_POST['generatekey']) {
 
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
-$a_phase1 = &$config['ipsec']['phase1'];
-$a_phase2 = &$config['ipsec']['phase2'];
 
 if (is_numericint($_REQUEST['p1index'])) {
 	$p1index = $_REQUEST['p1index'];
@@ -63,13 +61,16 @@ if (is_numericint($_REQUEST['dup'])) {
 
 $p1 = null;
 if (!empty($_REQUEST['ikeid'])) {
-	foreach($a_phase1 as & $phase1) {
+	$p1index = 0;
+	foreach(config_get_path('ipsec/phase1') as $phase1) {
 		if ($phase1['ikeid'] == $_REQUEST['ikeid']) {
-			$p1 =& $phase1;
+			$p1 = $phase1;
+			break;
 		}
+		$p1index++;
 	}
-} elseif (isset($p1index) && $a_phase1[$p1index]) {
-	$p1 =& $a_phase1[$p1index];
+} elseif (isset($p1index) && config_get_path('ipsec/phase1/' . $p1index)) {
+	$p1 = config_get_path('ipsec/phase1/' . $p1index);
 }
 
 if ($p1) {
@@ -161,7 +162,7 @@ if ($p1) {
 } else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
-	if ($config['interfaces']['lan']) {
+	if (config_get_path('interfaces/lan')) {
 		$pconfig['localnet'] = "lan";
 	}
 	$pconfig['mode'] = "main";
@@ -348,7 +349,7 @@ if ($_POST['save']) {
 	}
 
 	if ($pconfig['remotegw'] && !isset($pconfig['disabled'])) {
-		foreach ($a_phase1 as $ph1tmp) {
+		foreach (config_get_path('ipsec/phase1', []) as $ph1tmp) {
 			if ($p1['ikeid'] != $ph1tmp['ikeid']) {
 				$tremotegw = $pconfig['remotegw'];
 				if (($ph1tmp['remote-gateway'] == $tremotegw) && ($ph1tmp['remote-gateway'] != '0.0.0.0') &&
@@ -495,8 +496,8 @@ if ($_POST['save']) {
 	}
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
 	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
-		if (!empty($config['ipsec']['client']['user_source'])) {
-			$auth_server_list  = explode(',', $config['ipsec']['client']['user_source']);
+		if (!empty(config_get_path('ipsec/client/user_source'))) {
+			$auth_server_list  = explode(',', config_get_path('ipsec/client/user_source'));
 			foreach ($auth_server_list as $auth_server_name) {
 				$auth_server       = auth_get_authserver($auth_server_name);
 				if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
@@ -506,7 +507,7 @@ if ($_POST['save']) {
 		}
 	}
 	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent, false, false)) {
-		foreach ($a_phase2 as $ph2tmp) {
+		foreach (config_get_path('ipsec/phase2', []) as $ph2tmp) {
 			if ($ph2tmp['ikeid'] == $old_ph1ent['ikeid']) {
 				if (!$vtidisablecheck && $pconfig['disabled'] &&
 				    is_interface_ipsec_vti_assigned($ph2tmp)) {
@@ -637,9 +638,11 @@ if ($_POST['save']) {
 		}
 
 		if ($p1 && !isset($_REQUEST['dup'])) {
-			$p1 = $ph1ent;
+			config_set_path('ipsec/phase1/' . $p1index, $ph1ent);
 		} else {
-			$a_phase1[] = $ph1ent;
+			$p1s = config_get_path('ipsec/phase1', []);
+			$p1s[] = $ph1ent;
+			config_set_path('ipsec/phase1', $p1s);
 		}
 
 		write_config(gettext("Saved IPsec tunnel Phase 1 configuration."));
@@ -678,7 +681,7 @@ function build_interface_list() {
 }
 
 function build_auth_method_list() {
-	global $p1_authentication_methods, $pconfig, $config;
+	global $p1_authentication_methods, $pconfig;
 
 	$list = array();
 
@@ -686,7 +689,7 @@ function build_auth_method_list() {
 		if (!$pconfig['mobile'] && $method_params['mobile']) {
 			continue;
 		}
-		if (!isset($config['ipsec']['pkcs11support']) &&
+		if (!config_path_enabled('ipsec', 'pkcs11support') &&
 		    ($method_type == 'pkcs11')) {
 			continue;
 		}
@@ -722,8 +725,6 @@ function build_peerid_list() {
 }
 
 function build_pkcs11cert_list() {
-	global $config;
-
 	$list = array();
 	$p11_cn = array();
 	$p11_id = array();
@@ -1196,7 +1197,7 @@ if ((!empty($_REQUEST['ikeid']) &&
 		'hidden',
 		$p1['ikeid']
 	));
-} elseif (isset($p1index) && $a_phase1[$p1index]) {
+} elseif (isset($p1index) && config_get_path('ipsec/phase1/' . $p1index)) {
 	$form->addGlobal(new Form_Input(
 		'p1index',
 		null,

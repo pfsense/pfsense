@@ -34,8 +34,6 @@ require_once("config.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
-global $config;
-
 /* setup syslog logging */
 openlog("charon", LOG_ODELAY, LOG_AUTH);
 
@@ -79,9 +77,9 @@ if (($strictusercn === true) && ($common_name != $username)) {
 }
 
 $attributes = array("nas_identifier" => "xauthIPsec");
-if (($config['ipsec']['client']['group_source'] == 'enabled') &&
-    !empty($config['ipsec']['client']['auth_groups'])) {
-	$ipsec_groups = explode(",", ($config['ipsec']['client']['auth_groups']));
+if ((config_get_path('ipsec/client/group_source') == 'enabled') &&
+    !empty(config_get_path('ipsec/client/auth_groups'))) {
+	$ipsec_groups = explode(",", config_get_path('ipsec/client/auth_groups'));
 } else { 
 	$ipsec_groups = '';
 }

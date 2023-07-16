@@ -38,26 +38,24 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 
 init_config_arr(array('ipsec', 'mobilekey'));
-ipsec_mobilekey_sort();
-$a_secret = &$config['ipsec']['mobilekey'];
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_secret[$id]) {
-	$pconfig['ident'] = $a_secret[$id]['ident'];
-	$pconfig['type'] = $a_secret[$id]['type'];
-	$pconfig['psk'] = $a_secret[$id]['pre-shared-key'];
-	$pconfig['ident_type'] = $a_secret[$id]['ident_type'];
-	$pconfig['pool_address'] = $a_secret[$id]['pool_address'];
-	$pconfig['pool_netbits'] = $a_secret[$id]['pool_netbits'];
-	$pconfig['dns_address'] = $a_secret[$id]['dns_address'];
+if (isset($id) && config_get_path('ipsec/mobilekey/' . $id)) {
+	$pconfig['ident'] = config_get_path('ipsec/mobilekey/' . $id . '/ident');
+	$pconfig['type'] = config_get_path('ipsec/mobilekey/' . $id . '/type');
+	$pconfig['psk'] = config_get_path('ipsec/mobilekey/' . $id . '/pre-shared-key');
+	$pconfig['ident_type'] = config_get_path('ipsec/mobilekey/' . $id . '/ident_type');
+	$pconfig['pool_address'] = config_get_path('ipsec/mobilekey/' . $id . '/pool_address');
+	$pconfig['pool_netbits'] = config_get_path('ipsec/mobilekey/' . $id . '/pool_netbits');
+	$pconfig['dns_address'] = config_get_path('ipsec/mobilekey/' . $id . '/dns_address');
 }
 
 if ($_POST['save']) {
 	$userids = array();
-	foreach ($config['system']['user'] as $uid => $user) {
+	foreach (config_get_path('system/user', []) as $uid => $user) {
 		$userids[$user['name']] = $uid;
 	}
 
@@ -91,9 +89,9 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid IP address for 'DNS Server' must be specified.");
 	}
 
-	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
+	if (!$input_errors && !(isset($id) && config_get_path('ipsec/mobilekey/' . $id))) {
 		/* make sure there are no dupes */
-		foreach ($a_secret as $secretent) {
+		foreach (config_get_path('ipsec/mobilekey', []) as $secretent) {
 			if ($secretent['ident'] == $_POST['ident']) {
 				$input_errors[] = gettext("Another entry with the same identifier already exists.");
 				break;
@@ -103,8 +101,8 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 
-		if (isset($id) && $a_secret[$id]) {
-			$secretent = $a_secret[$id];
+		if (isset($id) && config_get_path('ipsec/mobilekey/' . $id)) {
+			$secretent = config_get_path('ipsec/mobilekey/' . $id);
 		}
 
 		$secretent['ident'] = $_POST['ident'];
@@ -116,11 +114,13 @@ if ($_POST['save']) {
 		$secretent['dns_address'] = $_POST['dns_address'];
 		$text = "";
 
-		if (isset($id) && $a_secret[$id]) {
-			$a_secret[$id] = $secretent;
+		if (isset($id) && config_get_path('ipsec/mobilekey/' . $id)) {
+			config_set_path('ipsec/mobilekey/' . $id, $secretent);
 			$text = gettext("Edited IPsec Pre-Shared Keys");
 		} else {
-			$a_secret[] = $secretent;
+			$mks = config_get_path('ipsec/mobilekey', []);
+			$mks[] = $secretent;
+			config_set_path('ipsec/mobilekey', $mks);
 			$text = gettext("Added IPsec Pre-Shared Keys");
 		}
 
@@ -200,7 +200,7 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['dns_address']
 ))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. Individual DNS server only for this user. If left blank, "DNS Servers" of "Mobile Clients" will be used.');
 
-if (isset($id) && $a_secret[$id]) {
+if (isset($id) && config_get_path('ipsec/mobilekey/' . $id)) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		false,

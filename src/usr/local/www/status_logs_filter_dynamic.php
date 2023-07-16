@@ -128,7 +128,7 @@ system_log_filter();
 		$filter_query_string = "type=formatted&filter=" . urlencode(json_encode($filterfieldsarray ));
 	}
 	if ($filtersubmit) {	# Raw mode.
-		$filter_query_string = "type=raw&filter=" . urlencode(json_encode($filtertext )) . "&interfacefilter=" . $interfacefilter;
+		$filter_query_string = "type=raw&filter=" . urlencode(json_encode($filtertext)) . "&interfacefilter=" . urlencode(json_encode($interfacefilter));
 	}
 
 

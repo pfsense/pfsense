@@ -2304,10 +2304,10 @@ function filter_nat_rules_generate() {
 	if (ipsec_enabled()) {
 		foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
 			if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid']) && !isset($ph2ent['disabled'])) {
-				if (!ipsec_lookup_phase1($ph2ent, $ph1ent)) {
+				if (!ipsec_lookup_phase1($ph2ent, $ph1ent_disabled)) {
 					continue;
 				}
-				if (isset($ph1ent['disabled'])) {
+				if ($ph1ent_disabled) {
 					continue;
 				}
 				if (!is_array($ph2ent['localid'])) {

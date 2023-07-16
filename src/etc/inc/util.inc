@@ -1432,6 +1432,22 @@ function build_vip_list($fif, $family = "all") {
 			if (get_vip_descr($address)) {
 				$list[$vip] .= " (". get_vip_descr($address) .")";
 			}
+		} else {
+			/**
+			 * additional check necessary: Alias-on-CARP VIPs return a "_vip<id>" string
+			 * that needs to be resolved via an additional check to see if that VIP should
+			 * be displayed here or skipped, as the parent isn't configured on this interface
+			 */
+
+			$parentif = get_configured_vip_interface($vip);
+			if (str_starts_with($parentif, "_vip")) {
+				if ($fif == get_configured_vip_interface($parentif)) {
+					$list[$vip] = "$address";
+					if (get_vip_descr($address)) {
+						$list[$vip] .= " (". get_vip_descr($address) .")";
+					}
+				}
+			}
 		}
 	}
 
@@ -2007,7 +2023,7 @@ function alias_get_type($name) {
 	return "";
 }
 
-/* expand a host or network alias, if necessary */
+/* expand a url alias, if necessary */
 function alias_expand($name) {
 	global $aliastable;
 	$urltable_prefix = "/var/db/aliastables/";
@@ -2019,12 +2035,12 @@ function alias_expand($name) {
 			return null;
 		}
 		/*
-		 * make sure if it's a ports alias, it actually exists.
-		 * redmine #5845
+		 * make sure if it's a url alias, it actually exists.
+		 * redmine #5845, #13068
 		 */
 		foreach (config_get_path('aliases/alias', []) as $alias) {
 			if ($alias['name'] == $name) {
-				if ($alias['type'] == "urltable_ports") {
+				if (in_array($alias['type'], ['url', 'url_ports', 'urltable', "urltable_ports"])) {
 					if (is_URL($alias['url']) &&
 					    file_exists($urltable_filename) &&
 					    !empty(trim(file_get_contents($urltable_filename)))) {

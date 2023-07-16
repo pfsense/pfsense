@@ -3779,7 +3779,10 @@ events.push(function() {
 		$('#country').children().remove();
 		$('#provider_list').children().remove();
 		$('#providerplan').children().remove();
-		$.ajax("getserviceproviders.php",{
+		$.ajax({
+			type: 'post',
+			url: 'getserviceproviders.php',
+			data: { get_country_list: true },
 			success: function(response) {
 
 				var responseTextArr = response.split("\n");

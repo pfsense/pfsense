@@ -1638,6 +1638,11 @@ function services_dhcpdv6_configure($blacklist = array()) {
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
 	}
 
+	/* kill any running dhcpleases6 */
+	if (isvalidpid("{$g['varrun_path']}/dhcpleases6.pid")) {
+		killbypid("{$g['varrun_path']}/dhcpleases6.pid");
+	}
+
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcpv6_server_enabled()) {
 		return 0;
@@ -1999,6 +2004,7 @@ EOD;
 	/* fire up dhcpd in a chroot */
 	if (count($dhcpdv6ifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " . join(" ", $dhcpdv6ifs));
+		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php-cgi -f /usr/local/sbin/prefixes.php\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
 	if (platform_booting()) {
 		print gettext("done.") . "\n";

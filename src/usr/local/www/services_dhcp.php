@@ -984,28 +984,28 @@ if ($tabscounter == 0) {
 	exit;
 }
 
+$dhcrelay_enabled = config_path_enabled('dhcrelay');
+if ($dhcrelay_enabled) {
+	print_info_box(gettext('DHCP Relay is currently enabled. DHCP Server cannot be enabled while the DHCP Relay is enabled on any interface.'), 'danger', false);
+}
+
 display_top_tabs($tab_array);
 
 $form = new Form();
 
 $section = new Form_Section('General Options');
 
-if (!is_numeric($pool) && !($act == "newpool")) {
-	if (config_path_enabled('dhcrelay')) {
-		$section->addInput(new Form_Checkbox(
-			'enable',
-			'Enable',
-			gettext("DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface."),
-			$pconfig['enable']
-		))->setAttribute('disabled', true);
-	} else {
-		$section->addInput(new Form_Checkbox(
-			'enable',
-			'Enable',
-			sprintf(gettext("Enable DHCP server on %s interface"), htmlspecialchars($iflist[$if])),
-			$pconfig['enable']
-		));
+if (!is_numeric($pool) && !($act === 'newpool')) {
+	$input = new Form_Checkbox(
+		'enable',
+		gettext('Enable'),
+		sprintf(gettext('Enable DHCP Server on %s interface'), htmlspecialchars($iflist[$if])),
+		(!$dhcrelay_enabled ? $pconfig['enable'] : false)
+	);
+	if ($dhcrelay_enabled) {
+		$input->setAttribute('disabled', true);
 	}
+	$section->addInput($input);
 } else {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }

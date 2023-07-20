@@ -150,8 +150,8 @@ display_top_tabs($tab_array);
 						<td>
 <?php
 					$source_net = pprint_address($natent['source']);
-					if (is_specialnet($natent['external'])) {
-						echo $specialnets[$natent['external']];
+					if (get_specialnet($natent['external'])) {
+						echo pprint_address($natent['external']);
 					} else {
 						echo $natent['external'] . strstr($source_net, '/');
 					}

@@ -28,12 +28,7 @@ require_once("pfsense-utils.inc");
 require_once("ipsec.inc");
 require_once("filter.inc");
 
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
-foreach ($ifdisp as $kif => $kdescr) {
-	$specialsrcdst[] = "{$kif}";
-	$specialsrcdst[] = "{$kif}ip";
-}
 
 function save1to1NATrule($post, $id, $json = false) {
 	global $config, $vpn_and_ppp_ifs;
@@ -94,14 +89,14 @@ function save1to1NATrule($post, $id, $json = false) {
 		$post['dst'] = trim($post['dst']);
 	}
 
-	if (is_specialnet($post['srctype'])) {
+	if (get_specialnet($post['srctype'])) {
 		$post['src'] = $post['srctype'];
 		$post['srcmask'] = 0;
 	} else if ($post['srctype'] == "single") {
 		$post['srcmask'] = (is_ipaddrv4($post['src'])) ? 32 : 128;
 	}
 
-	if (is_specialnet($post['dsttype'])) {
+	if (get_specialnet($post['dsttype'])) {
 		$post['dst'] = $post['dsttype'];
 		$post['dstmask'] = 0;
 	} else if ($post['dsttype'] == "single") {
@@ -129,11 +124,11 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("The interface does not have an address from the specified address family.");
 	}
 
-	if ($post['external'] && !is_specialnet($post['exttype']) &&
+	if ($post['external'] && !get_specialnet($post['exttype']) &&
 	    ((($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['external']))) ||
 	    (($post['ipprotocol'] == 'inet6') && (is_ipaddrv6($post['external']))))) {
 		$extipaddrtype = validateipaddr($post['external'], IPV4V6, "External subnet IP", $input_errors, false);
-	} elseif (is_specialnet($post['exttype'])) {
+	} elseif (get_specialnet($post['exttype'])) {
 		$extipaddrtype = get_specialnet_type($post['exttype'], $post['ipprotocol']);
 	}
 
@@ -150,11 +145,11 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("A valid internal bit count must be specified.");
 	}
 
-	if ($post['src'] && !is_specialnet($post['srctype']) &&
+	if ($post['src'] && !get_specialnet($post['srctype']) &&
 	    ((($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['src']))) ||
 	    (($post['ipprotocol'] == 'inet6') && (is_ipaddrv6($post['src']))))) {
 		$srcipaddrtype = validateipaddr($post['src'], IPV4V6, "Internal IP", $input_errors, false);
-	} elseif (is_specialnet($post['srctype'])) {
+	} elseif (get_specialnet($post['srctype'])) {
 		$srcipaddrtype = get_specialnet_type($post['srctype'], $post['ipprotocol']);
 	}
 
@@ -166,11 +161,11 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("A valid destination bit count must be specified.");
 	}
 
-	if ($post['dst'] && !is_specialnet($post['dsttype']) && (is_alias($post['dst']) ||
+	if ($post['dst'] && !get_specialnet($post['dsttype']) && (is_alias($post['dst']) ||
 	    (($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['dst']))) ||
 	    (($post['ipprotocol'] == 'inet6') && (is_ipaddrv6($post['dst']))))) {
 		$dstipaddrtype = validateipaddr($post['dst'], IPV4V6, "Destination address", $input_errors, true);
-	} elseif (is_specialnet($post['dsttype'])) {
+	} elseif (get_specialnet($post['dsttype'])) {
 		$dstipaddrtype = get_specialnet_type($post['dsttype'], $post['ipprotocol']);
 	}
 
@@ -190,7 +185,7 @@ function save1to1NATrule($post, $id, $json = false) {
 		}
 	}
 
-	if (is_specialnet($post['exttype'])) {
+	if (get_specialnet($post['exttype'])) {
 		$post['external'] = $post['exttype'];
 		$pconfig['external'] = $post['exttype'];
 	}
@@ -407,11 +402,9 @@ function apply1to1NATrules() {
 }
 
 function build_srctype_list() {
-	global $pconfig, $ifdisp;
+	global $ifdisp;
 
 	$list = array('any' => gettext('Any'), 'single' => gettext('Single host'), 'network' => gettext('Network'));
-
-	$sel = is_specialnet($pconfig['src']);
 
 	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = gettext('PPPoE clients');
@@ -439,7 +432,7 @@ function srctype_selected() {
 		return $pconfig['srctype'];
 	}
 
-	$sel = is_specialnet($pconfig['src']);
+	$sel = get_specialnet($pconfig['src']);
 
 	if (!$sel) {
 		if ((($pconfig['srcmask'] == 32) && (is_ipaddrv4($pconfig['src']))) ||
@@ -455,9 +448,8 @@ function srctype_selected() {
 }
 
 function build_dsttype_list() {
-	global $pconfig, $config, $ifdisp;
+	global $ifdisp;
 
-	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
 	if (have_ruleint_access("pppoe")) {
@@ -505,7 +497,7 @@ function dsttype_selected() {
 		return $pconfig['dsttype'];
 	}
 
-	$sel = is_specialnet($pconfig['dst']);
+	$sel = get_specialnet($pconfig['dst']);
 
 	if (empty($pconfig['dst']) || ($pconfig['dst'] == "any")) {
 		return('any');
@@ -546,7 +538,7 @@ function exttype_selected() {
 		return $pconfig['exttype'];
 	}
 
-	$sel = is_specialnet($pconfig['external']);
+	$sel = get_specialnet($pconfig['external']);
 
 	if (!$sel) {
 		return('single');

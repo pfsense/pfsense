@@ -33,6 +33,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("util.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
@@ -158,13 +159,9 @@ foreach ($a_nat as $natent):
 		$trclass = '';
 	}
 
-	if (is_specialnet($natent['target'])) {
-		foreach ($ifdisp as $kif => $kdescr) {
-			if ($natent['target'] == "{$kif}ip") {
-				$natent['target'] = $kdescr . ' address';
-				break;
-			}
-		}
+	$specialnets = get_specialnet();
+	if (array_key_exists($natent['target'], $specialnets)) {
+		$natent['target'] = $specialnets[$natent['target']];
 	}
 ?>
 

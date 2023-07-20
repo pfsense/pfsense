@@ -143,7 +143,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'external',
 	null,
-	is_specialnet($pconfig['external']) ? '': $pconfig['external']
+	get_specialnet($pconfig['external']) ? '': $pconfig['external']
 ))->setHelp('Address')->setWidth(3);
 
 $group->setHelp('Enter the external (usually on a WAN) subnet\'s starting address or interface for the 1:1 mapping.');
@@ -169,7 +169,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'src',
 	null,
-	is_specialnet($pconfig['src']) ? '': $pconfig['src']
+	get_specialnet($pconfig['src']) ? '': $pconfig['src']
 ))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask');
 
 $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
@@ -196,7 +196,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'dst',
 	null,
-	is_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
+	get_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
 	'ALIASV4V6'
 ))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 

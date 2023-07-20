@@ -3973,7 +3973,7 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0
 
 	if ($padr == "any") {
 		$adr['any'] = true;
-	} else if (is_specialnet($padr)) {
+	} else if (get_specialnet($padr)) {
 		if ($addmask) {
 			$padr .= "/" . $pmask;
 		}
@@ -4015,13 +4015,32 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0
 	}
 }
 
-function is_specialnet($net) {
-	global $specialsrcdst;
-
-	if (!$net) {
+function get_specialnet(?string $net = '', bool $includemacros = true):bool|array {
+	if ($net === null) {
 		return false;
 	}
-	if (in_array($net, $specialsrcdst)) {
+
+	$specialsrcdst = [
+		'any' => gettext('any'),
+		'(self)' => gettext('This Firewall'),
+		'pptp' => gettext('PPTP clients'),
+		'pppoe' => gettext('PPPoE clients'),
+		'l2tp' => gettext('L2TP clients'),
+		'openvpn' => gettext('OpenVPN clients'),
+	];
+
+	/* Include interface macros as special networks */
+	if ($includemacros) {
+		$ifdisp = get_configured_interface_with_descr();
+		foreach ($ifdisp as $ifname => $ifdescr) {
+			$specialsrcdst[$ifname] = $ifdescr . ' net';
+			$specialsrcdst[$ifname . 'ip'] = $ifdescr . ' address';
+		}
+	}
+
+	if (empty($net)) {
+		return $specialsrcdst;
+	} elseif (array_key_exists($net, $specialsrcdst)) {
 		return true;
 	} else {
 		return false;

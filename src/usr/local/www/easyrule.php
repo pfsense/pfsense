@@ -38,10 +38,6 @@ $retval = 0;
 $message = "";
 $confirmed = isset($_POST['confirmed']) && $_POST['confirmed'] == 'true';
 
-/* $specialsrcdst must be a defined global for functions being called. */
-global $specialsrcdst;
-$specialsrcdst = explode(" ", "any pppoe l2tp openvpn");
-
 if ($_POST && $confirmed && isset($_POST['action'])) {
 	switch ($_POST['action']) {
 		case 'block':

@@ -152,13 +152,7 @@ if (count($ostypes) > 2) {
 	);
 }
 
-$specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
-
-foreach ($ifdisp as $kif => $kdescr) {
-	$specialsrcdst[] = "{$kif}";
-	$specialsrcdst[] = "{$kif}ip";
-}
 
 init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
@@ -454,7 +448,7 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (is_specialnet($_POST['srctype'])) {
+	if (get_specialnet($_POST['srctype'])) {
 		$_POST['src'] = $_POST['srctype'];
 		$_POST['srcmask'] = 0;
 	} else if ($_POST['srctype'] == "single") {
@@ -464,7 +458,7 @@ if ($_POST['save']) {
 			$_POST['srcmask'] = 32;
 		}
 	}
-	if (is_specialnet($_POST['dsttype'])) {
+	if (get_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
 	} else if ($_POST['dsttype'] == "single") {
@@ -512,12 +506,12 @@ if ($_POST['save']) {
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
+	    (!(get_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = gettext("Source bit count");
 	}
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
+	    (!(get_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
 	}
@@ -602,7 +596,7 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (!is_specialnet($_POST['srctype'])) {
+	if (!get_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
 		}
@@ -610,7 +604,7 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
 		}
 	}
-	if (!is_specialnet($_POST['dsttype'])) {
+	if (!get_specialnet($_POST['dsttype'])) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
 		}
@@ -1406,7 +1400,7 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 	if ($pconfig[$type.'type']) {
 		// The rule type came from the $_POST array, after input errors, so keep it.
 		$ruleType = $pconfig[$type.'type'];
-	} elseif (is_specialnet($pconfig[$type])) {
+	} elseif (get_specialnet($pconfig[$type])) {
 		// It is one of the special names, let it through as-is.
 		$ruleType = $pconfig[$type];
 	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||

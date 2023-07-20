@@ -29,12 +29,7 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("itemid.inc");
 
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
-foreach ($ifdisp as $kif => $kdescr) {
-	$specialsrcdst[] = "{$kif}";
-	$specialsrcdst[] = "{$kif}ip";
-}
 
 function build_localtype_list($json = false) {
 	global $pconfig, $ifdisp;
@@ -227,7 +222,7 @@ function saveNATrule($post, $id, $json = false) {
 		$post['dstendport'] = 0;
 	}
 
-	if (is_specialnet($post['srctype'])) {
+	if (get_specialnet($post['srctype'])) {
 		$post['src'] = $post['srctype'];
 		$post['srcmask'] = 0;
 	} elseif ($post['srctype'] == "single") {
@@ -238,7 +233,7 @@ function saveNATrule($post, $id, $json = false) {
 		}
 	}
 
-	if (is_specialnet($post['dsttype'])) {
+	if (get_specialnet($post['dsttype'])) {
 		$post['dst'] = $post['dsttype'];
 		$post['dstmask'] = 0;
 	} elseif ($post['dsttype'] == "single") {
@@ -257,7 +252,7 @@ function saveNATrule($post, $id, $json = false) {
 		}
 	}
 
-	if (is_specialnet($post['localtype'])) {
+	if (get_specialnet($post['localtype'])) {
 		$post['localip'] = $post['localtype'];
 	}
 
@@ -319,18 +314,18 @@ function saveNATrule($post, $id, $json = false) {
 
 	if ((($post['natreflection'] == "purenat") || ($post['natreflection'] == "enable") ||
 	    (($post['natreflection'] == "default") && !isset($config['system']['disablenatreflection']))) &&
-	    ((is_specialnet($post['interface']) || is_interface_group($post['interface'])) &&
+	    ((get_specialnet($post['interface']) || is_interface_group($post['interface'])) &&
 	    in_array($post['dst'], array('any', '0.0.0.0', '::')))) {
 		$input_errors[] = gettext("The submitted interface does not support the 'Any' destination type with enabled NAT reflection.");
 	}
 
 	if (!isset($post['nordr']) && $post['localip'] &&
-	    !is_ipaddroralias($post['localip']) && !is_specialnet($post['localtype'])) {
+	    !is_ipaddroralias($post['localip']) && !get_specialnet($post['localtype'])) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $post['localip']);
 	}
 
 	if ($post['localip']) {
-		if (is_specialnet($post['localtype'])) {
+		if (get_specialnet($post['localtype'])) {
 			foreach ($ifdisp as $kif => $kdescr) {
 				if ($post['localtype'] == "{$kif}ip") {
 					if (($post['ipprotocol'] == 'inet') && !get_interface_ip($kif)) {
@@ -390,7 +385,7 @@ function saveNATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
 	}
 
-	if (!is_specialnet($post['srctype'])) {
+	if (!get_specialnet($post['srctype'])) {
 		if (($post['src'] && !is_ipaddroralias($post['src']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $post['src']);
 		}
@@ -406,7 +401,7 @@ function saveNATrule($post, $id, $json = false) {
 		}
 	}
 
-	if (!is_specialnet($post['dsttype'])) {
+	if (!get_specialnet($post['dsttype'])) {
 		if (($post['dst'] && !is_ipaddroralias($post['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $post['dst']);
 		}
@@ -452,12 +447,12 @@ function saveNATrule($post, $id, $json = false) {
 		}
  		if ((($post['srctype'] == "network") && ($natent['source']['address'] != ($post['src'] . '/' . $post['srcmask']))) ||
 		    (($post['srctype'] == "single") && ($natent['source']['address'] != $post['src'])) ||
-		    ((is_specialnet($post['srctype'])) && ($natent['source']['network'] != $post['src']))) {
+		    ((get_specialnet($post['srctype'])) && ($natent['source']['network'] != $post['src']))) {
 			continue;
 		}
 		if ((($post['dsttype'] == "network") && ($natent['destination']['address'] != ($post['dst'] . '/' . $post['dstmask']))) ||
 		    (($post['dsttype'] == "single") && ($natent['destination']['address'] != $post['dst'])) ||
-		    ((is_specialnet($post['dsttype'])) && ($natent['destination']['network'] != $post['dst']))) {
+		    ((get_specialnet($post['dsttype'])) && ($natent['destination']['network'] != $post['dst']))) {
 			continue;
 		}
 		if (($natent['protocol'] != $post['proto']) &&
@@ -590,7 +585,7 @@ function saveNATrule($post, $id, $json = false) {
 			$filterent['interface'] = $post['interface'];
 			$filterent['ipprotocol'] = $post['ipprotocol'];
 			$filterent['protocol'] = $post['proto'];
-			if (is_specialnet($post['localtype'])) {
+			if (get_specialnet($post['localtype'])) {
 				$filterent['destination']['network'] = $post['localtype'];
 				if (isset($filterent['destination']['address'])) {
 					unset($filterent['destination']['address']);

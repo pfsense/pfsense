@@ -29,9 +29,6 @@ require_once("util.inc");
 require_once("ipsec.inc");
 require_once("config.inc");
 
-global $specialsrcdst;
-$specialsrcdst = explode(" ", "any (self) pppoe l2tp openvpn");
-
 function easyrule_find_rule_interface($int) {
 	global $config;
 	/* Borrowed from firewall_rules.php */
@@ -195,7 +192,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 
 	if (is_subnet($host)) {
 		list($host, $mask) = explode("/", $host);
-	} elseif (is_specialnet($host)) {
+	} elseif (get_specialnet($host, false)) {
 		$mask = 0;
 	} elseif (is_ipaddrv6($host)) {
 		$mask = 128;
@@ -343,7 +340,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	if (is_subnet($srchost)) {
 		list($srchost, $srcmask) = explode("/", $srchost);
-	} elseif (is_specialnet($srchost)) {
+	} elseif (get_specialnet($srchost, false)) {
 		$srcmask = 0;
 	} elseif (is_ipaddrv6($srchost)) {
 		$srcmask = 128;
@@ -353,7 +350,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	if (is_subnet($dsthost)) {
 		list($dsthost, $dstmask) = explode("/", $dsthost);
-	} elseif (is_specialnet($dsthost)) {
+	} elseif (get_specialnet($dsthost, false)) {
 		$dstmask = 0;
 	} elseif (is_ipaddrv6($dsthost)) {
 		$dstmask = 128;
@@ -435,7 +432,7 @@ function easyrule_parse_unblock($int, $host) {
 
 		if (is_subnet($host)) {
 			list($host, $mask) = explode("/", $host);
-		} elseif (is_specialnet($host)) {
+		} elseif (get_specialnet($host, false)) {
 			$mask = 0;
 		} elseif (is_ipaddrv6($host)) {
 			$mask = 128;
@@ -513,10 +510,10 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 		    (!is_numericint($proto) || (getprotobynumber($proto) === false))) {
 			return gettext("Invalid protocol for pass rule:") . ' ' . htmlspecialchars($proto);
 		}
-		if (!is_ipaddr($src) && !is_subnet($src) && !is_ipaddroralias($src) && !is_specialnet($src)) {
+		if (!is_ipaddr($src) && !is_subnet($src) && !is_ipaddroralias($src) && !get_specialnet($src, false)) {
 			return gettext("Tried to pass invalid source IP address:") . ' ' . htmlspecialchars($src);
 		}
-		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !is_specialnet($dst)) {
+		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !get_specialnet($dst, false)) {
 			return gettext("Tried to pass invalid destination IP address:") . ' ' . htmlspecialchars($dst);
 		}
 		if ((is_v6($src) && is_v4($dst)) || (is_v4($src) && is_v6($dst))) {

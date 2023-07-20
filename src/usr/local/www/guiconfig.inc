@@ -234,17 +234,6 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg", "ece", "cwr");
 
-$specialnets = array(
-	"(self)" => gettext("This Firewall"),
-	"pppoe" => gettext("PPPoE clients"),
-	"l2tp" => gettext("L2TP clients"));
-
-$spiflist = get_configured_interface_with_descr(true);
-foreach ($spiflist as $ifgui => $ifdesc) {
-	$specialnets[$ifgui] = $ifdesc . " net";
-	$specialnets[$ifgui . 'ip'] = $ifdesc . " address";
-}
-
 $medias = array(
 	"auto" => gettext("autoselect"),
 	"100full" => gettext("100BASE-TX full-duplex"),
@@ -415,12 +404,15 @@ function get_std_save_message($retval) {
 }
 
 function pprint_address($adr) {
-	global $specialnets;
-
 	if (isset($adr['any'])) {
 		$padr = "*";
 	} else if ($adr['network']) {
-		$padr = $specialnets[$adr['network']];
+		if (get_specialnet($adr['network'])) {
+			$specialnets = get_specialnet();
+			$padr = $specialnets[$adr['network']];
+		} else {
+			$padr = $adr['network'];
+		}
 	} else {
 		$padr = $adr['address'];
 	}

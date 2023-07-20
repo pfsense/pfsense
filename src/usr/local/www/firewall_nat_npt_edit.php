@@ -36,13 +36,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_npt.inc");
 
-$ifdisp = get_configured_interface_with_descr();
-
-foreach ($ifdisp as $kif => $kdescr) {
-	$specialsrcdst[] = "{$kif}";
-	$specialsrcdst[] = "{$kif}ip";
-}
-
 init_config_arr(array('nat', 'npt'));
 $a_npt = &$config['nat']['npt'];
 
@@ -88,7 +81,7 @@ function dsttype_selected() {
 		return $pconfig['dsttype'];
 	}
 
-	$sel = is_specialnet($pconfig['dst']);
+	$sel = get_specialnet($pconfig['dst']);
 
 	if (!$sel) {
 		return('network');
@@ -100,7 +93,6 @@ function dsttype_selected() {
 function build_dsttype_list() {
 	global $pconfig, $config;
 
-	$sel = is_specialnet($pconfig['dst']);
 	$list = array('network' => gettext('Prefix'));
 
 	$iflist = get_configured_interface_with_descr();

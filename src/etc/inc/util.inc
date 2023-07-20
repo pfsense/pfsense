@@ -4036,6 +4036,10 @@ function get_specialnet(?string $net = '', bool $includemacros = true):bool|arra
 			$specialsrcdst[$ifname] = $ifdescr . ' net';
 			$specialsrcdst[$ifname . 'ip'] = $ifdescr . ' address';
 		}
+		/* Include interface groups as special networks */
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+			$specialsrcdst[$ifgen['ifname']] = $ifgen['ifname'] . ' net';
+		}
 	}
 
 	if (empty($net)) {

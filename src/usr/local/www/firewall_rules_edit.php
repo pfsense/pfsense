@@ -1441,6 +1441,14 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 		$ruleValues[$ifent] = $ifdesc.' net';
 		$ruleValues[$ifent.'ip'] = $ifdesc.' address';
 	}
+	/* Add interface groups */
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+		if (!have_ruleint_access($ifent)) {
+			continue;
+		}
+		$ruleValues[$ifgen['ifname']] = $ifgen['ifname'];
+	}
+
 
 	$group->add(new Form_Select(
 		$type . 'type',

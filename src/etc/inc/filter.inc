@@ -1419,6 +1419,31 @@ function filter_generate_optcfg_array() {
 			$oc['if'] = $ifgen['ifname'];
 			$oc['descr'] = $ifgen['ifname'];
 			$oc['virtual'] = true;
+			// Add all interface addresses/networks belonging to this group's members as VIPs
+			foreach (explode(' ', $ifgen['members']) as $ifgmember) {
+				if (array_key_exists($ifgmember, $FilterIflist) && is_array($FilterIflist[$ifgmember])) {
+					foreach (array_get_path($FilterIflist, "{$ifgmember}/vips", []) as $viparr) {
+						$oc['vips'][] = $viparr;
+					}
+					foreach (array_get_path($FilterIflist, "{$ifgmember}/vips6", []) as $viparr) {
+						$oc['vips6'][] = $viparr;
+					}
+					if (!empty(array_get_path($FilterIflist, $ifgmember . "/ip"))) {
+						$oic = [];
+						$oic['mode'] = 'other';
+						$oic['ip'] = $FilterIflist[$ifgmember]['ip'];
+						$oic['sn'] = $FilterIflist[$ifgmember]['sn'];
+						$oc['vips'][] = $oic;
+					}
+					if (!empty(array_get_path($FilterIflist, $ifgmember . "/ipv6"))) {
+						$oic = [];
+						$oic['mode'] = 'other';
+						$oic['ip'] = $FilterIflist[$ifgmember]['ipv6'];
+						$oic['sn'] = $FilterIflist[$ifgmember]['snv6'];
+						$oc['vips6'][] = $oic;
+					}
+				}
+			}
 			$FilterIflist[$ifgen['ifname']] = $oc;
 		}
 	}
@@ -2849,7 +2874,7 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 	$vips = array();
 	$vips6 = array();
 
-	if ($not == true) {
+	if ($not == true && !empty($subnets)) {
 		$subnets = "!{$subnets}";
 	}
 
@@ -2866,6 +2891,14 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 		$vips6 = $FilterIflist[$if]['vips6'];
 	}
 
+	/* Include interface groups; interface groups only have VIPs */
+	$add_vips = false;
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+		if ($ifgen['ifname'] == $if) {
+			$add_vips = true;
+			break;
+		}
+	}
 	foreach (array_merge($vips, $vips6) as $vip) {
 		foreach ($if_subnets as $subnet) {
 			if (ip_in_subnet($vip['ip'], $subnet)) {
@@ -2874,13 +2907,13 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 		}
 
 		if (is_ipaddrv4($vip['ip'])) {
-			if (!is_subnetv4($if_subnets[0])) {
+			if (!is_subnetv4($if_subnets[0]) && !$add_vips) {
 				continue;
 			}
 
 			$network = gen_subnet($vip['ip'], $vip['sn']);
 		} else if (is_ipaddrv6($vip['ip'])) {
-			if (!is_subnetv6($if_subnets[0])) {
+			if (!is_subnetv6($if_subnets[0]) && !$add_vips) {
 				continue;
 			}
 
@@ -2889,7 +2922,7 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 			continue;
 		}
 
-		$subnets .= ' ' . ($not == true ? '!' : '') . $network . '/' . $vip['sn'];
+		$subnets .= (empty($subnets) ? '' : ' ') . ($not == true ? '!' : '') . $network . '/' . $vip['sn'];
 		$if_subnets[] = $network . '/' . $vip['sn'];
 	}
 	unset($if_subnets);
@@ -3038,7 +3071,16 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				}
 			}
 		}
-		if (is_subnet($src)) {
+		/* Include interface groups; interface groups only have VIPs */
+		$add_vips = false;
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+			if ($ifgen['ifname'] == $rule[$target]['network']) {
+				$add_vips = true;
+				$src = '';
+				break;
+			}
+		}
+		if (is_subnet($src) || $add_vips) {
 			filter_address_add_vips_subnets($src, $rule[$target]['network'], isset($rule[$target]['not']));
 		}
 	} else if ($rule[$target]['address']) {

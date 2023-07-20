@@ -149,14 +149,12 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
-$shortcut_section = "dhcp";
-include("head.inc");
+$pgtitle = array(gettext('Services'), gettext('DHCP Relay'));
+$shortcut_section = 'dhcrelay';
+include('head.inc');
 
 if ($dhcpd_enabled) {
-	print_info_box(gettext("DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface."), 'danger', false);
-	include("foot.inc");
-	exit;
+	print_info_box(gettext('DHCP Server is currently enabled. DHCP Relay cannot be enabled while the DHCP Server is enabled on any interface.'), 'danger', false);
 }
 
 if ($input_errors) {
@@ -167,16 +165,22 @@ if ($changes_applied) {
 	print_apply_result_box($retval);
 }
 
-$form = new Form;
+$form = new Form(gettext('Save'), !$dhcpd_enabled);
 
-$section = new Form_Section('DHCP Relay Configuration');
+$section = new Form_Section(gettext('DHCP Relay Configuration'));
 
-$section->addInput(new Form_Checkbox(
+$input = new Form_Checkbox(
 	'enable',
-	'Enable',
-	'Enable DHCP Relay on interface',
+	gettext('Enable'),
+	gettext('Enable DHCP Relay'),
 	$pconfig['enable']
-));
+);
+
+if ($dhcpd_enabled) {
+	$input->setAttribute('disabled', true);
+}
+
+$section->addInput($input);
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -230,12 +234,17 @@ foreach (explode(',', $pconfig['server']) as $server) {
 
 $form->add($section);
 
-$form->addGlobal(new Form_Button(
+$button = new Form_Button(
 	'addrow',
-	"Add server",
+	gettext('Add server'),
 	null,
 	'fa-plus'
-))->addClass('btn-success addbtn');
+);
+$button->addClass('btn-success addbtn');
+if ($dhcpd_enabled) {
+	$button->setAttribute('disabled', true);
+}
+$form->addGlobal($button);
 
 print $form;
 ?>

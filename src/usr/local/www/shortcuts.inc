@@ -178,6 +178,11 @@ $shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
 $shortcuts['dhcp6']['service'] = "dhcpd";
 
+$shortcuts['dhcrelay'] = array();
+$shortcuts['dhcrelay']['main'] = 'services_dhcp_relay.php';
+$shortcuts['dhcrelay']['log'] = 'status_logs.php?logfile=dhcpd';
+$shortcuts['dhcrelay']['service'] = 'dhcrelay';
+
 $shortcuts['radvd'] = array();
 $shortcuts['radvd']['main'] = "services_router_advertisements.php";
 $shortcuts['radvd']['log'] = "status_logs.php?logfile=routing";

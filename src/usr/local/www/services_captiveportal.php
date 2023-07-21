@@ -788,7 +788,7 @@ if ($pconfig['page']['htmltext']) {
 	$group->add(new Form_Button(
 		'btnview',
 		'View Page Contents',
-		'?zone=' . $cpzone . '&act=viewhtml',
+		'?zone=' . $cpzone . '&act=viewhtmlhtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 

@@ -98,6 +98,8 @@ sysutils/%%PRODUCT_NAME%%-pkg-Shellcmd
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 sysutils/ccze
+sysutils/dhcpleases
+sysutils/dhcpleases6
 sysutils/flashrom
 sysutils/htop
 sysutils/lsof

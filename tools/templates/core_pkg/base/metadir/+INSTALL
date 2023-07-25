@@ -36,7 +36,7 @@ echo "===> Extracting new base tarball"
 
 # Install new base files
 tar -C ${PKG_ROOTDIR}/ --exclude ./var/empty -xJPUf \
-	/usr/local/share/%%PRODUCT_NAME%%/base.txz
+	${PKG_ROOTDIR}/usr/local/share/%%PRODUCT_NAME%%/base.txz
 
 # Create/remove trigger to show copynotice when version changes
 if /usr/bin/cmp -s ${PKG_ROOTDIR}/etc/version ${PKG_ROOTDIR}/cf/conf/copynotice_version; then

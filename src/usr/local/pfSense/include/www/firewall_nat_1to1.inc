@@ -402,26 +402,8 @@ function apply1to1NATrules() {
 }
 
 function build_srctype_list() {
-	global $ifdisp;
-
-	$list = array('any' => gettext('Any'), 'single' => gettext('Single host'), 'network' => gettext('Network'));
-
-	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = gettext('PPPoE clients');
-	}
-
-	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = gettext('L2TP clients');
-	}
-
-	foreach ($ifdisp as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
-			$list[$ifent] = $ifdesc . ' ' . gettext('net');
-			$list[$ifent . 'ip'] = $ifdesc . ' ' . gettext('address');
-		}
-	}
-
-	return($list);
+	return get_specialnet('', [SPECIALNET_CHECKPERM, SPECIALNET_ANY, SPECIALNET_COMPAT_ADDR,
+	                      SPECIALNET_NET, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB]);
 }
 
 function srctype_selected() {
@@ -448,45 +430,9 @@ function srctype_selected() {
 }
 
 function build_dsttype_list() {
-	global $ifdisp;
-
-	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
-
-	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = gettext('PPPoE clients');
-	}
-
-	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = gettext('L2TP clients');
-	}
-
-	foreach ($ifdisp as $if => $ifdesc) {
-		if (have_ruleint_access($if)) {
-			$list[$if] = $ifdesc . ' ' . gettext('net');
-			$list[$if . 'ip'] = $ifdesc . ' ' . gettext('address');
-		}
-	}
-
-	foreach (config_get_path('virtualip/vip', []) as $sn) {
-		if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-			$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-			if (isset($sn['noexpand'])) {
-				continue;
-			}
-			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-			$len = $end - $start;
-			for ($i = 0; $i <= $len; $i++) {
-				$snip = long2ip32($start+$i);
-
-				$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
-			}
-		} else {
-			$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
-		}
-	}
-
-	return($list);
+	return get_specialnet('', [SPECIALNET_CHECKPERM, SPECIALNET_ANY,
+	                       SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET, SPECIALNET_CLIENTS,
+	                       SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS]);
 }
 
 function dsttype_selected() {
@@ -517,17 +463,7 @@ function dsttype_selected() {
 }
 
 function build_exttype_list() {
-	global $pconfig, $ifdisp;
-
-	$list = array('single' => gettext('Single host'));
-
-	foreach ($ifdisp as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
-			$list[$ifent . 'ip'] = $ifdesc . ' ' . gettext('address');
-		}
-	}
-
-	return($list);
+	return get_specialnet('', [SPECIALNET_CHECKPERM, SPECIALNET_COMPAT_ADDR, SPECIALNET_IFADDR]);
 }
 
 function exttype_selected() {

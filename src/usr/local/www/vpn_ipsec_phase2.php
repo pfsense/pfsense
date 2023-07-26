@@ -620,16 +620,11 @@ $section = new Form_Section('Networks');
 $group = new Form_Group('*Local Network');
 $group->addClass('opt_localid');
 
-$subnetarray = get_configured_interface_with_descr();
-foreach ($subnetarray as $ifname => $ifdescr) {
-	$subnetarray[$ifname] = $ifdescr . ' subnet';
-}
-
 $group->add(new Form_Select(
 	'localid_type',
 	null,
 	$pconfig['localid_type'],
-	['address' => gettext('Address'), 'network' => gettext('Network')] + $subnetarray
+	get_specialnet('', [SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB])
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(
@@ -644,19 +639,11 @@ $section->add($group);
 $group = new Form_Group('NAT/BINAT translation');
 $group->addClass('opt_natid');
 
-$subnetarray = get_configured_interface_with_descr();
-foreach ($subnetarray as $ifname => $ifdescr) {
-	$subnetarray[$ifname] = $ifdescr . ' subnet';
-}
-
-// Tack none, address & network on the beginning
-$subnetarray = array('none' => gettext('None'), 'address' => gettext('Address'), 'network' => gettext('Network')) + $subnetarray;
-
 $group->add(new Form_Select(
 	'natlocalid_type',
 	null,
 	$pconfig['natlocalid_type'],
-	$subnetarray
+	get_specialnet('', [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB])
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(

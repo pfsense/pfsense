@@ -67,7 +67,7 @@ function easyrule_print_usage() {
 		"     {$script} pass <interface> <protocol> <source> <destination> [destination port]\n\n",
 		" Interfaces can be passed as assigned internal names, descriptive names, group names, or OS names.\n",
 		" Protocol can be a protocol name, protocol number, or 'any'.\n",
-		" Sources and destinations can be IP addresses, subnets, aliase names, or special networks ['" . implode("', '", array_keys(get_specialnet('', false))) . "']\n\n",
+		" Sources and destinations can be IP addresses, subnets, aliase names, or special networks ['" . implode("', '", array_keys(get_specialnet('', [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS]))) . "']\n\n",
 		" Block example:\n",
 		"     {$script} block wan 1.2.3.4\n\n",
 		" Show active blocks example:\n",

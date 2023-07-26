@@ -1413,48 +1413,19 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 		$ruleType = 'network';
 	}
 
-	$ruleValues = array(
-		'any' => gettext('any'),
-		'single' => gettext('Single host or alias'),
-		'network' => gettext('Network'),
-	);
-
-	if ($type == 'dst') {
-		$ruleValues['(self)'] = gettext("This firewall (self)");
+	$ruleValues_flags = [SPECIALNET_CHECKPERM, SPECIALNET_ANY,
+		SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET, SPECIALNET_SELF,
+		SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_GROUP
+	];
+	if ($type != 'dst' && !isset($a_filter[$id]['floating']) && $if != "FloatingRules") {
+		$ruleValues_flags = array_diff($ruleValues_flags, [SPECIALNET_SELF]);
 	}
-
-	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
-		$ruleValues['(self)'] = gettext('This Firewall (self)');
-	}
-	if (have_ruleint_access("pppoe")) {
-		$ruleValues['pppoe'] = gettext('PPPoE clients');
-	}
-	if (have_ruleint_access("l2tp")) {
-		$ruleValues['l2tp'] = gettext('L2TP clients');
-	}
-
-	foreach ($ifdisp as $ifent => $ifdesc) {
-		if (!have_ruleint_access($ifent)) {
-			continue;
-		}
-
-		$ruleValues[$ifent] = $ifdesc.' net';
-		$ruleValues[$ifent.'ip'] = $ifdesc.' address';
-	}
-	/* Add interface groups */
-	foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
-		if (!have_ruleint_access($ifent)) {
-			continue;
-		}
-		$ruleValues[$ifgen['ifname']] = $ifgen['ifname'];
-	}
-
 
 	$group->add(new Form_Select(
 		$type . 'type',
 		$name .' Type',
 		$ruleType,
-		$ruleValues
+		get_specialnet('', $ruleValues_flags)
 	));
 
 	$group->add(new Form_IpAddress(

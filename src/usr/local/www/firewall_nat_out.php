@@ -168,7 +168,7 @@ print($form);
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-
+			$specialnet = get_specialnet();
 			foreach ($a_out as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
@@ -185,7 +185,8 @@ print($form);
 					$natent['source']['network'],
 					pprint_port($natent['sourceport']),
 					$natent['destination']['address'],
-					pprint_port($natent['dstport'])
+					pprint_port($natent['dstport']),
+					$natent['target']
 				);
 ?>
 
@@ -319,12 +320,22 @@ print($form);
 <?php
 						if (isset($natent['nonat'])) {
 							echo '<I>NO NAT</I>';
-						} elseif (!$natent['target']) {
-							echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
-						} elseif ($natent['target'] == "other-subnet") {
-							echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
-						} else {
-							echo $natent['target'];
+						} elseif ($natent['target_type'] != "network" && array_key_exists($natent['target_type'], $specialnet)) {
+							echo htmlspecialchars($specialnet[$natent['target_type']]);
+						} elseif (!empty($natent['target'])) {
+							if (isset($alias['target'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+<?php
+							endif;
+?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['target']))) . (!empty($natent['target_subnet'] && !isset($alias['target'])) ? '/' . $natent['target_subnet'] : '')?>
+<?php
+							if (isset($alias['target'])):
+?>
+							<i class='fa fa-pencil'></i></a>
+<?php
+							endif;
 						}
 ?>
 						</td>
@@ -465,12 +476,10 @@ if ($mode == "automatic" || $mode == "hybrid"):
 <?php
 		if (isset($natent['nonat'])) {
 			echo 'NO NAT';
-		} elseif (!$natent['target']) {
-			echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
-		} elseif ($natent['target'] == "other-subnet") {
-			echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
-		} else {
-			echo $natent['target'];
+		} elseif ($natent['target_type'] != "network" && array_key_exists($natent['target_type'], $specialnet)) {
+			echo htmlspecialchars($specialnet[$natent['target_type']]);
+		} elseif (!empty($natent['target'])) {
+			echo $natent['target'] . (!empty($natent['target_subnet']) ? '/' . $natent['target_subnet'] : '');
 		}
 ?>
 						</td>

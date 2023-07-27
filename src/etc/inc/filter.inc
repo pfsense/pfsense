@@ -1969,7 +1969,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['dstport'] = "500";
-		$natent['target'] = "";
+		$natent['target_type'] = "";
 		$natent['destination']['any'] = true;
 		$natent['staticnatport'] = true;
 		$natent['descr'] = gettext('Auto created rule for ISAKMP');
@@ -1979,7 +1979,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['sourceport'] = "";
-		$natent['target'] = "";
+		$natent['target_type'] = "";
 		$natent['destination']['any'] = true;
 		$natent['natport'] = "";
 		$natent['descr'] = gettext('Auto created rule');
@@ -2025,14 +2025,12 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 
 	/* Set tgt4 for IPv4 */
 	if ($inet == "" || $inet == 'inet') {
-		if ($natip != "") {
-			if (is_subnetv4($natip)) {
-				$tgt4 = $natip;
-			} elseif (is_alias($natip)) {
-				$tgt4 = "\${$natip}";
-			} else {
-				$tgt4 = "{$natip}/32";
-			}
+		if (!empty($natip) && is_subnetv4($natip)) {
+			$tgt4 = $natip;
+		} elseif (!empty($natip) && is_alias($natip)) {
+			$tgt4 = "\${$natip}";
+		} elseif (!empty($natip) && is_ipaddrv4($natip)) {
+			$tgt4 = "{$natip}/32";
 		} else {
 			$ifip = get_interface_ip($if);
 			if (is_ipaddrv4($ifip)) {
@@ -2044,14 +2042,12 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	}
 	/* Set tgt6 for IPv6 */
 	if ($inet == "" || $inet == 'inet6') {
-		if ($natip != "") {
-			if (is_subnetv6($natip)) {
-				$tgt6 = $natip;
-			} elseif (is_alias($natip)) {
-				$tgt6 = "\${$natip}";
-			} else {
-				$tgt6 = "{$natip}/128";
-			}
+		if (!empty($natip) && is_subnetv6($natip)) {
+			$tgt6 = $natip;
+		} elseif (!empty($natip) && is_alias($natip)) {
+			$tgt6 = "\${$natip}";
+		} elseif (!empty($natip) && is_ipaddrv6($natip)) {
+			$tgt6 = "{$natip}/128";
 		} else {
 			$ifip = get_interface_ipv6($if);
 			if (is_ipaddrv6($ifip)) {
@@ -2422,7 +2418,7 @@ function filter_nat_rules_generate() {
 				continue;
 			}
 
-			$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
+			$obtarget = ($obent['target_type'] == "network") ? $obent['target'] . '/' . $obent['target_subnet']: $obent['target_type'];
 			$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
 			/* pool option source-hash allows specification of an optional source-hash key */
@@ -2483,7 +2479,7 @@ function filter_nat_rules_generate() {
 					$a_out['sourceport'],
 					$a_out['destination']['address'],
 					$a_out['dstport'],
-					$a_out['target'],
+					$a_out['target_type'],
 					$a_out['natport'],
 					isset($a_out['nonat']),
 					isset($a_out['staticnatport']));

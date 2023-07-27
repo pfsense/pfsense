@@ -30,6 +30,9 @@ if (!function_exists("read_altq_config")) {
 if (!function_exists("console_configure")) {
 	require_once("/etc/inc/pfsense-utils.inc");
 }
+if (!function_exists("get_specialnet")) {
+	require_once("/etc/inc/util.inc");
+}
 
 /* Upgrade functions must be named:
  *    upgrade_XXX_to_YYY
@@ -6780,6 +6783,47 @@ function upgrade_228_to_229() {
 	mwexec("$rrdtool tune {$rrddbpath}{$database} DS:userwire:GAUGE:{$valid}:0:10000000 2>&1");
 	mwexec("$rrdtool tune {$rrddbpath}{$database} DS:laundry:GAUGE:{$valid}:0:10000000 2>&1");
 	mwexec("$rrdtool tune {$rrddbpath}{$database} DS:buffers:GAUGE:{$valid}:0:10000000 2>&1");
+}
+
+function upgrade_229_to_230() {
+	/* The "target" GUI for outbound NAT rules now behaves similarly to other pages. */
+	$obn_rules = config_get_path('nat/outbound/rule', []);
+	foreach ($obn_rules as & $obent) {
+		if (empty($obent['target'])) {
+			// migrate interface address selection
+			$obent['target_type'] = $obent['interface'] . 'ip';
+			$obent['target'] = '';
+			$obent['target_subnet'] = '';
+		} elseif (str_contains($obent['target'], ':') ||
+		          str_contains($obent['target'], '.')) {
+			// migrate VIPs
+			if (get_specialnet($obent['target'])) {
+				$obent['target_type'] = $obent['target'];
+				$obent['target'] = '';
+			} else {
+				$obent['target_type'] = '';
+			}
+			$obent['target_subnet'] = '';
+		} elseif ($obent['target'] == 'other-subnet') {
+			// migrate custom subnets
+			$obent['target_type'] = 'network';
+			$obent['target'] = $obent['targetip'];
+			$obent['target_subnet'] = $obent['targetip_subnet'];
+		} else {
+			// migrate aliases
+			$obent['target_type'] = 'network';
+			$obent['target_subnet'] = '';
+		}
+		foreach (['targetip', 'targetip_subnet'] as $old) {
+			if (array_key_exists($old, $obent)) {
+				unset($obent[$old]);
+			}
+		}
+	}
+	if (isset($obent)) {
+		unset($obent);
+	}
+	config_set_path('nat/outbound/rule', $obn_rules);
 }
 
 /*

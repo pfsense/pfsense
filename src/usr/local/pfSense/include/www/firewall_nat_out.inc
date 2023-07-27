@@ -73,7 +73,7 @@ function saveNAToutMode($post, $json = false) {
 					if ($rule['interface'] == $natent['interface'] &&
 					    $rule['source']['network'] == $natent['source']['network'] &&
 					    $rule['dstport'] == $natent['dstport'] &&
-					    $rule['target'] == $natent['target'] &&
+					    $rule['target_type'] == $natent['target_type'] &&
 					    $rule['descr'] == $natent['descr']) {
 						$found = true;
 						break;
@@ -158,8 +158,8 @@ function saveoutNATrule($post, $id, $json = false) {
 	if ($post['destination']) {
 		$post['destination'] = trim($post['destination']);
 	}
-	if ($post['targetip']) {
-		$post['targetip'] = trim($post['targetip']);
+	if ($post['target']) {
+		$post['target'] = trim($post['target']);
 	}
 	if ($post['sourceport']) {
 		$post['sourceport'] = trim($post['sourceport']);
@@ -169,11 +169,6 @@ function saveoutNATrule($post, $id, $json = false) {
 	}
 	if ($post['natport']) {
 		$post['natport'] = trim($post['natport']);
-	}
-
-	if (strlen($post['target']) > 0) {
-		// Strip the target code 1-char code from the front before validating and saving.
-		$post['target'] = substr($post['target'], 1);
 	}
 
 	if ($protocol_uses_ports && $post['sourceport'] <> "" && !is_port_or_range_or_alias($post['sourceport'])) {
@@ -214,17 +209,17 @@ function saveoutNATrule($post, $id, $json = false) {
 		}
 	}
 
-	if ($post['target'] && !is_ipaddr($post['target']) && !is_subnet($post['target']) && !is_alias($post['target']) && !isset($post['nonat']) && !($post['target'] == "other-subnet")) {
-		$input_errors[] = gettext("A valid target IP address must be specified.");
+	if (!isset($post['nonat']) && !get_specialnet($post['target_type'], [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS])) {
+		$input_errors[] = gettext("A valid target type must be specified.");
 	}
 
-	if ($post['target'] == "other-subnet") {
-		if (!is_ipaddr($post['targetip'])) {
-			$input_errors[] = gettext("A valid target IP must be specified when using the 'Other Subnet' type.");
+	if ($post['target_type'] == 'network') {
+		if (!is_ipaddr($post['target']) && !is_alias($post['target'])) {
+			$input_errors[] = gettext("A valid target IP address or alias must be specified when using the Network type.");
 		}
 
-		if (!is_numericint($post['targetip_subnet'])) {
-			$input_errors[] = gettext("A valid target bit count must be specified when using the 'Other Subnet' type.");
+		if (!is_numericint($post['target_subnet'])) {
+			$input_errors[] = gettext("A valid target bit count must be specified when using the Network type.");
 		}
 	}
 
@@ -232,7 +227,7 @@ function saveoutNATrule($post, $id, $json = false) {
 	$poolopts = "";
 	$source_hash_key = "";
 	if ($post['poolopts']) {
-		if (is_subnet($post['target']) || ($post['target'] == "other-subnet")) {
+		if (is_subnet($post['target_type']) || ($post['target_type'] == "network")) {
 			$poolopts = $post['poolopts'];
 		} elseif (is_alias($post['target'])) {
 			if (substr($post['poolopts'], 0, 11) == "round-robin") {
@@ -290,9 +285,9 @@ function saveoutNATrule($post, $id, $json = false) {
 		$natent['source']['network'] = $osn;
 		$natent['sourceport'] = ($protocol_uses_ports) ? $post['sourceport'] : "";
 		$natent['descr'] = $post['descr'];
+		$natent['target_type'] = (!isset($post['nonat'])) ? $post['target_type'] : "";
 		$natent['target'] = (!isset($post['nonat'])) ? $post['target'] : "";
-		$natent['targetip'] = (!isset($post['nonat'])) ? $post['targetip'] : "";
-		$natent['targetip_subnet'] = (!isset($post['nonat'])) ? $post['targetip_subnet'] : "";
+		$natent['target_subnet'] = (!isset($post['nonat'])) ? $post['target_subnet'] : "";
 		$natent['interface'] = $post['interface'];
 		$natent['poolopts'] = $poolopts;
 		$natent['source_hash_key'] = $source_hash_key;
@@ -419,22 +414,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['dstport'] = $a_out[$id]['dstport'];
 		$pconfig['natport'] = $a_out[$id]['natport'];
 		$pconfig['target'] = $a_out[$id]['target'];
-		if (strlen($pconfig['target']) > 0) {
-			// Deduce the target type and add to the front of the target string.
-			if (is_subnet($pconfig['target'])) {
-				$target_type = "S";
-			} elseif (is_ipaddr($pconfig['target'])) {
-				$target_type = "I";
-			} elseif (is_alias($pconfig['target'])) {
-				$target_type = "H";
-			} else {
-				$target_type = "O";
-			}
-			$pconfig['target'] = $target_type . $pconfig['target'];
-		}
-	
-		$pconfig['targetip'] = $a_out[$id]['targetip'];
-		$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
+		$pconfig['target_subnet'] = $a_out[$id]['target_subnet'];
 		$pconfig['poolopts'] = $a_out[$id]['poolopts'];
 		$pconfig['source_hash_key'] = $a_out[$id]['source_hash_key'];
 		$pconfig['interface'] = $a_out[$id]['interface'];
@@ -442,7 +422,7 @@ function getoutNATrule($id, $json = false) {
 		if (!$pconfig['interface']) {
 			$pconfig['interface'] = "wan";
 		}
-	
+		$pconfig['target_type'] = empty($a_out[$id]['target_type']) ? $pconfig['interface'] . 'ip' : $a_out[$id]['target_type'];
 		$pconfig['descr'] = $a_out[$id]['descr'];
 		$pconfig['nonat'] = $a_out[$id]['nonat'];
 		$pconfig['disabled'] = isset($a_out[$id]['disabled']);
@@ -453,6 +433,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['destination'] = "any";
 		$pconfig['destination_subnet'] = 24;
 		$pconfig['interface'] = "wan";
+		$pconfig['target_type'] = $pconfig['interface'] . 'ip';
 	}
 
 	return $json ? json_encode($pconfig):$pconfig;
@@ -605,67 +586,6 @@ function applyoutNATrules() {
 	}
 
 	return $retval;
-}
-
-function build_target_list() {
-	global $config;
-
-	init_config_arr(array('aliases', 'alias'));
-	$a_aliases = &$config['aliases']['alias'];
-
-	$list = array();
-	// Target list entries are made to start with the following characters:
-	// "" (blank) - the interface address of the selected interface
-	// S - a subnet
-	// I - an ordinary IP address
-	// H - a host alias
-	// O - other subnet
-	// The prefix letter makes it easy for the JavaScript to distinguish
-	// the type of entry based on the first letter of the value.
-	// The prefix letter is removed before saving in the config,
-	// and added back when reading from the config.
-
-	$list[""] = gettext('Interface Address');
-
-	//Temporary array so we can sort IPs
-	$templist = array();
-	foreach (config_get_path('virtualip/vip', []) as $sn) {
-		if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-			$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-			if (isset($sn['noexpand'])) {
-				continue;
-			}
-			$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-			$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-			$len = $end - $start;
-			for ($i = 0; $i <= $len; $i++) {
-				$snip = long2ip32($start+$i);
-
-				$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
-			}
-		} else {
-			$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
-		}
-	}
-
-	asort($templist);
-	//Append sorted IP array onto main array
-	$list = array_merge($list, $templist);
-	unset($templist);
-
-	foreach ($a_aliases as $alias) {
-		if ($alias['type'] != "host") {
-			continue;
-		}
-
-		$list['H' . $alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
-	}
-
-	/* First character is the type code, remainder is the internal name.
-	 * See https://redmine.pfsense.org/issues/14354 */
-	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
-
-	return($list);
 }
 
 function getAutoRules($json = false) {

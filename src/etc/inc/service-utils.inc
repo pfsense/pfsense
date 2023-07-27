@@ -379,7 +379,7 @@ function get_services() {
 	if (config_path_enabled('dhcrelay')) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
-		$pconfig['description'] = gettext("DHCP Relay");
+		$pconfig['description'] = gettext('ISC DHCP Relay Agent');
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
@@ -388,7 +388,7 @@ function get_services() {
 	if (config_path_enabled('dhcrelay6')) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay6";
-		$pconfig['description'] = gettext("DHCPv6 Relay");
+		$pconfig['description'] = gettext('ISC DHCPv6 Relay Agent');
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
@@ -397,7 +397,7 @@ function get_services() {
 	if (is_dhcp_server_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
-		$pconfig['description'] = gettext("DHCP Service");
+		$pconfig['description'] = gettext('ISC DHCP Server');
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
@@ -479,7 +479,7 @@ function get_services() {
 
 function find_service_by_name($name) {
 	$services = get_services();
-	
+
 	foreach ($services as $service) {
 		if (isset($service["name"]) && ($service["name"] == $name)) {
 			return $service;

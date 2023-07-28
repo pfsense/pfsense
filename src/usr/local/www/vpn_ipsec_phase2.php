@@ -830,9 +830,10 @@ if ($pconfig['mobile']) {
 		'Keep Alive',
 		'Enable periodic keep alive check',
 		$pconfig['keepalive']
-	))->setHelp('Periodically checks to see if the P2 is disconnected and initiates when it is down. ' .
-			'Does not send traffic inside the tunnel. Works for VTI and tunnel mode P2 entries. ' .
-			'For IKEv2 without split connections, this only needs enabled on one P2.');
+	))->setHelp('Periodically check this P2 and initiate it if disconnected; does not send traffic' .
+	            ' inside the tunnel. This check ignores the P1 option "Child SA Start Action" and' .
+				' works for both VTI and tunnel mode P2s. For IKEv2 without split connections, this' .
+				' only needs to be enabled on one P2.');
 	$form->add($section);
 }
 

@@ -154,7 +154,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 
 	// Update the separators
 	$a_separators = config_get_path('filter/separator/' . strtolower($tmpif), []);
-	$ridx = ifridx($tmpif, $after);	// get rule index within interface
+	$ridx = abs(ifridx($tmpif, $after));	// get rule index within interface
 	$mvnrows = +1;
 	move_separators($a_separators, $ridx, $mvnrows);
 	config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);

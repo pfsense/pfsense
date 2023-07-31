@@ -51,7 +51,7 @@ function delete_id($id) {
 	init_config_arr(array('filter', 'separator', strtolower($if)));
 	$a_separators = &$config['filter']['separator'][strtolower($if)];
 	// get rule index within interface
-	$ridx = ifridx($if, $delete_index);
+	$ridx = abs(ifridx($if, $delete_index));
 	$mvnrows = -1;
 	move_separators($a_separators, $ridx, $mvnrows);
 

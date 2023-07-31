@@ -172,7 +172,7 @@ if ($_POST['act'] == "del") {
 		// Update the separators
 		init_config_arr(array('filter', 'separator', strtolower($if)));
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
-		$ridx = ifridx($if, $_POST['id']);	// get rule index within interface
+		$ridx = abs(ifridx($if, $_POST['id']));	// get rule index within interface
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
@@ -211,10 +211,9 @@ if (isset($_POST['del_x'])) {
 
 			// Update the separators
 			// As rules are deleted, $ridx has to be decremented or separator position will break
-			if (count($_POST['rule']) == 1) { // Need special handling of single rule deletion
-				$ridx = ifridx($if, $rulei);
-			} else {
-				$ridx = ifridx($if, $rulei) - $num_deleted + 1;
+			$ridx = ifridx($if, $rulei);
+			if (count($_POST['rule']) != 1) {
+				$ridx = ($ridx < 0) ? abs($ridx) : $ridx - $num_deleted;
 			}
 
 			$mvnrows = -1;
@@ -994,8 +993,10 @@ foreach ($a_filter as $filteri => $filterent):
 endforeach;
 
 // There can be separator(s) after the last rule listed.
-if ($seprows[$nrules]) {
-	display_separator($separators, $nrules, $columns_in_table);
+foreach ($seprows as $idx => $sep) {
+	if ($idx >= $nrules) {
+		display_separator($separators, $idx, $columns_in_table);
+	}
 }
 ?>
 				</tbody>

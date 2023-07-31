@@ -4752,7 +4752,7 @@ function ifridx($if, $ridx) {
 		}
 		$i++;
 	}
-	return $ifridx;
+	return (-$ifridx);
 }
 
 /* display rules separators */

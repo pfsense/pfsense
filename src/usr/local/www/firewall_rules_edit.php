@@ -1058,7 +1058,7 @@ if ($_POST['save']) {
 				// Update the separators of previous interface.
 				init_config_arr(array('filter', 'separator', strtolower($if)));
 				$a_separators = config_get_path('filter/separator/' . strtolower($if));
-				$ridx = ifridx($if, $id);		// get rule index within interface
+				$ridx = abs(ifridx($if, $id));		// get rule index within interface
 				$mvnrows = -1;
 				move_separators($a_separators, $ridx, $mvnrows);
 				config_set_path('filter/separator/' . strtolower($if), $a_separators);
@@ -1067,7 +1067,7 @@ if ($_POST['save']) {
 				// Update the separators of new interface.
 				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif));
-				$ridx = ifridx($tmpif, $id);	// get rule index within interface
+				$ridx = abs(ifridx($tmpif, $id));	// get rule index within interface
 				if ($ridx == 0) {				// rule was placed at the top
 					$ridx = -1;					// move all separators
 				}
@@ -1088,7 +1088,7 @@ if ($_POST['save']) {
 				} else if (isset($filterent['interface'])) {
 					$tmpif = $filterent['interface'];
 					if ($tmpif != $if) {					// rule copied to different interface
-						$ridx = ifridx($tmpif, $after+1);	// get rule index within interface
+						$ridx = abs(ifridx($tmpif, $after+1));	// get rule index within interface
 						if ($ridx == 0) {					// rule was placed at the top
 							$after = -1;					// move all separators
 						}
@@ -1100,7 +1100,7 @@ if ($_POST['save']) {
 				// Update the separators
 				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif));
-				$ridx = ifridx($tmpif, $after);	// get rule index within interface
+				$ridx = abs(ifridx($tmpif, $after));	// get rule index within interface
 				$mvnrows = +1;
 				move_separators($a_separators, $ridx, $mvnrows);
 				config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);

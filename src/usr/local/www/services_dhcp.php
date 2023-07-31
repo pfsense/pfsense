@@ -32,13 +32,26 @@
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("filter.inc");
+require_once('guiconfig.inc');
+require_once('filter.inc');
 require_once('rrd.inc');
-require_once("shaper.inc");
-require_once("util.inc");
+require_once('shaper.inc');
+require_once('util.inc');
 
 global $ddnsdomainkeyalgorithms;
+
+function is_dhcrelay_enabled(string $if): bool
+{
+	if (config_path_enabled('dhcrelay')) {
+		foreach (explode(',', config_get_path('dhcrelay/interface')) as $dhcrelayif) {
+			if ($dhcrelayif === $if) {
+				return (true);
+			}
+		}
+	}
+
+	return (false);
+}
 
 if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
@@ -950,6 +963,9 @@ $i = 0;
 $have_small_subnet = false;
 
 foreach ($iflist as $ifent => $ifname) {
+	if (is_dhcrelay_enabled($ifent)) {
+		continue;
+	}
 	$oc = config_get_path("interfaces/{$ifent}");
 
 	/* Not static IPv4 or subnet >= 31 */
@@ -963,13 +979,7 @@ foreach ($iflist as $ifent => $ifname) {
 		continue;
 	}
 
-	if ($ifent == $if) {
-		$active = true;
-	} else {
-		$active = false;
-	}
-
-	$tab_array[] = array($ifname, $active, "services_dhcp.php?if={$ifent}");
+	$tab_array[] = array($ifname, ($ifent === $if), 'services_dhcp.php?if='.$ifent);
 	$tabscounter++;
 }
 
@@ -984,21 +994,6 @@ if ($tabscounter == 0) {
 	exit;
 }
 
-$dhcrelay_enabled = false;
-if (config_path_enabled('dhcrelay')) {
-	foreach (explode(',', config_get_path('dhcrelay/interface')) as $dhcrelayif) {
-		if ($dhcrelayif === $if) {
-			$dhcrelay_enabled = true;
-			break;
-		}
-	}
-}
-
-if ($dhcrelay_enabled) {
-	print_info_box(sprintf(gettext('DHCP Server cannot be enabled while %sDHCP Relay%s is enabled on %s interface.'),
-	    '<a href="/services_dhcp_relay.php">', '</a>', htmlspecialchars($iflist[$if])), 'danger', false);
-}
-
 display_top_tabs($tab_array);
 
 $form = new Form();
@@ -1010,11 +1005,8 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		'enable',
 		gettext('Enable'),
 		sprintf(gettext('Enable DHCP Server on %s interface'), htmlspecialchars($iflist[$if])),
-		(!$dhcrelay_enabled ? $pconfig['enable'] : false)
+		$pconfig['enable']
 	);
-	if ($dhcrelay_enabled) {
-		$input->setAttribute('disabled', true);
-	}
 	$section->addInput($input);
 } else {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);

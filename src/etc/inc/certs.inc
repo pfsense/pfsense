@@ -2655,7 +2655,7 @@ function cert_pkcs12_export($cert, $encryption = 'high', $passphrase = '', $add_
 	/* Encryption and Digest */
 	switch ($encryption) {
 		case 'legacy':
-			$algo = '-certpbe PBE-SHA1-RC2-40 -keypbe PBE-SHA1-RC2-40';
+			$algo = '-legacy -certpbe PBE-SHA1-RC2-40 -keypbe PBE-SHA1-RC2-40';
 			$hash = '';
 			break;
 		case 'low':

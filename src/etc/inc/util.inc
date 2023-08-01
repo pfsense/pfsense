@@ -4106,16 +4106,12 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 					if (have_ruleint_access("l2tp")) {
 						$ifallowed['l2tp'] = gettext('L2TP clients');
 					}
-					if (have_ruleint_access("openvpn")) {
-						$ifallowed['openvpn'] = gettext('OpenVPN clients');
-					}
 					$specialnet = array_merge($specialnet, $ifallowed);
 				} else {
 					$specialnet = array_merge($specialnet, [
 					                          'pptp' => gettext('PPTP clients'),
 					                          'pppoe' => gettext('PPPoE clients'),
-					                          'l2tp' => gettext('L2TP clients'),
-					                          'openvpn' => gettext('OpenVPN clients')]);
+					                          'l2tp' => gettext('L2TP clients')]);
 				}
 				break;
 			case SPECIALNET_IFADDR:

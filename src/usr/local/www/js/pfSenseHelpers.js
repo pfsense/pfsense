@@ -782,9 +782,7 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 
 	// Once the AJAX call has returned, refresh the page to show the new service
 	ajaxRequest.done(function (response, textStatus, jqXHR) {
-		// location.reload(true);
-		var loc = window.location;
-		window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
+		location.reload(true);
 	});
 });
 

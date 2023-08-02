@@ -29,36 +29,19 @@
 ##|*MATCH=services_dhcp_relay.php*
 ##|-PRIV
 
-require_once('guiconfig.inc');
-require_once('filter.inc');
+require_once("guiconfig.inc");
+require_once("filter.inc");
+$pconfig['enable'] = isset($config['dhcrelay']['enable']);
 
-$pconfig['enable'] = config_path_enabled('dhcrelay');
-
-$pconfig['interface'] = explode(',', config_get_path('dhcrelay/interface', ''));
-
-$pconfig['agentoption'] = config_path_enabled('dhcrelay', 'agentoption');
-$pconfig['server'] = config_get_path('dhcrelay/server');
-$pconfig['carpstatusvip'] = config_get_path('dhcrelay/carpstatusvip', 'none');
-
-function has_dhcpd_enabled(string $if): bool
-{
-	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpconf) {
-		if (($dhcpif === $if) &&
-		    isset($dhcpconf['enable']) &&
-		    config_path_enabled('interfaces/' . $dhcpif)) {
-			return (true);
-		}
-	}
-
-	return (false);
+if (empty($config['dhcrelay']['interface'])) {
+	$pconfig['interface'] = array();
+} else {
+	$pconfig['interface'] = explode(",", $config['dhcrelay']['interface']);
 }
 
-function has_valid_static_ip(string $if): bool
-{
-	$ifconf = config_get_path('interfaces/'.$if);
-
-	return (!empty($ifconf['subnet']) && ($ifconf['subnet'] < 31) && is_ipaddrv4($ifconf['ipaddr']));
-}
+$pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
+$pconfig['server'] = isset($config['dhcrelay']['server']) ? $config['dhcrelay']['server'] : null;
+$pconfig['carpstatusvip'] = isset($config['dhcrelay']['carpstatusvip']) ? $config['dhcrelay']['carpstatusvip'] : 'none';
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -66,25 +49,42 @@ $iflist = array_intersect_key(
 		array_filter(
 			array_keys(get_configured_interface_with_descr()),
 			function($if) {
-				return (!has_dhcpd_enabled($if) && has_valid_static_ip($if) &&
+				return (get_interface_ip($if) &&
 				    !is_pseudo_interface(convert_friendly_interface_to_real_interface_name($if)));
 			}
 		)
 	)
 );
 
-$carpiflist = array_merge(['none' => 'none'], array_intersect_key(
+$carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
        	get_configured_vip_list_with_descr('inet', VIP_CARP),
 	array_flip(
 		array_filter(
 			array_keys(get_configured_vip_list_with_descr('inet', VIP_CARP)),
 			function($if) {
-				return (has_valid_static_ip($if) &&
+				return (get_interface_ip($if) &&
 				    !is_pseudo_interface(convert_friendly_interface_to_real_interface_name($if)));
 			}
 		)
 	)
 ));
+
+/*   set the enabled flag which will tell us if DHCP server is enabled
+ *   on any interface.   We will use this to disable dhcp-relay since
+ *   the two are not compatible with each other.
+ */
+$dhcpd_enabled = false;
+if (is_array($config['dhcpd'])) {
+	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
+		if (empty($dhcp)) {
+			continue;
+		}
+		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
+			$dhcpd_enabled = true;
+			break;
+		}
+	}
+}
 
 if ($_POST) {
 
@@ -92,40 +92,42 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
-	$svrlist = [];
-
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = ['interface'];
-		$reqdfieldsn = [gettext('Downstream Interface(s)')];
+		$reqdfields = explode(" ", "interface");
+		$reqdfieldsn = array(gettext("Interface"));
+
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	}
 
-	for ($idx = 0; $idx < count($_POST); $idx++) {
-		if ($_POST['server'.$idx]) {
-			if (empty($_POST['server'.$idx])) {
-				continue;
+		$svrlist = '';
+
+		for ($idx=0; $idx<count($_POST); $idx++) {
+			if ($_POST['server' . $idx]) {
+				if (!empty($_POST['server' . $idx])) { // Filter out any empties
+					if (!is_ipaddrv4($_POST['server' . $idx])) {
+						$input_errors[] = sprintf(gettext("Destination Server IP address %s is not a valid IPv4 address."), $_POST['server' . $idx]);
+					}
+
+					if (!empty($svrlist)) {
+						$svrlist .= ',';
+					}
+
+					$svrlist .= $_POST['server' . $idx];
+				}
 			}
+		}
 
-			if (!is_ipaddrv4($_POST['server'.$idx])) {
-				$input_errors[] = sprintf(gettext('Upstream Server IPv4 address %s is not a valid IPv4 address.'), $_POST['server'.$idx]);
-			}
-
-			$svrlist[] = $_POST['server'.$idx];
+		// Check that the user input something in one of the Destination Server fields
+		if (empty($svrlist)) {
+			$input_errors[] = gettext("At least one Destination Server IP address must be specified.");
 		}
 	}
 
-	// Check that the user input something in one of the Destination Server fields
-	if (empty($svrlist) && $_POST['enable']) {
-		$input_errors[] = gettext('At least one Upstream Server IPv4 address must be specified.');
-	}
-
 	// Now $svrlist is a comma separated list of servers ready to save to the config system
-	$svrlist = implode(',', $svrlist);
 	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
-		init_config_arr(['dhcrelay']);
+		init_config_arr(array('dhcrelay'));
 		config_set_path('dhcrelay/enable', $_POST['enable'] ? true : false);
 		if (isset($_POST['interface']) &&
 		    is_array($_POST['interface'])) {
@@ -147,10 +149,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = [gettext('Services'), gettext('DHCP Relay')];
+$pgtitle = array(gettext('Services'), gettext('DHCP Relay'));
 $shortcut_section = 'dhcrelay';
-
 include('head.inc');
+
+if ($dhcpd_enabled) {
+	print_info_box(gettext('DHCP Server is currently enabled. DHCP Relay cannot be enabled while the DHCP Server is enabled on any interface.'), 'danger', false);
+}
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -160,7 +165,7 @@ if ($changes_applied) {
 	print_apply_result_box($retval);
 }
 
-$form = new Form(gettext('Save'));
+$form = new Form(gettext('Save'), !$dhcpd_enabled);
 
 $section = new Form_Section(gettext('DHCP Relay Configuration'));
 
@@ -168,54 +173,57 @@ $input = new Form_Checkbox(
 	'enable',
 	gettext('Enable'),
 	gettext('Enable DHCP Relay'),
-	(!empty($iflist) ? $pconfig['enable'] : false)
+	$pconfig['enable']
 );
-if (empty($iflist)) {
+
+if ($dhcpd_enabled) {
 	$input->setAttribute('disabled', true);
 }
+
 $section->addInput($input);
 
 $section->addInput(new Form_Select(
 	'interface',
-	'*'.gettext('Downstream Interface(s)'),
+	'*Interface(s)',
 	$pconfig['interface'],
 	$iflist,
 	true
-))->setHelp(gettext('Interface(s) from which requests from clients or other relay agents will be accepted.') . '%s' .
-    gettext('Interfaces running DHCP Server or without a static IPv4 address will not be shown.'), '<br />');
+))->setHelp('Interfaces without an IP address will not be shown.');
 
 $section->addInput(new Form_Select(
 	'carpstatusvip',
-	'*'.gettext('CARP Status VIP'),
+	'*CARP Status VIP',
 	$pconfig['carpstatusvip'],
 	$carpiflist,
-))->setHelp(gettext('DHCP Relay will be stopped when the chosen CARP VIP is in BACKUP status, and started in MASTER status.'));
+))->setHelp('Used to determine the HA MASTER/BACKUP status. DHCP Relay will be stopped when the ' .
+	    'chosen VIP is in BACKUP status, and started in MASTER status.');
 
 $section->addInput(new Form_Checkbox(
 	'agentoption',
-	null,
+	'',
 	'Append circuit ID and agent ID to requests',
 	$pconfig['agentoption']
-))->setHelp(gettext('If this is checked, the DHCP Relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.'),
-    g_get('product_label'));
+))->setHelp(
+	'If this is checked, the DHCP Relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
+	g_get('product_label')
+	);
 
-$servers = explode(',', $pconfig['server']);
-$last = (count($servers) - 1);
-foreach ($servers as $counter => $server) {
-	$group = new Form_Group(($counter == 0) ? '*'.gettext('Upstream Servers') : '');
+$counter = 0;
+foreach (explode(',', $pconfig['server']) as $server) {
+	$group = new Form_Group($counter == 0 ? gettext("*Destination server"):'');
 	$group->addClass('repeatable');
 
 	$group->add(new Form_IpAddress(
 		'server' . $counter,
-		gettext('Upstream Server'),
+		'Destination server',
 		$server,
 		'V4'
-	))->addClass('autotrim')
-          ->setHelp(($counter == $last) ? gettext('IPv4 address of the upstream server to which requests are relayed.') : '');
+	))->setWidth(4)
+	  ->setHelp('This is the IPv4 address of the server to which DHCP requests are relayed.');
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		gettext('Delete'),
+		'Delete',
 		null,
 		'fa-trash'
 	))->addClass('btn-warning');
@@ -224,34 +232,49 @@ foreach ($servers as $counter => $server) {
 	$counter++;
 }
 
-$group = new Form_Group(null);
+$form->add($section);
+
 $button = new Form_Button(
 	'addrow',
-	gettext('Add Upstream Server'),
+	gettext('Add server'),
 	null,
 	'fa-plus'
 );
-$button->addClass('btn-success btn-sm addbtn');
-$group->add($button);
-$section->add($group);
+$button->addClass('btn-success addbtn');
+if ($dhcpd_enabled) {
+	$button->setAttribute('disabled', true);
+}
+$form->addGlobal($button);
 
-$form->add($section);
-
-print($form);
+print $form;
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function() {
-	// Suppress "Delete" button if there are fewer than two rows
-	checkLastRow();
+	events.push(function() {
 
-	// Automatically remove whitespace on changes to .autotrim elements
-	$('body').on('change', '.autotrim', function () {
-		$(this).val($(this).val().replace(/\s/g, ''));
+		function updateSection(hide) {
+			if (hide) {
+				$('[name="interface[]"]').parent().parent('div').addClass('hidden');
+			} else {
+				$('[name="interface[]"]').parent().parent('div').removeClass('hidden');
+			}
+
+			hideCheckbox('agentoption', hide);
+			hideInput('carpstatusvip', hide);
+			hideClass('repeatable', hide);
+		}
+
+		$('#enable').click(function () {
+			updateSection(!this.checked);
+    	});
+
+    	updateSection(!$('#enable').prop('checked'));
+
+		// Suppress "Delete row" button if there are fewer than two rows
+		checkLastRow();
 	});
-});
 //]]>
 </script>
 
 <?php
-include('foot.inc');
+include("foot.inc");

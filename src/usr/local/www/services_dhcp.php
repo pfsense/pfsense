@@ -994,11 +994,16 @@ if ($tabscounter == 0) {
 	exit;
 }
 
+$dhcrelay_enabled = config_path_enabled('dhcrelay');
+if ($dhcrelay_enabled) {
+	print_info_box(gettext('DHCP Relay is currently enabled. DHCP Server cannot be enabled while the DHCP Relay is enabled on any interface.'), 'danger', false);
+}
+
 display_top_tabs($tab_array);
 
 $form = new Form();
 
-$section = new Form_Section(gettext('General Options'));
+$section = new Form_Section('General Options');
 
 if (!is_numeric($pool) && !($act === 'newpool')) {
 	$input = new Form_Checkbox(
@@ -1015,37 +1020,37 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 $section->addInput(new Form_Checkbox(
 	'ignorebootp',
 	'BOOTP',
-	gettext('Ignore BOOTP queries'),
+	'Ignore BOOTP queries',
 	$pconfig['ignorebootp']
 ));
 
 $section->addInput(new Form_Select(
 	'denyunknown',
-	gettext('Deny unknown clients'),
+	'Deny unknown clients',
 	$pconfig['denyunknown'],
 	array(
-		"disabled" => gettext('Allow all clients'),
-		"enabled" => gettext('Allow known clients from any interface'),
-		"class" => gettext('Allow known clients from only this interface')
+		"disabled" => "Allow all clients",
+		"enabled" => "Allow known clients from any interface",
+		"class" => "Allow known clients from only this interface",
 	)
-))->setHelp(gettext('When set to %3$sAllow all clients%4$s, any DHCP client will get an IP address within this scope/range on this interface. '.
+))->setHelp('When set to %3$sAllow all clients%4$s, any DHCP client will get an IP address within this scope/range on this interface. '.
 	'If set to %3$sAllow known clients from any interface%4$s, any DHCP client with a MAC address listed in a static mapping on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
-	'If set to %3$sAllow known clients from only this interface%4$s, only MAC addresses listed in static mappings on this interface will get an IP address within this scope/range.'),
+	'If set to %3$sAllow known clients from only this interface%4$s, only MAC addresses listed in static mappings on this interface will get an IP address within this scope/range.',
 	'<i>', '</i>', '<b>', '</b>');
 
 $section->addInput(new Form_Checkbox(
 	'nonak',
-	gettext('Ignore denied clients'),
-	gettext('Ignore denied clients rather than reject'),
+	'Ignore denied clients',
+	'Ignore denied clients rather than reject',
 	$pconfig['nonak']
-))->setHelp(gettext('This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.'));
+))->setHelp("This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.");
 
 $section->addInput(new Form_Checkbox(
 	'ignoreclientuids',
-	gettext('Ignore client identifiers'),
-	gettext('Do not record a unique identifier (UID) in client lease data if present in the client DHCP request'),
+	'Ignore client identifiers',
+	'Do not record a unique identifier (UID) in client lease data if present in the client DHCP request',
 	$pconfig['ignoreclientuids']
-))->setHelp(gettext('This option may be useful when a client can dual boot using different client identifiers but the same hardware (MAC) address.  Note that the resulting server behavior violates the official DHCP specification.'));
+))->setHelp("This option may be useful when a client can dual boot using different client identifiers but the same hardware (MAC) address.  Note that the resulting server behavior violates the official DHCP specification.");
 
 
 if (is_numeric($pool) || ($act == "newpool")) {

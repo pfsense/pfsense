@@ -32,26 +32,13 @@
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 
-require_once('guiconfig.inc');
-require_once('filter.inc');
+require_once("guiconfig.inc");
+require_once("filter.inc");
 require_once('rrd.inc');
-require_once('shaper.inc');
-require_once('util.inc');
+require_once("shaper.inc");
+require_once("util.inc");
 
 global $ddnsdomainkeyalgorithms;
-
-function is_dhcrelay_enabled(string $if): bool
-{
-	if (config_path_enabled('dhcrelay')) {
-		foreach (explode(',', config_get_path('dhcrelay/interface')) as $dhcrelayif) {
-			if ($dhcrelayif === $if) {
-				return (true);
-			}
-		}
-	}
-
-	return (false);
-}
 
 if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
@@ -963,9 +950,6 @@ $i = 0;
 $have_small_subnet = false;
 
 foreach ($iflist as $ifent => $ifname) {
-	if (is_dhcrelay_enabled($ifent)) {
-		continue;
-	}
 	$oc = config_get_path("interfaces/{$ifent}");
 
 	/* Not static IPv4 or subnet >= 31 */
@@ -979,7 +963,13 @@ foreach ($iflist as $ifent => $ifname) {
 		continue;
 	}
 
-	$tab_array[] = array($ifname, ($ifent === $if), 'services_dhcp.php?if='.$ifent);
+	if ($ifent == $if) {
+		$active = true;
+	} else {
+		$active = false;
+	}
+
+	$tab_array[] = array($ifname, $active, "services_dhcp.php?if={$ifent}");
 	$tabscounter++;
 }
 
@@ -1010,8 +1000,11 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		'enable',
 		gettext('Enable'),
 		sprintf(gettext('Enable DHCP Server on %s interface'), htmlspecialchars($iflist[$if])),
-		$pconfig['enable']
+		(!$dhcrelay_enabled ? $pconfig['enable'] : false)
 	);
+	if ($dhcrelay_enabled) {
+		$input->setAttribute('disabled', true);
+	}
 	$section->addInput($input);
 } else {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);

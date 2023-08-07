@@ -22,12 +22,9 @@
 
 include_once('globals.inc');
 
-function anchor_recurse($name = '') {
-	$anchor_list = "";
-	if ($name) {
-		$name = ' -a ' . escapeshellarg($name);
-	}
-	exec("/sbin/pfctl -vsA{$name} 2>/dev/null", $anchor_list);
+function anchor_list() {
+	$anchor_list = [];
+	exec("/sbin/pfctl -vsA 2>/dev/null | /usr/bin/sort -u", $anchor_list);
 	foreach ($anchor_list as $anchor) {
 		$anchor = trim($anchor);
 		echo "\n{$anchor} rules/nat contents:\n";
@@ -37,9 +34,8 @@ function anchor_recurse($name = '') {
 			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sn");
 			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sr");
 		}
-		anchor_recurse($anchor);
 	}
 }
 
 /* Start with a the root list of anchors */
-anchor_recurse();
+anchor_list();

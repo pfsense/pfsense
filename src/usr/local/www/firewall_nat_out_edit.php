@@ -188,7 +188,7 @@ $group->add(new Form_Select(
 	'target_type',
 	null,
 	$pconfig['target_type'],
-	get_specialnet('', [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS], $pconfig['interface'])
+	get_specialnet('', [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS])
 ))->setHelp('Type')->setWidth('3');
 $group->add(new Form_IpAddress(
 	'target',

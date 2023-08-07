@@ -6824,6 +6824,52 @@ function upgrade_229_to_230() {
 		unset($obent);
 	}
 	config_set_path('nat/outbound/rule', $obn_rules);
+
+	/* A reserved keyword suffix has been added; migrate conflicting aliases */
+	$aliases = config_get_path('aliases/alias', []);
+	$aliases_rename = [];
+	$rename_suffix = '__RENAMED';
+	$reserved_suffix = '__NETWORK';
+	$interfaces = array_merge(array_column(config_get_path('interfaces', []), 'descr'),
+	                          array_column(config_get_path('ifgroups/ifgroupentry', []), 'ifname'));
+	foreach ($aliases as & $alias) {
+		// varify that a name exists; alias names cannot start with a number
+		if (empty($alias['name'])) {
+			continue;
+		}
+
+		// check if the alias could conflict
+		if ($alias['name'] == $reserved_suffix || !str_ends_with($alias['name'], $reserved_suffix)) {
+			continue;
+		}
+
+		// check if the alias would conflict with an interface name
+		if (!in_array(strstr($alias['name'], $reserved_suffix, true), $interfaces)) {
+			continue;
+		}
+
+		// alias conflicts, attempt to rename it and flag it for references update
+		if (in_array($alias['name'] . $rename_suffix, array_column($aliases, 'name'))) {
+			file_notice('Alias', gettext('The following alias conflicts with a reserved keyword and must' .
+			            ' be manually renamed: ' . $alias['name']));
+		} else {
+			$aliases_rename[] = $alias['name'];
+			$alias['name'] .= $rename_suffix;
+		}
+	}
+	if (isset($alias)) {
+		unset($alias);
+	}
+	if (!empty($aliases_rename)) {
+		// commit alias changes
+		config_set_path('aliases/alias', $aliases);
+		// update alias references
+		foreach ($aliases_rename as $conflicting_name) {
+			update_alias_name($conflicting_name . $rename_suffix, $conflicting_name);
+		}
+		file_notice('Alias', gettext('The following aliases conflict with a reserved keyword and have been renamed: ') .
+		            implode(', ', $aliases_rename));
+	}
 }
 
 /*

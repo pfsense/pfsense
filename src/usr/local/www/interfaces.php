@@ -539,13 +539,9 @@ if ($_POST['apply']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
-		/* Reserved name? */
-		global $pf_reserved_keywords, $reserved_table_names;
-		$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_table_names);
-		foreach ($pf_reserved_keywords as $rk) {
-			if (strcasecmp($rk, $_POST['descr']) == 0) {
-				$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $rk);
-			}
+		/* Reserved name? Allow the reserved interface-network suffix since it is based on the interface name. */
+		if (get_pf_reserved($_POST['descr'], false) && !str_ends_with($_POST['descr'], '__NETWORK')) {
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $_POST['descr']);
 		}
 
 		/* description unique? */

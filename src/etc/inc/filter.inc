@@ -29,6 +29,7 @@
 
 require_once("openvpn.inc");
 require_once("captiveportal.inc");
+require_once('/etc/inc/pfsense-utils.inc');
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -575,7 +576,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 	}
 
-	global $reserved_table_names;
 	// get aliases names from config
 	$aliasesnames = array();
 	init_config_arr(array('aliases', 'alias'));
@@ -589,7 +589,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	// get aliases names from pfctl -sT
 	exec("/sbin/pfctl -sT", $pftables);
 	// compare config with pfctl aliases and reserved table names
-	$diff = array_diff($pftables, $aliasesnames, $reserved_table_names);
+	$diff = array_diff($pftables, $aliasesnames, get_pf_reserved());
 	// delete unused aliases
 	foreach ($diff as $alias) {
 		$_grbg = exec("/sbin/pfctl -t " . escapeshellarg($alias) . " -T kill 2>/dev/null");
@@ -867,6 +867,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$ifcfg[0]['descr']} = \"{ {$ifcfg[0]['if']}";
 				$aliases .= " }\"\n";
 			}
+			$ifcfg_temp = $ifcfg[0];
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
 			if (($ifcfg['type6'] == '6rd') || ($ifcfg['type6'] == '6to4')) {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf }\"\n";
@@ -883,6 +884,26 @@ function filter_generate_aliases() {
 				}
 			}
 			$aliases .= " }\"\n";
+			$ifcfg_temp = $ifcfg;
+		}
+
+		$if_subnets = [];
+		if (!empty($ifcfg_temp['sa']) && !empty($ifcfg_temp['sn'])) {
+			$if_subnets[] = $ifcfg_temp['sa'] . '/' . $ifcfg_temp['sn'];
+		}
+		if (!empty($ifcfg_temp['sav6']) && !empty($ifcfg_temp['snv6'])) {
+			$if_subnets[] = $ifcfg_temp['sav6'] . '/' . $ifcfg_temp['snv6'];
+		}
+		if (is_array($ifcfg_temp['vips'])) {
+			foreach ($ifcfg_temp['vips'] as $vip) {
+				if (!empty($vip['ip']) && !empty($vip['sn'])) {
+					$if_subnets[] = $vip['ip'] . '/' . $vip['sn'];
+				}
+			}
+		}
+		if (!empty($ifcfg['descr']) && !empty($if_subnets)) {
+			$aliases .= "table <{$ifcfg['descr']}__NETWORK> persist { " . implode(' ', $if_subnets) . " }\n";
+			$aliases .= "{$ifcfg['descr']}__NETWORK = \"<{$ifcfg['descr']}__NETWORK>\"\n";
 		}
 	}
 
@@ -2931,6 +2952,7 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	global $FilterIflist;
 	$src = "";
+	$add_macro = false;
 
 	if (isset($rule[$target]['any'])) {
 		$src = "any";
@@ -2944,7 +2966,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					if (!is_ipaddrv6($opt_sa)) {
 						return "";
 					}
-					$src = $opt_sa . "/" . $FilterIflist["opt{$optmatch[1]}"]['snv6'];
+					$add_macro = true;
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
@@ -2961,7 +2983,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					if (!is_ipaddrv4($opt_sa)) {
 						return "";
 					}
-					$src = $opt_sa . "/" . $FilterIflist["opt{$optmatch[1]}"]['sn'];
+					$add_macro = true;
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
@@ -3028,8 +3050,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						if (!is_ipaddrv4($wansa)) {
 							return "";
 						}
-						$wansn = $FilterIflist['wan']['sn'];
-						$src = "{$wansa}/{$wansn}";
+						$add_macro = true;
 						break;
 					case 'wanip':
 						$src = $FilterIflist["wan"]['ip'];
@@ -3042,21 +3063,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						if (!is_ipaddrv4($lansa)) {
 							return "";
 						}
-						$lansn = $FilterIflist['lan']['sn'];
-						$src = "{$lansa}/{$lansn}";
+						$add_macro = true;
 						break;
 					case '(self)':
 						$src = "(self)";
 						break;
 					case 'pppoe':
 						if (is_array($FilterIflist['pppoe'])) {
-							$src = "{ ";
-							foreach ($FilterIflist['pppoe'] as $pppoe) {
-								$pppoesa = gen_subnet($pppoe['sa'], $pppoe['sn']);
-								$pppoesn = $pppoe['sn'];
-								$src .= "{$pppoesa}/{$pppoesn} ";
-							}
-							$src .= "}";
+							$add_macro = true;
 						}
 						break;
 				}
@@ -3068,15 +3082,21 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			}
 		}
 		/* Include interface groups; interface groups only have VIPs */
-		$add_vips = false;
 		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
 			if ($ifgen['ifname'] == $rule[$target]['network']) {
-				$add_vips = true;
-				$src = '';
+				$add_macro = true;
 				break;
 			}
 		}
-		if (is_subnet($src) || $add_vips) {
+
+		if ($add_macro) {
+			$ifmacro = $FilterIflist[$rule[$target]['network']]['descr'];
+			if (!empty($ifmacro)) {
+				$src = ' ' . (isset($rule[$target]['not']) ? '! ' : '') . '$' . $ifmacro . '__NETWORK';
+			} else {
+				$src = '';
+			}
+		} elseif (is_subnet($src)) {
 			filter_address_add_vips_subnets($src, $rule[$target]['network'], isset($rule[$target]['not']));
 		}
 	} else if ($rule[$target]['address']) {

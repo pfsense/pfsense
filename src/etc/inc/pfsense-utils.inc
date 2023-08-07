@@ -3603,6 +3603,32 @@ function is_url_hostname_resolvable($url) {
 	return $resolvable;
 }
 
+function get_pf_reserved(?string $name = '', bool $check_ifdescr = true):bool|array {
+	global $pf_reserved_keywords, $reserved_table_names, $FilterIflist;
+
+	// generate a list of assigned interfaces and interface groups
+	$iflist = $FilterIflist;
+	if (empty($iflist)) {
+		$iflist = config_get_path('interfaces', []);
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
+		}
+	}
+	$reserved = [];
+	foreach ($iflist as $ifconf) {
+		if (empty($ifconf['descr'])) {
+			continue;
+		}
+		if ($check_ifdescr) {
+			$reserved[] = strtoupper($ifconf['descr']);
+		}
+		$reserved[] = strtoupper($ifconf['descr'] . '__NETWORK');
+	}
+	$reserved = array_merge($pf_reserved_keywords, $reserved_table_names, $reserved);
+
+	return (empty($name) ? $reserved : in_array(strtoupper($name), $reserved));
+}
+
 function get_pf_timeouts () {
 	$pftimeout = array();
 	exec("/sbin/pfctl -st", $pfctlst, $retval);

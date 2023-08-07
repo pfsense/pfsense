@@ -44,11 +44,6 @@ if (isset($_POST['referer'])) {
 	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 }
 
-// Keywords not allowed in names, see globals.inc for list.
-global $pf_reserved_keywords;
-
-$reserved_ifs = get_configured_interface_list(true);
-$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;
 
 // Debugging

@@ -29,18 +29,12 @@
 ##|-PRIV
 
 
-// Keywords not allowed in names, see globals.inc for list.
-global $pf_reserved_keywords;
-
 require_once("guiconfig.inc");
 require_once("util.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
-
-$reserved_ifs = get_configured_interface_list(true);
-$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 
 $tab = $_REQUEST['tab'];
 if (empty($tab)) {
@@ -67,7 +61,7 @@ if ($_POST) {
 
 
 	/* Check for reserved keyword names */
-	foreach ($pf_reserved_keywords as $rk) {
+	foreach (get_pf_reserved() as $rk) {
 		if ($rk == $_POST['name']) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}

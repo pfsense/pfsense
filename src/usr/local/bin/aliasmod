@@ -52,14 +52,14 @@ if (($argc > 1) && !empty($argv[1])) {
 }
 
 function aliasmod($act, $alias, $entry) {
-	global $reserved_table_names, $config, $g;
+	global $config, $g;
 
 	if (!in_array($act, array('add', 'del'))) {
 		return false;
 	}
 
 	if (!is_array($config['aliases']) || !is_alias($alias) ||
-	    in_array($alias, $reserved_table_names) || (alias_get_type($alias) != 'host')) {
+	    in_array($alias, get_pf_reserved()) || (alias_get_type($alias) != 'host')) {
 		return false;
 	}
 

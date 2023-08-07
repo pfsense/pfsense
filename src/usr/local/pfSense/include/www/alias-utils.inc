@@ -259,11 +259,9 @@ function alias_same_type($name, $type) {
 }
 
 function saveAlias($post, $id) {
-	global $g, $pf_reserved_keywords, $reserved_table_names, $pconfig, $aliastable;
+	global $g, $pconfig, $aliastable;
 
 	$origname = $post['origname'];
-	$reserved_ifs = get_configured_interface_list(true);
-	$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 	$max_alias_addresses = 5000;
 
 	$data_errors = array();
@@ -290,7 +288,7 @@ function saveAlias($post, $id) {
 	}
 
 	/* Check for reserved keyword names */
-	foreach ($pf_reserved_keywords as $rk) {
+	foreach (get_pf_reserved() as $rk) {
 		if (strcasecmp($rk, $post['name']) == 0) {
 			$data_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}

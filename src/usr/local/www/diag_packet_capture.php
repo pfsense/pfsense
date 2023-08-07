@@ -373,8 +373,8 @@ $form_fsmatch_tagged = array(
 );
 // Type match selection fields
 $form_match_ipaddress = $form_match_macaddress = $form_match_port = array(
-	PCAP_MATCH_ATTR_ALLOF => gettext('all of'),
 	PCAP_MATCH_ATTR_ANYOF => gettext('any of'),
+	PCAP_MATCH_ATTR_ALLOF => gettext('all of'),
 	PCAP_MATCH_ATTR_NONEOF => gettext('none of'),
 	PCAP_MATCH_TYPE_ALLOF => gettext('OR all of'),
 	PCAP_MATCH_TYPE_ANYOF => gettext('OR any of')
@@ -473,6 +473,12 @@ if (!isset($input_lookup)) {
 }
 if (!isset($input_untagged_section_match)) {
 	$input_untagged_section_match = PCAP_MATCH_SECT_ANYOF;
+}
+if (!isset($input_untagged_ipaddress_match)) {
+	$input_untagged_ipaddress_match = PCAP_MATCH_ATTR_ALLOF;
+}
+if (!isset($input_tagged_ipaddress_match)) {
+	$input_tagged_ipaddress_match = PCAP_MATCH_ATTR_ALLOF;
 }
 
 // Create the form

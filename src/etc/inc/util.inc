@@ -2439,8 +2439,32 @@ function set_single_sysctl($name, $value) {
 function get_memory() {
 	$physmem = get_single_sysctl("hw.physmem");
 	$realmem = get_single_sysctl("hw.realmem");
+	/* Ensure $physmem has a sane value */
+	if (!is_numericint($physmem) &&
+	    is_numericint($realmem)) {
+		$physmem = $realmem;
+	}
+	/* Ensure $realmem has a sane value */
+	if (!is_numericint($realmem) &&
+	    is_numericint($physmem)) {
+		$realmem = $physmem;
+	}
+	/* If both are invalid, something deeper is wrong */
+	if (!is_numericint($physmem) &&
+	    is_numericint($realmem)) {
+		/* Try checking by pages instead */
+		$membypages = (int) get_single_sysctl("vm.stats.vm.v_page_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");
+		if (is_numericint($membypages)) {
+			$physmem = $membypages;
+			$realmem = $membypages;
+		} else {
+			/* Everything failed, return zeroes */
+			$physmem = 0;
+			$realmem = 0;
+		}
+	}
 	/* convert from bytes to megabytes */
-	return array(($physmem/1048576), ($realmem/1048576));
+	return array(((int) $physmem/1048576), ((int) $realmem/1048576));
 }
 
 function mute_kernel_msgs() {

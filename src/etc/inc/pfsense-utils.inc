@@ -1901,8 +1901,16 @@ function pfsense_default_state_size() {
 	/* get system memory amount */
 	$memory = get_memory();
 	$physmem = $memory[0];
-	/* Be cautious and only allocate 10% of system memory to the state table */
-	$max_states = (int) ($physmem/10)*1000;
+
+	if ((int) $physmem > 0) {
+		/* Be cautious and only allocate 10% of system memory to the state table */
+		$max_states = (int) ($physmem/10)*1000;
+	} else {
+		/* If the memory check result is invalid, use a low but still
+		 * somewhat sane default (Equivalent to ~256MB RAM) */
+		$max_states = 25600;
+	}
+
 	return $max_states;
 }
 

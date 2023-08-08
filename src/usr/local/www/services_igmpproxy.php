@@ -43,9 +43,12 @@ if ($_POST['apply']) {
 	$pconfig = $_POST;
 
 	$changes_applied = true;
-	$retval = 0;
 	/* reload all components that use igmpproxy */
-	$retval |= services_igmpproxy_configure();
+	if (services_igmpproxy_configure()) {
+		$retval = 0;
+	} else {
+		$retval = 1;
+	}
 
 	clear_subsystem_dirty('igmpproxy');
 }

@@ -1097,6 +1097,7 @@ function parse_firewall_log_line($line) {
 		switch($flent['protoid']) {
 			case '6':
 			case '17': // TCP or UDP
+			case '132': // SCTP
 				$flent['srcport'] = $rule_data[$field++];
 				$flent['dstport'] = $rule_data[$field++];
 

@@ -126,7 +126,7 @@ $group = new Form_Group('*Source');
 $group->add(new Form_Select(
 	'source_type',
 	null,
-	$pconfig['source_type'],
+	(($pconfig['source'] == "any") || ($pconfig['source'] == "(self)")) ? $pconfig['source'] : "network",
 	get_specialnet('', [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL])
 ))->setHelp('Type')->setWidth('3');
 
@@ -151,14 +151,14 @@ $group = new Form_Group('*Destination');
 $group->add(new Form_Select(
 	'destination_type',
 	null,
-	$pconfig['destination_type'],
+	$pconfig['destination'] == "any" ? "any":"network",
 	get_specialnet('', [SPECIALNET_ANY, SPECIALNET_NETAL])
 ))->setHelp('Type')->setWidth('3');
 
 $group->add(new Form_IpAddress(
 	'destination',
 	null,
-	$pconfig['destination'],
+	$pconfig['destination'] == "any" ? "":$pconfig['destination'],
 	'ALIASV4V6'
 ))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.');
 

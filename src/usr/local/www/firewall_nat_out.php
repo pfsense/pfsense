@@ -320,8 +320,8 @@ print($form);
 <?php
 						if (isset($natent['nonat'])) {
 							echo '<I>NO NAT</I>';
-						} elseif (array_key_exists($natent['target'], $specialnet)) {
-							echo htmlspecialchars($specialnet[$natent['target']]);
+						} elseif ($natent['target_type'] != "network" && array_key_exists($natent['target_type'], $specialnet)) {
+							echo htmlspecialchars($specialnet[$natent['target_type']]);
 						} elseif (!empty($natent['target'])) {
 							if (isset($alias['target'])):
 ?>
@@ -329,7 +329,7 @@ print($form);
 <?php
 							endif;
 ?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target'] . ((!isset($alias['target']) && !empty($natent['target_subnet'])) ? '/' . $natent['target_subnet'] : '')))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['target']))) . (!empty($natent['target_subnet'] && !isset($alias['target'])) ? '/' . $natent['target_subnet'] : '')?>
 <?php
 							if (isset($alias['target'])):
 ?>
@@ -476,8 +476,8 @@ if ($mode == "automatic" || $mode == "hybrid"):
 <?php
 		if (isset($natent['nonat'])) {
 			echo 'NO NAT';
-		} elseif (array_key_exists($natent['target'], $specialnet)) {
-			echo htmlspecialchars($specialnet[$natent['target']]);
+		} elseif ($natent['target_type'] != "network" && array_key_exists($natent['target_type'], $specialnet)) {
+			echo htmlspecialchars($specialnet[$natent['target_type']]);
 		} elseif (!empty($natent['target'])) {
 			echo $natent['target'] . (!empty($natent['target_subnet']) ? '/' . $natent['target_subnet'] : '');
 		}

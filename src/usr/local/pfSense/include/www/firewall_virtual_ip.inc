@@ -257,6 +257,11 @@ function saveVIP($post, $json = false) {
 					config_set_path("nat/rule/{$i}/destination/address", $vipent['subnet']);
 				}
 			}
+			for ($i = 0; !empty(config_get_path("nat/outbound/rule/{$i}")); $i++) {
+				if (config_get_path("nat/outbound/rule/{$i}/target") == $a_vip[$id]['subnet']) {
+					config_set_path("nat/outbound/rule/{$i}/target", $vipent['subnet']);
+				}
+			}
 		}
 
 		config_set_path("virtualip/vip/{$id}", $vipent);
@@ -357,6 +362,15 @@ function deleteVIP($id, $json = false) {
 			if ($rule['destination']['address'] != "") {
 				if ($rule['destination']['address'] == $a_vip[$id]['subnet']) {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
+					break;
+				}
+			}
+		}
+		/* make sure no outbound NAT mappings reference this entry */
+		foreach (config_get_path('nat/outbound/rule', []) as $rule) {
+			if ($rule['target'] != "") {
+				if ($rule['target'] == $a_vip[$id]['subnet']) {
+					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one Outbound NAT mapping.");
 					break;
 				}
 			}

@@ -640,6 +640,14 @@ function is_alias_inuse($alias) {
 			}
 		}
 	}
+	/* loop through outbound nat rules looking for alias in use */
+	foreach (config_get_path('nat/outbound/rule', []) as $rule) {
+		foreach (['target', 'sourceport', 'dstport', 'source/network', 'destination/address'] as $property) {
+			if (array_get_path($rule, $property) == $alias) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 

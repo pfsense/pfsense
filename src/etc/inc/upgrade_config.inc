@@ -6791,27 +6791,14 @@ function upgrade_229_to_230() {
 	foreach ($obn_rules as & $obent) {
 		if (empty($obent['target'])) {
 			// migrate interface address selection
-			$obent['target_type'] = $obent['interface'] . 'ip';
-			$obent['target'] = '';
-			$obent['target_subnet'] = '';
-		} elseif (str_contains($obent['target'], ':') ||
-		          str_contains($obent['target'], '.')) {
-			// migrate VIPs
-			if (get_specialnet($obent['target'])) {
-				$obent['target_type'] = $obent['target'];
-				$obent['target'] = '';
-			} else {
-				$obent['target_type'] = '';
-			}
+			$obent['target'] = $obent['interface'] . 'ip';
 			$obent['target_subnet'] = '';
 		} elseif ($obent['target'] == 'other-subnet') {
 			// migrate custom subnets
-			$obent['target_type'] = 'network';
 			$obent['target'] = $obent['targetip'];
 			$obent['target_subnet'] = $obent['targetip_subnet'];
 		} else {
-			// migrate aliases
-			$obent['target_type'] = 'network';
+			// migrate VIPs and aliases
 			$obent['target_subnet'] = '';
 		}
 		foreach (['targetip', 'targetip_subnet'] as $old) {

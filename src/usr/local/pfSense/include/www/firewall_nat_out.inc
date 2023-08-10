@@ -73,7 +73,7 @@ function saveNAToutMode($post, $json = false) {
 					if ($rule['interface'] == $natent['interface'] &&
 					    $rule['source']['network'] == $natent['source']['network'] &&
 					    $rule['dstport'] == $natent['dstport'] &&
-					    $rule['target_type'] == $natent['target_type'] &&
+					    $rule['target'] == $natent['target'] &&
 					    $rule['descr'] == $natent['descr']) {
 						$found = true;
 						break;
@@ -285,9 +285,16 @@ function saveoutNATrule($post, $id, $json = false) {
 		$natent['source']['network'] = $osn;
 		$natent['sourceport'] = ($protocol_uses_ports) ? $post['sourceport'] : "";
 		$natent['descr'] = $post['descr'];
-		$natent['target_type'] = (!isset($post['nonat'])) ? $post['target_type'] : "";
-		$natent['target'] = (!isset($post['nonat'])) ? $post['target'] : "";
-		$natent['target_subnet'] = (!isset($post['nonat'])) ? $post['target_subnet'] : "";
+		if (isset($post['nonat'])) {
+			$natent['target'] = '';
+			$natent['target_subnet'] = '';
+		} elseif ($post['target_type'] == 'network') {
+			$natent['target'] = $post['target'];
+			$natent['target_subnet'] = (!isset($post['nonat'])) ? $post['target_subnet'] : "";
+		} else {
+			$natent['target'] = $post['target_type'];
+			$natent['target_subnet'] = '';
+		}
 		$natent['interface'] = $post['interface'];
 		$natent['poolopts'] = $poolopts;
 		$natent['source_hash_key'] = $source_hash_key;
@@ -402,19 +409,35 @@ function getoutNATrule($id, $json = false) {
 	
 		$pconfig['ipprotocol'] = $a_out[$id]['ipprotocol'];
 		$pconfig['protocol'] = $a_out[$id]['protocol'];
-		list($pconfig['source'], $pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
-		if (!is_numeric($pconfig['source_subnet'])) {
-			$pconfig['source_subnet'] = 32;
+
+		$pconfig['source_type'] = 'any';
+		$pconfig['source'] = '';
+		$pconfig['source_subnet'] = '';
+		if (!empty($a_out[$id]['source']['network'])) {
+			if (get_specialnet($a_out[$id]['source']['network'])) {
+				$pconfig['source_type'] = $pconfig['source'];
+			} else {
+				$pconfig['source_type'] = 'network';
+				list($pconfig['source'], $pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
+			}
 		}
 		$pconfig['sourceport'] = $a_out[$id]['sourceport'];
-		address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
-			$pconfig['destination_subnet'], $pconfig['destination_not'],
-			$none, $none);
-	
+
+		$pconfig['destination_type'] = 'any';
+		$pconfig['destination'] = '';
+		$pconfig['destination_subnet'] = '';
+		if (!empty($a_out[$id]['destination']['address'])) {
+			if (get_specialnet($a_out[$id]['destination']['address'])) {
+				$pconfig['destination_type'] = $pconfig['destination'];
+			} else {
+				$pconfig['destination_type'] = 'network';
+				list($pconfig['destination'], $pconfig['destination_subnet']) = explode('/', $a_out[$id]['destination']['address']);
+			}
+		}
 		$pconfig['dstport'] = $a_out[$id]['dstport'];
+		$pconfig['destination_not'] = (isset($a_out[$id]['destination']['not'])) ? 1 : 0;
+
 		$pconfig['natport'] = $a_out[$id]['natport'];
-		$pconfig['target'] = $a_out[$id]['target'];
-		$pconfig['target_subnet'] = $a_out[$id]['target_subnet'];
 		$pconfig['poolopts'] = $a_out[$id]['poolopts'];
 		$pconfig['source_hash_key'] = $a_out[$id]['source_hash_key'];
 		$pconfig['interface'] = $a_out[$id]['interface'];
@@ -422,18 +445,32 @@ function getoutNATrule($id, $json = false) {
 		if (!$pconfig['interface']) {
 			$pconfig['interface'] = "wan";
 		}
-		$pconfig['target_type'] = empty($a_out[$id]['target_type']) ? $pconfig['interface'] . 'ip' : $a_out[$id]['target_type'];
+		$pconfig['target'] = '';
+		$pconfig['target_subnet'] = '';
+		if (empty($a_out[$id]['target'])) {
+			$pconfig['target_type'] = $pconfig['interface'] . 'ip';
+		} elseif (empty($a_out[$id]['target_subnet']) && get_specialnet($a_out[$id]['target'])) {
+			$pconfig['target_type'] = $a_out[$id]['target'];
+		} else {
+			$pconfig['target_type'] = 'network';
+			$pconfig['target'] = $a_out[$id]['target'];
+			$pconfig['target_subnet'] = $a_out[$id]['target_subnet'];
+		}
 		$pconfig['descr'] = $a_out[$id]['descr'];
 		$pconfig['nonat'] = $a_out[$id]['nonat'];
 		$pconfig['disabled'] = isset($a_out[$id]['disabled']);
 		$pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);
 		$pconfig['nosync'] = isset($a_out[$id]['nosync']);
 	} else {
-		$pconfig['source_subnet'] = 24;
-		$pconfig['destination'] = "any";
-		$pconfig['destination_subnet'] = 24;
-		$pconfig['interface'] = "wan";
+		$pconfig['source_type'] = 'any';
+		$pconfig['source'] = '';
+		$pconfig['source_subnet'] = '';
+		$pconfig['destination_type'] = 'any';
+		$pconfig['destination'] = '';
+		$pconfig['destination_subnet'] = '';
+		$pconfig['interface'] = 'wan';
 		$pconfig['target_type'] = $pconfig['interface'] . 'ip';
+		$pconfig['target'] = '';
 	}
 
 	return $json ? json_encode($pconfig):$pconfig;

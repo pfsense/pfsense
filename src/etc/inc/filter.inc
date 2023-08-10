@@ -1990,7 +1990,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['dstport'] = "500";
-		$natent['target_type'] = "";
+		$natent['target'] = "";
 		$natent['destination']['any'] = true;
 		$natent['staticnatport'] = true;
 		$natent['descr'] = gettext('Auto created rule for ISAKMP');
@@ -2000,7 +2000,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['sourceport'] = "";
-		$natent['target_type'] = "";
+		$natent['target'] = "";
 		$natent['destination']['any'] = true;
 		$natent['natport'] = "";
 		$natent['descr'] = gettext('Auto created rule');
@@ -2439,7 +2439,7 @@ function filter_nat_rules_generate() {
 				continue;
 			}
 
-			$obtarget = ($obent['target_type'] == "network") ? $obent['target'] . '/' . $obent['target_subnet']: $obent['target_type'];
+			$obtarget = $obent['target'] . (!is_alias($obent['target'] && !empty($obent['target_subnet'])) ? '/' . $obent['target_subnet'] : '');
 			$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
 			/* pool option source-hash allows specification of an optional source-hash key */
@@ -2500,7 +2500,7 @@ function filter_nat_rules_generate() {
 					$a_out['sourceport'],
 					$a_out['destination']['address'],
 					$a_out['dstport'],
-					$a_out['target_type'],
+					$a_out['target'],
 					$a_out['natport'],
 					isset($a_out['nonat']),
 					isset($a_out['staticnatport']));

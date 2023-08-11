@@ -415,7 +415,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['source_subnet'] = '';
 		if (!empty($a_out[$id]['source']['network'])) {
 			if (get_specialnet($a_out[$id]['source']['network'])) {
-				$pconfig['source_type'] = $pconfig['source'];
+				$pconfig['source_type'] = $a_out[$id]['source']['network'];
 			} else {
 				$pconfig['source_type'] = 'network';
 				list($pconfig['source'], $pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
@@ -428,7 +428,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['destination_subnet'] = '';
 		if (!empty($a_out[$id]['destination']['address'])) {
 			if (get_specialnet($a_out[$id]['destination']['address'])) {
-				$pconfig['destination_type'] = $pconfig['destination'];
+				$pconfig['destination_type'] = $a_out[$id]['destination']['address'];
 			} else {
 				$pconfig['destination_type'] = 'network';
 				list($pconfig['destination'], $pconfig['destination_subnet']) = explode('/', $a_out[$id]['destination']['address']);

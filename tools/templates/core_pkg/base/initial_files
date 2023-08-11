@@ -1,0 +1,6 @@
+etc/dh-parameters.1024
+etc/dh-parameters.2048
+etc/dh-parameters.3072
+etc/dh-parameters.4096
+etc/dh-parameters.6144
+etc/dh-parameters.8192

@@ -1708,7 +1708,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reusese
 	/* If we are enforcing strict security, then check the digest against a
 	 * blacklist of insecure digest methods. */
 	if ($strictsecurity &&
-	    (in_array($digest_alg, $cert_strict_values['digest_blacklist']))) {
+	    is_weak_digest($cert_details['signatureTypeSN'])) {
 		$digest_alg = 'sha256';
 	}
 
@@ -2162,7 +2162,14 @@ function cert_print_infoblock($cert) {
 	$certsig = cert_get_sigtype($cert['crt']);
 	if (is_array($certsig) && !empty($certsig) && !empty($certsig['shortname'])) {
 		$certextinfo .= '<b>' . gettext("Signature Digest: ") . '</b> ';
+		$is_weak = is_weak_digest($certsig['shortname']);
+		$csgclass = ($is_weak) ? 'warning' : 'normal';
+		$certextinfo .= '<span class="text-' . $csgclass . '" data-placement="bottom">';
 		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certsig['shortname'], true));
+		if ($is_weak) {
+			$certextinfo .= ' (' . gettext("Weak Digest") . ')';
+		}
+		$certextinfo .= '</span>';
 		$certextinfo .= '<br/>';
 	}
 
@@ -2600,7 +2607,8 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
 	foreach (config_get_path($type, []) as $cert) {
 		if (empty($cert['prv']) && ($type == 'cert')) {
 			continue;
-		} else if (cert_check_pkey_compatibility($cert['prv'], $consumer)) {
+		} elseif (cert_check_pkey_compatibility($cert['prv'], $consumer) &&
+			  cert_check_digest_compatibility($type, $cert['crt'], $consumer)) {
 			if ($selectsource) {
 				$list[] = array('refid' => $cert['refid'],
 						'descr' => $cert['descr']);
@@ -2761,4 +2769,33 @@ function cert_pkcs12_export($cert, $encryption = 'high', $passphrase = '', $add_
 
 	return null;
 }
+
+/* Check if a given digest is known to be weak */
+function is_weak_digest($digest_alg) {
+	global $cert_strict_values;
+	/* Check for and remove unnecessary ECDSA digest prefix
+	 * See https://redmine.pfsense.org/issues/13437 */
+	$ecdsa_prefix = 'ecdsa-with-';
+	if (substr(strtolower($digest_alg), 0, strlen($ecdsa_prefix)) == $ecdsa_prefix) {
+		$digest_alg = substr($digest_alg, strlen($ecdsa_prefix));
+	}
+	return in_array($digest_alg, $cert_strict_values['digest_blacklist']);
+}
+
+/* Determine if a certificate is too weak to function in certain contexts
+ * such as for the GUI, Captive Portal, or OpenVPN with OpenSSL 3.x */
+function cert_has_weak_digest($str_crt, $decode = true) {
+	$digestinfo = cert_get_sigtype($str_crt, $decode);
+	return is_weak_digest($digestinfo['shortname']);
+}
+
+function cert_check_digest_compatibility($type, $cert, $consumer) {
+	$nonweak_consumers = [
+		'ca'   => ['HTTPS'],
+		'cert' => ['HTTPS', 'OpenVPN'],
+	];
+	return (!cert_has_weak_digest($cert) ||
+		!in_array($consumer, $nonweak_consumers[$type]));
+}
+
 ?>

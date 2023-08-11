@@ -1166,7 +1166,10 @@ $section->addInput(new Form_Select(
 	'*SSL/TLS Certificate',
 	$pconfig['certref'],
 	cert_build_list('cert', 'HTTPS')
-))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list. If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
+))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list, ' .
+		'such as certificates using incompatible ECDSA curves or weak digest algorithms.%3$s%3$s' .
+		'If no certificates are defined, one may be defined at %1$sSystem &gt; Certificates%2$s',
+		'<a href="system_certmanager.php">', '</a>', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'nohttpsforwards',

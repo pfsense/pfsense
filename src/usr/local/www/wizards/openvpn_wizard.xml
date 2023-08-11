@@ -588,6 +588,7 @@
 			<type>cert_selection</type>
 			<name>certname</name>
 			<displayname>Certificate</displayname>
+			<reject_weak>yes</reject_weak>
 			<bindstofield>ovpnserver->step9->authcertname</bindstofield>
 		</field>
 		<field>

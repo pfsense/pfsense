@@ -119,14 +119,7 @@ $lifetime = (int) round(($cert_details['validTo_time_t'] - $cert_details['validF
 $purpose = cert_get_purpose($torenew['crt']);
 $res_key = openssl_pkey_get_private(base64_decode($torenew['prv']));
 $key_details = openssl_pkey_get_details($res_key);
-$digest_alg = strtolower($cert_details['signatureTypeSN']);
-/* Check for and remove unnecessary ECDSA digest prefix
- * See https://redmine.pfsense.org/issues/13437 */
-$ecdsa_prefix = 'ecdsa-with-';
-if (substr($digest_alg, 0, strlen($ecdsa_prefix)) == $ecdsa_prefix) {
-	$digest_alg = substr($digest_alg, strlen($ecdsa_prefix));
-}
-
+$digest_alg = $cert_details['signatureTypeSN'];
 
 print_info_box(gettext('Renewing or reissuing a CA or certificate will replace the old entry.' . ' ' .
 		'The old entry will be lost, and cannot be revoked after it has been replaced.' . ' ' .
@@ -258,7 +251,7 @@ print($form);
 					<td><?=gettext("Digest")?></td>
 					<td><?=htmlspecialchars($digest_alg)?></td>
 					<td><?=gettext("SHA-256 or stronger")?></td>
-					<td><?=(in_array($digest_alg, $cert_strict_values['digest_blacklist'])) ? gettext('Yes') : gettext('No') ?></td>
+					<td><?=is_weak_digest($digest_alg) ? gettext('Yes') : gettext('No') ?></td>
 				</tr>
 <?php if ($key_details['type'] == OPENSSL_KEYTYPE_RSA): ?>
 				<tr>

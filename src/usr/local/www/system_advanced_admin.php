@@ -108,7 +108,8 @@ $section->addInput($input = new Form_Select(
 	'SSL/TLS Certificate',
 	$pconfig['ssl-certref'],
 	cert_build_list('cert', 'HTTPS')
-))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list.');
+))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list, ' .
+		'such as certificates using incompatible ECDSA curves or weak digest algorithms.');
 
 $section->addInput(new Form_Input(
 	'webguiport',

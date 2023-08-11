@@ -1122,8 +1122,10 @@ if ($act=="new" || $act=="edit"):
 			}
 		}
 	} else {
-		$certhelp = sprintf(gettext('No Certificates defined. One may be created here: %1$s%2$s%3$s'), '<span id="certtype">', '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
+		$certhelp = sprintf(gettext('No compatible certificates defined. One may be created at %1$s%2$s%3$s'), '<span id="certtype">', '<a href="system_camanager.php">' . gettext("System &gt; Certificates") . '</a>', '</span>');
 	}
+	$certhelp .= gettext('Certificates known to be incompatible with use for OpenVPN are not included in this list, ' .
+				'such as certificates using incompatible ECDSA curves or weak digest algorithms.');
 
 	//Save the number of server certs for use at run-time
 	$servercerts = count($certlist['server']);

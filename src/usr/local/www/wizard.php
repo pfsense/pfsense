@@ -696,6 +696,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					} else {
 						$canecho = 1;
 					}
+					if (($field['reject_weak'] == "yes") &&
+					    cert_has_weak_digest($ca['crt'])) {
+						$canecho = 0;
+					}
 					if ($canecho == 1) {
 						$options[$ca['refid']] = $caname;
 					}
@@ -749,6 +753,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 						}
 					} else {
 						$canecho = 1;
+					}
+					if (($field['reject_weak'] == "yes") &&
+					    cert_has_weak_digest($ca['crt'])) {
+						$canecho = 0;
 					}
 
 					if ($canecho == 1) {

@@ -6860,6 +6860,86 @@ function upgrade_229_to_230() {
 }
 
 /*
+ * Check OpenVPN instances for deprecated algorithms and weak certificate
+ * digests.
+ * https://redmine.pfsense.org/issues/14677
+ * https://redmine.pfsense.org/issues/14686
+ */
+function upgrade_230_to_231() {
+	/* Load lists of current usable algorithms */
+	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
+	$digest_validation_list = array_keys(openvpn_get_digestlist());
+	$changed = false;
+	$disabled = false;
+	foreach(array('server', 'client') as $mode) {
+		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $idx => $settings) {
+			$thischanged = false;
+			$thisdisabled = false;
+			/* Check data_ciphers and filter out any deprecated items */
+			if (!empty($settings['data_ciphers'])) {
+				$dc = explode(',', $settings['data_ciphers']);
+				/* Retain valid entries only, in the original order */
+				$dc = array_intersect($dc, $cipher_validation_list);
+				$dc = implode(',', $dc);
+				if ($settings['data_ciphers'] != $dc) {
+					$settings['data_ciphers'] = $dc;
+					$thischanged = true;
+				}
+			}
+			/* If no supported ciphers remain, replace with default set. */
+			if (empty($settings['data_ciphers'])) {
+				$settings['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
+				$thischanged = true;
+			}
+
+			/* Check data_ciphers_fallback and if it's deprecated, replace with 'AES-256-CBC' */
+			if (!in_array($settings['data_ciphers_fallback'], $cipher_validation_list)) {
+				$settings['data_ciphers_fallback'] = 'AES-256-CBC';
+				$thischanged = true;
+			}
+
+			/* Check digest and if it's deprecated, replace with 'SHA256' */
+			if (!empty($settings['digest']) &&
+			    !in_array($settings['digest'], $digest_validation_list)) {
+				$settings['digest'] = 'SHA256';
+				$thischanged = true;
+			}
+
+			/* If using SSL/TLS, check if (server|client) certificate is weak, if so, disable tunnel */
+			if (!empty($settings['certref'])) {
+				$cert = lookup_cert($settings['certref']);
+				/* Disable only if weak and not already disabled */
+				if (cert_has_weak_digest($cert['crt']) &&
+					!isset($settings['disable'])) {
+					/* Weak digest, disable tunnel. */
+					$settings['disable'] = true;
+					$thisdisabled = true;
+				}
+			}
+
+			/* If any changes were made, alert user (clarify changed vs disabled). */
+			if ($thisdisabled) {
+				$disabled = true;
+			}
+			if ($thischanged) {
+				$changed = true;
+			}
+
+			/* Save changes (if any were made) */
+			if ($thisdisabled || $thischanged) {
+				config_set_path("openvpn/openvpn-{$mode}/{$idx}", $settings);
+			}
+		}
+	}
+	if ($changed) {
+		file_notice("OpenVPN", gettext("One or more OpenVPN entries used deprecated algorithms and has been updated to secure defaults."));
+	}
+	if ($disabled) {
+		file_notice("OpenVPN", gettext("One or more OpenVPN entries has been disabled because it used a certificate with a deprecated weak digest algorithm."));
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

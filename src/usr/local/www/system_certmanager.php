@@ -841,8 +841,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		$pconfig['csrsign_digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('The digest method used when the certificate is signed. %1$s' .
-		'The best practice is to use an algorithm stronger than SHA1. '.
-		'Some platforms may consider weaker digest algorithms invalid', '<br/>');
+		'The best practice is to use SHA256 or higher. '.
+		'Some services and platforms, such as the GUI web server and OpenVPN, consider weaker digest algorithms invalid.', '<br/>');
 
 	$form->add($section);
 
@@ -989,8 +989,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		$pconfig['digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('The digest method used when the certificate is signed. %1$s' .
-		'The best practice is to use an algorithm stronger than SHA1. '.
-		'Some platforms may consider weaker digest algorithms invalid', '<br/>');
+		'The best practice is to use SHA256 or higher. '.
+		'Some services and platforms, such as the GUI web server and OpenVPN, consider weaker digest algorithms invalid.', '<br/>');
 
 	$section->addInput(new Form_Input(
 		'lifetime',
@@ -1093,8 +1093,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		$pconfig['csr_digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('The digest method used when the certificate is signed. %1$s' .
-		'The best practice is to use an algorithm stronger than SHA1. '.
-		'Some platforms may consider weaker digest algorithms invalid', '<br/>');
+		'The best practice is to use SHA256 or higher. '.
+		'Some services and platforms, such as the GUI web server and OpenVPN, consider weaker digest algorithms invalid.', '<br/>');
 
 	$section->addInput(new Form_Input(
 		'csr_dn_commonname',

@@ -714,8 +714,8 @@ $section->addInput(new Form_Select(
 	$pconfig['digest_alg'],
 	array_combine($openssl_digest_algs, $openssl_digest_algs)
 ))->setHelp('The digest method used when the CA is signed. %1$s' .
-	'The best practice is to use an algorithm stronger than SHA1. '.
-	'Some platforms may consider weaker digest algorithms invalid', '<br/>');
+	'The best practice is to use SHA256 or higher. '.
+	'Some services and platforms, such as the GUI web server and OpenVPN, consider weaker digest algorithms invalid.', '<br/>');
 
 $section->addInput(new Form_Input(
 	'lifetime',

@@ -6806,6 +6806,11 @@ function upgrade_229_to_230() {
 				unset($obent[$old]);
 			}
 		}
+		// migrate destination address
+		if (array_key_exists('address', $obent['destination'])) {
+			$obent['destination']['network'] = $obent['destination']['address'];
+			unset($obent['destination']['address']);
+		}
 	}
 	if (isset($obent)) {
 		unset($obent);

@@ -642,7 +642,7 @@ function is_alias_inuse($alias) {
 	}
 	/* loop through outbound nat rules looking for alias in use */
 	foreach (config_get_path('nat/outbound/rule', []) as $rule) {
-		foreach (['target', 'sourceport', 'dstport', 'source/network', 'destination/address'] as $property) {
+		foreach (['target', 'sourceport', 'dstport', 'source/network', 'destination/network'] as $property) {
 			if (array_get_path($rule, $property) == $alias) {
 				return true;
 			}
@@ -2279,7 +2279,7 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 	// NAT Outbound Rules
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $new_alias_name, $orig_alias_name);
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $new_alias_name, $orig_alias_name);
-	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'network'), $new_alias_name, $orig_alias_name);
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $new_alias_name, $orig_alias_name);
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
 	// Alias in an alias

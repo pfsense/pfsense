@@ -2099,7 +2099,8 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 		$tgtport .= " port {$natport}";
 	}
 	/* sometimes this gets called with "" instead of a value */
-	if ($src == "") {
+	$src = trim($src);
+	if (empty($src)) {
 		$src = "any";
 	}
 	/* Match on this source port */
@@ -2111,7 +2112,8 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 		$src .= " port {$srcportexpand}";
 	}
 	/* sometimes this gets called with "" instead of a value */
-	if ($dst == "") {
+	$dst = trim($dst);
+	if (empty($dst)) {
 		$dst = "any";
 	}
 	/* Match on this dest port */
@@ -2422,24 +2424,75 @@ function filter_nat_rules_generate() {
 			if (isset($obent['disabled'])) {
 				continue;
 			}
-			update_filter_reload_status(sprintf(gettext("Creating advanced outbound rule %s"), $obent['descr']));
-			$src = alias_expand($obent['source']['network']);
-			if (!$src) {
-				$src = $obent['source']['network'];
-			}
-			$dst = alias_expand($obent['destination']['address']);
-			if (!$dst) {
-				$dst = $obent['destination']['address'];
-			}
-			if (isset($obent['destination']['not']) && !isset($obent['destination']['any'])) {
-				$dst = "!" . $dst;
-			}
+
+			$descr = $obent['descr'];
+			update_filter_reload_status(sprintf(gettext("Creating advanced outbound rule %s"), $descr));
 
 			if (!$obent['interface'] || !isset($FilterIflist[$obent['interface']])) {
+				$error_text = sprintf(gettext("Missing interface '%1\$s' for rule '%2\$s'"), $obent['interface'], $descr);
+				$natrules .= "# {$error_text}";
 				continue;
 			}
 
-			$obtarget = $obent['target'] . (!is_alias($obent['target'] && !empty($obent['target_subnet'])) ? '/' . $obent['target_subnet'] : '');
+			$src = $obent['source']['network'];
+			if (is_alias($src)) {
+				$src = alias_expand($src);
+				/* validate source alias */
+				if (empty($src)) {
+					$error_text = sprintf(gettext("Unresolvable source alias '%1\$s' for rule '%2\$s'"), $src, $descr);
+					file_notice("Filter_Reload", $error_text);
+					$natrules .= "# {$error_text}";
+					continue;
+				}
+			}
+			/* validate source port alias */
+			if (is_alias($obent['sourceport'])) {
+				$error_text = '';
+				if (empty(alias_expand($obent['sourceport']))) {
+					$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $obent['sourceport'], $descr);
+				} else if (trim(filter_generate_nested_alias($obent['sourceport'])) == "") {
+					$error_text = sprintf(gettext("Empty source port alias '%1\$s' for rule '%2\$s'"), $obent['sourceport'], $descr);
+				}
+				if ($error_text) {
+					file_notice("Filter_Reload", $error_text);
+					$natrules .= "# {$error_text}";
+					continue;
+				}
+			}
+
+			$dst = $obent['destination']['network'];
+			if (is_alias($dst)) {
+				$dst = alias_expand($dst);
+				/* validate destination alias */
+				if (empty($dst)) {
+					$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $dst, $descr);
+					file_notice("Filter_Reload", $error_text);
+					$natrules .= "# {$error_text}";
+					continue;
+				}
+			}
+			/* validate destination port alias */
+			if (is_alias($obent['dstport'])) {
+				$error_text = '';
+				if (empty(alias_expand($obent['dstport']))) {
+					$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $obent['dstport'], $descr);
+				} else if (trim(filter_generate_nested_alias($obent['dstport'])) == "") {
+					$error_text = sprintf(gettext("Empty destination port alias '%1\$s' for rule '%2\$s'"), $obent['dstport'], $descr);
+				}
+				if ($error_text) {
+					file_notice("Filter_Reload", $error_text);
+					$natrules .= "# {$error_text}";
+					continue;
+				}
+			}
+
+			// handle specialnets in outbound NAT rules
+			$obent['source']['network'] = $src;
+			$src = filter_generate_address($obent, 'onatsource', true);
+			$obent['destination']['network'] = $dst;
+			$dst = filter_generate_address($obent, 'onatdestination', true);
+
+			$obtarget = $obent['target'] . ((!is_alias($obent['target']) && !empty($obent['target_subnet'])) ? '/' . $obent['target_subnet'] : '');
 			$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
 			/* pool option source-hash allows specification of an optional source-hash key */
@@ -2447,14 +2500,15 @@ function filter_nat_rules_generate() {
 				$poolopts = "source-hash ".$obent['source_hash_key'];
 			}
 
+			// ports are included in the source/destination string
 			$natrules .= filter_nat_rules_generate_if(
 				$obent['interface'],
-				$obent['descr'],
+				$descr,
 				$obent['ipprotocol'],
 				$src,
-				$obent['sourceport'],
+				'',
 				$dst,
-				$obent['dstport'],
+				'',
 				$obtarget,
 				$obent['natport'],
 				isset($obent['nonat']),
@@ -2498,7 +2552,7 @@ function filter_nat_rules_generate() {
 					$a_out['ipprotocol'],
 					$a_out['source']['network'],
 					$a_out['sourceport'],
-					$a_out['destination']['address'],
+					$a_out['destination']['network'],
 					$a_out['dstport'],
 					$a_out['target'],
 					$a_out['natport'],
@@ -2850,12 +2904,21 @@ function filter_generate_user_rule_arr($rule) {
 	return $ret;
 }
 
-function filter_generate_port(& $rule, $target = "source", $isnat = false) {
-
+function filter_generate_port($rule, $target = "source", $isnat = false) {
 	$src = "";
 
-	$rule['protocol'] = strtolower($rule['protocol']);
-	if (in_array($rule['protocol'], array("tcp", "udp", "tcp/udp"))) {
+	// support outbound NAT rules
+	if ($target == 'onatsource') {
+		$target = 'source';
+		$rule['protocol'] = "tcp/udp";
+		$rule[$target]['port'] = str_replace(':', '-', $rule['sourceport']);
+	} elseif ($target == 'onatdestination') {
+		$target = 'destination';
+		$rule['protocol'] = "tcp/udp";
+		$rule[$target]['port'] = str_replace(':', '-', $rule['dstport']);
+	}
+
+	if (in_array(strtolower($rule['protocol']), array("tcp", "udp", "tcp/udp"))) {
 		if ($rule[$target]['port']) {
 			$srcport = explode("-", $rule[$target]['port']);
 			$srcporta = alias_expand($srcport[0]);
@@ -2953,6 +3016,23 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	global $FilterIflist;
 	$src = "";
 	$add_macro = false;
+
+	// support outbound NAT rules
+	$onattarget = null;
+	if ($target == 'onatsource') {
+		$onattarget = 'onatsource';
+		$target = 'source';
+	} elseif ($target == 'onatdestination') {
+		$onattarget = 'onatdestination';
+		$target = 'destination';
+	}
+	if (isset($onattarget)) {
+		if ($rule[$target]['network'] == 'any') {
+			$rule[$target]['any'] = '';
+		} else {
+			$src = $rule[$target]['network'];
+		}
+	}
 
 	if (isset($rule[$target]['any'])) {
 		$src = "any";
@@ -3118,6 +3198,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	if (empty($src)) {
 		return '';
 	}
+
+	// support outbound NAT rules
+	$target = $onattarget ?? $target;
 
 	$src .= filter_generate_port($rule, $target, $isnat);
 

@@ -61,7 +61,7 @@ function deleteAlias($id, $apply = false) {
 		'nat/outbound/rule' => [
 			'source/network',
 			'sourceport',
-			'destination/address',
+			'destination/network',
 			'dstport',
 			'target'
 		],

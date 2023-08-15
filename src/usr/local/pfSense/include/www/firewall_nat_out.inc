@@ -111,17 +111,15 @@ function saveoutNATrule($post, $id, $json = false) {
 		$after = $post['after'];
 	}
 
-	if ($post['destination_type'] == "any") {
-		$post['destination'] = "any";
-		$post['destination_subnet'] = 24;
+	if ($post['source_type'] != 'network' && get_specialnet($post['source_type'],
+	    [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+		$post['source'] = $post['source_type'];
+		$post['source_subnet'] = '';
 	}
-
-	if ($post['source_type'] == "any") {
-		$post['source'] = "any";
-		$post['source_subnet'] = 24;
-	} elseif ($post['source_type'] == "(self)") {
-		$post['source'] = "(self)";
-		$post['source_subnet'] = 24;
+	if ($post['destination_type'] != 'network' && get_specialnet($post['destination_type'],
+	    [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+		$post['destination'] = $post['destination_type'];
+		$post['destination_subnet'] = '';
 	}
 
 	unset($input_errors);
@@ -143,9 +141,20 @@ function saveoutNATrule($post, $id, $json = false) {
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface protocol source source_subnet destination destination_subnet");
-	$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Source"), gettext("Source bit count"), gettext("Destination"), gettext("Destination bit count"));
-
+	$reqdfields = explode(" ", "interface protocol");
+	$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"));
+	if (!get_specialnet($post['source_type'])) {
+		$reqdfields[] = "source";
+		$reqdfieldsn[] = gettext("Source");
+		$reqdfields[] = "source_subnet";
+		$reqdfieldsn[] = gettext("Source bit count");
+	}
+	if (!get_specialnet($post['destination_type'])) {
+		$reqdfields[] = "destination";
+		$reqdfieldsn[] = gettext("Destination");
+		$reqdfields[] = "destination_subnet";
+		$reqdfieldsn[] = gettext("Destination bit count");
+	}
 	if (!$json) {
 		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
 	}
@@ -183,8 +192,8 @@ function saveoutNATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("A valid port must be supplied for the NAT port entry.");
 	}
 
-	if (($post['source_type'] != "any") && ($post['source_type'] != "(self)")) {
-		if ($post['source'] && !is_ipaddroralias($post['source']) && $post['source'] != "any") {
+	if ($post['source_type'] == 'network') {
+		if ($post['source'] && !is_ipaddroralias($post['source'])) {
 			$input_errors[] = gettext("A valid source must be specified.");
 		}
 	}
@@ -193,7 +202,7 @@ function saveoutNATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
 
-	if ($post['destination_type'] != "any") {
+	if ($post['destination_type'] == 'network') {
 		if ($post['destination'] && !is_ipaddroralias($post['destination'])) {
 			$input_errors[] = gettext("A valid destination must be specified.");
 		}
@@ -250,24 +259,16 @@ function saveoutNATrule($post, $id, $json = false) {
 		}
 	}
 
-	/* if user has selected any as source, set it here */
-	if ($post['source_type'] == "any") {
-		$osn = "any";
-	} else if ($post['source_type'] == "(self)") {
-		$osn = "(self)";
-	} else if (is_alias($post['source'])) {
-		$osn = $post['source'];
-	} else {
+	// if the source/destination is not an IP address, it's an alias or specialnet
+	if ($post['source_type'] == 'network' && is_ipaddr($post['source'])) {
 		$osn = gen_subnet($post['source'], $post['source_subnet']) . "/" . $post['source_subnet'];
-	}
-
-	/* check for existing entries */
-	if ($post['destination_type'] == "any") {
-		$ext = "any";
-	} else if (is_alias($post['destination'])) {
-		$ext = $post['destination'];
 	} else {
+		$osn = $post['source'];
+	}
+	if ($post['destination_type'] == 'network' && is_ipaddr($post['destination'])) {
 		$ext = gen_subnet($post['destination'], $post['destination_subnet']) . "/" . $post['destination_subnet'];
+	} else {
+		$ext = $post['destination'];
 	}
 
 	foreach ($a_out as $natent) {
@@ -334,7 +335,7 @@ function saveoutNATrule($post, $id, $json = false) {
 		if ($ext == "any") {
 			$natent['destination']['any'] = true;
 		} else {
-			$natent['destination']['address'] = $ext;
+			$natent['destination']['network'] = $ext;
 		}
 		if ($post['natport'] != "" && $protocol_uses_ports && !isset($post['nonat'])) {
 				$natent['natport'] = $post['natport'];
@@ -426,12 +427,12 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['destination_type'] = 'any';
 		$pconfig['destination'] = '';
 		$pconfig['destination_subnet'] = '';
-		if (!empty($a_out[$id]['destination']['address'])) {
-			if (get_specialnet($a_out[$id]['destination']['address'])) {
-				$pconfig['destination_type'] = $a_out[$id]['destination']['address'];
+		if (!empty($a_out[$id]['destination']['network'])) {
+			if (get_specialnet($a_out[$id]['destination']['network'])) {
+				$pconfig['destination_type'] = $a_out[$id]['destination']['network'];
 			} else {
 				$pconfig['destination_type'] = 'network';
-				list($pconfig['destination'], $pconfig['destination_subnet']) = explode('/', $a_out[$id]['destination']['address']);
+				list($pconfig['destination'], $pconfig['destination_subnet']) = explode('/', $a_out[$id]['destination']['network']);
 			}
 		}
 		$pconfig['dstport'] = $a_out[$id]['dstport'];

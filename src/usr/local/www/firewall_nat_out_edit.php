@@ -127,7 +127,7 @@ $group->add(new Form_Select(
 	'source_type',
 	null,
 	$pconfig['source_type'],
-	get_specialnet('', [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL])
+	get_specialnet('', [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])
 ))->setHelp('Type')->setWidth('3');
 
 $group->add(new Form_IpAddress(
@@ -152,7 +152,7 @@ $group->add(new Form_Select(
 	'destination_type',
 	null,
 	$pconfig['destination_type'],
-	get_specialnet('', [SPECIALNET_ANY, SPECIALNET_NETAL])
+	get_specialnet('', [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])
 ))->setHelp('Type')->setWidth('3');
 
 $group->add(new Form_IpAddress(

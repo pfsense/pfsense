@@ -505,6 +505,56 @@ function can_include(string $filename) : bool
 	return (file_exists($filename) || (bool) stream_resolve_include_path($filename));
 }
 
+/**
+ * Get a list of known protocols
+ * 
+ * @param string $type Filter the returned list based on the type
+ * 
+ * @return array
+ */
+function get_ipprotocols(?string $type = ''):array {
+	$exclude = [];
+	$ipprotocols = [
+		'any' => gettext('Any'),
+		'tcp' => 'TCP',
+		'udp' => 'UDP',
+		'tcp/udp' => 'TCP/UDP',
+		'icmp' => 'ICMP',
+		'esp' => 'ESP',
+		'ah' => 'AH',
+		'gre' => 'GRE',
+		'etherip' => 'EoIP',
+		'ipv6' => 'IPV6',
+		'igmp' => 'IGMP',
+		'pim' => 'PIM',
+		'ospf' => 'OSPF',
+		'sctp' => 'SCTP',
+		'carp' => 'CARP',
+		'pfsync' => 'PFSYNC'
+	];
+
+	switch ($type) {
+		case 'portsonly':
+			$ipprotocols = [
+				'tcp' => 'TCP',
+				'udp' => 'UDP',
+				'tcp/udp' => 'TCP/UDP',
+				'sctp' => 'SCTP'
+			];
+			break;
+		case 'outboundnat':
+			$exclude = ['EoIP', 'PIM', 'OSPF'];
+			break;
+		case 'portforward':
+			$exclude = ['EoIP', 'CARP', 'PFSYNC'];
+			break;
+		default:
+			break;
+	}
+
+	return array_diff($ipprotocols, $exclude);
+}
+
 // source pfSense Plus specific globals last
 if (can_include('globals.plus.inc')) {
 	include_once('globals.plus.inc');

@@ -1700,19 +1700,14 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 			}
 		}
 
-		switch ($rule['protocol']) {
-			case "tcp/udp":
-				$protocol = "{ tcp udp }";
-				$reflect_protos = array('tcp', 'udp');
-				break;
-			case "tcp":
-			case "udp":
-				$protocol = $rule['protocol'];
-				$reflect_protos = array($rule['protocol']);
-				break;
-			default:
-				return "";
-				break;
+		$protocol = strtolower($rule['protocol']);
+		if ($protocol == 'tcp/udp') {
+			$protocol = '{ tcp udp }';
+			$reflect_protos = ['tcp', 'udp'];
+		} elseif (array_key_exists($protocol, get_ipprotocols('portsonly'))) {
+			$reflect_protos = [$protocol];
+		} else {
+			return '';
 		}
 
 		if (!empty($nordr)) {
@@ -2654,18 +2649,11 @@ function filter_nat_rules_generate() {
 			$ipproto = 'inet';
 		}
 
-		switch (strtolower($rule['protocol'])) {
-		case "tcp/udp":
-			$protocol = "{ tcp udp }";
-			break;
-		case "tcp":
-		case "udp":
-			$protocol = strtolower($rule['protocol']);
-			break;
-		default:
-			$protocol = strtolower($rule['protocol']);
-			$localport = "";
-			break;
+		$protocol = strtolower($rule['protocol']);
+		if ($protocol == 'tcp/udp') {
+			$protocol = '{ tcp udp }';
+		} elseif (!array_key_exists($protocol, get_ipprotocols('portsonly'))) {
+			$localport = '';
 		}
 
 		if (is_ipaddr($rule['target'])) {
@@ -2918,7 +2906,8 @@ function filter_generate_port($rule, $target = "source", $isnat = false) {
 		$rule[$target]['port'] = str_replace(':', '-', $rule['dstport']);
 	}
 
-	if (in_array(strtolower($rule['protocol']), array("tcp", "udp", "tcp/udp"))) {
+	$rule['protocol'] = strtolower($rule['protocol']);
+	if (array_key_exists($rule['protocol'], get_ipprotocols('portsonly'))) {
 		if ($rule[$target]['port']) {
 			$srcport = explode("-", $rule[$target]['port']);
 			$srcporta = alias_expand($srcport[0]);
@@ -3292,7 +3281,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		return "# {$error_text}";
 	}
 	if ($rule['source']['port'] &&
-	    in_array(strtolower($rule['protocol']), array("tcp", "udp", "tcp/udp")) &&
+	    array_key_exists(strtolower($rule['protocol']), get_ipprotocols('portsonly')) &&
 	    !is_port_or_range(str_replace("-", ":", $rule['source']['port']))) {
 		$error_text = "";
 
@@ -3309,7 +3298,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		}
 	}
 	if ($rule['destination']['port'] &&
-	    in_array(strtolower($rule['protocol']), array("tcp", "udp", "tcp/udp")) &&
+	    array_key_exists(strtolower($rule['protocol']), get_ipprotocols('portsonly')) &&
 	    !is_port_or_range(str_replace("-", ":", $rule['destination']['port']))) {
 		$error_text = "";
 
@@ -3563,7 +3552,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 					$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
 				}
 				if (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") {
-					if (in_array($rule['protocol'], array("tcp", "tcp/udp")) ||
+					if (in_array($rule['protocol'], array("tcp", "tcp/udp", "sctp")) ||
 					    empty($rule['protocol'])) {
 						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
 					}
@@ -3571,7 +3560,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 					    empty($rule['protocol'])) {
 						$aline['flags'] .= "udp.multiple " . $rule['statetimeout'] . " ";
 					}
-					if (!in_array($rule['protocol'], array("udp", "tcp", "tcp/udp")) ||
+					if (!array_key_exists($rule['protocol'], get_ipprotocols('portsonly')) ||
 					    empty($rule['protocol'])) {
 						$aline['flags'] .= "other.multiple " . $rule['statetimeout'] . " ";
 					}

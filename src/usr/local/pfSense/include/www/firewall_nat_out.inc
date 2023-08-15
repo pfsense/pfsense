@@ -159,7 +159,7 @@ function saveoutNATrule($post, $id, $json = false) {
 		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 
-	$protocol_uses_ports = in_array($post['protocol'], explode(" ", "any tcp udp tcp/udp"));
+	$protocol_uses_ports = (strtolower($post['protocol']) == 'any' || array_key_exists(strtolower($post['protocol']), get_ipprotocols('portsonly'))) ? true : false;
 
 	if ($post['source']) {
 		$post['source'] = trim($post['source']);

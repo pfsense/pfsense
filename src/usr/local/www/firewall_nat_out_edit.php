@@ -112,13 +112,11 @@ $section->addInput(new Form_Select(
 	)
 ))->setHelp('Select the Internet Protocol version this rule applies to.');
 
-$protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
-
 $section->addInput(new Form_Select(
 	'protocol',
 	'*Protocol',
 	$pconfig['protocol'],
-	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
+	get_ipprotocols('outboundnat')
 ))->setHelp('Choose which protocol this rule should match. In most cases "any" is specified.');
 
 $group = new Form_Group('*Source');
@@ -341,7 +339,8 @@ events.push(function() {
 	}
 
 	function proto_change() {
-		if (($('#protocol').find(":selected").index() >= 0) && ($('#protocol').find(":selected").index() <= 3)) {
+		portsenabled = ($('#protocol :selected').val() == 'any' || (jQuery.inArray($('#protocol :selected').val(), Object.keys(<?=json_encode(get_ipprotocols('portsonly'))?>)) != -1)) ? true : false;
+		if (portsenabled) {
 			hideGroupInput('sourceport', false);
 			hideGroupInput('dstport', false);
 			hideClass('natportgrp', false);

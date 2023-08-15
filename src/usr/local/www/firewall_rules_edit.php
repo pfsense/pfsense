@@ -404,7 +404,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The '\' character is not allowed in the Description field.");
 	}
 
-	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
+	if (!array_key_exists(strtolower($_POST['proto']), get_ipprotocols('portsonly'))) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
 		$_POST['dstbeginport'] = 0;
@@ -1348,24 +1348,7 @@ $section->addInput(new Form_Select(
 	'proto',
 	'*Protocol',
 	$pconfig['proto'],
-	array(
-		'any' => gettext('Any'),
-		'tcp' => 'TCP',
-		'udp' => 'UDP',
-		'tcp/udp' => 'TCP/UDP',
-		'icmp' => 'ICMP',
-		'esp' => 'ESP',
-		'ah' => 'AH',
-		'gre' => 'GRE',
-		'etherip' => 'EoIP',
-		'ipv6' => 'IPV6',
-		'igmp' => 'IGMP',
-		'pim' => 'PIM',
-		'ospf' => 'OSPF',
-		'sctp' => 'SCTP',
-		'carp' => 'CARP',
-		'pfsync' => 'PFSYNC',
-	)
+	get_ipprotocols()
 ))->setHelp('Choose which IP protocol this rule should match.');
 
 $group = new Form_Group("ICMP Subtypes");
@@ -1963,9 +1946,8 @@ events.push(function() {
 	}
 
 	function proto_change() {
-		var is_tcpudp = (jQuery.inArray($('#proto :selected').val(), ['tcp','udp', 'tcp/udp']) != -1);
-		portsenabled = (is_tcpudp ? 1 : 0);
-		hideClass('tcpflags', !is_tcpudp);
+		portsenabled = (jQuery.inArray($('#proto :selected').val(), Object.keys(<?=json_encode(get_ipprotocols('portsonly'))?>)) != -1) ? true : false;
+		hideClass('tcpflags', !portsenabled);
 
 		// Disable OS if the proto is not TCP.
 		disableInput('os', ($('#proto :selected').val() != 'tcp'));
@@ -1992,7 +1974,7 @@ events.push(function() {
 
 		ext_change();
 
-		if (is_tcpudp) {
+		if (portsenabled) {
 			hideClass('dstprtr', false);
 			hideInput('btnsrctoggle', false);
 			if ((($('#srcbeginport').val() == "any") || ($('#srcbeginport').val() == "")) &&

@@ -186,8 +186,6 @@ $section->addInput(new Form_Select(
 	filter_get_interface_list()
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
 
-$protocols = "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF Any";
-
 $section->addInput(new Form_Select(
 	'ipprotocol',
 	'*Address Family',
@@ -202,7 +200,7 @@ $section->addInput(new Form_Select(
 	'proto',
 	'*Protocol',
 	$pconfig['proto'],
-	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
+	get_ipprotocols('portforward')
 ))->setHelp('Choose which protocol this rule should match. In most cases "TCP" is specified.');
 
 $btnsrcadv = new Form_Button(
@@ -593,11 +591,7 @@ events.push(function() {
 	}
 
 	function proto_change() {
-		if ($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
-			portsenabled = true;
-		} else {
-			portsenabled = false;
-		}
+		portsenabled = (jQuery.inArray($('#proto :selected').val(), Object.keys(<?=json_encode(get_ipprotocols('portsonly'))?>)) != -1) ? true : false;
 
 		if (portsenabled) {
 			hideClass('srcportrange', !srcenabled);

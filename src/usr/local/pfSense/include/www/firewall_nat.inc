@@ -99,7 +99,7 @@ function saveNATrule($post, $id, $json = false) {
 		$after = $post['after'];
 	}
 
-	if (strtoupper($post['proto']) == "TCP" || strtoupper($post['proto']) == "UDP" || strtoupper($post['proto']) == "TCP/UDP") {
+	if (array_key_exists(strtolower($post['proto']), get_ipprotocols('portsonly'))) {
 		if ($post['srcbeginport_cust'] && !$post['srcbeginport']) {
 			$post['srcbeginport'] = trim($post['srcbeginport_cust']);
 		}
@@ -194,7 +194,7 @@ function saveNATrule($post, $id, $json = false) {
 	$pconfig = $post;
 
 	/* input validation */
-	if (strtoupper($post['proto']) == "TCP" or strtoupper($post['proto']) == "UDP" or strtoupper($post['proto']) == "TCP/UDP") {
+	if (array_key_exists(strtolower($post['proto']), get_ipprotocols('portsonly'))) {
 		$reqdfields = explode(" ", "interface proto dstbeginport dstendport");
 		$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Destination port from"), gettext("Destination port to"));
 	} else {
@@ -310,7 +310,7 @@ function saveNATrule($post, $id, $json = false) {
 		}
 	}
 
-	if ((strtoupper($post['proto']) == "TCP" || strtoupper($post['proto']) == "UDP" || strtoupper($post['proto']) == "TCP/UDP") && (!isset($post['nordr']) && !is_port_or_alias($post['localbeginport']))) {
+	if ((array_key_exists(strtolower($post['proto']), get_ipprotocols('portsonly'))) && (!isset($post['nordr']) && !is_port_or_alias($post['localbeginport']))) {
 		$input_errors[] = sprintf(gettext("Redirect target port %s is not valid. It must be a port alias or integer between 1 and 65535."), $post['localbeginport']);
 	}
 
@@ -445,7 +445,7 @@ function saveNATrule($post, $id, $json = false) {
 
 		if (!isset($natent['nordr'])) {
 			$natent['target'] = $post['localip'];
-			if (in_array($natent['protocol'], array("tcp", "udp", "tcp/udp"))) {
+			if (array_key_exists(strtolower($natent['protocol']), get_ipprotocols('portsonly'))) {
 				$natent['local-port'] = $post['localbeginport'];
 			}
 		}

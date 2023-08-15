@@ -93,7 +93,7 @@ $lagghashhelp =
 		'<strong>Layer 3</strong><br />' .  gettext('Source/Destination IPv4/IPv6 Address.') .
 	'</li>' .
 	'<li>' .
-		'<strong>Layer 4</strong><br />' . gettext('Source/Destination TCP/UDP port.') .
+		'<strong>Layer 4</strong><br />' . gettext('Source/Destination port.') .
 	'</li>' .
 '</ul>';
 

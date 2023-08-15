@@ -1262,12 +1262,12 @@ function is_intrange($range, $min, $max) {
 	return true;
 }
 
-/* returns true if $port is a valid TCP/UDP port */
+/* returns true if $port is a valid TCP/UDP/SCTP port */
 function is_port($port) {
 	if (ctype_digit($port) && ((intval($port) >= 1) && (intval($port) <= 65535))) {
 		return true;
 	}
-	if (getservbyname($port, "tcp") || getservbyname($port, "udp")) {
+	if (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp")) {
 		return true;
 	}
 	return false;
@@ -1289,14 +1289,14 @@ function is_port_in_use($port, $proto = "tcp", $ip_version = 4) {
 	return in_array($port, $port_info);
 }
 
-/* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */
+/* returns true if $portrange is a valid portrange ("<port>:<port>") */
 function is_portrange($portrange) {
 	$ports = explode(":", $portrange);
 
 	return (count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]));
 }
 
-/* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") */
+/* returns true if $port is a valid port number or range ("<port>:<port>") */
 function is_port_or_range($port) {
 	return (is_port($port) || is_portrange($port));
 }
@@ -1318,7 +1318,7 @@ function is_port_or_alias($port) {
 	return (is_port($port) || is_portalias($port));
 }
 
-/* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") or an alias thereof */
+/* returns true if $port is a valid port number or range ("<port>:<port>") or an alias thereof */
 function is_port_or_range_or_alias($port) {
 	return (is_port($port) || is_portrange($port) || is_portalias($port));
 }

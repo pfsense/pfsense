@@ -2789,6 +2789,25 @@ function cert_has_weak_digest($str_crt, $decode = true) {
 	return is_weak_digest($digestinfo['shortname']);
 }
 
+/* Check both certificate and CA when passed a full certificate array entry */
+function cert_chain_has_weak_digest($cert) {
+	if (!is_array($cert) || !$cert['crt']) {
+		/* Empty input so flag as weak anyhow */
+		return true;
+	}
+	$weak = false;
+	/* Check CA if present */
+	if (!empty($cert['caref'])) {
+		$ca = lookup_ca($cert['caref']);
+		$weak = cert_has_weak_digest($ca['crt']);
+	}
+	/* Only check cert if the CA is not weak (or no self-signed) */
+	if (!$weak) {
+		$weak = cert_has_weak_digest($cert['crt']);
+	}
+	return $weak;
+}
+
 function cert_check_digest_compatibility($type, $cert, $consumer) {
 	$nonweak_consumers = [
 		'ca'   => ['HTTPS'],
@@ -2796,6 +2815,52 @@ function cert_check_digest_compatibility($type, $cert, $consumer) {
 	];
 	return (!cert_has_weak_digest($cert) ||
 		!in_array($consumer, $nonweak_consumers[$type]));
+}
+
+function cert_create_selfsigned($descr = '', $hostname = '', $log = true) {
+	global $cert_strict_values;
+
+	$a_cert = config_get_path('cert', []);
+	if ($log) {
+		log_error(sprintf(gettext("Creating self-signed SSL/TLS certificate (%s)"), $descr));
+	}
+
+	if (empty($descr)) {
+		$descr = gettext("GUI default");
+	}
+
+	/* Basic cert details */
+	$cert = [];
+	$cert['refid'] = uniqid();
+	$cert['descr'] = "{$descr} ({$cert['refid']})";
+
+	if (empty($hostname)) {
+		/* Find the system hostname, append unique refid */
+		$hostname = config_get_path('system/hostname') . "-{$cert['refid']}";
+	}
+
+	$dn = [
+		'organizationName' => g_get('product_label') . " {$descr} Self-Signed Certificate",
+		'commonName' => $hostname,
+		'subjectAltName' => "DNS:{$hostname}"
+	];
+
+	/* Create the self-signed certificate */
+	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
+	if (!cert_create($cert, null, 2048, $cert_strict_values['max_server_cert_lifetime'], $dn, "self-signed", "sha256")) {
+		while ($log && ($ssl_err = openssl_error_string())) {
+			log_error(sprintf(gettext("Error creating self-signed certificate: openssl library returns: %s"), $ssl_err));
+		}
+		error_reporting($old_err_level);
+		return null;
+	}
+	error_reporting($old_err_level);
+
+	/* Add the new certificate */
+	$a_cert[] = $cert;
+	config_set_path('cert', $a_cert);
+
+	return $cert;
 }
 
 ?>

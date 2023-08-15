@@ -1150,42 +1150,6 @@ function system_routing_enable() {
 	return;
 }
 
-function system_webgui_create_certificate() {
-	global $g, $cert_strict_values;
-
-	init_config_arr(array('ca'));
-	$a_ca = config_get_path('ca', []);
-	init_config_arr(array('cert'));
-	$a_cert = config_get_path('cert', []);
-	log_error(gettext("Creating SSL/TLS Certificate for this host"));
-
-	$cert = array();
-	$cert['refid'] = uniqid();
-	$cert['descr'] = sprintf(gettext("webConfigurator default (%s)"), $cert['refid']);
-	$hostname = config_get_path('system/hostname');
-	$cert_hostname = "{$hostname}-{$cert['refid']}";
-
-	$dn = array(
-		'organizationName' => "{$g['product_label']} webConfigurator Self-Signed Certificate",
-		'commonName' => $cert_hostname,
-		'subjectAltName' => "DNS:{$cert_hostname}");
-	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
-	if (!cert_create($cert, null, 2048, $cert_strict_values['max_server_cert_lifetime'], $dn, "self-signed", "sha256")) {
-		while ($ssl_err = openssl_error_string()) {
-			log_error(sprintf(gettext("Error creating WebGUI Certificate: openssl library returns: %s"), $ssl_err));
-		}
-		error_reporting($old_err_level);
-		return null;
-	}
-	error_reporting($old_err_level);
-
-	$a_cert[] = $cert;
-	config_set_path('cert', $a_cert);
-	config_set_path('system/webgui/ssl-certref', $cert['refid']);
-	write_config(sprintf(gettext("Generated new self-signed SSL/TLS certificate for HTTPS (%s)"), $cert['refid']));
-	return $cert;
-}
-
 function system_webgui_start() {
 	global $g;
 
@@ -1203,9 +1167,16 @@ function system_webgui_start() {
 
 	if (config_get_path('system/webgui/protocol') == "https") {
 		// Ensure that we have a webConfigurator CERT
-		$cert =& lookup_cert(config_get_path('system/webgui/ssl-certref'));
-		if (!is_array($cert) || !$cert['crt'] || !$cert['prv']) {
-			$cert = system_webgui_create_certificate();
+		$cert = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		if (!is_array($cert) || !$cert['crt'] || !$cert['prv'] ||
+		    cert_chain_has_weak_digest($cert)) {
+			$cert = cert_create_selfsigned();
+			if (is_array($cert) && !empty($cert)) {
+				config_set_path('system/webgui/ssl-certref', $cert['refid']);
+				write_config(sprintf(gettext("Generated new self-signed SSL/TLS certificate for HTTPS (%s)"), $cert['refid']));
+			} else {
+				log_error(sprintf(gettext("GUI certificate is not usable and there was an error creating a new self-signed certificate.")));
+			}
 		}
 		$crt = base64_decode($cert['crt']);
 		$key = base64_decode($cert['prv']);

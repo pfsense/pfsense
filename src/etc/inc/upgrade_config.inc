@@ -6940,6 +6940,62 @@ function upgrade_230_to_231() {
 }
 
 /*
+ * Check GUI and Captive Portal zones for certs with weak digests
+ * https://redmine.pfsense.org/issues/14672
+ */
+function upgrade_231_to_232() {
+	/* Check GUI if it is set for HTTPS */
+	if (config_get_path('system/webgui/protocol') == "https") {
+		$cert = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		/* If the GUI certificate is invalid or weak, replace it */
+		if (!is_array($cert) || !$cert['crt'] || !$cert['prv'] ||
+		    cert_chain_has_weak_digest($cert)) {
+			$cert = cert_create_selfsigned('', '', false);
+			if (is_array($cert) && !empty($cert)) {
+				config_set_path('system/webgui/ssl-certref', $cert['refid']);
+				file_notice("GUI", gettext("The GUI HTTPS certificate used a deprecated algorithm and has been replaced with a secure default."));
+			}
+		}
+	}
+
+	/* Check each portal zone */
+	foreach (config_get_path('captiveportal', []) as $zone => $portal) {
+		/* Only act if the portal is enabled and using HTTPS login */
+		if (!isset($portal['enable']) ||
+		    !isset($portal['httpslogin'])||
+		    empty($portal['certref'])) {
+			continue;
+		}
+
+		$cert = lookup_cert($portal['certref']);
+
+		/* If the cert is invalid or weak, generate a new self-signed
+		 * cert using configured HTTPS server name, if present */
+		if (!is_array($cert) ||
+		    !$cert['crt'] ||
+		    !$cert['prv'] ||
+		    cert_chain_has_weak_digest($cert)) {
+
+			if (!empty($portal['httpsname']) &&
+			    (is_hostname($portal['httpsname']) ||
+			    is_fqdn($portal['httpsname']))) {
+				$hostname = $portal['httpsname'];
+			} else {
+				$hostname = '';
+			}
+			$cert = cert_create_selfsigned("Captive Portal Zone {$zone}", $hostname, false);
+			if (is_array($cert) && !empty($cert)) {
+				config_set_path("captiveportal/{$zone}/certref", $cert['refid']);
+
+				file_notice("Captive Portal",
+					sprintf(gettext("The HTTPS certificate for Captive Portal Zone %s used ".
+							"a deprecated algorithm and has been replaced with a secure default."), $zone));
+			}
+		}
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

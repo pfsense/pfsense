@@ -19,11 +19,55 @@
  * limitations under the License.
  */
 
+require_once("certs.inc");
 require_once("system.inc");
+require_once("pfsense-utils.inc");
+
+function usage() {
+	echo "Usage: playback generateguicert [hostname]\n\n";
+	echo "When run without parameters, will create and activate a new.\n";
+	echo "  GUI certificate using default values.\n";
+	echo "Can be passed an optional hostname to use for the CN and SAN.\n";
+	echo "Examples:\n";
+	echo "playback generateguicert\n";
+	echo "playback generateguicert fw1.mycompany.example\n";
+	echo "\n";
+}
+
+global $argv, $command_split;
+if (is_array($command_split)) {
+	$args = array_slice($command_split, 2);
+} else {
+	$args = array_slice($argv, 3);
+}
+
+if ($args[0] == '-h') {
+	usage();
+	exit(1);
+}
+
+if (!empty($args[0])) {
+	if ((is_hostname($args[0]) || is_fqdn($args[0]))) {
+		$hostname = $args[0];
+	} else {
+		/* Invalid input */
+		echo "Invalid hostname.\n\n";
+		usage();
+		exit(1);
+	}
+} else {
+	$hostname = '';
+}
 
 echo gettext("Generating a new self-signed SSL/TLS certificate for the GUI...");
-$cert = system_webgui_create_certificate();
-echo gettext("Done.\n");
-echo gettext("Restarting webConfigurator...");
-send_event("service restart webgui");
-echo gettext("Done.\n");
+$cert = cert_create_selfsigned('', $hostname);
+if (is_array($cert) && !empty($cert)) {
+	config_set_path('system/webgui/ssl-certref', $cert['refid']);
+	write_config(sprintf(gettext("Generated new self-signed SSL/TLS certificate for HTTPS (%s)"), $cert['refid']));
+	echo gettext("Done.\n");
+	echo gettext("Restarting webConfigurator...");
+	send_event("service restart webgui");
+	echo gettext("Done.\n");
+} else {
+	echo gettext("Error creating certificate");
+}

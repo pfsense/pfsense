@@ -49,17 +49,15 @@ $carp_enabled = get_carp_status();
 		}
 		$carpint++;
 		$ipaddress = $carp['subnet'];
-		$password = $carp['password'];
 		$netmask = $carp['subnet_bits'];
 		$vhid = $carp['vhid'];
-		$advskew = $carp['advskew'];
 		$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 ?>
 		<tr>
 			<td>
-				<a href="/system_hasync.php">
+				<span title="<?=htmlspecialchars($carp['descr'])?>">
 					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?>
-				</a>
+				</span>
 			</td>
 <?php		
 		if ($carp_enabled == false) {

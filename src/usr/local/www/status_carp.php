@@ -182,6 +182,7 @@ if ($carpcount == 0) {
 						<tr>
 							<th><?=gettext("Interface and VHID")?></th>
 							<th><?=gettext("Virtual IP Address")?></th>
+							<th><?=gettext("Description")?></th>
 							<th><?=gettext("Status")?></th>
 						</tr>
 					</thead>
@@ -211,7 +212,7 @@ if ($carpcount == 0) {
 		}
 ?>
 					<tr>
-						<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
+						<td><?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?></td>
 						<td>
 <?php
 		printf("{$carp['subnet']}/{$carp['subnet_bits']}");
@@ -220,6 +221,7 @@ if ($carpcount == 0) {
 		}
 ?>
 						</td>
+						<td><?=htmlspecialchars($carp['descr'])?></td>
 						<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>
 					</tr>
 <?php }?>

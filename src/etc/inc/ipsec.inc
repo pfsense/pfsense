@@ -303,7 +303,7 @@ function ipsec_ikeid_next() {
 	$ikeids = array();
 
 	foreach (config_get_path('ipsec/phase1', []) as $ph1) {
-		$keyids[$ph1['ikeid']] = $ph1['ikeid'];
+		$ikeids[$ph1['ikeid']] = $ph1['ikeid'];
 	}
 
 	for ($i = 1; $i < 16000; $i++) {

@@ -60,10 +60,21 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 	}
 }
 
+$input_errors = [];
+
+if (!empty($_POST['interface']) &&
+    !empty($_POST['ruleid'])) {
+	$input_errors[] = gettext("Interface and Rule ID filters cannot be used at the same time.");
+}
+
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("States"));
 $pglinks = array("", "@self", "@self");
 include("head.inc");
 $delmsg = gettext("Are you sure you wish to delete this state?");
+
+if (!empty($input_errors)) {
+	print_input_errors($input_errors);
+}
 ?>
 
 <script type="text/javascript">

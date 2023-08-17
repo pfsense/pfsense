@@ -66,6 +66,8 @@ if (!function_exists('compose_table_body_contents')) {
 			}
 			if (isset($gateway['isdefaultgw'])) {
 				$gtitle = gettext("Default gateway");
+			} else {
+				$gtitle = "";
 			}
 
 			$gw_displayed = true;

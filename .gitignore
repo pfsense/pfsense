@@ -16,4 +16,8 @@ upload.sh
 *.php-e
 .zanata-cache
 # Composer
+src/usr/local/pfSense/include/vendor/
 src/usr/local/pfSense/include/www/vendor/
+# vi and emacs autosaves
+\#*\#
+*~

@@ -199,7 +199,7 @@ function swap_usage() {
 function mem_usage() {
 	$memUsage = "NA";
 	$totalMem = (int) get_single_sysctl("vm.stats.vm.v_page_count");
-	if (is_numeric($totalMem)) {
+	if (is_numeric($totalMem) and ($totalMem > 0)) {
 		/* Include inactive and laundry with free memory since they
 		 * could be freed under pressure. */
 		$inactiveMem = (int) get_single_sysctl("vm.stats.vm.v_inactive_count");

@@ -6950,7 +6950,8 @@ function upgrade_230_to_231() {
  */
 function upgrade_231_to_232() {
 	/* Check GUI if it is set for HTTPS */
-	if (config_get_path('system/webgui/protocol') == "https") {
+	if (config_get_path('system/webgui/protocol') == "https" &&
+	    !empty(config_get_path('system/webgui/ssl-certref'))) {
 		$cert = lookup_cert(config_get_path('system/webgui/ssl-certref'));
 		/* If the GUI certificate is invalid or weak, replace it */
 		if (!is_array($cert) || !$cert['crt'] || !$cert['prv'] ||

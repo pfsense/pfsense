@@ -886,7 +886,7 @@ function ipsec_terminate_by_conid($type = 'ike', $conid = null, $uniqueid = null
 	$selector = '--';
 	$selector .= ($type == 'ike') ? 'ike' : 'child';
 
-	if (ctype_digit($uniqueid) && ($uniqueid > 0)) {
+	if (ctype_digit(strval($uniqueid)) && ($uniqueid > 0)) {
 		$selector .= '-id';
 		$term = $uniqueid;
 	} else {

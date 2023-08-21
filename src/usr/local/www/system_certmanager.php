@@ -329,7 +329,7 @@ if ($_POST['save'] == gettext("Save")) {
 				$field = 'value';
 			}
 
-			if (ctype_digit($entry)) {
+			if (ctype_digit(strval($entry))) {
 				$entry++;	// Pre-bootstrap code is one-indexed, but the bootstrap code is 0-indexed
 				$altnames[$entry][$field] = $value;
 			}

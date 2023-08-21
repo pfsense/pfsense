@@ -109,7 +109,7 @@ if ($_POST['save']) {
 				$entry = substr($key, 16);
 				$field = 'description';
 			}
-			if (ctype_digit($entry)) {
+			if (ctype_digit(strval($entry))) {
 				array_set_path($aliases, "{$entry}/{$field}", $value);
 			}
 		}

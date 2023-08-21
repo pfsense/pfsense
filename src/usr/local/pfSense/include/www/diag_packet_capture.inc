@@ -404,7 +404,7 @@ class FilterAttribute {
 							$string_part = 'proto ospf';
 							break;
 						default:
-							if (ctype_digit($value) && ($value >= 0 && $value <= 255)) {
+							if (ctype_digit(strval($value)) && ($value >= 0 && $value <= 255)) {
 								$string_part = "proto {$value}";
 							} else {
 								$input_error = "Invalid protocol: {$value}";

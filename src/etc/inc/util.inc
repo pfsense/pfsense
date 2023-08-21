@@ -328,7 +328,7 @@ function is_module_loaded(string $module_name): bool
 
 /* validate non-negative numeric string, or equivalent numeric variable */
 function is_numericint($arg) {
-	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);
+	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit(strval($arg)))) ? true : false);
 }
 
 /* Generate the (human readable) ipv4 or ipv6 subnet address (i.e., netmask, or subnet start IP)
@@ -1244,7 +1244,7 @@ function is_intrange($range, $min, $max) {
 		return false;
 	}
 
-	if (!ctype_digit($values[0]) || !ctype_digit($values[1])) {
+	if (!ctype_digit(strval($values[0])) || !ctype_digit(strval($values[1]))) {
 		return false;
 	}
 
@@ -1264,7 +1264,7 @@ function is_intrange($range, $min, $max) {
 
 /* returns true if $port is a valid TCP/UDP/SCTP port */
 function is_port($port) {
-	if (ctype_digit($port) && ((intval($port) >= 1) && (intval($port) <= 65535))) {
+	if (ctype_digit(strval($port)) && ((intval($port) >= 1) && (intval($port) <= 65535))) {
 		return true;
 	}
 	if (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp")) {

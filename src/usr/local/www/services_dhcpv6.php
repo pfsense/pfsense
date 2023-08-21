@@ -214,7 +214,7 @@ if (isset($_POST['apply'])) {
 
 	$numberoptions = array();
 	for ($x = 0; $x < 99; $x++) {
-		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+		if (isset($_POST["number{$x}"]) && ctype_digit(strval($_POST["number{$x}"]))) {
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
 			$numbervalue['value'] = base64_encode($_POST["value{$x}"]);

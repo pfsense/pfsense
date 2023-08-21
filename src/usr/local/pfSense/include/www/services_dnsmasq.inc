@@ -316,7 +316,7 @@ function saveDNSMasqHost($post, $id, $json=false) {
 				$entry = substr($key, 16);
 				$field = 'description';
 			}
-			if (ctype_digit($entry)) {
+			if (ctype_digit(strval($entry))) {
 				$aliases[$entry][$field] = $value;
 			}
 		}

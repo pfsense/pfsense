@@ -161,7 +161,7 @@ if ($_POST['save']) {
 
 	$numberoptions = array();
 	for ($x = 0; $x < 99; $x++) {
-		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+		if (isset($_POST["number{$x}"]) && ctype_digit(strval($_POST["number{$x}"]))) {
 			if ($_POST["number{$x}"] < 1 || $_POST["number{$x}"] > 254) {
 				$input_errors[] = gettext("The DHCP option must be a number between 1 and 254.");
 				continue;

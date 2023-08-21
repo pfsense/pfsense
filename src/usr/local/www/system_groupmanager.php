@@ -48,6 +48,8 @@ unset($id);
 $id = $_REQUEST['groupid'];
 $act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
+$dup = null;
+
 if ($act == 'dup') {
 	$dup = $id;
 	$act = 'edit';
@@ -105,7 +107,7 @@ if (($_POST['act'] == "delgroup") && !$read_only) {
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 }
 
-if (($_POST['act'] == "delpriv") && !$read_only && !$dup) {
+if (($_POST['act'] == "delpriv") && !$read_only && ($dup === null)) {
 
 	if (!isset($id) || !isset($a_group[$id])) {
 		pfSenseHeader("system_groupmanager.php");
@@ -135,7 +137,7 @@ if (($_POST['act'] == "delpriv") && !$read_only && !$dup) {
 
 if ($act == "edit") {
 	if (isset($id) && isset($a_group[$id])) {
-		if (!$dup) {
+		if ($dup === null) {
 			$pconfig['name'] = $a_group[$id]['name'];
 			$pconfig['gid'] = $a_group[$id]['gid'];
 			$pconfig['gtype'] = empty($a_group[$id]['scope'])
@@ -316,7 +318,7 @@ function build_priv_table() {
 			$user_has_root_priv = true;
 		}
 		$privhtml .=			'</td>';
-		if (!$read_only && !$dup) {
+		if (!$read_only && ($dup === null)) {
 			$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
 		}
 		$privhtml .=		'</tr>';
@@ -339,7 +341,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	if (!$read_only && !$dup) {
+	if (!$read_only && ($dup === null)) {
 		$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$privhtml .= '</nav>';
@@ -444,7 +446,7 @@ if (!($act == "new" || $act == "edit")) {
 
 $form = new Form;
 $form->setAction('system_groupmanager.php?act=edit');
-if (!$dup) {
+if ($dup === null) {
 	$form->addGlobal(new Form_Input(
 		'groupid',
 		null,
@@ -581,7 +583,7 @@ if ($pconfig['gid'] != 1998) {
 
 }
 
-if (isset($pconfig['gid']) || $dup) {
+if (isset($pconfig['gid']) || ($dup !== null)) {
 	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(

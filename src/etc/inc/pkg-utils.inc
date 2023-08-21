@@ -521,8 +521,11 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 				    $err);
 
 				if ($rc == 0) {
-					$pkg_info['version'] =
-					    str_replace("\n", "", $out);
+					/*
+					 * just consider the first line of output from rquery
+					 * ref: https://github.com/freebsd/pkg/issues/2164
+					 */
+					$pkg_info['version'] = explode("\n", $out)[0];
 				}
 			}
 

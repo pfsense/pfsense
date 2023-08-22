@@ -563,10 +563,10 @@ if (isset($_POST['save'])) {
 		if (is_numeric($pool) || ($act == "newpool")) {
 			if (is_inrange_v4($_POST['range_from'],
 				config_get_path("dhcpd/{$if}/range/from"),
-				config_get_path("dhcpd/{$if}/range/to") ||
+				config_get_path("dhcpd/{$if}/range/to")) ||
 				is_inrange_v4($_POST['range_to'],
 				config_get_path("dhcpd/{$if}/range/from"),
-				config_get_path("dhcpd/{$if}/range/to")))) {
+				config_get_path("dhcpd/{$if}/range/to"))) {
 				$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
 			}
 		}

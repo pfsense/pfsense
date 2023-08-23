@@ -165,16 +165,17 @@ if ($_POST['apply']) {
 
 if ($_POST['act'] == "del") {
 	if ($a_filter[$_POST['id']]) {
-		if (!empty($a_filter[$_POST['id']]['associated-rule-id'])) {
-			delete_nat_association($a_filter[$_POST['id']]['associated-rule-id']);
-		}
-		unset($a_filter[$_POST['id']]);
-
-		// Update the separators
+		// separators must be updated before the rule is removed
 		$ridx = get_interface_ruleindex($if, $_POST['id']);
 		$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
 		shift_separators($a_separators, $ridx['index'], true);
 		config_set_path('filter/separator/' . strtolower($if), $a_separators);
+
+		// remove the rule
+		if (!empty($a_filter[$_POST['id']]['associated-rule-id'])) {
+			delete_nat_association($a_filter[$_POST['id']]['associated-rule-id']);
+		}
+		unset($a_filter[$_POST['id']]);
 
 		if (write_config(gettext("Firewall: Rules - deleted a firewall rule."))) {
 			mark_subsystem_dirty('filter');

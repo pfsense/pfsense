@@ -471,6 +471,28 @@ function gen_requirestatefilter_field(&$section, $value) {
 		'before the states are displayed. Useful for systems with large state tables.');
 }
 
+/****f* pfsense-utils/gen_requirefirewallinterface_field
+ * NAME
+ *   gen_requirefirewallinterface_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_requirefirewallinterface_field(&$section, $value) {
+	$section->addInput(new Form_Checkbox(
+		'requirefirewallinterface',
+		'Require Firewall Interface',
+		'Do not display firewall rules list without first selecting an interface',
+		$value
+	))->setHelp('By default, the GUI displays firewall rules for the first enabled interface '.
+		'(e.g. WAN) when navigating to Firewall > Rules. This option requires the user to '.
+		'explicitly select an interface before the GUI displays any rules. This is useful '.
+		'for systems with a large number of rules on the first enabled interface, '.
+		'causing slowness when loading that page.');
+}
+
 /****f* pfsense-utils/gen_created_updated_fields
  * NAME
  *   gen_created_updated_fields

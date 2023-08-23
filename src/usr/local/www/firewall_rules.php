@@ -171,11 +171,10 @@ if ($_POST['act'] == "del") {
 		unset($a_filter[$_POST['id']]);
 
 		// Update the separators
-		init_config_arr(array('filter', 'separator', strtolower($if)));
-		$a_separators = &$config['filter']['separator'][strtolower($if)];
-		$ridx = abs(ifridx($if, $_POST['id']));	// get rule index within interface
-		$mvnrows = -1;
-		move_separators($a_separators, $ridx, $mvnrows);
+		$ridx = get_interface_ruleindex($if, $_POST['id']);
+		$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
+		shift_separators($a_separators, $ridx['index'], true);
+		config_set_path('filter/separator/' . strtolower($if), $a_separators);
 
 		if (write_config(gettext("Firewall: Rules - deleted a firewall rule."))) {
 			mark_subsystem_dirty('filter');
@@ -201,29 +200,21 @@ if ($_REQUEST['savemsg']) {
 
 if (isset($_POST['del_x'])) {
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		init_config_arr(array('filter', 'separator', strtolower($if)));
-		$a_separators = &$config['filter']['separator'][strtolower($if)];
-
-		$num_deleted = 0;
-
+		$removed = false;
+		$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
 		foreach ($_POST['rule'] as $rulei) {
+			// separators must be updated before the rule is removed
+			$ridx = get_interface_ruleindex($if, $rulei);
+			shift_separators($a_separators, $ridx['index'], true);
+
+			// remove the rule
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
-
-			// Update the separators
-			// As rules are deleted, $ridx has to be decremented or separator position will break
-			$ridx = ifridx($if, $rulei);
-			if (count($_POST['rule']) != 1) {
-				$ridx = ($ridx < 0) ? abs($ridx) : $ridx - $num_deleted;
-			}
-
-			$mvnrows = -1;
-			move_separators($a_separators, $ridx, $mvnrows);
-
-			$num_deleted++;
+			$removed = true;
 		}
+		config_set_path('filter/separator/' . strtolower($if), $a_separators);
 
-		if ($num_deleted) {
+		if ($removed) {
 			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
 				mark_subsystem_dirty('filter');
 			}

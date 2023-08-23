@@ -113,7 +113,7 @@ function easyrule_block_rule_exists($int = 'wan', $ipproto = "inet") {
 }
 
 function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
-	global $blockaliasname, $config;
+	global $blockaliasname;
 	/* If the alias doesn't exist, exit.
 	 * Can't create an empty alias, and we don't know a host */
 	if (easyrule_block_alias_getid($int) === false) {
@@ -141,20 +141,15 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$filterent['created'] = make_config_revision_entry(null, "EasyRule");
 	$filterent['tracker'] = (int)microtime(true);
 
-	// Refer to firewall_rules_edit.php separators updating code.
-	// Using same code, variables, and techniques here.
-	$after = -1;	// Place rule at top and move all separators.
-	array_splice($a_filter, $after+1, 0, array($filterent));
+	// place the rule on top
+	$ridx = get_interface_ruleindex($int);
+	array_splice($a_filter, $ridx['first'], 0, array($filterent));
 	config_set_path('filter/rule', $a_filter);
 
-	$tmpif = $int;
-
-	// Update the separators
-	$a_separators = config_get_path('filter/separator/' . strtolower($tmpif), []);
-	$ridx = abs(ifridx($tmpif, $after));	// get rule index within interface
-	$mvnrows = +1;
-	move_separators($a_separators, $ridx, $mvnrows);
-	config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
+	// shift the separators
+	$a_separators = config_get_path('filter/separator/' . strtolower($int), []);
+	shift_separators($a_separators, -1);
+	config_set_path('filter/separator/' . strtolower($int), $a_separators);
 
 	return true;
 }

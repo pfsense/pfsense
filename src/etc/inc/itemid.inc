@@ -32,8 +32,6 @@
  *   boolean   - true if item was found and deleted
  ******/
 function delete_id($id) {
-	global $config;
-
 	$array = config_get_path('filter/rule', []);
 
 	// Search for the item in the array
@@ -47,13 +45,11 @@ function delete_id($id) {
 	$if = $array[$delete_index]['interface'];
 	unset($array[$delete_index]);
 
-	// Update the separators
-	init_config_arr(array('filter', 'separator', strtolower($if)));
-	$a_separators = &$config['filter']['separator'][strtolower($if)];
-	// get rule index within interface
-	$ridx = abs(ifridx($if, $delete_index));
-	$mvnrows = -1;
-	move_separators($a_separators, $ridx, $mvnrows);
+	// shift the separators
+	$ridx = get_interface_ruleindex($if, $delete_index);
+	$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
+	shift_separators($a_separators, $ridx['index'], true);
+	config_set_path('filter/separator/' . strtolower($if), $a_separators);
 
 	config_set_path('filter/rule', $array);
 	return true;

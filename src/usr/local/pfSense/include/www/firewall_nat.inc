@@ -598,12 +598,19 @@ function saveNATrule($post, $id, $json = false) {
 		} else {
 			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
+				// place the rule on top
 				array_splice($a_nat, $after+1, 0, array($natent));
 
-				// Update the separators
-				$ridx = $after;
-				$mvnrows = +1;
-				move_separators($a_separators, $ridx, $mvnrows);
+				// shift the separators
+				$a_separators = config_get_path('nat/separator', []);
+				if ($after == -1) {
+					// rule is being placed on top
+					shift_separators($a_separators, -1);
+				} else {
+					// rule is being placed after another rule
+					shift_separators($a_separators, $after);
+				}
+				config_set_path('nat/separator', $a_separators);
 			} else {
 				$a_nat[] = $natent;
 			}
@@ -686,31 +693,27 @@ function deleteNATrule($post, $json = false) {
 		$post['rule'] = array( $post['id'] => $post['id'] );
 	}
 
+	/* When deleting rules using an unordered index array, $num_deleted may
+	   be inaccurate since removing a higher index rule (e.g. 5) should not
+	   decrement lower indecies (e.g. 2). This sorting is only necessary when
+	   the rule index is NOT recalculated on every loop. */
+	asort($post['rule'], SORT_NATURAL);
 	$num_deleted = 0;
-
+	$a_separators = config_get_path('nat/separator', []);
 	foreach ($post['rule'] as $rulei) {
-		$associated_rule_id = config_get_path("nat/rule/{$rulei}/associated-rule-id");
+		// separators must be updated before the rule is removed
+		shift_separators($a_separators, $rulei - $num_deleted, true);
 
+		// remove the rule
+		$associated_rule_id = config_get_path("nat/rule/{$rulei}/associated-rule-id");
 		if ($associated_rule_id != null) {
 			delete_id($associated_rule_id);
 			$want_dirty_filter = true;
 		}
-
 		config_del_path("/nat/rule/{$rulei}");
-
-		// Update the separators
-		// As rules are deleted, $ridx has to be decremented or separator position will break
-		if (count($post['rule']) == 1) { // Need special handling of single rule deletion
-			$ridx = $rulei;
-		} else {
-			$ridx = $rulei - $num_deleted;
-		}
-
-		$mvnrows = -1;
-		move_separators($a_separators, $ridx, $mvnrows);
-
 		$num_deleted++;
 	}
+	config_set_path('nat/separator', $a_separators);
 
 	if ($num_deleted) {
 		if ($num_deleted == 1) {

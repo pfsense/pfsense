@@ -4866,23 +4866,61 @@ function filter_get_antilockout_ports($wantarray = false) {
 
 }
 
-/* get rule index within interface */
-function ifridx($if, $ridx) {
-	if ($ridx < 0) {
-		return $ridx;
+/**
+ * Get the first and last rule's index for an interface, and optionally the
+ * relative index of a rule within the interface.
+ * 
+ * @param string $if The interface used to calculate the rule indices
+ * @param int $idx (optional) A rule index
+ * 
+ * @return array Contains the matching interface's first and last rule's index,
+ *               and the matching rule's relative index if found.
+ */
+function get_interface_ruleindex(string $interface, ?int $rule_index = null): array {
+	if (isset($rule_index) && ($rule_index < 0)) {
+		unset($rule_index);
+	}
+	$interface_rule_index = [
+		'index' => null,
+		'first' => null,
+		'last' => null
+	];
+	if (empty($interface)) {
+		return $interface_rule_index;
 	}
 
-	$i = $ifridx = 0;
-	foreach (config_get_path('filter/rule',[]) as $filterent) {
-		if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
-			if ($i == $ridx) {
-				return $ifridx;
+	$interface = strtolower($interface);
+	$relative_index_count = -1; // a valid index count starts at 0
+	foreach (config_get_path('filter/rule',[]) as $idx => $rule) {
+		// skip rules on unrelated interfaces
+		if ((isset($rule['floating']) && ($interface != "floatingrules")) ||
+		    (!isset($rule['floating']) && ($interface != $rule['interface']))) {
+			if (isset($rule_index) && isset($interface_rule_index['first']) && ($idx >= $rule_index)) {
+				// the last rule on the matching interface has already been reached
+				break;
 			}
-			$ifridx++;
+			continue;
 		}
-		$i++;
+		// this rule has a matching interface, increment the count
+		$relative_index_count++;
+
+		// save the interface's first rule's index
+		if ($relative_index_count == 0) {
+			$interface_rule_index['first'] = $idx;
+		}
+
+		// found the rule, save the relative index
+		if (isset($rule_index) && ($idx == $rule_index)) {
+			$interface_rule_index['index'] = $relative_index_count;
+		}
 	}
-	return (-$ifridx);
+
+	// the interface was found, save its last rule's index
+	if (isset($interface_rule_index['first'])) {
+		$interface_rule_index['last'] = $interface_rule_index['first'] + $relative_index_count;
+	}
+	
+	return $interface_rule_index;
 }
 
 /* display rules separators */
@@ -4917,17 +4955,49 @@ function separator_rows($separators) {
 	return $seprows;
 }
 
-/* If the separator is located after the place ($ridx) where the rule was added or deleted, move the separator ($mvrows) */
-function move_separators(&$a_separators, $ridx, $mvnrows) {
-	if (is_array($a_separators)) {
-		foreach ($a_separators as $sepi => $separator) {
-			if (empty($separator)) {
-				continue;
+/**
+ * Shift separators by 1 depending on the rule index.
+ * 
+ * @param array &$separators All separators for an interface's rules
+ * @param int $index Index of the rule relative to the section/interface.
+ *            To indicate a rule is being placed before all other rules
+ *            and separators, specify -1 (top).
+ * @param bool $shiftup Shift the separators up or down
+ * 
+ */
+function shift_separators(array &$separators, ?int $index = null, bool $shiftup = false): void {
+	foreach ($separators as $rowkey => $name) {
+		$row = substr(array_get_path($name, 'row/0'), 2);
+		$shift = ($shiftup) ? -1 : 1;
+		if ($index == -1) {
+			if ($shiftup) {
+				// Rule is being removed at the top; shift all up
+				$shift = -1;
+			} else {
+				// Rule is being added at the top; shift all down
+				$shift = 1;
 			}
-			$seprow = substr(array_get_path($separator, 'row/0'), 2);
-			if ($seprow > $ridx) {
-				array_set_path($a_separators, "{$sepi}/row/0", 'fr' . ($seprow + $mvnrows));
-			}
+		} elseif (!isset($index) || empty($name)) {
+			// Skip undefined separators
+			$shift = 0;
+		} elseif ($row == 0) {
+			// Separators at the top cannot move up
+			$shift = 0;
+		} elseif ($row == $index) {
+			// Don't shift a separator with the same index as the rule
+			$shift = 0;
+		} elseif ($row < $index) {
+			// Don't shift the separator if it's above the rule
+			$shift = 0;
+		}
+
+		// shift the separators
+		if ($shift == 0) { 
+			continue;
+		} elseif ($shift < 0) {
+			array_set_path($separators, "{$rowkey}/row/0", 'fr' . --$row);
+		} else {
+			array_set_path($separators, "{$rowkey}/row/0", 'fr' . ++$row);
 		}
 	}
 }

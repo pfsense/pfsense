@@ -251,7 +251,15 @@ $system_menu[] = array(gettext("High Availability"), "/system_hasync.php");
 $system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
-$system_menu[] = array(gettext("Certificates"), "/system_camanager.php");
+
+if (isAllowedPage("system_camanager.php")) {
+	$system_menu[] = array(gettext("Certificates"), "/system_camanager.php");
+} elseif (isAllowedPage("system_certmanager.php")) {
+	$system_menu[] = array(gettext("Certificates"), "/system_certmanager.php");
+} elseif (isAllowedPage("system_crlmanager.php")) {
+	$system_menu[] = array(gettext("Certificates"), "/system_crlmanager.php");
+}
+
 $system_menu[] = array(gettext("Register"), "/system_register.php");
 
 if (!isAllowedPage("system_usermanager.php")) {

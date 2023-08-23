@@ -38,6 +38,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("alias-utils.inc");
 
+global $alias_types;
+
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
 } else {
@@ -50,16 +52,6 @@ $max_alias_addresses = 5000;
 if ($debug) {
 	unlink_if_exists($g['tmp_path'] . '/alias_rename_log.txt');
 }
-
-$singular_types = array(
-	'host'	=> gettext("host"),
-	'network' => gettext("network"),
-	'port' => gettext("port"),
-	'url' => gettext("URL (IP)"),
-	'url_ports' => gettext("URL (Port)"),
-	'urltable' => gettext("URL Table (IP)"),
-	'urltable_ports' => gettext("URL Table (Port)"),
-);
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -163,16 +155,6 @@ if ($_POST['save']) {
 
 include("head.inc");
 
-$section_str = array(
-	'network' => gettext("Network(s)"),
-	'host'	=> gettext("Host(s)"),
-	'port' => gettext("Port(s)"),
-	'url' => gettext("URL (IPs)"),
-	'url_ports' => gettext("URL (Ports)"),
-	'urltable' => gettext("URL Table (IPs)"),
-	'urltable_ports' => gettext("URL Table (Ports)")
-);
-
 $btn_str = array(
 	'network' => gettext("Add Network"),
 	'host'	=> gettext("Add Host"),
@@ -243,16 +225,6 @@ $placeholder_str = array(
 	'urltable_ports'	=> 'URL'
 );
 
-$types = array(
-	'host'	=> gettext("Host(s)"),
-	'network' => gettext("Network(s)"),
-	'port' => gettext("Port(s)"),
-	'url' => gettext("URL (IPs)"),
-	'url_ports' => gettext("URL (Ports)"),
-	'urltable' => gettext("URL Table (IPs)"),
-	'urltable_ports' => gettext("URL Table (Ports)"),
-);
-
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -312,12 +284,12 @@ $section->addInput(new Form_Select(
 	'type',
 	'*Type',
 	isset($pconfig['type']) ? $pconfig['type'] : $tab,
-	$types
+	$alias_types
 ));
 
 $form->add($section);
 
-$section = new Form_Section($section_str[$tab]);
+$section = new Form_Section($alias_types[$tab]);
 // Make somewhere to park the help text, and give it a class so we can update it later
 $section->addInput(new Form_StaticText(
 	'Hint',
@@ -425,7 +397,7 @@ events.push(function() {
 		$('.helptext').html(helparray[tab]);
 
 		// Set the section heading by tab type
-		var sectionstr = <?=json_encode($section_str);?>;
+		var sectionstr = <?=json_encode($alias_types);?>;
 		$('.panel-title:last').text(sectionstr[tab]);
 
 		var buttonstr = <?=json_encode($btn_str);?>;

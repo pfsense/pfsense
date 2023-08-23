@@ -104,6 +104,7 @@ display_top_tabs($tab_array);
 	<thead>
 		<tr>
 			<th><?=gettext("Name")?></th>
+			<th><?=gettext("Type")?></th>
 			<th><?=gettext("Values")?></th>
 			<th><?=gettext("Description")?></th>
 			<th><?=gettext("Actions")?></th>
@@ -145,6 +146,9 @@ display_top_tabs($tab_array);
 		<tr>
 			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 				<?=htmlspecialchars($alias['name'])?>
+			</td>
+			<td nowrap ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
+				<?=htmlspecialchars($alias_types[$alias['type']])?>
 			</td>
 			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 <?php

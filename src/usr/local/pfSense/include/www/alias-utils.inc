@@ -31,6 +31,28 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
+global $alias_types;
+$alias_types = array(
+	'host'	=> gettext("Host(s)"),
+	'network' => gettext("Network(s)"),
+	'port' => gettext("Port(s)"),
+	'url' => gettext("URL (IPs)"),
+	'url_ports' => gettext("URL (Ports)"),
+	'urltable' => gettext("URL Table (IPs)"),
+	'urltable_ports' => gettext("URL Table (Ports)"),
+);
+
+global $singular_types;
+$singular_types = array(
+	'host'	=> gettext("host"),
+	'network' => gettext("network"),
+	'port' => gettext("port"),
+	'url' => gettext("URL (IP)"),
+	'url_ports' => gettext("URL (Port)"),
+	'urltable' => gettext("URL Table (IP)"),
+	'urltable_ports' => gettext("URL Table (Port)"),
+);
+
 function deleteAlias($id, $apply = false) {
 	/* make sure rule is not being referenced by any nat or filter rules */
 	$delete_error = "";
@@ -259,7 +281,7 @@ function alias_same_type($name, $type) {
 }
 
 function saveAlias($post, $id) {
-	global $g, $pconfig, $aliastable;
+	global $g, $pconfig, $aliastable, $singular_types;
 
 	$origname = $post['origname'];
 	$max_alias_addresses = 5000;

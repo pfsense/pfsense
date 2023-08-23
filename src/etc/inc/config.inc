@@ -33,20 +33,6 @@ if (!function_exists('platform_booting')) {
 //if (in_array("/etc/inc/config.inc", get_included_files()))
 //	return;
 
-// Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels
-// the parser needs quite a bit of ram.   Do not remove this line unless you
-// know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
-if (!isset($ARCH)) {
-	$ARCH = php_uname("m");
-}
-
-// Set memory limit to 512M on amd64.
-if ($ARCH == "amd64") {
-	ini_set("memory_limit", "512M");
-} else {
-	ini_set("memory_limit", "128M");
-}
-
 /* include globals from notices.inc /utility/XML parser files */
 require_once("notices.inc");
 require_once("util.inc");
@@ -54,6 +40,16 @@ require_once("Net/IPv6.php");
 require_once('config.lib.inc');
 require_once("xmlparse.inc");
 require_once("crypt.inc");
+
+// Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels
+// the parser needs quite a bit of ram.   Do not remove this line unless you
+// know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
+if (!$ARCH) {
+	$ARCH = php_uname("m");
+}
+
+// Set memory limit to 512M on amd64.
+ini_set("memory_limit", get_php_default_memory($ARCH) . 'M');
 
 /* if /debugging exists, lets set $debugging
    so we can output more information */
@@ -150,6 +146,12 @@ if (isset($config['system']['timezone']) &&
 	$timezone = "Etc/UTC";
 }
 date_default_timezone_set("$timezone");
+
+/* override php memory limit */
+$php_memory_limit = config_get_path('system/php_memory_limit', 0);
+if (($php_memory_limit >= 128) && ($php_memory_limit <= get_php_max_memory())) {
+    ini_set("memory_limit", config_get_path('system/php_memory_limit') . "M");
+}
 
 if ($config_parsed == true) {
 	/* process packager manager custom rules */

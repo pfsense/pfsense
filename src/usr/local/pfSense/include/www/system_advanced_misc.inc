@@ -89,6 +89,7 @@ function getSystemAdvancedMisc($json = false) {
 	$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
 	$pconfig['pti'] = get_single_sysctl('vm.pmap.pti');
 	$pconfig['mds']= get_single_sysctl('hw.mds_disable_state');
+	$pconfig['php_memory_limit'] = config_get_path('system/php_memory_limit');
 
 	$pconfig['powerd_ac_mode'] = "hadp";
 	if (!empty($config['system']['powerd_ac_mode'])) {
@@ -198,6 +199,14 @@ function saveSystemAdvancedMisc($post, $json = false) {
 
 	if (!in_array($post['mds_disable'], array_keys($mds_modes))) {
 		$input_errors[] = gettext("Invalid MDS Mode.");
+	}
+
+	// Retrieve limit
+	$php_max_ram = get_php_max_memory();
+
+	if (!empty($post['php_memory_limit']) && ((!is_numeric($post['php_memory_limit'])) || ($post['php_memory_limit'] > $php_max_ram)
+			|| ($post['php_memory_limit'] < 128))) {
+		$input_errors[] = gettext("PHP Memory Limit must be numeric and should be between 128 to " . $php_max_ram);
 	}
 
 	if (!$input_errors) {
@@ -372,6 +381,13 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			} else {
 				config_del_path('system/captiveportalbackup');
 			}
+		}
+
+		// PHP Memory Limit
+		if (!empty($post['php_memory_limit'])) {
+			config_set_path('system/php_memory_limit', $post['php_memory_limit']);
+		} else {
+			config_del_path('system/php_memory_limit');
 		}
 
 		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.

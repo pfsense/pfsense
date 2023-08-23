@@ -36,6 +36,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
+require_once("system.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
 require_once("system_advanced_misc.inc");
@@ -319,6 +320,28 @@ $section->addInput(new Form_Checkbox(
 	'Enabling this checkbox overrides that behavior.');
 
 $form->add($section);
+
+// Retrieve limits
+$php_default = get_php_default_memory($ARCH);
+$php_max_ram = get_php_max_memory();
+
+$section = new Form_Section('PHP Settings');
+
+$group = new Form_Group('Memory Limit');
+
+$group->add(new Form_Input(
+	'php_memory_limit',
+	'Memory Limit',
+	'number',
+	str_replace("M", "", $pconfig['php_memory_limit']),
+	['min' => 128, 'max' => $php_max_ram, 'placeholder' => '128 to ' . $php_max_ram]
+))->setHelp('PHP memory limit in MiB.%1$sNote: Leave this blank for the default. On this system the default size is: %2$d '
+	, '<br/>', $php_default);
+
+$section->add($group);
+
+$form->add($section);
+
 $section = new Form_Section('RAM Disk Settings (Reboot to Apply Changes)');
 
 $section->addInput(new Form_Checkbox(

@@ -251,6 +251,16 @@ opcache.enabled="0"
 EOF
 fi
 
+# Memory limits 128M to AVAILABLE MEMORY - 1024M
+PHP_MEMORY_LIMIT="$(read_xml_tag.sh number system/php_memory_limit)"
+let PHP_MAX_LIMIT=${AVAILMEM}-1024 # Reserve 1GiB
+
+if [ -n "${PHP_MEMORY_LIMIT}" ] && [ "${PHP_MEMORY_LIMIT}" -ge "128" ] && [ "${PHP_MEMORY_LIMIT}" -le "${PHP_MAX_LIMIT"}" ]; then
+	/bin/cat >>/usr/local/etc/php.ini <<EOF
+memory_limit="${PHP_MEMORY_LIMIT}"M
+EOF
+fi
+
 PHPFPMMAX=3
 PHPFPMIDLE=30
 PHPFPMSTART=1

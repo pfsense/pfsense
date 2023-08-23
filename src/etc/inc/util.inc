@@ -2467,6 +2467,18 @@ function get_memory() {
 	return array(((int) $physmem/1048576), ((int) $realmem/1048576));
 }
 
+function get_php_default_memory($ARCH) {
+	if ($ARCH == "amd64") {
+		return 512;
+	} else {
+		return 128;
+	}
+}
+
+function get_php_max_memory() {
+	return intval(get_memory()[0] - 1024);
+}
+
 function mute_kernel_msgs() {
 	if (config_path_enabled('system','enableserial')) {
 		return;

@@ -15,6 +15,10 @@
 
 include_once('phpsessionmanager.inc');
 
+if (!is_array($GLOBALS['csrf'])) {
+	$GLOBALS['csrf'] = [];
+}
+
 // CONFIGURATION:
 
 /**
@@ -303,6 +307,7 @@ function csrf_check_token($token) {
     list($type, $value) = explode(':', $token, 2);
     if (strpos($value, ',') === false) return false;
     list($x, $time) = explode(',', $token, 2);
+    $time = intval($time);
     if ($GLOBALS['csrf']['expires']) {
         if (time() > $time + $GLOBALS['csrf']['expires']) return false;
     }

@@ -6088,69 +6088,25 @@ function link_interface_to_track6($int, $action = "") {
 }
 
 function interface_find_child_cfgmtu($realiface) {
-	$interface = convert_real_interface_to_friendly_interface_name($realiface);
 	$vlans = link_interface_to_vlans($realiface);
 	$qinqs = link_interface_to_qinqs($realiface);
 	$bridge = link_interface_to_bridge($realiface);
-	$gifs = link_interface_to_tunnelif($interface, 'gif');
-	$gres = link_interface_to_tunnelif($interface, 'gre');
-
 	$mtu = 0;
-	if (is_array($vlans)) {
-		foreach ($vlans as $vlan) {
-			$ifass = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-			if (empty($ifass)) {
-				continue;
-			}
-			$vlanmtu = config_get_path("interfaces/{$ifass}/mtu");
-			if ($vlanmtu && (intval($vlanmtu) > $mtu)) {
-				$mtu = $vlanmtu;
-			}
-		}
-	}
-	if (is_array($qinqs)) {
-		foreach ($qinqs as $qinq) {
-			$ifass = convert_real_interface_to_friendly_interface_name($qinq['vlanif']);
-			if (empty($ifass)) {
-				continue;
-			}
 
-			$qinqmtu = config_get_path("interfaces/{$ifass}/mtu");
-			if ($qinqmtu && (intval($qinqmtu) > $mtu)) {
-				$mtu = $qinqmtu;
+	foreach ([$vlans, $qinqs, ['bridge' => $bridge]] as $ints) {
+		if (is_array($ints)) {
+			foreach ($ints as $int) {
+				$ifass = convert_real_interface_to_friendly_interface_name($int['vlanif']);
+				if (!empty($ifass) &&
+				    config_path_enabled("interfaces/{$ifass}") &&
+				    (intval(config_get_path("interfaces/{$ifass}/mtu")) > $mtu)) {
+					$mtu = config_get_path("interfaces/{$ifass}/mtu");
+				}
 			}
 		}
 	}
-	foreach ($gifs as $gif) {
-		$ifass = convert_real_interface_to_friendly_interface_name($gif['gifif']);
-		if (empty($ifass)) {
-			continue;
-		}
 
-		$gifmtu = config_get_path("interfaces/{$ifass}/mtu");
-		if ($gifmtu && (intval($gifmtu) > $mtu)) {
-			$mtu = $gifmtu;
-		}
-	}
-	foreach ($gres as $gre) {
-		$ifass = convert_real_interface_to_friendly_interface_name($gre['greif']);
-		if (empty($ifass)) {
-			continue;
-		}
-		$gremtu = config_get_path("interfaces/{$ifass}/mtu");
-		if ($gremtu && (intval($gremtu) > $mtu)) {
-			$mtu = $gremtu;
-		}
-	}
-	$ifass = convert_real_interface_to_friendly_interface_name($bridge);
-	$ifassmtu = config_get_path("interfaces/{$ifass}/mtu");
-	if (!empty($ifass) && !empty($ifassmtu)) {
-		if ($ifassmtu > $mtu) {
-			$mtu = $ifassmtu;
-		}
-	}
-	unset($vlans, $bridge, $gifs, $gres, $ifass, $vlan);
-
+	unset($vlans, $qinqs, $bridge);
 	return $mtu;
 }
 

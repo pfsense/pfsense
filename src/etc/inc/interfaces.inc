@@ -7494,7 +7494,7 @@ function get_interface_addresses($interface) {
 	}
 	/* Transform output to conform to pfSense_get_interface_addresses() */
 	if ($v4addrs) {
-		$v4addr = array_pop($v4addrs);
+		$v4addr = array_shift($v4addrs);
 		$ifaddrs['ipaddr'] = $v4addr['addr'];
 		foreach(array("subnetbits", "subnet", "broadcast", "tunnel") as $key) {
 			if (array_key_exists($key, $v4addr)) {
@@ -7504,7 +7504,7 @@ function get_interface_addresses($interface) {
 	}
 
 	if ($v6addrs) {
-		$v6addr = array_pop($v6addrs);
+		$v6addr = array_shift($v6addrs);
 		$ifaddrs['ipaddr6'] = $v6addr['addr'];
 		foreach(array("subnetbits", "tunnel") as $key) {
 			if (array_key_exists($key, $v6addr)) {

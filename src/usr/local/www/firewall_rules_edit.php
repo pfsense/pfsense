@@ -1051,10 +1051,12 @@ if ($_POST['save']) {
 			} else {							// rule moved to different interface
 				// update the previous interface's separators
 				$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
-				shift_separators($a_separators, $id, true);
+				$ridx = get_interface_ruleindex($if, $id);
+				shift_separators($a_separators, $ridx['index'], true);
 				config_set_path('filter/separator/' . strtolower($if), $a_separators);
 
-				// place rule at the bottom of the new interface
+				// remove the rule from the previous interface and place it at the bottom of the new interface
+				unset($a_filter[$id]);
 				$ridx = get_interface_ruleindex($tmpif);
 				array_splice($a_filter, $ridx['last']+1, 0, array($filterent));
 			}

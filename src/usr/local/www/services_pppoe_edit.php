@@ -103,7 +103,7 @@ if ($_POST['save']) {
 	/* input validation */
 	if ($_POST['mode'] == "server") {
 		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = array(gettext("Server address"), gettext("Remote start address"));
+		$reqdfieldsn = array(gettext("Server address"), gettext("Remote address range"));
 
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
@@ -118,13 +118,13 @@ if ($_POST['save']) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
+		if (($_POST['localip'] && !is_ipaddrv4($_POST['localip']))) {
 			$input_errors[] = gettext("A valid server address must be specified.");
 		}
-		if (($_POST['remoteip'] && !is_ipaddr($_POST['remoteip']))) {
-			$input_errors[] = gettext("A valid remote start address must be specified.");
+		if (($_POST['remoteip'] && !is_ipaddrv4($_POST['remoteip']))) {
+			$input_errors[] = gettext("A valid remote address range must be specified.");
 		}
-		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
+		if (($_POST['radiusserver'] && !is_ipaddrv4($_POST['radiusserver']))) {
 			$input_errors[] = gettext("A valid RADIUS server address must be specified.");
 		}
 		if (!is_numericint($_POST['n_pppoe_units']) || $_POST['n_pppoe_units'] > 255) {
@@ -152,7 +152,7 @@ if ($_POST['save']) {
 				} elseif (preg_match("/^!/", trim($_POST["password{$x}"]))) {
 					$input_errors[] = gettext("User passwords cannot start with '!'.");
 				}
-				if ($_POST["ip{$x}"] != "" && !is_ipaddr($_POST["ip{$x}"])) {
+				if ($_POST["ip{$x}"] != "" && !is_ipaddrv4($_POST["ip{$x}"])) {
 					$input_errors[] = sprintf(gettext("Incorrect ip address specified for username %s"), $_POST["username{$x}"]);
 				}
 			}

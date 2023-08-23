@@ -6319,9 +6319,9 @@ function find_interface_ipv6($interface, $flush = false) {
 }
 
 /*
- * find_interface_ipv6_ll($interface): return the interface ipv6 link local (first found)
+ * Return the interface ipv6 link local address
  */
-function find_interface_ipv6_ll($interface, $flush = false) {
+function find_interface_ipv6_ll($interface, $flush = false, $usefirst = true) {
 	global $interface_llv6_arr_cache;
 
 	$interface = str_replace("\n", "", $interface);
@@ -6338,6 +6338,9 @@ function find_interface_ipv6_ll($interface, $flush = false) {
 				$parts = explode("/", $line);
 				if (is_linklocal($parts[0])) {
 					$ifinfo['linklocal'] = $parts[0];
+					if ($usefirst) {
+						break;
+					}
 				}
 			}
 		}

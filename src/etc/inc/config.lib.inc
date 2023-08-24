@@ -169,6 +169,10 @@ function generate_config_cache($config) {
 	global $g, $config_extra;
 
 	$configcache = fopen(g_get('tmp_path') . '/config.cache', "w");
+	if (!$configcache) {
+		/* Cannot open file for writing, so stop here. */
+		return false;
+	}
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
 	//pfSense_fsync("{$g['tmp_path']}/config.cache");
@@ -182,6 +186,7 @@ function generate_config_cache($config) {
 		//pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
 		unset($configcacheextra);
 	}
+	return true;
 }
 
 function discover_last_backup() {

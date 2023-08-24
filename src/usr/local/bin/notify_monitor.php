@@ -20,25 +20,17 @@
  * limitations under the License.
  */
 
-/* Do not attempt to take any action if this script is invoked by an
- * unprivileged user. Such users are unable to write to some files such as
- * the config.cache and the message queue which can lead to PHP errors and/or
- * duplicate notifications.
- * https://redmine.pfsense.org/issues/14031
- * https://redmine.pfsense.org/issues/14061
- */
-if (posix_geteuid() !== 0) {
-	echo "This script cannot be run by an unprivileged user.\n";
-	exit(1);
+try {
+	include_once('util.inc');
+	include_once('notices.inc');
+
+	$ret = try_lock("notifyqueue_running", 0);
+	if ($ret === NULL) {
+		//only 1 monitor needs to be running.
+		exit;
+	}
+
+	notices_sendqueue();
+} catch (Exception $e) {
+	log_error(gettext("Unable to send notices queue") . ": " . $e->getMessage());
 }
-
-include_once('util.inc');
-include_once('notices.inc');
-
-$ret = try_lock("notifyqueue_running", 0);
-if ($ret === NULL) {
-	//only 1 monitor needs to be running.
-	exit;
-}
-
-notices_sendqueue();

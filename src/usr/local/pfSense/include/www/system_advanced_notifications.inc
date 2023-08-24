@@ -36,101 +36,97 @@ init_config_arr(array('notifications', 'pushover'));
 init_config_arr(array('notifications', 'slack'));
 
 function getAdvancedNotifications($json = false) {
-	global $config;
-
 	$nconfig = array();
 
 	// General Settings
-	$nconfig['cert_enable_notify'] = ($config['notifications']['certexpire']['enable'] != "disabled");
-
-    	$nconfig['revoked_cert_ignore_notify'] = ($config['notifications']['certexpire']['ignore_revoked'] == "enabled");
-
-	if ($config['notifications']['certexpire']['expiredays']) {
+	$nconfig['cert_enable_notify'] = (config_get_path('notifications/certexpire/enable') != "disabled");
+	$nconfig['revoked_cert_ignore_notify'] = (config_get_path('notifications/certexpire/ignore_revoked') == "enabled");
+	if (config_get_path('notifications/certexpire/expiredays')) {
 		$nconfig['certexpiredays'] = config_get_path('notifications/certexpire/expiredays');
 	}
 
 	// SMTP
-	$nconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
-
-	if ($config['notifications']['smtp']['ipaddress']) {
+	$nconfig['disable_smtp'] = config_path_enabled('notifications/smtp', 'disable');
+	if (!empty(config_get_path('notifications/smtp/ipaddress'))) {
 		$nconfig['smtpipaddress'] = config_get_path('notifications/smtp/ipaddress');
 	}
 
-	if ($config['notifications']['smtp']['port']) {
+	if (!empty(config_get_path('notifications/smtp/port'))) {
 		$nconfig['smtpport'] = config_get_path('notifications/smtp/port');
 	}
 
-	$nconfig['smtpssl'] = isset($config['notifications']['smtp']['ssl']);
+	$nconfig['smtpssl'] = config_path_enabled('notifications/smtp', 'ssl');
 
-	$nconfig['sslvalidate'] = ($config['notifications']['smtp']['sslvalidate'] != "disabled");
+	$nconfig['sslvalidate'] = (config_get_path('notifications/smtp/sslvalidate') != "disabled");
 
-	if (!empty($config['notifications']['smtp']['timeout'])) {
+	if (!empty(config_get_path('notifications/smtp/timeout'))) {
 		$nconfig['smtptimeout'] = config_get_path('notifications/smtp/timeout');
 	}
 
-	if ($config['notifications']['smtp']['notifyemailaddress']) {
+	if (config_get_path('notifications/smtp/notifyemailaddress')) {
 		$nconfig['smtpnotifyemailaddress'] = config_get_path('notifications/smtp/notifyemailaddress');
 	}
 
-	if ($config['notifications']['smtp']['username']) {
+	if (config_get_path('notifications/smtp/username')) {
 		$nconfig['smtpusername'] = config_get_path('notifications/smtp/username');
 	}
 
-	if ($config['notifications']['smtp']['password']) {
+	if (config_get_path('notifications/smtp/password')) {
 		$nconfig['smtppassword'] = config_get_path('notifications/smtp/password');
 	}
 
-	if ($config['notifications']['smtp']['authentication_mechanism']) {
+	if (config_get_path('notifications/smtp/authentication_mechanism')) {
 		$nconfig['smtpauthmech'] = config_get_path('notifications/smtp/authentication_mechanism');
 	}
 
-	if ($config['notifications']['smtp']['fromaddress']) {
+	if (config_get_path('notifications/smtp/fromaddress')) {
 		$nconfig['smtpfromaddress'] = config_get_path('notifications/smtp/fromaddress');
 	}
 
 	// System Sounds
 	$nconfig['consolebell'] = config_get_path('system/consolebell', 'enabled');
-	$nconfig['disablebeep'] = isset($config['system']['disablebeep']);
+	$nconfig['disablebeep'] = config_path_enabled('system', 'disablebeep');
 
 	// Telegram
-	$nconfig['enable_telegram'] = isset($config['notifications']['telegram']['enabled']);
+	$nconfig['enable_telegram'] = config_path_enabled('notifications/telegram', 'enabled') ;
 
-	if ($config['notifications']['telegram']['api']) {
+	if (config_get_path('notifications/telegram/api')) {
 		$nconfig['api'] = config_get_path('notifications/telegram/api');
 	}
 
-	if ($config['notifications']['telegram']['chatid']) {
+	if (config_get_path('notifications/telegram/chatid')) {
 		$nconfig['chatid'] = config_get_path('notifications/telegram/chatid');
 	}
 	// Pushover
-	$nconfig['enable_pushover'] = isset($config['notifications']['pushover']['enabled']);
+	$nconfig['enable_pushover'] = config_path_enabled('notifications/pushover', 'enabled');
 
-	if ($config['notifications']['pushover']['apikey']) {
+	if (config_get_path('notifications/pushover/apikey')) {
 		$nconfig['pushoverapikey'] = config_get_path('notifications/pushover/apikey');
 	}
 
-	if ($config['notifications']['pushover']['userkey']) {
+	if (config_get_path('notifications/pushover/userkey')) {
 		$nconfig['pushoveruserkey'] = config_get_path('notifications/pushover/userkey');
 	}
 
-	if ($config['notifications']['pushover']['sound']) {
+	if (config_get_path('notifications/pushover/sound')) {
 		$nconfig['pushoversound'] = config_get_path('notifications/pushover/sound');
 	}
 
-	if ($config['notifications']['pushover']['priority']) {
+	if (config_get_path('notifications/pushover/priority')) {
 		$nconfig['pushoverpriority'] = config_get_path('notifications/pushover/priority');
 	}
 
-	$nconfig['pushoverretry'] = ($config['notifications']['pushover']['retry']) ? $config['notifications']['pushover']['retry'] : 60;
-	$nconfig['pushoverexpire'] = ($config['notifications']['pushover']['expire']) ? $config['notifications']['pushover']['expire'] : 300;
-	// Slack
-	$nconfig['enable_slack'] = isset($config['notifications']['slack']['enabled']);
+	$nconfig['pushoverretry'] = config_get_path('notifications/pushover/retry', 60);
+	$nconfig['pushoverexpire'] = config_get_path('notifications/pushover/expire', 300);
 
-	if ($config['notifications']['slack']['api']) {
+	// Slack
+	$nconfig['enable_slack'] = config_path_enabled('notifications/slack', 'enabled');
+
+	if (config_get_path('notifications/slack/api')) {
 		$nconfig['slack_api'] = config_get_path('notifications/slack/api');
 	}
 
-	if ($config['notifications']['slack']['channel']) {
+	if (config_get_path('notifications/slack/channel')) {
 		$nconfig['slack_channel'] = config_get_path('notifications/slack/channel');
 	}
 
@@ -138,7 +134,7 @@ function getAdvancedNotifications($json = false) {
 }
 
 function saveAdvancedNotifications($post, $json = false) {
-	global $g, $config, $smtp_authentication_mechanisms, $pushover_sounds;
+	global $smtp_authentication_mechanisms, $pushover_sounds;
 
 	$input_errors = array();
 	$rv = array();
@@ -151,12 +147,12 @@ function saveAdvancedNotifications($post, $json = false) {
 	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover || $testslack) {
 
 		// General Settings
-		$config['notifications']['certexpire']['enable'] = ($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
-	    	$config['notifications']['certexpire']['ignore_revoked'] = ($post['revoked_cert_ignore_notify'] == "yes") ? "enabled" : "disabled";
+		config_set_path('notifications/certexpire/enable', (($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled"));
+		config_set_path('notifications/certexpire/ignore_revoked', (($post['revoked_cert_ignore_notify'] == "yes") ? "enabled" : "disabled"));
 		if (empty($post['certexpiredays'])) {
-			$config['notifications']['certexpire']['expiredays'] = g_get('default_cert_expiredays');
+			config_set_path('notifications/certexpire/expiredays', g_get('default_cert_expiredays'));
 		} elseif (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0)) {
-			$config['notifications']['certexpire']['expiredays'] = $post['certexpiredays'];
+			config_set_path('notifications/certexpire/expiredays', $post['certexpiredays']);
 		} else {
 			$input_errors[] = gettext("Certificate Expiration Threshold must be a positive integer");
 		}
@@ -169,45 +165,41 @@ function saveAdvancedNotifications($post, $json = false) {
 		    !is_fqdn($post['smtpipaddress']))) {
 			$input_errors[] = gettext("Please enter valid E-Mail server address.");
 		} else {
-			$config['notifications']['smtp']['ipaddress'] = $post['smtpipaddress'];
+			config_set_path('notifications/smtp/ipaddress', $post['smtpipaddress']);
 		}
 
 		if ($validate_smtp && !is_port($post['smtpport'])) {
 			$input_errors[] = gettext("Please enter valid SMTP port of E-Mail server address.");
 		} else {
-			$config['notifications']['smtp']['port'] = $post['smtpport'];
+			config_set_path('notifications/smtp/port', $post['smtpport']);
 		}
 
 		if (isset($post['smtpssl'])) {
-			$config['notifications']['smtp']['ssl'] = true;
+			config_set_path('notifications/smtp/ssl', true);
 		} else {
 			config_del_path('notifications/smtp/ssl');
 		}
 
-		if (isset($post['sslvalidate'])) {
-			$config['notifications']['smtp']['sslvalidate'] = "enabled";
-		} else {
-			$config['notifications']['smtp']['sslvalidate'] = "disabled";
-		}
+		config_set_path('notifications/smtp/sslvalidate', (isset($post['sslvalidate']) ? 'enabled' : 'disabled'));
 
 		if ($validate_smtp && !empty($post['smtptimeout']) &&
 		    !is_numeric($post['smtptimeout'])) {
 			$input_errors[] = gettext("Please enter valid connection timeout.");
 		} else {
-			$config['notifications']['smtp']['timeout'] = $post['smtptimeout'];
+			config_set_path('notifications/smtp/timeout', $post['smtptimeout']);
 		}
 
 		if ($validate_smtp && empty($post['smtpnotifyemailaddress'])) {
 			$input_errors[] = gettext("Please enter valid notification E-Mail address.");
 		} else {
-			$config['notifications']['smtp']['notifyemailaddress'] = $post['smtpnotifyemailaddress'];
+			config_set_path('notifications/smtp/notifyemailaddress', $post['smtpnotifyemailaddress']);
 		}
 
-		$config['notifications']['smtp']['username'] = $post['smtpusername'];
+		config_set_path('notifications/smtp/username', $post['smtpusername']);
 
 		if (strcmp($post['smtppassword'], DMYPWD)!= 0) {
 			if ($post['smtppassword'] == $post['smtppassword_confirm']) {
-				$config['notifications']['smtp']['password'] = $post['smtppassword'];
+				config_set_path('notifications/smtp/password', $post['smtppassword']);
 			} else {
 				if ($post['disable_smtp'] != "yes") {
 					// Bug #7129 - do not nag people about passwords mismatch when SMTP notifications are disabled
@@ -219,13 +211,13 @@ function saveAdvancedNotifications($post, $json = false) {
 		if (!array_key_exists($post['smtpauthmech'], $smtp_authentication_mechanisms)) {
 			$input_errors[] = gettext("Please select valid authentication mechanism.");
 		} else {
-			$config['notifications']['smtp']['authentication_mechanism'] = $post['smtpauthmech'];
+			config_set_path('notifications/smtp/authentication_mechanism', $post['smtpauthmech']);
 		}
 
-		$config['notifications']['smtp']['fromaddress'] = $post['smtpfromaddress'];
+		config_set_path('notifications/smtp/fromaddress', $post['smtpfromaddress']);
 
 		if ($post['disable_smtp'] == "yes") {
-			$config['notifications']['smtp']['disable'] = true;
+			config_set_path('notifications/smtp/disable', true);
 		} else {
 			config_del_path('notifications/smtp/disable');
 		}
@@ -239,71 +231,71 @@ function saveAdvancedNotifications($post, $json = false) {
 			set_single_sysctl('kern.vt.enable_bell', '0');
 		}
 		if ($post['disablebeep'] == "yes") {
-			$config['system']['disablebeep'] = true;
+			config_set_path('system/disablebeep', true);
 		} else {
 			config_del_path('system/disablebeep');
 		}
 
 		// Telegram
-		$config['notifications']['telegram']['enabled'] = ($post['enable_telegram'] == "yes") ? true : false;
-		$config['notifications']['telegram']['api'] = $post['api'];
-		$config['notifications']['telegram']['chatid'] = $post['chatid'];
+		config_set_path('notifications/telegram/enabled', (($post['enable_telegram'] == "yes") ? true : false));
+		config_set_path('notifications/telegram/api', $post['api']);
+		config_set_path('notifications/telegram/chatid', $post['chatid']);
 
-		if (preg_replace("/[^a-zA-Z0-9_:\-]/", "", $config['notifications']['telegram']['api']) !== $config['notifications']['telegram']['api']) {
+		if (preg_replace("/[^a-zA-Z0-9_:\-]/", "", config_get_path('notifications/telegram/api')) !== config_get_path('notifications/telegram/api')) {
 			$input_errors[] = gettext("The only special characters permitted in the Telegram API string are _, - and :");
 		}
-		if (preg_replace("/[^a-zA-Z0-9@_\-]/", "", $config['notifications']['telegram']['chatid']) !== $config['notifications']['telegram']['chatid']) {
+		if (preg_replace("/[^a-zA-Z0-9@_\-]/", "", config_get_path('notifications/telegram/chatid')) !== config_get_path('notifications/telegram/chatid')) {
 			$input_errors[] = gettext("The Chat ID can only contain @, _ or - as special characters");
 		}
 
 		// Pushover
-		$config['notifications']['pushover']['enabled'] = ($post['enable_pushover'] == "yes") ? true : false;
-		$config['notifications']['pushover']['apikey'] = $post['pushoverapikey'];
-		$config['notifications']['pushover']['userkey'] = $post['pushoveruserkey'];
+		config_set_path('notifications/pushover/enabled', (($post['enable_pushover'] == "yes") ? true : false));
+		config_set_path('notifications/pushover/apikey', $post['pushoverapikey']);
+		config_set_path('notifications/pushover/userkey', $post['pushoveruserkey']);
 
-		if (preg_replace("/[^A-Za-z0-9]/", "", $config['notifications']['pushover']['apikey']) !== $config['notifications']['pushover']['apikey']) {
+		if (preg_replace("/[^A-Za-z0-9]/", "", config_get_path('notifications/pushover/apikey')) !== config_get_path('notifications/pushover/apikey')) {
 			$input_errors[] = gettext("API keys are case-sensitive, 30 characters long, and can only use the character set A-Z,a-z,0-9");
 		}
-		if (preg_replace("/[^A-Za-z0-9]/", "", $config['notifications']['pushover']['userkey']) !== $config['notifications']['pushover']['userkey']) {
+		if (preg_replace("/[^A-Za-z0-9]/", "", config_get_path('notifications/pushover/userkey')) !== config_get_path('notifications/pushover/userkey')) {
 			$input_errors[] = gettext("User keys are case-sensitive, 30 characters long, and can only use the character set A-Z,a-z,0-9");
 		}
 		if (!array_key_exists($post['pushoversound'], $pushover_sounds)) {
 			$input_errors[] = gettext("Please select a valid Pushover notification sound.");
 		} else {
-			$config['notifications']['pushover']['sound'] = $post['pushoversound'];
+			config_set_path('notifications/pushover/sound', $post['pushoversound']);
 		}
 		if (!array_key_exists($post['pushoverpriority'], array_fill_keys(range(-2,2),''))) {
 			$input_errors[] = gettext("Please select a valid Pushover message priority.");
 		} else {
-			$config['notifications']['pushover']['priority'] = $post['pushoverpriority'];
+			config_set_path('notifications/pushover/priority', $post['pushoverpriority']);
 		}
 		if (!empty($post['pushoverretry']) && !is_numeric($post['pushoverretry'])) {
 			$input_errors[] = gettext("Please enter valid notification retry interval in seconds.");
 		} elseif (!empty($post['pushoverretry']) && ($post['pushoverretry'] < 30)) {
 			$input_errors[] = gettext("Please enter valid notification retry interval with a minimum value of 30.");
 		} else {
-			$config['notifications']['pushover']['retry'] = $post['pushoverretry'];
+			config_set_path('notifications/pushover/retry', $post['pushoverretry']);
 		}
 		if (!empty($post['pushoverexpire']) && !is_numeric($post['pushoverexpire'])) {
 			$input_errors[] = gettext("Please enter valid notification expiration time in seconds.");
 		} elseif (!empty($post['pushoverexpire']) && ($post['pushoverretry'] > 10800)) {
 			$input_errors[] = gettext("Please enter valid notification expiration time with maximum value of 10800 (3 hours).");
 		} else {
-			$config['notifications']['pushover']['expire'] = $post['pushoverexpire'];
+			config_set_path('notifications/pushover/expire', $post['pushoverexpire']);
 		}
 
 		// Slack
-		$config['notifications']['slack']['enabled'] = ($post['enable_slack'] == "yes") ? true : false;
-		$config['notifications']['slack']['api'] = $post['slack_api'];
-		$config['notifications']['slack']['channel'] = $post['slack_channel'];
+		config_set_path('notifications/slack/enabled', (($post['enable_slack'] == "yes") ? true : false));
+		config_set_path('notifications/slack/api', $post['slack_api']);
+		config_set_path('notifications/slack/channel', $post['slack_channel']);
 
-		if (preg_replace("/[^a-zA-Z0-9:\-]/", "", $config['notifications']['slack']['api']) !== $config['notifications']['slack']['api']) {
+		if (preg_replace("/[^a-zA-Z0-9:\-]/", "", config_get_path('notifications/slack/api')) !== config_get_path('notifications/slack/api')) {
 			$input_errors[] = gettext("The only special characters permitted in the Slack API string are - and :");
 		}
-		if (preg_replace("/[^a-z0-9\-_]/", "", $config['notifications']['slack']['channel']) !== $config['notifications']['slack']['channel']) {
+		if (preg_replace("/[^a-z0-9\-_]/", "", config_get_path('notifications/slack/channel')) !== config_get_path('notifications/slack/channel')) {
 			$input_errors[] = gettext("The Slack Channel name may only contain lowercase letters, numbers, hyphens, and underscores.");
 		}
-		if (strlen($config['notifications']['slack']['channel']) > 80) {
+		if (strlen(config_get_path('notifications/slack/channel')) > 80) {
 			$input_errors[] = gettext("The Slack Channel name must be 80 characters or less.");
 		}
 

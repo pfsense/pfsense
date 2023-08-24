@@ -68,6 +68,10 @@ require_once("/etc/inc/rrd.inc");
 echo ".";
 require_once("/etc/inc/pfsense-utils.inc");
 echo ".";
+require_once("/etc/inc/notices.inc");
+echo ".";
+/* Setup notice queues */
+notices_setup();
 
 /* get system memory amount */
 $memory = get_memory();
@@ -419,7 +423,6 @@ if ($config['system']['afterbootupshellcmd'] <> "") {
 }
 
 if ($physmem < $g['minimum_ram_warning']) {
-	require_once("/etc/inc/notices.inc");
 	file_notice("{$g['product_label']}MemoryRequirements", "{$g['product_label']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	set_sysctl(array(
 		"net.inet.tcp.recvspace" => "4096",
@@ -428,7 +431,6 @@ if ($physmem < $g['minimum_ram_warning']) {
 }
 
 if (file_exists("/conf/ram_disks_failed")) {
-	require_once("/etc/inc/notices.inc");
 	file_notice("RAM Disks", "RAM disk creation failed. Reverted to traditional storage. Check RAM disk sizes.", "RAM Disks");
 }
 

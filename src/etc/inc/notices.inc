@@ -26,7 +26,12 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("led.inc");
 
-$notice_path = g_get('tmp_path') . '/notices';
+global $notice_root, $notice_path, $notice_queue, $notice_last;
+$notice_root  = g_get('tmp_path') . '/notices';
+$notice_path  = $notice_root . '/notices.serial';
+$notice_queue = $notice_root . '/smtp.queue';
+$notice_last  = $notice_root . '/smtp.last';
+
 global $smtp_authentication_mechanisms;
 $smtp_authentication_mechanisms = array(
 	'PLAIN' => 'PLAIN',
@@ -65,6 +70,34 @@ $pushover_sounds = array(
 	'vibrate' => 'Vibrate only',
 	'none' => 'None (silent)');
 
+/****f* notices/notices_setup
+ * NAME
+ *   notices_setup
+ * INPUTS
+ *   None
+ * RESULT
+ *   Sets up notice queues in such a way that any local daemon/user can
+ *   submit notification messages.
+ ******/
+function notices_setup() {
+	global $notice_root, $notice_path, $notice_queue, $notice_last;
+
+	/* Setup notice queue directory */
+	if (!is_dir($notice_root) || is_link($notice_root)) {
+		@unlink_if_exists($notice_root);
+		safe_mkdir($notice_root, 0755);
+	}
+
+	/* Create notice queue files */
+	foreach ([$notice_path, $notice_queue, $notice_last] as $nf) {
+		if (!is_file($nf) || is_link($nf)) {
+			@unlink_if_exists($nf);
+			touch($nf);
+			chmod($nf, 0777);
+		}
+	}
+}
+
 /****f* notices/file_notice
  * NAME
  *   file_notice
@@ -83,8 +116,9 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	 *	       0 = informational, 1 = warning, 2 = error, etc. This may also be arbitrary,
 	 */
 	global $notice_path;
+	notices_setup();
 	if (!$queue = get_notices()) {
-		$queue = array();
+		$queue = [];
 	}
 	$queuekey = time();
 	$toqueue = array(
@@ -128,10 +162,11 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
  *   Returns a specific notices text
  ******/
 function get_notices($category = "all") {
-	global $g;
+	global $notice_path;
+	notices_setup();
 
-	if (file_exists("{$g['tmp_path']}/notices")) {
-		$queue = unserialize(file_get_contents("{$g['tmp_path']}/notices"));
+	if (file_exists($notice_path)) {
+		$queue = unserialize(file_get_contents($notice_path));
 		if (!$queue) {
 			return false;
 		}
@@ -160,6 +195,7 @@ function get_notices($category = "all") {
  ******/
 function close_notice($id) {
 	global $notice_path;
+	notices_setup();
 	require_once("util.inc");
 	/* soekris */
 	if (file_exists("/dev/led/error")) {
@@ -167,12 +203,13 @@ function close_notice($id) {
 	}
 	/* wrap & alix */
 	led_normalize();
-	$ids = array();
+	$ids = [];
 	if (!$notices = get_notices()) {
 		return;
 	}
 	if ($id == "all") {
-		unlink_if_exists($notice_path);
+		@file_put_contents($notice_path, '');
+		notices_setup();
 		return;
 	}
 	foreach (array_keys($notices) as $time) {
@@ -195,33 +232,11 @@ function close_notice($id) {
 		fwrite($queueout, serialize($notices));
 		fclose($queueout);
 	} else {
-		unlink_if_exists($notice_path);
+		@file_put_contents($notice_path, '');
+		notices_setup();
 	}
 
 	return;
-}
-
-/****f* notices/dump_xml_notices
- * NAME
- *   dump_xml_notices
- * INPUTS
- *	 NONE
- * RESULT
- *   Outputs notices in XML formatted text
- ******/
-function dump_xml_notices() {
-	require_once("xmlparse.inc");
-	global $notice_path, $listtags;
-	$listtags[] = 'notice';
-	if (!$notices = get_notices()) {
-		return;
-	}
-	foreach ($notices as $time => $notice) {
-		$notice['time'] = $time;
-		$toput['notice'][] = $notice;
-	}
-	$xml = dump_xml_config($toput, 'notices');
-	return $xml;
 }
 
 /****f* notices/are_notices_pending
@@ -234,30 +249,37 @@ function dump_xml_notices() {
  ******/
 function are_notices_pending($category = "all") {
 	global $notice_path;
-	if (file_exists($notice_path)) {
-		return true;
-	}
-	return false;
+	notices_setup();
+	return file_exists($notice_path) && (filesize($notice_path) > 0);
 }
 
 function notices_sendqueue() {
-	global $g;
+	global $notice_queue;
+	notices_setup();
 	$nothing_done_count = 0;
-	$messagequeue = array();
+	$messagequeue = [];
 
 	while(true) {
 		$nothing_done_count++;
 		$smtpcount = 0;
-		$messages = array();
-		if (file_exists("{$g['vardb_path']}/notifyqueue.messages") &&
-		    is_writable("{$g['vardb_path']}/notifyqueue.messages")) {
+		$messages = [];
+		if (is_file($notice_queue) &&
+		    is_writable($notice_queue)) {
 			$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
-			$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
-			$messagequeue = $messages;
-			$messages['mails']['item'] = array(); // clear all items to be send
-			$ret = file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
-			if ($ret === false) {
-				log_error("ERROR: Failed to write notify message queue!");
+			$messages = unserialize(file_get_contents($notice_queue));
+			if ($messages &&
+			    is_array($messages) &&
+			    !empty($messages)) {
+				$messagequeue = $messages;
+				/* Empty message queue */
+				$messages = ['mails' => ['item' => []]];
+				$ret = @file_put_contents($notice_queue, serialize($messages));
+				if ($ret === false) {
+					log_error("ERROR: Failed to write notify message queue!");
+					return;
+				}
+			} else {
+				/* No messages in queue, nothing to do */
 				return;
 			}
 			unset($messages);
@@ -265,58 +287,70 @@ function notices_sendqueue() {
 			/* Queue does not exist or is not writable, so no action can be taken
 			 * https://redmine.pfsense.org/issues/14031
 			 */
+			log_error("SMTP queue does not exist or is not writable.");
 			return;
 		}
 		// clear lock before trying to send messages, so new one's can be added
 		unlock($notifyqueue_lck);
 
-		if (is_array($messagequeue['mails']['item'])) {
-			$smtpmessage = "";
-			foreach($messagequeue['mails']['item'] as $mail) {
-				switch ($mail['type']) {
-					case 'mail':
-						$smtpcount++;
-						$smtpmessage .= "\r\n" . date("G:i:s",$mail['time']) . " " . $mail['msg'];
-						break;
-					default:
-						break;
-				}
+		$smtpmessage = "";
+		foreach(array_get_path($messagequeue, 'mails/item', []) as $mail) {
+			if (!is_array($mail) || empty($mail)) {
+				continue;
 			}
-			if (!empty($smtpmessage)) {
-				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smtpcount);
-				$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
-				$nothing_done_count = 0;
-				notify_via_smtp($smtpmessageheader . $smtpmessage, true);
+			switch ($mail['type']) {
+				case 'mail':
+					$smtpcount++;
+					$smtpmessage .= "\r\n" . date("H:i:s", $mail['time']) . " " . $mail['msg'] . "\r\n";
+					break;
+				default:
+					break;
 			}
 		}
-		if ($nothing_done_count > 6) {
+		if (!empty($smtpmessage)) {
+			$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smtpcount);
+			$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
+			$nothing_done_count = 0;
+			notify_via_smtp($smtpmessage, true, $smtpmessageheader);
+		}
+
+		/* First batch may already be sent, sleep a bit before checking
+		 * again to send additional larger batches. */
+		if ($nothing_done_count > 3) {
 			break;
 		} else {
-			sleep(10);
+			sleep(30);
 		}
 	}
 }
 
 function notify_via_queue_add($message, $type='mail') {
-	global $g;
-	$mail = array();
+	global $notice_queue;
+	notices_setup();
+	$mail = [];
 	$mail['time'] = time();
 	$mail['type'] = $type;
 	$mail['msg'] = $message;
 	$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
-	$messages = array();
-	if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
-		if (!is_writable("{$g['vardb_path']}/notifyqueue.messages")) {
+	$messages = [];
+	if (is_file($notice_queue)) {
+		if (!is_writable($notice_queue)) {
 			/* Cannot write to notify queue, so exit early
 			 * https://redmine.pfsense.org/issues/14031
 			 */
+			log_error("Cannot write to the notify queue.");
 			return;
 		}
-		$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
+		$queue = unserialize(file_get_contents($notice_queue));
+		if ($queue) {
+			$messages = $queue;
+		}
 	}
 	if (is_array($messages)) {
-		$messages['mails']['item'][] = $mail;
-		$ret = file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+		$msg = array_get_path($messages, 'mails/item', []);
+		$msg[] = $mail;
+		array_set_path($messages, 'mails/item', $msg);
+		$ret = @file_put_contents($notice_queue, serialize($messages));
 		if ($ret === false) {
 			log_error("ERROR: Failed to write notify message queue!");
 			return;
@@ -336,88 +370,108 @@ function notify_via_queue_add($message, $type='mail') {
  * RESULT
  *   returns true if message was sent
  ******/
-function notify_via_smtp($message, $force = false) {
-	global $config, $g;
+function notify_via_smtp($message, $force = false, $header = "") {
+	global $notice_last;
 	if (platform_booting()) {
 		return;
 	}
 
-	if (isset($config['notifications']['smtp']['disable']) && !$force) {
+	if ((config_path_enabled('notifications/smtp', 'disable') && !$force) ||
+	    empty(config_get_path('notifications/smtp/ipaddress')) ||
+	    empty(config_get_path('notifications/smtp/notifyemailaddress'))) {
 		return;
 	}
 
-	/* Do NOT send the same message twice, except if $force is true */
-	if (!$force && file_exists("/var/db/notices_lastmsg.txt")) {
-		$lastmsg = trim(file_get_contents("/var/db/notices_lastmsg.txt"));
-		if ($lastmsg == $message) {
-			return;
+	notices_setup();
+
+	/* Try not to send the same message twice, except if $force is true */
+	$message = trim($message);
+
+	$repeat = false;
+	if (!$force &&
+	    file_exists($notice_last) &&
+	    (filesize($notice_last) > 0)) {
+		$lastmsg = trim(file_get_contents($notice_last));
+
+		/* Trim leading time from previous stored message */
+		$msgmatches = [];
+		if (preg_match('/^(([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]) (.*)/', $lastmsg, $msgmatches)) {
+			$lastmsg = $msgmatches[3];
+		}
+
+		/* Trim leading time from current message (if present) */
+		$msgmatches = [];
+		if (preg_match('/^(([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]) (.*)/', $message, $msgmatches)) {
+			/* Compare text without leading time, but don't change original copy */
+			if ($lastmsg == $msgmatches[3]) {
+				$repeat = true;
+			}
+		} elseif ($lastmsg == $message) {
+			$repeat = true;
 		}
 	}
 
+	/* Log that we have suppressed a repeat message
+	 * TODO: Maybe track repeats and send every X times.
+	 */
+	if ($repeat) {
+		log_error(gettext("Suppressing repeat e-mail notification message."));
+		return;
+	}
+
 	/* Store last message sent to avoid spamming */
-	@file_put_contents("/var/db/notices_lastmsg.txt", $message);
+	@file_put_contents($notice_last, $message);
 	if (!$force) {
-		notify_via_queue_add($message, 'mail');
+		notify_via_queue_add($header . $message, 'mail');
 		$ret = true;
 	} else {
-		$ret = send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
+		$ret = send_smtp_message($header . $message,
+					config_get_path('system/hostname') . '.' .
+					config_get_path('system/domain') .
+					" - Notification",
+					$force);
 	}
 
 	return $ret;
 }
 
 function send_smtp_message($message, $subject = "(no subject)", $force = false) {
-	global $config, $g;
 	require_once("Mail.php");
 
-	if (isset($config['notifications']['smtp']['disable']) && !$force) {
+	/* Bail if disabled (and not forced) or if config is incomplete */
+	if ((config_path_enabled('notifications/smtp', 'disable') && !$force) ||
+	    empty(config_get_path('notifications/smtp/ipaddress')) ||
+	    empty(config_get_path('notifications/smtp/notifyemailaddress'))) {
 		return;
 	}
 
-	if (!$config['notifications']['smtp']['ipaddress']) {
-		return;
-	}
-
-	if (!$config['notifications']['smtp']['notifyemailaddress']) {
-		return;
-	}
-
-	$to = config_get_path('notifications/smtp/notifyemailaddress');
-
-	if (empty($config['notifications']['smtp']['username']) ||
-	    empty($config['notifications']['smtp']['password'])) {
+	if (empty(config_get_path('notifications/smtp/username')) ||
+	    empty(config_get_path('notifications/smtp/password'))) {
 		$auth = false;
 		$username = '';
 		$password = '';
 	} else {
-		$auth = isset($config['notifications']['smtp']['authentication_mechanism'])
-		    ? $config['notifications']['smtp']['authentication_mechanism']
-		    : 'PLAIN';
+		$auth = config_get_path('notifications/smtp/authentication_mechanism', 'PLAIN');
 		$username = config_get_path('notifications/smtp/username');
 		$password = config_get_path('notifications/smtp/password');
 	}
 
 	$params = array(
-		'host' => (isset($config['notifications']['smtp']['ssl'])
+		'host' => (config_path_enabled('notifications/smtp', 'ssl')
 		    ? 'ssl://'
 		    : '')
-		    . $config['notifications']['smtp']['ipaddress'],
-		'port' => empty($config['notifications']['smtp']['port'])
-		    ? 25
-		    : $config['notifications']['smtp']['port'],
+		    . config_get_path('notifications/smtp/ipaddress'),
+		'port' => config_get_path('notifications/smtp/port', 25),
 		'auth' => $auth,
 		'username' => $username,
 		'password' => $password,
-		'localhost' => $config['system']['hostname'] . "." .
-		    $config['system']['domain'],
-		'timeout' => !empty($config['notifications']['smtp']['timeout'])
-		    ? $config['notifications']['smtp']['timeout']
-		    : 20,
+		'localhost' => config_get_path('system/hostname') . '.' . config_get_path('system/domain'),
+		'timeout' => config_get_path('notifications/smtp/timeout', 20),
 		'debug' => false,
 		'persist' => false
 	);
 
-	if ($config['notifications']['smtp']['sslvalidate'] == "disabled") {
+	if (config_get_path('notifications/smtp/sslvalidate') == "disabled") {
 		$params['socket_options'] = array(
 			'ssl' => array(
 				'verify_peer_name' => false,
@@ -425,11 +479,13 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		));
 	}
 
-	if ($config['notifications']['smtp']['fromaddress']) {
+	if (!empty(config_get_path('notifications/smtp/fromaddress'))) {
 		$from = config_get_path('notifications/smtp/fromaddress');
 	} else {
-		$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
+		$from = "pfsense@" . config_get_path('system/hostname') . '.' . config_get_path('system/domain');
 	}
+
+	$to = config_get_path('notifications/smtp/notifyemailaddress');
 
 	$headers = array(
 		"From"    => $from,
@@ -469,20 +525,19 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
  ******/
 
 function notify_via_telegram($message, $force = false) {
-	global $config;
-	if ((!isset($config['notifications']['telegram']['enabled']) && (!$force))
-	    || !$config['notifications']['telegram']['api']
-	    || !$config['notifications']['telegram']['chatid']) {
+	if ((!config_path_enabled('notifications/telegram', 'enabled') && (!$force)) ||
+	    empty(config_get_path('notifications/telegram/api')) ||
+	    empty(config_get_path('notifications/telegram/chatid'))) {
 		if ($force) {
 			return gettext("Unable to test Telegram notification without both API Key & Chat ID set");
 		}
 		return;
 	}
 
-	$url = "https://api.telegram.org/bot{$config['notifications']['telegram']['api']}/sendMessage?";
+	$url = "https://api.telegram.org/bot" . config_get_path('notifications/telegram/api') . "/sendMessage?";
 	$data = array(
-		"chat_id" => $config['notifications']['telegram']['chatid'],
-		"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
+		"chat_id" => config_get_path('notifications/telegram/chatid'),
+		"text" => config_get_path('system/hostname') . '.' . config_get_path('system/domain') . "\n{$message}"
 	);
 	$result = json_decode(curl_post_notification($url . http_build_query($data)), true);
 	if (is_array($result)) {
@@ -509,28 +564,28 @@ function notify_via_telegram($message, $force = false) {
  ******/
 
 function notify_via_pushover($message, $force = false) {
-	global $config;
-	if ((!isset($config['notifications']['pushover']['enabled']) && (!$force))
-	    || !$config['notifications']['pushover']['apikey']
-	    || !$config['notifications']['pushover']['userkey']) {
+	if ((!config_path_enabled('notifications/pushover', 'enabled') && (!$force)) ||
+	    empty(config_get_path('notifications/pushover/apikey')) ||
+	    empty(config_get_path('notifications/pushover/userkey'))) {
 		if ($force) {
 			return gettext("Unable to test Pushover notification without both API Key & User Key set");
 		}
 		return;
 	}
-	if (strcasecmp($config['notifications']['pushover']['sound'], 'devicedefault') == 0) {
+
+	if (strcasecmp(config_get_path('notifications/pushover/sound'), 'devicedefault') == 0) {
 		config_del_path('notifications/pushover/sound');
 	}
 
 	$url = "https://api.pushover.net/1/messages.json";
 	$data = array(
-		"token" => $config['notifications']['pushover']['apikey'],
-		"user" => $config['notifications']['pushover']['userkey'],
-		"sound" => $config['notifications']['pushover']['sound'],
-		"priority" => $config['notifications']['pushover']['priority'],
-		"retry" => $config['notifications']['pushover']['retry'],
-		"expire" => $config['notifications']['pushover']['expire'],
-		"message" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
+		"token"    => config_get_path('notifications/pushover/apikey'),
+		"user"     => config_get_path('notifications/pushover/userkey'),
+		"sound"    => config_get_path('notifications/pushover/sound'),
+		"priority" => config_get_path('notifications/pushover/priority'),
+		"retry"    => config_get_path('notifications/pushover/retry'),
+		"expire"   => config_get_path('notifications/pushover/expire'),
+		"message"  => config_get_path('system/hostname') . '.' . config_get_path('system/domain') . "\n{$message}"
 	);
 	$result = json_decode(curl_post_notification($url, $data), true);
 	if (is_array($result)) {
@@ -557,10 +612,9 @@ function notify_via_pushover($message, $force = false) {
  ******/
 
 function notify_via_slack($message, $force = false) {
-	global $config;
-	if ((!isset($config['notifications']['slack']['enabled']) && (!$force))
-	    || !$config['notifications']['slack']['api']
-	    || !$config['notifications']['slack']['channel']) {
+	if ((!config_path_enabled('notifications/slack', 'enabled') && (!$force)) ||
+	    empty(config_get_path('notifications/slack/api')) ||
+	    empty(config_get_path('notifications/slack/channel'))) {
 		if ($force) {
 			return gettext("Unable to test Slack notification without both API Key & Channel set");
 		}
@@ -569,10 +623,10 @@ function notify_via_slack($message, $force = false) {
 
 	$url = "https://slack.com/api/chat.postMessage";
 	$data = array(
-		"token" => $config['notifications']['slack']['api'],
-		"channel" => "#" . $config['notifications']['slack']['channel'],
-		"text" => $message,
-		"username" => "{$config['system']['hostname']}.{$config['system']['domain']}"
+		"token"    => config_get_path('notifications/slack/api'),
+		"channel"  => "#" . config_get_path('notifications/slack/channel'),
+		"text"     => $message,
+		"username" => config_get_path('system/hostname') . '.' . config_get_path('system/domain')
 	);
 	$result = json_decode(curl_post_notification($url, $data), true);
 	if (is_array($result)) {
@@ -589,7 +643,7 @@ function notify_via_slack($message, $force = false) {
 	return $err_msg;
 }
 
-function curl_post_notification($url, $data = array()) {
+function curl_post_notification($url, $data = []) {
 	$conn = curl_init($url);
 	if (!empty($data)) {
 		curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
@@ -600,7 +654,7 @@ function curl_post_notification($url, $data = array()) {
 	set_curlproxy($conn);
 	$curl_post_result = curl_exec($conn);
 	curl_close($conn);
-	return $curl_post_result;	//json encoded
+	return $curl_post_result; //json encoded
 }
 
 /* Notify via remote methods only - not via GUI. */
@@ -610,5 +664,3 @@ function notify_all_remote($msg) {
 	notify_via_pushover($msg);
 	notify_via_slack($msg);
 }
-
-?>

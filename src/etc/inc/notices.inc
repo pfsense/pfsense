@@ -301,7 +301,7 @@ function notices_sendqueue() {
 			switch ($mail['type']) {
 				case 'mail':
 					$smtpcount++;
-					$smtpmessage .= "\r\n" . date("H:i:s", $mail['time']) . " " . $mail['msg'] . "\r\n";
+					$smtpmessage .= "\r\n" . date("H:i:s", $mail['time']) . " " . $mail['msg'];
 					break;
 				default:
 					break;
@@ -309,7 +309,7 @@ function notices_sendqueue() {
 		}
 		if (!empty($smtpmessage)) {
 			$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smtpcount);
-			$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
+			$smtpmessageheader .= "\r\n" . str_repeat('=', strlen($smtpmessageheader)) . "\r\n";
 			$nothing_done_count = 0;
 			notify_via_smtp($smtpmessage, true, $smtpmessageheader);
 		}
@@ -425,7 +425,7 @@ function notify_via_smtp($message, $force = false, $header = "") {
 		notify_via_queue_add($header . $message, 'mail');
 		$ret = true;
 	} else {
-		$ret = send_smtp_message($header . $message,
+		$ret = send_smtp_message($header . "\r\n" . $message . "\r\n",
 					config_get_path('system/hostname') . '.' .
 					config_get_path('system/domain') .
 					" - Notification",

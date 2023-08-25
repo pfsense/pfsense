@@ -1649,7 +1649,7 @@ function ipsec_logging_config() {
  *   Called from ipsec_configure()
  ******/
 function ipsec_setup_strongswan() {
-	global $g, $mobile_ipsec_auth, $a_client, $aggressive_mode_psk, $ifacesuse;
+	global $g, $mobile_ipsec_auth, $aggressive_mode_psk, $ifacesuse;
 
 	/* strongswan.conf array */
 	$ssconf = array();
@@ -1769,22 +1769,22 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['plugins']['eap-radius']['eap_start'] = "no";
 		/* Activate RADIUS accounting only if it was selected on the IPsec Mobile Clients tab */
 		if ($auth_server && isset($auth_server['radius_acct_port']) &&
-		    (is_array($a_client) && ($a_client['radiusaccounting'] == "enabled"))) {
+		    (config_get_path('ipsec/client/radiusaccounting') == 'enabled')) {
 			$ssconf['charon']['plugins']['eap-radius']['accounting'] = "yes";
 			$ssconf['charon']['plugins']['eap-radius']['accounting_close_on_timeout'] = "no";
 		}
 		/* advanced parameters, see https://redmine.pfsense.org/issues/11211 */
-		if (isset($a_client['radius_retransmit_base'])) {
-			$ssconf['charon']['plugins']['eap-radius']['retransmit_base'] = $a_client['radius_retransmit_base'];
+		if (config_get_path('ipsec/client/radius_retransmit_base')) {
+			$ssconf['charon']['plugins']['eap-radius']['retransmit_base'] = config_get_path('ipsec/client/radius_retransmit_base');
 		}
-		if (isset($a_client['radius_retransmit_timeout'])) {
-			$ssconf['charon']['plugins']['eap-radius']['retransmit_timeout'] = $a_client['radius_retransmit_timeout'];
+		if (config_get_path('ipsec/client/radius_retransmit_timeout')) {
+			$ssconf['charon']['plugins']['eap-radius']['retransmit_timeout'] = config_get_path('ipsec/client/radius_retransmit_timeout');
 		}
-		if (isset($a_client['radius_retransmit_tries'])) {
-			$ssconf['charon']['plugins']['eap-radius']['retransmit_tries'] = $a_client['radius_retransmit_tries'];
+		if (config_get_path('ipsec/client/radius_retransmit_tries')) {
+			$ssconf['charon']['plugins']['eap-radius']['retransmit_tries'] = config_get_path('ipsec/client/radius_retransmit_tries');
 		}
-		if (isset($a_client['radius_sockets'])) {
-			$ssconf['charon']['plugins']['eap-radius']['sockets'] = $a_client['radius_sockets'];
+		if (config_get_path('ipsec/client/radius_sockets')) {
+			$ssconf['charon']['plugins']['eap-radius']['sockets'] = config_get_path('ipsec/client/radius_sockets');
 		}
 		$ssconf['charon']['plugins']['eap-radius']['servers'] = $radius_servers;
 	}
@@ -1794,7 +1794,7 @@ function ipsec_setup_strongswan() {
 			$ssconf['charon']['plugins']['xauth-generic'] = array();
 			$ssconf['charon']['plugins']['xauth-generic']['script'] = "/etc/inc/ipsec.auth-user.php";
 			$authcfgs = array();
-			foreach (explode(",", $a_client['user_source']) as $authcfg) {
+			foreach (explode(",", config_get_path('ipsec/client/user_source')) as $authcfg) {
 				$authcfgs[] = ($authcfg == "system") ? "Local Database" : $authcfg;
 			}
 			$ssconf['charon']['plugins']['xauth-generic']['authcfg'] = implode(",", $authcfgs);
@@ -1859,24 +1859,24 @@ function ipsec_setup_strongswan() {
 			}
 		}
 
-		if (!empty($a_client['dns_split'])) {
+		if (!empty(config_get_path('ipsec/client/dns_split'))) {
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (UNITY_SPLITDNS_NAME)";
 			$ssconf['charon']['plugins']['attr']['28675'] = config_get_path('ipsec/client/dns_split');
 			$ssconf['charon']['plugins']['attr'][] = "# Split DNS (INTERNAL_DNS_DOMAIN, RFC 8598)";
 			$ssconf['charon']['plugins']['attr']['25'] = str_replace(' ', ',', config_get_path('ipsec/client/dns_split'));
 		}
 
-		if (!empty($a_client['login_banner'])) {
+		if (!empty(config_get_path('ipsec/client/login_banner'))) {
 			$ssconf['charon']['plugins']['attr'][] = "# Login Banner";
 			$ssconf['charon']['plugins']['attr']['28672'] = config_get_path('ipsec/client/login_banner');
 		}
 
-		if (isset($a_client['save_passwd'])) {
+		if (config_path_enabled('ipsec/client', 'save_passwd')) {
 			$ssconf['charon']['plugins']['attr'][] = "# Save Xauth Password";
 			$ssconf['charon']['plugins']['attr']['28673'] = "1";
 		}
 
-		if ($a_client['pfs_group']) {
+		if (config_get_path('ipsec/client/pfs_group')) {
 			$ssconf['charon']['plugins']['attr'][] = "# Phase2 PFS Group";
 			$ssconf['charon']['plugins']['attr']['28679'] = config_get_path('ipsec/client/pfs_group');
 		}
@@ -2614,7 +2614,8 @@ function ipsec_setup_tunnels($gateways_status = false) {
 		foreach ($ph1ent['p2'] as $ph2ent) {
 			/* If this entry is disabled, or cannot be configured, skip. */
 			if (isset($ph2ent['disabled']) ||
-			    (isset($ph2ent['mobile']) && !isset($a_client['enable']))) {
+			    (isset($ph2ent['mobile']) &&
+			    !config_path_enabled('ipsec/client'))) {
 				continue;
 			}
 			$child = array();
@@ -2660,8 +2661,8 @@ function ipsec_setup_tunnels($gateways_status = false) {
 
 				if (!isset($ph2ent['mobile'])) {
 					$remote_ts = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
-				} else if (!empty($a_client['pool_address'])) {
-					$remote_ts = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+				} elseif (!empty(config_get_path('ipsec/client/pool_address'))) {
+					$remote_ts = config_get_path('ipsec/client/pool_address') . '/' . config_get_path('ipsec/client/pool_netbits');
 				}
 
 			} elseif ($ph2ent['mode'] == 'vti') {
@@ -2707,8 +2708,9 @@ function ipsec_setup_tunnels($gateways_status = false) {
 
 			/* If a PFS group is configured on the Mobile Clients tab,
 			 * and this is a mobile P2, use it here. */
-			if (isset($a_client['pfs_group']) && isset($ph2ent['mobile'])) {
-				$ph2ent['pfsgroup'] = $a_client['pfs_group'];
+			if (config_get_path('ipsec/client/pfs_group') &&
+			    isset($ph2ent['mobile'])) {
+				$ph2ent['pfsgroup'] = config_get_path('ipsec/client/pfs_group');
 			}
 
 			$reqids[] = $ph2ent['reqid'];
@@ -2816,17 +2818,18 @@ function ipsec_setup_tunnels($gateways_status = false) {
 
 		$pools = array();
 		if (isset($ph1ent['mobile'])) {
-			if (($ph1ent['authentication_method'] == 'eap-radius') && 
-			    empty($a_client['pool_address']) && empty($a_client['pool_address_v6'])) {
+			if (($ph1ent['authentication_method'] == 'eap-radius') &&
+			    empty(config_get_path('ipsec/client/pool_address')) &&
+			    empty(config_get_path('ipsec/client/pool_address_v6'))) {
 				$pools[] = "radius";
 			} else {
-				if (!empty($a_client['pool_address'])) {
+				if (!empty(config_get_path('ipsec/client/pool_address'))) {
 					$pools[] = "mobile-pool-v4";
 				}
-				if (!empty($a_client['pool_address_v6'])) {
+				if (!empty(config_get_path('ipsec/client/pool_address_v6'))) {
 					$pools[] = "mobile-pool-v6";
 				}
-				if (isset($a_client['radius_ip_priority_enable'])) {
+				if (config_path_enabled('ipsec/client', 'radius_ip_priority_enable')) {
 					$pools[] .= "radius";
 				}
 			}
@@ -3158,8 +3161,6 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 	$a_phase1 = config_get_path('ipsec/phase1');
 	init_config_arr(array('ipsec', 'phase2'));
 	$a_phase2 = config_get_path('ipsec/phase2');
-	init_config_arr(array('ipsec', 'client'));
-	$a_client = config_get_path('ipsec/client');
 
 	$mobile_configured = false;
 

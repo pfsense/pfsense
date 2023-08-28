@@ -467,7 +467,6 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");
 	fwrite($fd, "/usr/sbin/chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
-	fwrite($fd, "/sbin/mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 
 	/* only mount devfs if not already mounted */
 	fwrite($fd, "/bin/df {$g['dhcpd_chroot_path']}/dev | /usr/bin/grep -q {$g['dhcpd_chroot_path']}/dev || /sbin/mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");

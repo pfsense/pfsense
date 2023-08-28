@@ -2495,7 +2495,22 @@ function filter_nat_rules_generate() {
 				$poolopts = "source-hash ".$obent['source_hash_key'];
 			}
 
-			// ports are included in the source/destination string
+			// ports are included in the source/destination string, so validate the address family here
+			if (empty($obent['ipprotocol'])) {
+				$inet4 = $inet6 = false;
+				if (is_v4($obent['source']['network']) || is_v4($obent['destination']['network']) || is_v4($obtarget)) {
+					$inet4 = true;
+				}
+				if (is_v6($obent['source']['network']) || is_v6($obent['destination']['network']) || is_v6($obtarget)) {
+					$inet6 = true;
+				}
+				if ($inet4 && $inet6) {
+					$natrules .= "# conflicting ipv4/ipv6 settings in nat rule: {$descr}";
+					continue;
+				} elseif ($inet4 || $inet6) {
+					$obent['ipprotocol'] = ($inet4) ? 'inet' : 'inet6';
+				}
+			}
 			$natrules .= filter_nat_rules_generate_if(
 				$obent['interface'],
 				$descr,

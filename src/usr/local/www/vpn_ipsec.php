@@ -39,6 +39,8 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
+global $p1_authentication_methods;
+
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
 
@@ -303,7 +305,7 @@ if (is_subsystem_dirty('ipsec')) {
 						<th><?=gettext("ID")?></th>
 						<th><?=gettext("IKE")?></th>
 						<th><?=gettext("Remote Gateway")?></th>
-						<th><?=gettext("Mode")?></th>
+						<th><?=gettext("Auth")?>/<?=gettext("Mode")?></th>
 						<th><?=gettext("P1 Protocol")?></th>
 						<th><?=gettext("P1 Transforms")?></th>
 						<th><?=gettext("P1 DH-Group")?></th>
@@ -378,18 +380,22 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 			if (!isset($ph1ent['mobile'])) {
 				echo $if."<br />".$ph1ent['remote-gateway'];
 			} else {
-				echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
+				echo $if."<br /><strong>" . gettext("Mobile Clients") . "</strong>";
 			}
 ?>
 						</td>
 						<td id="frd<?=$i?>">
-					<?=$spans?>
 					<?php
+					$authtype = array_get_path($p1_authentication_methods, "{$ph1ent['authentication_method']}/name", '');
+					if (!empty($authtype)) {
+						echo "{$authtype}<br/>";
+					}
 					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1" || $ph1ent['iketype'] == "auto") {
 						echo "{$ph1ent['mode']}";
+					} else {
+						echo "-";
 					}
 					?>
-					<?=$spane?>
 				</td>
 				<td id="frd<?=$i?>">
 <?php

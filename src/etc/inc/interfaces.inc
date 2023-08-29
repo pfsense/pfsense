@@ -7504,7 +7504,14 @@ function get_interface_addresses($interface) {
 	}
 
 	if ($v6addrs) {
-		$v6addr = array_shift($v6addrs);
+		// use the first IPv6 GUA address if one exists, otherwise the first address
+		$v6addr = $v6addrs[array_key_first($v6addrs)];
+		foreach ($v6addrs as $addr) {
+			if (is_v6gua($addr['addr'])) {
+				$v6addr = $addr;
+				break;
+			}
+		}
 		$ifaddrs['ipaddr6'] = $v6addr['addr'];
 		foreach(array("subnetbits", "tunnel") as $key) {
 			if (array_key_exists($key, $v6addr)) {

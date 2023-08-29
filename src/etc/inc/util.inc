@@ -918,6 +918,27 @@ function is_v6($ip_or_subnet) {
 	return is_ipaddrv6($ip_or_subnet) || is_subnetv6($ip_or_subnet);
 }
 
+/**
+ * Checks if an IPv6 address is a Global Unicast Address (GUA).
+ * 
+ * @param string $ip_or_subnet IPv6 address or subnet
+ * 
+ * @return bool
+ */
+function is_v6gua(string $ip_or_subnet): bool {
+	if (is_subnet($ip_or_subnet) == 6) {
+		list($ip_or_subnet) = explode('/', $ip_or_subnet);
+	}
+	if (!is_ipaddrv6($ip_or_subnet)) {
+		return false;
+	}
+	if (ip_in_subnet($ip_or_subnet, '2000::/3')) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 /* same as is_subnet() but accepts IPv4 only */
 function is_subnetv4($subnet) {
 	return (is_subnet($subnet) == 4);

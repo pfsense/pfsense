@@ -50,6 +50,7 @@ $pconfig['prefetch'] = config_path_enabled('unbound', 'prefetch');
 $pconfig['prefetchkey'] = config_path_enabled('unbound', 'prefetchkey');
 $pconfig['dnssecstripped'] = config_path_enabled('unbound', 'dnssecstripped');
 $pconfig['dnsrecordcache'] = config_path_enabled('unbound', 'dnsrecordcache');
+$pconfig['sock_queue_timeout'] = config_get_path('unbound/sock_queue_timeout', 0);
 $pconfig['aggressivensec'] = config_path_enabled('unbound', 'aggressivensec');
 
 $pconfig['msgcachesize'] = config_get_path('unbound/msgcachesize');
@@ -177,6 +178,7 @@ if ($_POST) {
 			} else {
 				config_del_path('unbound/dnsrecordcache');
 			}
+			config_set_path('unbound/sock_queue_timeout', $_POST['sock_queue_timeout']);
 			if (isset($_POST['aggressivensec'])) {
 				config_set_path('unbound/aggressivensec', true);
 			} else {
@@ -319,6 +321,16 @@ $section->addInput(new Form_Checkbox(
 	'Serve cache records even with TTL of 0',
 	$pconfig['dnsrecordcache']
 ))->setHelp('When enabled, allows unbound to serve one query even with a TTL of 0, if TTL is 0 then new record will be requested in the background when the cache is served to ensure cache is updated without latency on service of the DNS request.');
+
+$section->addInput(new Form_Input(
+	'sock_queue_timeout',
+	'Drop Old UDP Queries',
+	null,
+	$pconfig['sock_queue_timeout'],
+	array('type' => 'number', 'min' => 0, 'step' => 1)
+))->setHelp('Timeout in seconds before dropping UDP queries waiting in the ' .
+            'socket buffer. Queries that have waited for a long time don\'t ' .
+            'need to be processed and can be dropped. Disabled by default (0).');
 
 $section->addInput(new Form_Checkbox(
 	'aggressivensec',

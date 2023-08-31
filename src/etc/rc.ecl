@@ -47,19 +47,30 @@ function get_disk_slices($disk) {
 }
 
 function get_disks() {
-	global $g, $debug;
-	$disks_array = array();
-	$disks_s = explode(" ", get_single_sysctl("kern.disks"));
-	foreach ($disks_s as $disk) {
-		/* Ignore the flash devices (ARM). */
-		if (strstr($disk, "flash")) {
-			continue;
-		}
-		if (trim($disk)) {
-			$disks_array[] = $disk;
-		}
-	}
-	return $disks_array;
+    global $g, $debug;
+    $disks_array = array();
+
+    // Get all disks from sysctl
+    $disks_s = explode(" ", get_single_sysctl("kern.disks"));
+
+    // Append CD/DVD drives by checking dmesg for CDROM entries
+    $cd_drives_lines = explode("\n", trim(shell_exec("dmesg | grep 'CDROM' | cut -d ':' -f1")));
+    foreach ($cd_drives_lines as $line) {
+        if (preg_match('/^(cd\d+)/', $line, $matches)) {
+            $disks_s[] = $matches[1];
+        }
+    }
+
+    foreach ($disks_s as $disk) {
+        /* Ignore the flash devices (ARM). */
+        if (strstr($disk, "flash")) {
+            continue;
+        }
+        if (trim($disk)) {
+            $disks_array[] = $disk;
+        }
+    }
+    return $disks_array;
 }
 
 function discover_config($mountpoint) {
@@ -139,11 +150,13 @@ function find_config_xml() {
 					continue;
 				}
 				echo " $slice";
+
 				// First try msdos fs
 				if ($debug) {
 					echo "\n/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 				}
 				$result = exec("/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+
 				// Next try regular fs (ufs)
 				if (!$result) {
 					if ($debug) {
@@ -151,6 +164,23 @@ function find_config_xml() {
 					}
 					$result = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
 				}
+
+				// Then try iso9660 (common, standard CD-ROM format)
+				if (!$result) {
+					if ($debug) {
+						echo "\n/sbin/mount -t iso9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
+					}
+					$result = exec("/sbin/mount -t iso9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				}
+
+				// Lastly, try udf (common for modern DVDs and some CDs)
+				if (!$result) {
+					if ($debug) {
+						echo "\n/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
+					}
+					$result = exec("/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				}
+
 				$mounted = trim(exec("/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep '/tmp/mnt/cf' | /usr/bin/wc -l"));
 				if ($debug) {
 					echo "\nmounted: $mounted ";

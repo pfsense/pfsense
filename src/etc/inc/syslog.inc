@@ -235,7 +235,7 @@ EOD;
 
 	$syslogconf .= "!*\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "auth.*;authpriv.* 						{$g['varlog_path']}/auth.log\n";
+		$syslogconf .= "auth.*;authpriv.* 					{$g['varlog_path']}/auth.log\n";
 	}
 	if (config_path_enabled('syslog', 'auth')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
@@ -251,7 +251,7 @@ EOD;
 
 	$syslogconf .= "!ntp,ntpd,ntpdate\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/ntpd.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/ntpd.log\n";
 	}
 	if (config_path_enabled('syslog', 'ntpd')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -259,7 +259,7 @@ EOD;
 
 	$syslogconf .= "!ppp\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/ppp.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/ppp.log\n";
 	}
 	if (config_path_enabled('syslog', 'ppp')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -267,7 +267,7 @@ EOD;
 
 	$syslogconf .= "!poes\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/poes.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/poes.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -275,7 +275,7 @@ EOD;
 
 	$syslogconf .= "!l2tps\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/l2tps.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/l2tps.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -283,7 +283,7 @@ EOD;
 
 	$syslogconf .= "!charon,ipsec_starter\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/ipsec.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/ipsec.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -291,7 +291,7 @@ EOD;
 
 	$syslogconf .= "!openvpn\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/openvpn.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/openvpn.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -299,7 +299,7 @@ EOD;
 
 	$syslogconf .= "!dpinger\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/gateways.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/gateways.log\n";
 	}
 	if (config_path_enabled('syslog', 'dpinger')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -307,7 +307,7 @@ EOD;
 
 	$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/resolver.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/resolver.log\n";
 	}
 	if (config_path_enabled('syslog', 'resolver')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -315,7 +315,7 @@ EOD;
 
 	$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6,kea-dhcp4,kea-dhcp6\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/dhcpd.log\n";
+		$syslogconf .= "*.*									{$g['varlog_path']}/dhcpd.log\n";
 	}
 	if (config_path_enabled('syslog', 'dhcp')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -351,7 +351,7 @@ EOD;
 local3.*							{$g['varlog_path']}/vpn.log
 local5.*							{$g['varlog_path']}/nginx.log
 *.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log
-auth.info;authpriv.info 					|exec /usr/local/sbin/sshguard -i /var/run/sshguard.pid
+auth.info;authpriv.info 			|exec /usr/local/sbin/sshguard -i /var/run/sshguard.pid
 *.emerg								*
 
 EOD;

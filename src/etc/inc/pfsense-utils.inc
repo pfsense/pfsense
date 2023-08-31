@@ -1170,7 +1170,9 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 		    "debug.ddb.capture.bufsize",
 		    "hint.uart.0.flags",
 		    "hint.uart.1.flags",
-		    "net.link.ifqmaxlen"
+		    "net.link.ifqmaxlen",
+		    "hint.hwpstate_intel.0.disabled",
+		    "machdep.hwpstate_pkg_ctrl",
 		));
 	}
 	foreach ($input_split as $line) {
@@ -1302,6 +1304,12 @@ function setup_loader_settings($path = "", $upgrade = false) {
 
 	/* Set maximum send queue length. */
 	$data[] = 'net.link.ifqmaxlen="128"';
+
+	/* Speed Shift / hwpstate */
+	if (config_get_path('system/hwpstate', 'enabled') == 'disabled') {
+		$data[] = 'hint.hwpstate_intel.0.disabled="1"';
+	}
+	$data[] = 'machdep.hwpstate_pkg_ctrl="' . config_get_path('system/hwpstate_control_level', get_single_sysctl('machdep.hwpstate_pkg_ctrl')) . '"';
 
 	safe_write_file($loader_conf_file, $data);
 

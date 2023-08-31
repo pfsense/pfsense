@@ -28,6 +28,52 @@
 require_once('config.lib.inc');
 require_once('syslog.inc');
 
+function system_hwpstate_active() {
+	return (get_single_sysctl('dev.cpufreq.0.freq_driver') == 'hwpstate_intel0');
+}
+
+function system_hwpstate_disabled() {
+	/* Is hwpstate disabled? */
+	$hwpstate_disabled_kenv = [];
+	exec('/bin/kenv -q hint.hwpstate_intel.0.disabled 2>/dev/null', $hwpstate_disabled_kenv);
+	if (empty($hwpstate_disabled_kenv) || !is_array($hwpstate_disabled_kenv)) {
+		/* Invalid result, so assume not explicitly disabled */
+		$hwpstate_disabled = false;
+	} else {
+		/* Compare value of kenv variable to 1 (disabled) */
+		$hwpstate_disabled = (array_shift($hwpstate_disabled_kenv) == '1');
+	}
+	return $hwpstate_disabled;
+}
+
+/*
+ * Attempt to determine if this system supports hwpstate power control.
+ * Three possible outcomes: No support, Disabled, Active
+ */
+function system_has_hwpstate() {
+	if (system_hwpstate_active()) {
+		/* Active, so system has hwpstate support */
+		return true;
+	} elseif (system_hwpstate_disabled()) {
+		/* Disabled via loader tunable so there is no way to know if
+		 * it is disabled or lacking support, so assume disabled. */
+		return -1;
+	} else {
+		/* Not active nor disabled, so no hardware support */
+		return false;
+	}
+}
+
+function system_hwpstate_setepp() {
+	$epp = config_get_path('system/hwpstate_epp', -1);
+	$cpu_count = get_single_sysctl('hw.ncpu');
+	if (($epp >= 0) && ($epp <= 100)) {
+		for ($cpu=0; $cpu < $cpu_count; $cpu++) {
+			set_single_sysctl("dev.hwpstate_intel.{$cpu}.epp", $epp);
+		}
+	}
+}
+
 function activate_powerd() {
 	if (is_process_running("powerd")) {
 		exec("/usr/bin/killall powerd");
@@ -103,6 +149,15 @@ function activate_sysctls() {
 
 	if (!is_array($sysctls)) {
 		$sysctls = array();
+	}
+
+	/* Speed Shift */
+	$epp = config_get_path('system/hwpstate_epp', -1);
+	$cpu_count = get_single_sysctl('hw.ncpu');
+	if (($epp >= 0) && ($epp <= 100)) {
+		for ($cpu=0; $cpu < $cpu_count; $cpu++) {
+			$sysctls["dev.hwpstate_intel.{$cpu}.epp"] = $epp;
+		}
 	}
 
 	$ipsec_filtermode = config_get_path('ipsec/filtermode', 'enc');

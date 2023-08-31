@@ -27,6 +27,19 @@ require_once("system.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 
+global $hwpstate_status_descr;
+$hwpstate_status_descr = [
+	'-1' => gettext('Disabled'),
+	'0'  => gettext('Unsupported'),
+	'1'  => gettext('Active'),
+];
+
+global $hwpstate_control_levels;
+$hwpstate_control_levels = [
+	'0' => gettext('Core Level Control (Recommended)'),
+	'1' => gettext('Package Level Control'),
+];
+
 global $global_gateway_state_kill_modes;
 $global_gateway_state_kill_modes = array(
 	'none' => gettext("Do not kill states on gateway failure"),
@@ -91,6 +104,16 @@ function getSystemAdvancedMisc($json = false) {
 	$pconfig['mds']= get_single_sysctl('hw.mds_disable_state');
 	$pconfig['php_memory_limit'] = config_get_path('system/php_memory_limit');
 
+	$pconfig['hwpstate'] = (config_get_path('system/hwpstate', 'enabled') == 'enabled');
+	$pconfig['hwpstate_control_level'] = config_get_path('system/hwpstate_control_level', get_single_sysctl('machdep.hwpstate_pkg_ctrl'));
+	$hwpstate_epp_default = get_single_sysctl('dev.hwpstate_intel.0.epp');
+	if (!is_numericint($hwpstate_epp_default) ||
+	    ($hwpstate_epp_default < 0) ||
+	    ($hwpstate_epp_default > 100)) {
+		$hwpstate_epp_default = 50;
+	}
+	$pconfig['hwpstate_epp'] = config_get_path('system/hwpstate_epp', $hwpstate_epp_default);
+
 	$pconfig['powerd_ac_mode'] = "hadp";
 	if (!empty($config['system']['powerd_ac_mode'])) {
 		$pconfig['powerd_ac_mode'] = config_get_path('system/powerd_ac_mode');
@@ -110,7 +133,7 @@ function getSystemAdvancedMisc($json = false) {
 }
 
 function saveSystemAdvancedMisc($post, $json = false) {
-	global $config, $global_gateway_state_kill_modes;
+	global $config, $global_gateway_state_kill_modes, $hwpstate_status_descr, $hwpstate_control_levels;
 
 	$rv = array();
 
@@ -183,6 +206,20 @@ function saveSystemAdvancedMisc($post, $json = false) {
 
 	if ($post['proxypass'] != $post['proxypass_confirm']) {
 		$input_errors[] = gettext("Proxy password and confirmation must match.");
+	}
+
+	if (system_has_hwpstate() !== false) {
+		if (!in_array($post['hwpstate_control_level'], array_keys($hwpstate_control_levels))) {
+			$input_errors[] = gettext("Invalid Speed Shift Control Level.");
+		}
+
+		if ((array_key_exists('hwpstate_epp', $post) &&
+		    (strlen($post['hwpstate_epp']) > 0)) &&
+		    (!is_numericint($post['hwpstate_epp']) ||
+		    ($post['hwpstate_epp'] < 0) ||
+		    ($post['hwpstate_epp'] > 100))) {
+			$input_errors[] = gettext("Invalid Speed Shift Energy/Performance Preference value.");
+		}
 	}
 
 	if (!in_array($post['powerd_ac_mode'], array_keys($powerd_modes))) {
@@ -275,6 +312,22 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			config_del_path('system/powerd_enable');
 		}
 
+		if (system_has_hwpstate() !== false) {
+			$old_hwpstate = config_get_path('system/hwpstate', 'enabled');
+			$new_hwpstate = ($post['hwpstate'] == 'yes') ? 'enabled' : 'disabled';
+			config_set_path('system/hwpstate', $new_hwpstate);
+			$old_hwpstate_control_level = get_single_sysctl('machdep.hwpstate_pkg_ctrl');
+			config_set_path('system/hwpstate_control_level', $post['hwpstate_control_level']);
+			config_set_path('system/hwpstate_epp', $post['hwpstate_epp']);
+
+			/* Check if reboot is needed */
+			if (($old_hwpstate != $new_hwpstate) ||
+			    ($old_hwpstate_control_level != $post['hwpstate_control_level'])) {
+				$rv['reboot-hwpstate'] = true;
+			}
+			system_hwpstate_setepp();
+		}
+
 		$config['system']['powerd_ac_mode'] = $post['powerd_ac_mode'];
 		$config['system']['powerd_battery_mode'] = $post['powerd_battery_mode'];
 		$config['system']['powerd_normal_mode'] = $post['powerd_normal_mode'];
@@ -345,7 +398,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		    (($post['use_mfs_tmpvar'] == "yes") &&
 		    (($config['system']['use_mfs_tmp_size'] != $post['use_mfs_tmp_size']) ||
 		    ($config['system']['use_mfs_var_size'] != $post['use_mfs_var_size'])))) {
-			$rv['reboot'] = true;
+			$rv['reboot-ramdisks'] = true;
 		}
 
 		$config['system']['use_mfs_tmp_size'] = $post['use_mfs_tmp_size'];
@@ -413,7 +466,8 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		system_resolvconf_generate(true);
 		$retval |= filter_configure();
 
-		if ($old_pti_state != isset($config['system']['pti_disabled'])) {
+		if (($rv['reboot-hwpstate']) ||
+		    ($old_pti_state != isset($config['system']['pti_disabled']))) {
 			setup_loader_settings();
 		}
 

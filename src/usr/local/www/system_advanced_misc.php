@@ -41,6 +41,10 @@ require_once("shaper.inc");
 require_once("vpn.inc");
 require_once("system_advanced_misc.inc");
 
+global $hwpstate_status_descr, $hwpstate_control_levels;
+$hwpstate_status = system_has_hwpstate();
+$hwpstate_status_descr = $hwpstate_status_descr[$hwpstate_status];
+
 $powerd_modes = array(
 	'hadp' => gettext('Hiadaptive'),
 	'adp' => gettext('Adaptive'),
@@ -72,7 +76,8 @@ $thermal_hardware_modules = array(
 
 global $global_gateway_state_kill_modes;
 
-$rebootneeded = false;
+$rebootneeded_ramdisks = false;
+$rebootneeded_hwpstate = false;
 
 if ($_POST) {
 	ob_flush();
@@ -84,7 +89,8 @@ if ($_POST) {
 	$input_errors = $rv['input_errors'];
 	$retval = $rv['retval'];
 	$changes_applied = $rv['changes_applied'];
-	$rebootneeded = $rv['reboot'];
+	$rebootneeded_ramdisks = $rv['reboot-ramdisks'];
+	$rebootneeded_hwpstate = $rv['reboot-hwpstate'];
 } else {
 	$pconfig = getSystemAdvancedMisc();
 }
@@ -175,7 +181,56 @@ $group->add(new Form_Input(
 $section->add($group);
 
 $form->add($section);
-$section = new Form_Section('Power Savings');
+
+if ($hwpstate_status !== false) {
+	$section = new Form_Section('Power Savings - Intel Speed Shift');
+	$section->addInput(new Form_Checkbox(
+		'hwpstate',
+		'Speed Shift',
+		'Enable Speed Shift',
+		$pconfig['hwpstate']
+	))->setHelp('Intel Speed Shift configures hardware-controlled performance states '.
+		'on systems with compatible hardware. This can allow the system to consume ' .
+		'less power and generate less heat when it is lightly loaded, and increase ' .
+		'power as needed. Changing this setting requires a reboot.%1$s%1$s' .
+		'Speed Shift takes precedence over Speed Step (BIOS and/or PowerD) so the best ' .
+		'practice is to only enable one or the other.' .
+		'%1$s%1$sCurrent State: %2$s', '<br/>', $hwpstate_status_descr);
+
+	$section->addInput(new Form_Select(
+		'hwpstate_control_level',
+		'Control Level',
+		$pconfig['hwpstate_control_level'],
+		$hwpstate_control_levels
+	))->setHelp('Chooses between per-core or per-package frequency control. When set ' .
+		'to core-level control, each CPU core can run at a different frequency. ' .
+		'When set to package-level control, all cores on the same physical CPU ' .
+		'package are locked to the same speed, but each package may run at a ' .
+		'different speed.%1$s%1$sCore-level control is the best practice in most ' .
+		'cases, especially for hardware with only a single physical CPU. ' .
+		'Changing this setting requires a reboot.' .
+		'%1$s%1$sCurrent Active Level: %2$s',
+		'<br/>', ((get_single_sysctl('machdep.hwpstate_pkg_ctrl') == '0') ? 'Core' : 'Package'));
+
+	$section->addInput(new Form_Input(
+		'hwpstate_epp',
+		'Power Preference',
+		'range',
+		$pconfig['hwpstate_epp'],
+		array (
+			'min' => 0,
+			'max' => 100,
+			'step' => 5,
+			'label-start' => gettext('Performance'),
+			'label-end' => gettext('Energy Efficiency'),
+			)
+	))->setHelp('This influences the bias of the hardware performance state toward ' .
+		'performance (left, lower values) or energy efficiency (right, higher values).');
+
+	$form->add($section);
+}
+
+$section = new Form_Section('Power Savings - PowerD');
 
 $section->addInput(new Form_Checkbox(
 	'powerd_enable',
@@ -459,15 +514,26 @@ $form->add($section);
 
 print $form;
 
-$ramdisk_msg = gettext('The \"Use RAM Disks\" setting has been changed.\nThis requires the firewall to reboot.\n\nReboot now ?');
-$use_mfs_tmpvar_changed = $rebootneeded;
+$reboot_confirm_prompt = "";
+$reboot_msg = [];
+if ($rebootneeded_ramdisks) {
+	$reboot_msg[] = gettext('The \"Use RAM Disks\" setting has been changed.\nThis requires the firewall to reboot.');
+}
+if ($rebootneeded_hwpstate) {
+	$reboot_msg[] = gettext('The Intel Speed Shift configuration has changed in a way which requires the firewall to reboot.');
+}
+if (!empty($reboot_msg)) {
+	$reboot_msg[] = gettext('Reboot now?');
+	$reboot_confirm_prompt = implode('\n\n', $reboot_msg);
+}
+
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	// Has the Use ramdisk checkbox changed state?
-	if (<?=(int)$use_mfs_tmpvar_changed?> && confirm("<?=$ramdisk_msg?>")) {
+	if (<?= (int) !empty($reboot_confirm_prompt) ?> && confirm("<?=$reboot_confirm_prompt?>")) {
 		postSubmit({rebootmode : 'Reboot', Submit: 'Yes'}, 'diag_reboot.php')
 	}
 

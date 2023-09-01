@@ -257,6 +257,12 @@ class Form_Input extends Form_Element
 			$label .= '<label for="' . $this->_attributes['id'] . '" class="form-label pull-right">' . $this->_attributes['label-end'] . '</label>';
 			unset($this->_attributes['label-end']);
 		}
+		$output = '';
+		if (isset($this->_attributes['show-output'])) {
+			$this->_attributes['oninput'] = 'this.nextElementSibling.value = this.value';
+			$output = '<output>' . $this->_attributes['value'] . '</output>';
+			unset($this->_attributes['show-output']);
+		}
 
 		$input = $this->_getInput();
 		$column = (string)$this->column;
@@ -274,6 +280,7 @@ class Form_Input extends Form_Element
 	{$column}
 		{$label}
 		{$input}
+		{$output}
 
 		{$help}
 	</div>

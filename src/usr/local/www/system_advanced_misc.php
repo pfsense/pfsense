@@ -223,6 +223,7 @@ if ($hwpstate_status !== false) {
 			'step' => 5,
 			'label-start' => gettext('Performance'),
 			'label-end' => gettext('Energy Efficiency'),
+			'show-output' => true,
 			)
 	))->setHelp('This influences the bias of the hardware performance state toward ' .
 		'performance (left, lower values) or energy efficiency (right, higher values).');

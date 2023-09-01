@@ -93,7 +93,8 @@ foreach (config_get_path("ipsec/phase1", []) as $ph1ent) {
 	if (empty($ph1ent)) {
 		continue;
 	}
-	if ((substr($ph1ent['interface'], 0, 4) == '_vip') && (in_array($ph1ent['interface'], $vips))) {
+	if ((substr($ph1ent['interface'], 0, 4) == '_vip') &&
+	    (in_array(substr($ph1ent['interface'], 4), array_column($vips, 'uniqid')))) {
 		log_error("Reconfiguring IPsec because of transition to CARP master.");
 		ipsec_configure();
 		break;

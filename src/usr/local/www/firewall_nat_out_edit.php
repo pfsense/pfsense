@@ -353,13 +353,18 @@ events.push(function() {
 
 	function poolopts_change() {
 		if ($('#target_type option:selected').val() == "network") {
-			var hide = false;
+			hideInput('poolopts', false);
+			hideInput('target', false);
+			hideInput('source_hash_key', !($('#poolopts option:selected').val() == "source-hash"));
+		} else if ($('#target_type option:selected').val().indexOf('/') !== -1) {
+			hideInput('poolopts', false);
+			hideInput('target', true);
+			hideInput('source_hash_key', !($('#poolopts option:selected').val() == "source-hash"));
 		} else {
-			var hide = true;
+			hideInput('poolopts', true);
+			hideInput('target', true);
+			hideInput('source_hash_key', true);
 		}
-		hideInput('poolopts', hide);
-		hideInput('target', hide);
-		hideInput('source_hash_key', (hide || !($('#poolopts option:selected').val() == "source-hash")));
 	}
 
 	// When controls are clicked . .

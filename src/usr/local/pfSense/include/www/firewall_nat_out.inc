@@ -143,13 +143,13 @@ function saveoutNATrule($post, $id, $json = false) {
 	/* input validation */
 	$reqdfields = explode(" ", "interface protocol");
 	$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"));
-	if (!get_specialnet($post['source_type'])) {
+	if (!get_specialnet($post['source_type'], [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
 		$reqdfields[] = "source";
 		$reqdfieldsn[] = gettext("Source");
 		$reqdfields[] = "source_subnet";
 		$reqdfieldsn[] = gettext("Source bit count");
 	}
-	if (!get_specialnet($post['destination_type'])) {
+	if (!get_specialnet($post['destination_type'], [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
 		$reqdfields[] = "destination";
 		$reqdfieldsn[] = gettext("Destination");
 		$reqdfields[] = "destination_subnet";
@@ -415,7 +415,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['source'] = '';
 		$pconfig['source_subnet'] = '';
 		if (!empty($a_out[$id]['source']['network'])) {
-			if (get_specialnet($a_out[$id]['source']['network'])) {
+			if (get_specialnet($a_out[$id]['source']['network'], [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
 				$pconfig['source_type'] = $a_out[$id]['source']['network'];
 			} else {
 				$pconfig['source_type'] = 'network';
@@ -428,7 +428,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['destination'] = '';
 		$pconfig['destination_subnet'] = '';
 		if (!empty($a_out[$id]['destination']['network'])) {
-			if (get_specialnet($a_out[$id]['destination']['network'])) {
+			if (get_specialnet($a_out[$id]['destination']['network'], [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
 				$pconfig['destination_type'] = $a_out[$id]['destination']['network'];
 			} else {
 				$pconfig['destination_type'] = 'network';
@@ -450,7 +450,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['target_subnet'] = '';
 		if (empty($a_out[$id]['target'])) {
 			$pconfig['target_type'] = $pconfig['interface'] . 'ip';
-		} elseif (empty($a_out[$id]['target_subnet']) && get_specialnet($a_out[$id]['target'])) {
+		} elseif (empty($a_out[$id]['target_subnet']) && get_specialnet($a_out[$id]['target'], [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS])) {
 			$pconfig['target_type'] = $a_out[$id]['target'];
 		} else {
 			$pconfig['target_type'] = 'network';

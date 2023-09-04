@@ -53,14 +53,6 @@ function get_disks() {
     // Get all disks from sysctl
     $disks_s = explode(" ", get_single_sysctl("kern.disks"));
 
-    // Append CD/DVD drives by checking dmesg for CDROM entries
-    $cd_drives_lines = explode("\n", trim(shell_exec("dmesg | grep 'CDROM' | cut -d ':' -f1")));
-    foreach ($cd_drives_lines as $line) {
-        if (preg_match('/^(cd\d+)/', $line, $matches)) {
-            $disks_s[] = $matches[1];
-        }
-    }
-
     foreach ($disks_s as $disk) {
         /* Ignore the flash devices (ARM). */
         if (strstr($disk, "flash")) {

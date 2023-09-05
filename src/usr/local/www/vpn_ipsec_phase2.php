@@ -38,6 +38,8 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
+global $p2_pfskeygroups;
+
 init_config_arr(array('ipsec', 'client'));
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
@@ -741,8 +743,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 
 $section->add($group);
 
-$sm = (!isset($pconfig['mobile']) || !isset($a_client['pfs_group']));
-$sm = (!isset($pconfig['mobile']) || !empty(config_get_path('ipsec/client/pfs_group')));
+$sm = (!isset($pconfig['mobile']) || empty(config_get_path('ipsec/client/pfs_group')));
 $helpstr = $sm ? '':'Set globally in mobile client options. ';
 $helpstr .= 'Note: Groups 1, 2, 5, 22, 23, and 24 provide weak security and should be avoided.';
 

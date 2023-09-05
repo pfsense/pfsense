@@ -26,12 +26,9 @@ require_once('pfsense-utils.inc');
 require_once('util.inc');
 
 function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
-	global $config;
-
 	$listedIPs = "";
 
 	//get interface IP and break up into an array
-
 	$real_interface = get_real_interface($interface);
 
 	if (!does_interface_exist($real_interface)) {
@@ -44,12 +41,10 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 	//get interface subnet
 	$netmask = find_interface_subnet($real_interface);
 	$netmask6 = find_interface_subnetv6($real_interface);
-	$intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
-	$intsubnet6 = gen_subnet($intip6, $netmask6) . "/$netmask";
+	$intsubnet = gen_subnet($intip, $netmask) . "/{$netmask}";
+	$intsubnet6 = gen_subnet($intip6, $netmask6) . "/{$netmask6}";
 
 	// see if they want local, remote or all IPs returned
-
-
 	if ($filter == "") {
 		$filter = "local";
 	}
@@ -74,49 +69,38 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 	$iplookup = array();
 	// If hostname, description or FQDN is requested then load the locally-known IP address - host/description mappings into an array keyed by IP address.
 	if ($hostipformat != "") {
-		if (is_array($config['dhcpd'])) {
-			// Build an array of static-mapped DHCP entries keyed by IP address.
-			foreach ($config['dhcpd'] as $ifdata) {
-				if (empty($ifdata)) {
-					continue;
-				}
-				if (is_array($ifdata['staticmap'])) {
-					foreach ($ifdata['staticmap'] as $hostent) {
-						if (($hostent['ipaddr'] != "") && ($hostent['hostname'] != "")) {
-							if ($hostipformat == "descr" && $hostent['descr'] != "") {
-								$iplookup[$hostent['ipaddr']] = $hostent['descr'];
-							} else {
-								$iplookup[$hostent['ipaddr']] = $hostent['hostname'];
-								if ($hostipformat == "fqdn") {
-									$iplookup[$hostent['ipaddr']] .= "." . $config['system']['domain'];
-								}
-							}
-						}
+		$domain = config_get_path('system/domain');
+		foreach (array_column(config_get_path('dhcpd', []), 'staticmap') as $hostent) {
+			if (($hostent['ipaddr'] != "") && ($hostent['hostname'] != "")) {
+				if ($hostipformat == "descr" && $hostent['descr'] != "") {
+					$iplookup[$hostent['ipaddr']] = $hostent['descr'];
+				} else {
+					$iplookup[$hostent['ipaddr']] = $hostent['hostname'];
+					if ($hostipformat == "fqdn") {
+						$iplookup[$hostent['ipaddr']] .= "." . $domain;
 					}
 				}
 			}
 		}
 		// Add any DNS host override data keyed by IP address.
 		foreach (array('dnsmasq', 'unbound') as $dns_type) {
-			if (isset($config[$dns_type]['enable'])) {
-				if (is_array($config[$dns_type]['hosts'])) {
-					foreach ($config[$dns_type]['hosts'] as $hostent) {
-						if (($hostent['ip'] != "") && ($hostent['host'] != "")) {
-							if ($hostipformat == "descr" && $hostent['descr'] != "") {
-								$iplookup[$hostent['ip']] = $hostent['descr'];
-							} else {
-								$iplookup[$hostent['ip']] = $hostent['host'];
-								if ($hostipformat == "fqdn") {
-									$iplookup[$hostent['ip']] .= "." . $hostent['domain'];
-								}
-							}
+			if (!config_path_enabled($dns_type, 'enable')) {
+				continue;
+			}
+			foreach (config_get_path("{$dns_type}/hosts", []) as $hostent) {
+				if (($hostent['ip'] != "") && ($hostent['host'] != "")) {
+					if ($hostipformat == "descr" && $hostent['descr'] != "") {
+						$iplookup[$hostent['ip']] = $hostent['descr'];
+					} else {
+						$iplookup[$hostent['ip']] = $hostent['host'];
+						if ($hostipformat == "fqdn") {
+							$iplookup[$hostent['ip']] .= "." . $hostent['domain'];
 						}
 					}
 				}
 			}
 		}
 	}
-
 
 	//get the mode
 	if ($mode == "iftop") {
@@ -130,12 +114,12 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 				if ( isvalidpid("/var/run/iftop_{$real_interface}.pid") ) {
 					killbypid("/var/run/iftop_{$real_interface}.pid");
 				}
-				unlink ( "/var/run/iftop_{$real_interface}.pid" );
-				$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
+				@unlink("/var/run/iftop_{$real_interface}.pid");
+				$_grb = exec( "/usr/local/bin/iftop_parser.sh {$real_interface} {$current_ts}", $listedIPs );
 			}
 		} else {
 			// refresh iftop infos
-			$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
+			$_grb = exec( "/usr/local/bin/iftop_parser.sh {$real_interface} {$current_ts}", $listedIPs );
 		}
 
 		// order and group by
@@ -145,8 +129,8 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 			if ($line != "") {
 				$arrLine = explode (";", $line);
 				$ip  = $arrLine[0];
-				$in  = unformat_number($arrLine[1]);
-				$out = unformat_number($arrLine[2]);
+				$in  = (int) unformat_number($arrLine[1]);
+				$out = (int) unformat_number($arrLine[2]);
 				if (isset($arr_in[$ip])) {
 					$arr_in[$ip]  += $in;
 					$arr_out[$ip] += $out;
@@ -169,17 +153,15 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 		$listedIPs[] = "";
 		$listedIPs[] = "";
 		foreach ($arrIP as $k => $ip) {
-			$listedIPs[] = $ip.";".format_number($arr_in[$ip],2).";".format_number($arr_out[$ip],2);
+			$listedIPs[] = $ip.";".format_number((int) $arr_in[$ip],2).";".format_number((int) $arr_out[$ip],2);
 		}
 
 	} else {
-		$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} {$ratesubnet} | tr \"|\" \" \" | awk '{ printf \"%s;%s;%s;%s;%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
+		$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} {$ratesubnet} | /usr/bin/tr \"|\" \" \" | /usr/bin/awk '{ printf \"%s;%s;%s;%s;%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 	}
-
 
 	$someinfo = false;
 	for ($x=2; $x<12; $x++) {
-
 		$bandwidthinfo = $listedIPs[$x];
 
 		// echo $bandwidthinfo;

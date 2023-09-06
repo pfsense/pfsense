@@ -159,9 +159,10 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['maximumstates'],
 	['min' => 1, 'placeholder' => pfsense_default_state_size()]
-))->setHelp('Maximum number of connections to hold in the firewall state table. %1$s'.
-	'Note: Leave this blank for the default. On this system the default '.
-	'size is: %2$d', '<br/>', pfsense_default_state_size());
+))->setHelp('Maximum number of connections to hold in the firewall state table. ' .
+	'Leave this blank for the system-dependent default (%1$d). Note: Changing ' .
+	'this value affects the state hash tables size which requires a reboot to ' .
+	'take effect.', pfsense_default_state_size());
 
 $section->addInput(new Form_Input(
 	'maximumtableentries',

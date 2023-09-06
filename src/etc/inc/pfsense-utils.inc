@@ -1173,6 +1173,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 		    "net.link.ifqmaxlen",
 		    "hint.hwpstate_intel.0.disabled",
 		    "machdep.hwpstate_pkg_ctrl",
+		    "net.pf.states_hashsize"
 		));
 	}
 	foreach ($input_split as $line) {
@@ -1310,6 +1311,11 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hint.hwpstate_intel.0.disabled="1"';
 	}
 	$data[] = 'machdep.hwpstate_pkg_ctrl="' . config_get_path('system/hwpstate_control_level', get_single_sysctl('machdep.hwpstate_pkg_ctrl')) . '"';
+
+	// calculate the size of hash tables that store states - should be power of 2
+	$pf_maximumstates = intval(config_get_path('system/maximumstates', pfsense_default_state_size()));
+	$pf_hashtablesize = pow(2, ceil(log(floor($pf_maximumstates / 2), 2)));
+	$data[] = "net.pf.states_hashsize=\"{$pf_hashtablesize}\"";
 
 	safe_write_file($loader_conf_file, $data);
 

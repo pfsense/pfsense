@@ -234,6 +234,7 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		}
 
 		$config['system']['optimization'] = $post['optimization'];
+		$maxstates_changed = ($config['system']['maximumstates'] != $post['maximumstates']) ? true : false;
 		$config['system']['maximumstates'] = $post['maximumstates'];
 		$config['system']['aliasesresolveinterval'] = $post['aliasesresolveinterval'];
 		$config['system']['maximumtableentries'] = $post['maximumtableentries'];
@@ -414,6 +415,10 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*", "root", false);
 			}
 			$config['system']['bogons']['interval'] = $post['bogonsinterval'];
+		}
+
+		if ($maxstates_changed) {
+			setup_loader_settings();
 		}
 
 		write_config(gettext("Changed Advanced Firewall/NAT settings."));

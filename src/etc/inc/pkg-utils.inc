@@ -1505,25 +1505,59 @@ function pkg_switch_repo($repo_path, $repo_name) {
  * Update the repository settings.
  */
 function update_repos() {
-
-	$rc = -1;
-	$out = NULL;
 	$product_name = g_get('product_name');
+	$pipes = [];
+	$descriptorspec = [
+		1 => ["pipe", "w"], /* stdout */
+		2 => ["pipe", "w"]  /* stderr */
+	];
+	$rc = -1;
+	/* Default error message for failure cases. */
+	$fail_error = [
+		"error" => 1,
+		"messages" => ["Could not update connect to Netgate servers. Please try again later."]
+	];
 
-	$res = exec("/usr/local/sbin/{$product_name}-repoc", $out, $rc);
-	if ($res === false || $out === NULL) {
-		return (array( "error" => 1,
-		    "messages" => array("We could not connect to Netgate servers. Please try again later.")));
-	}
-	$rtrn = array( "error" => $rc, "messages" => array() );
-	if (isset($out) && is_array($out) &&
-	    count($out) > 1 && $out[0] === "Messages:") {
-		for ($i = 1; $i < count($out); $i++) {
-			$rtrn['messages'][] = $out[$i];
-		}
+	/* Execute repoc with a full pkg style environment, including proxy
+	 * configuration. */
+	$process = proc_open("/usr/local/sbin/{$product_name}-repoc",
+	    $descriptorspec, $pipes, '/', pkg_env());
+
+	/* Process failed to start */
+	if (!is_resource($process)) {
+		return $fail_error;
 	}
 
-	return ($rtrn);
+	/* Read output */
+	$stdout = stream_get_contents($pipes[1]);
+	fclose($pipes[1]);
+	/* If stdout is boolean false, reading stdout failed. */
+	if ($stdout === false) {
+		return $fail_error;
+	}
+
+	/* Read errors */
+	$stderr = stream_get_contents($pipes[2]);
+	fclose($pipes[2]);
+
+	/* Get return code */
+	$rc = proc_close($process);
+	$result = [
+		"error" => $rc,
+		"messages" => []
+	];
+
+	/* Change stdout to be an array of lines */
+	$stdout = explode("\n", trim($stdout));
+
+	if ((count($stdout) > 1) &&
+	    ($stdout[0] === "Messages:")) {
+		/* Copy over message content from the output. */
+		$result['messages'] = array_merge($result['messages'], array_slice($stdout, 1));
+	} elseif (!empty($stderr)) {
+		$result['messages'][] = $stderr;
+	}
+
+	return ($result);
 }
-
 ?>

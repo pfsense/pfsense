@@ -23,7 +23,7 @@ require_once("config.gui.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 require_once("filter.inc");
-
+require_once("syslog.inc");
 
 function getAdvancedNetwork($json = false) {
 	global $config;
@@ -33,6 +33,7 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['ipv6nat_ipaddr'] = isset($config['diag']['ipv6nat']['ipaddr']) ? $config['diag']['ipv6nat']['ipaddr'] : null;
 	$pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 	$pconfig['ipv6dontcreatelocaldns'] = isset($config['system']['ipv6dontcreatelocaldns']);
+	$pconfig['radvddebug'] = isset($config['system']['radvddebug']);
 	$pconfig['dhcp6debug'] = isset($config['system']['dhcp6debug']);
 	$pconfig['dhcp6norelease'] = isset($config['system']['dhcp6norelease']);
 	$pconfig['global-v6duid'] = isset($config['system']['global-v6duid']) ? $config['system']['global-v6duid'] : null;
@@ -129,6 +130,13 @@ function saveAdvancedNetworking($post, $json = false) {
 			config_del_path('system/ipv6dontcreatelocaldns');
 		}
 
+		$syslogrestart = (isset($post['radvddebug']) xor config_path_enabled('system', 'radvddebug')) ? true : false;
+		if (isset($post['radvddebug'])) {
+			config_set_path('system/radvddebug', true);
+		} else {
+			config_del_path('system/radvddebug');
+		}
+
 		if ($post['dhcp6debug'] == "yes") {
 			$config['system']['dhcp6debug'] = true;
 		} else {
@@ -219,6 +227,10 @@ function saveAdvancedNetworking($post, $json = false) {
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
+
+		if ($syslogrestart) {
+			system_syslogd_start();
+		}
 
 		if ($dhcp6restart) {
 			foreach ($config['interfaces'] as $ifname => $ifcfg) {

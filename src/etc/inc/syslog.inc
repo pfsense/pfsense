@@ -241,9 +241,18 @@ EOD;
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
 	}
 
-	$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";
+	$syslogconf .= "!radvd\n";
+	$radvdloglevel = ((config_path_enabled('system', 'radvddebug')) ? '*' : 'err');
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*								{$g['varlog_path']}/routing.log\n";
+		$syslogconf .= "*.{$radvdloglevel}								{$g['varlog_path']}/routing.log\n";
+	}
+	if (config_path_enabled('syslog', 'routing')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "radvd.{$radvdloglevel}");
+	}
+
+	$syslogconf .= "!routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.*									{$g['varlog_path']}/routing.log\n";
 	}
 	if (config_path_enabled('syslog', 'routing')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");

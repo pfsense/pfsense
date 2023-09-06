@@ -124,6 +124,12 @@ $section->addInput(new Form_Checkbox(
 	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
 
 $section->addInput(new Form_Checkbox(
+	'radvddebug',
+	'RADVD Debug',
+	'Log all radvd log levels',
+	$pconfig['radvddebug']
+));
+$section->addInput(new Form_Checkbox(
 	'dhcp6debug',
 	'DHCP6 Debug',
 	'Start DHCP6 client in debug mode',

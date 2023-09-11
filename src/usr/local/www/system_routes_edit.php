@@ -91,8 +91,9 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("The gateway is disabled but the route is not. The route must be disabled in order to choose a disabled gateway.");
 		} else {
 			// Note that the 3rd parameter "disabled" must be passed as explicitly true or false.
-			if (!validate_address_family($_POST['network'], $_POST['gateway'], $_POST['disabled'] ? true : false)) {
-				$input_errors[] = sprintf(gettext('The gateway "%1$s" is a different Address Family than network "%2$s".'), $a_gateways[$_POST['gateway']]['gateway'], $_POST['network']);
+			if (!validate_address_family($_POST['network'], $_POST['gateway'], $_POST['disabled'] ? true : false) &&
+				!validate_address_family($_POST['network'], array_get_path($a_gateways, "{$_POST['gateway']}/gateway"), $_POST['disabled'] ? true : false)) {
+				$input_errors[] = sprintf(gettext('The gateway "%1$s" is a different Address Family than network "%2$s".'), array_get_path($a_gateways, "{$_POST['gateway']}/gateway"), $_POST['network']);
 			}
 		}
 	}
@@ -176,7 +177,7 @@ if ($_POST['save']) {
 		} else {
 			unset($route['disabled']);
 		}
-		
+
 		$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
 		if (file_exists($routes_apply_file)) {
 			$toapplylist = unserialize(file_get_contents($routes_apply_file));
@@ -208,7 +209,7 @@ if ($_POST['save']) {
 				}
 			}
 		}
-		
+
 		file_put_contents($routes_apply_file, serialize($toapplylist));
 
 		mark_subsystem_dirty('staticroutes');

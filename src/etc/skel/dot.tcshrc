@@ -84,3 +84,7 @@ set use_mfs_tmpvar=`/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpva
 #	setenv PKG_DBDIR '/root/var/db/pkg'
 #	setenv PKG_CACHEDIR '/root/var/cache/pkg'
 # endif
+
+if ( -f ~/.tcshrc.local ) then
+	source ~/.tcshrc.local
+endif

@@ -33,6 +33,11 @@ fi
 
 if [ -n "${_interactive}" ]; then
 	/usr/bin/resizewin -z
-	/etc/rc.initial
-	exit
+	if [ -f ~/.profile.local ]; then
+		. ~/.profile.local
+	fi
+	if [ ! -f ~/.nomenu ]; then
+		/etc/rc.initial
+		exit
+	fi
 fi

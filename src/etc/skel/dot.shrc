@@ -59,6 +59,11 @@ fi
 
 if [ -n "${_interactive}" ]; then
 	/usr/bin/resizewin -z
-	/etc/rc.initial
-	exit
+	if [ -f ~/.shrc.local ]; then
+		. ~/.shrc.local
+	fi
+	if [ ! -f ~/.nomenu ]; then
+		/etc/rc.initial
+		exit
+	fi
 fi

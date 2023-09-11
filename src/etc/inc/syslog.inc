@@ -247,7 +247,7 @@ EOD;
 		$syslogconf .= "*.{$radvdloglevel}								{$g['varlog_path']}/routing.log\n";
 	}
 	if (config_path_enabled('syslog', 'routing')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "radvd.{$radvdloglevel}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "!radvd.{$radvdloglevel}");
 	}
 
 	$syslogconf .= "!routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";

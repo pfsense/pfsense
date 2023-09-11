@@ -22,12 +22,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dumpdev=`/bin/realpath -q /dev/dumpdev`
+dumpdevs=`/sbin/dumpon -l | /usr/bin/tr ',' ' '`
+dumpdev_fallback=`/bin/realpath -q /dev/dumpdev`
 dumpdir='/var/crash'
 
-if [ ! -c "${dumpdev}" ]; then
-	echo "Dump device does not exist.  Savecore not run."
-	exit
+if [ "${dumpdevs}" = '/dev/null' ] ; then
+	if [ -c "${dumpdev_fallback}" ]; then
+		dumpdevs=${dumpdev_fallback}
+	else
+		echo "No dump devices found.  Savecore not run."
+		exit
+	fi
 fi
 
 if [ ! -d "${dumpdir}" ]; then
@@ -35,8 +40,21 @@ if [ ! -d "${dumpdir}" ]; then
 	exit
 fi
 
-if savecore -C "${dumpdev}" >/dev/null; then
-	savecore ${dumpdir} ${dumpdev}
-else
-	echo 'No core dumps found.'
-fi
+for dev in ${dumpdevs} ; do
+	# Some values may or may not already start with '/dev/' so make sure
+	#   they are consistent.
+	thisd=/dev/${dev#/dev/}
+
+	# Ensure the target device is a valid choice
+	if [ "${thisd}" = "/dev/null" -o ! -c "${thisd}" ] ; then
+		continue
+	fi
+
+	echo -n "Checking dump device ${thisd} for crash dumps ... "
+	if savecore -C "${thisd}" >/dev/null; then
+		echo "found data, saving."
+		savecore ${dumpdir} ${thisd}
+	else
+		echo "no crash dumps on ${thisd}."
+	fi
+done

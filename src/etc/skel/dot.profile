@@ -36,8 +36,6 @@ if [ -n "${_interactive}" ]; then
 	if [ -f ~/.profile.local ]; then
 		. ~/.profile.local
 	fi
-	if [ ! -f ~/.nomenu ]; then
-		/etc/rc.initial
-		exit
-	fi
+	/etc/rc.initial
+	exit
 fi

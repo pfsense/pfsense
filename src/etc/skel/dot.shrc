@@ -62,8 +62,6 @@ if [ -n "${_interactive}" ]; then
 	if [ -f ~/.shrc.local ]; then
 		. ~/.shrc.local
 	fi
-	if [ ! -f ~/.nomenu ]; then
-		/etc/rc.initial
-		exit
-	fi
+	/etc/rc.initial
+	exit
 fi

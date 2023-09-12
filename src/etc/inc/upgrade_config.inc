@@ -7001,6 +7001,30 @@ function upgrade_231_to_232() {
 	}
 }
 
+/* Update language internal IDs to match OS Locales where possible
+ * Some languages do not have direct equivalents.
+ * https://redmine.pfsense.org/issues/13776 */
+function upgrade_232_to_233() {
+	$lang_changes= [
+		"nl" => "nl_NL",
+		"fr" => "fr_FR",
+		"it" => "it_IT",
+		"ko" => "ko_KR",
+		"nb" => "nb_NO",
+		"pl" => "pl_PL",
+		"ru" => "ru_RU",
+		"es" => "es_ES",
+	];
+	$curlang = config_get_path('system/language');
+
+	/* If the language is set and is one in our list of languages to rename,
+	 * then update the language appropriately. */
+	if (!empty($curlang) &&
+	    array_key_exists($curlang, $lang_changes)) {
+		config_set_path('system/language', $lang_changes[$curlang]);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

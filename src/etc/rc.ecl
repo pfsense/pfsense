@@ -201,7 +201,7 @@ function password_prompt($config_location) {
 		$fp = fopen('php://stdin', 'r');
 		$read = array($fp);
 		$write = $except = array();
-		$timeout = 30; // skip after 30s of inactivity
+		$timeout = 60; // skip after 60s of inactivity
 		do {
 			echo gettext("Enter the password to decrypt config.xml, or press <ENTER> to skip:") . "\n";
 			if (stream_select($read, $write, $except, $timeout)) {

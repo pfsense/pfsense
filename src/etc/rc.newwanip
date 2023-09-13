@@ -108,8 +108,8 @@ if (empty($interface)) {
 }
 
 $oldip = "0.0.0.0";
-if (file_exists("{$g['vardb_path']}/{$interface}_cacheip")) {
-	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
+if (file_exists(g_get('vardb_path') . "/{$interface_real}_cacheip")) {
+	$oldip = file_get_contents(g_get('vardb_path') . "/{$interface_real}_cacheip");
 }
 
 /* regenerate resolv.conf */
@@ -117,7 +117,7 @@ system_resolvconf_generate(true);
 
 /* write the current interface IP to file */
 if (is_ipaddr($curwanip)) {
-	@file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
+	@file_put_contents(g_get('vardb_path') . "/{$interface_real}_ip", $curwanip);
 }
 
 link_interface_to_vips($interface, "update");
@@ -244,7 +244,7 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 	services_unbound_configure(true, $interface);
 
 	if (is_ipaddr($curwanip)) {
-		@file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
+		@file_put_contents(g_get('vardb_path') . "/{$interface_real}_cacheip", $curwanip);
 	}
 
 	/* perform RFC 2136 DNS update */

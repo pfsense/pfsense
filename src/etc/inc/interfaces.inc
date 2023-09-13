@@ -3766,6 +3766,8 @@ function kill_dhclient_process($interface) {
 		$i++;
 	}
 	unset($i);
+
+	unlink_if_exists(g_get('vardb_path') . "/{$interface}_cacheip");
 }
 
 function find_dhcp6c_process() {
@@ -4760,6 +4762,7 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh");
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_dhcp6withoutra_script.sh");
 			unlink_if_exists("{$g['varetc_path']}/rtsold_{$wanif}_script.sh");
+			unlink_if_exists(g_get('vardb_path') . "/{$wanif}_cacheipv6");
 			continue;
 		}
 

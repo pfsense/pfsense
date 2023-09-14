@@ -256,7 +256,7 @@ if ($carpcount == 0) {
 		<ul>
 <?php
 	$my_id = strtolower(ltrim(filter_get_host_id(), '0'));
-	exec("/sbin/pfctl -vvss | /usr/bin/awk '/creatorid:/ {print $4;}' | /usr/bin/sort -u", $hostids);
+	exec("/sbin/pfctl -sc | tail -n +2", $hostids);
 	if (!is_array($hostids)) {
 		$hostids = array();
 	}

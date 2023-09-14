@@ -1547,7 +1547,7 @@ function openvpn_reconfigure($mode, $settings) {
 	file_put_contents($fpath, $conf);
 	unset($conf);
 	$fpath = "{$g['openvpn_base']}/{$mode_id}/interface";
-	file_put_contents($fpath, $interface);
+	file_put_contents($fpath, get_failover_interface($interface));
 	$fpath = "{$g['openvpn_base']}/{$mode_id}/connuserlimit";
 	file_put_contents($fpath, $connlimit);
 	//chown($fpath, 'nobody');

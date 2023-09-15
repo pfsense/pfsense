@@ -7480,20 +7480,20 @@ function get_interface_addresses($interface) {
 		if (is_ipaddrv4($vip['subnet'])) {
 			array_push($v4vips, $vip['subnet']);
 		} else if (is_ipaddrv6($vip['subnet'])) {
-			array_push($v6vips, $vip['subnet']);
+			array_push($v6vips, Net_IPv6::Uncompress($vip['subnet']));
 		}
 	}
 
 	if ($ifaddrs['addrs']) {
-	   $v4addrs = array_filter($ifaddrs['addrs'], function($addr) use ($v4vips){
-		  return (array_search($addr['addr'], $v4vips) === false);
-	   });
+		$v4addrs = array_filter($ifaddrs['addrs'], function($addr) use ($v4vips){
+			return (array_search($addr['addr'], $v4vips) === false);
+		});
 	}
 
 	if ($ifaddrs['addrs6']) {
-	   $v6addrs = array_filter($ifaddrs['addrs6'], function($addr) use ($v6vips){
-		  return (array_search($addr['addr'], $v6vips) === false);
-	   });
+		$v6addrs = array_filter($ifaddrs['addrs6'], function($addr) use ($v6vips){
+			return (array_search(Net_IPv6::Uncompress($addr['addr']), $v6vips) === false);
+		});
 	}
 	/* Transform output to conform to pfSense_get_interface_addresses() */
 	if ($v4addrs) {

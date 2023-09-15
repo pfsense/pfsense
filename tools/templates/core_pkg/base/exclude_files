@@ -21,7 +21,6 @@
 ./etc/pfSense-rc.shutdown
 ./etc/platform
 ./etc/pwd.db
-./etc/rc
 ./etc/rc.conf
 ./etc/rc.ramdisk_functions.sh
 ./etc/spwd.db

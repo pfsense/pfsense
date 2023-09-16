@@ -2490,14 +2490,38 @@ function get_memory() {
 
 function get_php_default_memory($ARCH) {
 	if ($ARCH == "amd64") {
-		return 512;
+		$default_mem = 512;
 	} else {
 		return 128;
 	}
+
+	// Ensure the default isn't taking all of the available RAM with a minimum of 128M
+	$system_mem = get_memory()[0];
+	if ($default_mem >= $system_mem) {
+		$default_mem = $system_mem / 2;
+		if ($default_mem < 128) {
+			$default_mem = 128;
+		}
+	}
+
+	return floor($default_mem);
 }
 
 function get_php_max_memory() {
-	return intval(get_memory()[0] - 1024);
+	$system_mem = floor(get_memory()[0]);
+	$max_mem = $system_mem - 512;
+
+	// Ensure the max memory isn't zero or negative, in case 512M or less is available
+	if ($max_mem <= 0) {
+		$max_mem = $system_mem - 128;
+
+		// If there still isn't enough RAM available, disable the ability to increase the PHP limit
+		if ($max_mem  < 128) {
+			return get_php_default_memory("");
+		}
+	}
+
+	return $max_mem;
 }
 
 function mute_kernel_msgs() {

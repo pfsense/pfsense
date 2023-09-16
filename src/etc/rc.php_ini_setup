@@ -251,15 +251,42 @@ opcache.enabled="0"
 EOF
 fi
 
-# Memory limits 128M to AVAILABLE MEMORY - 1024M
+# Memory limits 128M to calculated max
 PHP_MEMORY_LIMIT="$(read_xml_tag.sh number system/php_memory_limit)"
-let PHP_MAX_LIMIT=${AVAILMEM}-1024 # Reserve 1GiB
 
-if [ -n "${PHP_MEMORY_LIMIT}" ] && [ "${PHP_MEMORY_LIMIT}" -ge "128" ] && [ "${PHP_MEMORY_LIMIT}" -le "${PHP_MAX_LIMIT"}" ]; then
-	/bin/cat >>/usr/local/etc/php.ini <<EOF
-memory_limit="${PHP_MEMORY_LIMIT}"M
-EOF
+# Set local variable for available memory to match the PHP code which always pulls from sysctl
+MEM=$(/bin/expr $(/sbin/sysctl -q hw.physmem | cut -d':' -f2) / 1048576)
+
+# Calculate MAX memory in the same fashion as get_php_max_memory() in /etc/inc/util.inc
+let PHP_MAX_LIMIT=${MEM}-512
+
+if [ "${PHP_MAX_LIMIT}" -le "0" ]; then
+	let PHP_MAX_LIMIT=${MEM}-128
+
+	if [ "${PHP_MAX_LIMIT}" -lt "128" ]; then
+		PHP_MAX_LIMIT=128
+	fi
 fi
+
+# If outside of limits, revert to default in same fashion as get_php_default_memory() in /etc/inc/util.inc
+if ! { [ -n "${PHP_MEMORY_LIMIT}" ] && [ "${PHP_MEMORY_LIMIT}" -ge "128" ] && [ "${PHP_MEMORY_LIMIT}" -le "${PHP_MAX_LIMIT}" ]; }; then
+	if [ "$(uname -m)" == "amd64" ]; then
+		PHP_MEMORY_LIMIT=512
+	else
+		PHP_MEMORY_LIMIT=128
+	fi
+
+	if [ ${PHP_MEMORY_LIMIT} -ge "${MEM}" ]; then
+		let PHP_MEMORY_LIMIT=${MEM}/2
+		if [ "${PHP_MEMORY_LIMIT}" -lt "128" ]; then
+			PHP_MEMORY_LIMIT=128
+		fi
+	fi
+fi
+
+/bin/cat >>/usr/local/etc/php.ini <<EOF
+memory_limit="${PHP_MEMORY_LIMIT}M"
+EOF
 
 PHPFPMMAX=3
 PHPFPMIDLE=30

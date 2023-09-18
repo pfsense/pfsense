@@ -44,6 +44,8 @@ global $errors;
 $console = false;
 $show_output = !isset($_GET['archiveonly']);
 $errors = [];
+$output_path = "/tmp/status_output/";
+$output_file = "/tmp/status_output.tgz";
 
 if ((php_sapi_name() == 'cli') ||
     (defined('STDIN'))) {
@@ -53,37 +55,7 @@ if ((php_sapi_name() == 'cli') ||
 	parse_str($argv[1], $_GET);
 }
 
-/* include all configuration functions */
-if ($console) {
-	require_once("config.inc");
-} else {
-	require_once("guiconfig.inc");
-}
-require_once("functions.inc");
-require_once("gwlb.inc");
-$output_path = "/tmp/status_output/";
-$output_file = "/tmp/status_output.tgz";
-
-$filtered_tags = array(
-	'accountkey', 'authorizedkeys', 'auth_pass',
-	'auth_server_shared_secret', 'auth_server_shared_secret2', 'auth_user',
-	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
-	'crypto_password2', 'dns_nsupdatensupdate_key', 'ddnsdomainkey', 'encryption_password',
-	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
-	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
-	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
-	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode',
-	'oinkmastercode', 'pass', 'passphrase', 'password', 'passwordagain',
-	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key', 'presharedkey', 'privatekey', 'proxypass',
-	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radmac_secret', 'radius_secret',
-	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2', 'securiteinfo_id',
-	'serverauthkey', 'sha512-hash', 'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
-	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
-	'varsqlconf2password', 	'varsyncpassword', 'varmodulesldappassword', 'varmodulesldap2password',
-	'varusersmotpinitsecret', 'varusersmotppin', 'varuserspassword', 'webrootftppassword'
-);
-
-$acme_filtered_tags = array('key', 'password', 'secret', 'token', 'pwd', 'pw');
+require_once('status_output.inc');
 
 if ($_POST['submit'] == "DOWNLOAD" &&
     file_exists($output_file)) {
@@ -98,194 +70,9 @@ if (is_dir($output_path)) {
 unlink_if_exists($output_file);
 mkdir($output_path);
 
-function doCmdT($title, $command, $method) {
-	global $output_path, $output_file, $filtered_tags, $acme_filtered_tags, $show_output, $errors;
-	/* Fixup output directory */
-
-	if ($show_output) {
-		$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
-		echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
-		print('<div class="panel panel-default">');
-		print('<div class="panel-heading"><h2 class="panel-title">' . $title . '</h2></div>');
-		print('<div class="panel-body">');
-		print('<pre>');
-	}
-
-	if ($command == "dumpconfigxml") {
-		try {
-			$ofd = @fopen("{$output_path}/config-sanitized.xml", "w");
-			$fd = @fopen("/conf/config.xml", "r");
-			if ($fd && $ofd) {
-				while (!feof($fd)) {
-					$line = fgets($fd);
-					/* remove sensitive contents */
-					foreach ($filtered_tags as $tag) {
-						$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
-					}
-					/* remove ACME pkg sensitive contents */
-					foreach ($acme_filtered_tags as $tag) {
-						$line = preg_replace("/<dns_(.+){$tag}>.*?<\\/dns_(.+){$tag}>/", "<dns_$1{$tag}>xxxxx</dns_$1{$tag}>", $line);
-					}
-					if ($show_output) {
-						echo htmlspecialchars(str_replace("\t", "    ", $line), ENT_NOQUOTES);
-					}
-					fwrite($ofd, $line);
-				}
-			}
-			if ($fd) {
-				fclose($fd);
-			}
-			if ($ofd) {
-				fclose($ofd);
-			}
-		} catch (Exception $e) {
-			status_add_error(sprintf(gettext("Failed to sanitize configuration (%s): %s\n"), $title, $e->getMessage()));
-		}
-	} else {
-		try {
-			$execOutput = "";
-			$execStatus = "";
-			$fn = "{$output_path}/" . basename("{$title}.txt");
-			if ($method == "exec") {
-				exec($command . " > " . escapeshellarg($fn) . " 2>&1", $execOutput, $execStatus);
-				if ($show_output) {
-					$ofd = @fopen($fn, "r");
-					if ($ofd) {
-						while (!feof($ofd)) {
-							echo htmlspecialchars(fgets($ofd), ENT_NOQUOTES);
-						}
-						fclose($ofd);
-					}
-				}
-				if ($execStatus !== 0) {
-					throw new Exception(sprintf(gettext('Command had non-zero exit status: %d'), $execStatus));
-				}
-			} elseif ($method == "php_func") {
-				$execOutput = $command();
-				if ($show_output) {
-					echo htmlspecialchars($execOutput, ENT_NOQUOTES);
-				}
-				file_put_contents($fn, $execOutput);
-			}
-		} catch (Exception $e) {
-			status_add_error(sprintf(gettext("Failed to execute command (%s): %s\n"), $title, $e->getMessage()));
-		}
-	}
-
-	if ($show_output) {
-		print('</pre>');
-		print('</div>');
-		print('</div>');
-	}
-}
-
-/* Define a command, with a title, to be executed later. */
-function defCmdT($title, $command, $method = "exec") {
-	global $commands;
-	$title = htmlspecialchars($title, ENT_NOQUOTES);
-	$commands[] = array($title, $command, $method);
-}
-
-/* List all of the commands as an index. */
-function listCmds() {
-	global $currentDate;
-	global $commands;
-
-	$rubbish = array('|', '-', '/', '.', ' ');	/* fixes the <a> tag to be W3C compliant */
-
-	print('<div class="panel panel-default">');
-	print('<div class="panel-heading"><h2 class="panel-title">' . sprintf(gettext("Firewall Status on %s"), $currentDate) . '</h2></div>');
-	print('<div class="panel-body">');
-	print('    <div class="content">');
-	print("\n<p>" . gettext("This status page includes the following information") . ":\n");
-	print("<ul>\n");
-	for ($i = 0; isset($commands[$i]); $i++) {
-		print("\t<li><strong><a href=\"#" . str_replace($rubbish, '', $commands[$i][0]) . "\">" . $commands[$i][0] . "</a></strong></li>\n");
-	}
-
-	print("</ul>\n");
-	print('	       </div>');
-	print('	   </div>');
-	print('</div>');
-}
-
-/* Execute all of the commands which were defined by a call to defCmd. */
-function execCmds() {
-	global $commands;
-	for ($i = 0; isset($commands[$i]); $i++) {
-		doCmdT($commands[$i][0], $commands[$i][1], $commands[$i][2]);
-	}
-}
-
-function get_firewall_info() {
-	global $g, $output_path;
-	/* Firewall Platform/Serial */
-	$firewall_info = "Product Name: " . htmlspecialchars(g_get('product_label'));
-	$platform = system_identify_specific_platform();
-	if (!empty($platform['descr'])) {
-		$firewall_info .= "<br/>Platform: " . htmlspecialchars($platform['descr']);
-	}
-
-	if (file_exists('/var/db/uniqueid')) {
-		$ngid = file_get_contents('/var/db/uniqueid');
-		if (!empty($ngid)) {
-			$firewall_info .= "<br/>Netgate Device ID: " . htmlspecialchars($ngid);
-		}
-	}
-
-	if (function_exists("system_get_thothid") &&
-	    (php_uname("m") == "arm64")) {
-		$thothid = system_get_thothid();
-		if (!empty($thothid)) {
-			$firewall_info .= "<br/>Netgate Crypto ID: " . htmlspecialchars(chop($thothid));
-		}
-	}
-
-	$serial = system_get_serial();
-	if (!empty($serial)) {
-		$firewall_info .= "<br/>Serial: " . htmlspecialchars($serial);
-	}
-
-	if (!empty(g_get('product_version_string'))) {
-		$firewall_info .= "<br/>" . htmlspecialchars(g_get('product_label')) .
-		    " version: " . htmlspecialchars(g_get('product_version_string'));
-	}
-
-	if (file_exists('/etc/version.buildtime')) {
-		$build_time = file_get_contents('/etc/version.buildtime');
-		if (!empty($build_time)) {
-			$firewall_info .= "<br/>Built On: " . htmlspecialchars($build_time);
-		}
-	}
-	if (file_exists('/etc/version.lastcommit')) {
-		$build_commit = file_get_contents('/etc/version.lastcommit');
-		if (!empty($build_commit)) {
-			$firewall_info .= "<br/>Last Commit: " . htmlspecialchars($build_commit);
-		}
-	}
-
-	if (file_exists('/etc/version.gitsync')) {
-		$gitsync = file_get_contents('/etc/version.gitsync');
-		if (!empty($gitsync)) {
-			$firewall_info .= "<br/>A gitsync was performed at " .
-			    date("D M j G:i:s T Y", filemtime('/etc/version.gitsync')) .
-			    " to commit " . htmlspecialchars($gitsync);
-		}
-	}
-
-	file_put_contents("{$output_path}/Product-Info.txt", str_replace("<br/>", "\n", $firewall_info) . "\n");
-	return $firewall_info;
-}
-
-function get_gateway_status() {
-	return return_gateways_status_text(true, false);
-}
-
 if ($console) {
 	print(gettext("Gathering status data...") . "\n");
 }
-
-global $g, $config;
 
 /* Set up all of the commands we want to execute. */
 
@@ -294,49 +81,49 @@ if (function_exists("system_get_thothid") &&
     (php_uname("m") == "arm64")) {
 	$thothid = system_get_thothid();
 	if (!empty($thothid)) {
-		defCmdT("Product-Public Key", "/usr/local/sbin/ping-auth -p");
+		status_cmd_define("Product-Public Key", "/usr/local/sbin/ping-auth -p");
 	}
 }
 
-defCmdT("OS-Uptime", "/usr/bin/uptime");
-defCmdT("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
-defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
-defCmdT("Network-Multicast Groups", "/usr/sbin/ifmcstat");
-defCmdT("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
-defCmdT("Process-List", "/bin/ps xauwwd");
-defCmdT("Disk-Mounted Filesystems", "/sbin/mount");
-defCmdT("Disk-Free Space", "/bin/df -hi");
-defCmdT("Network-Routing tables", "/usr/bin/netstat -nWr");
-defCmdT("Network-IPv4 Nexthop Data", "/usr/bin/netstat -4onW");
-defCmdT("Network-IPv6 Nexthop Data", "/usr/bin/netstat -6onW");
-defCmdT("Network-IPv4 Nexthop Group Data", "/usr/bin/netstat -4OnW");
-defCmdT("Network-IPv6 Nexthop Group Data", "/usr/bin/netstat -6OnW");
-defCmdT("Network-Gateway Status", 'get_gateway_status', "php_func");
-defCmdT("Network-Mbuf Usage", "/usr/bin/netstat -mb");
-defCmdT("Network-Protocol Statistics", "/usr/bin/netstat -s");
-defCmdT("Network-Buffer and Timer Statistics", "/usr/bin/netstat -nWx");
-defCmdT("Network-Listen Queues", "/usr/bin/netstat -LaAn");
-defCmdT("Network-Sockets", "/usr/bin/sockstat");
-defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
-defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");
-defCmdT("OS-Kernel Modules", "/sbin/kldstat -v");
-defCmdT("OS-Kernel VMStat", "/usr/bin/vmstat -afimsz");
+status_cmd_define("OS-Uptime", "/usr/bin/uptime");
+status_cmd_define("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
+status_cmd_define("Network-Interface Statistics", "/usr/bin/netstat -nWi");
+status_cmd_define("Network-Multicast Groups", "/usr/sbin/ifmcstat");
+status_cmd_define("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
+status_cmd_define("Process-List", "/bin/ps xauwwd");
+status_cmd_define("Disk-Mounted Filesystems", "/sbin/mount");
+status_cmd_define("Disk-Free Space", "/bin/df -hi");
+status_cmd_define("Network-Routing tables", "/usr/bin/netstat -nWr");
+status_cmd_define("Network-IPv4 Nexthop Data", "/usr/bin/netstat -4onW");
+status_cmd_define("Network-IPv6 Nexthop Data", "/usr/bin/netstat -6onW");
+status_cmd_define("Network-IPv4 Nexthop Group Data", "/usr/bin/netstat -4OnW");
+status_cmd_define("Network-IPv6 Nexthop Group Data", "/usr/bin/netstat -6OnW");
+status_cmd_define("Network-Gateway Status", 'status_get_gateway_status', "php_func");
+status_cmd_define("Network-Mbuf Usage", "/usr/bin/netstat -mb");
+status_cmd_define("Network-Protocol Statistics", "/usr/bin/netstat -s");
+status_cmd_define("Network-Buffer and Timer Statistics", "/usr/bin/netstat -nWx");
+status_cmd_define("Network-Listen Queues", "/usr/bin/netstat -LaAn");
+status_cmd_define("Network-Sockets", "/usr/bin/sockstat");
+status_cmd_define("Network-ARP Table", "/usr/sbin/arp -an");
+status_cmd_define("Network-NDP Table", "/usr/sbin/ndp -na");
+status_cmd_define("OS-Kernel Modules", "/sbin/kldstat -v");
+status_cmd_define("OS-Kernel VMStat", "/usr/bin/vmstat -afimsz");
 
 /* If a device has a switch, put the switch configuration in the status output */
 if (file_exists("/dev/etherswitch0")) {
-	defCmdT("Network-Switch Configuration", "/sbin/etherswitchcfg -f /dev/etherswitch0 info");
+	status_cmd_define("Network-Switch Configuration", "/sbin/etherswitchcfg -f /dev/etherswitch0 info");
 }
 
 /* Firewall rules and info */
-defCmdT("Firewall-Generated Ruleset", "/bin/cat {$g['tmp_path']}/rules.debug");
-defCmdT("Firewall-Generated Ruleset Limiters", "/bin/cat {$g['tmp_path']}/rules.limiter");
-defCmdT("Firewall-Generated Ruleset Limits", "/bin/cat {$g['tmp_path']}/rules.limits");
-foreach (glob("{$g['tmp_path']}/rules.packages.*") as $pkgrules) {
+status_cmd_define("Firewall-Generated Ruleset", "/bin/cat " . g_get('tmp_path') . "/rules.debug");
+status_cmd_define("Firewall-Generated Ruleset Limiters", "/bin/cat " . g_get('tmp_path') . "/rules.limiter");
+status_cmd_define("Firewall-Generated Ruleset Limits", "/bin/cat " . g_get('tmp_path') . "/rules.limits");
+foreach (glob(g_get('tmp_path') . "/rules.packages.*") as $pkgrules) {
 	$pkgname = substr($pkgrules, strrpos($pkgrules, '.') + 1);
-	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat " . escapeshellarg($pkgrules));
+	status_cmd_define("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat " . escapeshellarg($pkgrules));
 }
 $ovpnradrules = array();
-foreach (glob("{$g['tmp_path']}/ovpn_ovpns*.rules") as $ovpnrules) {
+foreach (glob(g_get('tmp_path') . "/ovpn_ovpns*.rules") as $ovpnrules) {
 	if (preg_match('/ovpn_ovpns(\d+)\_(\w+)\_(\d+)\.rules/', basename($ovpnrules), $matches)) {
 		$ovpnradrules[$matches[1]] .= "# user '{$matches[2]}' remote port {$matches[3]}\n";
 		$ovpnradrules[$matches[1]] .= file_get_contents($ovpnrules);
@@ -344,61 +131,61 @@ foreach (glob("{$g['tmp_path']}/ovpn_ovpns*.rules") as $ovpnrules) {
 	}
 }
 foreach ($ovpnradrules as $ovpns => $genrules) {
-	defCmdT("OpenVPN-Generated RADIUS ACL Ruleset for server{$ovpns}",
+	status_cmd_define("OpenVPN-Generated RADIUS ACL Ruleset for server{$ovpns}",
 	  "echo " .  escapeshellarg($genrules));
 }
-defCmdT("Firewall-pf NAT Rules", "/sbin/pfctl -vvsn");
-defCmdT("Firewall-pf Firewall Rules", "/sbin/pfctl -vvsr");
-defCmdT("Firewall-pf Tables", "/sbin/pfctl -vs Tables");
-defCmdT("Firewall-pf State Table Contents", "/sbin/pfctl -vvss");
-defCmdT("Firewall-pf Info", "/sbin/pfctl -si");
-defCmdT("Firewall-pf Show All", "/sbin/pfctl -sa");
-defCmdT("Firewall-pf Queues", "/sbin/pfctl -s queue -v");
-defCmdT("Firewall-pf OSFP", "/sbin/pfctl -s osfp");
-defCmdT("Firewall-pftop Default", "/usr/local/sbin/pftop -a -b");
-defCmdT("Firewall-pftop Long", "/usr/local/sbin/pftop -w 150 -a -b -v long");
-defCmdT("Firewall-pftop Queue", "/usr/local/sbin/pftop -w 150 -a -b -v queue");
-defCmdT("Firewall-pftop Rules", "/usr/local/sbin/pftop -w 150 -a -b -v rules");
-defCmdT("Firewall-pftop Size", "/usr/local/sbin/pftop -w 150 -a -b -v size");
-defCmdT("Firewall-pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
-defCmdT("Firewall-Limiter Info", "/sbin/dnctl pipe show");
-defCmdT("Firewall-Queue Info", "/sbin/dnctl queue show");
+status_cmd_define("Firewall-pf NAT Rules", "/sbin/pfctl -vvsn");
+status_cmd_define("Firewall-pf Firewall Rules", "/sbin/pfctl -vvsr");
+status_cmd_define("Firewall-pf Tables", "/sbin/pfctl -vs Tables");
+status_cmd_define("Firewall-pf State Table Contents", "/sbin/pfctl -vvss");
+status_cmd_define("Firewall-pf Info", "/sbin/pfctl -si");
+status_cmd_define("Firewall-pf Show All", "/sbin/pfctl -sa");
+status_cmd_define("Firewall-pf Queues", "/sbin/pfctl -s queue -v");
+status_cmd_define("Firewall-pf OSFP", "/sbin/pfctl -s osfp");
+status_cmd_define("Firewall-pftop Default", "/usr/local/sbin/pftop -a -b");
+status_cmd_define("Firewall-pftop Long", "/usr/local/sbin/pftop -w 150 -a -b -v long");
+status_cmd_define("Firewall-pftop Queue", "/usr/local/sbin/pftop -w 150 -a -b -v queue");
+status_cmd_define("Firewall-pftop Rules", "/usr/local/sbin/pftop -w 150 -a -b -v rules");
+status_cmd_define("Firewall-pftop Size", "/usr/local/sbin/pftop -w 150 -a -b -v size");
+status_cmd_define("Firewall-pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
+status_cmd_define("Firewall-Limiter Info", "/sbin/dnctl pipe show");
+status_cmd_define("Firewall-Queue Info", "/sbin/dnctl queue show");
 
 /* Configuration Files */
-defCmdT("Disk-Contents of var run", "/bin/ls /var/run");
-defCmdT("Disk-Contents of conf", "/bin/ls /conf");
-defCmdT("config.xml", "dumpconfigxml");
-defCmdT("DNS-Resolution Configuration", "/bin/cat /etc/resolv.conf");
-defCmdT("DNS-Resolver Access Lists", "/bin/cat /var/unbound/access_lists.conf");
-defCmdT("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.conf");
-defCmdT("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
-defCmdT("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
-defCmdT("DHCP-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
-defCmdT("DHCP-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
-defCmdT("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
-defCmdT("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
-defCmdT("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
-defCmdT("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
-defCmdT("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
-defCmdT("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
-defCmdT("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
-defCmdT("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
-defCmdT("IPsec-SPD", "/sbin/setkey -DP");
-defCmdT("IPsec-SAD", "/sbin/setkey -D");
+status_cmd_define("Disk-Contents of var run", "/bin/ls /var/run");
+status_cmd_define("Disk-Contents of conf", "/bin/ls /conf");
+status_cmd_define("config.xml", "dumpconfigxml");
+status_cmd_define("DNS-Resolution Configuration", "/bin/cat /etc/resolv.conf");
+status_cmd_define("DNS-Resolver Access Lists", "/bin/cat /var/unbound/access_lists.conf");
+status_cmd_define("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.conf");
+status_cmd_define("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
+status_cmd_define("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
+status_cmd_define("DHCP-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
+status_cmd_define("DHCP-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
+status_cmd_define("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
+status_cmd_define("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
+status_cmd_define("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
+status_cmd_define("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
+status_cmd_define("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
+status_cmd_define("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
+status_cmd_define("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
+status_cmd_define("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
+status_cmd_define("IPsec-SPD", "/sbin/setkey -DP");
+status_cmd_define("IPsec-SAD", "/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {
-	defCmdT("OS-Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
+	status_cmd_define("OS-Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
 }
 if (file_exists("/cf/conf/upgrade_log.latest.txt")) {
-	defCmdT("OS-Upgrade Log Latest", "/bin/cat /cf/conf/upgrade_log.latest.txt");
+	status_cmd_define("OS-Upgrade Log Latest", "/bin/cat /cf/conf/upgrade_log.latest.txt");
 }
 if (file_exists("/boot/loader.conf")) {
-	defCmdT("OS-Boot Loader Configuration", "/bin/cat /boot/loader.conf");
+	status_cmd_define("OS-Boot Loader Configuration", "/bin/cat /boot/loader.conf");
 }
 if (file_exists("/boot/loader.conf.local")) {
-	defCmdT("OS-Boot Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
+	status_cmd_define("OS-Boot Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
 }
 if (file_exists("/var/etc/filterdns.conf")) {
-	defCmdT("DNS-filterdns Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
+	status_cmd_define("DNS-filterdns Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
 }
 
 if (is_dir("/var/etc/openvpn")) {
@@ -407,12 +194,12 @@ if (is_dir("/var/etc/openvpn")) {
 		if (!count($ovpnfile) || (count($ovpnfile) < 6)) {
 			continue;
 		}
-		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
+		status_cmd_define("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
 	}
 }
 
 if (file_exists("/var/etc/l2tp-vpn/mpd.conf")) {
-	defCmdT("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');
+	status_cmd_define("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');
 }
 
 /* Config History */
@@ -423,81 +210,54 @@ if (count($confvers) != 0) {
 		$conf_history .= backup_info($confvers[$c], $c+1);
 		$conf_history .= "\n";
 	}
-	defCmdT("Config History", "echo " . escapeshellarg($conf_history));
+	status_cmd_define("Config History", "echo " . escapeshellarg($conf_history));
 }
 
-/* Logs */
-function status_add_log($name, $logfile, $number = 1000) {
-	if (!file_exists($logfile)) {
-		status_add_error(gettext('Requested log file is not present') . ": " . $logfile . "\n");
-		return;
-	}
-	if (!is_readable($logfile)) {
-		status_add_error(gettext('Requested log file is not readable') . ": " . $logfile . "\n");
-		return;
-	}
-	$descr = "Log-{$name}";
-	$tail = '';
-	if ($number != "all") {
-		$descr .= "-Last {$number} entries";
-		$tail = ' | tail -n ' . escapeshellarg($number);
-	}
-	defCmdT($descr, system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . $tail);
-}
+status_log_add("System", '/var/log/system.log');
+status_log_add("DHCP", '/var/log/dhcpd.log');
+status_log_add("Filter", '/var/log/filter.log');
+status_log_add("Gateways", '/var/log/gateways.log');
+status_log_add("IPsec", '/var/log/ipsec.log');
+status_log_add("L2TP", '/var/log/l2tps.log');
+status_log_add("NTP", '/var/log/ntpd.log');
+status_log_add("OpenVPN", '/var/log/openvpn.log');
+status_log_add("Captive Portal Authentication", '/var/log/portalauth.log');
+status_log_add("PPP", '/var/log/ppp.log');
+status_log_add("PPPoE Server", '/var/log/poes.log');
+status_log_add("DNS", '/var/log/resolver.log');
+status_log_add("Routing", '/var/log/routing.log');
+status_log_add("Wireless", '/var/log/wireless.log');
+status_log_add("PHP Errors", '/tmp/PHP_errors.log', 'all');
 
-function status_add_error($error) {
-	global $errors, $show_output, $console;
-	if ($show_output) {
-		echo $error;
-	}
-	$errors[] = $error;
-}
-
-status_add_log("System", '/var/log/system.log');
-status_add_log("DHCP", '/var/log/dhcpd.log');
-status_add_log("Filter", '/var/log/filter.log');
-status_add_log("Gateways", '/var/log/gateways.log');
-status_add_log("IPsec", '/var/log/ipsec.log');
-status_add_log("L2TP", '/var/log/l2tps.log');
-status_add_log("NTP", '/var/log/ntpd.log');
-status_add_log("OpenVPN", '/var/log/openvpn.log');
-status_add_log("Captive Portal Authentication", '/var/log/portalauth.log');
-status_add_log("PPP", '/var/log/ppp.log');
-status_add_log("PPPoE Server", '/var/log/poes.log');
-status_add_log("DNS", '/var/log/resolver.log');
-status_add_log("Routing", '/var/log/routing.log');
-status_add_log("Wireless", '/var/log/wireless.log');
-status_add_log("PHP Errors", '/tmp/PHP_errors.log', 'all');
-
-defCmdT("OS-Message Buffer", "/sbin/dmesg -a");
-defCmdT("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
+status_cmd_define("OS-Message Buffer", "/sbin/dmesg -a");
+status_cmd_define("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 
 /* OS/Hardware Status */
-defCmdT("OS-sysctl values", "/sbin/sysctl -aq");
-defCmdT("OS-Kernel Environment", "/bin/kenv");
-defCmdT("OS-Kernel Memory Usage", "/usr/local/sbin/kmemusage.sh");
-defCmdT("OS-Installed Packages", "/usr/local/sbin/pkg-static info");
-defCmdT("OS-Package Manager Configuration", "/usr/local/sbin/pkg-static -vv");
-defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
-defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
+status_cmd_define("OS-sysctl values", "/sbin/sysctl -aq");
+status_cmd_define("OS-Kernel Environment", "/bin/kenv");
+status_cmd_define("OS-Kernel Memory Usage", "/usr/local/sbin/kmemusage.sh");
+status_cmd_define("OS-Installed Packages", "/usr/local/sbin/pkg-static info");
+status_cmd_define("OS-Package Manager Configuration", "/usr/local/sbin/pkg-static -vv");
+status_cmd_define("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
+status_cmd_define("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
 
-defCmdT("Disk-Filesystem Table", "/bin/cat /etc/fstab");
-defCmdT("Disk-Swap Information", "/usr/sbin/swapinfo");
+status_cmd_define("Disk-Filesystem Table", "/bin/cat /etc/fstab");
+status_cmd_define("Disk-Swap Information", "/usr/sbin/swapinfo");
 
 if (is_module_loaded("zfs.ko")) {
-	defCmdT("Disk-ZFS List", "/sbin/zfs list");
-	defCmdT("Disk-ZFS Properties", "/sbin/zfs get all");
-	defCmdT("Disk-ZFS Pool List", "/sbin/zpool list");
-	defCmdT("Disk-ZFS Pool Status", "/sbin/zpool status");
+	status_cmd_define("Disk-ZFS List", "/sbin/zfs list");
+	status_cmd_define("Disk-ZFS Properties", "/sbin/zfs get all");
+	status_cmd_define("Disk-ZFS Pool List", "/sbin/zpool list");
+	status_cmd_define("Disk-ZFS Pool Status", "/sbin/zpool status");
 }
 
-defCmdT("Disk-GEOM Tree", "/sbin/geom -t");
-defCmdT("Disk-GEOM Disk List", "/sbin/geom disk list -a");
-defCmdT("Disk-GEOM Partition Summary", "/sbin/geom part show -p");
-defCmdT("Disk-GEOM Partition Details", "/sbin/geom part list");
-defCmdT("Disk-GEOM Label Status", "/sbin/geom label status");
-defCmdT("Disk-GEOM Label Details", "/sbin/geom label list");
-defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
+status_cmd_define("Disk-GEOM Tree", "/sbin/geom -t");
+status_cmd_define("Disk-GEOM Disk List", "/sbin/geom disk list -a");
+status_cmd_define("Disk-GEOM Partition Summary", "/sbin/geom part show -p");
+status_cmd_define("Disk-GEOM Partition Details", "/sbin/geom part list");
+status_cmd_define("Disk-GEOM Label Status", "/sbin/geom label status");
+status_cmd_define("Disk-GEOM Label Details", "/sbin/geom label list");
+status_cmd_define("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
@@ -522,10 +282,18 @@ include("head.inc"); ?>
 
 </form>
 
-<?php print_info_box(get_firewall_info(), 'info', false);
+<?php print_info_box(status_get_firewall_info(), 'info', false);
+
+/* Call any registeredd package plugins which define status output to include
+ * See https://redmine.pfsense.org/issues/14777 and
+ *     https://redmine.pfsense.org/issues/1458
+ */
+$pluginparams = array();
+$pluginparams['type'] = 'statusoutput';
+pkg_call_plugins('plugin_statusoutput', $pluginparams);
 
 if ($show_output) {
-	listCmds();
+	status_cmd_list();
 } else {
 	print_info_box(gettext("Status output suppressed. Download archive to view."), 'info', false);
 }
@@ -533,19 +301,20 @@ if ($show_output) {
 endif;
 
 if ($console) {
-	get_firewall_info();
+	status_get_firewall_info();
 }
-execCmds();
+
+status_cmd_run_all();
 
 if (!empty($errors)) {
 	$errors[] = gettext("NOTE: Some errors are normal if a feature is not enabled or is inaccessible by the current user.\n");
-	$errortext = gettext('Errors') . ": " . count($errors) . "\n";
-	$errortext .= implode('', $errors);
+	$errorheader = gettext('Errors') . ": " . count($errors) . "\n";
+	$errortext = $errorheader . implode('', $errors);
 	file_put_contents("{$output_path}/_errors.txt", $errortext);
 	if ($console) {
 		echo $errortext;
 	} else {
-		print_info_box(implode('<br/>', $errors), 'warning', false);
+		print_info_box($errorheader . "<br/>" . implode('<br/>', $errors), 'warning', false);
 	}
 }
 

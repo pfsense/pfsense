@@ -39,11 +39,14 @@
 
 global $console;
 global $show_output;
+global $errors;
 
 $console = false;
 $show_output = !isset($_GET['archiveonly']);
+$errors = [];
 
-if ((php_sapi_name() == 'cli') || (defined('STDIN'))) {
+if ((php_sapi_name() == 'cli') ||
+    (defined('STDIN'))) {
 	/* Running from console/shell, not web */
 	$console = true;
 	$show_output = false;
@@ -74,7 +77,7 @@ $filtered_tags = array(
 	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key', 'presharedkey', 'privatekey', 'proxypass',
 	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radmac_secret', 'radius_secret',
 	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2', 'securiteinfo_id',
-       	'serverauthkey', 'sha512-hash', 'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
+	'serverauthkey', 'sha512-hash', 'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
 	'varsqlconf2password', 	'varsyncpassword', 'varmodulesldappassword', 'varmodulesldap2password',
 	'varusersmotpinitsecret', 'varusersmotppin', 'varuserspassword', 'webrootftppassword'
@@ -82,7 +85,8 @@ $filtered_tags = array(
 
 $acme_filtered_tags = array('key', 'password', 'secret', 'token', 'pwd', 'pw');
 
-if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
+if ($_POST['submit'] == "DOWNLOAD" &&
+    file_exists($output_file)) {
 	session_cache_limiter('public');
 	send_user_download('file', $output_file);
 }
@@ -95,7 +99,7 @@ unlink_if_exists($output_file);
 mkdir($output_path);
 
 function doCmdT($title, $command, $method) {
-	global $output_path, $output_file, $filtered_tags, $acme_filtered_tags, $show_output;
+	global $output_path, $output_file, $filtered_tags, $acme_filtered_tags, $show_output, $errors;
 	/* Fixup output directory */
 
 	if ($show_output) {
@@ -108,48 +112,63 @@ function doCmdT($title, $command, $method) {
 	}
 
 	if ($command == "dumpconfigxml") {
-		$ofd = @fopen("{$output_path}/config-sanitized.xml", "w");
-		$fd = @fopen("/conf/config.xml", "r");
-		if ($fd) {
-			while (!feof($fd)) {
-				$line = fgets($fd);
-				/* remove sensitive contents */
-				foreach ($filtered_tags as $tag) {
-					$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
-				}
-				/* remove ACME pkg sensitive contents */
-				foreach ($acme_filtered_tags as $tag) {
-					$line = preg_replace("/<dns_(.+){$tag}>.*?<\\/dns_(.+){$tag}>/", "<dns_$1{$tag}>xxxxx</dns_$1{$tag}>", $line);
-				}
-				if ($show_output) {
-					echo htmlspecialchars(str_replace("\t", "    ", $line), ENT_NOQUOTES);
-				}
-				fwrite($ofd, $line);
-			}
-		}
-		fclose($fd);
-		fclose($ofd);
-	} else {
-		$execOutput = "";
-		$execStatus = "";
-		$fn = "{$output_path}/" . basename("{$title}.txt");
-		if ($method == "exec") {
-			exec($command . " > " . escapeshellarg($fn) . " 2>&1", $execOutput, $execStatus);
-			if ($show_output) {
-				$ofd = @fopen($fn, "r");
-				if ($ofd) {
-					while (!feof($ofd)) {
-						echo htmlspecialchars(fgets($ofd), ENT_NOQUOTES);
+		try {
+			$ofd = @fopen("{$output_path}/config-sanitized.xml", "w");
+			$fd = @fopen("/conf/config.xml", "r");
+			if ($fd && $ofd) {
+				while (!feof($fd)) {
+					$line = fgets($fd);
+					/* remove sensitive contents */
+					foreach ($filtered_tags as $tag) {
+						$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
 					}
+					/* remove ACME pkg sensitive contents */
+					foreach ($acme_filtered_tags as $tag) {
+						$line = preg_replace("/<dns_(.+){$tag}>.*?<\\/dns_(.+){$tag}>/", "<dns_$1{$tag}>xxxxx</dns_$1{$tag}>", $line);
+					}
+					if ($show_output) {
+						echo htmlspecialchars(str_replace("\t", "    ", $line), ENT_NOQUOTES);
+					}
+					fwrite($ofd, $line);
 				}
+			}
+			if ($fd) {
+				fclose($fd);
+			}
+			if ($ofd) {
 				fclose($ofd);
 			}
-		} elseif ($method == "php_func") {
-			$execOutput = $command();
-			if ($show_output) {
-				echo htmlspecialchars($execOutput, ENT_NOQUOTES);
+		} catch (Exception $e) {
+			status_add_error(sprintf(gettext("Failed to sanitize configuration (%s): %s\n"), $title, $e->getMessage()));
+		}
+	} else {
+		try {
+			$execOutput = "";
+			$execStatus = "";
+			$fn = "{$output_path}/" . basename("{$title}.txt");
+			if ($method == "exec") {
+				exec($command . " > " . escapeshellarg($fn) . " 2>&1", $execOutput, $execStatus);
+				if ($show_output) {
+					$ofd = @fopen($fn, "r");
+					if ($ofd) {
+						while (!feof($ofd)) {
+							echo htmlspecialchars(fgets($ofd), ENT_NOQUOTES);
+						}
+						fclose($ofd);
+					}
+				}
+				if ($execStatus !== 0) {
+					throw new Exception(sprintf(gettext('Command had non-zero exit status: %d'), $execStatus));
+				}
+			} elseif ($method == "php_func") {
+				$execOutput = $command();
+				if ($show_output) {
+					echo htmlspecialchars($execOutput, ENT_NOQUOTES);
+				}
+				file_put_contents($fn, $execOutput);
 			}
-			file_put_contents($fn, $execOutput);
+		} catch (Exception $e) {
+			status_add_error(sprintf(gettext("Failed to execute command (%s): %s\n"), $title, $e->getMessage()));
 		}
 	}
 
@@ -260,6 +279,10 @@ function get_firewall_info() {
 
 function get_gateway_status() {
 	return return_gateways_status_text(true, false);
+}
+
+if ($console) {
+	print(gettext("Gathering status data...") . "\n");
 }
 
 global $g, $config;
@@ -406,6 +429,11 @@ if (count($confvers) != 0) {
 /* Logs */
 function status_add_log($name, $logfile, $number = 1000) {
 	if (!file_exists($logfile)) {
+		status_add_error(gettext('Requested log file is not present') . ": " . $logfile . "\n");
+		return;
+	}
+	if (!is_readable($logfile)) {
+		status_add_error(gettext('Requested log file is not readable') . ": " . $logfile . "\n");
 		return;
 	}
 	$descr = "Log-{$name}";
@@ -415,6 +443,14 @@ function status_add_log($name, $logfile, $number = 1000) {
 		$tail = ' | tail -n ' . escapeshellarg($number);
 	}
 	defCmdT($descr, system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . $tail);
+}
+
+function status_add_error($error) {
+	global $errors, $show_output, $console;
+	if ($show_output) {
+		echo $error;
+	}
+	$errors[] = $error;
 }
 
 status_add_log("System", '/var/log/system.log');
@@ -497,10 +533,21 @@ if ($show_output) {
 endif;
 
 if ($console) {
-	print(gettext("Gathering status data...") . "\n");
 	get_firewall_info();
 }
 execCmds();
+
+if (!empty($errors)) {
+	$errors[] = gettext("NOTE: Some errors are normal if a feature is not enabled or is inaccessible by the current user.\n");
+	$errortext = gettext('Errors') . ": " . count($errors) . "\n";
+	$errortext .= implode('', $errors);
+	file_put_contents("{$output_path}/_errors.txt", $errortext);
+	if ($console) {
+		echo $errortext;
+	} else {
+		print_info_box(implode('<br/>', $errors), 'warning', false);
+	}
+}
 
 print(gettext("Saving output to archive..."));
 

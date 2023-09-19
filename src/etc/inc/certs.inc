@@ -2608,7 +2608,7 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
 		if (empty($cert['prv']) && ($type == 'cert')) {
 			continue;
 		} elseif (cert_check_pkey_compatibility($cert['prv'], $consumer) &&
-			  cert_check_digest_compatibility($type, $cert['crt'], $consumer)) {
+			  cert_check_digest_compatibility($type, $cert, $consumer)) {
 			if ($selectsource) {
 				$list[] = array('refid' => $cert['refid'],
 						'descr' => $cert['descr']);
@@ -2813,7 +2813,16 @@ function cert_check_digest_compatibility($type, $cert, $consumer) {
 		'ca'   => ['HTTPS'],
 		'cert' => ['HTTPS', 'OpenVPN'],
 	];
-	return (!cert_has_weak_digest($cert) ||
+	$usable = true;
+	/* HTTPS certificates must not have a weak entry anywhere in the CA+Cert
+	 * chain */
+	if (($type == 'cert') &&
+	    ($consumer == 'HTTPS')) {
+		$usable = !cert_chain_has_weak_digest($cert);
+	} else {
+		$usable = !cert_has_weak_digest($cert['crt']);
+	}
+	return ($usable ||
 		!in_array($consumer, $nonweak_consumers[$type]));
 }
 

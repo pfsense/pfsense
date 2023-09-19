@@ -1138,7 +1138,8 @@ events.push(function() {
 				var xmldoc = responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
 				$('#username').val('');
-				$('#password').val('');
+				$('#passwordfld').val('');
+				$('#passwordfld_confirm').val('');
 				if (provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
 					$('#phone').val('#777');
 					$('#apn').val('');
@@ -1146,8 +1147,11 @@ events.push(function() {
 					$('#phone').val('*99#');
 					$('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
 				}
-				$('#username').val(provider.getElementsByTagName('username')[0].firstChild.data);
-				$('#password').val(provider.getElementsByTagName('password')[0].firstChild.data);
+				ppp_username = provider.getElementsByTagName('username')[0].firstChild.data;
+				ppp_password = provider.getElementsByTagName('password')[0].firstChild.data;
+				$('#username').val(ppp_username);
+				$('#passwordfld').val(ppp_password);
+				$('#passwordfld_confirm').val(ppp_password);
 			}
 		});
 	}

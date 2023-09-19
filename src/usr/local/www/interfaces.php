@@ -3914,13 +3914,14 @@ events.push(function() {
 
 	function prefill_provider() {
 		$.ajax("getserviceproviders.php",{
-			type: 'post',
+			type: 'POST',
 			data: {country : $('#country').val(), provider : $('#provider_list').val(), plan : $('#providerplan').val()},
 			success: function(data, textStatus, response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
 				$('#ppp_username').val('');
 				$('#ppp_password').val('');
+				$('#ppp_password_confirm').val('');
 				if (provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
 					$('#phone').val('#777');
 					$('#apn').val('');

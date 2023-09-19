@@ -1134,7 +1134,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	/* do not delete dynamic (frr/bgp/ospf) route
 	 * see https://redmine.pfsense.org/issues/12536 */
 	if ($gwdefault == "-") {
-		if (is_static_route('default', $ipprotocol)) {
+		if (!is_dynamic_route('default', $ipprotocol)) {
 			route_del('default', $ipprotocol);
 		}
 		return;

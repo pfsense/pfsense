@@ -2876,8 +2876,16 @@ function route_table() {
 	return $result;
 }
 
-/* check if route is static (not BGP/OSPF) */
-function is_static_route($target, $ipprotocol = '') {
+/**
+ * Checks if a route was sourced from a dynamic routing protocol like
+ * BGP or OSPF by looking at the route flags.
+ * 
+ * @param string $target IP address or subnet, or 'default' for the default route
+ * @param string $ipprotocol either 'inet' for IPv4, or 'inet6' for IPv6
+ * 
+ * @return bool true if it's a dynamic route
+ */
+function is_dynamic_route(string $target, string $ipprotocol = ''): bool {
 	if (is_v4($target) || (($target == 'default') && ($ipprotocol == 'inet'))) {
 		$inet = '4';
 	} elseif (is_v6($target) || (($target == 'default') && ($ipprotocol == 'inet6'))) {
@@ -2886,7 +2894,10 @@ function is_static_route($target, $ipprotocol = '') {
 		return false;
 	}
 
-	if (exec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | egrep 'flags: <.*STATIC.*>'")) {
+	/* check for the PROTO* flag instead of STATIC
+	 * see https://redmine.pfsense.org/issues/14717
+	 * mwexec() returns false if the flag exists, so invert it */
+	if (!mwexec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | /usr/bin/egrep 'flags: <.*PROTO.*>'")) {
 		return true;
 	}
 

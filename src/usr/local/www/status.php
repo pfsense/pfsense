@@ -307,8 +307,8 @@ if ($console) {
 status_cmd_run_all();
 
 if (!empty($errors)) {
-	$errors[] = gettext("NOTE: Some errors are normal if a feature is not enabled or is inaccessible by the current user.\n");
 	$errorheader = gettext('Errors') . ": " . count($errors) . "\n";
+	$errors[] = gettext("NOTE: Some errors are normal if a feature is not enabled or is inaccessible by the current user.\n");
 	$errortext = $errorheader . implode('', $errors);
 	file_put_contents("{$output_path}/_errors.txt", $errortext);
 	if ($console) {

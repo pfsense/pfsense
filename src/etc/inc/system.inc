@@ -1521,7 +1521,7 @@ EOD;
 		location / {
 			index  index.php index.html index.htm;
 		}
-		location ~ \.inc$ {
+		location ~ (\.inc$|\.orig$|\.pkgsave$) {
 			deny all;
 			return 403;
 		}

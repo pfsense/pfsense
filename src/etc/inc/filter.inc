@@ -4982,6 +4982,9 @@ function separator_rows($separators) {
  */
 function shift_separators(array &$separators, ?int $index = null, bool $shiftup = false): void {
 	foreach ($separators as $rowkey => $name) {
+		if (empty($name)) {
+			continue;
+		}
 		$row = substr(array_get_path($name, 'row/0'), 2);
 		$shift = ($shiftup) ? -1 : 1;
 		if ($index == -1) {

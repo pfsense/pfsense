@@ -373,7 +373,7 @@ EOF;
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
 	$dns_record_cache = isset($unboundcfg['dnsrecordcache']) ? "yes" : "no";
-	$sock_queue_timeout = isset($unboundcfg['sock_queue_timeout']) ? $unboundcfg['sock_queue_timeout'] : '0';
+	$sock_queue_timeout = empty($unboundcfg['sock_queue_timeout']) ? '0' : $unboundcfg['sock_queue_timeout'];
 	$aggressivensec = isset($unboundcfg['aggressivensec']) ? "yes" : "no";
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";

@@ -1664,7 +1664,11 @@ function validate_address_family($ipaddr, $gwname, $disabled = false) {
 		$v6gw = true;
 	}
 
-	$gw_array = return_gateways_array();
+	/* Check gateways including disabled gateways and gateways for disabled
+	 * interfaces.
+	 * https://redmine.pfsense.org/issues/8846
+	 */
+	$gw_array = return_gateways_array(true, false, true);
 	if (is_array($gw_array[$gwname])) {
 		switch ($gw_array[$gwname]['ipprotocol']) {
 			case "inet":

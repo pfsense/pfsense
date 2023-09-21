@@ -684,8 +684,6 @@ function toggleNATrule($post, $json = false) {
 }
 
 function deleteNATrule($post, $json = false) {
-	global $config;
-
 	init_config_arr(array('nat', 'separator'));
 	$a_separators = config_get_path('nat/separator', []);
 
@@ -758,8 +756,6 @@ function applyNATrules() {
 
 // Re-order the NAT rules per the array of indices passed in $post
 function reorderNATrules($post, $json = false) {
-	global $config;
-
 	$updated = false;
 	$dirty = false;
 

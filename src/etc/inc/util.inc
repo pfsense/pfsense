@@ -2510,6 +2510,7 @@ function get_php_default_memory($ARCH) {
 function get_php_max_memory() {
 	$system_mem = floor(get_memory()[0]);
 	$max_mem = $system_mem - 512;
+	$default_mem = get_php_default_memory(php_uname("m"));
 
 	// Ensure the max memory isn't zero or negative, in case 512M or less is available
 	if ($max_mem <= 0) {
@@ -2519,6 +2520,9 @@ function get_php_max_memory() {
 		if ($max_mem  < 128) {
 			return get_php_default_memory("");
 		}
+	} elseif ($max_mem < $default_mem) {
+		/* Do not restrict the maximum to less than the default */
+		$max_mem = $default_mem;
 	}
 
 	return $max_mem;

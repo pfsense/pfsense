@@ -85,9 +85,13 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
 	$pconfig['subnets'] = config_get_path("dhcpdv6/{$if}/subnets/item");
+	$pconfig['routes'] = config_get_path("dhcpdv6/{$if}/routes/item");
 }
 if (!is_array($pconfig['subnets'])) {
 	$pconfig['subnets'] = array();
+}
+if (!is_array($pconfig['routes'])) {
+	$pconfig['routes'] = array();
 }
 
 $advertise_modes = array(
@@ -108,6 +112,11 @@ $subnets_help = '<span class="help-block">' .
 		"/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
 		"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.") .
 	'</span>';
+$routes_help = '<span class="help-block">' .
+	gettext("Routes are specified in CIDR format. " .
+			"Enter subnets to which routes should be advertised, and their priority. " .
+			"If you need a default route, specify it with ::/0 here.  " .
+			"If no routes are specified here, the Router Advertisement (RA) Daemon will advertise only the default route.");
 
 // THe use of <div class="infoblock"> here causes the text to be hidden until the user clicks the "info" icon
 $ramode_help = gettext('Select the Operating Mode for the Router Advertisement (RA) Daemon.') .
@@ -150,6 +159,29 @@ if ($_POST['save']) {
 			$pconfig['subnets'][] = $address . "/" . $bits;
 			if (!is_ipaddrv6($address)) {
 				$input_errors[] = sprintf(gettext('An invalid subnet or alias was specified. [%1$s/%2$s]'), $address, $bits);
+			}
+		}
+	}
+	$pconfig['routes'] = array();
+	for ($x = 0; $x < 5000; $x += 1) {
+		$address = trim($_POST['route_address' . $x]);
+		if ($address === "") {
+			continue;
+		}
+		$bits = trim($_POST['route_bits' . $x]);
+		if ($bits === "") {
+			$bits = "128";
+		}
+		$priority = trim($_POST['route_priority' . $x]);
+		if ($priority === "0") {
+			$priority = "medium";
+		}
+		if (is_alias($address)) {
+			$pconfig['routes'][] = array('destination' => $address);
+		} else {
+			$pconfig['routes'][] = array('destination' => $address . "/" . $bits, 'priority' => $priority);
+			if (!is_ipaddrv6($address)) {
+				$input_errors[] = sprintf(gettext("An invalid route was specified. [%1$s/%2$s]"), $address, $bits);
 			}
 		}
 	}
@@ -246,6 +278,11 @@ if ($_POST['save']) {
 			$config['dhcpdv6'][$if]['subnets']['item'] = $pconfig['subnets'];
 		} else {
 			config_del_path("dhcpdv6/{$if}/subnets");
+		}
+		if (count($pconfig['routes'])) {
+			$config['dhcpdv6'][$if]['routes']['item'] = $pconfig['routes'];
+		} else {
+			config_del_path("dhcpdv6/{$if}/routes");
 		}
 
 		write_config("Router Advertisements settings saved");
@@ -460,6 +497,55 @@ $section->addInput(new Form_Button(
 	null,
 	'fa-plus'
 ))->addClass('btn-success');
+/*-----------------------------------------------------------------------------*/
+$section->addInput(new Form_StaticText(
+	'Routes',
+	$routes_help
+));
+
+if (empty($pconfig['routes'])) {
+	$pconfig['routes'] = array('0' => '/128');
+}
+
+$route_counter = 0;
+$numrows = count($pconfig['routes']) - 1;
+$route_priority_modes = $priority_modes;
+array_unshift($route_priority_modes, '');
+foreach ($pconfig['routes'] as $route) {
+	$route_address_name = "route_address" . $route_counter;
+	$route_bits_name = "route_bits" . $route_counter;
+	$route_priority_name = "route_priority" . $route_counter;
+	list($address, $mask) = explode("/", $route['destination']);
+	$priority = $route['priority'];
+	$group = new Form_Group($route_counter == 0 ? 'Routes':'');
+	$group->add(new Form_IpAddress(
+		$route_address_name,
+		null,
+		$address
+	))->addMask($route_bits_name, $mask, 128, 0);
+	$group->add(new Form_Select(
+	$route_priority_name,
+	null,
+	$priority,
+	$route_priority_modes
+	));
+	$group->add(new Form_Button(
+		'deleterow_routes' . $route_counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->removeClass('btn-primary')->addClass('btn-warning');
+	$group->addClass('repeatable_routes');
+	$section->add($group);
+	$route_counter++;
+}
+$section->addInput(new Form_Button(
+	'addrow_routes',
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
+/*-----------------------------------------------------------------------------*/
 
 $form->add($section);
 
@@ -512,7 +598,7 @@ print($form);
 //<![CDATA[
 events.push(function() {
 	// Suppress "Delete row" button if there are fewer than two rows
-	checkLastRow();
+	checkLastRow($(this).attr("id"));
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;

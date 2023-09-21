@@ -236,26 +236,43 @@ function services_radvd_configure($blacklist = array()) {
 				}
 			}
 		}
-		$radvdconf .= "\troute ::/0 {\n";
-		switch ($dhcpv6ifconf['rapriority']) {
-			case "low":
-				$radvdconf .= "\t\tAdvRoutePreference low;\n";
-				break;
-			case "high":
-				$radvdconf .= "\t\tAdvRoutePreference high;\n";
-				break;
-			default:
-				$radvdconf .= "\t\tAdvRoutePreference medium;\n";
-				break;
+		/* If there are routes defined, do not generate a default route, but use the user-specified routes instead */
+		if (is_array($dhcpv6ifconf['routes']['item'])) {
+			foreach ($dhcpv6ifconf['routes']['item'] as $dhcpv6route) {
+				$radvdconf .= "\troute " . $dhcpv6route['destination'] . " {\n";
+				if ($rasrcaddr) {
+					$radvdconf .= "\t\tRemoveRoute off;\n";
+				}
+				else {
+					$radvdconf .= "\t\tRemoveRoute on;\n";
+				}
+				$radvdconf .= "\t\tAdvRoutePreference " . $dhcpv6route['priority'] . ";\n";
+				$radvdconf .= "\t};\n";
+			}
 		}
-
-		if ($rasrcaddr) {
-			$radvdconf .= "\t\tRemoveRoute off;\n";
-		}
+		/* There are no user-specified routes, so generate a default route entry */
 		else {
-			$radvdconf .= "\t\tRemoveRoute on;\n";
+			$radvdconf .= "\troute ::/0 {\n";
+			switch ($dhcpv6ifconf['rapriority']) {
+				case "low":
+					$radvdconf .= "\t\tAdvRoutePreference low;\n";
+					break;
+				case "high":
+					$radvdconf .= "\t\tAdvRoutePreference high;\n";
+					break;
+				default:
+					$radvdconf .= "\t\tAdvRoutePreference medium;\n";
+					break;
+			}
+
+			if ($rasrcaddr) {
+				$radvdconf .= "\t\tRemoveRoute off;\n";
+			}
+			else {
+				$radvdconf .= "\t\tRemoveRoute on;\n";
+			}
+			$radvdconf .= "\t};\n";
 		}
-		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
 		if ($dhcpv6ifconf['radvd-dns'] != 'disabled') {

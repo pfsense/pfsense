@@ -46,8 +46,8 @@ $ifdisp = get_configured_interface_with_descr();
 init_config_arr(array('filter', 'rule'));
 init_config_arr(array('nat', 'separator'));
 init_config_arr(array('nat', 'rule'));
-$a_nat = &$config['nat']['rule'];
-$a_separators = &$config['nat']['separator'];
+$a_nat = config_get_path('nat/rule', []);
+$a_separators = config_get_path('nat/separator', []);
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];

@@ -90,8 +90,8 @@ function saveNATrule($post, $id, $json = false) {
 	init_config_arr(array('filter', 'rule'));
 	init_config_arr(array('nat', 'separator'));
 	init_config_arr(array('nat', 'rule'));
-	$a_nat = &$config['nat']['rule'];
-	$a_separators = &$config['nat']['separator'];
+	$a_nat = config_get_path('nat/rule', []);
+	$a_separators = config_get_path('nat/separator', []);
 
 	$input_errors = array();
 
@@ -602,7 +602,6 @@ function saveNATrule($post, $id, $json = false) {
 				array_splice($a_nat, $after+1, 0, array($natent));
 
 				// shift the separators
-				$a_separators = config_get_path('nat/separator', []);
 				if ($after == -1) {
 					// rule is being placed on top
 					shift_separators($a_separators, -1);
@@ -616,6 +615,8 @@ function saveNATrule($post, $id, $json = false) {
 			}
 		}
 
+		config_set_path('nat/rule', $a_nat);
+		config_set_path('nat/separator', $a_separators);
 		if (write_config(gettext("Firewall: NAT: Port Forward - saved/edited a port forward rule."))) {
 			if (!$json) {
 				mark_subsystem_dirty('natconf');
@@ -686,7 +687,7 @@ function deleteNATrule($post, $json = false) {
 	global $config;
 
 	init_config_arr(array('nat', 'separator'));
-	$a_separators = &$config['nat']['separator'];
+	$a_separators = config_get_path('nat/separator', []);
 
 	// Check for single rule
 	if (!(is_array($post['rule']) && count($post['rule']))) {
@@ -699,7 +700,7 @@ function deleteNATrule($post, $json = false) {
 	   the rule index is NOT recalculated on every loop. */
 	asort($post['rule'], SORT_NATURAL);
 	$num_deleted = 0;
-	$a_separators = config_get_path('nat/separator', []);
+
 	foreach ($post['rule'] as $rulei) {
 		// separators must be updated before the rule is removed
 		shift_separators($a_separators, $rulei - $num_deleted, true);
@@ -764,8 +765,8 @@ function reorderNATrules($post, $json = false) {
 
 	init_config_arr(array('nat', 'separator'));
 	init_config_arr(array('nat', 'rule'));
-	$a_nat = &$config['nat']['rule'];
-	$a_separators = &$config['nat']['separator'];
+	$a_nat = config_get_path('nat/rule', []);
+	$a_separators = config_get_path('nat/separator', []);
 
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($post['rule']) && !empty($post['rule'])) {
@@ -801,6 +802,8 @@ function reorderNATrules($post, $json = false) {
 	}
 
 	if ($updated || $dirty) {
+		config_set_path('nat/rule', $a_nat);
+		config_set_path('nat/separator', $a_separators);
 		if (write_config("NAT: Rule order changed")) {
 			if ($json) {
 				filter_configure();

@@ -299,7 +299,7 @@ if (isset($_POST['del_x'])) {
 		}
 	}
 
-	$a_separators = &$config['filter']['separator'][strtolower($if)];
+	$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
 
 	/* update separator order, POST[separator] is an array of ordered IDs */
 	if (is_array($_POST['separator']) && !empty($_POST['separator'])) {
@@ -320,6 +320,7 @@ if (isset($_POST['del_x'])) {
 	}
 
 	if ($updated || $dirty) {
+		config_set_path('filter/separator/' . strtolower($if), $a_separators);
 		if (write_config(gettext("Firewall: Rules - reordered firewall rules."))) {
 			if ($dirty) {
 				mark_subsystem_dirty('filter');

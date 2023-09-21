@@ -264,7 +264,7 @@ function status_log_add($name, $logfile, $number = 1000) {
 
 function status_error_add($error) {
 	global $errors, $show_output, $console;
-	if ($show_output) {
+	if ($console) {
 		echo $error;
 	}
 	$errors[] = $error;

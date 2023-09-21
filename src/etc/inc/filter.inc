@@ -4977,12 +4977,17 @@ function separator_rows($separators) {
  * @param int $index Index of the rule relative to the section/interface.
  *            To indicate a rule is being placed before all other rules
  *            and separators, specify -1 (top).
- * @param bool $shiftup Shift the separators up or down
+ * @param bool $shiftup Shift the separators up (true), or down
  * 
  */
-function shift_separators(array &$separators, ?int $index = null, bool $shiftup = false): void {
+function shift_separators(array &$separators, ?int $index, bool $shiftup = false): void {
+	if (!isset($index)) {
+		return;
+	}
+
 	foreach ($separators as $rowkey => $name) {
 		if (empty($name)) {
+			// Skip undefined separators
 			continue;
 		}
 		$row = substr(array_get_path($name, 'row/0'), 2);
@@ -4995,17 +5000,10 @@ function shift_separators(array &$separators, ?int $index = null, bool $shiftup 
 				// Rule is being added at the top; shift all down
 				$shift = 1;
 			}
-		} elseif (!isset($index) || empty($name)) {
-			// Skip undefined separators
-			$shift = 0;
-		} elseif ($row == 0) {
-			// Separators at the top cannot move up
-			$shift = 0;
-		} elseif ($row == $index) {
-			// Don't shift a separator with the same index as the rule
-			$shift = 0;
-		} elseif ($row < $index) {
-			// Don't shift the separator if it's above the rule
+		} elseif ($row == 0 || $row == $index || $row < $index) {
+			/* Separators at the top (row 0) cannot move up;
+			 * Don't shift a separator with the same index as the rule;
+			 * Don't shift the separator if it's above the rule. */
 			$shift = 0;
 		}
 

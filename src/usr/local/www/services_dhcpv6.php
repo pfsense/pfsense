@@ -151,6 +151,7 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	$pconfig['ddnsdomainkey'] = config_get_path("dhcpdv6/{$if}/ddnsdomainkey");
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($config['dhcpdv6'][$if]['ddnsforcehostname']);
+	$pconfig['disableupdateoptimization'] = isset($config['dhcpdv6'][$if]['disableupdateoptimization']);
 	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
 	$pconfig['ddnsclientupdates'] = config_get_path("dhcpdv6/{$if}/ddnsclientupdates");
 	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = config_get_path("dhcpdv6/{$if}/ntpserver");
@@ -467,6 +468,7 @@ if (isset($_POST['apply'])) {
 		$config['dhcpdv6'][$if]['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$config['dhcpdv6'][$if]['disableupdateoptimization'] = ($_POST['disableupdateoptimization']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsreverse'] = ($_POST['ddnsreverse']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
@@ -858,6 +860,18 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ddnsreverse']
 ));
 
+$section->addInput(new Form_Checkbox(
+		'disableupdateoptimization',
+		'Update optimization',
+		'Disable DDNS update optimization',
+		$pconfig['disableupdateoptimization']
+	))->setHelp('If the update optimization is disabled, ' .
+	    'the server will attempt a DNS update for clients each time the ' .
+	    'client renews its lease, rather than only attempting an update ' .
+	    'when it appears to be necessary. This will allow the DNS to heal ' .
+	    'from database inconsistencies more easily, but the	cost is that ' .
+	    'the DHCP server must do many more DNS updates.');
+
 $btnadv = new Form_Button(
 	'btnadvntp',
 	'Display Advanced',
@@ -1127,6 +1141,7 @@ events.push(function() {
 <?php
 			if (!$pconfig['ddnsupdate'] &&
 			    !$pconfig['ddnsforcehostname'] &&
+				!$pconfig['disableupdateoptimization'] &&
 			    empty($pconfig['ddnsdomain']) &&
 			    empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainsecondary']) &&
@@ -1149,6 +1164,7 @@ events.push(function() {
 		hideCheckbox('ddnsupdate', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
 		hideCheckbox('ddnsforcehostname', !showadvdns);
+		hideCheckbox('disableupdateoptimization', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainsecondary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);

@@ -193,6 +193,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['ddnsdomainkey'] = $dhcpdconf['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($dhcpdconf['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($dhcpdconf['ddnsforcehostname']);
+	$pconfig['disableupdateoptimization'] = isset($dhcpdconf['disableupdateoptimization']);
 	$pconfig['mac_allow'] = $dhcpdconf['mac_allow'];
 	$pconfig['mac_deny'] = $dhcpdconf['mac_deny'];
 	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = $dhcpdconf['ntpserver'];
@@ -212,6 +213,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
 	$pconfig['disablepingcheck'] = $dhcpdconf['disablepingcheck'];
 	$pconfig['ddnsclientupdates'] = $dhcpdconf['ddnsclientupdates'];
+	$pconfig['disableupdateoptimization'] = $dhcpdconf['disableupdateoptimization'];
 
 	// OMAPI Settings
 	if(isset($dhcpdconf['omapi_port'])) {
@@ -713,6 +715,11 @@ if (isset($_POST['save'])) {
 			$dhcpdconf['disablepingcheck'] = $_POST['disablepingcheck'];
 		} else {
 			unset($dhcpdconf['disablepingcheck']);
+		}
+		if ($_POST['disableupdateoptimization']) {
+			$dhcpdconf['disableupdateoptimization'] = $_POST['disableupdateoptimization'];
+		} else {
+			unset($dhcpdconf['disableupdateoptimization']);
 		}
 		$dhcpdconf['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
@@ -1373,6 +1380,18 @@ $section->addInput(new Form_Select(
 	    'do the updates and the client should not, Ignore specifies that DHCP will do the ' .
 	    'update and the client can also attempt the update usually using a different domain name.');
 
+$section->addInput(new Form_Checkbox(
+		'disableupdateoptimization',
+		'Update optimization',
+		'Disable DDNS update optimization',
+		$pconfig['disableupdateoptimization']
+	))->setHelp('If the update optimization is disabled, ' .
+	    'the server will attempt a DNS update for clients each time the ' .
+	    'client renews its lease, rather than only attempting an update ' .
+	    'when it appears to be necessary. This will allow the DNS to heal ' .
+	    'from database inconsistencies more easily, but the	cost is that ' .
+	    'the DHCP server must do many more DNS updates.');
+
 // Advanced MAC
 $btnadv = new Form_Button(
 	'btnadvmac',
@@ -1802,6 +1821,7 @@ events.push(function() {
 <?php
 			if (!$pconfig['ddnsupdate'] &&
 				!$pconfig['ddnsforcehostname'] &&
+				!$pconfig['disableupdateoptimization'] &&
 				empty($pconfig['ddnsdomain']) &&
 				empty($pconfig['ddnsdomainprimary']) &&
 				empty($pconfig['ddnsdomainsecondary']) &&
@@ -1821,6 +1841,7 @@ events.push(function() {
 		}
 
 		hideCheckbox('ddnsupdate', !showadvdns);
+		hideCheckbox('disableupdateoptimization', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
 		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);

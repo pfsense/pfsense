@@ -106,15 +106,15 @@ if ($_POST['save']) {
 		}
 
 		$rollent['zone'] = $_POST['zone'];
-		$rollent['number'] = $_POST['number'];
-		$rollent['minutes'] = $_POST['minutes'];
+		$rollent['number'] = intval($_POST['number']);
+		$rollent['minutes'] = intval($_POST['minutes']);
 		$rollent['descr'] = $_POST['descr'];
 
 		/* New Roll or modified voucher count: create bitmask */
 		$voucherlck = lock("voucher{$cpzone}");
 
 		if ($_POST['count'] != $rollent['count']) {
-			$rollent['count'] = $_POST['count'];
+			$rollent['count'] = intval($_POST['count']);
 			$len = ($rollent['count']>>3) + 1;	 // count / 8 +1
 			$rollent['used'] = base64_encode(str_repeat("\000", $len)); // 4 bitmask
 			$rollent['active'] = array();

@@ -119,10 +119,20 @@ if ($_POST) {
 	$input_filter = ($_POST['filter'] !== null) ? intval($_POST['filter']) : null;
 	if ($_POST['count'] == '0') {
 		$input_count = 0;
+	} elseif (empty($_POST['count'])) {
+		$input_count = 1000;
+	} elseif (!is_numericint($_POST['count'])) {
+		$input_error[] = 'Invalid Packet Count.';
 	} else {
-		$input_count = empty($_POST['count']) ? 1000 : $_POST['count'];
+		$input_count = intval($_POST['count']);
 	}
-	$input_length = empty($_POST['length']) ? 0 : $_POST['length'];
+	if (empty($_POST['length'])) {
+		$input_length = 0;
+	} elseif (!is_numericint($_POST['length'])) {
+		$input_error[] = 'Invalid Packet Length.';
+	} else {
+		$input_length = intval($_POST['length']);
+	}
 	$input_promiscuous = empty($_POST['promiscuous']) ? false : $_POST['promiscuous'];
 	// view options
 	$input_viewdetail = empty($_POST['viewdetail']) ? 'normal' : $_POST['viewdetail'];
@@ -759,8 +769,8 @@ if ($action == 'stop' || $action == 'view' || $process_running || $run_capture) 
 
 		// Handle capture options
 		$cmd_part_promiscuous = $input_promiscuous ? '' : ' -p';
-		$cmd_part_count = empty($input_count) ? '' : " -c {$input_count}";
-		$cmd_part_length = empty($input_length) ? '' : " -s {$input_length}";
+		$cmd_part_count = empty($input_count) ? '' : " -c " . escapeshellarg($input_count);
+		$cmd_part_length = empty($input_length) ? '' : " -s " . escapeshellarg($input_length);
 		$cmd_expression_string = $expression_string ? escapeshellarg($expression_string) : '';
 
 		/* Output in binary format (use packet-buffered to avoid missing packets) to stdout,

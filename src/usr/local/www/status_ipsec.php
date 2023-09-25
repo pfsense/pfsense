@@ -342,12 +342,12 @@ function print_ipsec_body() {
 					$p2descr = $cmap[$childikeid]['p2'][$childreqid]['descr'];
 					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
 				} else {
-					$childreqid = array_key_first($cmap[$childikeid]['p2']);
-					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
-					if (count($cmap[$childikeid]['p2']) > 1) {
+					$childreqid = array_key_first(array_get_path($cmap, "{$childikeid}/p2", []));
+					$p2uid = array_get_path($cmap, "{$childikeid}/p2/{$childreqid}/uniqid");
+					if (count(array_get_path($cmap, "{$childikeid}/p2", [])) > 1) {
 						$p2descr = gettext("Multiple");
 					} else {
-						$p2descr = $cmap[$childikeid]['p2'][$childreqid]['descr'];
+						$p2descr = array_get_path($cmap, "{$childikeid}/p2/{$childreqid}/descr");
 					}
 				}
 ?>

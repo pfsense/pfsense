@@ -218,7 +218,21 @@ $factory_default_checkipservice = [
 ];
 
 global $dyndns_split_domain_types;
-$dyndns_split_domain_types = ['namecheap', 'cloudflare', 'cloudflare-v6', 'gratisdns', 'cloudns', 'godaddy', 'godaddy-v6', 'linode', 'linode-v6', 'porkbun', 'porkbun-v6'];
+$dyndns_split_domain_types = [
+	'cloudflare', 'cloudflare-v6',
+	'cloudns',
+	"digitalocean", "digitalocean-v6",
+	"gandi-livedns", "gandi-livedns-v6",
+	'godaddy', 'godaddy-v6',
+	'gratisdns',
+	'linode', 'linode-v6',
+	"mythicbeasts", "mythicbeasts-v6",
+	'namecheap',
+	"name.com", "name.com-v6",
+	"onecom", "onecom-v6",
+	'porkbun', 'porkbun-v6',
+	"yandex", "yandex-v6",
+];
 
 // pf tokens from FreeBSD source /sbin/pfctl/parse.y
 global $pf_reserved_keywords;

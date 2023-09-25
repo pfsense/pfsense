@@ -231,6 +231,27 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	endif;
 	if (!in_array('version', $skipsysinfoitems)):
 		$rows_displayed = true;
+
+		try {
+			/* Try to get build time from file */
+			if (file_exists("/etc/version.buildtime") &&
+			    (filesize("/etc/version.buildtime") > 0)) {
+				$buildtime = file_get_contents("/etc/version.buildtime");
+			} else {
+				/* Fall back to getting build timestamp from pkg-static */
+				$buildtime = exec("/usr/local/sbin/pkg-static info -A " . g_get('product_name') . " | /usr/bin/awk '/build_timestamp/ {print \$2;}'");
+			}
+
+			/* Standardize timestamp format */
+			if (!empty($buildtime)) {
+				$buildtime = date("D M j G:i:s T Y", strtotime($buildtime));
+			} else {
+				$buildtime = gettext('Unknown');
+			}
+		} catch (Exception $e) {
+			/* In case any of the above methods fail badly, print a default message. */
+			$buildtime = gettext('Unknown');
+		}
 ?>
 		<tr>
 			<th><?=gettext("Version");?></th>
@@ -238,7 +259,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 				<strong><?=g_get('product_version_string')?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
-				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>
+				<?=gettext('built on')?> <?= $buildtime ?>
 			<?php if (!g_get('hideuname')): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>

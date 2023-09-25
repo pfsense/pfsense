@@ -1420,7 +1420,7 @@
 
 					// gets all DNS records of the domain.
 					$post_data = null;
-					$url = "https://www.one.com/admin/api/domains/" . $this->_dnsDomain + "/dns/custom_records";
+					$url = "https://www.one.com/admin/api/domains/" . $this->_dnsDomain . "/dns/custom_records";
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
 					curl_setopt($ch, CURLOPT_HEADER, 0);

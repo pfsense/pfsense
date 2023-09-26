@@ -506,6 +506,19 @@ if [ -n "${USE_ZFS}" ]; then
 			fi
 		fi
 	fi
+
+	# Enable zpool trimming
+	if [ ! -f /.no_zpool_autotrim ]; then
+		/sbin/zpool list -o name pfSense > /dev/null 2>&1 && ZPOOL=pfSense
+		/sbin/zpool list -o name zroot > /dev/null 2>&1 && ZPOOL=zroot
+		if [ -n "${ZPOOL}" ]; then
+			AUTOTRIM=$( /sbin/zpool get -H -o value autotrim "${ZPOOL}" )
+			if [ "${AUTOTRIM}" = "off" ]; then
+				/sbin/zpool set autotrim=on "${ZPOOL}"
+				/sbin/zpool trim "${ZPOOL}"
+			fi
+		fi
+	fi
 fi
 
 echo -n "Starting CRON... "

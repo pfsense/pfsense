@@ -231,4 +231,5 @@ if (!$system_logs_manage_log_form_hidden) {
 }
 ?>
 
-<?php include("foot.inc"); ?>
+<?php
+include("foot.inc");

@@ -201,7 +201,7 @@ function discover_last_backup() {
 			if ($testconfig != -1) {
 				return basename($backup);
 			}
-		} 
+		}
 	}
 
 	return false;
@@ -246,7 +246,7 @@ function restore_backup($file) {
 
 /* If the config on disk had rrddata/xmldata tags already, remove that section first.
  * See https://redmine.pfsense.org/issues/8994,
- *     https://redmine.pfsense.org/issues/10508, 
+ *     https://redmine.pfsense.org/issues/10508,
  *     https://redmine.pfsense.org/issues/11050 */
 function clear_tagdata($tag, $data) {
 	$data = preg_replace("/[[:blank:]]*<{$tag}data>.*<\\/{$tag}data>[[:blank:]]*\n*/s", "", $data);
@@ -264,7 +264,8 @@ function restore_xmldatafile($type='voucher', $conf = false) {
 
 	foreach ($conf[$type]["{$type}data"]["xmldatafile"] as $file) {
 		$basename = basename($file['filename']);
-		$dirname = dirname($g['backuppath'][$type]);
+		/* fallback to dirname for restoring older backups */
+		$dirname = $file['path'] ?? dirname($g['backuppath'][$type]);
 		$xmldata_file = "{$dirname}/{$basename}";
 		if (!is_dir($dirname)) {
 			safe_mkdir($dirname);
@@ -1193,7 +1194,7 @@ function config_init_path(string $path) {
 	array_init_path($config, $path);
 }
 
-/* 
+/*
  * Notice: Use config_init_path() instead, if you must...
  *
  * This is retained for compatibility with older code
@@ -1224,7 +1225,7 @@ function config_get_path(string $path, $default = null) {
  * necessary. If the path cannot be reached because an intermediary exists but
  * is not empty or an array, return $default.
  * @param $path string path with '/' separators
- * @param $val mixed 
+ * @param $val mixed
  * @param $default mixed value to return if the path is not found
  * @returns mixed $val or $default if the path prefix does not exist
  */
@@ -1259,5 +1260,3 @@ function config_del_path(string $path) {
 	return (array_del_path($config, $path));
 }
 register_shutdown_function('pfSense_clear_globals');
-
-?>

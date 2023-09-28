@@ -79,49 +79,31 @@ $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notificat
 display_top_tabs($tab_array);
 
 $form = new Form;
-$section = new Form_Section('IPv6 Options');
+$section = new Form_Section(gettext('DHCP Options'));
 
-$section->addInput(new Form_Checkbox(
-	'ipv6allow',
-	'Allow IPv6',
-	'All IPv6 traffic will be blocked by the firewall unless this box is checked',
-	$pconfig['ipv6allow']
-))->setHelp('NOTE: This does not disable any IPv6 features on the firewall, it only '.
-	'blocks traffic.');
-
-$section->addInput(new Form_Checkbox(
-	'ipv6nat_enable',
-	'IPv6 over IPv4 Tunneling',
-	'Enable IPv6 over IPv4 tunneling',
-	$pconfig['ipv6nat_enable']
-))->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
-	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. ' .
-	'IPv6 firewall rules are %1$salso required%2$s, to control and pass encapsulated traffic.', '<a href="firewall_rules.php">', '</a>');
-
-$section->addInput(new Form_Input(
-	'ipv6nat_ipaddr',
-	'IPv4 address of Tunnel Peer',
-	'text',
-	$pconfig['ipv6nat_ipaddr']
+$group = new Form_Group(gettext('Server Backend'));
+$group->add(new Form_Checkbox(
+	'dhcpbackend',
+	null,
+	gettext('Kea DHCP'),
+	($pconfig['dhcpbackend'] === 'kea'),
+	'kea'
+))->displayAsRadio();
+$group->add(new Form_Checkbox(
+	'dhcpbackend',
+	null,
+	gettext('ISC DHCP (Deprecated)'),
+	($pconfig['dhcpbackend'] === 'isc'),
+	'isc'
+))->displayAsRadio();
+$group->setHelp(gettext('ISC DHCP has reached end-of-life and will be removed from a future version of %s. Kea DHCP is the newer, modern DHCP distribution from ISC that includes the most-requested features.'), g_get('product_label'));
+$group->add(new Form_Checkbox(
+	'ignoreiscwarning',
+	 null,
+	 gettext('Ignore Deprecation Warning'),
+	 $pconfig['ignoreiscwarning']
 ));
-
-$section->addInput(new Form_Checkbox(
-	'prefer_ipv4',
-	'Prefer IPv4 over IPv6',
-	'Prefer to use IPv4 even if IPv6 is available',
-	$pconfig['prefer_ipv4']
-))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '.
-	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
-
-$section->addInput(new Form_Checkbox(
-	'ipv6dontcreatelocaldns',
-	'IPv6 DNS entry',
-	'Do not generate local IPv6 DNS entries for LAN interfaces',
-	$pconfig['ipv6dontcreatelocaldns']
-))->setHelp('If a LAN interface\'s IPv6 configuration is set to Track, and the tracked interface loses connectivity, '.
-	'it can cause connections to this firewall that were established via hostname to fail. This can happen '.
-	'unintentionally when accessing the firewall by hostname, since by default both IPv4 and IPv6 entries are added '.
-	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'radvddebug',
@@ -232,6 +214,51 @@ $section->addInput(new Form_Input(
 	$pconfig['ipv6duiduuid'],
 	[ 'placeholder' => '00000000-0000-0000-0000-000000000000' ]
 ))->setHelp('Universally Unique Identifier');
+
+$form->add($section);
+$section = new Form_Section('IPv6 Options');
+
+$section->addInput(new Form_Checkbox(
+	'ipv6allow',
+	'Allow IPv6',
+	'All IPv6 traffic will be blocked by the firewall unless this box is checked',
+	$pconfig['ipv6allow']
+))->setHelp('NOTE: This does not disable any IPv6 features on the firewall, it only '.
+	'blocks traffic.');
+
+$section->addInput(new Form_Checkbox(
+	'ipv6nat_enable',
+	'IPv6 over IPv4 Tunneling',
+	'Enable IPv6 over IPv4 tunneling',
+	$pconfig['ipv6nat_enable']
+))->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
+	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. ' .
+	'IPv6 firewall rules are %1$salso required%2$s, to control and pass encapsulated traffic.', '<a href="firewall_rules.php">', '</a>');
+
+$section->addInput(new Form_Input(
+	'ipv6nat_ipaddr',
+	'IPv4 address of Tunnel Peer',
+	'text',
+	$pconfig['ipv6nat_ipaddr']
+));
+
+$section->addInput(new Form_Checkbox(
+	'prefer_ipv4',
+	'Prefer IPv4 over IPv6',
+	'Prefer to use IPv4 even if IPv6 is available',
+	$pconfig['prefer_ipv4']
+))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '.
+	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
+
+$section->addInput(new Form_Checkbox(
+	'ipv6dontcreatelocaldns',
+	'IPv6 DNS entry',
+	'Do not generate local IPv6 DNS entries for LAN interfaces',
+	$pconfig['ipv6dontcreatelocaldns']
+))->setHelp('If a LAN interface\'s IPv6 configuration is set to Track, and the tracked interface loses connectivity, '.
+	'it can cause connections to this firewall that were established via hostname to fail. This can happen '.
+	'unintentionally when accessing the firewall by hostname, since by default both IPv4 and IPv6 entries are added '.
+	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');
@@ -375,4 +402,5 @@ events.push(function() {
 //]]>
 </script>
 
-<?php include("foot.inc");
+<?php
+include("foot.inc");

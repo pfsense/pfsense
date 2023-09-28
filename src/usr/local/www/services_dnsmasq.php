@@ -71,6 +71,8 @@ if (is_subsystem_dirty('hosts')) {
 	print_apply_box(gettext("The DNS forwarder configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
+display_isc_warning();
+
 $form = new Form();
 
 $section = new Form_Section('General DNS Forwarder Options');
@@ -82,6 +84,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['enable']
 ))->toggles('.toggle-dhcp', 'disable');
 
+if (dhcp_is_backend('isc')):
 $section->addInput(new Form_Checkbox(
 	'regdhcp',
 	'DHCP Registration',
@@ -114,6 +117,7 @@ $section->addInput(new Form_Checkbox(
 					"be resolved before the manual list of names below. This only ".
 					"affects the name given for a reverse lookup (PTR).")
 	->addClass('toggle-dhcp');
+endif;
 
 $group = new Form_Group('DNS Query Forwarding');
 
@@ -161,7 +165,7 @@ $section->addInput(new Form_Select(
 	$iflist['selected'],
 	$iflist['options'],
 	true
-))->setHelp('Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, ' . 
+))->setHelp('Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, ' .
 			'both are used. Queries to other interface IPs not selected above are discarded. ' .
 			'The default behavior is to respond to queries on every available IPv4 and IPv6 address.');
 

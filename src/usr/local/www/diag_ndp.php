@@ -57,7 +57,7 @@ if (isset($_POST['deleteentry'])) {
 } elseif (isset($_POST['clearndptable'])) {
 	$out = "";
 	$ret = exec("/usr/sbin/ndp -c", $out, $ndpTableRetVal);
-	if ($ndpTableRetVal == 0) { 
+	if ($ndpTableRetVal == 0) {
 		$deleteResultMessage = gettext("NDP Table has been cleared.");
 		$deleteResultMessageType = 'success';
 	} else {
@@ -148,22 +148,22 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 	<div id="search-panel_panel-body" class="panel-body collapse in">
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Search term")?>
+				<?=gettext('Search Term')?>
 			</label>
 			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
 			<div class="col-sm-2">
 				<select id="where" class="form-control">
-					<option value="0"><?=gettext("IPv6 Address")?></option>
-					<option value="1"><?=gettext("MAC Address")?></option>
-					<option value="2"><?=gettext("Hostname")?></option>
-					<option value="3"><?=gettext("Interface")?></option>
-					<option value="4"><?=gettext("Expiration")?></option>
-					<option value="5" selected><?=gettext("All")?></option>
+					<option value="0"><?=gettext('IPv6 Address')?></option>
+					<option value="1"><?=gettext('MAC Address')?></option>
+					<option value="2"><?=gettext('Hostname')?></option>
+					<option value="3"><?=gettext('Interface')?></option>
+					<option value="4"><?=gettext('Expiration')?></option>
+					<option value="5" selected><?=gettext('All')?></option>
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext('Search')?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext('Clear')?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to filter entries.')?></span>
@@ -180,12 +180,12 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 	<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
-				<th><?=gettext("IPv6 address")?></th>
-				<th><?=gettext("MAC address")?></th>
-				<th><?=gettext("Hostname")?></th>
-				<th><?=gettext("Interface")?></th>
-				<th><?=gettext("Expiration")?></th>
-				<th data-sortable="false"><?=gettext("Actions")?></th>
+				<th><?=gettext('IPv6 Address')?></th>
+				<th><?=gettext('MAC Address')?></th>
+				<th><?=gettext('Hostname')?></th>
+				<th><?=gettext('Interface')?></th>
+				<th><?=gettext('Expiration')?></th>
+				<th data-sortable="false"><?=gettext('Actions')?></th>
 			</tr>
 	</thead>
 	<tbody>
@@ -283,6 +283,8 @@ events.push(function() {
 
 		$('#searchstr').val("");
 
+		$('#where option[value="5"]').prop('selected', true);
+
 		table.find('tr').each(function (i) {
 			$(this).show();
 		});
@@ -296,7 +298,7 @@ events.push(function() {
 	});
 
 	$('#clearndp').click(function() {
-		if (confirm("Are you sure you wish to clear NDP table?")) {
+		if (confirm("<?=gettext('Are you sure you wish to clear NDP table?')?>")) {
 			postSubmit({clearndptable: 'true'}, 'diag_ndp.php');
 		}
 	});
@@ -305,4 +307,5 @@ events.push(function() {
 //]]>
 </script>
 
-<?php include("foot.inc");
+<?php
+include('foot.inc');

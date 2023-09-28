@@ -68,7 +68,7 @@ function rrd_data_xml() {
 function backup_xmldatafile($tab=false, $type='voucher') {
 	global $g;
 
-	$xmldata_files = glob("{$g['backuppath'][$type]}");
+	$xmldata_files = glob("{$g['backuppath'][$type]}", GLOB_BRACE);
 	if (empty($xmldata_files)) {
 		return;
 	}
@@ -76,10 +76,12 @@ function backup_xmldatafile($tab=false, $type='voucher') {
 	$result = "{$t}\t<{$type}data>\n";
 	foreach ($xmldata_files as $xmldata_file) {
 		$basename = basename($xmldata_file);
+		$dirname = dirname($xmldata_file);
 		$data = file_get_contents($xmldata_file);
 		if ($data !== false) {
 			$result .= "{$t}\t\t<xmldatafile>\n";
 			$result .= "{$t}\t\t\t<filename>{$basename}</filename>\n";
+			$result .= "{$t}\t\t\t<path>{$dirname}</path>\n";
 			$result .= "{$t}\t\t\t<data>" . base64_encode(gzdeflate($data)) . "</data>\n";
 			$result .= "{$t}\t\t</xmldatafile>\n";
 		}
@@ -460,5 +462,3 @@ function listBackupsJSON() {
 
 	return json_encode($backups);
 }
-
-?>

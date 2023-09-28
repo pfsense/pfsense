@@ -57,13 +57,15 @@ function prepare_ARP_table($json = false) {
 
 	$i = 0;
 
-	// if list 
+	// if list
 	$ifdescrs = get_configured_interface_with_descr();
 
+	$hwif = $pfif = [];
 	foreach ($ifdescrs as $key => $interface) {
 		$thisif = convert_friendly_interface_to_real_interface_name($key);
 		if (!empty($thisif)) {
 			$hwif[$thisif] = $interface;
+			$pfif[$thisif] = $key;
 		}
 	}
 
@@ -127,9 +129,12 @@ function prepare_ARP_table($json = false) {
 		// Fix dnsresolve
 		$entry['dnsresolve'] = trim(str_replace("Z_ ", "", $entry['dnsresolve']));
 
-		// Use the interface friendly name only if it is assigned
-		if (array_key_exists($entry['interface'], $hwif)) {
+		/* Use the interface friendly name only if it is assigned */
+		$entry['assigned'] = false;
+		if (array_key_exists($entry['interface'], $pfif)) {
+			$entry['if'] = $pfif[$entry['interface']];
 			$entry['interface'] = $hwif[$entry['interface']];
+			$entry['assigned'] = true;
 		}
 	}
 
@@ -147,5 +152,3 @@ function prepare_ARP_table($json = false) {
 	}
 
 }
-
-?>

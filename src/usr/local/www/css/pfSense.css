@@ -339,27 +339,15 @@ tr.disabled a {
     background-color: #BDBDBD;
 }
 
-/* Handle the limited space available on the Status DHCPv6 Leases table.
- * Break DUID string when needed and use smaller text.
- */
-.statusdhcpv6leases tbody>tr>td:nth-of-type(4) {
-    word-wrap: break-word;
-    word-break: break-all;
-    font-size: smaller;
-}
-
-/* Smaller text for IAID in leases table and in prefixes table
- * for the route ip and its IAID.
- */
-.statusdhcpv6leases tbody>tr>td:nth-of-type(3),
-.statusdhcpv6prefixes tbody>tr>td:nth-of-type(3) {
-    font-size: smaller;
-}
-
 /* Break DUID string in the prefixes table. */
 .statusdhcpv6prefixes tbody>tr>td:nth-of-type(5) {
     word-wrap: break-word;
     word-break: break-all;
+}
+
+/* prevent icon columns from wrapping */
+#leaselist tr>td:first-child, #leaselist tr>td:last-child {
+	white-space: nowrap;
 }
 
 .popover {

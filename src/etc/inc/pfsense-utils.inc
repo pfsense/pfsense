@@ -24,6 +24,27 @@
 require_once("config.inc");
 require_once("config.lib.inc");
 
+function dhcp_is_backend($dhcpbackend)
+{
+	return (dhcp_get_backend() === $dhcpbackend);
+}
+
+function dhcp_get_backend()
+{
+	$dhcpbackend = config_get_path('dhcpbackend');
+	return (in_array($dhcpbackend, ['isc', 'kea']) ? $dhcpbackend : 'isc');
+}
+
+function display_isc_warning()
+{
+	if (!dhcp_is_backend('isc') ||
+	    config_path_enabled('system', 'ignoreiscwarning')) {
+		return;
+	}
+
+	print_info_box(sprintf(gettext('ISC DHCP has reached end-of-life and will be removed in a future version of %s. Visit %s to switch DHCP backend.'), g_get('product_label'), sprintf('<a href="%s">%s</a>', 'system_advanced_network.php', 'System > Advanced > Networking')), 'warning', false);
+}
+
 /****f* pfsense-utils/have_natpfruleint_access
  * NAME
  *   have_natpfruleint_access
@@ -549,7 +570,7 @@ function hardware_offloading_applyflags($iface) {
 	/* disable hardware checksum offloading for VirtIO network drivers,
 	 * see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=165059 */
 	if (config_path_enabled('system','disablechecksumoffloading') ||
-	    stristr($iface, "vtnet") || stristr($iface, "ena")) { 
+	    stristr($iface, "vtnet") || stristr($iface, "ena")) {
 		if (isset($options['encaps']['txcsum'])) {
 			$flags_off |= IFCAP_TXCSUM;
 		}
@@ -740,7 +761,7 @@ function enable_carp(bool $enable=true) {
 		set_single_sysctl("net.inet.carp.allow", $enable?"1":"0");
 	}
 }
-	
+
 /*
  * convert_ip_to_network_format($ip, $subnet): converts an ip address to network form
  */
@@ -786,7 +807,7 @@ function get_carp_bind_status($interface) {
 		return $carpstatus;
 	} else {
 		foreach (config_get_path('virtualip/vip', []) as $vip) {
-			if ($interface == "_vip{$vip['uniqid']}") { 
+			if ($interface == "_vip{$vip['uniqid']}") {
 				return get_carp_interface_status($vip['interface']);
 			}
 		}
@@ -3090,7 +3111,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 				$if_ipv6 = get_interface_ipv6($if);
 				$if_snbitsv6 = get_interface_subnetv6($if);
 				/* do not check subnet overlapping on 6rd interfaces,
-				 * see https://redmine.pfsense.org/issues/12371 */ 
+				 * see https://redmine.pfsense.org/issues/12371 */
 				if ($if_ipv6 && $if_snbitsv6 &&
 				    ((config_get_path("interfaces/{$if}/ipaddrv6") != '6rd') || ($cidrprefix > $if_snbitsv6)) &&
 				    check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
@@ -3293,7 +3314,7 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 		$suffix_list[count($suffix_list) - 1] = substr($hexsuffix, 0, 4);
 		$suffix_list[] = substr($hexsuffix, 4, 8);
 		$suffix = implode(':', $suffix_list);
-	}	
+	}
 	$prefix = Net_IPv6::uncompress($prefix, true);
 	$suffix = Net_IPv6::uncompress($suffix, true);
 
@@ -3719,4 +3740,3 @@ function set_curlproxy(&$ch) {
 		}
 	}
 }
-?>

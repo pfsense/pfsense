@@ -760,11 +760,11 @@ $priv_list['page-services-rfc2136edit']['descr'] = gettext("Allow access to the 
 $priv_list['page-services-rfc2136edit']['match'] = array();
 $priv_list['page-services-rfc2136edit']['match'][] = "services_rfc2136_edit.php*";
 
-$priv_list['page-services-router-advertisements'] = array();
-$priv_list['page-services-router-advertisements']['name'] = gettext("WebCfg - Services: Router Advertisements");
-$priv_list['page-services-router-advertisements']['descr'] = gettext("Allow access to the 'Services: Router Advertisements' page.");
-$priv_list['page-services-router-advertisements']['match'] = array();
-$priv_list['page-services-router-advertisements']['match'][] = "services_router_advertisements.php*";
+$priv_list['page-services-router-advertisement'] = array();
+$priv_list['page-services-router-advertisement']['name'] = gettext("WebCfg - Services: Router Advertisement");
+$priv_list['page-services-router-advertisement']['descr'] = gettext("Allow access to the 'Services: Router Advertisement' page.");
+$priv_list['page-services-router-advertisement']['match'] = array();
+$priv_list['page-services-router-advertisement']['match'][] = 'services_radvd.php*';
 
 $priv_list['page-services-snmp'] = array();
 $priv_list['page-services-snmp']['name'] = gettext("WebCfg - Services: SNMP");

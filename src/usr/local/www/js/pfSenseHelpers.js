@@ -882,3 +882,7 @@ function buttonsmode(tag, buttons) {
 		$('#' + button).prop('disabled', buttonsdisable);
 	})
 }
+
+$('input.autotrim').on('change', function () {
+	$(this).val($(this).val().replace(/\s/g, ''));
+});

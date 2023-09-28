@@ -30,7 +30,7 @@
 ##|*MATCH=services_dhcpv6_relay.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once('guiconfig.inc');
 
 $pconfig['enable'] = config_path_enabled('dhcrelay6');
 
@@ -93,29 +93,29 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext("Destination Server"), gettext("Interface"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+	}
 
-		$svrlist = '';
 
-		if ($_POST['server']) {
-			foreach ($_POST['server'] as $srv) {
-				if (!empty($srv[0])) { // Filter out any empties
-					if (!is_ipaddrv6($srv[0])) {
-						$input_errors[] = sprintf(gettext("Destination Server IP address %s is not a valid IPv6 address."), $srv[0]);
-					}
-
-					if (!empty($svrlist)) {
-						$svrlist .= ',';
-					}
-
-					$svrlist .= $srv[0];
+	$svrlist = '';
+	for ($idx = 0; $idx < count($_POST); $idx++) {
+		if ($_POST['server' . $idx]) {
+			if (!empty($_POST['server' . $idx])) { // Filter out any empties
+				if (!is_ipaddrv6($_POST['server' . $idx])) {
+					$input_errors[] = sprintf(gettext('Upstream Server IP address %s is not a valid IPv6 address.'), $_POST['server' . $idx]);
 				}
-			}
 
-			// Check that the user input something in one of the Destination Server fields
-			if (empty($svrlist)) {
-				$input_errors[] = gettext("At least one Destination Server IP address must be specified.");
+				if (!empty($svrlist)) {
+					$svrlist .= ',';
+				}
+
+				$svrlist .= $_POST['server' . $idx];
 			}
 		}
+	}
+
+	// Check that the user input something in one of the Destination Server fields
+	if (empty($svrlist) && $_POST['enable']) {
+		$input_errors[] = gettext('At least one Upstream Server must be specified.');
 	}
 
 	// Now $svrlist is a comma separated list of servers ready to save to the config system
@@ -142,87 +142,108 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DHCPv6 Relay"));
-$shortcut_section = "dhcp6";
-include("head.inc");
+$pgtitle = [gettext('Services'), gettext('DHCPv6 Relay')];
+$shortcut_section = 'dhcp6-relay';
+include('head.inc');
 
 if ($dhcpd_enabled) {
-	print_info_box(gettext("DHCPv6 Server is currently enabled. Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface."), 'danger', false);
-	include("foot.inc");
-	exit;
+	print_info_box(gettext('DHCPv6 Relay cannot be enabled while the DHCPv6 Server is enabled on any interface.'), 'danger', false);
 }
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($changes_applied) {
+if ($changes_applied && !$dhcpd_enabled) {
 	print_apply_result_box($retval);
 }
 
 $form = new Form;
 
-$section = new Form_Section('DHCPv6 Relay Configuration');
+$section = new Form_Section(gettext('DHCPv6 Relay Configuration'));
 
-$section->addInput(new Form_Checkbox(
+$group = new Form_Group(gettext('Enable'));
+$enable_cb = new Form_Checkbox(
 	'enable',
-	'Enable',
-	'Enable DHCPv6 Relay on interface',
-	$pconfig['enable']
-))->toggles('.form-group:not(:first-child)');
+	gettext('Enable'),
+	gettext('Enable DHCPv6 Relay'),
+	($dhcpd_enabled ? false : $pconfig['enable'])
+);
+
+if ($dhcpd_enabled) {
+	$enable_cb->setAttribute('disabled', true);
+}
+
+$group->add($enable_cb);
+$section->add($group);
 
 $section->addInput(new Form_Select(
 	'interface',
-	'*Interface(s)',
+	'*'.gettext('Downstream Interfaces'),
 	$pconfig['interface'],
 	$iflist,
 	true
-))->setHelp('Interfaces without an IPv6 address will not be shown.');
+))->setHelp(gettext('Interfaces without an IPv6 address will not be shown.'));
 
 $section->addInput(new Form_Select(
 	'carpstatusvip',
-	'*CARP Status VIP',
+	'*'.gettext('CARP Status VIP'),
 	$pconfig['carpstatusvip'],
 	$carpiflist,
-))->setHelp('Used to determine the HA MASTER/BACKUP status. DHCPv6 Relay will be stopped when the ' .
-	    'chosen VIP is in BACKUP status, and started in MASTER status.');
+))->setHelp(gettext('DHCPv6 Relay will be stopped when the ' .
+	    'chosen VIP is in BACKUP status, and started in MASTER status.'));
 
 $section->addInput(new Form_Checkbox(
 	'agentoption',
-	'',
-	'Append circuit ID and agent ID to requests',
+	null,
+	gettext('Append circuit ID and agent ID to requests'),
 	$pconfig['agentoption']
-))->setHelp(
-	'If this is checked, the DHCPv6 Relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request.',
-	g_get('product_label')
-);
+))->setHelp(gettext('Append the circuit ID (interface number) and the agent ID to the DHCPv6 request.'));
 
-function createDestinationServerInputGroup($value = null) {
-	$group = new Form_Group('*Destination server');
+$counter = 0;
+foreach (explode(',', $pconfig['server']) as $server) {
+	$group = new Form_Group((($counter === 0) ? '*' . gettext('Upstream Servers') : ''));
+	$group->addClass('repeatable');
 
 	$group->add(new Form_IpAddress(
-		'server',
-		'Destination server',
-		$value,
+		'server' . $counter,
+		gettext('Upstream Server'),
+		$server,
 		'V6'
-	))->setWidth(4)
-	  ->setHelp('This is the IPv6 address of the server to which DHCPv6 requests are relayed.')
-	  ->setIsRepeated();
+	))->addClass('autotrim');
 
-	$group->enableDuplication(null, true); // Buttons are in-line with the input
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		gettext('Delete'),
+		null,
+		'fa-trash'
+	))->addClass('btn-sm btn-warning');
 
-	return $group;
+	$section->add($group);
+	$counter++;
 }
 
-if (!isset($pconfig['server'])) {
-	$section->add(createDestinationServerInputGroup());
-} else {
-	foreach (explode(',', $pconfig['server']) as $server) {
-		$section->add(createDestinationServerInputGroup($server));
-	}
-}
+$group = new Form_Group(null);
+$group->add(new Form_Button(
+	'addrow',
+	gettext('Add Upstream Server'),
+	null,
+	'fa-plus',
+))->addClass('btn-success addbtn')
+  ->setHelp(gettext('The IPv6 addresses of the servers to which DHCPv6 requests are relayed.'));
+$section->add($group);
 
 $form->add($section);
-print $form;
 
-include("foot.inc");
+print $form;
+?>
+<script type="text/javascript">
+events.push(function() {
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+});
+//]]>
+</script>
+
+<?php
+include('foot.inc');

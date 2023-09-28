@@ -205,7 +205,13 @@ function is_service_enabled($service_name) {
 			return config_path_enabled('dhcrelay6');
 			break;
 		case 'dhcpd':
-			return is_dhcp_server_enabled();
+			return (dhcp_is_backend('isc') && is_dhcp_server_enabled());
+			break;
+		case 'kea-dhcp4':
+			return (dhcp_is_backend('kea') && is_dhcp_server_enabled());
+			break;
+		case 'kea-dhcp6':
+			return (dhcp_is_backend('kea') && is_dhcpv6_server_enabled());
 			break;
 		case 'dnsmasq':
 			return config_path_enabled('dnsmasq');
@@ -379,7 +385,7 @@ function get_services() {
 	if (config_path_enabled('dhcrelay')) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
-		$pconfig['description'] = gettext("DHCP Relay");
+		$pconfig['description'] = gettext('ISC DHCP Relay');
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
@@ -388,16 +394,34 @@ function get_services() {
 	if (config_path_enabled('dhcrelay6')) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay6";
-		$pconfig['description'] = gettext("DHCPv6 Relay");
+		$pconfig['description'] = gettext('ISC DHCPv6 Relay');
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
 	}
 
-	if (is_dhcp_server_enabled()) {
+	if (dhcp_is_backend('isc') && is_dhcp_server_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
-		$pconfig['description'] = gettext("DHCP Service");
+		$pconfig['description'] = gettext('ISC DHCP Server');
+		$pconfig['enabled'] = true;
+		$pconfig['status'] = get_service_status($pconfig);
+		$services[] = $pconfig;
+	}
+
+	if (dhcp_is_backend('kea') && is_dhcp_server_enabled()) {
+		$pconfig = array();
+		$pconfig['name'] = 'kea-dhcp4';
+		$pconfig['description'] = gettext('Kea DHCP Server');
+		$pconfig['enabled'] = true;
+		$pconfig['status'] = get_service_status($pconfig);
+		$services[] = $pconfig;
+	}
+
+	if (dhcp_is_backend('kea') && is_dhcpv6_server_enabled()) {
+		$pconfig = array();
+		$pconfig['name'] = 'kea-dhcp6';
+		$pconfig['description'] = gettext('Kea DHCPv6 Server');
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
@@ -479,7 +503,6 @@ function get_services() {
 
 function find_service_by_name($name) {
 	$services = get_services();
-	
 	foreach ($services as $service) {
 		if (isset($service["name"]) && ($service["name"] == $name)) {
 			return $service;
@@ -574,6 +597,12 @@ function get_service_status($service) {
 			break;
 		case 'ipsec':
 			$running = (is_pid_running("{$g['varrun_path']}/charon.pid") || is_process_running('charon'));
+			break;
+		case 'kea-dhcp4':
+			$running = is_pid_running('/var/run/kea/kea-dhcp4.kea-dhcp4.pid');
+			break;
+		case 'kea-dhcp6':
+			$running = is_pid_running('/var/run/kea/kea-dhcp6.kea-dhcp6.pid');
 			break;
 		default:
 			$running = is_service_running($service['name']);
@@ -717,6 +746,8 @@ function service_control_start($name, $extras) {
 		case 'unbound':
 			services_unbound_configure();
 			break;
+		case 'kea-dhcp4':
+		case 'kea-dhcp6':
 		case 'dhcpd':
 			services_dhcpd_configure();
 			break;
@@ -779,6 +810,12 @@ function service_control_stop($name, $extras) {
 			break;
 		case 'choparp':
 			killbyname("choparp");
+			break;
+		case 'kea-dhcp4':
+			killbypid('/var/run/kea/kea-dhcp4.kea-dhcp4.pid');
+			break;
+		case 'kea-dhcp6':
+			killbypid('/var/run/kea/kea-dhcp6.kea-dhcp6.pid');
 			break;
 		case 'dhcpd':
 			killbyname("dhcpd");
@@ -916,5 +953,3 @@ function service_control_restart($name, $extras) {
 	}
 	return sprintf(gettext("%s has been restarted."), htmlspecialchars($name));
 }
-
-?>

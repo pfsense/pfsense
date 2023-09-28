@@ -104,8 +104,8 @@ $g = [
 	'alternativemetaports' => ['vmware', 'php72', 'php73', 'php74'],
 	'backuppath' => [
 		'captiveportal' => '/var/db/captiveportal*.db',
-		'dhcpd' => '/var/dhcpd/var/db/dhcpd.leases',
-		'dhcpdv6' => '/var/dhcpd/var/db/dhcpd6.leases',
+		'dhcpd' => '{/var/dhcpd/var/db/dhcpd.leases,/var/lib/kea/dhcp4.leases}',
+		'dhcpdv6' => '{/var/dhcpd/var/db/dhcpd6.leases,/var/lib/kea/dhcp6.leases}',
 		'voucher' => '/var/db/voucher_*.db'
 	],
 	'cp_prefix' => 'cpzoneid',
@@ -521,9 +521,9 @@ function can_include(string $filename) : bool
 
 /**
  * Get a list of known protocols
- * 
+ *
  * @param string $type Filter the returned list based on the type
- * 
+ *
  * @return array
  */
 function get_ipprotocols(?string $type = ''):array {

@@ -88,7 +88,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 			$link = $shortcuts[$shortcut_section]['main'];
 			break;
 	}
-	if (!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}")) {
+	if (!empty($link) && !str_starts_with(ltrim($_SERVER['REQUEST_URI'], '/'), $link)) {
 		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related settings") . "\"><i class=\"fa fa-sliders\"></i></a>";
 	}
 	return "";
@@ -172,14 +172,20 @@ $shortcuts['dhcp']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp']['status'] = "status_dhcp_leases.php";
 $shortcuts['dhcp']['service'] = "dhcpd";
 
+$shortcuts['kea-dhcp4'] = $shortcuts['dhcp'];
+$shortcuts['kea-dhcp4']['service'] = 'kea-dhcp4';
+
 $shortcuts['dhcp6'] = array();
 $shortcuts['dhcp6']['main'] = "services_dhcpv6.php";
 $shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
 $shortcuts['dhcp6']['service'] = "dhcpd";
 
+$shortcuts['kea-dhcp6'] = $shortcuts['dhcp6'];
+$shortcuts['kea-dhcp6']['service'] = 'kea-dhcp6';
+
 $shortcuts['radvd'] = array();
-$shortcuts['radvd']['main'] = "services_router_advertisements.php";
+$shortcuts['radvd']['main'] = "services_radvd.php";
 $shortcuts['radvd']['log'] = "status_logs.php?logfile=routing";
 $shortcuts['radvd']['service'] = "radvd";
 
@@ -265,6 +271,10 @@ $shortcuts['carp']['status'] = "status_carp.php";
 $shortcuts['snmp'] = array();
 $shortcuts['snmp']['main'] = "services_snmp.php";
 $shortcuts['snmp']['service'] = "bsnmpd";
+
+$shortcuts['sshd'] = [];
+$shortcuts['sshd']['main'] = 'system_advanced_admin.php';
+$shortcuts['sshd']['service'] = 'sshd';
 
 $shortcuts['syslogd'] = array();
 $shortcuts['syslogd']['main'] = "status_logs_settings.php";

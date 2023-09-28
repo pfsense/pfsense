@@ -729,8 +729,433 @@ function system_dhcpleases_configure() {
 	}
 }
 
-function system_get_dhcpleases($dnsavailable=null) {
+function system_clear_all_kea4leases()
+{
+	$socket_path = '/tmp/kea4-ctrl-socket';
+	$rlen = 1024;
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		return;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'lease4-wipe']);
+
+	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
+
+	/* Kea sends status that we are not really interested in, so just eat it */
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		if ($bytes > 0) {
+			continue;
+		}
+
+		break;
+	}
+
+cleanup:
+	socket_close($fd);
+}
+
+function system_del_kea4lease(string $ip)
+{
+	$socket_path = '/tmp/kea4-ctrl-socket';
+	$rlen = 1024;
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		return;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode([
+		'command' => 'lease4-del',
+		'arguments' => [
+			'ip-address' => $ip
+		]
+	]);
+
+	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
+
+	/* Kea sends status that we are not really interested in, so just eat it */
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		if ($bytes > 0) {
+			continue;
+		}
+
+		break;
+	}
+
+cleanup:
+	socket_close($fd);
+}
+
+function system_clear_all_kea6leases()
+{
+	$socket_path = '/tmp/kea6-ctrl-socket';
+	$rlen = 1024;
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		return;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'lease6-wipe']);
+
+	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
+
+	/* Kea sends status that we are not really interested in, so just eat it */
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		if ($bytes > 0) {
+			continue;
+		}
+
+		break;
+	}
+
+cleanup:
+	socket_close($fd);
+}
+
+function system_del_kea6lease(string $ip)
+{
+	$socket_path = '/tmp/kea6-ctrl-socket';
+	$rlen = 1024;
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		return;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode([
+		'command' => 'lease6-del',
+		'arguments' => [
+			'ip-address' => $ip
+		]
+	]);
+
+	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
+
+	/* Kea sends status that we are not really interested in, so just eat it */
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		if ($bytes > 0) {
+			continue;
+		}
+
+		break;
+	}
+
+cleanup:
+	socket_close($fd);
+}
+
+
+function system_get_kea6leases()
+{
+	$leases = [];
+	$leases['lease'] = [];
+	$leases['failover'] = [];
+
+	$socket_path = '/tmp/kea6-ctrl-socket';
+	$rlen = 1024;
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		goto out;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'lease6-get-all']);
+
+	if (socket_send($fd, $cmdjson, strlen($cmdjson), 0) === false) {
+		goto cleanup;
+	}
+
+	$retjson = NULL;
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+
+		/* error occured, just bail out */
+		if ($bytes === false) {
+			goto cleanup;
+		/* we got some data, append it to the json buffer */
+		} elseif ($bytes > 0) {
+			$retjson .= $rbuf;
+		} else {
+			break;
+		}
+	}
+
+	/* sanity check in case we received malformed json */
+	if (($ret = json_decode($retjson, true)) === false) {
+		goto cleanup;
+	}
+
+	$ndpdata = get_ndpdata();
+
+	$online_string = gettext("active/online");
+	$offline_string = gettext("idle/offline");
+	$active_string = gettext("active");
+	$expired_string = gettext("expired");
+	$reserved_string = gettext("reserved");
+	$released_string = gettext("released");
+	$dynamic_string = gettext("dynamic");
+	$static_string = gettext("static");
+
+	$leasem = [];
+
+	foreach ($ret['arguments']['leases'] as $lease) {
+		$startsts = (int)$lease['cltt'];
+		$endsts = $startsts + (int)$lease['valid-lft'];
+
+		$item = [];
+		$item['act'] = $active_string;
+		if (time() > $endsts) {
+			$item['act'] = $expired_string;
+		}
+
+		$item['type'] = $dynamic_string;
+		$item['ip'] = $lease['ip-address'];
+		$item['duid'] = $lease['duid'];
+		$item['iaid'] = $lease['iaid'];
+
+		if (in_array($item['ip'], array_keys($ndpdata))) {
+			$item['online'] = $online_string;
+		} else {
+			$item['online'] = $offline_string;
+		}
+
+		$item['hostname'] = rtrim($lease['hostname'], '.');
+
+		$format = 'Y/m/d H:i:s';
+		$item['starts'] = date($format, $startsts);
+		$item['ends'] = date($format, $endsts);
+
+		$leasem[$item['ip']] = $item;
+	}
+
+	foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
+		foreach (config_get_path("dhcpdv6/{$ifname}/staticmap", []) as $idx => $static) {
+			$slease = array();
+			$slease['ip'] = merge_ipv6_delegated_prefix(get_interface_ipv6($ifname), $static['ipaddrv6'], get_interface_subnetv6($ifname));
+
+			/* we've seen this entry before, so just modify it */
+			if (array_key_exists($slease['ip'], $leasem)) {
+				$leasem[$slease['ip']]['if'] = $ifname;
+				$leasem[$slease['ip']]['type'] = $static_string;
+				$leasem[$slease['ip']]['act'] = $static_string;
+				$leasem[$slease['ip']]['descr'] = $static['descr'];
+				$leasem[$slease['ip']]['staticmap_array_index'] = $idx;
+				continue;
+			}
+
+			/* we still want to show static leases even if Kea doesn't see them */
+			$slease['if'] = $ifname;
+			$slease['type'] = $static_string;
+			$slease['duid'] = $static['duid'];
+			$slease['start'] = "";
+			$slease['end'] = "";
+			$slease['descr'] = $static['descr'];
+			$slease['hostname'] = $static['hostname'];
+			$slease['act'] = $static_string;
+			if (in_array($slease['ip'], array_keys($ndpdata))) {
+				$slease['online'] = $online_string;
+			} else {
+				$slease['online'] = $offline_string;
+			}
+			$slease['staticmap_array_index'] = $idx;
+
+			$leasem[$slease['ip']] = $slease;
+		}
+	}
+
+	$leases['lease'] = $leasem;
+
+cleanup:
+	socket_close($fd);
+out:
+	return $leases;
+}
+
+function system_get_kea4leases()
+{
+	$leases = [];
+	$leases['lease'] = [];
+	$leases['failover'] = [];
+
+	$socket_path = '/tmp/kea4-ctrl-socket';
+	$rlen = 1024;
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		goto out;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'lease4-get-all']);
+
+	if (socket_send($fd, $cmdjson, strlen($cmdjson), 0) === false) {
+		goto cleanup;
+	}
+
+	$retjson = NULL;
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+
+		/* error occured, just bail out */
+		if ($bytes === false) {
+			goto cleanup;
+		/* we got some data, append it to the json buffer */
+		} elseif ($bytes > 0) {
+			$retjson .= $rbuf;
+		/* we must be done reading */
+		} else {
+			break;
+		}
+	}
+
+	/* sanity check in case we received malformed json */
+	if (($ret = json_decode($retjson, true)) === false) {
+		goto cleanup;
+	}
+
+	$arp_table = system_get_arp_table();
+
+	$arpdata_ip = array();
+	$arpdata_mac = array();
+	foreach ($arp_table as $arp_entry) {
+		if (isset($arpentry['incomplete'])) {
+			continue;
+		}
+		$arpdata_ip[] = $arp_entry['ip-address'];
+		$arpdata_mac[] = $arp_entry['mac-address'];
+	}
+
+	$online_string = gettext("active/online");
+	$offline_string = gettext("idle/offline");
+	$active_string = gettext("active");
+	$expired_string = gettext("expired");
+	$reserved_string = gettext("reserved");
+	$dynamic_string = gettext("dynamic");
+	$static_string = gettext("static");
+
+	foreach ($ret['arguments']['leases'] as $lease) {
+		if (empty($lease['hw-address'])) {
+			continue;
+		}
+
+		$startsts = (int)$lease['cltt'];
+		$endsts = $startsts + (int)$lease['valid-lft'];
+
+		$item = [];
+		$item['act'] = $active_string;
+		if (time() > $endsts) {
+			$item['act'] = $expired_string;
+		}
+
+		$item['type'] = $dynamic_string;
+		$item['ip'] = $lease['ip-address'];
+		$item['mac'] = $lease['hw-address'];
+		$item['cid'] = $lease['client-id'];
+
+		if (in_array($item['ip'], $arpdata_ip) &&
+		    in_array(strtolower($item['mac']), $arpdata_mac)) {
+			$item['online'] = $online_string;
+		} else {
+			$item['online'] = $offline_string;
+		}
+
+		$item['hostname'] = $lease['hostname'];
+
+		$format = 'Y/m/d H:i:s';
+		$item['starts'] = date($format, $startsts);
+		$item['ends'] = date($format, $endsts);
+
+		$leases['lease'][] = $item;
+	}
+
+	$dedup_lease = false;
+	foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
+		foreach (config_get_path("dhcpd/{$ifname}/staticmap", []) as $idx => $static) {
+			if (empty($static['mac']) && empty($static['cid'])) {
+				continue;
+			}
+
+			$slease = array();
+			$slease['ip'] = $static['ipaddr'];
+			$slease['type'] = $static_string;
+			if (!empty($static['cid'])) {
+				$slease['cid'] = $static['cid'];
+			}
+			$slease['mac'] = $static['mac'];
+			$slease['if'] = $ifname;
+			$slease['starts'] = "";
+			$slease['ends'] = "";
+			$slease['hostname'] = $static['hostname'];
+			$slease['descr'] = $static['descr'];
+			$slease['act'] = $static_string;
+			$slease['online'] = in_array(strtolower($slease['mac']),
+			    $arpdata_mac) ? $online_string : $offline_string;
+			$slease['staticmap_array_index'] = $idx;
+			$leases['lease'][] = $slease;
+			$dedup_lease = true;
+		}
+	}
+
+	if ($dedup_lease) {
+		$leases['lease'] = array_remove_duplicate($leases['lease'],
+		    'ip');
+	}
+
+cleanup:
+	socket_close($fd);
+out:
+	return $leases;
+}
+
+function system_get_dhcpleases($dnsavailable=null)
+{
 	global $g;
+
+	if (dhcp_is_backend('kea')) {
+		return system_get_kea4leases();
+	}
 
 	$leases = array();
 	$leases['lease'] = array();
@@ -766,7 +1191,7 @@ function system_get_dhcpleases($dnsavailable=null) {
 	 * Translate these once so we don't do it over and over in the loops
 	 * below.
 	 */
-	$online_string = gettext("active");
+	$online_string = gettext("active/online");
 	$offline_string = gettext("idle/offline");
 	$active_string = gettext("active");
 	$expired_string = gettext("expired");

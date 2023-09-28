@@ -454,36 +454,1565 @@ function services_radvd_configure($blacklist = array()) {
 	return 0;
 }
 
-function services_dhcpd_configure($family = "all", $blacklist = array()) {
+function services_kea6_configure()
+{
+	$kea_var_run = g_get('varrun_path') . '/kea';
+	$kea_var_lib = '/var/lib/kea';
+	$kea_var_db = '/var/db/kea';
+
+	if (g_get('services_dhcp_server_enable') == false) {
+		return;
+	}
+
+	if (config_path_enabled('system','developerspew')) {
+		$mt = microtime();
+		echo "services_kea6_configure() being called $mt\n";
+	}
+
+	/* kill any running dhcpleases6 */
+	$pid_file = g_get('varrun_path') . '/dhcpleases6.pid';
+	if (isvalidpid($pid_file)) {
+		killbypid($pid_file);
+	}
+
+	/* DHCP enabled on any interfaces? */
+	if (!is_dhcpv6_server_enabled()) {
+		return 0;
+	}
+
+	/* bail if not Kea backend */
+	if (!dhcp_is_backend('kea')) {
+		return 0;
+	}
+
+	foreach ([$kea_var_run, $kea_var_lib, $kea_var_db] as $path) {
+		if (!file_exists($path)) {
+			mkdir($path, 0777, true);
+		}
+	}
+
+	$syscfg = config_get_path('system');
+	init_config_arr(['dhcpdv6']);
+	$dhcpdv6cfg = config_get_path('dhcpdv6');
+	$Iflist = get_configured_interface_list();
+	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
+
+	if (platform_booting()) {
+		echo "Starting Kea DHCPv6 service...";
+	}
+
+	/* configuration is built as a PHP array and converted to json */
+	$keaconf = [];
+	$keaconf['Dhcp6'] = [
+		'interfaces-config' => [
+			'interfaces' => []
+		],
+		'lease-database' => [
+			'type' => 'memfile',
+			'persist' => true,
+			'name' => '/var/lib/kea/dhcp6.leases'
+		],
+		'loggers' => [[
+			'name' => 'kea-dhcp6',
+			'output_options' => [[
+				'output' => 'syslog'
+			]],
+			'severity' => 'INFO'
+		]],
+		'valid-lifetime' => 7200,
+		'max-valid-lifetime' => 86400,
+		'hooks-libraries' => [],
+		'control-socket' => [
+			'socket-type' => 'unix',
+			'socket-name' => '/tmp/kea6-ctrl-socket'
+		],
+	];
+
+	/*
+	// configure ha hook library
+	$kea_ha_hook = [
+		'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+	];
+	*/
+
+	$kea_lease_cmds_hook = [
+		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
+	];
+
+	/* wire up lease_cmds hook */
+	$keaconf['Dhcp6']['hooks-libraries'][] = $kea_lease_cmds_hook;
+
+	$dhcpdv6ifs = array();
+
+	// $dhcpv6num = 0;
+
+	$known_duids = [];
+
+	$keasubnet_id = 1;
+	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		if (empty($dhcpv6ifconf)) {
+			continue;
+		}
+
+		$realif = get_real_interface($dhcpv6if, 'inet6');
+
+		$ddns_zones = array();
+
+		$ifcfgv6 = config_get_path("interfaces/{$dhcpv6if}");
+
+		if (!isset($dhcpv6ifconf['enable']) || !isset($Iflist[$dhcpv6if]) ||
+		    (!isset($ifcfgv6['enable']) && !preg_match("/poes/", $dhcpv6if))) {
+			continue;
+		}
+		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
+		if (!is_ipaddrv6($ifcfgipv6) && !preg_match("/poes/", $dhcpv6if)) {
+			continue;
+		}
+
+		$keaconf['Dhcp6']['interfaces-config']['interfaces'][] = $realif;
+
+		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
+		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		$pdlen = 64;
+
+		$keasubnet = [];
+		$keasubnet['id'] = $keasubnet_id++;
+		$keasubnet['interface'] = $realif;
+		$keasubnet['subnet'] = $subnetv6 . '/' . $ifcfgsnv6;
+
+		$all_pools = [];
+		$all_pools[] = $dhcpv6ifconf;
+		if (is_array($dhcpv6ifconf['pool'])) {
+			$all_pools = array_merge($all_pools, $dhcpv6ifconf['pool']);
+		}
+
+		/* kea6 subnet options */
+
+		// kea6 subnet default-lease-time
+		if ($dhcpv6ifconf['defaultleasetime']) {
+			$keasubnet['valid-lifetime'] = (int) $dhcpv6ifconf['defaultleasetime'];
+		}
+
+		// kea6 subnet max-lease-time
+		if ($dhcpv6ifconf['maxleasetime']) {
+			$keasubnet['max-valid-lifetime'] = (int) $dhcpv6ifconf['maxleasetime'];
+		}
+
+		/* kea6 subnet domain-search */
+		$searchlist = [];
+		if ($dhcpv6ifconf['domain']) {
+			$searchlist[] = $dhcpv6ifconf['domain'];
+		} else {
+			$searchlist[] = $syscfg['domain'];
+		}
+
+		if ($dhcpv6ifconf['domainsearchlist'] <> "") {
+			$searchlist = array_merge($searchlist, array_map('trim', explode(';', $dhcpv6ifconf['domainsearchlist'])));
+		}
+
+		if (!empty($searchlist)) {
+			$keasubnet['option-data'][] = [
+				'name' => 'domain-search',
+				'data' => implode(', ', $searchlist)
+			];
+		}
+
+		/* kea6 subnet dns-server */
+		$dnslist = [];
+		if ($dhcpv6ifconf['dhcp6c-dns'] != 'disabled') {
+			if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
+				$dnslist = $dhcpv6ifconf['dnsserver'];
+			} elseif (((config_path_enabled('dnsmasq')) || config_path_enabled('unbound')) && is_ipaddrv6($ifcfgipv6)) {
+				$dnslist = [$ifcfgipv6];
+			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+				$dns_arrv6 = array();
+				foreach ($syscfg['dnsserver'] as $dnsserver) {
+					if (is_ipaddrv6($dnsserver)) {
+						if ($ifcfgv6['ipaddrv6'] == 'track6' &&
+						    Net_IPv6::isInNetmask($dnsserver, '::', $pdlen)) {
+							$dnsserver = merge_ipv6_delegated_prefix($ifcfgipv6, $dnsserver, $pdlen);
+						}
+						$dns_arrv6[] = $dnsserver;
+					}
+				}
+				if (!empty($dns_arrv6)) {
+					$dnslist = $dns_arrv6;
+				}
+			}
+		}
+
+		if (!empty($dnslist)) {
+			$keasubnet['option-data'][] = [
+				'name' => 'dns-servers',
+				'data' => implode(', ', $dnslist)
+			];
+		}
+
+		/* kea6 subnet ntp-servers */
+		if (is_array($dhcpv6ifconf['ntpserver']) && $dhcpv6ifconf['ntpserver'][0]) {
+			$ntpservers = array();
+			foreach ($dhcpv6ifconf['ntpserver'] as $ntpserver) {
+				if (!is_ipaddrv6($ntpserver)) {
+					continue;
+				}
+				if ($ifcfgv6['ipaddrv6'] == 'track6' &&
+				    Net_IPv6::isInNetmask($ntpserver, '::', $pdlen)) {
+					$ntpserver = merge_ipv6_delegated_prefix($ifcfgipv6, $ntpserver, $pdlen);
+				}
+				$ntpservers[] = $ntpserver;
+			}
+			if (count($ntpservers) > 0) {
+				$keasubnet['option-data'][] = [
+					'name' => 'sntp-servers',
+					'data' => implode(', ', $ntpservers)
+				];
+			}
+		}
+
+
+		/* kea6 subnet netboot */
+		if (isset($dhcpv6ifconf['netboot'])) {
+			if (!empty($dhcpv6ifconf['bootfile_url'])) {
+				$keasubnet['option-data'][] = [
+					'name' => 'bootfile-url',
+					'data' => $dhcpv6ifconf['bootfile_url']
+				];
+			}
+		}
+
+		/* the first pool is the primary subnet pool, we handle it a bit differently */
+		$first_pool = true;
+		foreach ($all_pools as $all_pools_idx => $poolconf) {
+			$keapool = [];
+
+			$range_from = $poolconf['range']['from'];
+			$range_to = $poolconf['range']['to'];
+			if ($ifcfgv6['ipaddrv6'] == 'track6') {
+				$range_from = merge_ipv6_delegated_prefix($ifcfgipv6, $range_from, $pdlen);
+				$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to, $pdlen);
+			}
+
+			if (is_ipaddrv6($ifcfgipv6)) {
+				$subnet_start = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+				$subnet_end = gen_subnetv6_max($ifcfgipv6, $ifcfgsnv6);
+				if ((!is_inrange_v6($range_from, $subnet_start, $subnet_end)) ||
+				    (!is_inrange_v6($range_to, $subnet_start, $subnet_end))) {
+					log_error(gettext("The specified range lies outside of the current subnet. Skipping DHCP6 entry."));
+					continue;
+				}
+			}
+
+			if (!is_ipaddrv6($ifcfgipv6)) {
+				$ifcfgsnv6 = "64";
+				$subnetv6 = gen_subnetv6($range_from, $ifcfgsnv6);
+			}
+
+			if (!empty($range_from) && !empty($range_to)) {
+				$keapool['pool'] = $range_from . ' - ' . $range_to;
+			}
+
+			$keapool['client-class'] = 'pool_' . $dhcpv6if . '_'. $all_pools_idx;
+
+			$class_exprs = [];
+
+			$fetch_global_reservations = false;
+			if (isset($poolconf['denyunknown'])) {
+				if ($poolconf['denyunknown'] == "class") {
+					$class_exprs[] = 'member(\'KNOWN\')';
+				} elseif ($poolconf['denyunknown'] != "disabled") {
+					/** "catch-all" covering "enabled" value post-PR#4066, and covering non-upgraded
+					 * boolean option (i.e. literal value "enabled"). The condition is a safeguard in
+					 * case the engine ever changes such that: isset("disabled") == true.
+					 */
+					$class_exprs[] = 'member(\'KNOWN\')';
+					$fetch_global_reservations = true;
+				}
+			}
+
+			/* default allow all (e.g. member('ALL')) */
+			$pool_client_class_test = 'member(\'ALL\')';
+			if (!empty($class_exprs)) {
+				$pool_client_class_test = implode(' and ', $class_exprs);
+			}
+
+			/* the primary pool inherits options from the subnet, so skip over pool-specific options */
+			if ($first_pool) {
+				$first_pool = false;
+				goto kea6_skip_first_pool_options;
+			}
+
+			/* kea6 pool options */
+
+			/* kea6 pool domain-search */
+			$searchlist = [];
+			if ($poolconf['domain']) {
+				$searchlist[] = $poolconf['domain'];
+			}
+
+			if ($poolconf['domainsearchlist']) {
+				$searchlist = array_merge($searchlist, array_map('trim', explode(';', $poolconf['domainsearchlist'])));
+			}
+
+			if (!empty($searchlist)) {
+				$keapool['option-data'][] = [
+					'name' => 'domain-search',
+					'data' => implode(', ', $searchlist)
+				];
+			}
+
+			/* kea6 pool dns-server */
+			$dnslist = [];
+			if ($dhcpv6ifconf['dhcp6c-dns'] != 'disabled') {
+				if (is_array($poolconf['dnsserver']) && ($poolconf['dnsserver'][0])) {
+					$dnslist = $poolconf['dnsserver'];
+				}
+			}
+
+			if (!empty($dnslist)) {
+				$keapool['option-data'][] = [
+					'name' => 'dns-servers',
+					'data' => implode(', ', $dnslist)
+				];
+			}
+
+			// kea6 pool ntp-servers
+			if (is_array($poolconf['ntpserver']) && $poolconf['ntpserver'][0]) {
+				$ntpservers = array();
+				foreach ($poolconf['ntpserver'] as $ntpserver) {
+					if (!is_ipaddrv6($ntpserver)) {
+						continue;
+					}
+					if ($ifcfgv6['ipaddrv6'] == 'track6' &&
+					    Net_IPv6::isInNetmask($ntpserver, '::', $pdlen)) {
+						$ntpserver = merge_ipv6_delegated_prefix($ifcfgipv6, $ntpserver, $pdlen);
+					}
+					$ntpservers[] = $ntpserver;
+				}
+				if (count($ntpservers) > 0) {
+					$keapool['option-data'][] = [
+						'name' => 'sntp-servers',
+						'data' => implode(', ', $ntpservers)
+					];
+				}
+			}
+
+			/* kea6 pool netboot */
+			if (isset($poolconf['netboot'])) {
+				if (!empty($poolconf['bootfile_url'])) {
+					$keapool['option-data'][] = [
+						'name' => 'bootfile-url',
+						'data' => $poolconf['bootfile_url']
+					];
+				}
+			}
+
+kea6_skip_first_pool_options:
+			$keaconf['Dhcp6']['client-classes'][] = [
+				'name' => $keapool['client-class'],
+				'test' => $pool_client_class_test
+			];
+
+			$keasubnet['pools'][] = $keapool;
+		}
+
+		/* add static mappings */
+		/* Needs to use DUID */
+		if (is_array($dhcpv6ifconf['staticmap'])) {
+			$i = 0;
+			foreach ($dhcpv6ifconf['staticmap'] as $sm) {
+				if (empty($sm)) {
+					continue;
+				}
+
+				$keares = [];
+				$keares['duid'] = $sm['duid'];
+
+				$known_duids[$sm['duid']] = true;
+
+				if ($sm['ipaddrv6']) {
+					$ipaddrv6 = $sm['ipaddrv6'];
+					if ($ifcfgv6['ipaddrv6'] == 'track6') {
+						$ipaddrv6 = merge_ipv6_delegated_prefix($ifcfgipv6, $ipaddrv6, $pdlen);
+					}
+					$keares['ip-addresses'][] = $ipaddrv6;
+				}
+
+				if ($sm['hostname']) {
+					$dhhostname = str_replace(" ", "_", $sm['hostname']);
+					$dhhostname = str_replace(".", "_", $dhhostname);
+					$keares['hostname'] = $dhhostname;
+				}
+
+				$keasubnet['reservations'][] = $keares;
+				$i++;
+			}
+		}
+
+
+		if ($dhcpv6ifconf['ddnsdomain']) {
+			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);
+			$dhcpdv6conf .= dhcpdzones($ddns_zones);
+		}
+
+		if ((config_get_path("dhcpdv6/{$dhcpv6if}/ramode") != "unmanaged") &&
+		    (config_path_enabled("interfaces/{$dhcpv6if}") ||
+		    preg_match("/poes/", $dhcpv6if))) {
+			if (preg_match("/poes/si", $dhcpv6if)) {
+				/* magic here */
+				$dhcpdv6ifs = array_merge($dhcpdv6ifs, get_pppoes_child_interfaces($dhcpv6if));
+			} else {
+				$realif = get_real_interface($dhcpv6if, "inet6");
+				if (stristr("$realif", "bridge")) {
+					$mac = get_interface_mac($realif);
+					$v6address = generate_ipv6_from_mac($mac);
+					/* Create link local address for bridges */
+					mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
+				}
+				$realif = escapeshellcmd($realif);
+				$dhcpdv6ifs[] = $realif;
+			}
+		}
+
+		if ($fetch_global_reservations) {
+			$keasubnet['reservations-global'] = true;
+		}
+		$keasubnet['reservations-in-subnet'] = true;
+
+		$keaconf['Dhcp6']['subnet6'][] = $keasubnet;
+	}
+
+	$known_duids = array_keys($known_duids);
+	foreach ($known_duids as $duid) {
+		$keaconf['Dhcp6']['reservations'][] = [
+			'duid' => $duid
+		];
+	}
+
+	$keaconf_path = '/usr/local/etc/kea/kea-dhcp6.conf';
+
+	/* render kea-dhcp6.conf json */
+	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
+		log_error(gettext('error: cannot render json for %s in %s'), $keaconf_path, __FUNCTION__);
+		return 1;
+	}
+
+	/* write kea-dhcp6.conf */
+	if (!file_put_contents($keaconf_path, $keaconf)) {
+		log_error(gettext('error: cannot write %s in %s()'), $keaconf_path, __FUNCTION__);
+		return 1;
+	}
+
+	/* create an empty leases database */
+	$kea_lease_db = $kea_var_lib . '/dhcp6.leases';
+	if (!file_exists($kea_lease_db)) {
+		touch($kea_lease_db);
+	}
+
+	$kea_bin = '/usr/local/sbin/kea-dhcp6';
+	mwexec_bg(sprintf('%s -c %s', $kea_bin, $keaconf_path));
+
+	if (platform_booting()) {
+		print gettext('done') . ".\n";
+	}
+
+	return 0;
+}
+
+function services_dhcpd_kill_all()
+{
+	$dhcpd_var_run = g_get('dhcpd_chroot_path') . g_get('varrun_path');
+	$kea_var_run = g_get('varrun_path') . '/kea';
+
+	$pids = [
+		$dhcpd_var_run . '/dhcpd.pid',
+		$dhcpd_var_run . '/dhcpdv6.pid',
+		$kea_var_run . '/kea-dhcp4.kea-dhcp4.pid',
+		$kea_var_run . '/kea-dhcp6.kea-dhcp6.pid'
+	];
+
+	foreach ($pids as $pid) {
+		if (isvalidpid($pid)) {
+			killbypid($pid);
+			unlink_if_exists($pid);
+		}
+	}
+}
+
+function services_dhcpd_configure($family = "all")
+{
 	global $g;
 
-	$dhcpdconfigurelck = lock("dhcpdconfigure", LOCK_EX);
+	/* block if dhcpd is already being configured */
+	$dhcpdconfigurelck = lock('dhcpdconfigure', LOCK_EX);
 
-	/* configure DHCPD chroot once */
-	$fd = fopen("{$g['tmp_path']}/dhcpd.sh", "w");
-	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}\n");
-	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
-	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
-	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
-	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");
-	fwrite($fd, "/usr/sbin/chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
+	services_dhcpd_kill_all();
 
-	/* only mount devfs if not already mounted */
-	fwrite($fd, "/bin/df {$g['dhcpd_chroot_path']}/dev | /usr/bin/grep -q {$g['dhcpd_chroot_path']}/dev || /sbin/mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
+	if (dhcp_is_backend('isc')) {
+		$fd = fopen("{$g['tmp_path']}/dhcpd.sh", "w");
+		fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}\n");
+		fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
+		fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
+		fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
+		fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");
+		fwrite($fd, "/usr/sbin/chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
 
-	fclose($fd);
+		/* only mount devfs if not already mounted */
+		fwrite($fd, "/bin/df {$g['dhcpd_chroot_path']}/dev | /usr/bin/grep -q {$g['dhcpd_chroot_path']}/dev || /sbin/mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 
-	mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
-
-	if ($family == "all" || $family == "inet") {
-		services_dhcpdv4_configure();
+		fclose($fd);
+		mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
 	}
-	if ($family == "all" || $family == "inet6") {
-		services_dhcpdv6_configure($blacklist);
-		services_radvd_configure($blacklist);
+
+	if (($family === 'all') || ($family === 'inet')) {
+		switch (dhcp_get_backend()) {
+		case 'kea':
+			services_kea4_configure();
+			break;
+		case 'isc':
+		default:
+			services_dhcpdv4_configure();
+			break;
+		}
+	}
+
+	if (($family === 'all') || ($family === 'inet6')) {
+		switch (dhcp_get_backend()) {
+		case 'kea':
+			services_kea6_configure();
+			break;
+		case 'isc':
+		default:
+			services_dhcpdv6_configure();
+			break;
+		}
+		services_radvd_configure();
 	}
 
 	unlock($dhcpdconfigurelck);
+}
+
+function services_kea4_configure()
+{
+	$need_ddns_updates = false;
+	$ddns_zones = array();
+
+	$kea_var_run = g_get('varrun_path') . '/kea';
+	$kea_var_lib = '/var/lib/kea';
+
+	if (g_get('services_dhcp_server_enable') == false) {
+		return;
+	}
+
+	if (config_path_enabled('system','developerspew')) {
+		$mt = microtime();
+		echo "services_kea4_configure() being called $mt\n";
+	}
+
+	/* DHCP enabled on any interfaces? */
+	if (!is_dhcp_server_enabled()) {
+		return 0;
+	}
+
+	/* bail if not Kea backend */
+	if (!dhcp_is_backend('kea')) {
+		return 0;
+	}
+
+	/* ensure we have a valid /var/run/kea directory */
+	if (!file_exists($kea_var_run)) {
+		mkdir($kea_var_run, 0777, true);
+	}
+
+	/* ensure we have a valid /var/lib/kea directory */
+	if (!file_exists($kea_var_lib)) {
+		mkdir($kea_var_lib, 0777, true);
+	}
+
+	$syscfg = config_get_path('system');
+	init_config_arr(['dhcpd']);
+	$dhcpdcfg = config_get_path('dhcpd');
+	$Iflist = get_configured_interface_list();
+
+	/* configuration is built as a PHP array and converted to json */
+	$keaconf = [];
+	$keaconf['Dhcp4'] = [
+		'interfaces-config' => [
+			'interfaces' => []
+		],
+		'lease-database' => [
+			'type' => 'memfile',
+			'persist' => true,
+			'name' => $kea_var_lib . '/dhcp4.leases'
+		],
+		'loggers' => [[
+			'name' => 'kea-dhcp4',
+			'output_options' => [[
+				'output' => 'syslog'
+			]],
+			'severity' => 'INFO'
+		]],
+		'valid-lifetime' => 7200,
+		'max-valid-lifetime' => 86400,
+		'ip-reservations-unique' => false,
+		'option-data' => [[
+			'name' => 'domain-name',
+			'data' => $syscfg['domain'],
+		]],
+		'option-def' => [[
+			'space' => 'dhcp4',
+			'name' => 'ldap-server',
+			'code' => 95,
+			'type' => 'string'
+		]],
+		'hooks-libraries' => [],
+		'control-socket' => [
+			'socket-type' => 'unix',
+			'socket-name' => '/tmp/kea4-ctrl-socket'
+		],
+	];
+
+	$kea_ha_hook = [
+		'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+	];
+
+	$kea_lease_cmds_hook = [
+		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
+	];
+
+	/* wire up lease_cmds hook */
+	$keaconf['Dhcp4']['hooks-libraries'][] = $kea_lease_cmds_hook;
+
+	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
+	$dns_arrv4 = array();
+	if (is_array($syscfg['dnsserver'])) {
+		foreach ($syscfg['dnsserver'] as $dnsserver) {
+			if (is_ipaddrv4($dnsserver)) {
+				$dns_arrv4[] = $dnsserver;
+			}
+		}
+	}
+
+	if (platform_booting()) {
+		echo gettext('Starting Kea DHCP service...');
+	}
+
+	/* take these settings from the first DHCP configured interface,
+	 * see https://redmine.pfsense.org/issues/10270
+	 * TODO: Global Settings tab, see https://redmine.pfsense.org/issues/5080 */
+	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
+
+		if (!isset($dhcpifconf['disableauthoritative'])) {
+			$keaconf['Dhcp4']['authoritative'] = true;
+		}
+
+		break;
+	}
+
+	$enable_add_routers = false;
+	$gateways_arr = return_gateways_array();
+	/* only add a routers line if the system has any IPv4 gateway at all */
+	/* a static route has a gateway, manually overriding this field always works */
+	foreach ($gateways_arr as $gwitem) {
+		if ($gwitem['ipprotocol'] == "inet") {
+			$enable_add_routers = true;
+			break;
+		}
+	}
+
+	/* store known MACs and CIDs as we encounter them during the walk */
+	$known_macs = [];
+	$known_cids = [];
+
+	$keasubnet_id = 1; /* kea subnet id must start at 1 */
+	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if (empty($dhcpifconf)) {
+			continue;
+		}
+
+		$newzone = array();
+		$ifcfg = config_get_path("interfaces/{$dhcpif}");
+
+		if (!isset($dhcpifconf['enable']) || !isset($Iflist[$dhcpif])) {
+			continue;
+		}
+
+		$keasubnet = [];
+		$keasubnet['id'] = $keasubnet_id++;
+
+		$ifcfgip = get_interface_ip($dhcpif);
+		$ifcfgsn = get_interface_subnet($dhcpif);
+		$subnet = gen_subnet($ifcfgip, $ifcfgsn);
+		// $subnetmask = gen_subnet_mask($ifcfgsn);
+
+		if (!is_ipaddr($subnet)) {
+			continue;
+		}
+
+		$keasubnet['subnet'] = $subnet . '/' . $ifcfgsn;
+
+		$all_pools = array();
+		$all_pools[] = $dhcpifconf;
+		if (is_array($dhcpifconf['pool'])) {
+			$all_pools = array_merge($all_pools, $dhcpifconf['pool']);
+		}
+
+		if ($dhcpifconf['domain']) {
+			$keasubnet['option-data'][] = [
+				'name' => 'domain-name',
+				'data' => $dhcpifconf['domain']
+			];
+		}
+
+		if ($dhcpifconf['domainsearchlist'] <> "") {
+			$keasubnet['option-data'][] = [
+				'name' => 'domain-search',
+				'data' => implode(', ', array_map('trim', explode(';', $dhcpifconf['domainsearchlist'])))
+			];
+		}
+
+		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
+			$keasubnet['option-data'][] = [
+				'name' => 'domain-name-servers',
+				'data' => implode(', ', $dhcpifconf['dnsserver'])
+			];
+			if ($newzone['domain-name']) {
+				$newzone['dns-servers'] = $dhcpifconf['dnsserver'];
+			}
+		} elseif (config_path_enabled('dnsmasq')) {
+			$keasubnet['option-data'][] = [
+				'name' => 'domain-name-servers',
+				'data' => $ifcfgip
+			];
+			if ($newzone['domain-name'] && is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+				$newzone['dns-servers'] = $syscfg['dnsserver'];
+			}
+		} elseif (config_path_enabled('unbound')) {
+			$keasubnet['option-data'][] = [
+				'name' => 'domain-name-servers',
+				'data' => $ifcfgip
+			];
+		} elseif (!empty($dns_arrv4)) {
+			$keasubnet['option-data'][] = [
+				'name' => 'domain-name-servers',
+				'data' => implode(', ', $dns_arrv4)
+			];
+			if ($newzone['domain-name']) {
+				$newzone['dns-servers'] = $dns_arrv4;
+			}
+		}
+
+		/* Create classes - These all contain comma separated lists. Join them into one
+		   big comma separated string then split them all up. */
+		$all_mac_strings = array();
+		if (is_array($dhcpifconf['pool'])) {
+			foreach ($all_pools as $poolconf) {
+				$all_mac_strings[] = $poolconf['mac_allow'];
+				$all_mac_strings[] = $poolconf['mac_deny'];
+			}
+		}
+
+		$all_mac_strings[] = $dhcpifconf['mac_allow'];
+		$all_mac_strings[] = $dhcpifconf['mac_deny'];
+		if (!empty($all_mac_strings)) {
+			$all_mac_list = array_unique(explode(',', implode(',', $all_mac_strings)));
+			foreach ($all_mac_list as $mac) {
+				if (empty($mac)) {
+					continue;
+				}
+
+				/* create client classes (mac_0123456789ab) for MAC address matching */
+				$umacstr = strtoupper(str_replace(':', '', $mac));
+				$lmacstr = strtolower($umacstr);
+				$lmacstr_len = strlen($lmacstr);
+				$test_string = 'substring(hexstring(pkt4.mac, \'\'), 0, %s) == \'%s\'';
+				$keaconf['Dhcp4']['client-classes'][] = [
+					'name' => 'mac_'.$umacstr,
+					'test' => sprintf($test_string, $lmacstr_len, $lmacstr)
+				];
+			}
+		}
+
+		// Setup pool options
+		foreach ($all_pools as $all_pools_idx => $poolconf) {
+			$keapool = [];
+
+			if (!(ip_in_subnet($poolconf['range']['from'], "{$subnet}/{$ifcfgsn}") && ip_in_subnet($poolconf['range']['to'], "{$subnet}/{$ifcfgsn}"))) {
+				// If the user has changed the subnet from the interfaces page and applied,
+				// but has not updated the DHCP range, then the range to/from of the pool can be outside the subnet.
+				// This can also happen when implementing the batch of changes when the setup wizard reloads the new settings.
+				$error_msg = sprintf(gettext('Invalid DHCP pool %1$s - %2$s for %3$s subnet %4$s/%5$s detected. Please correct the settings in Services, DHCP Server'), $poolconf['range']['from'], $poolconf['range']['to'], convert_real_interface_to_friendly_descr($dhcpif), $subnet, $ifcfgsn);
+				$do_file_notice = true;
+				$conf_ipv4_address = $ifcfg['ipaddr'];
+				$conf_ipv4_subnetmask = $ifcfg['subnet'];
+				if (is_ipaddrv4($conf_ipv4_address) && is_subnet("{$conf_ipv4_address}/{$conf_ipv4_subnetmask}")) {
+					$conf_subnet_base = gen_subnet($conf_ipv4_address, $conf_ipv4_subnetmask);
+					if (ip_in_subnet($poolconf['range']['from'], "{$conf_subnet_base}/{$conf_ipv4_subnetmask}") &&
+					    ip_in_subnet($poolconf['range']['to'], "{$conf_subnet_base}/{$conf_ipv4_subnetmask}")) {
+						// Even though the running interface subnet does not match the pool range,
+						// the interface subnet in the config file contains the pool range.
+						// We are somewhere part-way through a settings reload, e.g. after running the setup wizard.
+						// services_dhcpdv4_configure will be called again later when the new interface settings from
+						// the config are applied and at that time everything will match up.
+						// Ignore this pool on this interface for now and just log the error to the system log.
+						log_error($error_msg);
+						$do_file_notice = false;
+					}
+				}
+				if ($do_file_notice) {
+					file_notice("DHCP", $error_msg);
+				}
+				continue;
+			}
+
+			$keapool['pool'] = $poolconf['range']['from'] . ' - '. $poolconf['range']['to'];
+			$keapool['client-class'] = 'pool_' . $dhcpif . '_'. $all_pools_idx;
+
+			$class_exprs = $mac_exprs = [];
+
+			/* mac_allow processing */
+			$mac_allow_list = array_unique(explode(',', $poolconf['mac_allow']));
+			$mac_allow_exprs = [];
+			foreach ($mac_allow_list as $mac) {
+				if (!empty($mac)) {
+					$class_name = 'mac_' . strtoupper(str_replace(':', '', $mac));
+					$mac_allow_exprs[] = sprintf('member(\'%s\')', $class_name);
+				}
+			}
+			if (!empty($mac_allow_exprs)) {
+				$mac_exprs[] = '(' . implode(' or ', $mac_allow_exprs) . ')';
+			}
+
+			/* mac_deny processing */
+			$mac_deny_list = array_unique(explode(',', $poolconf['mac_deny']));
+			$mac_deny_exprs = [];
+			foreach ($mac_deny_list as $mac) {
+				if (!empty($mac)) {
+					$class_name = 'mac_' . strtoupper(str_replace(':', '', $mac));
+					$mac_deny_exprs[] = sprintf('not member(\'%s\')', $class_name);
+				}
+			}
+			if (!empty($mac_deny_exprs)) {
+				$mac_exprs[] = '(' . implode(' and ', $mac_deny_exprs) . ')';
+			}
+
+			/* do we have a useful class test? */
+			if (!empty($mac_exprs)) {
+				$class_exprs[] = '(' . implode(' and ', $mac_exprs) . ')';
+			}
+
+			// set pool MAC limitations
+			if (isset($poolconf['denyunknown'])) {
+				if ($poolconf['denyunknown'] == "class") {
+					$class_exprs[] = 'member(\'KNOWN\')';
+				} elseif ($poolconf['denyunknown'] != "disabled") {
+					/** "catch-all" covering "enabled" value post-PR#4066, and covering non-upgraded
+					 * boolean option (i.e. literal value "enabled"). The condition is a safeguard in
+					 * case the engine ever changes such that: isset("disabled") == true.
+					 */
+					$class_exprs[] = 'member(\'KNOWN\')';
+					$keasubnet['reservations-global'] = true;
+				}
+			}
+
+			/* default allow all (e.g. member('ALL')) */
+			$pool_client_class_test = 'member(\'ALL\')';
+			if (!empty($class_exprs)) {
+				$pool_client_class_test = implode(' and ', $class_exprs);
+			}
+
+			if (is_array($poolconf['dnsserver']) && $poolconf['dnsserver'][0] <> "") {
+				$keapool['option-data'][] = [
+					'name' => 'domain-name-servers',
+					'data' => implode(', ', $poolconf['dnsserver'])
+				];
+			}
+
+			if ($poolconf['gateway'] && $poolconf['gateway'] != "none" && ($poolconf['gateway'] != $dhcpifconf['gateway'])) {
+				$keapool['option-data'][] = [
+					'name' => 'routers',
+					'data' => $poolconf['gateway']
+				];
+			}
+
+			if ($poolconf['domain'] && ($poolconf['domain'] != $dhcpifconf['domain'])) {
+				$keapool['option-data'][] = [
+					'name' => 'domain-name',
+					'data' => $poolconf['domain']
+				];
+			}
+
+			if (!empty($poolconf['domainsearchlist']) && ($poolconf['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
+				$keapool['option-data'][] = [
+					'name' => 'domain-search',
+					'data' => implode(', ', array_map('trim', explode(';', $poolconf['domainsearchlist'])))
+				];
+			}
+
+			// default-lease-time
+			if ($poolconf['defaultleasetime'] && ($poolconf['defaultleasetime'] != $dhcpifconf['defaultleasetime'])) {
+				$keapool['valid-lifetime'] = $poolconf['defaultleasetime'];
+			}
+
+			// max-lease-time
+			if ($poolconf['maxleasetime'] && ($poolconf['maxleasetime'] != $dhcpifconf['maxleasetime'])) {
+				$keapool['max-valid-lifetime'] = $poolconf['maxleasetime'];
+			}
+
+			// ignore-client-uids
+			if (isset($poolconf['ignoreclientuids'])) {
+				$keasubnet['match-client-id'] = false;
+			}
+
+			// netbios-name*
+			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
+				$keapool['option-data'][] = [
+					'name' => 'netbios-name-servers',
+					'data' => implode(', ', $poolconf['winserver'])
+				];
+				$keapool['option-data'][] = [
+					'name' => 'netbios-node-type',
+					'data' => '8'
+				];
+			}
+
+			// ntp-servers
+			if (is_array($poolconf['ntpserver']) && $poolconf['ntpserver'][0] && ($poolconf['ntpserver'][0] != $dhcpifconf['ntpserver'][0])) {
+				$keapool['option-data'][] = [
+					'name' => 'ntp-servers',
+					'data' => implode(', ', $poolconf['ntpserver'])
+				];
+			}
+
+			// tftp-server-name
+			if (!empty($poolconf['tftp'])) {
+				$keapool['option-data'][] = [
+					'name' => 'tftp-server-name',
+					'data' => $poolconf['tftp']
+				];
+			}
+
+			// Handle pool-specific options
+			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
+			$idx = 0;
+			$httpclient = false;
+			if (isset($poolconf['numberoptions']['item']) && is_array($poolconf['numberoptions']['item']) && ($all_pools_idx > 0)) {
+				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
+				// This matches the way $poolidx was used when generating the $custoptions string earlier.
+				// $poolidx = $all_pools_idx - 1;
+				foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
+					/*
+					$item_value = base64_decode($item['value']);
+					if (empty($item['type']) || $item['type'] == "text") {
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} \"{$item_value}\";\n";
+					} else {
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} {$item_value};\n";
+					}
+					*/
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					}
+					$idx++;
+				}
+			}
+			if (!empty($poolconf['uefihttpboot']) && isset($poolconf['netboot']) && !$httpclient &&
+			    (!isset($dhcpifconf['uefihttpboot']) ||
+			    ($poolconf['uefihttpboot'] != $dhcpifconf['uefihttpboot']))) {
+			//	$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$idx} \"HTTPClient\";\n";
+			}
+
+			// ldap-server
+			if (!empty($poolconf['ldap'])) {
+				$keapool['option-data'][] = [
+					'name' => 'ldap-server',
+					'data' => $poolconf['ldap']
+				];
+			}
+
+			// net boot information
+			if (isset($poolconf['netboot'])) {
+				$archs = [];
+				$pxe_files = array();
+				if (!empty($poolconf['uefihttpboot'])) {
+					$archs[] = [
+						'name' => 'uefihttp',
+						'test' => 'substring(option[60].text, 0, 10) == \'HTTPClient\'',
+						'filename' => $poolconf['uefihttpboot'],
+					];
+				}
+				if (!empty($poolconf['filename32'])) {
+					$archs[] = [
+						'name' => '32',
+						'test' => 'option[93].hex == 0x0006',
+						'filename' => $poolconf['filename32']
+					];
+				}
+				if (!empty($poolconf['filename64'])) {
+					$archs[] = [
+						'name' => '64',
+						'test' => 'option[93].hex == 0x0007 or option[93].hex == 0x0009',
+						'filename' => $poolconf['filename64']
+					];
+				}
+				if (!empty($poolconf['filename32arm'])) {
+					$archs[] = [
+						'name' => '32arm',
+						'test' => 'option[93].hex == 0x000a',
+						'filename' => $poolconf['filename32arm']
+					];
+				}
+				if (!empty($poolconf['filename64arm'])) {
+					$archs[] = [
+						'name' => '64arm',
+						'test' => 'option[93].hex == 0x000b',
+						'filename' => $poolconf['filename64arm']
+					];
+				}
+
+				foreach ($archs as $arch) {
+					$name = implode('_', ['ipxe', $arch['name'], $dhcpif, 'pool', $all_pools_idx]);
+					$keaconf['Dhcp4']['client-classes'][] = [
+						'name' => $name,
+						'test' => $arch['test'],
+						'only-if-required' => true,
+						'option-data' => [[
+							'name' => 'boot-file-name',
+							'data' => $arch['filename']
+						]]
+					];
+					$keapool['require-client-classes'][] = $name;
+				}
+
+				if (!empty($poolconf['filename'])) {
+					$legacy_test = 'member(\'ALL\')';
+					if (!empty($archs)) {
+						$legacy_exprs = [];
+						foreach ($archs as $arch) {
+							$name = implode('_', ['ipxe', $arch['name'], $dhcpif, 'pool', $all_pools_idx]);
+							$legacy_exprs[] = sprintf('not member(\'%s\')', $name);
+						}
+						$legacy_test = implode(' and ', $legacy_exprs);
+					}
+					$name = implode('_', ['ipxe', 'legacy', $dhcpif, 'pool', $all_pools_idx]);
+					$keaconf['Dhcp4']['client-classes'][] = [
+						'name' => $name,
+						'test' => $legacy_test,
+						'only-if-required' => true,
+						'option-data' => [[
+							'name' => 'boot-file-name',
+							'data' => $dhcpifconf['filename']
+						]]
+					];
+					if (!is_array($keapool['require-client-classes'])) {
+						$keapool['require-client-classes'] = [];
+					}
+					array_unshift($keapool['require-client-classes'], $name);
+				}
+
+				if (!empty($poolconf['rootpath'])) {
+					$keapool['option-data'][] = [
+						'name' => 'root-path',
+						'data' => $poolconf['rootpath']
+					];
+				}
+			}
+
+			$keaconf['Dhcp4']['client-classes'][] = [
+				'name' => $keapool['client-class'],
+				'test' => $pool_client_class_test
+			];
+
+			$keasubnet['pools'][] = $keapool;
+
+		}
+// End of settings inside pools
+
+		if ($dhcpifconf['gateway'] && $dhcpifconf['gateway'] != "none") {
+			$routers = $dhcpifconf['gateway'];
+			$add_routers = true;
+		} elseif ($dhcpifconf['gateway'] == "none") {
+			$add_routers = false;
+		} else {
+			$add_routers = $enable_add_routers;
+			$routers = $ifcfgip;
+		}
+		if ($add_routers) {
+			$keasubnet['option-data'][] = [
+				'name' => 'routers',
+				'data' => $routers,
+			];
+		}
+
+		// default-lease-time
+		if ($dhcpifconf['defaultleasetime']) {
+			$keasubnet['valid-lifetime'] = (int)$dhcpifconf['defaultleasetime'];
+		}
+
+		// max-lease-time
+		if ($dhcpifconf['maxleasetime']) {
+			$keasubnet['max-valid-lifetime'] = (int)$dhcpifconf['maxleasetime'];
+		}
+
+		// netbios-name*
+		if (is_array($dhcpifconf['winsserver']) && $dhcpifconf['winsserver'][0]) {
+			$keasubnet['option-data'][] = [
+				'name' => 'netbios-name-servers',
+				'data' => implode(', ', $dhcpifconf['winsserver'])
+			];
+			$keasubnet['option-data'][] = [
+				'name' => 'netbios-node-type',
+				'data' => '8'
+			];
+		}
+
+		// ntp-servers
+		if (is_array($dhcpifconf['ntpserver']) && $dhcpifconf['ntpserver'][0]) {
+			$keasubnet['option-data'][] = [
+				'name' => 'ntp-servers',
+				'data' => implode(', ', $dhcpifconf['ntpserver'])
+			];
+		}
+
+		// Handle option, number rowhelper values
+		//$dhcpdconf .= "\n";
+		$idx = 0;
+		$httpclient = false;
+		if (isset($dhcpifconf['numberoptions']['item']) && is_array($dhcpifconf['numberoptions']['item'])) {
+			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
+				/*
+				$item_value = base64_decode($item['value']);
+				if (empty($item['type']) || $item['type'] == "text") {
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item_value}\";\n";
+				} else {
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} {$item_value};\n";
+				}
+				*/
+				if (($item['type'] == "text") &&
+				    ($item['number'] == 60) &&
+				    (base64_decode($item['value']) == "HTTPClient")) {
+					$httpclient = true;
+				}
+				$idx++;
+			}
+		}
+
+		// net boot information
+		if (isset($dhcpifconf['netboot'])) {
+			if ($dhcpifconf['nextserver'] <> "") {
+				$keasubnet['next-server'] = $dhcpifconf['nextserver'];
+			}
+
+			$archs = [];
+			$pxe_files = array();
+			if (!empty($dhcpifconf['uefihttpboot'])) {
+				$archs[] = [
+					'name' => 'uefihttp',
+					'test' => 'substring(option[60].text, 0, 10) == \'HTTPClient\'',
+					'filename' => $dhcpifconf['uefihttpboot'],
+				];
+			}
+			if (!empty($dhcpifconf['filename32'])) {
+				$archs[] = [
+					'name' => '32',
+					'test' => 'option[93].hex == 0x0006',
+					'filename' => $dhcpifconf['filename32']
+				];
+			}
+			if (!empty($dhcpifconf['filename64'])) {
+				$archs[] = [
+					'name' => '64',
+					'test' => 'option[93].hex == 0x0007 or option[93].hex == 0x0009',
+					'filename' => $dhcpifconf['filename64']
+				];
+			}
+			if (!empty($dhcpifconf['filename32arm'])) {
+				$archs[] = [
+					'name' => '32arm',
+					'test' => 'option[93].hex == 0x000a',
+					'filename' => $dhcpifconf['filename32arm']
+				];
+			}
+			if (!empty($dhcpifconf['filename64arm'])) {
+				$archs[] = [
+					'name' => '64arm',
+					'test' => 'option[93].hex == 0x000b',
+					'filename' => $dhcpifconf['filename64arm']
+				];
+			}
+
+			foreach ($archs as $arch) {
+				$name = implode('_', ['ipxe', $arch['name'], $dhcpif]);
+				$keaconf['Dhcp4']['client-classes'][] = [
+					'name' => $name,
+					'test' => $arch['test'],
+					'only-if-required' => true,
+					'option-data' => [[
+						'name' => 'boot-file-name',
+						'data' => $arch['filename']
+					]]
+				];
+				$keasubnet['require-client-classes'][] = $name;
+			}
+
+			if (!empty($dhcpifconf['filename'])) {
+				$legacy_test = 'member(\'ALL\')';
+				if (!empty($archs)) {
+					$legacy_exprs = [];
+					foreach ($archs as $arch) {
+						$name = implode('_', ['ipxe', $arch['name'], $dhcpif]);
+						$legacy_exprs[] = sprintf('not member(\'%s\')', $name);
+					}
+					$legacy_test = implode(' and ', $legacy_exprs);
+				}
+				$name = implode('_', ['ipxe', 'legacy', $dhcpif]);
+				$keaconf['Dhcp4']['client-classes'][] = [
+					'name' => $name,
+					'test' => $legacy_test,
+					'only-if-required' => true,
+					'option-data' => [[
+						'name' => 'boot-file-name',
+						'data' => $dhcpifconf['filename']
+					]]
+				];
+				if (!is_array($keasubnet['require-client-classes'])) {
+					$keasubnet['require-client-classes'] = [];
+				}
+				array_unshift($keasubnet['require-client-classes'], $name);
+			}
+
+			if (!empty($dhcpifconf['rootpath'])) {
+				$keasubnet['option-data'][] = [
+					'name' => 'root-path',
+					'data' => $dhcpifconf['rootpath']
+				];
+			}
+		}
+
+		/* add static mappings */
+		if (is_array($dhcpifconf['staticmap'])) {
+			$i = 0;
+			$sm_newzone[] = array();
+			$need_sm_ddns_updates = false;
+			foreach ($dhcpifconf['staticmap'] as $sm) {
+				if (empty($sm)) {
+					continue;
+				}
+
+				$keares = [];
+
+				if ($sm['mac']) {
+					$keares['hw-address'] = $sm['mac'];
+
+					/* keys are unique */
+					$known_macs[strtolower(trim($sm['mac']))] = true;
+				}
+
+				$cid = '';
+				if ($sm['cid']) {
+					$cid = str_replace('"', '\"', $sm['cid']);
+					$keares['client-id'] = $cid;
+
+					/* keys are unique */
+					$known_cids[strtolower(trim($sm['client-id']))] = true;
+				}
+
+				if ($sm['ipaddr']) {
+					$keares['ip-address'] = $sm['ipaddr'];
+				}
+
+				if ($sm['hostname']) {
+					$dhhostname = str_replace(" ", "_", $sm['hostname']);
+					$dhhostname = str_replace(".", "_", $dhhostname);
+					$keares['hostname'] = $dhhostname;
+					$keagres['hostname'] = $dhhostname;
+					/*
+					if ((isset($dhcpifconf['ddnsupdate']) || isset($sm['ddnsupdate'])) && (isset($dhcpifconf['ddnsforcehostname']) || isset($sm['ddnsforcehostname']))) {
+						$dhcpdconf .= "	ddns-hostname \"{$dhhostname}\";\n";
+					}
+					*/
+				}
+				/*
+				if ($sm['filename']) {
+					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
+				}
+
+				if ($sm['rootpath']) {
+					$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
+				}
+				*/
+
+				/* routers */
+				if ($sm['gateway'] && ($sm['gateway'] != $dhcpifconf['gateway'])) {
+					$keares['option-data'][] = [
+						'name' => 'routers',
+						'data' => $sm['gateway']
+					];
+				}
+
+				/* domain-name */
+				if ($sm['domain'] && ($sm['domain'] != $dhcpifconf['domain'])) {
+					$keares['option-data'][] = [
+						'name' => 'domain-name',
+						'data' => $sm['domain']
+					];
+				}
+
+				/* domain-search */
+				if (!empty($sm['domainsearchlist']) && ($sm['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
+					$keares['option-data'][] = [
+						'name' => 'domain-search',
+						'data' => implode(', ', array_map('trim', explode(';', $sm['domainsearchlist'])))
+					];
+				}
+
+				/*
+				if (isset($sm['ddnsupdate'])) {
+					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
+						$smdnscfg .= "	ddns-domainname \"{$sm['ddnsdomain']}\";\n";
+				 		$need_sm_ddns_updates = true;
+					}
+					$smdnscfg .= "	ddns-update-style interim;\n";
+				}
+				*/
+
+				if (is_array($sm['dnsserver']) && ($sm['dnsserver'][0]) && ($sm['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
+					$keares['option-data'][] = [
+						'name' => 'domain-name-servers',
+						'data' => implode(', ', $sm['dnsserver'])
+					];
+				}
+
+				// netbios-name*
+				if (is_array($sm['winsserver']) && $sm['winsserver'][0] && ($sm['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
+					$keares['option-data'][] = [
+						'name' => 'netbios-name-servers',
+						'data' => implode(', ', $sm['winsserver'])
+					];
+					$keares['option-data'][] = [
+						'name' => 'netbios-node-type',
+						'data' => '8'
+					];
+				}
+
+				// ntp-servers
+				if (is_array($sm['ntpserver']) && $sm['ntpserver'][0] && ($sm['ntpserver'][0] != $dhcpifconf['ntpserver'][0])) {
+					$keares['option-data'][] = [
+						'name' => 'ntp-servers',
+						'data' => implode(', ', $sm['ntpserver'])
+					];
+				}
+
+				// tftp-server-name
+				if (!empty($sm['tftp']) && ($sm['tftp'] != $dhcpifconf['tftp'])) {
+					$keares['option-data'][] = [
+						'name' => 'tftp-server-name',
+						'data' => $sm['tftp']
+					];
+				}
+
+				// Handle option, number rowhelper values
+				// $dhcpdconf .= "\n";
+				$idx = 0;
+				$httpclient = false;
+				if (isset($sm['numberoptions']['item']) && is_array($sm['numberoptions']['item'])) {
+					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
+						/*
+						$item_value = base64_decode($item['value']);
+						if (empty($item['type']) || $item['type'] == "text") {
+							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} \"{$item_value}\";\n";
+						} else {
+							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} {$item_value};\n";
+						}
+						*/
+					}
+					if (($item['type'] == "text") &&
+					    ($item['number'] == 60) &&
+					    (base64_decode($item['value']) == "HTTPClient")) {
+						$httpclient = true;
+					}
+					$idx++;
+				}
+				/*
+				if (!empty($sm['uefihttpboot']) && isset($sm['netboot']) && !$httpclient) {
+					$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$idx} \"HTTPClient\";\n";
+				}
+				*/
+
+				// ldap-server
+				if (!empty($sm['ldap']) && ($sm['ldap'] != $dhcpifconf['ldap'])) {
+					$keares['option-data'][] = [
+						'name' => 'ldap-server',
+						'data' => $sm['ldap']
+					];
+				}
+
+				// net boot information
+				if (isset($sm['netboot'])) {
+
+					$pxe_files = array();
+					if (!empty($sm['filename'])) {
+						$filename = $sm['filename'];
+					}
+					if (!empty($sm['uefihttpboot'])) {
+						$pxe_files[] = array('HTTPClient', $sm['uefihttpboot']);
+					}
+					if (!empty($sm['filename32'])) {
+						$pxe_files[] = array('00:06', $sm['filename32']);
+					}
+					if (!empty($sm['filename64'])) {
+						$pxe_files[] = array('00:07', $sm['filename64']);
+						$pxe_files[] = array('00:09', $sm['filename64']);
+					}
+					if (!empty($sm['filename32arm'])) {
+						$pxe_files[] = array('00:0a', $sm['filename32arm']);
+					}
+					if (!empty($sm['filename64arm'])) {
+						$pxe_files[] = array('00:0b', $sm['filename64arm']);
+					}
+
+					$pxeif = false;
+					if (is_array($pxe_files) && !empty($pxe_files)) {
+						foreach ($pxe_files as $pxe) {
+							/*
+							if ($pxe[0] == 'HTTPClient') {
+								$expr = "substring (option vendor-class-identifier, 0, 10) = \"HTTPClient\" {\n";
+							} else {
+								$expr = "option arch = {$pxe[0]} {\n";
+							}
+							*/
+							if (!$pxeif) {
+								// $dhcpdconf .= "	if " . $expr;
+								$pxeif = true;
+							} /* else {
+								$dhcpdconf .= " elseif " . $expr;
+							}
+							$dhcpdconf .= "		filename \"{$pxe[1]}\";\n";
+							$dhcpdconf .= "	}";
+							*/
+						}
+						/*
+						if ($filename) {
+							$dhcpdconf .= " else {\n";
+							$dhcpdconf .= "		filename \"{$filename}\";\n";
+							$dhcpdconf .= "	}";
+						}
+						$dhcpdconf .= "\n\n";
+						*/
+					} /* elseif (!empty($filename)) {
+						$dhcpdconf .= "	filename \"{$filename}\";\n";
+					}
+					*/
+					unset($filename);
+					/*
+					if (!empty($dhcpifconf['rootpath'])) {
+						$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
+					}
+					*/
+				}
+
+				// $dhcpdconf .= "}\n";
+
+				// add zone DDNS key/server to $ddns_zone[] if required
+				if ($need_sm_ddns_updates) {
+					$ddnsduplicate = false;
+					foreach ($ddns_zones as $ddnszone) {
+						if ($ddnszone['domain-name'] == $sm['ddnsdomain']) {
+							$ddnsduplicate = true;
+						}
+					}
+					if (!$ddnsduplicate) {
+						$sm_newzone['dns-servers'] = array($sm['ddnsdomainprimary'], $sm['ddnsdomainsecondary']);
+						$sm_newzone['domain-name'] = $sm['ddnsdomain'];
+						$sm_newzone['ddnsdomainkeyname'] = $sm['ddnsdomainkeyname'];
+						$sm_newzone['ddnsdomainkeyalgorithm'] = $sm['ddnsdomainkeyalgorithm'];
+						$sm_newzone['ddnsdomainkey'] = $sm['ddnsdomainkey'];
+						// $dhcpdconf .= dhcpdkey($sm_newzone);
+						$ddns_zones[] = $sm_newzone;
+						$need_ddns_updates = true;
+					}
+				}
+
+				/*
+				// subclass for DHCP limiting
+				if (!empty($sm['mac'])) {
+					// assuming ALL addresses are ethernet hardware type ("1:" prefix)
+					$dhcpdconf .= "subclass \"s_{$dhcpif}\" 1:{$sm['mac']};\n";
+				}
+				if (!empty($cid)) {
+					$dhcpdconf .= "subclass \"s_{$dhcpif}\" \"{$cid}\";\n";
+				}
+				*/
+
+				$i++;
+
+				$keasubnet['reservations'][] = $keares;
+			}
+		}
+
+		$keasubnet['reservations-in-subnet'] = true;
+
+		$keaconf['Dhcp4']['subnet4'][] = $keasubnet;
+		$keaconf['Dhcp4']['interfaces-config']['interfaces'][] = get_real_interface($dhcpif);
+		if ($newzone['domain-name']) {
+			if ($need_ddns_updates) {
+				$newzone['dns-servers'] = array($dhcpifconf['ddnsdomainprimary'], $dhcpifconf['ddnsdomainsecondary']);
+				$newzone['ddnsdomainkeyname'] = $dhcpifconf['ddnsdomainkeyname'];
+				$newzone['ddnsdomainkeyalgorithm'] = $dhcpifconf['ddnsdomainkeyalgorithm'];
+				$newzone['ddnsdomainkey'] = $dhcpifconf['ddnsdomainkey'];
+				// $dhcpdconf .= dhcpdkey($dhcpifconf);
+			}
+			$ddns_zones[] = $newzone;
+		}
+	}
+
+	/* add global reservations for known macs */
+	$known_macs = array_keys($known_macs);
+	foreach ($known_macs as $mac) {
+		$keaconf['Dhcp4']['reservations'][] = [
+			'hw-address' => $mac
+		];
+	}
+
+	/* add global reservations for known cids */
+	$known_cids = array_keys($known_cids);
+	foreach ($known_cids as $cid) {
+		$keaconf['Dhcp4']['reservations'][] = [
+			'client-id' => $cid
+		];
+	}
+
+	/* render json */
+	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
+		log_error(gettext('error: unable to render json for kea-dhcp4.conf in %s()'), __FUNCTION__);
+		return 1;
+	}
+
+	/* write kea-dhcp4.conf */
+	$keaconf_path = '/usr/local/etc/kea/kea-dhcp4.conf';
+	if (!file_put_contents($keaconf_path, $keaconf)) {
+		log_error(gettext('error: cannot open %s in %s()'), $keaconf_path, __FUNCTION__);
+		return 1;
+	}
+
+	/* create an empty leases database */
+	$kea_lease_db = $kea_var_lib . '/dhcp4.leases';
+	if (!file_exists($kea_lease_db)) {
+		touch($kea_lease_db);
+	}
+
+	/* start kea-dhcp4 */
+	$kea_bin = '/usr/local/sbin/kea-dhcp4';
+	mwexec_bg(sprintf('%s -c %s', $kea_bin, $keaconf_path));
+
+	if (platform_booting()) {
+		print "done.\n";
+	}
+
+	return 0;
 }
 
 function services_dhcpdv4_configure() {
@@ -497,16 +2026,15 @@ function services_dhcpdv4_configure() {
 
 	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
-		echo "services_dhcpdv4_configure($if) being called $mt\n";
-	}
-
-	/* kill any running dhcpd */
-	if (isvalidpid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid")) {
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
+		echo "services_dhcpdv4_configure() being called $mt\n";
 	}
 
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcp_server_enabled()) {
+		return 0;
+	}
+
+	if (!dhcp_is_backend('isc')) {
 		return 0;
 	}
 
@@ -1633,12 +3161,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 
 	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
-		echo "services_dhcpd_configure($if) being called $mt\n";
-	}
-
-	/* kill any running dhcpd */
-	if (isvalidpid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid")) {
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
+		echo "services_dhcpd_configure() being called $mt\n";
 	}
 
 	/* kill any running dhcpleases6 */
@@ -1648,6 +3171,11 @@ function services_dhcpdv6_configure($blacklist = array()) {
 
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcpv6_server_enabled()) {
+		return 0;
+	}
+
+	/* bail out if the backend isn't isc */
+	if (!dhcp_is_backend('isc')) {
 		return 0;
 	}
 

@@ -34,6 +34,7 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 	$pconfig['ipv6dontcreatelocaldns'] = isset($config['system']['ipv6dontcreatelocaldns']);
 	$pconfig['radvddebug'] = isset($config['system']['radvddebug']);
+	$pconfig['ignoreiscwarning'] = isset($config['system']['ignoreiscwarning']);
 	$pconfig['dhcp6debug'] = isset($config['system']['dhcp6debug']);
 	$pconfig['dhcp6norelease'] = isset($config['system']['dhcp6norelease']);
 	$pconfig['global-v6duid'] = isset($config['system']['global-v6duid']) ? $config['system']['global-v6duid'] : null;
@@ -46,6 +47,10 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 	$pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
 	$pconfig['duid'] = get_duid_from_file();
+
+	/* not kea means isc */
+	$dhcpbackend = config_get_path('dhcpbackend', 'isc');
+	$pconfig['dhcpbackend'] = (in_array($dhcpbackend, ['isc', 'kea']) ? $dhcpbackend : 'isc');
 
 	return $json ? json_encode($pconfig) : $pconfig;
 }
@@ -118,6 +123,9 @@ function saveAdvancedNetworking($post, $json = false) {
 			}
 		}
 
+		$dhcpd_restart = (!dhcp_is_backend($post['dhcpbackend']));
+		config_set_path('dhcpbackend', $post['dhcpbackend']);
+
 		if ($post['ipv6allow'] == "yes") {
 			$config['system']['ipv6allow'] = true;
 		} else {
@@ -137,6 +145,12 @@ function saveAdvancedNetworking($post, $json = false) {
 			config_del_path('system/radvddebug');
 		}
 
+		if ($post['ignoreiscwarning'] === 'yes') {
+			config_set_path('system/ignoreiscwarning', true);
+		} else {
+			config_del_path('system/ignoreiscwarning');
+		}
+
 		if ($post['dhcp6debug'] == "yes") {
 			$config['system']['dhcp6debug'] = true;
 		} else {
@@ -150,7 +164,7 @@ function saveAdvancedNetworking($post, $json = false) {
 		}
 
 		if ((isset($post['dhcp6debug']) xor isset($config['system']['dhcp6debug'])) ||
-		    (isset($post['dhcp6norelease']) xor isset($config['system']['dhcp6norelease']))) { 
+		    (isset($post['dhcp6norelease']) xor isset($config['system']['dhcp6norelease']))) {
 			$dhcp6restart = true;
 		}
 
@@ -240,6 +254,10 @@ function saveAdvancedNetworking($post, $json = false) {
 			}
 		}
 
+		if ($dhcpd_restart) {
+			services_dhcpd_configure();
+		}
+
 		$rv['input_errors'] = $input_errors;
 		$rv['retval'] = $retval;
 		$rv['changes_applied'] = $changes_applied;
@@ -249,4 +267,3 @@ function saveAdvancedNetworking($post, $json = false) {
 		return $json ? json_encode($rv) : $rv;
 	}
 }
-?>

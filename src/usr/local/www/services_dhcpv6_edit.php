@@ -163,7 +163,7 @@ if ($_POST['save']) {
 		write_config("DHCPv6 server static maps saved");
 
 		if (isset($config['dhcpdv6'][$if]['enable'])) {
-			mark_subsystem_dirty('staticmaps');
+			mark_subsystem_dirty('dhcpd6');
 			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
 				mark_subsystem_dirty('hosts');
 			}
@@ -184,23 +184,37 @@ $ifname = '';
 if (!empty($if) && isset($iflist[$if])) {
 	$ifname = $iflist[$if];
 }
-$pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")), $ifname, gettext("DHCPv6 Server"), gettext("Edit Static Mapping"));
-$pglinks = array("", "services_dhcpv6.php", "services_dhcpv6.php?if={$if}", "services_dhcpv6.php?if={$if}", "@self");
-$shortcut_section = "dhcp6";
+$pgtitle = [gettext('Services'), gettext('DHCPv6 Server'), $ifname, gettext('Static Mapping'), gettext('Edit')];
+$pglinks = [null, 'services_dhcpv6.php', "services_dhcpv6.php?if={$if}", "services_dhcpv6.php?if={$if}", '@self'];
+$shortcut_section = 'dhcp6';
+if (dhcp_is_backend('kea')) {
+	$shortcut_section = 'kea-dhcp6';
+}
 
-include("head.inc");
+include('head.inc');
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
+display_isc_warning();
+
 $form = new Form();
 
-$section = new Form_Section('Static DHCPv6 Mapping');
+$section = new Form_Section(sprintf(gettext('Static DHCPv6 Mapping on %s'), $ifname));
+
+$section->addInput(new Form_StaticText(
+	gettext('DHCP Backend'),
+	match (dhcp_get_backend()) {
+		'isc' => gettext('ISC DHCP'),
+		'kea' => gettext('Kea DHCP'),
+		default => gettext('Unknown')
+	}
+));
 
 $section->addInput(new Form_Input(
 	'duid',
-	'*DUID',
+	'*'.gettext('DHCP Unique Identifier'),
 	'text',
 	$pconfig['duid'],
 	['placeholder' => 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
@@ -212,7 +226,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'ipaddrv6',
-	'IPv6 address',
+	gettext('IPv6 Address'),
 	'text',
 	$pconfig['ipaddrv6']
 ))->setHelp('IPv6 address to assign this client.%1$s%1$s' .
@@ -221,18 +235,19 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'hostname',
-	'Hostname',
+	gettext('Hostname'),
 	'text',
 	$pconfig['hostname']
-))->setHelp('Name of the client host without the domain part.');
+))->setHelp(gettext('Name of the client host without the domain part.'));
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Description',
+	gettext('Description'),
 	'text',
 	$pconfig['descr']
-))->setHelp('A description for administrative reference.');
+))->setHelp(gettext('A description for administrative reference (not parsed).'));
 
+if (dhcp_is_backend('isc')):
 if ($netboot_enabled) {
 	$section->addInput(new Form_Input(
 		'filename',
@@ -248,6 +263,7 @@ if ($netboot_enabled) {
 		$pconfig['rootpath']
 	))->setHelp('Enter the root-path string. This overrides setting on main page.');
 }
+endif;
 
 if (isset($id) && $a_maps[$id]) {
 	$form->addGlobal(new Form_Input(

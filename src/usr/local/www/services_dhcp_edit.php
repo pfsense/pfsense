@@ -65,7 +65,6 @@ init_config_arr(array('dhcpd', $if, 'pool'));
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
 $a_pools = &$config['dhcpd'][$if]['pool'];
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
-$netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
@@ -443,7 +442,7 @@ if ($_POST['save']) {
 		write_config("DHCP Server settings saved");
 
 		if (isset($config['dhcpd'][$if]['enable'])) {
-			mark_subsystem_dirty('staticmaps');
+			mark_subsystem_dirty('dhcpd');
 			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
 				mark_subsystem_dirty('hosts');
 			}
@@ -474,194 +473,225 @@ $ifname = '';
 if (!empty($if) && isset($iflist[$if])) {
 	$ifname = $iflist[$if];
 }
-$pgtitle = array(gettext("Services"), gettext("DHCP Server"), $ifname, gettext("Edit Static Mapping"));
-$pglinks = array("", "services_dhcp.php", "services_dhcp.php?if={$if}", "@self");
-$shortcut_section = "dhcp";
+$pgtitle = [gettext('Services'), gettext('DHCP Server'), $ifname, gettext('Static Mapping'), gettext('Edit')];
+$pglinks = ['', 'services_dhcp.php', 'services_dhcp.php?if='.$if, '@self', '@self'];
+$shortcut_section = 'dhcp';
+if (dhcp_is_backend('kea')) {
+	$shortcut_section = 'kea-dhcp4';
+}
 
-include("head.inc");
+include('head.inc');
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
+display_isc_warning();
+
 $form = new Form();
 
-$section = new Form_Section(sprintf("Static DHCP Mapping on %s", $ifcfgdescr));
+$section = new Form_Section(sprintf(gettext('Static DHCP Mapping on %s'), $ifcfgdescr));
+
+$section->addInput(new Form_StaticText(
+	gettext('DHCP Backend'),
+	match (dhcp_get_backend()) {
+		'isc' => gettext('ISC DHCP'),
+		'kea' => gettext('Kea DHCP'),
+		default => gettext('Unknown')
+	}
+));
 
 $macaddress = new Form_Input(
 	'mac',
-	'MAC Address',
+	gettext('MAC Address'),
 	'text',
 	$pconfig['mac'],
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
 
+$macaddress->addClass('autotrim');
+
 $btnmymac = new Form_Button(
 	'btnmymac',
-	'Copy My MAC',
+	gettext('Copy My MAC'),
 	null,
 	'fa-clone'
 	);
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
-$group = new Form_Group('MAC Address');
+$group = new Form_Group(gettext('MAC Address'));
 $group->add($macaddress);
 if (!empty($mymac)) {
 	$group->add($btnmymac);
 }
-$group->setHelp('MAC address of the client to match (6 hex octets separated by colons).');
+$group->setHelp(gettext('MAC address of the client to match (6 hex octets separated by colons).'));
 $section->add($group);
 
 $section->addInput(new Form_Input(
 	'cid',
-	'Client Identifier',
+	gettext('Client Identifier'),
 	'text',
 	$pconfig['cid']
-))->setHelp('An optional identifier to match based on the value sent by the client (RFC 2132)');
+))->addClass('autotrim')
+  ->setHelp('An optional identifier to match based on the value sent by the client (RFC 2132)');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
-	'IP Address',
+	gettext('IP Address'),
 	$pconfig['ipaddr'],
 	'V4'
-))->setHelp('IPv4 address to assign this client.%1$s%1$s' .
+))->addClass('autotrim')
+  ->setHelp(gettext('IPv4 address to assign this client.%1$s%1$s' .
 		'Address must be outside of any defined pools. ' .
 		'If no IPv4 address is given, one will be dynamically allocated from a pool.%1$s' .
-		'The same IP address may be assigned to multiple mappings.', '<br />');
-
-$section->addInput(new Form_Input(
-	'hostname',
-	'Hostname',
-	'text',
-	$pconfig['hostname']
-))->setHelp('Name of the client host without the domain part.');
-
-if ($netboot_enabled) {
-	$section->addInput(new Form_Input(
-		'filename',
-		'Netboot filename',
-		'text',
-		$pconfig['filename']
-	))->setHelp('Name of the file that should be loaded when this host boots off of the network, overrides setting on main page.');
-
-	$section->addInput(new Form_Input(
-		'rootpath',
-		'Root Path',
-		'text',
-		$pconfig['rootpath']
-	))->setHelp('Enter the root-path-string, overrides setting on main page.');
-}
-
-$section->addInput(new Form_Input(
-	'descr',
-	'Description',
-	'text',
-	$pconfig['descr']
-))->setHelp('A description for administrative reference.');
+		'The same IP address may be assigned to multiple mappings.'), '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'arp_table_static_entry',
-	'ARP Table Static Entry',
-	'Create an ARP Table Static Entry for this MAC & IP Address pair.',
+	gettext('ARP Table Static Entry'),
+	gettext('Create an ARP Table Static Entry for this MAC & IP Address pair.'),
 	$pconfig['arp_table_static_entry']
 ));
 
-$group = new Form_Group('WINS Servers');
-
-$group->add(new Form_Input(
-	'wins1',
-	null,
+$section->addInput(new Form_Input(
+	'hostname',
+	gettext('Hostname'),
 	'text',
-	$pconfig['wins1'],
-	['placeholder' => 'WINS 1']
-));
+	$pconfig['hostname']
+))->addClass('autotrim')
+  ->setHelp(gettext('Name of the client host without the domain part.'));
 
-$group->add(new Form_Input(
+$section->addInput(new Form_Input(
+	'descr',
+	gettext('Description'),
+	'text',
+	$pconfig['descr']
+))->setHelp(gettext('A description for administrative reference (not parsed).'));
+
+$form->add($section);
+
+$section = new Form_Section(gettext('Server Options'));
+
+$winsserver_holder = config_get_path('dhcpd/'.$if.'/winsserver', []);
+
+$section->addInput(new Form_IpAddress(
+	'wins1',
+	gettext('WINS Servers'),
+	$pconfig['wins1'],
+	'V4'
+))->addClass('autotrim')
+  ->setAttribute('placeholder', ($winsserver_holder[0] ?? gettext('WINS Server 1')));
+
+$section->addInput(new Form_IpAddress(
 	'wins2',
 	null,
-	'text',
 	$pconfig['wins2'],
-	['placeholder' => 'WINS 2']
-));
+	'V4'
+))->addClass('autotrim')
+  ->setAttribute('placeholder', ($winsserver_holder[1] ?? gettext('WINS Server 2')));
 
-$section->add($group);
-$group = new Form_Group('DNS Servers');
+$dns_holder = [];
+foreach (config_get_path('system/dnsserver', []) as $dnsserver) {
+	if (is_ipaddrv4($dnsserver)) {
+		$dns_holder[] = $dnsserver;
+	}
+}
 
-$group->add(new Form_Input(
-	'dns1',
-	null,
-	'text',
-	$pconfig['dns1'],
-	['placeholder' => 'DNS 1']
-));
+if (config_path_enabled('dnsmasq') ||
+    config_path_enabled('unbound')) {
+    $dns_holder = [get_interface_ip($if)];
+}
 
-$group->add(new Form_Input(
-	'dns2',
-	null,
-	'text',
-	$pconfig['dns2'],
-	['placeholder' => 'DNS 2']
-));
+$subnet_dnsservers = config_get_path('dhcpd/'.$if.'/dnsserver', []);
+if (!empty($subnet_dnsservers)) {
+	$dns_holder = $subnet_dnsservers;
+}
 
-$group->add(new Form_Input(
-	'dns3',
-	null,
-	'text',
-	$pconfig['dns3'],
-	['placeholder' => 'DNS 3']
-));
+for ($idx=1; $idx<=4; $idx++) {
+	$section->addInput(new Form_IpAddress(
+		'dns' . $idx,
+		($idx == 1) ? gettext('DNS Servers') : null,
+		$pconfig['dns' . $idx],
+		'V4'
+	))->addClass('autotrim')
+	  ->setAttribute('placeholder', ($dns_holder[$idx - 1] ?? sprintf(gettext('DNS Server %s'), $idx)))->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: The IP address of this firewall interface if DNS Resolver or Forwarder is enabled, otherwise the servers configured in General settings or those obtained dynamically.':'');
+}
 
-$group->add(new Form_Input(
-	'dns4',
-	null,
-	'text',
-	$pconfig['dns4'],
-	['placeholder' => 'DNS 4']
-));
+$form->add($section);
 
-$group->setHelp('Note: Leave blank to use the system default DNS servers: The IP address of this firewall interface if DNS Resolver or Forwarder is enabled, otherwise the servers configured in General settings or those obtained dynamically.');
+$section = new Form_Section(gettext('Other DHCP Options'));
 
-$section->add($group);
+$ifip = get_interface_ip($if);
+
+/* interface ip has lowest priority */
+$gateway_holder = $ifip;
+
+/* subnet/primary pool has highest priority */
+$subnet_gateway = config_get_path('dhcpd/'.$if.'/gateway');
+if (!empty($subnet_gateway)) {
+	$gateway_holder = $subnet_gateway;
+}
 
 $section->addInput(new Form_Input(
 	'gateway',
-	'Gateway',
+	gettext('Gateway'),
 	'text',
 	$pconfig['gateway']
-))->setHelp('The default is to use the IP address of this firewall interface as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network.');
+))->addClass('autotrim')
+  ->setAttribute('placeholder', $gateway_holder)
+  ->setHelp(gettext('The default is to use the IP address of this firewall interface as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network.'));
+
+$domain_holder = config_get_path('system/domain');
+
+$subnet_domain = config_get_path('dhcpd/'.$if.'/domain');
+if (!empty($subnet_domain)) {
+	$domain_holder = $subnet_domain;
+}
 
 $section->addInput(new Form_Input(
 	'domain',
-	'Domain name',
+	gettext('Domain Name'),
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this firewall as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
+))->addClass('autotrim')
+  ->setAttribute('placeholder', $domain_holder)
+  ->setHelp(gettext('The default is to use the domain name of this firewall as the default domain name provided by DHCP. An alternate domain name may be specified here.'));
+
+$searchlist_holder = config_get_path('dhcpd/'.$if.'/domainsearchlist');
+if (empty($searchlist_holder)) {
+	$searchlist_holder = 'example.com;sub.example.com';
+}
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
-	'Domain search list',
+	gettext('Domain Search List'),
 	'text',
 	$pconfig['domainsearchlist']
-))->setHelp('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator.');
+))->addClass('autotrim')
+  ->setAttribute('placeholder', $searchlist_holder)
+  ->setHelp(gettext('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator.'));
 
+if (dhcp_is_backend('isc')):
 $section->addInput(new Form_Input(
 	'deftime',
-	'Default lease time (Seconds)',
+	gettext('Default Lease Time'),
 	'text',
 	$pconfig['deftime']
-))->setHelp('Used for clients that do not ask for a specific expiration time. The default is 7200 seconds.');
+))->setHelp(gettext('Used for clients that do not ask for a specific expiration time. The default is 7200 seconds.'));
 
 $section->addInput(new Form_Input(
 	'maxtime',
-	'Maximum lease time (Seconds)',
+	gettext('Maximum Lease Time'),
 	'text',
 	$pconfig['maxtime']
-))->setHelp('This is the maximum lease time for clients that ask for a specific expiration time. The default is 86400 seconds.');
+))->setHelp(gettext('This is the maximum lease time for clients that ask for a specific expiration time. The default is 86400 seconds.'));
+endif;
 
+if (dhcp_is_backend('isc')):
 $btnadv = new Form_Button(
 	'btnadvdns',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-cog'
 );
@@ -669,71 +699,73 @@ $btnadv = new Form_Button(
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Dynamic DNS',
+	gettext('Dynamic DNS'),
 	$btnadv
 ));
 
 $section->addInput(new Form_Checkbox(
 	'ddnsupdate',
-	'DHCP Registration',
-	'Enable registration of DHCP client names in DNS.',
+	gettext('DHCP Registration'),
+	gettext('Enable registration of DHCP client names in DNS.'),
 	$pconfig['ddnsupdate']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'ddnsforcehostname',
-	'DDNS Hostname',
-	'Make dynamic DNS registered hostname the same as Hostname above.',
+	gettext('DDNS Hostname'),
+	gettext('Make dynamic DNS registered hostname the same as Hostname above.'),
 	$pconfig['ddnsforcehostname']
 ));
 
 $section->addInput(new Form_Input(
 	'ddnsdomain',
-	'DDNS Domain',
+	gettext('DDNS Domain'),
 	'text',
 	$pconfig['ddnsdomain']
-))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will ' .
+))->setHelp(gettext('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will ' .
 	    'be used to register client names in the DNS server. Only the first defined set of option for each ' .
-	    'domain will be honored if it is used for multiple interfaces/entries.');
+	    'domain will be honored if it is used for multiple interfaces/entries.'));
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
-	'Primary DDNS address',
+	gettext('Primary DDNS Address'),
 	$pconfig['ddnsdomainprimary'],
 	'BOTH'
-))->setHelp('Primary domain name server IP address for the dynamic domain name.');
+))->setHelp(gettext('Primary domain name server IP address for the dynamic domain name.'));
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainsecondary',
-	'Secondary DDNS address',
+	gettext('Secondary DDNS Address'),
 	$pconfig['ddnsdomainsecondary'],
 	'BOTH'
-))->setHelp('Secondary domain name server IP address for the dynamic domain name.');
+))->setHelp(gettext('Secondary domain name server IP address for the dynamic domain name.'));
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
-	'DDNS Domain Key name',
+	gettext('DDNS Domain Key Name'),
 	'text',
 	$pconfig['ddnsdomainkeyname']
-))->setHelp('Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.');
+))->setHelp(gettext('Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.'));
 
 $section->addInput(new Form_Select(
 	'ddnsdomainkeyalgorithm',
-	'Key algorithm',
+	gettext('Key Algorithm'),
 	$pconfig['ddnsdomainkeyalgorithm'],
 	$ddnsdomainkeyalgorithms
 ));
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',
-	'DDNS Domain Key secret',
+	gettext('DDNS Domain Key Secret'),
 	'text',
 	$pconfig['ddnsdomainkey']
-))->setHelp('Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.');
+))->setHelp(gettext('Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.'));
+endif;
 
+// Advanced NTP
 $btnadv = new Form_Button(
 	'btnadvntp',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-cog'
 );
@@ -741,43 +773,24 @@ $btnadv = new Form_Button(
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'NTP servers',
+	gettext('NTP'),
 	$btnadv
 ));
 
-$group = new Form_Group('NTP Servers');
 
-$group->add(new Form_Input(
-	'ntp1',
-	'NTP Server 1',
-	'text',
-	$pconfig['ntp1'],
-	['placeholder' => 'NTP 1']
-));
-
-$group->add(new Form_Input(
-	'ntp2',
-	'NTP Server 2',
-	'text',
-	$pconfig['ntp2'],
-	['placeholder' => 'NTP 2']
-));
-
-$group->add(new Form_Input(
-	'ntp3',
-	'NTP Server 3',
-	'text',
-	$pconfig['ntp3'],
-	['placeholder' => 'NTP 3']
-));
-
-$group->addClass('ntpclass');
-
-$section->add($group);
+for ($idx = 1; $idx <= 4; $idx++) {
+	$section->addInput(new Form_IpAddress(
+		'ntp'.$idx,
+		sprintf(gettext('NTP Server %s'), $idx),
+		$pconfig['ntp'.$idx],
+		'HOSTV4'
+	))->addClass('autotrim')
+	  ->setAttribute('placeholder', sprintf(gettext('NTP Server %s'), $idx));
+}
 
 $btnadv = new Form_Button(
 	'btnadvtftp',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-cog'
 );
@@ -785,21 +798,23 @@ $btnadv = new Form_Button(
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'TFTP servers',
+	gettext('TFTP'),
 	$btnadv
 ));
 
 $section->addInput(new Form_Input(
 	'tftp',
-	'TFTP Server',
+	gettext('TFTP Server'),
 	'text',
 	$pconfig['tftp']
-))->setHelp('Leave blank to disable. Enter a full hostname or IP for the TFTP server.');
+))->addClass('autotrim')
+  ->setAttribute('placeholder', gettext('TFTP Server'))
+  ->setHelp(gettext('Leave blank to disable. Enter a full hostname or IP for the TFTP server.'));
 
 // Advanced LDAP
 $btnadv = new Form_Button(
 	'btnadvldap',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-cog'
 );
@@ -807,16 +822,18 @@ $btnadv = new Form_Button(
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'LDAP',
+	gettext('LDAP'),
 	$btnadv
 ));
 
+$ldap_example = 'ldap://ldap.example.com/dc=example,dc=com';
 $section->addInput(new Form_Input(
 	'ldap',
-	'LDAP Server URI',
+	gettext('LDAP Server URI'),
 	'text',
 	$pconfig['ldap']
-))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
+))->setAttribute('placeholder', sprintf(gettext('LDAP Server URI (e.g. %s)'), $ldap_example))
+  ->setHelp(gettext('Leave blank to disable. Enter a full URI for the LDAP server in the form %s'), $ldap_example);
 
 // Advanced Network Booting options
 $btnadv = new Form_Button(
@@ -829,78 +846,82 @@ $btnadv = new Form_Button(
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Network Booting',
+	gettext('Network Booting'),
 	$btnadv
 ));
 
 $section->addInput(new Form_Checkbox(
 	'netboot',
-	'Enable',
-	'Enable network booting',
+	gettext('Enable'),
+	gettext('Enable Network Booting'),
 	$pconfig['netboot']
 ));
 
+if (dhcp_is_backend('isc')):
 $section->addInput(new Form_IpAddress(
 	'nextserver',
-	'Next Server',
+	gettext('Next Server'),
 	$pconfig['nextserver'],
 	'V4'
-))->setHelp('Enter the IP address of the next server');
+))->setHelp(gettext('Enter the IP address of the next server'));
+endif;
 
 $section->addInput(new Form_Input(
 	'filename',
-	'Default BIOS file name',
+	gettext('Default BIOS File Name'),
 	'text',
 	$pconfig['filename']
 ));
 
 $section->addInput(new Form_Input(
 	'filename32',
-	'UEFI 32 bit file name',
+	gettext('UEFI 32 bit File Name'),
 	'text',
 	$pconfig['filename32']
 ));
 
 $section->addInput(new Form_Input(
 	'filename64',
-	'UEFI 64 bit file name',
+	gettext('UEFI 64 bit File Name'),
 	'text',
 	$pconfig['filename64']
 ));
 
 $section->addInput(new Form_Input(
 	'filename32arm',
-	'ARM 32 bit file name',
+	gettext('ARM 32 bit File Name'),
 	'text',
 	$pconfig['filename32arm']
 ));
 
 $section->addInput(new Form_Input(
 	'filename64arm',
-	'ARM 64 bit file name',
+	gettext('ARM 64 bit File Name'),
 	'text',
 	$pconfig['filename64arm']
-))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
-			'All five filenames and a configured boot server are necessary for UEFI & ARM to work! ');
+))->setHelp(gettext('Both a filename and a boot server must be configured for this to work! ' .
+			'All five filenames and a configured boot server are necessary for UEFI & ARM to work!'));
 
 $section->addInput(new Form_Input(
 	'uefihttpboot',
-	'UEFI HTTPBoot URL',
+	gettext('UEFI HTTPBoot URL'),
 	'text',
 	$pconfig['uefihttpboot']
 ))->setHelp('string-format: http://(servername)/(firmwarepath)');
 
 $section->addInput(new Form_Input(
 	'rootpath',
-	'Root path',
+	gettext('Root Path'),
 	'text',
 	$pconfig['rootpath']
 ))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
 
+
+if (dhcp_is_backend('isc')):
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-cog'
 );
@@ -908,20 +929,14 @@ $btnadv = new Form_Button(
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Additional BOOTP/DHCP Options',
+	gettext('Custom DHCP Options'),
 	$btnadv
 ));
 
 $form->add($section);
 
-$section = new Form_Section('Additional BOOTP/DHCP Options');
+$section = new Form_Section(gettext('Custom DHCP Options'));
 $section->addClass('adnlopts');
-
-$section->addInput(new Form_StaticText(
-	null,
-	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
-	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s.%3$s'), '<a href="https://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>', '</div>')
-));
 
 if (!$pconfig['numberoptions']) {
 	$pconfig['numberoptions'] = array();
@@ -944,7 +959,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 	$itemtype = $item['type'];
 	$value = base64_decode($item['value']);
 
-	$group = new Form_Group(($counter == 0) ? 'Option':null);
+	$group = new Form_Group(($counter == 0) ? gettext('Custom Option') : null);
 	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
@@ -972,24 +987,30 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete',
+		gettext('Delete'),
 		null,
 		'fa-trash'
-	))->addClass('btn-warning');
+	))->addClass('btn-sm btn-warning');
 
 	$section->add($group);
 
 	$counter++;
 }
 
-$section->addInput(new Form_Button(
+$group = new Form_Group(null);
+$group->add(new Form_Button(
 	'addrow',
-	'Add',
+	gettext('Add Custom Option'),
 	null,
 	'fa-plus'
-))->addClass('btn-success');
+))->addClass('btn-success')
+  ->setHelp(gettext('Enter the DHCP option number, type and the value for each item to include in the DHCP lease information.'));
+$section->add($group);
+endif;
+
 
 $form->add($section);
+
 print($form);
 ?>
 
@@ -1068,6 +1089,7 @@ events.push(function() {
 		hideInput('ntp1', !showadvntp);
 		hideInput('ntp2', !showadvntp);
 		hideInput('ntp3', !showadvntp);
+		hideInput('ntp4', !showadvntp);
 
 		if (showadvntp) {
 			text = "<?=gettext('Hide Advanced');?>";
@@ -1246,4 +1268,5 @@ events.push(function() {
 //]]>
 </script>
 
-<?php include("foot.inc");
+<?php
+include("foot.inc");

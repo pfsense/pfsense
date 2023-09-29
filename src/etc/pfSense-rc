@@ -514,8 +514,10 @@ if [ -n "${USE_ZFS}" ]; then
 		if [ -n "${ZPOOL}" ]; then
 			AUTOTRIM=$( /sbin/zpool get -H -o value autotrim "${ZPOOL}" )
 			if [ "${AUTOTRIM}" = "off" ]; then
+				echo -n "Trimming the zpool... "
 				/sbin/zpool set autotrim=on "${ZPOOL}"
 				/sbin/zpool trim "${ZPOOL}"
+				echo "done."
 			fi
 		fi
 	fi

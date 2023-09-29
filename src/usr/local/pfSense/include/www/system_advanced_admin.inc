@@ -148,23 +148,31 @@ function doAdvancedAdminPOST($post, $json = false) {
 	}
 
 	if (!$input_errors) {
-		if ($post['webguiproto']) {
-			config_set_path('system/webgui/protocol', $post['webguiproto']);
+		if ($post['webguiproto'] != config_get_path('system/webgui/protocol')) {
+			config_set_path('system/webgui/protocol', (empty($post['webguiproto']) ? 'http' : $post['webguiproto']));
 			$restart_webgui = true;
 		}
 
-		if ($post['webguiport']) {
-			config_set_path('system/webgui/port', $post['webguiport']);
+		if ($post['webguiport'] != config_get_path('system/webgui/port')) {
+			if (empty($post['webguiport'])) {
+				config_del_path('system/webgui/port');
+			} else {
+				config_set_path('system/webgui/port', $post['webguiport']);
+			}
 			$restart_webgui = true;
 		}
 
-		if ($post['ssl-certref']) {
-			config_set_path('system/webgui/ssl-certref', $post['ssl-certref']);
+		if ($post['ssl-certref'] != config_get_path('system/webgui/ssl-certref')) {
+			if (empty($post['ssl-certref'])) {
+				config_del_path('system/webgui/ssl-certref');
+			} else {
+				config_set_path('system/webgui/ssl-certref', $post['ssl-certref']);
+			}
 			$restart_webgui = true;
 		}
 
-		if ($post['max_procs']) {
-			config_set_path('system/webgui/max_procs', $post['max_procs']);
+		if ($post['max_procs'] != config_get_path('system/webgui/max_procs')) {
+			config_set_path('system/webgui/max_procs', (empty($post['max_procs']) ? '2' : $post['max_procs']));
 			$restart_webgui = true;
 		}
 

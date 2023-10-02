@@ -3073,7 +3073,7 @@
 				$wan_ip = $this->_checkIP();
 				if ($this->_useIPv6 == false && $wan_ip > 0) {
 					$currentTime = time();
-					notify_all_remote(sprintf(gettext('DynDNS updated IP Address on %1$s (%2$s) to %3$s'), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
+					notify_all_remote(sprintf(gettext('DynDNS updated IP Address for %1$s on %2$s (%3$s) to %4$s'), $this->_FQDN, convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile, $wan_ip));
 					@file_put_contents($this->_cacheFile, "{$wan_ip}|{$currentTime}");
 				} else {
@@ -3081,7 +3081,7 @@
 				}
 				if ($this->_useIPv6 == true && $wan_ip > 0) {
 					$currentTime = time();
-					notify_all_remote(sprintf(gettext('DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s'), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
+					notify_all_remote(sprintf(gettext('DynDNS updated IPv6 Address for %1$s on %2$s (%3$s) to %4$s'), $this->_FQDN, convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile_v6, $wan_ip));
 					@file_put_contents($this->_cacheFile_v6, "{$wan_ip}|{$currentTime}");
 				} else {

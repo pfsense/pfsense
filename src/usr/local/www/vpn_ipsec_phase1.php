@@ -530,7 +530,8 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
 			}
 			$cert_sans = cert_get_sans($errchkcert['crt']);
-			if (count($cert_sans) == count(preg_grep('/\*/', $cert_sans))) {
+			if ((count($cert_sans) > 0) &&
+			    (count($cert_sans) == count(preg_grep('/\*/', $cert_sans)))) {
 				$input_errors[] = gettext("The selected certificate only contains wildcard SAN entries, which are not supported. The certificate must contain at least one non-wildcard SAN.");
 			}
 			$purpose = cert_get_purpose($errchkcert['crt']);

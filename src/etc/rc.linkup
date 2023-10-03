@@ -111,7 +111,13 @@ function handle_argument_group($iface, $action) {
 				$gw4 = get_interface_gateway_name($iface, 'inet', $gateways);
 				$gw6 = get_interface_gateway_name($iface, 'inet6', $gateways);
 
-				interface_bring_down($iface);
+				/* Tear down interface for dynamic types except if the only
+				 * dynamic part is track6
+				 * https://redmine.pfsense.org/issues/14756
+				 */
+				if (!($staticv4 && ($ip6addr == 'track6'))) {
+					interface_bring_down($iface);
+				}
 
 				if (!$staticv4) {
 					/* If there is a gateway on this interface, we may want to take additional actions */

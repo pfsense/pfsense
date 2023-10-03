@@ -28,6 +28,7 @@ require_once("config.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("interfaces.inc");
+require_once("gwlb.inc");
 
 function handle_argument_group($iface, $action) {
 	global $g, $config;
@@ -104,7 +105,51 @@ function handle_argument_group($iface, $action) {
 		switch ($action) {
 			case "stop":
 				log_error("DEVD Ethernet detached event for {$iface}");
+
+				/* Locate interface gateways, if any exist. */
+				$gateways = return_gateways_array();
+				$gw4 = get_interface_gateway_name($iface, 'inet', $gateways);
+				$gw6 = get_interface_gateway_name($iface, 'inet6', $gateways);
+
 				interface_bring_down($iface);
+
+				if (!$staticv4) {
+					/* If there is a gateway on this interface, we may want to take additional actions */
+					if (!empty($gw4)) {
+						$gw4d = false;
+						$gw4ip = get_interface_gateway($iface, $gw4d);
+						if (empty($gw4ip)) {
+							$gw4ip = get_interface_gateway_last($iface, 'inet');
+						}
+
+						/* Force a gateway alarm since dpinger isn't in a state to do so
+						 * https://redmine.pfsense.org/issues/14829
+						 * https://redmine.pfsense.org/issues/14626
+						 */
+						mwexec_bg("/etc/rc.gateway_alarm " .
+								escapeshellarg($gw4) . " " .
+								escapeshellarg($gw4ip) . " " .
+								'down 0 0 100');
+					}
+				}
+				if (!$staticv6) {
+					/* If there is a gateway on this interface, we may want to take additional actions */
+					if (!empty($gw6)) {
+						$gw6d = false;
+						$gw6ip = get_interface_gateway_v6($iface, $gw6d);
+						if (empty($gw6ip)) {
+							$gw6ip = get_interface_gateway_last($iface, 'inet6');
+						}
+						/* Force a gateway alarm since dpinger isn't in a state to do so
+						 * https://redmine.pfsense.org/issues/14829
+						 * https://redmine.pfsense.org/issues/14626
+						 */
+						mwexec_bg("/etc/rc.gateway_alarm " .
+								escapeshellarg($gw6) . " " .
+								escapeshellarg($gw6ip) . " " .
+								'down 0 0 100');
+					}
+				}
 				/* Restart unbound on interface down (dynamic),
 				 * only when this interface is referenced in resolver configuration.
 				 * https://redmine.pfsense.org/issues/11547

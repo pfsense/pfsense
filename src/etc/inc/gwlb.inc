@@ -2401,5 +2401,37 @@ function available_default_gateways() {
 	return $defaults;
 }
 
+function get_interface_gateway_name($friendlyiface, $family = 'inet', $gways = []) {
+	/* Try to locate gateway directly (e.g. static) */
+	if ($family == 'inet') {
+		$gw = config_get_path("interfaces/{$friendlyiface}/gateway", '');
+	} else {
+		$gw = config_get_path("interfaces/{$friendlyiface}/gatewayv6", '');
+	}
+
+	/* If the gateway is empty that means it's dynamic so we have to hunt it down */
+	if (empty($gw)) {
+		/* Setup gateways array if a cached copy hasn't been passed. */
+		if (empty($gways) ||
+		    !is_array($gways)) {
+			$gways = return_gateways_array();
+		}
+		/* Check each gateway entry for a dynamic gateway matching
+		 * this interface and the requested address family.
+		 */
+		foreach ($gways as $gwname => $gwcfg) {
+			if (empty($gwcfg) ||
+			    !is_array($gwcfg) ||
+			    ($gwcfg['dynamic'] == false) ||
+			    ($gwcfg['friendlyiface'] != $friendlyiface) ||
+			    ($gwcfg['ipprotocol'] != $family)) {
+				continue;
+			}
+			$gw = $gwname;
+			break;
+		}
+	}
+	return $gw;
+}
 
 ?>

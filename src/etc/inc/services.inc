@@ -1704,8 +1704,10 @@ function services_kea4_configure()
 
 				$keares = [];
 
+				$has_mac = false;
 				if ($sm['mac']) {
 					$keares['hw-address'] = $sm['mac'];
+					$has_mac = true;
 
 					/* keys are unique */
 					$known_macs[strtolower(trim($sm['mac']))] = true;
@@ -1714,10 +1716,13 @@ function services_kea4_configure()
 				$cid = '';
 				if ($sm['cid']) {
 					$cid = str_replace('"', '\"', $sm['cid']);
-					$keares['client-id'] = $cid;
+					if (!$has_mac) {
+						/* only set client-id if no mac address */
+						$keares['client-id'] = $cid;
+					}
 
 					/* keys are unique */
-					$known_cids[strtolower(trim($sm['client-id']))] = true;
+					$known_cids[strtolower(trim($cid))] = true;
 				}
 
 				if ($sm['ipaddr']) {

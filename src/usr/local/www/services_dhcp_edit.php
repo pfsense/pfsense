@@ -528,13 +528,19 @@ if (!empty($mymac)) {
 $group->setHelp(gettext('MAC address of the client to match (6 hex octets separated by colons).'));
 $section->add($group);
 
+$cid_help = gettext('An optional identifier to match based on the value sent by the client (RFC 2132).');
+if (dhcp_is_backend('kea')) {
+	$cid_help .= '<br /><br />';
+	$cid_help .= gettext('Kea DHCP will only match on MAC address if both MAC address and client identifier are set for a static reservation.');
+}
+
 $section->addInput(new Form_Input(
 	'cid',
 	gettext('Client Identifier'),
 	'text',
 	$pconfig['cid']
 ))->addClass('autotrim')
-  ->setHelp('An optional identifier to match based on the value sent by the client (RFC 2132)');
+  ->setHelp($cid_help);
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',

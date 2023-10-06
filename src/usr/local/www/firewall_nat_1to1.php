@@ -151,7 +151,11 @@ display_top_tabs($tab_array);
 <?php
 					$source_net = pprint_address($natent['source']);
 					if (get_specialnet($natent['external'])) {
-						echo pprint_address($natent['external']);
+						/* $natent['external'] is not an array like other addresses, and pprint_address()
+						 * requires it to be an array, so pass it in the format it expects.
+						 * https://redmine.pfsense.org/issues/14845
+						 */
+						echo pprint_address(['network' => $natent['external']]);
 					} else {
 						echo $natent['external'] . strstr($source_net, '/');
 					}

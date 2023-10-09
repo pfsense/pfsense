@@ -1075,7 +1075,7 @@ if ($_POST['save']) {
 				}
 
 				$ridx = get_interface_ruleindex($tmpif, $after);
-				if ($tmpif == $if) {
+				if ($tmpif == $if || (isset($pconfig['floating']))) {
 					// save the rule after the one being requested
 					array_splice($a_filter, $after+1, 0, array($filterent));
 					// shift the separators

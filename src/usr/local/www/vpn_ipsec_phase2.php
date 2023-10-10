@@ -39,6 +39,8 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 
 global $p2_pfskeygroups;
+$ipsec_lidtype_flags = [SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
+$ipsec_nlitype_flags = [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
 
 init_config_arr(array('ipsec', 'client'));
 init_config_arr(array('ipsec', 'phase1'));
@@ -626,7 +628,7 @@ $group->add(new Form_Select(
 	'localid_type',
 	null,
 	$pconfig['localid_type'],
-	get_specialnet('', [SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB])
+	get_specialnet('', $ipsec_lidtype_flags)
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(
@@ -645,7 +647,7 @@ $group->add(new Form_Select(
 	'natlocalid_type',
 	null,
 	$pconfig['natlocalid_type'],
-	get_specialnet('', [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB])
+	get_specialnet('', $ipsec_nlitype_flags)
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(

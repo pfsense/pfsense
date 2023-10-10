@@ -169,6 +169,7 @@ function easyrule_block_alias_getid($int = 'wan') {
 
 function easyrule_block_alias_add($host, $int = 'wan') {
 	global $blockaliasname, $config;
+	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 	/* If the host isn't a valid IP address, bail */
 	$host = trim($host, "[]");
 	if (!is_ipaddr($host) && !is_subnet($host)) {
@@ -187,7 +188,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 
 	if (is_subnet($host)) {
 		list($host, $mask) = explode("/", $host);
-	} elseif (get_specialnet($host, [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS])) {
+	} elseif (get_specialnet($host, $easyrule_nettype_flags)) {
 		$mask = 0;
 	} elseif (is_ipaddrv6($host)) {
 		$mask = 128;
@@ -305,6 +306,7 @@ function easyrule_block_host_add($host, $int = 'wan') {
 
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	global $config;
+	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 
 	init_config_arr(array('filter', 'rule'));
 	filter_rules_sort();
@@ -335,7 +337,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	if (is_subnet($srchost)) {
 		list($srchost, $srcmask) = explode("/", $srchost);
-	} elseif (get_specialnet($srchost, [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS])) {
+	} elseif (get_specialnet($srchost, $easyrule_nettype_flags)) {
 		$srcmask = 0;
 	} elseif (is_ipaddrv6($srchost)) {
 		$srcmask = 128;
@@ -345,7 +347,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	if (is_subnet($dsthost)) {
 		list($dsthost, $dstmask) = explode("/", $dsthost);
-	} elseif (get_specialnet($dsthost, [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS])) {
+	} elseif (get_specialnet($dsthost, $easyrule_nettype_flags)) {
 		$dstmask = 0;
 	} elseif (is_ipaddrv6($dsthost)) {
 		$dstmask = 128;
@@ -404,6 +406,7 @@ function easyrule_parse_block($int, $src) {
 
 function easyrule_parse_unblock($int, $host) {
 	global $blockaliasname, $config;
+	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 
 	if (!empty($host) && !empty($int)) {
 		$host = trim($host, "[]");
@@ -427,7 +430,7 @@ function easyrule_parse_unblock($int, $host) {
 
 		if (is_subnet($host)) {
 			list($host, $mask) = explode("/", $host);
-		} elseif (get_specialnet($host, [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS])) {
+		} elseif (get_specialnet($host, $easyrule_nettype_flags)) {
 			$mask = 0;
 		} elseif (is_ipaddrv6($host)) {
 			$mask = 128;
@@ -489,6 +492,7 @@ function easyrule_parse_getblock($int = 'wan', $sep = "\n") {
 function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = "inet") {
 	/* Check for valid int, srchost, dsthost, dstport, and proto */
 	global $protocols_with_ports;
+	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 	$src = trim($src, "[]");
 	$dst = trim($dst, "[]");
 
@@ -505,10 +509,10 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 		    (!is_numericint($proto) || (getprotobynumber($proto) === false))) {
 			return gettext("Invalid protocol for pass rule:") . ' ' . htmlspecialchars($proto);
 		}
-		if (!is_ipaddr($src) && !is_subnet($src) && !is_ipaddroralias($src) && !get_specialnet($src, [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS])) {
+		if (!is_ipaddr($src) && !is_subnet($src) && !is_ipaddroralias($src) && !get_specialnet($src, $easyrule_nettype_flags)) {
 			return gettext("Tried to pass invalid source IP address:") . ' ' . htmlspecialchars($src);
 		}
-		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !get_specialnet($dst, [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS])) {
+		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !get_specialnet($dst, $easyrule_nettype_flags)) {
 			return gettext("Tried to pass invalid destination IP address:") . ' ' . htmlspecialchars($dst);
 		}
 		if ((is_v6($src) && is_v4($dst)) || (is_v4($src) && is_v6($dst))) {

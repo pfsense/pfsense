@@ -32,6 +32,15 @@ $ifdisp = get_configured_interface_with_descr();
 
 function save1to1NATrule($post, $id, $json = false) {
 	global $config, $vpn_and_ppp_ifs;
+	$binat_exttype_flags = [SPECIALNET_COMPAT_ADDR, SPECIALNET_IFADDR];
+	$binat_srctype_flags = [
+		SPECIALNET_ANY, SPECIALNET_COMPAT_ADDR, SPECIALNET_NET,
+		SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB
+	];
+	$binat_dsttype_flags = [
+		SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET,
+		SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS
+	];
 
 	init_config_arr(array('nat', 'onetoone'));
 	$a_1to1 = &$config['nat']['onetoone'];
@@ -89,14 +98,14 @@ function save1to1NATrule($post, $id, $json = false) {
 		$post['dst'] = trim($post['dst']);
 	}
 
-	if (get_specialnet($post['srctype'])) {
+	if (get_specialnet($post['srctype'], $binat_srctype_flags)) {
 		$post['src'] = $post['srctype'];
 		$post['srcmask'] = 0;
 	} else if ($post['srctype'] == "single") {
 		$post['srcmask'] = (is_ipaddrv4($post['src'])) ? 32 : 128;
 	}
 
-	if (get_specialnet($post['dsttype'])) {
+	if (get_specialnet($post['dsttype'], $binat_dsttype_flags)) {
 		$post['dst'] = $post['dsttype'];
 		$post['dstmask'] = 0;
 	} else if ($post['dsttype'] == "single") {
@@ -124,11 +133,11 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("The interface does not have an address from the specified address family.");
 	}
 
-	if ($post['external'] && !get_specialnet($post['exttype']) &&
+	if ($post['external'] && !get_specialnet($post['exttype'], $binat_exttype_flags) &&
 	    ((($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['external']))) ||
 	    (($post['ipprotocol'] == 'inet6') && (is_ipaddrv6($post['external']))))) {
 		$extipaddrtype = validateipaddr($post['external'], IPV4V6, "External subnet IP", $input_errors, false);
-	} elseif (get_specialnet($post['exttype'])) {
+	} elseif (get_specialnet($post['exttype'], $binat_exttype_flags)) {
 		$extipaddrtype = get_specialnet_type($post['exttype'], $post['ipprotocol']);
 	}
 
@@ -145,11 +154,11 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("A valid internal bit count must be specified.");
 	}
 
-	if ($post['src'] && !get_specialnet($post['srctype']) &&
+	if ($post['src'] && !get_specialnet($post['srctype'], $binat_srctype_flags) &&
 	    ((($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['src']))) ||
 	    (($post['ipprotocol'] == 'inet6') && (is_ipaddrv6($post['src']))))) {
 		$srcipaddrtype = validateipaddr($post['src'], IPV4V6, "Internal IP", $input_errors, false);
-	} elseif (get_specialnet($post['srctype'])) {
+	} elseif (get_specialnet($post['srctype'], $binat_srctype_flags)) {
 		$srcipaddrtype = get_specialnet_type($post['srctype'], $post['ipprotocol']);
 	}
 
@@ -161,11 +170,11 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("A valid destination bit count must be specified.");
 	}
 
-	if ($post['dst'] && !get_specialnet($post['dsttype']) && (is_alias($post['dst']) ||
+	if ($post['dst'] && !get_specialnet($post['dsttype'], $binat_dsttype_flags) && (is_alias($post['dst']) ||
 	    (($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['dst']))) ||
 	    (($post['ipprotocol'] == 'inet6') && (is_ipaddrv6($post['dst']))))) {
 		$dstipaddrtype = validateipaddr($post['dst'], IPV4V6, "Destination address", $input_errors, true);
-	} elseif (get_specialnet($post['dsttype'])) {
+	} elseif (get_specialnet($post['dsttype'], $binat_dsttype_flags)) {
 		$dstipaddrtype = get_specialnet_type($post['dsttype'], $post['ipprotocol']);
 	}
 
@@ -185,7 +194,7 @@ function save1to1NATrule($post, $id, $json = false) {
 		}
 	}
 
-	if (get_specialnet($post['exttype'])) {
+	if (get_specialnet($post['exttype'], $binat_exttype_flags)) {
 		$post['external'] = $post['exttype'];
 		$pconfig['external'] = $post['exttype'];
 	}
@@ -468,13 +477,14 @@ function build_exttype_list() {
 
 function exttype_selected() {
 	global $pconfig;
+	$binat_exttype_flags = [SPECIALNET_COMPAT_ADDR, SPECIALNET_IFADDR];
 
 	if ($pconfig['exttype']) {
 		// The rule type came from the $post array, after input errors, so keep it.
 		return $pconfig['exttype'];
 	}
 
-	$sel = get_specialnet($pconfig['external']);
+	$sel = get_specialnet($pconfig['external'], $binat_exttype_flags);
 
 	if (!$sel) {
 		return('single');

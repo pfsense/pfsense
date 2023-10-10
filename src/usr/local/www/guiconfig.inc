@@ -403,12 +403,12 @@ function get_std_save_message($retval) {
 	return $to_return;
 }
 
-function pprint_address($adr) {
+function pprint_address($adr, $specialnet_flags = []) {
 	// outbound NAT rules use a value of 'any' rather than a key
 	if (isset($adr['any']) || $adr['network'] == 'any') {
 		$padr = "*";
 	} else if ($adr['network']) {
-		if (get_specialnet($adr['network'])) {
+		if (get_specialnet($adr['network'], $specialnet_flags)) {
 			$specialnets = get_specialnet();
 			$padr = $specialnets[$adr['network']];
 		} else {

@@ -41,6 +41,15 @@ require_once("shaper.inc");
 require_once("firewall_nat_1to1.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
+$binat_exttype_flags = [SPECIALNET_COMPAT_ADDR, SPECIALNET_IFADDR];
+$binat_srctype_flags = [
+	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDR, SPECIALNET_NET,
+	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB
+];
+$binat_dsttype_flags = [
+	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET,
+	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS
+];
 
 function get_must_be_both_text() {
 	return(" " . gettext("They must be either both IPv4 or both IPv6 addresses."));
@@ -143,7 +152,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'external',
 	null,
-	get_specialnet($pconfig['external']) ? '': $pconfig['external']
+	get_specialnet($pconfig['external'], $binat_exttype_flags) ? '' : $pconfig['external']
 ))->setHelp('Address')->setWidth(3);
 
 $group->setHelp('Enter the external (usually on a WAN) subnet\'s starting address or interface for the 1:1 mapping.');
@@ -169,7 +178,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'src',
 	null,
-	get_specialnet($pconfig['src']) ? '': $pconfig['src']
+	get_specialnet($pconfig['src'], $binat_srctype_flags) ? '' : $pconfig['src']
 ))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask');
 
 $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
@@ -196,7 +205,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'dst',
 	null,
-	get_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
+	get_specialnet($pconfig['dst'], $binat_dsttype_flags) ? '' : $pconfig['dst'],
 	'ALIASV4V6'
 ))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 

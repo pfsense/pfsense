@@ -43,6 +43,8 @@ global $GatewaysList;
 
 init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
+$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
+$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
@@ -228,7 +230,7 @@ print($form);
 <?php
 						endif;
 ?>
-						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'])))?>
+						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
 <?php
 						if (isset($alias['src'])):
 ?>
@@ -270,7 +272,7 @@ print($form);
 <?php
 						endif;
 ?>
-						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
+						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
 <?php
 						if (isset($alias['dst'])):
 ?>

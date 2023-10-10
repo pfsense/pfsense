@@ -103,6 +103,9 @@ function saveNAToutMode($post, $json = false) {
 // Save Outbound rule
 function saveoutNATrule($post, $id, $json = false) {
 	global $after, $config;
+	$nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
+	$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
+	$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 
 	init_config_arr(array('nat', 'outbound', 'rule'));
 	$a_out = &$config['nat']['outbound']['rule'];
@@ -111,13 +114,11 @@ function saveoutNATrule($post, $id, $json = false) {
 		$after = $post['after'];
 	}
 
-	if ($post['source_type'] != 'network' && get_specialnet($post['source_type'],
-	    [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+	if ($post['source_type'] != 'network' && get_specialnet($post['source_type'], $nat_srctype_flags)) {
 		$post['source'] = $post['source_type'];
 		$post['source_subnet'] = '';
 	}
-	if ($post['destination_type'] != 'network' && get_specialnet($post['destination_type'],
-	    [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+	if ($post['destination_type'] != 'network' && get_specialnet($post['destination_type'], $nat_dsttype_flags)) {
 		$post['destination'] = $post['destination_type'];
 		$post['destination_subnet'] = '';
 	}
@@ -143,13 +144,13 @@ function saveoutNATrule($post, $id, $json = false) {
 	/* input validation */
 	$reqdfields = explode(" ", "interface protocol");
 	$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"));
-	if (!get_specialnet($post['source_type'], [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+	if (!get_specialnet($post['source_type'], $nat_srctype_flags)) {
 		$reqdfields[] = "source";
 		$reqdfieldsn[] = gettext("Source");
 		$reqdfields[] = "source_subnet";
 		$reqdfieldsn[] = gettext("Source bit count");
 	}
-	if (!get_specialnet($post['destination_type'], [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+	if (!get_specialnet($post['destination_type'], $nat_dsttype_flags)) {
 		$reqdfields[] = "destination";
 		$reqdfieldsn[] = gettext("Destination");
 		$reqdfields[] = "destination_subnet";
@@ -218,7 +219,7 @@ function saveoutNATrule($post, $id, $json = false) {
 		}
 	}
 
-	if (!isset($post['nonat']) && !get_specialnet($post['target_type'], [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS])) {
+	if (!isset($post['nonat']) && !get_specialnet($post['target_type'], $nat_tgttype_flags)) {
 		$input_errors[] = gettext("A valid target type must be specified.");
 	}
 
@@ -393,6 +394,9 @@ function saveoutNATrule($post, $id, $json = false) {
 // Retrieve the specified Outbound rule
 function getoutNATrule($id, $json = false) {
 	global $config;
+	$nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
+	$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
+	$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 
 	init_config_arr(array('nat', 'outbound', 'rule'));
 	$a_out = &$config['nat']['outbound']['rule'];
@@ -415,7 +419,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['source'] = '';
 		$pconfig['source_subnet'] = '';
 		if (!empty($a_out[$id]['source']['network'])) {
-			if (get_specialnet($a_out[$id]['source']['network'], [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+			if (get_specialnet($a_out[$id]['source']['network'], $nat_srctype_flags)) {
 				$pconfig['source_type'] = $a_out[$id]['source']['network'];
 			} else {
 				$pconfig['source_type'] = 'network';
@@ -428,7 +432,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['destination'] = '';
 		$pconfig['destination_subnet'] = '';
 		if (!empty($a_out[$id]['destination']['network'])) {
-			if (get_specialnet($a_out[$id]['destination']['network'], [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP])) {
+			if (get_specialnet($a_out[$id]['destination']['network'], $nat_dsttype_flags)) {
 				$pconfig['destination_type'] = $a_out[$id]['destination']['network'];
 			} else {
 				$pconfig['destination_type'] = 'network';
@@ -450,7 +454,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['target_subnet'] = '';
 		if (empty($a_out[$id]['target'])) {
 			$pconfig['target_type'] = $pconfig['interface'] . 'ip';
-		} elseif (empty($a_out[$id]['target_subnet']) && get_specialnet($a_out[$id]['target'], [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS])) {
+		} elseif (empty($a_out[$id]['target_subnet']) && get_specialnet($a_out[$id]['target'], $nat_tgttype_flags)) {
 			$pconfig['target_type'] = $a_out[$id]['target'];
 		} else {
 			$pconfig['target_type'] = 'network';

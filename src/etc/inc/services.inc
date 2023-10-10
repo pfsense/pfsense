@@ -1504,7 +1504,7 @@ function services_kea4_configure()
 						'only-if-required' => true,
 						'option-data' => [[
 							'name' => 'boot-file-name',
-							'data' => $dhcpifconf['filename']
+							'data' => $poolconf['filename']
 						]]
 					];
 					if (!is_array($keapool['require-client-classes'])) {

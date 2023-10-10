@@ -1054,6 +1054,7 @@ function services_kea4_configure()
 		'valid-lifetime' => 7200,
 		'max-valid-lifetime' => 86400,
 		'ip-reservations-unique' => false,
+		'echo-client-id' => false, /* RFC6842 compatibility mode */
 		'option-data' => [[
 			'name' => 'domain-name',
 			'data' => $syscfg['domain'],

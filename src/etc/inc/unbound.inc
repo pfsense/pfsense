@@ -200,6 +200,11 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
 	$module_config = '';
 
+	// Setup RPZ
+	if (isset($unboundcfg['respip'])) {
+		$module_config = 'respip ';
+	}
+
 	// Setup Python module (pre validator)
 	if (!empty(unbound_get_python_scriptname($unboundcfg, $cfgsubdir)) &&
 	    $unboundcfg['python_order'] == 'pre_validator') {
@@ -1081,7 +1086,7 @@ function unbound_auto_ednsbufsize() {
 		$min_mtu = 1232;
 	} elseif ($min_mtu < 512) {
 		$min_mtu = 512;
-	}	
+	}
 
 	return $min_mtu;
 }

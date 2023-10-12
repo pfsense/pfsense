@@ -32,15 +32,9 @@ $ifdisp = get_configured_interface_with_descr();
 
 function save1to1NATrule($post, $id, $json = false) {
 	global $config, $vpn_and_ppp_ifs;
-	$binat_exttype_flags = [SPECIALNET_COMPAT_ADDR, SPECIALNET_IFADDR];
-	$binat_srctype_flags = [
-		SPECIALNET_ANY, SPECIALNET_COMPAT_ADDR, SPECIALNET_NET,
-		SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB
-	];
-	$binat_dsttype_flags = [
-		SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET,
-		SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS
-	];
+	$binat_exttype_flags = [SPECIALNET_IFADDR];
+	$binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB];
+	$binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];
 
 	init_config_arr(array('nat', 'onetoone'));
 	$a_1to1 = &$config['nat']['onetoone'];

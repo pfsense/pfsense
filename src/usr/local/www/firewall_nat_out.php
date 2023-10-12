@@ -43,8 +43,8 @@ global $GatewaysList;
 
 init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
-$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
-$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
+$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_IFNET, SPECIALNET_GROUP];
+$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_IFNET, SPECIALNET_GROUP];
 
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting

@@ -40,15 +40,9 @@ require_once("firewall_nat_1to1.inc");
 
 init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
-$binat_exttype_flags = [SPECIALNET_COMPAT_ADDR, SPECIALNET_IFADDR];
-$binat_srctype_flags = [
-	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDR, SPECIALNET_NET,
-	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB
-];
-$binat_dsttype_flags = [
-	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET,
-	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS
-];
+$binat_exttype_flags = [SPECIALNET_IFADDR];
+$binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB];
+$binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];
 
 // Process $_POST/$_REQUEST =======================================================================
 if ($_REQUEST['savemsg']) {

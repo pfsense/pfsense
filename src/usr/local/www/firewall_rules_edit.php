@@ -41,6 +41,7 @@ $filter_srcdsttype_flags = [
 	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET, SPECIALNET_SELF,
 	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_GROUP
 ];
+$filter_srcdsttype_flags_validation = array_diff($filter_srcdsttype_flags, [SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET]);
 
 /* build icmptypes valid for IPv4, IPv6 and IPv<any> */
 $icmptypes4 = array('any' => gettext('any'));
@@ -453,7 +454,7 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (get_specialnet($_POST['srctype'], $filter_srcdsttype_flags)) {
+	if (get_specialnet($_POST['srctype'], $filter_srcdsttype_flags_validation)) {
 		$_POST['src'] = $_POST['srctype'];
 		$_POST['srcmask'] = 0;
 	} else if ($_POST['srctype'] == "single") {
@@ -463,7 +464,7 @@ if ($_POST['save']) {
 			$_POST['srcmask'] = 32;
 		}
 	}
-	if (get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags)) {
+	if (get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags_validation)) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
 	} else if ($_POST['dsttype'] == "single") {
@@ -511,12 +512,12 @@ if ($_POST['save']) {
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(get_specialnet($_POST['srctype'], $filter_srcdsttype_flags) || ($_POST['srctype'] == "single")))) {
+	    (!(get_specialnet($_POST['srctype'], $filter_srcdsttype_flags_validation) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = gettext("Source bit count");
 	}
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-	    (!(get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags) || ($_POST['dsttype'] == "single")))) {
+	    (!(get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags_validation) || ($_POST['dsttype'] == "single")))) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
 	}
@@ -601,7 +602,7 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (!get_specialnet($_POST['srctype'], $filter_srcdsttype_flags)) {
+	if (!get_specialnet($_POST['srctype'], $filter_srcdsttype_flags_validation)) {
 		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
 		}
@@ -609,7 +610,7 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
 		}
 	}
-	if (!get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags)) {
+	if (!get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags_validation)) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
 		}

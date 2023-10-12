@@ -902,8 +902,9 @@ function filter_generate_aliases() {
 			}
 		}
 		if (!empty($ifcfg['descr']) && !empty($if_subnets)) {
-			$aliases .= "table <{$ifcfg['descr']}__NETWORK> persist { " . implode(' ', $if_subnets) . " }\n";
-			$aliases .= "{$ifcfg['descr']}__NETWORK = \"<{$ifcfg['descr']}__NETWORK>\"\n";
+			$tablename = strtoupper($if) . '__NETWORK';
+			$aliases .= "table <{$tablename}> persist { " . implode(' ', $if_subnets) . " }\n";
+			$aliases .= "{$tablename} = \"<{$tablename}>\"\n";
 		}
 	}
 
@@ -3174,9 +3175,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		}
 
 		if ($add_macro) {
-			$ifmacro = $FilterIflist[$rule[$target]['network']]['descr'];
+			$ifmacro = $rule[$target]['network'];
 			if (!empty($ifmacro)) {
-				$src = ' ' . (isset($rule[$target]['not']) ? '! ' : '') . '$' . $ifmacro . '__NETWORK';
+				$src = ' ' . (isset($rule[$target]['not']) ? '! ' : '') . '$' . strtoupper($ifmacro) . '__NETWORK';
 			} else {
 				$src = '';
 			}

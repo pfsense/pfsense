@@ -3676,7 +3676,7 @@ function is_url_hostname_resolvable($url) {
 	return $resolvable;
 }
 
-function get_pf_reserved(?string $name = '', bool $check_ifdescr = true):bool|array {
+function get_pf_reserved(?string $name = '', bool $check_ifname = true):bool|array {
 	global $pf_reserved_keywords, $reserved_table_names, $FilterIflist;
 
 	// generate a list of assigned interfaces and interface groups
@@ -3687,15 +3687,20 @@ function get_pf_reserved(?string $name = '', bool $check_ifdescr = true):bool|ar
 			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 		}
 	}
+	/**
+	 * pf table names are limited to a max of 31 characters.
+	 * Interface group names are limited to a max of 15 characters.
+	 * Hence, a combination of the interface name (optX) + the suffix should be safe.
+	 */ 
 	$reserved = [];
-	foreach ($iflist as $ifconf) {
+	foreach ($iflist as $if => $ifconf) {
 		if (empty($ifconf['descr'])) {
 			continue;
 		}
-		if ($check_ifdescr) {
-			$reserved[] = strtoupper($ifconf['descr']);
+		if ($check_ifname) {
+			$reserved[] = strtoupper($if);
 		}
-		$reserved[] = strtoupper($ifconf['descr'] . '__NETWORK');
+		$reserved[] = strtoupper("{$if}__NETWORK");
 	}
 	$reserved = array_merge($pf_reserved_keywords, $reserved_table_names, $reserved);
 

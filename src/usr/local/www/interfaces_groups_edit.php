@@ -68,6 +68,12 @@ if ($_POST['save']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
+		/* Reserved name? Allow the reserved interface-network suffix since it is based on the interface name. */
+		if ((get_pf_reserved($_POST['ifname'], false) && !str_ends_with($_POST['ifname'], '__NETWORK')) ||
+		    (get_pf_reserved(strtoupper($_POST['ifname']), false) && !str_ends_with(strtoupper($_POST['ifname']), '__NETWORK'))) {
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $_POST['ifname']);
+		}
+
 		foreach ($a_ifgroups as $groupid => $groupentry) {
 			if ((!isset($id) || ($groupid != $id)) && ($groupentry['ifname'] == $_POST['ifname'])) {
 				$input_errors[] = gettext("Group name already exists!");

@@ -541,9 +541,8 @@ if ($_POST['apply']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
-		/* Reserved name? Allow the reserved interface-network suffix since it is based on the interface name. */
-		if (get_pf_reserved($_POST['descr'], false) &&
-		    !str_ends_with($_POST['descr'], '__NETWORK')) {
+		/* Reserved name? */
+		if (get_pf_reserved($_POST['descr'], false)) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $_POST['descr']);
 		}
 

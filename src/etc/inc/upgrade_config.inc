@@ -6822,8 +6822,9 @@ function upgrade_229_to_230() {
 	$aliases_rename = [];
 	$rename_suffix = '__RENAMED';
 	$reserved_suffix = '__NETWORK';
-	$interfaces = array_merge(array_column(config_get_path('interfaces', []), 'descr'),
+	$interfaces = array_merge(array_keys(config_get_path('interfaces', [])),
 	                          array_column(config_get_path('ifgroups/ifgroupentry', []), 'ifname'));
+	$interfaces = array_map('strtoupper', $interfaces);
 	foreach ($aliases as & $alias) {
 		// varify that a name exists; alias names cannot start with a number
 		if (empty($alias['name'])) {
@@ -6836,7 +6837,7 @@ function upgrade_229_to_230() {
 		}
 
 		// check if the alias would conflict with an interface name
-		if (!in_array(strstr($alias['name'], $reserved_suffix, true), $interfaces)) {
+		if (!in_array(stristr($alias['name'], $reserved_suffix, true), $interfaces)) {
 			continue;
 		}
 

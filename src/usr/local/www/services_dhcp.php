@@ -1942,7 +1942,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 								<i class="fa fa-check"></i>
 							<?php endif; ?>
 						</td>
-						<td ondblclick="document.location='services_dhcpp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?=htmlspecialchars($mapent['mac'])?>
 						</td>
 <?php

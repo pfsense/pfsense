@@ -63,6 +63,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 $input_errors = [];
 
 if (!empty($_POST['interface']) &&
+    ($_POST['interface'] != 'all') &&
     !empty($_POST['ruleid'])) {
 	$input_errors[] = gettext("Interface and Rule ID filters cannot be used at the same time.");
 }

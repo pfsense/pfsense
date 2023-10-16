@@ -2382,6 +2382,7 @@ function ca_setup_trust_store() {
 
 		ca_setup_capath($ca, $trust_store_directory);
 	}
+	mwexec_bg('/usr/sbin/certctl rehash');
 }
 
 /****f* certs/ca_setup_capath

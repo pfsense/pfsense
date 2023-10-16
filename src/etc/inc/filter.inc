@@ -867,7 +867,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$ifcfg[0]['descr']} = \"{ {$ifcfg[0]['if']}";
 				$aliases .= " }\"\n";
 			}
-			$ifcfg_temp = $ifcfg[0];
+			$ifcfg_temp = $ifcfg;
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
 			if (($ifcfg['type6'] == '6rd') || ($ifcfg['type6'] == '6to4')) {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf }\"\n";
@@ -888,12 +888,14 @@ function filter_generate_aliases() {
 		}
 
 		$if_subnets = [];
+		// if list
 		if (!empty($ifcfg_temp['sa']) && !empty($ifcfg_temp['sn'])) {
 			$if_subnets[] = $ifcfg_temp['sa'] . '/' . $ifcfg_temp['sn'];
 		}
 		if (!empty($ifcfg_temp['sav6']) && !empty($ifcfg_temp['snv6'])) {
 			$if_subnets[] = $ifcfg_temp['sav6'] . '/' . $ifcfg_temp['snv6'];
 		}
+		// interface vips and groups
 		if (is_array($ifcfg_temp['vips'])) {
 			foreach ($ifcfg_temp['vips'] as $vip) {
 				if (!empty($vip['ip']) && !empty($vip['sn'])) {
@@ -901,7 +903,15 @@ function filter_generate_aliases() {
 				}
 			}
 		}
-		if (!empty($ifcfg['descr']) && !empty($if_subnets)) {
+		// pppoe
+		if (is_array($ifcfg_temp) && ($ifcfg_temp[0]['if'] == 'pppoe')) {
+			foreach ($ifcfg_temp as $pppoecfg) {
+				if (!empty($pppoecfg['ip']) && !empty($pppoecfg['sn'])) {
+					$if_subnets[] = $pppoecfg['ip'] . '/' . $pppoecfg['sn'];
+				}
+			}
+		}
+		if (!empty($if_subnets)) {
 			$tablename = strtoupper($if) . '__NETWORK';
 			$aliases .= "table <{$tablename}> persist { " . implode(' ', $if_subnets) . " }\n";
 			$aliases .= "{$tablename} = \"<{$tablename}>\"\n";

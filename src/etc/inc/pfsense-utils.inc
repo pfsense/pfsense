@@ -1485,12 +1485,6 @@ function is_dhcp_server_enabled() {
 
 /* DHCP enabled on any interfaces? */
 function is_dhcpv6_server_enabled() {
-	foreach (config_get_path('interfaces', []) as $ifcfg) {
-		if (isset($ifcfg['enable']) && !empty($ifcfg['track6-interface'])) {
-			return true;
-		}
-	}
-
 	foreach (config_get_path('dhcpdv6', []) as $dhcpv6if => $dhcpv6ifconf) {
 		if (empty($dhcpv6ifconf)) {
 			continue;

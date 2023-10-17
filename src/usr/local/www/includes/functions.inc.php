@@ -235,6 +235,8 @@ function get_cpufreq() {
 }
 
 define("INTEL_C2000_IQIA_PHYS", "0x1f188086");
+define("INTEL_200XX_QAT", "0x18ee8086");
+define("INTEL_200XX_QAT_VF", "0x18ef8086");
 define("INTEL_C3K_QAT", "0x19e28086");
 define("INTEL_C3K_QAT_VF", "0x19e38086");
 define("INTEL_C620_QAT", "0x37c88086");
@@ -336,8 +338,11 @@ function crypto_accel_get_algs($crypto) {
 function get_cpu_crypto_support() {
 	global $g;
 	$machine = get_single_sysctl('hw.machine');
-	$QATIDS = array(INTEL_C2000_IQIA_PHYS, INTEL_C3K_QAT, INTEL_C3K_QAT_VF, INTEL_C620_QAT, INTEL_C620_QAT_VF,
-			INTEL_XEOND_QAT, INTEL_XEOND_QAT_VF, INTEL_DH895XCC_QAT, INTEL_DH895XCC_QAT_VF);
+	$QATIDS = [
+		INTEL_C2000_IQIA_PHYS, INTEL_200XX_QAT, INTEL_200XX_QAT_VF,
+		INTEL_C3K_QAT, INTEL_C3K_QAT_VF, INTEL_C620_QAT, INTEL_C620_QAT_VF,
+		INTEL_XEOND_QAT, INTEL_XEOND_QAT_VF, INTEL_DH895XCC_QAT, INTEL_DH895XCC_QAT_VF
+	];
 
 	/* Defaults */
 	$crypto = crypto_accel_init();

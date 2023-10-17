@@ -9,8 +9,6 @@
 HOME			= .
 RANDFILE		= $ENV::HOME/.rnd
 
-openssl_conf = openssl_init
-
 # pfSense: default SAN value if $ENV::SAN is not defined
 #
 SAN			=
@@ -38,20 +36,6 @@ oid_section		= new_oids
 # tsa_policy1 = 1.2.3.4.1
 # tsa_policy2 = 1.2.3.4.5.6
 # tsa_policy3 = 1.2.3.4.5.7
-
-[openssl_init]
-providers = provider_sect
-
-# List of providers to load
-[provider_sect]
-default = default_sect
-legacy = legacy_sect
-
-[default_sect]
-activate = 1
-
-[legacy_sect]
-activate = 1
 
 ####################################################################
 [ ca ]

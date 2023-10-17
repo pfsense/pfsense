@@ -266,7 +266,7 @@ if ($_POST['save'] == gettext("Save")) {
 				if (!empty($_FILES['pkcs12_cert']) && is_uploaded_file($_FILES['pkcs12_cert']['tmp_name'])) {
 					$pkcs12_file = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
 					if (!openssl_pkcs12_read($pkcs12_file, $pkcs12_data, $_POST['pkcs12_pass'])) {
-						$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate.");
+						$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate or the bundle uses unsupported encryption ciphers.");
 					}
 				} else {
 					$input_errors[] = gettext("A PKCS #12 certificate store was not uploaded.");

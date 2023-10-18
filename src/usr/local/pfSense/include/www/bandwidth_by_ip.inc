@@ -20,7 +20,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 require_once('interfaces.inc');
 require_once('pfsense-utils.inc');
 require_once('util.inc');
@@ -50,7 +50,7 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 	}
 
 	if ($filter == "local") {
-		$ratesubnet = "-c " . $intsubnet;
+		$ratesubnet = "-lc " . $intsubnet;
 	} else {
 		// Tell the rate utility to consider the whole internet (0.0.0.0/0)
 		// and to consider local "l" traffic - i.e. traffic within the whole internet
@@ -170,7 +170,7 @@ function printBandwidth($interface, $filter, $sort, $hostipformat, $mode) {
 			$infoarray = explode (";", $bandwidthinfo);
 			if (($filter == "all") ||
 				(($filter == "local") && ((ip_in_subnet($infoarray[0], $intsubnet)) || (ip_in_subnet($infoarray[0], $intsubnet6)))) ||
-				(($filter == "remote") && ((!ip_in_subnet($infoarray[0], $intsubnet)) || (!ip_in_subnet($infoarray[0], $intsubnet6))))) {
+				(($filter == "remote") && ((!ip_in_subnet($infoarray[0], $intsubnet)) && (!ip_in_subnet($infoarray[0], $intsubnet6))))) {
 				if ($hostipformat == "") {
 					// pass back just the raw IP address
 					$addrdata = $infoarray[0];

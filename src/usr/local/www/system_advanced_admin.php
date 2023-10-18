@@ -247,7 +247,7 @@ $section->addInput(new Form_Checkbox(
 	'enablesshd',
 	'Secure Shell Server',
 	'Enable Secure Shell',
-	isset($pconfig['enablesshd'])
+	$pconfig['enablesshd']
 ));
 
 $section->addInput(new Form_Select(

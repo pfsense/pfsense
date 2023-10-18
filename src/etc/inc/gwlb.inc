@@ -1761,7 +1761,10 @@ function gateway_is_gwgroup_member($name, $detail=false) {
   Return completed $input_errors array if there is any problem.
   Otherwise return an empty $input_errors array
 */
-function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_sn = "") {
+function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_sn = "", $json = false) {
+	if ($json) {
+		$gateway_settings = json_decode($gateway_settings, true);
+	}
 	global $config, $gateway_state_kill_modes;
 
 	$a_gateways = return_gateways_array(true, false, true, true);
@@ -2074,6 +2077,9 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 		$input_errors[] = gettext("The alert interval needs to be greater than or equal to the probe interval.");
 	}
 
+	if ($json) {
+		return json_encode($input_errors);
+	}
 	return $input_errors;
 }
 
@@ -2088,7 +2094,10 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 
 // A subsequent "apply" step will implement the added/changed gateway.
 
-function save_gateway($gateway_settings, $realid = "") {
+function save_gateway($gateway_settings, $realid = "", $json = false) {
+	if ($json) {
+		$gateway_settings = json_decode($gateway_settings, true);
+	}
 	global $config;
 
 	init_config_arr(array('gateways', 'gateway_item'));

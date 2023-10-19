@@ -1937,7 +1937,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			require_once('services.inc');
 		}
 		/* Bring down radvd and dhcp6 on these interfaces */
-		services_dhcpd_configure('inet6', $track6);
+		services_dhcpd_configure('inet6');
 	}
 
 	/* remove interface up file if it exists */
@@ -7418,7 +7418,7 @@ function restart_interface_services($interface, $ipv6type = "") {
 
 	/* restart RADVD to announce correct IPv6 prefix
 	 * see https://redmine.pfsense.org/issues/12604 */
-	if ((($ipv6type == "staticv6") || ($ipv6type == "track6")) &&
+	if ((is_ipaddrv6($ipv6type) || ($ipv6type == "track6")) &&
 	    (config_get_path("dhcpdv6/{$interface}/ramode", "disabled") != "disabled")) {
 		services_radvd_configure();
 	}

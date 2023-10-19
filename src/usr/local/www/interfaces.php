@@ -469,7 +469,7 @@ if ($_POST['apply']) {
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 				}
-				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ipaddrv6'));
+				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ifcfg/ipaddrv6'));
 				$mtu = config_get_path("interfaces/{$ifapply}/mtu");
 				if (interface_has_clones($realif) &&
 				    ($mtu && ($mtu != $ifmtu)) ||

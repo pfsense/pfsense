@@ -918,17 +918,27 @@ kea6_skip_first_pool_options:
 	return 0;
 }
 
-function services_dhcpd_kill_all()
+function services_dhcpd_kill_all($family = 'all')
 {
 	$dhcpd_var_run = g_get('dhcpd_chroot_path') . g_get('varrun_path');
 	$kea_var_run = g_get('varrun_path') . '/kea';
 
-	$pids = [
+	$pids = [];
+	$pids4 = [
 		$dhcpd_var_run . '/dhcpd.pid',
-		$dhcpd_var_run . '/dhcpdv6.pid',
 		$kea_var_run . '/kea-dhcp4.kea-dhcp4.pid',
+	];
+	$pids6 = [
+		$dhcpd_var_run . '/dhcpdv6.pid',
 		$kea_var_run . '/kea-dhcp6.kea-dhcp6.pid'
 	];
+
+	if (($family === 'all') || ($family === 'inet')) {
+		$pids = array_merge($pids, $pids4);
+	}
+	if (($family === 'all') || ($family === 'inet6')) {
+		$pids = array_merge($pids, $pids6);
+	}
 
 	foreach ($pids as $pid) {
 		if (isvalidpid($pid)) {
@@ -945,7 +955,7 @@ function services_dhcpd_configure($family = "all")
 	/* block if dhcpd is already being configured */
 	$dhcpdconfigurelck = lock('dhcpdconfigure', LOCK_EX);
 
-	services_dhcpd_kill_all();
+	services_dhcpd_kill_all($family);
 
 	if (dhcp_is_backend('isc')) {
 		$fd = fopen("{$g['tmp_path']}/dhcpd.sh", "w");

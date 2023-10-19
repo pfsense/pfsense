@@ -1069,42 +1069,38 @@ if ($_POST['save']) {
 
 		} else {
 			$filterent['created'] = make_config_revision_entry();
-			if (is_numeric($after)) {
-				// For copy/dup the $if var is taken from the rule submission.
-				// In the case of floating rules that could be anything.  But never "FloatingRules" that is needed.
-				if (isset($pconfig['floating'])) {
-					$tmpif = 'FloatingRules';
-				} else if (isset($filterent['interface'])) {
-					$tmpif = $filterent['interface'];
-				} else {
-					$tmpif = $if;
-				}
-
-				$ridx = get_interface_ruleindex($tmpif, $after);
-				if ($tmpif == $if || (isset($pconfig['floating']))) {
-					// save the rule after the one being requested
-					array_splice($a_filter, $after+1, 0, array($filterent));
-					// shift the separators
-					$a_separators = config_get_path('filter/separator/' . strtolower($tmpif), []);
-					if ($after == -1) {
-						// rule is being placed on top
-						shift_separators($a_separators, -1);
-					} else {
-						// rule is being placed after another rule
-						shift_separators($a_separators, $ridx['index']);
-					}
-					config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
-				} else {
-					// rule copied to different interface; place it at the bottom
-					array_splice($a_filter, $ridx['last']+1, 0, array($filterent));
-				}
+			// For copy/dup the $if var is taken from the rule submission.
+			// In the case of floating rules that could be anything.  But never "FloatingRules" that is needed.
+			if (isset($pconfig['floating'])) {
+				$tmpif = 'FloatingRules';
+			} else if (isset($filterent['interface'])) {
+				$tmpif = $filterent['interface'];
 			} else {
-				$a_filter[] = $filterent;
+				$tmpif = $if;
+			}
+
+			$ridx = get_interface_ruleindex($tmpif, $after);
+			if (is_numeric($after) && ($tmpif == $if || (isset($pconfig['floating'])))) {
+				// save the rule after the one being requested
+				array_splice($a_filter, $after+1, 0, array($filterent));
+				// shift the separators
+				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif), []);
+				if ($after == -1) {
+					// rule is being placed on top
+					shift_separators($a_separators, -1);
+				} else {
+					// rule is being placed after another rule
+					shift_separators($a_separators, $ridx['index']);
+				}
+				config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
+			} else {
+				// rule copied to different interface; place it at the bottom
+				array_splice($a_filter, $ridx['last']+1, 0, array($filterent));
 			}
 		}
 
-		filter_rules_sort();
 		config_set_path('filter/rule', $a_filter);
+		filter_rules_sort();
 		if (write_config(gettext("Firewall: Rules - saved/edited a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}

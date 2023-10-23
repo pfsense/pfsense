@@ -135,31 +135,28 @@ tr.disabled a {
 
 .navbar-brand > img {
     /* reduce logo size */
-    max-width: 127px;
+    max-width: 130px;
+	width:auto;
+	height:auto;
     max-height: 36px;
-    width: auto;
-    height: auto;
+    
 }
 
 .navbar-brand svg#logo {
-    width: 105px;
+    #width: 105px;
 }
 
-.logo-st0 {
-    fill:#FFFFFF;
-}
-
-.logo-st1 {
-    fill:#FFFFFF;
-}
-
-.logo-st2 {
+.logo-st0, .logo-st1, .logo-st2, .logo-st3, .logo-st4, .logo-st5 {
     fill:#FFFFFF;
 }
 
 .navbar-brand {
     padding: 5px 10px 0 10px;
     line-height: .3em;
+}
+
+.factory.navbar-brand {
+    padding-top: 10px;
 }
 
 .nav>li>a {

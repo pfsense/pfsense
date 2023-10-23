@@ -14,27 +14,34 @@ header {
 }
 
 #headerrow {
-    position: fixed;
-    height: 90px;
-    top: 0;
-    width: 100%;
-    background-color: white;
+    
 }
 
 .pagebody {
-    position: absolute;
-    top:90px;
-    bottom:25px;
-    width: 100%;
-    color: white;
+    position: fixed;
+    bottom:0px;
+	top:0px;
+    width:100%;
+	height:100%;
+	background-size:cover;
+	background-position:center center;
+	background-image: url("/css/img/arcanjo-bg.jpg");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+
 }
 
 .pagebodywarn {
-    position: absolute;
-    top:140px;
-    bottom:25px;
+    position: fixed;
+    bottom:0px;
+	top:0px;
     width: 100%;
-    color: white;
+	height:100%;
+	background-size:cover;
+	background-position:center center;
+	background-repeat: no-repeat;
+	background-size:cover;
+	background-image: url("/css/img/arcanjo-bg.jpg");
 }
 
 .nowarning {
@@ -58,7 +65,8 @@ header {
     }
 
     .pagebody {
-    	top: 100px;
+    	top: 0px;
+		
     }
 
     .pagebody2 {
@@ -193,4 +201,5 @@ form.login a:hover
 input:-webkit-autofill {
     -webkit-animation-name: autofill;
     -webkit-animation-fill-mode: both;
+
 }

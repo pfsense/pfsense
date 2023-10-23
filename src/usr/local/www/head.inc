@@ -30,7 +30,9 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
-$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
+//$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
+$system_url = "arcanjo" . "." . $config['system']['domain'];
+
 
 if ($user_settings['webgui']['pagenamefirst']) {
 	$tabtitle = $pagetitle . " - " . htmlspecialchars($system_url);
@@ -61,10 +63,8 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	<link rel="apple-touch-icon-precomposed" sizes="60x60" href="/apple-touch/apple-touch-icon-ipad-76x76-precomposed.png">
 	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/apple-touch/apple-touch-icon-iphone-retina-120x120-precomposed.png">
 	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch/apple-touch-icon-ipad-retina-152x152-precomposed.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="icon" type="image/png"  href="/favicon.png">
 	<link rel="manifest" href="/manifest.json">
-	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
 	<meta name="theme-color" content="#ffffff">
 
 	<link rel="stylesheet" href="/vendor/font-awesome/css/all.min.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/all.min.css')?>">
@@ -488,9 +488,8 @@ if (are_notices_pending()) {
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/">
-				<?php include("/usr/local/www/logo.svg"); ?>
-				<span style="color:white;font-size:.5em;text-transform:uppercase;letter-spacing:1px;">Community Edition</span>
+			<a class="factory navbar-brand" href="/">
+				<img src="/img/logo_fw.png">
 			</a>
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">

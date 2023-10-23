@@ -110,7 +110,7 @@ function display_error_form($http_code, $desc) {
 		return;
 	}
 
-	$logincssfile = "#770101";
+	//$logincssfile = "#770101";
 ?>
 
 <!DOCTYPE html>
@@ -125,11 +125,11 @@ function display_error_form($http_code, $desc) {
 	<body id="error" >
 		<div id="total">
 			<header>
-				<div id="headerrow">
+				
 					<div class="row">
 						<div class="col-sm-4">
 							<div id="logodiv" style="text-align:center" class="nowarning">
-								<?php include("/usr/local/www/logo.svg"); ?>
+								
 							</div>
 						</div>
 						<div class="col-sm-8 nowarning msgbox text-center">
@@ -137,10 +137,10 @@ function display_error_form($http_code, $desc) {
 							</span>
 						</div>
 					</div>
-				</div>
+				
 			</header>
 
-			<div style="background: <?=$logincssfile?>;" class="pagebody">
+			<div style="background: <?=$logincssfile?>;" class="">
 				<div class="col-sm-2"></div>
 
 				<div class="col-sm-8 offset-md-4 logoCol">
@@ -152,13 +152,7 @@ function display_error_form($http_code, $desc) {
 			<div class="col-sm-2"></div>
 			</div>
 
-			<footer id="3">
-			<div id="footertext">
-					<p class="text-muted">
-						<?=print_credit()?>
-					</p>
-				</div>
-			</footer>
+			
 		</div>
 	</body>
 </html>
@@ -251,17 +245,18 @@ function display_login_form() {
 	// For the login form, get the settings of no particular user.
 	// That ensures we will use the system default theme for the login form.
 	$user_settings = get_user_settings("");
-	$logincssfile = "#1e3f75";
+	//$logincssfile = "#1e3f75";
 
 	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
 		$logincssfile = "#" . $user_settings['webgui']['logincss'];
 	}
 
 	if (config_path_enabled('system/webgui','loginshowhost')) {
-		$loginbannerstr = sprintf(gettext('%1$s.%2$s'),
+		/*$loginbannerstr = sprintf(gettext('%1$s.%2$s'),
 								  htmlspecialchars(config_get_path('system/hostname', "")),
 								  htmlspecialchars(config_get_path('system/domain', "")));
-		$login_title = gettext(htmlspecialchars(config_get_path('system/hostname', "") . " - Login"));
+		 $login_title = gettext(htmlspecialchars(config_get_path('system/hostname', "") . " - Login"));*/
+		 $login_title = "Arcanjo Firewall - Login";
 	} Else {
 		$loginbannerstr = sprintf(gettext('Login to %1$s'), g_get('product_label'));
 		$login_title = sprintf(gettext("%s - Login"), g_get('product_label'));
@@ -293,12 +288,12 @@ function display_login_form() {
 	<body id="login" >
 		<div id="total">
 			<header>
-				<div id="headerrow">
+				
 					<div class="row">
 						<!-- Header left logo box -->
 						<div class="col-sm-4">
 							<div id="logodiv" style="text-align:center" class="nowarning">
-								<?php include("/usr/local/www/logo.svg"); ?>
+								
 							</div>
 						</div>
 
@@ -332,10 +327,10 @@ function display_login_form() {
 <?php
 	}
 ?>
-	            </div>
+	           
 	        </header>
 
-	        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
+	       <div class="<?=$warnclass?>"> 
 	        	<div class="col-sm-4"></div>
 
 	        	<div class="col-sm-4 offset-md-4 logoCol">
@@ -349,16 +344,9 @@ function display_login_form() {
 					</div>
 	            </div>
 
-	        	<div class="col-sm-4"></div>
-	        </div>
+	        	
 
-	        <footer id="3">
-	            <div id="footertext">
-					<p class="text-muted">
-						<?=print_credit()?>
-					</p>
-	            </div>
-	        </footer>
+	       
 	    </div>
 
 		<script type="text/javascript">

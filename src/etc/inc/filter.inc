@@ -2254,10 +2254,7 @@ function filter_nat_rules_generate() {
 			continue;
 		}
 
-		if (($srcaddr != 'any') && !is_ipaddr($srcaddr) && !is_subnet($srcaddr)) {
-			$srcaddr = explode(' ', $srcaddr)[1];
-		}
-		$tmp = explode('/', $srcaddr);
+		$tmp = explode('/', trim($srcaddr, '! '));
 		$srcip = $tmp[0];
 		if (!empty($tmp[1]) && is_numeric($tmp[1])) {
 			$sn = $tmp[1];
@@ -2275,6 +2272,7 @@ function filter_nat_rules_generate() {
 		}
 
 		$nat_if_list = array();
+		$noautoreflection = false;
 		if (isset($rule['nobinat'])) {
 			$natrules .= "no binat on {$natif} {$ipproto} from {$srcaddr} to {$dstaddr}\n";
 		} else {
@@ -2293,12 +2291,20 @@ function filter_nat_rules_generate() {
 			if (!empty($nat_if_list)) {
 				$binat_if_list = implode(" ", $nat_if_list);
 				$binat_if_list = "{ {$binat_if_list} }";
-				$reflection_txt .= "rdr on {$binat_if_list} {$ipproto} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				if (str_contains($srcaddr, '! ')) {
+					$noautoreflection = true;
+				} else {
+					$reflection_txt .= "rdr on {$binat_if_list} {$ipproto} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				}
 			}
 		}
 
-		$nat_if_list = array_merge(array($natif), $nat_if_list);
-		$reflection_txt .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, "", $srcaddr, $srcip, $sn);
+		if ($noautoreflection) {
+			$reflection_txt .= "# Automatic NAT reflection rules do not support negated targets\n";
+		} else {
+			$nat_if_list = array_merge(array($natif), $nat_if_list);
+			$reflection_txt .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, "", $srcaddr, $srcip, $sn);
+		}
 	}
 
 	/* Add binat rules for Network Prefix translation */
@@ -3186,7 +3192,23 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 		if ($add_macro) {
 			$ifmacro = $rule[$target]['network'];
-			if (!empty($ifmacro)) {
+			if (!empty($ifmacro) && isset($rule['external'])) {
+				// support binat rules; these expect a single address or subnet rather than an alias
+				$rule_interface_real = get_real_interface($ifmacro);
+				if ($rule['ipprotocol'] == 'inet6') {
+					$rule_interface_ip = find_interface_ipv6($rule_interface_real);
+					$rule_interface_cidr = find_interface_subnetv6($rule_interface_real);
+				} else {
+					$rule_interface_ip = find_interface_ip($rule_interface_real);
+					$rule_interface_cidr = find_interface_subnet($rule_interface_real);
+				}
+				if (!empty($rule_interface_ip) && !empty($rule_interface_cidr)) {
+					$rule_interface_subnet = gen_subnet($rule_interface_ip, $rule_interface_cidr) . "/{$rule_interface_cidr}";
+					$src = ' ' . (isset($rule[$target]['not']) ? '! ' : '') . $rule_interface_subnet;
+				} else {
+					$src = '';
+				}
+			} elseif (!empty($ifmacro)) {
 				$src = ' ' . (isset($rule[$target]['not']) ? '! ' : '') . '$' . strtoupper($ifmacro) . '__NETWORK';
 			} else {
 				$src = '';

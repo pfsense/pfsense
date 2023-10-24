@@ -408,8 +408,8 @@ function pprint_address($adr, $specialnet_flags = []) {
 	if (isset($adr['any']) || $adr['network'] == 'any') {
 		$padr = "*";
 	} else if ($adr['network']) {
-		if (get_specialnet($adr['network'], $specialnet_flags)) {
-			$specialnets = get_specialnet();
+		$specialnets = get_specialnet('', $specialnet_flags);
+		if (array_key_exists($adr['network'], $specialnets)) {
 			$padr = $specialnets[$adr['network']];
 		} else {
 			$padr = $adr['network'];

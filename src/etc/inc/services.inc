@@ -454,6 +454,33 @@ function services_radvd_configure($blacklist = array()) {
 	return 0;
 }
 
+function kea_is_hexstring(string $string): bool
+{
+    $string = trim($string);
+
+    /* kea accepts hex strings starting with 0x */
+    if (str_starts_with($string, '0x')) {
+        return ctype_xdigit(substr($string, 2));
+    }
+
+    /* ... and also bytes separated by colon or space */
+    foreach ([':', ' '] as $sep) {
+        if (str_contains($string, $sep)) {
+            foreach (explode($sep, $string) as $piece) {
+                if ((strlen($piece) > 2) || !ctype_xdigit($piece)) {
+                    return false;
+                }
+            }
+
+	    /* looks okay */
+            return true;
+         }
+    }
+
+    /* not a valid kea hex string */
+    return false;
+}
+
 function services_kea6_configure()
 {
 	$kea_var_run = g_get('varrun_path') . '/kea';
@@ -1716,24 +1743,29 @@ function services_kea4_configure()
 				$keares = [];
 
 				$has_mac = false;
+				$sm['mac'] = strtolower(trim($sm['mac']));
 				if ($sm['mac']) {
-					$keares['hw-address'] = $sm['mac'];
 					$has_mac = true;
+					$keares['hw-address'] = $sm['mac'];
 
 					/* keys are unique */
-					$known_macs[strtolower(trim($sm['mac']))] = true;
+					$known_macs[$sm['mac']] = true;
 				}
 
-				$cid = '';
+				$sm['cid'] = strtolower(trim($sm['cid']));
 				if ($sm['cid']) {
-					$cid = str_replace('"', '\"', $sm['cid']);
+					/* wrap in single quotes if not a valid kea hex string */
+					if (!kea_is_hexstring($sm['cid'])) {
+						$sm['cid'] = '\''.$sm['cid'].'\'';
+					}
+
 					if (!$has_mac) {
 						/* only set client-id if no mac address */
-						$keares['client-id'] = $cid;
+						$keares['client-id'] = $sm['cid'];
 					}
 
 					/* keys are unique */
-					$known_cids[strtolower(trim($cid))] = true;
+					$known_cids[$sm['cid']] = true;
 				}
 
 				if ($sm['ipaddr']) {

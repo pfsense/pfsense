@@ -210,6 +210,26 @@ function openvpn_build_mode_list() {
 	return($list);
 }
 
+function openvpn_name(string $mode, array $settings, string $type = 'if') : string {
+	switch ($type) {
+		case 'if':
+			$prefix = ($mode == 'server') ? 'ovpns' : 'ovpnc';
+			break;
+		case 'dev':
+			$prefix = array_get_path($settings, 'dev_mode', 'tun');
+			break;
+		case 'generic':
+			$prefix = ($mode == 'server') ? 'server' : 'client';
+			break;
+		default:
+			$prefix = '';
+			break;
+	}
+
+	$id = array_get_path($settings, 'vpnid', '');
+	return "{$prefix}{$id}";
+}
+
 global $openvpn_interfacenames;
 function convert_openvpn_interface_to_friendly_descr($if) {
 	global $openvpn_interfacenames;
@@ -851,21 +871,13 @@ function openvpn_reconfigure($mode, $settings) {
 	 */
 
 	$vpnid = $settings['vpnid'];
-	$mode_id = $mode.$vpnid;
-
-	if (isset($settings['dev_mode'])) {
-		$tunname = "{$settings['dev_mode']}{$vpnid}";
-	} else {
-		/* defaults to tun */
-		$tunname = "tun{$vpnid}";
+	$mode_id = openvpn_name($mode, $settings, 'generic');
+	/* defaults to tun */
+	if (!isset($settings['dev_mode'])) {
 		$settings['dev_mode'] = "tun";
 	}
-
-	if ($mode == "server") {
-		$devname = "ovpns{$vpnid}";
-	} else {
-		$devname = "ovpnc{$vpnid}";
-	}
+	$tunname = openvpn_name($mode, $settings, 'dev');
+	$devname = openvpn_name($mode, $settings);
 
 	/* is our device already configured */
 	if (!does_interface_exist($devname)) {
@@ -1568,7 +1580,7 @@ function openvpn_restart($mode, $settings) {
 	global $g;
 
 	$vpnid = $settings['vpnid'];
-	$mode_id = $mode.$vpnid;
+	$mode_id = openvpn_name($mode, $settings, 'generic');
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
 	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
@@ -1654,13 +1666,7 @@ function openvpn_delete($mode, $settings) {
 	global $g;
 
 	$vpnid = $settings['vpnid'];
-	$mode_id = $mode.$vpnid;
-
-	if ($mode == "server") {
-		$devname = "ovpns{$vpnid}";
-	} else {
-		$devname = "ovpnc{$vpnid}";
-	}
+	$mode_id = openvpn_name($mode, $settings, 'generic');
 
 	/* kill the process if running */
 	$pfile = "{$g['varrun_path']}/openvpn_{$mode_id}.pid";
@@ -1675,7 +1681,7 @@ function openvpn_delete($mode, $settings) {
 	}
 
 	/* destroy the device */
-	pfSense_interface_destroy($devname);
+	pfSense_interface_destroy(openvpn_name($mode, $settings));
 
 	/* Invalidate cache */
 	get_interface_arr(true);
@@ -2462,10 +2468,8 @@ function openvpn_authscript_string($authmode, $strictusercn, $mode_id, $local_po
 }
 
 function openvpn_inuse($id, $mode) {
-	$type = ($mode == 'server') ? 's' : 'c';
-
 	foreach (get_configured_interface_list(true) as $if) {
-		if (config_get_path("interfaces/{$if}/if") == "ovpn{$type}{$id}") {
+		if (config_get_path("interfaces/{$if}/if") == openvpn_name($mode, $id)) {
 			return true;
 		}
 	}

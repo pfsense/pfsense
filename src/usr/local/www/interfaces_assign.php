@@ -44,6 +44,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("openvpn.inc");
 require_once("captiveportal.inc");
 require_once("rrd.inc");
 require_once("interfaces_fast.inc");
@@ -156,20 +157,11 @@ if (isset($config['ppps']['ppp']) && is_array($config['ppps']['ppp']) && count($
 }
 
 $ovpn_descrs = array();
-if (isset($config['openvpn']) && is_array($config['openvpn'])) {
-	if (isset($config['openvpn']['openvpn-server']) && is_array($config['openvpn']['openvpn-server'])) {
-		foreach (config_get_path('openvpn/openvpn-server', []) as $s) {
-			$portname = "ovpns{$s['vpnid']}";
-			$portlist[$portname] = $s;
-			$ovpn_descrs[$s['vpnid']] = $s['description'];
-		}
-	}
-	if (isset($config['openvpn']['openvpn-client']) && is_array($config['openvpn']['openvpn-client'])) {
-		foreach (config_get_path('openvpn/openvpn-client', []) as $c) {
-			$portname = "ovpnc{$c['vpnid']}";
-			$portlist[$portname] = $c;
-			$ovpn_descrs[$c['vpnid']] = $c['description'];
-		}
+foreach (['server', 'client'] as $openvpn_mode) {
+	foreach (config_get_path("openvpn/openvpn-{$openvpn_mode}", []) as $openvpn_settings) {
+		$portname = openvpn_name($openvpn_mode, $openvpn_settings);
+		$portlist[$portname] = $openvpn_settings;
+		$ovpn_descrs[$openvpn_settings['vpnid']] = $openvpn_settings['description'];
 	}
 }
 

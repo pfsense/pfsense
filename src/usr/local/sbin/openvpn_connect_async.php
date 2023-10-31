@@ -40,7 +40,7 @@ foreach ($result as $server) {
 			$name = isset($name) ? trim($name) : NULL;
 			$port = isset($port) ? trim($port) : NULL;
 			if ( !empty($name) && !empty($port) ) {
-				$output .= "ovpns{$vpnid}_{$name}_{$port}|";
+				$output .= openvpn_name('server', $server) . "_{$name}_{$port}|";
 			}
 		}
 	}

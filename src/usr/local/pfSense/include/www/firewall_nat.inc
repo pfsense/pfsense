@@ -174,6 +174,12 @@ function saveNATrule($post, $id, $json = false) {
 	if (get_specialnet($post['dsttype'], $rdr_dsttype_flags)) {
 		$post['dst'] = $post['dsttype'];
 		$post['dstmask'] = 0;
+		// handle VIPs
+		if (is_ipaddrv6($post['dsttype'])) {
+			$post['dstmask'] = 128;
+		} elseif (is_ipaddrv4($post['dsttype'])) {
+			$post['dstmask'] = 32;
+		}
 	} elseif ($post['dsttype'] == "single") {
 		if (is_ipaddrv6($post['dst'])) {
 			$post['dstmask'] = 128;
@@ -437,11 +443,11 @@ function saveNATrule($post, $id, $json = false) {
 
 		pconfig_to_address($natent['source'], $post['src'],
 			$post['srcmask'], $post['srcnot'],
-			$post['srcbeginport'], $post['srcendport']);
+			$post['srcbeginport'], $post['srcendport'], false, $rdr_srctype_flags);
 
 		pconfig_to_address($natent['destination'], $post['dst'],
 			$post['dstmask'], $post['dstnot'],
-			$post['dstbeginport'], $post['dstendport']);
+			$post['dstbeginport'], $post['dstendport'], false, array_diff($rdr_dsttype_flags, [SPECIALNET_VIPS]));
 
 		$natent['ipprotocol'] = $post['ipprotocol'];
 		$natent['protocol'] = $post['proto'];
@@ -517,7 +523,7 @@ function saveNATrule($post, $id, $json = false) {
 
 			pconfig_to_address($filterent['source'], $post['src'],
 				$post['srcmask'], $post['srcnot'],
-				$post['srcbeginport'], $post['srcendport']);
+				$post['srcbeginport'], $post['srcendport'], false, $rdr_srctype_flags);
 
 			// Update interface, protocol and destination
 			$filterent['interface'] = $post['interface'];

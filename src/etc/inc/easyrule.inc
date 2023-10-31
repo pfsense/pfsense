@@ -355,8 +355,8 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 		$dstmask = 32;
 	}
 
-	pconfig_to_address($filterent['source'], $srchost, $srcmask);
-	pconfig_to_address($filterent['destination'], $dsthost, $dstmask, '', $dstport, $dstport);
+	pconfig_to_address($filterent['source'], $srchost, $srcmask, false, 0, 0, false, $easyrule_nettype_flags);
+	pconfig_to_address($filterent['destination'], $dsthost, $dstmask, '', $dstport, $dstport, false, $easyrule_nettype_flags);
 
 	$filterent['created'] = make_config_revision_entry(null, "EasyRule");
 	$filterent['tracker'] = (int)microtime(true);

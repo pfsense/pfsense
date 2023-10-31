@@ -43,6 +43,11 @@ $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to mov
 
 $shortcut_section = "firewall";
 
+$filter_srcdsttype_flags = [
+	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET, SPECIALNET_SELF,
+	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_GROUP
+];
+
 function get_pf_rules($rules, $tracker_start, $tracker_end) {
 
 	if ($rules == NULL || !is_array($rules)) {
@@ -883,7 +888,7 @@ foreach ($a_filter as $filteri => $filterent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'])))?>
 								</a>
 							<?php else: ?>
-								<?=htmlspecialchars(pprint_address($filterent['source']))?>
+								<?=htmlspecialchars(pprint_address($filterent['source'], $filter_srcdsttype_flags))?>
 							<?php endif; ?>
 						</td>
 						<td>
@@ -901,7 +906,7 @@ foreach ($a_filter as $filteri => $filterent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'])))?>
 								</a>
 							<?php else: ?>
-								<?=htmlspecialchars(pprint_address($filterent['destination']))?>
+								<?=htmlspecialchars(pprint_address($filterent['destination'], $filter_srcdsttype_flags))?>
 							<?php endif; ?>
 						</td>
 						<td>

@@ -969,11 +969,11 @@ if ($_POST['save']) {
 
 		pconfig_to_address($filterent['source'], $_POST['src'],
 			$_POST['srcmask'], $_POST['srcnot'],
-			$_POST['srcbeginport'], $_POST['srcendport']);
+			$_POST['srcbeginport'], $_POST['srcendport'], false, $filter_srcdsttype_flags);
 
 		pconfig_to_address($filterent['destination'], $_POST['dst'],
 			$_POST['dstmask'], $_POST['dstnot'],
-			$_POST['dstbeginport'], $_POST['dstendport']);
+			$_POST['dstbeginport'], $_POST['dstendport'], false, $filter_srcdsttype_flags);
 
 		if ($_POST['disabled']) {
 			$filterent['disabled'] = true;

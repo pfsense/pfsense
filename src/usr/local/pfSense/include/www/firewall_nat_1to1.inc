@@ -102,6 +102,12 @@ function save1to1NATrule($post, $id, $json = false) {
 	if (get_specialnet($post['dsttype'], $binat_dsttype_flags)) {
 		$post['dst'] = $post['dsttype'];
 		$post['dstmask'] = 0;
+		// handle VIPs
+		if (is_ipaddrv6($post['dsttype'])) {
+			$post['dstmask'] = 128;
+		} elseif (is_ipaddrv4($post['dsttype'])) {
+			$post['dstmask'] = 32;
+		}
 	} else if ($post['dsttype'] == "single") {
 		$post['dstmask'] = (is_ipaddrv6($post['dst'])) ? 128 : 32;
 	} else if (is_ipaddr($post['dsttype'])) {
@@ -204,10 +210,10 @@ function save1to1NATrule($post, $id, $json = false) {
 		$natent['ipprotocol'] = $post['ipprotocol'];
 
 		pconfig_to_address($natent['source'], $post['src'],
-			$post['srcmask'], $post['srcnot']);
+			$post['srcmask'], $post['srcnot'], 0, 0, false, $binat_srctype_flags);
 
 		pconfig_to_address($natent['destination'], $post['dst'],
-			$post['dstmask'], $post['dstnot']);
+			$post['dstmask'], $post['dstnot'], 0, 0, false, array_diff($binat_dsttype_flags, [SPECIALNET_VIPS]));
 
 		if ($post['natreflection'] == "enable" || $post['natreflection'] == "disable") {
 			$natent['natreflection'] = $post['natreflection'];
@@ -412,12 +418,15 @@ function build_srctype_list() {
 function srctype_selected() {
 	global $pconfig;
 
+	$binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_COMPAT_ADDR, SPECIALNET_NET, SPECIALNET_CLIENTS,
+	    SPECIALNET_IFADDR, SPECIALNET_IFSUB];
+
 	if ($pconfig['srctype']) {
 		// The rule type came from the $post array, after input errors, so keep it.
 		return $pconfig['srctype'];
 	}
 
-	$sel = get_specialnet($pconfig['src']);
+	$sel = get_specialnet($pconfig['src'], $binat_srctype_flags);
 
 	if (!$sel) {
 		if ((($pconfig['srcmask'] == 32) && (is_ipaddrv4($pconfig['src']))) ||
@@ -441,12 +450,15 @@ function build_dsttype_list() {
 function dsttype_selected() {
 	global $pconfig;
 
+	$binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET, SPECIALNET_CLIENTS,
+	    SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];
+
 	if ($pconfig['dsttype']) {
 		// The rule type came from the $post array, after input errors, so keep it.
 		return $pconfig['dsttype'];
 	}
 
-	$sel = get_specialnet($pconfig['dst']);
+	$sel = get_specialnet($pconfig['dst'], $binat_dsttype_flags);
 
 	if (empty($pconfig['dst']) || ($pconfig['dst'] == "any")) {
 		return('any');
@@ -488,6 +500,15 @@ function exttype_selected() {
 }
 
 function get_specialnet_type($type, $ipprotocol='inet') {
+	if (get_specialnet($type, [SPECIALNET_VIPS])) {
+		if (is_ipaddrv6($type)) {
+			return '6';
+		} elseif (is_ipaddrv4($type)) {
+			return '4';
+		} else {
+			return false;
+		}
+	}
 
 	foreach (get_configured_interface_with_descr() as $kif => $kdescr) {
 		if (($type == "{$kif}ip") || ($type == $kif)) {

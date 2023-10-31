@@ -71,7 +71,7 @@ if ($_POST['apply']) {
 if ($_POST['act'] == "del") {
 	if ($a_gateway_groups[$_POST['id']]) {
 		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
-		foreach ($config['filter']['rule'] as $idx => $rule) {
+		foreach (config_get_path('filter/rule', []) as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
 				config_del_path("filter/rule/{$idx}/gateway");
 			}

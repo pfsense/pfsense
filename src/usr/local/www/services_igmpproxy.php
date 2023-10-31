@@ -65,7 +65,7 @@ if ($_POST['save']) {
 	if (isset($pconfig['enable'])) {
 		if (is_array($config['igmpproxy']['igmpentry']) && 
 		    !empty($config['igmpproxy']['igmpentry'])) {
-			foreach ($config['igmpproxy']['igmpentry'] as $igmpcf) {
+			foreach (config_get_path('igmpproxy/igmpentry', []) as $igmpcf) {
 				if ($igmpcf['type'] == 'upstream') {
 				       $upstream = true;	
 				} else {

@@ -247,7 +247,7 @@ function saveAdvancedNetworking($post, $json = false) {
 		}
 
 		if ($dhcp6restart) {
-			foreach ($config['interfaces'] as $ifname => $ifcfg) {
+			foreach (config_get_path('interfaces', []) as $ifname => $ifcfg) {
 				if (isset($ifcfg['enable']) && ($ifcfg['ipaddrv6'] == 'dhcp6')) {
 					interface_dhcpv6_configure($ifname, $ifcfg);
 				}

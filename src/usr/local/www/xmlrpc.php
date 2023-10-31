@@ -241,7 +241,7 @@ class pfsense_xmlrpc_server {
 
 		/* If captive portal sync is enabled on primary node, remove local CP on the secondary */
 		if (is_array($config['captiveportal']) && is_array($sections['captiveportal'])) {
-			foreach ($config['captiveportal'] as $zone => $item) {
+			foreach (config_get_path('captiveportal', []) as $zone => $item) {
 				if (!isset($sections['captiveportal'][$zone])) {
 					$cpzone = $zone;
 					config_del_path("captiveportal/{$cpzone}/enable");
@@ -288,7 +288,7 @@ class pfsense_xmlrpc_server {
 				}
 			}
 			if (is_array($config['system']['group'])) {
-				foreach ($config['system']['group'] as $idx => $group) {
+				foreach (config_get_path('system/group', []) as $idx => $group) {
 					if (array_search($idx, $g2keep) === false &&
 					    array_search($idx, $g2del_idx) === false) {
 						$g2del[] = $group;
@@ -325,7 +325,7 @@ class pfsense_xmlrpc_server {
 				}
 			}
 			if (is_array($config['system']['user'])) {
-				foreach ($config['system']['user'] as $idx => $user) {
+				foreach (config_get_path('system/user', []) as $idx => $user) {
 					if (array_search($idx, $u2keep) === false &&
 					    array_search($idx, $u2del_idx) === false) {
 						$u2del[] = $user;
@@ -449,7 +449,7 @@ class pfsense_xmlrpc_server {
 
 		$l_rolls = array();
 		if (is_array($config['voucher'])) {
-			foreach ($config['voucher'] as $zone => $item) {
+			foreach (config_get_path('voucher', []) as $zone => $item) {
 				if (!is_array($item['roll'])) {
 					continue;
 				}
@@ -533,7 +533,7 @@ class pfsense_xmlrpc_server {
 			$carp_setuped = false;
 			$anyproxyarp = false;
 
-			foreach ($config['virtualip']['vip'] as $vip) {
+			foreach (config_get_path('virtualip/vip', []) as $vip) {
 				$key = "{$vip['interface']}_vip{$vip['vhid']}";
 
 				if ($vip['mode'] == "carp" &&
@@ -609,7 +609,7 @@ class pfsense_xmlrpc_server {
 				}
 
 				/* do not remove VIP if the IP address remains the same */
-				foreach ($config['virtualip']['vip'] as $vip) {
+				foreach (config_get_path('virtualip/vip', []) as $vip) {
 					if ($vip['subnet'] == $oldvipar['subnet']) {
 						continue 2;
 					}
@@ -716,20 +716,20 @@ class pfsense_xmlrpc_server {
 			foreach (array("server", "client") as $type) {
 				$remove_id = array();
 				if (is_array($old_config['openvpn']["openvpn-{$type}"])) {
-					foreach ($old_config['openvpn']["openvpn-{$type}"] as & $old_settings) {
+					foreach ($old_config['openvpn']["openvpn-{$type}"] as $old_settings) {
 						$remove_id[] = $old_settings['vpnid'];
 					}
 				}
 				if (!is_array($config['openvpn']["openvpn-{$type}"])) {
 					continue;
 				}
-				foreach ($config['openvpn']["openvpn-{$type}"] as & $settings) {
+				foreach (config_get_path("openvpn/openvpn-{$type}", []) as $settings) {
 					$new_instance = true;
 					if (in_array($settings['vpnid'], $remove_id)) {
 						$remove_id = array_diff($remove_id, array($settings['vpnid']));
 					}
 					if (is_array($old_config['openvpn']["openvpn-{$type}"])) {
-						foreach ($old_config['openvpn']["openvpn-{$type}"] as & $old_settings) {
+						foreach ($old_config['openvpn']["openvpn-{$type}"] as $old_settings) {
 							if ($settings['vpnid'] == $old_settings['vpnid']) {
 								$new_instance = false;
 								if (($settings != $old_settings) || $force) {

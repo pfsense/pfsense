@@ -788,7 +788,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		global $config;
 		$allCsrs = array();
 
-		foreach ($config['cert'] as $cert) {
+		foreach (config_get_path('cert', []) as $cert) {
 			if ($cert['csr']) {
 				$allCsrs[$cert['refid']] = $cert['descr'];
 			}
@@ -1154,7 +1154,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	$existCerts = array();
 
-	foreach ($config['cert'] as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}

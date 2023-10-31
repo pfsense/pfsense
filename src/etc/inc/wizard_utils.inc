@@ -84,7 +84,9 @@ function save_setupwizard_config(
 		init_config_arr(array('gateways', 'gateway_item'));
 		$found = false;
 		$defaultgw_found = false;
-		foreach ($config['gateways']['gateway_item'] as & $gw) {
+		$gwlist = config_get_path('gateways/gateway_item', []);
+		$ifgw = '';
+		foreach ($gwlist as & $gw) {
 			if ($gw['interface'] != "wan")
 				continue;
 			if (isset($gw['defaultgw']))
@@ -92,9 +94,11 @@ function save_setupwizard_config(
 			if ($gw['name'] == 'WANGW' || $gw['gateway'] == $wangateway) {
 				$found = true;
 				$gw['gateway'] = $wangateway;
-				$config['interfaces']['wan']['gateway'] = $gw['name'];
+				$ifgw = $gw['name'];
 			}
 		}
+		config_set_path('interfaces/wan/gateway', $ifgw);
+		config_set_path('gateways/gateway_item', $gwlist);
 		if (!$found) {
 			$newgw = array();
 			$newgw['interface'] = "wan";
@@ -113,7 +117,7 @@ function save_setupwizard_config(
 
 	init_config_arr(array('ppps', 'ppp'));
 	if (count($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+		foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
 			if ($ppp['ptpid'] == "0") {
 				if ((substr($config['interfaces']['wan']['if'],0,5) == "pppoe") || (substr($config['interfaces']['wan']['if'],0,4) == "pptp")) {
 					$oldif = explode(",", $ppp['ports']);

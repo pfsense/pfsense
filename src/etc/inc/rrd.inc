@@ -790,7 +790,7 @@ function enable_rrd_graphing() {
 
 		/* Captive Portal statistics, set up the rrd file */
 		if (is_array($config['captiveportal'])) {
-			foreach ($config['captiveportal'] as $cpkey => $cp) {
+			foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
 				if (!isset($cp['enable'])) {
 					continue;
 				}
@@ -923,7 +923,7 @@ function enable_rrd_graphing() {
 
 		/* Start dhcpd statistics */
 		if (is_array($config['dhcpd'])) {
-			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+			foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpifconf) {
 				if (empty($dhcpifconf)) {
 					continue;
 				}

@@ -44,7 +44,7 @@ if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
-	foreach ($config['wol']['wolentry'] as $wolent) {
+	foreach (config_get_path('wol/wolentry', []) as $wolent) {
 		array_push($validNames, get_wolent_key($wolent));
 	}
 
@@ -140,7 +140,7 @@ endif;
 <?php
 $dhcpd_enabled = false;
 if (is_array($config['dhcpd'])) {
-	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
+	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
 		if (empty($dhcp)) {
 			continue;
 		}

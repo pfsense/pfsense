@@ -200,7 +200,7 @@ function captiveportal_configure() {
 	global $config, $g, $cpzone, $cpzoneid;
 
 	if (is_array($config['captiveportal'])) {
-		foreach ($config['captiveportal'] as $cpzone) {
+		foreach (config_get_path('captiveportal', []) as $cpzone) {
 			if (isset($cpzone['preservedb'])) {
 				$keep_online_users = true;
 				break;
@@ -210,7 +210,7 @@ function captiveportal_configure() {
 			/* see https://redmine.pfsense.org/issues/12455 */
 			unlink_if_exists("{$g['vardb_path']}/captiveportal_online_users");
 		}
-		foreach ($config['captiveportal'] as $cpkey => $cp) {
+		foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
 			$cpzone = $cpkey;
 			$cpzoneid = $cp['zoneid'];
 			captiveportal_configure_zone($cp);
@@ -423,7 +423,7 @@ function captiveportal_init_webgui() {
 	global $config, $cpzone;
 
 	if (is_array($config['captiveportal'])) {
-		foreach ($config['captiveportal'] as $cpkey => $cp) {
+		foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
 			$cpzone = $cpkey;
 			captiveportal_init_webgui_zone($cp);
 		}
@@ -1401,7 +1401,7 @@ function captiveportal_opendb() {
 			captiveportal_syslog("Successfully reinitialized tables for {$cpzone} -- database has been reset.");
 			if (!is_numericint($cpzoneid)) {
 				if (is_array($config['captiveportal'])) {
-					foreach ($config['captiveportal'] as $cpkey => $cp) {
+					foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
 						if ($cpzone == $cpkey) {
 							$cpzoneid = $cp['zoneid'];
 						}
@@ -2564,7 +2564,7 @@ function filter_captiveportal_aliases() {
 	$aliasesnames = array();
 
 	init_config_arr(array('captiveportal'));
-	foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
 		if (isset($cpcfg['enable'])) {
 			$cpzoneprefix = CPPREFIX . $config['captiveportal'][$cpzone]['zoneid'];
 			$aliasesnames[] = $cpzoneprefix . '_cpips';
@@ -2584,7 +2584,7 @@ function filter_captiveportal_tables() {
 
 	$rules = '';
 	init_config_arr(array('captiveportal'));
-	foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
 		if (!isset($cpcfg['enable'])) {
 			continue;
 		}
@@ -2626,7 +2626,7 @@ function filter_captiveportal_ether() {
 
 	$rules = '';
 	init_config_arr(array('captiveportal'));
-	foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
 		if (!isset($cpcfg['enable'])) {
 			continue;
 		}
@@ -2658,7 +2658,7 @@ function filter_captiveportal_rdr() {
 	global $g, $config, $FilterIflist;
 
 	$rules = '';
-	foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
 		if (!isset($cpcfg['enable'])) {
 			continue;
 		}
@@ -2695,7 +2695,7 @@ function filter_captiveportal_pass() {
 	$captiveportal_increment = 'filter_captiveportal_tracker';
 
 	$rules = '';
-	foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
 		if (!isset($cpcfg['enable'])) {
 			continue;
 		}

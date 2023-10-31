@@ -405,7 +405,7 @@ function execPost($post, $postfiles, $ui = true) {
 									convert_config();
 								}
 								if (is_array($config['captiveportal'])) {
-									foreach ($config['captiveportal'] as $cp) {
+									foreach (config_get_path('captiveportal', []) as $cp) {
 										if (isset($cp['enable'])) {
 											/* for some reason ipfw doesn't init correctly except on bootup sequence */
 											mark_subsystem_dirty("restore");

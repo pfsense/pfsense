@@ -110,7 +110,7 @@ if ($_GET) {
 		$can_add = false;
 		$can_enable = false;
 		$dontshow = true;
-		foreach ($config['filter']['rule'] as $key => $rule) {
+		foreach (config_get_path('filter/rule', []) as $key => $rule) {
 			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
 				config_del_path("filter/rule/{$key}");
 			}

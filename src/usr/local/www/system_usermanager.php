@@ -134,7 +134,7 @@ if (($_POST['act'] == "deluser") && !$read_only) {
 
 	$nonPrvCas = array();
 	if (is_array($config['ca']) && count($config['ca']) > 0) {
-		foreach ($config['ca'] as $ca) {
+		foreach (config_get_path('ca', []) as $ca) {
 			if (!$ca['prv']) {
 				continue;
 			}
@@ -471,7 +471,7 @@ if ($_POST['save'] && !$read_only) {
 			}
 			$userent['uid'] = $config['system']['nextuid']++;
 			/* Add the user to All Users group. */
-			foreach ($config['system']['group'] as $gidx => $group) {
+			foreach (config_get_path('system/group', []) as $gidx => $group) {
 				if ($group['name'] == "all") {
 					if (!is_array($config['system']['group'][$gidx]['member'])) {
 						$config['system']['group'][$gidx]['member'] = array();
@@ -885,7 +885,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$usergid = [$pconfig['usernamefld']];
 
-	foreach ($config['system']['group'] as $Ggroup) {
+	foreach (config_get_path('system/group', []) as $Ggroup) {
 		if ($Ggroup['name'] != "all") {
 			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array($a_user[$id]['uid'], $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list

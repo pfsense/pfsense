@@ -39,7 +39,7 @@ function deleteSchedule($post, $json = false) {
 		$schedule_name = $a_schedules[$id]['name'];
 
 		if (is_array($config['filter']['rule'])) {
-			foreach ($config['filter']['rule'] as $rule) {
+			foreach (config_get_path('filter/rule', []) as $rule) {
 				//check for this later once this is established
 				if ($rule['sched'] == $schedule_name) {
 					$referenced_by = $rule['descr'];

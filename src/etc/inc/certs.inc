@@ -1263,7 +1263,7 @@ function ca_has_serial($caref, $serial) {
 	global $config;
 
 	/* Check certs first -- more likely to find a hit */
-	foreach ($config['cert'] as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if (($cert['caref'] == $caref) &&
 		    (cert_get_serial($cert['crt'], true) == $serial)) {
 			/* If this certificate is issued by the CA in question
@@ -1281,7 +1281,7 @@ function ca_has_serial($caref, $serial) {
 	}
 
 	/* Check other CAs for a match (intermediates signed by this CA) */
-	foreach ($config['ca'] as $ca) {
+	foreach (config_get_path('ca', []) as $ca) {
 		if (($ca['caref'] == $caref) &&
 		    (cert_get_serial($ca['crt'], true) == $serial)) {
 			/* If this CA is issued by the CA in question
@@ -1424,7 +1424,7 @@ function is_cert_revoked($cert, $crlref = "") {
 		}
 
 		/* Check every CRL in the configuration for a match */
-		foreach ($config['crl'] as $crl) {
+		foreach (config_get_path('crl', []) as $crl) {
 			if (!is_array($crl['cert'])) {
 				continue;
 			}

@@ -150,7 +150,7 @@ if ($_POST['save']) {
 	}
 
 	if (is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $if) {
+		foreach (config_get_path('interfaces', []) as $if) {
 			if (is_ipaddrv4($_POST['network']) &&
 			    isset($if['ipaddr']) && isset($if['subnet']) &&
 			    is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&

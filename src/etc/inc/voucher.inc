@@ -395,7 +395,7 @@ function voucher_configure() {
 	global $config, $g, $cpzone;
 
 	if (is_array($config['voucher'])) {
-		foreach ($config['voucher'] as $voucherzone => $vcfg) {
+		foreach (config_get_path('voucher', []) as $voucherzone => $vcfg) {
 			if (platform_booting()) {
 				echo gettext("Enabling voucher support... ");
 			}
@@ -570,7 +570,7 @@ function voucher_save_db_to_config() {
 	global $config, $g;
 
 	if (is_array($config['voucher'])) {
-		foreach ($config['voucher'] as $zone => $vcfg) {
+		foreach (config_get_path('voucher', []) as $zone => $vcfg) {
 			if (isset($config['voucher'][$zone]['enable']) && is_array($config['voucher'][$zone]['roll'])) {
 				foreach ($config['voucher'][$zone]['roll'] as $key => $rollent) {
 					// read_active_db will remove expired vouchers that are still active

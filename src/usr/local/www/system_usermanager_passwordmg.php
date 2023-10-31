@@ -72,7 +72,7 @@ phpsession_begin();
 
 /* determine if user is not local to system */
 $islocal = false;
-foreach ($config['system']['user'] as $user) {
+foreach (config_get_path('system/user', []) as $user) {
 	if ($user['name'] == $_SESSION['Username']) {
 		$islocal = true;
 	}

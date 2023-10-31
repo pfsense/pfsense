@@ -130,7 +130,7 @@ if ($_GET) {
 			header("Location: firewall_shaper_queues.php?queue=".$qname."&action=show");
 			exit;
 		case "show":
-			foreach ($config['interfaces'] as $if => $ifdesc) {
+			foreach (config_get_path('interfaces', []) as $if => $ifdesc) {
 				$altq = $altq_list_queues[$if];
 
 				if ($altq) {

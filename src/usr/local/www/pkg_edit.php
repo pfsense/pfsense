@@ -975,7 +975,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		case "vpn_selection" :
 			$vpnlist = array();
 
-			foreach ($config['ipsec']['phase1'] as $vpn) {
+			foreach (config_get_path('ipsec/phase1', []) as $vpn) {
 				$vpnlist[$vpn['descr']] = $vpn['descr'];
 
 			}
@@ -1177,7 +1177,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$ips = array();
 			$interface_regex=(isset($pkga['hideinterfaceregex']) ? $pkga['hideinterfaceregex'] : "nointerfacestohide");
 			if (is_array($config['interfaces'])) {
-				foreach ($config['interfaces'] as $iface_key=>$iface_value) {
+				foreach (config_get_path('interfaces', []) as $iface_key=>$iface_value) {
 					if (isset($iface_value['enable']) && !preg_match("/$interface_regex/", $iface_key)) {
 						$iface_description=($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
 						if (isset($pkga['showips'])) {
@@ -1188,8 +1188,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if (is_array($config['virtualip']) && isset($pkga['showvirtualips'])) {
-				foreach ($config['virtualip']['vip'] as $vip) {
+			if (isset($pkga['showvirtualips'])) {
+				foreach (config_get_path('virtualip/vip', []) as $vip) {
 					if (!preg_match("/$interface_regex/", $vip['interface'])) {
 						$vip_description=($vip['descr'] !="" ? " ({$vip['descr']}) " : " ");
 					}
@@ -1359,7 +1359,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$schedules = array();
 			$schedules[] = "none";
 			if (is_array($config['schedules']['schedule'])) {
-				foreach ($config['schedules']['schedule'] as $schedule) {
+				foreach (config_get_path('schedules/schedule', []) as $schedule) {
 					if ($schedule['name'] != "") {
 						$schedules[] = $schedule['name'];
 					}

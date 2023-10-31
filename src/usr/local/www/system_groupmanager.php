@@ -528,7 +528,7 @@ if ($pconfig['gid'] != 1998) {
 	$systemGroups = array();
 	$usersGroups = array();
 
-	foreach ($config['system']['user'] as $user) {
+	foreach (config_get_path('system/user', []) as $user) {
 		if (is_array($pconfig['members']) && in_array($user['uid'],
 		    $pconfig['members'])) {
 			/* Add it to the user's list */

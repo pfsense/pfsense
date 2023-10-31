@@ -41,7 +41,7 @@ $a_csc = &$config['openvpn']['openvpn-csc'];
 init_config_arr(array('openvpn', 'openvpn-server'));
 
 $serveroptionlist = array();
-foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+foreach (config_get_path('openvpn/openvpn-server', []) as $serversettings) {
 	if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
 		$serveroptionlist[$serversettings['vpnid']] = sprintf(gettext("OpenVPN Server %d: %s"), $serversettings['vpnid'], $serversettings['description']);
 	}

@@ -135,7 +135,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifhwinfo = $ifinfo['hwif'];
 	$vlan = interface_is_vlan($ifinfo['hwif']);
 	if ($vlan && is_array($config['switches']['switch'][0]['vlangroups']['vlangroup'])) {
-		foreach ($config['switches']['switch'][0]['vlangroups']['vlangroup'] as $vlangroup) {
+		foreach (config_get_path('switches/switch/0/vlangroups/vlangroup', []) as $vlangroup) {
 			if ($vlangroup['vlanid'] == $vlan['tag']) {
 				$ifhwinfo .= ', switchports: ' . $vlangroup['members'];
 				break;

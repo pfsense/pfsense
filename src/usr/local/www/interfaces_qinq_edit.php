@@ -207,7 +207,7 @@ if ($_POST['save']) {
 				config_set_path('ifgroups/ifgroupentry', array());
 			}
 			$gid = null;
-			foreach ($config['ifgroups']['ifgroupentry'] as $idx => $group) {
+			foreach (config_get_path('ifgroups/ifgroupentry', []) as $idx => $group) {
 				if ($group['ifname'] == "QinQ") {
 					$gid = $idx;
 					break;

@@ -256,7 +256,7 @@ foreach ($leases['lease'] as $data):
 	}
 
 	if ($data['act'] != $static_string) {
-		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+		foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpifconf) {
 			if (empty($dhcpifconf)) {
 				continue;
 			}

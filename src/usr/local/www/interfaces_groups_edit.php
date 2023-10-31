@@ -128,7 +128,7 @@ if ($_POST['save']) {
 		// Edit group name
 		if (isset($id) && $a_ifgroups[$id] && $_POST['ifname'] != $a_ifgroups[$id]['ifname']) {
 			if (!empty($config['filter']) && is_array($config['filter']['rule'])) {
-				foreach ($config['filter']['rule'] as $ridx => $rule) {
+				foreach (config_get_path('filter/rule', []) as $ridx => $rule) {
 					if (isset($rule['floating'])) {
 						$rule_ifs = explode(",", $rule['interface']);
 						$rule_changed = false;
@@ -149,7 +149,7 @@ if ($_POST['save']) {
 				}
 			}
 			if (!empty($config['nat']) && is_array($config['nat']['rule'])) {
-				foreach ($config['nat']['rule'] as $ridx => $rule) {
+				foreach (config_get_path('nat/rule', []) as $ridx => $rule) {
 					if ($rule['interface'] == $a_ifgroups[$id]['ifname']) {
 						$config['nat']['rule'][$ridx]['interface'] = $_POST['ifname'];
 					}

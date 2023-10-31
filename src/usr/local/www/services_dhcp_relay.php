@@ -75,7 +75,7 @@ $carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
  */
 $dhcpd_enabled = false;
 if (is_array($config['dhcpd'])) {
-	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
+	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
 		if (empty($dhcp)) {
 			continue;
 		}

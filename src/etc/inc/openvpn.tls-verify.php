@@ -73,7 +73,7 @@ if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 }
 
 preg_match('/\/var\/etc\/openvpn\/server(\d+)\/config\.ovpn/', $_GET['config'], $current_vpnid);
-foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 	if (($ovpns['vpnid'] == $current_vpnid['1']) && ($ovpns['ocspcheck'] == 'yes')) {
 		$capath = "/var/etc/openvpn/server{$ovpns['vpnid']}/ca/";
 		$ca = lookup_ca($ovpns['caref']);

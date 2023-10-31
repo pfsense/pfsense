@@ -647,7 +647,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 	$i = -1;
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
-		foreach ($config['gateways']['gateway_item'] as $gateway) {
+		foreach (config_get_path('gateways/gateway_item', []) as $gateway) {
 			if (!is_array($gateway) || empty($gateway)) {
 				continue;
 			}
@@ -1172,7 +1172,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		$gwg_members = array();
 		$viplist = get_configured_vip_list();
 		if (is_array($config['gateways']['gateway_group'])) {
-			foreach ($config['gateways']['gateway_group'] as $group) {
+			foreach (config_get_path('gateways/gateway_group', []) as $group) {
 				if ($group['name'] == $gwdefault) {
 					// finds the gw members of the best available tier for this group.
 					$gwg_members = get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $viplist);
@@ -1408,7 +1408,7 @@ function get_gwgroup_members($groupname) {
 	$gateways_status = return_gateways_status(true);
 	$gateways_arr = return_gateways_array();
 	$viplist = get_configured_vip_list();
-	foreach ($config['gateways']['gateway_group'] as $group) {
+	foreach (config_get_path('gateways/gateway_group', []) as $group) {
 		if ($group['name'] == $groupname) {
 			return get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $viplist);
 		}
@@ -1445,7 +1445,7 @@ function return_gateway_groups_array($fixup = false, $gways = false) {
 	init_config_arr(array('gateways', 'gateway_group'));
 	if (!empty($config['gateways']['gateway_group'])) {
 		$viplist = get_configured_vip_list();
-		foreach ($config['gateways']['gateway_group'] as $group) {
+		foreach (config_get_path('gateways/gateway_group', []) as $group) {
 			$gateway_groups_array[$group['name']] = get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $viplist);
 		}
 	}
@@ -1458,7 +1458,8 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 	global $config;
 
 	if (is_array($config['gateways']['gateway_item'])) {
-		foreach ($config['gateways']['gateway_item'] as & $gw) {
+		$gwlist = config_get_path('gateways/gateway_item', []);
+		foreach ($gwlist as & $gw) {
 			if ($gw['interface'] != $interface) {
 				continue;
 			}
@@ -1469,6 +1470,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 				$changed = true;
 			}
 		}
+		config_set_path('gateways/gateway_item', $gwlist);
 	}
 
 	if ($changed && $current_gw) {
@@ -1495,7 +1497,7 @@ function lookup_gateway_or_group_by_name($gwname, $gways = false) {
 	}
 
 	init_config_arr(array('gateways', 'gateway_group'));
-	foreach ($config['gateways']['gateway_group'] as $gwg) {
+	foreach (config_get_path('gateways/gateway_group', []) as $gwg) {
 		if ($gwg['name'] == $gwname) {
 			$gwg['type'] = 'gatewaygroup';
 			return $gwg;
@@ -1561,7 +1563,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	$gw = NULL;
 	$gwcfg = config_get_path("interfaces/{$interface}");
 	if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
-		foreach ($config['gateways']['gateway_item'] as $gateway) {
+		foreach (config_get_path('gateways/gateway_item', []) as $gateway) {
 			if (($gateway['name'] == $gwcfg['gateway']) && (is_ipaddrv4($gateway['gateway']))) {
 				$gw = $gateway['gateway'];
 				break;
@@ -1605,7 +1607,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 	$gw = NULL;
 	$gwcfg = config_get_path("interfaces/{$interface}");
 	if (!empty($gwcfg['gatewayv6']) && is_array($config['gateways']['gateway_item'])) {
-		foreach ($config['gateways']['gateway_item'] as $gateway) {
+		foreach (config_get_path('gateways/gateway_item', []) as $gateway) {
 			if (($gateway['name'] == $gwcfg['gatewayv6']) && (is_ipaddrv6($gateway['gateway']))) {
 				$gw = $gateway['gateway'];
 				break;
@@ -2250,11 +2252,11 @@ function save_gateway($gateway_settings, $realid = "", $json = false) {
 }
 
 function gateway_set_enabled($name, $enabled) {
-	global $config;
-	if (is_array($config['gateways']['gateway_item'])) {
-		foreach($config['gateways']['gateway_item'] as &$item) {
+	$gwlist = config_get_path('gateways/gateway_item', []);
+	if (is_array($gwlist)) {
+		foreach($gwlist as $key => $item) {
 			if ($item['name'] == $name) {
-				$gateway = &$item;
+				$gateway = &$gwlist[$key];
 			}
 		}
 	}
@@ -2281,19 +2283,21 @@ function gateway_set_enabled($name, $enabled) {
 			$gateway['disabled'] = true;
 		}
 	}
+	unset($gateway);
+	config_set_path('gateways/gateway_item', $gwlist);
 }
 
 function gateway_or_gwgroup_exists($name) {
 	global $config;
 	if (is_array($config['gateways']['gateway_item'])) {
-		foreach($config['gateways']['gateway_item'] as $item) {
+		foreach(config_get_path('gateways/gateway_item', []) as $item) {
 			if ($item['name'] == $name) {
 				return true;
 			}
 		}
 	}
 	if (is_array($config['gateways']['gateway_group'])) {
-		foreach($config['gateways']['gateway_group'] as $item) {
+		foreach(config_get_path('gateways/gateway_group', []) as $item) {
 			if ($item['name'] == $name) {
 				return true;
 			}
@@ -2359,7 +2363,7 @@ function get_gateway_or_group_by_name($gwname, $gateways_arr) {
 	}
 
 	init_config_arr(array('gateways', 'gateway_group'));
-	foreach ($config['gateways']['gateway_group'] as $gwg) {
+	foreach (config_get_path('gateways/gateway_group', []) as $gwg) {
 		if ($gwg['name'] == $gwname) {
 			$gwg['type'] = 'gatewaygroup';
 			return $gwg;

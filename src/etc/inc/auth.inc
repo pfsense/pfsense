@@ -314,11 +314,12 @@ function & getUserEntry($name) {
 function & getUserEntryByUID($uid) {
 	global $debug, $config;
 
-	if (is_array($config['system']['user'])) {
-		foreach ($config['system']['user'] as & $user) {
-			if ($user['uid'] == $uid) {
-				return $user;
-			}
+	if (!is_array(array_get_path($config, 'system/user'))) {
+		return false;
+	}
+	foreach ($config['system']['user'] as & $user) {
+		if ($user['uid'] == $uid) {
+			return $user;
 		}
 	}
 
@@ -335,11 +336,12 @@ function & getGroupEntry($name) {
 function & getGroupEntryByGID($gid) {
 	global $debug, $config;
 
-	if (is_array($config['system']['group'])) {
-		foreach ($config['system']['group'] as & $group) {
-			if ($group['gid'] == $gid) {
-				return $group;
-			}
+	if (!is_array(array_get_path($config, 'system/group'))) {
+		return false;
+	}
+	foreach ($config['system']['group'] as & $group) {
+		if ($group['gid'] == $gid) {
+			return $group;
 		}
 	}
 

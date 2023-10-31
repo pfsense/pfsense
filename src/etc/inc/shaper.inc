@@ -585,9 +585,8 @@ function shaper_do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input
 }
 
 function cleanup_queue_from_rules($queue) {
-	global $config;
-
-	foreach ($config['filter']['rule'] as & $rule) {
+	$rulelist = config_get_path('filter/rule', []);
+	foreach ($rulelist as & $rule) {
 		if ($rule['defaultqueue'] == $queue) {
 			unset($rule['defaultqueue']);
 			if (isset($rule['ackqueue'])) {
@@ -598,12 +597,12 @@ function cleanup_queue_from_rules($queue) {
 			unset($rule['ackqueue']);
 		}
 	}
+	config_set_path('filter/rule', $rulelist);
 }
 
 function cleanup_dnqueue_from_rules($queue) {
-	global $config;
-
-	foreach ($config['filter']['rule'] as & $rule) {
+	$rulelist = config_get_path('filter/rule', []);
+	foreach ($rulelist as & $rule) {
 		if ($rule['dnpipe'] == $queue) {
 			unset($rule['dnpipe']);
 		}
@@ -611,12 +610,12 @@ function cleanup_dnqueue_from_rules($queue) {
 			unset($rule['pdnpipe']);
 		}
 	}
+	config_set_path('filter/rule', $rulelist);
 }
 
 function rename_queue_in_rules($name, $newname) {
-	global $config;
-
-	foreach ($config['filter']['rule'] as & $rule) {
+	$rulelist = config_get_path('filter/rule', []);
+	foreach ($rulelist as & $rule) {
 		if ($rule['defaultqueue'] == $name) {
 			$rule['defaultqueue'] = $newname;
 		}
@@ -624,12 +623,12 @@ function rename_queue_in_rules($name, $newname) {
 			$rule['ackqueue'] = $newname;
 		}
 	}
+	config_set_path('filter/rule', $rulelist);
 }
 
 function rename_dnqueue_in_rules($name, $newname) {
-	global $config;
-
-	foreach ($config['filter']['rule'] as & $rule) {
+	$rulelist = config_get_path('filter/rule', []);
+	foreach ($rulelist as & $rule) {
 		if ($rule['dnpipe'] == $name) {
 			$rule['dnpipe'] = $newname;
 		}
@@ -637,6 +636,7 @@ function rename_dnqueue_in_rules($name, $newname) {
 			$rule['pdnpipe'] = $newname;
 		}
 	}
+	config_set_path('filter/rule', $rulelist);
 }
 
 class altq_root_queue {
@@ -4156,7 +4156,7 @@ class dnpipe_class extends dummynet_class {
 			foreach ($bandwidth as $bw) {
 				if ($bw['bwsched'] != "none") {
 					if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-						foreach ($config['schedules']['schedule'] as $schedule) {
+						foreach (config_get_path('schedules/schedule', []) as $schedule) {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
 									/* pipe throughputs must always be an integer, enforce that restriction again here. */
@@ -4285,7 +4285,7 @@ class dnpipe_class extends dummynet_class {
 		//build list of schedules
 		$schedules = "<option value='none'>none</option>";
 		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach ($config['schedules']['schedule'] as $schedule) {
+			foreach (config_get_path('schedules/schedule', []) as $schedule) {
 				if ($schedule['name'] <> "") {
 					$schedules .= "<option value='{$schedule['name']}'>{$schedule['name']}</option>";
 				}
@@ -4348,7 +4348,7 @@ EOD;
 		$schedules = array();
 		$schedules[] = "none";//leave none to leave rule enabled all the time
 		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach ($config['schedules']['schedule'] as $schedule) {
+			foreach (config_get_path('schedules/schedule', []) as $schedule) {
 				if ($schedule['name'] != "") {
 					$schedules[] = $schedule['name'];
 				}
@@ -4429,7 +4429,7 @@ EOD;
 		$schedules = array();
 		$schedules[] = "none";//leave none to leave rule enabled all the time
 		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach ($config['schedules']['schedule'] as $schedule) {
+			foreach (config_get_path('schedules/schedule', []) as $schedule) {
 				if ($schedule['name'] <> "") {
 					$schedules[] = $schedule['name'];
 				}
@@ -5000,7 +5000,7 @@ class dnqueue_class extends dummynet_class {
 		$schedules = array();
 		$schedules[] = "none";//leave none to leave rule enabled all the time
 		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach ($config['schedules']['schedule'] as $schedule) {
+			foreach (config_get_path('schedules/schedule', []) as $schedule) {
 				if ($schedule['name'] <> "") {
 					$schedules[] = $schedule['name'];
 				}
@@ -5616,7 +5616,7 @@ function interface_has_queue($if) {
 	global $config;
 
 	if ($config['shaper']) {
-		foreach ($config['shaper']['queue'] as $queue) {
+		foreach (config_get_path('shaper/queue', []) as $queue) {
 			if ($queue['interface'] === $if) {
 				return true;
 			}

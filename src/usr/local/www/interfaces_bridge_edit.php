@@ -186,7 +186,7 @@ if ($_POST['save']) {
 
 	if (is_array($_POST['members']) && is_array($config['captiveportal'])) {
 		foreach ($_POST['members'] as $member) {
-			foreach ($config['captiveportal'] as $cp) {
+			foreach (config_get_path('captiveportal', []) as $cp) {
 				if (isset($cp['enable']) && in_array($member, explode(',', $cp['interface']))) {
 					$input_errors[] = sprintf(gettext('The interface (%s) is part of ' .
 						'the Captive Portal and cannot be part of the bridge. ' .

@@ -438,7 +438,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST
 	if (is_array($config['filter']['rule'])) {
 		filter_rules_sort();
 
-		foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
+		foreach (config_get_path('filter/rule', []) as $filter_id => $filter_rule) {
 			if (isset($filter_rule['associated-rule-id'])) {
 				$rulelist[$filter_rule['associated-rule-id']] = sprintf(gettext('Rule %s'), $filter_rule['descr']);
 

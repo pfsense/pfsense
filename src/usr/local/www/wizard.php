@@ -681,7 +681,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					config_set_path('ca', array());
 				}
 
-				foreach ($config['ca'] as $ca) {
+				foreach (config_get_path('ca', []) as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
 					if ($value == $caname) {
@@ -734,7 +734,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					config_set_path('cert', array());
 				}
 
-				foreach ($config['cert'] as $ca) {
+				foreach (config_get_path('cert', []) as $ca) {
 					if (stristr($ca['descr'], "webconf")) {
 						continue;
 					}

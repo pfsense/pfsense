@@ -44,7 +44,7 @@ if ($_POST['apply']) {
 				continue;
 			}
 			if (is_array($config['pppoes']['pppoe'])) {
-				foreach ($config['pppoes']['pppoe'] as $pppoe) {
+				foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
 					if ($pppoe['pppoeid'] == $pppoeid) {
 						vpn_pppoe_configure($pppoe);
 						break;

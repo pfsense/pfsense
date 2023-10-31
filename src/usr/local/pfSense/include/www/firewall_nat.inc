@@ -842,7 +842,7 @@ function MVC_create_interface_list() {
 
 	// add group interfaces
 	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
 			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 		}
 	}

@@ -100,7 +100,7 @@ $lagghashhelp =
 $realifchecklist = array();
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
+	foreach (config_get_path('laggs/lagg', []) as $lagg) {
 		unset($portlist[$lagg['laggif']]);
 		$laggiflist = explode(",", $lagg['members']);
 		foreach ($laggiflist as $tmpif) {

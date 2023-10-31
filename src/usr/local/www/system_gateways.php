@@ -94,7 +94,7 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 	}
 
 	if (is_array($config['gateways']['gateway_group'])) {
-		foreach ($config['gateways']['gateway_group'] as $group) {
+		foreach (config_get_path('gateways/gateway_group', []) as $group) {
 			foreach ($group['item'] as $item) {
 				$items = explode("|", $item);
 				if ($items[0] == $a_gateways[$id]['name']) {
@@ -125,7 +125,7 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 	 * see https://redmine.pfsense.org/issues/8390 */
 	$dnsgw_counter = 1;
 	init_config_arr(array('system', 'dnsserver'));
-	foreach ($config['system']['dnsserver'] as $dnsserver) {
+	foreach (config_get_path('system/dnsserver', []) as $dnsserver) {
 		if (isset($config["system"]["dns{$dnsgw_counter}gw"]) &&
 		    ($a_gateways[$id]['name'] == $config["system"]["dns{$dnsgw_counter}gw"])) {
 				if (!$disable) {

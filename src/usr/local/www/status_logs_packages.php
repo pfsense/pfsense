@@ -94,16 +94,14 @@ $i = 0;
 $pkgwithlogging = false;
 $apkg = $_REQUEST['pkg'];
 if (!$apkg) { // If we aren't looking for a specific package, locate the first package that handles logging.
-	if (isset($config['installedpackages']['package'])) {
-		foreach ($config['installedpackages']['package'] as $package) {
-			if (isset($package['logging']['logfilename']) && $package['logging']['logfilename'] != '') {
-				$pkgwithlogging = true;
-				$apkg = $package['name'];
-				$apkgid = $i;
-				break;
-			}
-			$i++;
+	foreach (config_get_path('installedpackages/package', []) as $package) {
+		if (isset($package['logging']['logfilename']) && $package['logging']['logfilename'] != '') {
+			$pkgwithlogging = true;
+			$apkg = $package['name'];
+			$apkgid = $i;
+			break;
 		}
+		$i++;
 	}
 } elseif ($apkg) {
 	$apkgid = get_package_id($apkg);
@@ -149,7 +147,7 @@ if ($pkgwithlogging == false) {
 	print_info_box(gettext("No packages with logging facilities are currently installed."));
 } else {
 	$tab_array = array();
-	foreach ($config['installedpackages']['package'] as $package) {
+	foreach (config_get_path('installedpackages/package', []) as $package) {
 		if (is_array($package['logging'])) {
 			if (!($logtab = $package['logging']['logtab'])) {
 				$logtab = $package['name'];

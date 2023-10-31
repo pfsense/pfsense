@@ -188,7 +188,7 @@ if (count($pools) > 0) {
 	asort($pools);
 }
 
-foreach ($config['interfaces'] as $ifname => $ifarr) {
+foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
 	if (is_array($config['dhcpdv6'][$ifname]) &&
 	    is_array($config['dhcpdv6'][$ifname]['staticmap'])) {
 		foreach ($config['dhcpdv6'][$ifname]['staticmap'] as $static) {
@@ -473,7 +473,7 @@ foreach ($prefixes as $data):
 	}
 
 	if ($data['act'] == $static_string) {
-		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
+		foreach (config_get_path('dhcpdv6', []) as $dhcpif => $dhcpifconf) {
 			if (empty($dhcpifconf)) {
 				continue;
 			}

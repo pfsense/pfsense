@@ -287,7 +287,7 @@ function getAllowedPages($username, &$attributes = array()) {
 
 	// build a list of allowed pages
 	if (is_array($config['system']['group']) && is_array($allowed_groups)) {
-		foreach ($config['system']['group'] as $group) {
+		foreach (config_get_path('system/group', []) as $group) {
 			if (in_array($group['name'], $allowed_groups)) {
 				getPrivPages($group, $allowed_pages);
 			}

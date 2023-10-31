@@ -44,7 +44,7 @@ if (empty($config['ipsec']['phase2']) ||
 $initiate = array();
 
 /* Check all P2s for keepalive setting */
-foreach ($config['ipsec']['phase2'] as $p2) {
+foreach (config_get_path('ipsec/phase2', []) as $p2) {
 	/* If enabled, form conid and store in list */
 	if ($p2['keepalive'] == 'enabled') {
 		$initiate[] = ipsec_conid(null, $p2);

@@ -70,7 +70,7 @@ $friendlyifnames = convert_real_interface_to_friendly_interface_name_fast();
 
 /* add wireless clone interfaces */
 if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
-	foreach ($config['wireless']['clone'] as $clone) {
+	foreach (config_get_path('wireless/clone', []) as $clone) {
 		$portlist[$clone['cloneif']] = $clone;
 		$portlist[$clone['cloneif']]['iswlclone'] = true;
 	}
@@ -79,7 +79,7 @@ if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone']
 /* add VLAN interfaces */
 if (isset($config['vlans']['vlan']) && is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	//$timea = microtime(true);
-	foreach ($config['vlans']['vlan'] as $vlan) {
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		$portlist[$vlan['vlanif']] = $vlan;
 		$portlist[$vlan['vlanif']]['isvlan'] = true;
 	}
@@ -87,7 +87,7 @@ if (isset($config['vlans']['vlan']) && is_array($config['vlans']['vlan']) && cou
 
 /* add Bridge interfaces */
 if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
-	foreach ($config['bridges']['bridged'] as $bridge) {
+	foreach (config_get_path('bridges/bridged', []) as $bridge) {
 		$portlist[$bridge['bridgeif']] = $bridge;
 		$portlist[$bridge['bridgeif']]['isbridge'] = true;
 	}
@@ -95,7 +95,7 @@ if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged
 
 /* add GIF interfaces */
 if (isset($config['gifs']['gif']) && is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
-	foreach ($config['gifs']['gif'] as $gif) {
+	foreach (config_get_path('gifs/gif', []) as $gif) {
 		$portlist[$gif['gifif']] = $gif;
 		$portlist[$gif['gifif']]['isgif'] = true;
 	}
@@ -103,7 +103,7 @@ if (isset($config['gifs']['gif']) && is_array($config['gifs']['gif']) && count($
 
 /* add GRE interfaces */
 if (isset($config['gres']['gre']) && is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
-	foreach ($config['gres']['gre'] as $gre) {
+	foreach (config_get_path('gres/gre', []) as $gre) {
 		$portlist[$gre['greif']] = $gre;
 		$portlist[$gre['greif']]['isgre'] = true;
 	}
@@ -111,7 +111,7 @@ if (isset($config['gres']['gre']) && is_array($config['gres']['gre']) && count($
 
 /* add LAGG interfaces */
 if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
+	foreach (config_get_path('laggs/lagg', []) as $lagg) {
 		$portlist[$lagg['laggif']] = $lagg;
 		$portlist[$lagg['laggif']]['islagg'] = true;
 		/* LAGG members cannot be assigned */
@@ -126,7 +126,7 @@ if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg']) && cou
 
 /* add QinQ interfaces */
 if (isset($config['qinqs']['qinqentry']) && is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
-	foreach ($config['qinqs']['qinqentry'] as $qinq) {
+	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
 		$portlist["{$qinq['vlanif']}"]['descr'] = "VLAN {$qinq['tag']} on {$qinq['if']}";
 		$portlist["{$qinq['vlanif']}"]['isqinq'] = true;
 		/* QinQ members */
@@ -140,7 +140,7 @@ if (isset($config['qinqs']['qinqentry']) && is_array($config['qinqs']['qinqentry
 
 /* add PPP interfaces */
 if (isset($config['ppps']['ppp']) && is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-	foreach ($config['ppps']['ppp'] as $ppp) {
+	foreach (config_get_path('ppps/ppp', []) as $ppp) {
 		$portname = $ppp['if'];
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
@@ -158,14 +158,14 @@ if (isset($config['ppps']['ppp']) && is_array($config['ppps']['ppp']) && count($
 $ovpn_descrs = array();
 if (isset($config['openvpn']) && is_array($config['openvpn'])) {
 	if (isset($config['openvpn']['openvpn-server']) && is_array($config['openvpn']['openvpn-server'])) {
-		foreach ($config['openvpn']['openvpn-server'] as $s) {
+		foreach (config_get_path('openvpn/openvpn-server', []) as $s) {
 			$portname = "ovpns{$s['vpnid']}";
 			$portlist[$portname] = $s;
 			$ovpn_descrs[$s['vpnid']] = $s['description'];
 		}
 	}
 	if (isset($config['openvpn']['openvpn-client']) && is_array($config['openvpn']['openvpn-client'])) {
-		foreach ($config['openvpn']['openvpn-client'] as $c) {
+		foreach (config_get_path('openvpn/openvpn-client', []) as $c) {
 			$portname = "ovpnc{$c['vpnid']}";
 			$portlist[$portname] = $c;
 			$ovpn_descrs[$c['vpnid']] = $c['description'];
@@ -185,7 +185,7 @@ $ifdescrs = interface_assign_description_fast($portlist,$friendlyifnames);
 if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	/* Be sure this port is not being used */
 	$portused = false;
-	foreach ($config['interfaces'] as $ifdata) {
+	foreach (config_get_path('interfaces', []) as $ifdata) {
 		if ($ifdata['if'] == $_REQUEST['if_add']) {
 			$portused = true;
 			break;
@@ -278,7 +278,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			$input_errors[] = $errstr;
 		} else if (count($ifnames) == 1 && preg_match('/^bridge[0-9]/', $portname) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
-			foreach ($config['bridges']['bridged'] as $bridge) {
+			foreach (config_get_path('bridges/bridged', []) as $bridge) {
 				if ($bridge['bridgeif'] != $portname) {
 					continue;
 				}
@@ -407,7 +407,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			init_config_arr(['filter', 'rule']);
 
-			foreach ($config['filter']['rule'] as $x => $rule) {
+			foreach (config_get_path('filter/rule', []) as $x => $rule) {
 				if ($rule['interface'] == $id) {
 					config_del_path("filter/rule/{$x}");
 				}
@@ -415,7 +415,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			init_config_arr(['nat', 'rule']);
 		
-			foreach ($config['nat']['rule'] as $x => $rule) {
+			foreach (config_get_path('nat/rule', []) as $x => $rule) {
 				if ($rule['interface'] == $id) {
 					config_del_path("nat/rule/{$x}/interface");
 				}
@@ -524,7 +524,7 @@ foreach ($portlist as $portname => $portinfo) {
 	<tbody>
 <?php
 	$i=0;
-	foreach ($config['interfaces'] as $ifname => $iface):
+	foreach (config_get_path('interfaces', []) as $ifname => $iface):
 		if ($iface['descr']) {
 			$ifdescr = $iface['descr'];
 		} else {

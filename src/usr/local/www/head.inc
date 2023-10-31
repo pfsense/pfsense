@@ -159,7 +159,7 @@ function return_ext_menu($section) {
 	$ext_menu_entries = array();
 
 	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
-		foreach ($config['installedpackages']['menu'] as $menu) {
+		foreach (config_get_path('installedpackages/menu', []) as $menu) {
 			if (isset($menu['name']) && ($menu['name'] != "AutoConfigBackup")) { // AutoConfigBackup was moved to a built-in function
 	//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
 				if (isset($menu['section']) && ($menu['section'] == $section)) {
@@ -724,7 +724,7 @@ if (!empty($warning_text)) {
 
 /*	If this page is being remotely managed then do not allow the loading of the contents. */
 if ($config['remote_managed_pages']['item']) {
-	foreach ($config['remote_managed_pages']['item'] as $rmp) {
+	foreach (config_get_path('remote_managed_pages/item', []) as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
 			print_info_box(gettext("This page is currently being managed by a remote machine."));
 			include("foot.inc");

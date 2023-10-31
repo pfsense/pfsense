@@ -45,6 +45,7 @@ init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
 $nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_IFNET, SPECIALNET_GROUP];
+$nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
 
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
@@ -170,7 +171,7 @@ print($form);
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-			$specialnet = get_specialnet();
+			$specialnet = get_specialnet('', $nat_tgttype_flags);
 			foreach ($a_out as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";

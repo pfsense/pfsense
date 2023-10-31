@@ -4082,12 +4082,13 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
 	}
 }
 
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0, $addmask = false) {
+// does not support specialnet VIPs
+function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0, $addmask = false, $specialnet_flags = []) {
 	$adr = array();
 
 	if ($padr == "any") {
 		$adr['any'] = true;
-	} else if (get_specialnet($padr)) {
+	} else if (get_specialnet($padr, $specialnet_flags)) {
 		if ($addmask) {
 			$padr .= "/" . $pmask;
 		}

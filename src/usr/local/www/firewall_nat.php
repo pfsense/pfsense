@@ -42,6 +42,7 @@ require_once("firewall_nat.inc");
 
 init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
+$rdr_lcltype_flags = [SPECIALNET_IFADDR];
 $rdr_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET];
 $rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
 
@@ -161,7 +162,7 @@ foreach ($a_nat as $natent):
 		$trclass = '';
 	}
 
-	$specialnets = get_specialnet();
+	$specialnets = get_specialnet('', $rdr_lcltype_flags);
 	if (array_key_exists($natent['target'], $specialnets)) {
 		$natent['target'] = $specialnets[$natent['target']];
 	}

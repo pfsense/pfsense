@@ -39,6 +39,9 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat.inc");
 
+$rdr_srctype_flags = [SPECIALNET_CHECKPERM, SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET];
+$rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
+
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat.php');
 
 $ifdisp = get_configured_interface_with_descr();
@@ -138,12 +141,14 @@ function dsttype_selected() {
 function localtype_selected() {
 	global $pconfig;
 
+	$rdr_lcltype_flags = [SPECIALNET_IFADDR];
+
 	if ($pconfig['localtype']) {
 		// The rule type came from the $_POST array, after input errors, so keep it.
 		return $pconfig['localtype'];
 	}
 
-	$sel = get_specialnet($pconfig['localip']);
+	$sel = get_specialnet($pconfig['localip'], $rdr_lcltype_flags);
 
 	if (!$sel) {
 		return('single');
@@ -236,7 +241,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'src',
 	null,
-	get_specialnet($pconfig['src']) ? '': $pconfig['src'],
+	get_specialnet($pconfig['src'], $rdr_srctype_flags) ? '': $pconfig['src'],
 	'ALIASV4V6'
 ))->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
 
@@ -304,7 +309,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'dst',
 	null,
-	get_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
+	get_specialnet($pconfig['dst'], $rdr_dsttype_flags) ? '': $pconfig['dst'],
 	'ALIASV4V6'
 ))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 

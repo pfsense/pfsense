@@ -2139,7 +2139,7 @@ events.push(function() {
 	}
 
 	function wins_server_change() {
-		var hide  = ! $('#wins_server_enable').prop('checked')
+		var hide  = (! $('#wins_server_enable').prop('checked') || ! $('#netbios_enable').prop('checked'))
 
 		hideInput('wins_server1', hide);
 		hideInput('wins_server2', hide);

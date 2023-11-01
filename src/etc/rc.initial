@@ -29,21 +29,6 @@ trap : INT
 trap : QUIT
 trap : ILL
 
-unset do_sleep
-if [ -f /etc/rc.local ]; then
-	if ! /bin/pgrep -qf 'rc.local$'; then
-		echo ">>> Launching rc.local in background..."
-		/bin/sh /etc/rc.local &
-		do_sleep=1
-	fi
-	if [ -f /etc/rc.local.running ] &&
-	! /bin/pgrep -qf 'rc.local.running$'; then
-		[ -n "${do_sleep}" ] && sleep 1
-		echo ">>> Launching rc.local.running in background..."
-		/bin/sh /etc/rc.local.running &
-	fi
-fi
-
 # Parse command line parameters
 while [ $# -gt 0 ]; do
 	case $1 in

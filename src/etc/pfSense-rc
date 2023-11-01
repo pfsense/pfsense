@@ -576,4 +576,20 @@ echo "Bootup complete" | /usr/bin/logger
 # Reset the cache.  read-only requires this.
 /bin/rm -f /tmp/config.cache
 
+# Run /etc/rc.local
+if [ -f /etc/rc.local ]; then
+	unset do_sleep
+	if ! /bin/pgrep -qf 'rc.local$'; then
+		echo ">>> Launching rc.local in background..."
+		/bin/sh /etc/rc.local &
+		do_sleep=1
+	fi
+	if [ -f /etc/rc.local.running ] &&
+	! /bin/pgrep -qf 'rc.local.running$'; then
+		[ -n "${do_sleep}" ] && sleep 1
+		echo ">>> Launching rc.local.running in background..."
+		/bin/sh /etc/rc.local.running &
+	fi
+fi
+
 exit 0

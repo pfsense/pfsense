@@ -777,11 +777,11 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 
 	if ($settings['netbios_enable']) {
 
-		if (!empty($settings['dhcp_nbttype']) && ($settings['dhcp_nbttype'] != 0)) {
-			$conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
+		if (!empty($settings['netbios_ntype']) && ($settings['netbios_ntype'] != 0)) {
+			$conf .= "push \"dhcp-option NBT {$settings['netbios_ntype']}\"\n";
 		}
-		if (!empty($settings['dhcp_nbtscope'])) {
-			$conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
+		if (!empty($settings['netbios_scope'])) {
+			$conf .= "push \"dhcp-option NBS {$settings['netbios_scope']}\"\n";
 		}
 
 		if (!empty($settings['wins_server1'])) {

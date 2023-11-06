@@ -134,7 +134,10 @@ if (($act == "edit") || ($act == "dup")) {
 		}
 
 		$pconfig['nbdd_server1'] = $a_csc[$id]['nbdd_server1'];
-		if ($pconfig['nbdd_server1']) {
+		$pconfig['nbdd_server2'] = $a_csc[$id]['nbdd_server2'];
+
+		if ($pconfig['nbdd_server1'] ||
+			$pconfig['nbdd_server2']) {
 			$pconfig['nbdd_server_enable'] = true;
 		}
 	}
@@ -239,6 +242,9 @@ if ($_POST['save']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
+			if (!empty($pconfig['nbdd_server2']) && !is_ipaddr(trim($pconfig['nbdd_server2']))) {
+				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #2' must contain a valid IP address");
+			}
 		}
 
 		if (!empty($pconfig['netbios_ntype']) &&
@@ -304,8 +310,9 @@ if ($_POST['save']) {
 				$csc['wins_server2'] = $pconfig['wins_server2'];
 			}
 
-			if ($pconfig['dns_server_enable']) {
+			if ($pconfig['nbdd_server_enable']) {
 				$csc['nbdd_server1'] = $pconfig['nbdd_server1'];
+				$csc['nbdd_server2'] = $pconfig['nbdd_server2'];
 			}
 		}
 
@@ -635,6 +642,33 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
+	$section->addInput(new Form_Checkbox(
+		'nbdd_server_enable',
+		'NBDD servers',
+		'Provide a NetBIOS over TCP/IP Datagram Distribution Servers list to clients',
+		$pconfig['nbdd_server_enable']
+	));
+
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Input(
+		'nbdd_server1',
+		null,
+		'text',
+		$pconfig['nbdd_server1']
+	))->setHelp('Server 1');
+
+	$group->add(new Form_Input(
+		'nbdd_server2',
+		null,
+		'text',
+		$pconfig['nbdd_server2']
+	))->setHelp('Server 2');
+
+	$group->addClass('nbddservers');
+
+	$section->add($group);
+
 	$custops = new Form_Textarea(
 		'custom_options',
 		'Advanced',
@@ -703,16 +737,24 @@ events.push(function() {
 			hideInput('netbios_scope', false);
 			hideCheckbox('wins_server_enable', false);
 			setWins();
+			hideCheckbox('nbdd_server_enable', false);
+			setNbdds();
 		} else {
 			hideInput('netbios_ntype', true);
 			hideInput('netbios_scope', true);
 			hideCheckbox('wins_server_enable', true);
 			hideClass('winsservers', true);
+			hideCheckbox('nbdd_server_enable', true);
+			hideClass('nbddservers', true);
 		}
 	}
 
 	function setWins() {
 		hideClass('winsservers', ! $('#wins_server_enable').prop('checked'));
+	}
+
+	function setNbdds() {
+		hideClass('nbddservers', ! $('#nbdd_server_enable').prop('checked'));
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
@@ -740,6 +782,11 @@ events.push(function() {
 	// On clicking the wins_server_enable checkbox
 	$('#wins_server_enable').click(function () {
 		setWins();
+	});
+
+	// On clicking the nbdd_server_enable checkbox
+	$('#nbdd_server_enable').click(function () {
+		setNbdds();
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------

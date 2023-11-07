@@ -383,11 +383,12 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Hetzner DNS Console, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Cloudflare, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
 				'GleSYS: Enter the record ID.%1$s' .
+				'Hetzner DNS Console: Enter @ in the fully qualified domain name format, to indicate an empty field.%1$s' .
 				'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
 					The domain name is the domain or subdomain zone being handled by the provider.', '<br />');

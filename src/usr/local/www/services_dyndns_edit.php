@@ -383,7 +383,7 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Cloudflare, Hetzner DNS Console, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
@@ -476,6 +476,7 @@ $section->addPassword(new Form_Input(
 			'Gandi LiveDNS: Enter API token%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
+			'Hetzner DNS Console: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
 			'Porkbun: Enter the API secret.%1$s' .

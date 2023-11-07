@@ -629,6 +629,7 @@
 					$zonesUrl = "$server/zones";
 					curl_setopt($ch, CURLOPT_URL, $zonesUrl);
 					$output = json_decode(curl_exec($ch));
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					$zoneId = null; // Set default value
 
 					if (!empty($output->zones)) {
@@ -650,7 +651,8 @@
 						$dnsRecordsUrl = "$server/records?zone_id=$zoneId";
 						curl_setopt($ch, CURLOPT_URL, $dnsRecordsUrl);
 						$output = json_decode(curl_exec($ch));
-						$recordId = null;
+						$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+						$recordId = null; // Set default value
 			
 						if (!empty($output->records)) {
 							// Iterate zone objects, check if $hostName exist of the same type
@@ -2697,7 +2699,6 @@
 					break;
 				case 'hetzner':
 				case 'hetzner-v6':
-					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					$output = json_decode($data);
 					if ($output->record->value === $this->_dnsIP) {
 						$status = "Dynamic DNS: (Success) {$this->_dnsHost} updated to {$this->_dnsIP}";

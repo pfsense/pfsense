@@ -102,6 +102,8 @@ if ($_POST['save'] || $_POST['force']) {
 		"godaddy" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"godaddy-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"googledomains" => array("apex" => false, "wildcard" => true, "username_none" => false),
+		"hetzner" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"hetzner-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"linode" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"linode-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
@@ -167,6 +169,23 @@ if ($_POST['save'] || $_POST['force']) {
 				$host_to_check = $_POST['domainname'];
 			} else {
 				$host_to_check = $_POST['host'] . '.' . $_POST['domainname'];
+			}
+		} elseif (($pconfig['type'] == "hetzner") || ($pconfig['type'] == "hetzner-v6")) {
+			/* Hetzner allows hostnames with '@' and '*', but not at the same time */
+			$host_to_check = $_POST['host'];
+			
+			if (!strpos($host_to_check, '@') !== false && !strpos($host_to_check, '*') !== false) {
+				
+				if (strrpos($host_to_check, '@') !== false) {
+					$last_to_check = strrpos($host_to_check, '@');
+				} else {
+					$last_to_check = strrpos($host_to_check, '*');
+				}
+				
+				if ($last_to_check !== false) {
+					$host_to_check = substr_replace($host_to_check, '0', $last_to_check, 1);
+				}
+				unset($last_to_check);
 			}
 		} else {
 			$host_to_check = $_POST['host'];
@@ -632,6 +651,13 @@ events.push(function() {
 				break;
 			case "godaddy":
 			case "godaddy-v6":
+			case "hetzner":
+			case "hetzner-v6":
+				hideInput('username', true);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideInput('ttl', false);
+				break;			
 			case "linode":
 			case "linode-v6":
 			case "name.com":

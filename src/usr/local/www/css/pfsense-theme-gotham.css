@@ -1,0 +1,742 @@
+@import url("/css/pfSense.css");
+
+:root {
+    --blue: #0C4B62;
+    --indigo: #102331;
+    --purple: #9788a5;
+    --red: #937982;
+    --orange: #CF683C;
+    --yellow: #CF683C;
+    --green: #26A98B;
+    --teal: #D9F7EF;
+    --cyan: #5A98A3;
+    --white: #D9F7EF;
+    --gray: #25515C;
+    --gray-dark: #091F2C;
+    --primary: #0C4B62;
+    --secondary: #0d3044;
+    --success: #26A98B;
+    --info: #0C4B62;
+    --warning: #C79341;
+    --warning-dark: #966f30;
+    --danger: #937982;
+    --danger-dark: #934751;
+    --light: #D9F7EF;
+    --dark: #10151B;
+    --font-family-sans-serif: Roboto-Regular;
+}
+
+pre {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 12px;
+    line-height: 1.42857143;
+    color: var(--teal);
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: var(--indigo);
+    border: 1px solid var(--cyan);
+    border-radius: 4px;
+}
+
+/* pfSense logo */
+.logo-st0 {
+    fill: var(--cyan);
+}
+
+.logo-st1 {
+    fill: var(--gray);
+}
+
+.logo-st2 {
+    fill: var(--cyan);
+}
+
+body {
+    background-color: var(--dark);
+    color: var(--teal);
+    font-family: Roboto-Regular, sans-serif;
+    font-style: normal;
+}
+
+.text-danger {
+    color: var(--danger-dark);
+}
+
+.text-success {
+    color: var(--success);
+}
+
+body.no-menu {
+    background-color: var(--gray);
+}
+
+a {
+    color: var(--cyan);
+}
+
+a:hover {
+    color: var(--teal);
+    text-decoration: none;
+}
+
+h1 a:any-link,
+h1 a:visited {
+    color: var(--blue);
+}
+
+h1 a:hover,
+h1 a:active {
+    color: var(--teal);
+    text-decoration: none !important;
+}
+
+/** Content structure */
+.contains-table table {
+    border: 1px solid var(--teal);
+}
+
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > thead > tr > th {
+    border-color: var(--dark);
+}
+
+.table-hover > tbody > tr:hover,
+.table-striped > tbody > tr:nth-of-type(odd):hover {
+    background-color: var(--gray);
+}
+
+.table-striped > tbody > tr:nth-of-type(even):hover {
+    background-color: var(--gray);
+}
+
+table.sortable-theme-bootstrap {
+    color: var(--yellow) !important;
+    background-color: var(--gray) !important;
+}
+
+.table > tbody + tbody {
+    border-top: 1px solid var(--gray);
+}
+
+.dropdown-menu {
+    background-color: var(--dark);
+    opacity: .93;
+    border-radius: 10px;
+}
+
+.dropdown-menu > li > a {
+    color: var(--cyan);
+}
+
+.dropdown-menu > li > a:focus,
+.dropdown-menu > li > a:hover {
+    background-color: var(--blue);
+    color: var(--teal);
+}
+
+/** Page header with title and breadcrumb */
+.header {
+    color: var(--cyan);
+    background-color: var(--indigo);
+}
+
+.breadcrumb {
+    color: var(--cyan);
+    background-color: var(--indigo);
+    margin: 1px;
+    line-height: 100%;
+}
+
+.breadcrumb > li + li:before {
+    color: var(--secondary);
+}
+
+ul.context-links li a {
+    color: var(--teal);
+}
+
+/* navigation */
+.navbar-inverse {
+    background-color: var(--gray-dark);
+}
+
+.nav > li > a {
+    border-bottom: 3px solid var(--dark);
+    color: var(--teal);
+}
+
+.nav > li > a:focus,
+.nav > li > a:hover {
+    color: var(--teal);
+    background-color: var(--dark);
+    border-bottom: 3px solid var(--teal);
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav li.open > a,
+.nav li.open > a:focus,
+.nav-pills > li.active > a:hover {
+    background-color: var(--dark);
+    border-bottom: 3px solid var(--teal);
+    color: var(--teal);
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    border-bottom: 3px solid var(--dark);
+}
+
+.nav-tabs > li > a {
+    border-bottom: 3px solid var(--dark);
+}
+
+.nav-tabs {
+    border-bottom: 1px solid var(--teal);
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li > a:hover {
+    border-left: 1px solid var(--dark);
+    border-right: 1px solid var(--dark);
+    border-top: 1px solid var(--dark);
+    border-bottom: 3px solid var(--teal);
+    background-color: var(--indigo);
+    color: var(--teal);
+}
+
+/* end navigation */
+/* start common colors */
+.alert-danger {
+    color: var(--danger-dark);
+    background-color: var(--dark);
+}
+
+.alert-warning {
+    color: var(--warning);
+    background-color: var(--dark);
+}
+
+.alert-success {
+    color: var(--teal);
+    background-color: var(--success);
+}
+
+.alert-info {
+    color: var(--teal);
+    background-color: var(--info);
+}
+
+.bg-primary {
+    color: var(--dark);
+    background-color: var(--success);
+}
+
+.bg-info {
+    color: var(--dark);
+    background-color: var(--cyan);
+}
+
+.bg-danger {
+    color: var(--dark);
+    background-color: var(--danger);
+}
+
+.bg-warning {
+    color: var(--dark);
+    background-color: var(--yellow);
+}
+
+.bg-success {
+    color: var(--dark);
+    background-color: var(--success);
+}
+
+.btn-default {
+    color: var(--light);
+    background-color: var(--blue);
+    border-color: var(--blue);
+}
+
+.btn-default.active,
+.btn-default.focus,
+.btn-default:active,
+.btn-default:focus,
+.btn-default:hover,
+.open > .dropdown-toggle.btn-default {
+    color: var(--light);
+    background-color: var(--green);
+    border-color: var(--green);
+}
+
+.btn-info {
+    background-color: var(--cyan);
+    border-color: var(--cyan);
+}
+
+.btn-info.active,
+.btn-info.focus,
+.btn-info:active,
+.btn-info:focus,
+.btn-info:hover,
+.open > .dropdown-toggle.btn-info {
+    background-color: var(--green);
+    border-color: var(--green);
+}
+
+.btn-primary {
+    background-color: var(--cyan);
+    border-color: var(--cyan);
+}
+
+.btn-primary.active,
+.btn-primary.focus,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:hover,
+.open > .dropdown-toggle.btn-primary {
+    background-color: var(--green);
+    border-color: var(--green);
+}
+
+.btn-success {
+    background-color: var(--cyan);
+    border-color: var(--cyan);
+}
+
+.btn-success.active,
+.btn-success.focus,
+.btn-success:active,
+.btn-success:focus,
+.btn-success:hover,
+.open > .dropdown-toggle.btn-success {
+    background-color: var(--green);
+    border-color: var(--green);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn-danger.active,
+.btn-danger.focus,
+.btn-danger:active,
+.btn-danger:focus,
+.btn-danger:hover,
+.open > .dropdown-toggle.btn-danger {
+    background-color: var(--danger-dark);
+    border-color: var(--danger-dark);
+}
+
+.btn-warning {
+    background-color: var(--warning-dark);
+    border-color: var(--warning-dark);
+}
+
+.btn-warning.active,
+.btn-warning.focus,
+.btn-warning:active,
+.btn-warning:focus,
+.btn-warning:hover,
+.open > .dropdown-toggle.btn-warning {
+    background-color: var(--warning);
+    border-color: var(--warning);
+}
+
+/* end common colors */
+caption {
+    color: var(--yellow);
+    background-color: var(--blue);
+}
+
+.form-control {
+    color: var(--light);
+    background-color: var(--indigo);
+}
+
+.form-group {
+    border-bottom: 1px solid var(--dark);
+    background-color: var(--dark);
+    border-color: var(--gray);
+}
+
+.panel-default > .panel-heading {
+    color: var(--yellow);
+    background-color: var(--indigo);
+    border-color: var(--cyan);
+}
+
+.panel-title {
+    line-height: 18px;
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.panel-heading a:link,
+.panel-heading a:visited {
+    color: var(--yellow);
+}
+
+.panel {
+    background-color: var(--indigo);
+    border-color: var(--cyan);
+    font-size: 14px;
+}
+
+.panel-footer {
+    background-color: var(--dark);
+}
+
+.help-block {
+    color: var(--teal);
+}
+
+.checkbox label,
+.radio label {
+    color: var(--light);
+}
+
+.table-striped > thead {
+    background-color: var(--dark);
+    border-color: var(--cyan);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: var(--dark);
+    border-color: var(--cyan);
+    color: var(--gray);
+}
+
+.table-striped > tbody > tr.disabled:nth-of-type(odd) {
+    background-color: var(--dark);
+    border-color: var(--cyan);
+    color: var(--gray);
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: var(--indigo);
+    border-color: var(--cyan);
+}
+
+.table-striped > tbody > tr.disabled:nth-of-type(even) {
+    background-color: var(--dark);
+    color: var(--gray-dark);
+}
+
+.table-hover > tbody > tr.disabled:hover,
+.table-striped > tbody > tr.disabled:nth-of-type(odd):hover,
+.table-striped > tbody > tr.disabled:nth-of-type(even):hover {
+    background-color: var(--gray-dark);
+}
+
+tr.disabled a {
+    color: var(--blue);
+}
+
+.table-bordered {
+    border: 1px solid var(--dark);
+}
+
+.table-bordered > thead {
+    background-color: var(--dark);
+}
+
+.table .table {
+    background-color: var(--primary);
+}
+
+/* active table row */
+.table > tbody > tr.active > td,
+.table > tbody > tr.active > th,
+.table > tbody > tr > td.active,
+.table > tbody > tr > th.active,
+.table > tfoot > tr.active > td,
+.table > tfoot > tr.active > th,
+.table > tfoot > tr > td.active,
+.table > tfoot > tr > th.active,
+.table > thead > tr.active > td,
+.table > thead > tr.active > th,
+.table > thead > tr > td.active,
+.table > thead > tr > th.active {
+    background-color: var(--teal);
+    color: var(--dark);
+}
+
+/* active table row on hover */
+.table-hover > tbody > tr.active:hover > td,
+.table-hover > tbody > tr.active:hover > th,
+.table-hover > tbody > tr:hover > .active,
+.table-hover > tbody > tr > td.active:hover,
+.table-hover > tbody > tr > th.active:hover {
+    background-color: var(--teal);
+    color: var(--dark);
+}
+
+.popover-title {
+    background-color: var(--primary);
+    border-bottom: 1px solid var(--dark);
+}
+
+.popover {
+    background-color: var(--gray);
+}
+
+.popover.right > .arrow:after {
+    border-right-color: var(--dark);
+}
+
+.modal-content {
+    background-color: var(--primary);
+}
+
+.modal-header,
+.modal-footer {
+    background-color: var(--dark);
+    border-color: var(--dark);
+}
+
+/** Page footer */
+.footer {
+    background-color: var(--dark);
+}
+
+.footer a {
+    color: var(--cyan);
+}
+
+/** Homepage / dashboard */
+.widget .panel-heading {
+    color: var(--yellow);
+    background-color: var(--indigo);
+}
+
+#widgetSequence {
+    border-top: 1px solid var(--cyan);
+}
+
+/* icons in the dashboard panel headings should pull-right **/
+.widget-heading-icon {
+    display: block;
+    float: right;
+}
+
+.widget-heading-icon .fa {
+    color: var(--cyan);
+}
+
+.widget-heading-icon .fa:hover {
+    color: var(--teal);
+}
+
+a.list-group-item,
+.list-group-item {
+    background-color: var(--primary);
+    color: var(--light);
+    border: 1px solid var(--dark);
+}
+
+a.list-group-item:focus,
+a.list-group-item:hover,
+.list-group-item:focus,
+.list-group-item:hover {
+    background-color: var(--dark);
+    color: var(--teal);
+}
+
+a.list-group-item .list-group-item-heading,
+.list-group-item .list-group-item-heading {
+    color: var(--cyan);
+}
+
+.progress {
+    background-color: var(--blue);
+}
+
+.progress-bar {
+    background-color: var(--cyan);
+}
+
+.icon-embed-btn {
+    color: var(--blue);
+}
+
+/* Used when you need an icon to act as a submit button **/
+.button-icon {
+    color: var(--teal);
+}
+
+button.close {
+    padding: 0 3px 1px 3px;
+    border-radius: 5px;
+}
+
+.modal-header button.close {
+    border: 1px solid var(--teal);
+    color: var(--teal);
+}
+
+input,
+select,
+textarea {
+    color: var(--teal);
+}
+
+/* tree css */
+ul.tree li A:link,
+ul.tree li A:hover,
+ul.tree li A:visited {
+    color: var(--cyan);
+}
+
+/*sortable table*/
+table[data-sortable].sortable-theme-bootstrap th[data-sorted="true"] {
+    background-color: var(--gray-dark);
+    color: var(--teal);
+    border-bottom-color: var(--gray-dark);
+}
+
+table[data-sortable].sortable-theme-bootstrap tbody td {
+    color: var(--teal);
+    border-top: 1px solid var(--gray-dark);
+}
+
+textarea {
+    color: var(--teal);
+    background-color: var(--gray-dark);
+}
+
+/** Styling for jQuery autocomplete widget */
+.ui-autocomplete {
+    color: var(--teal);
+    background-color: var(--gray-dark);
+}
+
+.ui-widget {
+    font-family: Roboto-Regular, sans-serif;
+    font-style: normal;
+}
+
+/* Callouts */
+.bs-callout {
+    padding: 10px 15px;
+    margin: 10px 0;
+    border: 1px solid var(--primary);
+    border-left-width: 5px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.bs-callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+
+.bs-callout code {
+    border-radius: 3px;
+}
+
+.bs-callout + .bs-callout {
+    margin-top: -5px;
+}
+
+/* Callout contextual classes */
+.bs-callout-default {
+    border-left-color: var(--secondary);
+}
+
+.bs-callout-default h4 {
+    color: var(--secondary);
+}
+
+.bs-callout-danger {
+    border-color: var(--danger-dark);
+    color: var(--danger);
+    background-color: var(--dark);
+}
+
+.bs-callout-danger h4 {
+    color: var(--danger);
+    background-color: var(--dark);
+}
+
+.bs-callout-warning {
+    border-left-color: var(--warning);
+    color: var(--warning);
+    background-color: var(--dark);
+}
+
+.bs-callout-warning h4 {
+    color: var(--warning);
+    background-color: var(--dark);
+}
+
+.bs-callout-info {
+    border-left-color: var(--blue);
+}
+
+.bs-callout-info h4 {
+    color: var(--blue);
+}
+
+/* D3 Styles */
+.traffic-widget-chart:not(:last-child) {
+    border-bottom: 2px solid var(--dark);
+    fill: var(--danger) !important;
+}
+
+svg text {
+    fill: var(--cyan) !important;
+    background-color: var(--gray-dark);
+}
+
+g.nv-axis text,
+g.nv-legend text {
+    fill: var(--gray-dark);
+}
+
+.nvd3 .nv-axis line,
+.nvd3 .nv-axis path {
+    fill: var(--gray-dark) !important;
+    stroke: var(--blue) !important;
+}
+
+/* Chart colors */
+.nvd3 .nv-group.nv-series-0 {
+    fill: var(--danger) !important;
+    stroke: var(--danger) !important;
+}
+
+.nvd3 .nv-group.nv-series-1 {
+    fill: var(--danger-dark) !important;
+    stroke: var(--danger-dark) !important;
+}
+
+.nvd3 .nv-legend-symbol {
+    fill: var(--danger-dark) !important;
+    stroke: var(--danger-dark) !important;
+}
+
+.colspanth {
+    background-color: var(--teal);
+}
+
+/* Required input elements have a title that begins with "*". This causes
+Group.class.php to add <span class="element-required" to the title, which
+can then be used to style required input here. Example below uses a custom
+text underline, but text-color, background, font etc. could also be used */
+.element-required {
+    box-shadow: inset 0 0px 0 var(--teal), inset 0 0px 0 var(--teal);
+}

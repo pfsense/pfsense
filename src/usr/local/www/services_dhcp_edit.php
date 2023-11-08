@@ -458,9 +458,9 @@ if ($_POST['save']) {
 
 		/* Configure static ARP entry, or remove ARP entry if this host is dynamic. See https://redmine.pfsense.org/issues/6821 */
 		if ($mapent['arp_table_static_entry']) {
-			mwexec("/usr/sbin/arp -S " . escapeshellarg($mapent['ipaddr']) . " " . escapeshellarg($mapent['mac']));
+			mwexec("/usr/sbin/arp -S " . escapeshellarg($mapent['ipaddr']) . " " . escapeshellarg($mapent['mac']) . " >/dev/null", true);
 		} else {
-			mwexec("/usr/sbin/arp -d " . escapeshellarg($mapent['ipaddr']));
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($mapent['ipaddr']) . " >/dev/null", true);
 		}
 
 		header("Location: services_dhcp.php?if={$if}");

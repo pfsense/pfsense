@@ -2074,7 +2074,7 @@ function alias_expand($name) {
 			return null;
 		}
 		/*
-		 * make sure if it's a url alias, it actually exists.
+		 * make sure if it's a url alias, it actually exists and valid URLs.
 		 * redmine #5845, #13068
 		 */
 		foreach (config_get_path('aliases/alias', []) as $alias) {
@@ -2083,6 +2083,13 @@ function alias_expand($name) {
 					if (is_URL($alias['url']) &&
 					    file_exists($urltable_filename) &&
 					    !empty(trim(file_get_contents($urltable_filename)))) {
+						return "\${$name}";
+					} elseif (is_array($alias['aliasurl'])) {
+						foreach ($alias['aliasurl'] as $aliasurl) {
+							if (!is_URL($aliasurl)) {
+								return null;
+							}
+						}
 						return "\${$name}";
 					} else {
 						return null;

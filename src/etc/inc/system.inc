@@ -192,7 +192,7 @@ function activate_sysctls() {
 	 *   Set the value dynamically since its default is not static, yet this
 	 *   still could be overridden by a user tunable. */
 	$maximumtableentries = config_get_path('system/maximumtableentries',
-										   pfsense_default_table_entries_size());
+										   pfsense_current_table_entries_size());
 
 	/* Set the default when there is no tunable or when the tunable is set
 	 * too low. */

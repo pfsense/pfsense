@@ -169,12 +169,11 @@ $section->addInput(new Form_Input(
 	'Firewall Maximum Table Entries',
 	'text',
 	$pconfig['maximumtableentries'],
-	['placeholder' => pfsense_default_table_entries_size()]
+	['placeholder' => pfsense_current_table_entries_size()]
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
 	'sshguard, snort, etc, combined.%1$sNote: Leave this blank for the '.
-	'default. On this system the default size is: %2$d',
-	'<br/>',
-	pfsense_default_table_entries_size());
+	'default.',
+	'<br/>');
 
 $section->addInput(new Form_Input(
 	'maximumfrags',

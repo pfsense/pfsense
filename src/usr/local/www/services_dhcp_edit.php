@@ -225,6 +225,11 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("This MAC address or Client identifier already exists.");
 			break;
 		}
+		if (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr']) {
+			set_flash_message('alert-info', sprintf(gettext('The IP address %1$s is in use by another static DHCP mapping. ' .
+			'This has the potential to cause an IP conflict.'), $mapent['ipaddr']));
+			break;
+		}
 	}
 
 	/* make sure it's not within the dynamic subnet */

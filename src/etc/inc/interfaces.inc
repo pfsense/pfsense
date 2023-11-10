@@ -3316,6 +3316,8 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	/* Set bssid */
 	if ($wlcfg['bssid']) {
 		$wlcmd[] = "bssid " .escapeshellarg($wlcfg['bssid']);
+	} else {
+		$wlcmd[] = "-bssid";
 	}
 
 	/* Set 802.11g protection mode */

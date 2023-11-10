@@ -384,7 +384,7 @@ if (is_array(array_get_path($wancfg, 'wireless'))) {
 	array_set_path($pconfig, 'mode', array_get_path($wancfg, 'wireless/mode'));
 	array_set_path($pconfig, 'protmode', array_get_path($wancfg, 'wireless/protmode'));
 	array_set_path($pconfig, 'ssid', array_get_path($wancfg, 'wireless/ssid'));
-	array_set_path($pconfig, 'bssid', array_get_path($wancfg, 'wireless/ssid'));
+	array_set_path($pconfig, 'bssid', array_get_path($wancfg, 'wireless/bssid'));
 	array_set_path($pconfig, 'channel', array_get_path($wancfg, 'wireless/channel'));
 	array_set_path($pconfig, 'channel_width', array_get_path($wancfg, 'wireless/channel_width'));
 	array_set_path($pconfig, 'txpower', array_get_path($wancfg, 'wireless/txpower'));

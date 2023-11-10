@@ -117,11 +117,11 @@ foreach ($a_dyndns as $dyndns):
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr == $cached_ip) {
-			$icon_class = "fa fa-check-circle";
+			$icon_class = "fa-solid fa-check-circle";
 			$text_class = "text-success";
 			$icon_title = "Updated";
 		} else {
-			$icon_class = "fa fa-times-circle";
+			$icon_class = "fa-solid fa-times-circle";
 			$text_class = "text-danger";
 			$icon_title = "Failed";
 		}
@@ -131,11 +131,11 @@ foreach ($a_dyndns as $dyndns):
 		$cached_ipv6 = $cached_ipv6_s[0];
 
 		if ($ipv6addr == $cached_ipv6) {
-			$icon_class = "fa fa-check-circle";
+			$icon_class = "fa-solid fa-check-circle";
 			$text_class = "text-success";
 			$icon_title = "Updated";
 		} else {
-			$icon_class = "fa fa-times-circle";
+			$icon_class = "fa-solid fa-times-circle";
 			$text_class = "text-danger";
 			$icon_title = "Failed";
 		}
@@ -205,17 +205,17 @@ foreach ($a_dyndns as $dyndns):
 ?>
 							</td>
 							<td>
-								<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
+								<a class="fa-solid fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
 <?php if (isset($dyndns['enable'])) {
 ?>
-								<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php } else {
 ?>
-								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php }
 ?>
-								<a class="fa fa-clone" title="<?=gettext('Copy service')?>"	href="services_dyndns_edit.php?dup=<?=$i?>"></a>
-								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-clone" title="<?=gettext('Copy service')?>"	href="services_dyndns_edit.php?dup=<?=$i?>"></a>
+								<a class="fa-solid fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php
@@ -231,13 +231,13 @@ foreach ($a_dyndns as $dyndns):
 
 <nav class="action-buttons">
 	<a href="services_dyndns_edit.php" class="btn btn-sm btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
 
 <div>
-	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa fa-check-circle text-success"></i>')?>
+	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa-solid fa-check-circle text-success"></i>')?>
 	<?=gettext('An update can be forced on the edit page for an entry.')?>
 </div>
 

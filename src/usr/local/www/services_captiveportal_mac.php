@@ -58,8 +58,8 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-$actsmbl = array('pass' => '<i class="fa fa-check text-success"></i>&nbsp;' . gettext("Pass"),
-	'block' => '<i class="fa fa-times text-danger"></i>&nbsp;' . gettext("Block"));
+$actsmbl = array('pass' => '<i class="fa-solid fa-check text-success"></i>&nbsp;' . gettext("Pass"),
+	'block' => '<i class="fa-solid fa-times text-danger"></i>&nbsp;' . gettext("Block"));
 
 if ($_POST['act'] == "del") {
 	if ($a_passthrumacs[$_POST['id']]) {
@@ -120,8 +120,8 @@ foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 					<?=htmlspecialchars($mac['descr'])?>
 				</td>
 				<td>
-					<a class="fa fa-pencil"	title="<?=gettext("Edit MAC address"); ?>" href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"usepost></a>
+					<a class="fa-solid fa-pencil"	title="<?=gettext("Edit MAC address"); ?>" href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
+					<a class="fa-solid fa-trash"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"usepost></a>
 				</td>
 			</tr>
 <?php
@@ -141,7 +141,7 @@ endif;
 
 <nav class="action-buttons">
 	<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

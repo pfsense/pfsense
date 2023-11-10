@@ -129,11 +129,11 @@ switch ($action) {
 			<input type="hidden" name="action" value="abort" />
 			<nav class="action-buttons">
 				<button type="submit" name="submit" class="btn btn-danger" value="<?=gettext("Abort Tests")?>">
-					<i class="fa fa-times icon-embed-btn"></i>
+					<i class="fa-solid fa-times icon-embed-btn"></i>
 					<?=gettext("Abort Test")?>
 				</button>
 				<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
-					<i class="fa fa-undo icon-embed-btn"></i>
+					<i class="fa-solid fa-undo icon-embed-btn"></i>
 					<?=gettext("Back")?>
 				</a>
 			</nav>
@@ -164,7 +164,7 @@ switch ($action) {
 
 		<nav class="action-buttons">
 			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
-				<i class="fa fa-undo icon-embed-btn"></i>
+				<i class="fa-solid fa-undo icon-embed-btn"></i>
 				<?=gettext("Back")?>
 			</a>
 		</nav>
@@ -192,7 +192,7 @@ switch ($action) {
 
 		<nav class="action-buttons">
 			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
-				<i class="fa fa-undo icon-embed-btn"></i>
+				<i class="fa-solid fa-undo icon-embed-btn"></i>
 				<?=gettext("Back")?>
 			</a>
 		</nav>

@@ -244,19 +244,19 @@ foreach ($a_routes as $i => $route):
 						<?=htmlspecialchars($route['descr'])?>
 					</td>
 					<td>
-						<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit route')?>"></a>
+						<a href="system_routes_edit.php?id=<?=$i?>" class="fa-solid fa-pencil" title="<?=gettext('Edit route')?>"></a>
 
-						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy route')?>"></a>
+						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa-solid fa-clone" title="<?=gettext('Copy route')?>"></a>
 
 				<?php if (isset($route['disabled'])) {
 				?>
-						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable route')?>" usepost></a>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa-solid fa-check-square-o" title="<?=gettext('Enable route')?>" usepost></a>
 				<?php } else {
 				?>
-						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable route')?>" usepost></a>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa-solid fa-ban" title="<?=gettext('Disable route')?>" usepost></a>
 				<?php }
 				?>
-						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete route')?>" usepost></a>
+						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash" title="<?=gettext('Delete route')?>" usepost></a>
 
 					</td>
 				</tr>
@@ -268,16 +268,16 @@ foreach ($a_routes as $i => $route):
 
 <nav class="action-buttons">
 	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
 <div class="infoblock">
 <?php
 print_info_box(
-	sprintf(gettext('%1$s Route is inactive, gateway interface is missing'), '<br /><strong><i class="fa fa-times-circle-o"></i></strong>') .
-	sprintf(gettext('%1$s Route disabled'), '<br /><strong><i class="fa fa-ban"></i></strong>') .
-	sprintf(gettext('%1$s Route enabled'), '<br /><strong><i class="fa fa-check-circle-o"></i></strong>')
+	sprintf(gettext('%1$s Route is inactive, gateway interface is missing'), '<br /><strong><i class="fa-solid fa-times-circle-o"></i></strong>') .
+	sprintf(gettext('%1$s Route disabled'), '<br /><strong><i class="fa-solid fa-ban"></i></strong>') .
+	sprintf(gettext('%1$s Route enabled'), '<br /><strong><i class="fa-solid fa-check-circle-o"></i></strong>')
 	);
 ?>
 </div>

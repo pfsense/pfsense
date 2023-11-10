@@ -148,7 +148,7 @@ if (!$_REQUEST['ajax']) {
 		$dstIP = str_replace(':', ':<wbr>', $dstIP);
 ?>
 		<tr>
-			<td><i class="fa fa-<?=$iconfn?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
+			<td><i class="fa-solid fa-<?=$iconfn?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
 			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($rule)?>">
 			</a></td>
 			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
@@ -284,7 +284,7 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets'][$widgetkey]['filt
 
 		<div class="form-group">
 			<div class="col-sm-offset-4 col-sm-6">
-				<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+				<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
 			</div>
 		</div>
 	</form>

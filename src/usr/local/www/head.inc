@@ -68,7 +68,6 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	<meta name="theme-color" content="#ffffff">
 
 	<link rel="stylesheet" href="/vendor/font-awesome/css/all.min.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/all.min.css')?>">
-	<link rel="stylesheet" href="/vendor/font-awesome/css/v4-shims.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/v4-shims.css')?>">
 	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css?v=<?=filemtime('/usr/local/www/vendor/sortable/sortable-theme-bootstrap.css')?>">
 	<link rel="stylesheet" href="/vendor/jquery-treegrid/css/jquery.treegrid.css?v=<?=filemtime('/usr/local/www/vendor/jquery-treegrid/css/jquery.treegrid.css')?>">
 	<link rel="stylesheet" href="<?=$cssfile?>?v=<?=filemtime('/usr/local/www/' . $cssfile)?>" />
@@ -542,7 +541,7 @@ if (are_notices_pending()) {
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
-							<i class="fa fa-bell text-danger" title="<?=gettext("Notices")?>"></i>
+							<i class="fa-solid fa-bell text-danger" title="<?=gettext("Notices")?>"></i>
 							<span class="badge bg-danger"><?=count($notices)?></span>
 						</a>
 					</li>
@@ -551,7 +550,7 @@ if (are_notices_pending()) {
 				?>
 					<li class="dropdown">
 						<a href="/index.php?logout" usepost>
-							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
+							<i class="fa-solid fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
 			</ul>
@@ -596,7 +595,7 @@ if (are_notices_pending()) {
 	<?php if (isset($widgets)): ?>
 		<li>
 			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible">
-				<i class="fa fa-save icon-pointer"></i>
+				<i class="fa-solid fa-save icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -604,7 +603,7 @@ if (are_notices_pending()) {
 	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
 			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available widgets")?>">
-				<i class="fa fa-plus icon-pointer"></i>
+				<i class="fa-solid fa-plus icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -612,7 +611,7 @@ if (are_notices_pending()) {
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
 			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log filter")?>">
-				<i class="fa fa-filter icon-pointer"></i>
+				<i class="fa-solid fa-filter icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif ?>
@@ -623,7 +622,7 @@ if (are_notices_pending()) {
 	?>
 		<li>
 			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage log")?>">
-				<i class="fa fa-wrench icon-pointer"></i>
+				<i class="fa-solid fa-wrench icon-pointer"></i>
 			</a>
 		</li>
 	<?php	}
@@ -633,7 +632,7 @@ if (are_notices_pending()) {
 	<?php if ($monitoring_settings_form_hidden): ?>
 		<li>
 			<a onclick="$('#monitoring-settings-form').toggle(360);" title="<?=gettext("Settings")?>">
-				<i class="fa fa-wrench icon-pointer"></i>
+				<i class="fa-solid fa-wrench icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -641,12 +640,12 @@ if (are_notices_pending()) {
 	<?php if ($status_monitoring): ?>
 		<li>
 			<a class="update-graph" title="<?=gettext("Refresh Graph")?>">
-				<i class="fa fa-repeat icon-pointer"></i>
+				<i class="fa-solid fa-repeat icon-pointer"></i>
 			</a>
 		</li>
 		<li>
 			<a class="export-graph" id="export-graph" title="<?=gettext("Export Graph")?>">
-				<i class="fa fa-download icon-pointer"></i>
+				<i class="fa-solid fa-download icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -691,7 +690,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 	<?php if (!g_get('disablehelpicon') && isAllowedPage("help.php")): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
-				<i class="fa fa-question-circle"></i>
+				<i class="fa-solid fa-question-circle"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -785,9 +784,9 @@ if ($display_notices):
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
+				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa-solid fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
 <?php if ($allow_clear_notices && isAllowedPage("/index.php")):?>
-				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa-solid fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 <?php endif;?>
 			</div>
 		</div>

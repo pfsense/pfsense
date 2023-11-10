@@ -112,7 +112,7 @@ if ($_POST['Submit'] == "No") {
 			<br/><br/>
 			<form action="crash_reporter.php" method="post">
 				<button class="btn btn-warning" name="Submit" type="submit" value="No">
-					<i class="fa fa-undo"></i>
+					<i class="fa-solid fa-undo"></i>
 					<?=gettext("Delete the crash report data and return to the Dashboard")?>
 				</button>
 			<br/><br/>
@@ -122,7 +122,7 @@ if ($_POST['Submit'] == "No") {
 			<br/><br/>
 	<?php	if (system_has_php_errors()): ?>
 				<button class="btn btn-info" name="Download" type="submit" value="PHP">
-					<i class="fa fa-download"></i>
+					<i class="fa-solid fa-download"></i>
 					<?=gettext("Download PHP Error Log")?>
 				</button>
 				<br/><br/>
@@ -130,7 +130,7 @@ if ($_POST['Submit'] == "No") {
 		foreach ($crash_files as $cf):
 				$tfn = htmlspecialchars(basename($cf)); ?>
 				<button class="btn btn-info" name="Download" type="submit" value="<?= $tfn ?>">
-					<i class="fa fa-download"></i>
+					<i class="fa-solid fa-download"></i>
 					<?=gettext("Download")?> <?= $tfn ?>
 				</button>
 				<br/><br/>

@@ -826,7 +826,7 @@ function ipsec_status_button($req, $act, $type, $conid, $uniqueid, $full) {
 		$btn .= ' usepost';
 	}
 	$btn .= '>';
-	$btn .= '<i class="fa fa-' . htmlspecialchars($icon);
+	$btn .= '<i class="fa-solid fa-' . htmlspecialchars($icon);
 	if ($req == 'post') {
 		$btn .= ' icon-embed-btn';
 	}

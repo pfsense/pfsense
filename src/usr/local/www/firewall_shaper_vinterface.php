@@ -367,7 +367,7 @@ display_top_tabs($tab_array);
 				<td class="col-md-1">
 					<?=$tree?>
 					<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add" class="btn btn-sm btn-success">
-						<i class="fa fa-plus icon-embed-btn"></i>
+						<i class="fa-solid fa-plus icon-embed-btn"></i>
 						<?=gettext('New Limiter')?>
 					</a>
 				</td>

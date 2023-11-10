@@ -1352,7 +1352,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			<?=gettext('Search')?>
 			<span class="widget-heading-icon pull-right">
 				<a data-toggle="collapse" href="#search-panel_panel-body">
-					<i class="fa fa-plus-circle"></i>
+					<i class="fa-solid fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
@@ -1371,8 +1371,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search certificate names and distinguished names.')?></span>
@@ -1484,22 +1484,22 @@ foreach ($a_cert as $cert):
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>
-							<a href="system_certmanager.php?act=edit&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit Certificate")?>"></a>
-							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
+							<a href="system_certmanager.php?act=edit&amp;id=<?=$cert['refid']?>" class="fa-solid fa-pencil" title="<?=gettext("Edit Certificate")?>"></a>
+							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa-solid fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
 							<?php if ($cert['prv']): ?>
-								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
-								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
+								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa-solid fa-key" title="<?=gettext("Export Key")?>"></a>
+								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa-solid fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
-								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
+								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa-solid fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
 							<?php endif ?>
 						<?php else: ?>
-							<a href="system_certmanager.php?act=csr&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
-							<a href="system_certmanager.php?act=req&amp;id=<?=$cert['refid']?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>"></a>
-							<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<a href="system_certmanager.php?act=csr&amp;id=<?=$cert['refid']?>" class="fa-solid fa-pencil" title="<?=gettext("Update CSR")?>"></a>
+							<a href="system_certmanager.php?act=req&amp;id=<?=$cert['refid']?>" class="fa-solid fa-sign-in" title="<?=gettext("Export Request")?>"></a>
+							<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa-solid fa-key" title="<?=gettext("Export Key")?>"></a>
 						<?php endif?>
 						<?php if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&amp;id=<?=$cert['refid']?>" class="fa fa-trash" title="<?=gettext("Delete Certificate")?>" usepost></a>
+							<a href="system_certmanager.php?act=del&amp;id=<?=$cert['refid']?>" class="fa-solid fa-trash" title="<?=gettext("Delete Certificate")?>" usepost></a>
 						<?php endif?>
 					</td>
 				</tr>
@@ -1513,7 +1513,7 @@ foreach ($a_cert as $cert):
 
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add/Sign")?>
 	</a>
 </nav>

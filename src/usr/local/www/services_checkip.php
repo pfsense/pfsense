@@ -125,22 +125,22 @@ foreach ($a_checkipservice as $checkipservice):
 							<?=htmlspecialchars($checkipservice['url'])?>
 						</td>
 						<td class="text-center">
-							<i<?=(isset($checkipservice['verifysslpeer'])) ? ' class="fa fa-check"' : '';?>></i>
+							<i<?=(isset($checkipservice['verifysslpeer'])) ? ' class="fa-solid fa-check"' : '';?>></i>
 						</td>
 						<td>
 							<?=htmlspecialchars($checkipservice['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil <?=$visibility?>" title="<?=gettext('Edit service')?>" href="services_checkip_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-pencil <?=$visibility?>" title="<?=gettext('Edit service')?>" href="services_checkip_edit.php?id=<?=$i?>"></a>
 						<?php if (isset($checkipservice['enable'])) {
 						?>
-							<a	class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+							<a	class="fa-solid fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php } else {
 						?>
-							<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php }
 						?>
-							<a class="fa fa-trash <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-trash <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -156,7 +156,7 @@ endforeach; ?>
 
 <nav class="action-buttons">
 	<a href="services_checkip_edit.php" class="btn btn-sm btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

@@ -319,7 +319,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		<h2 class="panel-title"><?=gettext("Available Widgets"); ?>
 			<span class="widget-heading-icon">
 				<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
-					<i class="fa fa-plus-circle"></i>
+					<i class="fa-solid fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
@@ -337,7 +337,7 @@ foreach ($available as $widgetconfig):
 	// If the widget supports multiple copies, or no copies are displayed yet, then it is available to add
 	if (($widgetconfig['multicopy']) || ($widgetconfig['display'] == 'none')):
 ?>
-		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetconfig['basename']?>"><i class="fa fa-plus"></i> <?=$widgetconfig['title']?></a></div>
+		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetconfig['basename']?>"><i class="fa-solid fa-plus"></i> <?=$widgetconfig['title']?></a></div>
 	<?php endif; ?>
 <?php
 endforeach;
@@ -400,14 +400,14 @@ foreach ($widgets as $widgetkey => $widgetconfig) {
 							<?=$wtitle?>
 							<span class="widget-heading-icon">
 								<a data-toggle="collapse" href="#<?=$widget_panel_footer_id?>" class="config hidden">
-									<i class="fa fa-wrench"></i>
+									<i class="fa-solid fa-wrench"></i>
 								</a>
 								<a data-toggle="collapse" href="#<?=$widget_panel_body_id?>">
 									<!--  actual icon is determined in css based on state of body -->
-									<i class="fa fa-plus-circle"></i>
+									<i class="fa-solid fa-plus-circle"></i>
 								</a>
 								<a data-toggle="close" href="#widget-<?=$widgetkey?>">
-									<i class="fa fa-times-circle"></i>
+									<i class="fa-solid fa-times-circle"></i>
 								</a>
 							</span>
 						</h2>
@@ -525,7 +525,7 @@ function set_all_none_button(checkbox_panel_ref, all_none_button_id) {
 		text = "<?=gettext('All')?>";
 	}
 
-	$("#" + all_none_button_id).html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
+	$("#" + all_none_button_id).html('<i class="fa-solid fa-undo icon-embed-btn"></i>' + text);
 }
 
 // Setup the necessary events to manage the All/None button and included checkboxes

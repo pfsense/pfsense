@@ -143,8 +143,8 @@ foreach ($a_vip as $vipent):
 						<?=htmlspecialchars($vipent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil" title="<?=gettext("Edit virtual ip"); ?>" href="firewall_virtual_ip_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext("Delete virtual ip")?>" href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil" title="<?=gettext("Edit virtual ip"); ?>" href="firewall_virtual_ip_edit.php?id=<?=$i?>"></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext("Delete virtual ip")?>" href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -159,7 +159,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="firewall_virtual_ip_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

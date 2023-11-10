@@ -177,22 +177,22 @@ foreach ($a_nat as $natent):
 						<td>
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
-								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa-solid fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 							</a>
 <?php	endif; ?>
 <?php 	if (isset($natent['nordr'])) { ?>
-								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+								&nbsp;<i class="fa-solid fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 	} ?>
 						</td>
 						<td>
 <?php
 	if ($natent['associated-rule-id'] == "pass"):
 ?>
-							<i class="fa fa-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
+							<i class="fa-solid fa-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
 <?php
 	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<i class="fa fa-random" title="<?=sprintf(gettext("Firewall rule ID %s is managed by this rule"), htmlspecialchars($natent['associated-rule-id']))?>"></i>
+							<i class="fa-solid fa-random" title="<?=sprintf(gettext("Firewall rule ID %s is managed by this rule"), htmlspecialchars($natent['associated-rule-id']))?>"></i>
 <?php
 	endif;
 ?>
@@ -325,9 +325,9 @@ foreach ($a_nat as $natent):
 						</td>
 						<td>
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
-							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
 <?php	else: ?>
 							-
 <?php	endif; ?>
@@ -352,27 +352,27 @@ if ($seprows[$nnats]) {
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
 	<nav class="action-buttons">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
-			<i class="fa fa-level-up icon-embed-btn"></i>
+			<i class="fa-solid fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
-			<i class="fa fa-level-down icon-embed-btn"></i>
+			<i class="fa-solid fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected rules')?>">
-			<i class="fa fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected rules"); ?>" title="<?=gettext('Toggle selected rules')?>">
-			<i class="fa fa-ban icon-embed-btn"></i>
+			<i class="fa-solid fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save rule order')?>">
-			<i class="fa fa-save icon-embed-btn"></i>
+			<i class="fa-solid fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 		<button type="submit" id="addsep" name="addsep" class="btn btn-sm btn-warning" title="<?=gettext('Add separator')?>">
-			<i class="fa fa-plus icon-embed-btn"></i>
+			<i class="fa-solid fa-plus icon-embed-btn"></i>
 			<?=gettext("Separator")?>
 		</button>
 	</nav>
@@ -453,8 +453,8 @@ if (count($a_nat) > 0) {
 <div>
 	<dl class="dl-horizontal responsive">
 		<dt><?=gettext('Legend')?></dt>					<dd></dd>
-		<dt><i class="fa fa-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
-		<dt><i class="fa fa-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
+		<dt><i class="fa-solid fa-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
+		<dt><i class="fa-solid fa-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
 	</dl>
 </div>
 

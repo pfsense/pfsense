@@ -607,7 +607,7 @@ if (!empty($pconfig['ikeid'])) {
 	$section->addInput(new Form_StaticText(
 		'Phase 1',
 		$p1name .
-		' <a class="fa fa-pencil" href="vpn_ipsec_phase1.php?ikeid=' . $p1['ikeid'] . '" title="' . gettext("Edit Phase 1 Entry") . '"></a>'
+		' <a class="fa-solid fa-pencil" href="vpn_ipsec_phase1.php?ikeid=' . $p1['ikeid'] . '" title="' . gettext("Edit Phase 1 Entry") . '"></a>'
 	));
 }
 if (!empty($pconfig['reqid'])) {

@@ -75,7 +75,7 @@ $carp_enabled = get_carp_status();
 		if ($ipaddress) {
 ?>
 				<td><?=htmlspecialchars($ipaddress);?></td>
-				<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
+				<td><i class="fa-solid fa-<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
 <?php
 		} else {
 ?>

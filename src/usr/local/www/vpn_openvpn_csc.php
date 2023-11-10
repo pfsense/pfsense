@@ -786,9 +786,9 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 						<?=htmlspecialchars($csc['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-clone"	title="<?=gettext("Copy CSC Override")?>"	href="vpn_openvpn_csc.php?act=dup&amp;id=<?=$i?>" usepost></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa-solid fa-clone"	title="<?=gettext("Copy CSC Override")?>"	href="vpn_openvpn_csc.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -802,7 +802,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 
 <nav class="action-buttons">
 	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

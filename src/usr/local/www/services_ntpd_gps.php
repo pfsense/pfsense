@@ -759,7 +759,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvgps').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvgps').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvgps').click(function(event) {

@@ -76,13 +76,13 @@ if (!function_exists('printPanel')) {
 		$opstring .=						$conn['remote_host'];
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						"<i class=\"fa fa-times\" ";
+		$opstring .=						"<i class=\"fa-solid fa-times\" ";
 		$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "', '');\" ";
 		$opstring .=							"style=\"cursor:pointer;\" ";
 		$opstring .=							"name=\"" . "i:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" ";
 		$opstring .=							"title=\"" . sprintf(gettext('Kill client connection from %s'), $conn['remote_host']) . "\">";
 		$opstring .=						"</i>&nbsp;";
-		$opstring .=						"<i class=\"fa fa-times-circle text-danger\" ";
+		$opstring .=						"<i class=\"fa-solid fa-times-circle text-danger\" ";
 		$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "', '" . $conn['client_id'] . "');\" ";
 		$opstring .=							"style=\"cursor:pointer;\" ";
 		$opstring .=							"name=\"" . "i:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" ";
@@ -158,10 +158,10 @@ if (!function_exists('printPanel')) {
 
 						if (strtolower($sk_server['state']) == "connected") {
 							/* tunnel is up */
-		$opstring .=						"<i class=\"fa fa-arrow-up text-success\"></i>";
+		$opstring .=						"<i class=\"fa-solid fa-arrow-up text-success\"></i>";
 						} else {
 							/* tunnel is down */
-		$opstring .=						"<i class=\"fa fa-arrow-down text-danger\"></i>";
+		$opstring .=						"<i class=\"fa-solid fa-arrow-down text-danger\"></i>";
 						}
 
 		$opstring .=					"</td>";
@@ -235,10 +235,10 @@ if (!function_exists('printPanel')) {
 
 						if (strtolower($client['state']) == "connected") {
 							/* tunnel is up */
-		$opstring .=						"<i class=\"fa fa-arrow-up text-success\"></i>";
+		$opstring .=						"<i class=\"fa-solid fa-arrow-up text-success\"></i>";
 						} else {
 							/* tunnel is down */
-		$opstring .=						"<i class=\"fa fa-arrow-down text-danger\"></i>";
+		$opstring .=						"<i class=\"fa-solid fa-arrow-down text-danger\"></i>";
 						}
 
 		$opstring .=					"</td>";
@@ -398,8 +398,8 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

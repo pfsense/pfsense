@@ -116,21 +116,21 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 				<div class="btn-group">
 					<p>
 						<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">
-							<i class="fa fa-file-text-o"></i>
+							<i class="fa-solid fa-file-text-o"></i>
 							<?=gettext('Load')?>
 						</button>
 						<button type="button" class="btn btn-default btn-sm" id="fbOpen"		value="<?=gettext('Browse')?>">
-							<i class="fa fa-list"></i>
+							<i class="fa-solid fa-list"></i>
 							<?=gettext('Browse')?>
 						</button>
 						<button type="button" class="btn btn-default btn-sm" onclick="saveFile();"	value="<?=gettext('Save')?>">
-							<i class="fa fa-save"></i>
+							<i class="fa-solid fa-save"></i>
 							<?=gettext('Save')?>
 						</button>
 					</p>
 				</div>
 				<p class="pull-right">
-					<button id="btngoto" class="btn btn-default btn-sm"><i class="fa fa-forward"></i><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" size="6" style="padding: 3px 0px;"/>
+					<button id="btngoto" class="btn btn-default btn-sm"><i class="fa-solid fa-forward"></i><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" size="6" style="padding: 3px 0px;"/>
 				</p>
 			</form>
 

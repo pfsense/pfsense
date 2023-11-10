@@ -119,8 +119,8 @@ display_top_tabs($tab_array);
 							<td><?=htmlspecialchars($vlan['pcp']);?></td>
 							<td><?=htmlspecialchars($vlan['descr']);?></td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=$gettext_array['edit']?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
-								<a class="fa fa-trash no-confirm"	title="<?=$gettext_array['del']?>"	role="button" id="del-<?=$i?>"></a>
+								<a class="fa-solid fa-pencil"	title="<?=$gettext_array['edit']?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
+								<a class="fa-solid fa-trash no-confirm"	title="<?=$gettext_array['del']?>"	role="button" id="del-<?=$i?>"></a>
 							</td>
 						</tr>
 <?php
@@ -135,7 +135,7 @@ display_top_tabs($tab_array);
 
 	<nav class="action-buttons">
 		<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php">
-			<i class="fa fa-plus icon-embed-btn"></i>
+			<i class="fa-solid fa-plus icon-embed-btn"></i>
 			<?=gettext('Add'); ?>
 		</a>
 	</nav>

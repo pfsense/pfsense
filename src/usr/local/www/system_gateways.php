@@ -314,7 +314,7 @@ foreach ($a_gateways as $i => $gateway):
 							<?php 
 							if (is_numeric($id)) :?>
 								<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
-								<a class='fa fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
+								<a class='fa-solid fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
 							<?php endif; ?>
 						</td>
 						<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
@@ -322,7 +322,7 @@ foreach ($a_gateways as $i => $gateway):
 						<?=htmlspecialchars($gateway['name'])?>
 <?php
 							if (isset($gateway['isdefaultgw'])) {
-								echo ' <i class="fa fa-globe"></i>';
+								echo ' <i class="fa-solid fa-globe"></i>';
 							}
 ?>
 						</td>
@@ -342,19 +342,19 @@ foreach ($a_gateways as $i => $gateway):
 							<?=htmlspecialchars($gateway['descr'])?>
 						</td>
 						<td style="white-space: nowrap;">
-							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
-							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway')?>"></a>
+							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa-solid fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
+							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa-solid fa-clone" title="<?=gettext('Copy gateway')?>"></a>
 
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>" usepost></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa-solid fa-check-square-o" title="<?=gettext('Enable gateway')?>" usepost></a>
 	<?php } else {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>" usepost></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa-solid fa-ban" title="<?=gettext('Disable gateway')?>" usepost></a>
 	<?php }
 	?>
-							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>" usepost></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash" title="<?=gettext('Delete gateway')?>" usepost></a>
 
 <?php endif; ?>
 						</td>
@@ -368,11 +368,11 @@ foreach ($a_gateways as $i => $gateway):
 
 <nav class="action-buttons">
 	<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled title="<?=gettext('Save rule order')?>">
-		<i class="fa fa-save icon-embed-btn"></i>
+		<i class="fa-solid fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>
 	</button>
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
 </nav>
@@ -405,10 +405,10 @@ print $form;
 <div class="infoblock">
 <?php
 print_info_box(
-	sprintf(gettext('%1$s The current default route as present in the current routing table of the operating system'), '<strong><i class="fa fa-globe"></i></strong>') .
-	sprintf(gettext('%1$s Gateway is inactive, interface is missing'), '<br /><strong><i class="fa fa-times-circle-o"></i></strong>') .
-	sprintf(gettext('%1$s Gateway disabled'), '<br /><strong><i class="fa fa-ban"></i></strong>') .
-	sprintf(gettext('%1$s Gateway enabled'), '<br /><strong><i class="fa fa-check-circle-o"></i></strong>')
+	sprintf(gettext('%1$s The current default route as present in the current routing table of the operating system'), '<strong><i class="fa-solid fa-globe"></i></strong>') .
+	sprintf(gettext('%1$s Gateway is inactive, interface is missing'), '<br /><strong><i class="fa-solid fa-times-circle-o"></i></strong>') .
+	sprintf(gettext('%1$s Gateway disabled'), '<br /><strong><i class="fa-solid fa-ban"></i></strong>') .
+	sprintf(gettext('%1$s Gateway enabled'), '<br /><strong><i class="fa-solid fa-check-circle-o"></i></strong>')
 	);
 ?>
 </div>

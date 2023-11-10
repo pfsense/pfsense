@@ -276,7 +276,7 @@ include("head.inc"); ?>
 	'<br />' .
 	sprintf(gettext('When the page has finished loading, the output is stored in %1$s. It may be downloaded via scp or using this button: '), $output_file) .
 	' <button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">' .
-	'<i class="fa fa-download icon-embed-btn"></i>' .
+	'<i class="fa-solid fa-download icon-embed-btn"></i>' .
 	gettext("Download") .
 	'</button>'); ?>
 

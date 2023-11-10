@@ -487,7 +487,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Custom Options');?>";
 		}
-		$('#btnadvcustom').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvcustom').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	// Un-hide additional controls
@@ -548,8 +548,8 @@ foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
 					</td>
 				</tr>
 
@@ -567,11 +567,11 @@ foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
-						<i class="fa fa-angle-double-right text-info"></i>
+						<i class="fa-solid fa-angle-double-right text-info"></i>
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
 					</td>
 				</tr>
 <?php
@@ -593,7 +593,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
@@ -627,8 +627,8 @@ foreach (config_get_path('unbound/domainoverrides') as $doment):
 						<?=htmlspecialchars($doment['descr'])?>&nbsp;
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -651,7 +651,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

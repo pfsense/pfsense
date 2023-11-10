@@ -206,7 +206,7 @@ if (is_array($confvers)):
 				<tr>
 					<th colspan="2">
 						<button type="submit" name="diff" class="btn btn-info btn-xs" value="Diff">
-							<i class="fa fa-exchange icon-embed-btn"></i>
+							<i class="fa-solid fa-exchange icon-embed-btn"></i>
 							<?=gettext("Diff"); ?>
 						</button>
 					</th>
@@ -259,9 +259,9 @@ if (is_array($confvers)):
 					<td><?= format_bytes($version['filesize']) ?></td>
 					<td><?= htmlspecialchars($version['description']) ?></td>
 					<td>
-						<a class="fa fa-undo do-confirm"	title="<?=gettext('Replace the current configuration with this backup')?>"	href="diag_confbak.php?newver=<?=$version['time']?>" usepost></a>
-						<a class="fa fa-download"		title="<?=gettext('Download this configuration revision')?>"			href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
-						<a class="fa fa-trash"			title="<?=gettext('Delete this configuration revision')?>"			href="diag_confbak.php?rmver=<?=$version['time']?>" usepost></a>
+						<a class="fa-solid fa-undo do-confirm"	title="<?=gettext('Replace the current configuration with this backup')?>"	href="diag_confbak.php?newver=<?=$version['time']?>" usepost></a>
+						<a class="fa-solid fa-download"		title="<?=gettext('Download this configuration revision')?>"			href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
+						<a class="fa-solid fa-trash"			title="<?=gettext('Delete this configuration revision')?>"			href="diag_confbak.php?rmver=<?=$version['time']?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -270,7 +270,7 @@ if (is_array($confvers)):
 				<tr>
 					<td colspan="2">
 						<button type="submit" name="diff" class="btn btn-info btn-xs" value="Diff">
-							<i class="fa fa-exchange icon-embed-btn"></i>
+							<i class="fa-solid fa-exchange icon-embed-btn"></i>
 							<?=gettext("Diff"); ?>
 						</button>
 					</td>

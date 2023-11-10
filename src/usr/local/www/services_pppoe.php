@@ -121,8 +121,8 @@ foreach ($a_pppoes as $pppoe):
 					<?=htmlspecialchars($pppoe['descr'])?>
 				</td>
 				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="services_pppoe_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>" usepost></a>
+					<a class="fa-solid fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="services_pppoe_edit.php?id=<?=$i?>"></a>
+					<a class="fa-solid fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php
@@ -138,7 +138,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="services_pppoe_edit.php" class="btn btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

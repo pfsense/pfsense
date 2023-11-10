@@ -192,17 +192,17 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 
 				<div class="btn-group">
 					<button type="button" class="btn btn-success btn-sm" name="btnRecallPrev" onclick="btnRecall_onClick( this.form, -1 );" title="<?=gettext("Recall Previous Command")?>">
-						<i class="fa fa-angle-double-left"></i>
+						<i class="fa-solid fa-angle-double-left"></i>
 					</button>
 					<button name="submit" type="submit" class="btn btn-warning btn-sm" value="EXEC" title="<?=gettext("Execute the entered command")?>">
-						<i class="fa fa-bolt"></i>
+						<i class="fa-solid fa-bolt"></i>
 						<?=gettext("Execute"); ?>
 					</button>
 					<button type="button" class="btn btn-success btn-sm" name="btnRecallNext" onclick="btnRecall_onClick( this.form,  1 );" title="<?=gettext("Recall Next Command")?>">
-						<i class="fa fa-angle-double-right"></i>
+						<i class="fa-solid fa-angle-double-right"></i>
 					</button>
 					<button style="margin-left: 10px;" type="button" class="btn btn-default btn-sm" onclick="return Reset_onClick( this.form );" title="<?=gettext("Clear command entry")?>">
-						<i class="fa fa-undo"></i>
+						<i class="fa-solid fa-undo"></i>
 						<?=gettext("Clear"); ?>
 					</button>
 				</div>
@@ -217,7 +217,7 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_REQUEST['dlPath']);?>"/>
 				<br /><br />
 				<button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">
-					<i class="fa fa-download icon-embed-btn"></i>
+					<i class="fa-solid fa-download icon-embed-btn"></i>
 					<?=gettext("Download")?>
 				</button>
 			</div>
@@ -236,7 +236,7 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 				<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
 				<br />
 				<button name="submit" type="submit" class="btn btn-primary btn-sm" id="upload" value="UPLOAD">
-					<i class="fa fa-upload icon-embed-btn"></i>
+					<i class="fa-solid fa-upload icon-embed-btn"></i>
 					<?=gettext("Upload")?>
 				</button>
 			</div>
@@ -333,7 +333,7 @@ END_FILE;
 				<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
 				<br />
 				<button name="submit" type="submit" class="btn btn-warning btn-sm" value="EXECPHP" title="<?=gettext("Execute this PHP Code")?>">
-					<i class="fa fa-bolt"></i>
+					<i class="fa-solid fa-bolt"></i>
 					<?=gettext("Execute")?>
 				</button>
 				<?=gettext("Example"); ?>: <code>print("Hello World!");</code>

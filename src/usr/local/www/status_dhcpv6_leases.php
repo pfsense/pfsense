@@ -268,7 +268,7 @@ if (dhcp_is_backend('kea')) {
 			<?=gettext('Search')?>
 			<span class="widget-heading-icon pull-right">
 				<a data-toggle="collapse" href="#search-panel_panel-body">
-					<i class="fa fa-plus-circle"></i>
+					<i class="fa-solid fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
@@ -296,8 +296,8 @@ if (dhcp_is_backend('kea')) {
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" title="<?=gettext('Search')?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-				<a id="btnclear" title="<?=gettext('Clear')?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext('Search')?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext('Clear')?>" class="btn btn-info btn-sm"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to filter entries.')?></span>
@@ -391,9 +391,9 @@ foreach ($leases as $data):
 					<td>
 						<i class="fa <?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
 <?php if ($data['online'] === $online_string): ?>
-						<i class="fa fa-arrow-up text-success online" title="<?=htmlspecialchars($data['online'])?>"></i>
+						<i class="fa-solid fa-arrow-up text-success online" title="<?=htmlspecialchars($data['online'])?>"></i>
 <?php else: ?>
-						<i class="fa fa-arrow-down online" title="<?=htmlspecialchars($data['online'])?>"></i>
+						<i class="fa-solid fa-arrow-down online" title="<?=htmlspecialchars($data['online'])?>"></i>
 <?php endif; ?>
 					</td>
 					<td><?=$data['ip']?></td>
@@ -412,16 +412,16 @@ foreach ($leases as $data):
 <?php endif; ?>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-						<a class="fa fa-plus-square-o" title="<?=gettext('Add static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa-solid fa-plus-square-o" title="<?=gettext('Add static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php endif; ?>
 <?php if ($mac): /* we can only add a WOL mapping if MAC address is known */ ?>
-						<a class="fa fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$mac?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
+						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$mac?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $static_string): ?>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+						<a class="fa-solid fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>
@@ -555,11 +555,11 @@ else:
 </div>
 
 <?php if ($_REQUEST['all']): ?>
-	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=0"><i class="fa fa-minus-circle icon-embed-btn"></i><?=gettext('Show Active and Static Leases Only')?></a>
+	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=0"><i class="fa-solid fa-minus-circle icon-embed-btn"></i><?=gettext('Show Active and Static Leases Only')?></a>
 <?php else: ?>
-	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext('Show all Configured Leases')?></a>
+	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=1"><i class="fa-solid fa-plus-circle icon-embed-btn"></i><?=gettext('Show all Configured Leases')?></a>
 <?php endif; ?>
-	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa fa-trash icon-embed-btn"></i><?=gettext('Clear all DHCPv6 Leases')?></a>
+	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa-solid fa-trash icon-embed-btn"></i><?=gettext('Clear all DHCPv6 Leases')?></a>
 
 <script type="text/javascript">
 //<![CDATA[

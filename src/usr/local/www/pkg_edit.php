@@ -1563,10 +1563,10 @@ if ($pkg['fields']['field'] != "") { ?>
 
 		if (advanced_visible) {
 			$('.advancedoptions').show();
-			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$showmsg?>");
+			$("#showadv").html('<i class="fa-solid fa-cog icon-embed-btn"></i>' + "<?=$showmsg?>");
 		} else {
 			$('.advancedoptions').hide();
-			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$hidemsg?>");
+			$("#showadv").html('<i class="fa-solid fa-cog icon-embed-btn"></i>' + "<?=$hidemsg?>");
 		}
 	});
 

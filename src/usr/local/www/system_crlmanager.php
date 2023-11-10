@@ -574,7 +574,7 @@ if ($act == "new" || $act == gettext("Save")) {
 						<td><?=date("D M j G:i:s T Y", $cert['revoke_time']); ?></td>
 						<td class="list">
 							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" usepost>
-								<i class="fa fa-trash" title="<?=gettext("Delete this certificate from the CRL")?>" alt="<?=gettext("Delete this certificate from the CRL")?>"></i>
+								<i class="fa-solid fa-trash" title="<?=gettext("Delete this certificate from the CRL")?>" alt="<?=gettext("Delete this certificate from the CRL")?>"></i>
 							</a>
 						</td>
 					</tr>
@@ -695,7 +695,7 @@ if ($act == "new" || $act == gettext("Save")) {
 					<tr>
 						<td><?=$caname?></td>
 						<td><?=$tmpcrl['descr']; ?></td>
-						<td><i class="fa fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
+						<td><i class="fa-solid fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td>
 						<?php if (is_openvpn_server_crl($tmpcrl['refid'])): ?>
@@ -704,18 +704,18 @@ if ($act == "new" || $act == gettext("Save")) {
 						<?php echo cert_usedby_description($tmpcrl['refid'], $certificates_used_by_packages); ?>
 						</td>
 						<td>
-							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>" ></a>
+							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa-solid fa-download" title="<?=gettext("Export CRL")?>" ></a>
 <?php
 				if ($internal): ?>
-							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
+							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa-solid fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
 <?php
 				else:
 ?>
-							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
+							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="fa-solid fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
 <?php			endif;
 				if (!$inuse):
 ?>
-							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-trash" title="<?=gettext("Delete CRL")?>" usepost></a>
+							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa-solid fa-trash" title="<?=gettext("Delete CRL")?>" usepost></a>
 <?php
 				endif;
 ?>

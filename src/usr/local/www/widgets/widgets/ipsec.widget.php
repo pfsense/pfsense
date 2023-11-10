@@ -146,7 +146,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				break;
 		}
 
-		$data->tunnel .= '<td><i class="fa fa-' . $statusicon .
+		$data->tunnel .= '<td><i class="fa-solid fa-' . $statusicon .
 					' text-' . $iconcolor . '" ' .
 					'title="' . $icontitle . '"></i> ';
 		$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p1conid, null, false);
@@ -190,7 +190,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 					$buttontarget = 'child';
 				}
 
-				$data->tunnel .= '<td><i class="fa fa-' . $statusicon .
+				$data->tunnel .= '<td><i class="fa-solid fa-' . $statusicon .
 							' text-' . $iconcolor . '" ' .
 							'title="' . $icontitle . '"></i> ';
 				$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p2conid, null, false);
@@ -221,7 +221,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 					$data->mobile .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
 					$data->mobile .= "<td>";
 					if ($muser['status'] == 'online') {
-						$data->mobile .= "<span class='fa fa-check'></span><span style='font-weight: bold'> ";
+						$data->mobile .= "<span class='fa-solid fa-check'></span><span style='font-weight: bold'> ";
 					} else {
 						$data->mobile .= "<span>  ";
 					}
@@ -277,7 +277,7 @@ if (ipsec_enabled()): ?>
 		</tr>
 		</thead>
 		<tbody>
-			<tr><td colspan="5"><?= htmlspecialchars(gettext("Retrieving overview data")) ?> <i class="fa fa-cog fa-spin"></i></td></tr>
+			<tr><td colspan="5"><?= htmlspecialchars(gettext("Retrieving overview data")) ?> <i class="fa-solid fa-cog fa-spin"></i></td></tr>
 		</tbody>
 	</table>
 </div>
@@ -292,7 +292,7 @@ if (ipsec_enabled()): ?>
 	</tr>
 	</thead>
 	<tbody>
-		<tr><td colspan="4"><?= htmlspecialchars(gettext("Retrieving tunnel data"))?> <i class="fa fa-cog fa-spin"></i></td></tr>
+		<tr><td colspan="4"><?= htmlspecialchars(gettext("Retrieving tunnel data"))?> <i class="fa-solid fa-cog fa-spin"></i></td></tr>
 	</tbody>
 	</table>
 </div>
@@ -308,7 +308,7 @@ if (ipsec_enabled()): ?>
 		</tr>
 		</thead>
 		<tbody>
-			<tr><td colspan="3"><?= htmlspecialchars(gettext("Retrieving mobile data")) ?> <i class="fa fa-cog fa-spin"></i></td></tr>
+			<tr><td colspan="3"><?= htmlspecialchars(gettext("Retrieving mobile data")) ?> <i class="fa-solid fa-cog fa-spin"></i></td></tr>
 		</tbody>
 <?php else:?>
 		<thead>
@@ -355,8 +355,8 @@ if (ipsec_enabled()): ?>
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

@@ -166,12 +166,12 @@ print $form;
 ?>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">
-			<i class="fa fa-plus icon-embed-btn"></i>
+			<i class="fa-solid fa-plus icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
 
 		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
-			<i class="fa fa-power-off icon-embed-btn"></i>
+			<i class="fa-solid fa-power-off icon-embed-btn"></i>
 			<?=gettext("Wake All Devices")?>
 		</a>
 	</div>
@@ -202,9 +202,9 @@ print $form;
 								<?=htmlspecialchars($wolent['descr']);?>
 							</td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
-								<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
-								<a class="fa fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
+								<a class="fa-solid fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
+								<a class="fa-solid fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
 							</td>
 						</tr>
 					<?php endforeach?>
@@ -214,12 +214,12 @@ print $form;
 	</div>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">
-			<i class="fa fa-plus icon-embed-btn"></i>
+			<i class="fa-solid fa-plus icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
 
 		<button id="wakeall" class="btn btn-primary">
-			<i class="fa fa-power-off icon-embed-btn"></i>
+			<i class="fa-solid fa-power-off icon-embed-btn"></i>
 			<?=gettext("Wake All Devices")?>
 		</button>
 	</div>

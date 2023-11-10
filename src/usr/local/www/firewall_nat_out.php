@@ -214,7 +214,7 @@ print($form);
 				endif;
 ?>
 <?php 				if (isset($natent['nonat'])): ?>
-							&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: Traffic matching this rule is not translated.")?>"></i>
+							&nbsp;<i class="fa-solid fa-hand-stop-o text-danger" title="<?=gettext("Negated: Traffic matching this rule is not translated.")?>"></i>
 <?php 				endif; ?>
 
 						</td>
@@ -235,7 +235,7 @@ print($form);
 <?php
 						if (isset($alias['src'])):
 ?>
-						<i class='fa fa-pencil'></i></a>
+						<i class='fa-solid fa-pencil'></i></a>
 <?php
 						endif;
 ?>
@@ -258,7 +258,7 @@ print($form);
 <?php
 							if (isset($alias['srcport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							<i class='fa-solid fa-pencil'></i></a>
 <?php
 							endif;
 						}
@@ -277,7 +277,7 @@ print($form);
 <?php
 						if (isset($alias['dst'])):
 ?>
-						<i class='fa fa-pencil'></i></a>
+						<i class='fa-solid fa-pencil'></i></a>
 <?php
 						endif;
 ?>
@@ -300,7 +300,7 @@ print($form);
 <?php
 							if (isset($alias['dstport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							<i class='fa-solid fa-pencil'></i></a>
 <?php
 							endif;
 						}
@@ -325,7 +325,7 @@ print($form);
 <?php
 							if (isset($alias['target'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							<i class='fa-solid fa-pencil'></i></a>
 <?php
 							endif;
 						}
@@ -344,9 +344,9 @@ print($form);
 
 						<td>
 <?php						if (isset($natent['staticnatport'])) { ?>
-							<i class="fa fa-check" title="Keep Source Port Static"></i>
+							<i class="fa-solid fa-check" title="Keep Source Port Static"></i>
 <?php						} else { ?>
-							<i class="fa fa-random" title="Randomize Source Port"></i>
+							<i class="fa-solid fa-random" title="Randomize Source Port"></i>
 <?php						} ?>
 						</td>
 
@@ -356,9 +356,9 @@ print($form);
 
 						<!-- Action	 icons -->
 						<td>
-							<a class="fa fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -372,23 +372,23 @@ print($form);
 
 	<nav class="action-buttons">
 		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the top of the list')?>">
-			<i class="fa fa-level-up icon-embed-btn"></i>
+			<i class="fa-solid fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the end of the list')?>">
-			<i class="fa fa-level-down icon-embed-btn"></i>
+			<i class="fa-solid fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>" disabled title="<?=gettext('Delete selected maps')?>">
-			<i class="fa fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" disabled title="<?=gettext('Toggle selected rules')?>">
-			<i class="fa fa-ban icon-embed-btn"></i>
+			<i class="fa-solid fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled name="order-store" title="<?=gettext('Save mapping order')?>">
-			<i class="fa fa-save icon-embed-btn"></i>
+			<i class="fa-solid fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 	</nav>
@@ -422,7 +422,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 					<tr>
 						<td>
-							<i class="fa fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
+							<i class="fa-solid fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
@@ -486,9 +486,9 @@ if ($mode == "automatic" || $mode == "hybrid"):
 						</td>
 						<td>
 <?php						if (isset($natent['staticnatport'])) { ?>
-							<i class="fa fa-check" title="Keep Source Port Static"></i>
+							<i class="fa-solid fa-check" title="Keep Source Port Static"></i>
 <?php						} else { ?>
-							<i class="fa fa-random" title="Randomize Source Port"></i>
+							<i class="fa-solid fa-random" title="Randomize Source Port"></i>
 <?php						} ?>
 						</td>
 						<td>

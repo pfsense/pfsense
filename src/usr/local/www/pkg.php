@@ -354,7 +354,7 @@ if ($savemsg) {
 				if ($include_filtering_inputbox) {
 					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . htmlspecialchars($_REQUEST['pkg_filter']) . '" />';
 					echo '&nbsp;<button type="submit" value="Filter" class="btn btn-primary btn-xs">';
-					echo '<i class="fa fa-filter icon-embed-btn"></i>';
+					echo '<i class="fa-solid fa-filter icon-embed-btn"></i>';
 					echo gettext("Filter");
 					echo "</button>";
 				}
@@ -523,12 +523,12 @@ if ($savemsg) {
 			#Show custom description to edit button if defined
 			$edit_msg=($pkg['adddeleteeditpagefields']['edittext']?$pkg['adddeleteeditpagefields']['edittext']:gettext("Edit this item"));
 ?>
-								<td><a class="fa fa-pencil" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>" title="<?=$edit_msg?>"></a></td>
+								<td><a class="fa-solid fa-pencil" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>" title="<?=$edit_msg?>"></a></td>
 <?php
 			#Show custom description to delete button if defined
 			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:gettext("Delete this item"));
 ?>
-								<td>&nbsp;<a class="fa fa-trash" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=$delete_msg?>"></a></td>
+								<td>&nbsp;<a class="fa-solid fa-trash" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=$delete_msg?>"></a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -583,13 +583,13 @@ if ($savemsg) {
 	#Show custom description to add button if defined
 	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:gettext("Add a new item"));
 ?>
-								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><i class="fa fa-plus icon-embed-btn"></i><?=gettext('Add')?></a></td>
+								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><i class="fa-solid fa-plus icon-embed-btn"></i><?=gettext('Add')?></a></td>
 <?php
 	#Show description button and info if defined
 	if ($pkg['adddeleteeditpagefields']['description']) {
 ?>
 								<td>
-									<i class="fa fa-info-circle"><?=$pkg['adddeleteeditpagefields']['description']?></i>
+									<i class="fa-solid fa-info-circle"><?=$pkg['adddeleteeditpagefields']['description']?></i>
 								</td>
 <?php
 	}
@@ -601,7 +601,7 @@ if ($savemsg) {
 				<?=$final_footer?>
 			</table>
 			</div>
-		<button class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')"><i class="fa fa-save icon-embed-btn"></i><?=gettext("Save")?></button>
+		<button class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext("Save")?></button>
 
 </form>
 <?php

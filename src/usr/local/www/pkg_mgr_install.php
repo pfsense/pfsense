@@ -449,10 +449,10 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 						<input type="hidden" name="id" value="firmware" />
 						<input type="hidden" name="confirmed" id="confirmed" value="true" />
 						<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
-							<i class="fa fa-check icon-embed-btn"></i>
+							<i class="fa-solid fa-check icon-embed-btn"></i>
 							<?=gettext("Confirm")?>
 						</button>
-						<span id="uptodate"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></span>
+						<span id="uptodate"><i class="fa-solid fa-cog fa-spin fa-lg text-warning"></i></span>
 					</div>
 				</div>
 <?php
@@ -461,7 +461,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 				<input type="hidden" name="pkg" value="<?=$pkgname;?>" />
 				<input type="hidden" name="confirmed" value="true" />
 				<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
-					<i class="fa fa-check icon-embed-btn"></i>
+					<i class="fa-solid fa-check icon-embed-btn"></i>
 					<?=gettext("Confirm")?>
 				</button>
 <?php

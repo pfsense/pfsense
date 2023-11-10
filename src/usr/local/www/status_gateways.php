@@ -195,15 +195,15 @@ display_top_tabs($tab_array);
 					<?=htmlspecialchars($gateway['descr']); ?>
 				</td>
 				<td>
-					<a href="?act=killgw&amp;gwname=<?=urlencode($gateway['name']);?>" class="fa fa-times-circle do-confirm" title="<?=gettext('Kill all firewall states created by policy routing rules using this specific gateway by name.')?>" usepost></a>
+					<a href="?act=killgw&amp;gwname=<?=urlencode($gateway['name']);?>" class="fa-solid fa-times-circle do-confirm" title="<?=gettext('Kill all firewall states created by policy routing rules using this specific gateway by name.')?>" usepost></a>
 <?php if (!empty($gwip) && is_ipaddr($gwip)): ?>
-					<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa fa-times-circle-o do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
+					<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa-solid fa-times-circle-o do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
 <?php endif; ?>
 <?php if (isset($gateway['isdefaultgw'])): ?>
 	<?php if ($gateway['ipprotocol'] != 'inet6'): ?>
-					<a href="?act=killgw&amp;gwdef4=true" class="fa fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv4 gateway (0.0.0.0) and not policy routing or reply-to rules.')?>" usepost></a>
+					<a href="?act=killgw&amp;gwdef4=true" class="fa-solid fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv4 gateway (0.0.0.0) and not policy routing or reply-to rules.')?>" usepost></a>
 	<?php else: ?>
-					<a href="?act=killgw&amp;gwdef6=true" class="fa fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv6 gateway (::) and not policy routing or reply-to rules.')?>" usepost></a>
+					<a href="?act=killgw&amp;gwdef6=true" class="fa-solid fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv6 gateway (::) and not policy routing or reply-to rules.')?>" usepost></a>
 	<?php endif; ?>
 <?php endif; ?>
 				</td>

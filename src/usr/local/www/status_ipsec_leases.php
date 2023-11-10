@@ -106,7 +106,7 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 					<td>
 						<?php if ($lease['status'] == 'online'): ?>
 						<span style="color:green; font-weight: bold">
-						<span class="fa fa-check"></span>
+						<span class="fa-solid fa-check"></span>
 						<?php else: ?>
 						<span>
 						<?php endif; ?>

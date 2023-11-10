@@ -607,7 +607,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvstats').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvstats').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvstats').click(function(event) {
@@ -644,7 +644,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvleap').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvleap').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	function change_serverauth() {

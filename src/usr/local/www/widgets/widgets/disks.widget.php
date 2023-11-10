@@ -81,7 +81,7 @@ if (isset($_POST['save'])) {
 							<tr>
 								<th><?=htmlspecialchars(gettext("Mount"))?></th>
 								<th>
-									<span><i class="fa fa-thumb-tack" style="vertical-align:middle;"></i></span>
+									<span><i class="fa-solid fa-thumb-tack" style="vertical-align:middle;"></i></span>
 									<?=htmlspecialchars(gettext("Pin"))?>
 								</th>
 							</tr>
@@ -120,11 +120,11 @@ if (isset($_POST['save'])) {
 
 		<nav class="action-buttons">
 			<button type="submit" class="btn btn-primary">
-				<i class="fa fa-save icon-embed-btn"></i>
+				<i class="fa-solid fa-save icon-embed-btn"></i>
 				<?=htmlspecialchars(gettext('Save'))?>
 			</button>
 			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info">
-				<i class="fa fa-undo icon-embed-btn"></i>
+				<i class="fa-solid fa-undo icon-embed-btn"></i>
 				<?=htmlspecialchars(gettext('All'))?>
 			</button>
 		</nav>
@@ -173,8 +173,8 @@ if (isset($_POST['save'])) {
 			}
 
 			tree.treegrid({
-				expanderExpandedClass: 'fa fa fa-chevron-down',
-				expanderCollapsedClass: 'fa fa fa-chevron-right',
+				expanderExpandedClass: 'fa fa-solid fa-chevron-down',
+				expanderCollapsedClass: 'fa fa-solid fa-chevron-right',
 				initialState: 'collapsed',
 				saveStateName: cookieName,
 				saveState: true

@@ -118,11 +118,11 @@ if (file_exists($supportfile) && ( time()-filemtime($supportfile) < $refreshinte
 } else {
 	//Print empty <div>s and request the data by AJAX
 	print(sprintf(gettext("%sRetrieving support information %s %s"),
-		"<div id=\"summary\" class=\"alert alert-warning\">", "<i class=\"fa fa-cog fa-spin\"></i>", "</div><div id=\"htmltxt\"></div>"));
+		"<div id=\"summary\" class=\"alert alert-warning\">", "<i class=\"fa-solid fa-cog fa-spin\"></i>", "</div><div id=\"htmltxt\"></div>"));
 }
 
 // Print a low-key refresh link
-print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/netgate_services_and_support.widget.php?act=refresh" usepost><i class="fa fa-refresh"></i></a></div>');
+print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/netgate_services_and_support.widget.php?act=refresh" usepost><i class="fa-solid fa-refresh"></i></a></div>');
 
 print("</div>");
 

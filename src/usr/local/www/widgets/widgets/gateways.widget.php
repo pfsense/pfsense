@@ -76,7 +76,7 @@ if (!function_exists('compose_table_body_contents')) {
 			$rtnstr .= 	"<td title='{$gtitle}'>\n";
 			$rtnstr .= htmlspecialchars($gateway['name']);
 			if (isset($gateway['isdefaultgw'])) {
-				$rtnstr .= ' <i class="fa fa-globe"></i>';
+				$rtnstr .= ' <i class="fa-solid fa-globe"></i>';
 			}
 			$rtnstr .= "<br />";
 			$rtnstr .= '<div id="gateway' . $counter . '" style="display:inline"><b>';
@@ -333,8 +333,8 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

@@ -56,7 +56,7 @@ $sysinfo_items = array(
 	);
 
 // Declared here so that JavaScript can access it
-$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa fa-cog fa-spin'></i>");
+$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-cog fa-spin'></i>");
 $state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
 
 if ($_REQUEST['getupdatestatus']) {
@@ -90,7 +90,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<div>
 			<?=gettext("Version ")?>
 			<span class="text-success"><?=$system_version['version']?></span> <?=gettext("is available.")?>
-			<a class="fa fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
+			<a class="fa-solid fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
 		</div>
 <?php
 		break;
@@ -114,7 +114,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<?printf("%s %s", gettext("Version information updated at"),
 		    date("D M j G:i:s T Y", filemtime($cache_file)));?>
 		    &nbsp;
-		    <a id="updver" href="#" class="fa fa-refresh"></a>
+		    <a id="updver" href="#" class="fa-solid fa-refresh"></a>
 	</div>
 <?php
 	endif;
@@ -487,7 +487,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="cpumeter"><?=sprintf(gettext("Retrieving CPU data %s"), "<i class=\"fa fa-gear fa-spin\"></i>")?></span>
+				<span id="cpumeter"><?=sprintf(gettext("Retrieving CPU data %s"), "<i class=\"fa-solid fa-gear fa-spin\"></i>")?></span>
 			</td>
 		</tr>
 <?php
@@ -576,8 +576,8 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

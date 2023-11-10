@@ -682,7 +682,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Hide Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnsrcadv').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------

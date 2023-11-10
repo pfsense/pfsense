@@ -73,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			<p><?=gettext('Click "Halt" to halt the system immediately, or "Cancel" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)')?></p>
 			<form action="diag_halt.php" method="post">
 				<button type="submit" class="btn btn-danger pull-center" name="save" value="<?=gettext("Halt")?>" title="<?=gettext("Halt the system and power off")?>">
-					<i class="fa fa-stop-circle"></i>
+					<i class="fa-solid fa-stop-circle"></i>
 					<?=gettext("Halt")?>
 				</button>
 				<a href="/" class="btn btn-info">
-					<i class="fa fa-undo"></i>
+					<i class="fa-solid fa-undo"></i>
 					<?=gettext("Cancel")?>
 				</a>
 			</form>

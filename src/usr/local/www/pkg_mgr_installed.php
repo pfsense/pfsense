@@ -124,11 +124,11 @@ function get_pkg_table() {
 		$pkgtbl .='					<td>';
 
 		if ($upgradeavail) {
-			$pkgtbl .='						<a title="' . $status . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '" class="fa fa-refresh"></a>';
+			$pkgtbl .='						<a title="' . $status . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '" class="fa-solid fa-refresh"></a>';
 		} elseif ($missing) {
-			$pkgtbl .='						<span class="text-danger"><i title="' . $status . '" class="fa fa-exclamation"></i></span>';
+			$pkgtbl .='						<span class="text-danger"><i title="' . $status . '" class="fa-solid fa-exclamation"></i></span>';
 		} else {
-			$pkgtbl .='						<i title="' . $status . '" class="fa fa-check"></i>';
+			$pkgtbl .='						<i title="' . $status . '" class="fa-solid fa-check"></i>';
 		}
 		$pkgtbl .='					</td>';
 		$pkgtbl .='					<td>';
@@ -154,25 +154,25 @@ function get_pkg_table() {
 			$pkgtbl .='						<br /><br />' . gettext("Package Dependencies") . ':<br/>';
 			foreach ($pkg['deps'] as $pdep) {
 				$pkgtbl .='						<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;' .
-				    '<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;';
+				    '<i class="fa-solid fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;';
 			}
 		}
 		$pkgtbl .='					</td>';
 		$pkgtbl .='					<td>';
 		$pkgtbl .='							<a title="' . sprintf(gettext("Remove package %s"), $pkg['name']) .
-		    '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '" class="fa fa-trash"></a>';
+		    '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '" class="fa-solid fa-trash"></a>';
 
 		if ($upgradeavail) {
 			$pkgtbl .='						<a title="' . sprintf(gettext("Update package %s"), $pkg['name']) .
-			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '" class="fa fa-refresh"></a>';
+			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '" class="fa-solid fa-refresh"></a>';
 		} else if (!isset($pkg['obsolete'])) {
 			$pkgtbl .='						<a title="' . sprintf(gettext("Reinstall package %s"), $pkg['name']) .
-			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '" class="fa fa-retweet"></a>';
+			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '" class="fa-solid fa-retweet"></a>';
 		}
 
 		if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
 			$pkgtbl .='						<a target="_blank" title="' . gettext("View more information") . '" href="' .
-			    htmlspecialchars($pkg['www']) . '" class="fa fa-info"></a>';
+			    htmlspecialchars($pkg['www']) . '" class="fa-solid fa-info"></a>';
 		}
 		$pkgtbl .='					</td>';
 		$pkgtbl .='				</tr>';
@@ -201,7 +201,7 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed Packages')?></h2></div>
 	<div id="pkgtbl" class="panel-body">
 		<div id="waitmsg">
-			<?php print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa fa-cog fa-spin"></i>'); ?>
+			<?php print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa-solid fa-cog fa-spin"></i>'); ?>
 		</div>
 
 		<div id="errmsg" style="display: none;">
@@ -215,13 +215,13 @@ display_top_tabs($tab_array);
 
 	<div id="legend" class="alert-info text-center">
 		<p>
-		<i class="fa fa-refresh"></i> = <?=gettext('Update')?>  &nbsp;
-		<i class="fa fa-check"></i> = <?=gettext('Current')?> &nbsp;
+		<i class="fa-solid fa-refresh"></i> = <?=gettext('Update')?>  &nbsp;
+		<i class="fa-solid fa-check"></i> = <?=gettext('Current')?> &nbsp;
 		</p>
 		<p>
-		<i class="fa fa-trash"></i> = <?=gettext('Remove')?> &nbsp;
-		<i class="fa fa-info"></i> = <?=gettext('Information')?> &nbsp;
-		<i class="fa fa-retweet"></i> = <?=gettext('Reinstall')?>
+		<i class="fa-solid fa-trash"></i> = <?=gettext('Remove')?> &nbsp;
+		<i class="fa-solid fa-info"></i> = <?=gettext('Information')?> &nbsp;
+		<i class="fa-solid fa-retweet"></i> = <?=gettext('Reinstall')?>
 		</p>
 		<p>
 		<span class="text-warning"><?=gettext("Newer version available")?></span>

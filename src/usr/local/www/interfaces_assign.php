@@ -536,7 +536,7 @@ echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>
 			<td>
 <?php if ($ifname != 'wan'):?>
 				<button type="submit" name="del[<?=$ifname?>]" class="btn btn-danger btn-sm" title="<?=$gettextArray['deleteif']?>">
-					<i class="fa fa-trash icon-embed-btn"></i>
+					<i class="fa-solid fa-trash icon-embed-btn"></i>
 					<?=$gettextArray["delete"]?>
 				</button>
 <?php endif;?>
@@ -562,7 +562,7 @@ foreach ($unused_portlist as $portname => $portinfo):?>
 			</td>
 			<td>
 				<button type="submit" name="add" title="<?=gettext("Add selected interface")?>" value="add interface" class="btn btn-success btn-sm" >
-					<i class="fa fa-plus icon-embed-btn"></i>
+					<i class="fa-solid fa-plus icon-embed-btn"></i>
 					<?=$gettextArray["add"]?>
 				</button>
 			</td>
@@ -572,7 +572,7 @@ foreach ($unused_portlist as $portname => $portinfo):?>
 	</table>
 	</div>
 
-	<button name="Submit" type="submit" class="btn btn-primary" value="<?=gettext('Save')?>"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+	<button name="Submit" type="submit" class="btn btn-primary" value="<?=gettext('Save')?>"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
 </form>
 <br />
 

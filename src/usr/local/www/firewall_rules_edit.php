@@ -1786,7 +1786,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -1859,7 +1859,7 @@ events.push(function() {
 			text = "<?=gettext('Display Advanced');?>";
 		}
 
-		$('#btnsrctoggle').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnsrctoggle').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {

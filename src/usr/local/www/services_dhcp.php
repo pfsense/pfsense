@@ -936,9 +936,9 @@ function build_pooltable() {
 				$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
 							htmlspecialchars($poolent['descr']) . '</td>';
 
-				$pooltbl .= '<td><a class="fa fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
+				$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
+				$pooltbl .= ' <a class="fa-solid fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
 				$pooltbl .= '</tr>';
 			}
 		$i++;
@@ -1939,7 +1939,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 					<tr>
 						<td class="text-center" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?php if (isset($mapent['arp_table_static_entry'])): ?>
-								<i class="fa fa-check"></i>
+								<i class="fa-solid fa-check"></i>
 							<?php endif; ?>
 						</td>
 						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
@@ -1964,8 +1964,8 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 							<?=htmlspecialchars($mapent['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -1982,7 +1982,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 
 <nav class="action-buttons">
 	<a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>" class="btn btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add Static Mapping')?>
 	</a>
 </nav>
@@ -2037,7 +2037,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvdns').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvdns').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvdns').click(function(event) {
@@ -2072,7 +2072,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvmac').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvmac').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvmac').click(function(event) {
@@ -2109,7 +2109,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvntp').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvntp').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvntp').click(function(event) {
@@ -2143,7 +2143,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvtftp').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvtftp').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvtftp').click(function(event) {
@@ -2177,7 +2177,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvldap').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvldap').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvldap').click(function(event) {
@@ -2212,7 +2212,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -2254,7 +2254,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvnwkboot').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvnwkboot').click(function(event) {

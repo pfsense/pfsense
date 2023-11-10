@@ -547,7 +547,7 @@ function build_priv_table() {
 		$privhtml .=			'</td>';
 		$privhtml .=			'<td>';
 		if (!$group && !$read_only) {
-			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
+			$privhtml .=			'<a class="fa-solid fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
 		}
 
 		$privhtml .=			'</td>';
@@ -575,7 +575,7 @@ function build_priv_table() {
 
 	$privhtml .= '<nav class="action-buttons">';
 	if (!$read_only) {
-		$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+		$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$privhtml .= '</nav>';
 
@@ -609,7 +609,7 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
 			if (!$read_only) {
-				$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
+				$certhtml .=			'<a id="delcert' . $i .'" class="fa-solid fa-trash no-confirm icon-pointer" title="';
 				$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
 			}
 			$certhtml .=		'</td>';
@@ -625,7 +625,7 @@ function build_cert_table() {
 
 	$certhtml .= '<nav class="action-buttons">';
 	if (!$read_only) {
-		$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+		$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$certhtml .= '</nav>';
 
@@ -695,16 +695,16 @@ foreach ($a_user as $i => $userent):
 		$usrimg = 'user';
 	}
 ?>
-							<i class="fa fa-<?=$usrimg?>" title="<?= gettext("Scope") . ": {$userent['scope']}" ?>"></i>
+							<i class="fa-solid fa-<?=$usrimg?>" title="<?= gettext("Scope") . ": {$userent['scope']}" ?>"></i>
 							<?=htmlspecialchars($userent['name'])?>
 						</td>
 						<td><?=htmlspecialchars($userent['descr'])?></td>
-						<td><i class="fa fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>><span style='display: none'><?= (isset($userent['disabled'])) ? gettext("Disabled") : gettext("Enabled") ; ?></span></i></td>
+						<td><i class="fa-solid fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>><span style='display: none'><?= (isset($userent['disabled'])) ? gettext("Disabled") : gettext("Enabled") ; ?></span></i></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username']) && !$read_only): ?>
-							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
+							<a class="fa-solid fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
 						</td>
 					</tr>
@@ -718,12 +718,12 @@ foreach ($a_user as $i => $userent):
 	<?php if (!$read_only): ?>
 
 	<a href="?act=new" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 
 	<button type="submit" class="btn btn-sm btn-danger" name="dellall" value="dellall" title="<?=gettext('Delete selected users')?>">
-		<i class="fa fa-trash icon-embed-btn"></i>
+		<i class="fa-solid fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete")?>
 	</button>
 	<?php endif; ?>

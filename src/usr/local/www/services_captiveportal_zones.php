@@ -103,8 +103,8 @@ if (is_subsystem_dirty('captiveportal')) {
 						<td><?=count(captiveportal_read_db());?></td>
 						<td><?=htmlspecialchars($cpitem['descr']);?>&nbsp;</td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit zone"); ?>" href="services_captiveportal.php?zone=<?=$cpzone?>"></a>
-							<a class="fa fa-trash"  title="<?=gettext("Delete zone")?>" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" usepost></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit zone"); ?>" href="services_captiveportal.php?zone=<?=$cpzone?>"></a>
+							<a class="fa-solid fa-trash"  title="<?=gettext("Delete zone")?>" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -118,7 +118,7 @@ if (is_subsystem_dirty('captiveportal')) {
 
 <nav class="action-buttons">
 	<a href="services_captiveportal_zones_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

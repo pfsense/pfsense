@@ -294,7 +294,7 @@ if (!empty($cpzone)): ?>
 		endif;
 ?>
 					<td>
-						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa-solid fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
 					</td>
 				</tr>
 <?php
@@ -318,21 +318,21 @@ endif;
 if (!empty($cpzone)):
 	if ($_REQUEST['showact']): ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=0" role="button" class="btn btn-info" title="<?=gettext("Don't show last activity")?>">
-		<i class="fa fa-minus-circle icon-embed-btn"></i>
+		<i class="fa-solid fa-minus-circle icon-embed-btn"></i>
 		<?=gettext("Hide Last Activity")?>
 	</a>
 <?php
 	else:
 ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=1" role="button" class="btn btn-info" title="<?=gettext("Show last activity")?>">
-		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<i class="fa-solid fa-plus-circle icon-embed-btn"></i>
 		<?=gettext("Show Last Activity")?>
 	</a>
 <?php
 	endif;
 ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>" usepost>
-		<i class="fa fa-trash icon-embed-btn"></i>
+		<i class="fa-solid fa-trash icon-embed-btn"></i>
 		<?=gettext("Disconnect All Users")?>
 	</a>
 <?php

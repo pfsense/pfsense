@@ -402,7 +402,7 @@ events.push(function() {
 
 		var buttonstr = <?=json_encode($btn_str);?>;
 		$('.btn-success').prop('value', buttonstr[tab]);
-		$('.btn-success').html('<i class="fa fa-plus icon-embed-btn"></i>' + buttonstr[tab]);
+		$('.btn-success').html('<i class="fa-solid fa-plus icon-embed-btn"></i>' + buttonstr[tab]);
 
 		// Set the input field label by tab
 		var labelstr = <?=json_encode($label_str);?>;

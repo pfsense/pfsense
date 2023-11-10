@@ -100,7 +100,7 @@ function get_pkg_stats() {
 		print("<tr>\n");
 		print(		'<td><span class="' . $txtcolor . '">' . $pkg['shortname'] . "</span></td>\n");
 		print(		"<td>\n");
-		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i> ');
+		print(			'<i title="' . $status . '" class="fa-solid fa-' . $statusicon . '"></i> ');
 
 		if (!g_get('disablepackagehistory')) {
 			print('<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">');
@@ -114,16 +114,16 @@ function get_pkg_stats() {
 
 		print(	"</td>\n");
 		print(	"<td>\n");
-		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-trash"></i></a>'."\n");
+		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa-solid fa-trash"></i></a>'."\n");
 
 		if ($upgradeavail) {
-			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa fa-refresh"></i></a>'."\n");
+			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa-solid fa-refresh"></i></a>'."\n");
 		} else {
-			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-retweet"></i></a>'."\n");
+			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa-solid fa-retweet"></i></a>'."\n");
 		}
 
 		if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
-			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '"><i class="fa fa-info"></i></a>'."\n");
+			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '"><i class="fa-solid fa-info"></i></a>'."\n");
 		}
 
 		print(	"</td>\n");

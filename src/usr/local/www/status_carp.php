@@ -178,7 +178,7 @@ if ($carpcount == 0) {
 			"<br/><br/>" .
 			'<button type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
 			gettext("Reset CARP Demotion Status") .
-			'"><i class="fa fa-undo icon-embed-btn"></i>' .
+			'"><i class="fa-solid fa-undo icon-embed-btn"></i>' .
 			gettext("Reset CARP Demotion Status") .
 			'</button>',
 			'danger'
@@ -186,8 +186,8 @@ if ($carpcount == 0) {
 	}
 
 ?>
-				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? 'disable' : 'enable')?>" ><i class="fa fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
-				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? 'disable' : 'enable')?>" ><i class="fa fa-wrench icon-embed-btn"></i><?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
+				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? 'disable' : 'enable')?>" ><i class="fa-solid fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
+				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? 'disable' : 'enable')?>" ><i class="fa-solid fa-wrench icon-embed-btn"></i><?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
 			</div>
 		</div>
 	</div>
@@ -240,7 +240,7 @@ if ($carpcount == 0) {
 ?>
 						</td>
 						<td><?=htmlspecialchars($carp['descr'])?></td>
-						<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>
+						<td><i class="fa-solid fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>
 					</tr>
 <?php }?>
 				</tbody>

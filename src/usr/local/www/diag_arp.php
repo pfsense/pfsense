@@ -89,7 +89,7 @@ if ($savemsg) {
 		<?=gettext('Search')?>
 		<span class="widget-heading-icon pull-right">
 			<a data-toggle="collapse" href="#search-panel_panel-body">
-				<i class="fa fa-plus-circle"></i>
+				<i class="fa-solid fa-plus-circle"></i>
 			</a>
 		</span>
 	</h2>
@@ -112,8 +112,8 @@ if ($savemsg) {
 			</select>
 		</div>
 		<div class="col-sm-3">
-			<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-			<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+			<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+			<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 		</div>
 		<div class="col-sm-10 col-sm-offset-2">
 			<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to filter entries.')?></span>
@@ -151,10 +151,10 @@ if ($savemsg) {
 					<td><?=$entry['type']?></td>
 					<td>
 <?php if ($entry['assigned']): /* only useful for assigned interfaces */ ?>
-						<a class="fa fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>&amp;descr=<?=htmlspecialchars($entry['dnsresolve'])?>"></a>
-						<a class="fa fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>" usepost></a>
+						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>&amp;descr=<?=htmlspecialchars($entry['dnsresolve'])?>"></a>
+						<a class="fa-solid fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>" usepost></a>
 <?php endif; ?>
-						<a class="fa fa-trash" title="<?=gettext('Delete ARP cache entry')?>" href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>
+						<a class="fa-solid fa-trash" title="<?=gettext('Delete ARP cache entry')?>" href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -168,7 +168,7 @@ if ($savemsg) {
 
 <nav class="action-buttons">
 	<button id="cleararp" class="btn btn-danger no-confirm">
-		<i class="fa fa-trash icon-embed-btn"></i>
+		<i class="fa-solid fa-trash icon-embed-btn"></i>
 		<?=gettext("Clear ARP Table")?>
 	</button>
 </nav>

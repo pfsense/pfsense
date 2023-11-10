@@ -291,7 +291,7 @@ if (empty($entries)) {
 						<td>
 							<?php if (!$bogons && !$urltable): ?>
 								<a style="cursor: pointer;" data-entry="<?=htmlspecialchars($entry)?>">
-									<i class="fa fa-trash" title="<?= gettext("Remove this entry") ?>"></i>
+									<i class="fa-solid fa-trash" title="<?= gettext("Remove this entry") ?>"></i>
 								</a>
 							<?php endif ?>
 						</td>

@@ -103,7 +103,7 @@ if (!$confirmed && !empty($_REQUEST['action'])) { ?>
 				<input type="hidden" name="action" value="<?=htmlspecialchars($_REQUEST['action'])?>" />
 				<input type="hidden" name="confirmed" value="true" />
 				<button type="submit" class="btn btn-success" name="erconfirm" id="erconfirm" value="<?=gettext("Confirm")?>">
-					<i class="fa fa-check icon-embed-btn"></i>
+					<i class="fa-solid fa-check icon-embed-btn"></i>
 					<?=gettext("Confirm")?>
 				</button>
 	<?php endif;

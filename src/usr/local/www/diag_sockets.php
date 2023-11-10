@@ -40,7 +40,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 
 ?>
 <button class="btn btn-info btn-sm" type="button" value="<?=$showAllText?>" onclick="window.location.href='diag_sockets.php<?=$showAllOption?>'">
-	<i class="fa fa-<?= ($showAll) ? 'minus-circle' : 'plus-circle' ; ?> icon-embed-btn"></i>
+	<i class="fa-solid fa-<?= ($showAll) ? 'minus-circle' : 'plus-circle' ; ?> icon-embed-btn"></i>
 	<?=$showAllText?>
 </button>
 <br />

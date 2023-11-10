@@ -30,9 +30,9 @@
 	<footer class="footer">
 		<div class="container">
 			<p class="text-muted">
-				<a id="tpl" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="fa fa-caret-square-o-up pull-left"></i></a>
+				<a id="tpl" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="fa-solid fa-caret-square-o-up pull-left"></i></a>
 				<?=print_credit();?>
-				<a id="tpr" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="fa fa-caret-square-o-up pull-right"></i></a>
+				<a id="tpr" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="fa-solid fa-caret-square-o-up pull-right"></i></a>
 			</p>
 		</div>
 	</footer>

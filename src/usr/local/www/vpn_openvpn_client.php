@@ -1369,9 +1369,9 @@ else:
 						<?=htmlspecialchars($client['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit Client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-clone"	title="<?=gettext("Copy Client")?>"	href="vpn_openvpn_client.php?act=dup&amp;id=<?=$i?>" usepost></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete Client')?>"	href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit Client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa-solid fa-clone"	title="<?=gettext("Copy Client")?>"	href="vpn_openvpn_client.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete Client')?>"	href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -1385,7 +1385,7 @@ else:
 
 <nav class="action-buttons">
 	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

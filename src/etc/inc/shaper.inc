@@ -1129,7 +1129,7 @@ class altq_root_queue {
 		$form .= '<a class="btn btn-danger btn-xs" href="firewall_shaper_queues.php?interface=';
 		$form .= $this->GetInterface() . '&amp;queue=';
 		$form .= $this->GetQname() . '&amp;action=delete">';
-		$form .= '<i class="fa fa-trash icon-embed-btn"></i>';
+		$form .= '<i class="fa-solid fa-trash icon-embed-btn"></i>';
 		$form .= gettext("Remove shaper from this interface") . '</a>';
 
 		$form .= '	</dd>';
@@ -1970,7 +1970,7 @@ class priq_queue {
 			$form .= '<a class="btn btn-danger btn-xs" href="firewall_shaper_queues.php?interface=';
 			$form .= $this->GetInterface() . '&amp;queue=';
 			$form .= $this->GetQname() . '&amp;action=delete">';
-			$form .= '<i class="fa fa-trash icon-embed-btn"></i>';
+			$form .= '<i class="fa-solid fa-trash icon-embed-btn"></i>';
 			$form .= gettext("Delete Queue from this Interface") . '</a>';
 
 			$form .= '	</dd>';
@@ -4315,7 +4315,7 @@ var addBwRowTo = (function() {
 	cell1.innerHTML = "<input type='hidden' value='" + totalrows +"' name='bandwidth_row-" + totalrows + "' /><input type='text' class='form-control' name='bandwidth" + totalrows + "' id='bandwidth" + totalrows + "' />";
 	cell2.innerHTML = "<input type='hidden' value='" + totalrows +"' name='bwtype_row-" + totalrows + "' /><select class='form-control' name='bwtype" + totalrows + "'>{$bwopt}</select>";
 	cell3.innerHTML = "<input type='hidden' value='" + totalrows +"' name='bwsched_row-" + totalrows + "' /><select class='form-control' name='bwsched" + totalrows + "'>{$schedules}</select>";
-	cell4.innerHTML = '<a class="btn btn-warning" onclick="removeBwRow(this); return false;" href="#"><i class="fa fa-trash icon-embed-btn"></i>Delete</a>';
+	cell4.innerHTML = '<a class="btn btn-warning" onclick="removeBwRow(this); return false;" href="#"><i class="fa-solid fa-trash icon-embed-btn"></i>Delete</a>';
 
 	});
 })();
@@ -4409,14 +4409,14 @@ EOD;
 				$form .= "</select>";
 				$form .= "</td>";
 				$form .= '<td>';
-				$form .= '<a class="btn btn-warning" onclick="removeBwRow(this); return false;"><i class="fa fa-trash icon-embed-btn"></i>' . gettext('Delete') . '</a>';
+				$form .= '<a class="btn btn-warning" onclick="removeBwRow(this); return false;"><i class="fa-solid fa-trash icon-embed-btn"></i>' . gettext('Delete') . '</a>';
 				$form .= "</td></tr>";
 			}
 		}
 		$form .= "</tbody></table></div><br />";
 
 		$form .= '<a class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
-		$form .= '<i class="fa fa-plus icon-embed-btn"></i>';
+		$form .= '<i class="fa-solid fa-plus icon-embed-btn"></i>';
 		$form .= gettext("Add Schedule") . "</a>";
 
 		return($form);
@@ -5590,7 +5590,7 @@ function build_iface_without_this_queue($iface, $qname) {
 	$form .= '<a class="btn btn-info btn-xs" href="firewall_shaper_queues.php?interface=';
 	$form .= $iface . '&amp;queue=';
 	$form .= $qname . '&amp;action=add">';
-	$form .= '<i class="fa fa-clone icon-embed-btn"></i>';
+	$form .= '<i class="fa-solid fa-clone icon-embed-btn"></i>';
 	$form .= gettext("Clone Shaper to this Interface") . '</a>';
 	$form .= '	</dd>';
 

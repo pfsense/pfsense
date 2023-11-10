@@ -453,7 +453,7 @@ $('.infoblock').each(function() {
 	}
 
 	// Add the "i" icon before the infoblock, incrementing the icon id for each block (in case there are multiple infoblocks on a page)
-	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx.toString() + '" title="More information"></i>');
+	$(this).before('<i class="fa-solid fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx.toString() + '" title="More information"></i>');
 	$(this).removeClass("infoblock");
 	$(this).addClass("infoblock" + sfx.toString());
 	sfx++;
@@ -522,13 +522,13 @@ $("#addsep").click(function() {
 
 	$('#ruletable > tbody:last').append('<tr>' +
 		'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
-		'<td class="' + gColor + '" colspan="2"><button class="btn btn-primary btn-sm" id="btnnewsep"><i class="fa fa-save icon-embed-btn"></i>' + svtxt + '</button>' +
-		'<button class="btn btn-info btn-sm" id="btncncsep"><i class="fa fa-undo icon-embed-btn"></i>' + cncltxt + '</button>' +
+		'<td class="' + gColor + '" colspan="2"><button class="btn btn-primary btn-sm" id="btnnewsep"><i class="fa-solid fa-save icon-embed-btn"></i>' + svtxt + '</button>' +
+		'<button class="btn btn-info btn-sm" id="btncncsep"><i class="fa-solid fa-undo icon-embed-btn"></i>' + cncltxt + '</button>' +
 		'&nbsp;&nbsp;&nbsp;&nbsp;' +
-		'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
-		'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
-		'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
-		'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
+		'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa-solid fa-circle text-info icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa-solid fa-circle text-danger icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa-solid fa-circle text-success icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa-solid fa-circle text-warning icon-pointer"></i></button>' +
 		'</td></tr>');
 
 	$('#newsep').focus();
@@ -559,7 +559,7 @@ $("#addsep").click(function() {
 
 		$(this).parents('tr').replaceWith('<tr class="ui-sortable-handle separator">' +
 			'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
-			'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
+			'<td class="' + gColor + '"><a href="#"><i class="fa-solid fa-trash sepdel"></i></a>' +
 			'</td></tr>');
 
 		$('#order-store').removeAttr('disabled');
@@ -614,7 +614,7 @@ $(function(){
 			}
 		}
 		// Change to icon to show it is working
-		$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
+		$(this).children('i').removeClass().addClass('fa-solid fa-cog fa-spin text-success');
 		this.blur();
 		// POST request to handle the (dis)connect request
 		ajaxRequest = $.ajax(
@@ -762,7 +762,7 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 		name = args.join('-');
 	}
 
-	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
+	$(this).children('i').removeClass().addClass('fa-solid fa-cog fa-spin text-success');
 	this.blur();
 
 	ajaxRequest = $.ajax(

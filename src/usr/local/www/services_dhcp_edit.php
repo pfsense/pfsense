@@ -1070,7 +1070,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvdns').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvdns').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvdns').click(function(event) {
@@ -1107,7 +1107,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvntp').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvntp').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvntp').click(function(event) {
@@ -1141,7 +1141,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvtftp').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvtftp').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvtftp').click(function(event) {
@@ -1175,7 +1175,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvldap').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvldap').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvldap').click(function(event) {
@@ -1210,7 +1210,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -1252,7 +1252,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvnwkboot').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvnwkboot').click(function(event) {

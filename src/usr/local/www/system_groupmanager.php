@@ -319,7 +319,7 @@ function build_priv_table() {
 		}
 		$privhtml .=			'</td>';
 		if (!$read_only && ($dup === null)) {
-			$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
+			$privhtml .=			'<td><a class="fa-solid fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
 		}
 		$privhtml .=		'</tr>';
 
@@ -342,7 +342,7 @@ function build_priv_table() {
 
 	$privhtml .= '<nav class="action-buttons">';
 	if (!$read_only && ($dup === null)) {
-		$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+		$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$privhtml .= '</nav>';
 
@@ -415,10 +415,10 @@ if (!($act == "new" || $act == "edit")) {
 							<?=$groupcount?>
 						</td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Copy group"); ?>" href="?act=dup&amp;groupid=<?=$i?>"></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
+							<a class="fa-solid fa-clone" title="<?=gettext("Copy group"); ?>" href="?act=dup&amp;groupid=<?=$i?>"></a>
 							<?php if (($group['scope'] != "system") && !$read_only): ?>
-								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
+								<a class="fa-solid fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
 							<?php endif;?>
 						</td>
 					</tr>
@@ -434,7 +434,7 @@ if (!($act == "new" || $act == "edit")) {
 <nav class="action-buttons">
 	<?php if (!$read_only): ?>
 	<a href="?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 	<?php endif; ?>

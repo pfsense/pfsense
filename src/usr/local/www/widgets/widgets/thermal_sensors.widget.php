@@ -342,7 +342,7 @@ if ($thermal_sensors_widget_showFahrenheit) {
 
 		<div class="form-group">
 			<div class="col-sm-offset-4 col-sm-6">
-				<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+				<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
 			</div>
 		</div>
 

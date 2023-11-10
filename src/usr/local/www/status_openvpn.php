@@ -192,20 +192,20 @@ include("head.inc"); ?>
 							<a
 							onclick="showRuleContents('<?=$server['vpnid'];?>', '<?=$conn['user_name'];?>', '<?=$remote_port;?>');" style="cursor:pointer;"
 							   title="<?php echo gettext("Show RADIUS ACL generated ruleset"); ?>">
-							<i class="fa fa-info"></i>
+							<i class="fa-solid fa-info"></i>
 							</a>&nbsp;
 					<?php endif; ?>
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							   title="<?php echo sprintf(gettext("Kill client connection from %s"), $conn['remote_host']); ?>">
-							<i class="fa fa-times"></i>
+							<i class="fa-solid fa-times"></i>
 							</a>&nbsp;
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '<?=$conn['client_id'];?>');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							   title="<?php echo sprintf(gettext("Halt client connection from %s"), $conn['remote_host']); ?>">
-							<i class="fa fa-times-circle text-danger"></i>
+							<i class="fa-solid fa-times-circle text-danger"></i>
 							</a>
 						</td>
 					</tr>
@@ -232,7 +232,7 @@ include("head.inc"); ?>
 ?>
 <div id="shroutebut-<?= $i ?>">
 	<button type="button" class="btn btn-info" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>">
-		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<i class="fa-solid fa-plus-circle icon-embed-btn"></i>
 		<?php echo gettext("Show Routing Table"); ?>
 	</button>
 	- <?= gettext("Display OpenVPN's internal routing table for this server.") ?>

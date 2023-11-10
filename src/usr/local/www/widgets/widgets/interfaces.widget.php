@@ -104,14 +104,14 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 	<tr>
 		<td title="<?=htmlspecialchars($ifinfo['if'])?> (<?=htmlspecialchars($ifinfo['macaddr'])?>)">
-			<i class="fa fa-<?=$typeicon?>"></i>
+			<i class="fa-solid fa-<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
 			</a>
 		</td>
 		<td>
 			<?php if ($known_status):?>
-				<i class="fa fa-<?=$icon?>" title="<?=htmlspecialchars($ifinfo['status'])?>"></i>
+				<i class="fa-solid fa-<?=$icon?>" title="<?=htmlspecialchars($ifinfo['status'])?>"></i>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['status'])?>
 			<?php endif; ?>
@@ -194,8 +194,8 @@ endif;
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

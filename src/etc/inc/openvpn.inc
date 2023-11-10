@@ -794,6 +794,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 		if (!empty($settings['nbdd_server1'])) {
 			$conf .= "push \"dhcp-option NBDD {$settings['nbdd_server1']}\"\n";
 		}
+		if (!empty($settings['nbdd_server2'])) {
+			$conf .= "push \"dhcp-option NBDD {$settings['nbdd_server2']}\"\n";
+		}
 	}
 
 	if ($settings['gwredir']) {

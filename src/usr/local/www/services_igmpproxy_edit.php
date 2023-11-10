@@ -142,7 +142,7 @@ if ($_POST['save']) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['address'] = $address;
-		$pconfig['address'] = $whitelist;
+		$pconfig['whitelist'] = $whitelist;
 		$pconfig['type'] = $_POST['type'];
 	}
 }
@@ -279,10 +279,6 @@ $section->addInput(new Form_Button(
 $counter = 0;
 $whitelist = $pconfig['whitelist'];
 
-//if ($whitelist == "") {
-//	$whitelist = "/";
-//}
-
 $item = explode(" ", $whitelist);
 $rows = count($item) -1;
 
@@ -320,7 +316,7 @@ foreach ($item as $ww) {
 
 	$counter++;
 	$section->add($group);
-} // end foreach
+}
 
 $section->addInput(new Form_Button(
 	'addrow',

@@ -51,6 +51,7 @@ if (isset($id) && $a_igmpproxy[$id]) {
 	$pconfig['threshold'] = $a_igmpproxy[$id]['threshold'];
 	$pconfig['type'] = $a_igmpproxy[$id]['type'];
 	$pconfig['address'] = $a_igmpproxy[$id]['address'];
+	$pconfig['whitelist'] = $a_igmpproxy[$id]['whitelist'];
 	$pconfig['descr'] = html_entity_decode($a_igmpproxy[$id]['descr']);
 }
 
@@ -101,8 +102,29 @@ if ($_POST['save']) {
 		$x++;
 	}
 
+	$whitelist = "";
+	$isfirst = 0;
+	$x = 0;
+	while ($_POST["whitelist{$x}"]) {
+
+		if ($isfirst > 0) {
+			$whitelist .= " ";
+		}
+
+		$this_addr =  $_POST["whitelist{$x}"] . "/" . $_POST["whitelist_subnet{$x}"];
+		if (is_subnetv4($this_addr)) {
+			$whitelist .= $this_addr;
+			$isfirst++;
+		} else {
+			$input_errors[] = sprintf(gettext("The following submitted whitelist is invalid: %s"), $this_addr);
+		}
+
+		$x++;
+	}
+
 	if (!$input_errors) {
 		$igmpentry['address'] = $address;
+		$igmpentry['whitelist'] = $whitelist;
 		$igmpentry['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_igmpproxy[$id]) {
@@ -120,6 +142,7 @@ if ($_POST['save']) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['address'] = $address;
+		$pconfig['whitelist'] = $whitelist;
 		$pconfig['type'] = $_POST['type'];
 	}
 }
@@ -248,6 +271,56 @@ foreach ($item as $ww) {
 $section->addInput(new Form_Button(
 	'addrow',
 	'Add network',
+	null,
+	'fa-plus'
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
+
+
+$counter = 0;
+$whitelist = $pconfig['whitelist'];
+
+$item = explode(" ", $whitelist);
+$rows = count($item) -1;
+
+foreach ($item as $ww) {
+	$whitelist = $item[$counter];
+	$whitelist_subnet = "";
+	$item2 = explode("/", $whitelist);
+
+	foreach ($item2 as $current) {
+		if ($item2[1] != "") {
+			$whitelist = $item2[0];
+			$whitelist_subnet = $item2[1];
+		}
+	}
+
+	$item4 = $item3[$counter];
+	$tracker = $counter;
+
+	$group = new Form_group($tracker == 0? 'Whitelists':null);
+	$group->addClass("repeatable");
+
+	$group->add(new Form_IpAddress(
+		'whitelist' . $tracker,
+		null,
+		$whitelist,
+		['placeholder' => 'Whitelist']
+	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('whitelist_subnet' . $tracker, $whitelist_subnet, 32, 0)->setWidth(4);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->removeClass('btn-primary')->addClass('btn-warning');
+
+	$counter++;
+	$section->add($group);
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add whitelist',
 	null,
 	'fa-plus'
 ))->removeClass('btn-primary')->addClass('btn-success addbtn');

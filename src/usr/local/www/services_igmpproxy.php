@@ -126,7 +126,8 @@ print($form);
 						<tr>
 							<th><?=gettext("Name")?></th>
 							<th><?=gettext("Type")?></th>
-							<th><?=gettext("Values")?></th>
+							<th><?=gettext("Networks")?></th>
+							<th><?=gettext("Whitelists")?></th>
 							<th><?=gettext("Description")?></th>
 							<th><?=gettext("Actions")?></th>
 						</tr>
@@ -149,6 +150,18 @@ foreach ($a_igmpproxy as $igmpentry):
 	print(htmlspecialchars($addresses));
 
 	if (!is_array($igmpentry['address']) || count($igmpentry['address']) < 10) {
+		print(' ');
+	} else {
+		print('...');
+	}
+?>
+							</td>
+							<td>
+<?php
+	$whitelists = implode(", ", array_slice(explode(" ", $igmpentry['whitelist']), 0, 10));
+	print(htmlspecialchars($whitelists));
+
+	if (!is_array($igmpentry['whitelist']) || count($igmpentry['whitelist']) < 10) {
 		print(' ');
 	} else {
 		print('...');

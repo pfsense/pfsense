@@ -3313,6 +3313,11 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "ssid " .escapeshellarg($wlcfg['ssid']);
 	}
 
+	/* Set bssid */
+	if ($wlcfg['bssid']) {
+		$wlcmd[] = "bssid " .escapeshellarg($wlcfg['bssid']);
+	}
+
 	/* Set 802.11g protection mode */
 	$wlcmd[] = "protmode " . escapeshellarg($wlcfg['protmode']);
 

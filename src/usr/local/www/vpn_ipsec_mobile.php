@@ -310,6 +310,7 @@ if ($_POST['save']) {
 			config_del_path('ipsec/client/user_source');
 		}
 
+		config_set_path('ipsec/client/group_source', (($pconfig['group_source'] == 'yes') ? "enabled" : "disabled"));
 		if (($pconfig['group_source'] == 'yes') && !empty($pconfig['auth_groups'])) {
 			config_set_path('ipsec/client/auth_groups', implode(",", $pconfig['auth_groups']));
 		} else {

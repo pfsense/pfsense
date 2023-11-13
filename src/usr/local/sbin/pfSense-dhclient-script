@@ -289,15 +289,13 @@ fi
 $LOGGER $reason
 case $reason in
 MEDIUM)
-	$IFCONFIG $interface $medium
-	$IFCONFIG $interface inet -alias 0.0.0.0 $medium >/dev/null 2>&1
+	eval "$IFCONFIG $interface $medium"
 	/bin/sleep 1
 	;;
 
 PREINIT)
 	delete_old_alias
-	$IFCONFIG $interface inet 0.0.0.0 netmask 255.0.0.0 broadcast 255.255.255.255 up
-
+	eval "$IFCONFIG $interface up"
 	if [ -f "/tmp/${interface}_router" ]; then
 		/bin/mv /tmp/${interface}_router /tmp/${interface}_router.last
 	fi

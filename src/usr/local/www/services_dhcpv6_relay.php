@@ -89,8 +89,8 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "server interface");
-		$reqdfieldsn = array(gettext("Destination Server"), gettext("Interface"));
+		$reqdfields = explode(' ', 'interface');
+		$reqdfieldsn = array(gettext('Interface'));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}

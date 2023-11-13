@@ -37,7 +37,7 @@ require_once('guiconfig.inc');
 require_once('filter.inc');
 
 function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
-	global $config, $g;
+	global $g;
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;
@@ -268,7 +268,7 @@ if (isset($_POST['apply'])) {
 	// Note: if DHCPv6 Server is not enabled, then it is OK to adjust other parameters without specifying range from-to.
 	if ($_POST['enable'] || is_numeric($pool) || ($act === 'newpool')) {
 		if ((empty($_POST['range_from']) || empty($_POST['range_to'])) &&
-		    ($config['dhcpdv6'][$if]['ramode'] != 'stateless_dhcp')) {
+		    (config_get_path("dhcpdv6/{$if}/ramode") != 'stateless_dhcp')) {
 			$input_errors[] = gettext('A valid range must be specified for any Router Advertisement mode except "Stateless DHCP."');
 		}
 	}
@@ -311,7 +311,7 @@ if (isset($_POST['apply'])) {
 		if (!is_ipaddrv6($_POST['range_from'])) {
 			$input_errors[] = gettext("A valid range must be specified.");
 			$range_from_to_ok = false;
-		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
+		} elseif (config_get_path("interfaces/{$if}/ipaddrv6") == 'track6' &&
 			!Net_IPv6::isInNetmask($_POST['range_from'], '::', $ifcfgsn)) {
 			$input_errors[] = sprintf(gettext(
 				'The prefix (upper %1$s bits) must be zero.  Use the form %2$s'),
@@ -323,7 +323,7 @@ if (isset($_POST['apply'])) {
 		if (!is_ipaddrv6($_POST['range_to'])) {
 			$input_errors[] = gettext("A valid range must be specified.");
 			$range_from_to_ok = false;
-		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
+		} elseif (config_get_path("interfaces/{$if}/ipaddrv6") == 'track6' &&
 			!Net_IPv6::isInNetmask($_POST['range_to'], '::', $ifcfgsn)) {
 			$input_errors[] = sprintf(gettext(
 				'The prefix (upper %1$s bits) must be zero.  Use the form %2$s'),
@@ -622,9 +622,9 @@ if ($_POST['act'] == "del") {
 	if ($a_maps[$_POST['id']]) {
 		unset($a_maps[$_POST['id']]);
 		write_config("DHCPv6 server static map deleted");
-		if (isset($config['dhcpdv6'][$if]['enable'])) {
+		if (config_path_enabled("dhcpdv6/{$if}")) {
 			mark_subsystem_dirty('dhcpd6');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstaticv6'])) {
+			if (config_path_enabled('dnsmasq') && config_path_enabled('dnsmasq/regdhcpstaticv6', 'regdhcpstaticv6')) {
 				mark_subsystem_dirty('hosts');
 			}
 		}
@@ -735,9 +735,7 @@ foreach ($iflist as $ifent => $ifname) {
 	    (is_ipaddrv6($oc['ipaddrv6']) &&
 	    !is_linklocal($oc['ipaddrv6'])));
 
-	if ((!is_array($config['dhcpdv6'][$ifent]) ||
-	    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
-	    !$valid_if_ipaddrv6) {
+	if (!config_path_enabled("dhcpdv6/{$ifent}") && !$valid_if_ipaddrv6) {
 		continue;
 	}
 
@@ -831,8 +829,8 @@ $section = new Form_Section($pool_title);
 if (is_ipaddrv6($ifcfgip)) {
 	if ($ifcfgip == "::") {
 		$sntext = gettext("Delegated Prefix") . ':';
-		$sntext .= ' ' . convert_friendly_interface_to_friendly_descr($config['interfaces'][$if]['track6-interface']);
-		$sntext .= "/{$config['interfaces'][$if]['track6-prefix-id']}";
+		$sntext .= ' ' . convert_friendly_interface_to_friendly_descr(config_get_path("interfaces/{$if}/track6-interface"));
+		$sntext .= '/' . config_get_path("interfaces/{$if}/track6-prefix-id");
 		if (get_interface_track6ip($if)) {
 			$track6ip = get_interface_track6ip($if);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);

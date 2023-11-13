@@ -46,9 +46,9 @@ $iflist = get_configured_interface_with_descr();
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
-		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6");
+		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6", 'none');
 		if (!config_path_enabled("dhcpdv6/{$ifent}") &&
-		    !(($ifaddr == 'track6') ||
+		    !(($ifaddr == 'track6') || ($ifaddr == 'none') ||
 		    (is_ipaddrv6($ifaddr) &&
 		    !is_linklocal($ifaddr)))) {
 			continue;
@@ -120,6 +120,10 @@ if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	/* input validation */
+
+	if (config_get_path("interfaces/{$if}/ipaddrv6", 'none') == "none" && $_POST['ramode'] != 'disabled') {
+		$input_errors[] = gettext("Router Advertisements can only be enabled on interfaces configured with static IPv6 or Track Interface.");
+	}
 
 	$pconfig['subnets'] = array();
 	for ($x = 0; $x < 5000; $x += 1) {
@@ -273,8 +277,10 @@ $tabscounter = 0;
 $i = 0;
 foreach ($iflist as $ifent => $ifname) {
 	$oc = config_get_path("interfaces/{$ifent}");
-	// We need interfaces configured with a static IPv6 address or track6 for PD.
-	if (!is_ipaddrv6($oc['ipaddrv6']) && $oc['ipaddrv6'] != "track6") {
+	/* We need interfaces configured with a static IPv6 address or track6 for PD.
+	   Also show those configured as none to allow disabling the service. See:
+	   https://redmine.pfsense.org/issues/14967 */
+	if (!is_ipaddrv6($oc['ipaddrv6']) && $oc['ipaddrv6'] != "track6" && array_get_path($oc, 'ipaddrv6', 'none') != 'none') {
 		continue;
 	}
 
@@ -289,7 +295,7 @@ foreach ($iflist as $ifent => $ifname) {
 }
 
 if ($tabscounter == 0) {
-	print_info_box(gettext('Router Advertisements can only be enabled on interfaces configured with a static IPv6 address. This system has none.'), 'danger', false);
+	print_info_box(gettext('Router Advertisements can only be enabled on interfaces configured with static IPv6 or Track Interface.'), 'danger', false);
 	include('foot.inc');
 	exit;
 }

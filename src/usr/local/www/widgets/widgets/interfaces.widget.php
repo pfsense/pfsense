@@ -76,27 +76,27 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
 		/* PPP link (non-cell) - looks like a modem */
-		$typeicon = 'hdd-o';
+		$typeicon = 'fa-regular fa-hard-drive';
 	} else if ($ifinfo['ppplink']) {
 		/* PPP Link (usually cellular) */
-		$typeicon = 'signal';
+		$typeicon = 'fa-solid fa-signal';
 	} else if (is_interface_wireless($ifdescr)) {
 		/* Wi-Fi interface (hostap/client/etc) */
-		$typeicon = 'wifi';
+		$typeicon = 'fa-solid fa-wifi';
 	} else {
 		/* Wired/other interface. */
-		$typeicon = 'sitemap';
+		$typeicon = 'fa-solid fa-sitemap';
 	}
 
 	$known_status = true;
 
 	// Choose an icon by interface status
 	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
-		$icon = 'arrow-up text-success';
+		$icon = 'fa-solid fa-arrow-up text-success';
 	} elseif ($ifinfo['status'] == "no carrier") {
-		$icon = 'times-circle text-danger';
+		$icon = 'fa-solid fa-times-circle text-danger';
 	} elseif ($ifinfo['status'] == "down") {
-		$icon = 'arrow-down text-danger';
+		$icon = 'fa-solid fa-arrow-down text-danger';
 	} else {
 		$known_status = false;
 	}
@@ -104,14 +104,14 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 	<tr>
 		<td title="<?=htmlspecialchars($ifinfo['if'])?> (<?=htmlspecialchars($ifinfo['macaddr'])?>)">
-			<i class="fa-solid fa-<?=$typeicon?>"></i>
+			<i class="<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
 			</a>
 		</td>
 		<td>
 			<?php if ($known_status):?>
-				<i class="fa-solid fa-<?=$icon?>" title="<?=htmlspecialchars($ifinfo['status'])?>"></i>
+				<i class="<?=$icon?>" title="<?=htmlspecialchars($ifinfo['status'])?>"></i>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['status'])?>
 			<?php endif; ?>

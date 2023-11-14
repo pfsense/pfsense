@@ -460,7 +460,7 @@ foreach ($a_ca as $ca):
 ?>
 				<tr>
 					<td><?=$name?></td>
-					<td><i class="fa-solid fa-<?= (!empty($ca['prv'])) ? "check" : "times" ; ?>"></i></td>
+					<td><i class="<?= (!empty($ca['prv'])) ? "fa-solid fa-check" : "fa-solid fa-times" ; ?>"></i></td>
 					<td><i><?=$issuer_name?></i></td>
 					<td><?=$certcount?></td>
 					<td>

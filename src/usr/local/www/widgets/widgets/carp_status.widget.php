@@ -61,21 +61,21 @@ $carp_enabled = get_carp_status();
 			</td>
 <?php		
 		if ($carp_enabled == false) {
-			$icon = 'times-circle';
+			$icon = 'fa-solid fa-times-circle';
 			$status = "DISABLED";
 		} else {
 			if ($status == "MASTER") {
-				$icon = 'play-circle text-success';
+				$icon = 'fa-solid fa-play-circle text-success';
 			} else if ($status == "BACKUP") {
-				$icon = 'pause-circle text-warning';
+				$icon = 'fa-solid fa-pause-circle text-warning';
 			} else if ($status == "INIT") {
-				$icon = 'question-circle text-danger';
+				$icon = 'fa-solid fa-question-circle text-danger';
 			}
 		}
 		if ($ipaddress) {
 ?>
 				<td><?=htmlspecialchars($ipaddress);?></td>
-				<td><i class="fa-solid fa-<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
+				<td><i class="<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
 <?php
 		} else {
 ?>

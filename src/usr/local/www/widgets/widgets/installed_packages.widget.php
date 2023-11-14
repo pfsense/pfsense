@@ -74,11 +74,11 @@ function get_pkg_stats() {
 			if ($version_compare == '>') {
 				// we're running a newer version of the package
 				$status = sprintf(gettext('Newer than available (%s)'), $pkg['version']);
-				$statusicon = 'exclamation';
+				$statusicon = 'fa-solid fa-exclamation';
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package
 				$status = sprintf(gettext('Upgrade available to %s'), $pkg['version']);
-				$statusicon = 'plus-circle';
+				$statusicon = 'fa-solid fa-plus-circle';
 				$txtcolor = "text-warning";
 				$upgradeavail = true;
 				$vergetstr = '&amp;from=' . $pkg['installed_version'] .
@@ -86,21 +86,21 @@ function get_pkg_stats() {
 			} else if ($version_compare == '=') {
 				// we're running the current version
 				$status = gettext('ok');
-				$statusicon = 'check';
+				$statusicon = 'fa-solid fa-check';
 			} else {
 				$status = gettext('Error comparing version');
-				$statusicon = 'exclamation';
+				$statusicon = 'fa-solid fa-exclamation';
 			}
 		} else {
 			// unknown available package version
 			$status = gettext('Unknown');
-			$statusicon = 'question';
+			$statusicon = 'fa-solid fa-question';
 		}
 
 		print("<tr>\n");
 		print(		'<td><span class="' . $txtcolor . '">' . $pkg['shortname'] . "</span></td>\n");
 		print(		"<td>\n");
-		print(			'<i title="' . $status . '" class="fa-solid fa-' . $statusicon . '"></i> ');
+		print(			'<i title="' . $status . '" class="' . $statusicon . '"></i> ');
 
 		if (!g_get('disablepackagehistory')) {
 			print('<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">');

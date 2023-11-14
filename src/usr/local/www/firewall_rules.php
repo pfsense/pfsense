@@ -587,22 +587,22 @@ foreach ($a_filter as $filteri => $filterent):
 
 	<?php
 		if ($filterent['type'] == "block") {
-			$iconfn = "times text-danger";
+			$iconfn = "fa-solid fa-times text-danger";
 			$title_text = gettext("traffic is blocked");
 		} else if ($filterent['type'] == "reject") {
-			$iconfn = "hand-stop-o text-warning";
+			$iconfn = "fa-solid fa-hand text-warning";
 			$title_text = gettext("traffic is rejected");
 		} else if ($filterent['type'] == "match") {
-			$iconfn = "filter";
+			$iconfn = "fa-solid fa-filter";
 			$title_text = gettext("traffic is matched");
 		} else {
-			$iconfn = "check text-success";
+			$iconfn = "fa-solid fa-check text-success";
 			$title_text = gettext("traffic is passed");
 		}
 	?>
 						<td title="<?=$title_text?>">
 							<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$filteri;?>" usepost>
-								<i class="fa-solid fa-<?=$iconfn?>" title="<?=gettext("click to toggle enabled/disabled status");?>"></i>
+								<i class="<?=$iconfn?>" title="<?=gettext("click to toggle enabled/disabled status");?>"></i>
 							</a>
 	<?php
 		if ($filterent['quick'] == 'yes') {
@@ -756,20 +756,20 @@ foreach ($a_filter as $filteri => $filterent):
 		if (!isset($filterent['disabled'])) {
 			if ($schedstatus) {
 				if ($filterent['type'] == "block" || $filterent['type'] == "reject") {
-					$image = "times-circle";
+					$image = "fa-solid fa-times-circle";
 					$dispcolor = "text-danger";
 					$alttext = gettext("Traffic matching this rule is currently being denied");
 				} else {
-					$image = "play-circle";
+					$image = "fa-solid fa-play-circle";
 					$dispcolor = "text-success";
 					$alttext = gettext("Traffic matching this rule is currently being allowed");
 				}
 				$printicon = true;
 			} else if ($filterent['sched']) {
 				if ($filterent['type'] == "block" || $filterent['type'] == "reject") {
-					$image = "times-circle";
+					$image = "fa-solid fa-times-circle";
 				} else {
-					$image = "play-circle";
+					$image = "fa-solid fa-play-circle";
 				}
 				$alttext = gettext("This rule is not currently active because its period has expired");
 				$dispcolor = "text-warning";
@@ -962,7 +962,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if ($printicon) { ?>
-								<i class="fa-solid fa-<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>"></i>
+								<i class="<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>"></i>
 							<?php } ?>
 							<?=$schedule_span_begin;?><?=str_replace('_', '_<wbr>', htmlspecialchars($filterent['sched']));?>&nbsp;<?=$schedule_span_end;?>
 						</td>

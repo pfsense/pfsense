@@ -124,21 +124,21 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		switch ($tstatus['state']) {
 			case 'ESTABLISHED':
-				$statusicon = 'arrow-up';
+				$statusicon = 'fa-solid fa-arrow-up';
 				$iconcolor = 'success';
 				$icontitle = gettext('Connected');
 				$buttonaction = 'disconnect';
 				$buttontarget = 'ike';
 				break;
 			case 'CONNECTING':
-				$statusicon = 'spinner fa-spin';
+				$statusicon = 'fa-solid fa-spinner fa-spin';
 				$iconcolor = 'warning';
 				$icontitle = gettext('Connecting');
 				$buttonaction = 'disconnect';
 				$buttontarget = 'ike';
 				break;
 			default:
-				$statusicon = 'arrow-down';
+				$statusicon = 'fa-solid fa-arrow-down';
 				$iconcolor = 'danger';
 				$icontitle = gettext('Disconnected');
 				$buttonaction = 'connect';
@@ -146,7 +146,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				break;
 		}
 
-		$data->tunnel .= '<td><i class="fa-solid fa-' . $statusicon .
+		$data->tunnel .= '<td><i class="' . $statusicon .
 					' text-' . $iconcolor . '" ' .
 					'title="' . $icontitle . '"></i> ';
 		$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p1conid, null, false);
@@ -177,20 +177,20 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 
 				if (isset($p2['connected'])) {
-					$statusicon = 'arrow-up';
+					$statusicon = 'fa-solid fa-arrow-up';
 					$iconcolor = 'success';
 					$icontitle = gettext('Connected');
 					$buttonaction = 'disconnect';
 					$buttontarget = 'child';
 				} else {
-					$statusicon = 'arrow-down';
+					$statusicon = 'fa-solid fa-arrow-down';
 					$iconcolor = 'danger';
 					$icontitle = gettext('Disconnected');
 					$buttonaction = 'connect';
 					$buttontarget = 'child';
 				}
 
-				$data->tunnel .= '<td><i class="fa-solid fa-' . $statusicon .
+				$data->tunnel .= '<td><i class="' . $statusicon .
 							' text-' . $iconcolor . '" ' .
 							'title="' . $icontitle . '"></i> ';
 				$data->tunnel .= ipsec_status_button('ajax', $buttonaction, $buttontarget, $p2conid, null, false);

@@ -73,18 +73,18 @@ function showDef($show, $term, $def) {
 	// Choose an icon by interface status
 	if ($term == "Status") {
 		if ($def == "up" || $def == "associated") {
-			$icon = 'arrow-up text-success';
+			$icon = 'fa-solid fa-arrow-up text-success';
 		} elseif ($def == "no carrier") {
-			$icon = 'times-circle text-danger';
+			$icon = 'fa-solid fa-times-circle text-danger';
 		} elseif ($def == "down") {
-			$icon = 'arrow-down text-danger';
+			$icon = 'fa-solid fa-arrow-down text-danger';
 		} else {
 			$icon = '';
 		}
 	}
 	if ($show) {
 		print('<dt>' . $term . '</dt>');
-		print('<dd>' . htmlspecialchars($def) . ' <i class="fa-solid fa-' . $icon . '"></i></dd>');
+		print('<dd>' . htmlspecialchars($def) . ' <i class="' . $icon . '"></i></dd>');
 	}
 }
 

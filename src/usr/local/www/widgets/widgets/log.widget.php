@@ -132,13 +132,13 @@ if (!$_REQUEST['ajax']) {
 		}
 
 		if ($filterent['act'] == "block") {
-			$iconfn = "times text-danger";
+			$iconfn = "fa-solid fa-times text-danger";
 		} else if ($filterent['act'] == "reject") {
-			$iconfn = "hand-stop-o text-warning";
+			$iconfn = "fa-solid fa-hand-stop-o text-warning";
 		} else if ($filterent['act'] == "match") {
-			$iconfn = "filter";
+			$iconfn = "fa-solid fa-filter";
 		} else {
-			$iconfn = "check text-success";
+			$iconfn = "fa-solid fa-check text-success";
 		}
 
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
@@ -148,7 +148,7 @@ if (!$_REQUEST['ajax']) {
 		$dstIP = str_replace(':', ':<wbr>', $dstIP);
 ?>
 		<tr>
-			<td><i class="fa-solid fa-<?=$iconfn?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
+			<td><i class="<?=$iconfn?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
 			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($rule)?>">
 			</a></td>
 			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>

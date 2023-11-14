@@ -773,11 +773,11 @@ function ipsec_status_button($req, $act, $type, $conid, $uniqueid, $full) {
 	if ($act == 'disconnect') {
 		$buttonclass = ($type == 'ike') ? 'danger' : 'warning';
 		$title = gettext("Disconnect");
-		$icon = 'trash';
+		$icon = 'fa-solid fa-trash-can';
 	} else {
 		$buttonclass = 'success';
 		$title = gettext("Connect");
-		$icon = 'sign-in';
+		$icon = 'fa-solid fa-right-to-bracket';
 	}
 	if ($full) {
 		$linkclass = 'btn btn-xs btn-' . htmlspecialchars($buttonclass);
@@ -826,7 +826,7 @@ function ipsec_status_button($req, $act, $type, $conid, $uniqueid, $full) {
 		$btn .= ' usepost';
 	}
 	$btn .= '>';
-	$btn .= '<i class="fa-solid fa-' . htmlspecialchars($icon);
+	$btn .= '<i class="' . htmlspecialchars($icon);
 	if ($req == 'post') {
 		$btn .= ' icon-embed-btn';
 	}

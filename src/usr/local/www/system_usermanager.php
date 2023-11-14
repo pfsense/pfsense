@@ -690,16 +690,16 @@ foreach ($a_user as $i => $userent):
 						<td>
 <?php
 	if ($userent['scope'] != "user") {
-		$usrimg = 'eye';
+		$usrimg = 'fa-regular fa-eye';
 	} else {
-		$usrimg = 'user';
+		$usrimg = 'fa-solid fa-user';
 	}
 ?>
-							<i class="fa-solid fa-<?=$usrimg?>" title="<?= gettext("Scope") . ": {$userent['scope']}" ?>"></i>
+							<i class="<?=$usrimg?>" title="<?= gettext("Scope") . ": {$userent['scope']}" ?>"></i>
 							<?=htmlspecialchars($userent['name'])?>
 						</td>
 						<td><?=htmlspecialchars($userent['descr'])?></td>
-						<td><i class="fa-solid fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>><span style='display: none'><?= (isset($userent['disabled'])) ? gettext("Disabled") : gettext("Enabled") ; ?></span></i></td>
+						<td><i class="<?= (isset($userent['disabled'])) ? 'fa-solid fa-ban" title="' . gettext("Disabled") . '"' : 'fa-solid fa-check" title="' . gettext("Enabled") . '"' ; ?>"><span style='display: none'><?= (isset($userent['disabled'])) ? gettext("Disabled") : gettext("Enabled") ; ?></span></i></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa-solid fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>

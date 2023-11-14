@@ -186,7 +186,7 @@ if ($carpcount == 0) {
 	}
 
 ?>
-				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? 'disable' : 'enable')?>" ><i class="fa-solid fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
+				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? 'disable' : 'enable')?>" ><i class="<?=($carp_enabled) ? 'fa-solid fa-ban' : 'fa-solid fa-check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
 				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? 'disable' : 'enable')?>" ><i class="fa-solid fa-wrench icon-embed-btn"></i><?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
 			</div>
 		</div>
@@ -217,15 +217,15 @@ if ($carpcount == 0) {
 		$aliases = find_ipalias("_vip{$carp['uniqid']}");
 
 		if ($carp_enabled == false) {
-			$icon = 'times-circle';
+			$icon = 'fa-solid fa-times-circle';
 			$status = "DISABLED";
 		} else {
 			if ($status == "MASTER") {
-				$icon = 'play-circle text-success';
+				$icon = 'fa-solid fa-play-circle text-success';
 			} else if ($status == "BACKUP") {
-				$icon = 'pause-circle text-warning';
+				$icon = 'fa-solid fa-pause-circle text-warning';
 			} else if ($status == "INIT") {
-				$icon = 'question-circle text-danger';
+				$icon = 'fa-solid fa-question-circle text-danger';
 			}
 		}
 ?>
@@ -240,7 +240,7 @@ if ($carpcount == 0) {
 ?>
 						</td>
 						<td><?=htmlspecialchars($carp['descr'])?></td>
-						<td><i class="fa-solid fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>
+						<td><i class="<?=$icon?>"></i>&nbsp;<?=$status?></td>
 					</tr>
 <?php }?>
 				</tbody>

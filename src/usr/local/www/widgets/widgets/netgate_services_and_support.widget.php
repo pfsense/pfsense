@@ -122,7 +122,7 @@ if (file_exists($supportfile) && ( time()-filemtime($supportfile) < $refreshinte
 }
 
 // Print a low-key refresh link
-print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/netgate_services_and_support.widget.php?act=refresh" usepost><i class="fa-solid fa-arrows-rotate"></i></a></div>');
+print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/netgate_services_and_support.widget.php?act=refresh" usepost><i class="fa-solid fa-refresh"></i></a></div>');
 
 print("</div>");
 

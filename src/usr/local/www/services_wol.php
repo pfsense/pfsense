@@ -203,7 +203,7 @@ print $form;
 							</td>
 							<td>
 								<a class="fa-solid fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
-								<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
 								<a class="fa-solid fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
 							</td>
 						</tr>

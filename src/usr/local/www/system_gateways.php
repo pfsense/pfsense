@@ -343,18 +343,18 @@ foreach ($a_gateways as $i => $gateway):
 						</td>
 						<td style="white-space: nowrap;">
 							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa-solid fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
-							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa-regular fa-clone" title="<?=gettext('Copy gateway')?>"></a>
+							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa-solid fa-clone" title="<?=gettext('Copy gateway')?>"></a>
 
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa-regular fa-square-check" title="<?=gettext('Enable gateway')?>" usepost></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa-solid fa-check-square-o" title="<?=gettext('Enable gateway')?>" usepost></a>
 	<?php } else {
 	?>
 							<a href="?act=toggle&amp;id=<?=$i?>" class="fa-solid fa-ban" title="<?=gettext('Disable gateway')?>" usepost></a>
 	<?php }
 	?>
-							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash-can" title="<?=gettext('Delete gateway')?>" usepost></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash" title="<?=gettext('Delete gateway')?>" usepost></a>
 
 <?php endif; ?>
 						</td>
@@ -406,9 +406,9 @@ print $form;
 <?php
 print_info_box(
 	sprintf(gettext('%1$s The current default route as present in the current routing table of the operating system'), '<strong><i class="fa-solid fa-globe"></i></strong>') .
-	sprintf(gettext('%1$s Gateway is inactive, interface is missing'), '<br /><strong><i class="fa-regular fa-circle-xmark"></i></strong>') .
+	sprintf(gettext('%1$s Gateway is inactive, interface is missing'), '<br /><strong><i class="fa-solid fa-times-circle-o"></i></strong>') .
 	sprintf(gettext('%1$s Gateway disabled'), '<br /><strong><i class="fa-solid fa-ban"></i></strong>') .
-	sprintf(gettext('%1$s Gateway enabled'), '<br /><strong><i class="fa-regular fa-circle-check"></i></strong>')
+	sprintf(gettext('%1$s Gateway enabled'), '<br /><strong><i class="fa-solid fa-check-circle-o"></i></strong>')
 	);
 ?>
 </div>

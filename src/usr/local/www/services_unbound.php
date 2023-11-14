@@ -549,7 +549,7 @@ foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 					</td>
 					<td>
 						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
-						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
 					</td>
 				</tr>
 
@@ -628,7 +628,7 @@ foreach (config_get_path('unbound/domainoverrides') as $doment):
 					</td>
 					<td>
 						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

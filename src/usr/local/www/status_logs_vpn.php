@@ -153,9 +153,9 @@ if (!$rawfilter) {
 						</td>
 						<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
 							<?php if ($filterent['action'] == "login") { ?>
-							<i class="fa-solid fa-right-to-bracket" title="User Logged In"></i>
+							<i class="fa-solid fa-sign-in" title="User Logged In"></i>
 							<?php } else if ($filterent['action'] == "logout") { ?>
-							<i class="fa-solid fa-right-from-bracket" title="User Logged Out"></i>
+							<i class="fa-solid fa-sign-out" title="User Logged Out"></i>
 							<?php } else { ?>
 							<i><?=htmlspecialchars($filterent['action'])?></i>
 							<?php } ?>

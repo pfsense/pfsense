@@ -383,7 +383,7 @@ print($tree);
 if (count($altq_list_queues) > 0) {
 ?>
 					<a href="firewall_shaper.php?action=resetall" class="btn btn-sm btn-danger">
-						<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+						<i class="fa-solid fa-trash icon-embed-btn"></i>
 						<?=gettext('Remove Shaper')?>
 					</a>
 <?php

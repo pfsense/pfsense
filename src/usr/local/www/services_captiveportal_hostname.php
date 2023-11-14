@@ -111,7 +111,7 @@ foreach ($a_cp[$cpzone]['allowedhostname'] as $ip): ?>
 				</td>
 				<td>
 					<a class="fa-solid fa-pencil"	title="<?=gettext("Edit hostname"); ?>" href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete hostname")?>" href="services_captiveportal_hostname.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+					<a class="fa-solid fa-trash"	title="<?=gettext("Delete hostname")?>" href="services_captiveportal_hostname.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php

@@ -574,7 +574,7 @@ if ($act == "new" || $act == gettext("Save")) {
 						<td><?=date("D M j G:i:s T Y", $cert['revoke_time']); ?></td>
 						<td class="list">
 							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" usepost>
-								<i class="fa-solid fa-trash-can" title="<?=gettext("Delete this certificate from the CRL")?>" alt="<?=gettext("Delete this certificate from the CRL")?>"></i>
+								<i class="fa-solid fa-trash" title="<?=gettext("Delete this certificate from the CRL")?>" alt="<?=gettext("Delete this certificate from the CRL")?>"></i>
 							</a>
 						</td>
 					</tr>
@@ -715,7 +715,7 @@ if ($act == "new" || $act == gettext("Save")) {
 <?php			endif;
 				if (!$inuse):
 ?>
-							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa-solid fa-trash-can" title="<?=gettext("Delete CRL")?>" usepost></a>
+							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa-solid fa-trash" title="<?=gettext("Delete CRL")?>" usepost></a>
 <?php
 				endif;
 ?>

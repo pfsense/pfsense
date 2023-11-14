@@ -137,10 +137,10 @@ foreach ($a_checkipservice as $checkipservice):
 							<a	class="fa-solid fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php } else {
 						?>
-							<a class="fa-regular fa-square-check" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php }
 						?>
-							<a class="fa-solid fa-trash-can <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-trash <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

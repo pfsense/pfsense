@@ -238,7 +238,7 @@ else:
 <?php
 			if (strtoupper($name['status']) == "DEGRADED"): ?>
 							<br />
-							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=forget&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?=gettext("Forget Disconnected Disks"); ?></a>
+							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=forget&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-trash icon-embed-btn"></i><?=gettext("Forget Disconnected Disks"); ?></a>
 <?php
 			endif; ?>
 						</td>
@@ -247,9 +247,9 @@ else:
 							<?php list($cname, $cstatus) = explode(" ", $name['components'][0], 2); ?><br />
 <?php
 			if ((strtoupper($name['status']) == "COMPLETE") && (count($name["components"]) > 1)): ?>
-							<a class="btn btn-xs btn-info" href="diag_gmirror.php?action=rebuild&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-arrows-rotate icon-embed-btn"></i><?=gettext("Rebuild"); ?></a>
-							<a class="btn btn-xs btn-warning" href="diag_gmirror.php?action=deactivate&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-link-broken icon-embed-btn"></i><?=gettext("Deactivate"); ?></a>
-							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=remove&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?=gettext("Remove"); ?></a>
+							<a class="btn btn-xs btn-info" href="diag_gmirror.php?action=rebuild&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-refresh icon-embed-btn"></i><?=gettext("Rebuild"); ?></a>
+							<a class="btn btn-xs btn-warning" href="diag_gmirror.php?action=deactivate&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-chain-broken icon-embed-btn"></i><?=gettext("Deactivate"); ?></a>
+							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=remove&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-trash icon-embed-btn"></i><?=gettext("Remove"); ?></a>
 <?php
 			endif; ?>
 						</td>
@@ -265,9 +265,9 @@ else:
 							<?php list($cname, $cstatus) = explode(" ", $component, 2); ?><br />
 <?php
 					if ((strtoupper($name['status']) == "COMPLETE") && (count($name["components"]) > 1)): ?>
-							<a class="btn btn-xs btn-info" href="diag_gmirror.php?action=rebuild&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-arrows-rotate icon-embed-btn"></i><?=gettext("Rebuild"); ?></a>
-							<a class="btn btn-xs btn-warning" href="diag_gmirror.php?action=deactivate&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-link-broken icon-embed-btn"></i><?=gettext("Deactivate"); ?></a>
-							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=remove&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?=gettext("Remove"); ?></a>
+							<a class="btn btn-xs btn-info" href="diag_gmirror.php?action=rebuild&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-refresh icon-embed-btn"></i><?=gettext("Rebuild"); ?></a>
+							<a class="btn btn-xs btn-warning" href="diag_gmirror.php?action=deactivate&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-chain-broken icon-embed-btn"></i><?=gettext("Deactivate"); ?></a>
+							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=remove&amp;consumer=<?=htmlspecialchars($cname); ?>&amp;mirror=<?=htmlspecialchars($name['name']); ?>"><i class="fa-solid fa-trash icon-embed-btn"></i><?=gettext("Remove"); ?></a>
 <?php
 					endif; ?>
 						</td>
@@ -324,12 +324,12 @@ else:
 
 			if ($oldmirror): ?>
 							<a class="btn btn-xs btn-success" href="diag_gmirror.php?action=activate&amp;consumer=<?=htmlspecialchars($consumer['name']); ?>&amp;mirror=<?=htmlspecialchars($oldmirror); ?>">
-								<i class="fa-solid fa-link icon-embed-btn"></i>
+								<i class="fa-solid fa-chain icon-embed-btn"></i>
 								<?=sprintf(gettext("Reactivate on %s"), htmlspecialchars($oldmirror)); ?>
 							</a>
 
 							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=clear&amp;consumer=<?=htmlspecialchars($consumer['name']); ?>">
-								<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+								<i class="fa-solid fa-trash icon-embed-btn"></i>
 								<?=gettext("Clear Metadata"); ?>
 							</a>
 <?php

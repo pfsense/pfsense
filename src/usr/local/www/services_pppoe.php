@@ -122,7 +122,7 @@ foreach ($a_pppoes as $pppoe):
 				</td>
 				<td>
 					<a class="fa-solid fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="services_pppoe_edit.php?id=<?=$i?>"></a>
-					<a class="fa-solid fa-trash-can" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>" usepost></a>
+					<a class="fa-solid fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php

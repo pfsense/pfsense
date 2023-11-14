@@ -125,7 +125,7 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 			break;
 	}
 	if (!empty($link)) {
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa-regular fa-chart-bar\"></i></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa-solid fa-bar-chart\"></i></a>";
 	}
 	return "";
 }
@@ -134,7 +134,7 @@ function get_shortcut_log_link($shortcut_section, $addspace = true) {
 	global $g, $shortcuts;
 	$space = ($addspace) ? "&nbsp;" : "" ;
 	if (!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
-		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Related log entries") . "\"><i class=\"fa-regular fa-rectangle-list\"></i></a>";
+		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Related log entries") . "\"><i class=\"fa-solid fa-list-alt\"></i></a>";
 	}
 	return "";
 }

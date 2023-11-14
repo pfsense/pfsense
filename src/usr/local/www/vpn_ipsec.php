@@ -446,9 +446,9 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 							<button style="display: none;" class="btn btn-default btn-xs" type="submit" id="move_<?=$i?>" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("Move checked entries to here")?></button>
 							<a class="fa-solid fa-pencil" href="vpn_ipsec_phase1.php?ikeid=<?=$ph1ent['ikeid']?>" title="<?=gettext("Edit phase 1 entry"); ?>"></a>
 <?php if (!isset($ph1ent['mobile'])): ?>
-							<a class="fa-regular fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase 1 entry"); ?>"></a>
+							<a class="fa-solid fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase 1 entry"); ?>"></a>
 <?php endif; ?>
-							<a	class="fa-solid fa-trash-can no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase 1 entry'); ?>"></a>
+							<a	class="fa-solid fa-trash no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase 1 entry'); ?>"></a>
 							<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="del_<?=$i?>" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>">delete</button>
 
 						</td>
@@ -573,8 +573,8 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 											<td style="cursor: pointer;">
 <!--												<button class="fa-solid fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
 												<a class="fa-solid fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase 2 entry"); ?>"></a>
-												<a class="fa-regular fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
-												<a	class="fa-solid fa-trash-can no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase 2 entry'); ?>"></a>
+												<a class="fa-solid fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
+												<a	class="fa-solid fa-trash no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase 2 entry'); ?>"></a>
 												<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 											</td>
 										</tr>
@@ -617,7 +617,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 		</a>
 <?php if ($i !== 0): ?>
 		<button type="submit" name="del" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected P1s")?>">
-			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+			<i class="fa-solid fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete P1s")?>
 		</button>
 <?php endif; ?>

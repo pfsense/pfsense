@@ -221,7 +221,7 @@ foreach ($a_hosts as $i => $hostent):
 					</td>
 					<td>
 						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$hostent['idx']?>"></a>
-						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$hostent['idx']?>" usepost></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$hostent['idx']?>" usepost></a>
 					</td>
 				</tr>
 
@@ -291,7 +291,7 @@ foreach ($a_domainOverrides as $doment):
 					</td>
 					<td>
 						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$doment['idx']?>"></a>
-						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$doment['idx']?>" usepost></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$doment['idx']?>" usepost></a>
 					</td>
 				</tr>
 <?php

@@ -559,7 +559,7 @@ $("#addsep").click(function() {
 
 		$(this).parents('tr').replaceWith('<tr class="ui-sortable-handle separator">' +
 			'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
-			'<td class="' + gColor + '"><a href="#"><i class="fa-solid fa-trash-can sepdel"></i></a>' +
+			'<td class="' + gColor + '"><a href="#"><i class="fa-solid fa-trash sepdel"></i></a>' +
 			'</td></tr>');
 
 		$('#order-store').removeAttr('disabled');

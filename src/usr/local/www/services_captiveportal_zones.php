@@ -104,7 +104,7 @@ if (is_subsystem_dirty('captiveportal')) {
 						<td><?=htmlspecialchars($cpitem['descr']);?>&nbsp;</td>
 						<td>
 							<a class="fa-solid fa-pencil" title="<?=gettext("Edit zone"); ?>" href="services_captiveportal.php?zone=<?=$cpzone?>"></a>
-							<a class="fa-solid fa-trash-can"  title="<?=gettext("Delete zone")?>" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" usepost></a>
+							<a class="fa-solid fa-trash"  title="<?=gettext("Delete zone")?>" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" usepost></a>
 						</td>
 					</tr>
 <?php

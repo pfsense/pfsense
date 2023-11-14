@@ -547,7 +547,7 @@ function build_priv_table() {
 		$privhtml .=			'</td>';
 		$privhtml .=			'<td>';
 		if (!$group && !$read_only) {
-			$privhtml .=			'<a class="fa-solid fa-trash-can no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
+			$privhtml .=			'<a class="fa-solid fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
 		}
 
 		$privhtml .=			'</td>';
@@ -609,7 +609,7 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
 			if (!$read_only) {
-				$certhtml .=			'<a id="delcert' . $i .'" class="fa-solid fa-trash-can no-confirm icon-pointer" title="';
+				$certhtml .=			'<a id="delcert' . $i .'" class="fa-solid fa-trash no-confirm icon-pointer" title="';
 				$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
 			}
 			$certhtml .=		'</td>';
@@ -704,7 +704,7 @@ foreach ($a_user as $i => $userent):
 						<td>
 							<a class="fa-solid fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username']) && !$read_only): ?>
-							<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
+							<a class="fa-solid fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
 						</td>
 					</tr>
@@ -723,7 +723,7 @@ foreach ($a_user as $i => $userent):
 	</a>
 
 	<button type="submit" class="btn btn-sm btn-danger" name="dellall" value="dellall" title="<?=gettext('Delete selected users')?>">
-		<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+		<i class="fa-solid fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete")?>
 	</button>
 	<?php endif; ?>

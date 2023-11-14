@@ -220,7 +220,7 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 						<?=$entry['expiration']?>
 					</td>
 					<td>
-						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete NDP entry')?>"	href="diag_ndp.php?deleteentry=<?=$entry['ipv6']?>" usepost></a>
+						<a class="fa-solid fa-trash" title="<?=gettext('Delete NDP entry')?>"	href="diag_ndp.php?deleteentry=<?=$entry['ipv6']?>" usepost></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -233,7 +233,7 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 
 <nav class="action-buttons">
 	<button id="clearndp" class="btn btn-danger no-confirm">
-		<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+		<i class="fa-solid fa-trash icon-embed-btn"></i>
 		<?=gettext("Clear NDP Table")?>
 	</button>
 </nav>

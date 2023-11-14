@@ -1903,8 +1903,8 @@ else:
 					</td>
 					<td>
 						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit Server')?>"	href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa-regular fa-clone"	title="<?=gettext("Copy Server")?>"	href="vpn_openvpn_server.php?act=dup&amp;id=<?=$i?>" usepost></a>
-						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete Server')?>"	href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-clone"	title="<?=gettext("Copy Server")?>"	href="vpn_openvpn_server.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-trash"	title="<?=gettext('Delete Server')?>"	href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

@@ -116,7 +116,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 				<div class="btn-group">
 					<p>
 						<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">
-							<i class="fa-regular fa-file-lines"></i>
+							<i class="fa-solid fa-file-text-o"></i>
 							<?=gettext('Load')?>
 						</button>
 						<button type="button" class="btn btn-default btn-sm" id="fbOpen"		value="<?=gettext('Browse')?>">

@@ -119,7 +119,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
-							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php endforeach; ?>

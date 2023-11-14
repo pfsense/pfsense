@@ -109,7 +109,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit group')?>"	href="interfaces_groups_edit.php?id=<?=$i; ?>"></a>
-							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>" usepost></a>
+							<a class="fa-solid fa-trash"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>" usepost></a>
 						</td>
 					</tr>
 <?php endforeach; ?>

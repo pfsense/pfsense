@@ -171,8 +171,8 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a class="fa-solid fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_npt_edit.php?id=<?=$i?>"></a>
-							<a class="fa-regular fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>"></a>
-							<a class="fa-solid fa-trash-can" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -186,15 +186,15 @@ endforeach;
 
 	<nav class="action-buttons">
 		<a href="firewall_nat_npt_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>">
-			<i class="fa-solid fa-turn-up icon-embed-btn"></i>
+			<i class="fa-solid fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>">
-			<i class="fa-solid fa-turn-down icon-embed-btn"></i>
+			<i class="fa-solid fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected mappings')?>">
-			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+			<i class="fa-solid fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected mappings"); ?>" title="<?=gettext('Toggle selected rules')?>">

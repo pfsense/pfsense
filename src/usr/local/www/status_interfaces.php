@@ -62,7 +62,7 @@ $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' 
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
 					'<button type="submit" name="submit" class="btn btn-danger btn-xs" value="%s">' .
-					'<i class="fa-solid fa-arrows-rotate icon-embed-btn"></i>' .
+					'<i class="fa-solid fa-refresh icon-embed-btn"></i>' .
 					'%s' .
 					'</button>' .
 					'%s' .

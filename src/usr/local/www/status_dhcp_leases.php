@@ -327,7 +327,7 @@ foreach ($leases['lease'] as $data):
 					<? endif; ?>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-						<a class="fa-regular fa-square-plus"	title="<?=gettext('Add static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa-solid fa-plus-square-o"	title="<?=gettext('Add static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php endif; ?>
 						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;descr=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php if ($data['online'] != $online_string):?>
@@ -337,7 +337,7 @@ foreach ($leases['lease'] as $data):
 						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+						<a class="fa-solid fa-trash" title="<?=gettext('Delete lease')?>" href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>
@@ -421,7 +421,7 @@ else:
 <?php else: ?>
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa-solid fa-plus-circle icon-embed-btn"></i><?=gettext("Show All Configured Leases")?></a>
 <?php endif; ?>
-	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?=gettext("Clear All DHCP Leases")?></a>
+	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa-solid fa-trash icon-embed-btn"></i><?=gettext("Clear All DHCP Leases")?></a>
 
 <script type="text/javascript">
 //<![CDATA[

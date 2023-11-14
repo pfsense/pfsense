@@ -62,10 +62,10 @@ include("head.inc");
 	<div class="panel-body">
 		<div class="content">
 			<form action="status_filter_reload.php" method="post" name="filter">
-				<button type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter"><i class="fa-solid fa-arrows-rotate icon-embed-btn"></i><?=gettext("Reload Filter")?></button>
+				<button type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter"><i class="fa-solid fa-refresh icon-embed-btn"></i><?=gettext("Reload Filter")?></button>
 <?php
 if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
-				<button type="submit" class="btn btn-info" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter"><i class="fa-regular fa-clone icon-embed-btn"></i><?=gettext("Force Config Sync")?></button>
+				<button type="submit" class="btn btn-info" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter"><i class="fa-solid fa-clone icon-embed-btn"></i><?=gettext("Force Config Sync")?></button>
 <?php
 endif;
 ?>

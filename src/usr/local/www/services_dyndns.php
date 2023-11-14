@@ -211,11 +211,11 @@ foreach ($a_dyndns as $dyndns):
 								<a class="fa-solid fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php } else {
 ?>
-								<a class="fa-regular fa-square-check" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php }
 ?>
-								<a class="fa-regular fa-clone" title="<?=gettext('Copy service')?>"	href="services_dyndns_edit.php?dup=<?=$i?>"></a>
-								<a class="fa-solid fa-trash-can" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-clone" title="<?=gettext('Copy service')?>"	href="services_dyndns_edit.php?dup=<?=$i?>"></a>
+								<a class="fa-solid fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php

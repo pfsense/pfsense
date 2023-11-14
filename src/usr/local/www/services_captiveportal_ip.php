@@ -113,7 +113,7 @@ if (is_array($a_cp[$cpzone]['allowedip'])): ?>
 				</td>
 				<td>
 					<a class="fa-solid fa-pencil"	title="<?=gettext("Edit IP"); ?>" href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete IP")?>" href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+					<a class="fa-solid fa-trash"	title="<?=gettext("Delete IP")?>" href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php

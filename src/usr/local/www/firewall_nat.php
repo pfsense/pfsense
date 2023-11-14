@@ -181,7 +181,7 @@ foreach ($a_nat as $natent):
 							</a>
 <?php	endif; ?>
 <?php 	if (isset($natent['nordr'])) { ?>
-								&nbsp;<i class="fa-regular fa-hand text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+								&nbsp;<i class="fa-solid fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 	} ?>
 						</td>
 						<td>
@@ -326,8 +326,8 @@ foreach ($a_nat as $natent):
 						<td>
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<a class="fa-solid fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
-							<a class="fa-regular fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
-							<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
 <?php	else: ?>
 							-
 <?php	endif; ?>
@@ -352,15 +352,15 @@ if ($seprows[$nnats]) {
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
 	<nav class="action-buttons">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
-			<i class="fa-solid fa-turn-up icon-embed-btn"></i>
+			<i class="fa-solid fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
-			<i class="fa-solid fa-turn-down icon-embed-btn"></i>
+			<i class="fa-solid fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected rules')?>">
-			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+			<i class="fa-solid fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected rules"); ?>" title="<?=gettext('Toggle selected rules')?>">

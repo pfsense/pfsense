@@ -490,10 +490,10 @@ foreach ($a_ca as $ca):
 						<a class="fa-solid fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$ca['refid']?>"></a>
 					<?php endif?>
 					<?php if (is_cert_locally_renewable($ca)): ?>
-						<a href="system_certmanager_renew.php?type=ca&amp;refid=<?=$ca['refid']?>" class="fa-solid fa-arrow-rotate-right" title="<?=gettext("Reissue/Renew")?>"></a>
+						<a href="system_certmanager_renew.php?type=ca&amp;refid=<?=$ca['refid']?>" class="fa-solid fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
 					<?php endif ?>
 					<?php if (!ca_in_use($ca['refid'])): ?>
-						<a class="fa-solid fa-trash-can" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$ca['refid']?>" usepost ></a>
+						<a class="fa-solid fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$ca['refid']?>" usepost ></a>
 					<?php endif?>
 					</td>
 				</tr>

@@ -182,7 +182,7 @@ display_top_tabs($tab_array);
 										<td class="<?=$bgcolor?>">
 											<?=htmlspecialchars($member);?>
 <?php if (!empty($gwip) && is_ipaddr($gwip)): ?>
-											<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa-regular fa-circle-xmark do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
+											<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa-solid fa-times-circle-o do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
 <?php endif; ?>
 											<br/><?=$online?>
 										</td>

@@ -154,7 +154,7 @@ if ($savemsg) {
 						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>&amp;descr=<?=htmlspecialchars($entry['dnsresolve'])?>"></a>
 						<a class="fa-solid fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>" usepost></a>
 <?php endif; ?>
-						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete ARP cache entry')?>" href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>
+						<a class="fa-solid fa-trash" title="<?=gettext('Delete ARP cache entry')?>" href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -168,7 +168,7 @@ if ($savemsg) {
 
 <nav class="action-buttons">
 	<button id="cleararp" class="btn btn-danger no-confirm">
-		<i class="fa-solid fa-trash-can icon-embed-btn"></i>
+		<i class="fa-solid fa-trash icon-embed-btn"></i>
 		<?=gettext("Clear ARP Table")?>
 	</button>
 </nav>

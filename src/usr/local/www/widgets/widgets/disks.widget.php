@@ -173,8 +173,8 @@ if (isset($_POST['save'])) {
 			}
 
 			tree.treegrid({
-				expanderExpandedClass: 'fa fa-solid fa-chevron-down',
-				expanderCollapsedClass: 'fa fa-solid fa-chevron-right',
+				expanderExpandedClass: 'fa-solid fa-chevron-down',
+				expanderCollapsedClass: 'fa-solid fa-chevron-right',
 				initialState: 'collapsed',
 				saveStateName: cookieName,
 				saveState: true

@@ -522,8 +522,8 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<td>
 						<?php if ($i < (count($a_server) - 1)): ?>
 							<a class="fa-solid fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
-							<a class="fa-solid fa-clone" title="<?=gettext("Copy server"); ?>" href="system_authservers.php?act=dup&amp;id=<?=$i?>"></a>
-							<a class="fa-solid fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-regular fa-clone" title="<?=gettext("Copy server"); ?>" href="system_authservers.php?act=dup&amp;id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
 						<?php endif?>
 						</td>
 					</tr>

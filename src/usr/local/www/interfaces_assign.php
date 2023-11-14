@@ -536,7 +536,7 @@ echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>
 			<td>
 <?php if ($ifname != 'wan'):?>
 				<button type="submit" name="del[<?=$ifname?>]" class="btn btn-danger btn-sm" title="<?=$gettextArray['deleteif']?>">
-					<i class="fa-solid fa-trash icon-embed-btn"></i>
+					<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 					<?=$gettextArray["delete"]?>
 				</button>
 <?php endif;?>

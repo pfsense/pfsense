@@ -319,7 +319,7 @@ function build_priv_table() {
 		}
 		$privhtml .=			'</td>';
 		if (!$read_only && ($dup === null)) {
-			$privhtml .=			'<td><a class="fa-solid fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
+			$privhtml .=			'<td><a class="fa-solid fa-trash-can" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
 		}
 		$privhtml .=		'</tr>';
 
@@ -416,9 +416,9 @@ if (!($act == "new" || $act == "edit")) {
 						</td>
 						<td>
 							<a class="fa-solid fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
-							<a class="fa-solid fa-clone" title="<?=gettext("Copy group"); ?>" href="?act=dup&amp;groupid=<?=$i?>"></a>
+							<a class="fa-regular fa-clone" title="<?=gettext("Copy group"); ?>" href="?act=dup&amp;groupid=<?=$i?>"></a>
 							<?php if (($group['scope'] != "system") && !$read_only): ?>
-								<a class="fa-solid fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
+								<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
 							<?php endif;?>
 						</td>
 					</tr>

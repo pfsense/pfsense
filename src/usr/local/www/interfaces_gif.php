@@ -113,7 +113,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit GIF interface')?>"	href="interfaces_gif_edit.php?id=<?=$i?>"></a>
-							<a class="fa-solid fa-trash"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php endforeach; ?>

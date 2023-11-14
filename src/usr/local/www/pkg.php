@@ -528,7 +528,7 @@ if ($savemsg) {
 			#Show custom description to delete button if defined
 			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:gettext("Delete this item"));
 ?>
-								<td>&nbsp;<a class="fa-solid fa-trash" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=$delete_msg?>"></a></td>
+								<td>&nbsp;<a class="fa-solid fa-trash-can" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=$delete_msg?>"></a></td>
 							</tr>
 						</tbody>
 					</table>

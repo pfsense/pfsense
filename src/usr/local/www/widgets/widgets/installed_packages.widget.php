@@ -114,10 +114,10 @@ function get_pkg_stats() {
 
 		print(	"</td>\n");
 		print(	"<td>\n");
-		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa-solid fa-trash"></i></a>'."\n");
+		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa-solid fa-trash-can"></i></a>'."\n");
 
 		if ($upgradeavail) {
-			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa-solid fa-refresh"></i></a>'."\n");
+			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa-solid fa-arrows-rotate"></i></a>'."\n");
 		} else {
 			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa-solid fa-retweet"></i></a>'."\n");
 		}

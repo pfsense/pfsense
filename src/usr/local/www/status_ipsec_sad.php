@@ -105,7 +105,7 @@ if (count($sad)) {
 						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
 						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
 					?>
-					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>" usepost><i class="fa-solid fa-trash" title="<?=gettext("Remove this SPD Entry")?>"></i></a>
+					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>" usepost><i class="fa-solid fa-trash-can" title="<?=gettext("Remove this SPD Entry")?>"></i></a>
 				</td>
 			</tr>
 

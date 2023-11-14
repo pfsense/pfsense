@@ -550,7 +550,7 @@ if (are_notices_pending()) {
 				?>
 					<li class="dropdown">
 						<a href="/index.php?logout" usepost>
-							<i class="fa-solid fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
+							<i class="fa-solid fa-right-from-bracket" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
 			</ul>
@@ -640,7 +640,7 @@ if (are_notices_pending()) {
 	<?php if ($status_monitoring): ?>
 		<li>
 			<a class="update-graph" title="<?=gettext("Refresh Graph")?>">
-				<i class="fa-solid fa-repeat icon-pointer"></i>
+				<i class="fa-solid fa-arrow-rotate-right icon-pointer"></i>
 			</a>
 		</li>
 		<li>
@@ -786,7 +786,7 @@ if ($display_notices):
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa-solid fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
 <?php if ($allow_clear_notices && isAllowedPage("/index.php")):?>
-				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa-solid fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa-regular fa-trash-can icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 <?php endif;?>
 			</div>
 		</div>

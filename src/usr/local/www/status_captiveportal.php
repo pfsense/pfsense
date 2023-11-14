@@ -294,7 +294,7 @@ if (!empty($cpzone)): ?>
 		endif;
 ?>
 					<td>
-						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa-solid fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa-solid fa-trash-can" title="<?=gettext("Disconnect this User")?>"></i></a>
 					</td>
 				</tr>
 <?php
@@ -332,7 +332,7 @@ if (!empty($cpzone)):
 	endif;
 ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>" usepost>
-		<i class="fa-solid fa-trash icon-embed-btn"></i>
+		<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 		<?=gettext("Disconnect All Users")?>
 	</a>
 <?php

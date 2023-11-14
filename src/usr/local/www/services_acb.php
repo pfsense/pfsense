@@ -428,7 +428,7 @@ print('</div>');
 <?php
 		if ($userkey == $origkey) {
 ?>
-							<a class="fa-solid fa-trash"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?>"></a>
+							<a class="fa-solid fa-trash-can"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?>"></a>
 <?php 	} ?>
 						</td>
 					</tr>

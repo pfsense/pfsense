@@ -81,7 +81,7 @@ if (isset($_POST['save'])) {
 							<tr>
 								<th><?=htmlspecialchars(gettext("Mount"))?></th>
 								<th>
-									<span><i class="fa-solid fa-thumb-tack" style="vertical-align:middle;"></i></span>
+									<span><i class="fa-solid fa-thumbtack" style="vertical-align:middle;"></i></span>
 									<?=htmlspecialchars(gettext("Pin"))?>
 								</th>
 							</tr>

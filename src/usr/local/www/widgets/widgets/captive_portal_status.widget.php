@@ -101,7 +101,7 @@ foreach ($a_cp as $cpzone => $cp) {
 			</td>
 			<td>
 				<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
-					<i class="fa-solid fa-trash" title="<?=gettext("delete");?>"></i>
+					<i class="fa-solid fa-trash-can" title="<?=gettext("delete");?>"></i>
 				</a>
 			</td>
 		</tr>

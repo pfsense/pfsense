@@ -91,7 +91,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<div>
 			<?=gettext("Version ")?>
 			<span class="text-success"><?=$system_version['version']?></span> <?=gettext("is available.")?>
-			<a class="fa-solid fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
+			<a class="fa-solid fa-cloud-arrow-down fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
 		</div>
 <?php
 		break;
@@ -115,7 +115,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<?printf("%s %s", gettext("Version information updated at"),
 		    date("D M j G:i:s T Y", filemtime($cache_file)));?>
 		    &nbsp;
-		    <a id="updver" href="#" class="fa-solid fa-refresh"></a>
+		    <a id="updver" href="#" class="fa-solid fa-arrows-rotate"></a>
 	</div>
 <?php
 	endif;

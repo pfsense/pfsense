@@ -187,7 +187,7 @@ foreach ($a_igmpproxy as $igmpentry):
 							</td>
 							<td>
 								<a class="fa-solid fa-pencil"	title="<?=gettext('Edit IGMP entry')?>" href="services_igmpproxy_edit.php?id=<?=$i?>"></a>
-								<a class="fa-solid fa-trash"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php

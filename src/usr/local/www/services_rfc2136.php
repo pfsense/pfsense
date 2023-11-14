@@ -212,11 +212,11 @@ foreach ($a_rfc2136 as $rfc2136):
 						<a	class="fa-solid fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php } else {
 					?>
-						<a class="fa-solid fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-regular fa-square-check" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php }
 					?>
-						<a class="fa-solid fa-clone" title="<?=gettext('Copy client')?>" href="services_rfc2136_edit.php?dup=<?=$i?>"></a>
-						<a class="fa-solid fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-regular fa-clone" title="<?=gettext('Copy client')?>" href="services_rfc2136_edit.php?dup=<?=$i?>"></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 					</tr>
 <?php

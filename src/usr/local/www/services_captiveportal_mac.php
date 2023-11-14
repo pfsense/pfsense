@@ -121,7 +121,7 @@ foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 				</td>
 				<td>
 					<a class="fa-solid fa-pencil"	title="<?=gettext("Edit MAC address"); ?>" href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa-solid fa-trash"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"usepost></a>
+					<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"usepost></a>
 				</td>
 			</tr>
 <?php

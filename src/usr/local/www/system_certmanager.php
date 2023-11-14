@@ -1491,15 +1491,15 @@ foreach ($a_cert as $cert):
 								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa-solid fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
-								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa-solid fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
+								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa-solid fa-arrow-rotate-right" title="<?=gettext("Reissue/Renew")?>"></a>
 							<?php endif ?>
 						<?php else: ?>
 							<a href="system_certmanager.php?act=csr&amp;id=<?=$cert['refid']?>" class="fa-solid fa-pencil" title="<?=gettext("Update CSR")?>"></a>
-							<a href="system_certmanager.php?act=req&amp;id=<?=$cert['refid']?>" class="fa-solid fa-sign-in" title="<?=gettext("Export Request")?>"></a>
+							<a href="system_certmanager.php?act=req&amp;id=<?=$cert['refid']?>" class="fa-solid fa-right-to-bracket" title="<?=gettext("Export Request")?>"></a>
 							<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa-solid fa-key" title="<?=gettext("Export Key")?>"></a>
 						<?php endif?>
 						<?php if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&amp;id=<?=$cert['refid']?>" class="fa-solid fa-trash" title="<?=gettext("Delete Certificate")?>" usepost></a>
+							<a href="system_certmanager.php?act=del&amp;id=<?=$cert['refid']?>" class="fa-solid fa-trash-can" title="<?=gettext("Delete Certificate")?>" usepost></a>
 						<?php endif?>
 					</td>
 				</tr>

@@ -85,7 +85,7 @@ function disks_compose_health_icon(Filesystem $fs, $autoshow_threshold) {
 
 	$isAlert = (($autoshow_threshold != 0) && ($used_percent >= $autoshow_threshold));
 
-	$class = $isAlert ? 'fa-solid fa-exclamation-triangle' : 'fa-solid fa-thumb-tack';
+	$class = $isAlert ? 'fa-solid fa-exclamation-triangle' : 'fa-solid fa-thumbtack';
 
 	$title = $isAlert ? gettext('Alert') : gettext('Pinned');
 

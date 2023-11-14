@@ -32,7 +32,7 @@
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
-define('CLOCK', '<i class="fa-solid fa-clock-o icon-black"></i>');
+define('CLOCK', '<i class="fa-regular fa-clock icon-black"></i>');
 
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
@@ -199,7 +199,7 @@ foreach ($a_schedules as $schedule):
 
 					<td>
 						<a class="fa-solid fa-pencil" title="<?=gettext("Edit schedule"); ?>" href="firewall_schedule_edit.php?id=<?=$i?>"></a>
-						<a class="fa-solid fa-trash" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>" usepost></a>
 
 					</td>
 				</tr>

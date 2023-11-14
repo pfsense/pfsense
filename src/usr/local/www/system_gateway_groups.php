@@ -167,8 +167,8 @@ foreach ($a_gateway_groups as $gateway_group):
 						</td>
 						<td>
 							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa-solid fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
-							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa-solid fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
-							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash" title="<?=gettext('Delete gateway group')?>" usepost></a>
+							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa-regular fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
+							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash-can" title="<?=gettext('Delete gateway group')?>" usepost></a>
 						</td>
 					</tr>
 <?php

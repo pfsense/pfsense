@@ -197,7 +197,7 @@ display_top_tabs($tab_array);
 				<td>
 					<a href="?act=killgw&amp;gwname=<?=urlencode($gateway['name']);?>" class="fa-solid fa-times-circle do-confirm" title="<?=gettext('Kill all firewall states created by policy routing rules using this specific gateway by name.')?>" usepost></a>
 <?php if (!empty($gwip) && is_ipaddr($gwip)): ?>
-					<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa-solid fa-times-circle-o do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
+					<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa-regular fa-circle-xmark do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
 <?php endif; ?>
 <?php if (isset($gateway['isdefaultgw'])): ?>
 	<?php if ($gateway['ipprotocol'] != 'inet6'): ?>

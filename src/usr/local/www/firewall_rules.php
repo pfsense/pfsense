@@ -620,9 +620,9 @@ foreach ($a_filter as $filteri => $filterent):
 
 		if (isset($filterent['direction']) && ($if == "FloatingRules")) {
 			if ($filterent['direction'] == 'in') {
-				print '<i class="fa-solid fa-arrow-circle-o-left" title="'. gettext("direction is in") .'" style="cursor: pointer;"></i>';
+				print '<i class="fa-regular fa-circle-left" title="'. gettext("direction is in") .'" style="cursor: pointer;"></i>';
 			} elseif ($filterent['direction'] == 'out') {
-				print '<i class="fa-solid fa-arrow-circle-o-right" title="'. gettext("direction is out") .'" style="cursor: pointer;"></i>';
+				print '<i class="fa-regular fa-circle-right" title="'. gettext("direction is out") .'" style="cursor: pointer;"></i>';
 			}
 		}
 	?>
@@ -973,16 +973,16 @@ foreach ($a_filter as $filteri => $filterent):
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
 							<a	class="fa-solid fa-anchor icon-pointer" id="Xmove_<?=$filteri?>" title="<?=$XmoveTitle?>"></a>
 							<a href="firewall_rules_edit.php?id=<?=$filteri;?>" class="fa-solid fa-pencil" title="<?=gettext('Edit')?>"></a>
-							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa-solid fa-clone" title="<?=gettext('Copy')?>"></a>
+							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa-regular fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
 ?>
-							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa-solid fa-check-square-o" title="<?=gettext('Enable')?>" usepost></a>
+							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa-regular fa-square-check" title="<?=gettext('Enable')?>" usepost></a>
 <?php } else {
 ?>
 							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa-solid fa-ban" title="<?=gettext('Disable')?>" usepost></a>
 <?php }
 ?>
-							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa-solid fa-trash" title="<?=gettext('Delete this rule')?>" usepost></a>
+							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa-solid fa-trash-can" title="<?=gettext('Delete this rule')?>" usepost></a>
 <?php if (($filterent['type'] == 'pass') &&
 	    !empty($filterent['tracker'])): ?>
 							<a href="?act=killid&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>&amp;tracker=<?=$filterent['tracker']?>" class="fa-solid fa-times do-confirm" title="<?=gettext('Kill states on this interface created by this rule')?>" usepost></a>
@@ -1022,15 +1022,15 @@ foreach ($seprows as $idx => $sep) {
 
 	<nav class="action-buttons">
 		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&amp;after=-1" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
-			<i class="fa-solid fa-level-up icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-up icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
 		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
-			<i class="fa-solid fa-level-down icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-down icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>" disabled title="<?=gettext('Delete selected rules')?>">
-			<i class="fa-solid fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" disabled title="<?=gettext('Toggle selected rules')?>">
@@ -1039,7 +1039,7 @@ foreach ($seprows as $idx => $sep) {
 		</button>
 		<?php if ($if != 'FloatingRules'):?>
 		<button id="copy_x" name="copy_x" type="button" class="btn btn-primary btn-sm" value="<?=gettext("Copy selected rules"); ?>" disabled title="<?=gettext('Copy selected rules')?>" data-toggle="modal" data-target="#rulescopy">
-			<i class="fa-solid fa-clone icon-embed-btn"></i>
+			<i class="fa-regular fa-clone icon-embed-btn"></i>
 			<?=gettext("Copy"); ?>
 		</button>
 		<?php endif;?>
@@ -1117,7 +1117,7 @@ else: ?>
 			<dt><i class="fa-solid fa-check text-success"></i></dt>		<dd><?=gettext("Pass");?></dd>
 			<dt><i class="fa-solid fa-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
 			<dt><i class="fa-solid fa-times text-danger"></i></dt>	<dd><?=gettext("Block");?></dd>
-			<dt><i class="fa-solid fa-hand-stop-o text-warning"></i></dt>		<dd><?=gettext("Reject");?></dd>
+			<dt><i class="fa-regular fa-hand text-warning"></i></dt>		<dd><?=gettext("Reject");?></dd>
 			<dt><i class="fa-solid fa-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
 			<dt><i class="fa-solid fa-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
 			<dt><i class="fa-solid fa-forward text-success"></i></dt><dd> <?=gettext("&quot;Quick&quot; rule. Applied immediately on match.")?></dd>

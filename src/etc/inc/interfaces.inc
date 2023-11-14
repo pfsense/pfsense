@@ -5086,6 +5086,10 @@ EOD;
 			}
 		}
 
+		/* A default router file will be written by RTSOLD */
+		unlink_if_exists("{$g['tmp_path']}/{$realif}_routerv6");
+		unlink_if_exists("{$g['tmp_path']}/{$realif}_defaultgwv6");
+
 		if (isset($ifcfg['dhcp6withoutra']) && !$dhcp6c_restarted) {
 			/*
 			 * Start dhcp6c here if we don't want to wait for ra - calls
@@ -5121,6 +5125,24 @@ EOD;
 			    "-p {$g['varrun_path']}/rtsold_{$realif}.pid " .
 			    "-A {$g['varetc_path']}/rtsold_{$realif}_script.sh " .
 			    $realif);
+		}
+
+		/*
+		 * If a default router file is not available immediately,
+		 * trying to fetch default gateway from netstat and create it.
+		 */
+		$retry = 5;
+		while ($retry > 0 && !file_exists("{$g['tmp_path']}/{$realif}_routerv6")) {
+			$defgw = exec_command("netstat -6rWn | grep {$realif} | sed -nE 's/^default +([0-9a-z:%_]+).*/\\1/p'");
+			if ($defgw) {
+				/* write out a default router file */
+				file_put_contents("{$g['tmp_path']}/{$realif}_routerv6", "{$defgw}");
+				unlink_if_exists("{$g['tmp_path']}/{$realif}_routerv6.last");
+				file_put_contents("{$g['tmp_path']}/{$realif}_defaultgwv6", "{$defgw}");
+				break;
+			}
+			$retry -= 1;
+			sleep(1);
 		}
 	} else {
 		kill_dhcp6client_process(true);

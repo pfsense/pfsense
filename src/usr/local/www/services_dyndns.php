@@ -99,6 +99,10 @@ display_top_tabs($tab_array);
 					</thead>
 					<tbody>
 <?php
+
+$iflist = get_configured_interface_with_descr();
+$groupslist = return_gateway_groups_array();
+
 $i = 0;
 foreach ($a_dyndns as $dyndns):
 	if (!is_array($dyndns) || empty($dyndns)) {
@@ -147,7 +151,6 @@ foreach ($a_dyndns as $dyndns):
 							</td>
 							<td>
 <?php
-	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdesc) {
 		if (str_replace('_stf', '', $dyndns['interface']) == $if) {
 			print($ifdesc);
@@ -156,7 +159,6 @@ foreach ($a_dyndns as $dyndns):
 		}
 	}
 
-	$groupslist = return_gateway_groups_array();
 	foreach ($groupslist as $if => $group) {
 		if ($dyndns['interface'] == $if) {
 			print($if);

@@ -91,7 +91,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 	$data->overview .= "</tr>";
 
-	$gateways_status = return_gateways_status(true);
 	$data->tunnel = "";
 	foreach ($cmap as $k => $tunnel) {
 		if (in_array($k, array('connected', 'disconnected')) ||
@@ -102,7 +101,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		}
 
 		// convert_friendly_interface_to_friendly_descr($ph1ent['interface'])
-		$p1src = ipsec_get_phase1_src($tunnel['p1'], $gateways_status);
+		$p1src = ipsec_get_phase1_src($tunnel['p1']);
 		if (empty($p1src)) {
 			$p1src = gettext("Unknown");
 		} else {

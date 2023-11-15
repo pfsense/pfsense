@@ -80,7 +80,7 @@ if (isset($_GET['interface'])) {
 
 // Workaround as rc.openvpn is called by the gatewaymonitor / check_reload event system,..
 //file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED ".$argument);
-$gateways_arr = return_gateways_array();
+$gateways_arr = get_gateways();
 if (isset($gateways_arr[$argument])) {
 	//file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED WITH GW:".$argument);
 	// called upon rc.gateway_alarm 

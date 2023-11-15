@@ -84,7 +84,8 @@ if ($_POST['apply']) {
 	}
 }
 
-$a_gateways = return_gateways_array(true, false, true, true);
+refresh_gateways_cache(); // make sure we're working on a current gateway list
+$a_gateways = get_gateways(GW_CACHE_INDEXED);
 
 function can_delete_disable_gateway_item($id, $disable = false) {
 	global $config, $input_errors, $a_gateways;

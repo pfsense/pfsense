@@ -86,7 +86,7 @@ if ($_POST['act'] == "del") {
 }
 
 function gateway_exists($gwname) {
-	$gateways = return_gateways_array();
+	$gateways = get_gateways();
 
 	if (is_array($gateways)) {
 		foreach ($gateways as $gw) {

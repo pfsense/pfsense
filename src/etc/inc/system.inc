@@ -1385,7 +1385,7 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	$gateways_arr = return_gateways_array(false, true);
+	$gateways_arr = get_gateways(GW_CACHE_LOCALHOST);
 	foreach ($gateways_arr as $gateway) {
 		// setup static interface routes for nonlocal gateways
 		if (isset($gateway["nonlocalgateway"])) {
@@ -1414,7 +1414,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 
 	$static_routes = get_staticroutes(false, true);
 	if (count($static_routes)) {
-		$gateways_arr = return_gateways_array(false, true);
+		$gateways_arr = get_gateways(GW_CACHE_LOCALHOST);
 
 		foreach ($static_routes as $rtent) {
 			/* Do not delete disabled routes,

@@ -39,7 +39,8 @@ if (isset($_POST['referer'])) {
 
 global $gateway_state_kill_modes;
 
-$a_gateways = return_gateways_array(true, false, true, true);
+refresh_gateways_cache(); // make sure we're working on a current gateway list
+$a_gateways = get_gateways(GW_CACHE_INDEXED);
 
 init_config_arr(array('gateways', 'gateway_item'));
 $a_gateway_item = &$config['gateways']['gateway_item'];

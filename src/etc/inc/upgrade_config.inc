@@ -808,7 +808,7 @@ function upgrade_043_to_044() {
 	global $config;
 
 	/* migrate static routes to the new gateways config */
-	$gateways = return_gateways_array(true);
+	$gateways = get_gateways(GW_CACHE_DISABLED);
 	$i = 0;
 	if (is_array($config['staticroutes']['route'])) {
 		$gwmap = array();
@@ -1977,7 +1977,7 @@ function upgrade_053_to_054() {
 		$lbpool_arr = config_get_path('load_balancer/lbpool');
 		$lbpool_srv_arr = array();
 		$gateway_group_arr = array();
-		$gateways = return_gateways_array();
+		$gateways = get_gateways();
 		$group_name_changes = array();
 		init_config_arr(array('gateways', 'gateway_item'));
 		$a_gateways = &$config['gateways']['gateway_item'];
@@ -2979,7 +2979,7 @@ function upgrade_084_to_085() {
 	global $config;
 
 	$gateway_group_arr = array();
-	$gateways = return_gateways_array();
+	$gateways = get_gateways();
 	$oldnames = array();
 	/* setup translation array */
 	foreach ($gateways as $name => $gw) {

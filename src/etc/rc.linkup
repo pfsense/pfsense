@@ -107,9 +107,8 @@ function handle_argument_group($iface, $action) {
 				log_error("DEVD Ethernet detached event for {$iface}");
 
 				/* Locate interface gateways, if any exist. */
-				$gateways = return_gateways_array();
-				$gw4 = get_interface_gateway_name($iface, 'inet', $gateways);
-				$gw6 = get_interface_gateway_name($iface, 'inet6', $gateways);
+				$gw4 = get_interface_gateway_name($iface, 'inet');
+				$gw6 = get_interface_gateway_name($iface, 'inet6');
 
 				/* Tear down interface for dynamic types except if the only
 				 * dynamic part is track6

@@ -508,7 +508,6 @@ function print_ipsec_body() {
 	}
 
 	$rgmap = array();
-	$gateways_status = return_gateways_status(true);
 
 	foreach ($cmap as $p1) {
 		if (!array_key_exists('p1', $p1) ||
@@ -531,7 +530,7 @@ function print_ipsec_body() {
 	<td>
 		<b><?= htmlspecialchars(gettext("ID:")) ?></b>
 <?php
-		list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local", array(), $gateways_status);
+		list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local", array());
 		if (empty($myid_data)) {
 			$myid_data = gettext("Unknown");
 		}
@@ -540,7 +539,7 @@ function print_ipsec_body() {
 		<br/>
 		<b><?= htmlspecialchars(gettext("Host:")) ?></b>
 <?php
-		$ph1src = ipsec_get_phase1_src($ph1ent, $gateways_status);
+		$ph1src = ipsec_get_phase1_src($ph1ent);
 		if (empty($ph1src)) {
 			$ph1src = gettext("Unknown");
 		} else {
@@ -553,7 +552,7 @@ function print_ipsec_body() {
 <?php		if (!isset($ph1ent['mobile'])): ?>
 		<b><?= htmlspecialchars(gettext("ID:")) ?></b>
 <?php
-		list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap, $gateways_status);
+		list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
 		if (empty($peerid_data)) {
 			$peerid_data = gettext("Unknown");
 		}

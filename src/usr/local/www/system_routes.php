@@ -39,7 +39,7 @@ require_once('shaper.inc');
 
 init_config_arr(['staticroutes', 'route']);
 $a_routes = &$config['staticroutes']['route'];
-$a_gateways = return_gateways_array(true, true, true);
+$a_gateways = get_gateways(GW_CACHE_ALL);
 $changedesc_prefix = gettext('Static Routes') . ": ";
 
 if ($_POST['apply']) {

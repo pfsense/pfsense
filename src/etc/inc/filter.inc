@@ -1025,7 +1025,8 @@ function filter_generate_gateways() {
 	update_filter_reload_status(gettext("Creating gateway group item..."));
 
 	/* Lookup Gateways to be used in filter rules once */
-	$GatewaysList = return_gateways_array();
+	refresh_gateways_cache(); // make sure rules are generated from a current gateway list
+	$GatewaysList = get_gateways();
 	$GatewayGroupsList = return_gateway_groups_array(true);
 	$GatewaysStatus = return_gateways_status(true);
 
@@ -4684,6 +4685,7 @@ function filter_generate_ipsec_rules($log = array()) {
 	}
 	if (ipsec_enabled()) {
 		/* step through all phase1 entries */
+		$a_groups = return_gateway_groups_array(true);
 		foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 			$tracker += 10;
 
@@ -4730,7 +4732,6 @@ function filter_generate_ipsec_rules($log = array()) {
 				}
 			}
 
-			$a_groups = return_gateway_groups_array(true);
 			if (is_array($a_groups[$ph1ent['interface']])) {
 				// bound to gateway group
 				$parentinterface = get_failover_interface($ph1ent['interface']);

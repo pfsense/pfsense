@@ -3142,7 +3142,7 @@ function set_ipv6routes_mtu($interface, $mtu) {
 	if (!$config['interfaces'][$if]['ipaddrv6']) {
 		return;
 	}
-	$a_gateways = return_gateways_array();
+	$a_gateways = get_gateways();
 	$a_staticroutes = get_staticroutes(false, false, true);
 	foreach ($a_gateways as $gate) {
 		foreach ($a_staticroutes as $sroute) {

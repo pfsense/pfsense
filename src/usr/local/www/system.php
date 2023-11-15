@@ -42,7 +42,7 @@ $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
 $pconfig['dnsserver'] = $config['system']['dnsserver'];
 
-$arr_gateways = return_gateways_array();
+$arr_gateways = get_gateways();
 
 // set default columns to two if unset
 if (!isset($config['system']['webgui']['dashboardcolumns'])) {

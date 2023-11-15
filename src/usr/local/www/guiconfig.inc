@@ -983,7 +983,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 	init_config_arr(array('gateways', 'gateway_group'));
 	/* Get groups indexed by name so we can avoid re-scanning the array
 	 * multiple times later unnecessarily. */
-	$a_gateways = return_gateways_array(true, false, true, false);
+	$a_gateways = get_gateways(GW_CACHE_DISABLED | GW_CACHE_INACTIVE);
 
 	/* Use cached gateway status if available.
 	 * See https://redmine.pfsense.org/issues/12174 */

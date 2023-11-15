@@ -47,7 +47,7 @@ if ($_POST['act'] == 'killgw') {
 	exit;
 }
 
-$a_gateways = return_gateways_array();
+$a_gateways = get_gateways();
 $gateways_status = return_gateways_status(true);
 
 $pgtitle = array(gettext("Status"), gettext("Gateways"));

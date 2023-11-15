@@ -35,7 +35,7 @@ require_once("vpn.inc");
 
 init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
-$a_gateways = return_gateways_array();
+$a_gateways = get_gateways();
 
 $categories = array(
 	'down' => gettext("Member Down"),
@@ -165,7 +165,7 @@ if ($input_errors) {
 }
 
 function get_gw_family($gwname) {
-	$gateways = return_gateways_array();
+	$gateways = get_gateways();
 
 	if (is_array($gateways)) {
 		foreach ($gateways as $gw) {

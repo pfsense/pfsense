@@ -41,7 +41,7 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/syste
 
 init_config_arr(array('staticroutes', 'route'));
 $a_routes = &$config['staticroutes']['route'];
-$a_gateways = return_gateways_array(true, true);
+$a_gateways = get_gateways(GW_CACHE_DISABLED | GW_CACHE_LOCALHOST);
 
 $id = $_REQUEST['id'];
 

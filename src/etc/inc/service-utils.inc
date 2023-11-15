@@ -219,8 +219,7 @@ function is_service_enabled($service_name) {
 		case 'dpinger':
 			/* TODO: Should loop through gateways and check to make
 			 *       sure they don't all have monitoring disabled. */
-			$gateways_arr = return_gateways_array();
-			return is_array($gateways_arr) && !empty($gateways_arr);
+			return !empty(get_gateways());
 			break;
 		case 'igmpproxy':
 			return (config_path_enabled('igmpproxy') && !empty(config_get_path('igmpproxy/igmpentry', [])));
@@ -427,8 +426,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	$gateways_arr = return_gateways_array();
-	if (is_array($gateways_arr) && !empty($gateways_arr)) {
+	if (!empty(get_gateways())) {
 		$pconfig = array();
 		$pconfig['name'] = "dpinger";
 		$pconfig['description'] = gettext("Gateway Monitoring Daemon");

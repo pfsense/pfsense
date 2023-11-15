@@ -1411,7 +1411,7 @@ function is_interface_ipsec_vti_assigned($phase2) {
 	/* Check if this interface is assigned */
 	return (does_interface_exist($vti_interface) && (convert_real_interface_to_friendly_interface_name($vti_interface) != null));
 }
-function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
+function interface_ipsec_vti_configure($ph1ent) {
 	global $ipsec_reqid_base;
 
 	if (empty($ph1ent) || !is_array($ph1ent) || empty(config_get_path('ipsec/phase2'))) {
@@ -1423,7 +1423,7 @@ function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
 		return false;
 	}
 
-	$left_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
+	$left_spec = ipsec_get_phase1_src($ph1ent);
 
 	/* Attempt to resolve the remote gateway if needed */
 	$right_spec = ipsec_get_phase1_dst($ph1ent);
@@ -1529,18 +1529,14 @@ function interface_ipsec_vti_configure($ph1ent, $gateways_status = false) {
 	return true;
 }
 
-function interfaces_ipsec_vti_configure($gateways_status = false) {
+function interfaces_ipsec_vti_configure() {
 	$bootmsg = false;
 
-	/* Fetch gateway status if not passed */
-	if (!is_array($gateways_status)) {
-		$gateways_status = return_gateways_status(true);
-	}
 	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if ($ph1ent['disabled']) {
 			continue;
 		}
-		if (interface_ipsec_vti_configure($ph1ent, $gateways_status) &&
+		if (interface_ipsec_vti_configure($ph1ent) &&
 			!$bootmsg && platform_booting()) {
 			echo gettext("Configuring IPsec VTI interfaces...");
 			$bootmsg = true;
@@ -1820,7 +1816,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 
 	/* check all gateways, including dynamic,
 	 * see https://redmine.pfsense.org/issues/12920 */
-	foreach (return_gateways_array(true) as $gw) {
+	foreach (get_gateways(GW_CACHE_DISABLED) as $gw) {
 		if ($gw['friendlyiface'] == $interface) {
 			$restart_gateways_monitor = true;
 			break;
@@ -3874,12 +3870,7 @@ function run_dhcp6client_process($interfaces, $debugOption, $noreleaseOption) {
 	}
 }
 
-function interface_virtual_create($interface, $gateways_status = false) {
-
-	/* Fetch gateway status if not passed */
-	if (!is_array($gateways_status)) {
-		$gateways_status = return_gateways_status(true);
-	}
+function interface_virtual_create($interface) {
 
 	if (interface_is_vlan($interface) != NULL) {
 		interface_vlan_configure(interface_is_vlan($interface));
@@ -3914,7 +3905,7 @@ function interface_virtual_create($interface, $gateways_status = false) {
 			if ($ph1ent['disabled']) {
 				continue;
 			}
-			interface_ipsec_vti_configure($ph1ent, $gateways_status);
+			interface_ipsec_vti_configure($ph1ent);
 		}
 	} elseif (substr($interface, 0, 4) == "lagg") {
 		interfaces_lagg_configure($interface);
@@ -6463,7 +6454,7 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 	return $sourceips;
 }
 
-function get_interface_ip($interface = "wan", $gateways_status = false) {
+function get_interface_ip($interface = "wan") {
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_vip_ipv4($interface);
 	} elseif (substr($interface, 0, 5) == '_lloc') {
@@ -6471,7 +6462,7 @@ function get_interface_ip($interface = "wan", $gateways_status = false) {
 		return null;
 	}
 
-	$realif = get_failover_interface($interface, 'inet', $gateways_status);
+	$realif = get_failover_interface($interface, 'inet');
 	if (!$realif) {
 		return null;
 	}
@@ -6501,14 +6492,14 @@ function get_interface_ip($interface = "wan", $gateways_status = false) {
 	}
 }
 
-function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallback = false, $gateways_status = false) {
+function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallback = false) {
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_vip_ipv6($interface);
 	} elseif (substr($interface, 0, 5) == '_lloc') {
 		return get_interface_linklocal($interface);
 	}
 
-	$realif = get_failover_interface($interface, 'inet6', $gateways_status);
+	$realif = get_failover_interface($interface, 'inet6');
 	if (!$realif) {
 		return null;
 	}
@@ -7134,14 +7125,14 @@ function interfaces_staticarp_configure($if) {
 	return 0;
 }
 
-function get_failover_interface($interface, $family = "all", $gateways_status = false) {
+function get_failover_interface($interface, $family = "all") {
 	/* shortcut to get_real_interface if we find it in the config */
 	if (is_array(config_get_path("interfaces/{$interface}"))) {
 		return get_real_interface($interface, $family);
 	}
 
 	/* compare against gateway groups */
-	$a_groups = return_gateway_groups_array(true, $gateways_status);
+	$a_groups = return_gateway_groups_array(true);
 	if (is_array($a_groups[$interface])) {
 		/* we found a gateway group, fetch the interface or vip */
 		if (!empty($a_groups[$interface][0]['vip'])) {

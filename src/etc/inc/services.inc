@@ -1150,7 +1150,7 @@ function services_kea4_configure()
 	}
 
 	$enable_add_routers = false;
-	$gateways_arr = return_gateways_array();
+	$gateways_arr = get_gateways();
 	/* only add a routers line if the system has any IPv4 gateway at all */
 	/* a static route has a gateway, manually overriding this field always works */
 	foreach ($gateways_arr as $gwitem) {
@@ -2240,7 +2240,7 @@ EOD;
 
 	$dhcpdifs = array();
 	$enable_add_routers = false;
-	$gateways_arr = return_gateways_array();
+	$gateways_arr = get_gateways();
 	/* only add a routers line if the system has any IPv4 gateway at all */
 	/* a static route has a gateway, manually overriding this field always works */
 	foreach ($gateways_arr as $gwitem) {

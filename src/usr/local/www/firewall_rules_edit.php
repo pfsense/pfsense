@@ -1673,7 +1673,7 @@ $section->addInput(new Form_Select(
 // Build the gateway lists in JSON so the selector can be populated in JS
 $gwjson = '[{"name":"", "gateway":"Default", "family":"inet46"}';
 
-foreach (return_gateways_array() as $gwname => $gw) {
+foreach (get_gateways() as $gwname => $gw) {
 	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwname) . ', "gateway":' .
 	json_encode($gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr'])) . ',"family":' .
 	json_encode($gw['ipprotocol']) . '}';

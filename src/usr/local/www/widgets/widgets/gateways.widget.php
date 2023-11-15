@@ -37,7 +37,7 @@ if (!function_exists('compose_table_body_contents')) {
 
 		$rtnstr = '';
 
-		$a_gateways = return_gateways_array();
+		$a_gateways = get_gateways();
 		$gateways_status = array();
 		$gateways_status = return_gateways_status(true);
 
@@ -216,7 +216,7 @@ if ($_POST['widgetkey']) {
 	}
 
 	$validNames = array();
-	$a_gateways = return_gateways_array();
+	$a_gateways = get_gateways();
 
 	foreach ($a_gateways as $gname => $gateway) {
 		array_push($validNames, $gname);
@@ -312,7 +312,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 					</thead>
 					<tbody>
 <?php
-				$a_gateways = return_gateways_array();
+				$a_gateways = get_gateways();
 				$hiddengateways = explode(",", $user_settings["widgets"][$widgetkey]["gatewaysfilter"]);
 				$idx = 0;
 

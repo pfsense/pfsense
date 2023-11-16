@@ -526,6 +526,11 @@ function deleteVIP($id, $json = false) {
 				phpsession_end();
 			}
 
+			config_del_path("virtualip/vip/{$id}");
+			if (count($a_vip) == 0) {
+				config_del_path("virtualip/vip");
+			}
+			write_config(gettext("Deleted a virtual IP."));
 
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$id]['mode'] == "proxyarp") {
@@ -534,12 +539,6 @@ function deleteVIP($id, $json = false) {
 			} else {
 				interface_vip_bring_down($a_vip[$id]);
 			}
-
-			config_del_path("virtualip/vip/{$id}");
-			if (count($a_vip) == 0) {
-				config_del_path("virtualip/vip");
-			}
-			write_config(gettext("Deleted a virtual IP."));
 
 			/* Reload filter since removed address may trigger changes in rules
 			 * https://redmine.pfsense.org/issues/13908 */

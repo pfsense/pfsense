@@ -83,7 +83,7 @@ class Form_Element
 
 		if (isset($this->_attributes['icon'])) {
 			$rv = '<'. $this->_tagName . $attributes .'>' .
-				'<i class="fa ' . $this->_attributes['icon'] . ' icon-embed-btn' . '">' . ' </i>' .
+				'<i class="' . $this->_attributes['icon'] . ' icon-embed-btn' . '">' . ' </i>' .
 				htmlspecialchars($this->_attributes['value']);
 
 			if ($this->_tagName != 'a') {

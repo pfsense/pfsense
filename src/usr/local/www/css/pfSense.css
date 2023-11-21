@@ -55,7 +55,7 @@ a:hover {
     text-decoration: none;
 }
 
-a.fa, i.fa {
+a.fa-solid, i.fa-solid, a.fa-regular, i.fa-regular, a.fa-brands, i.fa-brands {
     font-size: 18px;
 }
 
@@ -106,7 +106,7 @@ wbr:after {
     background-color: rgba(245, 245, 245, .5);
 }
 
-tr.disabled i.fa {
+tr.disabled i.fa-solid, tr.disabled i.fa-regular, tr.disabled i.fa-brands {
     opacity: .5;
 }
 
@@ -714,11 +714,11 @@ footer a {
     float: right;
 }
 
-.widget-heading-icon .fa {
+.widget-heading-icon .fa-solid, .widget-heading-icon i.fa-regular, .widget-heading-icon i.fa-brands {
     color: #fff;
 }
 
-.widget-heading-icon .fa:hover {
+.widget-heading-icon .fa-solid:hover {
     color: #e0e0e0;
 }
 

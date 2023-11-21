@@ -337,13 +337,13 @@ foreach ($leases as $data):
 
 	if ($data['act'] == $active_string) {
 		/* Active DHCP Lease */
-		$icon = 'fa-check-circle-o';
+		$icon = 'fa-regular fa-circle-check';
 	} elseif ($data['act'] == $expired_string) {
 		/* Expired DHCP Lease */
-		$icon = 'fa-ban';
+		$icon = 'fa-solid fa-ban';
 	} else {
 		/* Static Mapping */
-		$icon = 'fa-user';
+		$icon = 'fa-solid fa-user';
 	}
 
 	if ($data['act'] !== $static_string) {
@@ -389,7 +389,7 @@ foreach ($leases as $data):
 ?>
 				<tr>
 					<td>
-						<i class="fa <?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
+						<i class="<?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
 <?php if ($data['online'] === $online_string): ?>
 						<i class="fa-solid fa-arrow-up text-success online" title="<?=htmlspecialchars($data['online'])?>"></i>
 <?php else: ?>
@@ -465,11 +465,11 @@ foreach ($prefixes as $data):
 	}
 
 	if ($data['act'] == $active_string) {
-		$icon = 'fa-check-circle-o';
+		$icon = 'fa-regular fa-circle-check';
 	} elseif ($data['act'] == $expired_string) {
-		$icon = 'fa-ban';
+		$icon = 'fa-solid fa-ban';
 	} else {
-		$icon = 'fa-times-circle-o';
+		$icon = 'fa-regular fa-circle-xmark';
 	}
 
 	if ($data['act'] == $static_string) {
@@ -495,7 +495,7 @@ foreach ($prefixes as $data):
 	}
 ?>
 			<tr>
-				<td><i class="fa <?=$icon?>"></i></td>
+				<td><i class="<?=$icon?>"></i></td>
 				<td><?=$data['prefix']?></td>
 				<td><?php foreach ($mappings[$data['duid']] as $iaid => $iproute):?><?=$iproute?><br />IAID: <?=$iaid?><br /><?php endforeach; ?></td>
 				<td><?=$data['iaid']?></td>

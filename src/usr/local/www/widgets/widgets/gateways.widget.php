@@ -56,12 +56,12 @@ if (!function_exists('compose_table_body_contents')) {
 			}
 			if (isset($gateway['inactive'])) {
 				$title = gettext("Gateway inactive, interface is missing");
-				$icon = 'fa-times-circle-o';
+				$icon = 'fa-regular fa-circle-xmark';
 			} elseif (isset($gateway['disabled'])) {
-				$icon = 'fa-ban';
+				$icon = 'fa-solid fa-ban';
 				$title = gettext("Gateway disabled");
 			} else {
-				$icon = 'fa-check-circle-o';
+				$icon = 'fa-regular fa-circle-check';
 				$title = gettext("Gateway enabled");
 			}
 			if (isset($gateway['isdefaultgw'])) {
@@ -72,7 +72,7 @@ if (!function_exists('compose_table_body_contents')) {
 
 			$gw_displayed = true;
 			$rtnstr .= "<tr>\n";
-			$rtnstr .= 	"<td title='{$title}'><i class='fa {$icon}'></i></td>\n";
+			$rtnstr .= 	"<td title='{$title}'><i class='{$icon}'></i></td>\n";
 			$rtnstr .= 	"<td title='{$gtitle}'>\n";
 			$rtnstr .= htmlspecialchars($gateway['name']);
 			if (isset($gateway['isdefaultgw'])) {

@@ -45,7 +45,7 @@ table[data-sortable].sortable-theme-bootstrap {
     padding: 4px 5px;
 }
 
-a.fa, i.fa {
+a.fa-solid, i.fa-solid, a.fa-regular, i.fa-regular, a.fa-brands, i.fa-brands {
     font-size: 14px;
 }
 

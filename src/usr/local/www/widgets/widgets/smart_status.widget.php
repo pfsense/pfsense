@@ -88,21 +88,21 @@ if (count($devs) > 0)  {
 			case "PASSED":
 			case "OK":
 				$color = "text-success";
-				$icon = "fa-check";
+				$icon = "fa-solid fa-check";
 				break;
 			case "":
 				$dev_state = gettext("Unknown");
 				$color = "text-info";
-				$icon = "fa-times-circle";
+				$icon = "fa-solid fa-times-circle";
 				break;
 			default:
 				$color = "text-alert";
-				$icon = "fa-question-circle";
+				$icon = "fa-solid fa-question-circle";
 				break;
 		}
 ?>
 		<tr>
-			<td><i class="fa <?=$icon?> <?=$color?>"></i></td>
+			<td><i class="<?=$icon?> <?=$color?>"></i></td>
 			<td><?=$dev?></td>
 			<td><?=$dev_ident?></td>
 			<td><?=ucfirst($dev_state)?></td>

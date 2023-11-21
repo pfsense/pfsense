@@ -309,7 +309,7 @@ function sprint_info_box($msg, $class="alert-warning", $btnname = "close", $btnt
 			$btntext = $btnname;
 		}
 		if (!empty($btnicon)) {
-			$btnicon = '<i class="fa ' . $btnicon . ' icon-embed-btn"></i>';
+			$btnicon = '<i class="' . $btnicon . ' icon-embed-btn"></i>';
 		}
 
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-' . $btnclass . '" name="'. $btnname . '" value="' . $btntext . '">' . $btnicon . $btntext . '</button>';
@@ -330,7 +330,7 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 }
 
 function print_apply_box($msg) {
-	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-check', 'success');
+	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-solid fa-check', 'success');
 }
 
 // Format and print a box reporting that changes have been applied

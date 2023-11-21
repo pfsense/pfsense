@@ -219,18 +219,18 @@ display_top_tabs($tab_array);
 <?php
 foreach ($a_routes as $i => $route):
 	if (isset($a_gateways[$route['gateway']]['inactive'])) {
-		$icon = 'fa-times-circle-o';
+		$icon = 'fa-regular fa-circle-xmark';
 		$title = gettext('Route inactive, gateway interface is missing');
 	} elseif (isset($route['disabled'])) {
-		$icon = 'fa-ban';
+		$icon = 'fa-solid fa-ban';
 		$title = gettext('Route disabled');
 	} else {
-		$icon = 'fa-check-circle-o';
+		$icon = 'fa-regular fa-circle-check';
 		$title = gettext('Route enabled');
 	}
 ?>
-				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
+				<tr<?=($icon != 'fa-solid fa-circle-check')? ' class="disabled"' : ''?>>
+					<td title="<?=$title?>"><i class="<?=$icon?>"></i></td>
 					<td>
 						<?=strtolower($route['network'])?>
 					</td>

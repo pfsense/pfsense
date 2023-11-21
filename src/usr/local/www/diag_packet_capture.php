@@ -263,27 +263,27 @@ $form_buttons = [
 	'stop_button' => [
 		'class' => 'btn-warning',
 		'value' => 'Stop',
-		'icon' => 'fa-stop-circle'
+		'icon' => 'fa-solid fa-stop-circle'
 	],
 	'start_button' => [
 		'class' => 'btn-success',
 		'value' => 'Start',
-		'icon' => 'fa-play-circle'
+		'icon' => 'fa-solid fa-play-circle'
 	],
 	'view_button' => [
 		'class' => 'btn-primary',
 		'value' => 'View',
-		'icon' => 'fa-file-text-o'
+		'icon' => 'fa-regular fa-file-lines'
 	],
 	'download_button' => [
 		'class' => 'btn-primary',
 		'value' => 'Download',
-		'icon' => 'fa-download'
+		'icon' => 'fa-solid fa-download'
 	],
 	'clear_button' => [
 		'class' => 'btn-danger',
 		'value' => 'Clear Captures',
-		'icon' => 'fa-trash'
+		'icon' => 'fa-solid fa-trash-can'
 	]
 ];
 

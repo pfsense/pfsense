@@ -246,13 +246,13 @@ foreach ($leases['lease'] as $data):
 
 	if ($data['act'] == $active_string) {
 		/* Active DHCP Lease */
-		$icon = 'fa-check-circle-o';
+		$icon = 'fa-regular fa-circle-check';
 	} elseif ($data['act'] == $expired_string) {
 		/* Expired DHCP Lease */
-		$icon = 'fa-ban';
+		$icon = 'fa-solid fa-ban';
 	} else {
 		/* Static Mapping */
-		$icon = 'fa-user';
+		$icon = 'fa-solid fa-user';
 	}
 
 	if ($data['act'] != $static_string) {
@@ -297,7 +297,7 @@ foreach ($leases['lease'] as $data):
 ?>
 				<tr>
 					<td>
-						<i class="fa <?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
+						<i class="<?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
 <?php if ($data['online'] === $online_string): ?>
 						<i class="fa-solid fa-arrow-up text-success online" title="<?=htmlspecialchars($data['online'])?>"></i>
 <?php else: ?>

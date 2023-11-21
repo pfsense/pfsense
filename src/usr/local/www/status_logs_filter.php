@@ -177,9 +177,9 @@ if (!$rawfilter) {
 					<td>
 <?php
 		if ($filterent['act'] == "block") {
-			$icon_act = "fa-times text-danger";
+			$icon_act = "fa-solid fa-times text-danger";
 		} else {
-			$icon_act = "fa-check text-success";
+			$icon_act = "fa-solid fa-check text-success";
 		}
 
 		if ($filterent['count']) {
@@ -188,7 +188,7 @@ if (!$rawfilter) {
 			$margin_left = '0.4em';
 		}
 ?>
-						<i style="margin-left:<?=$margin_left;?>" class="fa <?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+						<i style="margin-left:<?=$margin_left;?>" class="<?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 <?php
 		if ($filterent['count']) {
 			echo $filterent['count'];

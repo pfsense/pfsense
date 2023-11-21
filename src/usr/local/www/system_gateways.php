@@ -294,12 +294,12 @@ display_top_tabs($tab_array);
 foreach ($a_gateways as $i => $gateway):
 	if (isset($gateway['inactive'])) {
 		$title = gettext("Gateway inactive, interface is missing");
-		$icon = 'fa-times-circle-o';
+		$icon = 'fa-regular fa-circle-xmark';
 	} elseif (isset($gateway['disabled'])) {
-		$icon = 'fa-ban';
+		$icon = 'fa-solid fa-ban';
 		$title = gettext("Gateway disabled");
 	} else {
-		$icon = 'fa-check-circle-o';
+		$icon = 'fa-regular fa-circle-check';
 		$title = gettext("Gateway enabled");
 	}
 
@@ -310,7 +310,7 @@ foreach ($a_gateways as $i => $gateway):
 
 	$id = $gateway['attribute'];
 ?>
-					<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
+					<tr<?=($icon != 'fa-regular fa-circle-check')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
 						<td style="white-space: nowrap;">
 							<?php 
 							if (is_numeric($id)) :?>
@@ -318,7 +318,7 @@ foreach ($a_gateways as $i => $gateway):
 								<a class='fa-solid fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
 							<?php endif; ?>
 						</td>
-						<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
+						<td title="<?=$title?>"><i class="<?=$icon?>"></i></td>
 						<td title="<?=$gtitle?>">
 						<?=htmlspecialchars($gateway['name'])?>
 <?php

@@ -564,26 +564,6 @@ function get_interface_bandwidth($object) {
 	}
 }
 
-/*
- * This is duplicated here since we cannot include guiconfig.inc.
- * Including it makes all stuff break.
- */
-function shaper_do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors) {
-
-	/* check for bad control characters */
-	foreach ($postdata as $pn => $pd) {
-		if (is_string($pd) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $pd)) {
-			$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $pn);
-		}
-	}
-
-	for ($i = 0; $i < count($reqdfields); $i++) {
-		if ($postdata[$reqdfields[$i]] == "") {
-			$input_errors[] = sprintf(gettext("The field '%s' is required."), $reqdfieldsn[$i]);
-		}
-	}
-}
-
 function cleanup_queue_from_rules($queue) {
 	$rulelist = config_get_path('filter/rule', []);
 	foreach ($rulelist as & $rule) {
@@ -785,15 +765,14 @@ class altq_root_queue {
 	}
 
 	function validate_input($data, &$input_errors) {
+		// check for invalid data; taken from do_input_validation()
+		foreach ($data as $key => $value) {
+			if (is_string($value) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $value)) {
+				$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $key);
+			}
+		}
 
-		$reqdfields[] = "bandwidth";
-		$reqdfieldsn[] = gettext("Bandwidth");
-		$reqdfields[] = "bandwidthtype";
-		$reqdfieldsn[] = gettext("Bandwidthtype");
-
-		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-
-		if ($data['bandwidth'] == null) {
+		if (!isset($data['bandwidth']) || ($data['bandwidth'] == '')) {
 			$input_errors[] = gettext("Bandwidth must be set.  This is usually the interface speed.");
 		} else {
 			if ((!is_numeric($data['bandwidth']))) {
@@ -803,7 +782,9 @@ class altq_root_queue {
 				$input_errors[] = gettext("Bandwidth cannot be negative.");
 			}
 		}
-		if ($data['bandwidthtype'] == "%") {
+		if (!isset($data['bandwidthtype']) || ($data['bandwidthtype'] == '')) {
+			$input_errors[] = gettext("The field 'Bandwidthtype' is required.");
+		} elseif ($data['bandwidthtype'] == "%") {
 			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
 				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 			}
@@ -1582,9 +1563,21 @@ class priq_queue {
 	function validate_input($data, &$input_errors) {
 		global $altq_list_queues;
 
-		$reqdfields[] = "name";
-		$reqdfieldsn[] = gettext("Name");
-		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		// check for invalid data and required fields; taken from do_input_validation()
+		$reqdfields = [
+			"name" => gettext("Name"),
+		];
+		foreach ($data as $key => $value) {
+			if (is_string($value) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $value)) {
+				$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $key);
+			}
+		}
+		foreach ($reqdfields as $key => $descr) {
+			if (!isset($data[$key]) || ($data[$key] == '')) {
+				$input_errors[] = sprintf(gettext("The field '%s' is required."), $descr);
+			}
+		}
+
 		$parent = $altq_list_queues[$this->GetInterface()];
 
 		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
@@ -2306,23 +2299,28 @@ class hfsc_queue extends priq_queue {
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
 
-		$reqdfields[] = "bandwidth";
-		$reqdfieldsn[] = gettext("Bandwidth");
-		$reqdfields[] = "bandwidthtype";
-		$reqdfieldsn[] = gettext("Bandwidthtype");
-
-		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		// check for invalid data; taken from do_input_validation()
+		foreach ($data as $key => $value) {
+			if (is_string($value) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $value)) {
+				$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $key);
+			}
+		}
 
 		if (isset($data['linkshare3']) && !empty($data['linkshare3'])) {
-			if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
-				$input_errors[] = gettext("Bandwidth must be an integer.");
+			if (!isset($data['bandwidth']) || ($data['bandwidth'] == '')) {
+				$input_errors[] = gettext("The field 'Bandwidth' is required.");
+			} else {
+				if (!is_numeric($data['bandwidth'])) {
+					$input_errors[] = gettext("Bandwidth must be an integer.");
+				}
+				if ((int)$data['bandwidth'] < 0) {
+					$input_errors[] = gettext("Bandwidth cannot be negative.");
+				}
 			}
 
-			if ($data['bandwidth'] < 0) {
-				$input_errors[] = gettext("Bandwidth cannot be negative.");
-			}
-
-			if ($data['bandwidthtype'] == "%") {
+			if (!isset($data['bandwidthtype']) || ($data['bandwidthtype'] == '')) {
+				$input_errors[] = gettext("The field 'Bandwidthtype' is required.");
+			} elseif ($data['bandwidthtype'] == "%") {
 				if (($data['bandwidth'] > 100) || ($data['bandwidth'] < 0)) {
 					$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 				}
@@ -3053,12 +3051,21 @@ class cbq_queue extends priq_queue {
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
 
-		$reqdfields[] = "bandwidth";
-		$reqdfieldsn[] = gettext("Bandwidth");
-		$reqdfields[] = "bandwidthtype";
-		$reqdfieldsn[] = gettext("Bandwidthtype");
-
-		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		// check for invalid data and required fields; taken from do_input_validation()
+		$reqdfields = [
+			"bandwidth" => gettext("Bandwidth"),
+			"bandwidthtype" => gettext("Bandwidthtype"),
+		];
+		foreach ($data as $key => $value) {
+			if (is_string($value) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $value)) {
+				$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $key);
+			}
+		}
+		foreach ($reqdfields as $key => $descr) {
+			if (!isset($data[$key]) || ($data[$key] == '')) {
+				$input_errors[] = sprintf(gettext("The field '%s' is required."), $descr);
+			}
+		}
 
 		if ($data['priority'] > 7) {
 			$input_errors[] = gettext("Priority must be an integer between 0 and 7.");
@@ -3345,12 +3352,22 @@ class fairq_queue extends priq_queue {
 		if ($data['priority'] > 7) {
 				$input_errors[] = gettext("Priority must be an integer between 0 and 7.");
 		}
-		$reqdfields[] = "bandwidth";
-		$reqdfieldsn[] = gettext("Bandwidth");
-		$reqdfields[] = "bandwidthtype";
-		$reqdfieldsn[] = gettext("Bandwidthtype");
 
-		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		// check for invalid data and required fields; taken from do_input_validation()
+		$reqdfields = [
+			"bandwidth" => gettext("Bandwidth"),
+			"bandwidthtype" => gettext("Bandwidthtype"),
+		];
+		foreach ($data as $key => $value) {
+			if (is_string($value) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $value)) {
+				$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $key);
+			}
+		}
+		foreach ($reqdfields as $key => $descr) {
+			if (!isset($data[$key]) || ($data[$key] == '')) {
+				$input_errors[] = sprintf(gettext("The field '%s' is required."), $descr);
+			}
+		}
 	}
 
 	function ReadConfig(&$q) {
@@ -3690,16 +3707,22 @@ class dummynet_class {
 	}
 
 	function validate_input($data, &$input_errors) {
-		$reqdfields[] = "bandwidth";
-		$reqdfieldsn[] = gettext("Bandwidth");
-		/*$reqdfields[] = "burst";
-		$reqdfieldsn[] = gettext("Burst"); */
-		$reqdfields[] = "bandwidthtype";
-		$reqdfieldsn[] = gettext("Bandwidthtype");
-		$reqdfields[] = "newname";
-		$reqdfieldsn[] = gettext("Name");
-
-		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		// check for invalid data and required fields; taken from do_input_validation()
+		$reqdfields = [
+			"bandwidth" => gettext("Bandwidth"),
+			"bandwidthtype" => gettext("Bandwidthtype"),
+			"newname" => gettext("Name"),
+		];
+		foreach ($data as $key => $value) {
+			if (is_string($value) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $value)) {
+				$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $key);
+			}
+		}
+		foreach ($reqdfields as $key => $descr) {
+			if (!isset($data[$key]) || ($data[$key] == '')) {
+				$input_errors[] = sprintf(gettext("The field '%s' is required."), $descr);
+			}
+		}
 
 		if ($data['plr'] && (!is_numeric($data['plr']) ||
 		    ($data['plr'] < 0) || ($data['plr'] > 1))) {

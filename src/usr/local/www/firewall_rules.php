@@ -1075,14 +1075,14 @@ $btncopyrules = new Form_Button(
 	'copyr',
 	'Paste',
 	null,
-	'fa-clone'
+	'fa-regular fa-clone'
 );
 $btncopyrules->setAttribute('type','button')->addClass('btn-success');
 $btncancelcopyrules = new Form_Button(
 	'cancel_copyr',
 	'Cancel',
 	null,
-	'fa-undo'
+	'fa-solid fa-undo'
 );
 $btncancelcopyrules->setAttribute('type','button')->addClass('btn-warning');
 $modal->addInput(new Form_StaticText(

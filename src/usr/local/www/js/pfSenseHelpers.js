@@ -602,7 +602,7 @@ $(function(){
 			uniqueid = '';
 		}
 		// Prompt to confirm only on disconnect
-		if (($(this).hasClass('fa-trash')) || ($(this).children('i').hasClass('fa-trash'))) {
+		if (($(this).hasClass('fa-trash-can')) || ($(this).children('i').hasClass('fa-trash-can'))) {
 			var msg = $.trim(this.title) + ' ' + $.trim(conid);
 			if (!msg) {
 				msg = 'Confirm?';
@@ -803,7 +803,7 @@ function interceptGET() {
 		if (typeof attr !== typeof undefined && attr !== false) {
 			// Automatically apply a confirmation dialog to "Delete" icons
 			if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
-			   (($(this).hasClass('do-confirm')) || ($(this).hasClass('fa-trash')))) {
+			   (($(this).hasClass('do-confirm')) || ($(this).hasClass('fa-trash-can')))) {
 				var msg = $.trim(this.textContent).toLowerCase();
 
 				if (!msg)

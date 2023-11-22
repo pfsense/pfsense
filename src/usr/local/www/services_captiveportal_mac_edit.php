@@ -216,7 +216,7 @@ $btnmymac = new Form_Button(
 	'btnmymac',
 	'Copy My MAC',
 	null,
-	'fa-clone'
+	'fa-regular fa-clone'
 	);
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');

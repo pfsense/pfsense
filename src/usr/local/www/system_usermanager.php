@@ -919,14 +919,14 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'movetoenabled',
 		'Move to "Member of" list',
 		null,
-		'fa-angle-double-right'
+		'fa-solid fa-angle-double-right'
 	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
 		'Move to "Not member of" list',
 		null,
-		'fa-angle-double-left'
+		'fa-solid fa-angle-double-left'
 	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');

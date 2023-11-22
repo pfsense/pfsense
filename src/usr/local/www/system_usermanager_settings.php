@@ -289,7 +289,7 @@ $form->addGlobal(new Form_Button(
 	'savetest',
 	'Save & Test',
 	null,
-	'fa-wrench'
+	'fa-solid fa-wrench'
 ))->addClass('btn-info');
 
 $form->add($section);

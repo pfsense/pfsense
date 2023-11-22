@@ -315,7 +315,7 @@ function filter_form_system() {
 			'filterlogentries_submit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
@@ -344,7 +344,7 @@ function filter_form_system() {
 			'filtersubmit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	}
 
@@ -535,7 +535,7 @@ function filter_form_firewall() {
 			'filterlogentries_submit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
@@ -575,7 +575,7 @@ function filter_form_firewall() {
 			'filtersubmit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	}
 
@@ -1023,7 +1023,7 @@ function manage_log_section() {
 		'save_settings',
 		gettext('Save'),
 		null,
-		'fa-save'
+		'fa-solid fa-save'
 	);
 
 	$btnsavesettings->addClass('btn-sm btn-primary');
@@ -1038,7 +1038,7 @@ function manage_log_section() {
 		'clear',
 		gettext('Clear log'),
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	);
 
 	$btnclear->removeClass('btn-primary')->addClass('btn-sm btn-danger');

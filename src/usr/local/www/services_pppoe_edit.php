@@ -564,7 +564,7 @@ if ($usernames != "") {
 			'deleterow' . $counter,
 			'Delete',
 			null,
-			'fa-trash'
+			'fa-solid fa-trash-can'
 		))->addClass('btn-warning');
 
 		$section->add($group);
@@ -577,7 +577,7 @@ $btnaddrow = new Form_Button(
 	'addrow',
 	'Add user',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 );
 
 $btnaddrow->addClass('btn-success');

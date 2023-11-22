@@ -443,7 +443,7 @@ $btnadv = new Form_Button(
 	'btnadvcustom',
 	'Custom options',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');

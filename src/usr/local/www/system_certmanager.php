@@ -1247,7 +1247,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			'deleterow' . $counter,
 			'Delete',
 			null,
-			'fa-trash'
+			'fa-solid fa-trash-can'
 		))->addClass('btn-warning');
 
 		$group->addClass('repeatable');
@@ -1266,7 +1266,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'addrow',
 		'Add SAN Row',
 		null,
-		'fa-plus'
+		'fa-solid fa-plus'
 	))->addClass('btn-success');
 
 	$form->add($section);
@@ -1276,13 +1276,13 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			'exportpkey',
 			'Export Private Key',
 			null,
-			'fa-key'
+			'fa-solid fa-key'
 		))->addClass('btn-primary');
 		$form->addGlobal(new Form_Button(
 			'exportp12',
 			'Export PKCS#12',
 			null,
-			'fa-archive'
+			'fa-solid fa-archive'
 		))->addClass('btn-primary');
 	}
 
@@ -1340,7 +1340,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'save',
 		'Update',
 		null,
-		'fa-save'
+		'fa-solid fa-save'
 	))->addClass('btn-primary');
 
 	print($form);

@@ -609,7 +609,7 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 		'deleterow' . $dnsserver_num,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->setWidth(2)->addClass('btn-warning');
 
 	$section->add($group);
@@ -620,7 +620,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add DNS Server',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success addbtn');
 
 $section->addInput(new Form_Checkbox(

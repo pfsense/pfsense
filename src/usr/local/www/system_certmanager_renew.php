@@ -207,7 +207,7 @@ $form->addGlobal(new Form_Button(
 	'renew',
 	'Renew/Reissue',
 	null,
-	'fa-repeat'
+	'fa-solid fa-arrow-rotate-right'
 ))->addClass('btn-danger');
 
 print($form);

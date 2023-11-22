@@ -531,7 +531,7 @@ if (isset($id) && $a_dyndns[$id]) {
 		'force',
 		'Save & Force Update',
 		null,
-		'fa-refresh'
+		'fa-solid fa-arrows-rotate'
 	))->removeClass('btn-primary')->addClass('btn-info');
 }
 

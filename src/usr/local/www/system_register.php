@@ -128,7 +128,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Register',
 	null,
-	'fa-registered'
+	'fa-regular fa-registered'
 ))->addClass('btn-primary')->setAttribute($disabled, true);
 
 print $form;

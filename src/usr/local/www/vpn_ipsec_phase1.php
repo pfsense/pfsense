@@ -984,7 +984,7 @@ foreach($eitems as $key => $p1enc) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning')->setWidth(2);
 
 	$group->add(new Form_StaticText(
@@ -1008,7 +1008,7 @@ $btnaddopt = new Form_Button(
 	'algoaddrow',
 	'Add Algorithm',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 );
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 $section->addInput($btnaddopt);

@@ -286,7 +286,7 @@ foreach ($items as $item) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning')->addClass('nowarn');
 
 	$section->add($group);
@@ -297,7 +297,7 @@ $form->addGlobal(new Form_Button(
 	'addrow',
 	'Add Host Name',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $section->addInput(new Form_StaticText(

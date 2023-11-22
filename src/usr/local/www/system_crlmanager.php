@@ -624,7 +624,7 @@ if ($act == "new" || $act == gettext("Save")) {
 		'submit',
 		'Add',
 		null,
-		'fa-plus'
+		'fa-solid fa-plus'
 		))->addClass('btn-success btn-sm');
 
 	$form->addGlobal(new Form_Input(
@@ -747,7 +747,7 @@ if ($act == "new" || $act == gettext("Save")) {
 		'submit',
 		'Add',
 		null,
-		'fa-plus'
+		'fa-solid fa-plus'
 		))->addClass('btn-success btn-sm');
 	$section->add($group);
 	$form->addGlobal(new Form_Input(

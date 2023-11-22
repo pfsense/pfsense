@@ -173,7 +173,7 @@ $section->addInput(new Form_Button(
 	'Submit',
 	gettext("Save"),
 	null,
-	'fa-save'
+	'fa-solid fa-save'
 ))->addClass('btn-primary');
 
 $form->add($section);

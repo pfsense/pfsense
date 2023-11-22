@@ -333,7 +333,7 @@ foreach ($item as $ww) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning');
 
 	$counter++;
@@ -345,7 +345,7 @@ $form->addGlobal(new Form_Button(
 	'addrow',
 	'Add Tag',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success addbtn');
 
 $form->add($section);

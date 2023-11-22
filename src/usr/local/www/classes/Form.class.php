@@ -45,7 +45,7 @@ class Form extends Form_Element
 				'save',
 				$submit,
 				null,
-				'fa-save'
+				'fa-solid fa-save'
 			);
 
 			if (!$enabled) {

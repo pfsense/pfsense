@@ -134,7 +134,7 @@ if (!$_REQUEST['ajax']) {
 		if ($filterent['act'] == "block") {
 			$iconfn = "fa-solid fa-times text-danger";
 		} else if ($filterent['act'] == "reject") {
-			$iconfn = "fa-solid fa-hand-stop-o text-warning";
+			$iconfn = "fa-regular fa-hand text-warning";
 		} else if ($filterent['act'] == "match") {
 			$iconfn = "fa-solid fa-filter";
 		} else {

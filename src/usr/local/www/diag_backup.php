@@ -213,7 +213,7 @@ $group->add(new Form_Button(
 	'download',
 	'Download configuration as XML',
 	null,
-	'fa-download'
+	'fa-solid fa-download'
 ))->setAttribute('id')->addClass('btn-primary');
 
 $section->add($group);
@@ -261,7 +261,7 @@ $group->add(new Form_Button(
 	'restore',
 	'Restore Configuration',
 	null,
-	'fa-undo'
+	'fa-solid fa-undo'
 ))->setHelp('The firewall will reboot after restoring the configuration.')->addClass('btn-danger restore')->setAttribute('id');
 
 $section->add($group);
@@ -280,7 +280,7 @@ if ($has_installed_packages || (is_subsystem_dirty("packagelock"))) {
 			'reinstallpackages',
 			'Reinstall Packages',
 			null,
-			'fa-retweet'
+			'fa-solid fa-retweet'
 		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->addClass('btn-success')->setAttribute('id');
 
 		$section->add($group);
@@ -293,7 +293,7 @@ if ($has_installed_packages || (is_subsystem_dirty("packagelock"))) {
 			'clearpackagelock',
 			'Clear Package Lock',
 			null,
-			'fa-wrench'
+			'fa-solid fa-wrench'
 		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->addClass('btn-warning')->setAttribute('id');
 
 		$section->add($group);

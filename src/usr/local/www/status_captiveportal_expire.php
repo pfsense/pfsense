@@ -99,7 +99,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Expire',
 	null,
-	'fa-trash'
+	'fa-solid fa-trash-can'
 ))->addClass('btn-warning');
 
 print($form);

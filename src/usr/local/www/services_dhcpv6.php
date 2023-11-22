@@ -925,7 +925,7 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		'btnaddpool',
 		gettext('Add Address Pool'),
 		'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&act=newpool',
-		'fa-plus'
+		'fa-solid fa-plus'
 	);
 	$btnaddpool->addClass('btn-success');
 
@@ -1094,7 +1094,7 @@ $btnadv = new Form_Button(
 	'btnadvdns',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -1193,7 +1193,7 @@ $btnadv = new Form_Button(
 	'btnadvntp',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -1248,7 +1248,7 @@ $btnadv = new Form_Button(
 	'btnadvldap',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -1273,7 +1273,7 @@ $btnadv = new Form_Button(
 	'btnadvnetboot',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -1302,7 +1302,7 @@ $btnadv = new Form_Button(
 	'btnadvopts',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -1356,7 +1356,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	);
 
 	$btn->addClass('btn-warning');
@@ -1370,7 +1370,7 @@ $btnaddopt = new Form_Button(
 	'addrow',
 	'Add Option',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 );
 
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');

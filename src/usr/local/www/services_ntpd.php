@@ -352,7 +352,7 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning');
 
 	 $section->add($group);
@@ -362,7 +362,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success');
 
 $section->addInput(new Form_StaticText(
@@ -445,7 +445,7 @@ $btnadv = new Form_Button(
 	'btnadvstats',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -481,7 +481,7 @@ $btnadv = new Form_Button(
 	'btnadvleap',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');

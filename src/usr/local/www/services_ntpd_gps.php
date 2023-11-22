@@ -557,7 +557,7 @@ $btnadv = new Form_Button(
 	'btnadvgps',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -591,7 +591,7 @@ $btncalc = new Form_Button(
 	'btncalc',
 	'Calculate',
 	null,
-	'fa-calculator'
+	'fa-solid fa-calculator'
 );
 
 $btncalc->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');

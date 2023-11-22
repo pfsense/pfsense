@@ -624,7 +624,7 @@ if ($pkg['savehelp'] != "") {
 	$savehelp = $pkg['savehelp'];
 }
 
-$saveicon = "fa-save";
+$saveicon = "fa-solid fa-save";
 if ($pkg['saveicon'] != "") {
 	$saveicon = $pkg['saveicon'];
 }
@@ -1315,7 +1315,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		// Create form button
 		case "button":
-			$newbtnicon = "fa-save";
+			$newbtnicon = "fa-solid fa-save";
 			if ($pkga['buttonicon'] != "") {
 				$newbtnicon = $pkga['buttonicon'];
 			}
@@ -1468,7 +1468,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						'deleterow' . $rowcounter,
 						'Delete',
 						null,
-						'fa-trash'
+						'fa-solid fa-trash-can'
 					))->removeClass('btn-primary')->addClass('btn-warning btn-sm');
 
 					$rowcounter++;
@@ -1480,7 +1480,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				'addrow',
 				'Add',
 				null,
-				'fa-plus'
+				'fa-solid fa-plus'
 			))->addClass('btn-success');
 
 			break;
@@ -1523,7 +1523,7 @@ if (!empty($advanced)) {
 		'showadv',
 		'Show Advanced Options',
 		null,
-		'fa-cog'
+		'fa-solid fa-cog'
 	))->setAttribute('type','button')->addClass('btn-info');
 
 	$form->add($advanced);

@@ -152,7 +152,7 @@ $btncopyduid = new Form_Button(
 	'btncopyduid',
 	'Copy DUID',
 	null,
-	'fa-clone'
+	'fa-regular fa-clone'
 	);
 
 $btncopyduid->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');

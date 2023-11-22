@@ -332,7 +332,7 @@ if (isset($id) && $a_rfc2136[$id]) {
 		'force',
 		'Save & Force Update',
 		null,
-		'fa-refresh'
+		'fa-solid fa-arrows-rotate'
 	))->addClass('btn-info');
 }
 

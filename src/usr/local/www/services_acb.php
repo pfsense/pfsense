@@ -375,14 +375,14 @@ $group->add(new Form_Button(
 	'upduserkey',
 	'Submit',
 	null,
-	'fa-save'
+	'fa-solid fa-save'
 ))->addClass('btn-success btn-xs');
 
 $group->add(new Form_Button(
 	'restore',
 	'Reset',
 	null,
-	'fa-refresh'
+	'fa-solid fa-arrows-rotate'
 ))->addClass('btn-info btn-xs');
 
 $section2->add($group);

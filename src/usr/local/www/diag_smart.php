@@ -226,7 +226,7 @@ switch ($action) {
 			'submit',
 			'View',
 			null,
-			'fa-file-text-o'
+			'fa-regular fa-file-lines'
 		);
 		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');
@@ -269,7 +269,7 @@ switch ($action) {
 			'submit',
 			'View',
 			null,
-			'fa-file-text-o'
+			'fa-regular fa-file-lines'
 		);
 		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');
@@ -313,7 +313,7 @@ switch ($action) {
 			'submit',
 			'Test',
 			null,
-			'fa-wrench'
+			'fa-solid fa-wrench'
 		);
 		$btntest->addClass('btn-primary');
 		$btntest->setAttribute('id');
@@ -356,7 +356,7 @@ switch ($action) {
 			'submit',
 			'Abort Tests',
 			null,
-			'fa-times'
+			'fa-solid fa-times'
 		);
 
 		$btnabort->addClass('btn-danger')->setAttribute('id');

@@ -431,14 +431,14 @@ $group->add(new Form_Button(
 	'btnaddtime',
 	'Add Time',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->setAttribute('type','button')->addClass('btn-success btn-sm');
 
 $group->add(new Form_Button(
 	'btnclrsel',
 	'Clear selection',
 	null,
-	'fa-undo'
+	'fa-solid fa-undo'
 ))->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->add($group);
@@ -617,7 +617,7 @@ if ($getSchedule && !empty($pconfig['timerange'])) {
 				'Delete' . $counter,
 				'Delete',
 				null,
-				'fa-trash'
+				'fa-solid fa-trash-can'
 			))->setAttribute('type','button')->addClass('btn-xs btn-warning');
 
 			$group->add(new Form_Input(

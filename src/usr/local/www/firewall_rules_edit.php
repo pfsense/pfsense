@@ -1418,7 +1418,7 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 			'btnsrctoggle',
 			'',
 			null,
-			'fa-cog'
+			'fa-solid fa-cog'
 		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
 			'The %1$sSource Port Range%2$s for a connection is typically random '.
 			'and almost never equal to the destination port. '.
@@ -1492,7 +1492,7 @@ $btnadv = new Form_Button(
 	'btnadvopts',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');

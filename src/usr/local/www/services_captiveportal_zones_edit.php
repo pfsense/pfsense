@@ -106,7 +106,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Save & Continue',
 	null,
-	'fa-save'
+	'fa-solid fa-save'
 ))->addClass('btn-primary');
 
 print($form);

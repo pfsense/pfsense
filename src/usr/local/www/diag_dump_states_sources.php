@@ -110,7 +110,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Filter',
 	null,
-	'fa-filter'
+	'fa-solid fa-filter'
 ))->addClass('btn-primary');
 
 print $form;

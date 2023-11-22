@@ -375,7 +375,7 @@ $section->addInput(new Form_Button(
 	'resetlogs',
 	'Reset Log Files',
 	null,
-	'fa-trash'
+	'fa-solid fa-trash-can'
 ))->addClass('btn-danger btn-sm')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if any setting changes have been made.');
 
 $form->add($section);

@@ -178,7 +178,7 @@ if ($_REQUEST['act'] == 'add') {
 		'Submit',
 		'Upload',
 		null,
-		'fa-upload'
+		'fa-solid fa-upload'
 	))->addClass('btn-primary');
 
 	print($form);

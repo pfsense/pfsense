@@ -520,7 +520,7 @@ $btnmymac = new Form_Button(
 	'btnmymac',
 	gettext('Copy My MAC'),
 	null,
-	'fa-clone'
+	'fa-regular fa-clone'
 	);
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
@@ -704,7 +704,7 @@ $btnadv = new Form_Button(
 	'btnadvdns',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -778,7 +778,7 @@ $btnadv = new Form_Button(
 	'btnadvntp',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -803,7 +803,7 @@ $btnadv = new Form_Button(
 	'btnadvtftp',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -827,7 +827,7 @@ $btnadv = new Form_Button(
 	'btnadvldap',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -851,7 +851,7 @@ $btnadv = new Form_Button(
 	'btnadvnwkboot',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -934,7 +934,7 @@ $btnadv = new Form_Button(
 	'btnadvopts',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -1000,7 +1000,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 		'deleterow' . $counter,
 		gettext('Delete'),
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-sm btn-warning');
 
 	$section->add($group);
@@ -1013,7 +1013,7 @@ $group->add(new Form_Button(
 	'addrow',
 	gettext('Add Custom Option'),
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success')
   ->setHelp(gettext('Enter the DHCP option number, type and the value for each item to include in the DHCP lease information.'));
 $section->add($group);

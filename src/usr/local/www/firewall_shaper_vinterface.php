@@ -388,7 +388,7 @@ if (!$dfltmsg) {
 				'add',
 				'Add new Queue',
 				$url,
-				'fa-plus'
+				'fa-solid fa-plus'
 			))->addClass('btn-success');
 		}
 
@@ -404,7 +404,7 @@ if (!$dfltmsg) {
 					'delete',
 					($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
 					$url,
-					'fa-trash'
+					'fa-solid fa-trash-can'
 				))->addClass('btn-danger nowarn');
 			}
 		}

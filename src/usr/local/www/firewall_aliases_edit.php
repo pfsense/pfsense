@@ -345,7 +345,7 @@ while ($counter < count($addresses)) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning');
 
 	$section->add($group);
@@ -357,7 +357,7 @@ if ((isset($id) && config_get_path('aliases/alias/' . $id)) && !preg_match("/url
 		'exportaliases',
 		'Export to file',
 		null,
-		'fa-download'
+		'fa-solid fa-download'
 	))->addClass('btn-primary');
 }
 
@@ -365,7 +365,7 @@ $form->addGlobal(new Form_Button(
 	'addrow',
 	$btn_str[$tab],
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success addbtn');
 
 $form->add($section);

@@ -149,7 +149,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Send',
 	null,
-	'fa-power-off'
+	'fa-solid fa-power-off'
 ))->addClass('btn-primary');
 
 print $form;

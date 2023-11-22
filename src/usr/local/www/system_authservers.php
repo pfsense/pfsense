@@ -83,7 +83,7 @@ if ($_REQUEST['ajax']) {
 			'svcontbtn',
 			'Save',
 			null,
-			'fa-save'
+			'fa-solid fa-save'
 		);
 
 		$btnsv->removeClass("btn-default)")->addClass("btn-primary");
@@ -667,7 +667,7 @@ $group->add(new Form_Button(
 	'Select',
 	'Select a container',
 	null,
-	'fa-search'
+	'fa-solid fa-search'
 ))->setAttribute('type','button')->addClass('btn-info');
 
 $section->add($group);

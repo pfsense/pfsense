@@ -250,7 +250,7 @@ if ($act == "new" || $act == "edit") {
 			'deleterow' . $counter,
 			'Delete',
 			null,
-			'fa-trash'
+			'fa-solid fa-trash-can'
 		))->addClass('btn-warning');
 
 		$group->addClass('repeatable');
@@ -263,7 +263,7 @@ if ($act == "new" || $act == "edit") {
 		'addrow',
 		'Add Network',
 		null,
-		'fa-plus'
+		'fa-solid fa-plus'
 	))->addClass('btn-success');
 
 	$form->add($section);

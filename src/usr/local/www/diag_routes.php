@@ -114,7 +114,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Update',
 	null,
-	'fa-refresh'
+	'fa-solid fa-arrows-rotate'
 ))->addClass('btn-primary');
 
 print $form;

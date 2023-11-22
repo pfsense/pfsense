@@ -335,7 +335,7 @@ while ($counter < $numaddrs) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning btn-xs');
 
 	if ($counter == ($numaddrs - 1)) {
@@ -351,7 +351,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add address',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success addbtn');
 
 $form->add($section);

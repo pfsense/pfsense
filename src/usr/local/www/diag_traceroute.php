@@ -174,7 +174,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Traceroute',
 	null,
-	'fa-rss'
+	'fa-solid fa-rss'
 ))->addClass('btn-primary');
 
 print $form;

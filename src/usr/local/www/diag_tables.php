@@ -152,14 +152,14 @@ if ($bogons || $urltable || !empty($entries)) {
 			'Download',
 			'Update',
 			null,
-			'fa-refresh'
+			'fa-solid fa-arrows-rotate'
 		))->addClass('btn-success btn-sm');
 	} elseif (!empty($entries)) {
 		$group->add(new Form_Button(
 			'clearall',
 			'Empty Table',
 			null,
-			'fa-trash'
+			'fa-solid fa-trash-can'
 		))->addClass('btn-danger btn-sm');
 	}
 }

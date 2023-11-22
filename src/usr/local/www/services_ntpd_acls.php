@@ -306,7 +306,7 @@ foreach ($networkacl as $item) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning btn-xs')->addClass("nowarn");
 
 	$group->addClass('repeatable');
@@ -320,7 +320,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success');
 
 $form->add($section);

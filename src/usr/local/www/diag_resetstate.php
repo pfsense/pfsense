@@ -115,7 +115,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Reset',
 	null,
-	'fa-trash'
+	'fa-solid fa-trash-can'
 ))->addClass('btn-warning');
 
 print $form;

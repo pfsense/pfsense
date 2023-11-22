@@ -1303,11 +1303,11 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 function find_action_image($action) {
 	global $g;
 	if ((strstr(strtolower($action), "p")) || (strtolower($action) == "rdr")) {
-		return "fa-check-circle-o";
+		return "fa-regular fa-circle-check";
 	} else if (strstr(strtolower($action), "r")) {
-		return "fa-times-circle-o";
+		return "fa-regular fa-circle-xmark";
 	} else {
-		return "fa-ban";
+		return "fa-solid fa-ban";
 	}
 }
 
@@ -1357,12 +1357,12 @@ function handle_ajax() {
 				}
 
 				if ($log_row['act'] == "block") {
-					$icon_act = "fa-times text-danger";
+					$icon_act = "fa-solid fa-times text-danger";
 				} else {
-					$icon_act = "fa-check text-success";
+					$icon_act = "fa-solid fa-check text-success";
 				}
 
-				$btn = '<i class="fa-solid ' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
+				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

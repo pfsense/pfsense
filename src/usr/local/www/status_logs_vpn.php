@@ -403,7 +403,7 @@ function filter_form_vpn() {
 			'filterlogentries_submit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
@@ -432,7 +432,7 @@ function filter_form_vpn() {
 			'filtersubmit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	}
 

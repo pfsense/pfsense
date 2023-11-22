@@ -149,7 +149,7 @@ $form->addGlobal(new Form_Button(
         'Submit',
         'Submit',
         null,
-        'fa-wrench'
+        'fa-solid fa-wrench'
 ))->addClass('btn-primary');
 
 print $form;

@@ -207,7 +207,7 @@ $btnfilter = new Form_Button(
 	'btnfilter',
 	'Filter',
 	null,
-	'fa-filter'
+	'fa-solid fa-filter'
 );
 
 $btnfilter->setAttribute('type','button')->addClass('btn btn-info');
@@ -218,7 +218,7 @@ $btnclear = new Form_Button(
 	'btnclear',
 	'Clear',
 	null,
-	'fa-times'
+	'fa-solid fa-times'
 );
 
 $btnclear->setAttribute('type','button')->addClass('btn btn-warning');

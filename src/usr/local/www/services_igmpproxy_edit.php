@@ -240,7 +240,7 @@ foreach ($item as $ww) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->removeClass('btn-primary')->addClass('btn-warning');
 
 	$counter++;
@@ -251,7 +251,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add network',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);

@@ -211,7 +211,7 @@ $form->addGlobal(new Form_Button(
         'Submit',
         'Lookup',
         null,
-        'fa-search'
+        'fa-solid fa-search'
 ))->addClass('btn-primary');
 
 if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
@@ -219,7 +219,7 @@ if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
 		'create_alias',
 		($alias_exists) ? gettext("Update Alias") : gettext("Add Alias"),
 		null,
-		($alias_exists) ? 'fa-refresh' : 'fa-plus'
+		($alias_exists) ? 'fa-solid fa-arrows-rotate' : 'fa-solid fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');
 }
 

@@ -2005,7 +2005,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['dstport'] = "500";
-		$natent['target'] = "";
+		$natent['target'] = "{$if}ip";
 		$natent['destination']['any'] = true;
 		$natent['staticnatport'] = true;
 		$natent['descr'] = gettext('Auto created rule for ISAKMP');
@@ -2015,7 +2015,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['sourceport'] = "";
-		$natent['target'] = "";
+		$natent['target'] = "{$if}ip";
 		$natent['destination']['any'] = true;
 		$natent['natport'] = "";
 		$natent['descr'] = gettext('Auto created rule');

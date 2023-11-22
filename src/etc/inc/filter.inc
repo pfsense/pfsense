@@ -2442,7 +2442,7 @@ function filter_nat_rules_generate() {
 
 			if (!$obent['interface'] || !isset($FilterIflist[$obent['interface']])) {
 				$error_text = sprintf(gettext("Missing interface '%1\$s' for rule '%2\$s'"), $obent['interface'], $descr);
-				$natrules .= "# {$error_text}";
+				$natrules .= "# {$error_text}\n";
 				continue;
 			}
 
@@ -2453,7 +2453,7 @@ function filter_nat_rules_generate() {
 				if (empty($src)) {
 					$error_text = sprintf(gettext("Unresolvable source alias '%1\$s' for rule '%2\$s'"), $src, $descr);
 					file_notice("Filter_Reload", $error_text);
-					$natrules .= "# {$error_text}";
+					$natrules .= "# {$error_text}\n";
 					continue;
 				}
 			}
@@ -2467,7 +2467,7 @@ function filter_nat_rules_generate() {
 				}
 				if ($error_text) {
 					file_notice("Filter_Reload", $error_text);
-					$natrules .= "# {$error_text}";
+					$natrules .= "# {$error_text}\n";
 					continue;
 				}
 			}
@@ -2479,7 +2479,7 @@ function filter_nat_rules_generate() {
 				if (empty($dst)) {
 					$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $dst, $descr);
 					file_notice("Filter_Reload", $error_text);
-					$natrules .= "# {$error_text}";
+					$natrules .= "# {$error_text}\n";
 					continue;
 				}
 			}
@@ -2493,7 +2493,7 @@ function filter_nat_rules_generate() {
 				}
 				if ($error_text) {
 					file_notice("Filter_Reload", $error_text);
-					$natrules .= "# {$error_text}";
+					$natrules .= "# {$error_text}\n";
 					continue;
 				}
 			}
@@ -2522,7 +2522,7 @@ function filter_nat_rules_generate() {
 					$inet6 = true;
 				}
 				if ($inet4 && $inet6) {
-					$natrules .= "# conflicting ipv4/ipv6 settings in nat rule: {$descr}";
+					$natrules .= "# conflicting ipv4/ipv6 settings in nat rule: {$descr}\n";
 					continue;
 				} elseif ($inet4 || $inet6) {
 					$obent['ipprotocol'] = ($inet4) ? 'inet' : 'inet6';

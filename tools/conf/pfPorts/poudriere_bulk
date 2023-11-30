@@ -1,9 +1,9 @@
 benchmarks/%%PRODUCT_NAME%%-pkg-iperf
 benchmarks/iperf
 benchmarks/iperf3
-databases/php82-mysqli
-databases/php82-pdo_mysql
-databases/php82-pgsql
+databases/php83-mysqli
+databases/php83-pdo_mysql
+databases/php83-pgsql
 devel/aws-sdk-php
 devel/gdb
 devel/git
@@ -57,8 +57,6 @@ net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/%%PRODUCT_NAME%%-pkg-udpbroadcastrelay
 net/%%PRODUCT_NAME%%-pkg-WireGuard
 net/dhcpcd
-net/frr8
-net/frr8-pythontools
 net/hping3
 net/intel-em-kmod
 net/kea

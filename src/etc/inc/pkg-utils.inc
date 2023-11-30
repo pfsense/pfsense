@@ -1313,7 +1313,7 @@ function get_base_pkg_name() {
 }
 
 /* Verify if system needs updating from selected repo or upgrading from available repos (meta package or base) */
-function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_only = true) {
+function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_only = true, $update_cache = false) {
 	global $g;
 
 	if (!check_dnsavailable('any')) {
@@ -1336,12 +1336,14 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 		    "/usr/local/sbin/{$g['product_name']}-upgrade " . ($updates_only?'-c':'-C') , $_gc,
 		    $rc);
 
+		if ($rc != 0 && $rc != 2) {
+			return false;
+		}
+
 		/* Update cache if it succeeded */
-		if ($rc == 0 || $rc == 2) {
+		if ($update_cache && ($rc == 0 || $rc == 2)) {
 			@file_put_contents($cache_file, $output);
 			@file_put_contents($rc_file, $rc);
-		} else {
-			return false;
 		}
 	}
 

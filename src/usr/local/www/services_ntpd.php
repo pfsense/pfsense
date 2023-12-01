@@ -551,7 +551,7 @@ $group->add(new Form_Input(
 	'NTP Authentication key number',
 	'number',
 	$pconfig['serverauthkeyid'],
-	['placeholder' => 'NTP Authentication key number', 'min' => '0', 'max' => '4,294,967,295']
+	['placeholder' => 'NTP Authentication key ID', 'min' => '0', 'max' => '4,294,967,295']
 ))->setWidth(2)->setHelp(
 	'Key ID associated with the NTP Authentication key'
 );

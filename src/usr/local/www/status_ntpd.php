@@ -61,7 +61,6 @@ if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
 	foreach ($ntpq_associations_output as $line) {
 		$associations_response = array();
 		$peerinfo = preg_split("/[\s\t]+/", $line);
-		
 		$server['ind'] = $peerinfo[1];
 		$associations_response['assid'] = $peerinfo[2];
 		$associations_response['status_word'] = $peerinfo[3];
@@ -72,11 +71,10 @@ if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
 		$associations_response['last_event'] = $peerinfo[8];
 		$associations_response['cnt'] = $peerinfo[9];
 
-
 		$ntpq_server_responses[$i] = $associations_response;
 		$i = $i +1;
 	}
-	
+
 	$i = 0;
 
 	foreach ($ntpq_output as $line) {

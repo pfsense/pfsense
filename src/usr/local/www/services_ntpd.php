@@ -97,6 +97,10 @@ if ($_POST) {
 	if (isset($pconfig['serverauth'])) {
 		if (empty($pconfig['serverauthkey'])) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key can't be empty.");
+		} elseif (empty($pconfig['serverauthkeyid'])) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key number can't be empty");
+		} elseif (!ctype_digit($pconfig['serverauthkeyid'])) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key number must be a positive integer");
 		} elseif (($pconfig['serverauthalgo'] == 'md5') && ((strlen($pconfig['serverauthkey']) > 20) ||
 		    !ctype_print($pconfig['serverauthkey']))) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key for MD5 digest must be from 1 to 20 printable characters.");
@@ -210,10 +214,12 @@ if ($_POST) {
 		if (!empty($_POST['serverauth'])) {
 			config_set_path('ntpd/serverauth', $_POST['serverauth']);
 			config_set_path('ntpd/serverauthkey', base64_encode(trim($_POST['serverauthkey'])));
+			config_set_path('ntpd/serverauthkeyid', $_POST['serverauthkeyid']);
 			config_set_path('ntpd/serverauthalgo', $_POST['serverauthalgo']);
 		} elseif (config_path_enabled('ntpd', 'serverauth')) {
 			config_del_path('ntpd/serverauth');
 			config_del_path('ntpd/serverauthkey');
+			config_del_path('ntpd/serverauthkeyid');
 			config_del_path('ntpd/serverauthalgo');
 		}
 
@@ -540,9 +546,20 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('Authentication key');
 $group->addClass('ntpserverauth');
 
-$group->add(new Form_IpAddress(
+$group->add(new Form_Input(
+	'serverauthkeyid',
+	'NTP Authentication key number',
+	'number',
+	$pconfig['serverauthkeyid'],
+	['placeholder' => 'NTP Authentication key number', 'min' => '0', 'max' => '4,294,967,295']
+))->setWidth(2)->setHelp(
+	'Key ID associated with the NTP Authentication key'
+);
+
+$group->add(new Form_Input(
 	'serverauthkey',
 	'NTP Authentication key',
+	'text',
 	base64_decode($pconfig['serverauthkey']),
 	['placeholder' => 'NTP Authentication key']
 ))->setHelp(
@@ -557,7 +574,7 @@ $group->add(new Form_Select(
 	null,
 	$pconfig['serverauthalgo'],
 	$ntp_auth_halgos
-))->setWidth(3)->setHelp('Digest algorithm');
+))->setWidth(2)->setHelp('Digest algorithm');
 
 $section->add($group);
 

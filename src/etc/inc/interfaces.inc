@@ -6589,7 +6589,7 @@ function get_interface_track6ip($interface = "wan") {
 	foreach (pfSense_getall_interface_addresses($realif) as $ifaddr) {
 		list($ip, $bits) = explode("/", $ifaddr);
 		$ip = text_to_compressed_ip6($ip);
-		if (is_ipaddrv6($ip) && !is_linklocal($ip)) {
+		if (is_ipaddrv6($ip) && !is_linklocal($ip) && !is_private_ipv6($ip)) {
 			if (is_array($vips) && !empty($vips)) {
 				foreach ($vips as $vip) {
 					if ($ip == text_to_compressed_ip6($vip)) {

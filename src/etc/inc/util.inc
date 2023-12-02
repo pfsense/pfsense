@@ -831,6 +831,11 @@ function is_linklocal($ipaddr) {
 	return '';
 }
 
+/* Returns true if $ip is private, false otherwise */
+function is_private_ipv6($ip){
+	return str_starts_with($ip, "fc") || str_starts_with($ip, "fd");
+}
+
 /* returns scope of a linklocal address */
 function get_ll_scope($addr) {
 	if (!is_linklocal($addr) || !strstr($addr, "%")) {

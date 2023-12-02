@@ -41,8 +41,13 @@ function get_swap_disks() {
 
 function get_disk_slices($disk) {
 	global $g, $debug;
-	$slices = glob("/dev/" . $disk . "[ps]*");
-	$slices = str_replace("/dev/", "", $slices);
+
+	if (str_starts_with($disk, 'cd')) {
+		$slices[] = $disk;
+	} else {
+		$slices = glob("/dev/" . $disk . "[ps]*");
+		$slices = str_replace("/dev/", "", $slices);
+	}
 	return $slices;
 }
 
@@ -151,12 +156,12 @@ function find_config_xml() {
 					}
 					$result = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
 				}
-				// try iso9660 (standard CD-ROM format)
+				// try cd9660 (standard CD-ROM format)
 				if (!$result) {
 					if ($debug) {
-						echo "\n/sbin/mount -t iso9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
+						echo "\n/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
-					$result = exec("/sbin/mount -t iso9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+					$result = exec("/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
 				}
 				// try udf (common for modern DVDs and some CDs)
 				if (!$result) {

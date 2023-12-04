@@ -2373,7 +2373,18 @@ function get_sysctl($names) {
 		$name_list = array(escapeshellarg($names));
 	}
 
-	exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output);
+	/* https://redmine.pfsense.org/issues/14648
+	 * exec()'ing sysctl must never fail and valid output is expected, except
+	 * when the OID is absent for the system. Retry up to 2 times and log sysctl
+	 * failure for troubleshooting */
+	$retries = 2;
+	do {
+		$ret = exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output, $status);
+	} while ($ret === false && $retries-- > 0);
+	if ($ret === false) {
+		log_error("Warning: \"/sbin/sysctl -iq " . implode(" ", $name_list) . "\" returned status: {$status}");
+	}
+
 	$values = array();
 	foreach ($output as $line) {
 		$line = explode(": ", $line, 2);

@@ -44,6 +44,25 @@ printf("%s: %s\n\n", gettext("Netgate Device ID"), system_get_uniqueid());
 print "*** Welcome to {$g['product_label']} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 
 $iflist = get_configured_interface_with_descr(true);
+
+// calculate max string widths for the banner
+$realif_wdith = 1;
+$tobanner_wdith = 1;
+foreach ($iflist as $ifname => $friendly) {
+	$realif = get_real_interface($ifname);
+	$realif_length = strlen($realif);
+	if ($realif_length > $realif_wdith) {
+		$realif_wdith = $realif_length;
+	}
+	$tobanner = "{$friendly} ({$ifname})";
+	$tobanner_length = strlen($tobanner);
+	if ($tobanner_length > $tobanner_wdith) {
+		$tobanner_wdith = $tobanner_length;
+	}
+}
+$v6line_width = $realif_wdith + $tobanner_wdith + 9;
+
+// print the banner
 foreach ($iflist as $ifname => $friendly) {
 	/* point to this interface's config */
 	$ifconf = $config['interfaces'][$ifname];
@@ -92,7 +111,7 @@ foreach ($iflist as $ifname => $friendly) {
 	$realif = get_real_interface($ifname);
 	$tobanner = "{$friendly} ({$ifname})";
 
-	printf("\n %-15s -> %-10s -> ",
+	printf("\n %-{$tobanner_wdith}s -> %-{$realif_wdith}s -> ",
 		$tobanner,
 		$realif
 	);
@@ -108,7 +127,7 @@ foreach ($iflist as $ifname => $friendly) {
 	}
 	if (!empty($ipaddr6) && !empty($subnet6)) {
 		if (!$v6first) {
-			printf("\n%s", str_repeat(" ", 34));
+			printf("\n%s", str_repeat(" ", $v6line_width));
 		}
 		printf("v6%s: %s/%s",
 			$class6,

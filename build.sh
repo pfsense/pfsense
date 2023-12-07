@@ -1,5 +1,7 @@
 #!/bin/sh -T
 #
+set -x
+#
 # build.sh
 #
 # part of pfSense (https://www.pfsense.org)

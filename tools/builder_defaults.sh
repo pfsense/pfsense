@@ -1,5 +1,7 @@
 #!/bin/sh
 #
+set -x
+#
 # builder_defaults.sh
 #
 # part of pfSense (https://www.pfsense.org)

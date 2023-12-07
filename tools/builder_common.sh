@@ -1093,7 +1093,7 @@ depend_check() {
 #			echo "Missing dependency (${_txz})."
 #			print_error_pfS
 #		fi
-	done
+#	done
 }
 
 # This routine ensures any ports / binaries that the builder

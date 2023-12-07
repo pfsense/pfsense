@@ -162,11 +162,14 @@ build_all_kernels() {
 		LOGFILE="${BUILDER_LOGS}/kernel.${KERNCONF}.${TARGET}.log"
 		echo ">>> Building $BUILD_KERNEL kernel."  | tee -a ${LOGFILE}
 
+		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).pkg" ]; then
+			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
+			continue
+		fi
 		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
 			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 			continue
 		fi
-
 		buildkernel
 
 		echo ">>> Staging $BUILD_KERNEL kernel..." | tee -a ${LOGFILE}
@@ -198,6 +201,10 @@ install_default_kernel() {
 
 	# Copy kernel package to chroot, otherwise pkg won't find it to install
 	if ! pkg_chroot_add ${FINAL_CHROOT_DIR} kernel-${KERNEL_NAME}; then
+		echo ">>> ERROR: Error installing kernel package $(get_pkg_name kernel-${KERNEL_NAME}).pkg" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+	if ! pkg_chroot_add ${FINAL_CHROOT_DIR} kernel-${KERNEL_NAME}; then
 		echo ">>> ERROR: Error installing kernel package $(get_pkg_name kernel-${KERNEL_NAME}).txz" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
@@ -211,6 +218,19 @@ install_default_kernel() {
 	fi
 	mkdir -p $FINAL_CHROOT_DIR/pkgs
 	if [ -z "${2}" -o -n "${INSTALL_EXTRA_KERNELS}" ]; then
+		cp ${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).pkg $FINAL_CHROOT_DIR/pkgs
+		if [ -n "${INSTALL_EXTRA_KERNELS}" ]; then
+			for _EXTRA_KERNEL in $INSTALL_EXTRA_KERNELS; do
+				_EXTRA_KERNEL_PATH=${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${_EXTRA_KERNEL}).pkg
+				if [ -f "${_EXTRA_KERNEL_PATH}" ]; then
+					echo -n ". adding ${_EXTRA_KERNEL_PATH} on image /pkgs folder"
+					cp ${_EXTRA_KERNEL_PATH} $FINAL_CHROOT_DIR/pkgs
+				else
+					echo ">>> ERROR: Requested kernel $(get_pkg_name kernel-${_EXTRA_KERNEL}).pkg was not found to be put on image /pkgs folder!"
+					print_error_pfS
+				fi
+			done
+		fi
 		cp ${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
 		if [ -n "${INSTALL_EXTRA_KERNELS}" ]; then
 			for _EXTRA_KERNEL in $INSTALL_EXTRA_KERNELS; do
@@ -726,7 +746,7 @@ customize_stagearea_for_image() {
 	     "${_image_type}" = "memstickserial" -o \
 	     "${_image_type}" = "memstickadi" ]; then
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
-		cp ${CORE_PKG_ALL_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
+		cp ${CORE_PKG_ALL_PATH}/*default-config*.pkg ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
@@ -1065,6 +1085,12 @@ depend_check() {
 			print_error_pfS
 		fi
 	done
+#	for _txz in ${BUILDER_PKG_DEPENDENCIES}; do
+#		if ! pkg info -e ${_txz}; then
+#			echo "Missing dependency (${_txz})."
+#			print_error_pfS
+#		fi
+	done
 }
 
 # This routine ensures any ports / binaries that the builder
@@ -1184,7 +1210,8 @@ pkg_chroot_add() {
 	fi
 
 	local _target="${1}"
-	local _pkg="$(get_pkg_name ${2}).txz"
+	local _pkg="$(get_pkg_name ${2}).pkg"
+#	local _txz="$(get_pkg_name ${2}).txz"
 
 	if [ ! -d "${_target}" ]; then
 		echo ">>> ERROR: Target dir ${_target} not found"
@@ -1195,10 +1222,17 @@ pkg_chroot_add() {
 		echo ">>> ERROR: Package ${_pkg} not found"
 		print_error_pfS
 	fi
+#	if [ ! -f ${CORE_PKG_ALL_PATH}/${txz} ]; then
+#		echo ">>> ERROR: Package ${_txz} not found"
+#		print_error_pfS
+#	fi
 
 	cp ${CORE_PKG_ALL_PATH}/${_pkg} ${_target}
 	pkg_chroot ${_target} add /${_pkg}
 	rm -f ${_target}/${_pkg}
+#	cp ${CORE_PKG_ALL_PATH}/${_pkg} ${_target}
+#	pkg_chroot ${_target} add /${_pkg}
+#	rm -f ${_target}/${_pkg}
 }
 
 pkg_bootstrap() {

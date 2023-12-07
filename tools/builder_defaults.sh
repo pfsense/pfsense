@@ -131,7 +131,7 @@ case "${FREEBSD_REPO_BASE}" in
 esac
 
 # Leave this alone.
-export SRCCONF=${SRCCONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
+export SRCCONF=${SRCCONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_installer_src.conf"}
 export SRC_ENV_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src-env.conf"}
 export __MAKE_CONF=${__MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
 

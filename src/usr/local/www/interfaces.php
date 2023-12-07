@@ -1932,7 +1932,7 @@ $shortcut_section = "interfaces";
 $types4 = ["ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP")];
 
 if (!in_array(array_get_path($pconfig, 'type'), ["ppp", "pppoe", "pptp", "l2tp"]) ||
-   !array_key_exists(array_get_path($a_ppps, "{$pppid}/ports", []), get_configured_interface_list_by_realif())) {
+    !array_intersect_key(explode(",", array_get_path($a_ppps, "{$pppid}/ports", "")), get_configured_interface_list_by_realif())) {
 	$types4 = array_merge(["none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP")], $types4);
 }
 

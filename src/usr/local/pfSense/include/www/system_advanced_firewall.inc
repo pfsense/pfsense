@@ -160,7 +160,7 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 	if ($post['maximumtableentries']) {
 		$maximumtableentries = $post['maximumtableentries'];
 	} else {
-		$maximumtableentries = pfsense_default_table_entries_size();
+		$maximumtableentries = pfsense_current_table_entries_size();
 	}
 	if (!is_numericint($maximumtableentries)) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");

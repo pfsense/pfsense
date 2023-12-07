@@ -1973,12 +1973,12 @@ function pfsense_default_state_size() {
 	return $max_states;
 }
 
-function pfsense_default_tables_size() {
+function pfsense_current_tables_size() {
 	$current = `pfctl -sm | grep ^tables | awk '{print $4};'`;
 	return $current;
 }
 
-function pfsense_default_table_entries_size() {
+function pfsense_current_table_entries_size() {
 	$current = `pfctl -sm | grep table-entries | awk '{print $4};'`;
 	return (trim($current));
 }

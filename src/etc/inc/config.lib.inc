@@ -264,8 +264,24 @@ function restore_xmldatafile($type='voucher', $conf = false) {
 
 	foreach ($conf[$type]["{$type}data"]["xmldatafile"] as $file) {
 		$basename = basename($file['filename']);
-		/* fallback to dirname for restoring older backups */
-		$dirname = $file['path'] ?? dirname($g['backuppath'][$type]);
+		$dirname = '';
+		if (isset($file['path'])) {
+			$dirname = $file['path'];
+		} else {
+			/* Handle restoring older backups without a path. If
+			   multiple paths are given, use the first path with a
+			   matching file name. If there are no matching names,
+			   default to the first path. */
+			$paths = explode(',', trim($g['backuppath'][$type], '{}'));
+			$dirname = dirname($paths[array_key_first($paths)]);
+			foreach ($paths as $path) {
+				if (basename($path) == $basename) {
+					$dirname = dirname($path);
+					break;
+				}
+			}
+		}
+
 		$xmldata_file = "{$dirname}/{$basename}";
 		if (!is_dir($dirname)) {
 			safe_mkdir($dirname);

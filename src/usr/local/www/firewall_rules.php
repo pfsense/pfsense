@@ -590,7 +590,7 @@ foreach ($a_filter as $filteri => $filterent):
 			$iconfn = "fa-solid fa-times text-danger";
 			$title_text = gettext("traffic is blocked");
 		} else if ($filterent['type'] == "reject") {
-			$iconfn = "fa-solid fa-hand text-warning";
+			$iconfn = "fa-regular fa-hand text-warning";
 			$title_text = gettext("traffic is rejected");
 		} else if ($filterent['type'] == "match") {
 			$iconfn = "fa-solid fa-filter";

@@ -229,7 +229,7 @@ foreach ($a_routes as $i => $route):
 		$title = gettext('Route enabled');
 	}
 ?>
-				<tr<?=($icon != 'fa-solid fa-circle-check')? ' class="disabled"' : ''?>>
+				<tr<?=($icon != 'fa-regular fa-circle-check')? ' class="disabled"' : ''?>>
 					<td title="<?=$title?>"><i class="<?=$icon?>"></i></td>
 					<td>
 						<?=strtolower($route['network'])?>

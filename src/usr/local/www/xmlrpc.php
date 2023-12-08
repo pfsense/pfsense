@@ -276,7 +276,7 @@ class pfsense_xmlrpc_server {
 
 					if ($idx === false) {
 						$g2add[] = $group;
-					} else if ($group['gid'] < 1999) {
+					} else if ($group['gid'] < 2000) {
 						$g2keep[] = $idx;
 					} else if ($group != $local_groups[$idx]) {
 						$g2add[] = $group;

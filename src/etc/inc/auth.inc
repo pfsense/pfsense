@@ -517,7 +517,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 	}
 
 	foreach($g2del as $group) {
-		if ($group['gid'] < 1999 || $group['gid'] > 65000) {
+		if ($group['gid'] < 2000 || $group['gid'] > 65000) {
 			continue;
 		}
 

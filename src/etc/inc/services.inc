@@ -4261,6 +4261,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 	}
 
 	if (!empty($interface) && config_path_enabled('unbound') &&
+	    !in_array('all', explode(',', config_get_path('unbound/active_interface', 'all'))) &&
 	    !in_array($interface, explode(',', config_get_path('unbound/active_interface'))) &&
 	    !in_array($interface, explode(',', config_get_path('unbound/outgoing_interface')))) {
 		return $return;

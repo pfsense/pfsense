@@ -388,8 +388,9 @@
 						$this->_dnsMaxCacheAgeDays = 25;
 				}
 			}
+			$this->_logPrefix = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): ";
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s'), $this->_FQDN, $dnsRequestIf, $this->_dnsRequestIf));
+				log_error($this->_logPrefix . sprintf(gettext('running get_failover_interface for %1$s. found %2$s'), $dnsRequestIf, $this->_dnsRequestIf));
 			}
 			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
 			$this->_dnsDummyUpdateDone = false;
@@ -397,7 +398,7 @@
 
 			// Ensure that we were able to lookup the IP
 			if (!is_ipaddr($this->_dnsIP)) {
-				log_error(sprintf(gettext('Dynamic DNS (%1$s) There was an error trying to determine the public IP for interface - %2$s (%3$s %4$s).'), $this->_FQDN, $dnsIf, $this->_if, $this->_dnsIP));
+				log_error($this->_logPrefix . sprintf(gettext('There was an error trying to determine the public IP for interface - %1$s (%2$s %3$s).'), $dnsIf, $this->_if, $this->_dnsIP));
 				unlock($dyndnslck);
 				return;
 			}
@@ -525,7 +526,7 @@
 		function _update() {
 
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _update() starting.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_update() starting.'));
 			}
 
 			if (strstr($this->_dnsRequestIf, "_vip")) {
@@ -1672,7 +1673,7 @@
 					$linode_api = "https://api.linode.com/v4";
 					$record_type = $this->_useIPv6 ? "AAAA" : "A";
 					$record_name = $this->_dnsHost == "@" ? "" : $this->_dnsHost;
-					$err_prefix = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): (" . gettext("Error") . ")";
+					$err_prefix = $this->_logPrefix . "(" . gettext("Error") . ")";
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 						'Accept: application/json',
@@ -1816,7 +1817,7 @@
 				$this->_checkStatus($http_code, $curl_error, $data, $header);
 			}
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _update() ending.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_update() ending.'));
 			}
 		}
 
@@ -1832,7 +1833,7 @@
 		function _remove($existing_ip = NULL) {
 			$remove_allowed = false;
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _remove() starting.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_remove() starting.'));
 			}
 
 			if (strstr($this->_dnsRequestIf, "_vip")) {
@@ -1902,7 +1903,7 @@
 		function _lookup_current() {
 			$lookup_allowed = false;
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _listCurrent() starting.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_listCurrent() starting.'));
 			}
 
 			if (strstr($this->_dnsRequestIf, "_vip")) {
@@ -1964,7 +1965,7 @@
 		 */
 		function _checkLookupStatus($curl_error, $data, $header) {
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_checkLookupStatus() starting.'));
 			}
 			$success_str = "(" . gettext("Success") . ") ";
 			$error_str = "(" . gettext("Error") . ") ";
@@ -2000,7 +2001,7 @@
 				}
 				if (!is_array($this->_existingRecords)){
 					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records found.'), $this->_dnsService, $this->_FQDN));
+						log_error($this->_logPrefix . gettext('_checkLookupStatus() ending.  No matching records found.'));
 					}
 				}
 				break;
@@ -2015,7 +2016,7 @@
 		 */
 		function _checkStatus($http_code, $curl_error, $data, $header) {
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() starting.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_checkStatus() starting.'));
 			}
 			$successful_update = false;
 			$success_str = "(" . gettext("Success") . ") ";
@@ -2993,7 +2994,7 @@
 					break;
 				case 'linode':
 				case 'linode-v6':
-					$status_intro = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): ";
+					$status_intro = $this->_logPrefix;
 					$result = json_decode($data,true);
 					if ($this->_dnsVerboseLog) {
 						log_error(sprintf(gettext('_checkStatus() results: %1$s'), $data));
@@ -3091,7 +3092,7 @@
 			$this->status = $status;
 			log_error($status);
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() ending.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_checkStatus() ending.'));
 			}
 		}
 
@@ -3150,7 +3151,7 @@
 		 */
 		function _detectChange() {
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _detectChange() starting.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_detectChange() starting.'));
 			}
 
 			$currentTime = time();
@@ -3251,7 +3252,7 @@
 		}
 		function _checkIP() {
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkIP() starting.'), $this->_dnsService, $this->_FQDN));
+				log_error($this->_logPrefix . gettext('_checkIP() starting.'));
 			}
 
 			if ($this->_useIPv6 == true) {
@@ -3262,20 +3263,20 @@
 			} else {
 				$ip_address = dyndnsCheckIP($this->_if);
 				if (!is_ipaddr($ip_address)) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
+					log_error($this->_logPrefix . gettext('IP address could not be extracted from Check IP Service'));
 					return 0;
 				} elseif (is_private_ip($ip_address)) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): Public IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
+					log_error($this->_logPrefix . gettext('Public IP address could not be extracted from Check IP Service'));
 					return 0;
 				}
 			}
 			if ($this->_useIPv6 == false && is_private_ip(get_interface_ip($this->_if))) {
 				if ($this->_dnsVerboseLog) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
+					log_error($this->_logPrefix . "{$ip_address}" . gettext(' extracted from Check IP Service'));
 				}
 			} else {
 				if ($this->_dnsVerboseLog) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from local system.'), $this->_dnsService, $this->_FQDN, $ip_address));
+					log_error($this->_logPrefix . "{$ip_address}" . gettext(' extracted from local system.'));
 				}
 			}
 			$this->_dnsIP = $ip_address;

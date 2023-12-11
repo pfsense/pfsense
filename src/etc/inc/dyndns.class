@@ -2021,7 +2021,7 @@
 			$successful_update = false;
 			$success_str = "(" . gettext("Success") . ") ";
 			$error_str = "(" . gettext("Error") . ") ";
-			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
+			$status_intro = $this->_logPrefix;
 
 			if ($this->_dnsService != 'ods' && !empty($curl_error)) {
 				$status = gettext("Curl error occurred:") . " {$curl_error}";

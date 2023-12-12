@@ -151,6 +151,9 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$allow_wildcard = false;
 		}
+		if (in_array($pconfig['type'], $dyndns_split_domain_types)) {
+			$host_to_check = "{$_POST['host']}.{$_POST['domainname']}";
+		}
 		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
 		    (($_POST['host'] == '@.') || ($_POST['host'] == '@')))) {
 			$host_to_check = $_POST['domainname'];

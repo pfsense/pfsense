@@ -105,6 +105,8 @@ if ($_POST['save'] || $_POST['force']) {
 		"linode" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"linode-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"porkbun" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"porkbun-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"yandex" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"yandex-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"dnsexit" => array("apex" => false, "wildcard" => false, "username_none" => true),
@@ -157,9 +159,6 @@ if ($_POST['save'] || $_POST['force']) {
 		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
 		    (($_POST['host'] == '@.') || ($_POST['host'] == '@')))) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
-			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
-			$allow_wildcard = true;
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
 			$host_to_check = $_POST['host'];
 			$allow_wildcard = true;

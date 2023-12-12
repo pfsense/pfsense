@@ -97,16 +97,16 @@ if ($_POST['save'] || $_POST['force']) {
 		"freedns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"freedns2" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"freedns2-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"gandi-livedns" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"gandi-livedns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"gandi-livedns" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"gandi-livedns-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"godaddy" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"godaddy-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"googledomains" => array("apex" => false, "wildcard" => true, "username_none" => false),
-		"linode" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"linode-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"linode" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"linode-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
-		"yandex" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"yandex-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"yandex" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"yandex-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"dnsexit" => array("apex" => false, "wildcard" => false, "username_none" => true),
 	);
 
@@ -157,7 +157,7 @@ if ($_POST['save'] || $_POST['force']) {
 		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
 		    (($_POST['host'] == '@.') || ($_POST['host'] == '@')))) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6") || ($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
+		} elseif (($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {

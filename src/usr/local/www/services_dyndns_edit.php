@@ -146,11 +146,13 @@ if ($_POST['save'] || $_POST['force']) {
 	}
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
-		$allow_wildcard = false;
+		if (isset($ddns_attr[$pconfig['type']]['wildcard'])) {
+			$allow_wildcard = $ddns_attr[$pconfig['type']]['wildcard'];
+		} else {
+			$allow_wildcard = false;
+		}
 		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
-		    (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
-		    (isset($ddns_attr[$pconfig['type']]['wildcard']) && ($ddns_attr[$pconfig['type']]['wildcard'] == true) && 
-		    (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
+		    (($_POST['host'] == '@.') || ($_POST['host'] == '@')))) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );

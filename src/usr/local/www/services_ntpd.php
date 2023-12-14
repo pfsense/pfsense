@@ -98,9 +98,11 @@ if ($_POST) {
 		if (empty($pconfig['serverauthkey'])) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key can't be empty.");
 		} elseif (empty($pconfig['serverauthkeyid'])) {
-			$input_errors[] = gettext("The supplied value for NTP Authentication key number can't be empty");
+			$input_errors[] = gettext("The authentication Key ID can't be empty.");
 		} elseif (!ctype_digit($pconfig['serverauthkeyid'])) {
-			$input_errors[] = gettext("The supplied value for NTP Authentication key number must be a positive integer");
+			$input_errors[] = gettext("The authentication Key ID must be a positive integer.");
+		} elseif ($pconfig['serverauthkeyid'] < 1 || $pconfig['serverauthkeyid'] > 65535) {
+			$input_errors[] = gettext("The authentication Key ID must be between 1-65535.");
 		} elseif (($pconfig['serverauthalgo'] == 'md5') && ((strlen($pconfig['serverauthkey']) > 20) ||
 		    !ctype_print($pconfig['serverauthkey']))) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key for MD5 digest must be from 1 to 20 printable characters.");
@@ -548,13 +550,11 @@ $group->addClass('ntpserverauth');
 
 $group->add(new Form_Input(
 	'serverauthkeyid',
-	'NTP Authentication key number',
-	'number',
+	'Key ID',
+	null,
 	$pconfig['serverauthkeyid'],
-	['placeholder' => 'NTP Authentication key ID', 'min' => '0', 'max' => '4,294,967,295']
-))->setWidth(2)->setHelp(
-	'Key ID associated with the NTP Authentication key'
-);
+	['placeholder' => 'Key ID', 'type' => 'number', 'min' => 1, 'max' => 65535, 'step' => 1]
+))->setWidth(2)->setHelp('ID associated with the authentication key');
 
 $group->add(new Form_Input(
 	'serverauthkey',

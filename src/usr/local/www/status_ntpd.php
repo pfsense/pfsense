@@ -57,8 +57,8 @@ if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
 
 	$ntpq_servers = array();
 	$ntpq_server_responses = array();
-	$i = 0;
-	foreach ($ntpq_associations_output as $line) {
+
+	foreach ($ntpq_associations_output as $i => $line) {
 		$associations_response = array();
 		$peerinfo = preg_split("/[\s\t]+/", $line);
 		$server['ind'] = $peerinfo[1];
@@ -70,14 +70,10 @@ if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
 		$associations_response['condition'] = $peerinfo[7];
 		$associations_response['last_event'] = $peerinfo[8];
 		$associations_response['cnt'] = $peerinfo[9];
-
 		$ntpq_server_responses[$i] = $associations_response;
-		$i = $i +1;
 	}
 
-	$i = 0;
-
-	foreach ($ntpq_output as $line) {
+	foreach ($ntpq_output as $i => $line) {
 		$server = array();
 		$status_char = substr($line, 0, 1);
 		$line = substr($line, 1);
@@ -135,7 +131,6 @@ if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
 		}
 
 		$ntpq_servers[] = $server;
-		$i = $i + 1;
 	}
 
 	exec("/usr/local/sbin/ntpq -c clockvar $inet_version", $ntpq_clockvar_output);
@@ -248,7 +243,7 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $ntpq_servers, $allow_query, $ntpq_server_responses;
+	global $ntpq_servers, $allow_query;
 
 	if (config_get_path('ntpd/enable') == 'disabled'):
 		print("<tr>\n");

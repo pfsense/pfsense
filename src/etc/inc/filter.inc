@@ -903,6 +903,13 @@ function filter_generate_aliases() {
 				}
 			}
 		}
+		if (is_array($ifcfg_temp['vips6'])) {
+			foreach ($ifcfg_temp['vips6'] as $vip) {
+				if (!empty($vip['ip']) && !empty($vip['sn'])) {
+					$if_subnets[] = $vip['ip'] . '/' . $vip['sn'];
+				}
+			}
+		}
 		// pppoe
 		if (is_array($ifcfg_temp) && ($ifcfg_temp[0]['if'] == 'pppoe')) {
 			foreach ($ifcfg_temp as $pppoecfg) {

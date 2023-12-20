@@ -195,14 +195,6 @@ function status_get_firewall_info() {
 		}
 	}
 
-	if (function_exists("system_get_thothid") &&
-	    (php_uname("m") == "arm64")) {
-		$thothid = system_get_thothid();
-		if (!empty($thothid)) {
-			$firewall_info .= "<br/>Netgate Crypto ID: " . htmlspecialchars(chop($thothid));
-		}
-	}
-
 	$serial = system_get_serial();
 	if (!empty($serial)) {
 		$firewall_info .= "<br/>Serial: " . htmlspecialchars($serial);

@@ -77,13 +77,6 @@ if ($console) {
 /* Set up all of the commands we want to execute. */
 
 /* OS stats/info */
-if (function_exists("system_get_thothid") &&
-    (php_uname("m") == "arm64")) {
-	$thothid = system_get_thothid();
-	if (!empty($thothid)) {
-		status_cmd_define("Product-Public Key", "/usr/local/sbin/ping-auth -p");
-	}
-}
 
 status_cmd_define("OS-Uptime", "/usr/bin/uptime");
 status_cmd_define("Network-Interfaces", "/sbin/ifconfig -vvvvvam");

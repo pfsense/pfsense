@@ -6582,24 +6582,21 @@ function get_interface_linklocal($interface = "wan") {
 	}
 }
 
+/**
+ * Get the first IPv6 address that is not a VIP or Link-Local address.
+ * Prioritize IPv6 GUA over ULA.
+ * 
+ * @param array $interface Interface to check
+ * @return array IP address and prefix length
+ * @return bool false If no match is found
+ */
 function get_interface_track6ip($interface = "wan") {
-	$realif = get_real_interface($interface);
-	$vips = get_configured_vip_list('inet6');
+	$ifinfo = get_interface_addresses(get_real_interface($interface));
 
-	foreach (pfSense_getall_interface_addresses($realif) as $ifaddr) {
-		list($ip, $bits) = explode("/", $ifaddr);
-		$ip = text_to_compressed_ip6($ip);
-		if (is_ipaddrv6($ip) && !is_linklocal($ip)) {
-			if (is_array($vips) && !empty($vips)) {
-				foreach ($vips as $vip) {
-					if ($ip == text_to_compressed_ip6($vip)) {
-						continue 2;
-					}
-				}
-			}
-			return array($ip, $bits);
-		}
+	if (isset($ifinfo['ipaddr6']) && isset($ifinfo['subnetbits6'])) {
+		return [$ifinfo['ipaddr6'], $ifinfo['subnetbits6']];
 	}
+
 	return false;
 }
 

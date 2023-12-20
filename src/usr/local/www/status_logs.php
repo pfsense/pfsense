@@ -166,7 +166,6 @@ if (!$rawfilter) {
 <?php elseif ($rawfilter): ?>
 			<thead>
 				<tr class="text-nowrap">
-					<th><?=gettext("Time")?></th>
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>
 			</thead>

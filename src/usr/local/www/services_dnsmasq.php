@@ -119,6 +119,15 @@ $section->addInput(new Form_Checkbox(
 	->addClass('toggle-dhcp');
 endif;
 
+$section->addInput(new Form_Checkbox(
+	'no_system_dns',
+	'No System DNS',
+	'Do not use system DNS servers',
+	$pconfig['no_system_dns']
+))->setHelp("If this option is set the system configured DNS servers will ".
+					"not be used.  You must specify custom server= options below.")
+	->addClass('toggle-dhcp');
+
 $group = new Form_Group('DNS Query Forwarding');
 
 $group->add(new Form_Checkbox(

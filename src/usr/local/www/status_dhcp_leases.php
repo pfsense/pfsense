@@ -436,6 +436,11 @@ events.push(function() {
 		var table = $("#leaselist");
 		var where = $('#where').val();
 
+		// Trim on values where a space doesn't make sense
+		if ((where >= 2) && (where <= 7)) {
+			searchstr = searchstr.trim();
+		}
+
 		table.find('tr').each(function (i) {
 			var $tds 	= $(this).find('td');
 			var $popover	= $($.parseHTML($tds.eq(2).attr('data-content')));

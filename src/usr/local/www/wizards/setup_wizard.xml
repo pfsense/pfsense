@@ -263,7 +263,7 @@
 	</javascriptafterformdisplay>
 	<fields>
 		<field>
-			<name>SelectedType</name>
+			<name>Configuration Type</name>
 			<type>select</type>
 			<donotdisable>true</donotdisable>
 			<options>

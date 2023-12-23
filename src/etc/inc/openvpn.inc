@@ -1696,6 +1696,7 @@ function openvpn_delete($mode, $settings) {
 	filter_configure();
 }
 
+// set client specific overrides
 function openvpn_resync_csc($settings) {
 	global $g, $openvpn_tls_server_modes;
 	if (isset($settings['disable'])) {
@@ -1719,8 +1720,40 @@ function openvpn_resync_csc($settings) {
 		$conf .= "push-reset\n";
 	}
 
+	if ($settings['topology_override']) {
+		$conf .= "push \"topology {$settings['topology']}\"\n";
+	}
+
 	if ($settings['remove_route']) {
 		$conf .= "push-remove route\n";
+	}
+
+	if ($settings['remove_iroute']) {
+		$conf .= "push-remove iroute\n";
+	}
+
+	if ($settings['remove_dnsdomain']) {
+		$conf .= "push-remove \"dhcp-option DOMAIN\"\n";
+	}
+
+	if ($settings['remove_dnsservers']) {
+		$conf .= "push-remove \"dhcp-option DNS\"\n";
+	}
+
+	if ($settings['remove_ntpservers']) {
+		$conf .= "push-remove \"dhcp-option NTP\"\n";
+	}
+
+	if ($settings['remove_netbios_ntype']) {
+		$conf .= "push-remove \"dhcp-option NBT\"\n";
+	}
+
+	if ($settings['remove_netbios_scope']) {
+		$conf .= "push-remove \"dhcp-option NBS\"\n";
+	}
+
+	if ($settings['remove_wins']) {
+		$conf .= "push-remove \"dhcp-option WINS\"\n";
 	}
 
 	if ($settings['local_network']) {
@@ -1739,9 +1772,34 @@ function openvpn_resync_csc($settings) {
 		$conf .= openvpn_gen_routes($settings['remote_networkv6'], "ipv6", false, true);
 	}
 
+	// push the ipv4 gateway if specified
+	if (!empty($settings['gateway']) && is_ipaddrv4($settings['gateway'])) {
+		$conf .= "push \"route-gateway {$settings['gateway']}\"\n";
+	}
+
+	/* Currently route-ipv6-gateway is not supported by openvpn
+	if (!empty($settings['gateway']) && is_ipaddrv4($settings['gateway'])) {
+		$conf .= "push \"route-ipv6-gateway {$settings['gateway']}\"\n";
+	}
+	*/
+
+	// Ping override options
+	if ($settings['ping_push']) {
+		$conf .= "push \"ping {$settings['ping_seconds']}\"\n";
+	}
+
+	if ($settings['ping_action_push']) {
+		$action = str_replace("_", "-", $settings['ping_action']);
+		$conf .= "push \"{$action} " .
+			"{$settings['ping_action_seconds']}\"\n";
+	}
+
+	// create client specific dhcp options and gateway redirection
 	openvpn_add_dhcpopts($settings, $conf);
 
+	// custom options are added after all client overrides, and before the tunnel options
 	openvpn_add_custom($settings, $conf);
+
 	/* Loop through servers, find which ones can use this CSC */
 	foreach (config_get_path('openvpn/openvpn-server', []) as $serversettings) {
 		if (isset($serversettings['disable'])) {

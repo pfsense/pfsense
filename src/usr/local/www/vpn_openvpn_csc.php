@@ -35,6 +35,8 @@ require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
+global $openvpn_topologies;
+global $openvpn_ping_action, $openvpn_default_keepalive_interval, $openvpn_default_keepalive_timeout;
 
 init_config_arr(array('openvpn', 'openvpn-csc'));
 $a_csc = &$config['openvpn']['openvpn-csc'];
@@ -87,14 +89,54 @@ if (($act == "edit") || ($act == "dup")) {
 
 		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
 		$pconfig['tunnel_networkv6'] = $a_csc[$id]['tunnel_networkv6'];
+
+		//$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
+		$pconfig['topology_override'] = $a_csc[$id]['topology_override'];
+		$pconfig['topology'] = $a_csc[$id]['topology'];
+		//$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
+		$pconfig['remove_iroute'] = $a_csc[$id]['remove_iroute'];
+		$pconfig['remove_dnsdomain'] = $a_csc[$id]['remove_dnsdomain'];
+		$pconfig['remove_dnsservers'] = $a_csc[$id]['remove_dnsservers'];
+		$pconfig['remove_ntpservers'] = $a_csc[$id]['remove_ntpservers'];
+		$pconfig['remove_netbios_ntype'] = $a_csc[$id]['remove_netbios_ntype'];
+		$pconfig['remove_netbios_scope'] = $a_csc[$id]['remove_netbios_scope'];
+		$pconfig['remove_wins'] = $a_csc[$id]['remove_wins'];
+
+		//$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
+		//$pconfig['gwredir6'] = $a_csc[$id]['gwredir6'];
 		$pconfig['local_network'] = $a_csc[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
+		$pconfig['gateway'] = $a_csc[$id]['gateway'];
+		//$pconfig['gateway6'] = $a_csc[$id]['gateway6'];
+
 		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
 		$pconfig['remote_networkv6'] = $a_csc[$id]['remote_networkv6'];
+
+		$pconfig['ping_push'] = $a_csc[$id]['ping_push'];
+		$pconfig['ping_seconds'] = $a_csc[$id]['ping_seconds'];
+
+		$pconfig['ping_action_push'] = $a_csc[$id]['ping_action_push'];
+		$pconfig['ping_action'] = $a_csc[$id]['ping_action'];
+		$pconfig['ping_action_seconds'] = $a_csc[$id]['ping_action_seconds'];
+
 		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
+		$pconfig['gwredir6'] = $a_csc[$id]['gwredir6'];
 
 		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
 		$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
+
+		if ($pconfig['push_reset'] ||
+				$pconfig['topology_override'] ||
+				$pconfig['remove_route'] ||
+				$pconfig['remove_iroute'] ||
+				$pconfig['remove_dnsdomain'] ||
+				$pconfig['remove_dnsservers'] ||
+				$pconfig['remove_ntpservers'] ||
+				$pconfig['remove_netbios_ntype'] ||
+				$pconfig['remove_netbios_scope'] ||
+				$pconfig['remove_wins']) {
+			$pconfig['server_overrides_enabled'] = true;
+		}
 
 		$pconfig['dns_domain'] = $a_csc[$id]['dns_domain'];
 		if ($pconfig['dns_domain']) {
@@ -112,6 +154,9 @@ if (($act == "edit") || ($act == "dup")) {
 		    $pconfig['dns_server4']) {
 			$pconfig['dns_server_enable'] = true;
 		}
+
+		$pconfig['push_blockoutsidedns'] = $a_csc[$id]['push_blockoutsidedns'];
+		$pconfig['push_register_dns'] = $a_csc[$id]['push_register_dns'];
 
 		$pconfig['ntp_server1'] = $a_csc[$id]['ntp_server1'];
 		$pconfig['ntp_server2'] = $a_csc[$id]['ntp_server2'];
@@ -159,6 +204,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
 	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
+		// restore custom options field to its original value
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
 	}
 
@@ -182,13 +228,27 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix or an alias with a single IPv6 prefix.");
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4", true)) {
+	if ($pconfig['server_overrides_enabled'] && $pconfig['topology_override'] && !array_key_exists($pconfig['topology'], $openvpn_topologies)) {
+		$input_errors[] = gettext("The field 'Topology' contains an invalid selection");
+	}
+
+	if (!$pconfig['gwredir'] && ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4", true))) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6", true)) {
+	if (!$pconfig['gwredir6'] && ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6", true))) {
 		$input_errors[] = $result;
 	}
+
+	if (!empty($pconfig['gateway']) && !is_ipaddrv4($pconfig['gateway'])) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the gateway.");
+	}
+
+	/*
+	if (!empty($pconfig['gateway6']) && !is_ipaddrv6($pconfig['gateway6'])) {
+		$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
+	}
+	*/
 
 	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
@@ -196,6 +256,16 @@ if ($_POST['save']) {
 
 	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
+	}
+
+	if ($pconfig['ping_push'] && !is_numericint($pconfig['ping_seconds'])) {
+		$input_errors[] = gettext("The supplied Ping Seconds value is invalid.");
+	}
+	if ($pconfig['ping_action_push'] && !array_key_exists($pconfig['ping_action'], $openvpn_ping_action)) {
+		$input_errors[] = gettext("The field 'Ping Action' contains an invalid selection");
+	}
+	if ($pconfig['ping_action_push'] && !is_numericint($pconfig['ping_action_seconds'])) {
+		$input_errors[] = gettext("The supplied Ping Restart or Exit Seconds value is invalid.");
 	}
 
 	if ($pconfig['dns_server_enable']) {
@@ -274,13 +344,54 @@ if ($_POST['save']) {
 		$csc['description'] = $pconfig['description'];
 		$csc['tunnel_network'] = $pconfig['tunnel_network'];
 		$csc['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
-		$csc['local_network'] = $pconfig['local_network'];
-		$csc['local_networkv6'] = $pconfig['local_networkv6'];
+
+		if (!$pconfig['gwredir']) {
+			$csc['local_network'] = $pconfig['local_network'];
+		}
+
+		if (!$pconfig['gwredir6']) {
+			$csc['local_networkv6'] = $pconfig['local_networkv6'];
+		}
+
+		if ($pconfig['server_overrides_enabled']) {
+			$csc['push_reset'] = $pconfig['push_reset'];
+			if (!$pconfig['push_reset']) {
+				$csc['remove_route'] = $pconfig['remove_route'];
+				$csc['remove_iroute'] = $pconfig['remove_iroute'];
+				$csc['remove_dnsdomain'] = $pconfig['remove_dnsdomain'];
+				$csc['remove_dnsservers'] = $pconfig['remove_dnsservers'];
+				$csc['remove_ntpservers'] = $pconfig['remove_ntpservers'];
+				$csc['remove_netbios_ntype'] = $pconfig['remove_netbios_ntype'];
+				$csc['remove_netbios_scope'] = $pconfig['remove_netbios_scope'];
+				$csc['remove_wins'] = $pconfig['remove_wins'];
+			}
+
+			$csc['topology_override'] = $pconfig['topology_override'];
+			if ($pconfig['topology_override']) {
+				$csc['topology'] = $pconfig['topology'];
+			}
+		}
+
 		$csc['remote_network'] = $pconfig['remote_network'];
 		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$csc['gwredir'] = $pconfig['gwredir'];
-		$csc['push_reset'] = $pconfig['push_reset'];
-		$csc['remove_route'] = $pconfig['remove_route'];
+		$csc['gwredir6'] = $pconfig['gwredir6'];
+
+		$csc['gateway'] = $pconfig['gateway'];
+		//$csc['gateway6'] = $pconfig['gateway6'];
+
+		//$csc['push_reset'] = $pconfig['push_reset'];
+		//$csc['remove_route'] = $pconfig['remove_route'];
+
+		$csc['ping_push'] = $pconfig['ping_push'];
+		if ($pconfig['ping_push']) {
+			$csc['ping_seconds'] = $pconfig['ping_seconds'];
+		}
+		$csc['ping_action_push'] = $pconfig['ping_action_push'];
+		if ($pconfig['ping_action_push']) {
+			$csc['ping_action'] = $pconfig['ping_action'];
+			$csc['ping_action_seconds'] = $pconfig['ping_action_seconds'];
+		}
 
 		if ($pconfig['dns_domain_enable']) {
 			$csc['dns_domain'] = $pconfig['dns_domain'];
@@ -292,6 +403,9 @@ if ($_POST['save']) {
 			$csc['dns_server3'] = $pconfig['dns_server3'];
 			$csc['dns_server4'] = $pconfig['dns_server4'];
 		}
+
+		$csc['push_blockoutsidedns'] = $pconfig['push_blockoutsidedns'];
+		$csc['push_register_dns'] = $pconfig['push_register_dns'];
 
 		if ($pconfig['ntp_server_enable']) {
 			$csc['ntp_server1'] = $pconfig['ntp_server1'];
@@ -414,6 +528,100 @@ if ($act == "new" || $act == "edit"):
 		true
 		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
 
+	// Override server client options
+	$section->addInput(new Form_Checkbox(
+		'server_overrides_enabled',
+		'Select Server Overrides',
+		'Select server options to remove.',
+		$pconfig['server_overrides_enabled']
+	))->setHelp('If unchecked, any client options specified in below form or Advanced section will be pushed to the client after the server options.%1$s' .
+			'If checked, you can select the server options you want to remove. Client-specific options on this page are not affected and they will thus override the corresponding server-defined options.',
+			'<br />');
+
+	$section->addInput(new Form_Checkbox(
+		'push_reset',
+		null,
+		'Remove All Server Options',
+		$pconfig['push_reset']
+	))->setHelp('Prevent this client from receiving any server-defined client settings.%1$s' .
+			'This option will send a push-reset to the client. It will thus remove any server-defined routes, the gateway and topology.%1$s' .
+			'For the client to properly connect, you will need to enter at least the gateway and topology in the below form or in Advanced section.',
+			'<br />');
+
+	$section->addInput(new Form_Checkbox(
+		'topology_override',
+		null,
+		'Override Server Topology',
+		$pconfig['topology_override']
+	));
+
+	$section->addInput(new Form_Select(
+		'topology',
+		null,
+		$pconfig['topology'],
+		$openvpn_topologies
+	))->setHelp('This will push the selected topology to the client. It should only be set when option "Remove All Server Options" is checked. It must match the actual topology specified in server.%1$s' .
+			'NOTE: This will perform a "push topology [selection]" without a previous "push-remove topology". Alternetively you can push the topology in Advanced section.',
+			'<br />');
+
+	/* as "push-reset" can break subnet topology, 
+	 * "push-remove route" removes only IPv4/IPv6 routes, see #9702 */
+	$section->addInput(new Form_Checkbox(
+		'remove_route',
+		null,
+		'Remove Server Local Routes',
+		$pconfig['remove_route']
+	))->setHelp('Send "push-remove route" to the client');
+
+	$section->addInput(new Form_Checkbox(
+		'remove_iroute',
+		null,
+		'Remove Server Remote Routes',
+		$pconfig['remove_iroute']
+	))->setHelp('Send "push-remove iroute" to the client');
+
+	$section->addInput(new Form_Checkbox(
+		'remove_dnsdomain',
+		null,
+		'Remove Server DNS Domains',
+		$pconfig['remove_dnsdomain']
+	))->setHelp('Send "push-remove dhcp-option DOMAIN" to the client');
+
+	$section->addInput(new Form_Checkbox(
+		'remove_dnsservers',
+		null,
+		'Remove Server DNS Servers',
+		$pconfig['remove_dnsservers']
+	))->setHelp('Send "push-remove dhcp-option DNS" to the client');
+
+	$section->addInput(new Form_Checkbox(
+		'remove_ntpservers',
+		null,
+		'Remove Server NTP Options.',
+		$pconfig['remove_ntpservers']
+	))->setHelp('Send "push-remove dhcp-option NTP" to the client');
+
+	$section->addInput(new Form_Checkbox(
+		'remove_netbios_ntype',
+		null,
+		'Remove Server NetBIOS Type',
+		$pconfig['remove_netbios_ntype']
+	))->setHelp('Send "push-remove dhcp-option NBT" to the client');
+
+	$section->addInput(new Form_Checkbox(
+		'remove_netbios_scope',
+		null,
+		'Remove Server NetBIOS Scope',
+		$pconfig['remove_netbios_scope']
+	))->setHelp('Send "push-remove dhcp-option NBS" to the client');
+
+	$section->addInput(new Form_Checkbox(
+		'remove_wins',
+		null,
+		'Remove Server WINS Options',
+		$pconfig['remove_wins']
+	))->setHelp('Send "push-remove dhcp-option WINS" to the client');
+
 	$form->add($section);
 
 	$section = new Form_Section('Tunnel Settings');
@@ -437,6 +645,20 @@ if ($act == "new" || $act == "edit"):
 		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
 			'<br />');
 
+	$section->addInput(new Form_Checkbox(
+		'gwredir',
+		'Redirect IPv4 Gateway',
+		'Force all client generated traffic through the tunnel.',
+		$pconfig['gwredir']
+	));
+
+	$section->addInput(new Form_Checkbox(
+		'gwredir6',
+		'Redirect IPv6 Gateway',
+		'Force all client-generated IPv6 traffic through the tunnel.',
+		$pconfig['gwredir6']
+	));
+
 	$section->addInput(new Form_Input(
 		'local_network',
 		'IPv4 Local Network/s',
@@ -454,6 +676,30 @@ if ($act == "new" || $act == "edit"):
 	))->setHelp('These are the IPv6 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.%1$s' .
 		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
 			'<br />');
+
+	$section->addInput(new Form_Input(
+		'gateway',
+		'IPv4 Gateway',
+		'text',
+		$pconfig['gateway']
+	))->setHelp('This is the IPv4 Gateway to push to the client. Normally it is left blank and configured on the server. ' .
+			'The gateway IP should be entered if any of the options "Remove Server Local Routes" or "Remove All Server Options" is checked, ' .
+			'as these 2 options will remove the gateway defined on the server and connection from the client will likely fail.%1$s' .
+			'NOTE: Remember that, unless configured specifically, the gateway should match the IPv4 Tunnel gateway configured on the selected OpenVPN servers settings.',
+			'<br />');
+
+	/*
+	$section->addInput(new Form_Input(
+		'gateway6',
+		'IPv6 Gateway',
+		'text',
+		$pconfig['gateway6']
+	))->setHelp('This is the IPv6 Gateway to push to the client. Normally it is left blank and configured on the server. ' .
+			'The gateway IP should be entered if any of the options "Remove Server Local Routes" or "Remove All Server Options" is checked, ' .
+			'as these 2 options will remove the gateway defined on the server and connection from the client will likely fail.%1$s' .
+			'NOTE: Remember that, unless configured specifically, the gateway should match the IPv4 Tunnel gateway configured on the selected OpenVPN servers settings.',
+			'<br />');
+	*/
 
 	$section->addInput(new Form_Input(
 		'remote_network',
@@ -475,31 +721,51 @@ if ($act == "new" || $act == "edit"):
 		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.',
 			'<br />');
 
-	$section->addInput(new Form_Checkbox(
-		'gwredir',
-		'Redirect Gateway',
-		'Force all client generated traffic through the tunnel.',
-		$pconfig['gwredir']
-	));
-
 	$form->add($section);
 
-	$section = new Form_Section('Client Settings');
+	$section = new Form_Section('Other Client Settings');
 
 	$section->addInput(new Form_Checkbox(
-		'push_reset',
-		'Server Definitions',
-		'Prevent this client from receiving any server-defined client settings. ',
-		$pconfig['push_reset']
-	));
+		'ping_push',
+		'Ping Interval',
+		'Push ping to VPN client',
+		$pconfig['ping_push']
+	))->setHelp('Override server ping interval.%1$s',
+				'<br />');
 
-	/* as "push-reset" can break subnet topology, 
-	 * "push-remove route" removes only IPv4/IPv6 routes, see #9702 */
+	$section->addInput(new Form_Input(
+		'ping_seconds',
+		'Ping Seconds',
+		'number',
+		$pconfig['ping_seconds'] ?: $openvpn_default_keepalive_interval,
+		['min' => '0']
+	))->setHelp('Ping remote over the TCP/UDP control channel if no ' .
+	    'packets have been sent for at least n seconds.%1$s',
+	    '<br />');
+
 	$section->addInput(new Form_Checkbox(
-		'remove_route',
-		'Remove Server Routes',
-		'Prevent this client from receiving any server-defined routes without removing any other options. ',
-		$pconfig['remove_route']
+		'ping_action_push',
+		'Ping Action',
+		'Push ping-restart/ping-exit to VPN client',
+		$pconfig['ping_action_push']
+	))->setHelp('Override server ping restart/exit.%1$s',
+				'<br />');
+
+	$section->addInput(new Form_Select(
+		'ping_action',
+		'Ping restart or exit',
+		$pconfig['ping_action'],
+		$openvpn_ping_action
+	))->setHelp('Exit or restart OpenVPN after timeout from remote.%1$s',
+				'<br />');
+
+	$section->addInput(new Form_Input(
+		'ping_action_seconds',
+		'Ping restart or exit seconds',
+		'number',
+		$pconfig['ping_action_seconds']
+		    ?: $openvpn_default_keepalive_timeout,
+		['min' => '0']
 	));
 
 	$section->addInput(new Form_Checkbox(
@@ -561,6 +827,20 @@ if ($act == "new" || $act == "edit"):
 	))->setHelp('Server 4');
 
 	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'push_blockoutsidedns',
+		'Block Outside DNS',
+		'Make Windows 10 Clients Block access to DNS servers except across OpenVPN while connected, forcing clients to use only VPN DNS servers.',
+		$pconfig['push_blockoutsidedns']
+	))->setHelp('Requires Windows 10 and OpenVPN 2.3.9 or later. Only Windows 10 is prone to DNS leakage in this way, other clients will ignore the option as they are not affected.');
+
+	$section->addInput(new Form_Checkbox(
+		'push_register_dns',
+		'Force DNS cache update',
+		'Run "net stop dnscache", "net start dnscache", "ipconfig /flushdns" and "ipconfig /registerdns" on connection initiation.',
+		$pconfig['push_register_dns']
+	))->setHelp('This is known to kick Windows into recognizing pushed DNS servers.');
 
 	// NTP servers
 	$section->addInput(new Form_Checkbox(
@@ -676,7 +956,8 @@ if ($act == "new" || $act == "edit"):
 	if (!$user_can_edit_advanced) {
 		$custops->setDisabled();
 	}
-	$section->addInput($custops)->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. %1$s' .
+	$section->addInput($custops)->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon.%1$s' .
+				'The options will be pushed to the client after all above custom options.%1$s' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ',
 				'<br />');
 
@@ -705,6 +986,82 @@ if ($act == "new" || $act == "edit"):
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	// when option server_overrides_enabled is checked, show override server options
+	function serveroverrides_change() {
+		if ($('#server_overrides_enabled').prop('checked')) {
+			hideCheckbox('push_reset', false);
+			hideCheckbox('topology_override', false);
+			topology_change();
+			push_reset_change();
+		} else {
+			hideCheckbox('push_reset', true);
+			hideCheckbox('topology_override', true);
+			hideSelect('topology', true);
+			hideCheckbox('remove_route', true);
+			hideCheckbox('remove_iroute', true);
+			hideCheckbox('remove_dnsdomain', true);
+			hideCheckbox('remove_dnsservers', true);
+			hideCheckbox('remove_ntpservers', true);
+			hideCheckbox('remove_netbios_ntype', true);
+			hideCheckbox('remove_netbios_scope', true);
+			hideCheckbox('remove_wins', true);
+		}
+	}
+
+	// when push_reset option is selected, hide push_remove options, but not topology
+	function push_reset_change() {
+		var hide = $('#push_reset').prop('checked');
+
+		hideCheckbox('remove_route', hide);
+		hideCheckbox('remove_iroute', hide);
+		hideCheckbox('remove_dnsdomain', hide);
+		hideCheckbox('remove_dnsservers', hide);
+		hideCheckbox('remove_ntpservers', hide);
+		hideCheckbox('remove_netbios_ntype', hide);
+		hideCheckbox('remove_netbios_scope', hide);
+		hideCheckbox('remove_wins', hide);
+	}
+
+	function topology_change() {
+		if ($('#topology_override').prop('checked')) {
+			hideSelect('topology', false);
+		} else {
+			hideSelect('topology', true);
+		}
+	}
+
+	function gwredir_change() {
+		var hide = $('#gwredir').prop('checked');
+
+		hideInput('local_network', hide);
+//		hideInput('remote_network', hide);
+	}
+
+	function gwredir6_change() {
+		var hide = $('#gwredir6').prop('checked');
+
+		hideInput('local_networkv6', hide);
+//		hideInput('remote_networkv6', hide);
+	}
+
+	function ping_seconds_change() {
+		if ($('#ping_push').prop('checked')) {
+			hideInput('ping_seconds', false);
+		} else {
+			hideInput('ping_seconds', true);
+		}
+	}
+
+	function ping_action_change() {
+		if ($('#ping_action_push').prop('checked')) {
+			hideSelect('ping_action', false);
+			hideInput('ping_action_seconds', false);
+		} else {
+			hideSelect('ping_action', true);
+			hideInput('ping_action_seconds', true);
+		}
+	}
+
 	function dnsdomain_change() {
 		if ($('#dns_domain_enable').prop('checked')) {
 			hideClass('dnsdomain', false);
@@ -758,6 +1115,41 @@ events.push(function() {
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
+	 // On clicking Select Server Overrides Options
+	$('#server_overrides_enabled').click(function () {
+		serveroverrides_change();
+	});
+
+	 // On clicking Remove All Server Options
+	$('#push_reset').click(function () {
+		push_reset_change();
+	});
+
+	 // On clicking Override Server Topology
+	$('#topology_override').click(function () {
+		topology_change();
+	});
+
+	 // On clicking Gateway redirect
+	$('#gwredir').click(function () {
+		gwredir_change();
+	});
+
+	 // On clicking Gateway redirect IPv6
+	$('#gwredir6').click(function () {
+		gwredir6_change();
+	});
+
+	 // On clicking Ping Interval
+	$('#ping_push').click(function () {
+		ping_seconds_change();
+	});
+
+	 // On clicking Ping Action
+	$('#ping_action_push').click(function () {
+		ping_action_change();
+	});
+
 	 // On clicking DNS Default Domain
 	$('#dns_domain_enable').click(function () {
 		dnsdomain_change();
@@ -789,6 +1181,18 @@ events.push(function() {
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
+
+	// first the options depending on push_reset, and on server_overrides_enabled
+	// and finally the global server_overrides_enabled toggle
+	push_reset_change();
+	topology_change();
+	serveroverrides_change();
+
+	gwredir_change();
+	gwredir6_change();
+
+	ping_seconds_change();
+	ping_action_change();
 
 	setNetbios();
 	dnsdomain_change();

@@ -1026,6 +1026,8 @@ function interface_lagg_configure($lagg, $flush = true) {
 	}
 
 	interfaces_bring_up($laggif);
+	// after the lagg is recreated, its VLANs must be reconfigured
+	interfaces_vlan_configure($laggif);
 
 	return $laggif;
 }

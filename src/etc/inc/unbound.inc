@@ -657,6 +657,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 					unlink_if_exists($root_key_file);
 				}
 			}
+			// When there are conectivity issues, it may take ~10 seconds for the command to time out
 			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {

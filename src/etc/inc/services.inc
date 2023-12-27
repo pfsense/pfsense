@@ -4356,10 +4356,9 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 			}
 		}
 
+		// unbound has already been stopped at this point
 		if (platform_booting()) {
 			echo gettext("Starting DNS Resolver...");
-		} else {
-			sleep(1);
 		}
 
 		/* generate hosts file */

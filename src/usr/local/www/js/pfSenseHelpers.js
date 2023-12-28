@@ -821,7 +821,8 @@ function interceptGET() {
 
 			var target = $(this).attr("href").split("?");
 
-			postSubmit(get2post(target[1]),target[0]);
+			// the usepost attribute value is prepended to the POST action URI
+			postSubmit(get2post(target[1]),target[0].concat(attr));
 			return false;
 		}
 	});

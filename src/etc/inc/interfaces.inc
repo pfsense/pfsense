@@ -1501,13 +1501,13 @@ function interface_ipsec_vti_configure($ph1ent) {
 			} else {
 				$inet = "inet";
 				$gwtype = "";
-				$right = escapeshellarg($addr['right']);
+				$right = escapeshellarg((explode('/', $addr['right'], 2))[0]);
 			}
 
 			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($addr['left']) . " " . $right . $addr['alias']);
 			/* If alias is empty, this is the first address on the interface and should be used as the gateway. */
 			if (empty($addr['alias'])) {
-				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);
+				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", (explode('/', $addr['right'], 2))[0]);
 				unlink_if_exists("/tmp/{$ipsecif}_router{$gwtype}.last");
 			}
 		}

@@ -48,6 +48,7 @@ for dev in ${bootdevs}; do
 			error_exit "Couldn't mount ${PKG_ROOTDIR}/dev/${efipart} to ${PKG_ROOTDIR}/boot/efi"
 		echo "Updating EFI loader in ESP ${efipart}"
 		mkdir -p ${PKG_ROOTDIR}/boot/efi/efi/boot/
+		mkdir -p ${PKG_ROOTDIR}/boot/efi/efi/freebsd/
 		install -vS ${PKG_ROOTDIR}/boot/loader.efi ${PKG_ROOTDIR}/boot/efi/efi/freebsd/ || error_exit "Failed to update ${PKG_ROOTDIR}/boot/loader.efi"
 		_archboot=""
 		if [ "${arch}" = "aarch64" ]; then

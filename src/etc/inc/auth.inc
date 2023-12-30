@@ -1557,6 +1557,12 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		log_error(sprintf(gettext("LDAP Debug: LDAP connection error flag: %s"), var_export($error, true)));
 	}
 
+	if ($error == true) {
+		$errormsg = sprintf(gettext("ERROR! Could not connect to server %s."), $ldapname);
+		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
+		return null;
+	}
+
 	/* Setup CA environment if needed. */
 	ldap_setup_caenv($ldap, $authcfg);
 
@@ -1573,12 +1579,6 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 			@ldap_close($ldap);
 			return null;
 		}
-	}
-
-	if ($error == true) {
-		$errormsg = sprintf(gettext("ERROR! Could not connect to server %s."), $ldapname);
-		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
-		return null;
 	}
 
 	/* ok, its up.  now, lets bind as the bind user so we can search it */

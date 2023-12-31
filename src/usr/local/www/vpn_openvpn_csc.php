@@ -645,6 +645,30 @@ if ($act == "new" || $act == "edit"):
 		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
 			'<br />');
 
+	$section->addInput(new Form_Input(
+		'gateway',
+		'IPv4 Gateway',
+		'text',
+		$pconfig['gateway']
+	))->setHelp('This is the IPv4 Gateway to push to the client. Normally it is left blank and configured on the server. ' .
+			'The gateway IP should be entered if any of the options "Remove Server Local Routes" or "Remove All Server Options" is checked, ' .
+			'as these 2 options will remove the gateway defined on the server and connection from the client will likely fail.%1$s' .
+			'NOTE: Remember that, unless configured specifically, the gateway should match the IPv4 Tunnel gateway configured on the selected OpenVPN servers settings.',
+			'<br />');
+
+	/*
+	$section->addInput(new Form_Input(
+		'gateway6',
+		'IPv6 Gateway',
+		'text',
+		$pconfig['gateway6']
+	))->setHelp('This is the IPv6 Gateway to push to the client. Normally it is left blank and configured on the server. ' .
+			'The gateway IP should be entered if any of the options "Remove Server Local Routes" or "Remove All Server Options" is checked, ' .
+			'as these 2 options will remove the gateway defined on the server and connection from the client will likely fail.%1$s' .
+			'NOTE: Remember that, unless configured specifically, the gateway should match the IPv4 Tunnel gateway configured on the selected OpenVPN servers settings.',
+			'<br />');
+	*/
+
 	$section->addInput(new Form_Checkbox(
 		'gwredir',
 		'Redirect IPv4 Gateway',
@@ -676,30 +700,6 @@ if ($act == "new" || $act == "edit"):
 	))->setHelp('These are the IPv6 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.%1$s' .
 		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
 			'<br />');
-
-	$section->addInput(new Form_Input(
-		'gateway',
-		'IPv4 Gateway',
-		'text',
-		$pconfig['gateway']
-	))->setHelp('This is the IPv4 Gateway to push to the client. Normally it is left blank and configured on the server. ' .
-			'The gateway IP should be entered if any of the options "Remove Server Local Routes" or "Remove All Server Options" is checked, ' .
-			'as these 2 options will remove the gateway defined on the server and connection from the client will likely fail.%1$s' .
-			'NOTE: Remember that, unless configured specifically, the gateway should match the IPv4 Tunnel gateway configured on the selected OpenVPN servers settings.',
-			'<br />');
-
-	/*
-	$section->addInput(new Form_Input(
-		'gateway6',
-		'IPv6 Gateway',
-		'text',
-		$pconfig['gateway6']
-	))->setHelp('This is the IPv6 Gateway to push to the client. Normally it is left blank and configured on the server. ' .
-			'The gateway IP should be entered if any of the options "Remove Server Local Routes" or "Remove All Server Options" is checked, ' .
-			'as these 2 options will remove the gateway defined on the server and connection from the client will likely fail.%1$s' .
-			'NOTE: Remember that, unless configured specifically, the gateway should match the IPv4 Tunnel gateway configured on the selected OpenVPN servers settings.',
-			'<br />');
-	*/
 
 	$section->addInput(new Form_Input(
 		'remote_network',

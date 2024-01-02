@@ -39,7 +39,7 @@ require_once('parser_dhcpv6_leases.inc');
 require_once('util.inc');
 
 $pgtitle = [gettext('Status'), gettext('DHCPv6 Leases')];
-$shortcut_section = 'dhcp';
+$shortcut_section = 'dhcp6';
 if (dhcp_is_backend('kea')) {
 	$shortcut_section = 'kea-dhcp6';
 }

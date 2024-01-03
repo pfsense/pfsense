@@ -34,6 +34,18 @@ require_once("unbound.inc");
 require_once("pfsense-utils.inc");
 require_once("system.inc");
 
+$python_files = glob("{$g['unbound_chroot_path']}/*.py");
+$python_scripts = array();
+if (!empty($python_files)) {
+	foreach ($python_files as $file) {
+		$file = pathinfo($file, PATHINFO_FILENAME);
+		$python_scripts[$file] = $file;
+	}
+}
+else {
+	$python_scripts = array('' => 'No Python Module scripts found');
+}
+
 $pconfig['enable'] = config_path_enabled('unbound');
 $pconfig['enablessl'] = config_path_enabled('unbound', 'enablessl');
 $pconfig['strictout'] = config_path_enabled('unbound', 'strictout');
@@ -138,6 +150,12 @@ if ($_POST['save']) {
 
 	if (($pconfig['system_domain_local_zone_type'] == "redirect") && isset($pconfig['regdhcp'])) {
 		$input_errors[] = gettext('A System Domain Local Zone Type of "redirect" is not compatible with dynamic DHCP Registration.');
+	}
+
+	if (isset($pconfig['python']) &&
+	    !array_key_exists(array_get_path($pconfig, 'python_script'), $python_scripts)) {
+		array_del_path($pconfig, 'python_script');
+		$input_errors[] = gettext('The submitted Python Module Script does not exist or is invalid.');
 	}
 
 	$display_custom_options = $pconfig['custom_options'];
@@ -364,18 +382,6 @@ $section->addInput(new Form_Checkbox(
 	'Enable Python Module',
 	$pconfig['python']
 ))->setHelp('Enable the Python Module.');
-
-$python_files = glob("{$g['unbound_chroot_path']}/*.py");
-$python_scripts = array();
-if (!empty($python_files)) {
-	foreach ($python_files as $file) {
-		$file = pathinfo($file, PATHINFO_FILENAME);
-		$python_scripts[$file] = $file;
-	}
-}
-else {
-	$python_scripts = array('' => 'No Python Module scripts found');
-}
 
 $section->addInput(new Form_Select(
 	'python_order',

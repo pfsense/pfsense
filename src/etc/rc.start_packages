@@ -68,6 +68,54 @@ foreach (config_get_path('installedpackages/package', []) as $pkgid => $package)
 	start_service($internal_name, true);
 	unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
 	echo "done.\n";
+        
+	/* 
+	 * If FRR is configured, then check if remote syslog servers are configured
+	 * and kill any existing invalid states. Since syslog is started prior to 
+	 * starting the FRR package, then any remote syslog servers that are on 
+	 * networks that are dynamically routed may accidentally be routed out 
+	 * the default gateway prior to the route being learned, resulting in a 
+	 * state being created. 
+	 */
+	if ( $package['name'] == "FRR" ) {
+		echo "  FRR Package found - Checking for remote syslog servers...\n";
+
+		$syslogcfg = config_get_path('syslog', []);
+		$remotes = array();
+		if (!empty($syslogcfg["remoteserver"])){
+			array_push($remotes, $syslogcfg["remoteserver"]);
+		}
+		if (!empty($syslogcfg["remoteserver2"])){
+			array_push($remotes, $syslogcfg["remoteserver2"]);
+		}
+		if (!empty($syslogcfg["remoteserver3"])){
+			array_push($remotes, $syslogcfg["remoteserver3"]);
+		}
+		
+		$rmtcnt = count($remotes);
+		if ($rmtcnt == 0) {
+			echo "  No remote servers found.\n";
+		} else {
+			echo count($remotes) . " remote(s) found. Checking for invalid states.\n";
+			sleep(15);
+			foreach ($remotes as $remote) {
+				$filter = array(
+					array('filter' => $remote)
+				);
+				echo "  Checking states for " . $remote . "... ";
+				$states = pfSense_get_pf_states($filter);
+				foreach ($states as $state) { 
+					if ( isset($state["src-orig"]) && $state["src"] != $state["src-orig"] ) {
+						echo "Killing state w/src " . $state["src"] . "... ";
+						list($dst, $dstport) = explode(":", $state['dst']);
+						list($src, $srcport) = explode(":", $state['src']);
+						pfSense_kill_states($src, $dst);
+					}
+				}
+				echo "Done.\n";
+			}
+		}
+	}
 }
 
 $shell = @popen("/bin/sh", "w");

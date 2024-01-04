@@ -106,7 +106,7 @@ $dnsavailable = get_dnsavailable(AF_INET6);
 foreach ($data as &$entry) {
 	$dns="";
 	if (!empty($entry['ipv6']) && $dnsavailable) {
-		$dns = check_dnsavailable($entry['ipv6']);
+		$dns = resolve_address($entry['ipv6']);
 	}
 
 	if (trim($dns)) {

@@ -230,7 +230,7 @@ if ($_REQUEST['download']) {
 
 // $confvers must be populated viewing info but there were errors
 $confvers = array();
-if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable('acb.netgate.com')) {
+if ((!($_REQUEST['download']) || $input_errors) && resolve_address('acb.netgate.com')) {
 	// Populate available backups
 	$curl_session = curl_init();
 

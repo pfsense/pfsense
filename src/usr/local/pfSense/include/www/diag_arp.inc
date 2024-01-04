@@ -68,7 +68,7 @@ function prepare_ARP_table($json = false) {
 		if (!empty($entry['mac-address']) && isset($namesbymac[$entry['mac-address']])) {
 			$dns = $namesbymac[$entry['mac-address']];
 		} elseif (!empty($entry['ip-address']) && $dnsavailable) {
-			$dns = check_dnsavailable($entry['ip-address']);
+			$dns = resolve_address($entry['ip-address']);
 		}
 
 		if (trim($dns)) {

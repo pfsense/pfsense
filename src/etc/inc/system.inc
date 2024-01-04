@@ -1225,7 +1225,7 @@ function system_get_dhcpleases($dnsavailable=null)
 		if (preg_match('/}$/', $line)) {
 			if ($lease) {
 				if ($dnsavailable && empty($item['hostname'])) {
-					$hostname = check_dnsavailable($item['ip']);
+					$hostname = resolve_address($item['ip']);
 					if (!empty($hostname)) {
 						$item['hostname'] = $hostname;
 					}
@@ -3288,14 +3288,16 @@ function get_dnsavailable(?int $protocol = null): bool {
 }
 
 /**
- * Checks for DNS A/AAAA/SRV/PTR records.
+ * Verifies the existence of a DNS A/AAAA/SRV/PTR record for an address.
  * 
- * @param string $address Hostname or IPv4/6 address to check.
+ * @param string $address Name or IPv4/6 address to check.
  * 
- * @return string The hostname of the given IP address, or the unmodified address.
- * @return false No DNS records found.
+ * @return string The address can be resolved. If $address is an IP address,
+ *                return the reverse lookup name, otherwise return the
+ *                unmodified input if it's a host/domain name.
+ * @return false Cannot resolve - no records found.
  */
-function check_dnsavailable(?string $address): string|false {
+function resolve_address(?string $address): string|false {
 	if (empty($address)) {
 		return false;
 	}

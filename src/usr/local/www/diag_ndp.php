@@ -102,15 +102,13 @@ foreach ($rawdata as $line) {
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
+$dnsavailable = get_dnsavailable(AF_INET6);
 foreach ($data as &$entry) {
-	if (is_null($dnsavailable)) {
-		$dnsavailable = check_dnsavailable('inet6');
+	$dns="";
+	if (!empty($entry['ipv6']) && $dnsavailable) {
+		$dns = check_dnsavailable($entry['ipv6']);
 	}
-	if ($dnsavailable) {
-		$dns = trim(_getHostName($entry['mac'], $entry['ipv6']));
-	} else {
-		$dns = "";
-	}
+
 	if (trim($dns)) {
 		$entry['dnsresolve'] = "$dns";
 	} else {

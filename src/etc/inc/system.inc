@@ -1213,6 +1213,9 @@ function system_get_dhcpleases($dnsavailable=null)
 	$dedup_lease = false;
 	$dedup_failover = false;
 
+	if ($dnsavailable === null) {
+		$dnsavailable = get_dnsavailable();
+	}
 	foreach ($leases_content as $line) {
 		/* Skip comments */
 		if (preg_match('/^\s*(|#.*)$/', $line)) {
@@ -1221,15 +1224,10 @@ function system_get_dhcpleases($dnsavailable=null)
 
 		if (preg_match('/}$/', $line)) {
 			if ($lease) {
-				if (empty($item['hostname'])) {
-					if (is_null($dnsavailable)) {
-						$dnsavailable = check_dnsavailable();
-					}
-					if ($dnsavailable) {
-						$hostname = gethostbyaddr($item['ip']);
-						if (!empty($hostname)) {
-							$item['hostname'] = $hostname;
-						}
+				if ($dnsavailable && empty($item['hostname'])) {
+					$hostname = check_dnsavailable($item['ip']);
+					if (!empty($hostname)) {
+						$item['hostname'] = $hostname;
 					}
 				}
 				$leases['lease'][] = $item;
@@ -3258,50 +3256,63 @@ function system_get_arp_table($resolve_hostnames = false) {
 	return $arp_table;
 }
 
-function _getHostName($mac, $ip) {
-	global $dhcpmac, $dhcpip;
-
-	if ($dhcpmac[$mac]) {
-		return $dhcpmac[$mac];
-	} else if ($dhcpip[$ip]) {
-		return $dhcpip[$ip];
-	} else {
-		exec("/usr/bin/host -W 1 " . escapeshellarg($ip), $output);
-		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
-			if ($matches[1] <> $ip) {
-				return $matches[1];
-			}
-		}
+/**
+ * Checks for DNS availability.
+ * 
+ * @param int $protocol IP family to check with [AF_INET|AF_INET6]
+ * 
+ * @return bool true if DNS is available, false otherwise
+ */
+function get_dnsavailable(?int $protocol = null): bool {
+	switch ($protocol) {
+		case AF_INET:
+			$proto = '-4';
+			break;
+		case AF_INET6:
+			$proto = '-6';
+			break;
+		default:
+			$proto = '';
+			break;
 	}
-	return "";
+
+	// The domain doesn't matter, only that there's an answer
+	exec("/usr/bin/host -W 1 {$proto} netgate.com.", $null, $result_code);
+	if ($result_code === 0) {
+		// DNS server responded
+		return true;
+	}
+
+	// no answer
+	return false;
 }
 
-function check_dnsavailable($proto='inet') {
-
-	if ($proto == 'inet') {
-		$gdns = array('8.8.8.8', '8.8.4.4');
-	} elseif ($proto == 'inet6') {
-		$gdns = array('2001:4860:4860::8888', '2001:4860:4860::8844');
-	} else {
-		$gdns = array('8.8.8.8', '8.8.4.4', '2001:4860:4860::8888', '2001:4860:4860::8844');
+/**
+ * Checks for DNS A/AAAA/SRV/PTR records.
+ * 
+ * @param string $address Hostname or IPv4/6 address to check.
+ * 
+ * @return string The hostname of the given IP address, or the unmodified address.
+ * @return false No DNS records found.
+ */
+function check_dnsavailable(?string $address): string|false {
+	if (empty($address)) {
+		return false;
 	}
-	$nameservers = array_merge($gdns, get_dns_nameservers());
-	$test = 0;
 
-	foreach ($gdns as $dns) {
-		if ($dns == '127.0.0.1') {
-			continue;
-		} else {
-			$dns_result = trim(_getHostName("", $dns));
-			if (($test == '2') && ($dns_result == "")) {
-				return false;
-			} elseif ($dns_result == "") {
-				$test++;
-				continue;
-			} else {
-				return true;
-			}
+	if (filter_var($address, FILTER_VALIDATE_IP)) {
+		$result = gethostbyaddr($address);
+		if (empty($result) || ($result == $address)) {
+			$result = null;
 		}
+	} elseif (filter_var($address, FILTER_VALIDATE_DOMAIN)) {
+		if (!empty(dns_get_record($address, DNS_A | DNS_AAAA | DNS_SRV))) {
+			$result = $address;
+		}
+	}
+
+	if (!empty($result)) {
+		return $result;
 	}
 
 	return false;

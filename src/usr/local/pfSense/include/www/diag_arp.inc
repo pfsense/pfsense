@@ -27,27 +27,16 @@
 
 require_once("config.gui.inc");
 
-// Put this in an easy to use form
-$dhcpmac = array();
-$dhcpip = array();
-
 function prepare_ARP_table($json = false) {
-	global $dhcpmac, $dhcpip;
-
+	// Get DHCP lease hostnames by MAC address
 	$leases = system_get_dhcpleases(false);
-
-	// Put this in an easy to use form
-	$dhcpmac = array();
-	$dhcpip = array();
-
+	$namesbymac = [];
 	foreach ($leases['lease'] as $value) {
-		if ($value["act"] == "expired") {
-			/* Skip expired leases
-			 * See https://redmine.pfsense.org/issues/11510 */
+		if ((empty($value['hostname']) && $value['hostname'] != '0') ||
+		    ($value["act"] == "expired")) {
 			continue;
 		}
-		$dhcpmac[$value['mac']] = $value['hostname'];
-		$dhcpip[$value['ip']] = $value['hostname'];
+		$namesbymac[$value['mac']] = $value['hostname'];
 	}
 
 	// Load MAC-Manufacturer table
@@ -72,21 +61,14 @@ function prepare_ARP_table($json = false) {
 	// Resolve hostnames and replace Z_ with "".  The intention
 	// is to sort the list by hostnames, alpha and then the non
 	// resolvable addresses will appear last in the list.
-
+	$dnsavailable = get_dnsavailable(AF_INET);
 	foreach ($arp_table as &$entry) {
 		// Add dnsresolve
-		if (!empty($entry['mac-address'])) {
-			if (is_null($dnsavailable)) {
-				$dnsavailable = check_dnsavailable();
-			}
-			if ($dnsavailable) {
-				$dns = trim(_getHostName($entry['mac-address'],
-					$entry['ip-address']));
-			} else {
-				$dns="";
-			}
-		} else {
-			$dns="";
+		$dns="";
+		if (!empty($entry['mac-address']) && isset($namesbymac[$entry['mac-address']])) {
+			$dns = $namesbymac[$entry['mac-address']];
+		} elseif (!empty($entry['ip-address']) && $dnsavailable) {
+			$dns = check_dnsavailable($entry['ip-address']);
 		}
 
 		if (trim($dns)) {

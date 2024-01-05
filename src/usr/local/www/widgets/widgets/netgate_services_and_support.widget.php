@@ -44,7 +44,7 @@ if ($_REQUEST['ajax']) {
 	// the support data file does not exist, or
 	// if it is more than a day old and the URL seems resolvable
 	if (!file_exists($supportfile) ||
-	    ((time()-filemtime($supportfile) > $refreshinterval) && is_url_hostname_resolvable($FQDN))) {
+	    ((time()-filemtime($supportfile) > $refreshinterval) && resolve_address($FQDN))) {
 		if (file_exists($supportfile)) {
 			unlink($supportfile);
 		}

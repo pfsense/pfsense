@@ -3658,18 +3658,6 @@ function send_user_download($type, $content, $userfilename = "", $contenttype = 
 	exit;
 }
 
-// Test whether the hostname in a URL can be resolved with a very short timeout
-function is_url_hostname_resolvable($url) {
-	$urlhostname = parse_url($url, PHP_URL_HOST);
-	if (empty($urlhostname)) {
-		return false;
-	}
-	putenv("RES_OPTIONS=timeout:3 attempts:1");
-	$resolvable = ($urlhostname !== gethostbyname($urlhostname));
-	putenv("RES_OPTIONS");
-	return $resolvable;
-}
-
 function get_pf_reserved(?string $name = '', bool $check_ifname = true):bool|array {
 	global $pf_reserved_keywords, $reserved_table_names, $FilterIflist;
 

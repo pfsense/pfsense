@@ -70,7 +70,7 @@ function upload($basename) {
 
     $upload_url = "https://acb.netgate.com/save";
 
-    if (!is_url_hostname_resolvable($upload_url)) {
+    if (!resolve_address($upload_url)) {
 	$data = " Unable to resolve " . parse_url($upload_url, PHP_URL_HOST) . " ";
 	acb_error_log($upload_url, $data);
 	unlink_if_exists($acbuploadpath . $basename . ".data");

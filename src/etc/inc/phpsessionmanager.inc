@@ -39,6 +39,7 @@ function phpsession_begin() {
 	$session_action_list[] = "#### phpsession_begin ####" . simplestacktrace();
 	if ($session_opencounter == 0) {
 		session_start();
+		header_remove("Pragma");
 	}
 	$session_opencounter++;
 }

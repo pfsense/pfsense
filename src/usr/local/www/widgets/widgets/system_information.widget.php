@@ -30,6 +30,7 @@ require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
 require_once('system.inc');
+require_once('globals.inc');
 include_once("includes/functions.inc.php");
 
 $sysinfo_items = array(
@@ -483,7 +484,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
 				</div>
-				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
+				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", $memory_from_cache / (1024*1024)) ?> MiB</span>
 			</td>
 		</tr>
 <?php

@@ -49,6 +49,9 @@ $version_patch_file = $version_file . 'patch';
 $product_version = rtrim(file_get_contents($version_file));
 $present_year = date('Y');
 
+$memory_from_cache = rtrim(file_get_contents('/var/run/info.hwrealmem'));
+
+
 global $g;
 $g = [
 	'acbbackuppath' => '/cf/conf/acb/',
@@ -109,7 +112,8 @@ $g = [
 		'voucher' => '/var/db/voucher_*.db'
 	],
 	'cp_prefix' => 'cpzoneid',
-	'booting' => false
+	'booting' => false,
+	'memory_from_cache' => $memory_from_cache
 ];
 
 /* IP TOS flags */

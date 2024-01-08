@@ -18,13 +18,13 @@ if [ ! -d ${PKG_ROOTDIR}/boot/efi ]; then
 fi
 
 arch=$(uname -p)
-rootfs=$(mount -p | awk '$2 ~ /^\/$/ {print $3}')
+rootfs=$(mount -p 2>/dev/null | awk '$2 ~ /^\/$/ {print $3}')
 case ${rootfs} in
 	ufs)
-		bootdevs=$(mount -p | awk '$2 ~ /^\/$/ { match($1, "[[:alpha:]/]+[[:digit:]]+"); print substr($1, RSTART, RLENGTH); }')
+		bootdevs=$(mount -p 2>/dev/null | awk '$2 ~ /^\/$/ { match($1, "[[:alpha:]/]+[[:digit:]]+"); print substr($1, RSTART, RLENGTH); }')
 		;;
 	zfs)
-		zpool=$(mount -p | awk '$2 ~ /^\/$/ { split($1, zroot, "/"); print zroot[1]; }')
+		zpool=$(mount -p 2>/dev/null | awk '$2 ~ /^\/$/ { split($1, zroot, "/"); print zroot[1]; }')
 		bootdevs=$(zpool status -P ${zpool} | awk '$1 ~/^\/dev\// { match($1, "[[:alpha:]/]+[[:digit:]]+"); dev = substr($1, RSTART, RLENGTH); devs = devs dev " "} END { print devs; }')
 		;;
 	*)
@@ -32,7 +32,7 @@ case ${rootfs} in
 		;;
 esac
 
-if [ -n "$(mount -p | awk '$2 ~/\/boot\/efi/')" ]; then
+if [ -n "$(mount -p 2>/dev/null | awk '$2 ~/\/boot\/efi/')" ]; then
 	if umount ${PKG_ROOTDIR}/boot/efi 2>&- >> /dev/null; then
 		rm -rf ${PKG_ROOTDIR}/boot/efi/*
 	else

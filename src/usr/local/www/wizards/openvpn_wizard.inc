@@ -639,7 +639,7 @@ function step12_submitphpaction() {
 	}
 	$server['protocol'] = $pconfig['step10']['protocol'];
 	$server['dev_mode'] = 'tun';
-	$server['interface'] = $pconfig['step10']['interface'];
+	list($server['interface'], $server['ipaddr']) = explode ("|", $pconfig['step10']['interface']);
 	if (isset($pconfig['step10']['localport']))
 		$server['local_port'] = $pconfig['step10']['localport'];
 
@@ -721,9 +721,18 @@ function step12_submitphpaction() {
 			$rule['descr'] = substr($rule['descr'], 0, 52);
 		}
 		$rule['source']['any'] = TRUE;
-		$rule['destination']['network'] = $server['interface'] . "ip";
+		if (str_starts_with($server['interface'], '_vip')) {
+			$rule['destination']['address'] = $server['ipaddr'];
+			$vipifparent = get_configured_vip_interface($server['interface']);
+			if (str_starts_with($vipifparent, '_vip')) {
+				$vipifparent = get_configured_vip_interface($vipifparent);
+			}
+			$rule['interface'] = $vipifparent;
+		} else {
+			$rule['destination']['network'] = $server['interface'] . "ip";
+			$rule['interface'] = $server['interface'];
+		}
 		$rule['destination']['port'] = $server['local_port'];
-		$rule['interface'] = $server['interface'];
 		$rule['protocol'] = strtolower(substr($server['protocol'], 0, 3));
 		$rule['type'] = "pass";
 		$rule['enabled'] = "on";

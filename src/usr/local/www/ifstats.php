@@ -40,9 +40,9 @@ if($_POST['if']) {
 	$realifarray = explode("|", $realifs);
 
 	$temp = gettimeofday();
-	$timing = (double)$temp["sec"] + (double)$temp["usec"] / 1000000.0;
+	$timing = (double)$temp["sec"];
+	
 	$obj = [];
-	$count = 0;
 
 	$i = 0;
 	for ($i = 0; $i < count($ifarray); $i++) {
@@ -64,5 +64,5 @@ if($_POST['if']) {
 	}
 
 	header('Content-Type: application/json');
-	echo json_encode($obj,JSON_PRETTY_PRINT|JSON_PARTIAL_OUTPUT_ON_ERROR|JSON_NUMERIC_CHECK);
+	echo json_encode($obj,JSON_PARTIAL_OUTPUT_ON_ERROR|JSON_NUMERIC_CHECK);
 }

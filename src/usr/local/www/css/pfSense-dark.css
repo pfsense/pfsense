@@ -394,6 +394,10 @@ div.inputselectcombo span input {
     border-bottom-left-radius: 0;
 }
 
+.progress-bar-success {
+	background-color: #009688 !important;
+}
+
 .no-separator {
     border-bottom: 0!important;
 }

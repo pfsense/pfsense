@@ -4190,9 +4190,11 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		/* avoid 127.0.0.1 dns loop,
 		 * see https://redmine.pfsense.org/issues/12902 */
 		$args .= ' --no-resolv';
-		foreach (get_dns_nameservers(false, true) as $dns) {
-			if ($dns != '127.0.0.1') {
-				$args .= ' --server=' . $dns;
+		if (!config_path_enabled('dnsmasq', 'no_system_dns')) {
+			foreach (get_dns_nameservers(false, true) as $dns) {
+				if (($dns != '127.0.0.1') && ($dns != '::1')) {
+					$args .= ' --server=' . $dns;
+				}
 			}
 		}
 

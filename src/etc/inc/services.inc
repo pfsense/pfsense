@@ -2724,6 +2724,11 @@ EOPP;
 			$dhcpdconf .= "	option routers {$routers};\n";
 		}
 
+		// DDNS updates must be explicitly configured per subnet - see #13894
+		if ($need_ddns_updates) {
+			$dhcpdconf .= '	ddns-updates ' . (isset($dhcpifconf['ddnsupdate']) ? 'on' : 'off') . ";\n";
+		}
+
 		$dhcpdconf .= <<<EOD
 $dnscfg
 
@@ -3423,6 +3428,12 @@ EOD;
 			}
 			$dhcpdv6conf .= "	option dhcp6.name-servers {$dns6ip};\n";
 		}
+
+		// DDNS updates must be explicitly configured per subnet - see #13894
+		if ($nsupdate) {
+			$dhcpdv6conf .= '	ddns-updates ' . (isset($dhcpv6ifconf['ddnsupdate']) ? 'on' : 'off') . ";\n";
+		}
+
 		// default-lease-time
 		if ($dhcpv6ifconf['defaultleasetime']) {
 			$dhcpdv6conf .= "	default-lease-time {$dhcpv6ifconf['defaultleasetime']};\n";

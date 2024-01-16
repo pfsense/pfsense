@@ -389,7 +389,7 @@ function get_std_save_message($retval) {
 		$to_return = gettext("The changes have been applied successfully.");
 	} else {
 		// non-zero means there was some problem
-		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href="status_logs.php">', '</a>');
+		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href="/status_logs.php">', '</a>');
 	}
 	foreach ($filter_pages as $fp) {
 		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {
@@ -398,7 +398,7 @@ function get_std_save_message($retval) {
 	}
 	if ($filter_related) {
 		$to_return .= " " . gettext("The firewall rules are now reloading in the background.") . "<br />" .
-		    sprintf(gettext('%1$sMonitor%2$s the filter reload progress.'), "<a href='status_filter_reload.php'>", "</a>");
+		    sprintf(gettext('%1$sMonitor%2$s the filter reload progress.'), "<a href='/status_filter_reload.php'>", "</a>");
 	}
 	return $to_return;
 }
@@ -1036,7 +1036,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 					$groupinfo);
 			/* Re-slice member gateways which are now sorted */
 			$gws = array_column($groupinfo, 'gw');
-			$link = "system_gateway_groups_edit.php?id={$i}";
+			$link = "/system_gateway_groups_edit.php?id={$i}";
 			break;
 		}
 	}

@@ -3056,12 +3056,18 @@ function system_identify_specific_platform() {
 	unset($product);
 	unset($maker);
 	unset($bios);
+	unset($chassis);
 	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
+	$_gb = exec('/bin/kenv -q smbios.chassis.tag 2>/dev/null', $chassis);
 
 	$vm = get_single_sysctl('kern.vm_guest');
-	// Google GCP and newer AWS instances return kvm from this so we must detect them first.
+	// Google GCP, newer AWS instances and OCI return kvm from this so we must detect them first.
+
+	if ($chassis[0] == "OracleCloud.com") {
+		return (array('name' => 'Oracle', 'descr' => 'Oracle Cloud Infrastructure'));
+	}	
 
 	if ($maker[0] == "QEMU") {
 		return (array('name' => 'QEMU', 'descr' => 'QEMU Guest'));
@@ -3081,11 +3087,13 @@ function system_identify_specific_platform() {
 		break;
 	}
 
-	// AWS and GCP can also be identified via the bios version
+	// AWS, GCP and OCI can also be identified via the bios version
 	if (stripos($bios[0], "amazon") !== false) {
 		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));
 	} else  if (stripos($bios[0], "Google") !== false) {
 		return (array('name' => 'Google', 'descr' => 'Google Cloud Platform'));
+	} else  if (stripos($bios[0], "oracle") !== false) {
+		return (array('name' => 'Oracle', 'descr' => 'Oracle Cloud Infrastructure'));
 	}
 
 	switch ($product[0]) {

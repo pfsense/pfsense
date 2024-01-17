@@ -1722,7 +1722,7 @@ function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
 		  in_array("all", explode(",", config_get_path('unbound/active_interface', 'all')), true))) &&
 	    (config_get_path('system/dnslocalhost') != 'remote')) {
 		$dns_nameservers[] = "127.0.0.1";
-		$dns_nameservers[] = "::1";
+		$dns_nameservers[] = $add_v6_brackets ? '[::1]' : '::1';
 	}
 
 	if ($hostns || (config_get_path('system/dnslocalhost') != 'local')) {

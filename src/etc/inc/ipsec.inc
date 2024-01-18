@@ -3409,4 +3409,70 @@ function ipsec_get_rand_time($entry) {
 	return ipsec_get_over_time($entry);
 }
 
+/* Delete a list of IPsec P1 and related P2 entries
+ * Takes no action if any of the passed items are assigned VTI interfaces
+ * Caller must write the config after if the function succeeded.
+ */
+function delete_p1_and_children($p1list = []) {
+	global $input_errors;
+
+	if (!is_array($p1list) || !count($p1list)) {
+		/* Nothing to do */
+		return 0;
+	}
+	$delp1ids = [];
+	$delp2ids = [];
+
+	/* Check for relevant P1 and P2 entries to remove */
+	foreach ($p1list as $p1idx) {
+		$p1_has_vti = false;
+		$ikeid = config_get_path('ipsec/phase1/' . $p1idx . '/ikeid');
+
+		/* Find relevant P2 entries */
+		foreach (config_get_path('ipsec/phase2', []) as $p2idx => $p2) {
+			/* Flag and remove invalid entries */
+			if (empty($p2) || !is_array($p2)) {
+				$delp2ids[] = $p2idx;
+				continue;
+			}
+			if ($p2['ikeid'] == $ikeid) {
+				if (is_interface_ipsec_vti_assigned($p2)) {
+					/* This entry is active VTI and cannot be deleted! */
+					$p1_has_vti = true;
+				} else {
+					$delp2ids[] = $p2idx;
+				}
+			}
+		}
+
+		if ($p1_has_vti) {
+			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
+		} else {
+			$delp1ids[] = $p1idx;
+		}
+	}
+
+	/* If there are errors, take no actions */
+	if (!empty($input_errors)) {
+		return 0;
+	}
+
+	/* Remove P1 entries */
+	foreach ($delp1ids as $delp1) {
+		/* remove static route if interface is not WAN */
+		if (config_get_path('ipsec/phase1/' . $delp1 . '/interface') <> "wan") {
+			route_del(config_get_path('ipsec/phase1/' . $delp1 . '/remote-gateway'));
+		}
+		config_del_path('ipsec/phase1/' . $delp1);
+	}
+	/* Remove P2 entries */
+	foreach ($delp2ids as $dp2idx) {
+		config_del_path('ipsec/phase2/' . $dp2idx);
+	}
+
+	/* Return the total number of entries removed. */
+	return count($delp1ids) + count($delp2ids);
+
+}
+
 ?>

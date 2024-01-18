@@ -60,12 +60,12 @@ if ($_POST['apply']) {
 } else if (isset($_POST['del'])) {
 	/* delete selected p1 entries */
 	if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
-		foreach ($_POST['p1entry'] as $p1entrydel) {
-			config_del_path('ipsec/phase1/' . $p1entrydel);
-			$items_deleted = true;
-		}
-		if (write_config(gettext("Deleted selected IPsec Phase 1 entries."))) {
-			mark_subsystem_dirty('ipsec');
+		$delcount = delete_p1_and_children($_POST['p1entry']);
+
+		if ($delcount > 0) {
+			if (write_config(gettext("Deleted selected IPsec Phase 1 and related Phase 2 entries."))) {
+				mark_subsystem_dirty('ipsec');
+			}
 		}
 	}
 } else if (isset($_POST['delp2'])) {
@@ -79,8 +79,10 @@ if ($_POST['apply']) {
 				$items_deleted = true;
 			}
 		}
-		if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
-			mark_subsystem_dirty('ipsec');
+		if ($items_deleted) {
+			if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
+				mark_subsystem_dirty('ipsec');
+			}
 		}
 	}
 } else  {
@@ -220,35 +222,15 @@ if ($_POST['apply']) {
 			}
 		}
 	} else if (isset($delbtn)) {
-		/* remove static route if interface is not WAN */
-		if (config_get_path('ipsec/phase1/' . $delbtn . '/interface') <> "wan") {
-			route_del(config_get_path('ipsec/phase1/' . $delbtn . '/remote-gateway'));
-		}
+		$delcount = delete_p1_and_children([$delbtn]);
 
-		/* remove all phase2 entries that match the ikeid */
-		$ikeid = config_get_path('ipsec/phase2/' . $delbtn . '/ikeid');
-		$p1_has_vti = false;
-		$delp2ids = array();
-		foreach (config_get_path('ipsec/phase2') as $p2index => $ph2tmp) {
-			if ($ph2tmp['ikeid'] == $ikeid) {
-				if (is_interface_ipsec_vti_assigned($ph2tmp)) {
-					$p1_has_vti = true;
-				} else {
-					$delp2ids[] = $p2index;
-				}
+		if ($delcount > 0) {
+			/* Use a better description than generic save below */
+			$save = 0;
+			if (write_config(gettext("Deleted selected IPsec Phase 1 and related Phase 2 entries."))) {
+				mark_subsystem_dirty('ipsec');
 			}
 		}
-
-		if ($p1_has_vti) {
-			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
-		} else {
-			foreach ($delp2ids as $dp2idx) {
-				config_del_path('ipsec/phase2/' . $dp2idx);
-			}
-			config_del_path('ipsec/phase1/' . $delbtn);
-			$items_deleted = true;
-		}
-
 	} else if (isset($delbtnp2)) {
 		if (is_interface_ipsec_vti_assigned(config_get_path('ipsec/phase2/' . $delbtnp2)) && (config_get_path('ipsec/phase2/' . $delbtnp2 . '/mode') == 'vti')) {
 			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");

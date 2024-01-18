@@ -391,6 +391,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$limitrules = "";
 	}
 
+	$limitrules .= "set state-policy " . config_get_path('system/statepolicy', 'if-bound') . "\n";
+
 	/* User defined maximum table entries in Advanced menu. */
 	if (is_numeric(config_get_path('system/maximumtableentries'))) {
 		$limitrules .= sprintf("set limit table-entries %d\n", config_get_path('system/maximumtableentries'));

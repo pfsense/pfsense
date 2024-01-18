@@ -250,6 +250,33 @@ $section->addInput(new Form_Checkbox(
 	'Note: This will also turn off NAT! To only disable NAT, '.
 	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', g_get('product_label'), '<br/>', '<a href="firewall_nat_out.php">', '</a>');
 
+global $state_policy_options;
+
+$section->addInput(new Form_Select(
+	'statepolicy',
+	'Firewall State Policy',
+	$pconfig['statepolicy'],
+	$state_policy_options
+))->setHelp(
+	'%1$sInterface Bound States are more strict and secure. States '.
+	'are bound to specific interfaces by their OS/driver name (e.g. '.
+	'igcX). If a packet attempts to takes an path through a different '.
+	'interface than the one to which it is bound, the packet is '.
+	'dropped. This policy is less likely to allow VPN or other '.
+	'traffic to egress via unexpected paths (e.g. during interface '.
+	'events). '.
+	'%2$sFloating States are less secure, more lenient in their '.
+	'checks, and are not strictly associated with any interface. The '.
+	'interface is tracked in state properties, but it is informational '.
+	'and not enforced. This policy allows HA nodes with different '.
+	'hardware to utilize state synchronization. It is also more '.
+	'forgiving of certain asymmetric routing scenarios. However, this '.
+	'relaxed policy may allow connections to be misdirected or take '.
+	'unexpected paths if the routing table can be manipulated. '.
+	'%3$sThere is no difference in the ability to view or kill states ' .
+	'between either mode.',
+	'</span><ul class="help-block"><li>', '</li><li>', '</li></ul><span class="help-block">');
+
 $section->addInput(new Form_Checkbox(
 	'bypassstaticroutes',
 	'Static route filtering',

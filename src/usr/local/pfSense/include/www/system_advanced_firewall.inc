@@ -27,6 +27,11 @@ require_once("system.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 
+$state_policy_options = [
+	'if-bound' => gettext('Interface Bound States'),
+	'floating' => gettext('Floating States'),
+];
+
 
 // Functions included by system_advanced_firewall.php =========================
 function getSystemAdvancedFirewall($json = false) {
@@ -40,6 +45,7 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['bogonsinterval'] = config_get_path('system/bogons/interval');
 	$pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 	$pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
+	$pconfig['statepolicy'] = config_get_path('system/statepolicy');
 	$pconfig['disablefilter'] = config_get_path('system/disablefilter');
 	$pconfig['disablenatreflection'] = config_get_path('system/disablenatreflection');
 	$pconfig['disablenegate'] = isset($config['system']['disablenegate']);
@@ -82,11 +88,17 @@ function getSystemAdvancedFirewall($json = false) {
 }
 
 function saveSystemAdvancedFirewall($post, $json = false) {
-	global $g, $config;
+	global $g, $config, $state_policy_options;
 
 	$rv = array();
 
 	/* input validation */
+
+	if (!empty($post['statepolicy']) &&
+	    !array_key_exists($post['statepolicy'], $state_policy_options)) {
+		$input_errors[] = gettext("Invalid Firewall State Policy value.");
+	}
+
 	if ((isset($post['adaptivestart']) && !isset($post['adaptiveend'])) || (!isset($post['adaptivestart']) && isset($post['adaptiveend']))) {
 		$input_errors[] = gettext("The Firewall Adaptive values must be set together.");
 	}
@@ -192,6 +204,8 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		} else {
 			config_del_path('system/disablefilter');
 		}
+
+		config_set_path('system/statepolicy', $post['statepolicy']);
 
 		if ($post['disablevpnrules'] == "yes") {
 			$config['system']['disablevpnrules'] = true;

@@ -647,7 +647,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable RADIUS Accounting',
 	$pconfig['radiusaccounting']
 ))->setHelp('When enabled, the IPsec daemon will attempt to send RADIUS accounting ' .
-		'data for all tunnels, not only connections associated with mobile IPsec. ' .
+		'data for mobile IPsec connections with Virtual IP addresses. ' .
 		'Do not enable this option unless the selected RADIUS servers are online and ' .
 		'capable of receiving RADIUS accounting data. If RADIUS accounting data is ' .
 		'enabled and fails to send, tunnels will be disconnected.');

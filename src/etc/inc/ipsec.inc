@@ -1758,6 +1758,7 @@ function ipsec_setup_strongswan() {
 		    (config_get_path('ipsec/client/radiusaccounting') == 'enabled')) {
 			$ssconf['charon']['plugins']['eap-radius']['accounting'] = "yes";
 			$ssconf['charon']['plugins']['eap-radius']['accounting_close_on_timeout'] = "no";
+			$ssconf['charon']['plugins']['eap-radius']['accounting_requires_vip'] = "yes";
 		}
 		/* advanced parameters, see https://redmine.pfsense.org/issues/11211 */
 		if (config_get_path('ipsec/client/radius_retransmit_base')) {

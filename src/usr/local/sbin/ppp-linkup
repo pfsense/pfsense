@@ -33,14 +33,6 @@ DNS1_RAW="${6}"
 DNS2_RAW="${7}"
 
 if [ "${PROTOCOL}" == "inet" ]; then
-
-	OLD_ROUTER=`cat /tmp/${IF}_router`
-	if [ -n "${OLD_ROUTER}" ]; then
-		echo "Removing states to old router ${OLD_ROUTER}" | logger -t ppp-linkup
-		pfctl -i ${IF} -k 0.0.0.0/0 -k ${OLD_ROUTER}/32
-		pfctl -i ${IF} -k ${OLD_ROUTER}/32 -k 0.0.0.0/0
-	fi
-
 	# let the configuration system know that the ipv4 has changed.
 	echo ${REMOTE_IP} > /tmp/${IF}_router
 	/bin/rm -f /tmp/${IF}_router.last

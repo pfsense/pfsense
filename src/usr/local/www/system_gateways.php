@@ -38,6 +38,7 @@ require_once("gwlb.inc");
 $simplefields = array('defaultgw4', 'defaultgw6');
 
 init_config_arr(array('gateways', 'gateway_item'));
+refresh_gateways(); // make sure we're working on a current gateway list
 $a_gateway_item = &$config['gateways']['gateway_item'];
 
 $pconfig = $_REQUEST;
@@ -84,7 +85,6 @@ if ($_POST['apply']) {
 	}
 }
 
-refresh_gateways_cache(); // make sure we're working on a current gateway list
 $a_gateways = get_gateways(GW_CACHE_INDEXED);
 
 function can_delete_disable_gateway_item($id, $disable = false) {

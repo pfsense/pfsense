@@ -47,7 +47,7 @@ if (!array_key_exists('GatewaysCache', $GLOBALS)) {
 
 /**
  * Caches the gateway list and filters the result. Changes to gateways should
- * call refresh_gateways_cache(), e.g. when adding or removing dynamic gateways.
+ * call refresh_gateways(), e.g. when adding or removing dynamic gateways.
  * 
  * @param array $flags Additional gateways to include.
  * 
@@ -55,7 +55,7 @@ if (!array_key_exists('GatewaysCache', $GLOBALS)) {
  */
 function get_gateways(int $flags = 0): array {
 	if (!is_array($GLOBALS['GatewaysCache'])) {
-		refresh_gateways_cache(); // create the gateway list cache
+		refresh_gateways(); // create the gateway list cache
 	}
 	$gateways = $GLOBALS['GatewaysCache'];
 	$indexed = boolval($flags & GW_CACHE_INDEXED);
@@ -100,8 +100,40 @@ function get_gateways(int $flags = 0): array {
 	return $gateways;
 }
 
-function refresh_gateways_cache(): void {
+/**
+ * Generates a list of all gateways and adds them to the config if missing.
+ */
+function refresh_gateways(): void {
+	// Generate all gateways and cache the result
 	$GLOBALS['GatewaysCache'] = return_gateways_array(true, true, true);
+
+	// Get gateways that exist in the config
+	$saved_gateways = array_column(config_get_path('gateways/gateway_item', []), 'name', 'name');
+
+	// Exclude null gateways from being saved to config
+	foreach (array_diff_key($GLOBALS["GatewaysCache"], array_fill_keys(['Null4', 'Null6'], null)) as $gateway) {
+		// Save any of the generated gateways that are not found in config
+		if (!array_key_exists($gateway['name'], $saved_gateways)) {
+			// Build the gateway elements and save the gateway to config
+			config_set_path('gateways/gateway_item',
+				array_merge(config_get_path('gateways/gateway_item', []), [[
+					'interface' => $gateway['friendlyiface'],
+					'gateway' => $gateway['dynamic'] ? 'dynamic' : $gateway['gateway'],
+					'name' => $gateway['name'],
+					'weight' => $gateway['weight'] ?? 1,
+					'ipprotocol' => $gateway['ipprotocol'],
+					'descr' => $gateway['descr'],
+					'gw_down_kill_states' => $gateway['gw_down_kill_states'] ?? ''
+				]])
+			);
+			if (!isset($write_config)) {
+				$write_config = true;
+			}
+		}
+	}
+	if ($write_config) {
+		write_config(gettext('Synced configured gateways'), true, true);
+	}
 }
 
 /* Returns an array of default values used for dpinger */
@@ -265,7 +297,7 @@ function start_dpinger($gateway) {
 function setup_gateways_monitor() {
 	global $config, $g;
 
-	refresh_gateways_cache(); // dynamic gateways may have changed so refresh the cache
+	refresh_gateways(); // dynamic gateways may have changed so refresh the cache
 	$gateways_arr = get_gateways();
 	if (!is_array($gateways_arr)) {
 		log_error(gettext("No gateways to monitor. dpinger will not run."));
@@ -1816,7 +1848,7 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 	}
 	global $config, $gateway_state_kill_modes;
 
-	refresh_gateways_cache(); // make sure we're validating against a current gateway list
+	refresh_gateways(); // make sure we're validating against a current gateway list
 	$a_gateways = get_gateways(GW_CACHE_INDEXED);
 	$input_errors = array();
 

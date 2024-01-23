@@ -3166,7 +3166,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 	set_sysctl(array('net.inet.ipsec.async_crypto' => (int) (isset($ipseccfg['async_crypto']) && ($ipseccfg['async_crypto'] == "enabled"))));
 
 	/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
-	refresh_gateways_cache(); // make sure automatic VTI gateways are created
+	refresh_gateways(); // make sure automatic VTI gateways are created
 	foreach (get_interface_arr() as $thisif) {
 		if (substr($thisif, 0, 5) == "ipsec") {
 			$ipsec_vti_cleanup_ifs[] = $thisif;

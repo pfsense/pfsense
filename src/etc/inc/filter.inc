@@ -1034,7 +1034,7 @@ function filter_generate_gateways() {
 	update_filter_reload_status(gettext("Creating gateway group item..."));
 
 	/* Lookup Gateways to be used in filter rules once */
-	refresh_gateways_cache(); // make sure rules are generated from a current gateway list
+	refresh_gateways(); // make sure rules are generated from a current gateway list
 	$GatewaysList = get_gateways();
 	$GatewayGroupsList = return_gateway_groups_array(true);
 	$GatewaysStatus = return_gateways_status(true);

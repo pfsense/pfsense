@@ -10,7 +10,7 @@
 global $config;
 $config = parse_config(true);
 
-refresh_gateways_cache(); // make sure we're working on a current gateway list
+refresh_gateways(); // make sure we're working on a current gateway list
 $a_gateways = get_gateways(GW_CACHE_INDEXED);
 
 // find gw interfaces os names (em0, vtnet1, etc):

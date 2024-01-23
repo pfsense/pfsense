@@ -31,7 +31,7 @@ function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams) {
 		buildThermalSensorsDataRaw(thermalSensorsData, widgetKey);
 	} else {
 		buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
-		updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
+		updateThermalSensorsDataGraph(thermalSensorsData, widgetKey);
 	}
 }
 
@@ -110,7 +110,7 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 }
 
-function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
+function updateThermalSensorsDataGraph(thermalSensorsData, widgetKey) {
 	var thermalSensorsArray = new Array();
 
 	if (thermalSensorsData && thermalSensorsData != "") {

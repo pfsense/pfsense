@@ -214,7 +214,6 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 		function ts_callback(s) {
 			var thermalSensorsData = s || "";
 			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams);
-			firstTime = false;
 		}
 
 		// POST data to send via AJAX

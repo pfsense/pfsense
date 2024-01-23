@@ -24,8 +24,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-upnpstatus
-##|*NAME=Status: UPnP Status
-##|*DESCR=Allow access to the 'Status: UPnP Status' page.
+##|*NAME=Status: UPnP IGD & PCP/NAT-PMP Status
+##|*DESCR=Allow access to the 'Status: UPnP IGD & PCP/NAT-PMP Status' page.
 ##|*MATCH=status_upnp.php*
 ##|-PRIV
 
@@ -41,7 +41,7 @@ if ($_POST) {
 $rdr_entries = array();
 exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 
-$pgtitle = array(gettext("Status"), gettext("UPnP &amp; NAT-PMP"));
+$pgtitle = array(gettext("Status"), gettext("UPnP IGD & PCP/NAT-PMP"));
 $shortcut_section = "upnp";
 
 include("head.inc");
@@ -54,7 +54,7 @@ if (!$config['installedpackages'] ||
     !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
     !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 
-	print_info_box(sprintf(gettext('UPnP is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP &amp; NAT-PMP'), '</a>'), 'danger');
+	print_info_box(sprintf(gettext('UPnP IGD & PCP/NAT-PMP is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services > UPnP IGD & PCP/NAT-PMP'), '</a>'), 'danger');
 	include("foot.inc");
 	exit;
 }
@@ -62,7 +62,7 @@ if (!$config['installedpackages'] ||
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("UPnP &amp; NAT-PMP Rules")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("UPnP IGD & PCP/NAT-PMP Rules")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>

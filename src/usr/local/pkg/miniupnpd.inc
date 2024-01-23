@@ -91,7 +91,7 @@
 
 	function validate_form_miniupnpd($post, &$input_errors) {
 		if ($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp'])) {
-			$input_errors[] = 'At least one of \'UPnP\' or \'NAT-PMP\' must be allowed';
+			$input_errors[] = 'At least one of \'UPnP IGD\' or \'PCP/NAT-PMP\' must be allowed';
 		}
 		if ($post['iface_array']) {
 			foreach ($post['iface_array'] as $iface) {
@@ -280,7 +280,7 @@
 					$config_text .= "queue={$upnp_config['upnpqueue']}\n";
 				}
 
-				/* Allow UPnP or NAT-PMP as requested */
+				/* Allow UPnP IGD or PCP/NAT-PMP as requested */
 				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp']   ? "yes\n" : "no\n");
 				$config_text .= "enable_natpmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
 
@@ -319,7 +319,7 @@
 				@unlink($config_file);
 			}
 		}
-		/* Reload filter to trigger UPnP rule changes */
+		/* Reload filter to trigger UPnP IGD & PCP/NAT-PMP rule changes */
 		send_event("filter reload");
 	}
 ?>

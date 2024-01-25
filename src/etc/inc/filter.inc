@@ -3591,9 +3591,13 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 			      ((isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
+			    (isset($rule['statepolicy']) and !empty($rule['statepolicy'])) or
 			    (isset($rule['sloppy'])) or
 			    (isset($rule['nopfsync']))) {
 				$aline['flags'] .= "( ";
+				if (!empty($rule['statepolicy'])) {
+					$aline['flags'] .= "{$rule['statepolicy']} ";
+				}
 				if (isset($rule['sloppy'])) {
 					$aline['flags'] .= "sloppy ";
 				}

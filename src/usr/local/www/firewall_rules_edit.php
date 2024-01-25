@@ -69,6 +69,12 @@ $icmplookup = array(
 	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
 );
 
+$statepolicy_values = [
+	''  => gettext('Use global default'),
+	'if-bound' => gettext('Interface Bound States'),
+	'floating' => gettext('Floating States'),
+];
+
 $statetype_values = array(
 	'keep state' => gettext('Keep'),
 	'sloppy state' => gettext('Sloppy'),
@@ -119,6 +125,7 @@ function is_aoadv_used($rule_config) {
 	    ($rule_config['tcpflags2'] != "") ||
 	    ($rule_config['tcpflags_any']) ||
 	    ($rule_config['nopfsync']) ||
+	    ($rule_config['statepolicy'] != "") ||
 	    (($rule_config['statetype'] != "") && ($rule_config['statetype'] != "keep state")) ||
 	    ($rule_config['nosync']) ||
 	    ($rule_config['vlanprio'] != "") ||
@@ -284,6 +291,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
 	$pconfig['max-src-conn'] = $a_filter[$id]['max-src-conn'];
 	$pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
+	$pconfig['statepolicy'] = $a_filter[$id]['statepolicy'];
 	$pconfig['statetype'] = $a_filter[$id]['statetype'];
 	$pconfig['statetimeout'] = $a_filter[$id]['statetimeout'];
 	$pconfig['nopfsync'] = isset($a_filter[$id]['nopfsync']);
@@ -828,6 +836,9 @@ if ($_POST['save']) {
 	if ($_POST['tagged'] && !is_validaliasname($_POST['tagged'])) {
 		$input_errors[] = gettext("Invalid tagged value.");
 	}
+	if ($_POST['statepolicy'] && !array_key_exists($_POST['statepolicy'], $statepolicy_values)) {
+		$input_errors[] = gettext("Invalid State Policy.");
+	}
 	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
 		$input_errors[] = gettext("Invalid State Type.");
 	}
@@ -929,6 +940,7 @@ if ($_POST['save']) {
 		$filterent['max-src-conn'] = $_POST['max-src-conn'];
 		$filterent['max-src-states'] = $_POST['max-src-states'];
 		$filterent['statetimeout'] = $_POST['statetimeout'];
+		$filterent['statepolicy'] = $_POST['statepolicy'];
 		$filterent['statetype'] = $_POST['statetype'];
 		$filterent['os'] = $_POST['os'];
 		if ($_POST['nopfsync'] <> "") {
@@ -1626,6 +1638,16 @@ $section->addInput(new Form_Checkbox(
 	'Prevent states created by this rule to be sync\'ed over pfsync.',
 	$pconfig['nopfsync']
 ));
+
+$section->addInput(new Form_Select(
+	'statepolicy',
+	'State Policy',
+	(isset($pconfig['statepolicy'])) ? $pconfig['statepolicy'] : "",
+	$statepolicy_values
+))->setHelp('Optionally overrides the default state policy behavior to force a specific policy ' .
+		'for connections matching this rule. Only effective when rules keep state.%1$s' .
+		'The global default policy option is located at System > Advanced, Firewall &amp; NAT tab.',
+		'<br />');
 
 $section->addInput(new Form_Select(
 	'statetype',

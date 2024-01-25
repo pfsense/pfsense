@@ -562,43 +562,6 @@ function openvpn_get_keydirlist() {
 	return $keydirs;
 }
 
-function openvpn_get_engines() {
-	$openssl_engines = array('none' => gettext('No Hardware Crypto Acceleration'));
-	exec("/usr/bin/openssl engine -t -c", $openssl_engine_output);
-	$openssl_engine_output = implode("\n", $openssl_engine_output);
-	$openssl_engine_output = preg_replace("/\\n\\s+/", "|", $openssl_engine_output);
-	$openssl_engine_output = explode("\n", $openssl_engine_output);
-
-	foreach ($openssl_engine_output as $oeo) {
-		$keep = true;
-		$details = explode("|", $oeo);
-		$engine = array_shift($details);
-		$linematch = array();
-		preg_match("/\((.*)\)\s(.*)/", $engine, $linematch);
-		foreach ($details as $dt) {
-			if (strpos($dt, "unavailable") !== FALSE) {
-				$keep = false;
-			}
-			if (strpos($dt, "available") !== FALSE) {
-				continue;
-			}
-			if (strpos($dt, "[") !== FALSE) {
-				$ciphers = trim($dt, "[]");
-			}
-		}
-		if (!empty($ciphers)) {
-			$ciphers = " - " . $ciphers;
-		}
-		if (strlen($ciphers) > 60) {
-			$ciphers = substr($ciphers, 0, 60) . " ... ";
-		}
-		if ($keep) {
-			$openssl_engines[$linematch[1]] = $linematch[2] . $ciphers;
-		}
-	}
-	return $openssl_engines;
-}
-
 function openvpn_get_buffer_values() {
 	$sendbuf_max = get_single_sysctl('net.inet.tcp.sendbuf_max');
 	$recvbuf_max = get_single_sysctl('net.inet.tcp.recvbuf_max');
@@ -609,11 +572,6 @@ function openvpn_get_buffer_values() {
 		$buffer_values[$buffer_max/$bs] = format_bytes($buffer_max/$bs);
 	}
 	return $buffer_values;
-}
-
-function openvpn_validate_engine($engine) {
-	$engines = openvpn_get_engines();
-	return array_key_exists($engine, $engines);
 }
 
 function openvpn_validate_host($value, $name) {
@@ -1038,10 +996,6 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 			break;
 		default:
-	}
-
-	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none")) {
-		$conf .= "engine {$settings['engine']}\n";
 	}
 
 	// server specific settings

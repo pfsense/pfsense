@@ -175,7 +175,6 @@ if (($act == "edit") || ($act == "dup")) {
 		}
 		$pconfig['data_ciphers_fallback'] = $a_server[$id]['data_ciphers_fallback'];
 		$pconfig['digest'] = !empty($a_server[$id]['digest']) ? $a_server[$id]['digest'] : "SHA256";
-		$pconfig['engine'] = $a_server[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
 		$pconfig['tunnel_networkv6'] = $a_server[$id]['tunnel_networkv6'];
@@ -363,11 +362,6 @@ if ($_POST['save']) {
 	if (!empty($pconfig['digest']) &&
 	    !array_key_exists($pconfig['digest'], openvpn_get_digestlist())) {
 		$input_errors[] = gettext("The selected Auth Digest Algorithm is not valid.");
-	}
-
-	if (!empty($pconfig['engine']) &&
-	    !array_key_exists($pconfig['engine'], openvpn_get_engines())) {
-		$input_errors[] = gettext("The selected Hardware Crypto engine is not valid.");
 	}
 
 	if (!empty($pconfig['cert_depth']) &&
@@ -755,7 +749,6 @@ if ($_POST['save']) {
 
 		$server['data_ciphers_fallback'] = $pconfig['data_ciphers_fallback'];
 		$server['digest'] = $pconfig['digest'];
-		$server['engine'] = $pconfig['engine'];
 
 		foreach (array('', 'v6') as $ntype) {
 			$server["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
@@ -1232,13 +1225,6 @@ if ($act=="new" || $act=="edit"):
 		    'When an AEAD Encryption Algorithm mode is used, such as AES-GCM, this digest is used for the control channel only, not the data channel.%1$s' .
 		    'The server and all clients must have the same setting. While SHA1 is the default for OpenVPN, this algorithm is insecure. ',
 			'<br />');
-
-	$section->addInput(new Form_Select(
-		'engine',
-		'Hardware Crypto',
-		$pconfig['engine'],
-		openvpn_get_engines()
-		));
 
 	$section->addInput(new Form_Select(
 		'cert_depth',

@@ -385,15 +385,6 @@ function step10_stepbeforeformdisplay() {
 				$opt['value'] = $name;
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
 			}
-		} else if ($field['name'] == "engine") {
-			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
-			$engines = openvpn_get_engines();
-			foreach ($engines as $name => $desc) {
-				$opt = array();
-				$opt['name'] = $desc;
-				$opt['value'] = $name;
-			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
-			}
 		} else if ($field['name'] == "nbttype") {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			foreach ($netbios_nodetypes as $type => $name) {
@@ -660,7 +651,6 @@ function step12_submitphpaction() {
 	$server['data_ciphers'] = is_array($pconfig['step10']['dataciphers']) ? implode(',', $pconfig['step10']['dataciphers']) : $pconfig['step10']['dataciphers'];
 	$server['data_ciphers_fallback'] = $pconfig['step10']['dataciphersfallback'];
 	$server['digest'] = $pconfig['step10']['digest'];
-	$server['engine'] = $pconfig['step10']['engine'];
 	$server['tunnel_network'] = $pconfig['step10']['tunnelnet'];
 	if (isset($pconfig['step10']['rdrgw']))
 		$server['gwredir'] = $pconfig['step10']['rdrgw'];

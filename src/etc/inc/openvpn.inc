@@ -2426,7 +2426,7 @@ function openvpn_authscript_string($authmode, $strictusercn, $mode_id, $local_po
 
 function openvpn_inuse($id, $mode) {
 	foreach (get_configured_interface_list(true) as $if) {
-		if (config_get_path("interfaces/{$if}/if") == openvpn_name($mode, $id)) {
+		if (config_get_path("interfaces/{$if}/if") == openvpn_name($mode, ['vpnid' => $id])) {
 			return true;
 		}
 	}

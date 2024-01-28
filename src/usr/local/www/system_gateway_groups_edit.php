@@ -56,6 +56,7 @@ if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['item'] = &$a_gateway_groups[$id]['item'];
 	$pconfig['descr'] = $a_gateway_groups[$id]['descr'];
 	$pconfig['trigger'] = $a_gateway_groups[$id]['trigger'];
+	$pconfig['keep_failover_states'] = $a_gateway_groups[$id]['keep_failover_states'];
 }
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
@@ -122,6 +123,9 @@ if (isset($_POST['save'])) {
 		$gateway_group['name'] = $_POST['name'];
 		$gateway_group['item'] = $pconfig['item'];
 		$gateway_group['trigger'] = $_POST['trigger'];
+		if (!empty($pconfig['keep_failover_states'])) {
+			$gateway_group['keep_failover_states'] = $pconfig['keep_failover_states'];
+		}
 		$gateway_group['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_gateway_groups[$id]) {
@@ -298,6 +302,20 @@ $section->addInput(new Form_StaticText(
 	'Virtual IP',
 	'The virtual IP field selects which (virtual) IP should be used when this group applies to a local Dynamic DNS, IPsec or OpenVPN endpoint.'
 ));
+
+$section->addInput(new Form_Select(
+	'keep_failover_states',
+	'*Keep failover states',
+	$pconfig['keep_failover_states'],
+	[
+		'' => 'Use global behavior (default)',
+		'keep' => 'Keep states on gateway recovery',
+		'kill' => 'Kill states on gateway recovery',
+	]
+))->setHelp('%2$sKeep states on gateway recovery%3$s: states for this gateway group ' .
+	'are unaffected.%1$s%2$sKill states on gateway recovery%3$s: states will ' .
+	'be killed for lower-tier gateways when a higher-tier gateway comes online.',
+	'<br/>', '<strong>', '</strong>');
 
 $section->addInput(new Form_Select(
 	'trigger',

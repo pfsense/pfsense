@@ -566,7 +566,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 				return;
 			}
 		}
-		unset($rules_loading, $rules_error);
 	} else {
 		/* Save the last version that works */
 		@copy("{$g['tmp_path']}/rules.debug",
@@ -676,6 +675,10 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	update_filter_reload_status(gettext("Done"));
 	if (platform_booting() == true) {
 		echo gettext("done.") . "\n";
+	}
+	
+	if (!platform_booting() && !$rules_loading) {
+		remove_failover_states();
 	}
 
 	clear_filter_subsystems_dirty();

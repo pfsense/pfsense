@@ -347,6 +347,31 @@ $form->add($section);
 $section = new Form_Section('Gateway Monitoring');
 
 $section->addInput(new Form_Select(
+	'remove_failover_states_default',
+	'State Killing on Gateway Recovery',
+	$pconfig['remove_failover_states_default'],
+	[
+		'' => 'Use the gateway group\'s behavior',
+		'all' => 'Kill all states',
+		'ipfamily' => 'Kill states of the same IP family',
+	]
+))->setHelp('Controls the state killing behavior for the %2$sdefault ' .
+	'gateway%3$s when set to a failover gateway group. %1$s%2$sKill all ' .
+	'states%3$s: all states for lower-tier gateways are killed.%1$s' .
+	'%2$sKill states of the same IP family%3$s: only states with the same IP ' .
+	'family as the gateway group are killed.', '<br/>', '<strong>', '</strong>');
+$section->addInput(new Form_Checkbox(
+	'keep_failover_states',
+	null,
+	'Keep failover states on gateway recovery',
+	$pconfig['keep_failover_states']
+))->setHelp('Controls the state killing behavior for %2$sall gateway ' ./////////
+	'groups%3$s - this behavior can be overridden per-gateway group.%1$s' .
+	'%2$sUnchecked%3$s: kill policy routing states for lower-tier gateways ' .
+	'on gateway recovery.%1$s%2$sChecked%3$s: do not kill policy routing ' .
+	'on gateway recovery.', '<br/>', '<strong>', '</strong>');
+
+$section->addInput(new Form_Select(
 	'gw_down_kill_states',
 	'State Killing on Gateway Failure',
 	$pconfig['gw_down_kill_states'],

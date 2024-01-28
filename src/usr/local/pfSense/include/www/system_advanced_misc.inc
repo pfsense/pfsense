@@ -93,6 +93,8 @@ function getSystemAdvancedMisc($json = false) {
 	$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
 	$pconfig['mds_disable'] = config_get_path('system/mds_disable');
 	$pconfig['schedule_states'] = isset($config['system']['schedule_states']);
+	$pconfig['remove_failover_states_default'] = config_get_path('system/remove_failover_states_default');
+	$pconfig['keep_failover_states'] = config_path_enabled('system', 'keep_failover_states');
 	$pconfig['gw_down_kill_states'] = config_get_path('system/gw_down_kill_states');
 	$pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 	$pconfig['dpinger_dont_add_static_routes'] = isset($config['system']['dpinger_dont_add_static_routes']);
@@ -361,6 +363,18 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			$config['system']['schedule_states'] = true;
 		} else {
 			config_del_path('system/schedule_states');
+		}
+
+		if (!empty($post['remove_failover_states_default'])) {
+			$config['system']['remove_failover_states_default'] = $post['remove_failover_states_default'];
+		} else {
+			config_del_path('system/remove_failover_states_default');
+		}
+
+		if ($post['keep_failover_states']) {
+			$config['system']['keep_failover_states'] = true;
+		} else {
+			config_del_path('system/keep_failover_states');
 		}
 
 		if ($post['gw_down_kill_states']) {

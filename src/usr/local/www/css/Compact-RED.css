@@ -93,6 +93,11 @@ body {
     margin-bottom: 0px;
 }
 
+.dropdown-menu {
+    max-height: calc(98vh - 35px);
+    overflow-y: auto;
+}
+
 .dropdown-menu>li>a {
     padding: 0px 20px;
     line-height: 26px;

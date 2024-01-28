@@ -76,6 +76,8 @@ table.sortable-theme-bootstrap {
     background-color: #000;
     opacity: .93;
     border-radius: 10px;
+    max-height: calc(98vh - 35px);
+    overflow-y: auto;
 }
 
 .dropdown-menu>li>a {

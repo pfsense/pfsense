@@ -210,6 +210,11 @@ tr.disabled a {
     margin-bottom: 20px;
 }
 
+.dropdown-menu {
+    max-height: calc(98vh - 35px);
+    overflow-y: auto;
+}
+
 .dropdown-menu>li>a {
     padding: 5px 20px;
 }

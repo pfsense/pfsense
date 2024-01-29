@@ -510,11 +510,14 @@ function firewall_check_for_advanced_options(&$item) {
 	if ($item['defaultqueue']) {
 		$item_set .= "defaultqueue " . htmlspecialchars($item['defaultqueue']) . " ";
 	}
+	if ($item['tagged']) {
+		if (array_key_exists('nottagged', $item)) {
+			$item_set .= '!';
+		}
+		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
+	}
 	if ($item['tag']) {
 		$item_set .= "tag " . htmlspecialchars($item['tag']) . " ";
-	}
-	if ($item['tagged']) {
-		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
 	}
 	if (isset($item['allowopts'])) {
 		$item_set .= "allowopts ";

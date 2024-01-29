@@ -450,57 +450,8 @@ function pprint_port($port) {
 function insert_word_breaks_in_domain_name($domain_name) {
 	return str_replace('.', '<wbr>.', $domain_name);
 }
-function testdebug(bool $incbt = false, array|string $arr = null, float $sleep = 0) {
-	$testdebug_time_now = microtime(true);
-	global $testdebug_time;
-	$testdebug_time_text = $testdebug_time_now;
-	if (!empty($testdebug_time)) {
-		$testdebug_time_text = '+' . number_format(($testdebug_time_now - $testdebug_time), 4) . " :: {$testdebug_time_now}" ;
-	}
-	if ($sleep >= 1) {
-		sleep(ceil($sleep));
-	} elseif ($sleep > 0) {
-		usleep(ceil($sleep * 1000 * 1000));
-	}
-	$txt = '';
-	$bt = [];
-	if ($incbt) {
-		$bt = array_reverse(debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT));
-		$txt =  '#################' . PHP_EOL;
-		$txt .= '### BACKTRACE ###' . PHP_EOL;
-		$txt .= '#################' . PHP_EOL;
-	}
-	foreach ($bt as $tk => $tv) {
-		$ttxt = '';
-		if (isset($tv['function']) && ($tk != array_key_last($bt))) {
-			$ttxt .= "#{$tk}:: ";
-			$ftxt = $tv['function'] . '(';
-			foreach ($tv['args'] as $arg) {
-				$ftxt .= ($arg != $tv['args'][array_key_last($tv['args'])]) ? "{$arg}," : "{$arg}";
-			}
-			$ttxt .= $ftxt . ')' . ((isset($tv['file'])) ? " at {$tv['file']}[{$tv['line']}]" : '');
-		}
-		if (!empty($ttxt)) {$txt .= $ttxt . PHP_EOL;}
-	}
-	if (!empty($arr)) {
-		$txt_header = 'DEBUG [' . $testdebug_time_text . ']';
-		$txt .= str_pad('', strlen($txt_header), '=') . PHP_EOL;
-		$txt .= $txt_header . PHP_EOL;
-		$atxt = '';
-		if (is_array($arr)) {
-			foreach ($arr as $ak => $av) {
-				$atxt .= "#{$ak}:: " . var_export($av, true) . PHP_EOL;
-			}
-		} else {
-			$atxt .= "#0:: " . var_export($arr, true) . PHP_EOL;
-		}
-		$txt .= $atxt . PHP_EOL;
-	}
-	file_put_contents('/tmp/_.txt', $txt, FILE_APPEND);
-	$testdebug_time = $testdebug_time_now;
-}
+
 function firewall_check_for_advanced_options(&$item) {
-	testdebug(true, [$item]);
 	$item_set = "";
 	if ($item['os']) {
 			$item_set .= "os " . htmlspecialchars($item['os']) . " ";
@@ -559,14 +510,11 @@ function firewall_check_for_advanced_options(&$item) {
 	if ($item['defaultqueue']) {
 		$item_set .= "defaultqueue " . htmlspecialchars($item['defaultqueue']) . " ";
 	}
-	if ($item['tagged']) {
-		if (array_key_exists('nottagged', $item)) {
-			$item_set .= '!';
-		}
-		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
-	}
 	if ($item['tag']) {
 		$item_set .= "tag " . htmlspecialchars($item['tag']) . " ";
+	}
+	if ($item['tagged']) {
+		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
 	}
 	if (isset($item['allowopts'])) {
 		$item_set .= "allowopts ";

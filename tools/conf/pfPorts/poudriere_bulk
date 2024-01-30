@@ -70,6 +70,7 @@ net/trafshow3
 net/udpbroadcastrelay
 net/vnstat
 security/%%PRODUCT_NAME%%
+security/%%PRODUCT_NAME%%-ce
 sysutils/%%PRODUCT_NAME%%-default-config
 sysutils/%%PRODUCT_NAME%%-default-config-serial
 security/%%PRODUCT_NAME%%-pkg-acme

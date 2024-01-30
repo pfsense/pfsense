@@ -305,16 +305,16 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Select(
 	'keep_failover_states',
-	'*Keep failover states',
+	'*Keep Failover States',
 	$pconfig['keep_failover_states'],
 	[
 		'' => 'Use global behavior (default)',
 		'keep' => 'Keep states on gateway recovery',
 		'kill' => 'Kill states on gateway recovery',
 	]
-))->setHelp('%2$sKeep states on gateway recovery%3$s: states for this gateway group ' .
-	'are unaffected.%1$s%2$sKill states on gateway recovery%3$s: states will ' .
-	'be killed for lower-tier gateways when a higher-tier gateway comes online.',
+))->setHelp('%2$sKeep states on gateway recovery%3$s: states for this gateway ' .
+	'group are unaffected.%1$s%2$sKill states on gateway recovery%3$s: kill  ' .
+	'policy routing states for lower-priority gateways.',
 	'<br/>', '<strong>', '</strong>');
 
 $section->addInput(new Form_Select(

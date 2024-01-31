@@ -497,14 +497,19 @@ function get_highest_failover_tier_online(?string $gateway_group): int|false {
 			}
 		}
 
-		// no online gateways, or highest online is highest tier
-		$highest_online_tier = min(array_values($group_gateways));
-		if (empty($group_gateways) || ($highest_online_tier == $highest_tier)) {
+		// no online gateways
+		if (empty($group_gateways)) {
 			return 0;
 		}
 
-		// get the highest-priority failover tier of online gateways
-		return min(array_values($group_gateways));
+		// highest online is highest tier
+		$highest_online_tier = min(array_values($group_gateways));
+		if ($highest_online_tier == $highest_tier) {
+			return 0;
+		}
+
+		// return the highest-priority failover tier of online gateways
+		return $highest_online_tier;
 	}
 
 	return false;

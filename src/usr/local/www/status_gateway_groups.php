@@ -39,7 +39,7 @@ require_once("guiconfig.inc");
 
 if ($_POST['act'] == 'killgw') {
 	if (!empty($_POST['gwname'])) {
-		mwexec("/sbin/pfctl -k label -k " . escapeshellarg("gw:{$_POST['gwname']}"));
+		remove_failover_states($_POST['gwname']);
 	} elseif (!empty($_POST['gwip']) && is_ipaddr($_POST['gwip'])) {
 		list($ipaddr, $scope) = explode('%', $_POST['gwip']);
 		mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($ipaddr));

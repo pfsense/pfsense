@@ -441,10 +441,86 @@ function setup_gateways_monitor() {
 }
 
 /**
- * Loops through each gateway group and kills states for lower-priority-tier gateways.
- * Supports the same gateway at different tiers in different gateway groups.
+ * Looks for the highest priority failover tier that is currently online in a
+ * failover gateway group. A failover tier is any tier number greater than the
+ * lowest configured tier number. A failover gateway group must consist of at
+ * least two different tiers.
+ * 
+ * @param string $gateway_group Name of an existing failover gateway group
+ * 
+ * @return int The tier number - returns 0 if no matches are found
+ * @return false Not a valid failover gateway group
  */
-function remove_failover_states(): void {
+function get_highest_failover_tier_online(?string $gateway_group): int|false {
+	if (empty($gateway_group)) {
+		return false;
+	}
+
+	foreach (config_get_path('gateways/gateway_group', []) as $group) {
+		// check if this is the gateway group being queried
+		if ($group['name'] != $gateway_group) {
+			continue;
+		}
+
+		// make sure there are expected values and at least two gateways in the gateway group
+		if (!is_array($group['item']) || empty($group['item']) || (count($group['item']) < 2)) {
+			continue;
+		}
+		// build a list of gateways and their tiers
+		$group_gateways = [];
+		foreach ($group['item'] as $item) {
+			$gateway_item = explode("|", $item);
+			// at least a gateway name and tier is expected
+			if (count($gateway_item) < 2) {
+				continue;
+			}
+
+			$group_gateways[$gateway_item[0]] = intval($gateway_item[1]);
+		}
+
+		// make sure it's a failover group by checking for different tiers
+		$group_tiers = array_unique(array_values($group_gateways));
+		if (count($group_tiers) < 2) {
+			break;
+		}
+
+		if (!isset($gateways_states)) {
+			// get a list of all relevant gateway states
+			$gateways_states = return_gateways_status(true);
+		}
+
+		$highest_tier = min($group_tiers);
+		// remove offline gateways
+		foreach (array_keys($group_gateways) as $gateway_name) {
+			if ($gateways_states[$gateway_name]['status'] != 'online') {
+				unset($group_gateways[$gateway_name]);
+			}
+		}
+
+		// no online gateways, or highest online is highest tier
+		$highest_online_tier = min(array_values($group_gateways));
+		if (empty($group_gateways) || ($highest_online_tier == $highest_tier)) {
+			return 0;
+		}
+
+		// get the highest-priority failover tier of online gateways
+		return min(array_values($group_gateways));
+	}
+
+	return false;
+}
+
+/**
+ * Loops through each gateway group and kills states for lower-priority gateways.
+ * Supports the same gateway at different tiers in different gateway groups. A
+ * failover gateway group name may be provided to restrict the state removal.
+ * 
+ * @param string $gateway_name Gateway group name to remove failover states for
+ */
+function remove_failover_states(?string $gateway_name = null): void {
+	// get the global default for gateway groups
+	$keep_failover_states = config_path_enabled('system', 'keep_failover_states');
+
 	// if killing states from the firewall itself, check for default failover gateway groups
 	$remove_states_default = config_get_path('system/remove_failover_states_default');
 	if ($remove_states_default) {
@@ -462,7 +538,8 @@ function remove_failover_states(): void {
 
 	foreach (config_get_path('gateways/gateway_group', []) as $group) {
 		// skip if states don't need to be killed for this gateway group
-		if (!$remove_states_default && ($group['keep_failover_states'] == 'keep')) {
+		if ((!empty($gateway_name) && ($group['name'] != $gateway_name)) ||
+		    ($keep_failover_states && ($group['keep_failover_states'] != 'kill'))) {
 			continue;
 		}
 
@@ -470,8 +547,8 @@ function remove_failover_states(): void {
 		if (!is_array($group['item']) || empty($group['item']) || (count($group['item']) < 2)) {
 			continue;
 		}
-		// build a list of gateway groups with gateway interfaces and tiers
-		$gateway_groups = [];
+		// build a list gateway interfaces and tiers
+		$gateway_interfaces = [];
 		foreach ($group['item'] as $item) {
 			$gateway_item = explode("|", $item);
 			// at least a gateway name and tier is expected
@@ -484,52 +561,46 @@ function remove_failover_states(): void {
 				$gateways_states = return_gateways_status(true);
 			}
 
-			// only get online gateways
-			if ($gateways_states[$gateway_item[0]]['status'] == 'online') {
-				if (!isset($all_gateways)) {
-					// get a list of all relevant gateways
-					$all_gateways = get_gateways();
-				}
-
-				// get the gateway's interface and tier
-				$gateway_groups[$group['name']][$all_gateways[$gateway_item[0]]['interface']] = intval($gateway_item[1]);
+			// only process online gateways
+			if ($gateways_states[$gateway_item[0]]['status'] != 'online') {
+				continue;
 			}
+
+			if (!isset($all_gateways)) {
+				// get a list of all relevant gateways
+				$all_gateways = get_gateways();
+			}
+
+			// get the gateway's interface and tier
+			$gateway_interfaces[$all_gateways[$gateway_item[0]]['interface']] = intval($gateway_item[1]);
 		}
 
-		// make sure there are at least two gateways in the gateway group being processed
-		if (empty($gateway_groups[$group['name']]) || (count($gateway_groups[$group['name']]) < 2)) {
+		// make sure there are at least two online gateways (interfaces) in this gateway group
+		if (empty($gateway_interfaces) || (count($gateway_interfaces) < 2)) {
 			continue;
 		}
 
-		// get a list of all assigned interfaces
-		if (!isset($all_interfaces)) {
-			require_once("interfaces_fast.inc");
-			$all_interfaces = convert_real_interface_to_friendly_interface_name_fast();
-		}
-
-		// get the interfaces of the default gateway group
+		// build a list of interfaces, used to kill states from the firewall itself
 		if ($remove_states_default && array_key_exists($group['name'], $default_gateways)) {
-			$default_gateways[$group['name']] = $gateway_groups[$group['name']];
-		}
+			// get the interfaces of the default gateway group
+			$default_gateways[$group['name']] = $gateway_interfaces;
 
-		// build a list of interfaces to kill states on
-		$interfaces_to_kill = $all_interfaces;
-		foreach (array_keys($gateway_groups[$group['name']], min(array_values($gateway_groups[$group['name']]))) as $gateway_interface) {
-			// exclude the interface of the highest tier gateway(s)
-			unset($interfaces_to_kill[$gateway_interface]);
-			if ($remove_states_default) {
+			// for states from the firewall itself (when the default gateway is set to a failover gateway group)
+			foreach (array_keys($gateway_interfaces, min(array_values($gateway_interfaces))) as $gateway_interface) {
+				// exclude the interface of the highest priority gateway(s)
 				unset($default_gateways[$group['name']][$gateway_interface]);
 			}
-		}
 
-		// if all states are to be killed for this gateway group, skip only killing policy routing states
-		if ($remove_states_default && array_key_exists($group['name'], $default_gateways)) {
+			// all states are to be killed for this gateway group, skip killing only policy routing states
 			continue;
 		}
 
-		foreach (array_keys($interfaces_to_kill) as $interface) {
-			// specify the interface to avoid killing states for the higher-tier gateway(s)
-			mwexec_bg('/sbin/pfctl -M -i ' . escapeshellarg($interface) . ' -k label -k ' . escapeshellarg("gw:{$group['name']}") . ' -q');
+		// build a list of tiers to kill policy routing states for
+		$tiers_to_kill = array_unique(array_values($gateway_interfaces));
+		// avoid killing states for the higher-tier gateway(s)
+		$tiers_to_kill = array_diff($tiers_to_kill, [min($tiers_to_kill)]);
+		foreach ($tiers_to_kill as $tier) {
+			mwexec_bg('/sbin/pfctl -M -k label -k ' . escapeshellarg("gw{$tier}:{$group['name']}") . ' -q');
 		}
 	}
 

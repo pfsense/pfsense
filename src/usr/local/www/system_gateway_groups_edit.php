@@ -314,7 +314,8 @@ $section->addInput(new Form_Select(
 	]
 ))->setHelp('%2$sKeep states on gateway recovery%3$s: states for this gateway ' .
 	'group are unaffected.%1$s%2$sKill states on gateway recovery%3$s: kill  ' .
-	'policy routing states for lower-priority gateways.',
+	'policy routing states for lower-priority gateways.%1$sNote: gateway ' .
+	'priority changes may not affect states created before those changes.',
 	'<br/>', '<strong>', '</strong>');
 
 $section->addInput(new Form_Select(

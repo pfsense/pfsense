@@ -3432,9 +3432,14 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	/* if user has selected a custom gateway, lets work with it */
 	else if ($rule['gateway'] <> "" && $type == "pass") {
 		if (isset($GatewaysList[$rule['gateway']])) {
+			/* Check if the rule uses a failover gateway group that is currently
+			 * in a failover state. If so, add the current tier to use for
+			 * state killing on gateway recovery */
+			$gwlabel_prefix = get_highest_failover_tier_online($rule['gateway']);
+			$gwlabel_prefix = empty($gwlabel_prefix) ? 'gw:' : "gw{$gwlabel_prefix}:";
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
-			$aline['gwlabel'] = "label \"gw:{$rule['gateway']}\"";
+			$aline['gwlabel'] = "label \"{$gwlabel_prefix}{$rule['gateway']}\"";
 		} else if (config_path_enabled('system','skip_rules_gw_down')) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {

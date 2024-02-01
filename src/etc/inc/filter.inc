@@ -234,69 +234,65 @@ function filter_configure() {
 }
 
 function filter_delete_states_for_down_gateways() {
-	global $GatewaysList;
-
 	$any_gateway_down = false;
 	$a_gateways = return_gateways_status();
 	$gateway = "";
-	if (is_array($GatewaysList)) {
-		foreach ($GatewaysList as $gateway) {
-			/* Skip irrelevant or invalid gateway entries */
-			$last_gw = '';
-			if (empty($gateway['monitor']) ||
-			    !is_ipaddr($gateway['monitor']) ||
-			    strstr($gateway['monitor'], "127.0.0.") ||
-			    empty($a_gateways[$gateway['monitor']])) {
-				$last_gw = get_interface_gateway_last($gateway['interface'], $gateway['ipprotocol']);
-				if (!is_ipaddr($last_gw)) {
-					continue;
-				}
+	foreach (get_gateways() as $gateway) {
+		/* Skip irrelevant or invalid gateway entries */
+		$last_gw = '';
+		if (empty($gateway['monitor']) ||
+		    !is_ipaddr($gateway['monitor']) ||
+		    strstr($gateway['monitor'], "127.0.0.") ||
+		    empty($a_gateways[$gateway['monitor']])) {
+			$last_gw = get_interface_gateway_last($gateway['interface'], $gateway['ipprotocol']);
+			if (!is_ipaddr($last_gw)) {
+				continue;
 			}
-			/* Do not trigger these actions if:
-			 * The gateway is configured to not kill states when down
-			 * Gateway monitoring is disabled
-			 * Gateway monitoring action is disabled
-			 * The gateway is forced down. */
-			if (($gateway['gw_down_kill_states'] == 'none') ||
-			    (isset($gateway['monitor_disable'])) ||
-			    (isset($gateway['action_disable'])) ||
-			    (isset($gateway['force_down']))) {
+		}
+		/* Do not trigger these actions if:
+		 * The gateway is configured to not kill states when down
+		 * Gateway monitoring is disabled
+		 * Gateway monitoring action is disabled
+		 * The gateway is forced down. */
+		if (($gateway['gw_down_kill_states'] == 'none') ||
+		    (isset($gateway['monitor_disable'])) ||
+		    (isset($gateway['action_disable'])) ||
+		    (isset($gateway['force_down']))) {
+			continue;
+		}
+
+		$gwstatus = &$a_gateways[$gateway['monitor']];
+		$gw_down_kill_states = config_get_path('system/gw_down_kill_states');
+		if (strstr($gwstatus['status'], "down") || is_ipaddr($last_gw)) {
+			$any_gateway_down = $gateway['name'];
+			if ($gw_down_kill_states == 'all') {
+				/* All states will be killed, no need to continue searching. */
+				break;
+			}
+
+			$what_to_kill = gettext("down gateway");
+			$gwip = lookup_gateway_ip_by_name($gateway['name']);
+			if (!is_ipaddr($gwip) && is_ipaddr($last_gw)) {
+				$gwip = $last_gw;
+				$what_to_kill = gettext("dynamic down gateway");
+			}
+			/* Cannot locate the gateway IP address, so we
+			 * cannot proceed. */
+			if (!is_ipaddr($gwip)) {
+				$message = gettext("GW States: Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
+				update_filter_reload_status($message);
+				log_error($message);
 				continue;
 			}
 
-			$gwstatus = &$a_gateways[$gateway['monitor']];
-			$gw_down_kill_states = config_get_path('system/gw_down_kill_states');
-			if (strstr($gwstatus['status'], "down") || is_ipaddr($last_gw)) {
-				$any_gateway_down = $gateway['name'];
-				if ($gw_down_kill_states == 'all') {
-					/* All states will be killed, no need to continue searching. */
-					break;
-				}
-
-				$what_to_kill = gettext("down gateway");
-				$gwip = lookup_gateway_ip_by_name($gateway['name']);
-				if (!is_ipaddr($gwip) && is_ipaddr($last_gw)) {
-					$gwip = $last_gw;
-					$what_to_kill = gettext("dynamic down gateway");
-				}
-				/* Cannot locate the gateway IP address, so we
-				 * cannot proceed. */
-				if (!is_ipaddr($gwip)) {
-					$message = gettext("GW States: Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
-					update_filter_reload_status($message);
-					log_error($message);
-					continue;
-				}
-
-				/* Kill states for the down gateway if the flag is on globally
-				 * or configured to do so on a specific gateway. */
-				if (($gw_down_kill_states == 'down') ||
-				    ($gateway['gw_down_kill_states'] == 'down')) {
-					$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
-					update_filter_reload_status($message);
-					log_error($message);
-					mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));
-				}
+			/* Kill states for the down gateway if the flag is on globally
+			 * or configured to do so on a specific gateway. */
+			if (($gw_down_kill_states == 'down') ||
+			    ($gateway['gw_down_kill_states'] == 'down')) {
+				$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
+				update_filter_reload_status($message);
+				log_error($message);
+				mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));
 			}
 		}
 	}

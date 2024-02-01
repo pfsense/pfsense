@@ -432,6 +432,10 @@ class pfsense_xmlrpc_server {
 			}
 		}
 
+		/* Extract and save any package sections before merging other sections */
+		$pkg_sections = ['installedpackages' => array_get_path($sections, 'installedpackages', [])];
+		array_del_path($sections, 'installedpackages');
+
 		/* For vip section, first keep items sent from the master */
 		config_set_path('', array_merge_recursive_unique(config_get_path(''), $sections));
 
@@ -539,6 +543,20 @@ class pfsense_xmlrpc_server {
 				array_unshift($vips, $vip);
 			}
 			config_set_path('virtualip/vip', $vips);
+		}
+
+		/* xmlrpc_recv plugin expects path => value pairs of changed nodes, not an associative tree */
+		$pkg_merged_paths = pkg_call_plugins("plugin_xmlrpc_recv", $pkg_sections);
+		foreach ($pkg_merged_paths as $pkg => $sections) {
+			if (!is_array($sections)) {
+				log_error('Package {$pkg} xmlrpc_recv plugin returned invalid value.');
+				continue;
+			}
+			foreach ($sections as $path => $section) {
+				if (is_null(config_set_path($path, $section))) {
+					log_error('Could not write section {$path} supplied by package {$pkg} xmlrpc_recv plugin');
+				}
+			}
 		}
 
 		/* Log what happened */
@@ -664,6 +682,7 @@ class pfsense_xmlrpc_server {
 		$this->filter_configure(false, $force_filterconfigure);
 		unset($old_config);
 
+		pkg_call_plugins('plugin_xmlrpc_recv_done', []);
 		return true;
 	}
 

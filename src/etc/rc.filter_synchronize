@@ -343,6 +343,16 @@ if (config_get_path('hasync')) {
 		return;
 	}
 
+	/* Retrieve sections for sync from any packages that provide them */
+	foreach (pkg_call_plugins("plugin_xmlrpc_send", []) as $pkg => $result) {
+		if (!is_array($result)) {
+			log_error("Package {$pkg} returned non-array from its plugin_xmlrpc_send handler");
+			continue;
+		}
+
+		$sections = array_merge($sections, $result);
+	}
+
 	update_filter_reload_status("Signaling CARP reload signal...");
 	if (!carp_sync_xml($rpc_client, $sections)) {
 		return;

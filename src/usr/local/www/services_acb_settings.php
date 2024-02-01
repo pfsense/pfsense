@@ -65,6 +65,10 @@ if (isset($_POST['save'])) {
 		}
 	}
 
+	if (!in_array($_POST['frequency'], ['cron', 'every'])) {
+		$input_errors[] = gettext("Invalid frequency value.");
+	}
+
 	if ($_POST['frequency'] === 'cron') {
 		if (!preg_match('/^[0-9\*\/\-\,]+$/', $_POST['minute'] . $_POST['hour'] . $_POST['day'] . $_POST['month'] . $_POST['dow']))  {
 			$input_errors[] = gettext("Schedule values may only contain 0-9 - , / *");
@@ -229,7 +233,7 @@ print $form;
 			hideClass("cronsched", ($(this).val() != 'cron'));
 		});
 
-		hideClass("cronsched", ("<?=$pconfig['frequency']?>" != 'cron'));
+		hideClass("cronsched", ("<?=htmlspecialchars($pconfig['frequency'])?>" != 'cron'));
 	});
 //]]>
 </script>

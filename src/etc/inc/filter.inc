@@ -242,9 +242,15 @@ function filter_delete_states_for_down_gateways() {
 		$last_gw = '';
 		if (empty($gateway['monitor']) ||
 		    !is_ipaddr($gateway['monitor']) ||
-		    strstr($gateway['monitor'], "127.0.0.") ||
-		    empty($a_gateways[$gateway['monitor']])) {
+		    strstr($gateway['monitor'], "127.0.0.")) {
+			// invalid monitor IP address
 			$last_gw = get_interface_gateway_last($gateway['interface'], $gateway['ipprotocol']);
+			if (!is_ipaddr($last_gw)) {
+				continue;
+			}
+		} elseif (empty($a_gateways[$gateway['monitor']])) {
+			// no gateway status, check for static configuration
+			$last_gw = $gateway['gateway'];
 			if (!is_ipaddr($last_gw)) {
 				continue;
 			}

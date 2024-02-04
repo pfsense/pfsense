@@ -97,7 +97,17 @@ if (isset($id) && $a_user[$id]) {
 phpsession_begin();
 $guiuser = getUserEntry($_SESSION['Username']);
 $read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+
+//BUG - Not sure how to fix this as we ideally should validate fido challenge but session is not maintained?
+//Generate challenge for fido2 registrations
+// if (empty($_SESSION['fido2Challenge'])) {
+// 	$_SESSION['fido2Challenge'] = generateRandomString(10);
+// }
+// $fido2Challenge = $_SESSION['fido2Challenge'];
+
 phpsession_end();
+
+
 
 if (!empty($_POST) && $read_only) {
 	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
@@ -186,6 +196,20 @@ if (($_POST['act'] == "delcert") && !$read_only) {
 	$certdeleted = $certdeleted['descr'];
 	unset($a_user[$id]['cert'][$_POST['certid']]);
 	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, $a_user[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+	$_POST['act'] = "edit";
+}
+
+if (($_POST['act'] == "delfido2") && !$read_only) {
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
+		exit;
+	}
+
+	$fido2id = $_POST['fido2id'];
+	unset($a_user[$id]['fido2entries']['cred-' . $fido2id]);
+	$savemsg = sprintf(gettext("Removed fido2 credential \"%s\" from user %s"), $fido2id, $a_user[$id]['name']);
 	write_config($savemsg);
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
@@ -309,6 +333,11 @@ if ($_POST['save'] && !$read_only) {
 	validate_webguihostnamemenu_field($input_errors, $_POST['webguihostnamemenu']);
 	validate_dashboardcolumns_field($input_errors, $_POST['dashboardcolumns']);
 
+	//Check if client FIDO2 is valid for Registration
+	if (!empty($_POST['newFido2Cred'])) {
+		validate_fido2registration($input_errors, $jsonFido2Cred, $fido2DomainName, $fido2Challenge);
+	}
+
 	if (!$input_errors) {
 
 		$userent = array();
@@ -339,6 +368,33 @@ if ($_POST['save'] && !$read_only) {
 		$userent['dashboardcolumns'] = $_POST['dashboardcolumns'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
+		
+		//TODO - Allow multiple new fido2 creds at same time?
+		//TODO - Allow new fido2 creds during account creation (tricky b/c need to inject username to javascript before username is established?)
+		if (!empty($_POST['newFido2Cred']) && !empty($userent['name'])) {
+			$jsonFido2Cred = json_decode($_POST['newFido2Cred']);
+			
+			if (empty($userent['fido2entries'])) {
+				$userent['fido2entries'] = array();
+			}
+
+				//BUG - cannot straight up use Id since something internal considers it a integer instead of string in array. Id is used for direct lookup and match
+				$fref = ("cred-" . $jsonFido2Cred->Id);
+
+				$userent['fido2entries'][$fref] = array();
+
+				//Structure is: Id, Domain, Description, Type, Format, bClientRegJSONData, bAuthData, bAttStmt
+				// $fido2entry['Id'] = $jsonFido2Cred->Id;
+				$fido2entry['Domain'] = $jsonFido2Cred->Domain;
+				$fido2entry['Description'] = htmlspecialchars($jsonFido2Cred->Description);
+				$fido2entry['Type'] = $jsonFido2Cred->Type;
+				$fido2entry['Format'] = $jsonFido2Cred->Format;
+				$fido2entry['bClientRegJSONData'] = $jsonFido2Cred->bClientRegJSONData;
+				$fido2entry['bAuthData'] = $jsonFido2Cred->bAuthData;
+				$fido2entry['bAttStmt'] = $jsonFido2Cred->bAuthData;
+
+				$userent['fido2entries'][$fref] = $fido2entry;
+		}
 
 		if ($_POST['disabled']) {
 			$userent['disabled'] = true;
@@ -632,6 +688,55 @@ function build_cert_table() {
 	return($certhtml);
 }
 
+function build_fido2_table($enabled) {
+	global $a_user, $id, $read_only;
+
+	$fido2html = '<div class="table-responsive">';
+	$fido2html .=	'<table id="fidoTable" class="table table-striped table-hover table-condensed">';
+	$fido2html .=		'<thead>';
+	$fido2html .=			'<tr>';
+	$fido2html .=				'<th>' . gettext('Id') . '</th>';
+	$fido2html .=				'<th>' . gettext('Domain') . '</th>';
+	$fido2html .=				'<th>' . gettext('Description') . '</th>';
+	$fido2html .=				'<th>' . gettext('Registration Type') . '</th>';
+	$fido2html .=				'<th></th>';
+	$fido2html .=			'</tr>';
+	$fido2html .=		'</thead>';
+	$fido2html .=		'<tbody>';
+
+	$a_fido2 = $a_user[$id]['fido2entries'];
+	if (is_array($a_fido2)) {
+		foreach ($a_fido2 as $fido2ref) {
+			$fido2html .=	'<tr>';
+			$fido2html .=		'<td>' . htmlspecialchars(str_replace("cred-","",key($a_fido2))) . '</td>';
+			$fido2html .=		'<td>' . htmlspecialchars($fido2ref['domain']) . '</td>';
+			$fido2html .=		'<td>' . htmlspecialchars($fido2ref['description']) . '</td>';
+			$fido2html .=		'<td>' . htmlspecialchars($fido2ref['type']) . '</td>';
+			$fido2html .=		'<td>';
+			if (!$read_only) {
+				$fido2html .=			'<a id="delfido2' . key($a_fido2) .'" class="fa fa-trash no-confirm icon-pointer" title="';
+				$fido2html .=			gettext('Delete this fido2 registration? (It is recommended to also remove from registered devices)') . '"></a>';
+			}
+			$fido2html .=		'</td>';
+			$fido2html .=	'</tr>';
+			next($a_fido2);
+		}
+
+	}
+
+	$fido2html .=		'</tbody>';
+	$fido2html .=	'</table>';
+	$fido2html .= '</div>';
+
+	$fido2html .= '<nav class="action-buttons">';
+	if (!$read_only && $enabled) {
+		$fido2html .=	'<a id="newfido2" class="btn btn-success"><i class="fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	}
+	$fido2html .= '</nav>';
+
+	return($fido2html);
+}
+
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
 $pglinks = array("", "system_usermanager.php", "system_usermanager.php");
 
@@ -773,6 +878,13 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$form->addGlobal(new Form_Input(
 		'certid',
+		null,
+		'hidden',
+		''
+	));
+
+	$form->addGlobal(new Form_Input(
+		'fido2id',
 		null,
 		'hidden',
 		''
@@ -952,6 +1064,26 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$form->add($section);
 
+	// ==== FIDO2 Keys ==================================================
+	// FIDO2 registration only allowed on HTTPS enabled sites & on account edit
+	$fido2enabledReg = false; //default to off
+	if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === "on" && $act == 'edit') { $fido2enabledReg = true; }
+	$fido2DomainName = $config['system']['hostname'] . "." . $config['system']['domain'];
+
+	$section = new Form_Section('FIDO2 Registrations');
+
+	$section->addInput(new Form_StaticText(
+		null,
+		build_fido2_table($fido2enabledReg)
+	));
+
+	$section->addInput(new Form_StaticText(
+		null,
+		'<input type="hidden" name="newFido2Cred" value="" />'
+	));
+
+	$form->add($section);
+
 	// ==== Effective privileges section ======================================
 	if (isset($pconfig['uid'])) {
 		// We are going to build an HTML table and add it to an Input_StaticText. It may be ugly, but it
@@ -1089,9 +1221,24 @@ print $form;
 
 $csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
 ?>
+<script type="text/javascript" src="/vendor/paroga/cbor.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	function insert_new_fido2_cred(fido2cred) {
+		var jfido2cred = JSON.parse(fido2cred);
+		
+		//Grab last row
+		var tmp = $('#fidoTable tr:last');
+		tmp.after('<tr>' + 
+		'<td>' + jfido2cred.Id + '</td>' +
+		'<td>' + jfido2cred.Domain + '</td>' +
+		'<td>' + jfido2cred.Description + '</td>' +
+		'<td>' + jfido2cred.Type + '</td>' +
+		'<td>' + '<a class="fa fa-hourglass no-confirm" title="<?=gettext('Pending Save')?>"></a></td>' +
+		'</tr>');
+	}
 
 	function setcustomoptions() {
 		var adv = $('#customsettings').prop('checked');
@@ -1161,6 +1308,15 @@ events.push(function() {
 		}
 	});
 
+	$('[id^=delfido2]').click(function(event) {
+		if (confirm(event.target.title)) {
+			$('#fido2id').val(event.target.id.match(/.*?cred-(.*)$/)[1]);
+			$('#userid').val('<?=$id;?>');
+			$('#act').val('delfido2');
+			$('form').submit();
+		}
+	});
+
 	$('[id^=delprivid]').click(function(event) {
 		if (confirm(event.target.title)) {
 			$('#privid').val(event.target.id.match(/\d+$/)[0]);
@@ -1174,6 +1330,73 @@ events.push(function() {
 
 	$('#keytype').change(function () {
 		change_keytype();
+	});
+
+	$("#newfido2").click(function() {
+
+		//check if one is already pending to be registered
+		if ($('input[name=newFido2Cred]').val()) {
+			alert('Only one new FIDO2 credential can be registered at a time');
+			return;
+		}
+		
+		const utf8Decoder = new TextDecoder('utf-8');
+
+		const publicKeyCredentialCreationOptions = {
+    		challenge: Uint8Array.from(
+        	'<?=$fido2Challenge?>', c => c.charCodeAt(0)),
+    		rp: {
+        		name: "pfsense",
+        		id: "<?=strtolower($fido2DomainName)?>",
+    		},
+    		user: {
+        		id: Uint8Array.from(
+            		'<?=generateRandomString(8)?>', c => c.charCodeAt(0)),
+        		name: '<?=$pconfig['usernamefld']?>',
+        		displayName: "<?=htmlspecialchars($pconfig['descr'])?>",
+    		},
+    		pubKeyCredParams: [{alg: -7, type: "public-key"}, {alg:-257, type: "public-key"}],
+    		authenticatorSelection: {
+        		authenticatorAttachment: "platform",
+    		},
+    		timeout: 60000,
+    		attestation: "direct"
+		};
+
+		const credential = navigator.credentials.create({
+			publicKey: publicKeyCredentialCreationOptions
+		});
+
+		credential.then((cred) => {
+
+			var descResponse = prompt("Enter friendly description for new FIDO device");
+
+			decodedClientData = utf8Decoder.decode(cred.response.clientDataJSON);
+			var attObj = CBOR.decode(cred.response.attestationObject);
+
+			// var base64AttestationObj = btoa(
+			// 	new Uint8Array(cred.response.attestationObject).reduce((data, byte) => data + String.fromCharCode(byte), '')
+			// );
+
+			//Parse the response to send to server
+			var fido2cred = JSON.stringify({
+				"Id": cred.id,
+				"Domain": (new URL(JSON.parse(decodedClientData).origin)).host,
+				"Description": descResponse,
+				"Type": cred.authenticatorAttachment,
+				"Format": attObj.fmt,
+				"bClientRegJSONData": btoa(decodedClientData),
+				"bAuthData": btoa(attObj.authData),
+				"bAttStmt": btoa(attObj.attStmt)
+			});
+
+			//Update hidden form to contain our credential
+			$('input[name=newFido2Cred]').val(fido2cred);
+
+			//Update user page to show notion that the fido2 credential will be saved
+			insert_new_fido2_cred(fido2cred);
+
+		}).catch((e) => alert(e));
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------

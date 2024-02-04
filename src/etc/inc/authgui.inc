@@ -167,6 +167,18 @@ function display_error_form($http_code, $desc) {
 
 } // end function
 
+/*
+Used in fido2 challenge to prevent replay attacks
+*/
+function generateRandomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[random_int(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
 
 function display_login_form() {
 	require_once("globals.inc");
@@ -246,6 +258,11 @@ function display_login_form() {
 				break;
 			}
 		}
+	}
+
+	//Generate challenge for fido2
+	if (!isset($_SESSION['fido2Challenge'])) {
+		$_SESSION['fido2Challenge'] = generateRandomString(10);
 	}
 
 	// For the login form, get the settings of no particular user.
@@ -344,8 +361,12 @@ function display_login_form() {
 			                <p class="form-title">Sign In</p>
 			                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" autocorrect="off" autocapitalize="none"/>
 			                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
+							<input name="fido2Attestation" id="fido2Attestation" type="hidden" />
 			                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
+							<a name="fido2Login" style="margin-top: 2px; display: block; padding-top: 12px; cursor: pointer;">Sign in with Security Key</a>
 		                </form>
+						
+						
 					</div>
 	            </div>
 
@@ -382,6 +403,48 @@ function display_login_form() {
 	    <script src="/vendor/jquery/jquery-3.5.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.5.1.min.js')?>"></script>
 		<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
 		<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
+
+		<script type="text/javascript">
+		//!<[CDATA[
+			$("a[name=fido2Login]").click(async function() {
+				
+				const utf8Decoder = new TextDecoder('utf-8');
+
+				const publicKeyCredentialRequestOptions = {
+					challenge: Uint8Array.from(
+						'<?=$_SESSION['fido2Challenge']?>', c => c.charCodeAt(0)),
+				// allowCredentials: [{
+				// 	id: Uint8Array.from(
+				// 		credentialId, c => c.charCodeAt(0)),
+				// 	type: 'public-key',
+				// 	transports: ['usb', 'ble', 'nfc'],
+				// }],
+				timeout: 60000,
+			};
+
+			try {
+				const assertion = await navigator.credentials.get({
+    				publicKey: publicKeyCredentialRequestOptions
+				});
+
+				const fido2payload = {
+					Id: assertion.id,
+					bClientDataJSON: btoa(utf8Decoder.decode(assertion.response.clientDataJSON)),
+					bSignature: btoa(assertion.response.signature),
+					UserHandle: utf8Decoder.decode(assertion.response.userHandle)
+				};
+
+				$("#fido2Attestation").val(JSON.stringify(fido2payload));
+				$("form.login").submit();
+
+			}
+			catch(err) {
+
+			}
+
+			});
+		//]]>
+		</script>
 
 		<script type="text/javascript">
 		//!<[CDATA[

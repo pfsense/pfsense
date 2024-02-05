@@ -918,6 +918,29 @@ function add_package_tabs($tabgroup, &$tab_array) {
 	}
 }
 
+function system_alias_info_popup($friendly_interface) {
+	if (empty($friendly_interface)) {
+		return '';
+	}
+
+	$content = [];
+	$alias = escapeshellarg(strtoupper($friendly_interface) . '__NETWORK');
+	exec("/sbin/pfctl -t {$alias} -T show 2>/dev/null", $content);
+
+	$alias_items = [];
+	foreach ($content as $address) {
+		$alias_items[] = trim($address);
+	}
+
+	$content = "<h5>{$alias}</h5>";
+	if (empty($alias_items)) {
+		return $content;
+	}
+
+	$content .= '<ul><li>' . implode('</li><li>', $alias_items) . '</li></ul>';
+	return $content;
+}
+
 function alias_info_popup($alias_id) {
 	global $user_settings;
 

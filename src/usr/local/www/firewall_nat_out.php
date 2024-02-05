@@ -145,6 +145,10 @@ $section->add($group);
 
 $form->add($section);
 print($form);
+
+global $user_settings;
+$show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 ?>
 
 <form action="firewall_nat_out.php" method="post" name="iform">
@@ -171,7 +175,6 @@ print($form);
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-			$specialnet = get_specialnet('', $nat_tgttype_flags);
 			foreach ($a_out as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
@@ -224,21 +227,17 @@ print($form);
 						</td>
 
 						<td>
-<?php
-						if (isset($alias['src'])):
-?>
-						<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
-<?php
-						endif;
-?>
-						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
-<?php
-						if (isset($alias['src'])):
-?>
-						<i class='fa-solid fa-pencil'></i></a>
-<?php
-						endif;
-?>
+							<?php if (isset($alias['src'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['source']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags))?>
+							<?php endif; ?>
 						</td>
 
 						<td>
@@ -266,21 +265,17 @@ print($form);
 						</td>
 
 						<td>
-<?php
-						if (isset($alias['dst'])):
-?>
-						<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
-<?php
-						endif;
-?>
-						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
-<?php
-						if (isset($alias['dst'])):
-?>
-						<i class='fa-solid fa-pencil'></i></a>
-<?php
-						endif;
-?>
+							<?php if (isset($alias['dst'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['destination']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags))?>
+							<?php endif; ?>
 						</td>
 
 						<td>
@@ -307,31 +302,19 @@ print($form);
 ?>
 
 						</td>
-
 						<td>
-<?php
-						if (isset($natent['nonat'])) {
-							echo '<I>NO NAT</I>';
-						} elseif (empty($natent['target_subnet']) && array_key_exists($natent['target'], $specialnet)) {
-							echo htmlspecialchars($specialnet[$natent['target']]);
-						} elseif (!empty($natent['target'])) {
-							if (isset($alias['target'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
-<?php
-							endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target'] . ((!isset($alias['target']) && !empty($natent['target_subnet'])) ? '/' . $natent['target_subnet'] : '')))?>
-<?php
-							if (isset($alias['target'])):
-?>
-							<i class='fa-solid fa-pencil'></i></a>
-<?php
-							endif;
-						}
-?>
+							<?php if (isset($natent['nonat'])): ?>
+								<i>NO NAT</i>
+							<?php elseif (isset($alias['target'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags)))?>
+								</a>
+							<?php elseif (empty($natent['target_subnet'])): ?>
+								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags))?>
+							<?php elseif (!empty($natent['target'])): ?>
+								<?=htmlspecialchars($natent['target'] . '/' . $natent['target_subnet'])?>
+							<?php endif; ?>
 						</td>
-
 						<td>
 <?php
 						if (!$natent['natport']) {
@@ -465,15 +448,13 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 						</td>
 						<td>
-<?php
-		if (isset($natent['nonat'])) {
-			echo 'NO NAT';
-		} elseif (array_key_exists($natent['target'], $specialnet)) {
-			echo htmlspecialchars($specialnet[$natent['target']]);
-		} elseif (!empty($natent['target'])) {
-			echo $natent['target'] . (!empty($natent['target_subnet']) ? '/' . $natent['target_subnet'] : '');
-		}
-?>
+							<?php if (isset($natent['nonat'])): ?>
+								<i>NO NAT</i>
+							<?php elseif (empty($natent['target_subnet'])): ?>
+								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags))?>
+							<?php elseif (!empty($natent['target'])): ?>
+								<?=htmlspecialchars($natent['target'] . '/' . $natent['target_subnet'])?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php

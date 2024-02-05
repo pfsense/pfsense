@@ -93,6 +93,9 @@ $tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
 $tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
 
+global $user_settings;
+$show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 ?>
 <form action="firewall_nat_1to1.php" method="post">
 	<div class="panel panel-default">
@@ -122,11 +125,12 @@ display_top_tabs($tab_array);
 			}
 
 			$alias = rule_columns_with_alias(
-			$natent['source']['address'],
-			pprint_port($natent['source']['port']),
-			$natent['destination']['address'],
-			pprint_port($natrent['destination']['port'])
-);
+				$natent['source']['address'],
+				pprint_port($natent['source']['port']),
+				$natent['destination']['address'],
+				pprint_port($natrent['destination']['port']),
+				$natent['external']
+			);
 ?>
 					<tr id="fr<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';" <?=(isset($natent['disabled']) ? ' class="disabled"' : '')?>>
 						<td >
@@ -151,27 +155,28 @@ display_top_tabs($tab_array);
 ?>
 						</td>
 						<td>
-<?php
-					$source_net = pprint_address($natent['source'], $binat_srctype_flags );
-					if (get_specialnet($natent['external'], $binat_exttype_flags)) {
-						/* $natent['external'] is not an array like other addresses, and pprint_address()
-						 * requires it to be an array, so pass it in the format it expects.
-						 * https://redmine.pfsense.org/issues/14845
-						 */
-						echo pprint_address(['network' => $natent['external']], $binat_exttype_flags);
-					} else {
-						echo $natent['external'] . strstr($source_net, '/');
-					}
-?>
+							<?=htmlspecialchars(pprint_address(['network' => $natent['external']], $binat_exttype_flags))?>
 						</td>
 						<td>
-<?php
-					echo $source_net;
-?>
+							<?php if (isset($alias['src'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['source']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($alias['dst'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $binat_dsttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['destination']['network'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $binat_dsttype_flags)))?>
 								</a>
 							<?php else: ?>

@@ -129,6 +129,9 @@ $separators = $config['nat']['separator'];
 // More efficient than looping through the list of separators on every row.
 $seprows = separator_rows($separators);
 
+global $user_settings;
+$show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 foreach ($a_nat as $natent):
 
 	// Display separator(s) for section beginning at rule n
@@ -162,10 +165,6 @@ foreach ($a_nat as $natent):
 		$trclass = '';
 	}
 
-	$specialnets = get_specialnet('', $rdr_lcltype_flags);
-	if (array_key_exists($natent['target'], $specialnets)) {
-		$natent['target'] = $specialnets[$natent['target']];
-	}
 ?>
 
 					<tr id="fr<?=$nnats;?>" <?=$trclass?> onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
@@ -214,23 +213,17 @@ foreach ($a_nat as $natent):
 						</td>
 
 						<td>
-
-
-<?php
-	if (isset($alias['src'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
-<?php
-	endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
-<?php
-	if (isset($alias['src'])):
-?>
-							</a>
-<?php
-	endif;
-?>
+							<?php if (isset($alias['src'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['source']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php
@@ -251,21 +244,17 @@ foreach ($a_nat as $natent):
 						</td>
 
 						<td>
-<?php
-	if (isset($alias['dst'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
-<?php
-	endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
-<?php
-	if (isset($alias['dst'])):
-?>
-							</a>
-<?php
-	endif;
-?>
+							<?php if (isset($alias['dst'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['destination']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php
@@ -285,22 +274,13 @@ foreach ($a_nat as $natent):
 ?>
 						</td>
 						<td>
-<?php
-	if (isset($alias['target'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true" >
-<?php
-	endif;
-?>
-
-							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target']))?>
-<?php
-	if (isset($alias['target'])):
-?>
-							</a>
-<?php
-	endif;
-?>
+							<?php if (isset($alias['target'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['network' => $natent['target']], $rdr_lcltype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $rdr_lcltype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php

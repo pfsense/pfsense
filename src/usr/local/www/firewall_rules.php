@@ -571,6 +571,9 @@ $seprows = separator_rows($separators);
  * See https://redmine.pfsense.org/issues/12174 */
 $gateways_status = return_gateways_status(true);
 
+global $user_settings;
+$show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 foreach ($a_filter as $filteri => $filterent):
 
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
@@ -887,6 +890,10 @@ foreach ($a_filter as $filteri => $filterent):
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'])))?>
 								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($filterent['source']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($filterent['source']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'], $filter_srcdsttype_flags)))?>
+								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['source'], $filter_srcdsttype_flags))?>
 							<?php endif; ?>
@@ -904,6 +911,10 @@ foreach ($a_filter as $filteri => $filterent):
 							<?php if (isset($alias['dst'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'])))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($filterent['destination']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($filterent['destination']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'], $filter_srcdsttype_flags)))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['destination'], $filter_srcdsttype_flags))?>

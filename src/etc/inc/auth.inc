@@ -299,6 +299,9 @@ function index_users() {
 	return ($userindex);
 }
 
+/**
+ * Associate FIDO2 ID with Username from config
+ */
 function index_fido2_creds() {
 	global $config;
 	
@@ -308,6 +311,9 @@ function index_fido2_creds() {
 		$entries = $user['fido2entries'];
 		if ($entries) {
 			$fido2index[(key($entries))] = $user['name'];
+			while (next($entries)) {
+				$fido2index[(key($entries))] = $user['name'];
+			}
 		}
 	}
 	return ($fido2index);
@@ -340,10 +346,8 @@ function & getUserEntry($name) {
 
 function & getFido2Entry($id) {
 	global $debug, $config, $fido2index, $userindex;
-	
 	$index = 'cred-'.strtolower($id); //BUG? - an array string index is always lower-case in php, mixed case won't find it
 	if (isset($fido2index[$index])) {
-		
 		$userNum = $userindex[$fido2index[$index]];
 		return $config['system']['user'][$userNum]['fido2entries'][$index];
 	}
@@ -2215,7 +2219,7 @@ function session_auth() {
 
 	/* Validate incoming login request */
 	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
-	if (isset($_POST['fido2Attestation']))
+	if (isset($_POST['fido2Attestation']) && !empty($_POST['fido2Attestation']))
 	{
 		//Perform authentication and attestation of credential
 		$fido2auth = authenticate_fido2_user($_POST['fido2Attestation']);

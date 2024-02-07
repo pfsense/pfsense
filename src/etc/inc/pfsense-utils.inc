@@ -3749,28 +3749,3 @@ function set_curlproxy(&$ch) {
 		}
 	}
 }
-
-/**
- * Perform server validation of new FIDO2 credential
- */
-function validate_fido2registration(&$input_errors, $fido2Cred, $serverDomainName, $serverChallenge) {
-	try {
-		//Check if the client registered domain matches pfsense domain
-		if (strtolower($serverDomainName) != strtolower($fido2Cred->Domain)) {
-			$input_errors[] = gettext("Client registration doesn't match pfsense domain");
-		}
-		
-		//BUG - Skip this for now as I don't know how to fix the session from being re-created
-		//Check if client challenge matches server to prevent replay attacks
-		// $fido2ClientRegData = json_decode($jClientRegData);
-		// $jClientRegData = base64_decode($fido2Cred->bClientRegJSONData);
-		// $cChallenge = $fido2ClientRegData->challenge;
-		// if ($serverChallenge != $cChallenge) {
-		// 	$input_errors[] = gettext("Client challenge doesn't match server generated challenge");
-		// }
-
-		
-	} catch (Exception $err) {
-		$input_errors[] = $err;
-	}
-}

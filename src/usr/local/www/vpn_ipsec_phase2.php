@@ -40,7 +40,7 @@ require_once("vpn.inc");
 
 global $p2_pfskeygroups;
 $ipsec_lidtype_flags = [SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
-$ipsec_nlitype_flags = [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
+$ipsec_nlitype_flags = [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET];
 
 init_config_arr(array('ipsec', 'client'));
 init_config_arr(array('ipsec', 'phase1'));

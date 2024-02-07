@@ -273,6 +273,9 @@ if ($_POST['apply']) {
 if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
+global $user_settings;
+$show_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$ipsec_specialnet = get_specialnet('', [SPECIALNET_IFSUB]);
 ?>
 
 <form name="mainform" method="post">
@@ -511,7 +514,13 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 											</td>
 <?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6") or ($ph2ent['mode'] == "vti")): ?>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
-												<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
+												<?php if ($show_alias_popup && !empty($ph2ent['localid']) && array_key_exists($ph2ent['localid']['type'], $ipsec_specialnet)): ?>
+													<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Subnet details')?>" data-content="<?=ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode'])?>" data-html="true">
+														<?=str_replace('_', '_<wbr>', htmlspecialchars($ipsec_specialnet[$ph2ent['localid']['type']]))?>
+													</a>
+												<?php else: ?>
+													<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
+												<?php endif; ?>
 											</td>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>

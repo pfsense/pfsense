@@ -633,8 +633,9 @@ function ipsec_idinfo_to_text(& $idinfo) {
 			return gettext("None");
 			break; /* NOTREACHED */
 		default:
-			if (!(empty(config_get_path('interfaces/' . $idinfo['type'])))) {
-				return convert_friendly_interface_to_friendly_descr($idinfo['type']);
+			$specialnet = get_specialnet('', [SPECIALNET_IFSUB]);
+			if (array_key_exists($idinfo['type'], $specialnet)) {
+				return $specialnet[$idinfo['type']];
 			} else {
 				return strtoupper($idinfo['type']);
 			}

@@ -365,8 +365,6 @@ function display_login_form() {
 			                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
 							<a name="fido2Login" style="margin-top: 2px; display: block; padding-top: 12px; cursor: pointer;">Sign in with Security Key</a>
 		                </form>
-						
-						
 					</div>
 	            </div>
 
@@ -399,7 +397,6 @@ function display_login_form() {
 			});
 		//]]>
 		</script>
-
 	    <script src="/vendor/jquery/jquery-3.5.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.5.1.min.js')?>"></script>
 		<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
 		<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>

@@ -337,18 +337,6 @@ function & getUserEntry($name) {
 	}
 }
 
-// function & getUserEntryFromFido2($fidoId) {
-// 	global $debug, $config, $userindex;
-// 	$users = $config['system']['user'];
-	
-// 	foreach($users as $user) {
-// 		if ($config['system']['user']['fido2entries'][$fidoId]) {
-// 			return $user['name'];
-// 		}
-// 	}
-// 	return false;	
-// }
-
 function & getFido2Entry($id) {
 	global $debug, $config, $fido2index, $userindex;
 	$index = 'cred-'.strtolower($id); //BUG? - an array string index is always lower-case in php, mixed case won't find it
@@ -363,9 +351,9 @@ function & getUserEntryByUID($uid) {
 
 	if (is_array($config['system']['user'])) {
 		foreach ($config['system']['user'] as & $user) {
-		if ($user['uid'] == $uid) {
-			return $user;
-			}		
+			if ($user['uid'] == $uid) {
+				return $user;
+			}
 		}
 	}
 
@@ -2179,9 +2167,9 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	}
 
 	if (!$authcfg) {
-			return local_backed($username, $password, $attributes);
+		return local_backed($username, $password, $attributes);
 	}
-		
+
 	$authenticated = false;
 	switch ($authcfg['type']) {
 		case 'ldap':
@@ -2203,7 +2191,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 		default:
 			/* lookup user object by name */
 			try {
-					$authenticated = local_backed($username, $password, $attributes);
+				$authenticated = local_backed($username, $password, $attributes);
 			} catch (Exception $e) {
 				log_error(sprintf(gettext("Local authentication error: %s"), $e->getMessage()));
 			}
@@ -2240,14 +2228,12 @@ function session_auth() {
 
 	// Detect protocol change
 	if ((!isset($_POST['login']) && !isset($_POST['fido2Attestation'])) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != config_get_path('system/webgui/protocol')) {
-		log_auth("Protocol Change");
 		phpsession_end();
 		return false;
 	}
 
 	// Detect IP change
 	if ((!isset($_POST['login']) && !isset($_POST['fido2Attestation'])) && (config_get_path('system/webgui/roaming') == 'disabled') && (!empty($_SESSION['REMOTE_ADDR']) && $_SESSION['REMOTE_ADDR'] != $_SERVER['REMOTE_ADDR'])) {
-		log_auth("IP Change");
 		phpsession_end();
 		return false;
 	}

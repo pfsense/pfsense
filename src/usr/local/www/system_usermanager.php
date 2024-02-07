@@ -107,8 +107,6 @@ $read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-read
 
 phpsession_end();
 
-
-
 if (!empty($_POST) && $read_only) {
 	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
 }

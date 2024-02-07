@@ -187,7 +187,7 @@ function display_login_form() {
 	unset($input_errors);
 
 	if (isAjax()) {
-		if (isset($_POST['login'])) {
+		if (isset($_POST['login']) || isset($_POST['fido2Attestation'])) {
 			if ($_SESSION['Logged_In'] <> "True") {
 				isset($_SESSION['Login_Error']) ? $login_error = $_SESSION['Login_Error'] : $login_error = gettext("unknown reason");
 				printf("showajaxmessage('" . gettext("Invalid login (%s).") . "')", $login_error);
@@ -322,7 +322,7 @@ function display_login_form() {
 						<!-- Header center message box -->
 						<div class="col-sm-4 nowarning msgbox text-center text-danger">
 <?php
-						if (!empty($_POST['usernamefld'])) {
+						if (!empty($_POST['usernamefld']) || !empty($_POST['fido2Attestation'])) {
 							print("<h4>" . $_SESSION['Login_Error'] . "</h4>");
 						}
 ?>
@@ -408,17 +408,15 @@ function display_login_form() {
 		//!<[CDATA[
 			$("a[name=fido2Login]").click(async function() {
 				
+				if (!window.PublicKeyCredential) { 
+					alert('Browser/Platform not capable of WebAuthN');
+				}
+
 				const utf8Decoder = new TextDecoder('utf-8');
 
 				const publicKeyCredentialRequestOptions = {
 					challenge: Uint8Array.from(
 						'<?=$_SESSION['fido2Challenge']?>', c => c.charCodeAt(0)),
-				// allowCredentials: [{
-				// 	id: Uint8Array.from(
-				// 		credentialId, c => c.charCodeAt(0)),
-				// 	type: 'public-key',
-				// 	transports: ['usb', 'ble', 'nfc'],
-				// }],
 				timeout: 60000,
 			};
 
@@ -429,8 +427,9 @@ function display_login_form() {
 
 				const fido2payload = {
 					Id: assertion.id,
+					bAuthenticatorData: btoa(new Uint8Array(assertion.response.authenticatorData)),
 					bClientDataJSON: btoa(utf8Decoder.decode(assertion.response.clientDataJSON)),
-					bSignature: btoa(assertion.response.signature),
+					bSignature: btoa(new Uint8Array(assertion.response.signature)),
 					UserHandle: utf8Decoder.decode(assertion.response.userHandle)
 				};
 

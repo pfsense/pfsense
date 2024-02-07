@@ -98,7 +98,7 @@ phpsession_begin();
 $guiuser = getUserEntry($_SESSION['Username']);
 $read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
 
-//BUG - Not sure how to fix this as we ideally should validate fido challenge but session is not maintained?
+//BUG - Not sure how to fix this as we ideally should v fido challenge but session is not maintained?
 //Generate challenge for fido2 registrations
 // if (empty($_SESSION['fido2Challenge'])) {
 // 	$_SESSION['fido2Challenge'] = generateRandomString(10);
@@ -383,15 +383,13 @@ if ($_POST['save'] && !$read_only) {
 
 				$userent['fido2entries'][$fref] = array();
 
-				//Structure is: Id, Domain, Description, Type, Format, bClientRegJSONData, bAuthData, bAttStmt
-				// $fido2entry['Id'] = $jsonFido2Cred->Id;
+				//Structure is: Id, Domain, Description, Type, bClientRegJSONData, bAuthData, bPublicKey
 				$fido2entry['Domain'] = $jsonFido2Cred->Domain;
 				$fido2entry['Description'] = htmlspecialchars($jsonFido2Cred->Description);
 				$fido2entry['Type'] = $jsonFido2Cred->Type;
-				$fido2entry['Format'] = $jsonFido2Cred->Format;
 				$fido2entry['bClientRegJSONData'] = $jsonFido2Cred->bClientRegJSONData;
 				$fido2entry['bAuthData'] = $jsonFido2Cred->bAuthData;
-				$fido2entry['bAttStmt'] = $jsonFido2Cred->bAuthData;
+				$fido2entry['bPublicKey'] = $jsonFido2Cred->bPublicKey;
 
 				$userent['fido2entries'][$fref] = $fido2entry;
 		}
@@ -730,7 +728,7 @@ function build_fido2_table($enabled) {
 
 	$fido2html .= '<nav class="action-buttons">';
 	if (!$read_only && $enabled) {
-		$fido2html .=	'<a id="newfido2" class="btn btn-success"><i class="fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+		$fido2html .=	'<a id="newfido2" class="btn btn-success"><i class="fa fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$fido2html .= '</nav>';
 
@@ -1221,7 +1219,6 @@ print $form;
 
 $csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
 ?>
-<script type="text/javascript" src="/vendor/paroga/cbor.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -1334,6 +1331,10 @@ events.push(function() {
 
 	$("#newfido2").click(function() {
 
+		if (!window.PublicKeyCredential) { 
+			alert('Browser/Platform not capable of WebAuthN');
+		}
+
 		//check if one is already pending to be registered
 		if ($('input[name=newFido2Cred]').val()) {
 			alert('Only one new FIDO2 credential can be registered at a time');
@@ -1357,10 +1358,12 @@ events.push(function() {
     		},
     		pubKeyCredParams: [{alg: -7, type: "public-key"}, {alg:-257, type: "public-key"}],
     		authenticatorSelection: {
+				/* TODO: Support user chosen attachments */
         		authenticatorAttachment: "platform",
     		},
     		timeout: 60000,
-    		attestation: "direct"
+			/* TODO: Support Attestation */
+    		attestation: "none"
 		};
 
 		const credential = navigator.credentials.create({
@@ -1372,11 +1375,6 @@ events.push(function() {
 			var descResponse = prompt("Enter friendly description for new FIDO device");
 
 			decodedClientData = utf8Decoder.decode(cred.response.clientDataJSON);
-			var attObj = CBOR.decode(cred.response.attestationObject);
-
-			// var base64AttestationObj = btoa(
-			// 	new Uint8Array(cred.response.attestationObject).reduce((data, byte) => data + String.fromCharCode(byte), '')
-			// );
 
 			//Parse the response to send to server
 			var fido2cred = JSON.stringify({
@@ -1384,10 +1382,9 @@ events.push(function() {
 				"Domain": (new URL(JSON.parse(decodedClientData).origin)).host,
 				"Description": descResponse,
 				"Type": cred.authenticatorAttachment,
-				"Format": attObj.fmt,
-				"bClientRegJSONData": btoa(decodedClientData),
-				"bAuthData": btoa(attObj.authData),
-				"bAttStmt": btoa(attObj.attStmt)
+				"bPublicKey": btoa(new Uint8Array(cred.response.getPublicKey())),
+				"bAuthData": btoa(new Uint8Array(cred.response.getAuthenticatorData())),
+				"bClientRegJSONData": btoa(decodedClientData)
 			});
 
 			//Update hidden form to contain our credential
@@ -1396,7 +1393,7 @@ events.push(function() {
 			//Update user page to show notion that the fido2 credential will be saved
 			insert_new_fido2_cred(fido2cred);
 
-		}).catch((e) => alert(e));
+		}).catch((e) => alert('FIDO2 Registration failed: ' + e));
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------

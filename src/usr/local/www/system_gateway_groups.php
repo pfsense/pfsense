@@ -68,8 +68,11 @@ if ($_POST['apply']) {
 	}
 }
 
-if ($_POST['act'] == "del") {
-	if ($a_gateway_groups[$_POST['id']]) {
+if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
+	if ((config_get_path('gateways/defaultgw4', '') == $a_gateway_groups[$_POST['id']]['name']) ||
+	    (config_get_path('gateways/defaultgw6', '') == $a_gateway_groups[$_POST['id']]['name'])) {
+		$input_errors[] = gettext('Cannot remove a gateway group that is being used as the default gateway.');
+	} else {
 		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
 		foreach (config_get_path('filter/rule', []) as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
@@ -111,6 +114,10 @@ if ($_POST['apply']) {
 
 if (is_subsystem_dirty('staticroutes')) {
 	print_apply_box(gettext("The gateway configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+}
+
+if ($input_errors) {
+	print_input_errors($input_errors);
 }
 
 $tab_array = array();

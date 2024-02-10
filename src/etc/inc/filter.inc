@@ -3704,7 +3704,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 			if ($sched['name'] == $rule['sched']) {
 				if (!filter_get_time_based_rule_status($sched)) {
 					if (!config_path_enabled('system','schedule_states')) {
-						mwexec("/sbin/pfctl -k label -k s:{$sched['schedlabel']}");
+						mwexec("/sbin/pfctl -M -k label -k s:{$sched['schedlabel']}");
 					}
 					return "# schedule finished - {$rule['descr']}";
 				} else if (g_get('debug')) {

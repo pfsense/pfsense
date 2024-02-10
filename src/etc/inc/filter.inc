@@ -2051,7 +2051,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	}
 	$src = trim($src); $dst = trim($dst);
 	if (empty($src) || empty($dst)) {
-		return "# source or destination is invalid or doesn't match IP family in nat rule{$descr}\n";
+		return "# source or destination is invalid or doesn't match address family in nat rule{$descr}\n";
 	}
 
 	/* XXX: billm - any idea if this code is needed? */

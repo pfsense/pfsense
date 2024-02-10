@@ -132,7 +132,7 @@ if ($_POST['save']) {
 				if ((is_subnetv4($source) && is_subnetv6($destination)) ||
 				    (is_subnetv6($source) && is_subnetv4($destination))) {
 					$input_errors[] = gettext('IPsec bypass source and destination addresses
-						must belong to the same IP family.');
+						must belong to the same address family.');
 				}
 				$bypassrules['rule'][] = array(
 					'source' => $_POST["source{$x}"],

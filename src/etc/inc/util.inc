@@ -4474,7 +4474,7 @@ function get_interface_vip_ips($interface) {
 /**
  * Checks for DNS availability.
  * 
- * @param int $protocol IP family to check with [AF_INET|AF_INET6]
+ * @param int $protocol Address family to check with [AF_INET|AF_INET6]
  * 
  * @return bool true if DNS is available, false otherwise
  */

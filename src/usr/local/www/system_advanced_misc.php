@@ -353,7 +353,7 @@ $section->addInput(new Form_Select(
 	[
 		'' => 'Don\'t kill states from the firewall itself',
 		'all' => 'Kill all states for lower-priority gateways',
-		'ipfamily' => 'Only kill states with the same IP family as the gateway group',
+		'addrfamily' => 'Only kill states with the same address family as the gateway group',
 	]
 ))->setHelp('Controls the state killing behavior for the %1$sdefault ' .
 	'gateway%2$s when set to a failover gateway group.',

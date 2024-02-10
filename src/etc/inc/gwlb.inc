@@ -619,8 +619,8 @@ function remove_failover_states(?string $gateway_name = null): void {
 		}
 
 		/* filtering for the address family allows states that have been created by user
-		   rules with a gateway of a different IP family on the same interface to remain */
-		if ($remove_states_default == 'ipfamily') {
+		   rules with a gateway of a different address family on the same interface to remain */
+		if ($remove_states_default == 'addrfamily') {
 			$host_prefix = ($gateway_name == $default_gateway4) ? '-k 0.0.0.0/0' : '-k ::/0';
 		} else {
 			$host_prefix = '';

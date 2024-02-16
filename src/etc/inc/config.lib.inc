@@ -1165,7 +1165,7 @@ function pfSense_clear_globals() {
 	if ($error !== NULL && !preg_match('|^' . preg_quote(g_get('tmp_path_user_code')) . '/[^/]{1,16}$|', $error['file'])) {
 		if (in_array($error['type'], array(E_ERROR, E_COMPILE_ERROR, E_CORE_ERROR, E_RECOVERABLE_ERROR))) {
 			$errorstr = "PHP ERROR: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
-			print($errorstr);
+			print('<pre style="white-space: pre-wrap;">' . htmlentities($errorstr) . '</pre>');
 			log_error($errorstr);
 			file_notice("phperror", $errorstr, 'PHP errors');
 		} else if ($error['type'] != E_NOTICE) {

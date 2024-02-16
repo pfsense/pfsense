@@ -77,7 +77,7 @@ if ($_POST['Submit'] == "No") {
 		if (filesize("/tmp/PHP_errors.log") < FILE_SIZE) {
 			$php_errors = file_get_contents("/tmp/PHP_errors.log");
 			$crash_reports .= "\nPHP Errors:\n";
-			$crash_reports .= $php_errors . "\n\n";
+			$crash_reports .= htmlspecialchars($php_errors) . "\n\n";
 		} else {
 			$crash_reports .= "\n/tmp/PHP_errors.log file is too large to display.\n";
 		}

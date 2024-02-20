@@ -435,6 +435,7 @@
 					case 'dyndns':
 					case 'dyndns-custom':
 					case 'dyndns-static':
+					case 'dynupdater':
 					case 'dyns':
 					case 'dynv6':
 					case 'dynv6-v6':
@@ -1298,6 +1299,20 @@
 					$server = "https://domains.google.com/nic/update";
 					$port = "";
 					curl_setopt($ch, CURLOPT_URL, 'https://domains.google.com/nic/update');
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					curl_setopt($ch, CURLOPT_POST, 1);
+					break;
+				case 'dynupdater':
+					$needsIP = FALSE;
+					$post_data['username:password'] = $this->_dnsUser . ':' . $this->_dnsPass;
+					$post_data['hostname'] = $this->_dnsHost;
+					$post_data['myip'] = $this->_dnsIP;
+					$post_data['offline'] = 'no';
+					$server = "https://domains.dynupdater.com/nic/update";
+					$port = "";
+					curl_setopt($ch, CURLOPT_URL, 'https://domains.dynupdater.com/nic/update');
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
@@ -2813,6 +2828,33 @@
 						$status = $status_intro . $error_str . gettext("Dynamic DNS access has been blocked!");
 					} else if (preg_match('/911/i', $data)) {
 						$status = $status_intro . $error_str . gettext("Error on Google's end, retry in 5 minutes");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
+				case 'dynupdater':
+					if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else if (preg_match('/notfqdn/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Not A FQDN");
+					} else if (preg_match('/badauth/i', $data)) {
+						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Hostname does not exist or DynDNS not enabled");
+					} else if (preg_match('/badagent/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Bad request");
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Dynamic DNS access has been blocked!");
+					} else if (preg_match('/911/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Error on Google's end, retry in 5 minutes");
+					} else if (strpos($data, 'error code: 520') !== false) {
+						$status = $status_intro . $error_str . gettext("Error while updating on DynUpdater");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);

@@ -93,6 +93,7 @@ if ($_POST['save'] || $_POST['force']) {
 		"digitalocean" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"digitalocean-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"dnsmadeeasy" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"dynupdater" => array("apex" => false, "wildcard" => true, "username_none" => false),
 		"freedns" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"freedns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"freedns2" => array("apex" => false, "wildcard" => false, "username_none" => true),

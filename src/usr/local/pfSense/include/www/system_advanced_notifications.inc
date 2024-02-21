@@ -34,6 +34,7 @@ init_config_arr(array('notifications', 'smtp'));
 init_config_arr(array('notifications', 'telegram'));
 init_config_arr(array('notifications', 'pushover'));
 init_config_arr(array('notifications', 'slack'));
+init_config_arr(array('notifications', 'webhook'));
 
 function getAdvancedNotifications($json = false) {
 	$nconfig = array();
@@ -145,7 +146,7 @@ function saveAdvancedNotifications($post, $json = false) {
 	$testslack = isset($post['test-slack']);
 	$testwebhook = isset($post['test-webhook']);
 
-	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover || $testslack || $webhook) {
+	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover || $testslack || $testwebhook) {
 
 		// General Settings
 		config_set_path('notifications/certexpire/enable', (($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled"));

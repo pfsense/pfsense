@@ -301,16 +301,6 @@ function saveAdvancedNotifications($post, $json = false) {
 			$input_errors[] = gettext("The Slack Channel name must be 80 characters or less.");
 		}
 
-		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack) {
-			write_config("Notifications Advanced Settings saved");
-
-			if (!$json) {
-				pfSenseHeader("system_advanced_notifications.php");
-				return;
-			}
-		}
-	}
-
 		// Generic Webhook
 		config_set_path('notifications/webhook/enabled', (($post['enable_webhook'] == "yes") ? true : false));
 		config_set_path('notifications/webhook/url', $post['webhook_url']);
@@ -319,14 +309,15 @@ function saveAdvancedNotifications($post, $json = false) {
 		    $input_errors[] = gettext("The webhook URL is not valid.");
 		}
 		
-		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack) {
-		    write_config("Notifications Advanced Settings saved");
-		
-		    if (!$json) {
-		        pfSenseHeader("system_advanced_notifications.php");
-		        return;
-		    }
+		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack && !$testwebhook) {
+			write_config("Notifications Advanced Settings saved");
+
+			if (!$json) {
+				pfSenseHeader("system_advanced_notifications.php");
+				return;
+			}
 		}
+	}
 
 	if ($testsmtp) {
 		// Send test message via smtp

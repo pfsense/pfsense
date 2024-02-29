@@ -252,6 +252,14 @@ status_cmd_define("Disk-GEOM Label Status", "/sbin/geom label status");
 status_cmd_define("Disk-GEOM Label Details", "/sbin/geom label list");
 status_cmd_define("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
+/* Items specific to EFI */
+if (get_single_sysctl("machdep.bootmethod") == "UEFI") {
+	/* Basic EFI boot list is easier to read but only includes active entries */
+	status_cmd_define("EFI-Boot Manager List", "/usr/sbin/efibootmgr");
+	/* Verbose EFI boot list has a lot more detail but is more difficult to read */
+	status_cmd_define("EFI-Boot Manager List (Verbose)", "/usr/sbin/efibootmgr -v");
+}
+
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 

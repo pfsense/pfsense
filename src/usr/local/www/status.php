@@ -177,6 +177,9 @@ if (file_exists("/boot/loader.conf")) {
 if (file_exists("/boot/loader.conf.local")) {
 	status_cmd_define("OS-Boot Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
 }
+if (file_exists("/boot/loader.conf.lua")) {
+	status_cmd_define("OS-Boot Loader Configuration (Lua)", "/bin/cat /boot/loader.conf.lua");
+}
 if (file_exists("/var/etc/filterdns.conf")) {
 	status_cmd_define("DNS-filterdns Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
 }

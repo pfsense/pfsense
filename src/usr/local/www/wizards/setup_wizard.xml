@@ -152,34 +152,28 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if (empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
-			include("head.inc");
-			$input_errors[] = "Hostname is invalid. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		global $input_errors, $stepid;
+		$input_errors = [];
+		if (empty($_POST['hostname']) ||
+		    !is_unqualified_hostname($_POST['hostname'])) {
+			$input_errors[] = gettext("Hostname is invalid.");
 		}
-		if (empty($_POST['domain']) || !is_domain($_POST['domain'])) {
-			include("head.inc");
-			$input_errors[] = "Domain is invalid. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		if (empty($_POST['domain']) ||
+		    !is_domain($_POST['domain'])) {
+			$input_errors[] = gettext("Domain is invalid.");
 		}
-		if (!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
-			include("head.inc");
-			$input_errors[] = "Primary DNS server is invalid. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		if (!empty($_POST['primarydnsserver']) &&
+		    !is_ipaddr($_POST['primarydnsserver'])) {
+			$input_errors[] = gettext("Primary DNS server is invalid.");
 		}
-		if (!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
-			include("head.inc");
-			$input_errors[] = "Second DNS server is invalid. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		if (!empty($_POST['secondarydnsserver']) &&
+		    !is_ipaddr($_POST['secondarydnsserver'])) {
+			$input_errors[] = gettext("Second DNS server is invalid.");
 		}
+		if (!empty($input_errors)) {
+			$stepid = $stepid - 1;
+		}
+
 		]]>
 	</stepsubmitphpaction>
 </step>
@@ -206,13 +200,15 @@
 	</fields>
 	<stepsubmitphpaction>
 		<![CDATA[
+		global $input_errors, $stepid;
+		$input_errors = [];
 		foreach (explode(' ', $_POST['timeserverhostname']) as $ts) {
 			if (!is_domain($ts)) {
-				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in the browser window and correct.");
-				print_input_errors($input_errors);
-				include("foot.inc");
-				die;
+				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces.");
 			}
+		}
+		if (!empty($input_errors)) {
+			$stepid = $stepid - 1;
 		}
 		]]>
 	</stepsubmitphpaction>
@@ -492,8 +488,9 @@
 
 		if (is_array($gws)) {
 			foreach ($gws as $gw) {
-				if ($gw['name'] == $wangw_name ||
-				    (!empty($wizard_wangw) && $gw['gateway'] == $wizard_wangw)) {
+				if (($gw['name'] == $wangw_name) ||
+				    (!empty($wizard_wangw) &&
+				     ($gw['gateway'] == $wizard_wangw))) {
 				    	$wizard_wangw = $gw['gateway'];
 				}
 			}
@@ -502,104 +499,89 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if (!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
-			include("head.inc");
-			$input_errors[] = "MTU Must be at least 576 (Per RFC 791). Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		global $input_errors, $stepid;
+		$input_errors = [];
+		if (!empty($_POST['mtu']) &&
+		    ($_POST['mtu'] < 576)) {
+			$input_errors[] = gettext("MTU Must be at least 576 (Per RFC 791).");
 		}
-		if (!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
-			include("head.inc");
-			$input_errors[] = "Invalid MAC Address. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		if (!empty($_POST['macaddress']) &&
+		    !is_macaddr($_POST['macaddress'])) {
+			$input_errors[] = gettext("Invalid MAC Address.");
 		}
-		if (!empty($_POST['ipaddress']) && ($_POST['configurationtype'] == "Static")) {
+		if (!empty($_POST['ipaddress']) &&
+		    ($_POST['configurationtype'] == "Static")) {
 			if (!is_ipaddr($_POST['ipaddress'])) {
-				include("head.inc");
-				$input_errors[] = "Invalid WAN IP Address. Please press back in the browser window and correct.";
-				print_input_errors($input_errors);
-				include("foot.inc");
-				die;
+				$input_errors[] = gettext("Invalid WAN IP Address.");
 			}
 			if ($_POST['subnetmask'] < 31 &&
-			    ($_POST['ipaddress'] == gen_subnet($_POST['ipaddress'], $_POST['subnetmask']) ||
-			     $_POST['ipaddress'] == gen_subnet_max($_POST['ipaddress'], $_POST['subnetmask']))) {
-			    include("head.inc");
-				$input_errors[] = "Invalid WAN IP Address. Please press back in the browser window and correct.";
-				print_input_errors($input_errors);
-				include("foot.inc");
-				die;
+			    (($_POST['ipaddress'] == gen_subnet($_POST['ipaddress'], $_POST['subnetmask'])) ||
+			     ($_POST['ipaddress'] == gen_subnet_max($_POST['ipaddress'], $_POST['subnetmask'])))) {
+				$input_errors[] = gettext("Invalid WAN IP Address.");
 			}
 		}
-		if (!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
-			include("head.inc");
-			$input_errors[] = "Invalid DHCP Hostname. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		if (!empty($_POST['dhcphostname']) &&
+		    !is_hostname($_POST['dhcphostname'])) {
+			$input_errors[] = gettext("Invalid DHCP Hostname.");
 		}
-		if (!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
-		    include("head.inc");
-			$input_errors[] = "Invalid PPTP Local IP Address. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		if (!empty($_POST['pptplocalipaddress']) &&
+		    !is_ipaddr($_POST['pptplocalipaddress'])) {
+			$input_errors[] = gettext("Invalid PPTP Local IP Address.");
 		}
-		if (!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
-			include("head.inc");
-			$input_errors[] = "Invalid PPTP Remote IP Address. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
+		if (!empty($_POST['pptpremoteipaddress']) &&
+		    !is_ipaddr($_POST['pptpremoteipaddress'])) {
+			$input_errors[] = gettext("Invalid PPTP Remote IP Address.");
 		}
-		$type = $_POST['configurationtype'];
+		if (empty($input_errors)) {
+			$type = $_POST['configurationtype'];
 
-		init_config_arr(array('ppps', 'ppp'));
-		if (count($config['ppps']['ppp'])) {
-			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-				if ($ppp['ptpid'] == "0") {
-					if ((substr($config['interfaces']['wan']['if'],0,5) == "pppoe") || (substr($config['interfaces']['wan']['if'],0,4) == "pptp")) {
-						$oldif = explode(",", $ppp['ports']);
-						$config['interfaces']['wan']['if'] = $oldif[0];
+			init_config_arr(array('ppps', 'ppp'));
+			if (count($config['ppps']['ppp'])) {
+				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+					if ($ppp['ptpid'] == "0") {
+						if ((substr($config['interfaces']['wan']['if'],0,5) == "pppoe") ||
+						    (substr($config['interfaces']['wan']['if'],0,4) == "pptp")) {
+							$oldif = explode(",", $ppp['ports']);
+							$config['interfaces']['wan']['if'] = $oldif[0];
+						}
+						if (($type == "pppoe") ||
+						    ($type == "pptp"))
+							unset($config['ppps']['ppp'][$pppid]);
 					}
-					if ($type == "pppoe" || $type == "pptp")
-						unset($config['ppps']['ppp'][$pppid]);
 				}
 			}
-		}
 
-		if ($type == "pppoe" || $type == "pptp") {
-			if ($type == "pptp") {
-				$config['wizardtemp']['wan']['username'] = $config['wizardtemp']['wan']['pptpusername'];
-				$config['wizardtemp']['wan']['password'] = $config['wizardtemp']['wan']['pptppassword'];
-				$config['wizardtemp']['wan']['ondemand'] = $config['wizardtemp']['wan']['pptpondemand'];
-				$config['wizardtemp']['wan']['idletimeout'] = $config['wizardtemp']['wan']['pptpidletimeout'];
-				unset($config['wizardtemp']['wan']['pptpusername']);
-				unset($config['wizardtemp']['wan']['pptppassword']);
-				unset($config['wizardtemp']['wan']['pptpondemand']);
-				unset($config['wizardtemp']['wan']['pptpidletimeout']);
+			if (($type == "pppoe") ||
+			    ($type == "pptp")) {
+				if ($type == "pptp") {
+					$config['wizardtemp']['wan']['username'] = $config['wizardtemp']['wan']['pptpusername'];
+					$config['wizardtemp']['wan']['password'] = $config['wizardtemp']['wan']['pptppassword'];
+					$config['wizardtemp']['wan']['ondemand'] = $config['wizardtemp']['wan']['pptpondemand'];
+					$config['wizardtemp']['wan']['idletimeout'] = $config['wizardtemp']['wan']['pptpidletimeout'];
+					unset($config['wizardtemp']['wan']['pptpusername']);
+					unset($config['wizardtemp']['wan']['pptppassword']);
+					unset($config['wizardtemp']['wan']['pptpondemand']);
+					unset($config['wizardtemp']['wan']['pptpidletimeout']);
+				}
+				$config['wizardtemp']['wan']['password'] = base64_encode($config['wizardtemp']['wan']['password']);
+				$tmp = array();
+				$tmp['ptpid'] = "0";
+				$tmp['type'] = $type;
+				$tmp['if'] = $type . "0";
+				$tmp['ports'] = $config['interfaces']['wan']['if'];
+				$config['ppps']['ppp'][] = array_merge($tmp, $config['wizardtemp']['wan']);
+				unset($tmp);
+				$config['interfaces']['wan']['if'] = $type."0";
 			}
-			$config['wizardtemp']['wan']['password'] = base64_encode($config['wizardtemp']['wan']['password']);
-			$tmp = array();
-			$tmp['ptpid'] = "0";
-			$tmp['type'] = $type;
-			$tmp['if'] = $type . "0";
-			$tmp['ports'] = $config['interfaces']['wan']['if'];
-			$config['ppps']['ppp'][] = array_merge($tmp, $config['wizardtemp']['wan']);
-			unset($tmp);
-			$config['interfaces']['wan']['if'] = $type."0";
+			unset($config['wizardtemp']['wan']);
+		} else {
+			$stepid = $stepid - 1;
 		}
-		unset($config['wizardtemp']['wan']);
 		]]>
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
-			if ($_POST['configurationtype'] == "Static") {
-
-			} else {
+			if ($_POST['configurationtype'] != "Static") {
 				$_POST['ipaddress'] = $_POST['configurationtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['configurationtype'];
 				write_config(gettext("WAN interface configuration saved via pfSense setup wizard."));
@@ -650,71 +632,67 @@
 	</stepsubmitbeforesave>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if (empty($_POST['lanipaddress']) || (!is_ipaddr($_POST['lanipaddress']) && (strtolower($_POST['lanipaddress']) != "dhcp"))) {
-			print_info_box("Invalid LAN IP address. Please press back in the browser window and correct.");
-			die;
-		}
+		global $input_errors, $stepid;
+		$input_errors = [];
 
-		$lowestip = gen_subnet($_POST['lanipaddress'], $_POST['subnetmask']);
-		$highestip = gen_subnet_max($_POST['lanipaddress'], $_POST['subnetmask']);
-
-		if ($_POST['subnetmask'] < 31) {
-			if ($_POST['lanipaddress'] == $lowestip) {
-				include("head.inc");
-				$input_errors[] = "LAN IP Address equals subnet network address. This is not allowed. Please press back in the browser window and correct.";
-				print_input_errors($input_errors);
-				include("foot.inc");
-				die;
-			}
-			if ($_POST['lanipaddress'] == $highestip) {
-				include("head.inc");
-				$input_errors[] = "LAN IP Address equals subnet broadcast address. This is not allowed. Please press back in the browser window and correct.";
-				print_input_errors($input_errors);
-				include("foot.inc");
-				die;
-			}
+		if (empty($_POST['lanipaddress']) ||
+		    (!is_ipaddr($_POST['lanipaddress']) &&
+		    (strtolower($_POST['lanipaddress']) != "dhcp"))) {
+			$input_errors[] = gettext("Invalid LAN IP address.");
 		} else {
-			include("head.inc");
-			$input_errors[] = "Invalid subnet mask, choose a mask less than 31. Please press back in the browser window and correct.";
-			print_input_errors($input_errors);
-			include("foot.inc");
-			die;
-		}
+			$lowestip = gen_subnet($_POST['lanipaddress'], $_POST['subnetmask']);
+			$highestip = gen_subnet_max($_POST['lanipaddress'], $_POST['subnetmask']);
 
-		/*
-		   If the existing DHCP range on LAN is not in the new subnet or
-		   is invalid, then replace the range with a newly crafted one.
-		*/
-		init_config_arr(array('dhcpd', 'lan', 'range', 'from'));
-		init_config_arr(array('dhcpd', 'lan', 'range', 'to'));
-		if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
-		    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
-
-			$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
-			$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
-			if ($ipaddresses_after >= $ipaddresses_before) {
-				// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
-				if ($ipaddresses_after > 30) {
-					// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-					// This case will work out like the old defaults if the user has specified the ".1" address.
-					// The range will be something like ".10" to ".245"
-					$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
-					$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
-				} else {
-					// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
-					$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
-					$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+			if ($_POST['subnetmask'] < 32) {
+				if ($_POST['lanipaddress'] == $lowestip) {
+					$input_errors[] = gettext("LAN IP Address is set to the subnet network address. This is not allowed.");
+				}
+				if ($_POST['lanipaddress'] == $highestip) {
+					$input_errors[] = gettext("LAN IP Address is set to the subnet broadcast address. This is not allowed.");
 				}
 			} else {
-				// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
-				if ($ipaddresses_before > 30) {
-					// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-					$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
-					$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
+				$input_errors[] = gettext("Invalid subnet mask, choose a mask less than 32.");
+			}
+		}
+
+		if (!empty($input_errors)) {
+			$stepid = $stepid - 1;
+		} else {
+			/*
+			   If the existing DHCP range on LAN is not in the new subnet or
+			   is invalid, then replace the range with a newly crafted one.
+			*/
+			init_config_arr(array('dhcpd', 'lan', 'range', 'from'));
+			init_config_arr(array('dhcpd', 'lan', 'range', 'to'));
+			if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
+			    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
+
+				$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
+				$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
+				if ($ipaddresses_after >= $ipaddresses_before) {
+					// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
+					if ($ipaddresses_after > 30) {
+						// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+						// This case will work out like the old defaults if the user has specified the ".1" address.
+						// The range will be something like ".10" to ".245"
+						$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
+						$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+					} else {
+						// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
+						$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
+						$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+					}
 				} else {
-					// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
-					$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
-					$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+					// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
+					if ($ipaddresses_before > 30) {
+						// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+						$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
+						$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
+					} else {
+						// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
+						$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
+						$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+					}
 				}
 			}
 		}
@@ -799,7 +777,9 @@
 					continue;
 				if (isset($gw['defaultgw']))
 					$defaultgw_found = true;
-				if ($gw['name'] == 'WANGW' || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway'])) {
+				if (($gw['name'] == 'WANGW') ||
+				    (!empty($config['wizardtemp']['wangateway']) &&
+				    ($gw['gateway'] == $config['wizardtemp']['wangateway']))) {
 					$found = true;
 					$gw['gateway'] = $config['wizardtemp']['wangateway'];
 					$config['interfaces']['wan']['gateway'] = $gw['name'];

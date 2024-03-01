@@ -723,15 +723,20 @@
 </step>
 <step>
 	<id>7</id>
-	<title>Set Admin WebGUI Password</title>
-	<description>On this screen the admin password will be set, which is used to access the WebGUI and also SSH services if enabled.</description>
+	<title>Change admin Account Password</title>
+	<description>
+		<![CDATA[
+		<p>Change the password for the admin account.</p>
+		<p>This account is used to access the GUI, console (if protected), and SSH service (if enabled).</p>
+		]]>
+	</description>
 	<fields>
 		<field>
-			<name>Admin Password</name>
+			<name>New admin Password</name>
 			<type>password</type>
 		</field>
 		<field>
-			<name>Admin Password AGAIN</name>
+			<name>Confirm admin Password</name>
 			<type>password</type>
 		</field>
 		<field>
@@ -741,16 +746,21 @@
 	</fields>
 	<stepsubmitphpaction>
 	<![CDATA[
-	if ($_POST['adminpassword'] != "") {
-		if ($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
-			$admin_user =& getUserEntryByUID(0);
-			local_user_set_password($admin_user, $_POST['adminpassword']);
-			local_user_set($admin_user);
-			write_config(gettext("Admin WebGUI password saved via pfSense setup wizard."));
-		} else {
-			print_info_box("Passwords do not match! Please press back in the browser window and correct.");
-			die;
-		}
+	global $input_errors, $stepid, $savemsg;
+	$input_errors = [];
+	if (!empty($_POST['newadminpassword']) &&
+	    ($_POST['newadminpassword'] == $_POST['confirmadminpassword'])) {
+		$admin_user =& getUserEntryByUID(0);
+		local_user_set_password($admin_user, $_POST['newadminpassword']);
+		local_user_set($admin_user);
+		write_config(gettext("Setup wizard changed admin account password."));
+	} elseif (!empty($_POST['newadminpassword']) &&
+		  ($_POST['newadminpassword'] != $_POST['confirmadminpassword'])) {
+		$input_errors[] = gettext("New and Confirm Passwords do not match!");
+	}
+
+	if (count($input_errors) > 0) {
+		$stepid = $stepid - 1;
 	}
 	]]>
 	</stepsubmitphpaction>

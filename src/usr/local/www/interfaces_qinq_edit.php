@@ -203,9 +203,6 @@ if ($_POST['save']) {
 			$a_qinqs[] = $qinqentry;
 		}
 		if ($_POST['autogroup'] == "yes") {
-			if (!is_array($config['ifgroups']['ifgroupentry'])) {
-				config_set_path('ifgroups/ifgroupentry', array());
-			}
 			$gid = null;
 			foreach (config_get_path('ifgroups/ifgroupentry', []) as $idx => $group) {
 				if ($group['ifname'] == "QinQ") {

@@ -225,24 +225,25 @@
 	<description>On this screen the Wide Area Network information will be configured.</description>
 	<javascriptafterformdisplay>
 		var selectedItem = 0;
-		if (document.forms[0].ipaddress.value == 'dhcp') {
-			selectedItem = 1;
-			document.forms[0].ipaddress.value = '';
-		} else if (document.forms[0].ipaddress.value == 'pppoe') {
-			selectedItem = 2;
-			document.forms[0].ipaddress.value = '';
-		} else if (document.forms[0].ipaddress.value == 'pptp') {
-			selectedItem = 3;
-			document.forms[0].ipaddress.value = '';
-		} else if (document.forms[0].ipaddress.value == 'ppp' || document.forms[0].ipaddress.value == 'l2tp') {
-			document.forms[0].ipaddress.value = '';
-		} else {
-			selectedItem = 0;
-		}
-		document.forms[0].selectedtype.selectedIndex = selectedItem;
-		enableitems(selectedItem);
-
 		events.push(function(){
+			if ($('#ipaddress').prop('value')  == 'dhcp') {
+				selectedItem = 1;
+				$('#ipaddress').prop('value', '');
+			} else if ($('#ipaddress').prop('value')  == 'pppoe') {
+				selectedItem = 2;
+				$('#ipaddress').prop('value', '');
+			} else if ($('#ipaddress').prop('value')  == 'pptp') {
+				selectedItem = 3;
+				$('#ipaddress').prop('value', '');
+			} else if ($('#ipaddress').prop('value')  == 'ppp' ||
+				   $('#ipaddress').prop('value')  == 'l2tp') {
+				$('#ipaddress').prop('value', '');
+			} else {
+				selectedItem = 0;
+			}
+			$('#configurationtype').prop('selectedIndex', selectedItem)
+			enableitems(selectedItem);
+
 			$('#showpppoepassword').click(function(event) {
 				if (this.checked) {
 					$('#pppoepassword').attr('type', 'text');

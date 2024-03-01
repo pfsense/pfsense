@@ -516,7 +516,7 @@
 			include("foot.inc");
 			die;
 		}
-		if (!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
+		if (!empty($_POST['ipaddress']) && ($_POST['configurationtype'] == "Static")) {
 			if (!is_ipaddr($_POST['ipaddress'])) {
 				include("head.inc");
 				$input_errors[] = "Invalid WAN IP Address. Please press back in the browser window and correct.";
@@ -555,7 +555,7 @@
 			include("foot.inc");
 			die;
 		}
-		$type = $_POST['selectedtype'];
+		$type = $_POST['configurationtype'];
 
 		init_config_arr(array('ppps', 'ppp'));
 		if (count($config['ppps']['ppp'])) {
@@ -597,11 +597,11 @@
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
-			if ($_POST['selectedtype'] == "Static") {
+			if ($_POST['configurationtype'] == "Static") {
 
 			} else {
-				$_POST['ipaddress'] = $_POST['selectedtype'];
-				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
+				$_POST['ipaddress'] = $_POST['configurationtype'];
+				$config['interfaces']['wan']['ipaddr'] = $_POST['configurationtype'];
 				write_config(gettext("WAN interface configuration saved via pfSense setup wizard."));
 			}
 			if (!$config['interfaces']['lan']) {

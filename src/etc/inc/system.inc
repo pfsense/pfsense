@@ -2560,7 +2560,7 @@ function system_ntp_configure() {
 		if (substr_count(config_get_path('ntpd/noselect'), $ts)) {
 			$ntpcfg .= ' noselect';
 		}
-		if (config_get_path('ntpd/serverauth') == 'yes' && !substr_count(config_get_path('ntpd/ispool'), $ts)) {
+		if (config_get_path('ntpd/serverauth') == 'yes' && !substr_count(config_get_path('ntpd/ispool'), $ts) && substr_count(config_get_path('ntpd/isauth'), $ts)) {
 			$ntpcfg .= " key {$ntp_keyid} ";
 		}
 		$ntpcfg .= "\n";

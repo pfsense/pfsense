@@ -82,6 +82,13 @@ if ($_POST) {
 		    (substr_compare($pconfig["server{$i}"], $auto_pool_suffix, strlen($pconfig["server{$i}"]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0))) {
 			$input_errors[] = gettext("It is not possible to use 'No Select' for pools.");
 		}
+		if (isset($pconfig["servauth{$i}"]) && (($pconfig["servistype{$i}"] == 'pool') ||
+			(substr_compare($pconfig["server{$i}"], $auto_pool_suffix, strlen($pconfig["server{$i}"]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0))) {
+			$input_errors[] = gettext("It is not possible to use 'Authenticated' for pools.");
+		}
+		if (isset($pconfig["servauth{$i}"]) && empty($pconfig['serverauth'])) {
+			$input_errors[] = gettext("The NTP authentication key information must be set to use 'Authenticated' for a server or peer.");
+		}
 		if (!empty($pconfig["server{$i}"]) && !is_domain($pconfig["server{$i}"]) &&
 		    !is_ipaddr($pconfig["server{$i}"])) {
 			$input_errors[] = gettext("NTP Time Server names must be valid domain names, IPv4 addresses, or IPv6 addresses");
@@ -127,6 +134,7 @@ if ($_POST) {
 		config_del_path('ntpd/noselect');
 		config_del_path('ntpd/ispool');
 		config_del_path('ntpd/ispeer');
+		config_del_path('ntpd/isauth');
 		$timeservers = '';
 
 		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -138,6 +146,12 @@ if ($_POST) {
 				}
 				if (isset($_POST["servselect{$i}"])) {
 					config_set_path('ntpd/noselect', (config_get_path('ntpd/noselect') . "{$tserver} "));
+				}
+				if (isset($_POST["servauth{$i}"])) {
+					$config['ntpd']['isauth'] .= "{$tserver} ";
+				}
+				if (isset($_POST["servauth{$i}"])) {
+					$config['ntpd']['isauth'] .= "{$tserver} ";
 				}
 				if ($_POST["servistype{$i}"] == 'pool') {
 					config_set_path('ntpd/ispool', (config_get_path('ntpd/ispool') . "{$tserver} "));
@@ -325,19 +339,26 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		['placeholder' => 'Hostname']
 	 ))->setWidth(3);
 
-	 $group->add(new Form_Checkbox(
+	$group->add(new Form_Checkbox(
 		'servprefer' . $counter,
 		null,
 		null,
 		config_path_enabled('ntpd', 'prefer') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/prefer'), $timeservers[$counter])
 	 ))->sethelp('Prefer');
 
-	 $group->add(new Form_Checkbox(
+	$group->add(new Form_Checkbox(
 		'servselect' . $counter,
 		null,
 		null,
 		config_path_enabled('ntpd', 'noselect') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/noselect'), $timeservers[$counter])
 	 ))->sethelp('No Select');
+
+	$group->add(new Form_Checkbox(
+		'servauth' . $counter,
+		null,
+		null,
+		isset($config['ntpd']['isauth']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['isauth'], $timeservers[$counter])
+	 ))->setHelp('Authenticated');
 
 	if ((substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0) ||
 	    ((config_get_path('ntpd/ispool') !== null) && isset($timeservers[$counter]) &&

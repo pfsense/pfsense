@@ -1825,11 +1825,11 @@ function get_interface_info($ifdescr) {
 			if (preg_match("/vendor: (.*)$/", $ici, $matches)) {
 				$ifinfo['vendor'] = $matches[1];
 			}
-			if (preg_match("/module temperature: (.*) Voltage: (.*)$/", $ici, $matches)) {
+			if (preg_match("/module temperature: (.*) voltage: (.*)$/", $ici, $matches)) {
 				$ifinfo['temperature'] = $matches[1];
 				$ifinfo['voltage'] = $matches[2];
 			}
-			if (preg_match("/RX: (.*) TX: (.*)$/", $ici, $matches)) {
+			if (preg_match("/RX power: (.*) TX bias: (.*)$/", $ici, $matches)) {
 				$ifinfo['rx'] = $matches[1];
 				$ifinfo['tx'] = $matches[2];
 			}

@@ -206,7 +206,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['temperature'], gettext("Temperature"), $ifinfo['temperature']);
 			}
 			if ($ifinfo['voltage']) {
-				showDef($ifinfo['voltage'], gettext("voltage"), $ifinfo['voltage']);
+				showDef($ifinfo['voltage'], gettext("Voltage"), $ifinfo['voltage']);
 			}
 			if ($ifinfo['rx']) {
 				showDef($ifinfo['rx'], gettext("RX"), $ifinfo['rx']);

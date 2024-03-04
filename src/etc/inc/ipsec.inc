@@ -2485,7 +2485,13 @@ function ipsec_setup_tunnels() {
 			/* Mobile tunnels cannot start automatically */
 			$start_action = 'none';
 		} else {
-			$remote_spec = $ph1ent['remote-gateway'];
+			if (($ph1ent['protocol'] == 'both') &&
+			    (($ph1ent['remote-gateway'] == '0.0.0.0') ||
+			    ($ph1ent['remote-gateway'] == '::'))) {
+				$remote_spec = '%any';
+			} else {
+				$remote_spec = $ph1ent['remote-gateway'];
+			}
 			$sourcehost = (is_ipaddr($remote_spec)) ? $remote_spec : $rgmap[$remote_spec];
 			$ifacesuse = ipsec_setup_routes($ph1ent['interface'], $ph1ent['protocol'], $sourcehost, isset($ph1ent['gw_duplicates']));
 		}

@@ -840,9 +840,13 @@ if (!$pconfig['mobile']) {
 	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
 	    '<div class="infoblock">',
 	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' .
-	    'to allow connections from any IPv6 address.' . '<br/>' . 'Child SA Start Action must be set to None and ' .
-	    'Peer IP Address cannot be used for Remote Identifier. A remote gateway address of \'0.0.0.0\' or \'::\' is not ' .
-	    'compatible with VTI, use an FQDN instead.'), 'info', false),
+	    'to allow connections from any IPv6 address. For dual stack tunnels, either form will allow connections from ' .
+	    'both address families.' .
+	    '<br/><br/>' .
+	    'Child SA Start Action must be set to None and Peer IP Address cannot be used for Remote Identifier. ' .
+	    '<br/><br/>' .
+	    'A remote gateway address of \'0.0.0.0\' or \'::\' is not compatible with VTI, use an FQDN instead.'),
+	    'info', false),
 	    '</div>');
 
 	$section->add($group);

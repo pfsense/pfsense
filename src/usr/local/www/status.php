@@ -153,8 +153,20 @@ status_cmd_define("DNS-Resolver Access Lists", "/bin/cat /var/unbound/access_lis
 status_cmd_define("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.conf");
 status_cmd_define("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
 status_cmd_define("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
-status_cmd_define("DHCP-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
-status_cmd_define("DHCP-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
+
+if (file_exists("/var/dhcpd/etc/dhcpd.conf")) {
+	status_cmd_define("DHCP-ISC-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
+}
+if (file_exists("/var/dhcpd/etc/dhcpdv6.conf")) {
+	status_cmd_define("DHCP-ISC-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
+}
+if (file_exists("/usr/local/etc/kea/kea-dhcp4.conf")) {
+	status_cmd_define("DHCP-Kea-IPv4 Configuration", '/bin/cat /usr/local/etc/kea/kea-dhcp4.conf');
+}
+if (file_exists("/usr/local/etc/kea/kea-dhcp6.conf")) {
+	status_cmd_define("DHCP-Kea-IPv6 Configuration", '/bin/cat /usr/local/etc/kea/kea-dhcp6.conf');
+}
+
 status_cmd_define("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
 status_cmd_define("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
 status_cmd_define("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");

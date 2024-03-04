@@ -167,14 +167,21 @@ if (file_exists("/usr/local/etc/kea/kea-dhcp6.conf")) {
 	status_cmd_define("DHCP-Kea-IPv6 Configuration", '/bin/cat /usr/local/etc/kea/kea-dhcp6.conf');
 }
 
-status_cmd_define("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
-status_cmd_define("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
-status_cmd_define("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
-status_cmd_define("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
-status_cmd_define("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
-status_cmd_define("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
-status_cmd_define("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
-status_cmd_define("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
+if (file_exists("/var/etc/ipsec/strongswan.conf")) {
+	status_cmd_define("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
+}
+if (file_exists("/var/etc/ipsec/swanctl.conf")) {
+	status_cmd_define("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
+}
+if (file_exists("/var/run/charon.vici")) {
+	status_cmd_define("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
+	status_cmd_define("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
+	status_cmd_define("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
+	status_cmd_define("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
+	status_cmd_define("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
+	status_cmd_define("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
+}
+
 status_cmd_define("IPsec-SPD", "/sbin/setkey -DP");
 status_cmd_define("IPsec-SAD", "/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {

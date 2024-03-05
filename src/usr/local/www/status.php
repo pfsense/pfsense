@@ -160,10 +160,12 @@ if (file_exists("/var/dhcpd/etc/dhcpd.conf")) {
 if (file_exists("/var/dhcpd/etc/dhcpdv6.conf")) {
 	status_cmd_define("DHCP-ISC-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
 }
-if (file_exists("/usr/local/etc/kea/kea-dhcp4.conf")) {
+if (file_exists("/usr/local/etc/kea/kea-dhcp4.conf") &&
+    !compare_files("/usr/local/etc/kea/kea-dhcp4.conf", "/usr/local/etc/kea/kea-dhcp4.conf.sample")) {
 	status_cmd_define("DHCP-Kea-IPv4 Configuration", '/bin/cat /usr/local/etc/kea/kea-dhcp4.conf');
 }
-if (file_exists("/usr/local/etc/kea/kea-dhcp6.conf")) {
+if (file_exists("/usr/local/etc/kea/kea-dhcp6.conf") &&
+    !compare_files("/usr/local/etc/kea/kea-dhcp6.conf", "/usr/local/etc/kea/kea-dhcp6.conf.sample")) {
 	status_cmd_define("DHCP-Kea-IPv6 Configuration", '/bin/cat /usr/local/etc/kea/kea-dhcp6.conf');
 }
 

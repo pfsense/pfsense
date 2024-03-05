@@ -4542,4 +4542,16 @@ function resolve_address(?string $address): string|false {
 	return false;
 }
 
+function compare_files($f1, $f2) {
+	/* One file doesn't exist or files are different sizes, so they can't
+	 * be the same */
+	if (!file_exists($f1) ||
+	    !file_exists($f2) ||
+	    (filesize($f1) != filesize($f2))) {
+		return false;
+	}
+	/* Return result of comparing hashes. */
+	return (hash_file('sha256', $f1) == hash_file('sha256', $f2));
+}
+
 ?>

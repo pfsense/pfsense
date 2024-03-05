@@ -821,10 +821,7 @@ function captiveportal_prune_old_automac() {
 			if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
 				if (isset($tmpvoucherdb[$emac['username']])) {
 					$temac = config_get_path("captiveportal/{$cpzone}/passthrumac/{$tmpvoucherdb[$emac['username']]}");
-					$pipes = captiveportal_get_dn_passthru_pipes($temac['mac']);
-					if ($pipes) {
-						captiveportal_ether_delete_entry($temac['mac'], 'auth');
-					}
+					captiveportal_passthrumac_delete_entry($temac);
 					$writecfg = true;
 					captiveportal_logportalauth($temac['username'], $temac['mac'],
 					    $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");

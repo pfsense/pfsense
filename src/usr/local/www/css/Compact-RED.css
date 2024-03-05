@@ -93,7 +93,7 @@ body {
     margin-bottom: 0px;
 }
 
-.dropdown-menu {
+.dropdown-menu-fixed {
     max-height: calc(98vh - 35px);
     overflow-y: auto;
 }

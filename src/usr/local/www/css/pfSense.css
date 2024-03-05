@@ -210,7 +210,7 @@ tr.disabled a {
     margin-bottom: 20px;
 }
 
-.dropdown-menu {
+.dropdown-menu-fixed {
     max-height: calc(98vh - 35px);
     overflow-y: auto;
 }

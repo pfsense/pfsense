@@ -454,9 +454,10 @@ if (!g_get('disablehelpmenu')) {
 }
 
 $menuclass = "static";
-
+$menuclass_dropdown = '';
 if ($user_settings['webgui']['webguifixedmenu'] == "fixed") {
 	$menuclass = "fixed";
+	$menuclass_dropdown = ' dropdown-menu-fixed';
 }
 
 $numColumns = (int) $user_settings['webgui']['dashboardcolumns'];
@@ -529,7 +530,7 @@ if (are_notices_pending()) {
 						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu"><?=$menu_output?></ul>
+					<ul class="dropdown-menu<?=$menuclass_dropdown?>" role="menu"><?=$menu_output?></ul>
 				</li>
 
 <?php

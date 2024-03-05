@@ -275,14 +275,18 @@ class pfsense_xmlrpc_server {
 					    array_column($local_groups, 'name'));
 
 					if ($idx === false) {
+						// section config group not found in local config
 						$g2add[] = $group;
 					} else if ($group['gid'] < 2000) {
+						// section config group found in local config and is a special group
 						$g2keep[] = $idx;
 					} else if ($group != $local_groups[$idx]) {
+						// section config group found in local config with different settings
 						$g2add[] = $group;
 						$g2del[] = $group;
 						$g2del_idx[] = $idx;
 					} else {
+						// section config group found in local config and its settings are synced
 						$g2keep[] = $idx;
 					}
 				}
@@ -291,6 +295,7 @@ class pfsense_xmlrpc_server {
 				foreach (config_get_path('system/group', []) as $idx => $group) {
 					if (array_search($idx, $g2keep) === false &&
 					    array_search($idx, $g2del_idx) === false) {
+						// local config group not in section config group
 						$g2del[] = $group;
 						$g2del_idx[] = $idx;
 					}

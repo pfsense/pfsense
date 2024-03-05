@@ -518,10 +518,11 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 
 	foreach($g2del as $group) {
 		if ($group['gid'] < 2000 || $group['gid'] > 65000) {
+			// dont' remove special groups
 			continue;
 		}
 
-		$cmd = "/usr/sbin/pw groupdel -g " .
+		$cmd = "/usr/sbin/pw groupdel -n " .
 		    escapeshellarg($group['name']);
 		if ($debug) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -997,7 +998,7 @@ function local_group_del($group) {
 	global $debug;
 
 	/* delete from group db */
-	$cmd = "/usr/sbin/pw groupdel " . escapeshellarg($group['name']);
+	$cmd = "/usr/sbin/pw groupdel -n " . escapeshellarg($group['name']);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));

@@ -91,9 +91,8 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	$macfull = explode('/', $_POST['mac']);
-	$macmask = $macfull[1] ? $macfull[1] : false; 
-	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $macfull[0])));
+	list($macfull, $macmask) = explode('/', $_POST['mac']);
+	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $macfull)));
 
 	if ($_POST['mac']) {
 		if (is_macaddr($_POST['mac'])) {
@@ -120,8 +119,13 @@ if ($_POST['save']) {
 	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
 		$input_errors[] = gettext("Download speed must be between 1 and 999999");
 	}
-	if ($macmask && (($macmask > 48) || ($macmask < 1))) {
-		$input_errors[] = gettext("MAC address mask must be between 1 and 48");
+	if (isset($macmask)) {
+		if (($macmask > 48) || ($macmask < 1)) {
+			$input_errors[] = gettext("MAC address mask must be between 1 and 48");
+		}
+		if (!is_numericint($macmask)) {
+			$input_errors[] = gettext("MAC address mask must be an integer.");
+		}
 	}
 
 	foreach ($a_passthrumacs as $macent) {

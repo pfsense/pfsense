@@ -224,10 +224,7 @@ $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('
 $group = new Form_Group('*MAC Address');
 $group->add($macaddress);
 $group->add($btnmymac);
-$group->setHelp('6 hex octets separated by colons%1$s%2$s%3$s', '<div class="infoblock">',
-	sprint_info_box(gettext('It is also possible to add a mask value (like /24),
-	for example, to allow all phones of a certain manufacturer to bypass the portal'), 'info', false),
-	'</div>');
+$group->setHelp('The client\'s MAC address, optionally with a mask length (e.g. "/24").');
 $section->add($group);
 
 $section->addInput(new Form_Input(

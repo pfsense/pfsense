@@ -1193,6 +1193,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 		    "hint.uart.1.flags",
 		    "net.link.ifqmaxlen",
 		    "hint.hwpstate_intel.0.disabled",
+		    "loader_conf_files",
 		    "machdep.hwpstate_pkg_ctrl",
 		    "net.pf.states_hashsize"
 		));
@@ -1275,6 +1276,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 
 	$data = load_loader_conf($loader_conf_file, false);
+
+	$data[] = 'loader_conf_files="/boot/loader.conf.lua"';
+
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';

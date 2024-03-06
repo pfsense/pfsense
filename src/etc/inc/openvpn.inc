@@ -2294,6 +2294,15 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 		return "";
 	}
 	$tmpnetworks = explode(',', $value);
+
+	/* Remove empty entries from network array, which otherwise may lead to
+	 * invalid route statements.
+	 * https://redmine.pfsense.org/issues/14919
+	 */
+	$tmpnetworks = array_filter($tmpnetworks, function ($tnet) {
+		return !empty(trim($tnet));
+	});
+
 	foreach ($tmpnetworks as $network) {
 		if (is_alias($network)) {
 			foreach (alias_to_subnets_recursive($network, true) as $net) {

@@ -41,6 +41,20 @@ init_config_arr(array('vlans', 'vlan'));
 $a_vlans = &$config['vlans']['vlan'];
 
 if ($_POST['act'] == "del") {
+	/*
+	 * Check user privileges to test if the user is allowed to make changes.
+	 * Otherwise users can end up in an inconsistent state where some changes are
+	 * performed and others denied. See https://redmine.pfsense.org/issues/15282
+	 */
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	phpsession_end();
+
+	if ($read_only) {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
+
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
 	} else if (empty($a_vlans[$_POST['id']])) {
@@ -48,7 +62,9 @@ if ($_POST['act'] == "del") {
 	/* check if still in use */
 	} else if (vlan_inuse($a_vlans[$_POST['id']])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
-	} else {
+	}
+
+	if (!$input_errors) {
 		if (does_interface_exist($a_vlans[$_POST['id']]['vlanif'])) {
 			pfSense_interface_destroy($a_vlans[$_POST['id']]['vlanif']);
 		}

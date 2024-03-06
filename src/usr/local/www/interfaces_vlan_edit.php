@@ -84,6 +84,20 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	/*
+	 * Check user privileges to test if the user is allowed to make changes.
+	 * Otherwise users can end up in an inconsistent state where some changes are
+	 * performed and others denied. See https://redmine.pfsense.org/issues/15282
+	 */
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	phpsession_end();
+
+	if ($read_only) {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
+
 	/* input validation */
 	$reqdfields = explode(" ", "if tag");
 	$reqdfieldsn = array(gettext("Parent interface"), gettext("VLAN tag"));

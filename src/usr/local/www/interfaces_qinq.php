@@ -37,6 +37,20 @@ $a_qinqs = &$config['qinqs']['qinqentry'];
 if ($_POST['act'] == "del") {
 	$id = $_POST['id'];
 
+	/*
+	 * Check user privileges to test if the user is allowed to make changes.
+	 * Otherwise users can end up in an inconsistent state where some changes are
+	 * performed and others denied. See https://redmine.pfsense.org/issues/15318
+	 */
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	phpsession_end();
+
+	if ($read_only) {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
+
 	/* check if still in use */
 	if (isset($a_qinqs) && vlan_inuse($a_qinqs[$id])) {
 		$input_errors[] = gettext("This QinQ cannot be deleted because it is still being used as an interface.");

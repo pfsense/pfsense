@@ -646,6 +646,24 @@ function local_reset_accounts() {
 	}
 }
 
+/* Determine if a given string is valid for use as a password.
+ * Returns an array of messages describing the problems.
+ */
+function validate_password($username, $password) {
+	$errors = [];
+
+	/* Rules for CE and Plus */
+	/* Disallow changing the password to the username. */
+	if ($username == $password) {
+		$errors[] = gettext("The password cannot be identical to the username.");
+	}
+	/* End rules for CE and Plus */
+
+	/* Plus-specific rules */
+	/* End Plus-specific rules */
+	return $errors;
+}
+
 function local_user_set(& $user) {
 	global $g, $debug;
 

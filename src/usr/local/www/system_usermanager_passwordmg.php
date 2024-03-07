@@ -35,11 +35,33 @@ require_once("guiconfig.inc");
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
 
-$pgtitle = array(gettext("System"), gettext("User Password"));
+$pgtitle = array(gettext("System"), gettext("User Password Manager"));
+
+$password_extra_help = sprintf(gettext('%1$sThe password cannot be identical to the username.'), '<br/>');
+
+unset($input_errors);
+$input_errors = [];
+
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+/* Determine if the current user authenticated locally */
+$islocal = false;
+foreach (config_get_path('system/user', []) as $user) {
+	if ($user['name'] == $_SESSION['Username']) {
+		$islocal = true;
+	}
+}
+phpsession_end(true);
 
 if (isset($_POST['save'])) {
-	unset($input_errors);
-	/* input validation */
+	/* Input validation */
+	if (!$islocal) {
+		$input_errors[] = gettext("This page cannot change passwords for non-local users.");
+	}
+	if ($read_only) {
+		$input_errors[] = gettext("The current user is read-only and cannot change the configuration.");
+	}
 
 	$reqdfields = explode(" ", "passwordfld1");
 	$reqdfieldsn = array(gettext("Password"));
@@ -53,9 +75,11 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("Could not locate this user.");
 	}
 
+	$input_errors = array_merge($input_errors, validate_password($_SESSION['Username'], $_POST['passwordfld1']));
+
 	if (!$input_errors) {
 		phpsession_begin();
-		// all values are okay --> saving changes
+		// Save changes to the current user
 		$userent =& $config['system']['user'][$userindex[$_SESSION['Username']]];
 		local_user_set_password($userent, $_POST['passwordfld1']);
 		local_user_set($userent);
@@ -68,22 +92,17 @@ if (isset($_POST['save'])) {
 	}
 }
 
-phpsession_begin();
-
-/* determine if user is not local to system */
-$islocal = false;
-foreach (config_get_path('system/user', []) as $user) {
-	if ($user['name'] == $_SESSION['Username']) {
-		$islocal = true;
-	}
-}
-
-phpsession_end(true);
-
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
+}
+
+if (!$islocal) {
+	print_info_box(gettext("This page cannot change passwords for non-local users."), 'danger');
+}
+if ($read_only) {
+	print_info_box(gettext("The current user is read-only and cannot change the configuration."), 'danger');
 }
 
 if ($savemsg) {
@@ -91,37 +110,59 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("User Password"), true, "system_usermanager_passwordmg.php");
+$tab_array[] = array(gettext("Change Password"), true, "system_usermanager_passwordmg.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if ($islocal == false) {
-	echo gettext("The password cannot be changed for a non-local user.");
-	include("foot.inc");
-	exit;
-}
-
 $form = new Form();
 
-$section = new Form_Section('Update Password');
+$section = new Form_Section('Change Password');
 
-$section->addInput(new Form_Input(
-	'passwordfld1',
-	'*Password',
-	'password',
-	null,
-	['autocomplete' => 'new-password']
+$section->addInput(new Form_StaticText(
+	'',
+	'This page changes the password for the current user in the local configuration. ' .
+	'This affects all services which utilize the Local Authentication database ' .
+	'(User Manager).' .
+	'<br/><br/>' .
+	'This page cannot change passwords for users from other authentication ' .
+	'sources such as LDAP or RADIUS.'
 ));
 
-$section->addInput(new Form_Input(
-	'passwordfld2',
-	'*Confirmation',
-	'password',
-	null,
-	['autocomplete' => 'new-password']
-))->setHelp('Select a new password');
+/* Only display password change fields for local users. */
+if ($islocal &&
+    !$read_only) {
+	$section->addInput(new Form_StaticText(
+		'Database',
+		'Local Authentication'
+	));
+
+	$section->addInput(new Form_StaticText(
+		'Username',
+		$_SESSION['Username']
+	));
+
+	$section->addInput(new Form_Input(
+		'passwordfld1',
+		'*Password',
+		'password',
+		null,
+		['autocomplete' => 'new-password']
+	))->setHelp('Enter a new password.' .
+			'%1$s%1$s' .
+			'Hints:%1$s' .
+			'Current NIST guidelines prioritize password length over complexity.' .
+			' %2$s', '<br/>', $password_extra_help);
+
+	$section->addInput(new Form_Input(
+		'passwordfld2',
+		'*Confirmation',
+		'password',
+		null,
+		['autocomplete' => 'new-password']
+	))->setHelp('Type the new password again for confirmation.');
+}
 
 $form->add($section);
 print($form);

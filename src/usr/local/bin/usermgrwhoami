@@ -27,7 +27,7 @@ require_once("config.inc");
 require_once("auth.inc");
 require_once("functions.inc");
 
-global $g, $config, $argv, $userindex;
+global $g, $argv, $userindex;
 
 function usermgrwhoami_usage() {
 	echo gettext("Usage") . ": usermgrwhoami\n";
@@ -53,6 +53,7 @@ if ($username == "root") {
 
 /* Lookup user in the user manager */
 $user = getUserEntry($username);
+$user = $user['item'];
 /* Get the current group list for this user */
 $groups = local_user_get_groups($user, false);
 

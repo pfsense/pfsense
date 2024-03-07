@@ -1295,7 +1295,8 @@ function captiveportal_authenticate_user(&$login = '', $password = '', $clientma
 					}
 
 					if ($authcfg['type'] == 'Local Auth' && $result && isset($cpcfg['localauth_priv'])) {
-						if (!userHasPrivilege(getUserEntry($login), "user-services-captiveportal-login")) {
+						$tmp_user_item_config = getUserEntry($login);
+						if (!userHasPrivilege($tmp_user_item_config['item'], "user-services-captiveportal-login")) {
 							$result = false;
 							$msg = gettext("Access Denied");
 						}

@@ -62,8 +62,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 
 if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
-	init_config_arr(array('system', 'user'));
-	$a_user =& $config['system']['user'];
+	config_init_path('system/user');
 }
 
 init_config_arr(array('ca'));
@@ -453,9 +452,10 @@ if ($_POST['save'] == gettext("Save")) {
 			case 'existing':
 				/* Add an existing certificate to a user */
 				$ucert = lookup_cert($pconfig['certref']);
-				if ($ucert && $a_user) {
-					$a_user[$userid]['cert'][] = $ucert['refid'];
-					$savemsg = sprintf(gettext("Added certificate %s to user %s"), htmlspecialchars($ucert['descr']), $a_user[$userid]['name']);
+				$ucert = $ucert['item'];
+				if ($ucert && config_get_path("system/user")) {
+					config_set_path("system/user/{$userid}/cert/", $ucert['refid']);
+					$savemsg = sprintf(gettext("Added certificate %s to user %s"), htmlspecialchars($ucert['descr']), config_get_path("system/user/{$userid}/name"));
 				}
 				unset($cert);
 				break;
@@ -623,8 +623,8 @@ if ($_POST['save'] == gettext("Save")) {
 			$a_cert[] = $cert;
 		}
 
-		if (isset($a_user) && isset($userid)) {
-			$a_user[$userid]['cert'][] = $cert['refid'];
+		if (isset($userid) && (config_get_path('system/user') !== null)) {
+			config_set_path("system/user/{$userid}/cert/", $cert['refid']);
 		}
 
 		if (!$input_errors) {
@@ -702,7 +702,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 	$form = new Form();
 	$form->setAction('system_certmanager.php')->setMultipartEncoding();
 
-	if (isset($userid) && $a_user) {
+	if (isset($userid) && config_get_path("system/user")) {
 		$form->addGlobal(new Form_Input(
 			'userid',
 			null,
@@ -754,7 +754,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'descr',
 		'*Descriptive name',
 		'text',
-		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
+		(config_get_path('system/user') && empty($pconfig['descr'])) ? config_get_path("system/user/{$userid}/name") : $pconfig['descr']
 	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse')
 	->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
 		'This name can contain spaces but it cannot contain any of the ' .

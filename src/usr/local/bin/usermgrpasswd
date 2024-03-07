@@ -27,7 +27,7 @@ require_once("config.inc");
 require_once("auth.inc");
 require_once("functions.inc");
 
-global $g, $config, $argv, $userindex;
+global $g, $argv, $userindex;
 
 function usermgrpasswd_usage() {
 	echo gettext("Usage") . ": usermgrpasswd [-c | --check] [-u user | --username user | user]\n";
@@ -143,7 +143,8 @@ $password = "";
 $confpassword = "";
 
 // If the user does not exist, bail
-$user =& getUserEntry($username);
+$user_item_config = getUserEntry($username);
+$user = &$user_item_config['item'];
 if ($user == NULL) {
 	printf(gettext("User '%s' does not exist in the User Manager database.\n"), $username);
 	exit(-1);
@@ -187,7 +188,8 @@ if ($password) {
 	fclose($fp);
 
 	//Reset password
-	local_user_set_password($user, $password);
+	config_set_path("system/user/{$user_item_config['idx']}", $user);
+	local_user_set_password($user_item_config, $password);
 	local_user_set($user);
 	$message = sprintf(gettext("User Manager password changed for user '%s' from console."), $username);
 	write_config($message);

@@ -26,14 +26,15 @@
 	require_once("functions.inc");
 
 	$removed = 0;
-	if (!is_array($config['system']['user'])) {
+	$user_config = config_get_path('system/user');
+	if (!is_array($user_config)) {
 		return;
 	}
 
-	$count = count($config['system']['user']);
+	$count = count($user_config);
 	$index = 0;
 	for (; $index < $count; $index++) {
-		$user =& $config['system']['user'][$index];
+		$user = &$user_config[$index];
 		if ($user['scope'] == "system") {
 			continue;
 		}
@@ -45,13 +46,13 @@
 		echo "1\n";
 		if (strtotime("-1 day") > strtotime($user['expires'])) {
 			echo "Disabling user {$user['name']} at index #{$index}\n";
-			//unset($config['system']['user'][$index]);
 			$user['disabled'] = true;
 			$removed++;
 			$count--;
 			$index--;
 		}
 	}
+	config_set_path("system/user", $user_config);
 
 	if ($removed > 0) {
 		write_config("Expired {$removed} user accounts");

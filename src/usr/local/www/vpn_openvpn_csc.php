@@ -56,6 +56,7 @@ if (isset($_REQUEST['act'])) {
 }
 
 $user_entry = getUserEntry($_SESSION['Username']);
+$user_entry = $user_entry['item'];
 $user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-csc-advanced") || userHasPrivilege($user_entry, "page-all"));
 
 if ($_POST['act'] == "del") {

@@ -651,6 +651,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		@phpsession_begin();
 		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
 			$user = getUserEntry($_SESSION['Username']);
+			$user = $user['item'];
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 				syslog(LOG_AUTHPRIV, sprintf(gettext("Save config permission denied by the 'User - Config: Deny Config Write' permission for user '%s'."), get_config_user()));
 				phpsession_end(true);

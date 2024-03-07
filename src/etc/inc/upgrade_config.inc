@@ -604,49 +604,63 @@ function upgrade_039_to_040() {
 	$config['system']['webgui']['auth_method'] = "session";
 	$config['system']['webgui']['backing_method'] = "htpasswd";
 
-	if (isset($config['system']['username'])) {
-		$config['system']['group'] = array();
-		$config['system']['group'][0]['name'] = "admins";
-		$config['system']['group'][0]['description'] = gettext("System Administrators");
-		$config['system']['group'][0]['scope'] = "system";
-		$config['system']['group'][0]['priv'] = "page-all";
-		$config['system']['group'][0]['home'] = "index.php";
-		$config['system']['group'][0]['gid'] = "110";
-
-		$config['system']['user'] = array();
-		$config['system']['user'][0]['name'] = "{$config['system']['username']}";
-		$config['system']['user'][0]['descr'] = "System Administrator";
-		$config['system']['user'][0]['scope'] = "system";
-		$config['system']['user'][0]['groupname'] = "admins";
-		$config['system']['user'][0]['password'] = "{$config['system']['password']}";
-		$config['system']['user'][0]['uid'] = "0";
+	$username_config = config_get_path('system/username', '');
+	if (!empty($username_config)) {
 		/* Ensure that we follow what this new "admin" username should be in the session. */
-		$_SESSION["Username"] = "{$config['system']['username']}";
+		$_SESSION["Username"] = $username_config;
 
-		$config['system']['user'][0]['priv'] = array();
-		$config['system']['user'][0]['priv'][0]['id'] = "lockwc";
-		$config['system']['user'][0]['priv'][0]['name'] = "Lock webConfigurator";
-		$config['system']['user'][0]['priv'][0]['descr'] = gettext("Indicates whether this user will lock access to the webConfigurator for other users.");
-		$config['system']['user'][0]['priv'][1]['id'] = "lock-ipages";
-		$config['system']['user'][0]['priv'][1]['name'] = "Lock individual pages";
-		$config['system']['user'][0]['priv'][1]['descr'] = gettext("Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).");
-		$config['system']['user'][0]['priv'][2]['id'] = "hasshell";
-		$config['system']['user'][0]['priv'][2]['name'] = "Has shell access";
-		$config['system']['user'][0]['priv'][2]['descr'] = gettext("Indicates whether this user is able to login for example via SSH.");
-		$config['system']['user'][0]['priv'][3]['id'] = "copyfiles";
-		$config['system']['user'][0]['priv'][3]['name'] = "Is allowed to copy files";
-		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP."), g_get('product_label'));
-		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
-		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
-		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (this privilege should only be associated with one single user).");
+		$group_config = [[
+			'name' => 'admins',
+			'description' => gettext('System Administrators'),
+			'scope' => 'system',
+			'priv' => 'page-all',
+			'home' => 'index.php',
+			'gid' => '110'
+		]];
+		config_set_path('system/group', $group_config);
 
-		$config['system']['nextuid'] = "111";
-		$config['system']['nextgid'] = "111";
+		$user_config = [[
+			'name' => $username_config,
+			'descr' => 'System Administrator',
+			'scope' => 'system',
+			'groupname' => 'admins',
+			'password' => config_get_path('system/password', ''),
+			'uid' => '0',
+			'priv' => [
+				[
+					'id' => 'lockwc',
+					'name' => 'Lock webConfigurator',
+					'descr' => gettext('Indicates whether this user will lock access to the webConfigurator for other users.'),
+				],
+				[
+					'id' => 'lock-ipages',
+					'name' => 'Lock individual pages',
+					'descr' => gettext('Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).'),
+				],
+				[
+					'id' => 'hasshell',
+					'name' => 'Has shell access',
+					'descr' => gettext('Indicates whether this user is able to login for example via SSH.'),
+				],
+				[
+					'id' => 'copyfiles',
+					'name' => 'Is allowed to copy files',
+					'descr' => sprintf(gettext('Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP.'), g_get('product_label')),
+				],
+				[
+					'id' => 'isroot',
+					'name' => 'Is root user',
+					'descr' => gettext('This user is associated with the UNIX root user (this privilege should only be associated with one single user).'),	
+				]
+			]
+		]];
+		config_set_path('system/user', $user_config);
+
+		config_set_path('system/nextuid', '111');
+		config_set_path('system/nextgid', '111');
 
 		config_del_path('system/username');
-		if (isset($config['system']['password'])) {
-			config_del_path('system/password');
-		}
+		config_del_path('system/password');
 	}
 }
 
@@ -1380,7 +1394,6 @@ function upgrade_047_to_048() {
 
 
 function upgrade_048_to_049() {
-	global $config;
 	/* setup new all users group */
 	$all = array();
 	$all['name'] = "all";
@@ -1389,36 +1402,36 @@ function upgrade_048_to_049() {
 	$all['gid'] = 1998;
 	$all['member'] = array();
 
-	if (!is_array($config['system']['user'])) {
-		$config['system']['user'] = array();
-	}
-	if (!is_array($config['system']['group'])) {
-		$config['system']['group'] = array();
-	}
+	config_init_path('system/user');
+	$user_config = config_get_path('system/user');
+	config_init_path('system/group');
+	$group_config = config_get_path('system/group');
 
 	/* work around broken uid assignments */
-	$config['system']['nextuid'] = 2000;
-	foreach ($config['system']['user'] as & $user) {
+	$nextuid = 2000;
+	foreach ($user_config  as & $user) {
 		if (isset($user['uid']) && !$user['uid']) {
 			continue;
 		}
-		$user['uid'] = $config['system']['nextuid']++;
+		$user['uid'] = $nextuid++;
 	}
+	config_set_path('system/nextuid', $nextuid);
 
 	/* work around broken gid assignments */
-	$config['system']['nextgid'] = 2000;
-	foreach ($config['system']['group'] as & $group) {
+	$nextgid = 2000;
+	foreach ($group_config as & $group) {
 		if ($group['name'] == g_get('admin_group')) {
 			$group['gid'] = 1999;
 		} else {
-			$group['gid'] = $config['system']['nextgid']++;
+			$group['gid'] = $nextgid++;
 		}
 	}
+	config_set_path('system/nextgid', $nextgid);
 
 	/* build group membership information */
-	foreach ($config['system']['group'] as & $group) {
+	foreach ($group_config as & $group) {
 		$group['member'] = array();
-		foreach ($config['system']['user'] as & $user) {
+		foreach ($user_config as & $user) {
 			$groupnames = explode(",", $user['groupname']);
 			if (in_array($group['name'], $groupnames)) {
 				$group['member'][] = $user['uid'];
@@ -1427,34 +1440,31 @@ function upgrade_048_to_049() {
 	}
 
 	/* reset user group information */
-	foreach ($config['system']['user'] as & $user) {
+	foreach ($user_config as & $user) {
 		unset($user['groupname']);
 		$all['member'][] = $user['uid'];
 	}
 
 	/* reset group scope information */
-	foreach ($config['system']['group'] as & $group) {
+	foreach ($user_config as & $group) {
 		if ($group['name'] != g_get('admin_group')) {
 			$group['scope'] = "user";
 		}
 	}
 
 	/* insert new all group */
-	$groups = Array();
-	$groups[] = $all;
-	$groups = array_merge($config['system']['group'], $groups);
-	$config['system']['group'] = $groups;
+	$group_config = array_merge($group_config, [[$all]]);
+
+	config_set_path('system/user', $user_config);
+	config_set_path('system/group', $group_config);
 }
 
 
 function upgrade_049_to_050() {
-	global $config;
-
-	if (!is_array($config['system']['user'])) {
-		$config['system']['user'] = array();
-	}
+	config_init_path('system/user');
+	$user_config = config_get_path('system/user');
 	/* update user privileges */
-	foreach ($config['system']['user'] as & $user) {
+	foreach ($user_config as & $user) {
 		$privs = array();
 		if (!is_array($user['priv'])) {
 			unset($user['priv']);
@@ -1473,8 +1483,10 @@ function upgrade_049_to_050() {
 		$user['priv'] = $privs;
 	}
 
+	config_init_path('system/group');
+	$group_config = config_get_path('system/group');
 	/* update group privileges */
-	foreach ($config['system']['group'] as & $group) {
+	foreach ($group_config as & $group) {
 		$privs = array();
 		if (!is_array($group['pages'])) {
 			unset($group['pages']);
@@ -1489,6 +1501,9 @@ function upgrade_049_to_050() {
 		unset($group['pages']);
 		$group['priv'] = $privs;
 	}
+
+	config_set_path('system/user', $user_config);
+	config_set_path('system/group', $group_config);
 
 	/* sync all local account information */
 	local_reset_accounts();
@@ -1963,9 +1978,12 @@ function upgrade_052_to_053() {
 	}
 
 	/* migrate advanced admin page ssh keys to user manager */
-	if ($config['system']['ssh']['authorizedkeys']) {
-		$admin_user =& getUserEntryByUID(0);
-		$admin_user['authorizedkeys'] = config_get_path('system/ssh/authorizedkeys');
+	$authorizedkeys = config_get_path('system/ssh/authorizedkeys');
+	if (!empty($authorizedkeys)) {
+		$admin_user = getUserEntryByUID(0);
+		if (!empty($admin_user['idx'])) {
+			config_set_path("system/user/{$admin_user['idx']}/authorizedkeys", $authorizedkeys);
+		}
 		config_del_path('system/ssh/authorizedkeys');
 	}
 }
@@ -2255,17 +2273,16 @@ function upgrade_055_to_056() {
 
 
 function upgrade_056_to_057() {
-	global $config;
+	config_init_path('system/user');
+	$user_config = config_get_path('system/user');
 
-	if (!is_array($config['system']['user'])) {
-		$config['system']['user'] = array();
-	}
 	/* migrate captivate portal to user manager */
-	if (is_array($config['captiveportal']['user'])) {
-		foreach ($config['captiveportal']['user'] as $user) {
+	if (is_array(config_get_path('captiveportal/user'))) {
+		$nextuid = config_get_path('system/nextuid');
+		foreach (config_get_path('captiveportal/user') as $user) {
 			// avoid user conflicts
 			$found = false;
-			foreach ($config['system']['user'] as $userent) {
+			foreach ($user_config as $userent) {
 				if ($userent['name'] == $user['name']) {
 					$found = true;
 					break;
@@ -2283,10 +2300,12 @@ function upgrade_056_to_057() {
 				$user['md5-hash'] = $user['password'];
 				unset($user['password']);
 			}
-			$user['uid'] = $config['system']['nextuid']++;
-			$config['system']['user'][] = $user;
+			$user['uid'] = $nextuid++;
+			$user_config[] = $user;
 		}
 		config_del_path('captiveportal/user');
+		config_set_path('system/nextuid', $nextuid);
+		config_set_path('system/user', $user_config);
 	}
 }
 
@@ -2575,11 +2594,13 @@ function upgrade_067_to_068() {
 }
 
 function upgrade_068_to_069() {
-	global $config;
-	if (!is_array($config['system']['user'])) {
+	$user_config = config_get_path('system/user');
+	if (!is_array($user_config)) {
 		return;
 	}
-	foreach ($config['system']['user'] as & $user) {
+
+	$cert_config = config_get_path('cert');
+	foreach ($user_config as & $user) {
 		if (!is_array($user['cert'])) {
 			continue;
 		}
@@ -2595,13 +2616,15 @@ function upgrade_068_to_069() {
 			}
 			// Keep the cert references for this user
 			$rids[] = $tcert['refid'];
-			$config['cert'][] = $tcert;
+			$cert_config[] = $tcert;
 		}
 		// Replace user certs with cert references instead.
 		if (count($rids) > 0) {
 			$user['cert'] = $rids;
 		}
 	}
+	config_set_path('cert', $cert_config);
+	config_set_path('system/user', $user_config);
 }
 
 function upgrade_069_to_070() {
@@ -2682,8 +2705,9 @@ function upgrade_072_to_073() {
 }
 
 function upgrade_073_to_074() {
-	global $config;
-	rename_field($config['system']['user'], 'fullname', 'descr');
+	$user_config = config_get_path('system/user');
+	rename_field($user_config, 'fullname', 'descr');
+	config_set_path('system/user', $user_config);
 }
 
 function upgrade_074_to_075() {
@@ -3382,8 +3406,6 @@ function upgrade_102_to_103() {
 }
 
 function upgrade_103_to_104() {
-	global $config;
-
 	$changed_privs = array(
 		"page-diag-system-activity" => "page-diagnostics-system-activity",
 		"page-interfacess-groups" => "page-interfaces-groups",
@@ -3391,8 +3413,11 @@ function upgrade_103_to_104() {
 		"page-interfacess-qinq" => "page-interfaces-qinq"
 	);
 
+	$user_config = config_get_path('system/user', []);
+	$group_config = config_get_path('system/group', []);
+
 	/* update user privileges */
-	foreach ($config['system']['user'] as & $user) {
+	foreach ($user_config as & $user) {
 		if (!is_array($user['priv'])) {
 			continue;
 		}
@@ -3404,7 +3429,7 @@ function upgrade_103_to_104() {
 	}
 
 	/* update group privileges */
-	foreach ($config['system']['group'] as & $group) {
+	foreach ($group_config as & $group) {
 		if (!is_array($group['priv'])) {
 			continue;
 		}
@@ -3414,6 +3439,10 @@ function upgrade_103_to_104() {
 			}
 		}
 	}
+
+
+	config_set_path('system/user', $user_config);
+	config_set_path('system/group', $group_config);
 
 	/* sync all local account information */
 	local_reset_accounts();
@@ -3820,12 +3849,13 @@ function upgrade_120_to_121() {
 }
 
 function upgrade_121_to_122() {
-	global $config;
-	foreach ($config['system']['user'] as &$user) {
+	$user_config = config_get_path('system/user', []);
+	foreach ($user_config as &$user) {
 		if (isset($user['nt-hash'])) {
 			unset($user['nt-hash']);
 		}
 	}
+	config_set_path('system/user', $user_config);
 }
 
 function upgrade_122_to_123() {
@@ -4701,18 +4731,19 @@ function upgrade_146_to_147() {
 }
 
 function upgrade_147_to_148() {
-	global $config;
+	$group_config = config_get_path('system/group');
 
 	// Ensure there are no spaces in group names by
 	// replacing spaces with underscores
-	if (is_array($config['system']['group'])) {
+	if (is_array($group_config)) {
 		$cleargroups = false;
-		foreach ($config['system']['group'] as $idx => $grp) {
+		foreach ($group_config as &$grp) {
 			if (strstr($grp['name'], " ")) {
 				$cleargroups = true;
-				$config['system']['group'][$idx]['scope'] = "remote";
+				$grp['scope'] = "remote";
 			}
 		}
+		config_set_path('system/group', $group_config);
 
 		// if there was a space in a group name, there may be multiple
 		// groups with the same name in the group file. To prevent pw
@@ -4720,7 +4751,7 @@ function upgrade_147_to_148() {
 		// groups here. local_reset_accounts will run shortly after this
 		// and add them back. redmine #6012
 		if ($cleargroups) {
-			foreach ($config['system']['group'] as $grp) {
+			foreach ($group_config as $grp) {
 				mwexec("/usr/sbin/pw groupdel -g {$grp['gid']}");
 			}
 		}
@@ -5156,7 +5187,7 @@ function upgrade_162_to_163() {
  * of a widget on the dashboard. Migrate any old settings.
  */
 function convert_widget_164($oldname, $newname, $settings_keys) {
-	global $config;
+	$user_config = config_get_path('system/user');
 
 	if ($newname == '') {
 		$newname = $oldname . '-0';
@@ -5179,7 +5210,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 			}
 
 			// Modify any user-specific entries
-			foreach ($config['system']['user'] as & $user) {
+			foreach ($user_config as & $user) {
 				if (isset($user['widgets'][$oldkey])) {
 					$user['widgets'][$newname][$newkey] = $user['widgets'][$oldkey];
 					unset($user['widgets'][$oldkey]);
@@ -5202,7 +5233,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 			}
 
 			// Modify any user-specific entries
-			foreach ($config['system']['user'] as & $user) {
+			foreach ($user_config as & $user) {
 				if (isset($user['widgets'][$oldname][$oldkey])) {
 					$user['widgets'][$newname][$newkey] = $user['widgets'][$oldname][$oldkey];
 					unset($user['widgets'][$oldname][$oldkey]);
@@ -5218,6 +5249,7 @@ function convert_widget_164($oldname, $newname, $settings_keys) {
 			config_del_path("widgets/{$oldname}");
 		}
 	}
+	config_set_path('system/user', $user_config);
 }
 
 function upgrade_163_to_164() {
@@ -6611,9 +6643,9 @@ function upgrade_221_to_222() {
 }
 
 function upgrade_222_to_223() {
-	global $config;
+	$user_config = config_get_path('system/user');
 
-	foreach ($config['system']['user'] as & $user) {
+	foreach ($user_config as & $user) {
 		if ($user['name'] == 'admin') {
 			$user_home = "/root";
 		} else {
@@ -6625,6 +6657,7 @@ function upgrade_222_to_223() {
 			@unlink($fn);
 		}
 	}
+	config_set_path('system/user', $user_config);
 }
 
 function upgrade_223_to_224() {

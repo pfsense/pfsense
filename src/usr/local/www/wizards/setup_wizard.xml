@@ -728,8 +728,9 @@
 	$input_errors = [];
 	if (!empty($_POST['newadminpassword']) &&
 	    ($_POST['newadminpassword'] == $_POST['confirmadminpassword'])) {
-		$admin_user =& getUserEntryByUID(0);
-		local_user_set_password($admin_user, $_POST['newadminpassword']);
+		$user_item_config = getUserEntryByUID(0);
+		$admin_user = &$user_item_config['item'];
+		local_user_set_password($user_item_config, $_POST['newadminpassword']);
 		local_user_set($admin_user);
 		write_config(gettext("Setup wizard changed admin account password."));
 	} elseif (!empty($_POST['newadminpassword']) &&

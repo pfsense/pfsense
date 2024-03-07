@@ -94,6 +94,7 @@ foreach ($authmodes as $authmode) {
 		$userGroups = getUserGroups($username, $authcfg, $attributes);
 		if ($authmode == "Local Database") {
 			$user = getUserEntry($username);
+			$user = $user['item'];
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin") ||
 			    (!empty($ipsec_groups) && (count(array_intersect($userGroups, $ipsec_groups)) == 0))) {
 				$authenticated = false;

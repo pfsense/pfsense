@@ -54,8 +54,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
 }
 
-init_config_arr(array('system', 'user'));
-$a_user = &$config['system']['user'];
+config_init_path('system/user');
 $act = $_REQUEST['act'];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
@@ -64,31 +63,34 @@ if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = '/system_usermanager.php';
 }
 
-if (isset($id) && $a_user[$id]) {
-	$pconfig['usernamefld'] = $a_user[$id]['name'];
-	$pconfig['descr'] = $a_user[$id]['descr'];
-	$pconfig['expires'] = $a_user[$id]['expires'];
-	$pconfig['customsettings'] = isset($a_user[$id]['customsettings']);
-	$pconfig['webguicss'] = $a_user[$id]['webguicss'];
-	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
-	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
-	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
-	$pconfig['interfacessort'] = isset($a_user[$id]['interfacessort']);
-	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
-	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
-	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
-	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
-	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
-	$pconfig['disablealiaspopupdetail'] = isset($a_user[$id]['disablealiaspopupdetail']);
-	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
-	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
-	$pconfig['utype'] = $a_user[$id]['scope'];
-	$pconfig['uid'] = $a_user[$id]['uid'];
-	$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
-	$pconfig['priv'] = $a_user[$id]['priv'];
-	$pconfig['ipsecpsk'] = $a_user[$id]['ipsecpsk'];
-	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
-	$pconfig['keephistory'] = isset($a_user[$id]['keephistory']);
+if (isset($id)) {
+	$this_user = config_get_path("system/user/{$id}");
+}
+if ($this_user) {
+	$pconfig['usernamefld'] = $this_user['name'];
+	$pconfig['descr'] = $this_user['descr'];
+	$pconfig['expires'] = $this_user['expires'];
+	$pconfig['customsettings'] = isset($this_user['customsettings']);
+	$pconfig['webguicss'] = $this_user['webguicss'];
+	$pconfig['webguifixedmenu'] = $this_user['webguifixedmenu'];
+	$pconfig['webguihostnamemenu'] = $this_user['webguihostnamemenu'];
+	$pconfig['dashboardcolumns'] = $this_user['dashboardcolumns'];
+	$pconfig['interfacessort'] = isset($this_user['interfacessort']);
+	$pconfig['dashboardavailablewidgetspanel'] = isset($this_user['dashboardavailablewidgetspanel']);
+	$pconfig['systemlogsfilterpanel'] = isset($this_user['systemlogsfilterpanel']);
+	$pconfig['systemlogsmanagelogpanel'] = isset($this_user['systemlogsmanagelogpanel']);
+	$pconfig['statusmonitoringsettingspanel'] = isset($this_user['statusmonitoringsettingspanel']);
+	$pconfig['webguileftcolumnhyper'] = isset($this_user['webguileftcolumnhyper']);
+	$pconfig['disablealiaspopupdetail'] = isset($this_user['disablealiaspopupdetail']);
+	$pconfig['pagenamefirst'] = isset($this_user['pagenamefirst']);
+	$pconfig['groups'] = local_user_get_groups($this_user);
+	$pconfig['utype'] = $this_user['scope'];
+	$pconfig['uid'] = $this_user['uid'];
+	$pconfig['authorizedkeys'] = base64_decode($this_user['authorizedkeys']);
+	$pconfig['priv'] = $this_user['priv'];
+	$pconfig['ipsecpsk'] = $this_user['ipsecpsk'];
+	$pconfig['disabled'] = isset($this_user['disabled']);
+	$pconfig['keephistory'] = isset($this_user['keephistory']);
 }
 
 /*
@@ -98,6 +100,7 @@ if (isset($id) && $a_user[$id]) {
  */
 phpsession_begin();
 $guiuser = getUserEntry($_SESSION['Username']);
+$guiuser = $guiuser['item'];
 $read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
 phpsession_end();
 
@@ -107,7 +110,7 @@ if (!empty($_POST) && $read_only) {
 
 if (($_POST['act'] == "deluser") && !$read_only) {
 
-	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
+	if (!isset($_POST['username']) || (config_get_path("system/user/{$id}") === null) || ($_POST['username'] != config_get_path("system/user/{$id}/name"))) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -115,11 +118,11 @@ if (($_POST['act'] == "deluser") && !$read_only) {
 	if ($_POST['username'] == $_SESSION['Username']) {
 		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_POST['username']);
 	} else {
-		local_user_del($a_user[$id]);
-		$userdeleted = $a_user[$id]['name'];
-		unset($a_user[$id]);
+		local_user_del(config_get_path("system/user/{$id}"));
+		$userdeleted = config_get_path("system/user/{$id}/name");
+		config_del_path("system/user/{$id}");
 		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
-		$a_user = array_values($a_user);
+		config_set_path('system/user', array_values(config_get_path('system/user')));
 		$savemsg = sprintf(gettext("Successfully deleted user: %s"), $userdeleted);
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
@@ -135,14 +138,12 @@ if (($_POST['act'] == "deluser") && !$read_only) {
 	$pconfig['lifetime'] = 3650;
 
 	$nonPrvCas = array();
-	if (is_array($config['ca']) && count($config['ca']) > 0) {
-		foreach (config_get_path('ca', []) as $ca) {
-			if (!$ca['prv']) {
-				continue;
-			}
-
-			$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
+	foreach (config_get_path('ca', []) as $ca) {
+		if (!$ca['prv']) {
+			continue;
 		}
+
+		$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
 	}
 
 }
@@ -154,23 +155,24 @@ if (isset($_POST['dellall']) && !$read_only) {
 
 	if (!empty($del_users)) {
 		foreach ($del_users as $userid) {
-			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
-				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
-					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
+			$tmp_user = config_get_path("system/user/{$userid}", []);
+			if ($tmp_user['scope'] != "system") {
+				if ($tmp_user['name'] == $_SESSION['Username']) {
+					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $tmp_user['name']);
 				} else {
-					$deleted_users[] = $a_user[$userid]['name'];
-					local_user_del($a_user[$userid]);
-					unset($a_user[$userid]);
+					$deleted_users[] = $tmp_user['name'];
+					local_user_del($tmp_user);
+					config_del_path("system/user/{$userid}");
 				}
 			} else {
-				$delete_errors[] = sprintf(gettext("Cannot delete user %s because it is a system user."), $a_user[$userid]['name']);
+				$delete_errors[] = sprintf(gettext("Cannot delete user %s because it is a system user."), $tmp_user['name']);
 			}
 		}
 
 		if (count($deleted_users) > 0) {
 			$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
 			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
-			$a_user = array_values($a_user);
+			config_set_path('system/user', array_values(config_get_path('system/user')));
 			write_config($savemsg);
 			syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		}
@@ -179,25 +181,25 @@ if (isset($_POST['dellall']) && !$read_only) {
 
 if (($_POST['act'] == "delcert") && !$read_only) {
 
-	if (!$a_user[$id]) {
+	if (!config_get_path("system/user/{$id}")) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	$certdeleted = lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
-	$certdeleted = $certdeleted['descr'];
-	unset($a_user[$id]['cert'][$_POST['certid']]);
-	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, $a_user[$id]['name']);
+	$certdeleted = lookup_cert(config_get_path("system/user/{$id}/cert/{$_POST['certid']}"));
+	$certdeleted = $certdeleted['item']['descr'];
+	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, config_get_path("system/user/{$id}/name"));
+	config_del_path("system/user/{$id}/cert/{$_POST['certid']}");
 	write_config($savemsg);
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
 }
 
 if (($_POST['act'] == "delprivid") && !$read_only) {
-	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
-	unset($a_user[$id]['priv'][$_POST['privid']]);
-	local_user_set($a_user[$id]);
-	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from user %s"), $privdeleted, $a_user[$id]['name']);
+	$privdeleted = array_get_path($priv_list, (config_get_path("system/user/{$id}/priv/{$_POST['privid']}") . '/name'));
+	config_del_path("system/user/{$id}/priv/{$_POST['privid']}");
+	local_user_set(config_get_path("system/user/{$id}"));
+	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from user %s"), $privdeleted, config_get_path("system/user/{$id}/name"));
 	write_config($savemsg);
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
@@ -209,7 +211,7 @@ if ($_POST['save'] && !$read_only) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if (isset($id) && ($a_user[$id])) {
+	if (isset($id) && config_get_path("system/user/{$id}")) {
 		$reqdfields = explode(" ", "usernamefld");
 		$reqdfieldsn = array(gettext("Username"));
 	} else {
@@ -259,14 +261,10 @@ if ($_POST['save'] && !$read_only) {
 		}
 	}
 
-	if (isset($id) && $a_user[$id]) {
-		$oldusername = $a_user[$id]['name'];
-	} else {
-		$oldusername = "";
-	}
+	$oldusername = config_get_path("system/user/{$id}/name", '');
 	/* make sure this user name is unique */
 	if (!$input_errors) {
-		foreach ($a_user as $userent) {
+		foreach (config_get_path('system/user') as $userent) {
 			if ($userent['name'] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
 				$input_errors[] = gettext("Another entry with the same username already exists.");
 				break;
@@ -315,11 +313,15 @@ if ($_POST['save'] && !$read_only) {
 	validate_dashboardcolumns_field($input_errors, $_POST['dashboardcolumns']);
 
 	if (!$input_errors) {
-
-		$userent = array();
-		if (isset($id) && $a_user[$id]) {
-			$userent = $a_user[$id];
+		if (isset($id) && config_get_path("system/user/{$id}")) {
+			$user_item_config = [
+				'idx' => $id,
+				'item' => config_get_path("system/user/{$id}")
+			];
+		} else {
+			$user_item_config = ['idx' => null, 'item' => null];
 		}
+		$userent = &$user_item_config['item'];
 
 		isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
 
@@ -331,7 +333,7 @@ if ($_POST['save'] && !$read_only) {
 
 		/* the user password was modified */
 		if ($_POST['passwordfld1']) {
-			local_user_set_password($userent, $_POST['passwordfld1']);
+			local_user_set_password($user_item_config, $_POST['passwordfld1']);
 		}
 
 		/* only change description if sent */
@@ -429,8 +431,8 @@ if ($_POST['save'] && !$read_only) {
 			unset($userent['keephistory']);
 		}
 
-		if (isset($id) && $a_user[$id]) {
-			$a_user[$id] = $userent;
+		if (isset($id) && config_get_path("system/user/{$id}")) {
+			config_set_path("system/user/{$id}", $userent);
 		} else {
 			if (!empty($_POST['name'])) {
 				$cert = array();
@@ -468,31 +470,35 @@ if ($_POST['save'] && !$read_only) {
 					$_POST['digest_alg'], $_POST['keytype'],
 					$_POST['ecname']);
 
-				if (!is_array($config['cert'])) {
-					config_set_path('cert', array());
-				}
-				$config['cert'][] = $cert;
+				config_set_path('cert/', $cert);
 				$userent['cert'][] = $cert['refid'];
 			}
-			$userent['uid'] = $config['system']['nextuid']++;
+			$nextuid_config = config_get_path('system/nextuid');
+			$userent['uid'] = $nextuid_config++;
+			config_set_path('system/nextuid', $nextuid_config);
 			/* Add the user to All Users group. */
-			foreach (config_get_path('system/group', []) as $gidx => $group) {
+			$group_config = config_get_path('system/group', []);
+			foreach ($group_config as $gidx => &$group) {
 				if ($group['name'] == "all") {
-					if (!is_array($config['system']['group'][$gidx]['member'])) {
-						$config['system']['group'][$gidx]['member'] = array();
+					if (!is_array($group['member'])) {
+						$group['member'] = [];
 					}
-					$config['system']['group'][$gidx]['member'][] = $userent['uid'];
+					$group['member'][] = $userent['uid'];
 					break;
 				}
 			}
+			unset($group);
+			config_set_path('system/group', $group_config);
 
-			$a_user[] = $userent;
+			config_set_path('system/user/', $userent);
 		}
 
 		/* Sort it alphabetically */
-		usort($config['system']['user'], function($a, $b) {
+		$user_config = config_get_path('system/user');
+		usort($user_config, function($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});
+		config_set_path('system/user', $user_config);
 
 		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
@@ -518,7 +524,7 @@ if ($_POST['save'] && !$read_only) {
 }
 
 function build_priv_table() {
-	global $a_user, $id, $read_only;
+	global $id, $read_only;
 
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -535,7 +541,7 @@ function build_priv_table() {
 	$i = 0;
 	$user_has_root_priv = false;
 
-	foreach (get_user_privdesc($a_user[$id]) as $priv) {
+	foreach (get_user_privdesc(config_get_path("system/user/{$id}")) as $priv) {
 		$group = false;
 		if ($priv['group']) {
 			$group = $priv['group'];
@@ -588,7 +594,7 @@ function build_priv_table() {
 }
 
 function build_cert_table() {
-	global $a_user, $id, $read_only;
+	global $id, $read_only;
 
 	$certhtml = '<div class="table-responsive">';
 	$certhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -601,27 +607,23 @@ function build_cert_table() {
 	$certhtml .=		'</thead>';
 	$certhtml .=		'<tbody>';
 
-	$a_cert = $a_user[$id]['cert'];
-	if (is_array($a_cert)) {
-		$i = 0;
-		foreach ($a_cert as $certref) {
-			$cert = lookup_cert($certref);
-			$ca = lookup_ca($cert['caref']);
-			$revokedstr =	is_cert_revoked($cert) ? '<b> Revoked</b>':'';
+	$i = 0;
+	foreach (config_get_path("system/user/{$id}/cert", []) as $certref) {
+		$cert = lookup_cert($certref);
+		$ca = lookup_ca($cert['caref']);
+		$revokedstr =	is_cert_revoked($cert) ? '<b> Revoked</b>':'';
 
-			$certhtml .=	'<tr>';
-			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
-			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
-			$certhtml .=		'<td>';
-			if (!$read_only) {
-				$certhtml .=			'<a id="delcert' . $i .'" class="fa-solid fa-trash-can no-confirm icon-pointer" title="';
-				$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
-			}
-			$certhtml .=		'</td>';
-			$certhtml .=	'</tr>';
-			$i++;
+		$certhtml .=	'<tr>';
+		$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
+		$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
+		$certhtml .=		'<td>';
+		if (!$read_only) {
+			$certhtml .=			'<a id="delcert' . $i .'" class="fa-solid fa-trash-can no-confirm icon-pointer" title="';
+			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
 		}
-
+		$certhtml .=		'</td>';
+		$certhtml .=	'</tr>';
+		$i++;
 	}
 
 	$certhtml .=		'</tbody>';
@@ -687,7 +689,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 				</thead>
 				<tbody>
 <?php
-foreach ($a_user as $i => $userent):
+foreach (config_get_path("system/user/{$id}", []) as $i => $userent):
 	?>
 					<tr>
 						<td>
@@ -896,7 +898,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	foreach (config_get_path('system/group', []) as $Ggroup) {
 		if ($Ggroup['name'] != "all") {
-			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array($a_user[$id]['uid'], $Ggroup['member'])) {
+			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array(config_get_path("system/user/{$id}/uid", []), $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
 			} else {
 				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
@@ -987,7 +989,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	}
 
 	// ==== Add user certificate for a new user
-	if (is_array($config['ca']) && count($config['ca']) > 0) {
+	if (count(config_get_path('ca', [])) > 0) {
 		$section = new Form_Section('Create Certificate for User');
 		$section->addClass('cert-options');
 

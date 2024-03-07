@@ -41,8 +41,7 @@ require_once("pfsense-utils.inc");
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
 
-init_config_arr(array('system', 'group'));
-$a_group = &$config['system']['group'];
+config_init_path('system/group');
 
 unset($id);
 $id = $_REQUEST['groupid'];
@@ -60,13 +59,14 @@ function cpusercmp($a, $b) {
 }
 
 function admin_groups_sort() {
-	global $a_group;
+	$group_config = config_get_path('system/group');
 
-	if (!is_array($a_group)) {
+	if (!is_array($group_config)) {
 		return;
 	}
 
-	usort($a_group, "cpusercmp");
+	usort($group_config, "cpusercmp");
+	config_set_path("system/group", $group_config);
 }
 
 /*
@@ -76,6 +76,7 @@ function admin_groups_sort() {
  */
 phpsession_begin();
 $guiuser = getUserEntry($_SESSION['Username']);
+$guiuser = $guiuser['item'];
 $read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
 phpsession_end();
 
@@ -86,20 +87,20 @@ if (!empty($_POST) && $read_only) {
 if (($_POST['act'] == "delgroup") && !$read_only) {
 
 	if (!isset($id) || !isset($_REQUEST['groupname']) ||
-	    !isset($a_group[$id]) ||
-	    ($_REQUEST['groupname'] != $a_group[$id]['name'])) {
+	    (config_get_path("system/group/{$id}") === null) ||
+	    ($_REQUEST['groupname'] != config_get_path("system/group/{$id}/name"))) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
 
-	local_group_del($a_group[$id]);
-	$groupdeleted = $a_group[$id]['name'];
-	unset($a_group[$id]);
+	local_group_del(config_get_path("system/group/{$id}"));
+	$groupdeleted = config_get_path("system/group/{$id}/name");
+	config_del_path("system/group/{$id}");
 	/*
 	 * Reindex the array to avoid operating on an incorrect index
 	 * https://redmine.pfsense.org/issues/7733
 	 */
-	$a_group = array_values($a_group);
+	config_set_path("system/group", array_values(config_get_path('system/group')));
 
 	$savemsg = sprintf(gettext("Successfully deleted group: %s"),
 	    $groupdeleted);
@@ -109,26 +110,24 @@ if (($_POST['act'] == "delgroup") && !$read_only) {
 
 if (($_POST['act'] == "delpriv") && !$read_only && ($dup === null)) {
 
-	if (!isset($id) || !isset($a_group[$id])) {
+	if (!isset($id) || (config_get_path("system/group/{$id}") === null)) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
 
-	$privdeleted =
-	    $priv_list[$a_group[$id]['priv'][$_REQUEST['privid']]]['name'];
-	unset($a_group[$id]['priv'][$_REQUEST['privid']]);
+	$privdeleted = array_get_path($priv_list, (config_get_path("system/group/{$id}/priv/{$_REQUEST['privid']}") . "/name"));
+	config_del_path("system/group/{$id}/priv/{$_REQUEST['privid']}");
 
-	if (is_array($a_group[$id]['member'])) {
-		foreach ($a_group[$id]['member'] as $uid) {
-			$user = getUserEntryByUID($uid);
-			if ($user) {
-				local_user_set($user);
-			}
+	foreach (config_get_path("system/group/{$id}/member", []) as $uid) {
+		$user = getUserEntryByUID($uid);
+		$user = $user['item'];
+		if ($user) {
+			local_user_set($user);
 		}
 	}
 
 	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from group %s"),
-	    $privdeleted, $a_group[$id]['name']);
+	    $privdeleted, config_get_path("system/group/{$id}/name"));
 	write_config($savemsg);
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 
@@ -136,19 +135,20 @@ if (($_POST['act'] == "delpriv") && !$read_only && ($dup === null)) {
 }
 
 if ($act == "edit") {
-	if (isset($id) && isset($a_group[$id])) {
+	$this_group = config_get_path("system/group/{$id}");
+	if (isset($id) && isset($this_group)) {
 		if ($dup === null) {
-			$pconfig['name'] = $a_group[$id]['name'];
-			$pconfig['gid'] = $a_group[$id]['gid'];
-			$pconfig['gtype'] = empty($a_group[$id]['scope'])
-			    ? "local" : $a_group[$id]['scope'];
+			$pconfig['name'] = $this_group['name'];
+			$pconfig['gid'] = $this_group['gid'];
+			$pconfig['gtype'] = empty($this_group['scope'])
+			    ? "local" : $this_group['scope'];
 		} else {
-			$pconfig['gtype'] = ($a_group[$id]['scope'] == 'system')
-			    ? "local" : $a_group[$id]['scope'];
+			$pconfig['gtype'] = ($this_group['scope'] == 'system')
+			    ? "local" : $this_group['scope'];
 		}
-		$pconfig['priv'] = $a_group[$id]['priv'];
-		$pconfig['description'] = $a_group[$id]['description'];
-		$pconfig['members'] = $a_group[$id]['member'];
+		$pconfig['priv'] = $this_group['priv'];
+		$pconfig['description'] = $this_group['description'];
+		$pconfig['members'] = $this_group['member'];
 	}
 }
 
@@ -159,11 +159,12 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 
 	if (!empty($del_groups)) {
 		foreach ($del_groups as $groupid) {
-			if (isset($a_group[$groupid]) &&
-			    $a_group[$groupid]['scope'] != "system") {
-				$deleted_groups[] = $a_group[$groupid]['name'];
-				local_group_del($a_group[$groupid]);
-				unset($a_group[$groupid]);
+			$this_group = config_get_path("system/group/{$groupid}");
+			if (isset($this_group) &&
+			    $this_group['scope'] != "system") {
+				$deleted_groups[] = $this_group['name'];
+				local_group_del($this_group);
+				config_del_path("system/group/{$groupid}");
 			}
 		}
 
@@ -175,7 +176,7 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 		 * Reindex the array to avoid operating on an incorrect index
 		 * https://redmine.pfsense.org/issues/7733
 		 */
-		$a_group = array_values($a_group);
+		config_set_path("system/group", array_values(config_get_path('system/group')));
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
@@ -220,9 +221,9 @@ if (isset($_POST['save']) && !$read_only) {
 		}
 	}
 
-	if (!$input_errors && !(isset($id) && $a_group[$id])) {
+	if (!$input_errors && !(isset($id) && config_get_path("system/group/{$id}"))) {
 		/* make sure there are no dupes */
-		foreach ($a_group as $group) {
+		foreach (config_get_path('system/group') as $group) {
 			if ($group['name'] == $_POST['groupname']) {
 				$input_errors[] = gettext("Another entry " .
 				    "with the same group name already exists.");
@@ -233,8 +234,8 @@ if (isset($_POST['save']) && !$read_only) {
 
 	if (!$input_errors) {
 		$group = array();
-		if (isset($id) && $a_group[$id]) {
-			$group = $a_group[$id];
+		if (isset($id) && config_get_path("system/group/{$id}")) {
+			$group = config_get_path("system/group/{$id}");
 		}
 
 		$group['name'] = $_POST['groupname'];
@@ -247,14 +248,16 @@ if (isset($_POST['save']) && !$read_only) {
 			$group['member'] = $_POST['members'];
 		}
 
-		if (isset($id) && $a_group[$id]) {
-			$a_group[$id] = $group;
+		if (isset($id) && config_get_path("system/group/{$id}")) {
+			config_set_path("system/group/{$id}", $group);
 		} else {
-			$group['gid'] = $config['system']['nextgid']++;
+			$nextgid = config_get_path('system/nextgid');
+			$group['gid'] = $nextgid++;
+			config_set_path('system/nextgid', $nextgid);
 			if ($_POST['dup']) {
-				$group['priv'] = $a_group[$_POST['dup']]['priv'];
+				$group['priv'] = config_get_path("system/group/{$_POST['dup']}/priv");
 			}
-			$a_group[] = $group;
+			config_set_path('system/group/', $group);
 		}
 
 		admin_groups_sort();
@@ -266,19 +269,21 @@ if (isset($_POST['save']) && !$read_only) {
 		 * changed.
 		 */
 		if (is_array($group['member'])) {
-			init_config_arr(array('system', 'user'));
-			$a_user = &$config['system']['user'];
-			foreach ($a_user as & $user) {
+			config_init_path('system/user');
+			foreach (config_get_path('system/user') as $idx => $user) {
 				if (in_array($user['uid'], $group['member'])) {
 					local_user_set($user);
+					config_set_path("system/user/{$idx}", $user);
 				}
 			}
 		}
 
 		/* Sort it alphabetically */
-		usort($config['system']['group'], function($a, $b) {
+		$group_config = config_get_path('system/group');
+		usort($group_config, function($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});
+		config_set_path('system/group', $group_config);
 
 		$savemsg = sprintf(gettext("Successfully %s group %s"),
 		    (strlen($id) > 0) ? gettext("edited") : gettext("created"),
@@ -294,7 +299,7 @@ if (isset($_POST['save']) && !$read_only) {
 }
 
 function build_priv_table() {
-	global $a_group, $id, $read_only, $dup;
+	global $id, $read_only, $dup;
 
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -309,7 +314,7 @@ function build_priv_table() {
 
 	$user_has_root_priv = false;
 
-	foreach (get_user_privdesc($a_group[$id]) as $i => $priv) {
+	foreach (get_user_privdesc(config_get_path("system/group/{$id}")) as $i => $priv) {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
@@ -392,9 +397,9 @@ if (!($act == "new" || $act == "edit")) {
 				</thead>
 				<tbody>
 <?php
-	foreach ($a_group as $i => $group):
+	foreach (config_get_path('system/group') as $i => $group):
 		if ($group["name"] == "all") {
-			$groupcount = count($config['system']['user']);
+			$groupcount = count(config_get_path('system/user', []));
 		} elseif (is_array($group['member'])) {
 			$groupcount = count($group['member']);
 		} else {
@@ -459,7 +464,7 @@ if ($dup === null) {
 	));
 }
 
-if (isset($id) && $a_group[$id]) {
+if (isset($id) && config_get_path("system/group/{$id}")) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

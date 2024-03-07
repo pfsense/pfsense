@@ -298,54 +298,53 @@ function index_users() {
 	return ($userindex);
 }
 
-function & getUserEntry($name) {
-	global $debug, $config, $userindex;
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+function getUserEntry($name) {
+	global $userindex;
+	$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 
 	if (isset($userindex[$name])) {
-		return $config['system']['user'][$userindex[$name]];
+		return [
+			'idx' => $userindex[$name],
+			'item' => config_get_path("system/user/{$userindex[$name]}")
+		];
 	} elseif ($authcfg['type'] != "Local Auth") {
-		$user = array();
-		$user['name'] = $name;
-		return $user;
+		return [
+			'idx' => null,
+			'item' => ['name' => $name]
+		];
 	}
 }
 
-function & getUserEntryByUID($uid) {
-	global $debug, $config;
-
-	if (!is_array(array_get_path($config, 'system/user'))) {
-		return false;
-	}
-	foreach ($config['system']['user'] as & $user) {
+function getUserEntryByUID($uid) {
+	foreach (config_get_path('system/user', []) as $idx => $user) {
 		if ($user['uid'] == $uid) {
-			return $user;
+			return [
+				'idx' => $idx,
+				'item' => $user
+			];
 		}
 	}
-
-	return false;
 }
 
-function & getGroupEntry($name) {
-	global $debug, $config, $groupindex;
+function getGroupEntry($name) {
+	global $groupindex;
 	if (isset($groupindex[$name])) {
-		return $config['system']['group'][$groupindex[$name]];
+		return [
+			'idx' => $groupindex[$name],
+			'item' => config_get_path("system/group/{$groupindex[$name]}")
+		];
 	}
 }
 
-function & getGroupEntryByGID($gid) {
-	global $debug, $config;
-
-	if (!is_array(array_get_path($config, 'system/group'))) {
-		return false;
-	}
-	foreach ($config['system']['group'] as & $group) {
+function getGroupEntryByGID($gid) {
+	foreach (config_get_path('system/group', []) as $idx => $group) {
 		if ($group['gid'] == $gid) {
-			return $group;
+			return [
+				'idx' => $idx,
+				'item' => $group
+			];
 		}
 	}
-
-	return false;
 }
 
 function get_user_privileges(& $user) {
@@ -394,6 +393,7 @@ function get_user_privileges(& $user) {
 
 	foreach ($allowed_groups as $name) {
 		$group = getGroupEntry($name);
+		$group = $group['item'];
 		if (is_array($group['priv'])) {
 			$privs = array_merge($privs, $group['priv']);
 		}
@@ -435,6 +435,7 @@ function userHasPrivilege($userent, $privid = false) {
 function local_backed($username, $passwd) {
 
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if (!$user) {
 		return false;
 	}
@@ -479,7 +480,6 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		return;
 	}
 	$users = config_get_path('system/user', []);
-	$groups = config_get_path('system/group', []);
 
 	foreach($u2del as $user) {
 		if ($user['uid'] > 65000) {
@@ -516,6 +516,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		}
 	}
 
+	$groups = config_get_path('system/group', []);
 	foreach($g2del as $group) {
 		if ($group['gid'] < 2000 || $group['gid'] > 65000) {
 			// dont' remove special groups
@@ -563,6 +564,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 
 	/* make sure the all group exists */
 	$allgrp = getGroupEntryByGID(1998);
+	$allgrp = $allgrp['item'];
 	local_group_set($allgrp, true);
 
 	foreach ($u2add as $user) {
@@ -633,6 +635,7 @@ function local_reset_accounts() {
 
 	/* make sure the all group exists */
 	$allgrp = getGroupEntryByGID(1998);
+	$allgrp = $allgrp['item'];
 	local_group_set($allgrp, true);
 
 	/* sync all local users */
@@ -700,7 +703,7 @@ function check_current_password($username) {
 	return null;
 }
 
-function local_user_set(& $user) {
+function local_user_set($user) {
 	global $g, $debug;
 
 	if (empty($user['sha512-hash']) && empty($user['bcrypt-hash']) && empty($user['password'])) {
@@ -874,7 +877,8 @@ function local_user_del($user) {
 	local_group_del_user($user);
 }
 
-function local_user_set_password(&$user, $password) {
+function local_user_set_password(&$user_item_config, $password) {
+	$user = &$user_item_config['item'];
 	unset($user['password']);
 	unset($user['md5-hash']);
 	unset($user['sha512-hash']);
@@ -899,6 +903,9 @@ function local_user_set_password(&$user, $password) {
 	if (($user['name'] == config_get_path('hasync/username')) &&
 	    (config_get_path('hasync/adminsync') == 'on')) {
 		config_set_path('hasync/new_password', $password);
+	}
+	if (isset($user_item_config['idx'])) {
+		config_set_path("system/user/{$user_item_config['idx']}", $user);
 	}
 }
 
@@ -1948,6 +1955,7 @@ function radius_get_groups($attributes) {
 
 function get_user_expiration_date($username) {
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if ($user['expires']) {
 		return $user['expires'];
 	}
@@ -1966,6 +1974,7 @@ function is_account_expired($username) {
 
 function is_account_disabled($username) {
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if (isset($user['disabled'])) {
 		return true;
 	}
@@ -1990,6 +1999,7 @@ function get_user_settings($username) {
 	$settings['webgui']['statusmonitoringsettingspanel'] = config_path_enabled('system/webgui', 'statusmonitoringsettingspanel');
 	$settings['webgui']['pagenamefirst'] = config_path_enabled('system/webgui', 'pagenamefirst');
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if (isset($user['customsettings'])) {
 		$settings['customsettings'] = true;
 		if (isset($user['widgets'])) {
@@ -2028,6 +2038,7 @@ function get_user_settings($username) {
 function save_widget_settings($username, $settings, $message = "") {
 	global $userindex;
 	$user = getUserEntry($username);
+	$user = $user['item'];
 
 	if (strlen($message) > 0) {
 		$msgout = $message;
@@ -2079,6 +2090,7 @@ function getUserGroups($username, $authcfg, &$attributes = array()) {
 			break;
 		default:
 			$user = getUserEntry($username);
+			$user = $user['item'];
 			$allowed_groups = @local_user_get_groups($user, true);
 			break;
 	}

@@ -77,6 +77,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		$user_entry = getUserEntry($username);
+		$user_entry = $user_entry['item'];
 		/*
 		 * admin (uid = 0) is allowed
 		 * or regular user with necessary privilege
@@ -257,6 +258,7 @@ class pfsense_xmlrpc_server {
 			}
 		}
 
+		$group_config = config_get_path('system/group', []);
 		/* Only touch users if users are set to synchronize from the primary node
 		 * See https://redmine.pfsense.org/issues/8450
 		 */
@@ -266,9 +268,7 @@ class pfsense_xmlrpc_server {
 			$g2del_idx = array();
 			$g2keep = array();
 			if (is_array($sections['system']['group'])) {
-				$local_groups = isset($config['system']['group'])
-				    ? $config['system']['group']
-				    : array();
+				$local_groups = $group_config;
 
 				foreach ($sections['system']['group'] as $group) {
 					$idx = array_search($group['name'],
@@ -291,8 +291,8 @@ class pfsense_xmlrpc_server {
 					}
 				}
 			}
-			if (is_array($config['system']['group'])) {
-				foreach (config_get_path('system/group', []) as $idx => $group) {
+			if (is_array($group_config)) {
+				foreach ($group_config as $idx => $group) {
 					if (array_search($idx, $g2keep) === false &&
 					    array_search($idx, $g2del_idx) === false) {
 						// local config group not in section config group
@@ -307,10 +307,9 @@ class pfsense_xmlrpc_server {
 			$u2del = array();
 			$u2del_idx = array();
 			$u2keep = array();
+			$user_config = config_get_path('system/user', []);
 			if (is_array($sections['system']['user'])) {
-				$local_users = isset($config['system']['user'])
-				    ? $config['system']['user']
-				    : array();
+				$local_users = $user_config;
 
 				foreach ($sections['system']['user'] as $user) {
 					$idx = array_search($user['name'],
@@ -329,8 +328,8 @@ class pfsense_xmlrpc_server {
 					}
 				}
 			}
-			if (is_array($config['system']['user'])) {
-				foreach (config_get_path('system/user', []) as $idx => $user) {
+			if (is_array($user_config)) {
+				foreach ($user_config as $idx => $user) {
 					if (array_search($idx, $u2keep) === false &&
 					    array_search($idx, $u2del_idx) === false) {
 						$u2del[] = $user;

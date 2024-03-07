@@ -517,6 +517,7 @@ function deleteVIP($id, $json = false) {
 			if (!$json) {
 				phpsession_begin();
 				$user = getUserEntry($_SESSION['Username']);
+				$user = $user['item'];
 
 				if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 					header("Location: firewall_virtual_ip.php");

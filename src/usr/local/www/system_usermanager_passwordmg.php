@@ -67,11 +67,15 @@ if (isset($_POST['save'])) {
 	$reqdfieldsn = array(gettext("Password"));
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	$user_item_config = [
+		'idx' => $userindex[$_SESSION['Username']],
+		'item' => isset($userindex[$_SESSION['Username']]) ? config_get_path("system/user/{$userindex[$_SESSION['Username']]}") : null
+	];
+	$userent = &$user_item_config['item'];
 	if ($_POST['passwordfld1'] != $_POST['passwordfld2']) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
-	if (!isset($config['system']['user'][$userindex[$_SESSION['Username']]]) ||
-	    !is_array($config['system']['user'][$userindex[$_SESSION['Username']]])) {
+	if (!is_array($userent)) {
 		$input_errors[] = gettext("Could not locate this user.");
 	}
 
@@ -80,11 +84,9 @@ if (isset($_POST['save'])) {
 	if (!$input_errors) {
 		phpsession_begin();
 		// Save changes to the current user
-		$userent =& $config['system']['user'][$userindex[$_SESSION['Username']]];
-		local_user_set_password($userent, $_POST['passwordfld1']);
+		local_user_set_password($user_item_config, $_POST['passwordfld1']);
 		local_user_set($userent);
 		$savemsg = sprintf(gettext("Password changed for user: %s"), $userent['name']);
-		unset($userent);
 		phpsession_end(true);
 
 		write_config($savemsg);

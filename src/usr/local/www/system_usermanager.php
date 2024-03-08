@@ -47,6 +47,8 @@ $openssl_ecnames = cert_build_curve_list();
 
 global $openssl_digest_algs;
 
+$password_extra_help = sprintf(gettext('%1$sThe password cannot be identical to the username.'), '<br/>');
+
 // start admin user code
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
@@ -203,6 +205,7 @@ if (($_POST['act'] == "delprivid") && !$read_only) {
 
 if ($_POST['save'] && !$read_only) {
 	unset($input_errors);
+	$input_errors = [];
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -244,6 +247,8 @@ if ($_POST['save'] && !$read_only) {
 	if (isset($_POST['ipsecpsk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['ipsecpsk'])) {
 		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
 	}
+
+	$input_errors = array_merge($input_errors, validate_password($_POST['usernamefld'], $_POST['passwordfld1']));
 
 	/* Check the POSTed groups to ensure they are valid and exist */
 	if (is_array($_POST['groups'])) {
@@ -836,14 +841,18 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'password',
 		null,
 		['autocomplete' => 'new-password']
-	));
+	))->setHelp('Enter a new password.' .
+			'%1$s%1$s' .
+			'Hints:%1$s' .
+			'Current NIST guidelines prioritize password length over complexity.' .
+			' %2$s', '<br/>', $password_extra_help);
 	$group->add(new Form_Input(
 		'passwordfld2',
 		'Confirm Password',
 		'password',
 		null,
 		['autocomplete' => 'new-password']
-	));
+	))->setHelp('Type the new password again for confirmation.');
 
 	$section->add($group);
 

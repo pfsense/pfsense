@@ -108,7 +108,7 @@ function dhcp_relinquish_lease($if, $ifdescr, $ipv) {
 	$ipv = ((int) $ipv == 6) ? '-6' : '-4';
 
 	if (file_exists($leases_db) && file_exists($script_file)) {
-		mwexec('/usr/local/sbin/dhclient {$ipv} -d -r' .
+		mwexec("/usr/local/sbin/dhclient {$ipv} -d -r" .
 			' -lf ' . escapeshellarg($leases_db) .
 			' -cf ' . escapeshellarg($conf_file) .
 			' -sf ' . escapeshellarg($script_file));

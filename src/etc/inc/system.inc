@@ -1866,6 +1866,7 @@ EOD;
 	} else {
 		$nginx_config .= "\tkeepalive_timeout 75;\n";
 	}
+	$nginx_config .= "\tclient_header_timeout 10;\n";
 
 	if ($cert <> "" and $key <> "") {
 		$nginx_config .= "\n";

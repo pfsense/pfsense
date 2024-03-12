@@ -736,6 +736,9 @@
 		  ($_POST['newadminpassword'] != $_POST['confirmadminpassword'])) {
 		$input_errors[] = gettext("New and Confirm Passwords do not match!");
 	}
+	if (!empty($_POST['newadminpassword'])) {
+		$input_errors = array_merge($input_errors, validate_password('admin', $_POST['newadminpassword']));
+	}
 
 	if (count($input_errors) > 0) {
 		$stepid = $stepid - 1;

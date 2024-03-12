@@ -37,7 +37,7 @@ $logging_prefix = gettext("Local User Database");
 
 $pgtitle = array(gettext("System"), gettext("User Password Manager"));
 
-$password_extra_help = sprintf(gettext('%1$sThe password cannot be identical to the username.'), '<br/>');
+$password_extra_help = get_validate_password_hints();
 
 unset($input_errors);
 $input_errors = [];
@@ -152,7 +152,6 @@ if ($islocal &&
 	))->setHelp('Enter a new password.' .
 			'%1$s%1$s' .
 			'Hints:%1$s' .
-			'Current NIST guidelines prioritize password length over complexity.' .
 			' %2$s', '<br/>', $password_extra_help);
 
 	$section->addInput(new Form_Input(

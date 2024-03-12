@@ -133,6 +133,9 @@ if ($user == NULL) {
 
 /* Prompt for the password, try up to five times. */
 printf(gettext("Changing password for '%s' in the User Manager database.\n"), $username);
+echo "Hints:\n";
+echo get_validate_password_hints('* ', "\n");
+
 for ($try=0; $try < 5; $try++) {
 	$password = prompt_for_password($username);
 	if ($password) {

@@ -663,6 +663,29 @@ function validate_password($username, $password) {
 	/* End Plus-specific rules */
 	return $errors;
 }
+/*
+ * Returns a string containing password hints that describe the rules validated
+ * by validate_password() above.
+ *
+ * $prefix: Value prepended to each array entry when returning the hint string.
+ * $suffix: Value appended to each array entry when returning the hint string.
+ */
+function get_validate_password_hints($prefix='', $suffix='<br/>') {
+	$hints = [];
+	/* Rules for CE and Plus */
+	$hints[] = gettext('Current NIST guidelines prioritize password length over complexity.');
+	$hints[] = gettext('The password cannot be identical to the username.');
+
+	/* Plus-specific rules */
+	/* End Plus-specific rules */
+
+	/* Add the prefix and suffix to each array entry. */
+	foreach ($hints as &$hint) {
+		$hint = $prefix . $hint . $suffix;
+	}
+
+	return implode('', $hints);
+}
 
 function local_user_set(& $user) {
 	global $g, $debug;

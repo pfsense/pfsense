@@ -47,7 +47,7 @@ $openssl_ecnames = cert_build_curve_list();
 
 global $openssl_digest_algs;
 
-$password_extra_help = sprintf(gettext('%1$sThe password cannot be identical to the username.'), '<br/>');
+$password_extra_help = get_validate_password_hints();
 
 // start admin user code
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
@@ -844,7 +844,6 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	))->setHelp('Enter a new password.' .
 			'%1$s%1$s' .
 			'Hints:%1$s' .
-			'Current NIST guidelines prioritize password length over complexity.' .
 			' %2$s', '<br/>', $password_extra_help);
 	$group->add(new Form_Input(
 		'passwordfld2',

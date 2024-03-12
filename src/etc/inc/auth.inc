@@ -304,7 +304,7 @@ function & getUserEntry($name) {
 
 	if (isset($userindex[$name])) {
 		return $config['system']['user'][$userindex[$name]];
-	} elseif ($authcfg['type'] != "Local Database") {
+	} elseif ($authcfg['type'] != "Local Auth") {
 		$user = array();
 		$user['name'] = $name;
 		return $user;

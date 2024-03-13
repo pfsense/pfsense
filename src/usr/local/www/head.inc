@@ -562,18 +562,68 @@ if (are_notices_pending()) {
 <div class="container <?=$menuclass?>" <?=$columnsContainer?>>
 
 <?php
-	// Print a warning if current user = admin and the password hash is still set to the default value
-	if ($_SESSION['Username'] == "admin") {
-		$cu = getUserEntry("admin");
+/* Password Security warnings */
 
-		if (local_backed("admin", g_get('factory_shipped_password'))) {
+	/* Setup user index to determine index IDs for user manager links. */
+	$userindex = index_users();
+
+	/* Gather info about the current user */
+	$cu = getUserEntry($_SESSION['Username']);
+
+	/* When logging in as non-admin user, warn about admin account password
+	 * if the user has sufficient access to do correct the problem.
+	 * Do not test the account if it is in a disabled state. */
+	if (($_SESSION['Username'] != 'admin') &&
+	    !is_account_disabled('admin')) {
+		/* Check the admin password */
+		$error = check_current_password('admin');
+
+		/* Only print a warning if the user has sufficient access to
+		 * address the problem. */
+		if ($error &&
+		    (userHasPrivilege($cu, "page-system-usermanager") ||
+		    userHasPrivilege($cu, "page-all"))) {
 			print('<div class="alert alert-danger">' .
-				sprintf(gettext('%sWARNING:%s The \'admin\' account password is set to the default value. ' .
-				' %s Change the password in the User Manager.%s'),
-				'<strong>', '</strong>', '<a href="/system_usermanager.php?act=edit&userid=' . $cu['uid'] . '">', '</a>') .
+				sprintf(gettext('%sWARNING:%s%s The \'admin\' account password is insecure. %s%s' .
+				' %sChange the password in the User Manager as soon as possible.%s'),
+				'<strong>', '</strong>', '<br/>',
+				$error, '<br/>',
+				'<a href="/system_usermanager.php?act=edit&userid=' . $userindex['admin'] . '">', '</a>') .
 				'</div>');
 		}
 	}
+
+	/* When logging in as any user, check the password for their account. */
+	$error = check_current_password($_SESSION['Username']);
+
+	/* Determine where to send the user to change their password
+	 * based on their account privileges. */
+	$target_page = "";
+	if ((userHasPrivilege($cu, "page-system-usermanager-passwordmg") ||
+	    userHasPrivilege($cu, "page-all"))) {
+		/* User has access to the self-service password manager, which
+		 * is the ideal destination. */
+		$target_page = 'system_usermanager_passwordmg.php';
+	} elseif (userHasPrivilege($cu, "page-system-usermanager")) {
+		/* User does not have access to the self-service page but has
+		 * access to the main user manager page, so use that instead. */
+		$target_page = 'system_usermanager.php?act=edit&userid=' . $userindex[$_SESSION['Username']];
+	}
+
+	/* Print a warning only if the user has sufficient access to change
+	 * their own password (non-empty target page). */
+	if ($error &&
+	    !empty($target_page)) {
+		print('<div class="alert alert-danger">' .
+			sprintf(gettext('%sWARNING:%s%s The password for this account is insecure. %s%s' .
+			' %sChange the password as soon as possible.%s'),
+			'<strong>', '</strong>', '<br/>',
+			$error, '<br/>',
+			'<a href="/' . $target_page . '">', '</a>') .
+			'</div>');
+	}
+
+/* End Password Security Warnings */
 ?>
 
 	<header class="header">

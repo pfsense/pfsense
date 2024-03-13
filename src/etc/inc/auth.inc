@@ -686,6 +686,19 @@ function get_validate_password_hints($prefix='', $suffix='<br/>') {
 
 	return implode('', $hints);
 }
+/*
+ * Test the password for a given user and produce warning messages if there are
+ * issues.
+ */
+function check_current_password($username) {
+	if (local_backed($username, $username)) {
+		return sprintf(gettext('Password is currently set to the username (%s).'), $username);
+	}
+	if (local_backed($username, g_get('factory_shipped_password'))) {
+		return sprintf(gettext('Password is currently set to the default value (%s).'), g_get('factory_shipped_password'));
+	}
+	return null;
+}
 
 function local_user_set(& $user) {
 	global $g, $debug;

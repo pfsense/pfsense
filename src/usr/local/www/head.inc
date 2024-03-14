@@ -581,8 +581,7 @@ if (are_notices_pending()) {
 		/* Only print a warning if the user has sufficient access to
 		 * address the problem. */
 		if ($error &&
-		    (userHasPrivilege($cu, "page-system-usermanager") ||
-		    userHasPrivilege($cu, "page-all"))) {
+		    isAllowedPage('system_usermanager.php')) {
 			print('<div class="alert alert-danger">' .
 				sprintf(gettext('%sWARNING:%s%s The \'admin\' account password is insecure. %s%s' .
 				' %sChange the password in the User Manager as soon as possible.%s'),
@@ -599,12 +598,11 @@ if (are_notices_pending()) {
 	/* Determine where to send the user to change their password
 	 * based on their account privileges. */
 	$target_page = "";
-	if ((userHasPrivilege($cu, "page-system-usermanager-passwordmg") ||
-	    userHasPrivilege($cu, "page-all"))) {
+	if (isAllowedPage('system_usermanager_passwordmg.php')) {
 		/* User has access to the self-service password manager, which
 		 * is the ideal destination. */
 		$target_page = 'system_usermanager_passwordmg.php';
-	} elseif (userHasPrivilege($cu, "page-system-usermanager")) {
+	} elseif (isAllowedPage('system_usermanager.php')) {
 		/* User does not have access to the self-service page but has
 		 * access to the main user manager page, so use that instead. */
 		$target_page = 'system_usermanager.php?act=edit&userid=' . $userindex[$_SESSION['Username']];

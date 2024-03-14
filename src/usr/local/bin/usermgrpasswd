@@ -30,7 +30,7 @@ require_once("functions.inc");
 global $g, $config, $argv, $userindex;
 
 function usermgrpasswd_usage() {
-	echo gettext("Usage") . ": usermgrpasswd [-u user | --username user | user]\n";
+	echo gettext("Usage") . ": usermgrpasswd [-c | --check] [-u user | --username user | user]\n";
 	echo gettext("Changes passwords for users in the User Manager authentication database.") . "\n";
 }
 
@@ -89,8 +89,9 @@ if (!is_writable(g_get('conf_path') . '/config.xml')) {
 $userindex = index_users();
 $username = "";
 
+$checkonly = false;
 if ($argv) {
-	$options = getopt("u:", ['username:'], $remain);
+	$options = getopt("cu:", ['check', 'username:'], $remain);
 	$args = array_slice($argv, $remain);
 
 	if (!empty($options['u'])) {
@@ -99,6 +100,11 @@ if ($argv) {
 		$username = $options['username'];
 	} elseif (!empty($args[0])) {
 		$username = $args[0];
+	}
+
+	if (array_key_exists('c', $options) ||
+	    array_key_exists('check', $options)) {
+		$checkonly = true;
 	}
 }
 
@@ -119,6 +125,17 @@ $username = trim($username);
 if (empty($username)) {
 	usermgrpasswd_usage();
 	exit(0);
+}
+
+if ($checkonly) {
+	$error = check_current_password($username);
+	if ($error) {
+		echo gettext('ERROR: ') . "{$error}\n";
+		exit(1);
+	} else {
+		echo gettext('Current password is OK.') . "\n";
+		exit(0);
+	}
 }
 
 $password = "";

@@ -488,13 +488,10 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-if (!isAllowedPage("system_usermanager.php")) {
-       $tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
-} else {
-       $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
-}
+$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Change Password"), false, "system_usermanager_passwordmg.php");
 $tab_array[] = array(gettext("Authentication Servers"), true, "system_authservers.php");
 display_top_tabs($tab_array);
 

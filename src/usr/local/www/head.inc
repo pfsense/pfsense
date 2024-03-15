@@ -261,10 +261,12 @@ if (isAllowedPage("system_camanager.php")) {
 
 $system_menu[] = array(gettext("Register"), "/system_register.php");
 
-if (!isAllowedPage("system_usermanager.php")) {
-	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
-} else {
+if (isAllowedPage("system_usermanager.php")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
+}
+
+if (isAllowedPage("system_usermanager_passwordmg.php")) {
+	$system_menu[] = array(gettext("User Password Manager"), "/system_usermanager_passwordmg.php");
 }
 
 if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php")) {

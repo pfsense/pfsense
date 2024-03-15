@@ -3741,3 +3741,13 @@ function set_curlproxy(&$ch) {
 		}
 	}
 }
+
+/*
+ * return the time difference in seconds.microseconds(6 digits) format between 2 DateTime objects
+ * @param DateTime $date1
+ * @param DateTime $date2
+ */
+
+function date_mdiff($date1, $date2){
+	return number_format(abs((float)$date1->format("U.u") - (float)$date2->format("U.u")), 6);
+}

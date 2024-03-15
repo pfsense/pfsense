@@ -25,7 +25,7 @@
  * >> In the code extensive debug options in order to analyse the impact of code changes on the performance of the widget. <<
  * - ^$DebugOn^ some lines lower is used to activate the debug
  * - lots of lines starting with //DEBUG: which can be enabled to have a more detailed view on performance
- * - a function ^mdiff^b have been added to calculate the delay between code steps in microseconds
+ * - a function ^date_mdiff^b have been added to calculate the delay between code steps in microseconds
  * - the debug output is logged in /var/log/mylog.log
  * - the debug log can be monitored or viewed via ^tail -F /var/log/mylog.log^
 
@@ -47,16 +47,6 @@ require_once("functions.inc");
 
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("syslog.inc");
-
-/*
- * return the time difference in seconds.microseconds(6 digits) format between 2 DateTime objects
- * @param DateTime $date1
- * @param DateTime $date2
- */
-
-function mdiff($date1, $date2){
-	return number_format(abs((float)$date1->format("U.u") - (float)$date2->format("U.u")), 6);
-}
 
 /* Enable or disable debugging (detail level depending on removed ^//DEBUG^statements */
 $DebugOn = false;
@@ -184,7 +174,7 @@ if (!$_REQUEST['ajax']) {
 
 	if ($DebugOn) {
 		$date2 = new DateTime($date);
-		$timediff = mdiff($date1, $date2);
+		$timediff = date_mdiff($date1, $date2);
 		$logContent .= date($dateFormat)."_Fetching pfctl output did take: ".$timediff.PHP_EOL;
 	}
 
@@ -194,7 +184,7 @@ if (!$_REQUEST['ajax']) {
 	$rule_lines = explode("\n", $thefile, -1);
 
 //DEBUG:	$date2 = new DateTime($date);
-//DEBUG:	$timediff = mdiff($date1, $date2);
+//DEBUG:	$timediff = date_mdiff($date1, $date2);
 //DEBUG:	$logContent .= date($dateFormat)."_Placing the pfctl output in array did take: ".$timediff.PHP_EOL;
 
 /*
@@ -232,7 +222,7 @@ if (!$_REQUEST['ajax']) {
 	endforeach;
 
 //DEBUG:	$date2 = new DateTime($date);
-//DEBUG:	$timediff = mdiff($date1, $date2);
+//DEBUG:	$timediff = date_mdiff($date1, $date2);
 //DEBUG:	$logContent .= date($dateFormat)."_Fill index array lookup did take: ".$timediff.PHP_EOL;
 
 	if ($DebugOn) {	$logContent .= date($dateFormat)."_Index array created. No lines:".$idx." No rules:".$norules.PHP_EOL; }
@@ -262,7 +252,7 @@ if (!$_REQUEST['ajax']) {
 //OLD METHOD		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
 
 //DEBUG:		$date2 = new DateTime($date);
-//DEBUG:		$timediff = mdiff($date1, $date2);
+//DEBUG:		$timediff = date_mdiff($date1, $date2);
 //DEBUG:		$logContent .= date($dateFormat)."_Rule lookup did take: ".$timediff.PHP_EOL;
 
 		// Putting <wbr> tags after each ':' allows the string to word-wrap at that point
@@ -286,7 +276,7 @@ if (!$_REQUEST['ajax']) {
 		endforeach;
 
 //DEBUG:	$date2 = new DateTime($date);
-//DEBUG:	$timediff = mdiff($date1, $date2);
+//DEBUG:	$timediff = date_mdiff($date1, $date2);
 //DEBUG:	$logContent .= date($dateFormat)."_Rule lookup did take: ".$timediff.PHP_EOL;
 
 /*
@@ -353,7 +343,7 @@ if (!$_REQUEST['ajax']) {
 
 	if ($DebugOn) {
 		$date99 = new DateTime($date);
-		$timediff = mdiff($date0, $date99);
+		$timediff = date_mdiff($date0, $date99);
 		$logContent .= date($dateFormat)."_widget update took: ".$timediff.PHP_EOL;
 	}
 

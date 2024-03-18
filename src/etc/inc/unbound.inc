@@ -791,21 +791,41 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 	return $zone_data;
 }
 
-function unbound_generate_respip_data($nat_entry) {
-
-	if (is_ipaddrv4($nat_entry['external'])) {
+function unbound_generate_respip_data($nat_rule) {
+	$zone_data = '';
+	$mask = intval($nat_rule['srcmask']);
+	
+	if ($nat_rule['ipprotocol'] == 'inet') {
 		$type = 'A';
-		$external_addr = "{$nat_entry['external']}/32";
-	} else if (is_ipaddrv6($nat_entry['external'])) {
-		$type = 'AAAA';
-		$external_addr = "{$nat_entry['external']}/128";
-	} else {
-		return "";
-	}
-	$redirect_addr = $nat_entry['source']['address'];
+		$external_first_address = "{$nat_rule['external']}/{$mask}";
+		$internal_first_address = "{$nat_rule['src']}/{$mask}";
+		
+		$external_all_addresses = subnetv4_expand($external_first_address);
+		$internal_all_addresses = subnetv4_expand($internal_first_address);
+		
+		$addr_mappings = array_map(function ($k, $v) {
+			return ["{$k}/32", $v];
+		}, $external_all_addresses, $internal_all_addresses);
 
-	$zone_data  = "response-ip: {$external_addr} redirect\n";
-	$zone_data .= "response-ip-data: {$external_addr} \"{$type} {$redirect_addr}\"\n";
+	} elseif ($nat_rule['ipprotocol'] == 'inet6') {
+		$type = 'AAAA';
+		
+		// IPv6 ranges are not supported
+		if ($mask != 128) {
+			return '';
+		}
+
+		$addr_mappings[] = ["{$nat_rule['external']}/128", $nat_rule['src']];
+	} else {
+		return '';
+	}
+
+	// Create a separate entry for each IP in a subnet
+	foreach ($addr_mappings as $m) {
+		list($external_addr, $internal_addr) = $m;
+		$zone_data .= "response-ip: {$external_addr} redirect\n";
+		$zone_data .= "response-ip-data: {$external_addr} \"{$type} {$internal_addr}\"\n";
+	}
 
 	return $zone_data;
 }
@@ -869,15 +889,17 @@ function unbound_add_host_entries($cfgsubdir = "") {
 }
 
 function unbound_add_1to1nat_entries($cfgsubdir = "") {
-	global $g, $nooutifs;
+	global $g;
 
 	$a_1to1 = config_get_path('nat/onetoone', []);
 
 	$unbound_entries = '';
 	/* Build zone data for other domain */
 	foreach ($a_1to1 as $nat_entry) {
-		if (! isset($nat_entry['disabled'])) {
-			$unbound_entries .= unbound_generate_respip_data($nat_entry);
+		$rule = nat1to1_rule_to_pconfig($nat_entry);
+		// Check conditions for including in DNS:
+		if (nat1to1_rule_can_dnsmap($rule)) {
+			$unbound_entries .= unbound_generate_respip_data($rule);
 		}
 	}
 

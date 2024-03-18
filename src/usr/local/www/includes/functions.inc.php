@@ -133,7 +133,7 @@ function get_hwtype() {
 }
 
 function get_mbuf(&$mbuf, &$mbufpercent) {
-	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters in use" | /usr/bin/awk '{ print $1 }'`);
+	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters" | /usr/bin/awk '{ print $1 }'`);
 	list($mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max) = explode("/", $mbufs_output);
 	$mbuf = "{$mbufs_total}/{$mbufs_max}";
 	$mbufpercent = ($mbufs_max > 0) ? round(($mbufs_total / $mbufs_max) * 100, 0) : "NA";
@@ -198,7 +198,7 @@ function swap_usage() {
 
 function mem_usage() {
 	$memUsage = "NA";
-	$totalMem = (int) get_single_sysctl("vm.stats.vm.v_page_count");
+	$totalMem = $cache_hw_real_mem;
 	if (is_numeric($totalMem)) {
 		/* Include inactive and laundry with free memory since they
 		 * could be freed under pressure. */
@@ -221,15 +221,11 @@ function update_date_time() {
 }
 
 function get_cpufreq() {
-	$cpufreqs = "";
 	$out = "";
-	$cpufreqs = explode(" ", get_single_sysctl('dev.cpu.0.freq_levels'));
-	$maxfreq = explode("/", $cpufreqs[0]);
-	$maxfreq = $maxfreq[0];
 	$curfreq = "";
 	$curfreq = get_single_sysctl('dev.cpu.0.freq');
-	if (($curfreq > 0) && ($curfreq != $maxfreq)) {
-		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
+	if ($curfreq > 0) {
+		$out = "Current: {$curfreq} MHz, Max: {$cache_cpu_max_speed} MHz";
 	}
 	return $out;
 }

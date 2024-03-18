@@ -49,8 +49,28 @@ $version_patch_file = $version_file . 'patch';
 $product_version = rtrim(file_get_contents($version_file));
 $present_year = date('Y');
 
-$memory_from_cache = rtrim(file_get_contents('/var/run/info.hwrealmem'));
 
+// getstats
+
+//$boot_time (uptime calc)
+//max_state_table_size 1606000
+//$current time ???? (get from cli?)
+//$cpu_max_speed
+//$max_mbuf 1000000
+
+
+
+//cached data
+$cache_hw_real_mem = rtrim(file_get_contents('/var/run/hwrealmem.cache'));
+$cache_swap = rtrim(file_get_contents('/var/run/swap.cache'));
+$cache_cpu_max_speed = rtrim(file_get_contents('/var/run/cpuspeed.cache'));
+//$cache_max_state_table_size = rtrim(file_get_contents('/var/run/statetablesize.cache'));
+$cache_boot_time = rtrim(file_get_contents('/var/run/boottime.cache'));
+
+$cache_version_buildtime = rtrim(file_get_contents('/var/run/version_buildtime.cache'));
+$cache_uname = rtrim(file_get_contents('/var/run/uname.cache'));
+
+//$cpu usage in percents???
 
 global $g;
 $g = [
@@ -113,7 +133,14 @@ $g = [
 	],
 	'cp_prefix' => 'cpzoneid',
 	'booting' => false,
-	'memory_from_cache' => $memory_from_cache
+	
+	'cache_hw_real_mem' => $cache_hw_real_mem,
+	'cache_boot_time' => $cache_boot_time,
+	'cache_cpu_max_speed' => $cache_cpu_max_speed,
+	'cache_max_state_table_size' => $cache_max_state_table_size,
+	'cache_swap' => $cache_swap,'
+	'cache_version_buildtime => $cache_version_buildtime,
+	'cache_uname' => $cache_uname
 ];
 
 /* IP TOS flags */

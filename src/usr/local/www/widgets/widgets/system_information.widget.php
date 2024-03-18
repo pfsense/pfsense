@@ -237,9 +237,9 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<th><?=gettext("Version");?></th>
 			<td>
 				<strong><?=g_get('product_version_string')?></strong>
-				(<?php echo php_uname("m"); ?>)
+				(<?$cache_uname;?>)
 				<br />
-				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>
+				<?=gettext('built on')?> <?$cache_version_buildtime;?>
 			<?php if (!g_get('hideuname')): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
@@ -484,7 +484,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
 				</div>
-				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", $memory_from_cache / (1024*1024)) ?> MiB</span>
+				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", $cache_hw_real_mem / (1024*1024)) ?> MiB</span>
 			</td>
 		</tr>
 <?php
@@ -501,7 +501,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
 					</div>
 				</div>
-				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/tail -1 | /usr/bin/awk '{ print $2;}'`) ?> MiB</span>
+				<span><?=$swapusage?>% of <?= sprintf("%.0f", $cache_swap) ?> MiB</span>
 			</td>
 		</tr>
 		<?php endif; ?>

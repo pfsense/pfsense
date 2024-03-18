@@ -1812,7 +1812,7 @@ function get_cpu_speed() {
 function get_uptime_sec() {
 	$boottime = "";
 	$matches = "";
-	$boottime = get_single_sysctl("kern.boottime");
+	$boottime = $cache_boot_time;
 	preg_match("/sec = (\d+)/", $boottime, $matches);
 	$boottime = $matches[1];
 	if (intval($boottime) == 0) {

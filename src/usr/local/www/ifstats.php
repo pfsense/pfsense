@@ -52,6 +52,10 @@ if($_POST['if']) {
 			$realif = $if; // Need for IPsec case interface.
 		}
 
+		//check where interface_statistics.widget.php gets its data from
+		//that call is actually slower - 40ms instead of 2-7ms
+
+		//interface show tables are always recreated but so are (probably) Interface Statistics.
 		$ifinfo = pfSense_get_interface_stats($realif);
 
 		$obj[$if] = [];

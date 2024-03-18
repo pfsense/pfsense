@@ -138,8 +138,8 @@ $g = [
 	'cache_boot_time' => $cache_boot_time,
 	'cache_cpu_max_speed' => $cache_cpu_max_speed,
 	'cache_max_state_table_size' => $cache_max_state_table_size,
-	'cache_swap' => $cache_swap,'
-	'cache_version_buildtime => $cache_version_buildtime,
+	'cache_swap' => $cache_swap,
+	'cache_version_buildtime' => $cache_version_buildtime,
 	'cache_uname' => $cache_uname
 ];
 

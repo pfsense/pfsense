@@ -1213,23 +1213,26 @@ function pfSense_clear_globals() {
 	unset($config);
 }
 
-/*
- * Same semantics as init_config_arr(), but with the new
- * path string interface.
+/**
+ * Initialize the leaf node as an array. Any scalars in the path, including the
+ * leaf node, are overridden with an array.
+ * 
+ * @param string $path Path with '/' separators
  */
 function config_init_path(string $path) {
 	global $config;
 	array_init_path($config, $path);
 }
 
-/*
- * Notice: Use config_init_path() instead, if you must...
- *
- * This is retained for compatibility with older code
- *
- * Initialize a config array multiple levels deep only if unset
- * Pass it an array of keys to test and create
- * init_config_arr(array('virtualip', 'vip'));
+/**
+ * Initialize the leaf node as an array. Any scalars in the path, including the
+ * leaf node, are overridden with an array.
+ * 
+ * @param array $keys The path as an array of keys
+ * 
+ * @deprecated This is retained for compatibility with older code;
+ * 
+ * @see config_init_path() Uses a string path
  */
 function init_config_arr($keys) {
 	// just translate the old signature to the new one
@@ -1238,10 +1241,12 @@ function init_config_arr($keys) {
 
 /**
  * Return a value specified by path in the config, if it exists.
- * @param $path string path with '/' separators
- * @param $default mixed value to return if the path is not found
- * @returns mixed value at path or $default if the path does not exist or if the
- *          path keys an empty string and $default is non-null
+ * 
+ * @param string $path    Path with '/' separators
+ * @param  mixed $default Value to return if the path is not found
+ * 
+ * @return mixed Value at path or $default if the path does not exist or if the
+ *               path keys an empty string and $default is non-null
  */
 function config_get_path(string $path, $default = null) {
 	global $config;
@@ -1252,13 +1257,24 @@ function config_get_path(string $path, $default = null) {
  * Set a value by path in the config, creating arrays for intermediary keys as
  * necessary. If the path cannot be reached because an intermediary exists but
  * is not empty or an array, return $default.
- * @param $path string path with '/' separators
- * @param $val mixed
- * @param $default mixed value to return if the path is not found
- * @returns mixed $val or $default if the path prefix does not exist
+ * 
+ * @param string $path    Path with '/' separators
+ * @param  mixed $val     Value to set
+ * @param  mixed $default Value to return if the path is not found
+ * 
+ * @return mixed $val or $default if the path prefix does not exist
  */
 function config_set_path(string $path, $value, $default = null) {
 	global $config;
+
+	if ($path == '' && !is_array($config)) {
+		// initialize $config when it's being completely replaced
+		$config = [];
+	} elseif ($path == '/') {
+		// prevent unintentionally treating $config as a list array
+		return ($default);
+	}
+
 	return (array_set_path($config, $path, $value, $default));
 }
 
@@ -1268,10 +1284,12 @@ function config_set_path(string $path, $value, $default = null) {
  * enabled by having a key to a non-null value named 'enable', and checking it
  * with isset(). This can be counter-intuitive as isset() will return true if
  * the array element is any non-null value that evaluates to false.
- * @param $path string path with '/' separators
- * @param $enable_key string an optional alternative key value for the enable key
- * @returns bool true if $enable_key exists in the array at $path, and has a
- * non-null value, otherwise false.
+ * 
+ * @param string $path       Path with '/' separators
+ * @param string $enable_key Optional alternative key value for the enable key
+ * 
+ * @return bool true if $enable_key exists in the array at $path, and has a
+ *              non-null value, otherwise false.
  */
 function config_path_enabled(string $path, $enable_key = "enable") {
 	global $config;
@@ -1279,12 +1297,15 @@ function config_path_enabled(string $path, $enable_key = "enable") {
 }
 
 /**
- * Remove a key from the config by path
- * @param $path string path with '/' separators
- * @returns array copy of the removed value or null
+ * Remove a key from the config by path.
+ * 
+ * @param string $path Path with '/' separators
+ * 
+ * @return array copy of the removed value or null
  */
 function config_del_path(string $path) {
 	global $config;
 	return (array_del_path($config, $path));
 }
+
 register_shutdown_function('pfSense_clear_globals');

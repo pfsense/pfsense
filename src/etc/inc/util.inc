@@ -3575,11 +3575,13 @@ function array_remove_duplicate($array, $field) {
 
 /**
  * Return a value specified by a path of keys in a nested array, if it exists.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @param $default mixed value to return if the path is not found
- * @returns mixed value at path or $default if the path does not exist or if the
- *          path keys an empty string and $default is non-null
+ * 
+ * @param array  $arr     Array to search
+ * @param string $path    Path with '/' separators
+ * @param mixed  $default Value to return if the path is not found
+ * 
+ * @return mixed Value at path or $default if the path does not exist or if the
+ *               path keys an empty string and $default is non-null
  */
 function array_get_path(array &$arr, string $path, $default = null) {
 	$vpath = explode('/', $path);
@@ -3602,10 +3604,12 @@ function array_get_path(array &$arr, string $path, $default = null) {
 	return ($el);
 }
 
-/*
- * Initialize an arbitrary array multiple levels deep only if unset
- * @param $arr top of array
- * @param $path string path with '/' separators
+/**
+ * Initialize an arbitrary array multiple levels deep. Any scalars in the path,
+ * including the leaf node, are overridden with an array.
+ * 
+ * @param mixed  $arr  Top of array
+ * @param string $path Path with '/' separators
  */
 function array_init_path(mixed &$arr, ?string $path)
 {
@@ -3627,22 +3631,43 @@ function array_init_path(mixed &$arr, ?string $path)
 /**
  * Set a value by path in a nested array, creating arrays for intermediary keys
  * as necessary. If the path cannot be reached because an intermediary exists
- * but is not empty or an array, return $default.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @param $value mixed
- * @param $default mixed value to return if the path is not found
- * @returns mixed $val or $default if the path prefix does not exist
+ * but is not empty or an array, return $default. A trailing '/' in the path
+ * will add $value to the leaf node array; if not an array, the leaf node is
+ * overwritten to be an array containing $value.
+ * 
+ * @param array  $arr     Array to search
+ * @param string $path    Path with '/' separators
+ * @param mixed  $value   Value to set
+ * @param mixed  $default Value to return if the path is not found
+ * 
+ * @return mixed $value or $default if the path prefix does not exist
  */
 function array_set_path(array &$arr, string $path, $value, $default = null) {
 	$vpath = explode('/', $path);
-	$vkey = null;
+	// check for trailing forward-slash
+	if (($path != '') && ($vpath[array_key_last($vpath)] === '')) {
+		$append = true;
+	} else {
+		$append = false;
+	}
+
+	// get the path's leaf node; ignore trailing and contiguous forward-slashes
 	do {
 		$vkey = array_pop($vpath);
-	} while (mb_strlen($vkey) == 0);
+	} while (isset($vkey) && (mb_strlen($vkey) == 0));
+
+	// path is root, make sure $arr is always an array
 	if ($vkey == null) {
-		return ($default);
+		// avoid creating a single-element root (e.g. [0 => []])
+		if ($append) {
+			$arr[] = (is_array($value)) ? $value : [$value];
+		} else {
+			$arr = (is_array($value)) ? $value : [$value];
+		}
+		return ($value);
 	}
+
+	// traverse the array and get reference to the leaf node
 	$el =& $arr;
 	foreach ($vpath as $key) {
 		if (mb_strlen($key) == 0) {
@@ -3650,25 +3675,38 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
 		}
 		if (array_key_exists($key, $el) && !empty($el[$key])) {
 			if (!is_array($el[$key])) {
-					return ($default);
+				return ($default);
 			}
 		} else {
-				$el[$key] = [];
+			$el[$key] = [];
 		}
 		$el =& $el[$key];
 	}
-	$el[$vkey] = $value;
+
+	// set the leaf node value
+	if ($append) {
+		if (is_array($el[$vkey])) {
+			$el[$vkey][] = $value;
+		} else {
+			$el[$vkey] = [$value];
+		}
+	} else {
+		$el[$vkey] = $value;
+	}
+	
 	return ($value);
 }
 
 /**
  * Determine whether a path in a nested array has a non-null value keyed by
  * $enable_key.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @param $enable_key string an optional alternative key value for the enable key
- * @returns bool true if $enable_key exists in the array at $path, and has a
- * non-null value, otherwise false
+ * 
+ * @param array  $arr        Array to search
+ * @param string $path       Path with '/' separators
+ * @param string $enable_key Optional alternative key value for the enable key
+ * 
+ * @return bool true if $enable_key exists in the array at $path, and has a
+ *              non-null value, otherwise false
  */
 function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
 	$el = array_get_path($arr, $path, []);
@@ -3680,9 +3718,11 @@ function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
 
 /**
  * Remove a key from the nested array by path.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @returns array copy of the removed value or null
+ * 
+ * @param array  $arr  Array to search
+ * @param string $path Path with '/' separators
+ * 
+ * @return null|array copy of the removed value or null
  */
 function array_del_path(array &$arr, string $path) {
 	$vpath = explode('/', $path);

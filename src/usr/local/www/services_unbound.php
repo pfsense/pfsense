@@ -452,8 +452,9 @@ $section->addInput(new Form_Checkbox(
 	'1:1 NAT Addresses',
 	'Replace 1:1 NAT IP Addresses in Responses',
 	$pconfig['replace1to1']
-))->setHelp('If this option is set, then when an A record is returned with an IP address from the 1:1 NAT table, the value will be replaced'.
-					' with the internal IP address. This is an alternative to manually creating split-DNS.');
+))->setHelp('If this option is set, then when an A record is returned with an IP address from the 1:1 NAT table, the value will be replaced '.
+					'with the internal IP address. This is an alternative to manually creating split-DNS. Note that this option will activate '.
+					'the respip module which inspects and alters DNS responses directly - this can degrade DNS performance.');
 
 $btnadv = new Form_Button(
 	'btnadvcustom',

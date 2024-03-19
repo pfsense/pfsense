@@ -667,7 +667,11 @@ events.push(function() {
 			    }
 			}
 
-		    setTimeout(function() { executewidget(); }, 1000);
+			if (ajaxcntr == 0) { //no timeout on first load
+				setTimeout(function() { executewidget(); }, 0);
+			} else {
+				setTimeout(function() { executewidget(); }, 1000);
+			}
 	  	}
 	}
 

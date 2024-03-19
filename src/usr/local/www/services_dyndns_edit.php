@@ -86,8 +86,8 @@ if ($_POST['save'] || $_POST['force']) {
 	$pconfig = $_POST;
 
 	$ddns_attr = array(
-		"cloudflare" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"cloudflare-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"cloudflare" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"cloudflare-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"desec" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"desec-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"digitalocean" => array("apex" => true, "wildcard" => true, "username_none" => true),
@@ -97,16 +97,20 @@ if ($_POST['save'] || $_POST['force']) {
 		"freedns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"freedns2" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"freedns2-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"gandi-livedns" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"gandi-livedns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"gandi-livedns" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"gandi-livedns-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"godaddy" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"godaddy-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"googledomains" => array("apex" => false, "wildcard" => true, "username_none" => false),
-		"linode" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"linode-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"linode" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"linode-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"luadns" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"luadns-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
-		"yandex" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"yandex-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"porkbun" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"porkbun-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"yandex" => array("apex" => true, "wildcard" => true, "username_none" => true),
+		"yandex-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"dnsexit" => array("apex" => false, "wildcard" => false, "username_none" => true),
 	);
 
@@ -146,18 +150,17 @@ if ($_POST['save'] || $_POST['force']) {
 	}
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
-		$allow_wildcard = false;
+		if (isset($ddns_attr[$pconfig['type']]['wildcard'])) {
+			$allow_wildcard = $ddns_attr[$pconfig['type']]['wildcard'];
+		} else {
+			$allow_wildcard = false;
+		}
+		if (in_array($pconfig['type'], $dyndns_split_domain_types)) {
+			$host_to_check = "{$_POST['host']}.{$_POST['domainname']}";
+		}
 		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
-		    (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
-		    (isset($ddns_attr[$pconfig['type']]['wildcard']) && ($ddns_attr[$pconfig['type']]['wildcard'] == true) && 
-		    (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
+		    (($_POST['host'] == '@.') || ($_POST['host'] == '@')))) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
-			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
-			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6") || ($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
-			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
-			$allow_wildcard = true;
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
 			$host_to_check = $_POST['host'];
 			$allow_wildcard = true;
@@ -364,13 +367,13 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Cloudflare, Linode, LuaDNS, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
 				'GleSYS: Enter the record ID.%1$s' .
 				'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
-				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
+				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, LuaDNS, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
 					The domain name is the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
@@ -435,6 +438,7 @@ $section->addInput(new Form_Input(
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
+			'LuaDNS: Enter account email.%1$s' .
 			'NoIP: For group authentication, replace semicolon (:) with pound-key (#).%1$s' .
 			'Porkbun: Enter the API key.%1$s' .
 			'Route 53: Enter the Access Key ID.', '<br />');
@@ -458,6 +462,7 @@ $section->addPassword(new Form_Input(
 			'GleSYS: Enter the API key.%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
+			'LuaDNS: Enter the API key.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
 			'Porkbun: Enter the API secret.%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
@@ -634,6 +639,8 @@ events.push(function() {
 			case "godaddy-v6":
 			case "linode":
 			case "linode-v6":
+			case "luadns":
+			case "luadns-v6":
 			case "name.com":
 			case "name.com-v6":
 			case "onecom":

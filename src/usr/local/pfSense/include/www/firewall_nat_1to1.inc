@@ -209,14 +209,13 @@ function save1to1NATrule($post, $id, $json = false) {
 			unset($natent['natreflection']);
 		}
 
-		if ($post['dnsmap'] == "force" || $post['dnsmap'] == "never") {
+		if (($post['dnsmap'] == "force") || ($post['dnsmap'] == "never")) {
 			$natent['dnsmap'] = $post['dnsmap'];
 		} else {
 			unset($natent['dnsmap']);
 		}
 
 		$a_1to1 = config_get_path('nat/onetoone');
-
 		if (isset($id) && $a_1to1[$id]) {
 			$a_1to1[$id] = $natent;
 		} else {
@@ -231,7 +230,7 @@ function save1to1NATrule($post, $id, $json = false) {
 		if (write_config(gettext("Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping.")) && !$json) {
 			mark_subsystem_dirty('natconf');
 
-			if (config_path_enabled('unbound') && config_path_enabled('unbound', 'replace1to1')) {
+			if ((config_path_enabled('unbound')) && (config_path_enabled('unbound', 'replace1to1'))) {
 				mark_subsystem_dirty('unbound');
 			}
 
@@ -375,7 +374,7 @@ function apply1to1NATrules() {
 	$retval = 0;
 	$retval |= filter_configure();
 
-	if (config_path_enabled('unbound') && config_path_enabled('unbound', 'replace1to1')) {
+	if ((config_path_enabled('unbound')) && (config_path_enabled('unbound', 'replace1to1'))) {
 		require_once("unbound.inc");
 
 		$retval |= unbound_1to1nat_generate();

@@ -4084,9 +4084,9 @@ function alias_idn_to_ascii($alias) {
 
 /**
  * Expand 1:1 NAT rule from config format to pconfig so it can be used in the web interface or easily checked by other functions
- * 
+ *
  * @param array $rule One NAT rule from `config_get_path('nat/onetoone')`
- * 
+ *
  * @return array pconfig format 1:1 NAT rule
  */
 function nat1to1_rule_to_pconfig(array $rule) : array {
@@ -4094,34 +4094,34 @@ function nat1to1_rule_to_pconfig(array $rule) : array {
 
 	$pconfig['nobinat'] = isset($rule['nobinat']);
 	$pconfig['disabled'] = isset($rule['disabled']);
-	
+
 	address_to_pconfig($rule['source'], $pconfig['src'],
 	$pconfig['srcmask'], $pconfig['srcnot'],
 	$pconfig['srcbeginport'], $pconfig['srcendport']);
 	address_to_pconfig($rule['destination'], $pconfig['dst'],
 	$pconfig['dstmask'], $pconfig['dstnot'],
 	$pconfig['dstbeginport'], $pconfig['dstendport']);
-	
+
 	$pconfig['interface'] = $rule['interface'];
 	$pconfig['ipprotocol'] = $rule['ipprotocol'];
 	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
 	}
-	
+
 	$pconfig['external'] = $rule['external'];
 	$pconfig['descr'] = $rule['descr'];
 	$pconfig['natreflection'] = $rule['natreflection'];
 	$pconfig['dnsmap'] = $rule['dnsmap'];
-	
+
 	return $pconfig;
 }
 
 /**
  * Centralized set of rules for whether a 1:1 NAT rule can be included in unbound internal IP mapping
  * This will allow the rule to be exposed in the user interface
- * 
+ *
  * @param array $rule One NAT rule in pconfig format (i.e. from `nat1to1_rule_to_pconfig`)
- * 
+ *
  * @return bool Should this rule be included in DNS mapping
  */
 function nat1to1_rule_can_dnsmap(array $rule) : bool {
@@ -4136,14 +4136,20 @@ function nat1to1_rule_can_dnsmap(array $rule) : bool {
 	}
 
 	// Don't rewrite for disabled entries
-	if ($rule['disabled']) { return false; }
+	if ($rule['disabled']) {
+		return false;
+	}
 
 	// Clients will be confused if they can't access something because the IP was changed to one they are not allowed to access
-	if ($rule['dst'] != 'any') { return false; }
+	if ($rule['dst'] != 'any') {
+		return false;
+	}
 
 	// We don't have a function available to loop through a large IPv6 range
 	// Also, why would you want to do 1:1 NAT for IPv6 ranges? That is the point of IPv6
-	if ($rule['ipprotocol'] == 'inet6' && intval($rule['srcmask']) < 128) { return false; }
+	if (($rule['ipprotocol'] == 'inet6') && (intval($rule['srcmask']) < 128)) {
+		return false;
+	}
 
 	// Default to true
 	return true;

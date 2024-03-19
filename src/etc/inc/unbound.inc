@@ -794,22 +794,22 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 function unbound_generate_respip_data($nat_rule) {
 	$zone_data = '';
 	$mask = intval($nat_rule['srcmask']);
-	
+
 	if ($nat_rule['ipprotocol'] == 'inet') {
 		$type = 'A';
 		$external_first_address = "{$nat_rule['external']}/{$mask}";
 		$internal_first_address = "{$nat_rule['src']}/{$mask}";
-		
+
 		$external_all_addresses = subnetv4_expand($external_first_address);
 		$internal_all_addresses = subnetv4_expand($internal_first_address);
-		
+
 		$addr_mappings = array_map(function ($k, $v) {
 			return ["{$k}/32", $v];
 		}, $external_all_addresses, $internal_all_addresses);
 
 	} elseif ($nat_rule['ipprotocol'] == 'inet6') {
 		$type = 'AAAA';
-		
+
 		// IPv6 ranges are not supported
 		if ($mask != 128) {
 			return '';

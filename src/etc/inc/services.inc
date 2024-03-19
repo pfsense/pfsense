@@ -3946,6 +3946,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsUpdateURL = "{$conf['updateurl']}",
 		$forceUpdate = $conf['force'],
 		$dnsZoneID = $conf['zoneid'],
+		$dnsHostID = $conf['hostid'],
 		$dnsTTL = $conf['ttl'],
 		$dnsResultMatch = "{$conf['resultmatch']}",
 		$dnsRequestIf = "{$conf['requestif']}",

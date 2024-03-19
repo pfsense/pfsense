@@ -49,7 +49,7 @@ function get_stats($sitems = array()) {
 }
 
 function get_uptime() {
-	$uptime = get_uptime_sec();
+	$uptime = get_uptime_sec_from_cache();
 
 	if (intval($uptime) == 0) {
 		return;
@@ -198,7 +198,7 @@ function swap_usage() {
 
 function mem_usage() {
 	$memUsage = "NA";
-	$totalMem = $cache_hw_real_mem;
+	$totalMem = g_get('cache_vmem_pagecount');
 	if (is_numeric($totalMem)) {
 		/* Include inactive and laundry with free memory since they
 		 * could be freed under pressure. */
@@ -223,9 +223,10 @@ function update_date_time() {
 function get_cpufreq() {
 	$out = "";
 	$curfreq = "";
+	$maxfreq = g_get('cache_cpu_max_speed');
 	$curfreq = get_single_sysctl('dev.cpu.0.freq');
 	if ($curfreq > 0) {
-		$out = "Current: {$curfreq} MHz, Max: {$cache_cpu_max_speed} MHz";
+		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
 	}
 	return $out;
 }

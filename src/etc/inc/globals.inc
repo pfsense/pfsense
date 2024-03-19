@@ -62,6 +62,7 @@ $present_year = date('Y');
 
 //cached data
 $cache_hw_real_mem = rtrim(file_get_contents('/var/run/hwrealmem.cache'));
+$cache_vmem_pagecount = rtrim(file_get_contents('/var/run/vmem.cache'));
 $cache_swap = rtrim(file_get_contents('/var/run/swap.cache'));
 $cache_cpu_max_speed = rtrim(file_get_contents('/var/run/cpuspeed.cache'));
 //$cache_max_state_table_size = rtrim(file_get_contents('/var/run/statetablesize.cache'));
@@ -135,6 +136,7 @@ $g = [
 	'booting' => false,
 	
 	'cache_hw_real_mem' => $cache_hw_real_mem,
+	'cache_vmem_pagecount' => $cache_vmem_pagecount,
 	'cache_boot_time' => $cache_boot_time,
 	'cache_cpu_max_speed' => $cache_cpu_max_speed,
 	'cache_max_state_table_size' => $cache_max_state_table_size,

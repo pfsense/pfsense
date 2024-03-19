@@ -117,10 +117,20 @@ if ($_POST['save']) {
 
 	/* validate aliases */
 	foreach ($aliases as $idx => $alias) {
-		$aliasreqdfields = array('aliasdomain' . $idx);
-		$aliasreqdfieldsn = array(gettext("Alias Domain"));
+		if ((count($aliases) > 1) ||
+		    !empty($alias['host'])) {
+			$aliasreqdfields = array('aliasdomain' . $idx);
+			$aliasreqdfieldsn = array(gettext("Alias Domain"));
 
-		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
+			do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
+		}
+
+		/* Remove empty values */
+		if (empty($alias['host']) &&
+		    empty($alias['domain'])) {
+			unset($aliases[$idx]);
+			continue;
+		}
 
 		if ($alias['host']) {
 			if (!is_hostname($alias['host'])) {

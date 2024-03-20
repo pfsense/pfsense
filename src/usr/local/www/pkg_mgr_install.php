@@ -794,7 +794,9 @@ function get_firmware_versions() {
 
 		json = jQuery.parseJSON(response);
 
-		if (json) {
+		if (json && json.pkg_busy == '1') {
+			$('#uptodate').html('<span class="text-danger">' + 'Another instance of pfSense-upgrade is running.  Please try again in a few moments.' + "</span>");
+		} else if (json && !json.pkg_version_error) {
 			$('#installed_version').text(json.installed_version);
 			$('#version').text(json.version);
 

@@ -1408,7 +1408,28 @@ function pkg_list_repos() {
 		if ($repo_name == false || strlen($repo_name) <= 1) {
 			continue;
 		}
+		$old = 0;
+		$new = 0;
 		$repo_name_base = "{$repo_base}-{$repo_name}";
+		if (file_exists("{$repo_name_base}.conf")) {
+			$old = 1;
+		} else {
+			if (sscanf($name_file,
+			    "{$repo_base}-%x.name", $repo_id) != 1) {
+				continue;
+			}
+			if ($repo_id < 0 || $repo_id > 0xffff) {
+				continue;
+			}
+			$repo_name_base = sprintf("%s-%04x",
+			    $repo_base, $repo_id);
+			if (file_exists("{$repo_name_base}.conf")) {
+				$new = 1;
+			}
+		}
+		if ($old == 0 && $new == 0) {
+			continue;
+		}
 		$descr_file = "{$repo_name_base}.descr";
 		if (file_exists($descr_file)) {
 			$descr = file_get_contents($descr_file);
@@ -1423,6 +1444,9 @@ function pkg_list_repos() {
 		    'path' => "{$repo_name_base}.conf",
 		    'descr' => $descr
 		);
+		if ($new == 1) {
+			$entry['id'] = $repo_id;
+		}
 		if (file_exists("{$repo_name_base}.default")) {
 			$entry['default'] = true;
 		}

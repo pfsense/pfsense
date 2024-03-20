@@ -1863,8 +1863,12 @@ EOD;
 	if ($captive_portal !== false) {
 		$nginx_config .= "\tlimit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
 		$nginx_config .= "\tkeepalive_timeout 0;\n";
+		$intercept_errors = "";
 	} else {
 		$nginx_config .= "\tkeepalive_timeout 75;\n";
+		$nginx_config .= "\terror_page 404 /404.html;\n";
+		$nginx_config .= "\terror_page 500 502 503 504 /50x.html;\n";
+		$intercept_errors = "\t\t\tfastcgi_intercept_errors on;\n";
 	}
 	$nginx_config .= "\tclient_header_timeout 10;\n";
 
@@ -1960,6 +1964,7 @@ EOD;
 			# Fix httpoxy - https://httpoxy.org/#fix-now
 			fastcgi_param  HTTP_PROXY  "";
 			fastcgi_read_timeout 180;
+{$intercept_errors}
 			include        /usr/local/etc/nginx/fastcgi_params;
 		}
 		location ~ (^/status$) {

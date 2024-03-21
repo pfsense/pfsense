@@ -1552,7 +1552,7 @@ function update_repos() {
 
 	/* Execute repoc with a full pkg style environment, including proxy
 	 * configuration. */
-	$process = proc_open("/usr/local/sbin/{$product_name}-repoc -N",
+	$process = proc_open(sprintf('/usr/local/sbin/%s-repoc -N', $product_name),
 	    $descriptorspec, $pipes, '/', pkg_env());
 
 	/* Process failed to start */

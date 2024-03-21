@@ -74,6 +74,7 @@ if ($_POST['Submit'] || $_POST['mac']) {
 		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 		$mac = strtolower(str_replace("-", ":", $_POST['mac']));
 		$if = $_POST['if'];
+		$descr = $_POST['descr'];
 	}
 
 	/* input validation */
@@ -86,7 +87,7 @@ if ($_POST['Submit'] || $_POST['mac']) {
 	}
 
 	if (!$input_errors) {
-		send_wol($if, $mac, '', $savemsg, $class);
+		send_wol($if, $mac, $descr, $savemsg, $class);
 	}
 }
 
@@ -196,7 +197,7 @@ print $form;
 								<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
 							</td>
 							<td>
-								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost><?=strtolower($wolent['mac']);?></a>
+								<a href="?mac=<?=$wolent['mac'];?>&amp;descr=<?=$wolent['descr'];?>&amp;if=<?=$wolent['interface'];?>" usepost><?=strtolower($wolent['mac']);?></a>
 							</td>
 							<td>
 								<?=htmlspecialchars($wolent['descr']);?>
@@ -204,7 +205,7 @@ print $form;
 							<td>
 								<a class="fa-solid fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
 								<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
-								<a class="fa-solid fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
+								<a class="fa-solid fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;descr=<?=$wolent['descr'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
 							</td>
 						</tr>
 					<?php endforeach?>

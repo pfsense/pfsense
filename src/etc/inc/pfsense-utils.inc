@@ -1554,6 +1554,10 @@ function is_radvd_enabled() {
 			continue;
 		}
 
+		if (config_get_path("dhcpdv6/{$if}/ramode", "disabled") == "disabled") {
+			continue;
+		}
+
 		return true;
 	}
 

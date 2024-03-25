@@ -1548,7 +1548,7 @@ function services_kea4_configure()
 					if (!is_array($keapool['require-client-classes'])) {
 						$keapool['require-client-classes'] = [];
 					}
-					array_unshift($keapool['require-client-classes'], $name);
+					$keapool['require-client-classes'][] = $name;
 				}
 
 				if (!empty($poolconf['rootpath'])) {
@@ -1719,7 +1719,7 @@ function services_kea4_configure()
 				if (!is_array($keasubnet['require-client-classes'])) {
 					$keasubnet['require-client-classes'] = [];
 				}
-				array_unshift($keasubnet['require-client-classes'], $name);
+				$keasubnet['require-client-classes'][] = $name;
 			}
 
 			if (!empty($dhcpifconf['rootpath'])) {

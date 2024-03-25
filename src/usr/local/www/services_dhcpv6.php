@@ -196,6 +196,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['ddnsupdate'] = isset($dhcpdconf['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($dhcpdconf['ddnsforcehostname']);
 	$pconfig['ddnsclientupdates'] = $dhcpdconf['ddnsclientupdates'];
+	$pconfig['ddnsreverse'] = isset($dhcpdconf['ddnsreverse']);
 	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'], $pconfig['ntp4']) = $dhcpdconf['ntpserver'];
 	$pconfig['tftp'] = $dhcpdconf['tftp'];
 	$pconfig['ldap'] = $dhcpdconf['ldap'];

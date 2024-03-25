@@ -1408,7 +1408,7 @@ function services_kea4_configure()
 			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
 				$keapool['option-data'][] = [
 					'name' => 'netbios-name-servers',
-					'data' => implode(', ', $poolconf['winserver'])
+					'data' => implode(', ', $poolconf['winsserver'])
 				];
 				$keapool['option-data'][] = [
 					'name' => 'netbios-node-type',

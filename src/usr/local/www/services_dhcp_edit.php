@@ -317,10 +317,15 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) ||
-	    ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2']))) ||
-	    ($_POST['ntp3'] && (!is_ipaddrv4($_POST['ntp3']) && !is_hostname($_POST['ntp3'])))) {
-		$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
+	if (($_POST['ntp1'] && !(is_ipaddrv4($_POST['ntp1']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp1'])))) ||
+	    ($_POST['ntp2'] && !(is_ipaddrv4($_POST['ntp2']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp2'])))) ||
+	    ($_POST['ntp3'] && !(is_ipaddrv4($_POST['ntp3']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp3'])))) ||
+	    ($_POST['ntp4'] && !(is_ipaddrv4($_POST['ntp4']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp4']))))) {
+		if (dhcp_is_backend('isc')) {
+			$input_errors[] = gettext("A valid IP address or hostname must be specified for the NTP servers.");
+		} else {
+			$input_errors[] = gettext("A valid IP address must be specified for the NTP servers.");
+		}
 	}
 	if ($_POST['domain'] && (!is_domain($_POST['domain'], false, false))) {
 		$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");

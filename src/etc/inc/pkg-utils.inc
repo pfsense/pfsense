@@ -559,13 +559,13 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
  * to register itself in config.xml and also execute custom
  * install functions
  */
-function register_all_installed_packages() {
+function register_all_installed_packages(bool $force = false) {
 	$pkg_info = get_pkg_info('all', true, true);
 
 	foreach ($pkg_info as $pkg) {
 		pkg_remove_prefix($pkg['name']);
 
-		if (is_package_installed($pkg['name'])) {
+		if (!$force && is_package_installed($pkg['name'])) {
 			continue;
 		}
 
@@ -739,7 +739,7 @@ function read_package_configurationfile($package_name) {
 	$pkg_config = array();
 	$id = get_package_id($package_name);
 	$pkg_data = config_get_path("installedpackages/package/{$id}", []);
-   
+
 	if ($id < 0 || empty($pkg_data)) {
 		return $pkg_config;
 	}
@@ -1176,7 +1176,7 @@ function package_reinstall_all() {
 		return false;
 	}
 
-	if (!empty($pkgs)) { 
+	if (!empty($pkgs)) {
 		$pkg_info = get_pkg_info();
 	}
 

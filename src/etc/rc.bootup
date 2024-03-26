@@ -179,6 +179,14 @@ echo "Setting up extended sysctls...";
 system_setup_sysctl();
 echo "done.\n";
 
+$file = '/deferred_pkg_install';
+if (file_exists($file)) {
+	echo "Executing deferred package installation scripts...";
+	register_all_installed_packages(true);
+	unlink($file);
+	echo "done.\n";
+}
+
 /* enable optional crypto modules */
 load_crypto();
 

@@ -75,15 +75,24 @@ if ($_REQUEST['getupdatestatus']) {
 		true /* see https://redmine.pfsense.org/issues/15055 */
 	);
 
-	if ($system_version === false) {
-		print(gettext("<i>Unable to check for updates</i>"));
-		exit;
+	unset($error);
+	if ($system_version === false || !is_array($system_version)) {
+		$error = gettext("<i>Unable to check for updates</i>");
 	}
-
-	if (!is_array($system_version) ||
-	    !isset($system_version['version']) ||
+	if (isset($system_version['pkg_busy']) ||
+	    isset($system_version['pkg_version_error'])) {
+		$error = gettext("<i>Update system is busy, try again later</i>");
+	}
+	if (!isset($system_version['version']) ||
 	    !isset($system_version['installed_version'])) {
-		print(gettext("<i>Error in version information</i>"));
+		$error = gettext("<i>Error in version information</i>");
+	}
+	if (isset($error)) {
+		print($error);
+?>
+		    &nbsp;
+		    <a id="updver" href="#" class="fa-solid fa-arrows-rotate"></a>
+<?
 		exit;
 	}
 

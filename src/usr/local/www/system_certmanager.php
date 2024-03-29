@@ -65,14 +65,11 @@ if (isset($userid)) {
 	config_init_path('system/user');
 }
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
+config_init_path('ca');
+config_init_path('cert');
 
 $internal_ca_count = 0;
-foreach ($a_ca as $ca) {
+foreach (config_get_path('cert', []) as $ca) {
 	if ($ca['prv']) {
 		$internal_ca_count++;
 	}
@@ -96,7 +93,8 @@ if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 if (!empty($id)) {
-	$thiscert =& lookup_cert($id);
+	$cert_item_config = lookup_cert($id);
+	$thiscert = &$cert_item_config['item'];
 }
 
 /* Actions other than 'new' require an ID.
@@ -116,9 +114,9 @@ switch ($act) {
 			$savemsg = sprintf(gettext("Certificate %s is in use and cannot be deleted"), $name);
 			$class = "danger";
 		} else {
-			foreach ($a_cert as $cid => $acrt) {
+			foreach (config_get_path('cert', []) as $cid => $acrt) {
 				if ($acrt['refid'] == $thiscert['refid']) {
-					unset($a_cert[$cid]);
+					config_del_path("cert/{$cid}");
 				}
 			}
 			$savemsg = sprintf(gettext("Deleted certificate %s"), $name);
@@ -462,8 +460,10 @@ if ($_POST['save'] == gettext("Save")) {
 			case 'sign':
 				/* Sign a CSR */
 				$csrid = lookup_cert($pconfig['csrtosign']);
-				$ca = & lookup_ca($pconfig['catosignwith']);
-				// Read the CSR from $config, or if a new one, from the textarea
+				$csrid = $csrid['item'];
+				$ca_item_config = lookup_ca($pconfig['catosignwith']);
+				$ca = &$ca_item_config['item'];
+				// Read the CSR from config array, or if a new one, from the textarea
 				if ($pconfig['csrtosign'] === "new") {
 					$csr = $pconfig['csrpaste'];
 				} else {
@@ -476,6 +476,7 @@ if ($_POST['save'] == gettext("Save")) {
 					$altname_str = implode(",", $altnames_tmp);
 				}
 				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
+				config_set_path("ca/{$ca_item_config['idx']}", $ca);
 				if ($n509) {
 					// Gather the details required to save the new cert
 					$newcert = array();
@@ -490,7 +491,7 @@ if ($_POST['save'] == gettext("Save")) {
 						$newcert['prv'] = $csrid['prv'];
 					}
 					// Add it to the config file
-					$config['cert'][] = $newcert;
+					config_set_path('cert/', $newcert);
 					$savemsg = sprintf(gettext("Signed certificate %s"), htmlspecialchars($newcert['descr']));
 					unset($act);
 				}
@@ -513,7 +514,7 @@ if ($_POST['save'] == gettext("Save")) {
 							$cn = $int_data['subject']['CN'];
 							$int_ca = array('descr' => $cn, 'refid' => uniqid());
 							if (ca_import($int_ca, $intermediate)) {
-								$a_ca[] = $int_ca;
+								config_set_path('ca/', $int_ca);
 							}
 						}
 					}
@@ -619,8 +620,9 @@ if ($_POST['save'] == gettext("Save")) {
 
 		if (isset($id) && $thiscert) {
 			$thiscert = $cert;
+			config_set_path("cert/{$cert_item_config['idx']}", $thiscert);
 		} elseif ($cert) {
-			$a_cert[] = $cert;
+			config_set_path('cert/', $cert);
 		}
 
 		if (isset($userid) && (config_get_path('system/user') !== null)) {
@@ -668,6 +670,7 @@ if ($_POST['save'] == gettext("Save")) {
 		$cert['descr'] = $pconfig['descr'];
 		csr_complete($cert, $pconfig['cert']);
 		$thiscert = $cert;
+		config_set_path("cert/{$cert_item_config['idx']}", $thiscert);
 		$savemsg = sprintf(gettext("Updated certificate signing request %s"), htmlspecialchars($pconfig['descr']));
 		write_config($savemsg);
 		pfSenseHeader("system_certmanager.php");
@@ -771,10 +774,9 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	// Return an array containing the IDs od all CAs
 	function list_cas() {
-		global $a_ca;
 		$allCas = array();
 
-		foreach ($a_ca as $ca) {
+		foreach (config_get_path('ca', []) as $ca) {
 			if ($ca['prv']) {
 				$allCas[$ca['refid']] = $ca['descr'];
 			}
@@ -938,7 +940,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		));
 	} else {
 		$allCas = array();
-		foreach ($a_ca as $ca) {
+		foreach (config_get_path('ca', []) as $ca) {
 			if (!$ca['prv']) {
 				continue;
 			}
@@ -1165,6 +1167,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		}
 
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 		if ($ca) {
 			$cert['descr'] .= " (CA: {$ca['descr']})";
 		}
@@ -1402,7 +1405,7 @@ $pluginparams = array();
 $pluginparams['type'] = 'certificates';
 $pluginparams['event'] = 'used_certificates';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
-foreach ($a_cert as $cert):
+foreach (config_get_path('cert', []) as $cert):
 	if (!is_array($cert) || empty($cert)) {
 		continue;
 	}
@@ -1434,6 +1437,7 @@ foreach ($a_cert as $cert):
 	}
 
 	$ca = lookup_ca($cert['caref']);
+	$ca = $ca['item'];
 	if ($ca) {
 		$caname = htmlspecialchars($ca['descr']);
 	}
@@ -1616,7 +1620,7 @@ events.push(function() {
 
 		switch (caref) {
 <?php
-			foreach ($a_ca as $ca):
+			foreach (config_get_path('ca', []) as $ca):
 				if (!$ca['prv']) {
 					continue;
 				}

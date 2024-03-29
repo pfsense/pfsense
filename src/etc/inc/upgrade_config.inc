@@ -2338,7 +2338,8 @@ function upgrade_059_to_060() {
 			$subject = cert_get_subject($ca['crt']);
 			$issuer = cert_get_issuer($ca['crt']);
 			if ($issuer <> $subject) {
-				$issuer_crt =& lookup_ca_by_subject($issuer);
+				$issuer_crt = lookup_ca_by_subject($issuer);
+				$issuer_crt = $issuer_crt['item'];
 				if ($issuer_crt) {
 					$ca['caref'] = $issuer_crt['refid'];
 				}
@@ -2351,7 +2352,8 @@ function upgrade_059_to_060() {
 				$subject = cert_get_subject($cert['crt']);
 				$issuer = cert_get_issuer($cert['crt']);
 				if ($issuer <> $subject) {
-					$issuer_crt =& lookup_ca_by_subject($issuer);
+					$issuer_crt = lookup_ca_by_subject($issuer);
+					$issuer_crt = $issuer_crt['item'];
 					if ($issuer_crt) {
 						$cert['caref'] = $issuer_crt['refid'];
 					}
@@ -2599,7 +2601,6 @@ function upgrade_068_to_069() {
 		return;
 	}
 
-	$cert_config = config_get_path('cert');
 	foreach ($user_config as & $user) {
 		if (!is_array($user['cert'])) {
 			continue;
@@ -2616,14 +2617,13 @@ function upgrade_068_to_069() {
 			}
 			// Keep the cert references for this user
 			$rids[] = $tcert['refid'];
-			$cert_config[] = $tcert;
+			config_set_path('cert/', $tcert);
 		}
 		// Replace user certs with cert references instead.
 		if (count($rids) > 0) {
 			$user['cert'] = $rids;
 		}
 	}
-	config_set_path('cert', $cert_config);
 	config_set_path('system/user', $user_config);
 }
 
@@ -6947,6 +6947,7 @@ function upgrade_230_to_231() {
 			/* If using SSL/TLS, check if (server|client) certificate is weak, if so, disable tunnel */
 			if (!empty($settings['certref'])) {
 				$cert = lookup_cert($settings['certref']);
+				$cert = $cert['item'];
 				/* Disable only if weak and not already disabled */
 				if (cert_has_weak_digest($cert['crt']) &&
 					!isset($settings['disable'])) {
@@ -6987,6 +6988,7 @@ function upgrade_231_to_232() {
 	if (config_get_path('system/webgui/protocol') == "https" &&
 	    !empty(config_get_path('system/webgui/ssl-certref'))) {
 		$cert = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		$cert = $cert['item'];
 		/* If the GUI certificate is invalid or weak, replace it */
 		if (!is_array($cert) || !$cert['crt'] || !$cert['prv'] ||
 		    cert_chain_has_weak_digest($cert)) {
@@ -7008,6 +7010,7 @@ function upgrade_231_to_232() {
 		}
 
 		$cert = lookup_cert($portal['certref']);
+		$cert = $cert['item'];
 
 		/* If the cert is invalid or weak, generate a new self-signed
 		 * cert using configured HTTPS server name, if present */

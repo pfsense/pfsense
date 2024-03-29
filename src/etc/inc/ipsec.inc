@@ -2144,6 +2144,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 
 	if (!empty($ph1ent['caref'])) {
 		$ca = lookup_ca($ph1ent['caref']);
+		$ca = $ca['item'];
 		if ($ca) {
 			/* Get hash value to use for filename */
 			$ca_details = openssl_x509_parse(base64_decode($ca['crt']));
@@ -2903,6 +2904,7 @@ function ipsec_setup_secrets() {
 
 			$ikeid = $ph1ent['ikeid'];
 			$cert = lookup_cert($ph1ent['certref']);
+			$cert = $cert['item'];
 
 			if (!$cert) {
 				log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
@@ -2989,6 +2991,7 @@ function ipsec_setup_secrets() {
 		    array('cert', 'eap-tls', 'xauth_cert_server', 'pkcs11'))) {
 			if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
 				$thisca = lookup_ca($ph1ent['caref']);
+				$thisca = $thisca['item'];
 				$vpncas[$ph1ent['caref']] = $thisca;
 				/* follow chain up to root */
 				$cachain = ca_chain_array($thisca);

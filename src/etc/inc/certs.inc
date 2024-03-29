@@ -64,98 +64,108 @@ $cert_max_lifetime = 12000;
 global $crl_max_lifetime;
 $crl_max_lifetime = 9999;
 
-function & lookup_ca($refid) {
-	global $config;
-
-	if (is_array($config['ca'])) {
-		foreach ($config['ca'] as & $ca) {
-			if (empty($ca)) {
-				continue;
-			}
-			if ($ca['refid'] == $refid) {
-				return $ca;
-			}
+/**
+ * @return array Contains the CA config index and item.
+ */
+function lookup_ca($refid) {
+	$ca_item = ['idx' => null, 'item' => null];
+	foreach (config_get_path('ca', []) as $idx => $ca) {
+		if (empty($ca)) {
+			continue;
+		}
+		if ($ca['refid'] == $refid) {
+			$ca_item = ['idx' => $idx, 'item' => $ca];
+			break;
 		}
 	}
 
-	return false;
+	return $ca_item;
 }
 
-function & lookup_ca_by_subject($subject) {
-	global $config;
-
-	if (is_array($config['ca'])) {
-		foreach ($config['ca'] as & $ca) {
-			if (empty($ca)) {
-				continue;
-			}
-			$ca_subject = cert_get_subject($ca['crt']);
-			if ($ca_subject == $subject) {
-				return $ca;
-			}
+/**
+ * @return array Contains the CA config index and item.
+ */
+function lookup_ca_by_subject($subject) {
+	$ca_item = ['idx' => null, 'item' => null];
+	foreach (config_get_path('ca', []) as $idx => $ca) {
+		if (empty($ca)) {
+			continue;
+		}
+		$ca_subject = cert_get_subject($ca['crt']);
+		if ($ca_subject == $subject) {
+			$ca_item = ['idx' => $idx, 'item' => $ca];
+			break;
 		}
 	}
 
-	return false;
+	return $ca_item;
 }
 
-function & lookup_cert($refid) {
-	global $config;
-
-	if (is_array($config['cert'])) {
-		foreach ($config['cert'] as & $cert) {
-			if (empty($cert)) {
-				continue;
-			}
-			if ($cert['refid'] == $refid) {
-				return $cert;
-			}
+/**
+ * @return array Contains the cert config index and item.
+ */
+function lookup_cert($refid) {
+	$cert_item = ['idx' => null, 'item' => null];
+	foreach (config_get_path('cert', []) as $idx => $cert) {
+		if (empty($cert)) {
+			continue;
+		}
+		if ($cert['refid'] == $refid) {
+			$cert_item = ['idx' => $idx, 'item' => $cert];
+			break;
 		}
 	}
 
-	return false;
+	return $cert_item;
 }
 
-function & lookup_cert_by_name($name) {
-	global $config;
-	if (is_array($config['cert'])) {
-		foreach ($config['cert'] as & $cert) {
-			if (empty($cert)) {
-				continue;
-			}
-			if ($cert['descr'] == $name) {
-				return $cert;
-			}
+/**
+ * @return array Contains the cert config index and item.
+ */
+function lookup_cert_by_name($name) {
+	$cert_item = ['idx' => null, 'item' => null];
+	foreach (config_get_path('cert', []) as $idx => $cert) {
+		if (empty($cert)) {
+			continue;
 		}
-	}
-}
-
-function & lookup_crl($refid) {
-	global $config;
-
-	if (is_array($config['crl'])) {
-		foreach ($config['crl'] as & $crl) {
-			if (empty($crl)) {
-				continue;
-			}
-			if ($crl['refid'] == $refid) {
-				return $crl;
-			}
+		if ($cert['descr'] == $name) {
+			$cert_item = ['idx' => $idx, 'item' => $cert];
+			break;
 		}
 	}
 
-	return false;
+	return $cert_item;
 }
 
-function ca_chain_array(& $cert) {
+/**
+ * @return array Contains the CRL config index and item.
+ */
+function lookup_crl($refid) {
+	$crl_item = ['idx' => null, 'item' => null];
+	foreach (config_get_path('crl', []) as $idx => $crl) {
+		if (empty($crl)) {
+			continue;
+		}
+		if ($crl['refid'] == $refid) {
+			$crl_item = ['idx' => $idx, 'item' => $crl];
+			break;
+		}
+	}
+
+	return $crl_item;
+}
+
+function ca_chain_array($cert) {
 	if ($cert['caref']) {
 		$chain = array();
 		$crt = lookup_ca($cert['caref']);
+		$crt = $crt['item'];
 		$chain[] = $crt;
 		while ($crt) {
 			$caref = $crt['caref'];
 			if ($caref) {
 				$crt = lookup_ca($caref);
+				$crt = $crt['item'];
 			} else {
 				$crt = false;
 			}
@@ -168,12 +178,12 @@ function ca_chain_array(& $cert) {
 	return false;
 }
 
-function ca_chain(& $cert) {
+function ca_chain($cert) {
 	if ($cert['caref']) {
 		$ca = "";
 		$cas = ca_chain_array($cert);
 		if (is_array($cas)) {
-			foreach ($cas as & $ca_cert) {
+			foreach ($cas as $ca_cert) {
 				$ca .= base64_decode($ca_cert['crt']);
 				$ca .= "\n";
 			}
@@ -183,9 +193,17 @@ function ca_chain(& $cert) {
 	return "";
 }
 
+/**
+ * Writes the given CA to config and updates certs that reference it.
+ * 
+ * @param array  &$ca    Directly modified; written to config if it does not exist.
+ * @param string $str    CA cert - not encoded.
+ * @param string $key    Optional. CA key - not encoded.
+ * @param string $serial Optional. CA serial; defaults to 0.
+ * 
+ * @return bool False if CA already exists; True otherwise.
+ */
 function ca_import(& $ca, $str, $key = "", $serial = "") {
-	global $config;
-
 	$ca['crt'] = base64_encode($str);
 	if (!empty($key)) {
 		$ca['prv'] = base64_encode($key);
@@ -201,33 +219,34 @@ function ca_import(& $ca, $str, $key = "", $serial = "") {
 
 	// Find my issuer unless self-signed
 	if ($issuer <> $subject) {
-		$issuer_crt =& lookup_ca_by_subject($issuer);
+		$issuer_crt = lookup_ca_by_subject($issuer);
+		$issuer_crt = $issuer_crt['item'];
 		if ($issuer_crt) {
 			$ca['caref'] = $issuer_crt['refid'];
 		}
 	}
 
 	/* Correct if child certificate was loaded first */
-	if (is_array($config['ca'])) {
-		foreach ($config['ca'] as & $oca) {
-			// check by serial number if CA already exists
-			$osn = cert_get_serial($oca['crt']);
-			if (($ca['refid'] <> $oca['refid']) && ($serialNumber == $osn)) {
-				return false;
-			}
-			$issuer = cert_get_issuer($oca['crt']);
-			if (($ca['refid'] <> $oca['refid']) && ($issuer == $subject)) {
-				$oca['caref'] = $ca['refid'];
-			}
+	foreach (config_get_path('ca', []) as $idx => $oca) {
+		// check by serial number if CA already exists
+		$osn = cert_get_serial($oca['crt']);
+		if (($ca['refid'] <> $oca['refid']) && ($serialNumber == $osn)) {
+			return false;
+		}
+		$issuer = cert_get_issuer($oca['crt']);
+		if (($ca['refid'] <> $oca['refid']) && ($issuer == $subject)) {
+			config_set_path("ca/{$idx}/caref", $ca['refid']);
 		}
 	}
-	if (is_array($config['cert'])) {
-		foreach ($config['cert'] as & $cert) {
+	$cert_config = config_get_path('cert');
+	if (is_array($cert_config)) {
+		foreach ($cert_config as & $cert) {
 			$issuer = cert_get_issuer($cert['crt']);
 			if ($issuer == $subject) {
 				$cert['caref'] = $ca['refid'];
 			}
 		}
+		config_set_path('cert', $cert_config);
 	}
 	return true;
 }
@@ -278,9 +297,13 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256", $keyt
 	return true;
 }
 
+/**
+ * Creates intermediate Certificate Authority; increments the CA's serial and writes it to config.
+ */
 function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256", $keytype = "RSA", $ecname = "prime256v1") {
 	// Create Intermediate Certificate Authority
-	$signing_ca =& lookup_ca($caref);
+	$ca_item_config = lookup_ca($caref);
+	$signing_ca = &$ca_item_config['item'];
 	if (!$signing_ca) {
 		return false;
 	}
@@ -290,7 +313,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	if (!$signing_ca_res_crt || !$signing_ca_res_key) {
 		return false;
 	}
-	$signing_ca_serial = ++$signing_ca['serial'];
+	$signing_ca_serial = config_set_path("ca/{$ca_item_config['idx']}", ++$signing_ca['serial']);
 
 	$args = array(
 		"x509_extensions" => "v3_ca",
@@ -347,7 +370,8 @@ function cert_import(& $cert, $crt_str, $key_str) {
 
 	// Find my issuer unless self-signed
 	if ($issuer <> $subject) {
-		$issuer_crt =& lookup_ca_by_subject($issuer);
+		$issuer_crt = lookup_ca_by_subject($issuer);
+		$issuer_crt = $issuer_crt['item'];
 		if ($issuer_crt) {
 			$cert['caref'] = $issuer_crt['refid'];
 		}
@@ -361,7 +385,8 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 
 	if ($type != "self-signed") {
 		$cert['caref'] = $caref;
-		$ca =& lookup_ca($caref);
+		$ca_item_config = lookup_ca($caref);
+		$ca = &$ca_item_config['item'];
 		if (!$ca) {
 			return false;
 		}
@@ -376,6 +401,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 
 		/* Get the next available CA serial number. */
 		$ca_serial = ca_get_next_serial($ca);
+		config_set_path("ca/{$ca_item_config['idx']}", $ca);
 	}
 
 	$cert_type = cert_type_config_section($type);
@@ -408,6 +434,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 
 	// If this is a self-signed cert, blank out the CA and sign with the cert's key
 	if ($type == "self-signed") {
+		config_del_path("ca/{$ca_item_config['idx']}");
 		$ca           = null;
 		$ca_res_crt   = null;
 		$ca_res_key   = $res_key;
@@ -984,10 +1011,14 @@ function crl_get_max_lifetime() {
 	return min(7000, cert_get_max_lifetime());
 }
 
+/**
+ * Directly modifes the Certificate Revocation List and adds it to config.
+ */
 function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	global $config;
 	$max_lifetime = crl_get_max_lifetime();
-	$ca =& lookup_ca($caref);
+	$ca = lookup_ca($caref);
+	$ca = $ca['item'];
 	if (!$ca) {
 		return false;
 	}
@@ -1003,7 +1034,11 @@ function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	return $crl;
 }
 
-function crl_update(& $crl) {
+/**
+ * @param array &$crl_config Must contain the CRL config index and item.
+ */
+function crl_update(& $crl_config) {
+	$crl = &$crl_config['item'];
 	require_once('ASN1.php');
 	require_once('ASN1_UTF8STRING.php');
 	require_once('ASN1_ASCIISTRING.php');
@@ -1027,7 +1062,8 @@ function crl_update(& $crl) {
 
 	global $config;
 	$max_lifetime = crl_get_max_lifetime();
-	$ca =& lookup_ca($crl['caref']);
+	$ca = lookup_ca($crl['caref']);
+	$ca = $ca['item'];
 	if (!$ca) {
 		return false;
 	}
@@ -1036,6 +1072,7 @@ function crl_update(& $crl) {
 		return false;
 	}
 	$crl['serial']++;
+	config_set_path("crl/{$crl_config['idx']}", $crl);
 	$ca_cert = \Ukrbublik\openssl_x509_crl\X509::pem2der(base64_decode($ca['crt']));
 	$ca_pkey = openssl_pkey_get_private(base64_decode($ca['prv']));
 
@@ -1067,12 +1104,18 @@ function crl_update(& $crl) {
 
 	$crl_data = \Ukrbublik\openssl_x509_crl\X509_CRL::create($crlconf, $ca_pkey, $ca_cert);
 	$crl['text'] = base64_encode(\Ukrbublik\openssl_x509_crl\X509::der2pem4crl($crl_data));
+	config_set_path("crl/{$crl_config['idx']}", $crl);
 
 	return $crl['text'];
 }
 
-function cert_revoke($cert, & $crl, $reason = -1) {
-	global $config;
+/**
+ * @param array|string $cert        The cert item or cert serial to revoke.
+ * @param array        &$crl_config Must contain the CRL config index and item.
+ * @param int          $reason      Revocation reason; defined by RFC5280.
+ */
+function cert_revoke($cert, &$crl_config, $reason = -1) {
+	$crl = &$crl_config['item'];
 	if (is_cert_revoked($cert, $crl['refid'])) {
 		return true;
 	}
@@ -1095,12 +1138,16 @@ function cert_revoke($cert, & $crl, $reason = -1) {
 	$rcert['reason'] = $reason;
 	$rcert['revoke_time'] = time();
 	$crl['cert'][] = $rcert;
-	crl_update($crl);
+	crl_update($crl_config);
 	return true;
 }
 
-function cert_unrevoke($cert, & $crl) {
-	global $config;
+/**
+ * @param array|string $cert        The cert item or cert serial to unrevoke.
+ * @param array        &$crl_config Must contain the CRL config index and item.
+ */
+function cert_unrevoke($cert, &$crl_config) {
+	$crl = &$crl_config['item'];
 	if (!is_crl_internal($crl)) {
 		return false;
 	}
@@ -1118,9 +1165,9 @@ function cert_unrevoke($cert, & $crl) {
 				if (!isset($crl['method'])) {
 					$crl['method'] = "internal";
 				}
-				crl_update($crl);
+				crl_update($crl_config);
 			} else {
-				crl_update($crl);
+				crl_update($crl_config);
 			}
 			return true;
 		}
@@ -1272,6 +1319,7 @@ function ca_has_serial($caref, $serial) {
 
 	/* Check the CA itself */
 	$this_ca = lookup_ca($caref);
+	$this_ca = $this_ca['item'];
 	$this_serial = cert_get_serial($this_ca['crt'], true);
 	if ($serial == $this_serial) {
 		return true;
@@ -1368,6 +1416,7 @@ function crl_contains_cert($crl, $cert) {
 
 	/* Find the issuer of this CRL */
 	$ca = lookup_ca($crl['caref']);
+	$ca = $ca['item'];
 	$crlissuer = is_array($cert) ? cert_get_subject($ca['crt']) : null;
 	$serial = crl_get_entry_serial($cert);
 
@@ -1411,6 +1460,7 @@ function is_cert_revoked($cert, $crlref = "") {
 
 	if (!empty($crlref)) {
 		$crl = lookup_crl($crlref);
+		$crl = $crl['item'];
 		return crl_contains_cert($crl, $cert);
 	} else {
 		if (!is_array($cert)) {
@@ -1472,6 +1522,7 @@ function cert_get_cn($crt, $isref = false) {
 	/* If this is a certref, not an actual cert, look up the cert first */
 	if ($isref) {
 		$cert = lookup_cert($crt);
+		$cert = $cert['item'];
 		/* If it's not a valid cert, bail. */
 		if (!(is_array($cert) && !empty($cert['crt']))) {
 			return "";
@@ -1566,6 +1617,7 @@ function is_cert_locally_renewable($cert) {
 	$ca = array();
 	if (!empty($cert['caref'])) {
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 	}
 
 	/* If the CA exists and we have the private key, or if the cert is
@@ -1590,7 +1642,8 @@ $cert_strict_values = array(
  * NAME
  *   cert_renew - Renew an existing internal CA or certificate
  * INPUTS
- *   $cert : The entry to be renewed (used as a reference so it can be altered directly)
+ *   $cert_config : An array containing the config array path and the ca or
+ *                  cert item; it is modified directly and written to config.
  *   $reusekey : Whether or not to reuse the existing key for the certificate
  *      true: Reuse the existing key (Default)
  *      false: Generate a new key based on current (or enforced minimum) parameters
@@ -1605,9 +1658,10 @@ $cert_strict_values = array(
  *   Does NOT run write_config(), that must be performed by the caller.
  ******/
 
-function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reuseserial = false) {
+function cert_renew(& $cert_config, $reusekey = true, $strictsecurity = false, $reuseserial = false) {
 	global $cert_strict_values, $cert_curve_compatible, $curve_compatible_list;
 
+	$cert = &$cert_config['item'];
 	/* If there is no certificate or private key string, this entry is either
 	 *  invalid or cannot be renewed by this function. */
 	if (empty($cert['crt']) || empty($cert['prv'])) {
@@ -1662,6 +1716,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reusese
 		/* Automatically determine certificate type if unset based on purpose value */
 		$cert['type'] = ($purpose['server'] == 'Yes') ? 'server' : 'user';
 	}
+	config_set_path("{$cert_config['path']}", $cert);
 
 	/* Convert the internal certificate type to an openssl.cnf section name */
 	$cert_type = cert_type_config_section($cert['type']);
@@ -1763,7 +1818,8 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reusese
 
 	if (!empty($cert['caref'])) {
 		/* The certificate was signed by a CA, so read the CA details. */
-		$ca = & lookup_ca($cert['caref']);
+		$ca_item_config = lookup_ca($cert['caref']);
+		$ca = &$ca_item_config['item'];
 		/* If the referenced CA cannot be found, bail. */
 		if (!$ca) {
 			return false;
@@ -1782,6 +1838,10 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reusese
 		}
 		/* Get the next available CA serial number. */
 		$ca_serial = ca_get_next_serial($ca);
+		config_set_path("ca/{$ca_item_config['idx']}", $ca);
+		if ($cert['type'] == 'ca') {
+			$cert = $ca;
+		}
 	} elseif ($selfsigned) {
 		/* For self-signed CAs & certificates, set the CA details to self and
 		 * use the key for this entry to sign itself.
@@ -1812,6 +1872,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false, $reusese
 	/* Load the new certificate string and key into the configuration */
 	$cert['crt'] = base64_encode($str_crt);
 	$cert['prv'] = base64_encode($str_key);
+	config_set_path("{$cert_config['path']}", $cert);
 
 	return true;
 }
@@ -2735,6 +2796,7 @@ function cert_pkcs12_export($cert, $encryption = 'high', $passphrase = '', $add_
 	$eca = '';
 	if ($add_ca && !empty($cert['caref'])) {
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 		if ($ca) {
 			$capath = "{$workdir}/ca.pem";
 			file_put_contents($capath, base64_decode($ca['crt']));
@@ -2805,6 +2867,7 @@ function cert_chain_has_weak_digest($cert) {
 	/* Check CA if present */
 	if (!empty($cert['caref'])) {
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 		$weak = cert_has_weak_digest($ca['crt']);
 	}
 	/* Only check cert if the CA is not weak (or no self-signed) */

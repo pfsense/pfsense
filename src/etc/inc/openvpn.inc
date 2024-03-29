@@ -280,13 +280,12 @@ function openvpn_build_if_list() {
 }
 
 function openvpn_build_crl_list() {
-	global $a_crl;
-
 	$list = array('' => 'None');
 
-	foreach ($a_crl as $crl) {
+	foreach (config_get_path('crl', []) as $crl) {
 		$caname = "";
 		$ca = lookup_ca($crl['caref']);
+		$ca = $ca['item'];
 
 		if ($ca) {
 			$caname = " (CA: {$ca['descr']})";
@@ -299,7 +298,6 @@ function openvpn_build_crl_list() {
 }
 
 function openvpn_build_cert_list($include_none = false, $prioritize_server_certs = false) {
-	global $a_cert;
 	$openvpn_compatible_certs = cert_build_list('cert', 'OpenVPN');
 
 	if ($include_none) {
@@ -315,13 +313,14 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 		$non_server_list['  '] = gettext("===== Non-Server Certificates =====");
 	}
 
-	foreach ($a_cert as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if (!array_key_exists($cert['refid'], $openvpn_compatible_certs)) {
 			continue;
 		}
 		$properties = array();
 		$propstr = "";
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 		$purpose = cert_get_purpose($cert['crt'], true);
 
 		if ($purpose['server'] == "Yes") {
@@ -1121,6 +1120,7 @@ function openvpn_reconfigure($mode, $settings) {
 				$cert = "";
 			} else {
 				$cert = lookup_cert($settings['certref']);
+				$cert = $cert['item'];
 				/* XXX: Seems not used at all! */
 				$servercn = urlencode(cert_get_cn($cert['crt']));
 				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
@@ -1315,8 +1315,9 @@ function openvpn_reconfigure($mode, $settings) {
 			@unlink_if_exists("{$capath}/*.r*");
 			/* Find the CRL listed in the settings */
 			if (!empty($settings['crlref'])) {
-				$crl = lookup_crl($settings['crlref']);
-				crl_update($crl);
+				$crl_item_config = lookup_crl($settings['crlref']);
+				$crl = &$crl_item_config['item'];
+				crl_update($crl_item_config);
 			}
 			/* For each CA in the chain, setup the CApath */
 			foreach ($cas as $ca) {
@@ -1327,6 +1328,7 @@ function openvpn_reconfigure($mode, $settings) {
 
 			if (!empty($settings['certref'])) {
 				$cert = lookup_cert($settings['certref']);
+				$cert = $cert['item'];
 				openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
 				openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
 			}
@@ -2199,8 +2201,9 @@ function openvpn_refresh_crls() {
 			$cas = ca_chain_array($param);
 			$capath = "{$g['openvpn_base']}/server{$settings['vpnid']}/ca";
 			if (!empty($settings['crlref'])) {
-				$crl = lookup_crl($settings['crlref']);
-				crl_update($crl);
+				$crl_item_config = lookup_crl($settings['crlref']);
+				$crl = &$crl_item_config['item'];
+				crl_update($crl_item_config);
 			}
 			foreach ($cas as $ca) {
 				ca_setup_capath($ca, $capath, $crl, true);

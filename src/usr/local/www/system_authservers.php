@@ -107,8 +107,7 @@ if (!is_array($config['system']['authserver'])) {
 
 $a_server = array_values(auth_get_authserver_list());
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
+config_init_path('ca');
 
 $act = $_REQUEST['act'];
 
@@ -600,7 +599,7 @@ $section->addInput(new Form_Select(
 ));
 
 $ldapCaRef = array('global' => 'Global Root CA List');
-foreach ($a_ca as $ca) {
+foreach (config_get_path('ca', []) as $ca) {
 	$ldapCaRef[$ca['refid']] = $ca['descr'];
 }
 
@@ -924,7 +923,7 @@ events.push(function() {
 		var authserver = $('#authmode').val();
 		var cert;
 
-<?php if (count($a_ca) > 0): ?>
+<?php if (count(config_get_path('ca', [])) > 0): ?>
 			cert = $('#ldap_caref').val();
 <?php else: ?>
 			cert = '';

@@ -302,6 +302,7 @@ EOF;
 
 		// Lookup CA and Server Cert
 		$cert = lookup_cert($unboundcfg['sslcertref']);
+		$cert = $cert['item'];
 		$ca = ca_chain($cert);
 		$cert_chain = base64_decode($cert['crt']);
 		if (!empty($ca)) {

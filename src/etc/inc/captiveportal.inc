@@ -448,6 +448,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 
 	if (isset($cpcfg['httpslogin'])) {
 		$cert = lookup_cert($cpcfg['certref']);
+		$cert = $cert['item'];
 		$crt = base64_decode($cert['crt']);
 		$key = base64_decode($cert['prv']);
 		$ca = ca_chain($cert);

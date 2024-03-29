@@ -426,6 +426,7 @@ events.push(function() {
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('ocsp-staple', "<?php 
 			$cert_temp = lookup_cert($pconfig['ssl-certref']);
+			$cert_temp = $cert_temp['item'];
 			echo (cert_get_ocspstaple($cert_temp['crt']) ? "true" : "false");
 			?>" === "true");
 

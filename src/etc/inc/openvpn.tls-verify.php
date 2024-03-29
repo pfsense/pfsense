@@ -77,6 +77,7 @@ foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 	if (($ovpns['vpnid'] == $current_vpnid['1']) && ($ovpns['ocspcheck'] == 'yes')) {
 		$capath = "/var/etc/openvpn/server{$ovpns['vpnid']}/ca/";
 		$ca = lookup_ca($ovpns['caref']);
+		$ca = $ca['item'];
 		$cert_contents = base64_decode($ca['crt']);
 		$cert_details = openssl_x509_parse($cert_contents);
 		$issuer = $capath . $cert_details['hash'] . ".0";

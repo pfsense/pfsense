@@ -524,7 +524,8 @@ if ($_POST['save']) {
 	}
 
 	if (!empty($pconfig['certref'])) {
-		$errchkcert =& lookup_cert($pconfig['certref']);
+		$errchkcert = lookup_cert($pconfig['certref']);
+		$errchkcert = $errchkcert['item'];
 		if (is_array($errchkcert)) {
 			if (!cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
 				$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");

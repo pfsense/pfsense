@@ -3461,6 +3461,7 @@ EOD;
 					}
 					if (strstr($wlcfg['wpa']['wpa_eap_client_mode'], 'TLS')) {
 						$cert = lookup_cert($wlcfg['wpa']['wpa_eap_cert']);
+						$cert = $cert['item'];
 						$wpa_supplicant_crt = $wpa_supplicant_file . "crt";
 						$wpa_supplicant_key = $wpa_supplicant_file . "key";
 						@file_put_contents($wpa_supplicant_crt, base64_decode($cert['crt']) . "\n" .
@@ -3472,6 +3473,7 @@ EOD;
 						$wpa .= "private_key=\"{$wpa_supplicant_key}\"\n";
 					}
 					$ca = lookup_ca($wlcfg['wpa']['wpa_eap_ca']);
+					$ca = $ca['item'];
 					$wpa_supplicant_ca = $wpa_supplicant_file . "ca";
 					@file_put_contents($wpa_supplicant_ca, base64_decode($ca['crt']) . "\n" .
 					    ca_chain($ca));

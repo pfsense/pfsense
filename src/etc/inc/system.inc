@@ -1646,6 +1646,7 @@ function system_webgui_start() {
 	if (config_get_path('system/webgui/protocol') == "https") {
 		// Ensure that we have a webConfigurator CERT
 		$cert = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		$cert = $cert['item'];
 		if (!is_array($cert) || !$cert['crt'] || !$cert['prv'] ||
 		    cert_chain_has_weak_digest($cert)) {
 			$cert = cert_create_selfsigned();
@@ -1898,6 +1899,7 @@ EOD;
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
 		$cert_temp = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		$cert_temp = $cert_temp['item'];
 		if ((config_get_path('system/webgui/ocsp-staple') == true) or
 		    (cert_get_ocspstaple($cert_temp['crt']) == true)) {
 			$nginx_config .= "\t\tssl_stapling on;\n";

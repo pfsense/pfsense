@@ -35,23 +35,30 @@ require_once("pfsense-utils.inc");
 
 global $cert_strict_values, $curve_compatible_list;
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
+config_init_path('ca');
+config_init_path('cert');
 
 $type = $_REQUEST['type'];
 
 switch ($type) {
 	case 'ca':
-		$torenew = & lookup_ca($_REQUEST['refid']);
+		$ca_item_config = lookup_ca($_REQUEST['refid']);
+		$torenew = &$ca_item_config['item'];
+		$torenew_config = [
+			'path' => "ca/{$ca_item_config['idx']}",
+			'item' => &$torenew
+		];
 		$returnpage = "system_camanager.php";
 		$service_function = 'ca_get_all_services';
 		$typestring = gettext("Certificate Authority");
 		break;
 	case 'cert':
-		$torenew = & lookup_cert($_REQUEST['refid']);
+		$cert_item_config = lookup_cert($_REQUEST['refid']);
+		$torenew = &$cert_item_config['item'];
+		$torenew_config = [
+			'path' => "cert/{$cert_item_config['idx']}",
+			'item' => &$torenew
+		];
 		$returnpage = "system_certmanager.php";
 		$service_function = 'cert_get_all_services';
 		$typestring = gettext("Certificate");
@@ -69,7 +76,7 @@ $old_serial = cert_get_serial($torenew['crt']);
 if ($_POST['renew']) {
 	$input_errors = array();
 	$old_serial = cert_get_serial($torenew['crt']);
-	if (cert_renew($torenew, ($_POST['reusekey'] == "yes"), ($_POST['strictsecurity'] == "yes"), ($_POST['reuseserial'] == "yes"))) {
+	if (cert_renew($torenew_config, ($_POST['reusekey'] == "yes"), ($_POST['strictsecurity'] == "yes"), ($_POST['reuseserial'] == "yes"))) {
 		$new_serial = cert_get_serial($torenew['crt']);
 		$message = sprintf(gettext("Renewed %s %s (%s) - Serial %s -> %s"),
 					$typestring,
@@ -108,7 +115,8 @@ $cert_details = openssl_x509_parse(base64_decode($torenew['crt']));
 $subj = cert_get_subject($torenew['crt']);
 $issuer = cert_get_issuer($torenew['crt']);
 if (!empty($torenew['caref'])) {
-	$issuer_ca = & lookup_ca($torenew['caref']);
+	$issuer_ca = lookup_ca($torenew['caref']);
+	$issuer_ca = $issuer_ca['item'];
 	if ($issuer_ca && !empty($issuer_ca['descr'])) {
 		$issuer = "{$issuer_ca['descr']}: {$issuer}";
 	}

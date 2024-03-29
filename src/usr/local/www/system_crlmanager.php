@@ -47,19 +47,14 @@ if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-
-init_config_arr(array('crl'));
-$a_crl = &$config['crl'];
+config_init_path('ca');
+config_init_path('cert');
+config_init_path('crl');
 
 /* Clean up blank entries missing a reference ID */
-foreach ($a_crl as $cid => $acrl) {
+foreach (config_get_path('crl', []) as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
-		unset ($a_crl[$cid]);
+		config_del_path("crl/{$cid}");
 	}
 }
 
@@ -68,7 +63,8 @@ $act = $_REQUEST['act'];
 $cacert_list = array();
 
 if (!empty($id)) {
-	$thiscrl =& lookup_crl($id);
+	$crl_item_config = lookup_crl($id);
+	$thiscrl = &$crl_item_config['item'];
 }
 
 /* Actions other than 'new' require a CRL to act upon.
@@ -90,9 +86,9 @@ switch ($act) {
 			$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted."), $name);
 			$class = "danger";
 		} else {
-			foreach ($a_crl as $cid => $acrl) {
+			foreach (config_get_path('crl', []) as $cid => $acrl) {
 				if ($acrl['refid'] == $thiscrl['refid']) {
-					unset($a_crl[$cid]);
+					config_del_path("crl/{$cid}");
 				}
 			}
 			write_config("Deleted CRL {$name}.");
@@ -105,7 +101,8 @@ switch ($act) {
 		$pconfig['caref'] = $_REQUEST['caref'];
 		$pconfig['lifetime'] = $default_lifetime;
 		$pconfig['serial'] = "0";
-		$crlca =& lookup_ca($pconfig['caref']);
+		$crlca = lookup_ca($pconfig['caref']);
+		$crlca = $crlca['item'];
 		if (!$crlca) {
 			$input_errors[] = gettext('Invalid CA');
 			unset($act);
@@ -138,7 +135,8 @@ switch ($act) {
 			pfSenseHeader("system_crlmanager.php");
 			exit;
 		}
-		$crl =& lookup_crl($pconfig['crlref']);
+		$crl_item_config = lookup_crl($pconfig['crlref']);
+		$crl = &$crl_item_config['item'];
 
 		if (!is_array($pconfig['certref'])) {
 			$pconfig['certref'] = array();
@@ -161,6 +159,7 @@ switch ($act) {
 		}
 		foreach ($pconfig['certref'] as $rcert) {
 			$cert = lookup_cert($rcert);
+			$cert = $cert['item'];
 			if ($crl['caref'] == $cert['caref']) {
 				$revoke_list[] = $cert;
 			} else {
@@ -176,7 +175,7 @@ switch ($act) {
 				$savemsg = "Revoked certificate(s) in CRL {$crl['descr']}.";
 				$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
 				foreach ($revoke_list as $cert) {
-					cert_revoke($cert, $crl, $reason);
+					cert_revoke($cert, $crl_item_config, $reason);
 				}
 				// refresh IPsec and OpenVPN CRLs
 				openvpn_refresh_crls();
@@ -209,7 +208,7 @@ switch ($act) {
 		}
 		$certname = htmlspecialchars($thiscert['descr']);
 		$crlname = htmlspecialchars($thiscrl['descr']);
-		if (cert_unrevoke($thiscert, $thiscrl)) {
+		if (cert_unrevoke($thiscert, $crl_item_config)) {
 			$savemsg = sprintf(gettext('Deleted Certificate %1$s from CRL %2$s.'), $certname, $crlname);
 			$class = "success";
 			// refresh IPsec and OpenVPN CRLs
@@ -224,7 +223,7 @@ switch ($act) {
 		break;
 	case 'exp':
 		/* Exporting the CRL contents*/
-		crl_update($thiscrl);
+		crl_update($crl_item_config);
 		send_user_download('data', base64_decode($thiscrl['text']), "{$thiscrl['descr']}.crl");
 		break;
 	default:
@@ -291,7 +290,9 @@ if ($_POST['save'] && empty($input_errors)) {
 		}
 
 		if (!$thiscrl) {
-			$a_crl[] = $crl;
+			config_set_path('crl/', $crl);
+		} else {
+			config_set_path("crl/{$crl_item_config['idx']}", $crl);
 		}
 
 		write_config("Saved CRL {$crl['descr']}");
@@ -353,11 +354,9 @@ function build_method_list($importonly = false) {
 }
 
 function build_ca_list() {
-	global $a_ca;
-
 	$list = array();
 
-	foreach ($a_ca as $ca) {
+	foreach (config_get_path('ca', []) as $ca) {
 		$list[$ca['refid']] = $ca['descr'];
 	}
 
@@ -365,10 +364,10 @@ function build_ca_list() {
 }
 
 function build_cacert_list() {
-	global $a_cert, $crl, $id;
+	global $crl, $id;
 
 	$list = array();
-	foreach ($a_cert as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if ((isset($cert['caref']) && !empty($cert['caref'])) &&
 		    ($cert['caref'] == $crl['caref']) &&
 		    !is_cert_revoked($cert, $id)) {
@@ -676,16 +675,17 @@ if ($act == "new" || $act == gettext("Save")) {
 	$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 	// Map CRLs to CAs in one pass
 	$ca_crl_map = array();
-	foreach ($a_crl as $crl) {
+	foreach (config_get_path('crl', []) as $crl) {
 		$ca_crl_map[$crl['caref']][] = $crl['refid'];
 	}
 
 	$i = 0;
-	foreach ($a_ca as $ca):
+	foreach (config_get_path('ca', []) as $ca):
 		$caname = htmlspecialchars($ca['descr']);
 		if (is_array($ca_crl_map[$ca['refid']])):
 			foreach ($ca_crl_map[$ca['refid']] as $crl):
 				$tmpcrl = lookup_crl($crl);
+				$tmpcrl = $tmpcrl['item'];
 				$internal = is_crl_internal($tmpcrl);
 				if ($internal && (!isset($tmpcrl['cert']) || empty($tmpcrl['cert'])) ) {
 					$tmpcrl['cert'] = array();

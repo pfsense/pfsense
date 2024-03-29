@@ -303,6 +303,7 @@ if ($_POST['save'] && !$read_only) {
 
 	if (!empty($_POST['name'])) {
 		$ca = lookup_ca($_POST['caref']);
+		$ca = $ca['item'];
 		if (!$ca) {
 			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 		}
@@ -610,7 +611,9 @@ function build_cert_table() {
 	$i = 0;
 	foreach (config_get_path("system/user/{$id}/cert", []) as $certref) {
 		$cert = lookup_cert($certref);
+		$cert = $cert['item'];
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 		$revokedstr =	is_cert_revoked($cert) ? '<b> Revoked</b>':'';
 
 		$certhtml .=	'<tr>';

@@ -1119,6 +1119,7 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
+		$caref = $caref['item'];
 		$cert_details = openssl_x509_parse(base64_decode($caref['crt']));
 		$param = array('caref' => $authcfg['ldap_caref']);
 		$cachain = ca_chain($param);

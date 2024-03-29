@@ -277,6 +277,7 @@ function step9_stepbeforeformdisplay() {
 		$orgunit = $pconfig['step6']['organizationalunit'];
 	} else {
 		$ca = lookup_ca($pconfig['step6']['authcertca']);
+		$ca = $ca['item'];
 		$cavl = cert_get_subject_hash($ca['crt']);
 		$country = $cavl['C'];
 		$state = $cavl['ST'];
@@ -554,18 +555,19 @@ function step12_submitphpaction() {
 		}
 
 		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn, "sha256");
-		if (!is_array($config['ca']))
-			$config['ca'] = array();
-
-		$config['ca'][] = $ca;
+		config_set_path('ca/', $ca);
 	} else if (!isset($pconfig['step6']['uselist']) && empty($pconfig['step6']['authcertca'])) {
 		$message = "Please choose a Certificate Authority.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
 		exit;
-	} else if (!($ca = lookup_ca($pconfig['step6']['authcertca']))) {
-		$message = "An invalid Certificate Authority has been specified.";
-		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
-		exit;
+	} else {
+		$ca = lookup_ca($pconfig['step6']['authcertca']);
+		$ca = $ca['item'];
+		if (!$ca) {
+			$message = "An invalid Certificate Authority has been specified.";
+			header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
+			exit;
+		}
 	}
 
 	if (isset($pconfig['step9']['uselist'])) {
@@ -607,10 +609,14 @@ function step12_submitphpaction() {
 		$message = "Please choose a Certificate.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
 		exit;
-	} else if (!($cert = lookup_cert($pconfig['step9']['authcertname']))) {
-		$message = "An invalid Certificate has been specified.";
-		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
-		exit;
+	} else {
+		$cert = lookup_cert($pconfig['step9']['authcertname']);
+		$cert = $cert['item'];
+		if (!$cert) {
+			$message = "An invalid Certificate has been specified.";
+			header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
+			exit;
+		}
 	}
 	$server = array();
 	$server['vpnid'] = openvpn_vpnid_next();

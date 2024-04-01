@@ -465,7 +465,7 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets'][$widgetkey]['filt
 			<label for="filterlogentriesinterval" class="col-sm-4 control-label"><?=gettext('Update interval')?></label>
 			<div class="col-sm-4">
 				<input type="number" name="filterlogentriesinterval" id="filterlogentriesinterval" value="<?=$pconfig['nentriesinterval']?>" placeholder="60"
-					min="1" class="form-control" />
+					min="5" class="form-control" />
 			</div>
 			<?=gettext('Seconds');?>
 		</div>

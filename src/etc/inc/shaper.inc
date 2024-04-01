@@ -325,66 +325,50 @@ function get_queue_stats() {
 	return $result;
 }
 
-/*
- * I admit :) this is derived from xmlparse.inc StartElement()
- */
-function &get_reference_to_me_in_config(&$mypath) {
-	global $config;
-
-	init_config_arr(array('shaper'));
-	$ptr = &$config['shaper'];
+function shaper_config_get_path($mypath) {
+	config_init_path('shaper');
+	$path = 'shaper';
 	foreach ($mypath as $indeks) {
-		if (!is_array($ptr)) {
-			$ptr = array();
-		}
-		if (!is_array($ptr['queue'])) {
-			$ptr['queue'] = array();
-		}
-		if (!is_array($ptr['queue'][$indeks])) {
-			$ptr['queue'][$indeks] = array();
-		}
-		$ptr = &$ptr['queue'][$indeks];
+		$path .= "/queue/{$indeks}";
 	}
 
-	return $ptr;
+	return $path;
 }
 
-function unset_object_by_reference(&$mypath) {
-	global $config;
-
-	init_config_arr(array('shaper'));
-	$ptr = &$config['shaper'];
+function shaper_config_del($mypath) {
+	config_init_path('shaper');
+	$path = 'shaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
-		$ptr = &$ptr['queue'][$mypath[$i]];
+		$path .= "/queue/{$mypath[$i]}";
 	}
-	unset($ptr['queue'][$mypath[$i]]);
+	config_del_path("{$path}/queue/{$mypath[$i]}");
 }
 
-function &get_dn_reference_to_me_in_config(&$mypath) {
-	global $config;
-
-	init_config_arr(array('dnshaper'));
-	$ptr = &$config['dnshaper'];
+function shaper_dn_config_get_path($mypath) {
+	config_init_path('dnshaper');
+	$path = 'dnshaper';
 	foreach ($mypath as $indeks) {
-		$ptr = &$ptr['queue'][$indeks];
+		$path .= "/queue/{$indeks}";
 	}
 
-	return $ptr;
+	return $path;
 }
 
-function unset_dn_object_by_reference(&$mypath) {
-	global $config;
-
-	init_config_arr(array('dnshaper'));
-	$ptr = &$config['dnshaper'];
+function shaper_dn_config_del($mypath) {
+	config_init_path('dnshaper');
+	$path = 'dnshaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
-		$ptr = &$ptr['queue'][$mypath[$i]];
+		$path .= "/queue/{$mypath[$i]}";
 	}
-	unset($ptr['queue'][$mypath[$i]]);
+	config_del_path("{$path}/queue/{$mypath[$i]}");
 }
 
 function clean_child_queues($type, $mypath) {
-	$ref = &get_reference_to_me_in_config($mypath);
+	$ref_path = shaper_config_get_path($mypath);
+	$ref = config_get_path($ref_path);
+	if (empty($ref)) {
+		return;
+	}
 
 	switch ($type) {
 		case 'HFSC':
@@ -459,6 +443,7 @@ function clean_child_queues($type, $mypath) {
 			}
 			break;
 	}
+	config_set_path($ref_path, $ref);
 }
 
 function get_bandwidthtype_scale($type) {
@@ -957,14 +942,14 @@ class altq_root_queue {
 		foreach ($this->queues as $q) {
 			$q->delete_queue();
 		}
-		unset_object_by_reference($this->GetLink());
+		shaper_config_del($this->GetLink());
 	}
 
 	function delete_all() {
 		if (count($this->queues)) {
 			foreach ($this->queues as $q) {
 				$q->delete_all();
-				unset_object_by_reference($q->GetLink());
+				shaper_config_del($q->GetLink());
 				unset($q);
 			}
 			unset($this->queues);
@@ -1213,7 +1198,8 @@ class altq_root_queue {
 	 * the same function much like build_rules();
 	 */
 	function wconfig() {
-		$cflink = &get_reference_to_me_in_config($this->GetLink());
+		$cflink_path = shaper_config_get_path($this->GetLink());
+		$cflink = config_get_path($cflink_path);
 		if (!is_array($cflink)) {
 			$cflink = array();
 		}
@@ -1234,6 +1220,7 @@ class altq_root_queue {
 		if (empty($cflink['enabled'])) {
 			unset($cflink['enabled']);
 		}
+		config_set_path($cflink_path, $cflink);
 	}
 
 }
@@ -1530,14 +1517,14 @@ class priq_queue {
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
-		unset_object_by_reference($this->GetLink());
+		shaper_config_del($this->GetLink());
 	}
 
 	function delete_all() {
 		if (count($this->subqueues)) {
 			foreach ($this->subqueues as $q) {
 				$q->delete_all();
-				unset_object_by_reference($q->GetLink());
+				shaper_config_del($q->GetLink());
 				unset($q);
 			}
 			unset($this->subqueues);
@@ -1956,7 +1943,8 @@ class priq_queue {
 	}
 
 	function wconfig() {
-		$cflink =& get_reference_to_me_in_config($this->GetLink());
+		$cflink_path = shaper_config_get_path($this->GetLink());
+		$cflink = config_get_path($cflink_path);
 		if (!is_array($cflink)) {
 			$cflink = array();
 		}
@@ -1998,6 +1986,7 @@ class priq_queue {
 		if (empty($cflink['ecn'])) {
 			unset($cflink['ecn']);
 		}
+		config_set_path($cflink_path, $cflink);
 	}
 }
 
@@ -2242,7 +2231,7 @@ class hfsc_queue extends priq_queue {
 		foreach ($this->subqueues as $q) {
 			$q->delete_queue();
 		}
-		unset_object_by_reference($this->GetLink());
+		shaper_config_del($this->GetLink());
 	}
 
 	/*
@@ -2772,7 +2761,8 @@ EOJS;
 	}
 
 	function wconfig() {
-		$cflink =& get_reference_to_me_in_config($this->GetLink());
+		$cflink_path = shaper_config_get_path($this->GetLink());
+		$cflink = config_get_path($cflink_path);
 		if (!is_array($cflink)) {
 			$cflink = array();
 		}
@@ -2885,6 +2875,7 @@ EOJS;
 			unset($cflink['upperlimit2']);
 			unset($cflink['upperlimit3']);
 		}
+		config_set_path($cflink_path, $cflink);
 	}
 }
 
@@ -3011,7 +3002,7 @@ class cbq_queue extends priq_queue {
 		foreach ($this->subqueues as $q) {
 			$q->delete_queue();
 		}
-		unset_object_by_reference($this->GetLink());
+		shaper_config_del($this->GetLink());
 	}
 
 	function validate_input($data, &$input_errors) {
@@ -3190,7 +3181,8 @@ class cbq_queue extends priq_queue {
 	}
 
 	function wconfig() {
-		$cflink =& get_reference_to_me_in_config($this->GetLink());
+		$cflink_path = shaper_config_get_path($this->GetLink());
+		$cflink = config_get_path($cflink_path);
 		if (!is_array($cflink)) {
 			$cflink = array();
 		}
@@ -3238,6 +3230,7 @@ class cbq_queue extends priq_queue {
 		if (empty($cflink['borrow'])) {
 			unset($cflink['borrow']);
 		}
+		config_set_path($cflink_path, $cflink);
 	}
 }
 
@@ -3293,7 +3286,7 @@ class fairq_queue extends priq_queue {
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
-		unset_object_by_reference($this->GetLink());
+		shaper_config_del($this->GetLink());
 	}
 
 	function validate_input($data, &$input_errors) {
@@ -3463,7 +3456,8 @@ class fairq_queue extends priq_queue {
 	}
 
 	function wconfig() {
-		$cflink =& get_reference_to_me_in_config($this->GetLink());
+		$cflink_path = shaper_config_get_path($this->GetLink());
+		$cflink = config_get_path($cflink_path);
 		if (!is_array($cflink)) {
 			$cflink = array();
 		}
@@ -3515,6 +3509,7 @@ class fairq_queue extends priq_queue {
 		if (empty($cflink['hogs'])) {
 			unset($cflink['hogs']);
 		}
+		config_set_path($cflink_path, $cflink);
 	}
 }
 
@@ -3811,7 +3806,7 @@ class dnpipe_class extends dummynet_class {
 		foreach ($this->subqueues as $q) {
 			$q->delete_queue();
 		}
-		unset_dn_object_by_reference($this->GetLink());
+		shaper_dn_config_del($this->GetLink());
 		mwexec("/sbin/dnctl pipe delete " . $this->GetNumber());
 		mwexec("/sbin/dnctl sched delete " . $this->GetNumber());
 	}
@@ -4591,7 +4586,8 @@ EOD;
 		}
 
 	function wconfig() {
-		$cflink =& get_dn_reference_to_me_in_config($this->GetLink());
+		$cflink_path = shaper_dn_config_get_path($this->GetLink());
+		$cflink = config_get_path($cflink_path);
 		if (!is_array($cflink)) {
 			$cflink = array();
 		}
@@ -4648,6 +4644,7 @@ EOD;
 		if ($selectedScheduler["pie_pderand"]) {
 			$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
 		}
+		config_get_path($cflink_path, $cflink);
 		/* End limiter queue patch */
 	}
 
@@ -4734,7 +4731,7 @@ class dnqueue_class extends dummynet_class {
 
 	function delete_queue() {
 		cleanup_dnqueue_from_rules($this->GetQname());
-		unset_dn_object_by_reference($this->GetLink());
+		shaper_dn_config_del($this->GetLink());
 		mwexec("/sbin/dnctl queue delete " . $this->GetNumber());
 	}
 
@@ -5150,7 +5147,8 @@ class dnqueue_class extends dummynet_class {
 	}
 
 	function wconfig() {
-		$cflink =& get_dn_reference_to_me_in_config($this->GetLink());
+		$cflink_path = shaper_dn_config_get_path($this->GetLink());
+		$cflink = config_get_path($cflink_path);
 		if (!is_array($cflink)) {
 			$cflink = array();
 		}
@@ -5189,6 +5187,7 @@ class dnqueue_class extends dummynet_class {
 		if ($selectedAQM["pie_pderand"]) {
 			$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
 		}
+		config_set_path($cflink_path, $cflink);
 		/* End limiter queue patch */
 	}
 }

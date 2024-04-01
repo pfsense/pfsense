@@ -103,12 +103,12 @@ if ($_GET) {
 						}
 
 						if ($tmp) {
-							$link =& get_reference_to_me_in_config($tmp->GetLink());
+							$link = shaper_config_get_path($tmp->GetLink());
 						} else {
-							$link =& get_reference_to_me_in_config($aq->GetLink());
+							$link = shaper_config_get_path($aq->GetLink());
 						}
 
-						$link['queue'][] = $copycfg;
+						config_set_path("{$link}/queue/", $copycfg);
 					} else {
 						$newroot = array();
 						$newroot['name'] = $interface;

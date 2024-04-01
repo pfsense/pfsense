@@ -92,7 +92,7 @@ if ($_REQUEST['getupdatestatus']) {
 ?>
 		    &nbsp;
 		    <a id="updver" href="#" class="fa-solid fa-arrows-rotate"></a>
-<?
+<?php
 		exit;
 	}
 

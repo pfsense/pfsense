@@ -394,7 +394,7 @@ events.push(function(){
 	// Create an object defining the widget refresh AJAX call
 	var logsObject = new Object();
 	logsObject.name = "NewFirewall Logs";
-	logsObject.url = "/widgets/widgets/fwlog.widget.php";
+	logsObject.url = "/widgets/widgets/log.widget.php";
 	logsObject.callback = logs_callback;
 	logsObject.parms = postdata;
 	logsObject.freq = <?=$nentriesinterval?>/5;

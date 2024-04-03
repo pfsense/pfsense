@@ -135,7 +135,7 @@ function adjust_gmt($dt) {
 	if ($dhcpv6leaseinlocaltime == "yes") {
 		$ts = strtotime($dt . " GMT");
 		if ($ts !== false) {
-			return strftime("%Y/%m/%d %H:%M:%S", $ts);
+			return date("Y/m/d H:i:s", $ts);
 		}
 	}
 	/* If we did not need to convert to local time or the conversion failed, just return the input. */

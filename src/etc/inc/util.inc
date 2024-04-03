@@ -3760,7 +3760,7 @@ function dhcpd_date_adjust_gmt($dt) {
 		if ($dhcpditem['dhcpleaseinlocaltime'] == "yes") {
 			$ts = strtotime($dt . " GMT");
 			if ($ts !== false) {
-				return strftime("%Y/%m/%d %H:%M:%S", $ts);
+				return date("Y/m/d H:i:s", $ts);
 			}
 		}
 	}

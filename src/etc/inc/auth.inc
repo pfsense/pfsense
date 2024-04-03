@@ -1195,8 +1195,8 @@ function ldap_test_bind($authcfg) {
 		}
 	}
 
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			@ldap_close($ldap);
@@ -1283,8 +1283,8 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 		}
 	}
 
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind anonymously to server %s."), $ldapname));
@@ -1424,8 +1424,8 @@ function ldap_get_groups($username, $authcfg) {
 	}
 
 	/* bind as user that has rights to read group attributes */
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
@@ -1453,8 +1453,8 @@ function ldap_get_groups($username, $authcfg) {
 			$has_userinfo = false;
 			$ldac_splits = explode(";", $ldapauthcont);
 			foreach ($ldac_splits as $i => $ldac_split) {
-				$ldac_split = isset($authcfg['ldap_utf8']) ? utf8_encode($ldac_split) : $ldac_split;
-				$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? utf8_encode("{$ldac_split},{$ldapbasedn}") : "{$ldac_split},{$ldapbasedn}";
+				$ldac_split = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldac_split, 'UTF-8') : $ldac_split;
+				$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding("{$ldac_split},{$ldapbasedn}", 'UTF-8') : "{$ldac_split},{$ldapbasedn}";
 				$ldapfilter = "({$ldapnameattribute}={$username})";
 				if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
 					$ldapdn = $ldac_split;
@@ -1639,8 +1639,8 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 
 	/* ok, its up.  now, lets bind as the bind user so we can search it */
 	$error = false;
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			$error = true;
@@ -1674,12 +1674,12 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	}
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
-		$ldac_split = isset($authcfg['ldap_utf8']) ? utf8_encode($ldac_split) : $ldac_split;
-		$ldapfilter = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapfilter) : $ldapfilter;
-		$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? utf8_encode("{$ldac_split},{$ldapbasedn}") : "{$ldac_split},{$ldapbasedn}";
+		$ldac_split = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldac_split, 'UTF-8') : $ldac_split;
+		$ldapfilter = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapfilter, 'UTF-8') : $ldapfilter;
+		$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding("{$ldac_split},{$ldapbasedn}", 'UTF-8') : "{$ldac_split},{$ldapbasedn}";
 		/* Make sure we just use the first user we find */
 		if ($debug) {
-			log_error(sprintf(gettext('LDAP Debug: Now searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, utf8_decode($ldac_split), utf8_decode($ldapfilter)));
+			log_error(sprintf(gettext('LDAP Debug: Now searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, mb_convert_encoding($ldac_split, 'ISO-8859-1', 'UTF-8'), mb_convert_encoding($ldapfilter, 'ISO-8859-1', 'UTF-8')));
 		}
 		if ($ldapscope == "one") {
 			$ldapfunc = "ldap_list";
@@ -1743,7 +1743,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	}
 
 	/* Now lets bind as the user we found */
-	$passwd = isset($authcfg['ldap_utf8']) ? utf8_encode($passwd) : $passwd;
+	$passwd = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($passwd, 'UTF-8') : $passwd;
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
 		if ($debug) {
 			log_error(sprintf(gettext('LDAP Debug: ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
@@ -1753,7 +1753,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	}
 
 	if ($debug) {
-		$userdn = isset($authcfg['ldap_utf8']) ? utf8_decode($userdn) : $userdn;
+		$userdn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($userdn, 'ISO-8859-1', 'UTF-8') : $userdn;
 		log_error(sprintf(gettext('LDAP Debug: Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 	}
 

@@ -246,7 +246,7 @@ if (!$found) {
 			$command = readline("Is this a custom GIT URL? [y]? ");
 			if (strtolower($command) == "y" or $command == "") {
 				$GIT_REPO = $branch;
-				$command = readline("Checkout which branch [${DEFAULT_BRANCH}]? ");
+				$command = readline("Checkout which branch [{$DEFAULT_BRANCH}]? ");
 				if ($command == "") {
 					$branch = $DEFAULT_BRANCH;
 				}
@@ -267,7 +267,7 @@ $merge_repos = array();
 if (file_exists($GITSYNC_MERGE)) {
 	$gitsync_merges = file($GITSYNC_MERGE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	if (!empty($gitsync_merges) && is_array($gitsync_merges)) {
-		echo "\n===> Automatic merge list read from ${GITSYNC_MERGE}\n";
+		echo "\n===> Automatic merge list read from {$GITSYNC_MERGE}\n";
 		foreach ($gitsync_merges as $merge_line_num => $merge_line) {
 			$merge_comments = explode("#", trim($merge_line));
 			if (empty($merge_comments[0])) {
@@ -292,7 +292,7 @@ if (!$args[0] && !$upgrading) {
 		echo "\nAdd a custom RCS branch URL (Git or HTTP) to merge in or press enter if done.\n\n";
 		$merge_repo = readline("> ");
 		if (!empty($merge_repo)) {
-			$merge_branch = readline("Merge which branch [${DEFAULT_BRANCH}]? ");
+			$merge_branch = readline("Merge which branch [{$DEFAULT_BRANCH}]? ");
 			if ($merge_branch == "") {
 				$merge_repos[] = array('repo' => $merge_repo, 'branch' => $DEFAULT_BRANCH);
 			} else if ($merge_branch) {

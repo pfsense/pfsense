@@ -952,7 +952,7 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 	/* if we still don't have the lock, unlock forcefully and take it */
 	if (!$rcprunelock) {
-		log_error("CP zone ${cpzone}: could not obtain the lock for more than 15 seconds, lock taken forcefully to disconnect all users");
+		log_error("CP zone {$cpzone}: could not obtain the lock for more than 15 seconds, lock taken forcefully to disconnect all users");
 		unlock_force("rcprunecaptiveportal{$cpzone}");
 		$rcprunelock = lock("rcprunecaptiveportal{$cpzone}", LOCK_EX);
 	}
@@ -2934,7 +2934,7 @@ function captiveportal_load_pfctl($anchor, $host, $rules) {
 	if (!empty($rules)) {
 		mwexec("/usr/bin/printf \"{$rules}\" | /sbin/pfctl -a {$anchor}/{$host} -f-");
 	} else {
-		log_error("CP zone ${cpzone}: {$anchor} rules are empty for {$host}");
+		log_error("CP zone {$cpzone}: {$anchor} rules are empty for {$host}");
 	}
 }
 

@@ -790,7 +790,7 @@ function interface_bridge_configure_stp($bridge) {
 			}
 			foreach ($ifpriority as $key => $value) {
 				$realif = get_real_interface($key);
-				mwexec("/sbin/ifconfig ${bridgeif} ifpriority {$realif} " . escapeshellarg($value));
+				mwexec("/sbin/ifconfig {$bridgeif} ifpriority {$realif} " . escapeshellarg($value));
 			}
 		}
 		if (!empty($bridge['ifpathcost'])) {
@@ -804,7 +804,7 @@ function interface_bridge_configure_stp($bridge) {
 			}
 			foreach ($ifpathcost as $key => $value) {
 				$realif = get_real_interface($key);
-				mwexec("/sbin/ifconfig ${bridgeif} ifpathcost {$realif} " . escapeshellarg($value));
+				mwexec("/sbin/ifconfig {$bridgeif} ifpathcost {$realif} " . escapeshellarg($value));
 			}
 		}
 	}
@@ -3575,7 +3575,7 @@ EOD;
 	if (!empty($wl_sysctl)) {
 		fwrite($fd_set, "# sysctls for {$baseif}\n");
 		foreach ($wl_sysctl as $wl_sysctl_line) {
-			fwrite($fd_set, "{$sysctl} ${sysctl_args} {$wl_sysctl_prefix}.{$wl_sysctl_line}\n");
+			fwrite($fd_set, "{$sysctl} {$sysctl_args} {$wl_sysctl_prefix}.{$wl_sysctl_line}\n");
 		}
 	}
 
@@ -6268,8 +6268,8 @@ function find_interface_ip($interface, $flush = false) {
 
 	/* Setup IP cache */
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
-		if (file_exists("/var/db/${interface}_ip")) {
-			$ifip = chop(file_get_contents("/var/db/${interface}_ip"));
+		if (file_exists("/var/db/{$interface}_ip")) {
+			$ifip = chop(file_get_contents("/var/db/{$interface}_ip"));
 			$ifaddrs = pfSense_getall_interface_addresses($interface);
 			foreach ($ifaddrs as $ifaddr) {
 				list($ip, $mask) = explode("/", $ifaddr);

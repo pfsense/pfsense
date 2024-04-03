@@ -522,7 +522,7 @@ if ($intip != '') {
 }
 if ($intip6 != '') {
 	if (is_ipaddr($intip6)) {
-		$intip6str = "${intip6}/${intbits6}";
+		$intip6str = "{$intip6}/{$intbits6}";
 	} else {
 		$intip6str = $intip6;
 	}

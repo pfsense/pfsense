@@ -4440,7 +4440,7 @@ function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
 	global $tracker;
 	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
-		echo "filter_rules_spoofcheck_generate() being called for ${ifname} at {$mt}\n";
+		echo "filter_rules_spoofcheck_generate() being called for {$ifname} at {$mt}\n";
 	}
 	$ipfrules = "antispoof {$log['block']} for \${$ifcfg['descr']} ridentifier {$tracker}\n";
 	$tracker++;

@@ -829,7 +829,7 @@ function enable_rrd_graphing() {
 				/* the Captive Portal stats gathering function. */
 				$rrdupdatesh .= "\n";
 				$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
-				$rrdupdatesh .= "CP=`${php} -q ${captiveportal_gather} '${cpkey}' 'concurrent'`\n";
+				$rrdupdatesh .= "CP={$php} -q{$captiveportal_gather} {$cpkey}' 'concurrent'`\n";
 				$rrdupdatesh .= "$rrdtool update $concurrent_filename \${CP}\n";
 
 				$loggedin_filename = $rrddbpath . $ifname . '-' . $cpkey . $captiveportalloggedin;
@@ -865,7 +865,7 @@ function enable_rrd_graphing() {
 				/* the Captive Portal stats gathering function. */
 				$rrdupdatesh .= "\n";
 				$rrdupdatesh .= "# polling Captive Portal for number of logged in users\n";
-				$rrdupdatesh .= "CP=`${php} -q ${captiveportal_gather} '${cpkey}' 'loggedin'`\n";
+				$rrdupdatesh .= "CP={$php} -q{$captiveportal_gather} {$cpkey}' 'loggedin'`\n";
 				$rrdupdatesh .= "$rrdtool update $loggedin_filename \${CP}\n";
 
 			}
@@ -956,7 +956,7 @@ function enable_rrd_graphing() {
 
 					$rrdupdatesh .= "\n";
 					$rrdupdatesh .= "# polling leases for dhcp \n";
-					$rrdupdatesh .= "DHCP=`${php} -q ${dhcpd_gather} '${dhcpif}'`\n";
+					$rrdupdatesh .= "DHCP={$php} -q{$dhcpd_gather} {$dhcpif}'`\n";
 					$rrdupdatesh .= "$rrdtool update $rrddbpath$dhcpif$dhcpd \${DHCP}\n";
 
 				}

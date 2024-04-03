@@ -103,7 +103,7 @@ function voucher_expire($voucher_received, $carp_loop = false) {
 	foreach ($a_vouchers_received as $voucher) {
 		$v = escapeshellarg($voucher);
 		if (strlen($voucher) < 5) {
-			captiveportal_syslog("${voucher} invalid: Too short!");
+			captiveportal_syslog("{$voucher} invalid: Too short!");
 			continue;   // seems too short to be a voucher!
 		}
 

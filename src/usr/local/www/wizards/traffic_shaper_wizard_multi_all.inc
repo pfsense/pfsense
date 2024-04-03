@@ -392,7 +392,7 @@ function step2_stepsubmitphpaction() {
 		config_set_path("ezshaper/step2/conn{$i}uploadspeed", $_POST["conn{$i}uploadspeed"]);
 		config_set_path("ezshaper/step2/conn{$i}download", $_POST["conn{$i}download"]);
 		config_set_path("ezshaper/step2/conn{$i}downloadspeed", $_POST["conn{$i}downloadspeed"]);
-		config_set_path("ezshaper/step2/conn${i}interface", $_POST["conn{$i}interface"]);
+		config_set_path("ezshaper/step2/conn{$i}interface", $_POST["conn{$i}interface"]);
 	}
 }
 
@@ -762,18 +762,18 @@ function apply_all_chosen_items() {
 		$tmppath = [];
 		$__tmp_altq = new altq_root_queue(); $altq =& $__tmp_altq;
 
-		$altq->SetInterface(config_get_path("ezshaper/step2/conn${i}interface"));
-		$interfacelist[] = config_get_path("ezshaper/step2/conn${i}interface");
-		$altq->SetScheduler(config_get_path("ezshaper/step2/conn${i}uploadscheduler"));
-		$altq->SetBandwidth(floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0)));
-		$altq->SetBwscale(config_get_path("ezshaper/step2/conn${i}uploadspeed"));
+		$altq->SetInterface(config_get_path("ezshaper/step2/conn{$i}interface"));
+		$interfacelist[] = config_get_path("ezshaper/step2/conn{$i}interface");
+		$altq->SetScheduler(config_get_path("ezshaper/step2/conn{$i}uploadscheduler"));
+		$altq->SetBandwidth(floatval(config_get_path("ezshaper/step2/conn{$i}upload", 0.0)));
+		$altq->SetBwscale(config_get_path("ezshaper/step2/conn{$i}uploadspeed"));
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
-		array_push($tmppath, config_get_path("ezshaper/step2/conn${i}interface"));
+		array_push($tmppath, config_get_path("ezshaper/step2/conn{$i}interface"));
 		$altq->SetLink($tmppath);
 		$altq->wconfig();
 
-		$sched = config_get_path("ezshaper/step2/conn${i}uploadscheduler");
+		$sched = config_get_path("ezshaper/step2/conn{$i}uploadscheduler");
 		$voipbw =0;
 		$voipbwunit = "Kb";
 		$voip = false;
@@ -794,8 +794,8 @@ function apply_all_chosen_items() {
 		if (config_path_enabled('ezshaper/step3')) {
 			$voip = true;
 			if ($sched != "PRIQ") {
-				$voipbw = config_get_path("ezshaper/step3/conn${i}upload");
-				$voipbwunit = config_get_path("ezshaper/step3/conn${i}uploadspeed");
+				$voipbw = config_get_path("ezshaper/step3/conn{$i}upload");
+				$voipbwunit = config_get_path("ezshaper/step3/conn{$i}uploadspeed");
 				if ($voipbwunit == "%") {
 					$factor =  $upbw/100;
 				} else {
@@ -877,17 +877,17 @@ function apply_all_chosen_items() {
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
 			If ($sched == "CBQ") {
-				$tmpcf['bandwidth'] = floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0));
-				$tmpcf['bandwidthtype'] = config_get_path("ezshaper/step2/conn${i}uploadspeed");
+				$tmpcf['bandwidth'] = floatval(config_get_path("ezshaper/step2/conn{$i}upload", 0.0));
+				$tmpcf['bandwidthtype'] = config_get_path("ezshaper/step2/conn{$i}uploadspeed");
 			} elseif ($sched == "HFSC") {
 				$tmpcf['upperlimit'] = "on";
-				$tmpcf['upperlimit3'] = floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0)) .
-							config_get_path("ezshaper/step2/conn${i}uploadspeed");
+				$tmpcf['upperlimit3'] = floatval(config_get_path("ezshaper/step2/conn{$i}upload", 0.0)) .
+							config_get_path("ezshaper/step2/conn{$i}uploadspeed");
 				$tmpcf['linkshare'] = "on";
-				$tmpcf['linkshare3'] = floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0)) .
-							config_get_path("ezshaper/step2/conn${i}uploadspeed");
-				$tmpcf['bandwidth'] =  floatval(config_get_path("ezshaper/step2/conn${i}upload", 0.0));
-				$tmpcf['bandwidthtype'] = config_get_path("ezshaper/step2/conn${i}uploadspeed");
+				$tmpcf['linkshare3'] = floatval(config_get_path("ezshaper/step2/conn{$i}upload", 0.0)) .
+							config_get_path("ezshaper/step2/conn{$i}uploadspeed");
+				$tmpcf['bandwidth'] =  floatval(config_get_path("ezshaper/step2/conn{$i}upload", 0.0));
+				$tmpcf['bandwidthtype'] = config_get_path("ezshaper/step2/conn{$i}uploadspeed");
 			}
 
 			array_push($tmppath, "qInternet");
@@ -1167,8 +1167,8 @@ function apply_all_chosen_items() {
 	$localint = intval(config_get_path('ezshaper/step1/numberoflocalinterfaces', 0));
 	$lanbw = 0;
 	for ($i = 0; $i < $steps; $i++) {
-		$down = wizard_get_bandwidthtype_scale(config_get_path("ezshaper/step2/conn${i}downloadspeed"));
-		$input_bw = floatval(config_get_path("ezshaper/step2/conn${i}download", 0.0)) * $down;
+		$down = wizard_get_bandwidthtype_scale(config_get_path("ezshaper/step2/conn{$i}downloadspeed"));
+		$input_bw = floatval(config_get_path("ezshaper/step2/conn{$i}download", 0.0)) * $down;
 		$lanbw += $input_bw;
 	}
 
@@ -1176,13 +1176,13 @@ function apply_all_chosen_items() {
 		$tmppath = [];
 		$__tmp_altq = new altq_root_queue(); $altq =& $__tmp_altq;
 
-		$altq->SetInterface(config_get_path("ezshaper/step2/local${i}interface"));
+		$altq->SetInterface(config_get_path("ezshaper/step2/local{$i}interface"));
 		$altq->SetScheduler(config_get_path("ezshaper/step2/local{$i}downloadscheduler"));
 		$altq->SetBandwidth($lanbw/1000);
 		$altq->SetBwscale("Kb");
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
-		array_push($tmppath, config_get_path("ezshaper/step2/local${i}interface"));
+		array_push($tmppath, config_get_path("ezshaper/step2/local{$i}interface"));
 		$altq->SetLink($tmppath);
 		$altq->wconfig();
 

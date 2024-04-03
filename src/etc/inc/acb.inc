@@ -135,7 +135,7 @@ function test_connection($post) {
 	global $savemsg, $config, $g;
 
 	// Do nothing when booting or when not enabled
-	if (platform_booting() || !acb_enabled()) {
+	if (is_platform_booting() || !acb_enabled()) {
 		return;
 	}
 
@@ -193,7 +193,7 @@ function upload_config($manual = false) {
 	}
 
 	// Do nothing when booting or when not enabled
-	if (platform_booting() || !acb_enabled()) {
+	if (is_platform_booting() || !acb_enabled()) {
 		return;
 	}
 

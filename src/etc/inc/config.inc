@@ -25,7 +25,7 @@
  * limitations under the License.
  */
 
-if (!function_exists('platform_booting')) {
+if (!function_exists('is_platform_booting')) {
 	require_once('globals.inc');
 }
 
@@ -58,7 +58,7 @@ if (file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-if (platform_booting(true) &&
+if (is_platform_booting() && is_cli_sapi() &&
     !file_exists(g_get('cf_conf_path') . "/config.xml")) {
 	echo ".";
 	/* find the device where config.xml resides and write out an fstab */
@@ -90,7 +90,7 @@ if (platform_booting(true) &&
 				}
 			}
 			if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					echo ".";
 				}
 				if (file_exists("{$g['cf_conf_path']}/config.xml")) {

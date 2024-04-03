@@ -296,7 +296,7 @@ function setup_gateways_monitor() {
 		stop_dpinger();
 		return;
 	}
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "Setting up gateway monitors...";
 	}
 	$monitor_ips = array();
@@ -425,7 +425,7 @@ function setup_gateways_monitor() {
 			log_error(sprintf(gettext("Error starting gateway monitor for %s"), $gateway['name']));
 		}
 	}
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "done.\n";
 	}
 
@@ -1601,7 +1601,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 	$tiers_count = count($tiers);
 	if ($tiers_count == 0) {
 		/* Oh dear, we have no members! Engage Plan B */
-		if (config_path_enabled('system', 'gw-debug') && (!platform_booting())) {
+		if (config_path_enabled('system', 'gw-debug') && (!is_platform_booting())) {
 			$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
 			log_error($msg);
 		}

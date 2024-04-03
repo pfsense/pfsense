@@ -594,7 +594,7 @@ function resync_all_package_configs($show_message = false) {
 		if ($show_message == true) {
 			echo " " . $package['name'];
 		}
-		if (platform_booting() != true) {
+		if (!is_platform_booting()) {
 			stop_service(get_package_internal_name($package));
 		}
 		sync_package($package['name']);
@@ -1023,7 +1023,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 					    $service['name'])) {
 						continue;
 					}
-					if (platform_booting() != true) {
+					if (!is_platform_booting()) {
 						stop_service($service['name']);
 					}
 					if ($service['rcfile']) {

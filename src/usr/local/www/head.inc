@@ -750,7 +750,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 <?php
 /* if upgrade in progress, alert user */
 $warning_text = "";
-if (file_exists('/conf/needs_package_sync') && platform_booting()) {
+if (file_exists('/conf/needs_package_sync') && is_platform_booting()) {
 	$warning_text = sprintf(gettext(
 	    '%1$s%3$s is booting, then packages will be reinstalled in the ' .
 	    'background.%2$s%1$sDo not make changes in the GUI until this is ' .

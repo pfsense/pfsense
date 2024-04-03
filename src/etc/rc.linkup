@@ -208,7 +208,7 @@ if (!in_array($action, ['start', 'stop'])) {
 		return;
 }
 
-if (platform_booting()) {
+if (is_platform_booting()) {
 	if (!empty($realiface)) {
 		$interface = convert_real_interface_to_friendly_interface_name($realiface);
 	}

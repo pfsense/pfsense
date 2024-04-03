@@ -2098,7 +2098,7 @@ function upgrade_054_to_055() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo "Migrate RRD database {$database} to new format for IPv6 \n";
 		}
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
@@ -2135,7 +2135,7 @@ function upgrade_054_to_055() {
 		$xmldumptmp = "{$database}.tmp.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo "Migrate RRD database {$database} to new format \n";
 		}
 		/* rename DS source */
@@ -2187,14 +2187,14 @@ function upgrade_054_to_055() {
 		@unlink("{$g['tmp_path']}/{$xmldump}");
 		@unlink("{$g['tmp_path']}/{$xmldumpnew}");
 	}
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		enable_rrd_graphing();
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 	unlink_if_exists("{$g['vardb_path']}/rrd/*.xml");
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "Updating configuration...";
 	}
 }
@@ -2796,7 +2796,7 @@ function upgrade_080_to_081() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo "Migrate RRD database {$database} to new format for IPv6.\n";
 		}
 
@@ -2913,13 +2913,13 @@ function upgrade_080_to_081() {
 		unlink_if_exists("{$g['tmp_path']}/{$xmldump}");
 		unlink_if_exists("{$g['tmp_path']}/{$xmldumpnew}");
 	}
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		enable_rrd_graphing();
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "Updating configuration...";
 	}
 	foreach ($config['filter']['rule'] as & $rule) {
@@ -3207,7 +3207,7 @@ function upgrade_092_to_093() {
 		}
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		enable_rrd_graphing();
 	}
 }
@@ -3253,7 +3253,7 @@ function upgrade_095_to_096() {
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach ($databases as $database) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo "Update RRD database {$database}.\n";
 		}
 
@@ -3264,7 +3264,7 @@ function upgrade_095_to_096() {
 		mwexec("{$cmd} 2>&1");
 
 	}
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		enable_rrd_graphing();
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
@@ -4629,7 +4629,7 @@ function upgrade_145_to_146() {
 	foreach ($databases as $database) {
 		$xmldump = "{$g['tmp_path']}/{$database}.xml";
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo "Update RRD database {$database}.\n";
 		}
 
@@ -4638,7 +4638,7 @@ function upgrade_145_to_146() {
 		@unlink("{$xmldump}");
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		enable_rrd_graphing();
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
@@ -6777,7 +6777,7 @@ function upgrade_228_to_229() {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "Migrating System Memory RRD file to new format\n";
 	}
 	mwexec("$rrdtool tune {$rrddbpath}{$database} DS:userwire:GAUGE:{$valid}:0:10000000 2>&1");

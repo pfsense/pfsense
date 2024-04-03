@@ -28,7 +28,7 @@ include_once("auth.inc");
 include_once("config.inc");
 include_once("config.lib.inc");
 include_once("priv.inc");
-if (!function_exists('platform_booting')) {
+if (!function_exists('is_platform_booting')) {
 	require_once('globals.inc');
 }
 require_once('pfsense-utils.inc');

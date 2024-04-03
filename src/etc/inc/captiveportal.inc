@@ -225,7 +225,7 @@ function captiveportal_configure_zone($cpcfg, $reload_rules = false) {
 
 	if (isset($cpcfg['enable'])) {
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo "Starting captive portal({$cpcfg['zone']})... ";
 		} else {
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
@@ -372,7 +372,7 @@ EOD;
 		/* delete outdated radius server database if exist */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 
-		if (platform_booting() || $reload_rules) {
+		if (is_platform_booting() || $reload_rules) {
 			/* send Accounting-On to server */
 			captiveportal_send_server_accounting('on');
 			echo "done\n";

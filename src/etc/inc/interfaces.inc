@@ -142,13 +142,13 @@ function does_vip_exist($vip) {
 }
 
 function interfaces_loopback_configure() {
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Configuring loopback interface...");
 		mute_kernel_msgs();
 	}
 	pfSense_interface_setaddress("lo0", "127.0.0.1");
 	interfaces_bring_up("lo0");
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		unmute_kernel_msgs();
 		echo gettext("done.") . "\n";
 	}
@@ -345,7 +345,7 @@ function interfaces_vlan_configure($parentif = "") {
 
 	$vlans = config_get_path('vlans/vlan');
 	if (is_array($vlans) && count($vlans)) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("Configuring VLAN interfaces...");
 		}
 		foreach ($vlans as $vlan) {
@@ -371,7 +371,7 @@ function interfaces_vlan_configure($parentif = "") {
 		}
 		/* Invalidate cache */
 		get_interface_arr(true);
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -532,9 +532,9 @@ function interface_qinq_configure(&$qinq, $flush = true) {
 function interfaces_qinq_configure($ovpn=false) {
 	$qinqentry = config_get_path('qinqs/qinqentry');
 	if (is_array($qinqentry) && count($qinqentry)) {
-		if (platform_booting() && $ovpn) {
+		if (is_platform_booting() && $ovpn) {
 			echo gettext("Configuring OpenVPN QinQ interfaces...");
-		} elseif (platform_booting()) {
+		} elseif (is_platform_booting()) {
 			echo gettext("Configuring QinQ interfaces...");
 		}
 		foreach ($qinqentry as $qinq) {
@@ -545,7 +545,7 @@ function interfaces_qinq_configure($ovpn=false) {
 		}
 		/* Invalidate cache */
 		get_interface_arr(true);
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -590,7 +590,7 @@ function interfaces_create_wireless_clones() {
 
 	$wclone = config_get_path('wireless/clone');
 	if (is_array($wclone) && count($wclone)) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("Creating wireless clone interfaces...");
 		}
 		/* Invalidate cache */
@@ -605,7 +605,7 @@ function interfaces_create_wireless_clones() {
 			/* XXX: Maybe we should report any errors?! */
 			interface_wireless_clone($clone['cloneif'], $clone);
 		}
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -925,7 +925,7 @@ function interfaces_lagg_configure($realif = "") {
 	$i = 0;
 	$laggs = config_get_path('laggs/lagg');
 	if (is_array($laggs) && count($laggs)) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("Configuring LAGG interfaces...");
 		}
 		foreach ($laggs as $lagg) {
@@ -941,7 +941,7 @@ function interfaces_lagg_configure($realif = "") {
 		}
 		/* Invalidate cache */
 		get_interface_arr(true);
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -957,7 +957,7 @@ function interface_lagg_configure($lagg, $flush = true) {
 		return -1;
 	}
 
-	if (platform_booting() || !(empty($lagg['laggif']))) {
+	if (is_platform_booting() || !(empty($lagg['laggif']))) {
 		pfSense_interface_destroy($lagg['laggif']);
 		pfSense_interface_create2($lagg['laggif']);
 		$laggif = $lagg['laggif'];
@@ -1056,7 +1056,7 @@ function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 	/* make sure the parent interface is up */
 	interfaces_bring_up($realif);
 
-	if (platform_booting() || !(empty($gre['greif']))) {
+	if (is_platform_booting() || !(empty($gre['greif']))) {
 		pfSense_interface_destroy($gre['greif']);
 		pfSense_interface_create2($gre['greif']);
 		$greif = $gre['greif'];
@@ -1219,7 +1219,7 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 		mwexec("/sbin/kldload if_gif");
 	}
 
-	if (platform_booting() || !(empty($gif['gifif']))) {
+	if (is_platform_booting() || !(empty($gif['gifif']))) {
 		pfSense_interface_destroy($gif['gifif']);
 		pfSense_interface_create2($gif['gifif']);
 		$gifif = $gif['gifif'];
@@ -1266,7 +1266,7 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 		log_error(gettext("could not bring gifif up -- variable not defined"));
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		$iflist = get_configured_interface_list();
 		foreach ($iflist as $ifname) {
 			$if = config_get_path("interfaces/{$ifname}/if", "");
@@ -1539,12 +1539,12 @@ function interfaces_ipsec_vti_configure() {
 			continue;
 		}
 		if (interface_ipsec_vti_configure($ph1ent) &&
-			!$bootmsg && platform_booting()) {
+			!$bootmsg && is_platform_booting()) {
 			echo gettext("Configuring IPsec VTI interfaces...");
 			$bootmsg = true;
 		}
 	}
-	if (platform_booting() && $bootmsg) {
+	if (is_platform_booting() && $bootmsg) {
 		echo gettext("done.") . "\n";
 	}
 }
@@ -1574,7 +1574,7 @@ function interfaces_configure() {
 
 	/* This is needed to speedup interfaces on bootup. */
 	$reload = false;
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		$reload = true;
 	}
 
@@ -1604,7 +1604,7 @@ function interfaces_configure() {
 					continue;
 				}
 			}
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				printf(gettext("Configuring %s interface..."),
 				    $ifname);
 			}
@@ -1614,7 +1614,7 @@ function interfaces_configure() {
 				    $ifname));
 			}
 			interface_configure($if, $reload);
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo gettext("done.") . "\n";
 			}
 		}
@@ -1636,7 +1636,7 @@ function interfaces_configure() {
 	interfaces_bridge_configure(1);
 
 	foreach ($track6_list as $if => $ifname) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
 		if (g_get('debug')) {
@@ -1645,7 +1645,7 @@ function interfaces_configure() {
 
 		interface_configure($if, $reload);
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -1660,7 +1660,7 @@ function interfaces_configure() {
 	interfaces_tunnel_configure(2,'','gif');
 
 	foreach ($delayed_list as $if => $ifname) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
 		if (g_get('debug')) {
@@ -1669,7 +1669,7 @@ function interfaces_configure() {
 
 		interface_configure($if, $reload);
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -1678,7 +1678,7 @@ function interfaces_configure() {
 	interfaces_bridge_configure(2);
 
 	foreach ($bridge_list as $if => $ifname) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
 		if (g_get('debug')) {
@@ -1690,13 +1690,13 @@ function interfaces_configure() {
 		interface_reconfigure($if, $reload);
 		interfaces_vips_configure($if);
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
 
 	foreach ($dhcp6c_list as $if => $ifname) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			printf(gettext("Configuring %s interface..."), $ifname);
 		}
 		if (g_get('debug')) {
@@ -1705,7 +1705,7 @@ function interfaces_configure() {
 
 		interface_configure($if, $reload);
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -1716,7 +1716,7 @@ function interfaces_configure() {
 	/* configure interface groups */
 	interfaces_group_setup();
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
 
@@ -2688,7 +2688,7 @@ EOD;
 	/* Set temporary bogon (RFC 5737) IPv4 addresses to work round mpd5 IPv6CP issue causing */
 	/* random IPv6 interface identifier during boot. More details at */
 	/* https://forum.netgate.com/post/592474 */
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		$count = 0;
 		foreach (config_get_path('interfaces', []) as $tempifacename => $tempiface) {
 			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type($tempifacename)) {
@@ -2768,7 +2768,7 @@ function interfaces_sync_setup() {
 		echo "interfaces_sync_setup() being called $mt\n";
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Configuring CARP settings...");
 		mute_kernel_msgs();
 	}
@@ -2828,7 +2828,7 @@ function interfaces_sync_setup() {
 		enable_carp();
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		unmute_kernel_msgs();
 		echo gettext("done.") . "\n";
 	}
@@ -4004,7 +4004,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
-	if (!platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
+	if (!is_platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
 		if (is_array($tmpifaces)) {
@@ -4039,7 +4039,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif")) ||
+	if (!is_platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif")) ||
 	    !does_interface_exist($interface_to_check))) {
 		interface_virtual_create($interface_to_check);
 	}
@@ -4267,7 +4267,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		link_interface_to_vips($interface, "update");
 
 		if ($tunnelif != 'gre') {
@@ -4311,7 +4311,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
-	if (!platform_booting() && (substr($realif, 0, 5) == 'l2tps')) {
+	if (!is_platform_booting() && (substr($realif, 0, 5) == 'l2tps')) {
 		vpn_l2tp_configure();
 	};
 
@@ -4382,7 +4382,7 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 			break;
 	}
 
-	if ($linkupevent == false && !platform_booting()) {
+	if ($linkupevent == false && !is_platform_booting()) {
 		if (!function_exists('services_dhcpd_configure')) {
 			require_once("services.inc");
 		}
@@ -4611,7 +4611,7 @@ function interface_6rd_configure($interface, $wancfg) {
 	}
 
 	/* configure dependent interfaces */
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		link_interface_to_track6($interface, "update");
 	}
 
@@ -4723,7 +4723,7 @@ function interface_6to4_configure($interface, $wancfg) {
 		route_add_or_change("192.88.99.1", $ip4gateway);
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		link_interface_to_track6($interface, "update");
 	}
 
@@ -7101,7 +7101,7 @@ function interfaces_staticarp_configure($if) {
 		 * Interfaces do not have staticarp enabled by default
 		 * Let's not disable staticarp on freshly created interfaces
 		 */
-		if (!platform_booting()) {
+		if (!is_platform_booting()) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp ");
 			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
 		}

@@ -43,7 +43,7 @@ function encrypted_configxml() {
 		return;
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		return;
 	}
 
@@ -100,7 +100,7 @@ function parse_config($parse = false) {
 		}
 	}
 
-	if (platform_booting(true)) {
+	if (is_platform_booting() && is_cli_sapi()) {
 		echo ".";
 	}
 
@@ -119,7 +119,7 @@ function parse_config($parse = false) {
 	}
 	if ($parse == true) {
 		if (!file_exists(g_get('conf_path') . "/config.xml")) {
-			if (platform_booting(true)) {
+			if (is_platform_booting() && is_cli_sapi()) {
 				echo ".";
 			}
 			log_error("No config.xml found, attempting last known config restore.");
@@ -147,7 +147,7 @@ function parse_config($parse = false) {
 		generate_config_cache($config);
 	}
 
-	if (platform_booting(true)) {
+	if (is_platform_booting() && is_cli_sapi()) {
 		echo ".";
 	}
 
@@ -379,13 +379,13 @@ function restore_sshdata($conf = false) {
 function parse_config_bootup() {
 	global $config, $g;
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 
 	$lockkey = lock('config');
 	if (!file_exists("{$g['conf_path']}/config.xml")) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			$last_backup = discover_last_backup();
 			if ($last_backup) {
 				log_error("No config.xml found, attempting last known config restore.");
@@ -536,7 +536,7 @@ function convert_config() {
 			}
 		}
 		$config['version'] = sprintf('%.1f', $next / 10);
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo ".";
 		}
 	}
@@ -710,7 +710,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		if ($last_backup) {
 			restore_backup("/cf/conf/backup/{$last_backup}");
 			$config = parse_xml_config("{$g['conf_path']}/config.xml", g_get('xml_rootobj'));
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo "\n\n ************** WARNING **************";
 				echo "\n\n Configuration could not be validated. A previous configuration was restored. \n";
 				echo "\n The failed configuration file has been saved as {$g['conf_path']}/config.xml.bad \n\n";
@@ -856,7 +856,7 @@ function config_install($conffile) {
 		return 1;
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Installing configuration...") . "\n";
 	} else {
 		log_error(gettext("Installing configuration ...."));
@@ -964,7 +964,7 @@ function cleanup_backupcache($lock = false) {
 		unset($backupexp);
 		if (!in_array($tocheck, $baktimes)) {
 			$i = true;
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo ".";
 			}
 			try {
@@ -993,7 +993,7 @@ function cleanup_backupcache($lock = false) {
 			$newbaks[] = $checkbak;
 		} else {
 			$i = true;
-			if (platform_booting()) print " " . $tocheck . "r";
+			if (is_platform_booting()) print " " . $tocheck . "r";
 		}
 	}
 	foreach ($newbaks as $todo) {

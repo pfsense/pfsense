@@ -261,7 +261,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	fwrite($fd, "resolv_conf=\"/dev/null\"\n");
 	fclose($fd);
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		/* restart dhcpd (nameservers may have changed) */
 		if (!$dynupdate) {
 			services_dhcpd_configure();
@@ -665,7 +665,7 @@ function system_hosts_generate() {
 	}
 
 	/* restart dhcpleases */
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		system_dhcpleases_configure();
 	}
 
@@ -1631,7 +1631,7 @@ function system_routing_enable() {
 function system_webgui_start() {
 	global $g;
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting webConfigurator...");
 	}
 
@@ -1679,7 +1679,7 @@ function system_webgui_start() {
 	/* start nginx */
 	$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-webConfigurator.conf");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		if ($res == 0) {
 			echo gettext("done.") . "\n";
 		} else {
@@ -2091,7 +2091,7 @@ function system_timezone_configure() {
 
 	$syscfg = config_get_path('system');
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Setting timezone...");
 	}
 
@@ -2101,7 +2101,7 @@ function system_timezone_configure() {
 	@file_put_contents("/var/db/zoneinfo", $timezone . "\n");
 	mwexec("/usr/sbin/tzsetup -r");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 }
@@ -2349,7 +2349,7 @@ function system_ntp_configure() {
 		return;
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting NTP Server...");
 	}
 
@@ -2732,7 +2732,7 @@ function system_ntp_configure() {
 	// Note that we are starting up
 	log_error("NTPD is starting up.");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 
@@ -2868,7 +2868,7 @@ function system_set_harddisk_standby() {
 	}
 
 	if (config_path_enabled('system', 'harddiskstandby')) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext('Setting hard disk standby... ');
 		}
 
@@ -2886,13 +2886,13 @@ function system_set_harddisk_standby() {
 				foreach ($harddisks as $harddisk) {
 					mwexec("/sbin/camcontrol standby {$harddisk} -t {$standby}");
 				}
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					echo gettext("done.") . "\n";
 				}
-			} else if (platform_booting()) {
+			} else if (is_platform_booting()) {
 				echo gettext("failed!") . "\n";
 			}
-		} else if (platform_booting()) {
+		} else if (is_platform_booting()) {
 			echo gettext("failed!") . "\n";
 		}
 	}

@@ -191,7 +191,7 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 		$unboundcfg = config_get_path('unbound');
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
 	}
 

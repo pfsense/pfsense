@@ -28,7 +28,7 @@ require_once("util.inc");
 require_once("globals.inc");
 
 /* make sure to wait until the boot scripts have finished */
-if (platform_booting()) {
+if (is_platform_booting()) {
 	return;
 }
 

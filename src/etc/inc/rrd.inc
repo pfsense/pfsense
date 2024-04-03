@@ -148,7 +148,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 function enable_rrd_graphing() {
 	global $config, $g, $altq_list_queues;
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Generating RRD graphs...");
 	}
 
@@ -288,7 +288,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U:U:U:U:U");
 			}
 
@@ -321,7 +321,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U:U:U:U:U");
 			}
 
@@ -350,7 +350,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$wireless N:U:U:U");
 				}
 
@@ -375,7 +375,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$vpnusers N:U");
 				}
 
@@ -459,7 +459,7 @@ function enable_rrd_graphing() {
 					unset($rrdcreate);
 				}
 
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					$rrdqcommand = "-t ";
 					$rrducommand = "N";
 					$qi = 0;
@@ -527,7 +527,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$cellular N:U:U:U");
 				}
 
@@ -561,7 +561,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$states N:U:U:U:U:U");
 		}
 
@@ -597,7 +597,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$proc N:U:U:U:U:U");
 		}
 
@@ -638,7 +638,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U:U:U:U");
 		}
 
@@ -727,7 +727,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$mbuf N:U:U:U:U");
 		}
 
@@ -776,7 +776,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ifname$sensors N$unknown");
 			}
 
@@ -822,7 +822,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					mwexec("$rrdtool update $concurrent_filename N:U");
 				}
 
@@ -858,7 +858,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					mwexec("$rrdtool update $loggedin_filename N:U");
 				}
 
@@ -901,7 +901,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ntpd N:U:U:U:U:U:U");
 			}
 
@@ -950,7 +950,7 @@ function enable_rrd_graphing() {
 					}
 
 					/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-					if (platform_booting()) {
+					if (is_platform_booting()) {
 						mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U");
 					}
 
@@ -1047,7 +1047,7 @@ EOD;
 		}
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 

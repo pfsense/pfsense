@@ -228,7 +228,7 @@ function filter_configure() {
 	 * NOTE: Check here for bootup status since this should not be triggered during bootup.
 	 *	 The reason is that rc.bootup calls filter_configure_sync directly which does this too.
 	 */
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		send_event("filter reload");
 	}
 }
@@ -335,19 +335,19 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	/* Get interface list to work with. */
 	filter_generate_optcfg_array();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo gettext("Configuring firewall");
 	}
 
 	/* generate aliases */
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Creating aliases"));
 	$vpns_list = filter_get_vpns_list();
 	$aliases = filter_generate_aliases();
 	$gateways = filter_generate_gateways();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Generating Limiter rules"));
@@ -356,19 +356,19 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	update_filter_reload_status(gettext("Generating NAT rules"));
 	/* generate nat rules */
 	$natrules = filter_nat_rules_generate();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Generating filter rules"));
 	/* generate pfctl rules */
 	$pfrules = filter_rules_generate();
 	/* generate altq, limiter */
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Loading filter rules"));
@@ -379,7 +379,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		mwexec("/sbin/pfctl -d", true);
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
-		if (platform_booting() == true) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 		unlock($filterlck);
@@ -598,7 +598,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$_grbg = exec("/sbin/pfctl -t " . escapeshellarg($alias) . " -T kill 2>/dev/null");
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		if (!empty($filterdns)) {
 			@file_put_contents("{$g['varetc_path']}/filterdns.conf", implode("", $filterdns));
 			unset($filterdns);
@@ -656,7 +656,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		filter_tdr_install_cron(false);
 	}
 
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 
@@ -675,11 +675,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 
 	update_filter_reload_status(gettext("Done"));
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 	
-	if (!platform_booting() && !$rules_loading) {
+	if (!is_platform_booting() && !$rules_loading) {
 		remove_failover_states();
 	}
 
@@ -4458,7 +4458,7 @@ function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
  *   none
  ******/
 function filter_tdr_install_cron($should_install) {
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		return;
 	}
 

@@ -1613,7 +1613,7 @@ function openvpn_restart($mode, $settings) {
 	} else {
 		syslog(LOG_ERR, "OpenVPN failed to start");
 	}
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		send_event("filter reload");
 	}
 	unlock($lockhandle);
@@ -1818,7 +1818,7 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 
 		/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
 		 * see https://redmine.pfsense.org/issues/11662 */
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			interfaces_qinq_configure(true);
 			/* Configure all qinq interface addresses and add them to their
 			 * bridges. See https://redmine.pfsense.org/issues/13225,

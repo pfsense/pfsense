@@ -513,7 +513,7 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 	}
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
-		if (!platform_booting()) {
+		if (!is_platform_booting()) {
 			$result = resolve_retry($rg, $ph1ent['protocol']);
 			if (!empty($result)) {
 				return $result;
@@ -1517,7 +1517,7 @@ function ipsec_setup_gwifs() {
 		$rg = $ph1ent['remote-gateway'];
 		if (!is_ipaddr($rg)) {
 			$filterdns_list[] = "{$rg}";
-			if (!platform_booting()) {
+			if (!is_platform_booting()) {
 				$rg = resolve_retry($rg, $ph1ent['protocol']);
 			}
 			if (!is_ipaddr($rg)) {
@@ -2813,7 +2813,7 @@ function ipsec_setup_tunnels() {
 					$pools[] = "mobile-pool-v6";
 				}
 				if (config_path_enabled('ipsec/client', 'radius_ip_priority_enable')) {
-					$pools[] .= "radius";
+					$pools[] = "radius";
 				}
 			}
 		}
@@ -3107,11 +3107,11 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		mwexec("/sbin/ifconfig enc0 up");
 		/* PC/SC daemon must be started before strongswan */
 		if (config_path_enabled('ipsec', 'pkcs11support') && !isvalidproc("pcscd")) {
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo gettext("Starting PC/SC Smart Card Services...");
 			}
 			mwexec_bg("/usr/local/sbin/pcscd");
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo gettext("done.\n");
 			}
 		} elseif (!config_path_enabled('ipsec', 'pkcs11support') && isvalidproc("pcscd")) {
@@ -3121,7 +3121,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		}
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
 	}
 
@@ -3284,7 +3284,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		@unlink("{$g['varrun_path']}/filterdns-ipsec.pid");
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "done\n";
 	}
 

@@ -249,7 +249,7 @@ EOD;
 			}
 			$config['interfaces']['lan']['if'] = $lanif;
 			$config['interfaces']['lan']['enable'] = true;
-		} elseif (!platform_booting()) {
+		} elseif (!is_platform_booting()) {
 
 			echo "\n" . gettext("You have chosen to remove the LAN interface.") . "\n";
 			echo "\n" . gettext("Would you like to remove the LAN IP address and \nunload the interface now [y|n]?") . " ";

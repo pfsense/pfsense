@@ -396,12 +396,12 @@ function voucher_configure() {
 
 	if (is_array($config['voucher'])) {
 		foreach (config_get_path('voucher', []) as $voucherzone => $vcfg) {
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo gettext("Enabling voucher support... ");
 			}
 			$cpzone = $voucherzone;
 			$error = voucher_configure_zone();
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				if ($error) {
 					echo "error\n";
 				} else {

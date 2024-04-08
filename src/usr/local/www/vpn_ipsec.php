@@ -173,7 +173,7 @@ if ($_POST['apply']) {
 		/* copy all p2 entries > $movebtnp2 and not selected */
 		for ($i = $movebtnp2+1; $i < count(config_get_path('ipsec/phase2', [])); $i++) {
 			if (!in_array($i, $_POST['p2entry'])) {
-				$a_phase2_new[] = config_get_path('ipsec/phase2/', $i);
+				$a_phase2_new[] = config_get_path('ipsec/phase2/' . $i);
 			}
 		}
 		if (count($a_phase2_new) > 0) {

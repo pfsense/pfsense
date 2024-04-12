@@ -63,7 +63,7 @@ function get_gateways(int $flags = 0): array {
 		$remove_disabled = false;
 		$remove_localhost = true;
 		$remove_inactive = false;
-	} elseif (boolval($flags & GW_CACHE_ALL)) {
+	} elseif (boolval(($flags & GW_CACHE_ALL) == GW_CACHE_ALL)) {
 		$remove_disabled = false;
 		$remove_localhost = false;
 		$remove_inactive = false;

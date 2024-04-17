@@ -29,7 +29,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
 // Update once per minute by default, instead of every 10 seconds
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000 * 6;
 
 if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);

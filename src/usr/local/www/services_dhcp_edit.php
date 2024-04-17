@@ -39,9 +39,11 @@ function staticmapcmp($a, $b) {
 }
 
 function staticmaps_sort($ifgui) {
-	global $g, $config;
+	global $g;
 
-	usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
+	$dhcpd_config = config_get_path("dhcpd/{$ifgui}/staticmap");
+	usort($dhcpd_config, "staticmapcmp");
+	config_set_path("dhcpd/{$ifgui}/staticmap", $dhcpd_config);
 }
 
 require_once('globals.inc');
@@ -60,53 +62,52 @@ if (!$if) {
 	exit;
 }
 
-init_config_arr(array('dhcpd', $if, 'staticmap'));
-init_config_arr(array('dhcpd', $if, 'pool'));
-$a_maps = &$config['dhcpd'][$if]['staticmap'];
-$a_pools = &$config['dhcpd'][$if]['pool'];
-$static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
+config_init_path("dhcpd/{$if}/staticmap");
+config_init_path("dhcpd/{$if}/pool");
+$static_arp_enabled = config_path_enabled("dhcpd/{$if}", 'staticarp');
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_maps[$id]) {
-	$pconfig['mac'] = $a_maps[$id]['mac'];
-	$pconfig['cid'] = $a_maps[$id]['cid'];
-	$pconfig['hostname'] = $a_maps[$id]['hostname'];
-	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
-	$pconfig['filename'] = $a_maps[$id]['filename'];
-	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
-	$pconfig['descr'] = $a_maps[$id]['descr'];
-	$pconfig['arp_table_static_entry'] = isset($a_maps[$id]['arp_table_static_entry']);
-	$pconfig['deftime'] = $a_maps[$id]['defaultleasetime'];
-	$pconfig['maxtime'] = $a_maps[$id]['maxleasetime'];
-	$pconfig['gateway'] = $a_maps[$id]['gateway'];
-	$pconfig['domain'] = $a_maps[$id]['domain'];
-	$pconfig['domainsearchlist'] = $a_maps[$id]['domainsearchlist'];
-	list($pconfig['wins1'], $pconfig['wins2']) = $a_maps[$id]['winsserver'];
-	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $a_maps[$id]['dnsserver'];
-	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
-	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
-	$pconfig['ddnsdomainsecondary'] = $a_maps[$id]['ddnsdomainsecondary'];
-	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
-	$pconfig['ddnsdomainkeyalgorithm'] = $a_maps[$id]['ddnsdomainkeyalgorithm'];
-	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
-	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
-	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
-	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3']) = $a_maps[$id]['ntpserver'];
-	$pconfig['tftp'] = $a_maps[$id]['tftp'];
-	$pconfig['ldap'] = $a_maps[$id]['ldap'];
-	$pconfig['netboot'] = isset($a_maps[$id]['netboot']);
-	$pconfig['nextserver'] = $a_maps[$id]['nextserver'];
-	$pconfig['filename32'] = $a_maps[$id]['filename32'];
-	$pconfig['filename64'] = $a_maps[$id]['filename64'];
-	$pconfig['filename32arm'] = $a_maps[$id]['filename32arm'];
-	$pconfig['filename64arm'] = $a_maps[$id]['filename64arm'];
-	$pconfig['uefihttpboot'] = $a_maps[$id]['uefihttpboot'];
-	$pconfig['netmask'] = $a_maps[$id]['netmask'];
-	$pconfig['numberoptions'] = $a_maps[$id]['numberoptions'];
+$this_map_config = isset($id) ? config_get_path("dhcpd/{$if}/staticmap/{$id}") : null;
+if ($this_map_config) {
+	$pconfig['mac'] = $this_map_config['mac'];
+	$pconfig['cid'] = $this_map_config['cid'];
+	$pconfig['hostname'] = $this_map_config['hostname'];
+	$pconfig['ipaddr'] = $this_map_config['ipaddr'];
+	$pconfig['filename'] = $this_map_config['filename'];
+	$pconfig['rootpath'] = $this_map_config['rootpath'];
+	$pconfig['descr'] = $this_map_config['descr'];
+	$pconfig['arp_table_static_entry'] = isset($this_map_config['arp_table_static_entry']);
+	$pconfig['deftime'] = $this_map_config['defaultleasetime'];
+	$pconfig['maxtime'] = $this_map_config['maxleasetime'];
+	$pconfig['gateway'] = $this_map_config['gateway'];
+	$pconfig['domain'] = $this_map_config['domain'];
+	$pconfig['domainsearchlist'] = $this_map_config['domainsearchlist'];
+	list($pconfig['wins1'], $pconfig['wins2']) = $this_map_config['winsserver'];
+	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $this_map_config['dnsserver'];
+	$pconfig['ddnsdomain'] = $this_map_config['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $this_map_config['ddnsdomainprimary'];
+	$pconfig['ddnsdomainsecondary'] = $this_map_config['ddnsdomainsecondary'];
+	$pconfig['ddnsdomainkeyname'] = $this_map_config['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $this_map_config['ddnsdomainkeyalgorithm'];
+	$pconfig['ddnsdomainkey'] = $this_map_config['ddnsdomainkey'];
+	$pconfig['ddnsupdate'] = isset($this_map_config['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($this_map_config['ddnsforcehostname']);
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3']) = $this_map_config['ntpserver'];
+	$pconfig['tftp'] = $this_map_config['tftp'];
+	$pconfig['ldap'] = $this_map_config['ldap'];
+	$pconfig['netboot'] = isset($this_map_config['netboot']);
+	$pconfig['nextserver'] = $this_map_config['nextserver'];
+	$pconfig['filename32'] = $this_map_config['filename32'];
+	$pconfig['filename64'] = $this_map_config['filename64'];
+	$pconfig['filename32arm'] = $this_map_config['filename32arm'];
+	$pconfig['filename64arm'] = $this_map_config['filename64arm'];
+	$pconfig['uefihttpboot'] = $this_map_config['uefihttpboot'];
+	$pconfig['netmask'] = $this_map_config['netmask'];
+	$pconfig['numberoptions'] = $this_map_config['numberoptions'];
 } else {
 	$pconfig['mac'] = $_REQUEST['mac'];
 	$pconfig['cid'] = $_REQUEST['cid'];
@@ -214,8 +215,8 @@ if ($_POST['save']) {
 	}
 
 	/* check for overlaps */
-	foreach ($a_maps as $mapent) {
-		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
+	foreach (config_get_path("dhcpd/{$if}/staticmap") as $mapent) {
+		if ($this_map_config && ($this_map_config === $mapent)) {
 			continue;
 		}
 		if ((($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
@@ -232,11 +233,11 @@ if ($_POST['save']) {
 
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {
-		if (is_inrange_v4($_POST['ipaddr'], $config['dhcpd'][$if]['range']['from'], $config['dhcpd'][$if]['range']['to'])) {
+		if (is_inrange_v4($_POST['ipaddr'], config_get_path("dhcpd/{$if}/range/from"), config_get_path("dhcpd/{$if}/range/to"))) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 
-		foreach ($a_pools as $p) {
+		foreach (config_get_path("dhcpd/{$if}/pool") as $p) {
 			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
 				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
 				break;
@@ -440,21 +441,21 @@ if ($_POST['save']) {
 		$mapent['uefihttpboot'] = $_POST['uefihttpboot'];
 		$mapent['numberoptions'] = $pconfig['numberoptions'];
 
-		if (isset($id) && $a_maps[$id]) {
-			$a_maps[$id] = $mapent;
+		if ($this_map_config) {
+			config_set_path("dhcpd/{$if}/staticmap/{$id}", $mapent);
 		} else {
-			$a_maps[] = $mapent;
+			config_set_path("dhcpd/{$if}/staticmap/", $mapent);
 		}
 		staticmaps_sort($if);
 
 		write_config("DHCP Server settings saved");
 
-		if (isset($config['dhcpd'][$if]['enable'])) {
+		if (config_path_enabled("dhcpd/{$if}")) {
 			mark_subsystem_dirty('dhcpd');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
+			if (config_path_enabled('dnsmasq') && config_path_enabled('dnsmasq', 'regdhcpstatic')) {
 				mark_subsystem_dirty('hosts');
 			}
-			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+			if (config_path_enabled('unbound') && config_path_enabled('unbound', 'regdhcpstatic')) {
 				mark_subsystem_dirty('unbound');
 			}
 		}

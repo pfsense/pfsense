@@ -983,10 +983,10 @@ function rmdir_recursive($path, $follow_links=false) {
 			if (is_dir($workingdir)) {
 				$dir = opendir($workingdir);
 				while ($entry = readdir($dir)) {
-					if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry"))) {
-						unlink("$workingdir/$entry");
-					} elseif (is_dir("$workingdir/$entry") && $entry != '.' && $entry != '..') {
-						rmdir_recursive("$workingdir/$entry");
+					if (is_file("{$workingdir}/{$entry}") || ((!$follow_links) && is_link("{$workingdir}/{$entry}"))) {
+						unlink("{$workingdir}/{$entry}");
+					} elseif (is_dir("{$workingdir}/{$entry}") && $entry != '.' && $entry != '..') {
+						rmdir_recursive("{$workingdir}/{$entry}");
 					}
 				}
 				closedir($dir);
@@ -1047,14 +1047,14 @@ function strncpy(&$dst, $src, $length) {
  *   none
  ******/
 function reload_interfaces_sync() {
-	global $config, $g;
+	global $g;
 
 	if (g_get('debug')) {
 		log_error(gettext("reload_interfaces_sync() is starting."));
 	}
 
-	/* parse config.xml again */
-	$config = parse_config(true);
+	/* parse config.xml */
+	config_set_path('', parse_config(true));
 
 	/* enable routing */
 	system_routing_enable();
@@ -1103,10 +1103,8 @@ function reload_interfaces() {
  *   none
  ******/
 function reload_all_sync() {
-	global $config;
-
-	/* parse config.xml again */
-	$config = parse_config(true);
+	/* parse config.xml */
+	config_set_path('', parse_config(true));
 
 	/* set up our timezone */
 	system_timezone_configure();
@@ -1338,8 +1336,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$data[] = 'machdep.hwpstate_pkg_ctrl="' . config_get_path('system/hwpstate_control_level', get_single_sysctl('machdep.hwpstate_pkg_ctrl')) . '"';
 
 	// calculate the size of hash tables that store states - should be power of 2
-	$pf_maximumstates = intval(config_get_path('system/maximumstates', pfsense_default_state_size()));
-	$pf_hashtablesize = pow(2, ceil(log(floor($pf_maximumstates / 2), 2)));
+	$pf_maximumstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+	$pf_hashtablesize = pow(2, ceil(log(floor(intval($pf_maximumstates) / 2), 2)));
 	$data[] = "net.pf.states_hashsize=\"{$pf_hashtablesize}\"";
 
 	safe_write_file($loader_conf_file, $data);
@@ -1504,7 +1502,7 @@ function is_dhcpv6_server_enabled() {
 
 /* radvd enabled on any interfaces? */
 function is_radvd_enabled() {
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 
@@ -1954,7 +1952,7 @@ function add_hostname_to_watch($hostname) {
 				$contents .= "$ip\n";
 			}
 		}
-		file_put_contents("/var/db/dnscache/$hostname", $contents);
+		file_put_contents("/var/db/dnscache/{$hostname}", $contents);
 		/* Remove empty elements */
 		$result = array_filter(explode("\n", $contents), 'strlen');
 	}
@@ -2366,11 +2364,12 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
-	global $g, $config, $pconfig, $debug;
+	global $g, $pconfig, $debug;
 	if (!$origname) {
 		return;
 	}
 
+	$config = config_get_path('');
 	$sectionref = &$config;
 	foreach ($section as $sectionname) {
 		if (is_array($sectionref) && isset($sectionref[$sectionname])) {
@@ -2408,6 +2407,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 				$fieldref = $new_alias_name;
 			}
 		}
+		config_set_path('', $config);
 	}
 
 	if ($debug) {
@@ -2948,7 +2948,7 @@ function get_cert_country_codes() {
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
-	init_config_arr(array('filter', 'rule'));
+	config_init_path('filter/rule');
 	$rules = config_get_path('filter/rule', []);
 
 	/* mark each rule with the sequence number (to retain the order while sorting) */

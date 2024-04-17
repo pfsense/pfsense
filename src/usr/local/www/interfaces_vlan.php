@@ -37,8 +37,7 @@ require_once("interfaces_fast.inc");
 
 global $profile;
 
-init_config_arr(array('vlans', 'vlan'));
-$a_vlans = &$config['vlans']['vlan'];
+config_init_path('vlans/vlan');
 
 if ($_POST['act'] == "del") {
 	/*
@@ -55,20 +54,21 @@ if ($_POST['act'] == "del") {
 		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
 	}
 
+	$this_vlan_config = config_get_path("vlans/vlan/{$_POST['id']}");
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_vlans[$_POST['id']])) {
+	} else if (empty($this_vlan_config)) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (vlan_inuse($a_vlans[$_POST['id']])) {
+	} else if (vlan_inuse($this_vlan_config)) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
 	}
 
 	if (!$input_errors) {
-		if (does_interface_exist($a_vlans[$_POST['id']]['vlanif'])) {
-			pfSense_interface_destroy($a_vlans[$_POST['id']]['vlanif']);
+		if (does_interface_exist($this_vlan_config['vlanif'])) {
+			pfSense_interface_destroy($this_vlan_config['vlanif']);
 		}
-		unset($a_vlans[$_POST['id']]);
+		config_del_path("vlans/vlan/{$_POST['id']}");
 
 		write_config("VLAN interface deleted");
 
@@ -121,7 +121,7 @@ display_top_tabs($tab_array);
 	$i = 0;
 	$gettext_array = array('edit'=>gettext('Edit VLAN'),'del'=>gettext('Delete VLAN'));
 	$ifaces = convert_real_interface_to_friendly_interface_name_fast();
-	foreach ($a_vlans as $vlan) {
+	foreach (config_get_path('vlans/vlan') as $vlan) {
 ?>
 						<tr>
 							<td>

@@ -73,8 +73,6 @@ $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
 function build_area_list($showall) {
-	global $config;
-
 	$areas = array(
 		"aliases" => gettext("Aliases"),
 		"captiveportal" => gettext("Captive Portal"),

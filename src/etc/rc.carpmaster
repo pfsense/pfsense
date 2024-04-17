@@ -60,7 +60,6 @@ foreach ($vips as $vip) {
 restart_ppp_interfaces_using_interfaces($vips);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
-global $config;
 $a_groups = return_gateway_groups_array(true);
 
 foreach (array('server', 'client') as $mode) {
@@ -196,7 +195,7 @@ if (!empty(config_get_path('captiveportal')) &&
 			}
 			captiveportal_write_usedmacs_db($usedmacs); 
 		}
-		captiveportal_syslog(sprintf(gettext('Connected users, used vouchers and used MACs have been synchronized from %1$s'), $config['hasync']['synchronizetoip']));
+		captiveportal_syslog(sprintf(gettext('Connected users, used vouchers and used MACs have been synchronized from %1$s'), config_get_path('hasync/synchronizetoip')));
 	}
 }
 $pluginparams = array();

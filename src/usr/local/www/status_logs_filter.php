@@ -152,7 +152,7 @@ if (!$rawfilter) {
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("Interface")?></th>
 <?php
-	if ($config['syslog']['filterdescriptions'] === "1") {
+	if (config_get_path('syslog/filterdescriptions') === "1") {
 ?>
 					<th style="width:100%">
 						<?=gettext("Rule")?>
@@ -167,7 +167,7 @@ if (!$rawfilter) {
 			</thead>
 			<tbody>
 <?php
-	if ($config['syslog']['filterdescriptions']) {
+	if (config_get_path('syslog/filterdescriptions')) {
 		buffer_rules_load();
 	}
 
@@ -207,7 +207,7 @@ if (!$rawfilter) {
 		<?=htmlspecialchars($filterent['interface'])?>
 					</td>
 <?php
-		if ($config['syslog']['filterdescriptions'] === "1") {
+		if (config_get_path('syslog/filterdescriptions') === "1") {
 ?>
 					<td style="white-space:normal;">
 			<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?>
@@ -274,7 +274,7 @@ if (!$rawfilter) {
 					</td>
 				</tr>
 <?php
-		if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2") {
+		if (config_get_path('syslog/filterdescriptions') === "2") {
 ?>
 				<tr>
 					<td colspan="2" />

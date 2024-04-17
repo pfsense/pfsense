@@ -4080,7 +4080,7 @@ class dnpipe_class extends dummynet_class {
 	}
 
 	function build_rules() {
-		global $config, $time_based_rules;
+		global $time_based_rules;
 
 		if ($this->GetEnabled() == "") {
 			return;
@@ -4092,7 +4092,7 @@ class dnpipe_class extends dummynet_class {
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bw) {
 				if ($bw['bwsched'] != "none") {
-					if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
+					if (is_array(config_get_path('schedules/schedule'))) {
 						foreach (config_get_path('schedules/schedule', []) as $schedule) {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
@@ -4215,17 +4215,15 @@ class dnpipe_class extends dummynet_class {
 	}
 
 	function build_javascript() {
-		global $g, $config;
+		global $g;
 
 		$javasr = parent::build_javascript();
 
 		//build list of schedules
 		$schedules = "<option value='none'>none</option>";
-		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach (config_get_path('schedules/schedule', []) as $schedule) {
-				if ($schedule['name'] <> "") {
-					$schedules .= "<option value='{$schedule['name']}'>{$schedule['name']}</option>";
-				}
+		foreach (config_get_path('schedules/schedule', []) as $schedule) {
+			if ($schedule['name'] <> "") {
+				$schedules .= "<option value='{$schedule['name']}'>{$schedule['name']}</option>";
 			}
 		}
 		$bwopt = "";
@@ -4278,17 +4276,13 @@ EOD;
 	// The table has been "Bootstrapped" to match the web design while maintaining compatibility with
 	// with the javascript in this class
 	function build_bwtable() {
-		global $config;
-
 		$bandwidth = $this->GetBandwidth();
 				//build list of schedules
 		$schedules = array();
 		$schedules[] = "none";//leave none to leave rule enabled all the time
-		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach (config_get_path('schedules/schedule', []) as $schedule) {
-				if ($schedule['name'] != "") {
-					$schedules[] = $schedule['name'];
-				}
+		foreach (config_get_path('schedules/schedule', []) as $schedule) {
+			if ($schedule['name'] != "") {
+				$schedules[] = $schedule['name'];
 			}
 		}
 
@@ -4360,16 +4354,14 @@ EOD;
 	}
 
 	function build_form() {
-		global $g, $config, $pipe, $action, $qname;
+		global $g, $pipe, $action, $qname;
 
 		//build list of schedules
 		$schedules = array();
 		$schedules[] = "none";//leave none to leave rule enabled all the time
-		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach (config_get_path('schedules/schedule', []) as $schedule) {
-				if ($schedule['name'] <> "") {
-					$schedules[] = $schedule['name'];
-				}
+		foreach (config_get_path('schedules/schedule', []) as $schedule) {
+			if ($schedule['name'] <> "") {
+				$schedules[] = $schedule['name'];
 			}
 		}
 
@@ -4933,19 +4925,16 @@ class dnqueue_class extends dummynet_class {
 	}
 
 	function build_form() {
-		global $g, $config, $pipe, $action, $qname;
+		global $g, $pipe, $action, $qname;
 
 		//build list of schedules
 		$schedules = array();
 		$schedules[] = "none";//leave none to leave rule enabled all the time
-		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
-			foreach (config_get_path('schedules/schedule', []) as $schedule) {
-				if ($schedule['name'] <> "") {
-					$schedules[] = $schedule['name'];
-				}
+		foreach (config_get_path('schedules/schedule', []) as $schedule) {
+			if ($schedule['name'] <> "") {
+				$schedules[] = $schedule['name'];
 			}
 		}
-
 
 		$sform = new Form();
 		$sform->setAction("firewall_shaper.php");
@@ -5312,19 +5301,14 @@ function unref_on_altq_queue_list($qname) {
 }
 
 function read_altq_config() {
-	global $altq_list_queues, $config;
+	global $altq_list_queues;
 	$path = array();
 
-	init_config_arr(array('shaper', 'queue'));
-	$a_int = &$config['shaper']['queue'];
+	config_init_path('shaper/queue');
 
 	$altq_list_queues = array();
 
-	if (!is_array($config['shaper']['queue'])) {
-		return;
-	}
-
-	foreach ($a_int as $key => $conf) {
+	foreach (config_get_path('shaper/queue') as $key => $conf) {
 		$int = $conf['interface'];
 		$root = new altq_root_queue();
 		$root->SetInterface($int);
@@ -5348,15 +5332,15 @@ function read_altq_config() {
 }
 
 function read_dummynet_config() {
-	global $dummynet_pipe_list, $config;
+	global $dummynet_pipe_list;
 	$path = array();
 
-	init_config_arr(array('dnshaper', 'queue'));
-	$a_int = &$config['dnshaper']['queue'];
+	config_init_path('dnshaper/queue');
+	$a_int = config_get_path('dnshaper/queue');
 
 	$dummynet_pipe_list = array();
 
-	if (!count($config['dnshaper']['queue'])) {
+	if (!count($a_int)) {
 		return;
 	}
 
@@ -5385,7 +5369,7 @@ function read_dummynet_config() {
 }
 
 function get_interface_list_to_show() {
-	global $altq_list_queues, $config;
+	global $altq_list_queues;
 	global $shaperIFlist;
 
 	$tree = "";
@@ -5482,7 +5466,7 @@ function dnpipe_find_nextnumber() {
 }
 
 function filter_generate_dummynet_rules() {
-	global $config, $g, $dummynet_pipe_list;
+	global $g, $dummynet_pipe_list;
 
 	read_dummynet_config();
 
@@ -5554,13 +5538,9 @@ $dn_default_shaper_msg .= sprintf($shaper_msg, gettext("limiter"));
 
 // Check to see if the specified interface has a queue configured
 function interface_has_queue($if) {
-	global $config;
-
-	if ($config['shaper']) {
-		foreach (config_get_path('shaper/queue', []) as $queue) {
-			if ($queue['interface'] === $if) {
-				return true;
-			}
+	foreach (config_get_path('shaper/queue', []) as $queue) {
+		if ($queue['interface'] === $if) {
+			return true;
 		}
 	}
 

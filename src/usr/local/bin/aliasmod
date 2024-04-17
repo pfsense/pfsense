@@ -52,13 +52,13 @@ if (($argc > 1) && !empty($argv[1])) {
 }
 
 function aliasmod($act, $alias, $entry) {
-	global $config, $g;
+	global $g;
 
 	if (!in_array($act, array('add', 'del'))) {
 		return false;
 	}
 
-	if (!is_array($config['aliases']) || !is_alias($alias) ||
+	if (!is_array(config_get_path('aliases')) || !is_alias($alias) ||
 	    in_array($alias, get_pf_reserved()) || (alias_get_type($alias) != 'host')) {
 		return false;
 	}
@@ -67,7 +67,8 @@ function aliasmod($act, $alias, $entry) {
 		return false;
 	}
 
-	foreach ($config['aliases']['alias'] as & $als) {
+	$alias_config = config_get_path('aliases/alias');
+	foreach ($alias_config as & $als) {
 		if ($als['name'] != $alias) {
 			continue;
 		}
@@ -89,9 +90,11 @@ function aliasmod($act, $alias, $entry) {
 			$als['detail'] = implode('||', $details);
 			break;
 		} else {
+			config_set_path('aliases/alias', $alias_config);
 			return false;
 		}
 	}
+	config_set_path('aliases/alias', $alias_config);
 	write_config(gettext("Edited a firewall alias by aliasmod."));
 
 	$retval = 0;

@@ -95,7 +95,7 @@ if ($_GET) {
 					$aq =& $altq_list_queues[$interface];
 
 					if ($qname == $qtmp->GetInterface()) {
-						$config['shaper']['queue'][] = $copycfg;
+						config_set_path('shaper/queue/', $copycfg);
 					} else if ($aq) {
 						$tmp1 =& $qtmp->find_parentqueue($interface, $qname);
 						if ($tmp1) {
@@ -116,7 +116,7 @@ if ($_GET) {
 						$newroot['scheduler'] = $altq->GetScheduler();
 						$newroot['queue'] = array();
 						$newroot['queue'][] = $copycfg;
-						$config['shaper']['queue'][] = $newroot;
+						config_set_path('shaper/queue/', $newroot);
 					}
 
 					if (write_config("Traffic Shaper: Added new queue")) {

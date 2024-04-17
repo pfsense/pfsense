@@ -441,7 +441,7 @@ function interface_vlan_configure(&$vlan, $flush = true) {
  * https://redmine.pfsense.org/issues/11035
  */
 function interfaces_vlan_configure_mtu($parentif = "") {
-	init_config_arr(array('ppps', 'ppp'));
+	config_init_path('ppps/ppp');
 	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if ($parentif != $vlan['if']) {
 			continue;
@@ -1989,7 +1989,7 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
 		config_set_path('virtualip_carp_maintenancemode', true);
 		write_config(gettext("Enter CARP maintenance mode"));
 	}
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 
 	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if ($vip['mode'] == "carp") {
@@ -2151,9 +2151,7 @@ function handle_pppoe_reset($post_array) {
 	if (isset($itemhash['ID'])) {
 		config_set_path("cron/item/{$itemhash['ID']}", $item);
 	} else {
-		$items = config_get_path('cron/item', []);
-		$items[] = $item;
-		config_set_path('cron/item', $items);
+		config_set_path('cron/item/', $item);
 	}
 }
 
@@ -5610,7 +5608,7 @@ function get_current_wan_address($interface = "wan") {
 function convert_real_interface_to_friendly_interface_name($interface = "wan", $checkparent = false) {
 
 	/* XXX: For speed reasons reference directly the interface array */
-	init_config_arr(array('interfaces'));
+	config_init_path('interfaces');
 	$ifdescrs = config_get_path('interfaces');
 	//$ifdescrs = get_configured_interface_list(true);
 
@@ -6244,7 +6242,7 @@ function link_interface_to_ppp_tunnelif($interface) {
 		return $result;
 	}
 
-	init_config_arr(array('ppps', 'ppp'));
+	config_init_path('ppps/ppp');
 	$realif = get_real_interface($interface);
 	foreach (config_get_path('ppps/ppp', []) as $ppp) {
 		if (($ppp['ports'] == $realif) && in_array($ppp['type'], array('l2tp', 'pptp'))) {
@@ -6443,7 +6441,7 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 		}
 	}
 
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	foreach (config_get_path('ipsec/phase1') as $p1) {
 		if ($p1['disabled']) {
 			continue;
@@ -6810,7 +6808,7 @@ function is_interface_wireless($interface) {
 	$friendly = convert_real_interface_to_friendly_interface_name($interface);
 	if (config_get_path("interfaces/{$friendly}/wireless") === null) {
 		if (preg_match(g_get('wireless_regex'), $interface)) {
-			init_config_arr(['interfaces', $friendly, 'wireless']);
+			config_init_path("interfaces/{$friendly}/wireless");
 			return true;
 		}
 		return false;
@@ -7419,7 +7417,7 @@ function restart_interface_services($interface, $ipv6type = "") {
 		services_dhcpd_configure();
 	}
 
-	init_config_arr(array('syslog'));
+	config_init_path('syslog');
 	if (config_path_enabled('syslog') && ($interface == config_get_path('syslog/sourceip'))) {
 		system_syslogd_start();
 	}

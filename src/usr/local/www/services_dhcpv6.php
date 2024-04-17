@@ -127,8 +127,6 @@ if (!$if || !isset($iflist[$if])) {
 
 $act = $_REQUEST['act'];
 
-$a_pools = [];
-
 if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	$pool = $_REQUEST['pool'];
 	if (is_numeric($_POST['pool'])) {
@@ -140,19 +138,17 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 		exit;
 	}
 
-	init_config_arr(['dhcpdv6', $if, 'pool']);
-	$a_pools = &$config['dhcpdv6'][$if]['pool'];
+	config_init_path("dhcpdv6/{$if}/pool");
 
-	if (is_numeric($pool) && $a_pools[$pool]) {
-		$dhcpdconf = &$a_pools[$pool];
+	if (is_numeric($pool) && config_get_path("dhcpdv6/{$if}/pool/{$pool}")) {
+		$dhcpdconf = config_get_path("dhcpdv6/{$if}/pool/{$pool}");
 	} elseif ($act === 'newpool') {
 		$dhcpdconf = [];
 	} else {
-		$dhcpdconf = &$config['dhcpdv6'][$if];
+		$dhcpdconf = config_get_path("dhcpdv6/{$if}");
 	}
 
-	init_config_arr(['dhcpdv6', $if, 'staticmap']);
-	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
+	config_init_path("dhcpdv6/{$if}/staticmap");
 }
 
 if (is_array($dhcpdconf)) {
@@ -409,11 +405,9 @@ if (isset($_POST['apply'])) {
 	}
 
 	$noip = false;
-	if (is_array($a_maps)) {
-		foreach ($a_maps as $map) {
-			if (empty($map['ipaddrv6'])) {
-				$noip = true;
-			}
+	foreach (config_get_path("dhcpdv6/{$if}/staticmap", []) as $map) {
+		if (empty($map['ipaddrv6'])) {
+			$noip = true;
 		}
 	}
 
@@ -446,7 +440,7 @@ if (isset($_POST['apply'])) {
 			}
 		}
 
-		foreach ($a_pools as $id => $p) {
+		foreach (config_get_path("dhcpdv6/{$if}/pool") as $id => $p) {
 			if (is_numeric($pool) && ($id == $pool)) {
 				continue;
 			}
@@ -470,16 +464,14 @@ if (isset($_POST['apply'])) {
 		$dynsubnet_start = inet_pton($_POST['range_from']);
 		$dynsubnet_end = inet_pton($_POST['range_to']);
 
-		if (is_array($a_maps)) {
-			foreach ($a_maps as $map) {
-				if (empty($map['ipaddrv6'])) {
-					continue;
-				}
-				if ((inet_pton($map['ipaddrv6']) > $dynsubnet_start) &&
-					(inet_pton($map['ipaddrv6']) < $dynsubnet_end)) {
-					$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
-					break;
-				}
+		foreach (config_get_path("dhcpdv6/{$if}/staticmap", []) as $map) {
+			if (empty($map['ipaddrv6'])) {
+				continue;
+			}
+			if ((inet_pton($map['ipaddrv6']) > $dynsubnet_start) &&
+				(inet_pton($map['ipaddrv6']) < $dynsubnet_end)) {
+				$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
+				break;
 			}
 		}
 	}
@@ -493,8 +485,8 @@ if (isset($_POST['apply'])) {
 				$dhcpdconf = config_get_path("dhcpdv6/{$if}");
 			}
 		} else {
-			if (is_array($a_pools[$pool])) {
-				$dhcpdconf = $a_pools[$pool];
+			if (is_array(config_get_path("dhcpdv6/{$if}/pool/{$pool}"))) {
+				$dhcpdconf = config_get_path("dhcpdv6/{$if}/pool/{$pool}");
 			} else {
 				header("Location: services_dhcpv6.php");
 				exit;
@@ -591,10 +583,10 @@ if (isset($_POST['apply'])) {
 
 		$dhcpdconf['numberoptions'] = $numberoptions;
 
-		if (is_numeric($pool) && is_array($a_pools[$pool])) {
-			$a_pools[$pool] = $dhcpdconf;
+		if (is_numeric($pool) && is_array(config_get_path("dhcpdv6/{$if}/pool/{$pool}"))) {
+			config_set_path("dhcpdv6/{$if}/pool/{$pool}", $dhcpdconf);
 		} elseif ($act === 'newpool') {
-			$a_pools[] = $dhcpdconf;
+			config_set_path("dhcpdv6/{$if}/pool/", $dhcpdconf);
 		} else {
 			config_set_path("dhcpdv6/{$if}", $dhcpdconf);
 		}
@@ -610,8 +602,8 @@ if (isset($_POST['apply'])) {
 }
 
 if ($act == "delpool") {
-	if ($a_pools[$_POST['id']]) {
-		unset($a_pools[$_POST['id']]);
+	if (config_get_path("dhcpdv6/{$if}/pool/{$_POST['id']}")) {
+		config_del_path("dhcpdv6/{$if}/pool/{$_POST['id']}");
 		write_config('DHCPv6 Server pool deleted');
 		mark_subsystem_dirty('dhcpd6');
 		header("Location: services_dhcpv6.php?if={$if}");
@@ -620,8 +612,8 @@ if ($act == "delpool") {
 }
 
 if ($_POST['act'] == "del") {
-	if ($a_maps[$_POST['id']]) {
-		unset($a_maps[$_POST['id']]);
+	if (config_get_path("dhcpdv6/{$if}/staticmap/{$_POST['id']}")) {
+		config_del_path("dhcpdv6/{$if}/staticmap/{$_POST['id']}");
 		write_config("DHCPv6 server static map deleted");
 		if (config_path_enabled("dhcpdv6/{$if}")) {
 			mark_subsystem_dirty('dhcpd6');
@@ -636,7 +628,7 @@ if ($_POST['act'] == "del") {
 
 // Build an HTML table that can be inserted into a Form_StaticText element
 function build_pooltable() {
-	global $a_pools, $if;
+	global $if;
 
 	$pooltbl =	'<div class="table-responsive">';
 	$pooltbl .=		'<table class="table table-striped table-hover table-condensed">';
@@ -650,27 +642,25 @@ function build_pooltable() {
 	$pooltbl .=			'</thead>';
 	$pooltbl .=			'<tbody>';
 
-	if (is_array($a_pools)) {
-		$i = 0;
-		foreach ($a_pools as $poolent) {
-			if (!empty($poolent['range']['from']) && !empty($poolent['range']['to'])) {
-				$pooltbl .= '<tr>';
-				$pooltbl .= '<td ondblclick="document.location=\'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
-							htmlspecialchars($poolent['range']['from']) . '</td>';
+	$i = 0;
+	foreach (config_get_path("dhcpdv6/{$if}/pool", []) as $poolent) {
+		if (!empty($poolent['range']['from']) && !empty($poolent['range']['to'])) {
+			$pooltbl .= '<tr>';
+			$pooltbl .= '<td ondblclick="document.location=\'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
+						htmlspecialchars($poolent['range']['from']) . '</td>';
 
-				$pooltbl .= '<td ondblclick="document.location=\'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
-							htmlspecialchars($poolent['range']['to']) . '</td>';
+			$pooltbl .= '<td ondblclick="document.location=\'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
+						htmlspecialchars($poolent['range']['to']) . '</td>';
 
-				$pooltbl .= '<td ondblclick="document.location=\'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
-							htmlspecialchars($poolent['descr']) . '</td>';
+			$pooltbl .= '<td ondblclick="document.location=\'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
+						htmlspecialchars($poolent['descr']) . '</td>';
 
-				$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
+			$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-				$pooltbl .= ' <a class="fa-solid fa-trash-can" title="'. gettext("Delete pool") . '" href="services_dhcpv6.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
-				$pooltbl .= '</tr>';
-			}
-		$i++;
+			$pooltbl .= ' <a class="fa-solid fa-trash-can" title="'. gettext("Delete pool") . '" href="services_dhcpv6.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
+			$pooltbl .= '</tr>';
 		}
+		$i++;
 	}
 
 	$pooltbl .=			'</tbody>';
@@ -729,7 +719,7 @@ $tabscounter = 0;
 $i = 0;
 
 foreach ($iflist as $ifent => $ifname) {
-	init_config_arr(['dhcpdv6', $ifent]);
+	config_init_path("dhcpdv6/{$ifent}");
 
 	$oc = config_get_path("interfaces/{$ifent}");
 	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
@@ -858,7 +848,7 @@ if (is_ipaddrv6($ifcfgip)) {
 			$ranges[] = $subnet_range;
 		}
 
-		foreach ($a_pools as $p) {
+		foreach (config_get_path("dhcpdv6/{$if}/pool") as $p) {
 			$pa = array_get_path($p, 'range', []);
 			if (!empty($pa)) {
 				$pa['descr'] = trim($p['descr']);
@@ -914,7 +904,7 @@ $section->add($group);
 if (dhcp_is_backend('kea')):
 if (!is_numeric($pool) && !($act === 'newpool')) {
 	$has_pools = false;
-	if (is_array($a_pools) && (count($a_pools) > 0)) {
+	if (is_array(config_get_path("dhcpdv6/{$if}/pool")) && (count(config_get_path("dhcpdv6/{$if}/pool")) > 0)) {
 		$section->addInput(new Form_StaticText(
 			gettext('Additional Pools'),
 			build_pooltable()
@@ -1428,34 +1418,32 @@ if (!is_numeric($pool) && !($act === 'newpool')):
 			</thead>
 			<tbody>
 <?php
-if (is_array($a_maps)):
-	$i = 0;
-	foreach ($a_maps as $mapent):
-		if ($mapent['duid'] != "" or $mapent['ipaddrv6'] != ""):
+$i = 0;
+foreach (config_get_path("dhcpdv6/{$if}/staticmap", []) as $mapent):
+	if ($mapent['duid'] != "" or $mapent['ipaddrv6'] != ""):
 ?>
-				<tr>
-					<td>
-						<?=htmlspecialchars($mapent['duid'])?>
-					</td>
-					<td>
-						<?=htmlspecialchars($mapent['ipaddrv6'])?>
-					</td>
-					<td>
-						<?=htmlspecialchars($mapent['hostname'])?>
-					</td>
-					<td>
-						<?=htmlspecialchars($mapent['descr'])?>
-					</td>
-					<td>
-						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>"></a>
-						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete static mapping')?>" href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
-					</td>
-				</tr>
+			<tr>
+				<td>
+					<?=htmlspecialchars($mapent['duid'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($mapent['ipaddrv6'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($mapent['hostname'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($mapent['descr'])?>
+				</td>
+				<td>
+					<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>"></a>
+					<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete static mapping')?>" href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+				</td>
+			</tr>
 <?php
-		endif;
+	endif;
 	$i++;
-	endforeach;
-endif;
+endforeach;
 ?>
 			</tbody>
 		</table>

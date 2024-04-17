@@ -2892,13 +2892,13 @@ function upgrade_080_to_081() {
 
 		$xml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
 		foreach ($ds_arr as $ds) {
-			$xml = preg_replace("/$ds_search/s", "$ds{$ds_search}", $xml);
+			$xml = preg_replace("/{$ds_search}/s", "$ds{$ds_search}", $xml);
 		}
 		foreach ($cdp_arr as $cdp) {
-			$xml = preg_replace("/$cdp_search/s", "$cdp{$cdp_replace}", $xml);
+			$xml = preg_replace("/{$cdp_search}/s", "$cdp{$cdp_replace}", $xml);
 		}
 		foreach ($ds_arr as $ds) {
-			$xml = preg_replace("/$value_search/s", "$value{$value_replace}", $xml);
+			$xml = preg_replace("/{$value_search}/s", "$value{$value_replace}", $xml);
 		}
 
 		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $xml);

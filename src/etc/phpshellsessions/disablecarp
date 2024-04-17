@@ -25,9 +25,8 @@ require_once("interfaces.inc");
 require_once("util.inc");
 
 enable_carp(false);
-if (is_array($config['virtualip']['vip'])) {
-	init_config_arr(array('virtualip', 'vip'));
-	$viparr = &$config['virtualip']['vip'];
+$viparr = config_get_path('virtualip/vip');
+if (is_array($viparr)) {
 	foreach ($viparr as $vip) {
 		switch ($vip['mode']) {
 			case "carp":

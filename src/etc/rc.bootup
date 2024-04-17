@@ -146,7 +146,7 @@ echo "done.\n";
  */
 while (is_interface_mismatch() == true) {
 	led_assigninterfaces();
-	if (isset($config['revision'])) {
+	if (config_get_path('revision') !== null) {
 		if (file_exists("{$g['tmp_path']}/missing_interfaces")) {
 			echo "Warning: Configuration references interfaces that do not exist: " . file_get_contents("{$g['tmp_path']}/missing_interfaces") . "\n";
 		}
@@ -231,9 +231,8 @@ echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
 
-if (isset($config['system']['mds_disable']) &&
-    (strlen($config['system']['mds_disable']) > 0)) {
-	set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);
+if (strlen(config_get_path('system/mds_disable', '')) > 0) {
+	set_single_sysctl("hw.mds_disable" , (int)config_get_path('system/mds_disable'));
 }
 
 /* remove leftover dhcp6c lock file if it exist */
@@ -259,8 +258,8 @@ if (!$debugging) {
 system_hosts_generate();
 
 /* start sshd */
-init_config_arr(array('system', 'ssh'));
-if (isset($config['system']['ssh']['enable'])) {
+config_init_path('system/ssh');
+if (config_path_enabled('system/ssh')) {
 	echo "Starting Secure Shell Services...";
 	send_event("service reload sshd");
 	echo "done.\n";
@@ -290,10 +289,10 @@ echo "Setting up static routes...";
 system_routing_configure();
 echo "done.\n";
 
-init_config_arr(array('unbound'));
-init_config_arr(array('dnsmasq'));
-if (isset($config['unbound']['enable']) ||
-    isset($config['dnsmasq']['enable'])) {
+config_init_path('unbound');
+config_init_path('dnsmasq');
+if (config_path_enabled('unbound') ||
+    config_path_enabled('dnsmasq')) {
 	echo "Setting up DNSs...\n";
 	/* start dnsmasq service */
 	services_dnsmasq_configure();
@@ -417,9 +416,10 @@ enable_rrd_graphing();
 enable_watchdog();
 
 /* if <system><afterbootupshellcmd> exists, execute the command */
-if ($config['system']['afterbootupshellcmd'] <> "") {
-	echo "Running afterbootupshellcmd {$config['system']['afterbootupshellcmd']}\n";
-	mwexec($config['system']['afterbootupshellcmd']);
+$afterbootupshellcmd = config_get_path('system/afterbootupshellcmd', '');
+if (!empty($afterbootupshellcmd)) {
+	echo "Running afterbootupshellcmd {$afterbootupshellcmd}\n";
+	mwexec($afterbootupshellcmd);
 }
 
 if ($physmem < $g['minimum_ram_warning']) {
@@ -482,9 +482,9 @@ if ($ipsec_dynamic_hosts) {
 
 	/* restart dpinger if PH1 remote gateway == fqdn and PH2 mode == VTI
 	 * see https://redmine.pfsense.org/issues/12763 */
-	foreach ($config['ipsec']['phase1'] as $p1) {
+	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if (!isset($p1['mobile']) && !isset($p1['disabled']) && is_fqdn($p1['remote-gateway'])) {
-			foreach ($config['ipsec']['phase2'] as $p2) {
+			foreach (config_get_path('ipsec/phase2', []) as $p2) {
 				if (!isset($p2['disabled']) && ($p2['mode'] == 'vti')) {
 					setup_gateways_monitor();
 					break 2;

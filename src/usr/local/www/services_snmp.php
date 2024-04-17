@@ -35,13 +35,13 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['snmpd'])) {
+if (!is_array(config_get_path('snmpd'))) {
 	config_set_path('snmpd', array());
 	config_set_path('snmpd/rocommunity', "public");
 	config_set_path('snmpd/pollport', "161");
 }
 
-if (!is_array($config['snmpd']['modules'])) {
+if (!is_array(config_get_path('snmpd/modules'))) {
 	config_set_path('snmpd/modules', array());
 	config_set_path('snmpd/modules/mibii', true);
 	config_set_path('snmpd/modules/netgraph', true);
@@ -52,7 +52,7 @@ if (!is_array($config['snmpd']['modules'])) {
 	config_set_path('snmpd/modules/regex', true);
 }
 
-$pconfig['enable'] = isset($config['snmpd']['enable']);
+$pconfig['enable'] = config_path_enabled('snmpd');
 $pconfig['pollport'] = config_get_path('snmpd/pollport');
 $pconfig['syslocation'] = config_get_path('snmpd/syslocation');
 $pconfig['syscontact'] = config_get_path('snmpd/syscontact');
@@ -61,24 +61,24 @@ $pconfig['rocommunity'] = config_get_path('snmpd/rocommunity');
 $pconfig['rwenable'] = isset($config['snmpd']['rwenable']);
 $pconfig['rwcommunity'] = $config['snmpd']['rwcommunity'];
 */
-$pconfig['trapenable'] = isset($config['snmpd']['trapenable']);
+$pconfig['trapenable'] = config_path_enabled('snmpd', 'trapenable');
 $pconfig['trapserver'] = config_get_path('snmpd/trapserver');
 $pconfig['trapserverport'] = config_get_path('snmpd/trapserverport');
 $pconfig['trapstring'] = config_get_path('snmpd/trapstring');
 
-$pconfig['mibii'] = isset($config['snmpd']['modules']['mibii']);
-$pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
-$pconfig['pf'] = isset($config['snmpd']['modules']['pf']);
-$pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
-$pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
-$pconfig['ucd'] = isset($config['snmpd']['modules']['ucd']);
-$pconfig['regex'] = isset($config['snmpd']['modules']['regex']);
+$pconfig['mibii'] = config_path_enabled('snmpd/modules', 'mibii');
+$pconfig['netgraph'] = config_path_enabled('snmpd/modules', 'netgraph');
+$pconfig['pf'] = config_path_enabled('snmpd/modules', 'pf');
+$pconfig['hostres'] = config_path_enabled('snmpd/modules', 'hostres');
+$pconfig['bridge'] = config_path_enabled('snmpd/modules', 'bridge');
+$pconfig['ucd'] = config_path_enabled('snmpd/modules', 'ucd');
+$pconfig['regex'] = config_path_enabled('snmpd/modules', 'regex');
 
 $pconfig['ipprotocol'] = config_get_path('snmpd/ipprotocol');
-if (empty($config['snmpd']['bindip'])) {
+if (empty(config_get_path('snmpd/bindip'))) {
 	$pconfig['bindip'] = array();
 } else {
-	$pconfig['bindip'] = explode(",", $config['snmpd']['bindip']);
+	$pconfig['bindip'] = explode(",", config_get_path('snmpd/bindip'));
 }
 
 if ($_POST) {

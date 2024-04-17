@@ -31,7 +31,7 @@ require_once("interfaces.inc");
 require_once("gwlb.inc");
 
 function handle_argument_group($iface, $action) {
-	global $g, $config;
+	global $g;
 
 	if (empty(config_get_path("interfaces/{$iface}"))) {
 		log_error("Cannot find interface configuration for {$iface}");

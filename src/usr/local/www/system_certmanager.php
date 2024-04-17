@@ -787,7 +787,6 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	// Return an array containing the IDs od all CSRs
 	function list_csrs() {
-		global $config;
 		$allCsrs = array();
 
 		foreach (config_get_path('cert', []) as $cert) {

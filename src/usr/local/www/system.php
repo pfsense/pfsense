@@ -38,60 +38,60 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system.inc");
 
-$pconfig['hostname'] = $config['system']['hostname'];
-$pconfig['domain'] = $config['system']['domain'];
-$pconfig['dnsserver'] = $config['system']['dnsserver'];
+$pconfig['hostname'] = config_get_path('system/hostname');
+$pconfig['domain'] = config_get_path('system/domain');
+$pconfig['dnsserver'] = config_get_path('system/dnsserver');
 
 $arr_gateways = get_gateways();
 
 // set default columns to two if unset
-if (!isset($config['system']['webgui']['dashboardcolumns'])) {
+if (!config_path_enabled('system/webgui', 'dashboardcolumns')) {
 	config_set_path('system/webgui/dashboardcolumns', 2);
 }
 
 // set default language if unset
-if (!isset($config['system']['language'])) {
+if (!config_path_enabled('system', 'language')) {
 	config_set_path('system/language', g_get('language'));
 }
 
 $dnshost_counter = 1;
 
-while (isset($config["system"]["dns{$dnshost_counter}host"])) {
+while (config_path_enabled("system", "dns{$dnshost_counter}host")) {
 	$pconfig_dnshost_counter = $dnshost_counter - 1;
-	$pconfig["dnshost{$pconfig_dnshost_counter}"] = $config["system"]["dns{$dnshost_counter}host"];
+	$pconfig["dnshost{$pconfig_dnshost_counter}"] = config_get_path("system/dns{$dnshost_counter}host");
 	$dnshost_counter++;
 }
 
 $dnsgw_counter = 1;
 
-while (isset($config["system"]["dns{$dnsgw_counter}gw"])) {
+while (config_get_path("system/dns{$dnsgw_counter}gw") !== null) {
 	$pconfig_dnsgw_counter = $dnsgw_counter - 1;
-	$pconfig["dnsgw{$pconfig_dnsgw_counter}"] = $config["system"]["dns{$dnsgw_counter}gw"];
+	$pconfig["dnsgw{$pconfig_dnsgw_counter}"] = config_get_path("system/dns{$dnsgw_counter}host");
 	$dnsgw_counter++;
 }
 
-$pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
-$pconfig['timezone'] = $config['system']['timezone'];
-$pconfig['timeservers'] = $config['system']['timeservers'];
-$pconfig['language'] = $config['system']['language'];
-$pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
-$pconfig['logincss'] = $config['system']['webgui']['logincss'];
-$pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
-$pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
-$pconfig['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
-$pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
-$pconfig['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
-$pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
-$pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
-$pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
-$pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
-$pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
-$pconfig['dnslocalhost'] = $config['system']['dnslocalhost'];
+$pconfig['dnsallowoverride'] = config_path_enabled('system', 'dnsallowoverride');
+$pconfig['timezone'] = config_get_path('system/timezone');
+$pconfig['timeservers'] = config_get_path('system/timeservers');
+$pconfig['language'] = config_get_path('system/language');
+$pconfig['webguicss'] = config_get_path('system/webgui/webguicss');
+$pconfig['logincss'] = config_get_path('system/webgui/logincss');
+$pconfig['webguifixedmenu'] = config_get_path('system/webgui/webguifixedmenu');
+$pconfig['dashboardcolumns'] = config_get_path('system/webgui/dashboardcolumns');
+$pconfig['interfacessort'] = config_path_enabled('system/webgui', 'interfacessort');
+$pconfig['webguileftcolumnhyper'] = config_path_enabled('system/webgui', 'webguileftcolumnhyper');
+$pconfig['disablealiaspopupdetail'] = config_path_enabled('system/webgui', 'disablealiaspopupdetail');
+$pconfig['dashboardavailablewidgetspanel'] = config_path_enabled('system/webgui', 'dashboardavailablewidgetspanel');
+$pconfig['systemlogsfilterpanel'] = config_path_enabled('system/webgui', 'systemlogsfilterpanel');
+$pconfig['systemlogsmanagelogpanel'] = config_path_enabled('system/webgui', 'systemlogsmanagelogpanel');
+$pconfig['statusmonitoringsettingspanel'] = config_path_enabled('system/webgui', 'statusmonitoringsettingspanel');
+$pconfig['webguihostnamemenu'] = config_get_path('system/webgui/webguihostnamemenu');
+$pconfig['dnslocalhost'] = config_get_path('system/dnslocalhost');
 //$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
-$pconfig['roworderdragging'] = isset($config['system']['webgui']['roworderdragging']);
-$pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
-$pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
-$pconfig['requirefirewallinterface'] = isset($config['system']['webgui']['requirefirewallinterface']);
+$pconfig['roworderdragging'] = config_path_enabled('system/webgui', 'roworderdragging');
+$pconfig['loginshowhost'] = config_path_enabled('system/webgui', 'loginshowhost');
+$pconfig['requirestatefilter'] = config_path_enabled('system/webgui', 'requirestatefilter');
+$pconfig['requirefirewallinterface'] = config_path_enabled('system/webgui', 'requirefirewallinterface');
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
@@ -266,8 +266,8 @@ if ($_POST) {
 		$pconfig['dnsserver'] = $dnslist;
 	} else {
 		// input validation passed, so we can proceed with removing static routes for dead DNS gateways
-		if (is_array($config['system']['dnsserver'])) {
-		  	$dns_servers_arr = $config['system']['dnsserver'];
+		if (is_array(config_get_path('system/dnsserver'))) {
+		  	$dns_servers_arr = config_get_path('system/dnsserver');
 	 		foreach ($dns_servers_arr as $arr_index => $this_dnsserver) {
 				$i = (int)$arr_index + 1;
 				$this_dnsgw = config_get_path("system/dns{$i}gw");
@@ -281,12 +281,14 @@ if ($_POST) {
 			}
 		}
 
-		update_if_changed("hostname", $config['system']['hostname'], $_POST['hostname']);
-		update_if_changed("domain", $config['system']['domain'], $_POST['domain']);
-		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
-		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
+		$system_config = config_get_path('system');
+		update_if_changed("hostname", $system_config['hostname'], $_POST['hostname']);
+		update_if_changed("domain", $system_config['domain'], $_POST['domain']);
+		update_if_changed("timezone", $system_config['timezone'], $_POST['timezone']);
+		update_if_changed("NTP servers", $system_config['timeservers'], strtolower($_POST['timeservers']));
+		config_set_path('system', $system_config);
 
-		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
+		if ($_POST['language'] && $_POST['language'] != config_get_path('system/language')) {
 			config_set_path('system/language', $_POST['language']);
 			set_language();
 		}
@@ -354,7 +356,7 @@ if ($_POST) {
 		config_set_path('system/webgui/requirefirewallinterface', $_POST['requirefirewallinterface'] ? true : false);
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
-		$olddnsservers = $config['system']['dnsserver'];
+		$olddnsservers = config_get_path('system/dnsserver');
 		config_del_path('system/dnsserver');
 
 		$dnscounter = 0;
@@ -362,16 +364,16 @@ if ($_POST) {
 
 		while (isset($_POST[$dnsname])) {
 			if ($_POST[$dnsname]) {
-				$config['system']['dnsserver'][] = $_POST[$dnsname];
+				config_set_path('system/dnsserver/', $_POST[$dnsname]);
 			}
 			$dnscounter++;
 			$dnsname = "dns{$dnscounter}";
 		}
 
 		// Remember the new list for display also.
-		$pconfig['dnsserver'] = $config['system']['dnsserver'];
+		$pconfig['dnsserver'] = config_get_path('system/dnsserver');
 
-		$olddnsallowoverride = $config['system']['dnsallowoverride'];
+		$olddnsallowoverride = config_get_path('system/dnsallowoverride');
 
 		config_del_path('system/dnsallowoverride');
 		config_set_path('system/dnsallowoverride', $_POST['dnsallowoverride'] ? true : false);
@@ -409,9 +411,9 @@ if ($_POST) {
 			$thisdnshostname = $pconfig[$dnshostname];
 
 			// "Blank" out the settings for this index, then we set them below using the "outdnscounter" index.
-			$config['system'][$dnsgwconfigname] = "none";
+			config_set_path("system/{$dnsgwconfigname}", 'none');
 			$pconfig[$dnsgwname] = "none";
-			$config['system'][$dnshostconfigname] = "";
+			config_set_path("system/{$dnshostconfigname}", '');
 			$pconfig[$dnshostname] = "";
 			$pconfig[$dnsname] = "";
 
@@ -436,7 +438,7 @@ if ($_POST) {
 
 				$pconfig[$outdnsname] = $_POST[$dnsname];
 				if ($_POST[$dnsgwname]) {
-					$config['system'][$outdnsgwconfigname] = $thisdnsgwname;
+					config_set_path("system/{$outdnsgwconfigname}", $thisdnsgwname);
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
 				} else {
 					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
@@ -444,7 +446,7 @@ if ($_POST) {
 					$pconfig[$outdnsgwname] = "";
 				}
 				if ($_POST[$dnshostname]) {
-					$config['system'][$outdnshostconfigname] = $thisdnshostname;
+					config_set_path("system/{$outdnshostconfigname}", $thisdnshostname);
 					$pconfig[$outdnshostname] = $thisdnshostname;
 				} else {
 					// Note: when no DNS hostname is chosen, unset the value.
@@ -462,8 +464,8 @@ if ($_POST) {
 		// clean up dnsgw orphans
 		$oldgwcounter = 1;
 		$olddnsgwconfigname = "dns{$oldgwcounter}gw";
-		while (isset($config['system'][$olddnsgwconfigname])) {
-			if (empty($config['system']['dnsserver'][$oldgwcounter - 1])) {
+		while (config_get_path("system/{$olddnsgwconfigname}") !== null) {
+			if (empty(config_get_path('system/dnsserver/' . ($oldgwcounter - 1)))) {
 				config_del_path("system/{$olddnsgwconfigname}");
 			}
 			$oldgwcounter++;
@@ -481,15 +483,15 @@ if ($_POST) {
 		$retval |= system_hostname_configure();
 		$retval |= system_hosts_generate();
 		$retval |= system_resolvconf_generate();
-		if (isset($config['dnsmasq']['enable'])) {
+		if (config_path_enabled('dnsmasq')) {
 			$retval |= services_dnsmasq_configure();
-		} elseif (isset($config['unbound']['enable'])) {
+		} elseif (config_path_enabled('unbound')) {
 			$retval |= services_unbound_configure();
 		}
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();
 
-		if ($olddnsallowoverride != $config['system']['dnsallowoverride']) {
+		if ($olddnsallowoverride != config_get_path('system/dnsallowoverride')) {
 			$retval |= send_event("service reload dns");
 		}
 

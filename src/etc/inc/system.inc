@@ -2210,7 +2210,7 @@ function system_ntp_setup_gps($serialport) {
 		return false;
 	}
 
-	init_config_arr(array('ntpd', 'gps'));
+	config_init_path('ntpd/gps');
 	$serialports = get_serial_ports(true);
 
 	if (!array_key_exists($serialport, $serialports)) {
@@ -2337,7 +2337,7 @@ function system_ntp_configure() {
 
 	safe_mkdir($statsdir);
 
-	init_config_arr(array('ntpd'));
+	config_init_path('ntpd');
 
 	// ntpd is disabled, just stop it and return
 	if (config_get_path('ntpd/enable') == 'disabled') {

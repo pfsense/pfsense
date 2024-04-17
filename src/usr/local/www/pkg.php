@@ -90,15 +90,16 @@ if ($_REQUEST['display_maximum_rows']) {
 	}
 }
 
-$config_path = sprintf('installedpackages/%s/config', xml_safe_fieldname($pkg['name']));
+$pkg_config_path = sprintf('installedpackages/%s', xml_safe_fieldname($pkg['name']));
+config_init_path("{$pkg_config_path}/config");
 
-$evaledvar = config_get_path($config_path, []);
+$evaledvar = config_get_path("{$pkg_config_path}/config");
 
 if ($_POST['act'] == "update") {
 
-	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_POST['ids'] !="") {
+	if (is_array(config_get_path($pkg_config_path)) && $pkg['name'] != "" && $_POST['ids'] !="") {
 		// get current values
-		$current_values=config_get_path("installedpackages/{$pkg['name']}/config");
+		$current_values = config_get_path("{$pkg_config_path}/config");
 		// get updated ids
 		parse_str($_POST['ids'], $update_list);
 		// sort ids to know what to change
@@ -107,7 +108,7 @@ if ($_POST['act'] == "update") {
 		sort($sort_list);
 		// apply updates
 		foreach ($update_list['ids'] as $key=> $value) {
-			$config['installedpackages'][$pkg['name']]['config'][$sort_list[$key]]=$current_values[$update_list['ids'][$key]];
+			config_set_path("{$pkg_config_path}/config/{$sort_list[$key]}", $current_values[$update_list['ids'][$key]]);
 		}
 		// save current config
 		write_config(gettext("Package configuration changes saved from package settings page."));
@@ -129,11 +130,8 @@ if ($_REQUEST['act'] == "del") {
 		}
 	}
 
-	init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
-	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
-
-	if ($a_pkg[$_REQUEST['id']]) {
-		unset($a_pkg[$_REQUEST['id']]);
+	if (config_get_path("{$pkg_config_path}/config/{$_REQUEST['id']}")) {
+		config_del_path("{$pkg_config_path}/config/{$_REQUEST['id']}");
 		write_config(gettext("Package configuration item deleted from package settings page."));
 		if ($pkg['custom_delete_php_command'] != "") {
 			if ($pkg['custom_php_command_before_form'] != "") {
@@ -149,7 +147,7 @@ if ($_REQUEST['act'] == "del") {
 ob_start();
 
 $iflist = get_configured_interface_with_descr(true);
-$evaledvar = config_get_path($config_path, []);
+$evaledvar = config_get_path("{$pkg_config_path}/config");
 
 if ($pkg['custom_php_global_functions'] != "") {
 	eval($pkg['custom_php_global_functions']);

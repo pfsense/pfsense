@@ -137,7 +137,7 @@ function upload($basename) {
     } else {
         // Update last pfS backup time
         $fd = fopen("/cf/conf/lastpfSbackup.txt", "w");
-        fwrite($fd, $config['revision']['time']);
+        fwrite($fd, config_get_path('revision/time'));
         fclose($fd);
         $notice_text = "End of configuration backup to " . $upload_url . " (success).";
         log_error($notice_text);

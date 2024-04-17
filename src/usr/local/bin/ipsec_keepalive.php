@@ -23,15 +23,14 @@
 include_once('ipsec.inc');
 include_once('service-utils.inc');
 include_once('gwlb.inc');
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
-global $config;
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/phase2');
 
 $debug = false;
 
 /* Check if there are any tunnels defined, bail if not */
 /* Check if IPsec is enabled and running, bail if disabled or stopped */
-if (empty($config['ipsec']['phase2']) ||
+if (empty(config_get_path('ipsec/phase2')) ||
     !ipsec_enabled() ||
     !get_service_status(array('name' => 'ipsec'))) {
 	if ($debug) {

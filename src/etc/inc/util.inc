@@ -1494,17 +1494,12 @@ function build_vip_list($fif, $family = "all") {
 }
 
 function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
-	global $config;
-
 	$list = array();
-	if (!array_key_exists('virtualip', $config) ||
-		!is_array($config['virtualip']) ||
-	    !is_array($config['virtualip']['vip']) ||
-	    empty($config['virtualip']['vip'])) {
+	$viparr = config_get_path('virtualip/vip');
+	if (!is_array($viparr) || empty($viparr)) {
 		return ($list);
 	}
 
-	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 
 		if ($type == VIP_CARP) {
@@ -1558,16 +1553,11 @@ function get_configured_vip_subnetv6($vipinterface = '') {
 }
 
 function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
-	global $config;
-
-	if (empty($vipinterface) ||
-	    !is_array($config['virtualip']) ||
-	    !is_array($config['virtualip']['vip']) ||
-	    empty($config['virtualip']['vip'])) {
+	$viparr = config_get_path('virtualip/vip');
+	if (empty($vipinterface) || !is_array($viparr) || empty($viparr)) {
 		return (NULL);
 	}
 
-	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias") {
 			continue;
@@ -1696,8 +1686,6 @@ function get_configured_interface_with_descr(bool $with_disabled = false) : arra
  *
  */
 function get_configured_ip_addresses() {
-	global $config;
-
 	if (!function_exists('get_interface_ip')) {
 		require_once("interfaces.inc");
 	}
@@ -1717,7 +1705,7 @@ function get_configured_ip_addresses() {
 	}
 
 	/* pppoe server */
-	if (is_array($config['pppoes']) && is_array($config['pppoes']['pppoe'])) {
+	if (is_array(config_get_path('pppoes/pppoe'))) {
 		foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
 			if ($pppoe['mode'] == "server") {
 				if (is_ipaddr($pppoe['localip'])) {
@@ -1764,7 +1752,6 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
  *			status (much slower)
  */
 function get_interface_list($mode = "active", $keyby = "physical", $vfaces = false) {
-	global $config;
 	$upints = array();
 	/* get a list of virtual interface types */
 	if (!$vfaces) {
@@ -1860,7 +1847,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 					$toput['ipaddr'] = $aip[1];
 				}
 			}
-			if (is_array($config['interfaces'])) {
+			if (is_array(config_get_path('interfaces'))) {
 				foreach (config_get_path('interfaces', []) as $name => $int) {
 					if ($int['if'] == $ifname) {
 						$friendly = $name;
@@ -1893,10 +1880,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 }
 
 function get_lagg_interface_list() {
-	global $config;
-
 	$plist = array();
-	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+	if (is_array(config_get_path('laggs/lagg'))) {
 		foreach (config_get_path('laggs/lagg', []) as $lagg) {
 			$lagg['mac'] = get_interface_mac($lagg['laggif']);
 			$lagg['islagg'] = true;
@@ -1988,7 +1973,7 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 		// run in foreground, and (optionally) log if nonzero return
 		$outputarray = array();
 		exec("$command 2>&1", $outputarray, $retval);
-		if (($retval <> 0) && (!$nologentry || isset($config['system']['developerspew']))) {
+		if (($retval <> 0) && (!$nologentry || config_path_enabled('system', 'developerspew'))) {
 			log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, implode(" ", $outputarray)));
 		}
 	}
@@ -2167,10 +2152,10 @@ function xml_safe_fieldname($fieldname) {
 }
 
 function mac_format($clientmac) {
-	global $config, $cpzone;
+	global $cpzone;
 
 	$mac = explode(":", $clientmac);
-	$mac_format = $cpzone ? $config['captiveportal'][$cpzone]['radmac_format'] : false;
+	$mac_format = $cpzone ? config_get_path("captiveportal/{$cpzone}/radmac_format") : false;
 
 	switch ($mac_format) {
 		case 'singledash':
@@ -2603,12 +2588,12 @@ function is_interface_vlan_mismatch() {
 }
 
 function is_interface_mismatch() {
-	global $config, $g;
+	global $g;
 
 	$do_assign = false;
 	$i = 0;
 	$missing_interfaces = array();
-	if (is_array($config['interfaces'])) {
+	if (is_array(config_get_path('interfaces'))) {
 		foreach (config_get_path('interfaces', []) as $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
@@ -2627,7 +2612,7 @@ function is_interface_mismatch() {
 
 	/* VLAN/QinQ-only interface mismatch detection
 	 * see https://redmine.pfsense.org/issues/12170 */
-	init_config_arr(array('vlans', 'vlan'));
+	config_init_path('vlans/vlan');
 	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if (!does_interface_exist($vlan['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
@@ -2635,7 +2620,7 @@ function is_interface_mismatch() {
 			$do_assign = true;
 		}
 	}
-	init_config_arr(array('qinqs', 'qinqentry'));
+	config_init_path('qinqs/qinqentry');
 	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
 		if (!does_interface_exist($qinq['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $qinq['if'])) {
@@ -2929,8 +2914,6 @@ function is_dynamic_route(string $target, string $ipprotocol = ''): bool {
 
 /* Get static route for specific destination */
 function route_get($target, $ipprotocol = '', $useroute = false) {
-	global $config;
-
 	if (!empty($ipprotocol)) {
 		$family = $ipprotocol;
 	} else if (is_v4($target)) {
@@ -2954,7 +2937,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 			return array();
 		} elseif ($interface == 'lo0') {
 			// interface assigned IP address
-			foreach (array_keys($config['interfaces']) as $intf) {
+			foreach (array_keys(config_get_path('interfaces')) as $intf) {
 				if ((($inet == '4') && (get_interface_ip($intf) == $target)) ||
 				    (($inet == '6') && (get_interface_ipv6($intf) == $target))) {
 					$interface = convert_friendly_interface_to_real_interface_name($intf);
@@ -3010,8 +2993,6 @@ function route_get_default($ipprotocol) {
 
 /* Delete a static route */
 function route_del($target, $ipprotocol = '') {
-	global $config;
-
 	if (empty($target)) {
 		return;
 	}
@@ -3056,7 +3037,7 @@ function route_del($target, $ipprotocol = '') {
 		exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
 		    "{$target} {$gw}"), $output, $rc);
 
-		if (isset($config['system']['route-debug'])) {
+		if (config_path_enabled('system', 'route-debug')) {
 			log_error("ROUTING debug: " . microtime() .
 			    " - DEL RC={$rc} - {$target} - gw: " . $gw);
 			file_put_contents("/dev/console", "\n[" . getmypid() .
@@ -3078,8 +3059,6 @@ function route_del($target, $ipprotocol = '') {
  */
 function route_add_or_change($target, $gw, $iface = '', $args = '',
     $ipprotocol = '') {
-	global $config;
-
 	if (empty($target) || (empty($gw) && empty($iface))) {
 		return false;
 	}
@@ -3135,7 +3114,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
 	    "{$target} {$args} {$params}"), $output, $rc);
 
-	if (isset($config['system']['route-debug'])) {
+	if (config_path_enabled('system', 'route-debug')) {
 		log_error("ROUTING debug: " . microtime() .
 		    " - ADD RC={$rc} - {$target} {$args}");
 		file_put_contents("/dev/console", "\n[" . getmypid() .
@@ -3147,11 +3126,9 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 }
 
 function set_ipv6routes_mtu($interface, $mtu) {
-	global $config;
-
 	$ipv6mturoutes = array();
 	$if = convert_real_interface_to_friendly_interface_name($interface);
-	if (!$config['interfaces'][$if]['ipaddrv6']) {
+	if (!config_get_path("interfaces/{$if}/ipaddrv6")) {
 		return;
 	}
 	$a_gateways = get_gateways();
@@ -3207,11 +3184,9 @@ function alias_to_subnets_recursive($name, $returnhostnames = false) {
 }
 
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
-	global $config;
-
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
-	init_config_arr(array('staticroutes', 'route'));
-	if (empty($config['staticroutes']['route'])) {
+	config_init_path('staticroutes/route');
+	if (empty(config_get_path('staticroutes/route'))) {
 		return array();
 	}
 
@@ -3751,7 +3726,7 @@ function array_del_path(array &$arr, string $path) {
 
 
 function dhcpd_date_adjust_gmt($dt) {
-	init_config_arr(array('dhcpd'));
+	config_init_path('dhcpd');
 
 	foreach (config_get_path('dhcpd', []) as $dhcpditem) {
 		if (empty($dhcpditem)) {
@@ -4489,7 +4464,7 @@ function dummynet_load_module($max_qlimit) {
 			"net.inet.ip.dummynet.hash_size" => "256",
 			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 	));
-	init_config_arr(array('sysctl', 'item'));
+	config_init_path('sysctl/item');
 	foreach (config_get_path('sysctl/item', []) as $item) {
 		if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
 			$sysctls[$item['tunable']] = $item['value'];
@@ -4499,10 +4474,9 @@ function dummynet_load_module($max_qlimit) {
 }
 
 function get_interface_vip_ips($interface) {
-	global $config;
 	$vipips = '';
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if (($vip['interface'] == $interface) &&
 		    (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {

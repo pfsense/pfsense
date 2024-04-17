@@ -396,7 +396,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 		$field = new Form_Select(
 			'fwbranch',
 			'*Branch',
-			pkg_get_repo_name($config['system']['pkg_repo_conf_path']),
+			pkg_get_repo_name(config_get_path('system/pkg_repo_conf_path')),
 			pkg_build_repo_list()
 		);
 
@@ -592,8 +592,7 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 			break;
 
 		case 'reinstallall':
-			if (is_array($config['installedpackages']) &&
-			    is_array($config['installedpackages']['package'])) {
+			if (is_array(config_get_path('installedpackages/package'))) {
 				/*
 				 * We don't show the progress bar for
 				 * reinstallall. It would be far too confusing

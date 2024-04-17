@@ -43,7 +43,7 @@ $pgtitle = array(gettext("Status"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
 include("head.inc");
 
-if (!isset($config['shaper']['queue']) || !is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
+if (count(config_get_path('shaper/queue', [])) < 1) {
 	print_info_box(gettext("Traffic shaping is not configured."));
 	include("foot.inc");
 	exit;

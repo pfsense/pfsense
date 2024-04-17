@@ -96,13 +96,8 @@ function cpu_usage() {
 }
 
 function get_pfstate($percent=false) {
-	global $config;
 	$matches = "";
-	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
-		$maxstates="{$config['system']['maximumstates']}";
-	} else {
-		$maxstates=pfsense_default_state_size();
-	}
+	$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 		$curentries = $matches[1];
@@ -434,7 +429,6 @@ function get_load_average() {
 }
 
 function get_interfacestats() {
-	global $config;
 	//build interface list for widget use
 	$ifdescrs = get_configured_interface_list();
 
@@ -474,7 +468,6 @@ function get_interfacestats() {
 
 function get_interfacestatus() {
 	$data = "";
-	global $config;
 
 	//build interface list for widget use
 	$ifdescrs = get_configured_interface_with_descr();

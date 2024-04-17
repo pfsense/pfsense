@@ -7,32 +7,17 @@
  *
  */
 
-global $config;
-$config = parse_config(true);
+// parse config.xml
+config_set_path('', parse_config(true));
 
 refresh_gateways(); // make sure we're working on a current gateway list
 $a_gateways = get_gateways(GW_CACHE_INDEXED);
-
-// find gw interfaces os names (em0, vtnet1, etc):
-$restartifs = array();
-for ($id=0; $id<count($a_gateways); $id++) {
-	array_push($restartifs,$a_gateways[$id]['interface']);
-}
-$restartifs = array_unique($restartifs);
-
-// find gw interfaces pfsense names (wan, opt1, etc):
-$names_restart = array();
-while ($int = current($config['interfaces'])) {
-	if (in_array($int['if'], $restartifs)) {
-		array_push($names_restart,key($config['interfaces']));
-	}
-	next($config['interfaces']);
-}
+$names_restart = array_unique(array_column($a_gateways, 'friendlyiface'));
 
 foreach ($names_restart as $id) {
-	interface_bring_down($id, true, $config['interfaces'][$id]);
-if (isset($config['dhcpd'][$id]['enable']) || 
-	isset($config['dhcpdv6'][$id]['enable'])) {
+	interface_bring_down($id, true, config_get_path("interfaces/{$id}"));
+	if (config_path_enabled("dhcpd/{$id}") || 
+	    config_path_enabled("dhcpdv6/{$id}")) {
 		services_dhcpd_configure();
 	}
 	printf("Interface %s is disabled\n", $id);
@@ -41,10 +26,10 @@ if (isset($config['dhcpd'][$id]['enable']) ||
 sleep (1);
 
 foreach ($names_restart as $id) {
-	interface_bring_down($id, false, $config['interfaces'][$id]);
+	interface_bring_down($id, false, config_get_path("interfaces/{$id}"));
 	interface_configure($id, true);
-	if ($config['interfaces'][$id]['ipaddrv6'] == 'track6') {
-		$wancfg = $config['interfaces'][$id];
+	if (config_get_path("interfaces/{$id}/ipaddrv6") == 'track6') {
+		$wancfg = config_get_path("interfaces/{$id}");
 		interface_track6_configure($id, $wancfg, true);
 	}
 	printf("Interface %s is enabled\n", $id);

@@ -113,7 +113,7 @@ EOT;
 
 	public function __toString()
 	{
-		global $config, $user_settings;
+		global $user_settings;
 
 		$element = parent::__toString();
 

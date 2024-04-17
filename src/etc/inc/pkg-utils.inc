@@ -792,7 +792,7 @@ function install_package_xml($package_name) {
 	/* add package information to config.xml */
 	$pkgid = get_package_id($pkg_info['name']);
 	update_status(gettext("Saving updated package information...") . "\n");
-	init_config_arr(array('installedpackages', 'package'));
+	config_init_path('installedpackages/package');
 	$pkgs = config_get_path('installedpackages/package', []);
 	if ($pkgid == -1) {
 		$pkgs[] = $pkg_info;
@@ -905,7 +905,7 @@ function install_package_xml($package_name) {
 	}
 	/* sidebar items */
 	if (is_array($pkg_config['menu'])) {
-		init_config_arr(array('installedpackages', 'menu'));
+		config_init_path('installedpackages/menu');
 		$menus = config_get_path('installedpackages/menu', []);
 		update_status(gettext("Menu items... "));
 		foreach ($pkg_config['menu'] as $menu) {
@@ -920,7 +920,7 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	/* services */
-	init_config_arr(array('installedpackages', 'service'));
+	config_init_path('installedpackages/service');
 	if (is_array($pkg_config['service'])) {
 		update_status(gettext("Services... "));
 		$services = config_get_path('installedpackages/service', []);
@@ -942,7 +942,7 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	if (is_array($pkg_config['tabs'])) {
-		init_config_arr(array('installedpackages', 'package', $pkgid, 'tabs'));
+		config_init_path("installedpackages/package/{$pkgid}/tabs");
 		config_set_path("installedpackages/package/{$pkgid}/tabs",$pkg_config['tabs']);
 	}
 	/* plugins */
@@ -950,7 +950,7 @@ function install_package_xml($package_name) {
 		config_set_path("installedpackages/package/{$pkgid}/include_file", $pkg_config['include_file']);
 	}
 	if (is_array($pkg_config['plugins'])) {
-		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins'));
+		config_init_path("installedpackages/package/{$pkgid}/plugins");
 		config_set_path("installedpackages/package/{$pkgid}/plugins", $pkg_config['plugins']);
 	}
 
@@ -987,11 +987,11 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	update_status(sprintf(gettext("Removing %s components..."),
 	    $package_name) . "\n");
 	/* parse package configuration */
-	init_config_arr(array('installedpackages', 'package', $pkgid));
+	config_init_path("installedpackages/package/{$pkgid}");
 	$pkg_info = config_get_path("installedpackages/package/{$pkgid}",[]);
-	init_config_arr(array('installedpackages', 'menu'));
+	config_init_path('installedpackages/menu');
 	$menus = config_get_path('installedpackages/menu', []);
-	init_config_arr(array('installedpackages', 'service'));
+	config_init_path('installedpackages/service');
 	$services = config_get_path('installedpackages/service', []);
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
@@ -1517,7 +1517,7 @@ function pkg_get_repo_help() {
 
 /* Switch between stable and devel repos */
 function pkg_switch_repo($repo_path, $repo_name) {
-	global $g, $config;
+	global $g;
 
 	safe_mkdir("/usr/local/etc/pkg/repos");
 	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");

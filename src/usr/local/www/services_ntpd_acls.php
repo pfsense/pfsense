@@ -35,11 +35,9 @@ require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 
-if (!is_array($config['ntpd'])) {
-	config_set_path('ntpd', array());
-}
+config_init_path('ntpd');
 
-if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
+if (is_array(config_get_path('ntpd/restrictions/row'))) {
 	$networkacl = config_get_path('ntpd/restrictions/row');
 } else {
 	$networkacl = array('0' => array('acl_network' => '', 'mask' => ''));
@@ -125,43 +123,43 @@ if ($_POST) {
 		/* Default Access Restrictions */
 		if (empty($_POST['kod'])) {
 			config_set_path('ntpd/kod', 'on');
-		} elseif (isset($config['ntpd']['kod'])) {
+		} elseif (config_path_enabled('ntpd', 'kod')) {
 			config_del_path('ntpd/kod');
 		}
 
 		if (empty($_POST['nomodify'])) {
 			config_set_path('ntpd/nomodify', 'on');
-		} elseif (isset($config['ntpd']['nomodify'])) {
+		} elseif (config_path_enabled('ntpd', 'nomodify')) {
 			config_del_path('ntpd/nomodify');
 		}
 
 		if (!empty($_POST['noquery'])) {
 			config_set_path('ntpd/noquery', $_POST['noquery']);
-		} elseif (isset($config['ntpd']['noquery'])) {
+		} elseif (config_path_enabled('ntpd', 'noquery')) {
 			config_del_path('ntpd/noquery');
 		}
 
 		if (!empty($_POST['noserve'])) {
 			config_set_path('ntpd/noserve', $_POST['noserve']);
-		} elseif (isset($config['ntpd']['noserve'])) {
+		} elseif (config_path_enabled('ntpd', 'noserve')) {
 			config_del_path('ntpd/noserve');
 		}
 
 		if (empty($_POST['nopeer'])) {
 			config_set_path('ntpd/nopeer', 'on');
-		} elseif (isset($config['ntpd']['nopeer'])) {
+		} elseif (config_path_enabled('ntpd', 'nopeer')) {
 			config_del_path('ntpd/nopeer');
 		}
 
 		if (empty($_POST['notrap'])) {
 			config_set_path('ntpd/notrap', 'on');
-		} elseif (isset($config['ntpd']['notrap'])) {
+		} elseif (config_path_enabled('ntpd', 'notrap')) {
 			config_del_path('ntpd/notrap');
 		}
 		/* End Default Access Restrictions */
 		config_set_path('ntpd/restrictions/row', array());
 		foreach ($networkacl as $acl) {
-			$config['ntpd']['restrictions']['row'][] = $acl;
+			config_set_path('ntpd/restrictions/row/', $acl);
 		}
 
 		write_config("Updated NTP ACL Settings");
@@ -172,8 +170,8 @@ if ($_POST) {
 	}
 }
 
-init_config_arr(array('ntpd'));
-$pconfig = &$config['ntpd'];
+config_init_path('ntpd');
+$pconfig = config_get_path('ntpd');
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));
 $pglinks = array("", "services_ntpd.php", "@self");

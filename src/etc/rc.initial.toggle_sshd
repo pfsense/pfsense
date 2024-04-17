@@ -30,7 +30,7 @@ require_once("filter.inc");
 
 $fp = fopen('php://stdin', 'r');
 
-if (isset($config['system']['ssh']['enable'])) {
+if (config_path_enabled('system/ssh')) {
 	if (!empty(getenv('SSH_CONNECTION'))) {
 		echo gettext("!!! WARNING !!!");
 		echo "\n\n";
@@ -40,7 +40,7 @@ if (isset($config['system']['ssh']['enable'])) {
 	echo "SSHD is currently enabled.  Would you like to disable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {
-		unset($config['system']['ssh']['enable']);
+		config_del_path('system/ssh/enable');
 		echo "\nWriting configuration...";
 		write_config(gettext("Disabled SSHD from console menu."));
 		echo " done.\n";
@@ -56,8 +56,8 @@ if (isset($config['system']['ssh']['enable'])) {
 	echo "SSHD is currently disabled.  Would you like to enable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {
-		init_config_arr(array('system', 'ssh'));
-		$config['system']['ssh']['enable'] = "enabled";
+		config_init_path('system/ssh');
+		config_set_path('system/ssh/enable', "enabled");
 		echo "\nWriting configuration...";
 		write_config(gettext("Enabled SSHD from console menu."));
 		echo " done.\n";

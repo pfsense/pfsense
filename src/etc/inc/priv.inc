@@ -230,7 +230,7 @@ function getPrivPages(& $entry, & $allowed_pages) {
 }
 
 function getAllowedPages($username, &$attributes = array()) {
-	global $config, $_SESSION;
+	global $_SESSION;
 
 	if (!function_exists("ldap_connect")) {
 		return;
@@ -241,13 +241,9 @@ function getAllowedPages($username, &$attributes = array()) {
 
  	phpsession_begin();
 	if ($_SESSION['remoteauth']) {
-		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 		// cache auth results for a short time to ease load on auth services & logs
-		if (isset($config['system']['webgui']['auth_refresh_time'])) {
-			$recheck_time = config_get_path('system/webgui/auth_refresh_time');
-		} else {
-			$recheck_time = 30;
-		}
+		$recheck_time = config_get_path('system/webgui/auth_refresh_time', 30);
 		// obtain ldap groups if we are in ldap mode
 		if ($authcfg['type'] == "ldap") {
 			if (isset($_SESSION["ldap_allowed_groups"]) &&

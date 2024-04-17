@@ -30,7 +30,6 @@ require_once("ipsec.inc");
 require_once("config.inc");
 
 function easyrule_find_rule_interface($int) {
-	global $config;
 	/* Borrowed from firewall_rules.php */
 	$iflist = get_configured_interface_with_descr(true);
 
@@ -91,7 +90,7 @@ function easyrule_find_rule_interface($int) {
 }
 
 function easyrule_block_rule_exists($int = 'wan', $ipproto = "inet") {
-	global $blockaliasname, $config;
+	global $blockaliasname;
 	/* No rules, we we know it doesn't exist */
 	if (empty(config_get_path('filter/rule', []))) {
 		return false;
@@ -168,7 +167,7 @@ function easyrule_block_alias_getid($int = 'wan') {
 }
 
 function easyrule_block_alias_add($host, $int = 'wan') {
-	global $blockaliasname, $config;
+	global $blockaliasname;
 	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 	/* If the host isn't a valid IP address, bail */
 	$host = trim($host, "[]");
@@ -305,12 +304,10 @@ function easyrule_block_host_add($host, $int = 'wan') {
 }
 
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
-	global $config;
 	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 
-	init_config_arr(array('filter', 'rule'));
+	config_init_path('filter/rule');
 	filter_rules_sort();
-	$a_filter = config_get_path('filter/rule', []);
 
 	/* Make up a new rule */
 	$filterent = array();
@@ -360,8 +357,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	$filterent['created'] = make_config_revision_entry(null, "EasyRule");
 	$filterent['tracker'] = (int)microtime(true);
-	$a_filter[] = $filterent;
-	config_set_path('filter/rule', $a_filter);
+	config_set_path('filter/rule/', $filterent);
 
 	write_config($filterent['descr']);
 	$retval = filter_configure();
@@ -405,7 +401,7 @@ function easyrule_parse_block($int, $src) {
 }
 
 function easyrule_parse_unblock($int, $host) {
-	global $blockaliasname, $config;
+	global $blockaliasname;
 	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 
 	if (!empty($host) && !empty($int)) {
@@ -422,7 +418,7 @@ function easyrule_parse_unblock($int, $host) {
 		$id = easyrule_block_alias_getid($real_int);
 		if ($id === false ||
 		    empty(config_get_path("aliases/alias/{$id}", [])) ||
-		    empty(config_get_path("aliases/alias/{$id}")['address'])) {
+		    empty(config_get_path("aliases/alias/{$id}/address"))) {
 			return gettext("No entries are blocked on interface:") . ' ' . htmlspecialchars($int);
 		}
 
@@ -471,7 +467,7 @@ function easyrule_parse_unblock($int, $host) {
 }
 
 function easyrule_parse_getblock($int = 'wan', $sep = "\n") {
-	global $blockaliasname, $config;
+	global $blockaliasname;
 
 	$real_int = easyrule_find_rule_interface($int);
 	if ($real_int === false) {
@@ -483,10 +479,10 @@ function easyrule_parse_getblock($int = 'wan', $sep = "\n") {
 
 	if ($id === false ||
 	    empty(config_get_path("aliases/alias/{$id}", [])) ||
-	    empty(config_get_path("aliases/alias/{$id}")['address'])) {
+	    empty(config_get_path("aliases/alias/{$id}/address"))) {
 		return gettext("No entries are blocked on interface:") . ' ' . htmlspecialchars($int);
 	}
-	return join($sep, explode(" ", config_get_path("aliases/alias/{$id}")['address']));
+	return join($sep, explode(" ", config_get_path("aliases/alias/{$id}/address")));
 }
 
 function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = "inet") {

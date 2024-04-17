@@ -519,7 +519,6 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 }
 
 function csr_sign($csr, & $ca, $duration, $type, $altnames, $digest_alg = "sha256") {
-	global $config;
 	$old_err_level = error_reporting(0);
 
 	// Gather the information required for signed cert
@@ -1015,7 +1014,6 @@ function crl_get_max_lifetime() {
  * Directly modifes the Certificate Revocation List and adds it to config.
  */
 function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
-	global $config;
 	$max_lifetime = crl_get_max_lifetime();
 	$ca = lookup_ca($caref);
 	$ca = $ca['item'];
@@ -1028,9 +1026,7 @@ function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	$crl['lifetime'] = ($lifetime > $max_lifetime) ? $max_lifetime : $lifetime;
 	$crl['cert'] = array();
 
-	$crls = config_get_path('crl', []);
-	$crls[] = $crl;
-	config_set_path('crl', $crls);
+	config_set_path('crl/', $crl);
 	return $crl;
 }
 
@@ -1060,7 +1056,6 @@ function crl_update(& $crl_config) {
 	require_once('X509_CERT.php');
 	require_once('X509_CRL.php');
 
-	global $config;
 	$max_lifetime = crl_get_max_lifetime();
 	$ca = lookup_ca($crl['caref']);
 	$ca = $ca['item'];
@@ -1304,8 +1299,6 @@ function cert_generate_serial() {
  ******/
 
 function ca_has_serial($caref, $serial) {
-	global $config;
-
 	/* Check certs first -- more likely to find a hit */
 	foreach (config_get_path('cert', []) as $cert) {
 		if (($cert['caref'] == $caref) &&
@@ -1408,8 +1401,7 @@ function ca_get_next_serial(& $ca) {
  ******/
 
 function crl_contains_cert($crl, $cert) {
-	global $config;
-	if (!is_array($config['crl']) ||
+	if (!is_array(config_get_path('crl')) ||
 	    !is_array($crl['cert'])) {
 		return false;
 	}
@@ -1453,8 +1445,7 @@ function crl_contains_cert($crl, $cert) {
  ******/
 
 function is_cert_revoked($cert, $crlref = "") {
-	global $config;
-	if (!is_array($config['crl'])) {
+	if (!is_array(config_get_path('crl'))) {
 		return false;
 	}
 
@@ -2366,8 +2357,6 @@ function cert_print_infoblock($cert) {
  ******/
 
 function cert_notify_expiring() {
-	global $config;
-
 	/* If certificate expiration notifications are disabled, there is nothing to do. */
 	if (config_get_path('notifications/certexpire/enable') == "disabled") {
 		return;
@@ -2376,9 +2365,9 @@ function cert_notify_expiring() {
 	$notifications = array();
 
 	/* Check all CA and Cert entries at once */
-	init_config_arr(array('ca'));
-	init_config_arr(array('cert'));
-	$all_certs = array_merge_recursive($config['ca'], $config['cert']);
+	config_init_path('ca');
+	config_init_path('cert');
+	$all_certs = array_merge_recursive(config_get_path('ca'), config_get_path('cert'));
 
 	foreach ($all_certs as $cert) {
 		if (empty($cert)) {
@@ -2898,7 +2887,6 @@ function cert_check_digest_compatibility($type, $cert, $consumer) {
 function cert_create_selfsigned($descr = '', $hostname = '', $log = true) {
 	global $cert_strict_values;
 
-	$a_cert = config_get_path('cert', []);
 	if ($log) {
 		log_error(sprintf(gettext("Creating self-signed SSL/TLS certificate (%s)"), $descr));
 	}
@@ -2935,8 +2923,7 @@ function cert_create_selfsigned($descr = '', $hostname = '', $log = true) {
 	error_reporting($old_err_level);
 
 	/* Add the new certificate */
-	$a_cert[] = $cert;
-	config_set_path('cert', $a_cert);
+	config_set_path('cert/', $cert);
 
 	return $cert;
 }

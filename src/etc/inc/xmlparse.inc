@@ -261,13 +261,13 @@ function dump_xml_config_sub($arr, $indent) {
 					if (is_array($cval)) {
 						if (empty($cval)) {
 							$xmlconfig .= str_repeat("\t", $indent);
-							$xmlconfig .= "<$ent></$ent>\n";
+							$xmlconfig .= "<{$ent}></{$ent}>\n";
 						} else {
 							$xmlconfig .= str_repeat("\t", $indent);
-							$xmlconfig .= "<$ent>\n";
+							$xmlconfig .= "<{$ent}>\n";
 							$xmlconfig .= dump_xml_config_sub($cval, $indent + 1);
 							$xmlconfig .= str_repeat("\t", $indent);
-							$xmlconfig .= "</$ent>\n";
+							$xmlconfig .= "</{$ent}>\n";
 						}
 					} else {
 						if ($cval === false) {
@@ -275,35 +275,35 @@ function dump_xml_config_sub($arr, $indent) {
 						}
 						$xmlconfig .= str_repeat("\t", $indent);
 						if ((is_bool($cval) && $cval == true) || ($cval === "")) {
-							$xmlconfig .= "<$ent></$ent>\n";
+							$xmlconfig .= "<{$ent}></{$ent}>\n";
 						} else if (is_cdata_entity($ent)) {
-							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
+							$xmlconfig .= "<{$ent}><![CDATA[" . htmlentities($cval) . "]]></{$ent}>\n";
 						} else {
-							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
+							$xmlconfig .= "<{$ent}>" . htmlentities($cval) . "</{$ent}>\n";
 						}
 					}
 				}
 			} else if (empty($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent></$ent>\n";
+				$xmlconfig .= "<{$ent}></{$ent}>\n";
 			} else {
 				/* it's an array */
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent>\n";
+				$xmlconfig .= "<{$ent}>\n";
 				$xmlconfig .= dump_xml_config_sub($val, $indent + 1);
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "</$ent>\n";
+				$xmlconfig .= "</{$ent}>\n";
 			}
 		} else {
 			if ((is_bool($val) && ($val == true)) || ($val === "")) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent></$ent>\n";
+				$xmlconfig .= "<{$ent}></{$ent}>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
 				if (is_cdata_entity($ent)) {
-					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
+					$xmlconfig .= "<{$ent}><![CDATA[" . htmlentities($val) . "]]></{$ent}>\n";
 				} else {
-					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";
+					$xmlconfig .= "<{$ent}>" . htmlentities($val) . "</{$ent}>\n";
 				}
 			}
 		}
@@ -337,11 +337,11 @@ function dump_xml_config_pkg($arr, $rootobj) {
 function dump_xml_config_raw($arr, $rootobj) {
 
 	$xmlconfig = "<?xml version=\"1.0\"?" . ">\n";
-	$xmlconfig .= "<$rootobj>\n";
+	$xmlconfig .= "<{$rootobj}>\n";
 
 	$xmlconfig .= dump_xml_config_sub($arr, 1);
 
-	$xmlconfig .= "</$rootobj>\n";
+	$xmlconfig .= "</{$rootobj}>\n";
 
 	return $xmlconfig;
 }

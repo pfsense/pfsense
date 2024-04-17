@@ -68,7 +68,7 @@ if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
 	send_user_download('file',
 				g_get('conf_path') . '/backup/config-' . $_REQUEST['getcfg'] . '.xml',
-				"config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
+				'config-' . config_get_path('system/hostname') . '.' . config_get_path('system/domain') . "-{$_REQUEST['getcfg']}.xml");
 }
 
 if (($_REQUEST['diff'] == 'Diff') && isset($_REQUEST['oldtime']) && isset($_REQUEST['newtime']) &&
@@ -158,7 +158,7 @@ $section->addInput(new Form_Input(
 	'backupcount',
 	'Backup Count',
 	'number',
-	$config['system']['backupcount'],
+	config_get_path('system/backupcount'),
 	['min' => '0']
 ))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', g_get('default_config_backup_count'));
 
@@ -224,10 +224,10 @@ if (is_array($confvers)):
 					<td>
 						<input type="radio" name="newtime" value="current" />
 					</td>
-					<td><?= date(gettext("n/j/y H:i:s"), $config['revision']['time']) ?></td>
-					<td><?= $config['version'] ?></td>
+					<td><?= date(gettext("n/j/y H:i:s"), config_get_path('revision/time')) ?></td>
+					<td><?= config_get_path('version') ?></td>
 					<td><?= format_bytes(filesize("/conf/config.xml")) ?></td>
-					<td><?= htmlspecialchars($config['revision']['description']) ?></td>
+					<td><?= htmlspecialchars(config_get_path('revision/description')) ?></td>
 					<td><?=gettext("Current configuration")?></td>
 				</tr>
 <?php

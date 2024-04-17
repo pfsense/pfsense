@@ -404,8 +404,8 @@ function openvpn_create_dhparams($bits) {
 }
 
 function openvpn_vpnid_used($vpnid) {
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach (["server", "client"] as $mode) {
 		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
 			if ($vpnid == $settings['vpnid']) {
@@ -1736,7 +1736,7 @@ function openvpn_resync_csc($settings) {
 }
 
 function openvpn_resync_csc_all() {
-	init_config_arr(array('openvpn', 'openvpn-csc'));
+	config_init_path('openvpn/openvpn-csc');
 	foreach (config_get_path('openvpn/openvpn-csc', []) as $settings) {
 		openvpn_resync_csc($settings);
 	}
@@ -1780,8 +1780,8 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 	}
 
 	// Check if OpenVPN clients and servers require a resync.
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach (array("server", "client") as $type) {
 		foreach (config_get_path("openvpn/openvpn-{$type}", []) as & $settings) {
 			if (isset($settings['disable'])) {
@@ -2220,8 +2220,8 @@ function openvpn_create_dirs() {
 		safe_mkdir(g_get('openvpn_base'), 0750);
 	}
 
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach(array('server', 'client') as $mode) {
 		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
 			if (isset($settings['disable'])) {
@@ -2368,8 +2368,8 @@ function openvpn_gen_route_ipv6($network, $iroute = false) {
 }
 
 function openvpn_get_settings($mode, $vpnid) {
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach (["server", "client"] as $mode) {
 		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
 			if (isset($settings['disable'])) {
@@ -2401,8 +2401,8 @@ function openvpn_restart_by_vpnid($mode, $vpnid) {
  ******/
 
 function openvpn_is_tunnel_network_in_use($net) {
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	/* Determine whether to check IPv4 or IPv6 tunnel networks */
 	$tocheck = 'tunnel_network';
 	if (is_v6($net)) {

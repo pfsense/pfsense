@@ -141,47 +141,28 @@ if ($stepid > $totalsteps) {
 	$stepid = $totalsteps;
 }
 
-// Convert a string containing a text version of a PHP array into a real $config array
-// that can then be created. e.g.: config_array_from_str("['apple']['orange']['pear']['banana']");
-function config_array_from_str( $text) {
-	$t = str_replace("[", "", $text);	// Remove '['
-	$t = str_replace("'", "", $t);		// Remove '
-	$t = str_replace("\"", "", $t);		// Remove "
-	$t = str_replace("]", " ", $t);		// Convert ] to space
-	$a = explode(" ", trim($t));
-	init_config_arr($a);
-}
-
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
-	global $config;
-	$field_split = explode("->", $field);
-	$thisvar = null;
-	foreach ($field_split as $f) {
-		$field_conv .= "['" . $f . "']";
-	}
+	$field_conv = implode('/', explode("->", $field));
 	if ($field_conv == "") {
 		return;
 	}
 	if ($arraynum != "") {
-		$field_conv .= "[" . $arraynum . "]";
+		$field_conv .= "/{$arraynum}";
 	}
+	if ($unset == "yes") {
+		config_del_path($field_conv);
+	}
+
 	if (($field_type == "checkbox" and $updatetext != "on") || $updatetext == "") {
 		/*
 		 * item is a checkbox, it should have the value "on"
 		 * if it was checked
 		 */
-		$var = "\$config{$field_conv}";
-		$text = "if (isset({$var})) unset({$var});";
-		eval($text);
 		return;
 	}
 
 	if ($field_type == "interfaces_selection") {
-		$var = "\$config{$field_conv}";
-		$text = "if (isset({$var})) unset({$var});";
-		$text .= "\$thisvar = &\$config" . $field_conv . ";";
-		eval($text);
-		$thisvar = $updatetext;
+		config_set_path($field_conv, $updatetext);
 		return;
 	}
 
@@ -191,22 +172,10 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		}
 	}
 
-	if ($unset == "yes") {
-		$text = "unset(\$config" . $field_conv . ");";
-		eval($text);
-	}
+	// Verify that the needed config array element exists. If not, create it
+	config_init_path($field_conv);
 
-	// Verify that the needed $config element exists. If not, create it
-	$tsttext = 'return (isset($config' . $field_conv . '));';
-
-	if (!eval($tsttext)) {
-		config_array_from_str($field_conv);
-	}
-
-	$text .= "\$thisvar = &\$config" . $field_conv . ";";
-	eval($text);
-
-	$thisvar = $updatetext;
+	config_set_path($field_conv, $updatetext);
 }
 
 $title	   = $pkg['step'][$stepid]['title'];
@@ -505,26 +474,23 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 		$name = strtolower($name);
 
 		if ($field['bindstofield'] != "") {
-			$arraynum = "";
-			$field_conv = "";
-			$field_split = explode("->", $field['bindstofield']);
+			$field_conv_path = implode('/', explode("->", $field['bindstofield']));
 			// arraynum is used in cases where there is an array of the same field
 			// name such as dnsserver (2 of them)
 			if ($field['arraynum'] != "") {
-				$arraynum = "[" . $field['arraynum'] . "]";
-			}
-
-			foreach ($field_split as $f) {
-				$field_conv .= "['" . $f . "']";
+				$field_conv_path .= "/{$field['arraynum']}";
 			}
 
 			if ($field['type'] == "checkbox") {
-				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) { \$value = \$config" . $field_conv . $arraynum . "; if (empty(\$value)) \$value = true; }";
+				$value = config_get_path($field_conv_path);
+				if (empty($value)) {
+					$value = true;
+				}
 			} else {
-				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) \$value = \$config" . $field_conv . $arraynum . ";";
+				if (config_get_path($field_conv_path) !== null) {
+					$value = config_get_path($field_conv_path);
+				}
 			}
-
-			eval($toeval);
 		}
 
 
@@ -677,9 +643,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
 
-				if (!is_array($config['ca'])) {
-					config_set_path('ca', array());
-				}
+				config_init_path('ca');
 
 				foreach (config_get_path('ca', []) as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
@@ -730,9 +694,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
 				}
 
-				if (!is_array($config['cert'])) {
-					config_set_path('cert', array());
-				}
+				config_init_path('cert');
 
 				foreach (config_get_path('cert', []) as $ca) {
 					if (stristr($ca['descr'], "webconf")) {

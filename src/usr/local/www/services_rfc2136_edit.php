@@ -39,8 +39,7 @@ $tsig_key_algos = array(
 	'hmac-sha512' => 'HMAC-SHA512 (most secure)',
 );
 
-init_config_arr(array('dnsupdates', 'dnsupdate'));
-$a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
+config_init_path('dnsupdates/dnsupdate');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -52,30 +51,31 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$dup = true;
 }
 
-if (isset($id) && isset($a_rfc2136[$id])) {
-	$pconfig['enable'] = isset($a_rfc2136[$id]['enable']);
+$this_rfc2136_config = isset($id) ? config_get_path("dnsupdates/dnsupdate/{$id}") : null;
+if ($this_rfc2136_config) {
+	$pconfig['enable'] = isset($this_rfc2136_config['enable']);
 	if (!$dup) {
-		$pconfig['host'] = $a_rfc2136[$id]['host'];
+		$pconfig['host'] = $this_rfc2136_config['host'];
 	}
-	$pconfig['ttl'] = $a_rfc2136[$id]['ttl'];
+	$pconfig['ttl'] = $this_rfc2136_config['ttl'];
 	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
 	}
-	$pconfig['zone'] = $a_rfc2136[$id]['zone'];
-	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
-	$pconfig['keyalgorithm'] = $a_rfc2136[$id]['keyalgorithm'];
-	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
-	$pconfig['server'] = $a_rfc2136[$id]['server'];
-	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
-	$pconfig['updatesource'] = $a_rfc2136[$id]['updatesource'];
-	$pconfig['updatesourcefamily'] = $a_rfc2136[$id]['updatesourcefamily'];
-	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
-	$pconfig['usepublicip'] = isset($a_rfc2136[$id]['usepublicip']);
-	$pconfig['recordtype'] = $a_rfc2136[$id]['recordtype'];
+	$pconfig['zone'] = $this_rfc2136_config['zone'];
+	$pconfig['keyname'] = $this_rfc2136_config['keyname'];
+	$pconfig['keyalgorithm'] = $this_rfc2136_config['keyalgorithm'];
+	$pconfig['keydata'] = $this_rfc2136_config['keydata'];
+	$pconfig['server'] = $this_rfc2136_config['server'];
+	$pconfig['interface'] = $this_rfc2136_config['interface'];
+	$pconfig['updatesource'] = $this_rfc2136_config['updatesource'];
+	$pconfig['updatesourcefamily'] = $this_rfc2136_config['updatesourcefamily'];
+	$pconfig['usetcp'] = isset($this_rfc2136_config['usetcp']);
+	$pconfig['usepublicip'] = isset($this_rfc2136_config['usepublicip']);
+	$pconfig['recordtype'] = $this_rfc2136_config['recordtype'];
 	if (!$pconfig['recordtype']) {
 		$pconfig['recordtype'] = "both";
 	}
-	$pconfig['descr'] = $a_rfc2136[$id]['descr'];
+	$pconfig['descr'] = $this_rfc2136_config['descr'];
 
 }
 
@@ -124,10 +124,10 @@ if ($_POST['save'] || $_POST['force']) {
 		$rfc2136['updatesourcefamily'] = $_POST['updatesourcefamily'];
 		$rfc2136['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_rfc2136[$id] && !$dup) {
-			$a_rfc2136[$id] = $rfc2136;
+		if ($this_rfc2136_config && !$dup) {
+			config_set_path("dnsupdates/dnsupdate/{$id}", $rfc2136);
 		} else {
-			$a_rfc2136[] = $rfc2136;
+			config_set_path('dnsupdates/dnsupdate/', $rfc2136);
 		}
 
 		write_config(gettext("New/Edited RFC2136 dnsupdate entry was posted."));
@@ -320,7 +320,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_rfc2136[$id]) {
+if ($this_rfc2136_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

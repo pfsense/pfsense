@@ -117,7 +117,7 @@ EOT;
 
 	public function __toString()
 	{
-		global $config, $user_settings;
+		global $user_settings;
 
 		$element = Form_Element::__toString();
 

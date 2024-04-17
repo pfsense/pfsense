@@ -37,8 +37,6 @@ require_once("interfaces.inc");
 require_once("pfsense-utils.inc");
 require_once("util.inc");
 
-global $config;
-
 if ($_POST['ifdescr'] && $_POST['submit']) {
 	$interface = $_POST['ifdescr'];
 	if ($_POST['status'] == "up") {
@@ -121,7 +119,8 @@ include("head.inc");
 
 $ifdescrs = get_configured_interface_with_descr(true);
 $ifinterrupts = interfaces_interrupts();
-
+$switch_config = config_get_path('switches/switch/0/vlangroups/vlangroup', []);
+$if_config = config_get_path('interfaces');
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 	$mac_man = load_mac_manufacturer_table();
@@ -134,8 +133,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 	$ifhwinfo = $ifinfo['hwif'];
 	$vlan = interface_is_vlan($ifinfo['hwif']);
-	if ($vlan && is_array($config['switches']['switch'][0]['vlangroups']['vlangroup'])) {
-		foreach (config_get_path('switches/switch/0/vlangroups/vlangroup', []) as $vlangroup) {
+	if ($vlan) {
+		foreach ($switch_config as $vlangroup) {
 			if ($vlangroup['vlanid'] == $vlan['tag']) {
 				$ifhwinfo .= ', switchports: ' . $vlangroup['members'];
 				break;
@@ -180,7 +179,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['linklocal'], gettext('IPv6 Link Local'), $ifinfo['linklocal']);
 				showDef($ifinfo['ipaddrv6'], gettext('IPv6 Address'), $ifinfo['ipaddrv6']);
 				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
-				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
+				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $if_config[$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
 
 				$dns_servers = get_dynamic_nameservers($ifdescr);
 				$dnscnt = 0;

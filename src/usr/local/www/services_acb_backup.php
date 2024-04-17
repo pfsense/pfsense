@@ -33,8 +33,6 @@ require_once("guiconfig.inc");
 require_once("acb.inc");
 
 if ($_POST) {
-	global $config;
-
 	if ($_REQUEST['nooverwrite']) {
 		touch("/tmp/acb_nooverwrite");
 	}
@@ -51,7 +49,8 @@ if ($_POST) {
 		$savemsg = "Backup not completed - write_config() failed.";
 	}
 
-	$config = parse_config(true);
+	// parse config.xml
+	config_set_path('', parse_config(true));
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
 
 	$donotshowheader = true;

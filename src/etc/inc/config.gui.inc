@@ -49,16 +49,17 @@ if (file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-global $config;
-$config = parse_config();
+// reload config
+config_set_path('', parse_config());
 
 /* make alias table (for faster lookups) */
 alias_make_table();
 
 /* set timezone */
-if (isset($config['system']['timezone']) &&
-    !empty($config['system']['timezone'])) {
-	$timezone = config_get_path('system/timezone');
+$timezone = config_get_path('system/timezone');
+if (isset($timezone) &&
+    !empty($timezone)) {
+	// noop
 } elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
 	$timezone = g_get('default_timezone');
 } else {

@@ -101,9 +101,7 @@ if ($_REQUEST['ajax']) {
 
 $id = $_REQUEST['id'];
 
-if (!is_array($config['system']['authserver'])) {
-	config_set_path('system/authserver', array());
-}
+config_init_path('system/authserver');
 
 $a_server = array_values(auth_get_authserver_list());
 
@@ -290,8 +288,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 	}
 
-	if (isset($id) && $config['system']['authserver'][$id] &&
-	   ($config['system']['authserver'][$id]['name'] != $pconfig['name'])) {
+	if (isset($id) && config_get_path("system/authserver/{$id}") &&
+	   (config_get_path("system/authserver/{$id}/name") != $pconfig['name'])) {
 		$input_errors[] = gettext("The name of an authentication server cannot be changed.");
 	}
 
@@ -302,8 +300,8 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($pconfig['type'] == 'ldap') && isset($config['system']['webgui']['shellauth']) &&
-	    ($config['system']['webgui']['authmode'] == $pconfig['name']) && empty($pconfig['ldap_pam_groupdn'])) {
+	if (($pconfig['type'] == 'ldap') && config_path_enabled('system/webgui', 'shellauth') &&
+	    (config_get_path('system/webgui/authmode') == $pconfig['name']) && empty($pconfig['ldap_pam_groupdn'])) {
 		$input_errors[] = gettext("Shell Authentication Group DN must be specified if " . 
 			"Shell Authentication is enabled for appliance.");
 	}
@@ -413,14 +411,14 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (isset($id) && $config['system']['authserver'][$id]) {
-			$config['system']['authserver'][$id] = $server;
+		if (isset($id) && config_get_path("system/authserver/{$id}")) {
+			config_set_path("system/authserver/{$id}", $server);
 		} else {
-			$config['system']['authserver'][] = $server;
+			config_set_path('system/authserver/', $server);
 		}
 
-		if (isset($config['system']['webgui']['shellauth']) &&
-		    ($config['system']['webgui']['authmode'] == $pconfig['name'])) {
+		if (config_path_enabled('system/webgui', 'shellauth') &&
+		    (config_get_path('system/webgui/authmode') == $pconfig['name'])) {
 			set_pam_auth();
 		}
 
@@ -431,7 +429,6 @@ if ($_POST['save']) {
 }
 
 function build_radiusnas_list() {
-	global $config;
 	$list = array();
 
 	$iflist = get_configured_interface_with_descr();

@@ -958,7 +958,7 @@ function unbound_acls_config($cfgsubdir = "") {
 			}
 		}
 		// OpenVPN CSO
-		init_config_arr(array('openvpn', 'openvpn-csc'));
+		config_init_path('openvpn/openvpn-csc');
 		foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 			if (is_array($ovpnent) && !isset($ovpnent['disable'])) {
 				if (!empty($ovpnent['tunnel_network'])) {

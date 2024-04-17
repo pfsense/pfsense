@@ -38,7 +38,7 @@ function services_radvd_configure($blacklist = array()) {
 		echo "services_radvd_configure() being called $mt\n";
 	}
 
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
@@ -519,7 +519,7 @@ function services_kea6_configure()
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 	$dhcpdv6cfg = config_get_path('dhcpdv6');
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
@@ -1066,7 +1066,7 @@ function services_kea4_configure()
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpd']);
+	config_init_path('dhcpd');
 	$dhcpdcfg = config_get_path('dhcpd');
 	$Iflist = get_configured_interface_list();
 
@@ -2087,7 +2087,7 @@ function services_dhcpdv4_configure() {
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpd']);
+	config_init_path('dhcpd');
 	$dhcpdcfg = config_get_path('dhcpd');
 	$Iflist = get_configured_interface_list();
 
@@ -3233,7 +3233,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 	$dhcpdv6cfg = config_get_path('dhcpdv6');
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
@@ -3722,7 +3722,7 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	init_config_arr(array('dhcrelay'));
+	config_init_path('dhcrelay');
 	$dhcrelaycfg = config_get_path('dhcrelay');
 
 	/* DHCPRelay enabled on any interfaces? */
@@ -3843,7 +3843,7 @@ function services_dhcrelay6_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 
-	init_config_arr(array('dhcrelay6'));
+	config_init_path('dhcrelay6');
 	$dhcrelaycfg = config_get_path('dhcrelay6');
 
 	/* DHCPv6 Relay enabled on any interfaces? */
@@ -4183,7 +4183,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 			// Set the --server parameter to nowhere for each reverse domain name that was not specifically specified in a domain override.
 			foreach ($reverse_domain_a as $reverse_domain) {
 				if (!isset($override_a[$reverse_domain])) {
-					$args .= " --server=/$reverse_domain/ ";
+					$args .= " --server=/{$reverse_domain}/ ";
 				}
 			}
 			unset($override_a);
@@ -5052,7 +5052,7 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 	$cron_changed = true;
 	$change_message = "";
 
-	init_config_arr(['cron','item']);
+	config_init_path('cron/item');
 
 	$job = null;
 	foreach (config_get_path('cron/item', []) as $idx => $item) {
@@ -5073,9 +5073,7 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 		$cron_item['who'] = $who;
 		$cron_item['command'] = $command;
 		if (!$is_installed) {
-			$cron_items = config_get_path('cron/item', []);
-			$cron_items[] = $cron_item;
-			config_set_path('cron/item', $cron_items);
+			config_set_path('cron/item/', $cron_item);
 			$change_message = "Installed cron job for %s";
 		} else {
 			if (config_get_path("cron/item/{$job}") == $cron_item) {

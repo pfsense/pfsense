@@ -39,11 +39,11 @@ global $cpzone;
 global $cpzoneid;
 
 $cpzone = str_replace("\n", "", $argv[1]);
-if (!is_array($config['captiveportal'][$cpzone])) {
+if (!is_array(config_get_path("captiveportal/{$cpzone}"))) {
 	log_error("{$cpzone} is not a valid zone in the configuration!");
 	return;
 }
-$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
 $rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 3);
 

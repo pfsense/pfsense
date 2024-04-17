@@ -28,7 +28,7 @@ require_once("config.inc");
 require_once("gwlb.inc");
 require_once("interfaces.inc");
 
-$hostname = $config['system']['hostname'];
+$hostname = config_get_path('system/hostname');
 $machine = trim(`uname -m`);
 
 $platform = system_identify_specific_platform();
@@ -65,7 +65,7 @@ $v6line_width = $realif_wdith + $tobanner_wdith + 9;
 // print the banner
 foreach ($iflist as $ifname => $friendly) {
 	/* point to this interface's config */
-	$ifconf = $config['interfaces'][$ifname];
+	$ifconf = config_get_path("interfaces/{$ifname}");
 	/* look for 'special cases' */
 	switch ($ifconf['ipaddr']) {
 		case "dhcp":

@@ -78,7 +78,7 @@ if (!$clientip) {
 }
 
 $ourhostname = portal_hostname_from_client_ip($clientip);
-$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
+$protocol = (config_path_enabled("captiveportal/{$cpzone}", "httpslogin")) ? 'https://' : 'http://';
 $logouturl = "{$protocol}{$ourhostname}/";
 
 $cpsession = captiveportal_isip_logged($clientip);
@@ -194,7 +194,7 @@ if ($_POST['logout_id']) {
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated", null, $redirurl);
 
-} elseif (isset($config['voucher'][$cpzone]['enable']) && ($_POST['accept'] && $_POST['auth_voucher']) || $_GET['voucher']) {
+} elseif (config_path_enabled("voucher/{$cpzone}") && ($_POST['accept'] && $_POST['auth_voucher']) || $_GET['voucher']) {
 	if (isset($_POST['auth_voucher'])) {
 		$voucher = trim($_POST['auth_voucher']);
 	} else {
@@ -220,14 +220,14 @@ if ($_POST['logout_id']) {
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher, $clientmac, $clientip, "Voucher login good for $timecredit min.");
 		} else {
-			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg, $clientmac, $clientip);
+			portal_reply_page($redirurl, "error", config_get_path("voucher/{$cpzone}/descrmsgexpired") ? config_get_path("voucher/{$cpzone}/descrmsgexpired"): $errormsg, $clientmac, $clientip);
 		}
 	} elseif (-1 == $timecredit) {  // valid but expired
 		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE", "voucher expired");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg, $clientmac, $clientip);
+		portal_reply_page($redirurl, "error", config_get_path("voucher/{$cpzone}/descrmsgexpired") ? config_get_path("voucher/{$cpzone}/descrmsgexpired"): $errormsg, $clientmac, $clientip);
 	} else {
 		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgnoaccess'] ? $config['voucher'][$cpzone]['descrmsgnoaccess'] : $errormsg, $clientmac, $clientip);
+		portal_reply_page($redirurl, "error", config_get_path("voucher/{$cpzone}/descrmsgnoaccess") ? config_get_path("voucher/{$cpzone}/descrmsgnoaccess") : $errormsg, $clientmac, $clientip);
 	}
 
 } elseif ($_POST['accept'] || $cpcfg['auth_method'] === 'radmac') {

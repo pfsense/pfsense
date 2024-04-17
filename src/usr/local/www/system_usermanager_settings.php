@@ -100,18 +100,14 @@ if ($_REQUEST['ajax']) {
 
 $pconfig['session_timeout'] = config_get_path('system/webgui/session_timeout');
 
-if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = config_get_path('system/webgui/authmode');
-} else {
-	$pconfig['authmode'] = "Local Database";
-}
+$pconfig['authmode'] = config_get_path('system/webgui/authmode', "Local Database");
 
 /* Default to bcrypt hashing if unset.
  * See https://redmine.pfsense.org/issues/12855
  */
-$pconfig['pwhash'] = isset($config['system']['webgui']['pwhash']) ? $config['system']['webgui']['pwhash'] : 'bcrypt';
+$pconfig['pwhash'] = config_get_path('system/webgui/pwhash', 'bcrypt');
 
-$pconfig['shellauth'] = isset($config['system']['webgui']['shellauth']) ? true : false;
+$pconfig['shellauth'] = config_path_enabled('system/webgui', 'shellauth') ? true : false;
 
 $pconfig['backend'] = config_get_path('system/webgui/backend');
 

@@ -30,8 +30,8 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('hasync'));
-$a_hasync = &$config['hasync'];
+config_init_path('hasync');
+$a_hasync = config_get_path('hasync');
 
 $checkbox_names = array(
 	'pfsyncenabled',
@@ -92,6 +92,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		config_set_path('hasync', $a_hasync);
 		write_config("Updated High Availability Sync configuration");
 		interfaces_sync_setup();
 		if ($old_pfhostid != $a_hasync['pfhostid']) {

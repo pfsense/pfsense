@@ -49,7 +49,7 @@ $ifnum = get_real_interface($ifnum);
 $ifname = @$_REQUEST["ifname"]?$_REQUEST["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
-if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
+if (config_get_path('widgets/trafficgraphs/scale_type') !== null) {
 	$scale_type = config_get_path('widgets/trafficgraphs/scale_type');
 } else {
 	$scale_type = "up";

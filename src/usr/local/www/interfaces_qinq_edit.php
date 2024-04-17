@@ -34,8 +34,7 @@ $shortcut_section = "interfaces";
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('qinqs', 'qinqentry'));
-$a_qinqs = &$config['qinqs']['qinqentry'];
+config_init_path('qinqs/qinqentry');
 
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
@@ -52,13 +51,14 @@ foreach ($lagglist as $lagg) {
 
 /* Do not allow OpenVPN TUN interfaces to be used for QinQ
  * https://redmine.pfsense.org/issues/11675 */
-init_config_arr(array('openvpn', 'openvpn-server'));
-init_config_arr(array('openvpn', 'openvpn-client'));
+config_init_path('openvpn/openvpn-server');
+config_init_path('openvpn/openvpn-client');
+$openvpn_config = config_get_path('openvpn');
 foreach ($portlist as $portname => $port) {
 	if (strstr($portname, "ovpn")) {
 		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
 		$type = ($m[1] == 'c') ? 'client' : 'server';
-		foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
+		foreach ($openvpn_config['openvpn-'.$type] as $ovpn) {
 			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
 				unset($portlist[$portname]);
 			}
@@ -75,13 +75,14 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_qinqs[$id]) {
-	$pconfig['if'] = $a_qinqs[$id]['if'];
-	$pconfig['tag'] = $a_qinqs[$id]['tag'];
-	$pconfig['members'] = $a_qinqs[$id]['members'];
-	$pconfig['descr'] = html_entity_decode($a_qinqs[$id]['descr']);
-	$pconfig['autogroup'] = isset($a_qinqs[$id]['autogroup']);
-	$pconfig['autoadjustmtu'] = isset($a_qinqs[$id]['autoadjustmtu']);
+$this_qinq_config = isset($id) ? config_get_path("qinqs/qinqentry/{$id}") : null;
+if ($this_qinq_config) {
+	$pconfig['if'] = $this_qinq_config['if'];
+	$pconfig['tag'] = $this_qinq_config['tag'];
+	$pconfig['members'] = $this_qinq_config['members'];
+	$pconfig['descr'] = html_entity_decode($this_qinq_config['descr']);
+	$pconfig['autogroup'] = isset($this_qinq_config['autogroup']);
+	$pconfig['autoadjustmtu'] = isset($this_qinq_config['autoadjustmtu']);
 }
 
 if ($_POST['save']) {
@@ -105,14 +106,14 @@ if ($_POST['save']) {
 	if (empty($_POST['tag'])) {
 		$input_errors[] = gettext("First level tag cannot be empty.");
 	}
-	if (isset($id) && $a_qinqs[$id]['tag'] != $_POST['tag']) {
+	if ($this_qinq_config && $this_qinq_config['tag'] != $_POST['tag']) {
 		$input_errors[] = gettext("Modifying the first level tag of an existing entry is not allowed.");
 	}
-	if (isset($id) && $a_qinqs[$id]['if'] != $_POST['if']) {
+	if ($this_qinq_config && $this_qinq_config['if'] != $_POST['if']) {
 		$input_errors[] = gettext("Modifying the interface of an existing entry is not allowed.");
 	}
 	if (!isset($id)) {
-		foreach ($a_qinqs as $qinqentry) {
+		foreach (config_get_path('qinqs/qinqentry') as $qinqentry) {
 			if ($qinqentry['tag'] == $_POST['tag'] && $qinqentry['if'] == $_POST['if']) {
 				$input_errors[] = gettext("QinQ level already exists for this interface, edit it!");
 			}
@@ -175,11 +176,11 @@ if ($_POST['save']) {
 	}
 
 	$nmembers = explode(" ", $members);
-	if (isset($id) && $a_qinqs[$id]) {
-		$omembers = explode(" ", $a_qinqs[$id]['members']);
+	if ($this_qinq_config) {
+		$omembers = explode(" ", $this_qinq_config['members']);
 		$delmembers = array_diff($omembers, $nmembers);
 		foreach ($delmembers as $tag) {
-			if (qinq_inuse($a_qinqs[$id], $tag)) {
+			if (qinq_inuse($this_qinq_config, $tag)) {
 				$input_errors[] = gettext("This QinQ tag cannot be deleted because it is still being used as an interface.");
 				break;
 			}
@@ -192,8 +193,8 @@ if ($_POST['save']) {
 		$qinqentry['vlanif'] = vlan_interface($_POST);
 		$nmembers = explode(" ", $members);
 
-		if (isset($id) && $a_qinqs[$id]) {
-			$omembers = explode(" ", $a_qinqs[$id]['members']);
+		if ($this_qinq_config) {
+			$omembers = explode(" ", $this_qinq_config['members']);
 			$delmembers = array_diff($omembers, $nmembers);
 			$addmembers = array_diff($nmembers, $omembers);
 
@@ -211,10 +212,10 @@ if ($_POST['save']) {
 					interface_qinq2_configure($qinq, $macaddr);
 				}
 			}
-			$a_qinqs[$id] = $qinqentry;
+			config_set_path("qinqs/qinqentry/{$id}", $qinqentry);
 		} else {
 			interface_qinq_configure($qinqentry);
-			$a_qinqs[] = $qinqentry;
+			config_set_path('qinqs/qinqentry/', $qinqentry);
 		}
 		if ($_POST['autogroup'] == "yes") {
 			$gid = null;
@@ -230,14 +231,14 @@ if ($_POST['save']) {
 			}
 			$additions .= "{$qinqentry['vlanif']}";
 			if ($gid !== null) {
-				$config['ifgroups']['ifgroupentry'][$gid]['members'] .= " {$additions}";
+				config_set_path("ifgroups/ifgroupentry/{$gid}/members", config_get_path("ifgroups/ifgroupentry/{$gid}/members") . $qinqentry);
 			} else {
 				$gentry = array();
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";
 				$gentry['descr'] = gettext("QinQ VLANs group");
-				init_config_arr(array('ifgroups', 'ifgroupentry'));
-				$config['ifgroups']['ifgroupentry'][] = $gentry;
+				config_init_path('ifgroups/ifgroupentry');
+				config_set_path('ifgroups/ifgroupentry/', $gentry);
 			}
 		}
 
@@ -309,7 +310,7 @@ $section->addInput(new Form_StaticText(
 	'Click "Add Tag" as many times as needed to add new inputs.'
 ));
 
-if (isset($id) && $a_qinqs[$id]) {
+if ($this_qinq_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

@@ -109,7 +109,7 @@ events.push(function() {
 <?php
 $tab_array = array();
 $tab_array[] = array(gettext("States"), true, "diag_dump_states.php");
-if (isset($config['system']['lb_use_sticky'])) {
+if (config_path_enabled('system', 'lb_use_sticky')) {
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
 }
 $tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
@@ -235,7 +235,7 @@ if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter.');
 	} else if (!isset($_POST['filter']) && !isset($_REQUEST['ruleid']) &&
-	    isset($config['system']['webgui']['requirestatefilter'])) {
+	    config_path_enabled('system/webgui', 'requirestatefilter')) {
 		$errmsg = gettext('State display suppressed without filter submission. '.
 		'See System > General Setup, Require State Filter.');
 	} else {

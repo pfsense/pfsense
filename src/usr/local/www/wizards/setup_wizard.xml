@@ -145,7 +145,7 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
-		init_config_arr(array('wizardtemp', 'system'));
+		config_init_path('wizardtemp/system');
 		config_set_path('wizardtemp/system/hostname', config_get_path('system/hostname'));
 		config_set_path('wizardtemp/system/domain', config_get_path('system/domain'));
 		]]>
@@ -535,18 +535,16 @@
 		if (empty($input_errors)) {
 			$type = $_POST['configurationtype'];
 
-			init_config_arr(array('ppps', 'ppp'));
-			if (count($config['ppps']['ppp'])) {
-				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-					if ($ppp['ptpid'] == "0") {
-						if ((substr($config['interfaces']['wan']['if'],0,5) == "pppoe") ||
-						    (substr($config['interfaces']['wan']['if'],0,4) == "pptp")) {
-							$oldif = explode(",", $ppp['ports']);
-							$config['interfaces']['wan']['if'] = $oldif[0];
-						}
-						if (($type == "pppoe") ||
-						    ($type == "pptp"))
-							unset($config['ppps']['ppp'][$pppid]);
+			config_init_path('ppps/ppp');
+			foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+				if ($ppp['ptpid'] == "0") {
+					if ((substr(config_get_path('interfaces/wan/if'),0,5) == "pppoe") ||
+					    (substr(config_get_path('interfaces/wan/if'),0,4) == "pptp")) {
+						$oldif = explode(",", $ppp['ports']);
+						config_set_path('interfaces/wan/if', $oldif[0]);
+					}
+					if (($type == "pppoe") || ($type == "pptp")) {
+						config_del_path("ppps/ppp/{$pppid}");
 					}
 				}
 			}
@@ -554,26 +552,26 @@
 			if (($type == "pppoe") ||
 			    ($type == "pptp")) {
 				if ($type == "pptp") {
-					$config['wizardtemp']['wan']['username'] = $config['wizardtemp']['wan']['pptpusername'];
-					$config['wizardtemp']['wan']['password'] = $config['wizardtemp']['wan']['pptppassword'];
-					$config['wizardtemp']['wan']['ondemand'] = $config['wizardtemp']['wan']['pptpondemand'];
-					$config['wizardtemp']['wan']['idletimeout'] = $config['wizardtemp']['wan']['pptpidletimeout'];
-					unset($config['wizardtemp']['wan']['pptpusername']);
-					unset($config['wizardtemp']['wan']['pptppassword']);
-					unset($config['wizardtemp']['wan']['pptpondemand']);
-					unset($config['wizardtemp']['wan']['pptpidletimeout']);
+					config_set_path('wizardtemp/wan/username', config_get_path('wizardtemp/wan/pptpusername'));
+					config_set_path('wizardtemp/wan/password', config_get_path('wizardtemp/wan/pptppassword'));
+					config_set_path('wizardtemp/wan/ondemand', config_get_path('wizardtemp/wan/pptpondemand'));
+					config_set_path('wizardtemp/wan/idletimeout', config_get_path('wizardtemp/wan/pptpidletimeout'));
+					config_del_path('wizardtemp/wan/pptpusername');
+					config_del_path('wizardtemp/wan/pptppassword');
+					config_del_path('wizardtemp/wan/pptpondemand');
+					config_del_path('wizardtemp/wan/pptpidletimeout');
 				}
-				$config['wizardtemp']['wan']['password'] = base64_encode($config['wizardtemp']['wan']['password']);
+				config_set_path('wizardtemp/wan/password', base64_encode(config_get_path('wizardtemp/wan/password')));
 				$tmp = array();
 				$tmp['ptpid'] = "0";
 				$tmp['type'] = $type;
 				$tmp['if'] = $type . "0";
-				$tmp['ports'] = $config['interfaces']['wan']['if'];
-				$config['ppps']['ppp'][] = array_merge($tmp, $config['wizardtemp']['wan']);
+				$tmp['ports'] = config_get_path('interfaces/wan/if');
+				config_set_path('ppps/ppp/', array_merge($tmp, config_get_path('wizardtemp/wan')));
 				unset($tmp);
-				$config['interfaces']['wan']['if'] = $type."0";
+				config_set_path('interfaces/wan/if', $type."0");
 			}
-			unset($config['wizardtemp']['wan']);
+			config_del_path('wizardtemp/wan');
 		} else {
 			$stepid = $stepid - 1;
 		}
@@ -583,10 +581,10 @@
 		<![CDATA[
 			if ($_POST['configurationtype'] != "Static") {
 				$_POST['ipaddress'] = $_POST['configurationtype'];
-				$config['interfaces']['wan']['ipaddr'] = $_POST['configurationtype'];
+				config_set_path('interfaces/wan/ipaddr', $_POST['configurationtype']);
 				write_config(gettext("WAN interface configuration saved via pfSense setup wizard."));
 			}
-			if (!$config['interfaces']['lan']) {
+			if (!config_get_path('interfaces/lan')) {
 				header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
@@ -624,10 +622,10 @@
 		 * between the time it is saved here and applied at the end of the wizard.
 		 * See https://redmine.pfsense.org/issues/8524
 		 */
-		$althosts_before = $config['system']['webgui']['althostnames'];
-		$althosts = explode(' ', $config['system']['webgui']['althostnames']);
+		$althosts_before = config_get_path('system/webgui/althostnames');
+		$althosts = explode(' ', config_get_path('system/webgui/althostnames'));
 		$althosts[] = get_interface_ip('lan');
-		$config['system']['webgui']['althostnames'] = implode(' ', $althosts);
+		config_set_path('system/webgui/althostnames', implode(' ', $althosts));
 		]]>
 	</stepsubmitbeforesave>
 	<stepsubmitphpaction>
@@ -662,10 +660,10 @@
 			   If the existing DHCP range on LAN is not in the new subnet or
 			   is invalid, then replace the range with a newly crafted one.
 			*/
-			init_config_arr(array('dhcpd', 'lan', 'range', 'from'));
-			init_config_arr(array('dhcpd', 'lan', 'range', 'to'));
-			if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
-			    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
+			config_init_path('dhcpd/lan/range/from');
+			config_init_path('dhcpd/lan/range/to');
+			if (!ip_in_subnet(config_get_path('dhcpd/lan/range/from'), "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
+			    !ip_in_subnet(config_get_path('dhcpd/lan/range/to'), "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
 
 				$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
 				$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
@@ -675,23 +673,23 @@
 						// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
 						// This case will work out like the old defaults if the user has specified the ".1" address.
 						// The range will be something like ".10" to ".245"
-						$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
-						$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+						config_set_path('dhcpd/lan/range/from', ip_after($_POST['lanipaddress'], 9));
+						config_set_path('dhcpd/lan/range/to', ip_before($highestip, 10));
 					} else {
 						// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
-						$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
-						$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+						config_set_path('dhcpd/lan/range/from', ip_after($_POST['lanipaddress']));
+						config_set_path('dhcpd/lan/range/to', ip_before($highestip));
 					}
 				} else {
 					// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
 					if ($ipaddresses_before > 30) {
 						// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-						$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
-						$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
+						config_set_path('dhcpd/lan/range/from', ip_after($lowestip, 10));
+						config_set_path('dhcpd/lan/range/to', ip_before($_POST['lanipaddress'], 9));
 					} else {
 						// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
-						$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
-						$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+						config_set_path('dhcpd/lan/range/from', ip_after($lowestip));
+						config_set_path('dhcpd/lan/range/to', ip_before($_POST['lanipaddress']));
 					}
 				}
 			}
@@ -770,40 +768,40 @@
 	</description>
 	<stepafterformdisplay>
 		<![CDATA[
-		$config['system']['hostname'] = $config['wizardtemp']['system']['hostname'];
-		$config['system']['domain'] = $config['wizardtemp']['system']['domain'];
-		if (!empty($config['wizardtemp']['wangateway'])) {
-			init_config_arr(array('gateways', 'gateway_item'));
+		config_set_path('system/hostname', config_get_path('wizardtemp/system/hostname'));
+		config_set_path('system/domain', config_get_path('wizardtemp/system/domain'));
+		if (!empty(config_get_path('wizardtemp/wangateway'))) {
+			config_init_path('gateways/gateway_item');
 			$found = false;
 			$defaultgw_found = false;
-			foreach ($config['gateways']['gateway_item'] as & $gw) {
+			foreach (config_get_path('gateways/gateway_item', []) as $idx => $gw) {
 				if ($gw['interface'] != "wan")
 					continue;
 				if (isset($gw['defaultgw']))
 					$defaultgw_found = true;
 				if (($gw['name'] == 'WANGW') ||
-				    (!empty($config['wizardtemp']['wangateway']) &&
-				    ($gw['gateway'] == $config['wizardtemp']['wangateway']))) {
+				    (!empty(config_get_path('wizardtemp/wangateway')) &&
+				    ($gw['gateway'] == config_get_path('wizardtemp/wangateway')))) {
 					$found = true;
-					$gw['gateway'] = $config['wizardtemp']['wangateway'];
-					$config['interfaces']['wan']['gateway'] = $gw['name'];
+					config_set_path("gateways/gateway_item/{$idx}/gateway", config_get_path('wizardtemp/wangateway'));
+					config_set_path('interfaces/wan/gateway', $gw['name']);
 				}
 			}
 			if (!$found) {
 				$newgw = array();
 				$newgw['interface'] = "wan";
-				$newgw['gateway'] = $config['wizardtemp']['wangateway'];
+				$newgw['gateway'] = config_get_path('wizardtemp/wangateway');
 				$newgw['name'] = "WANGW";
 				$newgw['weight'] = 1;
 				$newgw['descr'] = "WAN Gateway";
 				$newgw['defaultgw'] = !$defaultgw_found;
-				$config['gateways']['gateway_item'][] = $newgw;
-				$config['interfaces']['wan']['gateway'] = "WANGW";
+				config_set_path('gateways/gateway_item', $newgw);
+				config_set_path('interfaces/wan/gateway', "WANGW");
 			}
 		}
-		unset($config['wizardtemp']);
+		config_del_path('wizardtemp');
 		/* See https://redmine.pfsense.org/issues/8524 */
-		$config['system']['webgui']['althostnames'] = $althosts_before;
+		config_set_path('system/webgui/althostnames', $althosts_before);
 		write_config(gettext("Configuration saved on completion of the pfSense setup wizard."));
 		reload_all();
 		mwexec_bg("/etc/rc.update_bogons.sh now");

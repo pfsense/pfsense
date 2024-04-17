@@ -106,8 +106,6 @@ if (!$if || !isset($iflist[$if])) {
 
 $act = $_REQUEST['act'];
 
-$a_pools = array();
-
 if (!empty(config_get_path("dhcpd/{$if}"))) {
 	$pool = $_REQUEST['pool'];
 	if (is_numeric($_POST['pool'])) {
@@ -120,19 +118,17 @@ if (!empty(config_get_path("dhcpd/{$if}"))) {
 		exit;
 	}
 
-	init_config_arr(array('dhcpd', $if, 'pool'));
-	$a_pools = &$config['dhcpd'][$if]['pool'];
+	config_init_path("dhcpd/{$if}/pool");
 
-	if (is_numeric($pool) && $a_pools[$pool]) {
-		$dhcpdconf = &$a_pools[$pool];
+	if (is_numeric($pool) && config_get_path("dhcpd/{$if}/pool/{$pool}")) {
+		$dhcpdconf = config_get_path("dhcpd/{$if}/pool/{$pool}");
 	} elseif ($act == "newpool") {
 		$dhcpdconf = array();
 	} else {
-		$dhcpdconf = &$config['dhcpd'][$if];
+		$dhcpdconf = config_get_path("dhcpd/{$if}");
 	}
 
-	init_config_arr(array('dhcpd', $if, 'staticmap'));
-	$a_maps = &$config['dhcpd'][$if]['staticmap'];
+	array_init_path($dhcpd_if_config, "staticmap");
 }
 
 if (is_array($dhcpdconf)) {
@@ -487,11 +483,9 @@ if (isset($_POST['save'])) {
 	}
 
 	$noip = false;
-	if (is_array($a_maps)) {
-		foreach ($a_maps as $map) {
-			if (empty($map['ipaddr'])) {
-				$noip = true;
-			}
+	foreach (config_get_path("dhcpd/{$if}/staticmap", []) as $map) {
+		if (empty($map['ipaddr'])) {
+			$noip = true;
 		}
 	}
 
@@ -590,7 +584,7 @@ if (isset($_POST['save'])) {
 			}
 		}
 
-		foreach ($a_pools as $id => $p) {
+		foreach (config_get_path("dhcpd/{$if}/pool") as $id => $p) {
 			if (is_numeric($pool) && ($id == $pool)) {
 				continue;
 			}
@@ -602,15 +596,13 @@ if (isset($_POST['save'])) {
 			}
 		}
 
-		if (is_array($a_maps)) {
-			foreach ($a_maps as $map) {
-				if (empty($map['ipaddr'])) {
-					continue;
-				}
-				if (is_inrange_v4($map['ipaddr'], $_POST['range_from'], $_POST['range_to'])) {
-					$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
-					break;
-				}
+		foreach (config_get_path("dhcpd/{$if}/staticmap", []) as $map) {
+			if (empty($map['ipaddr'])) {
+				continue;
+			}
+			if (is_inrange_v4($map['ipaddr'], $_POST['range_from'], $_POST['range_to'])) {
+				$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
+				break;
 			}
 		}
 	}
@@ -624,8 +616,8 @@ if (isset($_POST['save'])) {
 				$dhcpdconf = config_get_path("dhcpd/{$if}");
 			}
 		} else {
-			if (is_array($a_pools[$pool])) {
-				$dhcpdconf = $a_pools[$pool];
+			if (is_array(config_get_path("dhcpd/{$if}/pool/{$pool}"))) {
+				$dhcpdconf = config_get_path("dhcpd/{$if}/pool/{$pool}");
 			} else {
 				// Someone specified a pool but it doesn't exist. Punt.
 				header("Location: services_dhcp.php");
@@ -797,10 +789,10 @@ if (isset($_POST['save'])) {
 			$dhcpdconf['omapi_key_algorithm'] = $_POST['omapi_key_algorithm'];
 		}
 
-		if (is_numeric($pool) && is_array($a_pools[$pool])) {
-			$a_pools[$pool] = $dhcpdconf;
+		if (is_numeric($pool) && is_array(config_get_path("dhcpd/{$if}/pool/{$pool}"))) {
+			config_set_path("dhcpd/{$if}/pool/{$pool}", $dhcpdconf);
 		} elseif ($act == "newpool") {
-			$a_pools[] = $dhcpdconf;
+			config_set_path("dhcpd/{$if}/pool/", $dhcpdconf);
 		} else {
 			config_set_path("dhcpd/{$if}", $dhcpdconf);
 		}
@@ -881,8 +873,8 @@ if (isset($_POST['apply'])) {
 }
 
 if ($act == "delpool") {
-	if ($a_pools[$_POST['id']]) {
-		unset($a_pools[$_POST['id']]);
+	if (config_get_path("dhcpd/{$if}/pool/{$_POST['id']}")) {
+		config_del_path("dhcpd/{$if}/pool/{$_POST['id']}");
 		write_config("DHCP Server pool deleted");
 		mark_subsystem_dirty('dhcpd');
 		header("Location: services_dhcp.php?if={$if}");
@@ -891,12 +883,12 @@ if ($act == "delpool") {
 }
 
 if ($act == "del") {
-	if (isset($a_maps[$_POST['id']])) {
+	if (config_get_path("dhcpd/{$if}/staticmap/{$_POST['id']}") !== null) {
 		/* Remove static ARP entry, if necessary */
-		if (isset($a_maps[$_POST['id']]['arp_table_static_entry'])) {
-			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_POST['id']]['ipaddr']));
+		if (config_get_path("dhcpd/{$if}/staticmap/{$_POST['id']}/arp_table_static_entry") !== null) {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg(config_get_path("dhcpd/{$if}/staticmap/{$_POST['id']}/ipaddr")));
 		}
-		unset($a_maps[$_POST['id']]);
+		config_del_path("dhcpd/{$if}/staticmap/{$_POST['id']}");
 		write_config("DHCP Server static map deleted");
 		if (config_path_enabled("dhcpd/{$if}")) {
 			mark_subsystem_dirty('dhcpd');
@@ -912,7 +904,7 @@ if ($act == "del") {
 
 // Build an HTML table that can be inserted into a Form_StaticText element
 function build_pooltable() {
-	global $a_pools, $if;
+	global $if;
 
 	$pooltbl =	'<div class="table-responsive">';
 	$pooltbl .=		'<table class="table table-striped table-hover table-condensed">';
@@ -926,27 +918,25 @@ function build_pooltable() {
 	$pooltbl .=			'</thead>';
 	$pooltbl .=			'<tbody>';
 
-	if (is_array($a_pools)) {
-		$i = 0;
-		foreach ($a_pools as $poolent) {
-			if (!empty($poolent['range']['from']) && !empty($poolent['range']['to'])) {
-				$pooltbl .= '<tr>';
-				$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
-							htmlspecialchars($poolent['range']['from']) . '</td>';
+	$i = 0;
+	foreach (config_get_path("dhcpd/{$if}/pool", []) as $poolent) {
+		if (!empty($poolent['range']['from']) && !empty($poolent['range']['to'])) {
+			$pooltbl .= '<tr>';
+			$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
+						htmlspecialchars($poolent['range']['from']) . '</td>';
 
-				$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
-							htmlspecialchars($poolent['range']['to']) . '</td>';
+			$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
+						htmlspecialchars($poolent['range']['to']) . '</td>';
 
-				$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
-							htmlspecialchars($poolent['descr']) . '</td>';
+			$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
+						htmlspecialchars($poolent['descr']) . '</td>';
 
-				$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
+			$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-				$pooltbl .= ' <a class="fa-solid fa-trash-can" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
-				$pooltbl .= '</tr>';
-			}
-		$i++;
+			$pooltbl .= ' <a class="fa-solid fa-trash-can" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
+			$pooltbl .= '</tr>';
 		}
+		$i++;
 	}
 
 	$pooltbl .=			'</tbody>';
@@ -1146,7 +1136,7 @@ if (is_numeric($pool) || ($act === 'newpool')) {
 		$ranges[] = $subnet_range;
 	}
 
-	foreach ($a_pools as $p) {
+	foreach (config_get_path("dhcpd/{$if}/pool") as $p) {
 		$pa = array_get_path($p, 'range', []);
 		if (!empty($pa)) {
 			$pa['descr'] = trim($p['descr']);
@@ -1191,7 +1181,7 @@ $section->add($group);
 
 if (!is_numeric($pool) && !($act == "newpool")) {
 	$has_pools = false;
-	if (is_array($a_pools) && (count($a_pools) > 0)) {
+	if (is_array(config_get_path("dhcpd/{$if}/pool")) && (count(config_get_path("dhcpd/{$if}/pool")) > 0)) {
 		$section->addInput(new Form_StaticText(
 			gettext('Additional Pools'),
 			build_pooltable()
@@ -1898,12 +1888,10 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 
 	// Decide whether display of the Client Id column is needed.
 	$got_cid = false;
-	if (is_array($a_maps)) {
-		foreach ($a_maps as $map) {
-			if (!empty($map['cid'])) {
-				$got_cid = true;
-				break;
-			}
+	foreach (config_get_path("dhcpd/{$if}/staticmap", []) as $map) {
+		if (!empty($map['cid'])) {
+			$got_cid = true;
+			break;
 		}
 	}
 ?>
@@ -1933,53 +1921,49 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 					</tr>
 				</thead>
 <?php
-	if (is_array($a_maps)) {
-		$i = 0;
+	$i = 0;
 ?>
-				<tbody>
+			<tbody>
 <?php
-		foreach ($a_maps as $mapent) {
+	foreach (config_get_path("dhcpd/{$if}/staticmap", []) as $mapent) {
 ?>
-					<tr>
-						<td class="text-center" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-							<?php if (isset($mapent['arp_table_static_entry'])): ?>
-								<i class="fa-solid fa-check"></i>
-							<?php endif; ?>
-						</td>
-						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-							<?=htmlspecialchars($mapent['mac'])?>
-						</td>
+				<tr>
+					<td class="text-center" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<?php if (isset($mapent['arp_table_static_entry'])): ?>
+							<i class="fa-solid fa-check"></i>
+						<?php endif; ?>
+					</td>
+					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<?=htmlspecialchars($mapent['mac'])?>
+					</td>
 <?php
-			if ($got_cid):
+		if ($got_cid):
 ?>
-						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-							<?=htmlspecialchars($mapent['cid'])?>
-						</td>
+					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<?=htmlspecialchars($mapent['cid'])?>
+					</td>
 <?php
-			endif;
+		endif;
 ?>
-						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-							<?=htmlspecialchars($mapent['ipaddr'])?>
-						</td>
-						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-							<?=htmlspecialchars($mapent['hostname'])?>
-						</td>
-						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-							<?=htmlspecialchars($mapent['descr'])?>
-						</td>
-						<td>
-							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
-							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
-						</td>
-					</tr>
+					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<?=htmlspecialchars($mapent['ipaddr'])?>
+					</td>
+					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<?=htmlspecialchars($mapent['hostname'])?>
+					</td>
+					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<?=htmlspecialchars($mapent['descr'])?>
+					</td>
+					<td>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
+						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+					</td>
+				</tr>
 <?php
 		$i++;
-		}
-?>
-				</tbody>
-<?php
 	}
 ?>
+			</tbody>
 		</table>
 	</div>
 </div>

@@ -89,13 +89,11 @@ if ($_POST['save'] && !$read_only) {
 			config_set_path("system/group/{$groupid}/priv", array_merge(config_get_path("system/group/{$groupid}/priv"), $pconfig['sysprivs']));
 		}
 
-		if (is_array(config_get_path("system/group/{$groupid}/member"))) {
-			foreach (config_get_path("system/group/{$groupid}/member") as $uid) {
-				$user = getUserEntryByUID($uid);
-				$user = $user['item'];
-				if ($user) {
-					local_user_set($user);
-				}
+		foreach (config_get_path("system/group/{$groupid}/member", []) as $uid) {
+			$user = getUserEntryByUID($uid);
+			$user = $user['item'];
+			if ($user) {
+				local_user_set($user);
 			}
 		}
 

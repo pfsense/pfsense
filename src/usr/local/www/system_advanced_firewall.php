@@ -78,6 +78,7 @@ display_top_tabs($tab_array);
 
 ?><div id="container"><?php
 
+$system_config = config_get_path('system');
 $form = new Form;
 $section = new Form_Section('Packet Processing');
 
@@ -85,7 +86,7 @@ $section->addInput(new Form_Checkbox(
 	'scrubnodf',
 	'IP Do-Not-Fragment compatibility',
 	'Clear invalid DF bits instead of dropping the packets',
-	isset($config['system']['scrubnodf'])
+	isset($system_config['scrubnodf'])
 ))->setHelp('This allows for communications with hosts that generate fragmented '.
 	'packets with the don\'t fragment (DF) bit set. Linux NFS is known to do this. '.
 	'This will cause the filter to not drop such packets but instead clear the don\'t '.
@@ -95,7 +96,7 @@ $section->addInput(new Form_Checkbox(
 	'scrubrnid',
 	'IP Random id generation',
 	'Insert a stronger ID into IP header of packets passing through the filter.',
-	isset($config['system']['scrubrnid'])
+	isset($system_config['scrubrnid'])
 ))->setHelp('Replaces the IP identification field of packets with random values to '.
 	'compensate for operating systems that use predictable values. This option only '.
 	'applies to packets that are not fragmented after the optional packet '.
@@ -104,7 +105,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput($input = new Form_Select(
 	'optimization',
 	'Firewall Optimization Options',
-	$config['system']['optimization'],
+	$system_config['optimization'],
 	array(
 		'normal' => 'Normal',
 		'high-latency' => gettext('High-latency'),
@@ -117,7 +118,7 @@ $section->addInput(new Form_Checkbox(
 	'disablescrub',
 	'Disable Firewall Scrub',
 	'Disables the PF scrubbing option which can sometimes interfere with NFS traffic.',
-	isset($config['system']['disablescrub'])
+	isset($system_config['disablescrub'])
 ));
 
 $group = new Form_Group('Firewall Adaptive Timeouts');
@@ -243,7 +244,7 @@ $section->addInput(new Form_Checkbox(
 	'disablefilter',
 	'Disable Firewall',
 	'Disable all packet filtering.',
-	isset($config['system']['disablefilter'])
+	isset($system_config['disablefilter'])
 ))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
 	'Note: This will also turn off NAT! To only disable NAT, '.
 	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', g_get('product_label'), '<br/>', '<a href="firewall_nat_out.php">', '</a>');
@@ -289,7 +290,7 @@ $section->addInput(new Form_Checkbox(
 	'disablevpnrules',
 	'Disable Auto-added VPN rules',
 	'Disable all auto-added VPN rules.',
-	isset($config['system']['disablevpnrules'])
+	isset($system_config['disablevpnrules'])
 ))->setHelp('Note: This disables automatically added rules for IPsec.');
 
 $section->addInput(new Form_Checkbox(
@@ -354,12 +355,12 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-if (count($config['interfaces']) > 1) {
+if (count(config_get_path('interfaces')) > 1) {
 	$section = new Form_Section('Network Address Translation');
 
-	if (isset($config['system']['disablenatreflection'])) {
+	if (isset($system_config['disablenatreflection'])) {
 		$value = 'disable';
-	} elseif (!isset($config['system']['enablenatreflectionpurenat'])) {
+	} elseif (!isset($system_config['enablenatreflectionpurenat'])) {
 		$value = 'proxy';
 	} else {
 		$value = 'purenat';
@@ -395,7 +396,7 @@ if (count($config['interfaces']) > 1) {
 		'reflectiontimeout',
 		'Reflection Timeout',
 		'number',
-		$config['system']['reflectiontimeout'],
+		$system_config['reflectiontimeout'],
 		['min' => 1, 'placeholder' => '2000']
 	))->setHelp('Enter value for Reflection timeout in seconds.%1$sNote: Only '.
 		'applies to Reflection on port forwards in NAT + proxy mode.', '<br/>');
@@ -404,7 +405,7 @@ if (count($config['interfaces']) > 1) {
 		'enablebinatreflection',
 		'Enable NAT Reflection for 1:1 NAT',
 		'Automatic creation of additional NAT redirect rules from within the internal networks.',
-		isset($config['system']['enablebinatreflection'])
+		isset($system_config['enablebinatreflection'])
 	))->setHelp('Note: Reflection on 1:1 mappings is only for the inbound component of '.
 		'the 1:1 mappings. This functions the same as the pure NAT mode for port '.
 		'forwards. For more details, refer to the pure NAT mode description '.
@@ -415,7 +416,7 @@ if (count($config['interfaces']) > 1) {
 		'enablenatreflectionhelper',
 		'Enable automatic outbound NAT for Reflection',
 		'Automatic create outbound NAT rules that direct traffic back out to the same subnet it originated from.',
-		isset($config['system']['enablenatreflectionhelper'])
+		isset($system_config['enablenatreflectionhelper'])
 	))->setHelp('Required for full functionality of the pure NAT mode of NAT '.
 		'Reflection for port forwards or NAT Reflection for 1:1 NAT. Note: This only works '.
 		'for assigned interfaces.  Other interfaces require manually creating the '.
@@ -440,7 +441,7 @@ foreach ($pftimeouts as $tm) {
 			$item['keyname'],
 			$item['name'],
 			'number',
-			$config['system'][$item['keyname']],
+			$system_config[$item['keyname']],
 			['placeholder' => $item['value']]
 		));
 	}

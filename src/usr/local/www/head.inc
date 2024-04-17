@@ -30,7 +30,7 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
-$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
+$system_url = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 
 if ($user_settings['webgui']['pagenamefirst']) {
 	$tabtitle = $pagetitle . " - " . htmlspecialchars($system_url);
@@ -47,8 +47,8 @@ if (isset($user_settings['webgui']['webguicss'])) {
 }
 
 // set default columns to two if unset
-if (!isset($config['system']['webgui']['dashboardcolumns'])) {
-	$config['system']['webgui']['dashboardcolumns'] = 2;
+if (config_get_path('system/webgui/dashboardcolumns') === null) {
+	config_set_path('system/webgui/dashboardcolumns', 2);
 }
 
 ?>
@@ -149,15 +149,15 @@ function read_ext_menu_path_data() {
 }
 
 // Create a menu entry of any installed packages in the specified category
-// (Now reads the menu information from $config['installedpackages']['menu'] only)
+// (Now reads the menu information from installedpackages/menu only)
 function return_ext_menu($section) {
-	global $config, $ext_menu_path_data;
+	global $ext_menu_path_data;
 
 	$htmltext = "";
 	$extarray = array();
 	$ext_menu_entries = array();
 
-	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
+	if ((!empty(config_get_path('installedpackages/package'))) && (!empty(config_get_path('installedpackages/menu')))) {
 		foreach (config_get_path('installedpackages/menu', []) as $menu) {
 			if (isset($menu['name']) && ($menu['name'] != "AutoConfigBackup")) { // AutoConfigBackup was moved to a built-in function
 	//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
@@ -286,7 +286,7 @@ $interfaces_menu = array();
 $interfaces_top = array();
 $interfaces_bottom = array();
 
-if (!isset($config['system']['webgui']['noassigninterfaces'])) {
+if (!config_path_enabled('system/webgui', 'noassigninterfaces')) {
 	$interfaces_top[] = array(gettext("Assignments"), "/interfaces_assign.php");
 	$div = true;
 }
@@ -300,7 +300,7 @@ if ($platform['name'] == "uFW") {
 $opts = get_configured_interface_with_descr(true);
 
 foreach ($opts as $oif => $odescr) {
-	if (!isset($config['interfaces'][$oif]['ovpn'])) {
+	if (config_get_path("interfaces/{$oif}/ovpn") === null) {
 		$interfaces_bottom[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
@@ -346,7 +346,7 @@ $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/services_pppoe.php");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
 
-if (count($config['interfaces']) > 1) {
+if (count(config_get_path('interfaces')) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
@@ -383,15 +383,15 @@ $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php");
 
-if (count($config['interfaces']) > 1) {
+if (count(config_get_path('interfaces')) > 1) {
 	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
 }
 
 $wifdescrs = array();
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
-	if (is_array($config['interfaces'][$ent]['wireless']) &&
-	    preg_match(g_get('wireless_regex'), $config['interfaces'][$ent]['if'])) {
+	if (is_array(config_get_path("interfaces/{$ent}/wireless")) &&
+	    preg_match(g_get('wireless_regex'), config_get_path("interfaces/{$ent}/if"))) {
 		$wifdescrs[$ent] = $entdesc;
 	}
 }
@@ -502,7 +502,7 @@ if (are_notices_pending()) {
 			<ul class="nav navbar-nav">
 			<?php
                 if ($user_settings['webgui']['webguihostnamemenu'] == 'hostonly') {
-                    $help_menu_title = htmlspecialchars($config['system']['hostname']);
+                    $help_menu_title = htmlspecialchars(config_get_path('system/hostname'));
                 }
                 elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
                     $help_menu_title = htmlspecialchars($system_url);
@@ -774,7 +774,7 @@ if (!empty($warning_text)) {
 }
 
 /*	If this page is being remotely managed then do not allow the loading of the contents. */
-if ($config['remote_managed_pages']['item']) {
+if (config_get_path('remote_managed_pages/item')) {
 	foreach (config_get_path('remote_managed_pages/item', []) as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
 			print_info_box(gettext("This page is currently being managed by a remote machine."));

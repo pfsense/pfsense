@@ -287,7 +287,7 @@ function ipsec_enabled() {
  */
 
 function ipsec_ikeid_used($ikeid) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if ($ikeid == $ph1ent['ikeid']) {
 			return true;
@@ -298,7 +298,7 @@ function ipsec_ikeid_used($ikeid) {
 
 function ipsec_ikeid_next() {
 	$ikeid = 1;
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	$ipsecikeid = lock('ipsecikeids', LOCK_EX);
 	$ikeids = array();
 
@@ -318,7 +318,7 @@ function ipsec_ikeid_next() {
 }
 
 function ipsec_new_reqid() {
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
 	$keyids = array();
 	$keyid = 1;
@@ -339,7 +339,7 @@ function ipsec_new_reqid() {
 }
 
 function ipsec_get_phase1($ikeid) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 
 	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['ikeid'] == $ikeid) {
@@ -349,7 +349,7 @@ function ipsec_get_phase1($ikeid) {
 }
 
 function ipsec_get_p1_descr($ikeid) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	$p1 = ipsec_get_phase1($ikeid);
 	return (!empty($p1['descr'])) ? $p1['descr'] : '';
 }
@@ -358,7 +358,7 @@ function ipsec_get_p1_descr($ikeid) {
  * Return copy of phase1 for a given phase2
  */
 function ipsec_lookup_phase1($p2, &$p1_disabled) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 
 	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['ikeid'] == $p2['ikeid']) {
@@ -371,7 +371,7 @@ function ipsec_lookup_phase1($p2, &$p1_disabled) {
 }
 
 function ipsec_get_phase2($reqid) {
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 
 	foreach (config_get_path('ipsec/phase2', []) as $p2) {
 		if ($p2['reqid'] == $reqid) {
@@ -381,7 +381,7 @@ function ipsec_get_phase2($reqid) {
 }
 
 function ipsec_get_phase2_by_ikeid($ikeid) {
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 	$results = array();
 	foreach (config_get_path('ipsec/phase2', []) as $p2) {
 		if ($p2['ikeid'] == $ikeid) {
@@ -397,8 +397,8 @@ function ipsec_get_number_of_phase2($ikeid) {
 
 /* Return a nested hash with P1 indexed by ikeid and P2 indexed by reqid */
 function ipsec_map_config_by_id() {
-	init_config_arr(array('ipsec', 'phase1'));
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase1');
+	config_init_path('ipsec/phase2');
 	$map = array();
 
 	foreach (config_get_path('ipsec/phase1', []) as $p1) {
@@ -447,7 +447,7 @@ function ipsec_id_by_conid($conid) {
 	global $ipsec_conid_prefix, $ipsec_conid_separator;
 
 	if ($conid == "{$ipsec_conid_prefix}-mobile") {
-		init_config_arr(array('ipsec', 'phase1'));
+		config_init_path('ipsec/phase1');
 		foreach (config_get_path('ipsec/phase1', []) as $p1) {
 			if (isset($p1['mobile'])) {
 				$conid = $ipsec_conid_prefix . $p1['ikeid'];
@@ -1065,7 +1065,9 @@ function ipsec_mobilekey_sort() {
 		return strcmp($a['ident'][0], $b['ident'][0]);
 	}
 
-	usort($config['ipsec']['mobilekey'], "mobilekeycmp");
+	$mobilekey_config = config_get_path('ipsec/mobilekey');
+	usort($mobilekey_config, "mobilekeycmp");
+	config_set_path('ipsec/mobilekey', $mobilekey_config);
 }
 
 function ipsec_fixup_ip($ipaddr) {
@@ -1232,7 +1234,7 @@ function ipsec_vti($p1, $returnaddresses = false, $skipdisabled = true) {
 function ipsec_reload_package_hook() {
 	global $g;
 
-	init_config_arr(array('installedpackages', 'package'));
+	config_init_path('installedpackages/package');
 	foreach (config_get_path('installedpackages/package', []) as $package) {
 		if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 			continue;
@@ -3137,10 +3139,10 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 
 	/* Populate convenience variables */
 	$syscfg = config_get_path('system');
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	$ipseccfg = config_get_path('ipsec');
 	$a_phase1 = config_get_path('ipsec/phase1');
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 	$a_phase2 = config_get_path('ipsec/phase2');
 
 	$mobile_configured = false;

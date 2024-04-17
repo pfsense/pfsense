@@ -48,8 +48,8 @@ if ($_POST['generatekey']) {
 	exit;
 }
 
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/phase2');
 
 if (is_numericint($_REQUEST['p1index'])) {
 	$p1index = $_REQUEST['p1index'];
@@ -642,9 +642,7 @@ if ($_POST['save']) {
 		if ($p1 && !isset($_REQUEST['dup'])) {
 			config_set_path('ipsec/phase1/' . $p1index, $ph1ent);
 		} else {
-			$p1s = config_get_path('ipsec/phase1', []);
-			$p1s[] = $ph1ent;
-			config_set_path('ipsec/phase1', $p1s);
+			config_set_path('ipsec/phase1/', $ph1ent);
 		}
 
 		write_config(gettext("Saved IPsec tunnel Phase 1 configuration."));

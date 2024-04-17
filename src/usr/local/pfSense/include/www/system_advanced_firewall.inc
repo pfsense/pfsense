@@ -35,23 +35,21 @@ $state_policy_options = [
 
 // Functions included by system_advanced_firewall.php =========================
 function getSystemAdvancedFirewall($json = false) {
-	global $config;
-
 	$pconfig = array();
 
 	$pconfig['adaptiveend'] = config_get_path('system/adaptiveend');
 	$pconfig['adaptivestart'] = config_get_path('system/adaptivestart');
 	$pconfig['aliasesresolveinterval'] = config_get_path('system/aliasesresolveinterval');
 	$pconfig['bogonsinterval'] = config_get_path('system/bogons/interval');
-	$pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
-	$pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
+	$pconfig['bypassstaticroutes'] = config_path_enabled('filter', 'bypassstaticroutes');
+	$pconfig['checkaliasesurlcert'] = config_path_enabled('system', 'checkaliasesurlcert');
 	$pconfig['statepolicy'] = config_get_path('system/statepolicy');
 	$pconfig['disablefilter'] = config_get_path('system/disablefilter');
 	$pconfig['disablenatreflection'] = config_get_path('system/disablenatreflection');
-	$pconfig['disablenegate'] = isset($config['system']['disablenegate']);
-	$pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
-	$pconfig['disablescrub'] = isset($config['system']['disablescrub']);
-	$pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
+	$pconfig['disablenegate'] = config_path_enabled('system', 'disablenegate');
+	$pconfig['disablereplyto'] = config_path_enabled('system', 'disablereplyto');
+	$pconfig['disablescrub'] = config_path_enabled('system', 'disablescrub');
+	$pconfig['disablevpnrules'] = config_path_enabled('system', 'disablevpnrules');
 	$pconfig['enablebinatreflection'] = config_get_path('system/enablebinatreflection');
 	$pconfig['enablenatreflectionhelper'] = config_get_path('system/enablenatreflectionhelper');
 	$pconfig['enablenatreflectionpurenat'] = config_get_path('system/enablenatreflectionpurenat');
@@ -60,7 +58,7 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['maximumfrags'] = config_get_path('system/maximumfrags');
 	$pconfig['maximumstates'] = config_get_path('system/maximumstates');
 	$pconfig['maximumtableentries'] = config_get_path('system/maximumtableentries');
-	$pconfig['no_apipa_block'] = isset($config['system']['no_apipa_block']);
+	$pconfig['no_apipa_block'] = config_path_enabled('system', 'no_apipa_block');
 	$pconfig['optimization'] = config_get_path('system/optimization');
 	$pconfig['otherfirsttimeout'] = config_get_path('system/otherfirsttimeout');
 	$pconfig['othermultipletimeout'] = config_get_path('system/othermultipletimeout');
@@ -75,20 +73,20 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['tcpfirsttimeout'] = config_get_path('system/tcpfirsttimeout');
 	$pconfig['tcpopeningtimeout'] = config_get_path('system/tcpopeningtimeout');
 	$pconfig['tcptsdifftimeout'] = config_get_path('system/tcptsdifftimeout');
-	$pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
+	$pconfig['tftpinterface'] = explode(",", config_get_path('system/tftpinterface'));
 	$pconfig['udpfirsttimeout'] = config_get_path('system/udpfirsttimeout');
 	$pconfig['udpmultipletimeout'] = config_get_path('system/udpmultipletimeout');
 	$pconfig['udpsingletimeout'] = config_get_path('system/udpsingletimeout');
-	$pconfig['vpn_scrubnodf'] = isset($config['system']['vpn_scrubnodf']);
-	$pconfig['vpn_fragment_reassemble'] = isset($config['system']['vpn_fragment_reassemble']);
-	$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
+	$pconfig['vpn_scrubnodf'] = config_path_enabled('system', 'vpn_scrubnodf');
+	$pconfig['vpn_fragment_reassemble'] = config_path_enabled('system', 'vpn_fragment_reassemble');
+	$pconfig['maxmss_enable'] = config_path_enabled('system', 'maxmss_enable');
 	$pconfig['maxmss'] = config_get_path('system/maxmss');
 
 	return $json ? json_encode($pconfig) : $pconfig;
 }
 
 function saveSystemAdvancedFirewall($post, $json = false) {
-	global $g, $config, $state_policy_options;
+	global $g, $state_policy_options;
 
 	$rv = array();
 
@@ -200,7 +198,7 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 	if (!$input_errors) {
 
 		if ($post['disablefilter'] == "yes") {
-			$config['system']['disablefilter'] = "enabled";
+			config_set_path('system/disablefilter', "enabled");
 		} else {
 			config_del_path('system/disablefilter');
 		}
@@ -208,41 +206,41 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		config_set_path('system/statepolicy', $post['statepolicy']);
 
 		if ($post['disablevpnrules'] == "yes") {
-			$config['system']['disablevpnrules'] = true;
+			config_set_path('system/disablevpnrules', true);
 		} else {
 			config_del_path('system/disablevpnrules');
 		}
 		if ($post['rfc959workaround'] == "yes") {
-			$config['system']['rfc959workaround'] = "enabled";
+			config_set_path('system/rfc959workaround', "enabled");
 		} else {
 			config_del_path('system/rfc959workaround');
 		}
 
 		if ($post['scrubnodf'] == "yes") {
-			$config['system']['scrubnodf'] = "enabled";
+			config_set_path('system/scrubnodf', "enabled");
 		} else {
 			config_del_path('system/scrubnodf');
 		}
 
 		if ($post['scrubrnid'] == "yes") {
-			$config['system']['scrubrnid'] = "enabled";
+			config_set_path('system/scrubrnid', "enabled");
 		} else {
 			config_del_path('system/scrubrnid');
 		}
 
 		if (is_numericint($post['adaptiveend'])) {
-			$config['system']['adaptiveend'] = $post['adaptiveend'];
+			config_set_path('system/adaptiveend', $post['adaptiveend']);
 		} else {
 			config_del_path('system/adaptiveend');
 		}
 		if (is_numericint($post['adaptivestart'])) {
-			$config['system']['adaptivestart'] = $post['adaptivestart'];
+			config_set_path('system/adaptivestart', $post['adaptivestart']);
 		} else {
 			config_del_path('system/adaptivestart');
 		}
 
 		if ($post['checkaliasesurlcert'] == "yes") {
-			$config['system']['checkaliasesurlcert'] = true;
+			config_set_path('system/checkaliasesurlcert', true);
 		} else {
 			config_del_path('system/checkaliasesurlcert');
 		}
@@ -250,109 +248,105 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		$setup_sysctl = ($post['maximumtableentries'] != config_get_path('system/maximumtableentries'));
 		$restart_filterdns = ($post['aliasesresolveinterval'] != config_get_path('system/aliasesresolveinterval'));
 
-		$config['system']['optimization'] = $post['optimization'];
-		$maxstates_changed = ($config['system']['maximumstates'] != $post['maximumstates']) ? true : false;
-		$config['system']['maximumstates'] = $post['maximumstates'];
-		$config['system']['aliasesresolveinterval'] = $post['aliasesresolveinterval'];
-		$config['system']['maximumtableentries'] = $post['maximumtableentries'];
-		$config['system']['maximumfrags'] = $post['maximumfrags'];
+		config_set_path('system/optimization', $post['optimization']);
+		$maxstates_changed = (config_get_path('system/maximumstates') != $post['maximumstates']) ? true : false;
+		config_set_path('system/maximumstates', $post['maximumstates']);
+		config_set_path('system/aliasesresolveinterval', $post['aliasesresolveinterval']);
+		config_set_path('system/maximumtableentries', $post['maximumtableentries']);
+		config_set_path('system/maximumfrags', $post['maximumfrags']);
 
 		if ($post['maxmss_enable'] == "yes") {
-			$config['system']['maxmss_enable'] = true;
-			$config['system']['maxmss'] = $post['maxmss'];
+			config_set_path('system/maxmss_enable', true);
+			config_set_path('system/maxmss', $post['maxmss']);
 		} else {
-			if (isset($config['system']['maxmss_enable'])) {
 				config_del_path('system/maxmss_enable');
-			}
-			if (isset($config['system']['maxmss'])) {
 				config_del_path('system/maxmss');
-			}
 		}
 
 		if ($post['vpn_scrubnodf'] == "yes") {
-			$config['system']['vpn_scrubnodf'] = true;
+			config_set_path('system/vpn_scrubnodf', true);
 		} else {
 			config_del_path('system/vpn_scrubnodf');
 		}
 
 		if ($post['vpn_fragment_reassemble'] == "yes") {
-			$config['system']['vpn_fragment_reassemble'] = true;
+			config_set_path('system/vpn_fragment_reassemble', true);
 		} else {
 			config_del_path('system/vpn_fragment_reassemble');
 		}
 
 		if (!empty($post['tcpfirsttimeout'])) {
-			$config['system']['tcpfirsttimeout'] = $post['tcpfirsttimeout'];
+			config_set_path('system/tcpfirsttimeout', $post['tcpfirsttimeout']);
 		} else {
 			config_del_path('system/tcpfirsttimeout');
 		}
 		if (!empty($post['tcpopeningtimeout'])) {
-			$config['system']['tcpopeningtimeout'] = $post['tcpopeningtimeout'];
+			config_set_path('system/tcpopeningtimeout', $post['tcpopeningtimeout']);
 		} else {
 			config_del_path('system/tcpopeningtimeout');
 		}
 		if (!empty($post['tcpestablishedtimeout'])) {
-			$config['system']['tcpestablishedtimeout'] = $post['tcpestablishedtimeout'];
+			config_set_path('system/tcpestablishedtimeout', $post['tcpestablishedtimeout']);
 		} else {
 			config_del_path('system/tcpestablishedtimeout');
 		}
 		if (!empty($post['tcpclosingtimeout'])) {
-			$config['system']['tcpclosingtimeout'] = $post['tcpclosingtimeout'];
+			config_set_path('system/tcpclosingtimeout', $post['tcpclosingtimeout']);
 		} else {
 			config_del_path('system/tcpclosingtimeout');
 		}
 		if (!empty($post['tcpfinwaittimeout'])) {
-			$config['system']['tcpfinwaittimeout'] = $post['tcpfinwaittimeout'];
+			config_set_path('system/tcpfinwaittimeout', $post['tcpfinwaittimeout']);
 		} else {
 			config_del_path('system/tcpfinwaittimeout');
 		}
 		if (!empty($post['tcpclosedtimeout'])) {
-			$config['system']['tcpclosedtimeout'] = $post['tcpclosedtimeout'];
+			config_set_path('system/tcpclosedtimeout', $post['tcpclosedtimeout']);
 		} else {
 			config_del_path('system/tcpclosedtimeout');
 		}
 		if (!empty($post['tcptsdifftimeout'])) {
-			$config['system']['tcptsdifftimeout'] = $post['tcptsdifftimeout'];
+			config_set_path('system/tcptsdifftimeout', $post['tcptsdifftimeout']);
 		} else {
 			config_del_path('system/tcptsdifftimeout');
 		}
 		if (!empty($post['udpfirsttimeout'])) {
-			$config['system']['udpfirsttimeout'] = $post['udpfirsttimeout'];
+			config_set_path('system/udpfirsttimeout', $post['udpfirsttimeout']);
 		} else {
 			config_del_path('system/udpfirsttimeout');
 		}
 		if (!empty($post['udpsingletimeout'])) {
-			$config['system']['udpsingletimeout'] = $post['udpsingletimeout'];
+			config_set_path('system/udpsingletimeout', $post['udpsingletimeout']);
 		} else {
 			config_del_path('system/udpsingletimeout');
 		}
 		if (!empty($post['udpmultipletimeout'])) {
-			$config['system']['udpmultipletimeout'] = $post['udpmultipletimeout'];
+			config_set_path('system/udpmultipletimeout', $post['udpmultipletimeout']);
 		} else {
 			config_del_path('system/udpmultipletimeout');
 		}
 		if (!empty($post['icmpfirsttimeout'])) {
-			$config['system']['icmpfirsttimeout'] = $post['icmpfirsttimeout'];
+			config_set_path('system/icmpfirsttimeout', $post['icmpfirsttimeout']);
 		} else {
 			config_del_path('system/icmpfirsttimeout');
 		}
 		if (!empty($post['icmperrortimeout'])) {
-			$config['system']['icmperrortimeout'] = $post['icmperrortimeout'];
+			config_set_path('system/icmperrortimeout', $post['icmperrortimeout']);
 		} else {
 			config_del_path('system/icmperrortimeout');
 		}
 		if (!empty($post['otherfirsttimeout'])) {
-			$config['system']['otherfirsttimeout'] = $post['otherfirsttimeout'];
+			config_set_path('system/otherfirsttimeout', $post['otherfirsttimeout']);
 		} else {
 			config_del_path('system/otherfirsttimeout');
 		}
 		if (!empty($post['othersingletimeout'])) {
-			$config['system']['othersingletimeout'] = $post['othersingletimeout'];
+			config_set_path('system/othersingletimeout', $post['othersingletimeout']);
 		} else {
 			config_del_path('system/othersingletimeout');
 		}
 		if (!empty($post['othermultipletimeout'])) {
-			$config['system']['othermultipletimeout'] = $post['othermultipletimeout'];
+			config_set_path('system/othermultipletimeout', $post['othermultipletimeout']);
 		} else {
 			config_del_path('system/othermultipletimeout');
 		}
@@ -362,63 +356,63 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 			config_del_path('system/enablenatreflectionpurenat');
 		} else if ($post['natreflection'] == "purenat") {
 			config_del_path('system/disablenatreflection');
-			$config['system']['enablenatreflectionpurenat'] = "yes";
+			config_set_path('system/enablenatreflectionpurenat', "yes");
 		} else {
-			$config['system']['disablenatreflection'] = "yes";
+			config_set_path('system/disablenatreflection', "yes");
 			config_del_path('system/enablenatreflectionpurenat');
 		}
 
 		if ($post['enablebinatreflection'] == "yes") {
-			$config['system']['enablebinatreflection'] = "yes";
+			config_set_path('system/enablebinatreflection', "yes");
 		} else {
 			config_del_path('system/enablebinatreflection');
 		}
 
 		if ($post['disablereplyto'] == "yes") {
-			$config['system']['disablereplyto'] = $post['disablereplyto'];
+			config_set_path('system/disablereplyto', $post['disablereplyto']);
 		} else {
 			config_del_path('system/disablereplyto');
 		}
 
 		if ($post['disablenegate'] == "yes") {
-			$config['system']['disablenegate'] = $post['disablenegate'];
+			config_set_path('system/disablenegate', $post['disablenegate']);
 		} else {
 			config_del_path('system/disablenegate');
 		}
 
 		if ($post['no_apipa_block'] == "yes") {
-			$config['system']['no_apipa_block'] = "enabled";
+			config_set_path('system/no_apipa_block', "enabled");
 		} else {
 			config_del_path('system/no_apipa_block');
 		}
 
 		if ($post['enablenatreflectionhelper'] == "yes") {
-			$config['system']['enablenatreflectionhelper'] = "yes";
+			config_set_path('system/enablenatreflectionhelper', "yes");
 		} else {
 			config_del_path('system/enablenatreflectionhelper');
 		}
 
-		$config['system']['reflectiontimeout'] = $post['reflectiontimeout'];
+		config_set_path('system/reflectiontimeout', $post['reflectiontimeout']);
 
 		if ($post['bypassstaticroutes'] == "yes") {
-			$config['filter']['bypassstaticroutes'] = $post['bypassstaticroutes'];
-		} elseif (isset($config['filter']['bypassstaticroutes'])) {
+			config_set_path('filter/bypassstaticroutes', $post['bypassstaticroutes']);
+		} elseif (config_path_enabled('filter', 'bypassstaticroutes')) {
 			config_del_path('filter/bypassstaticroutes');
 		}
 
 		if ($post['disablescrub'] == "yes") {
-			$config['system']['disablescrub'] = $post['disablescrub'];
+			config_set_path('system/disablescrub', $post['disablescrub']);
 		} else {
 			config_del_path('system/disablescrub');
 		}
 
 		if ($post['tftpinterface']) {
-			$config['system']['tftpinterface'] = implode(",", $post['tftpinterface']);
+			config_set_path('system/tftpinterface', implode(",", $post['tftpinterface']));
 		} else {
 			config_del_path('system/tftpinterface');
 		}
 
-		if ($post['bogonsinterval'] != $config['system']['bogons']['interval']) {
+		if ($post['bogonsinterval'] != config_get_path('system/bogons/interval')) {
 			switch ($post['bogonsinterval']) {
 				case 'daily':
 					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*", "root", false);
@@ -431,7 +425,7 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 				default:
 					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*", "root", false);
 			}
-			$config['system']['bogons']['interval'] = $post['bogonsinterval'];
+			config_set_path('system/bogons/interval', $post['bogonsinterval']);
 		}
 
 		if ($maxstates_changed) {

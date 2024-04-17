@@ -19,14 +19,14 @@
  * limitations under the License.
  */
 
-global $config;
 echo "Enabling sshd...";
 require("config.inc");
 echo ".";
-$config = parse_config(true);
+// parse config.xml
+config_set_path('', parse_config(true));
 echo ".";
-init_config_arr(array('system', 'ssh'));
-$config['system']['ssh']['enable'] = "enabled";
+config_init_path('system/ssh');
+config_set_path('system/ssh/enable', "enabled");
 echo ".";
 write_config("pfSsh.php enabled sshd");
 echo "\nRestarting sshd, please wait...";

@@ -32,8 +32,7 @@ require_once("guiconfig.inc");
 
 global $lagghash_list;
 
-init_config_arr(array('laggs', 'lagg'));
-$a_laggs = &$config['laggs']['lagg'];
+config_init_path('laggs/lagg');
 
 $portlist = get_interface_list();
 $laggprotos	  = array("none", "lacp", "failover", "loadbalance", "roundrobin");
@@ -99,13 +98,11 @@ $lagghashhelp =
 
 $realifchecklist = array();
 /* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach (config_get_path('laggs/lagg', []) as $lagg) {
-		unset($portlist[$lagg['laggif']]);
-		$laggiflist = explode(",", $lagg['members']);
-		foreach ($laggiflist as $tmpif) {
-			$realifchecklist[get_real_interface($tmpif)] = $tmpif;
-		}
+foreach (config_get_path('laggs/lagg', []) as $lagg) {
+	unset($portlist[$lagg['laggif']]);
+	$laggiflist = explode(",", $lagg['members']);
+	foreach ($laggiflist as $tmpif) {
+		$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 	}
 }
 
@@ -117,24 +114,25 @@ foreach ($checklist as $tmpif) {
 
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_laggs[$id]) {
-	$pconfig['laggif'] = $a_laggs[$id]['laggif'];
-	$pconfig['members'] = $a_laggs[$id]['members'];
-	$laggiflist = explode(",", $a_laggs[$id]['members']);
+$this_lagg_config = isset($id) ? config_get_path("laggs/lagg/{$id}") : null;
+if ($this_lagg_config) {
+	$pconfig['laggif'] = $this_lagg_config['laggif'];
+	$pconfig['members'] = $this_lagg_config['members'];
+	$laggiflist = explode(",", $this_lagg_config['members']);
 	foreach ($laggiflist as $tmpif) {
 		unset($realifchecklist[get_real_interface($tmpif)]);
 	}
-	$pconfig['proto'] = $a_laggs[$id]['proto'];
-	if (isset($a_laggs[$id]['failovermaster'])) {
-		$pconfig['failovermaster'] = $a_laggs[$id]['failovermaster'];
+	$pconfig['proto'] = $this_lagg_config['proto'];
+	if (isset($this_lagg_config['failovermaster'])) {
+		$pconfig['failovermaster'] = $this_lagg_config['failovermaster'];
 	}
-	if (isset($a_laggs[$id]['lacptimeout'])) {
-		$pconfig['lacptimeout'] = $a_laggs[$id]['lacptimeout'];
+	if (isset($this_lagg_config['lacptimeout'])) {
+		$pconfig['lacptimeout'] = $this_lagg_config['lacptimeout'];
 	}
-	if (isset($a_laggs[$id]['lagghash'])) {
-		$pconfig['lagghash'] = $a_laggs[$id]['lagghash'];
+	if (isset($this_lagg_config['lagghash'])) {
+		$pconfig['lagghash'] = $this_lagg_config['lagghash'];
 	}
-	$pconfig['descr'] = $a_laggs[$id]['descr'];
+	$pconfig['descr'] = $this_lagg_config['descr'];
 }
 
 if ($_POST['save']) {
@@ -197,18 +195,18 @@ if ($_POST['save']) {
 		} else {
 			unset($lagg['lagghash']);
 		}
-		if (isset($id) && $a_laggs[$id]) {
-			$lagg['laggif'] = $a_laggs[$id]['laggif'];
+		if ($this_lagg_config) {
+			$lagg['laggif'] = $this_lagg_config['laggif'];
 		}
 
 		$lagg['laggif'] = interface_lagg_configure($lagg);
 		if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
-			if (isset($id) && $a_laggs[$id]) {
-				$a_laggs[$id] = $lagg;
+			if ($this_lagg_config) {
+				config_set_path("laggs/lagg/{$id}", $lagg);
 			} else {
-				$a_laggs[] = $lagg;
+				config_set_path('laggs/lagg/', $lagg);
 			}
 
 			write_config("LAGG interface added");
@@ -337,7 +335,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['laggif']
 ));
 
-if (isset($id) && $a_laggs[$id]) {
+if ($this_lagg_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

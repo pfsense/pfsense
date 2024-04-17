@@ -39,19 +39,11 @@ $ntp_poll_values = system_ntp_poll_values();
 $serialports = get_serial_ports(true);
 
 function set_default_gps() {
-	global $config;
-
-	if (!is_array($config['ntpd'])) {
-		config_set_path('ntpd', array());
-	}
-	if (is_array($config['ntpd']['gps'])) {
-		config_del_path('ntpd/gps');
-	}
-
-	config_set_path('ntpd/gps', array());
+	config_init_path('ntpd');
+	config_del_path('ntpd/gps');
 	config_set_path('ntpd/gps/type', 'Default');
 	/* copy an existing configured GPS port if it exists, the unset may be uncommented post production */
-	if (!empty($config['ntpd']['gpsport']) && empty($config['ntpd']['gps']['port'])) {
+	if (!empty(config_get_path('ntpd/gpsport')) && empty(config_get_path('ntpd/gps/port'))) {
 		config_set_path('ntpd/gps/port', config_get_path('ntpd/gpsport'));
 		config_del_path('ntpd/gpsport'); /* this removes the original port config from config.xml */
 		config_set_path('ntpd/gps/speed', 0);
@@ -181,7 +173,7 @@ if ($_POST) {
 
 } else {
 	/* set defaults if they do not already exist */
-	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
+	if (empty(config_get_path('ntpd/gps/type'))) {
 		set_default_gps();
 	}
 }
@@ -197,7 +189,7 @@ if ($_POST && empty($input_errors)) {
 
 	if (!empty($_POST['gpstype'])) {
 		config_set_path('ntpd/gps/type', $_POST['gpstype']);
-	} elseif (isset($config['ntpd']['gps']['type'])) {
+	} else {
 		config_del_path('ntpd/gps/type');
 	}
 
@@ -206,13 +198,13 @@ if ($_POST && empty($input_errors)) {
 		if ($_POST['gpsspeed'] == 'autoalways') {
 			$fixghost = true;
 		}
-	} elseif (isset($config['ntpd']['gps']['speed'])) {
+	} elseif (config_path_enabled('ntpd/gps', 'speed')) {
 		config_del_path('ntpd/gps/speed');
 	}
 	
 	if (!empty($_POST['autobaudinit'])) {
 		config_set_path('ntpd/gps/autobaudinit', $_POST['autobaudinit']);
-	} elseif (isset($config['ntpd']['gps']['autobaudinit'])) {
+	} else {
 		config_del_path('ntpd/gps/autobaudinit');
 	}
 
@@ -224,96 +216,98 @@ if ($_POST && empty($input_errors)) {
 
 	if (!empty($_POST['processpgrmf'])) {
 		config_set_path('ntpd/gps/processpgrmf', $_POST['processpgrmf']);
-	} elseif (isset($config['ntpd']['gps']['processpgrmf'])) {
+	} else {
 		config_del_path('ntpd/gps/processpgrmf');
 	}
 
 	if (!empty($_POST['gpsfudge1'])) {
 		config_set_path('ntpd/gps/fudge1', $_POST['gpsfudge1']);
-	} elseif (isset($config['ntpd']['gps']['fudge1'])) {
+	} else {
 		config_del_path('ntpd/gps/fudge1');
 	}
 
 	if (!empty($_POST['gpsfudge2'])) {
 		config_set_path('ntpd/gps/fudge2', $_POST['gpsfudge2']);
-	} elseif (isset($config['ntpd']['gps']['fudge2'])) {
+	} else {
 		config_del_path('ntpd/gps/fudge2');
 	}
 
 	if (!empty($_POST['gpsstratum']) && ($_POST['gpsstratum']) < 17) {
 		config_set_path('ntpd/gps/stratum', $_POST['gpsstratum']);
-	} elseif (isset($config['ntpd']['gps']['stratum'])) {
+	} else {
 		config_del_path('ntpd/gps/stratum');
 	}
 
 	if (empty($_POST['gpsprefer'])) {
 		config_set_path('ntpd/gps/prefer', 'on');
-	} elseif (isset($config['ntpd']['gps']['prefer'])) {
+	} else {
 		config_del_path('ntpd/gps/prefer');
 	}
 
 	if (!empty($_POST['gpsnoselect'])) {
 		config_set_path('ntpd/gps/noselect', $_POST['gpsnoselect']);
-	} elseif (isset($config['ntpd']['gps']['noselect'])) {
+	} else {
 		config_del_path('ntpd/gps/noselect');
 	}
 
 	if (!empty($_POST['gpsflag1'])) {
 		config_set_path('ntpd/gps/flag1', $_POST['gpsflag1']);
-	} elseif (isset($config['ntpd']['gps']['flag1'])) {
+	} else {
 		config_del_path('ntpd/gps/flag1');
 	}
 
 	if (!empty($_POST['gpsflag2'])) {
 		config_set_path('ntpd/gps/flag2', $_POST['gpsflag2']);
-	} elseif (isset($config['ntpd']['gps']['flag2'])) {
+	} else {
 		config_del_path('ntpd/gps/flag2');
 	}
 
 	if (!empty($_POST['gpsflag3'])) {
 		config_set_path('ntpd/gps/flag3', $_POST['gpsflag3']);
-	} elseif (isset($config['ntpd']['gps']['flag3'])) {
+	} else {
 		config_del_path('ntpd/gps/flag3');
 	}
 
 	if (!empty($_POST['gpsflag4'])) {
 		config_set_path('ntpd/gps/flag4', $_POST['gpsflag4']);
-	} elseif (isset($config['ntpd']['gps']['flag4'])) {
+	} else {
 		config_del_path('ntpd/gps/flag4');
 	}
 
 	if (!empty($_POST['gpssubsec'])) {
 		config_set_path('ntpd/gps/subsec', $_POST['gpssubsec']);
-	} elseif (isset($config['ntpd']['gps']['subsec'])) {
+	} else {
 		config_del_path('ntpd/gps/subsec');
 	}
 
 	if (!empty($_POST['gpsrefid'])) {
 		config_set_path('ntpd/gps/refid', $_POST['gpsrefid']);
-	} elseif (isset($config['ntpd']['gps']['refid'])) {
+	} else {
 		config_del_path('ntpd/gps/refid');
 	}
 
 	if (!empty($_POST['extstatus'])) {
 		config_set_path('ntpd/gps/extstatus', $_POST['extstatus']);
-	} elseif (isset($config['ntpd']['gps']['extstatus'])) {
+	} else {
 		config_del_path('ntpd/gps/extstatus');
 	}
 
 	if (!empty($_POST['autocorrect_initcmd'])) {
 		config_set_path('ntpd/gps/autocorrect_initcmd', $_POST['autocorrect_initcmd']);
-	} elseif (isset($config['ntpd']['gps']['autocorrect_initcmd'])) {
+	} else {
 		config_del_path('ntpd/gps/autocorrect_initcmd');
 	}
 
 	if (!empty($_POST['gpsinitcmd'])) {
 		$initcmd = $_POST['gpsinitcmd'];
-		if ($config['ntpd']['gps']['autocorrect_initcmd']) {
+		if (config_get_path('ntpd/gps/autocorrect_initcmd')) {
 			$initcmd = autocorrect_initcmd($initcmd);
 		}
 		config_set_path('ntpd/gps/initcmd', base64_encode($initcmd));
-		parse_initcmd($config['ntpd']['gps']['nmeaset'], $initcmd);
-	} elseif (isset($config['ntpd']['gps']['initcmd'])) {
+		$nmeaset_config = config_get_path('ntpd/gps/nmeaset');
+		parse_initcmd($nmeaset_config, $initcmd);
+		config_set_path('ntpd/gps/nmeaset', $nmeaset_config);
+	} elseif (config_get_path('ntpd/gps/initcmd') !== null) {
 		config_del_path('ntpd/gps/initcmd');
 		config_del_path('ntpd/gps/nmeaset');
 	}
@@ -331,7 +325,7 @@ if ($_POST && empty($input_errors)) {
 	}
 } else {
 	/* set defaults if they do not already exist */
-	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
+	if (empty(config_get_path('ntpd/gps/type'))) {
 		set_default_gps();
 	}
 }
@@ -360,8 +354,8 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
-init_config_arr(array('ntpd', 'gps'));
-$pconfig = &$config['ntpd']['gps'];
+config_init_path('ntpd/gps');
+$pconfig = config_get_path('ntpd/gps');
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";

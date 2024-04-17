@@ -32,8 +32,6 @@ require_once("util.inc");
 // Retrieve the current DNS forwarder config, the list of hosts & DNS overrides and the
 // possible interfaces
 function getDNSMasqConfig($json = false) {
-    global $config;
-
     $pconfig = array();
 
     $pconfig['enable'] = config_path_enabled('dnsmasq');
@@ -54,8 +52,8 @@ function getDNSMasqConfig($json = false) {
         $pconfig['interface'] = array();
     }
     
-    init_config_arr(array('dnsmasq', 'hosts'));
-    $a_hosts = &$config['dnsmasq']['hosts'];
+    config_init_path('dnsmasq/hosts');
+    $a_hosts = config_get_path('dnsmasq/hosts');
     
     // Add a temporary index so we don't lose the order after sorting
     for ($idx=0; $idx<count($a_hosts); $idx++) {
@@ -63,9 +61,10 @@ function getDNSMasqConfig($json = false) {
     }
     
     hosts_sort($a_hosts);
+    config_set_path('dnsmasq/hosts', $a_hosts);
     
-    init_config_arr(array('dnsmasq', 'domainoverrides'));
-    $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+    config_init_path('dnsmasq/domainoverrides');
+    $a_domainOverrides = config_get_path('dnsmasq/domainoverrides');
     
     // Add a temporary index so we don't lose the order after sorting
     for ($idx=0; $idx<count($a_domainOverrides); $idx++) {
@@ -73,6 +72,7 @@ function getDNSMasqConfig($json = false) {
     }
     
     domains_sort($a_domainOverrides);
+    config_set_path('dnsmasq/domainoverrides', $a_domainOverrides);
 
     $rv = array();
 
@@ -112,22 +112,22 @@ function domains_sort(&$a_domainOverrides) {
 
 // Delete a DNS host or override (depending on "type")
 function deleteDNSMasqEntry($post, $json=false) {
-    global $config;
-
     if ($post['type'] == 'host') {
-        init_config_arr(array('dnsmasq', 'hosts'));
-        $a_hosts = &$config['dnsmasq']['hosts'];
+        config_init_path('dnsmasq/hosts');
+        $a_hosts = config_get_path('dnsmasq/hosts');
 
         if ($a_hosts[$post['id']]) {
             unset($a_hosts[$post['id']]);
+            config_set_path('dnsmasq/hosts', $a_hosts);
             write_config("DNS Forwarder host override deleted"); 
         }
     } elseif ($post['type'] == 'doverride') {
-        init_config_arr(array('dnsmasq', 'domainoverrides'));
-        $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+        config_init_path('dnsmasq/domainoverrides');
+        $a_domainOverrides = config_get_path('dnsmasq/domainoverrides');
 
         if ($a_domainOverrides[$post['id']]) {
             unset($a_domainOverrides[$post['id']]);
+            config_set_path('dnsmasq/domainoverrides', $a_domainOverrides);
             write_config("DNS Forwarder domain override deleted");
         }
     }
@@ -165,24 +165,22 @@ function build_if_list($pconfig) {
 
 // Save the DNS forwarder configuration (only). Does not affect the host or override list.
 function saveDNSMasqConfig($post, $json=false) {
-    global $config;
-
     $pconfig = $post;
     $input_errors = array();
 
-	$config['dnsmasq']['enable'] = ($post['enable']) ? true : false;
-	$config['dnsmasq']['regdhcp'] = ($post['regdhcp']) ? true : false;
-	$config['dnsmasq']['regdhcpstatic'] = ($post['regdhcpstatic']) ? true : false;
-	$config['dnsmasq']['dhcpfirst'] = ($post['dhcpfirst']) ? true : false;
-	$config['dnsmasq']['no_system_dns'] = ($post['no_system_dns']) ? true : false;
-	$config['dnsmasq']['strict_order'] = ($post['strict_order']) ? true : false;
-	$config['dnsmasq']['domain_needed'] = ($post['domain_needed']) ? true : false;
-	$config['dnsmasq']['no_private_reverse'] = ($post['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['strictbind'] = ($post['strictbind']) ? true : false;
+	config_set_path('dnsmasq/enable', ($post['enable']) ? true : false);
+	config_set_path('dnsmasq/regdhcp', ($post['regdhcp']) ? true : false);
+	config_set_path('dnsmasq/regdhcpstatic', ($post['regdhcpstatic']) ? true : false);
+	config_set_path('dnsmasq/dhcpfirst', ($post['dhcpfirst']) ? true : false);
+	config_set_path('dnsmasq/no_system_dns', ($post['no_system_dns']) ? true : false);
+	config_set_path('dnsmasq/strict_order', ($post['strict_order']) ? true : false);
+	config_set_path('dnsmasq/domain_needed', ($post['domain_needed']) ? true : false);
+	config_set_path('dnsmasq/no_private_reverse', ($post['no_private_reverse']) ? true : false);
+	config_set_path('dnsmasq/strictbind', ($post['strictbind']) ? true : false);
 
 	if (!empty(trim($post['custom_options']))) {
 		$custom_options_source = str_replace("\r\n", "\n", trim($post['custom_options']));
-		$config['dnsmasq']['custom_options'] = base64_encode($custom_options_source);
+		config_set_path('dnsmasq/custom_options', base64_encode($custom_options_source));
 	} else {
 		config_del_path('dnsmasq/custom_options');
 	}
@@ -199,7 +197,7 @@ function saveDNSMasqConfig($post, $json=false) {
 
 	if ($post['port']) {
 		if (is_port($post['port'])) {
-			$config['dnsmasq']['port'] = $post['port'];
+			config_set_path('dnsmasq/port', $post['port']);
 		} else {
 			$input_errors[] = gettext("A valid port number must be specified.");
 		}
@@ -208,7 +206,7 @@ function saveDNSMasqConfig($post, $json=false) {
 	}
 
 	if (is_array($post['interface'])) {
-		$config['dnsmasq']['interface'] = implode(",", $post['interface']);
+		config_set_path('dnsmasq/interface', implode(",", $post['interface']));
 	} elseif (config_get_path('dnsmasq/interface')) {
 		config_del_path('dnsmasq/interface');
 	}
@@ -268,13 +266,10 @@ function applyDNSMasqConfig($json=false) {
 
 // DNSMasq host table update
 function saveDNSMasqHost($post, $id, $json=false) {
-    global $config;
-
 	$input_errors = array();
 	$pconfig = $post;
 
-    init_config_arr(array('dnsmasq', 'hosts'));
-    $a_hosts = &$config['dnsmasq']['hosts'];
+    config_init_path('dnsmasq/hosts');
 
     if (!$json) {
         /* input validation */
@@ -350,6 +345,7 @@ function saveDNSMasqHost($post, $id, $json=false) {
 		}
 	}
 
+	$a_hosts = config_get_path('dnsmasq/hosts');
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
 		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
@@ -382,6 +378,7 @@ function saveDNSMasqHost($post, $id, $json=false) {
 		} else {
 			$a_hosts[] = $hostent;
 		}
+		config_set_path('dnsmasq/hosts', $a_hosts);
 
         write_config("DNS Forwarder host override saved");
 
@@ -400,9 +397,7 @@ function saveDNSMasqHost($post, $id, $json=false) {
 }
 
 function getDomainOverride($id, $json = false) {
-    global $config;
-
-    init_config_arr(array('dnsmasq', 'domainoverrides'));
+    config_init_path('dnsmasq/domainoverrides');
     $a_domainOverrides = config_get_path('dnsmasq/domainoverrides');
 
     $pconfig = array();
@@ -423,10 +418,7 @@ function getDomainOverride($id, $json = false) {
 
 // Domain override table update
 function saveDomainOverride($post, $id, $json=false) {
-    global $config;
-
-    init_config_arr(array('dnsmasq', 'domainoverrides'));
-    $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+    config_init_path('dnsmasq/domainoverrides');
 
     $input_errors = array();
     $pconfig = $post;
@@ -473,10 +465,10 @@ function saveDomainOverride($post, $id, $json=false) {
 
         $doment['descr'] = $post['descr'];
 
-        if (isset($id) && $a_domainOverrides[$id] && ($id != -1)) {
-            $a_domainOverrides[$id] = $doment;
+        if (isset($id) && config_get_path("dnsmasq/domainoverrides/{$id}") && ($id != -1)) {
+            config_get_path("dnsmasq/domainoverrides/{$id}", $doment);
         } else {
-            $a_domainOverrides[] = $doment;
+            config_get_path('dnsmasq/domainoverrides/', $doment);
         }
 
         $retval = services_dnsmasq_configure();

@@ -38,8 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_virtual_ip.inc");
 
-init_config_arr(array('virtualip', 'vip'));
-$a_vip = &$config['virtualip']['vip'];
+config_init_path('virtualip/vip');
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -50,6 +49,7 @@ function return_first_two_octets($ip) {
 	return $ip_split[0] . "." . $ip_split[1];
 }
 
+$a_vip = config_get_path('virtualip/vip');
 if (isset($id) && $a_vip[$id]) {
 	$pconfig['mode'] = $a_vip[$id]['mode'];
 	$pconfig['vhid'] = $a_vip[$id]['vhid'];
@@ -74,7 +74,7 @@ if ($_POST['save']) {
 	$_POST['id'] = $id;
 	$rv = saveVIP($_POST);
 	$input_errors = $rv['input_errors'];
-	$a_vip = $rv['a_vip'];
+	config_set_path('virtualip/vip', $rv['a_vip']);
 }
 
 $ipaliashelp = gettext('The mask must be the network\'s subnet mask. It does not specify a CIDR range.');
@@ -221,7 +221,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_vip[$id]) {
+if (isset($id) && config_get_path("virtualip/vip/{$id}")) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

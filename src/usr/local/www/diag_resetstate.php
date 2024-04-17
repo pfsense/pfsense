@@ -82,7 +82,7 @@ $sourcetablehelp = sprintf(gettext('Resetting the source tracking table will rem
 $tab_array = array();
 $tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
 
-if (isset($config['system']['lb_use_sticky'])) {
+if (config_path_enabled('system', 'lb_use_sticky')) {
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
 }
 
@@ -100,7 +100,7 @@ $section->addInput(new Form_Checkbox(
 	false
 ))->setHelp($statetablehelp);
 
-if (isset($config['system']['lb_use_sticky'])) {
+if (config_path_enabled('system', 'lb_use_sticky')) {
 	$section->addInput(new Form_Checkbox(
 		'sourcetracking',
 		'Source Tracking',

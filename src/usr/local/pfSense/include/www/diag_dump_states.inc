@@ -43,8 +43,6 @@ function get_ip($addr) {
 
 // Process web request and return an array of filtered states
 function process_state_req($post, $request, $json = false) {
-	global $config;
-
 	$arr = array();
 	/* RuleId filter. */
 	if (isset($post['ruleid']) && strlen($post['ruleid']) > 0) {
@@ -64,7 +62,7 @@ function process_state_req($post, $request, $json = false) {
 	}
 
 	if (isset($post['filter']) || isset($post['ruleid']) ||
-	    !isset($config['system']['webgui']['requirestatefilter'])) {
+	    !config_path_enabled('system/webgui', 'requirestatefilter')) {
 		if (count($arr) > 0) {
 			$res = pfSense_get_pf_states($arr);
 		} else {

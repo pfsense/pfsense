@@ -451,13 +451,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 					config_get_path('system/adaptiveend'));
 	}
 
-	$max_states = 0;
-	if (is_numeric(config_get_path('system/maximumstates'))) {
-		/* User defined maximum states in Advanced menu. */
-		$max_states = config_get_path('system/maximumstates');
-	} else {
-		$max_states = pfsense_default_state_size();
-	}
+	/* User defined maximum states in Advanced menu. */
+	$max_states = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
 	$limitrules .= "set limit states {$max_states}\n";
 	$limitrules .= "set limit src-nodes {$max_states}\n";
 
@@ -581,7 +576,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	// get aliases names from config
 	$aliasesnames = array();
-	init_config_arr(array('aliases', 'alias'));
+	config_init_path('aliases/alias');
 	foreach (config_get_path('aliases/alias', []) as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
@@ -1944,7 +1939,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	// OpenVPN CSO
-	init_config_arr(array('openvpn', 'openvpn-csc'));
+	config_init_path('openvpn/openvpn-csc');
 	foreach (config_get_path('openvpn/openvpn-csc') as $ovpnent) {
 		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
 			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
@@ -2211,7 +2206,7 @@ EOD;
 function filter_nat_rules_generate() {
 	global $g, $FilterIflist;
 
-	init_config_arr(array('ipsec', 'client'));
+	config_init_path('ipsec/client');
 	$ipsec_client = config_get_path('ipsec/client');
 
 	$natrules = "no nat proto carp\n";
@@ -4462,11 +4457,10 @@ function filter_tdr_install_cron($should_install) {
 		return;
 	}
 
-	init_config_arr(['cron','item']);
+	config_init_path('cron/item');
 	$x = 0;
 	$is_installed = false;
-	$cron_items = config_get_path('cron/item', []);
-	foreach ($cron_items as $item) {
+	foreach (config_get_path('cron/item') as $item) {
 		if (strstr($item['command'], "filter_configure_sync")) {
 			$is_installed = true;
 			break;
@@ -4485,8 +4479,7 @@ function filter_tdr_install_cron($should_install) {
 				$cron_item['wday'] = "*";
 				$cron_item['who'] = "root";
 				$cron_item['command'] = "/etc/rc.filter_configure_sync";
-				$cron_items[] = $cron_item;
-				config_set_path('cron/item', $cron_items);
+				config_set_path('cron/item/', $cron_item);
 				write_config(gettext("Installed 15 minute filter reload for Time Based Rules"));
 				configure_cron();
 			}

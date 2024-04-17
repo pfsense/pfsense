@@ -233,7 +233,7 @@ if ($_POST['widgetkey']) {
 	exit(0);
 }
 
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>

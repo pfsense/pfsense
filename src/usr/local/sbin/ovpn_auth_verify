@@ -25,6 +25,7 @@ if [ "$1" = "tls" ]; then
 	do
 		eval serial="\$tls_serial_${check_depth}"
 		if [ -n "$serial" ]; then
+			# $config contains the path, e.g. '/var/etc/openvpn/server1/config.ovpn'
 			RESULT=$(/usr/local/sbin/fcgicli -f /etc/inc/openvpn.tls-verify.php -d "servercn=$2&depth=$3&certdepth=$4&certsubject=$5&serial=$serial&config=$config")
 			if [ "${RESULT}" = "FAILED" ]; then
 				exit 1

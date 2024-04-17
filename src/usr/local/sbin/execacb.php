@@ -32,7 +32,7 @@
  require_once("config.inc");
  require_once("acb.inc");
 
- if ($config['system']['acb']['enable'] == "yes") {
+ if (config_get_path('system/acb/enable') == "yes") {
  	write_config("Scheduled backup");
  	upload_config();
  }

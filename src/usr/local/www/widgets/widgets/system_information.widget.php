@@ -64,7 +64,7 @@ if ($_REQUEST['getupdatestatus']) {
 
 	$cache_file = g_get('version_cache_file');
 
-	if (isset($config['system']['firmware']['disablecheck'])) {
+	if (config_path_enabled('system/firmware', 'disablecheck')) {
 		exit;
 	}
 
@@ -169,7 +169,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 ?>
 		<tr>
 			<th><?=gettext("Name");?></th>
-			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
+			<td><?php echo htmlspecialchars(config_get_path('system/hostname') . "." . config_get_path('system/domain')); ?></td>
 		</tr>
 <?php
 	endif;
@@ -281,7 +281,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
-			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+			<?php if (!config_path_enabled('system/firmware', 'disablecheck')): ?>
 				<br /><br />
 				<div id='updatestatus'><?=$updtext?></div>
 			<?php endif; ?>
@@ -380,10 +380,10 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	if (!in_array('last_config_change', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>
-		<?php if ($config['revision']): ?>
+		<?php if (config_get_path('revision')): ?>
 		<tr>
 			<th><?=gettext("Last config change");?></th>
-			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
+			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval(config_get_path('revision/time'))));?></td>
 		</tr>
 		<?php endif; ?>
 <?php
@@ -398,25 +398,9 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 		// Calculate scaling factor
 		$adaptive = false;
-
-		if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
-			$maxstates="{$config['system']['maximumstates']}";
-		} else {
-			$maxstates=pfsense_default_state_size();
-		}
-
-		if (isset($config['system']['adaptivestart']) and $config['system']['adaptivestart'] > 0) {
-		    $adaptivestart = "{$config['system']['adaptivestart']}";
-		} else {
-		    $adaptivestart = intval($maxstates * 0.6);
-		}
-
-		if (isset($config['system']['adaptiveend']) and $config['system']['adaptiveend'] > 0) {
-		    $adaptiveend = "{$config['system']['adaptiveend']}";
-		} else {
-		    $adaptiveend = intval($maxstates * 1.2);
-		}
-
+		$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+		$adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
+		$adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
 		$adaptive_text = "";
 
 		if ($pfstatetext > $adaptivestart) {
@@ -819,7 +803,7 @@ events.push(function() {
 	// Register the AJAX object
 	register_ajax(metersObject);
 
-<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+<?php if (!config_path_enabled('system/firmware', 'disablecheck')): ?>
 
 	// Callback function called by refresh system when data is retrieved
 	function version_callback(s) {

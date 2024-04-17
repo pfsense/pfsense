@@ -29,7 +29,7 @@ function usage() {
 	echo "\n";
 }
 
-global $g, $config, $argv, $command_split;
+global $g, $argv, $command_split;
 
 if (is_array($command_split)) {
 	$args = array_slice($command_split, 2);
@@ -41,8 +41,8 @@ if (is_array($command_split)) {
 if (empty($args[0])) {
 	echo gettext("Upgrading current live configuration.") . "\n";
 	require_once('config.inc');
-	global $config;
-	parse_config(true);
+	// parse config.xml
+	config_set_path('', parse_config(true));
 	convert_config();
 	exit(0);
 }
@@ -89,29 +89,23 @@ if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
 }
 
 /* We want to work with our local content, not the global running config */
-$oldconfig = $config;
-unset($config);
-/* Re-declare global after unset or functions can't see our new content. */
-global $config;
+$oldconfig = config_get_path('');
 
 /* Read in the desired config */
-$config = parse_xml_config($in_file, array($g['xml_rootobj'], 'pfsense'));
-$prev_version = $config['version'];
+config_set_path('', parse_xml_config($in_file, array($g['xml_rootobj'], 'pfsense')));
+$prev_version = config_get_path('version');
 
 /* If it's already current, there is nothing to do. */
-if ($config['version'] == $g['latest_config']) {
+if (config_get_path('version') == $g['latest_config']) {
 	echo gettext("Input file is already at the latest version.") . "\n";
 	exit(0);
 }
-
-if (!is_array($config['system']['already_run_config_upgrade'])) {
-	$config['system']['already_run_config_upgrade'] = array();
-}
-$already_run = $config['system']['already_run_config_upgrade'];
+config_init_path('system/already_run_config_upgrade');
+$already_run = config_get_path('system/already_run_config_upgrade');
 
 /* Loop and run upgrade_VER_to_VER() until we're at current version */
-while ($config['version'] < $g['latest_config']) {
-	$cur = $config['version'] * 10;
+while (config_get_path('version') < $g['latest_config']) {
+	$cur = config_get_path('version') * 10;
 	$next = $cur + 1;
 	$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
 
@@ -122,25 +116,23 @@ while ($config['version'] < $g['latest_config']) {
 		}
 		if (isset($already_run[$migration_function])) {
 			/* Already executed, skip now */
-			unset($config['system']
-			    ['already_run_config_upgrade']
-			    [$migration_function]);
+			config_del_path("system/already_run_config_upgrade/{$migration_function}");
 		} else {
 			$migration_function();
 		}
 	}
-	$config['version'] = sprintf('%.1f', $next / 10);
+	config_set_path('version', sprintf('%.1f', $next / 10));
 }
 
-if ($prev_version != $config['version']) {
-	$desc = sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']);
-	$config['revision'] = make_config_revision_entry($desc, 'console');
-	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
+if ($prev_version != config_get_path('version')) {
+	$desc = sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, config_get_path('version'));
+	config_set_path('revision', make_config_revision_entry($desc, 'console'));
+	$xmlconfig = dump_xml_config(config_get_path(''), $g['xml_rootobj']);
 	file_put_contents($out_file, $xmlconfig);
 	echo $desc . "\n";
 }
 
 /* Restore old content */
-$config = $oldconfig;
+config_set_path('', $oldconfig);
 
 echo gettext("Done") . "\n";

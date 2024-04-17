@@ -75,7 +75,7 @@ function step1_submitphpaction() {
 }
 
 function step2_stepbeforeformdisplay() {
-	global $config, $pkg;
+	global $pkg;
 	global $stepid, $savemsg;
 
 	$wans = 0;
@@ -294,7 +294,6 @@ function step2_stepbeforeformdisplay() {
 }
 
 function step2_stepsubmitphpaction() {
-	global $config;
 	global $stepid, $savemsg;
 	$sumdownloads = 0;
 
@@ -357,7 +356,7 @@ function step2_stepsubmitphpaction() {
 }
 
 function step3_stepbeforeformdisplay() {
-	global $config, $pkg;
+	global $pkg;
 	global $stepid, $savemsg;
 
 	$cfgname = "traffic_shaper_wizard_dedicated.xml";
@@ -503,7 +502,6 @@ function step3_stepbeforeformdisplay() {
 }
 
 function step3_stepsubmitphpaction() {
-	global $config;
 	global $stepid, $savemsg;
 
 	if (!$_POST['enable']) {
@@ -595,7 +593,6 @@ function step3_stepsubmitphpaction() {
 }
 
 function step4_stepsubmitphpaction() {
-	global $config;
 	global $stepid, $savemsg;
 
 	if ( $_POST['enable'] ) {
@@ -653,7 +650,7 @@ function step5_stepsubmitphpaction() {
 }
 
 function step8_stepsubmitphpaction() {
-	global $g, $config;
+	global $g;
 
 	/* save the new configuration */
 	apply_all_chosen_items();
@@ -675,7 +672,7 @@ function step8_stepsubmitphpaction() {
 }
 
 function apply_all_chosen_items() {
-	global $config, $g, $altq_list_queues, $gamesplist, $voiplist, $othersplist, $p2plist;
+	global $g, $altq_list_queues, $gamesplist, $voiplist, $othersplist, $p2plist;
 
 	require_once("wizardapp.inc");
 

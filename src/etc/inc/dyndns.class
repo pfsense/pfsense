@@ -216,7 +216,7 @@
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true,
 					$curlProxy = false) {
 
-			global $config, $g, $dyndns_split_domain_types;
+			global $g, $dyndns_split_domain_types;
 			if (in_array($dnsService, $dyndns_split_domain_types)) {
 				$this->_FQDN = $dnsHost . "." . $dnsDomain;
 			} else {

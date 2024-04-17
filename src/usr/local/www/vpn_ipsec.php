@@ -41,8 +41,8 @@ require_once("vpn.inc");
 
 global $p1_authentication_methods;
 
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/phase2');
 
 $items_deleted = false;
 

@@ -26,14 +26,13 @@ require_once("globals.inc");
 require_once("interfaces.inc");
 
 function interface_ipv6_lower($interface_real) {
-	global $g, $config;
+	global $g;
 
 	if (!empty($interface_real)) {
 		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
 
-		if (!empty($interface) && is_array($config['interfaces'][$interface]) && interface_isppp_type($interface)) {
-			$ifcfg = $config['interfaces'][$interface];
-
+		$ifcfg = config_get_path("interfaces/{$interface}");
+		if (!empty($interface) && is_array($ifcfg) && interface_isppp_type($interface)) {
             if (!empty($ifcfg['ipaddrv6'])) {
                 switch ($ifcfg['ipaddrv6']) {
                     case 'slaac':
@@ -67,14 +66,11 @@ function interface_ipv6_lower($interface_real) {
 }
 
 function interface_ipv6_raise($interface_real) {
-	global $config;
-
 	if (!empty($interface_real)) {
 		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
 
-		if (!empty($interface) && is_array($config['interfaces'][$interface]) && interface_isppp_type($interface)) {
-			$ifcfg = $config['interfaces'][$interface];
-
+		$ifcfg = config_get_path("interfaces/{$interface}");
+		if (!empty($interface) && is_array($ifcfg) && interface_isppp_type($interface)) {
             if (!empty($ifcfg['ipaddrv6'])) {
                 switch ($ifcfg['ipaddrv6']) {
                     case 'slaac':

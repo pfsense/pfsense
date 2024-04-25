@@ -78,13 +78,6 @@ if (!posix_isatty(0)) {
 	exit(-1);
 }
 
-/* Most users will not be able to run this script themselves, direct them to the GUI. */
-if (!is_writable(g_get('conf_path') . '/config.xml')) {
-	echo gettext("This user does not have write access to the configuration in a shell.") . "\n\n";
-	echo gettext("Log into the GUI and change the password from there.") . "\n";
-	exit(-1);
-}
-
 /* Reindex and fetch the current user database */
 $userindex = index_users();
 $username = "";
@@ -106,6 +99,14 @@ if ($argv) {
 	    array_key_exists('check', $options)) {
 		$checkonly = true;
 	}
+}
+
+/* Most users will not be able to run this script themselves, direct them to the GUI. */
+if (!$checkonly &&
+    !is_writable(g_get('conf_path') . '/config.xml')) {
+	echo gettext("This user does not have write access to the configuration in a shell.") . "\n\n";
+	echo gettext("Log into the GUI and change the password from there.") . "\n";
+	exit(-1);
 }
 
 /* Check if the user passed a name to the script */

@@ -2365,11 +2365,12 @@ function cert_notify_expiring() {
 
 function ca_setup_trust_store() {
 	/* This directory is trusted by OpenSSL on FreeBSD by default */
-	$trust_store_directory = '/etc/ssl/certs';
+	$trust_store_directory = '/usr/local/etc/ssl/certs';
 
 	/* Create the directory if it does not already exist, and clean it up if it does. */
 	safe_mkdir($trust_store_directory);
-	unlink_if_exists("{$trust_store_directory}/*.0");
+	unlink_if_exists("{$trust_store_directory}/*.crt");
+	unlink_if_exists("{$trust_store_directory}/*.crl");
 
 	foreach (config_get_path('ca', []) as $ca) {
 		/* If the entry is invalid or is not trusted, skip it. */
@@ -2380,8 +2381,9 @@ function ca_setup_trust_store() {
 			continue;
 		}
 
-		ca_setup_capath($ca, $trust_store_directory);
+		ca_setup_capath($ca, $trust_store_directory, '', false, 'crt', 'crl');
 	}
+
 	mwexec_bg('/usr/sbin/certctl rehash');
 }
 
@@ -2395,13 +2397,15 @@ function ca_setup_trust_store() {
  *   $basedir: The directory which will contain the CA structure.
  *   $crl    : A CRL (not a refid) associated with the CA to write.
  *   $refresh: Refresh CRLs -- When true, perform no cleanup and increment suffix
+ *   $crtext : Certificate file extension
+ *   $crlext : CRL file extension
  * RESULT
  *   $basedir is populated with CA and CRL files in a format usable by OpenSSL
  *   CApath. This has the filenames as the CA hash with the CA named <hash>.0
  *   and CRLs named <hash>.r0
  ******/
 
-function ca_setup_capath($ca, $basedir, $crl = "", $refresh = false) {
+function ca_setup_capath($ca, $basedir, $crl = "", $refresh = false, $crtext = '0', $crlext = 'r') {
 	/* Check for an invalid CA */
 	if (!$ca || !is_array($ca)) {
 		return false;
@@ -2432,7 +2436,7 @@ function ca_setup_capath($ca, $basedir, $crl = "", $refresh = false) {
 	$fprefix = "{$basedir}/{$cert_details['hash']}";
 
 
-	$ca_filename = "{$fprefix}.0";
+	$ca_filename = "{$fprefix}.{$crtext}";
 	/* Cleanup old CA/CRL files for this hash */
 	@unlink_if_exists($ca_filename);
 	/* Write CA to base dir and ensure it has correct permissions. */
@@ -2443,13 +2447,17 @@ function ca_setup_capath($ca, $basedir, $crl = "", $refresh = false) {
 
 	/* If there is a CRL, process it. */
 	if ($crl) {
-		$crl_filename = "{$fprefix}.r";
+		$crl_filename = "{$fprefix}.{$crlext}";
 		if (!$refresh) {
 			/* Cleanup old CA/CRL files for this hash */
 			@unlink_if_exists("{$crl_filename}*");
 		}
-		/* Find next suffix based on how many existing files there are (start=0) */
-		$crl_filename .= count(glob("{$crl_filename}*"));
+
+		if ($crlext == 'r') {
+			/* Find next suffix based on how many existing files there are (start=0) */
+			$crl_filename .= count(glob("{$crl_filename}*"));
+		}
+
 		/* Write CRL to base dir and ensure it has correct permissions. */
 		file_put_contents($crl_filename, base64_decode($crl['text']));
 		chmod($crl_filename, 0644);

@@ -218,9 +218,11 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		unset($biosvendor);
 		unset($biosversion);
 		unset($biosdate);
+		unset($bootmethod);
 		$_gb = exec('/bin/kenv -q smbios.bios.vendor 2>/dev/null', $biosvendor);
 		$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $biosversion);
 		$_gb = exec('/bin/kenv -q smbios.bios.reldate 2>/dev/null', $biosdate);
+		$bootmethod = get_single_sysctl("machdep.bootmethod");
 		/* Only display BIOS information if there is any to show. */
 		if (!empty($biosvendor[0]) || !empty($biosversion[0]) || !empty($biosdate[0])):
 ?>
@@ -235,6 +237,9 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<?php endif; ?>
 			<?php if (!empty($biosdate[0])): ?>
 				<?=gettext("Release Date: ");?><strong><?= date("D M j Y ",strtotime($biosdate[0]));?></strong><br/>
+			<?php endif; ?>
+			<?php if (!empty($bootmethod)): ?>
+				<?=gettext("Boot Method: ");?><strong><?= htmlspecialchars($bootmethod) ?></strong><br/>
 			<?php endif; ?>
 			</td>
 		</tr>

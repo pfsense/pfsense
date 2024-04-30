@@ -71,6 +71,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['curl_ipresolve_v4'] = isset($a_dyndns[$id]['curl_ipresolve_v4']);
 	$pconfig['curl_ssl_verifypeer'] = isset($a_dyndns[$id]['curl_ssl_verifypeer']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
+	$pconfig['hostid'] = $a_dyndns[$id]['hostid'];
 	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
 	$pconfig['maxcacheage'] = $a_dyndns[$id]['maxcacheage'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
@@ -229,6 +230,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$dyndns['interface'] = $_POST['interface'];
 		}
 		$dyndns['zoneid'] = $_POST['zoneid'];
+		$dyndns['hostid'] = $_POST['hostid'];
 		$dyndns['ttl'] = $_POST['ttl'];
 		$dyndns['maxcacheage'] = $_POST['maxcacheage'];
 		$dyndns['updateurl'] = $_POST['updateurl'];
@@ -473,6 +475,13 @@ $section->addInput(new Form_Input(
 			'Route53: Enter AWS Zone ID.', '<br />');
 
 $section->addInput(new Form_Input(
+	'hostid',
+	'Host ID',
+	'text',
+	$pconfig['hostid']
+))->setHelp('Enter the host id of this entry. Leave empty to auto-detect.');
+
+$section->addInput(new Form_Input(
 	'updateurl',
 	'Update URL',
 	'text',
@@ -560,6 +569,7 @@ events.push(function() {
 		hideCheckbox('wildcard', false); // show by default
 		hideCheckbox('proxied', true);
 		hideInput('zoneid', true);
+		hideInput('hostid', true);
 		hideInput('ttl', true);
 		hideInput('maxcacheage', true);
 
@@ -591,6 +601,7 @@ events.push(function() {
 				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', false);
 				hideInput('ttl', false);
+				hideInput('hostid', false);
 				break;
 			case "cloudns":
 				hideGroupInput('domainname', false);

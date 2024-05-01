@@ -100,7 +100,7 @@ if ($input_errors) {
 $tab_array = array();
 $tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
 $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
-$tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
+$tab_array[] = array(gettext("Revocation"), false, "system_crlmanager.php");
 $tab_array[] = array(gettext("Renew or Reissue"), true, "system_certmanager_renew.php");
 display_top_tabs($tab_array);
 

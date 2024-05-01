@@ -695,7 +695,7 @@ if ($savemsg) {
 $tab_array = array();
 $tab_array[] = array(gettext('Authorities'), false, 'system_camanager.php');
 $tab_array[] = array(gettext('Certificates'), true, 'system_certmanager.php');
-$tab_array[] = array(gettext('Certificate Revocation'), false, 'system_crlmanager.php');
+$tab_array[] = array(gettext('Revocation'), false, 'system_crlmanager.php');
 display_top_tabs($tab_array);
 
 if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save")) && $input_errors)) {

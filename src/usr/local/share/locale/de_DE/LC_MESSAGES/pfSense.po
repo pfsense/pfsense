@@ -10516,7 +10516,7 @@ msgstr "*Zielnetzwerk"
 
 #: src/usr/local/www/system_routes_edit.php:252
 msgid "Destination network for this static route"
-msgstr "Zielnetzwerk für diese statishe Route"
+msgstr "Zielnetzwerk für diese statische Route"
 
 #: src/usr/local/www/system_routes_edit.php:260
 msgid "*Gateway"

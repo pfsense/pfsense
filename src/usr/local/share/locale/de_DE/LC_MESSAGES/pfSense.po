@@ -10831,7 +10831,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_pps.php:204
 #: src/usr/local/www/services_ntpd_gps.php:497
 msgid "Flags"
-msgstr "Fahne"
+msgstr "Flags"
 
 #: src/usr/local/www/services_ntpd_pps.php:225
 #: src/usr/local/www/services_ntpd_gps.php:553

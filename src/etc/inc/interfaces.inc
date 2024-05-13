@@ -340,12 +340,18 @@ function interface_has_clones($if) {
 	return (FALSE);
 }
 
-function interfaces_vlan_configure($parentif = "") {
+/**
+ * Configure the child VLAN interfaces for a parent interface.
+ * 
+ * @param bool $skip_parent_mtu Skip setting the parent interface's MTU
+ */
+function interfaces_vlan_configure($parentif = "", $skip_parent_mtu = false) {
 	$dhcp6c_list = array();
 
 	$vlans = config_get_path('vlans/vlan');
 	if (is_array($vlans) && count($vlans)) {
-		if (is_platform_booting()) {
+		// If the parent MTU is being skipped at boot, this has already been shown
+		if (is_platform_booting() && !$skip_parent_mtu) {
 			echo gettext("Configuring VLAN interfaces...");
 		}
 		foreach ($vlans as $vlan) {
@@ -364,20 +370,26 @@ function interfaces_vlan_configure($parentif = "") {
 			}
 
 			/* XXX: Maybe we should report any errors?! */
-			interface_vlan_configure($vlan, false);
+			interface_vlan_configure($vlan, false, $skip_parent_mtu);
 		}
 		foreach ($dhcp6c_list as $if => $vlan) {
-			interface_vlan_configure($vlan, false);
+			interface_vlan_configure($vlan, false, $skip_parent_mtu);
 		}
 		/* Invalidate cache */
 		get_interface_arr(true);
-		if (is_platform_booting()) {
+		// If the parent MTU is being skipped at boot, this has already been shown
+		if (is_platform_booting() && !$skip_parent_mtu) {
 			echo gettext("done.") . "\n";
 		}
 	}
 }
 
-function interface_vlan_configure(&$vlan, $flush = true) {
+/**
+ * Configure a VLAN interface.
+ * 
+ * @param bool $skip_parent_mtu Skip setting the parent interface's MTU
+ */
+function interface_vlan_configure(&$vlan, $flush = true, $skip_parent_mtu = false) {
 	if (!is_array($vlan)) {
 		log_error(gettext("VLAN: called with wrong options. Problems with config!"));
 		return(NULL);
@@ -422,7 +434,7 @@ function interface_vlan_configure(&$vlan, $flush = true) {
 	$assignedif = convert_real_interface_to_friendly_interface_name($vlanif);
 	if ($assignedif) {
 		if (config_path_enabled("interfaces/{$assignedif}")) {
-			interface_configure($assignedif, true);
+			interface_configure($assignedif, true, false, $skip_parent_mtu);
 		}
 	}
 
@@ -969,7 +981,8 @@ function interface_lagg_configure($lagg, $flush = true) {
 	$lagg_mtu = interface_find_child_cfgmtu($laggif);
 	if ($lagg_mtu == 0) {
 		foreach (config_get_path('interfaces', []) as $tmpinterface) {
-			if ($tmpinterface['if'] == $lagg['laggif'] &&
+			// ignore the configured MTU from disabled interfaces
+			if (($tmpinterface['if'] == $lagg['laggif']) && isset($tmpinterface['enable']) &&
 			    !empty($tmpinterface['mtu'])) {
 				$lagg_mtu = $tmpinterface['mtu'];
 				break;
@@ -1027,7 +1040,7 @@ function interface_lagg_configure($lagg, $flush = true) {
 
 	interfaces_bring_up($laggif);
 	// after the lagg is recreated, its VLANs must be reconfigured
-	interfaces_vlan_configure($laggif);
+	interfaces_vlan_configure($laggif, true);
 
 	return $laggif;
 }
@@ -3977,7 +3990,12 @@ function interface_mtu_wanted_for_pppoe($realif) {
 	return $mtu;
 }
 
-function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
+/**
+ * Applies the configured settings for an interface.
+ * 
+ * @param bool $skip_parent_mtu Skip setting the parent interface's MTU
+ */
+function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false, $skip_parent_mtu = false) {
 	global $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
 	global $interface_snv6_arr_cache, $interface_ipv6_arr_cache;
@@ -4178,8 +4196,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		else
 			$mtu = $wantedmtu;
 
-		/* Set the parent MTU. */
-		if (get_interface_mtu($mtuhwif) < $mtu)
+		/* Set the parent MTU. Avoid looping when a parent lagg interface
+		   is being configured; see #14083 */
+		if ((get_interface_mtu($mtuhwif) < $mtu) && !$skip_parent_mtu)
 			set_interface_mtu($mtuhwif, $mtu);
 		/* Set the VLAN MTU. */
 		if (get_interface_mtu($mtuif) != $mtu)

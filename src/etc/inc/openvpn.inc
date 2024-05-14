@@ -239,7 +239,7 @@ function convert_openvpn_interface_to_friendly_descr($if) {
 	foreach($openvpn_interfacenames as $key => $value) {
 		list($item_if, $item_ip) = explode("|", $key);
 		if ($if == $item_if) {
-			echo "$value";
+			return $value;
 		}
 	}
 }

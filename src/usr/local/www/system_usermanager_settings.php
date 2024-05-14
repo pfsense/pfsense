@@ -295,7 +295,7 @@ $modal = new Modal("LDAP settings", "testresults", true);
 
 $modal->addInput(new Form_StaticText(
 	'Test results',
-	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>', g_get('product_label')
+	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>'
 ));
 
 $form->add($modal);

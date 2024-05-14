@@ -496,8 +496,8 @@ function parse_package_templates() {
 										$separator = $se;
 									}
 									if ($separator != "") {
-										$row_helper_data = ereg_replace("  ", $separator, $row_helper_data);
-										$template_text = ereg_replace("\[{$separator}\]", "", $template_text);
+										$row_helper_data = str_replace("  ", $separator, $row_helper_data);
+										$template_text = str_replace("\[{$separator}\]", "", $template_text);
 									}
 									$template_text = str_replace($rowhelperfield['fieldname'] . "_fieldvalue", $row_helper_data, $template_text);
 								}

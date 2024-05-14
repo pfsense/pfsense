@@ -79,7 +79,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['duid'] = $_REQUEST['duid'];
 	$pconfig['hostname'] = $_REQUEST['hostname'];
 	$pconfig['filename'] = $_REQUEST['filename'];
-	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
+	$pconfig['rootpath'] = $_REQUEST['rootpath'];
 	$pconfig['descr'] = $_REQUEST['descr'];
 }
 

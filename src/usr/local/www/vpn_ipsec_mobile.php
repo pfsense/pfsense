@@ -382,7 +382,7 @@ if ($_POST['save']) {
 		if ($pconfig['dns_split_enable']) {
 			config_set_path('ipsec/client/dns_split', $pconfig['dns_split']);
 		} else {
-			config_del_path('ipsec/client/dns_split', $pconfig['dns_split']);
+			config_del_path('ipsec/client/dns_split');
 		}
 
 		if ($pconfig['dns_server_enable']) {

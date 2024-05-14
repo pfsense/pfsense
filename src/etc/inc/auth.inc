@@ -1150,6 +1150,7 @@ function ldap_test_bind($authcfg) {
 		$ldapbasedn = $authcfg['ldap_basedn'];
 		$ldapbindun = $authcfg['ldap_binddn'];
 		$ldapbindpw = $authcfg['ldap_bindpw'];
+		$ldapname = $authcfg['name'];
 		$ldapver = $authcfg['ldap_protver'];
 		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 		if (empty($ldapbindun) || empty($ldapbindpw)) {
@@ -2105,7 +2106,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	}
 
 	if (!$authcfg) {
-		return local_backed($username, $password, $attributes);
+		return local_backed($username, $password);
 	}
 
 	$authenticated = false;
@@ -2117,8 +2118,6 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 				log_error(sprintf(gettext("LDAP authentication error: %s"), $e->getMessage()));
 			}
 			break;
-
-			break;
 		case 'radius':
 			try {
 				$authenticated = radius_backed($username, $password, $authcfg, $attributes);
@@ -2129,7 +2128,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 		default:
 			/* lookup user object by name */
 			try {
-				$authenticated = local_backed($username, $password, $attributes);
+				$authenticated = local_backed($username, $password);
 			} catch (Exception $e) {
 				log_error(sprintf(gettext("Local authentication error: %s"), $e->getMessage()));
 			}

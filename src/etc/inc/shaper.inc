@@ -1070,7 +1070,7 @@ class altq_root_queue {
 	}
 
 	function build_shortform() {
-		global $g;
+		global $shaperIFlist;
 
 		$altq =& $this;
 
@@ -1256,6 +1256,7 @@ class priq_queue {
 	var $qenabled = "";
 	var $qparent;
 	var $link;
+	var $firsttime;
 
 	/* This is here to help with form building and building rules/lists */
 	var $subqueues = array();
@@ -1404,10 +1405,10 @@ class priq_queue {
 		$this->qdefault = $value;
 	}
 	function GetCodel() {
-		return $this->codel;
+		return $this->qcodel;
 	}
 	function SetCodel($codel = false) {
-		$this->codel = $codel;
+		$this->qcodel = $codel;
 	}
 	function GetRed() {
 		return $this->qred;
@@ -2968,7 +2969,7 @@ class cbq_queue extends priq_queue {
 		if (empty($cflink['borrow'])) {
 			unset($cflink['borrow']);
 		}
-		if (is_array($this->queues)) {
+		if (is_array($this->subqueues)) {
 			$cflinkp['queue'] = array();
 			foreach ($this->subqueues as $q) {
 				$cflink['queue'][$q->GetQname()] = array();
@@ -3542,6 +3543,7 @@ class dummynet_class {
 	/* mask parameters */
 	var $mask;
 	var $noerror;
+	var $firsttime;
 
 	/* Accessor functions */
 	function SetLink($link) {
@@ -3712,6 +3714,7 @@ class dnpipe_class extends dummynet_class {
 	var $delay;
 	var $qbandwidth = array();
 	var $qbandwidthtype;
+	var $qburst;
 
 	/* Limiter queue patch */
 	var $ecn; // ecn 'on' or 'off'

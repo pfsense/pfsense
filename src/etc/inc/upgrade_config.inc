@@ -6617,7 +6617,7 @@ function upgrade_222_to_223() {
 		if ($user['name'] == 'admin') {
 			$user_home = "/root";
 		} else {
-			$user_home = "/home/{$user_name}";
+			$user_home = "/home/{$user['name']}";
 		}
 		$fn = "{$user_home}/.keephistory";
 		if (file_exists($fn)) {

@@ -755,7 +755,7 @@ function ipsec_status() {
 					}
 					if (!array_key_exists($p2['reqid'], $cmap['connected']['p2'])) {
 						/* This P2 is not connected */
-						$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($p1['p1'], $p2);
+						$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($tunnel['p1'], $p2);
 					}
 				}
 			}
@@ -1964,12 +1964,11 @@ function ipsec_setup_userpools() {
 		$scconf['pools'][$upname] = array();
 
 		$clientid = (in_array($mkent['ident_type'], array('auto', 'none'))) ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
-		$clienteapid = ($ph1ent['authentication_method'] == "eap-mschapv2") ? $clientid : '%any';
 
 		/* Craft a cloned connection with the ID information to match */
 		$scconf['connections'][$upconn]['remote'] = array();
 		$scconf['connections'][$upconn]['remote']['id'] = $clientid;
-		$scconf['connections'][$upconn]['remote']['eap_id'] = $clienteapid;
+		$scconf['connections'][$upconn]['remote']['eap_id'] = '%any';
 		$scconf['connections'][$upconn]['pools'] = $upbase;
 
 		/* Craft a cloned pool with pool settings to override for this user */

@@ -145,7 +145,7 @@ if (!function_exists('compose_table_body_contents')) {
 							$bgcolor = "warning";
 							break;
 						default:
-							if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
+							if ($gateways_status[$gname]['monitor_disable'] || ($gateways_status[$gname]['monitorip'] == "none")) {
 								$online = gettext("Online <br/>(unmonitored)");
 							} else {
 								$online = gettext("Online");

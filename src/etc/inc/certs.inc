@@ -795,7 +795,7 @@ function cert_get_sigtype($str_crt, $decode = true) {
 }
 
 function is_openvpn_server_ca($caref) {
-	foreach(config_get_path('openvpn/openvpn-server', []) as $opvns) {
+	foreach(config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 		if ($ovpns['caref'] == $caref) {
 			return true;
 		}
@@ -968,12 +968,9 @@ function cert_get_max_lifetime() {
 /* Detect a rollover at 2050 with UTCTime
  * See: https://redmine.pfsense.org/issues/9098 */
 function crl_get_max_lifetime() {
-	global $crl_max_lifetime;
-	$max = $crl_max_lifetime;
-
 	$now = new DateTime("now");
 	$utctime_before_roll = DateTime::createFromFormat('Ymd', '20491231');
-	if ($date !== false) {
+	if ($now !== false) {
 		$interval = $now->diff($utctime_before_roll);
 		$max_days = abs($interval->days);
 		/* Reduce the max well below the rollover time */

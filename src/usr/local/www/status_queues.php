@@ -325,7 +325,7 @@ function processInterfaceQueues($altqstats, $parent_name) {
 			$qname = str_replace($q['interface'], $qfinterface, $q['name']);
 ?>
 			<tr class="<?=$parent_name;?>">
-				<td class="<?=$row_class?>" style="padding-left:<?=$level * 20?>px;">
+				<td class="alert_default" style="padding-left:<?=$level * 20?>px;">
 					<?php
 					if (is_array($q['contains'])) {
 						echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$qname}{$qfinterface}');return false\">+/-</a>";

@@ -749,14 +749,14 @@ function captiveportal_prune_old() {
 					$cpentry['context']); // context
 				if ($auth_result['result'] === false) {
 					captiveportal_disconnect($cpentry, 17);
-					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT - REAUTHENTICATION FAILED", $auth_list['reply_message']);
+					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT - REAUTHENTICATION FAILED", $auth_result['reply_message']);
 					$unsetindexes[] = $cpentry[5];
 				} else if ($auth_result['result'] === true) {
 					if ($cpentry['authmethod'] !== $auth_result['auth_method']) {
 						// if the user got authenticated against another server type:  we update the database
 						if (!empty($cpentry[5])) {
 							captiveportal_update_entry($cpentry['sessionid'], $auth_result['auth_method'], 'authmethod');
-							captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "CHANGED AUTHENTICATION SERVER", $auth_list['reply_message']);
+							captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "CHANGED AUTHENTICATION SERVER", $auth_result['reply_message']);
 						}
 						// User was logged on a RADIUS server, but is now logged in by another server type : we send an accounting Stop
 						if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && $cpentry['authmethod'] == 'radius') {
@@ -1000,7 +1000,7 @@ function captiveportal_radius_stop_all($term_cause = 6, $logoutReason = "DISCONN
 				$cpentry[3], // clientmac
 				$cpentry[5], // sessionid
 				$start_time, // start time
-				$stop_time, // stop time
+				time(), // stop time
 				$term_cause); // Acct-Terminate-Cause
 		}
 		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);

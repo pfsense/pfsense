@@ -45,10 +45,10 @@ function save_setupwizard_config(
 	$wangateway,
 	$wanip,
 	$wantype,
-	$pppoeUsername,
-	$pppoePassword,
-	$pppoeOnDemand,
-	$pppoeIdelTimeout,
+	$pppUsername,
+	$pppPassword,
+	$pppOnDemand,
+	$pppIdleTimeout,
 	$pppoeServiceName,
 	$ppppoeLocalIP) {
 

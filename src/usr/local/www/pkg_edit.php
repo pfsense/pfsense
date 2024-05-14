@@ -360,7 +360,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 
 			break;
 		case "interfaces_selection":
-			$size = ($size ? "size=\"{$size}\"" : '');
+			$size = ($rowhelper['size'] ? "size=\"{$rowhelper['size']}\"" : '');
 			$multiple = '';
 			if (isset($rowhelper['multiple'])) {
 				$multiple = "multiple";
@@ -403,6 +403,11 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 		case "select_source":
 			$options = array();
 			$selected = array();
+
+			$multiple = '';
+			if (isset($rowhelper['multiple'])) {
+				$multiple = "multiple";
+			}
 
 			if (isset($rowhelper['show_disable_value'])) {
 				$options[$rowhelper['show_disable_value']] = $rowhelper['show_disable_value'];

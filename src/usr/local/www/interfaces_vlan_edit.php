@@ -147,7 +147,7 @@ if ($_POST['save']) {
 					// Destroy previous vlan
 					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
 				} else {
-					pfSense_interface_destroy(vlan_interface($a_vlans[id]));
+					pfSense_interface_destroy(vlan_interface($a_vlans[$id]));
 					$confif = convert_real_interface_to_friendly_interface_name(vlan_interface($a_vlans[$id]));
 				}
 				if ($confif != "") {

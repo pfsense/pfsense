@@ -1097,7 +1097,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							if (!$vtisubnet_spec || !is_array($vtisubnet_spec)) {
 								continue;
 							}
-							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+							if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
 									if ($ifcfg['if'] == ipsec_get_ifname($ph1ent, $vtisub['reqid'])) {
 										// If this specific VTI remote is v4, then we can make a v4 gw
@@ -1242,7 +1242,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							if (!$vtisubnet_spec || !is_array($vtisubnet_spec)) {
 								continue;
 							}
-							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+							if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
 									if ($ifcfg['if'] == ipsec_get_ifname($ph1ent, $vtisub['reqid'])) {
 										// If this specific VTI remote is v6, then we can make a v6 gw
@@ -1479,7 +1479,7 @@ function setdefaultgateway($gw) {
 		if ($ipprotocol == 'inet') {
 			$gw['gateway'] = get_interface_gateway($gw['friendlyiface']);
 		} else {
-			$gw['gateway'] = get_interface_gateway_v6($$gw['friendlyiface']);
+			$gw['gateway'] = get_interface_gateway_v6($gw['friendlyiface']);
 		}
 	}
 	if ($ipprotocol == 'inet6' && !is_ipaddrv6($gw['gateway'])) {

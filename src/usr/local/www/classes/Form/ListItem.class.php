@@ -86,7 +86,7 @@ class Form_ListItem extends Form_Group
 			$this->addClass('user-duplication');		// added buttons 10 cols wide with 2 col offset
 
 		if (isset($max))
-			$this->_attributes('data-duplicate-max', $max);
+			$this->_attributes['data-duplicate-max'] = $max;
 
 		foreach ($this->_inputs as $input) {
 			if ($input instanceof Form_Input)

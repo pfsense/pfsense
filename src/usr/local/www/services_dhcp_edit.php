@@ -100,13 +100,11 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ldap'] = $a_maps[$id]['ldap'];
 	$pconfig['netboot'] = isset($a_maps[$id]['netboot']);
 	$pconfig['nextserver'] = $a_maps[$id]['nextserver'];
-	$pconfig['filename'] = $a_maps[$id]['filename'];
 	$pconfig['filename32'] = $a_maps[$id]['filename32'];
 	$pconfig['filename64'] = $a_maps[$id]['filename64'];
 	$pconfig['filename32arm'] = $a_maps[$id]['filename32arm'];
 	$pconfig['filename64arm'] = $a_maps[$id]['filename64arm'];
 	$pconfig['uefihttpboot'] = $a_maps[$id]['uefihttpboot'];
-	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
 	$pconfig['netmask'] = $a_maps[$id]['netmask'];
 	$pconfig['numberoptions'] = $a_maps[$id]['numberoptions'];
 } else {

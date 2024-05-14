@@ -1190,7 +1190,7 @@ function captiveportal_syslog($message) {
 }
 
 /* Authenticate users using Authentication Backend */
-function captiveportal_authenticate_user(&$login = '', &$password = '', $clientmac = '', $clientip = '', $pipeno = 'null', $context = 'first') {
+function captiveportal_authenticate_user(&$login = '', $password = '', $clientmac = '', $clientip = '', $pipeno = 'null', $context = 'first') {
 	global $g, $config, $cpzone;
 	$cpcfg = config_get_path("captiveportal/{$cpzone}");
 
@@ -2309,7 +2309,7 @@ function xmlrpc_sync_usedmacs($usedmacs) {
 
 	// XMLRPC Call over to the other node
 	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
-	    $syncuser, $syncpass, $carp_loop)) {
+	    $syncuser, $syncpass)) {
 		$rpc_client = new pfsense_xmlrpc_client();
 		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
 		$rpc_client->set_noticefile("CaptivePortalUsedmacsSync");

@@ -424,7 +424,7 @@ function enable_rrd_graphing() {
 				if ($qbandwidth <= 0) {
 					$qbandwidth = 100 * 1000 * 1000; /* 100Mbit */
 				}
-				$qlist =& $altq->get_queue_list($notused);
+				$qlist =& $altq->get_queue_list();
 				if (!file_exists("$rrddbpath$ifname$queues")) {
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval ";
 					/* loop list of shaper queues */

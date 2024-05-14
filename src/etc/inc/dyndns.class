@@ -162,6 +162,7 @@
 	 */
 
 	class updatedns {
+		var $con = [];
 		var $_cacheFile;
 		var $_cacheFile_v6;
 		var $_debugFile;
@@ -1684,6 +1685,12 @@
 					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains");
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$domains_output = curl_exec($ch);
+					$domains_result = json_decode($domains_output, TRUE);
+					foreach($domains_result["data"] as $domains_entry) {
+						if ($domains_entry["domain"] == $this->_dnsDomain) {
+							$domain_id = $domains_entry["id"];
+						}
+					}
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ( $http_code == 401 && preg_match('/invalid oauth token/i', $domains_output) ) {
 						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authentication Failed"));
@@ -1697,12 +1704,6 @@
 						return false;
 					}
 
-					$domains_result = json_decode($domains_output, TRUE);
-					foreach($domains_result["data"] as $domains_entry) {
-						if ($domains_entry["domain"] == $this->_dnsDomain) {
-							$domain_id = $domains_entry["id"];
-						}
-					}
 					if ( ! $domain_id ) {
 						log_error("{$err_prefix} " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'");
 						return false;
@@ -1827,7 +1828,7 @@
 		 *   Some services do not perform an inplace upgrade.  If they do not then the solution
 		 *   is to remove the existing record and add a new record.
 		 *
-		 * @param unknown $existing_ip If required, an existing IP address for the record.
+		 * @param string $existing_ip If required, an existing IP address for the record.
 		 */
 		function _remove($existing_ip = NULL) {
 			$remove_allowed = false;

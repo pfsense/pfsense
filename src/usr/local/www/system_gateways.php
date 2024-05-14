@@ -165,7 +165,6 @@ function delete_gateway_item($id) {
 
 	/* NOTE: Cleanup static routes for the interface route if any */
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
-	    $gateway['gateway'] != $a_gateways[$id]['gateway'] &&
 	    isset($a_gateways[$id]["nonlocalgateway"])) {
 		route_del($a_gateways[$id]['gateway']);
 	}
@@ -211,7 +210,7 @@ if (isset($_REQUEST['del_x'])) {
 				$items_deleted .= "{$rulei} ";
 			}
 			if (!empty($items_deleted)) {
-				write_config(sprintf(gettext("Gateways: removed gateways %s", $items_deleted)));
+				write_config(sprintf(gettext("Gateways: removed gateways %s"), $items_deleted));
 				mark_subsystem_dirty('staticroutes');
 			}
 			header("Location: system_gateways.php");

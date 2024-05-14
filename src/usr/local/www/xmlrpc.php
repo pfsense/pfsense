@@ -850,7 +850,7 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @param array $arguments
 	 *
-	 * @return array
+	 * @return array|bool|null
 	 */
 	public function captive_portal_sync($arguments, $timeout) {
 		ini_set('default_socket_timeout', $timeout);

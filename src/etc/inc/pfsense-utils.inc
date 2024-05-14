@@ -1932,6 +1932,7 @@ function resolve_host_addresses($host, $recordtypes = array(DNS_A, DNS_AAAA, DNS
 		}
 	}
 	if ($index == false) {
+		$noind = [];
 		foreach ($resolved as $res) {
 			$noind[] = $res['data'];
 		}

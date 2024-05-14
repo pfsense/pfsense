@@ -120,7 +120,7 @@ display_top_tabs($tab_array);
 <?php
 	$i = 0;
 	$gettext_array = array('edit'=>gettext('Edit VLAN'),'del'=>gettext('Delete VLAN'));
-	$ifaces = convert_real_interface_to_friendly_interface_name_fast(array());
+	$ifaces = convert_real_interface_to_friendly_interface_name_fast();
 	foreach ($a_vlans as $vlan) {
 ?>
 						<tr>

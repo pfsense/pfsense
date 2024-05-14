@@ -100,6 +100,7 @@ function more($text, $count=24) {
 }
 
 function show_help() {
+	global $g;
 
 $show_help_text = <<<EOF
 

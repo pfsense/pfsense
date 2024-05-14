@@ -3873,9 +3873,9 @@ function run_dhcp6client_process($interfaces, $debugOption, $noreleaseOption) {
 }
 
 function interface_virtual_create($interface) {
-
-	if (interface_is_vlan($interface) != NULL) {
-		interface_vlan_configure(interface_is_vlan($interface));
+	$vlan = interface_is_vlan($interface);
+	if ($vlan != NULL) {
+		interface_vlan_configure($vlan);
 	} elseif (substr($interface, 0, 3) == "gre") {
 		interfaces_tunnel_configure(0, $interface, 'gre');
 	} elseif (substr($interface, 0, 3) == "gif") {
@@ -6588,9 +6588,8 @@ function get_interface_linklocal($interface = "wan") {
  * Get the first IPv6 address that is not a VIP or Link-Local address.
  * Prioritize IPv6 GUA over ULA.
  * 
- * @param array $interface Interface to check
- * @return array IP address and prefix length
- * @return bool false If no match is found
+ * @param string $interface Interface to check
+ * @return array|bool IP address and prefix length; false If no match is found
  */
 function get_interface_track6ip($interface = "wan") {
 	$ifinfo = get_interface_addresses(get_real_interface($interface));

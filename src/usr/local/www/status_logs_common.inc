@@ -811,7 +811,7 @@ function manage_log_code() {
 				if ($firewall_logging_changed) {
 					require_once("filter.inc");
 					$retval |= filter_configure();
-					filter_pflog_start(true);
+					filter_pflog_start();
 				}
 			}
 		}

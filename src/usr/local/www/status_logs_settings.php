@@ -231,7 +231,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$extra_save_msg = gettext("WebGUI process is restarting.");
 		}
 
-		filter_pflog_start(true);
+		filter_pflog_start();
 	}
 }
 

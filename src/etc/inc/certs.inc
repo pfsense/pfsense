@@ -1071,7 +1071,7 @@ function crl_update(& $crl) {
 	return $crl['text'];
 }
 
-function cert_revoke($cert, & $crl, $reason = OCSP_REVOKED_STATUS_UNSPECIFIED) {
+function cert_revoke($cert, & $crl, $reason = -1) {
 	global $config;
 	if (is_cert_revoked($cert, $crl['refid'])) {
 		return true;

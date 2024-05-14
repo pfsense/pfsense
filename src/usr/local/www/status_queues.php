@@ -250,7 +250,7 @@ else: ?>
 				<tbody>
 <?php
 	$if_queue_list = get_configured_interface_list_by_realif(true);
-	processInterfaceQueues($stats, 0, "");
+	processInterfaceQueues($stats, "");
 ?>
 <?php endif; ?>
 				</tbody>
@@ -355,7 +355,7 @@ function processInterfaceQueues($altqstats, $parent_name) {
 			</tr>
 <?php
 			if (is_array($q['queue'])) {
-				processInterfaceQueues($q, $level + 1, $parent_name);
+				processInterfaceQueues($q, $parent_name);
 			}
 		}
 	};

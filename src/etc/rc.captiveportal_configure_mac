@@ -35,6 +35,6 @@ $stopidx = isset($_GET['cpzone']) ? $_GET['stopidx'] : trim($argv[3]);
 
 $cpzoneidx = $config['captiveportal'][$cpzone]['zoneid'];
 
-captiveportal_passthrumac_configure($filename, $startidx, $stopidx);
+captiveportal_passthrumac_configure($startidx, $stopidx);
 
 ?>

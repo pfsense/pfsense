@@ -138,7 +138,7 @@ if ($_POST['save']) {
 			$rollent['used'] = base64_encode(voucher_read_used_db($rollent['number']));
 			$activent = array();
 			$db = array();
-			$active_vouchers = voucher_read_active_db($rollent['number'], $rollent['minutes']);
+			$active_vouchers = voucher_read_active_db($rollent['number']);
 			foreach ($active_vouchers as $voucher => $line) {
 				list($timestamp, $minutes) = explode(",", $line);
 				$activent['voucher'] = $voucher;

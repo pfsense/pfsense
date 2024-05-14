@@ -142,7 +142,7 @@ if ($_POST['save']) {
 					$attributes['maxbytes'] = $user['traffic_quota'];
 
 					portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), null,
-					    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
+					    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid']);
 				}
 				foreach ($expired_vouchers as $roll => $vdb) {
 					voucher_write_used_db($roll, $vdb);

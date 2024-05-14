@@ -247,6 +247,9 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 			config_del_path('system/checkaliasesurlcert');
 		}
 
+		$setup_sysctl = ($post['maximumtableentries'] != config_get_path('system/maximumtableentries'));
+		$restart_filterdns = ($post['aliasesresolveinterval'] != config_get_path('system/aliasesresolveinterval'));
+
 		$config['system']['optimization'] = $post['optimization'];
 		$maxstates_changed = ($config['system']['maximumstates'] != $post['maximumstates']) ? true : false;
 		$config['system']['maximumstates'] = $post['maximumstates'];
@@ -438,15 +441,13 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		write_config(gettext("Changed Advanced Firewall/NAT settings."));
 
 		// Kill filterdns when value changes, filter_configure() will restart it
-		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
-		    isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
+		if ($restart_filterdns && isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
 		}
 
 		/* Update net.pf.request_maxcount when necessary
 		 * See https://redmine.pfsense.org/issues/10861 */
-		if ($old_maximumtableentries !=
-		    $config['system']['maximumtableentries']) {
+		if ($setup_sysctl) {
 			system_setup_sysctl();
 		}
 

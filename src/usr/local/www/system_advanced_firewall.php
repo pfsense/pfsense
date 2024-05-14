@@ -41,8 +41,6 @@ require_once("system_advanced_firewall.inc");
 
 // Retrieve firewall settings
 $pconfig = getSystemAdvancedFirewall();
-$old_maximumtableentries = $pconfig['maximumtableentries'];
-$old_aliasesresolveinterval = $pconfig['aliasesresolveinterval'];
 
 $pftimeouts = get_pf_timeouts();
 

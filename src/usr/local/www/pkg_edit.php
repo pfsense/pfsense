@@ -491,7 +491,7 @@ function parse_package_templates() {
 									$row_helper_total_rows++;
 									$row_helper_data .= $value;
 									$sep = "";
-									ereg($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
+									preg_match($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
 									foreach ($sep as $se) {
 										$separator = $se;
 									}

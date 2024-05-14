@@ -199,7 +199,7 @@ function upgrade_011_to_012() {
 	$config['dhcpd']['lan'] = $tmp;
 
 	/* encrypt password */
-	$config['system']['password'] = crypt($config['system']['password']);
+	config_set_path('system/password', password_hash(config_get_path('system/password'), PASSWORD_BCRYPT));
 }
 
 

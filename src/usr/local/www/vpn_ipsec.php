@@ -300,7 +300,7 @@ $ipsec_specialnet = get_specialnet('', [SPECIALNET_IFSUB]);
 				</thead>
 				<tbody class="p1-entries">
 <?php
-$iflabels = get_configured_interface_with_descr(false, true);
+$iflabels = get_configured_interface_with_descr(true);
 $viplist = get_configured_vip_list();
 foreach ($viplist as $vip => $address) {
 	$iflabels[$vip] = $address;

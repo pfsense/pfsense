@@ -4971,12 +4971,12 @@ function configure_cron() {
 			if (!empty($http_proxyport)) {
 				$http_proxy .= ':' . $http_proxyport;
 			}
-			$crontab_contents .= "HTTP_PROXY={$http_proxy}";
+			$crontab_contents .= "HTTP_PROXY={$http_proxy}\n";
 
 			$proxyuser = config_get_path('system/proxyuser');
 			$proxypass = config_get_path('system/proxypass');
 			if (!empty($proxyuser) && !empty($proxypass)) {
-				$crontab_contents .= "HTTP_PROXY_AUTH=basic:*:{$proxyuser}:{$proxypass}";
+				$crontab_contents .= "HTTP_PROXY_AUTH=basic:*:{$proxyuser}:{$proxypass}\n";
 			}
 		}
 

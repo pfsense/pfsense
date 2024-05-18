@@ -75,7 +75,7 @@ if ($_POST['carp_maintenancemode'] != "") {
 		interfaces_carp_set_maintenancemode($maintenancemode);
 	}
 	if ($status == 0) {
-		$_POST['disablecarp'] = "off";
+		$_POST['disablecarp'] = "disable";
 	}
 }
 

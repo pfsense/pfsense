@@ -104,8 +104,7 @@ function pkg_env($extra_env = array()) {
 		$proxyuser = config_get_path('system/proxyuser');
 		$proxypass = config_get_path('system/proxypass');
 		if (!empty($proxyuser) && !empty($proxypass)) {
-			$pkg_env_vars['HTTP_PROXY_AUTH'] = "basic:*:" .
-			    $proxyuser . ":" . $proxypass;
+			$pkg_env_vars['HTTP_PROXY_AUTH'] = $proxyuser . ":" . $proxypass;
 		}
 	}
 

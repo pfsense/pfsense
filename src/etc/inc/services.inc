@@ -4976,7 +4976,7 @@ function configure_cron() {
 			$proxyuser = config_get_path('system/proxyuser');
 			$proxypass = config_get_path('system/proxypass');
 			if (!empty($proxyuser) && !empty($proxypass)) {
-				$crontab_contents .= "HTTP_PROXY_AUTH=basic:*:{$proxyuser}:{$proxypass}\n";
+				$crontab_contents .= "HTTP_PROXY_AUTH={$proxyuser}:{$proxypass}\n";
 			}
 		}
 

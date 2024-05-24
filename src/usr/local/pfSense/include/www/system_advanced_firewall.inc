@@ -204,6 +204,11 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		}
 
 		config_set_path('system/statepolicy', $post['statepolicy']);
+		if (isset($post['disable_auto_floating_states'])) {
+			config_set_path('system/disable_auto_floating_states', true);
+		} else {
+			config_del_path('system/disable_auto_floating_states');
+		}
 
 		if ($post['disablevpnrules'] == "yes") {
 			config_set_path('system/disablevpnrules', true);

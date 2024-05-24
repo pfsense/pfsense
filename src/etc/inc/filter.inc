@@ -110,6 +110,31 @@ if (config_get_path('ipsec/filtermode') == 'if_ipsec') {
 	$filter_interface_remove[] = 'ipsec';
 }
 
+/**
+ * Floating states for IPsec rules are not needed when:
+ * - The global state policy is already set to floating
+ * - The IPsec Filter Mode is set to assigned interfaces
+ * - There are no enabled VTI IPsec tunnels
+ */
+global $use_floating_states_for_ipsec;
+$use_floating_states_for_ipsec = false;
+if (!config_path_enabled('system', 'disable_auto_floating_states') &&
+    (config_get_path('system/statepolicy', 'if-bound') == 'if-bound') &&
+    (config_get_path('ipsec/filtermode', 'enc') == 'enc')) {
+	// look for a VTI or transport mode p2
+	foreach (config_get_path('ipsec/phase2', []) as $ipsecp2) {
+		if (!isset($ipsecp2['disabled']) && ($ipsecp2['mode'] == 'transport') || ($ipsecp2['mode'] == 'vti')) {
+			// check if the matching p1 to this p2 is enabled
+			foreach (config_get_path('ipsec/phase1', []) as $ipsecp1) {
+				if (!isset($ipsecp1['disabled']) && ($ipsecp1['ikeid'] == $ipsecp2['ikeid'])) {
+					$use_floating_states_for_ipsec = true;
+					break 2;
+				} 
+			}
+		}
+	}
+}
+
 /*
  * Fixed tracker values (used to group and track usage in GUI):
  *
@@ -3265,7 +3290,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 }
 
 function filter_generate_user_rule($rule, & $extralabels = null) {
-	global $g, $FilterIflist, $GatewaysList, $vpns_list;
+	global $g, $FilterIflist, $GatewaysList, $vpns_list, $use_floating_states_for_ipsec;
 	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
 	if (config_path_enabled('system','developerspew')) {
@@ -3413,7 +3438,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 
 	$aline['gwlabel'] = "";
 	/* do not process reply-to for gateway'd rules */
-	if ($rule['gateway'] == "" && $aline['direction'] <> "" && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !config_path_enabled('system','disablereplyto') && !isset($rule['disablereplyto']) && $type != "match") {
+	if (($type == "pass") && ($rule['gateway'] == "") && ($aline['direction'] <> "") && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !config_path_enabled('system','disablereplyto') && !isset($rule['disablereplyto'])) {
 		if ($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if (is_ipaddrv6($rg)) {
@@ -3600,10 +3625,14 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
 			    (isset($rule['statepolicy']) and !empty($rule['statepolicy'])) or
 			    (isset($rule['sloppy'])) or
-			    (isset($rule['nopfsync']))) {
+			    (isset($rule['nopfsync'])) or
+				$use_floating_states_for_ipsec) {
 				$aline['flags'] .= "( ";
 				if (!empty($rule['statepolicy'])) {
 					$aline['flags'] .= "{$rule['statepolicy']} ";
+				} elseif ($use_floating_states_for_ipsec && ($rule['interface'] == 'enc0')) {
+					// a floating state is needed for enc0 rules - see #15430
+					$aline['flags'] .= 'floating ';
 				}
 				if (isset($rule['sloppy'])) {
 					$aline['flags'] .= "sloppy ";
@@ -3748,7 +3777,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 
 function filter_rules_generate() {
 	global $FilterIflist, $time_based_rules, $GatewaysList,
-	       $tracker, $vlanprio_values, $vpn_and_ppp_ifs;
+	       $tracker, $vlanprio_values, $vpn_and_ppp_ifs, $use_floating_states_for_ipsec;
 
 	$fix_rule_label = 'fix_rule_label';
 	$increment_tracker = 'filter_rule_tracker';
@@ -4229,7 +4258,9 @@ EOD;
 		require_once("ipsec.inc");
 	}
 	if (ipsec_enabled()) {
-		$ipfrules .= "pass out {$log['pass']} on \$IPsec all ridentifier {$increment_tracker()} ridentifier {$increment_tracker()} keep state label \"IPsec internal host to host\"\n";
+		// a floating state is needed for ipsec rules - see #15430
+		$state_policy = $use_floating_states_for_ipsec ? '(floating)' : '';
+		$ipfrules .= "pass out {$log['pass']} on \$IPsec all ridentifier {$increment_tracker()} ridentifier {$increment_tracker()} keep state {$state_policy} label \"IPsec internal host to host\"\n";
 	}
 
 	$saved_tracker += 10;

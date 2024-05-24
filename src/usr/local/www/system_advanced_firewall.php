@@ -277,6 +277,18 @@ $section->addInput(new Form_Select(
 	'</span><ul class="help-block"><li>', '</li><li>', '</li></ul><span class="help-block">');
 
 $section->addInput(new Form_Checkbox(
+	'disable_auto_floating_states',
+	'Disable state-policy override for IPsec rules',
+	'Don\'t automatically use floating states for IPsec rules.',
+	isset($pconfig['disable_auto_floating_states'])
+))->setHelp('When %1$sFirewall State Policy%2$s is set to %1$sInterface '.
+	'Bound States%2$s, unchecking this option allows IPsec rules to '.
+	'automatically use floating states where needed. This option is '.
+	'ignored when %3$sIPsec Filter Mode%4$s is set to assigned '.
+	'interfaces.', '<b>', '</b>','<a href="firewall_nat_out.php">', '</a>'
+);
+
+$section->addInput(new Form_Checkbox(
 	'bypassstaticroutes',
 	'Static route filtering',
 	'Bypass firewall rules for traffic on the same interface',

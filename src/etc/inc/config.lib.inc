@@ -740,7 +740,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	}
 
 	// Try the core AutoConfigBackup system
-	$acb_config = config_get_path('system/acb');
+	$acb_config = config_get_path('system/acb', []);
 	if ($acb_config['enable'] == "yes" &&
 	    (!isset($acb_config['frequency']) || $acb_config['frequency'] == "every") || file_exists("/tmp/forceacb")) {
 	    if ($doacb) {

@@ -71,7 +71,7 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
 	global $g;
 
 	$existing_ifs = does_interface_exist_fast();
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 
 	$out = array();
 	foreach ($interfaces as $interface) {

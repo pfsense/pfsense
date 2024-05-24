@@ -1199,10 +1199,7 @@ class altq_root_queue {
 	 */
 	function wconfig() {
 		$cflink_path = shaper_config_get_path($this->GetLink());
-		$cflink = config_get_path($cflink_path);
-		if (!is_array($cflink)) {
-			$cflink = array();
-		}
+		$cflink = config_get_path($cflink_path, []);
 		$cflink['interface'] = $this->GetInterface();
 		$cflink['name'] = $this->GetQname();
 		$cflink['scheduler'] = $this->GetScheduler();
@@ -1944,10 +1941,7 @@ class priq_queue {
 
 	function wconfig() {
 		$cflink_path = shaper_config_get_path($this->GetLink());
-		$cflink = config_get_path($cflink_path);
-		if (!is_array($cflink)) {
-			$cflink = array();
-		}
+		$cflink = config_get_path($cflink_path, []);
 		$cflink['name'] = $this->GetQname();
 		$cflink['interface'] = $this->GetInterface();
 		$cflink['qlimit'] = trim($this->GetQlimit());
@@ -2762,10 +2756,7 @@ EOJS;
 
 	function wconfig() {
 		$cflink_path = shaper_config_get_path($this->GetLink());
-		$cflink = config_get_path($cflink_path);
-		if (!is_array($cflink)) {
-			$cflink = array();
-		}
+		$cflink = config_get_path($cflink_path, []);
 		$cflink['name'] = $this->GetQname();
 		$cflink['interface'] = $this->GetInterface();
 		$cflink['qlimit'] = trim($this->GetQlimit());
@@ -3182,10 +3173,7 @@ class cbq_queue extends priq_queue {
 
 	function wconfig() {
 		$cflink_path = shaper_config_get_path($this->GetLink());
-		$cflink = config_get_path($cflink_path);
-		if (!is_array($cflink)) {
-			$cflink = array();
-		}
+		$cflink = config_get_path($cflink_path, []);
 		$cflink['interface'] = $this->GetInterface();
 		$cflink['qlimit'] = trim($this->GetQlimit());
 		if (empty($cflink['qlimit'])) {
@@ -3457,10 +3445,7 @@ class fairq_queue extends priq_queue {
 
 	function wconfig() {
 		$cflink_path = shaper_config_get_path($this->GetLink());
-		$cflink = config_get_path($cflink_path);
-		if (!is_array($cflink)) {
-			$cflink = array();
-		}
+		$cflink = config_get_path($cflink_path, []);
 		$cflink['interface'] = $this->GetInterface();
 		$cflink['qlimit'] = trim($this->GetQlimit());
 		if (empty($cflink['qlimit'])) {
@@ -4092,8 +4077,9 @@ class dnpipe_class extends dummynet_class {
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bw) {
 				if ($bw['bwsched'] != "none") {
-					if (is_array(config_get_path('schedules/schedule'))) {
-						foreach (config_get_path('schedules/schedule', []) as $schedule) {
+					$schedules = config_get_path('schedules/schedule');
+					if (is_array($schedules)) {
+						foreach ($schedules as $schedule) {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
 									/* pipe throughputs must always be an integer, enforce that restriction again here. */
@@ -4579,10 +4565,7 @@ EOD;
 
 	function wconfig() {
 		$cflink_path = shaper_dn_config_get_path($this->GetLink());
-		$cflink = config_get_path($cflink_path);
-		if (!is_array($cflink)) {
-			$cflink = array();
-		}
+		$cflink = config_get_path($cflink_path, []);
 		$cflink['name'] = $this->GetQname();
 		$cflink['number'] = $this->GetNumber();
 		$cflink['qlimit'] = $this->GetQlimit();
@@ -5137,10 +5120,7 @@ class dnqueue_class extends dummynet_class {
 
 	function wconfig() {
 		$cflink_path = shaper_dn_config_get_path($this->GetLink());
-		$cflink = config_get_path($cflink_path);
-		if (!is_array($cflink)) {
-			$cflink = array();
-		}
+		$cflink = config_get_path($cflink_path, []);
 		$cflink['name'] = $this->GetQname();
 		$cflink['number'] = $this->GetNumber();
 		$cflink['qlimit'] = $this->GetQlimit();
@@ -5336,7 +5316,7 @@ function read_dummynet_config() {
 	$path = array();
 
 	config_init_path('dnshaper/queue');
-	$a_int = config_get_path('dnshaper/queue');
+	$a_int = config_get_path('dnshaper/queue', []);
 
 	$dummynet_pipe_list = array();
 

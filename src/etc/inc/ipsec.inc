@@ -1193,7 +1193,7 @@ function ipsec_get_loglevels() {
 	$levels = array();
 
 	foreach (array_keys($ipsec_log_cats) as $cat) {
-		if (strlen(config_get_path('ipsec/logging/' . $cat)) > 0) {
+		if (strlen(config_get_path('ipsec/logging/' . $cat, '')) > 0) {
 			$levels[$cat] = config_get_path('ipsec/logging/' . $cat);
 		} elseif (in_array($cat, array('ike', 'chd', 'cfg'))) {
 			$levels[$cat] = "2";

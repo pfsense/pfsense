@@ -2334,7 +2334,7 @@ function get_user_remote_authsource() {
 }
 
 function set_pam_auth() {
-	$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
+	$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode', []));
 
 	unlink_if_exists("/etc/radius.conf");
 	unlink_if_exists("/var/etc/pam_ldap.conf");

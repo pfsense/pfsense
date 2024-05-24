@@ -79,7 +79,7 @@ if (($strictusercn === true) && ($common_name != $username)) {
 $attributes = array("nas_identifier" => "xauthIPsec");
 if ((config_get_path('ipsec/client/group_source') == 'enabled') &&
     !empty(config_get_path('ipsec/client/auth_groups'))) {
-	$ipsec_groups = explode(",", config_get_path('ipsec/client/auth_groups'));
+	$ipsec_groups = explode(",", config_get_path('ipsec/client/auth_groups', ''));
 } else { 
 	$ipsec_groups = '';
 }

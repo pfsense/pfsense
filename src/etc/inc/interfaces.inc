@@ -5678,7 +5678,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan", $
 
 	/* XXX: For speed reasons reference directly the interface array */
 	config_init_path('interfaces');
-	$ifdescrs = config_get_path('interfaces');
+	$ifdescrs = config_get_path('interfaces', []);
 	//$ifdescrs = get_configured_interface_list(true);
 
 	foreach ($ifdescrs as $if => $ifname) {
@@ -7154,7 +7154,7 @@ function interfaces_staticarp_configure($if) {
 		echo "interfaces_staticarp_configure($if) being called $mt\n";
 	}
 
-	if (!config_path_enabled("interfaces/{$if}")) {
+	if (empty(config_get_path("interfaces/{$if}"))) {
 		return 0;
 	}
 

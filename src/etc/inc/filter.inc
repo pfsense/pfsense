@@ -1369,7 +1369,7 @@ function filter_generate_optcfg_array() {
 	/* if list */
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdetail) {
-		$oc = config_get_path("interfaces/{$if}");
+		$oc = config_get_path("interfaces/{$if}", []);
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
 		if (!does_interface_exist($oic['if'])) {

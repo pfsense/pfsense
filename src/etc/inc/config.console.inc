@@ -350,7 +350,7 @@ EOD;
 		}
 
 		/* remove all other (old) optional interfaces */
-		$if_config = config_get_path('interfaces');
+		$if_config = config_get_path('interfaces', []);
 		for (; isset($if_config['opt' . ($if_opt_counter+1)]); $if_opt_counter++) {
 			unset($if_config['opt' . ($if_opt_counter+1)]);
 		}

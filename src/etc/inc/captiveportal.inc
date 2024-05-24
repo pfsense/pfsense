@@ -47,7 +47,7 @@ function get_captive_portal_logo() {
 	$logo_src = "captiveportal-default-logo.png";
 	// Check if customlogo is set and if the element exists
 	// Check if the image is in the directory
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	if (isset($cpzone_config['customlogo']) &&
 	    is_array($cpzone_config['element']) &&
 	    !empty($cpzone_config['element'])) {
@@ -67,7 +67,7 @@ function get_captive_portal_bg() {
 	$bg_src = "linear-gradient(135deg, #1475CF, #2B40B5, #1C1275)";
 	global $g, $cpzone;
 	// check if custombg is set and if the element exists
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	if (isset($cpzone_config['custombg']) &&
 	    is_array($cpzone_config['element']) &&
 	    !empty($cpzone_config['element'])) {
@@ -564,8 +564,8 @@ function captiveportal_prune_old() {
 		return;
 	}
 
-	$cpcfg = config_get_path("captiveportal/{$cpzone}");
-	$vcpcfg = config_get_path("voucher/{$cpzone}");
+	$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
+	$vcpcfg = config_get_path("voucher/{$cpzone}", []);
 
 	/* check for expired entries */
 	$idletimeout = 0;
@@ -811,7 +811,7 @@ function captiveportal_prune_old() {
 
 function captiveportal_prune_old_automac() {
 	global $g, $cpzone, $cpzoneid;
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 
 	if (is_array($cpzone_config['passthrumac']) &&
 	    isset($cpzone_config['passthrumacadd'])) {
@@ -847,7 +847,7 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null, $c
 	$stop_time = (empty($stop_time)) ? time() : $stop_time;
 
 	/* this client needs to be deleted - remove pf anchor */
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	if (isset($cpzone_config['radacct_enable']) && $dbent['authmethod'] == 'radius') {
 		if ($cpzone_config['reauthenticateacct'] == "stopstartfreeradius") {
 			/*
@@ -988,7 +988,7 @@ function captiveportal_radius_stop_all($term_cause = 6, $logoutReason = "DISCONN
 
 	$cpdb = captiveportal_read_db();
 
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	$radacct = isset($cpzone_config['radacct_enable']) ? true : false;
 	foreach ($cpdb as $cpentry) {
 		if ($cpentry['authmethod'] === 'radius' && $radacct) {
@@ -1123,7 +1123,7 @@ function captiveportal_filterdns_configure() {
 	$cp_filterdns_filename = g_get('varetc_path') .
 	    "/filterdns-{$cpzone}-captiveportal.conf";
 
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	if (isset($cpzone_config['enable']) &&
 	    is_array($cpzone_config['allowedhostname']) &&
 	    file_exists($cp_filterdns_filename) &&
@@ -1202,7 +1202,7 @@ function captiveportal_syslog($message) {
 /* Authenticate users using Authentication Backend */
 function captiveportal_authenticate_user(&$login = '', $password = '', $clientmac = '', $clientip = '', $pipeno = 'null', $context = 'first') {
 	global $g, $cpzone;
-	$cpcfg = config_get_path("captiveportal/{$cpzone}");
+	$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 
 	$login_status = 'FAILURE';
 	$login_msg = gettext('Invalid credentials specified');
@@ -1509,7 +1509,7 @@ function captiveportal_write_db($queries) {
 function captiveportal_write_elements() {
 	global $g, $cpzone;
 
-	$cpcfg = config_get_path("captiveportal/{$cpzone}");
+	$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 
 	if (!is_dir(g_get('captiveportal_element_path'))) {
 		@mkdir(g_get('captiveportal_element_path'));
@@ -1659,7 +1659,7 @@ function captiveportal_free_dn_rulenos($rulenos) {
 function captiveportal_get_dn_passthru_pipes($mac, $anchor = 'passthrumac') {
 	global $g, $cpzone, $cpzoneid;
 
-	$cpcfg = config_get_path("captiveportal/{$cpzone}");
+	$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 	$cpzoneprefix = CPPREFIX . $cpcfg['zoneid'];
 	if (!isset($cpcfg['enable'])) {
 		return NULL;
@@ -1685,7 +1685,7 @@ function captiveportal_get_dn_passthru_pipes($mac, $anchor = 'passthrumac') {
 function getVolume($ip) {
 	global $g, $cpzone;
 
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	$reverse = isset($cpzone_config['reverseacct']) ? true : false;
 	$volume = array();
 	// Initialize vars properly, since we don't want NULL vars
@@ -1790,7 +1790,7 @@ function portal_ip_from_client_ip($cliip) {
 function portal_hostname_from_client_ip($cliip) {
 	global $cpzone;
 
-	$cpcfg = config_get_path("captiveportal/{$cpzone}");
+	$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 
 	if (isset($cpcfg['httpslogin'])) {
 		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 8001);
@@ -1821,7 +1821,7 @@ function portal_hostname_from_client_ip($cliip) {
 function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null, $voucher = null) {
 	global $g, $cpzone;
 
-	$cpcfg = config_get_path("captiveportal/{$cpzone}");
+	$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 	$ourhostname = portal_hostname_from_client_ip($clientip);
 	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
 	$portal_url = "{$protocol}{$ourhostname}/index.php?zone={$cpzone}";
@@ -1871,7 +1871,7 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 function captiveportal_reapply_attributes($cpentry, $attributes) {
 	global $cpzone, $g;
 
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	if (isset($cpzone_config['peruserbw'])) {
 		$dwfaultbw_up = !empty($cpzone_config['bwdefaultup']) ? $cpzone_config['bwdefaultup'] : 0;
 		$dwfaultbw_down = !empty($cpzone_config['bwdefaultdn']) ? $cpzone_config['bwdefaultdn'] : 0;
@@ -1933,7 +1933,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 	$writecfg = false;
 	/* If both "Add MAC addresses of connected users as pass-through MAC" and "Disable concurrent logins" are checked,
 	then we need to check if the user was already authenticated using another MAC Address, and if so remove the previous Pass-Through MAC. */
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	if ((isset($cpzone_config['noconcurrentlogins'])) && ($cpzone_config['noconcurrentlogins'] == 'last') && ($username != 'unauthenticated') && isset($cpzone_config['passthrumacadd'])) {
 		$mac = captiveportal_passthrumac_findbyname($username);
 		if (!empty($mac)) {
@@ -1966,7 +1966,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 	}
 	$unsetindexes = array();
 
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	foreach ($cpdb as $cpentry) {
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
@@ -2060,7 +2060,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 			$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
 		}
 
-		$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+		$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 		if (isset($cpzone_config['peruserbw'])) {
 			$dwfaultbw_up = !empty($cpzone_config['bwdefaultup']) ? $cpzone_config['bwdefaultup'] : 0;
 			$dwfaultbw_down = !empty($cpzone_config['bwdefaultdn']) ? $cpzone_config['bwdefaultdn'] : 0;
@@ -2213,7 +2213,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 			return false;
 		}
 	}
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	/* redirect user to desired destination */
 	if (is_URL($attributes['url_redirection'], true)) {
 		$my_redirurl = $attributes['url_redirection'];
@@ -2253,7 +2253,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 function portal_consume_passthrough_credit($clientmac) {
 	global $cpzone;
 
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	if (!empty($cpzone_config['freelogins_count']) && is_numeric($cpzone_config['freelogins_count'])) {
 		$freeloginscount = $cpzone_config['freelogins_count'];
 	} else {
@@ -2456,7 +2456,7 @@ function remainder($bytes) {
 function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $username = null, $clientip = null, $clientmac = null, $sessionid = null, $start_time = null, $stop_time = null, $term_cause = null) {
 	global $cpzone;
 
-	$cpcfg = config_get_path("captiveportal/{$cpzone}");
+	$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 	$acctcfg = auth_get_authserver($cpcfg['radacct_server']);
 
 	if (!isset($cpcfg['radacct_enable']) || empty($acctcfg) ||
@@ -2587,7 +2587,7 @@ function captiveportal_allowedhostname_cleanup() {
 	global $g, $cpzone;
 
 	config_init_path("captiveportal/{$cpzone}/allowedhostname");
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	$cpzoneprefix = CPPREFIX . $cpzone_config['zoneid'];
 
 	foreach ($cpzone_config['allowedhostname'] as $id => $hostnameent) {
@@ -2865,7 +2865,7 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 function captiveportal_pipe_configure($host, $type, $user_auth = true) {
 	global $cpzone;
 
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	$bwUp = 0;
 	if (!empty($host['bw_up'])) {
 		$bwUp = $host['bw_up'];

@@ -482,7 +482,7 @@ function easyrule_parse_getblock($int = 'wan', $sep = "\n") {
 	    empty(config_get_path("aliases/alias/{$id}/address"))) {
 		return gettext("No entries are blocked on interface:") . ' ' . htmlspecialchars($int);
 	}
-	return join($sep, explode(" ", config_get_path("aliases/alias/{$id}/address")));
+	return join($sep, explode(" ", config_get_path("aliases/alias/{$id}/address", '')));
 }
 
 function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = "inet") {

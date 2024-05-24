@@ -47,7 +47,7 @@ if ($_POST['act'] == "del") {
 			$wc_msg = gettext('Enabled a check IP service.');
 		}
 		$dirty = true;
-	} else if ($_POST['id'] == count(config_get_path('checkipservices/checkipservice'))) {
+	} else if ($_POST['id'] == count(config_get_path('checkipservices/checkipservice', []))) {
 		if (config_path_enabled('checkipservices', 'disable_factory_default')) {
 			config_del_path('checkipservices/disable_factory_default');
 			$wc_msg = gettext('Enabled the default check IP service.');

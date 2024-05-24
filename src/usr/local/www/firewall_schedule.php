@@ -73,7 +73,7 @@ if ($errmsg) {
 			<tbody>
 <?php
 $i = 0;
-foreach (config_get_path('schedules/schedule') as $schedule):
+foreach (config_get_path('schedules/schedule', []) as $schedule):
 	$schedstatus = filter_get_time_based_rule_status($schedule);
 ?>
 				<tr>

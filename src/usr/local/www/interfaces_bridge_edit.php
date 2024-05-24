@@ -274,7 +274,7 @@ if ($_POST['save']) {
 			if (is_array($_POST['span']) && in_array($ifmembers, $_POST['span'])) {
 				$input_errors[] = sprintf(gettext('Span interface (%s) cannot be part of the bridge. Remove the span interface from bridge members to continue.'), $ifacelist[$ifmembers]);
 			}
-			foreach (config_get_path('bridges/bridged') as $a_bridge) {
+			foreach (config_get_path('bridges/bridged', []) as $a_bridge) {
 				if ($_POST['bridgeif'] === $a_bridge['bridgeif']) {
 					continue;
 				}

@@ -128,7 +128,7 @@ if ($_POST['save']) {
 		}
 	}
 	if (!isset($id)) {
-		$id = count(config_get_path('staticroutes/route'));
+		$id = count(config_get_path('staticroutes/route', []));
 	}
 	$oroute = $this_routes_config;
 	$old_targets = array();

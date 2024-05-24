@@ -1940,7 +1940,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 
 	// OpenVPN CSO
 	config_init_path('openvpn/openvpn-csc');
-	foreach (config_get_path('openvpn/openvpn-csc') as $ovpnent) {
+	foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
 			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
 			$descriptions[] = gettext("OpenVPN CSO");
@@ -2447,7 +2447,7 @@ function filter_nat_rules_generate() {
 	case "hybrid":
 		$natrules .= "\n# Outbound NAT rules (manual)\n";
 		/* advanced outbound rules */
-		foreach (config_get_path('nat/outbound/rule') as $obent) {
+		foreach (config_get_path('nat/outbound/rule', []) as $obent) {
 			if (isset($obent['disabled'])) {
 				continue;
 			}
@@ -3665,7 +3665,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	if ($rule['dnpipe'] <> "") {
 		if (!empty($dummynet_name_list[$rule['dnpipe']])) {
 			/* https://redmine.pfsense.org/issues/11636 */
-			foreach (config_get_path('dnshaper/queue') as $queue) {
+			foreach (config_get_path('dnshaper/queue', []) as $queue) {
 				if (($queue['name'] == $rule['dnpipe']) &&
 				    is_array($queue['bandwidth']['item'])) {
 					foreach ($queue['bandwidth']['item'] as $bw) {
@@ -4460,7 +4460,7 @@ function filter_tdr_install_cron($should_install) {
 	config_init_path('cron/item');
 	$x = 0;
 	$is_installed = false;
-	foreach (config_get_path('cron/item') as $item) {
+	foreach (config_get_path('cron/item', []) as $item) {
 		if (strstr($item['command'], "filter_configure_sync")) {
 			$is_installed = true;
 			break;

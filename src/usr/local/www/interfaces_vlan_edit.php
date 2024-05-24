@@ -58,7 +58,7 @@ foreach ($portlist as $portname => $port) {
 	if (strstr($portname, "ovpn")) {
 		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
 		$type = ($m[1] == 'c') ? 'client' : 'server';
-		foreach (config_get_path("openvpn/openvpn-{$type}") as $ovpn) {
+		foreach (config_get_path("openvpn/openvpn-{$type}", []) as $ovpn) {
 			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
 				unset($portlist[$portname]);
 			}
@@ -122,7 +122,7 @@ if ($_POST['save']) {
 			}
 		}
 	}
-	foreach (config_get_path('vlans/vlan') as $vlan) {
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if ($this_vlan_config && ($this_vlan_config === $vlan)) {
 			continue;
 		}

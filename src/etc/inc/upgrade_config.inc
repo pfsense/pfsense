@@ -926,7 +926,7 @@ function upgrade_045_to_046() {
 		}
 	}
 	config_set_path('load_balancer', $load_balancer_config);
-	if (count(config_get_path('load_balancer')) == 0) {
+	if (count(config_get_path('load_balancer', [])) == 0) {
 		config_del_path('load_balancer');
 	}
 }
@@ -1487,7 +1487,7 @@ function upgrade_050_to_051() {
 	config_del_path('bridge');
 
 	$convert_bridges = false;
-	foreach (config_get_path('interfaces') as $intf) {
+	foreach (config_get_path('interfaces', []) as $intf) {
 		if (isset($intf['bridge']) && $intf['bridge'] <> "") {
 			config_init_path('bridges/bridged');
 			$convert_bridges = true;
@@ -1782,7 +1782,7 @@ function upgrade_051_to_052() {
 				}
 				$client['custom_options'] = implode(";", $cstmopts);
 				if (!empty($assigned_if)) {
-					foreach (config_get_path('interfaces') as $iface => $cfgif) {
+					foreach (config_get_path('interfaces', []) as $iface => $cfgif) {
 						if ($cfgif['if'] == $assigned_if) {
 							config_set_path("interfaces/{$iface}/if", "ovpnc{$client['vpnid']}");
 							break;
@@ -2227,7 +2227,7 @@ function upgrade_056_to_057() {
 	/* migrate captivate portal to user manager */
 	if (is_array(config_get_path('captiveportal/user'))) {
 		$nextuid = config_get_path('system/nextuid');
-		foreach (config_get_path('captiveportal/user') as $user) {
+		foreach (config_get_path('captiveportal/user', []) as $user) {
 			// avoid user conflicts
 			$found = false;
 			foreach ($user_config as $userent) {
@@ -2982,7 +2982,7 @@ function upgrade_084_to_085() {
 	/* process the old array */
 	if (is_array(config_get_path('gateways/gateway_group'))) {
 		$group_array_new = array();
-		foreach (config_get_path('gateways/gateway_group') as $name => $group) {
+		foreach (config_get_path('gateways/gateway_group', []) as $name => $group) {
 			if (is_array($group['item'])) {
 				$newlist = array();
 				foreach ($group['item'] as $entry) {
@@ -3920,7 +3920,7 @@ function upgrade_123_to_124() {
 
 function upgrade_124_to_125() {
 	/* Find interfaces with WEP configured. */
-	foreach (config_get_path('interfaces') as $ifname => $intf) {
+	foreach (config_get_path('interfaces', []) as $ifname => $intf) {
 		if (!is_array($intf['wireless'])) {
 			continue;
 		}
@@ -4029,7 +4029,7 @@ function upgrade_128_to_129() {
 		return;
 	}
 
-	foreach (config_get_path('sysctl/item') as $idx => $sysctl) {
+	foreach (config_get_path('sysctl/item', []) as $idx => $sysctl) {
 		if ($sysctl['tunable'] == "net.inet.ip.fastforwarding") {
 			config_del_path("sysctl/item/{$idx}");
 		}
@@ -4046,7 +4046,7 @@ function upgrade_128_to_129() {
 		 * If IPsec was globally disabled, disable all
 		 * phase1 entries
 		 */
-		foreach (config_get_path('ipsec/phase1') as $idx => $p1) {
+		foreach (config_get_path('ipsec/phase1', []) as $idx => $p1) {
 			config_set_path("ipsec/phase1/{$idx}/disabled", true);
 		}
 	}
@@ -4422,7 +4422,7 @@ function upgrade_142_to_143() {
 }
 
 function get_vip_from_ip_alias($ipalias) {
-	foreach (config_get_path('virtualip/vip') as $idx => $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $idx => $vip) {
 		if ($vip['mode'] != "ipalias") {
 			continue;
 		}
@@ -4435,7 +4435,7 @@ function get_vip_from_ip_alias($ipalias) {
 }
 
 function get_vip_from_oldcarp($carp) {
-	foreach (config_get_path('virtualip/vip') as $idx => $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $idx => $vip) {
 		if ($vip['mode'] != "carp") {
 			continue;
 		}
@@ -4642,7 +4642,7 @@ function upgrade_bgpd_146_to_147() {
 
 	if (!is_array(config_get_path('virtualip/vip')))
 		return;
-	foreach (config_get_path('virtualip/vip') as $idx => $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $idx => $vip) {
 		if ($vip['subnet'] == $openbgpd_conf['carpstatusip']) {
 			$openbgpd_conf['carpstatusvid'] = "_vip{$vip['uniqid']}";
 			unset($openbgpd_conf['carpstatusip']);
@@ -4665,7 +4665,7 @@ function upgrade_quagga_146_to_147() {
 
 	if (!is_array(config_get_path('virtualip/vip')))
 		return;
-	foreach (config_get_path('virtualip/vip') as $idx => $vip) {
+	foreach (config_get_path('virtualip/vip', []) as $idx => $vip) {
 		if ($vip['subnet'] == $ospfd_conf['carpstatusip']) {
 			$ospfd_conf['carpstatusvid'] = "_vip{$vip['uniqid']}";
 			unset($ospfd_conf['carpstatusip']);
@@ -4825,7 +4825,7 @@ function upgrade_151_to_152() {
 
 function upgrade_152_to_153() {
 	if (is_array(config_get_path('virtualip/vip'))) {
-		foreach (config_get_path('virtualip/vip') as $idx => $vip) {
+		foreach (config_get_path('virtualip/vip', []) as $idx => $vip) {
 			if (substr($vip['interface'], 0, 4) == "_vip") {
 				// using new VIP format
 				continue;
@@ -4838,7 +4838,7 @@ function upgrade_152_to_153() {
 
 	// upgrade GIFs using VIP to new format
 	if (is_array(config_get_path('gifs/gif'))) {
-		foreach (config_get_path('gifs/gif') as $idx => $gif) {
+		foreach (config_get_path('gifs/gif', []) as $idx => $gif) {
 			if (substr($gif['if'], 0, 4) == "_vip") {
 				// using new VIP format
 				continue;
@@ -4851,7 +4851,7 @@ function upgrade_152_to_153() {
 
 	// upgrade GREs using VIP to new format
 	if (is_array(config_get_path('gres/gre'))) {
-		foreach (config_get_path('gres/gre') as $idx => $gre) {
+		foreach (config_get_path('gres/gre', []) as $idx => $gre) {
 			if (substr($gre['if'], 0, 4) == "_vip") {
 				// using new VIP format
 				continue;
@@ -4864,7 +4864,7 @@ function upgrade_152_to_153() {
 
 	// upgrade gateway groups using VIPs
 	if (is_array(config_get_path('gateways/gateway_group'))) {
-		foreach (config_get_path('gateways/gateway_group') as $idx => $gw) {
+		foreach (config_get_path('gateways/gateway_group', []) as $idx => $gw) {
 			if (is_array($gw['item'])) {
 				$newitems = array();
 				$gwvipchange = false;
@@ -4932,7 +4932,7 @@ function upgrade_156_to_157() {
 
 	/* unset old pppoerestart cron job if it exists. redmine 1905 */
 	if (is_array(config_get_path('cron/item'))) {
-		foreach (config_get_path('cron/item') as $idx => $cronitem) {
+		foreach (config_get_path('cron/item', []) as $idx => $cronitem) {
 			if ($cronitem['command'] == "/etc/pppoerestart") {
 				config_del_path("cron/item/{$idx}");
 			}
@@ -5310,7 +5310,7 @@ function upgrade_168_to_169() {
  * Each wireless interface now needs to be a cloned instance, the card itself
  * Can no longer be assigned. https://redmine.pfsense.org/issues/6770 */
 function upgrade_169_to_170() {
-	foreach (config_get_path('interfaces') as $friendly => & $iface) {
+	foreach (config_get_path('interfaces', []) as $friendly => & $iface) {
 		if (is_array($iface['wireless']) && !empty($iface['wireless']['mode'])) {
 			/* This test can only be true for one instance per card, so it is safe. */
 			if (stristr($iface['if'], '_wlan') === false) {
@@ -5471,7 +5471,7 @@ function upgrade_174_to_175() {
  * And provide the option through gui to disable it again
  */
 function upgrade_175_to_176() {
-	if (is_array(config_get_path('igmpproxy/igmpentry')) && (count(config_get_path('igmpproxy/igmpentry')) > 0)) {
+	if ((count(config_get_path('igmpproxy/igmpentry', [])) > 0)) {
 		config_set_path('igmpproxy/enable', true);
 	}
 }
@@ -5514,7 +5514,7 @@ function upgrade_179_to_180() {
  */
 function upgrade_180_to_181() {
 	if (is_array(config_get_path('captiveportal'))) {
-		foreach (config_get_path('captiveportal') as $cpzone => $cpcfg) {
+		foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
 			if ($cpcfg['auth_method'] == "radius") {
 				config_set_path("captiveportal/{$cpzone}/radiusperuserbw", true);
 			}
@@ -5785,7 +5785,7 @@ function upgrade_186_to_187() {
 	global $g;
 
 	if (is_array(config_get_path('captiveportal'))) {
-		foreach (config_get_path('captiveportal') as $cpzone => $cp) {
+		foreach (config_get_path('captiveportal', []) as $cpzone => $cp) {
 			// we flush any existing sqlite3 db.
 			// It will be automatically re-generated on next captiveportal_readdb()/captiveportal_writedb()
 			$db_path = "{$g['vardb_path']}/captiveportal{$cpzone}.db";
@@ -5857,7 +5857,7 @@ function upgrade_187_to_188() {
 	$old_cmd = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout";
 	$new_cmd = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard";
 	config_init_path('cron/item');
-	foreach (config_get_path('cron/item') as $idx => $entry) {
+	foreach (config_get_path('cron/item', []) as $idx => $entry) {
 		if ($entry['command'] == $old_cmd) {
 			config_set_path("cron/item/{$idx}/command", $new_cmd);
 			break;
@@ -5954,7 +5954,7 @@ function upgrade_193_to_194() {
 	global $g;
 
 	if (is_array(config_get_path('captiveportal'))) {
-		foreach (config_get_path('captiveportal') as $cpzone => $cp) {
+		foreach (config_get_path('captiveportal', []) as $cpzone => $cp) {
 			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 		}
 	}
@@ -6385,7 +6385,7 @@ function upgrade_216_to_217() {
  */
 function upgrade_217_to_218() {
 	config_init_path('ipsec/phase1');
-	foreach (config_get_path('ipsec/phase1') as $ph1ent) {
+	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if (empty($ph1ent)) {
 			continue;
 		}
@@ -6410,7 +6410,7 @@ function upgrade_218_to_219() {
 	 * locates and returns an ipsecifnum in the config.
 	 */
 	function upgrade219_get_ipsecifnum($ikeid, $idx) {
-		foreach (config_get_path('ipsec/vtimaps/item') as $vtimap) {
+		foreach (config_get_path('ipsec/vtimaps/item', []) as $vtimap) {
 			if (($vtimap['reqid'] == $ikeid) &&
 			    ($vtimap['index'] == $idx)) {
 				return $vtimap['ifnum'];
@@ -6429,7 +6429,7 @@ function upgrade_218_to_219() {
 
 	/* Make an associative array with old name as key and new name as value for all VTI tunnels */
 	$ipsecifs = array();
-	foreach (config_get_path('ipsec/phase1') as $ph1ent) {
+	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if (empty($ph1ent) || !is_array($ph1ent)) {
 			continue;
 		}

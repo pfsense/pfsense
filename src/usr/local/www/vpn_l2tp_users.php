@@ -76,7 +76,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php $i = 0; foreach (config_get_path('l2tp/user') as $secretent):?>
+<?php $i = 0; foreach (config_get_path('l2tp/user', []) as $secretent):?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($secretent['name'])?>

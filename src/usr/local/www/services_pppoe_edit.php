@@ -263,7 +263,7 @@ if ($_POST['save']) {
 		}
 
 		if (!isset($id)) {
-			$id = count(config_get_path('pppoes/pppoe'));
+			$id = count(config_get_path('pppoes/pppoe', []));
 		    	$reload = true;
 		}
 

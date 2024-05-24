@@ -118,7 +118,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach (config_get_path('qinqs/qinqentry') as $i => $qinq):?>
+<?php foreach (config_get_path('qinqs/qinqentry', []) as $i => $qinq):?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($qinq['if'])?>

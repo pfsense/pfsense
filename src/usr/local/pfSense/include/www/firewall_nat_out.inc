@@ -68,7 +68,7 @@ function saveNAToutMode($post, $json = false) {
 
 				/* Try to detect already auto created rules and avoid duplicating them */
 				$found = false;
-				foreach (config_get_path('nat/outbound/rule') as $rule) {
+				foreach (config_get_path('nat/outbound/rule', []) as $rule) {
 					if ($rule['interface'] == $natent['interface'] &&
 					    $rule['source']['network'] == $natent['source']['network'] &&
 					    $rule['dstport'] == $natent['dstport'] &&

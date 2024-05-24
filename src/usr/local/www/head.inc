@@ -346,7 +346,7 @@ $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/services_pppoe.php");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
 
-if (count(config_get_path('interfaces')) > 1) {
+if (count(config_get_path('interfaces', [])) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
@@ -383,7 +383,7 @@ $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php");
 
-if (count(config_get_path('interfaces')) > 1) {
+if (count(config_get_path('interfaces', [])) > 1) {
 	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
 }
 

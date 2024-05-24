@@ -99,7 +99,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach (config_get_path('gres/gre') as $i => $gre):
+<?php foreach (config_get_path('gres/gre', []) as $i => $gre):
 	if (substr($gre['if'], 0, 4) == "_vip") {
 		$if = convert_real_interface_to_friendly_descr(get_real_interface($gre['if']));
 	} else {

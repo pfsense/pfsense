@@ -93,7 +93,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The alias IP address family has to match the family of the remote peer address.");
 	}
 
-	foreach (config_get_path('gifs/gif') as $gif) {
+	foreach (config_get_path('gifs/gif', []) as $gif) {
 		if ($this_gif_config && ($this_gif_config === $gif)) {
 			continue;
 		}

@@ -157,7 +157,7 @@ print($form);
 					<tbody>
 <?php
 $i = 0;
-foreach (config_get_path('igmpproxy/igmpentry') as $igmpentry):
+foreach (config_get_path('igmpproxy/igmpentry', []) as $igmpentry):
 ?>
 						<tr>
 							<td>

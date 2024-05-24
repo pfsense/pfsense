@@ -59,7 +59,7 @@ if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	if ($_POST['type'] == "upstream") {
-		foreach (config_get_path('igmpproxy/igmpentry') as $pid => $proxyentry) {
+		foreach (config_get_path('igmpproxy/igmpentry', []) as $pid => $proxyentry) {
 			if (isset($id) && $id == $pid) {
 				continue;
 			}

@@ -118,7 +118,7 @@ function save_setupwizard_config(
 	$type = $wantype;
 
 	config_init_path('ppps/ppp');
-	if (count(config_get_path('ppps/ppp'))) {
+	if (count(config_get_path('ppps/ppp', []))) {
 		foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
 			if ($ppp['ptpid'] == "0") {
 				if ((substr(config_get_path('interfaces/wan/if'),0,5) == "pppoe") || (substr(config_get_path('interfaces/wan/if'),0,4) == "pptp")) {

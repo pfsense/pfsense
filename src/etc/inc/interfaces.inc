@@ -454,7 +454,7 @@ function interfaces_vlan_configure_mtu($parentif = "") {
 			continue;
 		}
 		// PPP interfaces must be restarted to adjust MTU changes
-		foreach (config_get_path('ppps/ppp') as $ppp) {
+		foreach (config_get_path('ppps/ppp', []) as $ppp) {
 			$ports = explode(',', $ppp['ports']);
 			foreach ($ports as $port) {
 				if ($port != $vlan['vlanif']) {
@@ -5753,7 +5753,7 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 			case "pptp":
 			case "l2tp":
 				if (empty($parents)) {
-					foreach (config_get_path('ppps/ppp') as $ppp) {
+					foreach (config_get_path('ppps/ppp', []) as $ppp) {
 						if ($ifcfg['if'] == $ppp['if']) {
 							$ports = explode(',', $ppp['ports']);
 							foreach ($ports as $pid => $parent_if) {
@@ -6203,7 +6203,7 @@ function link_interface_to_lagg($int) {
 function link_interface_to_group($int) {
 	$result = array();
 
-	foreach (config_get_path('ifgroups/ifgroupentry') as $group) {
+	foreach (config_get_path('ifgroups/ifgroupentry', []) as $group) {
 		if (in_array($int, explode(" ", $group['members']))) {
 			$result[$group['ifname']] = $int;
 		}
@@ -6442,7 +6442,7 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 	}
 
 	config_init_path('ipsec/phase1');
-	foreach (config_get_path('ipsec/phase1') as $p1) {
+	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['disabled']) {
 			continue;
 		}

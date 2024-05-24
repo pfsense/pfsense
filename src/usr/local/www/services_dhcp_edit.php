@@ -215,7 +215,7 @@ if ($_POST['save']) {
 	}
 
 	/* check for overlaps */
-	foreach (config_get_path("dhcpd/{$if}/staticmap") as $mapent) {
+	foreach (config_get_path("dhcpd/{$if}/staticmap", []) as $mapent) {
 		if ($this_map_config && ($this_map_config === $mapent)) {
 			continue;
 		}
@@ -237,7 +237,7 @@ if ($_POST['save']) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 
-		foreach (config_get_path("dhcpd/{$if}/pool") as $p) {
+		foreach (config_get_path("dhcpd/{$if}/pool", []) as $p) {
 			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
 				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
 				break;

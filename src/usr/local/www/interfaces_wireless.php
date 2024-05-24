@@ -101,7 +101,7 @@ display_top_tabs($tab_array);
 
 $i = 0;
 
-foreach (config_get_path('wireless/clone') as $clone) {
+foreach (config_get_path('wireless/clone', []) as $clone) {
 ?>
 					<tr>
 						<td>

@@ -112,7 +112,7 @@ display_top_tabs($tab_array);
 $i = 0;
 
 
-foreach (config_get_path('ppps/ppp') as $ppp) {
+foreach (config_get_path('ppps/ppp', []) as $ppp) {
 ?>
 					<tr>
 						<td>

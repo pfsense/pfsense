@@ -620,7 +620,7 @@ endforeach;
 			<tbody>
 <?php
 $i = 0;
-foreach (config_get_path('unbound/domainoverrides') as $doment):
+foreach (config_get_path('unbound/domainoverrides', []) as $doment):
 ?>
 				<tr>
 					<td>

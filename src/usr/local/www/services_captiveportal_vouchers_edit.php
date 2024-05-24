@@ -76,7 +76,7 @@ if ($_POST['save']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	// Look for duplicate roll #
-	foreach (config_get_path("voucher/{$cpzone}/roll") as $re) {
+	foreach (config_get_path("voucher/{$cpzone}/roll", []) as $re) {
 		if ($this_roll_config && $this_roll_config === $re) {
 			continue;
 		}

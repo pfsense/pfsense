@@ -108,7 +108,7 @@ display_top_tabs($tab_array);
 $i = 0;
 $ifdescrs = get_configured_interface_with_descr();
 
-foreach (config_get_path('bridges/bridged') as $bridge) {
+foreach (config_get_path('bridges/bridged', []) as $bridge) {
 ?>
 					<tr>
 						<td>

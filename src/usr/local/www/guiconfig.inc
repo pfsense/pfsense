@@ -1040,7 +1040,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 		}
 	}
 	$grouptiermap = [];
-	foreach(config_get_path('gateways/gateway_group') as $i => $gwgroup) {
+	foreach(config_get_path('gateways/gateway_group', []) as $i => $gwgroup) {
 		if ($gwgroup['name'] == $showgw) {
 			$groupinfo = [];
 			foreach ($gwgroup['item'] as $member) {

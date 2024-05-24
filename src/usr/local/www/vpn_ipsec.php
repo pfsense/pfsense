@@ -189,7 +189,7 @@ if ($_POST['apply']) {
 				$ikeid = config_get_path('ipsec/phase1/' . $togglebtn . '/ikeid');
 				$p1_has_vti = false;
 				$disablep2ids = array();
-				foreach (config_get_path('ipsec/phase2') as $p2index => $ph2tmp) {
+				foreach (config_get_path('ipsec/phase2', []) as $p2index => $ph2tmp) {
 					if ($ph2tmp['ikeid'] == $ikeid) {
 						if (is_interface_ipsec_vti_assigned($ph2tmp)) {
 							$p1_has_vti = true;
@@ -453,7 +453,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 <?php
 				$phase2count=0;
 
-				foreach (config_get_path('ipsec/phase2') as $ph2ent) {
+				foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
 					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 						continue;
 					}
@@ -482,7 +482,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 										</tr>
 									</thead>
 									<tbody class="p2-entries">
-<?php $j = 0; foreach (config_get_path('ipsec/phase2') as $ph2index => $ph2ent): ?>
+<?php $j = 0; foreach (config_get_path('ipsec/phase2', []) as $ph2index => $ph2ent): ?>
 <?php
 						if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 							continue;

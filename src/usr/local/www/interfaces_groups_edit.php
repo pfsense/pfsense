@@ -74,7 +74,7 @@ if ($_POST['save']) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $_POST['ifname']);
 		}
 
-		foreach (config_get_path('ifgroups/ifgroupentry') as $groupid => $groupentry) {
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $groupid => $groupentry) {
 			if ((!isset($id) || ($groupid != $id)) && ($groupentry['ifname'] == $_POST['ifname'])) {
 				$input_errors[] = gettext("Group name already exists!");
 			}

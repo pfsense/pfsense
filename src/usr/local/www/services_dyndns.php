@@ -103,7 +103,7 @@ $iflist = get_configured_interface_with_descr();
 $groupslist = return_gateway_groups_array();
 
 $i = 0;
-foreach (config_get_path("dyndnses/dyndns") as $dyndns):
+foreach (config_get_path("dyndnses/dyndns", []) as $dyndns):
 	if (!is_array($dyndns) || empty($dyndns)) {
 		continue;
 	}

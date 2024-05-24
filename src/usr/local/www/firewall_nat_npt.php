@@ -110,7 +110,7 @@ display_top_tabs($tab_array);
 
 	$textse = "</span>";
 	$i = 0;
-	foreach (config_get_path('nat/npt') as $natent):
+	foreach (config_get_path('nat/npt', []) as $natent):
 		if (isset($natent['disabled'])) {
 			$textss = "<span class=\"gray\">";
 			$iconfn = "pass_d";

@@ -95,7 +95,7 @@ display_top_tabs($tab_array, true);
 		<tbody>
 <?php
 	$i = 0;
-	foreach (config_get_path("captiveportal/{$cpzone}/allowedip") as $ip): ?>
+	foreach (config_get_path("captiveportal/{$cpzone}/allowedip", []) as $ip): ?>
 			<tr>
 				<td>
 					<?=$directionicons[$ip['dir']]?>&nbsp;<?=$ip['ip']?>

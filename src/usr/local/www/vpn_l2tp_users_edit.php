@@ -82,7 +82,7 @@ if ($_POST['save']) {
 
 	if (!$input_errors && !$this_secret_config) {
 		/* make sure there are no dupes */
-		foreach (config_get_path('l2tp/user') as $secretent) {
+		foreach (config_get_path('l2tp/user', []) as $secretent) {
 			if ($secretent['name'] == $_POST['usernamefld']) {
 				$input_errors[] = gettext("Another entry with the same username already exists.");
 				break;

@@ -99,7 +99,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
 	}
 
-	foreach (config_get_path("captiveportal/{$cpzone}/allowedhostname") as $ipent) {
+	foreach (config_get_path("captiveportal/{$cpzone}/allowedhostname", []) as $ipent) {
 		if ($this_allowedhostname_config && ($this_allowedhostname_config === $ipent)) {
 			continue;
 		}

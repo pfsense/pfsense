@@ -58,7 +58,7 @@ if ($_POST['apply']) {
 		clear_subsystem_dirty('staticroutes');
 	}
 
-	foreach (config_get_path('gateways/gateway_group') as $gateway_group) {
+	foreach (config_get_path('gateways/gateway_group', []) as $gateway_group) {
 		$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
 		if (is_subsystem_dirty($gw_subsystem)) {
 			openvpn_resync_gwgroup($gateway_group['name']);
@@ -143,7 +143,7 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 $i = 0;
-foreach (config_get_path('gateways/gateway_group') as $gateway_group):
+foreach (config_get_path('gateways/gateway_group', []) as $gateway_group):
 ?>
 					<tr>
 						<td>

@@ -81,7 +81,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach (config_get_path('ifgroups/ifgroupentry') as $i => $ifgroupentry): ?>
+<?php foreach (config_get_path('ifgroups/ifgroupentry', []) as $i => $ifgroupentry): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($ifgroupentry['ifname']); ?>

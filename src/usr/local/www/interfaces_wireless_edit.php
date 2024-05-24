@@ -91,7 +91,7 @@ if ($_POST['save']) {
 			do {
 				$clone_exists = false;
 				$clone['cloneif'] = "{$_POST['if']}_wlan{$clone_id}";
-				foreach (config_get_path('wireless/clone') as $existing) {
+				foreach (config_get_path('wireless/clone', []) as $existing) {
 					if ($clone['cloneif'] == $existing['cloneif']) {
 						$clone_exists = true;
 						$clone_id++;

@@ -129,7 +129,7 @@ if ($_POST['save']) {
 		}
 	}
 
-	foreach (config_get_path("captiveportal/{$cpzone}/passthrumac") as $macent) {
+	foreach (config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $macent) {
 		if ($this_passthrumac_config && ($this_passthrumac_config === $macent)) {
 			continue;
 		}

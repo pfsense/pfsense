@@ -130,7 +130,7 @@ if ($_POST['save']) {
 	}
 
 	/* check for overlaps */
-	foreach (config_get_path("dhcpdv6/{$if}/staticmap") as $mapent) {
+	foreach (config_get_path("dhcpdv6/{$if}/staticmap", []) as $mapent) {
 		if ($this_map_config && ($this_map_config === $mapent)) {
 			continue;
 		}

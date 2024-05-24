@@ -2524,7 +2524,7 @@ function update_alias_url_data() {
 
 		$address = array();
 		$type = config_get_path("aliases/alias/{$x}/type");
-		foreach (config_get_path("aliases/alias/{$x}/aliasurl") as $alias_url) {
+		foreach (config_get_path("aliases/alias/{$x}/aliasurl", []) as $alias_url) {
 			/* fetch down and add in */
 			if (is_URL($alias_url)) {
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
@@ -3542,7 +3542,7 @@ function get_pppoes_child_interfaces($ifpattern) {
 function pkg_call_plugins($plugin_type, $plugin_params) {
 	global $g;
 	$results = array();
-	foreach (config_get_path('installedpackages/package') as $package) {
+	foreach (config_get_path('installedpackages/package', []) as $package) {
 		foreach (array_get_path($package, 'plugins/item', []) as $plugin) {
 			if (!is_array($plugin) || empty($plugin)) {
 				continue;

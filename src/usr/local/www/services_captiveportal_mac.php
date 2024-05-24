@@ -102,7 +102,7 @@ display_top_tabs($tab_array, true);
 		<tbody>
 <?php
 $i = 0;
-foreach (config_get_path("captiveportal/{$cpzone}/passthrumac") as $mac): ?>
+foreach (config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $mac): ?>
 			<tr>
 				<td>
 					<?=$actsmbl[$mac['action']]?>

@@ -95,7 +95,7 @@ $iflist = get_configured_interface_with_descr();
 $groupslist = return_gateway_groups_array();
 
 $i = 0;
-foreach (config_get_path('dnsupdates/dnsupdate') as $rfc2136):
+foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 	if (!is_array($rfc2136) || empty($rfc2136)) {
 		continue;
 	}

@@ -84,7 +84,7 @@ display_top_tabs($tab_array);
 <?php
 			$voucherlck = lock("voucher{$cpzone}");
 			$i = 0;
-			foreach (config_get_path("voucher/{$cpzone}/roll") as $rollent):
+			foreach (config_get_path("voucher/{$cpzone}/roll", []) as $rollent):
 				$used = voucher_used_count($rollent['number']);
 				$active = count(voucher_read_active_db($rollent['number']));
 				$ready = $rollent['count'] - $used;

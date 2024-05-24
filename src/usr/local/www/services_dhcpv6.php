@@ -440,7 +440,7 @@ if (isset($_POST['apply'])) {
 			}
 		}
 
-		foreach (config_get_path("dhcpdv6/{$if}/pool") as $id => $p) {
+		foreach (config_get_path("dhcpdv6/{$if}/pool", []) as $id => $p) {
 			if (is_numeric($pool) && ($id == $pool)) {
 				continue;
 			}
@@ -848,7 +848,7 @@ if (is_ipaddrv6($ifcfgip)) {
 			$ranges[] = $subnet_range;
 		}
 
-		foreach (config_get_path("dhcpdv6/{$if}/pool") as $p) {
+		foreach (config_get_path("dhcpdv6/{$if}/pool", []) as $p) {
 			$pa = array_get_path($p, 'range', []);
 			if (!empty($pa)) {
 				$pa['descr'] = trim($p['descr']);
@@ -904,7 +904,7 @@ $section->add($group);
 if (dhcp_is_backend('kea')):
 if (!is_numeric($pool) && !($act === 'newpool')) {
 	$has_pools = false;
-	if (is_array(config_get_path("dhcpdv6/{$if}/pool")) && (count(config_get_path("dhcpdv6/{$if}/pool")) > 0)) {
+	if (isset($if) && (count(config_get_path("dhcpdv6/{$if}/pool", [])) > 0)) {
 		$section->addInput(new Form_StaticText(
 			gettext('Additional Pools'),
 			build_pooltable()

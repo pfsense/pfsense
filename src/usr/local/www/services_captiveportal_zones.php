@@ -82,7 +82,7 @@ if (is_subsystem_dirty('captiveportal')) {
 				<tbody>
 
 <?php
-	foreach (config_get_path('captiveportal') as $cpzone => $cpitem):
+	foreach (config_get_path('captiveportal', []) as $cpzone => $cpitem):
 		if (!is_array($cpitem)) {
 			continue;
 		}

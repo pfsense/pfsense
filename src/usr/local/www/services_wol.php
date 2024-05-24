@@ -60,7 +60,7 @@ $savemsg = "";
 $class = "";
 
 if ($_REQUEST['wakeall'] != "") {
-	foreach (config_get_path('wol/wolentry') as $wolent) {
+	foreach (config_get_path('wol/wolentry', []) as $wolent) {
 		send_wol($wolent['interface'], $wolent['mac'], $wolent['descr'], $savemsg, $class);
 	}
 	$savemsg .= gettext('Sent magic packet to all devices.') . "<br />";
@@ -189,7 +189,7 @@ print $form;
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach (config_get_path('wol/wolentry') as $i => $wolent): ?>
+					<?php foreach (config_get_path('wol/wolentry', []) as $i => $wolent): ?>
 						<tr>
 							<td>
 								<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>

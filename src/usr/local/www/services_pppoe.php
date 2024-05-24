@@ -103,7 +103,7 @@ if (is_subsystem_dirty('vpnpppoe')) {
 		<tbody>
 <?php
 $i = 0;
-foreach (config_get_path('pppoes/pppoe') as $pppoe):
+foreach (config_get_path('pppoes/pppoe', []) as $pppoe):
 ?>
 			<tr>
 				<td>

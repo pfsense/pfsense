@@ -78,7 +78,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach (config_get_path('gateways/gateway_group') as $gateway_group): ?>
+					<?php foreach (config_get_path('gateways/gateway_group', []) as $gateway_group): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($gateway_group['name'])?>

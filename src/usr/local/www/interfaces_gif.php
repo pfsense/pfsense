@@ -99,7 +99,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach (config_get_path('gifs/gif') as $i => $gif): ?>
+<?php foreach (config_get_path('gifs/gif', []) as $i => $gif): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']))?>

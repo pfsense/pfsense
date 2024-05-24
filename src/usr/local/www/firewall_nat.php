@@ -131,7 +131,7 @@ $seprows = separator_rows($separators);
 global $user_settings;
 $show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
 $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
-foreach (config_get_path('nat/rule') as $natent):
+foreach (config_get_path('nat/rule', []) as $natent):
 
 	// Display separator(s) for section beginning at rule n
 	if ($seprows[$nnats]) {
@@ -426,7 +426,7 @@ events.push(function() {
 </script>
 <?php
 
-if (count(config_get_path('nat/rule')) > 0) {
+if (count(config_get_path('nat/rule', [])) > 0) {
 ?>
 <!-- Legend -->
 <div>

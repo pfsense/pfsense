@@ -113,7 +113,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Modifying the interface of an existing entry is not allowed.");
 	}
 	if (!isset($id)) {
-		foreach (config_get_path('qinqs/qinqentry') as $qinqentry) {
+		foreach (config_get_path('qinqs/qinqentry', []) as $qinqentry) {
 			if ($qinqentry['tag'] == $_POST['tag'] && $qinqentry['if'] == $_POST['if']) {
 				$input_errors[] = gettext("QinQ level already exists for this interface, edit it!");
 			}

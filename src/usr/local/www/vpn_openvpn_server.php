@@ -1839,7 +1839,7 @@ else:
 <?php
 	$print_sk_warning = false;
 	$i = 0;
-	foreach (config_get_path('openvpn/openvpn-server') as $server):
+	foreach (config_get_path('openvpn/openvpn-server', []) as $server):
 		if ($server['mode'] == 'p2p_shared_key') {
 			$print_sk_warning = true;
 		}

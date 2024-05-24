@@ -264,7 +264,7 @@ if ($_POST['save'] && !$read_only) {
 	$oldusername = config_get_path("system/user/{$id}/name", '');
 	/* make sure this user name is unique */
 	if (!$input_errors) {
-		foreach (config_get_path('system/user') as $userent) {
+		foreach (config_get_path('system/user', []) as $userent) {
 			if ($userent['name'] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
 				$input_errors[] = gettext("Another entry with the same username already exists.");
 				break;

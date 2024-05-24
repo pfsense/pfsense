@@ -110,7 +110,7 @@ foreach ($viplist as $vipname => $address) {
 $interfaces['lo0'] = "Localhost";
 
 $i = 0;
-foreach (config_get_path('virtualip/vip') as $vipent):
+foreach (config_get_path('virtualip/vip', []) as $vipent):
 	if ($vipent['subnet'] != "" or $vipent['range'] != "" or
 		$vipent['subnet_bits'] != "" or (isset($vipent['range']['from']) && $vipent['range']['from'] != "")):
 ?>

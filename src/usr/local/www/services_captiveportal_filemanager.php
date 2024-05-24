@@ -100,7 +100,7 @@ if ($_POST['Submit']) {
 		$size = filesize($_FILES['new']['tmp_name']);
 
 		// is there already a file with that name?
-		foreach (config_get_path("captiveportal/{$cpzone}/element") as $element) {
+		foreach (config_get_path("captiveportal/{$cpzone}/element", []) as $element) {
 			if ($element['name'] == $name) {
 				$input_errors[] = sprintf(gettext("A file with the name '%s' already exists."), $name);
 				break;
@@ -203,7 +203,7 @@ if (is_array(config_get_path("captiveportal/{$cpzone}/element"))):
 					<tbody>
 <?php
 	$i = 0;
-	foreach (config_get_path("captiveportal/{$cpzone}/element") as $element):
+	foreach (config_get_path("captiveportal/{$cpzone}/element", []) as $element):
 ?>
 						<tr>
 							<td><?=htmlspecialchars($element['name'])?></td>

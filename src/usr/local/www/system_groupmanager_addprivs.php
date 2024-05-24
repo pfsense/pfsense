@@ -83,7 +83,7 @@ if ($_POST['save'] && !$read_only) {
 			$pconfig['sysprivs'] = array();
 		}
 
-		if (!count(config_get_path("system/group/{$groupid}/priv"))) {
+		if (!count(config_get_path("system/group/{$groupid}/priv", []))) {
 			config_set_path("system/group/{$groupid}/priv", $pconfig['sysprivs']);
 		} else {
 			config_set_path("system/group/{$groupid}/priv", array_merge(config_get_path("system/group/{$groupid}/priv"), $pconfig['sysprivs']));

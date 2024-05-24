@@ -268,7 +268,7 @@ if (isset($_POST['del_x'])) {
 
 		// Include the rules of other interfaces listed in config before this (the selected) interface.
 		$filteri_before = null;
-		foreach (config_get_path('filter/rule') as $idx => $filterent) {
+		foreach (config_get_path('filter/rule', []) as $idx => $filterent) {
 			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
 				$filteri_before = $idx;
 				break;
@@ -284,7 +284,7 @@ if (isset($_POST['del_x'])) {
 		}
 
 		// Include the rules of other interfaces listed in config after this (the selected) interface.
-		foreach (config_get_path('filter/rule') as $filteri_after => $filterent) {
+		foreach (config_get_path('filter/rule', []) as $filteri_after => $filterent) {
 			if ($filteri_before > $filteri_after) {
 				continue;
 			}
@@ -412,8 +412,8 @@ $showprivate = false;
 $showblockbogons = false;
 
 if (!config_path_enabled('system/webgui', 'noantilockout') &&
-    (((count(config_get_path('interfaces')) > 1) && ($if == 'lan')) ||
-    ((count(config_get_path('interfaces')) == 1) && ($if == 'wan')))) {
+    (((count(config_get_path('interfaces', [])) > 1) && ($if == 'lan')) ||
+    ((count(config_get_path('interfaces', [])) == 1) && ($if == 'wan')))) {
 	$showantilockout = true;
 }
 
@@ -574,7 +574,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 config_init_path('schedules/schedule');
 $a_schedules = config_get_path('schedules/schedule');
 $if_config = config_get_path('interfaces');
-foreach (config_get_path('filter/rule') as $filteri => $filterent):
+foreach (config_get_path('filter/rule', []) as $filteri => $filterent):
 
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
 

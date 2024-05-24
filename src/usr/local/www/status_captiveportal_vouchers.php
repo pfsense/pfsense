@@ -58,7 +58,7 @@ config_init_path("voucher/{$cpzone}/roll");
 
 $db = array();
 
-foreach (config_get_path("voucher/{$cpzone}/roll") as $rollent) {
+foreach (config_get_path("voucher/{$cpzone}/roll", []) as $rollent) {
 	$roll = $rollent['number'];
 	$minutes = $rollent['minutes'];
 

@@ -59,7 +59,7 @@ if ($_POST['Submit']) {
 		$input_errors[] = sprintf(gettext("The zone name [%s] is reserved."), $_POST['zone']);
 	}
 
-	foreach (config_get_path('captiveportal') as $cpent) {
+	foreach (config_get_path('captiveportal', []) as $cpent) {
 		if ($cpent['zone'] == $_POST['zone']) {
 			$input_errors[] = sprintf(gettext("Zone [%s] already exists."), $_POST['zone']);
 			break;

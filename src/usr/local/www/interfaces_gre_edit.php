@@ -138,7 +138,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The IPv6 tunnel subnet must be an integer between 1 and 128.");
 	}
 
-	foreach (config_get_path('gres/gre') as $gre) {
+	foreach (config_get_path('gres/gre', []) as $gre) {
 		if ($this_gre_config && ($this_gre_config === $gre)) {
 			continue;
 		}

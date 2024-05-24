@@ -119,7 +119,7 @@ $cpzone = strtolower($_REQUEST['zone']);
 
 config_init_path('captiveportal');
 
-if (count(config_get_path('captiveportal')) == 1) {
+if (count(config_get_path('captiveportal', [])) == 1) {
 	$cpzone = current(array_keys(config_get_path('captiveportal')));
 }
 
@@ -180,14 +180,14 @@ endif;
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-if (count(config_get_path('captiveportal')) > 1) {
+if (count(config_get_path('captiveportal', [])) > 1) {
 	$form = new Form(false);
 
 	$section = new Form_Section('Captive Portal Zone');
 
 	$zonelist = array("" => 'None');
 
-	foreach (config_get_path('captiveportal') as $cpkey => $cp) {
+	foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
 		$zonelist[$cpkey] = $cp['zone'];
 	}
 

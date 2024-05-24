@@ -110,7 +110,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Download speed must be between 1 and 999999");
 	}
 
-	foreach (config_get_path("captiveportal/{$cpzone}/allowedip") as $ipent) {
+	foreach (config_get_path("captiveportal/{$cpzone}/allowedip", []) as $ipent) {
 		if ($this_allowedip_config && ($this_allowedip_config === $ipent)) {
 			continue;
 		}

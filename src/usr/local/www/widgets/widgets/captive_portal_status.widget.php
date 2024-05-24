@@ -60,7 +60,7 @@ if (!function_exists('clientcmp')) {
 
 $cpdb_all = array();
 
-foreach (config_get_path('captiveportal') as $cpzone => $cp) {
+foreach (config_get_path('captiveportal', []) as $cpzone => $cp) {
 	$cpdb = captiveportal_read_db();
 	foreach ($cpdb as $cpent) {
 		$cpent[10] = $cpzone;

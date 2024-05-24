@@ -820,7 +820,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 			<tbody>
 <?php
 	$i = 0;
-	foreach (config_get_path('openvpn/openvpn-csc') as $csc):
+	foreach (config_get_path('openvpn/openvpn-csc', []) as $csc):
 		$disabled = isset($csc['disable']) ? "Yes":"No";
 ?>
 				<tr>

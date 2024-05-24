@@ -5308,7 +5308,7 @@ function read_altq_config() {
 
 	$altq_list_queues = array();
 
-	foreach (config_get_path('shaper/queue') as $key => $conf) {
+	foreach (config_get_path('shaper/queue', []) as $key => $conf) {
 		$int = $conf['interface'];
 		$root = new altq_root_queue();
 		$root->SetInterface($int);

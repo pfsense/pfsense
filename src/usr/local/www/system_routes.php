@@ -218,7 +218,7 @@ display_top_tabs($tab_array);
 				</thead>
 				<tbody>
 <?php
-foreach (config_get_path('staticroutes/route') as $i => $route):
+foreach (config_get_path('staticroutes/route', []) as $i => $route):
 	if (isset($a_gateways[$route['gateway']]['inactive'])) {
 		$icon = 'fa-regular fa-circle-xmark';
 		$title = gettext('Route inactive, gateway interface is missing');

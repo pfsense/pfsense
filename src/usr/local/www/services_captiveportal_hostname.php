@@ -96,7 +96,7 @@ display_top_tabs($tab_array, true);
 		<tbody>
 <?php
 $i = 0;
-foreach (config_get_path("captiveportal/{$cpzone}/allowedhostname") as $ip): ?>
+foreach (config_get_path("captiveportal/{$cpzone}/allowedhostname", []) as $ip): ?>
 			<tr>
 				<td>
 					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower(idn_to_utf8($ip['hostname']))?>

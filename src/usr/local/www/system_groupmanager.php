@@ -223,7 +223,7 @@ if (isset($_POST['save']) && !$read_only) {
 
 	if (!$input_errors && !(isset($id) && config_get_path("system/group/{$id}"))) {
 		/* make sure there are no dupes */
-		foreach (config_get_path('system/group') as $group) {
+		foreach (config_get_path('system/group', []) as $group) {
 			if ($group['name'] == $_POST['groupname']) {
 				$input_errors[] = gettext("Another entry " .
 				    "with the same group name already exists.");
@@ -270,7 +270,7 @@ if (isset($_POST['save']) && !$read_only) {
 		 */
 		if (is_array($group['member'])) {
 			config_init_path('system/user');
-			foreach (config_get_path('system/user') as $idx => $user) {
+			foreach (config_get_path('system/user', []) as $idx => $user) {
 				if (in_array($user['uid'], $group['member'])) {
 					local_user_set($user);
 					config_set_path("system/user/{$idx}", $user);
@@ -397,7 +397,7 @@ if (!($act == "new" || $act == "edit")) {
 				</thead>
 				<tbody>
 <?php
-	foreach (config_get_path('system/group') as $i => $group):
+	foreach (config_get_path('system/group', []) as $i => $group):
 		if ($group["name"] == "all") {
 			$groupcount = count(config_get_path('system/user', []));
 		} elseif (is_array($group['member'])) {

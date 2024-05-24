@@ -1306,7 +1306,7 @@ else:
 <?php
 	$print_sk_warning = false;
 	$i = 0;
-	foreach (config_get_path('openvpn/openvpn-client') as $client):
+	foreach (config_get_path('openvpn/openvpn-client', []) as $client):
 		if ($client['mode'] == 'p2p_shared_key') {
 			$print_sk_warning = true;
 		}

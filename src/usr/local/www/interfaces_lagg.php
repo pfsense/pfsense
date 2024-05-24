@@ -108,7 +108,7 @@ display_top_tabs($tab_array);
 
 $i = 0;
 
-foreach (config_get_path('laggs/lagg') as $lagg) {
+foreach (config_get_path('laggs/lagg', []) as $lagg) {
 ?>
 					<tr>
 						<td>

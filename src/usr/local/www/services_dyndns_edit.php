@@ -252,12 +252,12 @@ if ($_POST['save'] || $_POST['force']) {
 			config_set_path("dyndnses/dyndns/{$id}", $dyndns);
 		} else {
 			config_set_path("dyndnses/dyndns/", $dyndns);
-			$id = count(config_get_path('dyndnses/dyndns')) - 1;
+			$id = count(config_get_path('dyndnses/dyndns', [])) - 1;
 		}
 
 		$dyndns['id'] = $id;
 		//Probably overkill, but its better to be safe
-		for ($i = 0; $i < count(config_get_path('dyndnses/dyndns')); $i++) {
+		for ($i = 0; $i < count(config_get_path('dyndnses/dyndns', [])); $i++) {
 			config_set_path("dyndnses/dyndns/{$i}/id", $i);
 		}
 

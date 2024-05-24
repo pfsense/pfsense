@@ -526,13 +526,13 @@ function captiveportal_delete_rules($pipes_to_remove = array(), $clear_auth_rule
 
 	/* delete MAC passthru entries */
 	config_init_path("captiveportal/{$cpzone}/passthrumac");
-	foreach (config_get_path("captiveportal/{$cpzone}/passthrumac") as $macent) {
+	foreach (config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $macent) {
 		captiveportal_passthrumac_delete_entry($macent);
 	}
 
 	/* delete Allowed IP entries */
 	config_init_path("captiveportal/{$cpzone}/allowedip");
-	foreach (config_get_path("captiveportal/{$cpzone}/allowedip") as $ipent) {
+	foreach (config_get_path("captiveportal/{$cpzone}/allowedip", []) as $ipent) {
 		captiveportal_ether_delete_entry($ipent, 'allowedhosts');
 	}
 
@@ -1937,7 +1937,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 	if ((isset($cpzone_config['noconcurrentlogins'])) && ($cpzone_config['noconcurrentlogins'] == 'last') && ($username != 'unauthenticated') && isset($cpzone_config['passthrumacadd'])) {
 		$mac = captiveportal_passthrumac_findbyname($username);
 		if (!empty($mac)) {
-			foreach (config_get_path("captiveportal/{$cpzone}/passthrumac") as $idx => $macent) {
+			foreach (config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $idx => $macent) {
 				if ($macent['mac'] != $mac['mac']) {
 					continue;
 				}
@@ -2101,7 +2101,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 			config_init_path("captiveportal/{$cpzone}/passthrumac");
 			//check for mac duplicates before adding it to config.
 			$mac_duplicate = false;
-			foreach(config_get_path("captiveportal/{$cpzone}/passthrumac") as $mac_check){
+			foreach(config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $mac_check){
 				if($mac_check['mac'] == $mac['mac']){
 					$mac_duplicate = true;
 				}

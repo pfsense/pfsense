@@ -303,7 +303,7 @@ display_top_tabs($tab_array, true);
 				<tbody>
 <?php
 $i = 0;
-foreach (config_get_path("voucher/{$cpzone}/roll") as $rollent):
+foreach (config_get_path("voucher/{$cpzone}/roll", []) as $rollent):
 ?>
 					<tr>
 						<td><?=htmlspecialchars($rollent['number']); ?></td>

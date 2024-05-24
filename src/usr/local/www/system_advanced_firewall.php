@@ -355,7 +355,7 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-if (count(config_get_path('interfaces')) > 1) {
+if (count(config_get_path('interfaces', [])) > 1) {
 	$section = new Form_Section('Network Address Translation');
 
 	if (isset($system_config['disablenatreflection'])) {

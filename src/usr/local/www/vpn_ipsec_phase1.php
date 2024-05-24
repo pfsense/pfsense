@@ -62,7 +62,7 @@ if (is_numericint($_REQUEST['dup'])) {
 $p1 = null;
 if (!empty($_REQUEST['ikeid'])) {
 	$p1index = 0;
-	foreach(config_get_path('ipsec/phase1') as $phase1) {
+	foreach(config_get_path('ipsec/phase1', []) as $phase1) {
 		if ($phase1['ikeid'] == $_REQUEST['ikeid']) {
 			$p1 = $phase1;
 			break;

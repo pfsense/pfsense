@@ -467,7 +467,7 @@ function vlan_setup() {
 			continue;
 		}
 
-		foreach (config_get_path('vlans/vlan') as $existingvlan) {
+		foreach (config_get_path('vlans/vlan', []) as $existingvlan) {
 			if ($vlan['if'] == $existingvlan['if'] && $vlan['tag'] == $existingvlan['tag']) {
 				printf("\n\n" . gettext("This parent interface and VLAN already created."));
 				continue 2;

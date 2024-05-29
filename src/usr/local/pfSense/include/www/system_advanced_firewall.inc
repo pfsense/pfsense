@@ -44,6 +44,7 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['bypassstaticroutes'] = config_path_enabled('filter', 'bypassstaticroutes');
 	$pconfig['checkaliasesurlcert'] = config_path_enabled('system', 'checkaliasesurlcert');
 	$pconfig['statepolicy'] = config_get_path('system/statepolicy');
+	$pconfig['disable_auto_floating_states'] = config_get_path('system/disable_auto_floating_states');
 	$pconfig['disablefilter'] = config_get_path('system/disablefilter');
 	$pconfig['disablenatreflection'] = config_get_path('system/disablenatreflection');
 	$pconfig['disablenegate'] = config_path_enabled('system', 'disablenegate');

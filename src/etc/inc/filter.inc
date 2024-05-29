@@ -129,7 +129,7 @@ if (!config_path_enabled('system', 'disable_auto_floating_states') &&
 				if (!isset($ipsecp1['disabled']) && ($ipsecp1['ikeid'] == $ipsecp2['ikeid'])) {
 					$use_floating_states_for_ipsec = true;
 					break 2;
-				} 
+				}
 			}
 		}
 	}
@@ -3572,118 +3572,103 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 			$aline['flags'] = "flags S/SA ";
 		}
 	}
+
+	/* State Tracking Options */
+	$rule_tracks_state = true;
 	if ($type == "pass") {
-		/*
-		 *	# keep state
-		 *		works with TCP, UDP, and ICMP.
-		 *	# modulate state
-		 *		deprecated
-		 *	# synproxy state
-		 *		proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
-		 *	# none
-		 *		do not use state mechanisms to keep track. this is only useful if your doing advanced
-		 *		queueing in certain situations. please check the faq.
-		 */
-		$noadvoptions = false;
-		if (isset($rule['statetype']) && $rule['statetype'] <> "") {
+		if (empty($rule['statetype'])) {
+			// Default to 'keep state'; works with TCP, UDP, and ICMP.
+			$aline['flags'] .= "keep state ";
+		} else {
 			switch ($rule['statetype']) {
-				case "none":
-					$noadvoptions = true;
-					$aline['flags'] .= " no state ";
-					break;
-				case "modulate state":
-				case "synproxy state":
-					if ($rule['protocol'] == "tcp") {
-						$aline['flags'] .= "{$rule['statetype']} ";
-					}
-					break;
 				case "sloppy state":
 					$aline['flags'] .= "keep state ";
 					$rule['sloppy'] = true;
 					break;
-				default:
-					$aline['flags'] .= "{$rule['statetype']} ";
+				case "modulate state":
+					// deprecated
+				case "synproxy state":
+					// Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
+					if ($rule['protocol'] == "tcp") {
+						$aline['flags'] .= "{$rule['statetype']} ";
+					}
 					break;
-			}
-		} else {
-			$aline['flags'] .= "keep state ";
-		}
-
-		if ($noadvoptions == false && isset($rule['nopfsync'])) {
-			$rule['nopfsync'] = true;
-		}
-
-		if ($noadvoptions == false) {
-			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
-			    (isset($rule['max']) and $rule['max'] <> "") or
-			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
-			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
-			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
-			    ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-			      ((isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
-			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
-			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
-			    (isset($rule['statepolicy']) and !empty($rule['statepolicy'])) or
-			    (isset($rule['sloppy'])) or
-			    (isset($rule['nopfsync'])) or
-				$use_floating_states_for_ipsec) {
-				$aline['flags'] .= "( ";
-				if (!empty($rule['statepolicy'])) {
-					$aline['flags'] .= "{$rule['statepolicy']} ";
-				} elseif ($use_floating_states_for_ipsec && ($rule['interface'] == 'enc0')) {
-					// a floating state is needed for enc0 rules - see #15430
-					$aline['flags'] .= 'floating ';
-				}
-				if (isset($rule['sloppy'])) {
-					$aline['flags'] .= "sloppy ";
-				}
-				if (isset($rule['nopfsync'])) {
-					$aline['flags'] .= "no-sync ";
-				}
-				if (isset($rule['source-track']) and $rule['source-track'] <> "") {
-					$aline['flags'] .= "source-track rule ";
-				}
-				if (isset($rule['max']) and $rule['max'] <> "") {
-					$aline['flags'] .= "max " . $rule['max'] . " ";
-				}
-				if (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") {
-					$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
-				}
-				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-				    (isset($rule['max-src-conn'])) and
-				    ($rule['max-src-conn'] <> "")) {
-					$aline['flags'] .= "max-src-conn " . $rule['max-src-conn'] . " ";
-				}
-				if (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") {
-					$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
-				}
-				if (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") {
-					if (in_array($rule['protocol'], array("tcp", "tcp/udp", "sctp")) ||
-					    empty($rule['protocol'])) {
-						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
-					}
-					if (in_array($rule['protocol'], array("udp", "tcp/udp")) ||
-					    empty($rule['protocol'])) {
-						$aline['flags'] .= "udp.multiple " . $rule['statetimeout'] . " ";
-					}
-					if (!array_key_exists($rule['protocol'], get_ipprotocols('portsonly')) ||
-					    empty($rule['protocol'])) {
-						$aline['flags'] .= "other.multiple " . $rule['statetimeout'] . " ";
-					}
-				}
-				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-				    (isset($rule['max-src-conn-rate'])) and
-				    ($rule['max-src-conn-rate'] <> "") and
-				    (isset($rule['max-src-conn-rates'])) and
-				    ($rule['max-src-conn-rates'] <> "")) {
-					$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
-					$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
-				}
-
-				$aline['flags'] .= " ) ";
+				case "none":
+					// Do not track the state for this rule. This can be useful for advanced queueing.
+					$rule_tracks_state = false;
+					$aline['flags'] .= "no state ";
+					break;
+				default:
+					// Default to 'keep state' for unknown options.
+					$aline['flags'] .= "keep state ";
+					break;
 			}
 		}
 	}
+	// Set 'state-opts' and 'timeout' options.
+	if ($rule_tracks_state) {
+		$track_options = [];
+
+		// state-opt
+		if (isset($rule['nopfsync'])) {
+			$rule['nopfsync'] = true;
+			$track_options[] = "no-sync";
+		}
+		if (!empty($rule['statepolicy'])) {
+			$track_options[] = "{$rule['statepolicy']}";
+		} elseif ($use_floating_states_for_ipsec && ($rule['interface'] == 'enc0')) {
+			// a floating state is needed for enc0 rules - see #15430
+			$track_options[] = 'floating';
+		}
+		if (isset($rule['sloppy'])) {
+			$track_options[] = "sloppy";
+		}
+		if (!empty($rule['source-track'])) {
+			$track_options[] = "source-track rule";
+		}
+		if (!empty($rule['max'])) {
+			$track_options[] = "max {$rule['max']}";
+		}
+		if (!empty($rule['max-src-nodes'])) {
+			$track_options[] = "max-src-nodes {$rule['max-src-nodes']}";
+		}
+		if (!empty($rule['max-src-states'])) {
+			$track_options[] = "max-src-states {$rule['max-src-states']}";
+		}
+		if (!empty($rule['max-src-conn']) && (!empty($rule['protocol']) &&
+		    ($rule['protocol'] == 'tcp' || $rule['protocol'] == 'tcp/udp'))) {
+			$track_options[] = "max-src-conn {$rule['max-src-conn']}";
+		}
+		if (!empty($rule['max-src-conn-rate']) && !empty($rule['max-src-conn-rates']) &&
+		    ($rule['protocol'] == 'tcp' || $rule['protocol'] == 'tcp/udp')) {
+			$track_options[] = "max-src-conn-rate {$rule['max-src-conn-rate']} / {$rule['max-src-conn-rates']}, overload <virusprot> flush global";
+		}
+
+		// timeout
+		if (!empty($rule['statetimeout'])) {
+			if (empty($rule['protocol'])) {
+				// no protocol set
+				$track_options[] = "tcp.established {$rule['statetimeout']} udp.multiple {$rule['statetimeout']} other.multiple {$rule['statetimeout']}";
+			} elseif ($rule['protocol'] == 'tcp/udp') {
+				// either tcp or udp
+				$track_options[] = "tcp.established {$rule['statetimeout']} udp.multiple {$rule['statetimeout']}";
+			} elseif (($rule['protocol'] == 'tcp') || ($rule['protocol'] == 'sctp')) {
+				// tcp or sctp
+				$track_options[] = "tcp.established {$rule['statetimeout']}";
+			} elseif ($rule['protocol'] == 'udp') {
+				// udp
+				$track_options[] = "udp.multiple {$rule['statetimeout']}";
+			} elseif (!array_key_exists($rule['protocol'], get_ipprotocols('portsonly'))) {
+				// set protocol is unknown
+				$track_options[] = "other.multiple {$rule['statetimeout']}";
+			}
+		}
+
+		if (!empty($track_options)) {
+			$aline['flags'] .= '(' . implode(' ', $track_options)  . ') ';
+		}
+	}
+
 	if ($rule['defaultqueue'] <> "") {
 		$aline['queue'] = " queue (".$rule['defaultqueue'];
 		if ($rule['ackqueue'] <> "") {

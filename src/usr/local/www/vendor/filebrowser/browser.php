@@ -47,9 +47,9 @@ if (is_file($path)) {
 <table width="100%">
 	<tr>
 		<td class="fbHome text-left" width="25px">
-			<img onClick="$('#fbTarget').val('<?=$realDir?>'); fbBrowse('/');" src="/vendor/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
+			<img onClick="$('#fbTarget').val('<?=htmlspecialchars($realDir)?>'); fbBrowse('/');" src="/vendor/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
 		</td>
-		<td><b><?=$path;?></b></td>
+		<td><b><?=htmlspecialchars($path);?></b></td>
 		<td class="fbClose text-right">
 			<img onClick="$('#fbBrowser').fadeOut();" border="0" src="/vendor/filebrowser/images/icon_cancel.gif" alt="Close" title="Close" />
 		</td>
@@ -82,10 +82,10 @@ foreach ($dirs as $dir):
 ?>
 	<tr>
 		<td></td>
-		<td class="fbDir vexpl text-left" id="<?=$realDir;?>">
-			<div onClick="$('#fbTarget').val('<?=$realDir?>'); fbBrowse('<?=$realDir?>');">
+		<td class="fbDir vexpl text-left" id="<?=htmlspecialchars($realDir);?>">
+			<div onClick="$('#fbTarget').val('<?=htmlspecialchars($realDir)?>'); fbBrowse('<?=htmlspecialchars($realDir)?>');">
 				<img src="/vendor/filebrowser/images/folder_generic.gif" />
-				&nbsp;<?=$dir;?>
+				&nbsp;<?=htmlspecialchars($dir);?>
 			</div>
 		</td>
 		<td></td>

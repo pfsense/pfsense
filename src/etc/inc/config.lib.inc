@@ -1254,7 +1254,7 @@ function init_config_arr($keys) {
  */
 function config_get_path(string $path, $default = null) {
 	global $config;
-	return(array_get_path($config, $path, $default));
+	return is_array($config) ? array_get_path($config, $path, $default) : $default;
 }
 
 /**
@@ -1279,7 +1279,7 @@ function config_set_path(string $path, $value, $default = null) {
 		return ($default);
 	}
 
-	return (array_set_path($config, $path, $value, $default));
+	return is_array($config) ? array_set_path($config, $path, $value, $default) : $default;
 }
 
 /**
@@ -1292,12 +1292,13 @@ function config_set_path(string $path, $value, $default = null) {
  * @param string $path       Path with '/' separators
  * @param string $enable_key Optional alternative key value for the enable key
  * 
- * @return bool true if $enable_key exists in the array at $path, and has a
- *              non-null value, otherwise false.
+ * @return mixed|bool true if $enable_key exists in the array at $path, and has
+ *                    a non-null value, otherwise false; or $default if the
+ *                    path prefix does not exist.
  */
-function config_path_enabled(string $path, $enable_key = "enable") {
+function config_path_enabled(string $path, $enable_key = "enable", $default = false) {
 	global $config;
-	return (array_path_enabled($config, $path, $enable_key));
+	return is_array($config) ? array_path_enabled($config, $path, $enable_key, $default) : $default;
 }
 
 /**
@@ -1305,11 +1306,12 @@ function config_path_enabled(string $path, $enable_key = "enable") {
  * 
  * @param string $path Path with '/' separators
  * 
- * @return array copy of the removed value or null
+ * @return mixed|array Copy of the removed value or null; or $default if the
+ *                     path prefix does not exist.
  */
-function config_del_path(string $path) {
+function config_del_path(string $path, $default = null) {
 	global $config;
-	return (array_del_path($config, $path));
+	return is_array($config) ? array_del_path($config, $path, $default) : $default;
 }
 
 register_shutdown_function('pfSense_clear_globals');

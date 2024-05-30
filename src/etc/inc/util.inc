@@ -3680,27 +3680,28 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
  * @param array  $arr        Array to search
  * @param string $path       Path with '/' separators
  * @param string $enable_key Optional alternative key value for the enable key
+ * @param mixed  $default    Value to return if the path is not found
  * 
- * @return bool true if $enable_key exists in the array at $path, and has a
- *              non-null value, otherwise false
+ * @return mixed|bool true if $enable_key exists in the array at $path, and has
+ *                    a non-null value, otherwise false; or $default if the
+ *                    path prefix does not exist.
  */
-function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
-	$el = array_get_path($arr, $path, []);
-	if (is_array($el) && isset($el[$enable_key])) {
-		return (true);
-	}
-	return (false);
+function array_path_enabled(array &$arr, string $path, $enable_key = "enable", $default = false) {
+	$el = array_get_path($arr, $path, $default);
+	return is_array($el) ? isset($el[$enable_key]) : $default;
 }
 
 /**
  * Remove a key from the nested array by path.
  * 
- * @param array  $arr  Array to search
- * @param string $path Path with '/' separators
+ * @param array  $arr     Array to search
+ * @param string $path    Path with '/' separators
+ * @param mixed  $default Value to return if the path is not found
  * 
- * @return null|array copy of the removed value or null
+ * @return mixed|array Copy of the removed value or null; or $default if the
+ *                     path prefix does not exist.
  */
-function array_del_path(array &$arr, string $path) {
+function array_del_path(array &$arr, string $path, $default = null) {
 	$vpath = explode('/', $path);
 	$vkey = array_pop($vpath);
 	$el =& $arr;
@@ -3711,12 +3712,12 @@ function array_del_path(array &$arr, string $path) {
 		if (is_array($el) && array_key_exists($key, $el)) {
 			$el =& $el[$key];
 		} else {
-			return null;
+			return $default;
 		}
 	}
 
 	if (!(is_array($el) && array_key_exists($vkey, $el))) {
-		return null;
+		return $default;
 	}
 
 	$ret = $el[$vkey];

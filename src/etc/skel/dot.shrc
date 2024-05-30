@@ -30,7 +30,7 @@ fi
 HTTP_PROXY_AUTH_USER=`/usr/local/sbin/read_xml_tag.sh string system/proxyuser`
 HTTP_PROXY_AUTH_PASS=`/usr/local/sbin/read_xml_tag.sh string system/proxypass`
 if [ "${HTTP_PROXY_AUTH_USER}" != "" ] && [ "${HTTP_PROXY_AUTH_PASS}" != "" ]; then
-	HTTP_PROXY_AUTH="basic:*:${HTTP_PROXY_AUTH_USER}:${HTTP_PROXY_AUTH_PASS}"
+	HTTP_PROXY_AUTH="${HTTP_PROXY_AUTH_USER}:${HTTP_PROXY_AUTH_PASS}"
 	export HTTP_PROXY_AUTH
 fi
 

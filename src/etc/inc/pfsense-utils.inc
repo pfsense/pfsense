@@ -983,10 +983,10 @@ function rmdir_recursive($path, $follow_links=false) {
 			if (is_dir($workingdir)) {
 				$dir = opendir($workingdir);
 				while ($entry = readdir($dir)) {
-					if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry"))) {
-						unlink("$workingdir/$entry");
-					} elseif (is_dir("$workingdir/$entry") && $entry != '.' && $entry != '..') {
-						rmdir_recursive("$workingdir/$entry");
+					if (is_file("{$workingdir}/{$entry}") || ((!$follow_links) && is_link("{$workingdir}/{$entry}"))) {
+						unlink("{$workingdir}/{$entry}");
+					} elseif (is_dir("{$workingdir}/{$entry}") && $entry != '.' && $entry != '..') {
+						rmdir_recursive("{$workingdir}/{$entry}");
 					}
 				}
 				closedir($dir);
@@ -1047,14 +1047,14 @@ function strncpy(&$dst, $src, $length) {
  *   none
  ******/
 function reload_interfaces_sync() {
-	global $config, $g;
+	global $g;
 
 	if (g_get('debug')) {
 		log_error(gettext("reload_interfaces_sync() is starting."));
 	}
 
-	/* parse config.xml again */
-	$config = parse_config(true);
+	/* parse config.xml */
+	config_set_path('', parse_config(true));
 
 	/* enable routing */
 	system_routing_enable();
@@ -1103,10 +1103,8 @@ function reload_interfaces() {
  *   none
  ******/
 function reload_all_sync() {
-	global $config;
-
-	/* parse config.xml again */
-	$config = parse_config(true);
+	/* parse config.xml */
+	config_set_path('', parse_config(true));
 
 	/* set up our timezone */
 	system_timezone_configure();
@@ -1193,6 +1191,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 		    "hint.uart.1.flags",
 		    "net.link.ifqmaxlen",
 		    "hint.hwpstate_intel.0.disabled",
+		    "loader_conf_files",
 		    "machdep.hwpstate_pkg_ctrl",
 		    "net.pf.states_hashsize"
 		));
@@ -1275,6 +1274,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 
 	$data = load_loader_conf($loader_conf_file, false);
+
+	$data[] = 'loader_conf_files="/boot/loader.conf.lua"';
+
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';
@@ -1334,8 +1336,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$data[] = 'machdep.hwpstate_pkg_ctrl="' . config_get_path('system/hwpstate_control_level', get_single_sysctl('machdep.hwpstate_pkg_ctrl')) . '"';
 
 	// calculate the size of hash tables that store states - should be power of 2
-	$pf_maximumstates = intval(config_get_path('system/maximumstates', pfsense_default_state_size()));
-	$pf_hashtablesize = pow(2, ceil(log(floor($pf_maximumstates / 2), 2)));
+	$pf_maximumstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+	$pf_hashtablesize = pow(2, ceil(log(floor(intval($pf_maximumstates) / 2), 2)));
 	$data[] = "net.pf.states_hashsize=\"{$pf_hashtablesize}\"";
 
 	safe_write_file($loader_conf_file, $data);
@@ -1500,7 +1502,7 @@ function is_dhcpv6_server_enabled() {
 
 /* radvd enabled on any interfaces? */
 function is_radvd_enabled() {
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 
@@ -1547,6 +1549,10 @@ function is_radvd_enabled() {
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 
 		if (!is_ipaddrv6($subnetv6)) {
+			continue;
+		}
+
+		if (config_get_path("dhcpdv6/{$if}/ramode", "disabled") == "disabled") {
 			continue;
 		}
 
@@ -1825,11 +1831,11 @@ function get_interface_info($ifdescr) {
 			if (preg_match("/vendor: (.*)$/", $ici, $matches)) {
 				$ifinfo['vendor'] = $matches[1];
 			}
-			if (preg_match("/module temperature: (.*) Voltage: (.*)$/", $ici, $matches)) {
+			if (preg_match("/module temperature: (.*) voltage: (.*)$/", $ici, $matches)) {
 				$ifinfo['temperature'] = $matches[1];
 				$ifinfo['voltage'] = $matches[2];
 			}
-			if (preg_match("/RX: (.*) TX: (.*)$/", $ici, $matches)) {
+			if (preg_match("/RX power: (.*) TX bias: (.*)$/", $ici, $matches)) {
 				$ifinfo['rx'] = $matches[1];
 				$ifinfo['tx'] = $matches[2];
 			}
@@ -1924,6 +1930,7 @@ function resolve_host_addresses($host, $recordtypes = array(DNS_A, DNS_AAAA, DNS
 		}
 	}
 	if ($index == false) {
+		$noind = [];
 		foreach ($resolved as $res) {
 			$noind[] = $res['data'];
 		}
@@ -1945,7 +1952,7 @@ function add_hostname_to_watch($hostname) {
 				$contents .= "$ip\n";
 			}
 		}
-		file_put_contents("/var/db/dnscache/$hostname", $contents);
+		file_put_contents("/var/db/dnscache/{$hostname}", $contents);
 		/* Remove empty elements */
 		$result = array_filter(explode("\n", $contents), 'strlen');
 	}
@@ -2357,11 +2364,12 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
-	global $g, $config, $pconfig, $debug;
+	global $g, $pconfig, $debug;
 	if (!$origname) {
 		return;
 	}
 
+	$config = config_get_path('');
 	$sectionref = &$config;
 	foreach ($section as $sectionname) {
 		if (is_array($sectionref) && isset($sectionref[$sectionname])) {
@@ -2399,6 +2407,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 				$fieldref = $new_alias_name;
 			}
 		}
+		config_set_path('', $config);
 	}
 
 	if ($debug) {
@@ -2515,7 +2524,7 @@ function update_alias_url_data() {
 
 		$address = array();
 		$type = config_get_path("aliases/alias/{$x}/type");
-		foreach (config_get_path("aliases/alias/{$x}/aliasurl") as $alias_url) {
+		foreach (config_get_path("aliases/alias/{$x}/aliasurl", []) as $alias_url) {
 			/* fetch down and add in */
 			if (is_URL($alias_url)) {
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
@@ -2939,7 +2948,7 @@ function get_cert_country_codes() {
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
-	init_config_arr(array('filter', 'rule'));
+	config_init_path('filter/rule');
 	$rules = config_get_path('filter/rule', []);
 
 	/* mark each rule with the sequence number (to retain the order while sorting) */
@@ -3533,7 +3542,7 @@ function get_pppoes_child_interfaces($ifpattern) {
 function pkg_call_plugins($plugin_type, $plugin_params) {
 	global $g;
 	$results = array();
-	foreach (config_get_path('installedpackages/package') as $package) {
+	foreach (config_get_path('installedpackages/package', []) as $package) {
 		foreach (array_get_path($package, 'plugins/item', []) as $plugin) {
 			if (!is_array($plugin) || empty($plugin)) {
 				continue;
@@ -3736,4 +3745,14 @@ function set_curlproxy(&$ch) {
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$proxyuser}:{$proxypass}");
 		}
 	}
+}
+
+/*
+ * return the time difference in seconds.microseconds(6 digits) format between 2 DateTime objects
+ * @param DateTime $date1
+ * @param DateTime $date2
+ */
+
+function date_mdiff($date1, $date2){
+	return number_format(abs((float)$date1->format("U.u") - (float)$date2->format("U.u")), 6);
 }

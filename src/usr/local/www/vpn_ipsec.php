@@ -41,8 +41,8 @@ require_once("vpn.inc");
 
 global $p1_authentication_methods;
 
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/phase2');
 
 $items_deleted = false;
 
@@ -173,7 +173,7 @@ if ($_POST['apply']) {
 		/* copy all p2 entries > $movebtnp2 and not selected */
 		for ($i = $movebtnp2+1; $i < count(config_get_path('ipsec/phase2', [])); $i++) {
 			if (!in_array($i, $_POST['p2entry'])) {
-				$a_phase2_new[] = config_get_path('ipsec/phase2/', $i);
+				$a_phase2_new[] = config_get_path('ipsec/phase2/' . $i);
 			}
 		}
 		if (count($a_phase2_new) > 0) {
@@ -189,7 +189,7 @@ if ($_POST['apply']) {
 				$ikeid = config_get_path('ipsec/phase1/' . $togglebtn . '/ikeid');
 				$p1_has_vti = false;
 				$disablep2ids = array();
-				foreach (config_get_path('ipsec/phase2') as $p2index => $ph2tmp) {
+				foreach (config_get_path('ipsec/phase2', []) as $p2index => $ph2tmp) {
 					if ($ph2tmp['ikeid'] == $ikeid) {
 						if (is_interface_ipsec_vti_assigned($ph2tmp)) {
 							$p1_has_vti = true;
@@ -300,7 +300,7 @@ $ipsec_specialnet = get_specialnet('', [SPECIALNET_IFSUB]);
 				</thead>
 				<tbody class="p1-entries">
 <?php
-$iflabels = get_configured_interface_with_descr(false, true);
+$iflabels = get_configured_interface_with_descr(true);
 $viplist = get_configured_vip_list();
 foreach ($viplist as $vip => $address) {
 	$iflabels[$vip] = $address;
@@ -453,7 +453,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 <?php
 				$phase2count=0;
 
-				foreach (config_get_path('ipsec/phase2') as $ph2ent) {
+				foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
 					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 						continue;
 					}
@@ -482,7 +482,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 										</tr>
 									</thead>
 									<tbody class="p2-entries">
-<?php $j = 0; foreach (config_get_path('ipsec/phase2') as $ph2index => $ph2ent): ?>
+<?php $j = 0; foreach (config_get_path('ipsec/phase2', []) as $ph2index => $ph2ent): ?>
 <?php
 						if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 							continue;

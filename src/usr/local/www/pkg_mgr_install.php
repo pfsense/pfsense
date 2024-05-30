@@ -289,8 +289,8 @@ if (!empty($_REQUEST['id'])) {
 		foreach ($repos as $repo) {
 			if ($repo['name'] == $_POST['fwbranch']) {
 				config_set_path('system/pkg_repo_conf_path', $repo['path']);
-				pkg_switch_repo(g_get('pkg_repos_path'), $repo['name']);
 				write_config(gettext("Saved firmware branch setting."));
+				pkg_switch_repo(g_get('pkg_repos_path'), $repo['name']);
 				break;
 			}
 		}
@@ -396,7 +396,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 		$field = new Form_Select(
 			'fwbranch',
 			'*Branch',
-			pkg_get_repo_name($config['system']['pkg_repo_conf_path']),
+			pkg_get_repo_name(config_get_path('system/pkg_repo_conf_path')),
 			pkg_build_repo_list()
 		);
 
@@ -592,8 +592,7 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 			break;
 
 		case 'reinstallall':
-			if (is_array($config['installedpackages']) &&
-			    is_array($config['installedpackages']['package'])) {
+			if (is_array(config_get_path('installedpackages/package'))) {
 				/*
 				 * We don't show the progress bar for
 				 * reinstallall. It would be far too confusing
@@ -794,7 +793,9 @@ function get_firmware_versions() {
 
 		json = jQuery.parseJSON(response);
 
-		if (json) {
+		if (json && json.pkg_busy == '1') {
+			$('#uptodate').html('<span class="text-danger">' + 'Another instance of pfSense-upgrade is running.  Please try again in a few moments.' + "</span>");
+		} else if (json && !json.pkg_version_error) {
 			$('#installed_version').text(json.installed_version);
 			$('#version').text(json.version);
 

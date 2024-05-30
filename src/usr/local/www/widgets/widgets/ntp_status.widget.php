@@ -28,12 +28,11 @@ require_once("/usr/local/www/widgets/include/ntp_status.inc");
 
 // For this widget the update period is 6 x larger than most others. It typically defaults
 // to once per 60 seconds, not once per 10 seconds
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000 * 6;
 
-if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
-    !isset($config['ntpd']['enable']) || ($config['ntpd']['enable'] == 'enabled'))) {
+if ($_REQUEST['updateme'] && (config_get_path('ntpd/enable', 'enabled') == 'enabled')) {
 //this block displays only on ajax refresh
-	if (isset($config['system']['ipv6allow'])) {
+	if (config_path_enabled('system', 'ipv6allow')) {
 		$inet_version = "";
 	} else {
 		$inet_version = " -4";
@@ -126,9 +125,9 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 		}
 	}
 
-	if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus'])) {
+	if (isset($gps_ok) && config_path_enabled('ntpd/gps', 'extstatus')) {
 		$lookfor['GPGSV'] = config_get_path('ntpd/gps/nmeaset/gpgsv');
-		$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
+		$lookfor['GPGGA'] = !isset($gps_sat) && config_get_path('ntpd/gps/nmeaset/gpgga');
 		$gpsport = fopen('/dev/gps0', 'r+');
 		while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {
 			$buffer = fgets($gpsport);
@@ -148,7 +147,7 @@ if ($_REQUEST['updateme'] && (!is_array($config['ntpd']) ||
 ?>
 
 <table id="ntp_status_widget" class="table table-striped table-hover">
-<?php if (!is_array($config['ntpd']) || !isset($config['ntpd']['enable']) || ($config['ntpd']['enable'] == 'enabled')): ?>
+<?php if (config_get_path('ntpd/enable', 'enabled') == 'enabled'): ?>
 	<tr>
 		<th><?=gettext('Server Time')?></th>
 		<td id="ClockTime">
@@ -232,7 +231,7 @@ setInterval(function() {
 <table id="ntpstatus" class="table table-striped table-hover">
 	<tbody>
 		<tr>
-		<?php if (!is_array($config['ntpd']) || !isset($config['ntpd']['enable']) || ($config['ntpd']['enable'] == 'enabled')): ?>
+		<?php if (config_get_path('ntpd/enable', 'enabled') == 'enabled'): ?>
 			<td><?=gettext('Updating...')?></td>
 		<?php else: ?>
 			<td class="text-danger"><?=gettext('NTP Server is disabled')?></td>

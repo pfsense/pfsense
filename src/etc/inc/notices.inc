@@ -372,7 +372,7 @@ function notify_via_queue_add($message, $type='mail') {
  ******/
 function notify_via_smtp($message, $force = false, $header = "") {
 	global $notice_last;
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		return;
 	}
 

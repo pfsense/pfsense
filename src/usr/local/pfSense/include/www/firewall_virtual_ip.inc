@@ -54,7 +54,7 @@ function getVIPs($json = false) {
 function saveVIP($post, $json = false) {
 	global $g;
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	$a_vip = config_get_path('virtualip/vip');
 	$rv = array();
 	$id = $post['id'];
@@ -287,7 +287,7 @@ function saveVIP($post, $json = false) {
 function applyVIP() {
 	global $g;
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	$a_vip = config_get_path('virtualip/vip');
 	$rv = array();
 
@@ -353,7 +353,7 @@ function deleteVIP($id, $json = false) {
 	$rv = array();
 	$input_errors = array();
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	$a_vip = config_get_path('virtualip/vip');
 
 	if ($a_vip[$id]) {
@@ -395,7 +395,7 @@ function deleteVIP($id, $json = false) {
 			}
 		}
 
-		init_config_arr(array('ipsec', 'phase1'));
+		config_init_path('ipsec/phase1');
 		foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 			if (!isset($ph1ent['disabled'])) {
 				foreach (explode(',', ipsec_get_phase1_src($ph1ent)) as $ifip) {
@@ -517,6 +517,7 @@ function deleteVIP($id, $json = false) {
 			if (!$json) {
 				phpsession_begin();
 				$user = getUserEntry($_SESSION['Username']);
+				$user = $user['item'];
 
 				if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 					header("Location: firewall_virtual_ip.php");

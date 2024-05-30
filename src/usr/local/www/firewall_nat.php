@@ -40,8 +40,7 @@ require_once("shaper.inc");
 require_once("itemid.inc");
 require_once("firewall_nat.inc");
 
-init_config_arr(array('nat', 'rule'));
-$a_nat = &$config['nat']['rule'];
+config_init_path('nat/rule');
 $rdr_lcltype_flags = [SPECIALNET_IFADDR];
 $rdr_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET];
 $rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
@@ -56,11 +55,11 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 } else if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
 	$retval = applyNATrules();
 } else if (($_POST['act'] == "del" || isset($_POST['del_x'])) && have_natpfruleint_access($natent['interface'])) {
-	if ($a_nat[$_POST['id']] || (is_array($_POST['rule']) && count($_POST['rule']))) {
+	if (config_get_path("nat/rule/{$_POST['id']}") || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		deleteNATrule($_POST);
 	}
 } elseif (($_POST['act'] == "toggle" || isset($_POST['toggle_x'])) && have_natpfruleint_access($natent['interface'])) {
-	if ($a_nat[$_POST['id']] || (is_array($_POST['rule']) && count($_POST['rule']))) {
+	if (config_get_path("nat/rule/{$_POST['id']}") || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		toggleNATrule($_POST);
 	}
 }
@@ -123,7 +122,7 @@ $columns_in_table = 13;
 <?php
 
 $nnats = $i = 0;
-$separators = $config['nat']['separator'];
+$separators = config_get_path('nat/separator');
 
 // Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
 // More efficient than looping through the list of separators on every row.
@@ -132,7 +131,7 @@ $seprows = separator_rows($separators);
 global $user_settings;
 $show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
 $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
-foreach ($a_nat as $natent):
+foreach (config_get_path('nat/rule', []) as $natent):
 
 	// Display separator(s) for section beginning at rule n
 	if ($seprows[$nnats]) {
@@ -371,7 +370,7 @@ dirty = false;
 
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -427,7 +426,7 @@ events.push(function() {
 </script>
 <?php
 
-if (count($a_nat) > 0) {
+if (count(config_get_path('nat/rule', [])) > 0) {
 ?>
 <!-- Legend -->
 <div>

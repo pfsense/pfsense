@@ -44,8 +44,7 @@ require_once("firewall_schedule.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
-init_config_arr(array('schedules', 'schedule'));
-$a_schedules = &$config['schedules']['schedule'];
+config_init_path('schedules/schedule');
 
 if ($_POST['act'] == "del") {
 	$errmsg = deleteSchedule($_POST);
@@ -74,7 +73,7 @@ if ($errmsg) {
 			<tbody>
 <?php
 $i = 0;
-foreach ($a_schedules as $schedule):
+foreach (config_get_path('schedules/schedule', []) as $schedule):
 	$schedstatus = filter_get_time_based_rule_status($schedule);
 ?>
 				<tr>

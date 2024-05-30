@@ -36,15 +36,17 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 
 function ppp_inuse($num) {
-	global $config, $g;
+	global $g;
 
+	$ppp_config = config_get_path('ppps/ppp');
+	$if_config = config_get_path('interfaces');
 	$iflist = get_configured_interface_list(true);
-	if (!is_array($config['ppps']['ppp'])) {
+	if (!is_array($ppp_config)) {
 		return false;
 	}
 
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $config['ppps']['ppp'][$num]['if']) {
+		if ($if_config[$if]['if'] == $ppp_config[$num]['if']) {
 			return true;
 		}
 	}
@@ -53,13 +55,14 @@ function ppp_inuse($num) {
 }
 
 if ($_POST['act'] == "del") {
+	$this_ppp_config = config_get_path("ppps/ppp/{$_POST['id']}");
 	/* check if still in use */
 	if (ppp_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This point-to-point link cannot be deleted because it is still being used as an interface.");
-	} elseif (is_array($config['ppps']['ppp']) && is_array($config['ppps']['ppp'][$_POST['id']])) {
+	} elseif (is_array($this_ppp_config)) {
 
 		config_del_path("ppps/ppp/{$_POST['id']}/pppoe-reset-type");
-		handle_pppoe_reset($config['ppps']['ppp'][$_POST['id']]);
+		handle_pppoe_reset($this_ppp_config);
 		config_del_path("ppps/ppp/{$_POST['id']}");
 		write_config("PPP interface deleted");
 		header("Location: interfaces_ppps.php");
@@ -67,15 +70,7 @@ if ($_POST['act'] == "del") {
 	}
 }
 
-if (!is_array($config['ppps'])) {
-	config_set_path('ppps', array());
-}
-
-if (!is_array($config['ppps']['ppp'])) {
-	config_set_path('ppps/ppp', array());
-}
-
-$a_ppps = config_get_path('ppps/ppp');
+config_init_path('ppps/ppp');
 
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"));
 $shortcut_section = "interfaces";
@@ -117,8 +112,7 @@ display_top_tabs($tab_array);
 $i = 0;
 
 
-if (is_array($a_ppps)) {
-	foreach ($a_ppps as $ppp) {
+foreach (config_get_path('ppps/ppp', []) as $ppp) {
 ?>
 					<tr>
 						<td>
@@ -145,7 +139,6 @@ if (is_array($a_ppps)) {
 					</tr>
 <?php
 	$i++;
-	}
 }
 ?>
 				</tbody>

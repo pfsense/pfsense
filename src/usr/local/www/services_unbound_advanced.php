@@ -63,7 +63,7 @@ $pconfig['cache_max_ttl'] = config_get_path('unbound/cache_max_ttl', 86400);
 $pconfig['cache_min_ttl'] = config_get_path('unbound/cache_min_ttl', 0);
 
 /* default to enabled if not explicitly set */
-if (!isset($config['unbound']['infra_keep_probing']) || $config['unbound']['infra_keep_probing'] == "enabled") {
+if (config_get_path('unbound/infra_keep_probing', 'enabled') == "enabled") {
 	$pconfig['infra_keep_probing'] = true;
 }
 

@@ -31,7 +31,7 @@ require_once("interfaces.inc");
 require_once("gwlb.inc");
 
 function handle_argument_group($iface, $action) {
-	global $g, $config;
+	global $g;
 
 	if (empty(config_get_path("interfaces/{$iface}"))) {
 		log_error("Cannot find interface configuration for {$iface}");
@@ -208,7 +208,7 @@ if (!in_array($action, ['start', 'stop'])) {
 		return;
 }
 
-if (platform_booting()) {
+if (is_platform_booting()) {
 	if (!empty($realiface)) {
 		$interface = convert_real_interface_to_friendly_interface_name($realiface);
 	}

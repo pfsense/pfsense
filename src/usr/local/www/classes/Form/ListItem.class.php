@@ -86,7 +86,7 @@ class Form_ListItem extends Form_Group
 			$this->addClass('user-duplication');		// added buttons 10 cols wide with 2 col offset
 
 		if (isset($max))
-			$this->_attributes('data-duplicate-max', $max);
+			$this->_attributes['data-duplicate-max'] = $max;
 
 		foreach ($this->_inputs as $input) {
 			if ($input instanceof Form_Input)
@@ -117,7 +117,7 @@ EOT;
 
 	public function __toString()
 	{
-		global $config, $user_settings;
+		global $user_settings;
 
 		$element = Form_Element::__toString();
 
@@ -155,6 +155,9 @@ EOT;
 		if (!$user_settings['webgui']['webguileftcolumnhyper']) {
 			$target = null;
 		}
+
+		$label = new Form_Element('label', false, ['for' => $target]);
+		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
 
 		if (!empty(trim($this->_title)) || is_numeric($this->_title)) {
 			$title = htmlspecialchars(gettext($this->_title));

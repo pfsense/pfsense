@@ -130,7 +130,12 @@ ramdisk_try_mount () {
 	NAME=$1
 	if [ ramdisk_check_size ]; then
 		SIZE=$(eval echo \${${NAME}size})m
-		/sbin/mount -o rw,size=${SIZE},mode=1777 -t tmpfs tmpfs /${NAME}
+		if [ "${NAME}" = "tmp" ]; then
+			MODE="1777"
+		else
+			MODE="1755"
+		fi
+		/sbin/mount -o rw,size=${SIZE},mode=${MODE} -t tmpfs tmpfs /${NAME}
 		return $?
 	else
 		return 1;

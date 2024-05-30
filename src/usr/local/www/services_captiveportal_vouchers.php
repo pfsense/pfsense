@@ -61,39 +61,37 @@ if (empty($cpzone)) {
 	exit;
 }
 
-init_config_arr(array('captiveportal'));
-init_config_arr(array('voucher', $cpzone, 'roll'));
-$a_cp = &$config['captiveportal'];
+config_init_path('captiveportal');
+config_init_path("voucher/{$cpzone}/roll");
 
-if (empty($a_cp[$cpzone])) {
+if (empty(config_get_path("captiveportal/{$cpzone}"))) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Vouchers"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-if (!is_array($config['voucher'][$cpzone]['roll'])) {
-	$config['voucher'][$cpzone]['roll'] = array();
+config_init_path("voucher/{$cpzone}/roll");
+$voucher_config = config_get_path("voucher/{$cpzone}");
+if (!isset($voucher_config['charset'])) {
+	$voucher_config['charset'] = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 }
-if (!isset($config['voucher'][$cpzone]['charset'])) {
-	$config['voucher'][$cpzone]['charset'] = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+if (!isset($voucher_config['rollbits'])) {
+	$voucher_config['rollbits'] = 16;
 }
-if (!isset($config['voucher'][$cpzone]['rollbits'])) {
-	$config['voucher'][$cpzone]['rollbits'] = 16;
+if (!isset($voucher_config['ticketbits'])) {
+	$voucher_config['ticketbits'] = 10;
 }
-if (!isset($config['voucher'][$cpzone]['ticketbits'])) {
-	$config['voucher'][$cpzone]['ticketbits'] = 10;
+if (!isset($voucher_config['checksumbits'])) {
+	$voucher_config['checksumbits'] = 5;
 }
-if (!isset($config['voucher'][$cpzone]['checksumbits'])) {
-	$config['voucher'][$cpzone]['checksumbits'] = 5;
+if (!isset($voucher_config['magic'])) {
+	$voucher_config['magic'] = rand();	 // anything slightly random will do
 }
-if (!isset($config['voucher'][$cpzone]['magic'])) {
-	$config['voucher'][$cpzone]['magic'] = rand();	 // anything slightly random will do
-}
-if (!isset($config['voucher'][$cpzone]['exponent'])) {
+if (!isset($voucher_config['exponent'])) {
 	while (true) {
 		while (($exponent = rand()) % 30000 < 5000) {
 			continue;
@@ -104,39 +102,39 @@ if (!isset($config['voucher'][$cpzone]['exponent'])) {
 		}
 	}
 
-	$config['voucher'][$cpzone]['exponent'] = $exponent;
+	$voucher_config['exponent'] = $exponent;
 	unset($exponent);
 }
 
-if (!isset($config['voucher'][$cpzone]['publickey'])) {
+if (!isset($voucher_config['publickey'])) {
 	/* generate a random 64 bit RSA key pair using the voucher binary */
-	$fd = popen("/usr/local/bin/voucher -g 64 -e " . $config['voucher'][$cpzone]['exponent'], "r");
+	$fd = popen("/usr/local/bin/voucher -g 64 -e " . $voucher_config['exponent'], "r");
 	if ($fd !== false) {
 		$output = fread($fd, 16384);
 		pclose($fd);
 		list($privkey, $pubkey) = explode("\0", $output);
-		$config['voucher'][$cpzone]['publickey'] = base64_encode($pubkey);
-		$config['voucher'][$cpzone]['privatekey'] = base64_encode($privkey);
+		$voucher_config['publickey'] = base64_encode($pubkey);
+		$voucher_config['privatekey'] = base64_encode($privkey);
 	}
 }
 
 // Check for invalid or expired vouchers
-if (!isset($config['voucher'][$cpzone]['descrmsgnoaccess'])) {
-	$config['voucher'][$cpzone]['descrmsgnoaccess'] = gettext("Voucher invalid");
+if (!isset($voucher_config['descrmsgnoaccess'])) {
+	$voucher_config['descrmsgnoaccess'] = gettext("Voucher invalid");
 }
 
-if (!isset($config['voucher'][$cpzone]['descrmsgexpired'])) {
-	$config['voucher'][$cpzone]['descrmsgexpired'] = gettext("Voucher expired");
+if (!isset($voucher_config['descrmsgexpired'])) {
+	$voucher_config['descrmsgexpired'] = gettext("Voucher expired");
 }
 
-$a_roll = &$config['voucher'][$cpzone]['roll'];
+config_set_path("voucher/{$cpzone}", $voucher_config);
 
 if ($_POST['act'] == "del") {
 	$id = $_POST['id'];
-	if ($a_roll[$id]) {
-		$roll = $a_roll[$id]['number'];
+	if (config_get_path("voucher/{$cpzone}/roll/{$id}")) {
+		$roll = config_get_path("voucher/{$cpzone}/roll/{$id}/number");
 		$voucherlck = lock("voucher{$cpzone}");
-		unset($a_roll[$id]);
+		config_del_path("voucher/{$cpzone}/roll/{$id}");
 		voucher_unlink_db($roll);
 		unlock($voucherlck);
 		write_config("Deleted voucher roll");
@@ -145,7 +143,7 @@ if ($_POST['act'] == "del") {
 	exit;
 } else if ($_REQUEST['act'] == "csv") {
 	/* print all vouchers of the selected roll */
-	$privkey = base64_decode($config['voucher'][$cpzone]['privatekey']);
+	$privkey = base64_decode($voucher_config['privatekey']);
 	if (strstr($privkey, "BEGIN RSA PRIVATE KEY")) {
 		$fd = fopen("{$g['varetc_path']}/voucher_{$cpzone}.private", "w");
 		if (!$fd) {
@@ -154,11 +152,11 @@ if ($_POST['act'] == "del") {
 			chmod("{$g['varetc_path']}/voucher_{$cpzone}.private", 0600);
 			fwrite($fd, $privkey);
 			fclose($fd);
-			$a_voucher = &$config['voucher'][$cpzone]['roll'];
 			$id = $_REQUEST['id'];
-			if (isset($id) && $a_voucher[$id]) {
-				$number = $a_voucher[$id]['number'];
-				$count = $a_voucher[$id]['count'];
+			$this_voucher = isset($id) ? config_get_path("voucher/{$cpzone}/roll/{$id}") : null;
+			if ($this_voucher) {
+				$number = $this_voucher['number'];
+				$count = $this_voucher['count'];
 				if (file_exists("{$g['varetc_path']}/voucher_{$cpzone}.cfg")) {
 					$cmd = "/usr/local/bin/voucher" .
 						" -c " . escapeshellarg("{$g['varetc_path']}/voucher_{$cpzone}.cfg") .
@@ -180,15 +178,15 @@ if ($_POST['act'] == "del") {
 	}
 }
 
-$pconfig['enable'] = isset($config['voucher'][$cpzone]['enable']);
+$pconfig['enable'] = config_path_enabled("voucher/{$cpzone}");
 $pconfig['charset'] = config_get_path("voucher/{$cpzone}/charset");
 $pconfig['rollbits'] = config_get_path("voucher/{$cpzone}/rollbits");
 $pconfig['ticketbits'] = config_get_path("voucher/{$cpzone}/ticketbits");
 $pconfig['checksumbits'] = config_get_path("voucher/{$cpzone}/checksumbits");
 $pconfig['magic'] = config_get_path("voucher/{$cpzone}/magic");
 $pconfig['exponent'] = config_get_path("voucher/{$cpzone}/exponent");
-$pconfig['publickey'] = base64_decode($config['voucher'][$cpzone]['publickey']);
-$pconfig['privatekey'] = base64_decode($config['voucher'][$cpzone]['privatekey']);
+$pconfig['publickey'] = base64_decode(config_get_path("voucher/{$cpzone}/publickey"));
+$pconfig['privatekey'] = base64_decode(config_get_path("voucher/{$cpzone}/privatekey"));
 $pconfig['msgnoaccess'] = config_get_path("voucher/{$cpzone}/descrmsgnoaccess");
 $pconfig['msgexpired'] = config_get_path("voucher/{$cpzone}/descrmsgexpired");
 
@@ -237,11 +235,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		if (empty($config['voucher'][$cpzone])) {
-			$newvoucher = array();
-		} else {
-			$newvoucher = config_get_path("voucher/{$cpzone}");
-		}
+		$newvoucher = config_get_path("voucher/{$cpzone}", []);
 		if ($_POST['enable'] == "yes") {
 			$newvoucher['enable'] = true;
 		} else {
@@ -257,11 +251,11 @@ if ($_POST['save']) {
 		$newvoucher['privatekey'] = base64_encode($_POST['privatekey']);
 		$newvoucher['descrmsgnoaccess'] = $_POST['msgnoaccess'];
 		$newvoucher['descrmsgexpired'] = $_POST['msgexpired'];
-		$config['voucher'][$cpzone] = $newvoucher;
+		config_set_path("voucher/{$cpzone}", $newvoucher);
 		write_config('Updated vouchers settings');
 		voucher_configure_zone();
 		// Refresh captiveportal login to show voucher changes
-		captiveportal_configure_zone($config['captiveportal'][$cpzone]);
+		captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}"));
 
 		if (!$input_errors) {
 			header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
@@ -309,7 +303,7 @@ display_top_tabs($tab_array, true);
 				<tbody>
 <?php
 $i = 0;
-foreach ($a_roll as $rollent):
+foreach (config_get_path("voucher/{$cpzone}/roll", []) as $rollent):
 ?>
 					<tr>
 						<td><?=htmlspecialchars($rollent['number']); ?></td>

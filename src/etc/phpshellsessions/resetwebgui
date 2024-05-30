@@ -19,9 +19,8 @@
  * limitations under the License.
  */
 
-global $config;
-
-$config = parse_config(true);
+// parse config.xml
+config_set_path('', parse_config(true));
 $default_theme = "pfSense.css";
 $default_columns = 2;
 $default_widgets = "system_information:col1:show,interfaces:col2:show";
@@ -33,14 +32,12 @@ echo "  Top navigation to scroll\n";
 echo "  Widgets to System Information and Interfaces\n";
 echo "...";
 
-$config['system']['webgui']['webguicss'] = $default_theme;
-$config['system']['webgui']['dashboardcolumns'] = $default_columns;
+config_set_path('system/webgui/webguicss', $default_theme);
+config_set_path('system/webgui/dashboardcolumns', $default_columns);
 
-if (isset($config['system']['webgui']['webguifixedmenu'])) {
-	unset($config['system']['webgui']['webguifixedmenu']);
-}
+config_del_path('system/webgui/webguifixedmenu');
 
-$config['widgets']['sequence'] = $default_widgets;
+config_set_path('widgets/sequence', $default_widgets);
 
 write_config("pfSsh.php reset webGUI");
 

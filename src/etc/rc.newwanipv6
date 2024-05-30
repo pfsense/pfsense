@@ -141,7 +141,7 @@ setup_gateways_monitor();
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
 
-if (platform_booting()) {
+if (is_platform_booting()) {
 	// avoid race conditions in many of the below functions that occur during boot
 	touch("/tmp/{$interface_real}_dhcp6_complete");
 	exit;
@@ -154,7 +154,7 @@ $srvupdate = true;
 if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 	if (($curwanipv6 == $oldipv6) && !file_exists("{$g['tmp_path']}/{$interface}_upstart6")) {
 		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-		if (!in_array($config['interfaces'][$interface]['ipaddr'], array('pppoe', 'pptp', 'ppp'))) {
+		if (!in_array(config_get_path("interfaces/{$interface}/ipaddr"), array('pppoe', 'pptp', 'ppp'))) {
 			return;
 		} else {
 			$srvupdate = false;
@@ -215,7 +215,7 @@ if ($srvupdate) {
 }
 
 unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart6");
-if (empty($config['interfaces'][$interface]['ipaddr'])) {
+if (empty(config_get_path("interfaces/{$interface}/ipaddr"))) {
 	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
 }
 

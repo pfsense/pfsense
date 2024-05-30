@@ -36,14 +36,14 @@ $pgtitle = array(gettext("Interfaces"), gettext("Interface Groups"), gettext("Ed
 $pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
-init_config_arr(array('ifgroups', 'ifgroupentry'));
-$a_ifgroups = &$config['ifgroups']['ifgroupentry'];
+config_init_path('ifgroups/ifgroupentry');
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_ifgroups[$id]) {
-	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
-	$pconfig['members'] = $a_ifgroups[$id]['members'];
-	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
+$this_ifgroup_config = isset($id) ? config_get_path("ifgroups/ifgroupentry/{$id}") : null;
+if ($this_ifgroup_config) {
+	$pconfig['ifname'] = $this_ifgroup_config['ifname'];
+	$pconfig['members'] = $this_ifgroup_config['members'];
+	$pconfig['descr'] = html_entity_decode($this_ifgroup_config['descr']);
 }
 
 $interface_list = get_configured_interface_with_descr(true);
@@ -74,7 +74,7 @@ if ($_POST['save']) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $_POST['ifname']);
 		}
 
-		foreach ($a_ifgroups as $groupid => $groupentry) {
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $groupid => $groupentry) {
 			if ((!isset($id) || ($groupid != $id)) && ($groupentry['ifname'] == $_POST['ifname'])) {
 				$input_errors[] = gettext("Group name already exists!");
 			}
@@ -126,67 +126,73 @@ if ($_POST['save']) {
 		$ifgroupentry['descr'] = $_POST['descr'];
 
 		// Edit group name
-		if (isset($id) && $a_ifgroups[$id] && $_POST['ifname'] != $a_ifgroups[$id]['ifname']) {
-			if (!empty($config['filter']) && is_array($config['filter']['rule'])) {
-				foreach (config_get_path('filter/rule', []) as $ridx => $rule) {
+		if ($this_ifgroup_config && $_POST['ifname'] != $this_ifgroup_config['ifname']) {
+			$filter_rule_config = config_get_path('filter/rule');
+			if (is_array($filter_rule_config)) {
+				foreach ($filter_rule_config as &$rule) {
 					if (isset($rule['floating'])) {
 						$rule_ifs = explode(",", $rule['interface']);
 						$rule_changed = false;
 						foreach ($rule_ifs as $rule_if_id => $rule_if) {
-							if ($rule_if == $a_ifgroups[$id]['ifname']) {
+							if ($rule_if == $this_ifgroup_config['ifname']) {
 								$rule_ifs[$rule_if_id] = $_POST['ifname'];
 								$rule_changed = true;
 							}
 						}
 						if ($rule_changed) {
-							$config['filter']['rule'][$ridx]['interface'] = implode(",", $rule_ifs);
+							$rule['interface'] = implode(",", $rule_ifs);
 						}
 					} else {
-						if ($rule['interface'] == $a_ifgroups[$id]['ifname']) {
-							$config['filter']['rule'][$ridx]['interface'] = $_POST['ifname'];
+						if ($rule['interface'] == $this_ifgroup_config['ifname']) {
+							$rule['interface'] = $_POST['ifname'];
 						}
 					}
 				}
+				unset($rule);
+				config_set_path('filter/rule', $filter_rule_config);
 			}
-			if (!empty($config['nat']) && is_array($config['nat']['rule'])) {
-				foreach (config_get_path('nat/rule', []) as $ridx => $rule) {
-					if ($rule['interface'] == $a_ifgroups[$id]['ifname']) {
-						$config['nat']['rule'][$ridx]['interface'] = $_POST['ifname'];
+			$nat_rule_config = config_get_path('nat/rule');
+			if (is_array($nat_rule_config)) {
+				foreach ($nat_rule_config as $ridx => &$rule) {
+					if ($rule['interface'] == $this_ifgroup_config['ifname']) {
+						$rule['interface'] = $_POST['ifname'];
 					}
 				}
+				unset($rule);
+				config_set_path('nat/rule', $nat_rule_config);
 			}
-			$omembers = explode(" ", $a_ifgroups[$id]['members']);
+			$omembers = explode(" ", $this_ifgroup_config['members']);
 			if (count($omembers) > 0) {
 				foreach ($omembers as $ifs) {
 					$realif = get_real_interface($ifs);
 					if ($realif) {
-						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+						mwexec("/sbin/ifconfig {$realif} -group " . $this_ifgroup_config['ifname']);
 					}
 				}
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
-			$a_ifgroups[$id] = $ifgroupentry;
+			$this_ifgroup_config = $ifgroupentry;
 
 		// Edit old group
-		} else if (isset($id) && $a_ifgroups[$id]) {
-			$omembers = explode(" ", $a_ifgroups[$id]['members']);
+		} else if ($this_ifgroup_config) {
+			$omembers = explode(" ", $this_ifgroup_config['members']);
 			$nmembers = explode(" ", $members);
 			$delmembers = array_diff($omembers, $nmembers);
 			if (count($delmembers) > 0) {
 				foreach ($delmembers as $ifs) {
 					$realif = get_real_interface($ifs);
 					if ($realif) {
-						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+						mwexec("/sbin/ifconfig {$realif} -group " . $this_ifgroup_config['ifname']);
 					}
 				}
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
-			$a_ifgroups[$id] = $ifgroupentry;
+			config_set_path("ifgroups/ifgroupentry/{$id}", $ifgroupentry);
 
 		// Create new group
 		} else {
 			$ifgroupentry['ifname'] = $_POST['ifname'];
-			$a_ifgroups[] = $ifgroupentry;
+			config_set_path('ifgroups/ifgroupentry/', $ifgroupentry);
 		}
 
 		write_config("Interface Group added");
@@ -240,7 +246,7 @@ $section->addInput(new Form_Select(
 	'Multi-WAN typically relies. %1$sMore Information%2$s',
 	'<a href="https://docs.netgate.com/pfsense/en/latest/interfaces/groups.html">', '</a>');
 
-if (isset($id) && $a_ifgroups[$id]) {
+if ($this_ifgroup_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		'id',

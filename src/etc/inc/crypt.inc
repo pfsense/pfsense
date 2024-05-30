@@ -49,7 +49,7 @@ define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 
 		$output = "";
 		$exitcode = "";
-		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md ${md} {$keyder} {$iter} 2> /dev/null", $output, $exitcode);
+		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md {$md} {$keyder} {$iter} 2> /dev/null", $output, $exitcode);
 
 		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");

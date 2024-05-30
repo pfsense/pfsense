@@ -39,8 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_npt.inc");
 
-init_config_arr(array('nat', 'npt'));
-$a_npt = &$config['nat']['npt'];
+config_init_path('nat/npt');
 
 // Process $_POST/$_REQUEST =======================================================================
 if ($_REQUEST['savemsg']) {
@@ -52,7 +51,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 } elseif ($_POST['apply']) {
 	$retval = applynptNATrules();
 } elseif (($_POST['act'] == "del")) {
-	if ($a_npt[$_POST['id']]) {
+	if (config_get_path("nat/npt/{$_POST['id']}")) {
 		deletenptNATrule($_POST);
 	}
 } elseif (isset($_POST['del_x'])) {
@@ -65,7 +64,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 		toggleMultiplenptNATrules($_POST);
 	}
 } elseif (($_POST['act'] == "toggle")) {
-	if ($a_npt[$_POST['id']]) {
+	if (config_get_path("nat/npt/{$_POST['id']}")) {
 		togglenptNATrule($_POST);
 	}
 }
@@ -111,7 +110,7 @@ display_top_tabs($tab_array);
 
 	$textse = "</span>";
 	$i = 0;
-	foreach ($a_npt as $natent):
+	foreach (config_get_path('nat/npt', []) as $natent):
 		if (isset($natent['disabled'])) {
 			$textss = "<span class=\"gray\">";
 			$iconfn = "pass_d";
@@ -148,11 +147,10 @@ display_top_tabs($tab_array);
 		if (count($dst_arr) > 1) {
 			$natent['destination']['network'] = $dst_arr[0];
 		}
-		if (is_array($config['interfaces'][$natent['destination']['network']]) &&
-		    ($config['interfaces'][$natent['destination']['network']]['ipaddrv6'] == 'track6')) {
+		if (config_get_path("interfaces/{$natent['destination']['network']}/ipaddrv6") == 'track6') {
 			$track6ip = get_interface_track6ip($natent['destination']['network']);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
-			$dst = "{$config['interfaces'][$natent['destination']['network']]['descr']} ({$pdsubnet}/{$track6ip[1]})";
+			$dst = config_get_path("interfaces/{$natent['destination']['network']}/descr") . " ({$pdsubnet}/{$track6ip[1]})";
 		} else {
 			$dst = pprint_address($natent['destination']);
 		}
@@ -212,7 +210,7 @@ endforeach;
 //<![CDATA[
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules draggable/sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',

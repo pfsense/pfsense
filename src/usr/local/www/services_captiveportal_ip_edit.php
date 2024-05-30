@@ -38,9 +38,11 @@ function allowedipscmp($a, $b) {
 }
 
 function allowedips_sort() {
-	global $g, $config, $cpzone;
+	global $g, $cpzone;
 
-	usort($config['captiveportal'][$cpzone]['allowedip'], "allowedipscmp");
+	$cp_config = config_get_path("captiveportal/{$cpzone}/allowedip");
+	usort($cp_config, "allowedipscmp");
+	config_set_path("captiveportal/{$cpzone}/allowedip", $cp_config);
 }
 
 require_once("guiconfig.inc");
@@ -51,28 +53,27 @@ require_once("captiveportal.inc");
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal', $cpzone, 'allowedip'));
-$a_cp = &$config['captiveportal'];
-$cpzoneid = $a_cp[$cpzone]['zoneid'];
-$a_allowedips = &$config['captiveportal'][$cpzone]['allowedip'];
+config_init_path("captiveportal/{$cpzone}/allowedip");
+$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed IP Addresses"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Allowed IP Addresses"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_ip.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_allowedips[$id]) {
-	$pconfig['ip'] = $a_allowedips[$id]['ip'];
-	$pconfig['sn'] = $a_allowedips[$id]['sn'];
-	$pconfig['dir'] = $a_allowedips[$id]['dir'];
-	$pconfig['bw_up'] = $a_allowedips[$id]['bw_up'];
-	$pconfig['bw_down'] = $a_allowedips[$id]['bw_down'];
-	$pconfig['descr'] = $a_allowedips[$id]['descr'];
+$this_allowedip_config = isset($id) ? config_get_path("captiveportal/{$cpzone}/allowedip/{$id}") : null;
+if ($this_allowedip_config) {
+	$pconfig['ip'] = $this_allowedip_config['ip'];
+	$pconfig['sn'] = $this_allowedip_config['sn'];
+	$pconfig['dir'] = $this_allowedip_config['dir'];
+	$pconfig['bw_up'] = $this_allowedip_config['bw_up'];
+	$pconfig['bw_down'] = $this_allowedip_config['bw_down'];
+	$pconfig['descr'] = $this_allowedip_config['descr'];
 }
 
 if ($_POST['save']) {
@@ -109,8 +110,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Download speed must be between 1 and 999999");
 	}
 
-	foreach ($a_allowedips as $ipent) {
-		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent)) {
+	foreach (config_get_path("captiveportal/{$cpzone}/allowedip", []) as $ipent) {
+		if ($this_allowedip_config && ($this_allowedip_config === $ipent)) {
 			continue;
 		}
 
@@ -136,24 +137,24 @@ if ($_POST['save']) {
 		}
 
 		$oldip = array();
-		if (isset($id) && $a_allowedips[$id]) {
-			$oldip['ip'] = $a_allowedips[$id]['ip'];
-			if (!empty($a_allowedips[$id]['sn'])) {
-				$oldip['sn'] = $a_allowedips[$id]['sn'];
+		if ($this_allowedip_config) {
+			$oldip['ip'] = $this_allowedip_config['ip'];
+			if (!empty($this_allowedip_config['sn'])) {
+				$oldip['sn'] = $this_allowedip_config['sn'];
 			} else {
 				$oldip['sn'] = 32;
 			}
 
-			$a_allowedips[$id] = $ip;
+			config_set_path("captiveportal/{$cpzone}/allowedip/{$id}", $ip);
 		} else {
-			$a_allowedips[] = $ip;
+			config_set_path("captiveportal/{$cpzone}/allowedip/", $ip);
 		}
 
 		allowedips_sort();
 
 		write_config("Captive portal allowed IPs added");
 
-		if (isset($a_cp[$cpzone]['enable'])) {
+		if (config_path_enabled("captiveportal/{$cpzone}")) {
 			if (!empty($oldip)) {
 				captiveportal_ether_delete_entry($oldip, 'allowedhosts');
 			}
@@ -228,7 +229,7 @@ $form->addGlobal(new Form_Input(
 	$cpzone
 ));
 
-if (isset($id) && $a_allowedips[$id]) {
+if ($this_allowedip_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

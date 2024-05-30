@@ -298,54 +298,53 @@ function index_users() {
 	return ($userindex);
 }
 
-function & getUserEntry($name) {
-	global $debug, $config, $userindex;
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+function getUserEntry($name) {
+	global $userindex;
+	$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 
 	if (isset($userindex[$name])) {
-		return $config['system']['user'][$userindex[$name]];
-	} elseif ($authcfg['type'] != "Local Database") {
-		$user = array();
-		$user['name'] = $name;
-		return $user;
+		return [
+			'idx' => $userindex[$name],
+			'item' => config_get_path("system/user/{$userindex[$name]}")
+		];
+	} elseif ($authcfg['type'] != "Local Auth") {
+		return [
+			'idx' => null,
+			'item' => ['name' => $name]
+		];
 	}
 }
 
-function & getUserEntryByUID($uid) {
-	global $debug, $config;
-
-	if (!is_array(array_get_path($config, 'system/user'))) {
-		return false;
-	}
-	foreach ($config['system']['user'] as & $user) {
+function getUserEntryByUID($uid) {
+	foreach (config_get_path('system/user', []) as $idx => $user) {
 		if ($user['uid'] == $uid) {
-			return $user;
+			return [
+				'idx' => $idx,
+				'item' => $user
+			];
 		}
 	}
-
-	return false;
 }
 
-function & getGroupEntry($name) {
-	global $debug, $config, $groupindex;
+function getGroupEntry($name) {
+	global $groupindex;
 	if (isset($groupindex[$name])) {
-		return $config['system']['group'][$groupindex[$name]];
+		return [
+			'idx' => $groupindex[$name],
+			'item' => config_get_path("system/group/{$groupindex[$name]}")
+		];
 	}
 }
 
-function & getGroupEntryByGID($gid) {
-	global $debug, $config;
-
-	if (!is_array(array_get_path($config, 'system/group'))) {
-		return false;
-	}
-	foreach ($config['system']['group'] as & $group) {
+function getGroupEntryByGID($gid) {
+	foreach (config_get_path('system/group', []) as $idx => $group) {
 		if ($group['gid'] == $gid) {
-			return $group;
+			return [
+				'idx' => $idx,
+				'item' => $group
+			];
 		}
 	}
-
-	return false;
 }
 
 function get_user_privileges(& $user) {
@@ -394,6 +393,7 @@ function get_user_privileges(& $user) {
 
 	foreach ($allowed_groups as $name) {
 		$group = getGroupEntry($name);
+		$group = $group['item'];
 		if (is_array($group['priv'])) {
 			$privs = array_merge($privs, $group['priv']);
 		}
@@ -435,6 +435,7 @@ function userHasPrivilege($userent, $privid = false) {
 function local_backed($username, $passwd) {
 
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if (!$user) {
 		return false;
 	}
@@ -479,7 +480,6 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		return;
 	}
 	$users = config_get_path('system/user', []);
-	$groups = config_get_path('system/group', []);
 
 	foreach($u2del as $user) {
 		if ($user['uid'] > 65000) {
@@ -516,12 +516,14 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		}
 	}
 
+	$groups = config_get_path('system/group', []);
 	foreach($g2del as $group) {
 		if ($group['gid'] < 2000 || $group['gid'] > 65000) {
+			// dont' remove special groups
 			continue;
 		}
 
-		$cmd = "/usr/sbin/pw groupdel -g " .
+		$cmd = "/usr/sbin/pw groupdel -n " .
 		    escapeshellarg($group['name']);
 		if ($debug) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -562,6 +564,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 
 	/* make sure the all group exists */
 	$allgrp = getGroupEntryByGID(1998);
+	$allgrp = $allgrp['item'];
 	local_group_set($allgrp, true);
 
 	foreach ($u2add as $user) {
@@ -632,6 +635,7 @@ function local_reset_accounts() {
 
 	/* make sure the all group exists */
 	$allgrp = getGroupEntryByGID(1998);
+	$allgrp = $allgrp['item'];
 	local_group_set($allgrp, true);
 
 	/* sync all local users */
@@ -645,7 +649,61 @@ function local_reset_accounts() {
 	}
 }
 
-function local_user_set(& $user) {
+/* Determine if a given string is valid for use as a password.
+ * Returns an array of messages describing the problems.
+ */
+function validate_password($username, $password) {
+	$errors = [];
+
+	/* Rules for CE and Plus */
+	/* Disallow changing the password to the username. */
+	if ($username == $password) {
+		$errors[] = gettext("The password cannot be identical to the username.");
+	}
+	/* End rules for CE and Plus */
+
+	/* Plus-specific rules */
+	/* End Plus-specific rules */
+	return $errors;
+}
+/*
+ * Returns a string containing password hints that describe the rules validated
+ * by validate_password() above.
+ *
+ * $prefix: Value prepended to each array entry when returning the hint string.
+ * $suffix: Value appended to each array entry when returning the hint string.
+ */
+function get_validate_password_hints($prefix='', $suffix='<br/>') {
+	$hints = [];
+	/* Rules for CE and Plus */
+	$hints[] = gettext('Current NIST guidelines prioritize password length over complexity.');
+	$hints[] = gettext('The password cannot be identical to the username.');
+
+	/* Plus-specific rules */
+	/* End Plus-specific rules */
+
+	/* Add the prefix and suffix to each array entry. */
+	foreach ($hints as &$hint) {
+		$hint = $prefix . $hint . $suffix;
+	}
+
+	return implode('', $hints);
+}
+/*
+ * Test the password for a given user and produce warning messages if there are
+ * issues.
+ */
+function check_current_password($username) {
+	if (local_backed($username, $username)) {
+		return sprintf(gettext('Password is currently set to the username (%s).'), $username);
+	}
+	if (local_backed($username, g_get('factory_shipped_password'))) {
+		return sprintf(gettext('Password is currently set to the default value (%s).'), g_get('factory_shipped_password'));
+	}
+	return null;
+}
+
+function local_user_set($user) {
 	global $g, $debug;
 
 	if (empty($user['sha512-hash']) && empty($user['bcrypt-hash']) && empty($user['password'])) {
@@ -819,7 +877,8 @@ function local_user_del($user) {
 	local_group_del_user($user);
 }
 
-function local_user_set_password(&$user, $password) {
+function local_user_set_password(&$user_item_config, $password) {
+	$user = &$user_item_config['item'];
 	unset($user['password']);
 	unset($user['md5-hash']);
 	unset($user['sha512-hash']);
@@ -844,6 +903,9 @@ function local_user_set_password(&$user, $password) {
 	if (($user['name'] == config_get_path('hasync/username')) &&
 	    (config_get_path('hasync/adminsync') == 'on')) {
 		config_set_path('hasync/new_password', $password);
+	}
+	if (isset($user_item_config['idx'])) {
+		config_set_path("system/user/{$user_item_config['idx']}", $user);
 	}
 }
 
@@ -997,7 +1059,7 @@ function local_group_del($group) {
 	global $debug;
 
 	/* delete from group db */
-	$cmd = "/usr/sbin/pw groupdel " . escapeshellarg($group['name']);
+	$cmd = "/usr/sbin/pw groupdel -n " . escapeshellarg($group['name']);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -1057,6 +1119,7 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
+		$caref = $caref['item'];
 		$cert_details = openssl_x509_parse(base64_decode($caref['crt']));
 		$param = array('caref' => $authcfg['ldap_caref']);
 		$cachain = ca_chain($param);
@@ -1095,6 +1158,7 @@ function ldap_test_bind($authcfg) {
 		$ldapbasedn = $authcfg['ldap_basedn'];
 		$ldapbindun = $authcfg['ldap_binddn'];
 		$ldapbindpw = $authcfg['ldap_bindpw'];
+		$ldapname = $authcfg['name'];
 		$ldapver = $authcfg['ldap_protver'];
 		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 		if (empty($ldapbindun) || empty($ldapbindpw)) {
@@ -1139,8 +1203,8 @@ function ldap_test_bind($authcfg) {
 		}
 	}
 
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			@ldap_close($ldap);
@@ -1227,8 +1291,8 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 		}
 	}
 
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind anonymously to server %s."), $ldapname));
@@ -1368,8 +1432,8 @@ function ldap_get_groups($username, $authcfg) {
 	}
 
 	/* bind as user that has rights to read group attributes */
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
@@ -1397,8 +1461,8 @@ function ldap_get_groups($username, $authcfg) {
 			$has_userinfo = false;
 			$ldac_splits = explode(";", $ldapauthcont);
 			foreach ($ldac_splits as $i => $ldac_split) {
-				$ldac_split = isset($authcfg['ldap_utf8']) ? utf8_encode($ldac_split) : $ldac_split;
-				$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? utf8_encode("{$ldac_split},{$ldapbasedn}") : "{$ldac_split},{$ldapbasedn}";
+				$ldac_split = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldac_split, 'UTF-8') : $ldac_split;
+				$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding("{$ldac_split},{$ldapbasedn}", 'UTF-8') : "{$ldac_split},{$ldapbasedn}";
 				$ldapfilter = "({$ldapnameattribute}={$username})";
 				if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
 					$ldapdn = $ldac_split;
@@ -1481,7 +1545,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$username = $username_split[0];
 	}
 
-	$username = ldap_escape($username, null, LDAP_ESCAPE_FILTER);
+	$username = ldap_escape($username, '', LDAP_ESCAPE_FILTER);
 
 	if ($authcfg) {
 		if (strstr($authcfg['ldap_urltype'], "SSL")) {
@@ -1583,8 +1647,8 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 
 	/* ok, its up.  now, lets bind as the bind user so we can search it */
 	$error = false;
-	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
-	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			$error = true;
@@ -1618,12 +1682,12 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	}
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
-		$ldac_split = isset($authcfg['ldap_utf8']) ? utf8_encode($ldac_split) : $ldac_split;
-		$ldapfilter = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapfilter) : $ldapfilter;
-		$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? utf8_encode("{$ldac_split},{$ldapbasedn}") : "{$ldac_split},{$ldapbasedn}";
+		$ldac_split = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldac_split, 'UTF-8') : $ldac_split;
+		$ldapfilter = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapfilter, 'UTF-8') : $ldapfilter;
+		$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding("{$ldac_split},{$ldapbasedn}", 'UTF-8') : "{$ldac_split},{$ldapbasedn}";
 		/* Make sure we just use the first user we find */
 		if ($debug) {
-			log_error(sprintf(gettext('LDAP Debug: Now searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, utf8_decode($ldac_split), utf8_decode($ldapfilter)));
+			log_error(sprintf(gettext('LDAP Debug: Now searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, mb_convert_encoding($ldac_split, 'ISO-8859-1', 'UTF-8'), mb_convert_encoding($ldapfilter, 'ISO-8859-1', 'UTF-8')));
 		}
 		if ($ldapscope == "one") {
 			$ldapfunc = "ldap_list";
@@ -1687,7 +1751,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	}
 
 	/* Now lets bind as the user we found */
-	$passwd = isset($authcfg['ldap_utf8']) ? utf8_encode($passwd) : $passwd;
+	$passwd = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($passwd, 'UTF-8') : $passwd;
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
 		if ($debug) {
 			log_error(sprintf(gettext('LDAP Debug: ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
@@ -1697,7 +1761,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	}
 
 	if ($debug) {
-		$userdn = isset($authcfg['ldap_utf8']) ? utf8_decode($userdn) : $userdn;
+		$userdn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($userdn, 'ISO-8859-1', 'UTF-8') : $userdn;
 		log_error(sprintf(gettext('LDAP Debug: Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 	}
 
@@ -1892,6 +1956,7 @@ function radius_get_groups($attributes) {
 
 function get_user_expiration_date($username) {
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if ($user['expires']) {
 		return $user['expires'];
 	}
@@ -1910,6 +1975,7 @@ function is_account_expired($username) {
 
 function is_account_disabled($username) {
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if (isset($user['disabled'])) {
 		return true;
 	}
@@ -1934,6 +2000,7 @@ function get_user_settings($username) {
 	$settings['webgui']['statusmonitoringsettingspanel'] = config_path_enabled('system/webgui', 'statusmonitoringsettingspanel');
 	$settings['webgui']['pagenamefirst'] = config_path_enabled('system/webgui', 'pagenamefirst');
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if (isset($user['customsettings'])) {
 		$settings['customsettings'] = true;
 		if (isset($user['widgets'])) {
@@ -1972,6 +2039,7 @@ function get_user_settings($username) {
 function save_widget_settings($username, $settings, $message = "") {
 	global $userindex;
 	$user = getUserEntry($username);
+	$user = $user['item'];
 
 	if (strlen($message) > 0) {
 		$msgout = $message;
@@ -2023,6 +2091,7 @@ function getUserGroups($username, $authcfg, &$attributes = array()) {
 			break;
 		default:
 			$user = getUserEntry($username);
+			$user = $user['item'];
 			$allowed_groups = @local_user_get_groups($user, true);
 			break;
 	}
@@ -2050,7 +2119,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	}
 
 	if (!$authcfg) {
-		return local_backed($username, $password, $attributes);
+		return local_backed($username, $password);
 	}
 
 	$authenticated = false;
@@ -2062,8 +2131,6 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 				log_error(sprintf(gettext("LDAP authentication error: %s"), $e->getMessage()));
 			}
 			break;
-
-			break;
 		case 'radius':
 			try {
 				$authenticated = radius_backed($username, $password, $authcfg, $attributes);
@@ -2074,7 +2141,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 		default:
 			/* lookup user object by name */
 			try {
-				$authenticated = local_backed($username, $password, $attributes);
+				$authenticated = local_backed($username, $password);
 			} catch (Exception $e) {
 				log_error(sprintf(gettext("Local authentication error: %s"), $e->getMessage()));
 			}

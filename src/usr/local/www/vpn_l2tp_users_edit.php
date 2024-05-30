@@ -36,17 +36,17 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-init_config_arr(array('l2tp', 'user'));
-$a_secret = &$config['l2tp']['user'];
+config_init_path('l2tp/user');
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_secret[$id]) {
-	$pconfig['usernamefld'] = $a_secret[$id]['name'];
-	$pconfig['ip'] = $a_secret[$id]['ip'];
-	$pconfig['passwordfld'] = $a_secret[$id]['passwordfld'];
+$this_secret_config = isset($id) ? config_get_path("l2tp/user/{$id}") : null;
+if ($this_secret_config) {
+	$pconfig['usernamefld'] = $this_secret_config['name'];
+	$pconfig['ip'] = $this_secret_config['ip'];
+	$pconfig['passwordfld'] = $this_secret_config['passwordfld'];
 	$pwd_required = "";
 } else {
 	$pwd_required = "*";
@@ -57,7 +57,7 @@ if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if (isset($id) && ($a_secret[$id])) {
+	if ($this_secret_config) {
 		$reqdfields = explode(" ", "usernamefld");
 		$reqdfieldsn = array(gettext("Username"));
 	} else {
@@ -80,9 +80,9 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The IP address entered is not valid.");
 	}
 
-	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
+	if (!$input_errors && !$this_secret_config) {
 		/* make sure there are no dupes */
-		foreach ($a_secret as $secretent) {
+		foreach (config_get_path('l2tp/user', []) as $secretent) {
 			if ($secretent['name'] == $_POST['usernamefld']) {
 				$input_errors[] = gettext("Another entry with the same username already exists.");
 				break;
@@ -92,8 +92,8 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 
-		if (isset($id) && $a_secret[$id]) {
-			$secretent = $a_secret[$id];
+		if ($this_secret_config) {
+			$secretent = $this_secret_config;
 		}
 
 		$secretent['name'] = $_POST['usernamefld'];
@@ -103,10 +103,10 @@ if ($_POST['save']) {
 			$secretent['password'] = $_POST['passwordfld'];
 		}
 
-		if (isset($id) && $a_secret[$id]) {
-			$a_secret[$id] = $secretent;
+		if ($this_secret_config) {
+			config_set_path("l2tp/user/{$id}", $secretent);
 		} else {
-			$a_secret[] = $secretent;
+			config_set_path('l2tp/user/', $secretent);
 		}
 		l2tp_users_sort();
 
@@ -145,7 +145,7 @@ $pwd = new Form_Input(
 	$pconfig['passwordfld']
 );
 
-if (isset($id) && $a_secret[$id]) {
+if ($this_secret_config) {
 	$pwd->setHelp('To change the users password, enter it here.');
 }
 
@@ -159,7 +159,7 @@ $section->addInput(new Form_IpAddress(
 
 $form->add($section);
 
-if (isset($id) && $a_secret[$id]) {
+if ($this_secret_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

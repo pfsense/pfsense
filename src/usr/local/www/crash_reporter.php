@@ -85,7 +85,7 @@ if ($_POST['Submit'] == "No") {
 		$crash_reports .= "\nNo PHP errors found.\n";
 	}
 
-	$crash_files = cleanup_crash_file_list(glob("/var/crash/*"));
+	$crash_files = cleanup_crash_file_list();
 	if (count($crash_files) > 0) {
 		foreach ($crash_files as $cf) {
 			if (filesize($cf) < FILE_SIZE) {

@@ -26,26 +26,24 @@ require_once("filter.inc");
 require_once("syslog.inc");
 
 function getAdvancedNetwork($json = false) {
-	global $config;
-
 	$pconfig = array();
-	$pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
-	$pconfig['ipv6nat_ipaddr'] = isset($config['diag']['ipv6nat']['ipaddr']) ? $config['diag']['ipv6nat']['ipaddr'] : null;
-	$pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
-	$pconfig['ipv6dontcreatelocaldns'] = isset($config['system']['ipv6dontcreatelocaldns']);
-	$pconfig['radvddebug'] = isset($config['system']['radvddebug']);
-	$pconfig['ignoreiscwarning'] = isset($config['system']['ignoreiscwarning']);
-	$pconfig['dhcp6debug'] = isset($config['system']['dhcp6debug']);
-	$pconfig['dhcp6norelease'] = isset($config['system']['dhcp6norelease']);
-	$pconfig['global-v6duid'] = isset($config['system']['global-v6duid']) ? $config['system']['global-v6duid'] : null;
-	$pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
-	$pconfig['sharednet'] = isset($config['system']['sharednet']) ? $config['system']['sharednet'] : null;
-	$pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
-	$pconfig['ip_change_kill_states'] = isset($config['system']['ip_change_kill_states']) ? $config['system']['ip_change_kill_states'] : null;
-	$pconfig['hnaltqenable'] = isset($config['system']['hn_altq_enable']);
-	$pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
-	$pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
-	$pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
+	$pconfig['ipv6nat_enable'] = config_path_enabled('diag/ipv6nat');
+	$pconfig['ipv6nat_ipaddr'] = config_path_enabled('diag/ipv6nat', 'ipaddr') ? config_get_path('diag/ipv6nat/ipaddr') : null;
+	$pconfig['ipv6allow'] = config_path_enabled('system', 'ipv6allow');
+	$pconfig['ipv6dontcreatelocaldns'] = config_path_enabled('system', 'ipv6dontcreatelocaldns');
+	$pconfig['radvddebug'] = config_path_enabled('system', 'radvddebug');
+	$pconfig['ignoreiscwarning'] = config_path_enabled('system', 'ignoreiscwarning');
+	$pconfig['dhcp6debug'] = config_path_enabled('system', 'dhcp6debug');
+	$pconfig['dhcp6norelease'] = config_path_enabled('system', 'dhcp6norelease');
+	$pconfig['global-v6duid'] = config_path_enabled('system', 'global-v6duid') ? config_get_path('system/global-v6duid') : null;
+	$pconfig['prefer_ipv4'] = config_path_enabled('system', 'prefer_ipv4');
+	$pconfig['sharednet'] = config_path_enabled('system', 'sharednet') ? config_get_path('system/sharednet') : null;
+	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
+	$pconfig['ip_change_kill_states'] = config_path_enabled('system', 'ip_change_kill_states') ? config_get_path('system/ip_change_kill_states') : null;
+	$pconfig['hnaltqenable'] = config_path_enabled('system', 'hn_altq_enable');
+	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
+	$pconfig['disablesegmentationoffloading'] = config_path_enabled('system', 'disablesegmentationoffloading');
+	$pconfig['disablelargereceiveoffloading'] = config_path_enabled('system', 'disablelargereceiveoffloading');
 	$pconfig['duid'] = get_duid_from_file();
 
 	/* not kea means isc */
@@ -56,7 +54,7 @@ function getAdvancedNetwork($json = false) {
 }
 
 function saveAdvancedNetworking($post, $json = false) {
-	global $g, $config;
+	global $g;
 
 	$input_errors = array();
 	$rv = array();
@@ -97,8 +95,8 @@ function saveAdvancedNetworking($post, $json = false) {
 	}
 
 	if ($post['ipv6allow'] == "yes" && is_bogonsv6_used(true) &&
-	    (!isset($config['system']['maximumtableentries']) ||
-	     $config['system']['maximumtableentries'] <
+	    ((config_get_path('system/maximumtableentries') === null) ||
+	     config_get_path('system/maximumtableentries') <
 	     g_get('minimumtableentries_bogonsv6'))) {
 		$input_errors[] = sprintf(gettext(
 		    "In order enable IPv6 and block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
@@ -112,12 +110,12 @@ function saveAdvancedNetworking($post, $json = false) {
 
 	if (!$input_errors) {
 		if ($post['ipv6nat_enable'] == "yes") {
-			init_config_arr(array('diag', 'ipv6nat'));
-			$config['diag']['ipv6nat']['enable'] = true;
-			$config['diag']['ipv6nat']['ipaddr'] = $post['ipv6nat_ipaddr'];
+			config_init_path('diag/ipv6nat');
+			config_set_path('diag/ipv6nat/enable', true);
+			config_set_path('diag/ipv6nat/ipaddr', $post['ipv6nat_ipaddr']);
 		} else {
-			if (is_array($config['diag']) &&
-			    is_array($config['diag']['ipv6nat'])) {
+			if (is_array(config_get_path('diag')) &&
+			    is_array(config_get_path('diag/ipv6nat'))) {
 				config_del_path('diag/ipv6nat/enable');
 				config_del_path('diag/ipv6nat/ipaddr');
 			}
@@ -127,13 +125,13 @@ function saveAdvancedNetworking($post, $json = false) {
 		config_set_path('dhcpbackend', $post['dhcpbackend']);
 
 		if ($post['ipv6allow'] == "yes") {
-			$config['system']['ipv6allow'] = true;
+			config_set_path('system/ipv6allow', true);
 		} else {
 			config_del_path('system/ipv6allow');
 		}
 
 		if ($post['ipv6dontcreatelocaldns'] == "yes") {
-			$config['system']['ipv6dontcreatelocaldns'] = true;
+			config_set_path('system/ipv6dontcreatelocaldns', true);
 		} else {
 			config_del_path('system/ipv6dontcreatelocaldns');
 		}
@@ -152,74 +150,74 @@ function saveAdvancedNetworking($post, $json = false) {
 		}
 
 		if ($post['dhcp6debug'] == "yes") {
-			$config['system']['dhcp6debug'] = true;
+			config_set_path('system/dhcp6debug', true);
 		} else {
 			config_del_path('system/dhcp6debug');
 		}
 
 		if ($post['dhcp6norelease'] == "yes") {
-			$config['system']['dhcp6norelease'] = true;
+			config_set_path('system/dhcp6norelease', true);
 		} else {
 			config_del_path('system/dhcp6norelease');
 		}
 
-		if ((isset($post['dhcp6debug']) xor isset($config['system']['dhcp6debug'])) ||
-		    (isset($post['dhcp6norelease']) xor isset($config['system']['dhcp6norelease']))) {
+		if ((isset($post['dhcp6debug']) xor config_path_enabled('system', 'dhcp6debug')) ||
+		    (isset($post['dhcp6norelease']) xor config_path_enabled('system', 'dhcp6norelease'))) {
 			$dhcp6restart = true;
 		}
 
 		if ($post['prefer_ipv4'] == "yes") {
-			$config['system']['prefer_ipv4'] = true;
+			config_set_path('system/prefer_ipv4', true);
 		} else {
 			config_del_path('system/prefer_ipv4');
 		}
 
 		if (!empty($post['global-v6duid'])) {
-			$config['system']['global-v6duid'] = $post['global-v6duid'];
+			config_set_path('system/global-v6duid', $post['global-v6duid']);
 		} else {
 			config_del_path('system/global-v6duid');
 		}
 
 		if ($post['sharednet'] == "yes") {
-			$config['system']['sharednet'] = true;
+			config_set_path('system/sharednet', true);
 			system_disable_arp_wrong_if();
 		} else {
 			config_del_path('system/sharednet');
 			system_enable_arp_wrong_if();
 		}
 
-		if ((isset($post['disablechecksumoffloading']) xor isset($config['system']['disablechecksumoffloading'])) ||
-		    (isset($post['disablesegmentationoffloading']) xor isset($config['system']['disablesegmentationoffloading'])) ||
-		    (isset($post['disablelargereceiveoffloading']) xor isset($config['system']['disablelargereceiveoffloading']))) {
+		if ((isset($post['disablechecksumoffloading']) xor config_path_enabled('system', 'disablechecksumoffloading')) ||
+		    (isset($post['disablesegmentationoffloading']) xor config_path_enabled('system', 'disablesegmentationoffloading')) ||
+		    (isset($post['disablelargereceiveoffloading']) xor config_path_enabled('system', 'disablelargereceiveoffloading'))) {
 			$show_reboot_msg = true;
 		}
 
 		if ($post['disablechecksumoffloading'] == "yes") {
-			$config['system']['disablechecksumoffloading'] = true;
+			config_set_path('system/disablechecksumoffloading', true);
 		} else {
 			config_del_path('system/disablechecksumoffloading');
 		}
 
 		if ($post['disablesegmentationoffloading'] == "yes") {
-			$config['system']['disablesegmentationoffloading'] = true;
+			config_set_path('system/disablesegmentationoffloading', true);
 		} else {
 			config_del_path('system/disablesegmentationoffloading');
 		}
 
 		if ($post['disablelargereceiveoffloading'] == "yes") {
-			$config['system']['disablelargereceiveoffloading'] = true;
+			config_set_path('system/disablelargereceiveoffloading', true);
 		} else {
 			config_del_path('system/disablelargereceiveoffloading');
 		}
 
 		if ($post['hnaltqenable'] == "yes") {
-			$config['system']['hn_altq_enable'] = true;
+			config_set_path('system/hn_altq_enable', true);
 		} else {
 			config_del_path('system/hn_altq_enable');
 		}
 
 		if ($post['ip_change_kill_states'] == "yes") {
-			$config['system']['ip_change_kill_states'] = true;
+			config_set_path('system/ip_change_kill_states', true);
 		} else {
 			config_del_path('system/ip_change_kill_states');
 		}
@@ -233,10 +231,10 @@ function saveAdvancedNetworking($post, $json = false) {
 		prefer_ipv4_or_ipv6();
 
 		$pconfig['duid'] = get_duid_from_file();
-		$pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
-		$pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
-		$pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-		$pconfig['hnaltqenable'] = isset($config['system']['hn_altq_enable']);
+		$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
+		$pconfig['disablesegmentationoffloading'] = config_path_enabled('system', 'disablesegmentationoffloading');
+		$pconfig['disablelargereceiveoffloading'] = config_path_enabled('system', 'disablelargereceiveoffloading');
+		$pconfig['hnaltqenable'] = config_path_enabled('system', 'hn_altq_enable');
 
 		$changes_applied = true;
 		$retval = 0;

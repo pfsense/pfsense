@@ -26,7 +26,7 @@ function pfsense_www_class_autoloader($classname) {
 	$filename = str_replace('_', '/', $classname);
 
 	// Build the full path, load it if it exists
-	$filepath = "/usr/local/www/classes/$filename.class.php";
+	$filepath = "/usr/local/www/classes/{$filename}.class.php";
 	if (file_exists($filepath)) {
 		require_once($filepath);
 	}

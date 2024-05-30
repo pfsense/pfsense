@@ -38,7 +38,6 @@ require_once("util.inc");
  *  1: user quit
  */
 function set_networking_interfaces_ports() {
-	global $config;
 	global $g;
 	global $fp;
 
@@ -177,8 +176,9 @@ EOD;
 			}
 			$io = $i + 1;
 
-			if ($config['interfaces']['opt' . $io]['descr']) {
-				printf(gettext('%1$sOptional interface %2$s description found: %3$s'), "\n", $io, $config['interfaces']['opt' . $io]['descr']);
+			$if_descr_config = config_get_path("interfaces/opt{$io}/descr");
+			if ($if_descr_config) {
+				printf(gettext('%1$sOptional interface %2$s description found: %3$s'), "\n", $io, $if_descr_config);
 			}
 
 			printf(gettext('%1$sEnter the Optional %2$s interface name or \'a\' for auto-detection%3$s' .
@@ -239,142 +239,122 @@ EOD;
 
 	if (in_array($key, array('y', 'Y'))) {
 		if ($lanif) {
-			if (is_array($config['interfaces']['lan'])) {
+			$if_lan_config = config_get_path('interfaces/lan');
+			if (is_array($if_lan_config)) {
 				$upints = pfSense_interface_listget(IFF_UP);
-				if (in_array($config['interfaces']['lan']['if'], $upints))
+				if (in_array($if_lan_config['if'], $upints))
 					interface_bring_down('lan', true);
 			}
-			if (!is_array($config['interfaces']['lan'])) {
-				$config['interfaces']['lan'] = array();
+			if (!is_array($if_lan_config)) {
+				$if_lan_config['lan'] = array();
 			}
-			$config['interfaces']['lan']['if'] = $lanif;
-			$config['interfaces']['lan']['enable'] = true;
-		} elseif (!platform_booting()) {
+			$if_lan_config['if'] = $lanif;
+			$if_lan_config['enable'] = true;
+			config_set_path('interfaces/lan', $if_lan_config);
+		} elseif (!is_platform_booting()) {
 
 			echo "\n" . gettext("You have chosen to remove the LAN interface.") . "\n";
 			echo "\n" . gettext("Would you like to remove the LAN IP address and \nunload the interface now [y|n]?") . " ";
 
+			$if_lan_config = config_get_path('interfaces/lan');
 			if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-				if (isset($config['interfaces']['lan']) && $config['interfaces']['lan']['if']) {
-					mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
+				if (isset($if_lan_config) && $if_lan_config['if']) {
+					mwexec("/sbin/ifconfig {$if_lan_config['if']} delete");
 				}
 			}
-			if (isset($config['interfaces']['lan'])) {
+			if (isset($if_lan_config)) {
 				config_del_path('interfaces/lan');
 			}
-			if (isset($config['dhcpd']['lan'])) {
-				config_del_path('dhcpd/lan');
-			}
-			if (isset($config['dhcpdv6']['lan'])) {
-				config_del_path('dhcpdv6/lan');
-			}
-			if (isset($config['interfaces']['lan']['if'])) {
-				config_del_path('interfaces/lan/if');
-			}
-			if (isset($config['interfaces']['wan']['blockpriv'])) {
-				config_del_path('interfaces/wan/blockpriv');
-			}
-			if (isset($config['shaper'])) {
-				config_del_path('shaper');
-			}
-			if (isset($config['ezshaper'])) {
-				config_del_path('ezshaper');
-			}
-			if (isset($config['nat'])) {
-				config_del_path('nat');
-			}
+
+			config_del_path('dhcpd/lan');
+			config_del_path('dhcpdv6/lan');
+			config_del_path('interfaces/wan/blockpriv');
+			config_del_path('shaper');
+			config_del_path('ezshaper');
+			config_del_path('nat');
 		} else {
-			if (isset($config['interfaces']['lan']['if'])) {
-				mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
+			$if_lan_config = config_get_path('interfaces/lan');
+			if (isset($if_lan_config['if'])) {
+				mwexec("/sbin/ifconfig {$if_lan_config['if']} delete");
 			}
-			if (isset($config['interfaces']['lan'])) {
+			if (isset($if_lan_config)) {
 				config_del_path('interfaces/lan');
 			}
-			if (isset($config['dhcpd']['lan'])) {
-				config_del_path('dhcpd/lan');
-			}
-			if (isset($config['dhcpdv6']['lan'])) {
-				config_del_path('dhcpdv6/lan');
-			}
-			if (isset($config['interfaces']['lan']['if'])) {
-				config_del_path('interfaces/lan/if');
-			}
-			if (isset($config['interfaces']['wan']['blockpriv'])) {
-				config_del_path('interfaces/wan/blockpriv');
-			}
-			if (isset($config['shaper'])) {
-				config_del_path('shaper');
-			}
-			if (isset($config['ezshaper'])) {
-				config_del_path('ezshaper');
-			}
-			if (isset($config['nat'])) {
-				config_del_path('nat');
-			}
+			config_del_path('dhcpd/lan');
+			config_del_path('dhcpdv6/lan');
+			config_del_path('interfaces/wan/blockpriv');
+			config_del_path('shaper');
+			config_del_path('ezshaper');
+			config_del_path('nat');
 		}
+		$if_lan_config = config_get_path('interfaces/lan');
 		if (preg_match(g_get('wireless_regex'), $lanif)) {
-			if (is_array($config['interfaces']['lan']) &&
-			    !is_array($config['interfaces']['lan']['wireless'])) {
-				$config['interfaces']['lan']['wireless'] = array();
+			if (is_array($if_lan_config) &&
+			    !is_array($if_lan_config['wireless'])) {
+				config_set_path('interfaces/lan/wireless', []);
 			}
 		} else {
-			if (isset($config['interfaces']['lan'])) {
+			if (isset($if_lan_config)) {
 				config_del_path('interfaces/lan/wireless');
 			}
 		}
 
-		if (is_array($config['interfaces']['wan'])) {
+		
+		if (is_array(config_get_path('interfaces/wan'))) {
 			$upints = pfSense_interface_listget(IFF_UP);
-			if (in_array($config['interfaces']['wan']['if'], $upints))
+			if (in_array(config_get_path('interfaces/wan/if'), $upints))
 				interface_bring_down('wan', true);
 		}
-		if (!is_array($config['interfaces']['wan'])) {
-			$config['interfaces']['wan'] = array();
-		}
-		$config['interfaces']['wan']['if'] = $wanif;
-		$config['interfaces']['wan']['enable'] = true;
+		config_init_path('interfaces/wan');
+
+		$if_wan_config = config_get_path('interfaces/wan');
+		$if_wan_config['if'] = $wanif;
+		$if_wan_config['enable'] = true;
 		if (preg_match(g_get('wireless_regex'), $wanif)) {
-			if (is_array($config['interfaces']['wan']) &&
-			    !is_array($config['interfaces']['wan']['wireless'])) {
-				$config['interfaces']['wan']['wireless'] = array();
+			if (is_array($if_wan_config) &&
+			    !is_array($if_wan_config['wireless'])) {
+				$if_wan_config['wireless'] = array();
 			}
 		} else {
-			if (isset($config['interfaces']['wan'])) {
-				config_del_path('interfaces/wan/wireless');
+			if (isset($if_wan_config)) {
+				unset($if_wan_config['wireless']);
 			}
 		}
+		config_set_path('interfaces/wan', $if_wan_config);
 
-		for ($i = 0; $i < count($optif); $i++) {
-			if (is_array($config['interfaces']['opt' . ($i+1)])) {
+		$if_opt_counter = 0;
+		for (; $if_opt_counter < count($optif); $if_opt_counter++) {
+			$if_opt_name = 'opt' . ($if_opt_counter+1);
+			if (is_array(config_get_path("interfaces/{$if_opt_name}"))) {
 				$upints = pfSense_interface_listget(IFF_UP);
-				if (in_array($config['interfaces']['opt' . ($i+1)]['if'], $upints))
-					interface_bring_down('opt' . ($i+1), true);
+				if (in_array(config_get_path("interfaces/{$if_opt_name}/if"), $upints))
+					interface_bring_down($if_opt_name, true);
 			}
-			if (!is_array($config['interfaces']['opt' . ($i+1)])) {
-				$config['interfaces']['opt' . ($i+1)] = array();
-			}
-
-			$config['interfaces']['opt' . ($i+1)]['if'] = $optif[$i];
+			config_init_path("interfaces/{$if_opt_name}");
+			$if_opt_config = config_get_path("interfaces/{$if_opt_name}");
+			$if_opt_config['if'] = $optif[$if_opt_counter];
 
 			/* wireless interface? */
 			if (preg_match(g_get('wireless_regex'), $optif[$i])) {
-				if (!is_array($config['interfaces']['opt' . ($i+1)]['wireless'])) {
-					$config['interfaces']['opt' . ($i+1)]['wireless'] = array();
+				if (!is_array($if_opt_config['wireless'])) {
+					$if_opt_config['wireless'] = array();
 				}
 			} else {
-				config_del_path('interfaces/opt' . ($i+1) . '/wireless');
+				unset($if_opt_config['wireless']);
 			}
 
-			if (empty($config['interfaces']['opt' . ($i+1)]['descr'])) {
-				$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
-				config_del_path('interfaces/opt' . ($i+1) . '/enable');
+			if (empty($if_opt_config['descr'])) {
+				$if_opt_config['descr'] = strtoupper($if_opt_name);
 			}
+			config_set_path("interfaces/{$if_opt_name}", $if_opt_config);
 		}
 
 		/* remove all other (old) optional interfaces */
-		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++) {
-			config_del_path('interfaces/opt' . ($i+1));
+		$if_config = config_get_path('interfaces');
+		for (; isset($if_config['opt' . ($if_opt_counter+1)]); $if_opt_counter++) {
+			unset($if_config['opt' . ($if_opt_counter+1)]);
 		}
+		config_set_path('interfaces', $if_config);
 
 		printf(gettext("%sWriting configuration..."), "\n");
 		write_config(gettext("Console assignment of interfaces"));
@@ -426,7 +406,7 @@ function interfaces_setup() {
 }
 
 function vlan_setup() {
-	global $iflist, $config, $fp;
+	global $iflist, $fp;
 
 	$iflist = get_interface_list();
 
@@ -440,7 +420,7 @@ function vlan_setup() {
 		}
 	}
 
-	init_config_arr(array('vlans', 'vlan'));
+	config_init_path('vlans/vlan');
 	echo "\n";
 
 	$vlanif = 0;
@@ -487,22 +467,18 @@ function vlan_setup() {
 			continue;
 		}
 
-		if (is_array($config['vlans']['vlan'])) {
-			foreach (config_get_path('vlans/vlan', []) as $existingvlan) {
-				if ($vlan['if'] == $existingvlan['if'] && $vlan['tag'] == $existingvlan['tag']) {
-					printf("\n\n" . gettext("This parent interface and VLAN already created."));
-					continue 2;
-				}
+		foreach (config_get_path('vlans/vlan', []) as $existingvlan) {
+			if ($vlan['if'] == $existingvlan['if'] && $vlan['tag'] == $existingvlan['tag']) {
+				printf("\n\n" . gettext("This parent interface and VLAN already created."));
+				continue 2;
 			}
 		}
-		$config['vlans']['vlan'][] = $vlan;
+		config_set_path('vlans/vlan/', $vlan);
 		$vlanif++;
 	}
 }
 
 function check_for_alternate_interfaces() {
-	global $config;
-
 	// If the WAN and/or LAN devices in the factory default config do not exist,
 	// then look for alternate devices.
 	// This lets many systems boot a factory default config without being
@@ -512,6 +488,7 @@ function check_for_alternate_interfaces() {
 	$default_device = array();
 
 	// If we recognise the platform, then specify the devices directly.
+	$if_config = config_get_path('interfaces', []);
 	switch ($specplatform['name']) {
 		case 'alix':
 			$default_device['wan'] = "vr1";
@@ -522,17 +499,17 @@ function check_for_alternate_interfaces() {
 			$default_device['lan'] = "re2";
 			break;
 		case 'Turbot Dual-E':
-			$config['interfaces']['wan']['if'] = 'igb0';
-			$config['interfaces']['lan']['if'] = 'igb1';
+			$if_config['wan']['if'] = 'igb0';
+			$if_config['lan']['if'] = 'igb1';
 			break;
 		case 'C2758':
-			$config['interfaces']['wan']['if'] = 'igb0';
-			$config['interfaces']['lan']['if'] = 'igb1';
-			$config['interfaces']['opt1'] = array(
+			$if_config['wan']['if'] = 'igb0';
+			$if_config['lan']['if'] = 'igb1';
+			$if_config['opt1'] = array(
 				'if' => 'igb2',
 				'descr' => 'OPT1'
 			);
-			$config['interfaces']['opt2'] = array(
+			$if_config['opt2'] = array(
 				'if' => 'igb3',
 				'descr' => 'OPT2'
 			);
@@ -541,30 +518,30 @@ function check_for_alternate_interfaces() {
 		case 'SG-2220':
 			/* SG-4860 or SG-8860 */
 			if (does_interface_exist('igb4')) {
-				$config['interfaces']['wan']['if'] = 'igb1';
-				$config['interfaces']['lan']['if'] = 'igb0';
+				$if_config['wan']['if'] = 'igb1';
+				$if_config['lan']['if'] = 'igb0';
 			} else {
-				$config['interfaces']['wan']['if'] = 'igb0';
-				$config['interfaces']['lan']['if'] = 'igb1';
+				$if_config['wan']['if'] = 'igb0';
+				$if_config['lan']['if'] = 'igb1';
 			}
 			/* It has 4 ports */
 			if (does_interface_exist('igb3')) {
-				$config['interfaces']['opt1'] = array(
+				$if_config['opt1'] = array(
 					'if' => 'igb2',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'if' => 'igb3',
 					'descr' => 'OPT2'
 				);
 			}
 			/* It has 6 ports */
 			if (does_interface_exist('igb5')) {
-				$config['interfaces']['opt3'] = array(
+				$if_config['opt3'] = array(
 					'if' => 'igb4',
 					'descr' => 'OPT3'
 				);
-				$config['interfaces']['opt4'] = array(
+				$if_config['opt4'] = array(
 					'if' => 'igb5',
 					'descr' => 'OPT4'
 				);
@@ -573,65 +550,65 @@ function check_for_alternate_interfaces() {
 		case '1537':
 			if (does_interface_exist('cxl0')) {
 				/* It has 10G SFP+ addon */
-				$config['interfaces']['wan']['if'] = 'cxl0';
-				$config['interfaces']['lan']['if'] = 'cxl1';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'cxl0';
+				$if_config['lan']['if'] = 'cxl1';
+				$if_config['opt1'] = array(
 					'if' => 'igb0',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'enable' => true,
 					'if' => 'ix0',
 					'descr' => 'OPT2'
 				);
-				$config['interfaces']['opt3'] = array(
+				$if_config['opt3'] = array(
 					'if' => 'igb1',
 					'descr' => 'OPT3'
 				);
-				$config['interfaces']['opt4'] = array(
+				$if_config['opt4'] = array(
 					'enable' => true,
 					'if' => 'ix1',
 					'descr' => 'OPT4'
 				);
 			} elseif (does_interface_exist('igb4')) {
 				/* It has 4 port ethernet addon */
-				$config['interfaces']['wan']['if'] = 'igb4';
-				$config['interfaces']['lan']['if'] = 'igb5';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'igb4';
+				$if_config['lan']['if'] = 'igb5';
+				$if_config['opt1'] = array(
 					'enable' => true,
 					'if' => 'ix0',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'enable' => true,
 					'if' => 'ix1',
 					'descr' => 'OPT2'
 				);
-				$config['interfaces']['opt3'] = array(
+				$if_config['opt3'] = array(
 					'if' => 'igb3',
 					'descr' => 'OPT3'
 				);
-				$config['interfaces']['opt4'] = array(
+				$if_config['opt4'] = array(
 					'if' => 'igb2',
 					'descr' => 'OPT4'
 				);
-				$config['interfaces']['opt5'] = array(
+				$if_config['opt5'] = array(
 					'if' => 'igb1',
 					'descr' => 'OPT5'
 				);
-				$config['interfaces']['opt6'] = array(
+				$if_config['opt6'] = array(
 					'if' => 'igb0',
 					'descr' => 'OPT6'
 				);
 			} else {
-				$config['interfaces']['wan']['if'] = 'igb0';
-				$config['interfaces']['lan']['if'] = 'igb1';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'igb0';
+				$if_config['lan']['if'] = 'igb1';
+				$if_config['opt1'] = array(
 					'enable' => true,
 					'if' => 'ix0',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'enable' => true,
 					'if' => 'ix1',
 					'descr' => 'OPT2'
@@ -642,64 +619,64 @@ function check_for_alternate_interfaces() {
 		case '1541':
 			if (does_interface_exist('igb2')) {
 				/* It has 4 port Intel 1Gb expansion card */
-				$config['interfaces']['wan']['if'] = 'igb4';
-				$config['interfaces']['lan']['if'] = 'igb5';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'igb4';
+				$if_config['lan']['if'] = 'igb5';
+				$if_config['opt1'] = array(
 					'enable' => true,
 					'if' => 'ix0',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'enable' => true,
 					'if' => 'ix1',
 					'descr' => 'OPT2'
 				);
-				$config['interfaces']['opt3'] = array(
+				$if_config['opt3'] = array(
 					'if' => 'igb3',
 					'descr' => 'OPT3'
 				);
-				$config['interfaces']['opt4'] = array(
+				$if_config['opt4'] = array(
 					'if' => 'igb2',
 					'descr' => 'OPT4'
 				);
-				$config['interfaces']['opt5'] = array(
+				$if_config['opt5'] = array(
 					'if' => 'igb1',
 					'descr' => 'OPT5'
 				);
-				$config['interfaces']['opt6'] = array(
+				$if_config['opt6'] = array(
 					'if' => 'igb0',
 					'descr' => 'OPT6'
 				);
 			} elseif (does_interface_exist('cxl0')) {
 				/* It has 2 port Chelsio 10Gb expansion card */
-				$config['interfaces']['wan']['if'] = 'cxl0';
-				$config['interfaces']['lan']['if'] = 'cxl1';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'cxl0';
+				$if_config['lan']['if'] = 'cxl1';
+				$if_config['opt1'] = array(
 					'if' => 'igb0',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'enable' => true,
 					'if' => 'ix0',
 					'descr' => 'OPT2'
 				);
-				$config['interfaces']['opt3'] = array(
+				$if_config['opt3'] = array(
 					'if' => 'igb1',
 					'descr' => 'OPT3'
 				);
-				$config['interfaces']['opt4'] = array(
+				$if_config['opt4'] = array(
 					'enable' => true,
 					'if' => 'ix1',
 					'descr' => 'OPT4'
 				);
 			} else {
-				$config['interfaces']['wan']['if'] = 'ix0';
-				$config['interfaces']['lan']['if'] = 'ix1';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'ix0';
+				$if_config['lan']['if'] = 'ix1';
+				$if_config['opt1'] = array(
 					'if' => 'igb0',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'if' => 'igb1',
 					'descr' => 'OPT2'
 				);
@@ -708,74 +685,74 @@ function check_for_alternate_interfaces() {
 		case 'RCC':
 			if (does_interface_exist('igb7')) {
 				// has quad port expansion card
-				$config['interfaces']['opt5'] = array(
+				$if_config['opt5'] = array(
 					'if' => 'igb0',
 					'descr' => 'OPT5'
 				);
-				$config['interfaces']['opt6'] = array(
+				$if_config['opt6'] = array(
 					'if' => 'igb1',
 					'descr' => 'OPT6'
 				);
-				$config['interfaces']['opt7'] = array(
+				$if_config['opt7'] = array(
 					'if' => 'igb2',
 					'descr' => 'OPT7'
 				);
-				$config['interfaces']['opt8'] = array(
+				$if_config['opt8'] = array(
 					'if' => 'igb3',
 					'descr' => 'OPT8'
 				);
-				$config['interfaces']['wan']['if'] = 'igb4';
-				$config['interfaces']['lan']['if'] = 'igb6';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'igb4';
+				$if_config['lan']['if'] = 'igb6';
+				$if_config['opt1'] = array(
 					'if' => 'igb5',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'if' => 'igb7',
 					'descr' => 'OPT2'
 				);
 			} else {
-				$config['interfaces']['wan']['if'] = 'igb0';
-				$config['interfaces']['lan']['if'] = 'igb2';
-				$config['interfaces']['opt1'] = array(
+				$if_config['wan']['if'] = 'igb0';
+				$if_config['lan']['if'] = 'igb2';
+				$if_config['opt1'] = array(
 					'if' => 'igb1',
 					'descr' => 'OPT1'
 				);
-				$config['interfaces']['opt2'] = array(
+				$if_config['opt2'] = array(
 					'if' => 'igb3',
 					'descr' => 'OPT2'
 				);
 			}
-			$config['interfaces']['opt3'] = array(
+			$if_config['opt3'] = array(
 				'enable' => true,
 				'if' => 'ix0',
 				'descr' => 'OPT3'
 			);
-			$config['interfaces']['opt4'] = array(
+			$if_config['opt4'] = array(
 				'enable' => true,
 				'if' => 'ix1',
 				'descr' => 'OPT4'
 			);
 			break;
 		case '5100':
-			$config['interfaces']['wan']['if'] = 'igb0';
-			$config['interfaces']['lan']['if'] = 'igb1';
-			$config['interfaces']['opt1'] = array(
+			$if_config['wan']['if'] = 'igb0';
+			$if_config['lan']['if'] = 'igb1';
+			$if_config['opt1'] = array(
 				'enable' => true,
 				'if' => 'ix0',
 				'descr' => 'OPT1'
 			);
-			$config['interfaces']['opt2'] = array(
+			$if_config['opt2'] = array(
 				'enable' => true,
 				'if' => 'ix1',
 				'descr' => 'OPT2'
 			);
-			$config['interfaces']['opt3'] = array(
+			$if_config['opt3'] = array(
 				'enable' => true,
 				'if' => 'ix2',
 				'descr' => 'OPT3'
 			);
-			$config['interfaces']['opt4'] = array(
+			$if_config['opt4'] = array(
 				'enable' => true,
 				'if' => 'ix3',
 				'descr' => 'OPT4'
@@ -786,6 +763,7 @@ function check_for_alternate_interfaces() {
 			$default_device['lan'] = "";
 			break;
 	}
+	config_set_path('interfaces', $if_config);
 
 	// Other common device names can be put here and will be looked for
 	// if the system was not one of the known platforms.
@@ -794,24 +772,26 @@ function check_for_alternate_interfaces() {
 	$interface_assignment_changed = false;
 
 	foreach ($other_devices_arr as $ifname => $other_devices) {
-		if (!does_interface_exist($config['interfaces'][$ifname]['if'])) {
+		$if_config = config_get_path("interfaces/{$ifname}/if");
+		if (!does_interface_exist($if_config)) {
 			if (does_interface_exist($default_device[$ifname])) {
-				$config['interfaces'][$ifname]['if'] = $default_device[$ifname];
+				$if_config = $default_device[$ifname];
 				$interface_assignment_changed = true;
 			} else {
 				foreach ($other_devices as $other_device) {
 					if (does_interface_exist($other_device)) {
-						$config['interfaces'][$ifname]['if'] = $other_device;
+						$if_config = $other_device;
 						$interface_assignment_changed = true;
 						break;
 					}
 				}
 			}
+			config_set_path("interfaces/{$ifname}/if", $if_config);
 		}
 	}
 
 	if ($interface_assignment_changed) {
-		write_config("Factory default boot detected WAN " . $config['interfaces']['wan']['if'] . " and LAN " . $config['interfaces']['lan']['if']);
+		write_config("Factory default boot detected WAN " . config_get_path('interfaces/wan/if') . " and LAN " . config_get_path('interfaces/lan/if'));
 	}
 }
 

@@ -37,13 +37,15 @@ function schedulecmp($a, $b) {
 }
 
 function schedule_sort() {
-	global $g, $config;
+	global $g;
 
-	if (!is_array($config['schedules']['schedule'])) {
+	$schedule_config = config_get_path('schedules/schedule');
+	if (!is_array($schedule_config)) {
 		return;
 	}
 
-	usort($config['schedules']['schedule'], "schedulecmp");
+	usort($schedule_config, "schedulecmp");
+	config_set_path('schedules/schedule', $schedule_config);
 }
 
 require_once("guiconfig.inc");
@@ -59,8 +61,8 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
-init_config_arr(array('schedules', 'schedule'));
-$a_schedules = &$config['schedules']['schedule'];
+config_init_path('schedules/schedule');
+$a_schedules = config_get_path('schedules/schedule');
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -182,6 +184,7 @@ if ($_POST['save']) {
 		} else {
 			$a_schedules[] = $schedule;
 		}
+		config_set_path('schedules/schedule', $a_schedules);
 
 		schedule_sort();
 

@@ -45,43 +45,45 @@ function save_setupwizard_config(
 	$wangateway,
 	$wanip,
 	$wantype,
-	$pppoeUsername,
-	$pppoePassword,
-	$pppoeOnDemand,
-	$pppoeIdelTimeout,
+	$pppUsername,
+	$pppPassword,
+	$pppOnDemand,
+	$pppIdleTimeout,
 	$pppoeServiceName,
 	$ppppoeLocalIP) {
 
-	global $config, $g;
+	global $g;
 
 	// General ====================================================================================================================
-	$config['system']['hostname'] = $hostname;
-	$config['system']['domain'] = $domain;
+	config_set_path('system/hostname', $hostname);
+	config_set_path('system/domain', $domain);
 
 	// Time =======================================================================================================================
-	$config['system']['timezone'] = $timezone;
-	$config['system']['timeservers'] = $timeservers;
+	config_set_path('system/timezone', $timezone);
+	config_set_path('system/timeservers', $timeservers);
 
 	// WAN ========================================================================================================================
-	setorforget($config['interfaces']['wan']['spoofmac'], $spoofmac);
-	setorforget($config['interfaces']['wan']['mtu'], $mtu);
-	setorforget($config['interfaces']['wan']['mss'], $mss);
-	$config['interfaces']['wan']['dhcphostname'] = $dhcphostname;
+	$if_wan_config = config_get_path('interfaces/wan');
+	setorforget($if_wan_config['spoofmac'], $spoofmac);
+	setorforget($if_wan_config['mtu'], $mtu);
+	setorforget($if_wan_config['mss'], $mss);
+	$if_wan_config['dhcphostname'] = $dhcphostname;
+	config_set_path('interfaces/wan', $if_wan_config);
 
 	if ($bogons == "on") {
-		$config['interfaces']['wan']['blockbogons'] = "on";
+		config_set_path('interfaces/wan/blockbogons', "on");
 	} else {
 		config_del_path('interfaces/wan/blockbogons');
 	}
 
 	if ($rfc1918 == "on") {
-		$config['interfaces']['wan']['blockpriv'] = "on";
+		config_set_path('interfaces/wan/blockpriv', "on");
 	} else {
 		config_del_path('interfaces/wan/blockpriv');
 	}
 
 	if (strlen($wangateway) > 0) {
-		init_config_arr(array('gateways', 'gateway_item'));
+		config_init_path('gateways/gateway_item');
 		$found = false;
 		$defaultgw_found = false;
 		$gwlist = config_get_path('gateways/gateway_item', []);
@@ -107,21 +109,21 @@ function save_setupwizard_config(
 			$newgw['weight'] = 1;
 			$newgw['descr'] = "WAN Gateway";
 			$newgw['defaultgw'] = !$defaultgw_found;
-			$config['gateways']['gateway_item'][] = $newgw;
-			$config['interfaces']['wan']['gateway'] = "WANGW";
+			config_set_path('gateways/gateway_item/', $newgw);
+			config_set_path('interfaces/wan/gateway', "WANGW");
 		}
 	}
 
 	$pppfg = array();
 	$type = $wantype;
 
-	init_config_arr(array('ppps', 'ppp'));
-	if (count($config['ppps']['ppp'])) {
+	config_init_path('ppps/ppp');
+	if (count(config_get_path('ppps/ppp', []))) {
 		foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
 			if ($ppp['ptpid'] == "0") {
-				if ((substr($config['interfaces']['wan']['if'],0,5) == "pppoe") || (substr($config['interfaces']['wan']['if'],0,4) == "pptp")) {
+				if ((substr(config_get_path('interfaces/wan/if'),0,5) == "pppoe") || (substr(config_get_path('interfaces/wan/if'),0,4) == "pptp")) {
 					$oldif = explode(",", $ppp['ports']);
-					$config['interfaces']['wan']['if'] = $oldif[0];
+					config_set_path('interfaces/wan/if', $oldif[0]);
 				}
 				if ($type == "pppoe" || $type == "pptp")
 					config_del_path("ppps/ppp/{$pppid}");
@@ -142,17 +144,17 @@ function save_setupwizard_config(
 		$tmp['type'] = $type;
 		$tmp['if'] = $type . "0";
 		$tmp['ports'] = config_get_path('interfaces/wan/if');
-		$config['ppps']['ppp'][] = array_merge($tmp, $pppfg);
+		config_set_path('ppps/ppp/', array_merge($tmp, $pppfg));
 		unset($tmp);
-		$config['interfaces']['wan']['if'] = $type."0";
+		config_set_path('interfaces/wan/if', $type."0");
 	}
 
 	if(strpos($wanip, "/") !== false){
 		$ip = explode("/", $wanip);
-		$config['interfaces']['wan']['ipaddr'] = $ip[0];
-		$config['interfaces']['wan']['subnet'] = $ip[1];		
+		config_set_path('interfaces/wan/ipaddr', $ip[0]);
+		config_set_path('interfaces/wan/subnet', $ip[1]);		
 	} else {
-		$config['interfaces']['wan']['ipaddr'] = $wanip;
+		config_set_path('interfaces/wan/ipaddr', $wanip);
 	}
 
 	// LAN ========================================================================================================================
@@ -160,14 +162,14 @@ function save_setupwizard_config(
 	$addr = $lp[0];
 	$mask = $lp[1];
 
-	$config['interfaces']['lan']['ipaddr'] = $addr;
-	$config['interfaces']['lan']['subnet'] = $mask;
+	config_set_path('interfaces/lan/ipaddr', $addr);
+	config_set_path('interfaces/lan/subnet', $mask);
 
-	init_config_arr(array('dhcpd', 'lan', 'range', 'from'));
-	init_config_arr(array('dhcpd', 'lan', 'range', 'to'));
+	config_init_path('dhcpd/lan/range/from');
+	config_init_path('dhcpd/lan/range/to');
 
-	if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$addr}/{$mask}") ||
-	    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$addr}/{$mask}")) {
+	if (!ip_in_subnet(config_get_path('dhcpd/lan/range/from'), "{$addr}/{$mask}") ||
+	    !ip_in_subnet(config_get_path('dhcpd/lan/range/to'), "{$addr}/{$mask}")) {
 
 		$ipaddresses_before = ip_range_size_v4($lowestip, $addr);
 		$ipaddresses_after = ip_range_size_v4($addr, $highestip);
@@ -177,35 +179,35 @@ function save_setupwizard_config(
 				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
 				// This case will work out like the old defaults if the user has specified the ".1" address.
 				// The range will be something like ".10" to ".245"
-				$config['dhcpd']['lan']['range']['from'] = ip_after($addr, 9);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+				config_set_path('dhcpd/lan/range/from', ip_after($addr, 9));
+				config_set_path('dhcpd/lan/range/to', ip_before($highestip, 10));
 			} else {
 				// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
-				$config['dhcpd']['lan']['range']['from'] = ip_after($addr);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+				config_set_path('dhcpd/lan/range/from', ip_after($addr));
+				config_set_path('dhcpd/lan/range/to', ip_before($highestip));
 			}
 		} else {
 			// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
 			if ($ipaddresses_before > 30) {
 				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($addr, 9);
+				config_set_path('dhcpd/lan/range/from', ip_after($lowestip, 10));
+				config_set_path('dhcpd/lan/range/to', ip_before($addr, 9));
 			} else {
 				// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
-				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($addr);
+				config_set_path('dhcpd/lan/range/from', ip_after($lowestip));
+				config_set_path('dhcpd/lan/range/to', ip_before($addr));
 			}
 		}
 	}
 
 	// DNS ========================================================================================================================
 	if ($dnsoverride == "on") {
-		$config['system']['dnsallowoverride'] = "on";
+		config_set_path('system/dnsallowoverride', "on");
 	} else {
 		config_del_path('system/dnsallowoverride');
 	}
 
-	$config['system']['dnsserver'] = array($primarydns, $secondarydns);
+	config_set_path('system/dnsserver', array($primarydns, $secondarydns));
 
 	write_config("Configuration updated by setup wizard");
 	reload_all();

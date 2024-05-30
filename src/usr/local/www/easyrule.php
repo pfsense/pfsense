@@ -42,7 +42,7 @@ if ($_POST && $confirmed && isset($_POST['action'])) {
 	switch ($_POST['action']) {
 		case 'block':
 			/* Check that we have a valid host */
-			$message = easyrule_parse_block($_POST['int'], $_POST['src'], $_POST['ipproto']);
+			$message = easyrule_parse_block($_POST['int'], $_POST['src']);
 			break;
 		case 'pass':
 			$message = easyrule_parse_pass($_POST['int'], $_POST['proto'], $_POST['src'], $_POST['dst'], $_POST['dstport'], $_POST['ipproto']);

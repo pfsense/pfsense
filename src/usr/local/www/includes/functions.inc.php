@@ -96,13 +96,8 @@ function cpu_usage() {
 }
 
 function get_pfstate($percent=false) {
-	global $config;
 	$matches = "";
-	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
-		$maxstates="{$config['system']['maximumstates']}";
-	} else {
-		$maxstates=pfsense_default_state_size();
-	}
+	$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 		$curentries = $matches[1];
@@ -245,6 +240,10 @@ define("INTEL_XEOND_QAT", "0x6f548086");
 define("INTEL_XEOND_QAT_VF", "0x6f558086");
 define("INTEL_DH895XCC_QAT", "0x04358086");
 define("INTEL_DH895XCC_QAT_VF", "0x04438086");
+define("INTEL_4XXX_QAT", "0x49408086");
+define("INTEL_4XXX_QAT_VF", "0x49418086");
+define("INTEL_401XX_QAT", "0x49428086");
+define("INTEL_401XX_QAT_VF", "0x49438086");
 define("AESNI_ALGS", "AES-CBC,AES-CCM,AES-GCM,AES-ICM,AES-XTS");
 define("AESNI_ALGS_SHA", "SHA1,SHA256");
 define("QAT_ALGS", "AES-CBC,AES-CCM,AES-GCM,AES-ICM,AES-XTS,SHA1,SHA256,SHA384,SHA512");
@@ -341,7 +340,8 @@ function get_cpu_crypto_support() {
 	$QATIDS = [
 		INTEL_C2000_IQIA_PHYS, INTEL_200XX_QAT, INTEL_200XX_QAT_VF,
 		INTEL_C3K_QAT, INTEL_C3K_QAT_VF, INTEL_C620_QAT, INTEL_C620_QAT_VF,
-		INTEL_XEOND_QAT, INTEL_XEOND_QAT_VF, INTEL_DH895XCC_QAT, INTEL_DH895XCC_QAT_VF
+		INTEL_XEOND_QAT, INTEL_XEOND_QAT_VF, INTEL_DH895XCC_QAT, INTEL_DH895XCC_QAT_VF,
+		INTEL_4XXX_QAT, INTEL_4XXX_QAT_VF, INTEL_401XX_QAT, INTEL_401XX_QAT_VF
 	];
 
 	/* Defaults */
@@ -429,7 +429,6 @@ function get_load_average() {
 }
 
 function get_interfacestats() {
-	global $config;
 	//build interface list for widget use
 	$ifdescrs = get_configured_interface_list();
 
@@ -469,7 +468,6 @@ function get_interfacestats() {
 
 function get_interfacestatus() {
 	$data = "";
-	global $config;
 
 	//build interface list for widget use
 	$ifdescrs = get_configured_interface_with_descr();

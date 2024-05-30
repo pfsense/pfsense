@@ -37,8 +37,7 @@ require_once('functions.inc');
 require_once('filter.inc');
 require_once('shaper.inc');
 
-init_config_arr(['staticroutes', 'route']);
-$a_routes = &$config['staticroutes']['route'];
+config_init_path('staticroutes/route');
 $a_gateways = get_gateways(GW_CACHE_ALL);
 $changedesc_prefix = gettext('Static Routes') . ": ";
 
@@ -67,10 +66,10 @@ if ($_POST['apply']) {
 }
 
 if ($_POST['act'] === 'del') {
-	if ($a_routes[$_POST['id']]) {
-		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), $a_routes[$_POST['id']]['network']);
+	if (config_get_path("staticroutes/route/{$_POST['id']}")) {
+		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), config_get_path("staticroutes/route/{$_POST['id']}/network"));
 		delete_static_route($_POST['id'], true);
-		unset($a_routes[$_POST['id']]);
+		config_del_path("staticroutes/route/{$_POST['id']}");
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header('Location: system_routes.php');
@@ -83,9 +82,9 @@ if (isset($_POST['del_x'])) {
 	if (is_array($_POST['route']) && count($_POST['route'])) {
 		$deleted_routes = '';
 		foreach ($_POST['route'] as $routei) {
-			$deleted_routes .= ' ' . $a_routes[$routei]['network'];
+			$deleted_routes .= ' ' . config_get_path("staticroutes/route/{$routei}/network");
 			delete_static_route($routei, true);
-			unset($a_routes[$routei]);
+			config_del_path("staticroutes/route/{$routei}");
 		}
 		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), $deleted_routes);
 		write_config($changedesc);
@@ -96,21 +95,22 @@ if (isset($_POST['del_x'])) {
 }
 
 if ($_POST['act'] === 'toggle') {
-	if ($a_routes[$_POST['id']]) {
+	$this_route_config = config_get_path("staticroutes/route/{$_POST['id']}");
+	if ($this_route_config) {
 		$do_update_config = true;
-		if (isset($a_routes[$_POST['id']]['disabled'])) {
+		if (isset($this_route_config['disabled'])) {
 			// Do not enable a route whose gateway is disabled
-			if (isset($a_gateways[$a_routes[$_POST['id']]['gateway']]['disabled'])) {
+			if (isset($a_gateways[$this_route_config['gateway']]['disabled'])) {
 				$do_update_config = false;
-				$input_errors[] = $changedesc_prefix . sprintf(gettext('gateway is disabled, cannot enable route to %s'), $a_routes[$_POST['id']]['network']);
+				$input_errors[] = $changedesc_prefix . sprintf(gettext('gateway is disabled, cannot enable route to %s'), $this_route_config['network']);
 			} else {
-				unset($a_routes[$_POST['id']]['disabled']);
-				$changedesc = $changedesc_prefix . sprintf(gettext('enabled route to %s'), $a_routes[$_POST['id']]['network']);
+				config_del_path("staticroutes/route/{$_POST['id']}/disabled");
+				$changedesc = $changedesc_prefix . sprintf(gettext('enabled route to %s'), $this_route_config['network']);
 			}
 		} else {
 			delete_static_route($_POST['id']);
-			$a_routes[$_POST['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . sprintf(gettext('disabled route to %s'), $a_routes[$_POST['id']]['network']);
+			config_set_path("staticroutes/route/{$_POST['id']}/disabled", true);
+			$changedesc = $changedesc_prefix . sprintf(gettext('disabled route to %s'), $this_route_config['network']);
 		}
 
 		if ($do_update_config) {
@@ -134,6 +134,7 @@ if($_POST['save']) {
 	}
 	/* move selected routes before this route */
 	if (isset($movebtn) && is_array($_POST['route']) && count($_POST['route'])) {
+		$a_routes = config_get_path('staticroutes/route');
 		$a_routes_new = array();
 
 		/* copy all routes < $movebtn and not selected */
@@ -165,7 +166,7 @@ if($_POST['save']) {
 			}
 		}
 		if (count($a_routes_new) > 0) {
-			$a_routes = $a_routes_new;
+			config_set_path('staticroutes/route', $a_routes_new);
 		}
 
 		if (write_config(gettext('Saved static routes configuration.'))) {
@@ -217,7 +218,7 @@ display_top_tabs($tab_array);
 				</thead>
 				<tbody>
 <?php
-foreach ($a_routes as $i => $route):
+foreach (config_get_path('staticroutes/route', []) as $i => $route):
 	if (isset($a_gateways[$route['gateway']]['inactive'])) {
 		$icon = 'fa-regular fa-circle-xmark';
 		$title = gettext('Route inactive, gateway interface is missing');

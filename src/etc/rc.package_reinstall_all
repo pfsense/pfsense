@@ -29,7 +29,7 @@ $max_tries = 5;
 mark_subsystem_dirty('packagelock');
 
 /* If it's still booting, give it a few seconds before start */
-if (platform_booting()) {
+if (is_platform_booting()) {
 	sleep(5);
 }
 

@@ -31,23 +31,35 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-init_config_arr(array('qinqs', 'qinqentry'));
-$a_qinqs = &$config['qinqs']['qinqentry'];
+config_init_path('qinqs/qinqentry');
 
 if ($_POST['act'] == "del") {
 	$id = $_POST['id'];
 
+	/*
+	 * Check user privileges to test if the user is allowed to make changes.
+	 * Otherwise users can end up in an inconsistent state where some changes are
+	 * performed and others denied. See https://redmine.pfsense.org/issues/15318
+	 */
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	phpsession_end();
+
+	if ($read_only) {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
+
+	$this_qinq_config = config_get_path("qinqs/qinqentry/{$id}");
 	/* check if still in use */
-	if (isset($a_qinqs) && vlan_inuse($a_qinqs[$id])) {
+	if ((config_get_path('qinqs/qinqentry') !== null) && vlan_inuse($this_qinq_config)) {
 		$input_errors[] = gettext("This QinQ cannot be deleted because it is still being used as an interface.");
-	} elseif (empty($a_qinqs[$id]['vlanif']) || !does_interface_exist($a_qinqs[$id]['vlanif'])) {
+	} elseif (empty($this_qinq_config['vlanif']) || !does_interface_exist($this_qinq_config['vlanif'])) {
 		$input_errors[] = gettext("QinQ interface does not exist");
 	} else {
-		$qinq =& $a_qinqs[$id];
-
-		$delmembers = explode(" ", $qinq['members']);
+		$delmembers = explode(" ", $this_qinq_config['members']);
 		foreach ($delmembers as $tag) {
-			if (qinq_inuse($qinq, $tag)) {
+			if (qinq_inuse($this_qinq_config, $tag)) {
 				$input_errors[] = gettext("This QinQ cannot be deleted because one of it tags is still being used as an interface.");
 				break;
 			}
@@ -55,14 +67,12 @@ if ($_POST['act'] == "del") {
 	}
 
 	if (empty($input_errors)) {
-		$qinq =& $a_qinqs[$id];
-
-		$delmembers = explode(" ", $qinq['members']);
+		$delmembers = explode(" ", $this_qinq_config['members']);
 		foreach ($delmembers as $tag) {
-			exec("/sbin/ifconfig {$qinq['vlanif']}.{$tag} destroy");
+			exec("/sbin/ifconfig {$this_qinq_config['vlanif']}.{$tag} destroy");
 		}
-		pfSense_interface_destroy($qinq['vlanif']);
-		unset($a_qinqs[$id]);
+		pfSense_interface_destroy($this_qinq_config['vlanif']);
+		config_del_path("qinqs/qinqentry/{$id}");
 
 		write_config("QinQ interface deleted");
 
@@ -108,7 +118,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_qinqs as $i => $qinq):?>
+<?php foreach (config_get_path('qinqs/qinqentry', []) as $i => $qinq):?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($qinq['if'])?>

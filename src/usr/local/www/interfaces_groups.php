@@ -31,19 +31,18 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-init_config_arr(array('ifgroups', 'ifgroupentry'));
-$a_ifgroups = &$config['ifgroups']['ifgroupentry'];
+config_init_path('ifgroups/ifgroupentry');
 
 if ($_POST['act'] == "del") {
-	if ($a_ifgroups[$_POST['id']]) {
-		$members = explode(" ", $a_ifgroups[$_POST['id']]['members']);
+	if (config_get_path("ifgroups/ifgroupentry/{$_POST['id']}")) {
+		$members = explode(" ", config_get_path("ifgroups/ifgroupentry/{$_POST['id']}"));
 		foreach ($members as $ifs) {
 			$realif = get_real_interface($ifs);
 			if ($realif) {
-				mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$_POST['id']]['ifname']);
+				mwexec("/sbin/ifconfig {$realif} -group " . config_get_path("ifgroups/ifgroupentry/{$_POST['id']}/ifname"));
 			}
 		}
-		unset($a_ifgroups[$_POST['id']]);
+		config_del_path("ifgroups/ifgroupentry/{$_POST['id']}");
 		write_config("Interface Group deleted");
 		header("Location: interfaces_groups.php");
 		exit;
@@ -82,7 +81,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_ifgroups as $i => $ifgroupentry): ?>
+<?php foreach (config_get_path('ifgroups/ifgroupentry', []) as $i => $ifgroupentry): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($ifgroupentry['ifname']); ?>

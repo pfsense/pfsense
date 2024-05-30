@@ -19,13 +19,13 @@
  * limitations under the License.
  */
 
-global $config;
 require_once("filter.inc");
 require_once("shaper.inc");
-$config = parse_config(true);
+// parse config.xml
+config_set_path('', parse_config(true));
 echo "Adding allow all rule...\n";
 
-$config["filter"]["rule"][] = array(
+config_set_path('filter/rule/', [
 	"tracker" => (int)microtime(true),
 	"type" => "pass",
 	"interface" => "wan",
@@ -36,17 +36,18 @@ $config["filter"]["rule"][] = array(
 	"destination" => array("any" => ""),
 	"descr" => "Allow all ipv4+ipv6 via pfSsh.php",
 	"created" => make_config_revision_entry(null, "pfSsh.php added allow all wan rule")
-);
+]);
 
 echo "Turning off block private networks (if on)...\n";
-unset($config["interfaces"]["wan"]["blockpriv"]);
+config_del_path('interfaces/wan/blockpriv');
 echo "Turning off block bogon networks (if on)...\n";
-unset($config["interfaces"]["wan"]["blockbogons"]);
+config_del_path('interfaces/wan/blockbogons');
 unlink_if_exists("/tmp/config.cache");
 write_config("pfSsh.php added allow all wan rule");
 unlink_if_exists("/tmp/config.cache");
-unset($config['interfaces']['wan']['blockbogons']);
-$config = parse_config(true);
+config_del_path('interfaces/wan/blockbogons');
+// parse config.xml
+config_set_path('', parse_config(true));
 echo "Reloading the filter configuration...";
 filter_configure_sync();
 echo "\n\n";

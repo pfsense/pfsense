@@ -287,7 +287,7 @@ function ipsec_enabled() {
  */
 
 function ipsec_ikeid_used($ikeid) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if ($ikeid == $ph1ent['ikeid']) {
 			return true;
@@ -298,7 +298,7 @@ function ipsec_ikeid_used($ikeid) {
 
 function ipsec_ikeid_next() {
 	$ikeid = 1;
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	$ipsecikeid = lock('ipsecikeids', LOCK_EX);
 	$ikeids = array();
 
@@ -318,7 +318,7 @@ function ipsec_ikeid_next() {
 }
 
 function ipsec_new_reqid() {
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
 	$keyids = array();
 	$keyid = 1;
@@ -339,7 +339,7 @@ function ipsec_new_reqid() {
 }
 
 function ipsec_get_phase1($ikeid) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 
 	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['ikeid'] == $ikeid) {
@@ -349,7 +349,7 @@ function ipsec_get_phase1($ikeid) {
 }
 
 function ipsec_get_p1_descr($ikeid) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	$p1 = ipsec_get_phase1($ikeid);
 	return (!empty($p1['descr'])) ? $p1['descr'] : '';
 }
@@ -358,7 +358,7 @@ function ipsec_get_p1_descr($ikeid) {
  * Return copy of phase1 for a given phase2
  */
 function ipsec_lookup_phase1($p2, &$p1_disabled) {
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 
 	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['ikeid'] == $p2['ikeid']) {
@@ -371,7 +371,7 @@ function ipsec_lookup_phase1($p2, &$p1_disabled) {
 }
 
 function ipsec_get_phase2($reqid) {
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 
 	foreach (config_get_path('ipsec/phase2', []) as $p2) {
 		if ($p2['reqid'] == $reqid) {
@@ -381,7 +381,7 @@ function ipsec_get_phase2($reqid) {
 }
 
 function ipsec_get_phase2_by_ikeid($ikeid) {
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 	$results = array();
 	foreach (config_get_path('ipsec/phase2', []) as $p2) {
 		if ($p2['ikeid'] == $ikeid) {
@@ -397,8 +397,8 @@ function ipsec_get_number_of_phase2($ikeid) {
 
 /* Return a nested hash with P1 indexed by ikeid and P2 indexed by reqid */
 function ipsec_map_config_by_id() {
-	init_config_arr(array('ipsec', 'phase1'));
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase1');
+	config_init_path('ipsec/phase2');
 	$map = array();
 
 	foreach (config_get_path('ipsec/phase1', []) as $p1) {
@@ -447,7 +447,7 @@ function ipsec_id_by_conid($conid) {
 	global $ipsec_conid_prefix, $ipsec_conid_separator;
 
 	if ($conid == "{$ipsec_conid_prefix}-mobile") {
-		init_config_arr(array('ipsec', 'phase1'));
+		config_init_path('ipsec/phase1');
 		foreach (config_get_path('ipsec/phase1', []) as $p1) {
 			if (isset($p1['mobile'])) {
 				$conid = $ipsec_conid_prefix . $p1['ikeid'];
@@ -513,7 +513,7 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 	}
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
-		if (!platform_booting()) {
+		if (!is_platform_booting()) {
 			$result = resolve_retry($rg, $ph1ent['protocol']);
 			if (!empty($result)) {
 				return $result;
@@ -755,7 +755,7 @@ function ipsec_status() {
 					}
 					if (!array_key_exists($p2['reqid'], $cmap['connected']['p2'])) {
 						/* This P2 is not connected */
-						$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($p1['p1'], $p2);
+						$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($tunnel['p1'], $p2);
 					}
 				}
 			}
@@ -1065,7 +1065,9 @@ function ipsec_mobilekey_sort() {
 		return strcmp($a['ident'][0], $b['ident'][0]);
 	}
 
-	usort($config['ipsec']['mobilekey'], "mobilekeycmp");
+	$mobilekey_config = config_get_path('ipsec/mobilekey');
+	usort($mobilekey_config, "mobilekeycmp");
+	config_set_path('ipsec/mobilekey', $mobilekey_config);
 }
 
 function ipsec_fixup_ip($ipaddr) {
@@ -1232,7 +1234,7 @@ function ipsec_vti($p1, $returnaddresses = false, $skipdisabled = true) {
 function ipsec_reload_package_hook() {
 	global $g;
 
-	init_config_arr(array('installedpackages', 'package'));
+	config_init_path('installedpackages/package');
 	foreach (config_get_path('installedpackages/package', []) as $package) {
 		if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 			continue;
@@ -1517,7 +1519,7 @@ function ipsec_setup_gwifs() {
 		$rg = $ph1ent['remote-gateway'];
 		if (!is_ipaddr($rg)) {
 			$filterdns_list[] = "{$rg}";
-			if (!platform_booting()) {
+			if (!is_platform_booting()) {
 				$rg = resolve_retry($rg, $ph1ent['protocol']);
 			}
 			if (!is_ipaddr($rg)) {
@@ -1964,12 +1966,11 @@ function ipsec_setup_userpools() {
 		$scconf['pools'][$upname] = array();
 
 		$clientid = (in_array($mkent['ident_type'], array('auto', 'none'))) ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
-		$clienteapid = ($ph1ent['authentication_method'] == "eap-mschapv2") ? $clientid : '%any';
 
 		/* Craft a cloned connection with the ID information to match */
 		$scconf['connections'][$upconn]['remote'] = array();
 		$scconf['connections'][$upconn]['remote']['id'] = $clientid;
-		$scconf['connections'][$upconn]['remote']['eap_id'] = $clienteapid;
+		$scconf['connections'][$upconn]['remote']['eap_id'] = '%any';
 		$scconf['connections'][$upconn]['pools'] = $upbase;
 
 		/* Craft a cloned pool with pool settings to override for this user */
@@ -2145,6 +2146,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 
 	if (!empty($ph1ent['caref'])) {
 		$ca = lookup_ca($ph1ent['caref']);
+		$ca = $ca['item'];
 		if ($ca) {
 			/* Get hash value to use for filename */
 			$ca_details = openssl_x509_parse(base64_decode($ca['crt']));
@@ -2485,7 +2487,13 @@ function ipsec_setup_tunnels() {
 			/* Mobile tunnels cannot start automatically */
 			$start_action = 'none';
 		} else {
-			$remote_spec = $ph1ent['remote-gateway'];
+			if (($ph1ent['protocol'] == 'both') &&
+			    (($ph1ent['remote-gateway'] == '0.0.0.0') ||
+			    ($ph1ent['remote-gateway'] == '::'))) {
+				$remote_spec = '%any';
+			} else {
+				$remote_spec = $ph1ent['remote-gateway'];
+			}
 			$sourcehost = (is_ipaddr($remote_spec)) ? $remote_spec : $rgmap[$remote_spec];
 			$ifacesuse = ipsec_setup_routes($ph1ent['interface'], $ph1ent['protocol'], $sourcehost, isset($ph1ent['gw_duplicates']));
 		}
@@ -2808,7 +2816,7 @@ function ipsec_setup_tunnels() {
 					$pools[] = "mobile-pool-v6";
 				}
 				if (config_path_enabled('ipsec/client', 'radius_ip_priority_enable')) {
-					$pools[] .= "radius";
+					$pools[] = "radius";
 				}
 			}
 		}
@@ -2898,6 +2906,7 @@ function ipsec_setup_secrets() {
 
 			$ikeid = $ph1ent['ikeid'];
 			$cert = lookup_cert($ph1ent['certref']);
+			$cert = $cert['item'];
 
 			if (!$cert) {
 				log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
@@ -2984,6 +2993,7 @@ function ipsec_setup_secrets() {
 		    array('cert', 'eap-tls', 'xauth_cert_server', 'pkcs11'))) {
 			if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
 				$thisca = lookup_ca($ph1ent['caref']);
+				$thisca = $thisca['item'];
 				$vpncas[$ph1ent['caref']] = $thisca;
 				/* follow chain up to root */
 				$cachain = ca_chain_array($thisca);
@@ -3102,11 +3112,11 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		mwexec("/sbin/ifconfig enc0 up");
 		/* PC/SC daemon must be started before strongswan */
 		if (config_path_enabled('ipsec', 'pkcs11support') && !isvalidproc("pcscd")) {
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo gettext("Starting PC/SC Smart Card Services...");
 			}
 			mwexec_bg("/usr/local/sbin/pcscd");
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo gettext("done.\n");
 			}
 		} elseif (!config_path_enabled('ipsec', 'pkcs11support') && isvalidproc("pcscd")) {
@@ -3116,7 +3126,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		}
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
 	}
 
@@ -3129,10 +3139,10 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 
 	/* Populate convenience variables */
 	$syscfg = config_get_path('system');
-	init_config_arr(array('ipsec', 'phase1'));
+	config_init_path('ipsec/phase1');
 	$ipseccfg = config_get_path('ipsec');
 	$a_phase1 = config_get_path('ipsec/phase1');
-	init_config_arr(array('ipsec', 'phase2'));
+	config_init_path('ipsec/phase2');
 	$a_phase2 = config_get_path('ipsec/phase2');
 
 	$mobile_configured = false;
@@ -3279,7 +3289,7 @@ function ipsec_configure($restart = false, $filterdns_restart = false) {
 		@unlink("{$g['varrun_path']}/filterdns-ipsec.pid");
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "done\n";
 	}
 

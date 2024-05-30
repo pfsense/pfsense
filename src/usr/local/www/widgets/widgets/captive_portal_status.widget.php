@@ -32,8 +32,7 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
+config_init_path('captiveportal');
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
@@ -41,8 +40,8 @@ if (isset($_POST['zone'])) {
 }
 $cpzone = strtolower($cpzone);
 
-if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
-	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+if (isset($cpzone) && !empty($cpzone)) {
+	$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 }
 
 if (($_GET['act'] == "del") && !empty($cpzone) && isset($cpzoneid)) {
@@ -61,7 +60,7 @@ if (!function_exists('clientcmp')) {
 
 $cpdb_all = array();
 
-foreach ($a_cp as $cpzone => $cp) {
+foreach (config_get_path('captiveportal', []) as $cpzone => $cp) {
 	$cpdb = captiveportal_read_db();
 	foreach ($cpdb as $cpent) {
 		$cpent[10] = $cpzone;

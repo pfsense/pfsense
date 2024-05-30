@@ -39,8 +39,7 @@ $infra_cache_entries = array();
 $errors = "";
 
 // Check if unbound is enabled and running, bail if not
-global $config;
-if (!isset($config['unbound']['enable']) || !is_service_running('unbound')) {
+if (!config_path_enabled('unbound') || !is_service_running('unbound')) {
 	print_info_box(gettext("The DNS Resolver is disabled or stopped."), 'warning', false);
 } else {
 	exec("/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf dump_infra", $infra_cache_entries, $ubc_ret);

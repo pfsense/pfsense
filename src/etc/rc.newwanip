@@ -66,7 +66,7 @@ if (empty($argument)) {
 $interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
 /* If the interface is configured and not enabled, bail. We do not need to change settings for disabled interfaces. #3313 */
-if (is_array($config['interfaces'][$interface]) && !isset($config['interfaces'][$interface]['enable'])) {
+if (is_array(config_get_path("interfaces/{$interface}")) && !config_path_enabled("interfaces/{$interface}")) {
 	log_error("Interface is disabled, nothing to do.");
 	return;
 }
@@ -88,7 +88,7 @@ log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_des
  */
 if ($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
 	if (substr($interface_real, 0, 4) != "ovpn") {
-		if (!empty($config['interfaces'][$interface]['ipaddr'])) {
+		if (!empty(config_get_path("interfaces/{$interface}/ipaddr"))) {
 			log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
 			send_event("interface reconfigure {$interface}");
 			return;
@@ -98,7 +98,7 @@ if ($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
 
 /* XXX: This really possible? */
 if (empty($interface)) {
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		return;
 	}
 	log_error("rc.newwanip called with empty interface.");
@@ -146,23 +146,23 @@ if (!empty($bridgetmp)) {
 system_hosts_generate();
 
 /* check tunnelled IPv6 interface tracking */
-switch ($config['interfaces'][$interface]['ipaddrv6']) {
+switch (config_get_path("interfaces/{$interface}/ipaddrv6")) {
 	case "6to4":
-		interface_6to4_configure($interface, $config['interfaces'][$interface]);
+		interface_6to4_configure($interface, config_get_path("interfaces/{$interface}"));
 		break;
 	case "6rd":
-		interface_6rd_configure($interface, $config['interfaces'][$interface]);
+		interface_6rd_configure($interface, config_get_path("interfaces/{$interface}"));
 		break;
 	case "slaac":
 	case "dhcp6":
 		// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script calls
 		// interface_dhcpv6_configure() for these connections after IPv6CP is up
-		if (((($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6') &&
-		    isset($config['interfaces'][$interface]['dhcp6usev4iface'])) ||
-		    (($config['interfaces'][$interface]['ipaddrv6'] == 'slaac') &&
-		    isset($config['interfaces'][$interface]['slaacusev4iface']))) &&
+		if ((((config_get_path("interfaces/{$interface}/ipaddrv6") == 'dhcp6') &&
+		    config_path_enabled("interfaces/{$interface}", 'dhcp6usev4iface')) ||
+		    ((config_get_path("interfaces/{$interface}/ipaddrv6") == 'slaac') &&
+		    config_path_enabled("interfaces/{$interface}", 'slaacusev4iface'))) &&
 		    !interface_isppp_type($interface)) {
-			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
+			interface_dhcpv6_configure($interface, config_get_path("interfaces/{$interface}"));
 		}
 		break;
 	default:
@@ -192,7 +192,7 @@ foreach ($ppp as $ppptun) {
 	}
 }
 
-if (platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", "ppt", "l2t"))) {
+if (is_platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", "ppt", "l2t"))) {
 	// unlike dhcp interfaces which wait until they get an ip, a ppp connection lets the boot continue while 
 	// trying to acquire a ip address so to avoid a race condition where it would be possible that the default
 	// route would not be set, this script must continue to use the new assigned ip even while booting
@@ -212,7 +212,7 @@ if (platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", 
  * could be failing back in which case we need to switch IPs back anyhow.
  */
 if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}/{$interface}_upstart4") ||
-    (!is_ipaddrv4($config['interfaces'][$interface]['ipaddr']) && ($config['interfaces'][$interface]['ipaddr'] != 'dhcp'))) {
+    (!is_ipaddrv4(config_get_path("interfaces/{$interface}/ipaddr")) && (config_get_path("interfaces/{$interface}/ipaddr") != 'dhcp'))) {
 	/*
 	 * Some services (e.g. dyndns, see ticket #4066) depend on
 	 * filter_configure() to be called before, otherwise pass out
@@ -230,7 +230,7 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 
 	/* If the IP address changed, kill old states after rules and routing have been updated */
 	if ($curwanip != $oldip) {
-		if (isset($config['system']['ip_change_kill_states'])) {
+		if (config_path_enabled('system', 'ip_change_kill_states')) {
 			log_error("IP Address has changed, killing all states (ip_change_kill_states is set).");
 			filter_flush_state_table();
 		} else {
@@ -275,7 +275,7 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 	restart_packages();
 
 	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
-	if (empty($config['interfaces'][$interface]['ipaddrv6'])) {
+	if (empty(config_get_path("interfaces/{$interface}/ipaddrv6"))) {
 		unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart6");
 	}
 }

@@ -38,15 +38,10 @@ require_once("voucher.inc");
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-if (!is_array($config['captiveportal'])) {
-	config_set_path('captiveportal', array());
-}
-
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
+config_init_path('captiveportal');
 
 /* If the zone does not exist, do not display the invalid zone */
-if (!array_key_exists($cpzone, $a_cp)) {
+if (!array_key_exists($cpzone, config_get_path('captiveportal'))) {
 	$cpzone = "";
 }
 
@@ -55,7 +50,7 @@ if (empty($cpzone)) {
 	exit;
 }
 
-$pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars($a_cp[$cpzone]['zone']), gettext("Expire Vouchers"));
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars(config_get_path("captiveportal/{$cpzone}/zone")), gettext("Expire Vouchers"));
 $pglinks = array("", "status_captiveportal.php", "status_captiveportal.php?zone=" . $cpzone, "@self");
 
 include("head.inc");

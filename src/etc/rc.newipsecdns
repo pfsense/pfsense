@@ -63,8 +63,7 @@ sleep(3);
 log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
 
 /* make sure we have the latest configuration changes loaded. */
-global $config;
-$config = parse_config();
+config_set_path('', parse_config());
 
 ipsec_configure();
 

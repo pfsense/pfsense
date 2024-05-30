@@ -471,7 +471,7 @@ $group->add(new Form_Input(
 	'rrdbackup',
 	'Periodic RRD Backup',
 	'number',
-	$config['system']['rrdbackup'],
+	config_get_path('system/rrdbackup'),
 	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
 ))->setHelp('RRD Data');
 
@@ -479,7 +479,7 @@ $group->add(new Form_Input(
 	'dhcpbackup',
 	'Periodic DHCP Leases Backup',
 	'number',
-	$config['system']['dhcpbackup'],
+	config_get_path('system/dhcpbackup'),
 	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
 ))->setHelp('DHCP Leases');
 
@@ -487,7 +487,7 @@ $group->add(new Form_Input(
 	'logsbackup',
 	'Periodic Logs Backup',
 	'number',
-	$config['system']['logsbackup'],
+	config_get_path('system/logsbackup'),
 	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
 ))->setHelp('Log Directory');
 
@@ -495,7 +495,7 @@ $group->add(new Form_Input(
 	'captiveportalbackup',
 	'Periodic Captive Portal DB and Vouchers Backup',
 	'number',
-	$config['system']['captiveportalbackup'],
+	config_get_path('system/captiveportalbackup'),
 	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
 ))->setHelp('Captive Portal Data');
 

@@ -65,12 +65,14 @@ net/mosh
 net/mrouted
 net/py-speedtest-cli
 net/realtek-re-kmod
+net/speedtest-go
 net/trafshow
 net/trafshow3
 net/udpbroadcastrelay
 net/vnstat
 security/%%PRODUCT_NAME%%
 security/%%PRODUCT_NAME%%-ce
+shells/zsh
 sysutils/%%PRODUCT_NAME%%-default-config
 sysutils/%%PRODUCT_NAME%%-default-config-serial
 security/%%PRODUCT_NAME%%-pkg-acme
@@ -109,7 +111,6 @@ sysutils/tmux
 sysutils/usb_modeswitch
 sysutils/vm-bhyve
 sysutils/xe-guest-utilities
-textproc/ripgrep
 www/%%PRODUCT_NAME%%-pkg-Lightsquid
 www/%%PRODUCT_NAME%%-pkg-squid
 www/%%PRODUCT_NAME%%-pkg-squidGuard

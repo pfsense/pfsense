@@ -35,11 +35,10 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-init_config_arr(array('gateways', 'gateway_group'));
-$a_gateway_groups = &$config['gateways']['gateway_group'];
+config_init_path('gateways/gateway_group');
 
-init_config_arr(array('gateways', 'gateway_item'));
-$a_gateways = &$config['gateways']['gateway_item'];
+config_init_path('gateways/gateway_item');
+$a_gateways = config_get_path('gateways/gateway_item');
 $changedesc = gettext("Gateway Groups") . ": ";
 
 
@@ -59,7 +58,7 @@ if ($_POST['apply']) {
 		clear_subsystem_dirty('staticroutes');
 	}
 
-	foreach ($a_gateway_groups as $gateway_group) {
+	foreach (config_get_path('gateways/gateway_group', []) as $gateway_group) {
 		$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
 		if (is_subsystem_dirty($gw_subsystem)) {
 			openvpn_resync_gwgroup($gateway_group['name']);
@@ -68,6 +67,7 @@ if ($_POST['apply']) {
 	}
 }
 
+$a_gateway_groups = config_get_path('gateways/gateway_group');
 if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
 	if ((config_get_path('gateways/defaultgw4', '') == $a_gateway_groups[$_POST['id']]['name']) ||
 	    (config_get_path('gateways/defaultgw6', '') == $a_gateway_groups[$_POST['id']]['name'])) {
@@ -80,7 +80,7 @@ if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
 			}
 		}
 
-		unset($a_gateway_groups[$_POST['id']]);
+		config_del_path("gateways/gateway_group/{$_POST['id']}");
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateway_groups.php");
@@ -143,7 +143,7 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 $i = 0;
-foreach ($a_gateway_groups as $gateway_group):
+foreach (config_get_path('gateways/gateway_group', []) as $gateway_group):
 ?>
 					<tr>
 						<td>

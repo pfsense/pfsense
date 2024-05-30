@@ -23,7 +23,7 @@ require_once("config.inc");
 require_once("util.inc");
 require_once("pkg-utils.inc");
 
-global $g, $config, $argv, $command_split;
+global $g, $argv, $command_split;
 
 if (is_array($command_split)) {
 	$args = array_slice($command_split, 1);

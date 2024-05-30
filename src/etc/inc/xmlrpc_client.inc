@@ -27,7 +27,6 @@ class pfsense_xmlrpc_client {
 	private $username, $password, $url, $logurl, $filenotice, $error;
 
 	public function __construct() {
-		global $config;
 		$hasync = config_get_path('hasync', []);
 		/* XMLRPC sync is not configured, nothing to do.
 		 * https://redmine.pfsense.org/issues/14182 */
@@ -44,7 +43,7 @@ class pfsense_xmlrpc_client {
 		/* if port is empty lets rely on the protocol selection */
 		$port = config_get_path('system/webgui/port');
 		if (empty($port)) {
-			if ($config['system']['webgui']['protocol'] == "http") {
+			if (config_get_path('system/webgui/protocol') == "http") {
 				$port = "80";
 			} else {
 				$port = "443";
@@ -54,7 +53,6 @@ class pfsense_xmlrpc_client {
 	}
 
 	public function setConnectionData($syncip, $port, $username, $password, $scheme = "") {
-		global $config;
 		$this->username = $username;
 		$this->password = $password;
 		$this->filenotice = "sync_settings";
@@ -62,10 +60,7 @@ class pfsense_xmlrpc_client {
 			$scheme = "http";
 			if ($port == "443") {
 				$scheme = "https";
-			} else if (is_array($config['system']) &&
-				is_array($config['system']['webgui']) &&
-				!empty($config['system']['webgui']['protocol']) &&
-				$config['system']['webgui']['protocol'] == "https") {
+			} elseif (config_get_path('system/webgui/protocol') == "https") {
 				$scheme = "https";
 			}
 		}
@@ -106,7 +101,7 @@ class pfsense_xmlrpc_client {
 			log_error(sprintf(gettext("Beginning XMLRPC sync data to %s."), $this->logurl));
 			$cli = XML_RPC2_Client::create($this->url, $options);
 			if (!is_object($cli)) {
-				$this->error = sprintf(gettext("A communications error occurred while attempting XMLRPC sync with %s (pfsense.%s)."), $this->log, $method);
+				$this->error = sprintf(gettext("A communications error occurred while attempting XMLRPC sync with %s (pfsense.%s)."), $this->logurl, $method);
 			}
 			try {//restore_config_section
 				$REQUEST_URI = $_SERVER['REQUEST_URI'];

@@ -33,26 +33,25 @@
 
 $pgtitle = array(gettext("System"), gettext("User Settings"));
 
-init_config_arr(array('system', 'user'));
-$a_user = &$config['system']['user'];
+config_init_path('system/user');
 
 if (isset($_SESSION['Username']) && isset($userindex[$_SESSION['Username']])) {
 	$id = $userindex[$_SESSION['Username']];
+	$this_user = config_get_path("system/user/{$id}");
 }
-
-if (isset($id) && $a_user[$id]) {
-	$pconfig['webguicss'] = $a_user[$id]['webguicss'];
-	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
-	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
-	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
-	$pconfig['interfacessort'] = isset($a_user[$id]['interfacessort']);
-	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
-	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
-	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
-	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
-	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
-	$pconfig['disablealiaspopupdetail'] = isset($a_user[$id]['disablealiaspopupdetail']);
-	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
+if ($this_user) {
+	$pconfig['webguicss'] = $this_user['webguicss'];
+	$pconfig['webguifixedmenu'] = $this_user['webguifixedmenu'];
+	$pconfig['webguihostnamemenu'] = $this_user['webguihostnamemenu'];
+	$pconfig['dashboardcolumns'] = $this_user['dashboardcolumns'];
+	$pconfig['interfacessort'] = isset($this_user['interfacessort']);
+	$pconfig['dashboardavailablewidgetspanel'] = isset($this_user['dashboardavailablewidgetspanel']);
+	$pconfig['systemlogsfilterpanel'] = isset($this_user['systemlogsfilterpanel']);
+	$pconfig['systemlogsmanagelogpanel'] = isset($this_user['systemlogsmanagelogpanel']);
+	$pconfig['statusmonitoringsettingspanel'] = isset($this_user['statusmonitoringsettingspanel']);
+	$pconfig['webguileftcolumnhyper'] = isset($this_user['webguileftcolumnhyper']);
+	$pconfig['disablealiaspopupdetail'] = isset($this_user['disablealiaspopupdetail']);
+	$pconfig['pagenamefirst'] = isset($this_user['pagenamefirst']);
 } else {
 	echo gettext("The settings cannot be managed for a non-local user.");
 	include("foot.inc");
@@ -71,7 +70,7 @@ if (isset($_POST['save'])) {
 	validate_webguihostnamemenu_field($input_errors, $_POST['webguihostnamemenu']);
 	validate_dashboardcolumns_field($input_errors, $_POST['dashboardcolumns']);
 
-	$userent = $a_user[$id];
+	$userent = config_get_path("system/user/{$id}");
 
 	if (!$input_errors) {
 		$pconfig['webguicss'] = $userent['webguicss'] = $_POST['webguicss'];
@@ -148,7 +147,7 @@ if (isset($_POST['save'])) {
 			unset($userent['pagenamefirst']);
 		}
 
-		$a_user[$id] = $userent;
+		config_set_path("system/user/{$id}", $userent);
 		$savemsg = sprintf(gettext("User settings successfully changed for user %s."), $_SESSION['Username']);
 		write_config($savemsg);
 	}

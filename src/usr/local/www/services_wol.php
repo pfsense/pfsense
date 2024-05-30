@@ -34,8 +34,7 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('wol', 'wolentry'));
-$a_wol = &$config['wol']['wolentry'];
+config_init_path('wol/wolentry');
 
 function send_wol($if, $mac, $description, & $savemsg, & $class) {
 	$ipaddr = get_interface_ip($if);
@@ -61,7 +60,7 @@ $savemsg = "";
 $class = "";
 
 if ($_REQUEST['wakeall'] != "") {
-	foreach ($a_wol as $wolent) {
+	foreach (config_get_path('wol/wolentry', []) as $wolent) {
 		send_wol($wolent['interface'], $wolent['mac'], $wolent['descr'], $savemsg, $class);
 	}
 	$savemsg .= gettext('Sent magic packet to all devices.') . "<br />";
@@ -91,8 +90,8 @@ if ($_POST['Submit'] || $_POST['mac']) {
 }
 
 if ($_POST['act'] == "del") {
-	if ($a_wol[$_POST['id']]) {
-		unset($a_wol[$_POST['id']]);
+	if (config_get_path("wol/wolentry/{$_POST['id']}")) {
+		config_del_path("wol/wolentry/{$_POST['id']}");
 		write_config(gettext("Deleted a device from WOL configuration."));
 		header("Location: services_wol.php");
 		exit;
@@ -162,7 +161,7 @@ print $form;
 
 <?php
 	// Add top buttons if more than 24 entries in the table
-	if (is_array($a_wol) && (count($a_wol) > 24)) {
+	if (count(config_get_path('wol/wolentry', 0)) > 24) {
 ?>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">
@@ -190,7 +189,7 @@ print $form;
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach ($a_wol as $i => $wolent): ?>
+					<?php foreach (config_get_path('wol/wolentry', []) as $i => $wolent): ?>
 						<tr>
 							<td>
 								<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>

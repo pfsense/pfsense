@@ -37,7 +37,7 @@ require_once("vpn.inc");
 
 global $ipsec_filtermodes;
 
-init_config_arr(array('ipsec', 'phase1'));
+config_init_path('ipsec/phase1');
 
 $pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = config_path_enabled('ipsec', 'unityplugin');

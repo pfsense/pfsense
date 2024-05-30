@@ -162,6 +162,7 @@
 	 */
 
 	class updatedns {
+		var $con = [];
 		var $_cacheFile;
 		var $_cacheFile_v6;
 		var $_debugFile;
@@ -215,7 +216,7 @@
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true,
 					$curlProxy = false) {
 
-			global $config, $g, $dyndns_split_domain_types;
+			global $g, $dyndns_split_domain_types;
 			if (in_array($dnsService, $dyndns_split_domain_types)) {
 				$this->_FQDN = $dnsHost . "." . $dnsDomain;
 			} else {
@@ -552,7 +553,7 @@
 				// The special custom provider
 				case 'custom':
 				case 'custom-v6':
-					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
+					if (strstr($this->_dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
 					if ($this->_dnsUser != '') {
 						if ($this->_curlIpresolveV4) {
 							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
@@ -666,7 +667,6 @@
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
-					curl_setopt($ch, CURLOPT_URL, $url_data);
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myipv6=' . $iptoset);
 					break;
 				case 'noip':
@@ -1306,7 +1306,7 @@
 				case 'dnsmadeeasy':
 					$needsIP = TRUE;
 					$server = "https://cp.dnsmadeeasy.com/servlet/updateip";
-					$username = empty($this->_dnsUser) ? "" : "&username={$this->dnsUser}";
+					$username = empty($this->_dnsUser) ? "" : "&username={$this->_dnsUser}";
 					curl_setopt($ch, CURLOPT_URL, $server . '?password=' . $this->_dnsPass . '&id=' . $this->_dnsHost . '&ip=' . $this->_dnsIP . $username);
 					break;
 				case 'spdyn':
@@ -1434,7 +1434,7 @@
 
 					// finds the record id of a record from it's subdomain
 					foreach ($records as $rec) {
-						if ($rec['attributes']['prefix'] == $this->_dnsHostname) {
+						if ($rec['attributes']['prefix'] == $this->_dnsHost) {
 							$id = $rec['id'];
 							break;
 						}
@@ -1455,7 +1455,7 @@
 					}
 					$tosend['attributes'] = array(
 						'type' => $rectype,
-						'prefix' => $this->_dnsHostname,
+						'prefix' => $this->_dnsHost,
 						'content' => $this->_dnsIP,
 						'ttl' => $this->_dnsTTL
 					);
@@ -1684,6 +1684,12 @@
 					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains");
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 					$domains_output = curl_exec($ch);
+					$domains_result = json_decode($domains_output, TRUE);
+					foreach($domains_result["data"] as $domains_entry) {
+						if ($domains_entry["domain"] == $this->_dnsDomain) {
+							$domain_id = $domains_entry["id"];
+						}
+					}
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ( $http_code == 401 && preg_match('/invalid oauth token/i', $domains_output) ) {
 						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authentication Failed"));
@@ -1697,12 +1703,6 @@
 						return false;
 					}
 
-					$domains_result = json_decode($domains_output, TRUE);
-					foreach($domains_result["data"] as $domains_entry) {
-						if ($domains_entry["domain"] == $this->_dnsDomain) {
-							$domain_id = $domains_entry["id"];
-						}
-					}
 					if ( ! $domain_id ) {
 						log_error("{$err_prefix} " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'");
 						return false;
@@ -1827,7 +1827,7 @@
 		 *   Some services do not perform an inplace upgrade.  If they do not then the solution
 		 *   is to remove the existing record and add a new record.
 		 *
-		 * @param unknown $existing_ip If required, an existing IP address for the record.
+		 * @param string $existing_ip If required, an existing IP address for the record.
 		 */
 		function _remove($existing_ip = NULL) {
 			$remove_allowed = false;
@@ -3005,7 +3005,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . $error_str .
-							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" );
+							( isset($result["errors"][0]["reason"]) ? $result["errors"][0]["reason"] : "HTTP {$http_code}" );
 					}
 					break;
 				case 'gandi-livedns':

@@ -32,8 +32,7 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("vpn.inc");
 
-init_config_arr(array('pppoes', 'pppoe'));
-$a_pppoes = &$config['pppoes']['pppoe'];
+config_init_path('pppoes/pppoe');
 
 
 if ($_POST['apply']) {
@@ -43,12 +42,10 @@ if ($_POST['apply']) {
 			if (!is_numeric($pppoeid)) {
 				continue;
 			}
-			if (is_array($config['pppoes']['pppoe'])) {
-				foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
-					if ($pppoe['pppoeid'] == $pppoeid) {
-						vpn_pppoe_configure($pppoe);
-						break;
-					}
+			foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
+				if ($pppoe['pppoeid'] == $pppoeid) {
+					vpn_pppoe_configure($pppoe);
+					break;
 				}
 			}
 		}
@@ -59,15 +56,16 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('vpnpppoe');
 }
 
+$this_pppoe_config = isset($_POST['id']) ? config_get_path("pppoes/pppoe/{$_POST['id']}") : null;
 if ($_POST['act'] == "del") {
-	if ($a_pppoes[$_POST['id']]) {
-		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid") {
-			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid");
+	if ($this_pppoe_config) {
+		if ("{$g['varrun_path']}/pppoe" . $this_pppoe_config['pppoeid'] . "-vpn.pid") {
+			killbypid("{$g['varrun_path']}/pppoe" . $this_pppoe_config['pppoeid'] . "-vpn.pid");
 		}
-		if (is_dir("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn")) {
-			rmdir_recursive("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn");
+		if (is_dir("{$g['varetc_path']}/pppoe{$this_pppoe_config['pppoeid']}-vpn")) {
+			rmdir_recursive("{$g['varetc_path']}/pppoe{$this_pppoe_config['pppoeid']}-vpn");
 		}
-		unset($a_pppoes[$_POST['id']]);
+		config_del_path("pppoes/pppoe/{$_POST['id']}");
 		write_config("PPPoE Server deleted");
 		header("Location: services_pppoe.php");
 		exit;
@@ -105,7 +103,7 @@ if (is_subsystem_dirty('vpnpppoe')) {
 		<tbody>
 <?php
 $i = 0;
-foreach ($a_pppoes as $pppoe):
+foreach (config_get_path('pppoes/pppoe', []) as $pppoe):
 ?>
 			<tr>
 				<td>

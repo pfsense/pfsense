@@ -38,7 +38,7 @@ final class Filesystems {
 
 	public function __construct(AbstractProvider $provider = null) {
 		if (is_null($provider)
-		    || (!($df instanceof AbstractProvider))) {
+		    || (!($provider instanceof AbstractProvider))) {
 			$provider = new SystemProvider();
 		}
 

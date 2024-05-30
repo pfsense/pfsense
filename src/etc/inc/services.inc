@@ -38,7 +38,7 @@ function services_radvd_configure($blacklist = array()) {
 		echo "services_radvd_configure() being called $mt\n";
 	}
 
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
@@ -430,7 +430,7 @@ function services_radvd_configure($blacklist = array()) {
 	/* write radvd.conf */
 	if (!@file_put_contents("{$g['varetc_path']}/radvd.conf", $radvdconf)) {
 		log_error(gettext("Error: cannot open radvd.conf in services_radvd_configure()."));
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
 		}
 	}
@@ -519,12 +519,12 @@ function services_kea6_configure()
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 	$dhcpdv6cfg = config_get_path('dhcpdv6');
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "Starting Kea DHCPv6 service...";
 	}
 
@@ -919,13 +919,13 @@ kea6_skip_first_pool_options:
 
 	/* render kea-dhcp6.conf json */
 	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
-		log_error(gettext('error: cannot render json for %s in %s'), $keaconf_path, __FUNCTION__);
+		log_error(sprintf(gettext('error: cannot render json for %s in %s'), $keaconf_path, __FUNCTION__));
 		return 1;
 	}
 
 	/* write kea-dhcp6.conf */
 	if (!file_put_contents($keaconf_path, $keaconf)) {
-		log_error(gettext('error: cannot write %s in %s()'), $keaconf_path, __FUNCTION__);
+		log_error(sprintf(gettext('error: cannot write %s in %s()'), $keaconf_path, __FUNCTION__));
 		return 1;
 	}
 
@@ -938,7 +938,7 @@ kea6_skip_first_pool_options:
 	$kea_bin = '/usr/local/sbin/kea-dhcp6';
 	mwexec_bg(sprintf('%s -c %s', $kea_bin, $keaconf_path));
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		print gettext('done') . ".\n";
 	}
 
@@ -1066,7 +1066,7 @@ function services_kea4_configure()
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpd']);
+	config_init_path('dhcpd');
 	$dhcpdcfg = config_get_path('dhcpd');
 	$Iflist = get_configured_interface_list();
 
@@ -1130,7 +1130,7 @@ function services_kea4_configure()
 		}
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext('Starting Kea DHCP service...');
 	}
 
@@ -1408,7 +1408,7 @@ function services_kea4_configure()
 			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
 				$keapool['option-data'][] = [
 					'name' => 'netbios-name-servers',
-					'data' => implode(', ', $poolconf['winserver'])
+					'data' => implode(', ', $poolconf['winsserver'])
 				];
 				$keapool['option-data'][] = [
 					'name' => 'netbios-node-type',
@@ -1420,7 +1420,7 @@ function services_kea4_configure()
 			if (is_array($poolconf['ntpserver']) && $poolconf['ntpserver'][0] && ($poolconf['ntpserver'][0] != $dhcpifconf['ntpserver'][0])) {
 				$keapool['option-data'][] = [
 					'name' => 'ntp-servers',
-					'data' => implode(', ', $poolconf['ntpserver'])
+					'data' => implode(', ', array_filter($poolconf['ntpserver'], 'is_ipaddrv4'))
 				];
 			}
 
@@ -1548,7 +1548,7 @@ function services_kea4_configure()
 					if (!is_array($keapool['require-client-classes'])) {
 						$keapool['require-client-classes'] = [];
 					}
-					array_unshift($keapool['require-client-classes'], $name);
+					$keapool['require-client-classes'][] = $name;
 				}
 
 				if (!empty($poolconf['rootpath'])) {
@@ -1611,7 +1611,7 @@ function services_kea4_configure()
 		if (is_array($dhcpifconf['ntpserver']) && $dhcpifconf['ntpserver'][0]) {
 			$keasubnet['option-data'][] = [
 				'name' => 'ntp-servers',
-				'data' => implode(', ', $dhcpifconf['ntpserver'])
+				'data' => implode(', ', array_filter($dhcpifconf['ntpserver'], 'is_ipaddrv4'))
 			];
 		}
 
@@ -1719,7 +1719,7 @@ function services_kea4_configure()
 				if (!is_array($keasubnet['require-client-classes'])) {
 					$keasubnet['require-client-classes'] = [];
 				}
-				array_unshift($keasubnet['require-client-classes'], $name);
+				$keasubnet['require-client-classes'][] = $name;
 			}
 
 			if (!empty($dhcpifconf['rootpath'])) {
@@ -1850,7 +1850,7 @@ function services_kea4_configure()
 				if (is_array($sm['ntpserver']) && $sm['ntpserver'][0] && ($sm['ntpserver'][0] != $dhcpifconf['ntpserver'][0])) {
 					$keares['option-data'][] = [
 						'name' => 'ntp-servers',
-						'data' => implode(', ', $sm['ntpserver'])
+						'data' => implode(', ', array_filter($sm['ntpserver'], 'is_ipaddrv4'))
 					];
 				}
 
@@ -2035,14 +2035,14 @@ function services_kea4_configure()
 
 	/* render json */
 	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
-		log_error(gettext('error: unable to render json for kea-dhcp4.conf in %s()'), __FUNCTION__);
+		log_error(sprintf(gettext('error: unable to render json for kea-dhcp4.conf in %s()'), __FUNCTION__));
 		return 1;
 	}
 
 	/* write kea-dhcp4.conf */
 	$keaconf_path = '/usr/local/etc/kea/kea-dhcp4.conf';
 	if (!file_put_contents($keaconf_path, $keaconf)) {
-		log_error(gettext('error: cannot open %s in %s()'), $keaconf_path, __FUNCTION__);
+		log_error(sprintf(gettext('error: cannot open %s in %s()'), $keaconf_path, __FUNCTION__));
 		return 1;
 	}
 
@@ -2056,7 +2056,7 @@ function services_kea4_configure()
 	$kea_bin = '/usr/local/sbin/kea-dhcp4';
 	mwexec_bg(sprintf('%s -c %s', $kea_bin, $keaconf_path));
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		print "done.\n";
 	}
 
@@ -2087,7 +2087,7 @@ function services_dhcpdv4_configure() {
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpd']);
+	config_init_path('dhcpd');
 	$dhcpdcfg = config_get_path('dhcpd');
 	$Iflist = get_configured_interface_list();
 
@@ -2101,7 +2101,7 @@ function services_dhcpdv4_configure() {
 		}
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting DHCP service...");
 	} else {
 		sleep(1);
@@ -3120,7 +3120,7 @@ EOD;
 			join(" ", $dhcpdifs));
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		print "done.\n";
 	}
 
@@ -3233,13 +3233,13 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	}
 
 	$syscfg = config_get_path('system');
-	init_config_arr(['dhcpdv6']);
+	config_init_path('dhcpdv6');
 	$dhcpdv6cfg = config_get_path('dhcpdv6');
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "Starting DHCPv6 service...";
 	} else {
 		sleep(1);
@@ -3574,7 +3574,7 @@ EOD;
 	/* write dhcpdv6.conf */
 	if (!@file_put_contents("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", $dhcpdv6conf)) {
 		log_error("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			printf("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
 		}
 		unset($dhcpdv6conf);
@@ -3596,7 +3596,7 @@ EOD;
 		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " . join(" ", $dhcpdv6ifs));
 		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php-cgi -f /usr/local/sbin/prefixes.php\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		print gettext("done.") . "\n";
 	}
 
@@ -3630,7 +3630,7 @@ function services_igmpproxy_configure($interface='') {
 		return false;
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting IGMP Proxy service...");
 	}
 
@@ -3704,7 +3704,7 @@ EOD;
 
 	log_error(gettext("Started IGMP Proxy service."));
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 
@@ -3722,7 +3722,7 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	init_config_arr(array('dhcrelay'));
+	config_init_path('dhcrelay');
 	$dhcrelaycfg = config_get_path('dhcrelay');
 
 	/* DHCPRelay enabled on any interfaces? */
@@ -3749,7 +3749,7 @@ function services_dhcrelay_configure() {
 		}
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting DHCP Relay service...");
 	} else {
 		sleep(1);
@@ -3843,7 +3843,7 @@ function services_dhcrelay6_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 
-	init_config_arr(array('dhcrelay6'));
+	config_init_path('dhcrelay6');
 	$dhcrelaycfg = config_get_path('dhcrelay6');
 
 	/* DHCPv6 Relay enabled on any interfaces? */
@@ -3870,7 +3870,7 @@ function services_dhcrelay6_configure() {
 		}
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting DHCPv6 Relay service...");
 	} else {
 		sleep(1);
@@ -3969,7 +3969,7 @@ function services_dyndns_configure($int = "") {
 	}
 	$gwgroups = return_gateway_groups_array(true);
 	if (is_array($dyndnscfg)) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("Starting DynDNS clients...");
 		}
 
@@ -4011,7 +4011,7 @@ function services_dyndns_configure($int = "") {
 			}
 		}
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -4105,7 +4105,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 
 	if (config_path_enabled('dnsmasq')) {
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("Starting DNS forwarder...");
 		} else {
 			sleep(1);
@@ -4183,7 +4183,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 			// Set the --server parameter to nowhere for each reverse domain name that was not specifically specified in a domain override.
 			foreach ($reverse_domain_a as $reverse_domain) {
 				if (!isset($override_a[$reverse_domain])) {
-					$args .= " --server=/$reverse_domain/ ";
+					$args .= " --server=/{$reverse_domain}/ ";
 				}
 			}
 			unset($override_a);
@@ -4250,12 +4250,12 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 
 		system_dhcpleases_configure();
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
 
-	if (!platform_booting() && $restart_dhcp) {
+	if (!is_platform_booting() && $restart_dhcp) {
 		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
@@ -4370,7 +4370,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 		}
 
 		// unbound has already been stopped at this point
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("Starting DNS Resolver...");
 		}
 
@@ -4382,7 +4382,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 		/* Check here for dhcp6 complete - wait upto 10 seconds */
 		if(config_get_path('interfaces/wan/ipaddrv6') == 'dhcp6') {
 			$wanif = get_real_interface("wan", "inet6");
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				for ($i=1; $i <= 10; $i++) {
 					if (!file_exists("/tmp/{$wanif}_dhcp6_complete")) {
 						log_error(gettext("Unbound start waiting on dhcp6c."));
@@ -4397,7 +4397,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 		}
 
 		sync_unbound_service();
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			log_error(gettext("sync unbound done."));
 			echo gettext("done.") . "\n";
 		}
@@ -4410,7 +4410,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 		}
 	}
 
-	if (!platform_booting() && $restart_dhcp) {
+	if (!is_platform_booting() && $restart_dhcp) {
 		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
@@ -4450,7 +4450,7 @@ function services_snmpd_configure($interface='') {
 
 	if (config_path_enabled('snmpd')) {
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("Starting SNMP daemon... ");
 		}
 
@@ -4665,7 +4665,7 @@ EOD;
 		mwexec("/usr/sbin/bsnmpd -c {$g['varetc_path']}/snmpd.conf" .
 			" -p {$g['varrun_path']}/snmpd.pid");
 
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 	}
@@ -4971,12 +4971,12 @@ function configure_cron() {
 			if (!empty($http_proxyport)) {
 				$http_proxy .= ':' . $http_proxyport;
 			}
-			$crontab_contents .= "HTTP_PROXY={$http_proxy}";
+			$crontab_contents .= "HTTP_PROXY={$http_proxy}\n";
 
 			$proxyuser = config_get_path('system/proxyuser');
 			$proxypass = config_get_path('system/proxypass');
 			if (!empty($proxyuser) && !empty($proxypass)) {
-				$crontab_contents .= "HTTP_PROXY_AUTH=basic:*:{$proxyuser}:{$proxypass}";
+				$crontab_contents .= "HTTP_PROXY_AUTH={$proxyuser}:{$proxypass}\n";
 			}
 		}
 
@@ -5052,7 +5052,7 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 	$cron_changed = true;
 	$change_message = "";
 
-	init_config_arr(['cron','item']);
+	config_init_path('cron/item');
 
 	$job = null;
 	foreach (config_get_path('cron/item', []) as $idx => $item) {
@@ -5073,9 +5073,7 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 		$cron_item['who'] = $who;
 		$cron_item['command'] = $command;
 		if (!$is_installed) {
-			$cron_items = config_get_path('cron/item', []);
-			$cron_items[] = $cron_item;
-			config_set_path('cron/item', $cron_items);
+			config_set_path('cron/item/', $cron_item);
 			$change_message = "Installed cron job for %s";
 		} else {
 			if (config_get_path("cron/item/{$job}") == $cron_item) {

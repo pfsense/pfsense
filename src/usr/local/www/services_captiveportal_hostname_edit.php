@@ -33,8 +33,10 @@ function allowedhostnamescmp($a, $b) {
 }
 
 function allowedhostnames_sort() {
-	global $g, $config, $cpzone;
-	usort($config['captiveportal'][$cpzone]['allowedhostname'], "allowedhostnamescmp");
+	global $g, $cpzone;
+	$cp_config = config_get_path("captiveportal/{$cpzone}/allowedhostname");
+	usort($cp_config, "allowedhostnamescmp");
+	config_set_path("captiveportal/{$cpzone}/allowedhostname", $cp_config);
 }
 
 require_once("guiconfig.inc");
@@ -51,29 +53,28 @@ $cpzone = strtolower(htmlspecialchars($cpzone));
 
 $cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
-$a_cp = &$config['captiveportal'];
-$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
+config_init_path("captiveportal/{$cpzone}/allowedhostname");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed Hostnames"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Allowed Hostnames"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_hostname.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_allowedhostnames[$id]) {
-	$pconfig['zone'] = $a_allowedhostnames[$id]['zone'];
-	$pconfig['hostname'] = idn_to_utf8($a_allowedhostnames[$id]['hostname']);
-	$pconfig['sn'] = $a_allowedhostnames[$id]['sn'];
-	$pconfig['dir'] = $a_allowedhostnames[$id]['dir'];
-	$pconfig['bw_up'] = $a_allowedhostnames[$id]['bw_up'];
-	$pconfig['bw_down'] = $a_allowedhostnames[$id]['bw_down'];
-	$pconfig['descr'] = $a_allowedhostnames[$id]['descr'];
+$this_allowedhostname_config = isset($id) ? config_get_path("captiveportal/{$cpzone}/allowedhostname/{$id}") : null;
+if ($this_allowedhostname_config) {
+	$pconfig['zone'] = $this_allowedhostname_config['zone'];
+	$pconfig['hostname'] = idn_to_utf8($this_allowedhostname_config['hostname']);
+	$pconfig['sn'] = $this_allowedhostname_config['sn'];
+	$pconfig['dir'] = $this_allowedhostname_config['dir'];
+	$pconfig['bw_up'] = $this_allowedhostname_config['bw_up'];
+	$pconfig['bw_down'] = $this_allowedhostname_config['bw_down'];
+	$pconfig['descr'] = $this_allowedhostname_config['descr'];
 }
 
 if ($_POST['save']) {
@@ -98,8 +99,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
 	}
 
-	foreach ($a_allowedhostnames as $ipent) {
-		if (isset($id) && ($a_allowedhostnames[$id]) && ($a_allowedhostnames[$id] === $ipent)) {
+	foreach (config_get_path("captiveportal/{$cpzone}/allowedhostname", []) as $ipent) {
+		if ($this_allowedhostname_config && ($this_allowedhostname_config === $ipent)) {
 			continue;
 		}
 
@@ -121,10 +122,10 @@ if ($_POST['save']) {
 		if ($_POST['bw_down']) {
 			$ip['bw_down'] = $_POST['bw_down'];
 		}
-		if (isset($id) && $a_allowedhostnames[$id]) {
-			$a_allowedhostnames[$id] = $ip;
+		if ($this_allowedhostname_config) {
+			config_set_path("captiveportal/{$cpzone}/allowedhostname/{$id}", $ip);
 		} else {
-			$a_allowedhostnames[] = $ip;
+			config_set_path("captiveportal/{$cpzone}/allowedhostname/", $ip);
 		}
 
 		captiveportal_allowedhostname_cleanup();
@@ -201,7 +202,7 @@ $form->addGlobal(new Form_Input(
 	$cpzone
 ));
 
-if (isset($id) && $a_allowedhostnames[$id]) {
+if ($this_allowedhostname_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

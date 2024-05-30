@@ -38,8 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_out.inc");
 
-init_config_arr(array('nat', 'outbound', 'rule'));
-$a_out = &$config['nat']['outbound']['rule'];
+config_init_path('nat/outbound/rule');
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -269,7 +268,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_out[$id]) {
+if (isset($id) && config_get_path("nat/outbound/rule/{$id}")) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -287,7 +286,7 @@ $form->addGlobal(new Form_Input(
 
 $form->add($section);
 
-gen_created_updated_fields($form, $a_out[$id]['created'], $a_out[$id]['updated']);
+gen_created_updated_fields($form, config_get_path("nat/outbound/rule/{$id}/created"), config_get_path("nat/outbound/rule/{$id}/updated"));
 
 print($form);
 

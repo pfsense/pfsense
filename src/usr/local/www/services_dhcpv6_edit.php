@@ -38,9 +38,11 @@ function staticmapcmp($a, $b) {
 }
 
 function staticmaps_sort($ifgui) {
-	global $g, $config;
+	global $g;
 
-	usort($config['dhcpdv6'][$ifgui]['staticmap'], "staticmapcmp");
+	$dhcpd6_config = config_get_path("dhcpdv6/{$ifgui}/staticmap");
+	usort($dhcpd6_config, "staticmapcmp");
+	config_set_path("dhcpdv6/{$ifgui}/staticmap", $dhcpd6_config);
 }
 
 require_once('globals.inc');
@@ -59,27 +61,27 @@ if (!$if) {
 	exit;
 }
 
-init_config_arr(array('dhcpdv6', $if, 'staticmap'));
-$netboot_enabled = isset($config['dhcpdv6'][$if]['netboot']);
-$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
+config_init_path("dhcpdv6/{$if}/staticmap");
+$netboot_enabled = config_path_enabled("dhcpdv6/{$if}", 'netboot');
 $ifcfgipv6 = get_interface_ipv6($if);
 $ifcfgsnv6 = get_interface_subnetv6($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_maps[$id]) {
-	$pconfig['duid'] = $a_maps[$id]['duid'];
-	$pconfig['hostname'] = $a_maps[$id]['hostname'];
-	$pconfig['ipaddrv6'] = $a_maps[$id]['ipaddrv6'];
-	$pconfig['filename'] = $a_maps[$id]['filename'];
-	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
-	$pconfig['descr'] = $a_maps[$id]['descr'];
+$this_map_config = isset($id) ? config_get_path("dhcpdv6/{$if}/staticmap/{$id}") : null;
+if ($this_map_config) {
+	$pconfig['duid'] = $this_map_config['duid'];
+	$pconfig['hostname'] = $this_map_config['hostname'];
+	$pconfig['ipaddrv6'] = $this_map_config['ipaddrv6'];
+	$pconfig['filename'] = $this_map_config['filename'];
+	$pconfig['rootpath'] = $this_map_config['rootpath'];
+	$pconfig['descr'] = $this_map_config['descr'];
 } else {
 	$pconfig['duid'] = $_REQUEST['duid'];
 	$pconfig['hostname'] = $_REQUEST['hostname'];
 	$pconfig['filename'] = $_REQUEST['filename'];
-	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
+	$pconfig['rootpath'] = $_REQUEST['rootpath'];
 	$pconfig['descr'] = $_REQUEST['descr'];
 }
 
@@ -111,7 +113,7 @@ if ($_POST['save']) {
 	if ($_POST['ipaddrv6']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
-		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
+		} elseif (config_get_path("dhcpdv6/{$if}/ipaddrv6") == 'track6') {
 			$trackifname = config_get_path("interfaces/{$if}/track6-interface");
 			$trackcfg = config_get_path("interfaces/{$trackifname}");
 			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
@@ -128,8 +130,8 @@ if ($_POST['save']) {
 	}
 
 	/* check for overlaps */
-	foreach ($a_maps as $mapent) {
-		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
+	foreach (config_get_path("dhcpdv6/{$if}/staticmap", []) as $mapent) {
+		if ($this_map_config && ($this_map_config === $mapent)) {
 			continue;
 		}
 
@@ -153,21 +155,21 @@ if ($_POST['save']) {
 		$mapent['filename'] = $_POST['filename'];
 		$mapent['rootpath'] = $_POST['rootpath'];
 
-		if (isset($id) && $a_maps[$id]) {
-			$a_maps[$id] = $mapent;
+		if ($this_map_config) {
+			config_set_path("dhcpdv6/{$if}/staticmap/{$id}", $mapent);
 		} else {
-			$a_maps[] = $mapent;
+			config_set_path("dhcpdv6/{$if}/staticmap/", $mapent);
 		}
 		staticmaps_sort($if);
 
 		write_config("DHCPv6 server static maps saved");
 
-		if (isset($config['dhcpdv6'][$if]['enable'])) {
+		if (config_path_enabled("dhcpdv6/{$if}")) {
 			mark_subsystem_dirty('dhcpd6');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
+			if (config_path_enabled('dnsmasq') && config_path_enabled('dnsmasq', 'regdhcpstatic')) {
 				mark_subsystem_dirty('hosts');
 			}
-			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+			if (config_path_enabled('unbound') && config_path_enabled('unbound', 'regdhcpstatic')) {
 				mark_subsystem_dirty('unbound');
 			}
 
@@ -265,7 +267,7 @@ if ($netboot_enabled) {
 }
 endif;
 
-if (isset($id) && $a_maps[$id]) {
+if ($this_map_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

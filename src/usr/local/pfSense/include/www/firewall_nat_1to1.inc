@@ -31,13 +31,12 @@ require_once("filter.inc");
 $ifdisp = get_configured_interface_with_descr();
 
 function save1to1NATrule($post, $id, $json = false) {
-	global $config, $vpn_and_ppp_ifs;
+	global $vpn_and_ppp_ifs;
 	$binat_exttype_flags = [SPECIALNET_IFADDR];
 	$binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB];
 	$binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];
 
-	init_config_arr(array('nat', 'onetoone'));
-	$a_1to1 = &$config['nat']['onetoone'];
+	config_init_path('nat/onetoone');
 
 	if (isset($post['after'])) {
 		$after = $post['after'];
@@ -182,18 +181,6 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("The destination address is not from the specified address family.");
 	}
 
-	/* check for overlaps with other 1:1 */
-	foreach ($a_1to1 as $natent) {
-		if (isset($id) && ($a_1to1[$id]) && ($a_1to1[$id] === $natent)) {
-			continue;
-		}
-
-		if (check_subnets_overlap($post['internal'], $post['subnet'], $natent['internal'], $natent['subnet'])) {
-			//$input_errors[] = "Another 1:1 rule overlaps with the specified internal subnet.";
-			//break;
-		}
-	}
-
 	if (get_specialnet($post['exttype'], $binat_exttype_flags)) {
 		$post['external'] = $post['exttype'];
 		$pconfig['external'] = $post['exttype'];
@@ -221,6 +208,7 @@ function save1to1NATrule($post, $id, $json = false) {
 			unset($natent['natreflection']);
 		}
 
+		$a_1to1 = config_get_path('nat/onetoone');
 		if (isset($id) && $a_1to1[$id]) {
 			$a_1to1[$id] = $natent;
 		} else {
@@ -230,6 +218,7 @@ function save1to1NATrule($post, $id, $json = false) {
 				$a_1to1[] = $natent;
 			}
 		}
+		config_set_path('nat/onetoone', $a_1to1);
 
 		if (write_config(gettext("Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping.")) && !$json) {
 			mark_subsystem_dirty('natconf');
@@ -244,10 +233,8 @@ function save1to1NATrule($post, $id, $json = false) {
 }
 
 function get1to1NATRule($id, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'onetoone'));
-	$a_1to1 = &$config['nat']['onetoone'];
+	config_init_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone');
 
 	$pconfig = array();
 
@@ -281,10 +268,8 @@ function get1to1NATRule($id, $json = false) {
 
 // Toggle enabled/disabled status of a 1 to 1 rule
 function toggle1to1NATrule($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'onetoone'));
-	$a_1to1 = &$config['nat']['onetoone'];
+	config_init_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone');
 
 	if (isset($a_1to1[$post['id']]['disabled'])) {
 		unset($a_1to1[$post['id']]['disabled']);
@@ -293,6 +278,7 @@ function toggle1to1NATrule($post, $json = false) {
 		$a_1to1[$post['id']]['disabled'] = true;
 		$wc_msg = gettext('Firewall: NAT: 1:1 - disabled a NAT 1:1 rule.');
 	}
+	config_set_path('nat/onetoone', $a_1to1);
 
 	if (write_config($wc_msg) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -302,17 +288,14 @@ function toggle1to1NATrule($post, $json = false) {
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	} else {
-		$a_1to1 = &$config['nat']['onetoone'];
 		return isset($a_1to1[$post['id']]['disabled']) ? "disabled":"enabled";
 	}
 }
 
 // Toggle enabled/disabled status for multiple 1 to 1 rules
 function toggleMultiple1to1NATrules($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'onetoone'));
-	$a_1to1 = &$config['nat']['onetoone'];
+	config_init_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone');
 
 	foreach ($post['rule'] as $rulei) {
 		if (isset($a_1to1[$rulei]['disabled'])) {
@@ -321,6 +304,7 @@ function toggleMultiple1to1NATrules($post, $json = false) {
 			$a_1to1[$rulei]['disabled'] = true;
 		}
 	}
+	config_set_path('nat/onetoone', $a_1to1);
 
 	if (write_config(gettext("Firewall: NAT: 1:1 - toggle enable/disable for selected NAT 1:1 mappings.")) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -334,14 +318,13 @@ function toggleMultiple1to1NATrules($post, $json = false) {
 
 // Delete multiple 1 to 1 rules
 function deleteMultiple1to1NATrules($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'onetoone'));
-	$a_1to1 = &$config['nat']['onetoone'];
+	config_init_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone');
 
 	foreach ($post['rule'] as $rulei) {
 		unset($a_1to1[$rulei]);
 	}
+	config_set_path('nat/onetoone', $a_1to1);
 
 	if (write_config(gettext("Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings.")) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -355,12 +338,9 @@ function deleteMultiple1to1NATrules($post, $json = false) {
 
 // Delete 1 to 1 rule
 function delete1to1NATrule($post, $json = false) {
-	global $config;
+	config_init_path('nat/onetoone');
 
-	init_config_arr(array('nat', 'onetoone'));
-	$a_1to1 = &$config['nat']['onetoone'];
-
-	unset($a_1to1[$post['id']]);
+	config_del_path("nat/onetoone/{$post['id']}");
 	if (write_config(gettext("Firewall: NAT: 1:1 - deleted NAT 1:1 mapping.")) && !$json) {
 		mark_subsystem_dirty('natconf');
 	}
@@ -373,11 +353,9 @@ function delete1to1NATrule($post, $json = false) {
 
 // Re-order the 1 to 1 NAT rules per the array of indices passed in $post
 function reorder1to1NATrules($post, $json = false) {
-	global $config;
-
 	if (is_array($post['rule']) && !empty($post['rule'])) {
-		init_config_arr(array('nat', 'onetoone'));
-		$a_1to1 = &$config['nat']['onetoone'];
+		config_init_path('nat/onetoone');
+		$a_1to1 = config_get_path('nat/onetoone');
 		$a_1to1_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
@@ -386,6 +364,7 @@ function reorder1to1NATrules($post, $json = false) {
 		}
 
 		$a_1to1 = $a_1to1_new;
+		config_set_path('nat/onetoone', $a_1to1);
 
 		if (write_config(gettext("Firewall: NAT: 1:1 - reordered NAT 1:1 mappings.")) && !$json) {
 			mark_subsystem_dirty('natconf');

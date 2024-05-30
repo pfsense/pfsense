@@ -38,32 +38,31 @@ require_once("voucher.inc");
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal'));
-init_config_arr(array('voucher', $cpzone, 'roll'));
-$a_cp = &$config['captiveportal'];
-$a_roll = &$config['voucher'][$cpzone]['roll'];
+config_init_path('captiveportal');
+config_init_path("voucher/{$cpzone}/roll");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Vouchers"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_vouchers.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_roll[$id]) {
-	$pconfig['zone'] = $a_roll[$id]['zone'];
-	$pconfig['number'] = $a_roll[$id]['number'];
-	$pconfig['count'] = $a_roll[$id]['count'];
-	$pconfig['minutes'] = $a_roll[$id]['minutes'];
-	$pconfig['descr'] = $a_roll[$id]['descr'];
+$this_roll_config = isset($id) ? config_get_path("voucher/{$cpzone}/roll/{$id}") : null;
+if ($this_roll_config) {
+	$pconfig['zone'] = $this_roll_config['zone'];
+	$pconfig['number'] = $this_roll_config['number'];
+	$pconfig['count'] = $this_roll_config['count'];
+	$pconfig['minutes'] = $this_roll_config['minutes'];
+	$pconfig['descr'] = $this_roll_config['descr'];
 }
 
-$maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;	// Highest Roll#
-$maxcount = (1<<$config['voucher'][$cpzone]['ticketbits']) -1;	 // Highest Ticket#
+$maxnumber = (1<<config_get_path("voucher/{$cpzone}/rollbits")) -1;	// Highest Roll#
+$maxcount = (1<<config_get_path("voucher/{$cpzone}/ticketbits")) -1;	 // Highest Ticket#
 
 if ($_POST['save']) {
 
@@ -77,8 +76,8 @@ if ($_POST['save']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	// Look for duplicate roll #
-	foreach ($a_roll as $re) {
-		if (isset($id) && $a_roll[$id] && $a_roll[$id] === $re) {
+	foreach (config_get_path("voucher/{$cpzone}/roll", []) as $re) {
+		if ($this_roll_config && $this_roll_config === $re) {
 			continue;
 		}
 		if ($re['number'] == $_POST['number']) {
@@ -101,8 +100,8 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 
-		if (isset($id) && $a_roll[$id]) {
-			$rollent = $a_roll[$id];
+		if ($this_roll_config) {
+			$rollent = $this_roll_config;
 		}
 
 		$rollent['zone'] = $_POST['zone'];
@@ -138,7 +137,7 @@ if ($_POST['save']) {
 			$rollent['used'] = base64_encode(voucher_read_used_db($rollent['number']));
 			$activent = array();
 			$db = array();
-			$active_vouchers = voucher_read_active_db($rollent['number'], $rollent['minutes']);
+			$active_vouchers = voucher_read_active_db($rollent['number']);
 			foreach ($active_vouchers as $voucher => $line) {
 				list($timestamp, $minutes) = explode(",", $line);
 				$activent['voucher'] = $voucher;
@@ -153,10 +152,10 @@ if ($_POST['save']) {
 
 		unlock($voucherlck);
 
-		if (isset($id) && $a_roll[$id]) {
-			$a_roll[$id] = $rollent;
+		if ($this_roll_config) {
+			config_set_path("voucher/{$cpzone}/roll/{$id}", $rollent);
 		} else {
-			$a_roll[] = $rollent;
+			config_set_path("voucher/{$cpzone}/roll/", $rollent);
 		}
 
 		write_config("Captive portal vouchers edited");
@@ -211,7 +210,7 @@ $form->addGlobal(new Form_Input(
 	$cpzone
 ));
 
-if (isset($id) && $a_roll[$id]) {
+if ($this_roll_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

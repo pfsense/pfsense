@@ -54,8 +54,6 @@ if ($_REQUEST['ajax']) {
 
 // Table body is composed here so that it can be more easily updated via AJAX
 function print_ipsec_body() {
-	global $config;
-
 	if (!ipsec_enabled()) {
 ?>
 <tr>

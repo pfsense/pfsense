@@ -36,8 +36,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_npt.inc");
 
-init_config_arr(array('nat', 'npt'));
-$a_npt = &$config['nat']['npt'];
+config_init_path('nat/npt');
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -91,19 +90,19 @@ function dsttype_selected() {
 }
 
 function build_dsttype_list() {
-	global $pconfig, $config;
+	global $pconfig;
 
 	$list = array('network' => gettext('Prefix'));
 
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdesc) {
-		if (($config['interfaces'][$if]['ipaddrv6'] == 'track6') && 
+		if ((config_get_path("interfaces/{$if}/ipaddrv6") == 'track6') && 
 		    get_interface_track6ip($if)) {
 			$track6ip = get_interface_track6ip($if);
 			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
 			$sntext = gettext('Delegated Prefix') . ": ";
-			$sntext .= "{$iflist[$config['interfaces'][$if]['track6-interface']]}/";
-			$sntext .= "{$config['interfaces'][$if]['track6-prefix-id']}";
+			$sntext .= $iflist[config_get_path("interfaces/{$if}/track6-interface")] . "/";
+			$sntext .= config_get_path("interfaces/{$if}/track6-prefix-id");
 			$sntext .= " ({$pdsubnet}/{$track6ip[1]})";
 			$list[$if] = "{$ifdesc} {$sntext}";
 		}
@@ -195,7 +194,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_npt[$id]) {
+if (isset($id) && config_get_path("nat/npt/{$id}")) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

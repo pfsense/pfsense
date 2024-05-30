@@ -36,7 +36,7 @@ require_once("gwlb.inc");
 require_once("openvpn.inc");
 
 function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
-	global $g, $config;
+	global $g;
 
 	if (empty($mode) ||
 	    !is_array($ovpn_settings) ||
@@ -123,7 +123,7 @@ foreach ($arg_array as $arg_element) {
 		}
 	}
 
-	foreach (config_get_path("openvpn/openvpn-server", []) as &$server) {
+	foreach (config_get_path("openvpn/openvpn-server", []) as $server) {
 		if (empty($server)) {
 			continue;
 		}
@@ -133,7 +133,7 @@ foreach ($arg_array as $arg_element) {
 		}
 	}
 
-	foreach (config_get_path("openvpn/openvpn-client", []) as &$client) {
+	foreach (config_get_path("openvpn/openvpn-client", []) as $client) {
 		if (empty($client)) {
 			continue;
 		}

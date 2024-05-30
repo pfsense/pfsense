@@ -29,16 +29,16 @@ require_once("rrd.inc");
 
 echo gettext("Removing shaper settings...\n");
 
-if (is_array($config['shaper'])) {
-	unset($config['shaper']['queue']);
+if (is_array(config_get_path('shaper'))) {
+	config_del_path('shaper/queue');
 }
 
 unset($queue);
 unset($altq);
 
-foreach ($config['filter']['rule'] as $key => $rule) {
+foreach (config_get_path('filter/rule', []) as $key => $rule) {
 	if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-		unset($config['filter']['rule'][$key]);
+		config_del_path("filter/rule/{$key}");
 	}
 }
 if (write_config(gettext("pfSsh.php removed shaper settings"))) {

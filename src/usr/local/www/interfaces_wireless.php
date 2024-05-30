@@ -31,16 +31,14 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('wireless', 'clone'));
-$a_clones = &$config['wireless']['clone'];
+config_init_path('wireless/clone');
 
 function clone_inuse($num) {
-	global $config, $a_clones;
-
+	$a_clones = config_get_path('wireless/clone');
 	$iflist = get_configured_interface_list(true);
-
+	$if_config = config_get_path('interfaces');
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif']) {
+		if ($if_config[$if]['if'] == $a_clones[$num]['cloneif']) {
 			return true;
 		}
 	}
@@ -53,8 +51,8 @@ if ($_POST['act'] == "del") {
 	if (clone_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This wireless clone cannot be deleted because it is assigned as an interface.");
 	} else {
-		pfSense_interface_destroy($a_clones[$_POST['id']]['cloneif']);
-		unset($a_clones[$_POST['id']]);
+		pfSense_interface_destroy(config_get_path("wireless/clone/{$_POST['id']}/cloneif"));
+		config_del_path("wireless/clone/{$_POST['id']}");
 
 		write_config("Wireless interface deleted");
 
@@ -103,7 +101,7 @@ display_top_tabs($tab_array);
 
 $i = 0;
 
-foreach ($a_clones as $clone) {
+foreach (config_get_path('wireless/clone', []) as $clone) {
 ?>
 					<tr>
 						<td>

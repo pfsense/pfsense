@@ -38,9 +38,11 @@ function passthrumacscmp($a, $b) {
 }
 
 function passthrumacs_sort() {
-	global $config, $cpzone;
+	global $cpzone;
 
-	usort($config['captiveportal'][$cpzone]['passthrumac'], "passthrumacscmp");
+	$cp_config = config_get_path("captiveportal/{$cpzone}/passthrumac");
+	usort($cp_config, "passthrumacscmp");
+	config_set_path("captiveportal/{$cpzone}/passthrumacscmp", $cp_config);
 }
 
 require_once("guiconfig.inc");
@@ -54,17 +56,15 @@ global $cpzoneid;
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
-$a_cp = &$config['captiveportal'];
-$cpzoneid = $a_cp[$cpzone]['zoneid'];
-$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
+config_init_path("captiveportal/{$cpzone}/passthrumac");
+$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("MACs"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_mac.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
@@ -72,13 +72,14 @@ if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_passthrumacs[$id]) {
-	$pconfig['action'] = $a_passthrumacs[$id]['action'];
-	$pconfig['mac'] = $a_passthrumacs[$id]['mac'];
-	$pconfig['bw_up'] = $a_passthrumacs[$id]['bw_up'];
-	$pconfig['bw_down'] = $a_passthrumacs[$id]['bw_down'];
-	$pconfig['descr'] = $a_passthrumacs[$id]['descr'];
-	$pconfig['username'] = $a_passthrumacs[$id]['username'];
+$this_passthrumac_config = isset($id) ? config_get_path("captiveportal/{$cpzone}/passthrumac/{$id}") : null;
+if ($this_passthrumac_config) {
+	$pconfig['action'] = $this_passthrumac_config['action'];
+	$pconfig['mac'] = $this_passthrumac_config['mac'];
+	$pconfig['bw_up'] = $this_passthrumac_config['bw_up'];
+	$pconfig['bw_down'] = $this_passthrumac_config['bw_down'];
+	$pconfig['descr'] = $this_passthrumac_config['descr'];
+	$pconfig['username'] = $this_passthrumac_config['username'];
 }
 
 if ($_POST['save']) {
@@ -91,9 +92,8 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	$macfull = explode('/', $_POST['mac']);
-	$macmask = $macfull[1] ? $macfull[1] : false; 
-	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $macfull[0])));
+	list($macfull, $macmask) = explode('/', $_POST['mac']);
+	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $macfull)));
 
 	if ($_POST['mac']) {
 		if (is_macaddr($_POST['mac'])) {
@@ -120,12 +120,17 @@ if ($_POST['save']) {
 	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
 		$input_errors[] = gettext("Download speed must be between 1 and 999999");
 	}
-	if ($macmask && (($macmask > 48) || ($macmask < 1))) {
-		$input_errors[] = gettext("MAC address mask must be between 1 and 48");
+	if (isset($macmask)) {
+		if (($macmask > 48) || ($macmask < 1)) {
+			$input_errors[] = gettext("MAC address mask must be between 1 and 48");
+		}
+		if (!is_numericint($macmask)) {
+			$input_errors[] = gettext("MAC address mask must be an integer.");
+		}
 	}
 
-	foreach ($a_passthrumacs as $macent) {
-		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent)) {
+	foreach (config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $macent) {
+		if ($this_passthrumac_config && ($this_passthrumac_config === $macent)) {
 			continue;
 		}
 
@@ -154,18 +159,18 @@ if ($_POST['save']) {
 
 		$mac['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_passthrumacs[$id]) {
-			$oldmac = $a_passthrumacs[$id];
-			$a_passthrumacs[$id] = $mac;
+		if ($this_passthrumac_config) {
+			$oldmac = $this_passthrumac_config;
+			config_set_path("captiveportal/{$cpzone}/passthrumac/{$id}", $mac);
 		} else {
 			$oldmac = $mac;
-			$a_passthrumacs[] = $mac;
+			config_set_path("captiveportal/{$cpzone}/passthrumac/", $mac);
 		}
 		passthrumacs_sort();
 
 		write_config("Captive portal passthrough MAC added");
 
-		if (isset($config['captiveportal'][$cpzone]['enable'])) {
+		if (config_path_enabled("captiveportal/{$cpzone}")) {
 			$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 			captiveportal_passthrumac_delete_entry($oldmac);
 			captiveportal_ether_configure_entry($mac, 'passthrumac');
@@ -224,10 +229,7 @@ $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('
 $group = new Form_Group('*MAC Address');
 $group->add($macaddress);
 $group->add($btnmymac);
-$group->setHelp('6 hex octets separated by colons%1$s%2$s%3$s', '<div class="infoblock">',
-	sprint_info_box(gettext('It is also possible to add a mask value (like /24),
-	for example, to allow all phones of a certain manufacturer to bypass the portal'), 'info', false),
-	'</div>');
+$group->setHelp('The client\'s MAC address, optionally with a mask length (e.g. "/24").');
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -258,7 +260,7 @@ $form->addGlobal(new Form_Input(
 	$cpzone
 ));
 
-if (isset($id) && $a_passthrumacs[$id]) {
+if ($this_passthrumac_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

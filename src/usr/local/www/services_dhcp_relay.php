@@ -31,17 +31,17 @@
 
 require_once("guiconfig.inc");
 require_once("filter.inc");
-$pconfig['enable'] = isset($config['dhcrelay']['enable']);
+$pconfig['enable'] = config_path_enabled('dhcrelay');
 
-if (empty($config['dhcrelay']['interface'])) {
+if (empty(config_get_path('dhcrelay/interface'))) {
 	$pconfig['interface'] = array();
 } else {
-	$pconfig['interface'] = explode(",", $config['dhcrelay']['interface']);
+	$pconfig['interface'] = explode(",", config_get_path('dhcrelay/interface'));
 }
 
-$pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
-$pconfig['server'] = isset($config['dhcrelay']['server']) ? $config['dhcrelay']['server'] : null;
-$pconfig['carpstatusvip'] = isset($config['dhcrelay']['carpstatusvip']) ? $config['dhcrelay']['carpstatusvip'] : 'none';
+$pconfig['agentoption'] = config_path_enabled('dhcrelay', 'agentoption');
+$pconfig['server'] = config_path_enabled('dhcrelay', 'server') ? config_get_path('dhcrelay/server') : null;
+$pconfig['carpstatusvip'] = config_path_enabled('dhcrelay', 'carpstatusvip') ? config_get_path('dhcrelay/carpstatusvip') : 'none';
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -74,15 +74,13 @@ $carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
  *   the two are not compatible with each other.
  */
 $dhcpd_enabled = false;
-if (is_array($config['dhcpd'])) {
-	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
-		if (empty($dhcp)) {
-			continue;
-		}
-		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
-			$dhcpd_enabled = true;
-			break;
-		}
+foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
+	if (empty($dhcp)) {
+		continue;
+	}
+	if (isset($dhcp['enable']) && config_path_enabled("interfaces/{$dhcpif}")) {
+		$dhcpd_enabled = true;
+		break;
 	}
 }
 
@@ -126,7 +124,7 @@ if ($_POST) {
 	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
-		init_config_arr(array('dhcrelay'));
+		config_init_path('dhcrelay');
 		config_set_path('dhcrelay/enable', $_POST['enable'] ? true : false);
 		if (isset($_POST['interface']) &&
 		    is_array($_POST['interface'])) {

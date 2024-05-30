@@ -115,7 +115,7 @@ function upload($basename) {
     if (curl_errno($curl_session)) {
         $fd = fopen("/tmp/backupdebug.txt", "w");
         $acb_curl_error = curl_error($curl_session);
-        fwrite($fd, $upload_url . "" . $fields_string . "\n\n");
+        fwrite($fd, $upload_url . "\n\n");
         fwrite($fd, $data);
         fwrite($fd, $acb_curl_error);
         fclose($fd);
@@ -137,7 +137,7 @@ function upload($basename) {
     } else {
         // Update last pfS backup time
         $fd = fopen("/cf/conf/lastpfSbackup.txt", "w");
-        fwrite($fd, $config['revision']['time']);
+        fwrite($fd, config_get_path('revision/time'));
         fclose($fd);
         $notice_text = "End of configuration backup to " . $upload_url . " (success).";
         log_error($notice_text);

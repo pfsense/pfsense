@@ -117,15 +117,14 @@ function ssh_keys_xml() {
 }
 
 function check_and_returnif_section_exists($section) {
-	global $config;
-	if (is_array($config[$section])) {
+	if (is_array(config_get_path($section))) {
 		return true;
 	}
 	return false;
 }
 
 function execPost($post, $postfiles, $ui = true) {
-	global $config, $g;
+	global $g;
 
 	unset($input_errors);
 
@@ -147,7 +146,7 @@ function execPost($post, $postfiles, $ui = true) {
 			}
 
 			if (!$input_errors) {
-				$host = "{$config['system']['hostname']}.{$config['system']['domain']}";
+				$host = config_get_path('system/hostname') . '.' . config_get_path('system/domain');
 				$name = "config-{$host}-".date("YmdHis").".xml";
 				$data = "";
 
@@ -188,7 +187,7 @@ function execPost($post, $postfiles, $ui = true) {
 
 				if (!$post['backuparea'] && $post['backupdata']) {
 					foreach (g_get('backuppath') as $bk => $path) {
-						if (!empty($config[$bk])) {
+						if (!empty(config_get_path($bk))) {
 							$data = clear_tagdata($bk, $data);
 							$dataxml = backup_xmldatafile(true, $bk);
 							$closing_tag = "\t</{$bk}>";
@@ -300,17 +299,17 @@ function execPost($post, $postfiles, $ui = true) {
 								$input_errors[] = gettext("An area to restore was selected but the correct xml tag could not be located.");
 							} else {
 								$conf_change = false;
-								if ($config['rrddata']) {
+								if (config_get_path('rrddata')) {
 									restore_rrddata();
 									config_del_path('rrddata');
 									$conf_change = true;
 								}
-								if ($config['sshdata']) {
+								if (config_get_path('sshdata')) {
 									restore_sshdata();
 									config_del_path('sshdata');
 									$conf_change = true;
 								}
-								if (!empty($config[$post['restorearea']][$post['restorearea'].'data'])) {
+								if (!empty(config_get_path("{$post['restorearea']}/{$post['restorearea']}data"))) {
 									restore_xmldatafile($post['restorearea']);
 									config_del_path("{$post['restorearea']}/{$post['restorearea']}data");
 									$conf_change = true;
@@ -333,7 +332,7 @@ function execPost($post, $postfiles, $ui = true) {
 							if (config_install($postfiles['conffile']['tmp_name']) == 0) {
 								/* Save current pkg repo to re-add on new config */
 								unset($pkg_repo_conf_path);
-								if (isset($config['system']['pkg_repo_conf_path'])) {
+								if (config_path_enabled('system', 'pkg_repo_conf_path')) {
 									$pkg_repo_conf_path = config_get_path('system/pkg_repo_conf_path');
 								}
 
@@ -344,15 +343,15 @@ function execPost($post, $postfiles, $ui = true) {
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");
 								}
-								$config = parse_config(true);
+								// parse config.xml
+								config_set_path('', parse_config(true));
 
 								/* Restore previously pkg repo configured */
 								$pkg_repo_restored = false;
 								if (isset($pkg_repo_conf_path)) {
-									$config['system']['pkg_repo_conf_path'] =
-									    $pkg_repo_conf_path;
+									config_set_path('system/pkg_repo_conf_path', $pkg_repo_conf_path);
 									$pkg_repo_restored = true;
-								} elseif (isset($config['system']['pkg_repo_conf_path'])) {
+								} elseif (config_path_enabled('system', 'pkg_repo_conf_path')) {
 									config_del_path('system/pkg_repo_conf_path');
 									$pkg_repo_restored = true;
 								}
@@ -366,7 +365,7 @@ function execPost($post, $postfiles, $ui = true) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
 									if (strpos($loaderconf, "console=\"comconsole") ||
 									    strpos($loaderconf, "boot_serial=\"YES")) {
-										$config['system']['enableserial'] = true;
+										config_set_path('system/enableserial', true);
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}
 									unset($loaderconf);
@@ -375,25 +374,25 @@ function execPost($post, $postfiles, $ui = true) {
 									$loaderconf = file_get_contents("/boot/loader.conf.local");
 									if (strpos($loaderconf, "console=\"comconsole") ||
 									    strpos($loaderconf, "boot_serial=\"YES")) {
-										$config['system']['enableserial'] = true;
+										config_set_path('system/enableserial', true);
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}
 									unset($loaderconf);
 								}
-								/* extract out rrd items, unset from $config when done */
+								/* extract out rrd items, unset from config array when done */
 								$conf_change = false;
-								if ($config['rrddata']) {
+								if (config_get_path('rrddata')) {
 									restore_rrddata();
 									config_del_path('rrddata');
 									$conf_change = true;
 								}
-								if ($config['sshdata']) {
+								if (config_get_path('sshdata')) {
 									restore_sshdata();
 									config_del_path('sshdata');
 									$conf_change = true;
 								}
 								foreach (g_get('backuppath') as $bk => $path) {
-									if (!empty($config[$bk][$bk.'data'])) {
+									if (!empty(config_get_path("{$bk}/{$bk}data"))) {
 										restore_xmldatafile($bk);
 										config_del_path("{$bk}/{$bk}data");
 										$conf_change = true;
@@ -404,7 +403,7 @@ function execPost($post, $postfiles, $ui = true) {
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									convert_config();
 								}
-								if (is_array($config['captiveportal'])) {
+								if (is_array(config_get_path('captiveportal'))) {
 									foreach (config_get_path('captiveportal', []) as $cp) {
 										if (isset($cp['enable'])) {
 											/* for some reason ipfw doesn't init correctly except on bootup sequence */

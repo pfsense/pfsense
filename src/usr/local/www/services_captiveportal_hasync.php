@@ -43,22 +43,18 @@ if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
-if (!is_array($config['captiveportal'])) {
-	config_set_path('captiveportal', array());
-}
+config_init_path("captiveportal/{$cpzone}");
 
-$a_cp =& $config['captiveportal'];
-
-if (empty($a_cp[$cpzone])) {
+if (empty(config_get_path("captiveportal/{$cpzone}"))) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
 	header("Location: services_captiveportal_zones.php");
 	exit();
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("High Availability"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("High Availability"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 
-$pconfig['enablebackwardsync'] = isset($config['captiveportal'][$cpzone]['enablebackwardsync']);
+$pconfig['enablebackwardsync'] = config_path_enabled("captiveportal/{$cpzone}", 'enablebackwardsync');
 $pconfig['backwardsyncip'] = config_get_path("captiveportal/{$cpzone}/backwardsyncip");
 $pconfig['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
 $pconfig['backwardsyncuser'] = config_get_path("captiveportal/{$cpzone}/backwardsyncuser");
@@ -86,18 +82,17 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		$newcp =& $a_cp[$cpzone];
 		if ($pconfig['enablebackwardsync'] == "yes") {
-			$newcp['enablebackwardsync'] = true;
+			config_set_path("captiveportal/{$cpzone}/enablebackwardsync", true);
 		} else {
-			unset($newcp['enablebackwardsync']);
+			config_del_path("captiveportal/{$cpzone}/enablebackwardsync");
 		}
-		$newcp['backwardsyncip'] = $pconfig['backwardsyncip'];
-		$newcp['backwardsyncuser'] = $pconfig['backwardsyncuser'];
+		config_set_path("captiveportal/{$cpzone}/backwardsyncip", $pconfig['backwardsyncip']);
+		config_set_path("captiveportal/{$cpzone}/backwardsyncuser", $pconfig['backwardsyncuser']);
 
 		$port = config_get_path('system/webgui/port');
 		if (empty($port)) { // if port is empty lets rely on the protocol selection
-			if ($config['system']['webgui']['protocol'] == "http") {
+			if (config_get_path('system/webgui/protocol') == "http") {
 				$port = "80";
 			} else {
 				$port = "443";
@@ -105,10 +100,10 @@ if ($_POST['save']) {
 		}
 
 		if ($_POST['backwardsyncpassword'] != DMYPWD ) {
-			$newcp['backwardsyncpassword'] = $pconfig['backwardsyncpassword'];
-		} else {
-			$newcp['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
+			config_set_path("captiveportal/{$cpzone}/backwardsyncpassword", $pconfig['backwardsyncpassword']);
 		}
+
+		$newcp = config_get_path("captiveportal/{$cpzone}");
 		if (!empty($newcp['enablebackwardsync'])) {
 			$rpc_client = new pfsense_xmlrpc_client();
 			$rpc_client->setConnectionData($newcp['backwardsyncip'], $port, $newcp['backwardsyncuser'], $newcp['backwardsyncpassword']);
@@ -142,7 +137,7 @@ if ($_POST['save']) {
 					$attributes['maxbytes'] = $user['traffic_quota'];
 
 					portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), null,
-					    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
+					    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid']);
 				}
 				foreach ($expired_vouchers as $roll => $vdb) {
 					voucher_write_used_db($roll, $vdb);
@@ -157,7 +152,6 @@ if ($_POST['save']) {
 			}
 		}
 		if (!$input_errors) {
-			$config['captiveportal'][$cpzone] = $newcp;
 			write_config('Updated captiveportal backward HA settings');
 		}
 	}

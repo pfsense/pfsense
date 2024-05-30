@@ -64,7 +64,7 @@ if ($_POST) {
 		}
 	}
 } else {
-	if (isset($config['system']['webgui']['authmode'])) {
+	if (config_path_enabled('system/webgui', 'authmode')) {
 		$pconfig['authmode'] = config_get_path('system/webgui/authmode');
 	} else {
 		$pconfig['authmode'] = "Local Database";

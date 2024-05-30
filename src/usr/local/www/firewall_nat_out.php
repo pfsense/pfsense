@@ -41,8 +41,7 @@ require_once("firewall_nat_out.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-init_config_arr(array('nat', 'outbound', 'rule'));
-$a_out = &$config['nat']['outbound']['rule'];
+config_init_path('nat/outbound/rule');
 $nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
@@ -53,11 +52,11 @@ if (isset($_REQUEST['order-store'])) {
 	outNATrulesreorder($_POST);
 }
 
-if (!isset($config['nat']['outbound']['mode'])) {
+if (config_get_path('nat/outbound/mode') === null) {
 	config_set_path('nat/outbound/mode', "automatic");
 }
 
-$mode = $config['nat']['outbound']['mode'];
+$mode = config_get_path('nat/outbound/mode');
 
 if ($_POST['apply']) {
 	$retval = applyoutNATrules();
@@ -175,7 +174,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-			foreach ($a_out as $natent):
+			foreach (config_get_path('nat/outbound/rule', []) as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
 				$trclass = '';
@@ -508,7 +507,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 //<![CDATA[
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',

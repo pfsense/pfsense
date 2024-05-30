@@ -54,9 +54,6 @@ function is_aoadv_used($pconfig) {
 	return false;
 }
 
-init_config_arr(array('bridges', 'bridged'));
-$a_bridges = &$config['bridges']['bridged'];
-
 $ifacelist = get_configured_interface_with_descr();
 
 foreach ($ifacelist as $bif => $bdescr) {
@@ -67,23 +64,25 @@ foreach ($ifacelist as $bif => $bdescr) {
 
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_bridges[$id]) {
-	$pconfig['enablestp'] = isset($a_bridges[$id]['enablestp']);
-	$pconfig['ip6linklocal'] = isset($a_bridges[$id]['ip6linklocal']);
-	$pconfig['descr'] = $a_bridges[$id]['descr'];
-	$pconfig['bridgeif'] = $a_bridges[$id]['bridgeif'];
-	$pconfig['members'] = $a_bridges[$id]['members'];
-	$pconfig['maxaddr'] = $a_bridges[$id]['maxaddr'];
-	$pconfig['timeout'] = $a_bridges[$id]['timeout'];
-	$pconfig['maxage'] = $a_bridges[$id]['maxage'];
-	$pconfig['fwdelay'] = $a_bridges[$id]['fwdelay'];
-	$pconfig['hellotime'] = $a_bridges[$id]['hellotime'];
-	$pconfig['priority'] = $a_bridges[$id]['priority'];
-	$pconfig['proto'] = $a_bridges[$id]['proto'];
-	$pconfig['holdcnt'] = $a_bridges[$id]['holdcnt'];
+config_init_path('bridges/bridged');
+$this_bridge_config = isset($id) ? config_get_path("bridges/bridged/{$id}") : null;
+if ($this_bridge_config) {
+	$pconfig['enablestp'] = isset($this_bridge_config['enablestp']);
+	$pconfig['ip6linklocal'] = isset($this_bridge_config['ip6linklocal']);
+	$pconfig['descr'] = $this_bridge_config['descr'];
+	$pconfig['bridgeif'] = $this_bridge_config['bridgeif'];
+	$pconfig['members'] = $this_bridge_config['members'];
+	$pconfig['maxaddr'] = $this_bridge_config['maxaddr'];
+	$pconfig['timeout'] = $this_bridge_config['timeout'];
+	$pconfig['maxage'] = $this_bridge_config['maxage'];
+	$pconfig['fwdelay'] = $this_bridge_config['fwdelay'];
+	$pconfig['hellotime'] = $this_bridge_config['hellotime'];
+	$pconfig['priority'] = $this_bridge_config['priority'];
+	$pconfig['proto'] = $this_bridge_config['proto'];
+	$pconfig['holdcnt'] = $this_bridge_config['holdcnt'];
 
-	if (!empty($a_bridges[$id]['ifpriority'])) {
-		$pconfig['ifpriority'] = explode(",", $a_bridges[$id]['ifpriority']);
+	if (!empty($this_bridge_config['ifpriority'])) {
+		$pconfig['ifpriority'] = explode(",", $this_bridge_config['ifpriority']);
 		$ifpriority = array();
 		foreach ($pconfig['ifpriority'] as $cfg) {
 			list ($key, $value) = explode(":", $cfg);
@@ -95,8 +94,8 @@ if (isset($id) && $a_bridges[$id]) {
 		$pconfig['ifpriority'] = $ifpriority;
 	}
 
-	if (!empty($a_bridges[$id]['ifpathcost'])) {
-		$pconfig['ifpathcost'] = explode(",", $a_bridges[$id]['ifpathcost']);
+	if (!empty($this_bridge_config['ifpathcost'])) {
+		$pconfig['ifpathcost'] = explode(",", $this_bridge_config['ifpathcost']);
 		$ifpathcost = array();
 		foreach ($pconfig['ifpathcost'] as $cfg) {
 			list ($key, $value) = explode(":", $cfg);
@@ -108,29 +107,29 @@ if (isset($id) && $a_bridges[$id]) {
 		$pconfig['ifpathcost'] = $ifpathcost;
 	}
 
-	if (isset($a_bridges[$id]['static'])) {
-		$pconfig['static'] = $a_bridges[$id]['static'];
+	if (isset($this_bridge_config['static'])) {
+		$pconfig['static'] = $this_bridge_config['static'];
 	}
-	if (isset($a_bridges[$id]['private'])) {
-		$pconfig['private'] = $a_bridges[$id]['private'];
+	if (isset($this_bridge_config['private'])) {
+		$pconfig['private'] = $this_bridge_config['private'];
 	}
-	if (isset($a_bridges[$id]['stp'])) {
-		$pconfig['stp'] = $a_bridges[$id]['stp'];
+	if (isset($this_bridge_config['stp'])) {
+		$pconfig['stp'] = $this_bridge_config['stp'];
 	}
-	if (isset($a_bridges[$id]['span'])) {
-		$pconfig['span'] = $a_bridges[$id]['span'];
+	if (isset($this_bridge_config['span'])) {
+		$pconfig['span'] = $this_bridge_config['span'];
 	}
-	if (isset($a_bridges[$id]['edge'])) {
-		$pconfig['edge'] = $a_bridges[$id]['edge'];
+	if (isset($this_bridge_config['edge'])) {
+		$pconfig['edge'] = $this_bridge_config['edge'];
 	}
-	if (isset($a_bridges[$id]['autoedge'])) {
-		$pconfig['autoedge'] = $a_bridges[$id]['autoedge'];
+	if (isset($this_bridge_config['autoedge'])) {
+		$pconfig['autoedge'] = $this_bridge_config['autoedge'];
 	}
-	if (isset($a_bridges[$id]['ptp'])) {
-		$pconfig['ptp'] = $a_bridges[$id]['ptp'];
+	if (isset($this_bridge_config['ptp'])) {
+		$pconfig['ptp'] = $this_bridge_config['ptp'];
 	}
-	if (isset($a_bridges[$id]['autoptp'])) {
-		$pconfig['autoptp'] = $a_bridges[$id]['autoptp'];
+	if (isset($this_bridge_config['autoptp'])) {
+		$pconfig['autoptp'] = $this_bridge_config['autoptp'];
 	}
 }
 
@@ -184,7 +183,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("At least one member interface must be selected for a bridge.");
 	}
 
-	if (is_array($_POST['members']) && is_array($config['captiveportal'])) {
+	if (is_array($_POST['members']) && is_array(config_get_path('captiveportal'))) {
 		foreach ($_POST['members'] as $member) {
 			foreach (config_get_path('captiveportal', []) as $cp) {
 				if (isset($cp['enable']) && in_array($member, explode(',', $cp['interface']))) {
@@ -260,21 +259,22 @@ if ($_POST['save']) {
 		$pconfig['autoptp'] = implode(',', $_POST['autoptp']);
 	}
 	if (is_array($_POST['members'])) {
+		$if_config = config_get_path('interfaces');
 		foreach ($_POST['members'] as $ifmembers) {
-			if (empty($config['interfaces'][$ifmembers])) {
+			if (empty($if_config[$ifmembers])) {
 				$input_errors[] = gettext("A member interface passed does not exist in configuration");
 			}
-			if (substr($config['interfaces'][$ifmembers]['if'], 0, 6) == "bridge") {
+			if (substr($if_config[$ifmembers]['if'], 0, 6) == "bridge") {
 				$input_errors[] = gettext("A bridge interface cannot be a member of a bridge.");
 			}
-			if (is_array($config['interfaces'][$ifmembers]['wireless']) &&
-			    $config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap") {
+			if (is_array($if_config[$ifmembers]['wireless']) &&
+			    $if_config[$ifmembers]['wireless']['mode'] != "hostap") {
 				$input_errors[] = gettext("Bridging a wireless interface is only possible in hostap mode.");
 			}
 			if (is_array($_POST['span']) && in_array($ifmembers, $_POST['span'])) {
 				$input_errors[] = sprintf(gettext('Span interface (%s) cannot be part of the bridge. Remove the span interface from bridge members to continue.'), $ifacelist[$ifmembers]);
 			}
-			foreach ($a_bridges as $a_bridge) {
+			foreach (config_get_path('bridges/bridged', []) as $a_bridge) {
 				if ($_POST['bridgeif'] === $a_bridge['bridgeif']) {
 					continue;
 				}
@@ -372,10 +372,10 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 
-			if (isset($id) && $a_bridges[$id]) {
-				$a_bridges[$id] = $bridge;
+			if ($this_bridge_config) {
+				config_set_path("bridges/bridged/{$id}", $bridge);
 			} else {
-				$a_bridges[] = $bridge;
+				config_set_path('bridges/bridged/', $bridge);
 			}
 
 			write_config("Bridge interface created");
@@ -393,12 +393,13 @@ if ($_POST['save']) {
 
 // port list with the exception of assigned bridge interfaces to prevent invalid configs
 function build_port_list($selection) {
-	global $config, $ifacelist;
+	global $ifacelist;
 
 	$portlist = array('list' => array(), 'selected' => array());
 
+	$if_config = config_get_path('interfaces');
 	foreach ($ifacelist as $ifn => $ifdescr) {
-		if (substr($config['interfaces'][$ifn]['if'], 0, 6) != "bridge") {
+		if (substr($if_config[$ifn]['if'], 0, 6) != "bridge") {
 			$portlist['list'][$ifn] = $ifdescr;
 
 			if (in_array($ifn, explode(',', $selection))) {
@@ -661,7 +662,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['bridgeif']
 ));
 
-if (isset($id) && $a_bridges[$id]) {
+if ($this_bridge_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

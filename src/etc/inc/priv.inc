@@ -111,7 +111,7 @@ function map_page_privname($page) {
 	return false;
 }
 
-function get_user_privdesc(& $user) {
+function get_user_privdesc($user) {
 	global $priv_list;
 
 	$privs = array();
@@ -125,6 +125,7 @@ function get_user_privdesc(& $user) {
 
 	foreach ($names as $name) {
 		$group = getGroupEntry($name);
+		$group = $group['item'];
 		$group_privs = $group['priv'];
 		if (!is_array($group_privs)) {
 			continue;
@@ -160,6 +161,7 @@ function isAdminUID($username) {
 
 	/* admin/root access check */
 	$user = getUserEntry($username);
+	$user = $user['item'];
 	if (isset($user)) {
 		if (isset($user['uid'])) {
 			if ($user['uid'] == 0) {
@@ -228,7 +230,7 @@ function getPrivPages(& $entry, & $allowed_pages) {
 }
 
 function getAllowedPages($username, &$attributes = array()) {
-	global $config, $_SESSION;
+	global $_SESSION;
 
 	if (!function_exists("ldap_connect")) {
 		return;
@@ -239,13 +241,9 @@ function getAllowedPages($username, &$attributes = array()) {
 
  	phpsession_begin();
 	if ($_SESSION['remoteauth']) {
-		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 		// cache auth results for a short time to ease load on auth services & logs
-		if (isset($config['system']['webgui']['auth_refresh_time'])) {
-			$recheck_time = config_get_path('system/webgui/auth_refresh_time');
-		} else {
-			$recheck_time = 30;
-		}
+		$recheck_time = config_get_path('system/webgui/auth_refresh_time', 30);
 		// obtain ldap groups if we are in ldap mode
 		if ($authcfg['type'] == "ldap") {
 			if (isset($_SESSION["ldap_allowed_groups"]) &&
@@ -271,6 +269,7 @@ function getAllowedPages($username, &$attributes = array()) {
 	if (!$allowed_groups) {
 		// search for a local user by name
 		$local_user = getUserEntry($username);
+		$local_user = $local_user['item'];
 
 		// obtain local user pages and groups if we have a local user
 		if ($local_user) {
@@ -286,8 +285,9 @@ function getAllowedPages($username, &$attributes = array()) {
 	}
 
 	// build a list of allowed pages
-	if (is_array($config['system']['group']) && is_array($allowed_groups)) {
-		foreach (config_get_path('system/group', []) as $group) {
+	$group_config = config_get_path('system/group');
+	if (is_array($group_config) && is_array($allowed_groups)) {
+		foreach ($group_config as $group) {
 			if (in_array($group['name'], $allowed_groups)) {
 				getPrivPages($group, $allowed_pages);
 			}

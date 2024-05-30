@@ -31,15 +31,14 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-init_config_arr(array('gres', 'gre'));
-$a_gres = &$config['gres']['gre'] ;
+config_init_path('gres/gre');
 
 function gre_inuse($num) {
-	global $config, $a_gres;
-
+	$a_gres = config_get_path('gres/gre');
 	$iflist = get_configured_interface_list(true);
+	$if_config = config_get_path('interfaces');
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gres[$num]['greif']) {
+		if ($if_config[$if]['if'] == $a_gres[$num]['greif']) {
 			return true;
 		}
 	}
@@ -50,14 +49,14 @@ function gre_inuse($num) {
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_gres[$_POST['id']])) {
+	} else if (empty(config_get_path("gres/gre/{$_POST['id']}"))) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (gre_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
 	} else {
-		pfSense_interface_destroy($a_gres[$_POST['id']]['greif']);
-		unset($a_gres[$_POST['id']]);
+		pfSense_interface_destroy(config_get_path("gres/gre/{$_POST['id']}/greif"));
+		config_del_path("gres/gre/{$_POST['id']}");
 
 		write_config("GRE interface deleted");
 
@@ -100,7 +99,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_gres as $i => $gre):
+<?php foreach (config_get_path('gres/gre', []) as $i => $gre):
 	if (substr($gre['if'], 0, 4) == "_vip") {
 		$if = convert_real_interface_to_friendly_descr(get_real_interface($gre['if']));
 	} else {

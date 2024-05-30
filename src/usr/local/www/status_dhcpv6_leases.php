@@ -116,10 +116,8 @@ function leasecmp($a, $b) {
 }
 
 function adjust_gmt($dt) {
-	global $config;
-
 	$dhcpv6leaseinlocaltime = "no";
-	if (is_array($config['dhcpdv6'])) {
+	if (is_array(config_get_path('dhcpdv6'))) {
 		$dhcpdv6 = config_get_path('dhcpdv6');
 		foreach ($dhcpdv6 as $dhcpdv6params) {
 			if (empty($dhcpdv6params)) {
@@ -135,7 +133,7 @@ function adjust_gmt($dt) {
 	if ($dhcpv6leaseinlocaltime == "yes") {
 		$ts = strtotime($dt . " GMT");
 		if ($ts !== false) {
-			return strftime("%Y/%m/%d %H:%M:%S", $ts);
+			return date("Y/m/d H:i:s", $ts);
 		}
 	}
 	/* If we did not need to convert to local time or the conversion failed, just return the input. */
@@ -189,25 +187,22 @@ if (count($pools) > 0) {
 }
 
 foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
-	if (is_array($config['dhcpdv6'][$ifname]) &&
-	    is_array($config['dhcpdv6'][$ifname]['staticmap'])) {
-		foreach ($config['dhcpdv6'][$ifname]['staticmap'] as $static) {
-			$slease = array();
-			$slease['ip'] = merge_ipv6_delegated_prefix(get_interface_ipv6($ifname), $static['ipaddrv6'], get_interface_subnetv6($ifname));
-			$slease['type'] = "static";
-			$slease['duid'] = $static['duid'];
-			$slease['start'] = "";
-			$slease['end'] = "";
-			$slease['hostname'] = htmlentities($static['hostname']);
-			$slease['act'] = $static_string;
-			if (in_array($slease['ip'], array_keys($ndpdata))) {
-				$slease['online'] = $online_string;
-			} else {
-				$slease['online'] = $offline_string;
-			}
-
-			$leases[] = $slease;
+	foreach (config_get_path("dhcpdv6/{$ifname}/staticmap", []) as $static) {
+		$slease = array();
+		$slease['ip'] = merge_ipv6_delegated_prefix(get_interface_ipv6($ifname), $static['ipaddrv6'], get_interface_subnetv6($ifname));
+		$slease['type'] = "static";
+		$slease['duid'] = $static['duid'];
+		$slease['start'] = "";
+		$slease['end'] = "";
+		$slease['hostname'] = htmlentities($static['hostname']);
+		$slease['act'] = $static_string;
+		if (in_array($slease['ip'], array_keys($ndpdata))) {
+			$slease['online'] = $online_string;
+		} else {
+			$slease['online'] = $offline_string;
 		}
+
+		$leases[] = $slease;
 	}
 }
 

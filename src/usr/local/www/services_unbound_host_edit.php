@@ -96,45 +96,53 @@ if ($_POST['save']) {
 
 	/* collect aliases */
 	$aliases = array();
-	if (!empty($_POST['aliashost0'])) {
-		foreach ($_POST as $key => $value) {
-			$entry = '';
-			if (!substr_compare('aliashost', $key, 0, 9)) {
-				$entry = substr($key, 9);
-				$field = 'host';
-			} elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
-				$entry = substr($key, 11);
-				$field = 'domain';
-			} elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
-				$entry = substr($key, 16);
-				$field = 'description';
-			}
-			if (ctype_digit(strval($entry))) {
-				array_set_path($aliases, "{$entry}/{$field}", $value);
-			}
+	foreach ($_POST as $key => $value) {
+		$entry = '';
+		if (!substr_compare('aliashost', $key, 0, 9)) {
+			$entry = substr($key, 9);
+			$field = 'host';
+		} elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
+			$entry = substr($key, 11);
+			$field = 'domain';
+		} elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
+			$entry = substr($key, 16);
+			$field = 'description';
 		}
+		if (ctype_digit(strval($entry))) {
+			array_set_path($aliases, "{$entry}/{$field}", $value);
+		}
+	}
 
-		array_set_path($pconfig, 'aliases/item', $aliases);
+	array_set_path($pconfig, 'aliases/item', $aliases);
 
-		/* validate aliases */
-		foreach ($aliases as $idx => $alias) {
+	/* validate aliases */
+	foreach ($aliases as $idx => $alias) {
+		if ((count($aliases) > 1) ||
+		    !empty($alias['host'])) {
 			$aliasreqdfields = array('aliasdomain' . $idx);
 			$aliasreqdfieldsn = array(gettext("Alias Domain"));
 
 			do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
+		}
 
-			if ($alias['host']) {
-				if (!is_hostname($alias['host'])) {
-					$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
-				} else {
-					if (!is_unqualified_hostname($alias['host'])) {
-						$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
-					}
+		/* Remove empty values */
+		if (empty($alias['host']) &&
+		    empty($alias['domain'])) {
+			unset($aliases[$idx]);
+			continue;
+		}
+
+		if ($alias['host']) {
+			if (!is_hostname($alias['host'])) {
+				$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
+			} else {
+				if (!is_unqualified_hostname($alias['host'])) {
+					$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
 				}
 			}
-			if (($alias['domain'] && !is_domain($alias['domain']))) {
-				$input_errors[] = gettext("A valid domain must be specified in alias list.");
-			}
+		}
+		if (($alias['domain'] && !is_domain($alias['domain']))) {
+			$input_errors[] = gettext("A valid domain must be specified in alias list.");
 		}
 	}
 

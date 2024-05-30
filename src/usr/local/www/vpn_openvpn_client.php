@@ -37,17 +37,11 @@ require_once("pkg-utils.inc");
 global $openvpn_topologies, $openvpn_tls_modes;
 global $openvpn_sharedkey_warning;
 
-init_config_arr(array('openvpn', 'openvpn-client'));
-$a_client = &$config['openvpn']['openvpn-client'];
+config_init_path('openvpn/openvpn-client');
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-
-init_config_arr(array('crl'));
-$a_crl = &$config['crl'];
+config_init_path('ca');
+config_init_path('cert');
+config_init_path('crl');
 
 $proxy_auth_types = array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'));
 $certlist = openvpn_build_cert_list(true);
@@ -55,37 +49,38 @@ $certlist = openvpn_build_cert_list(true);
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
-
+$this_client_config = isset($id) ? config_get_path("openvpn/openvpn-client/{$id}") : null;
 $act = $_REQUEST['act'];
 
-if (isset($id) && $a_client[$id]) {
-	$vpnid = $a_client[$id]['vpnid'];
+if ($this_client_config) {
+	$vpnid = $this_client_config['vpnid'];
 } else {
 	$vpnid = 0;
 }
 
 $user_entry = getUserEntry($_SESSION['Username']);
+$user_entry = $user_entry['item'];
 $user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-client-advanced") || userHasPrivilege($user_entry, "page-all"));
 
 if ($_POST['act'] == "del") {
 
-	if (!isset($a_client[$id])) {
+	if (!isset($this_client_config)) {
 		pfSenseHeader("vpn_openvpn_client.php");
 		exit;
 	}
 
-	if (empty($a_client[$id])) {
+	if (empty($this_client_config)) {
 		$wc_msg = gettext('Deleted empty OpenVPN client');
-	} elseif (openvpn_inuse($a_client[$id]['vpnid'], 'client')) {
+	} elseif (openvpn_inuse($this_client_config['vpnid'], 'client')) {
 		$input_errors[] = gettext("Cannot delete an OpenVPN instance while the interface is assigned. Remove the interface assignment first.");
-	} elseif (!$user_can_edit_advanced && !empty($a_client[$id]['custom_options'])) {
+	} elseif (!$user_can_edit_advanced && !empty($this_client_config['custom_options'])) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
 	} else {
-		openvpn_delete('client', $a_client[$id]);
-		$wc_msg = sprintf(gettext('Deleted OpenVPN client to server %1$s:%2$s %3$s'), $a_client[$id]['server_addr'], $a_client[$id]['server_port'], $a_client[$id]['description']);
+		openvpn_delete('client', $this_client_config);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN client to server %1$s:%2$s %3$s'), $this_client_config['server_addr'], $this_client_config['server_port'], $this_client_config['description']);
 	}
 	if (!empty($wc_msg)) {
-		unset($a_client[$id]);
+		config_del_path("openvpn/openvpn-client/{$id}");
 		write_config($wc_msg);
 		$savemsg = gettext("Client successfully deleted.");
 		services_unbound_configure(false);
@@ -114,90 +109,90 @@ global $simplefields;
 $simplefields = array('auth_user', 'auth_pass', 'proxy_user', 'proxy_passwd');
 
 if (($act == "edit") || ($act == "dup")) {
-	if (isset($id) && $a_client[$id]) {
+	if ($this_client_config) {
 		foreach ($simplefields as $stat) {
-			$pconfig[$stat] = $a_client[$id][$stat];
+			$pconfig[$stat] = $this_client_config[$stat];
 		}
 
-		$pconfig['disable'] = isset($a_client[$id]['disable']);
-		$pconfig['mode'] = $a_client[$id]['mode'];
-		$pconfig['protocol'] = $a_client[$id]['protocol'];
-		$pconfig['interface'] = $a_client[$id]['interface'];
-		if (!empty($a_client[$id]['ipaddr'])) {
-			$pconfig['interface'] = $pconfig['interface'] . '|' . $a_client[$id]['ipaddr'];
+		$pconfig['disable'] = isset($this_client_config['disable']);
+		$pconfig['mode'] = $this_client_config['mode'];
+		$pconfig['protocol'] = $this_client_config['protocol'];
+		$pconfig['interface'] = $this_client_config['interface'];
+		if (!empty($this_client_config['ipaddr'])) {
+			$pconfig['interface'] = $pconfig['interface'] . '|' . $this_client_config['ipaddr'];
 		}
-		$pconfig['local_port'] = $a_client[$id]['local_port'];
-		$pconfig['server_addr'] = $a_client[$id]['server_addr'];
-		$pconfig['server_port'] = $a_client[$id]['server_port'];
-		$pconfig['proxy_addr'] = $a_client[$id]['proxy_addr'];
-		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
-		$pconfig['proxy_authtype'] = $a_client[$id]['proxy_authtype'];
-		$pconfig['description'] = $a_client[$id]['description'];
-		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
-		$pconfig['ns_cert_type'] = $a_client[$id]['ns_cert_type'];
-		if (isset($a_client[$id]['data_ciphers'])) {
-			$pconfig['data_ciphers'] = $a_client[$id]['data_ciphers'];
+		$pconfig['local_port'] = $this_client_config['local_port'];
+		$pconfig['server_addr'] = $this_client_config['server_addr'];
+		$pconfig['server_port'] = $this_client_config['server_port'];
+		$pconfig['proxy_addr'] = $this_client_config['proxy_addr'];
+		$pconfig['proxy_port'] = $this_client_config['proxy_port'];
+		$pconfig['proxy_authtype'] = $this_client_config['proxy_authtype'];
+		$pconfig['description'] = $this_client_config['description'];
+		$pconfig['custom_options'] = $this_client_config['custom_options'];
+		$pconfig['ns_cert_type'] = $this_client_config['ns_cert_type'];
+		if (isset($this_client_config['data_ciphers'])) {
+			$pconfig['data_ciphers'] = $this_client_config['data_ciphers'];
 		} else {
 			$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
 		}
-		$pconfig['dev_mode'] = $a_client[$id]['dev_mode'];
+		$pconfig['dev_mode'] = $this_client_config['dev_mode'];
 
 		if ($pconfig['mode'] != "p2p_shared_key") {
-			$pconfig['caref'] = $a_client[$id]['caref'];
-			$pconfig['certref'] = $a_client[$id]['certref'];
-			$pconfig['crlref'] = $a_client[$id]['crlref'];
-			if ($a_client[$id]['tls']) {
+			$pconfig['caref'] = $this_client_config['caref'];
+			$pconfig['certref'] = $this_client_config['certref'];
+			$pconfig['crlref'] = $this_client_config['crlref'];
+			if ($this_client_config['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
-				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
-				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
+				$pconfig['tls'] = base64_decode($this_client_config['tls']);
+				$pconfig['tls_type'] = $this_client_config['tls_type'];
 			}
-			$pconfig['remote_cert_tls'] = isset($a_client[$id]['remote_cert_tls']);
+			$pconfig['remote_cert_tls'] = isset($this_client_config['remote_cert_tls']);
 		} else {
-			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
+			$pconfig['shared_key'] = base64_decode($this_client_config['shared_key']);
 		}
-		$pconfig['tlsauth_keydir'] = $a_client[$id]['tlsauth_keydir'];
-		$pconfig['data_ciphers_fallback'] = $a_client[$id]['data_ciphers_fallback'];
-		$pconfig['digest'] = !empty($a_client[$id]['digest']) ? $a_client[$id]['digest'] : "SHA256";
+		$pconfig['tlsauth_keydir'] = $this_client_config['tlsauth_keydir'];
+		$pconfig['data_ciphers_fallback'] = $this_client_config['data_ciphers_fallback'];
+		$pconfig['digest'] = !empty($this_client_config['digest']) ? $this_client_config['digest'] : "SHA256";
 
-		$pconfig['tunnel_network'] = $a_client[$id]['tunnel_network'];
-		$pconfig['tunnel_networkv6'] = $a_client[$id]['tunnel_networkv6'];
-		$pconfig['remote_network'] = $a_client[$id]['remote_network'];
-		$pconfig['remote_networkv6'] = $a_client[$id]['remote_networkv6'];
-		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
-		$pconfig['allow_compression'] = $a_client[$id]['allow_compression'];
-		$pconfig['compression'] = $a_client[$id]['compression'];
-		$pconfig['auth-retry-none'] = $a_client[$id]['auth-retry-none'];
-		$pconfig['passtos'] = $a_client[$id]['passtos'];
-		$pconfig['udp_fast_io'] = $a_client[$id]['udp_fast_io'];
-		$pconfig['exit_notify'] = $a_client[$id]['exit_notify'];
-		$pconfig['sndrcvbuf'] = $a_client[$id]['sndrcvbuf'];
-		$pconfig['topology'] = $a_client[$id]['topology'];
+		$pconfig['tunnel_network'] = $this_client_config['tunnel_network'];
+		$pconfig['tunnel_networkv6'] = $this_client_config['tunnel_networkv6'];
+		$pconfig['remote_network'] = $this_client_config['remote_network'];
+		$pconfig['remote_networkv6'] = $this_client_config['remote_networkv6'];
+		$pconfig['use_shaper'] = $this_client_config['use_shaper'];
+		$pconfig['allow_compression'] = $this_client_config['allow_compression'];
+		$pconfig['compression'] = $this_client_config['compression'];
+		$pconfig['auth-retry-none'] = $this_client_config['auth-retry-none'];
+		$pconfig['passtos'] = $this_client_config['passtos'];
+		$pconfig['udp_fast_io'] = $this_client_config['udp_fast_io'];
+		$pconfig['exit_notify'] = $this_client_config['exit_notify'];
+		$pconfig['sndrcvbuf'] = $this_client_config['sndrcvbuf'];
+		$pconfig['topology'] = $this_client_config['topology'];
 
 		// just in case the modes switch
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
 
-		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
-		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
-		$pconfig['dns_add'] = $a_client[$id]['dns_add'];
-		if (isset($a_client[$id]['create_gw'])) {
-			$pconfig['create_gw'] = $a_client[$id]['create_gw'];
+		$pconfig['route_no_pull'] = $this_client_config['route_no_pull'];
+		$pconfig['route_no_exec'] = $this_client_config['route_no_exec'];
+		$pconfig['dns_add'] = $this_client_config['dns_add'];
+		if (isset($this_client_config['create_gw'])) {
+			$pconfig['create_gw'] = $this_client_config['create_gw'];
 		} else {
 			$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
 		}
-		if (isset($a_client[$id]['verbosity_level'])) {
-			$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
+		if (isset($this_client_config['verbosity_level'])) {
+			$pconfig['verbosity_level'] = $this_client_config['verbosity_level'];
 		} else {
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 		}
 
-		$pconfig['ping_method'] = $a_client[$id]['ping_method'];
-		$pconfig['keepalive_interval'] = $a_client[$id]['keepalive_interval'];
-		$pconfig['keepalive_timeout'] = $a_client[$id]['keepalive_timeout'];
-		$pconfig['ping_seconds'] = $a_client[$id]['ping_seconds'];
-		$pconfig['ping_action'] = $a_client[$id]['ping_action'];
-		$pconfig['ping_action_seconds'] = $a_client[$id]['ping_action_seconds'];
-		$pconfig['inactive_seconds'] = $a_client[$id]['inactive_seconds'] ?: 0;
+		$pconfig['ping_method'] = $this_client_config['ping_method'];
+		$pconfig['keepalive_interval'] = $this_client_config['keepalive_interval'];
+		$pconfig['keepalive_timeout'] = $this_client_config['keepalive_timeout'];
+		$pconfig['ping_seconds'] = $this_client_config['ping_seconds'];
+		$pconfig['ping_action'] = $this_client_config['ping_action'];
+		$pconfig['ping_action_seconds'] = $this_client_config['ping_action_seconds'];
+		$pconfig['inactive_seconds'] = $this_client_config['inactive_seconds'] ?: 0;
 	}
 }
 
@@ -213,8 +208,8 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($id) && $a_client[$id]) {
-		$vpnid = $a_client[$id]['vpnid'];
+	if ($this_client_config) {
+		$vpnid = $this_client_config['vpnid'];
 	} else {
 		$vpnid = 0;
 	}
@@ -224,12 +219,12 @@ if ($_POST['save']) {
 	}
 
 	if (isset($pconfig['custom_options']) &&
-	    ($pconfig['custom_options'] != $a_client[$id]['custom_options']) &&
+	    ($pconfig['custom_options'] != $this_client_config['custom_options']) &&
 	    !$user_can_edit_advanced) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
-	if (!$user_can_edit_advanced && !empty($a_client[$id]['custom_options'])) {
-		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
+	if (!$user_can_edit_advanced && !empty($this_client_config['custom_options'])) {
+		$pconfig['custom_options'] = $this_client_config['custom_options'];
 	}
 
 	if (!empty($pconfig['mode']) &&
@@ -376,8 +371,8 @@ if ($_POST['save']) {
 		if (!openvpn_validate_tunnel_network($pconfig['tunnel_network'], 'ipv4')) {
 			$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask or an alias with a single IPv4 subnet with CIDR mask.");
 		}
-		if ((!isset($a_client[$id]) ||
-		    ($a_client[$id]['tunnel_network'] != $pconfig['tunnel_network'])) &&
+		if ((!isset($this_client_config) ||
+		    ($this_client_config['tunnel_network'] != $pconfig['tunnel_network'])) &&
 		    openvpn_is_tunnel_network_in_use($pconfig['tunnel_network'])) {
 			$input_errors[] = gettext("The submitted IPv4 Tunnel Network is already in use.");
 		}
@@ -387,8 +382,8 @@ if ($_POST['save']) {
 		if (!openvpn_validate_tunnel_network($pconfig['tunnel_networkv6'], 'ipv6')) {
 			$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix or an alias with a single IPv6 prefix.");
 		}
-		if ((!isset($a_client[$id]) ||
-		    ($a_client[$id]['tunnel_networkv6'] != $pconfig['tunnel_networkv6'])) &&
+		if ((!isset($this_client_config) ||
+		    ($this_client_config['tunnel_networkv6'] != $pconfig['tunnel_networkv6'])) &&
 		    openvpn_is_tunnel_network_in_use($pconfig['tunnel_networkv6'])) {
 			$input_errors[] = gettext("The submitted IPv6 Tunnel Network is already in use.");
 		}
@@ -515,13 +510,13 @@ if ($_POST['save']) {
 
 		$client = array();
 
-		if (isset($id) && $a_client[$id] &&
-		    $pconfig['dev_mode'] <> $a_client[$id]['dev_mode']) {
+		if ($this_client_config &&
+		    $pconfig['dev_mode'] <> $this_client_config['dev_mode']) {
 			/*
 			 * delete old interface so a new TUN or TAP interface
 			 * can be created.
 			 */
-			openvpn_delete('client', $a_client[$id]);
+			openvpn_delete('client', $this_client_config);
 		}
 
 		foreach ($simplefields as $stat) {
@@ -531,7 +526,7 @@ if ($_POST['save']) {
 				} else {
 					$orig_id = $id;
 				}
-				$client[$stat] = $a_client[$orig_id][$stat];
+				$client[$stat] = config_get_path("openvpn/openvpn-client/{$orig_id}/{$stat}");
 			} else {
 				update_if_changed($stat, $client[$stat], $_POST[$stat]);
 			}
@@ -613,17 +608,17 @@ if ($_POST['save']) {
 		$client['ping_action_seconds'] = $pconfig['ping_action_seconds'];
 		$client['inactive_seconds'] = $pconfig['inactive_seconds'];
 
-		if (($act == 'new') || (!empty($client['disable']) ^ !empty($a_client[$id]['disable'])) ||
-		    ($client['tunnel_network'] != $a_client[$id]['tunnel_network']) ||
-		    ($client['tunnel_networkv6'] != $a_client[$id]['tunnel_networkv6'])) {
+		if (($act == 'new') || (!empty($client['disable']) ^ !empty($this_client_config['disable'])) ||
+		    ($client['tunnel_network'] != $this_client_config['tunnel_network']) ||
+		    ($client['tunnel_networkv6'] != $this_client_config['tunnel_networkv6'])) {
 			$client['unbound_restart'] = true;
 		}
 
-		if (isset($id) && $a_client[$id]) {
-			$a_client[$id] = $client;
+		if ($this_client_config) {
+			config_set_path("openvpn/openvpn-client/{$id}", $client);
 			$wc_msg = sprintf(gettext('Updated OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
 		} else {
-			$a_client[] = $client;
+			config_set_path('openvpn/openvpn-client/', $client);
 			$wc_msg = sprintf(gettext('Added OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
 		}
 
@@ -880,7 +875,7 @@ if ($act=="new" || $act=="edit"):
 			'For example, if the server is set to 0, the client must be set to 1. ' .
 			'Both may be set to omit the direction, in which case the TLS Key will be used bidirectionally.');
 
-	if (count($a_ca)) {
+	if (count(config_get_path('ca', []))) {
 		$section->addInput(new Form_Select(
 			'caref',
 			'*Peer Certificate Authority',
@@ -894,7 +889,7 @@ if ($act=="new" || $act=="edit"):
 		));
 	}
 
-	if (count($a_crl)) {
+	if (count(config_get_path('crl', []))) {
 		$section->addInput(new Form_Select(
 			'crlref',
 			'Peer Certificate Revocation list',
@@ -1270,7 +1265,7 @@ if ($act=="new" || $act=="edit"):
 		$act
 	));
 
-	if (isset($id) && $a_client[$id]) {
+	if ($this_client_config) {
 		$form->addGlobal(new Form_Input(
 			'id',
 			null,
@@ -1311,7 +1306,7 @@ else:
 <?php
 	$print_sk_warning = false;
 	$i = 0;
-	foreach ($a_client as $client):
+	foreach (config_get_path('openvpn/openvpn-client', []) as $client):
 		if ($client['mode'] == 'p2p_shared_key') {
 			$print_sk_warning = true;
 		}

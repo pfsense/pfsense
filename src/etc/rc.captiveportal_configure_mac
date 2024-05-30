@@ -33,8 +33,8 @@ $cpzone = isset($_GET['cpzone']) ? $_GET['cpzone'] : trim($argv[1]);
 $startidx = isset($_GET['startidx']) ? $_GET['startidx'] : trim($argv[2]);
 $stopidx = isset($_GET['cpzone']) ? $_GET['stopidx'] : trim($argv[3]);
 
-$cpzoneidx = $config['captiveportal'][$cpzone]['zoneid'];
+$cpzoneidx = config_get_path("captiveportal/{$cpzone}/zoneid");
 
-captiveportal_passthrumac_configure($filename, $startidx, $stopidx);
+captiveportal_passthrumac_configure($startidx, $stopidx);
 
 ?>

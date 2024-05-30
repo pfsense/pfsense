@@ -30,24 +30,23 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('gifs', 'gif'));
-$a_gifs = &$config['gifs']['gif'];
+config_init_path('gifs/gif');
 $id = $_REQUEST['id'];
 
-
-if (isset($id) && $a_gifs[$id]) {
-	$pconfig['if'] = $a_gifs[$id]['if'];
-	if (!empty($a_gifs[$id]['ipaddr'])) {
-		$pconfig['if'] = $pconfig['if'] . '|' . $a_gifs[$id]['ipaddr'];
+$this_gif_config = isset($id) ? config_get_path("gifs/gif/{$id}") : null;
+if ($this_gif_config) {
+	$pconfig['if'] = $this_gif_config['if'];
+	if (!empty($this_gif_config['ipaddr'])) {
+		$pconfig['if'] = $pconfig['if'] . '|' . $this_gif_config['ipaddr'];
 	}
-	$pconfig['gifif'] = $a_gifs[$id]['gifif'];
-	$pconfig['remote-addr'] = $a_gifs[$id]['remote-addr'];
-	$pconfig['tunnel-remote-net'] = $a_gifs[$id]['tunnel-remote-net'];
-	$pconfig['tunnel-local-addr'] = $a_gifs[$id]['tunnel-local-addr'];
-	$pconfig['tunnel-remote-addr'] = $a_gifs[$id]['tunnel-remote-addr'];
-	$pconfig['link1'] = isset($a_gifs[$id]['link1']);
-	$pconfig['link2'] = isset($a_gifs[$id]['link2']);
-	$pconfig['descr'] = $a_gifs[$id]['descr'];
+	$pconfig['gifif'] = $this_gif_config['gifif'];
+	$pconfig['remote-addr'] = $this_gif_config['remote-addr'];
+	$pconfig['tunnel-remote-net'] = $this_gif_config['tunnel-remote-net'];
+	$pconfig['tunnel-local-addr'] = $this_gif_config['tunnel-local-addr'];
+	$pconfig['tunnel-remote-addr'] = $this_gif_config['tunnel-remote-addr'];
+	$pconfig['link1'] = isset($this_gif_config['link1']);
+	$pconfig['link2'] = isset($this_gif_config['link2']);
+	$pconfig['descr'] = $this_gif_config['descr'];
 }
 
 if ($_POST['save']) {
@@ -94,8 +93,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The alias IP address family has to match the family of the remote peer address.");
 	}
 
-	foreach ($a_gifs as $gif) {
-		if (isset($id) && ($a_gifs[$id]) && ($a_gifs[$id] === $gif)) {
+	foreach (config_get_path('gifs/gif', []) as $gif) {
+		if ($this_gif_config && ($this_gif_config === $gif)) {
 			continue;
 		}
 
@@ -136,10 +135,10 @@ if ($_POST['save']) {
 		    !preg_match("/^gif[0-9]+$/", $gif['gifif'])) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
-			if (isset($id) && $a_gifs[$id]) {
-				$a_gifs[$id] = $gif;
+			if ($this_gif_config) {
+				config_set_path("gifs/gif/{$id}", $gif);
 			} else {
-				$a_gifs[] = $gif;
+				config_set_path('gifs/gif/', $gif);
 			}
 
 			write_config("GIF interface added");
@@ -239,7 +238,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['gifif']
 ));
 
-if (isset($id) && $a_gifs[$id]) {
+if ($this_gif_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

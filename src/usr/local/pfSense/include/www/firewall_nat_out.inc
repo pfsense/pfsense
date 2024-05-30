@@ -30,13 +30,12 @@ require_once("filter.inc");
 
 // Save Outbound mode
 function saveNAToutMode($post, $json = false) {
-	global $config, $FilterIflist, $GatewaysList;
+	global $FilterIflist, $GatewaysList;
 
-	init_config_arr(array('nat', 'outbound', 'rule'));
-	$a_out = &$config['nat']['outbound']['rule'];
+	config_init_path('nat/outbound/rule');
 
-	if (!isset($config['nat']['outbound']['mode'])) {
-		$config['nat']['outbound']['mode'] = "automatic";
+	if (config_get_path('nat/outbound/mode') === null) {
+		config_set_path('nat/outbound/mode', "automatic");
 	}
 	
 	$mode = config_get_path('nat/outbound/mode');
@@ -69,7 +68,7 @@ function saveNAToutMode($post, $json = false) {
 
 				/* Try to detect already auto created rules and avoid duplicating them */
 				$found = false;
-				foreach ($a_out as $rule) {
+				foreach (config_get_path('nat/outbound/rule', []) as $rule) {
 					if ($rule['interface'] == $natent['interface'] &&
 					    $rule['source']['network'] == $natent['source']['network'] &&
 					    $rule['dstport'] == $natent['dstport'] &&
@@ -81,7 +80,7 @@ function saveNAToutMode($post, $json = false) {
 				}
 
 				if ($found === false) {
-					$a_out[] = $natent;
+					config_set_path('nat/outbound/rule/', $natent);
 				}
 			}
 		}
@@ -89,7 +88,7 @@ function saveNAToutMode($post, $json = false) {
 		unset($FilterIflist, $GatewaysList);
 	}
 
-	$config['nat']['outbound']['mode'] = $post['mode'];
+	config_set_path('nat/outbound/mode', $post['mode']);
 
 	if (write_config(gettext("Firewall: NAT: Outbound - saved outbound NAT settings."))) {
 		mark_subsystem_dirty('natconf');
@@ -102,13 +101,12 @@ function saveNAToutMode($post, $json = false) {
 }
 // Save Outbound rule
 function saveoutNATrule($post, $id, $json = false) {
-	global $after, $config;
+	global $after;
 	$nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
 	$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 	$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 
-	init_config_arr(array('nat', 'outbound', 'rule'));
-	$a_out = &$config['nat']['outbound']['rule'];
+	config_init_path('nat/outbound/rule');
 
 	if (isset($post['after'])) {
 		$after = $post['after'];
@@ -272,16 +270,6 @@ function saveoutNATrule($post, $id, $json = false) {
 		$ext = $post['destination'];
 	}
 
-	foreach ($a_out as $natent) {
-		if (isset($id) && ($a_out[$id]) && ($a_out[$id] === $natent)) {
-			continue;
-		}
-
-		if (!$natent['interface']) {
-			$natent['interface'] = "wan";
-		}
-	}
-
 	if (!$input_errors) {
 		$natent = array();
 		$natent['source']['network'] = $osn;
@@ -359,8 +347,8 @@ function saveoutNATrule($post, $id, $json = false) {
 			$natent['destination']['not'] = true;
 		}
 
-		if (isset($a_out[$id]['created']) && is_array($a_out[$id]['created'])) {
-			$natent['created'] = $a_out[$id]['created'];
+		if (is_array(config_get_path("nat/outbound/rule/{$id}/created"))) {
+			$natent['created'] = config_get_path("nat/outbound/rule/{$id}/created");
 		}
 
 		$natent['updated'] = make_config_revision_entry();
@@ -368,14 +356,16 @@ function saveoutNATrule($post, $id, $json = false) {
 		// Allow extending of the firewall edit page and include custom input validation
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/pre_write_config");
 
-		if (isset($id) && $a_out[$id]) {
-			$a_out[$id] = $natent;
+		if (isset($id) && config_get_path("nat/outbound/rule/{$id}")) {
+			config_set_path("nat/outbound/rule/{$id}", $natent);
 		} else {
 			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
+				$a_out = config_get_path('nat/outbound/rule');
 				array_splice($a_out, $after+1, 0, array($natent));
+				config_set_path('nat/outbound/rule', $a_out);
 			} else {
-				$a_out[] = $natent;
+				config_set_path('nat/outbound/rule/', $natent);
 			}
 		}
 
@@ -393,13 +383,12 @@ function saveoutNATrule($post, $id, $json = false) {
 
 // Retrieve the specified Outbound rule
 function getoutNATrule($id, $json = false) {
-	global $config;
 	$nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
 	$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 	$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 
-	init_config_arr(array('nat', 'outbound', 'rule'));
-	$a_out = &$config['nat']['outbound']['rule'];
+	config_init_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule');
 
 	$pconfig = array();
 
@@ -483,10 +472,8 @@ function getoutNATrule($id, $json = false) {
 
 // Toggle enabled/disabled status of an Outbound rule
 function toggleoutNATrule($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'outbound', 'rule'));
-	$a_out = &$config['nat']['outbound']['rule'];
+	config_init_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule');
 
 	if (isset($a_out[$post['id']]['disabled'])) {
 		unset($a_out[$post['id']]['disabled']);
@@ -495,6 +482,7 @@ function toggleoutNATrule($post, $json = false) {
 		$a_out[$post['id']]['disabled'] = true;
 		$wc_msg = gettext('Firewall: NAT: Outbound - disabled a NAT Outbound rule.');
 	}
+	config_set_path('nat/outbound/rule', $a_out);
 
 	if (write_config($wc_msg) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -504,15 +492,12 @@ function toggleoutNATrule($post, $json = false) {
 		header("Location: firewall_nat_out.php");
 		exit;
 	} else {
-		$a_out = &$config['nat']['outbound'];
-		return isset($a_out['rule'][$post['id']]['disabled']) ? "disabled":"enabled";
+		return isset($a_out[$post['id']]['disabled']) ? "disabled":"enabled";
 	}
 }
 
 // Toggle multiple Outbound rules
 function toggleMultipleoutNATrules($post, $json = false) {
-	global $config;
-
 	if (empty($post) ||
 	    !is_array($post) ||
 	    !isset($post['rule']) ||
@@ -522,8 +507,8 @@ function toggleMultipleoutNATrules($post, $json = false) {
 		return;
 	}
 
-	init_config_arr(array('nat', 'outbound', 'rule'));
-	$a_out = &$config['nat']['outbound']['rule'];
+	config_init_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule');
 
 	foreach ($post['rule'] as $rulei) {
 		if (isset($a_out[$rulei]['disabled'])) {
@@ -532,6 +517,7 @@ function toggleMultipleoutNATrules($post, $json = false) {
 			$a_out[$rulei]['disabled'] = true;
 		}
 	}
+	config_set_path('nat/outbound/rule', $a_out);
 
 	if (write_config(gettext("Firewall: NAT: Outbound - toggle enable/disable for selected outbound mappings.")) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -545,8 +531,6 @@ function toggleMultipleoutNATrules($post, $json = false) {
 
 // Delete multiple Outbound rules
 function deleteMultipleoutNATrules($post, $json = false) {
-	global $config;
-
 	if (empty($post) ||
 	    !is_array($post) ||
 	    !isset($post['rule']) ||
@@ -556,12 +540,13 @@ function deleteMultipleoutNATrules($post, $json = false) {
 		return;
 	}
 
-	init_config_arr(array('nat', 'outbound', 'rule'));
-	$a_out = &$config['nat']['outbound']['rule'];
+	config_init_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule');
 
 	foreach ($post['rule'] as $rulei) {
 		unset($a_out[$rulei]);
 	}
+	config_set_path('nat/outbound/rule', $a_out);
 
 	if (write_config(gettext("Firewall: NAT: Outbound - deleted selected outbound mappings.")) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -575,12 +560,11 @@ function deleteMultipleoutNATrules($post, $json = false) {
 
 // Delete outbound rule
 function deleteoutNATrule($post, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'outbound', 'rule'));
-	$a_out = &$config['nat']['outbound']['rule'];
+	config_init_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule');
 
 	unset($a_out[$post['id']]);
+	config_set_path('nat/outbound/rule', $a_out);
 	if (write_config(gettext("Firewall: NAT: Outbound - deleted NPt mapping.")) && !$json) {
 		mark_subsystem_dirty('natconf');
 	}
@@ -593,11 +577,9 @@ function deleteoutNATrule($post, $json = false) {
 
 // Re-order the NPtNAT rules per the array of indices passed in $post
 function outNATrulesreorder($post, $json = false) {
-	global $config;
-
 	if (is_array($post['rule']) && !empty($post['rule'])) {
-		init_config_arr(array('nat', 'outbound', 'rule'));
-		$a_out = &$config['nat']['outbound']['rule'];
+		config_init_path('nat/outbound/rule');
+		$a_out = config_get_path('nat/outbound/rule');
 		$a_out_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
@@ -606,6 +588,7 @@ function outNATrulesreorder($post, $json = false) {
 		}
 
 		$a_out = $a_out_new;
+		config_set_path('nat/outbound/rule', $a_out);
 
 		if (write_config(gettext("Firewall: NAT: Outbound - reordered outbound mappings.")) && !$json) {
 			mark_subsystem_dirty('natconf');

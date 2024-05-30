@@ -102,9 +102,7 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 }
 
 ##if no config entry found, initialize config entry
-if (!is_array($config['widgets'])) {
-	config_set_path('widgets', array());
-}
+config_init_path('widgets');
 
 if (!is_array($user_settings['widgets'])) {
 	$user_settings['widgets'] = array();
@@ -284,9 +282,10 @@ if ($user_settings['widgets']['sequence'] != "") {
 	$widgets = $widgetsfromconfig + $known_widgets;
 
 	##find custom configurations of a particular widget and load its info to $pconfig
+	$widgets_config = config_get_path('widgets');
 	foreach ($widgets as $widgetname => $widgetconfig) {
-		if ($config['widgets'][$widgetname . '-config']) {
-			$pconfig[$widgetname . '-config'] = config_get_path("widgets/{$widgetname}-config");
+		if ($widgets_config["{$widgetname}-config"]) {
+			$pconfig["{$widgetname}-config"] = $widgets_config["{$widgetname}-config"];
 		}
 	}
 }

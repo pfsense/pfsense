@@ -39,8 +39,7 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zo
 $pglinks = array("", "services_captiveportal_zones.php", "@self");
 $shortcut_section = "captiveportal";
 
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
+config_init_path('captiveportal');
 
 if ($_POST['Submit']) {
 	unset($input_errors);
@@ -60,7 +59,7 @@ if ($_POST['Submit']) {
 		$input_errors[] = sprintf(gettext("The zone name [%s] is reserved."), $_POST['zone']);
 	}
 
-	foreach ($a_cp as $cpent) {
+	foreach (config_get_path('captiveportal', []) as $cpent) {
 		if ($cpent['zone'] == $_POST['zone']) {
 			$input_errors[] = sprintf(gettext("Zone [%s] already exists."), $_POST['zone']);
 			break;
@@ -69,10 +68,11 @@ if ($_POST['Submit']) {
 
 	if (!$input_errors) {
 		$cpzone = strtolower(htmlspecialchars($_POST['zone']));
-		$a_cp[$cpzone] = array();
-		$a_cp[$cpzone]['zone'] = str_replace(" ", "", $_POST['zone']);
-		$a_cp[$cpzone]['descr'] = $_POST['descr'];
-		$a_cp[$cpzone]['localauth_priv'] = true;
+		config_set_path("captiveportal/{$cpzone}", [
+			'zone' => str_replace(" ", "", $_POST['zone']),
+			'descr' => $_POST['descr'],
+			'localauth_priv' => true
+		]);
 		write_config("Captive portal zone saved");
 
 		header("Location: services_captiveportal.php?zone={$cpzone}");

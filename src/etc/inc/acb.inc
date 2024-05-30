@@ -67,13 +67,10 @@ $uniqueID = system_get_uniqueid();
 
 /* Check whether ACB is enabled */
 function acb_enabled() {
-	global $config;
 	$acb_enabled = false;
 
-	if (is_array($config['system']['acb'])) {
-		if ($config['system']['acb']['enable'] == "yes") {
-			$acb_enabled = true;
-		}
+	if (config_get_path('system/acb/enable', '') == "yes") {
+		$acb_enabled = true;
 	}
 
 	return $acb_enabled;
@@ -81,7 +78,7 @@ function acb_enabled() {
 
 // Ensures patches match
 function acb_custom_php_validation_command($post, &$input_errors) {
-	global $_POST, $savemsg, $config;
+	global $_POST, $savemsg;
 
 	// Do nothing when ACB is disabled in configuration
 	// This also makes it possible to delete the credentials from config.xml
@@ -132,10 +129,10 @@ function acb_custom_php_resync_config_command() {
 }
 
 function test_connection($post) {
-	global $savemsg, $config, $g;
+	global $savemsg;
 
 	// Do nothing when booting or when not enabled
-	if (platform_booting() || !acb_enabled()) {
+	if (is_platform_booting() || !acb_enabled()) {
 		return;
 	}
 
@@ -152,7 +149,7 @@ function test_connection($post) {
 	$password = $post['password'];
 
 	// Set hostname
-	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$hostname = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 
 	// URL to restore.php
 	$get_url = "https://acb.netgate.com/getbkp";
@@ -182,7 +179,7 @@ function test_connection($post) {
 }
 
 function upload_config($manual = false) {
-	global $config, $g, $input_errors, $userkey, $uniqueID;
+	global $g, $input_errors, $userkey, $uniqueID;
 
 	if (empty($userkey)) {
 		$userkey = get_device_key();
@@ -193,7 +190,7 @@ function upload_config($manual = false) {
 	}
 
 	// Do nothing when booting or when not enabled
-	if (platform_booting() || !acb_enabled()) {
+	if (is_platform_booting() || !acb_enabled()) {
 		return;
 	}
 
@@ -219,14 +216,10 @@ function upload_config($manual = false) {
 	}
 
 	$last_config_change = config_get_path('revision/time');
-	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$hostname = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 	$reason	= config_get_path('revision/description');
 
-	if ($manual && array_key_exists('numman', $config['system']['acb'])) {
-		$manmax = config_get_path('system/acb/numman');
-	} else {
-		$manmax = "0";
-	}
+	$manmax = config_get_path('system/acb/numman', '0');
 
 	$encryptpw = config_get_path('system/acb/encryption_password');
 
@@ -264,7 +257,7 @@ function upload_config($manual = false) {
 				'userkey' => htmlspecialchars($userkey),
 				'sha256_hash' => $raw_config_sha256_hash,
 				'version' => g_get('product_version'),
-				'hint' => $config['system']['acb']['hint'],
+				'hint' => config_get_path('system/acb/hint'),
 				'manmax' => $manmax
 			);
 
@@ -339,27 +332,25 @@ function upload_config($manual = false) {
 // if frequency == "cron", a new crontab entry is created, otherwise any existing
 // ACB entry is removed
 function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $reverse, $pwd) {
-	global $config;
-
-	init_config_arr(array('system', 'acb'));
+	config_init_path('system/acb');
 
 	// Randomize the minutes if not specified
 	if (!isset($minute) || strlen($minute) == 0 || $minute == "0") {
 		$minute = rand(1, 59);
 	}
 
-	$config['system']['acb']['enable'] = $enable;
-	$config['system']['acb']['hint'] = $hint;
-	$config['system']['acb']['frequency'] = $frequency;
-	$config['system']['acb']['minute'] = $minute;
-	$config['system']['acb']['hour'] = $hours;
-	$config['system']['acb']['month'] = $month;
-	$config['system']['acb']['day'] = $day;
-	$config['system']['acb']['dow'] = $dow;
-	$config['system']['acb']['numman'] = $numman;
-	$config['system']['acb']['reverse'] = $reverse;
+	config_set_path('system/acb/enable', $enable);
+	config_set_path('system/acb/hint', $hint);
+	config_set_path('system/acb/frequency', $frequency);
+	config_set_path('system/acb/minute', $minute);
+	config_set_path('system/acb/hour', $hours);
+	config_set_path('system/acb/month', $month);
+	config_set_path('system/acb/day', $day);
+	config_set_path('system/acb/dow', $dow);
+	config_set_path('system/acb/numman', $numman);
+	config_set_path('system/acb/reverse', $reverse);
 	if (strlen($pwd) >= 8) {
-		$config['system']['acb']['encryption_password'] = $pwd;
+		config_set_path('system/acb/encryption_password', $pwd);
 	}
 
 	install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php", $frequency == "cron",
@@ -375,5 +366,5 @@ function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $d
 
 	write_config("AutoConfigBackup settings updated");
 
-	return($config['system']['acb']);
+	return config_get_path('system/acb');
 }

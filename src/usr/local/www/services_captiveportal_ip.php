@@ -43,31 +43,27 @@ require_once("captiveportal.inc");
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
-$cpzoneid = $a_cp[$cpzone]['zoneid'];
+config_init_path("captiveportal/{$cpzone}/allowedip");
+$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed IP Addresses"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Allowed IP Addresses"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 if ($_POST['act'] == "del" && !empty($cpzone)) {
-	init_config_arr(array('captiveportal', $cpzone, 'allowedip'));
-	$a_allowedips = &$config['captiveportal'][$cpzone]['allowedip'];
+	if (config_get_path("captiveportal/{$cpzone}/allowedip/{$_POST['id']}")) {
+		$ipent = config_get_path("captiveportal/{$cpzone}/allowedip/{$_POST['id']}");
 
-	if ($a_allowedips[$_POST['id']]) {
-		$ipent = $a_allowedips[$_POST['id']];
-
-		if (isset($config['captiveportal'][$cpzone]['enable'])) {
+		if (config_path_enabled("captiveportal/{$cpzone}")) {
 			captiveportal_ether_delete_entry($ipent, 'allowedhosts');
 		}
 
-		unset($a_allowedips[$_POST['id']]);
+		config_del_path("captiveportal/{$cpzone}/allowedip/{$_POST['id']}");
 		write_config("Captive portal allowed IPs saved");
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
@@ -96,13 +92,10 @@ display_top_tabs($tab_array, true);
 				<th data-sortable="false"><?=gettext("Actions"); ?></th>
 			</tr>
 		</thead>
-
-<?php
-if (is_array($a_cp[$cpzone]['allowedip'])): ?>
 		<tbody>
 <?php
 	$i = 0;
-	foreach ($a_cp[$cpzone]['allowedip'] as $ip): ?>
+	foreach (config_get_path("captiveportal/{$cpzone}/allowedip", []) as $ip): ?>
 			<tr>
 				<td>
 					<?=$directionicons[$ip['dir']]?>&nbsp;<?=$ip['ip']?>
@@ -125,14 +118,6 @@ if (is_array($a_cp[$cpzone]['allowedip'])): ?>
 	<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %1$sto%2$s the address are allowed'), '<u>', '</u>') . ', '?>
 	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %1$sfrom%2$s the address are allowed'), '<u>', '</u>') . ', '?>
 	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %1$sto or from%2$s are allowed'), '<u>', '</u>')?>
-<?php
-else:
-?>
-		</tbody>
-	</table>
-<?php
-endif;
-?>
 </div>
 
 <nav class="action-buttons">

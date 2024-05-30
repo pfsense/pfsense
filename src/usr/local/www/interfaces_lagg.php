@@ -30,15 +30,14 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('laggs', 'lagg'));
-$a_laggs = &$config['laggs']['lagg'] ;
+config_init_path('laggs/lagg');
 
 function lagg_inuse($num) {
-	global $config, $a_laggs;
-
+	$a_laggs = config_get_path('laggs/lagg');
+	$if_config = config_get_path('interfaces');
 	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_laggs[$num]['laggif']) {
+		if ($if_config[$if]['if'] == $a_laggs[$num]['laggif']) {
 			return true;
 		}
 	}
@@ -54,14 +53,14 @@ function lagg_inuse($num) {
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_laggs[$_POST['id']])) {
+	} else if (empty(config_get_path("laggs/lagg/{$_POST['id']}"))) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (lagg_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This LAGG interface cannot be deleted because it is still being used.");
 	} else {
-		pfSense_interface_destroy($a_laggs[$_POST['id']]['laggif']);
-		unset($a_laggs[$_POST['id']]);
+		pfSense_interface_destroy(config_get_path("laggs/lagg/{$_POST['id']}/laggif"));
+		config_del_path("laggs/lagg/{$_POST['id']}");
 
 		write_config("LAGG interface deleted");
 
@@ -109,7 +108,7 @@ display_top_tabs($tab_array);
 
 $i = 0;
 
-foreach ($a_laggs as $lagg) {
+foreach (config_get_path('laggs/lagg', []) as $lagg) {
 ?>
 					<tr>
 						<td>

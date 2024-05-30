@@ -72,12 +72,15 @@ table.sortable-theme-bootstrap {
     border-top: 2px solid #616161;
 }
 
+.dropdown-menu-fixed {
+    max-height: calc(98vh - 35px);
+    overflow-y: auto;
+}
+
 .dropdown-menu {
     background-color: #000;
     opacity: .93;
     border-radius: 10px;
-    max-height: calc(98vh - 35px);
-    overflow-y: auto;
 }
 
 .dropdown-menu>li>a {

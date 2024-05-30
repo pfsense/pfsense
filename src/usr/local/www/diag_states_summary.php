@@ -177,7 +177,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 							</tr><tr>
 <?php endif;
 
-	$srscnt = is_array($protoinfo['srcports']) ? count($protoinfo['srcports']) : 0;
+	$srccnt = is_array($protoinfo['srcports']) ? count($protoinfo['srcports']) : 0;
 	$dstcnt = is_array($protoinfo['dstports']) ? count($protoinfo['dstports']) : 0;
 
 ?>

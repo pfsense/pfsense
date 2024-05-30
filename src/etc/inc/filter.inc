@@ -110,6 +110,31 @@ if (config_get_path('ipsec/filtermode') == 'if_ipsec') {
 	$filter_interface_remove[] = 'ipsec';
 }
 
+/**
+ * Floating states for IPsec rules are not needed when:
+ * - The global state policy is already set to floating
+ * - The IPsec Filter Mode is set to assigned interfaces
+ * - There are no enabled VTI IPsec tunnels
+ */
+global $use_floating_states_for_ipsec;
+$use_floating_states_for_ipsec = false;
+if (!config_path_enabled('system', 'disable_auto_floating_states') &&
+    (config_get_path('system/statepolicy', 'if-bound') == 'if-bound') &&
+    (config_get_path('ipsec/filtermode', 'enc') == 'enc')) {
+	// look for a VTI or transport mode p2
+	foreach (config_get_path('ipsec/phase2', []) as $ipsecp2) {
+		if (!isset($ipsecp2['disabled']) && ($ipsecp2['mode'] == 'transport') || ($ipsecp2['mode'] == 'vti')) {
+			// check if the matching p1 to this p2 is enabled
+			foreach (config_get_path('ipsec/phase1', []) as $ipsecp1) {
+				if (!isset($ipsecp1['disabled']) && ($ipsecp1['ikeid'] == $ipsecp2['ikeid'])) {
+					$use_floating_states_for_ipsec = true;
+					break 2;
+				}
+			}
+		}
+	}
+}
+
 /*
  * Fixed tracker values (used to group and track usage in GUI):
  *
@@ -228,7 +253,7 @@ function filter_configure() {
 	 * NOTE: Check here for bootup status since this should not be triggered during bootup.
 	 *	 The reason is that rc.bootup calls filter_configure_sync directly which does this too.
 	 */
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		send_event("filter reload");
 	}
 }
@@ -335,19 +360,19 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	/* Get interface list to work with. */
 	filter_generate_optcfg_array();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo gettext("Configuring firewall");
 	}
 
 	/* generate aliases */
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Creating aliases"));
 	$vpns_list = filter_get_vpns_list();
 	$aliases = filter_generate_aliases();
 	$gateways = filter_generate_gateways();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Generating Limiter rules"));
@@ -356,19 +381,19 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	update_filter_reload_status(gettext("Generating NAT rules"));
 	/* generate nat rules */
 	$natrules = filter_nat_rules_generate();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Generating filter rules"));
 	/* generate pfctl rules */
 	$pfrules = filter_rules_generate();
 	/* generate altq, limiter */
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 	update_filter_reload_status(gettext("Loading filter rules"));
@@ -379,7 +404,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		mwexec("/sbin/pfctl -d", true);
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
-		if (platform_booting() == true) {
+		if (is_platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 		unlock($filterlck);
@@ -451,13 +476,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 					config_get_path('system/adaptiveend'));
 	}
 
-	$max_states = 0;
-	if (is_numeric(config_get_path('system/maximumstates'))) {
-		/* User defined maximum states in Advanced menu. */
-		$max_states = config_get_path('system/maximumstates');
-	} else {
-		$max_states = pfsense_default_state_size();
-	}
+	/* User defined maximum states in Advanced menu. */
+	$max_states = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
 	$limitrules .= "set limit states {$max_states}\n";
 	$limitrules .= "set limit src-nodes {$max_states}\n";
 
@@ -581,7 +601,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	// get aliases names from config
 	$aliasesnames = array();
-	init_config_arr(array('aliases', 'alias'));
+	config_init_path('aliases/alias');
 	foreach (config_get_path('aliases/alias', []) as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
@@ -598,7 +618,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$_grbg = exec("/sbin/pfctl -t " . escapeshellarg($alias) . " -T kill 2>/dev/null");
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		if (!empty($filterdns)) {
 			@file_put_contents("{$g['varetc_path']}/filterdns.conf", implode("", $filterdns));
 			unset($filterdns);
@@ -656,7 +676,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		filter_tdr_install_cron(false);
 	}
 
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 
@@ -675,11 +695,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 
 	update_filter_reload_status(gettext("Done"));
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 	
-	if (!platform_booting() && !$rules_loading) {
+	if (!is_platform_booting() && !$rules_loading) {
 		remove_failover_states();
 	}
 
@@ -1944,8 +1964,8 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	// OpenVPN CSO
-	init_config_arr(array('openvpn', 'openvpn-csc'));
-	foreach (config_get_path('openvpn/openvpn-csc') as $ovpnent) {
+	config_init_path('openvpn/openvpn-csc');
+	foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
 			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
 			$descriptions[] = gettext("OpenVPN CSO");
@@ -2211,7 +2231,7 @@ EOD;
 function filter_nat_rules_generate() {
 	global $g, $FilterIflist;
 
-	init_config_arr(array('ipsec', 'client'));
+	config_init_path('ipsec/client');
 	$ipsec_client = config_get_path('ipsec/client');
 
 	$natrules = "no nat proto carp\n";
@@ -2452,7 +2472,7 @@ function filter_nat_rules_generate() {
 	case "hybrid":
 		$natrules .= "\n# Outbound NAT rules (manual)\n";
 		/* advanced outbound rules */
-		foreach (config_get_path('nat/outbound/rule') as $obent) {
+		foreach (config_get_path('nat/outbound/rule', []) as $obent) {
 			if (isset($obent['disabled'])) {
 				continue;
 			}
@@ -3270,7 +3290,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 }
 
 function filter_generate_user_rule($rule, & $extralabels = null) {
-	global $g, $FilterIflist, $GatewaysList, $vpns_list;
+	global $g, $FilterIflist, $GatewaysList, $vpns_list, $use_floating_states_for_ipsec;
 	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
 	if (config_path_enabled('system','developerspew')) {
@@ -3418,7 +3438,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 
 	$aline['gwlabel'] = "";
 	/* do not process reply-to for gateway'd rules */
-	if ($rule['gateway'] == "" && $aline['direction'] <> "" && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !config_path_enabled('system','disablereplyto') && !isset($rule['disablereplyto']) && $type != "match") {
+	if (($type == "pass") && ($rule['gateway'] == "") && ($aline['direction'] <> "") && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !config_path_enabled('system','disablereplyto') && !isset($rule['disablereplyto'])) {
 		if ($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if (is_ipaddrv6($rg)) {
@@ -3552,114 +3572,103 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 			$aline['flags'] = "flags S/SA ";
 		}
 	}
+
+	/* State Tracking Options */
+	$rule_tracks_state = true;
 	if ($type == "pass") {
-		/*
-		 *	# keep state
-		 *		works with TCP, UDP, and ICMP.
-		 *	# modulate state
-		 *		deprecated
-		 *	# synproxy state
-		 *		proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
-		 *	# none
-		 *		do not use state mechanisms to keep track. this is only useful if your doing advanced
-		 *		queueing in certain situations. please check the faq.
-		 */
-		$noadvoptions = false;
-		if (isset($rule['statetype']) && $rule['statetype'] <> "") {
+		if (empty($rule['statetype'])) {
+			// Default to 'keep state'; works with TCP, UDP, and ICMP.
+			$aline['flags'] .= "keep state ";
+		} else {
 			switch ($rule['statetype']) {
-				case "none":
-					$noadvoptions = true;
-					$aline['flags'] .= " no state ";
-					break;
-				case "modulate state":
-				case "synproxy state":
-					if ($rule['protocol'] == "tcp") {
-						$aline['flags'] .= "{$rule['statetype']} ";
-					}
-					break;
 				case "sloppy state":
 					$aline['flags'] .= "keep state ";
 					$rule['sloppy'] = true;
 					break;
-				default:
-					$aline['flags'] .= "{$rule['statetype']} ";
+				case "modulate state":
+					// deprecated
+				case "synproxy state":
+					// Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
+					if ($rule['protocol'] == "tcp") {
+						$aline['flags'] .= "{$rule['statetype']} ";
+					}
 					break;
-			}
-		} else {
-			$aline['flags'] .= "keep state ";
-		}
-
-		if ($noadvoptions == false && isset($rule['nopfsync'])) {
-			$rule['nopfsync'] = true;
-		}
-
-		if ($noadvoptions == false) {
-			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
-			    (isset($rule['max']) and $rule['max'] <> "") or
-			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
-			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
-			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
-			    ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-			      ((isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
-			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
-			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
-			    (isset($rule['statepolicy']) and !empty($rule['statepolicy'])) or
-			    (isset($rule['sloppy'])) or
-			    (isset($rule['nopfsync']))) {
-				$aline['flags'] .= "( ";
-				if (!empty($rule['statepolicy'])) {
-					$aline['flags'] .= "{$rule['statepolicy']} ";
-				}
-				if (isset($rule['sloppy'])) {
-					$aline['flags'] .= "sloppy ";
-				}
-				if (isset($rule['nopfsync'])) {
-					$aline['flags'] .= "no-sync ";
-				}
-				if (isset($rule['source-track']) and $rule['source-track'] <> "") {
-					$aline['flags'] .= "source-track rule ";
-				}
-				if (isset($rule['max']) and $rule['max'] <> "") {
-					$aline['flags'] .= "max " . $rule['max'] . " ";
-				}
-				if (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") {
-					$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
-				}
-				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-				    (isset($rule['max-src-conn'])) and
-				    ($rule['max-src-conn'] <> "")) {
-					$aline['flags'] .= "max-src-conn " . $rule['max-src-conn'] . " ";
-				}
-				if (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") {
-					$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
-				}
-				if (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") {
-					if (in_array($rule['protocol'], array("tcp", "tcp/udp", "sctp")) ||
-					    empty($rule['protocol'])) {
-						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
-					}
-					if (in_array($rule['protocol'], array("udp", "tcp/udp")) ||
-					    empty($rule['protocol'])) {
-						$aline['flags'] .= "udp.multiple " . $rule['statetimeout'] . " ";
-					}
-					if (!array_key_exists($rule['protocol'], get_ipprotocols('portsonly')) ||
-					    empty($rule['protocol'])) {
-						$aline['flags'] .= "other.multiple " . $rule['statetimeout'] . " ";
-					}
-				}
-				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-				    (isset($rule['max-src-conn-rate'])) and
-				    ($rule['max-src-conn-rate'] <> "") and
-				    (isset($rule['max-src-conn-rates'])) and
-				    ($rule['max-src-conn-rates'] <> "")) {
-					$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
-					$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
-				}
-
-				$aline['flags'] .= " ) ";
+				case "none":
+					// Do not track the state for this rule. This can be useful for advanced queueing.
+					$rule_tracks_state = false;
+					$aline['flags'] .= "no state ";
+					break;
+				default:
+					// Default to 'keep state' for unknown options.
+					$aline['flags'] .= "keep state ";
+					break;
 			}
 		}
 	}
+	// Set 'state-opts' and 'timeout' options.
+	if ($rule_tracks_state) {
+		$track_options = [];
+
+		// state-opt
+		if (isset($rule['nopfsync'])) {
+			$rule['nopfsync'] = true;
+			$track_options[] = "no-sync";
+		}
+		if (!empty($rule['statepolicy'])) {
+			$track_options[] = "{$rule['statepolicy']}";
+		} elseif ($use_floating_states_for_ipsec && ($rule['interface'] == 'enc0')) {
+			// a floating state is needed for enc0 rules - see #15430
+			$track_options[] = 'floating';
+		}
+		if (isset($rule['sloppy'])) {
+			$track_options[] = "sloppy";
+		}
+		if (!empty($rule['source-track'])) {
+			$track_options[] = "source-track rule";
+		}
+		if (!empty($rule['max'])) {
+			$track_options[] = "max {$rule['max']}";
+		}
+		if (!empty($rule['max-src-nodes'])) {
+			$track_options[] = "max-src-nodes {$rule['max-src-nodes']}";
+		}
+		if (!empty($rule['max-src-states'])) {
+			$track_options[] = "max-src-states {$rule['max-src-states']}";
+		}
+		if (!empty($rule['max-src-conn']) && (!empty($rule['protocol']) &&
+		    ($rule['protocol'] == 'tcp' || $rule['protocol'] == 'tcp/udp'))) {
+			$track_options[] = "max-src-conn {$rule['max-src-conn']}";
+		}
+		if (!empty($rule['max-src-conn-rate']) && !empty($rule['max-src-conn-rates']) &&
+		    ($rule['protocol'] == 'tcp' || $rule['protocol'] == 'tcp/udp')) {
+			$track_options[] = "max-src-conn-rate {$rule['max-src-conn-rate']} / {$rule['max-src-conn-rates']}, overload <virusprot> flush global";
+		}
+
+		// timeout
+		if (!empty($rule['statetimeout'])) {
+			if (empty($rule['protocol'])) {
+				// no protocol set
+				$track_options[] = "tcp.established {$rule['statetimeout']} udp.multiple {$rule['statetimeout']} other.multiple {$rule['statetimeout']}";
+			} elseif ($rule['protocol'] == 'tcp/udp') {
+				// either tcp or udp
+				$track_options[] = "tcp.established {$rule['statetimeout']} udp.multiple {$rule['statetimeout']}";
+			} elseif (($rule['protocol'] == 'tcp') || ($rule['protocol'] == 'sctp')) {
+				// tcp or sctp
+				$track_options[] = "tcp.established {$rule['statetimeout']}";
+			} elseif ($rule['protocol'] == 'udp') {
+				// udp
+				$track_options[] = "udp.multiple {$rule['statetimeout']}";
+			} elseif (!array_key_exists($rule['protocol'], get_ipprotocols('portsonly'))) {
+				// set protocol is unknown
+				$track_options[] = "other.multiple {$rule['statetimeout']}";
+			}
+		}
+
+		if (!empty($track_options)) {
+			$aline['flags'] .= '(' . implode(' ', $track_options)  . ') ';
+		}
+	}
+
 	if ($rule['defaultqueue'] <> "") {
 		$aline['queue'] = " queue (".$rule['defaultqueue'];
 		if ($rule['ackqueue'] <> "") {
@@ -3670,7 +3679,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	if ($rule['dnpipe'] <> "") {
 		if (!empty($dummynet_name_list[$rule['dnpipe']])) {
 			/* https://redmine.pfsense.org/issues/11636 */
-			foreach (config_get_path('dnshaper/queue') as $queue) {
+			foreach (config_get_path('dnshaper/queue', []) as $queue) {
 				if (($queue['name'] == $rule['dnpipe']) &&
 				    is_array($queue['bandwidth']['item'])) {
 					foreach ($queue['bandwidth']['item'] as $bw) {
@@ -3753,7 +3762,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 
 function filter_rules_generate() {
 	global $FilterIflist, $time_based_rules, $GatewaysList,
-	       $tracker, $vlanprio_values, $vpn_and_ppp_ifs;
+	       $tracker, $vlanprio_values, $vpn_and_ppp_ifs, $use_floating_states_for_ipsec;
 
 	$fix_rule_label = 'fix_rule_label';
 	$increment_tracker = 'filter_rule_tracker';
@@ -4234,7 +4243,9 @@ EOD;
 		require_once("ipsec.inc");
 	}
 	if (ipsec_enabled()) {
-		$ipfrules .= "pass out {$log['pass']} on \$IPsec all ridentifier {$increment_tracker()} ridentifier {$increment_tracker()} keep state label \"IPsec internal host to host\"\n";
+		// a floating state is needed for ipsec rules - see #15430
+		$state_policy = $use_floating_states_for_ipsec ? '(floating)' : '';
+		$ipfrules .= "pass out {$log['pass']} on \$IPsec all ridentifier {$increment_tracker()} ridentifier {$increment_tracker()} keep state {$state_policy} label \"IPsec internal host to host\"\n";
 	}
 
 	$saved_tracker += 10;
@@ -4440,7 +4451,7 @@ function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
 	global $tracker;
 	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
-		echo "filter_rules_spoofcheck_generate() being called for ${ifname} at {$mt}\n";
+		echo "filter_rules_spoofcheck_generate() being called for {$ifname} at {$mt}\n";
 	}
 	$ipfrules = "antispoof {$log['block']} for \${$ifcfg['descr']} ridentifier {$tracker}\n";
 	$tracker++;
@@ -4458,15 +4469,14 @@ function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
  *   none
  ******/
 function filter_tdr_install_cron($should_install) {
-	if (platform_booting() == true) {
+	if (is_platform_booting()) {
 		return;
 	}
 
-	init_config_arr(['cron','item']);
+	config_init_path('cron/item');
 	$x = 0;
 	$is_installed = false;
-	$cron_items = config_get_path('cron/item', []);
-	foreach ($cron_items as $item) {
+	foreach (config_get_path('cron/item', []) as $item) {
 		if (strstr($item['command'], "filter_configure_sync")) {
 			$is_installed = true;
 			break;
@@ -4485,8 +4495,7 @@ function filter_tdr_install_cron($should_install) {
 				$cron_item['wday'] = "*";
 				$cron_item['who'] = "root";
 				$cron_item['command'] = "/etc/rc.filter_configure_sync";
-				$cron_items[] = $cron_item;
-				config_set_path('cron/item', $cron_items);
+				config_set_path('cron/item/', $cron_item);
 				write_config(gettext("Installed 15 minute filter reload for Time Based Rules"));
 				configure_cron();
 			}

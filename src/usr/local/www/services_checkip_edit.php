@@ -30,8 +30,7 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('checkipservices', 'checkipservice'));
-$a_checkip = &$config['checkipservices']['checkipservice'];
+config_init_path('checkipservices/checkipservice');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -41,15 +40,16 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
-if (isset($id) && isset($a_checkip[$id])) {
-	$pconfig['enable'] = isset($a_checkip[$id]['enable']);
-	$pconfig['name'] = $a_checkip[$id]['name'];
-	$pconfig['url'] = $a_checkip[$id]['url'];
-	$pconfig['username'] = $a_checkip[$id]['username'];
-	$pconfig['password'] = $a_checkip[$id]['password'];
-	$pconfig['verifysslpeer'] = isset($a_checkip[$id]['verifysslpeer']);
-	$pconfig['curl_proxy'] = isset($a_checkip[$id]['curl_proxy']);
-	$pconfig['descr'] = $a_checkip[$id]['descr'];
+$this_checkip_config = isset($id) ? config_get_path("checkipservices/checkipservice/{$id}") : null;
+if ($this_checkip_config) {
+	$pconfig['enable'] = isset($this_checkip_config['enable']);
+	$pconfig['name'] = $this_checkip_config['name'];
+	$pconfig['url'] = $this_checkip_config['url'];
+	$pconfig['username'] = $this_checkip_config['username'];
+	$pconfig['password'] = $this_checkip_config['password'];
+	$pconfig['verifysslpeer'] = isset($this_checkip_config['verifysslpeer']);
+	$pconfig['curl_proxy'] = isset($this_checkip_config['curl_proxy']);
+	$pconfig['descr'] = $this_checkip_config['descr'];
 }
 
 if ($_POST) {
@@ -84,17 +84,17 @@ if ($_POST) {
 		if ($_POST['passwordfld'] != DMYPWD) {
 			$checkip['password'] = $_POST['passwordfld'];
 		} else {
-			$checkip['password'] = $a_checkip[$id]['password'];;
+			$checkip['password'] = $this_checkip_config['password'];;
 		}
 
 		$checkip['verifysslpeer'] = $_POST['verifysslpeer'] ? true : false;
 		$checkip['curl_proxy'] = $_POST['curl_proxy'] ? true : false;
 		$checkip['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_checkip[$id]) {
-			$a_checkip[$id] = $checkip;
+		if ($this_checkip_config) {
+			config_set_path("checkipservices/checkipservice/{$id}", $checkip);
 		} else {
-			$a_checkip[] = $checkip;
+			config_set_path('checkipservices/checkipservice/', $checkip);
 		}
 
 		write_config(gettext("New/Edited Check IP Services entry was posted."));
@@ -159,7 +159,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['verifysslpeer']
 ));
 
-if (!empty($config['system']['proxyurl'])) {
+if (!empty(config_get_path('system/proxyurl'))) {
 	$section->addInput(new Form_Checkbox(
 		'curl_proxy',
 		'Use Proxy',
@@ -175,7 +175,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_checkip[$id]) {
+if ($this_checkip_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

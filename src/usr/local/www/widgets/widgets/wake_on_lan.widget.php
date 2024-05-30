@@ -26,11 +26,7 @@ require_once("guiconfig.inc");
 require_once("system.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 
-if (isset($config['wol']['wolentry']) && is_array($config['wol']['wolentry'])) {
-	$wolcomputers = config_get_path('wol/wolentry');
-} else {
-	$wolcomputers = array();
-}
+$wolcomputers = config_get_path('wol/wolentry', []);
 
 // Constructs a unique key that will identify a WoL entry in the filter list.
 if (!function_exists('get_wolent_key')) {
@@ -139,15 +135,13 @@ endif;
 </table>
 <?php
 $dhcpd_enabled = false;
-if (is_array($config['dhcpd'])) {
-	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
-		if (empty($dhcp)) {
-			continue;
-		}
-		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
-			$dhcpd_enabled = true;
-			break;
-		}
+foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
+	if (empty($dhcp)) {
+		continue;
+	}
+	if (isset($dhcp['enable']) && config_path_enabled("interfaces/{$dhcpif}")) {
+		$dhcpd_enabled = true;
+		break;
 	}
 }
 ?>

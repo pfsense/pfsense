@@ -38,8 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_1to1.inc");
 
-init_config_arr(array('nat', 'onetoone'));
-$a_1to1 = &$config['nat']['onetoone'];
+config_init_path('nat/onetoone');
 $binat_exttype_flags = [SPECIALNET_IFADDR];
 $binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB];
 $binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];
@@ -54,7 +53,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 } elseif ($_POST['apply']) {
 	$retval = apply1to1NATrules();
 } elseif (($_POST['act'] == "del")) {
-	if ($a_1to1[$_POST['id']]) {
+	if (config_get_path("nat/onetoone/{$_POST['id']}")) {
 		delete1to1NATrule($_POST);
 	}
 } elseif (isset($_POST['del_x'])) {
@@ -67,7 +66,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 		toggleMultiple1to1NATrules($_POST);
 	}
 } elseif (($_POST['act'] == "toggle")) {
-	if ($a_1to1[$_POST['id']]) {
+	if (config_get_path("nat/onetoone/{$_POST['id']}")) {
 		toggle1to1NATrule($_POST);
 	}
 }
@@ -117,7 +116,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 				<tbody class="user-entries">
 <?php
 		$i = 0;
-		foreach ($a_1to1 as $natent):
+		foreach (config_get_path('nat/onetoone', []) as $natent):
 			if (isset($natent['disabled'])) {
 				$iconfn = "pass_d";
 			} else {
@@ -243,7 +242,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 //<![CDATA[
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',

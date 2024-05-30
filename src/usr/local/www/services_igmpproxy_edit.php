@@ -39,19 +39,19 @@ require_once("guiconfig.inc");
 
 //igmpproxy_sort();
 
-init_config_arr(array('igmpproxy', 'igmpentry'));
-$a_igmpproxy = &$config['igmpproxy']['igmpentry'];
+config_init_path('igmpproxy/igmpentry');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_igmpproxy[$id]) {
-	$pconfig['ifname'] = $a_igmpproxy[$id]['ifname'];
-	$pconfig['threshold'] = $a_igmpproxy[$id]['threshold'];
-	$pconfig['type'] = $a_igmpproxy[$id]['type'];
-	$pconfig['address'] = $a_igmpproxy[$id]['address'];
-	$pconfig['descr'] = html_entity_decode($a_igmpproxy[$id]['descr']);
+$this_igmpproxy_config = isset($id) ? config_get_path("igmpproxy/igmpentry/{$id}") : null;
+if ($this_igmpproxy_config) {
+	$pconfig['ifname'] = $this_igmpproxy_config['ifname'];
+	$pconfig['threshold'] = $this_igmpproxy_config['threshold'];
+	$pconfig['type'] = $this_igmpproxy_config['type'];
+	$pconfig['address'] = $this_igmpproxy_config['address'];
+	$pconfig['descr'] = html_entity_decode($this_igmpproxy_config['descr']);
 }
 
 if ($_POST['save']) {
@@ -59,7 +59,7 @@ if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	if ($_POST['type'] == "upstream") {
-		foreach ($a_igmpproxy as $pid => $proxyentry) {
+		foreach (config_get_path('igmpproxy/igmpentry', []) as $pid => $proxyentry) {
 			if (isset($id) && $id == $pid) {
 				continue;
 			}
@@ -105,10 +105,10 @@ if ($_POST['save']) {
 		$igmpentry['address'] = $address;
 		$igmpentry['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_igmpproxy[$id]) {
-			$a_igmpproxy[$id] = $igmpentry;
+		if ($this_igmpproxy_config) {
+			config_set_path("igmpproxy/igmpentry/{$id}", $igmpentry);
 		} else {
-			$a_igmpproxy[] = $igmpentry;
+			config_set_path('igmpproxy/igmpentry/', $igmpentry);
 		}
 
 		write_config("IGMP Proxy item saved");
@@ -154,8 +154,9 @@ $section = new Form_Section('IGMP Proxy Edit');
 $optionlist = array();
 $iflist = get_configured_interface_with_descr();
 
+$if_config = config_get_path('interfaces');
 foreach ($iflist as $ifnam => $ifdescr) {
-	if (!empty($config['interfaces'][$ifnam]['ipaddr'])) {
+	if (!empty($if_config[$ifnam]['ipaddr'])) {
 		$optionlist[$ifnam] = $ifdescr;
 	}
 }
@@ -192,7 +193,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Defines the TTL threshold for the network interface. Packets with a lower TTL than the threshold value will be ignored. ' .
 			'This setting is optional, and by default the threshold is 1.');
 
-if (isset($id) && $a_igmpproxy[$id]) {
+if ($this_igmpproxy_config) {
 		$form->addGlobal(new Form_Input(
 		'id',
 		null,

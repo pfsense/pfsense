@@ -135,8 +135,8 @@ system_log_filter();
 	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
 	$reverse = config_path_enabled('syslog', 'reverse');
 	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+	if (config_get_path("syslog/{$specific_log}/cronorder") == 'forward') $reverse = false;
+	if (config_get_path("syslog/{$specific_log}/cronorder") == 'reverse') $reverse = true;
 ?>
 	var filter_query_string = "<?=$filter_query_string . '&logfile=' . $logfile_path . '&nentries=' . $nentries?>";
 

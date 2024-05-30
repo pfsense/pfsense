@@ -75,8 +75,8 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 
 	$pconfig['radomainsearchlist'] = config_get_path("dhcpdv6/{$if}/radomainsearchlist");
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = config_get_path("dhcpdv6/{$if}/radnsserver");
-	$pconfig['radvd-dns'] = ($config['dhcpdv6'][$if]['radvd-dns'] != 'disabled') ? true : false;
-	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
+	$pconfig['radvd-dns'] = (config_get_path("dhcpdv6/{$if}/radvd-dns") != 'disabled') ? true : false;
+	$pconfig['rasamednsasdhcp6'] = config_path_enabled("dhcpdv6/{$if}", 'rasamednsasdhcp6');
 
 	$pconfig['subnets'] = config_get_path("dhcpdv6/{$if}/subnets/item");
 }
@@ -202,45 +202,41 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		if (!is_array($config['dhcpdv6'])) {
-			config_set_path('dhcpdv6', array());
-		}
+		config_init_path("dhcpdv6/{$if}");
+		$dhcpd6_config = config_get_path("dhcpdv6/{$if}");
 
-		if (!is_array($config['dhcpdv6'][$if])) {
-			$config['dhcpdv6'][$if] = array();
-		}
+		$dhcpd6_config['ramode'] = $_POST['ramode'];
+		$dhcpd6_config['rapriority'] = $_POST['rapriority'];
+		$dhcpd6_config['rainterface'] = $_POST['rainterface'];
 
-		$config['dhcpdv6'][$if]['ramode'] = $_POST['ramode'];
-		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
-		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
+		$dhcpd6_config['ravalidlifetime'] = $_POST['ravalidlifetime'];
+		$dhcpd6_config['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
+		$dhcpd6_config['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
+		$dhcpd6_config['ramaxrtradvinterval'] = $_POST['ramaxrtradvinterval'];
+		$dhcpd6_config['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
 
-		$config['dhcpdv6'][$if]['ravalidlifetime'] = $_POST['ravalidlifetime'];
-		$config['dhcpdv6'][$if]['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
-		$config['dhcpdv6'][$if]['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
-		$config['dhcpdv6'][$if]['ramaxrtradvinterval'] = $_POST['ramaxrtradvinterval'];
-		$config['dhcpdv6'][$if]['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
-
-		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
-		config_del_path("dhcpdv6/{$if}/radnsserver");
+		$dhcpd6_config['radomainsearchlist'] = $_POST['radomainsearchlist'];
+		array_del_path($dhcpd6_config, 'radnsserver');
 		if ($_POST['radns1']) {
-			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns1'];
+			$dhcpd6_config['radnsserver'][] = $_POST['radns1'];
 		}
 		if ($_POST['radns2']) {
-			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns2'];
+			$dhcpd6_config['radnsserver'][] = $_POST['radns2'];
 		}
 		if ($_POST['radns3']) {
-			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns3'];
+			$dhcpd6_config['radnsserver'][] = $_POST['radns3'];
 		}
 
-		$config['dhcpdv6'][$if]['radvd-dns'] = ($_POST['radvd-dns']) ? "enabled" : "disabled";
-		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
+		$dhcpd6_config['radvd-dns'] = ($_POST['radvd-dns']) ? "enabled" : "disabled";
+		$dhcpd6_config['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
 
 		if (count($pconfig['subnets'])) {
-			$config['dhcpdv6'][$if]['subnets']['item'] = $pconfig['subnets'];
+			$dhcpd6_config['subnets']['item'] = $pconfig['subnets'];
 		} else {
-			config_del_path("dhcpdv6/{$if}/subnets");
+			array_del_path($dhcpd6_config, 'subnets');
 		}
 
+		config_set_path("dhcpdv6/{$if}", $dhcpd6_config);
 		write_config("Router Advertisements settings saved");
 		$changes_applied = true;
 		$retval = 0;

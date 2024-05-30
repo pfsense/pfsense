@@ -46,7 +46,7 @@ class pfsense_xmlrpc_server {
 	private $remote_addr;
 
 	private function auth() {
-		global $config, $userindex;
+		global $userindex;
 		$userindex = index_users();
 
 		$username = $_SERVER['PHP_AUTH_USER'];
@@ -55,8 +55,7 @@ class pfsense_xmlrpc_server {
 		$login_ok = false;
 		if (!empty($username) && !empty($password)) {
 			$attributes = array();
-			$authcfg = auth_get_authserver(
-			    $config['system']['webgui']['authmode']);
+			$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 
 			if (authenticate_user($username, $password,
 			    $authcfg, $attributes) ||
@@ -77,6 +76,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		$user_entry = getUserEntry($username);
+		$user_entry = $user_entry['item'];
 		/*
 		 * admin (uid = 0) is allowed
 		 * or regular user with necessary privilege
@@ -112,13 +112,11 @@ class pfsense_xmlrpc_server {
 	}
 
 	public function __construct() {
-		global $config;
-
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 
 		/* grab sync to ip if enabled */
-		if (isset($config['hasync']['synchronizetoip']) &&
-		    $config['hasync']['synchronizetoip'] == $this->remote_addr) {
+		if ((config_get_path('hasync/synchronizetoip') !== null) &&
+		    config_get_path('hasync/synchronizetoip') == $this->remote_addr) {
 			$this->loop_detected = true;
 		}
 	}
@@ -175,10 +173,7 @@ class pfsense_xmlrpc_server {
 	 */
 	public function backup_config_section($section) {
 		$this->auth();
-
-		global $config;
-
-		return array_intersect_key($config, array_flip($section));
+		return array_intersect_key(config_get_path(''), array_flip($section));
 	}
 
 	/**
@@ -192,9 +187,9 @@ class pfsense_xmlrpc_server {
 		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
-		global $config, $cpzone, $cpzoneid, $old_config;
+		global $cpzone, $cpzoneid, $old_config;
 
-		$old_config = $config;
+		$old_config = config_get_path('');
 
 		if ($this->loop_detected) {
 			log_error("Disallowing CARP sync loop");
@@ -240,16 +235,14 @@ class pfsense_xmlrpc_server {
 		}
 
 		/* If captive portal sync is enabled on primary node, remove local CP on the secondary */
-		if (is_array($config['captiveportal']) && is_array($sections['captiveportal'])) {
+		if (is_array($sections['captiveportal'])) {
 			foreach (config_get_path('captiveportal', []) as $zone => $item) {
 				if (!isset($sections['captiveportal'][$zone])) {
 					$cpzone = $zone;
 					config_del_path("captiveportal/{$cpzone}/enable");
-					captiveportal_configure_zone($config['captiveportal'][$cpzone]);
+					captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}"));
 					config_del_path("captiveportal/{$cpzone}");
-					if (isset($config['voucher'][$cpzone])) {
-						config_del_path("voucher/{$cpzone}");
-					}
+					config_del_path("voucher/{$cpzone}");
 					unlink_if_exists("/var/db/captiveportal{$cpzone}.db");
 					unlink_if_exists("/var/db/captiveportal_usedmacs_{$cpzone}.db");
 					unlink_if_exists("/var/db/voucher_{$cpzone}_*.db");
@@ -257,6 +250,7 @@ class pfsense_xmlrpc_server {
 			}
 		}
 
+		$group_config = config_get_path('system/group', []);
 		/* Only touch users if users are set to synchronize from the primary node
 		 * See https://redmine.pfsense.org/issues/8450
 		 */
@@ -266,31 +260,34 @@ class pfsense_xmlrpc_server {
 			$g2del_idx = array();
 			$g2keep = array();
 			if (is_array($sections['system']['group'])) {
-				$local_groups = isset($config['system']['group'])
-				    ? $config['system']['group']
-				    : array();
+				$local_groups = $group_config;
 
 				foreach ($sections['system']['group'] as $group) {
 					$idx = array_search($group['name'],
 					    array_column($local_groups, 'name'));
 
 					if ($idx === false) {
+						// section config group not found in local config
 						$g2add[] = $group;
 					} else if ($group['gid'] < 2000) {
+						// section config group found in local config and is a special group
 						$g2keep[] = $idx;
 					} else if ($group != $local_groups[$idx]) {
+						// section config group found in local config with different settings
 						$g2add[] = $group;
 						$g2del[] = $group;
 						$g2del_idx[] = $idx;
 					} else {
+						// section config group found in local config and its settings are synced
 						$g2keep[] = $idx;
 					}
 				}
 			}
-			if (is_array($config['system']['group'])) {
-				foreach (config_get_path('system/group', []) as $idx => $group) {
+			if (is_array($group_config)) {
+				foreach ($group_config as $idx => $group) {
 					if (array_search($idx, $g2keep) === false &&
 					    array_search($idx, $g2del_idx) === false) {
+						// local config group not in section config group
 						$g2del[] = $group;
 						$g2del_idx[] = $idx;
 					}
@@ -302,10 +299,9 @@ class pfsense_xmlrpc_server {
 			$u2del = array();
 			$u2del_idx = array();
 			$u2keep = array();
+			$user_config = config_get_path('system/user', []);
 			if (is_array($sections['system']['user'])) {
-				$local_users = isset($config['system']['user'])
-				    ? $config['system']['user']
-				    : array();
+				$local_users = $user_config;
 
 				foreach ($sections['system']['user'] as $user) {
 					$idx = array_search($user['name'],
@@ -324,8 +320,8 @@ class pfsense_xmlrpc_server {
 					}
 				}
 			}
-			if (is_array($config['system']['user'])) {
-				foreach (config_get_path('system/user', []) as $idx => $user) {
+			if (is_array($user_config)) {
+				foreach ($user_config as $idx => $user) {
 					if (array_search($idx, $u2keep) === false &&
 					    array_search($idx, $u2del_idx) === false) {
 						$u2del[] = $user;
@@ -345,19 +341,19 @@ class pfsense_xmlrpc_server {
 				unset($sections['voucher'][$zone]['roll']);
 				// Note : This code can be safely deleted once #97 fix has been applied and deployed to pfSense stable release.
 				// Please do not delete this code before
-				if (isset($config['voucher'][$zone]['vouchersyncdbip'])) {
+				if (config_get_path("voucher/{$zone}/vouchersyncdbip") !== null) {
 					$sections['voucher'][$zone]['vouchersyncdbip'] =
 					    config_get_path("voucher/{$zone}/vouchersyncdbip");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncdbip']);
 				}
-				if (isset($config['voucher'][$zone]['vouchersyncusername'])) {
+				if (config_get_path("voucher/{$zone}/vouchersyncusername") !== null) {
 					$sections['voucher'][$zone]['vouchersyncusername'] =
 					    config_get_path("voucher/{$zone}/vouchersyncusername");
 				} else {
 					unset($sections['voucher'][$zone]['vouchersyncusername']);
 				}
-				if (isset($config['voucher'][$zone]['vouchersyncpass'])) {
+				if (config_get_path("voucher/{$zone}/vouchersyncpass") !== null) {
 					$sections['voucher'][$zone]['vouchersyncpass'] =
 					    config_get_path("voucher/{$zone}/vouchersyncpass");
 				} else {
@@ -370,28 +366,28 @@ class pfsense_xmlrpc_server {
 		if (is_array($sections['captiveportal'])) {
 			// Captiveportal : Backward HA settings should remain local.
 			foreach ($sections['captiveportal'] as $zone => $cp) {
-				if (isset($config['captiveportal'][$zone]['enablebackwardsync'])) {
+				if (config_path_enabled("captiveportal/{$zone}", "enablebackwardsync")) {
 					$sections['captiveportal'][$zone]['enablebackwardsync'] = config_get_path("captiveportal/{$zone}/enablebackwardsync");
 				} else {
 					unset($sections['captiveportal'][$zone]['enablebackwardsync']);
 				}
-				if (isset($config['captiveportal'][$zone]['backwardsyncip'])) {
+				if (config_get_path("captiveportal/{$zone}/backwardsyncip") !== null) {
 					$sections['captiveportal'][$zone]['backwardsyncip'] = config_get_path("captiveportal/{$zone}/backwardsyncip");
 				} else {
 					unset($sections['captiveportal'][$zone]['backwardsyncip']);
 				}
-				if (isset($config['captiveportal'][$zone]['backwardsyncuser'])) {
+				if (config_get_path("captiveportal/{$zone}/backwardsyncuser") !== null) {
 					$sections['captiveportal'][$zone]['backwardsyncuser'] = config_get_path("captiveportal/{$zone}/backwardsyncuser");
 				} else {
 					unset($sections['captiveportal'][$zone]['backwardsyncuser']);
 				}
-				if (isset($config['captiveportal'][$zone]['backwardsyncpassword'])) {
+				if (config_get_path("captiveportal/{$zone}/backwardsyncpassword") !== null) {
 					$sections['captiveportal'][$zone]['backwardsyncpassword'] = config_get_path("captiveportal/{$zone}/backwardsyncpassword");
 				} else {
 					unset($sections['captiveportal'][$zone]['vouchersyncpass']);
 				}
 			}
-			$config['captiveportal'] = $sections['captiveportal'];
+			config_set_path('captiveportal', $sections['captiveportal']);
 			unset($sections['captiveportal']);
 		}
 
@@ -437,7 +433,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		/* For vip section, first keep items sent from the master */
-		$config = array_merge_recursive_unique($config, $sections);
+		config_set_path('', array_merge_recursive_unique(config_get_path(''), $sections));
 
 		/* Remove locally items removed remote */
 		foreach ($voucher as $zone => $item) {
@@ -448,7 +444,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		$l_rolls = array();
-		if (is_array($config['voucher'])) {
+		if (is_array(config_get_path('voucher'))) {
 			foreach (config_get_path('voucher', []) as $zone => $item) {
 				if (!is_array($item['roll'])) {
 					continue;
@@ -469,15 +465,14 @@ class pfsense_xmlrpc_server {
 			if (!is_array($item['roll'])) {
 				continue;
 			}
+			config_init_path("voucher/{$zone}");
+			$l_vouchers = config_get_path("voucher/{$zone}");
 			foreach ($item['roll'] as $roll) {
 				if (!isset($l_rolls[$zone][$roll['number']])) {
-					$config['voucher'][$zone]['roll'][] =
-					    $roll;
+					$l_vouchers['roll'][] = $roll;
 					continue;
 				}
 				$l_roll_idx = $l_rolls[$zone][$roll['number']];
-				init_config_arr(array('voucher', $zone));
-				$l_vouchers = &$config['voucher'][$zone];
 				$l_roll = $l_vouchers['roll'][$l_roll_idx];
 				if (!isset($l_roll['lastsync'])) {
 					$l_roll['lastsync'] = 0;
@@ -490,6 +485,7 @@ class pfsense_xmlrpc_server {
 					unset($l_rolls[$zone][$roll['number']]);
 				}
 			}
+			config_set_path("voucher/{$zone}", $l_vouchers);
 		}
 
 		/*
@@ -528,8 +524,7 @@ class pfsense_xmlrpc_server {
 		 */
 		$force_filterconfigure = false;
 		if (isset($sections['virtualip']) &&
-		    is_array($config['virtualip']) &&
-		    is_array($config['virtualip']['vip'])) {
+		    is_array(config_get_path('virtualip/vip'))) {
 			$carp_setuped = false;
 			$anyproxyarp = false;
 
@@ -652,15 +647,13 @@ class pfsense_xmlrpc_server {
 		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
-		global $config;
-
 		if ($this->loop_detected) {
 			log_error("Disallowing CARP sync loop");
 			return true;
 		}
 
-		$config['installedpackages'] = array_merge(
-		    $config['installedpackages'], $section);
+		config_set_path('installedpackages', array_merge(
+		    config_get_path('installedpackages'), $section));
 		$mergedkeys = implode(", ", array_keys($section));
 		write_config(sprintf(gettext(
 		    "Merged in config (%s sections) from XMLRPC client."),
@@ -680,15 +673,12 @@ class pfsense_xmlrpc_server {
 		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
-		global $config;
-
 		if ($this->loop_detected) {
 			log_error("Disallowing CARP sync loop");
 			return true;
 		}
 
-		$config_new = $this->array_overlay($config, $section);
-		$config = $config_new;
+		config_set_path('', $this->array_overlay(config_get_path(''), $section));
 		$mergedkeys = implode(", ", array_keys($section));
 		write_config(sprintf(gettext(
 		    "Merged in config (%s sections) from XMLRPC client."),
@@ -703,7 +693,7 @@ class pfsense_xmlrpc_server {
 	 * @return bool
 	 */
 	private function filter_configure($reset_accounts = true, $force = false) {
-		global $g, $config, $old_config;
+		global $g, $old_config;
 
 		filter_configure();
 		system_routing_configure();
@@ -712,15 +702,15 @@ class pfsense_xmlrpc_server {
 		/* do not restart unchanged services on XMLRPC sync,
 		 * see https://redmine.pfsense.org/issues/11082 
 		 */
-		if (is_array($config['openvpn']) || is_array($old_config['openvpn'])) {
+		if (is_array(config_get_path('openvpn')) || is_array($old_config['openvpn'])) {
 			foreach (array("server", "client") as $type) {
 				$remove_id = array();
-				if (is_array($old_config['openvpn']["openvpn-{$type}"])) {
+				if (is_array(array_get_path($old_config, "openvpn/openvpn-{$type}"))) {
 					foreach ($old_config['openvpn']["openvpn-{$type}"] as $old_settings) {
 						$remove_id[] = $old_settings['vpnid'];
 					}
 				}
-				if (!is_array($config['openvpn']["openvpn-{$type}"])) {
+				if (!is_array(config_get_path("openvpn/openvpn-{$type}"))) {
 					continue;
 				}
 				foreach (config_get_path("openvpn/openvpn-{$type}", []) as $settings) {
@@ -728,7 +718,7 @@ class pfsense_xmlrpc_server {
 					if (in_array($settings['vpnid'], $remove_id)) {
 						$remove_id = array_diff($remove_id, array($settings['vpnid']));
 					}
-					if (is_array($old_config['openvpn']["openvpn-{$type}"])) {
+					if (is_array(array_get_path($old_config, "openvpn/openvpn-{$type}"))) {
 						foreach ($old_config['openvpn']["openvpn-{$type}"] as $old_settings) {
 							if ($settings['vpnid'] == $old_settings['vpnid']) {
 								$new_instance = false;
@@ -757,8 +747,8 @@ class pfsense_xmlrpc_server {
 		}
 
 		/* run ipsec_configure() on any IPsec change, see https://redmine.pfsense.org/issues/12075 */
-		if (((is_array($config['ipsec']) || is_array($old_config['ipsec'])) &&
-		    ($config['ipsec'] != $old_config['ipsec'])) ||
+		if (((is_array(config_get_path('ipsec')) || is_array($old_config['ipsec'])) &&
+		    (config_get_path('ipsec') != $old_config['ipsec'])) ||
 		    $force) {
 			ipsec_configure();
 		}
@@ -768,10 +758,10 @@ class pfsense_xmlrpc_server {
 		 * long as * they are running on different ports.
 		 * See ticket #5882
 		 */
-		if (((is_array($config['dnsmasq']) || is_array($old_config['dnsmasq'])) &&
-		    ($config['dnsmasq'] != $old_config['dnsmasq'])) ||
+		if (((is_array(config_get_path('dnsmasq')) || is_array($old_config['dnsmasq'])) &&
+		    (config_get_path('dnsmasq') != $old_config['dnsmasq'])) ||
 		    $force) {
-			if (isset($config['dnsmasq']['enable'])) {
+			if (config_path_enabled('dnsmasq')) {
 				/* Configure dnsmasq but tell it NOT to restart DHCP */
 				services_dnsmasq_configure(false);
 			} else {
@@ -782,10 +772,10 @@ class pfsense_xmlrpc_server {
 				}
 			}
 		}
-		if (((is_array($config['unbound']) || is_array($old_config['unbound'])) &&
-		    ($config['unbound'] != $old_config['unbound'])) ||
+		if (((is_array(config_get_path('unbound')) || is_array($old_config['unbound'])) &&
+		    (config_get_path('unbound') != $old_config['unbound'])) ||
 		    $force) {
-			if (isset($config['unbound']['enable'])) {
+			if (config_path_enabled('unbound')) {
 				/* Configure unbound but tell it NOT to restart DHCP */
 				services_unbound_configure(false);
 			} else {
@@ -803,20 +793,20 @@ class pfsense_xmlrpc_server {
 		 * This avoids restarting dhcpd twice as described on
 		 * ticket #3797
 		 */
-		if (((is_array($config['dhcpd']) || is_array($old_config['dhcpd'])) &&
-		    ($config['dhcpd'] != $old_config['dhcpd'])) ||
+		if (((is_array(config_get_path('dhcpd')) || is_array($old_config['dhcpd'])) &&
+		    (config_get_path('dhcpd') != $old_config['dhcpd'])) ||
 		    $force) {
 			services_dhcpd_configure();
 		}
 
-		if (((is_array($config['dhcrelay']) || is_array($old_config['dhcrelay'])) &&
-		    ($config['dhcrelay'] != $old_config['dhcrelay'])) ||
+		if (((is_array(config_get_path('dhcrelay')) || is_array($old_config['dhcrelay'])) &&
+		    (config_get_path('dhcrelay') != $old_config['dhcrelay'])) ||
 		    $force) {
 			services_dhcrelay_configure();
 		}
 
-		if (((is_array($config['dhcrelay6']) || is_array($old_config['dhcrelay6'])) &&
-		    ($config['dhcrelay6'] != $old_config['dhcrelay6'])) ||
+		if (((is_array(config_get_path('dhcrelay6')) || is_array($old_config['dhcrelay6'])) &&
+		    (config_get_path('dhcrelay6') != $old_config['dhcrelay6'])) ||
 		    $force) {
 			services_dhcrelay6_configure();
 		}
@@ -825,13 +815,13 @@ class pfsense_xmlrpc_server {
 			local_reset_accounts();
 		}
 
-		if ((is_array($config['captiveportal']) || is_array($old_config['captiveportal']) &&
-		    ($config['captiveportal'] != $old_config['captiveportal'])) ||
+		if ((is_array(config_get_path('captiveportal')) || is_array($old_config['captiveportal']) &&
+		    (config_get_path('captiveportal') != $old_config['captiveportal'])) ||
 		    $force) {
 			captiveportal_configure();
 		}
-		if ((is_array($config['voucher']) || is_array($old_config['voucher']) &&
-		    ($config['voucher'] != $old_config['voucher'])) ||
+		if ((is_array(config_get_path('voucher')) || is_array($old_config['voucher']) &&
+		    (config_get_path('voucher') != $old_config['voucher'])) ||
 		    $force) {
 			voucher_configure();
 		}
@@ -845,7 +835,7 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @param array $arguments
 	 *
-	 * @return array
+	 * @return array|bool|null
 	 */
 	public function captive_portal_sync($arguments, $timeout) {
 		ini_set('default_socket_timeout', $timeout);
@@ -853,9 +843,9 @@ class pfsense_xmlrpc_server {
 		// Note : no protection against CARP loop is done here, and this is in purpose.
 		// This function is used for bi-directionnal sync, which is precisely what CARP loop protection is supposed to prevent.
 		// CARP loop has to be managed within functions using captive_portal_sync()
-		global $g, $config, $cpzone;
+		global $g, $cpzone;
 
-		if (empty($arguments['op']) || empty($arguments['zone']) || empty($config['captiveportal'][$arguments['zone']])) {
+		if (empty($arguments['op']) || empty($arguments['zone']) || empty(config_get_path("captiveportal/{$arguments['zone']}"))) {
 			return false;
 		}
 		$cpzone = $arguments['zone'];
@@ -865,14 +855,12 @@ class pfsense_xmlrpc_server {
 			$expired_vouchers = [];
 			$usedmacs = [];
 
-			if (is_array($config['voucher'][$cpzone]['roll'])) {
-				foreach($config['voucher'][$cpzone]['roll'] as $roll) {
-					$expired_vouchers[$roll['number']] = base64_encode(voucher_read_used_db($roll['number']));
-					$active_vouchers[$roll['number']] = voucher_read_active_db($roll['number']);
-				}
+			foreach(config_get_path("voucher/{$cpzone}/roll", []) as $roll) {
+				$expired_vouchers[$roll['number']] = base64_encode(voucher_read_used_db($roll['number']));
+				$active_vouchers[$roll['number']] = voucher_read_active_db($roll['number']);
 			}
-			if (!empty($config['captiveportal'][$cpzone]['freelogins_count']) &&
-			    !empty($config['captiveportal'][$cpzone]['freelogins_resettimeout'])) {
+			if (!empty(config_get_path("captiveportal/{$cpzone}/freelogins_count")) &&
+			    !empty(config_get_path("captiveportal/{$cpzone}/freelogins_resettimeout"))) {
 				$usedmacs = captiveportal_read_usedmacs_db();
 			}
 			// base64 is here for safety reasons, as we don't fully control

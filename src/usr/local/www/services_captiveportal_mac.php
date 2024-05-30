@@ -44,17 +44,15 @@ global $cpzoneid;
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
-$a_cp = &$config['captiveportal'];
-$cpzoneid = $a_cp[$cpzone]['zoneid'];
-$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
+config_init_path("captiveportal/{$cpzone}/passthrumac");
+$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("MACs"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
@@ -62,10 +60,9 @@ $actsmbl = array('pass' => '<i class="fa-solid fa-check text-success"></i>&nbsp;
 	'block' => '<i class="fa-solid fa-times text-danger"></i>&nbsp;' . gettext("Block"));
 
 if ($_POST['act'] == "del") {
-	if ($a_passthrumacs[$_POST['id']]) {
-		$cpzoneid = $a_cp[$cpzone]['zoneid'];
-		captiveportal_passthrumac_delete_entry($a_passthrumacs[$_POST['id']]);
-		unset($a_passthrumacs[$_POST['id']]);
+	if (config_get_path("captiveportal/{$cpzone}/passthrumac/{$_POST['id']}")) {
+		captiveportal_passthrumac_delete_entry(config_get_path("captiveportal/{$cpzone}/passthrumac/{$_POST['id']}"));
+		config_del_path("captiveportal/{$cpzone}/passthrumac/{$_POST['id']}");
 		write_config("Captive portal passthrough MAC deleted");
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
 		exit;
@@ -102,13 +99,10 @@ display_top_tabs($tab_array, true);
 				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
-
-<?php
-if (is_array($a_cp[$cpzone]['passthrumac'])): ?>
 		<tbody>
 <?php
 $i = 0;
-foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
+foreach (config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $mac): ?>
 			<tr>
 				<td>
 					<?=$actsmbl[$mac['action']]?>
@@ -129,14 +123,6 @@ $i++;
 endforeach; ?>
 		</tbody>
 	</table>
-<?php
-else:
-?>
-		</tbody>
-	</table>
-<?php
-endif;
-?>
 </div>
 
 <nav class="action-buttons">

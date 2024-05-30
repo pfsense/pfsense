@@ -34,7 +34,7 @@ function getThermalSensorsData() {
 
 	$_gb = exec("/sbin/sysctl -aq | grep temperature", $dfout);
 	$dfout_filtered = array_filter($dfout, function($v) {
-		return strpos($negsign, ' -') === false;
+		return strpos($v, ' -') === false;
 	});
 	return join("|", $dfout_filtered);
 

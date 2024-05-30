@@ -100,6 +100,7 @@ function more($text, $count=24) {
 }
 
 function show_help() {
+	global $g;
 
 $show_help_text = <<<EOF
 
@@ -117,19 +118,19 @@ $show_help_text = <<<EOF
 	stoprecording
 	showrecordings
 
-	parse_config(true);  # reloads the \$config array
+	config_set_path('', parse_config(true));  # reloads the config array
 
-	\$temp = print_r(\$config, true);
+	\$temp = print_r(config_get_path(''), true);
 	more(\$temp);
 
 	/* to output a configuration array */
-	print_r(\$config);
+	print_r(config_get_path(''));
 
 	/* to output the interfaces configuration portion of config.xml */
-	print_r(\$config['interfaces']);
+	print_r(config_get_path('interfaces'));
 
 	/* to output the dhcp server configuration */
-	print_r(\$config['dhcpd']);
+	print_r(config_get_path('dhcpd'));
 
 	/* to exit the {$g['product_label']} developer shell */
 	exit
@@ -138,29 +139,29 @@ $show_help_text = <<<EOF
 	print_r(get_wireless_modes(\"ath0\"));
 
 	/* to enable SSH */
-	\$config['system']['ssh']['enable'] = "enabled";
+	config_set_path('system/ssh/enable', "enabled");
 
 	/* change OPTX to the OPT interface name such as BACKHAUL */
-	\$config['interfaces']['optx']['wireless']['standard'] = "11a";
-	\$config['interfaces']['optx']['wireless']['mode'] = "hostap";
-	\$config['interfaces']['optx']['wireless']['channel'] = "6";
+	config_set_path('interfaces/optx/wireless/standard', "11a");
+	config_set_path('interfaces/optx/wireless/mode', "hostap");
+	config_set_path('interfaces/optx/wireless/channel', "6");
 
 	/* to enable dhcp server for an optx interface */
-	\$config['dhcpd']['optx']['enable'] = true;
-	\$config['dhcpd']['optx']['range']['from'] = "192.168.31.100";
-	\$config['dhcpd']['optx']['range']['to'] = "192.168.31.150";
+	config_set_path('dhcpd/optx/enable', true);
+	config_set_path('dhcpd/optx/range/from', "192.168.31.100");
+	config_set_path('dhcpd/optx/range/to', "192.168.31.150");
 
 	/* to disable the firewall filter */
-	\$config['system']['disablefilter'] = true;
+	config_set_path('system/disablefilter', true);
 
 	/* to enable an interface and configure it as a DHCP client */
-	\$config['interfaces']['optx']['disabled'] = false;
-	\$config['interfaces']['optx']['ipaddr'] = "dhcp";
+	config_set_path('interfaces/optx/disabled', false);
+	config_set_path('interfaces/optx/ipaddr', "dhcp");
 
 	/* to enable an interface and set a static IPv4 address */
-	\$config['interfaces']['wan']['enable'] = true;
-	\$config['interfaces']['wan']['ipaddr'] = "192.168.100.1";
-	\$config['interfaces']['wan']['subnet'] = "24";
+	config_set_path('interfaces/wan/enable', true);
+	config_set_path('interfaces/wan/ipaddr', "192.168.100.1");
+	config_set_path('interfaces/wan/subnet', "24");
 
 	/* to save out the new configuration (config.xml) */
 	write_config();
@@ -370,7 +371,6 @@ function playback_text($playback_file_contents) {
 			$playback_text .= $pfs . "\n";
 		}
 	}
-	global $config;
 	eval($playback_text);
 }
 

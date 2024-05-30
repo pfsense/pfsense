@@ -49,8 +49,7 @@ if ($_POST['act'] == 'killgw') {
 	exit;
 }
 
-init_config_arr(array('gateways', 'gateway_group'));
-$a_gateway_groups = &$config['gateways']['gateway_group'];
+config_init_path('gateways/gateway_group');
 $changedesc = gettext("Gateway Groups") . ": ";
 
 $gateways_status = return_gateways_status();
@@ -79,7 +78,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach ($a_gateway_groups as $gateway_group): ?>
+					<?php foreach (config_get_path('gateways/gateway_group', []) as $gateway_group): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($gateway_group['name'])?>

@@ -28,7 +28,7 @@ require_once("util.inc");
 require_once("globals.inc");
 
 /* make sure to wait until the boot scripts have finished */
-if (platform_booting()) {
+if (is_platform_booting()) {
 	return;
 }
 
@@ -54,8 +54,8 @@ if (empty($argument)) {
 				// e.g. $arg_element = "WANGW", $gwgroups = array of gateway groups that use "wan"
 				$gwgroups = gateway_is_gwgroup_member($arg_element);
 			}
-			init_config_arr(array('ipsec', 'phase1'));
-			foreach ($config['ipsec']['phase1'] as $phase1) {
+			config_init_path('ipsec/phase1');
+			foreach (config_get_path('ipsec/phase1', []) as $phase1) {
 				if (isset($phase1['disabled']) || isset($phase1['mobile']) ||
 				    ($phase1['startaction'] == 'none')) {
 					continue;

@@ -74,7 +74,7 @@ $i = 0;
 $ifdescrs = get_configured_interface_with_descr();
 
 foreach ($ifdescrs as $key =>$interface) {
-	$hwif[$config['interfaces'][$key]['if']] = $interface;
+	$hwif[config_get_path("interfaces/{$key}/if")] = $interface;
 }
 
 /*

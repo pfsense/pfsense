@@ -34,16 +34,16 @@ require_once('util.inc');
  * INPUTS
  *   None
  * RESULT
- *   $config 	- rewrites config.xml without encryption
+ *   Rewrites config.xml without encryption
  ******/
 function encrypted_configxml() {
-	global $g, $config;
+	global $g;
 
 	if (!file_exists(g_get('conf_path') . "/config.xml")) {
 		return;
 	}
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		return;
 	}
 
@@ -76,11 +76,11 @@ function encrypted_configxml() {
 
 /****f* config/parse_config
  * NAME
- *   parse_config - Read in config.cache or config.xml if needed and return $config array
+ *   parse_config - Read in config.cache or config.xml if needed and return a config array
  * INPUTS
  *   $parse       - boolean to force parse_config() to read config.xml and generate config.cache
  * RESULT
- *   $config      - array containing all configuration variables
+ *   Config array containing all configuration variables
  ******/
 function parse_config($parse = false) {
 	global $g, $config_parsed, $config_extra;
@@ -92,7 +92,7 @@ function parse_config($parse = false) {
 		$last_backup = discover_last_backup();
 		if ($last_backup) {
 			log_error(gettext("No config.xml found, attempting last known config restore."));
-			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
+			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "", 1, true);
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
 		} else {
 			unlock($lockkey);
@@ -100,7 +100,7 @@ function parse_config($parse = false) {
 		}
 	}
 
-	if (platform_booting(true)) {
+	if (is_platform_booting() && is_cli_sapi()) {
 		echo ".";
 	}
 
@@ -119,11 +119,11 @@ function parse_config($parse = false) {
 	}
 	if ($parse == true) {
 		if (!file_exists(g_get('conf_path') . "/config.xml")) {
-			if (platform_booting(true)) {
+			if (is_platform_booting() && is_cli_sapi()) {
 				echo ".";
 			}
 			log_error("No config.xml found, attempting last known config restore.");
-			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
+			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "", 1, true);
 			$last_backup = discover_last_backup();
 			if ($last_backup) {
 				restore_backup("/cf/conf/backup/{$last_backup}");
@@ -147,7 +147,7 @@ function parse_config($parse = false) {
 		generate_config_cache($config);
 	}
 
-	if (platform_booting(true)) {
+	if (is_platform_booting() && is_cli_sapi()) {
 		echo ".";
 	}
 
@@ -236,7 +236,7 @@ function restore_backup($file) {
 		//pfSense_fsync($g['conf_path']);
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), g_get('product_label'), $file));
-		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), g_get('product_label'), $file), "pfSenseConfigurator", "");
+		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), g_get('product_label'), $file), "pfSenseConfigurator", "", 1, true);
 	}
 }
 
@@ -256,10 +256,10 @@ function clear_tagdata($tag, $data) {
 }
 
 function restore_xmldatafile($type='voucher', $conf = false) {
-	global $config, $g;
+	global $g;
 
 	if (!$conf) {
-		$conf = & $config;
+		$conf = config_get_path('');
 	}
 
 	foreach ($conf[$type]["{$type}data"]["xmldatafile"] as $file) {
@@ -294,10 +294,10 @@ function restore_xmldatafile($type='voucher', $conf = false) {
 }
 
 function restore_rrddata($conf = false) {
-	global $config, $g, $rrdtool, $input_errors;
+	global $g, $rrdtool, $input_errors;
 
 	if (!$conf) {
-		$conf = & $config;
+		$conf = config_get_path('');
 	}
 
 	foreach ($conf['rrddata']['rrddatafile'] as $rrd) {
@@ -348,10 +348,10 @@ function restore_rrddata($conf = false) {
 }
 
 function restore_sshdata($conf = false) {
-	global $config, $sshConfigDir;
+	global $sshConfigDir;
 
 	if (!$conf) {
-		$conf = & $config;
+		$conf = config_get_path('');
 	}
 
 	$oldmask = umask();
@@ -377,19 +377,19 @@ function restore_sshdata($conf = false) {
  *   null
  ******/
 function parse_config_bootup() {
-	global $config, $g;
+	global $g;
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo ".";
 	}
 
 	$lockkey = lock('config');
 	if (!file_exists("{$g['conf_path']}/config.xml")) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			$last_backup = discover_last_backup();
 			if ($last_backup) {
 				log_error("No config.xml found, attempting last known config restore.");
-				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
+				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "", 1, true);
 				restore_backup("/cf/conf/backup/{$last_backup}");
 			}
 			if (!file_exists("{$g['conf_path']}/config.xml")) {
@@ -411,7 +411,7 @@ function parse_config_bootup() {
 		$last_backup = discover_last_backup();
 		if ($last_backup) {
 			log_error(gettext("No config.xml found, attempting last known config restore."));
-			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
+			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "", 1, true);
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
 		} else {
 			unlock($lockkey);
@@ -420,9 +420,10 @@ function parse_config_bootup() {
 	}
 	unlock($lockkey);
 
-	$config = parse_config(true);
+	// parse config.xml
+	config_set_path('', parse_config(true));
 
-	if ((float)$config['version'] > (float)g_get('latest_config')) {
+	if ((float)config_get_path('version') > (float)g_get('latest_config')) {
 		echo <<<EOD
 
 
@@ -478,24 +479,26 @@ function conf_mount_ro() {
  ******/
 /* convert configuration, if necessary */
 function convert_config() {
-	global $config, $g;
+	global $g;
 	$now = date("H:i:s");
 	log_error(sprintf(gettext("Start Configuration upgrade at %s, set execution timeout to 15 minutes"), $now));
 	//ini_set("max_execution_time", "900");
 
 	/* special case upgrades */
 	/* fix every minute crontab bogons entry */
-	if (is_array($config['cron'])) {
-		$cron_item_count = count($config['cron']['item']);
+	$cron_config = config_get_path('cron');
+	if (is_array($cron_config)) {
+		$cron_item_count = count($cron_config['item']);
 		for ($x = 0; $x < $cron_item_count; $x++) {
-			if (stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
-				if ($config['cron']['item'][$x]['hour'] == "*") {
-					$config['cron']['item'][$x]['hour'] = "3";
+			if (stristr($cron_config['item'][$x]['command'], "rc.update_bogons.sh")) {
+				if ($cron_config['item'][$x]['hour'] == "*") {
+					$cron_config['item'][$x]['hour'] = "3";
 					write_config(gettext("Updated bogon update frequency to 3am"));
 					log_error(gettext("Updated bogon update frequency to 3am"));
 				}
 			}
 		}
+		config_set_path('cron', $cron_config);
 	}
 
 	// Save off config version
@@ -507,19 +510,17 @@ function convert_config() {
 		include_once("upgrade_config_custom.inc");
 	}
 
-	if ($config['version'] == g_get('latest_config')) {
+	if (config_get_path('version') == g_get('latest_config')) {
 		additional_config_upgrade();
 		return;		/* already at latest version */
 	}
 
-	if (!is_array($config['system']['already_run_config_upgrade'])) {
-		$config['system']['already_run_config_upgrade'] = array();
-	}
+	config_init_path('system/already_run_config_upgrade');
 	$already_run = config_get_path('system/already_run_config_upgrade');
 
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
-	while ($config['version'] < g_get('latest_config')) {
-		$cur = $config['version'] * 10;
+	while (config_get_path('version') < g_get('latest_config')) {
+		$cur = config_get_path('version') * 10;
 		$next = $cur + 1;
 		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur,
 		    $next);
@@ -535,17 +536,17 @@ function convert_config() {
 				$migration_function();
 			}
 		}
-		$config['version'] = sprintf('%.1f', $next / 10);
-		if (platform_booting()) {
+		config_set_path('version', sprintf('%.1f', $next / 10));
+		if (is_platform_booting()) {
 			echo ".";
 		}
 	}
 
-	if ($prev_version != $config['version']) {
+	if ($prev_version != config_get_path('version')) {
 		$now = date("H:i:s");
 		log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
 
-		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']));
+		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, config_get_path('version')));
 	}
 
 	additional_config_upgrade();
@@ -619,7 +620,7 @@ function safe_write_file($file, $content, $force_binary = false) {
  ******/
 /* save the system configuration */
 function write_config($desc="Unknown", $backup = true, $write_config_only = false) {
-	global $config, $g;
+	global $g;
 
 	// Certain strings may be embedded in the $desc (reason) parameter to trigger certain behavior.
 	// If detected, those strings are removed and a variable set.
@@ -651,6 +652,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		@phpsession_begin();
 		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
 			$user = getUserEntry($_SESSION['Username']);
+			$user = $user['item'];
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 				syslog(LOG_AUTHPRIV, sprintf(gettext("Save config permission denied by the 'User - Config: Deny Config Write' permission for user '%s'."), get_config_user()));
 				phpsession_end(true);
@@ -662,7 +664,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		}
 	}
 
-	if (isset($config['reset_factory_defaults'])) {
+	if (config_path_enabled('', 'reset_factory_defaults')) {
 		/*
 		   We have put a default config.xml on disk and are about to reboot
 		   or reload it. Do not let any system or package code try to save
@@ -680,12 +682,12 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		file_notice("config.xml", gettext(
 		    'WARNING: write_config() was called without description'));
 	}
-	$config['revision'] = make_config_revision_entry($desc);
+	config_set_path('revision', make_config_revision_entry($desc));
 
 	$lockkey = lock('config', LOCK_EX);
 
 	/* generate configuration XML */
-	$xmlconfig = dump_xml_config($config, g_get('xml_rootobj'));
+	$xmlconfig = dump_xml_config(config_get_path(''), g_get('xml_rootobj'));
 
 	/* write new configuration */
 	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig)) {
@@ -696,21 +698,20 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	}
 
 	if (config_get_path('syslog/logconfigchanges') != "disabled") {
-		log_error(gettext("Configuration Change") . ": {$config['revision']['description']}");
+		log_error(gettext('Configuration Change: ' . config_get_path('revision/description')));
 	}
 
 	cleanup_backupcache(true);
 
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
-	$config = parse_xml_config("{$g['conf_path']}/config.xml", g_get('xml_rootobj'));
-	if ($config == -1) {
+	if (config_set_path('', parse_xml_config("{$g['conf_path']}/config.xml", g_get('xml_rootobj'))) == -1) {
 		copy("{$g['conf_path']}/config.xml", "{$g['conf_path']}/config.xml.bad");
 		$last_backup = discover_last_backup();
 		if ($last_backup) {
 			restore_backup("/cf/conf/backup/{$last_backup}");
-			$config = parse_xml_config("{$g['conf_path']}/config.xml", g_get('xml_rootobj'));
-			if (platform_booting()) {
+			config_set_path('', parse_xml_config("{$g['conf_path']}/config.xml", g_get('xml_rootobj')));
+			if (is_platform_booting()) {
 				echo "\n\n ************** WARNING **************";
 				echo "\n\n Configuration could not be validated. A previous configuration was restored. \n";
 				echo "\n The failed configuration file has been saved as {$g['conf_path']}/config.xml.bad \n\n";
@@ -719,13 +720,13 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 			log_error(gettext("Could not restore config.xml."));
 		}
 	} else {
-		generate_config_cache($config);
+		generate_config_cache(config_get_path(''));
 	}
 
 	unlock($lockkey);
 
 	if ($write_config_only) {
-		return $config;
+		return config_get_path('');
 	}
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
@@ -739,8 +740,9 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	}
 
 	// Try the core AutoConfigBackup system
-	if (is_array($config['system']['acb']) && $config['system']['acb']['enable'] == "yes" &&
-	    (!isset($config['system']['acb']['frequency']) || $config['system']['acb']['frequency'] == "every") || file_exists("/tmp/forceacb")) {
+	$acb_config = config_get_path('system/acb', []);
+	if ($acb_config['enable'] == "yes" &&
+	    (!isset($acb_config['frequency']) || $acb_config['frequency'] == "every") || file_exists("/tmp/forceacb")) {
 	    if ($doacb) {
 			require_once("acb.inc");
 			upload_config($manual_acb);
@@ -751,7 +753,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		}
 	}
 
-	return $config;
+	return config_get_path('');
 }
 
 /****f* config/reset_factory_defaults
@@ -761,7 +763,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
  *   integer	- indicates completion
  ******/
 function reset_factory_defaults($lock = false, $reboot_required = true) {
-	global $config, $g;
+	global $g;
 
 	/* Remove all additional packages */
 	mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade " .
@@ -802,7 +804,7 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	   In both cases, we want to ensure that write_config does not flush the
 	   in-memory config back to disk.
 	*/
-	$config['reset_factory_defaults'] = true;
+	config_set_path('reset_factory_defaults', true);
 
 	/* call the wizard */
 	if ($reboot_required) {
@@ -819,7 +821,7 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 }
 
 function config_restore($conffile) {
-	global $config, $g;
+	global $g;
 
 	if (!file_exists($conffile)) {
 		return 1;
@@ -837,7 +839,8 @@ function config_restore($conffile) {
 
 	unlock($lockkey);
 
-	$config = parse_config(true);
+	// parse config.xml
+	config_set_path('', parse_config(true));
 
 
 	write_config(sprintf(gettext("Reverted to %s."), array_pop(explode("/", $conffile))), false);
@@ -846,7 +849,7 @@ function config_restore($conffile) {
 }
 
 function config_install($conffile) {
-	global $config, $g;
+	global $g;
 
 	if (!file_exists($conffile)) {
 		return 1;
@@ -856,7 +859,7 @@ function config_install($conffile) {
 		return 1;
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Installing configuration...") . "\n";
 	} else {
 		log_error(gettext("Installing configuration ...."));
@@ -930,10 +933,11 @@ function config_validate($conffile) {
 }
 
 function cleanup_backupcache($lock = false) {
-	global $config, $g;
+	global $g;
 	$i = false;
 
-	$revisions = intval(is_numericint($config['system']['backupcount']) ? $config['system']['backupcount'] : g_get('default_config_backup_count'));
+	$revisions = config_get_path('system/backupcount');
+	$revisions = intval(is_numericint($revisions) ? $revisions : g_get('default_config_backup_count'));
 
 	if (!$lock) {
 		$lockkey = lock('config');
@@ -964,7 +968,7 @@ function cleanup_backupcache($lock = false) {
 		unset($backupexp);
 		if (!in_array($tocheck, $baktimes)) {
 			$i = true;
-			if (platform_booting()) {
+			if (is_platform_booting()) {
 				echo ".";
 			}
 			try {
@@ -993,7 +997,7 @@ function cleanup_backupcache($lock = false) {
 			$newbaks[] = $checkbak;
 		} else {
 			$i = true;
-			if (platform_booting()) print " " . $tocheck . "r";
+			if (is_platform_booting()) print " " . $tocheck . "r";
 		}
 	}
 	foreach ($newbaks as $todo) {
@@ -1041,24 +1045,24 @@ function get_backups() {
 }
 
 function backup_config() {
-	global $config, $g;
+	global $g;
 
 
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
-	if ($config['revision']['time'] == "") {
+	if (config_get_path('revision/time') == "") {
 		$baktime = 0;
 	} else {
 		$baktime = config_get_path('revision/time');
 	}
 
-	if ($config['revision']['description'] == "") {
+	if (config_get_path('revision/description') == "") {
 		$bakdesc = "Unknown";
 	} else {
 		$bakdesc = config_get_path('revision/description');
 	}
 
-	$bakver = ($config['version'] == "") ? "?" : $config['version'];
+	$bakver = config_get_path('version', "?");
 	$bakfilename = g_get('cf_conf_path') . '/backup/config-' . $baktime . '.xml';
 	copy(g_get('cf_conf_path') . '/config.xml', $bakfilename);
 
@@ -1106,7 +1110,7 @@ function set_device_perms() {
 		);
 
 	foreach ($devices as $name => $attr) {
-		$path = "/dev/$name";
+		$path = "/dev/{$name}";
 		if (file_exists($path)) {
 			chown($path, $attr['user']);
 			chgrp($path, $attr['group']);
@@ -1162,18 +1166,30 @@ function pfSense_clear_globals() {
 	$error = error_get_last();
 
 	// Errors generated by user code (diag_commands.php) are identified by path and not added to notices
-	if ($error !== NULL && !preg_match('|^' . preg_quote(g_get('tmp_path_user_code')) . '/[^/]{1,16}$|', $error['file'])) {
+	$is_user_code = preg_match('|^' . preg_quote(g_get('tmp_path_user_code')) . '/[^/]{1,16}$|', $error['file']);
+
+	if (!is_null($error)) {
 		if (in_array($error['type'], array(E_ERROR, E_COMPILE_ERROR, E_CORE_ERROR, E_RECOVERABLE_ERROR))) {
-			$errorstr = "PHP ERROR: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
-			print('<pre style="white-space: pre-wrap;">' . htmlentities($errorstr) . '</pre>');
-			log_error($errorstr);
-			file_notice("phperror", $errorstr, 'PHP errors');
-		} else if ($error['type'] != E_NOTICE) {
-			$errorstr = "PHP WARNING: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
-			// XXX: comment out for now, should re-enable post-2.2
-			//print($errorstr);
-			//log_error($errorstr);
-			//file_notice("phpwarning", $errorstr, 'PHP warning');
+			$errortype = "error";
+		} elseif ($error['type'] != E_NOTICE) {
+			$errortype = "warning";
+		}
+		$errorstr = "PHP " . strtoupper($errortype) . ": " .
+				"Type: {$error['type']}, " .
+				"File: {$error['file']}, " .
+				"Line: {$error['line']}, " .
+				"Message: {$error['message']}";
+
+		if (!$is_user_code) {
+			if (($errortype == "error") ||
+			    (config_path_enabled('system','developerspew') &&
+			    ($errortype = "warning"))) {
+				print('<pre style="white-space: pre-wrap;">' . htmlentities($errorstr) . '</pre>');
+				log_error($errorstr);
+				file_notice("php{$errortype}", $errorstr, 'PHP {$errortype}s');
+			}
+		} else {
+			print(str_replace(',', "\n", $errorstr));
 		}
 	}
 
@@ -1201,23 +1217,26 @@ function pfSense_clear_globals() {
 	unset($config);
 }
 
-/*
- * Same semantics as init_config_arr(), but with the new
- * path string interface.
+/**
+ * Initialize the leaf node as an array. Any scalars in the path, including the
+ * leaf node, are overridden with an array.
+ * 
+ * @param string $path Path with '/' separators
  */
 function config_init_path(string $path) {
 	global $config;
 	array_init_path($config, $path);
 }
 
-/*
- * Notice: Use config_init_path() instead, if you must...
- *
- * This is retained for compatibility with older code
- *
- * Initialize a config array multiple levels deep only if unset
- * Pass it an array of keys to test and create
- * init_config_arr(array('virtualip', 'vip'));
+/**
+ * Initialize the leaf node as an array. Any scalars in the path, including the
+ * leaf node, are overridden with an array.
+ * 
+ * @param array $keys The path as an array of keys
+ * 
+ * @deprecated This is retained for compatibility with older code;
+ * 
+ * @see config_init_path() Uses a string path
  */
 function init_config_arr($keys) {
 	// just translate the old signature to the new one
@@ -1226,10 +1245,12 @@ function init_config_arr($keys) {
 
 /**
  * Return a value specified by path in the config, if it exists.
- * @param $path string path with '/' separators
- * @param $default mixed value to return if the path is not found
- * @returns mixed value at path or $default if the path does not exist or if the
- *          path keys an empty string and $default is non-null
+ * 
+ * @param string $path    Path with '/' separators
+ * @param  mixed $default Value to return if the path is not found
+ * 
+ * @return mixed Value at path or $default if the path does not exist or if the
+ *               path keys an empty string and $default is non-null
  */
 function config_get_path(string $path, $default = null) {
 	global $config;
@@ -1240,13 +1261,24 @@ function config_get_path(string $path, $default = null) {
  * Set a value by path in the config, creating arrays for intermediary keys as
  * necessary. If the path cannot be reached because an intermediary exists but
  * is not empty or an array, return $default.
- * @param $path string path with '/' separators
- * @param $val mixed
- * @param $default mixed value to return if the path is not found
- * @returns mixed $val or $default if the path prefix does not exist
+ * 
+ * @param string $path    Path with '/' separators
+ * @param  mixed $val     Value to set
+ * @param  mixed $default Value to return if the path is not found
+ * 
+ * @return mixed $val or $default if the path prefix does not exist
  */
 function config_set_path(string $path, $value, $default = null) {
 	global $config;
+
+	if ($path == '' && !is_array($config)) {
+		// initialize $config when it's being completely replaced
+		$config = [];
+	} elseif ($path == '/') {
+		// prevent unintentionally treating $config as a list array
+		return ($default);
+	}
+
 	return (array_set_path($config, $path, $value, $default));
 }
 
@@ -1256,10 +1288,12 @@ function config_set_path(string $path, $value, $default = null) {
  * enabled by having a key to a non-null value named 'enable', and checking it
  * with isset(). This can be counter-intuitive as isset() will return true if
  * the array element is any non-null value that evaluates to false.
- * @param $path string path with '/' separators
- * @param $enable_key string an optional alternative key value for the enable key
- * @returns bool true if $enable_key exists in the array at $path, and has a
- * non-null value, otherwise false.
+ * 
+ * @param string $path       Path with '/' separators
+ * @param string $enable_key Optional alternative key value for the enable key
+ * 
+ * @return bool true if $enable_key exists in the array at $path, and has a
+ *              non-null value, otherwise false.
  */
 function config_path_enabled(string $path, $enable_key = "enable") {
 	global $config;
@@ -1267,12 +1301,15 @@ function config_path_enabled(string $path, $enable_key = "enable") {
 }
 
 /**
- * Remove a key from the config by path
- * @param $path string path with '/' separators
- * @returns array copy of the removed value or null
+ * Remove a key from the config by path.
+ * 
+ * @param string $path Path with '/' separators
+ * 
+ * @return array copy of the removed value or null
  */
 function config_del_path(string $path) {
 	global $config;
 	return (array_del_path($config, $path));
 }
+
 register_shutdown_function('pfSense_clear_globals');

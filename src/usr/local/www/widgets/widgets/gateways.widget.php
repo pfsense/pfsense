@@ -145,7 +145,7 @@ if (!function_exists('compose_table_body_contents')) {
 							$bgcolor = "warning";
 							break;
 						default:
-							if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
+							if ($gateways_status[$gname]['monitor_disable'] || ($gateways_status[$gname]['monitorip'] == "none")) {
 								$online = gettext("Online <br/>(unmonitored)");
 							} else {
 								$online = gettext("Online");
@@ -233,7 +233,7 @@ if ($_POST['widgetkey']) {
 	exit(0);
 }
 
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>

@@ -167,7 +167,7 @@ if (count($ostypes) > 2) {
 
 $ifdisp = get_configured_interface_with_descr();
 
-init_config_arr(array('filter', 'rule'));
+config_init_path('filter/rule');
 filter_rules_sort();
 $a_filter = config_get_path('filter/rule', []);
 

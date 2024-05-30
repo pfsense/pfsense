@@ -30,26 +30,25 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('checkipservices', 'checkipservice'));
-$a_checkipservice = &$config['checkipservices']['checkipservice'];
+config_init_path('checkipservices/checkipservice');
 
 $dirty = false;
 if ($_POST['act'] == "del") {
-	unset($a_checkipservice[$_POST['id']]);
+	config_del_path("checkipservices/checkipservice/{$_POST['id']}");
 	$wc_msg = gettext('Deleted a check IP service.');
 	$dirty = true;
 } else if ($_POST['act'] == "toggle") {
-	if ($a_checkipservice[$_POST['id']]) {
-		if (isset($a_checkipservice[$_POST['id']]['enable'])) {
-			unset($a_checkipservice[$_POST['id']]['enable']);
+	if (config_get_path("checkipservices/checkipservice/{$_POST['id']}")) {
+		if (config_path_enabled("checkipservices/checkipservice/{$_POST['id']}")) {
+			config_del_path("checkipservices/checkipservice/{$_POST['id']}/enable");
 			$wc_msg = gettext('Disabled a check IP service.');
 		} else {
-			$a_checkipservice[$_POST['id']]['enable'] = true;
+			config_set_path("checkipservices/checkipservice/{$_POST['id']}/enable", true);
 			$wc_msg = gettext('Enabled a check IP service.');
 		}
 		$dirty = true;
-	} else if ($_POST['id'] == count($a_checkipservice)) {
-		if (isset($config['checkipservices']['disable_factory_default'])) {
+	} else if ($_POST['id'] == count(config_get_path('checkipservices/checkipservice', []))) {
+		if (config_path_enabled('checkipservices', 'disable_factory_default')) {
 			config_del_path('checkipservices/disable_factory_default');
 			$wc_msg = gettext('Enabled the default check IP service.');
 		} else {
@@ -99,11 +98,12 @@ if ($input_errors) {
 					<tbody>
 <?php
 // Is the factory default check IP service disabled?
-if (isset($config['checkipservices']['disable_factory_default'])) {
+if (config_path_enabled('checkipservices/checkipservice', 'disable_factory_default')) {
 	unset($factory_default_checkipservice['enable']);
 }
 
 // Append the factory default check IP service to the list.
+$a_checkipservice = config_get_path('checkipservices/checkipservice');
 $a_checkipservice[] = $factory_default_checkipservice;
 $factory_default = count($a_checkipservice) - 1;
 

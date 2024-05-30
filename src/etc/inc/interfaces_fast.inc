@@ -48,8 +48,6 @@ The $interface parameter is not used, but is accepted for
 consistency with the function it replaces.
 */
 function does_interface_exist_fast($interface='', $flush = true) {
-	global $config;
-
 	$ints = get_interface_arr($flush);
 	return array_flip($ints);
 }
@@ -59,15 +57,8 @@ function does_interface_exist_fast($interface='', $flush = true) {
  Returns an array of interfaces and friendly names.
  */
 function convert_real_interface_to_friendly_interface_name_fast() {
-	global $config;
-
-	$out = array();
-	/* XXX: For speed reasons reference directly the interface array */
-	init_config_arr(array('interfaces'));
-	$ifdescrs = &$config['interfaces'];
-	$iffriendlynames = array_keys($ifdescrs);
-	$out = array_flip(get_real_interface_fast($iffriendlynames));
-	return $out;
+	config_init_path('interfaces');
+	return array_flip(get_real_interface_fast(array_keys(config_get_path('interfaces'))));
 }
 
 /*
@@ -77,9 +68,10 @@ function convert_real_interface_to_friendly_interface_name_fast() {
  */
 
 function get_real_interface_fast($interfaces = array(), $family = "all", $realv6iface = false, $flush = true) {
-	global $config, $g;
+	global $g;
 
 	$existing_ifs = does_interface_exist_fast();
+	$if_config = config_get_path('interfaces');
 
 	$out = array();
 	foreach ($interfaces as $interface) {
@@ -126,11 +118,10 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
 					break;
 				}
 
-				if (empty($config['interfaces'][$interface])) {
+				$cfg = &$if_config[$interface];
+				if (empty($cfg)) {
 					break;
 				}
-
-				$cfg = &$config['interfaces'][$interface];
 
 				if ($family == "inet6") {
 					switch ($cfg['ipaddrv6']) {

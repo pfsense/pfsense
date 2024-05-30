@@ -105,9 +105,6 @@ switch ($action) {
 		/* Do nothing, no match */
 }
 
-$a_ca = config_get_path('ca', []);
-$a_cert = config_get_path('cert', []);
-
 $cpzoneid = $pconfig['zoneid'] = config_get_path("captiveportal/{$cpzone}/zoneid");
 $pconfig['descr'] = config_get_path("captiveportal/{$cpzone}/descr");
 $pconfig['cinterface'] = config_get_path("captiveportal/{$cpzone}/interface");

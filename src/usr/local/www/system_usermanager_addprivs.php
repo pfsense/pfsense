@@ -43,12 +43,12 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
 $pglinks = array("", "system_usermanager.php", "system_usermanager.php", "system_usermanager.php?act=edit&userid=" . $userid, "@self");
 
-if (!isset($config['system']['user'][$userid]) && !is_array($config['system']['user'][$userid])) {
+$a_user = config_get_path("system/user/{$userid}");
+
+if (empty($a_user) || !is_array($a_user)) {
 	pfSenseHeader("system_usermanager.php");
 	exit;
 }
-
-$a_user = & $config['system']['user'][$userid];
 
 if (!is_array($a_user['priv'])) {
 	$a_user['priv'] = array();
@@ -65,6 +65,7 @@ uasort($spriv_list, "compare_by_name");
  */
 phpsession_begin();
 $guiuser = getUserEntry($_SESSION['Username']);
+$guiuser = $guiuser['item'];
 $read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
 phpsession_end();
 
@@ -95,6 +96,7 @@ if ($_POST['save'] && !$read_only) {
 		}
 
 		$a_user['priv'] = sort_user_privs($a_user['priv']);
+		config_set_path("system/user/{$userid}", $a_user);
 		local_user_set($a_user);
 
 		$savemsg = sprintf(gettext("Privileges changed for user: %s"), $a_user['name']);
@@ -148,6 +150,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Change Password"), false, "system_usermanager_passwordmg.php");
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 

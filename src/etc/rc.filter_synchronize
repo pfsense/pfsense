@@ -73,7 +73,7 @@ function backup_vip_config_section() {
 function carp_check_version($rpc_client) {
 	global $g;
 
-	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
+	if (is_platform_booting()) {
 		return;
 	}
 
@@ -95,14 +95,14 @@ function carp_check_version($rpc_client) {
 }
 
 function carp_sync_xml($rpc_client, $sections) {
-	global $config, $g;
+	global $g;
 
-	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
+	if (is_platform_booting()) {
 		return true;
 	}
 
 	/* make a copy of config */
-	$config_copy = $config;
+	$config_copy = config_get_path('');
 
 	/* strip out nosync items */
 	$nosyncs = [
@@ -130,7 +130,7 @@ function carp_sync_xml($rpc_client, $sections) {
 		if (empty($dhcpifconf)) {
 			continue;
 		}
-		$dhcpif_addr = array_get_path($config, "interfaces/{$dhcpif}/ipaddr");
+		$dhcpif_addr = config_get_path("interfaces/{$dhcpif}/ipaddr");
 		if (($dhcpifconf['failover_peerip'] <> "") && 
 			$dhcpif_addr != null) {
 			array_set_path($config_copy, "dhcpd/{$dhcpif}/failover_peerip", $dhcpif_addr);
@@ -182,7 +182,7 @@ function carp_sync_xml($rpc_client, $sections) {
 	return false;
 }
 
-if (platform_booting()) {
+if (is_platform_booting()) {
 	return;
 }
 

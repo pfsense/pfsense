@@ -39,8 +39,7 @@ require_once("gwlb.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
 
-init_config_arr(array('staticroutes', 'route'));
-$a_routes = &$config['staticroutes']['route'];
+config_init_path('staticroutes/route');
 $a_gateways = get_gateways(GW_CACHE_DISABLED | GW_CACHE_LOCALHOST);
 
 $id = $_REQUEST['id'];
@@ -49,12 +48,13 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$id = $_REQUEST['dup'];
 }
 
-if (isset($id) && $a_routes[$id]) {
+$this_routes_config = isset($id) ? config_get_path("staticroutes/route/{$id}") : null;
+if ($this_routes_config) {
 	list($pconfig['network'], $pconfig['network_subnet']) =
-		explode('/', $a_routes[$id]['network']);
-	$pconfig['gateway'] = $a_routes[$id]['gateway'];
-	$pconfig['descr'] = $a_routes[$id]['descr'];
-	$pconfig['disabled'] = isset($a_routes[$id]['disabled']);
+		explode('/', $this_routes_config['network']);
+	$pconfig['gateway'] = $this_routes_config['gateway'];
+	$pconfig['descr'] = $this_routes_config['descr'];
+	$pconfig['disabled'] = isset($this_routes_config['disabled']);
 }
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
@@ -128,9 +128,9 @@ if ($_POST['save']) {
 		}
 	}
 	if (!isset($id)) {
-		$id = count($a_routes);
+		$id = count(config_get_path('staticroutes/route', []));
 	}
-	$oroute = $a_routes[$id];
+	$oroute = $this_routes_config;
 	$old_targets = array();
 	if (!empty($oroute)) {
 		$staticroute_file = g_get('tmp_path') . '/staticroute_' . $id;
@@ -149,21 +149,19 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
 	}
 
-	if (is_array($config['interfaces'])) {
-		foreach (config_get_path('interfaces', []) as $if) {
-			if (is_ipaddrv4($_POST['network']) &&
-			    isset($if['ipaddr']) && isset($if['subnet']) &&
-			    is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
-			    ($_POST['network_subnet'] == $if['subnet']) &&
-			    (gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
-				$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
-			} else if (is_ipaddrv6($_POST['network']) &&
-			    isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
-			    is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
-			    ($_POST['network_subnet'] == $if['subnetv6']) &&
-			    (gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
-				$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
-			}
+	foreach (config_get_path('interfaces', []) as $if) {
+		if (is_ipaddrv4($_POST['network']) &&
+			isset($if['ipaddr']) && isset($if['subnet']) &&
+			is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
+			($_POST['network_subnet'] == $if['subnet']) &&
+			(gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
+			$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
+		} else if (is_ipaddrv6($_POST['network']) &&
+			isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
+			is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
+			($_POST['network_subnet'] == $if['subnetv6']) &&
+			(gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
+			$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
 		}
 	}
 
@@ -184,7 +182,7 @@ if ($_POST['save']) {
 		} else {
 			$toapplylist = array();
 		}
-		$a_routes[$id] = $route;
+		config_set_path("staticroutes/route/{$id}", $route);
 
 		if (!empty($oroute)) {
 			$rgateway = $route[0]['gateway'];
@@ -232,7 +230,7 @@ if ($input_errors) {
 
 $form = new Form;
 
-if (isset($id) && $a_routes[$id]) {
+if ($this_routes_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

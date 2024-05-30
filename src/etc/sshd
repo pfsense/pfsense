@@ -28,9 +28,9 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("shaper.inc");
 
-global $config, $ssh_keys, $sshConfigDir;
+global $ssh_keys, $sshConfigDir;
 
-if (!isset($config['system']['ssh']['enable'])) {
+if (!config_path_enabled('system/ssh')) {
 	return;
 }
 
@@ -61,8 +61,8 @@ if (!file_exists("/var/log/lastlog")) {
 	@touch("/var/log/lastlog");
 }
 
-if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
-	$sshport = $config['system']['ssh']['port'];
+if (!empty(config_get_path('system/ssh/port'))) {
+	$sshport = config_get_path('system/ssh/port');
 } else {
 	$sshport = 22;
 }
@@ -86,14 +86,14 @@ if (is_account_disabled("admin") || is_account_expired("admin")) {
 	$permitroot = 'yes';
 }
 $sshconf .= "PermitRootLogin {$permitroot}\n";
-if ($config['system']['ssh']['sshdkeyonly'] == "both") {
+if (config_get_path('system/ssh/sshdkeyonly') == "both") {
 	$sshconf .= "# Login via both Key and Password only\n";
 	$sshconf .= "AuthenticationMethods publickey,password\n";
 	$sshconf .= "ChallengeResponseAuthentication yes\n";
 	$sshconf .= "PasswordAuthentication yes\n";
 	$sshconf .= "PubkeyAuthentication yes\n";
 	$sshconf .= "UsePAM yes\n";
-} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
+} else if (config_path_enabled('system/ssh', 'sshdkeyonly')) {
 	$sshconf .= "# Login via Key only\n";
 	$sshconf .= "ChallengeResponseAuthentication no\n";
 	$sshconf .= "PasswordAuthentication no\n";
@@ -109,7 +109,7 @@ $sshconf .= "UseDNS no\n";
 $sshconf .= "LoginGraceTime 30s\n";
 /* Hide FreeBSD version */
 $sshconf .= "VersionAddendum none\n";
-if (isset($config['system']['ssh']['sshdagentforwarding'])) {
+if (config_path_enabled('system/ssh', 'sshdagentforwarding')) {
 	$sshconf .= "AllowAgentForwarding yes\n";
 } else {
 	$sshconf .= "AllowAgentForwarding no\n";
@@ -132,16 +132,16 @@ if (file_exists("/etc/sshd_extra")) {
 @file_put_contents("{$sshConfigDir}/sshd_config", $sshconf);
 
 /* mop up from a badly implemented ssh keys -> cf backup */
-if ($config['ssh']['dsa_key'] <> "") {
-	unset($config['ssh']['dsa_key']);
-	unset($config['ssh']['ecdsa_key']);
-	unset($config['ssh']['ed25519_key']);
-	unset($config['ssh']['rsa_key']);
-	unset($config['ssh']['rsa1_key']);
-	unset($config['ssh']['dsa']);
-	unset($config['ssh']['rsa']);
-	unset($config['ssh']['rsa1']);
-	unset($config['ssh']['ak']);
+if (config_path_enabled('ssh', 'dsa_key')) {
+	config_del_path('ssh/dsa_key');
+	config_del_path('ssh/ecdsa_key');
+	config_del_path('ssh/ed25519_key');
+	config_del_path('ssh/rsa_key');
+	config_del_path('ssh/rsa1_key');
+	config_del_path('ssh/dsa');
+	config_del_path('ssh/rsa');
+	config_del_path('ssh/rsa1');
+	config_del_path('ssh/ak');
 	write_config("Clearing SSH keys from config.xml");
 }
 

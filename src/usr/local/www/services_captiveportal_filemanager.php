@@ -39,9 +39,11 @@ function cpelementscmp($a, $b) {
 }
 
 function cpelements_sort() {
-	global $config, $cpzone;
+	global $cpzone;
 
-	usort($config['captiveportal'][$cpzone]['element'], "cpelementscmp");
+	$cp_config = config_get_path("captiveportal/{$cpzone}/element");
+	usort($cp_config, "cpelementscmp");
+	config_set_path("captiveportal/{$cpzone}/element", $cp_config);
 }
 
 require_once("guiconfig.inc");
@@ -59,16 +61,15 @@ if (empty($cpzone)) {
 	exit;
 }
 
-init_config_arr(array('captiveportal', $cpzone, 'element'));
-$a_cp = &$config['captiveportal'];
-$a_element = &$a_cp[$cpzone]['element'];
+config_init_path("captiveportal/{$cpzone}/element");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("File Manager"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("File Manager"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 // Calculate total size of all files
 $total_size = 0;
+$a_element = config_get_path("captiveportal/{$cpzone}/element");
 for ($i = 0; $i < count($a_element); $i++) {
 
 	// if the image in the directory does not exist remove it from config
@@ -84,6 +85,7 @@ for ($i = 0; $i < count($a_element); $i++) {
 	}
 
 }
+config_set_path("captiveportal/{$cpzone}/element", $a_element);
 
 if ($_POST['Submit']) {
 	unset($input_errors);
@@ -98,7 +100,7 @@ if ($_POST['Submit']) {
 		$size = filesize($_FILES['new']['tmp_name']);
 
 		// is there already a file with that name?
-		foreach ($a_element as $element) {
+		foreach (config_get_path("captiveportal/{$cpzone}/element", []) as $element) {
 			if ($element['name'] == $name) {
 				$input_errors[] = sprintf(gettext("A file with the name '%s' already exists."), $name);
 				break;
@@ -117,7 +119,7 @@ if ($_POST['Submit']) {
 			$element['size'] = $size;
 			$element['content'] = base64_encode(file_get_contents($_FILES['new']['tmp_name']));
 
-			$a_element[] = $element;
+			config_set_path("captiveportal/{$cpzone}/element/", $element);
 			cpelements_sort();
 
 			write_config("Captive portal file manager: file uploaded");
@@ -126,10 +128,10 @@ if ($_POST['Submit']) {
 			exit;
 		}
 	}
-} else if (($_POST['act'] == "del") && !empty($cpzone) && $a_element[$_POST['id']]) {
-	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_POST['id']]['name']);
-	@unlink("{$g['captiveportal_path']}/" . $a_element[$_POST['id']]['name']);
-	unset($a_element[$_POST['id']]);
+} else if (($_POST['act'] == "del") && !empty($cpzone) && config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")) {
+	@unlink("{$g['captiveportal_element_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")['name']);
+	@unlink("{$g['captiveportal_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")['name']);
+	config_del_path("captiveportal/{$cpzone}/element/{$_POST['id']}");
 	write_config("Captive portal file manager: file deleted");
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 	exit;
@@ -184,7 +186,7 @@ if ($_REQUEST['act'] == 'add') {
 	print($form);
 }
 
-if (is_array($a_cp[$cpzone]['element'])):
+if (is_array(config_get_path("captiveportal/{$cpzone}/element"))):
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Installed Files")?></h2></div>
@@ -201,7 +203,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 					<tbody>
 <?php
 	$i = 0;
-	foreach ($a_cp[$cpzone]['element'] as $element):
+	foreach (config_get_path("captiveportal/{$cpzone}/element", []) as $element):
 ?>
 						<tr>
 							<td><?=htmlspecialchars($element['name'])?></td>

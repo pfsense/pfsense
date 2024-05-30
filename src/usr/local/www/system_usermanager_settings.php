@@ -100,18 +100,14 @@ if ($_REQUEST['ajax']) {
 
 $pconfig['session_timeout'] = config_get_path('system/webgui/session_timeout');
 
-if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = config_get_path('system/webgui/authmode');
-} else {
-	$pconfig['authmode'] = "Local Database";
-}
+$pconfig['authmode'] = config_get_path('system/webgui/authmode', "Local Database");
 
 /* Default to bcrypt hashing if unset.
  * See https://redmine.pfsense.org/issues/12855
  */
-$pconfig['pwhash'] = isset($config['system']['webgui']['pwhash']) ? $config['system']['webgui']['pwhash'] : 'bcrypt';
+$pconfig['pwhash'] = config_get_path('system/webgui/pwhash', 'bcrypt');
 
-$pconfig['shellauth'] = isset($config['system']['webgui']['shellauth']) ? true : false;
+$pconfig['shellauth'] = config_path_enabled('system/webgui', 'shellauth') ? true : false;
 
 $pconfig['backend'] = config_get_path('system/webgui/backend');
 
@@ -214,13 +210,10 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-if (!isAllowedPage("system_usermanager.php")) {
-       $tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
-} else {
-       $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
-}
+$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Change Password"), false, "system_usermanager_passwordmg.php");
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
@@ -298,7 +291,7 @@ $modal = new Modal("LDAP settings", "testresults", true);
 
 $modal->addInput(new Form_StaticText(
 	'Test results',
-	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>', g_get('product_label')
+	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>'
 ));
 
 $form->add($modal);

@@ -192,7 +192,7 @@ function system_syslogd_start($sighup = false) {
 
 	$syslogcfg = config_get_path('syslog', []);
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting syslog...");
 	}
 
@@ -482,7 +482,7 @@ EOD;
 		$retval = sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 

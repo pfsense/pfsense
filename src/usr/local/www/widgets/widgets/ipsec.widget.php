@@ -34,8 +34,8 @@ require_once("service-utils.inc");
 require_once("ipsec.inc");
 
 // Should always be initialized
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/phase2');
 
 $ipsec_widget_tabs = array(
 	'overview' => gettext('Overview'),
@@ -263,7 +263,7 @@ if (ipsec_enabled()) {
 }
 
 $mobile = ipsec_dump_mobile();
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000;
 
 if (ipsec_enabled()): ?>
 <div id="<?=htmlspecialchars($widgetkey_nodash)?>-overview" style="display:<?=(($activetab == 'overview') ? 'block': 'none')?>;"  class="table-responsive">

@@ -43,27 +43,23 @@ function openvpn_wizard_get_dhparams() {
 }
 
 function step1_stepsubmitbeforesave() {
-	global $stepid, $config;
-	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != $config['ovpnserver']['step1']['type'])) {
-		if (isset($config['ovpnserver']['step2'])) {
-			config_del_path('ovpnserver/step2');
-		}
+	global $stepid;
+	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != config_get_path('ovpnserver/step1/type'))) {
+		config_del_path('ovpnserver/step2');
 	}
 }
 
 function step1_submitphpaction() {
-	global $stepid, $config;
+	global $stepid;
 	if ($_POST['authtype'] == "local") {
 		$stepid = 4;
-		$config['ovpnserver']['step1']['type'] = "local";
+		config_set_path('ovpnserver/step1/type', "local");
 	} else if ($_POST['authtype'] == "ldap") {
 		$stepid = 0;
 	} else if ($_POST['authtype'] == "radius") {
 		$stepid = 2;
-		$config['ovpnserver']['step1']['type'] = "radius";
-		if (isset($config['ovpnserver']['step1']['uselist'])) {
-			config_del_path('ovpnserver/step1/uselist');
-		}
+		config_set_path('ovpnserver/step1/type', "radius");
+		config_del_path('ovpnserver/step1/uselist');
 	}
 }
 
@@ -99,14 +95,14 @@ function step2_submitphpaction() {
 }
 
 function step3_submitphpaction() {
-	global $stepid, $savemsg, $config;
+	global $stepid, $savemsg;
 
 	/* Default LDAP port is 389 for TCP and 636 for SSL */
 	if (empty($_POST['port'])) {
 		if (($_POST['transport'] == "Standard TCP") || ($_POST['transport'] == "STARTTLS Encrypted"))
-			$config['ovpnserver']['step2']['port'] = 389;
+			config_set_path('ovpnserver/step2/port', 389);
 		elseif ($_POST['transport'] == "SSL/TLS Encrypted")
-			$config['ovpnserver']['step2']['port'] = 636;
+			config_set_path('ovpnserver/step2/port', 636);
 	} elseif (!is_port($_POST['port'])) {
 		$stepid--;
 		$savemsg = "Please enter a valid port number.";
@@ -123,7 +119,7 @@ function step3_submitphpaction() {
 		$stepid--;
 		$savemsg = "Please enter a valid IP address or hostname for the authentication server.";
 	} else {
-		$config['ovpnserver']['step2']['uselist'] = "on";
+		config_set_path('ovpnserver/step2/uselist', "on");
 		$_POST['uselist'] = "on";
 		$stepid += 2;
 	}
@@ -160,11 +156,11 @@ function step4_submitphpaction() {
 }
 
 function step5_submitphpaction() {
-	global $stepid, $savemsg, $config;
+	global $stepid, $savemsg;
 
 	/* Default RADIUS Auth port = 1812 */
 	if (empty($_POST['port'])) {
-		$config['ovpnserver']['step2']['port'] = 1812;
+		config_set_path('ovpnserver/step2/port', 1812);
 	} elseif (!is_port($_POST['port'])) {
 		$stepid--;
 		$savemsg = "Please enter a valid port number.";
@@ -180,45 +176,41 @@ function step5_submitphpaction() {
 		$stepid--;
 		$savemsg = "Please enter a valid IP address or hostname for the authentication server.";
 	} else {
-		$config['ovpnserver']['step2']['uselist'] = "on";
+		config_set_path('ovpnserver/step2/uselist', "on");
 		$_POST['uselist'] = "on";
 	}
 }
 
 function step6_stepbeforeformdisplay() {
-	global $stepid, $config;
+	global $stepid;
 
-	if (!is_array($config['ca']) || count($config['ca']) < 1) {
+	if (count(config_get_path('ca', [])) < 1) {
 		$stepid++;
 	}
 }
 
 function step6_submitphpaction() {
-	global $stepid, $config;
+	global $stepid;
 
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
-		if (isset($config['ovpnserver']['step6']['uselist'])) {
-			config_del_path('ovpnserver/step6/uselist');
-		}
+		config_del_path('ovpnserver/step6/uselist');
 		$stepid++;
 	} else {
-		$config['ovpnserver']['step6']['uselist'] = "on";
+		config_set_path('ovpnserver/step6/uselist', "on");
 		$_POST['uselist'] = "on";
 	}
 }
 
 function step7_submitphpaction() {
-	global $input_errors, $stepid, $savemsg, $_POST, $config, $dn_cc;
+	global $input_errors, $stepid, $savemsg, $_POST, $dn_cc;
 
 	$canames = array();
 	$cacns = array();
-	if (is_array($config['ca'])) {
-		foreach (config_get_path('ca', []) as $ca) {
-			$canames[] = $ca['descr'];
-			$cainfo = cert_get_subject_hash($ca['crt']);
-			$cacns[] = $cainfo["CN"];
-		}
+	foreach (config_get_path('ca', []) as $ca) {
+		$canames[] = $ca['descr'];
+		$cainfo = cert_get_subject_hash($ca['crt']);
+		$cacns[] = $cainfo["CN"];
 	}
 
 	if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
@@ -235,37 +227,35 @@ function step7_submitphpaction() {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certificate Authority. A Certificate Authority with that name already exists.";
 	} else {
-		$config['ovpnserver']['step6']['uselist'] = "on";
+		config_set_path('ovpnserver/step6/uselist', "on");
 		$_POST['uselist'] = "on";
 	}
 }
 
 function step8_stepbeforeformdisplay() {
-	global $stepid, $config;
+	global $stepid;
 
-	if (count($config['cert']) < 1 ||
-		(count($config['cert']) == 1 && stristr($config['cert'][0]['descr'], "webconf"))) {
+	if (count(config_get_path('cert', [])) < 1 ||
+		(count(config_get_path('cert', [])) == 1 && stristr(config_get_path('cert/0/descr'), "webconf"))) {
 		$stepid++;
 	}
 }
 
 function step8_submitphpaction() {
-	global $stepid, $config, $_POST;
+	global $stepid, $_POST;
 
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
-		if (isset($config['ovpnserver']['step9']['uselist'])) {
-			config_del_path('ovpnserver/step9/uselist');
-		}
+		config_del_path('ovpnserver/step9/uselist');
 		$stepid++;
 	} else {
-		$config['ovpnserver']['step9']['uselist'] = "on";
+		config_set_path('ovpnserver/step9/uselist', "on");
 		$_POST['uselist'] = "on";
 	}
 }
 
 function step9_stepbeforeformdisplay() {
-	global $config, $pkg, $stepid;
+	global $pkg, $stepid;
 
 	$pconfig = config_get_path('ovpnserver');
 
@@ -277,6 +267,7 @@ function step9_stepbeforeformdisplay() {
 		$orgunit = $pconfig['step6']['organizationalunit'];
 	} else {
 		$ca = lookup_ca($pconfig['step6']['authcertca']);
+		$ca = $ca['item'];
 		$cavl = cert_get_subject_hash($ca['crt']);
 		$country = $cavl['C'];
 		$state = $cavl['ST'];
@@ -308,16 +299,14 @@ function step9_stepbeforeformdisplay() {
 }
 
 function step9_submitphpaction() {
-	global $input_errors, $stepid, $savemsg, $_POST, $config, $dn_cc;
+	global $input_errors, $stepid, $savemsg, $_POST, $dn_cc;
 
 	$certnames = array();
 	$certcns = array();
-	if (is_array($config['cert'])) {
-		foreach (config_get_path('cert', []) as $cert) {
-			$certnames[] = $cert['descr'];
-			$certinfo = cert_get_subject_hash($cert['crt']);
-			$certcns[] = $certinfo["CN"];
-		}
+	foreach (config_get_path('cert', []) as $cert) {
+		$certnames[] = $cert['descr'];
+		$certinfo = cert_get_subject_hash($cert['crt']);
+		$certcns[] = $certinfo["CN"];
 	}
 
 	if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
@@ -334,20 +323,15 @@ function step9_submitphpaction() {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certificate. A Certificate with that name/common name already exists.";
 	} else {
-		$config['ovpnserver']['step9']['uselist'] = "on";
+		config_set_path('ovpnserver/step9/uselist', "on");
 		$_POST['uselist'] = "on";
 	}
 }
 
 function step10_stepbeforeformdisplay() {
-	global $pkg, $stepid, $netbios_nodetypes, $config;
-
-	if (isset($config['ovpnserver']['step10']['localport'])) {
-		config_del_path('ovpnserver/step10/localport');
-	}
-	if (isset($config['ovpnserver']['step10']['tunnelnet'])) {
-		config_del_path('ovpnserver/step10/tunnelnet');
-	}
+	global $pkg, $stepid, $netbios_nodetypes;
+	config_del_path('ovpnserver/step10/localport');
+	config_del_path('ovpnserver/step10/tunnelnet');
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $idx => $field) {
 		if ($field['name'] == "dataciphersfallback") {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
@@ -463,11 +447,9 @@ function step10_submitphpaction() {
 }
 
 function step12_submitphpaction() {
-	global $config;
-
 	$pconfig = config_get_path('ovpnserver');
 
-	if (!is_array($config['ovpnserver'])) {
+	if (!is_array(config_get_path('ovpnserver'))) {
 		$message = "No configuration found, please try again.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
 		exit;
@@ -512,10 +494,9 @@ function step12_submitphpaction() {
 			$auth['radius_secret'] = $pconfig['step2']['password'];
 			$auth['radius_srvcs'] = "auth";
 		}
-		if (!is_array($config['system']['authserver']))
-			$config['system']['authserver'] = array();
+		config_init_path('system/authserver');
 
-		$config['system']['authserver'][] = $auth;
+		config_set_path('system/authserver/', $auth);
 	} else if (!isset($pconfig['step2']['uselist']) && empty($pconfig['step2']['authserv'])) {
 		$message = "Please choose an authentication server .";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
@@ -554,18 +535,19 @@ function step12_submitphpaction() {
 		}
 
 		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn, "sha256");
-		if (!is_array($config['ca']))
-			$config['ca'] = array();
-
-		$config['ca'][] = $ca;
+		config_set_path('ca/', $ca);
 	} else if (!isset($pconfig['step6']['uselist']) && empty($pconfig['step6']['authcertca'])) {
 		$message = "Please choose a Certificate Authority.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
 		exit;
-	} else if (!($ca = lookup_ca($pconfig['step6']['authcertca']))) {
-		$message = "An invalid Certificate Authority has been specified.";
-		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
-		exit;
+	} else {
+		$ca = lookup_ca($pconfig['step6']['authcertca']);
+		$ca = $ca['item'];
+		if (!$ca) {
+			$message = "An invalid Certificate Authority has been specified.";
+			header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
+			exit;
+		}
 	}
 
 	if (isset($pconfig['step9']['uselist'])) {
@@ -599,18 +581,21 @@ function step12_submitphpaction() {
 		}
 
 		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");
-		if (!is_array($config['cert']))
-			$config['cert'] = array();
+		config_init_path('cert');
 
-		$config['cert'][] = $cert;
+		config_set_path('cert/', $cert);
 	} else if (!isset($pconfig['step9']['uselist']) && empty($pconfig['step9']['authcertname'])) {
 		$message = "Please choose a Certificate.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
 		exit;
-	} else if (!($cert = lookup_cert($pconfig['step9']['authcertname']))) {
-		$message = "An invalid Certificate has been specified.";
-		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
-		exit;
+	} else {
+		$cert = lookup_cert($pconfig['step9']['authcertname']);
+		$cert = $cert['item'];
+		if (!$cert) {
+			$message = "An invalid Certificate has been specified.";
+			header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
+			exit;
+		}
 	}
 	$server = array();
 	$server['vpnid'] = openvpn_vpnid_next();
@@ -729,7 +714,7 @@ function step12_submitphpaction() {
 		$rule['tracker'] = $tracker++;
 		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
 
-		$config['filter']['rule'][] = $rule;
+		config_set_path('filter/rule/', $rule);
 	}
 	if (isset($pconfig['step11']['ovpnallow'])) {
 		$rule = array();
@@ -745,18 +730,11 @@ function step12_submitphpaction() {
 		$rule['enabled'] = "on";
 		$rule['tracker'] = $tracker++;
 		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
-		$config['filter']['rule'][] = $rule;
+		config_set_path('filter/rule/', $rule);
 	}
 
-	if (!is_array($config['openvpn'])) {
-		$config['openvpn'] = array();
-	}
-
-	if (!is_array($config['openvpn']['openvpn-server'])) {
-		$config['openvpn']['openvpn-server'] = array();
-	}
-
-	$config['openvpn']['openvpn-server'][] = $server;
+	config_init_path('openvpn/openvpn-server');
+	config_set_path('openvpn/openvpn-server', $server);
 
 	openvpn_resync('server', $server);
 	write_config(gettext("OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."));

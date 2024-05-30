@@ -31,15 +31,14 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('wireless', 'clone'));
-$a_clones = &$config['wireless']['clone'];
+config_init_path('wireless/clone');
 
 function clone_inuse($num) {
-	global $config, $a_clones;
-
+	$a_clones = config_get_path('wireless/clone');
 	$iflist = get_configured_interface_list(true);
+	$if_config = config_get_path('interfaces');
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif']) {
+		if ($if_config[$if]['if'] == $a_clones[$num]['cloneif']) {
 			return true;
 		}
 	}
@@ -57,11 +56,12 @@ if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_clones[$id]) {
-	$pconfig['if'] = $a_clones[$id]['if'];
-	$pconfig['cloneif'] = $a_clones[$id]['cloneif'];
-	$pconfig['mode'] = $a_clones[$id]['mode'];
-	$pconfig['descr'] = $a_clones[$id]['descr'];
+$this_clone_config = isset($id) ? config_get_path("wireless/clone/{$id}") : null;
+if ($this_clone_config) {
+	$pconfig['if'] = $this_clone_config['if'];
+	$pconfig['cloneif'] = $this_clone_config['cloneif'];
+	$pconfig['mode'] = $this_clone_config['mode'];
+	$pconfig['descr'] = $this_clone_config['descr'];
 }
 
 if ($_POST['save']) {
@@ -80,9 +80,9 @@ if ($_POST['save']) {
 		$clone['mode'] = $_POST['mode'];
 		$clone['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_clones[$id]) {
-			if ($clone['if'] == $a_clones[$id]['if']) {
-				$clone['cloneif'] = $a_clones[$id]['cloneif'];
+		if ($this_clone_config) {
+			if ($clone['if'] == $this_clone_config['if']) {
+				$clone['cloneif'] = $this_clone_config['cloneif'];
 			}
 		}
 
@@ -91,7 +91,7 @@ if ($_POST['save']) {
 			do {
 				$clone_exists = false;
 				$clone['cloneif'] = "{$_POST['if']}_wlan{$clone_id}";
-				foreach ($a_clones as $existing) {
+				foreach (config_get_path('wireless/clone', []) as $existing) {
 					if ($clone['cloneif'] == $existing['cloneif']) {
 						$clone_exists = true;
 						$clone_id++;
@@ -101,11 +101,11 @@ if ($_POST['save']) {
 			} while ($clone_exists);
 		}
 
-		if (isset($id) && $a_clones[$id]) {
+		if ($this_clone_config) {
 			if (clone_inuse($id)) {
-				if ($clone['if'] != $a_clones[$id]['if']) {
+				if ($clone['if'] != $this_clone_config['if']) {
 					$input_errors[] = gettext("This wireless clone cannot be modified because it is still assigned as an interface.");
-				} else if ($clone['mode'] != $a_clones[$id]['mode']) {
+				} else if ($clone['mode'] != $this_clone_config['mode']) {
 					$input_errors[] = gettext("Use the configuration page for the assigned interface to change the mode.");
 				}
 			}
@@ -115,18 +115,20 @@ if ($_POST['save']) {
 			if (!interface_wireless_clone($clone['cloneif'], $clone)) {
 				$input_errors[] = sprintf(gettext('Error creating interface with mode %1$s.	 The %2$s interface may not support creating more clones with the selected mode.'), $wlan_modes[$clone['mode']], $clone['if']);
 			} else {
-				if (isset($id) && $a_clones[$id]) {
-					if ($clone['if'] != $a_clones[$id]['if']) {
-						pfSense_interface_destroy($a_clones[$id]['cloneif']);
+				if ($this_clone_config) {
+					if ($clone['if'] != $this_clone_config['if']) {
+						pfSense_interface_destroy($this_clone_config['cloneif']);
 					}
 					$input_errors[] = sprintf(gettext("Created with id %s"), $id);
-					$a_clones[$id] = $clone;
+					config_set_path("wireless/clone/{$id}", $clone);
 				} else {
 					$input_errors[] = gettext("Created without id");
-					$a_clones[] = $clone;
+					config_set_path('wireless/clone/', $clone);
 				}
 
+				$a_clones = config_get_path('wireless/clone');
 				usort($a_clones, "clone_compare");
+				config_set_path('wireless/clone', $clone);
 				write_config("Wireless interface added");
 
 				header("Location: interfaces_wireless.php");
@@ -198,7 +200,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['cloneif']
 ));
 
-if (isset($id) && $a_clones[$id]) {
+if ($this_clone_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

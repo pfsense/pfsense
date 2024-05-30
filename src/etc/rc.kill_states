@@ -29,7 +29,7 @@ require_once("interfaces.inc");
 require_once("util.inc");
 
 // Do not process while booting
-if (platform_booting()) {
+if (is_platform_booting()) {
 	return;
 }
 
@@ -57,7 +57,7 @@ if (!empty($local_ip)) {
 	}
 }
 
-if (isset($config['system']['gw_down_kill_states'])) {
+if (config_path_enabled('system', 'gw_down_kill_states')) {
 	if (!empty($local_ip)) {
 		log_error("rc.kill_states: Removing states for IP {$local_ip}/{$subnet_bits}");
 		$filter = array(

@@ -36,17 +36,17 @@ $repos = pkg_list_repos();
 
 if ($_POST) {
 
-	init_config_arr(array('system', 'firmware'));
+	config_init_path('system/firmware');
 	if ($_POST['disablecheck'] == "yes") {
 		config_set_path('system/firmware/disablecheck', true);
-	} elseif (isset($config['system']['firmware']['disablecheck'])) {
+	} elseif (config_path_enabled('system/firmware', 'disablecheck')) {
 		config_del_path('system/firmware/disablecheck');
 	}
 
-	init_config_arr(array('system', 'gitsync'));
+	config_init_path('system/gitsync');
 	if ($_POST['synconupgrade'] == "yes") {
 		config_set_path('system/gitsync/synconupgrade', true);
-	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
+	} elseif (config_path_enabled('system/gitsync', 'synconupgrade')) {
 		config_del_path('system/gitsync/synconupgrade');
 	}
 
@@ -91,10 +91,10 @@ if ($_POST) {
 		config_del_path('system/gitsync/dryrun');
 	}
 
-	if (empty($config['system']['firmware'])) {
+	if (empty(config_get_path('system/firmware'))) {
 		config_del_path('system/firmware');
 	}
-	if (empty($config['system']['gitsync'])) {
+	if (empty(config_get_path('system/gitsync'))) {
 		config_del_path('system/gitsync');
 	}
 	write_config(gettext("Saved system update settings."));
@@ -135,7 +135,7 @@ $section = new Form_Section('Firmware Branch');
 $field = new Form_Select(
 	'fwbranch',
 	'*Branch',
-	pkg_get_repo_name($config['system']['pkg_repo_conf_path']),
+	pkg_get_repo_name(config_get_path('system/pkg_repo_conf_path')),
 	pkg_build_repo_list()
 );
 

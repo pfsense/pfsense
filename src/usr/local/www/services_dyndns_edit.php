@@ -43,8 +43,7 @@ function is_dyndns_username($uname) {
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('dyndnses', 'dyndns'));
-$a_dyndns = &$config['dyndnses']['dyndns'];
+config_init_path('dyndnses/dyndns');
 
 $id = $_REQUEST['id'];
 
@@ -54,30 +53,31 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$dup = true;
 }
 
-if (isset($id) && isset($a_dyndns[$id])) {
-	$pconfig['username'] = $a_dyndns[$id]['username'];
-	$pconfig['password'] = $a_dyndns[$id]['password'];
+$this_dyndns_config = isset($id) ? config_get_path("dyndnses/dyndns/{$id}") : null;
+if ($this_dyndns_config) {
+	$pconfig['username'] = $this_dyndns_config['username'];
+	$pconfig['password'] = $this_dyndns_config['password'];
 	if (!$dup) {
-		$pconfig['host'] = $a_dyndns[$id]['host'];
+		$pconfig['host'] = $this_dyndns_config['host'];
 	}
-	$pconfig['domainname'] = $a_dyndns[$id]['domainname'];
-	$pconfig['mx'] = $a_dyndns[$id]['mx'];
-	$pconfig['type'] = $a_dyndns[$id]['type'];
-	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
-	$pconfig['interface'] = str_replace('_stf', '', $a_dyndns[$id]['interface']);
-	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
-	$pconfig['proxied'] = isset($a_dyndns[$id]['proxied']);
-	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
-	$pconfig['curl_ipresolve_v4'] = isset($a_dyndns[$id]['curl_ipresolve_v4']);
-	$pconfig['curl_ssl_verifypeer'] = isset($a_dyndns[$id]['curl_ssl_verifypeer']);
-	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
-	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
-	$pconfig['maxcacheage'] = $a_dyndns[$id]['maxcacheage'];
-	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
-	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
-	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
-	$pconfig['curl_proxy'] = isset($a_dyndns[$id]['curl_proxy']);
-	$pconfig['descr'] = $a_dyndns[$id]['descr'];
+	$pconfig['domainname'] = $this_dyndns_config['domainname'];
+	$pconfig['mx'] = $this_dyndns_config['mx'];
+	$pconfig['type'] = $this_dyndns_config['type'];
+	$pconfig['enable'] = !isset($this_dyndns_config['enable']);
+	$pconfig['interface'] = str_replace('_stf', '', $this_dyndns_config['interface']);
+	$pconfig['wildcard'] = isset($this_dyndns_config['wildcard']);
+	$pconfig['proxied'] = isset($this_dyndns_config['proxied']);
+	$pconfig['verboselog'] = isset($this_dyndns_config['verboselog']);
+	$pconfig['curl_ipresolve_v4'] = isset($this_dyndns_config['curl_ipresolve_v4']);
+	$pconfig['curl_ssl_verifypeer'] = isset($this_dyndns_config['curl_ssl_verifypeer']);
+	$pconfig['zoneid'] = $this_dyndns_config['zoneid'];
+	$pconfig['ttl'] = $this_dyndns_config['ttl'];
+	$pconfig['maxcacheage'] = $this_dyndns_config['maxcacheage'];
+	$pconfig['updateurl'] = $this_dyndns_config['updateurl'];
+	$pconfig['resultmatch'] = $this_dyndns_config['resultmatch'];
+	$pconfig['requestif'] = str_replace('_stf', '', $this_dyndns_config['requestif']);
+	$pconfig['curl_proxy'] = isset($this_dyndns_config['curl_proxy']);
+	$pconfig['descr'] = $this_dyndns_config['descr'];
 }
 
 if ($_POST['save'] || $_POST['force']) {
@@ -207,7 +207,7 @@ if ($_POST['save'] || $_POST['force']) {
 		if ($_POST['passwordfld'] != DMYPWD) {
 			$dyndns['password'] = base64_encode($_POST['passwordfld']);
 		} else {
-			$dyndns['password'] = $a_dyndns[$id]['password'];;
+			$dyndns['password'] = $this_dyndns_config['password'];;
 		}
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['domainname'] = $_POST['domainname'];
@@ -248,17 +248,17 @@ if ($_POST['save'] || $_POST['force']) {
 			$dyndns['username'] = "";
 		}
 
-		if (isset($id) && $a_dyndns[$id] && !$dup) {
-			$a_dyndns[$id] = $dyndns;
+		if ($this_dyndns_config && !$dup) {
+			config_set_path("dyndnses/dyndns/{$id}", $dyndns);
 		} else {
-			$a_dyndns[] = $dyndns;
-			$id = count($a_dyndns) - 1;
+			config_set_path("dyndnses/dyndns/", $dyndns);
+			$id = count(config_get_path('dyndnses/dyndns', [])) - 1;
 		}
 
 		$dyndns['id'] = $id;
 		//Probably overkill, but its better to be safe
-		for ($i = 0; $i < count($a_dyndns); $i++) {
-			$a_dyndns[$i]['id'] = $i;
+		for ($i = 0; $i < count(config_get_path('dyndnses/dyndns', [])); $i++) {
+			config_set_path("dyndnses/dyndns/{$i}/id", $i);
 		}
 
 		write_config(gettext("Dynamic DNS client configured."));
@@ -502,7 +502,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maxcacheage']
 ))->setHelp('The number of days after which the DNS record is always updated. The DNS record is updated when: update is forced, WAN address changes or this number of days has passed.');
 
-if (!empty($config['system']['proxyurl'])) {
+if (!empty(config_get_path('system/proxyurl'))) {
 	$section->addInput(new Form_Checkbox(
 		'curl_proxy',
 		'Use Proxy',
@@ -519,7 +519,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).%1$s' .
 			'This field will be used in the Dynamic DNS Status Widget for Custom services.', '<br />');
 
-if (isset($id) && $a_dyndns[$id]) {
+if ($this_dyndns_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

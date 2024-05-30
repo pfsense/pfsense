@@ -30,15 +30,14 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('gifs', 'gif'));
-$a_gifs = &$config['gifs']['gif'] ;
+config_init_path('gifs/gif');
 
 function gif_inuse($num) {
-	global $config, $a_gifs;
-
+	$a_gifs = config_get_path('gifs/gif');
 	$iflist = get_configured_interface_list(true);
+	$if_config = config_get_path('interfaces');
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif']) {
+		if ($if_config[$if]['if'] == $a_gifs[$num]['gifif']) {
 			return true;
 		}
 	}
@@ -49,14 +48,14 @@ function gif_inuse($num) {
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_gifs[$_POST['id']])) {
+	} else if (empty(config_get_path("gifs/gif/{$_POST['id']}"))) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (gif_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
 	} else {
-		pfSense_interface_destroy($a_gifs[$_POST['id']]['gifif']);
-		unset($a_gifs[$_POST['id']]);
+		pfSense_interface_destroy(config_get_path("gifs/gif/{$_POST['id']}/gifif"));
+		config_del_path("gifs/gif/{$_POST['id']}");
 
 		write_config("GIF interface deleted");
 
@@ -100,7 +99,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_gifs as $i => $gif): ?>
+<?php foreach (config_get_path('gifs/gif', []) as $i => $gif): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']))?>

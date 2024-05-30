@@ -39,8 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_virtual_ip.inc");
 
-init_config_arr(array('virtualip', 'vip'));
-$a_vip = &$config['virtualip']['vip'];
+config_init_path('virtualip/vip');
 $input_errors = array();
 $retval = 0;
 
@@ -111,7 +110,7 @@ foreach ($viplist as $vipname => $address) {
 $interfaces['lo0'] = "Localhost";
 
 $i = 0;
-foreach ($a_vip as $vipent):
+foreach (config_get_path('virtualip/vip', []) as $vipent):
 	if ($vipent['subnet'] != "" or $vipent['range'] != "" or
 		$vipent['subnet_bits'] != "" or (isset($vipent['range']['from']) && $vipent['range']['from'] != "")):
 ?>

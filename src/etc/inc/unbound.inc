@@ -191,7 +191,7 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 		$unboundcfg = config_get_path('unbound');
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
 	}
 
@@ -302,6 +302,7 @@ EOF;
 
 		// Lookup CA and Server Cert
 		$cert = lookup_cert($unboundcfg['sslcertref']);
+		$cert = $cert['item'];
 		$ca = ca_chain($cert);
 		$cert_chain = base64_decode($cert['crt']);
 		if (!empty($ca)) {
@@ -957,7 +958,7 @@ function unbound_acls_config($cfgsubdir = "") {
 			}
 		}
 		// OpenVPN CSO
-		init_config_arr(array('openvpn', 'openvpn-csc'));
+		config_init_path('openvpn/openvpn-csc');
 		foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 			if (is_array($ovpnent) && !isset($ovpnent['disable'])) {
 				if (!empty($ovpnent['tunnel_network'])) {

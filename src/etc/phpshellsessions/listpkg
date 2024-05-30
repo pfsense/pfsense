@@ -22,12 +22,12 @@
 require_once("config.inc");
 require_once("util.inc");
 
-global $g, $config;
+global $g;
 
-if (is_array($config['installedpackages']['package'])) {
+if (is_array(config_get_path('installedpackages/package'))) {
 	echo "Installed packages:\n";
 
-	foreach ($config['installedpackages']['package'] as $package) {
+	foreach (config_get_path('installedpackages/package', []) as $package) {
 		$name = str_pad("{$package['name']}-{$package['version']}", 30);
 		$descr = $package['descr'];
 		$line = "{$name} {$descr}";

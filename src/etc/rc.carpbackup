@@ -59,7 +59,6 @@ foreach ($vips as $vip) {
 restart_ppp_interfaces_using_interfaces($vips);
 
 /* Stop OpenVPN clients running on this VIP, since multiple active OpenVPN clients on a CARP cluster can be problematic. */
-global $config;
 $a_groups = return_gateway_groups_array(true);
 
 foreach (array('server', 'client') as $mode) {

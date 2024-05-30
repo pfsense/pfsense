@@ -36,9 +36,8 @@ require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
 
-init_config_arr(array('openvpn', 'openvpn-csc'));
-$a_csc = &$config['openvpn']['openvpn-csc'];
-init_config_arr(array('openvpn', 'openvpn-server'));
+config_init_path('openvpn/openvpn-csc');
+config_init_path('openvpn/openvpn-server');
 
 $serveroptionlist = array();
 foreach (config_get_path('openvpn/openvpn-server', []) as $serversettings) {
@@ -56,20 +55,23 @@ if (isset($_REQUEST['act'])) {
 }
 
 $user_entry = getUserEntry($_SESSION['Username']);
+$user_entry = $user_entry['item'];
 $user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-csc-advanced") || userHasPrivilege($user_entry, "page-all"));
 
+$this_csc_config = isset($id) ? config_get_path("openvpn/openvpn-csc/{$id}") : null;
+
 if ($_POST['act'] == "del") {
-	if (!$a_csc[$id]) {
+	if (!$this_csc_config) {
 		pfSenseHeader("vpn_openvpn_csc.php");
 		exit;
 	}
 
-	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
+	if (!$user_can_edit_advanced && !empty($this_csc_config['custom_options'])) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
 	} else {
-		$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
-		openvpn_delete_csc($a_csc[$id]);
-		unset($a_csc[$id]);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $this_csc_config['common_name'], $this_csc_config['description']);
+		openvpn_delete_csc($this_csc_config);
+		config_del_path("openvpn/openvpn-csc/{$id}");
 		write_config($wc_msg);
 		$savemsg = gettext("Client specific override successfully deleted.");
 		services_unbound_configure(false);
@@ -77,34 +79,34 @@ if ($_POST['act'] == "del") {
 }
 
 if (($act == "edit") || ($act == "dup")) {
-	if (isset($id) && $a_csc[$id]) {
-		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
-		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
-		$pconfig['disable'] = isset($a_csc[$id]['disable']);
-		$pconfig['common_name'] = $a_csc[$id]['common_name'];
-		$pconfig['block'] = $a_csc[$id]['block'];
-		$pconfig['description'] = $a_csc[$id]['description'];
+	if ($this_csc_config) {
+		$pconfig['server_list'] = explode(",", $this_csc_config['server_list']);
+		$pconfig['custom_options'] = $this_csc_config['custom_options'];
+		$pconfig['disable'] = isset($this_csc_config['disable']);
+		$pconfig['common_name'] = $this_csc_config['common_name'];
+		$pconfig['block'] = $this_csc_config['block'];
+		$pconfig['description'] = $this_csc_config['description'];
 
-		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
-		$pconfig['tunnel_networkv6'] = $a_csc[$id]['tunnel_networkv6'];
-		$pconfig['local_network'] = $a_csc[$id]['local_network'];
-		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
-		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
-		$pconfig['remote_networkv6'] = $a_csc[$id]['remote_networkv6'];
-		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
+		$pconfig['tunnel_network'] = $this_csc_config['tunnel_network'];
+		$pconfig['tunnel_networkv6'] = $this_csc_config['tunnel_networkv6'];
+		$pconfig['local_network'] = $this_csc_config['local_network'];
+		$pconfig['local_networkv6'] = $this_csc_config['local_networkv6'];
+		$pconfig['remote_network'] = $this_csc_config['remote_network'];
+		$pconfig['remote_networkv6'] = $this_csc_config['remote_networkv6'];
+		$pconfig['gwredir'] = $this_csc_config['gwredir'];
 
-		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
-		$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
+		$pconfig['push_reset'] = $this_csc_config['push_reset'];
+		$pconfig['remove_route'] = $this_csc_config['remove_route'];
 
-		$pconfig['dns_domain'] = $a_csc[$id]['dns_domain'];
+		$pconfig['dns_domain'] = $this_csc_config['dns_domain'];
 		if ($pconfig['dns_domain']) {
 			$pconfig['dns_domain_enable'] = true;
 		}
 
-		$pconfig['dns_server1'] = $a_csc[$id]['dns_server1'];
-		$pconfig['dns_server2'] = $a_csc[$id]['dns_server2'];
-		$pconfig['dns_server3'] = $a_csc[$id]['dns_server3'];
-		$pconfig['dns_server4'] = $a_csc[$id]['dns_server4'];
+		$pconfig['dns_server1'] = $this_csc_config['dns_server1'];
+		$pconfig['dns_server2'] = $this_csc_config['dns_server2'];
+		$pconfig['dns_server3'] = $this_csc_config['dns_server3'];
+		$pconfig['dns_server4'] = $this_csc_config['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
 		    $pconfig['dns_server2'] ||
@@ -113,28 +115,28 @@ if (($act == "edit") || ($act == "dup")) {
 			$pconfig['dns_server_enable'] = true;
 		}
 
-		$pconfig['ntp_server1'] = $a_csc[$id]['ntp_server1'];
-		$pconfig['ntp_server2'] = $a_csc[$id]['ntp_server2'];
+		$pconfig['ntp_server1'] = $this_csc_config['ntp_server1'];
+		$pconfig['ntp_server2'] = $this_csc_config['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
 		    $pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
 		}
 
-		$pconfig['netbios_enable'] = $a_csc[$id]['netbios_enable'];
-		$pconfig['netbios_ntype'] = $a_csc[$id]['netbios_ntype'];
-		$pconfig['netbios_scope'] = $a_csc[$id]['netbios_scope'];
+		$pconfig['netbios_enable'] = $this_csc_config['netbios_enable'];
+		$pconfig['netbios_ntype'] = $this_csc_config['netbios_ntype'];
+		$pconfig['netbios_scope'] = $this_csc_config['netbios_scope'];
 
-		$pconfig['wins_server1'] = $a_csc[$id]['wins_server1'];
-		$pconfig['wins_server2'] = $a_csc[$id]['wins_server2'];
+		$pconfig['wins_server1'] = $this_csc_config['wins_server1'];
+		$pconfig['wins_server2'] = $this_csc_config['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
 		    $pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
 		}
 
-		$pconfig['nbdd_server1'] = $a_csc[$id]['nbdd_server1'];
-		$pconfig['nbdd_server2'] = $a_csc[$id]['nbdd_server2'];
+		$pconfig['nbdd_server1'] = $this_csc_config['nbdd_server1'];
+		$pconfig['nbdd_server2'] = $this_csc_config['nbdd_server2'];
 
 		if ($pconfig['nbdd_server1'] || $pconfig['nbdd_server2']) {
 			$pconfig['nbdd_server_enable'] = true;
@@ -154,12 +156,12 @@ if ($_POST['save']) {
 
 	/* input validation */
 	if (isset($pconfig['custom_options']) &&
-	    ($pconfig['custom_options'] != $a_csc[$id]['custom_options']) &&
+	    ($pconfig['custom_options'] != $this_csc_config['custom_options']) &&
 	    !$user_can_edit_advanced) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
-	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
-		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
+	if (!$user_can_edit_advanced && !empty($this_csc_config['custom_options'])) {
+		$pconfig['custom_options'] = $this_csc_config['custom_options'];
 	}
 
 	if (!empty($pconfig['server_list'])) {
@@ -315,18 +317,18 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (($act == 'new') || (!empty($csc['disable']) ^ !empty($a_csc[$id]['disable'])) ||
-		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
-		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
+		if (($act == 'new') || (!empty($csc['disable']) ^ !empty($this_csc_config['disable'])) ||
+		    ($csc['tunnel_network'] != $this_csc_config['tunnel_network']) ||
+		    ($csc['tunnel_networkv6'] != $this_csc_config['tunnel_networkv6'])) {
 			$csc['unbound_restart'] = true;
 		}
 
-		if (isset($id) && $a_csc[$id]) {
-			$old_csc = $a_csc[$id];
-			$a_csc[$id] = $csc;
+		if ($this_csc_config) {
+			$old_csc = $this_csc_config;
+			config_set_path("openvpn/openvpn-csc/{$id}", $csc);
 			$wc_msg = sprintf(gettext('Updated OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		} else {
-			$a_csc[] = $csc;
+			config_set_path('openvpn/openvpn-csc/', $csc);
 			$wc_msg = sprintf(gettext('Added OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		}
 
@@ -688,7 +690,7 @@ if ($act == "new" || $act == "edit"):
 		$act
 	));
 
-	if (isset($id) && $a_csc[$id]) {
+	if ($this_csc_config) {
 		$form->addGlobal(new Form_Input(
 			'id',
 			null,
@@ -818,7 +820,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 			<tbody>
 <?php
 	$i = 0;
-	foreach ($a_csc as $csc):
+	foreach (config_get_path('openvpn/openvpn-csc', []) as $csc):
 		$disabled = isset($csc['disable']) ? "Yes":"No";
 ?>
 				<tr>

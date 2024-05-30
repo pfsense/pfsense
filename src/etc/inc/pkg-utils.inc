@@ -104,8 +104,7 @@ function pkg_env($extra_env = array()) {
 		$proxyuser = config_get_path('system/proxyuser');
 		$proxypass = config_get_path('system/proxypass');
 		if (!empty($proxyuser) && !empty($proxypass)) {
-			$pkg_env_vars['HTTP_PROXY_AUTH'] = "basic:*:" .
-			    $proxyuser . ":" . $proxypass;
+			$pkg_env_vars['HTTP_PROXY_AUTH'] = $proxyuser . ":" . $proxypass;
 		}
 	}
 
@@ -559,13 +558,13 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
  * to register itself in config.xml and also execute custom
  * install functions
  */
-function register_all_installed_packages() {
+function register_all_installed_packages(bool $force = false) {
 	$pkg_info = get_pkg_info('all', true, true);
 
 	foreach ($pkg_info as $pkg) {
 		pkg_remove_prefix($pkg['name']);
 
-		if (is_package_installed($pkg['name'])) {
+		if (!$force && is_package_installed($pkg['name'])) {
 			continue;
 		}
 
@@ -595,7 +594,7 @@ function resync_all_package_configs($show_message = false) {
 		if ($show_message == true) {
 			echo " " . $package['name'];
 		}
-		if (platform_booting() != true) {
+		if (!is_platform_booting()) {
 			stop_service(get_package_internal_name($package));
 		}
 		sync_package($package['name']);
@@ -739,7 +738,7 @@ function read_package_configurationfile($package_name) {
 	$pkg_config = array();
 	$id = get_package_id($package_name);
 	$pkg_data = config_get_path("installedpackages/package/{$id}", []);
-   
+
 	if ($id < 0 || empty($pkg_data)) {
 		return $pkg_config;
 	}
@@ -793,7 +792,7 @@ function install_package_xml($package_name) {
 	/* add package information to config.xml */
 	$pkgid = get_package_id($pkg_info['name']);
 	update_status(gettext("Saving updated package information...") . "\n");
-	init_config_arr(array('installedpackages', 'package'));
+	config_init_path('installedpackages/package');
 	$pkgs = config_get_path('installedpackages/package', []);
 	if ($pkgid == -1) {
 		$pkgs[] = $pkg_info;
@@ -906,7 +905,7 @@ function install_package_xml($package_name) {
 	}
 	/* sidebar items */
 	if (is_array($pkg_config['menu'])) {
-		init_config_arr(array('installedpackages', 'menu'));
+		config_init_path('installedpackages/menu');
 		$menus = config_get_path('installedpackages/menu', []);
 		update_status(gettext("Menu items... "));
 		foreach ($pkg_config['menu'] as $menu) {
@@ -921,7 +920,7 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	/* services */
-	init_config_arr(array('installedpackages', 'service'));
+	config_init_path('installedpackages/service');
 	if (is_array($pkg_config['service'])) {
 		update_status(gettext("Services... "));
 		$services = config_get_path('installedpackages/service', []);
@@ -943,7 +942,7 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	if (is_array($pkg_config['tabs'])) {
-		init_config_arr(array('installedpackages', 'package', $pkgid, 'tabs'));
+		config_init_path("installedpackages/package/{$pkgid}/tabs");
 		config_set_path("installedpackages/package/{$pkgid}/tabs",$pkg_config['tabs']);
 	}
 	/* plugins */
@@ -951,7 +950,7 @@ function install_package_xml($package_name) {
 		config_set_path("installedpackages/package/{$pkgid}/include_file", $pkg_config['include_file']);
 	}
 	if (is_array($pkg_config['plugins'])) {
-		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins'));
+		config_init_path("installedpackages/package/{$pkgid}/plugins");
 		config_set_path("installedpackages/package/{$pkgid}/plugins", $pkg_config['plugins']);
 	}
 
@@ -988,11 +987,11 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	update_status(sprintf(gettext("Removing %s components..."),
 	    $package_name) . "\n");
 	/* parse package configuration */
-	init_config_arr(array('installedpackages', 'package', $pkgid));
+	config_init_path("installedpackages/package/{$pkgid}");
 	$pkg_info = config_get_path("installedpackages/package/{$pkgid}",[]);
-	init_config_arr(array('installedpackages', 'menu'));
+	config_init_path('installedpackages/menu');
 	$menus = config_get_path('installedpackages/menu', []);
-	init_config_arr(array('installedpackages', 'service'));
+	config_init_path('installedpackages/service');
 	$services = config_get_path('installedpackages/service', []);
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
@@ -1024,7 +1023,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 					    $service['name'])) {
 						continue;
 					}
-					if (platform_booting() != true) {
+					if (!is_platform_booting()) {
 						stop_service($service['name']);
 					}
 					if ($service['rcfile']) {
@@ -1176,7 +1175,7 @@ function package_reinstall_all() {
 		return false;
 	}
 
-	if (!empty($pkgs)) { 
+	if (!empty($pkgs)) {
 		$pkg_info = get_pkg_info();
 	}
 
@@ -1317,11 +1316,14 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 	global $g;
 
 	if (!get_dnsavailable()) {
-		return false;
+		$result['pkg_version_error'] = "DNS servers not available";
+		return ($result);
 	}
 
 	$cache_file = g_get('version_cache_file');
 	$rc_file = $cache_file . '.rc';
+
+	$result['pkg_use_cache'] = $use_cache;
 
 	$rc = "";
 	if ($use_cache && file_exists($rc_file) &&
@@ -1332,12 +1334,14 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 	if ($rc == "2") {
 		$output = @file_get_contents($cache_file);
 	} else if ($rc != "0") {
-		$output = exec(
-		    "/usr/local/sbin/{$g['product_name']}-upgrade " . ($updates_only?'-c':'-C') , $_gc,
-		    $rc);
-
+		$output = exec("/usr/local/sbin/{$g['product_name']}-upgrade ".
+		    ($updates_only?'-c':'-C') , $_gc, $rc);
+		if ($rc == 75) {
+			$result['pkg_busy'] = "1";
+		}
 		if ($rc != 0 && $rc != 2) {
-			return false;
+			$result['pkg_version_error'] = "{$g['product_name']}-upgrade error: $rc";
+			return ($result);
 		}
 
 		/* Update cache if it succeeded */
@@ -1356,6 +1360,7 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 	$meta_pkg = get_meta_pkg_name();
 
 	if (!$base_pkg || !$meta_pkg) {
+		$result['pkg_version_error'] = "no base pkg: $base_pkg:$meta_pkg";
 		return false;
 	}
 
@@ -1408,7 +1413,28 @@ function pkg_list_repos() {
 		if ($repo_name == false || strlen($repo_name) <= 1) {
 			continue;
 		}
+		$old = 0;
+		$new = 0;
 		$repo_name_base = "{$repo_base}-{$repo_name}";
+		if (file_exists("{$repo_name_base}.conf")) {
+			$old = 1;
+		} else {
+			if (sscanf($name_file,
+			    "{$repo_base}-%x.name", $repo_id) != 1) {
+				continue;
+			}
+			if ($repo_id < 0 || $repo_id > 0xffff) {
+				continue;
+			}
+			$repo_name_base = sprintf("%s-%04x",
+			    $repo_base, $repo_id);
+			if (file_exists("{$repo_name_base}.conf")) {
+				$new = 1;
+			}
+		}
+		if ($old == 0 && $new == 0) {
+			continue;
+		}
 		$descr_file = "{$repo_name_base}.descr";
 		if (file_exists($descr_file)) {
 			$descr = file_get_contents($descr_file);
@@ -1423,6 +1449,9 @@ function pkg_list_repos() {
 		    'path' => "{$repo_name_base}.conf",
 		    'descr' => $descr
 		);
+		if ($new == 1) {
+			$entry['id'] = $repo_id;
+		}
 		if (file_exists("{$repo_name_base}.default")) {
 			$entry['default'] = true;
 		}
@@ -1488,7 +1517,7 @@ function pkg_get_repo_help() {
 
 /* Switch between stable and devel repos */
 function pkg_switch_repo($repo_path, $repo_name) {
-	global $g, $config;
+	global $g;
 
 	safe_mkdir("/usr/local/etc/pkg/repos");
 	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
@@ -1522,7 +1551,7 @@ function update_repos() {
 
 	/* Execute repoc with a full pkg style environment, including proxy
 	 * configuration. */
-	$process = proc_open("/usr/local/sbin/{$product_name}-repoc",
+	$process = proc_open(sprintf('/usr/local/sbin/%s-repoc -N', $product_name),
 	    $descriptorspec, $pipes, '/', pkg_env());
 
 	/* Process failed to start */

@@ -40,11 +40,9 @@ $auto_pool_suffix = "pool.ntp.org";
 $max_candidate_peers = 25;
 $min_candidate_peers = 4;
 
-if (!is_array($config['ntpd'])) {
-	config_set_path('ntpd', array());
-}
+config_init_path('ntpd');
 
-if (empty($config['ntpd']['interface'])) {
+if (empty(config_get_path('ntpd/interface'))) {
 	$old_ifs = config_get_path('installedpackages/openntpd/config/0/interface');
 	if (!empty($old_ifs)) {
 		config_set_path('ntpd/interface', $old_ifs);
@@ -55,7 +53,7 @@ if (empty($config['ntpd']['interface'])) {
 		$pconfig['interface'] = array();
 	}
 } else {
-	$pconfig['interface'] = explode(",", $config['ntpd']['interface']);
+	$pconfig['interface'] = explode(",", config_get_path('ntpd/interface'));
 }
 
 if ($_POST) {
@@ -115,7 +113,7 @@ if ($_POST) {
 		config_set_path('ntpd/enable', isset($_POST['enable']) ? 'enabled' : 'disabled');
 		if (is_array($_POST['interface'])) {
 			config_set_path('ntpd/interface', implode(",", $_POST['interface']));
-		} elseif (isset($config['ntpd']['interface'])) {
+		} else {
 			config_del_path('ntpd/interface');
 		}
 
@@ -130,15 +128,15 @@ if ($_POST) {
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
 				if (isset($_POST["servprefer{$i}"])) {
-					$config['ntpd']['prefer'] .= "{$tserver} ";
+					config_set_path('ntpd/prefer', (config_get_path('ntpd/prefer') . "{$tserver} "));
 				}
 				if (isset($_POST["servselect{$i}"])) {
-					$config['ntpd']['noselect'] .= "{$tserver} ";
+					config_set_path('ntpd/noselect', (config_get_path('ntpd/noselect') . "{$tserver} "));
 				}
 				if ($_POST["servistype{$i}"] == 'pool') {
-					$config['ntpd']['ispool'] .= "{$tserver} ";
+					config_set_path('ntpd/ispool', (config_get_path('ntpd/ispool') . "{$tserver} "));
 				} elseif ($_POST["servistype{$i}"] == 'peer') {
-					$config['ntpd']['ispeer'] .= "{$tserver} ";
+					config_set_path('ntpd/ispeer', (config_get_path('ntpd/ispeer') . "{$tserver} "));
 				}
 			}
 		}
@@ -159,40 +157,40 @@ if ($_POST) {
 
 		if (!empty($_POST['logpeer'])) {
 			config_set_path('ntpd/logpeer', $_POST['logpeer']);
-		} elseif (isset($config['ntpd']['logpeer'])) {
+		} elseif (config_path_enabled('ntpd', 'logpeer')) {
 			config_del_path('ntpd/logpeer');
 		}
 
 		if (!empty($_POST['logsys'])) {
 			config_set_path('ntpd/logsys', $_POST['logsys']);
-		} elseif (isset($config['ntpd']['logsys'])) {
+		} elseif (config_path_enabled('ntpd', 'logsys')) {
 			config_del_path('ntpd/logsys');
 		}
 
 		if (!empty($_POST['clockstats'])) {
 			config_set_path('ntpd/clockstats', $_POST['clockstats']);
-		} elseif (isset($config['ntpd']['clockstats'])) {
+		} elseif (config_path_enabled('ntpd', 'clockstats')) {
 			config_del_path('ntpd/clockstats');
 		}
 
 		if (!empty($_POST['loopstats'])) {
 			config_set_path('ntpd/loopstats', $_POST['loopstats']);
-		} elseif (isset($config['ntpd']['loopstats'])) {
+		} elseif (config_path_enabled('ntpd', 'loopstats')) {
 			config_del_path('ntpd/loopstats');
 		}
 
 		if (!empty($_POST['peerstats'])) {
 			config_set_path('ntpd/peerstats', $_POST['peerstats']);
-		} elseif (isset($config['ntpd']['peerstats'])) {
+		} elseif (config_path_enabled('ntpd', 'peerstats')) {
 			config_del_path('ntpd/peerstats');
 		}
 
-		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph']))) {
+		if ((empty($_POST['statsgraph'])) == (config_path_enabled('ntpd', 'statsgraph'))) {
 			$enable_rrd_graphing = true;
 		}
 		if (!empty($_POST['statsgraph'])) {
 			config_set_path('ntpd/statsgraph', $_POST['statsgraph']);
-		} elseif (isset($config['ntpd']['statsgraph'])) {
+		} elseif (config_path_enabled('ntpd', 'statsgraph')) {
 			config_del_path('ntpd/statsgraph');
 		}
 		if (isset($enable_rrd_graphing)) {
@@ -201,7 +199,7 @@ if ($_POST) {
 
 		if (!empty($_POST['leaptext'])) {
 			config_set_path('ntpd/leapsec', base64_encode($_POST['leaptext']));
-		} elseif (isset($config['ntpd']['leapsec'])) {
+		} elseif (config_path_enabled('ntpd', 'leapsec')) {
 			config_del_path('ntpd/leapsec');
 		}
 
@@ -213,7 +211,7 @@ if ($_POST) {
 			config_set_path('ntpd/serverauth', $_POST['serverauth']);
 			config_set_path('ntpd/serverauthkey', base64_encode(trim($_POST['serverauthkey'])));
 			config_set_path('ntpd/serverauthalgo', $_POST['serverauthalgo']);
-		} elseif (isset($config['ntpd']['serverauth'])) {
+		} elseif (config_path_enabled('ntpd', 'serverauth')) {
 			config_del_path('ntpd/serverauth');
 			config_del_path('ntpd/serverauthkey');
 			config_del_path('ntpd/serverauthalgo');
@@ -251,14 +249,14 @@ function build_interface_list() {
 	return($iflist);
 }
 
-init_config_arr(array('ntpd'));
-$pconfig = &$config['ntpd'];
-$pconfig['enable'] = ($config['ntpd']['enable'] != 'disabled') ? 'enabled' : 'disabled';
+$pconfig = config_get_path('ntpd');
+$pconfig['enable'] = ($pconfig['enable'] != 'disabled') ? 'enabled' : 'disabled';
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
+config_set_path('ntpd', $pconfig);
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Settings"));
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "ntp";
@@ -303,7 +301,7 @@ $section->addInput(new Form_Select(
 			'Selecting no interfaces will listen on all interfaces with a wildcard.%1$s' .
 			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.', '<br />');
 
-$timeservers = explode(' ', $config['system']['timeservers']);
+$timeservers = explode(' ', config_get_path('system/timeservers'));
 $maxrows = max(count($timeservers), 1);
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
@@ -323,19 +321,21 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		'servprefer' . $counter,
 		null,
 		null,
-		isset($config['ntpd']['prefer']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['prefer'], $timeservers[$counter])
+		config_path_enabled('ntpd', 'prefer') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/prefer'), $timeservers[$counter])
 	 ))->sethelp('Prefer');
 
 	 $group->add(new Form_Checkbox(
 		'servselect' . $counter,
 		null,
 		null,
-		isset($config['ntpd']['noselect']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['noselect'], $timeservers[$counter])
+		config_path_enabled('ntpd', 'noselect') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/noselect'), $timeservers[$counter])
 	 ))->sethelp('No Select');
 
-	if ((substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0) || (isset($config['ntpd']['ispool']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispool'], $timeservers[$counter]))) {
+	if ((substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0) ||
+	    ((config_get_path('ntpd/ispool') !== null) && isset($timeservers[$counter]) &&
+	    substr_count(config_get_path('ntpd/ispool'), $timeservers[$counter]))) {
 		$servertype = 'pool';
-	} elseif (isset($config['ntpd']['ispeer']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispeer'], $timeservers[$counter])) {
+	} elseif ((config_get_path('ntpd/ispeer') !== null) && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/ispeer'), $timeservers[$counter])) {
 		$servertype = 'peer';
 	} else {
 		$servertype = 'server';

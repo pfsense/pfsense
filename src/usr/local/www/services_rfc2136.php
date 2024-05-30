@@ -30,23 +30,22 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('dnsupdates', 'dnsupdate'));
-$a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
+config_init_path('dnsupdates/dnsupdate');
 
 if ($_POST['act'] == "del") {
-	unset($a_rfc2136[$_POST['id']]);
+	config_del_path("dnsupdates/dnsupdate/{$_POST['id']}");
 
 	write_config("RFC 2136 client deleted");
 
 	header("Location: services_rfc2136.php");
 	exit;
 } else if ($_POST['act'] == "toggle") {
-	if ($a_rfc2136[$_POST['id']]) {
-		if (isset($a_rfc2136[$_POST['id']]['enable'])) {
-			unset($a_rfc2136[$_POST['id']]['enable']);
+	if (config_get_path("dnsupdates/dnsupdate/{$_POST['id']}")) {
+		if (config_path_enabled("dnsupdates/dnsupdate/{$_POST['id']}")) {
+			config_del_path("dnsupdates/dnsupdate/{$_POST['id']}/enable");
 			$action = "disabled";
 		} else {
-			$a_rfc2136[$_POST['id']]['enable'] = true;
+			config_set_path("dnsupdates/dnsupdate/{$_POST['id']}/enable", true);
 			$action = "enabled";
 		}
 		write_config("RFC 2136 {$action}");
@@ -96,7 +95,7 @@ $iflist = get_configured_interface_with_descr();
 $groupslist = return_gateway_groups_array();
 
 $i = 0;
-foreach ($a_rfc2136 as $rfc2136):
+foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 	if (!is_array($rfc2136) || empty($rfc2136)) {
 		continue;
 	}

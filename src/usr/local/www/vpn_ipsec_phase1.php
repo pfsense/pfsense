@@ -48,8 +48,8 @@ if ($_POST['generatekey']) {
 	exit;
 }
 
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/phase2');
 
 if (is_numericint($_REQUEST['p1index'])) {
 	$p1index = $_REQUEST['p1index'];
@@ -62,7 +62,7 @@ if (is_numericint($_REQUEST['dup'])) {
 $p1 = null;
 if (!empty($_REQUEST['ikeid'])) {
 	$p1index = 0;
-	foreach(config_get_path('ipsec/phase1') as $phase1) {
+	foreach(config_get_path('ipsec/phase1', []) as $phase1) {
 		if ($phase1['ikeid'] == $_REQUEST['ikeid']) {
 			$p1 = $phase1;
 			break;
@@ -524,7 +524,8 @@ if ($_POST['save']) {
 	}
 
 	if (!empty($pconfig['certref'])) {
-		$errchkcert =& lookup_cert($pconfig['certref']);
+		$errchkcert = lookup_cert($pconfig['certref']);
+		$errchkcert = $errchkcert['item'];
 		if (is_array($errchkcert)) {
 			if (!cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
 				$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
@@ -641,9 +642,7 @@ if ($_POST['save']) {
 		if ($p1 && !isset($_REQUEST['dup'])) {
 			config_set_path('ipsec/phase1/' . $p1index, $ph1ent);
 		} else {
-			$p1s = config_get_path('ipsec/phase1', []);
-			$p1s[] = $ph1ent;
-			config_set_path('ipsec/phase1', $p1s);
+			config_set_path('ipsec/phase1/', $ph1ent);
 		}
 
 		write_config(gettext("Saved IPsec tunnel Phase 1 configuration."));
@@ -840,9 +839,13 @@ if (!$pconfig['mobile']) {
 	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
 	    '<div class="infoblock">',
 	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' .
-	    'to allow connections from any IPv6 address.' . '<br/>' . 'Child SA Start Action must be set to None and ' .
-	    'Peer IP Address cannot be used for Remote Identifier. A remote gateway address of \'0.0.0.0\' or \'::\' is not ' .
-	    'compatible with VTI, use an FQDN instead.'), 'info', false),
+	    'to allow connections from any IPv6 address. For dual stack tunnels, either form will allow connections from ' .
+	    'both address families.' .
+	    '<br/><br/>' .
+	    'Child SA Start Action must be set to None and Peer IP Address cannot be used for Remote Identifier. ' .
+	    '<br/><br/>' .
+	    'A remote gateway address of \'0.0.0.0\' or \'::\' is not compatible with VTI, use an FQDN instead.'),
+	    'info', false),
 	    '</div>');
 
 	$section->add($group);

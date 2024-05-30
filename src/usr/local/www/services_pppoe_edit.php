@@ -32,32 +32,27 @@ require_once("guiconfig.inc");
 require_once("vpn.inc");
 
 function vpn_pppoe_get_id() {
-	global $config;
-
 	$vpnid = 1;
-	if (is_array($config['pppoes']['pppoe'])) {
-		foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
-			if ($vpnid == $pppoe['pppoeid']) {
-				$vpnid++;
-			} else {
-				return $vpnid;
-			}
+	foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
+		if ($vpnid == $pppoe['pppoeid']) {
+			$vpnid++;
+		} else {
+			return $vpnid;
 		}
 	}
 
 	return $vpnid;
 }
 
-init_config_arr(array('pppoes', 'pppoe'));
-$a_pppoes = &$config['pppoes']['pppoe'];
+config_init_path('pppoes/pppoe');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_pppoes[$id]) {
-	$pppoecfg =& $a_pppoes[$id];
-	$pppoecfg_old = $a_pppoes[$id];
+if (isset($id) && config_get_path("pppoes/pppoe/{$id}")) {
+	$pppoecfg = config_get_path("pppoes/pppoe/{$id}");
+	$pppoecfg_old = config_get_path("pppoes/pppoe/{$id}");
 
 	$pconfig['remoteip'] = $pppoecfg['remoteip'];
 	$pconfig['localip'] = $pppoecfg['localip'];
@@ -268,7 +263,7 @@ if ($_POST['save']) {
 		}
 
 		if (!isset($id)) {
-			$id = count($a_pppoes);
+			$id = count(config_get_path('pppoes/pppoe', []));
 		    	$reload = true;
 		}
 
@@ -284,7 +279,7 @@ if ($_POST['save']) {
 			file_put_contents("{$g['tmp_path']}/.vpn_pppoe.apply", serialize($toapplylist));
 		}
 
-		$a_pppoes[$id] = $pppoecfg;
+		config_set_path("pppoes/pppoe/{$id}", $pppoecfg);
 		write_config("PPPoE Server item saved");
 		if (!$reload) {
 			vpn_pppoe_updatesecret($pppoecfg);

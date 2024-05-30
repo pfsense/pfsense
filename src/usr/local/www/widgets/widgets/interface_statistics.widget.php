@@ -192,7 +192,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	header("Location: /index.php");
 }
 
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>

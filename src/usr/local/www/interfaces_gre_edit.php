@@ -31,24 +31,24 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-init_config_arr(array('gres', 'gre'));
-$a_gres = &$config['gres']['gre'];
+config_init_path('gres/gre');
 $id = $_REQUEST['id'];
 
-if (isset($id) && $a_gres[$id]) {
-	$pconfig['if'] = $a_gres[$id]['if'];
-	$pconfig['greif'] = $a_gres[$id]['greif'];
-	$pconfig['remote-addr'] = $a_gres[$id]['remote-addr'];
-	$pconfig['tunnel-remote-net'] = $a_gres[$id]['tunnel-remote-net'];
-	$pconfig['tunnel-local-addr'] = $a_gres[$id]['tunnel-local-addr'];
-	$pconfig['tunnel-remote-addr'] = $a_gres[$id]['tunnel-remote-addr'];
-	$pconfig['tunnel-remote-net6'] = $a_gres[$id]['tunnel-remote-net6'];
-	$pconfig['tunnel-local-addr6'] = $a_gres[$id]['tunnel-local-addr6'];
-	$pconfig['tunnel-remote-addr6'] = $a_gres[$id]['tunnel-remote-addr6'];
-	$pconfig['link1'] = isset($a_gres[$id]['link1']);
-	$pconfig['link2'] = isset($a_gres[$id]['link2']);
-	$pconfig['link0'] = isset($a_gres[$id]['link0']);
-	$pconfig['descr'] = $a_gres[$id]['descr'];
+$this_gre_config = isset($id) ? config_get_path("gres/gre/{$id}") : null;
+if ($this_gre_config) {
+	$pconfig['if'] = $this_gre_config['if'];
+	$pconfig['greif'] = $this_gre_config['greif'];
+	$pconfig['remote-addr'] = $this_gre_config['remote-addr'];
+	$pconfig['tunnel-remote-net'] = $this_gre_config['tunnel-remote-net'];
+	$pconfig['tunnel-local-addr'] = $this_gre_config['tunnel-local-addr'];
+	$pconfig['tunnel-remote-addr'] = $this_gre_config['tunnel-remote-addr'];
+	$pconfig['tunnel-remote-net6'] = $this_gre_config['tunnel-remote-net6'];
+	$pconfig['tunnel-local-addr6'] = $this_gre_config['tunnel-local-addr6'];
+	$pconfig['tunnel-remote-addr6'] = $this_gre_config['tunnel-remote-addr6'];
+	$pconfig['link1'] = isset($this_gre_config['link1']);
+	$pconfig['link2'] = isset($this_gre_config['link2']);
+	$pconfig['link0'] = isset($this_gre_config['link0']);
+	$pconfig['descr'] = $this_gre_config['descr'];
 }
 
 if ($_POST['save']) {
@@ -138,8 +138,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The IPv6 tunnel subnet must be an integer between 1 and 128.");
 	}
 
-	foreach ($a_gres as $gre) {
-		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre)) {
+	foreach (config_get_path('gres/gre', []) as $gre) {
+		if ($this_gre_config && ($this_gre_config === $gre)) {
 			continue;
 		}
 
@@ -185,10 +185,10 @@ if ($_POST['save']) {
 		    !preg_match("/^gre[0-9]+$/", $gre['greif'])) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
-			if (isset($id) && $a_gres[$id]) {
-				$a_gres[$id] = $gre;
+			if ($this_gre_config) {
+				config_set_path("gres/gre/{$id}", $gre);
 			} else {
-				$a_gres[] = $gre;
+				config_set_path('gres/gre/', $gre);
 			}
 
 			write_config("GRE interface added");
@@ -312,7 +312,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['greif']
 ));
 
-if (isset($id) && $a_gres[$id]) {
+if ($this_gre_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

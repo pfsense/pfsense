@@ -38,11 +38,10 @@ require_once("voucher.inc");
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
+config_init_path('captiveportal');
 
 /* If the zone does not exist, do not display the invalid zone */
-if (!array_key_exists($cpzone, $a_cp)) {
+if (!array_key_exists($cpzone, config_get_path('captiveportal'))) {
 	$cpzone = "";
 }
 
@@ -51,16 +50,11 @@ if (empty($cpzone)) {
 	exit;
 }
 
-$pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars($a_cp[$cpzone]['zone']), gettext("Voucher Rolls"));
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars(config_get_path("captiveportal/{$cpzone}/zone")), gettext("Voucher Rolls"));
 $pglinks = array("", "status_captiveportal.php", "status_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-if (!is_array($config['voucher'][$cpzone]['roll'])) {
-	$config['voucher'][$cpzone]['roll'] = array();
-}
-
-init_config_arr(array('voucher', $cpzone, 'roll'));
-$a_roll = &$config['voucher'][$cpzone]['roll'];
+config_init_path("voucher/{$cpzone}/roll");
 
 include("head.inc");
 
@@ -90,7 +84,7 @@ display_top_tabs($tab_array);
 <?php
 			$voucherlck = lock("voucher{$cpzone}");
 			$i = 0;
-			foreach ($a_roll as $rollent):
+			foreach (config_get_path("voucher/{$cpzone}/roll", []) as $rollent):
 				$used = voucher_used_count($rollent['number']);
 				$active = count(voucher_read_active_db($rollent['number']));
 				$ready = $rollent['count'] - $used;

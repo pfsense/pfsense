@@ -35,7 +35,7 @@ if (isset($_GET['interface'])) {
 if (empty($argument)) {
 	interface_configure("wan");
 } else {
-	if (!empty($config['interfaces'][$argument])) {
+	if (!empty(config_get_path("interfaces/{$argument}"))) {
 		interface_configure($argument);
 	}
 }

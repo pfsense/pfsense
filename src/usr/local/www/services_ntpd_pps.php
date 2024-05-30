@@ -36,12 +36,7 @@ $ntp_poll_values = system_ntp_poll_values();
 
 $serialports = get_serial_ports(true);
 
-if (!is_array($config['ntpd'])) {
-	config_set_path('ntpd', array());
-}
-if (!is_array($config['ntpd']['pps'])) {
-	config_set_path('ntpd/pps', array());
-}
+config_init_path('ntpd/pps');
 
 if ($_POST) {
 	unset($input_errors);
@@ -73,43 +68,43 @@ if ($_POST) {
 
 		if (!empty($_POST['ppsfudge1'])) {
 			config_set_path('ntpd/pps/fudge1', $_POST['ppsfudge1']);
-		} elseif (isset($config['ntpd']['pps']['fudge1'])) {
+		} else {
 			config_del_path('ntpd/pps/fudge1');
 		}
 
 		if (!empty($_POST['ppsstratum']) && ($_POST['ppsstratum']) < 17) {
 			config_set_path('ntpd/pps/stratum', $_POST['ppsstratum']);
-		} elseif (isset($config['ntpd']['pps']['stratum'])) {
+		} else {
 			config_del_path('ntpd/pps/stratum');
 		}
 
 		if (!empty($_POST['ppsselect'])) {
 			config_set_path('ntpd/pps/noselect', $_POST['ppsselect']);
-		} elseif (isset($config['ntpd']['pps']['noselect'])) {
+		} else {
 			config_del_path('ntpd/pps/noselect');
 		}
 
 		if (!empty($_POST['ppsflag2'])) {
 			config_set_path('ntpd/pps/flag2', $_POST['ppsflag2']);
-		} elseif (isset($config['ntpd']['pps']['flag2'])) {
+		} else {
 			config_del_path('ntpd/pps/flag2');
 		}
 
 		if (!empty($_POST['ppsflag3'])) {
 			config_set_path('ntpd/pps/flag3', $_POST['ppsflag3']);
-		} elseif (isset($config['ntpd']['pps']['flag3'])) {
+		} else {
 			config_del_path('ntpd/pps/flag3');
 		}
 
 		if (!empty($_POST['ppsflag4'])) {
 			config_set_path('ntpd/pps/flag4', $_POST['ppsflag4']);
-		} elseif (isset($config['ntpd']['pps']['flag4'])) {
+		} else {
 			config_del_path('ntpd/pps/flag4');
 		}
 
 		if (!empty($_POST['ppsrefid'])) {
 			config_set_path('ntpd/pps/refid', $_POST['ppsrefid']);
-		} elseif (isset($config['ntpd']['pps']['refid'])) {
+		} else {
 			config_del_path('ntpd/pps/refid');
 		}
 		config_set_path('ntpd/pps/ppsminpoll', $_POST['ppsminpoll']);
@@ -123,8 +118,8 @@ if ($_POST) {
 	}
 }
 
-init_config_arr(array('ntpd', 'pps'));
-$pconfig = &$config['ntpd']['pps'];
+config_init_path('ntpd/pps');
+$pconfig = config_get_path('ntpd/pps');
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("PPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";

@@ -3106,8 +3106,13 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	}
 
 	if (empty($params)) {
-		log_error("route_add_or_change: Invalid gateway {$gw} and/or " .
-		    "network interface {$iface}");
+		if (!empty($gw) && !empty($iface)) {
+			log_error("route_add_or_change: Invalid gateway ({$gw}) and network interface was not found ({$iface})");
+		} elseif (!empty($gw)) {
+			log_error("route_add_or_change: Invalid gateway ({$gw})");
+		} else {
+			log_error("route_add_or_change: Network interface was not found ({$iface})");
+		}
 		return false;
 	}
 

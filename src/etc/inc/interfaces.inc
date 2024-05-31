@@ -1539,6 +1539,12 @@ function interface_ipsec_vti_configure($ph1ent) {
 				mwexec("/sbin/ifconfig {$ipsecif} mtu {$vtimtu}");
 			}
 		}
+		/* Add the VTI to the interface cache directly because calling 'get_interface_arr(true)' is expensive.
+		   See: https://redmine.pfsense.org/issues/15449 */
+		global $interface_arr_cache;
+		if (is_array($interface_arr_cache) && !in_array($ipsecif, $interface_arr_cache)) {
+			$interface_arr_cache[] = $ipsecif;
+		}
 		system_routing_configure(convert_real_interface_to_friendly_interface_name($ipsecif));
 	}
 	return true;

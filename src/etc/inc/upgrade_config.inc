@@ -4094,7 +4094,7 @@ function upgrade_130_to_131() {
 				$gw['interval'] = $gw['interval'] * 1000;
 			}
 
-			if (isset($gw['interval'])) {
+			if (!empty($gw['interval'])) {
 				$effective_interval = $gw['interval'];
 			} else {
 				$effective_interval = $default_interval;
@@ -4106,7 +4106,7 @@ function upgrade_130_to_131() {
 				unset($gw['down']);
 			}
 
-			if (isset($gw['time_period'])) {
+			if (!empty($gw['time_period'])) {
 				$effective_time_period = $gw['time_period'];
 			} else {
 				$effective_time_period = $default_time_period;
@@ -4120,7 +4120,7 @@ function upgrade_130_to_131() {
 				}
 			}
 
-			if (isset($gw['loss_interval'])) {
+			if (!empty($gw['loss_interval'])) {
 				$effective_loss_interval = $gw['loss_interval'];
 			} else {
 				$effective_loss_interval = $default_loss_interval;

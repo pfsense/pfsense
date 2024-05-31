@@ -1551,8 +1551,8 @@ function captiveportal_free_dnrules($rulenos_start = 2000,
 		$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	}
 
-	$rules = unserialize(file_get_contents(
-	    "{$g['vardb_path']}/captiveportaldn.rules"));
+	$rules = unserialize_data(file_get_contents(
+	    "{$g['vardb_path']}/captiveportaldn.rules"), []);
 	$ridx = $rulenos_start;
 	while ($ridx < $rulenos_range_max) {
 		if (substr($rules[$ridx], 0, strlen($cpzone . '_')) == $cpzone . '_') {
@@ -1591,7 +1591,7 @@ function captiveportal_reserve_ruleno($ruleno) {
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
-		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$rules = unserialize_data(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"), array_pad(array(), 64500, false));
 	} else {
 		$rules = array_pad(array(), 64500, false);
 	}
@@ -1612,7 +1612,7 @@ function captiveportal_get_next_dn_ruleno($rule_type = 'default', $rulenos_start
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	$ruleno = 0;
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
-		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$rules = unserialize_data(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"), []);
 		$ridx = $rulenos_start;
 		while ($ridx < $rulenos_range_max) {
 			if (empty($rules[$ridx])) {
@@ -1646,7 +1646,7 @@ function captiveportal_free_dn_rulenos($rulenos) {
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
-		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$rules = unserialize_data(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"), []);
 		foreach ($rulenos as $ruleno) {
 			$rules[$ruleno] = false;
 		}

@@ -243,7 +243,7 @@ function saveVIP($post, $json = false) {
 		}
 
 		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+			$toapplylist = unserialize_data(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"), []);
 		} else {
 			$toapplylist = array();
 		}
@@ -293,7 +293,7 @@ function applyVIP() {
 
 	$check_carp = false;
 	if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
-		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+		$toapplylist = unserialize_data(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"), []);
 		foreach ($toapplylist as $vid => $ovip) {
 			if (!empty($ovip)) {
 				interface_vip_bring_down($ovip);

@@ -118,13 +118,13 @@ if ($_POST['save']) {
 				}
 			} else {
 				// Contains array of connected users (will be stored in SQLite DB)
-				$connected_users = unserialize(base64_decode($resp['connected_users']));
+				$connected_users = unserialize_data(base64_decode($resp['connected_users']), []);
 				// Contains array of active vouchers (will be stored in active vouchers db)
-				$active_vouchers = unserialize(base64_decode($resp['active_vouchers']));
+				$active_vouchers = unserialize_data(base64_decode($resp['active_vouchers']), []);
 				// Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
-				$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers']));
+				$expired_vouchers = unserialize_data(base64_decode($resp['expired_vouchers']), []);
 				// Contains array of usedmacs (will be stored in usedmacs db)
-				$usedmacs = unserialize(base64_decode($resp['usedmacs']));
+				$usedmacs = unserialize_data(base64_decode($resp['usedmacs']), []);
 
 				foreach ($connected_users as $user) {
 					$pipeno = captiveportal_get_next_dn_ruleno('auth');

@@ -49,7 +49,7 @@ if (isset($_POST['backupcount'])) {
 	}
 }
 
-$confvers = unserialize(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'));
+$confvers = unserialize_data(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'), []);
 
 if ($_POST['newver'] != "") {
 	if (config_restore(g_get('conf_path') . '/backup/config-' . $_POST['newver'] . '.xml') == 0) {

@@ -872,7 +872,7 @@ class pfsense_xmlrpc_server {
 
 			return $returndata;
 		} elseif ($arguments['op'] === 'connect_user') {
-			$user = unserialize(base64_decode($arguments['user']));
+			$user = unserialize_data(base64_decode($arguments['user']), []);
 			$user['attributes']['allow_time'] = $user['allow_time'];
 
 			// pipeno might be different between primary and secondary
@@ -880,7 +880,7 @@ class pfsense_xmlrpc_server {
 			return portal_allow($user['clientip'], $user['clientmac'], $user['username'], $user['password'], null,
 			    $user['attributes'], $pipeno, $user['authmethod'], $user['context'], $user['sessionid']);
 		} elseif ($arguments['op'] === 'disconnect_user') {
-			$session = unserialize(base64_decode($arguments['session']));
+			$session = unserialize_data(base64_decode($arguments['session']), []);
 			/* read database again, as pipeno might be different between primary & secondary */
 			$sessionid = SQLite3::escapeString($session['sessionid']);
 			$local_dbentry = captiveportal_read_db("WHERE sessionid = '{$sessionid}'");
@@ -891,15 +891,15 @@ class pfsense_xmlrpc_server {
 				return false;
 			}
 		} elseif ($arguments['op'] === 'remove_entries') {
-			$entries = unserialize(base64_decode($arguments['entries']));
+			$entries = unserialize_data(base64_decode($arguments['entries']), []);
 
 			return captiveportal_remove_entries($entries, true);
 		} elseif ($arguments['op'] === 'disconnect_all') {
-			$arguments = unserialize(base64_decode($arguments['arguments']));
+			$arguments = unserialize_data(base64_decode($arguments['arguments']), []);
 
 			return captiveportal_disconnect_all($arguments['term_cause'], $arguments['logout_reason'], true);
 		} elseif ($arguments['op'] === 'write_vouchers') {
-			$arguments = unserialize(base64_decode($arguments['arguments']));
+			$arguments = unserialize_data(base64_decode($arguments['arguments']), []);
 
 			if (is_array($arguments['active_and_used_vouchers_bitmasks'])) {
 				foreach ($arguments['active_and_used_vouchers_bitmasks'] as $roll => $used) {
@@ -917,7 +917,7 @@ class pfsense_xmlrpc_server {
 			}
 			return true;
 		} elseif ($arguments['op'] === 'write_usedmacs') {
-			$arguments = unserialize(base64_decode($arguments['arguments']));
+			$arguments = unserialize_data(base64_decode($arguments['arguments']), []);
 
 			captiveportal_write_usedmacs_db($arguments['usedmacs']); 
 			return true;

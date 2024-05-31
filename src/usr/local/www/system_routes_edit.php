@@ -135,11 +135,11 @@ if ($_POST['save']) {
 	if (!empty($oroute)) {
 		$staticroute_file = g_get('tmp_path') . '/staticroute_' . $id;
 		if (file_exists($staticroute_file)) {
-			$old_targets = unserialize(file_get_contents($staticroute_file));
+			$old_targets = unserialize_data(file_get_contents($staticroute_file), []);
 		}
 		$staticroute_gw_file = $staticroute_file . '_gw';
 		if (file_exists($staticroute_gw_file)) {
-			$old_gateway = unserialize(file_get_contents($staticroute_gw_file));
+			$old_gateway = unserialize_data(file_get_contents($staticroute_gw_file), []);
 		}
 	}
 
@@ -178,7 +178,7 @@ if ($_POST['save']) {
 
 		$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
 		if (file_exists($routes_apply_file)) {
-			$toapplylist = unserialize(file_get_contents($routes_apply_file));
+			$toapplylist = unserialize_data(file_get_contents($routes_apply_file), []);
 		} else {
 			$toapplylist = array();
 		}

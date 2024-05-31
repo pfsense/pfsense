@@ -5083,7 +5083,7 @@ EOD;
 		}
 
 		if (file_exists("{$g['tmp_path']}/dhcp6c_ifs")) {
-			$dhcp6crealifs_run = unserialize(file_get_contents("{$g['tmp_path']}/dhcp6c_ifs"));
+			$dhcp6crealifs_run = unserialize_data(file_get_contents("{$g['tmp_path']}/dhcp6c_ifs"), []);
 		} else {
 			$dhcp6crealifs_run = array();
 		}

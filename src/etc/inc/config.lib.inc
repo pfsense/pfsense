@@ -1029,7 +1029,7 @@ function cleanup_backupcache($lock = false) {
 function get_backups() {
 	global $g;
 	if (file_exists("{$g['cf_conf_path']}/backup/backup.cache")) {
-		$confvers = unserialize(file_get_contents("{$g['cf_conf_path']}/backup/backup.cache"));
+		$confvers = unserialize_data(file_get_contents("{$g['cf_conf_path']}/backup/backup.cache"), []);
 		$bakvers = array_keys($confvers);
 		$toreturn = array();
 		sort($bakvers);
@@ -1067,7 +1067,7 @@ function backup_config() {
 	copy(g_get('cf_conf_path') . '/config.xml', $bakfilename);
 
 	if (file_exists(g_get('cf_conf_path') . '/backup/backup.cache')) {
-		$backupcache = unserialize(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'));
+		$backupcache = unserialize_data(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'), []);
 	} else {
 		$backupcache = array();
 	}

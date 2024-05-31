@@ -4575,4 +4575,28 @@ function compare_files($f1, $f2) {
 	return (hash_file('sha256', $f1) == hash_file('sha256', $f2));
 }
 
+/**
+ * Helper function for unserialize() with error handling.
+ * 
+ * @param ?string $path    Data string to unserialize
+ * @param mixed  $default Value to return in case of failure
+ * @param ?array  $options Options to pass to unserialize()
+ * 
+ * @return mixed $data The unserialized data
+ */
+function unserialize_data(?string $path, mixed $default = null, ?array $options = []):mixed {
+	if (empty($path) || !isset($options)) {
+		return $default;
+	}
+
+	$data = @unserialize($path, $options);
+
+	// check if the string was not unserialized
+	if (($data === false) && ($data == serialize(false))) {
+		return $default;
+	}
+
+	return $data;
+}
+
 ?>

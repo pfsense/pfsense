@@ -450,7 +450,7 @@ if ($_POST['apply']) {
 
 		$vlan_redo = [];
 		if (file_exists(g_get('tmp_path') . '/.interfaces.apply')) {
-			$toapplylist = unserialize(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'));
+			$toapplylist = unserialize_data(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'), []);
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
 				$realif = get_real_interface($ifapply);
 				$ifmtu = get_interface_mtu($realif);
@@ -1718,7 +1718,7 @@ if ($_POST['apply']) {
 		}
 
 		if (file_exists(g_get('tmp_path') . '/.interfaces.apply')) {
-			$toapplylist = unserialize(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'));
+			$toapplylist = unserialize_data(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'), []);
 		} else {
 			$toapplylist = [];
 		}

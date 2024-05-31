@@ -268,7 +268,7 @@ if ($_POST['save']) {
 		}
 
 		if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"));
+			$toapplylist = unserialize_data(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"), []);
 		} else {
 			$toapplylist = array();
 		}

@@ -741,7 +741,7 @@ function saveAlias($post, $id) {
 				$srid++;
 			}
 			if ($reload_static_route && file_exists($g['tmp_path'] . '/.system_routes.apply')) {
-				$toapplylist = unserialize(file_get_contents($g['tmp_path'] . '/.system_routes.apply'));
+				$toapplylist = unserialize_data(file_get_contents($g['tmp_path'] . '/.system_routes.apply'), []);
 				foreach ($toapplylist as $toapply) {
 					mwexec("{$toapply}");
 				}

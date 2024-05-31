@@ -1576,15 +1576,15 @@ function delete_static_route($id, $delete = false) {
 	}
 
 	if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
-		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+		$toapplylist = unserialize_data(file_get_contents("{$g['tmp_path']}/.system_routes.apply"), []);
 	} else {
 		$toapplylist = array();
 	}
 
 	if (file_exists("{$g['tmp_path']}/staticroute_{$id}") &&
 	    file_exists("{$g['tmp_path']}/staticroute_{$id}_gw")) {
-		$delete_targets = unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}"));
-		$delgw = lookup_gateway_ip_by_name(unserialize(file_get_contents("{$g['tmp_path']}/staticroute_{$id}_gw")));
+		$delete_targets = unserialize_data(file_get_contents("{$g['tmp_path']}/staticroute_{$id}"), []);
+		$delgw = lookup_gateway_ip_by_name(unserialize_data(file_get_contents("{$g['tmp_path']}/staticroute_{$id}_gw")));
 		if (count($delete_targets)) {
 			foreach ($delete_targets as $dts) {
 				if (is_subnetv4($dts)) {

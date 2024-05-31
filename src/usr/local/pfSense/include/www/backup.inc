@@ -452,7 +452,7 @@ function listBackupsJSON() {
 
 	cleanup_backupcache(false);
 
-	$raw = unserialize(file_get_contents(g_get('cf_conf_path') . "/backup/backup.cache"));
+	$raw = unserialize_data(file_get_contents(g_get('cf_conf_path') . "/backup/backup.cache"), []);
 
 	$backups = array();
 	foreach($raw as $key => $value) {

@@ -240,6 +240,10 @@ function system_resolvconf_generate($dynupdate = false) {
 		$resolvconf .= "options edns0\n";
 	}
 
+	if (!empty(config_get_path('system/resolvconf_custom_options'))) {
+		$resolvconf .= base64_decode(config_get_path('system/resolvconf_custom_options', ""));
+	}
+
 	$dnslock = lock('resolvconf', LOCK_EX);
 
 	$fd = fopen("{$g['etc_path']}/resolv.conf", "w");

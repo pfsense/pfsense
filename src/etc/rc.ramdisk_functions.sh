@@ -3,7 +3,7 @@
 # rc.ramdisk_functions.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2020-2023 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2020-2024 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -130,7 +130,12 @@ ramdisk_try_mount () {
 	NAME=$1
 	if [ ramdisk_check_size ]; then
 		SIZE=$(eval echo \${${NAME}size})m
-		/sbin/mount -o rw,size=${SIZE},mode=1777 -t tmpfs tmpfs /${NAME}
+		if [ "${NAME}" = "tmp" ]; then
+			MODE="1777"
+		else
+			MODE="1755"
+		fi
+		/sbin/mount -o rw,size=${SIZE},mode=${MODE} -t tmpfs tmpfs /${NAME}
 		return $?
 	else
 		return 1;

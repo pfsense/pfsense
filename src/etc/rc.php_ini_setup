@@ -4,7 +4,7 @@
 #
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2014-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,11 @@
 VERSION=$(/bin/cat /etc/version)
 MIN_REALMEM_FOR_OPCACHE=512
 
-if /usr/local/sbin/pkg-static info -e php81; then
+if /usr/local/sbin/pkg-static info -e php83; then
+	EXTENSIONSDIR="/usr/local/lib/php/20230831/"
+elif /usr/local/sbin/pkg-static info -e php82; then
+	EXTENSIONSDIR="/usr/local/lib/php/20220829/"
+elif /usr/local/sbin/pkg-static info -e php81; then
 	EXTENSIONSDIR="/usr/local/lib/php/20210902/"
 elif /usr/local/sbin/pkg-static info -e php74; then
 	EXTENSIONSDIR="/usr/local/lib/php/20190902/"
@@ -164,9 +168,13 @@ if [ -z "${TIMEZONE}" ]; then
 fi
 
 if echo "${VERSION}" | grep -q RELEASE; then
+	# On release versions, reduce error reporting and don't print function arguments.
 	error_reporting="error_reporting = E_ERROR | E_PARSE"
+	exception_ignore_args="zend.exception_ignore_args=1"
 else
+	# On development versions, increase error reporting and print function arguments.
 	error_reporting="error_reporting = E_ALL ^ (E_WARNING | E_NOTICE | E_DEPRECATED)"
+	exception_ignore_args="zend.exception_ignore_args=0"
 fi
 
 # Get a loaded module list in the stock php
@@ -195,7 +203,8 @@ zlib.output_compression = Off
 zlib.output_compression_level = 1
 include_path = ".:/etc/inc:/usr/local/pfSense/include:/usr/local/pfSense/include/www:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form:/usr/local/share/pear:/usr/local/share/openssl_x509_crl/"
 display_startup_errors=off
-display_errors=on
+; No need to display errors directly, they are handled in etc/inc/config.lib.inc by pfSense_clear_globals()
+display_errors=off
 log_errors=on
 error_log=/tmp/PHP_errors.log
 extension_dir=${EXTENSIONSDIR}
@@ -203,6 +212,7 @@ date.timezone="${TIMEZONE}"
 session.hash_bits_per_character = 5
 session.hash_function = 1
 ${error_reporting}
+${exception_ignore_args}
 
 ; Extensions
 

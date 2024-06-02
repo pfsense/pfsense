@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,10 +62,10 @@ include("head.inc");
 	<div class="panel-body">
 		<div class="content">
 			<form action="status_filter_reload.php" method="post" name="filter">
-				<button type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Reload Filter")?></button>
+				<button type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter"><i class="fa-solid fa-arrows-rotate icon-embed-btn"></i><?=gettext("Reload Filter")?></button>
 <?php
-if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
-				<button type="submit" class="btn btn-info" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter"><i class="fa fa-clone icon-embed-btn"></i><?=gettext("Force Config Sync")?></button>
+if (!empty(config_get_path('hasync/synchronizetoip'))): ?>
+				<button type="submit" class="btn btn-info" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter"><i class="fa-regular fa-clone icon-embed-btn"></i><?=gettext("Force Config Sync")?></button>
 <?php
 endif;
 ?>

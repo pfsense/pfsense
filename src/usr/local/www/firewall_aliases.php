@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -179,9 +179,9 @@ display_top_tabs($tab_array);
 				<?=htmlspecialchars($alias['descr'])?>&nbsp;
 			</td>
 			<td>
-				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
-				<a class="fa fa-clone" title="<?=gettext('Copy alias')?>" href="firewall_aliases_edit.php?dup=<?=$i;?>" ></a>
-				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" usepost></a>
+				<a class="fa-solid fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
+				<a class="fa-regular fa-clone" title="<?=gettext('Copy alias')?>" href="firewall_aliases_edit.php?dup=<?=$i;?>" ></a>
+				<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" usepost></a>
 			</td>
 		</tr>
 <?php endif?>
@@ -195,14 +195,14 @@ display_top_tabs($tab_array);
 
 <nav class="action-buttons">
 	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
 <?php
 if (($tab == "ip") || ($tab == "port") || ($tab == "all")):
 ?>
 	<a href="firewall_aliases_import.php?tab=<?=$tab?>" role="button" class="btn btn-primary btn-sm">
-		<i class="fa fa-upload icon-embed-btn"></i>
+		<i class="fa-solid fa-upload icon-embed-btn"></i>
 		<?=gettext("Import");?>
 	</a>
 <?php

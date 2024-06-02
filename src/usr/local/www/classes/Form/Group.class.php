@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -84,7 +84,7 @@ class Form_Group extends Form_Element
 			$this->addClass('user-duplication');		// added buttons 10 cols wide with 2 col offset
 
 		if (isset($max))
-			$this->_attributes('data-duplicate-max', $max);
+			$this->_attributes['data-duplicate-max'] = $max;
 
 		foreach ($this->_inputs as $input)
 			$input->setIsRepeated();
@@ -113,7 +113,7 @@ EOT;
 
 	public function __toString()
 	{
-		global $config, $user_settings;
+		global $user_settings;
 
 		$element = parent::__toString();
 

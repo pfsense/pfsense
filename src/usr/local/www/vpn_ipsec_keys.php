@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,10 +38,10 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-init_config_arr(array('ipsec', 'mobilekey'));
+config_init_path('ipsec/mobilekey');
 
 $userkeys = array();
-init_config_arr(array('system', 'user'));
+config_init_path('system/user');
 foreach (config_get_path('system/user', []) as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
 		$userkeys[] = array('ident' => $user['name'], 'type' => 'PSK', 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;
@@ -128,7 +128,7 @@ if (is_subsystem_dirty('ipsec')) {
 							<?=htmlspecialchars($secretent['pre-shared-key'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>"></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit user')?>"	href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>"></a>
 						</td>
 					</tr>
 <?php $i++; endforeach; ?>
@@ -151,8 +151,8 @@ if (is_subsystem_dirty('ipsec')) {
 							<?=htmlspecialchars($secretent['pre-shared-key'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit key')?>" href="vpn_ipsec_keys_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete key')?>" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit key')?>" href="vpn_ipsec_keys_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete key')?>" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php $i++; endforeach; ?>
@@ -164,7 +164,7 @@ if (is_subsystem_dirty('ipsec')) {
 
 <nav class="action-buttons">
 	<a class="btn btn-success btn-sm" href="vpn_ipsec_keys_edit.php">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

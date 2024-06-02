@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -105,7 +105,7 @@ if (count($sad)) {
 						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
 						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
 					?>
-					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>" usepost><i class="fa fa-trash" title="<?=gettext("Remove this SPD Entry")?>"></i></a>
+					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>" usepost><i class="fa-solid fa-trash-can" title="<?=gettext("Remove this SPD Entry")?>"></i></a>
 				</td>
 			</tr>
 

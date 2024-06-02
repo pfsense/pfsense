@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -50,9 +50,8 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
-if (!$config['installedpackages'] ||
-    !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
-    !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
+    !config_path_enabled('installedpackages/miniupnpd/config/0')) {
 
 	print_info_box(sprintf(gettext('UPnP is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP &amp; NAT-PMP'), '</a>'), 'danger');
 	include("foot.inc");
@@ -128,7 +127,7 @@ foreach ($rdr_entries as $rdr_entry) {
 	<form action="status_upnp.php" method="post">
 		<nav class="action-buttons">
 			<button class="btn btn-danger btn-sm" type="submit" name="clear" id="clear" value="<?=gettext("Clear all sessions")?>">
-				<i class="fa fa-trash icon-embed-btn"></i>
+				<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 				<?=gettext("Clear all sessions")?>
 			</button>
 		</nav>

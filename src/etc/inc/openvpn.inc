@@ -6,7 +6,7 @@
  * Copyright (c) 2006 Fernando Lemos
  * Copyright (c) 2006-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but
@@ -239,7 +239,7 @@ function convert_openvpn_interface_to_friendly_descr($if) {
 	foreach($openvpn_interfacenames as $key => $value) {
 		list($item_if, $item_ip) = explode("|", $key);
 		if ($if == $item_if) {
-			echo "$value";
+			return $value;
 		}
 	}
 }
@@ -280,13 +280,12 @@ function openvpn_build_if_list() {
 }
 
 function openvpn_build_crl_list() {
-	global $a_crl;
-
 	$list = array('' => 'None');
 
-	foreach ($a_crl as $crl) {
+	foreach (config_get_path('crl', []) as $crl) {
 		$caname = "";
 		$ca = lookup_ca($crl['caref']);
+		$ca = $ca['item'];
 
 		if ($ca) {
 			$caname = " (CA: {$ca['descr']})";
@@ -299,7 +298,6 @@ function openvpn_build_crl_list() {
 }
 
 function openvpn_build_cert_list($include_none = false, $prioritize_server_certs = false) {
-	global $a_cert;
 	$openvpn_compatible_certs = cert_build_list('cert', 'OpenVPN');
 
 	if ($include_none) {
@@ -315,13 +313,14 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 		$non_server_list['  '] = gettext("===== Non-Server Certificates =====");
 	}
 
-	foreach ($a_cert as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if (!array_key_exists($cert['refid'], $openvpn_compatible_certs)) {
 			continue;
 		}
 		$properties = array();
 		$propstr = "";
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 		$purpose = cert_get_purpose($cert['crt'], true);
 
 		if ($purpose['server'] == "Yes") {
@@ -405,8 +404,8 @@ function openvpn_create_dhparams($bits) {
 }
 
 function openvpn_vpnid_used($vpnid) {
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach (["server", "client"] as $mode) {
 		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
 			if ($vpnid == $settings['vpnid']) {
@@ -562,43 +561,6 @@ function openvpn_get_keydirlist() {
 	return $keydirs;
 }
 
-function openvpn_get_engines() {
-	$openssl_engines = array('none' => gettext('No Hardware Crypto Acceleration'));
-	exec("/usr/bin/openssl engine -t -c", $openssl_engine_output);
-	$openssl_engine_output = implode("\n", $openssl_engine_output);
-	$openssl_engine_output = preg_replace("/\\n\\s+/", "|", $openssl_engine_output);
-	$openssl_engine_output = explode("\n", $openssl_engine_output);
-
-	foreach ($openssl_engine_output as $oeo) {
-		$keep = true;
-		$details = explode("|", $oeo);
-		$engine = array_shift($details);
-		$linematch = array();
-		preg_match("/\((.*)\)\s(.*)/", $engine, $linematch);
-		foreach ($details as $dt) {
-			if (strpos($dt, "unavailable") !== FALSE) {
-				$keep = false;
-			}
-			if (strpos($dt, "available") !== FALSE) {
-				continue;
-			}
-			if (strpos($dt, "[") !== FALSE) {
-				$ciphers = trim($dt, "[]");
-			}
-		}
-		if (!empty($ciphers)) {
-			$ciphers = " - " . $ciphers;
-		}
-		if (strlen($ciphers) > 60) {
-			$ciphers = substr($ciphers, 0, 60) . " ... ";
-		}
-		if ($keep) {
-			$openssl_engines[$linematch[1]] = $linematch[2] . $ciphers;
-		}
-	}
-	return $openssl_engines;
-}
-
 function openvpn_get_buffer_values() {
 	$sendbuf_max = get_single_sysctl('net.inet.tcp.sendbuf_max');
 	$recvbuf_max = get_single_sysctl('net.inet.tcp.recvbuf_max');
@@ -609,11 +571,6 @@ function openvpn_get_buffer_values() {
 		$buffer_values[$buffer_max/$bs] = format_bytes($buffer_max/$bs);
 	}
 	return $buffer_values;
-}
-
-function openvpn_validate_engine($engine) {
-	$engines = openvpn_get_engines();
-	return array_key_exists($engine, $engines);
 }
 
 function openvpn_validate_host($value, $name) {
@@ -793,6 +750,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 
 		if (!empty($settings['nbdd_server1'])) {
 			$conf .= "push \"dhcp-option NBDD {$settings['nbdd_server1']}\"\n";
+		}
+		if (!empty($settings['nbdd_server2'])) {
+			$conf .= "push \"dhcp-option NBDD {$settings['nbdd_server2']}\"\n";
 		}
 	}
 
@@ -1037,10 +997,6 @@ function openvpn_reconfigure($mode, $settings) {
 		default:
 	}
 
-	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none")) {
-		$conf .= "engine {$settings['engine']}\n";
-	}
-
 	// server specific settings
 	if ($mode == 'server') {
 
@@ -1164,6 +1120,7 @@ function openvpn_reconfigure($mode, $settings) {
 				$cert = "";
 			} else {
 				$cert = lookup_cert($settings['certref']);
+				$cert = $cert['item'];
 				/* XXX: Seems not used at all! */
 				$servercn = urlencode(cert_get_cn($cert['crt']));
 				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
@@ -1358,8 +1315,9 @@ function openvpn_reconfigure($mode, $settings) {
 			@unlink_if_exists("{$capath}/*.r*");
 			/* Find the CRL listed in the settings */
 			if (!empty($settings['crlref'])) {
-				$crl = lookup_crl($settings['crlref']);
-				crl_update($crl);
+				$crl_item_config = lookup_crl($settings['crlref']);
+				$crl = &$crl_item_config['item'];
+				crl_update($crl_item_config);
 			}
 			/* For each CA in the chain, setup the CApath */
 			foreach ($cas as $ca) {
@@ -1370,6 +1328,7 @@ function openvpn_reconfigure($mode, $settings) {
 
 			if (!empty($settings['certref'])) {
 				$cert = lookup_cert($settings['certref']);
+				$cert = $cert['item'];
 				openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
 				openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
 			}
@@ -1656,7 +1615,7 @@ function openvpn_restart($mode, $settings) {
 	} else {
 		syslog(LOG_ERR, "OpenVPN failed to start");
 	}
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		send_event("filter reload");
 	}
 	unlock($lockhandle);
@@ -1777,7 +1736,7 @@ function openvpn_resync_csc($settings) {
 }
 
 function openvpn_resync_csc_all() {
-	init_config_arr(array('openvpn', 'openvpn-csc'));
+	config_init_path('openvpn/openvpn-csc');
 	foreach (config_get_path('openvpn/openvpn-csc', []) as $settings) {
 		openvpn_resync_csc($settings);
 	}
@@ -1821,8 +1780,8 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 	}
 
 	// Check if OpenVPN clients and servers require a resync.
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach (array("server", "client") as $type) {
 		foreach (config_get_path("openvpn/openvpn-{$type}", []) as & $settings) {
 			if (isset($settings['disable'])) {
@@ -1861,7 +1820,7 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 
 		/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
 		 * see https://redmine.pfsense.org/issues/11662 */
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			interfaces_qinq_configure(true);
 			/* Configure all qinq interface addresses and add them to their
 			 * bridges. See https://redmine.pfsense.org/issues/13225,
@@ -2242,8 +2201,9 @@ function openvpn_refresh_crls() {
 			$cas = ca_chain_array($param);
 			$capath = "{$g['openvpn_base']}/server{$settings['vpnid']}/ca";
 			if (!empty($settings['crlref'])) {
-				$crl = lookup_crl($settings['crlref']);
-				crl_update($crl);
+				$crl_item_config = lookup_crl($settings['crlref']);
+				$crl = &$crl_item_config['item'];
+				crl_update($crl_item_config);
 			}
 			foreach ($cas as $ca) {
 				ca_setup_capath($ca, $capath, $crl, true);
@@ -2260,8 +2220,8 @@ function openvpn_create_dirs() {
 		safe_mkdir(g_get('openvpn_base'), 0750);
 	}
 
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach(array('server', 'client') as $mode) {
 		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
 			if (isset($settings['disable'])) {
@@ -2337,6 +2297,15 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 		return "";
 	}
 	$tmpnetworks = explode(',', $value);
+
+	/* Remove empty entries from network array, which otherwise may lead to
+	 * invalid route statements.
+	 * https://redmine.pfsense.org/issues/14919
+	 */
+	$tmpnetworks = array_filter($tmpnetworks, function ($tnet) {
+		return !empty(trim($tnet));
+	});
+
 	foreach ($tmpnetworks as $network) {
 		if (is_alias($network)) {
 			foreach (alias_to_subnets_recursive($network, true) as $net) {
@@ -2395,12 +2364,12 @@ function openvpn_gen_route_ipv6($network, $iroute = false) {
 	if (empty($prefix) && !is_numeric($prefix)) {
 		$prefix = "128";
 	}
-	return "{$i}route-ipv6 ${ipv6}/${prefix}";
+	return "{$i}route-ipv6 {$ipv6}/{$prefix}";
 }
 
 function openvpn_get_settings($mode, $vpnid) {
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	foreach (["server", "client"] as $mode) {
 		foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
 			if (isset($settings['disable'])) {
@@ -2432,8 +2401,8 @@ function openvpn_restart_by_vpnid($mode, $vpnid) {
  ******/
 
 function openvpn_is_tunnel_network_in_use($net) {
-	init_config_arr(array('openvpn', 'openvpn-server'));
-	init_config_arr(array('openvpn', 'openvpn-client'));
+	config_init_path('openvpn/openvpn-server');
+	config_init_path('openvpn/openvpn-client');
 	/* Determine whether to check IPv4 or IPv6 tunnel networks */
 	$tocheck = 'tunnel_network';
 	if (is_v6($net)) {
@@ -2469,7 +2438,7 @@ function openvpn_authscript_string($authmode, $strictusercn, $mode_id, $local_po
 
 function openvpn_inuse($id, $mode) {
 	foreach (get_configured_interface_list(true) as $if) {
-		if (config_get_path("interfaces/{$if}/if") == openvpn_name($mode, $id)) {
+		if (config_get_path("interfaces/{$if}/if") == openvpn_name($mode, ['vpnid' => $id])) {
 			return true;
 		}
 	}

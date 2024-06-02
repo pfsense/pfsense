@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -192,7 +192,7 @@ function system_syslogd_start($sighup = false) {
 
 	$syslogcfg = config_get_path('syslog', []);
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting syslog...");
 	}
 
@@ -482,7 +482,7 @@ EOD;
 		$retval = sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 
@@ -1295,7 +1295,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 		$rulename = substr($ruleString, 0, 30);
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
-		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $ruleString);
+		$rulename = str_replace("USER_RULE: ", '<i class="fa-solid fa-user"></i> ', $ruleString);
 	}
 	return "{$rulename} ({$lookup_key})";
 }
@@ -1303,11 +1303,11 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 function find_action_image($action) {
 	global $g;
 	if ((strstr(strtolower($action), "p")) || (strtolower($action) == "rdr")) {
-		return "fa-check-circle-o";
+		return "fa-regular fa-circle-check";
 	} else if (strstr(strtolower($action), "r")) {
-		return "fa-times-circle-o";
+		return "fa-regular fa-circle-xmark";
 	} else {
-		return "fa-ban";
+		return "fa-solid fa-ban";
 	}
 }
 
@@ -1357,12 +1357,12 @@ function handle_ajax() {
 				}
 
 				if ($log_row['act'] == "block") {
-					$icon_act = "fa-times text-danger";
+					$icon_act = "fa-solid fa-times text-danger";
 				} else {
-					$icon_act = "fa-check text-success";
+					$icon_act = "fa-solid fa-check text-success";
 				}
 
-				$btn = '<i class="fa ' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
+				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

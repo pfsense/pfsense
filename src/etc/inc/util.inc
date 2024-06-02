@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1494,17 +1494,12 @@ function build_vip_list($fif, $family = "all") {
 }
 
 function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
-	global $config;
-
 	$list = array();
-	if (!array_key_exists('virtualip', $config) ||
-		!is_array($config['virtualip']) ||
-	    !is_array($config['virtualip']['vip']) ||
-	    empty($config['virtualip']['vip'])) {
+	$viparr = config_get_path('virtualip/vip');
+	if (!is_array($viparr) || empty($viparr)) {
 		return ($list);
 	}
 
-	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 
 		if ($type == VIP_CARP) {
@@ -1558,16 +1553,11 @@ function get_configured_vip_subnetv6($vipinterface = '') {
 }
 
 function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
-	global $config;
-
-	if (empty($vipinterface) ||
-	    !is_array($config['virtualip']) ||
-	    !is_array($config['virtualip']['vip']) ||
-	    empty($config['virtualip']['vip'])) {
+	$viparr = config_get_path('virtualip/vip');
+	if (empty($vipinterface) || !is_array($viparr) || empty($viparr)) {
 		return (NULL);
 	}
 
-	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias") {
 			continue;
@@ -1696,8 +1686,6 @@ function get_configured_interface_with_descr(bool $with_disabled = false) : arra
  *
  */
 function get_configured_ip_addresses() {
-	global $config;
-
 	if (!function_exists('get_interface_ip')) {
 		require_once("interfaces.inc");
 	}
@@ -1717,7 +1705,7 @@ function get_configured_ip_addresses() {
 	}
 
 	/* pppoe server */
-	if (is_array($config['pppoes']) && is_array($config['pppoes']['pppoe'])) {
+	if (is_array(config_get_path('pppoes/pppoe'))) {
 		foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
 			if ($pppoe['mode'] == "server") {
 				if (is_ipaddr($pppoe['localip'])) {
@@ -1764,7 +1752,6 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
  *			status (much slower)
  */
 function get_interface_list($mode = "active", $keyby = "physical", $vfaces = false) {
-	global $config;
 	$upints = array();
 	/* get a list of virtual interface types */
 	if (!$vfaces) {
@@ -1844,7 +1831,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 		$alink = explode(" ", $link);
 		$ifname = rtrim(trim($alink[0]), '*');
 		/* trim out all numbers before checking for vfaces */
-		if (!in_array(array_shift(preg_split('/(\d-)*\d$/', $ifname)), $vfaces) &&
+		$tmp_ifname = preg_split('/(\d-)*\d$/', $ifname);
+		if (!in_array(array_shift($tmp_ifname), $vfaces) &&
 		    interface_is_vlan($ifname) == NULL &&
 		    interface_is_qinq($ifname) == NULL &&
 		    !stristr($ifname, "_wlan") &&
@@ -1859,7 +1847,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 					$toput['ipaddr'] = $aip[1];
 				}
 			}
-			if (is_array($config['interfaces'])) {
+			if (is_array(config_get_path('interfaces'))) {
 				foreach (config_get_path('interfaces', []) as $name => $int) {
 					if ($int['if'] == $ifname) {
 						$friendly = $name;
@@ -1892,10 +1880,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 }
 
 function get_lagg_interface_list() {
-	global $config;
-
 	$plist = array();
-	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+	if (is_array(config_get_path('laggs/lagg'))) {
 		foreach (config_get_path('laggs/lagg', []) as $lagg) {
 			$lagg['mac'] = get_interface_mac($lagg['laggif']);
 			$lagg['islagg'] = true;
@@ -1987,7 +1973,7 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 		// run in foreground, and (optionally) log if nonzero return
 		$outputarray = array();
 		exec("$command 2>&1", $outputarray, $retval);
-		if (($retval <> 0) && (!$nologentry || isset($config['system']['developerspew']))) {
+		if (($retval <> 0) && (!$nologentry || config_path_enabled('system', 'developerspew'))) {
 			log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, implode(" ", $outputarray)));
 		}
 	}
@@ -2074,7 +2060,7 @@ function alias_expand($name) {
 			return null;
 		}
 		/*
-		 * make sure if it's a url alias, it actually exists.
+		 * make sure if it's a url alias, it actually exists and valid URLs.
 		 * redmine #5845, #13068
 		 */
 		foreach (config_get_path('aliases/alias', []) as $alias) {
@@ -2083,6 +2069,13 @@ function alias_expand($name) {
 					if (is_URL($alias['url']) &&
 					    file_exists($urltable_filename) &&
 					    !empty(trim(file_get_contents($urltable_filename)))) {
+						return "\${$name}";
+					} elseif (is_array($alias['aliasurl'])) {
+						foreach ($alias['aliasurl'] as $aliasurl) {
+							if (!is_URL($aliasurl)) {
+								return null;
+							}
+						}
 						return "\${$name}";
 					} else {
 						return null;
@@ -2159,10 +2152,10 @@ function xml_safe_fieldname($fieldname) {
 }
 
 function mac_format($clientmac) {
-	global $config, $cpzone;
+	global $cpzone;
 
 	$mac = explode(":", $clientmac);
-	$mac_format = $cpzone ? $config['captiveportal'][$cpzone]['radmac_format'] : false;
+	$mac_format = $cpzone ? config_get_path("captiveportal/{$cpzone}/radmac_format") : false;
 
 	switch ($mac_format) {
 		case 'singledash':
@@ -2366,7 +2359,18 @@ function get_sysctl($names) {
 		$name_list = array(escapeshellarg($names));
 	}
 
-	exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output);
+	/* https://redmine.pfsense.org/issues/14648
+	 * exec()'ing sysctl must never fail and valid output is expected, except
+	 * when the OID is absent for the system. Retry up to 2 times and log sysctl
+	 * failure for troubleshooting */
+	$retries = 2;
+	do {
+		$ret = exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output, $status);
+	} while ($ret === false && $retries-- > 0);
+	if ($ret === false) {
+		log_error("Warning: \"/sbin/sysctl -iq " . implode(" ", $name_list) . "\" returned status: {$status}");
+	}
+
 	$values = array();
 	foreach ($output as $line) {
 		$line = explode(": ", $line, 2);
@@ -2584,12 +2588,12 @@ function is_interface_vlan_mismatch() {
 }
 
 function is_interface_mismatch() {
-	global $config, $g;
+	global $g;
 
 	$do_assign = false;
 	$i = 0;
 	$missing_interfaces = array();
-	if (is_array($config['interfaces'])) {
+	if (is_array(config_get_path('interfaces'))) {
 		foreach (config_get_path('interfaces', []) as $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
@@ -2608,7 +2612,7 @@ function is_interface_mismatch() {
 
 	/* VLAN/QinQ-only interface mismatch detection
 	 * see https://redmine.pfsense.org/issues/12170 */
-	init_config_arr(array('vlans', 'vlan'));
+	config_init_path('vlans/vlan');
 	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if (!does_interface_exist($vlan['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
@@ -2616,7 +2620,7 @@ function is_interface_mismatch() {
 			$do_assign = true;
 		}
 	}
-	init_config_arr(array('qinqs', 'qinqentry'));
+	config_init_path('qinqs/qinqentry');
 	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
 		if (!does_interface_exist($qinq['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $qinq['if'])) {
@@ -2910,8 +2914,6 @@ function is_dynamic_route(string $target, string $ipprotocol = ''): bool {
 
 /* Get static route for specific destination */
 function route_get($target, $ipprotocol = '', $useroute = false) {
-	global $config;
-
 	if (!empty($ipprotocol)) {
 		$family = $ipprotocol;
 	} else if (is_v4($target)) {
@@ -2935,7 +2937,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 			return array();
 		} elseif ($interface == 'lo0') {
 			// interface assigned IP address
-			foreach (array_keys($config['interfaces']) as $intf) {
+			foreach (array_keys(config_get_path('interfaces')) as $intf) {
 				if ((($inet == '4') && (get_interface_ip($intf) == $target)) ||
 				    (($inet == '6') && (get_interface_ipv6($intf) == $target))) {
 					$interface = convert_friendly_interface_to_real_interface_name($intf);
@@ -2991,8 +2993,6 @@ function route_get_default($ipprotocol) {
 
 /* Delete a static route */
 function route_del($target, $ipprotocol = '') {
-	global $config;
-
 	if (empty($target)) {
 		return;
 	}
@@ -3037,7 +3037,7 @@ function route_del($target, $ipprotocol = '') {
 		exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
 		    "{$target} {$gw}"), $output, $rc);
 
-		if (isset($config['system']['route-debug'])) {
+		if (config_path_enabled('system', 'route-debug')) {
 			log_error("ROUTING debug: " . microtime() .
 			    " - DEL RC={$rc} - {$target} - gw: " . $gw);
 			file_put_contents("/dev/console", "\n[" . getmypid() .
@@ -3059,8 +3059,6 @@ function route_del($target, $ipprotocol = '') {
  */
 function route_add_or_change($target, $gw, $iface = '', $args = '',
     $ipprotocol = '') {
-	global $config;
-
 	if (empty($target) || (empty($gw) && empty($iface))) {
 		return false;
 	}
@@ -3108,15 +3106,20 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	}
 
 	if (empty($params)) {
-		log_error("route_add_or_change: Invalid gateway {$gw} and/or " .
-		    "network interface {$iface}");
+		if (!empty($gw) && !empty($iface)) {
+			log_error("route_add_or_change: Invalid gateway ({$gw}) and network interface was not found ({$iface})");
+		} elseif (!empty($gw)) {
+			log_error("route_add_or_change: Invalid gateway ({$gw})");
+		} else {
+			log_error("route_add_or_change: Network interface was not found ({$iface})");
+		}
 		return false;
 	}
 
 	exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
 	    "{$target} {$args} {$params}"), $output, $rc);
 
-	if (isset($config['system']['route-debug'])) {
+	if (config_path_enabled('system', 'route-debug')) {
 		log_error("ROUTING debug: " . microtime() .
 		    " - ADD RC={$rc} - {$target} {$args}");
 		file_put_contents("/dev/console", "\n[" . getmypid() .
@@ -3128,14 +3131,12 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 }
 
 function set_ipv6routes_mtu($interface, $mtu) {
-	global $config;
-
 	$ipv6mturoutes = array();
 	$if = convert_real_interface_to_friendly_interface_name($interface);
-	if (!$config['interfaces'][$if]['ipaddrv6']) {
+	if (!config_get_path("interfaces/{$if}/ipaddrv6")) {
 		return;
 	}
-	$a_gateways = return_gateways_array();
+	$a_gateways = get_gateways();
 	$a_staticroutes = get_staticroutes(false, false, true);
 	foreach ($a_gateways as $gate) {
 		foreach ($a_staticroutes as $sroute) {
@@ -3188,11 +3189,9 @@ function alias_to_subnets_recursive($name, $returnhostnames = false) {
 }
 
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
-	global $config;
-
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
-	init_config_arr(array('staticroutes', 'route'));
-	if (empty($config['staticroutes']['route'])) {
+	config_init_path('staticroutes/route');
+	if (empty(config_get_path('staticroutes/route'))) {
 		return array();
 	}
 
@@ -3557,11 +3556,13 @@ function array_remove_duplicate($array, $field) {
 
 /**
  * Return a value specified by a path of keys in a nested array, if it exists.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @param $default mixed value to return if the path is not found
- * @returns mixed value at path or $default if the path does not exist or if the
- *          path keys an empty string and $default is non-null
+ * 
+ * @param array  $arr     Array to search
+ * @param string $path    Path with '/' separators
+ * @param mixed  $default Value to return if the path is not found
+ * 
+ * @return mixed Value at path or $default if the path does not exist or if the
+ *               path keys an empty string and $default is non-null
  */
 function array_get_path(array &$arr, string $path, $default = null) {
 	$vpath = explode('/', $path);
@@ -3584,10 +3585,12 @@ function array_get_path(array &$arr, string $path, $default = null) {
 	return ($el);
 }
 
-/*
- * Initialize an arbitrary array multiple levels deep only if unset
- * @param $arr top of array
- * @param $path string path with '/' separators
+/**
+ * Initialize an arbitrary array multiple levels deep. Any scalars in the path,
+ * including the leaf node, are overridden with an array.
+ * 
+ * @param mixed  $arr  Top of array
+ * @param string $path Path with '/' separators
  */
 function array_init_path(mixed &$arr, ?string $path)
 {
@@ -3609,22 +3612,43 @@ function array_init_path(mixed &$arr, ?string $path)
 /**
  * Set a value by path in a nested array, creating arrays for intermediary keys
  * as necessary. If the path cannot be reached because an intermediary exists
- * but is not empty or an array, return $default.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @param $value mixed
- * @param $default mixed value to return if the path is not found
- * @returns mixed $val or $default if the path prefix does not exist
+ * but is not empty or an array, return $default. A trailing '/' in the path
+ * will add $value to the leaf node array; if not an array, the leaf node is
+ * overwritten to be an array containing $value.
+ * 
+ * @param array  $arr     Array to search
+ * @param string $path    Path with '/' separators
+ * @param mixed  $value   Value to set
+ * @param mixed  $default Value to return if the path is not found
+ * 
+ * @return mixed $value or $default if the path prefix does not exist
  */
 function array_set_path(array &$arr, string $path, $value, $default = null) {
 	$vpath = explode('/', $path);
-	$vkey = null;
+	// check for trailing forward-slash
+	if (($path != '') && ($vpath[array_key_last($vpath)] === '')) {
+		$append = true;
+	} else {
+		$append = false;
+	}
+
+	// get the path's leaf node; ignore trailing and contiguous forward-slashes
 	do {
 		$vkey = array_pop($vpath);
-	} while (mb_strlen($vkey) == 0);
+	} while (isset($vkey) && (mb_strlen($vkey) == 0));
+
+	// path is root, make sure $arr is always an array
 	if ($vkey == null) {
-		return ($default);
+		// avoid creating a single-element root (e.g. [0 => []])
+		if ($append) {
+			$arr[] = (is_array($value)) ? $value : [$value];
+		} else {
+			$arr = (is_array($value)) ? $value : [$value];
+		}
+		return ($value);
 	}
+
+	// traverse the array and get reference to the leaf node
 	$el =& $arr;
 	foreach ($vpath as $key) {
 		if (mb_strlen($key) == 0) {
@@ -3632,41 +3656,57 @@ function array_set_path(array &$arr, string $path, $value, $default = null) {
 		}
 		if (array_key_exists($key, $el) && !empty($el[$key])) {
 			if (!is_array($el[$key])) {
-					return ($default);
+				return ($default);
 			}
 		} else {
-				$el[$key] = [];
+			$el[$key] = [];
 		}
 		$el =& $el[$key];
 	}
-	$el[$vkey] = $value;
+
+	// set the leaf node value
+	if ($append) {
+		if (is_array($el[$vkey])) {
+			$el[$vkey][] = $value;
+		} else {
+			$el[$vkey] = [$value];
+		}
+	} else {
+		$el[$vkey] = $value;
+	}
+	
 	return ($value);
 }
 
 /**
  * Determine whether a path in a nested array has a non-null value keyed by
  * $enable_key.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @param $enable_key string an optional alternative key value for the enable key
- * @returns bool true if $enable_key exists in the array at $path, and has a
- * non-null value, otherwise false
+ * 
+ * @param array  $arr        Array to search
+ * @param string $path       Path with '/' separators
+ * @param string $enable_key Optional alternative key value for the enable key
+ * @param mixed  $default    Value to return if the path is not found
+ * 
+ * @return mixed|bool true if $enable_key exists in the array at $path, and has
+ *                    a non-null value, otherwise false; or $default if the
+ *                    path prefix does not exist.
  */
-function array_path_enabled(array &$arr, string $path, $enable_key = "enable") {
-	$el = array_get_path($arr, $path, []);
-	if (is_array($el) && isset($el[$enable_key])) {
-		return (true);
-	}
-	return (false);
+function array_path_enabled(array &$arr, string $path, $enable_key = "enable", $default = false) {
+	$el = array_get_path($arr, $path, $default);
+	return is_array($el) ? isset($el[$enable_key]) : $default;
 }
 
 /**
  * Remove a key from the nested array by path.
- * @param $arr array value to search
- * @param $path string path with '/' separators
- * @returns array copy of the removed value or null
+ * 
+ * @param array  $arr     Array to search
+ * @param string $path    Path with '/' separators
+ * @param mixed  $default Value to return if the path is not found
+ * 
+ * @return mixed|array Copy of the removed value or null; or $default if the
+ *                     path prefix does not exist.
  */
-function array_del_path(array &$arr, string $path) {
+function array_del_path(array &$arr, string $path, $default = null) {
 	$vpath = explode('/', $path);
 	$vkey = array_pop($vpath);
 	$el =& $arr;
@@ -3677,12 +3717,12 @@ function array_del_path(array &$arr, string $path) {
 		if (is_array($el) && array_key_exists($key, $el)) {
 			$el =& $el[$key];
 		} else {
-			return null;
+			return $default;
 		}
 	}
 
 	if (!(is_array($el) && array_key_exists($vkey, $el))) {
-		return null;
+		return $default;
 	}
 
 	$ret = $el[$vkey];
@@ -3692,7 +3732,7 @@ function array_del_path(array &$arr, string $path) {
 
 
 function dhcpd_date_adjust_gmt($dt) {
-	init_config_arr(array('dhcpd'));
+	config_init_path('dhcpd');
 
 	foreach (config_get_path('dhcpd', []) as $dhcpditem) {
 		if (empty($dhcpditem)) {
@@ -3701,7 +3741,7 @@ function dhcpd_date_adjust_gmt($dt) {
 		if ($dhcpditem['dhcpleaseinlocaltime'] == "yes") {
 			$ts = strtotime($dt . " GMT");
 			if ($ts !== false) {
-				return strftime("%Y/%m/%d %H:%M:%S", $ts);
+				return date("Y/m/d H:i:s", $ts);
 			}
 		}
 	}
@@ -4430,7 +4470,7 @@ function dummynet_load_module($max_qlimit) {
 			"net.inet.ip.dummynet.hash_size" => "256",
 			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 	));
-	init_config_arr(array('sysctl', 'item'));
+	config_init_path('sysctl/item');
 	foreach (config_get_path('sysctl/item', []) as $item) {
 		if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
 			$sysctls[$item['tunable']] = $item['value'];
@@ -4440,10 +4480,9 @@ function dummynet_load_module($max_qlimit) {
 }
 
 function get_interface_vip_ips($interface) {
-	global $config;
 	$vipips = '';
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if (($vip['interface'] == $interface) &&
 		    (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
@@ -4451,6 +4490,89 @@ function get_interface_vip_ips($interface) {
 		}
 	}
 	return $vipips;
+}
+
+/**
+ * Checks for DNS availability.
+ * 
+ * @param int $protocol Address family to check with [AF_INET|AF_INET6]
+ * 
+ * @return bool true if DNS is available, false otherwise
+ */
+function get_dnsavailable(?int $protocol = null): bool {
+	switch ($protocol) {
+		case AF_INET:
+			$proto = '-4';
+			break;
+		case AF_INET6:
+			$proto = '-6';
+			break;
+		default:
+			$proto = '';
+			break;
+	}
+
+	// The domain doesn't matter, only that there's an answer
+	exec("/usr/bin/host -W 1 {$proto} netgate.com.", $null, $result_code);
+	if ($result_code === 0) {
+		// DNS server responded
+		return true;
+	}
+
+	// no answer
+	return false;
+}
+
+/**
+ * Verifies the existence of a DNS A/AAAA/SRV/PTR record for an address.
+ * 
+ * @param string $address URL, name, or IPv4/6 address to check.
+ * 
+ * @return string The address can be resolved. If $address is an IP address,
+ *                return the reverse lookup name, otherwise return the
+ *                unmodified input if it's a host/domain name.
+ * @return false Cannot resolve - no records found.
+ */
+function resolve_address(?string $address): string|false {
+	if (empty($address)) {
+		return false;
+	}
+
+	// Try once per server and timeout after 3 seconds per attempt - see resolver(5)
+	putenv("RES_OPTIONS=timeout:3 attempts:1");
+	if (filter_var($address, FILTER_VALIDATE_IP)) {
+		$result = gethostbyaddr($address);
+		if (empty($result) || ($result == $address)) {
+			$result = null;
+		}
+	} elseif (filter_var($address, FILTER_VALIDATE_URL)) {
+		if (!empty(dns_get_record(parse_url($address, PHP_URL_HOST), DNS_A | DNS_AAAA | DNS_SRV))) {
+			$result = $address;
+		}
+	} elseif (filter_var($address, FILTER_VALIDATE_DOMAIN)) {
+		if (!empty(dns_get_record($address, DNS_A | DNS_AAAA | DNS_SRV))) {
+			$result = $address;
+		}
+	}
+	putenv('RES_OPTIONS');
+
+	if (!empty($result)) {
+		return $result;
+	}
+
+	return false;
+}
+
+function compare_files($f1, $f2) {
+	/* One file doesn't exist or files are different sizes, so they can't
+	 * be the same */
+	if (!file_exists($f1) ||
+	    !file_exists($f2) ||
+	    (filesize($f1) != filesize($f2))) {
+		return false;
+	}
+	/* Return result of comparing hashes. */
+	return (hash_file('sha256', $f1) == hash_file('sha256', $f2));
 }
 
 ?>

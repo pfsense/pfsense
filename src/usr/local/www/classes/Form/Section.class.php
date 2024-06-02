@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -105,7 +105,7 @@ class Form_Section extends Form_Element
 		if (intval($this->_collapsible) & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .
 				'<a data-toggle="collapse" href="#' . $id . '_panel-body">' .
-					'<i class="fa fa-plus-circle"></i>' .
+					'<i class="fa-solid fa-plus-circle"></i>' .
 				'</a>' .
 			'</span>';
 			$bodyclass = '<div id="' . $id . '_panel-body" class="panel-body collapse ';

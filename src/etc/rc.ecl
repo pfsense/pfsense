@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2010-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,8 +41,13 @@ function get_swap_disks() {
 
 function get_disk_slices($disk) {
 	global $g, $debug;
-	$slices = glob("/dev/" . $disk . "[ps]*");
-	$slices = str_replace("/dev/", "", $slices);
+
+	if (str_starts_with($disk, 'cd')) {
+		$slices[] = $disk;
+	} else {
+		$slices = glob("/dev/" . $disk . "[ps]*");
+		$slices = str_replace("/dev/", "", $slices);
+	}
 	return $slices;
 }
 
@@ -139,17 +144,31 @@ function find_config_xml() {
 					continue;
 				}
 				echo " $slice";
-				// First try msdos fs
+				// try msdos fs
 				if ($debug) {
 					echo "\n/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 				}
 				$result = exec("/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
-				// Next try regular fs (ufs)
+				// try regular fs (ufs)
 				if (!$result) {
 					if ($debug) {
 						echo "\n/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
 					$result = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				}
+				// try cd9660 (standard CD-ROM format)
+				if (!$result) {
+					if ($debug) {
+						echo "\n/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
+					}
+					$result = exec("/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				}
+				// try udf (common for modern DVDs and some CDs)
+				if (!$result) {
+					if ($debug) {
+						echo "\n/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
+					}
+					$result = exec("/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
 				}
 				$mounted = trim(exec("/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep '/tmp/mnt/cf' | /usr/bin/wc -l"));
 				if ($debug) {

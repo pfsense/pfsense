@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -270,7 +270,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Test',
 	null,
-	'fa-wrench'
+	'fa-solid fa-wrench'
 ))->addClass('btn-primary');
 
 print $form;

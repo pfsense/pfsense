@@ -1,0 +1,202 @@
+#!/usr/local/bin/php-cgi -q
+<?php
+/*
+ * usermgrpasswd
+ *
+ * Changes passwords for users in the User Manager authentication database.
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2016 Electric Sheep Fencing
+ * Copyright (c) 2016-2024 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+require_once("config.inc");
+require_once("auth.inc");
+require_once("functions.inc");
+
+global $g, $argv, $userindex;
+
+function usermgrpasswd_usage() {
+	echo gettext("Usage") . ": usermgrpasswd [-c | --check] [-u user | --username user | user]\n";
+	echo gettext("Changes passwords for users in the User Manager authentication database.") . "\n";
+}
+
+function prompt_for_password($username) {
+	/* Open stdin for reading input (passwords, etc.) */
+	$fp = fopen('php://stdin', 'r');
+
+	// Prompt for new password
+	while (empty($password)) {
+		echo gettext("New Password") . ": ";
+		exec('/bin/stty -echo');
+		$password = trim(fgets($fp));
+		exec('/bin/stty echo');
+		echo "\n";
+	}
+
+	// Prompt to confirm password
+	while (empty($confpassword)) {
+		echo gettext("Confirm New Password") . ": ";
+		exec('/bin/stty -echo');
+		$confpassword = trim(fgets($fp));
+		exec('/bin/stty echo');
+		echo "\n";
+	}
+
+	fclose($fp);
+
+	if ($password == $confpassword) {
+		$errors = validate_password($username, $password);
+		if (!$errors) {
+			return $password;
+		} else {
+			echo "\n" . gettext('ERROR') . ":\n";
+			echo implode("\n", $errors);
+		}
+
+	} else {
+		echo gettext("New and Confirm passwords did not match.") . "\n";
+	}
+	return false;
+}
+
+if (!posix_isatty(0)) {
+	echo gettext('This script must be run from an interactive terminal and not through FastCGI') . "\n";
+	exit(-1);
+}
+
+/* Reindex and fetch the current user database */
+$userindex = index_users();
+$username = "";
+
+$checkonly = false;
+if ($argv) {
+	$options = getopt("cu:", ['check', 'username:'], $remain);
+	$args = array_slice($argv, $remain);
+
+	if (!empty($options['u'])) {
+		$username = $options['u'];
+	} elseif (!empty($options['username'])) {
+		$username = $options['username'];
+	} elseif (!empty($args[0])) {
+		$username = $args[0];
+	}
+
+	if (array_key_exists('c', $options) ||
+	    array_key_exists('check', $options)) {
+		$checkonly = true;
+	}
+}
+
+/* Most users will not be able to run this script themselves, direct them to the GUI. */
+if (!$checkonly &&
+    !is_writable(g_get('conf_path') . '/config.xml')) {
+	echo gettext("This user does not have write access to the configuration in a shell.") . "\n\n";
+	echo gettext("Log into the GUI and change the password from there.") . "\n";
+	exit(-1);
+}
+
+/* Check if the user passed a name to the script */
+if (empty($username)) {
+	/* Determine the shell user running this script */
+	$shelluser = posix_getpwuid(posix_geteuid());
+	$username = $shelluser['name'];
+}
+
+/* The user 'root' in the shell is tied to the 'admin' user in the user manager. */
+if ($username == "root") {
+	$username = "admin";
+}
+$username = trim($username);
+
+/* If the username is empty, print usage info and exit */
+if (empty($username)) {
+	usermgrpasswd_usage();
+	exit(0);
+}
+
+if ($checkonly) {
+	$error = check_current_password($username);
+	if ($error) {
+		echo gettext('ERROR: ') . "{$error}\n";
+		exit(1);
+	} else {
+		echo gettext('Current password is OK.') . "\n";
+		exit(0);
+	}
+}
+
+$password = "";
+$confpassword = "";
+
+// If the user does not exist, bail
+$user_item_config = getUserEntry($username);
+$user = &$user_item_config['item'];
+if ($user == NULL) {
+	printf(gettext("User '%s' does not exist in the User Manager database.\n"), $username);
+	exit(-1);
+}
+
+/* Prompt for the password, try up to five times. */
+printf(gettext("Changing password for '%s' in the User Manager database.\n"), $username);
+echo "Hints:\n";
+echo get_validate_password_hints('* ', "\n");
+
+for ($try=0; $try < 5; $try++) {
+	$password = prompt_for_password($username);
+	if ($password) {
+		break;
+	} else {
+		echo "\n\n";
+	}
+}
+
+// Compare password and confirm
+if ($password) {
+	/* Open stdin for reading input */
+	$fp = fopen('php://stdin', 'r');
+
+	// Check if user is disabled
+	if (is_account_disabled($username)) {
+		echo gettext("Account is disabled, re-enable? [y|n]") . ": ";
+		if (strcasecmp(chop(fgets($fp)), "y") == 0) {
+			unset($user['disabled']);
+		}
+	}
+
+	// Check if user is expired
+	if (is_account_expired($username)) {
+		echo gettext("Account is expired, clear the expiration date? [y|n]") . ": ";
+		if (strcasecmp(chop(fgets($fp)), "y") == 0) {
+			unset($user['expires']);
+		}
+	}
+
+	fclose($fp);
+
+	//Reset password
+	config_set_path("system/user/{$user_item_config['idx']}", $user);
+	local_user_set_password($user_item_config, $password);
+	local_user_set($user);
+	$message = sprintf(gettext("User Manager password changed for user '%s' from console."), $username);
+	write_config($message);
+	echo "{$message}\n";
+	exit(0);
+} else {
+	/* Password was not valid, so print an error and exit. */
+	echo gettext("\nPassword was not changed.") . "\n";
+	exit(-1);
+}

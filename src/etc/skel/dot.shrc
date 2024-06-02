@@ -4,7 +4,7 @@
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2013 BSD Perimeter
 # Copyright (c) 2013-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ fi
 HTTP_PROXY_AUTH_USER=`/usr/local/sbin/read_xml_tag.sh string system/proxyuser`
 HTTP_PROXY_AUTH_PASS=`/usr/local/sbin/read_xml_tag.sh string system/proxypass`
 if [ "${HTTP_PROXY_AUTH_USER}" != "" ] && [ "${HTTP_PROXY_AUTH_PASS}" != "" ]; then
-	HTTP_PROXY_AUTH="basic:*:${HTTP_PROXY_AUTH_USER}:${HTTP_PROXY_AUTH_PASS}"
+	HTTP_PROXY_AUTH="${HTTP_PROXY_AUTH_USER}:${HTTP_PROXY_AUTH_PASS}"
 	export HTTP_PROXY_AUTH
 fi
 

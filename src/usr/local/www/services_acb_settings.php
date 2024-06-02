@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -63,6 +63,10 @@ if (isset($_POST['save'])) {
 		} else {
 			$update_ep = true;
 		}
+	}
+
+	if (!in_array($_POST['frequency'], ['cron', 'every'])) {
+		$input_errors[] = gettext("Invalid frequency value.");
 	}
 
 	if ($_POST['frequency'] === 'cron') {
@@ -229,7 +233,7 @@ print $form;
 			hideClass("cronsched", ($(this).val() != 'cron'));
 		});
 
-		hideClass("cronsched", ("<?=$pconfig['frequency']?>" != 'cron'));
+		hideClass("cronsched", ("<?=htmlspecialchars($pconfig['frequency'])?>" != 'cron'));
 	});
 //]]>
 </script>

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ require_once("vpn.inc");
 
 global $ipsec_filtermodes;
 
-init_config_arr(array('ipsec', 'phase1'));
+config_init_path('ipsec/phase1');
 
 $pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = config_path_enabled('ipsec', 'unityplugin');
@@ -132,7 +132,7 @@ if ($_POST['save']) {
 				if ((is_subnetv4($source) && is_subnetv6($destination)) ||
 				    (is_subnetv6($source) && is_subnetv4($destination))) {
 					$input_errors[] = gettext('IPsec bypass source and destination addresses
-						must belong to the same IP family.');
+						must belong to the same address family.');
 				}
 				$bypassrules['rule'][] = array(
 					'source' => $_POST["source{$x}"],
@@ -678,7 +678,7 @@ foreach ($pconfig['bypassrules']['rule'] as $rule) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning');
 
 	$section->add($group);
@@ -690,7 +690,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success');
 
 $form->add($section);

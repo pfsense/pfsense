@@ -6,7 +6,7 @@
  * Copyright (c) 2007 Sam Wenham
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -32,8 +32,7 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
+config_init_path('captiveportal');
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
@@ -41,8 +40,8 @@ if (isset($_POST['zone'])) {
 }
 $cpzone = strtolower($cpzone);
 
-if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
-	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+if (isset($cpzone) && !empty($cpzone)) {
+	$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 }
 
 if (($_GET['act'] == "del") && !empty($cpzone) && isset($cpzoneid)) {
@@ -61,7 +60,7 @@ if (!function_exists('clientcmp')) {
 
 $cpdb_all = array();
 
-foreach ($a_cp as $cpzone => $cp) {
+foreach (config_get_path('captiveportal', []) as $cpzone => $cp) {
 	$cpdb = captiveportal_read_db();
 	foreach ($cpdb as $cpent) {
 		$cpent[10] = $cpzone;
@@ -101,7 +100,7 @@ foreach ($a_cp as $cpzone => $cp) {
 			</td>
 			<td>
 				<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
-					<i class="fa fa-trash" title="<?=gettext("delete");?>"></i>
+					<i class="fa-solid fa-trash-can" title="<?=gettext("delete");?>"></i>
 				</a>
 			</td>
 		</tr>

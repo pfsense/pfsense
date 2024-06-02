@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -89,7 +89,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 			break;
 	}
 	if (!empty($link) && !str_starts_with(ltrim($_SERVER['REQUEST_URI'], '/'), $link)) {
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related settings") . "\"><i class=\"fa fa-sliders\"></i></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related settings") . "\"><i class=\"fa-solid fa-sliders\"></i></a>";
 	}
 	return "";
 }
@@ -125,7 +125,7 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 			break;
 	}
 	if (!empty($link)) {
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa fa-bar-chart\"></i></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa-regular fa-chart-bar\"></i></a>";
 	}
 	return "";
 }
@@ -134,7 +134,7 @@ function get_shortcut_log_link($shortcut_section, $addspace = true) {
 	global $g, $shortcuts;
 	$space = ($addspace) ? "&nbsp;" : "" ;
 	if (!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
-		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Related log entries") . "\"><i class=\"fa fa-list-alt\"></i></a>";
+		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Related log entries") . "\"><i class=\"fa-regular fa-rectangle-list\"></i></a>";
 	}
 	return "";
 }

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,7 +37,7 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-init_config_arr(array('ipsec', 'mobilekey'));
+config_init_path('ipsec/mobilekey');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -118,9 +118,7 @@ if ($_POST['save']) {
 			config_set_path('ipsec/mobilekey/' . $id, $secretent);
 			$text = gettext("Edited IPsec Pre-Shared Keys");
 		} else {
-			$mks = config_get_path('ipsec/mobilekey', []);
-			$mks[] = $secretent;
-			config_set_path('ipsec/mobilekey', $mks);
+			config_set_path('ipsec/mobilekey/', $secretent);
 			$text = gettext("Added IPsec Pre-Shared Keys");
 		}
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -335,7 +335,7 @@ while ($counter < $numaddrs) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning btn-xs');
 
 	if ($counter == ($numaddrs - 1)) {
@@ -351,7 +351,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add address',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success addbtn');
 
 $form->add($section);
@@ -426,6 +426,7 @@ events.push(function() {
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('ocsp-staple', "<?php 
 			$cert_temp = lookup_cert($pconfig['ssl-certref']);
+			$cert_temp = $cert_temp['item'];
 			echo (cert_get_ocspstaple($cert_temp['crt']) ? "true" : "false");
 			?>" === "true");
 

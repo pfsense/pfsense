@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -39,9 +39,9 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'client'));
-init_config_arr(array('system', 'group'));
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/client');
+config_init_path('system/group');
 
 $auth_groups = array();
 foreach (config_get_path('system/group', []) as $group) {
@@ -310,6 +310,7 @@ if ($_POST['save']) {
 			config_del_path('ipsec/client/user_source');
 		}
 
+		config_set_path('ipsec/client/group_source', (($pconfig['group_source'] == 'yes') ? "enabled" : "disabled"));
 		if (($pconfig['group_source'] == 'yes') && !empty($pconfig['auth_groups'])) {
 			config_set_path('ipsec/client/auth_groups', implode(",", $pconfig['auth_groups']));
 		} else {
@@ -381,7 +382,7 @@ if ($_POST['save']) {
 		if ($pconfig['dns_split_enable']) {
 			config_set_path('ipsec/client/dns_split', $pconfig['dns_split']);
 		} else {
-			config_del_path('ipsec/client/dns_split', $pconfig['dns_split']);
+			config_del_path('ipsec/client/dns_split');
 		}
 
 		if ($pconfig['dns_server_enable']) {
@@ -573,7 +574,7 @@ foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 	}
 }
 if ($pconfig['enable'] && !$ph1found) {
-	print_info_box(gettext("Support for IPsec Mobile Clients is enabled but a Phase 1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), "warning", "create", gettext("Create Phase 1"), 'fa-plus', 'success');
+	print_info_box(gettext("Support for IPsec Mobile Clients is enabled but a Phase 1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), "warning", "create", gettext("Create Phase 1"), 'fa-solid fa-plus', 'success');
 }
 
 if ($input_errors) {
@@ -646,7 +647,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable RADIUS Accounting',
 	$pconfig['radiusaccounting']
 ))->setHelp('When enabled, the IPsec daemon will attempt to send RADIUS accounting ' .
-		'data for all tunnels, not only connections associated with mobile IPsec. ' .
+		'data for mobile IPsec connections with Virtual IP addresses. ' .
 		'Do not enable this option unless the selected RADIUS servers are online and ' .
 		'capable of receiving RADIUS accounting data. If RADIUS accounting data is ' .
 		'enabled and fails to send, tunnels will be disconnected.');

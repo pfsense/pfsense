@@ -3,7 +3,7 @@
  * disks.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2021-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2021-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,7 +85,7 @@ function disks_compose_health_icon(Filesystem $fs, $autoshow_threshold) {
 
 	$isAlert = (($autoshow_threshold != 0) && ($used_percent >= $autoshow_threshold));
 
-	$class = $isAlert ? 'fa fa-exclamation-triangle' : 'fa fa-thumb-tack';
+	$class = $isAlert ? 'fa-solid fa-exclamation-triangle' : 'fa-solid fa-thumbtack';
 
 	$title = $isAlert ? gettext('Alert') : gettext('Pinned');
 

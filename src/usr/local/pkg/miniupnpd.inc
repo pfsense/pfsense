@@ -85,7 +85,6 @@
 	}
 
 	function before_form_miniupnpd(&$pkg) {
-		global $config;
 
 	}
 
@@ -154,7 +153,7 @@
 	}
 
 	function sync_package_miniupnpd() {
-		global $g, $config;
+		global $g;
 		global $input_errors;
 
 		$upnp_config = config_get_path('installedpackages/miniupnpd/config/0');
@@ -237,12 +236,13 @@
 				$config_text .= "secure_mode=yes\n";
 
 				/* set webgui url */
+				$webgui_config = config_get_path('system/webgui');
 				if (!empty($upnp_config['presentationurl'])){
 					$config_text .= "presentation_url=" . $upnp_config['presentationurl'] . "\n";
-				} elseif (!empty($config['system']['webgui']['protocol'])) {
-					$config_text .= "presentation_url={$config['system']['webgui']['protocol']}://{$webgui_ip}";
-					if (!empty($config['system']['webgui']['port'])) {
-						$config_text .= ":{$config['system']['webgui']['port']}";
+				} elseif (!empty($webgui_config['protocol'])) {
+					$config_text .= "presentation_url={$webgui_config['protocol']}://{$webgui_ip}";
+					if (!empty($webgui_config['port'])) {
+						$config_text .= ":{$webgui_config['port']}";
 					}
 					$config_text .= "/\n";
 				}

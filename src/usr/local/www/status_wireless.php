@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -201,7 +201,7 @@ display_top_tabs($tab_array);
 	<nav class="action-buttons">
 		<input type="hidden" name="if" id="if" value="<?=htmlspecialchars($if)?>" />
 		<button type="submit" class="btn btn-success" name="rescanwifi" id="rescanwifi" value="Rescan">
-			<i class="fa fa-refresh icon-embed-btn"></i>
+			<i class="fa-solid fa-arrows-rotate icon-embed-btn"></i>
 			<?=gettext("Rescan")?>
 		</button>
 	</nav>

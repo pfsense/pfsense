@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,7 +70,7 @@ function upload($basename) {
 
     $upload_url = "https://acb.netgate.com/save";
 
-    if (!is_url_hostname_resolvable($upload_url)) {
+    if (!resolve_address($upload_url)) {
 	$data = " Unable to resolve " . parse_url($upload_url, PHP_URL_HOST) . " ";
 	acb_error_log($upload_url, $data);
 	unlink_if_exists($acbuploadpath . $basename . ".data");
@@ -115,7 +115,7 @@ function upload($basename) {
     if (curl_errno($curl_session)) {
         $fd = fopen("/tmp/backupdebug.txt", "w");
         $acb_curl_error = curl_error($curl_session);
-        fwrite($fd, $upload_url . "" . $fields_string . "\n\n");
+        fwrite($fd, $upload_url . "\n\n");
         fwrite($fd, $data);
         fwrite($fd, $acb_curl_error);
         fclose($fd);
@@ -137,7 +137,7 @@ function upload($basename) {
     } else {
         // Update last pfS backup time
         $fd = fopen("/cf/conf/lastpfSbackup.txt", "w");
-        fwrite($fd, $config['revision']['time']);
+        fwrite($fd, config_get_path('revision/time'));
         fclose($fd);
         $notice_text = "End of configuration backup to " . $upload_url . " (success).";
         log_error($notice_text);

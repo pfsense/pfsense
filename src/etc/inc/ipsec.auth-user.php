@@ -7,7 +7,7 @@
  * Copyright (c) 2008 Shrew Soft Inc
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -94,6 +94,7 @@ foreach ($authmodes as $authmode) {
 		$userGroups = getUserGroups($username, $authcfg, $attributes);
 		if ($authmode == "Local Database") {
 			$user = getUserEntry($username);
+			$user = $user['item'];
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin") ||
 			    (!empty($ipsec_groups) && (count(array_intersect($userGroups, $ipsec_groups)) == 0))) {
 				$authenticated = false;

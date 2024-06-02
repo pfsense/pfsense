@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -192,7 +192,7 @@ function activate_sysctls() {
 	 *   Set the value dynamically since its default is not static, yet this
 	 *   still could be overridden by a user tunable. */
 	$maximumtableentries = config_get_path('system/maximumtableentries',
-										   pfsense_default_table_entries_size());
+										   pfsense_current_table_entries_size());
 
 	/* Set the default when there is no tunable or when the tunable is set
 	 * too low. */
@@ -261,7 +261,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	fwrite($fd, "resolv_conf=\"/dev/null\"\n");
 	fclose($fd);
 
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		/* restart dhcpd (nameservers may have changed) */
 		if (!$dynupdate) {
 			services_dhcpd_configure();
@@ -665,7 +665,7 @@ function system_hosts_generate() {
 	}
 
 	/* restart dhcpleases */
-	if (!platform_booting()) {
+	if (!is_platform_booting()) {
 		system_dhcpleases_configure();
 	}
 
@@ -1213,6 +1213,9 @@ function system_get_dhcpleases($dnsavailable=null)
 	$dedup_lease = false;
 	$dedup_failover = false;
 
+	if ($dnsavailable === null) {
+		$dnsavailable = get_dnsavailable();
+	}
 	foreach ($leases_content as $line) {
 		/* Skip comments */
 		if (preg_match('/^\s*(|#.*)$/', $line)) {
@@ -1221,15 +1224,10 @@ function system_get_dhcpleases($dnsavailable=null)
 
 		if (preg_match('/}$/', $line)) {
 			if ($lease) {
-				if (empty($item['hostname'])) {
-					if (is_null($dnsavailable)) {
-						$dnsavailable = check_dnsavailable();
-					}
-					if ($dnsavailable) {
-						$hostname = gethostbyaddr($item['ip']);
-						if (!empty($hostname)) {
-							$item['hostname'] = $hostname;
-						}
+				if ($dnsavailable && empty($item['hostname'])) {
+					$hostname = resolve_address($item['ip']);
+					if (!empty($hostname)) {
+						$item['hostname'] = $hostname;
 					}
 				}
 				$leases['lease'][] = $item;
@@ -1385,7 +1383,7 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	$gateways_arr = return_gateways_array(false, true);
+	$gateways_arr = get_gateways(GW_CACHE_LOCALHOST);
 	foreach ($gateways_arr as $gateway) {
 		// setup static interface routes for nonlocal gateways
 		if (isset($gateway["nonlocalgateway"])) {
@@ -1414,7 +1412,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 
 	$static_routes = get_staticroutes(false, true);
 	if (count($static_routes)) {
-		$gateways_arr = return_gateways_array(false, true);
+		$gateways_arr = get_gateways(GW_CACHE_LOCALHOST);
 
 		foreach ($static_routes as $rtent) {
 			/* Do not delete disabled routes,
@@ -1633,7 +1631,7 @@ function system_routing_enable() {
 function system_webgui_start() {
 	global $g;
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting webConfigurator...");
 	}
 
@@ -1648,6 +1646,7 @@ function system_webgui_start() {
 	if (config_get_path('system/webgui/protocol') == "https") {
 		// Ensure that we have a webConfigurator CERT
 		$cert = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		$cert = $cert['item'];
 		if (!is_array($cert) || !$cert['crt'] || !$cert['prv'] ||
 		    cert_chain_has_weak_digest($cert)) {
 			$cert = cert_create_selfsigned();
@@ -1681,7 +1680,7 @@ function system_webgui_start() {
 	/* start nginx */
 	$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-webConfigurator.conf");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		if ($res == 0) {
 			echo gettext("done.") . "\n";
 		} else {
@@ -1715,15 +1714,16 @@ function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
 		echo "get_dns_nameservers() being called $mt\n";
 	}
 
-	if ((((config_path_enabled('dnsmasq')) &&
+	if ((((config_path_enabled('dnsmasq') &&
 		  (config_get_path('dnsmasq/port', '53') == '53') &&
 		  in_array("lo0", explode(",", config_get_path('dnsmasq/interface', 'lo0'))))) ||
 	    (config_path_enabled('unbound') &&
 		 (config_get_path('unbound/port', '53') == '53') &&
 		 (in_array("lo0", explode(",", config_get_path('unbound/active_interface', 'lo0'))) ||
-		  in_array("all", explode(",", config_get_path('unbound/active_interface', 'all')), true))) &&
+		  in_array("all", explode(",", config_get_path('unbound/active_interface', 'all')), true)))) &&
 	    (config_get_path('system/dnslocalhost') != 'remote')) {
 		$dns_nameservers[] = "127.0.0.1";
+		$dns_nameservers[] = $add_v6_brackets ? '[::1]' : '::1';
 	}
 
 	if ($hostns || (config_get_path('system/dnslocalhost') != 'local')) {
@@ -1864,9 +1864,14 @@ EOD;
 	if ($captive_portal !== false) {
 		$nginx_config .= "\tlimit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
 		$nginx_config .= "\tkeepalive_timeout 0;\n";
+		$intercept_errors = "";
 	} else {
 		$nginx_config .= "\tkeepalive_timeout 75;\n";
+		$nginx_config .= "\terror_page 404 /404.html;\n";
+		$nginx_config .= "\terror_page 500 502 503 504 /50x.html;\n";
+		$intercept_errors = "\t\t\tfastcgi_intercept_errors on;\n";
 	}
+	$nginx_config .= "\tclient_header_timeout 10;\n";
 
 	if ($cert <> "" and $key <> "") {
 		$nginx_config .= "\n";
@@ -1894,6 +1899,7 @@ EOD;
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
 		$cert_temp = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		$cert_temp = $cert_temp['item'];
 		if ((config_get_path('system/webgui/ocsp-staple') == true) or
 		    (cert_get_ocspstaple($cert_temp['crt']) == true)) {
 			$nginx_config .= "\t\tssl_stapling on;\n";
@@ -1960,6 +1966,7 @@ EOD;
 			# Fix httpoxy - https://httpoxy.org/#fix-now
 			fastcgi_param  HTTP_PROXY  "";
 			fastcgi_read_timeout 180;
+{$intercept_errors}
 			include        /usr/local/etc/nginx/fastcgi_params;
 		}
 		location ~ (^/status$) {
@@ -2086,7 +2093,7 @@ function system_timezone_configure() {
 
 	$syscfg = config_get_path('system');
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Setting timezone...");
 	}
 
@@ -2096,7 +2103,7 @@ function system_timezone_configure() {
 	@file_put_contents("/var/db/zoneinfo", $timezone . "\n");
 	mwexec("/usr/sbin/tzsetup -r");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 }
@@ -2203,7 +2210,7 @@ function system_ntp_setup_gps($serialport) {
 		return false;
 	}
 
-	init_config_arr(array('ntpd', 'gps'));
+	config_init_path('ntpd/gps');
 	$serialports = get_serial_ports(true);
 
 	if (!array_key_exists($serialport, $serialports)) {
@@ -2330,7 +2337,7 @@ function system_ntp_configure() {
 
 	safe_mkdir($statsdir);
 
-	init_config_arr(array('ntpd'));
+	config_init_path('ntpd');
 
 	// ntpd is disabled, just stop it and return
 	if (config_get_path('ntpd/enable') == 'disabled') {
@@ -2344,7 +2351,7 @@ function system_ntp_configure() {
 		return;
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("Starting NTP Server...");
 	}
 
@@ -2727,7 +2734,7 @@ function system_ntp_configure() {
 	// Note that we are starting up
 	log_error("NTPD is starting up.");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 
@@ -2863,7 +2870,7 @@ function system_set_harddisk_standby() {
 	}
 
 	if (config_path_enabled('system', 'harddiskstandby')) {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext('Setting hard disk standby... ');
 		}
 
@@ -2881,13 +2888,13 @@ function system_set_harddisk_standby() {
 				foreach ($harddisks as $harddisk) {
 					mwexec("/sbin/camcontrol standby {$harddisk} -t {$standby}");
 				}
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					echo gettext("done.") . "\n";
 				}
-			} else if (platform_booting()) {
+			} else if (is_platform_booting()) {
 				echo gettext("failed!") . "\n";
 			}
-		} else if (platform_booting()) {
+		} else if (is_platform_booting()) {
 			echo gettext("failed!") . "\n";
 		}
 	}
@@ -3057,12 +3064,18 @@ function system_identify_specific_platform() {
 	unset($product);
 	unset($maker);
 	unset($bios);
+	unset($chassis);
 	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
+	$_gb = exec('/bin/kenv -q smbios.chassis.tag 2>/dev/null', $chassis);
 
 	$vm = get_single_sysctl('kern.vm_guest');
-	// Google GCP and newer AWS instances return kvm from this so we must detect them first.
+	// Google GCP, newer AWS instances and OCI return kvm from this so we must detect them first.
+
+	if ($chassis[0] == "OracleCloud.com") {
+		return (array('name' => 'Oracle', 'descr' => 'Oracle Cloud Infrastructure'));
+	}	
 
 	if ($maker[0] == "QEMU") {
 		return (array('name' => 'QEMU', 'descr' => 'QEMU Guest'));
@@ -3082,11 +3095,13 @@ function system_identify_specific_platform() {
 		break;
 	}
 
-	// AWS and GCP can also be identified via the bios version
+	// AWS, GCP and OCI can also be identified via the bios version
 	if (stripos($bios[0], "amazon") !== false) {
 		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));
 	} else  if (stripos($bios[0], "Google") !== false) {
 		return (array('name' => 'Google', 'descr' => 'Google Cloud Platform'));
+	} else  if (stripos($bios[0], "oracle") !== false) {
+		return (array('name' => 'Oracle', 'descr' => 'Oracle Cloud Infrastructure'));
 	}
 
 	switch ($product[0]) {
@@ -3166,9 +3181,14 @@ function system_identify_specific_platform() {
 				return (array('name' => '1540', 'descr' => 'Super Micro XG-1540'));
 			}
 			break;
-		case 'apu2':
 		case 'APU2':
-			return (array('name' => 'apu2', 'descr' => 'PC Engines APU2'));
+		case 'apu2':
+		case 'apu3':
+		case 'apu4':
+		case 'apu5':
+		case 'apu6':
+		case 'apu7':
+			return (array('name' => 'apu2', 'descr' => "PC Engines APU2 Platform (\"{$product[0]}\" model)"));
 			break;
 		case 'VirtualBox':
 			return (array('name' => 'VirtualBox', 'descr' => 'VirtualBox Virtual Machine'));
@@ -3250,55 +3270,6 @@ function system_get_arp_table($resolve_hostnames = false) {
 	}
 
 	return $arp_table;
-}
-
-function _getHostName($mac, $ip) {
-	global $dhcpmac, $dhcpip;
-
-	if ($dhcpmac[$mac]) {
-		return $dhcpmac[$mac];
-	} else if ($dhcpip[$ip]) {
-		return $dhcpip[$ip];
-	} else {
-		exec("/usr/bin/host -W 1 " . escapeshellarg($ip), $output);
-		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
-			if ($matches[1] <> $ip) {
-				return $matches[1];
-			}
-		}
-	}
-	return "";
-}
-
-function check_dnsavailable($proto='inet') {
-
-	if ($proto == 'inet') {
-		$gdns = array('8.8.8.8', '8.8.4.4');
-	} elseif ($proto == 'inet6') {
-		$gdns = array('2001:4860:4860::8888', '2001:4860:4860::8844');
-	} else {
-		$gdns = array('8.8.8.8', '8.8.4.4', '2001:4860:4860::8888', '2001:4860:4860::8844');
-	}
-	$nameservers = array_merge($gdns, get_dns_nameservers());
-	$test = 0;
-
-	foreach ($gdns as $dns) {
-		if ($dns == '127.0.0.1') {
-			continue;
-		} else {
-			$dns_result = trim(_getHostName("", $dns));
-			if (($test == '2') && ($dns_result == "")) {
-				return false;
-			} elseif ($dns_result == "") {
-				$test++;
-				continue;
-			} else {
-				return true;
-			}
-		}
-	}
-
-	return false;
 }
 
 ?>

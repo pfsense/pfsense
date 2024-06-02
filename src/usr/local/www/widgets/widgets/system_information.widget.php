@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * All rights reserved.
  *
@@ -56,7 +56,7 @@ $sysinfo_items = array(
 	);
 
 // Declared here so that JavaScript can access it
-$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa fa-cog fa-spin'></i>");
+$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-cog fa-spin'></i>");
 $state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
 
 if ($_REQUEST['getupdatestatus']) {
@@ -64,23 +64,35 @@ if ($_REQUEST['getupdatestatus']) {
 
 	$cache_file = g_get('version_cache_file');
 
-	if (isset($config['system']['firmware']['disablecheck'])) {
+	if (config_path_enabled('system/firmware', 'disablecheck')) {
 		exit;
 	}
 
 	/* If $_REQUEST['getupdatestatus'] == 2, force update */
 	$system_version = get_system_pkg_version(false,
-	    ($_REQUEST['getupdatestatus'] == 1));
+		($_REQUEST['getupdatestatus'] == 1),
+		false, /* get upgrades from other repos */
+		true /* see https://redmine.pfsense.org/issues/15055 */
+	);
 
-	if ($system_version === false) {
-		print(gettext("<i>Unable to check for updates</i>"));
-		exit;
+	unset($error);
+	if ($system_version === false || !is_array($system_version)) {
+		$error = gettext("<i>Unable to check for updates</i>");
 	}
-
-	if (!is_array($system_version) ||
-	    !isset($system_version['version']) ||
+	if (isset($system_version['pkg_busy']) ||
+	    isset($system_version['pkg_version_error'])) {
+		$error = gettext("<i>Update system is busy, try again later</i>");
+	}
+	if (!isset($system_version['version']) ||
 	    !isset($system_version['installed_version'])) {
-		print(gettext("<i>Error in version information</i>"));
+		$error = gettext("<i>Error in version information</i>");
+	}
+	if (isset($error)) {
+		print($error);
+?>
+		    &nbsp;
+		    <a id="updver" href="#" class="fa-solid fa-arrows-rotate"></a>
+<?php
 		exit;
 	}
 
@@ -90,7 +102,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<div>
 			<?=gettext("Version ")?>
 			<span class="text-success"><?=$system_version['version']?></span> <?=gettext("is available.")?>
-			<a class="fa fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
+			<a class="fa-solid fa-cloud-arrow-down fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
 		</div>
 <?php
 		break;
@@ -114,7 +126,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<?printf("%s %s", gettext("Version information updated at"),
 		    date("D M j G:i:s T Y", filemtime($cache_file)));?>
 		    &nbsp;
-		    <a id="updver" href="#" class="fa fa-refresh"></a>
+		    <a id="updver" href="#" class="fa-solid fa-arrows-rotate"></a>
 	</div>
 <?php
 	endif;
@@ -157,7 +169,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 ?>
 		<tr>
 			<th><?=gettext("Name");?></th>
-			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
+			<td><?php echo htmlspecialchars(config_get_path('system/hostname') . "." . config_get_path('system/domain')); ?></td>
 		</tr>
 <?php
 	endif;
@@ -206,9 +218,11 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		unset($biosvendor);
 		unset($biosversion);
 		unset($biosdate);
+		unset($bootmethod);
 		$_gb = exec('/bin/kenv -q smbios.bios.vendor 2>/dev/null', $biosvendor);
 		$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $biosversion);
 		$_gb = exec('/bin/kenv -q smbios.bios.reldate 2>/dev/null', $biosdate);
+		$bootmethod = get_single_sysctl("machdep.bootmethod");
 		/* Only display BIOS information if there is any to show. */
 		if (!empty($biosvendor[0]) || !empty($biosversion[0]) || !empty($biosdate[0])):
 ?>
@@ -223,6 +237,9 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<?php endif; ?>
 			<?php if (!empty($biosdate[0])): ?>
 				<?=gettext("Release Date: ");?><strong><?= date("D M j Y ",strtotime($biosdate[0]));?></strong><br/>
+			<?php endif; ?>
+			<?php if (!empty($bootmethod)): ?>
+				<?=gettext("Boot Method: ");?><strong><?= htmlspecialchars($bootmethod) ?></strong><br/>
 			<?php endif; ?>
 			</td>
 		</tr>
@@ -264,7 +281,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
-			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+			<?php if (!config_path_enabled('system/firmware', 'disablecheck')): ?>
 				<br /><br />
 				<div id='updatestatus'><?=$updtext?></div>
 			<?php endif; ?>
@@ -363,10 +380,10 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	if (!in_array('last_config_change', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>
-		<?php if ($config['revision']): ?>
+		<?php if (config_get_path('revision')): ?>
 		<tr>
 			<th><?=gettext("Last config change");?></th>
-			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
+			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval(config_get_path('revision/time'))));?></td>
 		</tr>
 		<?php endif; ?>
 <?php
@@ -381,25 +398,9 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 		// Calculate scaling factor
 		$adaptive = false;
-
-		if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
-			$maxstates="{$config['system']['maximumstates']}";
-		} else {
-			$maxstates=pfsense_default_state_size();
-		}
-
-		if (isset($config['system']['adaptivestart']) and $config['system']['adaptivestart'] > 0) {
-		    $adaptivestart = "{$config['system']['adaptivestart']}";
-		} else {
-		    $adaptivestart = intval($maxstates * 0.6);
-		}
-
-		if (isset($config['system']['adaptiveend']) and $config['system']['adaptiveend'] > 0) {
-		    $adaptiveend = "{$config['system']['adaptiveend']}";
-		} else {
-		    $adaptiveend = intval($maxstates * 1.2);
-		}
-
+		$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+		$adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
+		$adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
 		$adaptive_text = "";
 
 		if ($pfstatetext > $adaptivestart) {
@@ -487,7 +488,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="cpumeter"><?=sprintf(gettext("Retrieving CPU data %s"), "<i class=\"fa fa-gear fa-spin\"></i>")?></span>
+				<span id="cpumeter"><?=sprintf(gettext("Retrieving CPU data %s"), "<i class=\"fa-solid fa-gear fa-spin\"></i>")?></span>
 			</td>
 		</tr>
 <?php
@@ -576,8 +577,8 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -802,7 +803,7 @@ events.push(function() {
 	// Register the AJAX object
 	register_ajax(metersObject);
 
-<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+<?php if (!config_path_enabled('system/firmware', 'disablecheck')): ?>
 
 	// Callback function called by refresh system when data is retrieved
 	function version_callback(s) {

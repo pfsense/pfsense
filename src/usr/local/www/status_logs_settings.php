@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -137,7 +137,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	}
 
 	if (!$input_errors) {
-		init_config_arr(array('syslog'));
+		config_init_path('syslog');
 		config_set_path('syslog/reverse', $_POST['reverse'] ? true : false);
 		config_set_path('syslog/nentries', (int)$_POST['nentries']);
 		$pconfig['nentries'] = config_get_path('syslog/nentries');
@@ -231,7 +231,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$extra_save_msg = gettext("WebGUI process is restarting.");
 		}
 
-		filter_pflog_start(true);
+		filter_pflog_start();
 	}
 }
 
@@ -375,7 +375,7 @@ $section->addInput(new Form_Button(
 	'resetlogs',
 	'Reset Log Files',
 	null,
-	'fa-trash'
+	'fa-solid fa-trash-can'
 ))->addClass('btn-danger btn-sm')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if any setting changes have been made.');
 
 $form->add($section);

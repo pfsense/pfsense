@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -345,7 +345,7 @@ while ($counter < count($addresses)) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning');
 
 	$section->add($group);
@@ -357,7 +357,7 @@ if ((isset($id) && config_get_path('aliases/alias/' . $id)) && !preg_match("/url
 		'exportaliases',
 		'Export to file',
 		null,
-		'fa-download'
+		'fa-solid fa-download'
 	))->addClass('btn-primary');
 }
 
@@ -365,7 +365,7 @@ $form->addGlobal(new Form_Button(
 	'addrow',
 	$btn_str[$tab],
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success addbtn');
 
 $form->add($section);
@@ -402,7 +402,7 @@ events.push(function() {
 
 		var buttonstr = <?=json_encode($btn_str);?>;
 		$('.btn-success').prop('value', buttonstr[tab]);
-		$('.btn-success').html('<i class="fa fa-plus icon-embed-btn"></i>' + buttonstr[tab]);
+		$('.btn-success').html('<i class="fa-solid fa-plus icon-embed-btn"></i>' + buttonstr[tab]);
 
 		// Set the input field label by tab
 		var labelstr = <?=json_encode($label_str);?>;

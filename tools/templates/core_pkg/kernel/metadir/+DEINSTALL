@@ -4,17 +4,33 @@ if [ "${2}" != "DEINSTALL" ]; then
 	exit 0
 fi
 
-echo "===> Keeping a copy of current kernel in /boot/kernel.old"
+# Returns the current root filesystem
+get_rootfs() {
+	/sbin/mount | /usr/bin/awk '/ \/ / {print $1}'
+}
 
-# Check if there is a current kernel to be moved
-if [ ! -f ${PKG_ROOTDIR}/boot/kernel/kernel.gz ] \
-    && [ ! -f ${PKG_ROOTDIR}/boot/kernel/kernel ]; then
-	echo "ERROR: Current kernel not found"
-	exit 1
-fi
+# Test if root filesystem is on UFS
+is_root_on_ufs() {
+	echo "$( get_rootfs )" | grep -q -m 1 -E "^/dev/"
+}
 
-[ -d ${PKG_ROOTDIR}/boot/kernel.old ] \
-	&& rm -rf ${PKG_ROOTDIR}/boot/kernel.old
+# Only backup the kernel on UFS systems
+is_root_on_ufs && {
+	echo "===> Keeping a copy of current kernel in /boot/kernel.old"
 
-cp -Rp ${PKG_ROOTDIR}/boot/kernel ${PKG_ROOTDIR}/boot/kernel.old
-exit $?
+	# Check if there is a current kernel to be moved
+	if [ ! -f ${PKG_ROOTDIR}/boot/kernel/kernel.gz ] \
+		&& [ ! -f ${PKG_ROOTDIR}/boot/kernel/kernel ]; then
+		echo "ERROR: Current kernel not found"
+		exit 1
+	fi
+
+	[ -d ${PKG_ROOTDIR}/boot/kernel.old ] \
+		&& rm -rf ${PKG_ROOTDIR}/boot/kernel.old
+
+	cp -Rp ${PKG_ROOTDIR}/boot/kernel ${PKG_ROOTDIR}/boot/kernel.old
+	exit $?
+}
+
+# A no-op on ZFS systems
+exit 0

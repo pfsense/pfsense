@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -69,6 +69,12 @@ $icmplookup = array(
 	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
 );
 
+$statepolicy_values = [
+	''  => gettext('Use global default'),
+	'if-bound' => gettext('Interface Bound States'),
+	'floating' => gettext('Floating States'),
+];
+
 $statetype_values = array(
 	'keep state' => gettext('Keep'),
 	'sloppy state' => gettext('Sloppy'),
@@ -119,6 +125,7 @@ function is_aoadv_used($rule_config) {
 	    ($rule_config['tcpflags2'] != "") ||
 	    ($rule_config['tcpflags_any']) ||
 	    ($rule_config['nopfsync']) ||
+	    ($rule_config['statepolicy'] != "") ||
 	    (($rule_config['statetype'] != "") && ($rule_config['statetype'] != "keep state")) ||
 	    ($rule_config['nosync']) ||
 	    ($rule_config['vlanprio'] != "") ||
@@ -160,7 +167,7 @@ if (count($ostypes) > 2) {
 
 $ifdisp = get_configured_interface_with_descr();
 
-init_config_arr(array('filter', 'rule'));
+config_init_path('filter/rule');
 filter_rules_sort();
 $a_filter = config_get_path('filter/rule', []);
 
@@ -284,6 +291,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
 	$pconfig['max-src-conn'] = $a_filter[$id]['max-src-conn'];
 	$pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
+	$pconfig['statepolicy'] = $a_filter[$id]['statepolicy'];
 	$pconfig['statetype'] = $a_filter[$id]['statetype'];
 	$pconfig['statetimeout'] = $a_filter[$id]['statetimeout'];
 	$pconfig['nopfsync'] = isset($a_filter[$id]['nopfsync']);
@@ -828,6 +836,9 @@ if ($_POST['save']) {
 	if ($_POST['tagged'] && !is_validaliasname($_POST['tagged'])) {
 		$input_errors[] = gettext("Invalid tagged value.");
 	}
+	if ($_POST['statepolicy'] && !array_key_exists($_POST['statepolicy'], $statepolicy_values)) {
+		$input_errors[] = gettext("Invalid State Policy.");
+	}
 	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
 		$input_errors[] = gettext("Invalid State Type.");
 	}
@@ -929,6 +940,7 @@ if ($_POST['save']) {
 		$filterent['max-src-conn'] = $_POST['max-src-conn'];
 		$filterent['max-src-states'] = $_POST['max-src-states'];
 		$filterent['statetimeout'] = $_POST['statetimeout'];
+		$filterent['statepolicy'] = $_POST['statepolicy'];
 		$filterent['statetype'] = $_POST['statetype'];
 		$filterent['os'] = $_POST['os'];
 		if ($_POST['nopfsync'] <> "") {
@@ -1418,7 +1430,7 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 			'btnsrctoggle',
 			'',
 			null,
-			'fa-cog'
+			'fa-solid fa-cog'
 		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
 			'The %1$sSource Port Range%2$s for a connection is typically random '.
 			'and almost never equal to the destination port. '.
@@ -1492,7 +1504,7 @@ $btnadv = new Form_Button(
 	'btnadvopts',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -1628,6 +1640,16 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Select(
+	'statepolicy',
+	'State Policy',
+	(isset($pconfig['statepolicy'])) ? $pconfig['statepolicy'] : "",
+	$statepolicy_values
+))->setHelp('Optionally overrides the default state policy behavior to force a specific policy ' .
+		'for connections matching this rule. Only effective when rules keep state.%1$s' .
+		'The global default policy option is located at System > Advanced, Firewall &amp; NAT tab.',
+		'<br />');
+
+$section->addInput(new Form_Select(
 	'statetype',
 	'State type',
 	(isset($pconfig['statetype'])) ? $pconfig['statetype'] : "keep state",
@@ -1673,7 +1695,7 @@ $section->addInput(new Form_Select(
 // Build the gateway lists in JSON so the selector can be populated in JS
 $gwjson = '[{"name":"", "gateway":"Default", "family":"inet46"}';
 
-foreach (return_gateways_array() as $gwname => $gw) {
+foreach (get_gateways() as $gwname => $gw) {
 	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwname) . ', "gateway":' .
 	json_encode($gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr'])) . ',"family":' .
 	json_encode($gw['ipprotocol']) . '}';
@@ -1786,7 +1808,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -1859,7 +1881,7 @@ events.push(function() {
 			text = "<?=gettext('Display Advanced');?>";
 		}
 
-		$('#btnsrctoggle').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnsrctoggle').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {

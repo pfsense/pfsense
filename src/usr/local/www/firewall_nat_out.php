@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,8 +41,7 @@ require_once("firewall_nat_out.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-init_config_arr(array('nat', 'outbound', 'rule'));
-$a_out = &$config['nat']['outbound']['rule'];
+config_init_path('nat/outbound/rule');
 $nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
@@ -53,11 +52,11 @@ if (isset($_REQUEST['order-store'])) {
 	outNATrulesreorder($_POST);
 }
 
-if (!isset($config['nat']['outbound']['mode'])) {
+if (config_get_path('nat/outbound/mode') === null) {
 	config_set_path('nat/outbound/mode', "automatic");
 }
 
-$mode = $config['nat']['outbound']['mode'];
+$mode = config_get_path('nat/outbound/mode');
 
 if ($_POST['apply']) {
 	$retval = applyoutNATrules();
@@ -145,6 +144,10 @@ $section->add($group);
 
 $form->add($section);
 print($form);
+
+global $user_settings;
+$show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 ?>
 
 <form action="firewall_nat_out.php" method="post" name="iform">
@@ -171,8 +174,7 @@ print($form);
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-			$specialnet = get_specialnet('', $nat_tgttype_flags);
-			foreach ($a_out as $natent):
+			foreach (config_get_path('nat/outbound/rule', []) as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
 				$trclass = '';
@@ -202,19 +204,19 @@ print($form);
 <?php
 				if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("This rule is being ignored")?>"></i>
+							<i class="fa-solid <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("This rule is being ignored")?>"></i>
 <?php
 				else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+								<i class="fa-solid <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php
 				endif;
 ?>
 <?php 				if (isset($natent['nonat'])): ?>
-							&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: Traffic matching this rule is not translated.")?>"></i>
+							&nbsp;<i class="fa-regular fa-hand text-danger" title="<?=gettext("Negated: Traffic matching this rule is not translated.")?>"></i>
 <?php 				endif; ?>
 
 						</td>
@@ -224,21 +226,17 @@ print($form);
 						</td>
 
 						<td>
-<?php
-						if (isset($alias['src'])):
-?>
-						<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
-<?php
-						endif;
-?>
-						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
-<?php
-						if (isset($alias['src'])):
-?>
-						<i class='fa fa-pencil'></i></a>
-<?php
-						endif;
-?>
+							<?php if (isset($alias['src'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['source']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags))?>
+							<?php endif; ?>
 						</td>
 
 						<td>
@@ -258,7 +256,7 @@ print($form);
 <?php
 							if (isset($alias['srcport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							<i class='fa-solid fa-pencil'></i></a>
 <?php
 							endif;
 						}
@@ -266,21 +264,17 @@ print($form);
 						</td>
 
 						<td>
-<?php
-						if (isset($alias['dst'])):
-?>
-						<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
-<?php
-						endif;
-?>
-						<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
-<?php
-						if (isset($alias['dst'])):
-?>
-						<i class='fa fa-pencil'></i></a>
-<?php
-						endif;
-?>
+							<?php if (isset($alias['dst'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['destination']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags))?>
+							<?php endif; ?>
 						</td>
 
 						<td>
@@ -300,38 +294,26 @@ print($form);
 <?php
 							if (isset($alias['dstport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							<i class='fa-solid fa-pencil'></i></a>
 <?php
 							endif;
 						}
 ?>
 
 						</td>
-
 						<td>
-<?php
-						if (isset($natent['nonat'])) {
-							echo '<I>NO NAT</I>';
-						} elseif (empty($natent['target_subnet']) && array_key_exists($natent['target'], $specialnet)) {
-							echo htmlspecialchars($specialnet[$natent['target']]);
-						} elseif (!empty($natent['target'])) {
-							if (isset($alias['target'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
-<?php
-							endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target'] . ((!isset($alias['target']) && !empty($natent['target_subnet'])) ? '/' . $natent['target_subnet'] : '')))?>
-<?php
-							if (isset($alias['target'])):
-?>
-							<i class='fa fa-pencil'></i></a>
-<?php
-							endif;
-						}
-?>
+							<?php if (isset($natent['nonat'])): ?>
+								<i>NO NAT</i>
+							<?php elseif (isset($alias['target'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags)))?>
+								</a>
+							<?php elseif (empty($natent['target_subnet'])): ?>
+								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags))?>
+							<?php elseif (!empty($natent['target'])): ?>
+								<?=htmlspecialchars($natent['target'] . '/' . $natent['target_subnet'])?>
+							<?php endif; ?>
 						</td>
-
 						<td>
 <?php
 						if (!$natent['natport']) {
@@ -344,9 +326,9 @@ print($form);
 
 						<td>
 <?php						if (isset($natent['staticnatport'])) { ?>
-							<i class="fa fa-check" title="Keep Source Port Static"></i>
+							<i class="fa-solid fa-check" title="Keep Source Port Static"></i>
 <?php						} else { ?>
-							<i class="fa fa-random" title="Randomize Source Port"></i>
+							<i class="fa-solid fa-random" title="Randomize Source Port"></i>
 <?php						} ?>
 						</td>
 
@@ -356,9 +338,9 @@ print($form);
 
 						<!-- Action	 icons -->
 						<td>
-							<a class="fa fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
+							<a class="fa-regular fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -372,23 +354,23 @@ print($form);
 
 	<nav class="action-buttons">
 		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the top of the list')?>">
-			<i class="fa fa-level-up icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the end of the list')?>">
-			<i class="fa fa-level-down icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected map"); ?>" disabled title="<?=gettext('Delete selected maps')?>">
-			<i class="fa fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Toggle selected rules"); ?>" disabled title="<?=gettext('Toggle selected rules')?>">
-			<i class="fa fa-ban icon-embed-btn"></i>
+			<i class="fa-solid fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled name="order-store" title="<?=gettext('Save mapping order')?>">
-			<i class="fa fa-save icon-embed-btn"></i>
+			<i class="fa-solid fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 	</nav>
@@ -422,7 +404,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 					<tr>
 						<td>
-							<i class="fa fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
+							<i class="fa-solid fa-check" title="<?=gettext("automatic outbound nat")?>"></i>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
@@ -465,15 +447,13 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 						</td>
 						<td>
-<?php
-		if (isset($natent['nonat'])) {
-			echo 'NO NAT';
-		} elseif (array_key_exists($natent['target'], $specialnet)) {
-			echo htmlspecialchars($specialnet[$natent['target']]);
-		} elseif (!empty($natent['target'])) {
-			echo $natent['target'] . (!empty($natent['target_subnet']) ? '/' . $natent['target_subnet'] : '');
-		}
-?>
+							<?php if (isset($natent['nonat'])): ?>
+								<i>NO NAT</i>
+							<?php elseif (empty($natent['target_subnet'])): ?>
+								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags))?>
+							<?php elseif (!empty($natent['target'])): ?>
+								<?=htmlspecialchars($natent['target'] . '/' . $natent['target_subnet'])?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php
@@ -486,9 +466,9 @@ if ($mode == "automatic" || $mode == "hybrid"):
 						</td>
 						<td>
 <?php						if (isset($natent['staticnatport'])) { ?>
-							<i class="fa fa-check" title="Keep Source Port Static"></i>
+							<i class="fa-solid fa-check" title="Keep Source Port Static"></i>
 <?php						} else { ?>
-							<i class="fa fa-random" title="Randomize Source Port"></i>
+							<i class="fa-solid fa-random" title="Randomize Source Port"></i>
 <?php						} ?>
 						</td>
 						<td>
@@ -527,7 +507,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 //<![CDATA[
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',

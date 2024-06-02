@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
  * All rights reserved.
  *
@@ -33,6 +33,18 @@ require_once("guiconfig.inc");
 require_once("unbound.inc");
 require_once("pfsense-utils.inc");
 require_once("system.inc");
+
+$python_files = glob("{$g['unbound_chroot_path']}/*.py");
+$python_scripts = array();
+if (!empty($python_files)) {
+	foreach ($python_files as $file) {
+		$file = pathinfo($file, PATHINFO_FILENAME);
+		$python_scripts[$file] = $file;
+	}
+}
+else {
+	$python_scripts = array('' => 'No Python Module scripts found');
+}
 
 $pconfig['enable'] = config_path_enabled('unbound');
 $pconfig['enablessl'] = config_path_enabled('unbound', 'enablessl');
@@ -138,6 +150,12 @@ if ($_POST['save']) {
 
 	if (($pconfig['system_domain_local_zone_type'] == "redirect") && isset($pconfig['regdhcp'])) {
 		$input_errors[] = gettext('A System Domain Local Zone Type of "redirect" is not compatible with dynamic DHCP Registration.');
+	}
+
+	if (isset($pconfig['python']) &&
+	    !array_key_exists(array_get_path($pconfig, 'python_script'), $python_scripts)) {
+		array_del_path($pconfig, 'python_script');
+		$input_errors[] = gettext('The submitted Python Module Script does not exist or is invalid.');
 	}
 
 	$display_custom_options = $pconfig['custom_options'];
@@ -365,18 +383,6 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['python']
 ))->setHelp('Enable the Python Module.');
 
-$python_files = glob("{$g['unbound_chroot_path']}/*.py");
-$python_scripts = array();
-if (!empty($python_files)) {
-	foreach ($python_files as $file) {
-		$file = pathinfo($file, PATHINFO_FILENAME);
-		$python_scripts[$file] = $file;
-	}
-}
-else {
-	$python_scripts = array('' => 'No Python Module scripts found');
-}
-
 $section->addInput(new Form_Select(
 	'python_order',
 	'Python Module Order',
@@ -443,7 +449,7 @@ $btnadv = new Form_Button(
 	'btnadvcustom',
 	'Custom options',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -487,7 +493,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Custom Options');?>";
 		}
-		$('#btnadvcustom').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnadvcustom').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	// Un-hide additional controls
@@ -548,8 +554,8 @@ foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
+						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
 					</td>
 				</tr>
 
@@ -567,11 +573,11 @@ foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
-						<i class="fa fa-angle-double-right text-info"></i>
+						<i class="fa-solid fa-angle-double-right text-info"></i>
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
 					</td>
 				</tr>
 <?php
@@ -593,7 +599,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
@@ -614,7 +620,7 @@ endforeach;
 			<tbody>
 <?php
 $i = 0;
-foreach (config_get_path('unbound/domainoverrides') as $doment):
+foreach (config_get_path('unbound/domainoverrides', []) as $doment):
 ?>
 				<tr>
 					<td>
@@ -627,8 +633,8 @@ foreach (config_get_path('unbound/domainoverrides') as $doment):
 						<?=htmlspecialchars($doment['descr'])?>&nbsp;
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
+						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -651,7 +657,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

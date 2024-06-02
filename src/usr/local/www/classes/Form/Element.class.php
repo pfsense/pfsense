@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Sjon Hortensius
  * Copyright (c) 2015-2016 Electric Sheep Fencing
- * Copyright (c) 2015-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -83,7 +83,7 @@ class Form_Element
 
 		if (isset($this->_attributes['icon'])) {
 			$rv = '<'. $this->_tagName . $attributes .'>' .
-				'<i class="fa ' . $this->_attributes['icon'] . ' icon-embed-btn' . '">' . ' </i>' .
+				'<i class="' . $this->_attributes['icon'] . ' icon-embed-btn' . '">' . ' </i>' .
 				htmlspecialchars($this->_attributes['value']);
 
 			if ($this->_tagName != 'a') {

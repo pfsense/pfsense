@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -40,8 +40,7 @@ require_once("shaper.inc");
 require_once("itemid.inc");
 require_once("firewall_nat.inc");
 
-init_config_arr(array('nat', 'rule'));
-$a_nat = &$config['nat']['rule'];
+config_init_path('nat/rule');
 $rdr_lcltype_flags = [SPECIALNET_IFADDR];
 $rdr_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET];
 $rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
@@ -56,11 +55,11 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 } else if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
 	$retval = applyNATrules();
 } else if (($_POST['act'] == "del" || isset($_POST['del_x'])) && have_natpfruleint_access($natent['interface'])) {
-	if ($a_nat[$_POST['id']] || (is_array($_POST['rule']) && count($_POST['rule']))) {
+	if (config_get_path("nat/rule/{$_POST['id']}") || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		deleteNATrule($_POST);
 	}
 } elseif (($_POST['act'] == "toggle" || isset($_POST['toggle_x'])) && have_natpfruleint_access($natent['interface'])) {
-	if ($a_nat[$_POST['id']] || (is_array($_POST['rule']) && count($_POST['rule']))) {
+	if (config_get_path("nat/rule/{$_POST['id']}") || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		toggleNATrule($_POST);
 	}
 }
@@ -123,13 +122,16 @@ $columns_in_table = 13;
 <?php
 
 $nnats = $i = 0;
-$separators = $config['nat']['separator'];
+$separators = config_get_path('nat/separator');
 
 // Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
 // More efficient than looping through the list of separators on every row.
 $seprows = separator_rows($separators);
 
-foreach ($a_nat as $natent):
+global $user_settings;
+$show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
+foreach (config_get_path('nat/rule', []) as $natent):
 
 	// Display separator(s) for section beginning at rule n
 	if ($seprows[$nnats]) {
@@ -162,10 +164,6 @@ foreach ($a_nat as $natent):
 		$trclass = '';
 	}
 
-	$specialnets = get_specialnet('', $rdr_lcltype_flags);
-	if (array_key_exists($natent['target'], $specialnets)) {
-		$natent['target'] = $specialnets[$natent['target']];
-	}
 ?>
 
 					<tr id="fr<?=$nnats;?>" <?=$trclass?> onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
@@ -177,22 +175,22 @@ foreach ($a_nat as $natent):
 						<td>
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
-								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa-solid fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 							</a>
 <?php	endif; ?>
 <?php 	if (isset($natent['nordr'])) { ?>
-								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+								&nbsp;<i class="fa-regular fa-hand text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 	} ?>
 						</td>
 						<td>
 <?php
 	if ($natent['associated-rule-id'] == "pass"):
 ?>
-							<i class="fa fa-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
+							<i class="fa-solid fa-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
 <?php
 	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<i class="fa fa-random" title="<?=sprintf(gettext("Firewall rule ID %s is managed by this rule"), htmlspecialchars($natent['associated-rule-id']))?>"></i>
+							<i class="fa-solid fa-random" title="<?=sprintf(gettext("Firewall rule ID %s is managed by this rule"), htmlspecialchars($natent['associated-rule-id']))?>"></i>
 <?php
 	endif;
 ?>
@@ -214,23 +212,17 @@ foreach ($a_nat as $natent):
 						</td>
 
 						<td>
-
-
-<?php
-	if (isset($alias['src'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
-<?php
-	endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
-<?php
-	if (isset($alias['src'])):
-?>
-							</a>
-<?php
-	endif;
-?>
+							<?php if (isset($alias['src'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['source']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php
@@ -251,21 +243,17 @@ foreach ($a_nat as $natent):
 						</td>
 
 						<td>
-<?php
-	if (isset($alias['dst'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
-<?php
-	endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
-<?php
-	if (isset($alias['dst'])):
-?>
-							</a>
-<?php
-	endif;
-?>
+							<?php if (isset($alias['dst'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['destination']['network'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php
@@ -285,22 +273,13 @@ foreach ($a_nat as $natent):
 ?>
 						</td>
 						<td>
-<?php
-	if (isset($alias['target'])):
-?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true" >
-<?php
-	endif;
-?>
-
-							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target']))?>
-<?php
-	if (isset($alias['target'])):
-?>
-							</a>
-<?php
-	endif;
-?>
+							<?php if (isset($alias['target'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['network' => $natent['target']], $rdr_lcltype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $rdr_lcltype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php
@@ -325,9 +304,9 @@ foreach ($a_nat as $natent):
 						</td>
 						<td>
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
-							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
+							<a class="fa-regular fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
 <?php	else: ?>
 							-
 <?php	endif; ?>
@@ -352,27 +331,27 @@ if ($seprows[$nnats]) {
 <?php	if (have_natpfruleint_access($natent['interface'])): ?>
 	<nav class="action-buttons">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
-			<i class="fa fa-level-up icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
-			<i class="fa fa-level-down icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected rules')?>">
-			<i class="fa fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected rules"); ?>" title="<?=gettext('Toggle selected rules')?>">
-			<i class="fa fa-ban icon-embed-btn"></i>
+			<i class="fa-solid fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save rule order')?>">
-			<i class="fa fa-save icon-embed-btn"></i>
+			<i class="fa-solid fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 		<button type="submit" id="addsep" name="addsep" class="btn btn-sm btn-warning" title="<?=gettext('Add separator')?>">
-			<i class="fa fa-plus icon-embed-btn"></i>
+			<i class="fa-solid fa-plus icon-embed-btn"></i>
 			<?=gettext("Separator")?>
 		</button>
 	</nav>
@@ -391,7 +370,7 @@ dirty = false;
 
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -447,14 +426,14 @@ events.push(function() {
 </script>
 <?php
 
-if (count($a_nat) > 0) {
+if (count(config_get_path('nat/rule', [])) > 0) {
 ?>
 <!-- Legend -->
 <div>
 	<dl class="dl-horizontal responsive">
 		<dt><?=gettext('Legend')?></dt>					<dd></dd>
-		<dt><i class="fa fa-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
-		<dt><i class="fa fa-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
+		<dt><i class="fa-solid fa-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
+		<dt><i class="fa-solid fa-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
 	</dl>
 </div>
 

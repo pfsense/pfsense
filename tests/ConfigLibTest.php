@@ -36,6 +36,15 @@ class ConfigLibTest extends TestCase {
 		// Root element already exists
 		$this->assertEquals("barbaz", config_set_path("bar", "barbaz"));
 		$this->assertEquals("barbaz", config_get_path("bar", "barbaz"));
+		// Replace root
+		$expect = config_get_path('');
+		$expect['bangbaz'] = 'bar';
+		$this->assertIsArray(config_set_path('', $expect));
+		$this->assertEquals($expect, config_get_path(''));
+		// Array root is not treated as a list
+		$expect = config_get_path('');
+		$this->assertEquals(null, config_set_path('/', 'bang'));
+		$this->assertEquals($expect, config_get_path(''));		
 		// Parent doesn't exist
 		$this->assertEquals("bang", config_set_path("barbang/baz", "bang"));
 		$this->assertEquals("bang", config_get_path("barbang/baz"));
@@ -67,6 +76,14 @@ class ConfigLibTest extends TestCase {
 		// Sublist
 		$this->assertIsArray(config_set_path('sublist/0', ['0_foo' => '0_bar']));
 		$this->assertEquals('0_bar', config_get_path('sublist/0/0_foo'));
+		// Add to leaf node array
+		$this->assertIsArray(config_set_path('sublist', [['0_foo' => '0_bar']]));
+		$this->assertIsArray(config_set_path('sublist/', ['1_foo' => '1_bar']));
+		$this->assertEquals('1_bar', config_get_path('sublist/1/1_foo'));
+		// Scalar leaf node is replaced with array
+		$this->assertEquals('foo', config_set_path('sublist', 'foo'));
+		$this->assertIsArray(config_set_path('sublist/', ['0_foo' => '0_bar']));
+		$this->assertEquals('0_bar', config_get_path('sublist/0/0_foo'));
 	}
 
 	public function test_config_path_enabled(): void {
@@ -86,22 +103,21 @@ class ConfigLibTest extends TestCase {
 	}
 
 	public function test_config_del_path(): void {
-		global $config;
 		// Path not in config
 		$this->assertNull(config_del_path("foobang/fooband"));
 		// Scalar value
 		$this->assertEquals('bar', config_del_path('foo'));
-		$this->assertArrayNotHasKey('foo', $config);
+		$this->assertArrayNotHasKey('foo', config_get_path(''));
 		// Subarray
-		$expect = $config['bar'];
+		$expect = config_get_path('bar');
 		$val = config_del_path('bar');
 		$this->assertSame($expect, $val);
-		$this->assertArrayNotHasKey('bar', $config);
+		$this->assertArrayNotHasKey('bar', config_get_path(''));
 		// Sublist
-		$expect = $config['sublist'][0];
+		$expect = config_get_path('sublist/0');
 		$val = config_del_path('sublist/0');
 		$this->assertSame($expect, $val);
-		$this->assertArrayNotHasKey('0', $config['sublist']);
+		$this->assertArrayNotHasKey('0', config_get_path('sublist'));
 	}
 
 	public function setUp(): void {

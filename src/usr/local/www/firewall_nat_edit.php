@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -46,10 +46,9 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 
 $ifdisp = get_configured_interface_with_descr();
 
-init_config_arr(array('filter', 'rule'));
-init_config_arr(array('nat', 'separator'));
-init_config_arr(array('nat', 'rule'));
-$a_nat = config_get_path('nat/rule', []);
+config_init_path('filter/rule');
+config_init_path('nat/separator');
+config_init_path('nat/rule');
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -101,7 +100,7 @@ if ($_POST['save'] && !$input_errors) {
 
 
 function srctype_selected() {
-	global $pconfig, $config;
+	global $pconfig;
 
 	$selected = "";
 	if (array_key_exists($pconfig['src'], build_srctype_list())) {
@@ -120,7 +119,7 @@ function srctype_selected() {
 }
 
 function dsttype_selected() {
-	global $pconfig, $config;
+	global $pconfig;
 
 	$selected = "";
 	if (array_key_exists($pconfig['dst'], build_dsttype_list())) {
@@ -211,7 +210,7 @@ $btnsrcadv = new Form_Button(
 	'btnsrcadv',
 	'Display Advanced',
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnsrcadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -429,13 +428,13 @@ $section->addInput(new Form_Select(
 	)
 ));
 
-if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST['dup']))) {
+if (isset($id) && config_get_path("nat/rule/{$id}") && (!isset($_POST['dup']) || !is_numericint($_POST['dup']))) {
 
 	$hlpstr = '';
 	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
 	$rule_association = 'associated-rule-id';
 
-	if (is_array($config['filter']['rule'])) {
+	if (is_array(config_get_path('filter/rule'))) {
 		filter_rules_sort();
 
 		foreach (config_get_path('filter/rule', []) as $filter_id => $filter_rule) {
@@ -476,9 +475,9 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-gen_created_updated_fields($form, $a_nat[$id]['created'], $a_nat[$id]['updated']);
+gen_created_updated_fields($form, config_get_path("nat/rule/{$id}/created"), config_get_path("nat/rule/{$id}/updated"));
 
-if (isset($id) && $a_nat[$id]) {
+if (isset($id) && config_get_path("nat/rule/{$id}")) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -682,7 +681,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Hide Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnsrcadv').html('<i class="fa-solid fa-cog"></i> ' + text);
 	}
 
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------

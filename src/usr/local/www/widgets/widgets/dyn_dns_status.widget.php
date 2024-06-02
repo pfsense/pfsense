@@ -6,7 +6,7 @@
  * Copyright (c) 2013 Stanley P. Miller \ stan-qaz
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,10 +46,10 @@ if (!function_exists('get_dyndns_hostname_text')) {
 	}
 }
 
-init_config_arr(array('dyndnses', 'dyndns'));
+config_init_path('dyndnses/dyndns');
 $a_dyndns = config_get_path('dyndnses/dyndns');
 
-init_config_arr(array('dnsupdates', 'dnsupdate'));
+config_init_path('dnsupdates/dnsupdate');
 $a_rfc2136 = config_get_path('dnsupdates/dnsupdate');
 
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
@@ -273,8 +273,8 @@ if (!function_exists('get_dyndns_service_text')) {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

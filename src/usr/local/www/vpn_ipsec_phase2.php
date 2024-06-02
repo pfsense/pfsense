@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -40,11 +40,11 @@ require_once("vpn.inc");
 
 global $p2_pfskeygroups;
 $ipsec_lidtype_flags = [SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
-$ipsec_nlitype_flags = [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
+$ipsec_nlitype_flags = [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET];
 
-init_config_arr(array('ipsec', 'client'));
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
+config_init_path('ipsec/client');
+config_init_path('ipsec/phase1');
+config_init_path('ipsec/phase2');
 
 if (!empty($_REQUEST['p2index'])) {
 	$uindex = $_REQUEST['p2index'];
@@ -457,9 +457,7 @@ if ($_POST['save']) {
 		if ($p2index !== null && config_get_path('ipsec/phase2/' . $p2index)) {
 			config_set_path('ipsec/phase2/' . $p2index, $ph2ent);
 		} else {
-			$ph2s = config_get_path('ipsec/phase2', []);
-			$ph2s[] = $ph2ent;
-			config_set_path('ipsec/phase2', $ph2s);
+			config_set_path('ipsec/phase2/', $ph2ent);
 		}
 
 		write_config(gettext("Saved IPsec tunnel Phase 2 configuration."));
@@ -607,7 +605,7 @@ if (!empty($pconfig['ikeid'])) {
 	$section->addInput(new Form_StaticText(
 		'Phase 1',
 		$p1name .
-		' <a class="fa fa-pencil" href="vpn_ipsec_phase1.php?ikeid=' . $p1['ikeid'] . '" title="' . gettext("Edit Phase 1 Entry") . '"></a>'
+		' <a class="fa-solid fa-pencil" href="vpn_ipsec_phase1.php?ikeid=' . $p1['ikeid'] . '" title="' . gettext("Edit Phase 1 Entry") . '"></a>'
 	));
 }
 if (!empty($pconfig['reqid'])) {

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2010 Yehuda Katz
  * All rights reserved.
  *
@@ -26,11 +26,7 @@ require_once("guiconfig.inc");
 require_once("system.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 
-if (isset($config['wol']['wolentry']) && is_array($config['wol']['wolentry'])) {
-	$wolcomputers = config_get_path('wol/wolentry');
-} else {
-	$wolcomputers = array();
-}
+$wolcomputers = config_get_path('wol/wolentry', []);
 
 // Constructs a unique key that will identify a WoL entry in the filter list.
 if (!function_exists('get_wolent_key')) {
@@ -109,16 +105,16 @@ if (count($wolcomputers) > 0):
 			</td>
 			<td>
 		<?php if ($status == 'expires'): ?>
-				<i class="fa fa-arrow-up text-success" data-toggle="tooltip" title="<?= gettext("Online") ?>"></i>
+				<i class="fa-solid fa-arrow-up text-success" data-toggle="tooltip" title="<?= gettext("Online") ?>"></i>
 		<?php elseif ($status == 'permanent'): ?>
-				<i class="fa fa-arrow-up text-success" data-toggle="tooltip" title="<?= gettext("Static ARP") ?>"></i>
+				<i class="fa-solid fa-arrow-up text-success" data-toggle="tooltip" title="<?= gettext("Static ARP") ?>"></i>
 		<?php else: ?>
-				<i class="fa fa-arrow-down text-danger" data-toggle="tooltip" title="<?= gettext("Offline") ?>"></i>
+				<i class="fa-solid fa-arrow-down text-danger" data-toggle="tooltip" title="<?= gettext("Offline") ?>"></i>
 		<?php endif; ?>
 			</td>
 			<td>
 				<a href="services_wol.php?mac=<?= $wolent['mac'] ?>&amp;if=<?= $wolent['interface']?>" usepost>
-				<i class="fa fa-power-off" data-toggle="tooltip" title="<?= gettext("Wake up!") ?>"></i>
+				<i class="fa-solid fa-power-off" data-toggle="tooltip" title="<?= gettext("Wake up!") ?>"></i>
 				</a>
 			</td>
 		</tr>
@@ -139,15 +135,13 @@ endif;
 </table>
 <?php
 $dhcpd_enabled = false;
-if (is_array($config['dhcpd'])) {
-	foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
-		if (empty($dhcp)) {
-			continue;
-		}
-		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
-			$dhcpd_enabled = true;
-			break;
-		}
+foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
+	if (empty($dhcp)) {
+		continue;
+	}
+	if (isset($dhcp['enable']) && config_path_enabled("interfaces/{$dhcpif}")) {
+		$dhcpd_enabled = true;
+		break;
 	}
 }
 ?>
@@ -197,8 +191,8 @@ if (is_array($config['dhcpd'])) {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -175,7 +175,7 @@ function stat_block($summary, $stat, $num) {
 			$numentries++;
 			$outstr = $k[$i];
 			if (is_ipaddr($outstr)) {
-				print('<tr><td>' . $outstr . '</td>' . '<td>' . $summary[$stat][$k[$i]] . '</td><td><a href="diag_dns.php?host=' . $outstr . '" class="btn btn-xs btn-primary" title="' . gettext("Reverse Resolve with DNS") . '"><i class="fa fa-search icon-embed-btn"></i>' . gettext("Lookup") . '</a></td></tr>');
+				print('<tr><td>' . $outstr . '</td>' . '<td>' . $summary[$stat][$k[$i]] . '</td><td><a href="diag_dns.php?host=' . $outstr . '" class="btn btn-xs btn-primary" title="' . gettext("Reverse Resolve with DNS") . '"><i class="fa-solid fa-search icon-embed-btn"></i>' . gettext("Lookup") . '</a></td></tr>');
 
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);

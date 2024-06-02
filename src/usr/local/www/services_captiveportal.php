@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -104,9 +104,6 @@ switch ($action) {
 	default:
 		/* Do nothing, no match */
 }
-
-$a_ca = config_get_path('ca', []);
-$a_cert = config_get_path('cert', []);
 
 $cpzoneid = $pconfig['zoneid'] = config_get_path("captiveportal/{$cpzone}/zoneid");
 $pconfig['descr'] = config_get_path("captiveportal/{$cpzone}/descr");
@@ -782,28 +779,28 @@ if ($pconfig['page']['htmltext']) {
 		'btnliveview',
 		'Live View',
 		$href,
-		'fa-file-text-o'
+		'fa-regular fa-file-lines'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btnview',
 		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewhtmlhtml',
-		'fa-file-text-o'
+		'fa-regular fa-file-lines'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
 		'Download',
 		'?zone=' . $cpzone . '&act=gethtmlhtml',
-		'fa-download'
+		'fa-solid fa-download'
 	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
 		'Restore Default Page',
 		'?zone=' . $cpzone . '&act=delhtmlhtml',
-		'fa-undo'
+		'fa-solid fa-undo'
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 	$section->add($group);
 }
@@ -823,21 +820,21 @@ if ($pconfig['page']['errtext']) {
 		'btnview',
 		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewerrhtml',
-		'fa-file-text-o'
+		'fa-regular fa-file-lines'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
 		'Download',
 		'?zone=' . $cpzone . '&act=geterrhtml',
-		'fa-download'
+		'fa-solid fa-download'
 	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
 		'Restore Default Page',
 		'?zone=' . $cpzone . '&act=delerrhtml',
-		'fa-undo'
+		'fa-solid fa-undo'
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 	$section->add($group);
 }
@@ -855,21 +852,21 @@ if ($pconfig['page']['logouttext']) {
 		'btnview',
 		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewlogouthtml',
-		'fa-file-text-o'
+		'fa-regular fa-file-lines'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
 		'Download',
 		'?zone=' . $cpzone . '&act=getlogouthtml',
-		'fa-download'
+		'fa-solid fa-download'
 	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
 		'Restore Default Page',
 		'?zone=' . $cpzone . '&act=dellogouthtml',
-		'fa-undo'
+		'fa-solid fa-undo'
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 	$section->add($group);
 }

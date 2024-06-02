@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+		<link rel="stylesheet" href="/css/login.css" type="text/css">
+		<title>50x Error</title>
+		<script type="text/javascript">
+			//<![CDATA{
+			var events = events || [];
+			//]]>
+		</script>
+		<script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
+		<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+		<script>
+			$(function(){
+				$("#logodiv").load("logo.svg");
+			});
+		</script>
+
+	</head>
+
+	<body id="login">
+		<div id="total">
+			<header>
+				<div id="headerrow">
+					<div class="row">
+						<div class="col-sm-4">
+							<div id="logodiv" style="text-align:center" class="nowarning">
+							</div>
+						</div>
+						<div class="col-sm-4 nowarning msgbox text-center text-danger">
+							The web server encountered an error processing this request.<br/>
+							<br/>
+							Check the <a href="/crash_reporter.php">Crash Reporter</a> for details.
+						</div>
+						<div class="col-sm-4 nowarning msgbox text-center">
+							<h4>50x Error</h4>
+						</div>
+					</div>
+				</div>
+			</header>
+			<div style="background: #1e3f75;" class="pagebody">
+				<div class="col-sm-4"></div>
+				<div class="col-sm-4 logoCol">
+					<div class="loginCont center-block text-center">
+						<strong><a href="/">Return to Dashboard</a></strong>
+					</div>
+				</div>
+				<div class="col-sm-4"></div>
+			</div>
+			<footer id="3">
+				<div id="footertext">
+					<p class="text-muted">
+						<a target="_blank" href="https://pfsense.org">pfSense</a>
+						software is developed and maintained by
+						<a target="_blank" href="https://netgate.com">Netgate</a>.
+						&copy; ESF 2004 - 2024
+						<a target="_blank" href="https://pfsense.org/license">View license</a>.
+					</p>
+				</div>
+			</footer>
+		</div>
+	</body>
+</html>

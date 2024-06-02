@@ -3,7 +3,7 @@
  * firewall_virtual_ip.inc.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,7 +54,7 @@ function getVIPs($json = false) {
 function saveVIP($post, $json = false) {
 	global $g;
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	$a_vip = config_get_path('virtualip/vip');
 	$rv = array();
 	$id = $post['id'];
@@ -287,7 +287,7 @@ function saveVIP($post, $json = false) {
 function applyVIP() {
 	global $g;
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	$a_vip = config_get_path('virtualip/vip');
 	$rv = array();
 
@@ -353,7 +353,7 @@ function deleteVIP($id, $json = false) {
 	$rv = array();
 	$input_errors = array();
 
-	init_config_arr(array('virtualip', 'vip'));
+	config_init_path('virtualip/vip');
 	$a_vip = config_get_path('virtualip/vip');
 
 	if ($a_vip[$id]) {
@@ -395,7 +395,7 @@ function deleteVIP($id, $json = false) {
 			}
 		}
 
-		init_config_arr(array('ipsec', 'phase1'));
+		config_init_path('ipsec/phase1');
 		foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 			if (!isset($ph1ent['disabled'])) {
 				foreach (explode(',', ipsec_get_phase1_src($ph1ent)) as $ifip) {
@@ -517,6 +517,7 @@ function deleteVIP($id, $json = false) {
 			if (!$json) {
 				phpsession_begin();
 				$user = getUserEntry($_SESSION['Username']);
+				$user = $user['item'];
 
 				if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 					header("Location: firewall_virtual_ip.php");
@@ -526,6 +527,11 @@ function deleteVIP($id, $json = false) {
 				phpsession_end();
 			}
 
+			config_del_path("virtualip/vip/{$id}");
+			if (count($a_vip) == 0) {
+				config_del_path("virtualip/vip");
+			}
+			write_config(gettext("Deleted a virtual IP."));
 
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$id]['mode'] == "proxyarp") {
@@ -534,12 +540,6 @@ function deleteVIP($id, $json = false) {
 			} else {
 				interface_vip_bring_down($a_vip[$id]);
 			}
-
-			config_del_path("virtualip/vip/{$id}");
-			if (count($a_vip) == 0) {
-				config_del_path("virtualip/vip");
-			}
-			write_config(gettext("Deleted a virtual IP."));
 
 			/* Reload filter since removed address may trigger changes in rules
 			 * https://redmine.pfsense.org/issues/13908 */

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -38,7 +38,7 @@ require_once('config.lib.inc');
 require_once('guiconfig.inc');
 
 $allow_query = !config_path_enabled('ntpd','noquery');
-foreach (config_get_path('ntpd/restrictions/row') as $v) {
+foreach (config_get_path('ntpd/restrictions/row', []) as $v) {
 	if (ip_in_subnet('127.0.0.1', "{$v['acl_network']}/{$v['mask']}") || 
 		ip_in_subnet('::1', "{$v['acl_network']}/{$v['mask']}")) {
 		$allow_query = !isset($v['noquery']);

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004-2006 T. Lechat <dev@lechat.org>
  * Copyright (c) 2004-2006 Jonathan Watt <jwatt@jwatt.org>
  * All rights reserved.
@@ -49,7 +49,7 @@ $ifnum = get_real_interface($ifnum);
 $ifname = @$_REQUEST["ifname"]?$_REQUEST["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
-if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
+if (config_get_path('widgets/trafficgraphs/scale_type') !== null) {
 	$scale_type = config_get_path('widgets/trafficgraphs/scale_type');
 } else {
 	$scale_type = "up";

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -77,13 +77,6 @@ if ($console) {
 /* Set up all of the commands we want to execute. */
 
 /* OS stats/info */
-if (function_exists("system_get_thothid") &&
-    (php_uname("m") == "arm64")) {
-	$thothid = system_get_thothid();
-	if (!empty($thothid)) {
-		status_cmd_define("Product-Public Key", "/usr/local/sbin/ping-auth -p");
-	}
-}
 
 status_cmd_define("OS-Uptime", "/usr/bin/uptime");
 status_cmd_define("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
@@ -160,16 +153,37 @@ status_cmd_define("DNS-Resolver Access Lists", "/bin/cat /var/unbound/access_lis
 status_cmd_define("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.conf");
 status_cmd_define("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
 status_cmd_define("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
-status_cmd_define("DHCP-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
-status_cmd_define("DHCP-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
-status_cmd_define("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
-status_cmd_define("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
-status_cmd_define("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
-status_cmd_define("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
-status_cmd_define("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
-status_cmd_define("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
-status_cmd_define("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
-status_cmd_define("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
+
+if (file_exists("/var/dhcpd/etc/dhcpd.conf")) {
+	status_cmd_define("DHCP-ISC-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
+}
+if (file_exists("/var/dhcpd/etc/dhcpdv6.conf")) {
+	status_cmd_define("DHCP-ISC-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
+}
+if (file_exists("/usr/local/etc/kea/kea-dhcp4.conf") &&
+    !compare_files("/usr/local/etc/kea/kea-dhcp4.conf", "/usr/local/etc/kea/kea-dhcp4.conf.sample")) {
+	status_cmd_define("DHCP-Kea-IPv4 Configuration", '/bin/cat /usr/local/etc/kea/kea-dhcp4.conf');
+}
+if (file_exists("/usr/local/etc/kea/kea-dhcp6.conf") &&
+    !compare_files("/usr/local/etc/kea/kea-dhcp6.conf", "/usr/local/etc/kea/kea-dhcp6.conf.sample")) {
+	status_cmd_define("DHCP-Kea-IPv6 Configuration", '/bin/cat /usr/local/etc/kea/kea-dhcp6.conf');
+}
+
+if (file_exists("/var/etc/ipsec/strongswan.conf")) {
+	status_cmd_define("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
+}
+if (file_exists("/var/etc/ipsec/swanctl.conf")) {
+	status_cmd_define("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
+}
+if (file_exists("/var/run/charon.vici")) {
+	status_cmd_define("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
+	status_cmd_define("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
+	status_cmd_define("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
+	status_cmd_define("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
+	status_cmd_define("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
+	status_cmd_define("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
+}
+
 status_cmd_define("IPsec-SPD", "/sbin/setkey -DP");
 status_cmd_define("IPsec-SAD", "/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {
@@ -183,6 +197,9 @@ if (file_exists("/boot/loader.conf")) {
 }
 if (file_exists("/boot/loader.conf.local")) {
 	status_cmd_define("OS-Boot Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
+}
+if (file_exists("/boot/loader.conf.lua")) {
+	status_cmd_define("OS-Boot Loader Configuration (Lua)", "/bin/cat /boot/loader.conf.lua");
 }
 if (file_exists("/var/etc/filterdns.conf")) {
 	status_cmd_define("DNS-filterdns Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
@@ -259,6 +276,14 @@ status_cmd_define("Disk-GEOM Label Status", "/sbin/geom label status");
 status_cmd_define("Disk-GEOM Label Details", "/sbin/geom label list");
 status_cmd_define("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
+/* Items specific to EFI */
+if (get_single_sysctl("machdep.bootmethod") == "UEFI") {
+	/* Basic EFI boot list is easier to read but only includes active entries */
+	status_cmd_define("EFI-Boot Manager List", "/usr/sbin/efibootmgr");
+	/* Verbose EFI boot list has a lot more detail but is more difficult to read */
+	status_cmd_define("EFI-Boot Manager List (Verbose)", "/usr/sbin/efibootmgr -v");
+}
+
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
@@ -276,7 +301,7 @@ include("head.inc"); ?>
 	'<br />' .
 	sprintf(gettext('When the page has finished loading, the output is stored in %1$s. It may be downloaded via scp or using this button: '), $output_file) .
 	' <button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">' .
-	'<i class="fa fa-download icon-embed-btn"></i>' .
+	'<i class="fa-solid fa-download icon-embed-btn"></i>' .
 	gettext("Download") .
 	'</button>'); ?>
 

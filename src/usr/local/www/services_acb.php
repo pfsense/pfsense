@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -230,7 +230,7 @@ if ($_REQUEST['download']) {
 
 // $confvers must be populated viewing info but there were errors
 $confvers = array();
-if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable()) {
+if ((!($_REQUEST['download']) || $input_errors) && resolve_address('acb.netgate.com')) {
 	// Populate available backups
 	$curl_session = curl_init();
 
@@ -307,7 +307,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div id="loading">
-	<i class="fa fa-spinner fa-spin"></i> Loading, please wait...
+	<i class="fa-solid fa-spinner fa-spin"></i> Loading, please wait...
 </div>
 
 
@@ -355,7 +355,7 @@ $form->add($section);
 print($form);
 
 ?>
-<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="services_acb.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa fa-undo"></i> Install this revision</a>
+<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="services_acb.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa-solid fa-undo"></i> Install this revision</a>
 
 <?php else:
 
@@ -375,14 +375,14 @@ $group->add(new Form_Button(
 	'upduserkey',
 	'Submit',
 	null,
-	'fa-save'
+	'fa-solid fa-save'
 ))->addClass('btn-success btn-xs');
 
 $group->add(new Form_Button(
 	'restore',
 	'Reset',
 	null,
-	'fa-refresh'
+	'fa-solid fa-arrows-rotate'
 ))->addClass('btn-info btn-xs');
 
 $section2->add($group);
@@ -423,12 +423,12 @@ print('</div>');
 						<td><?= $cv['localtime']; ?></td>
 						<td><?= $cv['reason']; ?></td>
 						<td>
-							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&newver=<?=urlencode($cv['time'])?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
-							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&reason=<?=urlencode($cv['reason'])?>"></a>
+							<a class="fa-solid fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&newver=<?=urlencode($cv['time'])?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
+							<a class="fa-solid fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&reason=<?=urlencode($cv['reason'])?>"></a>
 <?php
 		if ($userkey == $origkey) {
 ?>
-							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?>"></a>
+							<a class="fa-solid fa-trash-can"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?>"></a>
 <?php 	} ?>
 						</td>
 					</tr>

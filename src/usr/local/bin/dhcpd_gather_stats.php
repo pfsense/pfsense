@@ -5,7 +5,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2013-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ $result['active'] = "NaN";
 $result['static'] = "NaN";
 $result['range'] = "NaN";
 
-if (is_array($config['dhcpd'][$argv[1]])) {
+if (is_array(config_get_path("dhcpd/{$argv[1]}"))) {
 
 	$dhcpif = $argv[1] ;
 	$leases = system_get_dhcpleases(false);
@@ -44,8 +44,8 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 	$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
 
 	$result['range'] = ip_range_size_v4(
-	    $config['dhcpd'][$dhcpif]['range']['from'],
-	    $config['dhcpd'][$dhcpif]['range']['to']);
+	    config_get_path("dhcpd/{$dhcpif}/range/from"),
+	    config_get_path("dhcpd/{$dhcpif}/range/to"));
 
 	/*
 	 * Translate these once so we don't do it over and over in the loops
@@ -62,8 +62,8 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 		}
 		if ($data['act'] != $static_string) {
 			if (is_inrange_v4($data['ip'],
-			    $config['dhcpd'][$dhcpif]['range']['from'],
-			    $config['dhcpd'][$dhcpif]['range']['to'])) {
+			    config_get_path("dhcpd/{$dhcpif}/range/from"),
+			    config_get_path("dhcpd/{$dhcpif}/range/to"))) {
 				$result['active'] = intval($result['active']) +
 				    1;
 			}

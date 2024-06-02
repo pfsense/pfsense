@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
  * Copyright (c) 2015-2016 Electric Sheep Fencing
- * Copyright (c) 2015-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -191,7 +191,7 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 		$unboundcfg = config_get_path('unbound');
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
 	}
 
@@ -302,6 +302,7 @@ EOF;
 
 		// Lookup CA and Server Cert
 		$cert = lookup_cert($unboundcfg['sslcertref']);
+		$cert = $cert['item'];
 		$ca = ca_chain($cert);
 		$cert_chain = base64_decode($cert['crt']);
 		if (!empty($ca)) {
@@ -657,6 +658,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 					unlink_if_exists($root_key_file);
 				}
 			}
+			// When there are conectivity issues, it may take ~10 seconds for the command to time out
 			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {
@@ -956,7 +958,7 @@ function unbound_acls_config($cfgsubdir = "") {
 			}
 		}
 		// OpenVPN CSO
-		init_config_arr(array('openvpn', 'openvpn-csc'));
+		config_init_path('openvpn/openvpn-csc');
 		foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 			if (is_array($ovpnent) && !isset($ovpnent['disable'])) {
 				if (!empty($ovpnent['tunnel_network'])) {

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -110,7 +110,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Filter',
 	null,
-	'fa-filter'
+	'fa-solid fa-filter'
 ))->addClass('btn-primary');
 
 print $form;

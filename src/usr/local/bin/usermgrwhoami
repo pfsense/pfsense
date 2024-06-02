@@ -1,0 +1,77 @@
+#!/usr/local/bin/php-cgi -q
+<?php
+/*
+ * usermgrwhoami
+ *
+ * Prints information about the current shell user from the User Manager
+ * authentication database.
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2024 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+require_once("config.inc");
+require_once("auth.inc");
+require_once("functions.inc");
+
+global $g, $argv, $userindex;
+
+function usermgrwhoami_usage() {
+	echo gettext("Usage") . ": usermgrwhoami\n";
+	echo gettext("Prints information about the current shell user from the User Manager authentication database.") . "\n";
+}
+
+if (count($argv) > 1) {
+	usermgrwhoami_usage();
+	exit(0);
+}
+
+/* Reindex and fetch the current user database */
+$userindex = index_users();
+
+/* Determine the shell user running this script */
+$shelluser = posix_getpwuid(posix_geteuid());
+$username = $shelluser['name'];
+
+/* The user 'root' in the shell is tied to the 'admin' user in the user manager. */
+if ($username == "root") {
+	$username = "admin";
+}
+
+/* Lookup user in the user manager */
+$user = getUserEntry($username);
+$user = $user['item'];
+/* Get the current group list for this user */
+$groups = local_user_get_groups($user, false);
+
+/* Print user name and ID */
+echo gettext('User Name') . ": {$user['name']}\n";
+echo gettext('User ID') . ": {$user['uid']}\n";
+
+/* Print the full name if one is set. */
+if (!empty($user['descr'])) {
+	echo gettext('Full Name') . ": {$user['descr']}\n";
+}
+
+/* Print the groups if the user is a member of any. */
+if (!empty($groups)) {
+	echo gettext('Groups') . ": " . implode(', ', $groups) . "\n";
+}
+
+/* Print the account expiration date if one is set. */
+if (!empty($user['expires'])) {
+	echo gettext('Expires') . "Expires: {$user['expires']}\n";
+}

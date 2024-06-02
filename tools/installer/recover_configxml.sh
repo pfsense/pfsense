@@ -1,6 +1,6 @@
 #!/bin/sh
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2017-2023 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2017-2024 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ done
 # Display a menu with all of the disk choices located above
 if [ -n "${target_list}" ]; then
 	exec 3>&1
-	recover_disk_choice=`echo ${target_list} | xargs dialog --backtitle "pfSense Installer" \
+	recover_disk_choice=`echo ${target_list} | xargs -o bsddialog --backtitle "pfSense Installer" \
 		--title "Recover config.xml and SSH keys" \
 		--menu "Select the partition containing config.xml" \
 		0 0 0 2>&1 1>&3` || exit 1

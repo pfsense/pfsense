@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,7 +75,7 @@ if ($_POST['carp_maintenancemode'] != "") {
 		interfaces_carp_set_maintenancemode($maintenancemode);
 	}
 	if ($status == 0) {
-		$_POST['disablecarp'] = "off";
+		$_POST['disablecarp'] = "disable";
 	}
 }
 
@@ -178,7 +178,7 @@ if ($carpcount == 0) {
 			"<br/><br/>" .
 			'<button type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
 			gettext("Reset CARP Demotion Status") .
-			'"><i class="fa fa-undo icon-embed-btn"></i>' .
+			'"><i class="fa-solid fa-undo icon-embed-btn"></i>' .
 			gettext("Reset CARP Demotion Status") .
 			'</button>',
 			'danger'
@@ -186,8 +186,8 @@ if ($carpcount == 0) {
 	}
 
 ?>
-				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? 'disable' : 'enable')?>" ><i class="fa fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
-				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? 'disable' : 'enable')?>" ><i class="fa fa-wrench icon-embed-btn"></i><?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
+				<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? 'disable' : 'enable')?>" ><i class="<?=($carp_enabled) ? 'fa-solid fa-ban' : 'fa-solid fa-check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
+				<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? 'disable' : 'enable')?>" ><i class="fa-solid fa-wrench icon-embed-btn"></i><?=(config_path_enabled('', 'virtualip_carp_maintenancemode') ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
 			</div>
 		</div>
 	</div>
@@ -217,15 +217,15 @@ if ($carpcount == 0) {
 		$aliases = find_ipalias("_vip{$carp['uniqid']}");
 
 		if ($carp_enabled == false) {
-			$icon = 'times-circle';
+			$icon = 'fa-solid fa-times-circle';
 			$status = "DISABLED";
 		} else {
 			if ($status == "MASTER") {
-				$icon = 'play-circle text-success';
+				$icon = 'fa-solid fa-play-circle text-success';
 			} else if ($status == "BACKUP") {
-				$icon = 'pause-circle text-warning';
+				$icon = 'fa-solid fa-pause-circle text-warning';
 			} else if ($status == "INIT") {
-				$icon = 'question-circle text-danger';
+				$icon = 'fa-solid fa-question-circle text-danger';
 			}
 		}
 ?>
@@ -240,7 +240,7 @@ if ($carpcount == 0) {
 ?>
 						</td>
 						<td><?=htmlspecialchars($carp['descr'])?></td>
-						<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>
+						<td><i class="<?=$icon?>"></i>&nbsp;<?=$status?></td>
 					</tr>
 <?php }?>
 				</tbody>

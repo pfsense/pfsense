@@ -1526,7 +1526,8 @@ function cert_get_cn($crt, $isref = false) {
 	if (is_array($sub)) {
 		foreach ($sub as $s) {
 			if (strtoupper($s['a']) == "CN") {
-				return $s['v'];
+				// Multiple CNs are not supported so use the first available; see RFC9525, RFC5280
+				return is_array($s['v']) ? $s['v'][array_key_first($s['v'])] : $s['v'];
 			}
 		}
 	}

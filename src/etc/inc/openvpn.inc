@@ -1121,7 +1121,7 @@ function openvpn_reconfigure($mode, $settings) {
 			} else {
 				$cert = lookup_cert($settings['certref']);
 				$cert = $cert['item'];
-				/* XXX: Seems not used at all! */
+				// The script 'openvpn.tls-verify.php' (called by 'ovpn_auth_verify') does not verify the CN - the CN is effectively unused.
 				$servercn = urlencode(cert_get_cn($cert['crt']));
 				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
 			}

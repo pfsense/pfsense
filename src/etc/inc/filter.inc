@@ -3574,8 +3574,9 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	}
 
 	/* State Tracking Options */
-	$rule_tracks_state = true;
+	$rule_tracks_state = false;
 	if ($type == "pass") {
+		$rule_tracks_state = true;
 		if (empty($rule['statetype'])) {
 			// Default to 'keep state'; works with TCP, UDP, and ICMP.
 			$aline['flags'] .= "keep state ";

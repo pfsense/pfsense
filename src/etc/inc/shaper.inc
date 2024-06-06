@@ -4619,7 +4619,7 @@ EOD;
 		if ($selectedScheduler["pie_pderand"]) {
 			$cflink['pie_pderand'] = $this->GetPIE_PDERAND();
 		}
-		config_get_path($cflink_path, $cflink);
+		config_set_path($cflink_path, $cflink);
 		/* End limiter queue patch */
 	}
 

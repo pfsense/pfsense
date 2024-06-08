@@ -128,9 +128,9 @@ function saveVIP($post, $json = false) {
 			$broadcast_addr = gen_subnetv6_max($post['subnet'], $post['subnet_bits']);
 		}
 
-		if (isset($network_addr) && $post['subnet'] == $network_addr) {
+		if (isset($network_addr) && !is_ipaddrv6($post['subnet']) && $post['subnet'] == $network_addr) {
 			$input_errors[] = gettext("The network address cannot be used for this VIP");
-		} else if (isset($broadcast_addr) && $post['subnet'] == $broadcast_addr) {
+		} else if (isset($broadcast_addr) && !is_ipaddrv6($post['subnet']) && $post['subnet'] == $broadcast_addr) {
 			$input_errors[] = gettext("The broadcast address cannot be used for this VIP");
 		}
 	}

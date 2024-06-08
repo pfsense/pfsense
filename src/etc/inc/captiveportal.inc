@@ -170,8 +170,8 @@ EOD;
 EOD;
 	}
 
-	if ($cpzone_config['auth_method'] != "none" && $cpzone_config['auth_method'] != "totp"){
-		if ($cpzone_config['auth_method'] == 'authserver' && !empty($cpzone_config['auth_server2'])) {
+	if ($cpzone_config['auth_method'] != "none"){
+		if ($cpzone_config['auth_method'] === 'authserver' && !empty($cpzone_config['auth_server2'])) {
 			$htmltext .= <<<EOD
 			<div class="auth_head_div">
 				<h6 class="auth_head">{$translated_text3}</h6>

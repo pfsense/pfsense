@@ -168,9 +168,10 @@ EOD;
 		$htmltext .= <<<EOD
 		<form name="login_form" method="post" action="\$PORTAL_ACTION\$">
 EOD;
+
 	}
 
-	if ($cpzone_config['auth_method'] != "none"){
+	if ($cpzone_config['auth_method'] != "none" && $cpzone_config['auth_method'] != "totp"){
 		if ($cpzone_config['auth_method'] === 'authserver' && !empty($cpzone_config['auth_server2'])) {
 			$htmltext .= <<<EOD
 			<div class="auth_head_div">

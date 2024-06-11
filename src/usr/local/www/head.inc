@@ -350,7 +350,7 @@ if (count(config_get_path('interfaces', [])) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
+	$services_menu[] = array(gettext("UPnP Port Mapping"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 
 $services_menu[] = array(gettext("Wake-on-LAN"), "/services_wol.php");

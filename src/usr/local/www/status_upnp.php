@@ -41,7 +41,7 @@ if ($_POST) {
 $rdr_entries = array();
 exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 
-$pgtitle = array(gettext("Status"), gettext("UPnP &amp; NAT-PMP"));
+$pgtitle = array(gettext("Status"), gettext("UPnP Port Mapping"));
 $shortcut_section = "upnp";
 
 include("head.inc");
@@ -53,7 +53,7 @@ if ($savemsg) {
 if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
     !config_path_enabled('installedpackages/miniupnpd/config/0')) {
 
-	print_info_box(sprintf(gettext('UPnP is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP &amp; NAT-PMP'), '</a>'), 'danger');
+	print_info_box(sprintf(gettext('UPnP is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP Port Mapping'), '</a>'), 'danger');
 	include("foot.inc");
 	exit;
 }
@@ -61,7 +61,7 @@ if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("UPnP &amp; NAT-PMP Rules")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("UPnP Port Mapping Rules")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>

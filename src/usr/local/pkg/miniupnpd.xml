@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <packagegui>
-	<title>Services/UPnP &amp; NAT-PMP</title>
+	<title>Services/UPnP Port Mapping</title>
 	<name>miniupnpd</name>
 	<version>20100712</version>
 	<include_file>/usr/local/pkg/miniupnpd.inc</include_file>
 	<menu>
-		<name>UPnP &amp; NAT-PMP</name>
-		<tooltiptext>Set UPnP &amp; NAT-PMP settings such as interfaces to listen on.</tooltiptext>
+		<name>UPnP Port Mapping</name>
+		<tooltiptext>Set UPnP Port Mapping settings such as interfaces to listen on.</tooltiptext>
 		<section>Services</section>
 		<url>/pkg_edit.php?xml=miniupnpd.xml&amp;id=0</url>
 	</menu>
@@ -17,7 +17,7 @@
 	</service>
 	<fields>
 		<field>
-			<name>UPnP &amp; NAT-PMP Settings</name>
+			<name>UPnP Port Mapping Settings</name>
 			<type>listtopic</type>
 			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 		</field>
@@ -29,14 +29,14 @@
 			<description>Enable UPnP &amp; NAT-PMP</description>
 		</field>
 		<field>
-			<fielddescr>UPnP Port Mapping</fielddescr>
+			<fielddescr>UPnP-IGD</fielddescr>
 			<fieldname>enable_upnp</fieldname>
 			<type>checkbox</type>
-			<description>Allow UPnP Port Mapping</description>
+			<description>Allow UPnP-IGD Port Mapping</description>
 			<sethelp>This protocol is often used by Microsoft-compatible systems.</sethelp>
 		</field>
 		<field>
-			<fielddescr>NAT-PMP Port Mapping</fielddescr>
+			<fielddescr>NAT-PMP</fielddescr>
 			<fieldname>enable_natpmp</fieldname>
 			<type>checkbox</type>
 			<description>Allow NAT-PMP Port Mapping</description>
@@ -56,7 +56,7 @@
 			<fieldname>iface_array</fieldname>
 			<default_value>lan</default_value>
 			<type>interfaces_selection</type>
-			<description>Select the internal interfaces, such as LAN, where UPnP/NAT-PMP clients reside. Use the CTRL or COMMAND key to select multiple interfaces.</description>
+			<description>Select the internal interfaces, such as LAN, where UPnP clients reside. Use the CTRL or COMMAND key to select multiple interfaces.</description>
 			<required/>
 			<multiple/>
 		</field>
@@ -88,13 +88,13 @@
 			<fielddescr>Log packets</fielddescr>
 			<fieldname>logpackets</fieldname>
 			<type>checkbox</type>
-			<description>Log packets handled by UPnP &amp; NAT-PMP rules.</description>
+			<description>Log packets handled by UPnP rules.</description>
 		</field>
 		<field>
 			<fielddescr>Uptime</fielddescr>
 			<fieldname>sysuptime</fieldname>
 			<type>checkbox</type>
-			<description>Use system uptime instead of UPnP &amp; NAT-PMP service uptime.</description>
+			<description>Use system uptime instead of the UPnP service uptime.</description>
 		</field>
 		<field>
 			<fielddescr>Custom presentation URL</fielddescr>
@@ -160,7 +160,7 @@
 			<fielddescr>Default Deny</fielddescr>
 			<fieldname>permdefault</fieldname>
 			<type>checkbox</type>
-			<description>Deny access to UPnP &amp; NAT-PMP by default.</description>
+			<description>Deny access to UPnP by default.</description>
 		</field>
 		<field>
 			<name>ACL Help</name>

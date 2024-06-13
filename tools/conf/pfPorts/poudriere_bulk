@@ -11,6 +11,7 @@ devel/pecl-xdebug
 devel/valgrind
 dns/%%PRODUCT_NAME%%-pkg-bind
 dns/dnstop
+dns/powerdns
 editors/nano
 editors/vim
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools

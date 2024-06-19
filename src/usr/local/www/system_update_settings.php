@@ -56,7 +56,7 @@ if ($_POST) {
 	foreach ($repos as $repo) {
 		if ($repo['name'] == $_POST['fwbranch']) {
 			config_set_path('system/pkg_repo_conf_path', $repo['path']);
-			pkg_switch_repo($repo['path'], $repo['name']);
+			pkg_switch_repo();
 			break;
 		}
 	}

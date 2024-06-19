@@ -1156,7 +1156,7 @@ function package_reinstall_all() {
 	if ($current_repo_path != $default_repo['path']) {
 		config_set_path('system/pkg_repo_conf_path', $default_repo['path']);
 		write_config( "Configured default pkg repo after restore");
-		pkg_switch_repo($default_repo['path'], $default_repo['name']);
+		pkg_switch_repo();
 	}
 
 	/* wait for internet connection */
@@ -1516,14 +1516,10 @@ function pkg_get_repo_help() {
 }
 
 /* Switch between stable and devel repos */
-function pkg_switch_repo($repo_path, $repo_name) {
+function pkg_switch_repo() {
 	global $g;
 
 	safe_mkdir("/usr/local/etc/pkg/repos");
-	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
-	$repo = "{$repo_path}/{$g['product_name']}-repo-{$repo_name}.conf";
-	@symlink($repo, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
-
 	/* Do not fetch new settings, only setup the repo pkg.conf. */
 	mwexec("/usr/local/sbin/{$g['product_name']}-repo-setup -U");
 

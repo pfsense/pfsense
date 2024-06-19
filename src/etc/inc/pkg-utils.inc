@@ -1154,7 +1154,7 @@ function package_reinstall_all() {
 	}
 
 	if ($current_repo_path != $default_repo['path']) {
-		config_set_path('system/pkg_repo_conf_path', $default_repo['path']);
+		config_set_path('system/pkg_repo_conf_path', $default_repo['name']);
 		write_config( "Configured default pkg repo after restore");
 		pkg_switch_repo();
 	}
@@ -1492,7 +1492,7 @@ function pkg_get_repo_name($path) {
 
 	$default = $repos[0]['name'];
 	foreach ($repos as $repo) {
-		if ($repo['path'] == $path) {
+		if (in_array($path, [$repo['path'], $repo['name']])) {
 			return $repo['name'];
 		}
 		if (isset($repo['default'])) {

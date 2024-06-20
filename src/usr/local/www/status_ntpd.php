@@ -52,10 +52,28 @@ if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
 		$inet_version = " -4";
 	}
 
-	exec('/usr/local/sbin/ntpq -pnw ' . $inet_version . ' | /usr/bin/tail +3 | /usr/bin/awk -v RS= \'{gsub(/\n[[:space:]][[:space:]]+/," ")}1\'', $ntpq_output);
+	exec('/usr/local/sbin/ntpq -pnw' . $inet_version . ' | /usr/bin/tail +3 | /usr/bin/awk -v RS= \'{gsub(/\n[[:space:]][[:space:]]+/," ")}1\'', $ntpq_output);
+	exec('/usr/local/sbin/ntpq -c associations' . $inet_version . ' | /usr/bin/tail +3 | /usr/bin/awk -v RS= \'{gsub(/\n[[:space:]][[:space:]]\n+/," ")}1\'', $ntpq_associations_output);
 
 	$ntpq_servers = array();
-	foreach ($ntpq_output as $line) {
+	$ntpq_server_responses = array();
+
+	foreach ($ntpq_associations_output as $i => $line) {
+		$associations_response = array();
+		$peerinfo = preg_split("/[\s\t]+/", $line);
+		$server['ind'] = $peerinfo[1];
+		$associations_response['assid'] = $peerinfo[2];
+		$associations_response['status_word'] = $peerinfo[3];
+		$associations_response['conf'] = $peerinfo[4];
+		$associations_response['reach'] = $peerinfo[5];
+		$associations_response['auth'] = $peerinfo[6];
+		$associations_response['condition'] = $peerinfo[7];
+		$associations_response['last_event'] = $peerinfo[8];
+		$associations_response['cnt'] = $peerinfo[9];
+		$ntpq_server_responses[$i] = $associations_response;
+	}
+
+	foreach ($ntpq_output as $i => $line) {
 		$server = array();
 		$status_char = substr($line, 0, 1);
 		$line = substr($line, 1);
@@ -71,6 +89,15 @@ if ($allow_query && (config_get_path('ntpd/enable') != 'disabled')) {
 		$server['delay'] = $peerinfo[7];
 		$server['offset'] = $peerinfo[8];
 		$server['jitter'] = $peerinfo[9];
+
+		$server['ind'] = $ntpq_server_responses[$i]['ind'];
+		$server['assid'] = $ntpq_server_responses[$i]['assid'];
+		$server['status_word'] = $ntpq_server_responses[$i]['status_word'];
+		$server['conf'] = $ntpq_server_responses[$i]['conf'];
+		$server['auth'] = $ntpq_server_responses[$i]['auth'];
+		$server['condition'] = $ntpq_server_responses[$i]['condition'];
+		$server['last_event'] = $ntpq_server_responses[$i]['last_event'];
+		$server['cnt'] = $ntpq_server_responses[$i]['cnt'];
 
 		switch ($status_char) {
 			case " ":
@@ -252,6 +279,9 @@ function print_status() {
 			print("<td>" . $server['delay'] . "</td>\n");
 			print("<td>" . $server['offset'] . "</td>\n");
 			print("<td>" . $server['jitter'] . "</td>\n");
+			print("<td>" . $server['assid'] . "</td>\n");
+			print("<td>" . $server['status_word'] . "</td>\n");
+			print("<td>" . $server['auth'] . "</td>\n");
 			print("</tr>\n");
 			$i++;
 		endforeach;
@@ -332,6 +362,9 @@ include("head.inc");
 					<th><?=gettext("Delay (ms)")?></th>
 					<th><?=gettext("Offset (ms)")?></th>
 					<th><?=gettext("Jitter (ms)")?></th>
+					<th><?=gettext("AssocID")?></th>
+					<th><?=gettext("Status Word")?></th>
+					<th><?=gettext("Auth")?></th>
 				</tr>
 			</thead>
 			<tbody id="ntpbody">

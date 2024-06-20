@@ -30,8 +30,9 @@ if ramdisk_check_size && ramdisk_try_mount tmp && ramdisk_try_mount var; then
 	/bin/mkdir -p /var/db /var/spool/lock
 	/usr/sbin/chown uucp:dialer /var/spool/lock
 	# Ensure vi's recover directory is present
-	/bin/mkdir -p /var/tmp/vi.recover/
-	/bin/mkdir -p /var/crash/
+	/bin/mkdir -p /var/tmp/vi.recover
+	/bin/mkdir -p /var/crash
+	/bin/mkdir -p /var/run
 	echo " done."
 else
 	/usr/bin/touch ${RAMDISK_FLAG_FILE}

@@ -643,6 +643,43 @@ function notify_via_slack($message, $force = false) {
 	return $err_msg;
 }
 
+/****f* notices/notify_via_webhook
+ * NAME
+ *   notify_via_webhook
+ * INPUTS
+ *	 notification string to send to Server via API
+ * RESULT
+ *   returns NULL if message was sent
+ ******/
+
+function notify_via_webhook($url, $message, $force = false) {
+    if (empty($url) || empty($message)) {
+        if ($force) {
+            return "URL or message is empty. Cannot send webhook notification.";
+        }
+        return;
+    }
+
+    $data = array(
+        "text" => $message
+    );
+
+    // Use the existing curl_post_notification function
+    $result = json_decode(curl_post_notification($url, $data), true);
+    if (is_array($result)) {
+        if ($result['ok']) {
+            unset($err_msg);
+        } else {
+            $err_msg = sprintf("Failed to send webhook notification. Error received was: %s", $result['error']);
+            log_error($err_msg);
+        }
+    } else {
+        $err_msg = "Webhook server did not return data in expected format!";
+        log_error($err_msg);
+    }
+    return $err_msg;
+}
+
 function curl_post_notification($url, $data = []) {
 	$conn = curl_init($url);
 	if (!empty($data)) {
@@ -663,4 +700,5 @@ function notify_all_remote($msg) {
 	notify_via_telegram($msg);
 	notify_via_pushover($msg);
 	notify_via_slack($msg);
+        notify_via_webhook($msg);
 }

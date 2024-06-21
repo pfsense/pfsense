@@ -200,8 +200,8 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		$input_errors[] = gettext("Proxy URL must be a valid IP address or FQDN.");
 	}
 
-	if (!empty($post['proxyuser']) && preg_match("/[^a-zA-Z0-9\.\-_@]/", $post['proxyuser'])) {
-		$input_errors[] = gettext("The proxy username contains invalid characters.");
+	if (!empty($post['proxyuser']) && empty($post['proxypass'])) {
+		$input_errors[] = gettext("A proxy password must be set when specifying a proxy username.");
 	}
 
 	if ($post['proxypass'] != $post['proxypass_confirm']) {

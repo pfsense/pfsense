@@ -3741,6 +3741,8 @@ function set_curlproxy(&$ch) {
 		$proxyuser = config_get_path('system/proxyuser');
 		$proxypass = config_get_path('system/proxypass');
 		if (!empty($proxyuser) && !empty($proxypass)) {
+			$proxyuser = rawurlencode($proxyuser);
+			$proxypass = rawurlencode($proxypass);
 			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$proxyuser}:{$proxypass}");
 		}

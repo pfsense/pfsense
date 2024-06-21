@@ -148,10 +148,7 @@ if ($_POST) {
 					config_set_path('ntpd/noselect', (config_get_path('ntpd/noselect') . "{$tserver} "));
 				}
 				if (isset($_POST["servauth{$i}"])) {
-					$config['ntpd']['isauth'] .= "{$tserver} ";
-				}
-				if (isset($_POST["servauth{$i}"])) {
-					$config['ntpd']['isauth'] .= "{$tserver} ";
+					config_set_path('ntpd/isauth', (config_get_path('ntpd/isauth') . "{$tserver} "));
 				}
 				if ($_POST["servistype{$i}"] == 'pool') {
 					config_set_path('ntpd/ispool', (config_get_path('ntpd/ispool') . "{$tserver} "));
@@ -357,7 +354,7 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		'servauth' . $counter,
 		null,
 		null,
-		isset($config['ntpd']['isauth']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['isauth'], $timeservers[$counter])
+		config_path_enabled('ntpd', 'isauth') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/isauth'), $timeservers[$counter])
 	 ))->setHelp('Authenticated');
 
 	if ((substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0) ||

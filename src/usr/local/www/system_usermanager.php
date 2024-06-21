@@ -692,7 +692,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 				</thead>
 				<tbody>
 <?php
-foreach (config_get_path("system/user/{$id}", []) as $i => $userent):
+foreach (config_get_path('system/user', []) as $i => $userent):
 	?>
 					<tr>
 						<td>

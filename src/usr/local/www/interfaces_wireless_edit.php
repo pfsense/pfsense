@@ -128,7 +128,7 @@ if ($_POST['save']) {
 
 				$a_clones = config_get_path('wireless/clone');
 				usort($a_clones, "clone_compare");
-				config_set_path('wireless/clone', $clone);
+				config_set_path('wireless/clone', $a_clones);
 				write_config("Wireless interface added");
 
 				header("Location: interfaces_wireless.php");

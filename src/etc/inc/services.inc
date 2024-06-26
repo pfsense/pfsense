@@ -555,6 +555,11 @@ function services_kea6_configure()
 		],
 	];
 
+	/* See https://redmine.pfsense.org/issues/15328 */
+	$keaconf['Dhcp6']['sanity-checks'] = [
+		'lease-checks' => 'fix-del'
+	];
+
 	/*
 	// configure ha hook library
 	$kea_ha_hook = [
@@ -1107,6 +1112,11 @@ function services_kea4_configure()
 			'socket-type' => 'unix',
 			'socket-name' => '/tmp/kea4-ctrl-socket'
 		],
+	];
+
+	/* See https://redmine.pfsense.org/issues/15328 */
+	$keaconf['Dhcp4']['sanity-checks'] = [
+		'lease-checks' => 'fix-del'
 	];
 
 	$kea_ha_hook = [

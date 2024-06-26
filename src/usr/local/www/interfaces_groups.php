@@ -35,7 +35,7 @@ config_init_path('ifgroups/ifgroupentry');
 
 if ($_POST['act'] == "del") {
 	if (config_get_path("ifgroups/ifgroupentry/{$_POST['id']}")) {
-		$members = explode(" ", config_get_path("ifgroups/ifgroupentry/{$_POST['id']}"));
+		$members = explode(" ", config_get_path("ifgroups/ifgroupentry/{$_POST['id']}/members"));
 		foreach ($members as $ifs) {
 			$realif = get_real_interface($ifs);
 			if ($realif) {

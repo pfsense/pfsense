@@ -328,7 +328,7 @@ if ($_POST['save']) {
 		}
 
 		if (isset($id) && $thisca) {
-			config_set_path("ca/{$ca_item_config['item']}", $ca);
+			config_set_path("ca/{$ca_item_config['idx']}", $ca);
 		} else {
 			config_set_path('ca/', $ca);
 		}

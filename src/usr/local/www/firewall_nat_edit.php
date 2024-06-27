@@ -208,7 +208,7 @@ $section->addInput(new Form_Select(
 
 $btnsrcadv = new Form_Button(
 	'btnsrcadv',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -681,7 +681,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Hide Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnsrcadv').children();
+		$('#btnsrcadv').text(text).prepend(children);
 	}
 
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------

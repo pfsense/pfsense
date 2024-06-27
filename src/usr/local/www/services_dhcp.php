@@ -1681,7 +1681,7 @@ $section->addInput(new Form_Input(
 // Advanced Network Booting options
 $btnadv = new Form_Button(
 	'btnadvnwkboot',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -1764,7 +1764,7 @@ if (dhcp_is_backend('isc')):
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -2025,7 +2025,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvdns').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvdns').children();
+		$('#btnadvdns').text(text).prepend(children);
 	}
 
 	$('#btnadvdns').click(function(event) {
@@ -2060,7 +2061,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvmac').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvmac').children();
+		$('#btnadvmac').text(text).prepend(children);
 	}
 
 	$('#btnadvmac').click(function(event) {
@@ -2097,7 +2099,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvntp').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvntp').children();
+		$('#btnadvntp').text(text).prepend(children);
 	}
 
 	$('#btnadvntp').click(function(event) {
@@ -2131,7 +2134,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvtftp').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvtftp').children();
+		$('#btnadvtftp').text(text).prepend(children);
 	}
 
 	$('#btnadvtftp').click(function(event) {
@@ -2165,7 +2169,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvldap').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvldap').children();
+		$('#btnadvldap').text(text).prepend(children);
 	}
 
 	$('#btnadvldap').click(function(event) {
@@ -2200,7 +2205,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -2242,7 +2248,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvnwkboot').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvnwkboot').children();
+		$('#btnadvnwkboot').text(text).prepend(children);
 	}
 
 	$('#btnadvnwkboot').click(function(event) {

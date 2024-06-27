@@ -1502,7 +1502,7 @@ $section->addInput(new Form_Input(
 
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -1808,7 +1808,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -1880,8 +1881,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-
-		$('#btnsrctoggle').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnsrctoggle').children();
+		$('#btnsrctoggle').text(text).prepend(children);
 	}
 
 	function typesel_change() {

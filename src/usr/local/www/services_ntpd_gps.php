@@ -549,7 +549,7 @@ $section->addInput(new Form_Input(
 // Statistics logging section
 $btnadv = new Form_Button(
 	'btnadvgps',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -753,7 +753,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvgps').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvgps').children();
+		$('#btnadvgps').text(text).prepend(children);
 	}
 
 	$('#btnadvgps').click(function(event) {

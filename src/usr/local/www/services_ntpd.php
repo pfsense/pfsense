@@ -469,7 +469,7 @@ $section->addInput(new Form_Checkbox(
 // Statistics logging section
 $btnadv = new Form_Button(
 	'btnadvstats',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -505,7 +505,7 @@ $section->addInput(new Form_Checkbox(
 // Leap seconds section
 $btnadv = new Form_Button(
 	'btnadvleap',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -642,7 +642,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvstats').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvstats').children();
+		$('#btnadvstats').text(text).prepend(children);
 	}
 
 	$('#btnadvstats').click(function(event) {
@@ -679,7 +680,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvleap').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvleap').children();
+		$('#btnadvleap').text(text).prepend(children);
 	}
 
 	function change_serverauth() {

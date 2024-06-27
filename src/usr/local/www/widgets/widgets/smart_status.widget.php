@@ -33,9 +33,9 @@ require_once("/usr/local/www/widgets/include/smart_status.inc");
 $specplatform = system_identify_specific_platform();
 
 $devs = array();
-## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
+## Get all disks currently installed
 if ($specplatform['name'] != "Hyper-V") {
-	$devs = get_smart_drive_list();
+	$devs = get_drive_list();
 }
 
 if ($_POST['widgetkey']) {

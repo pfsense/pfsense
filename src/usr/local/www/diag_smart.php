@@ -218,7 +218,7 @@ switch ($action) {
 	// Default page, prints the forms to view info, test, etc...
 	default: {
 // Information
-		$devs = get_smart_drive_list();
+		$devs = get_drive_list();
 
 		$form = new Form(false);
 

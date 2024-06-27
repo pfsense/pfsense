@@ -3299,32 +3299,66 @@ function post_redirect($page, $params) {
 	print "</body></html>\n";
 }
 
-/* Locate disks that can be queried for S.M.A.R.T. data. */
-function get_smart_drive_list() {
+/**
+ * Locate disks that can be queried for S.M.A.R.T. data.
+ * 
+ * @param bool $check_controller If true (default), use the controller
+ *                               device name; otherwise use the
+ *                               original disk name.
+ * 
+ * @return array List of drive names
+ */
+function get_drive_list(bool $check_controller = true) {
+	// list of drives to return
+	$drive_list = [];
+
 	/* SMART supports some disks directly, and some controllers directly,
 	 * See https://redmine.pfsense.org/issues/9042 */
-	$supported_disk_types = array("ad", "da", "ada");
-	$supported_controller_types = array("nvme");
-	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
-	foreach ($disk_list as $id => $disk) {
-		// We only want certain kinds of disks for S.M.A.R.T.
-		// 1 is a match, 0 is no match, False is any problem processing the regex
-		if (preg_match("/^(" . implode("|", $supported_disk_types) . ").*[0-9]{1,2}$/", $disk) !== 1) {
-			unset($disk_list[$id]);
-			continue;
-		}
-	}
-	foreach ($supported_controller_types as $controller) {
-		$devices = glob("/dev/{$controller}*");
-		if (!is_array($devices)) {
-			continue;
-		}
+	$supported_controllers = [
+		'nvme'
+	];
+
+	// get disk devices; ignore sub-devices
+	$devices = [];
+	preg_match_all('/\b(?P<disks>[[:alpha:]]+\d+)\b/', get_single_sysctl("kern.disks"), $devices);
+	if (!empty($devices['disks']) && is_array($devices['disks'])) {
+		// ignore duplicate matches
+		$devices = array_unique($devices['disks']);
 		foreach ($devices as $device) {
-			$disk_list[] = basename($device);
+			// get device info
+			$output = shell_exec("/usr/sbin/diskinfo -v /dev/{$device}");
+			if (empty($output)) {
+				continue;
+			}
+
+			// don't check the controller
+			if (!$check_controller) {
+				$drive_list[] = $device;
+				continue;
+			}
+
+			// get device controller
+			$device_controller = [];
+			preg_match('/^\s+(?P<controller>[\w\-]+)\s+# Attachment/im', $output, $device_controller);
+			if (!empty($device_controller['controller']) && is_string($device_controller['controller'])) {
+				$device_controller = $device_controller['controller'];
+
+				// supported controllers are queried directly
+				$regex_pattern = implode('|', array_values($supported_controllers));
+				$regex_pattern = "/\b(?:{$regex_pattern})\d+\b/";
+				if (preg_match($regex_pattern, $device_controller)) {
+					$drive_list[] = $device_controller;
+					// skip further processing for this device
+					continue;
+				}
+			}
+
+			// no attachment, or other controller
+			$drive_list[] = $device;
 		}
 	}
-	sort($disk_list);
-	return $disk_list;
+
+	return $drive_list;
 }
 
 // Validate a network address

@@ -33,7 +33,7 @@ if (isset($_REQUEST["getThermalSensorsData"])) {
 	if ($specplatform['name'] == '5100') {
 		$_gb = exec("/sbin/sysctl -q dev.cpu | /usr/bin/grep temperature | /usr/bin/sort", $dfout);
 	} else {
-		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc dev.pchtherm | /usr/bin/grep 'temperature:'", $dfout);
+		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc dev.pchtherm | /usr/bin/grep 'temperature:' | /usr/bin/sort", $dfout);
 	}
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($v, ' -') === false;
@@ -136,8 +136,8 @@ if ($_POST['widgetkey']) {
 	//handle checkboxes separately
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_raw_output");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_full_sensor_name");
-	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_warning");
-	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_critical");
+	//saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_warning");
+	//saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_critical");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_fahrenheit");
 
 	//write settings to config file
@@ -159,11 +159,12 @@ $thermal_sensors_widget_pchCriticalTempThreshold = getThresholdValueFromConfig($
 //get display settings from config (apply defaults if missing)
 $thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_raw_output", false, $widgetkey);
 $thermal_sensors_widget_showFullSensorName = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_full_sensor_name", false, $widgetkey);
-$thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_warning", true, $widgetkey);
-$thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
 $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_fahrenheit", false, $widgetkey);
 
-//=========================================================================
+//not implemented yet
+//$thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_warning", true, $widgetkey);
+//$thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
+
 ?>
 
 <script type="text/javascript">
@@ -180,8 +181,8 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 			pchCriticalTempThreshold:<?= $thermal_sensors_widget_pchCriticalTempThreshold; ?>,
 			showRawOutput:<?= $thermal_sensors_widget_showRawOutput ? "true" : "false"; ?>,
 			showFullSensorName:<?= $thermal_sensors_widget_showFullSensorName ? "true" : "false"; ?>,
-			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
-			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>,
+			//pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
+			//pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>,
 			showFahrenheit:<?= $thermal_sensors_widget_showFahrenheit ? "true" : "false"; ?>
 
 		};
@@ -212,8 +213,7 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 		// Callback function called by refresh system when data is retrieved
 		function ts_callback(s) {
 			var thermalSensorsData = s || "";
-			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams, true);
-			firstTime = false;
+			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams);
 		}
 
 		// POST data to send via AJAX
@@ -250,7 +250,7 @@ if ($thermal_sensors_widget_showFahrenheit) {
 ?>
 <div style="padding: 5px">
 	<div id="thermalSensorsContainer-<?=htmlspecialchars($widgetkey)?>" class="listr">
-		<?=gettext('(Updating...)')?><br /><br />
+		<?=gettext('(Updating ...)')?><br/><br/>
 	</div>
 </div>
 </div>

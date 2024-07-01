@@ -25,24 +25,21 @@ var criticalTemp = 100;
 var widgetUnit = 'C';
 ajaxBusy = false;
 
-function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime) {
+
+function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams) {
 	if (tsParams.showRawOutput) {
 		buildThermalSensorsDataRaw(thermalSensorsData, widgetKey);
 	} else {
-		if (firstTime) {
-			buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
-		}
-
-		updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
+		buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
+		updateThermalSensorsDataGraph(thermalSensorsData, widgetKey);
 	}
 }
 
 function buildThermalSensorsDataRaw(thermalSensorsData, widgetKey) {
-
 	var thermalSensorsContent = "";
 
 	if (thermalSensorsData && thermalSensorsData != "") {
-		thermalSensorsContent = thermalSensorsData.replace(/\|/g, "<br />");
+		thermalSensorsContent = thermalSensorsData.replace(/\|/g, "<br/>");
 		//rawData = thermalSensorsData.split("|").join("<br />");
 	}
 
@@ -50,7 +47,6 @@ function buildThermalSensorsDataRaw(thermalSensorsData, widgetKey) {
 }
 
 function loadThermalSensorsContainer (thermalSensorsContent, widgetKey) {
-
 	if (thermalSensorsContent && thermalSensorsContent != "") {
 		//load generated graph (or raw data) into thermalSensorsContainer (thermalSensorsContainer DIV defined in "thermal_sensors.widget.php")
 		$('#thermalSensorsContainer-' + widgetKey).html(thermalSensorsContent);
@@ -60,7 +56,7 @@ function loadThermalSensorsContainer (thermalSensorsContent, widgetKey) {
 }
 
 function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
-
+	buildThermalSensorsDataGraph = function(){}; //delete this function after it was called once to avoid "building" rows every time
 	var thermalSensorsArray = new Array();
 
 	if (thermalSensorsData && thermalSensorsData != "") {
@@ -74,15 +70,12 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 		var sensorDataArray = thermalSensorsArray[i].split(":");
 		var sensorName = sensorDataArray[0].trim();
-		var thermalSensorValue = getThermalSensorValue(sensorDataArray[1]);
+		var thermalSensorValue = parseFloat(sensorDataArray[1] || 0).toFixed(1);
 
 		//set thresholds
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
 			warningTemp = tsParams.coreWarningTempThreshold;
 			criticalTemp = tsParams.coreCriticalTempThreshold;
-		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
-			warningTemp = tsParams.pchWarningTempThreshold;
-			criticalTemp = tsParams.pchCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
 			warningTemp = tsParams.zoneWarningTempThreshold;
 			criticalTemp = tsParams.zoneCriticalTempThreshold;
@@ -99,13 +92,13 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 		//build temperature item/row for a sensor
 
-		var thermalSensorRow =	'<div class="progress">' +
-						'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
-						'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-						'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-					'</div>' +
-					'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + '</span> &deg;' + widgetUnit;
-
+		var thermalSensorRow =
+			'<div style="margin-bottom: 5px"><span><b>' + sensorName + ': </b></span><span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + '</span> &deg;' + widgetUnit +
+			'<div class="progress">' +
+			'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
+			'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+			'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+			'</div></div>';
 
 		thermalSensorsHTMLContent = thermalSensorsHTMLContent + thermalSensorRow;
 
@@ -117,36 +110,19 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 }
 
-function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
+function updateThermalSensorsDataGraph(thermalSensorsData, widgetKey) {
 	var thermalSensorsArray = new Array();
 
 	if (thermalSensorsData && thermalSensorsData != "") {
 		thermalSensorsArray = thermalSensorsData.split("|");
 	}
 
-	//generate graph for each temperature sensor and append to thermalSensorsHTMLContent string
+	//update thermal sensor values
 	for (var i = 0; i < thermalSensorsArray.length; i++) {
 
 		var sensorDataArray = thermalSensorsArray[i].split(":");
-		var sensorName = sensorDataArray[0].trim();
-		var thermalSensorValue = getThermalSensorValue(sensorDataArray[1]);
 
-
-		//set thresholds
-		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
-			warningTemp = tsParams.coreWarningTempThreshold;
-			criticalTemp = tsParams.coreCriticalTempThreshold;
-		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
-			warningTemp = tsParams.pchWarningTempThreshold;
-			criticalTemp = tsParams.pchCriticalTempThreshold;
-		} else { //assuming sensor is for a zone, check Zone Threshold config settings
-			warningTemp = tsParams.zoneWarningTempThreshold;
-			criticalTemp = tsParams.zoneCriticalTempThreshold;
-		}
-
-		if (!tsParams.showFullSensorName) {
-			sensorName = getSensorFriendlyName(sensorName);
-		}
+		var thermalSensorValue = parseFloat(sensorDataArray[1] || 0).toFixed(1);
 
 		setTempProgress(i, thermalSensorValue, widgetKey);
 	}
@@ -170,10 +146,6 @@ function getSensorFriendlyName(sensorFullName) {
 	}
 
 	return sensorFullName;
-}
-
-function getThermalSensorValue(stringValue) {
-	return (+parseFloat(stringValue) || 0).toFixed(1);
 }
 
 function getFahrenheitValue(cels) {

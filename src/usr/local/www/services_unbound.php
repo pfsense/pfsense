@@ -447,7 +447,7 @@ $section->addInput(new Form_Checkbox(
 
 $btnadv = new Form_Button(
 	'btnadvcustom',
-	'Custom options',
+	gettext('Custom options'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -455,15 +455,15 @@ $btnadv = new Form_Button(
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Display Custom Options',
+	gettext('Display Custom Options'),
 	$btnadv
 ));
 
 $section->addInput(new Form_Textarea (
 	'custom_options',
-	'Custom options',
+	gettext('Custom options')
 	$pconfig['custom_options']
-))->setHelp('Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline.');
+))->setHelp(gettext('Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline.'));
 
 $form->add($section);
 print($form);
@@ -493,7 +493,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Custom Options');?>";
 		}
-		$('#btnadvcustom').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvcustom').children();
+		$('#btnadvcustom').text(text).prepend(children);
 	}
 
 	// Un-hide additional controls

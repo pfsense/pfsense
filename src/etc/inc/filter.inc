@@ -4986,7 +4986,7 @@ function get_interface_ruleindex(string $interface, ?int $rule_index = null): ar
 	foreach (config_get_path('filter/rule',[]) as $idx => $rule) {
 		// skip rules on unrelated interfaces
 		if ((isset($rule['floating']) && ($interface != "floatingrules")) ||
-		    (!isset($rule['floating']) && ($interface != $rule['interface']))) {
+		    (!isset($rule['floating']) && ($interface != strtolower($rule['interface'])))) {
 			if (isset($rule_index) && isset($interface_rule_index['first']) && ($idx >= $rule_index)) {
 				// the last rule on the matching interface has already been reached
 				break;

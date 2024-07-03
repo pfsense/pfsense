@@ -771,6 +771,10 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			$grp->setHelp($pkga['description']);
 
+			foreach (array_get_path($pkga, 'class', []) as $class) {
+				$grp->addClass($class);
+			}
+
 			if ($pkga['width']) {
 				$grp->setWidth($pkga['width']);
 			}

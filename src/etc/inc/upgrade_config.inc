@@ -5322,7 +5322,7 @@ function upgrade_169_to_170() {
 				$wlan['cloneif'] = "{$iface['if']}_wlan0";
 				/* Make sure this entry is placed in the list of wireless interface clones. */
 				config_init_path('wireless/clone');
-				config_set_path('wireless/clone', $wlan);
+				config_set_path('wireless/clone/', $wlan);
 				/* The interface assignment must now be the cloned interface name. */
 				$iface['if'] = $wlan['cloneif'];
 			}

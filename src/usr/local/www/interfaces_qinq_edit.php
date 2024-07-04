@@ -231,7 +231,7 @@ if ($_POST['save']) {
 			}
 			$additions .= "{$qinqentry['vlanif']}";
 			if ($gid !== null) {
-				config_set_path("ifgroups/ifgroupentry/{$gid}/members", config_get_path("ifgroups/ifgroupentry/{$gid}/members") . $qinqentry);
+				config_set_path("ifgroups/ifgroupentry/{$gid}/members", config_get_path("ifgroups/ifgroupentry/{$gid}/members") . " {$additions}");
 			} else {
 				$gentry = array();
 				$gentry['ifname'] = "QinQ";

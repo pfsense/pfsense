@@ -98,7 +98,7 @@ if ($_POST['save']) {
 		if ($this_domainOverrides_config) {
 			config_set_path("unbound/domainoverrides/{$id}", $doment);
 		} else {
-			config_set_path('unbound/domainoverrides', $doment);
+			config_set_path('unbound/domainoverrides/', $doment);
 		}
 
 		mark_subsystem_dirty('unbound');

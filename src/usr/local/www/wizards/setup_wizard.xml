@@ -795,7 +795,7 @@
 				$newgw['weight'] = 1;
 				$newgw['descr'] = "WAN Gateway";
 				$newgw['defaultgw'] = !$defaultgw_found;
-				config_set_path('gateways/gateway_item', $newgw);
+				config_set_path('gateways/gateway_item/', $newgw);
 				config_set_path('interfaces/wan/gateway', "WANGW");
 			}
 		}

@@ -461,7 +461,7 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Textarea (
 	'custom_options',
-	gettext('Custom options')
+	gettext('Custom options'),
 	$pconfig['custom_options']
 ))->setHelp(gettext('Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline.'));
 

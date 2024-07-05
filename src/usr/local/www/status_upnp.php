@@ -41,7 +41,7 @@ if ($_POST) {
 $rdr_entries = array();
 exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 
-$pgtitle = array(gettext("Status"), gettext("UPnP &amp; NAT-PMP"));
+$pgtitle = array(gettext("Status"), gettext("UPnP IGD &amp; PCP"));
 $shortcut_section = "upnp";
 
 include("head.inc");
@@ -53,7 +53,7 @@ if ($savemsg) {
 if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
     !config_path_enabled('installedpackages/miniupnpd/config/0')) {
 
-	print_info_box(sprintf(gettext('UPnP is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP &amp; NAT-PMP'), '</a>'), 'danger');
+	print_info_box(sprintf(gettext('Service is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP IGD &amp; PCP'), '</a>'), 'danger');
 	include("foot.inc");
 	exit;
 }
@@ -61,19 +61,19 @@ if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("UPnP &amp; NAT-PMP Rules")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Active Service Port Maps")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Interface")?></th>
-						<th><?=gettext("Protocol")?></th>
-						<th><?=gettext("Source IP")?></th>
-						<th><?=gettext("Ext IP")?></th>
-						<th><?=gettext("Port")?></th>
+						<th><?=gettext("Ext Port")?></th>
 						<th><?=gettext("Int IP")?></th>
 						<th><?=gettext("Int Port")?></th>
+						<th><?=gettext("Protocol")?></th>
+						<th><?=gettext("Source IP")?></th>
+						<th><?=gettext("Source Port")?></th>
 						<th><?=gettext("Description")?></th>
 					</tr>
 				</thead>
@@ -84,20 +84,11 @@ $i = 0;
 foreach ($rdr_entries as $rdr_entry) {
 	/* rdr log quick on igb2 inet proto tcp from any to any port = xxxxx keep state label "xxxxx" rtable 0 -> xxx.xxx.xxx.xxx port xxxxx */
 	/* rdr log quick on igb2 inet proto udp from any to xxx.xxx.xxx.xxx port = xxxxxx keep state label "xxxxx" rtable 0 -> xxx.xxx.xxx.xxx port xxxxx */
-	if (preg_match("/on (?P<iface>.*) inet proto (?P<proto>.*) from (?P<srcaddr>.*) to (?P<extaddr>.*) port = (?P<extport>.*) keep state (label \"(?P<descr>.*)\" )?rtable [0-9] -> (?P<intaddr>.*) port (?P<intport>.*)/", $rdr_entry, $matches)) {
+	if (preg_match("/on (?P<iface>.*) inet proto (?P<proto>.*) from (?P<srcaddr>.*) (port (?P<srcport>.*) )?to (?P<extaddr>.*) port = (?P<extport>.*) keep state (label \"(?P<descr>.*)\" )?rtable [0-9] -> (?P<intaddr>.*) port (?P<intport>.*)/", $rdr_entry, $matches)) {
 ?>
 					<tr>
 						<td>
 							<?= htmlspecialchars(convert_real_interface_to_friendly_descr($matches['iface'])) ?>
-						</td>
-						<td>
-							<?= htmlspecialchars($matches['proto']) ?>
-						</td>
-						<td>
-							<?= htmlspecialchars($matches['srcaddr']) ?>
-						</td>
-						<td>
-							<?= htmlspecialchars($matches['extaddr']) ?>
 						</td>
 						<td>
 							<?= htmlspecialchars($matches['extport']) ?>
@@ -107,6 +98,15 @@ foreach ($rdr_entries as $rdr_entry) {
 						</td>
 						<td>
 							<?= htmlspecialchars($matches['intport']) ?>
+						</td>
+						<td>
+							<?= htmlspecialchars(strtoupper($matches['proto'])) ?>
+						</td>
+						<td>
+							<?= htmlspecialchars($matches['srcaddr']) ?>
+						</td>
+						<td>
+							<?= htmlspecialchars($matches['srcport'] ?: "any") ?>
 						</td>
 						<td>
 							<?= htmlspecialchars($matches['descr']) ?>

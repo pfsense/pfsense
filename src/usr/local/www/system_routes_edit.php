@@ -243,10 +243,11 @@ $section = new Form_Section('Edit Route Entry');
 
 $section->addInput(new Form_IpAddress(
 	'network',
-	'*Destination network',
+	'*'.gettext('Destination network'),
 	$pconfig['network'],
 	'ALIASV4V6'
-))->addMask('network_subnet', $pconfig['network_subnet'])->setHelp('Destination network for this static route');
+))->addClass('autotrim')
+  ->addMask('network_subnet', $pconfig['network_subnet'])->setHelp(gettext('Destination network for this static route'));
 
 $allGateways = array_combine(
 	array_map(function($gw){ return $gw['name']; }, $a_gateways),
@@ -254,26 +255,26 @@ $allGateways = array_combine(
 );
 $section->addInput(new Form_Select(
 	'gateway',
-	'*Gateway',
+	'*'.gettext('Gateway'),
 	$pconfig['gateway'],
 	$allGateways
-))->setHelp('Choose which gateway this route applies to or %1$sadd a new one first%2$s',
+))->setHelp(gettext('Choose which gateway this route applies to or %1$sadd a new one first%2$s'),
 	'<a href="/system_gateways_edit.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',
-	'Disabled',
-	'Disable this static route',
+	gettext('Disabled'),
+	gettext('Disable this static route'),
 	$pconfig['disabled']
-))->setHelp('Set this option to disable this static route without removing it from '.
-	'the list.');
+))->setHelp(gettext('Set this option to disable this static route without removing it from '.
+	'the list.'));
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Description',
+	gettext('Description'),
 	'text',
 	htmlspecialchars($pconfig['descr'])
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+))->setHelp(gettext('A description may be entered here for administrative reference (not parsed).'));
 
 $form->add($section);
 

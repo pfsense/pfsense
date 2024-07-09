@@ -4247,6 +4247,26 @@ EOD;
 		// a floating state is needed for ipsec rules - see #15430
 		$state_policy = $use_floating_states_for_ipsec ? '(floating)' : '';
 		$ipfrules .= "pass out {$log['pass']} on \$IPsec all ridentifier {$increment_tracker()} ridentifier {$increment_tracker()} keep state {$state_policy} label \"IPsec internal host to host\"\n";
+		// also fix the state policy on VTIs
+		if (!empty($state_policy)) {
+			$ipsec_vti_list = [];
+			foreach (config_get_path('ipsec/phase1', []) as $phase1_config) {
+				if (isset($phase1_config['disabled'])) {
+					continue;
+				}
+				foreach(ipsec_get_phase2_by_ikeid($phase1_config['ikeid']) as $phase2_config) {
+					if (isset($phase2_config['disabled'])) {
+						continue;
+					}
+					if ($phase2_config['mode'] == 'vti') {
+						$ipsec_vti_list[] = ipsec_get_ifname($phase1_config, $phase1_config['ikeid']);
+					}
+				}
+			}
+			foreach ($ipsec_vti_list as $ipsec_vti_name) {
+				$ipfrules .= "pass out {$log['pass']} on {$ipsec_vti_name} all ridentifier {$increment_tracker()} keep state {$state_policy} label \"IPsec VTI floating states\"\n";
+			}
+		}
 	}
 
 	$saved_tracker += 10;

@@ -232,7 +232,7 @@ if (isset($_POST['del_x'])) {
 			if (config_path_enabled("filter/rule/{$rulei}", 'disabled')) {
 				config_del_path("filter/rule/{$rulei}/disabled");
 			} else {
-				config_set_path('filter/rule/disabled', true);
+				config_set_path("filter/rule/{$rulei}/disabled", true);
 			}
 		}
 		if (write_config(gettext("Firewall: Rules - toggle selected firewall rules."))) {

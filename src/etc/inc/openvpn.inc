@@ -1660,6 +1660,16 @@ function openvpn_resync_csc($settings) {
 	}
 	openvpn_create_dirs();
 
+	/* Some options remove the gateway or topology which are required;
+	 * in such cases, these can be automatically determined. */
+	$auto_config_gateway4 = false;
+	$auto_config_gateway6 = false;
+	$auto_config_topology = false;
+	$keep_minimal = false;
+	if (isset($settings['override_options']) && ($settings['override_options'] == 'keep_minimal')) {
+		$keep_minimal = true;
+	}
+
 	if (empty($settings['server_list'])) {
 		$csc_server_list = array();
 	} else {
@@ -1671,14 +1681,26 @@ function openvpn_resync_csc($settings) {
 		$conf .= "disable\n";
 	}
 
-	if ($settings['push_reset']) {
+	// Reset options
+	if (isset($settings['override_options']) && (($settings['override_options'] == 'push_reset') || $keep_minimal)) {
+		if ($keep_minimal) {
+			$auto_config_gateway4 = true;
+			$auto_config_gateway6 = true;
+			$auto_config_topology = true;
+		}
 		$conf .= "push-reset\n";
 	}
-
-	if ($settings['remove_route']) {
-		$conf .= "push-remove route\n";
+	if (!empty($settings['remove_options'])) {
+		foreach (explode(',', $settings['remove_options']) as $option) {
+			if ($keep_minimal && ($option == 'remove_route')) {
+				$auto_config_gateway4 = true;
+				$auto_config_gateway6 = true;
+			}
+			$conf .= "push-remove {$option}\n";
+		}
 	}
 
+	// Local network route options
 	if ($settings['local_network']) {
 		$conf .= openvpn_gen_routes($settings['local_network'], "ipv4", true);
 	}
@@ -1686,18 +1708,39 @@ function openvpn_resync_csc($settings) {
 		$conf .= openvpn_gen_routes($settings['local_networkv6'], "ipv6", true);
 	}
 
-	// Add a remote network iroute if set
+	// Remote network iroute options
 	if (openvpn_validate_cidr($settings['remote_network'], "", true, "ipv4", true) === FALSE) {
 		$conf .= openvpn_gen_routes($settings['remote_network'], "ipv4", false, true);
 	}
-	// Add a remote network iroute if set
 	if (openvpn_validate_cidr($settings['remote_networkv6'], "", true, "ipv6", true) === FALSE) {
 		$conf .= openvpn_gen_routes($settings['remote_networkv6'], "ipv6", false, true);
 	}
 
+	// Gatewy override options
+	if (!empty($settings['gateway'])) {
+		$auto_config_gateway4 = false;
+		$conf .= "push \"route-gateway {$settings['gateway']}\"\n";
+	}
+	if (!empty($settings['gateway6'])) {
+		$auto_config_gateway6 = false;
+		$conf .= "push \"route-ipv6-gateway {$settings['gateway6']}\"\n";
+	}
+
+	// Ping override options
+	if (isset($settings['ping_seconds'])) {
+		$conf .= "push \"ping {$settings['ping_seconds']}\"\n";
+	}
+	if (isset($settings['ping_action'])) {
+		$action = str_replace("_", "-", $settings['ping_action']);
+		$conf .= "push \"{$action} {$settings['ping_action_seconds']}\"\n";
+	}
+
+	// DHCP and gateway redirect options
 	openvpn_add_dhcpopts($settings, $conf);
 
+	// Custom options
 	openvpn_add_custom($settings, $conf);
+
 	/* Loop through servers, find which ones can use this CSC */
 	foreach (config_get_path('openvpn/openvpn-server', []) as $serversettings) {
 		if (isset($serversettings['disable'])) {
@@ -1707,6 +1750,46 @@ function openvpn_resync_csc($settings) {
 			if ($serversettings['vpnid'] && (empty($csc_server_list) || in_array($serversettings['vpnid'], $csc_server_list))) {
 				$csc_path = "{$g['openvpn_base']}/server{$serversettings['vpnid']}/csc/" . basename($settings['common_name']);
 				$csc_conf = $conf;
+
+				/* Topology is depends on the server configuration.
+				 * TAP mode always uses a subnet topology */
+				$topology = ($serversettings['dev_mode'] == 'tap') ? 'subnet' : $serversettings['topology'];
+				if ($keep_minimal && $auto_config_topology) {
+					$csc_conf .= "push \"topology {$topology}\"\n";
+				}
+
+				/* The gateway is the first usable address in the tunnel network.
+				 * If the tunnel network is not set, the gateway must be manually
+				 * defined. This can happen when using a net30 topology and
+				 * resetting options. */
+				if ($keep_minimal && $auto_config_gateway6) {
+					// IPv6 always uses a subnet topology
+					$tunnel_network = null;
+					if (!empty($settings['tunnel_networkv6'])) {
+						$tunnel_network = $settings['tunnel_networkv6'];
+					} elseif (!empty($serversettings['tunnel_networkv6'])) {
+						$tunnel_network = $serversettings['tunnel_networkv6'];
+					}
+					if (!empty($tunnel_network)) {
+						$tunnel_network_parts = openvpn_gen_tunnel_network($tunnel_network);
+						$gateway = ip6_after(gen_subnetv6($tunnel_network_parts[0], $tunnel_network_parts[1]));
+						$csc_conf .= "push \"route-ipv6-gateway {$gateway}\"\n";
+					}
+				}
+				if ($keep_minimal && $auto_config_gateway4) {
+					$tunnel_network = null;
+					if ($topology == "subnet") {
+						// The client tunnel network is assumed to be the same as the server's
+						$tunnel_network = $serversettings['tunnel_network'];
+					} elseif (!empty($settings['tunnel_network'])) {
+						$tunnel_network = $settings['tunnel_network'];
+					}
+					if (!empty($tunnel_network)) {
+						$tunnel_network_parts = openvpn_gen_tunnel_network($tunnel_network);
+						$gateway = ip_after(gen_subnetv4($tunnel_network_parts[0], $tunnel_network_parts[1]), 1);
+						$csc_conf .= "push \"route-gateway {$gateway}\"\n";
+					}
+				}
 
 				if (!empty($serversettings['tunnel_network']) && !empty($settings['tunnel_network'])) {
 					list($ip, $mask) = openvpn_gen_tunnel_network($settings['tunnel_network']);

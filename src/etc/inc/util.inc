@@ -533,6 +533,21 @@ function ip_after($ip, $offset = 1) {
 	return long2ip32(ip2long($ip) + $offset);
 }
 
+/**
+ * Return the next IPv6 address after the given address
+ * 
+ * @param string $ip IPv6 address
+ * 
+ * @return string|false IPv6 address; false if it cannot be incremented
+ */
+function ip6_after(string $ip): string|false {
+	/* Convert the IPv6 string to its in_addr representation,
+	 * increment it by one, then convert it back to a string. */
+	return inet_ntop(str_pad(gmp_export(
+		str_increment((string) gmp_import(inet_pton($ip)))
+	), 16, "\0", STR_PAD_LEFT));
+}
+
 /* Return true if the first IP is 'before' the second */
 function ip_less_than($ip1, $ip2) {
 	// Compare as unsigned long because otherwise it wouldn't work when

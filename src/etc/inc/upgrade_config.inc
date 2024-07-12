@@ -6937,6 +6937,32 @@ function upgrade_232_to_233() {
 	}
 }
 
+/* OpenVPN Client-Specific Override options have changed.
+ * https://redmine.pfsense.org/issues/12522 */
+ function upgrade_233_to_234() {
+	$openvpn_csc_config = config_get_path('openvpn/openvpn-csc', []);
+	if (empty($openvpn_csc_config)) {
+		return;
+	}
+	foreach ($openvpn_csc_config as &$settings) {
+		if (!is_array($settings)) {
+			continue;
+		}
+
+		// Migrate "push_reset"
+		if (isset($settings['push_reset'])) {
+			$settings['override_options'] = 'push_reset';
+			unset($settings['push_reset']);
+		}
+		// Migrate "remove_route"
+		if (isset($settings['remove_route'])) {
+			$settings['remove_options'] = 'remove_route';
+			unset($settings['remove_route']);
+		}
+	}
+	config_set_path('openvpn/openvpn-csc', $openvpn_csc_config);
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

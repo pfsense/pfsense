@@ -137,6 +137,43 @@ function carp_sync_xml($rpc_client, $sections) {
 		}
 	}
 
+	/* handle kea/kea6 */
+	foreach (['kea', 'kea6'] as $kea) {
+		/* flip the listen and peer ip/port */
+		foreach ([
+			'ha/localip'	=> 'ha/remoteip',
+			'ha/remoteip'	=> 'ha/localip',
+			'ha/localport'	=> 'ha/remoteport',
+			'ha/remoteport'	=> 'ha/localport'
+		] as $from_path => $to_path) {
+			if ($from = config_get_path($kea.'/'.$from_path)) {
+				array_set_path($config_copy, $kea.'/'.$to_path, $from);
+			}
+		}
+
+		$localname = trim(config_get_path($kea.'/ha/localname', kea_defaults('name')));
+		array_set_path($config_copy, $kea.'/ha/remotename', $localname);
+
+		/* flip the roles */
+		array_set_path($config_copy, $kea.'/ha/role',
+			match(config_get_path($kea.'/ha/role')) {
+				'primary' => 'standby',
+				'standby' => 'primary'
+			}
+		);
+
+		/* don't send these Kea HA settings */
+		foreach ([
+			'ha/localname',
+			'ha/tls',
+			'ha/mutualtls',
+			'ha/scertref',
+			'ha/ccertref'
+		] as $path) {
+			array_del_path($config_copy, $kea.'/'.$path);
+		}
+	}
+
 	$xml = array();
 	foreach ($sections as $section) {
 		/*
@@ -196,58 +233,71 @@ if (config_get_path('hasync')) {
 		return;
 	}
 
-	if ($hasync['synchronizerules'] != "") {
+	if ($hasync['synchronizerules']) {
 		config_init_path('filter');
 		$sections[] = 'filter';
 	}
-	if ($hasync['synchronizenat'] != "") {
+	if ($hasync['synchronizenat']) {
 		config_init_path('nat');
  		$sections[] = 'nat';
 	}
-	if ($hasync['synchronizealiases'] != "") {
+	if ($hasync['synchronizealiases']) {
 		config_init_path('aliases');
 		$sections[] = 'aliases';
 	}
-	if ($hasync['synchronizedhcpd'] != "" and is_array(config_get_path('dhcpd'))) {
-		$sections[] = 'dhcpd';
+	if ($hasync['synchronizedhcpd']) {
+		if (is_array(config_get_path('dhcpd'))) {
+			$sections[] = 'dhcpd';
+			if (is_array(config_get_path('kea'))) {
+				$sections[] = 'kea';
+			}
+		}
 	}
-	if ($hasync['synchronizedhcrelay'] != "" and is_array(config_get_path('dhcrelay'))) {
+	if ($hasync['synchronizekea6']) {
+		if (is_array(config_get_path('dhcpdv6'))) {
+			$sections[] = 'dhcpdv6';
+			if (is_array(config_get_path('kea6'))) {
+				$sections[] = 'kea6';
+			}
+		}
+	}
+	if ($hasync['synchronizedhcrelay'] && is_array(config_get_path('dhcrelay'))) {
 		$sections[] = 'dhcrelay';
 	}
-	if ($hasync['synchronizedhcrelay6'] != "" and is_array(config_get_path('dhcrelay6'))) {
+	if ($hasync['synchronizedhcrelay6'] && is_array(config_get_path('dhcrelay6'))) {
 		$sections[] = 'dhcrelay6';
 	}
-	if ($hasync['synchronizewol'] != "") {
+	if ($hasync['synchronizewol']) {
 		config_init_path('wol');
 		$sections[] = 'wol';
 	}
-	if ($hasync['synchronizetrafficshaper'] != "") {
+	if ($hasync['synchronizetrafficshaper']) {
 		config_init_path('shaper');
 		$sections[] = 'shaper';
 	}
-	if ($hasync['synchronizetrafficshaperlimiter'] != "") {
+	if ($hasync['synchronizetrafficshaperlimiter']) {
 		config_init_path('dnshaper');
 		$sections[] = 'dnshaper';
 	}
-	if ($hasync['synchronizestaticroutes'] != "") {
+	if ($hasync['synchronizestaticroutes']) {
 		config_init_path('staticroutes/route');
 		config_init_path('gateways');
 		$sections[] = 'staticroutes';
 		$sections[] = 'gateways';
 	}
-	if ($hasync['synchronizevirtualip'] != "") {
+	if ($hasync['synchronizevirtualip']) {
 		config_init_path('virtualip');
 		$sections[] = 'virtualip';
 	}
-	if ($hasync['synchronizeipsec'] != "") {
+	if ($hasync['synchronizeipsec']) {
 		config_init_path('ipsec');
 		$sections[] = 'ipsec';
 	}
-	if ($hasync['synchronizeopenvpn'] != "") {
+	if ($hasync['synchronizeopenvpn']) {
 		config_init_path('openvpn');
 		$sections[] = 'openvpn';
 	}
-	if ($hasync['synchronizecerts'] != "" || $hasync['synchronizeopenvpn'] != "") {
+	if ($hasync['synchronizecerts'] || $hasync['synchronizeopenvpn']) {
 		config_init_path('cert');
 		config_init_path('ca');
 		config_init_path('crl');
@@ -255,15 +305,15 @@ if (config_get_path('hasync')) {
 		$sections[] = 'ca';
 		$sections[] = 'crl';
 	}
-	if ($hasync['synchronizeusers'] != "") {
+	if ($hasync['synchronizeusers']) {
 		$sections[] = 'user';
 		$sections[] = 'group';
 	}
-	if ($hasync['synchronizeauthservers'] != "") {
+	if ($hasync['synchronizeauthservers']) {
 		config_init_path('authserver');
 		$sections[] = 'authserver';
 	}
-	if ($hasync['synchronizednsforwarder'] != "") {
+	if ($hasync['synchronizednsforwarder']) {
 		if (is_array(config_get_path('dnsmasq'))) {
 			$sections[] = 'dnsmasq';
 		}
@@ -271,14 +321,14 @@ if (config_get_path('hasync')) {
 			$sections[] = 'unbound';
 		}
 	}
-	if ($hasync['synchronizeschedules'] != "" || $hasync['synchronizerules'] != "") {
+	if ($hasync['synchronizeschedules'] || $hasync['synchronizerules'] != "") {
 		$sections[] = 'schedules';
 	}
-	if ($hasync['synchronizecaptiveportal'] != "") {
+	if ($hasync['synchronizecaptiveportal']) {
 		config_init_path('captiveportal');
 		$sections[] = 'captiveportal';
 	}
-	if ($hasync['synchronizecaptiveportal'] != "" and is_array(config_get_path('voucher'))) {
+	if ($hasync['synchronizecaptiveportal'] and is_array(config_get_path('voucher'))) {
 		$sections[] = 'voucher';
 	}
 

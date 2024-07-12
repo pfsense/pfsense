@@ -435,6 +435,37 @@ class pfsense_xmlrpc_server {
 		/* For vip section, first keep items sent from the master */
 		config_set_path('', array_merge_recursive_unique(config_get_path(''), $sections));
 
+		/* Special handling for Kea HA, skip receiving certain settings from master */
+		foreach (['kea', 'kea6'] as $kea) {
+			if (array_path_enabled($old_config, $kea.'/ha', 'tls')) {
+				config_set_path($kea.'/ha/tls', true);
+				if ($value = array_get_path($old_config, $kea.'/ha/scertref')) {
+					config_set_path($kea.'/ha/scertref', $value);
+				} else {
+					config_del_path($kea.'/ha/scertref');
+				}
+				if (array_path_enabled($old_config, $kea.'/ha', 'mutualtls')) {
+					config_set_path($kea.'/ha/mutualtls', true);
+					if ($value = array_get_path($old_config, $kea.'/ha/ccertref')) {
+						config_set_path($kea.'/ha/ccertref', $value);
+					} else {
+						config_del_path($kea.'/ha/ccertref');
+					}
+				}
+			} else {
+				config_del_path($kea.'/ha/tls');
+				config_del_path($kea.'/ha/scertref');
+				config_del_path($kea.'/ha/mutualtls');
+				config_del_path($kea.'/ha/ccertref');
+			}
+
+			if ($value = array_get_path($old_config, $kea.'/ha/localname')) {
+				config_set_path($kea.'/ha/localname', $value);
+			} else {
+				config_del_path($kea.'/ha/localname');
+			}
+		}
+
 		/* Remove locally items removed remote */
 		foreach ($voucher as $zone => $item) {
 			/* No rolls on master, delete local ones */
@@ -793,37 +824,30 @@ class pfsense_xmlrpc_server {
 		 * This avoids restarting dhcpd twice as described on
 		 * ticket #3797
 		 */
-		if (((is_array(config_get_path('dhcpd')) || is_array($old_config['dhcpd'])) &&
-		    (config_get_path('dhcpd') != $old_config['dhcpd'])) ||
-		    $force) {
-			services_dhcpd_configure();
-		}
-
-		if (((is_array(config_get_path('dhcrelay')) || is_array($old_config['dhcrelay'])) &&
-		    (config_get_path('dhcrelay') != $old_config['dhcrelay'])) ||
-		    $force) {
-			services_dhcrelay_configure();
-		}
-
-		if (((is_array(config_get_path('dhcrelay6')) || is_array($old_config['dhcrelay6'])) &&
-		    (config_get_path('dhcrelay6') != $old_config['dhcrelay6'])) ||
-		    $force) {
-			services_dhcrelay6_configure();
+		$called = [];
+		foreach ([
+			'dhcpd'			=> 'services_dhcpd_configure',
+			'dhcpdv6'		=> 'services_dhcpd_configure',
+			'kea'			=> 'services_dhcpd_configure',
+			'kea6'			=> 'services_dhcpd_configure',
+			'dhcrelay'		=> 'services_dhcrelay_configure',
+			'dhcrelay6'		=> 'services_dhcrelay6_configure',
+			'captiveportal'	=> 'captiveportal_configure',
+			'voucher'		=> 'voucher_configure'
+		] as $path => $fn) {
+			if (!array_key_exists($fn, $called)) {
+				if (((is_array(config_get_path($path)) || is_array($old_config[$path])) &&
+			        (config_get_path($path) !== array_get_path($old_config, $path))) || $force) {
+					if (is_callable($fn)) {
+						$fn();
+					}
+					$called[$fn] = true;
+				}
+			}
 		}
 
 		if ($reset_accounts) {
 			local_reset_accounts();
-		}
-
-		if ((is_array(config_get_path('captiveportal')) || is_array($old_config['captiveportal']) &&
-		    (config_get_path('captiveportal') != $old_config['captiveportal'])) ||
-		    $force) {
-			captiveportal_configure();
-		}
-		if ((is_array(config_get_path('voucher')) || is_array($old_config['voucher']) &&
-		    (config_get_path('voucher') != $old_config['voucher'])) ||
-		    $force) {
-			voucher_configure();
 		}
 
 		return true;

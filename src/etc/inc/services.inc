@@ -25,6 +25,7 @@
  * limitations under the License.
  */
 
+require_once('services_dhcp.inc');
 
 define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 desec desec-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsimple-v6 dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyfi dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 name.com name.com-v6 namecheap nicru nicru-v6 noip noip-v6 noip-free noip-free-v6 onecom onecom-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 strato yandex yandex-v6 zoneedit porkbun porkbun-v6');
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),deSEC,deSEC (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNSimple (v6),DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DY.fi,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi LiveDNS,Gandi LiveDNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Mythic Beasts,Mythic Beasts (v6),Name.com,Name.com (v6),Namecheap,NIC.RU,NIC.RU (v6),No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),One.com,One.com (v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),Strato,Yandex,Yandex (v6),ZoneEdit,Porkbun,Porkbun (v6)');
@@ -454,8 +455,7 @@ function services_radvd_configure($blacklist = array()) {
 	return 0;
 }
 
-function kea_is_hexstring(string $string): bool
-{
+function kea_is_hexstring(string $string): bool {
     $string = trim($string);
 
     /* kea accepts hex strings starting with 0x */
@@ -481,8 +481,7 @@ function kea_is_hexstring(string $string): bool
     return false;
 }
 
-function services_kea6_configure()
-{
+function services_kea6_configure() {
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
 	$kea_var_db = '/var/db/kea';
@@ -551,7 +550,7 @@ function services_kea6_configure()
 		'hooks-libraries' => [],
 		'control-socket' => [
 			'socket-type' => 'unix',
-			'socket-name' => '/tmp/kea6-ctrl-socket'
+			'socket-name' => '/var/run/kea6-ctrl-socket'
 		],
 	];
 
@@ -560,19 +559,106 @@ function services_kea6_configure()
 		'lease-checks' => 'fix-del'
 	];
 
-	/*
-	// configure ha hook library
-	$kea_ha_hook = [
-		'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
-	];
-	*/
-
-	$kea_lease_cmds_hook = [
+	/* required for HA support */
+	$keaconf['Dhcp6']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
 	];
 
-	/* wire up lease_cmds hook */
-	$keaconf['Dhcp6']['hooks-libraries'][] = $kea_lease_cmds_hook;
+	if (config_path_enabled('kea6/ha')) {
+		$scheme = (config_path_enabled('kea6/ha', 'tls') ? 'https://' : 'http://');
+
+		/* local side */
+		$local_role = config_get_path('kea6/ha/role', 'primary');
+		$local_name = config_get_path('kea6/ha/localname', kea_defaults('name'));
+		$local_address = config_get_path('kea6/ha/localip');
+		if (is_ipaddrv6($local_address)) {
+			$local_address = '[' . $local_address . ']';
+		}
+		$local_port = config_get_path('kea6/ha/localport', kea_defaults('listenport') + 1);
+
+		$local_conf = [
+			'name' => $local_name,
+			'role' => $local_role,
+			'url' => "{$scheme}{$local_address}:{$local_port}/",
+			'auto-failover' => true
+		];
+
+		/* remote side */
+		$remote_role = ($local_role === 'primary') ? 'standby' : 'primary';
+		$remote_name = config_get_path('kea6/ha/remotename', kea_defaults('name'));
+		$remote_address = config_get_path('kea6/ha/remoteip');
+		if (is_ipaddrv6($remote_address)) {
+			$remote_address = '[' . $remote_address . ']';
+		}
+		$remote_port = config_get_path('kea6/ha/remoteport', kea_defaults('listenport') + 1);
+
+		$remote_conf = [
+			'name' => $remote_name,
+			'role' => $remote_role,
+			'url' => "{$scheme}{$remote_address}:{$remote_port}/",
+			'auto-failover' => true,
+		];
+
+		$ha_conf = [
+			'this-server-name' => $local_name,
+			'restrict-commands' => true,
+			'mode' => 'hot-standby',
+			'peers' => []
+		];
+
+		if (config_path_enabled('kea6/ha', 'tls')) {
+			$cert = lookup_cert(config_get_path('kea6/ha/scertref'));
+			$ca = ca_chain($cert['item']);
+
+			$ha_conf['trust-anchor'] = '/usr/local/etc/kea/ha6_ca.pem';
+			file_put_contents($ha_conf['trust-anchor'], $ca);
+			chmod($ha_conf['trust-anchor'], 0644);
+
+			$ha_conf['cert-file'] = '/usr/local/etc/kea/ha6_scert.crt';
+			file_put_contents($ha_conf['cert-file'], base64_decode($cert['item']['crt']));
+			chmod($ha_conf['cert-file'], 0644);
+
+			$ha_conf['key-file'] = '/usr/local/etc/kea/ha6_scert.key';
+			file_put_contents($ha_conf['key-file'], base64_decode($cert['item']['prv']));
+			chmod($ha_conf['key-file'], 0600);
+
+			$ha_conf['require-client-certs'] = false;
+
+			if (config_path_enabled('kea6/ha', 'mutualtls')) {
+				$cert = lookup_cert(config_get_path('kea6/ha/ccertref'));
+
+				$remote_conf['cert-file'] = '/usr/local/etc/kea/ha6_ccert.crt';
+				file_put_contents($remote_conf['cert-file'], base64_decode($cert['item']['crt']));
+				chmod($remote_conf['cert-file'], 0644);
+
+				$remote_conf['key-file'] = '/usr/local/etc/kea/ha6_ccert.key';
+				file_put_contents($remote_conf['key-file'], base64_decode($cert['item']['prv']));
+				chmod($remote_conf['key-file'], 0600);
+
+				$ha_conf['require-client-certs'] = true;
+			}
+		}
+
+		$ha_conf['peers'] = [
+			$local_conf,
+			$remote_conf
+		];
+
+		$ha_conf['heartbeat-delay'] = (int)config_get_path('kea6/ha/heartbeatdelay', kea_defaults('heartbeatdelay'));
+		$ha_conf['max-response-delay'] = (int)config_get_path('kea6/ha/maxresponsedelay', kea_defaults('maxresponsedelay'));
+		$ha_conf['max-ack-delay'] = (int)config_get_path('kea6/ha/maxackdelay', kea_defaults('maxackdelay'));
+		$ha_conf['max-unacked-clients'] = (int)config_get_path('kea6/ha/maxunackedclients', kea_defaults('maxunackedclients'));
+		$ha_conf['max-rejected-lease-updates'] = (int)config_get_path('kea6/ha/maxrejectedleaseupdates', kea_defaults('maxrejectedleaseupdates'));
+
+		$kea_ha_hook = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+			'parameters' => [
+				'high-availability' => [$ha_conf]
+			]
+		];
+
+		$keaconf['Dhcp6']['hooks-libraries'][] = $kea_ha_hook;
+	}
 
 	$dhcpdv6ifs = array();
 
@@ -950,8 +1036,7 @@ kea6_skip_first_pool_options:
 	return 0;
 }
 
-function services_dhcpd_kill_all($family = 'all')
-{
+function services_dhcpd_kill_all($family = 'all') {
 	$dhcpd_var_run = g_get('dhcpd_chroot_path') . g_get('varrun_path');
 	$kea_var_run = g_get('varrun_path') . '/kea';
 
@@ -980,8 +1065,7 @@ function services_dhcpd_kill_all($family = 'all')
 	}
 }
 
-function services_dhcpd_configure($family = "all")
-{
+function services_dhcpd_configure($family = "all") {
 	global $g;
 
 	/* block if dhcpd is already being configured */
@@ -1033,8 +1117,7 @@ function services_dhcpd_configure($family = "all")
 	unlock($dhcpdconfigurelck);
 }
 
-function services_kea4_configure()
-{
+function services_kea4_configure() {
 	$need_ddns_updates = false;
 	$ddns_zones = array();
 
@@ -1110,7 +1193,7 @@ function services_kea4_configure()
 		'hooks-libraries' => [],
 		'control-socket' => [
 			'socket-type' => 'unix',
-			'socket-name' => '/tmp/kea4-ctrl-socket'
+			'socket-name' => '/var/run/kea4-ctrl-socket'
 		],
 	];
 
@@ -1119,16 +1202,106 @@ function services_kea4_configure()
 		'lease-checks' => 'fix-del'
 	];
 
-	$kea_ha_hook = [
-		'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
-	];
-
-	$kea_lease_cmds_hook = [
+	/* required for HA support */
+	$keaconf['Dhcp4']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
 	];
 
-	/* wire up lease_cmds hook */
-	$keaconf['Dhcp4']['hooks-libraries'][] = $kea_lease_cmds_hook;
+	if (config_path_enabled('kea/ha')) {
+		$scheme = (config_path_enabled('kea/ha', 'tls') ? 'https://' : 'http://');
+
+		/* local side */
+		$local_role = config_get_path('kea/ha/role', 'primary');
+		$local_name = config_get_path('kea/ha/localname', kea_defaults('name'));
+		$local_address = config_get_path('kea/ha/localip');
+		if (is_ipaddrv6($local_address)) {
+			$local_address = '[' . $local_address . ']';
+		}
+		$local_port = config_get_path('kea/ha/localport', kea_defaults('listenport'));
+
+		$local_conf = [
+			'name' => $local_name,
+			'role' => $local_role,
+			'url' => "{$scheme}{$local_address}:{$local_port}/",
+			'auto-failover' => true
+		];
+
+		/* remote side */
+		$remote_role = ($local_role === 'primary') ? 'standby' : 'primary';
+		$remote_name = config_get_path('kea/ha/remotename', kea_defaults('name'));
+		$remote_address = config_get_path('kea/ha/remoteip');
+		if (is_ipaddrv6($remote_address)) {
+			$remote_address = '[' . $remote_address . ']';
+		}
+		$remote_port = config_get_path('kea/ha/remoteport', kea_defaults('listenport'));
+
+		$remote_conf = [
+			'name' => $remote_name,
+			'role' => $remote_role,
+			'url' => "{$scheme}{$remote_address}:{$remote_port}/",
+			'auto-failover' => true,
+		];
+
+		$ha_conf = [
+			'this-server-name' => $local_name,
+			'restrict-commands' => true,
+			'mode' => 'hot-standby',
+			'peers' => []
+		];
+
+		if (config_path_enabled('kea/ha', 'tls')) {
+			$cert = lookup_cert(config_get_path('kea/ha/scertref'));
+			$ca = ca_chain($cert['item']);
+
+			$ha_conf['trust-anchor'] = '/usr/local/etc/kea/ha_ca.pem';
+			file_put_contents($ha_conf['trust-anchor'], $ca);
+			chmod($ha_conf['trust-anchor'], 0644);
+
+			$ha_conf['cert-file'] = '/usr/local/etc/kea/ha_scert.crt';
+			file_put_contents($ha_conf['cert-file'], base64_decode($cert['item']['crt']));
+			chmod($ha_conf['cert-file'], 0644);
+
+			$ha_conf['key-file'] = '/usr/local/etc/kea/ha_scert.key';
+			file_put_contents($ha_conf['key-file'], base64_decode($cert['item']['prv']));
+			chmod($ha_conf['key-file'], 0600);
+
+			$ha_conf['require-client-certs'] = false;
+
+			if (config_path_enabled('kea/ha', 'mutualtls')) {
+				$cert = lookup_cert(config_get_path('kea/ha/ccertref'));
+
+				$remote_conf['cert-file'] = '/usr/local/etc/kea/ha_ccert.crt';
+				file_put_contents($remote_conf['cert-file'], base64_decode($cert['item']['crt']));
+				chmod($remote_conf['cert-file'], 0644);
+
+				$remote_conf['key-file'] = '/usr/local/etc/kea/ha_ccert.key';
+				file_put_contents($remote_conf['key-file'], base64_decode($cert['item']['prv']));
+				chmod($remote_conf['key-file'], 0600);
+
+				$ha_conf['require-client-certs'] = true;
+			}
+		}
+
+		$ha_conf['peers'] = [
+			$local_conf,
+			$remote_conf
+		];
+
+		$ha_conf['heartbeat-delay'] = (int)config_get_path('kea/ha/heartbeatdelay', kea_defaults('heartbeatdelay'));
+		$ha_conf['max-response-delay'] = (int)config_get_path('kea/ha/maxresponsedelay', kea_defaults('maxresponsedelay'));
+		$ha_conf['max-ack-delay'] = (int)config_get_path('kea/ha/maxackdelay', kea_defaults('maxackdelay'));
+		$ha_conf['max-unacked-clients'] = (int)config_get_path('kea/ha/maxunackedclients', kea_defaults('maxunackedclients'));
+		$ha_conf['max-rejected-lease-updates'] = (int)config_get_path('kea/ha/maxrejectedleaseupdates', kea_defaults('maxrejectedleaseupdates'));
+
+		$kea_ha_hook = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+			'parameters' => [
+				'high-availability' => [$ha_conf]
+			]
+		];
+
+		$keaconf['Dhcp4']['hooks-libraries'][] = $kea_ha_hook;
+	}
 
 	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
 	$dns_arrv4 = array();

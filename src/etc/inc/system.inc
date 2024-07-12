@@ -729,10 +729,108 @@ function system_dhcpleases_configure() {
 	}
 }
 
-function system_clear_all_kea4leases()
-{
-	$socket_path = '/tmp/kea4-ctrl-socket';
-	$rlen = 1024;
+function system_get_kea6status() {
+	$socket_path = '/var/run/kea6-ctrl-socket';
+	$rbuf = NULL;
+	$ret = false;
+
+	if (!file_exists($socket_path)) {
+		goto out;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'status-get']);
+
+	if (socket_send($fd, $cmdjson, strlen($cmdjson), 0) === false) {
+		goto cleanup;
+	}
+
+	$retjson = NULL;
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
+
+		/* error occured, just bail out */
+		if ($bytes === false) {
+			goto cleanup;
+		/* we got some data, append it to the json buffer */
+		} elseif ($bytes > 0) {
+			$retjson .= $rbuf;
+		} else {
+			break;
+		}
+	}
+
+	/* sanity check in case we received malformed json */
+	if (($ret = json_decode($retjson, true)) === false) {
+		goto cleanup;
+	}
+
+cleanup:
+	socket_close($fd);
+out:
+	return ($ret);
+}
+
+function system_get_kea4status() {
+	$socket_path = '/var/run/kea4-ctrl-socket';
+	$rbuf = NULL;
+	$ret = false;
+
+	if (!file_exists($socket_path)) {
+		goto out;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'status-get']);
+
+	if (socket_send($fd, $cmdjson, strlen($cmdjson), 0) === false) {
+		goto cleanup;
+	}
+
+	$retjson = NULL;
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
+
+		/* error occured, just bail out */
+		if ($bytes === false) {
+			goto cleanup;
+		/* we got some data, append it to the json buffer */
+		} elseif ($bytes > 0) {
+			$retjson .= $rbuf;
+		} else {
+			break;
+		}
+	}
+
+	/* sanity check in case we received malformed json */
+	if (($ret = json_decode($retjson, true)) === false) {
+		goto cleanup;
+	}
+
+cleanup:
+	socket_close($fd);
+out:
+	return ($ret);
+}
+
+function system_clear_all_kea4leases() {
+	$socket_path = '/var/run/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -740,6 +838,9 @@ function system_clear_all_kea4leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -751,7 +852,7 @@ function system_clear_all_kea4leases()
 
 	/* Kea sends status that we are not really interested in, so just eat it */
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 		if ($bytes > 0) {
 			continue;
 		}
@@ -763,10 +864,8 @@ cleanup:
 	socket_close($fd);
 }
 
-function system_del_kea4lease(string $ip)
-{
-	$socket_path = '/tmp/kea4-ctrl-socket';
-	$rlen = 1024;
+function system_del_kea4lease(string $ip) {
+	$socket_path = '/var/run/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -774,6 +873,9 @@ function system_del_kea4lease(string $ip)
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -790,7 +892,7 @@ function system_del_kea4lease(string $ip)
 
 	/* Kea sends status that we are not really interested in, so just eat it */
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 		if ($bytes > 0) {
 			continue;
 		}
@@ -802,10 +904,8 @@ cleanup:
 	socket_close($fd);
 }
 
-function system_clear_all_kea6leases()
-{
-	$socket_path = '/tmp/kea6-ctrl-socket';
-	$rlen = 1024;
+function system_clear_all_kea6leases() {
+	$socket_path = '/var/run/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -813,6 +913,9 @@ function system_clear_all_kea6leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -824,7 +927,7 @@ function system_clear_all_kea6leases()
 
 	/* Kea sends status that we are not really interested in, so just eat it */
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 		if ($bytes > 0) {
 			continue;
 		}
@@ -836,10 +939,8 @@ cleanup:
 	socket_close($fd);
 }
 
-function system_del_kea6lease(string $ip)
-{
-	$socket_path = '/tmp/kea6-ctrl-socket';
-	$rlen = 1024;
+function system_del_kea6lease(string $ip) {
+	$socket_path = '/var/run/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -847,6 +948,9 @@ function system_del_kea6lease(string $ip)
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -863,7 +967,7 @@ function system_del_kea6lease(string $ip)
 
 	/* Kea sends status that we are not really interested in, so just eat it */
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 		if ($bytes > 0) {
 			continue;
 		}
@@ -876,14 +980,12 @@ cleanup:
 }
 
 
-function system_get_kea6leases()
-{
+function system_get_kea6leases() {
 	$leases = [];
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/tmp/kea6-ctrl-socket';
-	$rlen = 1024;
+	$socket_path = '/var/run/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -891,6 +993,9 @@ function system_get_kea6leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -904,7 +1009,7 @@ function system_get_kea6leases()
 
 	$retjson = NULL;
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 
 		/* error occured, just bail out */
 		if ($bytes === false) {
@@ -1008,14 +1113,12 @@ out:
 	return $leases;
 }
 
-function system_get_kea4leases()
-{
+function system_get_kea4leases() {
 	$leases = [];
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/tmp/kea4-ctrl-socket';
-	$rlen = 1024;
+	$socket_path = '/var/run/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1023,6 +1126,9 @@ function system_get_kea4leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -1036,7 +1142,7 @@ function system_get_kea4leases()
 
 	$retjson = NULL;
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 
 		/* error occured, just bail out */
 		if ($bytes === false) {
@@ -1149,8 +1255,7 @@ out:
 	return $leases;
 }
 
-function system_get_dhcpleases($dnsavailable=null)
-{
+function system_get_dhcpleases($dnsavailable=null) {
 	global $g;
 
 	if (dhcp_is_backend('kea')) {

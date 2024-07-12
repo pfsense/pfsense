@@ -47,6 +47,7 @@ $checkbox_names = array(
 	'synchronizeopenvpn',
 	'synchronizedhcpd',
 	'synchronizedhcrelay',
+	'synchronizekea6',
 	'synchronizedhcrelay6',
 	'synchronizewol',
 	'synchronizestaticroutes',
@@ -133,238 +134,248 @@ if ($input_errors) {
 
 $form = new Form;
 
-$section = new Form_Section('State Synchronization Settings (pfsync)');
+$section = new Form_Section(gettext('State Synchronization Settings (pfsync)'));
 
 $section->addInput(new Form_Checkbox(
 	'pfsyncenabled',
-	'Synchronize states',
-	'pfsync transfers state insertion, update, and deletion messages between firewalls.',
+	gettext('Synchronize states'),
+	gettext('pfsync transfers state insertion, update, and deletion messages between firewalls.'),
 	($pconfig['pfsyncenabled'] === 'on'),
 	'on'
-))->setHelp('Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240).' .
+))->setHelp(gettext('Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240).' .
 			' It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.%1$s' .
 			'This setting should be enabled on all members of a failover group.%1$s' .
-			'Clicking "Save" will force a configuration sync if it is enabled! (see Configuration Synchronization Settings below)', '<br />');
+			'Clicking "Save" will force a configuration sync if it is enabled! (see Configuration Synchronization Settings below)'), '<br />');
 
 $section->addInput(new Form_Select(
 	'pfsyncinterface',
-	'Synchronize Interface',
+	gettext('Synchronize Interface'),
 	$pconfig['pfsyncinterface'],
 	$iflist
-))->setHelp('If Synchronize States is enabled this interface will be used for communication.%1$s' .
+))->setHelp(gettext('If Synchronize States is enabled this interface will be used for communication.%1$s' .
 			'It is recommended to set this to an interface other than LAN! A dedicated interface works the best.%1$s' .
 			'An IP must be defined on each machine participating in this failover group.%1$s' .
-			'An IP must be assigned to the interface on any participating sync nodes.', '<br />');
+			'An IP must be assigned to the interface on any participating sync nodes.'), '<br />');
 
 $section->addInput(new Form_Input(
 	'pfhostid',
-	'Filter Host ID',
+	gettext('Filter Host ID'),
 	'text',
 	$pconfig['pfhostid'],
 	['placeholder' => substr(system_get_uniqueid(), -8)]
-))->setHelp('Custom pf host identifier carried in state data to uniquely identify which host created a firewall state.%1$s' .
+))->setHelp(gettext('Custom pf host identifier carried in state data to uniquely identify which host created a firewall state.%1$s' .
 		'Must be a non-zero hexadecimal string 8 characters or less (e.g. 1, 2, ff01, abcdef01).%1$s' .
-		'Each node participating in state synchronization must have a different ID.', '<br />');
+		'Each node participating in state synchronization must have a different ID.'), '<br />');
 
 $section->addInput(new Form_Input(
 	'pfsyncpeerip',
-	'pfsync Synchronize Peer IP',
+	gettext('pfsync Synchronize Peer IP'),
 	'text',
 	$pconfig['pfsyncpeerip'],
 	['placeholder' => 'IP Address']
-))->setHelp('Setting this option will force pfsync to synchronize its state table to this IP address. The default is directed multicast.');
+))->setHelp(gettext('Setting this option will force pfsync to synchronize its state table to this IP address. The default is directed multicast.'));
 
 $form->add($section);
 
-$section = new Form_Section('Configuration Synchronization Settings (XMLRPC Sync)');
+$section = new Form_Section(gettext('Configuration Synchronization Settings (XMLRPC Sync)'));
 
 $section->addInput(new Form_Input(
 	'synchronizetoip',
-	'Synchronize Config to IP',
+	gettext('Synchronize Config to IP'),
 	'text',
 	$pconfig['synchronizetoip'],
 	['placeholder' => 'IP Address']
-))->setHelp('Enter the IP address of the firewall to which the selected configuration sections should be synchronized.%1$s%1$s' .
+))->setHelp(gettext('Enter the IP address of the firewall to which the selected configuration sections should be synchronized.%1$s%1$s' .
 			'XMLRPC sync is currently only supported over connections using the same protocol and port as this system - make sure the remote system\'s port and protocol are set accordingly!%1$s' .
-			'Do not use the Synchronize Config to IP and password option on backup cluster members!', '<br />');
+			'Do not use the Synchronize Config to IP and password option on backup cluster members!'), '<br />');
 
 $section->addInput(new Form_Input(
 	'username',
-	'Remote System Username',
+	gettext('Remote System Username'),
 	'text',
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
-))->setHelp('Enter the webConfigurator username of the system entered above for synchronizing the configuration.%1$s' .
-			'Do not use the Synchronize Config to IP and username option on backup cluster members!', '<br />');
+))->setHelp(gettext('Enter the webConfigurator username of the system entered above for synchronizing the configuration.%1$s' .
+			'Do not use the Synchronize Config to IP and username option on backup cluster members!'), '<br />');
 
 $section->addPassword(new Form_Input(
 	'passwordfld',
-	'Remote System Password',
+	gettext('Remote System Password'),
 	'password',
 	$pconfig['passwordfld']
-))->setHelp('Enter the webConfigurator password of the system entered above for synchronizing the configuration.%1$s' .
-			'Do not use the Synchronize Config to IP and password option on backup cluster members!', '<br />');
+))->setHelp(gettext('Enter the webConfigurator password of the system entered above for synchronizing the configuration.%1$s' .
+			'Do not use the Synchronize Config to IP and password option on backup cluster members!'), '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'adminsync',
-	'Synchronize admin',
-	'synchronize admin accounts and autoupdate sync password.',
+	gettext('Synchronize admin'),
+	gettext('synchronize admin accounts and autoupdate sync password.'),
 	($pconfig['adminsync'] === 'on'),
 	'on'
-))->setHelp('By default, the admin account does not synchronize, and each node may have a different admin password.%1$s' .
+))->setHelp(gettext('By default, the admin account does not synchronize, and each node may have a different admin password.%1$s' .
 			'This option automatically updates XMLRPC Remote System Password when the password is changed on
-			the Remote System Username account.', '<br />');
+			the Remote System Username account.'), '<br />');
 
-$group = new Form_MultiCheckboxGroup('Select options to sync');
+$group = new Form_MultiCheckboxGroup(gettext('Select options to sync'));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizeusers',
-	'Synchronize Users and Groups',
-	'User manager users and groups',
+	gettext('Synchronize Users and Groups'),
+	gettext('User manager users and groups'),
 	($pconfig['synchronizeusers'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizeauthservers',
-	'Synchronize Auth Servers',
-	'Authentication servers (e.g. LDAP, RADIUS)',
+	gettext('Synchronize Auth Servers'),
+	gettext('Authentication servers (e.g. LDAP, RADIUS)'),
 	($pconfig['synchronizeauthservers'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizecerts',
-	'Synchronize Certificates',
-	'Certificate Authorities, Certificates, and Certificate Revocation Lists',
+	gettext('Synchronize Certificates'),
+	gettext('Certificate Authorities, Certificates, and Certificate Revocation Lists'),
 	($pconfig['synchronizecerts'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizerules',
-	'Synchronize Rules',
-	'Firewall rules ',
+	gettext('Synchronize Rules'),
+	gettext('Firewall rules'),
 	($pconfig['synchronizerules'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizeschedules',
-	'Synchronize Firewall schedules',
-	'Firewall schedules ',
+	gettext('Synchronize Firewall schedules'),
+	gettext('Firewall schedules'),
 	($pconfig['synchronizeschedules'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizealiases',
-	'Synchronize Firewall aliases',
-	'Firewall aliases ',
+	gettext('Synchronize Firewall aliases'),
+	gettext('Firewall aliases'),
 	($pconfig['synchronizealiases'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizenat',
-	'Synchronize NAT',
-	'NAT configuration ',
+	gettext('Synchronize NAT'),
+	gettext('NAT configuration'),
 	($pconfig['synchronizenat'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizeipsec',
-	'Synchronize IPsec',
-	'IPsec configuration ',
+	gettext('Synchronize IPsec'),
+	gettext('IPsec configuration'),
 	($pconfig['synchronizeipsec'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizeopenvpn',
-	'Synchronize OpenVPN',
-	'OpenVPN configuration (Implies CA/Cert/CRL Sync) ',
+	gettext('Synchronize OpenVPN'),
+	gettext('OpenVPN configuration (Implies CA/Cert/CRL Sync)'),
 	($pconfig['synchronizeopenvpn'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizedhcpd',
-	'Synchronize DHCPD',
-	'DHCP Server settings ',
+	gettext('Synchronize DHCPD'),
+	gettext('DHCP Server settings'),
 	($pconfig['synchronizedhcpd'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizedhcrelay',
-	'Synchronize DHCP Relay',
-	'DHCP Relay settings ',
+	gettext('Synchronize DHCP Relay'),
+	gettext('DHCP Relay settings'),
 	($pconfig['synchronizedhcrelay'] === 'on'),
 	'on'
 ));
 
+if (dhcp_is_backend('kea')) {
+	$group->add(new Form_MultiCheckbox(
+		'synchronizekea6',
+		gettext('Synchronize Kea DHCPv6'),
+		gettext('DHCPv6 Server settings'),
+		($pconfig['synchronizekea6'] === 'on'),
+		'on'
+	));	
+}
+
 $group->add(new Form_MultiCheckbox(
 	'synchronizedhcrelay6',
-	'Synchronize DHCPv6 Relay',
-	'DHCPv6 Relay settings',
+	gettext('Synchronize DHCPv6 Relay'),
+	gettext('DHCPv6 Relay settings'),
 	($pconfig['synchronizedhcrelay6'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizewol',
-	'Synchronize Wake-on-LAN',
-	'WoL Server settings ',
+	gettext('Synchronize Wake-on-LAN'),
+	gettext('WoL Server settings'),
 	($pconfig['synchronizewol'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizestaticroutes',
-	'Synchronize Static Routes',
-	'Static Route configuration ',
+	gettext('Synchronize Static Routes'),
+	gettext('Static Route configuration'),
 	($pconfig['synchronizestaticroutes'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizevirtualip',
-	'Synchronize Virtual IPs',
-	'Virtual IPs ',
+	gettext('Synchronize Virtual IPs'),
+	gettext('Virtual IPs'),
 	($pconfig['synchronizevirtualip'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaper',
-	'Synchronize traffic shaper (queues)',
-	'Traffic Shaper configuration ',
+	gettext('Synchronize traffic shaper (queues)'),
+	gettext('Traffic Shaper configuration'),
 	($pconfig['synchronizetrafficshaper'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizetrafficshaperlimiter',
-	'Synchronize traffic shaper (limiter)',
-	'Traffic Shaper Limiters configuration ',
+	gettext('Synchronize traffic shaper (limiter)'),
+	gettext('Traffic Shaper Limiters configuration'),
 	($pconfig['synchronizetrafficshaperlimiter'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizednsforwarder',
-	'Synchronize DNS (Forwarder/Resolver)',
-	'DNS Forwarder and DNS Resolver configurations ',
+	gettext('Synchronize DNS (Forwarder/Resolver)'),
+	gettext('DNS Forwarder and DNS Resolver configurations'),
 	($pconfig['synchronizednsforwarder'] === 'on'),
 	'on'
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizecaptiveportal',
-	'Synchronize Captive Portal)',
-	'Captive Portal ',
+	gettext('Synchronize Captive Portal'),
+	gettext('Captive Portal'),
 	($pconfig['synchronizecaptiveportal'] === 'on'),
 	'on'
 ));

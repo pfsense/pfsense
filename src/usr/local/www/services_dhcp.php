@@ -32,11 +32,12 @@
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("filter.inc");
+require_once('guiconfig.inc');
+require_once('filter.inc');
 require_once('rrd.inc');
-require_once("shaper.inc");
-require_once("util.inc");
+require_once('shaper.inc');
+require_once('util.inc');
+require_once('services_dhcp.inc');
 
 global $ddnsdomainkeyalgorithms;
 
@@ -906,7 +907,7 @@ if ($act == "del") {
 function build_pooltable() {
 	global $if;
 
-	$pooltbl =	'<div class="table-responsive">';
+	$pooltbl =	'<div class="contains-table table-responsive">';
 	$pooltbl .=		'<table class="table table-striped table-hover table-condensed">';
 	$pooltbl .=			'<thead>';
 	$pooltbl .=				'<tr>';
@@ -933,7 +934,7 @@ function build_pooltable() {
 
 			$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-			$pooltbl .= ' <a class="fa-solid fa-trash-can" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
+			$pooltbl .= ' <a class="fa-solid fa-trash-can text-danger" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
 			$pooltbl .= '</tr>';
 		}
 		$i++;
@@ -947,7 +948,7 @@ function build_pooltable() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
-$pglinks = array("", "services_dhcp.php");
+$pglinks = array("", "services_dhcp_settings.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
@@ -967,6 +968,12 @@ if (dhcp_is_backend('kea')) {
 }
 
 include('head.inc');
+
+if (dhcp_is_backend('kea')):
+if (config_path_enabled('dhcrelay')) {
+	print_info_box(gettext('DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface.'), 'danger', false);
+}
+endif;
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -988,7 +995,17 @@ $tabscounter = 0;
 $i = 0;
 $have_small_subnet = false;
 
+if (dhcp_is_backend('kea')) {
+	$tab_array[] = [gettext('Settings'), false, 'services_dhcp_settings.php'];
+}
+
 foreach ($iflist as $ifent => $ifname) {
+	if (dhcp_is_backend('kea') &&
+	    config_path_enabled('kea', 'hidedisabled') &&
+		!config_path_enabled("dhcpd/{$ifent}")) {
+		continue;
+	}
+
 	$oc = config_get_path("interfaces/{$ifent}");
 
 	/* Not static IPv4 or subnet >= 31 */
@@ -1029,6 +1046,7 @@ $form = new Form();
 
 $section = new Form_Section(gettext('General DHCP Options'));
 
+if (dhcp_is_backend('isc')):
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
 	match (dhcp_get_backend()) {
@@ -1037,19 +1055,21 @@ $section->addInput(new Form_StaticText(
 		default => gettext('Unknown')
 	}
 ));
+endif; /* dhcp_is_backend('isc) */
 
+if (dhcp_is_backend('isc')):
 if (!is_numeric($pool) && !($act == "newpool")) {
 	if (config_path_enabled('dhcrelay')) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
-			'Enable',
+			gettext('Enable'),
 			gettext("DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface."),
 			$pconfig['enable']
 		))->setAttribute('disabled', true);
 	} else {
 		$section->addInput(new Form_Checkbox(
 			'enable',
-			'Enable',
+			gettext('Enable'),
 			sprintf(gettext("Enable DHCP server on %s interface"), htmlspecialchars($iflist[$if])),
 			$pconfig['enable']
 		));
@@ -1058,14 +1078,22 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
 
-if (dhcp_is_backend('isc')):
 $section->addInput(new Form_Checkbox(
 	'ignorebootp',
 	'BOOTP',
 	'Ignore BOOTP queries',
 	$pconfig['ignorebootp']
 ));
-endif;
+endif; /* dhcp_is_backend('isc') */
+
+if (dhcp_is_backend('kea')):
+$form->addGlobal(new Form_Input(
+	'enable',
+	null,
+	'hidden',
+	$pconfig['enable'] ? 'yes' : 'no'
+));
+endif; /* dhcp_is_backend('kea') */
 
 $section->addInput(new Form_Select(
 	'denyunknown',
@@ -1088,7 +1116,7 @@ $section->addInput(new Form_Checkbox(
 	'Ignore denied clients rather than reject',
 	$pconfig['nonak']
 ))->setHelp(gettext('This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.'));
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('isc') ||
     (dhcp_is_backend('kea') && (!is_numeric($pool) && !($act === 'newpool')))):
@@ -1414,16 +1442,14 @@ if (dhcp_is_backend('isc')):
 		'Enable monitoring graphs for DHCP lease statistics',
 		$pconfig['statsgraph']
 	))->setHelp('Enable this to add DHCP leases statistics to the Monitoring graphs. Disabled by default.');
-endif;
 
-if (dhcp_is_backend('isc')):
 	$section->addInput(new Form_Checkbox(
 		'disablepingcheck',
 		'Ping check',
 		'Disable ping check',
 		$pconfig['disablepingcheck']
 	))->setHelp('When enabled dhcpd sends a ping to the address being assigned, and if no response has been heard, it assigns the address. Enabled by default.');
-endif;
+endif; /* dhcp_is_backend('isc') */
 }
 
 if (dhcp_is_backend('isc')):
@@ -1473,14 +1499,12 @@ $group->add(new Form_IpAddress(
 	'BOTH'
 ))->setHelp('Primary domain name server IPv4 address.');
 
-if (dhcp_is_backend('kea')):
 $group->add(new Form_Input(
 	'ddnsdomainprimaryport',
 	'53',
 	'text',
 	$pconfig['ddnsdomainprimaryport'],
 ))->setHelp(gettext('The port on which the server listens for DDNS requests.'));
-endif;
 
 $section->add($group);
 
@@ -1492,25 +1516,21 @@ $group->add(new Form_IpAddress(
 	'BOTH'
 ))->setHelp(gettext('Secondary domain name server IPv4 address.'));
 
-if (dhcp_is_backend('kea')):
 $group->add(new Form_Input(
 	'ddnsdomainsecondaryport',
 	'53',
 	'text',
 	$pconfig['ddnsdomainsecondaryport'],
 ))->setHelp(gettext('The port on which the server listens for DDNS requests.'));
-endif;
 
 $section->add($group);
 
-if (dhcp_is_backend('isc')):
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
 	gettext('DNS Domain Key'),
 	'text',
 	$pconfig['ddnsdomainkeyname']
 ))->setHelp(gettext('Dynamic DNS domain key name which will be used to register client names in the DNS server.'));
-endif;
 
 $section->addInput(new Form_Select(
 	'ddnsdomainkeyalgorithm',
@@ -1539,7 +1559,7 @@ $section->addInput(new Form_Select(
 	    'Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will ' .
 	    'do the updates and the client should not, Ignore specifies that DHCP will do the ' .
 	    'update and the client can also attempt the update usually using a different domain name.'));
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 // Advanced MAC
 $btnadv = new Form_Button(
@@ -1781,7 +1801,6 @@ $form->add($section);
 $section = new Form_Section(gettext('Custom DHCP Options'));
 $section->addClass('adnlopts');
 
-if (dhcp_is_backend('isc')):
 if (!$pconfig['numberoptions']) {
 	$pconfig['numberoptions'] = array();
 	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
@@ -1840,7 +1859,6 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 	$counter++;
 }
-endif; /* dhcp_is_backend(isc') */
 
 $group = new Form_Group(null);
 $group->add(new Form_Button(
@@ -1851,7 +1869,7 @@ $group->add(new Form_Button(
 ))->addClass('btn-success')
   ->setHelp(gettext('Enter the DHCP option number, type and the value for each item to include in the DHCP lease information.'));
 $section->add($group);
-endif;
+endif; /* dhcp_is_backend(isc') */
 
 $form->add($section);
 

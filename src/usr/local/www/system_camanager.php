@@ -341,7 +341,7 @@ if ($_POST['save']) {
 	}
 }
 
-$pgtitle = array(gettext('System'), gettext('Certificate'), gettext('Authorities'));
+$pgtitle = array(gettext('System'), gettext('Certificates'), gettext('Authorities'));
 $pglinks = array("", "system_camanager.php", "system_camanager.php");
 
 if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors) {
@@ -466,17 +466,17 @@ foreach (config_get_path('ca', []) as $ca):
 						<?php cert_print_dates($ca);?>
 					</td>
 					<td class="text-nowrap">
-						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
-							<?=gettext("OpenVPN Server")?><br/>
-						<?php endif?>
-						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
-							<?=gettext("OpenVPN Client")?><br/>
-						<?php endif?>
 						<?php if (is_ipsec_peer_ca($ca['refid'])): ?>
 							<?=gettext("IPsec Tunnel")?><br/>
 						<?php endif?>
 						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
-							<?=gettext("LDAP Server")?>
+							<?=gettext("LDAP Server")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
 						<?php endif?>
 						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>

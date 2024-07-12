@@ -864,6 +864,20 @@ function ca_in_use($caref) {
 		is_ldap_peer_ca($caref));
 }
 
+function is_kea_cert(string $certref): bool {
+	if (config_path_enabled('kea/ha', 'tls')) {
+		if (config_get_path('kea/ha/scertref') === $certref) {
+			return true;
+		}
+		if (config_path_enabled('kea/ha', 'mutualtls') &&
+		    (config_get_path('kea/ha/ccertref') === $certref)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function is_user_cert($certref) {
 	foreach (config_get_path('system/user', []) as $user) {
 		if (!is_array($user['cert'])) {
@@ -946,8 +960,8 @@ function is_unbound_cert($certref) {
 }
 
 function cert_in_use($certref) {
-
-	return (is_webgui_cert($certref) ||
+	return (is_kea_cert($certref) ||
+		is_webgui_cert($certref) ||
 		is_user_cert($certref) ||
 		is_openvpn_server_cert($certref) ||
 		is_openvpn_client_cert($certref) ||

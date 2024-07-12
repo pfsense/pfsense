@@ -81,9 +81,7 @@ if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	services_dhcpd_configure();
 	header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
 }
-endif;
 
-if (dhcp_is_backend('isc')):
 if ($_POST['cleardhcpleases']) {
 	killbyname("dhcpd");
 	sleep(2);
@@ -94,17 +92,17 @@ if ($_POST['cleardhcpleases']) {
 }
 endif; /* dhcp_is_backend('isc') */
 
-if (dhcp_is_backend('kea')) {
-	if ($_POST['deleteip'] && is_ipaddrv6($_POST['deleteip'])) {
-		system_del_kea6lease($_POST['deleteip']);
-		header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
-	}
-
-	if ($_POST['cleardhcpleases']) {
-		system_clear_all_kea6leases();
-		header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
-	}
+if (dhcp_is_backend('kea')):
+if ($_POST['deleteip'] && is_ipaddrv6($_POST['deleteip'])) {
+	system_del_kea6lease($_POST['deleteip']);
+	header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
 }
+
+if ($_POST['cleardhcpleases']) {
+	system_clear_all_kea6leases();
+	header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
+}
+endif; /* dhcp_is_backend('kea') */
 
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
@@ -251,10 +249,10 @@ endif; /* dhcp_is_backend('isc') */
 
 display_isc_warning();
 
-if (dhcp_is_backend('kea')) {
-	$kea6leases = system_get_kea6leases();
-	$leases = $kea6leases['lease'];
-}
+if (dhcp_is_backend('kea')):
+$kea6leases = system_get_kea6leases();
+$leases = $kea6leases['lease'];
+endif; /* dhcp_is_backend('kea') */
 
 ?>
 <div class="panel panel-default" id="search-panel">
@@ -435,7 +433,9 @@ endif;
 	</div>
 </div>
 
-<?php if (dhcp_is_backend('isc')): ?>
+<?php
+if (dhcp_is_backend('isc')):
+?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Delegated Prefixes')?></h2></div>
 	<div class="panel-body table-responsive">
@@ -509,7 +509,9 @@ foreach ($prefixes as $data):
 		</table>
 	</div>
 </div>
-<?php endif; ?>
+<?php
+endif; /* dhcp_is_backend('isc') */
+?>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Lease Utilization')?></h2></div>
@@ -549,12 +551,57 @@ else:
 	</div>
 </div>
 
+<nav class="action-buttons">
 <?php if ($_REQUEST['all']): ?>
 	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=0"><i class="fa-solid fa-minus-circle icon-embed-btn"></i><?=gettext('Show Active and Static Leases Only')?></a>
 <?php else: ?>
 	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=1"><i class="fa-solid fa-plus-circle icon-embed-btn"></i><?=gettext('Show all Configured Leases')?></a>
 <?php endif; ?>
 	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?=gettext('Clear all DHCPv6 Leases')?></a>
+</nav>
+
+<?php
+if (dhcp_is_backend('kea')):
+	$status = system_get_kea6status();
+	if (is_array($status) && array_key_exists('high-availability', $status['arguments'])):
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('High Availability Status')?></h2></div>
+	<div class="panel-body table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext('Node Name')?></th>
+				<th><?=gettext('Node Type')?></th>
+				<th><?=gettext('Node Role')?></th>
+				<th><?=gettext('Latest Heartbeat')?></th>
+				<th><?=gettext('Node State')?></th>
+			</tr>
+		</thead>
+		<tbody>
+<?php
+		foreach ($status['arguments']['high-availability'] as $ha_status):
+			foreach ($ha_status['ha-servers'] as $where => $ha_server):
+?>
+			<tr>
+				<td><?=dhcp_ha_status_icon($where, $ha_server)?> <?=htmlspecialchars($ha_server['server-name'])?></td>
+				<td><?=htmlspecialchars($where)?></td>
+				<td><?=htmlspecialchars($ha_server['role'])?></td>
+				<td><?=htmlspecialchars(kea_format_age($ha_server['age']))?></td>
+				<td><?=htmlspecialchars($ha_server['state'] ?? $ha_server['last-state'])?></td>
+			</tr>
+<?php
+			endforeach;
+		endforeach;
+?>
+		</tbody>
+		</table>
+	</div>
+</div>
+<?php
+	endif;
+endif; /* dhcp_is_backend('kea') */
+?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -573,7 +620,6 @@ events.push(function() {
 		if ((where >= 2) && (where <= 8)) {
 			searchstr = searchstr.trim();
 		}
-
 
 		table.find('tr').each(function (i) {
 			var $tds	= $(this).find('td');
@@ -638,7 +684,6 @@ events.push(function() {
 			postSubmit({cleardhcpleases: 'true'}, 'status_dhcpv6_leases.php');
 		}
 	});
-
 });
 //]]>
 </script>

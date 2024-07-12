@@ -35,70 +35,7 @@
 
 require_once('guiconfig.inc');
 require_once('filter.inc');
-
-function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
-	global $g;
-	$retval = 0;
-	$retvaldhcp = 0;
-	$retvaldns = 0;
-	if (dhcp_is_backend('isc')) {
-		/* Stop DHCPv6 so we can cleanup leases */
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
-	}
-	// dhcp_clean_leases();
-	/* dnsmasq_configure calls dhcpd_configure */
-	/* no need to restart dhcpd twice */
-	if (config_path_enabled('dnsmasq') &&
-	    config_path_enabled('dnsmasq', 'regdhcpstatic')) {
-		$retvaldns |= services_dnsmasq_configure();
-		if ($retvaldns == 0) {
-			clear_subsystem_dirty('hosts');
-			clear_subsystem_dirty('dhcpd6');
-		}
-	} elseif (config_path_enabled('unbound') &&
-		  config_path_enabled('unbound', 'regdhcpstatic')) {
-		$retvaldns |= services_unbound_configure();
-		if ($retvaldns == 0) {
-			clear_subsystem_dirty('unbound');
-			clear_subsystem_dirty('dhcpd6');
-		}
-	} else {
-		$retvaldhcp |= services_dhcpd_configure();
-		if ($retvaldhcp == 0) {
-			clear_subsystem_dirty('dhcpd6');
-		}
-	}
-	/* BIND package - Bug #3710 */
-	if (!function_exists('is_package_installed')) {
-		require_once('pkg-utils.inc');
-	}
-	if (is_package_installed('pfSense-pkg-bind') &&
-	    config_path_enabled('installedpackages/bind/config/0', 'enable_bind')) {
-		$reloadbind = false;
-		$bindzone = config_get_path('installedpackages/bindzone/config', []);
-
-		for ($x = 0; $x < sizeof($bindzone); $x++) {
-			$zone = $bindzone[$x];
-			if ($zone['regdhcpstatic'] == 'on') {
-				$reloadbind = true;
-				break;
-			}
-		}
-		if ($reloadbind === true) {
-			if (file_exists("/usr/local/pkg/bind.inc")) {
-				require_once("/usr/local/pkg/bind.inc");
-				bind_sync();
-			}
-		}
-	}
-	if ($dhcpdv6_enable_changed) {
-		$retvalfc |= filter_configure();
-	}
-	if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
-		$retval = 1;
-	}
-	return $retval;
-}
+require_once('services_dhcp.inc');
 
 if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
@@ -237,7 +174,7 @@ if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycf
 
 if (isset($_POST['apply'])) {
 	$changes_applied = true;
-	$retval = dhcpv6_apply_changes(false);
+	$retval = dhcp6_apply_changes();
 } elseif (isset($_POST['save'])) {
 
 	unset($input_errors);
@@ -718,6 +655,10 @@ $tab_array = array();
 $tabscounter = 0;
 $i = 0;
 
+if (dhcp_is_backend('kea')) {
+	$tab_array[] = [gettext('Settings'), false, 'services_dhcpv6_settings.php'];
+}
+
 foreach ($iflist as $ifent => $ifname) {
 	config_init_path("dhcpdv6/{$ifent}");
 
@@ -746,12 +687,19 @@ if ($tabscounter == 0) {
 	exit;
 }
 
+if (dhcp_is_backend('kea')):
+if ($dhcrelay_enabled) {
+	print_info_box(gettext('DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the DHCPv6 Relay is enabled on any interface.'), 'danger', false);
+}
+endif;
+
 display_top_tabs($tab_array);
 
 $form = new Form();
 
 $section = new Form_Section(gettext('General DHCPv6 Options'));
 
+if (dhcp_is_backend('isc')):
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
 	match (dhcp_get_backend()) {
@@ -780,6 +728,16 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 } else {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
+endif; /* dhcp_is_backend('isc') */
+
+if (dhcp_is_backend('kea')):
+$form->addGlobal(new Form_Input(
+	'enable',
+	null,
+	'hidden',
+	$pconfig['enable'] ? 'yes' : 'no'
+));
+endif; /* dhcp_is_backend('kea') */
 
 $section->addInput(new Form_Select(
 	'denyunknown',
@@ -804,7 +762,7 @@ if (is_numeric($pool) || ($act == "newpool")) {
 		$pconfig['descr']
 	))->setHelp(gettext('Description for administrative reference (not parsed).'));
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 $form->add($section);
 
@@ -925,7 +883,7 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		$btnaddpool
 	))->setHelp(gettext('If additional pools of addresses are needed inside of this prefix outside the above range, they may be specified here.'));
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 $form->add($section);
 
@@ -979,7 +937,7 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 endif;
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 $section = new Form_Section(gettext('Server Options'));
 
@@ -1078,9 +1036,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default DHCPv6 leases are displayed in UTC time. ' .
 			'By checking this box DHCPv6 lease time will be displayed in local time and set to time zone selected. ' .
 			'This will be used for all DHCPv6 interfaces lease time.');
-endif;
 
-if (dhcp_is_backend('isc')):
 $btnadv = new Form_Button(
 	'btnadvdns',
 	gettext('Display Advanced'),
@@ -1178,7 +1134,7 @@ $section->addInput(new Form_Checkbox(
 	'Add reverse dynamic DNS entries.',
 	$pconfig['ddnsreverse']
 ));
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 $btnadv = new Form_Button(
 	'btnadvntp',
@@ -1258,7 +1214,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ldap']
 ))->setAttribute('placeholder', sprintf(gettext('LDAP Server URI (e.g. %s)'), $ldap_example))
   ->setHelp(gettext('Leave blank to disable. Enter a full URI for the LDAP server in the form %s'), $ldap_example);
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 $btnadv = new Form_Button(
 	'btnadvnetboot',
@@ -1367,11 +1323,11 @@ $btnaddopt = new Form_Button(
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('kea')):
 $form->add($section);
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 if ($act === 'newpool') {
 	$form->addGlobal(new Form_Input(
@@ -1675,7 +1631,6 @@ events.push(function() {
 		hideClass('adnloptions', true);
 		hideInput('addrow', true);
 	}
-
 });
 //]]>
 </script>

@@ -334,8 +334,8 @@ $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 
 if (g_get('services_dhcp_server_enable')) {
-	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
-	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server")), "/services_dhcpv6.php");
+	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp_settings.php");
+	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server")), "/services_dhcpv6_settings.php");
 }
 
 $services_menu[] = [gettext('Router Advertisement'), '/services_radvd.php'];

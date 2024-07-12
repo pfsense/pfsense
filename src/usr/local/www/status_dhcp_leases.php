@@ -35,6 +35,7 @@
 require_once('guiconfig.inc');
 require_once('config.inc');
 require_once('system.inc');
+require_once('services_dhcp.inc');
 
 $pgtitle = [gettext('Status'), gettext('DHCP Leases')];
 $shortcut_section = 'dhcp';
@@ -77,13 +78,13 @@ if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	services_dhcpd_configure();
 	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
 }
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('kea')):
 if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	system_del_kea4lease($_POST['deleteip']);
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 if (dhcp_is_backend('isc')):
 if ($_POST['cleardhcpleases']) {
@@ -94,13 +95,13 @@ if ($_POST['cleardhcpleases']) {
 	services_dhcpd_configure();
 	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
 }
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('kea')):
 if ($_POST['cleardhcpleases']) {
 	system_clear_all_kea4leases();
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
@@ -138,7 +139,7 @@ if ($_REQUEST['order']) {
 }
 
 /* only print pool status when we have one */
-if (count($leases['failover']) > 0):
+if (dhcp_is_backend('isc') && count($leases['failover']) > 0):
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool Status')?></h2></div>
@@ -169,7 +170,7 @@ if (count($leases['failover']) > 0):
 </div>
 <?php
 /* only print pool status when we have one */
-endif;
+endif; /* dhcp_is_backend('isc') */
 ?>
 
 <div class="panel panel-default" id="search-panel">
@@ -416,12 +417,57 @@ else:
 	</div>
 </div>
 
+<nav class="action-buttons">
 <?php if ($_REQUEST['all']): ?>
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=0"><i class="fa-solid fa-minus-circle icon-embed-btn"></i><?=gettext("Show Active and Static Leases Only")?></a>
 <?php else: ?>
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa-solid fa-plus-circle icon-embed-btn"></i><?=gettext("Show All Configured Leases")?></a>
 <?php endif; ?>
 	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?=gettext("Clear All DHCP Leases")?></a>
+</nav>
+
+<?php
+if (dhcp_is_backend('kea')):
+$status = system_get_kea4status();
+if (is_array($status) && array_key_exists('high-availability', $status['arguments'])):
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('High Availability Status')?></h2></div>
+	<div class="panel-body table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext('Node Name')?></th>
+				<th><?=gettext('Node Type')?></th>
+				<th><?=gettext('Node Role')?></th>
+				<th><?=gettext('Latest Heartbeat')?></th>
+				<th><?=gettext('Node State')?></th>
+			</tr>
+		</thead>
+		<tbody>
+<?php
+	foreach ($status['arguments']['high-availability'] as $ha_status):
+		foreach ($ha_status['ha-servers'] as $where => $ha_server):
+?>
+			<tr>
+				<td><?=dhcp_ha_status_icon($where, $ha_server)?> <?=htmlspecialchars($ha_server['server-name'])?></td>
+				<td><?=htmlspecialchars($where)?></td>
+				<td><?=htmlspecialchars($ha_server['role'])?></td>
+				<td><?=htmlspecialchars(kea_format_age($ha_server['age']))?></td>
+				<td><?=htmlspecialchars($ha_server['state'] ?? $ha_server['last-state'])?></td>
+			</tr>
+<?php
+		endforeach;
+	endforeach;
+?>
+		</tbody>
+		</table>
+	</div>
+</div>
+<?php
+endif;
+endif; /* dhcp_is_backend('kea') */
+?>
 
 <script type="text/javascript">
 //<![CDATA[

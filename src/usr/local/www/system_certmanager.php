@@ -1460,28 +1460,34 @@ foreach (config_get_path('cert', []) as $cert):
 					</td>
 					<td>
 						<?php if (is_cert_revoked($cert)): ?>
-							<i><?=gettext("Revoked")?></i>
-						<?php endif?>
-						<?php if (is_webgui_cert($cert['refid'])): ?>
-							<?=gettext("webConfigurator")?>
-						<?php endif?>
-						<?php if (is_user_cert($cert['refid'])): ?>
-							<?=gettext("User Cert")?>
-						<?php endif?>
-						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Server")?>
-						<?php endif?>
-						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Client")?>
-						<?php endif?>
-						<?php if (is_ipsec_cert($cert['refid'])): ?>
-							<?=gettext("IPsec Tunnel")?>
+							<i><?=gettext("Revoked")?></i><br/>
 						<?php endif?>
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
-							<?=gettext("Captive Portal")?>
+							<?=gettext("Captive Portal")?><br/>
 						<?php endif?>
 						<?php if (is_unbound_cert($cert['refid'])): ?>
-							<?=gettext("DNS Resolver")?>
+							<?=gettext("DNS Resolver")?><br/>
+						<?php endif?>
+						<?php if (is_ipsec_cert($cert['refid'])): ?>
+							<?=gettext("IPsec Tunnel")?><br/>
+						<?php endif?>
+						<?php if (is_kea_cert($cert['refid'])): ?>
+							<?=gettext("Kea")?><br/>
+						<?php endif?>
+						<?php if (is_ldap_client_cert($cert['refid'])): ?>
+							<?=gettext("LDAP Client")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
+						<?php endif?>
+						<?php if (is_user_cert($cert['refid'])): ?>
+							<?=gettext("User Cert")?><br/>
+						<?php endif?>
+						<?php if (is_webgui_cert($cert['refid'])): ?>
+							<?=gettext("webConfigurator")?><br/>
 						<?php endif?>
 						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
 					</td>

@@ -499,8 +499,9 @@ display_isc_warning();
 
 $form = new Form();
 
-$section = new Form_Section(sprintf(gettext('Static DHCP Mapping on %s'), $ifcfgdescr));
+$section = new Form_Section(gettext('Static DHCP Mapping'));
 
+if (!dhcp_is_backend('kea')):
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
 	match (dhcp_get_backend()) {
@@ -509,6 +510,7 @@ $section->addInput(new Form_StaticText(
 		default => gettext('Unknown')
 	}
 ));
+endif;
 
 $macaddress = new Form_Input(
 	'mac',

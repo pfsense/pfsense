@@ -123,9 +123,6 @@ function saveVIP($post, $json = false) {
 		if (is_ipaddrv4($post['subnet']) && $post['subnet_bits'] != "32" && $post['subnet_bits'] != "31") {
 			$network_addr = gen_subnet($post['subnet'], $post['subnet_bits']);
 			$broadcast_addr = gen_subnet_max($post['subnet'], $post['subnet_bits']);
-		} else if (is_ipaddrv6($post['subnet']) && $post['subnet_bits'] != "128") {
-			$network_addr = gen_subnetv6($post['subnet'], $post['subnet_bits']);
-			$broadcast_addr = gen_subnetv6_max($post['subnet'], $post['subnet_bits']);
 		}
 
 		if (isset($network_addr) && $post['subnet'] == $network_addr) {

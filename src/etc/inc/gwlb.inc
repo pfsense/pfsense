@@ -2417,7 +2417,7 @@ function save_gateway($gateway_settings, $realid = "", $json = false) {
 		if ($gateway['ipprotocol'] == "inet") {
 			config_set_path('gateways/defaultgw4', $gateway['name']);
 		} elseif ($gateway['ipprotocol'] == "inet6") {
-			config_set_path('gateways/defaultgw4', $gateway['name']);
+			config_set_path('gateways/defaultgw6', $gateway['name']);
 		}
 	}
 

@@ -400,14 +400,9 @@ $form_match_ethertype +=  array(
 	'arp' => '[ARP]'
 );
 $form_match_protocol += array(
-	'icmp' => '[ICMPv4]',
-	'icmp6' => '[ICMPv6]',
-	'tcp' => '[TCP]',
-	'udp' => '[UDP]',
+	'ping' => '[Ping]',
 	'ipsec' => '[IPsec]',
-	'carp' => '[CARP]',
-	'pfsync' => '[pfsync]',
-	'ospf' => '[OSPF]'
+	'carp' => '[CARP]'
 );
 // Variables for each Section
 $form_filter_section_begin_row = array('ipaddress', 'protocol');

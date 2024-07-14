@@ -144,6 +144,12 @@ define('PCAP_LIST_TYPE', [
 define('PCAP_LIST_TYPE_ALL', array_merge(
     PCAP_LIST_TYPE, array(PCAP_TYPE_APRESET, PCAP_TYPE_SMATCH)));
 
+// System protocols
+global $system_protocols;
+if (!isset($system_protocols)) {
+	$system_protocols = get_system_protocols();
+}
+
 /**
  * The FilterAttribute class defines an Attribute and contains the associated
  * input value. It is used when generating part of the filter expression.
@@ -281,6 +287,34 @@ class FilterAttribute {
 		}
 	}
 
+	private function getProtocolAlias(string $alias): string|false {
+		// Custom aliases
+		$alias_string = match ($alias) {
+			'ping' => '(icmp[icmptype] == icmp-echo or icmp[icmptype] == icmp-echoreply or '.
+				'icmp6[icmptype] == icmp6-echo or icmp6[icmptype] == icmp6-echoreply)',
+			'ipsec' => '(esp or (udp port 4500 and udp[8:4]!=0))',
+			default => false
+		};
+		if ($alias_string !== false) {
+			return $alias_string;
+		}
+
+		// Arbitrary protocol numbers
+		if (ctype_digit(strval($alias)) && ($alias >= 0)) {
+			$alias_string = "proto {$alias}";
+			return $alias_string;
+		}
+
+		// System protocol names
+		global $system_protocols;
+		if (is_array($system_protocols) && isset($system_protocols[strtolower($alias)])) {
+			$alias_string = "proto \\{$alias}";
+			return $alias_string;
+		}
+
+		return false;
+	}
+
 	/**
 	 * Constructs a filter string for a specific Attribute using this
 	 * FilterAttribute object's properties.
@@ -378,39 +412,10 @@ class FilterAttribute {
 			case PCAP_TYPE_PROTOCOL:
 				foreach ($string_values as $value) {
 					// Validate input values
-					switch ($value) {
-						case 'icmp':
-							$string_part = 'icmp';
-							break;
-						case 'icmp6';
-							$string_part = 'icmp6';
-							break;
-						case 'tcp';
-							$string_part = 'tcp';
-							break;
-						case 'udp';
-							$string_part = 'udp';
-							break;
-						case 'ipsec';
-							$string_part = '(esp or (udp port 4500 and udp[8:4]!=0))';
-							break;
-						case 'carp';
-							$string_part = 'proto 112';
-							break;
-						case 'pfsync';
-							$string_part = 'proto pfsync';
-							break;
-						case 'ospf';
-							$string_part = 'proto ospf';
-							break;
-						default:
-							if (ctype_digit(strval($value)) && ($value >= 0 && $value <= 255)) {
-								$string_part = "proto {$value}";
-							} else {
-								$input_error = "Invalid protocol: {$value}";
-								break 2;
-							}
-							break;
+					$string_part = $this->getProtocolAlias($value);
+					if ($string_part === false) {
+						$input_error = "Unknown protocol: {$value}";
+						break;
 					}
 					if (!empty($string_part)) {
 						$string_items[] = $string_part;
@@ -857,4 +862,37 @@ function get_pgrep_output(string $expression) {
 	}
 
 	return $processes;
+}
+
+/**
+ * Get system-defined protocols
+ * 
+ * Parses system protocols defined in '/etc/protocols'.
+ * 
+ * @return array|false List of system protocols keyed by name; false on failure
+ */
+function get_system_protocols(): array|false {
+	$file_contents = @file_get_contents('/etc/protocols');
+	if (empty($file_contents)) {
+		return false;
+	}
+
+	$matches = [];
+	$pattern = '^([[:alnum:]\-\+\.\/]+)[[:blank:]]+([[:digit:]]+)[[:blank:]]+[[:alnum:]\-\+\.\/]+(?:[[:blank:]]+([[:alnum:]\-\+\.\/]+))?';
+	preg_match_all("/{$pattern}/m", $file_contents, $matches);
+	if (empty($matches[1]) || empty($matches[2]) || empty($matches[3])) {
+		return false;
+	}
+
+	$protocols = [];
+	foreach ($matches[1] as $idx => $name) {
+		// primary name
+		$protocols[strtolower($name)] = $matches[2][$idx];
+		// alternate name
+		if (!empty($matches[3][$idx])) {
+			$protocols[strtolower($matches[3][$idx])] = $matches[2][$idx];
+		}
+	}
+
+	return $protocols;
 }

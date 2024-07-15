@@ -156,7 +156,7 @@ function carp_sync_xml($rpc_client, $sections) {
 
 		/* flip the roles */
 		array_set_path($config_copy, $kea.'/ha/role',
-			match(config_get_path($kea.'/ha/role')) {
+			match(config_get_path($kea.'/ha/role', 'primary')) {
 				'primary' => 'standby',
 				'standby' => 'primary'
 			}

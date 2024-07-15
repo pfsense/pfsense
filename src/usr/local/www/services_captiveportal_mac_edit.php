@@ -42,7 +42,7 @@ function passthrumacs_sort() {
 
 	$cp_config = config_get_path("captiveportal/{$cpzone}/passthrumac");
 	usort($cp_config, "passthrumacscmp");
-	config_set_path("captiveportal/{$cpzone}/passthrumacscmp", $cp_config);
+	config_set_path("captiveportal/{$cpzone}/passthrumac", $cp_config);
 }
 
 require_once("guiconfig.inc");

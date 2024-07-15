@@ -402,7 +402,11 @@ $form_match_ethertype +=  array(
 $form_match_protocol += array(
 	'ping' => '[Ping]',
 	'ipsec' => '[IPsec]',
-	'carp' => '[CARP]'
+	'tcp' => '[TCP]',
+	'udp' => '[UDP]',
+	'carp' => '[CARP]',
+	'pfsync' => '[pfsync]',
+	'ospf' => '[OSPF]'
 );
 // Variables for each Section
 $form_filter_section_begin_row = array('ipaddress', 'protocol');

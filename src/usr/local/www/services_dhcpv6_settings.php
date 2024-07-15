@@ -351,7 +351,7 @@ $section->addInput(new Form_Input(
 	gettext('Max Unacked Clients'),
 	'number',
 	array_get_path($pconfig, 'ha/maxunackedclients'),
-	['placeholder' => kea_defaults('maxunackedclients')]
+	['min' => 0, 'placeholder' => kea_defaults('maxunackedclients')]
 ))->addClass('advopt')
   ->setHelp(gettext('Specifies how many “unacked” clients are allowed (see max-ack-delay) before this server assumes that the partner is offline and transitions to the partner-down state.'));
 

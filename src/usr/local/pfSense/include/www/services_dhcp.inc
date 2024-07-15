@@ -32,7 +32,7 @@ function kea_defaults(string $key): int|string {
 		'maxackdelay'				=> 60000,
 		'maxrejectedleaseupdates'	=> 10,
 		'maxresponsedelay' 			=> 60000,
-		'maxunackedclients' 		=> 10,
+		'maxunackedclients' 		=> 0,
 		'name' 						=> config_get_path('system/hostname', g_get('product_name'))
 	});
 }
@@ -202,7 +202,7 @@ function dhcp_do_settings_post(array $subnets): array {
 		'ha_maxunackedclients' => 'ha/maxunackedclients',
 		'ha_maxrejectedleaseupdates' => 'ha/maxrejectedleaseupdates'
 	] as $id => $path) {
-		if ($_POST[$id]) {
+		if (isset($_POST[$id])) {
 			array_set_path($pconfig, $path, $_POST[$id]);
 		} else {
 			array_del_path($pconfig, $path);

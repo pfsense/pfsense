@@ -101,7 +101,7 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 } elseif (!empty($cpsession) && !isset($_POST['logout_id'])) {
 	/* If the client tries to access the captive portal page while already connected,
 		but no custom logout page exists */
-	$logo_src = get_captive_portal_logo();
+	$logo_src = "{$protocol}{$ourhostname}/" . get_captive_portal_logo();
 	$bg_src = get_captive_portal_bg();
 ?>
 <!DOCTYPE html>

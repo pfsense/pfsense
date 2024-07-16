@@ -253,37 +253,6 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$section->addInput(new Form_Checkbox(
-	'ha_tls',
-	gettext('TLS Transport'),
-	gettext('Enable TLS transport'),
-	array_path_enabled($pconfig, 'ha', 'tls'),
-))->setHelp(sprintf(gettext('When checked, TLS transport will be used to secure Kea HA heart beat and lease syncronization traffic.%s'.
-				'Notice: TLS transport settings are not synchronized and must be configured manually on both the local and remote instance.'), '<br/>'));
-
-$section->addInput(new Form_Select(
-	'ha_scertref',
-	gettext('Server Certificate'),
-	array_get_path($pconfig, 'ha/scertref'),
-	kea_server_cert_list()
-))->setHelp(gettext('Certificates known to be incompatible with use for HTTPS are not included in this list, such as certificates ' .
-				    'using incompatible ECDSA curves or weak digest algorithms.'));
-
-$section->addInput(new Form_Checkbox(
-	'ha_mutualtls',
-	gettext('Mutual TLS'),
-	gettext('Enable mutual TLS'),
-	array_path_enabled($pconfig, 'ha', 'mutualtls'),
-))->setHelp(gettext('When checked, the Kea HA client will offer a client certificate to the remote instance for mutual verification.'));
-
-$section->addInput(new Form_Select(
-	'ha_ccertref',
-	gettext('Client Certificate'),
-	array_get_path($pconfig, 'ha/ccertref'),
-	kea_client_cert_list()
-))->setHelp(gettext('Certificates known to be incompatible with use for HTTPS are not included in this list, such as certificates ' .
-				    'using incompatible ECDSA curves or weak digest algorithms.'));
-
 $btnadv = new Form_Button(
 	'btnadvopts',
 	gettext('Display Advanced'),
@@ -344,6 +313,41 @@ $section->addInput(new Form_Input(
 	['placeholder' => kea_defaults('maxrejectedleaseupdates')]
 ))->addClass('advopt')
   ->setHelp(gettext('Specifies how many lease updates for distinct clients can fail, due to a conflict between the lease and the partner configuration or state, before the server transitions to the terminated state.'));
+
+$section->addInput(new Form_StaticText(
+	gettext('TLS Transport'),
+	gettext('TLS transport settings are not synchronized and must be configured manually on both the local and remote instance.')
+));
+
+$section->addInput(new Form_Checkbox(
+	'ha_tls',
+	gettext('Enable'),
+	gettext('Enable TLS transport'),
+	array_path_enabled($pconfig, 'ha', 'tls'),
+))->setHelp(gettext('When checked, TLS transport will be used to secure Kea HA heart beat and lease syncronization traffic.'));
+
+$section->addInput(new Form_Select(
+	'ha_scertref',
+	gettext('Server Certificate'),
+	array_get_path($pconfig, 'ha/scertref'),
+	kea_server_cert_list()
+))->setHelp(gettext('Certificates known to be incompatible with use for HTTPS are not included in this list, such as certificates ' .
+				    'using incompatible ECDSA curves or weak digest algorithms.'));
+
+$section->addInput(new Form_Checkbox(
+	'ha_mutualtls',
+	gettext('Mutual TLS'),
+	gettext('Enable mutual TLS'),
+	array_path_enabled($pconfig, 'ha', 'mutualtls'),
+))->setHelp(gettext('When checked, the Kea HA client will offer a client certificate to the remote instance for mutual verification.'));
+
+$section->addInput(new Form_Select(
+	'ha_ccertref',
+	gettext('Client Certificate'),
+	array_get_path($pconfig, 'ha/ccertref'),
+	kea_client_cert_list()
+))->setHelp(gettext('Certificates known to be incompatible with use for HTTPS are not included in this list, such as certificates ' .
+				    'using incompatible ECDSA curves or weak digest algorithms.'));
 
 $form->add($section);
 

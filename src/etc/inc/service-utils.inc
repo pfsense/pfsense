@@ -457,7 +457,7 @@ function get_services() {
 	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
 		$pconfig = array();
 		$pconfig['name'] = "miniupnpd";
-		$pconfig['description'] = gettext("UPnP Service");
+		$pconfig['description'] = gettext("UPnP IGD & PCP Service");
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;

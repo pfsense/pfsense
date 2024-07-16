@@ -90,7 +90,7 @@
 
 	function validate_form_miniupnpd($post, &$input_errors) {
 		if ($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp'])) {
-			$input_errors[] = 'At least one UPnP protocol ("UPnP-IGD" or "NAT-PMP") must be allowed';
+			$input_errors[] = 'At least one of \'UPnP IGD\' or \'PCP/NAT-PMP\' must be allowed';
 		}
 		if ($post['iface_array']) {
 			foreach ($post['iface_array'] as $iface) {
@@ -280,9 +280,9 @@
 					$config_text .= "queue={$upnp_config['upnpqueue']}\n";
 				}
 
-				/* Allow UPnP or NAT-PMP as requested */
+				/* Allow UPnP IGD or PCP/NAT-PMP as requested */
 				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp']   ? "yes\n" : "no\n");
-				$config_text .= "enable_natpmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
+				$config_text .= "enable_pcp_pmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
 
 				/* STUN configuration */
 				if ($upnp_config['enable_stun']) {

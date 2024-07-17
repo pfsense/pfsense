@@ -1461,7 +1461,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Input(
 		'inactive_seconds',
-		'Inactive',
+		'Inactivity Timeout',
 		'number',
 		$pconfig['inactive_seconds'] ?: 0,
 		['min' => '0']

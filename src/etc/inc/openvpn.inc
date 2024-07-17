@@ -1665,10 +1665,6 @@ function openvpn_resync_csc($settings) {
 	$auto_config_gateway4 = false;
 	$auto_config_gateway6 = false;
 	$auto_config_topology = false;
-	$keep_minimal = false;
-	if (isset($settings['override_options']) && ($settings['override_options'] == 'keep_minimal')) {
-		$keep_minimal = true;
-	}
 
 	if (empty($settings['server_list'])) {
 		$csc_server_list = array();
@@ -1682,8 +1678,8 @@ function openvpn_resync_csc($settings) {
 	}
 
 	// Reset options
-	if (isset($settings['override_options']) && (($settings['override_options'] == 'push_reset') || $keep_minimal)) {
-		if ($keep_minimal) {
+	if (isset($settings['override_options']) && ($settings['override_options'] == 'push_reset')) {
+		if (isset($settings['keep_minimal'])) {
 			$auto_config_gateway4 = true;
 			$auto_config_gateway6 = true;
 			$auto_config_topology = true;
@@ -1692,11 +1688,30 @@ function openvpn_resync_csc($settings) {
 	}
 	if (!empty($settings['remove_options'])) {
 		foreach (explode(',', $settings['remove_options']) as $option) {
-			if ($keep_minimal && ($option == 'remove_route')) {
+			if (isset($settings['keep_minimal']) && ($option == 'remove_route')) {
 				$auto_config_gateway4 = true;
 				$auto_config_gateway6 = true;
 			}
-			$conf .= "push-remove {$option}\n";
+			$options = match ($option) {
+				'remove_route' => 'route',
+				'remove_iroute' => 'iroute',
+				'remove_inactive' => 'inactive',
+				'remove_ping' => 'ping',
+				'remove_ping_action' => ['ping-restart', 'ping-exit'],
+				'remove_dnsdomain' => '"dhcp-option DOMAIN"',
+				'remove_dnsservers' => '"dhcp-option DNS"',
+				'remove_ntpservers' => '"dhcp-option NTP"',
+				'remove_netbios_ntype' => '"dhcp-option NBT"',
+				'remove_netbios_scope' => '"dhcp-option NBS"',
+				'remove_wins' => '"dhcp-option WINS"'
+			};
+			if (is_array($options)) {
+				foreach ($options as $option_name) {
+					$conf .= "push-remove {$option_name}\n";
+				}
+			} else {
+				$conf .= "push-remove {$options}\n";
+			}
 		}
 	}
 
@@ -1724,6 +1739,11 @@ function openvpn_resync_csc($settings) {
 	if (!empty($settings['gateway6'])) {
 		$auto_config_gateway6 = false;
 		$conf .= "push \"route-ipv6-gateway {$settings['gateway6']}\"\n";
+	}
+
+	// Inactivity override options
+	if (isset($settings['inactive_seconds'])) {
+		$conf .= "push \"inactive {$settings['inactive_seconds']}\"\n";
 	}
 
 	// Ping override options
@@ -1754,7 +1774,7 @@ function openvpn_resync_csc($settings) {
 				/* Topology is depends on the server configuration.
 				 * TAP mode always uses a subnet topology */
 				$topology = ($serversettings['dev_mode'] == 'tap') ? 'subnet' : $serversettings['topology'];
-				if ($keep_minimal && $auto_config_topology) {
+				if ($auto_config_topology) {
 					$csc_conf .= "push \"topology {$topology}\"\n";
 				}
 
@@ -1762,7 +1782,7 @@ function openvpn_resync_csc($settings) {
 				 * If the tunnel network is not set, the gateway must be manually
 				 * defined. This can happen when using a net30 topology and
 				 * resetting options. */
-				if ($keep_minimal && $auto_config_gateway6) {
+				if ($auto_config_gateway6) {
 					// IPv6 always uses a subnet topology
 					$tunnel_network = null;
 					if (!empty($settings['tunnel_networkv6'])) {
@@ -1776,7 +1796,7 @@ function openvpn_resync_csc($settings) {
 						$csc_conf .= "push \"route-ipv6-gateway {$gateway}\"\n";
 					}
 				}
-				if ($keep_minimal && $auto_config_gateway4) {
+				if ($auto_config_gateway4) {
 					$tunnel_network = null;
 					if ($topology == "subnet") {
 						// The client tunnel network is assumed to be the same as the server's

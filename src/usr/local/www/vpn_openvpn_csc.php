@@ -80,12 +80,13 @@ if ($_POST['act'] == "del") {
 
 if (($act == "edit") || ($act == "dup")) {
 	if ($this_csc_config) {
+		$pconfig['keep_minimal'] = $this_csc_config['keep_minimal'];
 		// Handle the "Reset Options" list
 		if (!empty($this_csc_config['remove_options'])) {
 			$pconfig['override_options'] = 'remove_specified';
 			$pconfig['remove_options'] = explode(',', $this_csc_config['remove_options']);
-		} else {
-			$pconfig['override_options'] = $this_csc_config['override_options'];
+		} elseif (isset($this_csc_config['push_reset'])) {
+			$pconfig['override_options'] = 'push_reset';
 		}
 
 		$pconfig['server_list'] = explode(",", $this_csc_config['server_list']);
@@ -106,6 +107,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['gwredir'] = $this_csc_config['gwredir'];
 		$pconfig['gwredir6'] = $this_csc_config['gwredir6'];
 
+		$pconfig['inactive_seconds'] = $this_csc_config['inactive_seconds'];
 		$pconfig['ping_seconds'] = $this_csc_config['ping_seconds'];
 		$pconfig['ping_action'] = $this_csc_config['ping_action'];
 		$pconfig['ping_action_seconds'] = $this_csc_config['ping_action_seconds'];
@@ -224,6 +226,10 @@ if ($_POST['save']) {
 		$input_errors[] = $result;
 	}
 
+	if (!empty($pconfig['inactive_seconds']) && !is_numericint($pconfig['inactive_seconds'])) {
+		$input_errors[] = gettext('The supplied "Inactivity Timeout" value is invalid.');
+	}
+
 	if (!empty($pconfig['ping_seconds']) && !is_numericint($pconfig['ping_seconds'])) {
 		$input_errors[] = gettext('The supplied "Ping Interval" value is invalid.');
 	}
@@ -298,14 +304,17 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		$csc = array();
 
+		if (isset($pconfig['keep_minimal'])) {
+			$csc['keep_minimal'] = true;
+		}
 		// Handle "Reset Server Options" and "Reset Options"
 		if (($pconfig['override_options'] == 'remove_specified')) {
 			// If no options are specified, keep the default behavior.
 			if (!empty($pconfig['remove_options'])) {
 				$csc['remove_options'] = implode(',', $pconfig['remove_options']);
 			}
-		} elseif (!empty($pconfig['override_options']) && ($pconfig['override_options'] != 'default')) {
-			$csc['override_options'] = $pconfig['override_options'];
+		} elseif ($pconfig['override_options'] == 'push_reset') {
+			$csc['push_reset'] = true;
 		}
 
 		if (is_array($pconfig['server_list'])) {
@@ -340,6 +349,9 @@ if ($_POST['save']) {
 		$csc['remote_network'] = $pconfig['remote_network'];
 		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
 
+		if (is_numericint($pconfig['inactive_seconds'])) {
+			$csc['inactive_seconds'] = $pconfig['inactive_seconds'];
+		}
 		if (is_numericint($pconfig['ping_seconds'])) {
 			$csc['ping_seconds'] = $pconfig['ping_seconds'];
 		}
@@ -490,11 +502,17 @@ if ($act == "new" || $act == "edit"):
 		($pconfig['override_options'] ?? 'default'),
 		[
 			'default' => 'Keep all server options (default)',
-			'keep_minimal' => 'Keep minimal server options',
 			'push_reset' => 'Reset all options',
 			'remove_specified' => 'Remove specified options'
 		]
-	))->setHelp('Prevent this client from receiving server-defined client settings. Other client-specific options on this page will supersede these reset options.');
+	))->setHelp('Prevent this client from receiving server-defined client settings. Other client-specific options on this page will supersede these options.');
+
+	$section->addInput(new Form_Checkbox(
+		'keep_minimal',
+		'Keep minimal options',
+		'Automatically determine the client topology and gateway',
+		$pconfig['keep_minimal']
+	))->setHelp('If checked, generate the required client configuration when server options are reset or removed.');
 
 	$group = new Form_Group('Remove Options');
 	$group->addClass('remove_options');
@@ -505,6 +523,9 @@ if ($act == "new" || $act == "edit"):
 		[
 			'remove_route' => 'Local Routes',
 			'remove_iroute' => 'Remote Routes',
+			'remove_inactive' => 'Inactivity Timeout',
+			'remove_ping' => 'Client Ping',
+			'remove_ping_action' => 'Ping Action',
 			'remove_dnsdomain' => 'DNS Domains',
 			'remove_dnsservers' => 'DNS Servers',
 			'remove_ntpservers' => 'NTP Options',
@@ -610,12 +631,20 @@ if ($act == "new" || $act == "edit"):
 	$section = new Form_Section('Other Client Settings');
 
 	$section->addInput(new Form_Input(
+		'inactive_seconds',
+		'Inactivity Timeout',
+		'number',
+		$pconfig['inactive_seconds'],
+		['min' => '0']
+	))->setHelp('Set connection inactivity timeout')->setWidth(3);
+
+	$section->addInput(new Form_Input(
 		'ping_seconds',
 		'Ping Interval',
 		'number',
 		$pconfig['ping_seconds'],
 		['min' => '0']
-	))->setHelp('Set a client ping interval')->setWidth(2);
+	))->setHelp('Set peer ping interval')->setWidth(3);
 
 	$group = new Form_Group('Ping Action');
 	$group->add(new Form_Select(
@@ -916,6 +945,7 @@ events.push(function() {
 	}
 
 	function remove_options_change() {
+		hideCheckbox('keep_minimal', ($('#override_options').find('option:selected').val() == 'default'));
 		hideClass('remove_options', ($('#override_options').find('option:selected').val() != 'remove_specified'));
 	}
 

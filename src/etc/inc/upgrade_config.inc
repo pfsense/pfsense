@@ -6949,11 +6949,6 @@ function upgrade_232_to_233() {
 			continue;
 		}
 
-		// Migrate "push_reset"
-		if (isset($settings['push_reset'])) {
-			$settings['override_options'] = 'push_reset';
-			unset($settings['push_reset']);
-		}
 		// Migrate "remove_route"
 		if (isset($settings['remove_route'])) {
 			$settings['remove_options'] = 'remove_route';

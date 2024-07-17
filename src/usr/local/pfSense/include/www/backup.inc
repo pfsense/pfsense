@@ -151,15 +151,18 @@ function execPost($post, $postfiles, $ui = true) {
 				$data = "";
 
 				if ($options == "nopackages") {
+					$data = config_get_path('', []);
+					unset($data['installedpackages']);
 					if (!$post['backuparea']) {
 						/* backup entire configuration */
-						$data = file_get_contents("{$g['conf_path']}/config.xml");
+						$data = dump_xml_config($data, g_get('xml_rootobj'));
 					} else {
 						/* backup specific area of configuration */
-						$data = backup_config_section($post['backuparea']);
+						$data = array_get_path($data, $post['backuparea'], []);
+						$data = dump_xml_config($data, $post['backuparea']);
+						$data = str_replace("<?xml version=\"1.0\"?>", "", $data);
 						$name = "{$post['backuparea']}-{$name}";
 					}
-					$data = preg_replace('/\t*<installedpackages>.*<\/installedpackages>\n/sm', '', $data);
 				} else {
 					if (!$post['backuparea']) {
 						/* backup entire configuration */

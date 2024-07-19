@@ -1695,9 +1695,11 @@ function openvpn_resync_csc($settings) {
 			$options = match ($option) {
 				'remove_route' => 'route',
 				'remove_iroute' => 'iroute',
+				'remove_redirect_gateway' => 'redirect-gateway',
 				'remove_inactive' => 'inactive',
 				'remove_ping' => 'ping',
 				'remove_ping_action' => ['ping-restart', 'ping-exit'],
+				'remove_blockoutsidedns' => 'block-outside-dns',
 				'remove_dnsdomain' => '"dhcp-option DOMAIN"',
 				'remove_dnsservers' => '"dhcp-option DNS"',
 				'remove_ntpservers' => '"dhcp-option NTP"',

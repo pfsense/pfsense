@@ -25,7 +25,7 @@
 ##|+PRIV
 ##|*IDENT=page-status-upnpstatus
 ##|*NAME=Status: UPnP IGD & PCP
-##|*DESCR=Allow access to the 'Status: IGD & PCP' page.
+##|*DESCR=Allow access to the 'Status: UPnP IGD & PCP' page.
 ##|*MATCH=status_upnp.php*
 ##|-PRIV
 

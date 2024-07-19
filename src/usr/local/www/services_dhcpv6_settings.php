@@ -24,10 +24,10 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-services-dhcpserver
-##|*NAME=Services: DHCP Server
-##|*DESCR=Allow access to the 'Services: DHCP Server' page.
-##|*MATCH=services_dhcp*.php*
+##|*IDENT=page-services-dhcpv6server-settings
+##|*NAME=Services: DHCPv6 Server: Settings
+##|*DESCR=Allow access to the 'Services: DHCPv6 Server: Settings' page.
+##|*MATCH=services_dhcpv6_settings.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");

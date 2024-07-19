@@ -23,8 +23,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-pfsensewizardsubsystem
-##|*NAME=pfSense wizard subsystem
-##|*DESCR=Allow access to the 'pfSense wizard subsystem' page.
+##|*NAME=Wizard Subsystem
+##|*DESCR=Allow access to the Wizard Subsystem (e.g. Setup Wizard, OpenVPN Wizard).
 ##|*MATCH=wizard.php*
 ##|-PRIV
 

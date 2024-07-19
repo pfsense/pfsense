@@ -23,8 +23,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-crash-reporter
-##|*NAME=Crash reporter
-##|*DESCR=Uploads crash reports to pfSense and or deletes crash reports.
+##|*NAME=Crash Reporter
+##|*DESCR=Allow access to view, download, and delete crash reports.
 ##|*MATCH=crash_reporter.php*
 ##|-PRIV
 

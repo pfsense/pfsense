@@ -1016,8 +1016,8 @@ $priv_list['page-status-dns-resolver']['match'] = array();
 $priv_list['page-status-dns-resolver']['match'][] = "status_unbound.php*";
 
 $priv_list['page-status-upnpstatus'] = array();
-$priv_list['page-status-upnpstatus']['name'] = gettext("WebCfg - Status: UPnP Status");
-$priv_list['page-status-upnpstatus']['descr'] = gettext("Allow access to the 'Status: UPnP Status' page.");
+$priv_list['page-status-upnpstatus']['name'] = gettext("WebCfg - Status: UPnP IGD & PCP");
+$priv_list['page-status-upnpstatus']['descr'] = gettext("Allow access to the 'Status: IGD & PCP' page.");
 $priv_list['page-status-upnpstatus']['match'] = array();
 $priv_list['page-status-upnpstatus']['match'][] = "status_upnp.php*";
 

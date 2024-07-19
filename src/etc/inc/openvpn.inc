@@ -1678,39 +1678,42 @@ function openvpn_resync_csc($settings) {
 	}
 
 	// Reset options
-	if (isset($settings['override_options']) && ($settings['override_options'] == 'push_reset')) {
-		if (isset($settings['keep_minimal'])) {
-			$auto_config_gateway4 = true;
-			$auto_config_gateway6 = true;
-			$auto_config_topology = true;
-		}
-		$conf .= "push-reset\n";
-	}
-	if (!empty($settings['remove_options'])) {
-		foreach (explode(',', $settings['remove_options']) as $option) {
-			if (isset($settings['keep_minimal']) && ($option == 'remove_route')) {
+	if (isset($settings['override_options'])) {
+		if ($settings['override_options'] == 'push_reset') {
+			if ($settings['keep_minimal']) {
 				$auto_config_gateway4 = true;
 				$auto_config_gateway6 = true;
+				$auto_config_topology = true;
 			}
-			$options = match ($option) {
-				'remove_route' => 'route',
-				'remove_iroute' => 'iroute',
-				'remove_inactive' => 'inactive',
-				'remove_ping' => 'ping',
-				'remove_ping_action' => ['ping-restart', 'ping-exit'],
-				'remove_dnsdomain' => '"dhcp-option DOMAIN"',
-				'remove_dnsservers' => '"dhcp-option DNS"',
-				'remove_ntpservers' => '"dhcp-option NTP"',
-				'remove_netbios_ntype' => '"dhcp-option NBT"',
-				'remove_netbios_scope' => '"dhcp-option NBS"',
-				'remove_wins' => '"dhcp-option WINS"'
-			};
-			if (is_array($options)) {
-				foreach ($options as $option_name) {
-					$conf .= "push-remove {$option_name}\n";
+			$conf .= "push-reset\n";
+		} elseif (($settings['override_options'] == 'remove_specified') && !empty($settings['remove_options'])) {
+			foreach (explode(',', $settings['remove_options']) as $option) {
+				if ($settings['keep_minimal'] && ($option == 'remove_route')) {
+					$auto_config_gateway4 = true;
+					$auto_config_gateway6 = true;
 				}
-			} else {
-				$conf .= "push-remove {$options}\n";
+				$options = match ($option) {
+					'remove_route' => 'route',
+					'remove_iroute' => 'iroute',
+					'remove_redirect_gateway' => 'redirect-gateway',
+					'remove_inactive' => 'inactive',
+					'remove_ping' => 'ping',
+					'remove_ping_action' => ['ping-restart', 'ping-exit'],
+					'remove_blockoutsidedns' => 'block-outside-dns',
+					'remove_dnsdomain' => '"dhcp-option DOMAIN"',
+					'remove_dnsservers' => '"dhcp-option DNS"',
+					'remove_ntpservers' => '"dhcp-option NTP"',
+					'remove_netbios_ntype' => '"dhcp-option NBT"',
+					'remove_netbios_scope' => '"dhcp-option NBS"',
+					'remove_wins' => '"dhcp-option WINS"'
+				};
+				if (is_array($options)) {
+					foreach ($options as $option_name) {
+						$conf .= "push-remove {$option_name}\n";
+					}
+				} else {
+					$conf .= "push-remove {$options}\n";
+				}
 			}
 		}
 	}

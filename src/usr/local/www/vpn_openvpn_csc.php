@@ -85,7 +85,7 @@ if (($act == "edit") || ($act == "dup")) {
 		if (!empty($this_csc_config['remove_options'])) {
 			$pconfig['override_options'] = 'remove_specified';
 			$pconfig['remove_options'] = explode(',', $this_csc_config['remove_options']);
-		} elseif (isset($this_csc_config['push_reset'])) {
+		} elseif ($this_csc_config['override_options'] == 'push_reset') {
 			$pconfig['override_options'] = 'push_reset';
 		}
 
@@ -304,17 +304,17 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		$csc = array();
 
-		if (isset($pconfig['keep_minimal'])) {
-			$csc['keep_minimal'] = true;
-		}
 		// Handle "Reset Server Options" and "Reset Options"
-		if (($pconfig['override_options'] == 'remove_specified')) {
+		$csc['override_options'] = $pconfig['override_options'];
+		if ($pconfig['override_options'] == 'remove_specified') {
 			// If no options are specified, keep the default behavior.
 			if (!empty($pconfig['remove_options'])) {
 				$csc['remove_options'] = implode(',', $pconfig['remove_options']);
 			}
-		} elseif ($pconfig['override_options'] == 'push_reset') {
-			$csc['push_reset'] = true;
+		}
+		if (!empty($pconfig['keep_minimal']) && ($pconfig['override_options'] != 'default')) {
+			//Do not set keep_minimal if override_options is on "default"
+			$csc['keep_minimal'] = $pconfig['keep_minimal'];
 		}
 
 		if (is_array($pconfig['server_list'])) {
@@ -507,13 +507,6 @@ if ($act == "new" || $act == "edit"):
 		]
 	))->setHelp('Prevent this client from receiving server-defined client settings. Other client-specific options on this page will supersede these options.');
 
-	$section->addInput(new Form_Checkbox(
-		'keep_minimal',
-		'Keep minimal options',
-		'Automatically determine the client topology and gateway',
-		$pconfig['keep_minimal']
-	))->setHelp('If checked, generate the required client configuration when server options are reset or removed.');
-
 	$group = new Form_Group('Remove Options');
 	$group->addClass('remove_options');
 	$group->add(new Form_Select(
@@ -521,11 +514,13 @@ if ($act == "new" || $act == "edit"):
 		null,
 		$pconfig['remove_options'],
 		[
-			'remove_route' => 'Local Routes',
+			'remove_route' => 'Local Routes and Gateways',
 			'remove_iroute' => 'Remote Routes',
+			'remove_redirect_gateway' => 'Redirect Gateways',
 			'remove_inactive' => 'Inactivity Timeout',
 			'remove_ping' => 'Client Ping',
 			'remove_ping_action' => 'Ping Action',
+			'remove_blockoutsidedns' => 'Block Outside DNS',
 			'remove_dnsdomain' => 'DNS Domains',
 			'remove_dnsservers' => 'DNS Servers',
 			'remove_ntpservers' => 'NTP Options',
@@ -536,6 +531,13 @@ if ($act == "new" || $act == "edit"):
 		true
 	))->setHelp('A "push-remove" option will be sent to the client for the selected options, removing the respective server-defined option.');
 	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'keep_minimal',
+		'Keep minimal options',
+		'Automatically determine the client topology and gateway',
+		$pconfig['keep_minimal']
+	))->setHelp('If checked, generate the required client configuration when server options are reset or removed.');
 
 	$form->add($section);
 

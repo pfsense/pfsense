@@ -484,6 +484,10 @@ $('.container .panel-heading a.config').each(function (idx, el){
 
 // Initial state & toggle icons of collapsed panel
 $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+	// Avoid modifying configuration button
+	if ($(el).hasClass('config')) {
+		return true;
+	}
 	var body = $(el).parents('.panel').children('.panel-body')
 	var isOpen = body.hasClass('in');
 

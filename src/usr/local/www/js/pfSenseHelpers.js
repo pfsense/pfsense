@@ -887,3 +887,19 @@ function buttonsmode(tag, buttons) {
 $('input.autotrim').on('change', function () {
 	$(this).val($(this).val().replace(/\s/g, ''));
 });
+
+function arraysEqual(arr1, arr2) {
+	if (arr1.length !== arr2.length) {
+		return false;
+	}
+
+	var sortedArr1 = arr1.slice().sort();
+	var sortedArr2 = arr2.slice().sort();
+
+	for (var i = 0; i < sortedArr1.length; i++) {
+		if (sortedArr1[i] !== sortedArr2[i]) {
+			return false;
+		}
+	}
+	return true;
+}

@@ -383,6 +383,9 @@ print($form);
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	var originalEnabled = $('#interface\\[\\]').val();
+	var enabledChanged = false;
+
 	$('#btnadvopts').data('hide', false);
 
 	function show_advopts(ispageload) {
@@ -433,9 +436,17 @@ events.push(function() {
 		show_advopts(false);
 	});
 
-	// Save the form
-	$('#saveform').on('click', function () {
-		$(form).submit();
+	$('#interface\\[\\]').on('change', function() {
+		enabledChanged = !arraysEqual($(this).val(), originalEnabled);
+	});
+
+	$(form).on('submit', function(event) {
+		if (enabledChanged) {
+			var result = confirm("<?=gettext('Enabled interfaces changed. Are you sure you wish to proceed')?>");
+			if (!result) {
+				event.preventDefault();
+			}
+		}
 	});
 
 	update_tls_section();

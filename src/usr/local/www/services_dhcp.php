@@ -969,11 +969,9 @@ if (dhcp_is_backend('kea')) {
 
 include('head.inc');
 
-if (dhcp_is_backend('kea')):
 if (config_path_enabled('dhcrelay')) {
 	print_info_box(gettext('DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface.'), 'danger', false);
 }
-endif;
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -1000,12 +998,6 @@ if (dhcp_is_backend('kea')) {
 }
 
 foreach ($iflist as $ifent => $ifname) {
-	if (dhcp_is_backend('kea') &&
-	    config_path_enabled('kea', 'hidedisabled') &&
-		!config_path_enabled("dhcpd/{$ifent}")) {
-		continue;
-	}
-
 	$oc = config_get_path("interfaces/{$ifent}");
 
 	/* Not static IPv4 or subnet >= 31 */
@@ -1046,7 +1038,6 @@ $form = new Form();
 
 $section = new Form_Section(gettext('General DHCP Options'));
 
-if (dhcp_is_backend('isc')):
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
 	match (dhcp_get_backend()) {
@@ -1055,9 +1046,7 @@ $section->addInput(new Form_StaticText(
 		default => gettext('Unknown')
 	}
 ));
-endif; /* dhcp_is_backend('isc) */
 
-if (dhcp_is_backend('isc')):
 if (!is_numeric($pool) && !($act == "newpool")) {
 	if (config_path_enabled('dhcrelay')) {
 		$section->addInput(new Form_Checkbox(
@@ -1078,6 +1067,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
 
+if (dhcp_is_backend('isc')):
 $section->addInput(new Form_Checkbox(
 	'ignorebootp',
 	'BOOTP',
@@ -1085,15 +1075,6 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ignorebootp']
 ));
 endif; /* dhcp_is_backend('isc') */
-
-if (dhcp_is_backend('kea')):
-$form->addGlobal(new Form_Input(
-	'enable',
-	null,
-	'hidden',
-	$pconfig['enable'] ? 'yes' : 'no'
-));
-endif; /* dhcp_is_backend('kea') */
 
 $section->addInput(new Form_Select(
 	'denyunknown',

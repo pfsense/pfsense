@@ -304,17 +304,14 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		$csc = array();
 
-		if (isset($pconfig['keep_minimal'])) {
-			$csc['keep_minimal'] = true;
-		}
 		// Handle "Reset Server Options" and "Reset Options"
-		if (($pconfig['override_options'] == 'remove_specified')) {
-			// If no options are specified, keep the default behavior.
-			if (!empty($pconfig['remove_options'])) {
-				$csc['remove_options'] = implode(',', $pconfig['remove_options']);
-			}
-		} elseif ($pconfig['override_options'] == 'push_reset') {
+		if ($pconfig['override_options'] == 'push_reset') {
 			$csc['push_reset'] = true;
+		} elseif (($pconfig['override_options'] == 'remove_specified') && !empty($pconfig['remove_options'])) {
+			$csc['remove_options'] = implode(',', $pconfig['remove_options']);
+		}
+		if (isset($pconfig['keep_minimal']) && (isset($csc['push_reset']) || isset($csc['remove_options']))) {
+			$csc['keep_minimal'] = true;
 		}
 
 		if (is_array($pconfig['server_list'])) {
@@ -507,11 +504,9 @@ if ($act == "new" || $act == "edit"):
 		]
 	))->setHelp('Prevent this client from receiving server-defined client settings. Other client-specific options on this page will supersede these options.');
 
-	$group = new Form_Group('Remove Options');
-	$group->addClass('remove_options');
-	$group->add(new Form_Select(
+	$section->addInput(new Form_Select(
 		'remove_options',
-		null,
+		'Remove Options',
 		$pconfig['remove_options'],
 		[
 			'remove_route' => 'Local Routes & Gateways',
@@ -529,8 +524,7 @@ if ($act == "new" || $act == "edit"):
 			'remove_wins' => 'WINS Options'
 		],
 		true
-	))->setHelp('A "push-remove" option will be sent to the client for the selected options, removing the respective server-defined option.');
-	$section->add($group);
+	))->addClass('remove_options')->setHelp('A "push-remove" option will be sent to the client for the selected options, removing the respective server-defined option.');
 
 	$section->addInput(new Form_Checkbox(
 		'keep_minimal',
@@ -948,7 +942,7 @@ events.push(function() {
 
 	function remove_options_change() {
 		hideCheckbox('keep_minimal', ($('#override_options').find('option:selected').val() == 'default'));
-		hideClass('remove_options', ($('#override_options').find('option:selected').val() != 'remove_specified'));
+		hideMultiClass('remove_options', ($('#override_options').find('option:selected').val() != 'remove_specified'));
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------

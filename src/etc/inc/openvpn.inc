@@ -1678,15 +1678,14 @@ function openvpn_resync_csc($settings) {
 	}
 
 	// Reset options
-	if (isset($settings['override_options']) && ($settings['override_options'] == 'push_reset')) {
+	if (isset($settings['push_reset'])) {
 		if (isset($settings['keep_minimal'])) {
 			$auto_config_gateway4 = true;
 			$auto_config_gateway6 = true;
 			$auto_config_topology = true;
 		}
 		$conf .= "push-reset\n";
-	}
-	if (!empty($settings['remove_options'])) {
+	} elseif (!empty($settings['remove_options'])) {
 		foreach (explode(',', $settings['remove_options']) as $option) {
 			if (isset($settings['keep_minimal']) && ($option == 'remove_route')) {
 				$auto_config_gateway4 = true;

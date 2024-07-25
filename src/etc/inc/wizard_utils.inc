@@ -71,13 +71,13 @@ function save_setupwizard_config(
 	config_set_path('interfaces/wan', $if_wan_config);
 
 	if ($bogons == "on") {
-		config_set_path('interfaces/wan/blockbogons', "on");
+		config_set_path('interfaces/wan/blockbogons', true);
 	} else {
 		config_del_path('interfaces/wan/blockbogons');
 	}
 
 	if ($rfc1918 == "on") {
-		config_set_path('interfaces/wan/blockpriv', "on");
+		config_set_path('interfaces/wan/blockpriv', true);
 	} else {
 		config_del_path('interfaces/wan/blockpriv');
 	}

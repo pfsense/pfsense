@@ -1225,7 +1225,7 @@ function pfSense_clear_globals() {
  */
 function config_init_path(string $path) {
 	global $config;
-	array_init_path($config, $path);
+	return array_init_path($config, $path);
 }
 
 /**

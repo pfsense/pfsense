@@ -3641,21 +3641,41 @@ function array_get_path(array &$arr, string $path, $default = null) {
  * @param mixed  $arr  Top of array
  * @param string $path Path with '/' separators
  */
-function array_init_path(mixed &$arr, ?string $path)
-{
-	if (!is_array($arr)) {
-		$arr = [];
-	}
-	if (is_null($path)) {
-		return;
-	}
-	$tmp = &$arr;
-	foreach (explode('/', $path) as $key) {
-		if (!is_array($tmp[$key])) {
-			$tmp[$key] = [];
+function array_init_path(mixed &$arr, ?string $path) {
+	$value = [];
+	$vpath = explode('/', $path);
+
+	// get the path's leaf node; ignore trailing and contiguous forward-slashes
+	do {
+		$vkey = array_pop($vpath);
+	} while (isset($vkey) && (mb_strlen($vkey) == 0));
+
+	// path is root, make sure $arr is always an array
+	if ($vkey == null) {
+		if (!is_array($arr)) {
+			$arr = $value;
 		}
-		$tmp = &$tmp[$key];
+		return true;
 	}
+
+	// traverse the array and replace any scalars along the path
+	$el = &$arr;
+	foreach ($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
+		}
+		if (!array_key_exists($key, $el) || !is_array($el[$key])) {
+			$el[$key] = [];
+		}
+		$el = &$el[$key];
+	}
+
+	// set the leaf node value
+	if (!array_key_exists($vkey, $el) || !is_array($el[$vkey])) {
+		$el[$vkey] = $value;
+	}
+	
+	return true;
 }
 
 /**

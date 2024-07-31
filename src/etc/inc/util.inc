@@ -3650,11 +3650,13 @@ function array_init_path(mixed &$arr, ?string $path) {
 		$vkey = array_pop($vpath);
 	} while (isset($vkey) && (mb_strlen($vkey) == 0));
 
-	// path is root, make sure $arr is always an array
+	// make sure $arr is always an array
+	if (!is_array($arr)) {
+		$arr = $value;
+	}
+
 	if ($vkey == null) {
-		if (!is_array($arr)) {
-			$arr = $value;
-		}
+		// path is root, nothing else to do
 		return true;
 	}
 

@@ -74,6 +74,11 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['tcpfirsttimeout'] = config_get_path('system/tcpfirsttimeout');
 	$pconfig['tcpopeningtimeout'] = config_get_path('system/tcpopeningtimeout');
 	$pconfig['tcptsdifftimeout'] = config_get_path('system/tcptsdifftimeout');
+	$pconfig['sctpfirsttimeout'] = config_get_path('system/sctpfirsttimeout');
+	$pconfig['sctpopeningtimeout'] = config_get_path('system/sctpopeningtimeout');
+	$pconfig['sctpestablishedtimeout'] = config_get_path('system/sctpestablishedtimeout');
+	$pconfig['sctpclosingtimeout'] = config_get_path('system/sctpclosingtimeout');
+	$pconfig['sctpclosedtimeout'] = config_get_path('system/sctpclosedtimeout');
 	$pconfig['tftpinterface'] = explode(",", config_get_path('system/tftpinterface'));
 	$pconfig['udpfirsttimeout'] = config_get_path('system/udpfirsttimeout');
 	$pconfig['udpmultipletimeout'] = config_get_path('system/udpmultipletimeout');
@@ -142,6 +147,21 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 	}
 	if ($post['tcptsdifftimeout'] && !is_numericint($post['tcptsdifftimeout'])) {
 		$input_errors[] = gettext("The TCP tsdiff timeout value must be an integer.");
+	}
+	if ($post['sctpfirsttimeout'] && !is_numericint($post['sctpfirsttimeout'])) {
+		$input_errors[] = gettext("The SCTP First timeout value must be an integer.");
+	}
+	if ($post['sctpopeningtimeout'] && !is_numericint($post['sctpopeningtimeout'])) {
+		$input_errors[] = gettext("The SCTP Opening timeout value must be an integer.");
+	}
+	if ($post['sctpestablishedtimeout'] && !is_numericint($post['sctpestablishedtimeout'])) {
+		$input_errors[] = gettext("The SCTP Established timeout value must be an integer.");
+	}
+	if ($post['sctpclosingtimeout'] && !is_numericint($post['sctpclosingtimeout'])) {
+		$input_errors[] = gettext("The SCTP Closing timeout value must be an integer.");
+	}
+	if ($post['sctpclosedtimeout'] && !is_numericint($post['sctpclosedtimeout'])) {
+		$input_errors[] = gettext("The SCTP Closed timeout value must be an integer.");
 	}
 	if ($post['udpfirsttimeout'] && !is_numericint($post['udpfirsttimeout'])) {
 		$input_errors[] = gettext("The UDP first timeout value must be an integer.");
@@ -315,6 +335,31 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 			config_set_path('system/tcptsdifftimeout', $post['tcptsdifftimeout']);
 		} else {
 			config_del_path('system/tcptsdifftimeout');
+		}
+		if (!empty($post['sctpfirsttimeout'])) {
+			config_set_path('system/sctpfirsttimeout', $post['sctpfirsttimeout']);
+		} else {
+			config_del_path('system/sctpfirsttimeout');
+		}
+		if (!empty($post['sctpopeningtimeout'])) {
+			config_set_path('system/sctpopeningtimeout', $post['sctpopeningtimeout']);
+		} else {
+			config_del_path('system/sctpopeningtimeout');
+		}
+		if (!empty($post['sctpestablishedtimeout'])) {
+			config_set_path('system/sctpestablishedtimeout', $post['sctpestablishedtimeout']);
+		} else {
+			config_del_path('system/sctpestablishedtimeout');
+		}
+		if (!empty($post['sctpclosingtimeout'])) {
+			config_set_path('system/sctpclosingtimeout', $post['sctpclosingtimeout']);
+		} else {
+			config_del_path('system/sctpclosingtimeout');
+		}
+		if (!empty($post['sctpclosedtimeout'])) {
+			config_set_path('system/sctpclosedtimeout', $post['sctpclosedtimeout']);
+		} else {
+			config_del_path('system/sctpclosedtimeout');
 		}
 		if (!empty($post['udpfirsttimeout'])) {
 			config_set_path('system/udpfirsttimeout', $post['udpfirsttimeout']);

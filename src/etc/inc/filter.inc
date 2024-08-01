@@ -443,6 +443,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 				$timeoutlist .= " tcp.{$typ} {$timeo} ";
 			}
 	}
+	// SCTP timeouts
+	foreach (["first", "opening", "established", "closing", "closed"] as $typ) {
+		$timeo = config_get_path("system/sctp{$typ}timeout");
+		if (is_numericint($timeo)) {
+				$timeoutlist .= " sctp.{$typ} {$timeo} ";
+			}
+	}
 	// UDP timeouts
 	foreach (["first", "single", "multiple"] as $typ) {
 		$timeo = config_get_path("system/udp{$typ}timeout");

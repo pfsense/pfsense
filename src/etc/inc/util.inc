@@ -1689,7 +1689,7 @@ function get_configured_interface_with_descr(bool $with_disabled = false) : arra
 
 	if (is_array($user_settings)
 	    && array_get_path($user_settings, 'webgui/interfacessort')) {
-		asort($iflist);
+		asort($iflist, SORT_NATURAL);
 	}
 
 	return ($iflist);

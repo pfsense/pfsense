@@ -668,7 +668,11 @@ events.push(function() {
 
 	function dst_change(iface, old_iface, old_dst) {
 		if ((old_dst == "") || (old_iface.concat("ip") == old_dst)) {
-			$('#dsttype').val(iface + "ip");
+			if ($("#dsttype option[value='" + iface + "ip" + "']").length > 0) {
+				$('#dsttype').val(iface + "ip");
+			} else {
+				$('#dsttype').val("single");
+			}
 		}
 	}
 

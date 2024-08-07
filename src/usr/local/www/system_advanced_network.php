@@ -106,6 +106,13 @@ $group->add(new Form_Checkbox(
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
+	'dhcpkearunscript',
+	'Enable Kea run script plugin',
+	'Runs user defined script(s) upon DHCP events. Only applicable when Kea DHCP is selected as DHCP server',
+	$pconfig['dhcpkearunscript']
+));
+
+$section->addInput(new Form_Checkbox(
 	'radvddebug',
 	'RADVD Debug',
 	'Log all radvd log levels',

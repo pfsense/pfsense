@@ -559,6 +559,16 @@ function services_kea6_configure() {
 		'lease-checks' => 'fix-del'
 	];
 
+	if (config_path_enabled('system', 'dhcpkearunscript')) {
+		$keaconf['Dhcp6']['hooks-libraries'][] = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_run_script.so',
+			'parameters' => [
+					'name' => '/usr/local/bin/kea_run6.sh',
+					'sync' => false
+			]
+		];
+	}
+
 	/* required for HA support */
 	$keaconf['Dhcp6']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
@@ -1201,6 +1211,16 @@ function services_kea4_configure() {
 	$keaconf['Dhcp4']['sanity-checks'] = [
 		'lease-checks' => 'fix-del'
 	];
+
+	if (config_path_enabled('system', 'dhcpkearunscript')) {
+		$keaconf['Dhcp4']['hooks-libraries'][] = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_run_script.so',
+			'parameters' => [
+					'name' => '/usr/local/bin/kea_run4.sh',
+					'sync' => false
+			]
+		];
+	}
 
 	/* required for HA support */
 	$keaconf['Dhcp4']['hooks-libraries'][] = [

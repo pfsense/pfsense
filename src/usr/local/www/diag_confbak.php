@@ -64,6 +64,24 @@ if ($_POST['rmver'] != "") {
 	$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['rmver']), htmlspecialchars($confvers[$_POST['rmver']]['description']));
 }
 
+if ($_REQUEST['del_x'] == 'DelAll') {
+	if (is_array($_REQUEST['confdel_x']) && count($_REQUEST['confdel_x'])) {
+		$savemsg = "";
+		foreach ($_REQUEST['confdel_x'] as $version) {
+			$conf_file = g_get('conf_path') . '/backup/config-' . $version . '.xml';
+			if (file_exists($conf_file)) {
+				unlink($conf_file);
+				$savemsg .= sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s"<br />'), date(gettext("n/j/y H:i:s"), $version), htmlspecialchars($confvers[$version]['description']));
+				$savemsg .= gettext('&nbsp;&nbsp;&nbsp;&nbsp; ->' . htmlspecialchars($g['conf_path']) . '/backup/config-' . htmlspecialchars($version) . '.xml' . "<br />");
+			} else {
+				$input_errors[] .= gettext("Could not find config file: " . htmlspecialchars($conf_file));
+			}
+		}
+	} else {
+		$input_errors = gettext("You must select at least one config to delete.");
+	}
+}
+
 if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
 	send_user_download('file',
@@ -94,7 +112,7 @@ $confvers = get_backups();
 unset($confvers['versions']);
 
 $pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), gettext("Config History"));
-$pglinks = array("", "diag_backup.php", "@self");
+$pglinks = array("", "diag_backup.php", "diag_confbak.php");
 include("head.inc");
 
 if ($input_errors) {
@@ -215,6 +233,12 @@ if (is_array($confvers)):
 					<th><?=gettext("Size")?></th>
 					<th><?=gettext("Configuration Change")?></th>
 					<th><?=gettext("Actions")?></th>
+					<th>
+						<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-xs" value="DelAll" disabled title="Delete selected configs">
+							<i class="fa fa-trash icon-embed-btn"></i>
+							<?=gettext("Delete"); ?>
+						</button>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -233,6 +257,7 @@ if (is_array($confvers)):
 <?php
 	// And now for the table of prior backups
 	$c = 0;
+	$nconfig = 0;
 	foreach ($confvers as $version):
 		if ($version['time'] != 0) {
 			$date = date(gettext("n/j/y H:i:s"), $version['time']);
@@ -240,7 +265,7 @@ if (is_array($confvers)):
 			$date = gettext("Unknown");
 		}
 ?>
-				<tr>
+				<tr id="fr<?=$nconfig;?>" onClick="fr_toggle(<?=$nconfig;?>)">
 					<td>
 						<input type="radio" name="oldtime" value="<?=$version['time']?>" />
 					</td>
@@ -263,8 +288,12 @@ if (is_array($confvers)):
 						<a class="fa-solid fa-download"		title="<?=gettext('Download this configuration revision')?>"			href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
 						<a class="fa-solid fa-trash-can"			title="<?=gettext('Delete this configuration revision')?>"			href="diag_confbak.php?rmver=<?=$version['time']?>" usepost></a>
 					</td>
+					<td>
+						<input type="checkbox" id="frc<?=$nconfig;?>" onClick="fr_toggle(<?=$nconfig;?>)" name="confdel_x[]" value="<?=$version['time']?>"/>
+					</td>
 				</tr>
 <?php
+	$nconfig++;
 	endforeach;
 ?>
 				<tr>
@@ -276,6 +305,18 @@ if (is_array($confvers)):
 					</td>
 					<td colspan="5"></td>
 				</tr>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$('[id^=fr]').click(function () {
+		buttonsmode('frc', ['del_x']);
+	});
+});
+//]]>
+</script>
+
+
 <?php
 else:
 	print_info_box(gettext("No backups found."), 'danger');

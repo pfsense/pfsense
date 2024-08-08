@@ -49,8 +49,7 @@ if ($_POST) {
 		$savemsg = "Backup not completed - write_config() failed.";
 	}
 
-	// parse config.xml
-	config_set_path('', parse_config(true));
+	config_read_file(true);
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
 
 	$donotshowheader = true;

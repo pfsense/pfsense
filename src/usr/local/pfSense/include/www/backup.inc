@@ -346,8 +346,7 @@ function execPost($post, $postfiles, $ui = true) {
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");
 								}
-								// parse config.xml
-								config_set_path('', parse_config(true));
+								config_read_file(true);
 
 								/* Restore previously pkg repo configured */
 								$pkg_repo_restored = false;

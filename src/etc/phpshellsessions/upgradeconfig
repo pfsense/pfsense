@@ -41,8 +41,7 @@ if (is_array($command_split)) {
 if (empty($args[0])) {
 	echo gettext("Upgrading current live configuration.") . "\n";
 	require_once('config.inc');
-	// parse config.xml
-	config_set_path('', parse_config(true));
+	config_read_file(true);
 	convert_config();
 	exit(0);
 }
@@ -89,7 +88,7 @@ if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
 }
 
 /* We want to work with our local content, not the global running config */
-$oldconfig = config_get_path('');
+config_write_file();
 
 /* Read in the desired config */
 config_set_path('', parse_xml_config($in_file, array($g['xml_rootobj'], 'pfsense')));
@@ -133,6 +132,6 @@ if ($prev_version != config_get_path('version')) {
 }
 
 /* Restore old content */
-config_set_path('', $oldconfig);
+config_read_file();
 
 echo gettext("Done") . "\n";

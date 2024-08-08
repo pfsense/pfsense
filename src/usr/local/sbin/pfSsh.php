@@ -118,7 +118,7 @@ $show_help_text = <<<EOF
 	stoprecording
 	showrecordings
 
-	config_set_path('', parse_config(true));  # reloads the config array
+	config_read_file();  # reloads the config array
 
 	\$temp = print_r(config_get_path(''), true);
 	more(\$temp);

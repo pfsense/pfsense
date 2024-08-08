@@ -22,8 +22,7 @@
 echo "Enabling sshd...";
 require("config.inc");
 echo ".";
-// parse config.xml
-config_set_path('', parse_config(true));
+config_read_file(true);
 echo ".";
 config_init_path('system/ssh');
 config_set_path('system/ssh/enable', "enabled");

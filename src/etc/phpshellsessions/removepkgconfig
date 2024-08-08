@@ -19,12 +19,10 @@
  * limitations under the License.
  */
 
-// parse config.xml
-config_set_path('', parse_config(true));
+config_read_file(true);
 config_del_path('installedpackages');
 echo "Clearing package configuration information...\n";
 write_config("pfSsh.php cleared package configuration data.");
-// parse config.xml
-config_set_path('', parse_config(true));
+config_read_file(true);
 echo "Removing startup files from /usr/local/etc/rc.d/...\n";
 exec("rm /usr/local/etc/rc.d/*");

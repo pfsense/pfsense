@@ -21,8 +21,7 @@
 
 require_once("filter.inc");
 require_once("shaper.inc");
-// parse config.xml
-config_set_path('', parse_config(true));
+config_read_file(true);
 echo "Adding allow all rule...\n";
 
 config_set_path('filter/rule/', [
@@ -46,8 +45,7 @@ unlink_if_exists("/tmp/config.cache");
 write_config("pfSsh.php added allow all wan rule");
 unlink_if_exists("/tmp/config.cache");
 config_del_path('interfaces/wan/blockbogons');
-// parse config.xml
-config_set_path('', parse_config(true));
+config_read_file(true);
 echo "Reloading the filter configuration...";
 filter_configure_sync();
 echo "\n\n";

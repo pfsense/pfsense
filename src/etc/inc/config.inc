@@ -133,8 +133,7 @@ if (is_platform_booting() && is_cli_sapi() &&
 	echo ".";
 }
 
-// reload config
-config_set_path('', parse_config());
+config_read_file(true, true);
 
 /* set timezone */
 $timezone = config_get_path('system/timezone');

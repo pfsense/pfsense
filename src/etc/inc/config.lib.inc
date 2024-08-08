@@ -414,8 +414,7 @@ function parse_config_bootup() {
 		}
 	}
 
-	// parse config.xml
-	config_set_path('', parse_config(true));
+	config_read_file(true);
 
 	if ((float)config_get_path('version') > (float)g_get('latest_config')) {
 		echo <<<EOD
@@ -678,16 +677,10 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	}
 	config_set_path('revision', make_config_revision_entry($desc));
 
-	$lockkey = lock('config', LOCK_EX);
-
-	/* generate configuration XML */
-	$xmlconfig = dump_xml_config(config_get_path(''), g_get('xml_rootobj'));
-
-	/* write new configuration */
-	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig)) {
-		log_error(gettext("WARNING: Config contents could not be saved. Could not open file!"));
-		unlock($lockkey);
-		file_notice("config.xml", sprintf(gettext('Unable to open %1$s/config.xml for writing in write_config()%2$s'), g_get('cf_conf_path'), "\n"));
+	// write the config file
+	$write_result = config_write_file();
+	if ($write_result !== true) {
+		file_notice("config.xml", $write_result . PHP_EOL);
 		return -1;
 	}
 
@@ -699,12 +692,12 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
-	if (config_set_path('', parse_xml_config("{$g['conf_path']}/config.xml", g_get('xml_rootobj'))) == -1) {
+	if (!config_read_file()) {
 		copy("{$g['conf_path']}/config.xml", "{$g['conf_path']}/config.xml.bad");
 		$last_backup = discover_last_backup();
 		if ($last_backup) {
 			restore_backup("/cf/conf/backup/{$last_backup}");
-			config_set_path('', parse_xml_config("{$g['conf_path']}/config.xml", g_get('xml_rootobj')));
+			config_read_file();
 			if (is_platform_booting()) {
 				echo "\n\n ************** WARNING **************";
 				echo "\n\n Configuration could not be validated. A previous configuration was restored. \n";
@@ -716,8 +709,6 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	} else {
 		generate_config_cache(config_get_path(''));
 	}
-
-	unlock($lockkey);
 
 	if ($write_config_only) {
 		return config_get_path('');
@@ -833,8 +824,7 @@ function config_restore($conffile) {
 
 	if ($copy_result) {
 		disable_security_checks();
-		// parse config.xml
-		config_set_path('', parse_config(true));
+		config_read_file(true);
 		write_config(sprintf(gettext("Reverted to %s."), array_pop(explode("/", $conffile))), false);
 		return 0;
 	}
@@ -1306,6 +1296,63 @@ function config_path_enabled(string $path, $enable_key = "enable", $default = fa
 function config_del_path(string $path, $default = null) {
 	global $config;
 	return is_array($config) ? array_del_path($config, $path, $default) : $default;
+}
+
+/**
+ * Writes the in-memory configuration to config.xml.
+ *
+ * @return bool|string True if the config.xml file was successfully
+ *                     written; otherwise an error string.
+ */
+function config_write_file() {
+		// generate configuration XML
+		$tmp_config = config_get_path('');
+		if (!is_array($tmp_config)) {
+			return gettext("Config contents could not be saved. Config is empty!");
+		}
+
+		// write configuration XML
+		$lockkey = lock('config', LOCK_EX);
+		if (!isset($lockkey)) {
+			return gettext("Config contents could not be saved. Could not create temporary file!");
+		}
+		$result = safe_write_file(g_get('cf_conf_path') . "/config.xml", dump_xml_config($tmp_config, g_get('xml_rootobj')));
+		unlock($lockkey);
+
+		if (!$result) {
+			return sprintf(gettext('Unable to open %1$s for writing.'), g_get('cf_conf_path') . '/config.xml');
+		}
+
+		// success
+		return true;
+}
+
+/**
+ * Reloads the in-memory configuration with config.xml.
+ *
+ * @param bool $use_backup If True, try to restore config backups
+ *                         when config.xml is corrupted.
+ * @param bool $use_cache If True, try to use the config cache file.
+ *
+ * @return bool True if the configuration was successfully reloaded.
+ */
+function config_read_file(bool $use_backup = false, bool $use_cache = false) {
+	$is_config_parsed = false;
+
+	if ($use_backup) {
+		$parsed_config = parse_config(!$use_cache);
+	} else {
+		if ($use_cache && file_exists(g_get('tmp_path') . '/config.cache')) {
+			$parsed_config = unserialize(file_get_contents(g_get('tmp_path') . '/config.cache'));
+		} else {
+			$parsed_config = parse_xml_config((g_get('conf_path') . '/config.xml'), [g_get('xml_rootobj')]);
+		}
+	}
+	if (is_array($parsed_config) && !empty($parsed_config)) {
+		$is_config_parsed = is_array(config_set_path('', $parsed_config));
+	}
+
+	return $is_config_parsed;
 }
 
 register_shutdown_function('pfSense_clear_globals');

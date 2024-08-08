@@ -19,8 +19,7 @@
  * limitations under the License.
  */
 
-// parse config.xml
-config_set_path('', parse_config(true));
+config_read_file(true);
 
 config_del_path('dhcpd');
 

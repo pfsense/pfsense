@@ -49,8 +49,7 @@ if (file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-// reload config
-config_set_path('', parse_config());
+config_read_file(true, true);
 
 /* make alias table (for faster lookups) */
 alias_make_table();

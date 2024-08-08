@@ -1054,7 +1054,7 @@ function reload_interfaces_sync() {
 	}
 
 	/* parse config.xml */
-	config_set_path('', parse_config(true));
+	config_read_file(true, true);
 
 	/* enable routing */
 	system_routing_enable();
@@ -1104,7 +1104,7 @@ function reload_interfaces() {
  ******/
 function reload_all_sync() {
 	/* parse config.xml */
-	config_set_path('', parse_config(true));
+	config_read_file(true, true);
 
 	/* set up our timezone */
 	system_timezone_configure();

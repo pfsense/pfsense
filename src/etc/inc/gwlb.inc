@@ -80,7 +80,10 @@ function get_gateways(int $flags = 0): array {
 
 	if ($remove_disabled || $remove_inactive) {
 		foreach ($gateways as $idx => &$gw) {
-			if ($remove_disabled && (isset($gw['disabled']) || !config_path_enabled("interfaces/{$gw['friendlyiface']}"))) {
+			if (($idx == 'Null4') || ($idx == 'Null6')) {
+				continue;
+			}
+			if ($remove_disabled && (isset($gw['disabled']) || (isset($gw['friendlyiface']) && !config_path_enabled("interfaces/{$gw['friendlyiface']}")))) {
 				unset($gateways[$idx]);
 			}
 			if ($remove_inactive && isset($gw['inactive'])) {

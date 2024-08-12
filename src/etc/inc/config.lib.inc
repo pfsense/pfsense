@@ -36,18 +36,21 @@ require_once('util.inc');
  * RESULT
  *   Rewrites config.xml without encryption
  ******/
-function encrypted_configxml() {
-	global $g;
-
-	if (!file_exists(g_get('conf_path') . "/config.xml")) {
-		return;
+function encrypted_configxml(string $file_name = null) {
+	// we can only prompt for password if the PHP script is running in a cli
+	if (!is_cli_sapi()) {
+		return false;
 	}
 
-	if (!is_platform_booting()) {
-		return;
+	if (!isset($file_name)) {
+		$file_name = g_get('conf_path') . "/config.xml";
 	}
 
-	$configtxt = file_get_contents(g_get('conf_path') . "/config.xml");
+	if (!file_exists($file_name)) {
+		return false;
+	}
+
+	$configtxt = file_get_contents($file_name);
 	if (tagfile_deformat($configtxt, $configtxt, "config.xml")) {
 		$fp = fopen('php://stdin', 'r');
 		$data = "";
@@ -60,98 +63,21 @@ function encrypted_configxml() {
 				$data = "";
 			}
 			if ($data) {
-				$fd = fopen(g_get('conf_path') . "/config.xml.tmp", "w");
+				$fd = fopen("{$file_name}.tmp", "w");
 				fwrite($fd, $data);
 				fclose($fd);
-				$lockkey = lock('config');
-				exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
-				unlock($lockkey);
-				echo "\n" . gettext("Config.xml unlocked.") . "\n";
+				exec("/bin/mv '{$file_name}.tmp' '{$file_name}.decrypted'");
+				echo "\n" . gettext("config.xml unlocked.") . "\n";
 				fclose($fp);
 				//pfSense_fsync("{$g['conf_path']}/config.xml");
+				return "{$file_name}.decrypted";
 			} else {
-				echo "\n" . gettext("Invalid password entered.  Please try again.") . "\n";
+				echo "\n" . gettext("Invalid password entered. Please try again.") . "\n";
 			}
 		}
 	}
-}
 
-/****f* config/parse_config
- * NAME
- *   parse_config - Read in config.cache or config.xml if needed and return a config array
- * INPUTS
- *   $parse       - boolean to force parse_config() to read config.xml and generate config.cache
- * RESULT
- *   Config array containing all configuration variables
- ******/
-function parse_config($parse = false) {
-	global $g, $config_parsed, $config_extra;
-
-	$config_parsed = false;
-
-	if (!file_exists("{$g['conf_path']}/config.xml") || filesize("{$g['conf_path']}/config.xml") == 0) {
-		$last_backup = discover_last_backup();
-		if ($last_backup) {
-			log_error(gettext("No config.xml found, attempting last known config restore."));
-			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "", 1, true);
-			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
-		} else {
-			die(gettext("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."));
-		}
-	}
-
-	if (is_platform_booting() && is_cli_sapi()) {
-		echo ".";
-	}
-
-	// Check for encrypted config.xml
-	encrypted_configxml();
-
-	if (!$parse) {
-		if (file_exists(g_get('tmp_path') . '/config.cache')) {
-			$config = unserialize(file_get_contents(g_get('tmp_path') . '/config.cache'));
-			if (!is_array($config)) {
-				$parse = true;
-			}
-		} else {
-			$parse = true;
-		}
-	}
-	if ($parse == true) {
-		if (!file_exists(g_get('conf_path') . "/config.xml")) {
-			if (is_platform_booting() && is_cli_sapi()) {
-				echo ".";
-			}
-			log_error("No config.xml found, attempting last known config restore.");
-			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "", 1, true);
-			$last_backup = discover_last_backup();
-			if ($last_backup) {
-				restore_backup("/cf/conf/backup/{$last_backup}");
-			} else {
-				log_error(gettext("Could not restore config.xml."));
-				die(gettext("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."));
-			}
-		}
-		$config = parse_xml_config(g_get('conf_path') . '/config.xml', array(g_get('xml_rootobj'), 'pfsense'));
-		if ($config == -1) {
-			$last_backup = discover_last_backup();
-			if ($last_backup) {
-				restore_backup("/cf/conf/backup/{$last_backup}");
-			} else {
-				log_error(gettext("Could not restore config.xml."));
-				die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
-			}
-		}
-		generate_config_cache($config);
-	}
-
-	if (is_platform_booting() && is_cli_sapi()) {
-		echo ".";
-	}
-
-	$config_parsed = true;
-
-	return $config;
+	return false;
 }
 
 /****f* config/generate_config_cache
@@ -189,54 +115,97 @@ function generate_config_cache($config) {
 function discover_last_backup() {
 	global $g;
 
-	$backups = glob('/cf/conf/backup/*.xml');
-	foreach (array_reverse($backups) as $backup) {
+	$backup_files = glob('/cf/conf/backup/*.xml');
+	if (!is_array($backup_files)) {
+		return false;
+	}
+	$backup_files = array_filter($backup_files,'is_file');
+	natsort($backup_files);
+
+	// check newest file first
+	foreach (array_reverse($backup_files) as $file_name) {
 		/* checking multiple backups when detecting invalid configuration
 		 * https://redmine.pfsense.org/issues/11748 */
-		if (filesize($backup) != 0) {
-			$testconfig = parse_xml_config($backup, g_get('xml_rootobj'));
-			if ($testconfig != -1) {
-				return basename($backup);
-			}
+		if (empty(filesize($file_name))) {
+			continue;
+		}
+
+		// Check for encrypted config.xml
+		$backup_decrypted = encrypted_configxml($file_name);
+		if (is_string($backup_decrypted)) {
+			$file_name = $backup_decrypted;
+		}
+
+		$backup_config = parse_xml_config($file_name, g_get('xml_rootobj'));
+		if (is_array($backup_config)) {
+			return [
+				'path' => $file_name,
+				'config' => $backup_config
+			];
 		}
 	}
 
 	return false;
 }
 
-function restore_backup($file) {
-	global $g;
+function restore_backup(string|array $backup) {
+	if (is_array($backup)) {
+		if (!is_string($backup['path']) || empty($backup['path'])) {
+			return false;
+		}
+		$file = $backup['path'];
 
-	if (file_exists($file)) {
-		/* restore rrddata/xmldata and clear appropriate data,
-		 * see https://redmine.pfsense.org/issues/11050 */
-		$data = file_get_contents("$file");
-		$conf = parse_xml_config("$file", g_get('xml_rootobj'));
-		if ($conf['rrddata']) {
-			restore_rrddata($conf);
-			$data = clear_tagdata("rrd", $data);
-		}
-		if ($conf['sshdata']) {
-			restore_sshdata($conf);
-			$data = clear_tagdata("ssh", $data);
-		}
-		foreach (g_get('backuppath') as $bk => $path) {
-			if (!empty($conf[$bk][$bk.'data'])) {
-				restore_xmldatafile($bk, $conf);
-				$data = clear_tagdata($bk, $data);
+		if (is_array($backup['config']) && !empty($backup['config'])) {
+			$conf = $backup['config'];
+		} else {
+			$conf = parse_xml_config($file, g_get('xml_rootobj'));
+			if (!is_array($conf)) {
+				return false;
 			}
 		}
-		file_put_contents($file, $data);
-		$lockkey = lock('config', LOCK_EX);
-		unlink_if_exists("{$g['tmp_path']}/config.cache");
-		copy("$file", "/cf/conf/config.xml");
-		unlock($lockkey);
-		//pfSense_fsync("/cf/conf/config.xml");
-		//pfSense_fsync($g['conf_path']);
-		disable_security_checks();
-		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), g_get('product_label'), $file));
-		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), g_get('product_label'), $file), "pfSenseConfigurator", "", 1, true);
+	} else {
+		$file = $backup;
+		if (!file_exists($file)) {
+			return false;
+		}
+		$conf = parse_xml_config($file, g_get('xml_rootobj'));
+		if (!is_array($conf)) {
+			return false;
+		}
 	}
+
+	$data = file_get_contents($file);
+	// restore RRD
+	if ($conf['rrddata']) {
+		restore_rrddata($conf);
+		$data = clear_tagdata("rrd", $data);
+	}
+	// restore SSH keys
+	if ($conf['sshdata']) {
+		restore_sshdata($conf);
+		$data = clear_tagdata("ssh", $data);
+	}
+	// restore additional data
+	foreach (g_get('backuppath') as $bk => $path) {
+		if (!is_array(array_get_path($conf, "{$bk}/{$bk}data/xmldatafile"))) {
+			continue;
+		}
+		restore_xmldatafile($bk, $conf);
+		$data = clear_tagdata($bk, $data);
+	}
+	file_put_contents($file, $data);
+
+	$lockkey = lock('config', LOCK_EX);
+	if (!isset($lockkey)) {
+		return false;
+	}
+	unlink_if_exists(g_get('tmp_path') . '/config.cache');
+	copy($file, g_get('cf_conf_path') . '/config.xml');
+	unlock($lockkey);
+
+	disable_security_checks();
+
+	return true;
 }
 
 /*
@@ -376,62 +345,25 @@ function restore_sshdata($conf = false) {
  *   null
  ******/
 function parse_config_bootup() {
-	global $g;
-
-	if (is_platform_booting()) {
-		echo ".";
+	if (!config_read_file(true)) {
+		die(gettext("Could not find a usable configuration file or it's backup! Exiting...."));
 	}
-
-	if (!file_exists("{$g['conf_path']}/config.xml")) {
-		if (is_platform_booting()) {
-			$last_backup = discover_last_backup();
-			if ($last_backup) {
-				log_error("No config.xml found, attempting last known config restore.");
-				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "", 1, true);
-				restore_backup("/cf/conf/backup/{$last_backup}");
-			}
-			if (!file_exists("{$g['conf_path']}/config.xml")) {
-				echo sprintf(gettext("XML configuration file not found.  %s cannot continue booting."), g_get('product_label')) . "\n";
-				die(gettext("Could not find a usable configuration file or it's backup! Exiting...."));
-			} else {
-				log_error("Last known config found and restored.  Please double check the configuration file for accuracy.");
-				file_notice("config.xml", gettext("Last known config found and restored.  Please double check the configuration file for accuracy."), "pfSenseConfigurator", "");
-			}
-		} else {
-			log_error(gettext("Could not find a usable configuration file! Exiting...."));
-			exit(0);
-		}
-	}
-
-	if (filesize("{$g['conf_path']}/config.xml") == 0) {
-		$last_backup = discover_last_backup();
-		if ($last_backup) {
-			log_error(gettext("No config.xml found, attempting last known config restore."));
-			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "", 1, true);
-			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
-		} else {
-			die(gettext("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."));
-		}
-	}
-
-	config_read_file(true);
-
 	if ((float)config_get_path('version') > (float)g_get('latest_config')) {
+		$product = g_get('product_label');
 		echo <<<EOD
 
 
 *******************************************************************************
 * WARNING!                                                                    *
-* The current configuration has been created with a newer version of {$g['product_label']}  *
+* The current configuration has been created with a newer version of {$product}  *
 * than this one! This can lead to serious misbehavior and even security       *
-* holes! You are urged to either upgrade to a newer version of {$g['product_label']} or     *
+* holes! You are urged to either upgrade to a newer version of {$product} or     *
 * revert to the default configuration immediately!                            *
 *******************************************************************************
 
 
 EOD;
 		}
-
 	/* make alias table (for faster lookups) */
 	alias_make_table();
 }
@@ -692,23 +624,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
-	if (!config_read_file()) {
-		copy("{$g['conf_path']}/config.xml", "{$g['conf_path']}/config.xml.bad");
-		$last_backup = discover_last_backup();
-		if ($last_backup) {
-			restore_backup("/cf/conf/backup/{$last_backup}");
-			config_read_file();
-			if (is_platform_booting()) {
-				echo "\n\n ************** WARNING **************";
-				echo "\n\n Configuration could not be validated. A previous configuration was restored. \n";
-				echo "\n The failed configuration file has been saved as {$g['conf_path']}/config.xml.bad \n\n";
-			}
-		} else {
-			log_error(gettext("Could not restore config.xml."));
-		}
-	} else {
-		generate_config_cache(config_get_path(''));
-	}
+	config_read_file(true);
 
 	if ($write_config_only) {
 		return config_get_path('');
@@ -1331,28 +1247,106 @@ function config_write_file() {
  * Reloads the in-memory configuration with config.xml.
  *
  * @param bool $use_backup If True, try to restore config backups
- *                         when config.xml is corrupted.
+ *                         when a valid config.xml is not available.
  * @param bool $use_cache If True, try to use the config cache file.
  *
  * @return bool True if the configuration was successfully reloaded.
  */
 function config_read_file(bool $use_backup = false, bool $use_cache = false) {
-	$is_config_parsed = false;
-
-	if ($use_backup) {
-		$parsed_config = parse_config(!$use_cache);
-	} else {
-		if ($use_cache && file_exists(g_get('tmp_path') . '/config.cache')) {
-			$parsed_config = unserialize(file_get_contents(g_get('tmp_path') . '/config.cache'));
-		} else {
+	/* file_notice() is always called at the end to give opportunity for
+	   config recovery, otherwise the PHP script may error out too quickly. */
+	function config_read() {
+		$update_cache = false;
+		$parsed_config = @file_get_contents(g_get('tmp_path') . '/config.cache');
+		if (is_string($parsed_config)) {
+			$parsed_config = unserialize($parsed_config);
+		}
+		if (!is_array($parsed_config)) {
 			$parsed_config = parse_xml_config((g_get('conf_path') . '/config.xml'), [g_get('xml_rootobj')]);
+			$update_cache = true;
+		}
+	
+		if (is_array($parsed_config) && !empty($parsed_config) &&
+			is_array(config_set_path('', $parsed_config))) {
+			if ($update_cache) {
+				generate_config_cache($parsed_config);
+			}
+			return true;
+		}
+	
+		return false;
+	}
+
+	if (!$use_cache) {
+		@unlink(g_get('tmp_path') . '/config.cache');
+	}
+	global $config, $config_parsed;
+	$config_parsed = false;
+
+	$config_parsed = config_read();
+
+	if ($config_parsed || !$use_backup) {
+		if (!$config_parsed) {
+			$log_message = gettext("A valid config file could not be found.");
+			log_error($log_message);
+			file_notice("config.xml", $log_message, "pfSenseConfigurator", "", 1, true);
+		}
+		return $config_parsed;
+	}
+
+	log_error(gettext("A valid config file backup could not be found."));
+	if (file_exists(g_get('conf_path') . '/config.xml')) {
+		// adapted from write_config()
+		copy((g_get('conf_path') . '/config.xml'), (g_get('conf_path') . '/config.xml.bad'));
+		log_error(gettext("The failed configuration file has been saved to ") . (g_get('conf_path') . '/config.xml.bad'));
+	}
+
+	if (is_platform_booting()) {
+		// adapted from parse_config() and parse_config_bootup()
+		if (is_cli_sapi()) {
+			echo ".";
+		}
+
+		// adapted from write_config()
+		$log_message = "\n\n************** " . gettext("WARNING") . " **************";
+		$log_message .= "\n\n " . gettext("Configuration could not be validated. A previous configuration was restored.");
+		$log_message .= "\n\n " . gettext("The failed configuration file has been saved to ") . (g_get('conf_path') . '/config.xml.bad') . "\n\n";
+		echo $log_message;
+	}
+
+	$last_backup = discover_last_backup();
+	if (!is_array($last_backup)) {
+		$log_message = gettext("A valid config file backup could not be found.");
+		log_error($log_message);
+		//return false;
+
+		// adapted from parse_config()
+		die($log_message);
+	}
+
+	if (restore_backup($last_backup)) {
+		// update in-memory config and generate a cache file
+		$config_parsed = config_read();
+		if ($config_parsed) {
+			$log_message = sprintf(gettext('Restored "%1$s" because "%2$s" is invalid or does not exist.'),
+			    $last_backup['path'], (g_get('cf_conf_path') . '/config.xml')
+			);
+			$log_message .= ' ' . gettext('Currently running PHP scripts may encounter errors.');
+			log_error($log_message);
+
+			// adapted from parse_config()
+			file_notice("config.xml", $log_message, "pfSenseConfigurator", "", 1, true);
+		} else {
+			$log_message = gettext("A valid config file could not be recovered.");
+			$log_message .= ' ' . gettext('Currently running PHP scripts may encounter errors.');
+			log_error($log_message);
+
+			// adapted from parse_config()
+			die($log_message);
 		}
 	}
-	if (is_array($parsed_config) && !empty($parsed_config)) {
-		$is_config_parsed = is_array(config_set_path('', $parsed_config));
-	}
 
-	return $is_config_parsed;
+	return $config_parsed;
 }
 
 register_shutdown_function('pfSense_clear_globals');

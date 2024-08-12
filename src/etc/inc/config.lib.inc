@@ -1255,7 +1255,7 @@ function config_write_file() {
 function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 	/* file_notice() is always called at the end to give opportunity for
 	   config recovery, otherwise the PHP script may error out too quickly. */
-	function config_read() {
+	$config_read = function () {
 		$update_cache = false;
 		$parsed_config = @file_get_contents(g_get('tmp_path') . '/config.cache');
 		if (is_string($parsed_config)) {
@@ -1275,7 +1275,7 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 		}
 	
 		return false;
-	}
+	};
 
 	if (!$use_cache) {
 		@unlink(g_get('tmp_path') . '/config.cache');
@@ -1283,7 +1283,7 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 	global $config, $config_parsed;
 	$config_parsed = false;
 
-	$config_parsed = config_read();
+	$config_parsed = $config_read();
 
 	if ($config_parsed || !$use_backup) {
 		if (!$config_parsed) {
@@ -1326,7 +1326,7 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 
 	if (restore_backup($last_backup)) {
 		// update in-memory config and generate a cache file
-		$config_parsed = config_read();
+		$config_parsed = $config_read();
 		if ($config_parsed) {
 			$log_message = sprintf(gettext('Restored "%1$s" because "%2$s" is invalid or does not exist.'),
 			    $last_backup['path'], (g_get('cf_conf_path') . '/config.xml')

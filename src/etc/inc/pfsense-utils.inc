@@ -2128,7 +2128,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	set_curlproxy($ch);
 
 	@curl_exec($ch);
-	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 	fclose($fp);
 	curl_close($ch);
 	if ($http_code == 200) {
@@ -2181,7 +2181,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	set_curlproxy($ch);
 
 	@curl_exec($ch);
-	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 	fclose($fout);
 	curl_close($ch);
 	if ($http_code == 200) {

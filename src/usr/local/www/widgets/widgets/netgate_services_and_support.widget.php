@@ -93,7 +93,7 @@ function updateSupport() {
 			set_curlproxy($ch);
 
 			$response = curl_exec($ch);
-			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 			curl_close($ch);
 
 			if ($status == 200) {

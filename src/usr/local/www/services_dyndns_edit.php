@@ -122,7 +122,7 @@ if ($_POST['save'] || $_POST['force']) {
 	$reqdfieldsn = array(gettext("Service type"));
 
 	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
-		if ($pconfig['type'] != "dnsomatic") {
+		if (($pconfig['type'] != "dnsomatic")) {
 			$reqdfields[] = "host";
 			$reqdfieldsn[] = gettext("Hostname");
 		}
@@ -155,7 +155,7 @@ if ($_POST['save'] || $_POST['force']) {
 		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6") || ($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
+		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "name.com") || ($pconfig['type'] == "name.com-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6") || ($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
@@ -210,6 +210,9 @@ if ($_POST['save'] || $_POST['force']) {
 			$dyndns['password'] = $this_dyndns_config['password'];;
 		}
 		$dyndns['host'] = $_POST['host'];
+		if (($pconfig['type'] == "name.com") || ($pconfig['type'] == "name.com-v6")) {
+			$dyndns['host'] = $_POST['host'] == "@" ? "" : $_POST['host'];
+		}
 		$dyndns['domainname'] = $_POST['domainname'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
@@ -364,7 +367,7 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Cloudflare, Linode, Porkbun, Name.com: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .

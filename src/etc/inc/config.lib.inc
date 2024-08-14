@@ -69,7 +69,6 @@ function encrypted_configxml(string $file_name = null) {
 				exec("/bin/mv '{$file_name}.tmp' '{$file_name}.decrypted'");
 				echo "\n" . gettext("config.xml unlocked.") . "\n";
 				fclose($fp);
-				//pfSense_fsync("{$g['conf_path']}/config.xml");
 				return "{$file_name}.decrypted";
 			} else {
 				echo "\n" . gettext("Invalid password entered. Please try again.") . "\n";
@@ -98,7 +97,6 @@ function generate_config_cache($config) {
 	}
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	//pfSense_fsync("{$g['tmp_path']}/config.cache");
 
 	unset($configcache);
 	/* Used for config.extra.xml */
@@ -106,7 +104,6 @@ function generate_config_cache($config) {
 		$configcacheextra = fopen(g_get('tmp_path') . '/config.extra.cache', "w");
 		fwrite($configcacheextra, serialize($config_extra));
 		fclose($configcacheextra);
-		//pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
 		unset($configcacheextra);
 	}
 	return true;
@@ -207,10 +204,6 @@ function restore_backup(string|array $backup) {
 
 	return true;
 }
-
-/*
- *	Backup RRD/XML Data
- */
 
 /* If the config on disk had rrddata/xmldata tags already, remove that section first.
  * See https://redmine.pfsense.org/issues/8994,
@@ -407,7 +400,6 @@ function convert_config() {
 	global $g;
 	$now = date("H:i:s");
 	log_error(sprintf(gettext("Start Configuration upgrade at %s, set execution timeout to 15 minutes"), $now));
-	//ini_set("max_execution_time", "900");
 
 	/* special case upgrades */
 	/* fix every minute crontab bogons entry */
@@ -436,8 +428,9 @@ function convert_config() {
 	}
 
 	if (config_get_path('version') == g_get('latest_config')) {
+		/* already at latest version */
 		additional_config_upgrade();
-		return;		/* already at latest version */
+		return;
 	}
 
 	config_init_path('system/already_run_config_upgrade');
@@ -485,9 +478,9 @@ function convert_config() {
  *   temporary file of the same name but ending with the pid of the current
  *   process, them renaming the temporary file over the original.
  * INPUTS
- *   $filename  - string containing the filename of the file to write
- *   $content   - string or array containing the file content to write to file
- *   $force_binary      - boolean denoting whether we should force binary
+ *   $filename - string containing the filename of the file to write
+ *   $content - string or array containing the file content to write to file
+ *   $force_binary - boolean denoting whether we should force binary
  *   mode writing.
  * RESULT
  *   boolean - true if successful, false if not
@@ -517,16 +510,12 @@ function safe_write_file($file, $content, $force_binary = false) {
 	fflush($fd);
 	fclose($fd);
 
-	/* XXX Re-add pfSense_fsync() call here after it's fixed */
-	// if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
 	if (!rename($tmp_file, $file)) {
 		// Unable to move temporary file to original
 		@unlink($tmp_file);
 		return false;
 	}
 
-	// Sync file before returning
-	//return pfSense_fsync($file);
 	return true;
 }
 
@@ -555,13 +544,15 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 
 	$desc = str_replace("-MaNuAlBaCkUp", "", $desc, $rcnt);
 	if ($rcnt > 0) {
-		$manual_acb = true; // Manual backups require special processing on the server
+		// Manual backups require special processing on the server
+		$manual_acb = true;
 	}
 
 	$rcnt = 0;
 	$desc = str_replace("-NoReMoTeBaCkUp", "", $desc, $rcnt);
 	if ($rcnt > 0) {
-		$doacb = false; // No ACB will be performed if this string is detected
+		// No ACB will be performed if this string is detected
+		$doacb = false;
 	}
 
 	/*
@@ -794,7 +785,7 @@ function disable_security_checks() {
 	touch("{$g['tmp_path']}/disable_security_checks");
 }
 
-/* Restores security checks.  Should be called after all succeed. */
+/* Restores security checks. Should be called after all succeed. */
 function restore_security_checks() {
 	global $g;
 	unlink_if_exists("{$g['tmp_path']}/disable_security_checks");
@@ -843,7 +834,6 @@ function cleanup_backupcache($lock = false) {
 		$lockkey = lock('config');
 	}
 
-
 	$backups = get_backups();
 	if ($backups) {
 		$baktimes = $backups['versions'];
@@ -856,7 +846,8 @@ function cleanup_backupcache($lock = false) {
 	$bakfiles = glob(g_get('cf_conf_path') . "/backup/config-*");
 	$tocache = array();
 
-	foreach ($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
+	// Check for backups in the directory not represented in the cache.
+	foreach ($bakfiles as $backup) {
 		$backupsize = filesize($backup);
 		if ($backupsize == 0) {
 			unlink($backup);
@@ -879,7 +870,7 @@ function cleanup_backupcache($lock = false) {
 			}
 
 			if ($newxml == "-1") {
-				log_error(sprintf(gettext("The backup cache file %s is corrupted.  Unlinking."), $backup));
+				log_error(sprintf(gettext("The backup cache file %s is corrupted. Unlinking."), $backup));
 				unlink($backup);
 				continue;
 			}
@@ -919,7 +910,6 @@ function cleanup_backupcache($lock = false) {
 	$bakout = fopen(g_get('cf_conf_path') . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($tocache));
 	fclose($bakout);
-	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 	if (!$lock) {
 		unlock($lockkey);
@@ -933,7 +923,6 @@ function get_backups() {
 		$bakvers = array_keys($confvers);
 		$toreturn = array();
 		sort($bakvers);
-		// 	$bakvers = array_reverse($bakvers);
 		foreach (array_reverse($bakvers) as $bakver) {
 			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description'], 'version' => $confvers[$bakver]['version'], 'filesize' => $confvers[$bakver]['filesize']);
 		}
@@ -946,7 +935,6 @@ function get_backups() {
 
 function backup_config() {
 	global $g;
-
 
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
@@ -975,8 +963,6 @@ function backup_config() {
 	$bakout = fopen(g_get('cf_conf_path') . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($backupcache));
 	fclose($bakout);
-	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
-
 
 	return true;
 }
@@ -1045,7 +1031,8 @@ function make_config_revision_entry($desc = null, $override_user = null) {
 
 	$revision = array();
 
-	if (time() > mktime(0, 0, 0, 9, 1, 2004)) {     /* make sure the clock settings are plausible */
+	/* make sure the clock settings are plausible */
+	if (time() > mktime(0, 0, 0, 9, 1, 2004)) {
 		$revision['time'] = time();
 	}
 
@@ -1129,25 +1116,10 @@ function config_init_path(string $path) {
 }
 
 /**
- * Initialize the leaf node as an array. Any scalars in the path, including the
- * leaf node, are overridden with an array.
- * 
- * @param array $keys The path as an array of keys
- * 
- * @deprecated This is retained for compatibility with older code;
- * 
- * @see config_init_path() Uses a string path
- */
-function init_config_arr($keys) {
-	// just translate the old signature to the new one
-	config_init_path(implode('/', $keys));
-}
-
-/**
  * Return a value specified by path in the config, if it exists.
  * 
- * @param string $path    Path with '/' separators
- * @param  mixed $default Value to return if the path is not found
+ * @param string $path Path with '/' separators
+ * @param mixed $default Value to return if the path is not found
  * 
  * @return mixed Value at path or $default if the path does not exist or if the
  *               path keys an empty string and $default is non-null
@@ -1162,9 +1134,9 @@ function config_get_path(string $path, $default = null) {
  * necessary. If the path cannot be reached because an intermediary exists but
  * is not empty or an array, return $default.
  * 
- * @param string $path    Path with '/' separators
- * @param  mixed $val     Value to set
- * @param  mixed $default Value to return if the path is not found
+ * @param string $path Path with '/' separators
+ * @param mixed $val Value to set
+ * @param mixed $default Value to return if the path is not found
  * 
  * @return mixed $val or $default if the path prefix does not exist
  */
@@ -1189,7 +1161,7 @@ function config_set_path(string $path, $value, $default = null) {
  * with isset(). This can be counter-intuitive as isset() will return true if
  * the array element is any non-null value that evaluates to false.
  * 
- * @param string $path       Path with '/' separators
+ * @param string $path Path with '/' separators
  * @param string $enable_key Optional alternative key value for the enable key
  * 
  * @return mixed|bool true if $enable_key exists in the array at $path, and has
@@ -1318,9 +1290,8 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 	if (!is_array($last_backup)) {
 		$log_message = gettext("A valid config file backup could not be found.");
 		log_error($log_message);
-		//return false;
 
-		// adapted from parse_config()
+		// adapted from parse_config() - alternatively it could return false
 		die($log_message);
 	}
 

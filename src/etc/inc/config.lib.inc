@@ -1225,8 +1225,9 @@ function config_write_file() {
  * @return bool True if the configuration was successfully reloaded.
  */
 function config_read_file(bool $use_backup = false, bool $use_cache = false) {
-	/* file_notice() is always called at the end to give opportunity for
-	   config recovery, otherwise the PHP script may error out too quickly. */
+	/* We leave calls to file_notice() for the end before returning.
+	 * This mitigates the potential for PHP errors to interfere with
+	 * the config recovery. */
 	$config_read = function () {
 		$update_cache = false;
 		$parsed_config = @file_get_contents(g_get('tmp_path') . '/config.cache');
@@ -1318,6 +1319,35 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 	}
 
 	return $config_parsed;
+}
+
+/**
+ * Reloads the in-memory configuration with config.xml.
+ *
+ * @param bool $parse If False, use the config cache when available.
+ *
+ * @return mixed Config array.
+ *
+ * @deprecated Retained for backwards compatibility with versions <= 24.03.
+ *
+ * @see config_read_file() Supports updated recovery code.
+ */
+function parse_config($parse = false) {
+	config_read_file(!$parse);
+	return config_get_path('');
+}
+
+/**
+ * Initialize the config path.
+ * 
+ * @param array $keys The path as an array of keys.
+ * 
+ * @deprecated Retained for backwards compatibility with versions <= 24.03.
+ * 
+ * @see config_init_path() Uses a string path.
+ */
+function init_config_arr($keys) {
+	config_init_path(implode('/', $keys));
 }
 
 register_shutdown_function('pfSense_clear_globals');

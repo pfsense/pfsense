@@ -215,6 +215,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 		$changes_applied = true;
 		$retval = 0;
+		system_sshguard_stop();
 		system_syslogd_start();
 		if (($oldnologdefaultblock !== config_path_enabled('syslog', 'nologdefaultblock')) ||
 		    ($oldnologdefaultpass !== config_path_enabled('syslog', 'nologdefaultpass')) ||

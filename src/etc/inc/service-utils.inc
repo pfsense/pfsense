@@ -866,7 +866,7 @@ function service_control_stop($name, $extras) {
 				usleep(100000);
 			}
 			/* Make sure sshguard stops as well */
-			sigkillbyname("sshguard", "TERM");
+			system_sshguard_stop();
 			break;
 		default:
 			stop_service($name);
@@ -944,6 +944,7 @@ function service_control_restart($name, $extras) {
 			}
 			break;
 		case 'syslogd':
+			system_sshguard_stop();
 			system_syslogd_start();
 			break;
 		default:

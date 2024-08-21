@@ -377,6 +377,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 		$retval = 0;
 		$retval |= filter_configure();
 		if ($restart_sshguard) {
+			system_sshguard_stop();
 			$retval |= system_syslogd_start(true);
 		}
 

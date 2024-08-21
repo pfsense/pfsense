@@ -466,6 +466,7 @@ if (file_exists("{$g['conf_path']}/needs_package_sync")) {
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
    fail to route syslog messages properly on both IPv4 and IPv6 */
+system_sshguard_stop();
 system_syslogd_start();
 
 /* done */

@@ -66,7 +66,7 @@ $dnsgw_counter = 1;
 
 while (config_get_path("system/dns{$dnsgw_counter}gw") !== null) {
 	$pconfig_dnsgw_counter = $dnsgw_counter - 1;
-	$pconfig["dnsgw{$pconfig_dnsgw_counter}"] = config_get_path("system/dns{$dnsgw_counter}host");
+	$pconfig["dnsgw{$pconfig_dnsgw_counter}"] = config_get_path("system/dns{$dnsgw_counter}gw");
 	$dnsgw_counter++;
 }
 

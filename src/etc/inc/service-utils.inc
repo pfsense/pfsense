@@ -944,7 +944,6 @@ function service_control_restart($name, $extras) {
 			}
 			break;
 		case 'syslogd':
-			system_sshguard_stop();
 			system_syslogd_start();
 			break;
 		default:

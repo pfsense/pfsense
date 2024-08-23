@@ -675,7 +675,7 @@ $group->add(new Form_Input(
 	'pool_address',
 	'Network',
 	'text',
-	htmlspecialchars($pconfig['pool_address'])
+	$pconfig['pool_address']
 ))->setWidth(4)->setHelp('Network configuration for Virtual Address Pool');
 
 $netBits = array();
@@ -712,7 +712,7 @@ $group->add(new Form_Input(
 	'pool_address_v6',
 	'IPv6 Network',
 	'text',
-	htmlspecialchars($pconfig['pool_address_v6'])
+	$pconfig['pool_address_v6']
 ))->setWidth(4)->setHelp('Network configuration for Virtual IPv6 Address Pool');
 
 $netBits = array();
@@ -821,7 +821,7 @@ $group->add(new Form_Input(
 	'dns_domain',
 	'',
 	'text',
-	htmlspecialchars($pconfig['dns_domain'])
+	$pconfig['dns_domain']
 ))->setHelp('Specify domain as DNS Default Domain');
 
 $section->add($group);
@@ -844,7 +844,7 @@ $group->add(new Form_Input(
 	'dns_split',
 	'',
 	'text',
-	htmlspecialchars($pconfig['dns_split'])
+	$pconfig['dns_split']
 ))->setHelp('NOTE: If left blank, and a default domain is set, it will be used for this value.');
 
 $section->add($group);
@@ -868,7 +868,7 @@ for ($i = 1; $i <= 4; $i++) {
 		'dns_server' . $i,
 		'Server #' . $i,
 		'text',
-		htmlspecialchars($pconfig['dns_server' . $i])
+		$pconfig['dns_server' . $i]
 	));
 
 	$section->add($group);
@@ -893,7 +893,7 @@ for ($i = 1; $i <= 2; $i++) {
 		'wins_server' . $i,
 		'Server #' . $i,
 		'text',
-		htmlspecialchars($pconfig['wins_server' . $i]),
+		$pconfig['wins_server' . $i],
 		array('size' => 20)
 	));
 
@@ -942,7 +942,7 @@ $group->add(new Form_Input(
 	'login_banner',
 	'',
 	'text',
-	htmlspecialchars($pconfig['login_banner'])
+	$pconfig['login_banner']
 ));
 
 $section->add($group);

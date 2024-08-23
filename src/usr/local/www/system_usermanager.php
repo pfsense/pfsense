@@ -865,7 +865,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'descr',
 		'Full name',
 		'text',
-		htmlspecialchars($pconfig['descr'])
+		$pconfig['descr']
 	))->setHelp('User\'s full name, for administrative information only');
 
 	if ($ro) {

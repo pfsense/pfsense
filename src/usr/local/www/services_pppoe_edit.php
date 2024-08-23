@@ -588,7 +588,7 @@ if (isset($id)) {
 		'id',
 		null,
 		'hidden',
-		htmlspecialchars($id, ENT_QUOTES | ENT_HTML401)
+		$id
 	));
 }
 

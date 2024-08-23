@@ -718,7 +718,7 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
 			gettext('Enable'),
-			sprintf(gettext('Enable DHCPv6 server on %s interface'), htmlspecialchars($iflist[$if])),
+			sprintf(gettext('Enable DHCPv6 server on %s interface'), $iflist[$if]),
 			$pconfig['enable']
 		));
 	}
@@ -860,7 +860,7 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
 		gettext('Add Address Pool'),
-		'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&act=newpool',
+		'services_dhcpv6.php?if=' . $if . '&act=newpool',
 		'fa-solid fa-plus'
 	);
 	$btnaddpool->addClass('btn-success');

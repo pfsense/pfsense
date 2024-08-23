@@ -221,7 +221,7 @@ $section->addInput(new Form_Input(
 	'althostnames',
 	'Alternate Hostnames',
 	'text',
-	htmlspecialchars($pconfig['althostnames'])
+	$pconfig['althostnames']
 ))->setHelp('Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks. '.
 	'Specify alternate hostnames by which the router may be queried, to '.
 	'bypass the DNS Rebinding Attack checks. Separate hostnames with spaces.');

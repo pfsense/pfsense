@@ -137,7 +137,7 @@ print_info_box(gettext('Renewing or reissuing a CA or certificate will replace t
 $form = new Form(false);
 $form->setAction('system_certmanager_renew.php');
 
-$section = new Form_Section("Renew or Reissue: " . htmlspecialchars($torenew['descr']));
+$section = new Form_Section("Renew or Reissue: " . $torenew['descr']);
 
 $section->addInput(new Form_StaticText(
 	"Subject",

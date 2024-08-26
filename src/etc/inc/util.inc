@@ -2920,7 +2920,7 @@ function is_dynamic_route(string $target, string $ipprotocol = ''): bool {
 	/* check for the PROTO* flag instead of STATIC
 	 * see https://redmine.pfsense.org/issues/14717
 	 * mwexec() returns false if the flag exists, so invert it */
-	if (!mwexec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | /usr/bin/egrep 'flags: <.*PROTO.*>'")) {
+	if (!mwexec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | /usr/bin/egrep 'flags: <.*PROTO.*>'", true)) {
 		return true;
 	}
 

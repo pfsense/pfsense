@@ -1925,6 +1925,8 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 		/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
 		 * see https://redmine.pfsense.org/issues/11662 */
 		if (is_platform_booting()) {
+			/* Refresh the cache; the parent interface may not yet exist in the cache. */
+			get_interface_arr(true);
 			interfaces_qinq_configure(true);
 			/* Configure all qinq interface addresses and add them to their
 			 * bridges. See https://redmine.pfsense.org/issues/13225,

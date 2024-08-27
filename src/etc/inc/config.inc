@@ -34,11 +34,11 @@ if (!function_exists('is_platform_booting')) {
 //	return;
 
 /* include globals from notices.inc /utility/XML parser files */
+require_once("xmlparse.inc");
 require_once("notices.inc");
 require_once("util.inc");
 require_once("Net/IPv6.php");
 require_once('config.lib.inc');
-require_once("xmlparse.inc");
 require_once("crypt.inc");
 
 // Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels

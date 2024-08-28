@@ -69,7 +69,7 @@ $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_map_config = isset($id) ? config_get_path("dhcpd/{$if}/staticmap/{$id}") : null;
 if ($this_map_config) {

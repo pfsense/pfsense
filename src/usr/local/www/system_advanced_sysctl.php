@@ -39,7 +39,7 @@ require_once("system_advanced_sysctl.inc");
 
 $tunables = getTunables();
 
-if (isset($_REQUEST['id'])) {
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = htmlspecialchars_decode($_REQUEST['id']);
 }
 

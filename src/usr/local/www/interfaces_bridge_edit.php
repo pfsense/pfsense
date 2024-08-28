@@ -62,7 +62,7 @@ foreach ($ifacelist as $bif => $bdescr) {
 	}
 }
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 config_init_path('bridges/bridged');
 $this_bridge_config = isset($id) ? config_get_path("bridges/bridged/{$id}") : null;

@@ -49,7 +49,7 @@ function hosts_sort() {
 
 require_once("guiconfig.inc");
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 $pconfig = [];
 
 if (isset($id) &&

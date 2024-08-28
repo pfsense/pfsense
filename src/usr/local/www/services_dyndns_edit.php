@@ -45,7 +45,7 @@ require_once("guiconfig.inc");
 
 config_init_path('dyndnses/dyndns');
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $dup = false;
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {

@@ -37,7 +37,7 @@ $pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
 config_init_path('ifgroups/ifgroupentry');
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_ifgroup_config = isset($id) ? config_get_path("ifgroups/ifgroupentry/{$id}") : null;
 if ($this_ifgroup_config) {

@@ -53,10 +53,6 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
-	$id = $_REQUEST['id'];
-}
-
 $this_ppp_config = isset($id) ? config_get_path("ppps/ppp/{$id}") : null;
 if ($this_ppp_config) {
 	$pconfig['ptpid'] = $this_ppp_config['ptpid'];

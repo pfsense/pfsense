@@ -112,7 +112,7 @@ foreach ($checklist as $tmpif) {
 	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 }
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_lagg_config = isset($id) ? config_get_path("laggs/lagg/{$id}") : null;
 if ($this_lagg_config) {

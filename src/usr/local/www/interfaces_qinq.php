@@ -34,7 +34,7 @@ require_once("functions.inc");
 config_init_path('qinqs/qinqentry');
 
 if ($_POST['act'] == "del") {
-	$id = $_POST['id'];
+	$id = is_numericint($_POST['id']) ? $_POST['id'] : null;
 
 	/*
 	 * Check user privileges to test if the user is allowed to make changes.

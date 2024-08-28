@@ -129,7 +129,7 @@ if (!isset($voucher_config['descrmsgexpired'])) {
 
 config_set_path("voucher/{$cpzone}", $voucher_config);
 
-if ($_POST['act'] == "del") {
+if (($_POST['act'] == "del") && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 	if (config_get_path("voucher/{$cpzone}/roll/{$id}")) {
 		$roll = config_get_path("voucher/{$cpzone}/roll/{$id}/number");
@@ -152,7 +152,7 @@ if ($_POST['act'] == "del") {
 			chmod("{$g['varetc_path']}/voucher_{$cpzone}.private", 0600);
 			fwrite($fd, $privkey);
 			fclose($fd);
-			$id = $_REQUEST['id'];
+			$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 			$this_voucher = isset($id) ? config_get_path("voucher/{$cpzone}/roll/{$id}") : null;
 			if ($this_voucher) {
 				$number = $this_voucher['number'];

@@ -57,7 +57,7 @@ function saveVIP($post, $json = false) {
 	config_init_path('virtualip/vip');
 	$a_vip = config_get_path('virtualip/vip');
 	$rv = array();
-	$id = $post['id'];
+	$id = is_numericint($post['id']) ? $post['id'] : null;
 
 	$input_errors = array();
 

@@ -50,7 +50,7 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_vouchers.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_roll_config = isset($id) ? config_get_path("voucher/{$cpzone}/roll/{$id}") : null;
 if ($this_roll_config) {

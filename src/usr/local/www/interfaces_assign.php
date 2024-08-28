@@ -354,7 +354,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		$delbtn = key($_POST['del']);
 	}
 
-	if (isset($delbtn)) {
+	if (isset($delbtn) && is_numericint($delbtn)) {
 		$id = $delbtn;
 
 		if (link_interface_to_group($id)) {

@@ -46,7 +46,7 @@ if (isset($_REQUEST['after'])) {
 	$after = $_REQUEST['after'];
 }
 
-if (isset($_REQUEST['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$id = $_REQUEST['dup'];
 	$after = $_REQUEST['dup'];
 }

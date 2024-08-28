@@ -43,8 +43,7 @@ $logging_prefix = gettext("Local User Database");
 
 config_init_path('system/group');
 
-unset($id);
-$id = $_REQUEST['groupid'];
+$id = is_numericint($_REQUEST['groupid']) ? $_REQUEST['groupid'] : null;
 $act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
 $dup = null;
@@ -135,8 +134,8 @@ if (($_POST['act'] == "delpriv") && !$read_only && ($dup === null)) {
 }
 
 if ($act == "edit") {
-	$this_group = config_get_path("system/group/{$id}");
-	if (isset($id) && isset($this_group)) {
+	if (isset($id)) {
+		$this_group = config_get_path("system/group/{$id}");
 		if ($dup === null) {
 			$pconfig['name'] = $this_group['name'];
 			$pconfig['gid'] = $this_group['gid'];
@@ -314,20 +313,21 @@ function build_priv_table() {
 
 	$user_has_root_priv = false;
 
-	foreach (get_user_privdesc(config_get_path("system/group/{$id}")) as $i => $priv) {
-		$privhtml .=		'<tr>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
-		if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
-			$privhtml .=			' ' . gettext('(admin privilege)');
-			$user_has_root_priv = true;
+	if (isset($id)) {
+		foreach (get_user_privdesc(config_get_path("system/group/{$id}")) as $i => $priv) {
+			$privhtml .=		'<tr>';
+			$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
+			$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
+			if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
+				$privhtml .=			' ' . gettext('(admin privilege)');
+				$user_has_root_priv = true;
+			}
+			$privhtml .=			'</td>';
+			if (!$read_only && ($dup === null)) {
+				$privhtml .=			'<td><a class="fa-solid fa-trash-can" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
+			}
+			$privhtml .=		'</tr>';
 		}
-		$privhtml .=			'</td>';
-		if (!$read_only && ($dup === null)) {
-			$privhtml .=			'<td><a class="fa-solid fa-trash-can" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
-		}
-		$privhtml .=		'</tr>';
-
 	}
 
 	if ($user_has_root_priv) {

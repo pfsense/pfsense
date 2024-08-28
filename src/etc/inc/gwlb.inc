@@ -527,11 +527,11 @@ function remove_failover_states(?string $gateway_name = null): void {
 		$default_gateways = [];
 
 		$default_gateway4 = config_get_path('gateways/defaultgw4', '');
-		if (!empty($default_gateway4)) {
+		if (!empty($default_gateway4) && ($default_gateway4 != '-')) {
 			$default_gateways[$default_gateway4] = null;
 		}
 		$default_gateway6 = config_get_path('gateways/defaultgw6', '');
-		if (!empty($default_gateway6)) {
+		if (!empty($default_gateway6) && ($default_gateway6 != '-')) {
 			$default_gateways[$default_gateway6] = null;
 		}
 	}
@@ -617,8 +617,10 @@ function remove_failover_states(?string $gateway_name = null): void {
 		   rules with a gateway of a different address family on the same interface to remain */
 		if ($remove_states_default == 'addrfamily') {
 			$host_prefix = ($gateway_name == $default_gateway4) ? '-k 0.0.0.0/0' : '-k ::/0';
+		} elseif ($remove_states_default == 'all') {
+			$host_prefix = '-Fs';
 		} else {
-			$host_prefix = '';
+			continue;
 		}
 		foreach (array_keys($gateway_interfaces) as $gateway_interface) {
 			mwexec_bg('/sbin/pfctl -M -i ' . escapeshellarg($gateway_interface) . " {$host_prefix} -q");

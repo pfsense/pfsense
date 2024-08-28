@@ -323,7 +323,7 @@ function filter_delete_states_for_down_gateways() {
 				$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
 				update_filter_reload_status($message);
 				log_error($message);
-				mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));
+				mwexec("/sbin/pfctl -M -k gateway -k " . escapeshellarg($gwip));
 			}
 		}
 	}

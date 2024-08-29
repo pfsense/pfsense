@@ -26,6 +26,7 @@
  * limitations under the License.
  */
 
+require_once("xmlparse.inc");
 require_once('util.inc');
 
 /****f* config/encrypted_configxml

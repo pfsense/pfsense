@@ -45,7 +45,7 @@ $pconfig['dnsserver'] = config_get_path('system/dnsserver');
 $arr_gateways = get_gateways();
 
 // set default columns to two if unset
-if (!config_path_enabled('system/webgui', 'dashboardcolumns')) {
+if (!is_numericint(config_get_path('system/webgui/dashboardcolumns'))) {
 	config_set_path('system/webgui/dashboardcolumns', 2);
 }
 

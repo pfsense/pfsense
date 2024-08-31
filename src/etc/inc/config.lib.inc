@@ -1112,6 +1112,10 @@ function pfSense_clear_globals() {
  * @param string $path Path with '/' separators
  */
 function config_init_path(string $path) {
+	// safety check in case $path was called with null keys
+	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
+		return false;
+	}
 	global $config;
 	return array_init_path($config, $path);
 }
@@ -1126,6 +1130,10 @@ function config_init_path(string $path) {
  *               path keys an empty string and $default is non-null
  */
 function config_get_path(string $path, $default = null) {
+	// safety check in case $path was called with null keys
+	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
+		return $default;
+	}
 	global $config;
 	return is_array($config) ? array_get_path($config, $path, $default) : $default;
 }
@@ -1142,6 +1150,10 @@ function config_get_path(string $path, $default = null) {
  * @return mixed $val or $default if the path prefix does not exist
  */
 function config_set_path(string $path, $value, $default = null) {
+	// safety check in case $path was called with null keys
+	if (str_contains($path, '//')) {
+		return $default;
+	}
 	global $config;
 
 	if ($path == '' && !is_array($config)) {
@@ -1170,6 +1182,10 @@ function config_set_path(string $path, $value, $default = null) {
  *                    path prefix does not exist.
  */
 function config_path_enabled(string $path, $enable_key = "enable", $default = false) {
+	// safety check in case $path was called with null keys
+	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
+		return $default;
+	}
 	global $config;
 	return is_array($config) ? array_path_enabled($config, $path, $enable_key, $default) : $default;
 }
@@ -1183,6 +1199,10 @@ function config_path_enabled(string $path, $enable_key = "enable", $default = fa
  *                     path prefix does not exist.
  */
 function config_del_path(string $path, $default = null) {
+	// safety check in case $path was called with null keys
+	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
+		return $default;
+	}
 	global $config;
 	return is_array($config) ? array_del_path($config, $path, $default) : $default;
 }

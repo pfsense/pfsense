@@ -693,6 +693,10 @@ if ($dhcrelay_enabled) {
 
 display_top_tabs($tab_array);
 
+if (is_null($pconfig) || !is_array($pconfig)) {
+	$pconfig = [];
+}
+
 $form = new Form();
 
 $section = new Form_Section(gettext('General DHCPv6 Options'));

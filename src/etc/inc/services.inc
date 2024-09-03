@@ -1346,8 +1346,10 @@ function services_kea4_configure() {
 	}
 
 	/* store known MACs and CIDs as we encounter them during the walk */
-	$known_macs = [];
-	$known_cids = [];
+	$reserve_macs = [];
+	$reserve_cids = [];
+
+	$mac_classes = [];
 
 	$keasubnet_id = 1; /* kea subnet id must start at 1 */
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
@@ -1442,19 +1444,9 @@ function services_kea4_configure() {
 		if (!empty($all_mac_strings)) {
 			$all_mac_list = array_unique(explode(',', implode(',', $all_mac_strings)));
 			foreach ($all_mac_list as $mac) {
-				if (empty($mac)) {
-					continue;
+				if ($mac) {
+					$mac_classes[$mac] = true;
 				}
-
-				/* create client classes (mac_0123456789ab) for MAC address matching */
-				$umacstr = strtoupper(str_replace(':', '', $mac));
-				$lmacstr = strtolower($umacstr);
-				$lmacstr_len = strlen($lmacstr);
-				$test_string = 'substring(hexstring(pkt4.mac, \'\'), 0, %s) == \'%s\'';
-				$keaconf['Dhcp4']['client-classes'][] = [
-					'name' => 'mac_'.$umacstr,
-					'test' => sprintf($test_string, $lmacstr_len, $lmacstr)
-				];
 			}
 		}
 
@@ -1934,7 +1926,7 @@ function services_kea4_configure() {
 					$keares['hw-address'] = $sm['mac'];
 
 					/* keys are unique */
-					$known_macs[$sm['mac']] = true;
+					$reserve_macs[$sm['mac']] = true;
 				}
 
 				$sm['cid'] = strtolower(trim($sm['cid']));
@@ -1950,7 +1942,7 @@ function services_kea4_configure() {
 					}
 
 					/* keys are unique */
-					$known_cids[$sm['cid']] = true;
+					$reserve_cids[$sm['cid']] = true;
 				}
 
 				if ($sm['ipaddr']) {
@@ -2202,17 +2194,28 @@ function services_kea4_configure() {
 		}
 	}
 
+	/* create client classes (mac_0123456789ab) for MAC address matching */
+	foreach (array_keys($mac_classes) as $mac) {
+		$umacstr = strtoupper(str_replace(':', '', $mac));
+		$lmacstr = strtolower($umacstr);
+		$lmacstr_len = strlen($lmacstr);
+		$test_string = 'substring(hexstring(pkt4.mac, \'\'), 0, %s) == \'%s\'';
+		/* mac client classes need to be defined early */
+		array_unshift($keaconf['Dhcp4']['client-classes'], [
+			'name' => 'mac_'.$umacstr,
+			'test' => sprintf($test_string, $lmacstr_len, $lmacstr)
+		]);
+	}
+
 	/* add global reservations for known macs */
-	$known_macs = array_keys($known_macs);
-	foreach ($known_macs as $mac) {
+	foreach (array_keys($reserve_macs) as $mac) {
 		$keaconf['Dhcp4']['reservations'][] = [
 			'hw-address' => $mac
 		];
 	}
 
 	/* add global reservations for known cids */
-	$known_cids = array_keys($known_cids);
-	foreach ($known_cids as $cid) {
+	foreach (array_keys($reserve_cids) as $cid) {
 		$keaconf['Dhcp4']['reservations'][] = [
 			'client-id' => $cid
 		];

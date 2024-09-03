@@ -2804,11 +2804,13 @@ function system_ntp_configure() {
 
 
 	if (empty(config_get_path('ntpd/interface'))) {
-		$interfaces =
-			explode(",",
-					config_get_path('installedpackages/openntpd/config/0/interface', ''));
+		$interfaces = config_get_path('installedpackages/openntpd/config/0/interface', '');
 	} else {
-		$interfaces = explode(",", config_get_path('ntpd/interface'));
+		$interfaces = config_get_path('ntpd/interface', '');
+	}
+	// avoid an array with a single empty value
+	if (!empty(trim($interfaces))) {
+		$interfaces = explode(",", config_get_path('ntpd/interface', ''));
 	}
 
 	if (is_array($interfaces) && count($interfaces)) {

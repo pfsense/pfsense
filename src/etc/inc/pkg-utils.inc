@@ -910,7 +910,7 @@ function install_package_xml($package_name) {
 		update_status(gettext("Menu items... "));
 		foreach ($pkg_config['menu'] as $menu) {
 			foreach ($menus as $amenu) {
-				if ($amenu['name'] == $menu['name']) {
+				if (trim($amenu['name']) == trim($menu['name'])) {
 					continue 2;
 				}
 			}
@@ -932,7 +932,7 @@ function install_package_xml($package_name) {
 				if (empty($aservice)) {
 					continue;
 				}
-				if ($aservice['name'] == $service['name']) {
+				if (trim($aservice['name']) == trim($service['name'])) {
 					continue 2;
 				}
 			}

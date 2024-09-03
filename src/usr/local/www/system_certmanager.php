@@ -1474,9 +1474,6 @@ foreach (config_get_path('cert', []) as $cert):
 						<?php if (is_kea_cert($cert['refid'])): ?>
 							<?=gettext("Kea")?><br/>
 						<?php endif?>
-						<?php if (is_ldap_client_cert($cert['refid'])): ?>
-							<?=gettext("LDAP Client")?><br/>
-						<?php endif?>
 						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
 							<?=gettext("OpenVPN Client")?><br/>
 						<?php endif?>

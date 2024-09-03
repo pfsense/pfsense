@@ -5625,7 +5625,7 @@ function interfaces_group_setup() {
 }
 
 function interface_group_setup(&$groupname /* The parameter is an array */) {
-	if (!is_array($groupname)) {
+	if (!is_array($groupname) || !isset($groupname['members']) || empty(trim($groupname['members']))) {
 		return;
 	}
 	$members = explode(" ", $groupname['members']);

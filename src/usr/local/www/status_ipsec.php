@@ -121,7 +121,7 @@ function print_ipsec_body() {
 			}
 		}
 		$p2disconnected = array();
-		if (!$cmap[$ikeid]['p1']['mobile'] &&
+		if (!isset($cmap[$ikeid]['p1']['mobile']) &&
 		    isset($cmap[$ikeid]) &&
 		    is_array($cmap[$ikeid]) &&
 		    is_array($cmap[$ikeid]['p2'])) {

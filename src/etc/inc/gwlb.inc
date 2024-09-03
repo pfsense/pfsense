@@ -687,7 +687,7 @@ function get_dpinger_status($gwname, $action_disable = false) {
 	$r['srcip'] = $proc['srcip'];
 	$r['targetip'] = $proc['targetip'];
 
-	$gateways_arr = get_gateways(GW_CACHE_ALL);
+	$gateways_arr = get_gateways();
 
 	unset($gw);
 	if (isset($gateways_arr[$gwname])) {
@@ -744,7 +744,7 @@ function return_gateways_status($byname = false) {
 	$dpinger_gws = running_dpinger_processes();
 	$status = array();
 
-	$gateways_arr = get_gateways(GW_CACHE_ALL);
+	$gateways_arr = get_gateways();
 
 	foreach ($dpinger_gws as $gwname => $gwdata) {
 		/*
@@ -1745,7 +1745,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 }
 
 function lookup_gateway_or_group_by_name($gwname) {
-	$gateways_arr = get_gateways(GW_CACHE_ALL);
+	$gateways_arr = get_gateways();
 
 	foreach ($gateways_arr as $gw) {
 		if ($gw['name'] == $gwname) {
@@ -2659,7 +2659,7 @@ function get_interface_gateway_name($friendlyiface, $family = 'inet') {
 		/* Check each gateway entry for a dynamic gateway matching
 		 * this interface and the requested address family.
 		 */
-		foreach (get_gateways(GW_CACHE_ALL) as $gwname => $gwcfg) {
+		foreach (get_gateways() as $gwname => $gwcfg) {
 			if (empty($gwcfg) ||
 			    !is_array($gwcfg) ||
 			    ($gwcfg['dynamic'] == false) ||

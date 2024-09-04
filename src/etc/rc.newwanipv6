@@ -62,7 +62,11 @@ if (empty($argument)) {
 	$curwanipv6 = get_interface_ipv6($interface, true);
 } else {
 	$interface_real = $argument;
-	$interface = convert_real_interface_to_friendly_interface_name($interface_real) ?? 'wan';
+	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+	if (empty($interface)) {
+		log_error("Interface is unassigned, nothing to do.");
+		return;
+	}
 	$curwanipv6 = get_interface_ipv6($interface, true);
 }
 

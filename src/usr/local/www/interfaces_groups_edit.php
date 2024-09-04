@@ -131,7 +131,7 @@ if ($_POST['save']) {
 			if (is_array($filter_rule_config)) {
 				foreach ($filter_rule_config as &$rule) {
 					if (isset($rule['floating'])) {
-						$rule_ifs = explode(",", $rule['interface']);
+						$rule_ifs = array_filter(explode(",", $rule['interface']));
 						$rule_changed = false;
 						foreach ($rule_ifs as $rule_if_id => $rule_if) {
 							if ($rule_if == $this_ifgroup_config['ifname']) {

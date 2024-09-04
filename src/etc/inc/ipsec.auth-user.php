@@ -38,7 +38,7 @@ require_once("interfaces.inc");
 openlog("charon", LOG_ODELAY, LOG_AUTH);
 
 if (isset($_GET['username'])) {
-	$authmodes = explode(",", $_GET['authcfg']);
+	$authmodes = array_filter(explode(",", $_GET['authcfg']));
 	$username = $_GET['username'];
 	$password = $_GET['password'];
 	$common_name = $_GET['cn'];
@@ -47,7 +47,7 @@ if (isset($_GET['username'])) {
 	$username = getenv("username");
 	$password = getenv("password");
 	$common_name = getenv("common_name");
-	$authmodes = explode(",", getenv("authcfg"));
+	$authmodes = array_filter(explode(",", getenv("authcfg")));
 }
 
 if (!$username) {

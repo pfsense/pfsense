@@ -541,7 +541,9 @@
 					if ((substr(config_get_path('interfaces/wan/if'),0,5) == "pppoe") ||
 					    (substr(config_get_path('interfaces/wan/if'),0,4) == "pptp")) {
 						$oldif = explode(",", $ppp['ports']);
-						config_set_path('interfaces/wan/if', $oldif[0]);
+						if (!empty($oldif[0])) {
+							config_set_path('interfaces/wan/if', $oldif[0]);
+						}
 					}
 					if (($type == "pppoe") || ($type == "pptp")) {
 						config_del_path("ppps/ppp/{$pppid}");

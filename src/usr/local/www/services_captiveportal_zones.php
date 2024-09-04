@@ -91,7 +91,7 @@ if (is_subsystem_dirty('captiveportal')) {
 						<td><?=htmlspecialchars($cpitem['zone']);?></td>
 						<td>
 <?php
-		$cpifaces = explode(",", $cpitem['interface']);
+		$cpifaces = array_filter(explode(",", $cpitem['interface']));
 		foreach ($cpifaces as $cpiface) {
 			echo convert_friendly_interface_to_friendly_descr($cpiface) . " ";
 		}

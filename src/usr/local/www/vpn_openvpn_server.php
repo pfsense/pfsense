@@ -958,7 +958,7 @@ if ($act=="new" || $act=="edit"):
 
 	$auth_servers = auth_get_authserver_list();
 
-	foreach (explode(",", $pconfig['data_ciphers']) as $cipher) {
+	foreach (array_filter(explode(",", $pconfig['data_ciphers'])) as $cipher) {
 		$data_ciphers_list[$cipher] = $cipher;
 	}
 

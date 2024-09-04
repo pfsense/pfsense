@@ -100,7 +100,7 @@ $realifchecklist = array();
 /* add LAGG interfaces */
 foreach (config_get_path('laggs/lagg', []) as $lagg) {
 	unset($portlist[$lagg['laggif']]);
-	$laggiflist = explode(",", $lagg['members']);
+	$laggiflist = array_filter(explode(",", $lagg['members']));
 	foreach ($laggiflist as $tmpif) {
 		$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 	}
@@ -118,7 +118,7 @@ $this_lagg_config = isset($id) ? config_get_path("laggs/lagg/{$id}") : null;
 if ($this_lagg_config) {
 	$pconfig['laggif'] = $this_lagg_config['laggif'];
 	$pconfig['members'] = $this_lagg_config['members'];
-	$laggiflist = explode(",", $this_lagg_config['members']);
+	$laggiflist = array_filter(explode(",", $this_lagg_config['members']));
 	foreach ($laggiflist as $tmpif) {
 		unset($realifchecklist[get_real_interface($tmpif)]);
 	}

@@ -5244,7 +5244,7 @@ function upgrade_165_to_166() {
 function upgrade_166_to_167() {
 	if (strpos(config_get_path('widgets/sequence'),
 	    'netgate_services_and_support') === false) {
-		$widgets = explode(",", config_get_path('widgets/sequence'));
+		$widgets = array_filter(explode(",", config_get_path('widgets/sequence')));
 		$cnt = count($widgets);
 		$col2 = $cnt;
 		$newsequence = array();

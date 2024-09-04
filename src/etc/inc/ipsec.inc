@@ -1784,7 +1784,7 @@ function ipsec_setup_strongswan() {
 			$ssconf['charon']['plugins']['xauth-generic'] = array();
 			$ssconf['charon']['plugins']['xauth-generic']['script'] = "/etc/inc/ipsec.auth-user.php";
 			$authcfgs = array();
-			foreach (explode(",", config_get_path('ipsec/client/user_source')) as $authcfg) {
+			foreach (array_filter(explode(",", config_get_path('ipsec/client/user_source'))) as $authcfg) {
 				$authcfgs[] = ($authcfg == "system") ? "Local Database" : $authcfg;
 			}
 			$ssconf['charon']['plugins']['xauth-generic']['authcfg'] = implode(",", $authcfgs);

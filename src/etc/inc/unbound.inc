@@ -255,7 +255,7 @@ EOF;
 	$tlsport = is_port($unboundcfg['tlsport']) ? $unboundcfg['tlsport'] : "853";
 	$bindintcfg = "";
 	$bindints = array();
-	$active_interfaces = explode(",", $unboundcfg['active_interface']);
+	$active_interfaces = array_filter(explode(",", $unboundcfg['active_interface']));
 	if (empty($unboundcfg['active_interface']) || in_array("all", $active_interfaces, true)) {
 		$bindintcfg .= "interface-automatic: yes" . PHP_EOL;
 		if (isset($unboundcfg['enablessl'])) {
@@ -1060,7 +1060,7 @@ function unbound_local_zone_types() {
 function unbound_auto_ednsbufsize() {
 	$active_ipv6_inf = false;
 	if (config_get_path('unbound/active_interface') != 'all') {
-		$active_interfaces = explode(",", config_get_path('unbound/active_interface'));
+		$active_interfaces = array_filter(explode(",", config_get_path('unbound/active_interface')));
 	} else {
 		$active_interfaces = get_configured_interface_list();
 	}

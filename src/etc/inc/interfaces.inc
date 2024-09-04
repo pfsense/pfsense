@@ -5836,7 +5836,7 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 							continue;
 						}
 						if ($ifcfg['if'] == $ppp['if']) {
-							$ports = explode(',', $ppp['ports']);
+							$ports = array_filter(explode(',', $ppp['ports']));
 							foreach ($ports as $pid => $parent_if) {
 								$parents[$pid] = get_real_interface($parent_if);
 							}
@@ -5869,7 +5869,7 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 		/* Handle LAGGs. */
 		$lagg = interface_is_type($realif, 'lagg');
 		if ($lagg != NULL && isset($lagg['members'])) {
-			$parents = explode(",", $lagg['members']);
+			$parents = array_filter(explode(",", $lagg['members']));
 		}
 	}
 

@@ -59,7 +59,7 @@ if ($this_ppp_config) {
 	if (!isset($_REQUEST['type'])) {
 		$pconfig['type'] = $this_ppp_config['type'];
 	}
-	$pconfig['interfaces'] = explode(",", $this_ppp_config['ports']);
+	$pconfig['interfaces'] = array_filter(explode(",", $this_ppp_config['ports']));
 	$pconfig['username'] = $this_ppp_config['username'];
 	$pconfig['password'] = base64_decode($this_ppp_config['password']);
 	if (isset($this_ppp_config['secret'])) {
@@ -115,10 +115,10 @@ if ($this_ppp_config) {
 			$pconfig['apnum'] = $this_ppp_config['apnum'];
 			$pconfig['phone'] = $this_ppp_config['phone'];
 			$pconfig['connect-timeout'] = $this_ppp_config['connect-timeout'];
-			$localip = explode(",", $this_ppp_config['localip']);
+			$localip = array_filter(explode(",", $this_ppp_config['localip']));
 			for ($i = 0; $i < count($localip); $i++)
 				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
-			$gateway = explode(",", $this_ppp_config['gateway']);
+			$gateway = array_filter(explode(",", $this_ppp_config['gateway']));
 			for ($i = 0; $i < count($gateway); $i++)
 				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 			$pconfig['country'] = $this_ppp_config['country'];
@@ -127,13 +127,13 @@ if ($this_ppp_config) {
 			break;
 		case "l2tp":
 		case "pptp":
-			$localip = explode(",", $this_ppp_config['localip']);
+			$localip = array_filter(explode(",", $this_ppp_config['localip']));
 			for ($i = 0; $i < count($localip); $i++)
 				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
-			$subnet = explode(",", $this_ppp_config['subnet']);
+			$subnet = array_filter(explode(",", $this_ppp_config['subnet']));
 			for ($i = 0; $i < count($subnet); $i++)
 				$pconfig['subnet'][$pconfig['interfaces'][$i]] = $subnet[$i];
-			$gateway = explode(",", $this_ppp_config['gateway']);
+			$gateway = array_filter(explode(",", $this_ppp_config['gateway']));
 			for ($i = 0; $i < count($gateway); $i++)
 				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 		case "pppoe":

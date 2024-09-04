@@ -1077,7 +1077,7 @@ function parse_firewall_log_line($line) {
 	list($all, $flent['time'], $host, $rule) = $log_split;
 	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
-	$rule_data = explode(",", $rule);
+	$rule_data = array_filter(explode(",", $rule));
 	$field = 0;
 
 	$flent['rulenum'] = $rule_data[$field++];

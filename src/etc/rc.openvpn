@@ -107,7 +107,7 @@ if (!$openvpnlck) {
 	$openvpnlck = lock('openvpn', LOCK_EX);
 }
 
-$arg_array = explode(",", $argument);
+$arg_array = array_filter(explode(",", $argument));
 foreach ($arg_array as $arg_element) {
 	$gwgroups = array();
 	if ($arg_element == "all") {

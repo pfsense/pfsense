@@ -71,6 +71,10 @@ function console_prompt_for_yn ($prompt_text) {
 
 function console_get_interface_from_ppp($realif) {
 	foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+		// skip modems, e.g. /dev/cuaZ99.0
+		if ($ppp['type'] == 'ppp') {
+			continue;
+		}
 		if ($realif == $ppp['if']) {
 			$ifaces = explode(",", $ppp['ports']);
 			return $ifaces[0];

@@ -471,6 +471,10 @@ function interfaces_vlan_configure_mtu($parentif = "") {
 		}
 		// PPP interfaces must be restarted to adjust MTU changes
 		foreach (config_get_path('ppps/ppp', []) as $ppp) {
+			// skip modems, e.g. /dev/cuaZ99.0
+			if ($ppp['type'] == 'ppp') {
+				continue;
+			}
 			$ports = explode(',', $ppp['ports']);
 			foreach ($ports as $port) {
 				if ($port != $vlan['vlanif']) {
@@ -2213,6 +2217,10 @@ function handle_pppoe_reset($post_array) {
 function restart_ppp_interfaces_using_interfaces($triggerinterfaces) {
 	$ppp_list = array();
 	foreach (config_get_path('ppps/ppp', []) as $ppp) {
+		// skip modems, e.g. /dev/cuaZ99.0
+		if ($ppp['type'] == 'ppp') {
+			continue;
+		}
 		$ports = explode(",", $ppp['ports']);
 		foreach($ports as $port) {
 			foreach($triggerinterfaces as $vip) {
@@ -5823,6 +5831,10 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 			case "l2tp":
 				if (empty($parents)) {
 					foreach (config_get_path('ppps/ppp', []) as $ppp) {
+						// skip modems, e.g. /dev/cuaZ99.0
+						if ($ppp['type'] == 'ppp') {
+							continue;
+						}
 						if ($ifcfg['if'] == $ppp['if']) {
 							$ports = explode(',', $ppp['ports']);
 							foreach ($ports as $pid => $parent_if) {

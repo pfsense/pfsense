@@ -241,6 +241,10 @@ if (!empty($realiface)) {
 			continue;
 		}
 		foreach (explode(',', array_get_path($ppp, 'ports', '')) as $parent_if) {
+			// skip modems, e.g. /dev/cuaZ99.0
+			if ($ppp['type'] == 'ppp') {
+				continue;
+			}
 			/* The loop here is because ppp types can have real and assigned interfaces as members */
 			$tmpiface = get_real_interface($parent_if);
 			if ($tmpiface != $realiface) {

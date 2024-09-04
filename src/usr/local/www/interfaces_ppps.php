@@ -122,7 +122,7 @@ foreach (config_get_path('ppps/ppp', []) as $ppp) {
 <?php
 	$portlist = explode(",", $ppp['ports']);
 	foreach ($portlist as $portid => $port) {
-		if ($port != get_real_interface($port) && $ppp['type'] != "ppp") {
+		if (($ppp['type'] != "ppp") && ($port != get_real_interface($port))) {
 			$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
 		}
 	}

@@ -854,7 +854,7 @@ function openvpn_reconfigure($mode, $settings) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " group openvpn");
 
 		$ifname = convert_real_interface_to_friendly_interface_name($devname);
-		$grouptmp = link_interface_to_group($ifname);
+		$grouptmp = (!empty($ifname)) ? link_interface_to_group($ifname) : null;
 		if (!empty($grouptmp)) {
 			array_walk($grouptmp, 'interface_group_add_member');
 		}

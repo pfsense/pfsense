@@ -351,7 +351,7 @@ foreach ($leases as $data):
 
 			$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
 
-			if (is_inrange_v6($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {
+			if (!empty($data['if']) && is_inrange_v6($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {
 				$dlskey = $data['if'] . '-' . $dhcpifconf['range']['from'];
 				$dhcp_leases_subnet_counter[$dlskey]['dhcpif'] = $data['if'];
 				$dhcp_leases_subnet_counter[$dlskey]['from'] = $dhcpifconf['range']['from'];
@@ -363,7 +363,7 @@ foreach ($leases as $data):
 			if (is_array($dhcpifconf['pool'])) {
 				foreach ($dhcpifconf['pool'] as $dhcppool) {
 					if (is_array($dhcppool['range'])) {
-						if (is_inrange_v6($data['ip'], $dhcppool['range']['from'], $dhcppool['range']['to'])) {
+						if (!empty($data['if']) && is_inrange_v6($data['ip'], $dhcppool['range']['from'], $dhcppool['range']['to'])) {
 							$dlskey = $data['if'] . '-' . $dhcpifconf['range']['from'];
 							$dhcp_leases_subnet_counter[$dlskey]['dhcpif'] = $data['if'];
 							$dhcp_leases_subnet_counter[$dlskey]['from'] = $dhcppool['from'];

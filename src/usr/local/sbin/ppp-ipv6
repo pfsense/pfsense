@@ -30,6 +30,9 @@ function interface_ipv6_lower($interface_real) {
 
 	if (!empty($interface_real)) {
 		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+		if (empty($interface)) {
+			return;
+		}
 
 		$ifcfg = config_get_path("interfaces/{$interface}");
 		if (!empty($interface) && is_array($ifcfg) && interface_isppp_type($interface)) {
@@ -68,6 +71,9 @@ function interface_ipv6_lower($interface_real) {
 function interface_ipv6_raise($interface_real) {
 	if (!empty($interface_real)) {
 		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+		if (empty($interface)) {
+			return;
+		}
 
 		$ifcfg = config_get_path("interfaces/{$interface}");
 		if (!empty($interface) && is_array($ifcfg) && interface_isppp_type($interface)) {

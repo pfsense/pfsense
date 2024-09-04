@@ -364,7 +364,7 @@ function interfaces_vlan_configure($parentif = "", $skip_parent_mtu = false) {
 			/* configure dhcp6 enabled VLAN interfaces later
 			 * see https://redmine.pfsense.org/issues/3965 */
 			$if = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-			if (config_get_path("interfaces/{$if}/ipaddrv6", "") == "dhcp6") {
+			if (!empty($if) && config_get_path("interfaces/{$if}/ipaddrv6", "") == "dhcp6") {
 				$dhcp6c_list[$if] = $vlan;
 				continue;
 			}
@@ -481,6 +481,9 @@ function interfaces_vlan_configure_mtu($parentif = "") {
 					continue;
 				}
 				$confif = convert_real_interface_to_friendly_interface_name($ppp['if']);
+				if (empty($confif)) {
+					continue;
+				}
 				interface_configure($confif);
 			}
 		}
@@ -1585,7 +1588,10 @@ function interface_ipsec_vti_configure($ph1ent) {
 		if (is_array($interface_arr_cache) && !in_array($ipsecif, $interface_arr_cache)) {
 			$interface_arr_cache[] = $ipsecif;
 		}
-		system_routing_configure(convert_real_interface_to_friendly_interface_name($ipsecif));
+		$ipsecif_friendlyname = convert_real_interface_to_friendly_interface_name($ipsecif);
+		if (!empty($ipsecif_friendlyname)) {
+			system_routing_configure($ipsecif_friendlyname);
+		}
 	}
 	return true;
 }
@@ -2226,6 +2232,9 @@ function restart_ppp_interfaces_using_interfaces($triggerinterfaces) {
 			foreach($triggerinterfaces as $vip) {
 				if ($port == "_vip{$vip['uniqid']}") {
 					$if = convert_real_interface_to_friendly_interface_name($ppp['if']);
+					if (empty($if)) {
+						continue;
+					}
 					$ppp_list[$if] = 1;
 				}
 			}
@@ -3063,7 +3072,7 @@ function interface_ipalias_configure(&$vip) {
 	$realif = get_real_interface("_vip{$vip['uniqid']}");
 	if ($realif != "lo0") {
 		$if = convert_real_interface_to_friendly_interface_name($realif);
-		if (!config_path_enabled("interfaces/{$if}")) {
+		if (empty($if) || !config_path_enabled("interfaces/{$if}")) {
 			return;
 		}
 		if (is_pseudo_interface($realif)) {
@@ -3992,7 +4001,7 @@ function interface_vlan_mtu_configured($iface) {
 		if (!empty($assignedport) && !empty(config_get_path("interfaces/{$assignedport}/mtu"))) {
 			/* VLAN MTU */
 			$mtu = config_get_path("interfaces/{$assignedport}/mtu");
-		} elseif (!empty(config_get_path("interfaces/{$parentinf}/mtu"))) {
+		} elseif (!empty($parentinf) && !empty(config_get_path("interfaces/{$parentinf}/mtu"))) {
 			/* Parent MTU */
 			$mtu = config_get_path("interfaces/{$parentinf}/mtu");
 		}
@@ -4065,7 +4074,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (interface_is_vlan($realif)) {
 		$mac_if = convert_real_interface_to_friendly_interface_name(
 		    $realhwif);
-		if (is_array(config_get_path("interfaces/{$mac_if}"))) {
+		if (!empty($mac_if) && is_array(config_get_path("interfaces/{$mac_if}"))) {
 			$mac_if_cfg = config_get_path("interfaces/{$mac_if}");
 		} else {
 			$mac_if = $interface;
@@ -5820,9 +5829,10 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 	if ($interface == $realif && $avoidrecurse == false) {
 		$interface = convert_real_interface_to_friendly_interface_name($interface);
 	}
-
-	$iface = config_get_path("interfaces/{$interface}");
-	if (!empty($interface) && $iface) {
+	if (!empty($interface)) {
+		$iface = config_get_path("interfaces/{$interface}");
+	}
+	if ($iface) {
 		$ifcfg = $iface;
 		switch ($ifcfg['ipaddr']) {
 			case "ppp":
@@ -6613,7 +6623,7 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 
 	/* try to find track6 address, see https://redmine.pfsense.org/issues/5999 */
 	$checkif = is_array($iface) ? $interface : convert_real_interface_to_friendly_interface_name($interface);
-	if (config_get_path("interfaces/{$checkif}/ipaddrv6", "") == 'track6') {
+	if (!empty($checkif) && config_get_path("interfaces/{$checkif}/ipaddrv6", "") == 'track6') {
 		$curip = get_interface_track6ip($checkif);
 		if ($curip) {
 			return $curip[0];
@@ -6887,7 +6897,7 @@ function is_interface_wireless($interface) {
 	global $g;
 
 	$friendly = convert_real_interface_to_friendly_interface_name($interface);
-	if (config_get_path("interfaces/{$friendly}/wireless") === null) {
+	if (!empty($friendly) && config_get_path("interfaces/{$friendly}/wireless") === null) {
 		if (preg_match(g_get('wireless_regex'), $interface)) {
 			config_init_path("interfaces/{$friendly}/wireless");
 			return true;

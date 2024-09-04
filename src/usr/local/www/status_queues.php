@@ -286,9 +286,10 @@ function processInterfaceQueues($altqstats, $parent_name) {
 	global $g;
 	global $if_queue_list;
 
-	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . convert_real_interface_to_friendly_interface_name($altqstats['interface']);
+	$interface_friendlyname = convert_real_interface_to_friendly_interface_name($altqstats['interface']);
+	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $interface_friendlyname;
 	$prev_if = $altqstats['interface'];
-	if (!is_array($altqstats['interfacestats'])) {
+	if (empty($interface_friendlyname) || !is_array($altqstats['interfacestats'])) {
 		print("<tr><td>");
 		print("No Queue data available");
 		print("</td></tr>");

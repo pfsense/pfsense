@@ -369,7 +369,7 @@ function fixup_string($string) {
 			$host_if = find_ip_interface($urlhost);
 			if ($host_if) {
 				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
-				$host_if_ip = config_get_path("interfaces/{$host_if}/ipaddr");
+				$host_if_ip = (!empty($host_if)) ? config_get_path("interfaces/{$host_if}/ipaddr") : null;
 				if ($host_if && is_ipaddr($host_if_ip)) {
 					$urlhost = $host_if_ip;
 				}

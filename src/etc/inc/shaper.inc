@@ -296,6 +296,9 @@ function get_queue_stats() {
 			unset($newqueue);
 			$newqueue = array();
 			$currentqueuename = convert_real_interface_to_friendly_interface_name($items[2]);
+			if (empty($currentqueuename)) {
+				continue;
+			}
 			$currentqueueif = $items[2];
 			$newqueue['name'] = $currentqueuename;
 			$newqueue['interface'] = $items[2];

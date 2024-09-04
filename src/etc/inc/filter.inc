@@ -4815,7 +4815,7 @@ function filter_generate_ipsec_rules($log = array()) {
 			} else {
 				$parentinterface = $ph1ent['interface'];
 			}
-			if (empty($FilterIflist[$parentinterface]['descr'])) {
+			if (empty($parentinterface) || empty($FilterIflist[$parentinterface]['descr'])) {
 				$ipfrules .= "# Could not locate interface for IPsec: {$descr}\n";
 				continue;
 			}

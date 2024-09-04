@@ -3148,7 +3148,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 function set_ipv6routes_mtu($interface, $mtu) {
 	$ipv6mturoutes = array();
 	$if = convert_real_interface_to_friendly_interface_name($interface);
-	if (!config_get_path("interfaces/{$if}/ipaddrv6")) {
+	if (empty($if) || !config_get_path("interfaces/{$if}/ipaddrv6")) {
 		return;
 	}
 	$a_gateways = get_gateways();

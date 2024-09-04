@@ -44,8 +44,8 @@ if (!strstr($argument, "@")) {
 list($vhid, $iface) = explode("@", $argument);
 
 $friendly = convert_real_interface_to_friendly_interface_name($iface);
-$friendly_descr = convert_friendly_interface_to_friendly_descr($friendly);
-$vips = link_interface_to_vips($friendly, '', $vhid);
+$friendly_descr = (!empty($friendly)) ? convert_friendly_interface_to_friendly_descr($friendly) : null;
+$vips = (!empty($friendly)) ? link_interface_to_vips($friendly, '', $vhid) : null;
 if (!is_array($vips)) {
 	log_error("CARP master event triggered from wrong source {$argument} - no associated VIPs");
 	exit;

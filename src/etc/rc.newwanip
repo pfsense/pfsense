@@ -59,7 +59,7 @@ if (empty($argument)) {
 	$interface = "wan";
 	$interface_real = get_real_interface();
 } else {
-	$interface = convert_real_interface_to_friendly_interface_name($argument);
+	$interface = convert_real_interface_to_friendly_interface_name($argument) ?? 'wan';
 	$interface_real = $argument;
 }
 

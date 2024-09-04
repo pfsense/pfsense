@@ -314,7 +314,7 @@ if ($_POST['save']) {
 				$parent_array = get_parent_interface($iface);
 				$parent = $parent_array[0];
 				$friendly = convert_real_interface_to_friendly_interface_name($parent);
-				if (!empty($if_config[$friendly]['mtu']) &&
+				if (!empty($friendly) && !empty($if_config[$friendly]['mtu']) &&
 					$_POST['mtu'][$iface] > ($if_config[$friendly]['mtu'] - 8)) {
 					$input_errors[] = sprintf(gettext('The MTU (%1$d) is too big for %2$s (maximum allowed with current settings: %3$d).'),
 						$_POST['mtu'][$iface], $iface, $if_config[$friendly]['mtu'] - 8);

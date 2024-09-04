@@ -323,7 +323,7 @@ EOF;
 	// Determine interfaces to run on
 	$outgoingints = "";
 	if (!empty($unboundcfg['outgoing_interface'])) {
-		$outgoing_interfaces = explode(",", $unboundcfg['outgoing_interface']);
+		$outgoing_interfaces = array_filter(explode(",", $unboundcfg['outgoing_interface']));
 		foreach ($outgoing_interfaces as $outif) {
 			$ifinfo = get_interface_info($outif);
 			if ($ifinfo && (($ifinfo['status'] != 'up') || !$ifinfo['enable'])) {

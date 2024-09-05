@@ -2547,7 +2547,9 @@ EOD;
 	}
 
 	foreach ($ports as $pid => $port) {
-		$port = get_real_interface($port);
+		if ($type != 'modem') {
+			$port = get_real_interface($port);
+		}
 		$mpdconf .= <<<EOD
 
 	create link static {$interface}_link{$pid} {$type}

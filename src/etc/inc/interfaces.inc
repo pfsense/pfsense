@@ -2047,10 +2047,10 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 }
 
 function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
-	if (config_path_enabled('/','virtualip_carp_maintenancemode') && ($carp_maintenancemode == false)) {
+	if (config_path_enabled('','virtualip_carp_maintenancemode') && ($carp_maintenancemode == false)) {
 		config_del_path('virtualip_carp_maintenancemode');
 		write_config("Leave CARP maintenance mode");
-	} elseif (!config_path_enabled('/','virtualip_carp_maintenancemode') && ($carp_maintenancemode == true)) {
+	} elseif (!config_path_enabled('','virtualip_carp_maintenancemode') && ($carp_maintenancemode == true)) {
 		config_set_path('virtualip_carp_maintenancemode', true);
 		write_config(gettext("Enter CARP maintenance mode"));
 	}
@@ -3136,8 +3136,7 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias
 		$advbase = "advbase " . escapeshellarg($vip['advbase']);
 	}
 
-	$carp_maintenancemode = config_path_enabled('/','virtualip_carp_maintenancemode');
-	if ($carp_maintenancemode) {
+	if (config_path_enabled('','virtualip_carp_maintenancemode')) {
 		$advskew = "advskew 254";
 	} else {
 		$advskew = "advskew " . escapeshellarg($vip['advskew']);

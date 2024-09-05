@@ -720,7 +720,7 @@ function deleteNATrule($post, $json = false) {
 			delete_id($associated_rule_id);
 			$want_dirty_filter = true;
 		}
-		config_del_path("/nat/rule/{$rulei}");
+		config_del_path("nat/rule/{$rulei}");
 		$num_deleted++;
 	}
 	config_set_path('nat/separator', $a_separators);

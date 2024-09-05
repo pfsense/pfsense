@@ -379,7 +379,7 @@ EOF;
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
 	if (empty($unboundcfg['edns_buffer_size']) || ($unboundcfg['edns_buffer_size'] == 'auto')) {
-		$edns_buffer_size = unbound_auto_ednsbufsize();
+		$edns_buffer_size = unbound_auto_ednsbufsize($active_interfaces);
 	} else {
 		$edns_buffer_size = $unboundcfg['edns_buffer_size'];
 	}
@@ -1056,36 +1056,49 @@ function unbound_local_zone_types() {
 	);
 }
 
-// Autoconfig EDNS buffer size
-function unbound_auto_ednsbufsize() {
-	$active_ipv6_inf = false;
-	if (config_get_path('unbound/active_interface') != 'all') {
+/**
+ * Automatically determine the response's EDNS buffer size.
+ *
+ * @param array $active_interfaces A list of friendly interface names (e.g. 'wan') to use
+ *                                 instead of the currently configured active interfaces.
+ *
+ * @return int The EDNS buffer size.
+ */
+function unbound_auto_ednsbufsize($active_interfaces = null) {
+	if (!is_array($active_interfaces)) {
 		$active_interfaces = array_filter(explode(",", config_get_path('unbound/active_interface')));
-	} else {
+	}
+	if (empty($active_interfaces) || in_array('all', $active_interfaces)) {
 		$active_interfaces = get_configured_interface_list();
 	}
 
-	$min_mtu = PHP_INT_MAX;
-	foreach ($active_interfaces as $ubif) {
-		$ubif_mtu = get_interface_mtu(get_real_interface($ubif));
-		if (get_interface_ipv6($ubif)) {
-			$active_ipv6_inf = true;
+	$active_ipv6_interface = false;
+	$interface_mtu_minimum = null;
+	foreach ($active_interfaces as $interface) {
+		$interface_mtu = get_interface_mtu(get_real_interface($interface));
+		if (empty($interface_mtu) || !is_numericint($interface_mtu)) {
+			continue;
 		}
-		if ($ubif_mtu < $min_mtu) {
-			$min_mtu = $ubif_mtu;
+
+		if ((!isset($interface_mtu_minimum)) || ($interface_mtu < $interface_mtu_minimum)) {
+			$interface_mtu_minimum = $interface_mtu;
+			if (!$active_ipv6_interface && get_interface_ipv6($interface)) {
+				$active_ipv6_interface = true;
+			}
 		}
 	}
 
-	// maximum IPv4 + UDP header = 68 bytes
-	$min_mtu = $min_mtu - 68;
+	/* Calculate the max buffer size based on the smallest interface MTU, and
+	 * account for the max IPv4 header size (60) plus the UDP header size (8). */
+	$buffer_size = isset($interface_mtu_minimum) ? ($interface_mtu_minimum - 68) : 0;
 
-	if (($min_mtu < 1232) && $active_ipv6_inf) {
-		$min_mtu = 1232;
-	} elseif ($min_mtu < 512) {
-		$min_mtu = 512;
-	}	
+	// Default to the minimum recommended size based on the address family.
+	$buffer_size_minimum = $active_ipv6_interface ? 1232 : 512;
+	if ($buffer_size < $buffer_size_minimum) {
+		$buffer_size = $buffer_size_minimum;
+	}
 
-	return $min_mtu;
+	return $buffer_size;
 }
 
 ?>

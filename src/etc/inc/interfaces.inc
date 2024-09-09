@@ -475,7 +475,7 @@ function interfaces_vlan_configure_mtu($parentif = "") {
 			if ($ppp['type'] == 'ppp') {
 				continue;
 			}
-			$ports = explode(',', $ppp['ports']);
+			$ports = array_filter(explode(',', $ppp['ports']));
 			foreach ($ports as $port) {
 				if ($port != $vlan['vlanif']) {
 					continue;
@@ -2227,7 +2227,7 @@ function restart_ppp_interfaces_using_interfaces($triggerinterfaces) {
 		if ($ppp['type'] == 'ppp') {
 			continue;
 		}
-		$ports = explode(",", $ppp['ports']);
+		$ports = array_filter(explode(",", $ppp['ports']));
 		foreach($ports as $port) {
 			foreach($triggerinterfaces as $vip) {
 				if ($port == "_vip{$vip['uniqid']}") {
@@ -2292,7 +2292,7 @@ function interface_ppps_configure($interface) {
 		$type = $ppp['type'];
 	}
 
-	$confports = explode(',', $ppp['ports']);
+	$confports = array_filter(explode(',', $ppp['ports']));
 	if ($type == "modem") {
 		$ports = $confports;
 	} else {
@@ -4023,7 +4023,7 @@ function interface_mtu_wanted_for_pppoe($realif) {
 		if (!empty($ppp['mtu'])) {
 			$mtus = explode(',', $ppp['mtu']);
 		}
-		$ports = explode(',', $ppp['ports']);
+		$ports = array_filter(explode(',', $ppp['ports']));
 
 		foreach ($ports as $pid => $port) {
 			$parentifa = get_parent_interface($port);

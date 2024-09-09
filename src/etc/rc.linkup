@@ -240,7 +240,7 @@ if (!empty($realiface)) {
 		if (array_get_path($ppp, 'type') == 'ppp') {
 			continue;
 		}
-		foreach (explode(',', array_get_path($ppp, 'ports', '')) as $parent_if) {
+		foreach (array_filter(explode(',', array_get_path($ppp, 'ports', ''))) as $parent_if) {
 			// skip modems, e.g. /dev/cuaZ99.0
 			if ($ppp['type'] == 'ppp') {
 				continue;

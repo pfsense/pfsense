@@ -110,7 +110,7 @@ if (!empty($_POST) && $read_only) {
 
 if (($_POST['act'] == "deluser") && !$read_only) {
 
-	if (!isset($_POST['username']) || (config_get_path("system/user/{$id}") === null) || ($_POST['username'] != config_get_path("system/user/{$id}/name"))) {
+	if (!isset($_POST['username']) || !isset($id) || (config_get_path("system/user/{$id}") === null) || ($_POST['username'] != config_get_path("system/user/{$id}/name"))) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -181,7 +181,7 @@ if (isset($_POST['dellall']) && !$read_only) {
 
 if (($_POST['act'] == "delcert") && !$read_only) {
 
-	if (!config_get_path("system/user/{$id}")) {
+	if (!isset($id) || !config_get_path("system/user/{$id}")) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -195,7 +195,7 @@ if (($_POST['act'] == "delcert") && !$read_only) {
 	$_POST['act'] = "edit";
 }
 
-if (($_POST['act'] == "delprivid") && !$read_only) {
+if (($_POST['act'] == "delprivid") && !$read_only && isset($id)) {
 	$privdeleted = array_get_path($priv_list, (config_get_path("system/user/{$id}/priv/{$_POST['privid']}") . '/name'));
 	config_del_path("system/user/{$id}/priv/{$_POST['privid']}");
 	local_user_set(config_get_path("system/user/{$id}"));
@@ -261,7 +261,7 @@ if ($_POST['save'] && !$read_only) {
 		}
 	}
 
-	$oldusername = config_get_path("system/user/{$id}/name", '');
+	$oldusername = (isset($id)) ? config_get_path("system/user/{$id}/name", '') : '';
 	/* make sure this user name is unique */
 	if (!$input_errors) {
 		foreach (config_get_path('system/user', []) as $userent) {
@@ -542,7 +542,8 @@ function build_priv_table() {
 	$i = 0;
 	$user_has_root_priv = false;
 
-	foreach (get_user_privdesc(config_get_path("system/user/{$id}")) as $priv) {
+	$user_privs = (is_numericint($id)) ? get_user_privdesc(config_get_path("system/user/{$id}", [])) : [];
+	foreach ($user_privs as $priv) {
 		$group = false;
 		if ($priv['group']) {
 			$group = $priv['group'];
@@ -609,7 +610,8 @@ function build_cert_table() {
 	$certhtml .=		'<tbody>';
 
 	$i = 0;
-	foreach (config_get_path("system/user/{$id}/cert", []) as $certref) {
+	$user_certs = (is_numericint($id)) ? config_get_path("system/user/{$id}/cert", []) : [];
+	foreach ($user_certs as $certref) {
 		$cert = lookup_cert($certref);
 		$cert = $cert['item'];
 		$ca = lookup_ca($cert['caref']);
@@ -634,7 +636,7 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	if (!$read_only) {
+	if (!$read_only && is_numericint($id)) {
 		$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$certhtml .= '</nav>';
@@ -901,7 +903,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	foreach (config_get_path('system/group', []) as $Ggroup) {
 		if ($Ggroup['name'] != "all") {
-			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array(config_get_path("system/user/{$id}/uid", []), $Ggroup['member'])) {
+			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && is_numericint($id) && in_array(config_get_path("system/user/{$id}/uid", []), $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
 			} else {
 				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list

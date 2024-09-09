@@ -29,6 +29,13 @@
 require_once("filter.inc");
 require_once("notices.inc");
 
+/* Don't attempt to upload while the system is still booting since the
+ * WAN is likely still down. The next scheduled job should pick up the
+ * file(s) to be uploaded. */
+if (is_platform_booting()) {
+	return;
+}
+
 $lockfile = "/tmp/acb.lock";
 // Check for 
 if (file_exists($lockfile)) {

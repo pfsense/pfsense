@@ -99,7 +99,7 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 		//build temperature item/row for a sensor
 
-		var thermalSensorRow =	'<div class="progress">' +
+		var thermalSensorRow =	'<div class="progress" style="margin-top: 5px">' +
 						'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
 						'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
 						'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +

@@ -910,7 +910,8 @@ function install_package_xml($package_name) {
 		update_status(gettext("Menu items... "));
 		foreach ($pkg_config['menu'] as $menu) {
 			foreach ($menus as $amenu) {
-				if (trim($amenu['name']) == trim($menu['name'])) {
+				if ((trim($amenu['name']) == trim($menu['name'])) &&
+				    ($amenu['section'] == $menu['section'])) {
 					continue 2;
 				}
 			}

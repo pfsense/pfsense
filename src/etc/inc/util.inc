@@ -1937,10 +1937,10 @@ function log_error($error) {
 * RESULT
 *   null
 ******/
-function log_auth($error) {
+function log_auth($error, $force_quiet = false) {
 	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
-	$level = config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE|LOG_AUTH : LOG_AUTH;
+	$level = ($force_quiet || config_path_enabled('system/webgui', 'quietlogin')) ? LOG_NOTICE|LOG_AUTH : LOG_AUTH;
 	syslog($level, "{$page}: {$error}");
 	if (g_get('debug')) {
 		syslog(LOG_WARNING, var_export(debug_backtrace()));

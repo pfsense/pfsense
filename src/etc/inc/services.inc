@@ -4391,7 +4391,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		$args .= ' --no-resolv';
 		if (!config_path_enabled('dnsmasq', 'no_system_dns')) {
 			foreach (get_dns_nameservers(false, true) as $dns) {
-				if (($dns != '127.0.0.1') && ($dns != '::1')) {
+				if (is_ipaddr($dns) && !ip_in_subnet($dns, "127.0.0.0/8") && !ip_in_subnet($dns, "::1/128")) {
 					$args .= ' --server=' . $dns;
 				}
 			}

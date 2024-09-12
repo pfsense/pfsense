@@ -113,7 +113,7 @@ if ($_POST['save']) {
 	if (isset($pconfig['forwarding'])) {
 		$founddns = false;
 		foreach (get_dns_nameservers(false, true) as $dns_server) {
-			if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
+			if (is_ipaddr($dns_server) && !ip_in_subnet($dns_server, "127.0.0.0/8") && !ip_in_subnet($dns_server, "::1/128")) {
 				$founddns = true;
 			}
 		}

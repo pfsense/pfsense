@@ -437,7 +437,7 @@ EOD;
 			foreach ($dnsservers as $dnsserver) {
 				$fwdport = "";
 				$fwdhost = "";
-				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
+				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8") && !ip_in_subnet($dnsserver, "::1/128")) {
 					if (isset($unboundcfg['forward_tls_upstream'])) {
 						$fwdport = "@853";
 						if (array_key_exists($dnsserver, $dns_hostnames)) {

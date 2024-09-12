@@ -62,8 +62,7 @@ function vpn_ppp_server_get_dns($dns1 = '', $dns2 = '') {
 
 		/* Add host DNS servers if they are usable */
 		foreach ($host_dns_servers as $dns) {
-			if (is_ipaddrv4($dns) &&
-			    ($dns != '127.0.0.1')) {
+			if (is_ipaddrv4($dns) && !ip_in_subnet($dns, "127.0.0.0/8")) {
 				$dns_servers[] = $dns;
 			}
 		}

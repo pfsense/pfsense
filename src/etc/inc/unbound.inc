@@ -130,7 +130,8 @@ function test_unbound_config($unboundcfg, &$output) {
 	}
 
 	$rv = 0;
-	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
+	// set the working directory for unbound-checkconf; see https://redmine.pfsense.org/issues/15723
+	exec("cd {$cfgdir} && /usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
 	    $output, $rv);
 
 	if ($rv == 0) {

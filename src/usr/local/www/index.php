@@ -545,8 +545,6 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 // ---------------------Centralized widget refresh system -------------------------------------------
 // These need to live outside of the events.push() function to enable the widgets to see them
 var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
-var ajaxidx = 0;
-var ajaxmutex = false;
 var ajaxcntr = 0;
 
 // Add a widget refresh object to the array list
@@ -615,8 +613,6 @@ events.push(function() {
 	ajaxtimeout = false;
 
 	function make_ajax_call(wd) {
-		ajaxmutex = true;
-
 		$.ajax({
 			type: 'POST',
 			url: wd.url,
@@ -636,38 +632,30 @@ events.push(function() {
 					}
 				}
 
-				ajaxmutex = false;
 			},
 
 			error: function(e){
-//				alert("Error: " + e);
-				ajaxmutex = false;
+				console.log("Error: " + e);
 			}
 		});
+	}
+
+	function execute_ajax_call(item){
+		if ((ajaxcntr % item.freq) === 0) {
+			make_ajax_call(item);
+		}
 	}
 
 	// Loop through each AJAX widget refresh object, make the AJAX call and pass the
 	// results back to the widget's callback function
 	function executewidget() {
-		if (ajaxspecs.length > 0) {
-			var freq = ajaxspecs[ajaxidx].freq;	// widget can specify it should be called freq times around the loop
+		ajaxspecs.forEach(execute_ajax_call);
 
-			if (!ajaxmutex) {
-				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
-				    make_ajax_call(ajaxspecs[ajaxidx]);
-				}
+		if (++ajaxcntr >= 4096) {
+			ajaxcntr = 0;
+		}
 
-			    if (++ajaxidx >= ajaxspecs.length) {
-					ajaxidx = 0;
-
-					if (++ajaxcntr >= 4096) {
-						ajaxcntr = 0;
-					}
-			    }
-			}
-
-		    setTimeout(function() { executewidget(); }, 1000);
-	  	}
+		setTimeout(function() { executewidget(); }, 1000);
 	}
 
 	// Kick it off

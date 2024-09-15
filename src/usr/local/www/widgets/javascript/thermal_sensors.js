@@ -23,17 +23,19 @@
 var warningTemp = 9999;
 var criticalTemp = 100;
 var widgetUnit = 'C';
-ajaxBusy = false;
+var firstTime = true;
 
-function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime) {
+function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams) {
 	if (tsParams.showRawOutput) {
 		buildThermalSensorsDataRaw(thermalSensorsData, widgetKey);
 	} else {
 		if (firstTime) {
 			buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
+			updateThermalSensorsDataGraph(thermalSensorsData, widgetKey);
+			firstTime = false;
+		} else {
+			updateThermalSensorsDataGraph(thermalSensorsData, widgetKey);
 		}
-
-		updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
 	}
 }
 
@@ -117,36 +119,18 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 }
 
-function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
+function updateThermalSensorsDataGraph(thermalSensorsData, widgetKey) {
 	var thermalSensorsArray = new Array();
 
 	if (thermalSensorsData && thermalSensorsData != "") {
 		thermalSensorsArray = thermalSensorsData.split("|");
 	}
 
-	//generate graph for each temperature sensor and append to thermalSensorsHTMLContent string
+	//update thermal sensor values
 	for (var i = 0; i < thermalSensorsArray.length; i++) {
 
 		var sensorDataArray = thermalSensorsArray[i].split(":");
-		var sensorName = sensorDataArray[0].trim();
 		var thermalSensorValue = getThermalSensorValue(sensorDataArray[1]);
-
-
-		//set thresholds
-		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
-			warningTemp = tsParams.coreWarningTempThreshold;
-			criticalTemp = tsParams.coreCriticalTempThreshold;
-		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
-			warningTemp = tsParams.pchWarningTempThreshold;
-			criticalTemp = tsParams.pchCriticalTempThreshold;
-		} else { //assuming sensor is for a zone, check Zone Threshold config settings
-			warningTemp = tsParams.zoneWarningTempThreshold;
-			criticalTemp = tsParams.zoneCriticalTempThreshold;
-		}
-
-		if (!tsParams.showFullSensorName) {
-			sensorName = getSensorFriendlyName(sensorName);
-		}
 
 		setTempProgress(i, thermalSensorValue, widgetKey);
 	}

@@ -397,7 +397,7 @@ events.push(function(){
 	logsObject.url = "/widgets/widgets/log.widget.php";
 	logsObject.callback = logs_callback;
 	logsObject.parms = postdata;
-	logsObject.freq = <?=$nentriesinterval?>/5;
+	logsObject.freq = <?=$nentriesinterval?>;
 
 	// Register the AJAX object
 	register_ajax(logsObject);

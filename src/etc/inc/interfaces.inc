@@ -6549,6 +6549,9 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 }
 
 function get_interface_ip($interface = "wan") {
+	if (empty($interface)) {
+		return null;
+	}
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_vip_ipv4($interface);
 	} elseif (substr($interface, 0, 5) == '_lloc') {
@@ -6587,6 +6590,9 @@ function get_interface_ip($interface = "wan") {
 }
 
 function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallback = false) {
+	if (empty($interface)) {
+		return null;
+	}
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_vip_ipv6($interface);
 	} elseif (substr($interface, 0, 5) == '_lloc') {

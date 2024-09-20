@@ -757,7 +757,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'descr',
 		'*Descriptive name',
 		'text',
-		(config_get_path('system/user') && empty($pconfig['descr'])) ? config_get_path("system/user/{$userid}/name") : $pconfig['descr']
+		(isset($userid) && config_get_path('system/user') && empty($pconfig['descr'])) ? config_get_path("system/user/{$userid}/name") : $pconfig['descr']
 	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse')
 	->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
 		'This name can contain spaces but it cannot contain any of the ' .

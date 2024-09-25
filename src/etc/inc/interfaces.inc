@@ -5959,6 +5959,10 @@ function interface_list_wireless() {
 function get_real_interface($interface = "wan", $family = "all", $realv6iface = false, $flush = false) {
 	global $g;
 
+	if (empty($interface)) {
+		return null;
+	}
+
 	$wanif = NULL;
 
 	switch ($interface) {

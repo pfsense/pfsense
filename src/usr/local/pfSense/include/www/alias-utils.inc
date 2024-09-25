@@ -145,6 +145,9 @@ function deleteAlias($id, $apply = false) {
 }
 
 function openvpnAlias ($id) {
+	if (!is_numericint($id)) {
+		return false;
+	}
 	$alarm_message = "";
 	$is_alias_referenced = false;
 	$referenced_by = array();
@@ -244,6 +247,9 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 }
 
 function staticrouteAlias($id) {
+	if (!is_numericint($id)) {
+		return false;
+	}
 	$alarm_message = "";
 	$is_alias_referenced = false;
 	$referenced_by = array();

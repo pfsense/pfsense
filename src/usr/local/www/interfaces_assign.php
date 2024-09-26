@@ -197,9 +197,6 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		uksort($if_config, "compare_interface_friendly_names");
 		config_set_path('interfaces', $if_config);
 
-		/* XXX: Do not remove this. */
-		unlink_if_exists("{$g['tmp_path']}/config.cache");
-
 		write_config("New interface assigned");
 
 		filter_configure();

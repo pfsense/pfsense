@@ -391,11 +391,11 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 		$repos = update_repos();
 		$helpfilename = pkg_get_repo_help();
 
-		$group = new Form_Group("Branch");
+		$group = new Form_Group(gettext('Branch'));
 
 		$field = new Form_Select(
 			'fwbranch',
-			'*Branch',
+			'*'.gettext('Branch'),
 			pkg_get_repo_name(config_get_path('system/pkg_repo_conf_path')),
 			pkg_build_repo_list()
 		);
@@ -415,7 +415,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 				'<label class="col-sm-2 control-label">' .
 					gettext("Messages") .
 				'</label>' .
-				'<div class="col-sm-10" id="netgate_messages">' 
+				'<div class="col-sm-10" id="netgate_messages">'
 
 			);
 			foreach ($repos['messages'] as $message) {
@@ -443,7 +443,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 
 				<div class="form-group" id="confirm">
 					<label class="col-sm-2 control-label" id="confirmlabel">
-						<?=gettext("Retrieving")?>
+						<?=gettext('Retrieving')?>
 					</label>
 					<div class="col-sm-10">
 						<input type="hidden" name="id" value="firmware" />
@@ -452,7 +452,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 							<i class="fa-solid fa-check icon-embed-btn"></i>
 							<?=gettext("Confirm")?>
 						</button>
-						<span id="uptodate"><i class="fa-solid fa-cog fa-spin fa-lg text-warning"></i></span>
+						<span id="uptodate"><i class="fa-solid fa-rotate fa-spin fa-lg text-warning"></i></span>
 					</div>
 				</div>
 <?php
@@ -537,6 +537,12 @@ if ($confirmed || isvalidpid($gui_pidfile)):
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
+			<div style="float: right;">
+				<label>
+					<input style="margin: 4px 4px 0;" type="checkbox" checked="true" id="autoscroll" />
+				<?=gettext('Auto-scroll')?>
+				</label>
+			</div>
 			<h2 class="panel-title" id="status"><?=$panel_heading_txt?></h2>
 		</div>
 
@@ -821,8 +827,10 @@ function getLogsStatus() {
 	var ajaxRequest;
 	var repeat;
 	var progress;
+	var overrideScroll;
 
 	repeat = true;
+	overrideScroll = false;
 
 	ajaxRequest = $.ajax({
 			url: "pkg_mgr_install.php",
@@ -843,9 +851,15 @@ function getLogsStatus() {
 //		alert("JSON data: " + JSON.stringify(json));
 
 		if (json.log != "not_ready") {
+			var _o = $('#output');
 			// Write the log file to the "output" textarea
-			$('#output').html(json.log);
-			scrollToBottom();
+			_o.html(json.log);
+
+			if ($('#autoscroll').prop('checked')) {
+				overrideScroll = true;
+				_o.scrollTop(_o.prop('scrollHeight'));
+				overrideScroll = false;
+			}
 
 			// Update the progress bar
 			progress = 0;
@@ -906,8 +920,14 @@ function getLogsStatus() {
 	});
 }
 
-function scrollToBottom() {
-	$('#output').scrollTop($('#output')[0].scrollHeight);
+function scrollToBottom(force) {
+	var _o = $('#output');
+	var _d = _o.scrollTop() + _o.outerHeight() * 2;
+	if (force || _d > _o.prop('scrollHeight')) {
+		_o.scrollTop(_o.prop('scrollHeight'));
+		console.log('scroll locked');
+	}
+	console.log('scroll unlocked');
 }
 
 var time = 0;
@@ -961,7 +981,7 @@ events.push(function() {
 		setProgress('progressbar', 100, false);
 		$('#progressbar').addClass("progress-bar-success");
 		show_success();
-		setTimeout(scrollToBottom, 200);
+		setTimeout(scrollToBottom, 200, true); /* force scroll */
 	}
 
 	if ("<?=$firmwareupdate?>") {

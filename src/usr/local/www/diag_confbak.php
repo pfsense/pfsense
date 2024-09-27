@@ -30,11 +30,11 @@
 ##|*MATCH=diag_confbak.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once('guiconfig.inc');
 
 if (isset($_POST['backupcount'])) {
 	if (!empty($_POST['backupcount']) && (!is_numericint($_POST['backupcount']) || ($_POST['backupcount'] < 0))) {
-		$input_errors[] = gettext("Invalid Backup Count specified");
+		$input_errors[] = gettext('Invalid Backup Count specified');
 	}
 
 	if (!$input_errors) {
@@ -43,16 +43,16 @@ if (isset($_POST['backupcount'])) {
 			$changedescr = config_get_path('system/backupcount');
 		} elseif (empty($_POST['backupcount'])) {
 			config_del_path('system/backupcount');
-			$changedescr = gettext("(platform default)");
+			$changedescr = gettext('platform default');
 		}
-		write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));
+		write_config(sprintf(gettext('Changed backup revision count to %s'), $changedescr));
 	}
 }
 
 $confvers = unserialize_data(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'), []);
 
 if ($_POST['newver'] != "") {
-	if (config_restore(g_get('conf_path') . '/backup/config-' . $_POST['newver'] . '.xml') == 0) {
+	if (config_restore(g_get('conf_path') . '/backup/config-' . $_POST['newver'] . '.xml', htmlspecialchars($confvers[$_POST['newver']]['description']))) {
 		$savemsg = sprintf(gettext('Successfully reverted configuration to timestamp %1$s with description "%2$s".%3$s%3$sTo activate the changes, manually reboot or apply/reload relevant features.'), date(gettext("n/j/y H:i:s"), $_POST['newver']), htmlspecialchars($confvers[$_POST['newver']]['description']), '<br/>');
 	} else {
 		$savemsg = gettext("Unable to revert to the selected configuration.");
@@ -71,7 +71,7 @@ if ($_REQUEST['getcfg'] != "") {
 				'config-' . config_get_path('system/hostname') . '.' . config_get_path('system/domain') . "-{$_REQUEST['getcfg']}.xml");
 }
 
-if (($_REQUEST['diff'] == 'Diff') && isset($_REQUEST['oldtime']) && isset($_REQUEST['newtime']) &&
+if (($_REQUEST['compare'] == 'compare') && isset($_REQUEST['oldtime']) && isset($_REQUEST['newtime']) &&
     (is_numeric($_REQUEST['oldtime'])) &&
     (is_numeric($_REQUEST['newtime']) || ($_REQUEST['newtime'] == 'current'))) {
 	$diff = "";
@@ -93,9 +93,9 @@ cleanup_backupcache(false);
 $confvers = get_backups();
 unset($confvers['versions']);
 
-$pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), gettext("Config History"));
-$pglinks = array("", "diag_backup.php", "@self");
-include("head.inc");
+$pgtitle = [gettext('Diagnostics'), htmlspecialchars(gettext('Backup & Restore')), gettext('Config History')];
+$pglinks = ['', 'diag_backup.php', '@self'];
+include('head.inc');
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -106,16 +106,16 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), false, "diag_backup.php");
-$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
+$tab_array[] = [htmlspecialchars(gettext('Backup & Restore')), false, "diag_backup.php"];
+$tab_array[] = [gettext('Config History'), true, 'diag_confbak.php'];
 display_top_tabs($tab_array);
 
-if ($diff) {
+if ($diff):
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=sprintf(gettext('Configuration Diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
+			<?=sprintf(gettext('Configuration Difference from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
 		</h2>
 	</div>
 	<div class="panel-body table-responsive">
@@ -123,55 +123,47 @@ if ($diff) {
 		<table style="padding-top: 4px; padding-bottom: 4px; vertical-align:middle;">
 
 <?php
-	foreach ($diff as $line) {
-		switch (substr($line, 0, 1)) {
-			case "+":
-				$color = "#caffd3";
-				break;
-			case "-":
-				$color = "#ffe8e8";
-				break;
-			case "@":
-				$color = "#a0a0a0";
-				break;
-			default:
-				$color = "#ffffff";
-		}
+$colors = [
+	'+' => '#caffd3',
+	'-' => '#ffe8e8',
+	'@' => '#a0a0a0'
+];
+	foreach ($diff as $line):
 ?>
 			<tr>
-				<td class="diff-text" style="vertical-align:middle; background-color:<?=$color;?>; white-space:pre-wrap;"><?=htmlentities($line)?></td>
+				<td class="diff-text" style="vertical-align:middle; background-color:<?=$colors[substr($line, 0, 1)] ?? '#ffffff'?>; white-space:pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
 <?php
-	}
+	endforeach;
 ?>
 		</table>
 	</div>
 </div>
 <?php
-}
+endif;
 
 $form = new Form(false);
 
-$section = new Form_Section('Configuration Backup Cache Settings', 'configsettings', COLLAPSIBLE|SEC_CLOSED);
+$section = new Form_Section(gettext('Configuration Backup Settings'), 'configsettings');
 
 $section->addInput(new Form_Input(
 	'backupcount',
-	'Backup Count',
+	gettext('Maximum Backups'),
 	'number',
 	config_get_path('system/backupcount'),
-	['min' => '0']
-))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', g_get('default_config_backup_count'));
+	['min' => '0', 'placeholder' => g_get('default_config_backup_count')]
+))->setHelp(gettext('Maximum number of old configuration backups to keep in the cache, 0 for no backups, or leave blank for the default value.'));
 
 $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");
 
 $section->addInput(new Form_StaticText(
-	'Current space used by backups',
+	gettext('Used Space'),
 	$space
 ));
 
 $section->addInput(new Form_Button(
 	'Submit',
-	gettext("Save"),
+	gettext('Save'),
 	null,
 	'fa-solid fa-save'
 ))->addClass('btn-primary');
@@ -188,8 +180,7 @@ if (is_array($confvers)) {
 			gettext(
 				'To view the differences between an older configuration and a newer configuration, ' .
 				'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
-				'then press the "Diff" button.'),
-			'info', false); ?>
+				'then press the "Compare" button.'), 'info', false); ?>
 	</div>
 </div>
 <?php
@@ -205,16 +196,16 @@ if (is_array($confvers)):
 			<thead>
 				<tr>
 					<th colspan="2">
-						<button type="submit" name="diff" class="btn btn-info btn-xs" value="Diff">
+						<button type="submit" name="compare" class="btn btn-info btn-xs" value="compare">
 							<i class="fa-solid fa-right-left icon-embed-btn"></i>
-							<?=gettext("Diff"); ?>
+							<?=gettext('Compare'); ?>
 						</button>
 					</th>
-					<th><?=gettext("Date")?></th>
-					<th><?=gettext("Version")?></th>
-					<th><?=gettext("Size")?></th>
-					<th><?=gettext("Configuration Change")?></th>
-					<th><?=gettext("Actions")?></th>
+					<th><?=gettext('Date')?></th>
+					<th><?=gettext('Version')?></th>
+					<th><?=gettext('Size')?></th>
+					<th><?=gettext('Configuration Change')?></th>
+					<th><?=gettext('Actions')?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -269,9 +260,9 @@ if (is_array($confvers)):
 ?>
 				<tr>
 					<td colspan="2">
-						<button type="submit" name="diff" class="btn btn-info btn-xs" value="Diff">
+						<button type="submit" name="compare" class="btn btn-info btn-xs" value="compare">
 							<i class="fa-solid fa-right-left icon-embed-btn"></i>
-							<?=gettext("Diff"); ?>
+							<?=gettext('Compare'); ?>
 						</button>
 					</td>
 					<td colspan="5"></td>

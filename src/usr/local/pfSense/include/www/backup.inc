@@ -252,7 +252,7 @@ function execPost($post, $postfiles, $ui = true) {
 					} else {
 
 						/* read the file contents */
-						$data = $ui ? file_get_contents($postfiles['conffile']['tmp_name']) : $postfiles['conffile']['tmp_name'];
+						$data = file_get_contents($postfiles['conffile']['tmp_name']);
 						if (!$data) {
 							$input_errors[] = gettext("Warning, could not read file {$postfiles['conffile']['tmp_name']}");
 						} elseif ($post['decrypt']) {

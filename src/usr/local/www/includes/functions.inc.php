@@ -382,30 +382,30 @@ function get_cpu_crypto_support() {
 
 function get_cpu_crypto_string($crypto) {
 	$machine = get_single_sysctl('hw.machine');
-	$string = "";
+	$string = '';
 
 	switch ($machine) {
 	case 'amd64':
-		$string = "AES-NI CPU Crypto: ";
-		if ($crypto && crypto_accel_get($crypto, "AESNI", "present")) {
-			$string .= "Yes ";
-			$string .= crypto_accel_get($crypto, "AESNI", "enabled") ? "(active)" : "(inactive)";
+		$string = 'AES-NI CPU Crypto: ';
+		if ($crypto && crypto_accel_get($crypto, 'AESNI', 'present')) {
+			$string .= 'Yes ';
+			$string .= crypto_accel_get($crypto, 'AESNI', 'enabled') ? '(active)' : '(inactive)';
 		} else {
-			$string .= "No";
+			$string .= 'No';
 		}
 		$string .= "<br>\n";
-		$string .= "QAT Crypto: ";
-		if ($crypto && crypto_accel_get($crypto, "QAT", "present")) {
-			$string .= "Yes ";
-			$string .= crypto_accel_get($crypto, "QAT", "enabled") ? "(active)" : "(inactive)";
+		$string .= 'QAT Crypto: ';
+		if ($crypto && crypto_accel_get($crypto, 'QAT', 'present')) {
+			$string .= 'Yes ';
+			$string .= crypto_accel_get($crypto, 'QAT', 'enabled') ? '(active)' : '(inactive)';
 		} else {
-			$string .= "No";
+			$string .= 'No';
 		}
 		break;
 	}
 
 	if (strlen($string) == 0) {
-		$string = "CPU Crypto: None/Unknown Platform";
+		$string = 'CPU Crypto: None/Unknown Platform';
 	}
 
 	return ($string);
@@ -417,7 +417,9 @@ function get_cpu_count($show_detail = false) {
 	if ($show_detail) {
 		$cpudetail = "";
 		exec("/usr/bin/grep 'FreeBSD/SMP:.*package' /var/log/dmesg.boot | /usr/bin/cut -f2- -d' '", $cpudetail);
-		$cpucount = $cpudetail[0];
+		if (!empty($cpudetail[0]))  {
+			$cpucount = $cpudetail[0];
+		}
 	}
 	return $cpucount;
 }
@@ -501,4 +503,3 @@ function get_interfacestatus() {
 	return $data;
 }
 
-?>

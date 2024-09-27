@@ -231,7 +231,6 @@ EOD;
 			@file_put_contents("{$g['varetc_path']}/syslog.d/" . basename($pkg_log_filename) . ".conf", $pkgsyslogconf);
 		}
 	}
-	$facilitylist = implode(',', array_unique($separatelogfacilities));
 
 	$syslogconf .= "!*\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
@@ -354,6 +353,7 @@ EOD;
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 	}
 
+	$facilitylist = implode(',', array_unique($separatelogfacilities));
 	$syslogconf .= "!-{$facilitylist}\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= <<<EOD

@@ -56,7 +56,7 @@ $sysinfo_items = array(
 	);
 
 // Declared here so that JavaScript can access it
-$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-cog fa-spin'></i>");
+$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-rotate fa-spin'></i>");
 $state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
 
 if ($_REQUEST['getupdatestatus']) {
@@ -126,7 +126,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<?printf("%s %s", gettext("Version information updated at"),
 		    date("D M j G:i:s T Y", filemtime($cache_file)));?>
 		    &nbsp;
-		    <a id="updver" href="#" class="fa-solid fa-arrows-rotate"></a>
+		    <a id="updver" href="#" class="fa-solid fa-rotate"></a>
 	</div>
 <?php
 	endif;
@@ -300,7 +300,13 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			$cpucount = get_cpu_count();
 			if ($cpucount > 1): ?>
 				<div id="cpucount">
-					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
+					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>
+<?php
+				$cpudetail = get_cpu_count(true);
+				if ($cpudetail != $cpucount): ?>
+					: <?= htmlspecialchars($cpudetail); ?>
+<?php
+				endif; ?>
 				</div>
 		<?php endif; ?>
 				<div id="cpucrypto">

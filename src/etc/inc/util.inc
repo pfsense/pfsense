@@ -24,6 +24,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 //require_once('interfaces.inc');
 require_once('Net/IPv6.php');
 define('VIP_ALL', 1);
@@ -47,6 +48,56 @@ define('SPECIALNET_GROUP', 11);
 define('SPECIALNET_VIPS', 12);
 define('SPECIALNET_CHECKPERM', 98);
 define('SPECIALNET_EXCLUDE', 99);
+
+/**
+ * Test the machine type
+ *
+ * @param string $arch		The architecture to test for
+ * @param bool $strict		Use strict architecture matching
+ *
+ * @return bool
+ */
+function is_arch(string $arch, bool $strict = false): bool
+{
+	$sys_arch = php_uname('m');
+	return (($arch == $sys_arch) || (!$strict && str_contains($sys_arch, $arch)));
+}
+
+/**
+ * Test if the machine type is any arm
+ *
+ * @return bool
+ */
+function is_arm(): bool
+{
+	return (is_arch('arm', false));
+}
+
+/**
+ * Test if the machine type is amd64
+ *
+ * @return bool
+ */
+function is_amd64(): bool
+{
+	return (is_arch('amd64', true));
+}
+
+/**
+ * Test if the machine type is arm64
+ */
+function is_arm64(): bool
+{
+	return (is_arch('arm64', true));
+}
+
+/**
+ * Test if the machine type is any 64bit
+ */
+function is_64bit(): bool
+{
+	return (is_amd64() || is_arm64());
+}
 
 /* kill a process by pid file */
 function killbypid($pidfile, $waitfor = 0) {
@@ -4674,4 +4725,3 @@ function unserialize_data(?string $path, mixed $default = null, ?array $options 
 	return $data;
 }
 
-?>

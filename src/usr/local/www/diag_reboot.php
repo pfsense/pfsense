@@ -46,30 +46,33 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 $platform = system_identify_specific_platform();
+
 include("head.inc");
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST'):
+if (isset($_POST['rebootmode'])):
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
 		print('<div><pre>');
 		switch ($_POST['rebootmode']) {
-			case 'FSCKReboot':
+			case 'fsckreboot':
 				if ((php_uname('m') != 'arm') && !is_module_loaded("zfs.ko")) {
 					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
 					notify_all_remote(sprintf(gettext("%s is rebooting for a filesystem check now."), g_get('product_label')));
 					system_reboot();
 				}
 				break;
-			case 'Reroot':
+			case 'reroot':
 				notify_all_remote(sprintf(gettext("%s is rerooting now."), g_get('product_label')));
 				system_reboot_sync(true);
 				break;
-			case 'Reboot':
+			case 'reboot':
 				notify_all_remote(sprintf(gettext("%s is rebooting now."), g_get('product_label')));
 				system_reboot();
 				break;
 			default:
+				header('Location: /diag_reboot.php');
+				break;
 		}
 		print('</pre></div>');
 	}
@@ -85,7 +88,7 @@ events.push(function() {
 
 	function checkonline() {
 		$.ajax({
-			url	 : "/index.php", // or other resource
+			url	: "/index.php", // or other resource
 			type : "HEAD"
 		})
 		.done(function() {
@@ -122,26 +125,25 @@ else:
 
 $form = new Form(false);
 
-$help = 'Select "Normal reboot" to reboot the system immediately';
-$modeslist = ['Reboot' => 'Normal reboot'];
+$section = new Form_Section(gettext('Reboot Method'));
+
+$help[] = gettext('Select "Normal reboot" to reboot the system immediately.');
+$modeslist['reboot'] = gettext('Normal Reboot');
+
 if ((php_uname('m') != 'arm') && !is_module_loaded("zfs.ko")) {
-        $help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';
-        $modeslist += ['FSCKReboot' => 'Reboot with Filesystem Check'];
+	$help[] = gettext('Select "Reboot with Filesystem Check" to reboot and run filesystem check.');
+	$modeslist['fsckreboot'] = gettext('Reboot with Filesystem Check');
 }
 
-$help .= ', or "Reroot" to stop processes, remount disks and re-run startup sequence';
-$modeslist += ['Reroot' => 'Reroot'];
-
-$help .= '.';
-
-$section = new Form_Section('Select reboot method');
+$help[] = gettext('Select "Reroot" to stop processes, remount disks and re-run startup sequence.');
+$modeslist['reroot'] = gettext('Reroot');
 
 $section->addInput(new Form_Select(
         'rebootmode',
-        '*Reboot method',
+        '*'.gettext('Reboot Method'),
         $rebootmode,
         $modeslist
-))->setHelp($help);
+))->setHelp(implode("<br />", $help));
 
 $form->add($section);
 
@@ -152,7 +154,7 @@ $form->addGlobal(new Form_Button(
         'fa-solid fa-wrench'
 ))->addClass('btn-primary');
 
-print $form;
+print($form);
 
 endif;
 

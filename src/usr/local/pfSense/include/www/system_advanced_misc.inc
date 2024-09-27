@@ -22,6 +22,7 @@
 require_once("config.gui.inc");
 require_once("functions.inc");
 require_once("filter.inc");
+require_once("service-utils.inc");
 require_once("shaper.inc");
 require_once("system.inc");
 require_once("util.inc");
@@ -132,6 +133,21 @@ function getSystemAdvancedMisc($json = false) {
 	return $json ? json_encode($pconfig) : $pconfig;
 }
 
+function getSystemAdvancedMiscCryptoModules() {
+	$platform = system_identify_specific_platform();
+	switch ($platform['name']) {
+		default:
+			$crypto_modules = array(
+				'aesni' => gettext("AES-NI CPU-based Acceleration"),
+				'aesni_cryptodev' => gettext("AES-NI and BSD Crypto Device (aesni, cryptodev)"),
+				'cryptodev' => gettext("BSD Crypto Device (cryptodev)"),
+				'qat' => gettext("Intel QuickAssist (QAT)"),
+			);
+	}
+
+	return $crypto_modules;
+}
+
 function saveSystemAdvancedMisc($post, $json = false) {
 	global $global_gateway_state_kill_modes, $hwpstate_status_descr, $hwpstate_control_levels;
 
@@ -163,7 +179,8 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
 	);
 
-	if (!empty($post['crypto_hardware']) && !array_key_exists($post['crypto_hardware'], $crypto_modules)) {
+	if (!empty($post['crypto_hardware']) && !array_key_exists($post['crypto_hardware'],
+	    getSystemAdvancedMiscCryptoModules())) {
 		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
 	}
 

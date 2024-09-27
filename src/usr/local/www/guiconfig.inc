@@ -528,7 +528,6 @@ function firewall_check_for_advanced_options(&$item) {
 	if ($item['tcpflags_any'] || $item['tcpflags1'] || $item['tcpflags2']) {
 		$item_set .= "tcpflags set";
 	}
-
 	return $item_set;
 }
 

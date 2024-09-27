@@ -117,9 +117,14 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), htmlspecialchars(gettext("Backup & Restore")));
-$pglinks = array("", "@self", "@self");
+$pgtitle = [gettext('Diagnostics'), htmlspecialchars(gettext('Backup & Restore')), htmlspecialchars(gettext('Backup & Restore'))];
+$pglinks = ['', '@self', '@self'];
 include("head.inc");
+
+$tab_array[] = [htmlspecialchars(gettext('Backup & Restore')), true, 'diag_backup.php'];
+$tab_array[] = [gettext('Configuration History'), false, 'diag_confbak.php'];
+
+display_top_tabs($tab_array);
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -139,11 +144,6 @@ if (is_subsystem_dirty('restore')):
 	</form>
 <?php
 endif;
-
-$tab_array = array();
-$tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), true, "diag_backup.php");
-$tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
-display_top_tabs($tab_array);
 
 $form = new Form(false);
 $form->setMultipartEncoding();	// Allow file uploads

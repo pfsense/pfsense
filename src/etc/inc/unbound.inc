@@ -27,6 +27,7 @@
 
 /* include all configuration functions */
 require_once("config.inc");
+require_once("services_dhcp.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");

@@ -33,13 +33,14 @@
 ##|*MATCH=system_advanced_misc.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
+require_once('guiconfig.inc');
+require_once('functions.inc');
+require_once('filter.inc');
 require_once("system.inc");
-require_once("shaper.inc");
-require_once("vpn.inc");
-require_once("system_advanced_misc.inc");
+require_once('shaper.inc');
+require_once('util.inc');
+require_once('vpn.inc');
+require_once('system_advanced_misc.inc');
 
 global $hwpstate_status_descr, $hwpstate_control_levels;
 $hwpstate_status = system_has_hwpstate();
@@ -63,11 +64,7 @@ $mds_modes = array(
 
 $pconfig = getSystemAdvancedMisc();
 
-$crypto_modules = array(
-	'aesni' => gettext("AES-NI CPU-based Acceleration"),
-	'cryptodev' => gettext("BSD Crypto Device (cryptodev)"),
-	'aesni_cryptodev' => gettext("AES-NI and BSD Crypto Device (aesni, cryptodev)"),
-);
+$crypto_modules = getSystemAdvancedMiscCryptoModules();
 
 $thermal_hardware_modules = array(
 	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),

@@ -28,6 +28,7 @@
 
 require_once("xmlparse.inc");
 require_once('util.inc');
+require_once('globals.inc');
 
 /****f* config/encrypted_configxml
  * NAME
@@ -713,31 +714,27 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	return 0;
 }
 
-function config_restore($conffile) {
-	global $g;
-
-	if (!file_exists($conffile)) {
-		return 1;
+function config_restore(string $path, string $descr): bool {
+	if (!file_exists($path) || !backup_config()) {
+		return false;
 	}
-
-	backup_config();
 
 	$lockkey = lock('config', LOCK_EX);
 	if (!isset($lockkey)) {
-		return 1;
+		return false;
 	}
 	unlink_if_exists(g_get('tmp_path'). '/config.cache');
-	$copy_result = copy($conffile, "{$g['cf_conf_path']}/config.xml");
+	$copy_result = copy($path, g_get('cf_conf_path') . '/config.xml');
 	unlock($lockkey);
 
 	if ($copy_result) {
 		disable_security_checks();
 		config_read_file(true);
-		write_config(sprintf(gettext("Reverted to %s."), array_pop(explode("/", $conffile))), false);
-		return 0;
+		write_config(sprintf(gettext('Reverted to "%s"'), $descr), false);
+		return true;
 	}
 
-	return 1;
+	return false;
 }
 
 function config_install($conffile) {
@@ -934,38 +931,32 @@ function get_backups() {
 	return $toreturn;
 }
 
-function backup_config() {
-	global $g;
+function backup_config(): bool
+{
+	$backup_dir = g_get('cf_conf_path') . '/backup';
 
 	/* Create backup directory if needed */
-	safe_mkdir("{$g['cf_conf_path']}/backup");
-	if (config_get_path('revision/time') == "") {
-		$baktime = 0;
-	} else {
-		$baktime = config_get_path('revision/time');
-	}
+	safe_mkdir($backup_dir);
 
-	if (config_get_path('revision/description') == "") {
-		$bakdesc = "Unknown";
-	} else {
-		$bakdesc = config_get_path('revision/description');
-	}
+	/* Generate config backup file name */
+	$backup_time = config_get_path('revision/time', 0);
+	$backup_file = $backup_dir . '/config-' . $backup_time . '.xml';
 
+	/* Handle backup cache */
+	$bakdesc = config_get_path('revision/description', 'Unknown');
 	$bakver = config_get_path('version', "?");
-	$bakfilename = g_get('cf_conf_path') . '/backup/config-' . $baktime . '.xml';
-	copy(g_get('cf_conf_path') . '/config.xml', $bakfilename);
-
 	if (file_exists(g_get('cf_conf_path') . '/backup/backup.cache')) {
 		$backupcache = unserialize_data(file_get_contents(g_get('cf_conf_path') . '/backup/backup.cache'), []);
 	} else {
 		$backupcache = array();
 	}
-	$backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($bakfilename));
+	$backupcache[$backup_time] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($backup_file));
 	$bakout = fopen(g_get('cf_conf_path') . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($backupcache));
 	fclose($bakout);
 
-	return true;
+	/* Do the backup */
+	return copy(g_get('cf_conf_path') . '/config.xml', $backup_file);
 }
 
 function backup_info($backup_info, $number) {

@@ -168,7 +168,7 @@ function parse_xml_regdomain(&$rdattributes, $rdfile = '', $rootobj = 'regulator
 	return $rdmain;
 }
 
-function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes, $isstring = "false") {
+function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes) {
 
 	global $depth, $curpath, $parsedcfg, $havedata, $listtags, $parsedattrs;
 	$parsedcfg = array();

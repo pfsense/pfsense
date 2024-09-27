@@ -488,6 +488,8 @@ function services_kea6_configure() {
 	$kea_var_lib = '/var/lib/kea';
 	$kea_var_db = '/var/db/kea';
 
+	$kea6socket = g_get('varrun_path') . '/kea6-ctrl-socket';
+
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;
 	}
@@ -552,7 +554,7 @@ function services_kea6_configure() {
 		'hooks-libraries' => [],
 		'control-socket' => [
 			'socket-type' => 'unix',
-			'socket-name' => '/var/run/kea6-ctrl-socket'
+			'socket-name' => $kea6socket
 		],
 	];
 
@@ -1004,7 +1006,7 @@ kea6_skip_first_pool_options:
 	$known_duids = array_keys($known_duids);
 	foreach ($known_duids as $duid) {
 		$keaconf['Dhcp6']['reservations'][] = [
-			'duid' => $duid
+			'duid' => (string) $duid
 		];
 	}
 
@@ -1126,6 +1128,8 @@ function services_kea4_configure() {
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
 
+	$kea4socket = g_get('varrun_path').'/kea4-ctrl-socket';
+
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;
 	}
@@ -1195,7 +1199,7 @@ function services_kea4_configure() {
 		'hooks-libraries' => [],
 		'control-socket' => [
 			'socket-type' => 'unix',
-			'socket-name' => '/var/run/kea4-ctrl-socket'
+			'socket-name' => $kea4socket
 		],
 	];
 

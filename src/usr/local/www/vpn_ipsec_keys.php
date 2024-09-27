@@ -82,12 +82,12 @@ if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
-	$tab_array = array();
-	$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-	$tab_array[1] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
-	$tab_array[2] = array(gettext("Pre-Shared Keys"), true, "vpn_ipsec_keys.php");
-	$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
-	display_top_tabs($tab_array);
+$tab_array = array();
+$tab_array[] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+$tab_array[] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Pre-Shared Keys"), true, "vpn_ipsec_keys.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
+display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">

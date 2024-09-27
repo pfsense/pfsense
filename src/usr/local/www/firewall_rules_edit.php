@@ -212,10 +212,6 @@ if (isset($id) && $a_filter[$id]) {
 		}
 	}
 
-	if (isset($a_filter['floating'])) {
-		$pconfig['floating'] = "yes";
-	}
-
 	if (isset($a_filter[$id]['direction'])) {
 		$pconfig['direction'] = $a_filter[$id]['direction'];
 	}
@@ -333,6 +329,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }
+
 /* Allow the FloatingRules to work */
 $if = $pconfig['interface'];
 
@@ -371,7 +368,12 @@ if ($_POST['save']) {
 
 	// add validation + input error for $_POST['interface']
 
-	$valid = ($_POST['interface'] == "FloatingRules" || isset($_POST['floating'])) ? ['pass','block','reject', 'match'] : ['pass','block','reject'];
+	if ($_POST['interface'] == 'FloatingRules' || isset($_POST['floating'])) {
+		$valid = ['pass', 'block', 'reject', 'match'];
+	} else {
+		$valid = ['pass', 'block', 'reject'];
+	}
+
 	if (!(is_string($_POST['type'])  && in_array($_POST['type'], $valid))) {
 		$input_errors[] = gettext("A valid rule type is not selected.");
 		unset($_POST['type']);
@@ -874,8 +876,8 @@ if ($_POST['save']) {
 
 		$filterent['type'] = $_POST['type'];
 
-		if (isset($_POST['floating']) && (!isset($_POST['interface']) ||
-		    in_array('any', $_POST['interface']))) {
+		if (isset($_POST['floating']) &&
+		    (!isset($_POST['interface']) || in_array('any', $_POST['interface']))) {
 			$_POST['interface'] = array('any');
 		} else {
 			$filterent['interface'] = $_POST['interface'];
@@ -1064,7 +1066,7 @@ if ($_POST['save']) {
 
 		if (isset($id) && $a_filter[$id]) {
 			$tmpif = $filterent['interface'];
-			if (($tmpif == $if) || (isset($pconfig['floating']))) {
+			if (($tmpif == $if) || isset($pconfig['floating'])) {
 				$a_filter[$id] = $filterent;
 			} else {							// rule moved to different interface
 				// update the previous interface's separators
@@ -1118,9 +1120,9 @@ if ($_POST['save']) {
 		}
 
 		if (isset($_POST['floating'])) {
-			header("Location: firewall_rules.php?if=FloatingRules");
+			header('Location: firewall_rules.php?if=FloatingRules');
 		} else {
-			header("Location: firewall_rules.php?if=" . htmlspecialchars($_POST['interface']));
+			header('Location: firewall_rules.php?if=' . htmlspecialchars($_POST['interface']));
 		}
 		exit;
 	}
@@ -1170,7 +1172,9 @@ function build_flag_table() {
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $pglinks = array("");
 
-if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+$is_floating_rule = (($if === 'FloatingRules') || isset($pconfig['floating']));
+
+if ($is_floating_rule) {
 	$pglinks[] = "firewall_rules.php?if=FloatingRules";
 	$pgtitle[] = gettext('Floating');
 	$pglinks[] = "firewall_rules.php?if=FloatingRules";
@@ -1235,7 +1239,7 @@ $values = array(
 	'reject' => gettext('Reject'),
 );
 
-if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+if ($is_floating_rule) {
 	$values['match'] = gettext('Match');
 }
 
@@ -1258,7 +1262,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Set this option to disable this rule without removing it from the '.
 	'list.');
 
-if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+if ($is_floating_rule) {
 	$section->addInput(new Form_Checkbox(
 		'quick',
 		'Quick',
@@ -1304,7 +1308,7 @@ if ($edit_disabled) {
 	}
 }
 
-if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+if ($is_floating_rule) {
 	$section->addInput($input = new Form_Select(
 		'interface',
 		'*Interface',
@@ -1321,7 +1325,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 
-if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+if ($is_floating_rule) {
 	$section->addInput(new Form_Select(
 		'direction',
 		'*Direction',
@@ -1478,6 +1482,7 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
+
 	$form->add($section);
 }
 
@@ -1497,7 +1502,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference. ' .
-	'A maximum of %s characters will be used in the ruleset and displayed in the firewall log.',
+	'A maximum of %s characters will be used in the ruleset label and displayed in the firewall log.',
 	user_rule_descr_maxlen());
 
 $btnadv = new Form_Button(
@@ -1703,8 +1708,7 @@ foreach (get_gateways() as $gwname => $gw) {
 
 foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data) {
 	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwg_name) . ', "gateway":' .
-	json_encode($gwg_data['name'] . $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr'])) . ',"family":' .
-	json_encode($gwg_data['ipprotocol']) . '}';
+	json_encode($gwg_data['name'] . $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr'])) . ',"family":' . json_encode($gwg_data['ipprotocol']) . '}';
 	$firstgw = false;
 }
 
@@ -2108,7 +2112,7 @@ events.push(function() {
 	});
 
 	$('#icmptype\\[\\]').on('change', function() {
-			icmptype_change();
+		icmptype_change();
 	});
 
 	$('#tcpflags_any').click(function () {

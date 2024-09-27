@@ -130,11 +130,11 @@ $helpfilename = pkg_get_repo_help();
 
 $form = new Form();
 
-$section = new Form_Section('Firmware Branch');
+$section = new Form_Section(gettext('Firmware Branch'));
 
 $field = new Form_Select(
 	'fwbranch',
-	'*Branch',
+	'*'.gettext('Branch'),
 	pkg_get_repo_name(config_get_path('system/pkg_repo_conf_path')),
 	pkg_build_repo_list()
 );
@@ -142,23 +142,21 @@ $field = new Form_Select(
 if (file_exists($helpfilename)) {
 	$field->setHelp(file_get_contents($helpfilename));
 } else {
-	$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
-					'Use of the development version is at your own risk!', '<br />');
+	$field->setHelp(gettext('Please select the branch from which to update the system firmware. %1$s' .
+					'Use of the development version is at your own risk!'), '<br />');
 }
 
 $section->addInput($field);
 
 $form->add($section);
 
-$section = new Form_Section('Updates');
-
+$section = new Form_Section(gettext('Update Settings'));
 $section->addInput(new Form_Checkbox(
 	'disablecheck',
-	'Dashboard check',
-	'Disable the Dashboard auto-update check',
+	gettext('Dashboard Check'),
+	gettext('Disable the dashboard auto-update check.'),
 	isset($curcfg['disablecheck'])
-	));
-
+));
 $form->add($section);
 
 if (file_exists("/usr/local/bin/git")) {
@@ -166,10 +164,10 @@ if (file_exists("/usr/local/bin/git")) {
 
 	$section->addInput(new Form_Checkbox(
 		'synconupgrade',
-		'Auto sync on update',
-		'Enable repository/branch sync before reboot',
+		gettext('Auto sync on update'),
+		gettext('Enable repository/branch sync before reboot'),
 		isset($gitcfg['synconupgrade'])
-		))->setHelp('After updating, sync with the following repository/branch before reboot.');
+		))->setHelp(gettext('After updating, sync with the following repository/branch before reboot.'));
 
 	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && /usr/local/bin/git config remote.origin.url", $output_str);
@@ -181,10 +179,10 @@ if (file_exists("/usr/local/bin/git")) {
 
 	$section->addInput(new Form_Input(
 		'repositoryurl',
-		'Repository URL',
+		gettext('Repository URL'),
 		'text',
 		($gitcfg['repositoryurl'] ? $gitcfg['repositoryurl'] : '')
-		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', $lastrepositoryurl);
+		))->setHelp(gettext('The most recently used repository was %s. This repository will be used if the field is left blank.'), $lastrepositoryurl);
 
 	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && /usr/local/bin/git branch", $output_str);
@@ -202,50 +200,50 @@ if (file_exists("/usr/local/bin/git")) {
 
 	$section->addInput(new Form_Input(
 		'branch',
-		'Branch name',
+		gettext('Branch Name'),
 		'text',
 		($gitcfg['branch'] ? $gitcfg['branch'] : '')
-		))->setHelp('The most recently used branch was "%1$s". (Usually the branch name is master)' .
-					'%2$sNote: Sync will not be performed if a branch is not specified.', $lastbranch, '<br />');
+		))->setHelp(gettext('The most recently used branch was "%1$s". (Usually the branch name is plus-master)' .
+					'%2$sNote: Sync will not be performed if a branch is not specified.'), $lastbranch, '<br />');
 
-	$group = new Form_Group('Sync options');
+	$group = new Form_Group(gettext('Sync Options'));
 
 	$group->add(new Form_Checkbox(
 		'minimal',
 		null,
-		'Minimal',
+		gettext('Minimal'),
 		isset($gitcfg['minimal'])
-		))->setHelp('Copy of only the updated files.');
+		))->setHelp(gettext('Copy of only the updated files.'));
 
 	$group->add(new Form_Checkbox(
 		'diff',
 		null,
-		'Diff',
+		gettext('Diff'),
 		isset($gitcfg['diff'])
-		))->setHelp('Copy of only the different or missing files.');
+		))->setHelp(gettext('Copy of only the different or missing files.'));
 
 	$group->add(new Form_Checkbox(
 		'show_files',
 		null,
-		'Show Files',
+		gettext('Show Files'),
 		isset($gitcfg['show_files'])
-		))->setHelp('Show different and missing files.%1$sWith \'Diff/Minimal\' option.', '<br />');
+		))->setHelp(gettext('Show different and missing files.%1$sWith \'Diff/Minimal\' option.'), '<br />');
 
 	$group->add(new Form_Checkbox(
 		'show_command',
 		null,
-		'Show Command',
+		gettext('Show Command'),
 		isset($gitcfg['show_command'])
-		))->setHelp('Show constructed command.%1$sWith \'Diff/Minimal\' option.', '<br />');
+		))->setHelp(gettext('Show constructed command.%1$sWith \'Diff/Minimal\' option.'), '<br />');
 
 	$group->add(new Form_Checkbox(
 		'dryrun',
 		null,
-		'Dry Run',
+		gettext('Dry Run'),
 		isset($gitcfg['dryrun'])
-		))->setHelp('Dry-run only.%1$sNo files copied.', '<br />');
+		))->setHelp(gettext('Dry-run only.%1$sNo files copied.'), '<br />');
 
-	$group->setHelp('See "playback gitsync --help" in console "PHP Shell + %s tools" for additional information.', g_get('product_label'));
+	$group->setHelp(gettext('See "playback gitsync --help" in console "PHP Shell + %s tools" for additional information.'), g_get('product_label'));
 	$section->add($group);
 
 	$form->add($section);

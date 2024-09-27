@@ -872,6 +872,30 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
 
 				break;
+			case "textarea_source":
+				if ($field['displayname']) {
+					$etitle = $field['displayname'];
+				} else if (!$field['dontdisplayname']) {
+					$etitle =  fixup_string($field['name']);
+				}
+
+				$source = $field['source'];
+				try{
+					@eval("\$value = &$source;");
+				} catch (\Throwable | \Error | \Exception $e) {
+					log_error($e);
+				}
+				$input = $section->addInput(new Form_Textarea(
+					$name,
+					$etitle,
+					$value
+				))->setHelp($field['description'])
+				  ->setAttribute('rows', $field['rows'])
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
+				if ($field['readonly']) {
+					$input->setReadonly();
+				}
+				break;
 			case "submit":
 				$form->addGlobal(new Form_Button(
 					$name,

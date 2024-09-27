@@ -1233,7 +1233,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
 		$g['primaryconsole_force'] = "video";
-	} elseif ($specific_platform['name'] == 'RCC-VE' ||
+	} elseif (
+	    $specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'SG-2220' ||
 	    $specific_platform['name'] == 'apu2') {
@@ -2028,7 +2029,10 @@ function compare_hostname_to_dnscache($hostname) {
  * load_crypto() - Load crypto modules if enabled in config.
  */
 function load_crypto() {
-	$crypto_modules = array('aesni', 'cryptodev');
+	$crypto_modules = [
+		'aesni',
+		'cryptodev'
+	];
 
 	$enabled_modules = explode('_', config_get_path('system/crypto_hardware'));
 

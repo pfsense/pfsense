@@ -57,7 +57,7 @@ function choose_backup() {
 	echo " 1-" . count($confvers) . " : ";
 	$number = strtoupper(chop(fgets($fp)));
 	if (is_numeric($number) && ($number > 0) && ($number <= count($confvers))) {
-		return $number;
+		return intval($number);
 	} else {
 		echo gettext("That is not a valid backup number.\n");
 		return -1;
@@ -74,7 +74,7 @@ function restore_history_backup($number) {
 		echo gettext("Y/N?") . " : ";
 		$confirm = strtoupper(chop(fgets($fp)));
 		if ($confirm == gettext("Y")) {
-			if (config_restore($g['conf_path'] . '/backup/config-' . $thisbackup['time'] . '.xml') == 0) {
+			if (config_restore($g['conf_path'] . '/backup/config-' . $thisbackup['time'] . '.xml', $thisbackup['description'])) {
 				echo "\n";
 				echo sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $thisbackup['time']), $thisbackup['description']);
 				echo "\n" . gettext("You may need to reboot the firewall or restart services before the restored configuration is fully active.") . "\n\n";

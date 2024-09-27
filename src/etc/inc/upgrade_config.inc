@@ -6515,7 +6515,6 @@ function upgrade_220_to_221() {
 	config_set_path('widgets/sequence', implode(',', $widgets));
 }
 
-/* No functional changes. */
 function upgrade_221_to_222() {
 }
 

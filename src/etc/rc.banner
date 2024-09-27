@@ -33,6 +33,7 @@ $machine = trim(`uname -m`);
 
 /* Export the product variable. */
 if (is_writable("/etc")) {
+	$handle = NULL;
 	if (!file_exists("/etc/product_name") || is_writable("/etc/product_name"))
 		$handle = fopen("/etc/product_name", 'w');
 	if ($handle != NULL)

@@ -45,7 +45,7 @@ if (!is_module_loaded("zfs.ko")) {
 
 echo gettext("Enter an option:") . " ";
 
-switch (chop(fgets($fp))) {
+switch (strtoupper(chop(fgets($fp)))) {
 	case "S":
 		mwexec('/sbin/nextboot -o "-s" -k kernel');
 		$msg = sprintf(gettext("%s is rebooting into single user mode now."), $g['product_label']);
@@ -70,7 +70,8 @@ switch (chop(fgets($fp))) {
 		system_reboot_sync(true);
 		break;
 	case "Y":
-	case "y":
+	case "YE":
+	case "YES":
 		$msg = sprintf(gettext("%s is rebooting now."), $g['product_label']);
 		echo "\n" . $msg . "\n";
 		notify_all_remote($msg);

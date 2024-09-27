@@ -209,9 +209,7 @@ fi
 if [ -n "${USE_RAMDISK}" ]; then
 	/etc/rc.embedded
 	# Remount the correct subordinate ZFS datasets to ensure they are used properly
-	if [ -n "${USE_ZFS}" ]; then
-		_be_mount_zfs
-	fi
+	[ -n "${USE_ZFS}" ] && _be_mount_zfs
 fi
 
 # If RAM disks are active, make symlinks for pkg database on UFS
@@ -393,6 +391,9 @@ echo "done."
 /usr/bin/cap_mkdb /etc/login.conf
 
 if [ -f /cf/conf/needs_package_sync ]; then
+	# When restoring a configuration backup:
+	# - do not call pfSense-upgrade on boot
+	# - do not run rc.start_packages
 	skip_packages=1
 fi
 
@@ -553,8 +554,9 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
-[ -z "$skip_packages" ] \
-	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 3
+if [ -z "$skip_packages" ]; then
+	/usr/local/sbin/${product_name}-upgrade -y -U -b 3
+fi
 
 # Start packages
 [ -z "$skip_packages" ] \
@@ -562,17 +564,6 @@ fi
 
 # Update pkg metadata
 /etc/rc.update_pkg_metadata now
-
-# Log product version to syslog
-get_version
-BUILDTIME=`cat /etc/version.buildtime`
-ARCH=`uname -m`
-echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
-
-echo "Bootup complete"
-echo "Bootup complete" | /usr/bin/logger
-
-/usr/local/bin/beep.sh start 2>&1 >/dev/null
 
 # Reset the cache.  read-only requires this.
 /bin/rm -f /tmp/config.cache
@@ -592,5 +583,16 @@ if [ -f /etc/rc.local ]; then
 		/bin/sh /etc/rc.local.running &
 	fi
 fi
+
+# Log product version to syslog
+get_version
+BUILDTIME=`cat /etc/version.buildtime`
+ARCH=`uname -m`
+echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
+
+echo "Bootup complete"
+echo "Bootup complete" | /usr/bin/logger
+
+/usr/local/bin/beep.sh start 2>&1 >/dev/null
 
 exit 0

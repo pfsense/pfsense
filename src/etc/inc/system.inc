@@ -26,6 +26,7 @@
  */
 
 require_once('config.lib.inc');
+require_once('services_dhcp.inc');
 require_once('syslog.inc');
 
 function system_hwpstate_active() {
@@ -202,6 +203,31 @@ function activate_sysctls() {
 	}
 
 	set_sysctl($sysctls);
+}
+
+/* Search current tunables for a specific OID and either update the existing
+ * entry or create a new one.
+ * Does not write the config, that's up to the caller. */
+function set_sysctl_config($oid, $value) {
+	$tunables = config_get_path('sysctl/item', []);
+	$updated = false;
+	$found = false;
+	foreach ($tunables as $idx => $tunable) {
+		if ($tunable['tunable'] == $oid) {
+			$found = true;
+			$tunables[$idx]['value'] = $value;
+		}
+	}
+	if (!$found) {
+		$tunables[] = [
+			'tunable' => $oid,
+			'value' => $value,
+		];
+		$updated = true;
+	}
+	if ($updated) {
+		config_set_path('sysctl/item', $tunables);
+	}
 }
 
 function system_resolvconf_generate($dynupdate = false) {
@@ -730,9 +756,8 @@ function system_dhcpleases_configure() {
 }
 
 function system_get_kea6status() {
-	$socket_path = '/var/run/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
 	$rbuf = NULL;
-	$ret = false;
 
 	if (!file_exists($socket_path)) {
 		goto out;
@@ -768,21 +793,15 @@ function system_get_kea6status() {
 		}
 	}
 
-	/* sanity check in case we received malformed json */
-	if (($ret = json_decode($retjson, true)) === false) {
-		goto cleanup;
-	}
-
 cleanup:
 	socket_close($fd);
 out:
-	return ($ret);
+	return (json_decode($retjson, true));
 }
 
 function system_get_kea4status() {
-	$socket_path = '/var/run/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
 	$rbuf = NULL;
-	$ret = false;
 
 	if (!file_exists($socket_path)) {
 		goto out;
@@ -818,19 +837,14 @@ function system_get_kea4status() {
 		}
 	}
 
-	/* sanity check in case we received malformed json */
-	if (($ret = json_decode($retjson, true)) === false) {
-		goto cleanup;
-	}
-
 cleanup:
 	socket_close($fd);
 out:
-	return ($ret);
+	return (json_decode($retjson, true));
 }
 
 function system_clear_all_kea4leases() {
-	$socket_path = '/var/run/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -843,7 +857,8 @@ function system_clear_all_kea4leases() {
 	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode(['command' => 'lease4-wipe']);
@@ -851,21 +866,13 @@ function system_clear_all_kea4leases() {
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
 
 function system_del_kea4lease(string $ip) {
-	$socket_path = '/var/run/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -878,7 +885,8 @@ function system_del_kea4lease(string $ip) {
 	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode([
@@ -891,21 +899,13 @@ function system_del_kea4lease(string $ip) {
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
 
 function system_clear_all_kea6leases() {
-	$socket_path = '/var/run/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -918,7 +918,8 @@ function system_clear_all_kea6leases() {
 	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode(['command' => 'lease6-wipe']);
@@ -926,21 +927,13 @@ function system_clear_all_kea6leases() {
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
 
 function system_del_kea6lease(string $ip) {
-	$socket_path = '/var/run/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -953,7 +946,8 @@ function system_del_kea6lease(string $ip) {
 	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode([
@@ -966,26 +960,17 @@ function system_del_kea6lease(string $ip) {
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
-
 
 function system_get_kea6leases() {
 	$leases = [];
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/var/run/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -3132,7 +3117,8 @@ function system_get_serial() {
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');
 
-	if (strlen($serial) >= 10 && strlen($serial) <= 16 &&
+	$serial = chop($serial);
+	if (strlen($serial) >= 10 && strlen($serial) <= 18 &&
 	    $vm_guest == 'none') {
 		return $serial;
 	}
@@ -3185,7 +3171,7 @@ function system_identify_specific_platform() {
 
 	if ($chassis[0] == "OracleCloud.com") {
 		return (array('name' => 'Oracle', 'descr' => 'Oracle Cloud Infrastructure'));
-	}	
+	}
 
 	if ($maker[0] == "QEMU") {
 		return (array('name' => 'QEMU', 'descr' => 'QEMU Guest'));
@@ -3382,5 +3368,3 @@ function system_get_arp_table($resolve_hostnames = false) {
 
 	return $arp_table;
 }
-
-?>

@@ -515,6 +515,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * 'cpzoneid_X_auth' - add PASS tag to authenticated client
 	 */
 	$rules .= filter_captiveportal_ether();
+	$rules .= PHP_EOL;
 
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubbing();

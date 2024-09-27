@@ -138,11 +138,9 @@ if ($_REQUEST['newver'] != "") {
 		$data = substr($out, 0, $pos);
 		$data = $data . "</pfsense>\n";
 
-		$fd = fopen("/tmp/config_restore.xml", "w");
-		fwrite($fd, $data);
-		fclose($fd);
+		file_put_contents('/tmp/config_restore.xml', $data);
 
-		$ondisksha256 = trim(shell_exec("/sbin/sha256 /tmp/config_restore.xml | /usr/bin/awk '{ print $4 }'"));
+		$ondisksha256 = hash_file('sha256', '/tmp/config_restore.xml');
 		// We might not have a sha256 on file for older backups
 		if ($sha256 != "0" && $sha256 != "") {
 			if ($ondisksha256 != $sha256) {
@@ -161,7 +159,7 @@ if ($_REQUEST['newver'] != "") {
 		}
 
 		if (!$input_errors && $data) {
-			if (config_restore("/tmp/config_restore.xml") == 0) {
+			if (config_restore("/tmp/config_restore.xml", "/tmp/config_restore.xml")) {
 				$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
 				$savemsg .= <<<EOF
 			<br />
@@ -172,7 +170,7 @@ if ($_REQUEST['newver'] != "") {
 		</form>
 EOF;
 			} else {
-				$savemsg = "Unable to revert to the selected configuration.";
+				$errormsg = gettext('Unable to revert to the selected configuration.');
 			}
 		} else {
 			log_error("There was an error when restoring the AutoConfigBackup item");
@@ -285,6 +283,9 @@ if ($input_errors) {
 }
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
+if ($errormsg) {
+	print_info_box($errormsg, 'danger');
 }
 
 $tab_array = array();

@@ -490,6 +490,30 @@ function check_for_alternate_interfaces() {
 	// If we recognise the platform, then specify the devices directly.
 	$if_config = config_get_path('interfaces', []);
 	switch ($specplatform['name']) {
+		case '5100':
+			$if_config['wan']['if'] = 'igb0';
+			$if_config['lan']['if'] = 'igb1';
+			$if_config['opt1'] = array(
+				'enable' => true,
+				'if' => 'ix0',
+				'descr' => 'OPT1'
+			);
+			$if_config['opt2'] = array(
+				'enable' => true,
+				'if' => 'ix1',
+				'descr' => 'OPT2'
+			);
+			$if_config['opt3'] = array(
+				'enable' => true,
+				'if' => 'ix2',
+				'descr' => 'OPT3'
+			);
+			$if_config['opt4'] = array(
+				'enable' => true,
+				'if' => 'ix3',
+				'descr' => 'OPT4'
+			);
+			break;
 		case 'alix':
 			$default_device['wan'] = "vr1";
 			$default_device['lan'] = "vr0";
@@ -731,30 +755,6 @@ function check_for_alternate_interfaces() {
 			$if_config['opt4'] = array(
 				'enable' => true,
 				'if' => 'ix1',
-				'descr' => 'OPT4'
-			);
-			break;
-		case '5100':
-			$if_config['wan']['if'] = 'igb0';
-			$if_config['lan']['if'] = 'igb1';
-			$if_config['opt1'] = array(
-				'enable' => true,
-				'if' => 'ix0',
-				'descr' => 'OPT1'
-			);
-			$if_config['opt2'] = array(
-				'enable' => true,
-				'if' => 'ix1',
-				'descr' => 'OPT2'
-			);
-			$if_config['opt3'] = array(
-				'enable' => true,
-				'if' => 'ix2',
-				'descr' => 'OPT3'
-			);
-			$if_config['opt4'] = array(
-				'enable' => true,
-				'if' => 'ix3',
 				'descr' => 'OPT4'
 			);
 			break;

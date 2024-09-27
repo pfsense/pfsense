@@ -542,7 +542,7 @@ $section->add($group);
 $cid_help = gettext('An optional identifier to match based on the value sent by the client (RFC 2132).');
 if (dhcp_is_backend('kea')) {
 	$cid_help .= '<br /><br />';
-	$cid_help .= gettext('Kea DHCP will only match on MAC address if both MAC address and client identifier are set for a static reservation.');
+	$cid_help .= gettext('Kea DHCP will match on MAC address if both MAC address and client identifier are set for a static mapping.');
 }
 
 $section->addInput(new Form_Input(

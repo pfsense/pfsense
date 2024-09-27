@@ -85,8 +85,6 @@ $pglinks = array("", "firewall_virtual_ip.php", "@self");
 include("head.inc");
 
 function build_if_list() {
-	$list = array();
-
 	$interfaces = get_configured_interface_with_descr(true);
 	$carplist = get_configured_vip_list('all', VIP_CARP);
 
@@ -195,7 +193,7 @@ $section->addInput(new Form_Select(
 	array_combine(range(1, 255, 1), range(1, 255, 1))
 ))->setHelp('Enter the VHID group that the machines will share.');
 
-$group = new Form_Group('Advertising frequency');
+$group = new Form_Group('Advertising Frequency');
 $group->add(new Form_Select(
 	'advbase',
 	'Base',
@@ -301,7 +299,6 @@ events.push(function() {
 			$('#type').val('single');
 			setRequired('type', false);
 			disableInput('subnet_bits', false);
-
 		} else if (mode == 'carp') {
 			$('#address_note').html("<?=$ipaliashelp?>");
 			disableInput('vhid', false);

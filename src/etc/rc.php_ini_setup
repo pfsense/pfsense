@@ -45,14 +45,16 @@ else
 	AVAILMEM=$(/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}')
 fi
 
+# Use hw.physmem if $AVAILMEM is zero
 if [ -z "$AVAILMEM" ]; then
-	MEM=$(/sbin/sysctl -q hw.physmem | cut -d':' -f2)
-	AVAILMEM=$(/bin/expr $MEM / 1048576)
+	AVAILMEM=$(/sbin/sysctl -qn hw.physmem | /usr/bin/awk '{print $1/1048576}' | /usr/bin/awk -F '.' '{print $1}')
 fi
 
-
 # Get amount of ram installed on this system
-REALMEM=$(/sbin/sysctl -q hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}')
+REALMEM=$(/sbin/sysctl -qn hw.realmem | /usr/bin/awk '{print $1/1048576}' | /usr/bin/awk -F '.' '{print $1}')
+if [ -z "$REALMEM" -o "$REALMEM" == "0" ]; then
+	REALMEM=$AVAILMEM
+fi
 export REALMEM
 export LOWMEM
 
@@ -80,6 +82,8 @@ else
 		OPCACHEMEMSIZE="50"
 	fi
 fi
+
+PCRE_JIT=1
 
 # Set upload directory
 UPLOADTMPDIR="/tmp"
@@ -213,6 +217,9 @@ session.hash_bits_per_character = 5
 session.hash_function = 1
 ${error_reporting}
 ${exception_ignore_args}
+
+[Pcre]
+pcre.jit=${PCRE_JIT}
 
 ; Extensions
 

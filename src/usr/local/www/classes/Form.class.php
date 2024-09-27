@@ -77,6 +77,13 @@ class Form extends Form_Element
 		return $this;
 	}
 
+	public function setMethod($method)
+	{
+		$this->_attributes['method'] = $method;
+
+		return $this;
+	}
+
 	public function addGlobal(Form_Input $input)
 	{
 		array_push($this->_global, $input);

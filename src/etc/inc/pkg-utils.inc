@@ -59,13 +59,17 @@ function pkg_valid_name($pkgname) {
 	return preg_match($pattern, $pkgname);
 }
 
-/* Remove pkg_prefix from package name if it's present */
+/* Remove pkg_prefix or flavor_prefix from package name if it's present */
 function pkg_remove_prefix(&$pkg_name) {
-	global $g;
-
-	if (substr($pkg_name, 0, strlen(g_get('pkg_prefix'))) ==
-	    g_get('pkg_prefix')) {
-		$pkg_name = substr($pkg_name, strlen(g_get('pkg_prefix')));
+	$pres = [g_get('pkg_prefix')];
+	if (!is_null(g_get('flavor_prefix'))) {
+		$pres[] = g_get('flavor_prefix');
+	}
+	foreach ( $pres as $pre) {
+		if (str_starts_with($pkg_name, $pre)) {
+			$pkg_name = substr($pkg_name, strlen($pre));
+			break;
+		}
 	}
 }
 
@@ -1556,43 +1560,50 @@ function pkg_switch_repo() {
 function update_repos() {
 	$product_name = g_get('product_name');
 	$pipes = [];
-	$descriptorspec = [
-		1 => ["pipe", "w"], /* stdout */
-		2 => ["pipe", "w"]  /* stderr */
+	$dspec = [
+		1 => ['pipe', 'w'], /* stdout */
+		2 => ['pipe', 'w']  /* stderr */
 	];
 	$rc = -1;
 	/* Default error message for failure cases. */
 	$fail_error = [
 		"error" => 1,
-		"messages" => ["Could not update connect to Netgate servers. Please try again later."]
+		"messages" => [gettext('Could not connect to Netgate servers. Please try again later.')]
 	];
 
 	/* Execute repoc with a full pkg style environment, including proxy
 	 * configuration. */
 	$process = proc_open(sprintf('/usr/local/sbin/%s-repoc -N', $product_name),
-	    $descriptorspec, $pipes, '/', pkg_env());
+	    $dspec, $pipes, '/', pkg_env());
 
 	/* Process failed to start */
 	if (!is_resource($process)) {
 		return $fail_error;
 	}
 
-	/* Read output */
-	$stdout = stream_get_contents($pipes[1]);
-	fclose($pipes[1]);
-	/* If stdout is boolean false, reading stdout failed. */
-	if ($stdout === false) {
-		return $fail_error;
-	}
-
-	/* Read errors */
-	$stderr = stream_get_contents($pipes[2]);
-	fclose($pipes[2]);
+	$timeout = 5; /* seconds */
+	$stdout = '';
+	do {
+		$start = microtime(true);
+		$r = ['stdout' => $pipes[1], 'stderr' => $pipes[2]];
+		$w = $e = null;
+		if (($n = stream_select($r, $w, $e, 0)) === false) {
+			$result = $fail_error;
+			goto error;
+		} else if ($n > 0) {
+			foreach ($r as $var => $fd) {
+				$$var .= fread($fd, 4096);
+			}
+		}
+		if (($timeout -= (microtime(true) - $start)) <= 0) {
+			$result = $fail_error;
+			goto error;
+		}
+	} while (!feof($pipes[1]) && !feof($pipes[2]));
 
 	/* Get return code */
-	$rc = proc_close($process);
 	$result = [
-		"error" => $rc,
+		"error" => proc_close($process),
 		"messages" => []
 	];
 
@@ -1600,13 +1611,18 @@ function update_repos() {
 	$stdout = explode("\n", trim($stdout));
 
 	if ((count($stdout) > 1) &&
-	    ($stdout[0] === "Messages:")) {
+	    ($stdout[0] === 'Messages:')) {
 		/* Copy over message content from the output. */
 		$result['messages'] = array_merge($result['messages'], array_slice($stdout, 1));
 	} elseif (!empty($stderr)) {
 		$result['messages'][] = $stderr;
 	}
 
-	return ($result);
+error:
+	if (is_resource($process)) {
+		proc_close($process);
+	}
+
+	return $result;
 }
 ?>

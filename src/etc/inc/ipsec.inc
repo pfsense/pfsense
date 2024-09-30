@@ -1843,9 +1843,9 @@ function ipsec_setup_strongswan() {
 
 		if (!empty(config_get_path('ipsec/client/dns_domain'))) {
 			$ssconf['charon']['plugins']['attr'][] = "# Search domain and default domain";
-			$ssconf['charon']['plugins']['attr']['27674'] = config_get_path('ipsec/client/dns_domain');
+			$ssconf['charon']['plugins']['attr']['28674'] = config_get_path('ipsec/client/dns_domain');
 			if (!empty(config_get_path('ipsec/client/dns_split'))) {
-				$ssconf['charon']['plugins']['attr']['27675'] = config_get_path('ipsec/client/dns_domain');
+				$ssconf['charon']['plugins']['attr']['28675'] = config_get_path('ipsec/client/dns_domain');
 			}
 		}
 

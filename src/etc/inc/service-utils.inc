@@ -911,6 +911,8 @@ function service_control_restart($name, $extras) {
 		case 'unbound':
 			services_unbound_configure();
 			break;
+		case 'kea-dhcp4':
+		case 'kea-dhcp6':
 		case 'dhcpd':
 			services_dhcpd_configure();
 			break;

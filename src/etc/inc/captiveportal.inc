@@ -1951,7 +1951,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 	/* read in client database */
 	$query = "WHERE ip = '{$clientip}'";
 	$tmpusername = SQLite3::escapeString(strtolower($username));
-	if (config_path_enabled("captiveportal/{$cpzone}/noconcurrentlogins")) {
+	if (config_get_path("captiveportal/{$cpzone}/noconcurrentlogins") !== null) {
 		$query .= " OR (username != 'unauthenticated' AND lower(username) = '{$tmpusername}')";
 	}
 	$cpdb = captiveportal_read_db($query);

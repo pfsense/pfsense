@@ -307,7 +307,7 @@ if (!function_exists('get_dyndns_service_text')) {
 		dyndnsObject.url = "/widgets/widgets/dyn_dns_status.widget.php";
 		dyndnsObject.callback =  dyndnscallback_<?=htmlspecialchars($widgetkey_nodash)?>;
 		dyndnsObject.parms = postdata;
-		dyndnsObject.freq = 1;
+		dyndnsObject.freq = 5;
 
 		// Register the AJAX object
 		register_ajax(dyndnsObject);

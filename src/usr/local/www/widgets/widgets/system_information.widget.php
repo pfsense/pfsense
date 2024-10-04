@@ -804,7 +804,7 @@ events.push(function() {
 	metersObject.url = "/getstats.php";
 	metersObject.callback = meters_callback;
 	metersObject.parms = postdata;
-	metersObject.freq = 1;
+	metersObject.freq = 5;
 
 	// Register the AJAX object
 	register_ajax(metersObject);

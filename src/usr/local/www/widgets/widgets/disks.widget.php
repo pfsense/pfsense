@@ -158,7 +158,7 @@ if (isset($_POST['save'])) {
 		disksObject.url = "/widgets/widgets/disks.widget.php";
 		disksObject.callback = disks_callback;
 		disksObject.parms = postdata;
-		disksObject.freq = 1;
+		disksObject.freq = 5;
 
 		// Register the AJAX object
 		register_ajax(disksObject);

@@ -233,7 +233,7 @@ if ($_REQUEST['ajax']) {
 		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
 		interfacesObject.callback = interfaces_callback;
 		interfacesObject.parms = postdata;
-		interfacesObject.freq = 1;
+		interfacesObject.freq = 5;
 
 		// Register the AJAX object
 		register_ajax(interfacesObject);

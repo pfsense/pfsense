@@ -457,7 +457,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 		openvpnObject.url = "/widgets/widgets/openvpn.widget.php";
 		openvpnObject.callback = openvpn_callback;
 		openvpnObject.parms = postdata;
-		openvpnObject.freq = 4;
+		openvpnObject.freq = 5;
 
 		// Register the AJAX object
 		register_ajax(openvpnObject);

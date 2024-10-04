@@ -263,7 +263,7 @@ events.push(function(){
 	ntpObject.url = "/widgets/widgets/ntp_status.widget.php";
 	ntpObject.callback = ntp_callback;
 	ntpObject.parms = postdata;
-	ntpObject.freq = 4;
+	ntpObject.freq = 5;
 
 	// Register the AJAX object
 	register_ajax(ntpObject);

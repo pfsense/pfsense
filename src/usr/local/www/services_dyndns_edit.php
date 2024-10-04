@@ -147,38 +147,33 @@ if ($_POST['save'] || $_POST['force']) {
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		$allow_wildcard = false;
-		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
-		    (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
-		    (isset($ddns_attr[$pconfig['type']]['wildcard']) && ($ddns_attr[$pconfig['type']]['wildcard'] == true) && 
-		    (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
+		if (((array_get_path($ddns_attr, "{$pconfig['type']}/apex") == true) && (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
+		    ((array_get_path($ddns_attr, "{$pconfig['type']}/wildcard") == true) && (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
-			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
-			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6") || ($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
-			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
-			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
-			$host_to_check = $_POST['host'];
-			$allow_wildcard = true;
-		} elseif ($pconfig['type'] == "hover") {
-			/* hover allows hostnames '@' and '*' also */
-			if ((strcmp("@", $_POST['host']) == 0) || (strcmp("*", $_POST['host']) == 0)) {
-				$host_to_check = $_POST['domainname'];
-			} else {
-				$host_to_check = $_POST['host'] . '.' . $_POST['domainname'];
-			}
 		} else {
-			$host_to_check = $_POST['host'];
-
-			/* No-ip can have a @ in hostname */
-			if (substr($pconfig['type'], 0, 4) == "noip") {
-				$last_to_check = strrpos($host_to_check, '@');
-				if ($last_to_check !== false) {
-					$host_to_check = substr_replace(
-						$host_to_check, '.', $last_to_check, 1);
-				}
-				unset($last_to_check);
+			switch ($pconfig['type']) {
+				case 'cloudflare':
+				case 'cloudflare-v6':
+				case 'gandi-livedns':
+				case 'gandi-livedns-v6':
+				case 'hover':
+				case 'linode':
+				case 'linode-v6':
+				case 'noip':
+				case 'porkbun':
+				case 'porkbun-v6':
+				case 'yandex':
+				case 'yandex-v6':
+					$host_to_check = ($_POST['host'] == '@') ? $_POST['domainname'] : "{$_POST['host']}.{$_POST['domainname']}";
+					$allow_wildcard = true;
+					break;
+				case 'route53':
+				case 'route53-v6':
+					$host_to_check = $_POST['host'];
+					$allow_wildcard = true;
+					break;
+				default:
+					$host_to_check = $_POST['host'];
 			}
 		}
 

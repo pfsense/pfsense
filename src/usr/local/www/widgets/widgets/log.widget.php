@@ -322,7 +322,7 @@ if (!$_REQUEST['ajax']) {
 			<td><i class="<?=$resultent['iconfn']?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$resultent['rulenum']},{$resultent['tracker']},{$resultent['act']}"; ?>', outputrule);"
 			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($resultent['rule'])?>">
 			</a></td>
-			<td title="<?=htmlspecialchars($resultent['time'])?>"><?=substr(htmlspecialchars($resultent['time']),0,-3)?></td>
+			<td title="<?=htmlspecialchars($resultent['time'])?>"><?=htmlspecialchars($resultent['time'])?></td>
 			<td><?=htmlspecialchars($resultent['interface']);?></td>
 			<td><a href="diag_dns.php?host=<?=$resultent['srcip']?>"
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$resultent['srcIP']?></a>
@@ -397,7 +397,7 @@ events.push(function(){
 	logsObject.url = "/widgets/widgets/log.widget.php";
 	logsObject.callback = logs_callback;
 	logsObject.parms = postdata;
-	logsObject.freq = <?=$nentriesinterval?>/5;
+	logsObject.freq = <?=$nentriesinterval?>;
 
 	// Register the AJAX object
 	register_ajax(logsObject);

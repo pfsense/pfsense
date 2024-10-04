@@ -159,6 +159,8 @@ if ($_POST['save'] || $_POST['force']) {
 				case 'hover':
 				case 'linode':
 				case 'linode-v6':
+				case 'name.com':
+				case 'name.com-v6':
 				case 'noip':
 				case 'porkbun':
 				case 'porkbun-v6':
@@ -204,7 +206,15 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['password'] = $this_dyndns_config['password'];;
 		}
-		$dyndns['host'] = $_POST['host'];
+		switch ($pconfig['type']) {
+			case 'name.com':
+			case 'name.com-v6':
+				$dyndns['host'] = ($_POST['host'] == "@") ? '' : $_POST['host'];
+				break;
+			default:
+				$dyndns['host'] = $_POST['host'];
+				break;
+		}
 		$dyndns['domainname'] = $_POST['domainname'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
@@ -359,7 +369,7 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Cloudflare, Linode, Porkbun, Name.com: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .

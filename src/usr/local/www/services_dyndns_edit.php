@@ -152,6 +152,8 @@ if ($_POST['save'] || $_POST['force']) {
 			$host_to_check = $_POST['domainname'];
 		} else {
 			switch ($pconfig['type']) {
+				case 'azure':
+				case 'azurev6':
 				case 'cloudflare':
 				case 'cloudflare-v6':
 				case 'gandi-livedns':
@@ -369,7 +371,7 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Linode, Porkbun, Name.com: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Azure, Cloudflare, Linode, Porkbun, Name.com: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .

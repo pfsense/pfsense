@@ -136,8 +136,6 @@ if ($_POST['widgetkey']) {
 	//handle checkboxes separately
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_raw_output");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_full_sensor_name");
-	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_warning");
-	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_critical");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_fahrenheit");
 
 	//write settings to config file
@@ -159,8 +157,6 @@ $thermal_sensors_widget_pchCriticalTempThreshold = getThresholdValueFromConfig($
 //get display settings from config (apply defaults if missing)
 $thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_raw_output", false, $widgetkey);
 $thermal_sensors_widget_showFullSensorName = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_full_sensor_name", false, $widgetkey);
-$thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_warning", true, $widgetkey);
-$thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
 $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_fahrenheit", false, $widgetkey);
 
 //=========================================================================
@@ -180,8 +176,6 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 			pchCriticalTempThreshold:<?= $thermal_sensors_widget_pchCriticalTempThreshold; ?>,
 			showRawOutput:<?= $thermal_sensors_widget_showRawOutput ? "true" : "false"; ?>,
 			showFullSensorName:<?= $thermal_sensors_widget_showFullSensorName ? "true" : "false"; ?>,
-			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
-			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>,
 			showFahrenheit:<?= $thermal_sensors_widget_showFahrenheit ? "true" : "false"; ?>
 
 		};
@@ -213,7 +207,6 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 		function ts_callback(s) {
 			var thermalSensorsData = s || "";
 			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams, true);
-			firstTime = false;
 		}
 
 		// POST data to send via AJAX

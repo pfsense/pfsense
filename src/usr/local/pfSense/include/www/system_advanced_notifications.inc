@@ -34,6 +34,7 @@ config_init_path('notifications/smtp');
 config_init_path('notifications/telegram');
 config_init_path('notifications/pushover');
 config_init_path('notifications/slack');
+config_init_path('notifications/webhook');
 
 function getAdvancedNotifications($json = false) {
 	$nconfig = array();
@@ -143,8 +144,9 @@ function saveAdvancedNotifications($post, $json = false) {
 	$testtelegram = isset($post['test-telegram']);
 	$testpushover = isset($post['test-pushover']);
 	$testslack = isset($post['test-slack']);
+	$testwebhook = isset($post['test-webhook']);
 
-	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover || $testslack) {
+	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover || $testslack || $testwebhook) {
 
 		// General Settings
 		config_set_path('notifications/certexpire/enable', (($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled"));
@@ -299,7 +301,15 @@ function saveAdvancedNotifications($post, $json = false) {
 			$input_errors[] = gettext("The Slack Channel name must be 80 characters or less.");
 		}
 
-		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack) {
+		// Generic Webhook
+		config_set_path('notifications/webhook/enabled', (($post['enable_webhook'] == "yes") ? true : false));
+		config_set_path('notifications/webhook/url', $post['webhook_url']);
+		
+		if (!filter_var(config_get_path('notifications/webhook/url'), FILTER_VALIDATE_URL)) {
+		    $input_errors[] = gettext("The webhook URL is not valid.");
+		}
+		
+		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack && !$testwebhook) {
 			write_config("Notifications Advanced Settings saved");
 
 			if (!$json) {
@@ -357,6 +367,16 @@ function saveAdvancedNotifications($post, $json = false) {
 		}
 	}
 
+	if ($testwebhook) {
+		// Send test message via webhook
+		$test_result = notify_via_webhook(sprintf(gettext("This is a Webhook test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
+		if (empty($test_result)) {
+			$test_result = gettext("Webhook testing message successfully sent");
+			$test_class = 'success';
+		} else {
+			$test_class = 'danger';
+		}
+	}
 	$rv['pconfig'] = $post;
 	$rv['test_result'] = $test_result;
 	$rv['test_class'] = $test_class;

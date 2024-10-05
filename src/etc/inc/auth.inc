@@ -2156,13 +2156,14 @@ function session_auth() {
 
 	// Handle HTTPS httponly and secure flags
 	$currentCookieParams = session_get_cookie_params();
-	session_set_cookie_params(
-		$currentCookieParams["lifetime"],
-		$currentCookieParams["path"],
-		NULL,
-		(config_get_path('system/webgui/protocol') == "https"),
-		true
-	);
+	session_set_cookie_params([
+		'lifetime' => $currentCookieParams["lifetime"],
+		'path' => $currentCookieParams["path"],
+		'domain' => NULL,
+		'secure' => (config_get_path('system/webgui/protocol') == "https"),
+		'httponly' => true,
+		'samesite' => 'Strict'
+	]);
 
 	phpsession_begin();
 

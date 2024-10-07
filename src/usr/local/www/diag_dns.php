@@ -189,7 +189,7 @@ if ($createdalias) {
 
 if ($couldnotcreatealias) {
 	if ($alias_exists) {
-		print_info_box(sprintf(gettext("Could not update alias for %s"), $host), 'warning', false);
+		print_info_box(sprintf(gettext("Alias already exists for %s"), $host), 'warning', false);
 	} else {
 		print_info_box(sprintf(gettext("Could not create alias for %s"), $host), 'warning', false);
 	}

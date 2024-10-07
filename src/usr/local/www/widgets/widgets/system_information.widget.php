@@ -438,7 +438,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<th><?=gettext("MBUF Usage");?></th>
 			<td>
 				<?php
-					get_mbuf($mbufstext, $mbufusage);
+					get_mbuf();
 				?>
 				<div class="progress">
 					<div id="mbufPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$mbufusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$mbufusage?>%">
@@ -631,8 +631,7 @@ function stats(x) {
 	updateCpuFreq(values[7]);
 	updateLoadAverage(values[8]);
 	updateMbuf(values[9]);
-	updateMbufMeter(values[10]);
-	updateStateMeter(values[11]);
+	updateStateMeter(values[10]);
 }
 
 function updateMemory(x) {
@@ -645,17 +644,18 @@ function updateMemory(x) {
 }
 
 function updateMbuf(x) {
+	mbufsTotal = x.split('/')[0];
+	mbufsMax= x.split('/')[1];
+	mbufsPercent = Math.floor((mbufsTotal / mbufsMax) * 100);
+
 	if ($('#mbuf')) {
 		$('[id="mbuf"]').html('(' + x + ')');
 	}
-}
-
-function updateMbufMeter(x) {
 	if ($('#mbufusagemeter')) {
-		$('[id="mbufusagemeter"]').html(x + '%');
+		$('[id="mbufusagemeter"]').html(mbufsPercent + '%');
 	}
 	if ($('#mbufPB')) {
-		setProgress('mbufPB', parseInt(x));
+		setProgress('mbufPB', mbufsPercent);
 	}
 }
 

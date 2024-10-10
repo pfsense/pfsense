@@ -34,7 +34,7 @@ require_once("guiconfig.inc");
 if ($_POST) {
 	if ($_POST['clear']) {
 		upnp_action('restart');
-		$savemsg = gettext("Rules have been cleared and the daemon restarted.");
+		$savemsg = gettext("Port maps have been cleared and the service restarted.");
 	}
 }
 
@@ -67,7 +67,7 @@ if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
-						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Ext Interface")?></th>
 						<th><?=gettext("Ext Port")?></th>
 						<th><?=gettext("Int IP")?></th>
 						<th><?=gettext("Int Port")?></th>
@@ -126,9 +126,9 @@ foreach ($rdr_entries as $rdr_entry) {
 <div>
 	<form action="status_upnp.php" method="post">
 		<nav class="action-buttons">
-			<button class="btn btn-danger btn-sm" type="submit" name="clear" id="clear" value="<?=gettext("Clear all sessions")?>">
+			<button class="btn btn-danger btn-sm" type="submit" name="clear" id="clear" value="<?=gettext("Clear all port maps")?>">
 				<i class="fa-solid fa-trash-can icon-embed-btn"></i>
-				<?=gettext("Clear all sessions")?>
+				<?=gettext("Clear all port maps")?>
 			</button>
 		</nav>
 	</form>

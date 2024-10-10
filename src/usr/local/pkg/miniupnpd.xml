@@ -27,7 +27,7 @@
 			<type>checkbox</type>
 			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 			<description>Enable service</description>
-			<sethelp>Enable automatic port mapping service.</sethelp>
+			<sethelp>Enable autonomous port mapping service.</sethelp>
 		</field>
 		<field>
 			<fielddescr>UPnP IGD</fielddescr>
@@ -41,7 +41,7 @@
 			<fieldname>enable_natpmp</fieldname>
 			<type>checkbox</type>
 			<description>Allow PCP/NAT-PMP Port Mapping</description>
-			<sethelp>This protocol is often used by Apple-compatible systems.</sethelp>
+			<sethelp>These protocols are often used by Apple-compatible systems.</sethelp>
 		</field>
 		<field>
 			<fielddescr>External Interface</fielddescr>
@@ -64,13 +64,13 @@
 		<field>
 			<fielddescr>Download Speed</fielddescr>
 			<fieldname>download</fieldname>
-			<description>Set the Maximum Download Speed in Kbits/second.</description>
+			<description>Report maximum download speed in kbit/s.</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fielddescr>Upload Speed</fielddescr>
 			<fieldname>upload</fieldname>
-			<description>Set the Maximum Upload Speed in Kbits/second.</description>
+			<description>Report maximum upload speed in kbit/s.</description>
 			<type>input</type>
 		</field>
 		<field>
@@ -95,7 +95,7 @@
 			<fielddescr>Uptime</fielddescr>
 			<fieldname>sysuptime</fieldname>
 			<type>checkbox</type>
-			<description>Use system uptime instead of service uptime.</description>
+			<description>Report system instead of service uptime.</description>
 		</field>
 		<field>
 			<fielddescr>Custom presentation URL</fielddescr>
@@ -154,7 +154,7 @@
 			<description>STUN UDP port (Default: 3478)</description>
 		</field>
 		<field>
-			<name>Service Access Control Lists</name>
+			<name>Service Access Control List</name>
 			<type>listtopic</type>
 		</field>
 		<field>
@@ -167,7 +167,7 @@
 			<name>ACL Help</name>
 			<type>info</type>
 			<description>
-			These entries control access to the service. Client systems may be granted or denied access based on several criteria.
+			These entries control access to the service. Client systems may be granted or denied access based on several criteria, IPv6 always allowed.
 			&lt;br /&gt;&lt;br /&gt;
 			Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]
 			&lt;br /&gt;Example: allow 1024-65535 192.168.0.0/24 1024-65535</description>

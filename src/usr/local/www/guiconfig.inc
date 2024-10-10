@@ -917,21 +917,21 @@ function add_package_tabs($tabgroup, &$tab_array) {
 	}
 }
 
-function system_alias_info_popup($friendly_interface) {
-	if (empty($friendly_interface)) {
+function system_alias_info_popup($name) {
+	if (empty($name)) {
 		return '';
 	}
 
 	$content = [];
-	$alias = escapeshellarg(strtoupper($friendly_interface) . '__NETWORK');
+	$alias = escapeshellarg($name);
 	exec("/sbin/pfctl -t {$alias} -T show 2>/dev/null", $content);
 
 	$alias_items = [];
 	foreach ($content as $address) {
-		$alias_items[] = trim($address);
+		$alias_items[] = htmlspecialchars(trim($address));
 	}
 
-	$content = "<h5>{$alias}</h5>";
+	$content = '<h5>' . htmlspecialchars($alias) . '</h5>';
 	if (empty($alias_items)) {
 		return $content;
 	}

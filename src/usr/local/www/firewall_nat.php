@@ -217,7 +217,7 @@ foreach (config_get_path('nat/rule', []) as $natent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['source']['network'])?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK')?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
 								</a>
 							<?php else: ?>
@@ -248,7 +248,7 @@ foreach (config_get_path('nat/rule', []) as $natent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['destination']['network'])?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK')?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
 								</a>
 							<?php else: ?>

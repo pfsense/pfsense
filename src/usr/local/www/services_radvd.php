@@ -527,7 +527,7 @@ events.push(function() {
 	checkLastRow();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network,urltable')) ?>;
 
 	$('#radns1, #radns2, #radns3, #radns4').autocomplete({
 		source: addressarray

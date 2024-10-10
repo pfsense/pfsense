@@ -404,8 +404,8 @@ events.push(function() {
 	poolopts_change();
 
     // --------- Autocomplete -----------------------------------------------------------------------------------------
-    var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
-    var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+    var addressarray = <?= json_encode(get_alias_list('host,network,urltable')) ?>;
+    var customarray = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
     $('#destination, #source, #target').autocomplete({
         source: addressarray

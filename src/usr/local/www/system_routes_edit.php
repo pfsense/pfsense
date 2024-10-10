@@ -285,7 +285,7 @@ print $form;
 //<![CDATA[
 events.push(function() {
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network')) ?>;
 
 	$('#network').autocomplete({
 		source: addressarray

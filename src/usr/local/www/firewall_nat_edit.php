@@ -577,7 +577,7 @@ events.push(function() {
 		}
 	}
 
-	var customarray	 = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var customarray	 = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
 	function check_for_aliases() {
 		//	if External port range is an alias, then disallow
@@ -761,8 +761,8 @@ if (!$_POST) {
 	nordr_change();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
-	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network,urltable')) ?>;
+	var customarray = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
 	$('#localip, #src, #dst').autocomplete({
 		source: addressarray

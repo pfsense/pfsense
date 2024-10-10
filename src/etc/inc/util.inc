@@ -3300,19 +3300,20 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, 
  * RESULT
  *   Array containing list of aliases.
  *   If $type is unspecified, all aliases are returned.
- *   If $type is a string, all aliases of the type specified in $type are returned.
- *   If $type is an array, all aliases of any type specified in any element of $type are returned.
+ *   If $type is a comma-separated string, all aliases of the type(s) specified in $type are returned.
  */
-function get_alias_list($type = null) {
-	$result = array();
-	foreach (config_get_path('aliases/alias', []) as $alias) {
-		if ($type === null) {
-			$result[] = $alias['name'];
-		} else if (is_array($type)) {
-			if (in_array($alias['type'], $type)) {
-				$result[] = $alias['name'];
-			}
-		} else if ($type === $alias['type']) {
+function get_alias_list($type = '') {
+	$requested_types = [];
+	if (!empty($type)) {
+		if (!is_string($type)) {
+			return [];
+		}
+		$requested_types = explode(',', $type);
+	}
+
+	$aliases = config_get_path('aliases/alias', []);
+	foreach ($aliases as $alias) {
+		if (empty($requested_types) || in_array($alias['type'], $requested_types)) {
 			$result[] = $alias['name'];
 		}
 	}

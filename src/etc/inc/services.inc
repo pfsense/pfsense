@@ -5223,7 +5223,7 @@ function upnp_start() {
 	}
 
 	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
-		echo gettext("Starting UPnP service... ");
+		echo gettext("Starting UPnP IGD & PCP service...");
 		require_once('/usr/local/pkg/miniupnpd.inc');
 		sync_package_miniupnpd();
 		echo "done.\n";

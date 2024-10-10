@@ -102,7 +102,7 @@
 			}
 		}
 		if ($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'], false)) {
-			$input_errors[] = 'You must specify a valid ip address in the \'Override WAN address\' field';
+			$input_errors[] = 'You must specify a valid IP address in the \'Override WAN address\' field';
 		}
 		if (($post['download'] && !$post['upload']) || ($post['upload'] && !$post['download'])) {
 			$input_errors[] = 'You must fill in both \'Maximum Download Speed\' and \'Maximum Upload Speed\' fields';
@@ -126,26 +126,26 @@
 			}
 		}
 
-		/* user permissions validation */
+		/* ACL Entries validation */
 		$j = substr_count(implode(array_keys($post)), "permuser");
 		for ($i = 0; $i < $j; $i++) {
 			if ($post["permuser{$i}"]) {
 				$perm = explode(' ', $post["permuser{$i}"]);
 				/* should explode to 4 args */
 				if (count($perm) != 4) {
-					$input_errors[] = "You must follow the specified format in the 'User specified permissions {$i}' field";
+					$input_errors[] = "You must follow the specified format in the 'ACL Entries {$i}' field";
 				} else {
 					/* must with allow or deny */
 					if (!($perm[0] == 'allow' || $perm[0] == 'deny')) {
-						$input_errors[] = "You must begin with allow or deny in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must begin with allow or deny in the 'ACL Entries {$i}' field";
 					}
 					/* verify port or port range */
 					if (!upnp_validate_port($perm[1]) || !upnp_validate_port($perm[3])) {
-						$input_errors[] = "You must specify a port or port range between 0 and 65535 in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must specify a port or port range between 1 and 65535 in the 'ACL Entries {$i}' field";
 					}
 					/* verify ip address */
 					if (!upnp_validate_ip($perm[2], true)) {
-						$input_errors[] = "You must specify a valid ip address in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must specify a valid IP address in the 'ACL Entries {$i}' field";
 					}
 				}
 			}
@@ -200,7 +200,7 @@
 							$ifaces_active .= ", {$iface}";
 						}
 					} else {
-						upnp_warn("Interface {$iface} has no ip address, ignoring");
+						upnp_warn("Interface {$iface} has no IP address, ignoring");
 					}
 				} else {
 					upnp_warn("Could not resolve real interface for {$iface}");
@@ -267,7 +267,7 @@
 				}
 
 				if ($upnp_config['permdefault']) {
-					$config_text .= "deny 0-65535 0.0.0.0/0 0-65535\n";
+					$config_text .= "deny 1-65535 0.0.0.0/0 1-65535\n";
 				}
 
 				/* Recheck if queue is valid */

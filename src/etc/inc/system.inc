@@ -2629,11 +2629,11 @@ function system_ntp_configure() {
 			} else {
 				$ntpcfg .= 'server ';
 			}
-			if (config_get_path('ntpd/dnsresolv') == 'inet') {
-				$ntpcfg .= '-4 ';
-			} elseif (config_get_path('ntpd/dnsresolv') == 'inet6') {
-				$ntpcfg .= '-6 ';
-			}
+		}
+		if (config_get_path('ntpd/dnsresolv') == 'inet') {
+			$ntpcfg .= '-4 ';
+		} elseif (config_get_path('ntpd/dnsresolv') == 'inet6') {
+			$ntpcfg .= '-6 ';
 		}
 
 		$ntpcfg .= "{$ts}";

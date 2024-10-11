@@ -263,17 +263,82 @@ $pf_reserved_keywords = [
 	'pppoe', 'pptp'
 ];
 
-/* Reserved table names to avoid collision */
+/**
+ * User-accessible read-only aliases reserved for system use.
+ * 
+ * Entries must have the name as the key. Each entry must have a name,
+ * type, description, and address. Possible values are:
+ * - name: Same value as the key; used for compatibility with other functions.
+ * - url: Only required for URL* types.
+ * - updatefreq: Only required for URL* types.
+ * - type: A string of one of 'port', or 'address'.
+ * - descr: A string value.
+ * - address: A string of space-separated values; may be defined
+ *            dynamically e.g. during filter ruleset generation.
+ * - detail: A string value.
+ * 
+ * @global array $reserved_table_names
+ */
 global $reserved_table_names;
 $reserved_table_names = [
-	'bogons',
-	'bogonsv6',
-	'negate_networks',
-	'snort2c',
-	'sshguard',
-	'tonatsubnets',
-	'virusprot',
-	'vpn_networks',
+	'bogons' => [
+		'name' => 'bogons',
+		'type' => 'urltable',
+		'url' => '/etc/bogons',
+		'descr' => 'IPv4 Bogons',
+		'address' => '',
+		'detail' => ''
+	],
+	'bogonsv6' => [
+		'name' => 'bogonsv6',
+		'type' => 'urltable',
+		'url' => '/etc/bogonsv6',
+		'descr' => 'IPv6 Bogons',
+		'address' => '',
+		'detail' => ''
+	],
+	'sshguard' => [
+		'name' => 'sshguard',
+		'type' => 'host',
+		'descr' => 'Hosts blocklisted by SSH login protection',
+		'address' => '',
+		'detail' => ''
+	],
+	'snort2c' => [
+		'name' => 'snort2c',
+		'type' => 'host',
+		'descr' => 'Hosts blocked by IDS',
+		'address' => '',
+		'detail' => ''
+	],
+	'virusprot' => [
+		'name' => 'virusprot',
+		'type' => 'host',
+		'descr' => 'Hosts blocked due to connection restrictions',
+		'address' => '',
+		'detail' => ''
+	],
+	'vpn_networks' => [
+		'name' => 'vpn_networks',
+		'type' => 'network',
+		'descr' => 'Networks for IPsec, OpenVPN, and PPPoE',
+		'address' => '',
+		'detail' => ''
+	],
+	'negate_networks' => [
+		'name' => 'negate_networks',
+		'type' => 'network',
+		'descr' => 'Networks to negate with policy routing rules',
+		'address' => '',
+		'detail' => ''
+	],
+	'tonatsubnets' => [
+		'name' => 'tonatsubnets',
+		'type' => 'network',
+		'descr' => 'Automatically NAT\'ed networks',
+		'address' => '',
+		'detail' => ''
+	],
 ];
 
 /* VLAN Prio values. */

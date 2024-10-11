@@ -131,6 +131,8 @@ $seprows = separator_rows($separators);
 global $user_settings;
 $show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
 $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
+$system_aliases_ports = get_reserved_table_names('', 'port,url_ports,urltable_ports');
+$system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable');
 foreach (config_get_path('nat/rule', []) as $natent):
 
 	// Display separator(s) for section beginning at rule n
@@ -220,26 +222,26 @@ foreach (config_get_path('nat/rule', []) as $natent):
 								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK')?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags)))?>
 								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['address'], $system_aliases_hosts)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['source']['address']))?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'])))?>
+								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($natent['source'], $rdr_srctype_flags))?>
 							<?php endif; ?>
 						</td>
 						<td>
-<?php
-	if (isset($alias['srcport'])):
-?>
+						<?php if (isset($alias['srcport'])): ?>
 							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
-<?php
-	endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['source']['port'])))?>
-<?php
-	if (isset($alias['srcport'])):
-?>
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['source']['port'])))?>
 							</a>
-<?php
-	endif;
-?>
+						<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['port'], $system_aliases_ports)): ?>
+							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($natent['source']['port']))?>" data-html="true">
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['source']['port'])))?>
+							</a>
+						<?php else: ?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['source']['port'])))?>
+						<?php endif; ?>
 						</td>
 
 						<td>
@@ -251,52 +253,52 @@ foreach (config_get_path('nat/rule', []) as $natent):
 								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK')?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags)))?>
 								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['address'], $system_aliases_hosts)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['destination']['address']))?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
+								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($natent['destination'], $rdr_dsttype_flags))?>
 							<?php endif; ?>
 						</td>
 						<td>
-<?php
-	if (isset($alias['dstport'])):
-?>
+						<?php if (isset($alias['dstport'])): ?>
 							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
-<?php
-	endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
-<?php
-	if (isset($alias['dstport'])):
-?>
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
 							</a>
-<?php
-	endif;
-?>
+						<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['port'], $system_aliases_ports)): ?>
+							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($natent['destination']['port']))?>" data-html="true">
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
+							</a>
+						<?php else: ?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
+						<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($alias['target'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['network' => $natent['target']], $rdr_lcltype_flags)))?>
 								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['target'], $system_aliases_hosts)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($natent['target']))?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['address' => $natent['target']])))?>
+								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $rdr_lcltype_flags))?>
 							<?php endif; ?>
 						</td>
 						<td>
-<?php
-	if (isset($alias['targetport'])):
-?>
+						<?php if (isset($alias['targetport'])): ?>
 							<a href="/firewall_aliases_edit.php?id=<?=$alias['targetport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['targetport'])?>" data-html="true">
-<?php
-	endif;
-?>
-							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($localport)))?>
-<?php
-	if (isset($alias['targetport'])):
-?>
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($localport)))?>
 							</a>
-<?php
-	endif;
-?>
+						<?php elseif ($show_system_alias_popup && array_key_exists($localport, $system_aliases_ports)): ?>
+							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($localport))?>" data-html="true">
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($localport)))?>
+							</a>
+						<?php else: ?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($localport)))?>
+						<?php endif; ?>
 						</td>
 
 						<td>

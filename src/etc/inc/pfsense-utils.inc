@@ -3707,7 +3707,7 @@ function get_pf_reserved(?string $name = '', bool $check_ifname = true):bool|arr
 		}
 		$reserved[] = strtoupper("{$if}__NETWORK");
 	}
-	$reserved = array_merge($pf_reserved_keywords, $reserved_table_names, $reserved);
+	$reserved = array_merge($pf_reserved_keywords, array_keys($reserved_table_names), $reserved);
 
 	return (empty($name) ? $reserved : in_array(strtoupper($name), $reserved));
 }

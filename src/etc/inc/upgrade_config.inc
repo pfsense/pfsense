@@ -6957,6 +6957,12 @@ function upgrade_232_to_233() {
 	config_set_path('openvpn/openvpn-csc', $openvpn_csc_config);
 }
 
+/* System aliases can now be used in filter rules. */
+function upgrade_234_to_235() {
+	rename_conflicting_aliases();
+}
+
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

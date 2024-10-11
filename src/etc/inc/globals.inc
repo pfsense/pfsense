@@ -270,12 +270,11 @@ $pf_reserved_keywords = [
  * type, description, and address. Possible values are:
  * - name: Same value as the key; used for compatibility with other functions.
  * - url: Only required for URL* types.
- * - updatefreq: Only required for URL* types.
- * - type: A string of one of 'port', or 'address'.
+ * - type: The alias type.
  * - descr: A string value.
  * - address: A string of space-separated values; may be defined
  *            dynamically e.g. during filter ruleset generation.
- * - detail: A string value.
+ * - detail: An optional string value.
  * 
  * @global array $reserved_table_names
  */

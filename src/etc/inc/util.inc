@@ -986,7 +986,7 @@ function set_reserved_table_name($name, $value) {
 	}
 
 	// Normalize the name.
-	$name = strtoupper($name);
+	$name = strtolower($name);
 	if (!isset($reserved_table_names[$name])) {
 		return false;
 	}

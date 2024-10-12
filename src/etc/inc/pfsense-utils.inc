@@ -3642,10 +3642,8 @@ function send_user_download($type, $content, $userfilename = "", $contenttype = 
 
 	/* Send cache headers */
 	if (isset($_SERVER['HTTPS'])) {
-		header('Pragma: ');
 		header('Cache-Control: ');
 	} else {
-		header("Pragma: private");
 		header("Cache-Control: private, must-revalidate");
 	}
 

@@ -890,11 +890,11 @@ foreach (config_get_path('filter/rule', []) as $filteri => $filterent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'])))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($filterent['source']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($filterent['source']['network']) . '__NETWORK')?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($filterent['source']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'], $filter_srcdsttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($filterent['source']['address'], $system_aliases_hosts)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($filterent['source']['address']))?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($filterent['source']['address']), true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'])))?>
 								</a>
 							<?php else: ?>
@@ -907,7 +907,7 @@ foreach (config_get_path('filter/rule', []) as $filteri => $filterent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['source']['port'])))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($filterent['source']['port'], $system_aliases_ports)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($filterent['source']['port']))?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($filterent['source']['port']), true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['source']['port'])))?>
 								</a>
 							<?php else: ?>
@@ -920,11 +920,11 @@ foreach (config_get_path('filter/rule', []) as $filteri => $filterent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'])))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($filterent['destination']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($filterent['destination']['network']) . '__NETWORK')?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($filterent['destination']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'], $filter_srcdsttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($filterent['destination']['address'], $system_aliases_hosts)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($filterent['destination']['network']))?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($filterent['destination']['address']), true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'])))?>
 								</a>
 							<?php else: ?>
@@ -937,7 +937,7 @@ foreach (config_get_path('filter/rule', []) as $filteri => $filterent):
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['destination']['port'])))?>
 								</a>
 								<?php elseif ($show_system_alias_popup && array_key_exists($filterent['destination']['port'], $system_aliases_ports)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($filterent['destination']['port']))?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($filterent['destination']['port']), true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['destination']['port'])))?>
 								</a>
 							<?php else: ?>

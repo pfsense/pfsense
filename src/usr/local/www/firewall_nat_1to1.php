@@ -162,7 +162,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK')?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags)))?>
 								</a>
 							<?php else: ?>
@@ -175,7 +175,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $binat_dsttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK')?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $binat_dsttype_flags)))?>
 								</a>
 							<?php else: ?>

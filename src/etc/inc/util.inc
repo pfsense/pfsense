@@ -2185,8 +2185,25 @@ function alias_make_table() {
 	global $aliastable;
 
 	$aliastable = array();
+	$aliases = config_get_path('aliases/alias', []);
 
-	foreach (config_get_path('aliases/alias', []) as $alias) {
+	// Reserved aliases take precedence.
+	$reserved_alias = get_reserved_table_names();
+	if (!empty($reserved_alias)) {
+		foreach ($aliases as $id => $info) {
+			if (!isset($reserved_alias[$info['name']])) {
+				continue;
+			}
+			$aliases[$id] = $reserved_alias[$info['name']];
+			unset($reserved_alias[$info['name']]);
+		}
+
+		if (!empty($reserved_alias)) {
+			$aliases = array_merge($aliases, array_values($reserved_alias));
+		}
+	}
+
+	foreach ($aliases as $alias) {
 		if (!is_array($alias) || empty($alias)) {
 			continue;
 		}
@@ -2230,13 +2247,7 @@ function alias_get_type($name) {
 	// Reserved aliases take precedence.
 	$reserved_alias = get_reserved_table_names($name);
 	if (!empty($reserved_alias)) {
-		foreach ($aliases as $id => $info) {
-			if (isset($reserved_alias[$info['name']])) {
-				$aliases[$id] = $reserved_alias[$info['name']];
-				unset($reserved_alias[$info['name']]);
-			}
-		}
-		$aliases = array_merge($aliases, array_values($reserved_alias));
+		return $reserved_alias[array_key_first($reserved_alias)]['type'];
 	}
 
 	foreach ($aliases as $alias) {
@@ -2262,24 +2273,48 @@ function alias_expand($name) {
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
 	$aliases = config_get_path('aliases/alias', []);
-	$aliastable_with_system_aliases = $aliastable;
-	$is_system_alias = false;
 
 	// Reserved aliases take precedence.
 	$reserved_alias = get_reserved_table_names($name);
 	if (!empty($reserved_alias)) {
-		$is_system_alias = true;
-		$aliastable_with_system_aliases = array_merge($aliastable_with_system_aliases, $reserved_alias);
-		foreach ($aliases as $id => $info) {
-			if (isset($reserved_alias[$info['name']])) {
-				$aliases[$id] = $reserved_alias[$info['name']];
-				unset($reserved_alias[$info['name']]);
+		if (!in_array($reserved_alias[array_key_first($reserved_alias)]['type'], ['url', 'url_ports', 'urltable', "urltable_ports"])) {
+			if (in_array($reserved_alias[array_key_first($reserved_alias)]['type'], ['port'])) {
+				return "\${$name}";
+			} else {
+				return "<{$name}>";
 			}
 		}
-		$aliases = array_merge($aliases, array_values($reserved_alias));
+
+		// Handle URL* type system aliases that specify a file path.
+		if (!empty($reserved_alias[array_key_first($reserved_alias)]['url']) && !is_URL($reserved_alias[array_key_first($reserved_alias)]['url'])) {
+			$urltable_filename = $reserved_alias[array_key_first($reserved_alias)]['url'];
+			if (file_exists($urltable_filename) && !empty(trim(file_get_contents($urltable_filename)))) {
+				if (in_array($reserved_alias[array_key_first($reserved_alias)]['type'], ['url_ports', 'urltable_ports'])) {
+					// pf does not support port tables - use a macro instead.
+					return "\${$name}";
+				} else {
+					return "<{$name}>";
+				}
+			} else {
+				return null;
+			}
+		}
+
+		// Replace user alias with system alias.
+		foreach ($aliases as $id => $info) {
+			if (!isset($reserved_alias[$info['name']])) {
+				continue;
+			}
+			$aliases[$id] = $reserved_alias[$info['name']];
+			unset($reserved_alias[$info['name']]);
+			break;
+		}
+		if (!empty($reserved_alias)) {
+			$aliases = array_merge($aliases, array_values($reserved_alias));
+		}
 	}
 
-	if (isset($aliastable_with_system_aliases[$name])) {
+	if (isset($aliastable[$name])) {
 		// alias names cannot be strictly numeric. redmine #4289
 		if (is_numericint($name)) {
 			return null;
@@ -2291,9 +2326,8 @@ function alias_expand($name) {
 		 */
 		foreach ($aliases as $alias) {
 			if ($alias['name'] == $name) {
-				$file_path = ($is_system_alias ? $alias['url'] : $urltable_filename);
 				if (in_array($alias['type'], ['url', 'url_ports', 'urltable', "urltable_ports"])) {
-					if (file_exists($file_path) && !empty(trim(file_get_contents($file_path)))) {
+					if (is_URL($alias['url']) && file_exists($urltable_filename) && !empty(trim(file_get_contents($urltable_filename)))) {
 						return "\${$name}";
 					} elseif (is_array($alias['aliasurl'])) {
 						foreach ($alias['aliasurl'] as $aliasurl) {
@@ -2333,15 +2367,30 @@ function alias_expand_urltable($name) {
 	$aliases = config_get_path('aliases/alias', []);
 
 	// Reserved aliases take precedence.
-	$reserved_alias = get_reserved_table_names($name);
+	$reserved_alias = get_reserved_table_names($name, 'urltable');
 	if (!empty($reserved_alias)) {
-		foreach ($aliases as $id => $info) {
-			if (isset($reserved_alias[$info['name']])) {
-				$aliases[$id] = $reserved_alias[$info['name']];
-				unset($reserved_alias[$info['name']]);
+		// Handle URL* type system aliases that specify a file path.
+		if (!empty($reserved_alias[array_key_first($reserved_alias)]['url']) && !is_URL($reserved_alias[array_key_first($reserved_alias)]['url'])) {
+			$urltable_filename = $reserved_alias[array_key_first($reserved_alias)]['url'];
+			if (file_exists($urltable_filename)) {
+				return $urltable_filename;
+			} else {
+				return null;
 			}
 		}
-		$aliases = array_merge($aliases, array_values($reserved_alias));
+
+		// Replace user alias with system alias.
+		foreach ($aliases as $id => $info) {
+			if (!isset($reserved_alias[$info['name']])) {
+				continue;
+			}
+			$aliases[$id] = $reserved_alias[$info['name']];
+			unset($reserved_alias[$info['name']]);
+			break;
+		}
+		if (!empty($reserved_alias)) {
+			$aliases = array_merge($aliases, array_values($reserved_alias));
+		}
 	}
 
 	foreach ($aliases as $alias) {

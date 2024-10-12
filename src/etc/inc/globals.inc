@@ -267,9 +267,11 @@ $pf_reserved_keywords = [
  * User-accessible read-only aliases reserved for system use.
  * 
  * Entries must have the name as the key. Each entry must have a name,
- * type, description, and address. Possible values are:
+ * type, and description. Possible values are:
  * - name: Same value as the key; used for compatibility with other functions.
- * - url: Only required for URL* types.
+ * - url: A URL string for URL* types. Alternatively it may be a file path.
+ *        If a file path is given, the alias is assumed to be processed
+ *        separately such as with rc.update_bogons.sh.
  * - type: The alias type.
  * - descr: A string value.
  * - address: A string of space-separated values; may be defined
@@ -284,7 +286,7 @@ $reserved_table_names = [
 		'name' => 'bogons',
 		'type' => 'urltable',
 		'url' => '/etc/bogons',
-		'descr' => 'IPv4 Bogons',
+		'descr' => 'IPv4 bogons',
 		'address' => '',
 		'detail' => ''
 	],
@@ -292,49 +294,49 @@ $reserved_table_names = [
 		'name' => 'bogonsv6',
 		'type' => 'urltable',
 		'url' => '/etc/bogonsv6',
-		'descr' => 'IPv6 Bogons',
+		'descr' => 'IPv6 bogons.',
 		'address' => '',
 		'detail' => ''
 	],
 	'sshguard' => [
 		'name' => 'sshguard',
 		'type' => 'host',
-		'descr' => 'Hosts blocklisted by SSH login protection',
+		'descr' => 'Hosts blocked by SSH login protection.',
 		'address' => '',
 		'detail' => ''
 	],
 	'snort2c' => [
 		'name' => 'snort2c',
 		'type' => 'host',
-		'descr' => 'Hosts blocked by IDS',
+		'descr' => 'Hosts blocked by IDS.',
 		'address' => '',
 		'detail' => ''
 	],
 	'virusprot' => [
 		'name' => 'virusprot',
 		'type' => 'host',
-		'descr' => 'Hosts blocked due to connection restrictions',
+		'descr' => 'Hosts blocked due to connection restrictions.',
 		'address' => '',
 		'detail' => ''
 	],
 	'vpn_networks' => [
 		'name' => 'vpn_networks',
 		'type' => 'network',
-		'descr' => 'Networks for IPsec, OpenVPN, and PPPoE',
+		'descr' => 'Networks for IPsec, OpenVPN, and PPPoE.',
 		'address' => '',
 		'detail' => ''
 	],
 	'negate_networks' => [
 		'name' => 'negate_networks',
 		'type' => 'network',
-		'descr' => 'Networks to negate with policy routing rules',
+		'descr' => 'Networks to negate with policy routing rules.',
 		'address' => '',
 		'detail' => ''
 	],
 	'tonatsubnets' => [
 		'name' => 'tonatsubnets',
 		'type' => 'network',
-		'descr' => 'Automatically NAT\'ed networks',
+		'descr' => 'Automatically NAT\'ed networks.',
 		'address' => '',
 		'detail' => ''
 	],

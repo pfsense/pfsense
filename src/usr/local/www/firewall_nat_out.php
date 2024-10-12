@@ -233,11 +233,11 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK')?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_aliases_hosts)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['source']['network']))?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['source']['network']), true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'])))?>
 								</a>
 							<?php else: ?>
@@ -256,7 +256,7 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['sourceport'])))?>
 							</a>
 						<?php elseif ($show_system_alias_popup && array_key_exists($natent['sourceport'], $system_aliases_ports)): ?>
-							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($natent['sourceport']))?>" data-html="true">
+							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['sourceport']), true)?>" data-html="true">
 								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['sourceport'])))?>
 							</a>
 						<?php else: ?>
@@ -270,11 +270,11 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK')?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_aliases_hosts)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtoupper($natent['destination']['network']))?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['destination']['network']), true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
 								</a>
 							<?php else: ?>
@@ -293,7 +293,7 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['dstport'])))?>
 							</a>
 						<?php elseif ($show_system_alias_popup && array_key_exists($natent['dstport'], $system_aliases_ports)): ?>
-							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($natent['dstport']))?>" data-html="true">
+							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['dstport']), true)?>" data-html="true">
 								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['dstport'])))?>
 							</a>
 						<?php else: ?>
@@ -308,7 +308,7 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['target'], $system_aliases_hosts)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup(strtolower($natent['target']))?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['target']), true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['address' => $natent['target']])))?>
 								</a>
 							<?php elseif (empty($natent['target_subnet'])): ?>

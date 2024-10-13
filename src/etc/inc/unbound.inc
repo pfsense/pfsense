@@ -202,6 +202,11 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
 	$module_config = '';
 
+	// Setup respip to look at IP addresses in responses 
+	if (isset($unboundcfg['replace1to1'])) {
+		$module_config .= 'respip ';
+	}
+
 	// Setup Python module (pre validator)
 	if (!empty(unbound_get_python_scriptname($unboundcfg, $cfgsubdir)) &&
 	    $unboundcfg['python_order'] == 'pre_validator') {
@@ -410,6 +415,19 @@ EOD;
 		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
 	}
 
+	if (isset($unboundcfg['replace1to1'])) {
+		$respip_redirects_conf .=<<<EOD
+# Response IP Redirects
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/respip_entries.conf
+EOD;
+
+		// Configure 1:1 NAT Replacement Entries
+		unbound_add_1to1nat_entries($cfgsubdir);
+	} else {
+		$respip_redirects_conf = '';
+		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/respip_entries.conf");
+	}
+
 	// Set up forwarding if it is configured
 	if (isset($unboundcfg['forwarding'])) {
 		$dnsservers = get_dns_nameservers(false, true);
@@ -550,6 +568,8 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 
 # dhcp lease entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
+
+{$respip_redirects_conf}
 
 {$openvpn_clients_conf}
 
@@ -773,6 +793,45 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 	return $zone_data;
 }
 
+function unbound_generate_respip_data($nat_rule) {
+	$zone_data = '';
+	$mask = intval($nat_rule['srcmask']);
+
+	if ($nat_rule['ipprotocol'] == 'inet') {
+		$type = 'A';
+		$external_first_address = "{$nat_rule['external']}/{$mask}";
+		$internal_first_address = "{$nat_rule['src']}/{$mask}";
+
+		$external_all_addresses = subnetv4_expand($external_first_address);
+		$internal_all_addresses = subnetv4_expand($internal_first_address);
+
+		$addr_mappings = array_map(function ($k, $v) {
+			return ["{$k}/32", $v];
+		}, $external_all_addresses, $internal_all_addresses);
+
+	} elseif ($nat_rule['ipprotocol'] == 'inet6') {
+		$type = 'AAAA';
+
+		// IPv6 ranges are not supported
+		if ($mask != 128) {
+			return '';
+		}
+
+		$addr_mappings[] = ["{$nat_rule['external']}/128", $nat_rule['src']];
+	} else {
+		return '';
+	}
+
+	// Create a separate entry for each IP in a subnet
+	foreach ($addr_mappings as $m) {
+		list($external_addr, $internal_addr) = $m;
+		$zone_data .= "response-ip: {$external_addr} redirect\n";
+		$zone_data .= "response-ip-data: {$external_addr} \"{$type} {$internal_addr}\"\n";
+	}
+
+	return $zone_data;
+}
+
 function unbound_add_host_entries($cfgsubdir = "") {
 	global $g, $nooutifs;
 
@@ -829,6 +888,26 @@ function unbound_add_host_entries($cfgsubdir = "") {
 
 	/* dhcpleases will write to this config file, make sure it exists */
 	@touch("{$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf");
+}
+
+function unbound_add_1to1nat_entries($cfgsubdir = "") {
+	global $g;
+
+	$a_1to1 = config_get_path('nat/onetoone', []);
+
+	$unbound_entries = '';
+	/* Build zone data for other domain */
+	foreach ($a_1to1 as $nat_entry) {
+		$rule = nat1to1_rule_to_pconfig($nat_entry);
+		// Check conditions for including in DNS:
+		if (nat1to1_rule_can_dnsmap($rule)) {
+			$unbound_entries .= unbound_generate_respip_data($rule);
+		}
+	}
+
+	// Write out entries
+	create_unbound_chroot_path($cfgsubdir);
+	file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/respip_entries.conf", $unbound_entries);
 }
 
 function unbound_control($action) {
@@ -1038,6 +1117,15 @@ function unbound_acls_config($cfgsubdir = "") {
 function unbound_hosts_generate() {
 	// Generate our hosts file
 	unbound_add_host_entries();
+
+	// Reload our service to read the updates
+	unbound_control("reload");
+}
+
+// Generate hosts and reload services
+function unbound_1to1nat_generate() {
+	// Generate our hosts file
+	unbound_add_1to1nat_entries();
 
 	// Reload our service to read the updates
 	unbound_control("reload");

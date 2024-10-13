@@ -231,6 +231,19 @@ $section->addInput(new Form_Select(
 	)
 ));
 
+$section->addInput(new Form_Select(
+	'dnsmap',
+	'DNS Mapping',
+	$pconfig['dnsmap'],
+	array(
+		'default' => gettext('Use default rules'),
+		'never'  => gettext('Never'),
+		'force' => gettext('Always (Force)')
+	)
+))->setHelp('When enabled in the %1$sDNS Resolver%2$s settings, the server will replace the public IP in DNS results with the corresponding '.
+			' private IP from the 1:1 NAT table. Only simple NAT rules are included in DNS Mapping by default. You can use this setting to '.
+			' force a rule to be included or excluded. Forcing a rule to be included may lead to unexpected results.','<a href="services_unbound.php">','</a>');
+
 $form->add($section);
 
 print($form);

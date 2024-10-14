@@ -133,8 +133,6 @@ if (isset($_POST['save'])) {
 	<script type="text/javascript">
 	//<![CDATA[
 	events.push(function() {
-		let cookieName = <?=json_encode("treegrid-{$widgetkey}")?>;
-
 		// Callback function called by refresh system when data is retrieved
 		function disks_callback(s) {
 			var tree = $(<?=json_encode("#{$widgetkey}-table")?>);
@@ -167,8 +165,6 @@ if (isset($_POST['save'])) {
 			var tree = $(<?=json_encode("#{$widgetkey}-table")?>);
 
 			if (!isAjax) {
-				$.removeCookie(cookieName);
-				
 				tree.removeData();
 			}
 
@@ -176,7 +172,6 @@ if (isset($_POST['save'])) {
 				expanderExpandedClass: 'fa-solid fa-chevron-down',
 				expanderCollapsedClass: 'fa-solid fa-chevron-right',
 				initialState: 'collapsed',
-				saveStateName: cookieName,
 				saveState: true
 			});
 		}

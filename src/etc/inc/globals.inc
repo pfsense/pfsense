@@ -286,7 +286,7 @@ $reserved_table_names = [
 		'name' => 'bogons',
 		'type' => 'urltable',
 		'url' => '/etc/bogons',
-		'descr' => 'IPv4 bogons',
+		'descr' => 'IPv4 bogons.',
 		'address' => '',
 		'detail' => ''
 	],
@@ -315,28 +315,28 @@ $reserved_table_names = [
 	'virusprot' => [
 		'name' => 'virusprot',
 		'type' => 'host',
-		'descr' => 'Hosts blocked due to connection restrictions.',
+		'descr' => 'Hosts blocked by rule restrictions.',
 		'address' => '',
 		'detail' => ''
 	],
 	'vpn_networks' => [
 		'name' => 'vpn_networks',
 		'type' => 'network',
-		'descr' => 'Networks for IPsec, OpenVPN, and PPPoE.',
+		'descr' => 'Networks for IPsec, OpenVPN, and PPPoE servers.',
 		'address' => '',
 		'detail' => ''
 	],
 	'negate_networks' => [
 		'name' => 'negate_networks',
 		'type' => 'network',
-		'descr' => 'Networks to negate with policy routing rules.',
+		'descr' => 'Networks to exclude from policy routing rules with any destination.',
 		'address' => '',
 		'detail' => ''
 	],
 	'tonatsubnets' => [
 		'name' => 'tonatsubnets',
 		'type' => 'network',
-		'descr' => 'Automatically NAT\'ed networks.',
+		'descr' => 'Networks handled by automatic outbound NAT.',
 		'address' => '',
 		'detail' => ''
 	],

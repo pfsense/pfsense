@@ -514,6 +514,13 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 	echo gettext("done") . "\n";
 }
 
+/* Dynamically-configured system aliases may only be ready after the
+ * earlier filter reload calls. Hence alias issues with ruleset
+ * generation will only trigger alerts once the system has finished
+ * booting. Now that bootup is complete, reload the filter to alert of
+ * any alias issues. */
+filter_configure_sync();
+
 led_normalize();
 
 notify_all_remote("Bootup complete");

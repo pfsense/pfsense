@@ -39,24 +39,34 @@ $shortcut_section = "interfaces";
 config_init_path('ifgroups/ifgroupentry');
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
-$this_ifgroup_config = isset($id) ? config_get_path("ifgroups/ifgroupentry/{$id}") : null;
-if ($this_ifgroup_config) {
-	$pconfig['ifname'] = $this_ifgroup_config['ifname'];
-	$pconfig['members'] = $this_ifgroup_config['members'];
-	$pconfig['descr'] = html_entity_decode($this_ifgroup_config['descr']);
-}
-
 $interface_list = get_configured_interface_with_descr(true);
 $interface_list_disabled = get_configured_interface_with_descr(true);
-$ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
-$ifname_no_digit_text = gettext("The group name cannot start or end with a digit.");
-
 /* hide VTI interfaces, see https://redmine.pfsense.org/issues/11134 */
 foreach ($interface_list as $if => $ifdescr) {
 	if (substr(get_real_interface($if), 0, 5) == "ipsec") {
 		unset($interface_list[$if]);
 	}
 }
+
+$this_ifgroup_config = isset($id) ? config_get_path("ifgroups/ifgroupentry/{$id}") : null;
+if ($this_ifgroup_config) {
+	/* Cleanup invalid group members (Deleted interfaces, etc.)
+	 * https://redmine.pfsense.org/issues/15778 */
+	$validmembers = [];
+	foreach (explode(" ", array_get_path($this_ifgroup_config, 'members', "")) as $ifname) {
+		if (array_key_exists($ifname, $interface_list)) {
+			$validmembers[] = $ifname;
+		}
+	}
+	array_set_path($this_ifgroup_config, 'members', implode(" ", $validmembers));
+
+	$pconfig['ifname'] = $this_ifgroup_config['ifname'];
+	$pconfig['members'] = $this_ifgroup_config['members'];
+	$pconfig['descr'] = html_entity_decode($this_ifgroup_config['descr']);
+}
+
+$ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
+$ifname_no_digit_text = gettext("The group name cannot start or end with a digit.");
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -112,10 +122,23 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("An alias with this name already exists.");
 			}
 		}
+
 	}
 
-	if (isset($_POST['members'])) {
-		$members = implode(" ", $_POST['members']);
+	/* Ensure submitted interfaces exist in the configuration, filter
+	 * invalid entries from selected interface list.
+	 * https://redmine.pfsense.org/issues/15778 */
+	$validmembers = [];
+	foreach ($_POST['members'] as $ifname) {
+		if (array_key_exists($ifname, $interface_list)) {
+			$validmembers[] = $ifname;
+		} else {
+			$input_errors[] = gettext("Submission contained an invalid interface");
+		}
+	}
+
+	if (!empty($validmembers)) {
+		$members = implode(" ", $validmembers);
 	} else {
 		$members = "";
 	}

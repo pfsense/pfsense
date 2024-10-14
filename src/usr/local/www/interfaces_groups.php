@@ -97,7 +97,7 @@ display_top_tabs($tab_array);
 
 		unset($iflist);
 		$memberses = implode(", ", $memberses_arr);
-		echo $memberses;
+		echo htmlspecialchars($memberses);
 		if (count($members_arr) >= 10) {
 			echo '&hellip;';
 		}

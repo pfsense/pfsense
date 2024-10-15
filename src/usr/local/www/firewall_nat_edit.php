@@ -46,10 +46,6 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 
 $ifdisp = get_configured_interface_with_descr();
 
-config_init_path('filter/rule');
-config_init_path('nat/separator');
-config_init_path('nat/rule');
-
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }

@@ -34,8 +34,6 @@ $shortcut_section = "interfaces";
 
 require_once("guiconfig.inc");
 
-config_init_path('qinqs/qinqentry');
-
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
 $portlist = array_merge($portlist, $lagglist);
@@ -51,14 +49,11 @@ foreach ($lagglist as $lagg) {
 
 /* Do not allow OpenVPN TUN interfaces to be used for QinQ
  * https://redmine.pfsense.org/issues/11675 */
-config_init_path('openvpn/openvpn-server');
-config_init_path('openvpn/openvpn-client');
-$openvpn_config = config_get_path('openvpn');
 foreach ($portlist as $portname => $port) {
 	if (strstr($portname, "ovpn")) {
 		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
 		$type = ($m[1] == 'c') ? 'client' : 'server';
-		foreach ($openvpn_config['openvpn-'.$type] as $ovpn) {
+		foreach (config_get_path("openvpn/openvpn-{$type}", []) as $ovpn) {
 			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
 				unset($portlist[$portname]);
 			}
@@ -237,7 +232,6 @@ if ($_POST['save']) {
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";
 				$gentry['descr'] = gettext("QinQ VLANs group");
-				config_init_path('ifgroups/ifgroupentry');
 				config_set_path('ifgroups/ifgroupentry/', $gentry);
 			}
 		}

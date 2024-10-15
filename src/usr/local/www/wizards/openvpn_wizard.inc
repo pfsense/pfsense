@@ -494,7 +494,6 @@ function step12_submitphpaction() {
 			$auth['radius_secret'] = $pconfig['step2']['password'];
 			$auth['radius_srvcs'] = "auth";
 		}
-		config_init_path('system/authserver');
 
 		config_set_path('system/authserver/', $auth);
 	} else if (!isset($pconfig['step2']['uselist']) && empty($pconfig['step2']['authserv'])) {
@@ -581,8 +580,6 @@ function step12_submitphpaction() {
 		}
 
 		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");
-		config_init_path('cert');
-
 		config_set_path('cert/', $cert);
 	} else if (!isset($pconfig['step9']['uselist']) && empty($pconfig['step9']['authcertname'])) {
 		$message = "Please choose a Certificate.";
@@ -733,7 +730,6 @@ function step12_submitphpaction() {
 		config_set_path('filter/rule/', $rule);
 	}
 
-	config_init_path('openvpn/openvpn-server');
 	config_set_path('openvpn/openvpn-server/', $server);
 
 	openvpn_resync('server', $server);

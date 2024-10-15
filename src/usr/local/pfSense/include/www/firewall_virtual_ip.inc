@@ -54,8 +54,7 @@ function getVIPs($json = false) {
 function saveVIP($post, $json = false) {
 	global $g;
 
-	config_init_path('virtualip/vip');
-	$a_vip = config_get_path('virtualip/vip');
+	$a_vip = config_get_path('virtualip/vip', []);
 	$rv = array();
 	$id = is_numericint($post['id']) ? $post['id'] : null;
 
@@ -284,8 +283,7 @@ function saveVIP($post, $json = false) {
 function applyVIP() {
 	global $g;
 
-	config_init_path('virtualip/vip');
-	$a_vip = config_get_path('virtualip/vip');
+	$a_vip = config_get_path('virtualip/vip', []);
 	$rv = array();
 
 	$check_carp = false;
@@ -350,8 +348,7 @@ function deleteVIP($id, $json = false) {
 	$rv = array();
 	$input_errors = array();
 
-	config_init_path('virtualip/vip');
-	$a_vip = config_get_path('virtualip/vip');
+	$a_vip = config_get_path('virtualip/vip', []);
 
 	if ($a_vip[$id]) {
 		/* make sure no inbound NAT mappings reference this entry */
@@ -392,7 +389,6 @@ function deleteVIP($id, $json = false) {
 			}
 		}
 
-		config_init_path('ipsec/phase1');
 		foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 			if (!isset($ph1ent['disabled'])) {
 				foreach (explode(',', ipsec_get_phase1_src($ph1ent)) as $ifip) {

@@ -38,7 +38,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_1to1.inc");
 
-config_init_path('nat/onetoone');
 $binat_exttype_flags = [SPECIALNET_IFADDR];
 $binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB];
 $binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];

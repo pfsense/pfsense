@@ -38,10 +38,7 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-config_init_path('ipsec/mobilekey');
-
 $userkeys = array();
-config_init_path('system/user');
 foreach (config_get_path('system/user', []) as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
 		$userkeys[] = array('ident' => $user['name'], 'type' => 'PSK', 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;

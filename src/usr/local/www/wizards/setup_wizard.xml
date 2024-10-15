@@ -145,7 +145,6 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
-		config_init_path('wizardtemp/system');
 		config_set_path('wizardtemp/system/hostname', config_get_path('system/hostname'));
 		config_set_path('wizardtemp/system/domain', config_get_path('system/domain'));
 		]]>
@@ -535,7 +534,6 @@
 		if (empty($input_errors)) {
 			$type = $_POST['configurationtype'];
 
-			config_init_path('ppps/ppp');
 			foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
 				if ($ppp['ptpid'] == "0") {
 					if ((substr(config_get_path('interfaces/wan/if'),0,5) == "pppoe") ||
@@ -662,8 +660,6 @@
 			   If the existing DHCP range on LAN is not in the new subnet or
 			   is invalid, then replace the range with a newly crafted one.
 			*/
-			config_init_path('dhcpd/lan/range/from');
-			config_init_path('dhcpd/lan/range/to');
 			if (!ip_in_subnet(config_get_path('dhcpd/lan/range/from'), "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
 			    !ip_in_subnet(config_get_path('dhcpd/lan/range/to'), "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
 
@@ -773,7 +769,6 @@
 		config_set_path('system/hostname', config_get_path('wizardtemp/system/hostname'));
 		config_set_path('system/domain', config_get_path('wizardtemp/system/domain'));
 		if (!empty(config_get_path('wizardtemp/wangateway'))) {
-			config_init_path('gateways/gateway_item');
 			$found = false;
 			$defaultgw_found = false;
 			foreach (config_get_path('gateways/gateway_item', []) as $idx => $gw) {

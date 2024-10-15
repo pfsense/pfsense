@@ -30,7 +30,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('dyndnses/dyndns');
 global $dyndns_split_domain_types;
 
 if ($_POST['act'] == "del") {

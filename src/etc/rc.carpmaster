@@ -149,7 +149,7 @@ if (!empty(config_get_path('captiveportal')) &&
 		}
 	}
 
-	foreach (array_keys(config_get_path('captiveportal')) as $cpzone) {
+	foreach (array_keys(config_get_path('captiveportal', [])) as $cpzone) {
 		$rpc_client = new pfsense_xmlrpc_client();
 		$rpc_client->setConnectionData(config_get_path('hasync/synchronizetoip'), $xmlrpc_port, $xmlrpc_username, config_get_path('hasync/password'));
 		$resp = $rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'get_databases', 'zone' => $cpzone));

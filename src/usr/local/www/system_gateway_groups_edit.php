@@ -33,7 +33,6 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-config_init_path('gateways/gateway_group');
 $a_gateways = get_gateways();
 
 $categories = array(

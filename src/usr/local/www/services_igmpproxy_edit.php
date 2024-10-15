@@ -39,8 +39,6 @@ require_once("guiconfig.inc");
 
 //igmpproxy_sort();
 
-config_init_path('igmpproxy/igmpentry');
-
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -154,7 +152,7 @@ $section = new Form_Section('IGMP Proxy Edit');
 $optionlist = array();
 $iflist = get_configured_interface_with_descr();
 
-$if_config = config_get_path('interfaces');
+$if_config = config_get_path('interfaces', []);
 foreach ($iflist as $ifnam => $ifdescr) {
 	if (!empty($if_config[$ifnam]['ipaddr'])) {
 		$optionlist[$ifnam] = $ifdescr;

@@ -54,7 +54,6 @@ if (empty($argument)) {
 				// e.g. $arg_element = "WANGW", $gwgroups = array of gateway groups that use "wan"
 				$gwgroups = gateway_is_gwgroup_member($arg_element);
 			}
-			config_init_path('ipsec/phase1');
 			foreach (config_get_path('ipsec/phase1', []) as $phase1) {
 				if (isset($phase1['disabled']) || isset($phase1['mobile']) ||
 				    ($phase1['startaction'] == 'none')) {

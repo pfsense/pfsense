@@ -48,7 +48,6 @@ if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	exit;
 }
 
-config_init_path("captiveportal/{$cpzone}/allowedip");
 $cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Allowed IP Addresses"));

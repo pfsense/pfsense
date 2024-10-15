@@ -433,7 +433,7 @@ function voucher_configure_zone() {
 		unlock($voucherlck);
 		return 1;
 	}
-	$voucher_config = config_get_path("voucher/{$cpzone}");
+	$voucher_config = config_get_path("voucher/{$cpzone}", []);
 	fwrite($fd, "{$voucher_config['rollbits']},{$voucher_config['ticketbits']},{$voucher_config['checksumbits']},{$voucher_config['magic']},{$voucher_config['charset']}\n");
 	fclose($fd);
 	@chmod("{$g['varetc_path']}/voucher_{$cpzone}.cfg", 0600);

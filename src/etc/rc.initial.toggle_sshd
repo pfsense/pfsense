@@ -56,7 +56,6 @@ if (config_path_enabled('system/ssh')) {
 	echo "SSHD is currently disabled.  Would you like to enable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {
-		config_init_path('system/ssh');
 		config_set_path('system/ssh/enable', "enabled");
 		echo "\nWriting configuration...";
 		write_config(gettext("Enabled SSHD from console menu."));

@@ -62,8 +62,6 @@ if (!$if) {
 	exit;
 }
 
-config_init_path("dhcpd/{$if}/staticmap");
-config_init_path("dhcpd/{$if}/pool");
 $static_arp_enabled = config_path_enabled("dhcpd/{$if}", 'staticarp');
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);

@@ -1025,7 +1025,6 @@ function alias_info_popup($alias_id, $is_system_alias = false) {
 }
 
 function gateway_info_popup($showgw, $gateways_status = false) {
-	config_init_path('gateways/gateway_group');
 	/* Get groups indexed by name so we can avoid re-scanning the array
 	 * multiple times later unnecessarily. */
 	$a_gateways = get_gateways(GW_CACHE_DISABLED | GW_CACHE_INACTIVE);

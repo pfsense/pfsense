@@ -30,8 +30,7 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('hasync');
-$a_hasync = config_get_path('hasync');
+$a_hasync = config_get_path('hasync', []);
 
 $checkbox_names = array(
 	'pfsyncenabled',

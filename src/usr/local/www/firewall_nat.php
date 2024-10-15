@@ -40,7 +40,6 @@ require_once("shaper.inc");
 require_once("itemid.inc");
 require_once("firewall_nat.inc");
 
-config_init_path('nat/rule');
 $rdr_lcltype_flags = [SPECIALNET_IFADDR];
 $rdr_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET];
 $rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
@@ -122,7 +121,7 @@ $columns_in_table = 13;
 <?php
 
 $nnats = $i = 0;
-$separators = config_get_path('nat/separator');
+$separators = config_get_path('nat/separator', []);
 
 // Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
 // More efficient than looping through the list of separators on every row.

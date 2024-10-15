@@ -609,7 +609,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	// get aliases names from config
 	$aliasesnames = array();
-	config_init_path('aliases/alias');
 	foreach (config_get_path('aliases/alias', []) as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
@@ -2004,7 +2003,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	// OpenVPN CSO
-	config_init_path('openvpn/openvpn-csc');
 	foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
 			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
@@ -2271,8 +2269,7 @@ EOD;
 function filter_nat_rules_generate() {
 	global $g, $FilterIflist;
 
-	config_init_path('ipsec/client');
-	$ipsec_client = config_get_path('ipsec/client');
+	$ipsec_client = config_get_path('ipsec/client', []);
 
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
@@ -4551,7 +4548,6 @@ function filter_tdr_install_cron($should_install) {
 		return;
 	}
 
-	config_init_path('cron/item');
 	$x = 0;
 	$is_installed = false;
 	foreach (config_get_path('cron/item', []) as $item) {

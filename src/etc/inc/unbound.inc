@@ -190,7 +190,7 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
 	global $g, $nooutifs;
 	if (is_null($unboundcfg)) {
-		$unboundcfg = config_get_path('unbound');
+		$unboundcfg = config_get_path('unbound', []);
 	}
 
 	if (is_platform_booting()) {
@@ -678,7 +678,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 	global $g;
 
-	$domains = config_get_path('unbound/domainoverrides');
+	$domains = config_get_path('unbound/domainoverrides', []);
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
@@ -776,7 +776,7 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 function unbound_add_host_entries($cfgsubdir = "") {
 	global $g, $nooutifs;
 
-	$hosts = system_hosts_entries(config_get_path('unbound'));
+	$hosts = system_hosts_entries(config_get_path('unbound', []));
 
 	/* Pass 1: Build domain list and hosts inside domains */
 	$hosts_by_domain = array();
@@ -960,7 +960,6 @@ function unbound_acls_config($cfgsubdir = "") {
 			}
 		}
 		// OpenVPN CSO
-		config_init_path('openvpn/openvpn-csc');
 		foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 			if (is_array($ovpnent) && !isset($ovpnent['disable'])) {
 				if (!empty($ovpnent['tunnel_network'])) {

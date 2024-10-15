@@ -36,8 +36,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-config_init_path('l2tp/user');
-
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }

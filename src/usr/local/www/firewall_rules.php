@@ -139,7 +139,6 @@ function delete_nat_association($id) {
 	config_set_path('nat/rule', $a_nat);
 }
 
-config_init_path('filter/rule');
 filter_rules_sort();
 
 if ($_REQUEST['if']) {
@@ -570,9 +569,8 @@ $show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user
 $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 $system_aliases_ports = get_reserved_table_names('', 'port,url_ports,urltable_ports');
 $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable');
-config_init_path('schedules/schedule');
 $a_schedules = config_get_path('schedules/schedule');
-$if_config = config_get_path('interfaces');
+$if_config = config_get_path('interfaces', []);
 foreach (config_get_path('filter/rule', []) as $filteri => $filterent):
 
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) ||

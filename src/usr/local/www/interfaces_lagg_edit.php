@@ -32,8 +32,6 @@ require_once("guiconfig.inc");
 
 global $lagghash_list;
 
-config_init_path('laggs/lagg');
-
 $portlist = get_interface_list();
 $laggprotos	  = array("none", "lacp", "failover", "loadbalance", "roundrobin");
 $laggprotosuc = array(gettext("NONE"), gettext("LACP"), gettext("FAILOVER"), gettext("LOADBALANCE"), gettext("ROUNDROBIN"));

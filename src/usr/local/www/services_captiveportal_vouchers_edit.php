@@ -43,9 +43,6 @@ if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	exit;
 }
 
-config_init_path('captiveportal');
-config_init_path("voucher/{$cpzone}/roll");
-
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Vouchers"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_vouchers.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";

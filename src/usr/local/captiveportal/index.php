@@ -38,7 +38,7 @@ header("Connection: close");
 global $cpzone, $cpzoneid, $cpzoneprefix;
 
 $cpzone = strtolower($_REQUEST['zone']);
-$cpcfg = config_get_path("captiveportal/{$cpzone}");
+$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
 $orig_request = trim($_REQUEST['redirurl'], " /");

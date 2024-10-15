@@ -31,12 +31,10 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-config_init_path('gres/gre');
-
 function gre_inuse($num) {
-	$a_gres = config_get_path('gres/gre');
+	$a_gres = config_get_path('gres/gre', []);
 	$iflist = get_configured_interface_list(true);
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
 		if ($if_config[$if]['if'] == $a_gres[$num]['greif']) {
 			return true;

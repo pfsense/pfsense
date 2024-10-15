@@ -119,17 +119,15 @@ if (!empty(config_get_path("dhcpd/{$if}"))) {
 		exit;
 	}
 
-	config_init_path("dhcpd/{$if}/pool");
-
 	if (is_numeric($pool) && config_get_path("dhcpd/{$if}/pool/{$pool}")) {
 		$dhcpdconf = config_get_path("dhcpd/{$if}/pool/{$pool}");
 	} elseif ($act == "newpool") {
 		$dhcpdconf = array();
 	} else {
-		$dhcpdconf = config_get_path("dhcpd/{$if}");
+		$dhcpdconf = config_get_path("dhcpd/{$if}", []);
 	}
 
-	array_init_path($dhcpd_if_config, "staticmap");
+	array_init_path($dhcpdconf, "staticmap");
 }
 
 if (is_array($dhcpdconf)) {
@@ -613,8 +611,7 @@ if (isset($_POST['save'])) {
 			if ($act == "newpool") {
 				$dhcpdconf = array();
 			} else {
-				config_init_path("dhcpd/{$if}");
-				$dhcpdconf = config_get_path("dhcpd/{$if}");
+				$dhcpdconf = config_get_path("dhcpd/{$if}", []);
 			}
 		} else {
 			if (is_array(config_get_path("dhcpd/{$if}/pool/{$pool}"))) {
@@ -998,7 +995,7 @@ if (dhcp_is_backend('kea')) {
 }
 
 foreach ($iflist as $ifent => $ifname) {
-	$oc = config_get_path("interfaces/{$ifent}");
+	$oc = config_get_path("interfaces/{$ifent}", []);
 
 	/* Not static IPv4 or subnet >= 31 */
 	if ($oc['subnet'] >= 31) {

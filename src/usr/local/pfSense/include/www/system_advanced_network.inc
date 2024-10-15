@@ -110,7 +110,6 @@ function saveAdvancedNetworking($post, $json = false) {
 
 	if (!$input_errors) {
 		if ($post['ipv6nat_enable'] == "yes") {
-			config_init_path('diag/ipv6nat');
 			config_set_path('diag/ipv6nat/enable', true);
 			config_set_path('diag/ipv6nat/ipaddr', $post['ipv6nat_ipaddr']);
 		} else {

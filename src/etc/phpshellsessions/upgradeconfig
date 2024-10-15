@@ -99,8 +99,7 @@ if (config_get_path('version') == $g['latest_config']) {
 	echo gettext("Input file is already at the latest version.") . "\n";
 	exit(0);
 }
-config_init_path('system/already_run_config_upgrade');
-$already_run = config_get_path('system/already_run_config_upgrade');
+$already_run = config_get_path('system/already_run_config_upgrade', []);
 
 /* Loop and run upgrade_VER_to_VER() until we're at current version */
 while (config_get_path('version') < $g['latest_config']) {

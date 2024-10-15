@@ -36,8 +36,6 @@ require_once("guiconfig.inc");
 
 //igmpproxy_sort();
 
-config_init_path('igmpproxy/igmpentry');
-
 if ($_POST['apply']) {
 	$pconfig = $_POST;
 

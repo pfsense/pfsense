@@ -36,14 +36,12 @@ $repos = pkg_list_repos();
 
 if ($_POST) {
 
-	config_init_path('system/firmware');
 	if ($_POST['disablecheck'] == "yes") {
 		config_set_path('system/firmware/disablecheck', true);
 	} elseif (config_path_enabled('system/firmware', 'disablecheck')) {
 		config_del_path('system/firmware/disablecheck');
 	}
 
-	config_init_path('system/gitsync');
 	if ($_POST['synconupgrade'] == "yes") {
 		config_set_path('system/gitsync/synconupgrade', true);
 	} elseif (config_path_enabled('system/gitsync', 'synconupgrade')) {
@@ -102,8 +100,8 @@ if ($_POST) {
 	$savemsg = gettext("Changes have been saved successfully");
 }
 
-$curcfg = config_get_path('system/firmware');
-$gitcfg = config_get_path('system/gitsync');
+$curcfg = config_get_path('system/firmware', []);
+$gitcfg = config_get_path('system/gitsync', []);
 
 $pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
 $pglinks = array("", "pkg_mgr_install.php?id=firmware", "@self");

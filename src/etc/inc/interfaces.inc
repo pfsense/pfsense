@@ -457,7 +457,6 @@ function interface_vlan_configure(&$vlan, $flush = true, $skip_parent_mtu = fals
  * https://redmine.pfsense.org/issues/11035
  */
 function interfaces_vlan_configure_mtu($parentif = "") {
-	config_init_path('ppps/ppp');
 	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if ($parentif != $vlan['if']) {
 			continue;
@@ -2054,7 +2053,6 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
 		config_set_path('virtualip_carp_maintenancemode', true);
 		write_config(gettext("Enter CARP maintenance mode"));
 	}
-	config_init_path('virtualip/vip');
 
 	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if ($vip['mode'] == "carp") {
@@ -5695,7 +5693,6 @@ function get_current_wan_address($interface = "wan") {
 function convert_real_interface_to_friendly_interface_name($interface = "wan", $checkparent = false) {
 
 	/* XXX: For speed reasons reference directly the interface array */
-	config_init_path('interfaces');
 	$ifdescrs = config_get_path('interfaces', []);
 	//$ifdescrs = get_configured_interface_list(true);
 
@@ -6338,7 +6335,6 @@ function link_interface_to_ppp_tunnelif($interface) {
 		return $result;
 	}
 
-	config_init_path('ppps/ppp');
 	$realif = get_real_interface($interface);
 	foreach (config_get_path('ppps/ppp', []) as $ppp) {
 		if (($ppp['ports'] == $realif) && in_array($ppp['type'], array('l2tp', 'pptp'))) {
@@ -6537,7 +6533,6 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 		}
 	}
 
-	config_init_path('ipsec/phase1');
 	foreach (config_get_path('ipsec/phase1', []) as $p1) {
 		if ($p1['disabled']) {
 			continue;
@@ -7519,7 +7514,6 @@ function restart_interface_services($interface, $ipv6type = "") {
 		services_dhcpd_configure();
 	}
 
-	config_init_path('syslog');
 	if (config_path_enabled('syslog') && ($interface == config_get_path('syslog/sourceip'))) {
 		system_syslogd_start();
 	}

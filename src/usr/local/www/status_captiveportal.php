@@ -45,7 +45,7 @@ function multiple_auth_server_type() {
 	global $cpzone;
 	
 	$auth_types = array();
-	$cpzone_config = config_get_path("captiveportal/{$cpzone}");
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
 	foreach(explode(",", $cpzone_config['auth_server']) as $authserver) {
 		if(strpos($authserver, ' - ') !== false) {
 			$authserver = explode(' - ', $authserver);
@@ -117,14 +117,12 @@ function print_details($cpent) {
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-config_init_path('captiveportal');
-
 if (count(config_get_path('captiveportal', [])) == 1) {
-	$cpzone = current(array_keys(config_get_path('captiveportal')));
+	$cpzone = current(array_keys(config_get_path('captiveportal', [])));
 }
 
 /* If the zone does not exist, do not display the invalid zone */
-if (!array_key_exists($cpzone, config_get_path('captiveportal'))) {
+if (!array_key_exists($cpzone, config_get_path('captiveportal', []))) {
 	$cpzone = "";
 }
 

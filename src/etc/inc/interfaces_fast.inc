@@ -57,8 +57,7 @@ function does_interface_exist_fast($interface='', $flush = true) {
  Returns an array of interfaces and friendly names.
  */
 function convert_real_interface_to_friendly_interface_name_fast() {
-	config_init_path('interfaces');
-	return array_flip(get_real_interface_fast(array_keys(config_get_path('interfaces'))));
+	return array_flip(get_real_interface_fast(array_keys(config_get_path('interfaces', []))));
 }
 
 /*

@@ -34,8 +34,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('wol/wolentry');
-
 function send_wol($if, $mac, $description, & $savemsg, & $class) {
 	$ipaddr = get_interface_ip($if);
 	if (!is_ipaddr($ipaddr) || !is_macaddr($mac)) {

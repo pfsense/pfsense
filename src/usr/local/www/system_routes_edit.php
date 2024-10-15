@@ -39,7 +39,6 @@ require_once("gwlb.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
 
-config_init_path('staticroutes/route');
 $a_gateways = get_gateways(GW_CACHE_DISABLED | GW_CACHE_LOCALHOST);
 
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;

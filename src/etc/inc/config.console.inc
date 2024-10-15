@@ -305,9 +305,8 @@ EOD;
 			if (in_array(config_get_path('interfaces/wan/if'), $upints))
 				interface_bring_down('wan', true);
 		}
-		config_init_path('interfaces/wan');
 
-		$if_wan_config = config_get_path('interfaces/wan');
+		$if_wan_config = config_get_path('interfaces/wan', []);
 		$if_wan_config['if'] = $wanif;
 		$if_wan_config['enable'] = true;
 		if (preg_match(g_get('wireless_regex'), $wanif)) {
@@ -330,8 +329,7 @@ EOD;
 				if (in_array(config_get_path("interfaces/{$if_opt_name}/if"), $upints))
 					interface_bring_down($if_opt_name, true);
 			}
-			config_init_path("interfaces/{$if_opt_name}");
-			$if_opt_config = config_get_path("interfaces/{$if_opt_name}");
+			$if_opt_config = config_get_path("interfaces/{$if_opt_name}", []);
 			$if_opt_config['if'] = $optif[$if_opt_counter];
 
 			/* wireless interface? */
@@ -420,7 +418,6 @@ function vlan_setup() {
 		}
 	}
 
-	config_init_path('vlans/vlan');
 	echo "\n";
 
 	$vlanif = 0;

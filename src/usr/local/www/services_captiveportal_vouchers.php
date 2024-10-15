@@ -61,9 +61,6 @@ if (empty($cpzone)) {
 	exit;
 }
 
-config_init_path('captiveportal');
-config_init_path("voucher/{$cpzone}/roll");
-
 if (empty(config_get_path("captiveportal/{$cpzone}"))) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
 	header("Location: services_captiveportal_zones.php");
@@ -74,8 +71,7 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-config_init_path("voucher/{$cpzone}/roll");
-$voucher_config = config_get_path("voucher/{$cpzone}");
+$voucher_config = config_get_path("voucher/{$cpzone}", []);
 if (!isset($voucher_config['charset'])) {
 	$voucher_config['charset'] = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 }
@@ -255,7 +251,7 @@ if ($_POST['save']) {
 		write_config('Updated vouchers settings');
 		voucher_configure_zone();
 		// Refresh captiveportal login to show voucher changes
-		captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}"));
+		captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}", []));
 
 		if (!$input_errors) {
 			header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");

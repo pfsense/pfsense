@@ -240,7 +240,7 @@ class pfsense_xmlrpc_server {
 				if (!isset($sections['captiveportal'][$zone])) {
 					$cpzone = $zone;
 					config_del_path("captiveportal/{$cpzone}/enable");
-					captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}"));
+					captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}", []));
 					config_del_path("captiveportal/{$cpzone}");
 					config_del_path("voucher/{$cpzone}");
 					unlink_if_exists("/var/db/captiveportal{$cpzone}.db");
@@ -500,8 +500,7 @@ class pfsense_xmlrpc_server {
 			if (!is_array($item['roll'])) {
 				continue;
 			}
-			config_init_path("voucher/{$zone}");
-			$l_vouchers = config_get_path("voucher/{$zone}");
+			$l_vouchers = config_get_path("voucher/{$zone}", []);
 			foreach ($item['roll'] as $roll) {
 				if (!isset($l_rolls[$zone][$roll['number']])) {
 					$l_vouchers['roll'][] = $roll;

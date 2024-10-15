@@ -36,8 +36,6 @@ $ntp_poll_values = system_ntp_poll_values();
 
 $serialports = get_serial_ports(true);
 
-config_init_path('ntpd/pps');
-
 if ($_POST) {
 	unset($input_errors);
 
@@ -118,8 +116,7 @@ if ($_POST) {
 	}
 }
 
-config_init_path('ntpd/pps');
-$pconfig = config_get_path('ntpd/pps');
+$pconfig = config_get_path('ntpd/pps', []);
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("PPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";

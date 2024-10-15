@@ -47,7 +47,6 @@ if (dhcp_is_backend('isc')) {
 	exit;
 }
 
-config_init_path('kea6');
 $pconfig = config_get_path('kea6', []);
 
 $iflist = get_configured_interface_with_descr();
@@ -119,9 +118,7 @@ $i = 0;
 $tab_array[] = [gettext('Settings'), true, 'services_dhcpv6_settings.php'];
 
 foreach ($iflist as $ifent => $ifname) {
-	config_init_path("dhcpdv6/{$ifent}");
-
-	$oc = config_get_path("interfaces/{$ifent}");
+	$oc = config_get_path("interfaces/{$ifent}", []);
 	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
 	    (is_ipaddrv6($oc['ipaddrv6']) &&
 	    !is_linklocal($oc['ipaddrv6'])));

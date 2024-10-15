@@ -270,7 +270,6 @@ if (!$debugging) {
 system_hosts_generate();
 
 /* start sshd */
-config_init_path('system/ssh');
 if (config_path_enabled('system/ssh')) {
 	echo "Starting Secure Shell Services...";
 	send_event("service reload sshd");
@@ -301,8 +300,6 @@ echo "Setting up static routes...";
 system_routing_configure();
 echo "done.\n";
 
-config_init_path('unbound');
-config_init_path('dnsmasq');
 if (config_path_enabled('unbound') ||
     config_path_enabled('dnsmasq')) {
 	echo "Setting up DNSs...\n";

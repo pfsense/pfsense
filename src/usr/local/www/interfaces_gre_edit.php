@@ -31,7 +31,6 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-config_init_path('gres/gre');
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_gre_config = isset($id) ? config_get_path("gres/gre/{$id}") : null;

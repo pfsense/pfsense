@@ -1710,7 +1710,6 @@ function return_gateway_groups_array($fixup = false) {
 			fixup_default_gateway("inet6", $gateways_status, $gateways_arr);
 		}
 	}
-	config_init_path('gateways/gateway_group');
 	if (!empty(config_get_path('gateways/gateway_group'))) {
 		$viplist = get_configured_vip_list();
 		foreach (config_get_path('gateways/gateway_group', []) as $group) {
@@ -1754,7 +1753,6 @@ function lookup_gateway_or_group_by_name($gwname) {
 		}
 	}
 
-	config_init_path('gateways/gateway_group');
 	foreach (config_get_path('gateways/gateway_group', []) as $gwg) {
 		if ($gwg['name'] == $gwname) {
 			$gwg['type'] = 'gatewaygroup';
@@ -2345,7 +2343,6 @@ function save_gateway($gateway_settings, $realid = "", $json = false) {
 		$gateway_settings = json_decode($gateway_settings, true);
 	}
 
-	config_init_path('gateways/gateway_item');
 	$reloadif = "";
 	$gateway = array();
 
@@ -2552,7 +2549,6 @@ function gateway_getgwtiername($gways, $idx) {
 
 	$gw = get_gateway_or_group_by_name($gwname, $gways);
 
-	config_init_path('gateways');
 	$gw4 = config_get_path('gateways/defaultgw4', "");
 	$gw6 = config_get_path('gateways/defaultgw6', "");
 	if ($gw4 == $gwname || $gw6 == $gwname) {
@@ -2596,7 +2592,6 @@ function get_gateway_or_group_by_name($gwname, $gateways_arr) {
 		}
 	}
 
-	config_init_path('gateways/gateway_group');
 	foreach (config_get_path('gateways/gateway_group', []) as $gwg) {
 		if ($gwg['name'] == $gwname) {
 			$gwg['type'] = 'gatewaygroup';

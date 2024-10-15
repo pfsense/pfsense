@@ -306,7 +306,6 @@ function easyrule_block_host_add($host, $int = 'wan') {
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 
-	config_init_path('filter/rule');
 	filter_rules_sort();
 
 	/* Make up a new rule */

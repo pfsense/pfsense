@@ -35,10 +35,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-config_init_path('gateways/gateway_group');
-
-config_init_path('gateways/gateway_item');
-$a_gateways = config_get_path('gateways/gateway_item');
+$a_gateways = config_get_path('gateways/gateway_item', []);
 $changedesc = gettext("Gateway Groups") . ": ";
 
 
@@ -67,7 +64,7 @@ if ($_POST['apply']) {
 	}
 }
 
-$a_gateway_groups = config_get_path('gateways/gateway_group');
+$a_gateway_groups = config_get_path('gateways/gateway_group', []);
 if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
 	if ((config_get_path('gateways/defaultgw4', '') == $a_gateway_groups[$_POST['id']]['name']) ||
 	    (config_get_path('gateways/defaultgw6', '') == $a_gateway_groups[$_POST['id']]['name'])) {

@@ -48,9 +48,6 @@ if ($_POST['generatekey']) {
 	exit;
 }
 
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/phase2');
-
 if (is_numericint($_REQUEST['p1index'])) {
 	$p1index = $_REQUEST['p1index'];
 }

@@ -75,17 +75,13 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 		exit;
 	}
 
-	config_init_path("dhcpdv6/{$if}/pool");
-
 	if (is_numeric($pool) && config_get_path("dhcpdv6/{$if}/pool/{$pool}")) {
 		$dhcpdconf = config_get_path("dhcpdv6/{$if}/pool/{$pool}");
 	} elseif ($act === 'newpool') {
 		$dhcpdconf = [];
 	} else {
-		$dhcpdconf = config_get_path("dhcpdv6/{$if}");
+		$dhcpdconf = config_get_path("dhcpdv6/{$if}", []);
 	}
-
-	config_init_path("dhcpdv6/{$if}/staticmap");
 }
 
 if (is_array($dhcpdconf)) {
@@ -418,8 +414,7 @@ if (isset($_POST['apply'])) {
 			if ($act === 'newpool') {
 				$dhcpdconf = [];
 			} else {
-				config_init_path("dhcpdv6/{$if}");
-				$dhcpdconf = config_get_path("dhcpdv6/{$if}");
+				$dhcpdconf = config_get_path("dhcpdv6/{$if}", []);
 			}
 		} else {
 			if (is_array(config_get_path("dhcpdv6/{$if}/pool/{$pool}"))) {
@@ -660,9 +655,7 @@ if (dhcp_is_backend('kea')) {
 }
 
 foreach ($iflist as $ifent => $ifname) {
-	config_init_path("dhcpdv6/{$ifent}");
-
-	$oc = config_get_path("interfaces/{$ifent}");
+	$oc = config_get_path("interfaces/{$ifent}", []);
 	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
 	    (is_ipaddrv6($oc['ipaddrv6']) &&
 	    !is_linklocal($oc['ipaddrv6'])));

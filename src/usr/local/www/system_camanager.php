@@ -47,10 +47,6 @@ $default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = cert_build_curve_list();
 $class = "success";
 
-config_init_path('ca');
-config_init_path('cert');
-config_init_path('crl');
-
 $act = $_REQUEST['act'];
 
 if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {

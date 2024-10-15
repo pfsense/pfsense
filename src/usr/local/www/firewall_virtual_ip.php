@@ -39,7 +39,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_virtual_ip.inc");
 
-config_init_path('virtualip/vip');
 $input_errors = array();
 $retval = 0;
 

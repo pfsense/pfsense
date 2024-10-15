@@ -37,8 +37,6 @@ require_once("interfaces_fast.inc");
 
 global $profile;
 
-config_init_path('vlans/vlan');
-
 if ($_POST['act'] == "del") {
 	/*
 	 * Check user privileges to test if the user is allowed to make changes.

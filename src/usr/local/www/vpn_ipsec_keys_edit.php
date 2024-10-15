@@ -37,8 +37,6 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-config_init_path('ipsec/mobilekey');
-
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }

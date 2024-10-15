@@ -40,8 +40,6 @@ $auto_pool_suffix = "pool.ntp.org";
 $max_candidate_peers = 25;
 $min_candidate_peers = 4;
 
-config_init_path('ntpd');
-
 if (empty(config_get_path('ntpd/interface'))) {
 	$old_ifs = config_get_path('installedpackages/openntpd/config/0/interface');
 	if (!empty($old_ifs)) {
@@ -268,7 +266,7 @@ function build_interface_list() {
 	return($iflist);
 }
 
-$pconfig = config_get_path('ntpd');
+$pconfig = config_get_path('ntpd', []);
 $pconfig['enable'] = ($pconfig['enable'] != 'disabled') ? 'enabled' : 'disabled';
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();

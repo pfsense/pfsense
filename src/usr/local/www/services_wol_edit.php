@@ -37,14 +37,12 @@ function wolcmp($a, $b) {
 }
 
 function wol_sort() {
-	$wol_config = config_get_path('wol/wolentry');
+	$wol_config = config_get_path('wol/wolentry', []);
 	usort($wol_config, "wolcmp");
 	config_set_path('wol/wolentry', $wol_config);
 }
 
 require_once("guiconfig.inc");
-
-config_init_path('wol/wolentry');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];

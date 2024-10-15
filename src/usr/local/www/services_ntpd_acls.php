@@ -35,8 +35,6 @@ require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 
-config_init_path('ntpd');
-
 if (is_array(config_get_path('ntpd/restrictions/row'))) {
 	$networkacl = config_get_path('ntpd/restrictions/row');
 } else {
@@ -170,8 +168,7 @@ if ($_POST) {
 	}
 }
 
-config_init_path('ntpd');
-$pconfig = config_get_path('ntpd');
+$pconfig = config_get_path('ntpd', []);
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));
 $pglinks = array("", "services_ntpd.php", "@self");

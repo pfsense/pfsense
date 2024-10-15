@@ -39,8 +39,6 @@ $tsig_key_algos = array(
 	'hmac-sha512' => 'HMAC-SHA512 (most secure)',
 );
 
-config_init_path('dnsupdates/dnsupdate');
-
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }

@@ -39,8 +39,6 @@ function services_radvd_configure($blacklist = array()) {
 		echo "services_radvd_configure() being called $mt\n";
 	}
 
-	config_init_path('dhcpdv6');
-
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
@@ -522,8 +520,7 @@ function services_kea6_configure() {
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpdv6');
-	$dhcpdv6cfg = config_get_path('dhcpdv6');
+	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
@@ -1160,8 +1157,7 @@ function services_kea4_configure() {
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpd');
-	$dhcpdcfg = config_get_path('dhcpd');
+	$dhcpdcfg = config_get_path('dhcpd', []);
 	$Iflist = get_configured_interface_list();
 
 	/* configuration is built as a PHP array and converted to json */
@@ -2279,8 +2275,7 @@ function services_dhcpdv4_configure() {
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpd');
-	$dhcpdcfg = config_get_path('dhcpd');
+	$dhcpdcfg = config_get_path('dhcpd', []);
 	$Iflist = get_configured_interface_list();
 
 	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
@@ -3425,8 +3420,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpdv6');
-	$dhcpdv6cfg = config_get_path('dhcpdv6');
+	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
@@ -3914,8 +3908,7 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	config_init_path('dhcrelay');
-	$dhcrelaycfg = config_get_path('dhcrelay');
+	$dhcrelaycfg = config_get_path('dhcrelay', []);
 
 	/* DHCPRelay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -4035,8 +4028,7 @@ function services_dhcrelay6_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 
-	config_init_path('dhcrelay6');
-	$dhcrelaycfg = config_get_path('dhcrelay6');
+	$dhcrelaycfg = config_get_path('dhcrelay6', []);
 
 	/* DHCPv6 Relay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -5243,8 +5235,6 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 	$is_installed = false;
 	$cron_changed = true;
 	$change_message = "";
-
-	config_init_path('cron/item');
 
 	$job = null;
 	foreach (config_get_path('cron/item', []) as $idx => $item) {

@@ -91,15 +91,14 @@ if ($_REQUEST['display_maximum_rows']) {
 }
 
 $pkg_config_path = sprintf('installedpackages/%s', xml_safe_fieldname($pkg['name']));
-config_init_path("{$pkg_config_path}/config");
 
-$evaledvar = config_get_path("{$pkg_config_path}/config");
+$evaledvar = config_get_path("{$pkg_config_path}/config", []);
 
 if ($_POST['act'] == "update") {
 
 	if (is_array(config_get_path($pkg_config_path)) && $pkg['name'] != "" && $_POST['ids'] !="") {
 		// get current values
-		$current_values = config_get_path("{$pkg_config_path}/config");
+		$current_values = config_get_path("{$pkg_config_path}/config", []);
 		// get updated ids
 		parse_str($_POST['ids'], $update_list);
 		// sort ids to know what to change
@@ -147,7 +146,7 @@ if ($_REQUEST['act'] == "del") {
 ob_start();
 
 $iflist = get_configured_interface_with_descr(true);
-$evaledvar = config_get_path("{$pkg_config_path}/config");
+$evaledvar = config_get_path("{$pkg_config_path}/config", []);
 
 if ($pkg['custom_php_global_functions'] != "") {
 	eval($pkg['custom_php_global_functions']);

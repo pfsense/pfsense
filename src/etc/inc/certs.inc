@@ -2379,9 +2379,7 @@ function cert_notify_expiring() {
 	$notifications = array();
 
 	/* Check all CA and Cert entries at once */
-	config_init_path('ca');
-	config_init_path('cert');
-	$all_certs = array_merge_recursive(config_get_path('ca'), config_get_path('cert'));
+	$all_certs = array_merge_recursive(config_get_path('ca', []), config_get_path('cert', []));
 
 	foreach ($all_certs as $cert) {
 		if (empty($cert)) {

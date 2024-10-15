@@ -43,7 +43,6 @@ if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
-config_init_path("captiveportal/{$cpzone}");
 
 if (empty(config_get_path("captiveportal/{$cpzone}"))) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
@@ -103,7 +102,7 @@ if ($_POST['save']) {
 			config_set_path("captiveportal/{$cpzone}/backwardsyncpassword", $pconfig['backwardsyncpassword']);
 		}
 
-		$newcp = config_get_path("captiveportal/{$cpzone}");
+		$newcp = config_get_path("captiveportal/{$cpzone}", []);
 		if (!empty($newcp['enablebackwardsync'])) {
 			$rpc_client = new pfsense_xmlrpc_client();
 			$rpc_client->setConnectionData($newcp['backwardsyncip'], $port, $newcp['backwardsyncuser'], $newcp['backwardsyncpassword']);

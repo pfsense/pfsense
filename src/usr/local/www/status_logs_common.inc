@@ -637,8 +637,7 @@ function manage_log_code() {
 	$changes_applied = false;
 	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
-	config_init_path("syslog/{$specific_log}");
-	$syslog_config = config_get_path('syslog');
+	$syslog_config = config_get_path('syslog', []);
 
 	// Common to All Logs
 	$pconfig['cronorder'] = isset($syslog_config[$specific_log]['cronorder']) ? $syslog_config[$specific_log]['cronorder'] : null;

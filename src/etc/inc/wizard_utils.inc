@@ -63,7 +63,7 @@ function save_setupwizard_config(
 	config_set_path('system/timeservers', $timeservers);
 
 	// WAN ========================================================================================================================
-	$if_wan_config = config_get_path('interfaces/wan');
+	$if_wan_config = config_get_path('interfaces/wan', []);
 	setorforget($if_wan_config['spoofmac'], $spoofmac);
 	setorforget($if_wan_config['mtu'], $mtu);
 	setorforget($if_wan_config['mss'], $mss);
@@ -83,7 +83,6 @@ function save_setupwizard_config(
 	}
 
 	if (strlen($wangateway) > 0) {
-		config_init_path('gateways/gateway_item');
 		$found = false;
 		$defaultgw_found = false;
 		$gwlist = config_get_path('gateways/gateway_item', []);
@@ -117,7 +116,6 @@ function save_setupwizard_config(
 	$pppfg = array();
 	$type = $wantype;
 
-	config_init_path('ppps/ppp');
 	if (count(config_get_path('ppps/ppp', []))) {
 		foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
 			if ($ppp['ptpid'] == "0") {
@@ -166,9 +164,6 @@ function save_setupwizard_config(
 
 	config_set_path('interfaces/lan/ipaddr', $addr);
 	config_set_path('interfaces/lan/subnet', $mask);
-
-	config_init_path('dhcpd/lan/range/from');
-	config_init_path('dhcpd/lan/range/to');
 
 	if (!ip_in_subnet(config_get_path('dhcpd/lan/range/from'), "{$addr}/{$mask}") ||
 	    !ip_in_subnet(config_get_path('dhcpd/lan/range/to'), "{$addr}/{$mask}")) {

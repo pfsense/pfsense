@@ -42,10 +42,6 @@ global $p2_pfskeygroups;
 $ipsec_lidtype_flags = [SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
 $ipsec_nlitype_flags = [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET];
 
-config_init_path('ipsec/client');
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/phase2');
-
 if (!empty($_REQUEST['p2index'])) {
 	$uindex = $_REQUEST['p2index'];
 }

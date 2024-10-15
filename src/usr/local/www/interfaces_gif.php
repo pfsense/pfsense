@@ -30,12 +30,10 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('gifs/gif');
-
 function gif_inuse($num) {
-	$a_gifs = config_get_path('gifs/gif');
+	$a_gifs = config_get_path('gifs/gif', []);
 	$iflist = get_configured_interface_list(true);
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
 		if ($if_config[$if]['if'] == $a_gifs[$num]['gifif']) {
 			return true;

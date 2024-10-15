@@ -1503,7 +1503,6 @@ function is_dhcpv6_server_enabled() {
 
 /* radvd enabled on any interfaces? */
 function is_radvd_enabled() {
-	config_init_path('dhcpdv6');
 	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 
@@ -2952,7 +2951,6 @@ function get_cert_country_codes() {
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
-	config_init_path('filter/rule');
 	$rules = config_get_path('filter/rule', []);
 
 	/* mark each rule with the sequence number (to retain the order while sorting) */

@@ -44,8 +44,6 @@ require_once("firewall_schedule.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
-config_init_path('schedules/schedule');
-
 if ($_POST['act'] == "del") {
 	$errmsg = deleteSchedule($_POST);
 }

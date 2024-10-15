@@ -30,11 +30,9 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('laggs/lagg');
-
 function lagg_inuse($num) {
-	$a_laggs = config_get_path('laggs/lagg');
-	$if_config = config_get_path('interfaces');
+	$a_laggs = config_get_path('laggs/lagg', []);
+	$if_config = config_get_path('interfaces', []);
 	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($if_config[$if]['if'] == $a_laggs[$num]['laggif']) {

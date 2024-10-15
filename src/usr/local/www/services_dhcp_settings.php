@@ -49,7 +49,6 @@ if (dhcp_is_backend('isc')) {
 	exit;
 }
 
-config_init_path('kea');
 $pconfig = config_get_path('kea', []);
 
 $iflist = get_configured_interface_with_descr();
@@ -105,7 +104,7 @@ $have_small_subnet = false;
 $tab_array[] = [gettext('Settings'), true, 'services_dhcp_settings.php'];
 
 foreach ($iflist as $ifent => $ifname) {
-	$oc = config_get_path("interfaces/{$ifent}");
+	$oc = config_get_path("interfaces/{$ifent}", []);
 
 	/* Not static IPv4 or subnet >= 31 */
 	if ($oc['subnet'] >= 31) {

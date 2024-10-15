@@ -39,7 +39,7 @@ function ppp_inuse($num) {
 	global $g;
 
 	$ppp_config = config_get_path('ppps/ppp');
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	$iflist = get_configured_interface_list(true);
 	if (!is_array($ppp_config)) {
 		return false;
@@ -69,8 +69,6 @@ if ($_POST['act'] == "del") {
 		exit;
 	}
 }
-
-config_init_path('ppps/ppp');
 
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"));
 $shortcut_section = "interfaces";

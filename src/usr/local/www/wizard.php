@@ -173,8 +173,6 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	}
 
 	// Verify that the needed config array element exists. If not, create it
-	config_init_path($field_conv);
-
 	config_set_path($field_conv, $updatetext);
 }
 
@@ -643,8 +641,6 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
 
-				config_init_path('ca');
-
 				foreach (config_get_path('ca', []) as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
@@ -693,8 +689,6 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
 				}
-
-				config_init_path('cert');
 
 				foreach (config_get_path('cert', []) as $ca) {
 					if (stristr($ca['descr'], "webconf")) {

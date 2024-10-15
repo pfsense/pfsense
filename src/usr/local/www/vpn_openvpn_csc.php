@@ -36,9 +36,6 @@ require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes, $openvpn_ping_action;
 
-config_init_path('openvpn/openvpn-csc');
-config_init_path('openvpn/openvpn-server');
-
 $serveroptionlist = array();
 foreach (config_get_path('openvpn/openvpn-server', []) as $serversettings) {
 	if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {

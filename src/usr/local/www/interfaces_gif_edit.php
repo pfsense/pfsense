@@ -30,7 +30,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('gifs/gif');
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_gif_config = isset($id) ? config_get_path("gifs/gif/{$id}") : null;

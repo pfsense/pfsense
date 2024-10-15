@@ -41,7 +41,7 @@ function cpelementscmp($a, $b) {
 function cpelements_sort() {
 	global $cpzone;
 
-	$cp_config = config_get_path("captiveportal/{$cpzone}/element");
+	$cp_config = config_get_path("captiveportal/{$cpzone}/element", []);
 	usort($cp_config, "cpelementscmp");
 	config_set_path("captiveportal/{$cpzone}/element", $cp_config);
 }
@@ -61,15 +61,13 @@ if (empty($cpzone)) {
 	exit;
 }
 
-config_init_path("captiveportal/{$cpzone}/element");
-
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("File Manager"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 // Calculate total size of all files
 $total_size = 0;
-$a_element = config_get_path("captiveportal/{$cpzone}/element");
+$a_element = config_get_path("captiveportal/{$cpzone}/element", []);
 for ($i = 0; $i < count($a_element); $i++) {
 
 	// if the image in the directory does not exist remove it from config

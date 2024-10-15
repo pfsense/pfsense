@@ -435,8 +435,7 @@ function convert_config() {
 		return;
 	}
 
-	config_init_path('system/already_run_config_upgrade');
-	$already_run = config_get_path('system/already_run_config_upgrade');
+	$already_run = config_get_path('system/already_run_config_upgrade', []);
 
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while (config_get_path('version') < g_get('latest_config')) {

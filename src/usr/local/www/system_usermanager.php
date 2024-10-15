@@ -54,7 +54,6 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
 }
 
-config_init_path('system/user');
 $act = $_REQUEST['act'];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
@@ -122,7 +121,7 @@ if (($_POST['act'] == "deluser") && !$read_only) {
 		$userdeleted = config_get_path("system/user/{$id}/name");
 		config_del_path("system/user/{$id}");
 		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
-		config_set_path('system/user', array_values(config_get_path('system/user')));
+		config_set_path('system/user', array_values(config_get_path('system/user', [])));
 		$savemsg = sprintf(gettext("Successfully deleted user: %s"), $userdeleted);
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
@@ -172,7 +171,7 @@ if (isset($_POST['dellall']) && !$read_only) {
 		if (count($deleted_users) > 0) {
 			$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
 			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
-			config_set_path('system/user', array_values(config_get_path('system/user')));
+			config_set_path('system/user', array_values(config_get_path('system/user', [])));
 			write_config($savemsg);
 			syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		}
@@ -495,7 +494,7 @@ if ($_POST['save'] && !$read_only) {
 		}
 
 		/* Sort it alphabetically */
-		$user_config = config_get_path('system/user');
+		$user_config = config_get_path('system/user', []);
 		usort($user_config, function($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});

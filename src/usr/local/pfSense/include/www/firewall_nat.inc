@@ -90,9 +90,6 @@ function saveNATrule($post, $id, $json = false) {
 	$rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
 	global $ifdisp;
 
-	config_init_path('filter/rule');
-	config_init_path('nat/separator');
-	config_init_path('nat/rule');
 	$a_nat = config_get_path('nat/rule', []);
 	$a_separators = config_get_path('nat/separator', []);
 
@@ -507,7 +504,7 @@ function saveNATrule($post, $id, $json = false) {
 		}
 
 		if ($need_filter_rule == true) {
-			$filter_rule_config = config_get_path('filter/rule');
+			$filter_rule_config = config_get_path('filter/rule', []);
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
 			unset($filterentid);
@@ -695,7 +692,6 @@ function toggleNATrule($post, $json = false) {
 }
 
 function deleteNATrule($post, $json = false) {
-	config_init_path('nat/separator');
 	$a_separators = config_get_path('nat/separator', []);
 
 	// Check for single rule
@@ -770,8 +766,6 @@ function reorderNATrules($post, $json = false) {
 	$updated = false;
 	$dirty = false;
 
-	config_init_path('nat/separator');
-	config_init_path('nat/rule');
 	$a_nat = config_get_path('nat/rule', []);
 	$a_separators = config_get_path('nat/separator', []);
 
@@ -873,8 +867,7 @@ function MVC_create_interface_list() {
 }
 
 function getNATRule($id, $json = false) {
-	config_init_path('nat/rule');
-	$a_nat = config_get_path('nat/rule');
+	$a_nat = config_get_path('nat/rule', []);
 
 	if (isset($id) && $a_nat[$id]) {
 		if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {

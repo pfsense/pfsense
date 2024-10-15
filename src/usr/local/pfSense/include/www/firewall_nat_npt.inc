@@ -30,8 +30,6 @@ require_once("filter.inc");
 
 // Save NPt rule
 function savenptNATrule($post, $id, $json = false) {
-	config_init_path('nat/npt');
-
 	if (isset($post['after'])) {
 		$after = $post['after'];
 	}
@@ -93,7 +91,7 @@ function savenptNATrule($post, $id, $json = false) {
 
 		pconfig_to_address($natent['destination'], $post['dst'], $post['dstmask'], $post['dstnot'], 0, 0, true);
 
-		$a_npt = config_get_path('nat/npt');
+		$a_npt = config_get_path('nat/npt', []);
 		if (isset($id) && $a_npt[$id]) {
 			$a_npt[$id] = $natent;
 		} else {
@@ -118,8 +116,7 @@ function savenptNATrule($post, $id, $json = false) {
 
 // Retrieve the specified NPt rule
 function getnptNATRule($id, $json = false) {
-	config_init_path('nat/npt');
-	$a_npt = config_get_path('nat/npt');
+	$a_npt = config_get_path('nat/npt', []);
 
 	$pconfig = array();
 
@@ -155,8 +152,7 @@ function getnptNATRule($id, $json = false) {
 
 // Toggle enabled/disabled status of an NPt rule
 function togglenptNATrule($post, $json = false) {
-	config_init_path('nat/npt');
-	$a_npt = config_get_path('nat/npt');
+	$a_npt = config_get_path('nat/npt', []);
 
 	if (isset($a_npt[$post['id']]['disabled'])) {
 		unset($a_npt[$post['id']]['disabled']);
@@ -179,8 +175,7 @@ function togglenptNATrule($post, $json = false) {
 
 // Toggle multiple NPt rules
 function toggleMultiplenptNATrules($post, $json = false) {
-	config_init_path('nat/npt');
-	$a_npt = config_get_path('nat/npt');
+	$a_npt = config_get_path('nat/npt', []);
 
 	foreach ($post['rule'] as $rulei) {
 		if (isset($a_npt[$rulei]['disabled'])) {
@@ -203,8 +198,7 @@ function toggleMultiplenptNATrules($post, $json = false) {
 
 // Delete multiple NPt rules
 function deleteMultiplenptNATrules($post, $json = false) {
-	config_init_path('nat/npt');
-	$a_npt = config_get_path('nat/npt');
+	$a_npt = config_get_path('nat/npt', []);
 
 	foreach ($post['rule'] as $rulei) {
 		unset($a_npt[$rulei]);
@@ -223,7 +217,6 @@ function deleteMultiplenptNATrules($post, $json = false) {
 
 // Delete NPt rule
 function deletenptNATrule($post, $json = false) {
-	config_init_path('nat/npt');
 	config_del_path("nat/npt/{$post['id']}");
 	if (write_config(gettext("Firewall: NAT: NPt - deleted NPt mapping.")) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -238,8 +231,7 @@ function deletenptNATrule($post, $json = false) {
 // Re-order the NPtNAT rules per the array of indices passed in $post
 function reordernptNATrules($post, $json = false) {
 	if (is_array($post['rule']) && !empty($post['rule'])) {
-		config_init_path('nat/npt');
-		$a_npt = config_get_path('nat/npt');
+		$a_npt = config_get_path('nat/npt', []);
 		$a_npt_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user

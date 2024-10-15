@@ -37,8 +37,6 @@ require_once("vpn.inc");
 
 global $ipsec_filtermodes;
 
-config_init_path('ipsec/phase1');
-
 $pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = config_path_enabled('ipsec', 'unityplugin');
 $pconfig['strictcrlpolicy'] = config_path_enabled('ipsec', 'strictcrlpolicy');

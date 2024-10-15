@@ -643,9 +643,9 @@ function system_hosts_generate() {
 	// prefer dnsmasq for hosts generation where it's enabled. It relies
 	// on hosts for name resolution of its overrides, unbound does not.
 	if (config_path_enabled('dnsmasq')) {
-		$dnsmasqcfg = config_get_path('dnsmasq');
+		$dnsmasqcfg = config_get_path('dnsmasq', []);
 	} else {
-		$dnsmasqcfg = config_get_path('unbound');
+		$dnsmasqcfg = config_get_path('unbound', []);
 	}
 
 	$syscfg = config_get_path('system');
@@ -2300,7 +2300,6 @@ function system_ntp_setup_gps($serialport) {
 		return false;
 	}
 
-	config_init_path('ntpd/gps');
 	$serialports = get_serial_ports(true);
 
 	if (!array_key_exists($serialport, $serialports)) {
@@ -2427,8 +2426,6 @@ function system_ntp_configure() {
 	$ntp_keyid = config_get_path('ntpd/serverauthkeyid', '1');
 
 	safe_mkdir($statsdir);
-
-	config_init_path('ntpd');
 
 	// ntpd is disabled, just stop it and return
 	if (config_get_path('ntpd/enable') == 'disabled') {

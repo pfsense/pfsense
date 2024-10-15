@@ -193,7 +193,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		}
 
 
-		$if_config = config_get_path('interfaces');
+		$if_config = config_get_path('interfaces', []);
 		uksort($if_config, "compare_interface_friendly_names");
 		config_set_path('interfaces', $if_config);
 
@@ -380,15 +380,11 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				services_dhcpd_configure('inet6');
 			}
 
-			config_init_path('filter/rule');
-
 			foreach (config_get_path('filter/rule', []) as $x => $rule) {
 				if ($rule['interface'] == $id) {
 					config_del_path("filter/rule/{$x}");
 				}
 			}
-
-			config_init_path('nat/rule');
 		
 			foreach (config_get_path('nat/rule', []) as $x => $rule) {
 				if ($rule['interface'] == $id) {
@@ -421,7 +417,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 $unused_portlist = array();
 $portArray = array_keys($portlist);
 
-$ifaceArray = array_column(config_get_path('interfaces'),'if');
+$ifaceArray = array_column(config_get_path('interfaces', []),'if');
 $unused = array_diff($portArray,$ifaceArray);
 $unused = array_flip($unused);
 $unused_portlist = array_intersect_key($portlist,$unused);//*/

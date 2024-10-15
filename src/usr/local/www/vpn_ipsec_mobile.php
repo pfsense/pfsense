@@ -39,10 +39,6 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/client');
-config_init_path('system/group');
-
 $auth_groups = array();
 foreach (config_get_path('system/group', []) as $group) {
 	if (isset($group['priv'])) {

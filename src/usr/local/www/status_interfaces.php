@@ -120,7 +120,7 @@ include("head.inc");
 $ifdescrs = get_configured_interface_with_descr(true);
 $ifinterrupts = interfaces_interrupts();
 $switch_config = config_get_path('switches/switch/0/vlangroups/vlangroup', []);
-$if_config = config_get_path('interfaces');
+$if_config = config_get_path('interfaces', []);
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 	$mac_man = load_mac_manufacturer_table();

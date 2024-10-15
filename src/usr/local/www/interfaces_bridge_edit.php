@@ -64,7 +64,6 @@ foreach ($ifacelist as $bif => $bdescr) {
 
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
-config_init_path('bridges/bridged');
 $this_bridge_config = isset($id) ? config_get_path("bridges/bridged/{$id}") : null;
 if ($this_bridge_config) {
 	$pconfig['enablestp'] = isset($this_bridge_config['enablestp']);
@@ -259,7 +258,7 @@ if ($_POST['save']) {
 		$pconfig['autoptp'] = implode(',', $_POST['autoptp']);
 	}
 	if (is_array($_POST['members'])) {
-		$if_config = config_get_path('interfaces');
+		$if_config = config_get_path('interfaces', []);
 		foreach ($_POST['members'] as $ifmembers) {
 			if (empty($if_config[$ifmembers])) {
 				$input_errors[] = gettext("A member interface passed does not exist in configuration");
@@ -397,7 +396,7 @@ function build_port_list($selection) {
 
 	$portlist = array('list' => array(), 'selected' => array());
 
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		if (substr($if_config[$ifn]['if'], 0, 6) != "bridge") {
 			$portlist['list'][$ifn] = $ifdescr;

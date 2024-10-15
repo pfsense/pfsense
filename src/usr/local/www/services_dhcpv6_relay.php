@@ -122,7 +122,6 @@ if ($_POST) {
 	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
-		config_init_path('dhcrelay6');
 		config_set_path('dhcrelay6/enable', $_POST['enable'] ? true : false);
 		if (isset($_POST['interface']) &&
 		    is_array($_POST['interface'])) {

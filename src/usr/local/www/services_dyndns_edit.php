@@ -43,8 +43,6 @@ function is_dyndns_username($uname) {
 
 require_once("guiconfig.inc");
 
-config_init_path('dyndnses/dyndns');
-
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $dup = false;

@@ -38,10 +38,8 @@ require_once("voucher.inc");
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-config_init_path('captiveportal');
-
 /* If the zone does not exist, do not display the invalid zone */
-if (!array_key_exists($cpzone, config_get_path('captiveportal'))) {
+if (!array_key_exists($cpzone, config_get_path('captiveportal', []))) {
 	$cpzone = "";
 }
 

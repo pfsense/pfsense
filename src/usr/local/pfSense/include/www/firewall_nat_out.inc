@@ -32,8 +32,6 @@ require_once("filter.inc");
 function saveNAToutMode($post, $json = false) {
 	global $FilterIflist, $GatewaysList;
 
-	config_init_path('nat/outbound/rule');
-
 	if (config_get_path('nat/outbound/mode') === null) {
 		config_set_path('nat/outbound/mode', "automatic");
 	}
@@ -105,8 +103,6 @@ function saveoutNATrule($post, $id, $json = false) {
 	$nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
 	$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 	$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
-
-	config_init_path('nat/outbound/rule');
 
 	if (isset($post['after'])) {
 		$after = $post['after'];
@@ -361,7 +357,7 @@ function saveoutNATrule($post, $id, $json = false) {
 		} else {
 			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
-				$a_out = config_get_path('nat/outbound/rule');
+				$a_out = config_get_path('nat/outbound/rule', []);
 				array_splice($a_out, $after+1, 0, array($natent));
 				config_set_path('nat/outbound/rule', $a_out);
 			} else {
@@ -387,8 +383,7 @@ function getoutNATrule($id, $json = false) {
 	$nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 	$nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_NETAL, SPECIALNET_IFNET, SPECIALNET_GROUP];
 
-	config_init_path('nat/outbound/rule');
-	$a_out = config_get_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule', []);
 
 	$pconfig = array();
 
@@ -472,8 +467,7 @@ function getoutNATrule($id, $json = false) {
 
 // Toggle enabled/disabled status of an Outbound rule
 function toggleoutNATrule($post, $json = false) {
-	config_init_path('nat/outbound/rule');
-	$a_out = config_get_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule', []);
 
 	if (isset($a_out[$post['id']]['disabled'])) {
 		unset($a_out[$post['id']]['disabled']);
@@ -507,8 +501,7 @@ function toggleMultipleoutNATrules($post, $json = false) {
 		return;
 	}
 
-	config_init_path('nat/outbound/rule');
-	$a_out = config_get_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule', []);
 
 	foreach ($post['rule'] as $rulei) {
 		if (isset($a_out[$rulei]['disabled'])) {
@@ -540,8 +533,7 @@ function deleteMultipleoutNATrules($post, $json = false) {
 		return;
 	}
 
-	config_init_path('nat/outbound/rule');
-	$a_out = config_get_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule', []);
 
 	foreach ($post['rule'] as $rulei) {
 		unset($a_out[$rulei]);
@@ -560,8 +552,7 @@ function deleteMultipleoutNATrules($post, $json = false) {
 
 // Delete outbound rule
 function deleteoutNATrule($post, $json = false) {
-	config_init_path('nat/outbound/rule');
-	$a_out = config_get_path('nat/outbound/rule');
+	$a_out = config_get_path('nat/outbound/rule', []);
 
 	unset($a_out[$post['id']]);
 	config_set_path('nat/outbound/rule', $a_out);
@@ -578,8 +569,7 @@ function deleteoutNATrule($post, $json = false) {
 // Re-order the NPtNAT rules per the array of indices passed in $post
 function outNATrulesreorder($post, $json = false) {
 	if (is_array($post['rule']) && !empty($post['rule'])) {
-		config_init_path('nat/outbound/rule');
-		$a_out = config_get_path('nat/outbound/rule');
+		$a_out = config_get_path('nat/outbound/rule', []);
 		$a_out_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user

@@ -61,7 +61,6 @@ if (!$if) {
 	exit;
 }
 
-config_init_path("dhcpdv6/{$if}/staticmap");
 $netboot_enabled = config_path_enabled("dhcpdv6/{$if}", 'netboot');
 $ifcfgipv6 = get_interface_ipv6($if);
 $ifcfgsnv6 = get_interface_subnetv6($if);

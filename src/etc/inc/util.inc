@@ -2909,7 +2909,6 @@ function is_interface_mismatch() {
 
 	/* VLAN/QinQ-only interface mismatch detection
 	 * see https://redmine.pfsense.org/issues/12170 */
-	config_init_path('vlans/vlan');
 	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if (!does_interface_exist($vlan['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
@@ -2917,7 +2916,6 @@ function is_interface_mismatch() {
 			$do_assign = true;
 		}
 	}
-	config_init_path('qinqs/qinqentry');
 	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
 		if (!does_interface_exist($qinq['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $qinq['if'])) {
@@ -3234,7 +3232,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 			return array();
 		} elseif ($interface == 'lo0') {
 			// interface assigned IP address
-			foreach (array_keys(config_get_path('interfaces')) as $intf) {
+			foreach (array_keys(config_get_path('interfaces', [])) as $intf) {
 				if ((($inet == '4') && (get_interface_ip($intf) == $target)) ||
 				    (($inet == '6') && (get_interface_ipv6($intf) == $target))) {
 					$interface = convert_friendly_interface_to_real_interface_name($intf);
@@ -3487,7 +3485,6 @@ function alias_to_subnets_recursive($name, $returnhostnames = false) {
 
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
-	config_init_path('staticroutes/route');
 	if (empty(config_get_path('staticroutes/route'))) {
 		return array();
 	}
@@ -4099,8 +4096,6 @@ function array_del_path(array &$arr, string $path, $default = null) {
 
 
 function dhcpd_date_adjust_gmt($dt) {
-	config_init_path('dhcpd');
-
 	foreach (config_get_path('dhcpd', []) as $dhcpditem) {
 		if (empty($dhcpditem)) {
 			continue;
@@ -4837,7 +4832,6 @@ function dummynet_load_module($max_qlimit) {
 			"net.inet.ip.dummynet.hash_size" => "256",
 			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 	));
-	config_init_path('sysctl/item');
 	foreach (config_get_path('sysctl/item', []) as $item) {
 		if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
 			$sysctls[$item['tunable']] = $item['value'];
@@ -4849,7 +4843,6 @@ function dummynet_load_module($max_qlimit) {
 function get_interface_vip_ips($interface) {
 	$vipips = '';
 
-	config_init_path('virtualip/vip');
 	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if (($vip['interface'] == $interface) &&
 		    (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {

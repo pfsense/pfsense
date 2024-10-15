@@ -30,8 +30,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('checkipservices/checkipservice');
-
 $dirty = false;
 if ($_POST['act'] == "del") {
 	config_del_path("checkipservices/checkipservice/{$_POST['id']}");
@@ -103,7 +101,7 @@ if (config_path_enabled('checkipservices/checkipservice', 'disable_factory_defau
 }
 
 // Append the factory default check IP service to the list.
-$a_checkipservice = config_get_path('checkipservices/checkipservice');
+$a_checkipservice = config_get_path('checkipservices/checkipservice', []);
 $a_checkipservice[] = $factory_default_checkipservice;
 $factory_default = count($a_checkipservice) - 1;
 

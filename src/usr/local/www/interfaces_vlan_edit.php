@@ -35,8 +35,6 @@
 require_once("config.lib.inc");
 require_once("guiconfig.inc");
 
-config_init_path('vlans/vlan');
-
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
 $portlist = array_merge($portlist, $lagglist);
@@ -52,8 +50,6 @@ foreach ($lagglist as $lagg) {
 
 /* Do not allow OpenVPN TUN interfaces to be used for QinQ
  * https://redmine.pfsense.org/issues/11675 */
-config_init_path('openvpn/openvpn-server');
-config_init_path('openvpn/openvpn-client');
 foreach ($portlist as $portname => $port) {
 	if (strstr($portname, "ovpn")) {
 		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);

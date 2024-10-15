@@ -36,7 +36,6 @@ $pgtitle = array(gettext("Interfaces"), gettext("Interface Groups"), gettext("Ed
 $pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
-config_init_path('ifgroups/ifgroupentry');
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $interface_list = get_configured_interface_with_descr(true);

@@ -36,9 +36,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-config_init_path('l2tp/user');
-
-
 $pconfig = $_POST;
 
 if ($_POST['act'] == "del") {

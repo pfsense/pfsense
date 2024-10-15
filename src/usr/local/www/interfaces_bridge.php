@@ -30,12 +30,10 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('bridges/bridged');
-
 function bridge_inuse($num) {
-	$a_bridges = config_get_path('bridges/bridged');
+	$a_bridges = config_get_path('bridges/bridged', []);
 	$iflist = get_configured_interface_list(true);
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
 		if ($if_config[$if]['if'] == $a_bridges[$num]['bridgeif']) {
 			return true;

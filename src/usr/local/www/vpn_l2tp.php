@@ -31,8 +31,6 @@
 require_once("guiconfig.inc");
 require_once("vpn.inc");
 
-config_init_path('l2tp/radius');
-
 $pconfig['remoteip'] = config_get_path('l2tp/radius/remoteip');
 $pconfig['localip'] = config_get_path('l2tp/radius/localip');
 $pconfig['l2tp_subnet'] = config_get_path('l2tp/radius/l2tp_subnet');

@@ -329,7 +329,6 @@ function get_queue_stats() {
 }
 
 function shaper_config_get_path($mypath) {
-	config_init_path('shaper');
 	$path = 'shaper';
 	foreach ($mypath as $indeks) {
 		$path .= "/queue/{$indeks}";
@@ -339,7 +338,6 @@ function shaper_config_get_path($mypath) {
 }
 
 function shaper_config_del($mypath) {
-	config_init_path('shaper');
 	$path = 'shaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
 		$path .= "/queue/{$mypath[$i]}";
@@ -348,7 +346,6 @@ function shaper_config_del($mypath) {
 }
 
 function shaper_dn_config_get_path($mypath) {
-	config_init_path('dnshaper');
 	$path = 'dnshaper';
 	foreach ($mypath as $indeks) {
 		$path .= "/queue/{$indeks}";
@@ -358,7 +355,6 @@ function shaper_dn_config_get_path($mypath) {
 }
 
 function shaper_dn_config_del($mypath) {
-	config_init_path('dnshaper');
 	$path = 'dnshaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
 		$path .= "/queue/{$mypath[$i]}";
@@ -5287,8 +5283,6 @@ function read_altq_config() {
 	global $altq_list_queues;
 	$path = array();
 
-	config_init_path('shaper/queue');
-
 	$altq_list_queues = array();
 
 	foreach (config_get_path('shaper/queue', []) as $key => $conf) {
@@ -5318,7 +5312,6 @@ function read_dummynet_config() {
 	global $dummynet_pipe_list;
 	$path = array();
 
-	config_init_path('dnshaper/queue');
 	$a_int = config_get_path('dnshaper/queue', []);
 
 	$dummynet_pipe_list = array();

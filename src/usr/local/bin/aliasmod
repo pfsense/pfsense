@@ -67,7 +67,7 @@ function aliasmod($act, $alias, $entry) {
 		return false;
 	}
 
-	$alias_config = config_get_path('aliases/alias');
+	$alias_config = config_get_path('aliases/alias', []);
 	foreach ($alias_config as & $als) {
 		if ($als['name'] != $alias) {
 			continue;

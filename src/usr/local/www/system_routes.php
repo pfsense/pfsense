@@ -37,7 +37,6 @@ require_once('functions.inc');
 require_once('filter.inc');
 require_once('shaper.inc');
 
-config_init_path('staticroutes/route');
 $a_gateways = get_gateways(GW_CACHE_ALL);
 $changedesc_prefix = gettext('Static Routes') . ": ";
 
@@ -134,7 +133,7 @@ if($_POST['save']) {
 	}
 	/* move selected routes before this route */
 	if (isset($movebtn) && is_array($_POST['route']) && count($_POST['route'])) {
-		$a_routes = config_get_path('staticroutes/route');
+		$a_routes = config_get_path('staticroutes/route', []);
 		$a_routes_new = array();
 
 		/* copy all routes < $movebtn and not selected */

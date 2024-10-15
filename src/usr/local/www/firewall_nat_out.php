@@ -41,7 +41,6 @@ require_once("firewall_nat_out.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-config_init_path('nat/outbound/rule');
 $nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];

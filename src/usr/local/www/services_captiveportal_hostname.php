@@ -51,8 +51,6 @@ if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	exit;
 }
 
-config_init_path("captiveportal/{$cpzone}/allowedhostname");
-
 if (isset($cpzone) && !empty($cpzone) && (config_get_path("captiveportal/{$cpzone}/zoneid") !== null)) {
 	$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 }

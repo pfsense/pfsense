@@ -6,7 +6,6 @@ require_once("functions.inc");
 
 $interface = convert_real_interface_to_friendly_interface_name(str_replace("\n", "", $argv[1]));
 if (!empty($interface)) {
-	config_init_path('gateways/gateway_item');
 	foreach (config_get_path('gateways/gateway_item', []) as $gate) {
 		if (($gate['interface'] == $interface) && 
 		    !isset($gate['monitor_disable']) &&

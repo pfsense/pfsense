@@ -34,8 +34,7 @@ require_once("pfsense-utils.inc");
 
 $host = idn_to_ascii(trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'"));
 
-config_init_path('aliases/alias');
-$a_aliases = config_get_path('aliases/alias');
+$a_aliases = config_get_path('aliases/alias', []);
 
 $aliasname = substr(str_replace(array(".", "-"), "_", $host), 0, 31);
 $alias_exists = false;

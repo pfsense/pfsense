@@ -30,8 +30,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('dnsupdates/dnsupdate');
-
 if ($_POST['act'] == "del") {
 	config_del_path("dnsupdates/dnsupdate/{$_POST['id']}");
 

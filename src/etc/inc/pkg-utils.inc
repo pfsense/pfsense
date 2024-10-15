@@ -796,7 +796,6 @@ function install_package_xml($package_name) {
 	/* add package information to config.xml */
 	$pkgid = get_package_id($pkg_info['name']);
 	update_status(gettext("Saving updated package information...") . "\n");
-	config_init_path('installedpackages/package');
 	$pkgs = config_get_path('installedpackages/package', []);
 	if ($pkgid == -1) {
 		$pkgs[] = $pkg_info;
@@ -909,7 +908,6 @@ function install_package_xml($package_name) {
 	}
 	/* sidebar items */
 	if (is_array($pkg_config['menu'])) {
-		config_init_path('installedpackages/menu');
 		$menus = config_get_path('installedpackages/menu', []);
 		update_status(gettext("Menu items... "));
 		foreach ($pkg_config['menu'] as $menu) {
@@ -925,7 +923,6 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	/* services */
-	config_init_path('installedpackages/service');
 	if (is_array($pkg_config['service'])) {
 		update_status(gettext("Services... "));
 		$services = config_get_path('installedpackages/service', []);
@@ -947,7 +944,6 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	if (is_array($pkg_config['tabs'])) {
-		config_init_path("installedpackages/package/{$pkgid}/tabs");
 		config_set_path("installedpackages/package/{$pkgid}/tabs",$pkg_config['tabs']);
 	}
 	/* plugins */
@@ -955,7 +951,6 @@ function install_package_xml($package_name) {
 		config_set_path("installedpackages/package/{$pkgid}/include_file", $pkg_config['include_file']);
 	}
 	if (is_array($pkg_config['plugins'])) {
-		config_init_path("installedpackages/package/{$pkgid}/plugins");
 		config_set_path("installedpackages/package/{$pkgid}/plugins", $pkg_config['plugins']);
 	}
 
@@ -992,11 +987,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	update_status(sprintf(gettext("Removing %s components..."),
 	    $package_name) . "\n");
 	/* parse package configuration */
-	config_init_path("installedpackages/package/{$pkgid}");
 	$pkg_info = config_get_path("installedpackages/package/{$pkgid}",[]);
-	config_init_path('installedpackages/menu');
 	$menus = config_get_path('installedpackages/menu', []);
-	config_init_path('installedpackages/service');
 	$services = config_get_path('installedpackages/service', []);
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .

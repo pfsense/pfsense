@@ -33,8 +33,6 @@
 
 $pgtitle = array(gettext("System"), gettext("User Settings"));
 
-config_init_path('system/user');
-
 if (isset($_SESSION['Username']) && isset($userindex[$_SESSION['Username']]) && is_numericint($userindex[$_SESSION['Username']])) {
 	$id = $userindex[$_SESSION['Username']];
 	$this_user = config_get_path("system/user/{$id}");

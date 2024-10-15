@@ -30,8 +30,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('checkipservices/checkipservice');
-
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }

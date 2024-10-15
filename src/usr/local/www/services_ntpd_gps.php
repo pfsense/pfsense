@@ -39,7 +39,6 @@ $ntp_poll_values = system_ntp_poll_values();
 $serialports = get_serial_ports(true);
 
 function set_default_gps() {
-	config_init_path('ntpd');
 	config_del_path('ntpd/gps');
 	config_set_path('ntpd/gps/type', 'Default');
 	/* copy an existing configured GPS port if it exists, the unset may be uncommented post production */
@@ -354,8 +353,7 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
-config_init_path('ntpd/gps');
-$pconfig = config_get_path('ntpd/gps');
+$pconfig = config_get_path('ntpd/gps', []);
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";

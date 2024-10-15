@@ -35,9 +35,6 @@ require_once("pfsense-utils.inc");
 
 global $cert_strict_values, $curve_compatible_list;
 
-config_init_path('ca');
-config_init_path('cert');
-
 $type = $_REQUEST['type'];
 
 switch ($type) {

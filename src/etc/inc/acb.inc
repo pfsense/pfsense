@@ -332,8 +332,6 @@ function upload_config($manual = false) {
 // if frequency == "cron", a new crontab entry is created, otherwise any existing
 // ACB entry is removed
 function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $reverse, $pwd) {
-	config_init_path('system/acb');
-
 	// Randomize the minutes if not specified
 	if (!isset($minute) || strlen($minute) == 0 || $minute == "0") {
 		$minute = rand(1, 59);

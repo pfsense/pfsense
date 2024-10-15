@@ -24,7 +24,6 @@ require("config.inc");
 echo ".";
 config_read_file(true);
 echo ".";
-config_init_path('system/ssh');
 config_set_path('system/ssh/enable', "enabled");
 echo ".";
 write_config("pfSsh.php enabled sshd");

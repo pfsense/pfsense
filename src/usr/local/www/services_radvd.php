@@ -202,8 +202,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		config_init_path("dhcpdv6/{$if}");
-		$dhcpd6_config = config_get_path("dhcpdv6/{$if}");
+		$dhcpd6_config = config_get_path("dhcpdv6/{$if}", []);
 
 		$dhcpd6_config['ramode'] = $_POST['ramode'];
 		$dhcpd6_config['rapriority'] = $_POST['rapriority'];
@@ -272,7 +271,7 @@ $tab_array = array();
 $tabscounter = 0;
 $i = 0;
 foreach ($iflist as $ifent => $ifname) {
-	$oc = config_get_path("interfaces/{$ifent}");
+	$oc = config_get_path("interfaces/{$ifent}", []);
 	/* We need interfaces configured with a static IPv6 address or track6 for PD.
 	   Also show those configured as none to allow disabling the service. See:
 	   https://redmine.pfsense.org/issues/14967 */

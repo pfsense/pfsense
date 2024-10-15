@@ -39,8 +39,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_npt.inc");
 
-config_init_path('nat/npt');
-
 // Process $_POST/$_REQUEST =======================================================================
 if ($_REQUEST['savemsg']) {
 	$savemsg = $_REQUEST['savemsg'];

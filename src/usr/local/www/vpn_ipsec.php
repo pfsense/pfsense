@@ -41,9 +41,6 @@ require_once("vpn.inc");
 
 global $p1_authentication_methods;
 
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/phase2');
-
 $items_deleted = false;
 
 if ($_POST['apply']) {

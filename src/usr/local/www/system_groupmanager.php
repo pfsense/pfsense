@@ -41,8 +41,6 @@ require_once("pfsense-utils.inc");
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
 
-config_init_path('system/group');
-
 $id = is_numericint($_REQUEST['groupid']) ? $_REQUEST['groupid'] : null;
 $act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
@@ -99,7 +97,7 @@ if (($_POST['act'] == "delgroup") && !$read_only) {
 	 * Reindex the array to avoid operating on an incorrect index
 	 * https://redmine.pfsense.org/issues/7733
 	 */
-	config_set_path("system/group", array_values(config_get_path('system/group')));
+	config_set_path("system/group", array_values(config_get_path('system/group', [])));
 
 	$savemsg = sprintf(gettext("Successfully deleted group: %s"),
 	    $groupdeleted);
@@ -175,7 +173,7 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 		 * Reindex the array to avoid operating on an incorrect index
 		 * https://redmine.pfsense.org/issues/7733
 		 */
-		config_set_path("system/group", array_values(config_get_path('system/group')));
+		config_set_path("system/group", array_values(config_get_path('system/group', [])));
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
@@ -268,7 +266,6 @@ if (isset($_POST['save']) && !$read_only) {
 		 * changed.
 		 */
 		if (is_array($group['member'])) {
-			config_init_path('system/user');
 			foreach (config_get_path('system/user', []) as $idx => $user) {
 				if (in_array($user['uid'], $group['member'])) {
 					local_user_set($user);
@@ -278,7 +275,7 @@ if (isset($_POST['save']) && !$read_only) {
 		}
 
 		/* Sort it alphabetically */
-		$group_config = config_get_path('system/group');
+		$group_config = config_get_path('system/group', []);
 		usort($group_config, function($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});

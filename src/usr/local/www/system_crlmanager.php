@@ -47,9 +47,6 @@ if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-config_init_path('ca');
-config_init_path('cert');
-config_init_path('crl');
 
 /* Clean up blank entries missing a reference ID */
 foreach (config_get_path('crl', []) as $cid => $acrl) {

@@ -38,8 +38,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_out.inc");
 
-config_init_path('nat/outbound/rule');
-
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }

@@ -38,8 +38,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_virtual_ip.inc");
 
-config_init_path('virtualip/vip');
-
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -49,7 +47,7 @@ function return_first_two_octets($ip) {
 	return $ip_split[0] . "." . $ip_split[1];
 }
 
-$a_vip = config_get_path('virtualip/vip');
+$a_vip = config_get_path('virtualip/vip', []);
 if (isset($id) && $a_vip[$id]) {
 	$pconfig['mode'] = $a_vip[$id]['mode'];
 	$pconfig['vhid'] = $a_vip[$id]['vhid'];

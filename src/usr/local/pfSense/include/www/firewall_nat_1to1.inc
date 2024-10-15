@@ -36,8 +36,6 @@ function save1to1NATrule($post, $id, $json = false) {
 	$binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB];
 	$binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];
 
-	config_init_path('nat/onetoone');
-
 	if (isset($post['after'])) {
 		$after = $post['after'];
 	}
@@ -208,7 +206,7 @@ function save1to1NATrule($post, $id, $json = false) {
 			unset($natent['natreflection']);
 		}
 
-		$a_1to1 = config_get_path('nat/onetoone');
+		$a_1to1 = config_get_path('nat/onetoone', []);
 		if (isset($id) && $a_1to1[$id]) {
 			$a_1to1[$id] = $natent;
 		} else {
@@ -233,8 +231,7 @@ function save1to1NATrule($post, $id, $json = false) {
 }
 
 function get1to1NATRule($id, $json = false) {
-	config_init_path('nat/onetoone');
-	$a_1to1 = config_get_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone', []);
 
 	$pconfig = array();
 
@@ -268,8 +265,7 @@ function get1to1NATRule($id, $json = false) {
 
 // Toggle enabled/disabled status of a 1 to 1 rule
 function toggle1to1NATrule($post, $json = false) {
-	config_init_path('nat/onetoone');
-	$a_1to1 = config_get_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone', []);
 
 	if (isset($a_1to1[$post['id']]['disabled'])) {
 		unset($a_1to1[$post['id']]['disabled']);
@@ -294,8 +290,7 @@ function toggle1to1NATrule($post, $json = false) {
 
 // Toggle enabled/disabled status for multiple 1 to 1 rules
 function toggleMultiple1to1NATrules($post, $json = false) {
-	config_init_path('nat/onetoone');
-	$a_1to1 = config_get_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone', []);
 
 	foreach ($post['rule'] as $rulei) {
 		if (isset($a_1to1[$rulei]['disabled'])) {
@@ -318,8 +313,7 @@ function toggleMultiple1to1NATrules($post, $json = false) {
 
 // Delete multiple 1 to 1 rules
 function deleteMultiple1to1NATrules($post, $json = false) {
-	config_init_path('nat/onetoone');
-	$a_1to1 = config_get_path('nat/onetoone');
+	$a_1to1 = config_get_path('nat/onetoone', []);
 
 	foreach ($post['rule'] as $rulei) {
 		unset($a_1to1[$rulei]);
@@ -338,8 +332,6 @@ function deleteMultiple1to1NATrules($post, $json = false) {
 
 // Delete 1 to 1 rule
 function delete1to1NATrule($post, $json = false) {
-	config_init_path('nat/onetoone');
-
 	config_del_path("nat/onetoone/{$post['id']}");
 	if (write_config(gettext("Firewall: NAT: 1:1 - deleted NAT 1:1 mapping.")) && !$json) {
 		mark_subsystem_dirty('natconf');
@@ -354,8 +346,7 @@ function delete1to1NATrule($post, $json = false) {
 // Re-order the 1 to 1 NAT rules per the array of indices passed in $post
 function reorder1to1NATrules($post, $json = false) {
 	if (is_array($post['rule']) && !empty($post['rule'])) {
-		config_init_path('nat/onetoone');
-		$a_1to1 = config_get_path('nat/onetoone');
+		$a_1to1 = config_get_path('nat/onetoone', []);
 		$a_1to1_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user

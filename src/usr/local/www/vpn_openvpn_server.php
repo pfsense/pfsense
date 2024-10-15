@@ -40,12 +40,6 @@ global $openvpn_prots;
 
 $openvpn_all_data_ciphers = openvpn_get_cipherlist();
 
-config_init_path('openvpn/openvpn-server');
-
-config_init_path('ca');
-config_init_path('cert');
-config_init_path('crl');
-
 foreach (config_get_path('crl', []) as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
 		config_del_path("crl/{$cid}");

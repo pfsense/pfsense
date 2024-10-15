@@ -36,7 +36,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('unbound/domainoverrides');
 $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_domainOverrides_config = isset($id) ? config_get_path("unbound/domainoverrides/{$id}") : null;

@@ -62,11 +62,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 
 if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
-	config_init_path('system/user');
 }
-
-config_init_path('ca');
-config_init_path('cert');
 
 $internal_ca_count = 0;
 foreach (config_get_path('cert', []) as $ca) {

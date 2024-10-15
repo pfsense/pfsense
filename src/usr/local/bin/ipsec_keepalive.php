@@ -23,8 +23,6 @@
 include_once('ipsec.inc');
 include_once('service-utils.inc');
 include_once('gwlb.inc');
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/phase2');
 
 $debug = false;
 

@@ -49,7 +49,6 @@ if ($_POST['act'] == 'killgw') {
 	exit;
 }
 
-config_init_path('gateways/gateway_group');
 $changedesc = gettext("Gateway Groups") . ": ";
 
 $gateways_status = return_gateways_status();

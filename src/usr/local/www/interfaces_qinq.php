@@ -31,8 +31,6 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-config_init_path('qinqs/qinqentry');
-
 if ($_POST['act'] == "del") {
 	$id = is_numericint($_POST['id']) ? $_POST['id'] : null;
 

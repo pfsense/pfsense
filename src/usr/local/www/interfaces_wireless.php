@@ -31,12 +31,10 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('wireless/clone');
-
 function clone_inuse($num) {
-	$a_clones = config_get_path('wireless/clone');
+	$a_clones = config_get_path('wireless/clone', []);
 	$iflist = get_configured_interface_list(true);
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
 		if ($if_config[$if]['if'] == $a_clones[$num]['cloneif']) {
 			return true;

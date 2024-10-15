@@ -40,12 +40,6 @@ global $openvpn_prots;
 
 $openvpn_all_data_ciphers = openvpn_get_cipherlist();
 
-config_init_path('openvpn/openvpn-client');
-
-config_init_path('ca');
-config_init_path('cert');
-config_init_path('crl');
-
 $proxy_auth_types = array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'));
 $certlist = openvpn_build_cert_list(true);
 

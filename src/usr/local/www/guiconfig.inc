@@ -56,7 +56,6 @@ if (!$omit_nocacheheaders) {
 	header("Expires: 0");
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 	header("Cache-Control: no-cache, no-store, must-revalidate");
-	header("Pragma: no-cache");
 }
 
 require_once("authgui.inc");

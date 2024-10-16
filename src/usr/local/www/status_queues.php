@@ -30,8 +30,7 @@
 /*
 header("Last-Modified: " . gmdate("D, j M Y H:i:s") . " GMT");
 header("Expires: " . gmdate("D, j M Y H:i:s", time()) . " GMT");
-header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP/1.1
-header("Pragma: no-cache"); // HTTP/1.0
+header("Cache-Control: no-cache, no-store, must-revalidate");
 */
 
 require_once("guiconfig.inc");

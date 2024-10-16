@@ -120,10 +120,10 @@ $tg_displayed_ifs_array = [];
 $tg_displayed_realifsarray = [];
 ?>
 	<script src="/vendor/d3/d3.min.js?v=<?=filemtime('/usr/local/www/vendor/d3/d3.min.js')?>"></script>
-	<script src="/vendor/nvd3/nv.d3.js?v=<?=filemtime('/usr/local/www/vendor/nvd3/nv.d3.js')?>"></script>
+	<script src="/vendor/nvd3/nv.d3.min.js?v=<?=filemtime('/usr/local/www/vendor/nvd3/nv.d3.min.js')?>"></script>
 	<script src="/vendor/visibility/visibility-1.2.3.min.js?v=<?=filemtime('/usr/local/www/vendor/visibility/visibility-1.2.3.min.js')?>"></script>
 
-	<link href="/vendor/nvd3/nv.d3.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/vendor/nvd3/nv.d3.min.css" media="screen, projection" rel="stylesheet" type="text/css">
 
 	<div id="traffic-chart-error" class="alert alert-danger" style="display: none;"></div>
 <?php

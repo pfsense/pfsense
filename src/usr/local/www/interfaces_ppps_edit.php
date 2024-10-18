@@ -251,7 +251,7 @@ if ($_POST['save']) {
 	if (($_POST['type'] == 'l2tp') && (isset($_POST['secret']))) {
 		$pconfig['secret'] = $_POST['secret'];
 	}
-	if (($_POST['type'] == "ppp") && (count($_POST['interfaces']) > 1)) {
+	if (($_POST['type'] == "ppp") && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
 	if ($_POST['provider'] && $_POST['null_service']) {

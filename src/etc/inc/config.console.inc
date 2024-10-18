@@ -475,6 +475,301 @@ function vlan_setup() {
 	}
 }
 
+function installer_add_gateway($if, $gateway) {
+
+	if (!isset($if) || strlen($if) == 0 ||
+	    !isset($gateway) || strlen($gateway) == 0) {
+		return (-1);
+	}
+
+	/* Delete the gateway first, if already present. */
+	$gws = config_get_path('gateways/gateway_item', []);
+	$gws = array_filter($gws, function($gw) use ($gateway, $if) {
+		if ($gw['gateway'] == $gateway && $gw['interface'] == $if) {
+			return (false);
+		}
+		return (true);
+	});
+	config_set_path('gateways/gateway_item', $gws);
+
+	/* Add the interface gateway. */
+	$gwname = strtoupper($if) . "GW";
+	$gw = [
+	    'interface'			=> $if,
+	    'gateway'			=> $gateway,
+	    'ipprotocol'		=> 'inet',
+	    'name'			=> $gwname,
+	    'descr'			=> "",
+	    'weight'			=> "",
+	    'gw_down_kill_states'	=> "",
+	];
+	config_set_path('gateways/gateway_item/', $gw);
+	config_set_path('gateways/defaultgw4', $gwname);
+	config_set_path("interfaces/{$if}/gateway", $gwname);
+
+	return (0);
+}
+
+function installer_add_pppoe($dev, $if, $user, $pass, $svc, $svc_null) {
+
+	$newid = 0;
+
+	/* Remove any existing PPPoE settings on the interface. */
+	$ppps = config_get_path('ppps/ppp', []);
+	$ppps = array_filter($ppps, function($ppp) use (&$newid, $dev) {
+		if ($ppp['type'] == "pppoe" && $ppp['ports'] == $dev) {
+			return (false);
+		}
+		$newid = max($newid, $ppp['ptpid'] + 1);
+		return (true);
+	});
+	config_set_path('ppps/ppp', $ppps);
+
+	/* Add the PPPoE connection. */
+	$ppp = [
+	    'ptpid'	=> $newid,
+	    'type'	=> 'pppoe',
+	    'if'	=> "pppoe{$newid}",
+	    'ports'	=> $dev,
+	    'username'	=> $user,
+	    'password'	=> base64_encode($pass),
+	    'bandwidth'	=> "",
+	    'mtu'	=> "",
+	    'mru'	=> "",
+	    'mrru'	=> "",
+	];
+	if ($svc_null !== true) {
+		$ppp['provider'] = $svc;
+	}
+	config_set_path('ppps/ppp/', $ppp);
+	config_set_path("interfaces/{$if}/enable", '');
+	config_set_path("interfaces/{$if}/ipaddr", 'pppoe');
+	config_set_path("interfaces/{$if}/if", "pppoe{$newid}");
+	config_del_path("interfaces/{$if}/subnet");
+	config_del_path("interfaces/{$if}/media");
+	config_del_path("interfaces/{$if}/mediaopt");
+	config_del_path("interfaces/{$if}/gateway");
+
+	return (0);
+}
+
+function installer_add_vlan($dev, $if, $descr, $tag, $pcp) {
+
+	if (intval($tag) < 1 || intval($tag) > 4094 ||
+	    intval($pcp) < 0 || intval($pcp) > 7) {
+		return (-1);
+	}
+
+	/* Delete the VLAN is already present. */
+	$vlans = config_get_path('vlans/vlan', []);
+	$vlans = array_filter($vlans, function($vlan) use ($dev, $tag) {
+		if ($vlan['tag'] == $tag && $vlan['if'] == $dev) {
+			return (false);
+		}
+		return (true);
+	});
+	config_set_path('vlans/vlan', $vlans);
+
+	/* Remove other interfaces using this VLAN tag. */
+	$ifs = config_get_path('interfaces', []);
+	$ifs = array_filter($ifs, function($intf) use ($dev, $if, $tag) {
+		if ($intf != $if && $intf['if'] == "{$dev}.{$tag}") {
+			return (false);
+		}
+		return (true);
+	});
+	config_set_path('interfaces', $ifs);
+
+	/* Add the VLAN. */
+	$vlan = [
+	    'if'	=> $dev,
+	    'tag'	=> $tag,
+	    'pcp'	=> $pcp,
+	    'descr'	=> $descr,
+	    'vlanif'	=> "{$dev}.{$tag}",
+	];
+	config_set_path('vlans/vlan/', $vlan);
+
+	return (0);
+}
+
+function installer_setup_lan($lan) {
+
+	if (!isset($lan->if) ||
+	    !does_interface_exist($lan->if)) {
+		return (-1);
+	}
+
+	$if = $lan->if;
+
+	/* VLAN setup. */
+	if (isset($lan->vlan) && intval($lan->vlan) > 0) {
+		if (installer_add_vlan($lan->if, "lan", "LAN",
+		    $lan->vlan, $lan->vlan_pcp) != 0) {
+			return (-1);
+		}
+		$if = "{$lan->if}.{$lan->vlan}";
+	}
+
+	config_set_path('interfaces/lan/if', $if);
+	switch ($lan->mode) {
+	case "DHCP":
+		config_set_path('interfaces/lan/enable', '');
+		config_set_path('interfaces/lan/ipaddr', 'dhcp');
+		config_set_path('interfaces/lan/ipaddrv6', 'dhcp6');
+		config_set_path('interfaces/lan/subnet', '');
+		config_set_path('interfaces/lan/gateway', '');
+		config_set_path('interfaces/lan/media', '');
+		config_set_path('interfaces/lan/mediaopt', '');
+		break;
+	case "STATIC":
+		list ($ip, $subnet) = explode("/", $lan->ip);
+		if (empty($subnet)) {
+			$subnet = "24";
+		}
+		config_set_path('interfaces/lan/enable', '');
+		config_set_path('interfaces/lan/ipaddr', $ip);
+		config_del_path('interfaces/lan/ipaddrv6');
+		config_set_path('interfaces/lan/subnet', $subnet);
+		config_set_path('interfaces/lan/media', '');
+		config_set_path('interfaces/lan/mediaopt', '');
+		break;
+	}
+
+	/* dhcpd. */
+	if (isset($lan->dhcpd_enabled) &&
+	    isset($lan->dhcpd_range_start) &&
+	    isset($lan->dhcpd_range_end) &&
+	    $lan->dhcpd_enabled === true) {
+		config_set_path('dhcpd/lan/enable', '');
+		config_set_path('dhcpd/lan/range/from', $lan->dhcpd_range_start);
+		config_set_path('dhcpd/lan/range/to', $lan->dhcpd_range_end);
+	} else {
+		config_del_path('dhcpd/lan/enable');
+	}
+
+	return (0);
+}
+
+function installer_setup_wan($wan) {
+
+	if (!isset($wan->if) ||
+	    !does_interface_exist($wan->if)) {
+		return (-1);
+	}
+
+	$if = $wan->if;
+
+	/* VLAN setup. */
+	if (isset($wan->vlan) && intval($wan->vlan) > 0) {
+		if (installer_add_vlan($wan->if, "wan", "WAN",
+		    $wan->vlan, $wan->vlan_pcp) != 0) {
+			return (-1);
+		}
+		$if = "{$wan->if}.{$wan->vlan}";
+	}
+
+	config_set_path('interfaces/wan/if', $if);
+	switch ($wan->mode) {
+	case "DHCP":
+		config_set_path('interfaces/wan/enable', '');
+		config_set_path('interfaces/wan/ipaddr', 'dhcp');
+		config_set_path('interfaces/wan/ipaddrv6', 'dhcp6');
+		config_set_path('interfaces/wan/subnet', '');
+		config_set_path('interfaces/wan/gateway', '');
+		config_set_path('interfaces/wan/media', '');
+		config_set_path('interfaces/wan/mediaopt', '');
+		break;
+	case "PPPoE":
+		if (installer_add_pppoe($if, "wan", $wan->PPPoE_User,
+		    $wan->PPPoE_Password, $wan->PPPoE_Service_Name,
+		    $wan->PPPoE_NULL_Service) != 0) {
+			return (-1);
+		}
+		break;
+	case "STATIC":
+		list ($ip, $subnet) = explode("/", $wan->ip);
+		if (empty($subnet)) {
+			$subnet = "24";
+		}
+		config_set_path('interfaces/wan/enable', '');
+		config_set_path('interfaces/wan/ipaddr', $ip);
+		config_del_path('interfaces/wan/ipaddrv6');
+		config_set_path('interfaces/wan/subnet', $subnet);
+		config_set_path('interfaces/wan/media', '');
+		config_set_path('interfaces/wan/mediaopt', '');
+		if (isset($wan->default_gateway) &&
+		    strlen($wan->default_gateway) > 0) {
+			if (installer_add_gateway("wan", $wan->default_gateway) != 0) {
+				return (-1);
+			}
+		}
+		break;
+	}
+
+	/* DNS. */
+	if (isset($wan->DNS_server) && strlen($wan->DNS_server) > 0) {
+		config_set_path('system/dnsserver', $wan->DNS_server);
+	} else {
+		config_del_path('system/dnsserver');
+	}
+
+	return (0);
+}
+
+function installer_settings_import() {
+	global $g;
+
+	/* Should not happen. */
+	if (!file_exists("{$g['conf_path']}/installer-settings.json")) {
+		return (-1);
+	}
+	/* Do not accept files bigger than 64KiB. */
+	$size = filesize("{$g['conf_path']}/installer-settings.json");
+	if ($size === false || $size >= 64 * 1024) {
+		return (-1);
+	}
+
+	/* Read the settings from the Netgate Installer. */
+	$settings = file_get_contents("{$g['conf_path']}/installer-settings.json");
+	if ($settings === false) {
+		return (0);
+	}
+	$json = json_decode($settings);
+	if ($json === NULL ||
+	    !isset($json->lan) ||
+	    !isset($json->wan)) {
+		return (0);
+	}
+	$lan = $json->lan;
+	$wan = $json->wan;
+
+	/* WAN setup. */
+	if (isset($wan->if) &&
+	    does_interface_exist($wan->if) &&
+	    installer_setup_wan($wan) != 0) {
+		return (-1);
+	}
+
+	/* LAN setup. */
+	if (isset($lan->if) &&
+	    does_interface_exist($lan->if) &&
+	    installer_setup_lan($lan) != 0) {
+		return (-1);
+	}
+
+	/* Remove the settings file. */
+	unlink("{$g['conf_path']}/installer-settings.json");
+	file_put_contents("{$g['conf_path']}/assign_complete", "1");
+
+	/* Remove the default trigger. */
+	config_del_path('system/trigger_virt_setup');
+
+	write_config(gettext("Network settings imported from the Netgate Installer"));
+
+	return (0);
+}
+
 function check_for_alternate_interfaces() {
 	// If the WAN and/or LAN devices in the factory default config do not exist,
 	// then look for alternate devices.

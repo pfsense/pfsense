@@ -122,6 +122,13 @@ echo "done.\n";
 
 mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid 2>/dev/null");
 
+/* Import the Installer network settings. */
+if (file_exists("{$g['conf_path']}/installer-settings.json")) {
+	echo "Importing the network settings from the Netgate Installer...";
+	installer_settings_import();
+	echo "done.\n";
+}
+
 // Only do the alternate interface checks if:
 // 1) The user has not yet run the initial wizard; and
 // 2) The user has not used the console menu to setup interface assignments

@@ -206,7 +206,12 @@ if (is_platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp
 	// setting up gateways monitor doesn't seem to have issues here, and fixes the
 	// most commonly encountered bugs from earlier versions when everything below
 	// was skipped during boot
+	filter_configure_sync();
 	setup_gateways_monitor();
+
+	// Make sure the default gateway is set up after DHCP succeeds. See:
+	// https://redmine.pfsense.org/issues/15791
+	system_routing_configure($interface);
 	exit;
 }
 

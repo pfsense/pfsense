@@ -175,6 +175,7 @@
 		var $_dnsDomain;
 		var $_FQDN;
 		var $_dnsIP;
+		var $_dnsLegacyIP;
 		var $_dnsWildcard;
 		var $_dnsProxied;
 		var $_dnsMX;
@@ -197,6 +198,7 @@
 		var $_dnsDummyUpdateDone;
 		var $_forceUpdateNeeded;
 		var $_useIPv6;
+		var $_useIPv4Andv6;
 		var $_existingRecords;
 		var $_curlProxy;
 
@@ -356,6 +358,12 @@
 				default:
 					$this->_useIPv6 = false;
 			}
+
+			switch ($dnsService) {
+				default:
+					$this->_useIPv4Andv6 = false;
+			}
+
 			$this->_dnsService = strtolower($dnsService);
 			$this->_dnsUser = $dnsUser;
 			$this->_dnsPass = base64_decode($dnsPass);
@@ -3254,33 +3262,53 @@
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkIP() starting.'), $this->_dnsService, $this->_FQDN));
 			}
 
-			if ($this->_useIPv6 == true) {
+			if ($this->_useIPv6 == true || $this->_useIPv4Andv6 == true) {
 				$ip_address = get_interface_ipv6($this->_if);
 				if (!is_ipaddrv6($ip_address)) {
 					return 0;
 				}
-			} else {
-				$ip_address = dyndnsCheckIP($this->_if);
-				if (!is_ipaddr($ip_address)) {
+			}
+			if ($this->_useIPv6 == false || $this->_useIPv4Andv6 == true) {
+				$legacy_ip_address = dyndnsCheckIP($this->_if);
+				if (!is_ipaddr($legacy_ip_address)) {
 					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
 					return 0;
-				} elseif (is_private_ip($ip_address)) {
+				} elseif (is_private_ip($legacy_ip_address)) {
 					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): Public IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
 					return 0;
 				}
 			}
-			if ($this->_useIPv6 == false && is_private_ip(get_interface_ip($this->_if))) {
-				if ($this->_dnsVerboseLog) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
+			if (($this->_useIPv6 == false || $this->_useIPv4Andv6 == true) && is_private_ip(get_interface_ip($this->_if))) {
+				if (is_ipaddr($legacy_ip_address)) {
+					if ($this->_dnsVerboseLog) {
+						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $legacy_ip_address));
+					}
+				} else {
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
+					return 0;
 				}
-			} else {
+			}
+			if ($this->_useIPv6 == true || $this->_useIPv4Andv6 == true) {
 				if ($this->_dnsVerboseLog) {
 					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from local system.'), $this->_dnsService, $this->_FQDN, $ip_address));
 				}
 			}
-			$this->_dnsIP = $ip_address;
 
-			return $ip_address;
+			if ($this->_useIPv6 == true || $this->_useIPv4Andv6 == true) {
+				$this->_dnsIP = $ip_address;
+			} else {
+				$this->_dnsIP = $legacy_ip_address;
+			}
+
+			if ($this->_useIPv4Andv6 == true) {
+				$this->_dnsLegacyIP = $legacy_ip_address;
+			}
+
+			if ($this->_useIPv6 == true) {
+				return $ip_address;
+			} else {
+				return $legacy_ip_address;
+			}
 		}
 
 	}

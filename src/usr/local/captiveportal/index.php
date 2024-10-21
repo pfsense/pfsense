@@ -32,7 +32,6 @@ require_once("captiveportal.inc");
 
 header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
 header("Connection: close");
 
 global $cpzone, $cpzoneid, $cpzoneprefix;

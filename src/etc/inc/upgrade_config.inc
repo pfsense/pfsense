@@ -6889,9 +6889,18 @@ function upgrade_232_to_233() {
 			continue;
 		}
 
-		// Migrate "remove_route"
+		// Update "push_reset" detection and migrate "remove_route".
+		if (array_get_path($settings, 'push_reset', '') == 'yes') {
+			$settings['push_reset'] = true;
+		} else {
+			if (isset($settings['push_reset'])) {
+				unset($settings['push_reset']);
+			}
+			if (array_get_path($settings, 'remove_route', '') == 'yes') {
+				$settings['remove_options'] = 'remove_route';
+			}
+		}
 		if (isset($settings['remove_route'])) {
-			$settings['remove_options'] = 'remove_route';
 			unset($settings['remove_route']);
 		}
 	}

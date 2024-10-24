@@ -21,8 +21,6 @@
 
 namespace pfSense\Services\Filesystem\Provider;
 
-use mikehaertl\shellcommand\Command;
-
 use Nette\Utils\{
 	Arrays,
 	Strings

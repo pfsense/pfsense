@@ -123,7 +123,8 @@ echo "done.\n";
 mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid 2>/dev/null");
 
 /* Import the Installer network settings. */
-if (file_exists("{$g['conf_path']}/installer-settings.json")) {
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard") &&
+    file_exists("{$g['conf_path']}/installer-settings.json")) {
 	echo "Importing the network settings from the Netgate Installer...";
 	installer_settings_import();
 	echo "done.\n";

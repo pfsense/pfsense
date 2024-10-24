@@ -760,10 +760,9 @@ function installer_settings_import() {
 
 	/* Remove the settings file. */
 	unlink("{$g['conf_path']}/installer-settings.json");
-	file_put_contents("{$g['conf_path']}/assign_complete", "1");
 
-	/* Remove the default trigger. */
-	config_del_path('system/trigger_virt_setup');
+	/* Let the system know that the interface assignment is done. */
+	touch("{$g['conf_path']}/assign_complete");
 
 	write_config(gettext("Network settings imported from the Netgate Installer"));
 

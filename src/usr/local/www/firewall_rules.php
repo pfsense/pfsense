@@ -125,18 +125,27 @@ function print_states($tracker_start, $tracker_end = -1) {
 	printf("%s/%s</a><br />", format_number($states), format_bytes($bytes));
 }
 
-function delete_nat_association($id) {
-	$a_nat = config_get_path('nat/rule');
-	if (!$id || !is_array($a_nat)) {
+function delete_nat_association(array $associations_to_remove = []) {
+	if (empty($associations_to_remove)) {
 		return;
 	}
 
-	foreach ($a_nat as &$natent) {
-		if ($natent['associated-rule-id'] == $id) {
+	$nat_rules = config_get_path('nat/rule', []);
+	if (empty($nat_rules)) {
+		return;
+	}
+
+	$update_config = false;
+	foreach ($nat_rules as &$natent) {
+		if (in_array($natent['associated-rule-id'], $associations_to_remove)) {
 			$natent['associated-rule-id'] = '';
+			$update_config = true;
 		}
 	}
-	config_set_path('nat/rule', $a_nat);
+
+	if ($update_config) {
+		config_set_path('nat/rule', $nat_rules);
+	}
 }
 
 filter_rules_sort();
@@ -167,16 +176,16 @@ if ($_POST['apply']) {
 }
 
 if ($_POST['act'] == "del") {
-	if (config_get_path("filter/rule/{$_POST['id']}")) {
+	$rule = is_numericint($_POST['id']) ? config_get_path("filter/rule/{$_POST['id']}") : null;
+	if (isset($rule)) {
 		// separators must be updated before the rule is removed
 		$ridx = get_interface_ruleindex($if, $_POST['id']);
 		$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
 		shift_separators($a_separators, $ridx['index'], true);
 		config_set_path('filter/separator/' . strtolower($if), $a_separators);
 
-		// remove the rule
-		if (!empty(config_get_path("filter/rule/{$_POST['id']}/associated-rule-id"))) {
-			delete_nat_association(config_get_path("filter/rule/{$_POST['id']}/associated-rule-id"));
+		if (!empty($rule['associated-rule-id'])) {
+			delete_nat_association([$rule['associated-rule-id']]);
 		}
 		config_del_path("filter/rule/{$_POST['id']}");
 
@@ -206,19 +215,29 @@ if (isset($_POST['del_x'])) {
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		$removed = false;
 		$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
+		$a_rules = config_get_path('filter/rule', []);
+		$associations_to_remove = [];
 		foreach ($_POST['rule'] as $rulei) {
+			if (!isset($a_rules[$rulei])) {
+				continue;
+			}
+
 			// separators must be updated before the rule is removed
-			$ridx = get_interface_ruleindex($if, $rulei);
+			$ridx = get_interface_ruleindex($if, $rulei, $a_rules);
 			shift_separators($a_separators, $ridx['index'], true);
 
-			// remove the rule
-			delete_nat_association(config_get_path("filter/rule/{$rulei}/associated-rule-id"));
-			config_del_path("filter/rule/{$rulei}");
+			if (!empty($a_rules[$rulei]['associated-rule-id'])) {
+				$associations_to_remove[] = $a_rules[$rulei]['associated-rule-id'];
+			}
+
+			unset($a_rules[$rulei]);
 			$removed = true;
 		}
-		config_set_path('filter/separator/' . strtolower($if), $a_separators);
 
 		if ($removed) {
+			delete_nat_association($associations_to_remove);
+			config_set_path('filter/separator/' . strtolower($if), $a_separators);
+			config_set_path('filter/rule', $a_rules);
 			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
 				mark_subsystem_dirty('filter');
 			}

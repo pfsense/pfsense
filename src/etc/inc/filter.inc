@@ -5032,16 +5032,16 @@ function filter_get_antilockout_ports($wantarray = false) {
 }
 
 /**
- * Get the first and last rule's index for an interface, and optionally the
- * relative index of a rule within the interface.
+ * Get the first and last rule's index for an interface, and optionally
+ * a rule index relative to the number of rules on the interface.
  * 
- * @param string $if The interface used to calculate the rule indices
- * @param int $idx (optional) A rule index
+ * @param string $interface The interface used to find the rule indices
+ * @param int $rule_index (optional) A rule index
  * 
  * @return array Contains the matching interface's first and last rule's index,
  *               and the matching rule's relative index if found.
  */
-function get_interface_ruleindex(string $interface, ?int $rule_index = null): array {
+function get_interface_ruleindex(string $interface, ?int $rule_index = null, ?array $rules = null): array {
 	if (isset($rule_index) && ($rule_index < 0)) {
 		unset($rule_index);
 	}
@@ -5054,9 +5054,10 @@ function get_interface_ruleindex(string $interface, ?int $rule_index = null): ar
 		return $interface_rule_index;
 	}
 
+	$rules = $rules ?? config_get_path('filter/rule', []);
 	$interface = strtolower($interface);
 	$relative_index_count = -1; // a valid index count starts at 0
-	foreach (config_get_path('filter/rule',[]) as $idx => $rule) {
+	foreach ($rules as $idx => $rule) {
 		// skip rules on unrelated interfaces
 		if ((isset($rule['floating']) && ($interface != "floatingrules")) ||
 		    (!isset($rule['floating']) && ($interface != strtolower($rule['interface'])))) {

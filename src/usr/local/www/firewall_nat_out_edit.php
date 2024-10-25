@@ -284,7 +284,9 @@ $form->addGlobal(new Form_Input(
 
 $form->add($section);
 
-gen_created_updated_fields($form, config_get_path("nat/outbound/rule/{$id}/created"), config_get_path("nat/outbound/rule/{$id}/updated"));
+if (isset($id)) {
+	gen_created_updated_fields($form, config_get_path("nat/outbound/rule/{$id}/created"), config_get_path("nat/outbound/rule/{$id}/updated"));
+}
 
 print($form);
 

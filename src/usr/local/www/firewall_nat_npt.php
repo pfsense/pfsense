@@ -141,14 +141,16 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 <?php
-		$dst_arr = explode("/", $natent['destination']['network']);
-		if (count($dst_arr) > 1) {
-			$natent['destination']['network'] = $dst_arr[0];
-		}
-		if (config_get_path("interfaces/{$natent['destination']['network']}/ipaddrv6") == 'track6') {
-			$track6ip = get_interface_track6ip($natent['destination']['network']);
-			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
-			$dst = config_get_path("interfaces/{$natent['destination']['network']}/descr") . " ({$pdsubnet}/{$track6ip[1]})";
+		if (!empty($natent['destination']['network'])) {
+			if (str_contains($natent['destination']['network'], '/')) {
+				$dst_arr = explode("/", $natent['destination']['network']);
+				$natent['destination']['network'] = $dst_arr[0];
+			}
+			if (config_get_path("interfaces/{$natent['destination']['network']}/ipaddrv6") == 'track6') {
+				$track6ip = get_interface_track6ip($natent['destination']['network']);
+				$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+				$dst = config_get_path("interfaces/{$natent['destination']['network']}/descr") . " ({$pdsubnet}/{$track6ip[1]})";
+			}
 		} else {
 			$dst = pprint_address($natent['destination']);
 		}

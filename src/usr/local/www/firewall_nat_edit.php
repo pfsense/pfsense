@@ -471,7 +471,9 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-gen_created_updated_fields($form, config_get_path("nat/rule/{$id}/created"), config_get_path("nat/rule/{$id}/updated"));
+if (isset($id)) {
+	gen_created_updated_fields($form, config_get_path("nat/rule/{$id}/created"), config_get_path("nat/rule/{$id}/updated"));
+}
 
 if (isset($id) && config_get_path("nat/rule/{$id}")) {
 	$form->addGlobal(new Form_Input(

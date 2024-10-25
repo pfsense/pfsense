@@ -1772,7 +1772,9 @@ $section->add($group)->setHelp('Choose the Acknowledge Queue only if there is a 
 
 $form->add($section);
 
-gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated'], $a_filter[$id]['tracker']);
+if (is_numericint($a_filter[$id])) {
+	gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated'], $a_filter[$id]['tracker']);
+}
 
 echo $form;
 ?>

@@ -56,9 +56,12 @@ $singular_types = array(
 function deleteAlias($id, $apply = false) {
 	/* make sure rule is not being referenced by any nat or filter rules */
 	$delete_error = "";
+	if (!is_numericint($id)) {
+		return $delete_error;
+	}
 	$is_alias_referenced = false;
 	$referenced_by = array();
-	$alias_name = config_get_path('aliases/alias/' . $id . '/name');
+	$alias = config_get_path("aliases/alias/{$id}");
 	$section_fields = [
 		// Firewall rules
 		'filter/rule' => [
@@ -120,19 +123,19 @@ function deleteAlias($id, $apply = false) {
 
 	foreach ($section_fields as $section => $fields) {
 		foreach ($fields as $field) {
-			find_alias_reference_by_path($section, $field, $alias_name, $is_alias_referenced, $referenced_by);
+			find_alias_reference_by_path($section, $field, $alias['name'], $is_alias_referenced, $referenced_by);
 		}
 	}
 
 	if ($is_alias_referenced == true) {
 		$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars(implode(", ", $referenced_by)));
 	} else {
-		if (preg_match("/urltable/i", config_get_path('aliases/alias/' . $id . '/type'))) {
+		if (preg_match("/urltable/i", $alias['type'])) {
 			// this is a URL table type alias, delete its file as well
-			unlink_if_exists("/var/db/aliastables/" . config_get_path('aliases/alias/' . $id . '/name') . ".txt");
+			unlink_if_exists("/var/db/aliastables/{$alias['name']}.txt");
 		}
 		config_del_path('aliases/alias/' . $id);
-		if (write_config(gettext("Deleted firewall alias " . config_get_path('aliases/alias/' . $id . '/name')))) {
+		if (write_config(gettext("Deleted firewall alias " . $alias['name']))) {
 			if (!$apply) {
 				mark_subsystem_dirty('aliases');
 			} else {

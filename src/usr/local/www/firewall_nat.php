@@ -54,11 +54,11 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 } else if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
 	$retval = applyNATrules();
 } else if (($_POST['act'] == "del" || isset($_POST['del_x'])) && have_natpfruleint_access($natent['interface'])) {
-	if (config_get_path("nat/rule/{$_POST['id']}") || (is_array($_POST['rule']) && count($_POST['rule']))) {
+	if ((is_numericint($_POST['id']) && config_get_path("nat/rule/{$_POST['id']}")) || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		deleteNATrule($_POST);
 	}
 } elseif (($_POST['act'] == "toggle" || isset($_POST['toggle_x'])) && have_natpfruleint_access($natent['interface'])) {
-	if (config_get_path("nat/rule/{$_POST['id']}") || (is_array($_POST['rule']) && count($_POST['rule']))) {
+	if ((is_numericint($_POST['id']) && config_get_path("nat/rule/{$_POST['id']}")) || (is_array($_POST['rule']) && count($_POST['rule']))) {
 		toggleNATrule($_POST);
 	}
 }

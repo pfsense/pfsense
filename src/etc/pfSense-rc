@@ -483,12 +483,6 @@ fi
 
 /etc/rc.bootup
 
-# /etc/rc.bootup unset $g['booting'], and removes file
-# Be sure the file is removed to not create troubles after
-if [ -f $varrunpath/booting ]; then
-	/bin/rm $varrunpath/booting
-fi
-
 if [ -n "${USE_ZFS}" ]; then
 	# Create ZFS reservation
 	if [ ! -f /.no_zfs_reservation ]; then
@@ -594,5 +588,11 @@ echo "Bootup complete"
 echo "Bootup complete" | /usr/bin/logger
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
+
+# /etc/rc.bootup unset $g['booting']
+# Be sure the file is removed to not create troubles after
+if [ -f $varrunpath/booting ]; then
+	/bin/rm $varrunpath/booting
+fi
 
 exit 0

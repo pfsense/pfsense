@@ -23,7 +23,6 @@
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
-require_once("functions.inc");
 
 /* bring in the Composer autoloader */
 require_once('vendor/autoload.php');

@@ -4157,8 +4157,13 @@ function services_dyndns_configure($int = "") {
 			echo gettext("Starting DynDNS clients...");
 		}
 
+		$configured_interfaces = config_get_path('interfaces');
 		foreach ($dyndnscfg as $dyndns) {
 			if (!is_array($dyndns) || empty($dyndns)) {
+				continue;
+			}
+			// Skip DDNS on disabled interfaces
+			if (isset($configured_interfaces[$dyndns['interface']]) && !array_path_enabled($configured_interfaces, $dyndns['interface'])) {
 				continue;
 			}
 			/*

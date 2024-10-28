@@ -551,7 +551,7 @@ $section->addInput(new Form_Select(
 		'inet' => 'IPv4',
 		'inet6' => 'IPv6',
 	)
-))->setHelp('Force NTP peers DNS resolution IP protocol. Do not affect pools.');
+))->setHelp('Force NTP peer DNS resolution IP protocol.');
 
 $section->addInput(new Form_Checkbox(
 	'serverauth',

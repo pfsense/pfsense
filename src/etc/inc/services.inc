@@ -1060,7 +1060,7 @@ function services_dhcpd_kill_all($family = 'all') {
 
 	foreach ($pids as $pid) {
 		if (isvalidpid($pid)) {
-			killbypid($pid);
+			killbypid($pid, 10);
 			unlink_if_exists($pid);
 		}
 	}

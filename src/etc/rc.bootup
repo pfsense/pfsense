@@ -488,6 +488,7 @@ system_syslogd_start();
 
 /* done */
 $g['booting'] = false;
+@unlink("{$g['varrun_path']}/booting");
 
 /* re-enable CARP */
 enable_carp();

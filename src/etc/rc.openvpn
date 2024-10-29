@@ -67,7 +67,7 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 }
 
 /* make sure to wait until the boot scripts have finished */
-if (file_exists("{$g['varrun_path']}/booting")) {
+if (is_platform_booting()) {
 	return;
 }
 

@@ -29,7 +29,7 @@ require_once("functions.inc");
 require_once("system.inc");
 
 /* make sure to wait until the boot scripts have finished */
-if (file_exists("{$g['varrun_path']}/booting")) {
+if (is_platform_booting()) {
 	return;
 }
 

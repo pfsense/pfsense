@@ -84,7 +84,7 @@ $gateways_arr = get_gateways();
 if (isset($gateways_arr[$argument])) {
 	//file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED WITH GW:".$argument);
 	// called upon rc.gateway_alarm 
-	system_routing_configure();
+	system_routing_configure($gateways_arr[$argument]['friendlyiface']);
 }
 
 if (count(config_get_path("openvpn/openvpn-server", [])) ||

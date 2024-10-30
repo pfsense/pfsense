@@ -261,18 +261,19 @@ if ((!($_REQUEST['download']) || $input_errors) && resolve_address('acb.netgate.
 	$data_split = explode("\n", $data);
 
 	foreach ($data_split as $ds) {
-		$ds_split = explode($exp_sep, $ds);
+		$ds_split = [];
+		preg_match("/^(.*?){$oper_sep}(.*){$oper_sep}(.*)/", $ds, $ds_split);
 		$tmp_array = array();
-		$tmp_array['username'] = $ds_split[0];
-		$tmp_array['reason'] = $ds_split[1];
-		$tmp_array['time'] = $ds_split[2];
+		$tmp_array['username'] = $ds_split[1];
+		$tmp_array['reason'] = $ds_split[2];
+		$tmp_array['time'] = $ds_split[3];
 
 		/* Convert the time from server time to local. See #5250 */
 		$budate = new DateTime($tmp_array['time'], $acbtz);
 		$budate->setTimezone($mytz);
 		$tmp_array['localtime'] = $budate->format(DATE_RFC2822);
 
-		if ($ds_split[2] && $ds_split[0]) {
+		if ($ds_split[3] && $ds_split[1]) {
 			$confvers[] = $tmp_array;
 		}
 	}

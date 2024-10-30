@@ -436,6 +436,26 @@ class pfsense_xmlrpc_server {
 		$pkg_sections = ['installedpackages' => array_get_path($sections, 'installedpackages', [])];
 		array_del_path($sections, 'installedpackages');
 
+		/* Check for changed or removed static routes; do this before updating the active/running config. */
+		if (!empty(array_get_path($sections, 'staticroutes/route'))) {
+			foreach (array_get_path($old_config, 'staticroutes/route', []) as $idx => $old_route) {
+				if (!isset($sections['staticroutes']['route'][$idx]) ||
+				    ($old_route['network'] != $sections['staticroutes']['route'][$idx]['network']) ||
+				    ($old_route['gateway'] != $sections['staticroutes']['route'][$idx]['gateway'])) {
+					delete_static_route($idx, true);
+				}
+			}
+			// Apply the removed route changes, if any.
+			$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
+			if (file_exists($routes_apply_file)) {
+				$toapplylist = unserialize_data(file_get_contents($routes_apply_file), []);
+				foreach ($toapplylist as $toapply) {
+					mwexec($toapply, true);
+				}
+				@unlink($routes_apply_file);
+			}
+		}
+
 		/* For vip section, first keep items sent from the master */
 		config_set_path('', array_merge_recursive_unique(config_get_path(''), $sections));
 

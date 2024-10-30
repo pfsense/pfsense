@@ -321,13 +321,10 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		$newcp = $a_zone;
 		if (empty($newcp['zoneid'])) {
-			$newcp['zoneid'] = 2;
-			foreach ($a_cp as $keycpzone => $cp) {
-				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone) {
-					$newcp['zoneid'] += 2; /* Reserve space for SSL/TLS config if needed */
-				}
-			}
-
+			$current_zoneids = array_flip(array_column($a_cp, 'zoneid'));
+			ksort($current_zoneids, SORT_NATURAL);
+			/* Reserve space for SSL/TLS config if needed by */
+			$newcp['zoneid'] = intval(array_key_last($current_zoneids)) + 2;
 			$cpzoneid = $newcp['zoneid'];
 		}
 		if (is_array($_POST['cinterface'])) {

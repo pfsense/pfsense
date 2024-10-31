@@ -790,8 +790,17 @@ function return_gateways_status($byname = false) {
 		if (!isset($gwitem['monitor_disable'])) {
 			continue;
 		}
-		$srcip = get_interface_ip($gwitem['friendlyiface']);
-		$tgtip = is_ipaddr($srcip) ? $srcip : 'none';
+		$srcips = get_interface_addresses($gwitem['interface']);
+		if (is_ipaddrv4($gwitem['gateway'])) {
+			$tgtip = $srcips['ipaddr'];
+			$srcip = $tgtip;
+		} elseif (is_ipaddrv6($gwitem['gateway'])) {
+			$tgtip = $srcips['ipaddr6'];
+			$srcip = $tgtip;
+		} else {
+			$tgtip = 'none';
+			$srcip = null;
+		}
 
 		if ($byname == true) {
 			$target = $gwitem['name'];

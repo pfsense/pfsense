@@ -133,8 +133,8 @@
 	 *  HE.net             - Last Tested: 7 July 2013
 	 *  HE.net IPv6        - Last Tested: 7 July 2013
 	 *  HE.net Tunnel      - Last Tested: 28 June 2011
-	 *  Hetzner DNS API    - Last Tested: Never
-     *  Hetzner DNS API v6 - Last Tested: Never 
+	 *  Hetzner DNS API    - Last Tested: 02 June 2024
+     *  Hetzner DNS API v6 - Last Tested: 02 June 2024
 	 *  HN.org             - Last Tested: 12 July 2005
 	 *  Hover              - Last Tested: 15 February 2017
 	 *  Loopia             - Last Tested: 21 August 2019
@@ -627,7 +627,7 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $headerAuth);
 
 					// Get all zone info
-					$zonesUrl = "$server/zones";
+					$zonesUrl = "{$server}/zones";
 					curl_setopt($ch, CURLOPT_URL, $zonesUrl);
 					$output = json_decode(curl_exec($ch));
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -649,7 +649,7 @@
 					}
 
 					if ($zoneId) { // If zone ID was found get host ID
-						$dnsRecordsUrl = "$server/records?zone_id=$zoneId";
+						$dnsRecordsUrl = "{$server}/records?zone_id={$zoneId}";
 						curl_setopt($ch, CURLOPT_URL, $dnsRecordsUrl);
 						$output = json_decode(curl_exec($ch));
 						$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -669,11 +669,11 @@
 					}
 
 					if ($recordId) { // If record ID was found, update record
-						$setRecordUrl = "$server/records/$recordId";
+						$setRecordUrl = "{$server}/records/{$recordId}";
 						curl_setopt($ch, CURLOPT_URL, $setRecordUrl);
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 					} else {
-						$setRecordUrl = "$server/records";
+						$setRecordUrl = "{$server}/records";
 						curl_setopt($ch, CURLOPT_URL, $setRecordUrl);
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 					}
@@ -2704,11 +2704,11 @@
 						$status = "Dynamic DNS: (Success) {$this->_dnsHost} updated to {$this->_dnsIP}";
 						$successful_update = true;
 					} elseif ($http_code == 401) {
-						$status = 'Dynamic DNS: (Error) Bad authentication attempt because of a wrong API Key.';
+						$status = 'Dynamic DNS: (Error) Authentication failed, incorrect API Key.';
 					} elseif ($http_code == 403) {
-						$status = 'Dynamic DNS: (Error) Access to the resource is denied. Mainly due to a lack of permissions to access it!';
+						$status = 'Dynamic DNS: (Error) Access denied due to lack of permissions.';
 					} else {
-						$status = 'Dynamic DNS: (Error) "Unknown Response"';
+						$status = 'Dynamic DNS: (Error) "Unknown Response"'; 
 						log_error("Dynamic DNS ({$this->_dnsHost}): PAYLOAD: {$data}");
 						$this->_debug("Unknown Response: " . $data);
 					}

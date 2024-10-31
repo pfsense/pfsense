@@ -55,8 +55,7 @@ if (empty($argument)) {
 				$gwgroups = gateway_is_gwgroup_member($arg_element);
 			}
 			foreach (config_get_path('ipsec/phase1', []) as $phase1) {
-				if (isset($phase1['disabled']) || isset($phase1['mobile']) ||
-				    ($phase1['startaction'] == 'none')) {
+				if (isset($phase1['disabled']) || ($phase1['startaction'] == 'none')) {
 					continue;
 				}
 				if (substr($phase1['interface'], 0, 4) == "_vip") {

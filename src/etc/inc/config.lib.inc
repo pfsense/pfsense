@@ -1107,7 +1107,7 @@ function config_init_path(string $path) {
 		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
 		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 		if ((count($backtrace) == 2) && isset($backtrace[1]['file'])) {
-			$error_text .= gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
+			$error_text .= ' ' . gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
 		}
 		log_error($error_text);
 		return false;
@@ -1131,7 +1131,7 @@ function config_get_path(string $path, $default = null) {
 		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
 		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 		if ((count($backtrace) == 2) && isset($backtrace[1]['file'])) {
-			$error_text .= gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
+			$error_text .= ' ' . gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
 		}
 		log_error($error_text);
 		return $default;
@@ -1157,7 +1157,7 @@ function config_set_path(string $path, $value, $default = null) {
 		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
 		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 		if ((count($backtrace) == 2) && isset($backtrace[1]['file'])) {
-			$error_text .= gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
+			$error_text .= ' ' . gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
 		}
 		log_error($error_text);
 		return $default;
@@ -1195,7 +1195,7 @@ function config_path_enabled(string $path, $enable_key = "enable", $default = fa
 		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
 		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 		if ((count($backtrace) == 2) && isset($backtrace[1]['file'])) {
-			$error_text .= gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
+			$error_text .= ' ' . gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
 		}
 		log_error($error_text);
 		return $default;
@@ -1218,7 +1218,7 @@ function config_del_path(string $path, $default = null) {
 		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
 		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 		if ((count($backtrace) == 2) && isset($backtrace[1]['file'])) {
-			$error_text .= gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
+			$error_text .= ' ' . gettext('at') . " {$backtrace[1]['file']}:{$backtrace[1]['line']}";
 		}
 		log_error($error_text);
 		return $default;

@@ -654,7 +654,7 @@ function manage_log_code() {
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
 		$pconfig['logdefaultblock'] = !isset($syslog_config['nologdefaultblock']);
-		$pconfig['logdefaultpass'] = isset($syslog_config['nologdefaultpass']);
+		$pconfig['logdefaultpass'] = !isset($syslog_config['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($syslog_config['nologbogons']);
 		$pconfig['logprivatenets'] = !isset($syslog_config['nologprivatenets']);
 		$pconfig['filterdescriptions'] = isset($syslog_config['filterdescriptions']) ? $syslog_config['filterdescriptions'] : null;
@@ -762,7 +762,7 @@ function manage_log_code() {
 				$oldnologprivatenets = isset($syslog_config['nologprivatenets']);
 
 				$syslog_config['nologdefaultblock'] = $logdefaultblock ? false : true;
-				$syslog_config['nologdefaultpass'] = $logdefaultpass ? true : false;
+				$syslog_config['nologdefaultpass'] = $logdefaultpass ? false : true;
 				$syslog_config['nologbogons'] = $logbogons ? false : true;
 				$syslog_config['nologprivatenets'] = $logprivatenets ? false : true;
 

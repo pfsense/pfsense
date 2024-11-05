@@ -62,7 +62,7 @@ $pconfig['routing'] = config_path_enabled('syslog', 'routing');
 $pconfig['ntpd'] = config_path_enabled('syslog', 'ntpd');
 $pconfig['enable'] = config_path_enabled('syslog', 'enable');
 $pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock');
-$pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
+$pconfig['logdefaultpass'] = !config_path_enabled('syslog', 'nologdefaultpass');
 $pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
 $pconfig['logprivatenets'] = !config_path_enabled('syslog', 'nologprivatenets');
 $pconfig['lognginx'] = !config_path_enabled('syslog', 'nolognginx');
@@ -192,7 +192,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologprivatenets = config_path_enabled('syslog', 'nologprivatenets');
 		$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
 		config_set_path('syslog/nologdefaultblock', $_POST['logdefaultblock'] ? false : true);
-		config_set_path('syslog/nologdefaultpass', $_POST['logdefaultpass'] ? true : false);
+		config_set_path('syslog/nologdefaultpass', $_POST['logdefaultpass'] ? false : true);
 		config_set_path('syslog/nologbogons', $_POST['logbogons'] ? false : true);
 		config_set_path('syslog/nologprivatenets', $_POST['logprivatenets'] ? false : true);
 		config_set_path('syslog/nolognginx', $_POST['lognginx'] ? false : true);

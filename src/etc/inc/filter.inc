@@ -3843,7 +3843,7 @@ function filter_rules_generate() {
 	if (!config_path_enabled('syslog','nologdefaultblock')) {
 		$log['block'] = "log";
 	}
-	if (config_path_enabled('syslog','nologdefaultpass')) {
+	if (!config_path_enabled('syslog','nologdefaultpass')) {
 		$log['pass'] = "log";
 	}
 

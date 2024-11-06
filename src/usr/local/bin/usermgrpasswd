@@ -187,6 +187,14 @@ if ($password) {
 
 	fclose($fp);
 
+	/*
+	 * Update the config cache before rewrite it with the new password.
+	 * This is necessary to catch up with any changes made in the GUI
+	 * while this program is running.
+	 * See: #17926.
+	 */
+	config_read_file();
+
 	//Reset password
 	config_set_path("system/user/{$user_item_config['idx']}", $user);
 	local_user_set_password($user_item_config, $password);

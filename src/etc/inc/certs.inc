@@ -313,7 +313,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	if (!$signing_ca_res_crt || !$signing_ca_res_key) {
 		return false;
 	}
-	$signing_ca_serial = config_set_path("ca/{$ca_item_config['idx']}", ++$signing_ca['serial']);
+	$signing_ca_serial = config_set_path("ca/{$ca_item_config['idx']}/serial", ++$signing_ca['serial']);
 
 	$args = array(
 		"x509_extensions" => "v3_ca",

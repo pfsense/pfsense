@@ -487,6 +487,7 @@ function services_kea6_configure() {
 	$kea_var_db = '/var/db/kea';
 
 	$kea6socket = g_get('varrun_path') . '/kea6-ctrl-socket';
+	unlink_if_exists($kea6socket . '.lock');
 
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;
@@ -1126,6 +1127,7 @@ function services_kea4_configure() {
 	$kea_var_lib = '/var/lib/kea';
 
 	$kea4socket = g_get('varrun_path').'/kea4-ctrl-socket';
+	unlink_if_exists($kea4socket . '.lock');
 
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;

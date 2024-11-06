@@ -104,22 +104,33 @@ function killbypid($pidfile, $waitfor = 0) {
 	return sigkillbypid($pidfile, "TERM", $waitfor);
 }
 
-function isvalidpid($pidfile) {
-	$output = "";
-	if (file_exists($pidfile)) {
-		exec("/bin/pgrep -qnF {$pidfile} 2>/dev/null", $output, $retval);
-		return (intval($retval) == 0);
+function isvalidpid(string $pidfile): bool {
+	if (!file_exists($pidfile)) {
+		return false;
 	}
-	return false;
+
+	exec(implode(' ', [
+		'/bin/pkill',
+		'-0',
+		'-F', $pidfile
+	]), $_out, $ret);
+
+	return ($ret === 0);
 }
 
-function is_process_running($process) {
-	$output = "";
-	if (!empty($process)) {
-		exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
-		return (intval($retval) == 0);
+function is_process_running(string $name): bool {
+	if (empty($name)) {
+		return false;
 	}
-	return false;
+
+	exec(implode(' ', [
+		'/bin/pkill',
+		'-0',
+		'-x',
+		escapeshellarg($name)
+	]), $_out, $ret);
+
+	return ($ret === 0);
 }
 
 function isvalidproc($proc) {
@@ -128,19 +139,24 @@ function isvalidproc($proc) {
 
 /* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
 /* return 1 for success and 0 for a failure */
-function sigkillbypid($pidfile, $sig, $waitfor = 0) {
-	if (isvalidpid($pidfile)) {
-		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
-		    " -F {$pidfile}", true);
-		$waitcounter = $waitfor * 10;
-		while(isvalidpid($pidfile) && $waitcounter > 0) {
-			$waitcounter = $waitcounter - 1;
-			usleep(100000);
-		}
-		return $result;
+function sigkillbypid(string $pidfile, string|int $sig, int $waitfor = 0): int {
+	if (!isvalidpid($pidfile)) {
+		return 0;
 	}
 
-	return 0;
+	exec(implode(' ', [
+		'/bin/pkill',
+		"-${sig}",
+		'-F', $pidfile
+	]), $_out, $ret);
+
+	$waitcounter = $waitfor * 10;
+	while(isvalidpid($pidfile) && $waitcounter > 0) {
+		$waitcounter = $waitcounter - 1;
+		usleep(100000); /* 100ms */
+	}
+
+	return $ret;
 }
 
 /* kill a process by name */

@@ -4806,6 +4806,31 @@ function get_specialnet_address($specialnet) {
 	return false;
 }
 
+function is_host_address($address) {
+	return (is_host_address4($address) || is_host_address6($address) || is_host_address_fqdn($address));
+}
+
+function is_host_address_fqdn($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_contains($address, ':')) {
+		// Check Domain:Port address
+		list($name, $port) = explode(':', $address);
+		if (is_domain($name) && is_port($port, false)) {
+			return true;
+		}
+	} else {
+		// Check Domain address
+		if (is_domain($address)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function is_host_address4($address) {
 	if (empty($address) || !is_string($address)) {
 		return false;
@@ -4814,7 +4839,7 @@ function is_host_address4($address) {
 	if (str_contains($address, ':')) {
 		// Check IPv4:Port address
 		list($ip, $port) = explode(':', $address);
-		if (is_ipaddrv4($ip) && is_port($port)) {
+		if (is_ipaddrv4($ip) && is_port($port, false)) {
 			return true;
 		}
 	} else {
@@ -4837,7 +4862,7 @@ function is_host_address6($address) {
 		$matches = [];
 		preg_match('/^\[((?:[[:xdigit:]]|:)+)\]:([[:digit:]]+)/', $address, $matches);
 		if (isset($matches[1]) && isset($matches[2]) &&
-		    is_ipaddrv6($matches[1]) && is_port($matches[2])) {
+		    is_ipaddrv6($matches[1]) && is_port($matches[2], false)) {
 			return true;
 		}
 	} else {

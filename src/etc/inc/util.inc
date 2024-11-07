@@ -1450,11 +1450,11 @@ function is_intrange($range, $min, $max) {
 }
 
 /* returns true if $port is a valid TCP/UDP/SCTP port */
-function is_port($port) {
+function is_port($port, $validate_name = true) {
 	if (ctype_digit(strval($port)) && ((intval($port) >= 1) && (intval($port) <= 65535))) {
 		return true;
 	}
-	if (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp")) {
+	if ($validate_name && (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp"))) {
 		return true;
 	}
 	return false;

@@ -4721,6 +4721,50 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	}
 }
 
+function is_host_address4($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_contains($address, ':')) {
+		// Check IPv4:Port address
+		list($ip, $port) = explode(':', $address);
+		if (is_ipaddrv4($ip) && is_port($port)) {
+			return true;
+		}
+	} else {
+		// Check IPv4 address
+		if (is_ipaddrv4($address)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function is_host_address6($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_starts_with($address, '[')) {
+		// Check [IPv6]:Port address
+		$matches = [];
+		preg_match('/^\[((?:[[:xdigit:]]|:)+)\]:([[:digit:]]+)/', $address, $matches);
+		if (isset($matches[1]) && isset($matches[2]) &&
+		    is_ipaddrv6($matches[1]) && is_port($matches[2])) {
+			return true;
+		}
+	} else {
+		// Check IPv6 address
+		if (is_ipaddrv6($address)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function is_interface_ipaddr($interface) {
 	if (!empty(config_get_path("interfaces/{$interface}/ipaddr"))) {
 		return true;

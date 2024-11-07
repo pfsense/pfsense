@@ -46,6 +46,8 @@ define('SPECIALNET_IFSUB', 9);
 define('SPECIALNET_IFNET', 10);
 define('SPECIALNET_GROUP', 11);
 define('SPECIALNET_VIPS', 12);
+define('SPECIALNET_IFADDR4', 13);
+define('SPECIALNET_IFADDR6', 14);
 define('SPECIALNET_CHECKPERM', 98);
 define('SPECIALNET_EXCLUDE', 99);
 
@@ -4557,6 +4559,14 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	                SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_IFNET,
 	                SPECIALNET_GROUP, SPECIALNET_VIPS];
 
+	// Special flags
+	if (in_array(SPECIALNET_IFADDR4, $flags)) {
+		$allnetflags[] = SPECIALNET_IFADDR4;
+	}
+	if (in_array(SPECIALNET_IFADDR6, $flags)) {
+		$allnetflags[] = SPECIALNET_IFADDR6;
+	}
+
 	if (empty($flags)) {
 		$flags = $allnetflags;
 	} else {
@@ -4568,7 +4578,8 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 		}
 	}
 	$specialnet = [];
-	if (in_array(SPECIALNET_IFADDR, $flags) || in_array(SPECIALNET_IFSUB, $flags) || in_array(SPECIALNET_IFNET, $flags)) {
+	if (in_array(SPECIALNET_IFADDR, $flags) || in_array(SPECIALNET_IFSUB, $flags) || in_array(SPECIALNET_IFNET, $flags) ||
+	    in_array(SPECIALNET_IFADDR4, $flags) || in_array(SPECIALNET_IFADDR6, $flags)) {
 		$ifmacros = get_configured_interface_with_descr();
 	}
 	foreach ($flags as $include) {
@@ -4627,6 +4638,23 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 					                          'pptp' => gettext('PPTP clients'),
 					                          'pppoe' => gettext('PPPoE clients'),
 					                          'l2tp' => gettext('L2TP clients')]);
+				}
+				break;
+			case SPECIALNET_IFADDR4:
+			case SPECIALNET_IFADDR6:
+				foreach ($ifmacros as $ifname => $ifdescr) {
+					// Only add macros for allowed interfaces when checking permissions
+					if ($checkpermission && !have_ruleint_access($ifname)) {
+						continue;
+					}
+					// If an interface is specified, only add interface macros for that interface
+					if (!empty($if) && ($if != $ifname)) {
+						continue;
+					}
+
+					$ifname_suffix = 'ip' . (($include == SPECIALNET_IFADDR4) ? '4' : '6');
+					$ifdescr_suffix = ' address ' . (($include == SPECIALNET_IFADDR4) ? '(IPv4)' : '(IPv6)');
+					$specialnet[$ifname . $ifname_suffix] = $ifdescr . $ifdescr_suffix;
 				}
 				break;
 			case SPECIALNET_IFADDR:
@@ -4719,6 +4747,63 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	} else {
 		return false;
 	}
+}
+
+function get_specialnet_interface($specialnet, $address_family = null) {
+	if (empty($specialnet) || !is_string($specialnet)) {
+		return false;
+	}
+
+	$matches = [];
+	preg_match('/^(?:wan|lan|opt[[:digit:]]+)/', $specialnet, $matches);
+	if (isset($matches[0])) {
+		$interface = match ($address_family) {
+			AF_INET => "{$matches[0]}ip4",
+			AF_INET6 => "{$matches[0]}ip6",
+			default => $matches[0]
+		};
+		if ($specialnet == $interface) {
+			return $matches[0];
+		}
+	}
+
+	return false;
+}
+
+function get_specialnet_address($specialnet) {
+	if (empty($specialnet) || !is_string($specialnet)) {
+		return false;
+	}
+
+	if (!get_specialnet($specialnet, [SPECIALNET_IFADDR4, SPECIALNET_IFADDR6, SPECIALNET_VIPS])) {
+		return false;
+	}
+
+	if (is_ipaddr($specialnet)) {
+		return $specialnet;
+	}
+
+	$interface = get_specialnet_interface($specialnet);
+	if (empty($interface)) {
+		return false;
+	}
+	$interface = convert_friendly_interface_to_real_interface_name($interface);
+	if (empty($interface)) {
+		return false;
+	}
+	$interface_addresses = get_interface_addresses($interface);
+
+	if (str_ends_with($specialnet, 'ip4')) {
+		if (isset($interface_addresses['ipaddr']) && is_ipaddrv4($interface_addresses['ipaddr'])) {
+			return $interface_addresses['ipaddr'];;
+		}
+	} elseif (str_ends_with($specialnet, 'ip6')) {
+		if (isset($interface_addresses['ipaddr6']) && is_ipaddrv6($interface_addresses['ipaddr6'])) {
+			return $interface_addresses['ipaddr6'];;
+		}
+	}
+
+	return false;
 }
 
 function is_host_address4($address) {

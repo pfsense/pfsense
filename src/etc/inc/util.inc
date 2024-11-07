@@ -4762,7 +4762,7 @@ function get_specialnet_interface($specialnet, $address_family = null) {
 			AF_INET6 => "{$matches[0]}ip6",
 			default => $matches[0]
 		};
-		if ($specialnet == $interface) {
+		if (!isset($address_family) || ($specialnet == $interface)) {
 			return $matches[0];
 		}
 	}

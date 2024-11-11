@@ -479,13 +479,12 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$field_conv_path .= "/{$field['arraynum']}";
 			}
 
-			if ($field['type'] == "checkbox") {
-				$value = config_get_path($field_conv_path);
-				if (empty($value)) {
-					$value = true;
-				}
-			} else {
-				if (config_get_path($field_conv_path) !== null) {
+			if (config_get_path($field_conv_path) !== null) {
+				if ($field['type'] == "checkbox") {
+					if (empty(config_get_path($field_conv_path))) {
+						$value = true;
+					}
+				} else {
 					$value = config_get_path($field_conv_path);
 				}
 			}

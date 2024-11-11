@@ -622,9 +622,10 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
-	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	#core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+ 	core_pkg_create boot "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR} "./boot"
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	#core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
 
@@ -635,7 +636,7 @@ clone_to_staging_area() {
 	# Change default interface names to match vmware driver
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "vmx1" ${DEFAULTCONF}
-	core_pkg_create default-config "vmware" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	#core_pkg_create default-config "vmware" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	# Restore default values to be used by serial package
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "${_old_wan_if}" ${DEFAULTCONF}
@@ -650,8 +651,8 @@ clone_to_staging_area() {
 
 	echo force > ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
 
-	core_pkg_create default-config-serial "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-	core_pkg_create default-config "bhyve" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	#core_pkg_create default-config-serial "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	#core_pkg_create default-config "bhyve" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	rm -f ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
 	rm -f ${STAGE_CHROOT_DIR}/cf/conf/config.xml
@@ -714,11 +715,13 @@ customize_stagearea_for_image() {
 	# Prepare final stage area
 	create_final_staging_area
 
-	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
+	#pkg_chroot_add ${FINAL_CHROOT_DIR} rc
+ 	pkg_chroot_add ${FINAL_CHROOT_DIR} boot
 	pkg_chroot_add ${FINAL_CHROOT_DIR} base
 
 	# Set base/rc pkgs as vital to avoid user end up removing it for any reason
-	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name rc)
+	#pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name rc)
+ 	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name boot)
 	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name base)
 
 	if [ "${_image_type}" = "iso" -o \
@@ -729,7 +732,7 @@ customize_stagearea_for_image() {
 		cp ${CORE_PKG_ALL_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
-	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
+	#pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
 
 	# XXX: Workaround to avoid pkg to complain regarding release
 	#      repo on first boot since packages are installed from
@@ -1008,7 +1011,8 @@ setup_pkg_repo() {
 	local _target_arch="${4}"
 	local _staging="${5}"
 	local _pkg_conf="${6}"
-	local _mirror_type="srv"
+	#local _mirror_type="srv"
+ 	local _mirror_type="none"
 	local _signature_type="fingerprints"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
@@ -1032,6 +1036,8 @@ setup_pkg_repo() {
 
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
+  		-e "s/%%OSVERSION%%/${GIT_REPO_BRANCH_OR_TAG}/" \
+    		-e "s/%%VERSION%%/${POUDRIERE_PORTS_BRANCH}/" \
 		-e "s/%%MIRROR_TYPE%%/${_mirror_type}/" \
 		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${_pkg_repo_branch_devel}/g" \
 		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch_release}/g" \
@@ -1184,7 +1190,8 @@ pkg_chroot_add() {
 	fi
 
 	local _target="${1}"
-	local _pkg="$(get_pkg_name ${2}).txz"
+	#local _pkg="$(get_pkg_name ${2}).txz"
+ 	local _pkg="$(get_pkg_name ${2}).pkg"
 
 	if [ ! -d "${_target}" ]; then
 		echo ">>> ERROR: Target dir ${_target} not found"
@@ -1240,6 +1247,7 @@ install_pkg_install_ports() {
 		echo "Failed!"
 		print_error_pfS
 	fi
+ 	pkg_chroot ${STAGE_CHROOT_DIR} install "${PRODUCT_NAME}-default-config"
 	# Make sure required packages are set as non-automatic
 	pkg_chroot ${STAGE_CHROOT_DIR} set -A 0 pkg ${MAIN_PKG} ${custom_package_list}
 	# pkg and MAIN_PKG are vital
@@ -1568,14 +1576,26 @@ poudriere_rename_ports() {
 
 		cp -r ${d} ${_pdir}/${_pname}
 
-		if [ -f ${_pdir}/${_pname}/pkg-plist ]; then
+		#if [ -f ${_pdir}/${_pname}/pkg-plist ]; then
+  		# Composer module is special
+    		if echo "${_pname}" | grep -q "composer"; then
+      			sed -i '' -e "s,pfSense-composer-deps,${PRODUCT_NAME}-composer-deps,g" \
+	 		${_pdir}/${_pname}/Makefile ${_pdescr} ${_plist}
+    			continue
+       		fi
+	 	if [ -f ${_pdir}/${_pname}/pkg-plist ] && [ "${_pname}" != "${PRODUCT_NAME}" ]; then
 			_plist=${_pdir}/${_pname}/pkg-plist
 		fi
 
 		if [ -f ${_pdir}/${_pname}/pkg-descr ]; then
 			_pdescr=${_pdir}/${_pname}/pkg-descr
 		fi
-
+  		# main package is special
+    		if [ "${_pname}" == "${PRODUCT_NAME}" ]; then
+      			sed -i '' -e "s,pfSense-devd,${PRODUCT_NAME}-devd,g" \
+	 			  -e "s,pfSense-ddb,${PRODUCT_NAME}-ddb,g" \
+      				${_pdir}/${_pname}/pkg-plist
+		fi
 		sed -i '' -e "s,pfSense,${PRODUCT_NAME},g" \
 			  -e "s,https://www.pfsense.org,${PRODUCT_URL},g" \
 			  -e "/^MAINTAINER=/ s,^.*$,MAINTAINER=	${PRODUCT_EMAIL}," \
@@ -1593,10 +1613,12 @@ poudriere_rename_ports() {
 			sed -i '' -e "s,COMPILE_DL_PFSENSE,COMPILE_DL_${_product_capital}," \
 				  -e "s,pfSense_module_entry,${PRODUCT_NAME}_module_entry,g" \
 				  -e "s,php_pfSense.h,php_${PRODUCT_NAME}\.h,g" \
+      				  -e "s,pfSense_arginfo.h,${PRODUCT_NAME}_arginfo\.h,g" \
+	    			  -e "s,pfSense_private.h,${PRODUCT_NAME}_private\.h,g" \
 				  -e "/ZEND_GET_MODULE/ s,pfSense,${PRODUCT_NAME}," \
 				  -e "/PHP_PFSENSE_WORLD_EXTNAME/ s,pfSense,${PRODUCT_NAME}," \
 				${_pdir}/${_pname}/files/pfSense.c \
-				${_pdir}/${_pname}/files/dummynet.c \
+    				${_pdir}/${_pname}/files/pfSense_private.h \
 				${_pdir}/${_pname}/files/php_pfSense.h
 		fi
 
@@ -2038,6 +2060,8 @@ POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME}
 PFSENSE_DEFAULT_REPO=${PFSENSE_DEFAULT_REPO}
 PRODUCT_NAME=${PRODUCT_NAME}
 REPO_BRANCH_PREFIX=${REPO_PATH_PREFIX}
+PFSENSE_COMMITHASH=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
+PFSENSE_DATESTRING=${DATESTRING}
 EOF
 
 	local _value=""

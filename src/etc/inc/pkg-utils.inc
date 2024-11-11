@@ -988,23 +988,24 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	    $package_name) . "\n");
 	/* parse package configuration */
 	$pkg_info = config_get_path("installedpackages/package/{$pkgid}",[]);
-	$menus = config_get_path('installedpackages/menu', []);
 	$services = config_get_path('installedpackages/service', []);
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
 		    $pkg_info['configurationfile'], "packagegui");
 		/* remove menu items */
-		if (is_array($pkg_config['menu']) && is_array($menus)) {
+		if (is_array($pkg_config['menu'])) {
+			$menus = config_get_path('installedpackages/menu', []);
 			update_status(gettext("Menu items... "));
 			foreach ($pkg_config['menu'] as $menu) {
-				foreach ($menus as $key => $instmenu) {
-					if (empty($instmenu) || ($instmenu['name'] ==
-					    $menu['name'])) {
-						config_del_path("installedpackages/menu/{$key}");
+				foreach ($menus as $key => $amenu) {
+					if ((trim($amenu['name']) == trim($menu['name'])) &&
+					    ($amenu['section'] == $menu['section'])) {
+						unset($menus[$key]);
 						break;
 					}
 				}
 			}
+			config_set_path('installedpackages/menu', $menus);
 			update_status(gettext("done.") . "\n");
 		}
 		/* remove services */

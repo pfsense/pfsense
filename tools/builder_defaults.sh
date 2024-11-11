@@ -56,7 +56,7 @@ fi
 # Define pfSense versions
 PKG_REPO_BRANCH_DEVEL="devel"
 #PKG_REPO_BRANCH_NEXT="v2_7_0"
-PKG_REPO_BRANCH_RELEASE="v2_6_0"
+PKG_REPO_BRANCH_RELEASE="v2_7_2"
 PKG_REPO_BRANCH_PREVIOUS="v2_5_2"
 
 # Make sure pkg will not be interactive
@@ -146,7 +146,7 @@ export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
 if [ -z "${MODULES_OVERRIDE}" ]; then
 	export MODULES_OVERRIDE_base="cc/cc_cdg cc/cc_chd cc/cc_cubic cc/cc_dctcp cc/cc_hd cc/cc_htcp cc/cc_vegas cryptodev dummynet fdescfs hwpmc i2c if_stf ipdivert ipfw ipfw_nat64 opensolaris usb/cdce usb/ipheth usb/ure usb/urndis zfs"
-	export MODULES_OVERRIDE_amd64="${MODULES_OVERRIDE_base} aesni amdsmn amdtemp blake2 coretemp cpuctl cxgbe/tom drm2 ipmi ix ixv ndis nmdm qlnx sfxge vmm"
+	export MODULES_OVERRIDE_amd64="${MODULES_OVERRIDE_base} aesni amdsmn amdtemp blake2 coretemp cpuctl cxgbe/tom ipmi ix ixv nmdm qlnx sfxge vmm"
 	export MODULES_OVERRIDE="${MODULES_OVERRIDE_amd64}"
 fi
 
@@ -320,7 +320,7 @@ export CORE_PKG_REAL_PATH="${CORE_PKG_PATH}/.real_${DATESTRING}"
 export CORE_PKG_ALL_PATH="${CORE_PKG_PATH}/All"
 
 export PKG_REPO_BASE=${PKG_REPO_BASE:-"${BUILDER_TOOLS}/templates/pkg_repos"}
-export PFSENSE_DEFAULT_REPO="${PRODUCT_NAME}-repo-devel"
+export PFSENSE_DEFAULT_REPO="${PRODUCT_NAME}-repo"
 export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PFSENSE_DEFAULT_REPO}.conf"}
 export PFSENSE_BUILD_REPO="${PFSENSE_DEFAULT_REPO}"
 export PKG_REPO_BUILD=${PKG_REPO_BUILD:-"${PKG_REPO_BASE}/${PFSENSE_BUILD_REPO}.conf"}

@@ -459,18 +459,32 @@ function dhcp6_apply_changes(): int {
 function kea_server_cert_list(): array {
 	return (array_filter(cert_build_list('cert', 'HTTPS'), function($refid) {
 		$cert = lookup_cert($refid);
-		$isServer = $cert['item']['type'] === 'server';
-		$hasCA = isset($cert['item']['caref']);
-		return $isServer && $hasCA;
+		$is_valid = false;
+		if (isset($cert['item']) && isset($cert['item']['caref'])) {
+			if (isset($cert['item']['type']) && ($cert['item']['type'] == 'server')) {
+				$is_valid = true;
+			} elseif (isset($cert['item']['crt'])) {
+				$purpose = cert_get_purpose($cert['item']['crt']);
+				$is_valid = ($purpose['server'] == 'Yes');
+			}
+		}
+		return $is_valid;
 	}, ARRAY_FILTER_USE_KEY));
 }
 
 function kea_client_cert_list(): array {
 	return (array_filter(cert_build_list('cert', 'HTTPS'), function($refid) {
 		$cert = lookup_cert($refid);
-		$isClient = $cert['item']['type'] === 'user';
-		$hasCA = isset($cert['item']['caref']);
-		return $isClient && $hasCA;
+		$is_valid = false;
+		if (isset($cert['item']) && isset($cert['item']['caref'])) {
+			if (isset($cert['item']['type']) && ($cert['item']['type'] == 'user')) {
+				$is_valid = true;
+			} elseif (isset($cert['item']['crt'])) {
+				$purpose = cert_get_purpose($cert['item']['crt']);
+				$is_valid = ($purpose['server'] == 'No');
+			}
+		}
+		return $is_valid;
 	}, ARRAY_FILTER_USE_KEY));
 }
 

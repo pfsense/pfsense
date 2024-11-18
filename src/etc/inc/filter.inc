@@ -2530,7 +2530,7 @@ function filter_nat_rules_generate() {
 				if (empty($src)) {
 					$error_text = sprintf(gettext("Unresolvable source alias '%1\$s' for rule '%2\$s'"), $src, $descr);
 					if (!is_platform_booting()) {
-						file_notice("Filter_Reload", $error_text);
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 					}
 					$natrules .= "# {$error_text}\n";
 					continue;
@@ -2546,7 +2546,7 @@ function filter_nat_rules_generate() {
 				}
 				if ($error_text) {
 					if (!is_platform_booting()) {
-						file_notice("Filter_Reload", $error_text);
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 					}
 					$natrules .= "# {$error_text}\n";
 					continue;
@@ -2560,7 +2560,7 @@ function filter_nat_rules_generate() {
 				if (empty($dst)) {
 					$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $dst, $descr);
 					if (!is_platform_booting()) {
-						file_notice("Filter_Reload", $error_text);
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 					}
 					$natrules .= "# {$error_text}\n";
 					continue;
@@ -2576,7 +2576,7 @@ function filter_nat_rules_generate() {
 				}
 				if ($error_text) {
 					if (!is_platform_booting()) {
-						file_notice("Filter_Reload", $error_text);
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 					}
 					$natrules .= "# {$error_text}\n";
 					continue;
@@ -3411,14 +3411,14 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 		$error_text = sprintf(gettext("Unresolvable source alias '%1\$s' for rule '%2\$s'"), $rule['source']['address'], $rule['descr']);
 		if (!is_platform_booting()) {
-			file_notice("Filter_Reload", $error_text);
+			file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 		}
 		return "# {$error_text}";
 	}
 	if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
 		$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $rule['destination']['address'], $rule['descr']);
 		if (!is_platform_booting()) {
-			file_notice("Filter_Reload", $error_text);
+			file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 		}
 		return "# {$error_text}";
 	}
@@ -3436,7 +3436,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 
 		if ($error_text) {
 			if (!is_platform_booting()) {
-				file_notice("Filter_Reload", $error_text);
+				file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 			}
 			return "# {$error_text}";
 		}
@@ -3455,7 +3455,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 
 		if ($error_text) {
 			if (!is_platform_booting()) {
-				file_notice("Filter_Reload", $error_text);
+				file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
 			}
 			return "# {$error_text}";
 		}

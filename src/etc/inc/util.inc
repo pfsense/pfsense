@@ -4567,6 +4567,14 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 		$allnetflags[] = SPECIALNET_IFADDR6;
 	}
 
+	// Specialnets to exclude
+	$exceptions = [
+		// Interface group exceptions
+		'ifgroups' => array_flip([
+			'WireGuard' // WireGuard group does not populate members in the config
+		]),
+	];
+
 	if (empty($flags)) {
 		$flags = $allnetflags;
 	} else {
@@ -4690,6 +4698,9 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 				break;
 			case SPECIALNET_GROUP:
 				foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+					if (isset($exceptions['ifgroups'][$ifgen['ifname']])) {
+						continue;
+					}
 					$ifgenmembers = explode(' ', $ifgen['members']);
 					foreach ($ifgenmembers as $ifgmember) {
 						// Skip interface groups with members which are not allowed

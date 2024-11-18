@@ -39,12 +39,12 @@ require_once("system_advanced_sysctl.inc");
 
 $tunables = getTunables();
 
-if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+if (isset($_REQUEST['id'])) {
 	$id = htmlspecialchars_decode($_REQUEST['id']);
 }
 
-if ($_POST['act'] == "del") {
-	if (deleteTunable($id)) {
+if (($_POST['act'] == "del")) {
+	if (is_numericint($id) && deleteTunable($id)) {
 		exit;
 	}
 }
@@ -70,7 +70,7 @@ if ($_POST['save'] == gettext("Save")) {
 $act = $_REQUEST['act'];
 
 if ($act == "edit") {
-	if (config_get_path('sysctl/item/' . $id)) {
+	if (is_numericint($id) && (config_get_path("sysctl/item/{$id}") !== null)) {
 		$pconfig['tunable'] = config_get_path('sysctl/item/' . $id . '/tunable');
 		$pconfig['value'] = config_get_path('sysctl/item/' . $id . '/value');
 		$pconfig['descr'] = config_get_path('sysctl/item/' . $id . '/descr');
@@ -187,7 +187,7 @@ if ($act != "edit"): ?>
 		$pconfig['descr']
 	))->setWidth(4);
 
-	if (isset($id) && config_get_path('sysctl/item/' . $id)) {
+	if (is_numericint($id) && config_get_path('sysctl/item/' . $id)) {
 		$form->addGlobal(new Form_Input(
 			'id',
 			'id',

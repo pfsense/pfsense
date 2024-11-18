@@ -4571,7 +4571,8 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	$exceptions = [
 		// Interface group exceptions
 		'ifgroups' => array_flip([
-			'WireGuard' // WireGuard group does not populate members in the config
+			'WireGuard', // WireGuard group does not populate members in the config
+			'Tailscale', // Tailscale group does not populate members in the config
 		]),
 	];
 

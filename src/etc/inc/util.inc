@@ -48,6 +48,7 @@ define('SPECIALNET_GROUP', 11);
 define('SPECIALNET_VIPS', 12);
 define('SPECIALNET_IFADDR4', 13);
 define('SPECIALNET_IFADDR6', 14);
+define('SPECIALNET_VIPALIAS', 15);
 define('SPECIALNET_CHECKPERM', 98);
 define('SPECIALNET_EXCLUDE', 99);
 
@@ -4566,6 +4567,9 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	if (in_array(SPECIALNET_IFADDR6, $flags)) {
 		$allnetflags[] = SPECIALNET_IFADDR6;
 	}
+	if (in_array(SPECIALNET_VIPALIAS, $flags)) {
+		$allnetflags[] = SPECIALNET_VIPALIAS;
+	}
 
 	// Specialnets to exclude
 	$exceptions = [
@@ -4739,12 +4743,33 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 						$len = $end - $start;
 						for ($i = 0; $i <= $len; $i++) {
 							$snip = ip2long32($start+$i);
-			
+
 							$specialnet[$snip] = $snip . ' (' . $sn['descr'] . ')';
 						}
 					} else {
 						$specialnet[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 					}
+				}
+				break;
+			case SPECIALNET_VIPALIAS:
+				$tmp_vips = [];
+				foreach (config_get_path('virtualip/vip', []) as $vip) {
+					if (empty($vip['interface'])) {
+						continue;
+					}
+					// Only add IP alias VIPs without a parent; i.e. addresses that remain on the interface
+					if (($vip['mode'] != 'ipalias') || str_starts_with($vip['interface'], '_vip')) {
+						continue;
+					}
+					// Only add VIPs for allowed interfaces when checking permissions
+					if ($checkpermission && !have_ruleint_access($vip['interface'])) {
+						continue;
+					}
+					$tmp_vips[$vip['subnet'] . '/' . $vip['subnet_bits']] = $vip;
+				}
+				asort($tmp_vips, SORT_NATURAL);
+				foreach ($tmp_vips as $vipsn => $sn) {
+					$specialnet[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 				}
 				break;
 			default:
@@ -4787,7 +4812,7 @@ function get_specialnet_address($specialnet) {
 		return false;
 	}
 
-	if (!get_specialnet($specialnet, [SPECIALNET_IFADDR4, SPECIALNET_IFADDR6, SPECIALNET_VIPS])) {
+	if (!get_specialnet($specialnet, [SPECIALNET_IFADDR4, SPECIALNET_IFADDR6, SPECIALNET_VIPS, SPECIALNET_VIPALIAS])) {
 		return false;
 	}
 

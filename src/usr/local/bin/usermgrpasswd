@@ -143,9 +143,7 @@ $password = "";
 $confpassword = "";
 
 // If the user does not exist, bail
-$user_item_config = getUserEntry($username);
-$user = &$user_item_config['item'];
-if ($user == NULL) {
+if (empty(getUserEntry($username))) {
 	printf(gettext("User '%s' does not exist in the User Manager database.\n"), $username);
 	exit(-1);
 }
@@ -166,6 +164,12 @@ for ($try=0; $try < 5; $try++) {
 
 // Compare password and confirm
 if ($password) {
+	// Refresh the config in case changes were made outside of the script.
+	config_read_file();
+
+	$user_force_enable = false;
+	$user_force_active = false;
+
 	/* Open stdin for reading input */
 	$fp = fopen('php://stdin', 'r');
 
@@ -173,7 +177,7 @@ if ($password) {
 	if (is_account_disabled($username)) {
 		echo gettext("Account is disabled, re-enable? [y|n]") . ": ";
 		if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-			unset($user['disabled']);
+			$user_force_enable = true;
 		}
 	}
 
@@ -181,16 +185,39 @@ if ($password) {
 	if (is_account_expired($username)) {
 		echo gettext("Account is expired, clear the expiration date? [y|n]") . ": ";
 		if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-			unset($user['expires']);
+			$user_force_active = true;
 		}
 	}
 
 	fclose($fp);
 
-	//Reset password
-	config_set_path("system/user/{$user_item_config['idx']}", $user);
+	/*
+	 * Update the config cache before rewrite it with the new password.
+	 * This is necessary to catch up with any changes made in the GUI
+	 * while this program is running.
+	 * See: #17926.
+	 */
+	config_read_file();
+
+	$user_item_config = getUserEntry($username);
+	if (empty($user_item_config)) {
+		/* The user has been removed outside of the script. */
+		echo gettext("\nUser does not exist.") . "\n";
+		exit(-1);
+	}
+
+	if ($user_force_enable) {
+		array_del_path($user_item_config, 'item/disabled');
+	}
+	if ($user_force_active) {
+		array_del_path($user_item_config, 'item/expires');
+	}
+
+	// Set the user config.
 	local_user_set_password($user_item_config, $password);
-	local_user_set($user);
+	// Apply the user config to the system.
+	local_user_set($user_item_config['item']);
+
 	$message = sprintf(gettext("User Manager password changed for user '%s' from console."), $username);
 	write_config($message);
 	echo "{$message}\n";

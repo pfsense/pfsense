@@ -46,6 +46,9 @@ define('SPECIALNET_IFSUB', 9);
 define('SPECIALNET_IFNET', 10);
 define('SPECIALNET_GROUP', 11);
 define('SPECIALNET_VIPS', 12);
+define('SPECIALNET_IFADDR4', 13);
+define('SPECIALNET_IFADDR6', 14);
+define('SPECIALNET_VIPALIAS', 15);
 define('SPECIALNET_CHECKPERM', 98);
 define('SPECIALNET_EXCLUDE', 99);
 
@@ -104,22 +107,33 @@ function killbypid($pidfile, $waitfor = 0) {
 	return sigkillbypid($pidfile, "TERM", $waitfor);
 }
 
-function isvalidpid($pidfile) {
-	$output = "";
-	if (file_exists($pidfile)) {
-		exec("/bin/pgrep -qnF {$pidfile} 2>/dev/null", $output, $retval);
-		return (intval($retval) == 0);
+function isvalidpid(string $pidfile): bool {
+	if (!file_exists($pidfile)) {
+		return false;
 	}
-	return false;
+
+	exec(implode(' ', [
+		'/bin/pkill',
+		'-0',
+		'-F', $pidfile
+	]), $_out, $ret);
+
+	return ($ret === 0);
 }
 
-function is_process_running($process) {
-	$output = "";
-	if (!empty($process)) {
-		exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
-		return (intval($retval) == 0);
+function is_process_running(string $name): bool {
+	if (empty($name)) {
+		return false;
 	}
-	return false;
+
+	exec(implode(' ', [
+		'/bin/pkill',
+		'-0',
+		'-x',
+		escapeshellarg($name)
+	]), $_out, $ret);
+
+	return ($ret === 0);
 }
 
 function isvalidproc($proc) {
@@ -128,19 +142,24 @@ function isvalidproc($proc) {
 
 /* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
 /* return 1 for success and 0 for a failure */
-function sigkillbypid($pidfile, $sig, $waitfor = 0) {
-	if (isvalidpid($pidfile)) {
-		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
-		    " -F {$pidfile}", true);
-		$waitcounter = $waitfor * 10;
-		while(isvalidpid($pidfile) && $waitcounter > 0) {
-			$waitcounter = $waitcounter - 1;
-			usleep(100000);
-		}
-		return $result;
+function sigkillbypid(string $pidfile, string|int $sig, int $waitfor = 0): int {
+	if (!isvalidpid($pidfile)) {
+		return 0;
 	}
 
-	return 0;
+	exec(implode(' ', [
+		'/bin/pkill',
+		"-${sig}",
+		'-F', $pidfile
+	]), $_out, $ret);
+
+	$waitcounter = $waitfor * 10;
+	while(isvalidpid($pidfile) && $waitcounter > 0) {
+		$waitcounter = $waitcounter - 1;
+		usleep(100000); /* 100ms */
+	}
+
+	return $ret;
 }
 
 /* kill a process by name */
@@ -1432,11 +1451,11 @@ function is_intrange($range, $min, $max) {
 }
 
 /* returns true if $port is a valid TCP/UDP/SCTP port */
-function is_port($port) {
+function is_port($port, $validate_name = true) {
 	if (ctype_digit(strval($port)) && ((intval($port) >= 1) && (intval($port) <= 65535))) {
 		return true;
 	}
-	if (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp")) {
+	if ($validate_name && (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp"))) {
 		return true;
 	}
 	return false;
@@ -4541,6 +4560,26 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	                SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_IFNET,
 	                SPECIALNET_GROUP, SPECIALNET_VIPS];
 
+	// Special flags
+	if (in_array(SPECIALNET_IFADDR4, $flags)) {
+		$allnetflags[] = SPECIALNET_IFADDR4;
+	}
+	if (in_array(SPECIALNET_IFADDR6, $flags)) {
+		$allnetflags[] = SPECIALNET_IFADDR6;
+	}
+	if (in_array(SPECIALNET_VIPALIAS, $flags)) {
+		$allnetflags[] = SPECIALNET_VIPALIAS;
+	}
+
+	// Specialnets to exclude
+	$exceptions = [
+		// Interface group exceptions
+		'ifgroups' => array_flip([
+			'WireGuard', // WireGuard group does not populate members in the config
+			'Tailscale', // Tailscale group does not populate members in the config
+		]),
+	];
+
 	if (empty($flags)) {
 		$flags = $allnetflags;
 	} else {
@@ -4552,7 +4591,8 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 		}
 	}
 	$specialnet = [];
-	if (in_array(SPECIALNET_IFADDR, $flags) || in_array(SPECIALNET_IFSUB, $flags) || in_array(SPECIALNET_IFNET, $flags)) {
+	if (in_array(SPECIALNET_IFADDR, $flags) || in_array(SPECIALNET_IFSUB, $flags) || in_array(SPECIALNET_IFNET, $flags) ||
+	    in_array(SPECIALNET_IFADDR4, $flags) || in_array(SPECIALNET_IFADDR6, $flags)) {
 		$ifmacros = get_configured_interface_with_descr();
 	}
 	foreach ($flags as $include) {
@@ -4613,6 +4653,23 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 					                          'l2tp' => gettext('L2TP clients')]);
 				}
 				break;
+			case SPECIALNET_IFADDR4:
+			case SPECIALNET_IFADDR6:
+				foreach ($ifmacros as $ifname => $ifdescr) {
+					// Only add macros for allowed interfaces when checking permissions
+					if ($checkpermission && !have_ruleint_access($ifname)) {
+						continue;
+					}
+					// If an interface is specified, only add interface macros for that interface
+					if (!empty($if) && ($if != $ifname)) {
+						continue;
+					}
+
+					$ifname_suffix = 'ip' . (($include == SPECIALNET_IFADDR4) ? '4' : '6');
+					$ifdescr_suffix = ' address ' . (($include == SPECIALNET_IFADDR4) ? '(IPv4)' : '(IPv6)');
+					$specialnet[$ifname . $ifname_suffix] = $ifdescr . $ifdescr_suffix;
+				}
+				break;
 			case SPECIALNET_IFADDR:
 			case SPECIALNET_IFSUB:
 			case SPECIALNET_IFNET:
@@ -4646,6 +4703,9 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 				break;
 			case SPECIALNET_GROUP:
 				foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+					if (isset($exceptions['ifgroups'][$ifgen['ifname']])) {
+						continue;
+					}
 					$ifgenmembers = explode(' ', $ifgen['members']);
 					foreach ($ifgenmembers as $ifgmember) {
 						// Skip interface groups with members which are not allowed
@@ -4683,12 +4743,33 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 						$len = $end - $start;
 						for ($i = 0; $i <= $len; $i++) {
 							$snip = ip2long32($start+$i);
-			
+
 							$specialnet[$snip] = $snip . ' (' . $sn['descr'] . ')';
 						}
 					} else {
 						$specialnet[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 					}
+				}
+				break;
+			case SPECIALNET_VIPALIAS:
+				$tmp_vips = [];
+				foreach (config_get_path('virtualip/vip', []) as $vip) {
+					if (empty($vip['interface'])) {
+						continue;
+					}
+					// Only add IP alias VIPs without a parent; i.e. addresses that remain on the interface
+					if (($vip['mode'] != 'ipalias') || str_starts_with($vip['interface'], '_vip')) {
+						continue;
+					}
+					// Only add VIPs for allowed interfaces when checking permissions
+					if ($checkpermission && !have_ruleint_access($vip['interface'])) {
+						continue;
+					}
+					$tmp_vips[$vip['subnet'] . '/' . $vip['subnet_bits']] = $vip;
+				}
+				asort($tmp_vips, SORT_NATURAL);
+				foreach ($tmp_vips as $vipsn => $sn) {
+					$specialnet[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 				}
 				break;
 			default:
@@ -4703,6 +4784,132 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	} else {
 		return false;
 	}
+}
+
+function get_specialnet_interface($specialnet, $address_family = null) {
+	if (empty($specialnet) || !is_string($specialnet)) {
+		return false;
+	}
+
+	$matches = [];
+	preg_match('/^(?:wan|lan|opt[[:digit:]]+)/', $specialnet, $matches);
+	if (isset($matches[0])) {
+		$interface = match ($address_family) {
+			AF_INET => "{$matches[0]}ip4",
+			AF_INET6 => "{$matches[0]}ip6",
+			default => $matches[0]
+		};
+		if (!isset($address_family) || ($specialnet == $interface)) {
+			return $matches[0];
+		}
+	}
+
+	return false;
+}
+
+function get_specialnet_address($specialnet) {
+	if (empty($specialnet) || !is_string($specialnet)) {
+		return false;
+	}
+
+	if (!get_specialnet($specialnet, [SPECIALNET_IFADDR4, SPECIALNET_IFADDR6, SPECIALNET_VIPS, SPECIALNET_VIPALIAS])) {
+		return false;
+	}
+
+	if (is_ipaddr($specialnet)) {
+		return $specialnet;
+	}
+
+	$interface = get_specialnet_interface($specialnet);
+	if (empty($interface)) {
+		return false;
+	}
+	$interface = convert_friendly_interface_to_real_interface_name($interface);
+	if (empty($interface)) {
+		return false;
+	}
+	$interface_addresses = get_interface_addresses($interface);
+
+	if (str_ends_with($specialnet, 'ip4')) {
+		if (isset($interface_addresses['ipaddr']) && is_ipaddrv4($interface_addresses['ipaddr'])) {
+			return $interface_addresses['ipaddr'];;
+		}
+	} elseif (str_ends_with($specialnet, 'ip6')) {
+		if (isset($interface_addresses['ipaddr6']) && is_ipaddrv6($interface_addresses['ipaddr6'])) {
+			return $interface_addresses['ipaddr6'];;
+		}
+	}
+
+	return false;
+}
+
+function is_host_address($address) {
+	return (is_host_address4($address) || is_host_address6($address) || is_host_address_fqdn($address));
+}
+
+function is_host_address_fqdn($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_contains($address, ':')) {
+		// Check Domain:Port address
+		list($name, $port) = explode(':', $address);
+		if (is_domain($name) && is_port($port, false)) {
+			return true;
+		}
+	} else {
+		// Check Domain address
+		if (is_domain($address)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function is_host_address4($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_contains($address, ':')) {
+		// Check IPv4:Port address
+		list($ip, $port) = explode(':', $address);
+		if (is_ipaddrv4($ip) && is_port($port, false)) {
+			return true;
+		}
+	} else {
+		// Check IPv4 address
+		if (is_ipaddrv4($address)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function is_host_address6($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_starts_with($address, '[')) {
+		// Check [IPv6]:Port address
+		$matches = [];
+		preg_match('/^\[((?:[[:xdigit:]]|:)+)\]:([[:digit:]]+)/', $address, $matches);
+		if (isset($matches[1]) && isset($matches[2]) &&
+		    is_ipaddrv6($matches[1]) && is_port($matches[2], false)) {
+			return true;
+		}
+	} else {
+		// Check IPv6 address
+		if (is_ipaddrv6($address)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 function is_interface_ipaddr($interface) {

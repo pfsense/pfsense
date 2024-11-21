@@ -80,10 +80,10 @@ function saveTunable($post, $id, $json = false) {
 		$tunableent['value'] = htmlspecialchars($post['value']);
 		$tunableent['descr'] = strip_tags($post['descr']);
 
-		if (isset($id)) {
-			config_set_path('sysctl/item/' . $id, $tunableent);
+		if (is_numericint($id)) {
+			config_set_path("sysctl/item/{$id}", $tunableent);
 		} else {
-			config_set_path('sysctl/item/' . count(config_get_path('sysctl/item', [])) + 1, $tunableent);
+			config_set_path('sysctl/item/', $tunableent);
 		}
 
 		if (!$json) {

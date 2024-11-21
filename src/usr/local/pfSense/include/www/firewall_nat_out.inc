@@ -343,7 +343,7 @@ function saveoutNATrule($post, $id, $json = false) {
 			$natent['destination']['not'] = true;
 		}
 
-		if (is_array(config_get_path("nat/outbound/rule/{$id}/created"))) {
+		if (isset($id) && is_array(config_get_path("nat/outbound/rule/{$id}/created"))) {
 			$natent['created'] = config_get_path("nat/outbound/rule/{$id}/created");
 		}
 

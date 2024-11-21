@@ -437,13 +437,21 @@ class pfsense_xmlrpc_server {
 		array_del_path($sections, 'installedpackages');
 
 		/* Check for changed or removed static routes; do this before updating the active/running config. */
-		if (!empty(array_get_path($sections, 'staticroutes/route'))) {
-			foreach (array_get_path($old_config, 'staticroutes/route', []) as $idx => $old_route) {
+		$static_routes_to_remove = [];
+		if (empty(array_get_path($old_config, 'staticroutes/route',))) {
+			$static_routes_to_remove = array_keys(array_get_path($sections, 'staticroutes/route', []));
+		} else {
+			foreach ($old_config['staticroutes']['route'] as $idx => $old_route) {
 				if (!isset($sections['staticroutes']['route'][$idx]) ||
 				    ($old_route['network'] != $sections['staticroutes']['route'][$idx]['network']) ||
 				    ($old_route['gateway'] != $sections['staticroutes']['route'][$idx]['gateway'])) {
-					delete_static_route($idx, true);
+					$static_routes_to_remove[] = $idx;
 				}
+			}
+		}
+		if (!empty($static_routes_to_remove)) {
+			foreach ($static_routes_to_remove as $route_index) {
+				delete_static_route($route_index, true);
 			}
 			// Apply the removed route changes, if any.
 			$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';

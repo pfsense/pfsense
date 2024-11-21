@@ -96,7 +96,7 @@ if ($input_errors) {
 					<tbody>
 <?php
 // Is the factory default check IP service disabled?
-if (config_path_enabled('checkipservices/checkipservice', 'disable_factory_default')) {
+if (config_path_enabled('checkipservices', 'disable_factory_default')) {
 	unset($factory_default_checkipservice['enable']);
 }
 

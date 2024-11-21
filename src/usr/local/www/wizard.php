@@ -149,15 +149,20 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if ($arraynum != "") {
 		$field_conv .= "/{$arraynum}";
 	}
-	if ($unset == "yes") {
-		config_del_path($field_conv);
+
+	if ($updatetext == '') {
+		if (config_get_path($field_conv) !== null) {
+			config_del_path($field_conv);
+		}
+		return;
 	}
 
-	if (($field_type == "checkbox" and $updatetext != "on") || $updatetext == "") {
-		/*
-		 * item is a checkbox, it should have the value "on"
-		 * if it was checked
-		 */
+	if ($field_type == "checkbox") {
+		if (($updatetext == 'on' ) || ($updatetext == 'yes')) {
+			config_set_path($field_conv, true);
+		} elseif (config_get_path($field_conv) !== null) {
+			config_del_path($field_conv);
+		}
 		return;
 	}
 
@@ -170,6 +175,10 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		if (is_array($updatetext)) {
 			$updatetext = implode(',', $updatetext);
 		}
+	}
+
+	if ($unset == "yes") {
+		config_del_path($field_conv);
 	}
 
 	// Verify that the needed config array element exists. If not, create it
@@ -479,13 +488,12 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$field_conv_path .= "/{$field['arraynum']}";
 			}
 
-			if ($field['type'] == "checkbox") {
-				$value = config_get_path($field_conv_path);
-				if (empty($value)) {
-					$value = true;
-				}
-			} else {
-				if (config_get_path($field_conv_path) !== null) {
+			if (config_get_path($field_conv_path) !== null) {
+				if ($field['type'] == "checkbox") {
+					if (empty(config_get_path($field_conv_path))) {
+						$value = true;
+					}
+				} else {
 					$value = config_get_path($field_conv_path);
 				}
 			}

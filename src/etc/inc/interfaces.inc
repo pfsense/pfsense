@@ -6547,6 +6547,12 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 	return $sourceips;
 }
 
+/**
+ * The the IPv4 address of an interface.
+ * @param string $interface A VIP ID, gateway group (including with VIPs),
+ *                         or an interface friendly name.
+ * @return string|null The IPv4 address; null if none found.
+ */
 function get_interface_ip($interface = "wan") {
 	if (empty($interface)) {
 		return null;
@@ -6588,6 +6594,12 @@ function get_interface_ip($interface = "wan") {
 	}
 }
 
+/**
+ * The the IPv6 address of an interface.
+ * @param string $interface A VIP ID, gateway group (including with VIPs),
+ *                         or an interface friendly name.
+ * @return string|null The IPv6 address; null if none found.
+ */
 function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallback = false) {
 	if (empty($interface)) {
 		return null;

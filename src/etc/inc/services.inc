@@ -4210,60 +4210,131 @@ function services_dyndns_configure($int = "") {
 	return 0;
 }
 
-function dyndnsCheckIP($int) {
-	global $factory_default_checkipservice;
-	$ip_address = get_interface_ip($int);
+/**
+ * Get the source IPv4 or IPv6 address to use for sending a request.
+ * @param string $interface A VIP ID, gateway group, or friendly name.
+ * @param mixed $address_family Force an IP address family.
+ * @return string|false The IP address to use; False otherwise.
+ */
+function get_request_source_address($interface, int|null $address_family = null) {
+	$source_address = '';
 
-	if (is_private_ip($ip_address)) {
+	// Get the interface gateway.
+	$interface_gateway = '';
+	$gateways_groups = return_gateway_groups_array();
+	if (isset($gateways_groups[$interface])) {
+		// Given interface is a gateway group.
+		$interface_gateway = $gateways_groups[$interface][0]['gw'];
+	} elseif (str_starts_with($interface, '_vip')) {
+		// Given interface is a VIP.
+		$interface_gateway = get_interface_gateway_name(get_root_interface($interface));
+	} else {
+		// Given interface is a friendly name.
+		$interface_gateway = get_interface_gateway_name($interface);
+	}
+
+	if (!empty($interface_gateway)) {
+		// Bail early if the gateway is down.
 		$gateways_status = return_gateways_status(true);
-		// If the gateway for this interface is down, then the external check cannot work.
-		// Avoid the long wait for the external check to timeout.
-		if (stristr(array_get_path($gateways_status, config_get_path("interfaces/{$int}/gateway") . "/status"), "down")) {
-			return "down";
+		if (array_get_path($gateways_status, "{$interface_gateway}/status", '') != 'online') {
+			return false;
 		}
-		$regex_ipv4 = '(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)(?:\/(?:\d|[12]\d|3[0-2])\b)?';
-		$regex_ipv6 = '(?:(?:(?:[[:xdigit:]]{1,4}:){7}(?:[[:xdigit:]]{1,4}|:))|(?:(?:[[:xdigit:]]{1,4}:){6}(?::[[:xdigit:]]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(?:(?:[[:xdigit:]]{1,4}:){5}(?:(?:(?::[[:xdigit:]]{1,4}){1,2})|:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(?:(?:[[:xdigit:]]{1,4}:){4}(?:(?:(?::[[:xdigit:]]{1,4}){1,3})|(?:(?::[[:xdigit:]]{1,4})?:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){3}(?:(?:(?::[[:xdigit:]]{1,4}){1,4})|(?:(?::[[:xdigit:]]{1,4}){0,2}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){2}(?:(?:(?::[[:xdigit:]]{1,4}){1,5})|(?:(?::[[:xdigit:]]{1,4}){0,3}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){1}(?:(?:(?::[[:xdigit:]]{1,4}){1,6})|(?:(?::[[:xdigit:]]{1,4}){0,4}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?::(?:(?:(?::[[:xdigit:]]{1,4}){1,7})|(?:(?::[[:xdigit:]]{1,4}){0,5}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))';
-		$response_pattern = "/((?:{$regex_ipv4}|{$regex_ipv6}))/";
-		$available_ci_services = config_get_path('checkipservices/checkipservice', []);
-		// Append the factory default check IP service to the list (if not disabled).
-		if (!config_path_enabled('checkipservices','disable_factory_default')) {
-			$available_ci_services[] = $factory_default_checkipservice;
-		}
+		$source_address_gw = array_get_path($gateways_status, "{$interface_gateway}/srcip", '');
+	}
 
-		// Use the first enabled check IP service as the default.
-		foreach ($available_ci_services as $checkipservice) {
-			if (isset($checkipservice['enable'])) {
-				$url = $checkipservice['url'];
-				$username = $checkipservice['username'];
-				$password = $checkipservice['password'];
-				$verifysslpeer = isset($checkipservice['verifysslpeer']);
-				$curl_proxy = isset($checkipservice['curl_proxy']);
-				break;
-			}
-		}
+	// Prefer the source address on the gateway group.
+	$source_address4 = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+	$source_address6 = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
 
-		$hosttocheck = $url;
-		$ip_ch = curl_init($hosttocheck);
-		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, $verifysslpeer);
-		curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
-		curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
-		curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
-		curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
-		if ($curl_proxy) {
-			set_curlproxy($ip_ch);
-		}
-		$ip_result_page = curl_exec($ip_ch);
-		curl_close($ip_ch);
-		$matches = [];
-		preg_match($response_pattern, $ip_result_page, $matches);
-		if (isset($matches[1]) && is_ipaddr($matches[1])) {
-			return $matches[1];
+	if ($address_family == AF_INET) {
+		$source_address = $source_address4;
+	} elseif ($address_family == AF_INET6) {
+		$source_address = $source_address6;
+	} else {
+		if (config_path_enabled('system', 'prefer_ipv4') && !empty($source_address4)) {
+			$source_address = $source_address4;
+		} elseif (!empty($source_address6)) {
+			$source_address = $source_address6;
+		} else {
+			$source_address = $source_address4;
 		}
 	}
-	return $ip_address;
+
+	// Bail if no IPv4 or IPv6 address is found for the given interface.
+	if (empty($source_address) || !is_ipaddr($source_address)) {
+		return false;
+	}
+
+	return $source_address;
+}
+
+/**
+ * Use the check IP service to determine the public IPv4 or IPv6 address.
+ * @param mixed $interface A VIP ID, gateway group, or friendly name.
+ * @param int|null $address_family Force an IP address family.
+ * @return string|false The IPv4 or IPv6 address; False if none found.
+ */
+function dyndnsCheckIP($interface, int|null $address_family = null) {
+	global $factory_default_checkipservice;
+
+	$interface_address = get_request_source_address($interface, $address_family);
+	if ($interface_address === false) {
+		return false;
+	}
+
+	$use_ipv6 = false;
+	if (is_ipaddrv6($interface_address)) {
+		$use_ipv6 = true;
+		if (is_v6gua($interface_address)) {
+			return $interface_address;
+		}
+	} elseif (is_ipaddrv4($interface_address) && !is_private_ip($interface_address)) {
+		return $interface_address;
+	}
+
+	$regex_ipv4 = '(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)(?:\/(?:\d|[12]\d|3[0-2])\b)?';
+	$regex_ipv6 = '(?:(?:(?:[[:xdigit:]]{1,4}:){7}(?:[[:xdigit:]]{1,4}|:))|(?:(?:[[:xdigit:]]{1,4}:){6}(?::[[:xdigit:]]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(?:(?:[[:xdigit:]]{1,4}:){5}(?:(?:(?::[[:xdigit:]]{1,4}){1,2})|:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(?:(?:[[:xdigit:]]{1,4}:){4}(?:(?:(?::[[:xdigit:]]{1,4}){1,3})|(?:(?::[[:xdigit:]]{1,4})?:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){3}(?:(?:(?::[[:xdigit:]]{1,4}){1,4})|(?:(?::[[:xdigit:]]{1,4}){0,2}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){2}(?:(?:(?::[[:xdigit:]]{1,4}){1,5})|(?:(?::[[:xdigit:]]{1,4}){0,3}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){1}(?:(?:(?::[[:xdigit:]]{1,4}){1,6})|(?:(?::[[:xdigit:]]{1,4}){0,4}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?::(?:(?:(?::[[:xdigit:]]{1,4}){1,7})|(?:(?::[[:xdigit:]]{1,4}){0,5}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))';
+	$response_pattern = "/((?:{$regex_ipv4}|{$regex_ipv6}))/";
+	$available_ci_services = config_get_path('checkipservices/checkipservice', []);
+	// Append the factory default check IP service to the list (if not disabled).
+	if (!config_path_enabled('checkipservices','disable_factory_default')) {
+		$available_ci_services[] = $factory_default_checkipservice;
+	}
+
+	// Use the first enabled check IP service as the default.
+	foreach ($available_ci_services as $checkipservice) {
+		if (isset($checkipservice['enable'])) {
+			$url = $checkipservice['url'];
+			$username = $checkipservice['username'];
+			$password = $checkipservice['password'];
+			$verifysslpeer = isset($checkipservice['verifysslpeer']);
+			$curl_proxy = isset($checkipservice['curl_proxy']);
+			break;
+		}
+	}
+
+	$hosttocheck = $url;
+	$ip_ch = curl_init($hosttocheck);
+	curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, $verifysslpeer);
+	curl_setopt($ip_ch, CURLOPT_INTERFACE, $interface_address);
+	curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
+	curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
+	curl_setopt($ip_ch, CURLOPT_IPRESOLVE, ($use_ipv6 ? CURL_IPRESOLVE_V6 : CURL_IPRESOLVE_V4));
+	curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+	curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
+	if ($curl_proxy) {
+		set_curlproxy($ip_ch);
+	}
+	$ip_result_page = curl_exec($ip_ch);
+	curl_close($ip_ch);
+	$matches = [];
+	preg_match($response_pattern, $ip_result_page, $matches);
+	if (isset($matches[1]) && is_ipaddr($matches[1])) {
+		return $matches[1];
+	}
+
+	return false;
 }
 
 function services_dnsmasq_configure($restart_dhcp = true) {
@@ -4914,7 +4985,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($if);
-			if (is_private_ip($wanip)) {
+			if (!$wanip || is_private_ip($wanip)) {
 				log_error(sprintf(gettext(
 				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),
 				    $dnsupdate['host']));

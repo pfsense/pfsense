@@ -91,7 +91,6 @@
 	 *    - _error()
 	 *    - _detectChange()
 	 *    - _debug()
-	 *    - _checkIP()
 	 * +----------------------------------------------------+
 	 *  All-Inkl        - Last Tested: 12 November 2016
 	 *  Amazon Route 53 - Last Tested: 04 February 2017
@@ -196,7 +195,7 @@
 		var $_dnsMaxCacheAgeDays;
 		var $_dnsDummyUpdateDone;
 		var $_forceUpdateNeeded;
-		var $_useIPv6;
+		var $_addressFamily;
 		var $_existingRecords;
 		var $_curlProxy;
 
@@ -227,7 +226,13 @@
 			$this->_cacheFile_v6 = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($this->_FQDN) . "{$dnsID}_v6.cache";
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($this->_FQDN) . "{$dnsID}.debug";
 
-			$this->_curlIpresolveV4 = $curlIpresolveV4;
+			$this->_curlIpresolveV4 = match ($dnsService) {
+				'duiadns' => true,
+				'duiadns-v6' => true,
+				'he-net' => true,
+				'he-net-v6' => true,
+				default => $curlIpresolveV4
+			};
 			$this->_curlSslVerifypeer = $curlSslVerifypeer;
 			$this->_curlProxy = $curlProxy;
 			$this->_dnsVerboseLog = $dnsVerboseLog;
@@ -351,10 +356,10 @@
 				case 'route53-v6':
 				case 'spdyn-v6':
 				case 'yandex-v6':
-					$this->_useIPv6 = true;
+					$this->_addressFamily = $this->_curlIpresolveV4 ? AF_INET : null;
 					break;
 				default:
-					$this->_useIPv6 = false;
+					$this->_addressFamily = null;
 			}
 			$this->_dnsService = strtolower($dnsService);
 			$this->_dnsUser = $dnsUser;
@@ -369,14 +374,13 @@
 			$this->_dnsZoneID = $dnsZoneID;
 			$this->_dnsTTL = $dnsTTL;
 			$this->_if = get_failover_interface($dnsIf);
-			$this->_checkIP();
 			$this->_dnsUpdateURL = $dnsUpdateURL;
 			$this->_dnsResultMatch = $dnsResultMatch;
-			if (($this->_dnsService == 'custom') || ($this->_dnsService == 'custom-v6')) {
-				$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
-			} else {
-				$this->_dnsRequestIf = $this->_if;
-			}
+			$this->_dnsRequestIf = $dnsRequestIf;
+			$this->_dnsRequestIfIP = get_request_source_address($this->_dnsRequestIf, $this->_addressFamily);
+			$this->_addressFamily = is_ipaddrv6($this->_dnsRequestIfIP) ? AF_INET6 : AF_INET;
+			$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_addressFamily);
+
 			if (($dnsMaxCacheAge !== null) && ($dnsMaxCacheAge !== "")) {
 				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
 			} else {
@@ -389,10 +393,6 @@
 						$this->_dnsMaxCacheAgeDays = 25;
 				}
 			}
-			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s'), $this->_FQDN, $dnsRequestIf, $this->_dnsRequestIf));
-			}
-			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
 			$this->_dnsDummyUpdateDone = false;
 			$this->_forceUpdateNeeded = $forceUpdate;
 
@@ -529,23 +529,14 @@
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _update() starting.'), $this->_dnsService, $this->_FQDN));
 			}
 
-			if (strstr($this->_dnsRequestIf, "_vip")) {
-				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
-				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
-			} else {
-				$realparentif = $this->_dnsRequestIf;
-			}
-
 			$ch = curl_init();
 
-			if ($this->_useIPv6 == false) {
-				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-			}
+			curl_setopt($ch, CURLOPT_IPRESOLVE, (($this->_addressFamily == AF_INET6) ? CURL_IPRESOLVE_V6 : CURL_IPRESOLVE_V4));
 
 			if ($this->_dnsService != 'ods') {
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
+				curl_setopt($ch, CURLOPT_INTERFACE, $this->_dnsRequestIfIP);
 				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 			}
 
@@ -555,9 +546,6 @@
 				case 'custom-v6':
 					if (strstr($this->_dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
 					if ($this->_dnsUser != '') {
-						if ($this->_curlIpresolveV4) {
-							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-						}
 						if ($this->_curlSslVerifypeer) {
 							/* required for a local CA
 							 * see https://redmine.pfsense.org/issues/12589 */
@@ -885,7 +873,7 @@
 						https://{login}:{password}@https://api.mythic-beasts.com/dns/v2/zones/example.com/records/test1/A -d data=1.2.3.4
 					*/
 					$needsIP = FALSE;
-					if ($this->_useIPv6) {
+					if ($this->_addressFamily == AF_INET6) {
 						$record = "AAAA";
 					} else {
 						$record = "A";
@@ -901,7 +889,7 @@
 					// API documentation: https://www.name.com/api-docs/ & https://www.name.com/api-docs/dns
 					$namedotcom_api = "https://api.name.com/v4/domains/{$this->_dnsDomain}/records";
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
-					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					$record_type = ($this->_addressFamily == AF_INET6) ? "AAAA" : "A";
 					// Check if a record already exists for this host.
 					curl_setopt($ch, CURLOPT_URL, "{$namedotcom_api}?perPage=1000");
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
@@ -965,7 +953,7 @@
 				case 'porkbun-v6':
 					// API documentation: https://api.porkbun.com/api/json/v3/documentation
 					$porkbun_api = "https://api.porkbun.com/api/json/v3/dns/retrieve/{$this->_dnsDomain}";
-					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					$record_type = ($this->_addressFamily == AF_INET6) ? "AAAA" : "A";
 					// Check if a record already exists for this host.
 					$post_data['apikey'] = $this->_dnsUser;
 					$post_data['secretapikey'] = $this->_dnsPass;
@@ -1013,7 +1001,7 @@
 					if (($record_id) &&
 					    ($this->_forceUpdateNeeded == true) &&
 					    ($this->_dnsDummyUpdateDone == false)) {
-						$post_data['content'] = $this->_useIPv6 ? "fd00:d::1" : "127.0.0.1";
+						$post_data['content'] = ($this->_addressFamily == AF_INET6) ? "fd00:d::1" : "127.0.0.1";
 						$this->_dnsDummyUpdateDone = true;
 						$log_message = 'Dynamic DNS %1$s (%2$s): ';
 						$log_message .= 'Performing forced update. ';
@@ -1076,7 +1064,6 @@
 				case 'duiadns-v6':
 					$needsIP = FALSE;
 					$server = "https://ipv4.duiadns.net/dyndns.duia?";
-					curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
@@ -1085,7 +1072,6 @@
 				case 'he-net-v6':
 					$needsIP = FALSE;
 					$server = "https://dyn.dns.he.net/nic/update?";
-					curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost . '&password=' . $this->_dnsPass . '&myip=' . $this->_dnsIP);
 					break;
@@ -1277,7 +1263,7 @@
 					   Data sent as JSON */
 					$needsIP = TRUE;
 					$server = 'https://api.godaddy.com/v1/domains/';
-					$recordType = $this->_useIPv6 ? "AAAA" : "A";
+					$recordType = ($this->_addressFamily == AF_INET6) ? "AAAA" : "A";
 					$url = $server . $this->_dnsDomain . '/records/' . $recordType . '/' . $this->_dnsHost;
 					$jsondata = '[{"data":"' . $this->_dnsIP . '","ttl":' . $this->_dnsTTL . '}]';
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -1648,7 +1634,7 @@
 						return false;
 					}
 						// Update the DNS record
-					if ($this->_useIPv6) {
+					if ($this->_addressFamily == AF_INET6) {
 						$url = "https://management.azure.com" . $resourceid . "/AAAA/" . $hostname . "?api-version=2017-09-01";
 						$body = '{"properties":{"TTL":"' . $newttl . '", "AAAARecords":[{"ipv6Address":"' . $newip . '"}]}}';
 					} else {
@@ -1670,7 +1656,7 @@
 				case 'linode':
 				case 'linode-v6':
 					$linode_api = "https://api.linode.com/v4";
-					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					$record_type = ($this->_addressFamily == AF_INET6) ? "AAAA" : "A";
 					$record_name = $this->_dnsHost == "@" ? "" : $this->_dnsHost;
 					$err_prefix = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): (" . gettext("Error") . ")";
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1767,7 +1753,7 @@
 					// https://api.gandi.net/docs/livedns/#v5-livedns-domains-fqdn-records-rrset_name-rrset_type
 					// PUT overrides the existing record or creates if none exists
 					$gandi_api = 'https://api.gandi.net/v5/livedns/domains/';
-					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					$record_type = ($this->_addressFamily == AF_INET6) ? "AAAA" : "A";
 					$url = "{$gandi_api}{$this->_dnsDomain}/records/{$this->_dnsHost}/{$record_type}";
 
 					$headers = array(
@@ -1835,22 +1821,13 @@
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _remove() starting.'), $this->_dnsService, $this->_FQDN));
 			}
 
-			if (strstr($this->_dnsRequestIf, "_vip")) {
-				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
-				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
-			} else {
-				$realparentif = $this->_dnsRequestIf;
-			}
-
 			$ch = curl_init();
 
-			if ($this->_useIPv6 == false) {
-				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-			}
+			curl_setopt($ch, CURLOPT_IPRESOLVE, (($this->_addressFamily == AF_INET6) ? CURL_IPRESOLVE_V6 : CURL_IPRESOLVE_V4));
 
 			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
+			curl_setopt($ch, CURLOPT_INTERFACE, $this->_dnsRequestIfIP);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 
 			switch ($this->_dnsService) {
@@ -1905,22 +1882,13 @@
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _listCurrent() starting.'), $this->_dnsService, $this->_FQDN));
 			}
 
-			if (strstr($this->_dnsRequestIf, "_vip")) {
-				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
-				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
-			} else {
-				$realparentif = $this->_dnsRequestIf;
-			}
-
 			$ch = curl_init();
 
-			if ($this->_useIPv6 == false) {
-				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-			}
+			curl_setopt($ch, CURLOPT_IPRESOLVE, (($this->_addressFamily == AF_INET6) ? CURL_IPRESOLVE_V6 : CURL_IPRESOLVE_V4));
 
 			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
+			curl_setopt($ch, CURLOPT_INTERFACE, $this->_dnsRequestIfIP);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 
 			switch ($this->_dnsService) {
@@ -1987,8 +1955,8 @@
 				} else {
 					foreach($result["data"] as $key => $row) {
 						if($row["record"] == $this->_dnsHost &&
-								(($row["type"] == "A" && !$this->_useIPv6)
-										|| ($row["type"] == "AAAA" && $this->_useIPv6)
+								(($row["type"] == "A" && ($this->_addressFamily == AF_INET))
+										|| ($row["type"] == "AAAA" && ($this->_addressFamily == AF_INET6))
 								)) {
 							if($row["editable"] == 0) {
 								log_error($status_intro . "host " . $this->_dnsHost . " is not editable.");
@@ -3070,8 +3038,9 @@
 
 			if ($successful_update == true) {
 				/* Write WAN IP to cache file */
-				$wan_ip = $this->_checkIP();
-				if ($this->_useIPv6 == false && $wan_ip > 0) {
+				$wan_ip = dyndnsCheckIP($this->_dnsRequestIf, $this->_addressFamily);
+				$this->_dnsIP = $wan_ip;
+				if (($this->_addressFamily == AF_INET) && $wan_ip) {
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IP Address for %1$s on %2$s (%3$s) to %4$s'), $this->_FQDN, convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile, $wan_ip));
@@ -3079,7 +3048,7 @@
 				} else {
 					@unlink($this->_cacheFile);
 				}
-				if ($this->_useIPv6 == true && $wan_ip > 0) {
+				if (($this->_addressFamily == AF_INET6) && $wan_ip) {
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IPv6 Address for %1$s on %2$s (%3$s) to %4$s'), $this->_FQDN, convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile_v6, $wan_ip));
@@ -3155,14 +3124,15 @@
 
 			$currentTime = time();
 
-			$wan_ip = $this->_checkIP();
-			if ($wan_ip == 0) {
+			$wan_ip = dyndnsCheckIP($this->_dnsRequestIf, $this->_addressFamily);
+			$this->_dnsIP = $wan_ip;
+			if (!$wan_ip) {
 				log_error(sprintf(gettext("Dynamic Dns (%s): Current WAN IP could not be determined, skipping update process."), $this->_FQDN));
 				return false;
 			}
 			$log_error = sprintf(gettext('Dynamic Dns (%1$s): Current WAN IP: %2$s'), $this->_FQDN, $wan_ip) . " ";
 
-			if ($this->_useIPv6 == true) {
+			if (($this->_addressFamily == AF_INET6)) {
 				if (file_exists($this->_cacheFile_v6)) {
 					$contents = file_get_contents($this->_cacheFile_v6);
 					list($cacheIP, $cacheTime) = explode('|', $contents);
@@ -3249,40 +3219,6 @@
 			fwrite($file, $string);
 			fclose($file);
 		}
-		function _checkIP() {
-			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkIP() starting.'), $this->_dnsService, $this->_FQDN));
-			}
-
-			if ($this->_useIPv6 == true) {
-				$ip_address = get_interface_ipv6($this->_if);
-				if (!is_ipaddrv6($ip_address)) {
-					return 0;
-				}
-			} else {
-				$ip_address = dyndnsCheckIP($this->_if);
-				if (!is_ipaddr($ip_address)) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
-					return 0;
-				} elseif (is_private_ip($ip_address)) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): Public IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
-					return 0;
-				}
-			}
-			if ($this->_useIPv6 == false && is_private_ip(get_interface_ip($this->_if))) {
-				if ($this->_dnsVerboseLog) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
-				}
-			} else {
-				if ($this->_dnsVerboseLog) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from local system.'), $this->_dnsService, $this->_FQDN, $ip_address));
-				}
-			}
-			$this->_dnsIP = $ip_address;
-
-			return $ip_address;
-		}
-
 	}
 
 ?>

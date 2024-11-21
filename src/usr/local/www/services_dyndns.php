@@ -128,7 +128,7 @@ foreach (config_get_path("dyndnses/dyndns", []) as $dyndns):
 			$icon_title = "Failed";
 		}
 	} else if (file_exists($filename_v6)) {
-		$ipv6addr = get_interface_ipv6($dyndns['interface']);
+		$ipv6addr = dyndnsCheckIP($dyndns['interface']);
 		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
 		$cached_ipv6 = $cached_ipv6_s[0];
 

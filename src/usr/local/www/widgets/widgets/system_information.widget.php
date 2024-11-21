@@ -57,7 +57,7 @@ $sysinfo_items = array(
 
 // Declared here so that JavaScript can access it
 $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-rotate fa-spin'></i>");
-$state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
+$state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced to ");
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");

@@ -1695,6 +1695,8 @@ function get_gwgroup_members($groupname) {
 /*
  * Return an array with all gateway groups with name as key
  * All gateway groups will be processed before returning the array.
+ * Returns the first online tier (potentially with multiple members);
+ * return the first tier if none are online.
  */
 function return_gateway_groups_array($fixup = false) {
 	/* fetch the current gateways status */

@@ -32,14 +32,14 @@
 require_once("guiconfig.inc");
 
 if ($_POST) {
-	if ($_POST['clear']) {
+	if ($_POST['delete-all']) {
 		upnp_action('restart');
-		$savemsg = gettext("Port maps have been cleared and the service restarted.");
+		$savemsg = gettext("Port maps have been deleted and the service restarted.");
 	}
 }
 
 $rdr_entries = array();
-exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
+exec("/sbin/pfctl -a miniupnpd -s nat -P", $rdr_entries, $pf_ret);
 
 $pgtitle = array(gettext("Status"), gettext("UPnP IGD &amp; PCP"));
 $shortcut_section = "upnp";
@@ -61,7 +61,7 @@ if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Active Service Port Maps")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=htmlentities(gettext("Active UPnP IGD & PCP/NAT-PMP Port Maps"))?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -126,9 +126,9 @@ foreach ($rdr_entries as $rdr_entry) {
 <div>
 	<form action="status_upnp.php" method="post">
 		<nav class="action-buttons">
-			<button class="btn btn-danger btn-sm" type="submit" name="clear" id="clear" value="<?=gettext("Clear all port maps")?>">
+			<button class="btn btn-danger btn-sm" type="submit" name="delete-all" value="delete-all">
 				<i class="fa-solid fa-trash-can icon-embed-btn"></i>
-				<?=gettext("Clear all port maps")?>
+				<?=gettext("Delete all port maps")?>
 			</button>
 		</nav>
 	</form>

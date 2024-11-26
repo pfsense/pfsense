@@ -74,43 +74,7 @@
 			<type>input</type>
 		</field>
 		<field>
-			<fielddescr>Override WAN address</fielddescr>
-			<fieldname>overridewanip</fieldname>
-			<description>Use an alternate WAN address to accept inbound connections, such as an IP Alias or CARP Virtual IP address.</description>
-			<type>input</type>
-		</field>
-		<field>
-			<fielddescr>Traffic Shaping</fielddescr>
-			<fieldname>upnpqueue</fieldname>
-			<description>Enter the ALTQ traffic shaping queue in which the connections should be placed.</description>
-			<type>input</type>
-		</field>
-		<field>
-			<fielddescr>Log packets</fielddescr>
-			<fieldname>logpackets</fieldname>
-			<type>checkbox</type>
-			<description>Log packets handled by service port maps.</description>
-		</field>
-		<field>
-			<fielddescr>Uptime</fielddescr>
-			<fieldname>sysuptime</fieldname>
-			<type>checkbox</type>
-			<description>Report system instead of service uptime.</description>
-		</field>
-		<field>
-			<fielddescr>Custom presentation URL</fielddescr>
-			<fieldname>presentationurl</fieldname>
-			<type>input</type>
-			<description>If left blank the default value of the WebGUI of this firewall will be used.</description>
-		</field>
-		<field>
-			<fielddescr>Custom model number</fielddescr>
-			<fieldname>modelnumber</fieldname>
-			<type>input</type>
-			<description>If left blank the default value of the firmware version of pfSense will be used.</description>
-		</field>
-		<field>
-			<name>STUN Configuration</name>
+			<name>Advanced Settings</name>
 			<type>listtopic</type>
 		</field>
 		<field>
@@ -141,8 +105,8 @@
 				STUN Server, either hostname or IP address.</br></br>
 
 				Some public STUN servers:</br>
-				stun.xten.com</br>
-				stun.l.google.com (on non standard port 19302)</br>
+				stun.counterpath.com</br>
+				stun.cloudflare.com</br>
 				]]>
 			</description>
 		</field>
@@ -152,6 +116,42 @@
 			<type>input</type>
 			<default_value>3478</default_value>
 			<description>STUN UDP port (Default: 3478)</description>
+		</field>
+		<field>
+			<fielddescr>Override WAN address</fielddescr>
+			<fieldname>overridewanip</fieldname>
+			<description>Use an alternate WAN address to accept inbound connections, such as an IP Alias or CARP Virtual IP address.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Traffic Shaping</fielddescr>
+			<fieldname>upnpqueue</fieldname>
+			<description>Enter the ALTQ traffic shaping queue in which the connections should be placed.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Custom presentation URL</fielddescr>
+			<fieldname>presentationurl</fieldname>
+			<type>input</type>
+			<description>If left blank the default value of the WebGUI of this firewall will be used.</description>
+		</field>
+		<field>
+			<fielddescr>Custom model number</fielddescr>
+			<fieldname>modelnumber</fieldname>
+			<type>input</type>
+			<description>If left blank the default value of the firmware version of pfSense will be used.</description>
+		</field>
+		<field>
+			<fielddescr>Log packets</fielddescr>
+			<fieldname>logpackets</fieldname>
+			<type>checkbox</type>
+			<description>Log packets handled by service port maps.</description>
+		</field>
+		<field>
+			<fielddescr>Uptime</fielddescr>
+			<fieldname>sysuptime</fieldname>
+			<type>checkbox</type>
+			<description>Report system instead of service uptime.</description>
 		</field>
 		<field>
 			<name>Service Access Control List</name>

@@ -31,22 +31,22 @@
 require_once("guiconfig.inc");
 require_once("vpn.inc");
 
-$pconfig['remoteip'] = config_get_path('l2tp/radius/remoteip');
-$pconfig['localip'] = config_get_path('l2tp/radius/localip');
-$pconfig['l2tp_subnet'] = config_get_path('l2tp/radius/l2tp_subnet');
-$pconfig['mode'] = config_get_path('l2tp/radius/mode');
-$pconfig['interface'] = config_get_path('l2tp/radius/interface');
-$pconfig['l2tp_dns1'] = config_get_path('l2tp/radius/dns1');
-$pconfig['l2tp_dns2'] = config_get_path('l2tp/radius/dns2');
-$pconfig['mtu'] = config_get_path('l2tp/radius/mtu');
+$pconfig['remoteip'] = config_get_path('l2tp/remoteip');
+$pconfig['localip'] = config_get_path('l2tp/localip');
+$pconfig['l2tp_subnet'] = config_get_path('l2tp/l2tp_subnet');
+$pconfig['mode'] = config_get_path('l2tp/mode');
+$pconfig['interface'] = config_get_path('l2tp/interface');
+$pconfig['l2tp_dns1'] = config_get_path('l2tp/dns1');
+$pconfig['l2tp_dns2'] = config_get_path('l2tp/dns2');
+$pconfig['mtu'] = config_get_path('l2tp/mtu');
 $pconfig['radiusenable'] = config_path_enabled('l2tp/radius');
-$pconfig['radacct_enable'] = config_path_enabled('l2tp/accounting');
-$pconfig['radiusserver'] = config_get_path('l2tp/radius/radius')['server'];
-$pconfig['radiussecret'] = config_get_path('l2tp/radius/radius')['secret'];
-$pconfig['radiusissueips'] = config_path_enabled('l2tp/radiusissueips');
-$pconfig['n_l2tp_units'] = config_get_path('l2tp/radius/n_l2tp_units');
-$pconfig['paporchap'] = config_get_path('l2tp/radius/paporchap');
-$pconfig['secret'] = config_get_path('l2tp/radius/secret');
+$pconfig['radacct_enable'] = config_path_enabled('l2tp/radius', 'accounting');
+$pconfig['radiusserver'] = config_get_path('l2tp/radius/server');
+$pconfig['radiussecret'] = config_get_path('l2tp/radius/secret');
+$pconfig['radiusissueips'] = config_path_enabled('l2tp/radius', 'radiusissueips');
+$pconfig['n_l2tp_units'] = config_get_path('l2tp/n_l2tp_units');
+$pconfig['paporchap'] = config_get_path('l2tp/paporchap');
+$pconfig['secret'] = config_get_path('l2tp/secret');
 
 if ($_POST['save']) {
 
@@ -126,7 +126,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		$l2tpcfg = config_get_path('l2tp');
+		$l2tpcfg = config_get_path('l2tp', []);
 		$l2tpcfg['remoteip'] = $_POST['remoteip'];
 		$l2tpcfg['localip'] = $_POST['localip'];
 		$l2tpcfg['l2tp_subnet'] = $_POST['l2tp_subnet'];

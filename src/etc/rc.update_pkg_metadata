@@ -33,7 +33,7 @@ tmp_version="$(mktemp -q "/tmp/${product_name}_version.XXXXXXXX")" \
 	sleep "${sleep_time}" \
 	&& "/usr/local/sbin/${product_name}-upgrade" -uf \
 	&& ( \
-		"/usr/local/sbin/${product_name}-upgrade" -Uc > "${tmp_version}.tmp" \
+		"/usr/local/sbin/${product_name}-upgrade" -C > "${tmp_version}.tmp" \
 		; rc="${?}" \
 		; tail -n 1 "${tmp_version}.tmp" > "${tmp_version}" \
 		; rm -f "${tmp_version}.tmp" \

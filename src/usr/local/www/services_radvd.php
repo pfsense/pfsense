@@ -487,7 +487,8 @@ if (is_numeric($pool) || ($act === 'newpool')) {
 	}
 }
 
-for ($idx = 1; $idx <= 4; $idx++) {
+// radvd supports up to 3 entries
+for ($idx = 1; $idx <= 3; $idx++) {
 	$last = $section->addInput(new Form_IpAddress(
 		'radns' . $idx,
 		gettext('DNS Server') . ' '. $idx,

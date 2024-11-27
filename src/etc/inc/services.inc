@@ -282,6 +282,10 @@ function services_radvd_configure($blacklist = array()) {
 			}
 			$raadvdnsslifetime = $ramaxrtradvinterval * 3;
 			if (count($dnslist) > 0) {
+				// radvd supports up to 3 entries
+				reset($dnslist);
+				$dnslist = array_slice($dnslist, 0, 3);
+
 				$dnsstring = implode(" ", $dnslist);
 				if ($dnsstring <> "") {
 					/*
@@ -413,6 +417,10 @@ function services_radvd_configure($blacklist = array()) {
 				}
 			}
 			if (count($dnslist) > 0) {
+				// radvd supports up to 3 entries
+				reset($dnslist);
+				$dnslist = array_slice($dnslist, 0, 3);
+
 				$dnsstring = implode(" ", $dnslist);
 				if (!empty($dnsstring)) {
 					$radvdconf .= "\tRDNSS {$dnsstring} { };\n";

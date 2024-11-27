@@ -126,9 +126,9 @@ if ($_POST['Submit']) {
 			exit;
 		}
 	}
-} else if (($_POST['act'] == "del") && !empty($cpzone) && config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")) {
-	@unlink("{$g['captiveportal_element_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")['name']);
-	@unlink("{$g['captiveportal_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")['name']);
+} else if (($_POST['act'] == "del") && !empty($cpzone) && is_numericint($_POST['id']) && config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")) {
+	@unlink("{$g['captiveportal_element_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}/name"));
+	@unlink("{$g['captiveportal_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}/name"));
 	config_del_path("captiveportal/{$cpzone}/element/{$_POST['id']}");
 	write_config("Captive portal file manager: file deleted");
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");

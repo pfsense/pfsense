@@ -288,7 +288,7 @@ function processInterfaceQueues($altqstats, $parent_name) {
 	$interface_friendlyname = convert_real_interface_to_friendly_interface_name($altqstats['interface']);
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $interface_friendlyname;
 	$prev_if = $altqstats['interface'];
-	if (empty($interface_friendlyname) || !is_array($altqstats['interfacestats'])) {
+	if (!is_array($altqstats['interfacestats'])) {
 		print("<tr><td>");
 		print("No Queue data available");
 		print("</td></tr>");

@@ -457,9 +457,9 @@ function saveDomainOverride($post, $id, $json=false) {
         $doment['descr'] = $post['descr'];
 
         if (isset($id) && config_get_path("dnsmasq/domainoverrides/{$id}") && ($id != -1)) {
-            config_get_path("dnsmasq/domainoverrides/{$id}", $doment);
+            config_set_path("dnsmasq/domainoverrides/{$id}", $doment);
         } else {
-            config_get_path('dnsmasq/domainoverrides/', $doment);
+            config_set_path('dnsmasq/domainoverrides/', $doment);
         }
 
         $retval = services_dnsmasq_configure();

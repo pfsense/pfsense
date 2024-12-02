@@ -285,10 +285,28 @@ if (!function_exists('printPanel')) {
 /* Handle AJAX */
 if ($_POST['action']) {
 	if ($_POST['action'] == "kill") {
-		$port = $_POST['port'];
-		$remipp = $_POST['remipp'];
-		$client_id  = $_POST['client_id'];
-		if (!empty($port) and !empty($remipp)) {
+		$servers = openvpn_get_active_servers();
+
+		$port      = $_POST['port'];
+		$remipp    = $_POST['remipp'];
+		$client_id = $_POST['client_id'];
+		$error     = false;
+
+		/* Validate remote IP address and port. */
+		if (!is_ipaddrwithport($remipp)) {
+			$error = true;
+		}
+		/* Validate submitted server ID */
+		$found_server = false;
+		foreach ($servers as $server) {
+			if ($port == $server['mgmt']) {
+				$found_server = true;
+			} else {
+				continue;
+			}
+		}
+
+		if (!$error && $found_server) {
 			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
@@ -407,6 +425,11 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 <script type="text/javascript">
 //<![CDATA[
 	function killClient(mport, remipp, client_id) {
+		if (client_id === '') {
+			$('i[name="i:' + mport + ":" + remipp + '"]').first().removeClass().addClass('fa-solid fa-cog fa-spin text-danger');
+		} else {
+			$('i[name="i:' + mport + ":" + remipp + '"]').last().removeClass().addClass('fa-solid fa-cog fa-spin text-danger');
+		}
 
 		$.ajax(
 			"widgets/widgets/openvpn.widget.php",

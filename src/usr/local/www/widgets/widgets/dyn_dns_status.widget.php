@@ -29,6 +29,21 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/dyn_dns_status.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 // Constructs a unique key that will identify a Dynamic DNS entry in the filter list.
 if (!function_exists('get_dyndnsent_key')) {
 	function get_dyndnsent_key($dyndns) {

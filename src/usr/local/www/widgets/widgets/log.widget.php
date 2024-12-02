@@ -48,6 +48,21 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("syslog.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 /* Enable or disable debugging (detail level depending on removed ^//DEBUG^statements */
 $DebugOn = false;
 /* Debugging options */
@@ -84,7 +99,9 @@ if ($_REQUEST['widgetkey'] && !$_REQUEST['ajax']) {
 	}
 	unset($acts);
 
-	if (($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All")) {
+	if ($_POST['filterlogentriesinterfaces'] &&
+	    ($_POST['filterlogentriesinterfaces'] != "All") &&
+	    array_key_exists($_POST['filterlogentriesinterfaces'], get_configured_interface_with_descr())) {
 		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
 	} else {
 		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterfaces']);
@@ -106,11 +123,6 @@ $date0 = new DateTime($date);
 
 if ($DebugOn) { $logContent .= date($dateFormat)."_^START^".PHP_EOL; }
 
-// When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
-// When the ajax call is made to refresh the firewall log table, 'widgetkey' comes in $_REQUEST.
-if ($_REQUEST['widgetkey']) {
-	$widgetkey = $_REQUEST['widgetkey'];
-}
 //DEBUG: $logContent .= date($dateFormat)."_After request widgetkey".PHP_EOL;
 
 $iface_descr_arr = get_configured_interface_with_descr();
@@ -130,7 +142,7 @@ $filterfieldsarray = array(
 );
 //DEBUG: $logContent .= date($dateFormat)."_After filling_filter array".PHP_EOL;
 
-$nentriesinterval = isset($user_settings['widgets'][$widgetkey]['filterlogentriesinterval']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterval'] : 60;
+$nentriesinterval = is_numeric($user_settings['widgets'][$widgetkey]['filterlogentriesinterval']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterval'] : 60;
 //DEBUG: $logContent .= date($dateFormat)."_After entries_interval".PHP_EOL;
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";

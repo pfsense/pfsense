@@ -31,9 +31,31 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/gateways.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
+global $display_types;
+$display_types = array(
+	'gw_ip' => gettext('Gateway IP Address'),
+	'monitor_ip' => gettext('Monitor IP Address'),
+	'both_ip' => gettext('Both')
+);
+
 if (!function_exists('compose_table_body_contents')) {
 	function compose_table_body_contents($widgetkey) {
-		global $user_settings;
+		global $user_settings, $display_types;
 
 		$rtnstr = '';
 
@@ -41,7 +63,8 @@ if (!function_exists('compose_table_body_contents')) {
 		$gateways_status = array();
 		$gateways_status = return_gateways_status(true);
 
-		if (isset($user_settings["widgets"][$widgetkey]["display_type"])) {
+		if (isset($user_settings["widgets"][$widgetkey]["display_type"]) &&
+		    array_key_exists($user_settings["widgets"][$widgetkey]["display_type"], $display_types)) {
 			$display_type = $user_settings["widgets"][$widgetkey]["display_type"];
 		} else {
 			$display_type = "gw_ip";
@@ -211,7 +234,8 @@ if ($_POST['widgetkey']) {
 		$user_settings["widgets"][$_POST['widgetkey']] = array();
 	}
 
-	if (isset($_POST["display_type"])) {
+	if (isset($_POST["display_type"]) &&
+	    array_key_exists($_POST["display_type"], $display_types)) {
 		$user_settings["widgets"][$_POST['widgetkey']]["display_type"] = $_POST["display_type"];
 	}
 

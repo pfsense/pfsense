@@ -24,6 +24,20 @@
 require_once("guiconfig.inc");
 require_once("system.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
 
 //=========================================================================
 //called by showThermalSensorsData() (jQuery Ajax call) in thermal_sensors.js

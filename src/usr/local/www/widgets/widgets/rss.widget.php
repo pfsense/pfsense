@@ -25,6 +25,21 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 /* bring in the Composer autoloader */
 require_once('vendor/autoload.php');
 
@@ -32,10 +47,37 @@ use SimplePie\SimplePie;
 
 if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
-	$user_settings['widgets'][$_POST['widgetkey']]['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
-	$user_settings['widgets'][$_POST['widgetkey']]['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
-	$user_settings['widgets'][$_POST['widgetkey']]['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
-	$user_settings['widgets'][$_POST['widgetkey']]['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
+
+	if ($_POST['rssfeed']) {
+		$validfeeds = [];
+		/* Allow feeds separated by comma or newline */
+		$feeds = preg_split('/[,\n]/', $_POST['rssfeed']);
+		foreach ($feeds as $feed) {
+			/* Trim any extra whitespace as the submitted value may have \r at the end. */
+			$feed = trim($feed);
+			if (is_URL($feed)) {
+				$validfeeds[] = $feed;
+			}
+		}
+		$user_settings['widgets'][$_POST['widgetkey']]['rssfeed'] = htmlspecialchars(implode(",", $validfeeds), ENT_QUOTES | ENT_HTML401);
+	}
+
+	if (is_numeric($_POST['rssmaxitems'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['rssmaxitems'] = $_POST['rssmaxitems'];
+	} else {
+		unset($user_settings['widgets'][$_POST['widgetkey']]['rssmaxitems']);
+	}
+	if (is_numeric($_POST['rsswidgetheight'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['rsswidgetheight'] = $_POST['rsswidgetheight'];
+	} else {
+		unset($user_settings['widgets'][$_POST['widgetkey']]['rsswidgetheight']);
+	}
+	if (is_numeric($_POST['rsswidgettextlength'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['rsswidgettextlength'] = $_POST['rsswidgettextlength'];
+	} else {
+		unset($user_settings['widgets'][$_POST['widgetkey']]['rsswidgettextlength']);
+	}
+
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved RSS Widget feed via Dashboard."));
 	header("Location: /");
 }

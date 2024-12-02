@@ -25,12 +25,25 @@ require_once('vendor/autoload.php');
 // pfSense includes
 require_once('guiconfig.inc');
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 // Widget includes
 require_once('/usr/local/www/widgets/include/disks.inc');
 
 global $disks_widget_defaults;
-
-$widgetkey = (isset($_POST['widgetkey'])) ? $_POST['widgetkey'] : $widgetkey;
 
 // Now override any defaults with user settings
 $widget_config = array_replace($disks_widget_defaults, (array) $user_settings['widgets'][$widgetkey]);

@@ -27,6 +27,21 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 $ifdescrs = get_configured_interface_with_descr();
 // Update once per minute by default, instead of every 10 seconds
 $widgetperiod = config_get_path('widgets/period', 10) * 1000 * 6;
@@ -48,12 +63,6 @@ if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
 	header("Location: /index.php");
-}
-
-// When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
-// When the ajax call is made to refresh the interfaces table, 'widgetkey' comes in $_REQUEST.
-if ($_REQUEST['widgetkey']) {
-	$widgetkey = $_REQUEST['widgetkey'];
 }
 
 ?>

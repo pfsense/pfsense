@@ -33,6 +33,26 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_REQUEST['widgetkey']) {
+	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
+		$widgetkey = $_REQUEST['widgetkey'];
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
+$orientations = array(
+	'if_columns' => gettext('Each interface in a column'),
+	'if_rows' => gettext('Each interface in a row')
+);
+
 $ifdescrs = get_configured_interface_with_descr();
 $ifstats = array(
 	'inpkts' => gettext('Packets In'),
@@ -53,7 +73,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	$an_interface_is_displayed = false; // decide if at least 1 interface is displayed (i.e. not down)
 	$an_ifstat_is_displayed = false;
 
-	if (isset($user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"])) {
+	if (isset($user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"]) &&
+	    array_key_exists($user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"], $orientations)) {
 		$orientation_type = $user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"];
 	} else {
 		$orientation_type = "if_columns";
@@ -160,7 +181,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 } else if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
 
-	if (isset($_POST['orientation_type'])) {
+	if (isset($_POST['orientation_type']) &&
+	    array_key_exists($_POST['orientation_type'], $orientations)) {
 		$user_settings['widgets'][$_POST['widgetkey']]['orientation_type'] = $_POST['orientation_type'];
 	}
 

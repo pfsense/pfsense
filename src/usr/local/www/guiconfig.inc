@@ -599,6 +599,9 @@ function gen_customwidgettitle_div($widgettitle) {
 }
 
 function set_customwidgettitle(& $user_settings) {
+	if (!is_valid_widgetkey($_POST['widgetkey'], $user_settings)) {
+		return false;
+	}
 	if ($_POST['descr']) {
 		$user_settings['widgets'][$_POST['widgetkey']]['descr'] = trim($_POST['descr']);
 	} else {

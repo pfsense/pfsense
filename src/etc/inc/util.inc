@@ -5166,3 +5166,63 @@ function unserialize_data(?string $path, mixed $default = null, ?array $options 
 	return $data;
 }
 
+/* Get an array of active widgets and metadata from user settings */
+function get_active_widgets($user_settings) {
+	$widgets = [];
+
+	/* Break up the sequence string into an array of widget definitions */
+	$widget_sep = ',';
+	$widget_seq_array = explode($widget_sep, rtrim($user_settings['widgets']['sequence'], $widget_sep));
+
+	foreach ($widget_seq_array as $widget_seq_data) {
+		/* Break each widget definition into its component values */
+		[$name, $column, $display, $instance] = explode(':', $widget_seq_data);
+		$widgets[] = [
+			'name'     => $name,
+			'column'   => $column,
+			'display'  => $display,
+			'instance' => $instance
+		];
+	}
+	return $widgets;
+}
+
+/* Test the validity of a given widget key based on user settings. */
+function is_valid_widgetkey($widgetkey, $user_settings, $widgetfile = null) {
+	/* Proper form of a widgetkey is <widget-name>-<instance-id>
+	 * Where:
+	 *   widget-name : Name of an active widget, which should be found in
+	 *                 the current sequence list.
+	 *   instance-id : An integer 0 or higher identifying a widget instance
+	 *
+	 * Additionally, for a widget to be valid in this context it must also
+	 * be present on the current Dashboard layout.
+	 */
+
+	/* Break the given widgetkey into its component parts */
+	[$wname, $wid] = explode('-', $widgetkey, 2);
+
+	/* Test for basic validity conditions */
+	if (empty($wname) ||
+	    !is_numericint($wid) ||
+	    empty($user_settings)) {
+		return false;
+	}
+
+	/* Check if this widget also matches a specific widget name */
+	if (!empty($widgetfile) &&
+	    ($wname != basename($widgetfile, '.widget.php'))) {
+		return false;
+	}
+
+	/* Ensure the key is for a widget which is in the Dashboard
+	 * configuration. */
+	$widgets = get_active_widgets($user_settings);
+	foreach ($widgets as $widget) {
+		if (($widget['name'] == $wname) &&
+		    ($widget['instance'] == $wid)) {
+			return true;
+		}
+	}
+	return false;
+}

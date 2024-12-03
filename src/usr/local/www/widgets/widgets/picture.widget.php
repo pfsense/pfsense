@@ -66,7 +66,10 @@ if ($_GET['getpic']=="true") {
 		}
 	}
 
-	send_user_download('data', $data, $image_filename, image_type_to_mime_type($pic_type));
+	send_user_download('data',
+				$data,
+				$image_filename . image_type_to_extension($pic_type),
+				image_type_to_mime_type($pic_type));
 }
 
 if ($_POST['widgetkey']) {

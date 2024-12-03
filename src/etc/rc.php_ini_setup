@@ -198,6 +198,7 @@ max_input_vars = 5000
 register_argc_argv = On
 register_long_arrays = Off
 variables_order = "GPCS"
+request_order = "GP"
 file_uploads = On
 upload_tmp_dir = ${UPLOADTMPDIR}
 upload_max_filesize = 200M

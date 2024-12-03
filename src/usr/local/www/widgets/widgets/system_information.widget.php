@@ -38,9 +38,10 @@ include_once("includes/functions.inc.php");
  * the Dashboard includes the widget. During other types of requests, such as
  * saving settings or AJAX, the value may be set via $_POST or similar.
  */
-if ($_REQUEST['widgetkey']) {
-	if (is_valid_widgetkey($_REQUEST['widgetkey'], $user_settings, __FILE__)) {
-		$widgetkey = $_REQUEST['widgetkey'];
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
 	} else {
 		print gettext("Invalid Widget Key");
 		exit;

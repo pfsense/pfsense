@@ -42,7 +42,7 @@ function interfaces_bring_up($interface) {
 	}
 	pfSense_interface_flags($interface, IFF_UP);
 }
-c
+
 /*
  * Validate comma-separated list of IPv4 addresses
  */

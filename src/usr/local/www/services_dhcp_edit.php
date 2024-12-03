@@ -564,8 +564,8 @@ $section->addInput(new Form_IpAddress(
 
 $section->addInput(new Form_Checkbox(
 	'arp_table_static_entry',
-	gettext('ARP Table Static Entry'),
-	gettext('Create an ARP Table Static Entry for this MAC & IP Address pair.'),
+	gettext('Static ARP Entry'),
+	gettext('Create a static ARP table entry for this MAC & IP Address pair.'),
 	$pconfig['arp_table_static_entry']
 ));
 

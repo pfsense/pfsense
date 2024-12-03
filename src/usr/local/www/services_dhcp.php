@@ -1400,16 +1400,16 @@ if (dhcp_is_backend('isc')):
 	))->setHelp('Leave blank to disable. Enter the interface IP address of the other firewall (failover peer) in this subnet. Firewalls must be using CARP. ' .
 			'Advertising skew of the CARP VIP on this interface determines whether the DHCP daemon is Primary or Secondary. ' .
 			'Ensure the advertising skew for the VIP on one firewall is &lt; 20 and the other is &gt; 20.');
-
+endif; /* dhcp_is_backend('isc') */
 	$section->addInput(new Form_Checkbox(
 		'staticarp',
-		'Static ARP',
-		'Enable Static ARP entries',
+		gettext('Static ARP'),
+		gettext('Enable Static ARP'),
 		$pconfig['staticarp']
 	))->setHelp('Restricts communication with the firewall to only hosts listed in static mappings containing both IP addresses and MAC addresses. ' .
 			'No other hosts will be able to communicate with the firewall on this interface. ' .
 			'This behavior is enforced even when DHCP server is disabled.');
-
+if (dhcp_is_backend('isc')):
 	$section->addInput(new Form_Checkbox(
 		'dhcpleaseinlocaltime',
 		'Time format change',

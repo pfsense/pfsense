@@ -1367,6 +1367,8 @@ function services_kea4_configure() {
 			continue;
 		}
 
+		interfaces_staticarp_configure($dhcpif);
+
 		$newzone = array();
 		$ifcfg = config_get_path("interfaces/{$dhcpif}");
 

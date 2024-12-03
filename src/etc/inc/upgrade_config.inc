@@ -3878,7 +3878,7 @@ function upgrade_122_to_123() {
 				continue;
 			}
 		}
-		config_set_path('nat/rule', $onat_rule_config);
+		config_set_path('nat/outbound/rule', $onat_rule_config);
 	}
 }
 
@@ -4058,23 +4058,23 @@ function upgrade_130_to_131() {
 			// dpinger uses milliseconds
 			if (isset($gw['interval']) &&
 				is_numeric($gw['interval'])) {
-				$gw['interval'] = $gw['interval'] * 1000;
+				$gw['interval'] = intval($gw['interval']) * 1000;
 			}
 
 			if (!empty($gw['interval'])) {
-				$effective_interval = $gw['interval'];
+				$effective_interval = intval($gw['interval']);
 			} else {
 				$effective_interval = $default_interval;
 			}
 
 			if (isset($gw['down']) &&
 				is_numeric($gw['down'])) {
-				$gw['time_period'] = $gw['down'] * 1000;
+				$gw['time_period'] = intval($gw['down']) * 1000;
 				unset($gw['down']);
 			}
 
 			if (!empty($gw['time_period'])) {
-				$effective_time_period = $gw['time_period'];
+				$effective_time_period = intval($gw['time_period']);
 			} else {
 				$effective_time_period = $default_time_period;
 			}
@@ -4082,13 +4082,13 @@ function upgrade_130_to_131() {
 			if (isset($gw['latencyhigh'])) {
 				// Default loss_interval is 2000, but must be set
 				// higher if latencyhigh is higher.
-				if ($gw['latencyhigh'] > $default_loss_interval) {
-					$gw['loss_interval'] = $gw['latencyhigh'];
+				if (intval($gw['latencyhigh']) > $default_loss_interval) {
+					$gw['loss_interval'] = intval($gw['latencyhigh']);
 				}
 			}
 
 			if (!empty($gw['loss_interval'])) {
-				$effective_loss_interval = $gw['loss_interval'];
+				$effective_loss_interval = intval($gw['loss_interval']);
 			} else {
 				$effective_loss_interval = $default_loss_interval;
 			}
@@ -4096,8 +4096,8 @@ function upgrade_130_to_131() {
 			if (isset($gw['interval'])) {
 				// Default alert_interval is 1000, but must be set
 				// higher if interval is higher.
-				if ($gw['interval'] > $default_alert_interval) {
-					$gw['alert_interval'] = $gw['interval'];
+				if (intval($gw['interval']) > $default_alert_interval) {
+					$gw['alert_interval'] = intval($gw['interval']);
 				}
 			}
 
@@ -4223,7 +4223,7 @@ function upgrade_136_to_137() {
 	$dhcpd_config = config_get_path('dhcpd');
 	if (is_array($dhcpd_config)) {
 		foreach ($dhcpd_config as &$dhcpd) {
-			if (!is_array($dhcpd['numberoptions']['item'])) {
+			if (!is_array($dhcpd) || !is_array(array_get_path($dhcpd, 'numberoptions/item'))) {
 				continue;
 			}
 
@@ -4237,7 +4237,7 @@ function upgrade_136_to_137() {
 	$dhcpdv6_config = config_get_path('dhcpdv6');
 	if (is_array($dhcpdv6_config)) {
 		foreach ($dhcpdv6_config as &$dhcpdv6) {
-			if (!is_array($dhcpdv6['numberoptions']['item'])) {
+			if (!is_array($dhcpdv6) || !is_array(array_get_path($dhcpdv6, 'numberoptions/item'))) {
 				continue;
 			}
 
@@ -4730,31 +4730,31 @@ function upgrade_150_to_151() {
 	if (is_array($gateways_config)) {
 		foreach ($gateways_config as &$gw) {
 			if (isset($gw['interval'])) {
-				$effective_interval = $gw['interval'];
+				$effective_interval = intval($gw['interval']);
 			} else {
 				$effective_interval = $default_interval;
 			}
 
 			if (isset($gw['alert_interval'])) {
-				$effective_alert_interval = $gw['alert_interval'];
+				$effective_alert_interval = intval($gw['alert_interval']);
 			} else {
 				$effective_alert_interval = $default_alert_interval;
 			}
 
 			if (isset($gw['loss_interval'])) {
-				$effective_loss_interval = $gw['loss_interval'];
+				$effective_loss_interval = intval($gw['loss_interval']);
 			} else {
 				$effective_loss_interval = $default_loss_interval;
 			}
 
 			if (isset($gw['time_period'])) {
-				$effective_time_period = $gw['time_period'];
+				$effective_time_period = intval($gw['time_period']);
 			} else {
 				$effective_time_period = $default_time_period;
 			}
 
 			if (isset($gw['latencyhigh'])) {
-				$effective_latencyhigh = $gw['latencyhigh'];
+				$effective_latencyhigh = intval($gw['latencyhigh']);
 			} else {
 				$effective_latencyhigh = $default_latencyhigh;
 			}
@@ -5273,7 +5273,7 @@ function upgrade_168_to_169() {
  * Each wireless interface now needs to be a cloned instance, the card itself
  * Can no longer be assigned. https://redmine.pfsense.org/issues/6770 */
 function upgrade_169_to_170() {
-	foreach (config_get_path('interfaces', []) as $friendly => & $iface) {
+	foreach (config_get_path('interfaces', []) as $friendly => $iface) {
 		if (is_array($iface['wireless']) && !empty($iface['wireless']['mode'])) {
 			/* This test can only be true for one instance per card, so it is safe. */
 			if (stristr($iface['if'], '_wlan') === false) {
@@ -5286,6 +5286,7 @@ function upgrade_169_to_170() {
 				/* Make sure this entry is placed in the list of wireless interface clones. */
 				config_set_path('wireless/clone/', $wlan);
 				/* The interface assignment must now be the cloned interface name. */
+				config_set_path("interfaces/{$friendly}/if", $wlan['cloneif']);
 				$iface['if'] = $wlan['cloneif'];
 			}
 		}

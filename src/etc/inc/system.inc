@@ -1966,8 +1966,9 @@ EOD;
 	if ($cert <> "" and $key <> "") {
 		$nginx_config .= "\n";
 		$nginx_config .= "\tserver {\n";
-		$nginx_config .= "\t\tlisten {$nginx_port} ssl http2;\n";
-		$nginx_config .= "\t\tlisten [::]:{$nginx_port} ssl http2;\n";
+		$nginx_config .= "\t\tlisten {$nginx_port} ssl;\n";
+		$nginx_config .= "\t\tlisten [::]:{$nginx_port} ssl;\n";
+		$nginx_config .= "\t\thttp2 on;\n";
 		$nginx_config .= "\n";
 		$nginx_config .= "\t\tssl_certificate         {$g['varetc_path']}/{$cert_location};\n";
 		$nginx_config .= "\t\tssl_certificate_key     {$g['varetc_path']}/{$key_location};\n";

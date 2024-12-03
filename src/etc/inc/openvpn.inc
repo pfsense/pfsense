@@ -1882,7 +1882,7 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 
 	// Check if OpenVPN clients and servers require a resync.
 	foreach (array("server", "client") as $type) {
-		foreach (config_get_path("openvpn/openvpn-{$type}", []) as & $settings) {
+		foreach (config_get_path("openvpn/openvpn-{$type}", []) as $settings) {
 			if (isset($settings['disable'])) {
 				continue;
 			}

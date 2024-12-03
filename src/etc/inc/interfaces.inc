@@ -7201,7 +7201,7 @@ function interfaces_staticarp_configure($if) {
 	$ifcfg = config_get_path("interfaces/{$if}");
 
 	/* Enable staticarp, if enabled */
-	$staticarp = config_get_path("dhcpd/{$if}/staticarp");
+	$staticarp = config_path_enabled("dhcpd/{$if}", 'staticarp');
 	if ($staticarp) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp ");
 		mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");

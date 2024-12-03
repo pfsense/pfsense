@@ -42,7 +42,7 @@ function interfaces_bring_up($interface) {
 	}
 	pfSense_interface_flags($interface, IFF_UP);
 }
-
+c
 /*
  * Validate comma-separated list of IPv4 addresses
  */
@@ -7217,7 +7217,7 @@ function interfaces_staticarp_configure($if) {
 	}
 
 	/* Enable static arp entries */
-	$staticmap = config_get_path("dhcpd/{$if}/staticmap", []);
+	$staticmap = config_path_enabled("dhcpd/{$if}", 'staticarp');
 	if (is_array($staticmap)) {
 		foreach ($staticmap as $arpent) {
 			if (empty($arpent['ipaddr']) || empty($arpent['mac'])) {

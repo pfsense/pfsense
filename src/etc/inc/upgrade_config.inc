@@ -6178,7 +6178,7 @@ function upgrade_210_to_211() {
 			$settings['ncp_enable'] = "enabled";
 		}
 		unset($settings);
-		config_set_path('openvpn', $openvpn_config);
+		config_set_path("openvpn/openvpn-{$mode}", $openvpn_config);
 	}
 }
 

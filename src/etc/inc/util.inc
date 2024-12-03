@@ -5177,6 +5177,9 @@ function get_active_widgets($user_settings) {
 	foreach ($widget_seq_array as $widget_seq_data) {
 		/* Break each widget definition into its component values */
 		[$name, $column, $display, $instance] = explode(':', $widget_seq_data);
+		if (is_null($instance)) {
+			$instance = 0;
+		}
 		$widgets[] = [
 			'name'     => $name,
 			'column'   => $column,

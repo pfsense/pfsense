@@ -142,7 +142,7 @@ function dhcp_validate_settings_post(array $pconfig): array {
     return ($input_errors);
 }
 
-function dhcp_do_settings_post(array $subnets): array {
+function dhcp_do_settings_post(): array {
 	$pconfig = $old_config = config_get_path('kea', []);
 
 	/* normalize these fields so that changes comparison below works properly */
@@ -165,14 +165,11 @@ function dhcp_do_settings_post(array $subnets): array {
 
 	if (isset($_POST['ha_enable'])) {
 		array_set_path($pconfig, 'ha/enable', true);
+		array_set_path($pconfig, 'ha/role', $_POST['ha_role']);
 	} else {
 		array_del_path($pconfig, 'ha/enable');
+		array_del_path($pconfig, 'ha/role');
 	}
-
-	array_set_path($pconfig, 'ha/role', $_POST['ha_role']);
-	array_set_path($pconfig, 'ha/localip', $_POST['ha_localip']);
-	array_set_path($pconfig, 'ha/remoteip', $_POST['ha_remoteip']);
-	array_set_path($pconfig, 'ha/remotename', $_POST['ha_remotename']);
 
 	if (isset($_POST['ha_tls'])) {
 		array_set_path($pconfig, 'ha/tls', true);
@@ -194,7 +191,10 @@ function dhcp_do_settings_post(array $subnets): array {
 	/* these are optional settings */
 	foreach ([
 		'ha_localname' => 'ha/localname',
+		'ha_localip' => 'ha/localip',
 		'ha_localport' => 'ha/localport',
+		'ha_remotename' => 'ha/remotename',
+		'ha_remoteip' => 'ha/remoteip',
 		'ha_remoteport' => 'ha/remoteport',
 		'ha_heartbeatdelay' => 'ha/heartbeatdelay',
 		'ha_maxresponsedelay' => 'ha/maxresponsedelay',
@@ -202,11 +202,16 @@ function dhcp_do_settings_post(array $subnets): array {
 		'ha_maxunackedclients' => 'ha/maxunackedclients',
 		'ha_maxrejectedleaseupdates' => 'ha/maxrejectedleaseupdates'
 	] as $id => $path) {
-		if (isset($_POST[$id])) {
+		if (!empty($_POST[$id])) {
 			array_set_path($pconfig, $path, $_POST[$id]);
 		} else {
 			array_del_path($pconfig, $path);
 		}
+	}
+
+	/* don't leave empty ha config section */
+	if (empty(array_get_path($pconfig, 'ha', []))) {
+		array_del_path($pconfig, 'ha');
 	}
 
 	$input_errors = dhcp_validate_settings_post($pconfig);
@@ -264,14 +269,11 @@ function dhcp6_do_settings_post(array $subnets): array {
 
 	if (isset($_POST['ha_enable'])) {
 		array_set_path($pconfig, 'ha/enable', true);
+		array_set_path($pconfig, 'ha/role', $_POST['ha_role']);
 	} else {
 		array_del_path($pconfig, 'ha/enable');
+		array_del_path($pconfig, 'ha/role');
 	}
-
-	array_set_path($pconfig, 'ha/role', $_POST['ha_role']);
-	array_set_path($pconfig, 'ha/localip', $_POST['ha_localip']);
-	array_set_path($pconfig, 'ha/remoteip', $_POST['ha_remoteip']);
-	array_set_path($pconfig, 'ha/remotename', $_POST['ha_remotename']);
 
 	if (isset($_POST['ha_tls'])) {
 		array_set_path($pconfig, 'ha/tls', true);
@@ -293,7 +295,10 @@ function dhcp6_do_settings_post(array $subnets): array {
 	/* these are optional settings */
 	foreach ([
 		'ha_localname' => 'ha/localname',
+		'ha_localip' => 'ha/localip',
 		'ha_localport' => 'ha/localport',
+		'ha_remotename' => 'ha/remotename',
+		'ha_remoteip' => 'ha/remoteip',
 		'ha_remoteport' => 'ha/remoteport',
 		'ha_heartbeatdelay' => 'ha/heartbeatdelay',
 		'ha_maxresponsedelay' => 'ha/maxresponsedelay',
@@ -301,11 +306,16 @@ function dhcp6_do_settings_post(array $subnets): array {
 		'ha_maxunackedclients' => 'ha/maxunackedclients',
 		'ha_maxrejectedleaseupdates' => 'ha/maxrejectedleaseupdates'
 	] as $id => $path) {
-		if ($_POST[$id]) {
+		if (!empty($_POST[$id])) {
 			array_set_path($pconfig, $path, $_POST[$id]);
 		} else {
 			array_del_path($pconfig, $path);
 		}
+	}
+
+	/* don't leave empty ha config section */
+	if (empty(array_get_path($pconfig, 'ha', []))) {
+		array_del_path($pconfig, 'ha');
 	}
 
 	$input_errors = dhcp_validate_settings_post($pconfig);
@@ -486,64 +496,4 @@ function kea_client_cert_list(): array {
 		}
 		return $is_valid;
 	}, ARRAY_FILTER_USE_KEY));
-}
-
-function kea_build_subnet_list(): array {
-	$list = [
-		'available' => [],
-		'enabled' => []
-	];
-	$available = &$list['available'];
-	$enabled = &$list['enabled'];
-
-	$iflist = get_configured_interface_with_descr();
-	foreach ($iflist as $ifent => $ifname) {
-		$oc = config_get_path("interfaces/{$ifent}", []);
-	
-		/* Not static IPv4 or subnet >= 31 */
-		if (($oc['subnet'] >= 31) ||
-		    !is_ipaddrv4($oc['ipaddr']) ||
-		    empty($oc['subnet'])) {
-			continue;
-		}
-
-		$available[$ifent] = sprintf('%s (%s)', $ifname, $ifent);
-
-		if (config_path_enabled("dhcpd/{$ifent}")) {
-			$enabled[] = $ifent;
-		}
-	}
-
-	return ($list);
-}
-
-function kea_build_prefix_list(): array {
-	$list = [
-		'available' => [],
-		'enabled' => []
-	];
-	$available = &$list['available'];
-	$enabled = &$list['enabled'];
-
-	$iflist = get_configured_interface_with_descr();
-	foreach ($iflist as $ifent => $ifname) {
-		$oc = config_get_path("interfaces/{$ifent}", []);
-
-
-		$valid = (bool) ($oc['ipaddrv6'] === 'track6' ||
-		    (is_ipaddrv6($oc['ipaddrv6']) &&
-		    !is_linklocal($oc['ipaddrv6'])));
-
-		if (!$valid) {
-			continue;
-		}
-
-		$available[$ifent] = sprintf('%s (%s)', $ifname, $ifent);
-
-		if (config_path_enabled("dhcpdv6/{$ifent}")) {
-			$enabled[] = $ifent;
-		}
-	}
-
-	return ($list);
 }

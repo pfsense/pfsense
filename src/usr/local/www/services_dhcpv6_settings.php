@@ -52,8 +52,6 @@ $pconfig = config_get_path('kea6', []);
 $iflist = get_configured_interface_with_descr();
 $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 
-$prefixes = kea_build_prefix_list();
-
 $dhcrelay_enabled = false;
 $dhcrelaycfg = config_get_path('dhcrelay6');
 
@@ -75,8 +73,7 @@ if ($_POST['apply']) {
 } elseif ($_POST['act']) {
 	switch($_POST['act']) {
 	case 'save':
-		[$input_errors, $pconfig] = dhcp6_do_settings_post($prefixes);
-		$prefixes = kea_build_prefix_list(); /* refresh prefix list */
+		[$input_errors, $pconfig] = dhcp6_do_settings_post();
 		break;
 	default:
 		header('Location: /services_dhcpv6_settings.php');

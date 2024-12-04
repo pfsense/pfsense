@@ -52,7 +52,6 @@ if (dhcp_is_backend('isc')) {
 $pconfig = config_get_path('kea', []);
 
 $iflist = get_configured_interface_with_descr();
-$subnets = kea_build_subnet_list();
 
 if ($_POST['apply']) {
 	$changes_applied = true;
@@ -60,8 +59,7 @@ if ($_POST['apply']) {
 } elseif ($_POST['act']) {
 	switch($_POST['act']) {
 	case 'save':
-		[$input_errors, $pconfig] = dhcp_do_settings_post($subnets);
-		$subnets = kea_build_subnet_list(); /* refresh subnet list */
+		[$input_errors, $pconfig] = dhcp_do_settings_post();
 		break;
 	default:
 		header('Location: /services_dhcp_settings.php');

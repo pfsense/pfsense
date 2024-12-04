@@ -813,7 +813,6 @@ function config_validate($conffile) {
 			return false;
 		}
 	}
-	xml_parser_free($xml_parser);
 
 	fclose($fp);
 

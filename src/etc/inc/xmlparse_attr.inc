@@ -207,7 +207,6 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes) {
 			return -1;
 		}
 	}
-	xml_parser_free($xml_parser);
 
 	if (!$parsedcfg[$rootobj]) {
 		log_error(sprintf(gettext("XML error: no %s object found!") . "\n", $rootobj));

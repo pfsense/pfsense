@@ -209,7 +209,6 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 			return -1;
 		}
 	}
-	xml_parser_free($xml_parser);
 
 	if ($rootobj) {
 		if (!is_array($rootobj)) {

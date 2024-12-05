@@ -1578,16 +1578,6 @@ function services_kea4_configure() {
 				];
 			}
 
-			// default-lease-time
-			if ($poolconf['defaultleasetime'] && ($poolconf['defaultleasetime'] != $dhcpifconf['defaultleasetime'])) {
-				$keapool['valid-lifetime'] = $poolconf['defaultleasetime'];
-			}
-
-			// max-lease-time
-			if ($poolconf['maxleasetime'] && ($poolconf['maxleasetime'] != $dhcpifconf['maxleasetime'])) {
-				$keapool['max-valid-lifetime'] = $poolconf['maxleasetime'];
-			}
-
 			// ignore-client-uids
 			if (isset($poolconf['ignoreclientuids'])) {
 				$keasubnet['match-client-id'] = false;

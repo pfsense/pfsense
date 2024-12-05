@@ -892,7 +892,7 @@ function local_user_set_password(&$user_item_config, $password) {
 	switch ($hashalgo) {
 		case 'sha512':
 			$salt = substr(bin2hex(random_bytes(16)),0,16);
-			$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
+			$user['sha512-hash'] = crypt($password, '$6$rounds=800000$'. $salt . '$');
 			break;
 		case 'bcrypt':
 		default:

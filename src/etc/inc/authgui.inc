@@ -71,12 +71,14 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 
 		$username = get_config_user();
 		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
+		phpsession_end();
 
 		exit;
 	} else {
 		// add this so they don't get stuck on the logout page when they have no permissions.
 		$_SESSION["Logged_In"] = false;
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
+		phpsession_end();
 
 		exit;
 	}
@@ -92,6 +94,8 @@ if (!$_SESSION['Post_Login']) {
 	$_SESSION['Post_Login'] = true;
 	require_once("functions.inc");
 	pfSenseHeader($_SERVER['REQUEST_URI']);
+	phpsession_end();
+
 	exit;
 }
 

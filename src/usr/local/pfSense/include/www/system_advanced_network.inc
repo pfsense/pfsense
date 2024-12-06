@@ -40,6 +40,7 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['sharednet'] = config_path_enabled('system', 'sharednet') ? config_get_path('system/sharednet') : null;
 	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
 	$pconfig['ip_change_kill_states'] = config_path_enabled('system', 'ip_change_kill_states') ? config_get_path('system/ip_change_kill_states') : null;
+	$pconfig['resolvconf_custom_options'] = base64_decode(config_get_path('system/resolvconf_custom_options', ""));
 	$pconfig['hnaltqenable'] = config_path_enabled('system', 'hn_altq_enable');
 	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
 	$pconfig['disablesegmentationoffloading'] = config_path_enabled('system', 'disablesegmentationoffloading');
@@ -221,6 +222,13 @@ function saveAdvancedNetworking($post, $json = false) {
 			config_del_path('system/ip_change_kill_states');
 		}
 
+		if (!empty(trim($post['resolvconf_custom_options']))) {
+			$resolvconf_custom_options_source = str_replace("\r\n", "\n", trim($post['resolvconf_custom_options']));
+			config_set_path('system/resolvconf_custom_options', base64_encode($resolvconf_custom_options_source));
+		} else {
+			config_del_path('system/resolvconf_custom_options');
+		}
+
 		setup_microcode();
 
 		// Write out configuration (config.xml)
@@ -238,6 +246,8 @@ function saveAdvancedNetworking($post, $json = false) {
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
+
+		system_resolvconf_generate();
 
 		if ($syslogrestart) {
 			system_syslogd_start();

@@ -91,12 +91,25 @@ function is_valid_syslog_server($target) {
 		|| is_hostnamewithport($target));
 }
 
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+phpsession_end();
+
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
-	clear_all_log_files(true);
-	$reset_msg = gettext("The log files have been reset.");
+	if (!$read_only) {
+		clear_all_log_files(true);
+		$reset_msg = gettext("The log files have been reset.");
+	} else {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
 } elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	if ($read_only) {
+		$input_errors[] = gettext("Insufficient privileges to make the requested change (read only).");
+	}
 
 	/* input validation */
 	if ($_POST['enable'] && !is_valid_syslog_server($_POST['remoteserver'])) {

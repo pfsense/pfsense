@@ -384,6 +384,7 @@ if (is_array(array_get_path($wancfg, 'wireless'))) {
 	array_set_path($pconfig, 'mode', array_get_path($wancfg, 'wireless/mode'));
 	array_set_path($pconfig, 'protmode', array_get_path($wancfg, 'wireless/protmode'));
 	array_set_path($pconfig, 'ssid', array_get_path($wancfg, 'wireless/ssid'));
+	array_set_path($pconfig, 'bssid', array_get_path($wancfg, 'wireless/bssid'));
 	array_set_path($pconfig, 'channel', array_get_path($wancfg, 'wireless/channel'));
 	array_set_path($pconfig, 'channel_width', array_get_path($wancfg, 'wireless/channel_width'));
 	array_set_path($pconfig, 'txpower', array_get_path($wancfg, 'wireless/txpower'));
@@ -1749,6 +1750,7 @@ function handle_wireless_post() {
 	array_set_path($wancfg, 'wireless/mode', $_POST['mode']);
 	array_set_path($wancfg, 'wireless/protmode', $_POST['protmode']);
 	array_set_path($wancfg, 'wireless/ssid', $_POST['ssid']);
+	array_set_path($wancfg, 'wireless/bssid', $_POST['bssid']);
 	array_set_path($wancfg, 'wireless/channel', $_POST['channel']);
 	array_set_path($wancfg, 'wireless/channel_width', $_POST['channel_width']);
 	array_set_path($wancfg, 'wireless/authmode', $_POST['authmode']);
@@ -3375,6 +3377,14 @@ if (is_array(array_get_path($wancfg, 'wireless'))) {
 		array_get_path($pconfig, 'ssid'),
 	));
 
+	$section->addInput(new Form_Input(
+		'bssid',
+		'BSSID',
+		'text',
+		array_get_path($pconfig, 'bssid'),
+		['placeholder' => 'xx:xx:xx:xx:xx:xx']
+	))->setHelp('If you need to fix your connection to a specific BSSID, enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.');
+
 	if (isset($wl_modes['11ng']) ||
 	    isset($wl_modes['11na'])) {
 		$section->addInput(new Form_Select(
@@ -4058,18 +4068,21 @@ events.push(function() {
 	function updatewifimode(m) {
 		switch (m) {
 			case "adhoc": {
+				hideInput('bssid', true);
 				hideInput('puremode', true);
 				hideCheckbox('apbridge_enable', true);
 				hideCheckbox('hidessid_enable', false);
 				break;
 			}
 			case "hostap": {
+				hideInput('bssid', true);
 				hideInput('puremode', false);
 				hideCheckbox('apbridge_enable', false);
 				hideCheckbox('hidessid_enable', false);
 				break;
 			}
 			default: {
+				hideInput('bssid', false);
 				hideInput('puremode', true);
 				hideCheckbox('apbridge_enable', true);
 				hideCheckbox('hidessid_enable', true);

@@ -44,7 +44,7 @@ $input_errors = [];
 
 phpsession_begin();
 $guiuser = getUserEntry($_SESSION['Username']);
-$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
 /* Determine if the current user authenticated locally */
 $islocal = false;
 foreach (config_get_path('system/user', []) as $user) {

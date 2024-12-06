@@ -45,7 +45,7 @@ if ($_POST['act'] == "del") {
 	 */
 	phpsession_begin();
 	$guiuser = getUserEntry($_SESSION['Username']);
-	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
 	phpsession_end();
 
 	if ($read_only) {

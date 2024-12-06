@@ -976,6 +976,15 @@ kea6_skip_first_pool_options:
 			}
 		}
 
+		if (is_ipaddrv6($dhcpv6ifconf['prefixrange']['from']) && is_ipaddrv6($dhcpv6ifconf['prefixrange']['to'])) {
+			if ($len = v6_range_to_prefixlen($dhcpv6ifconf['prefixrange']['from'], $dhcpv6ifconf['prefixrange']['to'])) {
+				$keasubnet['pd-pools'][] = [
+					'prefix' => $dhcpv6ifconf['prefixrange']['from'],
+					'prefix-len' => (int)$len,
+					'delegated-len' => (int)$dhcpv6ifconf['prefixrange']['prefixlength']
+				];
+			}
+		}
 
 		if ($dhcpv6ifconf['ddnsdomain']) {
 			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);

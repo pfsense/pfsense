@@ -52,6 +52,27 @@ define('SPECIALNET_VIPALIAS', 15);
 define('SPECIALNET_CHECKPERM', 98);
 define('SPECIALNET_EXCLUDE', 99);
 
+function v6_range_to_prefixlen(string $start, string $end): string|false {
+	$start_packed = inet_pton(Net_IPv6::uncompress($start, true));
+	$end_packed = inet_pton(Net_IPv6::uncompress($end, true));
+	if ($start_packed === false || $end_packed === false) {
+		return (false);
+	}
+
+	$len = 0;
+	foreach (str_split($start_packed ^ $end_packed) as $char) {
+		$byte = ord($char);
+		for ($i = 7; $i >= 0; $i--) {
+			if (($byte >> $i) & 1) {
+				break 2;
+			}
+			$len++;
+		}
+	}
+
+	return ($len);
+}
+
 /**
  * Test the machine type
  *

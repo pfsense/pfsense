@@ -871,10 +871,8 @@ endif; /* dhcp_is_backend('kea') */
 
 $form->add($section);
 
-if (dhcp_is_backend('isc')):
 if (!is_numeric($pool) && !($act === 'newpool')):
 $section = new Form_Section(gettext('Prefix Delegation Pool'));
-
 $f1 = new Form_Input(
 	'prefixrange_from',
 	null,
@@ -883,7 +881,7 @@ $f1 = new Form_Input(
 );
 
 $f1->addClass('trim')
-   ->setHelp('From');
+   ->setHelp(gettext('From'));
 
 $f2 = new Form_Input(
 	'prefixrange_to',
@@ -893,7 +891,7 @@ $f2 = new Form_Input(
 );
 
 $f2->addClass('trim')
-   ->setHelp('To');
+   ->setHelp(gettext('To'));
 
 $group = new Form_Group(gettext('Prefix Delegation Range'));
 
@@ -904,7 +902,7 @@ $section->add($group);
 
 $section->addInput(new Form_Select(
 	'prefixrange_length',
-	'Prefix Delegation Size',
+	gettext('Prefix Delegation Size'),
 	$pconfig['prefixrange_length'],
 	array(
 		'48' => '48',
@@ -918,10 +916,8 @@ $section->addInput(new Form_Select(
 		'64' => '64'
 		)
 ))->setHelp(gettext('A prefix range can be defined here for DHCP Prefix Delegation. This allows for assigning networks to subrouters. The start and end of the range must end on boundaries of the prefix delegation size.'));
-
 $form->add($section);
 endif;
-endif; /* dhcp_is_backend('isc') */
 
 $section = new Form_Section(gettext('Server Options'));
 

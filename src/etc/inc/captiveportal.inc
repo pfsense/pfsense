@@ -1743,7 +1743,7 @@ function portal_ip_from_client_ip($cliip) {
 	global $cpzone;
 
 	$isipv6 = is_ipaddrv6($cliip);
-	$interfaces = array_filter(explode(",", config_get_path("captiveportal/{$cpzone}/interface", [])));
+	$interfaces = array_filter(explode(",", config_get_path("captiveportal/{$cpzone}/interface", "")));
 	foreach ($interfaces as $cpif) {
 		if ($isipv6) {
 			$ip = get_interface_ipv6($cpif);

@@ -1090,6 +1090,7 @@ function ldap_test_connection($authcfg) {
 
 	/* connect and see if server is up */
 	$error = false;
+	ldap_setup_mtls($authcfg);
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
 	}
@@ -1143,6 +1144,47 @@ function ldap_setup_caenv($ldap, $authcfg) {
 	}
 }
 
+function ldap_setup_mtls($authcfg) {
+       global $g;
+       require_once("certs.inc");
+
+       $ldapmtlsenabled = $authcfg['ldap_mtls_enabled'];
+       // Set client certificate options
+       if ($ldapmtlsenabled) {
+               $thiscert = lookup_cert($authcfg['ldap_clientcert']);
+               if (!(is_array($thiscert) && !empty($thiscert['crt']))) {
+                       log_error(sprintf(gettext("LDAP: Could not lookup CERT by reference for host %s."), $authcfg['ldap_clientcert']));
+                       /* XXX: Prevent for credential leaking since we cannot setup the CA env. Better way? */
+                       ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
+                       return;
+               }
+               log_error(sprintf(gettext("LDAP: Lookup CERT by reference found for host %s."), $authcfg['ldap_clientcert']));
+               $cert_details = openssl_x509_parse(base64_decode($thiscert['crt']));
+               $mtls_cert['descr'] = $thiscert['descr'];
+               $mtls_cert['cert'] = base64_decode($thiscert['crt']);
+               $mtls_cert['key'] = base64_decode($thiscert['prv']);
+               //log_error(sprintf(gettext("LDAP: Lookup CERT returned public cert as %s."), $mtls_cert['cert']));
+               //log_error(sprintf(gettext("LDAP: Lookup CERT returned private key as %s."), $mtls_cert['key']));
+
+               $cert_path = "{$g['varrun_path']}/certs";
+               $cert_filename = "{$cert_path}/{$cert_details['hash']}.crt";
+               $key_filename = "{$cert_path}/{$cert_details['hash']}.key";
+               safe_mkdir($cert_path);
+               unlink_if_exists($cert_filename);
+               unlink_if_exists($key_filename);
+               file_put_contents($cert_filename, $mtls_cert['cert']);
+               file_put_contents($key_filename, $mtls_cert['key']);
+               @chmod($cert_filename, 0600);
+               @chmod($key_filename, 0400);
+
+               log_error(sprintf(gettext("LDAP: Wrote public cert to %s."), $cert_filename));
+               log_error(sprintf(gettext("LDAP: Wrote private key to %s."), $key_filename));
+               ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
+               ldap_set_option(NULL, LDAP_OPT_X_TLS_CERTFILE, $cert_filename);
+               ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, $key_filename);
+       }
+}
+
 function ldap_test_bind($authcfg) {
 	if ($authcfg) {
 		if (strstr($authcfg['ldap_urltype'], "SSL")) {
@@ -1177,6 +1219,7 @@ function ldap_test_bind($authcfg) {
 
 	/* connect and see if server is up */
 	$error = false;
+	ldap_setup_mtls($authcfg);
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
 	}
@@ -1263,6 +1306,7 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 
 	/* connect and see if server is up */
 	$error = false;
+	ldap_setup_mtls($authcfg);
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
 	}
@@ -1405,6 +1449,7 @@ function ldap_get_groups($username, $authcfg) {
 
 	/* connect and see if server is up */
 	$error = false;
+	ldap_setup_mtls($authcfg);
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
 	}
@@ -1561,6 +1606,10 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$ldapbasedn = $authcfg['ldap_basedn'];
 		$ldapbindun = $authcfg['ldap_binddn'];
 		$ldapbindpw = $authcfg['ldap_bindpw'];
+		$ldapmtlsenabled = $authcfg['ldap_mtls_enabled'];
+		if ($ldapmtlsenabled) {
+			$ldapclientcert = $authcfg['ldap_clientcert'];
+		}
 		if (empty($ldapbindun) || empty($ldapbindpw)) {
 			$ldapanon = true;
 		} else {
@@ -1602,6 +1651,9 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		log_error(sprintf(gettext("LDAP Debug: Attempting to authenticate %s on %s"), $username, $ldapname));
 		log_error(sprintf(gettext("LDAP Debug: URI: %s (v%s)"), $ldapserver, $ldapver));
 		log_error(sprintf(gettext("LDAP Debug: Base DN: %s"), $ldapbasedn));
+		if ($ldapmtlsenabled) {
+			log_error(sprintf(gettext("LDAP Debug: Client LDAPTLS_CERT: %s"), $ldapclientcert));
+		}
 		log_error(sprintf(gettext("LDAP Debug: Scope: %s"), $ldapscope));
 		log_error(sprintf(gettext("LDAP Debug: Auth Bind DN: %s"), $ldapbindun));
 		log_error(sprintf(gettext("LDAP Debug: Container: %s"), $ldapauthcont));
@@ -1613,6 +1665,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 
 	/* Make sure we can connect to LDAP */
 	$error = false;
+	ldap_setup_mtls($authcfg);
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
 	}
@@ -2458,6 +2511,20 @@ EOD;
 					$cacrt = ca_chain($ca);
 					@file_put_contents($ldappamcafile, $cacrt);
 					$ldapconf .= "tls_cacertfile {$ldappamcafile}\n";
+				}
+				if (!empty($authcfg['ldap_clientcert'])) {
+					$ldappamcertfile = "/var/etc/pam_ldap_client_cert.pem";
+					$ldappamkeyfile = "/var/etc/pam_ldap_client_key.pem";
+					$thiscert = lookup_cert($authcfg['ldap_clientcert']);
+					$mtls_cert['cert'] = base64_decode($thiscert['crt']);
+					$mtls_cert['key'] = base64_decode($thiscert['prv']);
+					@file_put_contents($ldappamcertfile, $mtls_cert['cert']);
+					@file_put_contents($ldappamkeyfile, $mtls_cert['key']);
+					@chmod($ldappamcertfile, 0600);
+					@chmod($ldappamkeyfile, 0400);
+					$ldapconf .= "tls_cert {$ldappamcertfile}\n";
+					$ldapconf .= "tls_key {$ldappamkeyfile}\n";
+					$ldapconf .= "tls_reqcert demand\n";
 				}
 				$ldapconf .= "tls_checkpeer yes\n";
 			}

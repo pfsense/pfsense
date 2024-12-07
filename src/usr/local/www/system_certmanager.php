@@ -1464,6 +1464,9 @@ foreach (config_get_path('cert', []) as $cert):
 						<?php if (is_unbound_cert($cert['refid'])): ?>
 							<?=gettext("DNS Resolver")?><br/>
 						<?php endif?>
+						<?php if (is_ldap_mtls_cert($cert['refid'])): ?>
+							<?=gettext("LDAP Server")?><br/>
+						<?php endif?>
 						<?php if (is_ipsec_cert($cert['refid'])): ?>
 							<?=gettext("IPsec Tunnel")?><br/>
 						<?php endif?>

@@ -240,7 +240,7 @@ function is_cdata_entity($ent) {
 	$cdata_fields = array(
 		'aclname', 'auth_pass', 'auth_prompt', 'auth_user', 'certca', 'certname', 'city', 'common_name',
 		'descr', 'detail', 'email', 'encryption_password', 'hint', 'ldap_attr',
-		'ldap_authcn', 'ldap_basedn', 'ldap_basedomain', 'ldap_bind', 'ldapbinddn',
+		'ldap_authcn', 'ldap_basedn', 'ldap_clientcert', 'ldap_basedomain', 'ldap_bind', 'ldapbinddn',
 		'ldapbindpass', 'ldap_extended_query', 'ldap_filter', 'ldap_pam_groupdn', 'ldap_pass', 'ldap_user',
 		'login_banner', 'organization', 'password', 'proxypass', 'proxyuser', 'rangedescr', 'state', 'text',
 		'username', 'varusersusername', 'varuserspassword'

@@ -300,6 +300,7 @@ if ($_POST['save']) {
 			if (empty($pconfig['ldap_clientcert'])) {
 				$input_errors[] = sprintf(gettext("%s mTLS can't be active without any Client TLS Certificate chosen."), strtoupper($pconfig['type']));
 			}
+		}
 	}
 
 	if (($pconfig['type'] == 'ldap') && config_path_enabled('system/webgui', 'shellauth') &&

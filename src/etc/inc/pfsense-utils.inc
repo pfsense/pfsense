@@ -3623,13 +3623,18 @@ function &getarraybyref(&$array) {
  *                    'file' type, this may be omitted and the basename of
  *                    $content will be used instead.
  *   $contenttype : MIME content type of the data. Default "application/octet-stream"
+ *   $download    : Boolean. Send the file as a download (true, default) or
+ *                    inline (false).
  * RESULT
- *   Sends the data to the browser as a file to download.
+ *   Sends the data to the browser as a file.
  ******/
 
-function send_user_download($type, $content, $userfilename = "", $contenttype = "application/octet-stream") {
+function send_user_download($type, $content, $userfilename = "", $contenttype = "application/octet-stream", $download = true) {
 	/* If the type is 'file', then use the file size, otherwise use the size of the data to send */
 	$size = ($type == 'file') ? filesize($content) : strlen($content);
+
+	/* Send the file as a download (attachment) or inline content */
+	$disposition = ($download) ? "attachment" : "inline";
 
 	/* If the filename to pass to the user is empty, assume it to be the filename being read. */
 	$name = basename((($type == 'file') && empty($userfilename)) ? $content : $userfilename);
@@ -3642,7 +3647,7 @@ function send_user_download($type, $content, $userfilename = "", $contenttype = 
 	/* Send basic download headers */
 	header("Content-Type: {$contenttype}");
 	header("Content-Length: {$size}");
-	header("Content-Disposition: attachment; filename=" . urlencode($name));
+	header("Content-Disposition: {$disposition}; filename=" . urlencode($name));
 
 	/* Send cache headers */
 	if (isset($_SERVER['HTTPS'])) {

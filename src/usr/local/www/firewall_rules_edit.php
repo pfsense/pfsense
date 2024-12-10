@@ -165,7 +165,7 @@ function parse_firewall_rule_nat_from_post(array $post): array {
 		default => null
 	};
 	if (!isset($nat_type)) {
-		return [gettext('The specified address family is not supported')];
+		return [gettext('The specified address family is not supported with NAT')];
 	}
 
 	if ($post['type'] != 'pass') {
@@ -2396,6 +2396,7 @@ events.push(function() {
 			hideClass('nat64', false);
 			hideInput('nat64_source_value', ($('#nat64_source option:selected').val() != "network"));
 		} else {
+			$('#nat').prop('checked', false);
 			hideInput('nat', true);
 			hideClass('nat', true);
 			return;

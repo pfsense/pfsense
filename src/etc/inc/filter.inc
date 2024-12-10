@@ -3124,8 +3124,68 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 }
 
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
-	global $FilterIflist;
+	global $FilterIflist, $GatewaysList;
 	$src = "";
+
+	$nat_type = match ($target) {
+		'nat64source' => '64',
+		default => null
+	};
+	if (isset($rule['nat']) && isset($nat_type)) {
+		$target = 'source';
+
+		$matches = [];
+		if (empty($rule['nat'][$target])) {
+			$source_interface = null;
+			if (isset($rule['gateway'])) {
+				if (array_get_path($GatewaysList, "{$rule['gateway']}/interface")) {
+					$source_interface = $GatewaysList[$rule['gateway']]['interface'];
+				} elseif (array_get_path($GatewaysList, "{$rule['gateway']}/0/int")) {
+					$source_interface = $GatewaysList[$rule['gateway']][0]['int'];
+				}
+			} else {
+				// Use the default gateway's interface if no gateway is specified for the rule
+				foreach ($GatewaysList as $gateway_config) {
+					if (!isset($gateway_config['isdefaultgw']) || !isset($gateway_config['interface']) || !isset($gateway_config['ipprotocol'])) {
+						continue;
+					}
+					if (($nat_type == '64') && ($gateway_config['ipprotocol'] == 'inet')) {
+						$source_interface = $gateway_config['interface'];
+						break;
+					}
+				}
+			}
+			if (isset($source_interface)) {
+				$src = "({$source_interface})";
+			}
+		} elseif (is_alias($rule['nat'][$target])) {
+			$src = alias_expand($rule['nat'][$target]) . ' round-robin';
+		} elseif (preg_match('/^(wan|lan|opt[[:digit:]]+)ip$/', $rule['nat'][$target], $matches)) {
+			$src = '(' . get_real_interface($matches[1]) . ')';
+		} else {
+			$source_address = explode('/', $rule['nat'][$target], 2);
+			if (($nat_type == '64') && is_ipaddrv4($source_address[0])) {
+				if (isset($source_address[1])) {
+					$filter_validate_int_options = [
+						'options' => [
+							'min_range' => 1,
+							'max_range' => 32
+						]
+					];
+					if (!empty(filter_var($source_address[1], FILTER_VALIDATE_INT, $filter_validate_int_options))) {
+						$src = "{$source_address[0]}/{$source_address[1]}";
+					}
+				} else {
+					$src = $source_address[0];
+				}
+
+				$src = "{ {$src} }";
+			}
+		}
+
+		return $src;
+	}
+
 	$add_macro = false;
 
 	// support outbound NAT rules
@@ -3466,6 +3526,26 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		/* default (for older rules) is pass */
 		$type = "pass";
 	}
+
+	if (array_path_enabled($rule, 'nat')) {
+		$nat_type = match ($rule['ipprotocol']) {
+			'inet6' => '64',
+			default => null
+		};
+		if ((isset($rule['floating']) && ($rule['floating'] == "yes") && ($rule['direction'] != 'in')) ||
+		    ($rule['type'] != 'pass') ||
+		    !isset($nat_type)) {
+			return "# Invalid NAT{$nat_type} rule";
+		}
+
+		$nat_source_address = filter_generate_address($rule, "nat{$nat_type}source");
+		if (empty($nat_source_address)) {
+			return "# Could not determine NAT{$nat_type} source address";
+		}
+
+		$aline['nat'] = " af-to inet from {$nat_source_address} ";
+	}
+
 	if ($type == "reject") {
 		$aline['type'] = "block return ";
 	} else {
@@ -3805,7 +3885,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	}
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
-		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
+		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] . "{$aline['nat']}" .
 		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
 		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 

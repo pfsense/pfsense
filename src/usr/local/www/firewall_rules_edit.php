@@ -142,6 +142,174 @@ function is_aoadv_used($rule_config) {
 	return false;
 }
 
+/**
+ * Parse a firwall rule's NAT form data into the respective configuration.
+ *
+ * Validates values. Supports PLAT/NAT64 with a source. Does not support
+ * CLAT/NAT46 nor specifying the destination since it's currently untested.
+ *
+ * @param array $post The form submission request.
+ * @return array [<error>, [<config values>]]
+ */
+function parse_firewall_rule_nat_from_post(array $post): array {
+	// Validate general rule requirements
+	if (!$post['nat']) {
+		return [null, null];
+	}
+
+	if (!isset($post['ipprotocol'])) {
+		return [gettext('NAT rules must specify an address family')];
+	}
+	$nat_type = match ($post['ipprotocol']) {
+		'inet6' => '64',
+		default => null
+	};
+	if (!isset($nat_type)) {
+		return [gettext('The specified address family is not supported')];
+	}
+
+	if ($post['type'] != 'pass') {
+		return [gettext('NAT may only be set on "pass" rules')];
+	}
+
+	if ((($post['interface'] == 'FloatingRules') || isset($post['floating'])) && (!isset($post['direction']) || ($post['direction'] != 'in'))) {
+		return [gettext('NAT may only be set on inbound rules')];
+	}
+
+	$config_values = [
+		'nat' => [
+			'enable' => true
+		]
+	];
+
+	// Validate NAT target
+	foreach (['source'] as $target) {
+		if (!isset($post["nat{$nat_type}_{$target}"])) {
+			return [gettext("The NAT {$target} must be selected")];
+		}
+
+		$address = [
+			null, // IP address
+			null, // mask bit
+		];
+		$validated = false;
+
+		// Validate the drop-down selection and respective input
+		if (empty($post["nat{$nat_type}_{$target}"]) || ($post["nat{$nat_type}_{$target}"] == 'default')) {
+			// The target should be determined automatically during filter reloads
+			$address[0] = '';
+			$validated = true;
+		} elseif ($post["nat{$nat_type}_{$target}"] == 'network') {
+			if (empty($post["nat{$nat_type}_{$target}_value"])) {
+				return [gettext('A valid NAT {$target} must be specified')];
+			}
+			if (is_alias($post["nat{$nat_type}_{$target}_value"])) {
+				// Validate aliases
+				$address[0] = $post["nat{$nat_type}_{$target}_value"];
+				$validated = true;
+			} else {
+				// Extract the address input
+				$address[0] = $post["nat{$nat_type}_{$target}_value"];
+				$address[1] = $post["nat{$nat_type}_{$target}_value_subnet"];
+			}
+		} elseif (get_specialnet($post["nat{$nat_type}_{$target}"], [SPECIALNET_VIPALIAS])) {
+			// Extract the VIP address from the selection
+			if (str_contains($post["nat{$nat_type}_{$target}"], '/')) {
+				$address = explode('/', $post["nat{$nat_type}_{$target}"], 2);
+				$validated = true;
+			} else {
+				$address[0] = $post["nat{$nat_type}_{$target}"];
+			}
+		} elseif (get_specialnet($post["nat{$nat_type}_{$target}"], [SPECIALNET_IFADDR])) {
+			// Interface address selected, e.g. wanip
+			$address[0] = $post["nat{$nat_type}_{$target}"];
+			$validated = true;
+		} else {
+			// Unknown selection
+			return [gettext("The specified NAT {$target} type is invalid")];
+		}
+
+		// Validate VIPs and IP address input
+		if (!$validated) {
+			if (($nat_type == '64') && !is_ipaddrv4($address[0])) {
+				return [gettext("The specified NAT {$target} is invalid")];
+			}
+			if (isset($address[1])) {
+				$filter_validate_int_options = [
+					'options' => [
+						'min_range' => 1,
+						'max_range' => 32
+					]
+				];
+				if (empty(filter_var($address[1], FILTER_VALIDATE_INT, $filter_validate_int_options))) {
+					return [gettext("The specified NAT {$target} mask bit is invalid")];
+				}
+			}
+			$validated = true;
+		}
+
+		if ($validated) {
+			$config_values['nat'][$target] = $address[0] . (isset($address[1]) ? "/{$address[1]}" : '');
+			continue;
+		}
+
+		return [gettext("Could not validate NAT {$target}")];
+	}
+
+	return [null, $config_values];
+}
+
+/**
+ * Parse the firewall rule's NAT configuration into form fields.
+ * 
+ * Does not validate values.
+ * @param array $rule The rule configuration.
+ * @return array [<error>, [<form values>]]
+ */
+function parse_firewall_rule_nat_from_config(array $rule): array {
+	$nat_type = match ($rule['ipprotocol']) {
+		'inet6' => '64',
+		default => null
+	};
+	if (!isset($nat_type)) {
+		return [gettext('Unknown NAT configuration')];
+	}
+
+	$specialnet_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPALIAS];
+	$form_values = [];
+
+	// Check if NAT is enabled
+	if (array_path_enabled($rule, 'nat')) {
+		$form_values['nat'] = true;
+	}
+
+	// Get the NAT values
+	foreach (['source'] as $target) {
+		$config_value = array_get_path($rule, "nat/{$target}");
+		if (!isset($config_value)) {
+			continue;
+		}
+
+		if (get_specialnet($config_value, $specialnet_flags)) {
+			// The value is a VIP or interface selection
+			$form_values["nat{$nat_type}_{$target}"] = $config_value;
+		} else {
+			// The value is an alias or IP address
+			$address = explode("/", $config_value, 2);
+			$form_values["nat{$nat_type}_{$target}"] = 'network';
+			$form_values["nat{$nat_type}_{$target}_value"] = $address[0];
+			if (isset($address[1])) {
+				$form_values["nat{$nat_type}_{$target}_value_subnet"] = $address[1];
+			}
+		}
+	}
+
+	return [
+		null,
+		$form_values
+	];
+}
+
 $ostypes = array();
 exec('/sbin/pfctl -s osfp | /usr/bin/tr \'\t\' \' \'', $ostypes);
 
@@ -229,6 +397,11 @@ if (isset($id) && $a_filter[$id]) {
 
 	if ($a_filter[$id]['protocol'] == "icmp") {
 		$pconfig['icmptype'] = $a_filter[$id]['icmptype'];
+	}
+
+	list($error, $pconfig_nat) = parse_firewall_rule_nat_from_config($a_filter[$id]);
+	if (!isset($error)) {
+		$pconfig = array_merge($pconfig, $pconfig_nat);
 	}
 
 	address_to_pconfig($a_filter[$id]['source'], $pconfig['src'],
@@ -518,6 +691,11 @@ if ($_POST['save']) {
 		if ($_POST['gateway'] != "") {
 			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."), $_POST['statetype']);
 		}
+	}
+
+	list($error, $config_nat) = parse_firewall_rule_nat_from_post($_POST);
+	if (isset($error)) {
+		$input_errors[] = $error;
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
@@ -883,6 +1061,10 @@ if ($_POST['save']) {
 		}
 
 		$filterent['ipprotocol'] = $_POST['ipprotocol'];
+
+		if (isset($config_nat)) {
+			$filterent = array_merge($filterent, $config_nat);
+		}
 
 		if ($_POST['tcpflags_any']) {
 			$filterent['tcpflags_any'] = true;
@@ -1344,7 +1526,8 @@ if ($is_floating_rule) {
 	));
 }
 
-$section->addInput(new Form_Select(
+$group = new Form_Group('*Address Family');
+$group->add(new Form_Select(
 	'ipprotocol',
 	'*Address Family',
 	$pconfig['ipprotocol'],
@@ -1354,6 +1537,13 @@ $section->addInput(new Form_Select(
 		'inet46' => 'IPv4+IPv6',
 	)
 ))->setHelp('Select the Internet Protocol version this rule applies to.');
+$group->add(new Form_Checkbox(
+	'nat',
+	null,
+	'Enable NAT',
+	$pconfig['nat']
+));
+$section->add($group);
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -1373,6 +1563,47 @@ $group->add(new Form_Select(
 $group->addClass('icmptype_section');
 
 $section->add($group);
+
+$form->add($section);
+
+$section = new Form_Section('Address Family Translation');
+$section->addClass('nat');
+$section->addInput(new Form_StaticText(
+	null,
+	'<span class="help-block">' .
+	gettext('Matching traffic will have its address family ' .
+		'translated and use the specified address as its source.') .
+		'</span>'
+));
+$form_nat_fields = [
+	[
+		'Source', // group title
+		'nat64', // field name prefix
+		'source', // target
+		'ALIASV4', // Form_IpAddress type
+		array_merge(['default' => 'Automatic (default)'],
+			get_specialnet('', [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPALIAS])
+		), // The drop-down selection values
+		32 // mask bit
+	]
+];
+foreach ($form_nat_fields as $form_field) {
+	$group = new Form_Group($form_field[0]);
+	$group->addClass($form_field[1]);
+	$group->add(new Form_Select(
+		"{$form_field[1]}_{$form_field[2]}",
+		null,
+		$pconfig["{$form_field[1]}_{$form_field[2]}"] ?? 'default',
+		$form_field[4]
+	))->setWidth('3');
+	$group->add(new Form_IpAddress(
+		"{$form_field[1]}_{$form_field[2]}_value",
+		null,
+		$pconfig["{$form_field[1]}_{$form_field[2]}_value"],
+		$form_field[3]
+	))->addMask("{$form_field[1]}_{$form_field[2]}_value_subnet", ($pconfig["{$form_field[1]}_{$form_field[2]}_value_subnet"] ?? $form_field[5]), $form_field[5])->setWidth('4');
+	$section->add($group);
+}
 
 $form->add($section);
 
@@ -2154,6 +2385,34 @@ events.push(function() {
 		}
 	}
 
+	// NAT
+	function nat_change() {
+		if ($('#ipprotocol option:selected').val() == "inet6") {
+			hideInput('nat', false);
+			if (!$('#nat').prop('checked')) {
+				hideClass('nat', true);
+				return;
+			}
+			hideClass('nat64', false);
+			hideInput('nat64_source_value', ($('#nat64_source option:selected').val() != "network"));
+		} else {
+			hideInput('nat', true);
+			hideClass('nat', true);
+			return;
+		}
+
+		hideClass('nat', false);
+	}
+	$('#nat').on('change', function() {
+		nat_change();
+	});
+	$('#ipprotocol').on('change', function() {
+		nat_change();
+	});
+	$('#nat64_source').on('change', function() {
+		nat_change();
+	});
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#statetype').on('change', function() {
@@ -2161,6 +2420,8 @@ events.push(function() {
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
+
+	nat_change();
 
 	setOptText('statetype', $('#statetype').val())
 <?php if ($edit_disabled) {
@@ -2175,7 +2436,7 @@ events.push(function() {
 	var addressarray = <?= json_encode(get_alias_list('host,network,url,urltable')) ?>;
 	var customarray = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
-	$('#src, #dst').autocomplete({
+	$('#nat64_source_value, #src, #dst').autocomplete({
 		source: addressarray
 	});
 

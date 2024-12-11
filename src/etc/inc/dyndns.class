@@ -195,6 +195,7 @@
 		var $_dnsMaxCacheAgeDays;
 		var $_dnsDummyUpdateDone;
 		var $_forceUpdateNeeded;
+		var $_checkIPMode;
 		var $_addressFamily;
 		var $_existingRecords;
 		var $_curlProxy;
@@ -213,7 +214,7 @@
 					$dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '', $dnsMaxCacheAge = '',
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true,
-					$curlProxy = false) {
+					$curlProxy = false, $checkIPMode = null) {
 
 			global $g, $dyndns_split_domain_types;
 			if (in_array($dnsService, $dyndns_split_domain_types)) {
@@ -379,7 +380,8 @@
 			$this->_dnsRequestIf = $dnsRequestIf;
 			$this->_dnsRequestIfIP = get_request_source_address($this->_dnsRequestIf, $this->_addressFamily);
 			$this->_addressFamily = is_ipaddrv6($this->_dnsRequestIfIP) ? AF_INET6 : AF_INET;
-			$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_addressFamily);
+			$this->_checkIPMode = $checkIPMode;
+			$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamily);
 
 			if (($dnsMaxCacheAge !== null) && ($dnsMaxCacheAge !== "")) {
 				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
@@ -3038,7 +3040,7 @@
 
 			if ($successful_update == true) {
 				/* Write WAN IP to cache file */
-				$wan_ip = dyndnsCheckIP($this->_dnsRequestIf, $this->_addressFamily);
+				$wan_ip = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamily);
 				$this->_dnsIP = $wan_ip;
 				if (($this->_addressFamily == AF_INET) && $wan_ip) {
 					$currentTime = time();
@@ -3124,7 +3126,7 @@
 
 			$currentTime = time();
 
-			$wan_ip = dyndnsCheckIP($this->_dnsRequestIf, $this->_addressFamily);
+			$wan_ip = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamily);
 			$this->_dnsIP = $wan_ip;
 			if (!$wan_ip) {
 				log_error(sprintf(gettext("Dynamic Dns (%s): Current WAN IP could not be determined, skipping update process."), $this->_FQDN));

@@ -53,6 +53,7 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 
 $this_dyndns_config = isset($id) ? config_get_path("dyndnses/dyndns/{$id}") : null;
 if ($this_dyndns_config) {
+	$pconfig['check_ip_mode'] = array_get_path($this_dyndns_config, 'check_ip_mode', 'default');
 	$pconfig['username'] = $this_dyndns_config['username'];
 	$pconfig['password'] = $this_dyndns_config['password'];
 	if (!$dup) {
@@ -143,6 +144,10 @@ if ($_POST['save'] || $_POST['force']) {
 		$input_errors[] = gettext("Password and confirmed password must match.");
 	}
 
+	if (isset($_POST['check_ip_mode']) && !in_array($_POST['check_ip_mode'], array_keys(build_check_ip_mode_list()))) {
+		$input_errors[] = gettext("The specified option for Check IP Mode is invalid.");
+	}
+
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		$allow_wildcard = false;
 		if (((array_get_path($ddns_attr, "{$pconfig['type']}/apex") == true) && (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
@@ -199,6 +204,9 @@ if ($_POST['save'] || $_POST['force']) {
 
 	if (!$input_errors) {
 		$dyndns = array();
+		if (array_get_path($_POST, 'check_ip_mode', 'default') != 'default') {
+			$dyndns['check_ip_mode'] = $_POST['check_ip_mode'];
+		}
 		$dyndns['type'] = $_POST['type'];
 		$dyndns['username'] = $_POST['username'];
 		if ($_POST['passwordfld'] != DMYPWD) {
@@ -273,6 +281,14 @@ if ($_POST['save'] || $_POST['force']) {
 		header("Location: services_dyndns.php");
 		exit;
 	}
+}
+
+function build_check_ip_mode_list() {
+	return [
+		'default' => 'Automatic (default)',
+		'always' => 'Always use the Check IP service',
+		'never' => 'Never use the Check IP service'
+	];
 }
 
 function build_type_list() {
@@ -352,6 +368,13 @@ $section->addInput(new Form_Select(
 	$pconfig['requestif'],
 	$interfacelist
 ))->setHelp('This is almost always the same as the Interface to Monitor. ');
+
+$section->addInput(new Form_Select(
+	'check_ip_mode',
+	'Check IP Mode',
+	$pconfig['check_ip_mode'],
+	build_check_ip_mode_list()
+))->setHelp('By default, the Check IP service will only be used if a private address is detected.');
 
 $group = new Form_Group('*Hostname');
 

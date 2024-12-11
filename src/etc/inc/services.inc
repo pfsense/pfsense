@@ -4149,7 +4149,9 @@ function services_dyndns_configure_client($conf) {
 		$dnsVerboseLog = $conf['verboselog'],
 		$curlIpresolveV4 = $conf['curl_ipresolve_v4'],
 		$curlSslVerifypeer = $conf['curl_ssl_verifypeer'],
-		$curlProxy = $conf['curl_proxy']);
+		$curlProxy = $conf['curl_proxy'],
+		$checkIPMode = array_get_path($conf, 'check_ip_mode')
+	);
 }
 
 function services_dyndns_configure($int = "") {
@@ -4280,24 +4282,27 @@ function get_request_source_address($interface, int|null $address_family = null)
 /**
  * Use the check IP service to determine the public IPv4 or IPv6 address.
  * @param mixed $interface A VIP ID, gateway group, or friendly name.
+ * @param string|null $mode Determines whether to use the Check IP service.
  * @param int|null $address_family Force an IP address family.
  * @return string|false The IPv4 or IPv6 address; False if none found.
  */
-function dyndnsCheckIP($interface, int|null $address_family = null) {
+function dyndnsCheckIP($interface, string|null $mode = null, int|null $address_family = null) {
 	global $factory_default_checkipservice;
 
 	$interface_address = get_request_source_address($interface, $address_family);
 	if ($interface_address === false) {
 		return false;
+	} elseif ($mode == 'never') {
+		return $interface_address;
 	}
 
 	$use_ipv6 = false;
 	if (is_ipaddrv6($interface_address)) {
 		$use_ipv6 = true;
-		if (is_v6gua($interface_address)) {
+		if (($mode != 'always') && is_v6gua($interface_address)) {
 			return $interface_address;
 		}
-	} elseif (is_ipaddrv4($interface_address) && !is_private_ip($interface_address)) {
+	} elseif (($mode != 'always') && is_ipaddrv4($interface_address) && !is_private_ip($interface_address)) {
 		return $interface_address;
 	}
 
@@ -4993,7 +4998,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
-			$wanip = dyndnsCheckIP($if);
+			$wanip = dyndnsCheckIP($if, array_get_path($dnsupdate, 'check_ip_mode'));
 			if (!$wanip || is_private_ip($wanip)) {
 				log_error(sprintf(gettext(
 				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),

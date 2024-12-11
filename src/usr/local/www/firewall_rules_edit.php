@@ -1540,7 +1540,7 @@ $group->add(new Form_Select(
 $group->add(new Form_Checkbox(
 	'nat',
 	null,
-	'Enable NAT',
+	'Enable NAT64',
 	$pconfig['nat']
 ));
 $section->add($group);

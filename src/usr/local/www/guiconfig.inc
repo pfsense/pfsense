@@ -452,6 +452,12 @@ function insert_word_breaks_in_domain_name($domain_name) {
 
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
+	if ($item['nat']) {
+		$item_set .= match ($item['ipprotocol']) {
+			'inet6' => 'NAT64 ',
+			default => '',
+		};
+	}
 	if ($item['os']) {
 			$item_set .= "os " . htmlspecialchars($item['os']) . " ";
 	}

@@ -2385,9 +2385,12 @@ events.push(function() {
 		}
 	}
 
-	// NAT
-	function nat_change() {
+	function nat_change(action) {
 		if ($('#ipprotocol option:selected').val() == "inet6") {
+			if (action == 'address_family') {
+				$('#nat').parent()[0].childNodes[1].nodeValue = 'Enable NAT64';
+			}
+
 			hideInput('nat', false);
 			if (!$('#nat').prop('checked')) {
 				hideClass('nat', true);
@@ -2395,6 +2398,16 @@ events.push(function() {
 			}
 			hideClass('nat64', false);
 			hideInput('nat64_source_value', ($('#nat64_source option:selected').val() != "network"));
+
+			if (action == 'nat_toggle') {
+				if (!$('#dst').val()) {
+					$('#dsttype').val('network');
+					$('#dsttype').change();
+					$('#dst').val('64:ff9b::');
+					$('#dst').change();
+					$('#dstmask').val('96');
+				}
+			}
 		} else {
 			$('#nat').prop('checked', false);
 			hideInput('nat', true);
@@ -2405,10 +2418,10 @@ events.push(function() {
 		hideClass('nat', false);
 	}
 	$('#nat').on('change', function() {
-		nat_change();
+		nat_change('nat_toggle');
 	});
 	$('#ipprotocol').on('change', function() {
-		nat_change();
+		nat_change('address_family');
 	});
 	$('#nat64_source').on('change', function() {
 		nat_change();
@@ -2422,7 +2435,7 @@ events.push(function() {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
-	nat_change();
+	nat_change('address_family');
 
 	setOptText('statetype', $('#statetype').val())
 <?php if ($edit_disabled) {

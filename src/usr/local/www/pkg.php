@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -90,15 +90,15 @@ if ($_REQUEST['display_maximum_rows']) {
 	}
 }
 
-$config_path = sprintf('installedpackages/%s/config', xml_safe_fieldname($pkg['name']));
+$pkg_config_path = sprintf('installedpackages/%s', xml_safe_fieldname($pkg['name']));
 
-$evaledvar = config_get_path($config_path, []);
+$evaledvar = config_get_path("{$pkg_config_path}/config", []);
 
 if ($_POST['act'] == "update") {
 
-	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_POST['ids'] !="") {
+	if (is_array(config_get_path($pkg_config_path)) && $pkg['name'] != "" && $_POST['ids'] !="") {
 		// get current values
-		$current_values=config_get_path("installedpackages/{$pkg['name']}/config");
+		$current_values = config_get_path("{$pkg_config_path}/config", []);
 		// get updated ids
 		parse_str($_POST['ids'], $update_list);
 		// sort ids to know what to change
@@ -107,7 +107,7 @@ if ($_POST['act'] == "update") {
 		sort($sort_list);
 		// apply updates
 		foreach ($update_list['ids'] as $key=> $value) {
-			$config['installedpackages'][$pkg['name']]['config'][$sort_list[$key]]=$current_values[$update_list['ids'][$key]];
+			config_set_path("{$pkg_config_path}/config/{$sort_list[$key]}", $current_values[$update_list['ids'][$key]]);
 		}
 		// save current config
 		write_config(gettext("Package configuration changes saved from package settings page."));
@@ -129,11 +129,8 @@ if ($_REQUEST['act'] == "del") {
 		}
 	}
 
-	init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
-	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
-
-	if ($a_pkg[$_REQUEST['id']]) {
-		unset($a_pkg[$_REQUEST['id']]);
+	if (config_get_path("{$pkg_config_path}/config/{$_REQUEST['id']}")) {
+		config_del_path("{$pkg_config_path}/config/{$_REQUEST['id']}");
 		write_config(gettext("Package configuration item deleted from package settings page."));
 		if ($pkg['custom_delete_php_command'] != "") {
 			if ($pkg['custom_php_command_before_form'] != "") {
@@ -149,7 +146,7 @@ if ($_REQUEST['act'] == "del") {
 ob_start();
 
 $iflist = get_configured_interface_with_descr(true);
-$evaledvar = config_get_path($config_path, []);
+$evaledvar = config_get_path("{$pkg_config_path}/config", []);
 
 if ($pkg['custom_php_global_functions'] != "") {
 	eval($pkg['custom_php_global_functions']);
@@ -354,7 +351,7 @@ if ($savemsg) {
 				if ($include_filtering_inputbox) {
 					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . htmlspecialchars($_REQUEST['pkg_filter']) . '" />';
 					echo '&nbsp;<button type="submit" value="Filter" class="btn btn-primary btn-xs">';
-					echo '<i class="fa fa-filter icon-embed-btn"></i>';
+					echo '<i class="fa-solid fa-filter icon-embed-btn"></i>';
 					echo gettext("Filter");
 					echo "</button>";
 				}
@@ -523,12 +520,12 @@ if ($savemsg) {
 			#Show custom description to edit button if defined
 			$edit_msg=($pkg['adddeleteeditpagefields']['edittext']?$pkg['adddeleteeditpagefields']['edittext']:gettext("Edit this item"));
 ?>
-								<td><a class="fa fa-pencil" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>" title="<?=$edit_msg?>"></a></td>
+								<td><a class="fa-solid fa-pencil" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>" title="<?=$edit_msg?>"></a></td>
 <?php
 			#Show custom description to delete button if defined
 			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:gettext("Delete this item"));
 ?>
-								<td>&nbsp;<a class="fa fa-trash" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=$delete_msg?>"></a></td>
+								<td>&nbsp;<a class="fa-solid fa-trash-can" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=$delete_msg?>"></a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -583,13 +580,13 @@ if ($savemsg) {
 	#Show custom description to add button if defined
 	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:gettext("Add a new item"));
 ?>
-								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><i class="fa fa-plus icon-embed-btn"></i><?=gettext('Add')?></a></td>
+								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><i class="fa-solid fa-plus icon-embed-btn"></i><?=gettext('Add')?></a></td>
 <?php
 	#Show description button and info if defined
 	if ($pkg['adddeleteeditpagefields']['description']) {
 ?>
 								<td>
-									<i class="fa fa-info-circle"><?=$pkg['adddeleteeditpagefields']['description']?></i>
+									<i class="fa-solid fa-info-circle"><?=$pkg['adddeleteeditpagefields']['description']?></i>
 								</td>
 <?php
 	}
@@ -601,7 +598,7 @@ if ($savemsg) {
 				<?=$final_footer?>
 			</table>
 			</div>
-		<button class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')"><i class="fa fa-save icon-embed-btn"></i><?=gettext("Save")?></button>
+		<button class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext("Save")?></button>
 
 </form>
 <?php

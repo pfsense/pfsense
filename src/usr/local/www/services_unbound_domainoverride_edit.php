@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -36,16 +36,15 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('unbound', 'domainoverrides'));
-$a_domainOverrides = &$config['unbound']['domainoverrides'];
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
-if (isset($id) && $a_domainOverrides[$id]) {
-	$pconfig['domain'] = $a_domainOverrides[$id]['domain'];
-	$pconfig['ip'] = $a_domainOverrides[$id]['ip'];
-	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
-	$pconfig['tls_hostname'] = $a_domainOverrides[$id]['tls_hostname'];
-	$pconfig['forward_tls_upstream'] = isset($a_domainOverrides[$id]['forward_tls_upstream']);
+$this_domainOverrides_config = isset($id) ? config_get_path("unbound/domainoverrides/{$id}") : null;
+if ($this_domainOverrides_config) {
+	$pconfig['domain'] = $this_domainOverrides_config['domain'];
+	$pconfig['ip'] = $this_domainOverrides_config['ip'];
+	$pconfig['descr'] = $this_domainOverrides_config['descr'];
+	$pconfig['tls_hostname'] = $this_domainOverrides_config['tls_hostname'];
+	$pconfig['forward_tls_upstream'] = isset($this_domainOverrides_config['forward_tls_upstream']);
 }
 
 if ($_POST['save']) {
@@ -95,10 +94,10 @@ if ($_POST['save']) {
 		$doment['tls_hostname'] = $_POST['tls_hostname'];
 		$doment['forward_tls_upstream'] = isset($_POST['forward_tls_upstream']);
 
-		if (isset($id) && $a_domainOverrides[$id]) {
-			$a_domainOverrides[$id] = $doment;
+		if ($this_domainOverrides_config) {
+			config_set_path("unbound/domainoverrides/{$id}", $doment);
 		} else {
-			$a_domainOverrides[] = $doment;
+			config_set_path('unbound/domainoverrides/', $doment);
 		}
 
 		mark_subsystem_dirty('unbound');
@@ -158,7 +157,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_domainOverrides[$id]) {
+if ($this_domainOverrides_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

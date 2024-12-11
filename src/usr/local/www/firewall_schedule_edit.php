@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,13 +37,15 @@ function schedulecmp($a, $b) {
 }
 
 function schedule_sort() {
-	global $g, $config;
+	global $g;
 
-	if (!is_array($config['schedules']['schedule'])) {
+	$schedule_config = config_get_path('schedules/schedule');
+	if (!is_array($schedule_config)) {
 		return;
 	}
 
-	usort($config['schedules']['schedule'], "schedulecmp");
+	usort($schedule_config, "schedulecmp");
+	config_set_path('schedules/schedule', $schedule_config);
 }
 
 require_once("guiconfig.inc");
@@ -59,8 +61,7 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
-init_config_arr(array('schedules', 'schedule'));
-$a_schedules = &$config['schedules']['schedule'];
+$a_schedules = config_get_path('schedules/schedule', []);
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -182,6 +183,7 @@ if ($_POST['save']) {
 		} else {
 			$a_schedules[] = $schedule;
 		}
+		config_set_path('schedules/schedule', $a_schedules);
 
 		schedule_sort();
 
@@ -431,14 +433,14 @@ $group->add(new Form_Button(
 	'btnaddtime',
 	'Add Time',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->setAttribute('type','button')->addClass('btn-success btn-sm');
 
 $group->add(new Form_Button(
 	'btnclrsel',
 	'Clear selection',
 	null,
-	'fa-undo'
+	'fa-solid fa-undo'
 ))->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->add($group);
@@ -617,7 +619,7 @@ if ($getSchedule && !empty($pconfig['timerange'])) {
 				'Delete' . $counter,
 				'Delete',
 				null,
-				'fa-trash'
+				'fa-solid fa-trash-can'
 			))->setAttribute('type','button')->addClass('btn-xs btn-warning');
 
 			$group->add(new Form_Input(
@@ -1112,7 +1114,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 			'<input class="form-control" name="schedule@" id="schedule@" type="hidden" value="' + tempID + '"/>' +
 		'</div>' +
 		'<div class="col-sm-2">' +
-			'<a class="btn btn-xs btn-warning" name="delete@" id="delete@" type="button" value="@"><i class="fa fa-trash icon-embed-btn"></i><?= gettext("Delete") ?></a>' +
+			'<a class="btn btn-xs btn-warning" name="delete@" id="delete@" type="button" value="@"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?= gettext("Delete") ?></a>' +
 		'</div>' +
 	'</div>';
 

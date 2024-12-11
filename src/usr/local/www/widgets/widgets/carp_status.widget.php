@@ -6,7 +6,7 @@
  * Copyright (c) 2007 Sam Wenham
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,21 +61,21 @@ $carp_enabled = get_carp_status();
 			</td>
 <?php		
 		if ($carp_enabled == false) {
-			$icon = 'times-circle';
+			$icon = 'fa-solid fa-times-circle';
 			$status = "DISABLED";
 		} else {
 			if ($status == "MASTER") {
-				$icon = 'play-circle text-success';
+				$icon = 'fa-solid fa-play-circle text-success';
 			} else if ($status == "BACKUP") {
-				$icon = 'pause-circle text-warning';
+				$icon = 'fa-solid fa-pause-circle text-warning';
 			} else if ($status == "INIT") {
-				$icon = 'question-circle text-danger';
+				$icon = 'fa-solid fa-question-circle text-danger';
 			}
 		}
 		if ($ipaddress) {
 ?>
 				<td><?=htmlspecialchars($ipaddress);?></td>
-				<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
+				<td><i class="<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
 <?php
 		} else {
 ?>

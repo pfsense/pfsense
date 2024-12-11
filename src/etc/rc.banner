@@ -7,7 +7,7 @@
  * Copyright (c) 2005 Colin Smith
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +28,27 @@ require_once("config.inc");
 require_once("gwlb.inc");
 require_once("interfaces.inc");
 
-$hostname = $config['system']['hostname'];
+$hostname = config_get_path('system/hostname');
 $machine = trim(`uname -m`);
+
+/* Export the product variable. */
+if (is_writable("/etc")) {
+	$handle = NULL;
+	if (!file_exists("/etc/product_name") || is_writable("/etc/product_name"))
+		$handle = fopen("/etc/product_name", 'w');
+	if ($handle != NULL)
+		fwrite($handle, $g['product_name']);
+	if ($handle != NULL)
+		fclose($handle);
+
+	$handle = NULL;
+	if (!file_exists("/etc/product_label") || is_writable("/etc/product_label"))
+		$handle = fopen("/etc/product_label", 'w');
+	if ($handle != NULL)
+		fwrite($handle, $g['product_label']);
+	if ($handle != NULL)
+		fclose($handle);
+}
 
 $platform = system_identify_specific_platform();
 $serial = system_get_serial();
@@ -44,9 +63,28 @@ printf("%s: %s\n\n", gettext("Netgate Device ID"), system_get_uniqueid());
 print "*** Welcome to {$g['product_label']} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 
 $iflist = get_configured_interface_with_descr(true);
+
+// calculate max string widths for the banner
+$realif_wdith = 1;
+$tobanner_wdith = 1;
+foreach ($iflist as $ifname => $friendly) {
+	$realif = get_real_interface($ifname);
+	$realif_length = strlen($realif);
+	if ($realif_length > $realif_wdith) {
+		$realif_wdith = $realif_length;
+	}
+	$tobanner = "{$friendly} ({$ifname})";
+	$tobanner_length = strlen($tobanner);
+	if ($tobanner_length > $tobanner_wdith) {
+		$tobanner_wdith = $tobanner_length;
+	}
+}
+$v6line_width = $realif_wdith + $tobanner_wdith + 9;
+
+// print the banner
 foreach ($iflist as $ifname => $friendly) {
 	/* point to this interface's config */
-	$ifconf = $config['interfaces'][$ifname];
+	$ifconf = config_get_path("interfaces/{$ifname}");
 	/* look for 'special cases' */
 	switch ($ifconf['ipaddr']) {
 		case "dhcp":
@@ -92,7 +130,7 @@ foreach ($iflist as $ifname => $friendly) {
 	$realif = get_real_interface($ifname);
 	$tobanner = "{$friendly} ({$ifname})";
 
-	printf("\n %-15s -> %-10s -> ",
+	printf("\n %-{$tobanner_wdith}s -> %-{$realif_wdith}s -> ",
 		$tobanner,
 		$realif
 	);
@@ -108,7 +146,7 @@ foreach ($iflist as $ifname => $friendly) {
 	}
 	if (!empty($ipaddr6) && !empty($subnet6)) {
 		if (!$v6first) {
-			printf("\n%s", str_repeat(" ", 34));
+			printf("\n%s", str_repeat(" ", $v6line_width));
 		}
 		printf("v6%s: %s/%s",
 			$class6,

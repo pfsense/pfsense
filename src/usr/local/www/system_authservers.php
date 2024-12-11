@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -83,7 +83,7 @@ if ($_REQUEST['ajax']) {
 			'svcontbtn',
 			'Save',
 			null,
-			'fa-save'
+			'fa-solid fa-save'
 		);
 
 		$btnsv->removeClass("btn-default)")->addClass("btn-primary");
@@ -99,16 +99,9 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-$id = $_REQUEST['id'];
-
-if (!is_array($config['system']['authserver'])) {
-	config_set_path('system/authserver', array());
-}
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $a_server = array_values(auth_get_authserver_list());
-
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
 
 $act = $_REQUEST['act'];
 
@@ -126,8 +119,8 @@ if ($_POST['act'] == "del") {
 
 	/* Remove server from main list. */
 	$serverdeleted = $a_server[$_POST['id']]['name'];
-	foreach ($config['system']['authserver'] as $k => $as) {
-		if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
+	foreach (config_get_path('system/authserver', []) as $k => $as) {
+		if ($as['name'] == $serverdeleted) {
 			config_del_path("system/authserver/{$k}");
 		}
 	}
@@ -291,8 +284,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 	}
 
-	if (isset($id) && $config['system']['authserver'][$id] &&
-	   ($config['system']['authserver'][$id]['name'] != $pconfig['name'])) {
+	if (isset($id) && config_get_path("system/authserver/{$id}") &&
+	   (config_get_path("system/authserver/{$id}/name") != $pconfig['name'])) {
 		$input_errors[] = gettext("The name of an authentication server cannot be changed.");
 	}
 
@@ -303,8 +296,8 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($pconfig['type'] == 'ldap') && isset($config['system']['webgui']['shellauth']) &&
-	    ($config['system']['webgui']['authmode'] == $pconfig['name']) && empty($pconfig['ldap_pam_groupdn'])) {
+	if (($pconfig['type'] == 'ldap') && config_path_enabled('system/webgui', 'shellauth') &&
+	    (config_get_path('system/webgui/authmode') == $pconfig['name']) && empty($pconfig['ldap_pam_groupdn'])) {
 		$input_errors[] = gettext("Shell Authentication Group DN must be specified if " . 
 			"Shell Authentication is enabled for appliance.");
 	}
@@ -414,14 +407,14 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (isset($id) && $config['system']['authserver'][$id]) {
-			$config['system']['authserver'][$id] = $server;
+		if (isset($id) && config_get_path("system/authserver/{$id}")) {
+			config_set_path("system/authserver/{$id}", $server);
 		} else {
-			$config['system']['authserver'][] = $server;
+			config_set_path('system/authserver/', $server);
 		}
 
-		if (isset($config['system']['webgui']['shellauth']) &&
-		    ($config['system']['webgui']['authmode'] == $pconfig['name'])) {
+		if (config_path_enabled('system/webgui', 'shellauth') &&
+		    (config_get_path('system/webgui/authmode') == $pconfig['name'])) {
 			set_pam_auth();
 		}
 
@@ -432,7 +425,6 @@ if ($_POST['save']) {
 }
 
 function build_radiusnas_list() {
-	global $config;
 	$list = array();
 
 	$iflist = get_configured_interface_with_descr();
@@ -488,13 +480,10 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-if (!isAllowedPage("system_usermanager.php")) {
-       $tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
-} else {
-       $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
-}
+$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Change Password"), false, "system_usermanager_passwordmg.php");
 $tab_array[] = array(gettext("Authentication Servers"), true, "system_authservers.php");
 display_top_tabs($tab_array);
 
@@ -521,9 +510,9 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<td><?=htmlspecialchars($server['host'])?></td>
 						<td>
 						<?php if ($i < (count($a_server) - 1)): ?>
-							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Copy server"); ?>" href="system_authservers.php?act=dup&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
+							<a class="fa-regular fa-clone" title="<?=gettext("Copy server"); ?>" href="system_authservers.php?act=dup&amp;id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
 						<?php endif?>
 						</td>
 					</tr>
@@ -536,7 +525,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>
@@ -603,7 +592,7 @@ $section->addInput(new Form_Select(
 ));
 
 $ldapCaRef = array('global' => 'Global Root CA List');
-foreach ($a_ca as $ca) {
+foreach (config_get_path('ca', []) as $ca) {
 	$ldapCaRef[$ca['refid']] = $ca['descr'];
 }
 
@@ -667,7 +656,7 @@ $group->add(new Form_Button(
 	'Select',
 	'Select a container',
 	null,
-	'fa-search'
+	'fa-solid fa-search'
 ))->setAttribute('type','button')->addClass('btn-info');
 
 $section->add($group);
@@ -927,7 +916,7 @@ events.push(function() {
 		var authserver = $('#authmode').val();
 		var cert;
 
-<?php if (count($a_ca) > 0): ?>
+<?php if (count(config_get_path('ca', [])) > 0): ?>
 			cert = $('#ldap_caref').val();
 <?php else: ?>
 			cert = '';

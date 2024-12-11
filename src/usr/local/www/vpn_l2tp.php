@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,25 +31,22 @@
 require_once("guiconfig.inc");
 require_once("vpn.inc");
 
-init_config_arr(array('l2tp', 'radius'));
-$l2tpcfg = &$config['l2tp'];
-
-$pconfig['remoteip'] = $l2tpcfg['remoteip'];
-$pconfig['localip'] = $l2tpcfg['localip'];
-$pconfig['l2tp_subnet'] = $l2tpcfg['l2tp_subnet'];
-$pconfig['mode'] = $l2tpcfg['mode'];
-$pconfig['interface'] = $l2tpcfg['interface'];
-$pconfig['l2tp_dns1'] = $l2tpcfg['dns1'];
-$pconfig['l2tp_dns2'] = $l2tpcfg['dns2'];
-$pconfig['mtu'] = $l2tpcfg['mtu'];
-$pconfig['radiusenable'] = isset($l2tpcfg['radius']['enable']);
-$pconfig['radacct_enable'] = isset($l2tpcfg['radius']['accounting']);
-$pconfig['radiusserver'] = $l2tpcfg['radius']['server'];
-$pconfig['radiussecret'] = $l2tpcfg['radius']['secret'];
-$pconfig['radiusissueips'] = isset($l2tpcfg['radius']['radiusissueips']);
-$pconfig['n_l2tp_units'] = $l2tpcfg['n_l2tp_units'];
-$pconfig['paporchap'] = $l2tpcfg['paporchap'];
-$pconfig['secret'] = $l2tpcfg['secret'];
+$pconfig['remoteip'] = config_get_path('l2tp/remoteip');
+$pconfig['localip'] = config_get_path('l2tp/localip');
+$pconfig['l2tp_subnet'] = config_get_path('l2tp/l2tp_subnet');
+$pconfig['mode'] = config_get_path('l2tp/mode');
+$pconfig['interface'] = config_get_path('l2tp/interface');
+$pconfig['l2tp_dns1'] = config_get_path('l2tp/dns1');
+$pconfig['l2tp_dns2'] = config_get_path('l2tp/dns2');
+$pconfig['mtu'] = config_get_path('l2tp/mtu');
+$pconfig['radiusenable'] = config_path_enabled('l2tp/radius');
+$pconfig['radacct_enable'] = config_path_enabled('l2tp/radius', 'accounting');
+$pconfig['radiusserver'] = config_get_path('l2tp/radius/server');
+$pconfig['radiussecret'] = config_get_path('l2tp/radius/secret');
+$pconfig['radiusissueips'] = config_path_enabled('l2tp/radius', 'radiusissueips');
+$pconfig['n_l2tp_units'] = config_get_path('l2tp/n_l2tp_units');
+$pconfig['paporchap'] = config_get_path('l2tp/paporchap');
+$pconfig['secret'] = config_get_path('l2tp/secret');
 
 if ($_POST['save']) {
 
@@ -129,6 +126,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
+		$l2tpcfg = config_get_path('l2tp', []);
 		$l2tpcfg['remoteip'] = $_POST['remoteip'];
 		$l2tpcfg['localip'] = $_POST['localip'];
 		$l2tpcfg['l2tp_subnet'] = $_POST['l2tp_subnet'];
@@ -189,6 +187,7 @@ if ($_POST['save']) {
 			unset($l2tpcfg['radius']['radiusissueips']);
 		}
 
+		config_set_path('l2tp', $l2tpcfg);
 		write_config(gettext("L2TP VPN configuration changed."));
 
 		$changes_applied = true;

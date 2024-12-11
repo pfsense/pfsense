@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -39,9 +39,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_npt.inc");
 
-init_config_arr(array('nat', 'npt'));
-$a_npt = &$config['nat']['npt'];
-
 // Process $_POST/$_REQUEST =======================================================================
 if ($_REQUEST['savemsg']) {
 	$savemsg = $_REQUEST['savemsg'];
@@ -52,7 +49,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 } elseif ($_POST['apply']) {
 	$retval = applynptNATrules();
 } elseif (($_POST['act'] == "del")) {
-	if ($a_npt[$_POST['id']]) {
+	if (config_get_path("nat/npt/{$_POST['id']}")) {
 		deletenptNATrule($_POST);
 	}
 } elseif (isset($_POST['del_x'])) {
@@ -65,7 +62,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 		toggleMultiplenptNATrules($_POST);
 	}
 } elseif (($_POST['act'] == "toggle")) {
-	if ($a_npt[$_POST['id']]) {
+	if (config_get_path("nat/npt/{$_POST['id']}")) {
 		togglenptNATrule($_POST);
 	}
 }
@@ -111,7 +108,7 @@ display_top_tabs($tab_array);
 
 	$textse = "</span>";
 	$i = 0;
-	foreach ($a_npt as $natent):
+	foreach (config_get_path('nat/npt', []) as $natent):
 		if (isset($natent['disabled'])) {
 			$textss = "<span class=\"gray\">";
 			$iconfn = "pass_d";
@@ -128,7 +125,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa-solid <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 							</a>
 						</td>
 						<td>
@@ -144,15 +141,16 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 <?php
-		$dst_arr = explode("/", $natent['destination']['network']);
-		if (count($dst_arr) > 1) {
-			$natent['destination']['network'] = $dst_arr[0];
-		}
-		if (is_array($config['interfaces'][$natent['destination']['network']]) &&
-		    ($config['interfaces'][$natent['destination']['network']]['ipaddrv6'] == 'track6')) {
-			$track6ip = get_interface_track6ip($natent['destination']['network']);
-			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
-			$dst = "{$config['interfaces'][$natent['destination']['network']]['descr']} ({$pdsubnet}/{$track6ip[1]})";
+		if (!empty($natent['destination']['network'])) {
+			if (str_contains($natent['destination']['network'], '/')) {
+				$dst_arr = explode("/", $natent['destination']['network']);
+				$natent['destination']['network'] = $dst_arr[0];
+			}
+			if (config_get_path("interfaces/{$natent['destination']['network']}/ipaddrv6") == 'track6') {
+				$track6ip = get_interface_track6ip($natent['destination']['network']);
+				$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+				$dst = config_get_path("interfaces/{$natent['destination']['network']}/descr") . " ({$pdsubnet}/{$track6ip[1]})";
+			}
 		} else {
 			$dst = pprint_address($natent['destination']);
 		}
@@ -170,9 +168,9 @@ display_top_tabs($tab_array);
 ?>
 						</td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_npt_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_npt_edit.php?id=<?=$i?>"></a>
+							<a class="fa-regular fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -186,23 +184,23 @@ endforeach;
 
 	<nav class="action-buttons">
 		<a href="firewall_nat_npt_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>">
-			<i class="fa fa-level-up icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>">
-			<i class="fa fa-level-down icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected mappings')?>">
-			<i class="fa fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected mappings"); ?>" title="<?=gettext('Toggle selected rules')?>">
-			<i class="fa fa-ban icon-embed-btn"></i>
+			<i class="fa-solid fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save mapping order')?>">
-			<i class="fa fa-save icon-embed-btn"></i>
+			<i class="fa-solid fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 	</nav>
@@ -212,7 +210,7 @@ endforeach;
 //<![CDATA[
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules draggable/sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',

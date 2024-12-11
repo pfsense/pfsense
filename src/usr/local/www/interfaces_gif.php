@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,15 +30,12 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('gifs', 'gif'));
-$a_gifs = &$config['gifs']['gif'] ;
-
 function gif_inuse($num) {
-	global $config, $a_gifs;
-
+	$a_gifs = config_get_path('gifs/gif', []);
 	$iflist = get_configured_interface_list(true);
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif']) {
+		if ($if_config[$if]['if'] == $a_gifs[$num]['gifif']) {
 			return true;
 		}
 	}
@@ -49,14 +46,14 @@ function gif_inuse($num) {
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_gifs[$_POST['id']])) {
+	} else if (empty(config_get_path("gifs/gif/{$_POST['id']}"))) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (gif_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
 	} else {
-		pfSense_interface_destroy($a_gifs[$_POST['id']]['gifif']);
-		unset($a_gifs[$_POST['id']]);
+		pfSense_interface_destroy(config_get_path("gifs/gif/{$_POST['id']}/gifif"));
+		config_del_path("gifs/gif/{$_POST['id']}");
 
 		write_config("GIF interface deleted");
 
@@ -100,7 +97,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_gifs as $i => $gif): ?>
+<?php foreach (config_get_path('gifs/gif', []) as $i => $gif): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']))?>
@@ -112,8 +109,8 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($gif['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit GIF interface')?>"	href="interfaces_gif_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit GIF interface')?>"	href="interfaces_gif_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php endforeach; ?>
@@ -125,7 +122,7 @@ display_top_tabs($tab_array);
 
 <nav class="action-buttons">
 	<a href="interfaces_gif_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

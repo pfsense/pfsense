@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -113,7 +113,7 @@ if ($_GET) {
 			$can_add = false;
 			$can_enable = false;
 			$dontshow = true;
-			foreach ($config['filter']['rule'] as $key => $rule) {
+			foreach (config_get_path('filter/rule', []) as $key => $rule) {
 				if (isset($rule['dnpipe'])) {
 					config_del_path("filter/rule/{$key}/dnpipe");
 				}
@@ -367,7 +367,7 @@ display_top_tabs($tab_array);
 				<td class="col-md-1">
 					<?=$tree?>
 					<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add" class="btn btn-sm btn-success">
-						<i class="fa fa-plus icon-embed-btn"></i>
+						<i class="fa-solid fa-plus icon-embed-btn"></i>
 						<?=gettext('New Limiter')?>
 					</a>
 				</td>
@@ -388,7 +388,7 @@ if (!$dfltmsg) {
 				'add',
 				'Add new Queue',
 				$url,
-				'fa-plus'
+				'fa-solid fa-plus'
 			))->addClass('btn-success');
 		}
 
@@ -404,7 +404,7 @@ if (!$dfltmsg) {
 					'delete',
 					($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
 					$url,
-					'fa-trash'
+					'fa-solid fa-trash-can'
 				))->addClass('btn-danger nowarn');
 			}
 		}

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -35,11 +35,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-init_config_arr(array('gateways', 'gateway_group'));
-$a_gateway_groups = &$config['gateways']['gateway_group'];
-
-init_config_arr(array('gateways', 'gateway_item'));
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = config_get_path('gateways/gateway_item', []);
 $changedesc = gettext("Gateway Groups") . ": ";
 
 
@@ -59,7 +55,7 @@ if ($_POST['apply']) {
 		clear_subsystem_dirty('staticroutes');
 	}
 
-	foreach ($a_gateway_groups as $gateway_group) {
+	foreach (config_get_path('gateways/gateway_group', []) as $gateway_group) {
 		$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
 		if (is_subsystem_dirty($gw_subsystem)) {
 			openvpn_resync_gwgroup($gateway_group['name']);
@@ -68,16 +64,20 @@ if ($_POST['apply']) {
 	}
 }
 
-if ($_POST['act'] == "del") {
-	if ($a_gateway_groups[$_POST['id']]) {
+$a_gateway_groups = config_get_path('gateways/gateway_group', []);
+if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
+	if ((config_get_path('gateways/defaultgw4', '') == $a_gateway_groups[$_POST['id']]['name']) ||
+	    (config_get_path('gateways/defaultgw6', '') == $a_gateway_groups[$_POST['id']]['name'])) {
+		$input_errors[] = gettext('Cannot remove a gateway group that is being used as the default gateway.');
+	} else {
 		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
-		foreach ($config['filter']['rule'] as $idx => $rule) {
+		foreach (config_get_path('filter/rule', []) as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
 				config_del_path("filter/rule/{$idx}/gateway");
 			}
 		}
 
-		unset($a_gateway_groups[$_POST['id']]);
+		config_del_path("gateways/gateway_group/{$_POST['id']}");
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateway_groups.php");
@@ -86,7 +86,7 @@ if ($_POST['act'] == "del") {
 }
 
 function gateway_exists($gwname) {
-	$gateways = return_gateways_array();
+	$gateways = get_gateways();
 
 	if (is_array($gateways)) {
 		foreach ($gateways as $gw) {
@@ -113,6 +113,10 @@ if (is_subsystem_dirty('staticroutes')) {
 	print_apply_box(gettext("The gateway configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
 $tab_array = array();
 $tab_array[] = array(gettext("Gateways"), false, "system_gateways.php");
 $tab_array[] = array(gettext("Static Routes"), false, "system_routes.php");
@@ -136,7 +140,7 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 $i = 0;
-foreach ($a_gateway_groups as $gateway_group):
+foreach (config_get_path('gateways/gateway_group', []) as $gateway_group):
 ?>
 					<tr>
 						<td>
@@ -166,9 +170,9 @@ foreach ($a_gateway_groups as $gateway_group):
 							<?=htmlspecialchars($gateway_group['descr'])?>
 						</td>
 						<td>
-							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
-							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
-							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>" usepost></a>
+							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa-solid fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
+							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa-regular fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
+							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash-can" title="<?=gettext('Delete gateway group')?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -183,7 +187,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="system_gateway_groups_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

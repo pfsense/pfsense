@@ -3,7 +3,7 @@
  * firewall_schedule.inc.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,10 +25,7 @@ require_once("config.gui.inc");
 // Delete a schedule after first checking that no rules are using it
 // Return an error string if the schedule is in use
 function deleteSchedule($post, $json = false) {
-    global $config;
-
-    init_config_arr(array('schedules', 'schedule'));
-    $a_schedules = &$config['schedules']['schedule'];
+    $a_schedules = config_get_path('schedules/schedule', []);
 
     $id = $post['id'];
 
@@ -38,14 +35,12 @@ function deleteSchedule($post, $json = false) {
 		$referenced_by = false;
 		$schedule_name = $a_schedules[$id]['name'];
 
-		if (is_array($config['filter']['rule'])) {
-			foreach ($config['filter']['rule'] as $rule) {
-				//check for this later once this is established
-				if ($rule['sched'] == $schedule_name) {
-					$referenced_by = $rule['descr'];
-					$is_schedule_referenced = true;
-					break;
-				}
+		foreach (config_get_path('filter/rule', []) as $rule) {
+			//check for this later once this is established
+			if ($rule['sched'] == $schedule_name) {
+				$referenced_by = $rule['descr'];
+				$is_schedule_referenced = true;
+				break;
 			}
 		}
 
@@ -53,6 +48,7 @@ function deleteSchedule($post, $json = false) {
 			$errmsg = sprintf(gettext("Cannot delete schedule. Currently in use by %s."), $referenced_by);
 		} else {
 			unset($a_schedules[$post['id']]);
+			config_set_path('schedules/schedule', $a_schedules);
 			write_config(gettext("Firewall schedule deleted."));
             if (!$json) {
                 header("Location: firewall_schedule.php");

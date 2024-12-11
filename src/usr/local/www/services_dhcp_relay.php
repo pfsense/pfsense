@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Justin Ellison <justin@techadvise.com>
  * All rights reserved.
  *
@@ -31,17 +31,17 @@
 
 require_once("guiconfig.inc");
 require_once("filter.inc");
-$pconfig['enable'] = isset($config['dhcrelay']['enable']);
+$pconfig['enable'] = config_path_enabled('dhcrelay');
 
-if (empty($config['dhcrelay']['interface'])) {
+if (empty(config_get_path('dhcrelay/interface'))) {
 	$pconfig['interface'] = array();
 } else {
-	$pconfig['interface'] = explode(",", $config['dhcrelay']['interface']);
+	$pconfig['interface'] = explode(",", config_get_path('dhcrelay/interface'));
 }
 
-$pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
-$pconfig['server'] = isset($config['dhcrelay']['server']) ? $config['dhcrelay']['server'] : null;
-$pconfig['carpstatusvip'] = isset($config['dhcrelay']['carpstatusvip']) ? $config['dhcrelay']['carpstatusvip'] : 'none';
+$pconfig['agentoption'] = config_path_enabled('dhcrelay', 'agentoption');
+$pconfig['server'] = config_path_enabled('dhcrelay', 'server') ? config_get_path('dhcrelay/server') : null;
+$pconfig['carpstatusvip'] = config_path_enabled('dhcrelay', 'carpstatusvip') ? config_get_path('dhcrelay/carpstatusvip') : 'none';
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -74,15 +74,13 @@ $carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
  *   the two are not compatible with each other.
  */
 $dhcpd_enabled = false;
-if (is_array($config['dhcpd'])) {
-	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
-		if (empty($dhcp)) {
-			continue;
-		}
-		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
-			$dhcpd_enabled = true;
-			break;
-		}
+foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcp) {
+	if (empty($dhcp)) {
+		continue;
+	}
+	if (isset($dhcp['enable']) && config_path_enabled("interfaces/{$dhcpif}")) {
+		$dhcpd_enabled = true;
+		break;
 	}
 }
 
@@ -126,7 +124,6 @@ if ($_POST) {
 	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
-		init_config_arr(array('dhcrelay'));
 		config_set_path('dhcrelay/enable', $_POST['enable'] ? true : false);
 		if (isset($_POST['interface']) &&
 		    is_array($_POST['interface'])) {
@@ -222,7 +219,7 @@ foreach (explode(',', $pconfig['server']) as $server) {
 		'deleterow' . $counter,
 		gettext('Delete'),
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-sm btn-warning');
 
 	$section->add($group);
@@ -234,7 +231,7 @@ $group->add(new Form_Button(
 	'addrow',
 	gettext('Add Upstream Server'),
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success addbtn')
   ->setHelp(gettext('The IPv4 addresses of the servers to which DHCP requests are relayed.'));
 $section->add($group);

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,9 +37,7 @@ require_once('functions.inc');
 require_once('filter.inc');
 require_once('shaper.inc');
 
-init_config_arr(['staticroutes', 'route']);
-$a_routes = &$config['staticroutes']['route'];
-$a_gateways = return_gateways_array(true, true, true);
+$a_gateways = get_gateways(GW_CACHE_ALL);
 $changedesc_prefix = gettext('Static Routes') . ": ";
 
 if ($_POST['apply']) {
@@ -48,7 +46,7 @@ if ($_POST['apply']) {
 	
 	$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
 	if (file_exists($routes_apply_file)) {
-		$toapplylist = unserialize(file_get_contents($routes_apply_file));
+		$toapplylist = unserialize_data(file_get_contents($routes_apply_file), []);
 		foreach ($toapplylist as $toapply) {
 			mwexec($toapply);
 		}
@@ -67,10 +65,10 @@ if ($_POST['apply']) {
 }
 
 if ($_POST['act'] === 'del') {
-	if ($a_routes[$_POST['id']]) {
-		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), $a_routes[$_POST['id']]['network']);
+	if (config_get_path("staticroutes/route/{$_POST['id']}")) {
+		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), config_get_path("staticroutes/route/{$_POST['id']}/network"));
 		delete_static_route($_POST['id'], true);
-		unset($a_routes[$_POST['id']]);
+		config_del_path("staticroutes/route/{$_POST['id']}");
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header('Location: system_routes.php');
@@ -83,9 +81,9 @@ if (isset($_POST['del_x'])) {
 	if (is_array($_POST['route']) && count($_POST['route'])) {
 		$deleted_routes = '';
 		foreach ($_POST['route'] as $routei) {
-			$deleted_routes .= ' ' . $a_routes[$routei]['network'];
+			$deleted_routes .= ' ' . config_get_path("staticroutes/route/{$routei}/network");
 			delete_static_route($routei, true);
-			unset($a_routes[$routei]);
+			config_del_path("staticroutes/route/{$routei}");
 		}
 		$changedesc = $changedesc_prefix . sprintf(gettext('removed route to %s'), $deleted_routes);
 		write_config($changedesc);
@@ -96,21 +94,22 @@ if (isset($_POST['del_x'])) {
 }
 
 if ($_POST['act'] === 'toggle') {
-	if ($a_routes[$_POST['id']]) {
+	$this_route_config = config_get_path("staticroutes/route/{$_POST['id']}");
+	if ($this_route_config) {
 		$do_update_config = true;
-		if (isset($a_routes[$_POST['id']]['disabled'])) {
+		if (isset($this_route_config['disabled'])) {
 			// Do not enable a route whose gateway is disabled
-			if (isset($a_gateways[$a_routes[$_POST['id']]['gateway']]['disabled'])) {
+			if (isset($a_gateways[$this_route_config['gateway']]['disabled'])) {
 				$do_update_config = false;
-				$input_errors[] = $changedesc_prefix . sprintf(gettext('gateway is disabled, cannot enable route to %s'), $a_routes[$_POST['id']]['network']);
+				$input_errors[] = $changedesc_prefix . sprintf(gettext('gateway is disabled, cannot enable route to %s'), $this_route_config['network']);
 			} else {
-				unset($a_routes[$_POST['id']]['disabled']);
-				$changedesc = $changedesc_prefix . sprintf(gettext('enabled route to %s'), $a_routes[$_POST['id']]['network']);
+				config_del_path("staticroutes/route/{$_POST['id']}/disabled");
+				$changedesc = $changedesc_prefix . sprintf(gettext('enabled route to %s'), $this_route_config['network']);
 			}
 		} else {
 			delete_static_route($_POST['id']);
-			$a_routes[$_POST['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . sprintf(gettext('disabled route to %s'), $a_routes[$_POST['id']]['network']);
+			config_set_path("staticroutes/route/{$_POST['id']}/disabled", true);
+			$changedesc = $changedesc_prefix . sprintf(gettext('disabled route to %s'), $this_route_config['network']);
 		}
 
 		if ($do_update_config) {
@@ -134,6 +133,7 @@ if($_POST['save']) {
 	}
 	/* move selected routes before this route */
 	if (isset($movebtn) && is_array($_POST['route']) && count($_POST['route'])) {
+		$a_routes = config_get_path('staticroutes/route', []);
 		$a_routes_new = array();
 
 		/* copy all routes < $movebtn and not selected */
@@ -165,7 +165,7 @@ if($_POST['save']) {
 			}
 		}
 		if (count($a_routes_new) > 0) {
-			$a_routes = $a_routes_new;
+			config_set_path('staticroutes/route', $a_routes_new);
 		}
 
 		if (write_config(gettext('Saved static routes configuration.'))) {
@@ -217,20 +217,20 @@ display_top_tabs($tab_array);
 				</thead>
 				<tbody>
 <?php
-foreach ($a_routes as $i => $route):
+foreach (config_get_path('staticroutes/route', []) as $i => $route):
 	if (isset($a_gateways[$route['gateway']]['inactive'])) {
-		$icon = 'fa-times-circle-o';
+		$icon = 'fa-regular fa-circle-xmark';
 		$title = gettext('Route inactive, gateway interface is missing');
 	} elseif (isset($route['disabled'])) {
-		$icon = 'fa-ban';
+		$icon = 'fa-solid fa-ban';
 		$title = gettext('Route disabled');
 	} else {
-		$icon = 'fa-check-circle-o';
+		$icon = 'fa-regular fa-circle-check';
 		$title = gettext('Route enabled');
 	}
 ?>
-				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
+				<tr<?=($icon != 'fa-regular fa-circle-check')? ' class="disabled"' : ''?>>
+					<td title="<?=$title?>"><i class="<?=$icon?>"></i></td>
 					<td>
 						<?=strtolower($route['network'])?>
 					</td>
@@ -244,19 +244,19 @@ foreach ($a_routes as $i => $route):
 						<?=htmlspecialchars($route['descr'])?>
 					</td>
 					<td>
-						<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit route')?>"></a>
+						<a href="system_routes_edit.php?id=<?=$i?>" class="fa-solid fa-pencil" title="<?=gettext('Edit route')?>"></a>
 
-						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy route')?>"></a>
+						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa-regular fa-clone" title="<?=gettext('Copy route')?>"></a>
 
 				<?php if (isset($route['disabled'])) {
 				?>
-						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable route')?>" usepost></a>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa-regular fa-square-check" title="<?=gettext('Enable route')?>" usepost></a>
 				<?php } else {
 				?>
-						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable route')?>" usepost></a>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa-solid fa-ban" title="<?=gettext('Disable route')?>" usepost></a>
 				<?php }
 				?>
-						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete route')?>" usepost></a>
+						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa-solid fa-trash-can" title="<?=gettext('Delete route')?>" usepost></a>
 
 					</td>
 				</tr>
@@ -268,16 +268,16 @@ foreach ($a_routes as $i => $route):
 
 <nav class="action-buttons">
 	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
 <div class="infoblock">
 <?php
 print_info_box(
-	sprintf(gettext('%1$s Route is inactive, gateway interface is missing'), '<br /><strong><i class="fa fa-times-circle-o"></i></strong>') .
-	sprintf(gettext('%1$s Route disabled'), '<br /><strong><i class="fa fa-ban"></i></strong>') .
-	sprintf(gettext('%1$s Route enabled'), '<br /><strong><i class="fa fa-check-circle-o"></i></strong>')
+	sprintf(gettext('%1$s Route is inactive, gateway interface is missing'), '<br /><strong><i class="fa-regular fa-circle-xmark"></i></strong>') .
+	sprintf(gettext('%1$s Route disabled'), '<br /><strong><i class="fa-solid fa-ban"></i></strong>') .
+	sprintf(gettext('%1$s Route enabled'), '<br /><strong><i class="fa-regular fa-circle-check"></i></strong>')
 	);
 ?>
 </div>

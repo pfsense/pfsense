@@ -3,7 +3,7 @@
 # openvpn_connect_async.php
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2021-2023 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2021-2024 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ foreach ($result as $server) {
 			$name = isset($name) ? trim($name) : NULL;
 			$port = isset($port) ? trim($port) : NULL;
 			if ( !empty($name) && !empty($port) ) {
-				$output .= "ovpns{$vpnid}_{$name}_{$port}|";
+				$output .= openvpn_name('server', $server) . "_{$name}_{$port}|";
 			}
 		}
 	}

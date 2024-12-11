@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
  * Copyright (c) 2015-2016 Electric Sheep Fencing
- * Copyright (c) 2015-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -27,6 +27,7 @@
 
 /* include all configuration functions */
 require_once("config.inc");
+require_once("services_dhcp.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
@@ -130,7 +131,8 @@ function test_unbound_config($unboundcfg, &$output) {
 	}
 
 	$rv = 0;
-	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
+	// set the working directory for unbound-checkconf; see https://redmine.pfsense.org/issues/15723
+	exec("cd {$cfgdir} && /usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
 	    $output, $rv);
 
 	if ($rv == 0) {
@@ -188,10 +190,10 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
 	global $g, $nooutifs;
 	if (is_null($unboundcfg)) {
-		$unboundcfg = config_get_path('unbound');
+		$unboundcfg = config_get_path('unbound', []);
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
 	}
 
@@ -260,7 +262,7 @@ EOF;
 	$tlsport = is_port($unboundcfg['tlsport']) ? $unboundcfg['tlsport'] : "853";
 	$bindintcfg = "";
 	$bindints = array();
-	$active_interfaces = explode(",", $unboundcfg['active_interface']);
+	$active_interfaces = array_filter(explode(",", $unboundcfg['active_interface']));
 	if (empty($unboundcfg['active_interface']) || in_array("all", $active_interfaces, true)) {
 		$bindintcfg .= "interface-automatic: yes" . PHP_EOL;
 		if (isset($unboundcfg['enablessl'])) {
@@ -307,6 +309,7 @@ EOF;
 
 		// Lookup CA and Server Cert
 		$cert = lookup_cert($unboundcfg['sslcertref']);
+		$cert = $cert['item'];
 		$ca = ca_chain($cert);
 		$cert_chain = base64_decode($cert['crt']);
 		if (!empty($ca)) {
@@ -327,7 +330,7 @@ EOF;
 	// Determine interfaces to run on
 	$outgoingints = "";
 	if (!empty($unboundcfg['outgoing_interface'])) {
-		$outgoing_interfaces = explode(",", $unboundcfg['outgoing_interface']);
+		$outgoing_interfaces = array_filter(explode(",", $unboundcfg['outgoing_interface']));
 		foreach ($outgoing_interfaces as $outif) {
 			$ifinfo = get_interface_info($outif);
 			if ($ifinfo && (($ifinfo['status'] != 'up') || !$ifinfo['enable'])) {
@@ -383,7 +386,7 @@ EOF;
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
 	if (empty($unboundcfg['edns_buffer_size']) || ($unboundcfg['edns_buffer_size'] == 'auto')) {
-		$edns_buffer_size = unbound_auto_ednsbufsize();
+		$edns_buffer_size = unbound_auto_ednsbufsize($active_interfaces);
 	} else {
 		$edns_buffer_size = $unboundcfg['edns_buffer_size'];
 	}
@@ -441,7 +444,7 @@ EOD;
 			foreach ($dnsservers as $dnsserver) {
 				$fwdport = "";
 				$fwdhost = "";
-				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
+				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8") && !ip_in_subnet($dnsserver, "::1/128")) {
 					if (isset($unboundcfg['forward_tls_upstream'])) {
 						$fwdport = "@853";
 						if (array_key_exists($dnsserver, $dns_hostnames)) {
@@ -662,6 +665,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 					unlink_if_exists($root_key_file);
 				}
 			}
+			// When there are conectivity issues, it may take ~10 seconds for the command to time out
 			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {
@@ -679,7 +683,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 	global $g;
 
-	$domains = config_get_path('unbound/domainoverrides');
+	$domains = config_get_path('unbound/domainoverrides', []);
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
@@ -777,7 +781,7 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 function unbound_add_host_entries($cfgsubdir = "") {
 	global $g, $nooutifs;
 
-	$hosts = system_hosts_entries(config_get_path('unbound'));
+	$hosts = system_hosts_entries(config_get_path('unbound', []));
 
 	/* Pass 1: Build domain list and hosts inside domains */
 	$hosts_by_domain = array();
@@ -961,7 +965,6 @@ function unbound_acls_config($cfgsubdir = "") {
 			}
 		}
 		// OpenVPN CSO
-		init_config_arr(array('openvpn', 'openvpn-csc'));
 		foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 			if (is_array($ovpnent) && !isset($ovpnent['disable'])) {
 				if (!empty($ovpnent['tunnel_network'])) {
@@ -1059,36 +1062,49 @@ function unbound_local_zone_types() {
 	);
 }
 
-// Autoconfig EDNS buffer size
-function unbound_auto_ednsbufsize() {
-	$active_ipv6_inf = false;
-	if (config_get_path('unbound/active_interface') != 'all') {
-		$active_interfaces = explode(",", config_get_path('unbound/active_interface'));
-	} else {
+/**
+ * Automatically determine the response's EDNS buffer size.
+ *
+ * @param array $active_interfaces A list of friendly interface names (e.g. 'wan') to use
+ *                                 instead of the currently configured active interfaces.
+ *
+ * @return int The EDNS buffer size.
+ */
+function unbound_auto_ednsbufsize($active_interfaces = null) {
+	if (!is_array($active_interfaces)) {
+		$active_interfaces = array_filter(explode(",", config_get_path('unbound/active_interface')));
+	}
+	if (empty($active_interfaces) || in_array('all', $active_interfaces)) {
 		$active_interfaces = get_configured_interface_list();
 	}
 
-	$min_mtu = PHP_INT_MAX;
-	foreach ($active_interfaces as $ubif) {
-		$ubif_mtu = get_interface_mtu(get_real_interface($ubif));
-		if (get_interface_ipv6($ubif)) {
-			$active_ipv6_inf = true;
+	$active_ipv6_interface = false;
+	$interface_mtu_minimum = null;
+	foreach ($active_interfaces as $interface) {
+		$interface_mtu = get_interface_mtu(get_real_interface($interface));
+		if (empty($interface_mtu) || !is_numericint($interface_mtu)) {
+			continue;
 		}
-		if ($ubif_mtu < $min_mtu) {
-			$min_mtu = $ubif_mtu;
+
+		if ((!isset($interface_mtu_minimum)) || ($interface_mtu < $interface_mtu_minimum)) {
+			$interface_mtu_minimum = $interface_mtu;
+			if (!$active_ipv6_interface && get_interface_ipv6($interface)) {
+				$active_ipv6_interface = true;
+			}
 		}
 	}
 
-	// maximum IPv4 + UDP header = 68 bytes
-	$min_mtu = $min_mtu - 68;
+	/* Calculate the max buffer size based on the smallest interface MTU, and
+	 * account for the max IPv4 header size (60) plus the UDP header size (8). */
+	$buffer_size = isset($interface_mtu_minimum) ? ($interface_mtu_minimum - 68) : 0;
 
-	if (($min_mtu < 1232) && $active_ipv6_inf) {
-		$min_mtu = 1232;
-	} elseif ($min_mtu < 512) {
-		$min_mtu = 512;
+	// Default to the minimum recommended size based on the address family.
+	$buffer_size_minimum = $active_ipv6_interface ? 1232 : 512;
+	if ($buffer_size < $buffer_size_minimum) {
+		$buffer_size = $buffer_size_minimum;
 	}
 
-	return $min_mtu;
+	return $buffer_size;
 }
 
 ?>

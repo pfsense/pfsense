@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,27 +36,36 @@ $pgtitle = array(gettext("Interfaces"), gettext("Interface Groups"), gettext("Ed
 $pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
-init_config_arr(array('ifgroups', 'ifgroupentry'));
-$a_ifgroups = &$config['ifgroups']['ifgroupentry'];
-$id = $_REQUEST['id'];
-
-if (isset($id) && $a_ifgroups[$id]) {
-	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
-	$pconfig['members'] = $a_ifgroups[$id]['members'];
-	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
-}
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $interface_list = get_configured_interface_with_descr(true);
 $interface_list_disabled = get_configured_interface_with_descr(true);
-$ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
-$ifname_no_digit_text = gettext("The group name cannot start or end with a digit.");
-
 /* hide VTI interfaces, see https://redmine.pfsense.org/issues/11134 */
 foreach ($interface_list as $if => $ifdescr) {
 	if (substr(get_real_interface($if), 0, 5) == "ipsec") {
 		unset($interface_list[$if]);
 	}
 }
+
+$this_ifgroup_config = isset($id) ? config_get_path("ifgroups/ifgroupentry/{$id}") : null;
+if ($this_ifgroup_config) {
+	/* Cleanup invalid group members (Deleted interfaces, etc.)
+	 * https://redmine.pfsense.org/issues/15778 */
+	$validmembers = [];
+	foreach (explode(" ", array_get_path($this_ifgroup_config, 'members', "")) as $ifname) {
+		if (array_key_exists($ifname, $interface_list)) {
+			$validmembers[] = $ifname;
+		}
+	}
+	array_set_path($this_ifgroup_config, 'members', implode(" ", $validmembers));
+
+	$pconfig['ifname'] = $this_ifgroup_config['ifname'];
+	$pconfig['members'] = $this_ifgroup_config['members'];
+	$pconfig['descr'] = html_entity_decode($this_ifgroup_config['descr']);
+}
+
+$ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
+$ifname_no_digit_text = gettext("The group name cannot start or end with a digit.");
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -68,7 +77,13 @@ if ($_POST['save']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
-		foreach ($a_ifgroups as $groupid => $groupentry) {
+		/* Reserved name? Allow the reserved interface-network suffix since it is based on the interface name. */
+		if ((get_pf_reserved($_POST['ifname'], false) && !str_ends_with($_POST['ifname'], '__NETWORK')) ||
+		    (get_pf_reserved(strtoupper($_POST['ifname']), false) && !str_ends_with(strtoupper($_POST['ifname']), '__NETWORK'))) {
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $_POST['ifname']);
+		}
+
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $groupid => $groupentry) {
 			if ((!isset($id) || ($groupid != $id)) && ($groupentry['ifname'] == $_POST['ifname'])) {
 				$input_errors[] = gettext("Group name already exists!");
 			}
@@ -106,10 +121,23 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("An alias with this name already exists.");
 			}
 		}
+
 	}
 
-	if (isset($_POST['members'])) {
-		$members = implode(" ", $_POST['members']);
+	/* Ensure submitted interfaces exist in the configuration, filter
+	 * invalid entries from selected interface list.
+	 * https://redmine.pfsense.org/issues/15778 */
+	$validmembers = [];
+	foreach ($_POST['members'] as $ifname) {
+		if (array_key_exists($ifname, $interface_list)) {
+			$validmembers[] = $ifname;
+		} else {
+			$input_errors[] = gettext("Submission contained an invalid interface");
+		}
+	}
+
+	if (!empty($validmembers)) {
+		$members = implode(" ", $validmembers);
 	} else {
 		$members = "";
 	}
@@ -120,67 +148,73 @@ if ($_POST['save']) {
 		$ifgroupentry['descr'] = $_POST['descr'];
 
 		// Edit group name
-		if (isset($id) && $a_ifgroups[$id] && $_POST['ifname'] != $a_ifgroups[$id]['ifname']) {
-			if (!empty($config['filter']) && is_array($config['filter']['rule'])) {
-				foreach ($config['filter']['rule'] as $ridx => $rule) {
+		if ($this_ifgroup_config && $_POST['ifname'] != $this_ifgroup_config['ifname']) {
+			$filter_rule_config = config_get_path('filter/rule');
+			if (is_array($filter_rule_config)) {
+				foreach ($filter_rule_config as &$rule) {
 					if (isset($rule['floating'])) {
-						$rule_ifs = explode(",", $rule['interface']);
+						$rule_ifs = array_filter(explode(",", $rule['interface']));
 						$rule_changed = false;
 						foreach ($rule_ifs as $rule_if_id => $rule_if) {
-							if ($rule_if == $a_ifgroups[$id]['ifname']) {
+							if ($rule_if == $this_ifgroup_config['ifname']) {
 								$rule_ifs[$rule_if_id] = $_POST['ifname'];
 								$rule_changed = true;
 							}
 						}
 						if ($rule_changed) {
-							$config['filter']['rule'][$ridx]['interface'] = implode(",", $rule_ifs);
+							$rule['interface'] = implode(",", $rule_ifs);
 						}
 					} else {
-						if ($rule['interface'] == $a_ifgroups[$id]['ifname']) {
-							$config['filter']['rule'][$ridx]['interface'] = $_POST['ifname'];
+						if ($rule['interface'] == $this_ifgroup_config['ifname']) {
+							$rule['interface'] = $_POST['ifname'];
 						}
 					}
 				}
+				unset($rule);
+				config_set_path('filter/rule', $filter_rule_config);
 			}
-			if (!empty($config['nat']) && is_array($config['nat']['rule'])) {
-				foreach ($config['nat']['rule'] as $ridx => $rule) {
-					if ($rule['interface'] == $a_ifgroups[$id]['ifname']) {
-						$config['nat']['rule'][$ridx]['interface'] = $_POST['ifname'];
+			$nat_rule_config = config_get_path('nat/rule');
+			if (is_array($nat_rule_config)) {
+				foreach ($nat_rule_config as $ridx => &$rule) {
+					if ($rule['interface'] == $this_ifgroup_config['ifname']) {
+						$rule['interface'] = $_POST['ifname'];
 					}
 				}
+				unset($rule);
+				config_set_path('nat/rule', $nat_rule_config);
 			}
-			$omembers = explode(" ", $a_ifgroups[$id]['members']);
+			$omembers = explode(" ", $this_ifgroup_config['members']);
 			if (count($omembers) > 0) {
 				foreach ($omembers as $ifs) {
 					$realif = get_real_interface($ifs);
 					if ($realif) {
-						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+						mwexec("/sbin/ifconfig {$realif} -group " . $this_ifgroup_config['ifname']);
 					}
 				}
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
-			$a_ifgroups[$id] = $ifgroupentry;
+			$this_ifgroup_config = $ifgroupentry;
 
 		// Edit old group
-		} else if (isset($id) && $a_ifgroups[$id]) {
-			$omembers = explode(" ", $a_ifgroups[$id]['members']);
+		} else if ($this_ifgroup_config) {
+			$omembers = explode(" ", $this_ifgroup_config['members']);
 			$nmembers = explode(" ", $members);
 			$delmembers = array_diff($omembers, $nmembers);
 			if (count($delmembers) > 0) {
 				foreach ($delmembers as $ifs) {
 					$realif = get_real_interface($ifs);
 					if ($realif) {
-						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+						mwexec("/sbin/ifconfig {$realif} -group " . $this_ifgroup_config['ifname']);
 					}
 				}
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
-			$a_ifgroups[$id] = $ifgroupentry;
+			config_set_path("ifgroups/ifgroupentry/{$id}", $ifgroupentry);
 
 		// Create new group
 		} else {
 			$ifgroupentry['ifname'] = $_POST['ifname'];
-			$a_ifgroups[] = $ifgroupentry;
+			config_set_path('ifgroups/ifgroupentry/', $ifgroupentry);
 		}
 
 		write_config("Interface Group added");
@@ -234,7 +268,7 @@ $section->addInput(new Form_Select(
 	'Multi-WAN typically relies. %1$sMore Information%2$s',
 	'<a href="https://docs.netgate.com/pfsense/en/latest/interfaces/groups.html">', '</a>');
 
-if (isset($id) && $a_ifgroups[$id]) {
+if ($this_ifgroup_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		'id',

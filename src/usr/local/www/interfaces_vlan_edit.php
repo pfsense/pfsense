@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,9 +35,6 @@
 require_once("config.lib.inc");
 require_once("guiconfig.inc");
 
-init_config_arr(array('vlans', 'vlan'));
-$a_vlans = config_get_path('vlans/vlan', []);
-
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
 $portlist = array_merge($portlist, $lagglist);
@@ -53,13 +50,11 @@ foreach ($lagglist as $lagg) {
 
 /* Do not allow OpenVPN TUN interfaces to be used for QinQ
  * https://redmine.pfsense.org/issues/11675 */
-init_config_arr(array('openvpn', 'openvpn-server'));
-init_config_arr(array('openvpn', 'openvpn-client'));
 foreach ($portlist as $portname => $port) {
 	if (strstr($portname, "ovpn")) {
 		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
 		$type = ($m[1] == 'c') ? 'client' : 'server';
-		foreach (config_get_path("openvpn/openvpn-{$type}") as $ovpn) {
+		foreach (config_get_path("openvpn/openvpn-{$type}", []) as $ovpn) {
 			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
 				unset($portlist[$portname]);
 			}
@@ -71,18 +66,33 @@ if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($id) && $a_vlans[$id]) {
-	$pconfig['if'] = $a_vlans[$id]['if'];
-	$pconfig['vlanif'] = $a_vlans[$id]['vlanif'];
-	$pconfig['tag'] = $a_vlans[$id]['tag'];
-	$pconfig['pcp'] = $a_vlans[$id]['pcp'];
-	$pconfig['descr'] = $a_vlans[$id]['descr'];
+$this_vlan_config = isset($id) ? config_get_path("vlans/vlan/{$id}") : null;
+if ($this_vlan_config) {
+	$pconfig['if'] = $this_vlan_config['if'];
+	$pconfig['vlanif'] = $this_vlan_config['vlanif'];
+	$pconfig['tag'] = $this_vlan_config['tag'];
+	$pconfig['pcp'] = $this_vlan_config['pcp'];
+	$pconfig['descr'] = $this_vlan_config['descr'];
 }
 
 if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	/*
+	 * Check user privileges to test if the user is allowed to make changes.
+	 * Otherwise users can end up in an inconsistent state where some changes are
+	 * performed and others denied. See https://redmine.pfsense.org/issues/15282
+	 */
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+	phpsession_end();
+
+	if ($read_only) {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "if tag");
@@ -102,14 +112,14 @@ if ($_POST['save']) {
 	}
 
 	if (isset($id)) {
-		if ($_POST['tag'] && $_POST['tag'] != $a_vlans[$id]['tag']) {
-			if (!empty($a_vlans[$id]['vlanif']) && convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']) != NULL) {
+		if ($_POST['tag'] && $_POST['tag'] != $this_vlan_config['tag']) {
+			if (!empty($this_vlan_config['vlanif']) && convert_real_interface_to_friendly_interface_name($this_vlan_config['vlanif']) != NULL) {
 				$input_errors[] = gettext("The VLAN tag cannot be changed while the interface is assigned.");
 			}
 		}
 	}
-	foreach ($a_vlans as $vlan) {
-		if (isset($id) && ($a_vlans[$id]) && ($a_vlans[$id] === $vlan)) {
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
+		if ($this_vlan_config && ($this_vlan_config === $vlan)) {
 			continue;
 		}
 
@@ -126,15 +136,15 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		if (isset($id) && $a_vlans[$id]) {
-			if (($a_vlans[$id]['if'] != $_POST['if']) || ($a_vlans[$id]['tag'] != $_POST['tag'])) {
-				if (!empty($a_vlans[$id]['vlanif'])) {
-					$confif = convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']);
+		if ($this_vlan_config) {
+			if (($this_vlan_config['if'] != $_POST['if']) || ($this_vlan_config['tag'] != $_POST['tag'])) {
+				if (!empty($this_vlan_config['vlanif'])) {
+					$confif = convert_real_interface_to_friendly_interface_name($this_vlan_config['vlanif']);
 					// Destroy previous vlan
-					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
+					pfSense_interface_destroy($this_vlan_config['vlanif']);
 				} else {
-					pfSense_interface_destroy(vlan_interface($a_vlans[id]));
-					$confif = convert_real_interface_to_friendly_interface_name(vlan_interface($a_vlans[$id]));
+					pfSense_interface_destroy(vlan_interface($this_vlan_config));
+					$confif = convert_real_interface_to_friendly_interface_name(vlan_interface($this_vlan_config));
 				}
 				if ($confif != "") {
 					config_set_path("interfaces/{$confif}/if", vlan_interface($_POST));
@@ -152,13 +162,12 @@ if ($_POST['save']) {
 			pfSense_interface_destroy($vlan['vlanif']);
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
-			if (isset($id) && $a_vlans[$id]) {
-				$a_vlans[$id] = $vlan;
+			if ($this_vlan_config) {
+				config_set_path("vlans/vlan/{$id}", $vlan);
 			} else {
-				$a_vlans[] = $vlan;
+				config_set_path('vlans/vlan/', $vlan);
 			}
 
-			config_set_path('vlans/vlan', $a_vlans);
 			write_config("VLAN interface added");
 
 			if ($confif != "") {
@@ -236,7 +245,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['vlanif']
 ));
 
-if (isset($id) && $a_vlans[$id]) {
+if ($this_vlan_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		'id',

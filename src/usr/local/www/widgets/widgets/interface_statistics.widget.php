@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org>
  * Copyright (c) 2004-2005 Jonathan Watt <jwatt@jwatt.org>
@@ -33,6 +33,27 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
+$orientations = array(
+	'if_columns' => gettext('Each interface in a column'),
+	'if_rows' => gettext('Each interface in a row')
+);
+
 $ifdescrs = get_configured_interface_with_descr();
 $ifstats = array(
 	'inpkts' => gettext('Packets In'),
@@ -53,7 +74,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	$an_interface_is_displayed = false; // decide if at least 1 interface is displayed (i.e. not down)
 	$an_ifstat_is_displayed = false;
 
-	if (isset($user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"])) {
+	if (isset($user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"]) &&
+	    array_key_exists($user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"], $orientations)) {
 		$orientation_type = $user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"];
 	} else {
 		$orientation_type = "if_columns";
@@ -160,7 +182,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 } else if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
 
-	if (isset($_POST['orientation_type'])) {
+	if (isset($_POST['orientation_type']) &&
+	    array_key_exists($_POST['orientation_type'], $orientations)) {
 		$user_settings['widgets'][$_POST['widgetkey']]['orientation_type'] = $_POST['orientation_type'];
 	}
 
@@ -192,7 +215,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	header("Location: /index.php");
 }
 
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>
@@ -289,8 +312,8 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -336,7 +359,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 		ifstatObject.url = "/widgets/widgets/interface_statistics.widget.php";
 		ifstatObject.callback = interface_statistics_callback;
 		ifstatObject.parms = postdata;
-		ifstatObject.freq = 1;
+		ifstatObject.freq = 5;
 
 		// Register the AJAX object
 		register_ajax(ifstatObject);

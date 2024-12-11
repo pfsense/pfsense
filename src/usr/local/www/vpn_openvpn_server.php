@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -36,22 +36,13 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes, $openvpn_exit_notify_server;
 global $openvpn_sharedkey_warning;
+global $openvpn_prots;
 
-init_config_arr(array('openvpn', 'openvpn-server'));
-$a_server = &$config['openvpn']['openvpn-server'];
+$openvpn_all_data_ciphers = openvpn_get_cipherlist();
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-
-init_config_arr(array('crl'));
-$a_crl = &$config['crl'];
-
-foreach ($a_crl as $cid => $acrl) {
+foreach (config_get_path('crl', []) as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
-		unset ($a_crl[$cid]);
+		config_del_path("crl/{$cid}");
 	}
 }
 
@@ -61,38 +52,41 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+$this_server_config = isset($id) ? config_get_path("openvpn/openvpn-server/{$id}") : null;
+
 if (isset($_REQUEST['act'])) {
 	$act = $_REQUEST['act'];
 }
 
 $user_entry = getUserEntry($_SESSION['Username']);
+$user_entry = $user_entry['item'];
 $user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-server-advanced") || userHasPrivilege($user_entry, "page-all"));
 
-if (isset($id) && $a_server[$id]) {
-	$vpnid = $a_server[$id]['vpnid'];
+if ($this_server_config) {
+	$vpnid = $this_server_config['vpnid'];
 } else {
 	$vpnid = 0;
 }
 
 if ($_POST['act'] == "del") {
 
-	if (!isset($a_server[$id])) {
+	if (!isset($this_server_config)) {
 		pfSenseHeader("vpn_openvpn_server.php");
 		exit;
 	}
 
-	if (empty($a_server[$id])) {
+	if (empty($this_server_config)) {
 		$wc_msg = gettext('Deleted empty OpenVPN server');
-	} elseif (openvpn_inuse($a_server[$id]['vpnid'], 'server')) {
+	} elseif (openvpn_inuse($this_server_config['vpnid'], 'server')) {
 		$input_errors[] = gettext("Cannot delete an OpenVPN instance while the interface is assigned. Remove the interface assignment first.");
-	} elseif (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
+	} elseif (!$user_can_edit_advanced && !empty($this_server_config['custom_options'])) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
 	} else {
-		openvpn_delete('server', $a_server[$id]);
-		$wc_msg = sprintf(gettext('Deleted OpenVPN server from %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($a_server[$id]['interface']), $a_server[$id]['local_port'], $a_server[$id]['description']);
+		openvpn_delete('server', $this_server_config);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN server from %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($this_server_config['interface']), $this_server_config['local_port'], $this_server_config['description']);
 	}
 	if (!empty($wc_msg)) {
-		unset($a_server[$id]);
+		config_del_path("openvpn/openvpn-server/{$id}");
 		write_config($wc_msg);
 		$savemsg = gettext("Server successfully deleted.");
 		services_unbound_configure(false);
@@ -123,95 +117,94 @@ if ($act == "new") {
 
 if (($act == "edit") || ($act == "dup")) {
 
-	if (isset($id) && $a_server[$id]) {
-		$pconfig['disable'] = isset($a_server[$id]['disable']);
-		$pconfig['mode'] = $a_server[$id]['mode'];
-		$pconfig['protocol'] = $a_server[$id]['protocol'];
-		$pconfig['authmode'] = $a_server[$id]['authmode'];
-		if (isset($a_server[$id]['data_ciphers'])) {
-			$pconfig['data_ciphers'] = $a_server[$id]['data_ciphers'];
+	if ($this_server_config) {
+		$pconfig['disable'] = isset($this_server_config['disable']);
+		$pconfig['mode'] = $this_server_config['mode'];
+		$pconfig['protocol'] = $this_server_config['protocol'];
+		$pconfig['authmode'] = $this_server_config['authmode'];
+		if (isset($this_server_config['data_ciphers'])) {
+			$pconfig['data_ciphers'] = $this_server_config['data_ciphers'];
 		} else {
 			$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
 		}
-		$pconfig['dev_mode'] = $a_server[$id]['dev_mode'];
-		$pconfig['interface'] = $a_server[$id]['interface'];
+		$pconfig['dev_mode'] = $this_server_config['dev_mode'];
+		$pconfig['interface'] = $this_server_config['interface'];
 
-		if (!empty($a_server[$id]['ipaddr'])) {
-			$pconfig['interface'] = $pconfig['interface'] . '|' . $a_server[$id]['ipaddr'];
+		if (!empty($this_server_config['ipaddr'])) {
+			$pconfig['interface'] = $pconfig['interface'] . '|' . $this_server_config['ipaddr'];
 		}
 
-		$pconfig['local_port'] = $a_server[$id]['local_port'];
-		$pconfig['description'] = $a_server[$id]['description'];
-		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
+		$pconfig['local_port'] = $this_server_config['local_port'];
+		$pconfig['description'] = $this_server_config['description'];
+		$pconfig['custom_options'] = $this_server_config['custom_options'];
 
 		if ($pconfig['mode'] != "p2p_shared_key") {
-			if ($a_server[$id]['tls']) {
+			if ($this_server_config['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
-				$pconfig['tls'] = base64_decode($a_server[$id]['tls']);
-				$pconfig['tls_type'] = $a_server[$id]['tls_type'];
-				$pconfig['tlsauth_keydir'] = $a_server[$id]['tlsauth_keydir'];
+				$pconfig['tls'] = base64_decode($this_server_config['tls']);
+				$pconfig['tls_type'] = $this_server_config['tls_type'];
+				$pconfig['tlsauth_keydir'] = $this_server_config['tlsauth_keydir'];
 			}
 
-			$pconfig['caref'] = $a_server[$id]['caref'];
-			$pconfig['crlref'] = $a_server[$id]['crlref'];
-			if (isset($a_server[$id]['ocspcheck'])) {
+			$pconfig['caref'] = $this_server_config['caref'];
+			$pconfig['crlref'] = $this_server_config['crlref'];
+			if (isset($this_server_config['ocspcheck'])) {
 				$pconfig['ocspcheck'] = "yes";
 			}
-			$pconfig['ocspurl'] = $a_server[$id]['ocspurl'];
-			$pconfig['certref'] = $a_server[$id]['certref'];
-			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
-			$pconfig['ecdh_curve'] = $a_server[$id]['ecdh_curve'];
-			if (isset($a_server[$id]['cert_depth'])) {
-				$pconfig['cert_depth'] = $a_server[$id]['cert_depth'];
+			$pconfig['ocspurl'] = $this_server_config['ocspurl'];
+			$pconfig['certref'] = $this_server_config['certref'];
+			$pconfig['dh_length'] = $this_server_config['dh_length'];
+			$pconfig['ecdh_curve'] = $this_server_config['ecdh_curve'];
+			if (isset($this_server_config['cert_depth'])) {
+				$pconfig['cert_depth'] = $this_server_config['cert_depth'];
 			} else {
 				$pconfig['cert_depth'] = 1;
 			}
 			if ($pconfig['mode'] == "server_tls_user") {
-				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
+				$pconfig['strictusercn'] = $this_server_config['strictusercn'];
 			}
-			$pconfig['remote_cert_tls'] = isset($a_server[$id]['remote_cert_tls']);
+			$pconfig['remote_cert_tls'] = isset($this_server_config['remote_cert_tls']);
 		} else {
-			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
+			$pconfig['shared_key'] = base64_decode($this_server_config['shared_key']);
 		}
-		$pconfig['data_ciphers_fallback'] = $a_server[$id]['data_ciphers_fallback'];
-		$pconfig['digest'] = !empty($a_server[$id]['digest']) ? $a_server[$id]['digest'] : "SHA256";
-		$pconfig['engine'] = $a_server[$id]['engine'];
+		$pconfig['data_ciphers_fallback'] = $this_server_config['data_ciphers_fallback'];
+		$pconfig['digest'] = !empty($this_server_config['digest']) ? $this_server_config['digest'] : "SHA256";
 
-		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
-		$pconfig['tunnel_networkv6'] = $a_server[$id]['tunnel_networkv6'];
+		$pconfig['tunnel_network'] = $this_server_config['tunnel_network'];
+		$pconfig['tunnel_networkv6'] = $this_server_config['tunnel_networkv6'];
 
-		$pconfig['remote_network'] = $a_server[$id]['remote_network'];
-		$pconfig['remote_networkv6'] = $a_server[$id]['remote_networkv6'];
-		$pconfig['gwredir'] = $a_server[$id]['gwredir'];
-		$pconfig['gwredir6'] = $a_server[$id]['gwredir6'];
-		$pconfig['local_network'] = $a_server[$id]['local_network'];
-		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
-		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
-		$pconfig['connlimit'] = $a_server[$id]['connlimit'];
-		$pconfig['allow_compression'] = $a_server[$id]['allow_compression'];
-		$pconfig['compression'] = $a_server[$id]['compression'];
-		$pconfig['compression_push'] = $a_server[$id]['compression_push'];
-		$pconfig['passtos'] = $a_server[$id]['passtos'];
-		$pconfig['client2client'] = $a_server[$id]['client2client'];
+		$pconfig['remote_network'] = $this_server_config['remote_network'];
+		$pconfig['remote_networkv6'] = $this_server_config['remote_networkv6'];
+		$pconfig['gwredir'] = $this_server_config['gwredir'];
+		$pconfig['gwredir6'] = $this_server_config['gwredir6'];
+		$pconfig['local_network'] = $this_server_config['local_network'];
+		$pconfig['local_networkv6'] = $this_server_config['local_networkv6'];
+		$pconfig['maxclients'] = $this_server_config['maxclients'];
+		$pconfig['connlimit'] = $this_server_config['connlimit'];
+		$pconfig['allow_compression'] = $this_server_config['allow_compression'];
+		$pconfig['compression'] = $this_server_config['compression'];
+		$pconfig['compression_push'] = $this_server_config['compression_push'];
+		$pconfig['passtos'] = $this_server_config['passtos'];
+		$pconfig['client2client'] = $this_server_config['client2client'];
 
-		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
-		$pconfig['topology'] = $a_server[$id]['topology'];
+		$pconfig['dynamic_ip'] = $this_server_config['dynamic_ip'];
+		$pconfig['topology'] = $this_server_config['topology'];
 
-		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
-		$pconfig['serverbridge_interface'] = $a_server[$id]['serverbridge_interface'];
-		$pconfig['serverbridge_routegateway'] = $a_server[$id]['serverbridge_routegateway'];
-		$pconfig['serverbridge_dhcp_start'] = $a_server[$id]['serverbridge_dhcp_start'];
-		$pconfig['serverbridge_dhcp_end'] = $a_server[$id]['serverbridge_dhcp_end'];
+		$pconfig['serverbridge_dhcp'] = $this_server_config['serverbridge_dhcp'];
+		$pconfig['serverbridge_interface'] = $this_server_config['serverbridge_interface'];
+		$pconfig['serverbridge_routegateway'] = $this_server_config['serverbridge_routegateway'];
+		$pconfig['serverbridge_dhcp_start'] = $this_server_config['serverbridge_dhcp_start'];
+		$pconfig['serverbridge_dhcp_end'] = $this_server_config['serverbridge_dhcp_end'];
 
-		$pconfig['dns_domain'] = $a_server[$id]['dns_domain'];
+		$pconfig['dns_domain'] = $this_server_config['dns_domain'];
 		if ($pconfig['dns_domain']) {
 			$pconfig['dns_domain_enable'] = true;
 		}
 
-		$pconfig['dns_server1'] = $a_server[$id]['dns_server1'];
-		$pconfig['dns_server2'] = $a_server[$id]['dns_server2'];
-		$pconfig['dns_server3'] = $a_server[$id]['dns_server3'];
-		$pconfig['dns_server4'] = $a_server[$id]['dns_server4'];
+		$pconfig['dns_server1'] = $this_server_config['dns_server1'];
+		$pconfig['dns_server2'] = $this_server_config['dns_server2'];
+		$pconfig['dns_server3'] = $this_server_config['dns_server3'];
+		$pconfig['dns_server4'] = $this_server_config['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
 		    $pconfig['dns_server2'] ||
@@ -220,28 +213,30 @@ if (($act == "edit") || ($act == "dup")) {
 			$pconfig['dns_server_enable'] = true;
 		}
 
-		$pconfig['ntp_server1'] = $a_server[$id]['ntp_server1'];
-		$pconfig['ntp_server2'] = $a_server[$id]['ntp_server2'];
+		$pconfig['ntp_server1'] = $this_server_config['ntp_server1'];
+		$pconfig['ntp_server2'] = $this_server_config['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
 		    $pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
 		}
 
-		$pconfig['netbios_enable'] = $a_server[$id]['netbios_enable'];
-		$pconfig['netbios_ntype'] = $a_server[$id]['netbios_ntype'];
-		$pconfig['netbios_scope'] = $a_server[$id]['netbios_scope'];
+		$pconfig['netbios_enable'] = $this_server_config['netbios_enable'];
+		$pconfig['netbios_ntype'] = $this_server_config['netbios_ntype'];
+		$pconfig['netbios_scope'] = $this_server_config['netbios_scope'];
 
-		$pconfig['wins_server1'] = $a_server[$id]['wins_server1'];
-		$pconfig['wins_server2'] = $a_server[$id]['wins_server2'];
+		$pconfig['wins_server1'] = $this_server_config['wins_server1'];
+		$pconfig['wins_server2'] = $this_server_config['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
 		    $pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
 		}
 
-		$pconfig['nbdd_server1'] = $a_server[$id]['nbdd_server1'];
-		if ($pconfig['nbdd_server1']) {
+		$pconfig['nbdd_server1'] = $this_server_config['nbdd_server1'];
+		$pconfig['nbdd_server2'] = $this_server_config['nbdd_server2'];
+
+		if ($pconfig['nbdd_server1'] || $pconfig['nbdd_server2']) {
 			$pconfig['nbdd_server_enable'] = true;
 		}
 
@@ -249,36 +244,36 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
 
-		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
+		$pconfig['duplicate_cn'] = isset($this_server_config['duplicate_cn']);
 
-		if (isset($a_server[$id]['create_gw'])) {
-			$pconfig['create_gw'] = $a_server[$id]['create_gw'];
+		if (isset($this_server_config['create_gw'])) {
+			$pconfig['create_gw'] = $this_server_config['create_gw'];
 		} else {
 			$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
 		}
 
-		if (isset($a_server[$id]['verbosity_level'])) {
-			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
+		if (isset($this_server_config['verbosity_level'])) {
+			$pconfig['verbosity_level'] = $this_server_config['verbosity_level'];
 		} else {
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 		}
 
-		$pconfig['push_blockoutsidedns'] = $a_server[$id]['push_blockoutsidedns'];
-		$pconfig['username_as_common_name']  = ($a_server[$id]['username_as_common_name'] != 'disabled');
-		$pconfig['udp_fast_io'] = $a_server[$id]['udp_fast_io'];
-		$pconfig['exit_notify'] = $a_server[$id]['exit_notify'];
-		$pconfig['sndrcvbuf'] = $a_server[$id]['sndrcvbuf'];
-		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
+		$pconfig['push_blockoutsidedns'] = $this_server_config['push_blockoutsidedns'];
+		$pconfig['username_as_common_name']  = ($this_server_config['username_as_common_name'] != 'disabled');
+		$pconfig['udp_fast_io'] = $this_server_config['udp_fast_io'];
+		$pconfig['exit_notify'] = $this_server_config['exit_notify'];
+		$pconfig['sndrcvbuf'] = $this_server_config['sndrcvbuf'];
+		$pconfig['push_register_dns'] = $this_server_config['push_register_dns'];
 
-		$pconfig['ping_method'] = $a_server[$id]['ping_method'];
-		$pconfig['keepalive_interval'] = $a_server[$id]['keepalive_interval'];
-		$pconfig['keepalive_timeout'] = $a_server[$id]['keepalive_timeout'];
-		$pconfig['ping_seconds'] = $a_server[$id]['ping_seconds'];
-		$pconfig['ping_push'] = empty($a_server[$id]['ping_push']) ? '' : 'yes';
-		$pconfig['ping_action'] = $a_server[$id]['ping_action'];
-		$pconfig['ping_action_seconds'] = $a_server[$id]['ping_action_seconds'];
-		$pconfig['ping_action_push'] = empty($a_server[$id]['ping_action_push']) ? '' : 'yes';
-		$pconfig['inactive_seconds'] = $a_server[$id]['inactive_seconds'] ?: 0;
+		$pconfig['ping_method'] = $this_server_config['ping_method'];
+		$pconfig['keepalive_interval'] = $this_server_config['keepalive_interval'];
+		$pconfig['keepalive_timeout'] = $this_server_config['keepalive_timeout'];
+		$pconfig['ping_seconds'] = $this_server_config['ping_seconds'];
+		$pconfig['ping_push'] = empty($this_server_config['ping_push']) ? '' : 'yes';
+		$pconfig['ping_action'] = $this_server_config['ping_action'];
+		$pconfig['ping_action_seconds'] = $this_server_config['ping_action_seconds'];
+		$pconfig['ping_action_push'] = empty($this_server_config['ping_action_push']) ? '' : 'yes';
+		$pconfig['inactive_seconds'] = $this_server_config['inactive_seconds'] ?: 0;
 	}
 }
 
@@ -293,8 +288,8 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($id) && $a_server[$id]) {
-		$vpnid = $a_server[$id]['vpnid'];
+	if ($this_server_config) {
+		$vpnid = $this_server_config['vpnid'];
 	} else {
 		$vpnid = 0;
 	}
@@ -304,12 +299,12 @@ if ($_POST['save']) {
 	}
 
 	if (isset($pconfig['custom_options']) &&
-	    ($pconfig['custom_options'] != $a_server[$id]['custom_options']) &&
+	    ($pconfig['custom_options'] != $this_server_config['custom_options']) &&
 	    !$user_can_edit_advanced) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
-	if (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
-		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
+	if (!$user_can_edit_advanced && !empty($this_server_config['custom_options'])) {
+		$pconfig['custom_options'] = $this_server_config['custom_options'];
 	}
 
 	if (!empty($pconfig['mode']) &&
@@ -337,7 +332,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The selected ECDH Curve is not valid.");
 	}
 
-	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
+	$cipher_validation_list = array_keys($openvpn_all_data_ciphers);
 	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
 		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
 	}
@@ -361,11 +356,6 @@ if ($_POST['save']) {
 	if (!empty($pconfig['digest']) &&
 	    !array_key_exists($pconfig['digest'], openvpn_get_digestlist())) {
 		$input_errors[] = gettext("The selected Auth Digest Algorithm is not valid.");
-	}
-
-	if (!empty($pconfig['engine']) &&
-	    !array_key_exists($pconfig['engine'], openvpn_get_engines())) {
-		$input_errors[] = gettext("The selected Hardware Crypto engine is not valid.");
 	}
 
 	if (!empty($pconfig['cert_depth']) &&
@@ -441,8 +431,8 @@ if ($_POST['save']) {
 	}
 
 	if (!empty($pconfig['tunnel_network']) &&
-	    (!isset($a_server[$id]) ||
-	    ($a_server[$id]['tunnel_network'] != $pconfig['tunnel_network'])) &&
+	    (!isset($this_server_config) ||
+	    ($this_server_config['tunnel_network'] != $pconfig['tunnel_network'])) &&
 	    openvpn_is_tunnel_network_in_use($pconfig['tunnel_network'])) {
 		$input_errors[] = gettext("The submitted IPv4 Tunnel Network is already in use.");
 	}
@@ -452,8 +442,8 @@ if ($_POST['save']) {
 	}
 
 	if (!empty($pconfig['tunnel_networkv6']) &&
-	    (!isset($a_server[$id]) ||
-	    ($a_server[$id]['tunnel_networkv6'] != $pconfig['tunnel_networkv6'])) &&
+	    (!isset($this_server_config) ||
+	    ($this_server_config['tunnel_networkv6'] != $pconfig['tunnel_networkv6'])) &&
 	    openvpn_is_tunnel_network_in_use($pconfig['tunnel_networkv6'])) {
 		$input_errors[] = gettext("The submitted IPv6 Tunnel Network is already in use.");
 	}
@@ -557,6 +547,9 @@ if ($_POST['save']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
+			if (!empty($pconfig['nbdd_server2']) && !is_ipaddr(trim($pconfig['nbdd_server2']))) {
+				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #2' must contain a valid IP address");
+			}
 		}
 
 		if (!empty($pconfig['netbios_ntype']) &&
@@ -599,8 +592,10 @@ if ($_POST['save']) {
 		$reqdfieldsn = array(gettext('Shared key'));
 	}
 
-	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['data_ciphers_fallback'], "GCM")) {
-		$input_errors[] = gettext("GCM Encryption Algorithms cannot be used with Shared Key mode.");
+	if (($pconfig['mode'] == "p2p_shared_key") &&
+	    (strstr($pconfig['data_ciphers_fallback'], "GCM") ||
+	    strstr($pconfig['data_ciphers_fallback'], "CHACHA"))) {
+		$input_errors[] = gettext("AEAD Encryption Algorithms (GCM, CHACHA) cannot be used with Shared Key mode.");
 	}
 
 	if ($pconfig['dev_mode'] == "tap") {
@@ -690,13 +685,13 @@ if ($_POST['save']) {
 
 		$server = array();
 
-		if (isset($id) && $a_server[$id] &&
-		    $pconfig['dev_mode'] <> $a_server[$id]['dev_mode']) {
+		if ($this_server_config &&
+		    ($pconfig['dev_mode'] != $this_server_config['dev_mode'])) {
 			/*
 			 * delete old interface so a new TUN or TAP interface
 			 * can be created.
 			 */
-			openvpn_delete('server', $a_server[$id]);
+			openvpn_delete('server', $this_server_config);
 		}
 
 		if ($vpnid) {
@@ -748,9 +743,7 @@ if ($_POST['save']) {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
 
-		$server['data_ciphers_fallback'] = $pconfig['data_ciphers_fallback'];
 		$server['digest'] = $pconfig['digest'];
-		$server['engine'] = $pconfig['engine'];
 
 		foreach (array('', 'v6') as $ntype) {
 			$server["tunnel_network{$ntype}"] = openvpn_tunnel_network_fix($pconfig["tunnel_network{$ntype}"]);
@@ -812,23 +805,23 @@ if ($_POST['save']) {
 		}
 
 		$server['netbios_enable'] = $pconfig['netbios_enable'];
-		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
-		$server['netbios_scope'] = $pconfig['netbios_scope'];
-
-		$server['create_gw'] = $pconfig['create_gw'];
-		$server['verbosity_level'] = $pconfig['verbosity_level'];
-
 		if ($pconfig['netbios_enable']) {
+			$server['netbios_ntype'] = $pconfig['netbios_ntype'];
+			$server['netbios_scope'] = $pconfig['netbios_scope'];
 
 			if ($pconfig['wins_server_enable']) {
 				$server['wins_server1'] = $pconfig['wins_server1'];
 				$server['wins_server2'] = $pconfig['wins_server2'];
 			}
 
-			if ($pconfig['dns_server_enable']) {
+			if ($pconfig['nbdd_server_enable']) {
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
+				$server['nbdd_server2'] = $pconfig['nbdd_server2'];
 			}
 		}
+
+		$server['create_gw'] = $pconfig['create_gw'];
+		$server['verbosity_level'] = $pconfig['verbosity_level'];
 
 		if ($_POST['duplicate_cn'] == "yes") {
 			$server['duplicate_cn'] = true;
@@ -837,6 +830,7 @@ if ($_POST['save']) {
 		if (!empty($pconfig['data_ciphers'])) {
 			$server['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 		}
+		$server['data_ciphers_fallback'] = $pconfig['data_ciphers_fallback'];
 
 		$server['ping_method'] = $pconfig['ping_method'];
 		$server['keepalive_interval'] = $pconfig['keepalive_interval'];
@@ -848,17 +842,17 @@ if ($_POST['save']) {
 		$server['ping_action_push'] = $pconfig['ping_action_push'];
 		$server['inactive_seconds'] = $pconfig['inactive_seconds'];
 
-		if (($act == 'new') || (!empty($server['disable']) ^ !empty($a_server[$id]['disable'])) ||
-		    ($server['tunnel_network'] != $a_server[$id]['tunnel_network']) ||
-		    ($server['tunnel_networkv6'] != $a_server[$id]['tunnel_networkv6'])) {
+		if (($act == 'new') || (!empty($server['disable']) ^ !empty($this_server_config['disable'])) ||
+		    ($server['tunnel_network'] != $this_server_config['tunnel_network']) ||
+		    ($server['tunnel_networkv6'] != $this_server_config['tunnel_networkv6'])) {
 			$server['unbound_restart'] = true;
 		}
 
-		if (isset($id) && $a_server[$id]) {
-			$a_server[$id] = $server;
+		if ($this_server_config) {
+			config_set_path("openvpn/openvpn-server/{$id}", $server);
 			$wc_msg = sprintf(gettext('Updated OpenVPN server on %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($server['interface']), $server['local_port'], $server['description']);
 		} else {
-			$a_server[] = $server;
+			config_set_path('openvpn/openvpn-server/', $server);
 			$wc_msg = sprintf(gettext('Added OpenVPN server on %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($server['interface']), $server['local_port'], $server['description']);
 		}
 
@@ -964,7 +958,7 @@ if ($act=="new" || $act=="edit"):
 
 	$auth_servers = auth_get_authserver_list();
 
-	foreach (explode(",", $pconfig['data_ciphers']) as $cipher) {
+	foreach (array_filter(explode(",", $pconfig['data_ciphers'])) as $cipher) {
 		$data_ciphers_list[$cipher] = $cipher;
 	}
 
@@ -1070,7 +1064,7 @@ if ($act=="new" || $act=="edit"):
 			'For example, if the server is set to 0, the client must be set to 1. ' .
 			'Both may be set to omit the direction, in which case the TLS Key will be used bidirectionally.');
 
-	if (count($a_ca)) {
+	if (count(config_get_path('ca', []))) {
 		$section->addInput(new Form_Select(
 			'caref',
 			'*Peer Certificate Authority',
@@ -1084,7 +1078,7 @@ if ($act=="new" || $act=="edit"):
 		));
 	}
 
-	if (count($a_crl)) {
+	if (count(config_get_path('crl', []))) {
 		$section->addInput(new Form_Select(
 			'crlref',
 			'Peer Certificate Revocation list',
@@ -1113,9 +1107,10 @@ if ($act=="new" || $act=="edit"):
 	));
 
 	$certhelp = '<span id="certtype"></span>';
-	if (count($a_cert)) {
+	if (count(config_get_path('cert', []))) {
 		if (!empty(trim($pconfig['certref']))) {
 			$thiscert = lookup_cert($pconfig['certref']);
+			$thiscert = $thiscert['item'];
 			$purpose = cert_get_purpose($thiscert['crt'], true);
 			if ($purpose['server'] != "Yes") {
 				$certhelp = '<span id="certtype" class="text-danger">' . gettext("Warning: The selected server certificate was not created as an SSL/TLS Server certificate and may not work as expected") . ' </span>';
@@ -1179,12 +1174,13 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('Paste the shared key here');
 
 	$group = new Form_Group('Data Encryption Algorithms');
+	$group->addClass("datacipherlist");
 
 	$group->add(new Form_Select(
 		'availciphers',
 		null,
 		array(),
-		openvpn_get_cipherlist(),
+		$openvpn_all_data_ciphers,
 		true
 	))->setAttribute('size', '10')
 	  ->setHelp('Available Data Encryption Algorithms%1$sClick to add or remove an algorithm from the list', '<br />');
@@ -1213,7 +1209,7 @@ if ($act=="new" || $act=="edit"):
 		'data_ciphers_fallback',
 		'Fallback Data Encryption Algorithm',
 		$pconfig['data_ciphers_fallback'],
-		openvpn_get_cipherlist()
+		$openvpn_all_data_ciphers
 		))->setHelp('The Fallback Data Encryption Algorithm used for data channel packets when communicating with ' .
 				'clients that do not support data encryption algorithm negotiation (e.g. Shared Key). ' .
 				'This algorithm is automatically included in the Data Encryption Algorithms list.');
@@ -1227,13 +1223,6 @@ if ($act=="new" || $act=="edit"):
 		    'When an AEAD Encryption Algorithm mode is used, such as AES-GCM, this digest is used for the control channel only, not the data channel.%1$s' .
 		    'The server and all clients must have the same setting. While SHA1 is the default for OpenVPN, this algorithm is insecure. ',
 			'<br />');
-
-	$section->addInput(new Form_Select(
-		'engine',
-		'Hardware Crypto',
-		$pconfig['engine'],
-		openvpn_get_engines()
-		));
 
 	$section->addInput(new Form_Select(
 		'cert_depth',
@@ -1473,7 +1462,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Input(
 		'inactive_seconds',
-		'Inactive',
+		'Inactivity Timeout',
 		'number',
 		$pconfig['inactive_seconds'] ?: 0,
 		['min' => '0']
@@ -1690,6 +1679,33 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['wins_server2']
 	));
 
+	$section->addInput(new Form_Checkbox(
+		'nbdd_server_enable',
+		'NBDD servers',
+		'Provide a NetBIOS over TCP/IP Datagram Distribution Servers list to clients',
+		$pconfig['nbdd_server_enable']
+	));
+
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Input(
+		'nbdd_server1',
+		null,
+		'text',
+		$pconfig['nbdd_server1']
+	))->setHelp('Server 1');
+
+	$group->add(new Form_Input(
+		'nbdd_server2',
+		null,
+		'text',
+		$pconfig['nbdd_server2']
+	))->setHelp('Server 2');
+
+	$group->addClass('nbddservers');
+
+	$section->add($group);
+
 	$form->add($section);
 
 	$section = new Form_Section('Advanced Configuration');
@@ -1791,7 +1807,7 @@ if ($act=="new" || $act=="edit"):
 		$act
 	));
 
-	if (isset($id) && $a_server[$id]) {
+	if ($this_server_config) {
 		$form->addGlobal(new Form_Input(
 			'id',
 			null,
@@ -1824,7 +1840,7 @@ else:
 <?php
 	$print_sk_warning = false;
 	$i = 0;
-	foreach ($a_server as $server):
+	foreach (config_get_path('openvpn/openvpn-server', []) as $server):
 		if ($server['mode'] == 'p2p_shared_key') {
 			$print_sk_warning = true;
 		}
@@ -1870,9 +1886,9 @@ else:
 						<?= htmlspecialchars($server['description']) ?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit Server')?>"	href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-clone"	title="<?=gettext("Copy Server")?>"	href="vpn_openvpn_server.php?act=dup&amp;id=<?=$i?>" usepost></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete Server')?>"	href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit Server')?>"	href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa-regular fa-clone"	title="<?=gettext("Copy Server")?>"	href="vpn_openvpn_server.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete Server')?>"	href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -1886,7 +1902,7 @@ else:
 
 <nav class="action-buttons">
 	<a href="vpn_openvpn_server.php?act=new" class="btn btn-sm btn-success btn-sm">
-	<i class="fa fa-plus icon-embed-btn"></i>
+	<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>
@@ -2139,12 +2155,15 @@ events.push(function() {
 	}
 
 	function wins_server_change() {
-		var hide  = ! $('#wins_server_enable').prop('checked')
+		var hide  = (! $('#wins_server_enable').prop('checked') || ! $('#netbios_enable').prop('checked'))
 
 		hideInput('wins_server1', hide);
 		hideInput('wins_server2', hide);
 	}
 
+	function nbdd_server_change() {
+		hideClass('nbddservers', ! $('#nbdd_server_enable').prop('checked') || ! $('#netbios_enable').prop('checked'));
+	}
 
 	function ntp_server_change() {
 		var hide  = ! $('#ntp_server_enable').prop('checked')
@@ -2160,6 +2179,8 @@ events.push(function() {
 		hideInput('netbios_scope', hide);
 		hideCheckbox('wins_server_enable', hide);
 		wins_server_change();
+		hideCheckbox('nbdd_server_enable', hide);
+		nbdd_server_change();
 	}
 
 	function tuntap_change() {
@@ -2290,6 +2311,11 @@ events.push(function() {
 		wins_server_change();
 	});
 
+	// NBDD server
+	$('#nbdd_server_enable').click(function () {
+		nbdd_server_change();
+	});
+
 	 // DNS server port
 	$('#dns_server_enable').click(function () {
 		dns_server_change();
@@ -2375,6 +2401,7 @@ events.push(function() {
 
 	function updateCipher(mem) {
 		var found = false;
+		var ciphers_all = <?= json_encode($openvpn_all_data_ciphers) ?>;
 
 		// If the cipher exists, remove it
 		$('[id="data_ciphers[]"] option').each(function() {
@@ -2386,7 +2413,7 @@ events.push(function() {
 
 		// If not, add it
 		if (!found) {
-			$('[id="data_ciphers[]"]').append(new Option(mem , mem));
+			$('[id="data_ciphers[]"]').append(new Option(ciphers_all[mem], mem));
 		}
 	}
 
@@ -2426,6 +2453,7 @@ events.push(function() {
 	dns_domain_change();
 	dns_server_change();
 	wins_server_change();
+	nbdd_server_change();
 	ntp_server_change();
 	netbios_change();
 	tuntap_change();

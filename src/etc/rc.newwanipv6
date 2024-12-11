@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2006-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -63,6 +63,10 @@ if (empty($argument)) {
 } else {
 	$interface_real = $argument;
 	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+	if (empty($interface)) {
+		log_error("Interface is unassigned, nothing to do.");
+		return;
+	}
 	$curwanipv6 = get_interface_ipv6($interface, true);
 }
 
@@ -141,7 +145,7 @@ setup_gateways_monitor();
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
 
-if (platform_booting()) {
+if (is_platform_booting()) {
 	// avoid race conditions in many of the below functions that occur during boot
 	touch("/tmp/{$interface_real}_dhcp6_complete");
 	exit;
@@ -154,7 +158,7 @@ $srvupdate = true;
 if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 	if (($curwanipv6 == $oldipv6) && !file_exists("{$g['tmp_path']}/{$interface}_upstart6")) {
 		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-		if (!in_array($config['interfaces'][$interface]['ipaddr'], array('pppoe', 'pptp', 'ppp'))) {
+		if (!in_array(config_get_path("interfaces/{$interface}/ipaddr"), array('pppoe', 'pptp', 'ppp'))) {
 			return;
 		} else {
 			$srvupdate = false;
@@ -215,7 +219,7 @@ if ($srvupdate) {
 }
 
 unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart6");
-if (empty($config['interfaces'][$interface]['ipaddr'])) {
+if (empty(config_get_path("interfaces/{$interface}/ipaddr"))) {
 	unlink_if_exists("{$g['tmp_path']}/{$interface}_upstart4");
 }
 

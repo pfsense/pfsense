@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -73,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			<p><?=gettext('Click "Halt" to halt the system immediately, or "Cancel" to go to the system dashboard. (There will be a brief delay before the dashboard appears.)')?></p>
 			<form action="diag_halt.php" method="post">
 				<button type="submit" class="btn btn-danger pull-center" name="save" value="<?=gettext("Halt")?>" title="<?=gettext("Halt the system and power off")?>">
-					<i class="fa fa-stop-circle"></i>
+					<i class="fa-solid fa-stop-circle"></i>
 					<?=gettext("Halt")?>
 				</button>
 				<a href="/" class="btn btn-info">
-					<i class="fa fa-undo"></i>
+					<i class="fa-solid fa-undo"></i>
 					<?=gettext("Cancel")?>
 				</a>
 			</form>

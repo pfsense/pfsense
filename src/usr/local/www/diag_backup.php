@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -73,8 +73,6 @@ $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
 function build_area_list($showall) {
-	global $config;
-
 	$areas = array(
 		"aliases" => gettext("Aliases"),
 		"captiveportal" => gettext("Captive Portal"),
@@ -119,9 +117,14 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), htmlspecialchars(gettext("Backup & Restore")));
-$pglinks = array("", "@self", "@self");
+$pgtitle = [gettext('Diagnostics'), htmlspecialchars(gettext('Backup & Restore')), htmlspecialchars(gettext('Backup & Restore'))];
+$pglinks = ['', '@self', '@self'];
 include("head.inc");
+
+$tab_array[] = [htmlspecialchars(gettext('Backup & Restore')), true, 'diag_backup.php'];
+$tab_array[] = [gettext('Configuration History'), false, 'diag_confbak.php'];
+
+display_top_tabs($tab_array);
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -141,11 +144,6 @@ if (is_subsystem_dirty('restore')):
 	</form>
 <?php
 endif;
-
-$tab_array = array();
-$tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), true, "diag_backup.php");
-$tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
-display_top_tabs($tab_array);
 
 $form = new Form(false);
 $form->setMultipartEncoding();	// Allow file uploads
@@ -213,7 +211,7 @@ $group->add(new Form_Button(
 	'download',
 	'Download configuration as XML',
 	null,
-	'fa-download'
+	'fa-solid fa-download'
 ))->setAttribute('id')->addClass('btn-primary');
 
 $section->add($group);
@@ -261,7 +259,7 @@ $group->add(new Form_Button(
 	'restore',
 	'Restore Configuration',
 	null,
-	'fa-undo'
+	'fa-solid fa-undo'
 ))->setHelp('The firewall will reboot after restoring the configuration.')->addClass('btn-danger restore')->setAttribute('id');
 
 $section->add($group);
@@ -280,7 +278,7 @@ if ($has_installed_packages || (is_subsystem_dirty("packagelock"))) {
 			'reinstallpackages',
 			'Reinstall Packages',
 			null,
-			'fa-retweet'
+			'fa-solid fa-retweet'
 		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->addClass('btn-success')->setAttribute('id');
 
 		$section->add($group);
@@ -293,7 +291,7 @@ if ($has_installed_packages || (is_subsystem_dirty("packagelock"))) {
 			'clearpackagelock',
 			'Clear Package Lock',
 			null,
-			'fa-wrench'
+			'fa-solid fa-wrench'
 		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->addClass('btn-warning')->setAttribute('id');
 
 		$section->add($group);

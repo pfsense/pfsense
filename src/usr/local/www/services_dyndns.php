@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,19 +30,17 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('dyndnses', 'dyndns'));
-$a_dyndns = &$config['dyndnses']['dyndns'];
 global $dyndns_split_domain_types;
 
 if ($_POST['act'] == "del") {
-	$conf = $a_dyndns[$_POST['id']];
+	$conf = config_get_path("dyndnses/dyndns/{$_POST['id']}");
 	if (in_array($conf['type'], $dyndns_split_domain_types)) {
 		$hostname = $conf['host'] . "." . $conf['domainname'];
 	} else {
 		$hostname = $conf['host'];
 	}
 	@unlink("{$g['conf_path']}/dyndns_{$conf['interface']}{$conf['type']}" . escapeshellarg($hostname) . "{$conf['id']}.cache");
-	unset($a_dyndns[$_POST['id']]);
+	config_del_path("dyndnses/dyndns/{$_POST['id']}");
 
 	write_config(gettext("Dynamic DNS client deleted."));
 	services_dyndns_configure();
@@ -50,12 +48,12 @@ if ($_POST['act'] == "del") {
 	header("Location: services_dyndns.php");
 	exit;
 } else if ($_POST['act'] == "toggle") {
-	if ($a_dyndns[$_POST['id']]) {
-		if (isset($a_dyndns[$_POST['id']]['enable'])) {
-			unset($a_dyndns[$_POST['id']]['enable']);
+	if (config_get_path("dyndnses/dyndns/{$_POST['id']}")) {
+		if (config_path_enabled("dyndnses/dyndns/{$_POST['id']}")) {
+			config_del_path("dyndnses/dyndns/{$_POST['id']}/enable");
 			$wc_msg = gettext('Dynamic DNS client disabled.');
 		} else {
-			$a_dyndns[$_POST['id']]['enable'] = true;
+			config_set_path("dyndnses/dyndns/{$_POST['id']}/enable", true);
 			$wc_msg = gettext('Dynamic DNS client enabled.');
 		}
 		write_config($wc_msg);
@@ -99,8 +97,12 @@ display_top_tabs($tab_array);
 					</thead>
 					<tbody>
 <?php
+
+$iflist = get_configured_interface_with_descr();
+$groupslist = return_gateway_groups_array();
+
 $i = 0;
-foreach ($a_dyndns as $dyndns):
+foreach (config_get_path("dyndnses/dyndns", []) as $dyndns):
 	if (!is_array($dyndns) || empty($dyndns)) {
 		continue;
 	}
@@ -112,30 +114,30 @@ foreach ($a_dyndns as $dyndns):
 	$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
 	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 	if (file_exists($filename)) {
-		$ipaddr = dyndnsCheckIP($dyndns['interface']);
+		$ipaddr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'));
 		$cached_ip_s = explode("|", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr == $cached_ip) {
-			$icon_class = "fa fa-check-circle";
+			$icon_class = "fa-solid fa-check-circle";
 			$text_class = "text-success";
 			$icon_title = "Updated";
 		} else {
-			$icon_class = "fa fa-times-circle";
+			$icon_class = "fa-solid fa-times-circle";
 			$text_class = "text-danger";
 			$icon_title = "Failed";
 		}
 	} else if (file_exists($filename_v6)) {
-		$ipv6addr = get_interface_ipv6($dyndns['interface']);
+		$ipv6addr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'));
 		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
 		$cached_ipv6 = $cached_ipv6_s[0];
 
 		if ($ipv6addr == $cached_ipv6) {
-			$icon_class = "fa fa-check-circle";
+			$icon_class = "fa-solid fa-check-circle";
 			$text_class = "text-success";
 			$icon_title = "Updated";
 		} else {
-			$icon_class = "fa fa-times-circle";
+			$icon_class = "fa-solid fa-times-circle";
 			$text_class = "text-danger";
 			$icon_title = "Failed";
 		}
@@ -147,7 +149,6 @@ foreach ($a_dyndns as $dyndns):
 							</td>
 							<td>
 <?php
-	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdesc) {
 		if (str_replace('_stf', '', $dyndns['interface']) == $if) {
 			print($ifdesc);
@@ -156,7 +157,6 @@ foreach ($a_dyndns as $dyndns):
 		}
 	}
 
-	$groupslist = return_gateway_groups_array();
 	foreach ($groupslist as $if => $group) {
 		if ($dyndns['interface'] == $if) {
 			print($if);
@@ -205,17 +205,17 @@ foreach ($a_dyndns as $dyndns):
 ?>
 							</td>
 							<td>
-								<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
+								<a class="fa-solid fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
 <?php if (isset($dyndns['enable'])) {
 ?>
-								<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php } else {
 ?>
-								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-regular fa-square-check" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php }
 ?>
-								<a class="fa fa-clone" title="<?=gettext('Copy service')?>"	href="services_dyndns_edit.php?dup=<?=$i?>"></a>
-								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-regular fa-clone" title="<?=gettext('Copy service')?>"	href="services_dyndns_edit.php?dup=<?=$i?>"></a>
+								<a class="fa-solid fa-trash-can" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php
@@ -231,13 +231,13 @@ foreach ($a_dyndns as $dyndns):
 
 <nav class="action-buttons">
 	<a href="services_dyndns_edit.php" class="btn btn-sm btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
 
 <div>
-	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa fa-check-circle text-success"></i>')?>
+	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa-solid fa-check-circle text-success"></i>')?>
 	<?=gettext('An update can be forced on the edit page for an entry.')?>
 </div>
 

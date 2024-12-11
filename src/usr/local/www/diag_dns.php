@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,8 +34,7 @@ require_once("pfsense-utils.inc");
 
 $host = idn_to_ascii(trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'"));
 
-init_config_arr(array('aliases', 'alias'));
-$a_aliases = &$config['aliases']['alias'];
+$a_aliases = config_get_path('aliases/alias', []);
 
 $aliasname = substr(str_replace(array(".", "-"), "_", $host), 0, 31);
 $alias_exists = false;
@@ -85,6 +84,7 @@ if (isAllowedPage('firewall_aliases_edit.php') && isset($_POST['create_alias']) 
 			} else {
 				$a_aliases[] = $newalias;
 			}
+			config_set_path('aliases/alias', $a_aliases);
 			write_config(gettext("Created an alias from Diagnostics - DNS Lookup page."));
 			$createdalias = true;
 		}
@@ -188,7 +188,7 @@ if ($createdalias) {
 
 if ($couldnotcreatealias) {
 	if ($alias_exists) {
-		print_info_box(sprintf(gettext("Could not update alias for %s"), $host), 'warning', false);
+		print_info_box(sprintf(gettext("Alias already exists for %s"), $host), 'warning', false);
 	} else {
 		print_info_box(sprintf(gettext("Could not create alias for %s"), $host), 'warning', false);
 	}
@@ -211,7 +211,7 @@ $form->addGlobal(new Form_Button(
         'Submit',
         'Lookup',
         null,
-        'fa-search'
+        'fa-solid fa-search'
 ))->addClass('btn-primary');
 
 if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
@@ -219,7 +219,7 @@ if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
 		'create_alias',
 		($alias_exists) ? gettext("Update Alias") : gettext("Add Alias"),
 		null,
-		($alias_exists) ? 'fa-refresh' : 'fa-plus'
+		($alias_exists) ? 'fa-solid fa-arrows-rotate' : 'fa-solid fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');
 }
 

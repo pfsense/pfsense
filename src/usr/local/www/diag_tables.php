@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,16 +46,14 @@ if ($_REQUEST['type'] && in_array($_REQUEST['type'], $tables)) {
 }
 
 // Gather selected alias metadata.
-if (isset($config['aliases']['alias'])) {
-	foreach ($config['aliases']['alias'] as $alias) {
-		if ( $alias['name'] == $tablename ) {
-			$tmp = array();
-			$tmp['type'] = $alias['type'];
-			$tmp['name'] = $alias['name'];
-			$tmp['url']  = $alias['url'];
-			$tmp['freq'] = $alias['updatefreq'];
-			break;
-		}
+foreach (config_get_path('aliases/alias', []) as $alias) {
+	if ( $alias['name'] == $tablename ) {
+		$tmp = array();
+		$tmp['type'] = $alias['type'];
+		$tmp['name'] = $alias['name'];
+		$tmp['url']  = $alias['url'];
+		$tmp['freq'] = $alias['updatefreq'];
+		break;
 	}
 }
 
@@ -154,14 +152,14 @@ if ($bogons || $urltable || !empty($entries)) {
 			'Download',
 			'Update',
 			null,
-			'fa-refresh'
+			'fa-solid fa-arrows-rotate'
 		))->addClass('btn-success btn-sm');
 	} elseif (!empty($entries)) {
 		$group->add(new Form_Button(
 			'clearall',
 			'Empty Table',
 			null,
-			'fa-trash'
+			'fa-solid fa-trash-can'
 		))->addClass('btn-danger btn-sm');
 	}
 }
@@ -293,7 +291,7 @@ if (empty($entries)) {
 						<td>
 							<?php if (!$bogons && !$urltable): ?>
 								<a style="cursor: pointer;" data-entry="<?=htmlspecialchars($entry)?>">
-									<i class="fa fa-trash" title="<?= gettext("Remove this entry") ?>"></i>
+									<i class="fa-solid fa-trash-can" title="<?= gettext("Remove this entry") ?>"></i>
 								</a>
 							<?php endif ?>
 						</td>

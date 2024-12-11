@@ -3,7 +3,7 @@
  * firewall_nat.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,21 +85,11 @@ function build_srctype_list($json = false) {
 }
 
 function saveNATrule($post, $id, $json = false) {
-	$rdr_lcltype_flags = [SPECIALNET_COMPAT_ADDRAL, SPECIALNET_IFADDR];
-	$rdr_srctype_flags = [
-		SPECIALNET_CHECKPERM, SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL,
-		SPECIALNET_NET, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET
-	];
-	$rdr_dsttype_flags = [
-		SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL,
-		SPECIALNET_NET, SPECIALNET_SELF, SPECIALNET_CLIENTS,
-		SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS
-	];
-	global $config, $ifdisp;
+	$rdr_lcltype_flags = [SPECIALNET_IFADDR];
+	$rdr_srctype_flags = [SPECIALNET_CHECKPERM, SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET];
+	$rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
+	global $ifdisp;
 
-	init_config_arr(array('filter', 'rule'));
-	init_config_arr(array('nat', 'separator'));
-	init_config_arr(array('nat', 'rule'));
 	$a_nat = config_get_path('nat/rule', []);
 	$a_separators = config_get_path('nat/separator', []);
 
@@ -181,6 +171,12 @@ function saveNATrule($post, $id, $json = false) {
 	if (get_specialnet($post['dsttype'], $rdr_dsttype_flags)) {
 		$post['dst'] = $post['dsttype'];
 		$post['dstmask'] = 0;
+		// handle VIPs
+		if (is_ipaddrv6($post['dsttype'])) {
+			$post['dstmask'] = 128;
+		} elseif (is_ipaddrv4($post['dsttype'])) {
+			$post['dstmask'] = 32;
+		}
 	} elseif ($post['dsttype'] == "single") {
 		if (is_ipaddrv6($post['dst'])) {
 			$post['dstmask'] = 128;
@@ -258,7 +254,7 @@ function saveNATrule($post, $id, $json = false) {
 	}
 
 	if ((($post['natreflection'] == "purenat") || ($post['natreflection'] == "enable") ||
-	    (($post['natreflection'] == "default") && !isset($config['system']['disablenatreflection']))) &&
+	    (($post['natreflection'] == "default") && !config_path_enabled('system', 'disablenatreflection'))) &&
 	    ((get_specialnet($post['interface']) || is_interface_group($post['interface'])) &&
 	    in_array($post['dst'], array('any', '0.0.0.0', '::')))) {
 		$input_errors[] = gettext("The submitted interface does not support the 'Any' destination type with enabled NAT reflection.");
@@ -420,8 +416,8 @@ function saveNATrule($post, $id, $json = false) {
 
 	/* https://redmine.pfsense.org/issues/12319 */
 	if (($post['ipprotocol'] == 'inet6') && (($post['natreflection'] == 'enable') ||
-	    (($post['natreflection'] == 'default') && !isset($config['system']['disablenatreflection']) &&
-	    !isset($config['system']['enablenatreflectionpurenat'])))) {
+	    (($post['natreflection'] == 'default') && !config_path_enabled('system', 'disablenatreflection') &&
+	    !config_path_enabled('system', 'enablenatreflectionpurenat')))) {
 		$input_errors[] = gettext("IPv6 address family doesn't support NAT + Proxy reflection mode.");
 	}
 
@@ -444,11 +440,11 @@ function saveNATrule($post, $id, $json = false) {
 
 		pconfig_to_address($natent['source'], $post['src'],
 			$post['srcmask'], $post['srcnot'],
-			$post['srcbeginport'], $post['srcendport']);
+			$post['srcbeginport'], $post['srcendport'], false, $rdr_srctype_flags);
 
 		pconfig_to_address($natent['destination'], $post['dst'],
 			$post['dstmask'], $post['dstnot'],
-			$post['dstbeginport'], $post['dstendport']);
+			$post['dstbeginport'], $post['dstendport'], false, array_diff($rdr_dsttype_flags, [SPECIALNET_VIPS]));
 
 		$natent['ipprotocol'] = $post['ipprotocol'];
 		$natent['protocol'] = $post['proto'];
@@ -508,23 +504,24 @@ function saveNATrule($post, $id, $json = false) {
 		}
 
 		if ($need_filter_rule == true) {
+			$filter_rule_config = config_get_path('filter/rule', []);
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
 			unset($filterentid);
 
 			// If a rule already exists, load it
 			if (!empty($natent['associated-rule-id'])) {
-				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
+				$filterentid = get_id($natent['associated-rule-id'], $filter_rule_config);
 				if ($filterentid === false) {
 					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
 				} else {
-					$filterent =& $config['filter']['rule'][$filterentid];
+					$filterent =& $filter_rule_config[$filterentid];
 				}
 			}
 
 			pconfig_to_address($filterent['source'], $post['src'],
 				$post['srcmask'], $post['srcnot'],
-				$post['srcbeginport'], $post['srcendport']);
+				$post['srcbeginport'], $post['srcendport'], false, $rdr_srctype_flags);
 
 			// Update interface, protocol and destination
 			$filterent['interface'] = $post['interface'];
@@ -574,8 +571,9 @@ function saveNATrule($post, $id, $json = false) {
 				}
 				$filterent['tracker'] = (int)microtime(true);
 				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
-				$config['filter']['rule'][] = $filterent;
+				$filter_rule_config[] = $filterent;
 			}
+			config_set_path('filter/rule', $filter_rule_config);
 
 			if (!$json) {
 				mark_subsystem_dirty('filter');
@@ -694,7 +692,6 @@ function toggleNATrule($post, $json = false) {
 }
 
 function deleteNATrule($post, $json = false) {
-	init_config_arr(array('nat', 'separator'));
 	$a_separators = config_get_path('nat/separator', []);
 
 	// Check for single rule
@@ -719,7 +716,7 @@ function deleteNATrule($post, $json = false) {
 			delete_id($associated_rule_id);
 			$want_dirty_filter = true;
 		}
-		config_del_path("/nat/rule/{$rulei}");
+		config_del_path("nat/rule/{$rulei}");
 		$num_deleted++;
 	}
 	config_set_path('nat/separator', $a_separators);
@@ -769,8 +766,6 @@ function reorderNATrules($post, $json = false) {
 	$updated = false;
 	$dirty = false;
 
-	init_config_arr(array('nat', 'separator'));
-	init_config_arr(array('nat', 'rule'));
 	$a_nat = config_get_path('nat/rule', []);
 	$a_separators = config_get_path('nat/separator', []);
 
@@ -837,13 +832,11 @@ function MVC_filter_get_interface_list() {
 }
 
 function MVC_create_interface_list() {
-	global $config;
-
 	$iflist = array();
 
 	// add group interfaces
-	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+	if (is_array(config_get_path('ifgroups/ifgroupentry'))) {
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
 			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 		}
 	}
@@ -852,7 +845,7 @@ function MVC_create_interface_list() {
 		$iflist[$ifent] = $ifdesc;
 	}
 
-	if ($config['l2tp']['mode'] == "server") {
+	if (config_get_path('l2tp/mode') == "server") {
 		$iflist['l2tp'] = gettext('L2TP VPN');
 	}
 
@@ -866,7 +859,7 @@ function MVC_create_interface_list() {
 	}
 
 	// add openvpn/tun interfaces
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+	if (config_get_path('openvpn/openvpn-server') || config_get_path('openvpn/openvpn-client')) {
 		$iflist["openvpn"] = gettext("OpenVPN");
 	}
 
@@ -874,10 +867,7 @@ function MVC_create_interface_list() {
 }
 
 function getNATRule($id, $json = false) {
-	global $config;
-
-	init_config_arr(array('nat', 'rule'));
-	$a_nat = &$config['nat']['rule'];
+	$a_nat = config_get_path('nat/rule', []);
 
 	if (isset($id) && $a_nat[$id]) {
 		if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,25 +37,22 @@ function wolcmp($a, $b) {
 }
 
 function wol_sort() {
-	global $config;
-
-	usort($config['wol']['wolentry'], "wolcmp");
+	$wol_config = config_get_path('wol/wolentry', []);
+	usort($wol_config, "wolcmp");
+	config_set_path('wol/wolentry', $wol_config);
 }
 
 require_once("guiconfig.inc");
-
-init_config_arr(array('wol', 'wolentry'));
-$a_wol = &$config['wol']['wolentry'];
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-
-if (isset($id) && $a_wol[$id]) {
-	$pconfig['interface'] = $a_wol[$id]['interface'];
-	$pconfig['mac'] = $a_wol[$id]['mac'];
-	$pconfig['descr'] = $a_wol[$id]['descr'];
+$this_wol_config = isset($id) ? config_get_path("wol/wolentry/{$id}") : null;
+if ($this_wol_config) {
+	$pconfig['interface'] = $this_wol_config['interface'];
+	$pconfig['mac'] = $this_wol_config['mac'];
+	$pconfig['descr'] = $this_wol_config['descr'];
 } else {
 	$pconfig['interface'] = $_REQUEST['if'];
 	$pconfig['mac'] = $_REQUEST['mac'];
@@ -80,7 +77,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
 
-	foreach ($a_wol as $wolidx => $wolentry) {
+	foreach (config_get_path('wol/wolentry', []) as $wolidx => $wolentry) {
 		if ((!isset($id) || ($wolidx != $id)) && ($wolentry['interface'] == $_POST['interface']) && ($wolentry['mac'] == $_POST['mac'])) {
 			$input_errors[] = gettext("This interface and MAC address wake-on-LAN entry already exists.");
 			break;
@@ -93,10 +90,10 @@ if ($_POST['save']) {
 		$wolent['mac'] = $_POST['mac'];
 		$wolent['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_wol[$id]) {
-			$a_wol[$id] = $wolent;
+		if ($this_wol_config) {
+			config_set_path("wol/wolentry/{$id}", $wolent);
 		} else {
-			$a_wol[] = $wolent;
+			config_set_path('wol/wolentry/', $wolent);
 		}
 		wol_sort();
 
@@ -117,7 +114,7 @@ if ($input_errors) {
 
 $form = new Form;
 
-if (isset($id) && $a_wol[$id]) {
+if ($this_wol_config) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

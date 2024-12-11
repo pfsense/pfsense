@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -153,9 +153,9 @@ if (!$rawfilter) {
 						</td>
 						<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
 							<?php if ($filterent['action'] == "login") { ?>
-							<i class="fa fa-sign-in" title="User Logged In"></i>
+							<i class="fa-solid fa-right-to-bracket" title="User Logged In"></i>
 							<?php } else if ($filterent['action'] == "logout") { ?>
-							<i class="fa fa-sign-out" title="User Logged Out"></i>
+							<i class="fa-solid fa-right-from-bracket" title="User Logged Out"></i>
 							<?php } else { ?>
 							<i><?=htmlspecialchars($filterent['action'])?></i>
 							<?php } ?>
@@ -403,7 +403,7 @@ function filter_form_vpn() {
 			'filterlogentries_submit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
@@ -432,7 +432,7 @@ function filter_form_vpn() {
 			'filtersubmit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	}
 

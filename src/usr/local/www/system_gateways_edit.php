@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,10 +39,10 @@ if (isset($_POST['referer'])) {
 
 global $gateway_state_kill_modes;
 
-$a_gateways = return_gateways_array(true, false, true, true);
+refresh_gateways(); // make sure we're working on a current gateway list
+$a_gateways = get_gateways(GW_CACHE_INDEXED);
 
-init_config_arr(array('gateways', 'gateway_item'));
-$a_gateway_item = &$config['gateways']['gateway_item'];
+$a_gateway_item = config_get_path('gateways/gateway_item', []);
 $dpinger_default = return_dpinger_defaults();
 
 if (is_numericint($_REQUEST['id'])) {
@@ -263,9 +263,9 @@ $section->addInput(new Form_Input(
 // Add a button to provide access to the advanced fields
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -469,7 +469,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {

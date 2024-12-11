@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ function pfsense_www_class_autoloader($classname) {
 	$filename = str_replace('_', '/', $classname);
 
 	// Build the full path, load it if it exists
-	$filepath = "/usr/local/www/classes/$filename.class.php";
+	$filepath = "/usr/local/www/classes/{$filename}.class.php";
 	if (file_exists($filepath)) {
 		require_once($filepath);
 	}

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,22 +43,17 @@ if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
-if (!is_array($config['captiveportal'])) {
-	config_set_path('captiveportal', array());
-}
 
-$a_cp =& $config['captiveportal'];
-
-if (empty($a_cp[$cpzone])) {
+if (empty(config_get_path("captiveportal/{$cpzone}"))) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
 	header("Location: services_captiveportal_zones.php");
 	exit();
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("High Availability"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("High Availability"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 
-$pconfig['enablebackwardsync'] = isset($config['captiveportal'][$cpzone]['enablebackwardsync']);
+$pconfig['enablebackwardsync'] = config_path_enabled("captiveportal/{$cpzone}", 'enablebackwardsync');
 $pconfig['backwardsyncip'] = config_get_path("captiveportal/{$cpzone}/backwardsyncip");
 $pconfig['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
 $pconfig['backwardsyncuser'] = config_get_path("captiveportal/{$cpzone}/backwardsyncuser");
@@ -86,18 +81,17 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		$newcp =& $a_cp[$cpzone];
 		if ($pconfig['enablebackwardsync'] == "yes") {
-			$newcp['enablebackwardsync'] = true;
+			config_set_path("captiveportal/{$cpzone}/enablebackwardsync", true);
 		} else {
-			unset($newcp['enablebackwardsync']);
+			config_del_path("captiveportal/{$cpzone}/enablebackwardsync");
 		}
-		$newcp['backwardsyncip'] = $pconfig['backwardsyncip'];
-		$newcp['backwardsyncuser'] = $pconfig['backwardsyncuser'];
+		config_set_path("captiveportal/{$cpzone}/backwardsyncip", $pconfig['backwardsyncip']);
+		config_set_path("captiveportal/{$cpzone}/backwardsyncuser", $pconfig['backwardsyncuser']);
 
 		$port = config_get_path('system/webgui/port');
 		if (empty($port)) { // if port is empty lets rely on the protocol selection
-			if ($config['system']['webgui']['protocol'] == "http") {
+			if (config_get_path('system/webgui/protocol') == "http") {
 				$port = "80";
 			} else {
 				$port = "443";
@@ -105,10 +99,10 @@ if ($_POST['save']) {
 		}
 
 		if ($_POST['backwardsyncpassword'] != DMYPWD ) {
-			$newcp['backwardsyncpassword'] = $pconfig['backwardsyncpassword'];
-		} else {
-			$newcp['backwardsyncpassword'] = config_get_path("captiveportal/{$cpzone}/backwardsyncpassword");
+			config_set_path("captiveportal/{$cpzone}/backwardsyncpassword", $pconfig['backwardsyncpassword']);
 		}
+
+		$newcp = config_get_path("captiveportal/{$cpzone}", []);
 		if (!empty($newcp['enablebackwardsync'])) {
 			$rpc_client = new pfsense_xmlrpc_client();
 			$rpc_client->setConnectionData($newcp['backwardsyncip'], $port, $newcp['backwardsyncuser'], $newcp['backwardsyncpassword']);
@@ -123,13 +117,13 @@ if ($_POST['save']) {
 				}
 			} else {
 				// Contains array of connected users (will be stored in SQLite DB)
-				$connected_users = unserialize(base64_decode($resp['connected_users']));
+				$connected_users = unserialize_data(base64_decode($resp['connected_users']), []);
 				// Contains array of active vouchers (will be stored in active vouchers db)
-				$active_vouchers = unserialize(base64_decode($resp['active_vouchers']));
+				$active_vouchers = unserialize_data(base64_decode($resp['active_vouchers']), []);
 				// Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
-				$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers']));
+				$expired_vouchers = unserialize_data(base64_decode($resp['expired_vouchers']), []);
 				// Contains array of usedmacs (will be stored in usedmacs db)
-				$usedmacs = unserialize(base64_decode($resp['usedmacs']));
+				$usedmacs = unserialize_data(base64_decode($resp['usedmacs']), []);
 
 				foreach ($connected_users as $user) {
 					$pipeno = captiveportal_get_next_dn_ruleno('auth');
@@ -142,7 +136,7 @@ if ($_POST['save']) {
 					$attributes['maxbytes'] = $user['traffic_quota'];
 
 					portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), null,
-					    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
+					    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid']);
 				}
 				foreach ($expired_vouchers as $roll => $vdb) {
 					voucher_write_used_db($roll, $vdb);
@@ -157,7 +151,6 @@ if ($_POST['save']) {
 			}
 		}
 		if (!$input_errors) {
-			$config['captiveportal'][$cpzone] = $newcp;
 			write_config('Updated captiveportal backward HA settings');
 		}
 	}

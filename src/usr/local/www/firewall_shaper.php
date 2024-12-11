@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,7 +110,7 @@ if ($_GET) {
 		$can_add = false;
 		$can_enable = false;
 		$dontshow = true;
-		foreach ($config['filter']['rule'] as $key => $rule) {
+		foreach (config_get_path('filter/rule', []) as $key => $rule) {
 			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
 				config_del_path("filter/rule/{$key}");
 			}
@@ -383,7 +383,7 @@ print($tree);
 if (count($altq_list_queues) > 0) {
 ?>
 					<a href="firewall_shaper.php?action=resetall" class="btn btn-sm btn-danger">
-						<i class="fa fa-trash icon-embed-btn"></i>
+						<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 						<?=gettext('Remove Shaper')?>
 					</a>
 <?php
@@ -407,7 +407,7 @@ if (!$dfltmsg && $sform)  {
 				'add',
 				'Add new Queue',
 				$url,
-				'fa-plus'
+				'fa-solid fa-plus'
 			))->addClass('btn-success');
 
 		}
@@ -422,7 +422,7 @@ if (!$dfltmsg && $sform)  {
 			'delete',
 			$queue ? 'Delete this queue':'Disable shaper on interface',
 			$url,
-			'fa-trash'
+			'fa-solid fa-trash-can'
 		))->addClass('btn-danger nowarn');
 
 	}

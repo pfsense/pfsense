@@ -3,7 +3,7 @@
  * system_advanced_admin.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,7 +50,7 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['enableserial'] = config_get_path('system/enableserial');
 	$pconfig['serialspeed'] = config_get_path('system/serialspeed');
 	$pconfig['primaryconsole'] = config_get_path('system/primaryconsole');
-	$pconfig['enablesshd'] = config_get_path('system/ssh/enable');
+	$pconfig['enablesshd'] = config_path_enabled('system/ssh');
 	$pconfig['sshport'] = config_get_path('system/ssh/port');
 	$pconfig['sshdkeyonly'] = config_get_path('system/ssh/sshdkeyonly');
 	$pconfig['sshdagentforwarding'] = config_path_enabled('system/ssh', 'sshdagentforwarding');
@@ -61,8 +61,7 @@ function getAdvancedAdminConfig($json = false) {
 	$pconfig['sshguard_detection_time'] = config_get_path('system/sshguard_detection_time', '');
 	$pconfig['sshguard_whitelist'] = config_get_path('system/sshguard_whitelist', '');
 	$pconfig['interfaces_lan'] = config_get_path('interfaces/lan');
-	$a_cert = config_get_path('cert', []);
-	$pconfig['certsavailable'] = (is_array($a_cert) && count($a_cert));
+	$pconfig['certsavailable'] = count(config_get_path('cert', [])) > 0;
 	if (!$pconfig['webguiproto'] || !$pconfig['certsavailable']) {
 		$pconfig['webguiproto'] = 'http';
 	}
@@ -378,6 +377,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 		$retval = 0;
 		$retval |= filter_configure();
 		if ($restart_sshguard) {
+			system_sshguard_stop();
 			$retval |= system_syslogd_start(true);
 		}
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -43,8 +43,8 @@ if (isset($_REQUEST['id'])) {
 	$id = htmlspecialchars_decode($_REQUEST['id']);
 }
 
-if ($_POST['act'] == "del") {
-	if (deleteTunable($id)) {
+if (($_POST['act'] == "del")) {
+	if (is_numericint($id) && deleteTunable($id)) {
 		exit;
 	}
 }
@@ -70,7 +70,7 @@ if ($_POST['save'] == gettext("Save")) {
 $act = $_REQUEST['act'];
 
 if ($act == "edit") {
-	if (config_get_path('sysctl/item/' . $id)) {
+	if (is_numericint($id) && (config_get_path("sysctl/item/{$id}") !== null)) {
 		$pconfig['tunable'] = config_get_path('sysctl/item/' . $id . '/tunable');
 		$pconfig['value'] = config_get_path('sysctl/item/' . $id . '/value');
 		$pconfig['descr'] = config_get_path('sysctl/item/' . $id . '/descr');
@@ -127,7 +127,7 @@ if ($act != "edit"): ?>
 						<th class="col-sm-3"><?=gettext("Tunable Name"); ?></th>
 						<th><?=gettext("Description"); ?></th>
 						<th class="col-sm-1"><?=gettext("Value"); ?></th>
-						<th><a class="btn btn-xs btn-success" href="system_advanced_sysctl.php?act=edit"><i class="fa fa-plus icon-embed-btn"></i><?=gettext('New'); ?></a></th>
+						<th><a class="btn btn-xs btn-success" href="system_advanced_sysctl.php?act=edit"><i class="fa-solid fa-plus icon-embed-btn"></i><?=gettext('New'); ?></a></th>
 					</tr>
 				</thead>
 				<?php
@@ -147,9 +147,9 @@ if ($act != "edit"): ?>
 					?>
 					</td>
 					<td>
-					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
+					<a class="fa-solid fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" usepost></a>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -187,7 +187,7 @@ if ($act != "edit"): ?>
 		$pconfig['descr']
 	))->setWidth(4);
 
-	if (isset($id) && config_get_path('sysctl/item/' . $id)) {
+	if (is_numericint($id) && config_get_path('sysctl/item/' . $id)) {
 		$form->addGlobal(new Form_Input(
 			'id',
 			'id',

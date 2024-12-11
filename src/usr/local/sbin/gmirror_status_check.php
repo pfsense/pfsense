@@ -5,7 +5,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2013-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ $notices = array();
 // Check for gmirror.status
 if (file_exists($status_file)) {
 	// If it exists, read status in
-	$previous_mirror_status = unserialize(file_get_contents($status_file));
+	$previous_mirror_status = unserialize_data(file_get_contents($status_file), []);
 	$previous_mirror_list = array_keys($previous_mirror_status);
 	sort($previous_mirror_list);
 	if (count($previous_mirror_status) > 0) {

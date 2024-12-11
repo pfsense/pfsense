@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Eric Friesen
  * All rights reserved.
  *
@@ -129,11 +129,11 @@ switch ($action) {
 			<input type="hidden" name="action" value="abort" />
 			<nav class="action-buttons">
 				<button type="submit" name="submit" class="btn btn-danger" value="<?=gettext("Abort Tests")?>">
-					<i class="fa fa-times icon-embed-btn"></i>
+					<i class="fa-solid fa-times icon-embed-btn"></i>
 					<?=gettext("Abort Test")?>
 				</button>
 				<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
-					<i class="fa fa-undo icon-embed-btn"></i>
+					<i class="fa-solid fa-undo icon-embed-btn"></i>
 					<?=gettext("Back")?>
 				</a>
 			</nav>
@@ -164,7 +164,7 @@ switch ($action) {
 
 		<nav class="action-buttons">
 			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
-				<i class="fa fa-undo icon-embed-btn"></i>
+				<i class="fa-solid fa-undo icon-embed-btn"></i>
 				<?=gettext("Back")?>
 			</a>
 		</nav>
@@ -192,7 +192,7 @@ switch ($action) {
 
 		<nav class="action-buttons">
 			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
-				<i class="fa fa-undo icon-embed-btn"></i>
+				<i class="fa-solid fa-undo icon-embed-btn"></i>
 				<?=gettext("Back")?>
 			</a>
 		</nav>
@@ -218,7 +218,7 @@ switch ($action) {
 	// Default page, prints the forms to view info, test, etc...
 	default: {
 // Information
-		$devs = get_smart_drive_list();
+		$devs = get_drive_list();
 
 		$form = new Form(false);
 
@@ -226,7 +226,7 @@ switch ($action) {
 			'submit',
 			'View',
 			null,
-			'fa-file-text-o'
+			'fa-regular fa-file-lines'
 		);
 		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');
@@ -269,7 +269,7 @@ switch ($action) {
 			'submit',
 			'View',
 			null,
-			'fa-file-text-o'
+			'fa-regular fa-file-lines'
 		);
 		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');
@@ -313,7 +313,7 @@ switch ($action) {
 			'submit',
 			'Test',
 			null,
-			'fa-wrench'
+			'fa-solid fa-wrench'
 		);
 		$btntest->addClass('btn-primary');
 		$btntest->setAttribute('id');
@@ -356,7 +356,7 @@ switch ($action) {
 			'submit',
 			'Abort Tests',
 			null,
-			'fa-times'
+			'fa-solid fa-times'
 		);
 
 		$btnabort->addClass('btn-danger')->setAttribute('id');

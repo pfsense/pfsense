@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,23 +32,17 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("vpn.inc");
 
-init_config_arr(array('pppoes', 'pppoe'));
-$a_pppoes = &$config['pppoes']['pppoe'];
-
-
 if ($_POST['apply']) {
 	if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
-		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"));
+		$toapplylist = unserialize_data(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"), []);
 		foreach ($toapplylist as $pppoeid) {
 			if (!is_numeric($pppoeid)) {
 				continue;
 			}
-			if (is_array($config['pppoes']['pppoe'])) {
-				foreach ($config['pppoes']['pppoe'] as $pppoe) {
-					if ($pppoe['pppoeid'] == $pppoeid) {
-						vpn_pppoe_configure($pppoe);
-						break;
-					}
+			foreach (config_get_path('pppoes/pppoe', []) as $pppoe) {
+				if ($pppoe['pppoeid'] == $pppoeid) {
+					vpn_pppoe_configure($pppoe);
+					break;
 				}
 			}
 		}
@@ -59,15 +53,16 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('vpnpppoe');
 }
 
+$this_pppoe_config = isset($_POST['id']) ? config_get_path("pppoes/pppoe/{$_POST['id']}") : null;
 if ($_POST['act'] == "del") {
-	if ($a_pppoes[$_POST['id']]) {
-		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid") {
-			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid");
+	if ($this_pppoe_config) {
+		if ("{$g['varrun_path']}/pppoe" . $this_pppoe_config['pppoeid'] . "-vpn.pid") {
+			killbypid("{$g['varrun_path']}/pppoe" . $this_pppoe_config['pppoeid'] . "-vpn.pid");
 		}
-		if (is_dir("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn")) {
-			rmdir_recursive("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn");
+		if (is_dir("{$g['varetc_path']}/pppoe{$this_pppoe_config['pppoeid']}-vpn")) {
+			rmdir_recursive("{$g['varetc_path']}/pppoe{$this_pppoe_config['pppoeid']}-vpn");
 		}
-		unset($a_pppoes[$_POST['id']]);
+		config_del_path("pppoes/pppoe/{$_POST['id']}");
 		write_config("PPPoE Server deleted");
 		header("Location: services_pppoe.php");
 		exit;
@@ -105,7 +100,7 @@ if (is_subsystem_dirty('vpnpppoe')) {
 		<tbody>
 <?php
 $i = 0;
-foreach ($a_pppoes as $pppoe):
+foreach (config_get_path('pppoes/pppoe', []) as $pppoe):
 ?>
 			<tr>
 				<td>
@@ -121,8 +116,8 @@ foreach ($a_pppoes as $pppoe):
 					<?=htmlspecialchars($pppoe['descr'])?>
 				</td>
 				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="services_pppoe_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>" usepost></a>
+					<a class="fa-solid fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="services_pppoe_edit.php?id=<?=$i?>"></a>
+					<a class="fa-solid fa-trash-can" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php
@@ -138,7 +133,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="services_pppoe_edit.php" class="btn btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

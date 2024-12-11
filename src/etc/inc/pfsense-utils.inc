@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -983,10 +983,10 @@ function rmdir_recursive($path, $follow_links=false) {
 			if (is_dir($workingdir)) {
 				$dir = opendir($workingdir);
 				while ($entry = readdir($dir)) {
-					if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry"))) {
-						unlink("$workingdir/$entry");
-					} elseif (is_dir("$workingdir/$entry") && $entry != '.' && $entry != '..') {
-						rmdir_recursive("$workingdir/$entry");
+					if (is_file("{$workingdir}/{$entry}") || ((!$follow_links) && is_link("{$workingdir}/{$entry}"))) {
+						unlink("{$workingdir}/{$entry}");
+					} elseif (is_dir("{$workingdir}/{$entry}") && $entry != '.' && $entry != '..') {
+						rmdir_recursive("{$workingdir}/{$entry}");
 					}
 				}
 				closedir($dir);
@@ -1047,14 +1047,14 @@ function strncpy(&$dst, $src, $length) {
  *   none
  ******/
 function reload_interfaces_sync() {
-	global $config, $g;
+	global $g;
 
 	if (g_get('debug')) {
 		log_error(gettext("reload_interfaces_sync() is starting."));
 	}
 
-	/* parse config.xml again */
-	$config = parse_config(true);
+	/* parse config.xml */
+	config_read_file(true, true);
 
 	/* enable routing */
 	system_routing_enable();
@@ -1103,10 +1103,8 @@ function reload_interfaces() {
  *   none
  ******/
 function reload_all_sync() {
-	global $config;
-
-	/* parse config.xml again */
-	$config = parse_config(true);
+	/* parse config.xml */
+	config_read_file(true, true);
 
 	/* set up our timezone */
 	system_timezone_configure();
@@ -1193,6 +1191,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 		    "hint.uart.1.flags",
 		    "net.link.ifqmaxlen",
 		    "hint.hwpstate_intel.0.disabled",
+		    "loader_conf_files",
 		    "machdep.hwpstate_pkg_ctrl",
 		    "net.pf.states_hashsize"
 		));
@@ -1234,7 +1233,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
 		$g['primaryconsole_force'] = "video";
-	} elseif ($specific_platform['name'] == 'RCC-VE' ||
+	} elseif (
+	    $specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'SG-2220' ||
 	    $specific_platform['name'] == 'apu2') {
@@ -1275,6 +1275,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 
 	$data = load_loader_conf($loader_conf_file, false);
+
+	$data[] = 'loader_conf_files="/boot/loader.conf.lua"';
+
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';
@@ -1334,8 +1337,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$data[] = 'machdep.hwpstate_pkg_ctrl="' . config_get_path('system/hwpstate_control_level', get_single_sysctl('machdep.hwpstate_pkg_ctrl')) . '"';
 
 	// calculate the size of hash tables that store states - should be power of 2
-	$pf_maximumstates = intval(config_get_path('system/maximumstates', pfsense_default_state_size()));
-	$pf_hashtablesize = pow(2, ceil(log(floor($pf_maximumstates / 2), 2)));
+	$pf_maximumstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+	$pf_hashtablesize = pow(2, ceil(log(floor(intval($pf_maximumstates) / 2), 2)));
 	$data[] = "net.pf.states_hashsize=\"{$pf_hashtablesize}\"";
 
 	safe_write_file($loader_conf_file, $data);
@@ -1485,12 +1488,6 @@ function is_dhcp_server_enabled() {
 
 /* DHCP enabled on any interfaces? */
 function is_dhcpv6_server_enabled() {
-	foreach (config_get_path('interfaces', []) as $ifcfg) {
-		if (isset($ifcfg['enable']) && !empty($ifcfg['track6-interface'])) {
-			return true;
-		}
-	}
-
 	foreach (config_get_path('dhcpdv6', []) as $dhcpv6if => $dhcpv6ifconf) {
 		if (empty($dhcpv6ifconf)) {
 			continue;
@@ -1506,7 +1503,6 @@ function is_dhcpv6_server_enabled() {
 
 /* radvd enabled on any interfaces? */
 function is_radvd_enabled() {
-	init_config_arr(['dhcpdv6']);
 	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 
@@ -1553,6 +1549,10 @@ function is_radvd_enabled() {
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 
 		if (!is_ipaddrv6($subnetv6)) {
+			continue;
+		}
+
+		if (config_get_path("dhcpdv6/{$if}/ramode", "disabled") == "disabled") {
 			continue;
 		}
 
@@ -1831,11 +1831,11 @@ function get_interface_info($ifdescr) {
 			if (preg_match("/vendor: (.*)$/", $ici, $matches)) {
 				$ifinfo['vendor'] = $matches[1];
 			}
-			if (preg_match("/module temperature: (.*) Voltage: (.*)$/", $ici, $matches)) {
+			if (preg_match("/module temperature: (.*) voltage: (.*)$/", $ici, $matches)) {
 				$ifinfo['temperature'] = $matches[1];
 				$ifinfo['voltage'] = $matches[2];
 			}
-			if (preg_match("/RX: (.*) TX: (.*)$/", $ici, $matches)) {
+			if (preg_match("/RX power: (.*) TX bias: (.*)$/", $ici, $matches)) {
 				$ifinfo['rx'] = $matches[1];
 				$ifinfo['tx'] = $matches[2];
 			}
@@ -1930,6 +1930,7 @@ function resolve_host_addresses($host, $recordtypes = array(DNS_A, DNS_AAAA, DNS
 		}
 	}
 	if ($index == false) {
+		$noind = [];
 		foreach ($resolved as $res) {
 			$noind[] = $res['data'];
 		}
@@ -1951,7 +1952,7 @@ function add_hostname_to_watch($hostname) {
 				$contents .= "$ip\n";
 			}
 		}
-		file_put_contents("/var/db/dnscache/$hostname", $contents);
+		file_put_contents("/var/db/dnscache/{$hostname}", $contents);
 		/* Remove empty elements */
 		$result = array_filter(explode("\n", $contents), 'strlen');
 	}
@@ -1979,12 +1980,12 @@ function pfsense_default_state_size() {
 	return $max_states;
 }
 
-function pfsense_default_tables_size() {
+function pfsense_current_tables_size() {
 	$current = `pfctl -sm | grep ^tables | awk '{print $4};'`;
 	return $current;
 }
 
-function pfsense_default_table_entries_size() {
+function pfsense_current_table_entries_size() {
 	$current = `pfctl -sm | grep table-entries | awk '{print $4};'`;
 	return (trim($current));
 }
@@ -2027,7 +2028,10 @@ function compare_hostname_to_dnscache($hostname) {
  * load_crypto() - Load crypto modules if enabled in config.
  */
 function load_crypto() {
-	$crypto_modules = array('aesni', 'cryptodev');
+	$crypto_modules = [
+		'aesni',
+		'cryptodev'
+	];
 
 	$enabled_modules = explode('_', config_get_path('system/crypto_hardware'));
 
@@ -2127,7 +2131,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	set_curlproxy($ch);
 
 	@curl_exec($ch);
-	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 	fclose($fp);
 	curl_close($ch);
 	if ($http_code == 200) {
@@ -2180,7 +2184,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	set_curlproxy($ch);
 
 	@curl_exec($ch);
-	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 	fclose($fout);
 	curl_close($ch);
 	if ($http_code == 200) {
@@ -2363,11 +2367,12 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
-	global $g, $config, $pconfig, $debug;
+	global $g, $pconfig, $debug;
 	if (!$origname) {
 		return;
 	}
 
+	$config = config_get_path('');
 	$sectionref = &$config;
 	foreach ($section as $sectionname) {
 		if (is_array($sectionref) && isset($sectionref[$sectionname])) {
@@ -2405,6 +2410,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 				$fieldref = $new_alias_name;
 			}
 		}
+		config_set_path('', $config);
 	}
 
 	if ($debug) {
@@ -2521,7 +2527,7 @@ function update_alias_url_data() {
 
 		$address = array();
 		$type = config_get_path("aliases/alias/{$x}/type");
-		foreach (config_get_path("aliases/alias/{$x}/aliasurl") as $alias_url) {
+		foreach (config_get_path("aliases/alias/{$x}/aliasurl", []) as $alias_url) {
 			/* fetch down and add in */
 			if (is_URL($alias_url)) {
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
@@ -2755,6 +2761,9 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 			/* Remove existing archive and create an up to date archive if RAM disk is enabled. */
 			unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz");
 			if (config_path_enabled('system','use_mfs_tmpvar') && !file_exists("/conf/ram_disks_failed")) {
+				if (!file_exists("{$g['cf_conf_path']}/RAM_Disk_Store")) {
+					mkdir("{$g['cf_conf_path']}/RAM_Disk_Store");
+				}
 				mwexec("/usr/bin/tar -czf " . escapeshellarg("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz") . " -C / " . escapeshellarg($urltable_filename));
 			}
 
@@ -2798,7 +2807,6 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 	xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
 	xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
 	xml_parse_into_struct($parser, trim($contents), $xml_values);
-	xml_parser_free($parser);
 	if (!$xml_values) {
 		return; //Hmm...
 	}
@@ -2945,7 +2953,6 @@ function get_cert_country_codes() {
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
-	init_config_arr(array('filter', 'rule'));
 	$rules = config_get_path('filter/rule', []);
 
 	/* mark each rule with the sequence number (to retain the order while sorting) */
@@ -3539,7 +3546,7 @@ function get_pppoes_child_interfaces($ifpattern) {
 function pkg_call_plugins($plugin_type, $plugin_params) {
 	global $g;
 	$results = array();
-	foreach (config_get_path('installedpackages/package') as $package) {
+	foreach (config_get_path('installedpackages/package', []) as $package) {
 		foreach (array_get_path($package, 'plugins/item', []) as $plugin) {
 			if (!is_array($plugin) || empty($plugin)) {
 				continue;
@@ -3616,13 +3623,18 @@ function &getarraybyref(&$array) {
  *                    'file' type, this may be omitted and the basename of
  *                    $content will be used instead.
  *   $contenttype : MIME content type of the data. Default "application/octet-stream"
+ *   $download    : Boolean. Send the file as a download (true, default) or
+ *                    inline (false).
  * RESULT
- *   Sends the data to the browser as a file to download.
+ *   Sends the data to the browser as a file.
  ******/
 
-function send_user_download($type, $content, $userfilename = "", $contenttype = "application/octet-stream") {
+function send_user_download($type, $content, $userfilename = "", $contenttype = "application/octet-stream", $download = true) {
 	/* If the type is 'file', then use the file size, otherwise use the size of the data to send */
 	$size = ($type == 'file') ? filesize($content) : strlen($content);
+
+	/* Send the file as a download (attachment) or inline content */
+	$disposition = ($download) ? "attachment" : "inline";
 
 	/* If the filename to pass to the user is empty, assume it to be the filename being read. */
 	$name = basename((($type == 'file') && empty($userfilename)) ? $content : $userfilename);
@@ -3635,14 +3647,12 @@ function send_user_download($type, $content, $userfilename = "", $contenttype = 
 	/* Send basic download headers */
 	header("Content-Type: {$contenttype}");
 	header("Content-Length: {$size}");
-	header("Content-Disposition: attachment; filename=" . urlencode($name));
+	header("Content-Disposition: {$disposition}; filename=" . urlencode($name));
 
 	/* Send cache headers */
 	if (isset($_SERVER['HTTPS'])) {
-		header('Pragma: ');
 		header('Cache-Control: ');
 	} else {
-		header("Pragma: private");
 		header("Cache-Control: private, must-revalidate");
 	}
 
@@ -3664,40 +3674,43 @@ function send_user_download($type, $content, $userfilename = "", $contenttype = 
 	exit;
 }
 
-// Test whether the hostname in a URL can be resolved with a very short timeout
-function is_url_hostname_resolvable($url) {
-	$urlhostname = parse_url($url, PHP_URL_HOST);
-	if (empty($urlhostname)) {
-		return false;
-	}
-	putenv("RES_OPTIONS=timeout:3 attempts:1");
-	$resolvable = ($urlhostname !== gethostbyname($urlhostname));
-	putenv("RES_OPTIONS");
-	return $resolvable;
-}
-
-function get_pf_reserved(?string $name = '', bool $check_ifdescr = true):bool|array {
+function get_pf_reserved(?string $name = '', bool $check_ifname = true):bool|array {
 	global $pf_reserved_keywords, $reserved_table_names, $FilterIflist;
 
-	// generate a list of assigned interfaces and interface groups
+	// get relevant interface names
 	$iflist = $FilterIflist;
 	if (empty($iflist)) {
+		// if list
 		$iflist = config_get_path('interfaces', []);
+		// l2tp
+		if (config_get_path('l2tp/mode') == "server") {
+			$iflist['l2tp'] = 'L2TP';
+		}
+		// pppoe
+		foreach (config_get_path('pppoes/pppoe', []) as $ifgen) {
+			if (array_key_exists('mode', $ifgen) && $ifgen['mode'] == 'server') {
+				$iflist['pppoe'] = 'pppoe';
+				break;
+			}
+		}
+		// add interface groups
 		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
 			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 		}
 	}
+	/**
+	 * pf table names are limited to a max of 31 characters.
+	 * Interface group names are limited to a max of 15 characters.
+	 * Hence, a combination of the interface name (optX) + the suffix should be safe.
+	 */ 
 	$reserved = [];
-	foreach ($iflist as $ifconf) {
-		if (empty($ifconf['descr'])) {
-			continue;
+	foreach (array_keys($iflist) as $if) {
+		if ($check_ifname) {
+			$reserved[] = strtoupper($if);
 		}
-		if ($check_ifdescr) {
-			$reserved[] = strtoupper($ifconf['descr']);
-		}
-		$reserved[] = strtoupper($ifconf['descr'] . '__NETWORK');
+		$reserved[] = strtoupper("{$if}__NETWORK");
 	}
-	$reserved = array_merge($pf_reserved_keywords, $reserved_table_names, $reserved);
+	$reserved = array_merge($pf_reserved_keywords, array_keys($reserved_table_names), $reserved);
 
 	return (empty($name) ? $reserved : in_array(strtoupper($name), $reserved));
 }
@@ -3735,8 +3748,90 @@ function set_curlproxy(&$ch) {
 		$proxyuser = config_get_path('system/proxyuser');
 		$proxypass = config_get_path('system/proxypass');
 		if (!empty($proxyuser) && !empty($proxypass)) {
+			$proxyuser = rawurlencode($proxyuser);
+			$proxypass = rawurlencode($proxypass);
 			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$proxyuser}:{$proxypass}");
 		}
 	}
+}
+
+/*
+ * return the time difference in seconds.microseconds(6 digits) format between 2 DateTime objects
+ * @param DateTime $date1
+ * @param DateTime $date2
+ */
+
+function date_mdiff($date1, $date2){
+	return number_format(abs((float)$date1->format("U.u") - (float)$date2->format("U.u")), 6);
+}
+
+/**
+ * Parse user-configured aliases and rename any that conflict with reserved names.
+ * @return void
+ */
+function rename_conflicting_aliases() {
+	$aliases = config_get_path('aliases/alias', []);
+	$renamed_aliases = [];
+
+	// Normalize to lower case, filter out duplicates, and use array keys for searching.
+	$reserved_alias_names = array_merge(array_keys(get_reserved_table_names()), get_pf_reserved());
+	$reserved_alias_names = array_map('strtolower', $reserved_alias_names);
+	$reserved_alias_names = array_flip($reserved_alias_names);
+
+	foreach ($aliases as & $alias) {
+		// Skip if there's no conflict.
+		if (empty($alias['name']) || !is_string($alias['name']) ||
+		    !array_key_exists(strtolower($alias['name']), $reserved_alias_names)) {
+			continue;
+		}
+
+		// There's a name conflict, try to rename it.
+		$try_count = 0;
+		$try_successful = false;
+		$current_alias_names = array_flip(array_column($aliases, 'name'));
+		do {
+			$try_count++;
+
+			$new_name = mb_str_pad($alias['name'], 31, bin2hex(random_bytes(15)));
+			if (array_key_exists($new_name, $current_alias_names)) {
+				continue;
+			}
+
+			$renamed_aliases[] = [
+				'old' => $alias['name'],
+				'new' => $new_name
+			];
+			$alias['name'] = $new_name;
+
+			$try_successful = true;
+			break;
+		} while ($try_count < 10);
+
+		// The rename attempts failed - log and warn the user.
+		if (!$try_successful) {
+			file_notice('Alias', gettext('The following alias conflicts with a reserved keyword and must' .
+				' be manually renamed: ' . $alias['name'])
+			);
+		}
+	}
+	if (isset($alias)) {
+		unset($alias);
+	}
+	
+	// Abort if there's anything to do.
+	if (empty($renamed_aliases)) {
+		return;
+	}
+
+	// Commit alias changes and update references to their old name.
+	config_set_path('aliases/alias', $aliases);
+	foreach ($renamed_aliases as $alias) {
+		update_alias_name($alias['new'], $alias['old']);
+	}
+
+	// Log and warn the user of old alias names.
+	file_notice('Alias', gettext('The following aliases conflict with a reserved keyword and have been renamed: ') .
+		implode(', ', array_column($renamed_aliases, 'old'))
+	);
 }

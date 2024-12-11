@@ -7,7 +7,7 @@
  * Copyright (c) 2008 Shrew Soft Inc
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ require_once("interfaces.inc");
 openlog("charon", LOG_ODELAY, LOG_AUTH);
 
 if (isset($_GET['username'])) {
-	$authmodes = explode(",", $_GET['authcfg']);
+	$authmodes = array_filter(explode(",", $_GET['authcfg']));
 	$username = $_GET['username'];
 	$password = $_GET['password'];
 	$common_name = $_GET['cn'];
@@ -47,7 +47,7 @@ if (isset($_GET['username'])) {
 	$username = getenv("username");
 	$password = getenv("password");
 	$common_name = getenv("common_name");
-	$authmodes = explode(",", getenv("authcfg"));
+	$authmodes = array_filter(explode(",", getenv("authcfg")));
 }
 
 if (!$username) {
@@ -79,7 +79,7 @@ if (($strictusercn === true) && ($common_name != $username)) {
 $attributes = array("nas_identifier" => "xauthIPsec");
 if ((config_get_path('ipsec/client/group_source') == 'enabled') &&
     !empty(config_get_path('ipsec/client/auth_groups'))) {
-	$ipsec_groups = explode(",", config_get_path('ipsec/client/auth_groups'));
+	$ipsec_groups = explode(",", config_get_path('ipsec/client/auth_groups', ''));
 } else { 
 	$ipsec_groups = '';
 }
@@ -94,6 +94,7 @@ foreach ($authmodes as $authmode) {
 		$userGroups = getUserGroups($username, $authcfg, $attributes);
 		if ($authmode == "Local Database") {
 			$user = getUserEntry($username);
+			$user = $user['item'];
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin") ||
 			    (!empty($ipsec_groups) && (count(array_intersect($userGroups, $ipsec_groups)) == 0))) {
 				$authenticated = false;

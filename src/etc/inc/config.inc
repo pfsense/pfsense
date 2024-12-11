@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -25,7 +25,7 @@
  * limitations under the License.
  */
 
-if (!function_exists('platform_booting')) {
+if (!function_exists('is_platform_booting')) {
 	require_once('globals.inc');
 }
 
@@ -58,7 +58,7 @@ if (file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-if (platform_booting(true) &&
+if (is_platform_booting() && is_cli_sapi() &&
     !file_exists(g_get('cf_conf_path') . "/config.xml")) {
 	echo ".";
 	/* find the device where config.xml resides and write out an fstab */
@@ -90,7 +90,7 @@ if (platform_booting(true) &&
 				}
 			}
 			if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
-				if (platform_booting()) {
+				if (is_platform_booting()) {
 					echo ".";
 				}
 				if (file_exists("{$g['cf_conf_path']}/config.xml")) {
@@ -109,15 +109,10 @@ if (platform_booting(true) &&
 			}
 		}
 		echo ".";
-		if (!$cfgdevice) {
-			$last_backup = discover_last_backup();
-			if ($last_backup) {
-				log_error(gettext("No config.xml found, attempting last known config restore."));
-				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
-				restore_backup("/cf/conf/backup/{$last_backup}");
-			} else {
-				log_error(gettext("No config.xml or config backups found, resetting to factory defaults."));
-				restore_backup('/conf.default/config.xml');
+		if (!$cfgdevice && !config_read_file(true)) {
+			log_error(gettext("No config.xml or config backups found, resetting to factory defaults."));
+			if (restore_backup('/conf.default/config.xml')) {
+				config_read_file();
 			}
 		}
 
@@ -133,13 +128,13 @@ if (platform_booting(true) &&
 	echo ".";
 }
 
-global $config;
-$config = parse_config();
+config_read_file(true, true);
 
 /* set timezone */
-if (isset($config['system']['timezone']) &&
-    !empty($config['system']['timezone'])) {
-	$timezone = config_get_path('system/timezone');
+$timezone = config_get_path('system/timezone');
+if (isset($timezone) &&
+    !empty($timezone)) {
+	// noop
 } elseif (isset($g['default_timezone']) && !empty(g_get('default_timezone'))) {
 	$timezone = g_get('default_timezone');
 } else {

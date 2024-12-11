@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -56,7 +56,6 @@ if (!$omit_nocacheheaders) {
 	header("Expires: 0");
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 	header("Cache-Control: no-cache, no-store, must-revalidate");
-	header("Pragma: no-cache");
 }
 
 require_once("authgui.inc");
@@ -309,7 +308,7 @@ function sprint_info_box($msg, $class="alert-warning", $btnname = "close", $btnt
 			$btntext = $btnname;
 		}
 		if (!empty($btnicon)) {
-			$btnicon = '<i class="fa ' . $btnicon . ' icon-embed-btn"></i>';
+			$btnicon = '<i class="' . $btnicon . ' icon-embed-btn"></i>';
 		}
 
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-' . $btnclass . '" name="'. $btnname . '" value="' . $btntext . '">' . $btnicon . $btntext . '</button>';
@@ -330,7 +329,7 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 }
 
 function print_apply_box($msg) {
-	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-check', 'success');
+	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-solid fa-check', 'success');
 }
 
 // Format and print a box reporting that changes have been applied
@@ -389,7 +388,7 @@ function get_std_save_message($retval) {
 		$to_return = gettext("The changes have been applied successfully.");
 	} else {
 		// non-zero means there was some problem
-		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href="status_logs.php">', '</a>');
+		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href="/status_logs.php">', '</a>');
 	}
 	foreach ($filter_pages as $fp) {
 		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {
@@ -398,7 +397,7 @@ function get_std_save_message($retval) {
 	}
 	if ($filter_related) {
 		$to_return .= " " . gettext("The firewall rules are now reloading in the background.") . "<br />" .
-		    sprintf(gettext('%1$sMonitor%2$s the filter reload progress.'), "<a href='status_filter_reload.php'>", "</a>");
+		    sprintf(gettext('%1$sMonitor%2$s the filter reload progress.'), "<a href='/status_filter_reload.php'>", "</a>");
 	}
 	return $to_return;
 }
@@ -408,8 +407,8 @@ function pprint_address($adr, $specialnet_flags = []) {
 	if (isset($adr['any']) || $adr['network'] == 'any') {
 		$padr = "*";
 	} else if ($adr['network']) {
-		if (get_specialnet($adr['network'], $specialnet_flags)) {
-			$specialnets = get_specialnet();
+		$specialnets = get_specialnet('', $specialnet_flags);
+		if (array_key_exists($adr['network'], $specialnets)) {
 			$padr = $specialnets[$adr['network']];
 		} else {
 			$padr = $adr['network'];
@@ -453,6 +452,12 @@ function insert_word_breaks_in_domain_name($domain_name) {
 
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
+	if ($item['nat']) {
+		$item_set .= match ($item['ipprotocol']) {
+			'inet6' => 'NAT64 ',
+			default => '',
+		};
+	}
 	if ($item['os']) {
 			$item_set .= "os " . htmlspecialchars($item['os']) . " ";
 	}
@@ -510,11 +515,14 @@ function firewall_check_for_advanced_options(&$item) {
 	if ($item['defaultqueue']) {
 		$item_set .= "defaultqueue " . htmlspecialchars($item['defaultqueue']) . " ";
 	}
+	if ($item['tagged']) {
+		if (array_key_exists('nottagged', $item)) {
+			$item_set .= '!';
+		}
+		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
+	}
 	if ($item['tag']) {
 		$item_set .= "tag " . htmlspecialchars($item['tag']) . " ";
-	}
-	if ($item['tagged']) {
-		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
 	}
 	if (isset($item['allowopts'])) {
 		$item_set .= "allowopts ";
@@ -525,7 +533,6 @@ function firewall_check_for_advanced_options(&$item) {
 	if ($item['tcpflags_any'] || $item['tcpflags1'] || $item['tcpflags2']) {
 		$item_set .= "tcpflags set";
 	}
-
 	return $item_set;
 }
 
@@ -598,6 +605,9 @@ function gen_customwidgettitle_div($widgettitle) {
 }
 
 function set_customwidgettitle(& $user_settings) {
+	if (!is_valid_widgetkey($_POST['widgetkey'], $user_settings)) {
+		return false;
+	}
 	if ($_POST['descr']) {
 		$user_settings['widgets'][$_POST['widgetkey']]['descr'] = trim($_POST['descr']);
 	} else {
@@ -915,12 +925,49 @@ function add_package_tabs($tabgroup, &$tab_array) {
 	}
 }
 
-function alias_info_popup($alias_id) {
+function system_alias_info_popup($name, $description = null) {
+	if (empty($name)) {
+		return '';
+	}
+
+	$content = [];
+	$alias = escapeshellarg($name);
+	exec("/sbin/pfctl -t {$alias} -T show 2>/dev/null", $content);
+
+	$alias_items = [];
+	foreach ($content as $address) {
+		$alias_items[] = htmlspecialchars(trim($address));
+	}
+
+	$content = '<h5>' . ($description ?? htmlspecialchars($name)) . '</h5>';
+	if (empty($alias_items)) {
+		return $content;
+	}
+
+	$content .= '<ul><li>' . implode('</li><li>', $alias_items) . '</li></ul>';
+	return $content;
+}
+
+function alias_info_popup($alias_id, $is_system_alias = false) {
 	global $user_settings;
 
-	$alias = config_get_path("aliases/alias/{$alias_id}");
-	if (!is_array($alias)) {
-		return;
+	$alias = null;
+
+	if ($is_system_alias) {
+		// Reserved aliases take precedence.
+		$reserved_alias = get_reserved_table_names($alias_id);
+		if (empty($reserved_alias)) {
+			return system_alias_info_popup($alias_id);
+		} elseif (in_array($reserved_alias[array_key_first($reserved_alias)]['type'], ['network', 'host']) && empty($reserved_alias[array_key_first($reserved_alias)]['address'])) {
+			return system_alias_info_popup($alias_id, $reserved_alias[array_key_first($reserved_alias)]['descr']);
+		}
+		$alias = $reserved_alias[array_key_first($reserved_alias)];
+	} else {
+		$alias = config_get_path("aliases/alias/{$alias_id}");
+	}
+
+	if (!isset($alias)) {
+		return '';
 	}
 
 	$maxlength = 60;
@@ -931,7 +978,7 @@ function alias_info_popup($alias_id) {
 			$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
 		}
 
-		$content .= $alias['descr'];
+		return htmlspecialchars($alias['descr']);
 	} else if ($alias['url']) {
 		// TODO: Change it when pf supports tables with ports
 		if ($alias['type'] == "urltable") {
@@ -949,6 +996,12 @@ function alias_info_popup($alias_id) {
 			$content .= '<i>'. gettext("listing only first 10k items") .'</i>';
 		}
 	} else {
+		if (empty($alias['address'])) {
+			if (strlen($alias['descr']) >= $maxlength) {
+				$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
+			}
+			return htmlspecialchars($alias['descr']);
+		}
 		$alias_addresses = explode (" ", $alias['address']);
 		$alias_details = explode ("||", $alias['detail']);
 		$idx = 0;
@@ -980,10 +1033,9 @@ function alias_info_popup($alias_id) {
 }
 
 function gateway_info_popup($showgw, $gateways_status = false) {
-	init_config_arr(array('gateways', 'gateway_group'));
 	/* Get groups indexed by name so we can avoid re-scanning the array
 	 * multiple times later unnecessarily. */
-	$a_gateways = return_gateways_array(true, false, true, false);
+	$a_gateways = get_gateways(GW_CACHE_DISABLED | GW_CACHE_INACTIVE);
 
 	/* Use cached gateway status if available.
 	 * See https://redmine.pfsense.org/issues/12174 */
@@ -1014,7 +1066,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 		}
 	}
 	$grouptiermap = [];
-	foreach(config_get_path('gateways/gateway_group') as $i => $gwgroup) {
+	foreach(config_get_path('gateways/gateway_group', []) as $i => $gwgroup) {
 		if ($gwgroup['name'] == $showgw) {
 			$groupinfo = [];
 			foreach ($gwgroup['item'] as $member) {
@@ -1036,7 +1088,7 @@ function gateway_info_popup($showgw, $gateways_status = false) {
 					$groupinfo);
 			/* Re-slice member gateways which are now sorted */
 			$gws = array_column($groupinfo, 'gw');
-			$link = "system_gateway_groups_edit.php?id={$i}";
+			$link = "/system_gateway_groups_edit.php?id={$i}";
 			break;
 		}
 	}

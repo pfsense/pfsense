@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -39,14 +39,12 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat.inc");
 
+$rdr_srctype_flags = [SPECIALNET_CHECKPERM, SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET];
+$rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
+
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat.php');
 
 $ifdisp = get_configured_interface_with_descr();
-
-init_config_arr(array('filter', 'rule'));
-init_config_arr(array('nat', 'separator'));
-init_config_arr(array('nat', 'rule'));
-$a_nat = config_get_path('nat/rule', []);
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -98,7 +96,7 @@ if ($_POST['save'] && !$input_errors) {
 
 
 function srctype_selected() {
-	global $pconfig, $config;
+	global $pconfig;
 
 	$selected = "";
 	if (array_key_exists($pconfig['src'], build_srctype_list())) {
@@ -117,7 +115,7 @@ function srctype_selected() {
 }
 
 function dsttype_selected() {
-	global $pconfig, $config;
+	global $pconfig;
 
 	$selected = "";
 	if (array_key_exists($pconfig['dst'], build_dsttype_list())) {
@@ -138,12 +136,14 @@ function dsttype_selected() {
 function localtype_selected() {
 	global $pconfig;
 
+	$rdr_lcltype_flags = [SPECIALNET_IFADDR];
+
 	if ($pconfig['localtype']) {
 		// The rule type came from the $_POST array, after input errors, so keep it.
 		return $pconfig['localtype'];
 	}
 
-	$sel = get_specialnet($pconfig['localip']);
+	$sel = get_specialnet($pconfig['localip'], $rdr_lcltype_flags);
 
 	if (!$sel) {
 		return('single');
@@ -204,9 +204,9 @@ $section->addInput(new Form_Select(
 
 $btnsrcadv = new Form_Button(
 	'btnsrcadv',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnsrcadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -236,7 +236,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'src',
 	null,
-	get_specialnet($pconfig['src']) ? '': $pconfig['src'],
+	get_specialnet($pconfig['src'], $rdr_srctype_flags) ? '': $pconfig['src'],
 	'ALIASV4V6'
 ))->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
 
@@ -304,7 +304,7 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'dst',
 	null,
-	get_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
+	get_specialnet($pconfig['dst'], $rdr_dsttype_flags) ? '': $pconfig['dst'],
 	'ALIASV4V6'
 ))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 
@@ -424,16 +424,16 @@ $section->addInput(new Form_Select(
 	)
 ));
 
-if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST['dup']))) {
+if (isset($id) && config_get_path("nat/rule/{$id}") && (!isset($_POST['dup']) || !is_numericint($_POST['dup']))) {
 
 	$hlpstr = '';
 	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
 	$rule_association = 'associated-rule-id';
 
-	if (is_array($config['filter']['rule'])) {
+	if (is_array(config_get_path('filter/rule'))) {
 		filter_rules_sort();
 
-		foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
+		foreach (config_get_path('filter/rule', []) as $filter_id => $filter_rule) {
 			if (isset($filter_rule['associated-rule-id'])) {
 				$rulelist[$filter_rule['associated-rule-id']] = sprintf(gettext('Rule %s'), $filter_rule['descr']);
 
@@ -471,9 +471,11 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-gen_created_updated_fields($form, $a_nat[$id]['created'], $a_nat[$id]['updated']);
+if (isset($id)) {
+	gen_created_updated_fields($form, config_get_path("nat/rule/{$id}/created"), config_get_path("nat/rule/{$id}/updated"));
+}
 
-if (isset($id) && $a_nat[$id]) {
+if (isset($id) && config_get_path("nat/rule/{$id}")) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -573,7 +575,7 @@ events.push(function() {
 		}
 	}
 
-	var customarray	 = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var customarray	 = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
 	function check_for_aliases() {
 		//	if External port range is an alias, then disallow
@@ -664,7 +666,11 @@ events.push(function() {
 
 	function dst_change(iface, old_iface, old_dst) {
 		if ((old_dst == "") || (old_iface.concat("ip") == old_dst)) {
-			$('#dsttype').val(iface + "ip");
+			if ($("#dsttype option[value='" + iface + "ip" + "']").length > 0) {
+				$('#dsttype').val(iface + "ip");
+			} else {
+				$('#dsttype').val("single");
+			}
 		}
 	}
 
@@ -677,7 +683,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Hide Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnsrcadv').children();
+		$('#btnsrcadv').text(text).prepend(children);
 	}
 
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------
@@ -752,8 +759,8 @@ if (!$_POST) {
 	nordr_change();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
-	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network,urltable')) ?>;
+	var customarray = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
 	$('#localip, #src, #dst').autocomplete({
 		source: addressarray

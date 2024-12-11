@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -42,25 +42,23 @@ require_once("captiveportal.inc");
 Return true if multiple servers type are selected in captiveportal config, false otherwise
 */
 function multiple_auth_server_type() {
-	global $config, $cpzone;
+	global $cpzone;
 	
 	$auth_types = array();
-
-	$fullauthservers = explode(",", $config['captiveportal'][$cpzone]['auth_server']);
-	foreach($fullauthservers as $authserver) {
+	$cpzone_config = config_get_path("captiveportal/{$cpzone}", []);
+	foreach(explode(",", $cpzone_config['auth_server']) as $authserver) {
 		if(strpos($authserver, ' - ') !== false) {
 			$authserver = explode(' - ', $authserver);
 			$auth_types[array_shift($authserver)] = true;
 		}
 	}
-	$fullauthservers2 = explode(",", $config['captiveportal'][$cpzone]['auth_server2']);
-	foreach($fullauthservers2 as $authserver) {
+	foreach(explode(",", $cpzone_config['auth_server2']) as $authserver) {
 		if(strpos($authserver, ' - ') !== false) {
 			$authserver = explode(' - ', $authserver);
 			$auth_types[array_shift($authserver)] = true;
 		}
 	}
-	if($config['captiveportal'][$cpzone]['auth_method'] === 'authserver' && count($auth_types)>1) {
+	if(($cpzone_config['auth_method'] === 'authserver') && (count($auth_types) > 1)) {
 		return true;
 	} else {
 		return false;
@@ -68,7 +66,7 @@ function multiple_auth_server_type() {
 }
 
 function print_details($cpent) {
-	global $config, $cpzone, $cpzoneid;
+	global $cpzone, $cpzoneid;
 
 	printf("<a data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" data-content=\" ", gettext("Session details"));
 
@@ -106,7 +104,7 @@ function print_details($cpent) {
 
 	/* print bytes sent and received, invert the values if reverse accounting is enabled */
 	$volume = getVolume($cpent[2]);
-	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
+	$reverse = config_path_enabled("captiveportal/{$cpzone}", 'reverseacct') ? true : false;
 	if ($reverse) {
 		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['output_bytes']), format_bytes($volume['input_bytes']));
 	} else {
@@ -119,20 +117,17 @@ function print_details($cpent) {
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-init_config_arr(array('captiveportal'));
-$a_cp = &$config['captiveportal'];
-
-if (count($a_cp) == 1) {
-	$cpzone = current(array_keys($a_cp));
+if (count(config_get_path('captiveportal', [])) == 1) {
+	$cpzone = current(array_keys(config_get_path('captiveportal', [])));
 }
 
 /* If the zone does not exist, do not display the invalid zone */
-if (!array_key_exists($cpzone, $a_cp)) {
+if (!array_key_exists($cpzone, config_get_path('captiveportal', []))) {
 	$cpzone = "";
 }
 
-if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
-	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+if (isset($cpzone) && !empty($cpzone) && config_path_enabled("captiveportal/{$cpzone}", 'zoneid')) {
+	$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 }
 
 if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_POST['id'])) {
@@ -158,10 +153,10 @@ $pglinks = array("", "status_captiveportal.php");
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
 
-	$pgtitle[] = htmlspecialchars($a_cp[$cpzone]['zone']);
+	$pgtitle[] = htmlspecialchars(config_get_path("captiveportal/{$cpzone}/zone"));
 	$pglinks[] = "status_captiveportal.php?zone=" . $cpzone;
 
-	if (isset($config['voucher'][$cpzone]['enable'])) {
+	if (config_path_enabled("voucher/{$cpzone}")) {
 		$pgtitle[] = gettext("Active Users");
 		$pglinks[] = "status_captiveportal.php?zone=" . $cpzone;
 	}
@@ -170,7 +165,7 @@ $shortcut_section = "captiveportal";
 
 include("head.inc");
 
-if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])):
+if (!empty($cpzone) && config_path_enabled("voucher/{$cpzone}")):
 	$tab_array = array();
 	$tab_array[] = array(gettext("Active Users"), true, "status_captiveportal.php?zone=" . htmlspecialchars($cpzone));
 	$tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone=" . htmlspecialchars($cpzone));
@@ -183,14 +178,14 @@ endif;
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-if (count($a_cp) > 1) {
+if (count(config_get_path('captiveportal', [])) > 1) {
 	$form = new Form(false);
 
 	$section = new Form_Section('Captive Portal Zone');
 
 	$zonelist = array("" => 'None');
 
-	foreach ($a_cp as $cpkey => $cp) {
+	foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
 		$zonelist[$cpkey] = $cp['zone'];
 	}
 
@@ -216,7 +211,7 @@ if (!empty($cpzone)): ?>
 				<tr>
 					<th><?=gettext("IP address")?></th>
 <?php
-	if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])):
+	if (!config_path_enabled("captiveportal/{$cpzone}", "nomacfilter")):
 ?>
 					<th><?=gettext("MAC address")?></th>
 <?php
@@ -249,7 +244,7 @@ if (!empty($cpzone)): ?>
 				<tr>
 					<td><?=htmlspecialchars($cpent[2])?></td>
 <?php
-		if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
+		if (!config_path_enabled("captiveportal/{$cpzone}", "nomacfilter")) {
 ?>
 					<td>
 <?php
@@ -294,7 +289,7 @@ if (!empty($cpzone)): ?>
 		endif;
 ?>
 					<td>
-						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa-solid fa-trash-can" title="<?=gettext("Disconnect this User")?>"></i></a>
 					</td>
 				</tr>
 <?php
@@ -306,7 +301,7 @@ if (!empty($cpzone)): ?>
 </div>
 <?php
 else:
-	if (empty($a_cp)) {
+	if (empty(config_get_path('captiveportal'))) {
 		// If no zones have been defined
 		print_info_box(sprintf(gettext('No Captive Portal zones have been configured. New zones may be added here: %1$sServices > Captive Portal%2$s.'), '<a href="services_captiveportal_zones.php">', '</a>'), 'warning', false);
 	}
@@ -318,21 +313,21 @@ endif;
 if (!empty($cpzone)):
 	if ($_REQUEST['showact']): ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=0" role="button" class="btn btn-info" title="<?=gettext("Don't show last activity")?>">
-		<i class="fa fa-minus-circle icon-embed-btn"></i>
+		<i class="fa-solid fa-minus-circle icon-embed-btn"></i>
 		<?=gettext("Hide Last Activity")?>
 	</a>
 <?php
 	else:
 ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=1" role="button" class="btn btn-info" title="<?=gettext("Show last activity")?>">
-		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<i class="fa-solid fa-plus-circle icon-embed-btn"></i>
 		<?=gettext("Show Last Activity")?>
 	</a>
 <?php
 	endif;
 ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>" usepost>
-		<i class="fa fa-trash icon-embed-btn"></i>
+		<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 		<?=gettext("Disconnect All Users")?>
 	</a>
 <?php

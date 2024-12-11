@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -36,9 +36,6 @@ require_once("guiconfig.inc");
 
 //igmpproxy_sort();
 
-init_config_arr(array('igmpproxy', 'igmpentry'));
-$a_igmpproxy = &$config['igmpproxy']['igmpentry'];
-
 if ($_POST['apply']) {
 	$pconfig = $_POST;
 
@@ -53,24 +50,21 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('igmpproxy');
 }
 
-if (isset($config['igmpproxy']['enable'])) {
+if (config_path_enabled('igmpproxy')) {
 	$pconfig['enable'] = true;
 }
-$pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
+$pconfig['igmpxverbose'] = config_path_enabled('syslog', 'igmpxverbose');
 
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	if (isset($pconfig['enable'])) {
-		if (is_array($config['igmpproxy']['igmpentry']) && 
-		    !empty($config['igmpproxy']['igmpentry'])) {
-			foreach ($config['igmpproxy']['igmpentry'] as $igmpcf) {
-				if ($igmpcf['type'] == 'upstream') {
-				       $upstream = true;	
-				} else {
-				       $downstream = true;	
-				}
+		foreach (config_get_path('igmpproxy/igmpentry', []) as $igmpcf) {
+			if ($igmpcf['type'] == 'upstream') {
+				$upstream = true;	
+			} else {
+				$downstream = true;	
 			}
 		}
 		if (!$upstream || !$downstream) {
@@ -93,8 +87,8 @@ if ($_POST['save']) {
 }
 
 if ($_POST['act'] == "del") {
-	if ($a_igmpproxy[$_POST['id']]) {
-		unset($a_igmpproxy[$_POST['id']]);
+	if (config_get_path("igmpproxy/igmpentry/{$_POST['id']}")) {
+		config_del_path("igmpproxy/igmpentry/{$_POST['id']}");
 		write_config("IGMP Proxy item deleted");
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");
@@ -161,7 +155,7 @@ print($form);
 					<tbody>
 <?php
 $i = 0;
-foreach ($a_igmpproxy as $igmpentry):
+foreach (config_get_path('igmpproxy/igmpentry', []) as $igmpentry):
 ?>
 						<tr>
 							<td>
@@ -186,8 +180,8 @@ foreach ($a_igmpproxy as $igmpentry):
 								<?=htmlspecialchars($igmpentry['descr'])?>&nbsp;
 							</td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=gettext('Edit IGMP entry')?>" href="services_igmpproxy_edit.php?id=<?=$i?>"></a>
-								<a class="fa fa-trash"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa-solid fa-pencil"	title="<?=gettext('Edit IGMP entry')?>" href="services_igmpproxy_edit.php?id=<?=$i?>"></a>
+								<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php
@@ -203,7 +197,7 @@ endforeach;
 
 <nav class="action-buttons">
 	<a href="services_igmpproxy_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

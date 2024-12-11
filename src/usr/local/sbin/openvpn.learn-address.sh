@@ -51,7 +51,8 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 				) > "${TMPSRV}"
 
 				/bin/chmod 644 "${TMPCONF}" "${TMPSRV}"
-				/usr/local/sbin/unbound-checkconf "${TMPSRV}" && /bin/mv "${TMPCONF}" "${CONF}"
+				# set the working directory for unbound-checkconf; see https://redmine.pfsense.org/issues/15723
+				CWD=$PWD; cd "${DIR}" && /usr/local/sbin/unbound-checkconf "${TMPSRV}" && cd "${CWD}" && /bin/mv "${TMPCONF}" "${CONF}"
 
 				# do not restart unbound on connect, see https://redmine.pfsense.org/issues/11129
 				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data ${CN}.${DOMAIN} ${ARECORD} ${IP}"

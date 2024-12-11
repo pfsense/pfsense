@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -40,11 +40,7 @@ $auto_pool_suffix = "pool.ntp.org";
 $max_candidate_peers = 25;
 $min_candidate_peers = 4;
 
-if (!is_array($config['ntpd'])) {
-	config_set_path('ntpd', array());
-}
-
-if (empty($config['ntpd']['interface'])) {
+if (empty(config_get_path('ntpd/interface'))) {
 	$old_ifs = config_get_path('installedpackages/openntpd/config/0/interface');
 	if (!empty($old_ifs)) {
 		config_set_path('ntpd/interface', $old_ifs);
@@ -55,7 +51,7 @@ if (empty($config['ntpd']['interface'])) {
 		$pconfig['interface'] = array();
 	}
 } else {
-	$pconfig['interface'] = explode(",", $config['ntpd']['interface']);
+	$pconfig['interface'] = explode(",", config_get_path('ntpd/interface'));
 }
 
 if ($_POST) {
@@ -88,6 +84,13 @@ if ($_POST) {
 		    !is_ipaddr($pconfig["server{$i}"])) {
 			$input_errors[] = gettext("NTP Time Server names must be valid domain names, IPv4 addresses, or IPv6 addresses");
 		}
+		if (isset($pconfig["servauth{$i}"]) && (($pconfig["servistype{$i}"] == 'pool') ||
+		    (substr_compare($pconfig["server{$i}"], $auto_pool_suffix, strlen($pconfig["server{$i}"]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0))) {
+			$input_errors[] = gettext("It is not possible to use 'Authenticated' for pools.");
+		}
+		if (isset($pconfig["servauth{$i}"]) && empty($pconfig['serverauth'])) {
+			$input_errors[] = gettext("The NTP authentication key information must be set to use 'Authenticated' for a server or peer.");
+		}
 	}
 
 	if (is_numericint($pconfig['ntpminpoll']) &&
@@ -99,6 +102,12 @@ if ($_POST) {
 	if (isset($pconfig['serverauth'])) {
 		if (empty($pconfig['serverauthkey'])) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key can't be empty.");
+		} elseif (empty($pconfig['serverauthkeyid'])) {
+			$input_errors[] = gettext("The authentication Key ID can't be empty.");
+		} elseif (!ctype_digit($pconfig['serverauthkeyid'])) {
+			$input_errors[] = gettext("The authentication Key ID must be a positive integer.");
+		} elseif ($pconfig['serverauthkeyid'] < 1 || $pconfig['serverauthkeyid'] > 65535) {
+			$input_errors[] = gettext("The authentication Key ID must be between 1-65535.");
 		} elseif (($pconfig['serverauthalgo'] == 'md5') && ((strlen($pconfig['serverauthkey']) > 20) ||
 		    !ctype_print($pconfig['serverauthkey']))) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key for MD5 digest must be from 1 to 20 printable characters.");
@@ -115,7 +124,7 @@ if ($_POST) {
 		config_set_path('ntpd/enable', isset($_POST['enable']) ? 'enabled' : 'disabled');
 		if (is_array($_POST['interface'])) {
 			config_set_path('ntpd/interface', implode(",", $_POST['interface']));
-		} elseif (isset($config['ntpd']['interface'])) {
+		} else {
 			config_del_path('ntpd/interface');
 		}
 
@@ -123,6 +132,7 @@ if ($_POST) {
 		config_del_path('ntpd/noselect');
 		config_del_path('ntpd/ispool');
 		config_del_path('ntpd/ispeer');
+		config_del_path('ntpd/isauth');
 		$timeservers = '';
 
 		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -130,15 +140,18 @@ if ($_POST) {
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
 				if (isset($_POST["servprefer{$i}"])) {
-					$config['ntpd']['prefer'] .= "{$tserver} ";
+					config_set_path('ntpd/prefer', (config_get_path('ntpd/prefer') . "{$tserver} "));
 				}
 				if (isset($_POST["servselect{$i}"])) {
-					$config['ntpd']['noselect'] .= "{$tserver} ";
+					config_set_path('ntpd/noselect', (config_get_path('ntpd/noselect') . "{$tserver} "));
+				}
+				if (isset($_POST["servauth{$i}"])) {
+					config_set_path('ntpd/isauth', (config_get_path('ntpd/isauth') . "{$tserver} "));
 				}
 				if ($_POST["servistype{$i}"] == 'pool') {
-					$config['ntpd']['ispool'] .= "{$tserver} ";
+					config_set_path('ntpd/ispool', (config_get_path('ntpd/ispool') . "{$tserver} "));
 				} elseif ($_POST["servistype{$i}"] == 'peer') {
-					$config['ntpd']['ispeer'] .= "{$tserver} ";
+					config_set_path('ntpd/ispeer', (config_get_path('ntpd/ispeer') . "{$tserver} "));
 				}
 			}
 		}
@@ -159,40 +172,40 @@ if ($_POST) {
 
 		if (!empty($_POST['logpeer'])) {
 			config_set_path('ntpd/logpeer', $_POST['logpeer']);
-		} elseif (isset($config['ntpd']['logpeer'])) {
+		} elseif (config_path_enabled('ntpd', 'logpeer')) {
 			config_del_path('ntpd/logpeer');
 		}
 
 		if (!empty($_POST['logsys'])) {
 			config_set_path('ntpd/logsys', $_POST['logsys']);
-		} elseif (isset($config['ntpd']['logsys'])) {
+		} elseif (config_path_enabled('ntpd', 'logsys')) {
 			config_del_path('ntpd/logsys');
 		}
 
 		if (!empty($_POST['clockstats'])) {
 			config_set_path('ntpd/clockstats', $_POST['clockstats']);
-		} elseif (isset($config['ntpd']['clockstats'])) {
+		} elseif (config_path_enabled('ntpd', 'clockstats')) {
 			config_del_path('ntpd/clockstats');
 		}
 
 		if (!empty($_POST['loopstats'])) {
 			config_set_path('ntpd/loopstats', $_POST['loopstats']);
-		} elseif (isset($config['ntpd']['loopstats'])) {
+		} elseif (config_path_enabled('ntpd', 'loopstats')) {
 			config_del_path('ntpd/loopstats');
 		}
 
 		if (!empty($_POST['peerstats'])) {
 			config_set_path('ntpd/peerstats', $_POST['peerstats']);
-		} elseif (isset($config['ntpd']['peerstats'])) {
+		} elseif (config_path_enabled('ntpd', 'peerstats')) {
 			config_del_path('ntpd/peerstats');
 		}
 
-		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph']))) {
+		if ((empty($_POST['statsgraph'])) == (config_path_enabled('ntpd', 'statsgraph'))) {
 			$enable_rrd_graphing = true;
 		}
 		if (!empty($_POST['statsgraph'])) {
 			config_set_path('ntpd/statsgraph', $_POST['statsgraph']);
-		} elseif (isset($config['ntpd']['statsgraph'])) {
+		} elseif (config_path_enabled('ntpd', 'statsgraph')) {
 			config_del_path('ntpd/statsgraph');
 		}
 		if (isset($enable_rrd_graphing)) {
@@ -201,7 +214,7 @@ if ($_POST) {
 
 		if (!empty($_POST['leaptext'])) {
 			config_set_path('ntpd/leapsec', base64_encode($_POST['leaptext']));
-		} elseif (isset($config['ntpd']['leapsec'])) {
+		} elseif (config_path_enabled('ntpd', 'leapsec')) {
 			config_del_path('ntpd/leapsec');
 		}
 
@@ -212,10 +225,12 @@ if ($_POST) {
 		if (!empty($_POST['serverauth'])) {
 			config_set_path('ntpd/serverauth', $_POST['serverauth']);
 			config_set_path('ntpd/serverauthkey', base64_encode(trim($_POST['serverauthkey'])));
+			config_set_path('ntpd/serverauthkeyid', $_POST['serverauthkeyid']);
 			config_set_path('ntpd/serverauthalgo', $_POST['serverauthalgo']);
-		} elseif (isset($config['ntpd']['serverauth'])) {
+		} elseif (config_path_enabled('ntpd', 'serverauth')) {
 			config_del_path('ntpd/serverauth');
 			config_del_path('ntpd/serverauthkey');
+			config_del_path('ntpd/serverauthkeyid');
 			config_del_path('ntpd/serverauthalgo');
 		}
 
@@ -251,14 +266,14 @@ function build_interface_list() {
 	return($iflist);
 }
 
-init_config_arr(array('ntpd'));
-$pconfig = &$config['ntpd'];
-$pconfig['enable'] = ($config['ntpd']['enable'] != 'disabled') ? 'enabled' : 'disabled';
+$pconfig = config_get_path('ntpd', []);
+$pconfig['enable'] = ($pconfig['enable'] != 'disabled') ? 'enabled' : 'disabled';
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
+config_set_path('ntpd', $pconfig);
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Settings"));
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "ntp";
@@ -303,7 +318,7 @@ $section->addInput(new Form_Select(
 			'Selecting no interfaces will listen on all interfaces with a wildcard.%1$s' .
 			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.', '<br />');
 
-$timeservers = explode(' ', $config['system']['timeservers']);
+$timeservers = explode(' ', config_get_path('system/timeservers'));
 $maxrows = max(count($timeservers), 1);
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
@@ -323,19 +338,28 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		'servprefer' . $counter,
 		null,
 		null,
-		isset($config['ntpd']['prefer']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['prefer'], $timeservers[$counter])
+		config_path_enabled('ntpd', 'prefer') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/prefer'), $timeservers[$counter])
 	 ))->sethelp('Prefer');
 
 	 $group->add(new Form_Checkbox(
 		'servselect' . $counter,
 		null,
 		null,
-		isset($config['ntpd']['noselect']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['noselect'], $timeservers[$counter])
+		config_path_enabled('ntpd', 'noselect') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/noselect'), $timeservers[$counter])
 	 ))->sethelp('No Select');
 
-	if ((substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0) || (isset($config['ntpd']['ispool']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispool'], $timeservers[$counter]))) {
+	 $group->add(new Form_Checkbox(
+		'servauth' . $counter,
+		null,
+		null,
+		config_path_enabled('ntpd', 'isauth') && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/isauth', ''), $timeservers[$counter])
+	 ))->setHelp('Authenticated');
+
+	if ((substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0) ||
+	    ((config_get_path('ntpd/ispool') !== null) && isset($timeservers[$counter]) &&
+	    substr_count(config_get_path('ntpd/ispool'), $timeservers[$counter]))) {
 		$servertype = 'pool';
-	} elseif (isset($config['ntpd']['ispeer']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispeer'], $timeservers[$counter])) {
+	} elseif ((config_get_path('ntpd/ispeer') !== null) && isset($timeservers[$counter]) && substr_count(config_get_path('ntpd/ispeer'), $timeservers[$counter])) {
 		$servertype = 'peer';
 	} else {
 		$servertype = 'server';
@@ -352,7 +376,7 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning');
 
 	 $section->add($group);
@@ -362,7 +386,7 @@ $section->addInput(new Form_Button(
 	'addrow',
 	'Add',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success');
 
 $section->addInput(new Form_StaticText(
@@ -443,9 +467,9 @@ $section->addInput(new Form_Checkbox(
 // Statistics logging section
 $btnadv = new Form_Button(
 	'btnadvstats',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -479,9 +503,9 @@ $section->addInput(new Form_Checkbox(
 // Leap seconds section
 $btnadv = new Form_Button(
 	'btnadvleap',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -527,7 +551,7 @@ $section->addInput(new Form_Select(
 		'inet' => 'IPv4',
 		'inet6' => 'IPv6',
 	)
-))->setHelp('Force NTP peers DNS resolution IP protocol. Do not affect pools.');
+))->setHelp('Force NTP peer DNS resolution IP protocol.');
 
 $section->addInput(new Form_Checkbox(
 	'serverauth',
@@ -540,9 +564,18 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('Authentication key');
 $group->addClass('ntpserverauth');
 
-$group->add(new Form_IpAddress(
+$group->add(new Form_Input(
+	'serverauthkeyid',
+	'Key ID',
+	null,
+	$pconfig['serverauthkeyid'],
+	['placeholder' => 'Key ID', 'type' => 'number', 'min' => 1, 'max' => 65535, 'step' => 1]
+))->setWidth(2)->setHelp('ID associated with the authentication key');
+
+$group->add(new Form_Input(
 	'serverauthkey',
 	'NTP Authentication key',
+	'text',
 	base64_decode($pconfig['serverauthkey']),
 	['placeholder' => 'NTP Authentication key']
 ))->setHelp(
@@ -557,7 +590,7 @@ $group->add(new Form_Select(
 	null,
 	$pconfig['serverauthalgo'],
 	$ntp_auth_halgos
-))->setWidth(3)->setHelp('Digest algorithm');
+))->setWidth(2)->setHelp('Digest algorithm');
 
 $section->add($group);
 
@@ -607,7 +640,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvstats').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvstats').children();
+		$('#btnadvstats').text(text).prepend(children);
 	}
 
 	$('#btnadvstats').click(function(event) {
@@ -644,7 +678,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvleap').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvleap').children();
+		$('#btnadvleap').text(text).prepend(children);
 	}
 
 	function change_serverauth() {

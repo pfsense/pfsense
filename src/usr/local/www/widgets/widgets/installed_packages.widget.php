@@ -8,7 +8,7 @@
  * Copyright (c) Jonathan Watt <jwatt@jwatt.org>
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -74,11 +74,11 @@ function get_pkg_stats() {
 			if ($version_compare == '>') {
 				// we're running a newer version of the package
 				$status = sprintf(gettext('Newer than available (%s)'), $pkg['version']);
-				$statusicon = 'exclamation';
+				$statusicon = 'fa-solid fa-exclamation';
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package
 				$status = sprintf(gettext('Upgrade available to %s'), $pkg['version']);
-				$statusicon = 'plus-circle';
+				$statusicon = 'fa-solid fa-plus-circle';
 				$txtcolor = "text-warning";
 				$upgradeavail = true;
 				$vergetstr = '&amp;from=' . $pkg['installed_version'] .
@@ -86,21 +86,21 @@ function get_pkg_stats() {
 			} else if ($version_compare == '=') {
 				// we're running the current version
 				$status = gettext('ok');
-				$statusicon = 'check';
+				$statusicon = 'fa-solid fa-check';
 			} else {
 				$status = gettext('Error comparing version');
-				$statusicon = 'exclamation';
+				$statusicon = 'fa-solid fa-exclamation';
 			}
 		} else {
 			// unknown available package version
 			$status = gettext('Unknown');
-			$statusicon = 'question';
+			$statusicon = 'fa-solid fa-question';
 		}
 
 		print("<tr>\n");
 		print(		'<td><span class="' . $txtcolor . '">' . $pkg['shortname'] . "</span></td>\n");
 		print(		"<td>\n");
-		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i> ');
+		print(			'<i title="' . $status . '" class="' . $statusicon . '"></i> ');
 
 		if (!g_get('disablepackagehistory')) {
 			print('<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">');
@@ -114,16 +114,16 @@ function get_pkg_stats() {
 
 		print(	"</td>\n");
 		print(	"<td>\n");
-		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-trash"></i></a>'."\n");
+		print(		'<a title="' . gettext("Remove") . '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '"><i class="fa-solid fa-trash-can"></i></a>'."\n");
 
 		if ($upgradeavail) {
-			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa fa-refresh"></i></a>'."\n");
+			print(	'<a title="' . gettext("Update") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '"><i class="fa-solid fa-arrows-rotate"></i></a>'."\n");
 		} else {
-			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa fa-retweet"></i></a>'."\n");
+			print(	'<a title="' . gettext("Reinstall") . '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '"><i class="fa-solid fa-retweet"></i></a>'."\n");
 		}
 
 		if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
-			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '"><i class="fa fa-info"></i></a>'."\n");
+			print(	'<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($pkg['www']) . '"><i class="fa-solid fa-info"></i></a>'."\n");
 		}
 
 		print(	"</td>\n");

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-pfsensewizardsubsystem
-##|*NAME=pfSense wizard subsystem
-##|*DESCR=Allow access to the 'pfSense wizard subsystem' page.
+##|*NAME=Wizard Subsystem
+##|*DESCR=Allow access to the Wizard Subsystem (e.g. Setup Wizard, OpenVPN Wizard).
 ##|*MATCH=wizard.php*
 ##|-PRIV
 
@@ -141,47 +141,33 @@ if ($stepid > $totalsteps) {
 	$stepid = $totalsteps;
 }
 
-// Convert a string containing a text version of a PHP array into a real $config array
-// that can then be created. e.g.: config_array_from_str("['apple']['orange']['pear']['banana']");
-function config_array_from_str( $text) {
-	$t = str_replace("[", "", $text);	// Remove '['
-	$t = str_replace("'", "", $t);		// Remove '
-	$t = str_replace("\"", "", $t);		// Remove "
-	$t = str_replace("]", " ", $t);		// Convert ] to space
-	$a = explode(" ", trim($t));
-	init_config_arr($a);
-}
-
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
-	global $config;
-	$field_split = explode("->", $field);
-	$thisvar = null;
-	foreach ($field_split as $f) {
-		$field_conv .= "['" . $f . "']";
-	}
+	$field_conv = implode('/', explode("->", $field));
 	if ($field_conv == "") {
 		return;
 	}
 	if ($arraynum != "") {
-		$field_conv .= "[" . $arraynum . "]";
+		$field_conv .= "/{$arraynum}";
 	}
-	if (($field_type == "checkbox" and $updatetext != "on") || $updatetext == "") {
-		/*
-		 * item is a checkbox, it should have the value "on"
-		 * if it was checked
-		 */
-		$var = "\$config{$field_conv}";
-		$text = "if (isset({$var})) unset({$var});";
-		eval($text);
+
+	if ($updatetext == '') {
+		if (config_get_path($field_conv) !== null) {
+			config_del_path($field_conv);
+		}
+		return;
+	}
+
+	if ($field_type == "checkbox") {
+		if (($updatetext == 'on' ) || ($updatetext == 'yes')) {
+			config_set_path($field_conv, true);
+		} elseif (config_get_path($field_conv) !== null) {
+			config_del_path($field_conv);
+		}
 		return;
 	}
 
 	if ($field_type == "interfaces_selection") {
-		$var = "\$config{$field_conv}";
-		$text = "if (isset({$var})) unset({$var});";
-		$text .= "\$thisvar = &\$config" . $field_conv . ";";
-		eval($text);
-		$thisvar = $updatetext;
+		config_set_path($field_conv, $updatetext);
 		return;
 	}
 
@@ -192,21 +178,11 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	}
 
 	if ($unset == "yes") {
-		$text = "unset(\$config" . $field_conv . ");";
-		eval($text);
+		config_del_path($field_conv);
 	}
 
-	// Verify that the needed $config element exists. If not, create it
-	$tsttext = 'return (isset($config' . $field_conv . '));';
-
-	if (!eval($tsttext)) {
-		config_array_from_str($field_conv);
-	}
-
-	$text .= "\$thisvar = &\$config" . $field_conv . ";";
-	eval($text);
-
-	$thisvar = $updatetext;
+	// Verify that the needed config array element exists. If not, create it
+	config_set_path($field_conv, $updatetext);
 }
 
 $title	   = $pkg['step'][$stepid]['title'];
@@ -400,7 +376,7 @@ function fixup_string($string) {
 			$host_if = find_ip_interface($urlhost);
 			if ($host_if) {
 				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
-				$host_if_ip = config_get_path("interfaces/{$host_if}/ipaddr");
+				$host_if_ip = (!empty($host_if)) ? config_get_path("interfaces/{$host_if}/ipaddr") : null;
 				if ($host_if && is_ipaddr($host_if_ip)) {
 					$urlhost = $host_if_ip;
 				}
@@ -505,26 +481,22 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 		$name = strtolower($name);
 
 		if ($field['bindstofield'] != "") {
-			$arraynum = "";
-			$field_conv = "";
-			$field_split = explode("->", $field['bindstofield']);
+			$field_conv_path = implode('/', explode("->", $field['bindstofield']));
 			// arraynum is used in cases where there is an array of the same field
 			// name such as dnsserver (2 of them)
 			if ($field['arraynum'] != "") {
-				$arraynum = "[" . $field['arraynum'] . "]";
+				$field_conv_path .= "/{$field['arraynum']}";
 			}
 
-			foreach ($field_split as $f) {
-				$field_conv .= "['" . $f . "']";
+			if (config_get_path($field_conv_path) !== null) {
+				if ($field['type'] == "checkbox") {
+					if (empty(config_get_path($field_conv_path))) {
+						$value = true;
+					}
+				} else {
+					$value = config_get_path($field_conv_path);
+				}
 			}
-
-			if ($field['type'] == "checkbox") {
-				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) { \$value = \$config" . $field_conv . $arraynum . "; if (empty(\$value)) \$value = true; }";
-			} else {
-				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) \$value = \$config" . $field_conv . $arraynum . ";";
-			}
-
-			eval($toeval);
 		}
 
 
@@ -677,11 +649,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
 
-				if (!is_array($config['ca'])) {
-					config_set_path('ca', array());
-				}
-
-				foreach ($config['ca'] as $ca) {
+				foreach (config_get_path('ca', []) as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
 					if ($value == $caname) {
@@ -730,11 +698,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
 				}
 
-				if (!is_array($config['cert'])) {
-					config_set_path('cert', array());
-				}
-
-				foreach ($config['cert'] as $ca) {
+				foreach (config_get_path('cert', []) as $ca) {
 					if (stristr($ca['descr'], "webconf")) {
 						continue;
 					}
@@ -910,12 +874,36 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
 
 				break;
+			case "textarea_source":
+				if ($field['displayname']) {
+					$etitle = $field['displayname'];
+				} else if (!$field['dontdisplayname']) {
+					$etitle =  fixup_string($field['name']);
+				}
+
+				$source = $field['source'];
+				try{
+					@eval("\$value = &$source;");
+				} catch (\Throwable | \Error | \Exception $e) {
+					log_error($e);
+				}
+				$input = $section->addInput(new Form_Textarea(
+					$name,
+					$etitle,
+					$value
+				))->setHelp($field['description'])
+				  ->setAttribute('rows', $field['rows'])
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
+				if ($field['readonly']) {
+					$input->setReadonly();
+				}
+				break;
 			case "submit":
 				$form->addGlobal(new Form_Button(
 					$name,
 					$field['name'],
 					null,
-					'fa-angle-double-right'
+					'fa-solid fa-angle-double-right'
 				))->addClass('btn-primary');
 
 				break;

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Originally Sponsored By Anathematic @ pfSense Forums
  * All rights reserved.
  *
@@ -42,7 +42,7 @@ if ($_POST && $confirmed && isset($_POST['action'])) {
 	switch ($_POST['action']) {
 		case 'block':
 			/* Check that we have a valid host */
-			$message = easyrule_parse_block($_POST['int'], $_POST['src'], $_POST['ipproto']);
+			$message = easyrule_parse_block($_POST['int'], $_POST['src']);
 			break;
 		case 'pass':
 			$message = easyrule_parse_pass($_POST['int'], $_POST['proto'], $_POST['src'], $_POST['dst'], $_POST['dstport'], $_POST['ipproto']);
@@ -103,7 +103,7 @@ if (!$confirmed && !empty($_REQUEST['action'])) { ?>
 				<input type="hidden" name="action" value="<?=htmlspecialchars($_REQUEST['action'])?>" />
 				<input type="hidden" name="confirmed" value="true" />
 				<button type="submit" class="btn btn-success" name="erconfirm" id="erconfirm" value="<?=gettext("Confirm")?>">
-					<i class="fa fa-check icon-embed-btn"></i>
+					<i class="fa-solid fa-check icon-embed-btn"></i>
 					<?=gettext("Confirm")?>
 				</button>
 	<?php endif;

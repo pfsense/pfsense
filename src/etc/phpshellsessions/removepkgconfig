@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,10 @@
  * limitations under the License.
  */
 
-global $config;
-$config = parse_config(true);
-unset($config['installedpackages']);
+config_read_file(true);
+config_del_path('installedpackages');
 echo "Clearing package configuration information...\n";
 write_config("pfSsh.php cleared package configuration data.");
-$config = parse_config(true);
+config_read_file(true);
 echo "Removing startup files from /usr/local/etc/rc.d/...\n";
 exec("rm /usr/local/etc/rc.d/*");

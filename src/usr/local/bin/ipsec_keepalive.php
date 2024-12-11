@@ -4,7 +4,7 @@
  * ipsec_keepalive.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2021-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2021-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,15 +23,12 @@
 include_once('ipsec.inc');
 include_once('service-utils.inc');
 include_once('gwlb.inc');
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
-global $config;
 
 $debug = false;
 
 /* Check if there are any tunnels defined, bail if not */
 /* Check if IPsec is enabled and running, bail if disabled or stopped */
-if (empty($config['ipsec']['phase2']) ||
+if (empty(config_get_path('ipsec/phase2')) ||
     !ipsec_enabled() ||
     !get_service_status(array('name' => 'ipsec'))) {
 	if ($debug) {
@@ -44,7 +41,7 @@ if (empty($config['ipsec']['phase2']) ||
 $initiate = array();
 
 /* Check all P2s for keepalive setting */
-foreach ($config['ipsec']['phase2'] as $p2) {
+foreach (config_get_path('ipsec/phase2', []) as $p2) {
 	/* If enabled, form conid and store in list */
 	if ($p2['keepalive'] == 'enabled') {
 		$initiate[] = ipsec_conid(null, $p2);

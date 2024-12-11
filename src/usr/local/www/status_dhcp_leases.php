@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,6 +35,7 @@
 require_once('guiconfig.inc');
 require_once('config.inc');
 require_once('system.inc');
+require_once('services_dhcp.inc');
 
 $pgtitle = [gettext('Status'), gettext('DHCP Leases')];
 $shortcut_section = 'dhcp';
@@ -77,13 +78,13 @@ if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	services_dhcpd_configure();
 	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
 }
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('kea')):
 if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	system_del_kea4lease($_POST['deleteip']);
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 if (dhcp_is_backend('isc')):
 if ($_POST['cleardhcpleases']) {
@@ -94,13 +95,13 @@ if ($_POST['cleardhcpleases']) {
 	services_dhcpd_configure();
 	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
 }
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('kea')):
 if ($_POST['cleardhcpleases']) {
 	system_clear_all_kea4leases();
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
@@ -138,7 +139,7 @@ if ($_REQUEST['order']) {
 }
 
 /* only print pool status when we have one */
-if (count($leases['failover']) > 0):
+if (dhcp_is_backend('isc') && count($leases['failover']) > 0):
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool Status')?></h2></div>
@@ -169,7 +170,7 @@ if (count($leases['failover']) > 0):
 </div>
 <?php
 /* only print pool status when we have one */
-endif;
+endif; /* dhcp_is_backend('isc') */
 ?>
 
 <div class="panel panel-default" id="search-panel">
@@ -178,7 +179,7 @@ endif;
 			<?=gettext('Search')?>
 			<span class="widget-heading-icon pull-right">
 				<a data-toggle="collapse" href="#search-panel_panel-body">
-					<i class="fa fa-plus-circle"></i>
+					<i class="fa-solid fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
@@ -205,8 +206,8 @@ endif;
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to filter entries.')?></span>
@@ -246,17 +247,17 @@ foreach ($leases['lease'] as $data):
 
 	if ($data['act'] == $active_string) {
 		/* Active DHCP Lease */
-		$icon = 'fa-check-circle-o';
+		$icon = 'fa-regular fa-circle-check';
 	} elseif ($data['act'] == $expired_string) {
 		/* Expired DHCP Lease */
-		$icon = 'fa-ban';
+		$icon = 'fa-solid fa-ban';
 	} else {
 		/* Static Mapping */
-		$icon = 'fa-user';
+		$icon = 'fa-solid fa-user';
 	}
 
 	if ($data['act'] != $static_string) {
-		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+		foreach (config_get_path('dhcpd', []) as $dhcpif => $dhcpifconf) {
 			if (empty($dhcpifconf)) {
 				continue;
 			}
@@ -297,11 +298,11 @@ foreach ($leases['lease'] as $data):
 ?>
 				<tr>
 					<td>
-						<i class="fa <?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
+						<i class="<?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
 <?php if ($data['online'] === $online_string): ?>
-						<i class="fa fa-arrow-up text-success online" title="<?=htmlspecialchars($data['online'])?>"></i>
+						<i class="fa-solid fa-arrow-up text-success online" title="<?=htmlspecialchars($data['online'])?>"></i>
 <?php else: ?>
-						<i class="fa fa-arrow-down online" title="<?=htmlspecialchars($data['online'])?>"></i>
+						<i class="fa-solid fa-arrow-down online" title="<?=htmlspecialchars($data['online'])?>"></i>
 <?php endif; ?>
 					</td>
 					<td><?=htmlspecialchars($data['ip'])?></td>
@@ -327,17 +328,17 @@ foreach ($leases['lease'] as $data):
 					<? endif; ?>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-						<a class="fa fa-plus-square-o"	title="<?=gettext('Add static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa-regular fa-square-plus"	title="<?=gettext('Add static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php endif; ?>
-						<a class="fa fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;descr=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;descr=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php if ($data['online'] != $online_string):?>
-						<a class="fa fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>" usepost></a>
+						<a class="fa-solid fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>" usepost></a>
 <?php endif; ?>
 <?php if ($data['type'] == $static_string): ?>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>" href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>
@@ -416,12 +417,57 @@ else:
 	</div>
 </div>
 
+<nav class="action-buttons">
 <?php if ($_REQUEST['all']): ?>
-	<a class="btn btn-info" href="status_dhcp_leases.php?all=0"><i class="fa fa-minus-circle icon-embed-btn"></i><?=gettext("Show Active and Static Leases Only")?></a>
+	<a class="btn btn-info" href="status_dhcp_leases.php?all=0"><i class="fa-solid fa-minus-circle icon-embed-btn"></i><?=gettext("Show Active and Static Leases Only")?></a>
 <?php else: ?>
-	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext("Show All Configured Leases")?></a>
+	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa-solid fa-plus-circle icon-embed-btn"></i><?=gettext("Show All Configured Leases")?></a>
 <?php endif; ?>
-	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa fa-trash icon-embed-btn"></i><?=gettext("Clear All DHCP Leases")?></a>
+	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa-solid fa-trash-can icon-embed-btn"></i><?=gettext("Clear All DHCP Leases")?></a>
+</nav>
+
+<?php
+if (dhcp_is_backend('kea')):
+$status = system_get_kea4status();
+if (is_array($status) && array_key_exists('high-availability', $status['arguments'])):
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('High Availability Status')?></h2></div>
+	<div class="panel-body table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext('Node Name')?></th>
+				<th><?=gettext('Node Type')?></th>
+				<th><?=gettext('Node Role')?></th>
+				<th><?=gettext('Latest Heartbeat')?></th>
+				<th><?=gettext('Node State')?></th>
+			</tr>
+		</thead>
+		<tbody>
+<?php
+	foreach ($status['arguments']['high-availability'] as $ha_status):
+		foreach ($ha_status['ha-servers'] as $where => $ha_server):
+?>
+			<tr>
+				<td><?=dhcp_ha_status_icon($where, $ha_server)?> <?=htmlspecialchars($ha_server['server-name'])?></td>
+				<td><?=htmlspecialchars($where)?></td>
+				<td><?=htmlspecialchars($ha_server['role'])?></td>
+				<td><?=htmlspecialchars(kea_format_age($ha_server['age']))?></td>
+				<td><?=htmlspecialchars($ha_server['state'] ?? $ha_server['last-state'])?></td>
+			</tr>
+<?php
+		endforeach;
+	endforeach;
+?>
+		</tbody>
+		</table>
+	</div>
+</div>
+<?php
+endif;
+endif; /* dhcp_is_backend('kea') */
+?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -435,6 +481,11 @@ events.push(function() {
 		var searchstr = $('#searchstr').val().toLowerCase();
 		var table = $("#leaselist");
 		var where = $('#where').val();
+
+		// Trim on values where a space doesn't make sense
+		if ((where >= 2) && (where <= 7)) {
+			searchstr = searchstr.trim();
+		}
 
 		table.find('tr').each(function (i) {
 			var $tds 	= $(this).find('td');

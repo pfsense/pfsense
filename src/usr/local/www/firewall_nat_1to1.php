@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,17 +38,9 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_1to1.inc");
 
-init_config_arr(array('nat', 'onetoone'));
-$a_1to1 = &$config['nat']['onetoone'];
-$binat_exttype_flags = [SPECIALNET_COMPAT_ADDR, SPECIALNET_IFADDR];
-$binat_srctype_flags = [
-	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDR, SPECIALNET_NET,
-	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB
-];
-$binat_dsttype_flags = [
-	SPECIALNET_ANY, SPECIALNET_COMPAT_ADDRAL, SPECIALNET_NET,
-	SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS
-];
+$binat_exttype_flags = [SPECIALNET_IFADDR];
+$binat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB];
+$binat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_VIPS];
 
 // Process $_POST/$_REQUEST =======================================================================
 if ($_REQUEST['savemsg']) {
@@ -60,7 +52,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 } elseif ($_POST['apply']) {
 	$retval = apply1to1NATrules();
 } elseif (($_POST['act'] == "del")) {
-	if ($a_1to1[$_POST['id']]) {
+	if (config_get_path("nat/onetoone/{$_POST['id']}")) {
 		delete1to1NATrule($_POST);
 	}
 } elseif (isset($_POST['del_x'])) {
@@ -73,7 +65,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 		toggleMultiple1to1NATrules($_POST);
 	}
 } elseif (($_POST['act'] == "toggle")) {
-	if ($a_1to1[$_POST['id']]) {
+	if (config_get_path("nat/onetoone/{$_POST['id']}")) {
 		toggle1to1NATrule($_POST);
 	}
 }
@@ -99,6 +91,9 @@ $tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
 $tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
 
+global $user_settings;
+$show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 ?>
 <form action="firewall_nat_1to1.php" method="post">
 	<div class="panel panel-default">
@@ -120,7 +115,7 @@ display_top_tabs($tab_array);
 				<tbody class="user-entries">
 <?php
 		$i = 0;
-		foreach ($a_1to1 as $natent):
+		foreach (config_get_path('nat/onetoone', []) as $natent):
 			if (isset($natent['disabled'])) {
 				$iconfn = "pass_d";
 			} else {
@@ -128,11 +123,12 @@ display_top_tabs($tab_array);
 			}
 
 			$alias = rule_columns_with_alias(
-			$natent['source']['address'],
-			pprint_port($natent['source']['port']),
-			$natent['destination']['address'],
-			pprint_port($natrent['destination']['port'])
-);
+				$natent['source']['address'],
+				pprint_port($natent['source']['port']),
+				$natent['destination']['address'],
+				pprint_port($natrent['destination']['port']),
+				$natent['external']
+			);
 ?>
 					<tr id="fr<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';" <?=(isset($natent['disabled']) ? ' class="disabled"' : '')?>>
 						<td >
@@ -141,9 +137,9 @@ display_top_tabs($tab_array);
 
 						<td>
 							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa-solid <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 				if (isset($natent['nobinat'])) { ?>
-								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+								&nbsp;<i class="fa-regular fa-hand text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 				} ?>
 							</a>
 						</td>
@@ -157,27 +153,28 @@ display_top_tabs($tab_array);
 ?>
 						</td>
 						<td>
-<?php
-					$source_net = pprint_address($natent['source'], $binat_srctype_flags );
-					if (get_specialnet($natent['external'], $binat_exttype_flags)) {
-						/* $natent['external'] is not an array like other addresses, and pprint_address()
-						 * requires it to be an array, so pass it in the format it expects.
-						 * https://redmine.pfsense.org/issues/14845
-						 */
-						echo pprint_address(['network' => $natent['external']], $binat_exttype_flags);
-					} else {
-						echo $natent['external'] . strstr($source_net, '/');
-					}
-?>
+							<?=htmlspecialchars(pprint_address(['network' => $natent['external']], $binat_exttype_flags))?>
 						</td>
 						<td>
-<?php
-					echo $source_net;
-?>
+							<?php if (isset($alias['src'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK', true)?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags)))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['source'], $binat_srctype_flags))?>
+							<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($alias['dst'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $binat_dsttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $binat_dsttype_flags)))?>
 								</a>
 							<?php else: ?>
@@ -191,9 +188,9 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
+							<a class="fa-regular fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 
 					</tr>
@@ -208,23 +205,23 @@ display_top_tabs($tab_array);
 
 	<nav class="action-buttons">
 		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>">
-			<i class="fa fa-level-up icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<a href="firewall_nat_1to1_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>">
-			<i class="fa fa-level-down icon-embed-btn"></i>
+			<i class="fa-solid fa-turn-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
 		<button id="del_x" name="del_x" type="submit" class="btn btn-danger btn-sm" disabled title="<?=gettext('Delete selected mappings')?>">
-			<i class="fa fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
 		<button id="toggle_x" name="toggle_x" type="submit" class="btn btn-primary btn-sm" disabled value="<?=gettext("Toggle selected mappings"); ?>" title="<?=gettext('Toggle selected rules')?>">
-			<i class="fa fa-ban icon-embed-btn"></i>
+			<i class="fa-solid fa-ban icon-embed-btn"></i>
 			<?=gettext("Toggle"); ?>
 		</button>
 		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save mapping order')?>">
-			<i class="fa fa-save icon-embed-btn"></i>
+			<i class="fa-solid fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
 	</nav>
@@ -244,7 +241,7 @@ display_top_tabs($tab_array);
 //<![CDATA[
 events.push(function() {
 
-<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
+<?php if(!config_path_enabled('system/webgui', 'roworderdragging')): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',

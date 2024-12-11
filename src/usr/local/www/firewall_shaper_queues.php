@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,7 +95,7 @@ if ($_GET) {
 					$aq =& $altq_list_queues[$interface];
 
 					if ($qname == $qtmp->GetInterface()) {
-						$config['shaper']['queue'][] = $copycfg;
+						config_set_path('shaper/queue/', $copycfg);
 					} else if ($aq) {
 						$tmp1 =& $qtmp->find_parentqueue($interface, $qname);
 						if ($tmp1) {
@@ -103,12 +103,12 @@ if ($_GET) {
 						}
 
 						if ($tmp) {
-							$link =& get_reference_to_me_in_config($tmp->GetLink());
+							$link = shaper_config_get_path($tmp->GetLink());
 						} else {
-							$link =& get_reference_to_me_in_config($aq->GetLink());
+							$link = shaper_config_get_path($aq->GetLink());
 						}
 
-						$link['queue'][] = $copycfg;
+						config_set_path("{$link}/queue/", $copycfg);
 					} else {
 						$newroot = array();
 						$newroot['name'] = $interface;
@@ -116,7 +116,7 @@ if ($_GET) {
 						$newroot['scheduler'] = $altq->GetScheduler();
 						$newroot['queue'] = array();
 						$newroot['queue'][] = $copycfg;
-						$config['shaper']['queue'][] = $newroot;
+						config_set_path('shaper/queue/', $newroot);
 					}
 
 					if (write_config("Traffic Shaper: Added new queue")) {
@@ -130,7 +130,7 @@ if ($_GET) {
 			header("Location: firewall_shaper_queues.php?queue=".$qname."&action=show");
 			exit;
 		case "show":
-			foreach ($config['interfaces'] as $if => $ifdesc) {
+			foreach (config_get_path('interfaces', []) as $if => $ifdesc) {
 				$altq = $altq_list_queues[$if];
 
 				if ($altq) {

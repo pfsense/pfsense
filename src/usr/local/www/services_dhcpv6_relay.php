@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Justin Ellison <justin@techadvise.com>
  * Copyright (c) 2010 Seth Mos
  * All rights reserved.
@@ -34,7 +34,7 @@ require_once('guiconfig.inc');
 
 $pconfig['enable'] = config_path_enabled('dhcrelay6');
 
-$pconfig['interface'] = explode(",", config_get_path('dhcrelay6/interface', ""));
+$pconfig['interface'] = array_filter(explode(",", config_get_path('dhcrelay6/interface', "")));
 
 $pconfig['agentoption'] = config_path_enabled('dhcrelay6', 'agentoption');
 $pconfig['server'] = config_get_path('dhcrelay6/server');
@@ -89,8 +89,8 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "server interface");
-		$reqdfieldsn = array(gettext("Destination Server"), gettext("Interface"));
+		$reqdfields = explode(' ', 'interface');
+		$reqdfieldsn = array(gettext('Interface'));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
@@ -122,7 +122,6 @@ if ($_POST) {
 	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
-		init_config_arr(array('dhcrelay6'));
 		config_set_path('dhcrelay6/enable', $_POST['enable'] ? true : false);
 		if (isset($_POST['interface']) &&
 		    is_array($_POST['interface'])) {
@@ -216,7 +215,7 @@ foreach (explode(',', $pconfig['server']) as $server) {
 		'deleterow' . $counter,
 		gettext('Delete'),
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-sm btn-warning');
 
 	$section->add($group);
@@ -228,7 +227,7 @@ $group->add(new Form_Button(
 	'addrow',
 	gettext('Add Upstream Server'),
 	null,
-	'fa-plus',
+	'fa-solid fa-plus',
 ))->addClass('btn-success addbtn')
   ->setHelp(gettext('The IPv6 addresses of the servers to which DHCPv6 requests are relayed.'));
 $section->add($group);

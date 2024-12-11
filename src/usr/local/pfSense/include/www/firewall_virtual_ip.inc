@@ -3,7 +3,7 @@
  * firewall_virtual_ip.inc.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,10 +54,9 @@ function getVIPs($json = false) {
 function saveVIP($post, $json = false) {
 	global $g;
 
-	init_config_arr(array('virtualip', 'vip'));
-	$a_vip = config_get_path('virtualip/vip');
+	$a_vip = config_get_path('virtualip/vip', []);
 	$rv = array();
-	$id = $post['id'];
+	$id = is_numericint($post['id']) ? $post['id'] : null;
 
 	$input_errors = array();
 
@@ -123,9 +122,6 @@ function saveVIP($post, $json = false) {
 		if (is_ipaddrv4($post['subnet']) && $post['subnet_bits'] != "32" && $post['subnet_bits'] != "31") {
 			$network_addr = gen_subnet($post['subnet'], $post['subnet_bits']);
 			$broadcast_addr = gen_subnet_max($post['subnet'], $post['subnet_bits']);
-		} else if (is_ipaddrv6($post['subnet']) && $post['subnet_bits'] != "128") {
-			$network_addr = gen_subnetv6($post['subnet'], $post['subnet_bits']);
-			$broadcast_addr = gen_subnetv6_max($post['subnet'], $post['subnet_bits']);
 		}
 
 		if (isset($network_addr) && $post['subnet'] == $network_addr) {
@@ -243,7 +239,7 @@ function saveVIP($post, $json = false) {
 		}
 
 		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+			$toapplylist = unserialize_data(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"), []);
 		} else {
 			$toapplylist = array();
 		}
@@ -287,13 +283,12 @@ function saveVIP($post, $json = false) {
 function applyVIP() {
 	global $g;
 
-	init_config_arr(array('virtualip', 'vip'));
-	$a_vip = config_get_path('virtualip/vip');
+	$a_vip = config_get_path('virtualip/vip', []);
 	$rv = array();
 
 	$check_carp = false;
 	if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
-		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+		$toapplylist = unserialize_data(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"), []);
 		foreach ($toapplylist as $vid => $ovip) {
 			if (!empty($ovip)) {
 				interface_vip_bring_down($ovip);
@@ -353,8 +348,7 @@ function deleteVIP($id, $json = false) {
 	$rv = array();
 	$input_errors = array();
 
-	init_config_arr(array('virtualip', 'vip'));
-	$a_vip = config_get_path('virtualip/vip');
+	$a_vip = config_get_path('virtualip/vip', []);
 
 	if ($a_vip[$id]) {
 		/* make sure no inbound NAT mappings reference this entry */
@@ -395,7 +389,6 @@ function deleteVIP($id, $json = false) {
 			}
 		}
 
-		init_config_arr(array('ipsec', 'phase1'));
 		foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 			if (!isset($ph1ent['disabled'])) {
 				foreach (explode(',', ipsec_get_phase1_src($ph1ent)) as $ifip) {
@@ -517,6 +510,7 @@ function deleteVIP($id, $json = false) {
 			if (!$json) {
 				phpsession_begin();
 				$user = getUserEntry($_SESSION['Username']);
+				$user = $user['item'];
 
 				if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 					header("Location: firewall_virtual_ip.php");
@@ -526,6 +520,11 @@ function deleteVIP($id, $json = false) {
 				phpsession_end();
 			}
 
+			config_del_path("virtualip/vip/{$id}");
+			if (count($a_vip) == 0) {
+				config_del_path("virtualip/vip");
+			}
+			write_config(gettext("Deleted a virtual IP."));
 
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$id]['mode'] == "proxyarp") {
@@ -534,12 +533,6 @@ function deleteVIP($id, $json = false) {
 			} else {
 				interface_vip_bring_down($a_vip[$id]);
 			}
-
-			config_del_path("virtualip/vip/{$id}");
-			if (count($a_vip) == 0) {
-				config_del_path("virtualip/vip");
-			}
-			write_config(gettext("Deleted a virtual IP."));
 
 			/* Reload filter since removed address may trigger changes in rules
 			 * https://redmine.pfsense.org/issues/13908 */

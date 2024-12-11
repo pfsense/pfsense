@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,9 @@
  * limitations under the License.
  */
 
-global $config;
+config_read_file(true);
 
-$config = parse_config(true);
-
-unset($config['dhcpd']);
+config_del_path('dhcpd');
 
 echo "Disabling DHCP Server on all interfaces...";
 

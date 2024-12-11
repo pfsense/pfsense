@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2012 mkirbst @ pfSense Forum
  * All rights reserved.
  *
@@ -30,12 +30,29 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
+
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 $specplatform = system_identify_specific_platform();
 
 $devs = array();
-## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
+## Get all disks currently installed
 if ($specplatform['name'] != "Hyper-V") {
-	$devs = get_smart_drive_list();
+	$devs = get_drive_list();
 }
 
 if ($_POST['widgetkey']) {
@@ -81,28 +98,28 @@ if (count($devs) > 0)  {
 		}
 
 		$smartdrive_is_displayed = true;
-		$dev_ident = exec("/usr/sbin/diskinfo -v /dev/$dev | /usr/bin/grep ident   | /usr/bin/awk '{print $1}'"); ## get identifier from drive
-		$dev_state = trim(exec("/usr/local/sbin/smartctl -H /dev/$dev | /usr/bin/awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
+		$dev_ident = exec("/usr/sbin/diskinfo -v /dev/{$dev} | /usr/bin/grep ident   | /usr/bin/awk '{print $1}'"); ## get identifier from drive
+		$dev_state = trim(exec("/usr/local/sbin/smartctl -H /dev/{$dev} | /usr/bin/awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
 		switch ($dev_state) {
 			case "PASSED":
 			case "OK":
 				$color = "text-success";
-				$icon = "fa-check";
+				$icon = "fa-solid fa-check";
 				break;
 			case "":
 				$dev_state = gettext("Unknown");
 				$color = "text-info";
-				$icon = "fa-times-circle";
+				$icon = "fa-solid fa-times-circle";
 				break;
 			default:
 				$color = "text-alert";
-				$icon = "fa-question-circle";
+				$icon = "fa-solid fa-question-circle";
 				break;
 		}
 ?>
 		<tr>
-			<td><i class="fa <?=$icon?> <?=$color?>"></i></td>
+			<td><i class="<?=$icon?> <?=$color?>"></i></td>
 			<td><?=$dev?></td>
 			<td><?=$dev_ident?></td>
 			<td><?=ucfirst($dev_state)?></td>
@@ -159,8 +176,8 @@ if (count($devs) > 0)  {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

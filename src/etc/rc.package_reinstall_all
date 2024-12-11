@@ -3,7 +3,7 @@
 /*
  * rc.package_reinstall_all
  *
- * Copyright (c) 2018-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2018-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ $max_tries = 5;
 mark_subsystem_dirty('packagelock');
 
 /* If it's still booting, give it a few seconds before start */
-if (platform_booting()) {
+if (is_platform_booting()) {
 	sleep(5);
 }
 

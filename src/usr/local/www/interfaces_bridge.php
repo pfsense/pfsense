@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,16 +30,12 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('bridges', 'bridged'));
-$a_bridges = &$config['bridges']['bridged'];
-
 function bridge_inuse($num) {
-	global $config, $a_bridges;
-
+	$a_bridges = config_get_path('bridges/bridged', []);
 	$iflist = get_configured_interface_list(true);
-
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_bridges[$num]['bridgeif']) {
+		if ($if_config[$if]['if'] == $a_bridges[$num]['bridgeif']) {
 			return true;
 		}
 	}
@@ -50,19 +46,19 @@ function bridge_inuse($num) {
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_bridges[$_POST['id']])) {
+	} else if (empty(config_get_path("bridges/bridged/{$_POST['id']}"))) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (bridge_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");
 	} else {
-		if (!does_interface_exist($a_bridges[$_POST['id']]['bridgeif'])) {
+		if (!does_interface_exist(config_get_path("bridges/bridged/{$_POST['id']}/bridgeif"))) {
 			log_error("Bridge interface does not exist, skipping ifconfig destroy.");
 		} else {
-			pfSense_interface_destroy($a_bridges[$_POST['id']]['bridgeif']);
+			pfSense_interface_destroy(config_get_path("bridges/bridged/{$_POST['id']}/bridgeif"));
 		}
 
-		unset($a_bridges[$_POST['id']]);
+		config_del_path("bridges/bridged/{$_POST['id']}");
 
 		write_config("Bridge deleted");
 
@@ -110,7 +106,7 @@ display_top_tabs($tab_array);
 $i = 0;
 $ifdescrs = get_configured_interface_with_descr();
 
-foreach ($a_bridges as $bridge) {
+foreach (config_get_path('bridges/bridged', []) as $bridge) {
 ?>
 					<tr>
 						<td>
@@ -135,8 +131,8 @@ foreach ($a_bridges as $bridge) {
 							<?=htmlspecialchars($bridge['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit interface bridge')?>"	href="interfaces_bridge_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete interface bridge')?>"	href="interfaces_bridge.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit interface bridge')?>"	href="interfaces_bridge_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete interface bridge')?>"	href="interfaces_bridge.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -151,7 +147,7 @@ foreach ($a_bridges as $bridge) {
 
 <nav class="action-buttons">
 	<a href="interfaces_bridge_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

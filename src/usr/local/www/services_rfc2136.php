@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,23 +30,20 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('dnsupdates', 'dnsupdate'));
-$a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
-
 if ($_POST['act'] == "del") {
-	unset($a_rfc2136[$_POST['id']]);
+	config_del_path("dnsupdates/dnsupdate/{$_POST['id']}");
 
 	write_config("RFC 2136 client deleted");
 
 	header("Location: services_rfc2136.php");
 	exit;
 } else if ($_POST['act'] == "toggle") {
-	if ($a_rfc2136[$_POST['id']]) {
-		if (isset($a_rfc2136[$_POST['id']]['enable'])) {
-			unset($a_rfc2136[$_POST['id']]['enable']);
+	if (config_get_path("dnsupdates/dnsupdate/{$_POST['id']}")) {
+		if (config_path_enabled("dnsupdates/dnsupdate/{$_POST['id']}")) {
+			config_del_path("dnsupdates/dnsupdate/{$_POST['id']}/enable");
 			$action = "disabled";
 		} else {
-			$a_rfc2136[$_POST['id']]['enable'] = true;
+			config_set_path("dnsupdates/dnsupdate/{$_POST['id']}/enable", true);
 			$action = "enabled";
 		}
 		write_config("RFC 2136 {$action}");
@@ -96,7 +93,7 @@ $iflist = get_configured_interface_with_descr();
 $groupslist = return_gateway_groups_array();
 
 $i = 0;
-foreach ($a_rfc2136 as $rfc2136):
+foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 	if (!is_array($rfc2136) || empty($rfc2136)) {
 		continue;
 	}
@@ -115,11 +112,11 @@ foreach ($a_rfc2136 as $rfc2136):
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr == $cached_ip) {
-			$icon_class = "fa fa-check-circle";
+			$icon_class = "fa-solid fa-check-circle";
 			$text_class = "text-success";
 			$icon_title = "Updated";
 		} else {
-			$icon_class = "fa fa-times-circle";
+			$icon_class = "fa-solid fa-times-circle";
 			$text_class = "text-danger";
 			$icon_title = "Failed";
 		}
@@ -129,11 +126,11 @@ foreach ($a_rfc2136 as $rfc2136):
 		$cached_ipv6 = $cached_ip_s[0];
 
 		if ($ipv6addr == $cached_ipv6) {
-			$icon_class = "fa fa-check-circle";
+			$icon_class = "fa-solid fa-check-circle";
 			$text_class = "text-success";
 			$icon_title = "Updated";
 		} else {
-			$icon_class = "fa fa-times-circle";
+			$icon_class = "fa-solid fa-times-circle";
 			$text_class = "text-danger";
 			$icon_title = "Failed";
 		}
@@ -206,17 +203,17 @@ foreach ($a_rfc2136 as $rfc2136):
 						<?=htmlspecialchars($rfc2136['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil" title="<?=gettext('Edit client')?>" href="services_rfc2136_edit.php?id=<?=$i?>"></a>
+						<a class="fa-solid fa-pencil" title="<?=gettext('Edit client')?>" href="services_rfc2136_edit.php?id=<?=$i?>"></a>
 					<?php if (isset($rfc2136['enable'])) {
 					?>
-						<a	class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+						<a	class="fa-solid fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php } else {
 					?>
-						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-regular fa-square-check" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php }
 					?>
-						<a class="fa fa-clone" title="<?=gettext('Copy client')?>" href="services_rfc2136_edit.php?dup=<?=$i?>"></a>
-						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-regular fa-clone" title="<?=gettext('Copy client')?>" href="services_rfc2136_edit.php?dup=<?=$i?>"></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 					</tr>
 <?php
@@ -232,13 +229,13 @@ endforeach; ?>
 
 <nav class="action-buttons">
 	<a href="services_rfc2136_edit.php" class="btn btn-sm btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
 
 <div>
-	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa fa-check-circle text-success"></i>')?>
+	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa-solid fa-check-circle text-success"></i>')?>
 	<?=gettext('An update can be forced on the edit page for an entry.')?>
 </div>
 

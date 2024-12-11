@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -44,28 +44,24 @@ global $cpzoneid;
 
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
-$a_cp = &$config['captiveportal'];
-$cpzoneid = $a_cp[$cpzone]['zoneid'];
-$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
+$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("MACs"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-$actsmbl = array('pass' => '<i class="fa fa-check text-success"></i>&nbsp;' . gettext("Pass"),
-	'block' => '<i class="fa fa-times text-danger"></i>&nbsp;' . gettext("Block"));
+$actsmbl = array('pass' => '<i class="fa-solid fa-check text-success"></i>&nbsp;' . gettext("Pass"),
+	'block' => '<i class="fa-solid fa-times text-danger"></i>&nbsp;' . gettext("Block"));
 
 if ($_POST['act'] == "del") {
-	if ($a_passthrumacs[$_POST['id']]) {
-		$cpzoneid = $a_cp[$cpzone]['zoneid'];
-		captiveportal_passthrumac_delete_entry($a_passthrumacs[$_POST['id']]);
-		unset($a_passthrumacs[$_POST['id']]);
+	if (config_get_path("captiveportal/{$cpzone}/passthrumac/{$_POST['id']}")) {
+		captiveportal_passthrumac_delete_entry(config_get_path("captiveportal/{$cpzone}/passthrumac/{$_POST['id']}"));
+		config_del_path("captiveportal/{$cpzone}/passthrumac/{$_POST['id']}");
 		write_config("Captive portal passthrough MAC deleted");
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
 		exit;
@@ -102,13 +98,10 @@ display_top_tabs($tab_array, true);
 				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
-
-<?php
-if (is_array($a_cp[$cpzone]['passthrumac'])): ?>
 		<tbody>
 <?php
 $i = 0;
-foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
+foreach (config_get_path("captiveportal/{$cpzone}/passthrumac", []) as $mac): ?>
 			<tr>
 				<td>
 					<?=$actsmbl[$mac['action']]?>
@@ -120,8 +113,8 @@ foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 					<?=htmlspecialchars($mac['descr'])?>
 				</td>
 				<td>
-					<a class="fa fa-pencil"	title="<?=gettext("Edit MAC address"); ?>" href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"usepost></a>
+					<a class="fa-solid fa-pencil"	title="<?=gettext("Edit MAC address"); ?>" href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
+					<a class="fa-solid fa-trash-can"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"usepost></a>
 				</td>
 			</tr>
 <?php
@@ -129,19 +122,11 @@ $i++;
 endforeach; ?>
 		</tbody>
 	</table>
-<?php
-else:
-?>
-		</tbody>
-	</table>
-<?php
-endif;
-?>
 </div>
 
 <nav class="action-buttons">
 	<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

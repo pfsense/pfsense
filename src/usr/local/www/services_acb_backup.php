@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,8 +33,6 @@ require_once("guiconfig.inc");
 require_once("acb.inc");
 
 if ($_POST) {
-	global $config;
-
 	if ($_REQUEST['nooverwrite']) {
 		touch("/tmp/acb_nooverwrite");
 	}
@@ -51,7 +49,7 @@ if ($_POST) {
 		$savemsg = "Backup not completed - write_config() failed.";
 	}
 
-	$config = parse_config(true);
+	config_read_file(true);
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
 
 	$donotshowheader = true;

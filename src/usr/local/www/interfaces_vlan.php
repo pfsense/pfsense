@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,22 +37,36 @@ require_once("interfaces_fast.inc");
 
 global $profile;
 
-init_config_arr(array('vlans', 'vlan'));
-$a_vlans = &$config['vlans']['vlan'];
-
 if ($_POST['act'] == "del") {
+	/*
+	 * Check user privileges to test if the user is allowed to make changes.
+	 * Otherwise users can end up in an inconsistent state where some changes are
+	 * performed and others denied. See https://redmine.pfsense.org/issues/15282
+	 */
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+	phpsession_end();
+
+	if ($read_only) {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
+
+	$this_vlan_config = config_get_path("vlans/vlan/{$_POST['id']}");
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_vlans[$_POST['id']])) {
+	} else if (empty($this_vlan_config)) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (vlan_inuse($a_vlans[$_POST['id']])) {
+	} else if (vlan_inuse($this_vlan_config)) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
-	} else {
-		if (does_interface_exist($a_vlans[$_POST['id']]['vlanif'])) {
-			pfSense_interface_destroy($a_vlans[$_POST['id']]['vlanif']);
+	}
+
+	if (!$input_errors) {
+		if (does_interface_exist($this_vlan_config['vlanif'])) {
+			pfSense_interface_destroy($this_vlan_config['vlanif']);
 		}
-		unset($a_vlans[$_POST['id']]);
+		config_del_path("vlans/vlan/{$_POST['id']}");
 
 		write_config("VLAN interface deleted");
 
@@ -104,8 +118,8 @@ display_top_tabs($tab_array);
 <?php
 	$i = 0;
 	$gettext_array = array('edit'=>gettext('Edit VLAN'),'del'=>gettext('Delete VLAN'));
-	$ifaces = convert_real_interface_to_friendly_interface_name_fast(array());
-	foreach ($a_vlans as $vlan) {
+	$ifaces = convert_real_interface_to_friendly_interface_name_fast();
+	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 ?>
 						<tr>
 							<td>
@@ -119,8 +133,8 @@ display_top_tabs($tab_array);
 							<td><?=htmlspecialchars($vlan['pcp']);?></td>
 							<td><?=htmlspecialchars($vlan['descr']);?></td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=$gettext_array['edit']?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
-								<a class="fa fa-trash no-confirm"	title="<?=$gettext_array['del']?>"	role="button" id="del-<?=$i?>"></a>
+								<a class="fa-solid fa-pencil"	title="<?=$gettext_array['edit']?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
+								<a class="fa-solid fa-trash-can no-confirm"	title="<?=$gettext_array['del']?>"	role="button" id="del-<?=$i?>"></a>
 							</td>
 						</tr>
 <?php
@@ -135,7 +149,7 @@ display_top_tabs($tab_array);
 
 	<nav class="action-buttons">
 		<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php">
-			<i class="fa fa-plus icon-embed-btn"></i>
+			<i class="fa-solid fa-plus icon-embed-btn"></i>
 			<?=gettext('Add'); ?>
 		</a>
 	</nav>

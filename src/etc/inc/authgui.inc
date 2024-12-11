@@ -8,7 +8,7 @@
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ include_once("auth.inc");
 include_once("config.inc");
 include_once("config.lib.inc");
 include_once("priv.inc");
-if (!function_exists('platform_booting')) {
+if (!function_exists('is_platform_booting')) {
 	require_once('globals.inc');
 }
 require_once('pfsense-utils.inc');
@@ -71,12 +71,14 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 
 		$username = get_config_user();
 		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
+		phpsession_end();
 
 		exit;
 	} else {
 		// add this so they don't get stuck on the logout page when they have no permissions.
 		$_SESSION["Logged_In"] = false;
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
+		phpsession_end();
 
 		exit;
 	}
@@ -92,6 +94,8 @@ if (!$_SESSION['Post_Login']) {
 	$_SESSION['Post_Login'] = true;
 	require_once("functions.inc");
 	pfSenseHeader($_SERVER['REQUEST_URI']);
+	phpsession_end();
+
 	exit;
 }
 
@@ -379,7 +383,7 @@ function display_login_form() {
 		//]]>
 		</script>
 
-	    <script src="/vendor/jquery/jquery-3.5.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.5.1.min.js')?>"></script>
+	    <script src="/vendor/jquery/jquery-3.7.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.7.1.min.js')?>"></script>
 		<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
 		<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
 

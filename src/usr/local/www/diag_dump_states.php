@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -63,6 +63,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 $input_errors = [];
 
 if (!empty($_POST['interface']) &&
+    ($_POST['interface'] != 'all') &&
     !empty($_POST['ruleid'])) {
 	$input_errors[] = gettext("Interface and Rule ID filters cannot be used at the same time.");
 }
@@ -108,7 +109,7 @@ events.push(function() {
 <?php
 $tab_array = array();
 $tab_array[] = array(gettext("States"), true, "diag_dump_states.php");
-if (isset($config['system']['lb_use_sticky'])) {
+if (config_path_enabled('system', 'lb_use_sticky')) {
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
 }
 $tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
@@ -157,7 +158,7 @@ $filterbtn = new Form_Button(
 	'filterbtn',
 	'Filter',
 	null,
-	'fa-filter'
+	'fa-solid fa-filter'
 );
 $filterbtn->addClass('btn-primary btn-sm');
 $section->addInput(new Form_StaticText(
@@ -170,7 +171,7 @@ if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST[
 		'killfilter',
 		'Kill States',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	);
 	$killbtn->addClass('btn-danger btn-sm');
 	$section->addInput(new Form_StaticText(
@@ -216,7 +217,7 @@ $states = count($statedisp);
 						<td><?= $dstate['bytes'] ?></td>
 
 						<td>
-							<a class="btn fa fa-trash no-confirm" data-entry="<?=$dstate['srcip']?>|<?=$dstate['dstip']?>"
+							<a class="btn fa-solid fa-trash-can no-confirm" data-entry="<?=$dstate['srcip']?>|<?=$dstate['dstip']?>"
 								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $dstate['srcip'], $dstate['dstip']);?>"></a>
 						</td>
 					</tr>
@@ -234,7 +235,7 @@ if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter.');
 	} else if (!isset($_POST['filter']) && !isset($_REQUEST['ruleid']) &&
-	    isset($config['system']['webgui']['requirestatefilter'])) {
+	    config_path_enabled('system/webgui', 'requirestatefilter')) {
 		$errmsg = gettext('State display suppressed without filter submission. '.
 		'See System > General Setup, Require State Filter.');
 	} else {

@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -48,9 +48,6 @@ if ($_POST['generatekey']) {
 	exit;
 }
 
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
-
 if (is_numericint($_REQUEST['p1index'])) {
 	$p1index = $_REQUEST['p1index'];
 }
@@ -62,7 +59,7 @@ if (is_numericint($_REQUEST['dup'])) {
 $p1 = null;
 if (!empty($_REQUEST['ikeid'])) {
 	$p1index = 0;
-	foreach(config_get_path('ipsec/phase1') as $phase1) {
+	foreach(config_get_path('ipsec/phase1', []) as $phase1) {
 		if ($phase1['ikeid'] == $_REQUEST['ikeid']) {
 			$p1 = $phase1;
 			break;
@@ -252,7 +249,7 @@ if ($_POST['save']) {
 		case "pre_shared_key":
 			// If this is a mobile PSK tunnel the user PSKs go on
 			//	  the PSK tab, not here, so skip the check.
-			if ($pconfig['mobile']) {
+			if (isset($pconfig['mobile'])) {
 				break;
 			}
 		case "xauth_psk_server":
@@ -273,7 +270,7 @@ if ($_POST['save']) {
 			/* Other types do not use this validation mechanism. */
 	}
 
-	if (!$pconfig['mobile']) {
+	if (!isset($pconfig['mobile'])) {
 		$reqdfields[] = "remotegw";
 		$reqdfieldsn[] = gettext("Remote gateway");
 	}
@@ -309,7 +306,7 @@ if ($_POST['save']) {
 
 	if (!empty($pconfig['startaction']) && !array_key_exists($pconfig['startaction'], $ipsec_startactions)) {
 		$input_errors[] = gettext("Invalid Child SA Start Action.");
-	} elseif ($pconfig['mobile'] && !empty($pconfig['startaction'])) {
+	} elseif (isset($pconfig['mobile']) && !empty($pconfig['startaction'])) {
 		/* Start action cannot be set for mobile tunnels */
 		$input_errors[] = gettext("Child SA Start Action cannot be set for Mobile Phase 1 entries.");
 	}
@@ -432,7 +429,7 @@ if ($_POST['save']) {
 	}
 
 	// Only enforce peer ID if we are not dealing with a pure-psk mobile config.
-	if (!(($pconfig['authentication_method'] == "pre_shared_key") && ($pconfig['mobile']))) {
+	if (!(($pconfig['authentication_method'] == "pre_shared_key") && (isset($pconfig['mobile'])))) {
 		if ($pconfig['peerid_type'] == "address" and $pconfig['peerid_data'] == "") {
 			$input_errors[] = gettext("Please enter an address for 'Peer Identifier'");
 		}
@@ -495,7 +492,7 @@ if ($_POST['save']) {
 		}
 	}
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
-	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
+	if (($pconfig['authentication_method'] == 'eap-radius') && isset($pconfig['mobile'])) {
 		if (!empty(config_get_path('ipsec/client/user_source'))) {
 			$auth_server_list  = explode(',', config_get_path('ipsec/client/user_source'));
 			foreach ($auth_server_list as $auth_server_name) {
@@ -524,7 +521,8 @@ if ($_POST['save']) {
 	}
 
 	if (!empty($pconfig['certref'])) {
-		$errchkcert =& lookup_cert($pconfig['certref']);
+		$errchkcert = lookup_cert($pconfig['certref']);
+		$errchkcert = $errchkcert['item'];
 		if (is_array($errchkcert)) {
 			if (!cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
 				$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
@@ -535,7 +533,7 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("The selected certificate only contains wildcard SAN entries, which are not supported. The certificate must contain at least one non-wildcard SAN.");
 			}
 			$purpose = cert_get_purpose($errchkcert['crt']);
-			if ($pconfig['mobile'] && ($purpose['server'] == 'No')) {
+			if (isset($pconfig['mobile']) && ($purpose['server'] == 'No')) {
 				$input_errors[] = gettext("The selected certificate must be a Server Certificate for Mobile IPsec mode.");
 			}
 		}
@@ -560,7 +558,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if ($pconfig['mobile']) {
+		if (isset($pconfig['mobile'])) {
 			$ph1ent['mobile'] = true;
 		} else {
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
@@ -641,9 +639,7 @@ if ($_POST['save']) {
 		if ($p1 && !isset($_REQUEST['dup'])) {
 			config_set_path('ipsec/phase1/' . $p1index, $ph1ent);
 		} else {
-			$p1s = config_get_path('ipsec/phase1', []);
-			$p1s[] = $ph1ent;
-			config_set_path('ipsec/phase1', $p1s);
+			config_set_path('ipsec/phase1/', $ph1ent);
 		}
 
 		write_config(gettext("Saved IPsec tunnel Phase 1 configuration."));
@@ -687,7 +683,7 @@ function build_auth_method_list() {
 	$list = array();
 
 	foreach ($p1_authentication_methods as $method_type => $method_params) {
-		if (!$pconfig['mobile'] && $method_params['mobile']) {
+		if (!isset($pconfig['mobile']) && $method_params['mobile']) {
 			continue;
 		}
 		if (!config_path_enabled('ipsec', 'pkcs11support') &&
@@ -756,7 +752,7 @@ function build_eal_list() {
 	return($list);
 }
 
-if ($pconfig['mobile']) {
+if (isset($pconfig['mobile'])) {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 1"));
 	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_mobile.php", "@self");
 } else {
@@ -829,7 +825,7 @@ $section->addInput(new Form_Select(
 	build_interface_list()
 ))->setHelp('Select the interface for the local endpoint of this phase1 entry.');
 
-if (!$pconfig['mobile']) {
+if (!isset($pconfig['mobile'])) {
 	$group = new Form_Group('*Remote Gateway');
 
 	$group->add(new Form_Input(
@@ -840,9 +836,13 @@ if (!$pconfig['mobile']) {
 	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
 	    '<div class="infoblock">',
 	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' .
-	    'to allow connections from any IPv6 address.' . '<br/>' . 'Child SA Start Action must be set to None and ' .
-	    'Peer IP Address cannot be used for Remote Identifier. A remote gateway address of \'0.0.0.0\' or \'::\' is not ' .
-	    'compatible with VTI, use an FQDN instead.'), 'info', false),
+	    'to allow connections from any IPv6 address. For dual stack tunnels, either form will allow connections from ' .
+	    'both address families.' .
+	    '<br/><br/>' .
+	    'Child SA Start Action must be set to None and Peer IP Address cannot be used for Remote Identifier. ' .
+	    '<br/><br/>' .
+	    'A remote gateway address of \'0.0.0.0\' or \'::\' is not compatible with VTI, use an FQDN instead.'),
+	    'info', false),
 	    '</div>');
 
 	$section->add($group);
@@ -901,7 +901,7 @@ $group->add(new Form_Input(
 	$pconfig['peerid_data']
 ));
 
-if ($pconfig['mobile']) {
+if (isset($pconfig['mobile'])) {
 	$group->setHelp('This is known as the "group" setting on some VPN client implementations');
 }
 
@@ -984,7 +984,7 @@ foreach($eitems as $key => $p1enc) {
 		'deleterow' . $counter,
 		'Delete',
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-warning')->setWidth(2);
 
 	$group->add(new Form_StaticText(
@@ -1008,7 +1008,7 @@ $btnaddopt = new Form_Button(
 	'algoaddrow',
 	'Add Algorithm',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 );
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 $section->addInput($btnaddopt);
@@ -1067,7 +1067,7 @@ $form->add($section);
 
 $section = new Form_Section('Advanced Options');
 
-if (!$pconfig['mobile']) {
+if (!isset($pconfig['mobile'])) {
 	$section->addInput(new Form_Select(
 		'startaction',
 		'Child SA Start Action',
@@ -1207,7 +1207,7 @@ if ((!empty($_REQUEST['ikeid']) &&
 	));
 }
 
-if ($pconfig['mobile']) {
+if (isset($pconfig['mobile'])) {
 	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,
@@ -1321,7 +1321,7 @@ events.push(function() {
 				disableInput('pkcs11pin', false);
 				break;
 
-<?php if ($pconfig['mobile']) { ?>
+<?php if (isset($pconfig['mobile'])) { ?>
 				case 'pre_shared_key':
 					hideInput('pskey', true);
 					hideClass('peeridgroup', true);
@@ -1484,7 +1484,7 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
-	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
+	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa-solid fa-arrows-rotate icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
 			type: 'post',

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,9 +41,6 @@ require_once("vpn.inc");
 
 global $p1_authentication_methods;
 
-init_config_arr(array('ipsec', 'phase1'));
-init_config_arr(array('ipsec', 'phase2'));
-
 $items_deleted = false;
 
 if ($_POST['apply']) {
@@ -60,12 +57,12 @@ if ($_POST['apply']) {
 } else if (isset($_POST['del'])) {
 	/* delete selected p1 entries */
 	if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
-		foreach ($_POST['p1entry'] as $p1entrydel) {
-			config_del_path('ipsec/phase1/' . $p1entrydel);
-			$items_deleted = true;
-		}
-		if (write_config(gettext("Deleted selected IPsec Phase 1 entries."))) {
-			mark_subsystem_dirty('ipsec');
+		$delcount = delete_p1_and_children($_POST['p1entry']);
+
+		if ($delcount > 0) {
+			if (write_config(gettext("Deleted selected IPsec Phase 1 and related Phase 2 entries."))) {
+				mark_subsystem_dirty('ipsec');
+			}
 		}
 	}
 } else if (isset($_POST['delp2'])) {
@@ -79,8 +76,10 @@ if ($_POST['apply']) {
 				$items_deleted = true;
 			}
 		}
-		if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
-			mark_subsystem_dirty('ipsec');
+		if ($items_deleted) {
+			if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
+				mark_subsystem_dirty('ipsec');
+			}
 		}
 	}
 } else  {
@@ -171,7 +170,7 @@ if ($_POST['apply']) {
 		/* copy all p2 entries > $movebtnp2 and not selected */
 		for ($i = $movebtnp2+1; $i < count(config_get_path('ipsec/phase2', [])); $i++) {
 			if (!in_array($i, $_POST['p2entry'])) {
-				$a_phase2_new[] = config_get_path('ipsec/phase2/', $i);
+				$a_phase2_new[] = config_get_path('ipsec/phase2/' . $i);
 			}
 		}
 		if (count($a_phase2_new) > 0) {
@@ -187,7 +186,7 @@ if ($_POST['apply']) {
 				$ikeid = config_get_path('ipsec/phase1/' . $togglebtn . '/ikeid');
 				$p1_has_vti = false;
 				$disablep2ids = array();
-				foreach (config_get_path('ipsec/phase2') as $p2index => $ph2tmp) {
+				foreach (config_get_path('ipsec/phase2', []) as $p2index => $ph2tmp) {
 					if ($ph2tmp['ikeid'] == $ikeid) {
 						if (is_interface_ipsec_vti_assigned($ph2tmp)) {
 							$p1_has_vti = true;
@@ -220,35 +219,15 @@ if ($_POST['apply']) {
 			}
 		}
 	} else if (isset($delbtn)) {
-		/* remove static route if interface is not WAN */
-		if (config_get_path('ipsec/phase1/' . $delbtn . '/interface') <> "wan") {
-			route_del(config_get_path('ipsec/phase1/' . $delbtn . '/remote-gateway'));
-		}
+		$delcount = delete_p1_and_children([$delbtn]);
 
-		/* remove all phase2 entries that match the ikeid */
-		$ikeid = config_get_path('ipsec/phase2/' . $delbtn . '/ikeid');
-		$p1_has_vti = false;
-		$delp2ids = array();
-		foreach (config_get_path('ipsec/phase2') as $p2index => $ph2tmp) {
-			if ($ph2tmp['ikeid'] == $ikeid) {
-				if (is_interface_ipsec_vti_assigned($ph2tmp)) {
-					$p1_has_vti = true;
-				} else {
-					$delp2ids[] = $p2index;
-				}
+		if ($delcount > 0) {
+			/* Use a better description than generic save below */
+			$save = 0;
+			if (write_config(gettext("Deleted selected IPsec Phase 1 and related Phase 2 entries."))) {
+				mark_subsystem_dirty('ipsec');
 			}
 		}
-
-		if ($p1_has_vti) {
-			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
-		} else {
-			foreach ($delp2ids as $dp2idx) {
-				config_del_path('ipsec/phase2/' . $dp2idx);
-			}
-			config_del_path('ipsec/phase1/' . $delbtn);
-			$items_deleted = true;
-		}
-
 	} else if (isset($delbtnp2)) {
 		if (is_interface_ipsec_vti_assigned(config_get_path('ipsec/phase2/' . $delbtnp2)) && (config_get_path('ipsec/phase2/' . $delbtnp2 . '/mode') == 'vti')) {
 			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
@@ -291,6 +270,9 @@ if ($_POST['apply']) {
 if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
+global $user_settings;
+$show_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
+$ipsec_specialnet = get_specialnet('', [SPECIALNET_IFSUB]);
 ?>
 
 <form name="mainform" method="post">
@@ -315,7 +297,7 @@ if (is_subsystem_dirty('ipsec')) {
 				</thead>
 				<tbody class="p1-entries">
 <?php
-$iflabels = get_configured_interface_with_descr(false, true);
+$iflabels = get_configured_interface_with_descr(true);
 $viplist = get_configured_vip_list();
 foreach ($viplist as $vip => $address) {
 	$iflabels[$vip] = $address;
@@ -346,7 +328,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 					<tr id="fr<?=$i?>" onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
 						<td>
 							<input type="checkbox" id="frc<?=$i?>" onclick="fr_toggle(<?=$i?>)" name="p1entry[]" value="<?=$i?>"  />
-							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
+							<a	class="fa-solid fa-anchor icon-pointer" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
 						</td>
 						<td>
 							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-<?= ($entryStatus == 'disabled' ? 'success' : 'warning') ?>" type="submit"><?= ($entryStatus == 'disabled' ? 'Enable' : 'Disable') ?></button>
@@ -442,13 +424,13 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 							<?=htmlspecialchars($ph1ent['descr'])?>
 						</td>
 						<td style="cursor: pointer;">
-<!--							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a> -->
+<!--							<a	class="fa-solid fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a> -->
 							<button style="display: none;" class="btn btn-default btn-xs" type="submit" id="move_<?=$i?>" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("Move checked entries to here")?></button>
-							<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?ikeid=<?=$ph1ent['ikeid']?>" title="<?=gettext("Edit phase 1 entry"); ?>"></a>
+							<a class="fa-solid fa-pencil" href="vpn_ipsec_phase1.php?ikeid=<?=$ph1ent['ikeid']?>" title="<?=gettext("Edit phase 1 entry"); ?>"></a>
 <?php if (!isset($ph1ent['mobile'])): ?>
-							<a class="fa fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase 1 entry"); ?>"></a>
+							<a class="fa-regular fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase 1 entry"); ?>"></a>
 <?php endif; ?>
-							<a	class="fa fa-trash no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase 1 entry'); ?>"></a>
+							<a	class="fa-solid fa-trash-can no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase 1 entry'); ?>"></a>
 							<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="del_<?=$i?>" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>">delete</button>
 
 						</td>
@@ -468,7 +450,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 <?php
 				$phase2count=0;
 
-				foreach (config_get_path('ipsec/phase2') as $ph2ent) {
+				foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
 					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 						continue;
 					}
@@ -477,7 +459,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 				$fr_prefix = "frp2{$i}";
 				$fr_header = $fr_prefix . "header";
 ?>
-								<button class="btn btn-info" type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"><i class="fa fa-plus-circle"></i> <?php printf(gettext("Show Phase 2 Entries (%s)"), $phase2count); ?></button>
+								<button class="btn btn-info" type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"><i class="fa-solid fa-plus-circle"></i> <?php printf(gettext("Show Phase 2 Entries (%s)"), $phase2count); ?></button>
 							</div>
 							<div id="tdph2-<?=$i?>" <?=($tdph2_visible != '1' ? 'style="display:none"' : '')?>>
 								<table class="table table-striped table-hover">
@@ -497,7 +479,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 										</tr>
 									</thead>
 									<tbody class="p2-entries">
-<?php $j = 0; foreach (config_get_path('ipsec/phase2') as $ph2index => $ph2ent): ?>
+<?php $j = 0; foreach (config_get_path('ipsec/phase2', []) as $ph2index => $ph2ent): ?>
 <?php
 						if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 							continue;
@@ -516,7 +498,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 										<tr id="<?=$fr_prefix . $j?>" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>'" class="<?= $entryStatus ?>">
 											<td>
 												<input type="checkbox" id="<?=$fr_c?>" name="p2entry[]" value="<?=$ph2index?>" onclick="fr_bgcolor('<?=$j?>', '<?=$fr_prefix?>')" />
-												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button>
+												<button class="fa-solid fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button>
 											</td>
 											<td>
 												<button value="togglep2_<?=$ph2index?>" name="togglep2_<?=$ph2index?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-<?= ($entryStatus == 'disabled'? 'success' : 'warning') ?>" type="submit"><?= ($entryStatus == 'disabled'? 'Enable' : 'Disable') ?></button>
@@ -529,7 +511,13 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 											</td>
 <?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6") or ($ph2ent['mode'] == "vti")): ?>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
-												<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
+												<?php if ($show_alias_popup && !empty($ph2ent['localid']) && array_key_exists($ph2ent['localid']['type'], $ipsec_specialnet)): ?>
+													<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Subnet details')?>" data-content="<?=ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode'])?>" data-html="true">
+														<?=str_replace('_', '_<wbr>', htmlspecialchars($ipsec_specialnet[$ph2ent['localid']['type']]))?>
+													</a>
+												<?php else: ?>
+													<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
+												<?php endif; ?>
 											</td>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
@@ -571,10 +559,10 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 											<td><?= htmlspecialchars($ph2ent['descr']) ?></td>
 											</td>
 											<td style="cursor: pointer;">
-<!--												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
-												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase 2 entry"); ?>"></a>
-												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
-												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase 2 entry'); ?>"></a>
+<!--												<button class="fa-solid fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
+												<a class="fa-solid fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase 2 entry"); ?>"></a>
+												<a class="fa-regular fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
+												<a	class="fa-solid fa-trash-can no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase 2 entry'); ?>"></a>
 												<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 											</td>
 										</tr>
@@ -583,7 +571,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 											<td></td>
 											<td>
 												<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>">
-													<i class="fa fa-plus icon-embed-btn"></i>
+													<i class="fa-solid fa-plus icon-embed-btn"></i>
 													<?=gettext("Add P2")?>
 												</a>
 											</td>
@@ -612,12 +600,12 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 */
 ?>
 		<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm"  usepost>
-			<i class="fa fa-plus icon-embed-btn"></i>
+			<i class="fa-solid fa-plus icon-embed-btn"></i>
 			<?=gettext("Add P1")?>
 		</a>
 <?php if ($i !== 0): ?>
 		<button type="submit" name="del" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected P1s")?>">
-			<i class="fa fa-trash icon-embed-btn"></i>
+			<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 			<?=gettext("Delete P1s")?>
 		</button>
 <?php endif; ?>

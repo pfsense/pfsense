@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@
 
 @import url("/vendor/bootstrap/css/bootstrap.min.css");
 @import url("/css/fonts/roboto.css");
-@import url("/vendor/jquery-ui/jquery-ui-1.12.1.min.css");
+@import url("/vendor/jquery-ui/jquery-ui-1.13.2.min.css");
 
 html {
     position: relative;
@@ -55,7 +55,7 @@ a:hover {
     text-decoration: none;
 }
 
-a.fa, i.fa {
+a.fa-solid, i.fa-solid, a.fa-regular, i.fa-regular, a.fa-brands, i.fa-brands {
     font-size: 18px;
 }
 
@@ -106,7 +106,7 @@ wbr:after {
     background-color: rgba(245, 245, 245, .5);
 }
 
-tr.disabled i.fa {
+tr.disabled i.fa-solid, tr.disabled i.fa-regular, tr.disabled i.fa-brands {
     opacity: .5;
 }
 
@@ -145,15 +145,7 @@ tr.disabled a {
     width: 105px;
 }
 
-.logo-st0 {
-    fill:#FFFFFF;
-}
-
-.logo-st1 {
-    fill:#FFFFFF;
-}
-
-.logo-st2 {
+.logo-st0, .logo-st1, .logo-st2, .logo-st3, .logo-st4, .logo-st5 {
     fill:#FFFFFF;
 }
 
@@ -208,6 +200,11 @@ tr.disabled a {
 
 .nav-pills {
     margin-bottom: 20px;
+}
+
+.dropdown-menu-fixed {
+    max-height: calc(98vh - 35px);
+    overflow-y: auto;
 }
 
 .dropdown-menu>li>a {
@@ -714,11 +711,11 @@ footer a {
     float: right;
 }
 
-.widget-heading-icon .fa {
+.widget-heading-icon .fa-solid, .widget-heading-icon i.fa-regular, .widget-heading-icon i.fa-brands {
     color: #fff;
 }
 
-.widget-heading-icon .fa:hover {
+.widget-heading-icon .fa-solid:hover {
     color: #e0e0e0;
 }
 

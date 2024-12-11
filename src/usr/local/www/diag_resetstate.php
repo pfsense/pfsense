@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -82,7 +82,7 @@ $sourcetablehelp = sprintf(gettext('Resetting the source tracking table will rem
 $tab_array = array();
 $tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
 
-if (isset($config['system']['lb_use_sticky'])) {
+if (config_path_enabled('system', 'lb_use_sticky')) {
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
 }
 
@@ -100,7 +100,7 @@ $section->addInput(new Form_Checkbox(
 	false
 ))->setHelp($statetablehelp);
 
-if (isset($config['system']['lb_use_sticky'])) {
+if (config_path_enabled('system', 'lb_use_sticky')) {
 	$section->addInput(new Form_Checkbox(
 		'sourcetracking',
 		'Source Tracking',
@@ -115,7 +115,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Reset',
 	null,
-	'fa-trash'
+	'fa-solid fa-trash-can'
 ))->addClass('btn-warning');
 
 print $form;

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -39,9 +39,11 @@ function staticmapcmp($a, $b) {
 }
 
 function staticmaps_sort($ifgui) {
-	global $g, $config;
+	global $g;
 
-	usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
+	$dhcpd_config = config_get_path("dhcpd/{$ifgui}/staticmap");
+	usort($dhcpd_config, "staticmapcmp");
+	config_set_path("dhcpd/{$ifgui}/staticmap", $dhcpd_config);
 }
 
 require_once('globals.inc');
@@ -60,55 +62,50 @@ if (!$if) {
 	exit;
 }
 
-init_config_arr(array('dhcpd', $if, 'staticmap'));
-init_config_arr(array('dhcpd', $if, 'pool'));
-$a_maps = &$config['dhcpd'][$if]['staticmap'];
-$a_pools = &$config['dhcpd'][$if]['pool'];
-$static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
+$static_arp_enabled = config_path_enabled("dhcpd/{$if}", 'staticarp');
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
-if (isset($id) && $a_maps[$id]) {
-	$pconfig['mac'] = $a_maps[$id]['mac'];
-	$pconfig['cid'] = $a_maps[$id]['cid'];
-	$pconfig['hostname'] = $a_maps[$id]['hostname'];
-	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
-	$pconfig['filename'] = $a_maps[$id]['filename'];
-	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
-	$pconfig['descr'] = $a_maps[$id]['descr'];
-	$pconfig['arp_table_static_entry'] = isset($a_maps[$id]['arp_table_static_entry']);
-	$pconfig['deftime'] = $a_maps[$id]['defaultleasetime'];
-	$pconfig['maxtime'] = $a_maps[$id]['maxleasetime'];
-	$pconfig['gateway'] = $a_maps[$id]['gateway'];
-	$pconfig['domain'] = $a_maps[$id]['domain'];
-	$pconfig['domainsearchlist'] = $a_maps[$id]['domainsearchlist'];
-	list($pconfig['wins1'], $pconfig['wins2']) = $a_maps[$id]['winsserver'];
-	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $a_maps[$id]['dnsserver'];
-	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
-	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
-	$pconfig['ddnsdomainsecondary'] = $a_maps[$id]['ddnsdomainsecondary'];
-	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
-	$pconfig['ddnsdomainkeyalgorithm'] = $a_maps[$id]['ddnsdomainkeyalgorithm'];
-	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
-	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
-	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
-	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3']) = $a_maps[$id]['ntpserver'];
-	$pconfig['tftp'] = $a_maps[$id]['tftp'];
-	$pconfig['ldap'] = $a_maps[$id]['ldap'];
-	$pconfig['netboot'] = isset($a_maps[$id]['netboot']);
-	$pconfig['nextserver'] = $a_maps[$id]['nextserver'];
-	$pconfig['filename'] = $a_maps[$id]['filename'];
-	$pconfig['filename32'] = $a_maps[$id]['filename32'];
-	$pconfig['filename64'] = $a_maps[$id]['filename64'];
-	$pconfig['filename32arm'] = $a_maps[$id]['filename32arm'];
-	$pconfig['filename64arm'] = $a_maps[$id]['filename64arm'];
-	$pconfig['uefihttpboot'] = $a_maps[$id]['uefihttpboot'];
-	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
-	$pconfig['netmask'] = $a_maps[$id]['netmask'];
-	$pconfig['numberoptions'] = $a_maps[$id]['numberoptions'];
+$this_map_config = isset($id) ? config_get_path("dhcpd/{$if}/staticmap/{$id}") : null;
+if ($this_map_config) {
+	$pconfig['mac'] = $this_map_config['mac'];
+	$pconfig['cid'] = $this_map_config['cid'];
+	$pconfig['hostname'] = $this_map_config['hostname'];
+	$pconfig['ipaddr'] = $this_map_config['ipaddr'];
+	$pconfig['filename'] = $this_map_config['filename'];
+	$pconfig['rootpath'] = $this_map_config['rootpath'];
+	$pconfig['descr'] = $this_map_config['descr'];
+	$pconfig['arp_table_static_entry'] = isset($this_map_config['arp_table_static_entry']);
+	$pconfig['deftime'] = $this_map_config['defaultleasetime'];
+	$pconfig['maxtime'] = $this_map_config['maxleasetime'];
+	$pconfig['gateway'] = $this_map_config['gateway'];
+	$pconfig['domain'] = $this_map_config['domain'];
+	$pconfig['domainsearchlist'] = $this_map_config['domainsearchlist'];
+	list($pconfig['wins1'], $pconfig['wins2']) = $this_map_config['winsserver'];
+	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $this_map_config['dnsserver'];
+	$pconfig['ddnsdomain'] = $this_map_config['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $this_map_config['ddnsdomainprimary'];
+	$pconfig['ddnsdomainsecondary'] = $this_map_config['ddnsdomainsecondary'];
+	$pconfig['ddnsdomainkeyname'] = $this_map_config['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $this_map_config['ddnsdomainkeyalgorithm'];
+	$pconfig['ddnsdomainkey'] = $this_map_config['ddnsdomainkey'];
+	$pconfig['ddnsupdate'] = isset($this_map_config['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($this_map_config['ddnsforcehostname']);
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3']) = $this_map_config['ntpserver'];
+	$pconfig['tftp'] = $this_map_config['tftp'];
+	$pconfig['ldap'] = $this_map_config['ldap'];
+	$pconfig['netboot'] = isset($this_map_config['netboot']);
+	$pconfig['nextserver'] = $this_map_config['nextserver'];
+	$pconfig['filename32'] = $this_map_config['filename32'];
+	$pconfig['filename64'] = $this_map_config['filename64'];
+	$pconfig['filename32arm'] = $this_map_config['filename32arm'];
+	$pconfig['filename64arm'] = $this_map_config['filename64arm'];
+	$pconfig['uefihttpboot'] = $this_map_config['uefihttpboot'];
+	$pconfig['netmask'] = $this_map_config['netmask'];
+	$pconfig['numberoptions'] = $this_map_config['numberoptions'];
 } else {
 	$pconfig['mac'] = $_REQUEST['mac'];
 	$pconfig['cid'] = $_REQUEST['cid'];
@@ -216,8 +213,8 @@ if ($_POST['save']) {
 	}
 
 	/* check for overlaps */
-	foreach ($a_maps as $mapent) {
-		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
+	foreach (config_get_path("dhcpd/{$if}/staticmap", []) as $mapent) {
+		if ($this_map_config && ($this_map_config === $mapent)) {
 			continue;
 		}
 		if ((($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
@@ -225,15 +222,20 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("This MAC address or Client identifier already exists.");
 			break;
 		}
+		if (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr']) {
+			set_flash_message('alert-info', sprintf(gettext('The IP address %1$s is in use by another static DHCP mapping. ' .
+			'This has the potential to cause an IP conflict.'), $mapent['ipaddr']));
+			break;
+		}
 	}
 
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {
-		if (is_inrange_v4($_POST['ipaddr'], $config['dhcpd'][$if]['range']['from'], $config['dhcpd'][$if]['range']['to'])) {
+		if (is_inrange_v4($_POST['ipaddr'], config_get_path("dhcpd/{$if}/range/from"), config_get_path("dhcpd/{$if}/range/to"))) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 
-		foreach ($a_pools as $p) {
+		foreach (config_get_path("dhcpd/{$if}/pool", []) as $p) {
 			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
 				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
 				break;
@@ -262,10 +264,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary WINS servers.");
 	}
 
-	$parent_ip = get_interface_ip($_POST['if']);
+	$parent_ip = get_interface_ip($if);
 	if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
-		$parent_sn = get_interface_subnet($_POST['if']);
-		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {
+		$parent_sn = get_interface_subnet($if);
+		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($if, $_POST['gateway'])) {
 			$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 		}
 	}
@@ -312,10 +314,15 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) ||
-	    ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2']))) ||
-	    ($_POST['ntp3'] && (!is_ipaddrv4($_POST['ntp3']) && !is_hostname($_POST['ntp3'])))) {
-		$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
+	if (($_POST['ntp1'] && !(is_ipaddrv4($_POST['ntp1']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp1'])))) ||
+	    ($_POST['ntp2'] && !(is_ipaddrv4($_POST['ntp2']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp2'])))) ||
+	    ($_POST['ntp3'] && !(is_ipaddrv4($_POST['ntp3']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp3'])))) ||
+	    ($_POST['ntp4'] && !(is_ipaddrv4($_POST['ntp4']) || (dhcp_is_backend('isc') && is_hostname($_POST['ntp4']))))) {
+		if (dhcp_is_backend('isc')) {
+			$input_errors[] = gettext("A valid IP address or hostname must be specified for the NTP servers.");
+		} else {
+			$input_errors[] = gettext("A valid IP address must be specified for the NTP servers.");
+		}
 	}
 	if ($_POST['domain'] && (!is_domain($_POST['domain'], false, false))) {
 		$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
@@ -432,30 +439,30 @@ if ($_POST['save']) {
 		$mapent['uefihttpboot'] = $_POST['uefihttpboot'];
 		$mapent['numberoptions'] = $pconfig['numberoptions'];
 
-		if (isset($id) && $a_maps[$id]) {
-			$a_maps[$id] = $mapent;
+		if ($this_map_config) {
+			config_set_path("dhcpd/{$if}/staticmap/{$id}", $mapent);
 		} else {
-			$a_maps[] = $mapent;
+			config_set_path("dhcpd/{$if}/staticmap/", $mapent);
 		}
 		staticmaps_sort($if);
 
 		write_config("DHCP Server settings saved");
 
-		if (isset($config['dhcpd'][$if]['enable'])) {
+		if (config_path_enabled("dhcpd/{$if}")) {
 			mark_subsystem_dirty('dhcpd');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {
+			if (config_path_enabled('dnsmasq') && config_path_enabled('dnsmasq', 'regdhcpstatic')) {
 				mark_subsystem_dirty('hosts');
 			}
-			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+			if (config_path_enabled('unbound') && config_path_enabled('unbound', 'regdhcpstatic')) {
 				mark_subsystem_dirty('unbound');
 			}
 		}
 
 		/* Configure static ARP entry, or remove ARP entry if this host is dynamic. See https://redmine.pfsense.org/issues/6821 */
 		if ($mapent['arp_table_static_entry']) {
-			mwexec("/usr/sbin/arp -S " . escapeshellarg($mapent['ipaddr']) . " " . escapeshellarg($mapent['mac']));
+			mwexec("/usr/sbin/arp -S " . escapeshellarg($mapent['ipaddr']) . " " . escapeshellarg($mapent['mac']) . " >/dev/null", true);
 		} else {
-			mwexec("/usr/sbin/arp -d " . escapeshellarg($mapent['ipaddr']));
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($mapent['ipaddr']) . " >/dev/null", true);
 		}
 
 		header("Location: services_dhcp.php?if={$if}");
@@ -490,8 +497,9 @@ display_isc_warning();
 
 $form = new Form();
 
-$section = new Form_Section(sprintf(gettext('Static DHCP Mapping on %s'), $ifcfgdescr));
+$section = new Form_Section(gettext('Static DHCP Mapping'));
 
+if (!dhcp_is_backend('kea')):
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
 	match (dhcp_get_backend()) {
@@ -500,6 +508,7 @@ $section->addInput(new Form_StaticText(
 		default => gettext('Unknown')
 	}
 ));
+endif;
 
 $macaddress = new Form_Input(
 	'mac',
@@ -515,7 +524,7 @@ $btnmymac = new Form_Button(
 	'btnmymac',
 	gettext('Copy My MAC'),
 	null,
-	'fa-clone'
+	'fa-regular fa-clone'
 	);
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
@@ -531,7 +540,7 @@ $section->add($group);
 $cid_help = gettext('An optional identifier to match based on the value sent by the client (RFC 2132).');
 if (dhcp_is_backend('kea')) {
 	$cid_help .= '<br /><br />';
-	$cid_help .= gettext('Kea DHCP will only match on MAC address if both MAC address and client identifier are set for a static reservation.');
+	$cid_help .= gettext('Kea DHCP will match on MAC address if both MAC address and client identifier are set for a static mapping.');
 }
 
 $section->addInput(new Form_Input(
@@ -555,8 +564,8 @@ $section->addInput(new Form_IpAddress(
 
 $section->addInput(new Form_Checkbox(
 	'arp_table_static_entry',
-	gettext('ARP Table Static Entry'),
-	gettext('Create an ARP Table Static Entry for this MAC & IP Address pair.'),
+	gettext('Static ARP Entry'),
+	gettext('Create a static ARP table entry for this MAC & IP Address pair.'),
 	$pconfig['arp_table_static_entry']
 ));
 
@@ -699,7 +708,7 @@ $btnadv = new Form_Button(
 	'btnadvdns',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -773,7 +782,7 @@ $btnadv = new Form_Button(
 	'btnadvntp',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -798,7 +807,7 @@ $btnadv = new Form_Button(
 	'btnadvtftp',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -822,7 +831,7 @@ $btnadv = new Form_Button(
 	'btnadvldap',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -844,9 +853,9 @@ $section->addInput(new Form_Input(
 // Advanced Network Booting options
 $btnadv = new Form_Button(
 	'btnadvnwkboot',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -929,7 +938,7 @@ $btnadv = new Form_Button(
 	'btnadvopts',
 	gettext('Display Advanced'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
@@ -995,7 +1004,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 		'deleterow' . $counter,
 		gettext('Delete'),
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	))->addClass('btn-sm btn-warning');
 
 	$section->add($group);
@@ -1008,7 +1017,7 @@ $group->add(new Form_Button(
 	'addrow',
 	gettext('Add Custom Option'),
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->addClass('btn-success')
   ->setHelp(gettext('Enter the DHCP option number, type and the value for each item to include in the DHCP lease information.'));
 $section->add($group);
@@ -1065,7 +1074,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvdns').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvdns').children();
+		$('#btnadvdns').text(text).prepend(children);
 	}
 
 	$('#btnadvdns').click(function(event) {
@@ -1102,7 +1112,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvntp').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvntp').children();
+		$('#btnadvntp').text(text).prepend(children);
 	}
 
 	$('#btnadvntp').click(function(event) {
@@ -1136,7 +1147,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvtftp').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvtftp').children();
+		$('#btnadvtftp').text(text).prepend(children);
 	}
 
 	$('#btnadvtftp').click(function(event) {
@@ -1170,7 +1182,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvldap').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvldap').children();
+		$('#btnadvldap').text(text).prepend(children);
 	}
 
 	$('#btnadvldap').click(function(event) {
@@ -1205,7 +1218,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -1247,7 +1261,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvnwkboot').children();
+		$('#btnadvnwkboot').text(text).prepend(children);	
 	}
 
 	$('#btnadvnwkboot').click(function(event) {

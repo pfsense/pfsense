@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -62,18 +62,10 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 
 if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
-	init_config_arr(array('system', 'user'));
-	$a_user =& $config['system']['user'];
 }
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-
 $internal_ca_count = 0;
-foreach ($a_ca as $ca) {
+foreach (config_get_path('cert', []) as $ca) {
 	if ($ca['prv']) {
 		$internal_ca_count++;
 	}
@@ -97,7 +89,8 @@ if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 if (!empty($id)) {
-	$thiscert =& lookup_cert($id);
+	$cert_item_config = lookup_cert($id);
+	$thiscert = &$cert_item_config['item'];
 }
 
 /* Actions other than 'new' require an ID.
@@ -117,9 +110,9 @@ switch ($act) {
 			$savemsg = sprintf(gettext("Certificate %s is in use and cannot be deleted"), $name);
 			$class = "danger";
 		} else {
-			foreach ($a_cert as $cid => $acrt) {
+			foreach (config_get_path('cert', []) as $cid => $acrt) {
 				if ($acrt['refid'] == $thiscert['refid']) {
-					unset($a_cert[$cid]);
+					config_del_path("cert/{$cid}");
 				}
 			}
 			$savemsg = sprintf(gettext("Deleted certificate %s"), $name);
@@ -266,7 +259,7 @@ if ($_POST['save'] == gettext("Save")) {
 				if (!empty($_FILES['pkcs12_cert']) && is_uploaded_file($_FILES['pkcs12_cert']['tmp_name'])) {
 					$pkcs12_file = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
 					if (!openssl_pkcs12_read($pkcs12_file, $pkcs12_data, $_POST['pkcs12_pass'])) {
-						$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate.");
+						$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate or the bundle uses unsupported encryption ciphers.");
 					}
 				} else {
 					$input_errors[] = gettext("A PKCS #12 certificate store was not uploaded.");
@@ -453,17 +446,20 @@ if ($_POST['save'] == gettext("Save")) {
 			case 'existing':
 				/* Add an existing certificate to a user */
 				$ucert = lookup_cert($pconfig['certref']);
-				if ($ucert && $a_user) {
-					$a_user[$userid]['cert'][] = $ucert['refid'];
-					$savemsg = sprintf(gettext("Added certificate %s to user %s"), htmlspecialchars($ucert['descr']), $a_user[$userid]['name']);
+				$ucert = $ucert['item'];
+				if ($ucert && config_get_path("system/user")) {
+					config_set_path("system/user/{$userid}/cert/", $ucert['refid']);
+					$savemsg = sprintf(gettext("Added certificate %s to user %s"), htmlspecialchars($ucert['descr']), config_get_path("system/user/{$userid}/name"));
 				}
 				unset($cert);
 				break;
 			case 'sign':
 				/* Sign a CSR */
 				$csrid = lookup_cert($pconfig['csrtosign']);
-				$ca = & lookup_ca($pconfig['catosignwith']);
-				// Read the CSR from $config, or if a new one, from the textarea
+				$csrid = $csrid['item'];
+				$ca_item_config = lookup_ca($pconfig['catosignwith']);
+				$ca = &$ca_item_config['item'];
+				// Read the CSR from config array, or if a new one, from the textarea
 				if ($pconfig['csrtosign'] === "new") {
 					$csr = $pconfig['csrpaste'];
 				} else {
@@ -476,6 +472,7 @@ if ($_POST['save'] == gettext("Save")) {
 					$altname_str = implode(",", $altnames_tmp);
 				}
 				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
+				config_set_path("ca/{$ca_item_config['idx']}", $ca);
 				if ($n509) {
 					// Gather the details required to save the new cert
 					$newcert = array();
@@ -490,7 +487,7 @@ if ($_POST['save'] == gettext("Save")) {
 						$newcert['prv'] = $csrid['prv'];
 					}
 					// Add it to the config file
-					$config['cert'][] = $newcert;
+					config_set_path('cert/', $newcert);
 					$savemsg = sprintf(gettext("Signed certificate %s"), htmlspecialchars($newcert['descr']));
 					unset($act);
 				}
@@ -513,7 +510,7 @@ if ($_POST['save'] == gettext("Save")) {
 							$cn = $int_data['subject']['CN'];
 							$int_ca = array('descr' => $cn, 'refid' => uniqid());
 							if (ca_import($int_ca, $intermediate)) {
-								$a_ca[] = $int_ca;
+								config_set_path('ca/', $int_ca);
 							}
 						}
 					}
@@ -619,12 +616,13 @@ if ($_POST['save'] == gettext("Save")) {
 
 		if (isset($id) && $thiscert) {
 			$thiscert = $cert;
+			config_set_path("cert/{$cert_item_config['idx']}", $thiscert);
 		} elseif ($cert) {
-			$a_cert[] = $cert;
+			config_set_path('cert/', $cert);
 		}
 
-		if (isset($a_user) && isset($userid)) {
-			$a_user[$userid]['cert'][] = $cert['refid'];
+		if (isset($userid) && (config_get_path('system/user') !== null)) {
+			config_set_path("system/user/{$userid}/cert/", $cert['refid']);
 		}
 
 		if (!$input_errors) {
@@ -668,6 +666,7 @@ if ($_POST['save'] == gettext("Save")) {
 		$cert['descr'] = $pconfig['descr'];
 		csr_complete($cert, $pconfig['cert']);
 		$thiscert = $cert;
+		config_set_path("cert/{$cert_item_config['idx']}", $thiscert);
 		$savemsg = sprintf(gettext("Updated certificate signing request %s"), htmlspecialchars($pconfig['descr']));
 		write_config($savemsg);
 		pfSenseHeader("system_certmanager.php");
@@ -695,14 +694,14 @@ if ($savemsg) {
 $tab_array = array();
 $tab_array[] = array(gettext('Authorities'), false, 'system_camanager.php');
 $tab_array[] = array(gettext('Certificates'), true, 'system_certmanager.php');
-$tab_array[] = array(gettext('Certificate Revocation'), false, 'system_crlmanager.php');
+$tab_array[] = array(gettext('Revocation'), false, 'system_crlmanager.php');
 display_top_tabs($tab_array);
 
 if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$form = new Form();
 	$form->setAction('system_certmanager.php')->setMultipartEncoding();
 
-	if (isset($userid) && $a_user) {
+	if (isset($userid) && config_get_path("system/user")) {
 		$form->addGlobal(new Form_Input(
 			'userid',
 			null,
@@ -754,7 +753,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'descr',
 		'*Descriptive name',
 		'text',
-		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
+		(isset($userid) && config_get_path('system/user') && empty($pconfig['descr'])) ? config_get_path("system/user/{$userid}/name") : $pconfig['descr']
 	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse')
 	->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
 		'This name can contain spaces but it cannot contain any of the ' .
@@ -771,10 +770,9 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	// Return an array containing the IDs od all CAs
 	function list_cas() {
-		global $a_ca;
 		$allCas = array();
 
-		foreach ($a_ca as $ca) {
+		foreach (config_get_path('ca', []) as $ca) {
 			if ($ca['prv']) {
 				$allCas[$ca['refid']] = $ca['descr'];
 			}
@@ -785,10 +783,9 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	// Return an array containing the IDs od all CSRs
 	function list_csrs() {
-		global $config;
 		$allCsrs = array();
 
-		foreach ($config['cert'] as $cert) {
+		foreach (config_get_path('cert', []) as $cert) {
 			if ($cert['csr']) {
 				$allCsrs[$cert['refid']] = $cert['descr'];
 			}
@@ -938,7 +935,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		));
 	} else {
 		$allCas = array();
-		foreach ($a_ca as $ca) {
+		foreach (config_get_path('ca', []) as $ca) {
 			if (!$ca['prv']) {
 				continue;
 			}
@@ -1154,7 +1151,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	$existCerts = array();
 
-	foreach ($config['cert'] as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
@@ -1165,6 +1162,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		}
 
 		$ca = lookup_ca($cert['caref']);
+		$ca = $ca['item'];
 		if ($ca) {
 			$cert['descr'] .= " (CA: {$ca['descr']})";
 		}
@@ -1247,7 +1245,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			'deleterow' . $counter,
 			'Delete',
 			null,
-			'fa-trash'
+			'fa-solid fa-trash-can'
 		))->addClass('btn-warning');
 
 		$group->addClass('repeatable');
@@ -1266,7 +1264,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'addrow',
 		'Add SAN Row',
 		null,
-		'fa-plus'
+		'fa-solid fa-plus'
 	))->addClass('btn-success');
 
 	$form->add($section);
@@ -1276,13 +1274,13 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			'exportpkey',
 			'Export Private Key',
 			null,
-			'fa-key'
+			'fa-solid fa-key'
 		))->addClass('btn-primary');
 		$form->addGlobal(new Form_Button(
 			'exportp12',
 			'Export PKCS#12',
 			null,
-			'fa-archive'
+			'fa-solid fa-archive'
 		))->addClass('btn-primary');
 	}
 
@@ -1340,7 +1338,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'save',
 		'Update',
 		null,
-		'fa-save'
+		'fa-solid fa-save'
 	))->addClass('btn-primary');
 
 	print($form);
@@ -1352,7 +1350,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			<?=gettext('Search')?>
 			<span class="widget-heading-icon pull-right">
 				<a data-toggle="collapse" href="#search-panel_panel-body">
-					<i class="fa fa-plus-circle"></i>
+					<i class="fa-solid fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
@@ -1371,8 +1369,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search certificate names and distinguished names.')?></span>
@@ -1402,7 +1400,7 @@ $pluginparams = array();
 $pluginparams['type'] = 'certificates';
 $pluginparams['event'] = 'used_certificates';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
-foreach ($a_cert as $cert):
+foreach (config_get_path('cert', []) as $cert):
 	if (!is_array($cert) || empty($cert)) {
 		continue;
 	}
@@ -1434,6 +1432,7 @@ foreach ($a_cert as $cert):
 	}
 
 	$ca = lookup_ca($cert['caref']);
+	$ca = $ca['item'];
 	if ($ca) {
 		$caname = htmlspecialchars($ca['descr']);
 	}
@@ -1457,49 +1456,52 @@ foreach ($a_cert as $cert):
 					</td>
 					<td>
 						<?php if (is_cert_revoked($cert)): ?>
-							<i><?=gettext("Revoked")?></i>
-						<?php endif?>
-						<?php if (is_webgui_cert($cert['refid'])): ?>
-							<?=gettext("webConfigurator")?>
-						<?php endif?>
-						<?php if (is_user_cert($cert['refid'])): ?>
-							<?=gettext("User Cert")?>
-						<?php endif?>
-						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Server")?>
-						<?php endif?>
-						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Client")?>
-						<?php endif?>
-						<?php if (is_ipsec_cert($cert['refid'])): ?>
-							<?=gettext("IPsec Tunnel")?>
+							<i><?=gettext("Revoked")?></i><br/>
 						<?php endif?>
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
-							<?=gettext("Captive Portal")?>
+							<?=gettext("Captive Portal")?><br/>
 						<?php endif?>
 						<?php if (is_unbound_cert($cert['refid'])): ?>
-							<?=gettext("DNS Resolver")?>
+							<?=gettext("DNS Resolver")?><br/>
+						<?php endif?>
+						<?php if (is_ipsec_cert($cert['refid'])): ?>
+							<?=gettext("IPsec Tunnel")?><br/>
+						<?php endif?>
+						<?php if (is_kea_cert($cert['refid'])): ?>
+							<?=gettext("Kea")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
+						<?php endif?>
+						<?php if (is_user_cert($cert['refid'])): ?>
+							<?=gettext("User Cert")?><br/>
+						<?php endif?>
+						<?php if (is_webgui_cert($cert['refid'])): ?>
+							<?=gettext("webConfigurator")?><br/>
 						<?php endif?>
 						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>
-							<a href="system_certmanager.php?act=edit&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit Certificate")?>"></a>
-							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
+							<a href="system_certmanager.php?act=edit&amp;id=<?=$cert['refid']?>" class="fa-solid fa-pencil" title="<?=gettext("Edit Certificate")?>"></a>
+							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa-solid fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
 							<?php if ($cert['prv']): ?>
-								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
-								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
+								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa-solid fa-key" title="<?=gettext("Export Key")?>"></a>
+								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa-solid fa-archive" title="<?=gettext("Export PCKS#12 Archive without Encryption")?>"></a>
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
-								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
+								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa-solid fa-arrow-rotate-right" title="<?=gettext("Reissue/Renew")?>"></a>
 							<?php endif ?>
 						<?php else: ?>
-							<a href="system_certmanager.php?act=csr&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
-							<a href="system_certmanager.php?act=req&amp;id=<?=$cert['refid']?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>"></a>
-							<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<a href="system_certmanager.php?act=csr&amp;id=<?=$cert['refid']?>" class="fa-solid fa-pencil" title="<?=gettext("Update CSR")?>"></a>
+							<a href="system_certmanager.php?act=req&amp;id=<?=$cert['refid']?>" class="fa-solid fa-right-to-bracket" title="<?=gettext("Export Request")?>"></a>
+							<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa-solid fa-key" title="<?=gettext("Export Key")?>"></a>
 						<?php endif?>
 						<?php if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&amp;id=<?=$cert['refid']?>" class="fa fa-trash" title="<?=gettext("Delete Certificate")?>" usepost></a>
+							<a href="system_certmanager.php?act=del&amp;id=<?=$cert['refid']?>" class="fa-solid fa-trash-can" title="<?=gettext("Delete Certificate")?>" usepost></a>
 						<?php endif?>
 					</td>
 				</tr>
@@ -1513,7 +1515,7 @@ foreach ($a_cert as $cert):
 
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add/Sign")?>
 	</a>
 </nav>
@@ -1616,7 +1618,7 @@ events.push(function() {
 
 		switch (caref) {
 <?php
-			foreach ($a_ca as $ca):
+			foreach (config_get_path('ca', []) as $ca):
 				if (!$ca['prv']) {
 					continue;
 				}

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -450,7 +450,7 @@ if ($_POST['apply']) {
 
 		$vlan_redo = [];
 		if (file_exists(g_get('tmp_path') . '/.interfaces.apply')) {
-			$toapplylist = unserialize(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'));
+			$toapplylist = unserialize_data(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'), []);
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
 				$realif = get_real_interface($ifapply);
 				$ifmtu = get_interface_mtu($realif);
@@ -469,7 +469,7 @@ if ($_POST['apply']) {
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 				}
-				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ipaddrv6'));
+				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ifcfg/ipaddrv6'));
 				$mtu = config_get_path("interfaces/{$ifapply}/mtu");
 				if (interface_has_clones($realif) &&
 				    ($mtu && ($mtu != $ifmtu)) ||
@@ -541,9 +541,8 @@ if ($_POST['apply']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
-		/* Reserved name? Allow the reserved interface-network suffix since it is based on the interface name. */
-		if (get_pf_reserved($_POST['descr'], false) &&
-		    !str_ends_with($_POST['descr'], '__NETWORK')) {
+		/* Reserved name? */
+		if (get_pf_reserved($_POST['descr'], false)) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an interface name: %s"), $_POST['descr']);
 		}
 
@@ -1719,7 +1718,7 @@ if ($_POST['apply']) {
 		}
 
 		if (file_exists(g_get('tmp_path') . '/.interfaces.apply')) {
-			$toapplylist = unserialize(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'));
+			$toapplylist = unserialize_data(file_get_contents(g_get('tmp_path') . '/.interfaces.apply'), []);
 		} else {
 			$toapplylist = [];
 		}
@@ -1933,7 +1932,7 @@ $shortcut_section = "interfaces";
 $types4 = ["ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP")];
 
 if (!in_array(array_get_path($pconfig, 'type'), ["ppp", "pppoe", "pptp", "l2tp"]) ||
-   !array_key_exists(array_get_path($a_ppps, "{$pppid}/ports", []), get_configured_interface_list_by_realif())) {
+    !array_intersect_key(explode(",", array_get_path($a_ppps, "{$pppid}/ports", "")), get_configured_interface_list_by_realif())) {
 	$types4 = array_merge(["none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP")], $types4);
 }
 
@@ -2139,7 +2138,7 @@ $group->add(new Form_Button(
 	'addgw4',
 	'Add a new gateway',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway4')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%1$s' .
@@ -2193,7 +2192,7 @@ $group->add(new Form_Button(
 	'addgw6',
 	'Add a new gateway',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%s' .
@@ -2237,7 +2236,7 @@ $btnaddgw6 = new Form_Button(
 	'add6',
 	'Add',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 );
 
 $btnaddgw6->setAttribute('type','button')->addClass('btn-success');
@@ -2246,7 +2245,7 @@ $btncnxgw6 = new Form_Button(
 	'cnx6',
 	'Cancel',
 	null,
-	'fa-undo'
+	'fa-solid fa-undo'
 );
 
 $btncnxgw6->setAttribute('type','button')->addClass('btn-warning');
@@ -2958,7 +2957,7 @@ $section->addInput(new Form_Button(
 	'btnadvppp',
 	'Advanced PPP',
 	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
-	'fa-cog'
+	'fa-solid fa-cog'
 ))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration.');
 
 $form->add($section);
@@ -3091,7 +3090,7 @@ $section->addInput(new Form_Button(
 	'btnadvppp',
 	'Advanced and MLPPP',
 	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
-	'fa-cog'
+	'fa-solid fa-cog'
 ))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
 
 $form->add($section);
@@ -3131,14 +3130,14 @@ $section->add($group);
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
 	'*Local IP address',
-	$_POST['pptp_local0'] ? $_POST['pptp_local0'] : array_get_path($pconfig, 'pptp_localip', [])[0],
+	$_POST['pptp_local0'] ? $_POST['pptp_local0'] : array_get_path($pconfig, 'pptp_localip/0', []),
 	'V4'
-))->addMask('pptp_subnet0', $_POST['pptp_subnet0'] ? $_POST['pptp_subnet0'] : array_get_path($pconfig, 'pptp_subnet', [])[0]);
+))->addMask('pptp_subnet0', $_POST['pptp_subnet0'] ? $_POST['pptp_subnet0'] : array_get_path($pconfig, 'pptp_subnet/0', []));
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'*Remote IP address',
-	$_POST['pptp_remote0'] ? $_POST['pptp_remote0'] : array_get_path($pconfig, 'pptp_remote', [])[0],
+	$_POST['pptp_remote0'] ? $_POST['pptp_remote0'] : array_get_path($pconfig, 'pptp_remote/0', []),
 	'HOSTV4'
 ));
 
@@ -3172,7 +3171,7 @@ $section->addInput(new Form_Button(
 	'btnadvppp',
 	'Advanced and MLPPP',
 	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
-	'fa-cog'
+	'fa-solid fa-cog'
 ))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('%sClick for additional PPTP and L2TP configuration options. Save first if changes have been made.', $mlppp_text);
 
 $form->add($section);
@@ -3681,7 +3680,7 @@ $btnaddgw4 = new Form_Button(
 	'add4',
 	'Add',
 	null,
-	'fa-plus'
+	'fa-solid fa-plus'
 );
 
 $btnaddgw4->setAttribute('type','button')->addClass('btn-success');
@@ -3690,7 +3689,7 @@ $btncnxgw4 = new Form_Button(
 	'cnx4',
 	'Cancel',
 	null,
-	'fa-undo'
+	'fa-solid fa-undo'
 );
 
 $btncnxgw4->setAttribute('type','button')->addClass('btn-warning');

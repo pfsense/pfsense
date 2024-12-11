@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -64,7 +64,7 @@ if ($_POST) {
 		}
 	}
 } else {
-	if (isset($config['system']['webgui']['authmode'])) {
+	if (config_path_enabled('system/webgui', 'authmode')) {
 		$pconfig['authmode'] = config_get_path('system/webgui/authmode');
 	} else {
 		$pconfig['authmode'] = "Local Database";
@@ -127,7 +127,7 @@ $form->addGlobal(new Form_Button(
 	'Submit',
 	'Test',
 	null,
-	'fa-wrench'
+	'fa-solid fa-wrench'
 ))->addClass('btn-primary');
 
 print $form;

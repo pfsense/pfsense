@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ if ($_REQUEST['ajax']) {
 	// the support data file does not exist, or
 	// if it is more than a day old and the URL seems resolvable
 	if (!file_exists($supportfile) ||
-	    ((time()-filemtime($supportfile) > $refreshinterval) && is_url_hostname_resolvable($FQDN))) {
+	    ((time()-filemtime($supportfile) > $refreshinterval) && resolve_address($FQDN))) {
 		if (file_exists($supportfile)) {
 			unlink($supportfile);
 		}
@@ -74,7 +74,7 @@ if ($_REQUEST['act'] == "refresh") {
 // Poll the Netgate server to obtain the JSON/HTML formatted support information
 // and write it to the JSON file
 function updateSupport() {
-	global $g, $supportfile, $idfile, $FQDN, $config;
+	global $g, $supportfile, $idfile, $FQDN;
 
 	if (file_exists($idfile)) {
 		if (function_exists('curl_version')) {
@@ -93,7 +93,7 @@ function updateSupport() {
 			set_curlproxy($ch);
 
 			$response = curl_exec($ch);
-			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 			curl_close($ch);
 
 			if ($status == 200) {
@@ -118,11 +118,11 @@ if (file_exists($supportfile) && ( time()-filemtime($supportfile) < $refreshinte
 } else {
 	//Print empty <div>s and request the data by AJAX
 	print(sprintf(gettext("%sRetrieving support information %s %s"),
-		"<div id=\"summary\" class=\"alert alert-warning\">", "<i class=\"fa fa-cog fa-spin\"></i>", "</div><div id=\"htmltxt\"></div>"));
+		"<div id=\"summary\" class=\"alert alert-warning\">", "<i class=\"fa-solid fa-cog fa-spin\"></i>", "</div><div id=\"htmltxt\"></div>"));
 }
 
 // Print a low-key refresh link
-print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/netgate_services_and_support.widget.php?act=refresh" usepost><i class="fa fa-refresh"></i></a></div>');
+print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/netgate_services_and_support.widget.php?act=refresh" usepost><i class="fa-solid fa-arrows-rotate"></i></a></div>');
 
 print("</div>");
 

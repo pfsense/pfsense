@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,7 +82,7 @@ $g = [
 	'disablehelpicon' => false,
 	'disablecrashreporter' => false,
 	'debug' => false,
-	'latest_config' => '23.3',
+	'latest_config' => '23.5',
 	'minimum_ram_warning' => '101',
 	'minimum_ram_warning_text' => '128 MB',
 	'wan_interface_name' => 'wan',
@@ -263,17 +263,83 @@ $pf_reserved_keywords = [
 	'pppoe', 'pptp'
 ];
 
-/* Reserved table names to avoid collision */
+/**
+ * User-accessible read-only aliases reserved for system use.
+ * 
+ * Entries must have the name as the key. Each entry must have a name,
+ * type, and description. Possible values are:
+ * - name: Same value as the key; used for compatibility with other functions.
+ * - url: A URL string for URL* types. Alternatively it may be a file path.
+ *        If a file path is given, the alias is assumed to be processed
+ *        separately such as with rc.update_bogons.sh.
+ * - type: The alias type.
+ * - descr: A string value.
+ * - address: A string of space-separated values; may be defined
+ *            dynamically e.g. during filter ruleset generation.
+ * - detail: An optional string value.
+ * 
+ * @global array $reserved_table_names
+ */
 global $reserved_table_names;
 $reserved_table_names = [
-	'bogons',
-	'bogonsv6',
-	'negate_networks',
-	'snort2c',
-	'sshguard',
-	'tonatsubnets',
-	'virusprot',
-	'vpn_networks',
+	'bogons' => [
+		'name' => 'bogons',
+		'type' => 'urltable',
+		'url' => '/etc/bogons',
+		'descr' => 'IPv4 bogons.',
+		'address' => '',
+		'detail' => ''
+	],
+	'bogonsv6' => [
+		'name' => 'bogonsv6',
+		'type' => 'urltable',
+		'url' => '/etc/bogonsv6',
+		'descr' => 'IPv6 bogons.',
+		'address' => '',
+		'detail' => ''
+	],
+	'sshguard' => [
+		'name' => 'sshguard',
+		'type' => 'host',
+		'descr' => 'Hosts blocked by SSH login protection.',
+		'address' => '',
+		'detail' => ''
+	],
+	'snort2c' => [
+		'name' => 'snort2c',
+		'type' => 'host',
+		'descr' => 'Hosts blocked by IDS.',
+		'address' => '',
+		'detail' => ''
+	],
+	'virusprot' => [
+		'name' => 'virusprot',
+		'type' => 'host',
+		'descr' => 'Hosts blocked by rule restrictions.',
+		'address' => '',
+		'detail' => ''
+	],
+	'vpn_networks' => [
+		'name' => 'vpn_networks',
+		'type' => 'network',
+		'descr' => 'Networks for IPsec, OpenVPN, and PPPoE servers.',
+		'address' => '',
+		'detail' => ''
+	],
+	'negate_networks' => [
+		'name' => 'negate_networks',
+		'type' => 'network',
+		'descr' => 'Networks to exclude from policy routing rules with any destination.',
+		'address' => '',
+		'detail' => ''
+	],
+	'tonatsubnets' => [
+		'name' => 'tonatsubnets',
+		'type' => 'network',
+		'descr' => 'Networks handled by automatic outbound NAT.',
+		'address' => '',
+		'detail' => ''
+	],
 ];
 
 /* VLAN Prio values. */

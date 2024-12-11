@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2011-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -73,10 +73,11 @@ if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 }
 
 preg_match('/\/var\/etc\/openvpn\/server(\d+)\/config\.ovpn/', $_GET['config'], $current_vpnid);
-foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 	if (($ovpns['vpnid'] == $current_vpnid['1']) && ($ovpns['ocspcheck'] == 'yes')) {
 		$capath = "/var/etc/openvpn/server{$ovpns['vpnid']}/ca/";
 		$ca = lookup_ca($ovpns['caref']);
+		$ca = $ca['item'];
 		$cert_contents = base64_decode($ca['crt']);
 		$cert_details = openssl_x509_parse($cert_contents);
 		$issuer = $capath . $cert_details['hash'] . ".0";

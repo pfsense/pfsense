@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
-$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
+$system_url = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 
 if ($user_settings['webgui']['pagenamefirst']) {
 	$tabtitle = $pagetitle . " - " . htmlspecialchars($system_url);
@@ -47,8 +47,8 @@ if (isset($user_settings['webgui']['webguicss'])) {
 }
 
 // set default columns to two if unset
-if (!isset($config['system']['webgui']['dashboardcolumns'])) {
-	$config['system']['webgui']['dashboardcolumns'] = 2;
+if (config_get_path('system/webgui/dashboardcolumns') === null) {
+	config_set_path('system/webgui/dashboardcolumns', 2);
 }
 
 ?>
@@ -68,7 +68,6 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	<meta name="theme-color" content="#ffffff">
 
 	<link rel="stylesheet" href="/vendor/font-awesome/css/all.min.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/all.min.css')?>">
-	<link rel="stylesheet" href="/vendor/font-awesome/css/v4-shims.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/v4-shims.css')?>">
 	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css?v=<?=filemtime('/usr/local/www/vendor/sortable/sortable-theme-bootstrap.css')?>">
 	<link rel="stylesheet" href="/vendor/jquery-treegrid/css/jquery.treegrid.css?v=<?=filemtime('/usr/local/www/vendor/jquery-treegrid/css/jquery.treegrid.css')?>">
 	<link rel="stylesheet" href="<?=$cssfile?>?v=<?=filemtime('/usr/local/www/' . $cssfile)?>" />
@@ -150,16 +149,16 @@ function read_ext_menu_path_data() {
 }
 
 // Create a menu entry of any installed packages in the specified category
-// (Now reads the menu information from $config['installedpackages']['menu'] only)
+// (Now reads the menu information from installedpackages/menu only)
 function return_ext_menu($section) {
-	global $config, $ext_menu_path_data;
+	global $ext_menu_path_data;
 
 	$htmltext = "";
 	$extarray = array();
 	$ext_menu_entries = array();
 
-	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
-		foreach ($config['installedpackages']['menu'] as $menu) {
+	if ((!empty(config_get_path('installedpackages/package'))) && (!empty(config_get_path('installedpackages/menu')))) {
+		foreach (config_get_path('installedpackages/menu', []) as $menu) {
 			if (isset($menu['name']) && ($menu['name'] != "AutoConfigBackup")) { // AutoConfigBackup was moved to a built-in function
 	//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
 				if (isset($menu['section']) && ($menu['section'] == $section)) {
@@ -262,10 +261,12 @@ if (isAllowedPage("system_camanager.php")) {
 
 $system_menu[] = array(gettext("Register"), "/system_register.php");
 
-if (!isAllowedPage("system_usermanager.php")) {
-	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
-} else {
+if (isAllowedPage("system_usermanager.php")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
+}
+
+if (isAllowedPage("system_usermanager_passwordmg.php")) {
+	$system_menu[] = array(gettext("User Password Manager"), "/system_usermanager_passwordmg.php");
 }
 
 if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php")) {
@@ -285,7 +286,7 @@ $interfaces_menu = array();
 $interfaces_top = array();
 $interfaces_bottom = array();
 
-if (!isset($config['system']['webgui']['noassigninterfaces'])) {
+if (!config_path_enabled('system/webgui', 'noassigninterfaces')) {
 	$interfaces_top[] = array(gettext("Assignments"), "/interfaces_assign.php");
 	$div = true;
 }
@@ -299,7 +300,7 @@ if ($platform['name'] == "uFW") {
 $opts = get_configured_interface_with_descr(true);
 
 foreach ($opts as $oif => $odescr) {
-	if (!isset($config['interfaces'][$oif]['ovpn'])) {
+	if (config_get_path("interfaces/{$oif}/ovpn") === null) {
 		$interfaces_bottom[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
@@ -333,8 +334,8 @@ $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 
 if (g_get('services_dhcp_server_enable')) {
-	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
-	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server")), "/services_dhcpv6.php");
+	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp_settings.php");
+	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server")), "/services_dhcpv6_settings.php");
 }
 
 $services_menu[] = [gettext('Router Advertisement'), '/services_radvd.php'];
@@ -345,11 +346,11 @@ $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/services_pppoe.php");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
 
-if (count($config['interfaces']) > 1) {
+if (count(config_get_path('interfaces', [])) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
+	$services_menu[] = array(gettext("UPnP IGD &amp; PCP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 
 $services_menu[] = array(gettext("Wake-on-LAN"), "/services_wol.php");
@@ -382,15 +383,15 @@ $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php");
 
-if (count($config['interfaces']) > 1) {
-	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
+if (count(config_get_path('interfaces', [])) > 1) {
+	$status_menu[] = array(gettext("UPnP IGD &amp; PCP"), "/status_upnp.php");
 }
 
 $wifdescrs = array();
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
-	if (is_array($config['interfaces'][$ent]['wireless']) &&
-	    preg_match(g_get('wireless_regex'), $config['interfaces'][$ent]['if'])) {
+	if (is_array(config_get_path("interfaces/{$ent}/wireless")) &&
+	    preg_match(g_get('wireless_regex'), config_get_path("interfaces/{$ent}/if"))) {
 		$wifdescrs[$ent] = $entdesc;
 	}
 }
@@ -455,9 +456,10 @@ if (!g_get('disablehelpmenu')) {
 }
 
 $menuclass = "static";
-
+$menuclass_dropdown = '';
 if ($user_settings['webgui']['webguifixedmenu'] == "fixed") {
 	$menuclass = "fixed";
+	$menuclass_dropdown = ' dropdown-menu-fixed';
 }
 
 $numColumns = (int) $user_settings['webgui']['dashboardcolumns'];
@@ -472,6 +474,7 @@ $allow_clear_notices = false;
 if (are_notices_pending()) {
 	// Evaluate user privs to determine if notices should be displayed, and if the user can clear them.
 	$user_entry = getUserEntry($_SESSION['Username']);
+	$user_entry = $user_entry['item'];
 	if (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "user-view-clear-notices") || userHasPrivilege($user_entry, "page-all")) {
 		$display_notices = true;
 		$allow_clear_notices = true;
@@ -499,7 +502,7 @@ if (are_notices_pending()) {
 			<ul class="nav navbar-nav">
 			<?php
                 if ($user_settings['webgui']['webguihostnamemenu'] == 'hostonly') {
-                    $help_menu_title = htmlspecialchars($config['system']['hostname']);
+                    $help_menu_title = htmlspecialchars(config_get_path('system/hostname'));
                 }
                 elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
                     $help_menu_title = htmlspecialchars($system_url);
@@ -530,7 +533,7 @@ if (are_notices_pending()) {
 						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu"><?=$menu_output?></ul>
+					<ul class="dropdown-menu<?=$menuclass_dropdown?>" role="menu"><?=$menu_output?></ul>
 				</li>
 
 <?php
@@ -542,7 +545,7 @@ if (are_notices_pending()) {
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
-							<i class="fa fa-bell text-danger" title="<?=gettext("Notices")?>"></i>
+							<i class="fa-solid fa-bell text-danger" title="<?=gettext("Notices")?>"></i>
 							<span class="badge bg-danger"><?=count($notices)?></span>
 						</a>
 					</li>
@@ -551,7 +554,7 @@ if (are_notices_pending()) {
 				?>
 					<li class="dropdown">
 						<a href="/index.php?logout" usepost>
-							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
+							<i class="fa-solid fa-right-from-bracket" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
 			</ul>
@@ -562,18 +565,66 @@ if (are_notices_pending()) {
 <div class="container <?=$menuclass?>" <?=$columnsContainer?>>
 
 <?php
-	// Print a warning if current user = admin and the password hash is still set to the default value
-	if ($_SESSION['Username'] == "admin") {
-		$cu = getUserEntry("admin");
+/* Password Security warnings */
 
-		if (local_backed("admin", g_get('factory_shipped_password'))) {
+	/* Setup user index to determine index IDs for user manager links. */
+	$userindex = index_users();
+
+	/* Gather info about the current user */
+	$cu = getUserEntry($_SESSION['Username']);
+
+	/* When logging in as non-admin user, warn about admin account password
+	 * if the user has sufficient access to do correct the problem.
+	 * Do not test the account if it is in a disabled state. */
+	if (($_SESSION['Username'] != 'admin') &&
+	    !is_account_disabled('admin')) {
+		/* Check the admin password */
+		$error = check_current_password('admin');
+
+		/* Only print a warning if the user has sufficient access to
+		 * address the problem. */
+		if ($error &&
+		    isAllowedPage('system_usermanager.php')) {
 			print('<div class="alert alert-danger">' .
-				sprintf(gettext('%sWARNING:%s The \'admin\' account password is set to the default value. ' .
-				' %s Change the password in the User Manager.%s'),
-				'<strong>', '</strong>', '<a href="/system_usermanager.php?act=edit&userid=' . $cu['uid'] . '">', '</a>') .
+				sprintf(gettext('%sWARNING:%s%s The \'admin\' account password is insecure. %s%s' .
+				' %sChange the password in the User Manager as soon as possible.%s'),
+				'<strong>', '</strong>', '<br/>',
+				$error, '<br/>',
+				'<a href="/system_usermanager.php?act=edit&userid=' . $userindex['admin'] . '">', '</a>') .
 				'</div>');
 		}
 	}
+
+	/* When logging in as any user, check the password for their account. */
+	$error = check_current_password($_SESSION['Username']);
+
+	/* Determine where to send the user to change their password
+	 * based on their account privileges. */
+	$target_page = "";
+	if (isAllowedPage('system_usermanager_passwordmg.php')) {
+		/* User has access to the self-service password manager, which
+		 * is the ideal destination. */
+		$target_page = 'system_usermanager_passwordmg.php';
+	} elseif (isAllowedPage('system_usermanager.php')) {
+		/* User does not have access to the self-service page but has
+		 * access to the main user manager page, so use that instead. */
+		$target_page = 'system_usermanager.php?act=edit&userid=' . $userindex[$_SESSION['Username']];
+	}
+
+	/* Print a warning only if the user has sufficient access to change
+	 * their own password (non-empty target page). */
+	if ($error &&
+	    !empty($target_page)) {
+		print('<div class="alert alert-danger">' .
+			sprintf(gettext('%sWARNING:%s%s The password for this account is insecure. %s%s' .
+			' %sChange the password as soon as possible.%s'),
+			'<strong>', '</strong>', '<br/>',
+			$error, '<br/>',
+			'<a href="/' . $target_page . '">', '</a>') .
+			'</div>');
+	}
+
+/* End Password Security Warnings */
 ?>
 
 	<header class="header">
@@ -596,7 +647,7 @@ if (are_notices_pending()) {
 	<?php if (isset($widgets)): ?>
 		<li>
 			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible">
-				<i class="fa fa-save icon-pointer"></i>
+				<i class="fa-solid fa-save icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -604,7 +655,7 @@ if (are_notices_pending()) {
 	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
 			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available widgets")?>">
-				<i class="fa fa-plus icon-pointer"></i>
+				<i class="fa-solid fa-plus icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -612,7 +663,7 @@ if (are_notices_pending()) {
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
 			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log filter")?>">
-				<i class="fa fa-filter icon-pointer"></i>
+				<i class="fa-solid fa-filter icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif ?>
@@ -623,7 +674,7 @@ if (are_notices_pending()) {
 	?>
 		<li>
 			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage log")?>">
-				<i class="fa fa-wrench icon-pointer"></i>
+				<i class="fa-solid fa-wrench icon-pointer"></i>
 			</a>
 		</li>
 	<?php	}
@@ -633,7 +684,7 @@ if (are_notices_pending()) {
 	<?php if ($monitoring_settings_form_hidden): ?>
 		<li>
 			<a onclick="$('#monitoring-settings-form').toggle(360);" title="<?=gettext("Settings")?>">
-				<i class="fa fa-wrench icon-pointer"></i>
+				<i class="fa-solid fa-wrench icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -641,12 +692,12 @@ if (are_notices_pending()) {
 	<?php if ($status_monitoring): ?>
 		<li>
 			<a class="update-graph" title="<?=gettext("Refresh Graph")?>">
-				<i class="fa fa-repeat icon-pointer"></i>
+				<i class="fa-solid fa-arrow-rotate-right icon-pointer"></i>
 			</a>
 		</li>
 		<li>
 			<a class="export-graph" id="export-graph" title="<?=gettext("Export Graph")?>">
-				<i class="fa fa-download icon-pointer"></i>
+				<i class="fa-solid fa-download icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -691,7 +742,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 	<?php if (!g_get('disablehelpicon') && isAllowedPage("help.php")): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
-				<i class="fa fa-question-circle"></i>
+				<i class="fa-solid fa-question-circle"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -700,7 +751,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 <?php
 /* if upgrade in progress, alert user */
 $warning_text = "";
-if (file_exists('/conf/needs_package_sync') && platform_booting()) {
+if (file_exists('/conf/needs_package_sync') && is_platform_booting()) {
 	$warning_text = sprintf(gettext(
 	    '%1$s%3$s is booting, then packages will be reinstalled in the ' .
 	    'background.%2$s%1$sDo not make changes in the GUI until this is ' .
@@ -723,8 +774,8 @@ if (!empty($warning_text)) {
 }
 
 /*	If this page is being remotely managed then do not allow the loading of the contents. */
-if ($config['remote_managed_pages']['item']) {
-	foreach ($config['remote_managed_pages']['item'] as $rmp) {
+if (config_get_path('remote_managed_pages/item')) {
+	foreach (config_get_path('remote_managed_pages/item', []) as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
 			print_info_box(gettext("This page is currently being managed by a remote machine."));
 			include("foot.inc");
@@ -785,9 +836,9 @@ if ($display_notices):
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
+				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa-solid fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
 <?php if ($allow_clear_notices && isAllowedPage("/index.php")):?>
-				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa-regular fa-trash-can icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 <?php endif;?>
 			</div>
 		</div>

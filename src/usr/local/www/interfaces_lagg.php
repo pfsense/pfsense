@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,15 +30,12 @@
 
 require_once("guiconfig.inc");
 
-init_config_arr(array('laggs', 'lagg'));
-$a_laggs = &$config['laggs']['lagg'] ;
-
 function lagg_inuse($num) {
-	global $config, $a_laggs;
-
+	$a_laggs = config_get_path('laggs/lagg', []);
+	$if_config = config_get_path('interfaces', []);
 	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_laggs[$num]['laggif']) {
+		if ($if_config[$if]['if'] == $a_laggs[$num]['laggif']) {
 			return true;
 		}
 	}
@@ -54,14 +51,14 @@ function lagg_inuse($num) {
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_laggs[$_POST['id']])) {
+	} else if (empty(config_get_path("laggs/lagg/{$_POST['id']}"))) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (lagg_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This LAGG interface cannot be deleted because it is still being used.");
 	} else {
-		pfSense_interface_destroy($a_laggs[$_POST['id']]['laggif']);
-		unset($a_laggs[$_POST['id']]);
+		pfSense_interface_destroy(config_get_path("laggs/lagg/{$_POST['id']}/laggif"));
+		config_del_path("laggs/lagg/{$_POST['id']}");
 
 		write_config("LAGG interface deleted");
 
@@ -109,7 +106,7 @@ display_top_tabs($tab_array);
 
 $i = 0;
 
-foreach ($a_laggs as $lagg) {
+foreach (config_get_path('laggs/lagg', []) as $lagg) {
 ?>
 					<tr>
 						<td>
@@ -122,8 +119,8 @@ foreach ($a_laggs as $lagg) {
 							<?=htmlspecialchars($lagg['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete LAGG interface')?>"	href="interfaces_lagg.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete LAGG interface')?>"	href="interfaces_lagg.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -138,7 +135,7 @@ foreach ($a_laggs as $lagg) {
 
  <nav class="action-buttons">
 	<a href="interfaces_lagg_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,15 +36,11 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-init_config_arr(array('l2tp', 'user'));
-$a_secret = &$config['l2tp']['user'];
-
-
 $pconfig = $_POST;
 
 if ($_POST['act'] == "del") {
-	if ($a_secret[$_POST['id']]) {
-		unset($a_secret[$_POST['id']]);
+	if (config_get_path("l2tp/user/{$_POST['id']}")) {
+		config_del_path("l2tp/user/{$_POST['id']}");
 		l2tp_users_sort();
 		write_config(gettext("Deleted a L2TP VPN user."));
 		vpn_l2tp_updatesecret();
@@ -55,7 +51,7 @@ if ($_POST['act'] == "del") {
 
 include("head.inc");
 
-if (isset($config['l2tp']['radius']['enable'])) {
+if (config_path_enabled('l2tp/radius')) {
 	print_info_box(gettext("RADIUS is enabled. The local user database will not be used."));
 }
 
@@ -77,7 +73,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php $i = 0; foreach ($a_secret as $secretent):?>
+<?php $i = 0; foreach (config_get_path('l2tp/user', []) as $secretent):?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($secretent['name'])?>
@@ -87,8 +83,8 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($secretent['ip'])?>&nbsp;
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="vpn_l2tp_users_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit user')?>"	href="vpn_l2tp_users_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php $i++; endforeach?>
@@ -99,7 +95,7 @@ display_top_tabs($tab_array);
 </div>
 <nav class="action-buttons">
 	<a class="btn btn-success btn-sm" href="vpn_l2tp_users_edit.php">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -47,22 +47,14 @@ $default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = cert_build_curve_list();
 $class = "success";
 
-init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
-init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-
-init_config_arr(array('crl'));
-$a_crl = &$config['crl'];
-
 $act = $_REQUEST['act'];
 
 if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 if (!empty($id)) {
-	$thisca =& lookup_ca($id);
+	$ca_item_config = lookup_ca($id);
+	$thisca = &$ca_item_config['item'];
 }
 
 /* Actions other than 'new' require an ID.
@@ -83,21 +75,21 @@ switch ($act) {
 			$class = "danger";
 		} else {
 			/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
-			foreach ($a_cert as $cid => $acrt) {
+			foreach (config_get_path('cert', []) as $cid => $acrt) {
 				if ($acrt['caref'] == $thisca['refid']) {
-					unset($a_cert[$cid]['caref']);
+					config_del_path("cert/{$cid}/caref");
 				}
 			}
 			/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
-			foreach ($a_crl as $cid => $acrl) {
+			foreach (config_get_path('crl', []) as $cid => $acrl) {
 				if ($acrl['caref'] == $thisca['refid']) {
-					unset($a_crl[$cid]);
+					config_del_path("crl/{$cid}");
 				}
 			}
 			/* Delete the CA */
-			foreach ($a_ca as $cid => $aca) {
+			foreach (config_get_path('ca', []) as $cid => $aca) {
 				if ($aca['refid'] == $thisca['refid']) {
-					unset($a_ca[$cid]);
+					config_del_path("ca/{$cid}");
 				}
 			}
 			$savemsg = sprintf(gettext("Deleted Certificate Authority %s and associated CRLs"), htmlspecialchars($name));
@@ -332,9 +324,9 @@ if ($_POST['save']) {
 		}
 
 		if (isset($id) && $thisca) {
-			$thisca = $ca;
+			config_set_path("ca/{$ca_item_config['idx']}", $ca);
 		} else {
-			$a_ca[] = $ca;
+			config_set_path('ca/', $ca);
 		}
 
 		if (!$input_errors) {
@@ -345,7 +337,7 @@ if ($_POST['save']) {
 	}
 }
 
-$pgtitle = array(gettext('System'), gettext('Certificate'), gettext('Authorities'));
+$pgtitle = array(gettext('System'), gettext('Certificates'), gettext('Authorities'));
 $pglinks = array("", "system_camanager.php", "system_camanager.php");
 
 if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors) {
@@ -376,7 +368,7 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 			<?=gettext('Search')?>
 			<span class="widget-heading-icon pull-right">
 				<a data-toggle="collapse" href="#search-panel_panel-body">
-					<i class="fa fa-plus-circle"></i>
+					<i class="fa-solid fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
@@ -395,8 +387,8 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search certificate names and distinguished names.')?></span>
@@ -428,7 +420,7 @@ $pluginparams['type'] = 'certificates';
 $pluginparams['event'] = 'used_ca';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 
-foreach ($a_ca as $ca):
+foreach (config_get_path('ca', []) as $ca):
 	$name = htmlspecialchars($ca['descr']);
 	$subj = cert_get_subject($ca['crt']);
 	$issuer = cert_get_issuer($ca['crt']);
@@ -442,17 +434,18 @@ foreach ($a_ca as $ca):
 	$certcount = 0;
 
 	$issuer_ca = lookup_ca($ca['caref']);
+	$issuer_ca = $issuer_ca['item'];
 	if ($issuer_ca) {
 		$issuer_name = htmlspecialchars($issuer_ca['descr']);
 	}
 
-	foreach ($a_cert as $cert) {
+	foreach (config_get_path('cert', []) as $cert) {
 		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
 		}
 	}
 
-	foreach ($a_ca as $cert) {
+	foreach (config_get_path('ca', []) as $cert) {
 		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
 		}
@@ -460,7 +453,7 @@ foreach ($a_ca as $ca):
 ?>
 				<tr>
 					<td><?=$name?></td>
-					<td><i class="fa fa-<?= (!empty($ca['prv'])) ? "check" : "times" ; ?>"></i></td>
+					<td><i class="<?= (!empty($ca['prv'])) ? "fa-solid fa-check" : "fa-solid fa-times" ; ?>"></i></td>
 					<td><i><?=$issuer_name?></i></td>
 					<td><?=$certcount?></td>
 					<td>
@@ -469,31 +462,31 @@ foreach ($a_ca as $ca):
 						<?php cert_print_dates($ca);?>
 					</td>
 					<td class="text-nowrap">
-						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
-							<?=gettext("OpenVPN Server")?><br/>
-						<?php endif?>
-						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
-							<?=gettext("OpenVPN Client")?><br/>
-						<?php endif?>
 						<?php if (is_ipsec_peer_ca($ca['refid'])): ?>
 							<?=gettext("IPsec Tunnel")?><br/>
 						<?php endif?>
 						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
-							<?=gettext("LDAP Server")?>
+							<?=gettext("LDAP Server")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
 						<?php endif?>
 						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td class="text-nowrap">
-						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$ca['refid']?>"></a>
-						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$ca['refid']?>"></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$ca['refid']?>"></a>
+						<a class="fa-solid fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$ca['refid']?>"></a>
 					<?php if ($ca['prv']): ?>
-						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$ca['refid']?>"></a>
+						<a class="fa-solid fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$ca['refid']?>"></a>
 					<?php endif?>
 					<?php if (is_cert_locally_renewable($ca)): ?>
-						<a href="system_certmanager_renew.php?type=ca&amp;refid=<?=$ca['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
+						<a href="system_certmanager_renew.php?type=ca&amp;refid=<?=$ca['refid']?>" class="fa-solid fa-arrow-rotate-right" title="<?=gettext("Reissue/Renew")?>"></a>
 					<?php endif ?>
 					<?php if (!ca_in_use($ca['refid'])): ?>
-						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$ca['refid']?>" usepost ></a>
+						<a class="fa-solid fa-trash-can" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$ca['refid']?>" usepost ></a>
 					<?php endif?>
 					</td>
 				</tr>
@@ -506,7 +499,7 @@ foreach ($a_ca as $ca):
 
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>
@@ -661,7 +654,7 @@ $section = new Form_Section('Internal Certificate Authority');
 $section->addClass('toggle-internal', 'toggle-intermediate', 'collapse');
 
 $allCas = array();
-foreach ($a_ca as $ca) {
+foreach (config_get_path('ca', []) as $ca) {
 	if (!$ca['prv']) {
 			continue;
 	}
@@ -782,7 +775,7 @@ $form->add($section);
 print $form;
 
 $internal_ca_count = 0;
-foreach ($a_ca as $ca) {
+foreach (config_get_path('ca', []) as $ca) {
 	if ($ca['prv']) {
 		$internal_ca_count++;
 	}

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -62,8 +62,7 @@ function vpn_ppp_server_get_dns($dns1 = '', $dns2 = '') {
 
 		/* Add host DNS servers if they are usable */
 		foreach ($host_dns_servers as $dns) {
-			if (is_ipaddrv4($dns) &&
-			    ($dns != '127.0.0.1')) {
+			if (is_ipaddrv4($dns) && !ip_in_subnet($dns, "127.0.0.0/8")) {
 				$dns_servers[] = $dns;
 			}
 		}
@@ -96,7 +95,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 		mkdir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn");
 	}
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off")) {
 			return 0;
 		}
@@ -114,7 +113,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 	}
 
 	if ($pppoecfg['mode'] != 'server') {
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done") . "\n";
 		}
 		return true;
@@ -252,7 +251,7 @@ EOD;
 	/* fire up mpd */
 	mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo gettext("done") . "\n";
 	}
 
@@ -305,7 +304,7 @@ function vpn_l2tp_configure($interface = '') {
 	}
 
 	$mode = array_get_path($l2tpcfg, 'mode', 'off');
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		if ($mode == 'off') {
 			rmdir_recursive("{$g['varetc_path']}/l2tp-vpn");
 			return 0;
@@ -329,7 +328,7 @@ function vpn_l2tp_configure($interface = '') {
 
 	if ($mode != 'server') {
 		rmdir_recursive("{$g['varetc_path']}/l2tp-vpn");
-		if (platform_booting()) {
+		if (is_platform_booting()) {
 			echo gettext("done") . "\n";
 		}
 		return true;
@@ -463,7 +462,7 @@ EOD;
 	/* fire up mpd */
 	mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
 
-	if (platform_booting()) {
+	if (is_platform_booting()) {
 		echo "done\n";
 	}
 

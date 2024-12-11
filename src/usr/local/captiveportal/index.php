@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -32,13 +32,12 @@ require_once("captiveportal.inc");
 
 header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
 header("Connection: close");
 
 global $cpzone, $cpzoneid, $cpzoneprefix;
 
 $cpzone = strtolower($_REQUEST['zone']);
-$cpcfg = config_get_path("captiveportal/{$cpzone}");
+$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
 $orig_request = trim($_REQUEST['redirurl'], " /");
@@ -78,7 +77,7 @@ if (!$clientip) {
 }
 
 $ourhostname = portal_hostname_from_client_ip($clientip);
-$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
+$protocol = (config_path_enabled("captiveportal/{$cpzone}", "httpslogin")) ? 'https://' : 'http://';
 $logouturl = "{$protocol}{$ourhostname}/";
 
 $cpsession = captiveportal_isip_logged($clientip);
@@ -101,7 +100,7 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 } elseif (!empty($cpsession) && !isset($_POST['logout_id'])) {
 	/* If the client tries to access the captive portal page while already connected,
 		but no custom logout page exists */
-	$logo_src = get_captive_portal_logo();
+	$logo_src = "{$protocol}{$ourhostname}/" . get_captive_portal_logo();
 	$bg_src = get_captive_portal_bg();
 ?>
 <!DOCTYPE html>
@@ -194,7 +193,7 @@ if ($_POST['logout_id']) {
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated", null, $redirurl);
 
-} elseif (isset($config['voucher'][$cpzone]['enable']) && ($_POST['accept'] && $_POST['auth_voucher']) || $_GET['voucher']) {
+} elseif (config_path_enabled("voucher/{$cpzone}") && ($_POST['accept'] && $_POST['auth_voucher']) || $_GET['voucher']) {
 	if (isset($_POST['auth_voucher'])) {
 		$voucher = trim($_POST['auth_voucher']);
 	} else {
@@ -220,14 +219,14 @@ if ($_POST['logout_id']) {
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher, $clientmac, $clientip, "Voucher login good for $timecredit min.");
 		} else {
-			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg, $clientmac, $clientip);
+			portal_reply_page($redirurl, "error", config_get_path("voucher/{$cpzone}/descrmsgexpired") ? config_get_path("voucher/{$cpzone}/descrmsgexpired"): $errormsg, $clientmac, $clientip);
 		}
 	} elseif (-1 == $timecredit) {  // valid but expired
 		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE", "voucher expired");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg, $clientmac, $clientip);
+		portal_reply_page($redirurl, "error", config_get_path("voucher/{$cpzone}/descrmsgexpired") ? config_get_path("voucher/{$cpzone}/descrmsgexpired"): $errormsg, $clientmac, $clientip);
 	} else {
 		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgnoaccess'] ? $config['voucher'][$cpzone]['descrmsgnoaccess'] : $errormsg, $clientmac, $clientip);
+		portal_reply_page($redirurl, "error", config_get_path("voucher/{$cpzone}/descrmsgnoaccess") ? config_get_path("voucher/{$cpzone}/descrmsgnoaccess") : $errormsg, $clientmac, $clientip);
 	}
 
 } elseif ($_POST['accept'] || $cpcfg['auth_method'] === 'radmac') {

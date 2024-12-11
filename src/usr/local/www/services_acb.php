@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -138,11 +138,9 @@ if ($_REQUEST['newver'] != "") {
 		$data = substr($out, 0, $pos);
 		$data = $data . "</pfsense>\n";
 
-		$fd = fopen("/tmp/config_restore.xml", "w");
-		fwrite($fd, $data);
-		fclose($fd);
+		file_put_contents('/tmp/config_restore.xml', $data);
 
-		$ondisksha256 = trim(shell_exec("/sbin/sha256 /tmp/config_restore.xml | /usr/bin/awk '{ print $4 }'"));
+		$ondisksha256 = hash_file('sha256', '/tmp/config_restore.xml');
 		// We might not have a sha256 on file for older backups
 		if ($sha256 != "0" && $sha256 != "") {
 			if ($ondisksha256 != $sha256) {
@@ -161,7 +159,7 @@ if ($_REQUEST['newver'] != "") {
 		}
 
 		if (!$input_errors && $data) {
-			if (config_restore("/tmp/config_restore.xml") == 0) {
+			if (config_restore("/tmp/config_restore.xml", "/tmp/config_restore.xml")) {
 				$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
 				$savemsg .= <<<EOF
 			<br />
@@ -172,7 +170,7 @@ if ($_REQUEST['newver'] != "") {
 		</form>
 EOF;
 			} else {
-				$savemsg = "Unable to revert to the selected configuration.";
+				$errormsg = gettext('Unable to revert to the selected configuration.');
 			}
 		} else {
 			log_error("There was an error when restoring the AutoConfigBackup item");
@@ -230,7 +228,7 @@ if ($_REQUEST['download']) {
 
 // $confvers must be populated viewing info but there were errors
 $confvers = array();
-if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable()) {
+if ((!($_REQUEST['download']) || $input_errors) && resolve_address('acb.netgate.com')) {
 	// Populate available backups
 	$curl_session = curl_init();
 
@@ -263,18 +261,19 @@ if ((!($_REQUEST['download']) || $input_errors) && check_dnsavailable()) {
 	$data_split = explode("\n", $data);
 
 	foreach ($data_split as $ds) {
-		$ds_split = explode($exp_sep, $ds);
+		$ds_split = [];
+		preg_match("/^(.*?){$oper_sep}(.*){$oper_sep}(.*)/", $ds, $ds_split);
 		$tmp_array = array();
-		$tmp_array['username'] = $ds_split[0];
-		$tmp_array['reason'] = $ds_split[1];
-		$tmp_array['time'] = $ds_split[2];
+		$tmp_array['username'] = $ds_split[1];
+		$tmp_array['reason'] = $ds_split[2];
+		$tmp_array['time'] = $ds_split[3];
 
 		/* Convert the time from server time to local. See #5250 */
 		$budate = new DateTime($tmp_array['time'], $acbtz);
 		$budate->setTimezone($mytz);
 		$tmp_array['localtime'] = $budate->format(DATE_RFC2822);
 
-		if ($ds_split[2] && $ds_split[0]) {
+		if ($ds_split[3] && $ds_split[1]) {
 			$confvers[] = $tmp_array;
 		}
 	}
@@ -285,6 +284,9 @@ if ($input_errors) {
 }
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
+if ($errormsg) {
+	print_info_box($errormsg, 'danger');
 }
 
 $tab_array = array();
@@ -307,7 +309,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div id="loading">
-	<i class="fa fa-spinner fa-spin"></i> Loading, please wait...
+	<i class="fa-solid fa-spinner fa-spin"></i> Loading, please wait...
 </div>
 
 
@@ -355,7 +357,7 @@ $form->add($section);
 print($form);
 
 ?>
-<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="services_acb.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa fa-undo"></i> Install this revision</a>
+<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="services_acb.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa-solid fa-undo"></i> Install this revision</a>
 
 <?php else:
 
@@ -375,14 +377,14 @@ $group->add(new Form_Button(
 	'upduserkey',
 	'Submit',
 	null,
-	'fa-save'
+	'fa-solid fa-save'
 ))->addClass('btn-success btn-xs');
 
 $group->add(new Form_Button(
 	'restore',
 	'Reset',
 	null,
-	'fa-refresh'
+	'fa-solid fa-arrows-rotate'
 ))->addClass('btn-info btn-xs');
 
 $section2->add($group);
@@ -423,12 +425,12 @@ print('</div>');
 						<td><?= $cv['localtime']; ?></td>
 						<td><?= $cv['reason']; ?></td>
 						<td>
-							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&newver=<?=urlencode($cv['time'])?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
-							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&reason=<?=urlencode($cv['reason'])?>"></a>
+							<a class="fa-solid fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&newver=<?=urlencode($cv['time'])?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
+							<a class="fa-solid fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&reason=<?=urlencode($cv['reason'])?>"></a>
 <?php
 		if ($userkey == $origkey) {
 ?>
-							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?>"></a>
+							<a class="fa-solid fa-trash-can"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?>"></a>
 <?php 	} ?>
 						</td>
 					</tr>

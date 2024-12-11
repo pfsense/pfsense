@@ -21,8 +21,8 @@ $priv_list['page-all']['match'] = array();
 $priv_list['page-all']['match'][] = "*";
 
 $priv_list['page-diagnostics-crash-reporter'] = array();
-$priv_list['page-diagnostics-crash-reporter']['name'] = gettext("WebCfg - Crash reporter");
-$priv_list['page-diagnostics-crash-reporter']['descr'] = sprintf(gettext("Uploads crash reports to %s and or deletes crash reports."), $g['product_label']);
+$priv_list['page-diagnostics-crash-reporter']['name'] = gettext("WebCfg - Crash Reporter");
+$priv_list['page-diagnostics-crash-reporter']['descr'] = gettext("Allow access to view, download, and delete crash reports.");
 $priv_list['page-diagnostics-crash-reporter']['match'] = array();
 $priv_list['page-diagnostics-crash-reporter']['match'][] = "crash_reporter.php*";
 
@@ -652,6 +652,12 @@ $priv_list['page-services-dhcprelay']['descr'] = gettext("Allow access to the 'S
 $priv_list['page-services-dhcprelay']['match'] = array();
 $priv_list['page-services-dhcprelay']['match'][] = "services_dhcp_relay.php*";
 
+$priv_list['page-services-dhcpserver-settings'] = array();
+$priv_list['page-services-dhcpserver-settings']['name'] = gettext("WebCfg - Services: DHCP Server: Settings");
+$priv_list['page-services-dhcpserver-settings']['descr'] = gettext("Allow access to the 'Services: DHCP Server: Settings' page.");
+$priv_list['page-services-dhcpserver-settings']['match'] = array();
+$priv_list['page-services-dhcpserver-settings']['match'][] = "services_dhcp_settings.php*";
+
 $priv_list['page-services-dhcpv6server'] = array();
 $priv_list['page-services-dhcpv6server']['name'] = gettext("WebCfg - Services: DHCPv6 Server");
 $priv_list['page-services-dhcpv6server']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Server' page.");
@@ -669,6 +675,12 @@ $priv_list['page-services-dhcpv6relay']['name'] = gettext("WebCfg - Services: DH
 $priv_list['page-services-dhcpv6relay']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Relay' page.");
 $priv_list['page-services-dhcpv6relay']['match'] = array();
 $priv_list['page-services-dhcpv6relay']['match'][] = "services_dhcpv6_relay.php*";
+
+$priv_list['page-services-dhcpv6server-settings'] = array();
+$priv_list['page-services-dhcpv6server-settings']['name'] = gettext("WebCfg - Services: DHCPv6 Server: Settings");
+$priv_list['page-services-dhcpv6server-settings']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Server: Settings' page.");
+$priv_list['page-services-dhcpv6server-settings']['match'] = array();
+$priv_list['page-services-dhcpv6server-settings']['match'][] = "services_dhcpv6_settings.php*";
 
 $priv_list['page-services-dnsforwarder'] = array();
 $priv_list['page-services-dnsforwarder']['name'] = gettext("WebCfg - Services: DNS Forwarder");
@@ -748,6 +760,12 @@ $priv_list['page-services-pppoeserver-edit']['descr'] = gettext("Allow access to
 $priv_list['page-services-pppoeserver-edit']['match'] = array();
 $priv_list['page-services-pppoeserver-edit']['match'][] = "services_pppoe_edit.php*";
 
+$priv_list['page-services-router-advertisement'] = array();
+$priv_list['page-services-router-advertisement']['name'] = gettext("WebCfg - Services: Router Advertisement");
+$priv_list['page-services-router-advertisement']['descr'] = gettext("Allow access to the 'Services: Router Advertisement' page.");
+$priv_list['page-services-router-advertisement']['match'] = array();
+$priv_list['page-services-router-advertisement']['match'][] = "services_radvd.php*";
+
 $priv_list['page-services-rfc2136clients'] = array();
 $priv_list['page-services-rfc2136clients']['name'] = gettext("WebCfg - Services: RFC 2136 Clients");
 $priv_list['page-services-rfc2136clients']['descr'] = gettext("Allow access to the 'Services: RFC 2136 Clients' page.");
@@ -759,12 +777,6 @@ $priv_list['page-services-rfc2136edit']['name'] = gettext("WebCfg - Services: RF
 $priv_list['page-services-rfc2136edit']['descr'] = gettext("Allow access to the 'Services: RFC 2136 Client: Edit' page.");
 $priv_list['page-services-rfc2136edit']['match'] = array();
 $priv_list['page-services-rfc2136edit']['match'][] = "services_rfc2136_edit.php*";
-
-$priv_list['page-services-router-advertisement'] = array();
-$priv_list['page-services-router-advertisement']['name'] = gettext("WebCfg - Services: Router Advertisement");
-$priv_list['page-services-router-advertisement']['descr'] = gettext("Allow access to the 'Services: Router Advertisement' page.");
-$priv_list['page-services-router-advertisement']['match'] = array();
-$priv_list['page-services-router-advertisement']['match'][] = 'services_radvd.php*';
 
 $priv_list['page-services-snmp'] = array();
 $priv_list['page-services-snmp']['name'] = gettext("WebCfg - Services: SNMP");
@@ -1004,8 +1016,8 @@ $priv_list['page-status-dns-resolver']['match'] = array();
 $priv_list['page-status-dns-resolver']['match'][] = "status_unbound.php*";
 
 $priv_list['page-status-upnpstatus'] = array();
-$priv_list['page-status-upnpstatus']['name'] = gettext("WebCfg - Status: UPnP Status");
-$priv_list['page-status-upnpstatus']['descr'] = gettext("Allow access to the 'Status: UPnP Status' page.");
+$priv_list['page-status-upnpstatus']['name'] = gettext("WebCfg - Status: UPnP IGD & PCP");
+$priv_list['page-status-upnpstatus']['descr'] = gettext("Allow access to the 'Status: UPnP IGD & PCP' page.");
 $priv_list['page-status-upnpstatus']['match'] = array();
 $priv_list['page-status-upnpstatus']['match'][] = "status_upnp.php*";
 
@@ -1131,6 +1143,12 @@ $priv_list['page-system-hasync']['name'] = gettext("WebCfg - System: High Availa
 $priv_list['page-system-hasync']['descr'] = gettext("Allow access to the 'System: High Availability Sync' page.");
 $priv_list['page-system-hasync']['match'] = array();
 $priv_list['page-system-hasync']['match'][] = "system_hasync.php*";
+
+$priv_list['page-system-register'] = array();
+$priv_list['page-system-register']['name'] = gettext("WebCfg - System: Register");
+$priv_list['page-system-register']['descr'] = gettext("Allow access to the 'System: Register' page.");
+$priv_list['page-system-register']['match'] = array();
+$priv_list['page-system-register']['match'][] = "system_register.php*";
 
 $priv_list['page-system-staticroutes'] = array();
 $priv_list['page-system-staticroutes']['name'] = gettext("WebCfg - System: Static Routes");
@@ -1268,8 +1286,8 @@ $priv_list['page-openvpn-server']['match'] = array();
 $priv_list['page-openvpn-server']['match'][] = "vpn_openvpn_server.php*";
 
 $priv_list['page-pfsensewizardsubsystem'] = array();
-$priv_list['page-pfsensewizardsubsystem']['name'] = sprintf(gettext("WebCfg - %s wizard subsystem"), $g['product_label']);
-$priv_list['page-pfsensewizardsubsystem']['descr'] = sprintf(gettext("Allow access to the '%s wizard subsystem' page."), $g['product_label']);
+$priv_list['page-pfsensewizardsubsystem']['name'] = gettext("WebCfg - Wizard Subsystem");
+$priv_list['page-pfsensewizardsubsystem']['descr'] = gettext("Allow access to the Wizard Subsystem (e.g. Setup Wizard, OpenVPN Wizard).");
 $priv_list['page-pfsensewizardsubsystem']['match'] = array();
 $priv_list['page-pfsensewizardsubsystem']['match'][] = "wizard.php*";
 

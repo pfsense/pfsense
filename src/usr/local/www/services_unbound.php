@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
  * All rights reserved.
  *
@@ -33,6 +33,18 @@ require_once("guiconfig.inc");
 require_once("unbound.inc");
 require_once("pfsense-utils.inc");
 require_once("system.inc");
+
+$python_files = glob("{$g['unbound_chroot_path']}/*.py");
+$python_scripts = array();
+if (!empty($python_files)) {
+	foreach ($python_files as $file) {
+		$file = pathinfo($file, PATHINFO_FILENAME);
+		$python_scripts[$file] = $file;
+	}
+}
+else {
+	$python_scripts = array('' => 'No Python Module scripts found');
+}
 
 $pconfig['enable'] = config_path_enabled('unbound');
 $pconfig['enablessl'] = config_path_enabled('unbound', 'enablessl');
@@ -102,7 +114,7 @@ if ($_POST['save']) {
 	if (isset($pconfig['forwarding'])) {
 		$founddns = false;
 		foreach (get_dns_nameservers(false, true) as $dns_server) {
-			if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
+			if (is_ipaddr($dns_server) && !ip_in_subnet($dns_server, "127.0.0.0/8") && !ip_in_subnet($dns_server, "::1/128")) {
 				$founddns = true;
 			}
 		}
@@ -139,6 +151,12 @@ if ($_POST['save']) {
 
 	if (($pconfig['system_domain_local_zone_type'] == "redirect") && isset($pconfig['regdhcp'])) {
 		$input_errors[] = gettext('A System Domain Local Zone Type of "redirect" is not compatible with dynamic DHCP Registration.');
+	}
+
+	if (isset($pconfig['python']) &&
+	    !array_key_exists(array_get_path($pconfig, 'python_script'), $python_scripts)) {
+		array_del_path($pconfig, 'python_script');
+		$input_errors[] = gettext('The submitted Python Module Script does not exist or is invalid.');
 	}
 
 	$display_custom_options = $pconfig['custom_options'];
@@ -274,14 +292,14 @@ $section = new Form_Section('General DNS Resolver Options');
 
 $section->addInput(new Form_Checkbox(
 	'enable',
-	'Enable',
-	'Enable DNS resolver',
+	gettext('Enable'),
+	gettext('Enable DNS resolver'),
 	$pconfig['enable']
 ));
 
 $section->addInput(new Form_Input(
 	'port',
-	'Listen Port',
+	gettext('Listen Port'),
 	'number',
 	$pconfig['port'],
 	['placeholder' => '53']
@@ -289,30 +307,30 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'enablessl',
-	'Enable SSL/TLS Service',
-	'Respond to incoming SSL/TLS queries from local clients',
+	gettext('Enable SSL/TLS Service'),
+	gettext('Respond to incoming SSL/TLS queries from local clients'),
 	$pconfig['enablessl']
 ))->setHelp('Configures the DNS Resolver to act as a DNS over SSL/TLS server which can answer queries from clients which also support DNS over TLS. ' .
-		'Activating this option disables automatic interface response routing behavior, thus it works best with specific interface bindings.' );
+		'Activating this option disables automatic interface response routing behavior, thus it works best with specific interface bindings.');
 
 if ($certs_available) {
 	$section->addInput($input = new Form_Select(
 		'sslcertref',
-		'SSL/TLS Certificate',
+		gettext('SSL/TLS Certificate'),
 		$pconfig['sslcertref'],
 		cert_build_list('cert', 'IPsec')
 	))->setHelp('The server certificate to use for SSL/TLS service. The CA chain will be determined automatically.');
 } else {
 	$section->addInput(new Form_StaticText(
 		'SSL/TLS Certificate',
-		sprintf('No Certificates have been defined. A certificate is required before SSL/TLS can be enabled. %1$s Create or Import %2$s a Certificate.',
-		'<a href="system_certmanager.php">', '</a>')
+		sprintf(gettext('No Certificates have been defined. A certificate is required before SSL/TLS can be enabled. %1$s Create or Import %2$s a Certificate.'),
+			'<a href="system_certmanager.php">', '</a>')
 	));
 }
 
 $section->addInput(new Form_Input(
 	'tlsport',
-	'SSL/TLS Listen Port',
+	gettext('SSL/TLS Listen Port'),
 	'number',
 	$pconfig['tlsport'],
 	['placeholder' => '853']
@@ -322,7 +340,7 @@ $activeiflist = build_if_list($pconfig['active_interface']);
 
 $section->addInput(new Form_Select(
 	'active_interface',
-	'*Network Interfaces',
+	'*'.gettext('Network Interfaces'),
 	$activeiflist['selected'],
 	$activeiflist['options'],
 	true
@@ -333,7 +351,7 @@ $outiflist = build_if_list($pconfig['outgoing_interface']);
 
 $section->addInput(new Form_Select(
 	'outgoing_interface',
-	'*Outgoing Network Interfaces',
+	'*'.gettext('Outgoing Network Interfaces'),
 	$outiflist['selected'],
 	$outiflist['options'],
 	true
@@ -341,22 +359,22 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Checkbox(
 	'strictout',
-	'Strict Outgoing Network Interface Binding',
-	'Do not send recursive queries if none of the selected Outgoing Network Interfaces are available.',
+	gettext('Strict Outgoing Network Interface Binding'),
+	gettext('Do not send recursive queries if none of the selected Outgoing Network Interfaces are available.'),
 	$pconfig['strictout']
 ))->setHelp('By default the DNS Resolver sends recursive DNS requests over any available interfaces if none of the selected Outgoing Network Interfaces are available. This option makes the DNS Resolver refuse recursive queries.');
 
 $section->addInput(new Form_Select(
 	'system_domain_local_zone_type',
-	'*System Domain Local Zone Type',
+	'*'.gettext('System Domain Local Zone Type'),
 	$pconfig['system_domain_local_zone_type'],
 	unbound_local_zone_types()
-))->setHelp('The local-zone type used for the %1$s system domain (System | General Setup | Domain).  Transparent is the default.', g_get('product_label'));
+))->setHelp('The local-zone type used for the %1$s system domain (%2$sSystem &gt; General Setup%3$s). Transparent is the default.', g_get('product_label'), '<a href="system.php">','</a>');
 
 $section->addInput(new Form_Checkbox(
 	'dnssec',
 	'DNSSEC',
-	'Enable DNSSEC Support',
+	gettext('Enable DNSSEC Support'),
 	$pconfig['dnssec']
 ));
 
@@ -369,41 +387,29 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'python',
-	'Python Module',
-	'Enable Python Module',
+	gettext('Python Module'),
+	gettext('Enable Python Module'),
 	$pconfig['python']
 ))->setHelp('Enable the Python Module.');
 
-$python_files = glob("{$g['unbound_chroot_path']}/*.py");
-$python_scripts = array();
-if (!empty($python_files)) {
-	foreach ($python_files as $file) {
-		$file = pathinfo($file, PATHINFO_FILENAME);
-		$python_scripts[$file] = $file;
-	}
-}
-else {
-	$python_scripts = array('' => 'No Python Module scripts found');
-}
-
 $section->addInput(new Form_Select(
 	'python_order',
-	'Python Module Order',
+	gettext('Python Module Order'),
 	$pconfig['python_order'],
 	[ 'pre_validator' => 'Pre Validator', 'post_validator' => 'Post Validator' ]
 ))->setHelp('Select the Python Module ordering.');
 
 $section->addInput(new Form_Select(
 	'python_script',
-	'Python Module Script',
+	gettext('Python Module Script'),
 	$pconfig['python_script'],
 	$python_scripts
 ))->setHelp('Select the Python module script to utilize.');
 
 $section->addInput(new Form_Checkbox(
 	'forwarding',
-	'DNS Query Forwarding',
-	'Enable Forwarding Mode',
+	gettext('DNS Query Forwarding'),
+	gettext('Enable Forwarding Mode'),
 	$pconfig['forwarding']
 ))->setHelp('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
 					' %1$sSystem &gt; General Setup%2$s or those obtained via dynamic ' .
@@ -413,15 +419,15 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'forward_tls_upstream',
 	null,
-	'Use SSL/TLS for outgoing DNS Queries to Forwarding Servers',
+	gettext('Use SSL/TLS for outgoing DNS Queries to Forwarding Servers'),
 	$pconfig['forward_tls_upstream']
 ))->setHelp('When set in conjunction with DNS Query Forwarding, queries to all upstream forwarding DNS servers will be sent using SSL/TLS on the default port of 853. Note that ALL configured forwarding servers MUST support SSL/TLS queries on port 853.');
 
 if (dhcp_is_backend('isc')):
 $section->addInput(new Form_Checkbox(
 	'regdhcp',
-	'DHCP Registration',
-	'Register DHCP leases in the DNS Resolver',
+	gettext('DHCP Registration'),
+	gettext('Register DHCP leases in the DNS Resolver'),
 	$pconfig['regdhcp']
 ))->setHelp('If this option is set, then machines that specify their hostname when requesting an IPv4 DHCP lease will be registered'.
 					' in the DNS Resolver so that their name can be resolved.'.
@@ -430,8 +436,8 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'regdhcpstatic',
-	'Static DHCP',
-	'Register DHCP static mappings in the DNS Resolver',
+	gettext('Static DHCP'),
+	gettext('Register DHCP static mappings in the DNS Resolver'),
 	$pconfig['regdhcpstatic']
 ))->setHelp('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be resolved. '.
 					'The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>');
@@ -439,34 +445,34 @@ endif;
 
 $section->addInput(new Form_Checkbox(
 	'regovpnclients',
-	'OpenVPN Clients',
-	'Register connected OpenVPN clients in the DNS Resolver',
+	gettext('OpenVPN Clients'),
+	gettext('Register connected OpenVPN clients in the DNS Resolver'),
 	$pconfig['regovpnclients']
-))->setHelp(sprintf('If this option is set, then the common name (CN) of connected OpenVPN clients will be ' .
+))->setHelp('If this option is set, then the common name (CN) of connected OpenVPN clients will be ' .
 	    'registered in the DNS Resolver, so that their name can be resolved. This only works for OpenVPN ' .
 	    'servers (Remote Access SSL/TLS or User Auth with Username as Common Name option) operating ' .
-	    'in "tun" mode. The domain in %sSystem: General Setup%s should also be set to the proper value.',
-	    '<a href="system.php">','</a>'));
+	    'in "tun" mode. The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.',
+	    '<a href="system.php">','</a>');
 
 $btnadv = new Form_Button(
 	'btnadvcustom',
-	'Custom options',
+	gettext('Custom options'),
 	null,
-	'fa-cog'
+	'fa-solid fa-cog'
 );
 
 $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Display Custom Options',
+	gettext('Display Custom Options'),
 	$btnadv
 ));
 
 $section->addInput(new Form_Textarea (
 	'custom_options',
-	'Custom options',
+	gettext('Custom options'),
 	$pconfig['custom_options']
-))->setHelp('Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline.');
+))->setHelp(gettext('Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline.'));
 
 $form->add($section);
 print($form);
@@ -496,7 +502,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Custom Options');?>";
 		}
-		$('#btnadvcustom').html('<i class="fa fa-cog"></i> ' + text);
+		var children = $('#btnadvcustom').children();
+		$('#btnadvcustom').text(text).prepend(children);
 	}
 
 	// Un-hide additional controls
@@ -557,8 +564,8 @@ foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
+						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$idx?>" usepost></a>
 					</td>
 				</tr>
 
@@ -576,11 +583,11 @@ foreach (config_get_path('unbound/hosts', []) as $idx => $hostent):
 						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
-						<i class="fa fa-angle-double-right text-info"></i>
+						<i class="fa-solid fa-angle-double-right text-info"></i>
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$idx?>"></a>
 					</td>
 				</tr>
 <?php
@@ -601,8 +608,8 @@ endforeach;
 </span>
 
 <nav class="action-buttons">
-	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+	<a href="services_unbound_host_edit.php" class="btn btn-success">
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>
@@ -623,7 +630,7 @@ endforeach;
 			<tbody>
 <?php
 $i = 0;
-foreach (config_get_path('unbound/domainoverrides') as $doment):
+foreach (config_get_path('unbound/domainoverrides', []) as $doment):
 ?>
 				<tr>
 					<td>
@@ -636,8 +643,8 @@ foreach (config_get_path('unbound/domainoverrides') as $doment):
 						<?=htmlspecialchars($doment['descr'])?>&nbsp;
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
+						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -659,8 +666,8 @@ endforeach;
 </span>
 
 <nav class="action-buttons">
-	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success">
-		<i class="fa fa-plus icon-embed-btn"></i>
+	<a href="services_unbound_domainoverride_edit.php" class="btn btn-success">
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,15 +31,12 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-init_config_arr(array('gres', 'gre'));
-$a_gres = &$config['gres']['gre'] ;
-
 function gre_inuse($num) {
-	global $config, $a_gres;
-
+	$a_gres = config_get_path('gres/gre', []);
 	$iflist = get_configured_interface_list(true);
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gres[$num]['greif']) {
+		if ($if_config[$if]['if'] == $a_gres[$num]['greif']) {
 			return true;
 		}
 	}
@@ -50,14 +47,14 @@ function gre_inuse($num) {
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_gres[$_POST['id']])) {
+	} else if (empty(config_get_path("gres/gre/{$_POST['id']}"))) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (gre_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
 	} else {
-		pfSense_interface_destroy($a_gres[$_POST['id']]['greif']);
-		unset($a_gres[$_POST['id']]);
+		pfSense_interface_destroy(config_get_path("gres/gre/{$_POST['id']}/greif"));
+		config_del_path("gres/gre/{$_POST['id']}");
 
 		write_config("GRE interface deleted");
 
@@ -100,7 +97,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_gres as $i => $gre):
+<?php foreach (config_get_path('gres/gre', []) as $i => $gre):
 	if (substr($gre['if'], 0, 4) == "_vip") {
 		$if = convert_real_interface_to_friendly_descr(get_real_interface($gre['if']));
 	} else {
@@ -118,8 +115,8 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($gre['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>" usepost></a>
+							<a class="fa-solid fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
+							<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php endforeach; ?>
@@ -131,7 +128,7 @@ display_top_tabs($tab_array);
 
 <nav class="action-buttons">
 	<a href="interfaces_gre_edit.php" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>

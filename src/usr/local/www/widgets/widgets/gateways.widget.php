@@ -6,7 +6,7 @@
  * Copyright (c) 2008 Seth Mos
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -31,17 +31,41 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/gateways.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
+global $display_types;
+$display_types = array(
+	'gw_ip' => gettext('Gateway IP Address'),
+	'monitor_ip' => gettext('Monitor IP Address'),
+	'both_ip' => gettext('Both')
+);
+
 if (!function_exists('compose_table_body_contents')) {
 	function compose_table_body_contents($widgetkey) {
-		global $user_settings;
+		global $user_settings, $display_types;
 
 		$rtnstr = '';
 
-		$a_gateways = return_gateways_array();
+		$a_gateways = get_gateways();
 		$gateways_status = array();
 		$gateways_status = return_gateways_status(true);
 
-		if (isset($user_settings["widgets"][$widgetkey]["display_type"])) {
+		if (isset($user_settings["widgets"][$widgetkey]["display_type"]) &&
+		    array_key_exists($user_settings["widgets"][$widgetkey]["display_type"], $display_types)) {
 			$display_type = $user_settings["widgets"][$widgetkey]["display_type"];
 		} else {
 			$display_type = "gw_ip";
@@ -56,12 +80,12 @@ if (!function_exists('compose_table_body_contents')) {
 			}
 			if (isset($gateway['inactive'])) {
 				$title = gettext("Gateway inactive, interface is missing");
-				$icon = 'fa-times-circle-o';
+				$icon = 'fa-regular fa-circle-xmark';
 			} elseif (isset($gateway['disabled'])) {
-				$icon = 'fa-ban';
+				$icon = 'fa-solid fa-ban';
 				$title = gettext("Gateway disabled");
 			} else {
-				$icon = 'fa-check-circle-o';
+				$icon = 'fa-regular fa-circle-check';
 				$title = gettext("Gateway enabled");
 			}
 			if (isset($gateway['isdefaultgw'])) {
@@ -72,11 +96,11 @@ if (!function_exists('compose_table_body_contents')) {
 
 			$gw_displayed = true;
 			$rtnstr .= "<tr>\n";
-			$rtnstr .= 	"<td title='{$title}'><i class='fa {$icon}'></i></td>\n";
+			$rtnstr .= 	"<td title='{$title}'><i class='{$icon}'></i></td>\n";
 			$rtnstr .= 	"<td title='{$gtitle}'>\n";
 			$rtnstr .= htmlspecialchars($gateway['name']);
 			if (isset($gateway['isdefaultgw'])) {
-				$rtnstr .= ' <i class="fa fa-globe"></i>';
+				$rtnstr .= ' <i class="fa-solid fa-globe"></i>';
 			}
 			$rtnstr .= "<br />";
 			$rtnstr .= '<div id="gateway' . $counter . '" style="display:inline"><b>';
@@ -145,7 +169,7 @@ if (!function_exists('compose_table_body_contents')) {
 							$bgcolor = "warning";
 							break;
 						default:
-							if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
+							if ($gateways_status[$gname]['monitor_disable'] || ($gateways_status[$gname]['monitorip'] == "none")) {
 								$online = gettext("Online <br/>(unmonitored)");
 							} else {
 								$online = gettext("Online");
@@ -211,12 +235,13 @@ if ($_POST['widgetkey']) {
 		$user_settings["widgets"][$_POST['widgetkey']] = array();
 	}
 
-	if (isset($_POST["display_type"])) {
+	if (isset($_POST["display_type"]) &&
+	    array_key_exists($_POST["display_type"], $display_types)) {
 		$user_settings["widgets"][$_POST['widgetkey']]["display_type"] = $_POST["display_type"];
 	}
 
 	$validNames = array();
-	$a_gateways = return_gateways_array();
+	$a_gateways = get_gateways();
 
 	foreach ($a_gateways as $gname => $gateway) {
 		array_push($validNames, $gname);
@@ -233,7 +258,7 @@ if ($_POST['widgetkey']) {
 	exit(0);
 }
 
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod = config_get_path('widgets/period', 10) * 1000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>
@@ -312,7 +337,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 					</thead>
 					<tbody>
 <?php
-				$a_gateways = return_gateways_array();
+				$a_gateways = get_gateways();
 				$hiddengateways = explode(",", $user_settings["widgets"][$widgetkey]["gatewaysfilter"]);
 				$idx = 0;
 
@@ -333,8 +358,8 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -362,7 +387,7 @@ events.push(function(){
 	gatewaysObject.url = "/widgets/widgets/gateways.widget.php";
 	gatewaysObject.callback = gateways_callback;
 	gatewaysObject.parms = postdata;
-	gatewaysObject.freq = 1;
+	gatewaysObject.freq = 5;
 
 	// Register the AJAX object
 	register_ajax(gatewaysObject);

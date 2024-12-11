@@ -3,7 +3,7 @@
  * csrf_error.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2019-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2019-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,6 @@ $logincssfile = "#770101";
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="/vendor/font-awesome/css/all.min.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/all.min.css')?>">
-		<link rel="stylesheet" href="/vendor/font-awesome/css/v4-shims.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/v4-shims.css')?>">
 		<link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
 		<link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
 		<title><?=gettext("CSRF Error"); ?></title>
@@ -78,7 +77,7 @@ $logincssfile = "#770101";
 							<input type="checkbox" id="bypass" /> I understand this warning and wish to resubmit the form data.
 							<br/>
 							<button class="btn btn-danger btn-sm" type="submit" name="submit" id="submit" value="<?=gettext("Try again")?>" disabled>
-								<i class="fa fa-exclamation-triangle icon-embed-btn"></i>
+								<i class="fa-solid fa-exclamation-triangle icon-embed-btn"></i>
 								<?=gettext("Resubmit Request with New Token")?>
 							</button>
 						</form>
@@ -108,8 +107,8 @@ $logincssfile = "#770101";
 	});
 	//]]>
 	</script>
-	<script src="/vendor/jquery/jquery-3.5.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.5.1.min.js')?>"></script>
-	<script src="/vendor/jquery-ui/jquery-ui-1.12.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery-ui/jquery-ui-1.12.1.min.js')?>"></script>
+	<script src="/vendor/jquery/jquery-3.7.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.7.1.min.js')?>"></script>
+	<script src="/vendor/jquery-ui/jquery-ui-1.13.2.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery-ui/jquery-ui-1.13.2.min.js')?>"></script>
 	<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
 	<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
 	<script src="/js/pfSenseHelpers.js?v=<?=filemtime('/usr/local/www/js/pfSenseHelpers.js')?>"></script>

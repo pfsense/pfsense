@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -34,14 +34,10 @@ require_once("openvpn.inc");
 require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
-global $openvpn_tls_server_modes;
-
-init_config_arr(array('openvpn', 'openvpn-csc'));
-$a_csc = &$config['openvpn']['openvpn-csc'];
-init_config_arr(array('openvpn', 'openvpn-server'));
+global $openvpn_tls_server_modes, $openvpn_ping_action;
 
 $serveroptionlist = array();
-foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+foreach (config_get_path('openvpn/openvpn-server', []) as $serversettings) {
 	if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
 		$serveroptionlist[$serversettings['vpnid']] = sprintf(gettext("OpenVPN Server %d: %s"), $serversettings['vpnid'], $serversettings['description']);
 	}
@@ -56,20 +52,23 @@ if (isset($_REQUEST['act'])) {
 }
 
 $user_entry = getUserEntry($_SESSION['Username']);
+$user_entry = $user_entry['item'];
 $user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-csc-advanced") || userHasPrivilege($user_entry, "page-all"));
 
+$this_csc_config = isset($id) ? config_get_path("openvpn/openvpn-csc/{$id}") : null;
+
 if ($_POST['act'] == "del") {
-	if (!$a_csc[$id]) {
+	if (!$this_csc_config) {
 		pfSenseHeader("vpn_openvpn_csc.php");
 		exit;
 	}
 
-	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
+	if (!$user_can_edit_advanced && !empty($this_csc_config['custom_options'])) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
 	} else {
-		$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
-		openvpn_delete_csc($a_csc[$id]);
-		unset($a_csc[$id]);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $this_csc_config['common_name'], $this_csc_config['description']);
+		openvpn_delete_csc($this_csc_config);
+		config_del_path("openvpn/openvpn-csc/{$id}");
 		write_config($wc_msg);
 		$savemsg = gettext("Client specific override successfully deleted.");
 		services_unbound_configure(false);
@@ -77,34 +76,48 @@ if ($_POST['act'] == "del") {
 }
 
 if (($act == "edit") || ($act == "dup")) {
-	if (isset($id) && $a_csc[$id]) {
-		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
-		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
-		$pconfig['disable'] = isset($a_csc[$id]['disable']);
-		$pconfig['common_name'] = $a_csc[$id]['common_name'];
-		$pconfig['block'] = $a_csc[$id]['block'];
-		$pconfig['description'] = $a_csc[$id]['description'];
+	if ($this_csc_config) {
+		$pconfig['keep_minimal'] = isset($this_csc_config['keep_minimal']);
+		// Handle the "Reset Options" list
+		if (!empty($this_csc_config['remove_options'])) {
+			$pconfig['override_options'] = 'remove_specified';
+			$pconfig['remove_options'] = explode(',', $this_csc_config['remove_options']);
+		} elseif (isset($this_csc_config['push_reset'])) {
+			$pconfig['override_options'] = 'push_reset';
+		}
 
-		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
-		$pconfig['tunnel_networkv6'] = $a_csc[$id]['tunnel_networkv6'];
-		$pconfig['local_network'] = $a_csc[$id]['local_network'];
-		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
-		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
-		$pconfig['remote_networkv6'] = $a_csc[$id]['remote_networkv6'];
-		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
+		$pconfig['server_list'] = array_filter(explode(",", $this_csc_config['server_list']));
+		$pconfig['custom_options'] = $this_csc_config['custom_options'];
+		$pconfig['disable'] = isset($this_csc_config['disable']);
+		$pconfig['common_name'] = $this_csc_config['common_name'];
+		$pconfig['block'] = $this_csc_config['block'];
+		$pconfig['description'] = $this_csc_config['description'];
 
-		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
-		$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
+		$pconfig['tunnel_network'] = $this_csc_config['tunnel_network'];
+		$pconfig['tunnel_networkv6'] = $this_csc_config['tunnel_networkv6'];
+		$pconfig['local_network'] = $this_csc_config['local_network'];
+		$pconfig['local_networkv6'] = $this_csc_config['local_networkv6'];
+		$pconfig['gateway'] = $this_csc_config['gateway'];
+		$pconfig['gateway6'] = $this_csc_config['gateway6'];
+		$pconfig['remote_network'] = $this_csc_config['remote_network'];
+		$pconfig['remote_networkv6'] = $this_csc_config['remote_networkv6'];
+		$pconfig['gwredir'] = $this_csc_config['gwredir'];
+		$pconfig['gwredir6'] = $this_csc_config['gwredir6'];
 
-		$pconfig['dns_domain'] = $a_csc[$id]['dns_domain'];
+		$pconfig['inactive_seconds'] = $this_csc_config['inactive_seconds'];
+		$pconfig['ping_seconds'] = $this_csc_config['ping_seconds'];
+		$pconfig['ping_action'] = $this_csc_config['ping_action'];
+		$pconfig['ping_action_seconds'] = $this_csc_config['ping_action_seconds'];
+
+		$pconfig['dns_domain'] = $this_csc_config['dns_domain'];
 		if ($pconfig['dns_domain']) {
 			$pconfig['dns_domain_enable'] = true;
 		}
 
-		$pconfig['dns_server1'] = $a_csc[$id]['dns_server1'];
-		$pconfig['dns_server2'] = $a_csc[$id]['dns_server2'];
-		$pconfig['dns_server3'] = $a_csc[$id]['dns_server3'];
-		$pconfig['dns_server4'] = $a_csc[$id]['dns_server4'];
+		$pconfig['dns_server1'] = $this_csc_config['dns_server1'];
+		$pconfig['dns_server2'] = $this_csc_config['dns_server2'];
+		$pconfig['dns_server3'] = $this_csc_config['dns_server3'];
+		$pconfig['dns_server4'] = $this_csc_config['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
 		    $pconfig['dns_server2'] ||
@@ -113,28 +126,33 @@ if (($act == "edit") || ($act == "dup")) {
 			$pconfig['dns_server_enable'] = true;
 		}
 
-		$pconfig['ntp_server1'] = $a_csc[$id]['ntp_server1'];
-		$pconfig['ntp_server2'] = $a_csc[$id]['ntp_server2'];
+		$pconfig['push_blockoutsidedns'] = $this_csc_config['push_blockoutsidedns'];
+		$pconfig['push_register_dns'] = $this_csc_config['push_register_dns'];
+
+		$pconfig['ntp_server1'] = $this_csc_config['ntp_server1'];
+		$pconfig['ntp_server2'] = $this_csc_config['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
 		    $pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
 		}
 
-		$pconfig['netbios_enable'] = $a_csc[$id]['netbios_enable'];
-		$pconfig['netbios_ntype'] = $a_csc[$id]['netbios_ntype'];
-		$pconfig['netbios_scope'] = $a_csc[$id]['netbios_scope'];
+		$pconfig['netbios_enable'] = $this_csc_config['netbios_enable'];
+		$pconfig['netbios_ntype'] = $this_csc_config['netbios_ntype'];
+		$pconfig['netbios_scope'] = $this_csc_config['netbios_scope'];
 
-		$pconfig['wins_server1'] = $a_csc[$id]['wins_server1'];
-		$pconfig['wins_server2'] = $a_csc[$id]['wins_server2'];
+		$pconfig['wins_server1'] = $this_csc_config['wins_server1'];
+		$pconfig['wins_server2'] = $this_csc_config['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
 		    $pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
 		}
 
-		$pconfig['nbdd_server1'] = $a_csc[$id]['nbdd_server1'];
-		if ($pconfig['nbdd_server1']) {
+		$pconfig['nbdd_server1'] = $this_csc_config['nbdd_server1'];
+		$pconfig['nbdd_server2'] = $this_csc_config['nbdd_server2'];
+
+		if ($pconfig['nbdd_server1'] || $pconfig['nbdd_server2']) {
 			$pconfig['nbdd_server_enable'] = true;
 		}
 	}
@@ -152,12 +170,13 @@ if ($_POST['save']) {
 
 	/* input validation */
 	if (isset($pconfig['custom_options']) &&
-	    ($pconfig['custom_options'] != $a_csc[$id]['custom_options']) &&
+	    ($pconfig['custom_options'] != $this_csc_config['custom_options']) &&
 	    !$user_can_edit_advanced) {
 		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
 	}
-	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
-		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
+	if (!$user_can_edit_advanced && !empty($this_csc_config['custom_options'])) {
+		// Restore the "custom options" field
+		$pconfig['custom_options'] = $this_csc_config['custom_options'];
 	}
 
 	if (!empty($pconfig['server_list'])) {
@@ -180,12 +199,20 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix or an alias with a single IPv6 prefix.");
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4", true)) {
+	if (empty($pconfig['gwredir']) && ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4", true))) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6", true)) {
+	if (empty($pconfig['gwredir6']) && ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6", true))) {
 		$input_errors[] = $result;
+	}
+
+	if (!empty($pconfig['gateway']) && !is_ipaddrv4($pconfig['gateway'])) {
+		$input_errors[] = gettext("The specified IPv4 gateway address is invalid.");
+	}
+
+	if (!empty($pconfig['gateway6']) && !is_ipaddrv6($pconfig['gateway6'])) {
+		$input_errors[] = gettext("The specified IPv6 gateway address is invalid.");
 	}
 
 	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4", true)) {
@@ -194,6 +221,22 @@ if ($_POST['save']) {
 
 	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
+	}
+
+	if (!empty($pconfig['inactive_seconds']) && !is_numericint($pconfig['inactive_seconds'])) {
+		$input_errors[] = gettext('The supplied "Inactivity Timeout" value is invalid.');
+	}
+
+	if (!empty($pconfig['ping_seconds']) && !is_numericint($pconfig['ping_seconds'])) {
+		$input_errors[] = gettext('The supplied "Ping Interval" value is invalid.');
+	}
+	if (!empty($pconfig['ping_action']) && ($pconfig['ping_action'] != 'default')) {
+		if (!isset($openvpn_ping_action[$pconfig['ping_action']])) {
+			$input_errors[] = gettext('The field "Ping Action" contains an invalid selection.');
+		}
+		if (!is_numericint($pconfig['ping_action_seconds'])) {
+			$input_errors[] = gettext('The supplied "Ping Action" timeout value is invalid.');
+		}
 	}
 
 	if ($pconfig['dns_server_enable']) {
@@ -239,6 +282,9 @@ if ($_POST['save']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
+			if (!empty($pconfig['nbdd_server2']) && !is_ipaddr(trim($pconfig['nbdd_server2']))) {
+				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #2' must contain a valid IP address");
+			}
 		}
 
 		if (!empty($pconfig['netbios_ntype']) &&
@@ -255,6 +301,16 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		$csc = array();
 
+		// Handle "Reset Server Options" and "Reset Options"
+		if ($pconfig['override_options'] == 'push_reset') {
+			$csc['push_reset'] = true;
+		} elseif (($pconfig['override_options'] == 'remove_specified') && !empty($pconfig['remove_options'])) {
+			$csc['remove_options'] = implode(',', $pconfig['remove_options']);
+		}
+		if (isset($pconfig['keep_minimal']) && (isset($csc['push_reset']) || isset($csc['remove_options']))) {
+			$csc['keep_minimal'] = true;
+		}
+
 		if (is_array($pconfig['server_list'])) {
 			$csc['server_list'] = implode(",", $pconfig['server_list']);
 		} else {
@@ -269,13 +325,34 @@ if ($_POST['save']) {
 		$csc['description'] = $pconfig['description'];
 		$csc['tunnel_network'] = $pconfig['tunnel_network'];
 		$csc['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
-		$csc['local_network'] = $pconfig['local_network'];
-		$csc['local_networkv6'] = $pconfig['local_networkv6'];
+
+		$csc['gateway'] = $pconfig['gateway'];
+		$csc['gateway6'] = $pconfig['gateway6'];
+		// Don't push routes if redirecting all traffic.
+		if (!empty($pconfig['gwredir'])) {
+			$csc['gwredir'] = $pconfig['gwredir'];
+		} else {
+			$csc['local_network'] = $pconfig['local_network'];
+		}
+		if (!empty($pconfig['gwredir6'])) {
+			$csc['gwredir6'] = $pconfig['gwredir6'];
+		} else {
+			$csc['local_networkv6'] = $pconfig['local_networkv6'];
+		}
+
 		$csc['remote_network'] = $pconfig['remote_network'];
 		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
-		$csc['gwredir'] = $pconfig['gwredir'];
-		$csc['push_reset'] = $pconfig['push_reset'];
-		$csc['remove_route'] = $pconfig['remove_route'];
+
+		if (is_numericint($pconfig['inactive_seconds'])) {
+			$csc['inactive_seconds'] = $pconfig['inactive_seconds'];
+		}
+		if (is_numericint($pconfig['ping_seconds'])) {
+			$csc['ping_seconds'] = $pconfig['ping_seconds'];
+		}
+		if (!empty($pconfig['ping_action']) && ($pconfig['ping_action'] != 'default')) {
+			$csc['ping_action'] = $pconfig['ping_action'];
+			$csc['ping_action_seconds'] = $pconfig['ping_action_seconds'];
+		}
 
 		if ($pconfig['dns_domain_enable']) {
 			$csc['dns_domain'] = $pconfig['dns_domain'];
@@ -288,38 +365,43 @@ if ($_POST['save']) {
 			$csc['dns_server4'] = $pconfig['dns_server4'];
 		}
 
+		$csc['push_blockoutsidedns'] = $pconfig['push_blockoutsidedns'];
+		$csc['push_register_dns'] = $pconfig['push_register_dns'];
+
 		if ($pconfig['ntp_server_enable']) {
 			$csc['ntp_server1'] = $pconfig['ntp_server1'];
 			$csc['ntp_server2'] = $pconfig['ntp_server2'];
 		}
 
 		$csc['netbios_enable'] = $pconfig['netbios_enable'];
-		$csc['netbios_ntype'] = $pconfig['netbios_ntype'];
-		$csc['netbios_scope'] = $pconfig['netbios_scope'];
 
 		if ($pconfig['netbios_enable']) {
+			$csc['netbios_ntype'] = $pconfig['netbios_ntype'];
+			$csc['netbios_scope'] = $pconfig['netbios_scope'];
+
 			if ($pconfig['wins_server_enable']) {
 				$csc['wins_server1'] = $pconfig['wins_server1'];
 				$csc['wins_server2'] = $pconfig['wins_server2'];
 			}
 
-			if ($pconfig['dns_server_enable']) {
+			if ($pconfig['nbdd_server_enable']) {
 				$csc['nbdd_server1'] = $pconfig['nbdd_server1'];
+				$csc['nbdd_server2'] = $pconfig['nbdd_server2'];
 			}
 		}
 
-		if (($act == 'new') || (!empty($csc['disable']) ^ !empty($a_csc[$id]['disable'])) ||
-		    ($csc['tunnel_network'] != $a_csc[$id]['tunnel_network']) ||
-		    ($csc['tunnel_networkv6'] != $a_csc[$id]['tunnel_networkv6'])) {
+		if (($act == 'new') || (!empty($csc['disable']) ^ !empty($this_csc_config['disable'])) ||
+		    ($csc['tunnel_network'] != $this_csc_config['tunnel_network']) ||
+		    ($csc['tunnel_networkv6'] != $this_csc_config['tunnel_networkv6'])) {
 			$csc['unbound_restart'] = true;
 		}
 
-		if (isset($id) && $a_csc[$id]) {
-			$old_csc = $a_csc[$id];
-			$a_csc[$id] = $csc;
+		if ($this_csc_config) {
+			$old_csc = $this_csc_config;
+			config_set_path("openvpn/openvpn-csc/{$id}", $csc);
 			$wc_msg = sprintf(gettext('Updated OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		} else {
-			$a_csc[] = $csc;
+			config_set_path('openvpn/openvpn-csc/', $csc);
 			$wc_msg = sprintf(gettext('Added OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		}
 
@@ -407,6 +489,47 @@ if ($act == "new" || $act == "edit"):
 		true
 		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
 
+
+	$section->addInput(new Form_Select(
+		'override_options',
+		'Reset Server Options',
+		($pconfig['override_options'] ?? 'default'),
+		[
+			'default' => 'Keep all server options (default)',
+			'push_reset' => 'Reset all options',
+			'remove_specified' => 'Remove specified options'
+		]
+	))->setHelp('Prevent this client from receiving server-defined client settings. Other client-specific options on this page will supersede these options.');
+
+	$section->addInput(new Form_Select(
+		'remove_options',
+		'Remove Options',
+		$pconfig['remove_options'],
+		[
+			'remove_route' => 'Local Routes & Gateways',
+			'remove_iroute' => 'Remote Routes',
+			'remove_redirect_gateway' => 'Redirect Gateways',
+			'remove_inactive' => 'Inactivity Timeout',
+			'remove_ping' => 'Client Ping',
+			'remove_ping_action' => 'Ping Action',
+			'remove_dnsdomain' => 'DNS Domains',
+			'remove_dnsservers' => 'DNS Servers',
+			'remove_blockoutsidedns' => 'Block Outside DNS',
+			'remove_ntpservers' => 'NTP Options',
+			'remove_netbios_ntype' => 'NetBIOS Type',
+			'remove_netbios_scope' => 'NetBIOS Scope',
+			'remove_wins' => 'WINS Options'
+		],
+		true
+	))->addClass('remove_options')->setHelp('A "push-remove" option will be sent to the client for the selected options, removing the respective server-defined option.');
+
+	$section->addInput(new Form_Checkbox(
+		'keep_minimal',
+		'Keep minimal options',
+		'Automatically determine the client topology and gateway',
+		$pconfig['keep_minimal']
+	))->setHelp('If checked, generate the required client configuration when server options are reset or removed.');
+
 	$form->add($section);
 
 	$section = new Form_Section('Tunnel Settings');
@@ -429,6 +552,34 @@ if ($act == "new" || $act == "edit"):
 	))->setHelp('The virtual IPv6 network or network type alias with a single entry used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
 		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
 			'<br />');
+
+	$section->addInput(new Form_Input(
+		'gateway',
+		'IPv4 Gateway',
+		'text',
+		$pconfig['gateway']
+	))->setHelp('This is the IPv4 Gateway to push to the client. Normally it is left blank and determined automatically.');
+
+	$section->addInput(new Form_Input(
+		'gateway6',
+		'IPv6 Gateway',
+		'text',
+		$pconfig['gateway6']
+	))->setHelp('This is the IPv6 Gateway to push to the client. Normally it is left blank and determined automatically.');
+
+	$section->addInput(new Form_Checkbox(
+		'gwredir',
+		'Redirect IPv4 Gateway',
+		'Force all client generated IPv4 traffic through the tunnel.',
+		$pconfig['gwredir']
+	));
+
+	$section->addInput(new Form_Checkbox(
+		'gwredir6',
+		'Redirect IPv6 Gateway',
+		'Force all client-generated IPv6 traffic through the tunnel.',
+		$pconfig['gwredir6']
+	));
 
 	$section->addInput(new Form_Input(
 		'local_network',
@@ -468,32 +619,43 @@ if ($act == "new" || $act == "edit"):
 		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.',
 			'<br />');
 
-	$section->addInput(new Form_Checkbox(
-		'gwredir',
-		'Redirect Gateway',
-		'Force all client generated traffic through the tunnel.',
-		$pconfig['gwredir']
-	));
-
 	$form->add($section);
 
-	$section = new Form_Section('Client Settings');
+	$section = new Form_Section('Other Client Settings');
 
-	$section->addInput(new Form_Checkbox(
-		'push_reset',
-		'Server Definitions',
-		'Prevent this client from receiving any server-defined client settings. ',
-		$pconfig['push_reset']
-	));
+	$section->addInput(new Form_Input(
+		'inactive_seconds',
+		'Inactivity Timeout',
+		'number',
+		$pconfig['inactive_seconds'],
+		['min' => '0']
+	))->setHelp('Set connection inactivity timeout')->setWidth(3);
 
-	/* as "push-reset" can break subnet topology, 
-	 * "push-remove route" removes only IPv4/IPv6 routes, see #9702 */
-	$section->addInput(new Form_Checkbox(
-		'remove_route',
-		'Remove Server Routes',
-		'Prevent this client from receiving any server-defined routes without removing any other options. ',
-		$pconfig['remove_route']
-	));
+	$section->addInput(new Form_Input(
+		'ping_seconds',
+		'Ping Interval',
+		'number',
+		$pconfig['ping_seconds'],
+		['min' => '0']
+	))->setHelp('Set peer ping interval')->setWidth(3);
+
+	$group = new Form_Group('Ping Action');
+	$group->add(new Form_Select(
+		'ping_action',
+		null,
+		$pconfig['ping_action'] ?? 'default',
+		array_merge([
+			'default' => 'Don\'t override option (default)'
+		], $openvpn_ping_action)
+	))->setHelp('Exit or restart OpenVPN client after server timeout')->setWidth(4);
+	$group->add(new Form_Input(
+		'ping_action_seconds',
+		'timeout seconds',
+		'number',
+		$pconfig['ping_action_seconds'],
+		['min' => '0']
+	))->setWidth(2)->addClass('ping_action_seconds');
+	$section->add($group);
 
 	$section->addInput(new Form_Checkbox(
 		'dns_domain_enable',
@@ -554,6 +716,20 @@ if ($act == "new" || $act == "edit"):
 	))->setHelp('Server 4');
 
 	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'push_blockoutsidedns',
+		'Block Outside DNS',
+		'Make Windows 10 Clients Block access to DNS servers except across OpenVPN while connected, forcing clients to use only VPN DNS servers.',
+		$pconfig['push_blockoutsidedns']
+	))->setHelp('Requires Windows 10 and OpenVPN 2.3.9 or later. Only Windows 10 is prone to DNS leakage in this way, other clients will ignore the option as they are not affected.');
+
+	$section->addInput(new Form_Checkbox(
+		'push_register_dns',
+		'Force DNS cache update',
+		'Run "net stop dnscache", "net start dnscache", "ipconfig /flushdns" and "ipconfig /registerdns" on connection initiation.',
+		$pconfig['push_register_dns']
+	))->setHelp('This is known to kick Windows into recognizing pushed DNS servers.');
 
 	// NTP servers
 	$section->addInput(new Form_Checkbox(
@@ -634,6 +810,33 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
+	$section->addInput(new Form_Checkbox(
+		'nbdd_server_enable',
+		'NBDD servers',
+		'Provide a NetBIOS over TCP/IP Datagram Distribution Servers list to clients',
+		$pconfig['nbdd_server_enable']
+	));
+
+	$group = new Form_Group(null);
+
+	$group->add(new Form_Input(
+		'nbdd_server1',
+		null,
+		'text',
+		$pconfig['nbdd_server1']
+	))->setHelp('Server 1');
+
+	$group->add(new Form_Input(
+		'nbdd_server2',
+		null,
+		'text',
+		$pconfig['nbdd_server2']
+	))->setHelp('Server 2');
+
+	$group->addClass('nbddservers');
+
+	$section->add($group);
+
 	$custops = new Form_Textarea(
 		'custom_options',
 		'Advanced',
@@ -654,7 +857,7 @@ if ($act == "new" || $act == "edit"):
 		$act
 	));
 
-	if (isset($id) && $a_csc[$id]) {
+	if ($this_csc_config) {
 		$form->addGlobal(new Form_Input(
 			'id',
 			null,
@@ -671,6 +874,18 @@ if ($act == "new" || $act == "edit"):
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	function gwredir_change() {
+		hideInput('local_network', ($('#gwredir').prop('checked')));
+	}
+
+	function gwredir6_change() {
+		hideInput('local_networkv6', ($('#gwredir6').prop('checked')));
+	}
+
+	function ping_action_change() {
+		hideClass('ping_action_seconds', ($('#ping_action').find('option:selected').val() == 'default'));
+	}
+
 	function dnsdomain_change() {
 		if ($('#dns_domain_enable').prop('checked')) {
 			hideClass('dnsdomain', false);
@@ -702,11 +917,15 @@ events.push(function() {
 			hideInput('netbios_scope', false);
 			hideCheckbox('wins_server_enable', false);
 			setWins();
+			hideCheckbox('nbdd_server_enable', false);
+			setNbdds();
 		} else {
 			hideInput('netbios_ntype', true);
 			hideInput('netbios_scope', true);
 			hideCheckbox('wins_server_enable', true);
 			hideClass('winsservers', true);
+			hideCheckbox('nbdd_server_enable', true);
+			hideClass('nbddservers', true);
 		}
 	}
 
@@ -714,7 +933,31 @@ events.push(function() {
 		hideClass('winsservers', ! $('#wins_server_enable').prop('checked'));
 	}
 
+	function setNbdds() {
+		hideClass('nbddservers', ! $('#nbdd_server_enable').prop('checked'));
+	}
+
+	function remove_options_change() {
+		hideCheckbox('keep_minimal', ($('#override_options').find('option:selected').val() == 'default'));
+		hideMultiClass('remove_options', ($('#override_options').find('option:selected').val() != 'remove_specified'));
+	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	 // On clicking Gateway redirect
+	$('#gwredir').click(function () {
+		gwredir_change();
+	});
+
+	 // On clicking Gateway redirect IPv6
+	$('#gwredir6').click(function () {
+		gwredir6_change();
+	});
+
+	 // On clicking Ping Action
+	$('#ping_action').click(function () {
+		ping_action_change();
+	});
 
 	 // On clicking DNS Default Domain
 	$('#dns_domain_enable').click(function () {
@@ -741,8 +984,20 @@ events.push(function() {
 		setWins();
 	});
 
+	// On clicking the nbdd_server_enable checkbox
+	$('#nbdd_server_enable').click(function () {
+		setNbdds();
+	});
+
+	$('#override_options').on('change', function() {
+		remove_options_change();
+	});
 	// ---------- On initial page load ------------------------------------------------------------
 
+	remove_options_change();
+	gwredir_change();
+	gwredir6_change();
+	ping_action_change();
 	setNetbios();
 	dnsdomain_change();
 	dnsservers_change();
@@ -771,7 +1026,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 			<tbody>
 <?php
 	$i = 0;
-	foreach ($a_csc as $csc):
+	foreach (config_get_path('openvpn/openvpn-csc', []) as $csc):
 		$disabled = isset($csc['disable']) ? "Yes":"No";
 ?>
 				<tr>
@@ -785,9 +1040,9 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 						<?=htmlspecialchars($csc['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-clone"	title="<?=gettext("Copy CSC Override")?>"	href="vpn_openvpn_csc.php?act=dup&amp;id=<?=$i?>" usepost></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa-regular fa-clone"	title="<?=gettext("Copy CSC Override")?>"	href="vpn_openvpn_csc.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -801,7 +1056,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 
 <nav class="action-buttons">
 	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
+		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>
 </nav>

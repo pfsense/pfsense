@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-crash-reporter
-##|*NAME=Crash reporter
-##|*DESCR=Uploads crash reports to pfSense and or deletes crash reports.
+##|*NAME=Crash Reporter
+##|*DESCR=Allow access to view, download, and delete crash reports.
 ##|*MATCH=crash_reporter.php*
 ##|-PRIV
 
@@ -77,7 +77,7 @@ if ($_POST['Submit'] == "No") {
 		if (filesize("/tmp/PHP_errors.log") < FILE_SIZE) {
 			$php_errors = file_get_contents("/tmp/PHP_errors.log");
 			$crash_reports .= "\nPHP Errors:\n";
-			$crash_reports .= $php_errors . "\n\n";
+			$crash_reports .= htmlspecialchars($php_errors) . "\n\n";
 		} else {
 			$crash_reports .= "\n/tmp/PHP_errors.log file is too large to display.\n";
 		}
@@ -85,7 +85,7 @@ if ($_POST['Submit'] == "No") {
 		$crash_reports .= "\nNo PHP errors found.\n";
 	}
 
-	$crash_files = cleanup_crash_file_list(glob("/var/crash/*"));
+	$crash_files = cleanup_crash_file_list();
 	if (count($crash_files) > 0) {
 		foreach ($crash_files as $cf) {
 			if (filesize($cf) < FILE_SIZE) {
@@ -112,7 +112,7 @@ if ($_POST['Submit'] == "No") {
 			<br/><br/>
 			<form action="crash_reporter.php" method="post">
 				<button class="btn btn-warning" name="Submit" type="submit" value="No">
-					<i class="fa fa-undo"></i>
+					<i class="fa-solid fa-undo"></i>
 					<?=gettext("Delete the crash report data and return to the Dashboard")?>
 				</button>
 			<br/><br/>
@@ -122,7 +122,7 @@ if ($_POST['Submit'] == "No") {
 			<br/><br/>
 	<?php	if (system_has_php_errors()): ?>
 				<button class="btn btn-info" name="Download" type="submit" value="PHP">
-					<i class="fa fa-download"></i>
+					<i class="fa-solid fa-download"></i>
 					<?=gettext("Download PHP Error Log")?>
 				</button>
 				<br/><br/>
@@ -130,7 +130,7 @@ if ($_POST['Submit'] == "No") {
 		foreach ($crash_files as $cf):
 				$tfn = htmlspecialchars(basename($cf)); ?>
 				<button class="btn btn-info" name="Download" type="submit" value="<?= $tfn ?>">
-					<i class="fa fa-download"></i>
+					<i class="fa-solid fa-download"></i>
 					<?=gettext("Download")?> <?= $tfn ?>
 				</button>
 				<br/><br/>

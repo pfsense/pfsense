@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -83,29 +83,18 @@ if ($pkg['custom_php_global_functions'] != "") {
 	eval($pkg['custom_php_global_functions']);
 }
 
-// grab the installedpackages->package_name section.
-if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])])) {
-	$config['installedpackages'][xml_safe_fieldname($pkg['name'])] = array();
-}
-
-if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])) {
-	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
-}
-
 /* If the first entry in the array is an empty <config/> tag, kill it.
  * See the following tickets for more:
  *  https://redmine.pfsense.org/issues/7624
  *  https://redmine.pfsense.org/issues/476
  */
 
-init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
-if ((count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) &&
-    (empty($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0])) &&
-    is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])) {
-	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
+$pkg_config_path = 'installedpackages/' . xml_safe_fieldname($pkg['name']) . '/config';
+$pkg_config = config_get_path($pkg_config_path, []);
+if ((count($pkg_config) > 0) && (empty($pkg_config[0]))) {
+	array_shift($pkg_config);
+	config_set_path($pkg_config_path, $pkg_config);
 }
-
-$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if ($_REQUEST['savemsg'] != "") {
 	$savemsg = htmlspecialchars($_REQUEST['savemsg']);
@@ -223,11 +212,11 @@ if ($_POST) {
 			 * and the settings are invalid, overwrite.
 			 * See https://redmine.pfsense.org/issues/7624
 			 */
-			if (isset($id) && ($a_pkg[$id] ||
-			   (($id == 0) && !is_array($a_pkg[$id])) )) {
-				$a_pkg[$id] = $pkgarr;
+			if (isset($id) && (config_get_path("{$pkg_config_path}/{$id}") ||
+			   (($id == 0) && !is_array(config_get_path("{$pkg_config_path}/{$id}"))) )) {
+				config_set_path("{$pkg_config_path}/{$id}", $pkgarr);
 			} else {
-				$a_pkg[] = $pkgarr;
+				config_set_path("{$pkg_config_path}/", $pkgarr);
 			}
 
 			write_config($pkg['addedit_string']);
@@ -292,7 +281,7 @@ function bootstrapTable($text) {
  * the specified element to $group
  */
 function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $ewidth = null) {
-	global $text, $group, $config;
+	global $text, $group;
 
 	switch ($type) {
 		case "input":
@@ -360,7 +349,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 
 			break;
 		case "interfaces_selection":
-			$size = ($size ? "size=\"{$size}\"" : '');
+			$size = ($rowhelper['size'] ? "size=\"{$rowhelper['size']}\"" : '');
 			$multiple = '';
 			if (isset($rowhelper['multiple'])) {
 				$multiple = "multiple";
@@ -404,12 +393,21 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 			$options = array();
 			$selected = array();
 
+			$multiple = '';
+			if (isset($rowhelper['multiple'])) {
+				$multiple = "multiple";
+			}
+
 			if (isset($rowhelper['show_disable_value'])) {
 				$options[$rowhelper['show_disable_value']] = $rowhelper['show_disable_value'];
 			}
 
 			$source_url = $rowhelper['source'];
-			eval("\$pkg_source_txt = &$source_url;");
+			try{
+				@eval("\$pkg_source_txt = $source_url;");
+			} catch (\Throwable | \Error | \Exception $e) {
+				log_error(sprintf(gettext("Error in '{$source_url}': %s"), $e->getMessage()));
+			}
 
 			foreach ($pkg_source_txt as $opt) {
 				$source_name = ($rowhelper['source_name'] ? $opt[$rowhelper['source_name']] : $opt[$rowhelper['name']]);
@@ -434,7 +432,6 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 }
 
 function fixup_string($string) {
-	global $config;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	$https = "";
 	$port = config_get_path('system/webguiport');
@@ -444,7 +441,7 @@ function fixup_string($string) {
 		$urlport = "";
 	}
 
-	if ($config['system']['webgui']['protocol'] == "https") {
+	if (config_get_path('system/webgui/protocol') == "https") {
 		$https = "s";
 	}
 	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlport;
@@ -486,13 +483,13 @@ function parse_package_templates() {
 									$row_helper_total_rows++;
 									$row_helper_data .= $value;
 									$sep = "";
-									ereg($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
+									preg_match($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
 									foreach ($sep as $se) {
 										$separator = $se;
 									}
 									if ($separator != "") {
-										$row_helper_data = ereg_replace("  ", $separator, $row_helper_data);
-										$template_text = ereg_replace("\[{$separator}\]", "", $template_text);
+										$row_helper_data = str_replace("  ", $separator, $row_helper_data);
+										$template_text = str_replace("\[{$separator}\]", "", $template_text);
 									}
 									$template_text = str_replace($rowhelperfield['fieldname'] . "_fieldvalue", $row_helper_data, $template_text);
 								}
@@ -624,7 +621,7 @@ if ($pkg['savehelp'] != "") {
 	$savehelp = $pkg['savehelp'];
 }
 
-$saveicon = "fa-save";
+$saveicon = "fa-solid fa-save";
 if ($pkg['saveicon'] != "") {
 	$saveicon = $pkg['saveicon'];
 }
@@ -734,8 +731,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$value = implode(',', $value);
 		}
 	} else {
-		if (isset($id) && isset($a_pkg[$id][$fieldname])) {
-			$value = $a_pkg[$id][$fieldname];
+		$this_pkg_config = isset($id) ? config_get_path("{$pkg_config_path}/{$id}") : null;
+		if (is_array($this_pkg_config) && isset($this_pkg_config[$fieldname])) {
+			$value = $this_pkg_config[$fieldname];
 		} else {
 			if (isset($pkga['default_value'])) {
 				$value = $pkga['default_value'];
@@ -771,6 +769,10 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				);
 
 			$grp->setHelp($pkga['description']);
+
+			foreach (array_get_path($pkga, 'class', []) as $class) {
+				$grp->addClass($class);
+			}
 
 			if ($pkga['width']) {
 				$grp->setWidth($pkga['width']);
@@ -915,9 +917,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			$source_url = $pkga['source'];
 			try{
-				@eval("\$pkg_source_txt = &$source_url;");
+				@eval("\$pkg_source_txt = $source_url;");
 			} catch (\Throwable | \Error | \Exception $e) {
-				//do nothing
+				log_error(sprintf(gettext("Error in '{$source_url}': %s"), $e->getMessage()));
 			}
 			#check if show disable option is present on xml
 			if (!is_array($pkg_source_txt)) {
@@ -975,7 +977,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		case "vpn_selection" :
 			$vpnlist = array();
 
-			foreach ($config['ipsec']['phase1'] as $vpn) {
+			foreach (config_get_path('ipsec/phase1', []) as $vpn) {
 				$vpnlist[$vpn['descr']] = $vpn['descr'];
 
 			}
@@ -1108,8 +1110,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
 			$fieldname = $pkga['fieldname'];
 
-			init_config_arr(array('aliases', 'alias'));
-			$a_aliases = &$config['aliases']['alias'];
+			$a_aliases = config_get_path('aliases/alias', []);
 			$addrisfirst = 0;
 			$aliasesaddr = "";
 
@@ -1176,21 +1177,19 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		case "interfaces_selection":
 			$ips = array();
 			$interface_regex=(isset($pkga['hideinterfaceregex']) ? $pkga['hideinterfaceregex'] : "nointerfacestohide");
-			if (is_array($config['interfaces'])) {
-				foreach ($config['interfaces'] as $iface_key=>$iface_value) {
-					if (isset($iface_value['enable']) && !preg_match("/$interface_regex/", $iface_key)) {
-						$iface_description=($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
-						if (isset($pkga['showips'])) {
-							$iface_description .= " address";
-						}
-						$ips[] = array('ip'=> $iface_key, 'description'=> $iface_description);
+			foreach (config_get_path('interfaces', []) as $iface_key=>$iface_value) {
+				if (isset($iface_value['enable']) && !preg_match("/{$interface_regex}/", $iface_key)) {
+					$iface_description=($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
+					if (isset($pkga['showips'])) {
+						$iface_description .= " address";
 					}
+					$ips[] = array('ip'=> $iface_key, 'description'=> $iface_description);
 				}
 			}
 
-			if (is_array($config['virtualip']) && isset($pkga['showvirtualips'])) {
-				foreach ($config['virtualip']['vip'] as $vip) {
-					if (!preg_match("/$interface_regex/", $vip['interface'])) {
+			if (isset($pkga['showvirtualips'])) {
+				foreach (config_get_path('virtualip/vip', []) as $vip) {
+					if (!preg_match("/{$interface_regex}/", $vip['interface'])) {
 						$vip_description=($vip['descr'] !="" ? " ({$vip['descr']}) " : " ");
 					}
 					switch ($vip['mode']) {
@@ -1219,7 +1218,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				array_unshift($ips, array('ip' => gettext('All'), 'description' => gettext('Listen on All interfaces/ip addresses ')));
 			}
 
-			if (!preg_match("/$interface_regex/", "loopback")) {
+			if (!preg_match("/{$interface_regex}/", "loopback")) {
 				$loopback_text = gettext("loopback");
 				$iface_description=(isset($pkga['showips']) ? "127.0.0.1 (" . $loopback_text . ")" : $loopback_text);
 				array_push($ips, array('ip' => 'lo0', 'description' => $iface_description));
@@ -1315,7 +1314,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		// Create form button
 		case "button":
-			$newbtnicon = "fa-save";
+			$newbtnicon = "fa-solid fa-save";
 			if ($pkga['buttonicon'] != "") {
 				$newbtnicon = $pkga['buttonicon'];
 			}
@@ -1358,11 +1357,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$input = "<select id='{$pkga['fieldname']}' name='{$pkga['fieldname']}'>\n";
 			$schedules = array();
 			$schedules[] = "none";
-			if (is_array($config['schedules']['schedule'])) {
-				foreach ($config['schedules']['schedule'] as $schedule) {
-					if ($schedule['name'] != "") {
-						$schedules[] = $schedule['name'];
-					}
+			foreach (config_get_path('schedules/schedule', []) as $schedule) {
+				if ($schedule['name'] != "") {
+					$schedules[] = $schedule['name'];
 				}
 			}
 
@@ -1407,10 +1404,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 				$rowcounter = 0;
 				$trc = 0;
+				$this_pkg_config = isset($id) ? config_get_path("{$pkg_config_path}/{$id}") : null;
 
-				//Use assigned $a_pkg or create an empty array to enter loop
-				if (isset($a_pkg[$id][$rowhelpername])) {
-					$saved_rows=$a_pkg[$id][$rowhelpername];
+				//Use assigned $this_pkg_config or create an empty array to enter loop
+				if (is_array($this_pkg_config) && isset($this_pkg_config[$rowhelpername])) {
+					$saved_rows=$this_pkg_config[$rowhelpername];
 				} else {
 					$saved_rows[] = array();
 				}
@@ -1431,7 +1429,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						// If input validation failed, read the value from the POST data so that the user's input is not lost
 						if ($get_from_post && isset($_POST[$fieldname.$rowcounter])) {
 							$value = $_POST[$fieldname.$rowcounter];
-						} elseif (isset($id) && $a_pkg[$id]) {
+						} elseif (isset($id) && $this_pkg_config) {
 							$value = $row[$fieldname];
 						} elseif ($rowhelper['value'] != "") {
 							$value = $rowhelper['value'];
@@ -1468,7 +1466,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						'deleterow' . $rowcounter,
 						'Delete',
 						null,
-						'fa-trash'
+						'fa-solid fa-trash-can'
 					))->removeClass('btn-primary')->addClass('btn-warning btn-sm');
 
 					$rowcounter++;
@@ -1480,7 +1478,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				'addrow',
 				'Add',
 				null,
-				'fa-plus'
+				'fa-solid fa-plus'
 			))->addClass('btn-success');
 
 			break;
@@ -1523,7 +1521,7 @@ if (!empty($advanced)) {
 		'showadv',
 		'Show Advanced Options',
 		null,
-		'fa-cog'
+		'fa-solid fa-cog'
 	))->setAttribute('type','button')->addClass('btn-info');
 
 	$form->add($advanced);
@@ -1563,10 +1561,10 @@ if ($pkg['fields']['field'] != "") { ?>
 
 		if (advanced_visible) {
 			$('.advancedoptions').show();
-			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$showmsg?>");
+			$("#showadv").html('<i class="fa-solid fa-cog icon-embed-btn"></i>' + "<?=$showmsg?>");
 		} else {
 			$('.advancedoptions').hide();
-			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$hidemsg?>");
+			$("#showadv").html('<i class="fa-solid fa-cog icon-embed-btn"></i>' + "<?=$hidemsg?>");
 		}
 	});
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,8 +37,6 @@ require_once("interfaces.inc");
 require_once("pfsense-utils.inc");
 require_once("util.inc");
 
-global $config;
-
 if ($_POST['ifdescr'] && $_POST['submit']) {
 	$interface = $_POST['ifdescr'];
 	if ($_POST['status'] == "up") {
@@ -62,7 +60,7 @@ $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' 
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
 					'<button type="submit" name="submit" class="btn btn-danger btn-xs" value="%s">' .
-					'<i class="fa fa-refresh icon-embed-btn"></i>' .
+					'<i class="fa-solid fa-arrows-rotate icon-embed-btn"></i>' .
 					'%s' .
 					'</button>' .
 					'%s' .
@@ -73,18 +71,18 @@ function showDef($show, $term, $def) {
 	// Choose an icon by interface status
 	if ($term == "Status") {
 		if ($def == "up" || $def == "associated") {
-			$icon = 'arrow-up text-success';
+			$icon = 'fa-solid fa-arrow-up text-success';
 		} elseif ($def == "no carrier") {
-			$icon = 'times-circle text-danger';
+			$icon = 'fa-solid fa-times-circle text-danger';
 		} elseif ($def == "down") {
-			$icon = 'arrow-down text-danger';
+			$icon = 'fa-solid fa-arrow-down text-danger';
 		} else {
 			$icon = '';
 		}
 	}
 	if ($show) {
 		print('<dt>' . $term . '</dt>');
-		print('<dd>' . htmlspecialchars($def) . ' <i class="fa fa-' . $icon . '"></i></dd>');
+		print('<dd>' . htmlspecialchars($def) . ' <i class="' . $icon . '"></i></dd>');
 	}
 }
 
@@ -108,7 +106,7 @@ function dhcp_relinquish_lease($if, $ifdescr, $ipv) {
 	$ipv = ((int) $ipv == 6) ? '-6' : '-4';
 
 	if (file_exists($leases_db) && file_exists($script_file)) {
-		mwexec('/usr/local/sbin/dhclient {$ipv} -d -r' .
+		mwexec("/usr/local/sbin/dhclient {$ipv} -d -r" .
 			' -lf ' . escapeshellarg($leases_db) .
 			' -cf ' . escapeshellarg($conf_file) .
 			' -sf ' . escapeshellarg($script_file));
@@ -121,7 +119,8 @@ include("head.inc");
 
 $ifdescrs = get_configured_interface_with_descr(true);
 $ifinterrupts = interfaces_interrupts();
-
+$switch_config = config_get_path('switches/switch/0/vlangroups/vlangroup', []);
+$if_config = config_get_path('interfaces', []);
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 	$mac_man = load_mac_manufacturer_table();
@@ -134,8 +133,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 	$ifhwinfo = $ifinfo['hwif'];
 	$vlan = interface_is_vlan($ifinfo['hwif']);
-	if ($vlan && is_array($config['switches']['switch'][0]['vlangroups']['vlangroup'])) {
-		foreach ($config['switches']['switch'][0]['vlangroups']['vlangroup'] as $vlangroup) {
+	if ($vlan) {
+		foreach ($switch_config as $vlangroup) {
 			if ($vlangroup['vlanid'] == $vlan['tag']) {
 				$ifhwinfo .= ', switchports: ' . $vlangroup['members'];
 				break;
@@ -180,7 +179,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['linklocal'], gettext('IPv6 Link Local'), $ifinfo['linklocal']);
 				showDef($ifinfo['ipaddrv6'], gettext('IPv6 Address'), $ifinfo['ipaddrv6']);
 				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
-				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
+				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $if_config[$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
 
 				$dns_servers = get_dynamic_nameservers($ifdescr);
 				$dnscnt = 0;
@@ -206,7 +205,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['temperature'], gettext("Temperature"), $ifinfo['temperature']);
 			}
 			if ($ifinfo['voltage']) {
-				showDef($ifinfo['voltage'], gettext("voltage"), $ifinfo['voltage']);
+				showDef($ifinfo['voltage'], gettext("Voltage"), $ifinfo['voltage']);
 			}
 			if ($ifinfo['rx']) {
 				showDef($ifinfo['rx'], gettext("RX"), $ifinfo['rx']);

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
@@ -192,17 +192,17 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 
 				<div class="btn-group">
 					<button type="button" class="btn btn-success btn-sm" name="btnRecallPrev" onclick="btnRecall_onClick( this.form, -1 );" title="<?=gettext("Recall Previous Command")?>">
-						<i class="fa fa-angle-double-left"></i>
+						<i class="fa-solid fa-angle-double-left"></i>
 					</button>
 					<button name="submit" type="submit" class="btn btn-warning btn-sm" value="EXEC" title="<?=gettext("Execute the entered command")?>">
-						<i class="fa fa-bolt"></i>
+						<i class="fa-solid fa-bolt"></i>
 						<?=gettext("Execute"); ?>
 					</button>
 					<button type="button" class="btn btn-success btn-sm" name="btnRecallNext" onclick="btnRecall_onClick( this.form,  1 );" title="<?=gettext("Recall Next Command")?>">
-						<i class="fa fa-angle-double-right"></i>
+						<i class="fa-solid fa-angle-double-right"></i>
 					</button>
 					<button style="margin-left: 10px;" type="button" class="btn btn-default btn-sm" onclick="return Reset_onClick( this.form );" title="<?=gettext("Clear command entry")?>">
-						<i class="fa fa-undo"></i>
+						<i class="fa-solid fa-undo"></i>
 						<?=gettext("Clear"); ?>
 					</button>
 				</div>
@@ -217,7 +217,7 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_REQUEST['dlPath']);?>"/>
 				<br /><br />
 				<button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">
-					<i class="fa fa-download icon-embed-btn"></i>
+					<i class="fa-solid fa-download icon-embed-btn"></i>
 					<?=gettext("Download")?>
 				</button>
 			</div>
@@ -236,7 +236,7 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 				<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
 				<br />
 				<button name="submit" type="submit" class="btn btn-primary btn-sm" id="upload" value="UPLOAD">
-					<i class="fa fa-upload icon-embed-btn"></i>
+					<i class="fa-solid fa-upload icon-embed-btn"></i>
 					<?=gettext("Upload")?>
 				</button>
 			</div>
@@ -266,22 +266,17 @@ END_FILE;
 
 		$output = $matches = array();
 		$retval = 0;
-		exec("/usr/local/bin/php -d log_errors=off {$tmpfile}", $output, $retval);
+		exec("/usr/local/bin/php -d zend.exception_ignore_args=0 -d log_errors=off {$tmpfile}", $output, $retval);
 
 		puts('<div class="panel panel-success responsive"><div class="panel-heading"><h2 class="panel-title">PHP Response</h2></div>');
 
 		// Help user to find bad code line, if it gave an error
-		$errmsg_found = preg_match("`error.*:.* (?:in|File:) {$tmpfile}(?:\(| on line |, Line: )(\d+)(?:, Message:|\).* eval\(\)'d code|$)`i", implode("\n", $output), $matches);
+		$errmsg_found = preg_match("`(error|warning).*:.* (?:in|File:) {$tmpfile}(?:\(| on line |, Line: )(\d+)(?:, Message:|\).* eval\(\)'d code|$)`i", implode(",", $output), $matches);
 		if ($retval || $errmsg_found) {
-			/* Trap failed code - test both retval and output message
-			 * Typical messages as at 2.3.x:
-			 *   "Parse error: syntax error, ERR_DETAILS in FILE on line NN"
-			 *   "PHP ERROR: Type: NN, File: FILE, Line: NN, Message: ERR_DETAILS"
-			 *   "Parse error: syntax error, unexpected end of file in FILE(NN) : eval()'d code on line 1" [the number in (..) is the error line]
-			*/
-			if ($matches[1] > $lineno_correction) {
-				$errline = $matches[1] - $lineno_correction;
-				$errtext = sprintf(gettext('Line %s appears to have generated an error, and has been highlighted. The full response is below.'), $errline);
+			/* Trap failed code - test both retval and output message */
+			if ($matches[2] > $lineno_correction) {
+				$errline = (int)$matches[2] - $lineno_correction;
+				$errtext = sprintf(gettext('Line %s appears to have generated an error or warning and has been highlighted. The full response is below.'), $errline);
 			} else {
 				$errline = -1;
 				$errtext = gettext('The code appears to have generated an error, but the line responsible cannot be identified. The full response is below.');
@@ -289,13 +284,15 @@ END_FILE;
 			$errtext .= '<br/>' . sprintf(gettext('Note that the line number in the full PHP response will be %s lines too large. Nested code and eval() errors may incorrectly point to "line 1".'), $lineno_correction);
 			$syntax_output = array();
 			$html = "";
-			exec("/usr/local/bin/php -s -d log_errors=off {$tmpfile}", $syntax_output);
-			// Lines 0, 2 and 3 are CSS wrapper for the syntax highlighted code which is at line 1 <br> separated.
-			$syntax_output = explode("<br />", $syntax_output[1]);
+			exec("/usr/local/bin/php -s -d zend.exception_ignore_args=0 -d log_errors=off {$tmpfile}", $syntax_output);
+
+			/* Remove lines with automatically added code */
+			$syntax_output = array_slice($syntax_output, $lineno_correction, (count($syntax_output) - ($lineno_correction + 1)));
+
 			$margin_layout = '%3s %' . strlen(count($syntax_output)) . 'd:';
-			for ($lineno = 1; $lineno < count($syntax_output) - $lineno_correction; $lineno++) {
+			for ($lineno = 1; $lineno < (count($syntax_output) + 1); $lineno++) {
 				$margin = str_replace(' ', '&nbsp;', sprintf($margin_layout, ($lineno == $errline ? '&gt;&gt;&gt;' : ''), $lineno));
-				$html .= "<span style='color:black;backgroundcolor:lightgrey'><tt>{$margin}</tt></span>&nbsp;&nbsp;{$syntax_output[$lineno + $lineno_correction - 1]}<br/>\n";
+				$html .= "<span style='color:black;backgroundcolor:lightgrey'><tt>{$margin}</tt></span>&nbsp;&nbsp;{$syntax_output[$lineno - 1]}<br/>\n";
 			}
 			print_info_box($errtext, 'danger');
 			print "<div style='margin:20px'><b>" . gettext("Error locator:") . "</b>\n";
@@ -333,7 +330,7 @@ END_FILE;
 				<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
 				<br />
 				<button name="submit" type="submit" class="btn btn-warning btn-sm" value="EXECPHP" title="<?=gettext("Execute this PHP Code")?>">
-					<i class="fa fa-bolt"></i>
+					<i class="fa-solid fa-bolt"></i>
 					<?=gettext("Execute")?>
 				</button>
 				<?=gettext("Example"); ?>: <code>print("Hello World!");</code>

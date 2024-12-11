@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -135,8 +135,8 @@ system_log_filter();
 	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
 	$reverse = config_path_enabled('syslog', 'reverse');
 	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+	if (config_get_path("syslog/{$specific_log}/cronorder") == 'forward') $reverse = false;
+	if (config_get_path("syslog/{$specific_log}/cronorder") == 'reverse') $reverse = true;
 ?>
 	var filter_query_string = "<?=$filter_query_string . '&logfile=' . $logfile_path . '&nentries=' . $nentries?>";
 
@@ -427,12 +427,12 @@ function toggleListDescriptions() {
 						<td>
 <?php
 							if ($filterent['act'] == "block") {
-								$icon_act = "fa-times text-danger";
+								$icon_act = "fa-solid fa-times text-danger";
 							} else {
-								$icon_act = "fa-check text-success";
+								$icon_act = "fa-solid fa-check text-success";
 							}
 ?>
-							<i class="fa <?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+							<i class="<?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 						</td>
 						<td><?=htmlspecialchars($filterent['time'])?></td>
 						<td><?=htmlspecialchars($filterent['interface'])?></td>

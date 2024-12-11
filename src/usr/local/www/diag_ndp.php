@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -74,7 +74,7 @@ $i = 0;
 $ifdescrs = get_configured_interface_with_descr();
 
 foreach ($ifdescrs as $key =>$interface) {
-	$hwif[$config['interfaces'][$key]['if']] = $interface;
+	$hwif[config_get_path("interfaces/{$key}/if")] = $interface;
 }
 
 /*
@@ -102,15 +102,13 @@ foreach ($rawdata as $line) {
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
+$dnsavailable = get_dnsavailable(AF_INET6);
 foreach ($data as &$entry) {
-	if (is_null($dnsavailable)) {
-		$dnsavailable = check_dnsavailable('inet6');
+	$dns="";
+	if (!empty($entry['ipv6']) && $dnsavailable) {
+		$dns = resolve_address($entry['ipv6']);
 	}
-	if ($dnsavailable) {
-		$dns = trim(_getHostName($entry['mac'], $entry['ipv6']));
-	} else {
-		$dns = "";
-	}
+
 	if (trim($dns)) {
 		$entry['dnsresolve'] = "$dns";
 	} else {
@@ -140,7 +138,7 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 			<?=gettext('Search')?>
 			<span class="widget-heading-icon pull-right">
 				<a data-toggle="collapse" href="#search-panel_panel-body">
-					<i class="fa fa-plus-circle"></i>
+					<i class="fa-solid fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
@@ -162,8 +160,8 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" title="<?=gettext('Search')?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
-				<a id="btnclear" title="<?=gettext('Clear')?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext('Search')?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext('Clear')?>" class="btn btn-info btn-sm"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to filter entries.')?></span>
@@ -220,7 +218,7 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 						<?=$entry['expiration']?>
 					</td>
 					<td>
-						<a class="fa fa-trash" title="<?=gettext('Delete NDP entry')?>"	href="diag_ndp.php?deleteentry=<?=$entry['ipv6']?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete NDP entry')?>"	href="diag_ndp.php?deleteentry=<?=$entry['ipv6']?>" usepost></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -233,7 +231,7 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 
 <nav class="action-buttons">
 	<button id="clearndp" class="btn btn-danger no-confirm">
-		<i class="fa fa-trash icon-embed-btn"></i>
+		<i class="fa-solid fa-trash-can icon-embed-btn"></i>
 		<?=gettext("Clear NDP Table")?>
 	</button>
 </nav>

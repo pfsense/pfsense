@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2023 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -31,8 +31,8 @@ require_once("syslog.inc");
 
 // Status Logs Common - Code
 function status_logs_common_code() {
-	global $g, $config, $user_settings, $specific_log, $nentries, $rawfilter, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
-	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view;
+	global $g, $user_settings, $specific_log, $nentries, $rawfilter, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
+	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view, $input_errors;
 
 	$logfile_path = "{$g['varlog_path']}/" . basename($logfile);
 	/* Only add .log suffix if necessary */
@@ -43,7 +43,7 @@ function status_logs_common_code() {
 	$specific_log = basename($logfile) . '_settings';
 
 	$nentries = config_get_path('syslog/nentries');
-	if (isset($config['syslog'][$specific_log]['nentries'])) {
+	if (config_get_path("syslog/{$specific_log}/nentries") !== null) {
 		$nentries = config_get_path("syslog/{$specific_log}/nentries");
 	}
 
@@ -56,8 +56,17 @@ function status_logs_common_code() {
 		$nentries = g_get('default_log_entries');
 	}
 
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+	phpsession_end();
+
 	if ($_POST['clear']) {
-		clear_log_file($logfile_path);
+		if (!$read_only) {
+			clear_log_file($logfile_path);
+		} else{
+			$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+		}
 	}
 
 	/* Setup shortcuts if they exist */
@@ -77,9 +86,9 @@ function status_logs_common_code() {
 	}
 
 	// Formatted/Raw Display
-	if (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'formatted')) {
+	if (config_get_path("syslog/{$specific_log}/format") == 'formatted') {
 		$rawfilter = false;
-	} elseif (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'raw')) {
+	} elseif (config_get_path("syslog/{$specific_log}/format") == 'raw') {
 		$rawfilter = true;
 	} else {	//  Use the general logging options setting (global).
 		$rawfilter = config_path_enabled('syslog', 'rawfilter');
@@ -315,7 +324,7 @@ function filter_form_system() {
 			'filterlogentries_submit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
@@ -344,7 +353,7 @@ function filter_form_system() {
 			'filtersubmit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	}
 
@@ -535,7 +544,7 @@ function filter_form_firewall() {
 			'filterlogentries_submit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
@@ -575,7 +584,7 @@ function filter_form_firewall() {
 			'filtersubmit',
 			gettext('Apply Filter'),
 			null,
-			'fa-filter'
+			'fa-solid fa-filter'
 		);
 	}
 
@@ -602,7 +611,7 @@ function status_logs_build_if_list() {
 		$interfaces[$if] = $ifdesc;
 	}
 
-	if ($config['l2tp']['mode'] == "server") {
+	if (config_get_path('l2tp/mode') == "server") {
 		$interfaces['l2tp'] = "L2TP VPN";
 	}
 
@@ -616,7 +625,7 @@ function status_logs_build_if_list() {
 	}
 
 	/* add openvpn/tun interfaces */
-	if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+	if	(config_get_path('openvpn/openvpn-server') || config_get_path('openvpn/openvpn-client')) {
 		$interfaces["openvpn"] = "OpenVPN";
 	}
 
@@ -632,38 +641,44 @@ function manage_log_code() {
 		return;
 	}
 
-	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied, $allowed_logs;
+	global $logfile, $specific_log, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied, $allowed_logs;
 
 	$changes_applied = false;
 	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
-	init_config_arr(array('syslog', $specific_log));
+	$syslog_config = config_get_path('syslog', []);
 
 	// Common to All Logs
-	$pconfig['cronorder'] = isset($config['syslog'][$specific_log]['cronorder']) ? $config['syslog'][$specific_log]['cronorder'] : null;
-	$pconfig['nentries'] = isset($config['syslog'][$specific_log]['nentries']) ? $config['syslog'][$specific_log]['nentries'] : null;
-	$pconfig['logfilesize'] = isset($config['syslog'][$specific_log]['logfilesize']) ? $config['syslog'][$specific_log]['logfilesize'] : null;
-	$pconfig['rotatecount'] = isset($config['syslog'][$specific_log]['rotatecount']) ? $config['syslog'][$specific_log]['rotatecount'] : null;
-	$pconfig['format'] = isset($config['syslog'][$specific_log]['format']) ? $config['syslog'][$specific_log]['format'] : null;
+	$pconfig['cronorder'] = isset($syslog_config[$specific_log]['cronorder']) ? $syslog_config[$specific_log]['cronorder'] : null;
+	$pconfig['nentries'] = isset($syslog_config[$specific_log]['nentries']) ? $syslog_config[$specific_log]['nentries'] : null;
+	$pconfig['logfilesize'] = isset($syslog_config[$specific_log]['logfilesize']) ? $syslog_config[$specific_log]['logfilesize'] : null;
+	$pconfig['rotatecount'] = isset($syslog_config[$specific_log]['rotatecount']) ? $syslog_config[$specific_log]['rotatecount'] : null;
+	$pconfig['format'] = isset($syslog_config[$specific_log]['format']) ? $syslog_config[$specific_log]['format'] : null;
 
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
-		$pconfig['lognginx'] = !config_path_enabled('syslog', 'nolognginx');
+		$pconfig['lognginx'] = !isset($syslog_config['nolognginx']);
 	}
 
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
-		$pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock');
-		$pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
-		$pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
-		$pconfig['logprivatenets'] = !config_path_enabled('syslog', 'nologprivatenets');
-		$pconfig['filterdescriptions'] = isset($config['syslog']['filterdescriptions']) ? $config['syslog']['filterdescriptions'] : null;
+		$pconfig['logdefaultblock'] = !isset($syslog_config['nologdefaultblock']);
+		$pconfig['logdefaultpass'] = isset($syslog_config['nologdefaultpass']);
+		$pconfig['logbogons'] = !isset($syslog_config['nologbogons']);
+		$pconfig['logprivatenets'] = !isset($syslog_config['nologprivatenets']);
+		$pconfig['filterdescriptions'] = isset($syslog_config['filterdescriptions']) ? $syslog_config['filterdescriptions'] : null;
 	}
 
 	$save_settings = getGETPOSTsettingvalue('save_settings', null);
 
-	if ($save_settings) {
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+	phpsession_end();
 
+	if ($save_settings && !$read_only) {
+
+		$input_errors[] = "Shouldn't be here";
 		// Common to All Logs
 		$cronorder = getGETPOSTsettingvalue('cronorder',  null);
 		$nentries = getGETPOSTsettingvalue('nentries', null);
@@ -714,74 +729,74 @@ function manage_log_code() {
 
 		if (!$input_errors) {
 
-			if (($rotatecount != $config['syslog'][$specific_log]['rotatecount']) ||
-			    ($logfilesize != $config['syslog'][$specific_log]['logfilesize'])) {
+			if (($rotatecount != $syslog_config[$specific_log]['rotatecount']) ||
+			    ($logfilesize != $syslog_config[$specific_log]['logfilesize'])) {
 				$logging_changed = true;
 			}
 
 			# Clear out the specific log settings and leave only the applied settings to override the general logging options (global) settings.
-			if (isset($config['syslog'][$specific_log])) {
-				config_del_path("syslog/{$specific_log}");
-			}
-			init_config_arr(array('syslog', $specific_log));
+			array_del_path($syslog_config, "{$specific_log}");
+			array_init_path($syslog_config, "{$specific_log}");
 
 		// Common to All Logs
 			if ($cronorder != '') { # if not using the general logging options setting (global)
-				$config['syslog'][$specific_log]['cronorder'] = $cronorder;
+				$syslog_config[$specific_log]['cronorder'] = $cronorder;
 			}
 
 			if (isset($nentries) && (strlen($nentries) > 0)) {
-				$config['syslog'][$specific_log]['nentries'] = (int)$nentries;
+				$syslog_config[$specific_log]['nentries'] = (int)$nentries;
 			}
 
 			if (isset($logfilesize) && (strlen($logfilesize) > 0)) {
-				$config['syslog'][$specific_log]['logfilesize'] = (int)$logfilesize;
+				$syslog_config[$specific_log]['logfilesize'] = (int)$logfilesize;
 			}
 
 			if (isset($rotatecount) && (strlen($rotatecount) > 0)) {
-				$config['syslog'][$specific_log]['rotatecount'] = (int)$rotatecount;
+				$syslog_config[$specific_log]['rotatecount'] = (int)$rotatecount;
 			}
 
 			if ($format != '') { # if not using the general logging options setting (global)
-				$config['syslog'][$specific_log]['format'] = $format;
+				$syslog_config[$specific_log]['format'] = $format;
 			}
 
 		// Specific to System General (main) Log
 			if ($logfile == 'system') {
-				$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
-				$config['syslog']['nolognginx'] = $lognginx ? false : true;
+				$oldnolognginx = isset($syslog_config['nolognginx']);
+				$syslog_config['nolognginx'] = $lognginx ? false : true;
 
-				if ($oldnolognginx !== $config['syslog']['nolognginx']) {
+				if ($oldnolognginx !== $syslog_config['nolognginx']) {
 					$logging_changed = $nginx_logging_changed = true;
 				}
 			}
 
 		// Specific to  Firewall Log
 			if ($logfile == 'filter') {
-				$oldnologdefaultblock = config_path_enabled('syslog', 'nologdefaultblock');
-				$oldnologdefaultpass = config_path_enabled('syslog', 'nologdefaultpass');
-				$oldnologbogons = config_path_enabled('syslog', 'nologbogons');
-				$oldnologprivatenets = config_path_enabled('syslog', 'nologprivatenets');
+				$oldnologdefaultblock = isset($syslog_config['nologdefaultblock']);
+				$oldnologdefaultpass = isset($syslog_config['nologdefaultpass']);
+				$oldnologbogons = isset($syslog_config['nologbogons']);
+				$oldnologprivatenets = isset($syslog_config['nologprivatenets']);
 
-				$config['syslog']['nologdefaultblock'] = $logdefaultblock ? false : true;
-				$config['syslog']['nologdefaultpass'] = $logdefaultpass ? true : false;
-				$config['syslog']['nologbogons'] = $logbogons ? false : true;
-				$config['syslog']['nologprivatenets'] = $logprivatenets ? false : true;
+				$syslog_config['nologdefaultblock'] = $logdefaultblock ? false : true;
+				$syslog_config['nologdefaultpass'] = $logdefaultpass ? true : false;
+				$syslog_config['nologbogons'] = $logbogons ? false : true;
+				$syslog_config['nologprivatenets'] = $logprivatenets ? false : true;
 
 				if (is_numeric($filterdescriptions) && $filterdescriptions > 0) {
-					$config['syslog']['filterdescriptions'] = $filterdescriptions;
+					$syslog_config['filterdescriptions'] = $filterdescriptions;
 				} else {
-					config_del_path('syslog/filterdescriptions');
+					array_del_path($syslog_config, 'syslog/filterdescriptions');
 				}
 
 				if (
-				    ($oldnologdefaultblock !== $config['syslog']['nologdefaultblock']) ||
-				    ($oldnologdefaultpass !== $config['syslog']['nologdefaultpass']) ||
-				    ($oldnologbogons !== $config['syslog']['nologbogons']) ||
-				    ($oldnologprivatenets !== $config['syslog']['nologprivatenets'])) {
+				    ($oldnologdefaultblock !== $syslog_config['nologdefaultblock']) ||
+				    ($oldnologdefaultpass !== $syslog_config['nologdefaultpass']) ||
+				    ($oldnologbogons !== $syslog_config['nologbogons']) ||
+				    ($oldnologprivatenets !== $syslog_config['nologprivatenets'])) {
 					$logging_changed = $firewall_logging_changed = true;
 				}
 			}
+
+			config_set_path('syslog', $syslog_config);
 
 			$retval = 0;
 			$changes_applied = true;
@@ -811,10 +826,13 @@ function manage_log_code() {
 				if ($firewall_logging_changed) {
 					require_once("filter.inc");
 					$retval |= filter_configure();
-					filter_pflog_start(true);
+					filter_pflog_start();
 				}
 			}
 		}
+	} elseif ($save_settings) {
+		/* Save Settings code path, but read only user. */
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
 	}
 }
 
@@ -826,7 +844,7 @@ function manage_log_section() {
 		return;
 	}
 
-	global $g, $input_errors, $allowed_logs, $logfile, $config, $pconfig;
+	global $g, $input_errors, $allowed_logs, $logfile, $pconfig;
 	global $system_logs_manage_log_form_hidden;
 
 	if ($input_errors) {
@@ -896,7 +914,7 @@ function manage_log_section() {
 		'GUI Log Entries',
 		'number',
 		$pconfig['nentries'],
-		['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : g_get('default_log_entries')]
+		['min' => 5, 'max' => 200000, 'placeholder' => config_get_path('syslog/nentries', g_get('default_log_entries'))]
 	))->setWidth(2);
 
 	$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');
@@ -910,7 +928,7 @@ function manage_log_section() {
 		'Log Rotation Size (Bytes)',
 		'number',
 		$pconfig['logfilesize'],
-		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : g_get('default_log_size')]
+		['min' => 100000, 'placeholder' => config_get_path('syslog/logfilesize', g_get('default_log_size'))]
 	))->setWidth(2);
 	$group->setHelp('This field controls the size at which logs will be rotated. By default this is %1$s per log file, and there are nearly 20 such log files. ' .
 				'Rotated log files consume additional disk space, which varies depending on compression and retention count.%2$s' .
@@ -925,7 +943,7 @@ function manage_log_section() {
 		'Log Retention Count',
 		'number',
 		$pconfig['rotatecount'],
-		['min' => 0, 'max' => 99, 'placeholder' => $config['syslog']['rotatecount'] ? $config['syslog']['rotatecount'] : 7]
+		['min' => 0, 'max' => 99, 'placeholder' => config_get_path('syslog/rotatecount', 7)]
 	))->setWidth(2);
 	$group->setHelp('The number of log files to keep before the oldest copy is removed on rotation.');
 	$section->add($group);
@@ -1023,7 +1041,7 @@ function manage_log_section() {
 		'save_settings',
 		gettext('Save'),
 		null,
-		'fa-save'
+		'fa-solid fa-save'
 	);
 
 	$btnsavesettings->addClass('btn-sm btn-primary');
@@ -1038,7 +1056,7 @@ function manage_log_section() {
 		'clear',
 		gettext('Clear log'),
 		null,
-		'fa-trash'
+		'fa-solid fa-trash-can'
 	);
 
 	$btnclear->removeClass('btn-primary')->addClass('btn-sm btn-danger');

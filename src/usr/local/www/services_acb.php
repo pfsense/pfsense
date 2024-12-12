@@ -423,7 +423,7 @@ print('</div>');
 			?>
 					<tr>
 						<td><?= $cv['localtime']; ?></td>
-						<td><?= $cv['reason']; ?></td>
+						<td><?= htmlspecialchars($cv['reason'], double_encode: false); ?></td>
 						<td>
 							<a class="fa-solid fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&newver=<?=urlencode($cv['time'])?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
 							<a class="fa-solid fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&reason=<?=urlencode($cv['reason'])?>"></a>

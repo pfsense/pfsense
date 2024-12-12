@@ -2835,7 +2835,7 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 		$host = $hostent['ip'] . '_32';
 		$l3from = "l3 from {$hostent['ip']}";
 		$l3to = "l3 to {$hostent['ip']}";
-		if (!config_path_enabled("captiveportal/{$cpzone}/nomacfilter")) {
+		if (!config_path_enabled("captiveportal/{$cpzone}", 'nomacfilter')) {
 			if (!empty($hostent['mac'])) {
 				$macfrom = "from {$hostent['mac']}";
 				$macto = "to {$hostent['mac']}";

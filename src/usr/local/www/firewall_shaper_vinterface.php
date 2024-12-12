@@ -64,8 +64,6 @@ if ($_POST) {
 	}
 	if ($_POST['pipe']) {
 		$pipe = htmlspecialchars(trim($_POST['pipe']));
-	} else {
-		$pipe = htmlspecialchars(trim($qname));
 	}
 	if ($_POST['parentqueue']) {
 		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));

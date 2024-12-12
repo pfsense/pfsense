@@ -342,6 +342,140 @@ $reserved_table_names = [
 	],
 ];
 
+function add_reserved_table(array $table, array $values) {
+	global $reserved_table_names;
+	if (!array_key_exists('name', $table)) {
+		return;
+	}
+	$table['address'] = implode(' ', array_keys($values));
+	$table['detail'] = implode('||', array_values($values));
+	$reserved_table_names[$table['name']] = $table;
+}
+
+add_reserved_table(
+	[
+		'name' => '_loopback_',
+		'type' => 'network',
+		'descr' => 'IPv4 and IPv6 loopback networks.',
+	],
+	[
+		'127.0.0.0/8' => 'Loopback', // RFC1122
+		'::1/128' => 'Loopback Address', // RFC4291
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_linklocal4_',
+		'type' => 'network',
+		'descr' => 'IPv4 link-local networks.',
+	],
+	[
+		'169.254.0.0/16' => 'Link Local', // RFC3927
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_linklocal6_',
+		'type' => 'network',
+		'descr' => 'IPv6 link-local networks.',
+	],
+	[
+		'fe80::/10' => 'Linked-Scoped Unicast', // RFC4291
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_private4_',
+		'type' => 'network',
+		'descr' => 'IPv4 private networks.',
+	],
+	[
+		'10.0.0.0/8' => 'Private-Use', // RFC1918
+		'172.16.0.0/12' => 'Private-Use', // RFC1918
+		'192.168.0.0/16' => 'Private-Use', // RFC1918
+
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_private6_',
+		'type' => 'network',
+		'descr' => 'IPv6 private networks.',
+	],
+	[
+		'fc00::/7' => 'Unique-Local', // RFC4193
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_multicast4_',
+		'type' => 'network',
+		'descr' => 'IPv4 multicast networks.',
+	],
+	[
+		'224.0.0.0/4' => 'Multicast', // RFC5771
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_multicast6_',
+		'type' => 'network',
+		'descr' => 'IPv6 multicast networks.',
+	],
+	[
+		'ff00::/8' => 'Multicast', // RFC4291
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_reserved4_',
+		'type' => 'network',
+		'descr' => 'IPv4 networks reserved for local use.',
+	],
+	[
+		'0.0.0.0/8' => 'This host on this network', // RFC1122
+		'10.0.0.0/8' => 'Private-Use', // RFC1918
+		'100.64.0.0/10' => 'Shared Address Space', // RFC6598
+		'127.0.0.0/8' => 'Loopback', // RFC1122
+		'169.254.0.0/16' => 'Link Local', // RFC3927
+		'172.16.0.0/12' => 'Private-Use', // RFC1918
+		'192.0.0.0/24' => 'IETF Protocol Assignments', // RFC6890
+		'192.0.2.0/24' => 'Documentation (TEST-NET-1)', // RFC5737
+		'192.88.99.0/24' => '6to4 Relay Anycast', // RFC3068
+		'192.168.0.0/16' => 'Private-Use', // RFC1918
+		'198.18.0.0/15' => 'Benchmarking', //RFC2544
+		'198.51.100.0/24' => 'Documentation (TEST-NET-2)', // RFC5737
+		'203.0.113.0/24' => 'Documentation (TEST-NET-3)', // RFC5737
+		'224.0.0.0/4' => 'Multicast', // RFC5771
+		'240.0.0.0/4' => 'Reserved', // RFC1112
+		'255.255.255.255/32' => 'Limited Broadcast', // RFC0919
+	]
+);
+add_reserved_table(
+	[
+		'name' => '_reserved6_',
+		'type' => 'network',
+		'descr' => 'IPv6 networks reserved for local use.',
+	],
+	[
+		'::1/128' => 'Loopback Address', // RFC4291
+		'::/128' => 'Unspecified Address', // RFC4291
+		'::ffff:0:0/96' => 'IPv4-mapped Address', // RFC4291
+		'64:ff9b::/96' => 'IPv4-IPv6 Translation', // RFC6052
+		'64:ff9b:1::/48' => 'Local-Use IPv4/IPv6 Translation', // RFC8215
+		'100::/64' => 'Discard-Only Address Block', // RFC6666
+		'2001::/23' => 'IETF Protocol Assignments', // RFC2928
+		'2001:2::/48' => 'Benchmarking', // RFC5180
+		'2001:db8::/32' => 'Documentation', // RFC3849
+		'2002::/16' => '6to4', // RFC3056
+		'3fff::/20' => 'Documentation', // RFC9637
+		'5f00::/16' => 'Segment Routing (SRv6) SIDs', // RFC9602
+		'fc00::/7' => 'Unique-Local', // RFC4193
+		'fe80::/10' => 'Linked-Scoped Unicast', // RFC4291
+		'ff00::/8' => 'Multicast', // RFC4291
+	]
+);
+
 /* VLAN Prio values. */
 global $vlanprio_values;
 $vlanprio_values = [

@@ -6913,6 +6913,13 @@ function upgrade_234_to_235() {
 	rename_conflicting_aliases();
 }
 
+function upgrade_235_to_236() {
+}
+
+/* Additional system aliases have been added. */
+function upgrade_236_to_237() {
+	rename_conflicting_aliases();
+}
 
 /*
  * Special function that is called independent of current config version. It's

@@ -3819,7 +3819,7 @@ function rename_conflicting_aliases() {
 		unset($alias);
 	}
 	
-	// Abort if there's anything to do.
+	// Abort if there's nothing to do.
 	if (empty($renamed_aliases)) {
 		return;
 	}

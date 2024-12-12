@@ -5454,6 +5454,14 @@ function filter_generate_dummynet_rules() {
 		if ($this_qlimit > $max_qlimit) {
 			$max_qlimit = $this_qlimit;
 		}
+		if (is_array($dn->subqueues)) {
+			foreach ($dn->subqueues as $queue) {
+				$this_qlimit = $queue->GetQlimit();
+				if ($this_qlimit > $max_qlimit) {
+					$max_qlimit = $this_qlimit;
+				}
+			}
+		}
 	}
 	if (!is_numericint($max_qlimit)) {
 		$max_qlimit = "100";

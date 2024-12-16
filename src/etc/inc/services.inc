@@ -4251,6 +4251,11 @@ function get_request_source_address($interface, int|null $address_family = null)
 			return false;
 		}
 		$source_address_gw = array_get_path($gateways_status, "{$interface_gateway}/srcip", '');
+
+		// If the address family hasn't been specified, base it on the gateway.
+		if (!isset($address_family)) {
+			$address_family = is_ipaddrv4($source_address_gw) ? AF_INET : AF_INET6;
+		}
 	}
 
 	// Prefer the source address on the gateway group.

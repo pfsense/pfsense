@@ -145,6 +145,7 @@ function upgrade_010_to_011() {
 	}
 
 	config_set_path('filter/rule', $filter_rule_config);
+	filter_rules_sort();
 
 	/* convert shaper rules */
 	$shaper_rule_config = config_get_path('pfqueueing/rule', []);
@@ -3803,6 +3804,7 @@ function upgrade_122_to_123() {
 			}
 		}
 		config_set_path('filter/rule', $filter_rules_config);
+		filter_rules_sort();
 	}
 
 	$binat_config = config_get_path('nat/onetoone', []);

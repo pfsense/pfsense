@@ -574,6 +574,7 @@ function saveNATrule($post, $id, $json = false) {
 				$filter_rule_config[] = $filterent;
 			}
 			config_set_path('filter/rule', $filter_rule_config);
+			filter_rules_sort();
 
 			if (!$json) {
 				mark_subsystem_dirty('filter');

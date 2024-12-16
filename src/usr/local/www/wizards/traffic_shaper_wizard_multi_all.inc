@@ -1840,6 +1840,7 @@ function apply_all_chosen_items() {
 	}
 
 	config_set_path('filter/rule', $filter_rules);
+	filter_rules_sort();
 	write_config(gettext("Shaper configuration saved via traffic shaper wizard."));
 }
 

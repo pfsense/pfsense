@@ -52,6 +52,7 @@ function delete_id($id) {
 	config_set_path('filter/separator/' . strtolower($if), $a_separators);
 
 	config_set_path('filter/rule', $array);
+	filter_rules_sort();
 	return true;
 }
 

@@ -238,6 +238,7 @@ if (isset($_POST['del_x'])) {
 			delete_nat_association($associations_to_remove);
 			config_set_path('filter/separator/' . strtolower($if), $a_separators);
 			config_set_path('filter/rule', $a_rules);
+			filter_rules_sort();
 			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
 				mark_subsystem_dirty('filter');
 			}
@@ -316,6 +317,7 @@ if (isset($_POST['del_x'])) {
 
 		if (config_get_path('filter/rule') !== $a_filter_new) {
 			config_set_path('filter/rule', $a_filter_new);
+			filter_rules_sort();
 			$dirty = true;
 		}
 	}

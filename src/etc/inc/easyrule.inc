@@ -144,6 +144,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$ridx = get_interface_ruleindex($int);
 	array_splice($a_filter, $ridx['first'], 0, array($filterent));
 	config_set_path('filter/rule', $a_filter);
+	filter_rules_sort();
 
 	// shift the separators
 	$a_separators = config_get_path('filter/separator/' . strtolower($int), []);

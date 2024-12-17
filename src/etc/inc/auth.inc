@@ -273,6 +273,7 @@ unset($security_passed);
 
 $groupindex = index_groups();
 $userindex = index_users();
+$fido2index = index_fido2_creds();
 
 function index_groups() {
 	global $g, $debug, $groupindex;
@@ -298,6 +299,31 @@ function index_users() {
 	return ($userindex);
 }
 
+/**
+ * Associate FIDO2 ID with Username from config
+ */
+function index_fido2_creds() {
+	global $config;
+	
+	$fido2index = array();
+
+	foreach($config['system']['user'] as $user) {
+		$entries = $user['fido2entries'];
+		if ($entries) {
+			$fido2index[(key($entries))] = $user['name'];
+			while (next($entries)) {
+				$fido2index[(key($entries))] = $user['name'];
+			}
+		}
+	}
+	return ($fido2index);
+}
+
+function getServerOrigin() {
+	global $config;
+	return (strtolower($config['system']['hostname'] . "." . $config['system']['domain']));
+}
+
 function & getUserEntry($name) {
 	global $debug, $config, $userindex;
 	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
@@ -308,6 +334,15 @@ function & getUserEntry($name) {
 		$user = array();
 		$user['name'] = $name;
 		return $user;
+	}
+}
+
+function & getFido2Entry($id) {
+	global $debug, $config, $fido2index, $userindex;
+	$index = 'cred-'.strtolower($id); //BUG? - an array string index is always lower-case in php, mixed case won't find it
+	if (isset($fido2index[$index])) {
+		$userNum = $userindex[$fido2index[$index]];
+		return $config['system']['user'][$userNum]['fido2entries'][$index];
 	}
 }
 
@@ -468,6 +503,90 @@ function local_backed($username, $passwd) {
 
 	return false;
 }
+
+function getFido2AttestationToUserName($fido2Attestation) {
+	global $debug, $fido2index;
+	try {
+		//JSON Decode Attestation
+		$fcred = json_decode($fido2Attestation);
+		$fId = "cred-".strtolower($fcred->Id);
+		return $fido2index[$fId];
+	}
+	catch (Exception $ex) {
+
+	}
+}
+
+/*
+Process FIDO2 Login Attestation
+*/
+function local_fido2_backend($fido2Attestation, $sChallenge) {
+	global $debug, $fido2index;
+
+	$authResult = false;
+
+	//JSON Decode Attestation sent from client
+	$fAttest = json_decode($fido2Attestation);
+
+	//Grab credentialId from attestation
+	$fId = $fAttest->Id;
+	$index = "cred-".strtolower($fId);
+
+	//Find if credential is registered by its credential ID to any user
+	$fidoent = getFido2Entry($fId);
+	if (!$fidoent) {
+		return false;
+	}
+
+	//Grab Attestation authenticatorData
+	$authData = implode(array_map('chr', explode(",", base64_decode($fAttest->bAuthenticatorData)))); //Probably not the best way to handle serialization from client to server
+
+	//Grab client data and validate origin, webauthn method, and challenge
+	$clientDataJSON = base64_decode($fAttest->bClientDataJSON);
+	$jClientData = json_decode($clientDataJSON);
+	if ($jClientData->type != 'webauthn.get') { return false; }
+
+	//TODO - need to address issue where session is destroyed containing initial challenge
+	// if ($jClientData->challenge != $sChallenge) {
+	// 	//Possible replay attack 
+	// 	return false;
+	// }
+
+	//Validate attestation origin matches server origin
+	if (strtolower(parse_url($jClientData->origin, PHP_URL_HOST)) != getServerOrigin()) { return false; }
+	
+	//Grab signature 
+	$signature = implode(array_map('chr', explode(",", base64_decode($fAttest->bSignature))));
+
+	//Grab hashed client data
+	$hashedClientData = hash('sha256', $clientDataJSON, true);
+
+	//Create signature used for verification
+	$signedData = ($authData . $hashedClientData);
+
+	//Retrieve stored FIDO2 publicKey (encode the key for openssl)
+	$publicKey = explode(",", base64_decode($fidoent["bpublickey"]));
+	$pkeyEncoded = chunk_split(base64_encode(implode(array_map('chr', $publicKey))), 64);
+	$pubKeyFormatted = "-----BEGIN PUBLIC KEY-----\r\n" . $pkeyEncoded . "-----END PUBLIC KEY-----";
+
+	//Peform signature verification against publicKey
+	$authResult = openssl_verify($signedData, $signature, $pubKeyFormatted, OPENSSL_ALGO_SHA256);
+
+	//Find user who has the credential registered
+	$username = $fido2index[$index];
+
+	$user = getUserEntry($username);
+	if (!$user) {
+		return false;
+	}
+
+	if (is_account_disabled($username) || is_account_expired($username)) {
+		return false;
+	}
+
+	return $authResult;
+}
+
 
 function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 	global $debug;
@@ -2082,6 +2201,16 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	return $authenticated;
 }
 
+function authenticate_fido2_user($fido2Attestation, $sChallenge) {
+	$authenticated = false;
+	try {
+		$authenticated = local_fido2_backend($fido2Attestation, $sChallenge);
+	} catch (Exception $e) {
+		log_error(sprintf(gettext("Local fido2 authentication error: %s"), $e->getMessage()));
+	}
+	return $authenticated;
+}
+
 function session_auth() {
 	global $_SESSION, $page;
 
@@ -2098,19 +2227,63 @@ function session_auth() {
 	phpsession_begin();
 
 	// Detect protocol change
-	if (!isset($_POST['login']) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != config_get_path('system/webgui/protocol')) {
+	if ((!isset($_POST['login']) && !isset($_POST['fido2Attestation'])) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != config_get_path('system/webgui/protocol')) {
 		phpsession_end();
 		return false;
 	}
 
 	// Detect IP change
-	if ((!isset($_POST['login'])) && (config_get_path('system/webgui/roaming') == 'disabled') && (!empty($_SESSION['REMOTE_ADDR']) && $_SESSION['REMOTE_ADDR'] != $_SERVER['REMOTE_ADDR'])) {
+	if ((!isset($_POST['login']) && !isset($_POST['fido2Attestation'])) && (config_get_path('system/webgui/roaming') == 'disabled') && (!empty($_SESSION['REMOTE_ADDR']) && $_SESSION['REMOTE_ADDR'] != $_SERVER['REMOTE_ADDR'])) {
 		phpsession_end();
 		return false;
 	}
 
 	/* Validate incoming login request */
 	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
+
+	/* Check if authentication is FIDO2 PublicKey */
+	if (isset($_POST['fido2Attestation']) && !empty($_POST['fido2Attestation']))
+	{
+		//Perform verification of attestation to registered fido2 credentials
+		$fido2auth = authenticate_fido2_user($_POST['fido2Attestation'], $_SESSION['fido2Challenge']);
+
+		if ($fido2auth) {
+
+			//Fetch username from matching registration
+			$username = getFido2AttestationToUserName($_POST['fido2Attestation']);
+
+			// Generate a new id to avoid session fixation
+			session_regenerate_id();
+			$_SESSION['Logged_In'] = "True";
+			$_SESSION['fido2auth'] = "True";
+			$_SESSION['authsource'] = "Local Database";
+			$_SESSION['Username'] = $username;
+			$_SESSION['user_radius_attributes'] = $attributes;
+			$_SESSION['last_access'] = time();
+			$_SESSION['protocol'] = config_get_path('system/webgui/protocol');
+			$_SESSION['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
+			phpsession_end(true);
+			log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $username, get_user_remote_address() . get_user_remote_authsource()));
+			if (isset($_POST['postafterlogin'])) {
+				return true;
+			} else {
+				if (empty($page)) {
+					$page = "/";
+				}
+				header("Location: {$page}");
+			}
+			exit;
+		} else {
+			/* give the user an error message */
+			$_SESSION['Login_Error'] = gettext("FIDO2 Authentication Failed");
+			log_auth(sprintf(gettext("webConfigurator fido2 authentication error from: %1\$s"), get_user_remote_address(false)));
+			if (isAjax()) {
+				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+				return;
+			}
+		} 
+	}
+	
 	if (isset($_POST['login']) && !empty($_POST['usernamefld'])) {
 		$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 		$remoteauth = authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes);

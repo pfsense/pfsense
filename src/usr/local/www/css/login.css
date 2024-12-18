@@ -27,6 +27,7 @@ header {
     bottom:25px;
     width: 100%;
     color: white;
+    overflow: scroll;
 }
 
 .pagebodywarn {
@@ -114,8 +115,8 @@ p.form-title
 
 form.login
 {
-    width: 270px;
-    margin: 0 auto;
+    max-width: 270px;
+    margin: 0 auto 20px auto;
 }
 
 form.login input[type="text"], form.login input[type="password"]

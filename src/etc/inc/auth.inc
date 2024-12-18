@@ -2303,6 +2303,19 @@ function session_auth() {
 	return true;
 }
 
+function print_login_message() {
+	$login_message = htmlentities(base64_decode(config_get_path('system/login_message', '')));
+	if (empty($login_message)) {
+		return '';
+	}
+	$login_message = str_replace(PHP_EOL, '<br />', $login_message);
+	$login_message = '<div><div class="col-sm-2"></div><div class="col-sm-8 text-center">' .
+		'<div class="alert alert-info" style="overflow-wrap:anywhere;margin-top:20px;"><p>' .
+		$login_message .
+		'</p></div></div><div class="col-sm-2"></div></div>';
+
+	return $login_message;
+}
 function print_credit() {
 	global $g;
 

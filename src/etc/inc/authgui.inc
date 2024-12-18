@@ -256,6 +256,7 @@ function display_login_form() {
 	// That ensures we will use the system default theme for the login form.
 	$user_settings = get_user_settings("");
 	$logincssfile = "#1e3f75";
+	$login_message = print_login_message();
 
 	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
 		$logincssfile = "#" . $user_settings['webgui']['logincss'];
@@ -340,9 +341,10 @@ function display_login_form() {
 	        </header>
 
 	        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
+				<?=(empty($login_message) ? '' : $login_message)?>
 	        	<div class="col-sm-4"></div>
 
-	        	<div class="col-sm-4 offset-md-4 logoCol">
+	        	<div class="col-sm-4 offset-md-4 <?=(empty($login_message) ? 'logoCol' : '')?>">
 					<div class="loginCont center-block">
 		                <form method="post" <?=$loginautocomplete?> class="login">
 			                <p class="form-title">Sign In</p>

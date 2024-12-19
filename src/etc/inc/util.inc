@@ -129,14 +129,11 @@ function killbypid($pidfile, $waitfor = 0) {
 }
 
 function isvalidpid(string $pidfile): bool {
-	if (!file_exists($pidfile)) {
-		return false;
-	}
-
 	exec(implode(' ', [
 		'/bin/pkill',
 		'-0',
-		'-F', $pidfile
+		'-F', $pidfile,
+		'2>/dev/null'
 	]), $_out, $ret);
 
 	return ($ret === 0);
@@ -150,8 +147,8 @@ function is_process_running(string $name): bool {
 	exec(implode(' ', [
 		'/bin/pkill',
 		'-0',
-		'-x',
-		escapeshellarg($name)
+		'-x', escapeshellarg($name),
+		'2>/dev/null'
 	]), $_out, $ret);
 
 	return ($ret === 0);
@@ -171,7 +168,8 @@ function sigkillbypid(string $pidfile, string|int $sig, int $waitfor = 0): int {
 	exec(implode(' ', [
 		'/bin/pkill',
 		"-${sig}",
-		'-F', $pidfile
+		'-F', $pidfile,
+		'2>/dev/null'
 	]), $_out, $ret);
 
 	$waitcounter = $waitfor * 10;

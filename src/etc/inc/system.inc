@@ -2115,7 +2115,13 @@ EOD;
 	server {
 		listen 80;
 		listen [::]:80;
-		return 301 https://\$http_host$redirectport\$request_uri;
+		location /.well-known/ {
+			alias /usr/local/www/.well-known/;
+		}
+
+		location / {
+			return 301 https://\$http_host$redirectport\$request_uri;
+		}
 	}
 
 EOD;

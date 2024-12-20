@@ -96,36 +96,26 @@ if ($_REQUEST['getdyndnsstatus']) {
 
 		$hostname = get_dyndns_hostname_text($dyndns);
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
-		$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
-		if (file_exists($filename)) {
-			$ipaddr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'));
-			$cached_ip_s = explode("|", file_get_contents($filename));
-			$cached_ip = $cached_ip_s[0];
-
-			if ($ipaddr != $cached_ip) {
-				print('<span class="text-danger">');
-			} else {
-				print('<span class="text-success">');
+		if (!file_exists($filename)) {
+			$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
+			if (!file_exists($filename)) {
+				print('N/A ' . date("H:i:s"));
+				continue;
 			}
-
-			print(htmlspecialchars($cached_ip));
-			print('</span>');
-		} else if (file_exists($filename_v6)) {
-			$ipv6addr = get_interface_ipv6($dyndns['interface']);
-			$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
-			$cached_ipv6 = $cached_ipv6_s[0];
-
-			if ($ipv6addr != $cached_ipv6) {
-				print('<span class="text-danger">');
-			} else {
-				print('<span class="text-success">');
-			}
-
-			print(htmlspecialchars($cached_ipv6));
-			print('</span>');
-		} else {
-			print('N/A ' . date("H:i:s"));
 		}
+
+		$ipaddr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'));
+		$cached_ip_s = explode("|", file_get_contents($filename));
+		$cached_ip = $cached_ip_s[0];
+
+		if ($ipaddr != $cached_ip) {
+			print('<span class="text-danger">');
+		} else {
+			print('<span class="text-success">');
+		}
+
+		print(htmlspecialchars($cached_ip));
+		print('</span>');
 	}
 
 	exit;

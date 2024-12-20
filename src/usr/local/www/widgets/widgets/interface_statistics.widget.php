@@ -359,7 +359,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 		ifstatObject.url = "/widgets/widgets/interface_statistics.widget.php";
 		ifstatObject.callback = interface_statistics_callback;
 		ifstatObject.parms = postdata;
-		ifstatObject.freq = 5;
+		ifstatObject.freq = 10;
 
 		// Register the AJAX object
 		register_ajax(ifstatObject);

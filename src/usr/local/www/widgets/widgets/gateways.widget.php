@@ -387,7 +387,7 @@ events.push(function(){
 	gatewaysObject.url = "/widgets/widgets/gateways.widget.php";
 	gatewaysObject.callback = gateways_callback;
 	gatewaysObject.parms = postdata;
-	gatewaysObject.freq = 5;
+	gatewaysObject.freq = 20;
 
 	// Register the AJAX object
 	register_ajax(gatewaysObject);

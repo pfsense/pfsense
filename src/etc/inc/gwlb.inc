@@ -628,18 +628,19 @@ function remove_failover_states(?string $gateway_name = null): void {
 	}
 }
 
-function get_dpinger_status($gwname, $action_disable = false) {
-	$running_processes = running_dpinger_processes();
-
-	if (!isset($running_processes[$gwname])) {
-		log_error(sprintf(gettext(
-		    'dpinger: No dpinger session running for gateway %s'),
-		    $gwname));
+function get_dpinger_status($gwitem, $proc) {
+	if (is_array($gwitem)) {
+		// The gateway config from get_gateways()
+		$gwname = $gwitem['name'];
+		$action_disable = isset($gwitem['action_disable']);
+		$gw = $gwitem;
+	} elseif (is_string($gwitem)) {
+		// The gateway no longer exists in the config
+		$gwname = $gwitem;
+		$action_disable = false;
+	} else {
 		return false;
 	}
-
-	$proc = $running_processes[$gwname];
-	unset($running_processes);
 
 	$timeoutcounter = 0;
 	while (true) {
@@ -686,13 +687,6 @@ function get_dpinger_status($gwname, $action_disable = false) {
 
 	$r['srcip'] = $proc['srcip'];
 	$r['targetip'] = $proc['targetip'];
-
-	$gateways_arr = get_gateways();
-
-	unset($gw);
-	if (isset($gateways_arr[$gwname])) {
-		$gw = $gateways_arr[$gwname];
-	}
 
 	$r['latency_avg'] = round($r['latency_avg']/1000, 3);
 	$r['latency_stddev'] = round($r['latency_stddev']/1000, 3);
@@ -753,8 +747,7 @@ function return_gateways_status($byname = false) {
 		 * rather than just "down".  Because reporting the gateway
 		 * down would be misleading (gateway action is disabled)
 		 */
-		$action_disable = $gateways_arr[$gwname]['action_disable'];
-		$dpinger_status = get_dpinger_status($gwname, $action_disable);
+		$dpinger_status = get_dpinger_status(($gateways_arr[$gwname] ?? $gwname), $gwdata);
 		if ($dpinger_status === false) {
 			continue;
 		}

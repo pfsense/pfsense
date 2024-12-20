@@ -4259,20 +4259,21 @@ function get_request_source_address($interface, int|null $address_family = null)
 	}
 
 	// Prefer the source address on the gateway group.
-	$source_address4 = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
-	$source_address6 = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
-
 	if ($address_family == AF_INET) {
-		$source_address = $source_address4;
+		$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
 	} elseif ($address_family == AF_INET6) {
-		$source_address = $source_address6;
+		$source_address = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
 	} else {
-		if (config_path_enabled('system', 'prefer_ipv4') && !empty($source_address4)) {
-			$source_address = $source_address4;
-		} elseif (!empty($source_address6)) {
-			$source_address = $source_address6;
-		} else {
-			$source_address = $source_address4;
+		$prefer_ipv4 = config_path_enabled('system', 'prefer_ipv4');
+		if ($prefer_ipv4) {
+			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+		}
+		if (empty($source_address)) {
+			// Also check IPv6 if IPv4 is preferred but not available.
+			$source_address = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
+		}
+		if (empty($source_address) && !$prefer_ipv4) {
+			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
 		}
 	}
 

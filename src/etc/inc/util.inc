@@ -2701,8 +2701,13 @@ function get_sysctl($names) {
 	$retries = 2;
 	do {
 		$ret = exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output, $status);
-	} while ($ret === false && $retries-- > 0);
-	if ($ret === false) {
+		if ($ret === false || $status != 0) {
+			log_error("Warning: \"/sbin/sysctl -iq " .
+			    implode(" ", $name_list) . "\" returned status: {$status}.  Trying again.");
+			sleep(1);
+		}
+	} while (($ret === false || $status != 0) && $retries-- > 0);
+	if ($ret === false || $status != 0) {
 		log_error("Warning: \"/sbin/sysctl -iq " . implode(" ", $name_list) . "\" returned status: {$status}");
 	}
 

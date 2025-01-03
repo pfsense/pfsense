@@ -609,7 +609,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	}
 
 	if (config_get_path('syslog/logconfigchanges') != "disabled") {
-		log_error(gettext('Configuration Change: ' . config_get_path('revision/description')));
+		log_error(gettext('Configuration Change') . ': ' . config_get_path('revision/description'));
 	}
 
 	cleanup_backupcache(true);

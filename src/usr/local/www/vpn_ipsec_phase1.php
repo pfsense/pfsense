@@ -347,7 +347,7 @@ if ($_POST['save']) {
 
 	if ($pconfig['remotegw'] && !isset($pconfig['disabled'])) {
 		foreach (config_get_path('ipsec/phase1', []) as $ph1tmp) {
-			if ($p1['ikeid'] != $ph1tmp['ikeid']) {
+			if ($pconfig['ikeid'] != $ph1tmp['ikeid']) {
 				$tremotegw = $pconfig['remotegw'];
 				if (($ph1tmp['remote-gateway'] == $tremotegw) && ($ph1tmp['remote-gateway'] != '0.0.0.0') &&
 				    ($ph1tmp['remote-gateway'] != '::') && !isset($ph1tmp['disabled']) &&

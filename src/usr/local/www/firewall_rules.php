@@ -438,11 +438,11 @@ if (!config_path_enabled('system/webgui', 'noantilockout') &&
 	$showantilockout = true;
 }
 
-if (config_path_enabled("interfaces/{$if}", "blockpriv")) {
+if (isset($if) && config_path_enabled("interfaces/{$if}", "blockpriv")) {
 	$showprivate = true;
 }
 
-if (config_path_enabled("interfaces/{$if}", "blockbogons")) {
+if (isset($if) && config_path_enabled("interfaces/{$if}", "blockbogons")) {
 	$showblockbogons = true;
 }
 

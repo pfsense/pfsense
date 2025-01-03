@@ -455,6 +455,14 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 						<span id="uptodate"><i class="fa-solid fa-rotate fa-spin fa-lg text-warning"></i></span>
 					</div>
 				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label">
+					</label>
+					<div class="col-sm-10" id="release_info">
+						<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/releases/versions.html"><?=gettext("Release notes and version information")?></a>
+					</div>
+				</div>
 <?php
 	else:
 ?>

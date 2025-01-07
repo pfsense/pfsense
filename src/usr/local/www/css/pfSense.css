@@ -111,6 +111,9 @@ tr.disabled i.fa-solid, tr.disabled i.fa-regular, tr.disabled i.fa-brands {
 }
 
 tr.disabled a {
+    opacity: .5;
+}
+tr.disabled a:not(".btn") {
     color: rgba(51, 122, 183, .5)
 }
 

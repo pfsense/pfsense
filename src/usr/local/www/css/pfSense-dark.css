@@ -306,6 +306,9 @@ select.form-control:focus {
 }
 
 tr.disabled a {
+    opacity: .5;
+}
+tr.disabled a:not(".btn") {
     color: rgba(0, 150, 136,.5);
 }
 

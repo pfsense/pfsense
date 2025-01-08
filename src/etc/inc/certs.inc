@@ -70,7 +70,7 @@ $crl_max_lifetime = 9999;
 function lookup_ca($refid) {
 	$ca_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('ca', []) as $idx => $ca) {
-		if (empty($ca)) {
+		if (!is_array($cert) || empty($ca)) {
 			continue;
 		}
 		if ($ca['refid'] == $refid) {
@@ -88,7 +88,7 @@ function lookup_ca($refid) {
 function lookup_ca_by_subject($subject) {
 	$ca_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('ca', []) as $idx => $ca) {
-		if (empty($ca)) {
+		if (!is_array($cert) || empty($ca)) {
 			continue;
 		}
 		$ca_subject = cert_get_subject($ca['crt']);
@@ -107,7 +107,7 @@ function lookup_ca_by_subject($subject) {
 function lookup_cert($refid) {
 	$cert_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('cert', []) as $idx => $cert) {
-		if (empty($cert)) {
+		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
 		if ($cert['refid'] == $refid) {
@@ -125,7 +125,7 @@ function lookup_cert($refid) {
 function lookup_cert_by_name($name) {
 	$cert_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('cert', []) as $idx => $cert) {
-		if (empty($cert)) {
+		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
 		if ($cert['descr'] == $name) {
@@ -2382,7 +2382,7 @@ function cert_notify_expiring() {
 	$all_certs = array_merge_recursive(config_get_path('ca', []), config_get_path('cert', []));
 
 	foreach ($all_certs as $cert) {
-		if (empty($cert)) {
+		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
 		/* Proceed only for not revoked certificate if ignore setting enabled */

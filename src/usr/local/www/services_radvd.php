@@ -74,7 +74,7 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	$pconfig['raadvdefaultlifetime'] = config_get_path("dhcpdv6/{$if}/raadvdefaultlifetime");
 
 	$pconfig['radomainsearchlist'] = config_get_path("dhcpdv6/{$if}/radomainsearchlist");
-	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = config_get_path("dhcpdv6/{$if}/radnsserver");
+	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3'], $pconfig['radns4']) = config_get_path("dhcpdv6/{$if}/radnsserver");
 	$pconfig['radvd-dns'] = (config_get_path("dhcpdv6/{$if}/radvd-dns") != 'disabled') ? true : false;
 	$pconfig['rasamednsasdhcp6'] = config_path_enabled("dhcpdv6/{$if}", 'rasamednsasdhcp6');
 
@@ -147,7 +147,7 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3']))) {
+	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3'])) || ($_POST['radns4'] && !is_ipaddrv6($_POST['radns4']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 	}
 	if ($_POST['radomainsearchlist']) {
@@ -224,6 +224,9 @@ if ($_POST['save']) {
 		}
 		if ($_POST['radns3']) {
 			$dhcpd6_config['radnsserver'][] = $_POST['radns3'];
+		}
+		if ($_POST['radns4']) {
+			$dhcpd6_config['radnsserver'][] = $_POST['radns4'];
 		}
 
 		$dhcpd6_config['radvd-dns'] = ($_POST['radvd-dns']) ? "enabled" : "disabled";
@@ -487,8 +490,8 @@ if (is_numeric($pool) || ($act === 'newpool')) {
 	}
 }
 
-// radvd supports up to 3 entries
-for ($idx = 1; $idx <= 3; $idx++) {
+// radvd supports up to 127 entries; allow up to 4 to align with DHCP
+for ($idx = 1; $idx <= 4; $idx++) {
 	$last = $section->addInput(new Form_IpAddress(
 		'radns' . $idx,
 		gettext('DNS Server') . ' '. $idx,

@@ -255,6 +255,20 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\t\tRemoveRoute on;\n";
 		}
 		$radvdconf .= "\t};\n";
+		if (isset($dhcpv6ifconf['ranat64'])) {
+			if (is_string($dhcpv6ifconf['ranat64']) && is_subnetv6($dhcpv6ifconf['ranat64'])) {
+				if (is_numericint($dhcpv6ifconf['ranat64_lifetime'])) {
+					$ranat64_lifetime = $dhcpv6ifconf['ranat64_lifetime'];
+				} else {
+					$ranat64_lifetime = $ramaxrtradvinterval * 3;
+				}
+				$radvdconf .= "\tnat64prefix {$dhcpv6ifconf['ranat64']} {\n";
+				$radvdconf .= "\t\tAdvValidLifetime {$ranat64_lifetime};\n";
+				$radvdconf .= "\t};\n";
+			} else {
+				log_error("radvd: skipping nat64prefix for interface {$dhcpv6if} because the prefix is invalid.");
+			}
+		}
 
 		/* add DNS servers */
 		if ($dhcpv6ifconf['radvd-dns'] != 'disabled') {
@@ -403,6 +417,21 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t\tAdvOnLink on;\n";
 		$radvdconf .= "\t\tAdvAutonomous on;\n";
 		$radvdconf .= "\t};\n";
+
+		if (isset($dhcpv6ifconf['ranat64'])) {
+			if (is_string($dhcpv6ifconf['ranat64']) && is_subnetv6($dhcpv6ifconf['ranat64'])) {
+				if (is_numericint($dhcpv6ifconf['ranat64_lifetime'])) {
+					$ranat64_lifetime = $dhcpv6ifconf['ranat64_lifetime'];
+				} else {
+					$ranat64_lifetime = $ramaxrtradvinterval * 3;
+				}
+				$radvdconf .= "\tnat64prefix {$dhcpv6ifconf['ranat64']} {\n";
+				$radvdconf .= "\t\tAdvValidLifetime {$ranat64_lifetime};\n";
+				$radvdconf .= "\t};\n";
+			} else {
+				log_error("radvd: skipping nat64prefix for interface {$if} because the prefix is invalid.");
+			}
+		}
 
 		/* add DNS servers */
 		if (isset($dhcpv6ifconf['radvd-dns']) && ($dhcpv6ifconf['radvd-dns'] != 'disabled')) {

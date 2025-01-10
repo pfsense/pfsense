@@ -645,7 +645,7 @@ function saveNATrule($post, $id, $json = false) {
 function toggleNATrule($post, $json = false) {
 	// Check for single rule
 	if (!(is_array($post['rule']) && count($post['rule']))) {
-		$post['rule'] = array( $post['id'] => $post['id'] );
+		$post['rule'] = [ $post['id'] ];
 	}
 
 	foreach ($post['rule'] as $rulei) {

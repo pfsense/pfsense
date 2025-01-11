@@ -21,8 +21,6 @@
 
 namespace pfSense\Services\Filesystem\Provider;
 
-use mikehaertl\shellcommand\Command;
-
 use Nette\Utils\{
 	Arrays,
 	Strings
@@ -35,7 +33,6 @@ use Symfony\{
 };
 
 final class SystemProvider extends AbstractProvider {
-	private const DF_BINARY_PATH = '/bin/df';
 
 	public function getFilesystems() {
 		$roots = [];
@@ -82,15 +79,12 @@ final class SystemProvider extends AbstractProvider {
 		$cacheKey = Strings::webalize(__METHOD__);
 
 		return $this->getCacheAdapter()->get($cacheKey, function (ItemInterface $item, &$save) {
-			$cmd = new Command(self::DF_BINARY_PATH);
 
-			$cmd->addArg('--libxo=json')->addArg('-h')->addArg('-T');
+			exec('/bin/df --libxo=json -h -T', $output, $return_code);
 
-			$cmd->execute();
+			$save = (($return_code === 0) && !empty($output[0]));
 
-			$save = ($cmd->getExitCode() === 0) && !empty($cmd->getOutput());
-
-			$retArray = $save ? json_decode($cmd->getOutput(), true) : array();
+			$retArray = $save ? json_decode($output[0], true) : array();
 
 			array_walk_recursive($retArray, function (&$x) { $x = trim($x); });
 

@@ -1163,12 +1163,17 @@ function config_set_path(string $path, $value, $default = null) {
 	}
 	global $config;
 
-	if ($path == '' && !is_array($config)) {
-		// initialize $config when it's being completely replaced
-		$config = [];
+	if ($path == '') {
+		if (!is_array($value)) {
+			return $default;
+		}
+		if (!is_array($config)) {
+			// initialize $config when it's being completely replaced
+			$config = [];
+		}
 	} elseif ($path == '/') {
 		// prevent unintentionally treating $config as a list array
-		return ($default);
+		return $default;
 	}
 
 	return is_array($config) ? array_set_path($config, $path, $value, $default) : $default;

@@ -215,8 +215,8 @@ if ($_POST) {
 			if (!is_array($dn->subqueues) || empty($dn->subqueues)) {
 				continue;
 			}
-			foreach ($dn->subqueues as $queue) {
-				if ($queue->GetQname() == $newname) {
+			foreach ($dn->subqueues as $subqueue) {
+				if ($subqueue->GetQname() == $newname) {
 					$input_errors[] = gettext("Limiters and child queues cannot have the same name.");
 					break 2;
 				}
@@ -295,12 +295,15 @@ if ($_POST) {
 		}
 
 	} else if ($queue) {
-		foreach ($dummynet_pipe_list as $dn) {
-			if ($dn->GetQname() == $newname) {
-				$input_errors[] = gettext("Limiters and child queues cannot have the same name.");
-				break;
+		if ($queue->GetQname() != $newname) {
+			foreach ($dummynet_pipe_list as $dn) {
+				if ($dn->GetQname() == $newname) {
+					$input_errors[] = gettext("Limiters and child queues cannot have the same name.");
+					break;
+				}
 			}
 		}
+
 		if (!$input_errors) {
 			$queue->validate_input($_POST, $input_errors);
 		}

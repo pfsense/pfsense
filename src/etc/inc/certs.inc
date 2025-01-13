@@ -70,7 +70,7 @@ $crl_max_lifetime = 9999;
 function lookup_ca($refid) {
 	$ca_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('ca', []) as $idx => $ca) {
-		if (!is_array($cert) || empty($ca)) {
+		if (!is_array($ca) || empty($ca)) {
 			continue;
 		}
 		if ($ca['refid'] == $refid) {
@@ -88,7 +88,7 @@ function lookup_ca($refid) {
 function lookup_ca_by_subject($subject) {
 	$ca_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('ca', []) as $idx => $ca) {
-		if (!is_array($cert) || empty($ca)) {
+		if (!is_array($ca) || empty($ca)) {
 			continue;
 		}
 		$ca_subject = cert_get_subject($ca['crt']);

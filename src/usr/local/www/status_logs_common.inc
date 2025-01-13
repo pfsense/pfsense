@@ -726,9 +726,8 @@ function manage_log_code() {
 		}
 
 		if (!$input_errors) {
-
-			if (($rotatecount != $syslog_config[$specific_log]['rotatecount']) ||
-			    ($logfilesize != $syslog_config[$specific_log]['logfilesize'])) {
+			if (($rotatecount != array_get_path($syslog_config, "{$specific_log}/rotatecount")) ||
+			    ($logfilesize != array_get_path($syslog_config, "{$specific_log}/logfilesize"))) {
 				$logging_changed = true;
 			}
 

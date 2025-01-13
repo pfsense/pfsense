@@ -677,8 +677,6 @@ function manage_log_code() {
 	phpsession_end();
 
 	if ($save_settings && !$read_only) {
-
-		$input_errors[] = "Shouldn't be here";
 		// Common to All Logs
 		$cronorder = getGETPOSTsettingvalue('cronorder',  null);
 		$nentries = getGETPOSTsettingvalue('nentries', null);

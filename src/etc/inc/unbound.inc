@@ -467,6 +467,8 @@ EOD;
 		if (isset($unboundcfg['qname-minimisation-strict'])) {
 			$qname_min .= "qname-minimisation-strict: yes\n";
 		}
+	} else {
+		$qname_min = "qname-minimisation: no\n";
 	}
 
 	$python_module = '';

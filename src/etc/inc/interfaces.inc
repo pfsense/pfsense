@@ -1895,7 +1895,13 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		case "pppoe":
 		case "pptp":
 		case "l2tp":
-			if (is_array($ppps) && count($ppps)) {
+			if ($ifcfg['ipaddr'] == "pppoe" &&
+			    !config_path_enabled('system',
+			    'use_mpd5_for_pppoe')) {
+				if (does_interface_exist($realif)) {
+					pfSense_interface_destroy($realif);
+				}
+			} elseif (is_array($ppps) && count($ppps)) {
 				foreach ($ppps as  $ppp) {
 					if ($realif == $ppp['if']) {
 						if (isset($ppp['ondemand']) && !$destroy) {

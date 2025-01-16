@@ -1,0 +1,198 @@
+#!/usr/local/bin/php-cgi -f
+<?php
+/*
+ * pppoe-handler
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2025 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+require_once("globals.inc");
+require_once("config.inc");
+require_once("gwlb.inc");
+require_once("util.inc");
+
+function pppoe_add_addrv4($interface, $address) {
+	$tmp = g_get('tmp_path', '');
+	$addresses = get_interface_addresses($interface);
+	if (!is_ipaddrv4($addresses['tunnel'])) {
+		return;
+	}
+	file_put_contents("{$tmp}/{$interface}_router",
+	    $addresses['tunnel']);
+	unlink_if_exists("{$tmp}/{$interface}_router.last");
+	file_put_contents("{$tmp}/{$interface}_ip", $address);
+	touch("{$tmp}/{$interface}up");
+	touch("{$tmp}/{$interface}_upstart4");
+
+	send_event("interface newip {$interface}");
+}
+
+function pppoe_add_addrv6($interface, $address) {
+	$tmp = g_get('tmp_path', '');
+	$addresses = get_interface_addresses($interface);
+	if (!is_ipaddrv6($addresses['tunnel6'])) {
+		return;
+	}
+	file_put_contents("{$tmp}/{$interface}_routerv6",
+	    $addresses['tunnel6']);
+	unlink_if_exists("{$tmp}/{$interface}_routerv6.last");
+	file_put_contents("{$tmp}/{$interface}_ipv6", $address);
+	touch("{$tmp}/{$interface}upv6");
+	touch("{$tmp}/{$interface}_upstart6");
+	touch("{$tmp}/{$interface}_v6_by_pppoe");
+
+	send_event("interface newipv6 {$interface}");
+}
+
+function pppoe_add_addr($interface, $address) {
+	if (is_ipaddrv4($address)) {
+		pppoe_add_addrv4($interface, $address);
+	} elseif (is_linklocal($address)) {
+		/* Nothing to be done here */
+		return;
+	} else {
+		pppoe_add_addrv6($interface, $address);
+	}
+
+	mwexec_bg("/usr/local/sbin/ppp-ipv6 {$interface} up");
+}
+
+function pppoe_add_dns($interface, $address, $append = false) {
+	if (!config_path_enabled('system', 'dnsallowoverride')) {
+		return;
+	}
+
+	$varetc = g_get('varetc_path', '');
+	if (is_ipaddrv4($address)) {
+		$ns_file = "{$varetc}/nameserver_{$interface}";
+	} else {
+		$ns_file = "{$varetc}/nameserver_v6{$interface}";
+	}
+
+	route_add_or_change($address, '', $interface);
+	file_put_contents($ns_file, $address  . "\n",
+	    $append ? FILE_APPEND : 0);
+
+	if ($append) {
+		send_event('service reload dns');
+	}
+}
+
+function pppoe_detach($interface) {
+	$tmp = g_get('tmp_path', '');
+
+	if (file_exists("{$tmp}/{$interface}_defaultgw")) {
+		$current_defaultgw = route_get_default('inet');
+		$defaultgw = trim(@file_get_contents(
+		    "{$tmp}/{$interface}_defaultgw"), " \n");
+		if ($defaultgw == $current_defaultgw) {
+			route_del('default', 'inet');
+		}
+	}
+
+	if (file_exists("{$tmp}/{$interface}_router")) {
+		unlink_if_exists("{$tmp}/{$interface}_router.last");
+		rename("{$tmp}/{$interface}_router",
+		    "{$tmp}/{$interface}_router.last");
+	}
+	unlink_if_exists("{$tmp}/{$interface}_ip");
+	unlink_if_exists("{$tmp}/{$interface}up");
+	unlink_if_exists("{$tmp}/{$interface}_upstart4");
+
+	if (file_exists("{$tmp}/{$interface}_v6_by_pppoe")) {
+		if (file_exists("{$tmp}/{$interface}_routerv6")) {
+			unlink_if_exists("{$tmp}/{$interface}_routerv6.last");
+			rename("{$tmp}/{$interface}_routerv6",
+			    "{$tmp}/{$interface}_routerv6.last");
+		}
+		unlink_if_exists("{$tmp}/{$interface}_ipv6");
+		unlink_if_exists("{$tmp}/{$interface}upv6");
+		unlink_if_exists("{$tmp}/{$interface}_upstart6");
+		unlink_if_exists("{$tmp}/{$interface}_v6_by_pppoe");
+	}
+
+	$varetc = g_get('varetc_path', '');
+	$nsv4_file = "{$varetc}/nameserver_{$interface}";
+	$nsv6_file = "{$varetc}/nameserver_v6{$interface}";
+
+	if (file_exists($nsv4_file) || file_exists($nsv6_file)) {
+		$dns_servers = array();
+		foreach (array($nsv4_file, $nsv6_file) as $ns_file) {
+			if (!file_exists($ns_file)) {
+				continue;
+			}
+			$items = file($ns_file,
+			    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			if (!empty($items)) {
+				$dns_servers = array_merge($dns_servers,
+				    $items);
+			}
+		}
+
+		foreach ($dns_servers as $dns_server) {
+			route_del($dns_server);
+		}
+		unlink_if_exists($nsv4_file);
+		unlink_if_exists($nsv6_file);
+
+		send_event('service reload dns');
+	}
+
+	mwexec_bg("/usr/local/sbin/ppp-ipv6 {$interface} down");
+}
+
+if (config_path_enabled('system', 'use_mpd5_for_pppoe')) {
+	/* Nothing to be done here, system is using mpd5 */
+	return;
+}
+
+if ($argc < 4) {
+	log_error("HOTPLUG event: Missing mandatory parameters!");
+	return;
+}
+$interface = trim($argv[1], " \n\t");
+$action = trim($argv[2], " \n\t");
+$address = '';
+if (!empty($argv[3])) {
+	$address = trim($argv[3], " \n\t");
+}
+
+if (empty($interface)) {
+	log_error("HOTPLUG event: Ignoring event with empty interface");
+	return;
+}
+
+if (!is_ipaddr($address)) {
+	log_error("HOTPLUG event: Invalid IP address {$address}");
+}
+
+switch ($action) {
+case "ADDR_ADD":
+	pppoe_add_addr($interface, $address);
+	break;
+case "ADD_DNS1":
+case "ADD_DNS2":
+	$dns_idx = substr($action, strlen("ADD_DNS"), 1);
+	pppoe_add_dns($interface, $address, $dns_idx == 2);
+	break;
+case "DETACH":
+case "LINK_DOWN":
+	pppoe_detach($interface);
+	break;
+}
+
+?>

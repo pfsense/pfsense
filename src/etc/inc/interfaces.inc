@@ -2250,6 +2250,75 @@ function restart_ppp_interfaces_using_interfaces($triggerinterfaces) {
 	}
 }
 
+function interface_pppoe_get_hostuniq($ppp) {
+	$hostuniq = '';
+
+	if (!empty($ppp['hostuniq'])) {
+		if (preg_match('/^0x[a-fA-F0-9]+$/', $ppp['hostuniq'])) {
+			$hostuniq = strtolower($ppp['hostuniq']) .'|';
+		} elseif (preg_match('/^[a-zA-Z0-9]+$/i', $ppp['hostuniq'])) {
+			$hostuniq = '0x' . bin2hex($ppp['hostuniq']) . '|';
+		}
+	}
+
+	return ($hostuniq);
+}
+
+/*
+ * This function configure PPPoE using if_pppoe kernel module
+ */
+function interface_pppoe_configure($ifcfg, $ppp) {
+
+	if (!is_module_loaded('if_pppoe.ko')) {
+		mwexec('/sbin/kldload if_pppoe.ko');
+	}
+	if (does_interface_exist($ifcfg['if'])) {
+		pfSense_interface_destroy($ifcfg['if']);
+	}
+
+	$tmpiface = pfSense_interface_create2($ifcfg['if']);
+
+	if ($tmpiface != $ifcfg['if']) {
+		log_error(sprintf(gettext("Error creating PPPoE interface %s"),
+		    $ifcfg['if']));
+		return (0);
+	}
+
+	$defaultmtu = "1492";
+	if (!empty($ifcfg['mtu'])) {
+		$defaultmtu = intval($ifcfg['mtu']);
+	}
+	$pppmtu = (empty($ppp['mtu']) ? $defaultmtu : intval($ppp['mtu']));
+	$mtu = min($defaultmtu, $pppmtu);
+	$mtu = min($mtu, get_interface_mtu($ppp['ports']) - 8);
+
+	set_interface_mtu($ifcfg['if'], $mtu);
+
+	$hostuniq = interface_pppoe_get_hostuniq($ppp);
+	$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
+	$authkey = base64_decode($ppp['password']);
+
+	/*
+	 * FIXME debug is very noisy, we need to silence console and save logs
+	 * on proper place
+	 */
+	//exec("/sbin/ifconfig {$ifcfg['if']} debug");
+
+	exec("/sbin/pppcfg {$ifcfg['if']} " .
+	    "pppoedev {$ppp['ports']} pppoesvc \"{$hostuniq}{$provider}\" " .
+	    "authname {$ppp['username']} authkey \"{$authkey}\" 2>&1",
+	    $out, $ret);
+
+	if ($ret != 0) {
+		log_error(sprintf(gettext("Error configuring PPPoE interface %s"),
+		    $ifcfg['if']));
+		return (0);
+	}
+
+	interfaces_bring_up($ppp['ports']);
+	interfaces_bring_up($ifcfg['if']);
+}
+
 /*
  * This function can configure PPPoE, MLPPP (PPPoE), PPTP.
  * It writes the mpd config file to /var/etc every time the link is opened.
@@ -2265,15 +2334,6 @@ function interface_ppps_configure($interface) {
 	$ifcfg = $iface;
 	if (!isset($ifcfg['enable'])) {
 		return 0;
-	}
-
-	// mpd5 requires a /var/spool/lock directory for PPP modem links.
-	if (!is_dir("/var/spool/lock")) {
-		mkdir("/var/spool/lock", 0777, true);
-	}
-	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files
-	if (!file_exists("{$g['varetc_path']}/mpd.script")) {
-		@symlink("/usr/local/sbin/mpd.script", "{$g['varetc_path']}/mpd.script");
 	}
 
 	$pppid = "";
@@ -2298,6 +2358,25 @@ function interface_ppps_configure($interface) {
 	}
 
 	$confports = array_filter(explode(',', $ppp['ports']));
+
+	if (!config_path_enabled('system', 'use_mpd5_for_pppoe') &&
+	    $type == "pppoe" && count($confports) == 1) {
+		return interface_pppoe_configure($ifcfg, $ppp);
+	}
+
+	// mpd5 requires a /var/spool/lock directory for PPP modem links.
+	if (!is_dir("/var/spool/lock")) {
+		mkdir("/var/spool/lock", 0777, true);
+	}
+	/*
+	 * mpd5 modem chat script expected in the same directory as the
+	 * mpd_xxx.conf files
+	 */
+	if (!file_exists("{$g['varetc_path']}/mpd.script")) {
+		@symlink("/usr/local/sbin/mpd.script",
+		    "{$g['varetc_path']}/mpd.script");
+	}
+
 	if ($type == "modem") {
 		$ports = $confports;
 	} else {
@@ -2681,14 +2760,7 @@ EOD;
 EOD;
 		}
 		if ($type == "pppoe") {
-			$hostuniq = '';
-			if (!empty($ppp['hostuniq'])) {
-				if (preg_match('/^0x[a-fA-F0-9]+$/', $ppp['hostuniq'])) {
-					$hostuniq = strtolower($ppp['hostuniq']) .'|';
-				} elseif (preg_match('/^[a-zA-Z0-9]+$/i', $ppp['hostuniq'])) {
-					$hostuniq = '0x' . bin2hex($ppp['hostuniq']) . '|';
-				}
-			}
+			$hostuniq = interface_pppoe_get_hostuniq($ppp);
 			// Send a null service name if none is set.
 			$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD

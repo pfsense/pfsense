@@ -2335,14 +2335,14 @@ function interface_ppps_configure($interface) {
 				}
 
 				if (!is_ipaddr($localips[$pid])) {
-					log_error(sprintf(gettext("Could not get a Local IP address for PPTP/L2TP link on %s in interfaces_ppps_configure. Using 0.0.0.0 ip!"), $port));
+					log_error(sprintf(gettext("Could not get a Local IP address for PPTP/L2TP link on %s in interface_ppps_configure. Using 0.0.0.0 ip!"), $port));
 					$localips[$pid] = "0.0.0.0";
 				}
 				if (!g_get('booting') && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
 					$gateways[$pid] = gethostbyname($gateways[$pid]);
 				}
 				if (!is_ipaddr($gateways[$pid])) {
-					log_error(sprintf(gettext('Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in interfaces_ppps_configure.'), $localips[$pid], $ppp['gateway']));
+					log_error(sprintf(gettext('Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in interface_ppps_configure.'), $localips[$pid], $ppp['gateway']));
 					return 0;
 				}
 				break;

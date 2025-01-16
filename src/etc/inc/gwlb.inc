@@ -48,9 +48,9 @@ if (!array_key_exists('GatewaysCache', $GLOBALS)) {
 /**
  * Caches the gateway list and filters the result. Changes to gateways should
  * call refresh_gateways(), e.g. when adding or removing dynamic gateways.
- * 
+ *
  * @param array $flags Additional gateways to include.
- * 
+ *
  * @return array filtered list of gateways
  */
 function get_gateways(int $flags = 0): array {
@@ -440,9 +440,9 @@ function setup_gateways_monitor() {
  * failover gateway group. A failover tier is any tier number greater than the
  * lowest configured tier number. A failover gateway group must consist of at
  * least two different tiers.
- * 
+ *
  * @param string $gateway_group Name of an existing failover gateway group
- * 
+ *
  * @return int The tier number - returns 0 if no matches are found
  * @return false Not a valid failover gateway group
  */
@@ -514,7 +514,7 @@ function get_highest_failover_tier_online(?string $gateway_group): int|false {
  * Loops through each gateway group and kills states for lower-priority gateways.
  * Supports the same gateway at different tiers in different gateway groups. A
  * failover gateway group name may be provided to restrict the state removal.
- * 
+ *
  * @param string $gateway_name Gateway group name to remove failover states for
  */
 function remove_failover_states(?string $gateway_name = null): void {
@@ -1988,7 +1988,7 @@ function gateway_is_gwgroup_member($name, $detail=false) {
 	if (empty($members)) {
 		return false;
 	}
-	
+
 	return $members;
 }
 /*

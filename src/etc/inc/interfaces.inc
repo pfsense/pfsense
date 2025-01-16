@@ -342,7 +342,7 @@ function interface_has_clones($if) {
 
 /**
  * Configure the child VLAN interfaces for a parent interface.
- * 
+ *
  * @param bool $skip_parent_mtu Skip setting the parent interface's MTU
  */
 function interfaces_vlan_configure($parentif = "", $skip_parent_mtu = false) {
@@ -386,7 +386,7 @@ function interfaces_vlan_configure($parentif = "", $skip_parent_mtu = false) {
 
 /**
  * Configure a VLAN interface.
- * 
+ *
  * @param bool $skip_parent_mtu Skip setting the parent interface's MTU
  */
 function interface_vlan_configure(&$vlan, $flush = true, $skip_parent_mtu = false) {
@@ -4050,7 +4050,7 @@ function interface_mtu_wanted_for_pppoe($realif) {
 
 /**
  * Applies the configured settings for an interface.
- * 
+ *
  * @param bool $skip_parent_mtu Skip setting the parent interface's MTU
  */
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false, $skip_parent_mtu = false) {
@@ -6696,7 +6696,7 @@ function get_interface_linklocal($interface = "wan") {
 /**
  * Get the first IPv6 address that is not a VIP or Link-Local address.
  * Prioritize IPv6 GUA over ULA.
- * 
+ *
  * @param string $interface Interface to check
  * @return array|bool IP address and prefix length; false If no match is found
  */

@@ -320,6 +320,17 @@ $section->addInput(new Form_Checkbox(
     'states associated with the previous IP Address.');
 
 $form->add($section);
+$section = new Form_Section('Network Interfaces');
+
+$section->addInput(new Form_Checkbox(
+	'use_mpd5_for_pppoe',
+	'Use mpd5 for PPPoE client',
+	'Use mpd5 for PPPoE client (DEPRECATED)',
+	$pconfig['use_mpd5_for_pppoe']
+))->setHelp('Checking this option will force the system to use mpd5 to dial '.
+    'PPPoE. Keep unchecked to use the if_pppoe kernel module.');
+
+$form->add($section);
 print $form;
 ?>
 

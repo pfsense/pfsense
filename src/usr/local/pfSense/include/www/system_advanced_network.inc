@@ -40,6 +40,7 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['sharednet'] = config_path_enabled('system', 'sharednet') ? config_get_path('system/sharednet') : null;
 	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
 	$pconfig['ip_change_kill_states'] = config_path_enabled('system', 'ip_change_kill_states') ? config_get_path('system/ip_change_kill_states') : null;
+	$pconfig['use_mpd5_for_pppoe'] = config_path_enabled('system', 'use_mpd5_for_pppoe');
 	$pconfig['hnaltqenable'] = config_path_enabled('system', 'hn_altq_enable');
 	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
 	$pconfig['disablesegmentationoffloading'] = config_path_enabled('system', 'disablesegmentationoffloading');
@@ -187,7 +188,8 @@ function saveAdvancedNetworking($post, $json = false) {
 
 		if ((isset($post['disablechecksumoffloading']) xor config_path_enabled('system', 'disablechecksumoffloading')) ||
 		    (isset($post['disablesegmentationoffloading']) xor config_path_enabled('system', 'disablesegmentationoffloading')) ||
-		    (isset($post['disablelargereceiveoffloading']) xor config_path_enabled('system', 'disablelargereceiveoffloading'))) {
+		    (isset($post['disablelargereceiveoffloading']) xor config_path_enabled('system', 'disablelargereceiveoffloading')) ||
+		    (isset($post['use_mpd5_for_pppoe']) xor config_path_enabled('system', 'use_mpd5_for_pppoe'))) {
 			$show_reboot_msg = true;
 		}
 
@@ -219,6 +221,12 @@ function saveAdvancedNetworking($post, $json = false) {
 			config_set_path('system/ip_change_kill_states', true);
 		} else {
 			config_del_path('system/ip_change_kill_states');
+		}
+
+		if ($post['use_mpd5_for_pppoe'] == "yes") {
+			config_set_path('system/use_mpd5_for_pppoe', true);
+		} else {
+			config_del_path('system/use_mpd5_for_pppoe');
 		}
 
 		setup_microcode();

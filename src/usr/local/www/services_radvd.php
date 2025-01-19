@@ -48,7 +48,7 @@ if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6", 'none');
 		if (!config_path_enabled("dhcpdv6/{$ifent}") &&
-			!(($ifaddr == 'track6') || ($ifaddr == 'none') ||
+				!(($ifaddr == 'track6') || ($ifaddr == 'none') ||
 		    (is_ipaddrv6($ifaddr) &&
 		    !is_linklocal($ifaddr)))) {
 			continue;

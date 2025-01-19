@@ -48,7 +48,7 @@ if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$ifaddr = config_get_path("interfaces/{$ifent}/ipaddrv6", 'none');
 		if (!config_path_enabled("dhcpdv6/{$ifent}") &&
-		!(($ifaddr == 'track6') || ($ifaddr == 'none') ||
+			!(($ifaddr == 'track6') || ($ifaddr == 'none') ||
 		    (is_ipaddrv6($ifaddr) &&
 		    !is_linklocal($ifaddr)))) {
 			continue;
@@ -262,7 +262,7 @@ if ($_POST['save']) {
 		$dhcpd6_config['ramode'] = $_POST['ramode'];
 		$dhcpd6_config['rapriority'] = $_POST['rapriority'];
 		$dhcpd6_config['rainterface'] = $_POST['rainterface'];
-	
+
 		$dhcpd6_config['ravalidlifetime'] = $_POST['ravalidlifetime'];
 		$dhcpd6_config['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
 		$dhcpd6_config['raminrtradvinterval'] = $_POST['raminrtradvinterval'];

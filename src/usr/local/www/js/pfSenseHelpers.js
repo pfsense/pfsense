@@ -444,7 +444,7 @@ $('[id^=addrow]').click(function() {
 	add_row($(this).attr("id"));
 });
 
-$('[id^=delete]').click(function() {
+$('[id^=delete]').click(function(event) {
 	var groupName = getRowGroupName($(this).attr("id"));
 	if($('.repeatable' + groupName).length > 1) {
 		if ((typeof retainhelp) == "undefined")

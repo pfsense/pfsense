@@ -234,10 +234,10 @@ if ($_POST['save']) {
 	    ($_POST['ravalidlifetime'] < $_POST['rapreferredlifetime'])) ||
 	    ($_POST['ravalidlifetime'] && empty($_POST['rapreferredlifetime']) &&
 	    ($_POST['ravalidlifetime'] < 14400)) || (empty($_POST['ravalidlifetime']) &&
-	    $_POST['rapreferredlifetime'] && ($_POST['rapreferredlifetime'] > 86400))) { 
+	    $_POST['rapreferredlifetime'] && ($_POST['rapreferredlifetime'] > 86400))) {
 		$input_errors[] = gettext("Default valid lifetime must be greater than Default preferred lifetime.");
 	}
-	
+
 	if (!empty($pconfig['ranat64'])) {
 		if (is_subnetv6($pconfig['ranat64'])) {
 			list($pconfig['ranat64_address'], $pconfig['ranat64_mask']) = explode('/', $pconfig['ranat64']);
@@ -262,7 +262,7 @@ if ($_POST['save']) {
 		$dhcpd6_config['ramode'] = $_POST['ramode'];
 		$dhcpd6_config['rapriority'] = $_POST['rapriority'];
 		$dhcpd6_config['rainterface'] = $_POST['rainterface'];
-		
+	
 		$dhcpd6_config['ravalidlifetime'] = $_POST['ravalidlifetime'];
 		$dhcpd6_config['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
 		$dhcpd6_config['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
@@ -398,7 +398,7 @@ $section->addInput(new Form_Select(
 	'*'.gettext('Router Priority'),
 	$pconfig['rapriority'],
 	$priority_modes
-	))->setHelp(gettext('Select the Priority for the RA Daemon.'));
+))->setHelp(gettext('Select the Priority for the RA Daemon.'));
 
 $carplist = get_configured_vip_list("inet6", VIP_CARP);
 
@@ -425,7 +425,7 @@ if (count($carplistif) > 0) {
 		gettext('RA Interface'),
 		$pconfig['rainterface'],
 		$iflist
-		))->setHelp(gettext('Select the Interface for the Router Advertisement (RA) Daemon.'));
+	))->setHelp(gettext('Select the Interface for the Router Advertisement (RA) Daemon.'));
 }
 
 $section->addInput(new Form_Input(
@@ -435,7 +435,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ravalidlifetime'],
 	['min' => 1, 'max' => 655350, 'placeholder' => 86400]
 ))->setHelp(gettext('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.%1$s' .
-	'The default is 86400 seconds.'), '<br />');
+'The default is 86400 seconds.'), '<br />');
 
 $section->addInput(new Form_Input(
 	'rapreferredlifetime',
@@ -444,7 +444,7 @@ $section->addInput(new Form_Input(
 	$pconfig['rapreferredlifetime'],
 	['placeholder' => 14400]
 ))->setHelp(gettext('The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via SLAAC remain preferred.%1$s' .
-	'The default is 14400 seconds.'), '<br />');
+			'The default is 14400 seconds.'), '<br />');
 
 $section->addInput(new Form_Input(
 	'raminrtradvinterval',
@@ -453,7 +453,7 @@ $section->addInput(new Form_Input(
 	$pconfig['raminrtradvinterval'],
 	['min' => 3, 'max' => 1350, 'placeholder' => 200]
 ))->setHelp(gettext('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
-	'The default is 200 seconds.'), '<br />');
+'The default is 200 seconds.'), '<br />');
 
 $section->addInput(new Form_Input(
 	'ramaxrtradvinterval',
@@ -462,7 +462,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ramaxrtradvinterval'],
 	['min' => 4, 'max' => 1800, 'placeholder' => 600]
 ))->setHelp(gettext('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
-	'The default is 600 seconds.'), '<br />');
+'The default is 600 seconds.'), '<br />');
 
 if (isset($pconfig['raadvdefaultlifetime']) &&
     is_numeric($pconfig['raadvdefaultlifetime'])) {
@@ -472,7 +472,7 @@ if (isset($pconfig['raadvdefaultlifetime']) &&
 	$raadvdefaultlifetime = $pconfig['ramaxrtradvinterval'] * 3;
 } else {
 	$raadvdefaultlifetime = 1800;
-}	
+}
 
 $section->addInput(new Form_Input(
 	'raadvdefaultlifetime',
@@ -481,26 +481,26 @@ $section->addInput(new Form_Input(
 	$pconfig['raadvdefaultlifetime'],
 	['min' => 1, 'max' => 9000, 'placeholder' => $raadvdefaultlifetime]
 ))->setHelp(gettext('The lifetime associated with the default router in seconds.%1$s' .
-	'The default is 3 * Maximum RA interval seconds.'), '<br />');
+'The default is 3 * Maximum RA interval seconds.'), '<br />');
 
 
-	$section->addInput(new Form_IpAddress(
-		'ranat64_address',
-		gettext('NAT64 Prefix'),
-		($pconfig['ranat64_address'] ?? ''),
-		'V6'
-	))->addClass('autotrim')->addMask('ranat64_mask', ($pconfig['ranat64_mask'] ?? 128))->setWidth(5)->setHelp(
-		'Specify a NAT64 prefix to enable PREF64 support. This is typically set to "64:ff9b::/96".'
-	);
-	$section->addInput(new Form_Input(
-		'ranat64_lifetime',
-		gettext('NAT64 Prefix Lifetime'),
-		'number',
-		$pconfig['ranat64_lifetime'],
-		['min' => 1, 'max' => 65528, 'placeholder' => (intval(array_get_path($pconfig, 'ramaxrtradvinterval', 600)) * 3)]
-	))->setHelp(gettext('The length of time in seconds (relative to the time
-		the packet is sent) that the prefix is valid for the purpose of NAT64
-		existence determination. The default is 3 * Maximum RA Interval seconds.'
+$section->addInput(new Form_IpAddress(
+	'ranat64_address',
+	gettext('NAT64 Prefix'),
+	($pconfig['ranat64_address'] ?? ''),
+	'V6'
+))->addClass('autotrim')->addMask('ranat64_mask', ($pconfig['ranat64_mask'] ?? 128))->setWidth(5)->setHelp(
+	'Specify a NAT64 prefix to enable PREF64 support. This is typically set to "64:ff9b::/96".'
+);
+$section->addInput(new Form_Input(
+	'ranat64_lifetime',
+	gettext('NAT64 Prefix Lifetime'),
+	'number',
+	$pconfig['ranat64_lifetime'],
+	['min' => 1, 'max' => 65528, 'placeholder' => (intval(array_get_path($pconfig, 'ramaxrtradvinterval', 600)) * 3)]
+))->setHelp(gettext('The length of time in seconds (relative to the time
+	the packet is sent) that the prefix is valid for the purpose of NAT64
+	existence determination. The default is 3 * Maximum RA Interval seconds.'
 ));
 
 if (empty($pconfig['subnets'])) {

@@ -5068,6 +5068,9 @@ function discover_pkg_rules($ruletype) {
 		    $pkg_config['include_file']));
 
 		$tmprules = $pkg_generate_rules("$ruletype");
+		if (empty($tmprules)) {
+			continue;
+		}
 		file_put_contents("{$g['tmp_path']}/rules.test.packages",
 		    $aliases . $tmprules);
 		$status = mwexec(

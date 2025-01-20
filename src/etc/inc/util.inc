@@ -878,7 +878,16 @@ function is_ipaddrv6($ipaddr) {
 	if (substr_count($ipaddr, '::') > 1) {
 		return false;
 	}
-	return Net_IPv6::checkIPv6($ipaddr);
+	/*
+	 * Net_IPv6::checkIPv6 does not properly handle addresses with extra segments
+	 * when compression is also used.
+	 * https://redmine.pfsense.org/issues/16005
+	 */
+	try {
+		return Net_IPv6::checkIPv6($ipaddr);
+	} catch (\Throwable $th) {
+		return false;
+	}
 }
 
 function is_ipaddrv6_v4map($ipaddr) {

@@ -563,6 +563,10 @@ if ($_POST['save']) {
 	}
 
 	if (isset($_POST['ipprotocol']) && $_POST['gateway'] <> '') {
+		if (($_POST['ipprotocol'] == "inet6") && $_POST['nat']) {
+			$input_errors[] = gettext("NAT64 rules cannot use specific gateways.");
+		}
+
 		foreach (config_get_path('gateways/gateway_group',[]) as $gw_group) {
 			if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
 				if ($_POST['ipprotocol'] == "inet46") {

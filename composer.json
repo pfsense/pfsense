@@ -1,11 +1,11 @@
 {
     "name": "pfsense/pfsense",
     "require": {
-        "mikehaertl/php-shellcommand": "^1.6",
-        "symfony/cache": "^5.3",
-        "nette/utils": "^3.2",
-        "simplepie/simplepie": "^1.7",
-        "twig/twig": "^3.7"
+        "mikehaertl/php-shellcommand": "^1.7",
+        "symfony/cache": "^7.2",
+        "nette/utils": "^4.0",
+        "simplepie/simplepie": "^1.8",
+        "symfony/console": "^7.2"
     },
     "autoload": {
         "psr-4": {

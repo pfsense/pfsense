@@ -240,7 +240,7 @@ function disks_compose_widget_user_body($widget_config) {
 		}
 	}
 
-	return $has_user_row ? $tbody : null;
+	return $has_user_row ? $tbody : '';
 }
 
 function disks_compose_widget_tree_body() {

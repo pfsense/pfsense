@@ -1276,7 +1276,10 @@ function setup_loader_settings($path = "", $upgrade = false) {
 
 	$data = load_loader_conf($loader_conf_file, false);
 
-	$data[] = 'loader_conf_files="/boot/loader.conf.lua"';
+	/* The armv7 port do not use the lua loader. */
+	if (!is_arch('arm', true)) {
+		$data[] = 'loader_conf_files="/boot/loader.conf.lua"';
+	}
 
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';

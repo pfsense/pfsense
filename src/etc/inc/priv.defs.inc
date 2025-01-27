@@ -538,6 +538,12 @@ $priv_list['page-services-acb-backup']['descr'] = gettext("Create a new auto con
 $priv_list['page-services-acb-backup']['match'] = array();
 $priv_list['page-services-acb-backup']['match'][] = "services_acb_backup.php*";
 
+$priv_list['page-services-acb-changekey'] = array();
+$priv_list['page-services-acb-changekey']['name'] = gettext("WebCfg - Services: Auto Config Backup: Change Device Key");
+$priv_list['page-services-acb-changekey']['descr'] = gettext("Change the auto config backup device key.");
+$priv_list['page-services-acb-changekey']['match'] = array();
+$priv_list['page-services-acb-changekey']['match'][] = "services_acb_changekey.php*";
+
 $priv_list['page-services-acb-settings'] = array();
 $priv_list['page-services-acb-settings']['name'] = gettext("WebCfg - Services: Auto Config Backup: Settings");
 $priv_list['page-services-acb-settings']['descr'] = gettext("Configure the auto config backup system.");

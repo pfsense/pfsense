@@ -632,17 +632,19 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		run_plugins("/usr/local/pkg/write_config/");
 	}
 
-	// Try the core AutoConfigBackup system
+	/* Trigger AutoConfigBackup if necessary. */
+	require_once("acb.inc");
+	global $acb_force_file;
 	$acb_config = config_get_path('system/acb', []);
-	if ($acb_config['enable'] == "yes" &&
-	    (!isset($acb_config['frequency']) || $acb_config['frequency'] == "every") || file_exists("/tmp/forceacb")) {
-	    if ($doacb) {
-			require_once("acb.inc");
-			upload_config($manual_acb);
+	if (acb_enabled() &&
+	    (!isset($acb_config['frequency']) ||
+	    ($acb_config['frequency'] == "every")) ||
+	    file_exists($acb_force_file)) {
+		if ($doacb) {
+			acb_backup_stage_upload($manual_acb);
 		}
-
-		if (file_exists("/tmp/forceacb")) {
-			unlink("/tmp/forceacb");
+		if (file_exists($acb_force_file)) {
+			unlink($acb_force_file);
 		}
 	}
 

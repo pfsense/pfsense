@@ -1,6 +1,6 @@
 <?php
 /*
- * autoconfigbackup_backup.php
+ * services_acb_backup.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
@@ -32,27 +32,37 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("acb.inc");
 
+$input_errors = [];
+
 if ($_POST) {
-	if ($_REQUEST['nooverwrite']) {
-		touch("/tmp/acb_nooverwrite");
-	}
-
-	touch("/tmp/forceacb");
-
-	if ($_REQUEST['reason']) {
-		if (write_config($_REQUEST['reason'] . "-MaNuAlBaCkUp")) {
-			$savemsg = "Backup queued successfully.";
+	/* Check backup reason string length. Service limit is 1024 but some of
+	 *  that is consumed by the backup creator string and auth database. */
+	if (!empty($_POST['reason'])) {
+		if (strlen($_POST['reason']) > 900) {
+			$input_errors[] = gettext("Reason text must be less than 900 characters in length.");
 		}
-	} elseif (write_config("Backup invoked via Auto Config Backup." . "-MaNuAlBaCkUp")) {
-			$savemsg = "Backup queued successfully.";
-	} else {
-		$savemsg = "Backup not completed - write_config() failed.";
+		if (is_acb_ignored_reason($_POST['reason'])) {
+			$input_errors[] = gettext("Reason text contains keywords ignored by AutoConfigBackup and will not be uploaded.");
+		}
 	}
 
-	config_read_file(true);
-	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
 
-	$donotshowheader = true;
+	if (empty($input_errors)) {
+		global $acb_force_file, $acb_last_backup_file;
+		touch($acb_force_file);
+		if ($_POST['reason']) {
+			if (write_config($_POST['reason'] . "-MaNuAlBaCkUp")) {
+				$savemsg = gettext('Backup queued successfully.');
+			}
+		} elseif (write_config(gettext('Backup invoked via Auto Config Backup.') . '-MaNuAlBaCkUp')) {
+			$savemsg = gettext('Backup queued successfully.');
+		} else {
+			$savemsg = gettext('Backup not completed -- write_config() failed.');
+		}
+
+		config_read_file(true);
+		unlink_if_exists($acb_last_backup_file);
+	}
 }
 
 $pgtitle = array("Services", "Auto Configuration Backup", "Backup Now");
@@ -67,33 +77,47 @@ if ($input_errors) {
 $tab_array = array();
 $tab_array[] = array("Settings", false, "/services_acb_settings.php");
 $tab_array[] = array("Restore", false, "/services_acb.php");
-$tab_array[] = array("Backup now", true, "/services_acb_backup.php");
+$tab_array[] = array("Backup Now", true, "/services_acb_backup.php");
 display_top_tabs($tab_array);
 
-$form = new Form("Backup", config_get_path('system/acb/enable') === "yes");
+$form = new Form("Backup", acb_enabled());
 
-$section = new Form_Section('Backup Details');
+if (acb_enabled()) {
+	$section = new Form_Section('Backup Details');
 
-$section->addInput(new Form_Input(
-	'reason',
-	'Revision Reason',
-	'text',
-	$_REQUEST['reason']
-))->setWidth(7)->setHelp("Enter the reason for the backup");
+	$section->addInput(new Form_Input(
+		'reason',
+		'Revision Reason',
+		'text',
+		$_POST['reason']
+	))->setWidth(7)->setHelp('Enter the reason for the backup. ' .
+		'Must be 900 characters in length or less.');
 
-$form->add($section);
+	$form->add($section);
 
-$section2 = new Form_Section('Device key');
+	$section = new Form_Section('Device Key');
 
-$section2->addInput(new Form_Input(
-	'devkey',
-	'Device key',
-	'text',
-	$userkey
-))->setWidth(7)->setReadonly()->setHelp("ID used to identify this firewall (derived from the SSH public key.) " .
-	"Keep a record of this key in case you should ever need to recover this backup on another firewall.");
+	$userkey = get_acb_device_key();
 
-$form->add($section2);
+	$section->addInput(new Form_Input(
+		'devkey',
+		'Device Key',
+		'text',
+		$userkey
+	))->setWidth(7)->setReadonly()->setHelp('Unique key which identifies backups associated with this device.%1$s%1$s' .
+		'%2$sKeep a secure copy of this value!%3$s %4$s%1$s' .
+		'If this key is lost, all backups for this device will be lost!',
+		'<br/>', '<strong>', '</strong>', acb_key_download_link('device', $userkey));
+
+	$form->add($section);
+} else {
+	$section = new Form_Section('AutoConfigBackup Disabled');
+	$section->addInput(new Form_StaticText(
+		null,
+		'The AutoConfigBackup service is currently disabled, manual backups are not possible.'
+	))->setHelp('Enable AutoConfigBackup on the %sSettings tab%s.', '<a href="services_acb_settings.php">', '</a>');
+	$form->add($section);
+}
 
 print($form);
 ?>
@@ -103,8 +127,8 @@ print($form);
 events.push(function() {
 	$(form).submit(function(e) {
 		e.preventDefault();
-		encpwd = '<?=config_get_path("system/acb/encryption_password")?>';
-		if ( encpwd.length === 0) {
+		encpwdl = '<?=strlen(config_get_path("system/acb/encryption_password")) ?>';
+		if ( encpwdl === 0) {
 			alert('<?=gettext("No encryption password has been set")?>');
 		} else if ($('#devkey').val().length === 0 ) {
 			alert('<?=gettext("No device key has been specified")?>');
@@ -119,4 +143,3 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc"); ?>
-

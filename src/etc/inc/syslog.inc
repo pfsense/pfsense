@@ -364,6 +364,13 @@ local5.*							{$g['varlog_path']}/nginx.log
 
 EOD;
 	}
+
+	$syslogconf .= <<<EOD
+!*
+:msg, startswith, "if_pppoe: "
+*.*								{$g['varlog_path']}/ppp.log
+EOD;
+
 	if (config_path_enabled('syslog', 'vpn')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.*");
 	}

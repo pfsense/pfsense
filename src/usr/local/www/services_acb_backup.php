@@ -127,7 +127,7 @@ print($form);
 events.push(function() {
 	$(form).submit(function(e) {
 		e.preventDefault();
-		encpwdl = '<?=strlen(config_get_path("system/acb/encryption_password")) ?>';
+		encpwdl = '<?=strlen(config_get_path("system/acb/encryption_password", ''))?>';
 		if ( encpwdl === 0) {
 			alert('<?=gettext("No encryption password has been set")?>');
 		} else if ($('#devkey').val().length === 0 ) {

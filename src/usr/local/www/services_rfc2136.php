@@ -123,7 +123,7 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 	} elseif (file_exists($filename_v6)) {
 		$ipv6addr = get_interface_ipv6($if);
 		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
-		$cached_ipv6 = $cached_ip_s[0];
+		$cached_ipv6 = $cached_ipv6_s[0];
 
 		if ($ipv6addr == $cached_ipv6) {
 			$icon_class = "fa-solid fa-check-circle";
@@ -168,10 +168,6 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 		print('IPv4: ');
 		print("<span class='{$text_class}'>");
 		print(htmlspecialchars($cached_ip));
-		print('</span>');
-	} elseif (file_exists($filename_v6)) {
-		print("<span class='{$text_class}'>");
-		print(htmlspecialchars($cached_ipv6));
 		print('</span>');
 	} else {
 		print('IPv4: N/A');

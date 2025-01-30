@@ -5159,9 +5159,6 @@ EOD;
 				    "{$dnsupdate['host']}. A\n";
 				$upinst .= "update add {$dnsupdate['host']}. " .
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
-				if (!empty($bindip)) {
-					$upinst .= "local {$bindip}\n";
-				}
 				$need_update = true;
 			} else {
 				log_error(sprintf(gettext(
@@ -5190,6 +5187,10 @@ EOD;
 		} else {
 			@unlink($cacheFilev6);
 			unset($cacheFilev6);
+		}
+
+		if ($need_update && !empty($bindip)) {
+			$upinst .= "local {$bindip}\n";
 		}
 
 		$upinst .= "\n";	/* mind that trailing newline! */

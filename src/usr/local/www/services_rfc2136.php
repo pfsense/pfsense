@@ -142,15 +142,15 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 							</td>
 							<td>
 <?php
-	foreach ($iflist as $if => $ifdesc) {
-		if ($rfc2136['interface'] == $if) {
+	foreach ($iflist as $ifname => $ifdesc) {
+		if ($rfc2136['interface'] == $ifname) {
 			print($ifdesc);
 			break;
 		}
 	}
-	foreach ($groupslist as $if => $group) {
-		if ($rfc2136['interface'] == $if) {
-			print($if);
+	foreach ($groupslist as $ifname => $group) {
+		if ($rfc2136['interface'] == $ifname) {
+			print($ifname);
 			break;
 		}
 	}

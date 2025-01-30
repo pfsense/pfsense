@@ -96,15 +96,17 @@ if ($_REQUEST['getdyndnsstatus']) {
 
 		$hostname = get_dyndns_hostname_text($dyndns);
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
+		$address_family = AF_INET;
 		if (!file_exists($filename)) {
 			$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
+			$address_family = AF_INET6;
 			if (!file_exists($filename)) {
 				print('N/A ' . date("H:i:s"));
 				continue;
 			}
 		}
 
-		$ipaddr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'));
+		$ipaddr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'), $address_family);
 		$cached_ip_s = explode("|", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 

@@ -103,7 +103,7 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 
 	if (file_exists($filename)) {
 		if (isset($rfc2136['usepublicip'])) {
-			$ipaddr = dyndnsCheckIP($if);
+			$ipaddr = dyndnsCheckIP($if, null, AF_INET);
 		} else {
 			$ipaddr = get_interface_ip($if);
 		}

@@ -5033,7 +5033,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
-			$wanip = dyndnsCheckIP($if, array_get_path($dnsupdate, 'check_ip_mode'));
+			$wanip = dyndnsCheckIP($if, null, AF_INET);
 			if (!$wanip || is_private_ip($wanip)) {
 				log_error(sprintf(gettext(
 				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),

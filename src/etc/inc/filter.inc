@@ -754,12 +754,39 @@ function filter_generate_scrubbing() {
 		} else {
 			$scrubifname6 = $scrubcfg['descr'];
 		}
-		/* set up MSS clamping */
+
+		$mss = null;
 		if (($scrubcfg['mss'] <> "") &&
 		    (is_numeric($scrubcfg['mss']))) {
+			$mss = intval($scrubcfg['mss']);
+		} elseif (!config_path_enabled('system',
+		    'use_mpd5_for_pppoe')) {
+			$ppps = config_get_path('ppps/ppp', []);
+			foreach ($ppps as $pppid => $ppp) {
+				if ($scrubcfg['if'] != $ppp['if']) {
+					continue;
+				}
+				if (isset($ppp['tcpmssfix'])) {
+					break;
+				}
+
+				/*
+				 * mpd5 has the tcpmssfix option, which is on
+				 * by default and will adjust MSS accordingly.
+				 * Since if_pppoe doesn't have it, we need to
+				 * force MSS using pf scrub otherwise connection
+				 * will be very unhappy
+				 */
+				$mss = get_interface_mtu($scrubcfg['if']);
+				break;
+			}
+		}
+
+		/* set up MSS clamping */
+		if ($mss) {
 			/* different size of IPv4/IPv6 header, https://redmine.pfsense.org/issues/11409 */
-			$mssclamp4 = "max-mss " . (intval($scrubcfg['mss'] - 40));
-			$mssclamp6 = "max-mss " . (intval($scrubcfg['mss'] - 60));
+			$mssclamp4 = "max-mss " . ($mss - 40);
+			$mssclamp6 = "max-mss " . ($mss - 60);
 		} else {
 			$mssclamp4 = "";
 			$mssclamp6 = "";

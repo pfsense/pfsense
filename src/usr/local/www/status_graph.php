@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -251,10 +251,10 @@ $realif = get_real_interface($curif);
 ?>
 
 <script src="/vendor/d3/d3.min.js?v=<?=filemtime('/usr/local/www/vendor/d3/d3.min.js')?>"></script>
-<script src="/vendor/nvd3/nv.d3.js?v=<?=filemtime('/usr/local/www/vendor/nvd3/nv.d3.js')?>"></script>
+<script src="/vendor/nvd3/nv.d3.min.js?v=<?=filemtime('/usr/local/www/vendor/nvd3/nv.d3.min.js')?>"></script>
 <script src="/vendor/visibility/visibility-1.2.3.min.js?v=<?=filemtime('/usr/local/www/vendor/visibility/visibility-1.2.3.min.js')?>"></script>
 
-<link href="/vendor/nvd3/nv.d3.css" media="screen, projection" rel="stylesheet" type="text/css">
+<link href="/vendor/nvd3/nv.d3.min.css" media="screen, projection" rel="stylesheet" type="text/css">
 
 <script type="text/javascript">
 

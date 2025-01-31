@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -45,10 +45,6 @@ $rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECI
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat.php');
 
 $ifdisp = get_configured_interface_with_descr();
-
-config_init_path('filter/rule');
-config_init_path('nat/separator');
-config_init_path('nat/rule');
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -208,7 +204,7 @@ $section->addInput(new Form_Select(
 
 $btnsrcadv = new Form_Button(
 	'btnsrcadv',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -475,7 +471,9 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-gen_created_updated_fields($form, config_get_path("nat/rule/{$id}/created"), config_get_path("nat/rule/{$id}/updated"));
+if (isset($id)) {
+	gen_created_updated_fields($form, config_get_path("nat/rule/{$id}/created"), config_get_path("nat/rule/{$id}/updated"));
+}
 
 if (isset($id) && config_get_path("nat/rule/{$id}")) {
 	$form->addGlobal(new Form_Input(
@@ -577,7 +575,7 @@ events.push(function() {
 		}
 	}
 
-	var customarray	 = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var customarray	 = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
 	function check_for_aliases() {
 		//	if External port range is an alias, then disallow
@@ -668,7 +666,11 @@ events.push(function() {
 
 	function dst_change(iface, old_iface, old_dst) {
 		if ((old_dst == "") || (old_iface.concat("ip") == old_dst)) {
-			$('#dsttype').val(iface + "ip");
+			if ($("#dsttype option[value='" + iface + "ip" + "']").length > 0) {
+				$('#dsttype').val(iface + "ip");
+			} else {
+				$('#dsttype').val("single");
+			}
 		}
 	}
 
@@ -681,7 +683,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Hide Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnsrcadv').children();
+		$('#btnsrcadv').text(text).prepend(children);
 	}
 
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------
@@ -756,8 +759,8 @@ if (!$_POST) {
 	nordr_change();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
-	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network,urltable')) ?>;
+	var customarray = <?= json_encode(get_alias_list('port,url_ports,urltable_ports')) ?>;
 
 	$('#localip, #src, #dst').autocomplete({
 		source: addressarray

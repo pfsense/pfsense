@@ -7,8 +7,7 @@
  *
  */
 
-// parse config.xml
-config_set_path('', parse_config(true));
+config_read_file(true);
 
 refresh_gateways(); // make sure we're working on a current gateway list
 $a_gateways = get_gateways(GW_CACHE_INDEXED);

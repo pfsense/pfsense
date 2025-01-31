@@ -3,7 +3,7 @@
  * system_advanced_notifications.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +28,6 @@ require_once("util.inc");
 require_once("pfsense-utils.inc");
 
 // Functions included by system_advanced_notifications.php ====================
-
-config_init_path('notifications/certexpire');
-config_init_path('notifications/smtp');
-config_init_path('notifications/telegram');
-config_init_path('notifications/pushover');
-config_init_path('notifications/slack');
 
 function getAdvancedNotifications($json = false) {
 	$nconfig = array();

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * Copyright (c) 2022-2024 Louis van Breda
  * All rights reserved.
@@ -48,6 +48,22 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("syslog.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 /* Enable or disable debugging (detail level depending on removed ^//DEBUG^statements */
 $DebugOn = false;
 /* Debugging options */
@@ -84,7 +100,9 @@ if ($_REQUEST['widgetkey'] && !$_REQUEST['ajax']) {
 	}
 	unset($acts);
 
-	if (($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All")) {
+	if ($_POST['filterlogentriesinterfaces'] &&
+	    ($_POST['filterlogentriesinterfaces'] != "All") &&
+	    array_key_exists($_POST['filterlogentriesinterfaces'], get_configured_interface_with_descr())) {
 		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
 	} else {
 		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterfaces']);
@@ -106,11 +124,6 @@ $date0 = new DateTime($date);
 
 if ($DebugOn) { $logContent .= date($dateFormat)."_^START^".PHP_EOL; }
 
-// When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
-// When the ajax call is made to refresh the firewall log table, 'widgetkey' comes in $_REQUEST.
-if ($_REQUEST['widgetkey']) {
-	$widgetkey = $_REQUEST['widgetkey'];
-}
 //DEBUG: $logContent .= date($dateFormat)."_After request widgetkey".PHP_EOL;
 
 $iface_descr_arr = get_configured_interface_with_descr();
@@ -130,7 +143,7 @@ $filterfieldsarray = array(
 );
 //DEBUG: $logContent .= date($dateFormat)."_After filling_filter array".PHP_EOL;
 
-$nentriesinterval = isset($user_settings['widgets'][$widgetkey]['filterlogentriesinterval']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterval'] : 60;
+$nentriesinterval = is_numeric($user_settings['widgets'][$widgetkey]['filterlogentriesinterval']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterval'] : 60;
 //DEBUG: $logContent .= date($dateFormat)."_After entries_interval".PHP_EOL;
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
@@ -322,7 +335,7 @@ if (!$_REQUEST['ajax']) {
 			<td><i class="<?=$resultent['iconfn']?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$resultent['rulenum']},{$resultent['tracker']},{$resultent['act']}"; ?>', outputrule);"
 			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($resultent['rule'])?>">
 			</a></td>
-			<td title="<?=htmlspecialchars($resultent['time'])?>"><?=substr(htmlspecialchars($resultent['time']),0,-3)?></td>
+			<td title="<?=htmlspecialchars($resultent['time'])?>"><?=htmlspecialchars($resultent['time'])?></td>
 			<td><?=htmlspecialchars($resultent['interface']);?></td>
 			<td><a href="diag_dns.php?host=<?=$resultent['srcip']?>"
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$resultent['srcIP']?></a>
@@ -397,7 +410,7 @@ events.push(function(){
 	logsObject.url = "/widgets/widgets/log.widget.php";
 	logsObject.callback = logs_callback;
 	logsObject.parms = postdata;
-	logsObject.freq = <?=$nentriesinterval?>/5;
+	logsObject.freq = <?=$nentriesinterval?>;
 
 	// Register the AJAX object
 	register_ajax(logsObject);

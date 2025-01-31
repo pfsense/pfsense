@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,7 +32,7 @@ require_once("syslog.inc");
 // Status Logs Common - Code
 function status_logs_common_code() {
 	global $g, $user_settings, $specific_log, $nentries, $rawfilter, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
-	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view;
+	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view, $input_errors;
 
 	$logfile_path = "{$g['varlog_path']}/" . basename($logfile);
 	/* Only add .log suffix if necessary */
@@ -56,8 +56,17 @@ function status_logs_common_code() {
 		$nentries = g_get('default_log_entries');
 	}
 
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+	phpsession_end();
+
 	if ($_POST['clear']) {
-		clear_log_file($logfile_path);
+		if (!$read_only) {
+			clear_log_file($logfile_path);
+		} else{
+			$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+		}
 	}
 
 	/* Setup shortcuts if they exist */
@@ -637,8 +646,7 @@ function manage_log_code() {
 	$changes_applied = false;
 	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
-	config_init_path("syslog/{$specific_log}");
-	$syslog_config = config_get_path('syslog');
+	$syslog_config = config_get_path('syslog', []);
 
 	// Common to All Logs
 	$pconfig['cronorder'] = isset($syslog_config[$specific_log]['cronorder']) ? $syslog_config[$specific_log]['cronorder'] : null;
@@ -663,8 +671,12 @@ function manage_log_code() {
 
 	$save_settings = getGETPOSTsettingvalue('save_settings', null);
 
-	if ($save_settings) {
+	phpsession_begin();
+	$guiuser = getUserEntry($_SESSION['Username']);
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+	phpsession_end();
 
+	if ($save_settings && !$read_only) {
 		// Common to All Logs
 		$cronorder = getGETPOSTsettingvalue('cronorder',  null);
 		$nentries = getGETPOSTsettingvalue('nentries', null);
@@ -714,9 +726,8 @@ function manage_log_code() {
 		}
 
 		if (!$input_errors) {
-
-			if (($rotatecount != $syslog_config[$specific_log]['rotatecount']) ||
-			    ($logfilesize != $syslog_config[$specific_log]['logfilesize'])) {
+			if (($rotatecount != array_get_path($syslog_config, "{$specific_log}/rotatecount")) ||
+			    ($logfilesize != array_get_path($syslog_config, "{$specific_log}/logfilesize"))) {
 				$logging_changed = true;
 			}
 
@@ -816,6 +827,9 @@ function manage_log_code() {
 				}
 			}
 		}
+	} elseif ($save_settings) {
+		/* Save Settings code path, but read only user. */
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
 	}
 }
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,7 +63,7 @@ function save_setupwizard_config(
 	config_set_path('system/timeservers', $timeservers);
 
 	// WAN ========================================================================================================================
-	$if_wan_config = config_get_path('interfaces/wan');
+	$if_wan_config = config_get_path('interfaces/wan', []);
 	setorforget($if_wan_config['spoofmac'], $spoofmac);
 	setorforget($if_wan_config['mtu'], $mtu);
 	setorforget($if_wan_config['mss'], $mss);
@@ -71,19 +71,18 @@ function save_setupwizard_config(
 	config_set_path('interfaces/wan', $if_wan_config);
 
 	if ($bogons == "on") {
-		config_set_path('interfaces/wan/blockbogons', "on");
+		config_set_path('interfaces/wan/blockbogons', true);
 	} else {
 		config_del_path('interfaces/wan/blockbogons');
 	}
 
 	if ($rfc1918 == "on") {
-		config_set_path('interfaces/wan/blockpriv', "on");
+		config_set_path('interfaces/wan/blockpriv', true);
 	} else {
 		config_del_path('interfaces/wan/blockpriv');
 	}
 
 	if (strlen($wangateway) > 0) {
-		config_init_path('gateways/gateway_item');
 		$found = false;
 		$defaultgw_found = false;
 		$gwlist = config_get_path('gateways/gateway_item', []);
@@ -117,13 +116,14 @@ function save_setupwizard_config(
 	$pppfg = array();
 	$type = $wantype;
 
-	config_init_path('ppps/ppp');
 	if (count(config_get_path('ppps/ppp', []))) {
 		foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
 			if ($ppp['ptpid'] == "0") {
 				if ((substr(config_get_path('interfaces/wan/if'),0,5) == "pppoe") || (substr(config_get_path('interfaces/wan/if'),0,4) == "pptp")) {
 					$oldif = explode(",", $ppp['ports']);
-					config_set_path('interfaces/wan/if', $oldif[0]);
+					if (!empty($oldif[0])) {
+						config_set_path('interfaces/wan/if', $oldif[0]);
+					}
 				}
 				if ($type == "pppoe" || $type == "pptp")
 					config_del_path("ppps/ppp/{$pppid}");
@@ -164,9 +164,6 @@ function save_setupwizard_config(
 
 	config_set_path('interfaces/lan/ipaddr', $addr);
 	config_set_path('interfaces/lan/subnet', $mask);
-
-	config_init_path('dhcpd/lan/range/from');
-	config_init_path('dhcpd/lan/range/to');
 
 	if (!ip_in_subnet(config_get_path('dhcpd/lan/range/from'), "{$addr}/{$mask}") ||
 	    !ip_in_subnet(config_get_path('dhcpd/lan/range/to'), "{$addr}/{$mask}")) {

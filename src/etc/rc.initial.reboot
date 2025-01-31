@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -45,7 +45,7 @@ if (!is_module_loaded("zfs.ko")) {
 
 echo gettext("Enter an option:") . " ";
 
-switch (chop(fgets($fp))) {
+switch (strtoupper(chop(fgets($fp)))) {
 	case "S":
 		mwexec('/sbin/nextboot -o "-s" -k kernel');
 		$msg = sprintf(gettext("%s is rebooting into single user mode now."), $g['product_label']);
@@ -70,7 +70,8 @@ switch (chop(fgets($fp))) {
 		system_reboot_sync(true);
 		break;
 	case "Y":
-	case "y":
+	case "YE":
+	case "YES":
 		$msg = sprintf(gettext("%s is rebooting now."), $g['product_label']);
 		echo "\n" . $msg . "\n";
 		notify_all_remote($msg);

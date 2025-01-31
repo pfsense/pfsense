@@ -4,7 +4,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -484,6 +484,10 @@ $('.container .panel-heading a.config').each(function (idx, el){
 
 // Initial state & toggle icons of collapsed panel
 $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+	// Avoid modifying configuration button
+	if ($(el).hasClass('config')) {
+		return true;
+	}
 	var body = $(el).parents('.panel').children('.panel-body')
 	var isOpen = body.hasClass('in');
 
@@ -887,3 +891,19 @@ function buttonsmode(tag, buttons) {
 $('input.autotrim').on('change', function () {
 	$(this).val($(this).val().replace(/\s/g, ''));
 });
+
+function arraysEqual(arr1, arr2) {
+	if (arr1.length !== arr2.length) {
+		return false;
+	}
+
+	var sortedArr1 = arr1.slice().sort();
+	var sortedArr2 = arr2.slice().sort();
+
+	for (var i = 0; i < sortedArr1.length; i++) {
+		if (sortedArr1[i] !== sortedArr2[i]) {
+			return false;
+		}
+	}
+	return true;
+}

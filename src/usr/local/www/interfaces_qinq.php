@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,10 +31,8 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-config_init_path('qinqs/qinqentry');
-
 if ($_POST['act'] == "del") {
-	$id = $_POST['id'];
+	$id = is_numericint($_POST['id']) ? $_POST['id'] : null;
 
 	/*
 	 * Check user privileges to test if the user is allowed to make changes.
@@ -43,7 +41,7 @@ if ($_POST['act'] == "del") {
 	 */
 	phpsession_begin();
 	$guiuser = getUserEntry($_SESSION['Username']);
-	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
 	phpsession_end();
 
 	if ($read_only) {

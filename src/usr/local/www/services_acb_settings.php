@@ -1,11 +1,11 @@
 <?php
 /*
- * autoconfigbackup_settings.php
+ * services_acb_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -44,48 +44,67 @@ if (isset($_POST['save'])) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	/* input validation */
+	/* Input Validation */
 	$reqdfields = explode(" ", "encryption_password");
 	$reqdfieldsn = array(gettext("Encryption password"));
-
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (strlen($_POST['encryption_password']) < 8) {
-		$input_errors[] = gettext("The encryption password must contain at least 8 characters");
+	/* Check Enable */
+	if (!empty($_POST['enable']) &&
+	    ($_POST['enable'] != 'yes')) {
+		$input_errors[] = gettext("Invalid Enable value.");
 	}
 
+	/* Check Encryption Password */
+	if (strlen($_POST['encryption_password']) < 8) {
+		$input_errors[] = gettext("Encryption Password must contain at least 8 characters");
+	}
 	$update_ep = false;
-
-	// Validate form contents
 	if ($_POST['encryption_password'] != "********") {
 		if ($_POST['encryption_password'] != $_POST['encryption_password_confirm']) {
-			$input_errors[] = gettext("Encryption password and confirmation do not match");
+			$input_errors[] = gettext("Encryption Password and confirmation value do not match");
 		} else {
 			$update_ep = true;
 		}
 	}
 
+	/* Check Backup Frequency */
 	if (!in_array($_POST['frequency'], ['cron', 'every'])) {
-		$input_errors[] = gettext("Invalid frequency value.");
+		$input_errors[] = gettext("Invalid frequency value");
 	}
 
 	if ($_POST['frequency'] === 'cron') {
 		if (!preg_match('/^[0-9\*\/\-\,]+$/', $_POST['minute'] . $_POST['hour'] . $_POST['day'] . $_POST['month'] . $_POST['dow']))  {
-			$input_errors[] = gettext("Schedule values may only contain 0-9 - , / *");
+			$input_errors[] = gettext("Schedule values may only contain the following characters: 0-9 - , / *");
 		}
 	}
 
-	if ((int)$_POST['numman'] > (int)"50" ) {
-		$input_errors[] = gettext("You may not retain more than 50 manual backups.");
+	/* Check Hint/Identifier */
+	if (!empty($_POST['hint']) &&
+	    (strlen($_POST['hint']) > 255)) {
+		$input_errors[] = gettext("Hint/Identifier must be less than 255 characters in length.");
 	}
 
-	$pwd = "";
+	/* Check Manual backup limit */
+	if (!empty($_POST['numman']) &&
+	    !is_numericint($_POST['numman'])) {
+		$input_errors[] = gettext("Manual Backup Limit must be blank or an integer.");
+	}
+	if ((int)$_POST['numman'] < 0) {
+		$input_errors[] = gettext("Manual Backup Limit cannot be negative.");
+	}
+	if ((int)$_POST['numman'] > 50) {
+		$input_errors[] = gettext("Manual Backup Limit cannot be larger than 50.");
+	}
 
+	/* Check Descending Date Order */
+	if (!empty($_POST['reverse']) &&
+	    ($_POST['reverse'] != 'yes')) {
+		$input_errors[] = gettext("Invalid Descending Date Order value.");
+	}
+
+	/* Store updated ACB configuration */
 	if (!$input_errors) {
-		if($update_ep) {
-			$pwd = $pconfig['encryption_password'];
-		}
-
 		$pconfig = setup_ACB(
 			$pconfig['enable'],
 			$pconfig['hint'],
@@ -97,7 +116,7 @@ if (isset($_POST['save'])) {
 			$pconfig['dow'],
 			$pconfig['numman'],
 			$pconfig['reverse'],
-			$pwd
+			($update_ep ? $pconfig['encryption_password'] : "")
 		);
 	}
 }
@@ -112,7 +131,7 @@ if ($input_errors) {
 $tab_array = array();
 $tab_array[] = array("Settings", true, "/services_acb_settings.php");
 $tab_array[] = array("Restore", false, "/services_acb.php");
-$tab_array[] = array("Backup now", false, "/services_acb_backup.php");
+$tab_array[] = array("Backup Now", false, "/services_acb_backup.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -185,8 +204,40 @@ $group->add(new Form_Input(
 ))->setHelp("Day of week (0-6)");
 
 $group->addClass("cronsched");
-$group->setHelp(sprintf('Use * ("every"), divisor or exact value.  Minutes are randomly chosen by default. See %s for more information.',
+$group->setHelp(sprintf('Use * ("every"), divisor, or exact value.  Minutes are randomly chosen by default. See %s for more information.',
 	'<a href="https://www.freebsd.org/cgi/man.cgi?crontab(5)" target="_blank">Cron format</a>'));
+$section->add($group);
+
+$group = new Form_Group("Device Key");
+
+$userkey = get_acb_device_key();
+$legacy_key = get_acb_legacy_device_key();
+$legacy_string = "";
+if (is_valid_acb_device_key($legacy_key) &&
+    ($legacy_key == $userkey)) {
+	$legacy_string = sprintf(gettext('%1$s%1$sThis is a legacy style key derived from the SSH public key.%1$s' .
+				'The best practice is to change this key to a randomized key using the ' .
+				'%2$sChange Key%3$s button.'),
+				'<br/>', '<strong>', '</strong>');
+}
+
+$group->add(new Form_Input(
+	'devkey',
+	'Device Key',
+	'text',
+	$userkey
+))->setWidth(7)->setReadonly()->setHelp('Unique key which identifies backups associated with this device.%1$s%1$s' .
+	'%2$sKeep a secure copy of this value!%3$s %4$s%1$s' .
+	'If this key is lost, all backups for this device will be lost!%5$s',
+	'<br/>', '<strong>', '</strong>', acb_key_download_link('device', $userkey), $legacy_string);
+
+$group->add(new Form_Button(
+	'changekey',
+	'Change Key',
+	null,
+	'fa-solid fa-key'
+))->addClass('btn-info btn-xs');
+
 $section->add($group);
 
 $section->addPassword(new Form_Input(
@@ -194,28 +245,34 @@ $section->addPassword(new Form_Input(
 	'*Encryption Password',
 	'password',
 	$pconfig['encryption_password']
-))->setHelp("The best practice for security is to use a long and complex password.");
+))->setHelp('AutoConfigBackup uses this string to encrypt the contents of the backup before upload. ' .
+	'The best practice for security is to use a long and complex string.%1$s%1$s' .
+	'%2$sKeep a secure copy of this value!%3$s%1$s' .
+	'If this password is lost, any backups encrypted with this string will be unreadable!',
+	'<br/>', '<strong>', '</strong>');
 
 $section->addInput(new Form_Input(
 	'hint',
 	'Hint/Identifier',
 	'text',
 	$pconfig['hint']
-))->setHelp("You may optionally provide an identifier which will be stored in plain text along with each encrypted backup. " .
-			"This may allow the Netgate support team to locate your key should you lose it.");
+))->setHelp("Optional identifier which AutoConfigBackup will store in plain text along with each encrypted backup. " .
+	"This may allow Netgate TAC to recover a device key should it become lost.");
 
 $section->addInput(new Form_Input(
 	'numman',
-	'Manual backups to keep',
+	'Manual Backup Limit',
 	'number',
-	$pconfig['numman']
-))->setHelp("It may be useful to specify how many manual backups are retained on the server so that automatic backups do not overwrite them." .
-			"A maximum of 50 retained manual backups (of the 100 total backups) is permitted.");
+	$pconfig['numman'],
+	['min'=>'0', 'max'=>'50']
+))->setHelp("Number of manual backup entries AutoConfigBackup will retain on the server, " .
+	"which will not be overwritten by automatic backups. " .
+	"The maximum value is 50 retained manual backups out of the 100 total entries.");
 
 $section->addInput(new Form_Checkbox(
 	'reverse',
-	'Descending Order by Date',
-	'List backups in descending order',
+	'Descending Date Order',
+	'List backups in descending order by revision date/time',
 	($pconfig['reverse'] == "yes")
 ))->setHelp("List backups in descending order (newest first) when viewing the restore section.");
 
@@ -228,13 +285,19 @@ print $form;
 
 <script type="text/javascript">
 //<![CDATA[
-	events.push(function() {
-		$('input:radio[name=frequency]').click(function() {
-			hideClass("cronsched", ($(this).val() != 'cron'));
-		});
-
-		hideClass("cronsched", ("<?=htmlspecialchars($pconfig['frequency'])?>" != 'cron'));
+events.push(function() {
+	$('input:radio[name=frequency]').click(function() {
+		hideClass("cronsched", ($(this).val() != 'cron'));
 	});
+
+	hideClass("cronsched", ("<?=htmlspecialchars($pconfig['frequency'])?>" != 'cron'));
+
+	$('#changekey').click(function(event) {
+		event.preventDefault();
+		$(location).prop('href', "/services_acb_changekey.php");
+	});
+
+});
 //]]>
 </script>
 

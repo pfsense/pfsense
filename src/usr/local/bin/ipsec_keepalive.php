@@ -4,7 +4,7 @@
  * ipsec_keepalive.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2021-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2021-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,6 @@
 include_once('ipsec.inc');
 include_once('service-utils.inc');
 include_once('gwlb.inc');
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/phase2');
 
 $debug = false;
 

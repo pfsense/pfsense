@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -43,14 +43,11 @@ if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	exit;
 }
 
-config_init_path('captiveportal');
-config_init_path("voucher/{$cpzone}/roll");
-
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Vouchers"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_vouchers.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_roll_config = isset($id) ? config_get_path("voucher/{$cpzone}/roll/{$id}") : null;
 if ($this_roll_config) {

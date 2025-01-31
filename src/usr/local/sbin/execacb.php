@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Erik Kristensen
  * All rights reserved.
  *
@@ -26,15 +26,18 @@
  * limitations under the License.
  */
 
- // Called from cron, this script makes a remote backup of the current configuration
- // via the ACB system
+/*
+ * This script is called by cron to perform a periodic scheduled backup of the
+ * current configuration using the AutoConfigBackup service.
+ */
 
- require_once("config.inc");
- require_once("acb.inc");
+require_once("acb.inc");
 
- if (config_get_path('system/acb/enable') == "yes") {
- 	write_config("Scheduled backup");
- 	upload_config();
- }
-
- ?>
+if (acb_enabled()) {
+	if (is_acb_upload_needed()) {
+		write_config(gettext('Scheduled Backup via AutoConfigBackup'));
+		acb_backup_stage_upload();
+	} else {
+		log_error(gettext('Skipping AutoConfigBackup scheduled backup (no changes since previous backup)'));
+	}
+}

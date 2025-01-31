@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -62,14 +62,12 @@ if (!$if) {
 	exit;
 }
 
-config_init_path("dhcpd/{$if}/staticmap");
-config_init_path("dhcpd/{$if}/pool");
 $static_arp_enabled = config_path_enabled("dhcpd/{$if}", 'staticarp');
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_map_config = isset($id) ? config_get_path("dhcpd/{$if}/staticmap/{$id}") : null;
 if ($this_map_config) {
@@ -266,10 +264,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary WINS servers.");
 	}
 
-	$parent_ip = get_interface_ip($_POST['if']);
+	$parent_ip = get_interface_ip($if);
 	if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
-		$parent_sn = get_interface_subnet($_POST['if']);
-		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {
+		$parent_sn = get_interface_subnet($if);
+		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($if, $_POST['gateway'])) {
 			$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 		}
 	}
@@ -499,8 +497,9 @@ display_isc_warning();
 
 $form = new Form();
 
-$section = new Form_Section(sprintf(gettext('Static DHCP Mapping on %s'), $ifcfgdescr));
+$section = new Form_Section(gettext('Static DHCP Mapping'));
 
+if (!dhcp_is_backend('kea')):
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
 	match (dhcp_get_backend()) {
@@ -509,6 +508,7 @@ $section->addInput(new Form_StaticText(
 		default => gettext('Unknown')
 	}
 ));
+endif;
 
 $macaddress = new Form_Input(
 	'mac',
@@ -540,7 +540,7 @@ $section->add($group);
 $cid_help = gettext('An optional identifier to match based on the value sent by the client (RFC 2132).');
 if (dhcp_is_backend('kea')) {
 	$cid_help .= '<br /><br />';
-	$cid_help .= gettext('Kea DHCP will only match on MAC address if both MAC address and client identifier are set for a static reservation.');
+	$cid_help .= gettext('Kea DHCP will match on MAC address if both MAC address and client identifier are set for a static mapping.');
 }
 
 $section->addInput(new Form_Input(
@@ -564,8 +564,8 @@ $section->addInput(new Form_IpAddress(
 
 $section->addInput(new Form_Checkbox(
 	'arp_table_static_entry',
-	gettext('ARP Table Static Entry'),
-	gettext('Create an ARP Table Static Entry for this MAC & IP Address pair.'),
+	gettext('Static ARP Entry'),
+	gettext('Create a static ARP table entry for this MAC & IP Address pair.'),
 	$pconfig['arp_table_static_entry']
 ));
 
@@ -853,7 +853,7 @@ $section->addInput(new Form_Input(
 // Advanced Network Booting options
 $btnadv = new Form_Button(
 	'btnadvnwkboot',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -1074,7 +1074,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvdns').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvdns').children();
+		$('#btnadvdns').text(text).prepend(children);
 	}
 
 	$('#btnadvdns').click(function(event) {
@@ -1111,7 +1112,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvntp').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvntp').children();
+		$('#btnadvntp').text(text).prepend(children);
 	}
 
 	$('#btnadvntp').click(function(event) {
@@ -1145,7 +1147,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvtftp').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvtftp').children();
+		$('#btnadvtftp').text(text).prepend(children);
 	}
 
 	$('#btnadvtftp').click(function(event) {
@@ -1179,7 +1182,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvldap').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvldap').children();
+		$('#btnadvldap').text(text).prepend(children);
 	}
 
 	$('#btnadvldap').click(function(event) {
@@ -1214,7 +1218,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -1256,7 +1261,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvnwkboot').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvnwkboot').children();
+		$('#btnadvnwkboot').text(text).prepend(children);	
 	}
 
 	$('#btnadvnwkboot').click(function(event) {

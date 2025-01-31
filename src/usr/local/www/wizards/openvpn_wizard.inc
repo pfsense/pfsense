@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -494,7 +494,6 @@ function step12_submitphpaction() {
 			$auth['radius_secret'] = $pconfig['step2']['password'];
 			$auth['radius_srvcs'] = "auth";
 		}
-		config_init_path('system/authserver');
 
 		config_set_path('system/authserver/', $auth);
 	} else if (!isset($pconfig['step2']['uselist']) && empty($pconfig['step2']['authserv'])) {
@@ -581,8 +580,6 @@ function step12_submitphpaction() {
 		}
 
 		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");
-		config_init_path('cert');
-
 		config_set_path('cert/', $cert);
 	} else if (!isset($pconfig['step9']['uselist']) && empty($pconfig['step9']['authcertname'])) {
 		$message = "Please choose a Certificate.";
@@ -733,8 +730,7 @@ function step12_submitphpaction() {
 		config_set_path('filter/rule/', $rule);
 	}
 
-	config_init_path('openvpn/openvpn-server');
-	config_set_path('openvpn/openvpn-server', $server);
+	config_set_path('openvpn/openvpn-server/', $server);
 
 	openvpn_resync('server', $server);
 	write_config(gettext("OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."));

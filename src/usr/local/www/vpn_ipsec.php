@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -40,9 +40,6 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 
 global $p1_authentication_methods;
-
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/phase2');
 
 $items_deleted = false;
 

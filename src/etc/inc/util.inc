@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -24,6 +24,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 //require_once('interfaces.inc');
 require_once('Net/IPv6.php');
 define('VIP_ALL', 1);
@@ -45,30 +46,112 @@ define('SPECIALNET_IFSUB', 9);
 define('SPECIALNET_IFNET', 10);
 define('SPECIALNET_GROUP', 11);
 define('SPECIALNET_VIPS', 12);
+define('SPECIALNET_IFADDR4', 13);
+define('SPECIALNET_IFADDR6', 14);
+define('SPECIALNET_VIPALIAS', 15);
 define('SPECIALNET_CHECKPERM', 98);
 define('SPECIALNET_EXCLUDE', 99);
+
+function v6_range_to_prefixlen(string $start, string $end): string|false {
+	$start_packed = inet_pton(Net_IPv6::uncompress($start, true));
+	$end_packed = inet_pton(Net_IPv6::uncompress($end, true));
+	if ($start_packed === false || $end_packed === false) {
+		return (false);
+	}
+
+	$len = 0;
+	foreach (str_split($start_packed ^ $end_packed) as $char) {
+		$byte = ord($char);
+		for ($i = 7; $i >= 0; $i--) {
+			if (($byte >> $i) & 1) {
+				break 2;
+			}
+			$len++;
+		}
+	}
+
+	return ($len);
+}
+
+/**
+ * Test the machine type
+ *
+ * @param string $arch		The architecture to test for
+ * @param bool $strict		Use strict architecture matching
+ *
+ * @return bool
+ */
+function is_arch(string $arch, bool $strict = false): bool
+{
+	$sys_arch = php_uname('m');
+	return (($arch == $sys_arch) || (!$strict && str_contains($sys_arch, $arch)));
+}
+
+/**
+ * Test if the machine type is any arm
+ *
+ * @return bool
+ */
+function is_arm(): bool
+{
+	return (is_arch('arm', false));
+}
+
+/**
+ * Test if the machine type is amd64
+ *
+ * @return bool
+ */
+function is_amd64(): bool
+{
+	return (is_arch('amd64', true));
+}
+
+/**
+ * Test if the machine type is arm64
+ */
+function is_arm64(): bool
+{
+	return (is_arch('arm64', true));
+}
+
+/**
+ * Test if the machine type is any 64bit
+ */
+function is_64bit(): bool
+{
+	return (is_amd64() || is_arm64());
+}
 
 /* kill a process by pid file */
 function killbypid($pidfile, $waitfor = 0) {
 	return sigkillbypid($pidfile, "TERM", $waitfor);
 }
 
-function isvalidpid($pidfile) {
-	$output = "";
-	if (file_exists($pidfile)) {
-		exec("/bin/pgrep -qnF {$pidfile} 2>/dev/null", $output, $retval);
-		return (intval($retval) == 0);
-	}
-	return false;
+function isvalidpid(string $pidfile): bool {
+	exec(implode(' ', [
+		'/bin/pkill',
+		'-0',
+		'-F', $pidfile,
+		'2>/dev/null'
+	]), $_out, $ret);
+
+	return ($ret === 0);
 }
 
-function is_process_running($process) {
-	$output = "";
-	if (!empty($process)) {
-		exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
-		return (intval($retval) == 0);
+function is_process_running(string $name): bool {
+	if (empty($name)) {
+		return false;
 	}
-	return false;
+
+	exec(implode(' ', [
+		'/bin/pkill',
+		'-0',
+		'-x', escapeshellarg($name),
+		'2>/dev/null'
+	]), $_out, $ret);
+
+	return ($ret === 0);
 }
 
 function isvalidproc($proc) {
@@ -77,19 +160,25 @@ function isvalidproc($proc) {
 
 /* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
 /* return 1 for success and 0 for a failure */
-function sigkillbypid($pidfile, $sig, $waitfor = 0) {
-	if (isvalidpid($pidfile)) {
-		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
-		    " -F {$pidfile}", true);
-		$waitcounter = $waitfor * 10;
-		while(isvalidpid($pidfile) && $waitcounter > 0) {
-			$waitcounter = $waitcounter - 1;
-			usleep(100000);
-		}
-		return $result;
+function sigkillbypid(string $pidfile, string|int $sig, int $waitfor = 0): int {
+	if (!isvalidpid($pidfile)) {
+		return 0;
 	}
 
-	return 0;
+	exec(implode(' ', [
+		'/bin/pkill',
+		"-${sig}",
+		'-F', $pidfile,
+		'2>/dev/null'
+	]), $_out, $ret);
+
+	$waitcounter = $waitfor * 10;
+	while(isvalidpid($pidfile) && $waitcounter > 0) {
+		$waitcounter = $waitcounter - 1;
+		usleep(100000); /* 100ms */
+	}
+
+	return $ret;
 }
 
 /* kill a process by name */
@@ -346,7 +435,7 @@ function gen_subnetv4($ipaddr, $bits) {
 		if ($bits == 0) {
 			return '0.0.0.0';  // avoids <<32
 		}
-		return long2ip(ip2long($ipaddr) & ((0xFFFFFFFF << (32 - $bits)) & 0xFFFFFFFF));
+		return long2ip32(ip2long($ipaddr) & ((0xFFFFFFFF << (32 - $bits)) & 0xFFFFFFFF));
 	}
 	return "";
 }
@@ -400,7 +489,7 @@ function gen_subnet_mask_long($bits) {
 
 /* same as above but returns a string */
 function gen_subnet_mask($bits) {
-	return long2ip(gen_subnet_mask_long($bits));
+	return long2ip32(gen_subnet_mask_long($bits));
 }
 
 /* Convert a prefix length to an IPv6 address-like mask notation. Very rare but at least ntp needs it. See #4463 */
@@ -416,6 +505,10 @@ function gen_subnet_mask_v6($bits) {
 /* Convert long int to IPv4 address
    Returns '' if not valid IPv4 (including if any bits >32 are non-zero) */
 function long2ip32($ip) {
+	if (PHP_INT_SIZE == 4) {
+		/* Convert long int on 32bit ARM, see NG #5445 */
+		return long2ip((int) ($ip + 0));
+	}
 	return long2ip($ip & 0xFFFFFFFF);
 }
 
@@ -533,6 +626,21 @@ function ip_after($ip, $offset = 1) {
 	return long2ip32(ip2long($ip) + $offset);
 }
 
+/**
+ * Return the next IPv6 address after the given address
+ * 
+ * @param string $ip IPv6 address
+ * 
+ * @return string|false IPv6 address; false if it cannot be incremented
+ */
+function ip6_after(string $ip): string|false {
+	/* Convert the IPv6 string to its in_addr representation,
+	 * increment it by one, then convert it back to a string. */
+	return inet_ntop(str_pad(gmp_export(
+		str_increment((string) gmp_import(inet_pton($ip)))
+	), 16, "\0", STR_PAD_LEFT));
+}
+
 /* Return true if the first IP is 'before' the second */
 function ip_less_than($ip1, $ip2) {
 	// Compare as unsigned long because otherwise it wouldn't work when
@@ -586,7 +694,7 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 	$rangeaddresses = array();
 	$end_int = ip2ulong($endip);
 	for ($ip_int = ip2ulong($startip); $ip_int <= $end_int; $ip_int++) {
-		$rangeaddresses[] = long2ip($ip_int);
+		$rangeaddresses[] = long2ip32($ip_int);
 	}
 
 	return $rangeaddresses;
@@ -770,7 +878,16 @@ function is_ipaddrv6($ipaddr) {
 	if (substr_count($ipaddr, '::') > 1) {
 		return false;
 	}
-	return Net_IPv6::checkIPv6($ipaddr);
+	/*
+	 * Net_IPv6::checkIPv6 does not properly handle addresses with extra segments
+	 * when compression is also used.
+	 * https://redmine.pfsense.org/issues/16005
+	 */
+	try {
+		return Net_IPv6::checkIPv6($ipaddr);
+	} catch (\Throwable $th) {
+		return false;
+	}
 }
 
 function is_ipaddrv6_v4map($ipaddr) {
@@ -880,8 +997,77 @@ function is_hostnamewithport($hostport) {
 	return false;
 }
 
-/* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
+function get_reserved_table_names($name = '', $type = '') {
+	global $reserved_table_names;
+
+	if (!isset($name) || !isset($type) || !is_string($name) || !is_string($type)) {
+		return [];
+	}
+
+	$return = [];
+	$name = strtolower($name);
+	$requested_types = explode(',', $type);
+
+	// Check for given alias name.
+	if (!empty($name)) {
+		if (isset($reserved_table_names[$name]) && (empty($type) || in_array($reserved_table_names[$name]['type'], $requested_types))) {
+			$return = [$name => $reserved_table_names[$name]];
+		}
+		return $return;
+	}
+
+	// Check for give alias type(s).
+	foreach ($reserved_table_names as $alias_name => $alias_info) {
+		if (empty($type) || in_array($alias_info['type'], $requested_types)) {
+			$return[$alias_name] = $alias_info;
+		}
+	}
+	return $return;
+}
+
+function set_reserved_table_name($name, $value) {
+	global $reserved_table_names;
+
+	if (empty($name) || !is_string($name) || !is_string($value)) {
+		return false;
+	}
+
+	// Normalize the name.
+	$name = strtolower($name);
+	if (!isset($reserved_table_names[$name])) {
+		return false;
+	}
+
+	if (is_numericint($value)) {
+		$value = strval($value);
+	} elseif (!isset($value) || !is_string($value)) {
+		return false;
+	}
+
+	if ((($reserved_table_names[$name]['type'] == 'address') && is_ipaddr($value)) ||
+	    (($reserved_table_names[$name]['type'] == 'port') && is_port($value))) {
+		$reserved_table_names[$name]['address'] = $value;
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Check if $ipaddr is a valid dotted IPv4 address or an alias thereof.
+ * Used in source/destination form input validation.
+ * @param mixed $ipaddr
+ * @return bool|int If an IP address, either 4 or 6 to denote the IP family.
+ */
 function is_ipaddroralias($ipaddr) {
+	if (empty($ipaddr)) {
+		return false;
+	}
+
+	if (!empty(get_reserved_table_names($ipaddr, 'host,network,url,urltable'))) {
+		return true;
+	}
+
 	if (is_alias($ipaddr)) {
 		foreach (config_get_path('aliases/alias', []) as $alias) {
 			if ($alias['name'] == $ipaddr && !preg_match("/port/i", $alias['type'])) {
@@ -951,7 +1137,16 @@ function is_subnetv6($subnet) {
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {
+	if (empty($subnet)) {
+		return false;
+	}
+
 	global $aliastable;
+
+	$reserved_alias = get_reserved_table_names($subnet, 'host,network,url,urltable');
+	if (!empty($reserved_alias)) {
+		return boolval(is_subnet($reserved_alias[array_key_first($reserved_alias)]['address']));
+	}
 
 	if (isset($aliastable[$subnet]) && is_subnet($aliastable[$subnet])) {
 		return true;
@@ -1010,7 +1205,7 @@ function subnetv4_expand($subnet) {
 	$net &= $mask;
 	$size = round(exp(log(2) * (32 - $bits)));
 	for ($i = 0; $i < $size; $i += 1) {
-		$result[] = long2ip($net | $i);
+		$result[] = long2ip32($net | $i);
 	}
 	return $result;
 }
@@ -1284,11 +1479,11 @@ function is_intrange($range, $min, $max) {
 }
 
 /* returns true if $port is a valid TCP/UDP/SCTP port */
-function is_port($port) {
+function is_port($port, $validate_name = true) {
 	if (ctype_digit(strval($port)) && ((intval($port) >= 1) && (intval($port) <= 65535))) {
 		return true;
 	}
-	if (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp")) {
+	if ($validate_name && (getservbyname($port, "tcp") || getservbyname($port, "udp") || getservbyname($port, "sctp"))) {
 		return true;
 	}
 	return false;
@@ -1322,8 +1517,21 @@ function is_port_or_range($port) {
 	return (is_port($port) || is_portrange($port));
 }
 
-/* returns true if $port is an alias that is a port type */
+/**
+ * Check if $port is a user or system alias that is a 'port' type.
+ * @param mixed $port The alias check.
+ * @return bool True if the alias is of type 'port'.
+ */
 function is_portalias($port) {
+	if (empty($port)) {
+		return false;
+	}
+
+	// pass input validation
+	if (!empty(get_reserved_table_names($port, 'port,url_ports,urltable_ports'))) {
+		return true;
+	}
+
 	if (is_alias($port)) {
 		foreach (config_get_path('aliases/alias', []) as $alias) {
 			if ($alias['name'] == $port && preg_match("/port/i", $alias['type'])) {
@@ -1674,7 +1882,7 @@ function get_configured_interface_with_descr(bool $with_disabled = false) : arra
 
 	if (is_array($user_settings)
 	    && array_get_path($user_settings, 'webgui/interfacessort')) {
-		asort($iflist);
+		asort($iflist, SORT_NATURAL);
 	}
 
 	return ($iflist);
@@ -1922,10 +2130,10 @@ function log_error($error) {
 * RESULT
 *   null
 ******/
-function log_auth($error) {
+function log_auth($error, $force_quiet = false) {
 	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
-	$level = config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE|LOG_AUTH : LOG_AUTH;
+	$level = ($force_quiet || config_path_enabled('system/webgui', 'quietlogin')) ? LOG_NOTICE|LOG_AUTH : LOG_AUTH;
 	syslog($level, "{$page}: {$error}");
 	if (g_get('debug')) {
 		syslog(LOG_WARNING, var_export(debug_backtrace()));
@@ -2014,13 +2222,35 @@ function unlink_if_exists($fn) {
 	return $result;
 }
 
-/* make a global alias table (for faster lookups) */
+/**
+ * Make a global alias table for faster lookups. Does not include
+ * system aliases since those are handled separately from aliases
+ * configured by users.
+ * @return void
+ */
 function alias_make_table() {
 	global $aliastable;
 
 	$aliastable = array();
+	$aliases = config_get_path('aliases/alias', []);
 
-	foreach (config_get_path('aliases/alias', []) as $alias) {
+	// Reserved aliases take precedence.
+	$reserved_alias = get_reserved_table_names();
+	if (!empty($reserved_alias)) {
+		foreach ($aliases as $id => $info) {
+			if (!isset($reserved_alias[$info['name']])) {
+				continue;
+			}
+			$aliases[$id] = $reserved_alias[$info['name']];
+			unset($reserved_alias[$info['name']]);
+		}
+
+		if (!empty($reserved_alias)) {
+			$aliases = array_merge($aliases, array_values($reserved_alias));
+		}
+	}
+
+	foreach ($aliases as $alias) {
 		if (!is_array($alias) || empty($alias)) {
 			continue;
 		}
@@ -2030,16 +2260,44 @@ function alias_make_table() {
 	}
 }
 
-/* check if an alias exists */
+/**
+ * Check if an alias exists. Used in form input validation.
+ * @param mixed $name The alias name.
+ * @return bool False is not a user or system alias.
+ */
 function is_alias($name) {
+	if (empty($name)) {
+		return false;
+	}
+
 	global $aliastable;
+
+	if (!empty(get_reserved_table_names($name))) {
+		return true;
+	}
 
 	return isset($aliastable[$name]);
 }
 
+/**
+ * Get the type of a user or system alias.
+ * @param mixed $name Alias name.
+ * @return string The alias type.
+ */
 function alias_get_type($name) {
+	if (empty($name)) {
+		return '';
+	}
 
-	foreach (config_get_path('aliases/alias', []) as $alias) {
+	$aliases = config_get_path('aliases/alias', []);
+
+	// Reserved aliases take precedence.
+	$reserved_alias = get_reserved_table_names($name);
+	if (!empty($reserved_alias)) {
+		return $reserved_alias[array_key_first($reserved_alias)]['type'];
+	}
+
+	foreach ($aliases as $alias) {
 		if ($name == $alias['name']) {
 			return $alias['type'];
 		}
@@ -2048,27 +2306,75 @@ function alias_get_type($name) {
 	return "";
 }
 
-/* expand a url alias, if necessary */
+/**
+ * Expand a URL user or system alias, if necessary.
+ * @param mixed $name Alias name.
+ * @return string|null null if the alias cannot be expanded.
+ */
 function alias_expand($name) {
+	if (empty($name)) {
+		return null;
+	}
 	global $aliastable;
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
+
+	$aliases = config_get_path('aliases/alias', []);
+
+	// Reserved aliases take precedence.
+	$reserved_alias = get_reserved_table_names($name);
+	if (!empty($reserved_alias)) {
+		if (!in_array($reserved_alias[array_key_first($reserved_alias)]['type'], ['url', 'url_ports', 'urltable', "urltable_ports"])) {
+			if (in_array($reserved_alias[array_key_first($reserved_alias)]['type'], ['port'])) {
+				return "\${$name}";
+			} else {
+				return "<{$name}>";
+			}
+		}
+
+		// Handle URL* type system aliases that specify a file path.
+		if (!empty($reserved_alias[array_key_first($reserved_alias)]['url']) && !is_URL($reserved_alias[array_key_first($reserved_alias)]['url'])) {
+			$urltable_filename = $reserved_alias[array_key_first($reserved_alias)]['url'];
+			if (file_exists($urltable_filename) && !empty(trim(file_get_contents($urltable_filename)))) {
+				if (in_array($reserved_alias[array_key_first($reserved_alias)]['type'], ['url_ports', 'urltable_ports'])) {
+					// pf does not support port tables - use a macro instead.
+					return "\${$name}";
+				} else {
+					return "<{$name}>";
+				}
+			} else {
+				return null;
+			}
+		}
+
+		// Replace user alias with system alias.
+		foreach ($aliases as $id => $info) {
+			if (!isset($reserved_alias[$info['name']])) {
+				continue;
+			}
+			$aliases[$id] = $reserved_alias[$info['name']];
+			unset($reserved_alias[$info['name']]);
+			break;
+		}
+		if (!empty($reserved_alias)) {
+			$aliases = array_merge($aliases, array_values($reserved_alias));
+		}
+	}
 
 	if (isset($aliastable[$name])) {
 		// alias names cannot be strictly numeric. redmine #4289
 		if (is_numericint($name)) {
 			return null;
 		}
+
 		/*
 		 * make sure if it's a url alias, it actually exists and valid URLs.
 		 * redmine #5845, #13068
 		 */
-		foreach (config_get_path('aliases/alias', []) as $alias) {
+		foreach ($aliases as $alias) {
 			if ($alias['name'] == $name) {
 				if (in_array($alias['type'], ['url', 'url_ports', 'urltable', "urltable_ports"])) {
-					if (is_URL($alias['url']) &&
-					    file_exists($urltable_filename) &&
-					    !empty(trim(file_get_contents($urltable_filename)))) {
+					if (is_URL($alias['url']) && file_exists($urltable_filename) && !empty(trim(file_get_contents($urltable_filename)))) {
 						return "\${$name}";
 					} elseif (is_array($alias['aliasurl'])) {
 						foreach ($alias['aliasurl'] as $aliasurl) {
@@ -2081,6 +2387,7 @@ function alias_expand($name) {
 						return null;
 					}
 				}
+				break;
 			}
 		}
 		return "\${$name}";
@@ -2092,11 +2399,48 @@ function alias_expand($name) {
 	}
 }
 
+/**
+ * Get the file path for a user or system urltable alias.
+ * @param mixed $name Alias file path.
+ * @return string|null null if the alias file does not exist.
+ */
 function alias_expand_urltable($name) {
+	if (empty($name)) {
+		return null;
+	}
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
-	foreach (config_get_path('aliases/alias', []) as $alias) {
+	$aliases = config_get_path('aliases/alias', []);
+
+	// Reserved aliases take precedence.
+	$reserved_alias = get_reserved_table_names($name, 'urltable');
+	if (!empty($reserved_alias)) {
+		// Handle URL* type system aliases that specify a file path.
+		if (!empty($reserved_alias[array_key_first($reserved_alias)]['url']) && !is_URL($reserved_alias[array_key_first($reserved_alias)]['url'])) {
+			$urltable_filename = $reserved_alias[array_key_first($reserved_alias)]['url'];
+			if (file_exists($urltable_filename)) {
+				return $urltable_filename;
+			} else {
+				return null;
+			}
+		}
+
+		// Replace user alias with system alias.
+		foreach ($aliases as $id => $info) {
+			if (!isset($reserved_alias[$info['name']])) {
+				continue;
+			}
+			$aliases[$id] = $reserved_alias[$info['name']];
+			unset($reserved_alias[$info['name']]);
+			break;
+		}
+		if (!empty($reserved_alias)) {
+			$aliases = array_merge($aliases, array_values($reserved_alias));
+		}
+	}
+
+	foreach ($aliases as $alias) {
 		if (!preg_match("/urltable/i", $alias['type']) ||
 		    ($alias['name'] != $name)) {
 			continue;
@@ -2366,8 +2710,13 @@ function get_sysctl($names) {
 	$retries = 2;
 	do {
 		$ret = exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output, $status);
-	} while ($ret === false && $retries-- > 0);
-	if ($ret === false) {
+		if ($ret === false || $status != 0) {
+			log_error("Warning: \"/sbin/sysctl -iq " .
+			    implode(" ", $name_list) . "\" returned status: {$status}.  Trying again.");
+			sleep(1);
+		}
+	} while (($ret === false || $status != 0) && $retries-- > 0);
+	if ($ret === false || $status != 0) {
 		log_error("Warning: \"/sbin/sysctl -iq " . implode(" ", $name_list) . "\" returned status: {$status}");
 	}
 
@@ -2612,7 +2961,6 @@ function is_interface_mismatch() {
 
 	/* VLAN/QinQ-only interface mismatch detection
 	 * see https://redmine.pfsense.org/issues/12170 */
-	config_init_path('vlans/vlan');
 	foreach (config_get_path('vlans/vlan', []) as $vlan) {
 		if (!does_interface_exist($vlan['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
@@ -2620,7 +2968,6 @@ function is_interface_mismatch() {
 			$do_assign = true;
 		}
 	}
-	config_init_path('qinqs/qinqentry');
 	foreach (config_get_path('qinqs/qinqentry', []) as $qinq) {
 		if (!does_interface_exist($qinq['if']) &&
 		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $qinq['if'])) {
@@ -2905,7 +3252,7 @@ function is_dynamic_route(string $target, string $ipprotocol = ''): bool {
 	/* check for the PROTO* flag instead of STATIC
 	 * see https://redmine.pfsense.org/issues/14717
 	 * mwexec() returns false if the flag exists, so invert it */
-	if (!mwexec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | /usr/bin/egrep 'flags: <.*PROTO.*>'")) {
+	if (!mwexec("/sbin/route -n{$inet} get " . escapeshellarg($target) . " 2>/dev/null | /usr/bin/egrep 'flags: <.*PROTO.*>'", true)) {
 		return true;
 	}
 
@@ -2937,7 +3284,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 			return array();
 		} elseif ($interface == 'lo0') {
 			// interface assigned IP address
-			foreach (array_keys(config_get_path('interfaces')) as $intf) {
+			foreach (array_keys(config_get_path('interfaces', [])) as $intf) {
 				if ((($inet == '4') && (get_interface_ip($intf) == $target)) ||
 				    (($inet == '6') && (get_interface_ipv6($intf) == $target))) {
 					$interface = convert_friendly_interface_to_real_interface_name($intf);
@@ -3133,7 +3480,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 function set_ipv6routes_mtu($interface, $mtu) {
 	$ipv6mturoutes = array();
 	$if = convert_real_interface_to_friendly_interface_name($interface);
-	if (!config_get_path("interfaces/{$if}/ipaddrv6")) {
+	if (empty($if) || !config_get_path("interfaces/{$if}/ipaddrv6")) {
 		return;
 	}
 	$a_gateways = get_gateways();
@@ -3190,7 +3537,6 @@ function alias_to_subnets_recursive($name, $returnhostnames = false) {
 
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
-	config_init_path('staticroutes/route');
 	if (empty(config_get_path('staticroutes/route'))) {
 		return array();
 	}
@@ -3224,25 +3570,39 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, 
 
 /****f* util/get_alias_list
  * NAME
- *   get_alias_list - Provide a list of aliases.
+ *   get_alias_list - Provide a list of aliases. Used when auto-completing GUI fields.
  * INPUTS
  *   $type          - Optional, can be a string or array specifying what type(s) of aliases you need.
  * RESULT
  *   Array containing list of aliases.
  *   If $type is unspecified, all aliases are returned.
- *   If $type is a string, all aliases of the type specified in $type are returned.
- *   If $type is an array, all aliases of any type specified in any element of $type are returned.
+ *   If $type is a comma-separated string, all aliases of the type(s) specified in $type are returned.
  */
-function get_alias_list($type = null) {
-	$result = array();
-	foreach (config_get_path('aliases/alias', []) as $alias) {
-		if ($type === null) {
-			$result[] = $alias['name'];
-		} else if (is_array($type)) {
-			if (in_array($alias['type'], $type)) {
-				$result[] = $alias['name'];
+function get_alias_list($type = '') {
+	$requested_types = [];
+	if (!empty($type)) {
+		if (!is_string($type)) {
+			return [];
+		}
+		$requested_types = explode(',', $type);
+	}
+
+	$aliases = config_get_path('aliases/alias', []);
+
+	// Reserved aliases take precedence.
+	$reserved_aliases = get_reserved_table_names();
+	if (!empty($reserved_aliases)) {
+		foreach ($aliases as $id => $info) {
+			if (isset($reserved_aliases[$info['name']])) {
+				$aliases[$id] = $reserved_aliases[$info['name']];
+				unset($reserved_alias[$info['name']]);
 			}
-		} else if ($type === $alias['type']) {
+		}
+		$aliases = array_merge($aliases, array_values($reserved_aliases));
+	}
+
+	foreach ($aliases as $alias) {
+		if (empty($requested_types) || in_array($alias['type'], $requested_types)) {
 			$result[] = $alias['name'];
 		}
 	}
@@ -3299,32 +3659,66 @@ function post_redirect($page, $params) {
 	print "</body></html>\n";
 }
 
-/* Locate disks that can be queried for S.M.A.R.T. data. */
-function get_smart_drive_list() {
+/**
+ * Locate disks that can be queried for S.M.A.R.T. data.
+ * 
+ * @param bool $check_controller If true (default), use the controller
+ *                               device name; otherwise use the
+ *                               original disk name.
+ * 
+ * @return array List of drive names
+ */
+function get_drive_list(bool $check_controller = true) {
+	// list of drives to return
+	$drive_list = [];
+
 	/* SMART supports some disks directly, and some controllers directly,
 	 * See https://redmine.pfsense.org/issues/9042 */
-	$supported_disk_types = array("ad", "da", "ada");
-	$supported_controller_types = array("nvme");
-	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
-	foreach ($disk_list as $id => $disk) {
-		// We only want certain kinds of disks for S.M.A.R.T.
-		// 1 is a match, 0 is no match, False is any problem processing the regex
-		if (preg_match("/^(" . implode("|", $supported_disk_types) . ").*[0-9]{1,2}$/", $disk) !== 1) {
-			unset($disk_list[$id]);
-			continue;
-		}
-	}
-	foreach ($supported_controller_types as $controller) {
-		$devices = glob("/dev/{$controller}*");
-		if (!is_array($devices)) {
-			continue;
-		}
+	$supported_controllers = [
+		'nvme'
+	];
+
+	// get disk devices; ignore sub-devices
+	$devices = [];
+	preg_match_all('/\b(?P<disks>[[:alpha:]]+\d+)\b/', get_single_sysctl("kern.disks"), $devices);
+	if (!empty($devices['disks']) && is_array($devices['disks'])) {
+		// ignore duplicate matches
+		$devices = array_unique($devices['disks']);
 		foreach ($devices as $device) {
-			$disk_list[] = basename($device);
+			// get device info
+			$output = shell_exec("/usr/sbin/diskinfo -v /dev/{$device}");
+			if (empty($output)) {
+				continue;
+			}
+
+			// don't check the controller
+			if (!$check_controller) {
+				$drive_list[] = $device;
+				continue;
+			}
+
+			// get device controller
+			$device_controller = [];
+			preg_match('/^\s+(?P<controller>[\w\-]+)\s+# Attachment/im', $output, $device_controller);
+			if (!empty($device_controller['controller']) && is_string($device_controller['controller'])) {
+				$device_controller = $device_controller['controller'];
+
+				// supported controllers are queried directly
+				$regex_pattern = implode('|', array_values($supported_controllers));
+				$regex_pattern = "/\b(?:{$regex_pattern})\d+\b/";
+				if (preg_match($regex_pattern, $device_controller)) {
+					$drive_list[] = $device_controller;
+					// skip further processing for this device
+					continue;
+				}
+			}
+
+			// no attachment, or other controller
+			$drive_list[] = $device;
 		}
 	}
-	sort($disk_list);
-	return $disk_list;
+
+	return $drive_list;
 }
 
 // Validate a network address
@@ -3592,21 +3986,43 @@ function array_get_path(array &$arr, string $path, $default = null) {
  * @param mixed  $arr  Top of array
  * @param string $path Path with '/' separators
  */
-function array_init_path(mixed &$arr, ?string $path)
-{
+function array_init_path(mixed &$arr, ?string $path) {
+	$value = [];
+	$vpath = explode('/', $path);
+
+	// get the path's leaf node; ignore trailing and contiguous forward-slashes
+	do {
+		$vkey = array_pop($vpath);
+	} while (isset($vkey) && (mb_strlen($vkey) == 0));
+
+	// make sure $arr is always an array
 	if (!is_array($arr)) {
-		$arr = [];
+		$arr = $value;
 	}
-	if (is_null($path)) {
-		return;
+
+	if ($vkey == null) {
+		// path is root, nothing else to do
+		return true;
 	}
-	$tmp = &$arr;
-	foreach (explode('/', $path) as $key) {
-		if (!is_array($tmp[$key])) {
-			$tmp[$key] = [];
+
+	// traverse the array and replace any scalars along the path
+	$el = &$arr;
+	foreach ($vpath as $key) {
+		if (mb_strlen($key) == 0) {
+			continue;
 		}
-		$tmp = &$tmp[$key];
+		if (!array_key_exists($key, $el) || !is_array($el[$key])) {
+			$el[$key] = [];
+		}
+		$el = &$el[$key];
 	}
+
+	// set the leaf node value
+	if (!array_key_exists($vkey, $el) || !is_array($el[$vkey])) {
+		$el[$vkey] = $value;
+	}
+	
+	return true;
 }
 
 /**
@@ -3732,8 +4148,6 @@ function array_del_path(array &$arr, string $path, $default = null) {
 
 
 function dhcpd_date_adjust_gmt($dt) {
-	config_init_path('dhcpd');
-
 	foreach (config_get_path('dhcpd', []) as $dhcpditem) {
 		if (empty($dhcpditem)) {
 			continue;
@@ -4179,6 +4593,26 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	                SPECIALNET_IFADDR, SPECIALNET_IFSUB, SPECIALNET_IFNET,
 	                SPECIALNET_GROUP, SPECIALNET_VIPS];
 
+	// Special flags
+	if (in_array(SPECIALNET_IFADDR4, $flags)) {
+		$allnetflags[] = SPECIALNET_IFADDR4;
+	}
+	if (in_array(SPECIALNET_IFADDR6, $flags)) {
+		$allnetflags[] = SPECIALNET_IFADDR6;
+	}
+	if (in_array(SPECIALNET_VIPALIAS, $flags)) {
+		$allnetflags[] = SPECIALNET_VIPALIAS;
+	}
+
+	// Specialnets to exclude
+	$exceptions = [
+		// Interface group exceptions
+		'ifgroups' => array_flip([
+			'WireGuard', // WireGuard group does not populate members in the config
+			'Tailscale', // Tailscale group does not populate members in the config
+		]),
+	];
+
 	if (empty($flags)) {
 		$flags = $allnetflags;
 	} else {
@@ -4190,7 +4624,8 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 		}
 	}
 	$specialnet = [];
-	if (in_array(SPECIALNET_IFADDR, $flags) || in_array(SPECIALNET_IFSUB, $flags) || in_array(SPECIALNET_IFNET, $flags)) {
+	if (in_array(SPECIALNET_IFADDR, $flags) || in_array(SPECIALNET_IFSUB, $flags) || in_array(SPECIALNET_IFNET, $flags) ||
+	    in_array(SPECIALNET_IFADDR4, $flags) || in_array(SPECIALNET_IFADDR6, $flags)) {
 		$ifmacros = get_configured_interface_with_descr();
 	}
 	foreach ($flags as $include) {
@@ -4251,6 +4686,23 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 					                          'l2tp' => gettext('L2TP clients')]);
 				}
 				break;
+			case SPECIALNET_IFADDR4:
+			case SPECIALNET_IFADDR6:
+				foreach ($ifmacros as $ifname => $ifdescr) {
+					// Only add macros for allowed interfaces when checking permissions
+					if ($checkpermission && !have_ruleint_access($ifname)) {
+						continue;
+					}
+					// If an interface is specified, only add interface macros for that interface
+					if (!empty($if) && ($if != $ifname)) {
+						continue;
+					}
+
+					$ifname_suffix = 'ip' . (($include == SPECIALNET_IFADDR4) ? '4' : '6');
+					$ifdescr_suffix = ' address ' . (($include == SPECIALNET_IFADDR4) ? '(IPv4)' : '(IPv6)');
+					$specialnet[$ifname . $ifname_suffix] = $ifdescr . $ifdescr_suffix;
+				}
+				break;
 			case SPECIALNET_IFADDR:
 			case SPECIALNET_IFSUB:
 			case SPECIALNET_IFNET:
@@ -4284,6 +4736,9 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 				break;
 			case SPECIALNET_GROUP:
 				foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+					if (isset($exceptions['ifgroups'][$ifgen['ifname']])) {
+						continue;
+					}
 					$ifgenmembers = explode(' ', $ifgen['members']);
 					foreach ($ifgenmembers as $ifgmember) {
 						// Skip interface groups with members which are not allowed
@@ -4321,12 +4776,33 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 						$len = $end - $start;
 						for ($i = 0; $i <= $len; $i++) {
 							$snip = ip2long32($start+$i);
-			
+
 							$specialnet[$snip] = $snip . ' (' . $sn['descr'] . ')';
 						}
 					} else {
 						$specialnet[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 					}
+				}
+				break;
+			case SPECIALNET_VIPALIAS:
+				$tmp_vips = [];
+				foreach (config_get_path('virtualip/vip', []) as $vip) {
+					if (empty($vip['interface'])) {
+						continue;
+					}
+					// Only add IP alias VIPs without a parent; i.e. addresses that remain on the interface
+					if (($vip['mode'] != 'ipalias') || str_starts_with($vip['interface'], '_vip')) {
+						continue;
+					}
+					// Only add VIPs for allowed interfaces when checking permissions
+					if ($checkpermission && !have_ruleint_access($vip['interface'])) {
+						continue;
+					}
+					$tmp_vips[$vip['subnet'] . '/' . $vip['subnet_bits']] = $vip;
+				}
+				asort($tmp_vips, SORT_NATURAL);
+				foreach ($tmp_vips as $vipsn => $sn) {
+					$specialnet[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 				}
 				break;
 			default:
@@ -4341,6 +4817,132 @@ function get_specialnet(?string $net = '', array $flags = [], ?string $if = ''):
 	} else {
 		return false;
 	}
+}
+
+function get_specialnet_interface($specialnet, $address_family = null) {
+	if (empty($specialnet) || !is_string($specialnet)) {
+		return false;
+	}
+
+	$matches = [];
+	preg_match('/^(?:wan|lan|opt[[:digit:]]+)/', $specialnet, $matches);
+	if (isset($matches[0])) {
+		$interface = match ($address_family) {
+			AF_INET => "{$matches[0]}ip4",
+			AF_INET6 => "{$matches[0]}ip6",
+			default => $matches[0]
+		};
+		if (!isset($address_family) || ($specialnet == $interface)) {
+			return $matches[0];
+		}
+	}
+
+	return false;
+}
+
+function get_specialnet_address($specialnet) {
+	if (empty($specialnet) || !is_string($specialnet)) {
+		return false;
+	}
+
+	if (!get_specialnet($specialnet, [SPECIALNET_IFADDR4, SPECIALNET_IFADDR6, SPECIALNET_VIPS, SPECIALNET_VIPALIAS])) {
+		return false;
+	}
+
+	if (is_ipaddr($specialnet)) {
+		return $specialnet;
+	}
+
+	$interface = get_specialnet_interface($specialnet);
+	if (empty($interface)) {
+		return false;
+	}
+	$interface = convert_friendly_interface_to_real_interface_name($interface);
+	if (empty($interface)) {
+		return false;
+	}
+	$interface_addresses = get_interface_addresses($interface);
+
+	if (str_ends_with($specialnet, 'ip4')) {
+		if (isset($interface_addresses['ipaddr']) && is_ipaddrv4($interface_addresses['ipaddr'])) {
+			return $interface_addresses['ipaddr'];;
+		}
+	} elseif (str_ends_with($specialnet, 'ip6')) {
+		if (isset($interface_addresses['ipaddr6']) && is_ipaddrv6($interface_addresses['ipaddr6'])) {
+			return $interface_addresses['ipaddr6'];;
+		}
+	}
+
+	return false;
+}
+
+function is_host_address($address) {
+	return (is_host_address4($address) || is_host_address6($address) || is_host_address_fqdn($address));
+}
+
+function is_host_address_fqdn($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_contains($address, ':')) {
+		// Check Domain:Port address
+		list($name, $port) = explode(':', $address);
+		if (is_domain($name) && is_port($port, false)) {
+			return true;
+		}
+	} else {
+		// Check Domain address
+		if (is_domain($address)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function is_host_address4($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_contains($address, ':')) {
+		// Check IPv4:Port address
+		list($ip, $port) = explode(':', $address);
+		if (is_ipaddrv4($ip) && is_port($port, false)) {
+			return true;
+		}
+	} else {
+		// Check IPv4 address
+		if (is_ipaddrv4($address)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function is_host_address6($address) {
+	if (empty($address) || !is_string($address)) {
+		return false;
+	}
+
+	if (str_starts_with($address, '[')) {
+		// Check [IPv6]:Port address
+		$matches = [];
+		preg_match('/^\[((?:[[:xdigit:]]|:)+)\]:([[:digit:]]+)/', $address, $matches);
+		if (isset($matches[1]) && isset($matches[2]) &&
+		    is_ipaddrv6($matches[1]) && is_port($matches[2], false)) {
+			return true;
+		}
+	} else {
+		// Check IPv6 address
+		if (is_ipaddrv6($address)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 function is_interface_ipaddr($interface) {
@@ -4470,7 +5072,6 @@ function dummynet_load_module($max_qlimit) {
 			"net.inet.ip.dummynet.hash_size" => "256",
 			"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 	));
-	config_init_path('sysctl/item');
 	foreach (config_get_path('sysctl/item', []) as $item) {
 		if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
 			$sysctls[$item['tunable']] = $item['value'];
@@ -4482,7 +5083,6 @@ function dummynet_load_module($max_qlimit) {
 function get_interface_vip_ips($interface) {
 	$vipips = '';
 
-	config_init_path('virtualip/vip');
 	foreach (config_get_path('virtualip/vip', []) as $vip) {
 		if (($vip['interface'] == $interface) &&
 		    (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
@@ -4599,4 +5199,66 @@ function unserialize_data(?string $path, mixed $default = null, ?array $options 
 	return $data;
 }
 
-?>
+/* Get an array of active widgets and metadata from user settings */
+function get_active_widgets($user_settings) {
+	$widgets = [];
+
+	/* Break up the sequence string into an array of widget definitions */
+	$widget_sep = ',';
+	$widget_seq_array = explode($widget_sep, rtrim($user_settings['widgets']['sequence'], $widget_sep));
+
+	foreach ($widget_seq_array as $widget_seq_data) {
+		/* Break each widget definition into its component values */
+		[$name, $column, $display, $instance] = explode(':', $widget_seq_data);
+		if (is_null($instance)) {
+			$instance = 0;
+		}
+		$widgets[] = [
+			'name'     => $name,
+			'column'   => $column,
+			'display'  => $display,
+			'instance' => $instance
+		];
+	}
+	return $widgets;
+}
+
+/* Test the validity of a given widget key based on user settings. */
+function is_valid_widgetkey($widgetkey, $user_settings, $widgetfile = null) {
+	/* Proper form of a widgetkey is <widget-name>-<instance-id>
+	 * Where:
+	 *   widget-name : Name of an active widget, which should be found in
+	 *                 the current sequence list.
+	 *   instance-id : An integer 0 or higher identifying a widget instance
+	 *
+	 * Additionally, for a widget to be valid in this context it must also
+	 * be present on the current Dashboard layout.
+	 */
+
+	/* Break the given widgetkey into its component parts */
+	[$wname, $wid] = explode('-', $widgetkey, 2);
+
+	/* Test for basic validity conditions */
+	if (empty($wname) ||
+	    !is_numericint($wid) ||
+	    empty($user_settings)) {
+		return false;
+	}
+
+	/* Check if this widget also matches a specific widget name */
+	if (!empty($widgetfile) &&
+	    ($wname != basename($widgetfile, '.widget.php'))) {
+		return false;
+	}
+
+	/* Ensure the key is for a widget which is in the Dashboard
+	 * configuration. */
+	$widgets = get_active_widgets($user_settings);
+	foreach ($widgets as $widget) {
+		if (($widget['name'] == $wname) &&
+		    ($widget['instance'] == $wid)) {
+			return true;
+		}
+	}
+	return false;
+}

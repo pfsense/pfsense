@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -61,9 +61,6 @@ if (empty($cpzone)) {
 	exit;
 }
 
-config_init_path('captiveportal');
-config_init_path("voucher/{$cpzone}/roll");
-
 if (empty(config_get_path("captiveportal/{$cpzone}"))) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
 	header("Location: services_captiveportal_zones.php");
@@ -74,8 +71,7 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-config_init_path("voucher/{$cpzone}/roll");
-$voucher_config = config_get_path("voucher/{$cpzone}");
+$voucher_config = config_get_path("voucher/{$cpzone}", []);
 if (!isset($voucher_config['charset'])) {
 	$voucher_config['charset'] = '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 }
@@ -129,7 +125,7 @@ if (!isset($voucher_config['descrmsgexpired'])) {
 
 config_set_path("voucher/{$cpzone}", $voucher_config);
 
-if ($_POST['act'] == "del") {
+if (($_POST['act'] == "del") && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 	if (config_get_path("voucher/{$cpzone}/roll/{$id}")) {
 		$roll = config_get_path("voucher/{$cpzone}/roll/{$id}/number");
@@ -152,7 +148,7 @@ if ($_POST['act'] == "del") {
 			chmod("{$g['varetc_path']}/voucher_{$cpzone}.private", 0600);
 			fwrite($fd, $privkey);
 			fclose($fd);
-			$id = $_REQUEST['id'];
+			$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 			$this_voucher = isset($id) ? config_get_path("voucher/{$cpzone}/roll/{$id}") : null;
 			if ($this_voucher) {
 				$number = $this_voucher['number'];
@@ -255,7 +251,7 @@ if ($_POST['save']) {
 		write_config('Updated vouchers settings');
 		voucher_configure_zone();
 		// Refresh captiveportal login to show voucher changes
-		captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}"));
+		captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}", []));
 
 		if (!$input_errors) {
 			header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");

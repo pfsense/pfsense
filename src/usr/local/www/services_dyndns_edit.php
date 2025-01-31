@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,9 +43,7 @@ function is_dyndns_username($uname) {
 
 require_once("guiconfig.inc");
 
-config_init_path('dyndnses/dyndns');
-
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $dup = false;
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
@@ -55,6 +53,7 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 
 $this_dyndns_config = isset($id) ? config_get_path("dyndnses/dyndns/{$id}") : null;
 if ($this_dyndns_config) {
+	$pconfig['check_ip_mode'] = array_get_path($this_dyndns_config, 'check_ip_mode', 'default');
 	$pconfig['username'] = $this_dyndns_config['username'];
 	$pconfig['password'] = $this_dyndns_config['password'];
 	if (!$dup) {
@@ -145,40 +144,43 @@ if ($_POST['save'] || $_POST['force']) {
 		$input_errors[] = gettext("Password and confirmed password must match.");
 	}
 
+	if (isset($_POST['check_ip_mode']) && !in_array($_POST['check_ip_mode'], array_keys(build_check_ip_mode_list()))) {
+		$input_errors[] = gettext("The specified option for Check IP Mode is invalid.");
+	}
+
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		$allow_wildcard = false;
-		if ((isset($ddns_attr[$pconfig['type']]['apex']) && ($ddns_attr[$pconfig['type']]['apex'] == true) && 
-		    (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
-		    (isset($ddns_attr[$pconfig['type']]['wildcard']) && ($ddns_attr[$pconfig['type']]['wildcard'] == true) && 
-		    (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
+		if (((array_get_path($ddns_attr, "{$pconfig['type']}/apex") == true) && (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
+		    ((array_get_path($ddns_attr, "{$pconfig['type']}/wildcard") == true) && (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
-			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
-			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6") || ($pconfig['type'] == "porkbun") || ($pconfig['type'] == "porkbun-v6")) {
-			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
-			$allow_wildcard = true;
-		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
-			$host_to_check = $_POST['host'];
-			$allow_wildcard = true;
-		} elseif ($pconfig['type'] == "hover") {
-			/* hover allows hostnames '@' and '*' also */
-			if ((strcmp("@", $_POST['host']) == 0) || (strcmp("*", $_POST['host']) == 0)) {
-				$host_to_check = $_POST['domainname'];
-			} else {
-				$host_to_check = $_POST['host'] . '.' . $_POST['domainname'];
-			}
 		} else {
-			$host_to_check = $_POST['host'];
-
-			/* No-ip can have a @ in hostname */
-			if (substr($pconfig['type'], 0, 4) == "noip") {
-				$last_to_check = strrpos($host_to_check, '@');
-				if ($last_to_check !== false) {
-					$host_to_check = substr_replace(
-						$host_to_check, '.', $last_to_check, 1);
-				}
-				unset($last_to_check);
+			switch ($pconfig['type']) {
+				case 'azure':
+				case 'azurev6':
+				case 'cloudflare':
+				case 'cloudflare-v6':
+				case 'gandi-livedns':
+				case 'gandi-livedns-v6':
+				case 'hover':
+				case 'linode':
+				case 'linode-v6':
+				case 'name.com':
+				case 'name.com-v6':
+				case 'noip':
+				case 'porkbun':
+				case 'porkbun-v6':
+				case 'yandex':
+				case 'yandex-v6':
+					$host_to_check = ($_POST['host'] == '@') ? $_POST['domainname'] : "{$_POST['host']}.{$_POST['domainname']}";
+					$allow_wildcard = true;
+					break;
+				case 'route53':
+				case 'route53-v6':
+					$host_to_check = $_POST['host'];
+					$allow_wildcard = true;
+					break;
+				default:
+					$host_to_check = $_POST['host'];
 			}
 		}
 
@@ -202,6 +204,9 @@ if ($_POST['save'] || $_POST['force']) {
 
 	if (!$input_errors) {
 		$dyndns = array();
+		if (array_get_path($_POST, 'check_ip_mode', 'default') != 'default') {
+			$dyndns['check_ip_mode'] = $_POST['check_ip_mode'];
+		}
 		$dyndns['type'] = $_POST['type'];
 		$dyndns['username'] = $_POST['username'];
 		if ($_POST['passwordfld'] != DMYPWD) {
@@ -209,7 +214,15 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['password'] = $this_dyndns_config['password'];;
 		}
-		$dyndns['host'] = $_POST['host'];
+		switch ($pconfig['type']) {
+			case 'name.com':
+			case 'name.com-v6':
+				$dyndns['host'] = ($_POST['host'] == "@") ? '' : $_POST['host'];
+				break;
+			default:
+				$dyndns['host'] = $_POST['host'];
+				break;
+		}
 		$dyndns['domainname'] = $_POST['domainname'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
@@ -268,6 +281,14 @@ if ($_POST['save'] || $_POST['force']) {
 		header("Location: services_dyndns.php");
 		exit;
 	}
+}
+
+function build_check_ip_mode_list() {
+	return [
+		'default' => 'Automatic (default)',
+		'always' => 'Always use the Check IP service',
+		'never' => 'Never use the Check IP service'
+	];
 }
 
 function build_type_list() {
@@ -348,6 +369,13 @@ $section->addInput(new Form_Select(
 	$interfacelist
 ))->setHelp('This is almost always the same as the Interface to Monitor. ');
 
+$section->addInput(new Form_Select(
+	'check_ip_mode',
+	'Check IP Mode',
+	$pconfig['check_ip_mode'],
+	build_check_ip_mode_list()
+))->setHelp('By default, the Check IP service will only be used if a private address is detected.');
+
 $group = new Form_Group('*Hostname');
 
 $group->add(new Form_Input(
@@ -364,7 +392,7 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Cloudflare, Linode, Porkbun: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Azure, Cloudflare, Linode, Porkbun, Name.com: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .

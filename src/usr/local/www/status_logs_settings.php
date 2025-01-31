@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -91,12 +91,25 @@ function is_valid_syslog_server($target) {
 		|| is_hostnamewithport($target));
 }
 
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
+phpsession_end();
+
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
-	clear_all_log_files(true);
-	$reset_msg = gettext("The log files have been reset.");
+	if (!$read_only) {
+		clear_all_log_files(true);
+		$reset_msg = gettext("The log files have been reset.");
+	} else {
+		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
 } elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	if ($read_only) {
+		$input_errors[] = gettext("Insufficient privileges to make the requested change (read only).");
+	}
 
 	/* input validation */
 	if ($_POST['enable'] && !is_valid_syslog_server($_POST['remoteserver'])) {
@@ -137,7 +150,6 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	}
 
 	if (!$input_errors) {
-		config_init_path('syslog');
 		config_set_path('syslog/reverse', $_POST['reverse'] ? true : false);
 		config_set_path('syslog/nentries', (int)$_POST['nentries']);
 		$pconfig['nentries'] = config_get_path('syslog/nentries');
@@ -215,6 +227,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 		$changes_applied = true;
 		$retval = 0;
+		system_sshguard_stop();
 		system_syslogd_start();
 		if (($oldnologdefaultblock !== config_path_enabled('syslog', 'nologdefaultblock')) ||
 		    ($oldnologdefaultpass !== config_path_enabled('syslog', 'nologdefaultpass')) ||

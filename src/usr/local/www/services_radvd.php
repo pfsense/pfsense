@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -72,9 +72,14 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	$pconfig['raminrtradvinterval'] = config_get_path("dhcpdv6/{$if}/raminrtradvinterval");
 	$pconfig['ramaxrtradvinterval'] = config_get_path("dhcpdv6/{$if}/ramaxrtradvinterval");
 	$pconfig['raadvdefaultlifetime'] = config_get_path("dhcpdv6/{$if}/raadvdefaultlifetime");
+	$pconfig['ranat64'] = config_get_path("dhcpdv6/{$if}/ranat64");
+	if (isset($pconfig['ranat64'])) {
+		list($pconfig['ranat64_address'], $pconfig['ranat64_mask']) = explode('/', $pconfig['ranat64']);
+	}
+	$pconfig['ranat64_lifetime'] = config_get_path("dhcpdv6/{$if}/ranat64_lifetime");
 
 	$pconfig['radomainsearchlist'] = config_get_path("dhcpdv6/{$if}/radomainsearchlist");
-	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = config_get_path("dhcpdv6/{$if}/radnsserver");
+	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3'], $pconfig['radns4']) = config_get_path("dhcpdv6/{$if}/radnsserver");
 	$pconfig['radvd-dns'] = (config_get_path("dhcpdv6/{$if}/radvd-dns") != 'disabled') ? true : false;
 	$pconfig['rasamednsasdhcp6'] = config_path_enabled("dhcpdv6/{$if}", 'rasamednsasdhcp6');
 
@@ -147,7 +152,7 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3']))) {
+	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3'])) || ($_POST['radns4'] && !is_ipaddrv6($_POST['radns4']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 	}
 	if ($_POST['radomainsearchlist']) {
@@ -201,9 +206,26 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Default valid lifetime must be greater than Default preferred lifetime.");
 	}
 
+	if (!empty($pconfig['ranat64'])) {
+		if (is_subnetv6($pconfig['ranat64'])) {
+			list($pconfig['ranat64_address'], $pconfig['ranat64_mask']) = explode('/', $pconfig['ranat64']);
+		} else {
+			$input_errors[] = gettext("The NAT64 prefix is invalid.");
+		}
+	}
+	if ($_POST['ranat64_lifetime']) {
+		if (!is_numericint($_POST['ranat64_lifetime'])) {
+			$input_errors[] = gettext("NAT64 Prefix Lifetime must be an integer.");
+		} elseif (intval($_POST['ranat64_lifetime']) < 1 || intval($_POST['ranat64_lifetime']) > 65528) {
+			$input_errors[] = gettext("NAT64 Prefix Lifetime must be from 1 to 65528.");
+		} elseif (empty($_POST['ranat64_address']) && intval($_POST['ranat64_lifetime']) == 128) {
+			// Don't save the default lifetime value
+			unset($_POST['ranat64_lifetime']);
+		}
+	}
+
 	if (!$input_errors) {
-		config_init_path("dhcpdv6/{$if}");
-		$dhcpd6_config = config_get_path("dhcpdv6/{$if}");
+		$dhcpd6_config = config_get_path("dhcpdv6/{$if}", []);
 
 		$dhcpd6_config['ramode'] = $_POST['ramode'];
 		$dhcpd6_config['rapriority'] = $_POST['rapriority'];
@@ -214,6 +236,16 @@ if ($_POST['save']) {
 		$dhcpd6_config['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
 		$dhcpd6_config['ramaxrtradvinterval'] = $_POST['ramaxrtradvinterval'];
 		$dhcpd6_config['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
+		if (!empty($_POST['ranat64_address'])) {
+			$dhcpd6_config['ranat64'] = "{$_POST['ranat64_address']}/{$_POST['ranat64_mask']}";
+		} else {
+			array_del_path($dhcpd6_config, 'ranat64');
+		}
+		if (isset($_POST['ranat64_lifetime'])) {
+			$dhcpd6_config['ranat64_lifetime'] = $_POST['ranat64_lifetime'];
+		} else {
+			array_del_path($dhcpd6_config, 'ranat64_lifetime');
+		}
 
 		$dhcpd6_config['radomainsearchlist'] = $_POST['radomainsearchlist'];
 		array_del_path($dhcpd6_config, 'radnsserver');
@@ -225,6 +257,9 @@ if ($_POST['save']) {
 		}
 		if ($_POST['radns3']) {
 			$dhcpd6_config['radnsserver'][] = $_POST['radns3'];
+		}
+		if ($_POST['radns4']) {
+			$dhcpd6_config['radnsserver'][] = $_POST['radns4'];
 		}
 
 		$dhcpd6_config['radvd-dns'] = ($_POST['radvd-dns']) ? "enabled" : "disabled";
@@ -272,7 +307,7 @@ $tab_array = array();
 $tabscounter = 0;
 $i = 0;
 foreach ($iflist as $ifent => $ifname) {
-	$oc = config_get_path("interfaces/{$ifent}");
+	$oc = config_get_path("interfaces/{$ifent}", []);
 	/* We need interfaces configured with a static IPv6 address or track6 for PD.
 	   Also show those configured as none to allow disabling the service. See:
 	   https://redmine.pfsense.org/issues/14967 */
@@ -405,6 +440,25 @@ $section->addInput(new Form_Input(
 'The default is 3 * Maximum RA interval seconds.'), '<br />');
 
 
+$section->addInput(new Form_IpAddress(
+	'ranat64_address',
+	gettext('NAT64 Prefix'),
+	($pconfig['ranat64_address'] ?? ''),
+	'V6'
+))->addClass('autotrim')->addMask('ranat64_mask', ($pconfig['ranat64_mask'] ?? 128))->setWidth(5)->setHelp(
+	'Specify a NAT64 prefix to enable PREF64 support. This is typically set to "64:ff9b::/96".'
+);
+$section->addInput(new Form_Input(
+	'ranat64_lifetime',
+	gettext('NAT64 Prefix Lifetime'),
+	'number',
+	$pconfig['ranat64_lifetime'],
+	['min' => 1, 'max' => 65528, 'placeholder' => (intval(array_get_path($pconfig, 'ramaxrtradvinterval', 600)) * 3)]
+))->setHelp(gettext('The length of time in seconds (relative to the time
+	the packet is sent) that the prefix is valid for the purpose of NAT64
+	existence determination. The default is 3 * Maximum RA Interval seconds.'
+));
+
 if (empty($pconfig['subnets'])) {
 	$pconfig['subnets'] = array('0' => '/128');
 }
@@ -488,6 +542,7 @@ if (is_numeric($pool) || ($act === 'newpool')) {
 	}
 }
 
+// radvd supports up to 127 entries; allow up to 4 to align with DHCP
 for ($idx = 1; $idx <= 4; $idx++) {
 	$last = $section->addInput(new Form_IpAddress(
 		'radns' . $idx,
@@ -527,7 +582,7 @@ events.push(function() {
 	checkLastRow();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network,urltable')) ?>;
 
 	$('#radns1, #radns2, #radns3, #radns4').autocomplete({
 		source: addressarray

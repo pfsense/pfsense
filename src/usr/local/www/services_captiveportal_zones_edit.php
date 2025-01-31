@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,8 +38,6 @@ require_once("xmlparse.inc");
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zone"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self");
 $shortcut_section = "captiveportal";
-
-config_init_path('captiveportal');
 
 if ($_POST['Submit']) {
 	unset($input_errors);

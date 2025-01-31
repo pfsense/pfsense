@@ -7,7 +7,7 @@
  * Copyright (c) 2006 Peter Allgeyer
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -323,7 +323,7 @@ function filter_delete_states_for_down_gateways() {
 				$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
 				update_filter_reload_status($message);
 				log_error($message);
-				mwexec("/sbin/pfctl -k gateway -k " . escapeshellarg($gwip));
+				mwexec("/sbin/pfctl -M -k gateway -k " . escapeshellarg($gwip));
 			}
 		}
 	}
@@ -443,6 +443,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 				$timeoutlist .= " tcp.{$typ} {$timeo} ";
 			}
 	}
+	// SCTP timeouts
+	foreach (["first", "opening", "established", "closing", "closed"] as $typ) {
+		$timeo = config_get_path("system/sctp{$typ}timeout");
+		if (is_numericint($timeo)) {
+				$timeoutlist .= " sctp.{$typ} {$timeo} ";
+			}
+	}
 	// UDP timeouts
 	foreach (["first", "single", "multiple"] as $typ) {
 		$timeo = config_get_path("system/udp{$typ}timeout");
@@ -508,6 +515,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * 'cpzoneid_X_auth' - add PASS tag to authenticated client
 	 */
 	$rules .= filter_captiveportal_ether();
+	$rules .= PHP_EOL;
 
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubbing();
@@ -601,7 +609,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	// get aliases names from config
 	$aliasesnames = array();
-	config_init_path('aliases/alias');
 	foreach (config_get_path('aliases/alias', []) as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
@@ -877,6 +884,118 @@ function filter_expand_alias_array($alias_name) {
 	return explode(" ", preg_replace('/\s+/', ' ', trim($expansion)));
 }
 
+function filter_generate_alias_tables(array $alias_list = []) {
+	global $after_filter_configure_run, $vpns_list;
+
+	$aliases = '';
+
+	$process_ids_header = true;
+	$process_bogons = true;
+	foreach ($alias_list as $aliased) {
+		if (is_numericint($aliased['name'])) {
+			// skip aliases with numeric-only names. redmine #4289
+			file_notice("Filter_Reload", sprintf(gettext("Aliases with numeric-only names are not valid. Skipping alias %s"), $aliased['name']));
+			continue;
+		}
+		$addrlist = filter_generate_nested_alias($aliased['name']);
+		switch ($aliased['type']) {
+		case "host":
+			if ($aliased['name'] == 'sshguard') {
+				$aliases .= "\n#SSH Lockout Table\n";
+				$aliases .= "table <sshguard> persist\n";
+				break;
+			}
+			if (($aliased['name'] == 'snort2c') || ($aliased['name'] == 'virusprot')) {
+				if ($process_ids_header) {
+					$aliases .= "#Snort tables\n";
+					$process_ids_header = false;
+				}
+				$aliases .= "table <{$aliased['name']}>\n";
+				break;
+			}
+		case "network":
+			if ($aliased['name'] == 'tonatsubnets') {
+				// Added in filter_nat_rules_generate().
+				break;
+			} elseif ($aliased['name'] == 'vpn_networks') {
+				if ($vpns_list) {
+					$aliases .= "table <vpn_networks> { $vpns_list }\n";
+				}
+				break;
+			} elseif ($aliased['name'] == 'negate_networks') {
+				if ($vpns_list && !config_path_enabled('system','disablenegate')) {
+					$aliases .= "table <negate_networks> { $vpns_list }\n";
+				}
+				break;
+			}
+		case "url":
+			$tableaddrs = "{$addrlist}";
+			if (empty($tableaddrs)) {
+				$aliases .= "table <{$aliased['name']}> persist\n";
+				if (empty($aliased['address'])) {
+					$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
+				}
+			} else {
+				$aliases .= "table <{$aliased['name']}> { {$addrlist} } \n";
+			}
+
+			$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+			break;
+		case "urltable":
+			if ($process_bogons && (($aliased['name'] == 'bogonsv6') || ($aliased['name'] == 'bogonsv6'))) {
+				$process_bogons = false;
+				if (!file_exists("/etc/bogons")) {
+					@file_put_contents("/etc/bogons", "");
+				}
+				if (!file_exists("/etc/bogonsv6")) {
+					@file_put_contents("/etc/bogonsv6", "");
+				}
+
+				$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
+				$aliases .= "bogons = \"<bogons>\"\n";
+
+				if (!is_bogonsv6_used()) {
+					break;
+				}
+				$maxtableents = config_get_path('system/maximumtableentries');
+				if (!isset($maxtableents) || ($maxtableents < g_get('minimumtableentries_bogonsv6'))) {
+					file_notice("Filter_Reload", sprintf(gettext(
+						"To block bogon IPv6 networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s"),
+						g_get('minimumtableentries_bogonsv6')));
+				} else {
+					$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
+					$aliases .= "bogonsv6 = \"<bogonsv6>\"\n";
+				}
+				break;
+			}
+
+			$urlfn = alias_expand_urltable($aliased['name']);
+			if ($urlfn) {
+				$aliases .= "table <{$aliased['name']}> persist file \"{$urlfn}\"\n";
+				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+			}
+			break;
+		case "urltable_ports":
+			// TODO: Change it when pf supports tables with ports
+			$urlfn = alias_expand_urltable($aliased['name']);
+			if ($urlfn && !empty(trim(file_get_contents($urlfn)))) {
+				$ports_tmp = parse_aliases_file($urlfn, "urltable_ports", "-1", false);
+				$aliases .= "{$aliased['name']} = \"{ " . preg_replace("/\n/", " ", implode("\n", $ports_tmp)) . " }\"\n";
+			}
+			break;
+		case "port":
+		case "url_ports":
+			$aliases .= "{$aliased['name']} = \"{ {$addrlist} }\"\n";
+			break;
+		default:
+			$aliases .= "{$aliased['name']} = \"{ {$aliased['address']} }\"\n";
+			break;
+		}
+	}
+
+	return $aliases;
+}
+
 function filter_generate_aliases() {
 	global $g, $FilterIflist, $after_filter_configure_run, $vpns_list;
 
@@ -885,7 +1004,7 @@ function filter_generate_aliases() {
 		echo "filter_generate_aliases() being called $mt\n";
 	}
 
-	$alias = "#System aliases\n ";
+	$result = "#System aliases\n";
 	$aliases = "loopback = \"{ lo0 }\"\n";
 
 	foreach ($FilterIflist as $if => $ifcfg) {
@@ -952,40 +1071,7 @@ function filter_generate_aliases() {
 		}
 	}
 
-	$aliases .= "\n#SSH Lockout Table\n";
-	$aliases .= "table <sshguard> persist\n";
-
-	$aliases .= "#Snort tables\n";
-	$aliases .= "table <snort2c>\n";
-	$aliases .= "table <virusprot>\n";
-	if (!file_exists("/etc/bogons") || !file_exists("/etc/bogonsv6")) {
-		if (!file_exists("/etc/bogons")) {
-			@file_put_contents("/etc/bogons", "");
-		}
-		if (!file_exists("/etc/bogonsv6")) {
-			@file_put_contents("/etc/bogonsv6", "");
-		}
-	}
-	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
-	if (is_bogonsv6_used()) {
-		$maxtableents = config_get_path('system/maximumtableentries');
-		if (!isset($maxtableents) ||
-			$maxtableents < g_get('minimumtableentries_bogonsv6')) {
-			file_notice("Filter_Reload", sprintf(gettext(
-			    "To block bogon IPv6 networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s"),
-			    g_get('minimumtableentries_bogonsv6')));
-		} else {
-			$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
-		}
-	}
-
-	if ($vpns_list) {
-		$aliases .= "table <vpn_networks> { $vpns_list }\n";
-		/* add a Negate_networks table */
-		if (!config_path_enabled('system','disablenegate')) {
-			$aliases .= "table <negate_networks> { $vpns_list }\n";
-		}
-	}
+	$aliases .= filter_generate_alias_tables(get_reserved_table_names());
 
 	/* Captive Portal tables
 	 * 'cpzoneid_X_cpips' - all portal interfaces IPv4 addresses (including VIPs)
@@ -997,55 +1083,8 @@ function filter_generate_aliases() {
 	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
 
-	foreach (get_sorted_aliases() as $aliased) {
-		if (is_numericint($aliased['name'])) {
-			// skip aliases with numeric-only names. redmine #4289
-			file_notice("Filter_Reload", sprintf(gettext("Aliases with numeric-only names are not valid. Skipping alias %s"), $aliased['name']));
-			continue;
-		}
-		$addrlist = filter_generate_nested_alias($aliased['name']);
-		switch ($aliased['type']) {
-		case "host":
-		case "network":
-		case "url":
-			$tableaddrs = "{$addrlist}";
-			if (empty($tableaddrs)) {
-				$aliases .= "table <{$aliased['name']}> persist\n";
-				if (empty($aliased['address'])) {
-					$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
-				}
-			} else {
-				$aliases .= "table <{$aliased['name']}> { {$addrlist} } \n";
-			}
+	$aliases .= filter_generate_alias_tables(get_sorted_aliases());
 
-			$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
-			break;
-		case "urltable":
-			$urlfn = alias_expand_urltable($aliased['name']);
-			if ($urlfn) {
-				$aliases .= "table <{$aliased['name']}> persist file \"{$urlfn}\"\n";
-				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
-			}
-			break;
-		case "urltable_ports":
-			// TODO: Change it when pf supports tables with ports
-			$urlfn = alias_expand_urltable($aliased['name']);
-			if ($urlfn && !empty(trim(file_get_contents($urlfn)))) {
-				$ports_tmp = parse_aliases_file($urlfn, "urltable_ports", "-1", false);
-				$aliases .= "{$aliased['name']} = \"{ " . preg_replace("/\n/", " ", implode("\n", $ports_tmp)) . " }\"\n";
-			}
-			break;
-		case "port":
-		case "url_ports":
-			$aliases .= "{$aliased['name']} = \"{ {$addrlist} }\"\n";
-			break;
-		default:
-			$aliases .= "{$aliased['name']} = \"{ {$aliased['address']} }\"\n";
-			break;
-		}
-
-	}
-	$result = "{$alias} \n";
 	$result .= "{$aliases}";
 
 	return $result;
@@ -1155,7 +1194,7 @@ function filter_generate_gateways() {
 						}
 						$foundlb++;
 					} else {
-						log_error(sprintf(gettext("An error occurred while trying to find the interface got %s .  The rule has not been added."), $gatewayip));
+						log_error(sprintf(gettext('Omitting gateway from filter ruleset. Group: "%s" Gateway: "%s" IP: "%s"'), $gateway, $member['gw'], $gatewayip));
 					}
 				}
 				$route = "";
@@ -1216,7 +1255,7 @@ function filter_get_vpns_list() {
 			}
 		}
 		foreach (config_get_path('ipsec/phase2', []) as $ph2ent) {
-			if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport') &&
+			if ((!isset($ph2ent['mobile'])) && ($ph2ent['mode'] != 'transport') &&
 				!isset($ph2ent['disabled'])) {
 				if (!is_array($ph2ent['remoteid'])) {
 					continue;
@@ -1964,7 +2003,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	// OpenVPN CSO
-	config_init_path('openvpn/openvpn-csc');
 	foreach (config_get_path('openvpn/openvpn-csc', []) as $ovpnent) {
 		if (is_array($ovpnent) && !isset($ovpnent['disable']) && !empty($ovpnent['tunnel_network'])) {
 			$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnent['tunnel_network']));
@@ -2231,8 +2269,7 @@ EOD;
 function filter_nat_rules_generate() {
 	global $g, $FilterIflist;
 
-	config_init_path('ipsec/client');
-	$ipsec_client = config_get_path('ipsec/client');
+	$ipsec_client = config_get_path('ipsec/client', []);
 
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
@@ -2492,7 +2529,9 @@ function filter_nat_rules_generate() {
 				/* validate source alias */
 				if (empty($src)) {
 					$error_text = sprintf(gettext("Unresolvable source alias '%1\$s' for rule '%2\$s'"), $src, $descr);
-					file_notice("Filter_Reload", $error_text);
+					if (!is_platform_booting()) {
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+					}
 					$natrules .= "# {$error_text}\n";
 					continue;
 				}
@@ -2506,7 +2545,9 @@ function filter_nat_rules_generate() {
 					$error_text = sprintf(gettext("Empty source port alias '%1\$s' for rule '%2\$s'"), $obent['sourceport'], $descr);
 				}
 				if ($error_text) {
-					file_notice("Filter_Reload", $error_text);
+					if (!is_platform_booting()) {
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+					}
 					$natrules .= "# {$error_text}\n";
 					continue;
 				}
@@ -2518,7 +2559,9 @@ function filter_nat_rules_generate() {
 				/* validate destination alias */
 				if (empty($dst)) {
 					$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $dst, $descr);
-					file_notice("Filter_Reload", $error_text);
+					if (!is_platform_booting()) {
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+					}
 					$natrules .= "# {$error_text}\n";
 					continue;
 				}
@@ -2532,7 +2575,9 @@ function filter_nat_rules_generate() {
 					$error_text = sprintf(gettext("Empty destination port alias '%1\$s' for rule '%2\$s'"), $obent['dstport'], $descr);
 				}
 				if ($error_text) {
-					file_notice("Filter_Reload", $error_text);
+					if (!is_platform_booting()) {
+						file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+					}
 					$natrules .= "# {$error_text}\n";
 					continue;
 				}
@@ -3079,8 +3124,68 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 }
 
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
-	global $FilterIflist;
+	global $FilterIflist, $GatewaysList;
 	$src = "";
+
+	$nat_type = match ($target) {
+		'nat64source' => '64',
+		default => null
+	};
+	if (isset($rule['nat']) && isset($nat_type)) {
+		$target = 'source';
+
+		$matches = [];
+		if (empty($rule['nat'][$target])) {
+			$source_interface = null;
+			if (isset($rule['gateway'])) {
+				if (array_get_path($GatewaysList, "{$rule['gateway']}/interface")) {
+					$source_interface = $GatewaysList[$rule['gateway']]['interface'];
+				} elseif (array_get_path($GatewaysList, "{$rule['gateway']}/0/int")) {
+					$source_interface = $GatewaysList[$rule['gateway']][0]['int'];
+				}
+			} else {
+				// Use the default gateway's interface if no gateway is specified for the rule
+				foreach ($GatewaysList as $gateway_config) {
+					if (!isset($gateway_config['isdefaultgw']) || !isset($gateway_config['interface']) || !isset($gateway_config['ipprotocol'])) {
+						continue;
+					}
+					if (($nat_type == '64') && ($gateway_config['ipprotocol'] == 'inet')) {
+						$source_interface = $gateway_config['interface'];
+						break;
+					}
+				}
+			}
+			if (isset($source_interface)) {
+				$src = "({$source_interface})";
+			}
+		} elseif (is_alias($rule['nat'][$target])) {
+			$src = alias_expand($rule['nat'][$target]) . ' round-robin';
+		} elseif (preg_match('/^(wan|lan|opt[[:digit:]]+)ip$/', $rule['nat'][$target], $matches)) {
+			$src = '(' . get_real_interface($matches[1]) . ')';
+		} else {
+			$source_address = explode('/', $rule['nat'][$target], 2);
+			if (($nat_type == '64') && is_ipaddrv4($source_address[0])) {
+				if (isset($source_address[1])) {
+					$filter_validate_int_options = [
+						'options' => [
+							'min_range' => 1,
+							'max_range' => 32
+						]
+					];
+					if (!empty(filter_var($source_address[1], FILTER_VALIDATE_INT, $filter_validate_int_options))) {
+						$src = "{$source_address[0]}/{$source_address[1]}";
+					}
+				} else {
+					$src = $source_address[0];
+				}
+
+				$src = "{ {$src} }";
+			}
+		}
+
+		return $src;
+	}
+
 	$add_macro = false;
 
 	// support outbound NAT rules
@@ -3365,12 +3470,16 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	/* check for unresolvable aliases */
 	if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 		$error_text = sprintf(gettext("Unresolvable source alias '%1\$s' for rule '%2\$s'"), $rule['source']['address'], $rule['descr']);
-		file_notice("Filter_Reload", $error_text);
+		if (!is_platform_booting()) {
+			file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+		}
 		return "# {$error_text}";
 	}
 	if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
 		$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $rule['destination']['address'], $rule['descr']);
-		file_notice("Filter_Reload", $error_text);
+		if (!is_platform_booting()) {
+			file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+		}
 		return "# {$error_text}";
 	}
 	if ($rule['source']['port'] &&
@@ -3386,7 +3495,9 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		}
 
 		if ($error_text) {
-			file_notice("Filter_Reload", $error_text);
+			if (!is_platform_booting()) {
+				file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+			}
 			return "# {$error_text}";
 		}
 	}
@@ -3403,7 +3514,9 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		}
 
 		if ($error_text) {
-			file_notice("Filter_Reload", $error_text);
+			if (!is_platform_booting()) {
+				file_notice("Filter_Reload", gettext('Rule skipped: ') . $error_text);
+			}
 			return "# {$error_text}";
 		}
 	}
@@ -3413,6 +3526,26 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 		/* default (for older rules) is pass */
 		$type = "pass";
 	}
+
+	if (array_path_enabled($rule, 'nat')) {
+		$nat_type = match ($rule['ipprotocol']) {
+			'inet6' => '64',
+			default => null
+		};
+		if ((isset($rule['floating']) && ($rule['floating'] == "yes") && ($rule['direction'] != 'in')) ||
+		    ($rule['type'] != 'pass') ||
+		    !isset($nat_type)) {
+			return "# Invalid NAT{$nat_type} rule";
+		}
+
+		$nat_source_address = filter_generate_address($rule, "nat{$nat_type}source");
+		if (empty($nat_source_address)) {
+			return "# Could not determine NAT{$nat_type} source address";
+		}
+
+		$aline['nat'] = " af-to inet from {$nat_source_address} ";
+	}
+
 	if ($type == "reject") {
 		$aline['type'] = "block return ";
 	} else {
@@ -3752,7 +3885,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	}
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
-		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
+		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] . "{$aline['nat']}" .
 		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
 		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 
@@ -3928,6 +4061,7 @@ EOD;
 	 * Useful for protecting against sudden outbursts, etc.
 	 */
 	$ipfrules .= "block in {$log['block']} quick from <virusprot> to any ridentifier 1000000400 label \"virusprot overload table\"\n";
+	$ipfrules .= "block out quick proto udp from any port = 67 to any port = 68 tagged \"dhcpin\" ridentifier {$increment_tracker()} label \"Prevent routing dhcp responses\"\n";
 
 	foreach ($FilterIflist as $on => $oc) {
 		$saved_tracker += 10;
@@ -3941,8 +4075,8 @@ EOD;
 			}
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
-pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 67 to any port = 68 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp replies in {$oc['descr']}")}"
-pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 to any port = 67 ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}" {$vlantag}
+pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 67 to any port = 68 tag "dhcpin" no state ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp replies in {$oc['descr']}")}"
+pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 to any port = 67 no state ridentifier {$increment_tracker()} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}" {$vlantag}
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
 
 EOD;
@@ -4247,6 +4381,26 @@ EOD;
 		// a floating state is needed for ipsec rules - see #15430
 		$state_policy = $use_floating_states_for_ipsec ? '(floating)' : '';
 		$ipfrules .= "pass out {$log['pass']} on \$IPsec all ridentifier {$increment_tracker()} ridentifier {$increment_tracker()} keep state {$state_policy} label \"IPsec internal host to host\"\n";
+		// also fix the state policy on VTIs
+		if (!empty($state_policy)) {
+			$ipsec_vti_list = [];
+			foreach (config_get_path('ipsec/phase1', []) as $phase1_config) {
+				if (isset($phase1_config['disabled'])) {
+					continue;
+				}
+				foreach(ipsec_get_phase2_by_ikeid($phase1_config['ikeid']) as $phase2_config) {
+					if (isset($phase2_config['disabled'])) {
+						continue;
+					}
+					if ($phase2_config['mode'] == 'vti') {
+						$ipsec_vti_list[] = ipsec_get_ifname($phase1_config, $phase1_config['ikeid']);
+					}
+				}
+			}
+			foreach ($ipsec_vti_list as $ipsec_vti_name) {
+				$ipfrules .= "pass out {$log['pass']} on {$ipsec_vti_name} all ridentifier {$increment_tracker()} keep state {$state_policy} label \"IPsec VTI floating states\"\n";
+			}
+		}
 	}
 
 	$saved_tracker += 10;
@@ -4474,7 +4628,6 @@ function filter_tdr_install_cron($should_install) {
 		return;
 	}
 
-	config_init_path('cron/item');
 	$x = 0;
 	$is_installed = false;
 	foreach (config_get_path('cron/item', []) as $item) {
@@ -4788,7 +4941,7 @@ function filter_generate_ipsec_rules($log = array()) {
 			} else {
 				$parentinterface = $ph1ent['interface'];
 			}
-			if (empty($FilterIflist[$parentinterface]['descr'])) {
+			if (empty($parentinterface) || empty($FilterIflist[$parentinterface]['descr'])) {
 				$ipfrules .= "# Could not locate interface for IPsec: {$descr}\n";
 				continue;
 			}
@@ -4915,6 +5068,9 @@ function discover_pkg_rules($ruletype) {
 		    $pkg_config['include_file']));
 
 		$tmprules = $pkg_generate_rules("$ruletype");
+		if (empty($tmprules)) {
+			continue;
+		}
 		file_put_contents("{$g['tmp_path']}/rules.test.packages",
 		    $aliases . $tmprules);
 		$status = mwexec(
@@ -4959,16 +5115,16 @@ function filter_get_antilockout_ports($wantarray = false) {
 }
 
 /**
- * Get the first and last rule's index for an interface, and optionally the
- * relative index of a rule within the interface.
+ * Get the first and last rule's index for an interface, and optionally
+ * a rule index relative to the number of rules on the interface.
  * 
- * @param string $if The interface used to calculate the rule indices
- * @param int $idx (optional) A rule index
+ * @param string $interface The interface used to find the rule indices
+ * @param int $rule_index (optional) A rule index
  * 
  * @return array Contains the matching interface's first and last rule's index,
  *               and the matching rule's relative index if found.
  */
-function get_interface_ruleindex(string $interface, ?int $rule_index = null): array {
+function get_interface_ruleindex(string $interface, ?int $rule_index = null, ?array $rules = null): array {
 	if (isset($rule_index) && ($rule_index < 0)) {
 		unset($rule_index);
 	}
@@ -4981,12 +5137,13 @@ function get_interface_ruleindex(string $interface, ?int $rule_index = null): ar
 		return $interface_rule_index;
 	}
 
+	$rules = $rules ?? config_get_path('filter/rule', []);
 	$interface = strtolower($interface);
 	$relative_index_count = -1; // a valid index count starts at 0
-	foreach (config_get_path('filter/rule',[]) as $idx => $rule) {
+	foreach ($rules as $idx => $rule) {
 		// skip rules on unrelated interfaces
 		if ((isset($rule['floating']) && ($interface != "floatingrules")) ||
-		    (!isset($rule['floating']) && ($interface != $rule['interface']))) {
+		    (!isset($rule['floating']) && ($interface != strtolower($rule['interface'])))) {
 			if (isset($rule_index) && isset($interface_rule_index['first']) && ($idx >= $rule_index)) {
 				// the last rule on the matching interface has already been reached
 				break;

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -173,7 +173,12 @@ $shortcuts['dhcp']['status'] = "status_dhcp_leases.php";
 $shortcuts['dhcp']['service'] = "dhcpd";
 
 $shortcuts['kea-dhcp4'] = $shortcuts['dhcp'];
-$shortcuts['kea-dhcp4']['service'] = 'kea-dhcp4';
+$shortcuts['kea-dhcp4']['main'] = 'services_dhcp_settings.php';
+$shortcuts['kea-dhcp4']['service'] ='kea-dhcp4';
+
+$shortcuts['dhcp-relay'] = array();
+$shortcuts['dhcp-relay']['main'] = 'services_dhcp_relay.php';
+$shortcuts['dhcp-relay']['service'] = 'dhcrelay';
 
 $shortcuts['dhcp6'] = array();
 $shortcuts['dhcp6']['main'] = "services_dhcpv6.php";
@@ -182,7 +187,12 @@ $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
 $shortcuts['dhcp6']['service'] = "dhcpd";
 
 $shortcuts['kea-dhcp6'] = $shortcuts['dhcp6'];
+$shortcuts['kea-dhcp6']['main'] = "services_dhcpv6_settings.php";
 $shortcuts['kea-dhcp6']['service'] = 'kea-dhcp6';
+
+$shortcuts['dhcp6-relay'] = array();
+$shortcuts['dhcp6-relay']['main'] = 'services_dhcpv6_relay.php';
+$shortcuts['dhcp6-relay']['service'] = 'dhcrelay6';
 
 $shortcuts['radvd'] = array();
 $shortcuts['radvd']['main'] = "services_radvd.php";

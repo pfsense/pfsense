@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -45,7 +45,7 @@ $filtered_tags = array(
 	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
 	'crypto_password2', 'dns_nsupdatensupdate_key', 'ddnsdomainkey', 'encryption_password',
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
-	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
+	'influx_pass', 'ipsecpsk', 'keydata', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
 	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
 	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode',
 	'oinkmastercode', 'pass', 'passphrase', 'password', 'passwordagain',

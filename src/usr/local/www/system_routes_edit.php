@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -39,10 +39,9 @@ require_once("gwlb.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
 
-config_init_path('staticroutes/route');
 $a_gateways = get_gateways(GW_CACHE_DISABLED | GW_CACHE_LOCALHOST);
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$id = $_REQUEST['dup'];
@@ -243,10 +242,11 @@ $section = new Form_Section('Edit Route Entry');
 
 $section->addInput(new Form_IpAddress(
 	'network',
-	'*Destination network',
+	'*'.gettext('Destination network'),
 	$pconfig['network'],
 	'ALIASV4V6'
-))->addMask('network_subnet', $pconfig['network_subnet'])->setHelp('Destination network for this static route');
+))->addClass('autotrim')
+  ->addMask('network_subnet', $pconfig['network_subnet'])->setHelp(gettext('Destination network for this static route'));
 
 $allGateways = array_combine(
 	array_map(function($gw){ return $gw['name']; }, $a_gateways),
@@ -254,26 +254,26 @@ $allGateways = array_combine(
 );
 $section->addInput(new Form_Select(
 	'gateway',
-	'*Gateway',
+	'*'.gettext('Gateway'),
 	$pconfig['gateway'],
 	$allGateways
-))->setHelp('Choose which gateway this route applies to or %1$sadd a new one first%2$s',
+))->setHelp(gettext('Choose which gateway this route applies to or %1$sadd a new one first%2$s'),
 	'<a href="/system_gateways_edit.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',
-	'Disabled',
-	'Disable this static route',
+	gettext('Disabled'),
+	gettext('Disable this static route'),
 	$pconfig['disabled']
-))->setHelp('Set this option to disable this static route without removing it from '.
-	'the list.');
+))->setHelp(gettext('Set this option to disable this static route without removing it from '.
+	'the list.'));
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Description',
+	gettext('Description'),
 	'text',
-	htmlspecialchars($pconfig['descr'])
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+	$pconfig['descr']
+))->setHelp(gettext('A description may be entered here for administrative reference (not parsed).'));
 
 $form->add($section);
 
@@ -284,7 +284,7 @@ print $form;
 //<![CDATA[
 events.push(function() {
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network')) ?>;
 
 	$('#network').autocomplete({
 		source: addressarray

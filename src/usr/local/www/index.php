@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -102,7 +102,6 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 }
 
 ##if no config entry found, initialize config entry
-config_init_path('widgets');
 
 if (!is_array($user_settings['widgets'])) {
 	$user_settings['widgets'] = array();
@@ -282,7 +281,7 @@ if ($user_settings['widgets']['sequence'] != "") {
 	$widgets = $widgetsfromconfig + $known_widgets;
 
 	##find custom configurations of a particular widget and load its info to $pconfig
-	$widgets_config = config_get_path('widgets');
+	$widgets_config = config_get_path('widgets', []);
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($widgets_config["{$widgetname}-config"]) {
 			$pconfig["{$widgetname}-config"] = $widgets_config["{$widgetname}-config"];
@@ -354,6 +353,7 @@ endforeach;
 </div>
 
 <?php
+$widgets_found = [];
 $widgetColumns = array();
 foreach ($widgets as $widgetkey => $widgetconfig) {
 	if ($widgetconfig['display'] != 'none' && file_exists("/usr/local/www/widgets/widgets/{$widgetconfig['basename']}.widget.php")) {
@@ -545,8 +545,6 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 // ---------------------Centralized widget refresh system -------------------------------------------
 // These need to live outside of the events.push() function to enable the widgets to see them
 var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
-var ajaxidx = 0;
-var ajaxmutex = false;
 var ajaxcntr = 0;
 
 // Add a widget refresh object to the array list
@@ -615,8 +613,6 @@ events.push(function() {
 	ajaxtimeout = false;
 
 	function make_ajax_call(wd) {
-		ajaxmutex = true;
-
 		$.ajax({
 			type: 'POST',
 			url: wd.url,
@@ -636,38 +632,30 @@ events.push(function() {
 					}
 				}
 
-				ajaxmutex = false;
 			},
 
 			error: function(e){
-//				alert("Error: " + e);
-				ajaxmutex = false;
+				console.log("Error: " + e);
 			}
 		});
+	}
+
+	function execute_ajax_call(item){
+		if ((ajaxcntr % item.freq) === 0) {
+			make_ajax_call(item);
+		}
 	}
 
 	// Loop through each AJAX widget refresh object, make the AJAX call and pass the
 	// results back to the widget's callback function
 	function executewidget() {
-		if (ajaxspecs.length > 0) {
-			var freq = ajaxspecs[ajaxidx].freq;	// widget can specify it should be called freq times around the loop
+		ajaxspecs.forEach(execute_ajax_call);
 
-			if (!ajaxmutex) {
-				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
-				    make_ajax_call(ajaxspecs[ajaxidx]);
-				}
+		if (++ajaxcntr >= 4096) {
+			ajaxcntr = 0;
+		}
 
-			    if (++ajaxidx >= ajaxspecs.length) {
-					ajaxidx = 0;
-
-					if (++ajaxcntr >= 4096) {
-						ajaxcntr = 0;
-					}
-			    }
-			}
-
-		    setTimeout(function() { executewidget(); }, 1000);
-	  	}
+		setTimeout(function() { executewidget(); }, 1000);
 	}
 
 	// Kick it off
@@ -681,6 +669,9 @@ events.push(function() {
 <?php
 //build list of javascript include files
 foreach (glob('widgets/javascript/*.js') as $file) {
+	if (!array_key_exists(basename($file, '.js'), $widgets_found)) {
+		continue;
+	}
 	$mtime = filemtime("/usr/local/www/{$file}");
 	echo '<script src="'.$file.'?v='.$mtime.'"></script>';
 }

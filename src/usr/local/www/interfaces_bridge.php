@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,12 +30,10 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('bridges/bridged');
-
 function bridge_inuse($num) {
-	$a_bridges = config_get_path('bridges/bridged');
+	$a_bridges = config_get_path('bridges/bridged', []);
 	$iflist = get_configured_interface_list(true);
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($iflist as $if) {
 		if ($if_config[$if]['if'] == $a_bridges[$num]['bridgeif']) {
 			return true;

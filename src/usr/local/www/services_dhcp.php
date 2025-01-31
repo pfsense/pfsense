@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,11 +32,12 @@
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("filter.inc");
+require_once('guiconfig.inc');
+require_once('filter.inc');
 require_once('rrd.inc');
-require_once("shaper.inc");
-require_once("util.inc");
+require_once('shaper.inc');
+require_once('util.inc');
+require_once('services_dhcp.inc');
 
 global $ddnsdomainkeyalgorithms;
 
@@ -118,17 +119,15 @@ if (!empty(config_get_path("dhcpd/{$if}"))) {
 		exit;
 	}
 
-	config_init_path("dhcpd/{$if}/pool");
-
 	if (is_numeric($pool) && config_get_path("dhcpd/{$if}/pool/{$pool}")) {
 		$dhcpdconf = config_get_path("dhcpd/{$if}/pool/{$pool}");
 	} elseif ($act == "newpool") {
 		$dhcpdconf = array();
 	} else {
-		$dhcpdconf = config_get_path("dhcpd/{$if}");
+		$dhcpdconf = config_get_path("dhcpd/{$if}", []);
 	}
 
-	array_init_path($dhcpd_if_config, "staticmap");
+	array_init_path($dhcpdconf, "staticmap");
 }
 
 if (is_array($dhcpdconf)) {
@@ -612,8 +611,7 @@ if (isset($_POST['save'])) {
 			if ($act == "newpool") {
 				$dhcpdconf = array();
 			} else {
-				config_init_path("dhcpd/{$if}");
-				$dhcpdconf = config_get_path("dhcpd/{$if}");
+				$dhcpdconf = config_get_path("dhcpd/{$if}", []);
 			}
 		} else {
 			if (is_array(config_get_path("dhcpd/{$if}/pool/{$pool}"))) {
@@ -906,7 +904,7 @@ if ($act == "del") {
 function build_pooltable() {
 	global $if;
 
-	$pooltbl =	'<div class="table-responsive">';
+	$pooltbl =	'<div class="contains-table table-responsive">';
 	$pooltbl .=		'<table class="table table-striped table-hover table-condensed">';
 	$pooltbl .=			'<thead>';
 	$pooltbl .=				'<tr>';
@@ -933,7 +931,7 @@ function build_pooltable() {
 
 			$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-			$pooltbl .= ' <a class="fa-solid fa-trash-can" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
+			$pooltbl .= ' <a class="fa-solid fa-trash-can text-danger" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
 			$pooltbl .= '</tr>';
 		}
 		$i++;
@@ -947,7 +945,7 @@ function build_pooltable() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
-$pglinks = array("", "services_dhcp.php");
+$pglinks = array("", "services_dhcp_settings.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
@@ -967,6 +965,10 @@ if (dhcp_is_backend('kea')) {
 }
 
 include('head.inc');
+
+if (config_path_enabled('dhcrelay')) {
+	print_info_box(gettext('DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface.'), 'danger', false);
+}
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -988,8 +990,12 @@ $tabscounter = 0;
 $i = 0;
 $have_small_subnet = false;
 
+if (dhcp_is_backend('kea')) {
+	$tab_array[] = [gettext('Settings'), false, 'services_dhcp_settings.php'];
+}
+
 foreach ($iflist as $ifent => $ifname) {
-	$oc = config_get_path("interfaces/{$ifent}");
+	$oc = config_get_path("interfaces/{$ifent}", []);
 
 	/* Not static IPv4 or subnet >= 31 */
 	if ($oc['subnet'] >= 31) {
@@ -1025,9 +1031,13 @@ if ($tabscounter == 0) {
 
 display_top_tabs($tab_array);
 
+if (is_null($pconfig) || !is_array($pconfig)) {
+	$pconfig = [];
+}
+
 $form = new Form();
 
-$section = new Form_Section(gettext('General DHCP Options'));
+$section = new Form_Section(gettext('General Settings'));
 
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
@@ -1042,15 +1052,15 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	if (config_path_enabled('dhcrelay')) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
-			'Enable',
+			gettext('Enable'),
 			gettext("DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface."),
 			$pconfig['enable']
 		))->setAttribute('disabled', true);
 	} else {
 		$section->addInput(new Form_Checkbox(
 			'enable',
-			'Enable',
-			sprintf(gettext("Enable DHCP server on %s interface"), htmlspecialchars($iflist[$if])),
+			gettext('Enable'),
+			sprintf(gettext("Enable DHCP server on %s interface"), $iflist[$if]),
 			$pconfig['enable']
 		));
 	}
@@ -1065,7 +1075,7 @@ $section->addInput(new Form_Checkbox(
 	'Ignore BOOTP queries',
 	$pconfig['ignorebootp']
 ));
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 $section->addInput(new Form_Select(
 	'denyunknown',
@@ -1088,7 +1098,7 @@ $section->addInput(new Form_Checkbox(
 	'Ignore denied clients rather than reject',
 	$pconfig['nonak']
 ))->setHelp(gettext('This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.'));
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('isc') ||
     (dhcp_is_backend('kea') && (!is_numeric($pool) && !($act === 'newpool')))):
@@ -1192,7 +1202,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
 		gettext('Add Address Pool'),
-		'services_dhcp.php?if=' . htmlspecialchars($if) . '&act=newpool',
+		'services_dhcp.php?if=' . $if . '&act=newpool',
 		'fa-solid fa-plus'
 	);
 	$btnaddpool->addClass('btn-success');
@@ -1390,16 +1400,16 @@ if (dhcp_is_backend('isc')):
 	))->setHelp('Leave blank to disable. Enter the interface IP address of the other firewall (failover peer) in this subnet. Firewalls must be using CARP. ' .
 			'Advertising skew of the CARP VIP on this interface determines whether the DHCP daemon is Primary or Secondary. ' .
 			'Ensure the advertising skew for the VIP on one firewall is &lt; 20 and the other is &gt; 20.');
-
+endif; /* dhcp_is_backend('isc') */
 	$section->addInput(new Form_Checkbox(
 		'staticarp',
-		'Static ARP',
-		'Enable Static ARP entries',
+		gettext('Static ARP'),
+		gettext('Enable Static ARP'),
 		$pconfig['staticarp']
 	))->setHelp('Restricts communication with the firewall to only hosts listed in static mappings containing both IP addresses and MAC addresses. ' .
 			'No other hosts will be able to communicate with the firewall on this interface. ' .
 			'This behavior is enforced even when DHCP server is disabled.');
-
+if (dhcp_is_backend('isc')):
 	$section->addInput(new Form_Checkbox(
 		'dhcpleaseinlocaltime',
 		'Time format change',
@@ -1414,16 +1424,14 @@ if (dhcp_is_backend('isc')):
 		'Enable monitoring graphs for DHCP lease statistics',
 		$pconfig['statsgraph']
 	))->setHelp('Enable this to add DHCP leases statistics to the Monitoring graphs. Disabled by default.');
-endif;
 
-if (dhcp_is_backend('isc')):
 	$section->addInput(new Form_Checkbox(
 		'disablepingcheck',
 		'Ping check',
 		'Disable ping check',
 		$pconfig['disablepingcheck']
 	))->setHelp('When enabled dhcpd sends a ping to the address being assigned, and if no response has been heard, it assigns the address. Enabled by default.');
-endif;
+endif; /* dhcp_is_backend('isc') */
 }
 
 if (dhcp_is_backend('isc')):
@@ -1473,14 +1481,12 @@ $group->add(new Form_IpAddress(
 	'BOTH'
 ))->setHelp('Primary domain name server IPv4 address.');
 
-if (dhcp_is_backend('kea')):
 $group->add(new Form_Input(
 	'ddnsdomainprimaryport',
 	'53',
 	'text',
 	$pconfig['ddnsdomainprimaryport'],
 ))->setHelp(gettext('The port on which the server listens for DDNS requests.'));
-endif;
 
 $section->add($group);
 
@@ -1492,25 +1498,21 @@ $group->add(new Form_IpAddress(
 	'BOTH'
 ))->setHelp(gettext('Secondary domain name server IPv4 address.'));
 
-if (dhcp_is_backend('kea')):
 $group->add(new Form_Input(
 	'ddnsdomainsecondaryport',
 	'53',
 	'text',
 	$pconfig['ddnsdomainsecondaryport'],
 ))->setHelp(gettext('The port on which the server listens for DDNS requests.'));
-endif;
 
 $section->add($group);
 
-if (dhcp_is_backend('isc')):
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
 	gettext('DNS Domain Key'),
 	'text',
 	$pconfig['ddnsdomainkeyname']
 ))->setHelp(gettext('Dynamic DNS domain key name which will be used to register client names in the DNS server.'));
-endif;
 
 $section->addInput(new Form_Select(
 	'ddnsdomainkeyalgorithm',
@@ -1539,7 +1541,7 @@ $section->addInput(new Form_Select(
 	    'Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will ' .
 	    'do the updates and the client should not, Ignore specifies that DHCP will do the ' .
 	    'update and the client can also attempt the update usually using a different domain name.'));
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 // Advanced MAC
 $btnadv = new Form_Button(
@@ -1681,7 +1683,7 @@ $section->addInput(new Form_Input(
 // Advanced Network Booting options
 $btnadv = new Form_Button(
 	'btnadvnwkboot',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -1764,7 +1766,7 @@ if (dhcp_is_backend('isc')):
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -1781,7 +1783,6 @@ $form->add($section);
 $section = new Form_Section(gettext('Custom DHCP Options'));
 $section->addClass('adnlopts');
 
-if (dhcp_is_backend('isc')):
 if (!$pconfig['numberoptions']) {
 	$pconfig['numberoptions'] = array();
 	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
@@ -1840,7 +1841,6 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 	$counter++;
 }
-endif; /* dhcp_is_backend(isc') */
 
 $group = new Form_Group(null);
 $group->add(new Form_Button(
@@ -1851,7 +1851,7 @@ $group->add(new Form_Button(
 ))->addClass('btn-success')
   ->setHelp(gettext('Enter the DHCP option number, type and the value for each item to include in the DHCP lease information.'));
 $section->add($group);
-endif;
+endif; /* dhcp_is_backend(isc') */
 
 $form->add($section);
 
@@ -1906,15 +1906,15 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 				<thead>
 					<tr>
 						<th><?=gettext("Static ARP")?></th>
-						<th><?=gettext("MAC address")?></th>
+						<th><?=gettext("MAC Address")?></th>
 <?php
 	if ($got_cid):
 ?>
-						<th><?=gettext("Client Id")?></th>
+						<th><?=gettext("Client ID")?></th>
 <?php
 	endif;
 ?>
-						<th><?=gettext("IP address")?></th>
+						<th><?=gettext("IP Address")?></th>
 						<th><?=gettext("Hostname")?></th>
 						<th><?=gettext("Description")?></th>
 						<th></th>
@@ -1955,8 +1955,8 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 						<?=htmlspecialchars($mapent['descr'])?>
 					</td>
 					<td>
-						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
-						<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
+						<a class="fa-solid fa-trash-can text-danger" title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -2025,7 +2025,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvdns').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvdns').children();
+		$('#btnadvdns').text(text).prepend(children);
 	}
 
 	$('#btnadvdns').click(function(event) {
@@ -2060,7 +2061,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvmac').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvmac').children();
+		$('#btnadvmac').text(text).prepend(children);
 	}
 
 	$('#btnadvmac').click(function(event) {
@@ -2097,7 +2099,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvntp').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvntp').children();
+		$('#btnadvntp').text(text).prepend(children);
 	}
 
 	$('#btnadvntp').click(function(event) {
@@ -2131,7 +2134,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvtftp').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvtftp').children();
+		$('#btnadvtftp').text(text).prepend(children);
 	}
 
 	$('#btnadvtftp').click(function(event) {
@@ -2165,7 +2169,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvldap').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvldap').children();
+		$('#btnadvldap').text(text).prepend(children);
 	}
 
 	$('#btnadvldap').click(function(event) {
@@ -2200,7 +2205,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -2242,7 +2248,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvnwkboot').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvnwkboot').children();
+		$('#btnadvnwkboot').text(text).prepend(children);
 	}
 
 	$('#btnadvnwkboot').click(function(event) {

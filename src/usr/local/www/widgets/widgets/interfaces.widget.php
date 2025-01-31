@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2007 Scott Dale
  * All rights reserved.
  *
@@ -26,6 +26,22 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
+
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
 
 $ifdescrs = get_configured_interface_with_descr();
 // Update once per minute by default, instead of every 10 seconds
@@ -48,12 +64,6 @@ if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
 	header("Location: /index.php");
-}
-
-// When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
-// When the ajax call is made to refresh the interfaces table, 'widgetkey' comes in $_REQUEST.
-if ($_REQUEST['widgetkey']) {
-	$widgetkey = $_REQUEST['widgetkey'];
 }
 
 ?>
@@ -91,7 +101,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	$known_status = true;
 
 	// Choose an icon by interface status
-	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
+	if ($ifinfo['status'] == "up" ||
+	    $ifinfo['status'] == "associated") {
 		$icon = 'fa-solid fa-arrow-up text-success';
 	} elseif ($ifinfo['status'] == "no carrier") {
 		$icon = 'fa-solid fa-times-circle text-danger';
@@ -103,7 +114,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 ?>
 	<tr>
-		<td title="<?=htmlspecialchars($ifinfo['if'])?> (<?=htmlspecialchars($ifinfo['macaddr'])?>)">
+		<td title="<?=htmlspecialchars($ifinfo['if'])?> (<?=htmlspecialchars($ifinfo['macaddr'])?>)" style="white-space: nowrap;">
 			<i class="<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
@@ -232,7 +243,7 @@ if ($_REQUEST['ajax']) {
 		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
 		interfacesObject.callback = interfaces_callback;
 		interfacesObject.parms = postdata;
-		interfacesObject.freq = 1;
+		interfacesObject.freq = 15;
 
 		// Register the AJAX object
 		register_ajax(interfacesObject);

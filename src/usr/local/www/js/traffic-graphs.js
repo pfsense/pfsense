@@ -1,7 +1,7 @@
 /*
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -286,8 +286,10 @@ function draw_graph(then) {
 					var trafficIn = ( priorIn[interfaceCount].reduce(function(a, b){ return a + b; },0) + currentIn)/(1 + priorIn[interfaceCount].length);
 					var trafficOut = ( priorOut[interfaceCount].reduce(function(a, b){ return a + b; },0) + currentOut) /(1 + priorOut[interfaceCount].length);
 					// circular array to keep track of 'x' amount of data points
-					priorIn[interfaceCount][smoothCount] = currentIn;
-					priorOut[interfaceCount][smoothCount] = currentOut;
+					if (smoothing > 0) {
+						priorIn[interfaceCount][smoothCount] = currentIn;
+						priorOut[interfaceCount][smoothCount] = currentOut;
+					}
 					if(window.invert) {
 						trafficOut = 0 - trafficOut;
 					}
@@ -338,8 +340,10 @@ function draw_graph(then) {
 				interfaceCount = interfaceCount % interfaceSize;
 			});
 			// increment the circular array
-			smoothCount ++;
-			smoothCount = smoothCount % smoothing;
+			if (smoothing > 0) {
+				smoothCount ++;
+				smoothCount = smoothCount % smoothing;
+			}
 			refreshGraphFunction_running = false;
 		});
 

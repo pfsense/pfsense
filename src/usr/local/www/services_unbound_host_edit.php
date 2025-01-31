@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -49,7 +49,7 @@ function hosts_sort() {
 
 require_once("guiconfig.inc");
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 $pconfig = [];
 
 if (isset($id) &&

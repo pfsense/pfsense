@@ -6,7 +6,7 @@
  * Copyright (c) 2013 Stanley P. Miller \ stan-qaz
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,22 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/dyn_dns_status.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 // Constructs a unique key that will identify a Dynamic DNS entry in the filter list.
 if (!function_exists('get_dyndnsent_key')) {
 	function get_dyndnsent_key($dyndns) {
@@ -46,11 +62,9 @@ if (!function_exists('get_dyndns_hostname_text')) {
 	}
 }
 
-config_init_path('dyndnses/dyndns');
-$a_dyndns = config_get_path('dyndnses/dyndns');
+$a_dyndns = config_get_path('dyndnses/dyndns', []);
 
-config_init_path('dnsupdates/dnsupdate');
-$a_rfc2136 = config_get_path('dnsupdates/dnsupdate');
+$a_rfc2136 = config_get_path('dnsupdates/dnsupdate', []);
 
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
 
@@ -82,36 +96,28 @@ if ($_REQUEST['getdyndnsstatus']) {
 
 		$hostname = get_dyndns_hostname_text($dyndns);
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
-		$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
-		if (file_exists($filename)) {
-			$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			$cached_ip_s = explode("|", file_get_contents($filename));
-			$cached_ip = $cached_ip_s[0];
-
-			if ($ipaddr != $cached_ip) {
-				print('<span class="text-danger">');
-			} else {
-				print('<span class="text-success">');
+		$address_family = AF_INET;
+		if (!file_exists($filename)) {
+			$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
+			$address_family = AF_INET6;
+			if (!file_exists($filename)) {
+				print('N/A ' . date("H:i:s"));
+				continue;
 			}
-
-			print(htmlspecialchars($cached_ip));
-			print('</span>');
-		} else if (file_exists($filename_v6)) {
-			$ipv6addr = get_interface_ipv6($dyndns['interface']);
-			$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
-			$cached_ipv6 = $cached_ipv6_s[0];
-
-			if ($ipv6addr != $cached_ipv6) {
-				print('<span class="text-danger">');
-			} else {
-				print('<span class="text-success">');
-			}
-
-			print(htmlspecialchars($cached_ipv6));
-			print('</span>');
-		} else {
-			print('N/A ' . date("H:i:s"));
 		}
+
+		$ipaddr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'), $address_family);
+		$cached_ip_s = explode("|", file_get_contents($filename));
+		$cached_ip = $cached_ip_s[0];
+
+		if ($ipaddr != $cached_ip) {
+			print('<span class="text-danger">');
+		} else {
+			print('<span class="text-success">');
+		}
+
+		print(htmlspecialchars($cached_ip));
+		print('</span>');
 	}
 
 	exit;
@@ -307,7 +313,7 @@ if (!function_exists('get_dyndns_service_text')) {
 		dyndnsObject.url = "/widgets/widgets/dyn_dns_status.widget.php";
 		dyndnsObject.callback =  dyndnscallback_<?=htmlspecialchars($widgetkey_nodash)?>;
 		dyndnsObject.parms = postdata;
-		dyndnsObject.freq = 1;
+		dyndnsObject.freq = 30;
 
 		// Register the AJAX object
 		register_ajax(dyndnsObject);

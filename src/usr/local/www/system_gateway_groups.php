@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -35,10 +35,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-config_init_path('gateways/gateway_group');
-
-config_init_path('gateways/gateway_item');
-$a_gateways = config_get_path('gateways/gateway_item');
+$a_gateways = config_get_path('gateways/gateway_item', []);
 $changedesc = gettext("Gateway Groups") . ": ";
 
 
@@ -67,7 +64,7 @@ if ($_POST['apply']) {
 	}
 }
 
-$a_gateway_groups = config_get_path('gateways/gateway_group');
+$a_gateway_groups = config_get_path('gateways/gateway_group', []);
 if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
 	if ((config_get_path('gateways/defaultgw4', '') == $a_gateway_groups[$_POST['id']]['name']) ||
 	    (config_get_path('gateways/defaultgw6', '') == $a_gateway_groups[$_POST['id']]['name'])) {

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -34,8 +34,6 @@ define('NUMACLS', 50); // The maximum number of configurable ACLs
 require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
-
-config_init_path('ntpd');
 
 if (is_array(config_get_path('ntpd/restrictions/row'))) {
 	$networkacl = config_get_path('ntpd/restrictions/row');
@@ -170,8 +168,7 @@ if ($_POST) {
 	}
 }
 
-config_init_path('ntpd');
-$pconfig = config_get_path('ntpd');
+$pconfig = config_get_path('ntpd', []);
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));
 $pglinks = array("", "services_ntpd.php", "@self");

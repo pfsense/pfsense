@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,8 +37,6 @@ require_once("interfaces_fast.inc");
 
 global $profile;
 
-config_init_path('vlans/vlan');
-
 if ($_POST['act'] == "del") {
 	/*
 	 * Check user privileges to test if the user is allowed to make changes.
@@ -47,7 +45,7 @@ if ($_POST['act'] == "del") {
 	 */
 	phpsession_begin();
 	$guiuser = getUserEntry($_SESSION['Username']);
-	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
 	phpsession_end();
 
 	if ($read_only) {

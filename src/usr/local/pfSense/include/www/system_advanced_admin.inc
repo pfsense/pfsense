@@ -3,7 +3,7 @@
  * system_advanced_admin.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -377,6 +377,7 @@ function doAdvancedAdminPOST($post, $json = false) {
 		$retval = 0;
 		$retval |= filter_configure();
 		if ($restart_sshguard) {
+			system_sshguard_stop();
 			$retval |= system_syslogd_start(true);
 		}
 

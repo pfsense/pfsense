@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
  * All rights reserved.
  *
@@ -281,7 +281,7 @@ $section->addInput(new Form_Checkbox(
 	'Query Name Minimization',
 	'Send minimum amount of QNAME/QTYPE information to upstream servers to enhance privacy',
 	$pconfig['qname-minimisation']
-))->setHelp('Only send minimum required labels of the QNAME and set QTYPE to A when possible. Best effort approach; full QNAME and original QTYPE will be sent when upstream replies with a RCODE other than NOERROR, except when receiving NXDOMAIN from a DNSSEC signed zone. Default is off.%1$s Refer to %2$sRFC 7816%3$s for in-depth information on Query Name Minimization.', '<br/>', '<a href="https://tools.ietf.org/html/rfc7816">', '</a>');
+))->setHelp('Only send minimum required labels of the QNAME and set QTYPE to A when possible. Best effort approach; full QNAME and original QTYPE will be sent when upstream replies with a RCODE other than NOERROR, except when receiving NXDOMAIN from a DNSSEC signed zone. Default is checked (on).%1$s Refer to %2$sRFC 7816%3$s for in-depth information on Query Name Minimization.', '<br/>', '<a href="https://tools.ietf.org/html/rfc7816">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'qname-minimisation-strict',

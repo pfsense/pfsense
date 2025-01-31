@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -296,6 +296,9 @@ function get_queue_stats() {
 			unset($newqueue);
 			$newqueue = array();
 			$currentqueuename = convert_real_interface_to_friendly_interface_name($items[2]);
+			if (empty($currentqueuename)) {
+				continue;
+			}
 			$currentqueueif = $items[2];
 			$newqueue['name'] = $currentqueuename;
 			$newqueue['interface'] = $items[2];
@@ -326,7 +329,6 @@ function get_queue_stats() {
 }
 
 function shaper_config_get_path($mypath) {
-	config_init_path('shaper');
 	$path = 'shaper';
 	foreach ($mypath as $indeks) {
 		$path .= "/queue/{$indeks}";
@@ -336,7 +338,6 @@ function shaper_config_get_path($mypath) {
 }
 
 function shaper_config_del($mypath) {
-	config_init_path('shaper');
 	$path = 'shaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
 		$path .= "/queue/{$mypath[$i]}";
@@ -345,7 +346,6 @@ function shaper_config_del($mypath) {
 }
 
 function shaper_dn_config_get_path($mypath) {
-	config_init_path('dnshaper');
 	$path = 'dnshaper';
 	foreach ($mypath as $indeks) {
 		$path .= "/queue/{$indeks}";
@@ -355,7 +355,6 @@ function shaper_dn_config_get_path($mypath) {
 }
 
 function shaper_dn_config_del($mypath) {
-	config_init_path('dnshaper');
 	$path = 'dnshaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
 		$path .= "/queue/{$mypath[$i]}";
@@ -5284,8 +5283,6 @@ function read_altq_config() {
 	global $altq_list_queues;
 	$path = array();
 
-	config_init_path('shaper/queue');
-
 	$altq_list_queues = array();
 
 	foreach (config_get_path('shaper/queue', []) as $key => $conf) {
@@ -5315,7 +5312,6 @@ function read_dummynet_config() {
 	global $dummynet_pipe_list;
 	$path = array();
 
-	config_init_path('dnshaper/queue');
 	$a_int = config_get_path('dnshaper/queue', []);
 
 	$dummynet_pipe_list = array();
@@ -5457,6 +5453,14 @@ function filter_generate_dummynet_rules() {
 		$this_qlimit = $dn->GetQlimit();
 		if ($this_qlimit > $max_qlimit) {
 			$max_qlimit = $this_qlimit;
+		}
+		if (is_array($dn->subqueues)) {
+			foreach ($dn->subqueues as $queue) {
+				$this_qlimit = $queue->GetQlimit();
+				if ($this_qlimit > $max_qlimit) {
+					$max_qlimit = $this_qlimit;
+				}
+			}
 		}
 	}
 	if (!is_numericint($max_qlimit)) {

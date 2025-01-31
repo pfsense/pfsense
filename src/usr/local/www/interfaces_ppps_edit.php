@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Gabriel B. <gnoahb@gmail.com>
  * All rights reserved.
  *
@@ -41,16 +41,10 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-config_init_path('ppps/ppp');
-
 $iflist = get_configured_interface_with_descr();
 
 if (isset($_REQUEST['type'])) {
 	$pconfig['type'] = $_REQUEST['type'];
-}
-
-if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
-	$id = $_REQUEST['id'];
 }
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -63,7 +57,7 @@ if ($this_ppp_config) {
 	if (!isset($_REQUEST['type'])) {
 		$pconfig['type'] = $this_ppp_config['type'];
 	}
-	$pconfig['interfaces'] = explode(",", $this_ppp_config['ports']);
+	$pconfig['interfaces'] = array_filter(explode(",", $this_ppp_config['ports']));
 	$pconfig['username'] = $this_ppp_config['username'];
 	$pconfig['password'] = base64_decode($this_ppp_config['password']);
 	if (isset($this_ppp_config['secret'])) {
@@ -119,10 +113,10 @@ if ($this_ppp_config) {
 			$pconfig['apnum'] = $this_ppp_config['apnum'];
 			$pconfig['phone'] = $this_ppp_config['phone'];
 			$pconfig['connect-timeout'] = $this_ppp_config['connect-timeout'];
-			$localip = explode(",", $this_ppp_config['localip']);
+			$localip = array_filter(explode(",", $this_ppp_config['localip']));
 			for ($i = 0; $i < count($localip); $i++)
 				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
-			$gateway = explode(",", $this_ppp_config['gateway']);
+			$gateway = array_filter(explode(",", $this_ppp_config['gateway']));
 			for ($i = 0; $i < count($gateway); $i++)
 				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 			$pconfig['country'] = $this_ppp_config['country'];
@@ -131,13 +125,13 @@ if ($this_ppp_config) {
 			break;
 		case "l2tp":
 		case "pptp":
-			$localip = explode(",", $this_ppp_config['localip']);
+			$localip = array_filter(explode(",", $this_ppp_config['localip']));
 			for ($i = 0; $i < count($localip); $i++)
 				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
-			$subnet = explode(",", $this_ppp_config['subnet']);
+			$subnet = array_filter(explode(",", $this_ppp_config['subnet']));
 			for ($i = 0; $i < count($subnet); $i++)
 				$pconfig['subnet'][$pconfig['interfaces'][$i]] = $subnet[$i];
-			$gateway = explode(",", $this_ppp_config['gateway']);
+			$gateway = array_filter(explode(",", $this_ppp_config['gateway']));
 			for ($i = 0; $i < count($gateway); $i++)
 				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 		case "pppoe":
@@ -257,7 +251,7 @@ if ($_POST['save']) {
 	if (($_POST['type'] == 'l2tp') && (isset($_POST['secret']))) {
 		$pconfig['secret'] = $_POST['secret'];
 	}
-	if (($_POST['type'] == "ppp") && (count($_POST['interfaces']) > 1)) {
+	if (($_POST['type'] == "ppp") && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
 	if ($_POST['provider'] && $_POST['null_service']) {
@@ -311,14 +305,14 @@ if ($_POST['save']) {
 		}
 
 		// Loop through each individual link/port and check max mtu
-		$if_config = config_get_path('interfaces');
+		$if_config = config_get_path('interfaces', []);
 		foreach ($_POST['interfaces'] as $iface) {
 			if (isset($_POST['mtu'][$iface]) &&
 			    strlen($_POST['mtu'][$iface]) > 0) {
 				$parent_array = get_parent_interface($iface);
 				$parent = $parent_array[0];
 				$friendly = convert_real_interface_to_friendly_interface_name($parent);
-				if (!empty($if_config[$friendly]['mtu']) &&
+				if (!empty($friendly) && !empty($if_config[$friendly]['mtu']) &&
 					$_POST['mtu'][$iface] > ($if_config[$friendly]['mtu'] - 8)) {
 					$input_errors[] = sprintf(gettext('The MTU (%1$d) is too big for %2$s (maximum allowed with current settings: %3$d).'),
 						$_POST['mtu'][$iface], $iface, $if_config[$friendly]['mtu'] - 8);
@@ -468,7 +462,7 @@ if ($_POST['save']) {
 		write_config("PPP interface added");
 		configure_cron();
 
-		$if_config = config_get_path('interfaces');
+		$if_config = config_get_path('interfaces', []);
 		foreach ($iflist as $pppif => $ifdescr) {
 			if ($if_config[$pppif]['if'] == $ppp['if']) {
 				interface_ppps_configure($pppif);
@@ -791,7 +785,7 @@ $section->add($group);
 
 $btnadv = new Form_Button(
 		'btnadvopts',
-		'Display Advanced',
+		gettext('Display Advanced'),
 		null,
 		'fa-solid fa-cog'
 );
@@ -1035,8 +1029,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-
-		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	} // e-o-show_advopts
 
 	$('#btnadvopts').click(function(event) {

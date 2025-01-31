@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,11 +30,9 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('laggs/lagg');
-
 function lagg_inuse($num) {
-	$a_laggs = config_get_path('laggs/lagg');
-	$if_config = config_get_path('interfaces');
+	$a_laggs = config_get_path('laggs/lagg', []);
+	$if_config = config_get_path('interfaces', []);
 	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($if_config[$if]['if'] == $a_laggs[$num]['laggif']) {

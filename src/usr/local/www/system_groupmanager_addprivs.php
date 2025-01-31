@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt.
  * All rights reserved.
  *
@@ -44,8 +44,6 @@ $groupid = $_REQUEST['groupid'];
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Edit"), gettext("Add Privileges"));
 $pglinks = array("", "system_usermanager.php", "system_groupmanager.php", "system_groupmanager.php?act=edit&groupid=" . $groupid, "@self");
-
-config_init_path("system/group/{$groupid}/priv");
 
 // Make a local copy and sort it
 $spriv_list = $priv_list;
@@ -86,7 +84,7 @@ if ($_POST['save'] && !$read_only) {
 		if (!count(config_get_path("system/group/{$groupid}/priv", []))) {
 			config_set_path("system/group/{$groupid}/priv", $pconfig['sysprivs']);
 		} else {
-			config_set_path("system/group/{$groupid}/priv", array_merge(config_get_path("system/group/{$groupid}/priv"), $pconfig['sysprivs']));
+			config_set_path("system/group/{$groupid}/priv", array_merge(config_get_path("system/group/{$groupid}/priv", []), $pconfig['sysprivs']));
 		}
 
 		foreach (config_get_path("system/group/{$groupid}/member", []) as $uid) {
@@ -112,7 +110,7 @@ function build_priv_list() {
 	$list = array();
 
 	foreach ($spriv_list as $pname => $pdata) {
-		if (in_array($pname, config_get_path("system/group/{$groupid}/priv"))) {
+		if (in_array($pname, config_get_path("system/group/{$groupid}/priv", []))) {
 			continue;
 		}
 
@@ -175,7 +173,7 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Select(
 	'sysprivs',
 	'*Assigned privileges',
-	config_get_path("system/group/{$groupid}/priv"),
+	config_get_path("system/group/{$groupid}/priv", []),
 	build_priv_list(),
 	true
 ))->addClass('multiselect')
@@ -250,7 +248,7 @@ events.push(function() {
 
 		$jdescs = "var descs = new Array();\n";
 		foreach ($spriv_list as $pname => $pdata) {
-			if (in_array($pname, config_get_path("system/group/{$groupid}/priv"))) {
+			if (in_array($pname, config_get_path("system/group/{$groupid}/priv", []))) {
 				continue;
 			}
 

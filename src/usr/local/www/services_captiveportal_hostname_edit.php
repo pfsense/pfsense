@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@ function allowedhostnamescmp($a, $b) {
 
 function allowedhostnames_sort() {
 	global $g, $cpzone;
-	$cp_config = config_get_path("captiveportal/{$cpzone}/allowedhostname");
+	$cp_config = config_get_path("captiveportal/{$cpzone}/allowedhostname", []);
 	usort($cp_config, "allowedhostnamescmp");
 	config_set_path("captiveportal/{$cpzone}/allowedhostname", $cp_config);
 }
@@ -58,13 +58,11 @@ if (empty($cpzone) || empty(config_get_path("captiveportal/{$cpzone}"))) {
 	exit;
 }
 
-config_init_path("captiveportal/{$cpzone}/allowedhostname");
-
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Allowed Hostnames"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_hostname.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_allowedhostname_config = isset($id) ? config_get_path("captiveportal/{$cpzone}/allowedhostname/{$id}") : null;
 if ($this_allowedhostname_config) {

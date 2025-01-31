@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +29,6 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-
-config_init_path('dnsupdates/dnsupdate');
 
 if ($_POST['act'] == "del") {
 	config_del_path("dnsupdates/dnsupdate/{$_POST['id']}");
@@ -105,7 +103,7 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 
 	if (file_exists($filename)) {
 		if (isset($rfc2136['usepublicip'])) {
-			$ipaddr = dyndnsCheckIP($if);
+			$ipaddr = dyndnsCheckIP($if, null, AF_INET);
 		} else {
 			$ipaddr = get_interface_ip($if);
 		}
@@ -125,7 +123,7 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 	} elseif (file_exists($filename_v6)) {
 		$ipv6addr = get_interface_ipv6($if);
 		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
-		$cached_ipv6 = $cached_ip_s[0];
+		$cached_ipv6 = $cached_ipv6_s[0];
 
 		if ($ipv6addr == $cached_ipv6) {
 			$icon_class = "fa-solid fa-check-circle";
@@ -144,15 +142,15 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 							</td>
 							<td>
 <?php
-	foreach ($iflist as $if => $ifdesc) {
-		if ($rfc2136['interface'] == $if) {
+	foreach ($iflist as $ifname => $ifdesc) {
+		if ($rfc2136['interface'] == $ifname) {
 			print($ifdesc);
 			break;
 		}
 	}
-	foreach ($groupslist as $if => $group) {
-		if ($rfc2136['interface'] == $if) {
-			print($if);
+	foreach ($groupslist as $ifname => $group) {
+		if ($rfc2136['interface'] == $ifname) {
+			print($ifname);
 			break;
 		}
 	}
@@ -170,10 +168,6 @@ foreach (config_get_path('dnsupdates/dnsupdate', []) as $rfc2136):
 		print('IPv4: ');
 		print("<span class='{$text_class}'>");
 		print(htmlspecialchars($cached_ip));
-		print('</span>');
-	} elseif (file_exists($filename_v6)) {
-		print("<span class='{$text_class}'>");
-		print(htmlspecialchars($cached_ipv6));
 		print('</span>');
 	} else {
 		print('IPv4: N/A');

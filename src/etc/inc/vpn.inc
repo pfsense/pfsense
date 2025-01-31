@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -62,8 +62,7 @@ function vpn_ppp_server_get_dns($dns1 = '', $dns2 = '') {
 
 		/* Add host DNS servers if they are usable */
 		foreach ($host_dns_servers as $dns) {
-			if (is_ipaddrv4($dns) &&
-			    ($dns != '127.0.0.1')) {
+			if (is_ipaddrv4($dns) && !ip_in_subnet($dns, "127.0.0.0/8")) {
 				$dns_servers[] = $dns;
 			}
 		}

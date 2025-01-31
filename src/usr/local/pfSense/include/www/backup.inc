@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -151,15 +151,18 @@ function execPost($post, $postfiles, $ui = true) {
 				$data = "";
 
 				if ($options == "nopackages") {
+					$data = config_get_path('', []);
+					unset($data['installedpackages']);
 					if (!$post['backuparea']) {
 						/* backup entire configuration */
-						$data = file_get_contents("{$g['conf_path']}/config.xml");
+						$data = dump_xml_config($data, g_get('xml_rootobj'));
 					} else {
 						/* backup specific area of configuration */
-						$data = backup_config_section($post['backuparea']);
+						$data = array_get_path($data, $post['backuparea'], []);
+						$data = dump_xml_config($data, $post['backuparea']);
+						$data = str_replace("<?xml version=\"1.0\"?>", "", $data);
 						$name = "{$post['backuparea']}-{$name}";
 					}
-					$data = preg_replace('/\t*<installedpackages>.*<\/installedpackages>\n/sm', '', $data);
 				} else {
 					if (!$post['backuparea']) {
 						/* backup entire configuration */
@@ -249,7 +252,7 @@ function execPost($post, $postfiles, $ui = true) {
 					} else {
 
 						/* read the file contents */
-						$data = $ui ? file_get_contents($postfiles['conffile']['tmp_name']) : $postfiles['conffile']['tmp_name'];
+						$data = file_get_contents($postfiles['conffile']['tmp_name']);
 						if (!$data) {
 							$input_errors[] = gettext("Warning, could not read file {$postfiles['conffile']['tmp_name']}");
 						} elseif ($post['decrypt']) {
@@ -343,8 +346,7 @@ function execPost($post, $postfiles, $ui = true) {
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");
 								}
-								// parse config.xml
-								config_set_path('', parse_config(true));
+								config_read_file(true);
 
 								/* Restore previously pkg repo configured */
 								$pkg_repo_restored = false;

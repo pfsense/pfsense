@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -123,6 +123,7 @@ if ($system_logs_manage_log_form_hidden) {
 // Filter Section/Form - Firewall
 filter_form_firewall();
 
+$filterdescriptions = config_get_path('syslog/filterdescriptions');
 
 // Now the forms are complete we can draw the log table and its controls
 if (!$rawfilter) {
@@ -152,7 +153,7 @@ if (!$rawfilter) {
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("Interface")?></th>
 <?php
-	if (config_get_path('syslog/filterdescriptions') === "1") {
+	if ($filterdescriptions === "1") {
 ?>
 					<th style="width:100%">
 						<?=gettext("Rule")?>
@@ -167,7 +168,7 @@ if (!$rawfilter) {
 			</thead>
 			<tbody>
 <?php
-	if (config_get_path('syslog/filterdescriptions')) {
+	if ($filterdescriptions) {
 		buffer_rules_load();
 	}
 
@@ -207,7 +208,7 @@ if (!$rawfilter) {
 		<?=htmlspecialchars($filterent['interface'])?>
 					</td>
 <?php
-		if (config_get_path('syslog/filterdescriptions') === "1") {
+		if ($filterdescriptions === "1") {
 ?>
 					<td style="white-space:normal;">
 			<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?>
@@ -274,7 +275,7 @@ if (!$rawfilter) {
 					</td>
 				</tr>
 <?php
-		if (config_get_path('syslog/filterdescriptions') === "2") {
+		if ($filterdescriptions=== "2") {
 ?>
 				<tr>
 					<td colspan="2" />

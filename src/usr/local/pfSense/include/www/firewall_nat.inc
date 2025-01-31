@@ -3,7 +3,7 @@
  * firewall_nat.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -90,9 +90,6 @@ function saveNATrule($post, $id, $json = false) {
 	$rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
 	global $ifdisp;
 
-	config_init_path('filter/rule');
-	config_init_path('nat/separator');
-	config_init_path('nat/rule');
 	$a_nat = config_get_path('nat/rule', []);
 	$a_separators = config_get_path('nat/separator', []);
 
@@ -507,7 +504,7 @@ function saveNATrule($post, $id, $json = false) {
 		}
 
 		if ($need_filter_rule == true) {
-			$filter_rule_config = config_get_path('filter/rule');
+			$filter_rule_config = config_get_path('filter/rule', []);
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
 			unset($filterentid);
@@ -577,6 +574,7 @@ function saveNATrule($post, $id, $json = false) {
 				$filter_rule_config[] = $filterent;
 			}
 			config_set_path('filter/rule', $filter_rule_config);
+			filter_rules_sort();
 
 			if (!$json) {
 				mark_subsystem_dirty('filter');
@@ -647,7 +645,7 @@ function saveNATrule($post, $id, $json = false) {
 function toggleNATrule($post, $json = false) {
 	// Check for single rule
 	if (!(is_array($post['rule']) && count($post['rule']))) {
-		$post['rule'] = array( $post['id'] => $post['id'] );
+		$post['rule'] = [ $post['id'] ];
 	}
 
 	foreach ($post['rule'] as $rulei) {
@@ -695,7 +693,6 @@ function toggleNATrule($post, $json = false) {
 }
 
 function deleteNATrule($post, $json = false) {
-	config_init_path('nat/separator');
 	$a_separators = config_get_path('nat/separator', []);
 
 	// Check for single rule
@@ -720,7 +717,7 @@ function deleteNATrule($post, $json = false) {
 			delete_id($associated_rule_id);
 			$want_dirty_filter = true;
 		}
-		config_del_path("/nat/rule/{$rulei}");
+		config_del_path("nat/rule/{$rulei}");
 		$num_deleted++;
 	}
 	config_set_path('nat/separator', $a_separators);
@@ -770,8 +767,6 @@ function reorderNATrules($post, $json = false) {
 	$updated = false;
 	$dirty = false;
 
-	config_init_path('nat/separator');
-	config_init_path('nat/rule');
 	$a_nat = config_get_path('nat/rule', []);
 	$a_separators = config_get_path('nat/separator', []);
 
@@ -873,8 +868,7 @@ function MVC_create_interface_list() {
 }
 
 function getNATRule($id, $json = false) {
-	config_init_path('nat/rule');
-	$a_nat = config_get_path('nat/rule');
+	$a_nat = config_get_path('nat/rule', []);
 
 	if (isset($id) && $a_nat[$id]) {
 		if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {

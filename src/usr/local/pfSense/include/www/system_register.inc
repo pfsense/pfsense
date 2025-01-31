@@ -3,7 +3,7 @@
  * system_register.inc
  *
  * part of pfSense plus (https://www.netgate.com)
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  */
 
@@ -33,7 +33,7 @@ function activate_plus($action, $token) {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,4);
 			$response = curl_exec($ch);
-			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 			curl_close($ch);
 
 			if ($status == 200) {

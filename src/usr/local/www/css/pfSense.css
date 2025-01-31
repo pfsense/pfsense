@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -111,6 +111,9 @@ tr.disabled i.fa-solid, tr.disabled i.fa-regular, tr.disabled i.fa-brands {
 }
 
 tr.disabled a {
+    opacity: .5;
+}
+tr.disabled a:not(".btn") {
     color: rgba(51, 122, 183, .5)
 }
 
@@ -145,15 +148,7 @@ tr.disabled a {
     width: 105px;
 }
 
-.logo-st0 {
-    fill:#FFFFFF;
-}
-
-.logo-st1 {
-    fill:#FFFFFF;
-}
-
-.logo-st2 {
+.logo-st0, .logo-st1, .logo-st2, .logo-st3, .logo-st4, .logo-st5 {
     fill:#FFFFFF;
 }
 

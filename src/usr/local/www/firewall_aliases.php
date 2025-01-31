@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -93,6 +93,72 @@ if (is_subsystem_dirty('aliases')) {
 
 display_top_tabs($tab_array);
 
+/* Show system aliases. */
+if ($tab == 'all'):
+	?>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('System Aliases')?></h2></div>
+		<div class="panel-body"><div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Type")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Values")?></th>
+					</tr>
+				</thead>
+				<tbody>
+	<?php
+	$system_aliases = get_reserved_table_names();
+	foreach ($system_aliases as $alias):
+	?>
+					<tr>
+						<td>
+							<?=htmlspecialchars($alias['name'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($alias_types[$alias['type']])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($alias['descr'])?>&nbsp;
+						</td>
+						<td>
+		<?php
+		if ($alias["url"]) {
+			echo htmlspecialchars($alias["url"]);
+		} elseif (is_array($alias["aliasurl"])) {
+			$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
+			echo htmlspecialchars($aliasurls);
+			if (is_array($aliasurls) && (count($aliasurls) > 10)) {
+				echo "&hellip;";
+			}
+		} elseif (!empty($alias['address'])) {
+			$tmpaddr = explode(" ", $alias['address']);
+			if ($alias['type'] == 'host') {
+				$tmpaddr = array_map('alias_idn_to_utf8', $tmpaddr);
+			}
+			echo htmlspecialchars(implode(", ", array_slice($tmpaddr, 0, 10)));
+			if (count($tmpaddr) > 10) {
+				echo '&hellip;';
+			}
+		} else {
+			?>
+							<span style="font-style:italic;"><?=gettext('Values set dynamically.')?>
+			<?php
+		}
+		?>
+						</td>
+					</tr>
+	<?php
+	endforeach;
+	?>
+				</tbody>
+			</table>
+		</div></div>
+	</div>
+	<?php
+endif;
 ?>
 
 <div class="panel panel-default">

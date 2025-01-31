@@ -3,7 +3,7 @@
  * getqueuestats.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2017-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2017-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +28,7 @@
 
 header("Last-Modified: " . gmdate("D, j M Y H:i:s") . " GMT");
 header("Expires: " . gmdate("D, j M Y H:i:s", time()) . " GMT");
-header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP/1.1
-header("Pragma: no-cache"); // HTTP/1.0
+header("Cache-Control: no-cache, no-store, must-revalidate");
 
 require_once("auth_check.inc");
 include_once("shaper.inc");

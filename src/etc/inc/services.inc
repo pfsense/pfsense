@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -25,6 +25,7 @@
  * limitations under the License.
  */
 
+require_once('services_dhcp.inc');
 
 define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 desec desec-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsimple-v6 dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyfi dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 name.com name.com-v6 namecheap nicru nicru-v6 noip noip-v6 noip-free noip-free-v6 onecom onecom-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 strato yandex yandex-v6 zoneedit porkbun porkbun-v6');
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),deSEC,deSEC (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNSimple (v6),DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DY.fi,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi LiveDNS,Gandi LiveDNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Mythic Beasts,Mythic Beasts (v6),Name.com,Name.com (v6),Namecheap,NIC.RU,NIC.RU (v6),No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),One.com,One.com (v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),Strato,Yandex,Yandex (v6),ZoneEdit,Porkbun,Porkbun (v6)');
@@ -37,8 +38,6 @@ function services_radvd_configure($blacklist = array()) {
 		$mt = microtime();
 		echo "services_radvd_configure() being called $mt\n";
 	}
-
-	config_init_path('dhcpdv6');
 
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
@@ -256,6 +255,20 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\t\tRemoveRoute on;\n";
 		}
 		$radvdconf .= "\t};\n";
+		if (isset($dhcpv6ifconf['ranat64'])) {
+			if (is_string($dhcpv6ifconf['ranat64']) && is_subnetv6($dhcpv6ifconf['ranat64'])) {
+				if (is_numericint($dhcpv6ifconf['ranat64_lifetime'])) {
+					$ranat64_lifetime = $dhcpv6ifconf['ranat64_lifetime'];
+				} else {
+					$ranat64_lifetime = $ramaxrtradvinterval * 3;
+				}
+				$radvdconf .= "\tnat64prefix {$dhcpv6ifconf['ranat64']} {\n";
+				$radvdconf .= "\t\tAdvValidLifetime {$ranat64_lifetime};\n";
+				$radvdconf .= "\t};\n";
+			} else {
+				log_error("radvd: skipping nat64prefix for interface {$dhcpv6if} because the prefix is invalid.");
+			}
+		}
 
 		/* add DNS servers */
 		if ($dhcpv6ifconf['radvd-dns'] != 'disabled') {
@@ -283,6 +296,10 @@ function services_radvd_configure($blacklist = array()) {
 			}
 			$raadvdnsslifetime = $ramaxrtradvinterval * 3;
 			if (count($dnslist) > 0) {
+				// radvd supports up to 127 entries; allow up to 4 to align with DHCP
+				reset($dnslist);
+				$dnslist = array_slice($dnslist, 0, 4);
+
 				$dnsstring = implode(" ", $dnslist);
 				if ($dnsstring <> "") {
 					/*
@@ -372,6 +389,8 @@ function services_radvd_configure($blacklist = array()) {
 			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 		}
 
+		$dhcpv6ifconf = config_get_path("dhcpdv6/{$if}", []);
+
 		$radvdconf .= "# Generated config for {$autotype} delegation from {$trackif} on {$if}\n";
 		$radvdconf .= "interface {$realif} {\n";
 		$radvdconf .= "\tAdvSendAdvert on;\n";
@@ -399,8 +418,23 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t\tAdvAutonomous on;\n";
 		$radvdconf .= "\t};\n";
 
+		if (isset($dhcpv6ifconf['ranat64'])) {
+			if (is_string($dhcpv6ifconf['ranat64']) && is_subnetv6($dhcpv6ifconf['ranat64'])) {
+				if (is_numericint($dhcpv6ifconf['ranat64_lifetime'])) {
+					$ranat64_lifetime = $dhcpv6ifconf['ranat64_lifetime'];
+				} else {
+					$ranat64_lifetime = $ramaxrtradvinterval * 3;
+				}
+				$radvdconf .= "\tnat64prefix {$dhcpv6ifconf['ranat64']} {\n";
+				$radvdconf .= "\t\tAdvValidLifetime {$ranat64_lifetime};\n";
+				$radvdconf .= "\t};\n";
+			} else {
+				log_error("radvd: skipping nat64prefix for interface {$if} because the prefix is invalid.");
+			}
+		}
+
 		/* add DNS servers */
-		if ($dhcpv6ifconf['radvd-dns'] != 'disabled') {
+		if (isset($dhcpv6ifconf['radvd-dns']) && ($dhcpv6ifconf['radvd-dns'] != 'disabled')) {
 			$dnslist = array();
 			if (config_path_enabled('dnsmasq') || config_path_enabled('unbound')) {
 				$dnslist[] = $ifcfgipv6;
@@ -412,6 +446,10 @@ function services_radvd_configure($blacklist = array()) {
 				}
 			}
 			if (count($dnslist) > 0) {
+				// radvd supports up to 127 entries; allow up to 4 to align with DHCP
+				reset($dnslist);
+				$dnslist = array_slice($dnslist, 0, 4);
+
 				$dnsstring = implode(" ", $dnslist);
 				if (!empty($dnsstring)) {
 					$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
@@ -454,8 +492,7 @@ function services_radvd_configure($blacklist = array()) {
 	return 0;
 }
 
-function kea_is_hexstring(string $string): bool
-{
+function kea_is_hexstring(string $string): bool {
     $string = trim($string);
 
     /* kea accepts hex strings starting with 0x */
@@ -481,11 +518,13 @@ function kea_is_hexstring(string $string): bool
     return false;
 }
 
-function services_kea6_configure()
-{
+function services_kea6_configure() {
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
 	$kea_var_db = '/var/db/kea';
+
+	$kea6socket = g_get('varrun_path') . '/kea6-ctrl-socket';
+	unlink_if_exists($kea6socket . '.lock');
 
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;
@@ -519,8 +558,7 @@ function services_kea6_configure()
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpdv6');
-	$dhcpdv6cfg = config_get_path('dhcpdv6');
+	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
@@ -551,23 +589,115 @@ function services_kea6_configure()
 		'hooks-libraries' => [],
 		'control-socket' => [
 			'socket-type' => 'unix',
-			'socket-name' => '/tmp/kea6-ctrl-socket'
+			'socket-name' => $kea6socket
 		],
 	];
 
-	/*
-	// configure ha hook library
-	$kea_ha_hook = [
-		'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+	/* See https://redmine.pfsense.org/issues/15328 */
+	$keaconf['Dhcp6']['sanity-checks'] = [
+		'lease-checks' => 'fix-del'
 	];
-	*/
 
-	$kea_lease_cmds_hook = [
+	/* required for HA support */
+	$keaconf['Dhcp6']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
 	];
 
-	/* wire up lease_cmds hook */
-	$keaconf['Dhcp6']['hooks-libraries'][] = $kea_lease_cmds_hook;
+	if (config_path_enabled('kea6/ha')) {
+		$scheme = (config_path_enabled('kea6/ha', 'tls') ? 'https://' : 'http://');
+
+		/* local side */
+		$local_role = config_get_path('kea6/ha/role', 'primary');
+		$local_name = config_get_path('kea6/ha/localname', kea_defaults('name'));
+		$local_address = config_get_path('kea6/ha/localip');
+		if (is_ipaddrv6($local_address)) {
+			$local_address = '[' . $local_address . ']';
+		}
+		$local_port = config_get_path('kea6/ha/localport', kea_defaults('listenport') + 1);
+
+		$local_conf = [
+			'name' => $local_name,
+			'role' => $local_role,
+			'url' => "{$scheme}{$local_address}:{$local_port}/",
+			'auto-failover' => true
+		];
+
+		/* remote side */
+		$remote_role = ($local_role === 'primary') ? 'standby' : 'primary';
+		$remote_name = config_get_path('kea6/ha/remotename', kea_defaults('name'));
+		$remote_address = config_get_path('kea6/ha/remoteip');
+		if (is_ipaddrv6($remote_address)) {
+			$remote_address = '[' . $remote_address . ']';
+		}
+		$remote_port = config_get_path('kea6/ha/remoteport', kea_defaults('listenport') + 1);
+
+		$remote_conf = [
+			'name' => $remote_name,
+			'role' => $remote_role,
+			'url' => "{$scheme}{$remote_address}:{$remote_port}/",
+			'auto-failover' => true,
+		];
+
+		$ha_conf = [
+			'this-server-name' => $local_name,
+			'restrict-commands' => true,
+			'mode' => 'hot-standby',
+			'peers' => []
+		];
+
+		if (config_path_enabled('kea6/ha', 'tls')) {
+			$cert = lookup_cert(config_get_path('kea6/ha/scertref'));
+			$ca = ca_chain($cert['item']);
+
+			$ha_conf['trust-anchor'] = '/usr/local/etc/kea/ha6_ca.pem';
+			file_put_contents($ha_conf['trust-anchor'], $ca);
+			chmod($ha_conf['trust-anchor'], 0644);
+
+			$ha_conf['cert-file'] = '/usr/local/etc/kea/ha6_scert.crt';
+			file_put_contents($ha_conf['cert-file'], base64_decode($cert['item']['crt']));
+			chmod($ha_conf['cert-file'], 0644);
+
+			$ha_conf['key-file'] = '/usr/local/etc/kea/ha6_scert.key';
+			file_put_contents($ha_conf['key-file'], base64_decode($cert['item']['prv']));
+			chmod($ha_conf['key-file'], 0600);
+
+			$ha_conf['require-client-certs'] = false;
+
+			if (config_path_enabled('kea6/ha', 'mutualtls')) {
+				$cert = lookup_cert(config_get_path('kea6/ha/ccertref'));
+
+				$remote_conf['cert-file'] = '/usr/local/etc/kea/ha6_ccert.crt';
+				file_put_contents($remote_conf['cert-file'], base64_decode($cert['item']['crt']));
+				chmod($remote_conf['cert-file'], 0644);
+
+				$remote_conf['key-file'] = '/usr/local/etc/kea/ha6_ccert.key';
+				file_put_contents($remote_conf['key-file'], base64_decode($cert['item']['prv']));
+				chmod($remote_conf['key-file'], 0600);
+
+				$ha_conf['require-client-certs'] = true;
+			}
+		}
+
+		$ha_conf['peers'] = [
+			$local_conf,
+			$remote_conf
+		];
+
+		$ha_conf['heartbeat-delay'] = (int)config_get_path('kea6/ha/heartbeatdelay', kea_defaults('heartbeatdelay'));
+		$ha_conf['max-response-delay'] = (int)config_get_path('kea6/ha/maxresponsedelay', kea_defaults('maxresponsedelay'));
+		$ha_conf['max-ack-delay'] = (int)config_get_path('kea6/ha/maxackdelay', kea_defaults('maxackdelay'));
+		$ha_conf['max-unacked-clients'] = (int)config_get_path('kea6/ha/maxunackedclients', kea_defaults('maxunackedclients'));
+		$ha_conf['max-rejected-lease-updates'] = (int)config_get_path('kea6/ha/maxrejectedleaseupdates', kea_defaults('maxrejectedleaseupdates'));
+
+		$kea_ha_hook = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+			'parameters' => [
+				'high-availability' => [$ha_conf]
+			]
+		];
+
+		$keaconf['Dhcp6']['hooks-libraries'][] = $kea_ha_hook;
+	}
 
 	$dhcpdv6ifs = array();
 
@@ -875,6 +1005,15 @@ kea6_skip_first_pool_options:
 			}
 		}
 
+		if (is_ipaddrv6($dhcpv6ifconf['prefixrange']['from']) && is_ipaddrv6($dhcpv6ifconf['prefixrange']['to'])) {
+			if ($len = v6_range_to_prefixlen($dhcpv6ifconf['prefixrange']['from'], $dhcpv6ifconf['prefixrange']['to'])) {
+				$keasubnet['pd-pools'][] = [
+					'prefix' => $dhcpv6ifconf['prefixrange']['from'],
+					'prefix-len' => (int)$len,
+					'delegated-len' => (int)$dhcpv6ifconf['prefixrange']['prefixlength']
+				];
+			}
+		}
 
 		if ($dhcpv6ifconf['ddnsdomain']) {
 			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);
@@ -911,7 +1050,7 @@ kea6_skip_first_pool_options:
 	$known_duids = array_keys($known_duids);
 	foreach ($known_duids as $duid) {
 		$keaconf['Dhcp6']['reservations'][] = [
-			'duid' => $duid
+			'duid' => (string) $duid
 		];
 	}
 
@@ -945,8 +1084,7 @@ kea6_skip_first_pool_options:
 	return 0;
 }
 
-function services_dhcpd_kill_all($family = 'all')
-{
+function services_dhcpd_kill_all($family = 'all') {
 	$dhcpd_var_run = g_get('dhcpd_chroot_path') . g_get('varrun_path');
 	$kea_var_run = g_get('varrun_path') . '/kea';
 
@@ -969,14 +1107,13 @@ function services_dhcpd_kill_all($family = 'all')
 
 	foreach ($pids as $pid) {
 		if (isvalidpid($pid)) {
-			killbypid($pid);
+			killbypid($pid, 10);
 			unlink_if_exists($pid);
 		}
 	}
 }
 
-function services_dhcpd_configure($family = "all")
-{
+function services_dhcpd_configure($family = "all") {
 	global $g;
 
 	/* block if dhcpd is already being configured */
@@ -1028,13 +1165,15 @@ function services_dhcpd_configure($family = "all")
 	unlock($dhcpdconfigurelck);
 }
 
-function services_kea4_configure()
-{
+function services_kea4_configure() {
 	$need_ddns_updates = false;
 	$ddns_zones = array();
 
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
+
+	$kea4socket = g_get('varrun_path').'/kea4-ctrl-socket';
+	unlink_if_exists($kea4socket . '.lock');
 
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;
@@ -1066,8 +1205,7 @@ function services_kea4_configure()
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpd');
-	$dhcpdcfg = config_get_path('dhcpd');
+	$dhcpdcfg = config_get_path('dhcpd', []);
 	$Iflist = get_configured_interface_list();
 
 	/* configuration is built as a PHP array and converted to json */
@@ -1105,20 +1243,115 @@ function services_kea4_configure()
 		'hooks-libraries' => [],
 		'control-socket' => [
 			'socket-type' => 'unix',
-			'socket-name' => '/tmp/kea4-ctrl-socket'
+			'socket-name' => $kea4socket
 		],
 	];
 
-	$kea_ha_hook = [
-		'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+	/* See https://redmine.pfsense.org/issues/15328 */
+	$keaconf['Dhcp4']['sanity-checks'] = [
+		'lease-checks' => 'fix-del'
 	];
 
-	$kea_lease_cmds_hook = [
+	/* required for HA support */
+	$keaconf['Dhcp4']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
 	];
 
-	/* wire up lease_cmds hook */
-	$keaconf['Dhcp4']['hooks-libraries'][] = $kea_lease_cmds_hook;
+	if (config_path_enabled('kea/ha')) {
+		$scheme = (config_path_enabled('kea/ha', 'tls') ? 'https://' : 'http://');
+
+		/* local side */
+		$local_role = config_get_path('kea/ha/role', 'primary');
+		$local_name = config_get_path('kea/ha/localname', kea_defaults('name'));
+		$local_address = config_get_path('kea/ha/localip');
+		if (is_ipaddrv6($local_address)) {
+			$local_address = '[' . $local_address . ']';
+		}
+		$local_port = config_get_path('kea/ha/localport', kea_defaults('listenport'));
+
+		$local_conf = [
+			'name' => $local_name,
+			'role' => $local_role,
+			'url' => "{$scheme}{$local_address}:{$local_port}/",
+			'auto-failover' => true
+		];
+
+		/* remote side */
+		$remote_role = ($local_role === 'primary') ? 'standby' : 'primary';
+		$remote_name = config_get_path('kea/ha/remotename', kea_defaults('name'));
+		$remote_address = config_get_path('kea/ha/remoteip');
+		if (is_ipaddrv6($remote_address)) {
+			$remote_address = '[' . $remote_address . ']';
+		}
+		$remote_port = config_get_path('kea/ha/remoteport', kea_defaults('listenport'));
+
+		$remote_conf = [
+			'name' => $remote_name,
+			'role' => $remote_role,
+			'url' => "{$scheme}{$remote_address}:{$remote_port}/",
+			'auto-failover' => true,
+		];
+
+		$ha_conf = [
+			'this-server-name' => $local_name,
+			'restrict-commands' => true,
+			'mode' => 'hot-standby',
+			'peers' => []
+		];
+
+		if (config_path_enabled('kea/ha', 'tls')) {
+			$cert = lookup_cert(config_get_path('kea/ha/scertref'));
+			$ca = ca_chain($cert['item']);
+
+			$ha_conf['trust-anchor'] = '/usr/local/etc/kea/ha_ca.pem';
+			file_put_contents($ha_conf['trust-anchor'], $ca);
+			chmod($ha_conf['trust-anchor'], 0644);
+
+			$ha_conf['cert-file'] = '/usr/local/etc/kea/ha_scert.crt';
+			file_put_contents($ha_conf['cert-file'], base64_decode($cert['item']['crt']));
+			chmod($ha_conf['cert-file'], 0644);
+
+			$ha_conf['key-file'] = '/usr/local/etc/kea/ha_scert.key';
+			file_put_contents($ha_conf['key-file'], base64_decode($cert['item']['prv']));
+			chmod($ha_conf['key-file'], 0600);
+
+			$ha_conf['require-client-certs'] = false;
+
+			if (config_path_enabled('kea/ha', 'mutualtls')) {
+				$cert = lookup_cert(config_get_path('kea/ha/ccertref'));
+
+				$remote_conf['cert-file'] = '/usr/local/etc/kea/ha_ccert.crt';
+				file_put_contents($remote_conf['cert-file'], base64_decode($cert['item']['crt']));
+				chmod($remote_conf['cert-file'], 0644);
+
+				$remote_conf['key-file'] = '/usr/local/etc/kea/ha_ccert.key';
+				file_put_contents($remote_conf['key-file'], base64_decode($cert['item']['prv']));
+				chmod($remote_conf['key-file'], 0600);
+
+				$ha_conf['require-client-certs'] = true;
+			}
+		}
+
+		$ha_conf['peers'] = [
+			$local_conf,
+			$remote_conf
+		];
+
+		$ha_conf['heartbeat-delay'] = (int)config_get_path('kea/ha/heartbeatdelay', kea_defaults('heartbeatdelay'));
+		$ha_conf['max-response-delay'] = (int)config_get_path('kea/ha/maxresponsedelay', kea_defaults('maxresponsedelay'));
+		$ha_conf['max-ack-delay'] = (int)config_get_path('kea/ha/maxackdelay', kea_defaults('maxackdelay'));
+		$ha_conf['max-unacked-clients'] = (int)config_get_path('kea/ha/maxunackedclients', kea_defaults('maxunackedclients'));
+		$ha_conf['max-rejected-lease-updates'] = (int)config_get_path('kea/ha/maxrejectedleaseupdates', kea_defaults('maxrejectedleaseupdates'));
+
+		$kea_ha_hook = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_ha.so',
+			'parameters' => [
+				'high-availability' => [$ha_conf]
+			]
+		];
+
+		$keaconf['Dhcp4']['hooks-libraries'][] = $kea_ha_hook;
+	}
 
 	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
 	$dns_arrv4 = array();
@@ -1161,14 +1394,18 @@ function services_kea4_configure()
 	}
 
 	/* store known MACs and CIDs as we encounter them during the walk */
-	$known_macs = [];
-	$known_cids = [];
+	$reserve_macs = [];
+	$reserve_cids = [];
+
+	$mac_classes = [];
 
 	$keasubnet_id = 1; /* kea subnet id must start at 1 */
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 		if (empty($dhcpifconf)) {
 			continue;
 		}
+
+		interfaces_staticarp_configure($dhcpif);
 
 		$newzone = array();
 		$ifcfg = config_get_path("interfaces/{$dhcpif}");
@@ -1257,19 +1494,9 @@ function services_kea4_configure()
 		if (!empty($all_mac_strings)) {
 			$all_mac_list = array_unique(explode(',', implode(',', $all_mac_strings)));
 			foreach ($all_mac_list as $mac) {
-				if (empty($mac)) {
-					continue;
+				if ($mac) {
+					$mac_classes[$mac] = true;
 				}
-
-				/* create client classes (mac_0123456789ab) for MAC address matching */
-				$umacstr = strtoupper(str_replace(':', '', $mac));
-				$lmacstr = strtolower($umacstr);
-				$lmacstr_len = strlen($lmacstr);
-				$test_string = 'substring(hexstring(pkt4.mac, \'\'), 0, %s) == \'%s\'';
-				$keaconf['Dhcp4']['client-classes'][] = [
-					'name' => 'mac_'.$umacstr,
-					'test' => sprintf($test_string, $lmacstr_len, $lmacstr)
-				];
 			}
 		}
 
@@ -1387,16 +1614,6 @@ function services_kea4_configure()
 					'name' => 'domain-search',
 					'data' => implode(', ', array_map('trim', explode(';', $poolconf['domainsearchlist'])))
 				];
-			}
-
-			// default-lease-time
-			if ($poolconf['defaultleasetime'] && ($poolconf['defaultleasetime'] != $dhcpifconf['defaultleasetime'])) {
-				$keapool['valid-lifetime'] = $poolconf['defaultleasetime'];
-			}
-
-			// max-lease-time
-			if ($poolconf['maxleasetime'] && ($poolconf['maxleasetime'] != $dhcpifconf['maxleasetime'])) {
-				$keapool['max-valid-lifetime'] = $poolconf['maxleasetime'];
 			}
 
 			// ignore-client-uids
@@ -1749,7 +1966,7 @@ function services_kea4_configure()
 					$keares['hw-address'] = $sm['mac'];
 
 					/* keys are unique */
-					$known_macs[$sm['mac']] = true;
+					$reserve_macs[$sm['mac']] = true;
 				}
 
 				$sm['cid'] = strtolower(trim($sm['cid']));
@@ -1765,7 +1982,7 @@ function services_kea4_configure()
 					}
 
 					/* keys are unique */
-					$known_cids[$sm['cid']] = true;
+					$reserve_cids[$sm['cid']] = true;
 				}
 
 				if ($sm['ipaddr']) {
@@ -2017,17 +2234,28 @@ function services_kea4_configure()
 		}
 	}
 
+	/* create client classes (mac_0123456789ab) for MAC address matching */
+	foreach (array_keys($mac_classes) as $mac) {
+		$umacstr = strtoupper(str_replace(':', '', $mac));
+		$lmacstr = strtolower($umacstr);
+		$lmacstr_len = strlen($lmacstr);
+		$test_string = 'substring(hexstring(pkt4.mac, \'\'), 0, %s) == \'%s\'';
+		/* mac client classes need to be defined early */
+		array_unshift($keaconf['Dhcp4']['client-classes'], [
+			'name' => 'mac_'.$umacstr,
+			'test' => sprintf($test_string, $lmacstr_len, $lmacstr)
+		]);
+	}
+
 	/* add global reservations for known macs */
-	$known_macs = array_keys($known_macs);
-	foreach ($known_macs as $mac) {
+	foreach (array_keys($reserve_macs) as $mac) {
 		$keaconf['Dhcp4']['reservations'][] = [
 			'hw-address' => $mac
 		];
 	}
 
 	/* add global reservations for known cids */
-	$known_cids = array_keys($known_cids);
-	foreach ($known_cids as $cid) {
+	foreach (array_keys($reserve_cids) as $cid) {
 		$keaconf['Dhcp4']['reservations'][] = [
 			'client-id' => $cid
 		];
@@ -2087,8 +2315,7 @@ function services_dhcpdv4_configure() {
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpd');
-	$dhcpdcfg = config_get_path('dhcpd');
+	$dhcpdcfg = config_get_path('dhcpd', []);
 	$Iflist = get_configured_interface_list();
 
 	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
@@ -3233,8 +3460,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	}
 
 	$syscfg = config_get_path('system');
-	config_init_path('dhcpdv6');
-	$dhcpdv6cfg = config_get_path('dhcpdv6');
+	$dhcpdv6cfg = config_get_path('dhcpdv6', []);
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
@@ -3722,8 +3948,7 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	config_init_path('dhcrelay');
-	$dhcrelaycfg = config_get_path('dhcrelay');
+	$dhcrelaycfg = config_get_path('dhcrelay', []);
 
 	/* DHCPRelay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -3774,7 +3999,7 @@ function services_dhcrelay_configure() {
 	 * In order for the relay to work, it needs to be active
 	 * on the interface in which the destination server sits.
 	 */
-	$srvips = explode(",", $dhcrelaycfg['server']);
+	$srvips = array_filter(explode(",", $dhcrelaycfg['server']));
 	if (!is_array($srvips)) {
 		log_error(gettext("No destination IP has been configured!"));
 		return;
@@ -3843,8 +4068,7 @@ function services_dhcrelay6_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 
-	config_init_path('dhcrelay6');
-	$dhcrelaycfg = config_get_path('dhcrelay6');
+	$dhcrelaycfg = config_get_path('dhcrelay6', []);
 
 	/* DHCPv6 Relay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -3894,7 +4118,7 @@ function services_dhcrelay6_configure() {
 	 * In order for the relay to work, it needs to be active
 	 * on the interface in which the destination server sits.
 	 */
-	$srvips = explode(",", $dhcrelaycfg['server']);
+	$srvips = array_filter(explode(",", $dhcrelaycfg['server']));
 	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		$destif = guess_interface_from_ip($srvip);
@@ -3954,7 +4178,9 @@ function services_dyndns_configure_client($conf) {
 		$dnsVerboseLog = $conf['verboselog'],
 		$curlIpresolveV4 = $conf['curl_ipresolve_v4'],
 		$curlSslVerifypeer = $conf['curl_ssl_verifypeer'],
-		$curlProxy = $conf['curl_proxy']);
+		$curlProxy = $conf['curl_proxy'],
+		$checkIPMode = array_get_path($conf, 'check_ip_mode')
+	);
 }
 
 function services_dyndns_configure($int = "") {
@@ -3973,8 +4199,13 @@ function services_dyndns_configure($int = "") {
 			echo gettext("Starting DynDNS clients...");
 		}
 
+		$configured_interfaces = config_get_path('interfaces');
 		foreach ($dyndnscfg as $dyndns) {
 			if (!is_array($dyndns) || empty($dyndns)) {
+				continue;
+			}
+			// Skip DDNS on disabled interfaces
+			if (isset($configured_interfaces[$dyndns['interface']]) && !array_path_enabled($configured_interfaces, $dyndns['interface'])) {
 				continue;
 			}
 			/*
@@ -4019,66 +4250,140 @@ function services_dyndns_configure($int = "") {
 	return 0;
 }
 
-function dyndnsCheckIP($int) {
-	global $factory_default_checkipservice;
-	$ip_address = get_interface_ip($int);
+/**
+ * Get the source IPv4 or IPv6 address to use for sending a request.
+ * @param string $interface A VIP ID, gateway group, or friendly name.
+ * @param mixed $address_family Force an IP address family.
+ * @return string|false The IP address to use; False otherwise.
+ */
+function get_request_source_address($interface, int|null $address_family = null) {
+	$source_address = '';
 
-	if (is_private_ip($ip_address)) {
+	// Get the interface gateway.
+	$interface_gateway = '';
+	$gateways_groups = return_gateway_groups_array();
+	if (isset($gateways_groups[$interface])) {
+		// Given interface is a gateway group.
+		$interface_gateway = $gateways_groups[$interface][0]['gw'];
+	} elseif (str_starts_with($interface, '_vip')) {
+		// Given interface is a VIP.
+		$interface_gateway = get_interface_gateway_name(get_root_interface($interface));
+	} else {
+		// Given interface is a friendly name.
+		$interface_gateway = get_interface_gateway_name($interface);
+	}
+
+	if (!empty($interface_gateway)) {
+		// Bail early if the gateway is down.
 		$gateways_status = return_gateways_status(true);
-		// If the gateway for this interface is down, then the external check cannot work.
-		// Avoid the long wait for the external check to timeout.
-		if (stristr(array_get_path($gateways_status, config_get_path("interfaces/{$int}/gateway") . "/status"), "down")) {
-			return "down";
+		if (array_get_path($gateways_status, "{$interface_gateway}/status", '') != 'online') {
+			return false;
 		}
+		$source_address_gw = array_get_path($gateways_status, "{$interface_gateway}/srcip", '');
 
-		$available_ci_services = config_get_path('checkipservices/checkipservice', []);
-		// Append the factory default check IP service to the list (if not disabled).
-		if (!config_path_enabled('checkipservices','disable_factory_default')) {
-			$available_ci_services[] = $factory_default_checkipservice;
-		}
-
-		// Use the first enabled check IP service as the default.
-		foreach ($available_ci_services as $checkipservice) {
-			if (isset($checkipservice['enable'])) {
-				$url = $checkipservice['url'];
-				$username = $checkipservice['username'];
-				$password = $checkipservice['password'];
-				$verifysslpeer = isset($checkipservice['verifysslpeer']);
-				$curl_proxy = isset($checkipservice['curl_proxy']);
-				break;
-			}
-		}
-
-		$hosttocheck = $url;
-		$ip_ch = curl_init($hosttocheck);
-		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, $verifysslpeer);
-		curl_setopt($ip_ch, CURLOPT_INTERFACE, 'host!' . $ip_address);
-		curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
-		curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
-		curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
-		if ($curl_proxy) {
-			set_curlproxy($ip_ch);
-		}
-		$ip_result_page = curl_exec($ip_ch);
-		curl_close($ip_ch);
-		$ip_result_decoded = urldecode($ip_result_page);
-		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
-
-		if ($matches[1]) {
-			$parsed_ip = trim($matches[1]);
-		} else {
-			$parsed_ip = trim($ip_result_decoded);
-		}
-
-		preg_match('=((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])=', $parsed_ip, $matches);
-		if ($matches[0]) {
-			$ip_address = $matches[0];
+		// If the address family hasn't been specified, base it on the gateway.
+		if (!isset($address_family)) {
+			$address_family = is_ipaddrv4($source_address_gw) ? AF_INET : AF_INET6;
 		}
 	}
-	return $ip_address;
+
+	// Prefer the source address on the gateway group.
+	if ($address_family == AF_INET) {
+		$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+	} elseif ($address_family == AF_INET6) {
+		$source_address = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
+	} else {
+		$prefer_ipv4 = config_path_enabled('system', 'prefer_ipv4');
+		if ($prefer_ipv4) {
+			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+		}
+		if (empty($source_address)) {
+			// Also check IPv6 if IPv4 is preferred but not available.
+			$source_address = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
+		}
+		if (empty($source_address) && !$prefer_ipv4) {
+			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+		}
+	}
+
+	// Bail if no IPv4 or IPv6 address is found for the given interface.
+	if (empty($source_address) || !is_ipaddr($source_address)) {
+		return false;
+	}
+
+	return $source_address;
+}
+
+/**
+ * Use the check IP service to determine the public IPv4 or IPv6 address.
+ * @param mixed $interface A VIP ID, gateway group, or friendly name.
+ * @param string|null $mode Determines whether to use the Check IP service.
+ * @param int|null $address_family Force an IP address family.
+ * @return string|false The IPv4 or IPv6 address; False if none found.
+ */
+function dyndnsCheckIP($interface, string|null $mode = null, int|null $address_family = null) {
+	global $factory_default_checkipservice;
+
+	$interface_address = get_request_source_address($interface, $address_family);
+	if ($interface_address === false) {
+		return false;
+	} elseif ($mode == 'never') {
+		return $interface_address;
+	}
+
+	$use_ipv6 = false;
+	if (is_ipaddrv6($interface_address)) {
+		$use_ipv6 = true;
+		if (($mode != 'always') && is_v6gua($interface_address)) {
+			return $interface_address;
+		}
+	} elseif (($mode != 'always') && is_ipaddrv4($interface_address) && !is_private_ip($interface_address)) {
+		return $interface_address;
+	}
+
+	$regex_ipv4 = '(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)(?:\/(?:\d|[12]\d|3[0-2])\b)?';
+	$regex_ipv6 = '(?:(?:(?:[[:xdigit:]]{1,4}:){7}(?:[[:xdigit:]]{1,4}|:))|(?:(?:[[:xdigit:]]{1,4}:){6}(?::[[:xdigit:]]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(?:(?:[[:xdigit:]]{1,4}:){5}(?:(?:(?::[[:xdigit:]]{1,4}){1,2})|:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(?:(?:[[:xdigit:]]{1,4}:){4}(?:(?:(?::[[:xdigit:]]{1,4}){1,3})|(?:(?::[[:xdigit:]]{1,4})?:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){3}(?:(?:(?::[[:xdigit:]]{1,4}){1,4})|(?:(?::[[:xdigit:]]{1,4}){0,2}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){2}(?:(?:(?::[[:xdigit:]]{1,4}){1,5})|(?:(?::[[:xdigit:]]{1,4}){0,3}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?:(?:[[:xdigit:]]{1,4}:){1}(?:(?:(?::[[:xdigit:]]{1,4}){1,6})|(?:(?::[[:xdigit:]]{1,4}){0,4}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(?::(?:(?:(?::[[:xdigit:]]{1,4}){1,7})|(?:(?::[[:xdigit:]]{1,4}){0,5}:(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))';
+	$response_pattern = "/((?:{$regex_ipv4}|{$regex_ipv6}))/";
+	$available_ci_services = config_get_path('checkipservices/checkipservice', []);
+	// Append the factory default check IP service to the list (if not disabled).
+	if (!config_path_enabled('checkipservices','disable_factory_default')) {
+		$available_ci_services[] = $factory_default_checkipservice;
+	}
+
+	// Use the first enabled check IP service as the default.
+	foreach ($available_ci_services as $checkipservice) {
+		if (isset($checkipservice['enable'])) {
+			$url = $checkipservice['url'];
+			$username = $checkipservice['username'];
+			$password = $checkipservice['password'];
+			$verifysslpeer = isset($checkipservice['verifysslpeer']);
+			$curl_proxy = isset($checkipservice['curl_proxy']);
+			break;
+		}
+	}
+
+	$hosttocheck = $url;
+	$ip_ch = curl_init($hosttocheck);
+	curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, $verifysslpeer);
+	curl_setopt($ip_ch, CURLOPT_INTERFACE, $interface_address);
+	curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
+	curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
+	curl_setopt($ip_ch, CURLOPT_IPRESOLVE, ($use_ipv6 ? CURL_IPRESOLVE_V6 : CURL_IPRESOLVE_V4));
+	curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+	curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
+	if ($curl_proxy) {
+		set_curlproxy($ip_ch);
+	}
+	$ip_result_page = curl_exec($ip_ch);
+	curl_close($ip_ch);
+	$matches = [];
+	preg_match($response_pattern, $ip_result_page, $matches);
+	if (isset($matches[1]) && is_ipaddr($matches[1])) {
+		return $matches[1];
+	}
+
+	return false;
 }
 
 function services_dnsmasq_configure($restart_dhcp = true) {
@@ -4130,7 +4435,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 
 		$listen_addresses = "";
 
-		$interfaces = explode(",", config_get_path('dnsmasq/interface', ""));
+		$interfaces = array_filter(explode(",", config_get_path('dnsmasq/interface', "")));
 		foreach ($interfaces as $interface) {
 			$if = get_real_interface($interface);
 			if (does_interface_exist($if)) {
@@ -4203,7 +4508,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		$args .= ' --no-resolv';
 		if (!config_path_enabled('dnsmasq', 'no_system_dns')) {
 			foreach (get_dns_nameservers(false, true) as $dns) {
-				if (($dns != '127.0.0.1') && ($dns != '::1')) {
+				if (is_ipaddr($dns) && !ip_in_subnet($dns, "127.0.0.0/8") && !ip_in_subnet($dns, "::1/128")) {
 					$args .= ' --server=' . $dns;
 				}
 			}
@@ -4546,7 +4851,7 @@ EOD;
 			if (strstr($ipproto, "6")) {
 				$inet6 = true;
 			}
-			foreach (explode(",", config_get_path('snmpd/bindip', "")) as $bind_to_ip) {
+			foreach (array_filter(explode(",", config_get_path('snmpd/bindip', ""))) as $bind_to_ip) {
 				if (is_ipaddr($bind_to_ip)) {
 					$bind_to_ips[] = $bind_to_ip;
 				} else {
@@ -4728,8 +5033,8 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
-			$wanip = dyndnsCheckIP($if);
-			if (is_private_ip($wanip)) {
+			$wanip = dyndnsCheckIP($if, null, AF_INET);
+			if (!$wanip || is_private_ip($wanip)) {
 				log_error(sprintf(gettext(
 				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),
 				    $dnsupdate['host']));
@@ -4854,9 +5159,6 @@ EOD;
 				    "{$dnsupdate['host']}. A\n";
 				$upinst .= "update add {$dnsupdate['host']}. " .
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
-				if (!empty($bindip)) {
-					$upinst .= "local {$bindip}\n";
-				}
 				$need_update = true;
 			} else {
 				log_error(sprintf(gettext(
@@ -4885,6 +5187,10 @@ EOD;
 		} else {
 			@unlink($cacheFilev6);
 			unset($cacheFilev6);
+		}
+
+		if ($need_update && !empty($bindip)) {
+			$upinst .= "local {$bindip}\n";
 		}
 
 		$upinst .= "\n";	/* mind that trailing newline! */
@@ -5040,7 +5346,7 @@ function upnp_start() {
 	}
 
 	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
-		echo gettext("Starting UPnP service... ");
+		echo gettext("Starting UPnP IGD & PCP service...");
 		require_once('/usr/local/pkg/miniupnpd.inc');
 		sync_package_miniupnpd();
 		echo "done.\n";
@@ -5051,8 +5357,6 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 	$is_installed = false;
 	$cron_changed = true;
 	$change_message = "";
-
-	config_init_path('cron/item');
 
 	$job = null;
 	foreach (config_get_path('cron/item', []) as $idx => $item) {

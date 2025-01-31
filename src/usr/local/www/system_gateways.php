@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -37,7 +37,6 @@ require_once("gwlb.inc");
 
 $simplefields = array('defaultgw4', 'defaultgw6');
 
-config_init_path('gateways/gateway_item');
 refresh_gateways(); // make sure we're working on a current gateway list
 
 $pconfig = $_REQUEST;
@@ -122,7 +121,6 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 	/* prevent removing a gateway if it's still in use by DNS servers
 	 * see https://redmine.pfsense.org/issues/8390 */
 	$dnsgw_counter = 1;
-	config_init_path('system/dnsserver');
 	foreach (config_get_path('system/dnsserver', []) as $dnsserver) {
 		if (config_path_enabled("system", "dns{$dnsgw_counter}gw") &&
 		    ($a_gateways[$id]['name'] == config_get_path("system/dns{$dnsgw_counter}gw"))) {

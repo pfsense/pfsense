@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,21 @@
 require_once("guiconfig.inc");
 require_once("system.inc");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
 
 //=========================================================================
 //called by showThermalSensorsData() (jQuery Ajax call) in thermal_sensors.js
@@ -33,7 +48,7 @@ if (isset($_REQUEST["getThermalSensorsData"])) {
 	if ($specplatform['name'] == '5100') {
 		$_gb = exec("/sbin/sysctl -q dev.cpu | /usr/bin/grep temperature | /usr/bin/sort", $dfout);
 	} else {
-		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc dev.pchtherm | /usr/bin/grep 'temperature:'", $dfout);
+		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc dev.pchtherm | /usr/bin/grep 'temperature:' | /usr/bin/sort", $dfout);
 	}
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($v, ' -') === false;
@@ -136,8 +151,6 @@ if ($_POST['widgetkey']) {
 	//handle checkboxes separately
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_raw_output");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_full_sensor_name");
-	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_warning");
-	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_critical");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_fahrenheit");
 
 	//write settings to config file
@@ -159,8 +172,6 @@ $thermal_sensors_widget_pchCriticalTempThreshold = getThresholdValueFromConfig($
 //get display settings from config (apply defaults if missing)
 $thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_raw_output", false, $widgetkey);
 $thermal_sensors_widget_showFullSensorName = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_full_sensor_name", false, $widgetkey);
-$thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_warning", true, $widgetkey);
-$thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
 $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_fahrenheit", false, $widgetkey);
 
 //=========================================================================
@@ -180,8 +191,6 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 			pchCriticalTempThreshold:<?= $thermal_sensors_widget_pchCriticalTempThreshold; ?>,
 			showRawOutput:<?= $thermal_sensors_widget_showRawOutput ? "true" : "false"; ?>,
 			showFullSensorName:<?= $thermal_sensors_widget_showFullSensorName ? "true" : "false"; ?>,
-			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
-			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>,
 			showFahrenheit:<?= $thermal_sensors_widget_showFahrenheit ? "true" : "false"; ?>
 
 		};
@@ -213,7 +222,6 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 		function ts_callback(s) {
 			var thermalSensorsData = s || "";
 			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams, true);
-			firstTime = false;
 		}
 
 		// POST data to send via AJAX

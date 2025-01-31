@@ -8,7 +8,7 @@
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,12 +71,14 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 
 		$username = get_config_user();
 		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
+		phpsession_end();
 
 		exit;
 	} else {
 		// add this so they don't get stuck on the logout page when they have no permissions.
 		$_SESSION["Logged_In"] = false;
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
+		phpsession_end();
 
 		exit;
 	}
@@ -92,6 +94,8 @@ if (!$_SESSION['Post_Login']) {
 	$_SESSION['Post_Login'] = true;
 	require_once("functions.inc");
 	pfSenseHeader($_SERVER['REQUEST_URI']);
+	phpsession_end();
+
 	exit;
 }
 
@@ -252,6 +256,7 @@ function display_login_form() {
 	// That ensures we will use the system default theme for the login form.
 	$user_settings = get_user_settings("");
 	$logincssfile = "#1e3f75";
+	$login_message = print_login_message();
 
 	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
 		$logincssfile = "#" . $user_settings['webgui']['logincss'];
@@ -336,9 +341,10 @@ function display_login_form() {
 	        </header>
 
 	        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
+				<?=(empty($login_message) ? '' : $login_message)?>
 	        	<div class="col-sm-4"></div>
 
-	        	<div class="col-sm-4 offset-md-4 logoCol">
+	        	<div class="col-sm-4 offset-md-4 <?=(empty($login_message) ? 'logoCol' : '')?>">
 					<div class="loginCont center-block">
 		                <form method="post" <?=$loginautocomplete?> class="login">
 			                <p class="form-title">Sign In</p>

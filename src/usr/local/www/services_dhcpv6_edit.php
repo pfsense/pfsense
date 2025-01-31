@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -61,13 +61,12 @@ if (!$if) {
 	exit;
 }
 
-config_init_path("dhcpdv6/{$if}/staticmap");
 $netboot_enabled = config_path_enabled("dhcpdv6/{$if}", 'netboot');
 $ifcfgipv6 = get_interface_ipv6($if);
 $ifcfgsnv6 = get_interface_subnetv6($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_map_config = isset($id) ? config_get_path("dhcpdv6/{$if}/staticmap/{$id}") : null;
 if ($this_map_config) {

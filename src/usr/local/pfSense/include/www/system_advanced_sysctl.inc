@@ -3,7 +3,7 @@
  * system_advanced_sysctl.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,10 +80,10 @@ function saveTunable($post, $id, $json = false) {
 		$tunableent['value'] = htmlspecialchars($post['value']);
 		$tunableent['descr'] = strip_tags($post['descr']);
 
-		if (isset($id)) {
-			config_set_path('sysctl/item/' . $id, $tunableent);
+		if (is_numericint($id)) {
+			config_set_path("sysctl/item/{$id}", $tunableent);
 		} else {
-			config_set_path('sysctl/item/' . count(config_get_path('sysctl/item', [])) + 1, $tunableent);
+			config_set_path('sysctl/item/', $tunableent);
 		}
 
 		if (!$json) {

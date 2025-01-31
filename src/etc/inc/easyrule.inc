@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2009-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Originally Sponsored By Anathematic @ pfSense Forums
  * All rights reserved.
  *
@@ -144,6 +144,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$ridx = get_interface_ruleindex($int);
 	array_splice($a_filter, $ridx['first'], 0, array($filterent));
 	config_set_path('filter/rule', $a_filter);
+	filter_rules_sort();
 
 	// shift the separators
 	$a_separators = config_get_path('filter/separator/' . strtolower($int), []);
@@ -306,7 +307,6 @@ function easyrule_block_host_add($host, $int = 'wan') {
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 
-	config_init_path('filter/rule');
 	filter_rules_sort();
 
 	/* Make up a new rule */

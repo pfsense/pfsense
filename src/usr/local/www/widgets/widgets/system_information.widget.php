@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * All rights reserved.
  *
@@ -32,6 +32,22 @@ require_once('notices.inc');
 require_once('system.inc');
 include_once("includes/functions.inc.php");
 
+/*
+ * Validate the "widgetkey" value.
+ * When this widget is present on the Dashboard, $widgetkey is defined before
+ * the Dashboard includes the widget. During other types of requests, such as
+ * saving settings or AJAX, the value may be set via $_POST or similar.
+ */
+if ($_POST['widgetkey'] || $_GET['widgetkey']) {
+	$rwidgetkey = isset($_POST['widgetkey']) ? $_POST['widgetkey'] : (isset($_GET['widgetkey']) ? $_GET['widgetkey'] : null);
+	if (is_valid_widgetkey($rwidgetkey, $user_settings, __FILE__)) {
+		$widgetkey = $rwidgetkey;
+	} else {
+		print gettext("Invalid Widget Key");
+		exit;
+	}
+}
+
 $sysinfo_items = array(
 	'name' => gettext('Name'),
 	'user' => gettext('User'),
@@ -56,8 +72,8 @@ $sysinfo_items = array(
 	);
 
 // Declared here so that JavaScript can access it
-$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-cog fa-spin'></i>");
-$state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
+$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-rotate fa-spin'></i>");
+$state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced to ");
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -126,7 +142,7 @@ if ($_REQUEST['getupdatestatus']) {
 		<?printf("%s %s", gettext("Version information updated at"),
 		    date("D M j G:i:s T Y", filemtime($cache_file)));?>
 		    &nbsp;
-		    <a id="updver" href="#" class="fa-solid fa-arrows-rotate"></a>
+		    <a id="updver" href="#" class="fa-solid fa-rotate"></a>
 	</div>
 <?php
 	endif;
@@ -300,7 +316,13 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			$cpucount = get_cpu_count();
 			if ($cpucount > 1): ?>
 				<div id="cpucount">
-					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
+					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>
+<?php
+				$cpudetail = get_cpu_count(true);
+				if ($cpudetail != $cpucount): ?>
+					: <?= htmlspecialchars($cpudetail); ?>
+<?php
+				endif; ?>
 				</div>
 		<?php endif; ?>
 				<div id="cpucrypto">
@@ -798,7 +820,7 @@ events.push(function() {
 	metersObject.url = "/getstats.php";
 	metersObject.callback = meters_callback;
 	metersObject.parms = postdata;
-	metersObject.freq = 1;
+	metersObject.freq = 5;
 
 	// Register the AJAX object
 	register_ajax(metersObject);

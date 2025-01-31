@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -221,7 +221,7 @@ $section->addInput(new Form_Input(
 	'althostnames',
 	'Alternate Hostnames',
 	'text',
-	htmlspecialchars($pconfig['althostnames'])
+	$pconfig['althostnames']
 ))->setHelp('Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks. '.
 	'Specify alternate hostnames by which the router may be queried, to '.
 	'bypass the DNS Rebinding Attack checks. Separate hostnames with spaces.');

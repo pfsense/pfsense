@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -90,8 +90,7 @@ if ($pkg['custom_php_global_functions'] != "") {
  */
 
 $pkg_config_path = 'installedpackages/' . xml_safe_fieldname($pkg['name']) . '/config';
-config_init_path($pkg_config_path);
-$pkg_config = config_get_path($pkg_config_path);
+$pkg_config = config_get_path($pkg_config_path, []);
 if ((count($pkg_config) > 0) && (empty($pkg_config[0]))) {
 	array_shift($pkg_config);
 	config_set_path($pkg_config_path, $pkg_config);
@@ -771,6 +770,10 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			$grp->setHelp($pkga['description']);
 
+			foreach (array_get_path($pkga, 'class', []) as $class) {
+				$grp->addClass($class);
+			}
+
 			if ($pkga['width']) {
 				$grp->setWidth($pkga['width']);
 			}
@@ -1107,8 +1110,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
 			$fieldname = $pkga['fieldname'];
 
-			config_init_path('aliases/alias');
-			$a_aliases = config_get_path('aliases/alias');
+			$a_aliases = config_get_path('aliases/alias', []);
 			$addrisfirst = 0;
 			$aliasesaddr = "";
 

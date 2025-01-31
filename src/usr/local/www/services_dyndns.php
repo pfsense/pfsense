@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,6 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('dyndnses/dyndns');
 global $dyndns_split_domain_types;
 
 if ($_POST['act'] == "del") {
@@ -115,7 +114,7 @@ foreach (config_get_path("dyndnses/dyndns", []) as $dyndns):
 	$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
 	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 	if (file_exists($filename)) {
-		$ipaddr = dyndnsCheckIP($dyndns['interface']);
+		$ipaddr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'));
 		$cached_ip_s = explode("|", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 
@@ -129,7 +128,7 @@ foreach (config_get_path("dyndnses/dyndns", []) as $dyndns):
 			$icon_title = "Failed";
 		}
 	} else if (file_exists($filename_v6)) {
-		$ipv6addr = get_interface_ipv6($dyndns['interface']);
+		$ipv6addr = dyndnsCheckIP($dyndns['interface'], array_get_path($dyndns, 'check_ip_mode'));
 		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
 		$cached_ipv6 = $cached_ipv6_s[0];
 

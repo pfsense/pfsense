@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,10 +38,7 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-config_init_path('ipsec/mobilekey');
-
 $userkeys = array();
-config_init_path('system/user');
 foreach (config_get_path('system/user', []) as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
 		$userkeys[] = array('ident' => $user['name'], 'type' => 'PSK', 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;
@@ -82,12 +79,12 @@ if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
-	$tab_array = array();
-	$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-	$tab_array[1] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
-	$tab_array[2] = array(gettext("Pre-Shared Keys"), true, "vpn_ipsec_keys.php");
-	$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
-	display_top_tabs($tab_array);
+$tab_array = array();
+$tab_array[] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+$tab_array[] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Pre-Shared Keys"), true, "vpn_ipsec_keys.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
+display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">

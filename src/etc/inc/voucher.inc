@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2007-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -433,7 +433,7 @@ function voucher_configure_zone() {
 		unlock($voucherlck);
 		return 1;
 	}
-	$voucher_config = config_get_path("voucher/{$cpzone}");
+	$voucher_config = config_get_path("voucher/{$cpzone}", []);
 	fwrite($fd, "{$voucher_config['rollbits']},{$voucher_config['ticketbits']},{$voucher_config['checksumbits']},{$voucher_config['magic']},{$voucher_config['charset']}\n");
 	fclose($fd);
 	@chmod("{$g['varetc_path']}/voucher_{$cpzone}.cfg", 0600);

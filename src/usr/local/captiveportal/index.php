@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -32,13 +32,12 @@ require_once("captiveportal.inc");
 
 header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
 header("Connection: close");
 
 global $cpzone, $cpzoneid, $cpzoneprefix;
 
 $cpzone = strtolower($_REQUEST['zone']);
-$cpcfg = config_get_path("captiveportal/{$cpzone}");
+$cpcfg = config_get_path("captiveportal/{$cpzone}", []);
 
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
 $orig_request = trim($_REQUEST['redirurl'], " /");
@@ -101,7 +100,7 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 } elseif (!empty($cpsession) && !isset($_POST['logout_id'])) {
 	/* If the client tries to access the captive portal page while already connected,
 		but no custom logout page exists */
-	$logo_src = get_captive_portal_logo();
+	$logo_src = "{$protocol}{$ourhostname}/" . get_captive_portal_logo();
 	$bg_src = get_captive_portal_bg();
 ?>
 <!DOCTYPE html>

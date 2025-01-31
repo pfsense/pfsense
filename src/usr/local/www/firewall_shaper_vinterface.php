@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,14 +53,20 @@ if ($_GET) {
 	}
 	if ($_GET['action']) {
 		$action = htmlspecialchars($_GET['action']);
+		$addnewpipe = ($action == 'add');
 	}
 }
 
 if ($_POST) {
 	if ($_POST['name']) {
 		$qname = htmlspecialchars(trim($_POST['name']));
-	} else if ($_POST['newname']) {
-		$qname = htmlspecialchars(trim($_POST['newname']));
+	}
+	if ($_POST['newname']) {
+		$newname = 	htmlspecialchars(trim($_POST['newname']));
+		if (!$_POST['name']) {
+			$qname = $newname;
+			$addnewpipe = (!isset($_POST['apply']) && !$_POST['parentqueue']);
+		}
 	}
 	if ($_POST['pipe']) {
 		$pipe = htmlspecialchars(trim($_POST['pipe']));
@@ -201,9 +207,22 @@ if ($_POST) {
 	unset($input_errors);
 
 	if ($addnewpipe) {
-		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
-		} else {
+		foreach ($dummynet_pipe_list as $dn) {
+			if ($dn->GetQname() == $newname) {
+				$input_errors[] = gettext("Cannot have duplicate limiter names.");
+				break;
+			}
+			if (!is_array($dn->subqueues) || empty($dn->subqueues)) {
+				continue;
+			}
+			foreach ($dn->subqueues as $subqueue) {
+				if ($subqueue->GetQname() == $newname) {
+					$input_errors[] = gettext("Limiters and child queues cannot have the same name.");
+					break 2;
+				}
+			}
+		}
+		if (empty($input_errors)) {
 			$__tmp_dnpipe = new dnpipe_class(); $dnpipe =& $__tmp_dnpipe;
 
 			$dnpipe->ReadConfig($_POST);
@@ -217,6 +236,8 @@ if ($_POST) {
 				$dnpipe->wconfig();
 				if (write_config("Traffic Shaper: New pipe added")) {
 					mark_subsystem_dirty('shaper');
+					header("Location: firewall_shaper_vinterface.php");
+					exit;
 				}
 				$can_enable = true;
 				$can_add = true;
@@ -227,9 +248,13 @@ if ($_POST) {
 			$newjavascript = $dnpipe->build_javascript();
 		}
 	} else if ($parentqueue) { /* Add a new queue */
-		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
-		} else if ($dnpipe) {
+		foreach ($dummynet_pipe_list as $dn) {
+			if ($dn->GetQname() == $newname) {
+				$input_errors[] = gettext("Limiters and child queues cannot have the same name.");
+				break;
+			}
+		}
+		if (empty($input_errors) && $dnpipe) {
 			$tmppath =& $dnpipe->GetLink();
 			array_push($tmppath, $qname);
 			$tmp =& $dnpipe->add_queue($pipe, $_POST, $tmppath, $input_errors);
@@ -240,6 +265,8 @@ if ($_POST) {
 					$can_enable = true;
 					$can_add = false;
 					mark_subsystem_dirty('shaper');
+					header("Location: firewall_shaper_vinterface.php");
+					exit;
 				}
 			}
 			read_dummynet_config();
@@ -268,12 +295,25 @@ if ($_POST) {
 		}
 
 	} else if ($queue) {
-		$queue->validate_input($_POST, $input_errors);
+		if ($queue->GetQname() != $newname) {
+			foreach ($dummynet_pipe_list as $dn) {
+				if ($dn->GetQname() == $newname) {
+					$input_errors[] = gettext("Limiters and child queues cannot have the same name.");
+					break;
+				}
+			}
+		}
+
+		if (!$input_errors) {
+			$queue->validate_input($_POST, $input_errors);
+		}
 		if (!$input_errors) {
 			$queue->update_dn_data($_POST);
 			$queue->wconfig();
 			if (write_config("Traffic Shaper: Queue changed")) {
 				mark_subsystem_dirty('shaper');
+				header("Location: firewall_shaper_vinterface.php");
+				exit;
 			}
 			$dontshow = false;
 		}
@@ -366,7 +406,7 @@ display_top_tabs($tab_array);
 			<tr class="tabcont">
 				<td class="col-md-1">
 					<?=$tree?>
-					<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add" class="btn btn-sm btn-success">
+					<a href="firewall_shaper_vinterface.php?action=add" class="btn btn-sm btn-success">
 						<i class="fa-solid fa-plus icon-embed-btn"></i>
 						<?=gettext('New Limiter')?>
 					</a>
@@ -374,7 +414,7 @@ display_top_tabs($tab_array);
 				<td>
 <?php
 
-if (!$dfltmsg) {
+if (!$dfltmsg && $sform) {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add && ($action != "add")) {

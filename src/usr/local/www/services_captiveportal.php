@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -334,13 +334,10 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		$newcp = $a_zone;
 		if (empty($newcp['zoneid'])) {
-			$newcp['zoneid'] = 2;
-			foreach ($a_cp as $keycpzone => $cp) {
-				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone) {
-					$newcp['zoneid'] += 2; /* Reserve space for SSL/TLS config if needed */
-				}
-			}
-
+			$current_zoneids = array_flip(array_column($a_cp, 'zoneid'));
+			ksort($current_zoneids, SORT_NATURAL);
+			/* Reserve space for SSL/TLS config if needed by */
+			$newcp['zoneid'] = intval(array_key_last($current_zoneids)) + 2;
 			$cpzoneid = $newcp['zoneid'];
 		}
 		if (is_array($_POST['cinterface'])) {

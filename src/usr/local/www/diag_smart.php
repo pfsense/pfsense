@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Eric Friesen
  * All rights reserved.
  *
@@ -218,7 +218,7 @@ switch ($action) {
 	// Default page, prints the forms to view info, test, etc...
 	default: {
 // Information
-		$devs = get_smart_drive_list();
+		$devs = get_drive_list();
 
 		$form = new Form(false);
 

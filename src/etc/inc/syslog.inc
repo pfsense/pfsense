@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -231,7 +231,6 @@ EOD;
 			@file_put_contents("{$g['varetc_path']}/syslog.d/" . basename($pkg_log_filename) . ".conf", $pkgsyslogconf);
 		}
 	}
-	$facilitylist = implode(',', array_unique($separatelogfacilities));
 
 	$syslogconf .= "!*\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
@@ -354,13 +353,13 @@ EOD;
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 	}
 
+	$facilitylist = implode(',', array_unique($separatelogfacilities));
 	$syslogconf .= "!-{$facilitylist}\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= <<<EOD
 local3.*							{$g['varlog_path']}/vpn.log
 local5.*							{$g['varlog_path']}/nginx.log
 *.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log
-auth.info;authpriv.info 			|exec /usr/local/sbin/sshguard -i /var/run/sshguard.pid
 *.emerg								*
 
 EOD;
@@ -433,6 +432,35 @@ EOD;
 		$sighup = false;
 	}
 
+	if (!$sighup) {
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
+		}
+
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			// if it still hasn't responded to the TERM, KILL it.
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+			usleep(100000);
+		}
+
+		$retval = mwexec_bg("/usr/sbin/syslogd {$syslogd_format} -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+	} else {
+		$retval = sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
+	}
+
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		system_sshguard_start();
+	}
+
+	if (is_platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
+
+	return $retval;
+}
+
+function system_sshguard_start() {
 	$sshguard_whitelist = array();
 	if (!empty(config_get_path('system/sshguard_whitelist'))) {
 		$sshguard_whitelist = explode(' ',
@@ -440,7 +468,7 @@ EOD;
 	}
 
 	$sshguard_config = array();
-	$sshguard_config[] = 'LOGREADER="/bin/cat"' . "\n";
+	$sshguard_config[] = 'FILES="' . g_get('varlog_path') . '/auth.log"' . "\n";
 	$sshguard_config[] = 'BACKEND="/usr/local/libexec/sshg-fw-pf"' . "\n";
 	if (!empty(config_get_path('system/sshguard_threshold'))) {
 		$sshguard_config[] = 'THRESHOLD=' .
@@ -464,29 +492,11 @@ EOD;
 	}
 	file_put_contents("/usr/local/etc/sshguard.conf", $sshguard_config);
 
-	if (!$sighup) {
-		sigkillbyname("sshguard", "TERM");
-		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
-			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
-		}
+	mwexec_bg('/usr/sbin/daemon -R 60 -P /var/run/daemon_sshguard.pid -t sshguard /usr/local/sbin/sshguard -i /var/run/sshguard.pid');
+}
 
-		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-			// if it still hasn't responded to the TERM, KILL it.
-			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-			usleep(100000);
-		}
-
-		$retval = mwexec_bg("/usr/sbin/syslogd {$syslogd_format} -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
-	} else {
-		$retval = sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
-	}
-
-	if (is_platform_booting()) {
-		echo gettext("done.") . "\n";
-	}
-
-	return $retval;
+function system_sshguard_stop() {
+	mwexec_bg('pkill -f "' . str_replace('/', '\\/', g_get('varlog_path')) . '\\/auth\.log|[[:<:]](sshguard|sshg-parser|sshg-fw-pf|sshg-blocker)[[:>:]]"');
 }
 
 function system_log_get_compression() {
@@ -1067,7 +1077,7 @@ function parse_firewall_log_line($line) {
 	list($all, $flent['time'], $host, $rule) = $log_split;
 	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
-	$rule_data = explode(",", $rule);
+	$rule_data = array_filter(explode(",", $rule));
 	$field = 0;
 
 	$flent['rulenum'] = $rule_data[$field++];

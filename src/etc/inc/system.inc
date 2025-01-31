@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -26,6 +26,7 @@
  */
 
 require_once('config.lib.inc');
+require_once('services_dhcp.inc');
 require_once('syslog.inc');
 
 function system_hwpstate_active() {
@@ -202,6 +203,31 @@ function activate_sysctls() {
 	}
 
 	set_sysctl($sysctls);
+}
+
+/* Search current tunables for a specific OID and either update the existing
+ * entry or create a new one.
+ * Does not write the config, that's up to the caller. */
+function set_sysctl_config($oid, $value) {
+	$tunables = config_get_path('sysctl/item', []);
+	$updated = false;
+	$found = false;
+	foreach ($tunables as $idx => $tunable) {
+		if ($tunable['tunable'] == $oid) {
+			$found = true;
+			$tunables[$idx]['value'] = $value;
+		}
+	}
+	if (!$found) {
+		$tunables[] = [
+			'tunable' => $oid,
+			'value' => $value,
+		];
+		$updated = true;
+	}
+	if ($updated) {
+		config_set_path('sysctl/item', $tunables);
+	}
 }
 
 function system_resolvconf_generate($dynupdate = false) {
@@ -617,9 +643,9 @@ function system_hosts_generate() {
 	// prefer dnsmasq for hosts generation where it's enabled. It relies
 	// on hosts for name resolution of its overrides, unbound does not.
 	if (config_path_enabled('dnsmasq')) {
-		$dnsmasqcfg = config_get_path('dnsmasq');
+		$dnsmasqcfg = config_get_path('dnsmasq', []);
 	} else {
-		$dnsmasqcfg = config_get_path('unbound');
+		$dnsmasqcfg = config_get_path('unbound', []);
 	}
 
 	$syscfg = config_get_path('system');
@@ -729,10 +755,96 @@ function system_dhcpleases_configure() {
 	}
 }
 
-function system_clear_all_kea4leases()
-{
-	$socket_path = '/tmp/kea4-ctrl-socket';
-	$rlen = 1024;
+function system_get_kea6status() {
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		goto out;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'status-get']);
+
+	if (socket_send($fd, $cmdjson, strlen($cmdjson), 0) === false) {
+		goto cleanup;
+	}
+
+	$retjson = NULL;
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
+
+		/* error occured, just bail out */
+		if ($bytes === false) {
+			goto cleanup;
+		/* we got some data, append it to the json buffer */
+		} elseif ($bytes > 0) {
+			$retjson .= $rbuf;
+		} else {
+			break;
+		}
+	}
+
+cleanup:
+	socket_close($fd);
+out:
+	return (json_decode($retjson, true));
+}
+
+function system_get_kea4status() {
+	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		goto out;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'status-get']);
+
+	if (socket_send($fd, $cmdjson, strlen($cmdjson), 0) === false) {
+		goto cleanup;
+	}
+
+	$retjson = NULL;
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
+
+		/* error occured, just bail out */
+		if ($bytes === false) {
+			goto cleanup;
+		/* we got some data, append it to the json buffer */
+		} elseif ($bytes > 0) {
+			$retjson .= $rbuf;
+		} else {
+			break;
+		}
+	}
+
+cleanup:
+	socket_close($fd);
+out:
+	return (json_decode($retjson, true));
+}
+
+function system_clear_all_kea4leases() {
+	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -740,9 +852,13 @@ function system_clear_all_kea4leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode(['command' => 'lease4-wipe']);
@@ -750,23 +866,13 @@ function system_clear_all_kea4leases()
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
 
-function system_del_kea4lease(string $ip)
-{
-	$socket_path = '/tmp/kea4-ctrl-socket';
-	$rlen = 1024;
+function system_del_kea4lease(string $ip) {
+	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -774,9 +880,13 @@ function system_del_kea4lease(string $ip)
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode([
@@ -789,23 +899,13 @@ function system_del_kea4lease(string $ip)
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
 
-function system_clear_all_kea6leases()
-{
-	$socket_path = '/tmp/kea6-ctrl-socket';
-	$rlen = 1024;
+function system_clear_all_kea6leases() {
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -813,9 +913,13 @@ function system_clear_all_kea6leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode(['command' => 'lease6-wipe']);
@@ -823,23 +927,13 @@ function system_clear_all_kea6leases()
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
 
-function system_del_kea6lease(string $ip)
-{
-	$socket_path = '/tmp/kea6-ctrl-socket';
-	$rlen = 1024;
+function system_del_kea6lease(string $ip) {
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -847,9 +941,13 @@ function system_del_kea6lease(string $ip)
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		return;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
-		goto cleanup;
+		socket_close($fd);
+		return;
 	}
 
 	$cmdjson = json_encode([
@@ -862,28 +960,17 @@ function system_del_kea6lease(string $ip)
 	socket_send($fd, $cmdjson, strlen($cmdjson), 0);
 
 	/* Kea sends status that we are not really interested in, so just eat it */
-	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
-		if ($bytes > 0) {
-			continue;
-		}
+	while (socket_recv($fd, $rbuf, 8192, MSG_WAITALL) > 0);
 
-		break;
-	}
-
-cleanup:
 	socket_close($fd);
 }
 
-
-function system_get_kea6leases()
-{
+function system_get_kea6leases() {
 	$leases = [];
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/tmp/kea6-ctrl-socket';
-	$rlen = 1024;
+	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -891,6 +978,9 @@ function system_get_kea6leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -904,7 +994,7 @@ function system_get_kea6leases()
 
 	$retjson = NULL;
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 
 		/* error occured, just bail out */
 		if ($bytes === false) {
@@ -1008,14 +1098,12 @@ out:
 	return $leases;
 }
 
-function system_get_kea4leases()
-{
+function system_get_kea4leases() {
 	$leases = [];
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/tmp/kea4-ctrl-socket';
-	$rlen = 1024;
+	$socket_path = '/var/run/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1023,6 +1111,9 @@ function system_get_kea4leases()
 	}
 
 	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
 
 	if (!socket_connect($fd, $socket_path, 0)) {
 		goto cleanup;
@@ -1036,7 +1127,7 @@ function system_get_kea4leases()
 
 	$retjson = NULL;
 	for (;;) {
-		$bytes = socket_recv($fd, $rbuf, $rlen, MSG_WAITALL);
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
 
 		/* error occured, just bail out */
 		if ($bytes === false) {
@@ -1149,8 +1240,7 @@ out:
 	return $leases;
 }
 
-function system_get_dhcpleases($dnsavailable=null)
-{
+function system_get_dhcpleases($dnsavailable=null) {
 	global $g;
 
 	if (dhcp_is_backend('kea')) {
@@ -1770,7 +1860,7 @@ function system_generate_nginx_config($filename,
 	}
 
 	if ($captive_portal !== false) {
-		$cp_interfaces = explode(",", config_get_path("captiveportal/{$captive_portal}/interface"));
+		$cp_interfaces = array_filter(explode(",", config_get_path("captiveportal/{$captive_portal}/interface")));
 		$cp_hostcheck = "";
 		foreach ($cp_interfaces as $cpint) {
 			$cpint_ip = get_interface_ip($cpint);
@@ -1876,8 +1966,9 @@ EOD;
 	if ($cert <> "" and $key <> "") {
 		$nginx_config .= "\n";
 		$nginx_config .= "\tserver {\n";
-		$nginx_config .= "\t\tlisten {$nginx_port} ssl http2;\n";
-		$nginx_config .= "\t\tlisten [::]:{$nginx_port} ssl http2;\n";
+		$nginx_config .= "\t\tlisten {$nginx_port} ssl;\n";
+		$nginx_config .= "\t\tlisten [::]:{$nginx_port} ssl;\n";
+		$nginx_config .= "\t\thttp2 on;\n";
 		$nginx_config .= "\n";
 		$nginx_config .= "\t\tssl_certificate         {$g['varetc_path']}/{$cert_location};\n";
 		$nginx_config .= "\t\tssl_certificate_key     {$g['varetc_path']}/{$key_location};\n";
@@ -2210,7 +2301,6 @@ function system_ntp_setup_gps($serialport) {
 		return false;
 	}
 
-	config_init_path('ntpd/gps');
 	$serialports = get_serial_ports(true);
 
 	if (!array_key_exists($serialport, $serialports)) {
@@ -2334,10 +2424,9 @@ function system_ntp_configure() {
 	$driftfile = "/var/db/ntpd.drift";
 	$statsdir = "/var/log/ntp";
 	$gps_device = '/dev/gps0';
+	$ntp_keyid = config_get_path('ntpd/serverauthkeyid', '1');
 
 	safe_mkdir($statsdir);
-
-	config_init_path('ntpd');
 
 	// ntpd is disabled, just stop it and return
 	if (config_get_path('ntpd/enable') == 'disabled') {
@@ -2363,7 +2452,7 @@ function system_ntp_configure() {
 
 	/* set NTP server authentication key */
 	if (config_get_path('ntpd/serverauth') == 'yes') {
-		$ntpkeyscfg = "1 " . strtoupper(config_get_path('ntpd/serverauthalgo')) . " " . base64_decode(config_get_path('ntpd/serverauthkey')) . "\n";
+		$ntpkeyscfg = "{$ntp_keyid} " . strtoupper(config_get_path('ntpd/serverauthalgo')) . " " . base64_decode(config_get_path('ntpd/serverauthkey')) . "\n";
 		if (!@file_put_contents("{$g['varetc_path']}/ntp.keys", $ntpkeyscfg)) {
 			log_error(sprintf(gettext("Could not open %s/ntp.keys for writing"), g_get('varetc_path')));
 			return;
@@ -2380,9 +2469,9 @@ function system_ntp_configure() {
 	if (config_get_path('ntpd/serverauth') == 'yes') {
 		$ntpcfg .= "# Authentication settings \n";
 		$ntpcfg .= "keys /var/etc/ntp.keys \n";
-		$ntpcfg .= "trustedkey 1 \n";
-		$ntpcfg .= "requestkey 1 \n";
-		$ntpcfg .= "controlkey 1 \n";
+		$ntpcfg .= "trustedkey {$ntp_keyid} \n";
+		$ntpcfg .= "requestkey {$ntp_keyid} \n";
+		$ntpcfg .= "controlkey {$ntp_keyid} \n";
 		$ntpcfg .= "\n";
 	}
 
@@ -2538,11 +2627,11 @@ function system_ntp_configure() {
 			} else {
 				$ntpcfg .= 'server ';
 			}
-			if (config_get_path('ntpd/dnsresolv') == 'inet') {
-				$ntpcfg .= '-4 ';
-			} elseif (config_get_path('ntpd/dnsresolv') == 'inet6') {
-				$ntpcfg .= '-6 ';
-			}
+		}
+		if (config_get_path('ntpd/dnsresolv') == 'inet') {
+			$ntpcfg .= '-4 ';
+		} elseif (config_get_path('ntpd/dnsresolv') == 'inet6') {
+			$ntpcfg .= '-6 ';
 		}
 
 		$ntpcfg .= "{$ts}";
@@ -2558,6 +2647,11 @@ function system_ntp_configure() {
 		}
 		if (substr_count(config_get_path('ntpd/noselect'), $ts)) {
 			$ntpcfg .= ' noselect';
+		}
+		if (config_get_path('ntpd/serverauth') == 'yes' &&
+		    !substr_count(config_get_path('ntpd/ispool'), $ts) &&
+		    substr_count(config_get_path('ntpd/isauth'), $ts)) {
+			$ntpcfg .= " key {$ntp_keyid} ";
 		}
 		$ntpcfg .= "\n";
 	}
@@ -2693,11 +2787,13 @@ function system_ntp_configure() {
 
 
 	if (empty(config_get_path('ntpd/interface'))) {
-		$interfaces =
-			explode(",",
-					config_get_path('installedpackages/openntpd/config/0/interface', ''));
+		$interfaces = config_get_path('installedpackages/openntpd/config/0/interface', '');
 	} else {
-		$interfaces = explode(",", config_get_path('ntpd/interface'));
+		$interfaces = config_get_path('ntpd/interface', '');
+	}
+	// avoid an array with a single empty value
+	if (!empty(trim($interfaces))) {
+		$interfaces = array_filter(explode(",", config_get_path('ntpd/interface', '')));
 	}
 
 	if (is_array($interfaces) && count($interfaces)) {
@@ -2877,12 +2973,9 @@ function system_set_harddisk_standby() {
 		$standby = config_get_path('system/harddiskstandby');
 		// Check for a numeric value
 		if (is_numeric($standby)) {
-			// Get only suitable candidates for standby; using get_smart_drive_list()
-			// from utils.inc to get the list of drives.
-			$harddisks = get_smart_drive_list();
+			// Get only suitable candidates for standby
+			$harddisks = get_drive_list(false);
 
-			// Since get_smart_drive_list() only matches ad|da|ada; lets put the check below
-			// just in case of some weird pfSense platform installs.
 			if (count($harddisks) > 0) {
 				// Iterate disks and run the camcontrol command for each
 				foreach ($harddisks as $harddisk) {
@@ -3022,7 +3115,8 @@ function system_get_serial() {
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');
 
-	if (strlen($serial) >= 10 && strlen($serial) <= 16 &&
+	$serial = chop($serial);
+	if (strlen($serial) >= 10 && strlen($serial) <= 18 &&
 	    $vm_guest == 'none') {
 		return $serial;
 	}
@@ -3075,7 +3169,7 @@ function system_identify_specific_platform() {
 
 	if ($chassis[0] == "OracleCloud.com") {
 		return (array('name' => 'Oracle', 'descr' => 'Oracle Cloud Infrastructure'));
-	}	
+	}
 
 	if ($maker[0] == "QEMU") {
 		return (array('name' => 'QEMU', 'descr' => 'QEMU Guest'));
@@ -3195,7 +3289,8 @@ function system_identify_specific_platform() {
 			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
-				if (stripos($bios[0], "Hyper") !== false) {
+				if ((stripos($bios[0], "Hyper") !== false) &&
+				    ($g['default-config-flavor'] != 'azure')) {
 					return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
 				} else {
 					return (array('name' => 'Azure', 'descr' => 'Microsoft Azure'));
@@ -3271,5 +3366,3 @@ function system_get_arp_table($resolve_hostnames = false) {
 
 	return $arp_table;
 }
-
-?>

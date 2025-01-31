@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,7 +82,7 @@ $g = [
 	'disablehelpicon' => false,
 	'disablecrashreporter' => false,
 	'debug' => false,
-	'latest_config' => '23.3',
+	'latest_config' => '23.7',
 	'minimum_ram_warning' => '101',
 	'minimum_ram_warning_text' => '128 MB',
 	'wan_interface_name' => 'wan',
@@ -263,18 +263,218 @@ $pf_reserved_keywords = [
 	'pppoe', 'pptp'
 ];
 
-/* Reserved table names to avoid collision */
+/**
+ * User-accessible read-only aliases reserved for system use.
+ * 
+ * Entries must have the name as the key. Each entry must have a name,
+ * type, and description. Possible values are:
+ * - name: Same value as the key; used for compatibility with other functions.
+ * - url: A URL string for URL* types. Alternatively it may be a file path.
+ *        If a file path is given, the alias is assumed to be processed
+ *        separately such as with rc.update_bogons.sh.
+ * - type: The alias type.
+ * - descr: A string value.
+ * - address: A string of space-separated values; may be defined
+ *            dynamically e.g. during filter ruleset generation.
+ * - detail: An optional string value.
+ * 
+ * @global array $reserved_table_names
+ */
 global $reserved_table_names;
 $reserved_table_names = [
-	'bogons',
-	'bogonsv6',
-	'negate_networks',
-	'snort2c',
-	'sshguard',
-	'tonatsubnets',
-	'virusprot',
-	'vpn_networks',
+	'bogons' => [
+		'name' => 'bogons',
+		'type' => 'urltable',
+		'url' => '/etc/bogons',
+		'descr' => 'IPv4 bogons.',
+		'address' => '',
+		'detail' => ''
+	],
+	'bogonsv6' => [
+		'name' => 'bogonsv6',
+		'type' => 'urltable',
+		'url' => '/etc/bogonsv6',
+		'descr' => 'IPv6 bogons.',
+		'address' => '',
+		'detail' => ''
+	],
+	'sshguard' => [
+		'name' => 'sshguard',
+		'type' => 'host',
+		'descr' => 'Hosts blocked by SSH login protection.',
+		'address' => '',
+		'detail' => ''
+	],
+	'snort2c' => [
+		'name' => 'snort2c',
+		'type' => 'host',
+		'descr' => 'Hosts blocked by IDS.',
+		'address' => '',
+		'detail' => ''
+	],
+	'virusprot' => [
+		'name' => 'virusprot',
+		'type' => 'host',
+		'descr' => 'Hosts blocked by rule restrictions.',
+		'address' => '',
+		'detail' => ''
+	],
+	'vpn_networks' => [
+		'name' => 'vpn_networks',
+		'type' => 'network',
+		'descr' => 'Networks for IPsec, OpenVPN, and PPPoE servers.',
+		'address' => '',
+		'detail' => ''
+	],
+	'negate_networks' => [
+		'name' => 'negate_networks',
+		'type' => 'network',
+		'descr' => 'Networks to exclude from policy routing rules with any destination.',
+		'address' => '',
+		'detail' => ''
+	],
+	'tonatsubnets' => [
+		'name' => 'tonatsubnets',
+		'type' => 'network',
+		'descr' => 'Networks handled by automatic outbound NAT.',
+		'address' => '',
+		'detail' => ''
+	],
 ];
+
+function add_reserved_table(array $table, array $values) {
+	global $reserved_table_names;
+	if (!array_key_exists('name', $table)) {
+		return;
+	}
+	$table['address'] = implode(' ', array_keys($values));
+	$table['detail'] = implode('||', array_values($values));
+	$reserved_table_names[$table['name']] = $table;
+}
+
+add_reserved_table(
+	[
+		'name' => '_loopback_',
+		'type' => 'network',
+		'descr' => 'IPv4 and IPv6 loopback networks.',
+	],
+	[
+		'127.0.0.0/8' => 'Loopback', // RFC1122
+		'::1/128' => 'Loopback Address', // RFC4291
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_linklocal4_',
+		'type' => 'network',
+		'descr' => 'IPv4 link-local networks.',
+	],
+	[
+		'169.254.0.0/16' => 'Link Local', // RFC3927
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_linklocal6_',
+		'type' => 'network',
+		'descr' => 'IPv6 link-local networks.',
+	],
+	[
+		'fe80::/10' => 'Linked-Scoped Unicast', // RFC4291
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_private4_',
+		'type' => 'network',
+		'descr' => 'IPv4 private networks.',
+	],
+	[
+		'10.0.0.0/8' => 'Private-Use', // RFC1918
+		'172.16.0.0/12' => 'Private-Use', // RFC1918
+		'192.168.0.0/16' => 'Private-Use', // RFC1918
+
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_private6_',
+		'type' => 'network',
+		'descr' => 'IPv6 private networks.',
+	],
+	[
+		'fc00::/7' => 'Unique-Local', // RFC4193
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_multicast4_',
+		'type' => 'network',
+		'descr' => 'IPv4 multicast networks.',
+	],
+	[
+		'224.0.0.0/4' => 'Multicast', // RFC5771
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_multicast6_',
+		'type' => 'network',
+		'descr' => 'IPv6 multicast networks.',
+	],
+	[
+		'ff00::/8' => 'Multicast', // RFC4291
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_reserved4_',
+		'type' => 'network',
+		'descr' => 'IPv4 networks reserved for local use.',
+	],
+	[
+		'0.0.0.0/8' => 'This host on this network', // RFC1122
+		'10.0.0.0/8' => 'Private-Use', // RFC1918
+		'100.64.0.0/10' => 'Shared Address Space', // RFC6598
+		'127.0.0.0/8' => 'Loopback', // RFC1122
+		'169.254.0.0/16' => 'Link Local', // RFC3927
+		'172.16.0.0/12' => 'Private-Use', // RFC1918
+		'192.0.0.0/24' => 'IETF Protocol Assignments', // RFC6890
+		'192.0.2.0/24' => 'Documentation (TEST-NET-1)', // RFC5737
+		'192.88.99.0/24' => '6to4 Relay Anycast', // RFC3068
+		'192.168.0.0/16' => 'Private-Use', // RFC1918
+		'198.18.0.0/15' => 'Benchmarking', //RFC2544
+		'198.51.100.0/24' => 'Documentation (TEST-NET-2)', // RFC5737
+		'203.0.113.0/24' => 'Documentation (TEST-NET-3)', // RFC5737
+		'224.0.0.0/4' => 'Multicast', // RFC5771
+		'240.0.0.0/4' => 'Reserved', // RFC1112
+		'255.255.255.255/32' => 'Limited Broadcast', // RFC0919
+	]
+);
+add_reserved_table(
+	[
+		'name' => '_reserved6_',
+		'type' => 'network',
+		'descr' => 'IPv6 networks reserved for local use.',
+	],
+	[
+		'::1/128' => 'Loopback Address', // RFC4291
+		'::/128' => 'Unspecified Address', // RFC4291
+		'::ffff:0:0/96' => 'IPv4-mapped Address', // RFC4291
+		'64:ff9b::/96' => 'IPv4-IPv6 Translation', // RFC6052
+		'64:ff9b:1::/48' => 'Local-Use IPv4/IPv6 Translation', // RFC8215
+		'100::/64' => 'Discard-Only Address Block', // RFC6666
+		'2001::/23' => 'IETF Protocol Assignments', // RFC2928
+		'2001:2::/48' => 'Benchmarking', // RFC5180
+		'2001:db8::/32' => 'Documentation', // RFC3849
+		'2002::/16' => '6to4', // RFC3056
+		'3fff::/20' => 'Documentation', // RFC9637
+		'5f00::/16' => 'Segment Routing (SRv6) SIDs', // RFC9602
+		'fc00::/7' => 'Unique-Local', // RFC4193
+		'fe80::/10' => 'Linked-Scoped Unicast', // RFC4291
+		'ff00::/8' => 'Multicast', // RFC4291
+	]
+);
 
 /* VLAN Prio values. */
 global $vlanprio_values;

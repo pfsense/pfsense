@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -34,15 +34,15 @@ function listtags() {
 	$ret = array(
 		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
 		'bridged', 'build_port_path',
-		'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 
+		'ca', 'cacert', 'cert', 'crl', 'clone', 'config',
 		'container', 'columnitem', 'checkipservice',
 		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
 		'earlyshellcmd', 'element', 'encryption-algorithm-option',
 		'field', 'fieldname',
 		'gateway_item', 'gateway_group', 'gif', 'gre', 'group',
 		'hash-algorithm-option', 'hosts', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',
-		'lagg', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
-		'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',
+		'lagg', 'laggroup', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
+		'member', 'menu', 'tab', 'mobilekey', 'mobilegroup', 'monitor_type', 'mount',
 		'npt', 'ntpserver',
 		'onetoone', 'openvpn-server', 'openvpn-client', 'openvpn-csc', 'option',
 		'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
@@ -58,8 +58,11 @@ function listtags() {
 
 /* Package XML tags that should be treated as a list not as a traditional array */
 function listtags_pkg() {
-	$ret = array('build_port_path', 'depends_on_package', 'onetoone', 'queue', 'rule', 'servernat', 'alias', 'additional_files_needed', 'tab', 'template', 'menu', 'rowhelperfield', 'service', 'step', 'package', 'columnitem', 'option', 'item', 'field', 'package', 'file');
-
+	$ret = array(
+		'additional_files_needed', 'alias', 'build_port_path', 'class', 'columnitem', 'depends_on_package',
+		'field', 'file', 'item', 'menu', 'onetoone', 'option', 'package', 'queue', 'rowhelperfield', 'rule', 'servernat',
+		'service', 'step', 'tab', 'template'
+	);
 	return array_flip($ret);
 }
 
@@ -125,7 +128,7 @@ function endElement($parser, $name) {
 	if (isset($listtags[strtolower($name)])) {
 		array_pop($curpath);
 	}
-	
+
 	$depth--;
 }
 
@@ -198,15 +201,19 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	}
 
 	while ($data = fread($fp, 4096)) {
-		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			log_error(sprintf(gettext('XML error: %1$s at line %2$d in %3$s') . "\n",
-				xml_error_string(xml_get_error_code($xml_parser)),
-				xml_get_current_line_number($xml_parser),
-				$cffile));
+		try {
+			if (!xml_parse($xml_parser, $data, feof($fp))) {
+				log_error(sprintf(gettext('XML error: %1$s at line %2$d in %3$s') . "\n",
+					xml_error_string(xml_get_error_code($xml_parser)),
+					xml_get_current_line_number($xml_parser),
+					$cffile));
+				return -1;
+			}
+		} catch (\Throwable | \Error | \Exception $e) {
+			log_error($e->getMessage());
 			return -1;
 		}
 	}
-	xml_parser_free($xml_parser);
 
 	if ($rootobj) {
 		if (!is_array($rootobj)) {
@@ -235,7 +242,7 @@ function is_cdata_entity($ent) {
 		'descr', 'detail', 'email', 'encryption_password', 'hint', 'ldap_attr',
 		'ldap_authcn', 'ldap_basedn', 'ldap_basedomain', 'ldap_bind', 'ldapbinddn',
 		'ldapbindpass', 'ldap_extended_query', 'ldap_filter', 'ldap_pam_groupdn', 'ldap_pass', 'ldap_user',
-		'login_banner', 'organization', 'password', 'rangedescr', 'state', 'text',
+		'login_banner', 'organization', 'password', 'proxypass', 'proxyuser', 'rangedescr', 'state', 'text',
 		'username', 'varusersusername', 'varuserspassword'
 	);
 

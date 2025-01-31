@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -46,10 +46,6 @@ $max_lifetime = cert_get_max_lifetime();
 $default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = cert_build_curve_list();
 $class = "success";
-
-config_init_path('ca');
-config_init_path('cert');
-config_init_path('crl');
 
 $act = $_REQUEST['act'];
 
@@ -328,7 +324,7 @@ if ($_POST['save']) {
 		}
 
 		if (isset($id) && $thisca) {
-			config_set_path("ca/{$ca_item_config['item']}", $ca);
+			config_set_path("ca/{$ca_item_config['idx']}", $ca);
 		} else {
 			config_set_path('ca/', $ca);
 		}
@@ -341,7 +337,7 @@ if ($_POST['save']) {
 	}
 }
 
-$pgtitle = array(gettext('System'), gettext('Certificate'), gettext('Authorities'));
+$pgtitle = array(gettext('System'), gettext('Certificates'), gettext('Authorities'));
 $pglinks = array("", "system_camanager.php", "system_camanager.php");
 
 if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors) {
@@ -466,17 +462,17 @@ foreach (config_get_path('ca', []) as $ca):
 						<?php cert_print_dates($ca);?>
 					</td>
 					<td class="text-nowrap">
-						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
-							<?=gettext("OpenVPN Server")?><br/>
-						<?php endif?>
-						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
-							<?=gettext("OpenVPN Client")?><br/>
-						<?php endif?>
 						<?php if (is_ipsec_peer_ca($ca['refid'])): ?>
 							<?=gettext("IPsec Tunnel")?><br/>
 						<?php endif?>
 						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
-							<?=gettext("LDAP Server")?>
+							<?=gettext("LDAP Server")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
 						<?php endif?>
 						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>

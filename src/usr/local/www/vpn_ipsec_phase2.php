@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -41,10 +41,6 @@ require_once("vpn.inc");
 global $p2_pfskeygroups;
 $ipsec_lidtype_flags = [SPECIALNET_ADDR, SPECIALNET_NET, SPECIALNET_IFSUB];
 $ipsec_nlitype_flags = [SPECIALNET_NONE, SPECIALNET_ADDR, SPECIALNET_NET];
-
-config_init_path('ipsec/client');
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/phase2');
 
 if (!empty($_REQUEST['p2index'])) {
 	$uindex = $_REQUEST['p2index'];
@@ -112,7 +108,7 @@ if ($p2index !== null) {
 	$pconfig['uniqid'] = uniqid();
 
 	/* mobile client */
-	if ($_REQUEST['mobile']) {
+	if (isset($_REQUEST['mobile'])) {
 		$pconfig['mobile']=true;
 		$pconfig['remoteid_type'] = "mobile";
 	}
@@ -134,6 +130,9 @@ if ($_POST['save']) {
 	$vti_switched = (($p2index !== null) && ($pconfig['mode'] == "vti") && ($_POST['mode'] != "vti"));
 
 	$pconfig = $_POST;
+	if (isset($pconfig['mobile'])) {
+		$pconfig['remoteid_type'] = 'mobile';
+	}
 
 	if (!isset($_POST['ikeid'])) {
 		$input_errors[] = gettext("A valid ikeid must be specified.");
@@ -474,7 +473,7 @@ $localid_help_mobile  = "Network reachable by mobile IPsec clients.";
 $remoteid_help_tunnel = "Remote network component of this IPsec security association.";
 $remoteid_help_vti    = "Remote point-to-point IPsec interface tunnel network address.";
 
-if ($pconfig['mobile']) {
+if (isset($pconfig['mobile'])) {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 2"));
 	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_mobile.php", "@self");
 	$editing_mobile = true;
@@ -598,7 +597,7 @@ if (!empty($pconfig['ikeid'])) {
 		$p1name = '<i>' . gettext('No description') . '</i> ';
 	}
 	$p1name .= ' (IKE ID ' . $pconfig['ikeid'];
-	if ($pconfig['mobile']) {
+	if (isset($pconfig['mobile'])) {
 		$p1name .= ', ' . gettext('Mobile');
 	}
 	$p1name .= ')';
@@ -796,7 +795,7 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 // Hidden inputs
-if ($pconfig['mobile']) {
+if (isset($pconfig['mobile'])) {
 	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,8 +35,6 @@
 require_once("config.lib.inc");
 require_once("guiconfig.inc");
 
-config_init_path('vlans/vlan');
-
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
 $portlist = array_merge($portlist, $lagglist);
@@ -52,8 +50,6 @@ foreach ($lagglist as $lagg) {
 
 /* Do not allow OpenVPN TUN interfaces to be used for QinQ
  * https://redmine.pfsense.org/issues/11675 */
-config_init_path('openvpn/openvpn-server');
-config_init_path('openvpn/openvpn-client');
 foreach ($portlist as $portname => $port) {
 	if (strstr($portname, "ovpn")) {
 		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
@@ -91,7 +87,7 @@ if ($_POST['save']) {
 	 */
 	phpsession_begin();
 	$guiuser = getUserEntry($_SESSION['Username']);
-	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+	$read_only = (is_array($guiuser) && userHasPrivilege($guiuser['item'], "user-config-readonly"));
 	phpsession_end();
 
 	if ($read_only) {

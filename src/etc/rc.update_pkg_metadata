@@ -2,7 +2,7 @@
 #
 # rc.update_pkg_metadata
 #
-# Copyright (c) 2017-2024 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2017-2025 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,34 +17,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ "$1" = "now" ]; then
-	sleep_time=0
+if [ "${1}" = "now" ]; then
+	sleep_time="0"
 else
-	sleep_time=$(jot -r 1 1 86399)
+	sleep_time="$(jot -r 1 1 86399)"
 fi
 
 # Read product_name from $g, defaults to pfSense
-product_name=$(/usr/local/sbin/read_global_var product_name pfSense)
+product_name="$(/usr/local/sbin/read_global_var product_name pfSense)"
 
-tmp_version=$(mktemp -q /tmp/${product_name}_version.XXXXXXXX) \
+tmp_version="$(mktemp -q "/tmp/${product_name}_version.XXXXXXXX")" \
 	|| exit 1
 
 ( \
-	sleep $sleep_time \
-	&& /usr/local/bin/php -r 'require_once("pkg-utils.inc");update_repos();' \
-	&& /usr/local/sbin/${product_name}-upgrade -uf \
+	sleep "${sleep_time}" \
+	&& "/usr/local/sbin/${product_name}-upgrade" -uf \
 	&& ( \
-		/usr/local/sbin/${product_name}-upgrade -Uc > ${tmp_version}.tmp \
-		; rc=$? \
-		; tail -n 1 ${tmp_version}.tmp > $tmp_version \
-		; rm -f ${tmp_version}.tmp \
-		; echo $rc > ${tmp_version}.rc \
-		; test $rc -eq 2 && return 0 || return $rc \
+		"/usr/local/sbin/${product_name}-upgrade" -C > "${tmp_version}.tmp" \
+		; rc="${?}" \
+		; tail -n 1 "${tmp_version}.tmp" > "${tmp_version}" \
+		; rm -f "${tmp_version}.tmp" \
+		; echo "${rc}" > "${tmp_version}.rc" \
+		; test "${rc}" -eq 2 && return 0 || return "${rc}" \
 	) \
 	&& ( \
-		mv $tmp_version /var/run/${product_name}_version \
-		&& mv ${tmp_version}.rc /var/run/${product_name}_version.rc \
-	) || rm -f $tmp_version ${tmp_version}.rc
+		mv "${tmp_version}" "/var/run/${product_name}_version" \
+		&& mv "${tmp_version}.rc" "/var/run/${product_name}_version.rc" \
+	) || rm -f "${tmp_version}" "${tmp_version}.rc"
 ) >/dev/null 2>&1 &
 
 exit 0

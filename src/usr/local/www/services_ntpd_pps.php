@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -35,8 +35,6 @@ global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
 $ntp_poll_values = system_ntp_poll_values();
 
 $serialports = get_serial_ports(true);
-
-config_init_path('ntpd/pps');
 
 if ($_POST) {
 	unset($input_errors);
@@ -118,8 +116,7 @@ if ($_POST) {
 	}
 }
 
-config_init_path('ntpd/pps');
-$pconfig = config_get_path('ntpd/pps');
+$pconfig = config_get_path('ntpd/pps', []);
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("PPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";

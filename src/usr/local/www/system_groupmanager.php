@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
@@ -41,10 +41,7 @@ require_once("pfsense-utils.inc");
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
 
-config_init_path('system/group');
-
-unset($id);
-$id = $_REQUEST['groupid'];
+$id = is_numericint($_REQUEST['groupid']) ? $_REQUEST['groupid'] : null;
 $act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
 $dup = null;
@@ -100,7 +97,7 @@ if (($_POST['act'] == "delgroup") && !$read_only) {
 	 * Reindex the array to avoid operating on an incorrect index
 	 * https://redmine.pfsense.org/issues/7733
 	 */
-	config_set_path("system/group", array_values(config_get_path('system/group')));
+	config_set_path("system/group", array_values(config_get_path('system/group', [])));
 
 	$savemsg = sprintf(gettext("Successfully deleted group: %s"),
 	    $groupdeleted);
@@ -135,8 +132,8 @@ if (($_POST['act'] == "delpriv") && !$read_only && ($dup === null)) {
 }
 
 if ($act == "edit") {
-	$this_group = config_get_path("system/group/{$id}");
-	if (isset($id) && isset($this_group)) {
+	if (isset($id)) {
+		$this_group = config_get_path("system/group/{$id}");
 		if ($dup === null) {
 			$pconfig['name'] = $this_group['name'];
 			$pconfig['gid'] = $this_group['gid'];
@@ -176,7 +173,7 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 		 * Reindex the array to avoid operating on an incorrect index
 		 * https://redmine.pfsense.org/issues/7733
 		 */
-		config_set_path("system/group", array_values(config_get_path('system/group')));
+		config_set_path("system/group", array_values(config_get_path('system/group', [])));
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
@@ -269,7 +266,6 @@ if (isset($_POST['save']) && !$read_only) {
 		 * changed.
 		 */
 		if (is_array($group['member'])) {
-			config_init_path('system/user');
 			foreach (config_get_path('system/user', []) as $idx => $user) {
 				if (in_array($user['uid'], $group['member'])) {
 					local_user_set($user);
@@ -279,7 +275,7 @@ if (isset($_POST['save']) && !$read_only) {
 		}
 
 		/* Sort it alphabetically */
-		$group_config = config_get_path('system/group');
+		$group_config = config_get_path('system/group', []);
 		usort($group_config, function($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});
@@ -314,20 +310,21 @@ function build_priv_table() {
 
 	$user_has_root_priv = false;
 
-	foreach (get_user_privdesc(config_get_path("system/group/{$id}")) as $i => $priv) {
-		$privhtml .=		'<tr>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
-		if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
-			$privhtml .=			' ' . gettext('(admin privilege)');
-			$user_has_root_priv = true;
+	if (isset($id)) {
+		foreach (get_user_privdesc(config_get_path("system/group/{$id}")) as $i => $priv) {
+			$privhtml .=		'<tr>';
+			$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
+			$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
+			if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
+				$privhtml .=			' ' . gettext('(admin privilege)');
+				$user_has_root_priv = true;
+			}
+			$privhtml .=			'</td>';
+			if (!$read_only && ($dup === null)) {
+				$privhtml .=			'<td><a class="fa-solid fa-trash-can" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
+			}
+			$privhtml .=		'</tr>';
 		}
-		$privhtml .=			'</td>';
-		if (!$read_only && ($dup === null)) {
-			$privhtml .=			'<td><a class="fa-solid fa-trash-can" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
-		}
-		$privhtml .=		'</tr>';
-
 	}
 
 	if ($user_has_root_priv) {

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +42,7 @@ if (!function_exists("get_specialnet")) {
 function upgrade_010_to_011() {
 	$opti = 1;
 	$ifmap = array('lan' => 'lan', 'wan' => 'wan', 'pptp' => 'pptp');
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 
 	/* convert DMZ to optional, if necessary */
 	if (isset($if_config['dmz'])) {
@@ -100,8 +100,7 @@ function upgrade_010_to_011() {
 	config_set_path('interfaces', $if_config);
 
 	/* convert filter rules */
-	config_init_path('filter/rule');
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = config_get_path('filter/rule', []);
 	$n = count($filter_rule_config);
 	for ($i = 0; $i < $n; $i++) {
 
@@ -146,10 +145,10 @@ function upgrade_010_to_011() {
 	}
 
 	config_set_path('filter/rule', $filter_rule_config);
+	filter_rules_sort();
 
 	/* convert shaper rules */
-	config_init_path('pfqueueing/rule');
-	$shaper_rule_config = config_get_path('pfqueueing/rule');
+	$shaper_rule_config = config_get_path('pfqueueing/rule', []);
 	$n = count($shaper_rule_config);
 	for ($i = 0; $i < $n; $i++) {
 
@@ -200,7 +199,6 @@ function upgrade_010_to_011() {
 function upgrade_011_to_012() {
 	/* move LAN DHCP server config */
 	$tmp = config_get_path('dhcpd');
-	config_init_path('dhcpd/lan');
 	config_set_path('dhcpd/lan', $tmp);
 
 	/* encrypt password */
@@ -222,7 +220,7 @@ function upgrade_012_to_013() {
 	config_set_path('nat/advancedoutbound/rule', $onat_rule_config);
 
 	/* add an explicit type="pass" to all filter rules to make things consistent */
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = config_get_path('filter/rule', []);
 	for ($i = 0; isset($filter_rule_config[$i]); $i++) {
 		$filter_rule_config[$i]['type'] = "pass";
 	}
@@ -234,8 +232,7 @@ function upgrade_013_to_014() {
 	/* convert shaper rules (make pipes) */
 	$shaper_rule_config = config_get_path('pfqueueing/rule');
 	if (is_array($shaper_rule_config)) {
-		config_init_path('pfqueueing/pipe');
-		$shaper_pipe_config = config_get_path('pfqueueing/pipe');
+		$shaper_pipe_config = config_get_path('pfqueueing/pipe', []);
 
 		for ($i = 0; isset($shaper_rule_config[$i]); $i++) {
 			$curent = &$shaper_rule_config[$i];
@@ -275,7 +272,7 @@ function upgrade_014_to_015() {
 	config_del_path('interfaces/lan/schedulertype');
 	config_del_path('interfaces/wan/schedulertype');
 
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	for ($i = 1; isset($if_config["opt{$i}"]); $i++) {
 		config_del_path("interfaces/opt{$i}/schedulertype");
 	}
@@ -418,7 +415,7 @@ function upgrade_024_to_025() {
 }
 
 function upgrade_025_to_026() {
-	$cron_config = config_get_path('cron/item');
+	$cron_config = config_get_path('cron/item', []);
 
 	$cron_config[] = [
 		'minute' => '0',
@@ -724,9 +721,9 @@ function upgrade_041_to_042() {
 
 function upgrade_042_to_043() {
 	/* migrate old interface gateway to the new gateways config */
-	$gateways_config = config_get_path('gateways/gateway_item');
-	$if_config = config_get_path('interfaces');
-	$filter_rule_config = config_get_path('filter/rule');
+	$gateways_config = config_get_path('gateways/gateway_item', []);
+	$if_config = config_get_path('interfaces', []);
+	$filter_rule_config = config_get_path('filter/rule', []);
 	$iflist = get_configured_interface_list(true);
 	$gateways = array();
 	$i = 0;
@@ -787,8 +784,7 @@ function upgrade_043_to_044() {
 	$i = 0;
 	$static_routes_config = config_get_path('staticroutes/route');
 	if (is_array($static_routes_config)) {
-		config_init_path('gateways/gateway_item');
-		$gateways_config = config_get_path('gateways/gateway_item');
+		$gateways_config = config_get_path('gateways/gateway_item', []);
 		$gwmap = array();
 		foreach ($static_routes_config as $idx => $sroute) {
 			$found = false;
@@ -827,7 +823,7 @@ function upgrade_044_to_045() {
 	$iflist = get_configured_interface_list(true);
 	$vlans_config = config_get_path('vlans/vlan');
 	if (is_array($vlans_config) && count($vlans_config)) {
-		$if_config = config_get_path('interfaces');
+		$if_config = config_get_path('interfaces', []);
 		$i = 0;
 		foreach ($vlans_config as $id => $vlan) {
 			/* Make sure to update the interfaces section with the right name */
@@ -942,7 +938,7 @@ function upgrade_046_to_047() {
 		$a_phase2 = array();
 		$ikeid = 0;
 
-		$virtualip_config = config_get_path('virtualip/vip');
+		$virtualip_config = config_get_path('virtualip/vip', []);
 		foreach ($ipsec_config as $tunnel) {
 
 			unset($ph1ent);
@@ -1161,7 +1157,7 @@ function upgrade_046_to_047() {
 	    is_array($ipsec_mobile_config['p2'])) {
 
 		if (config_get_path('ipsec/mobileclients') !== null) {
-			$ipsec_client_config = config_get_path('ipsec/client');
+			$ipsec_client_config = config_get_path('ipsec/client', []);
 			$ipsec_client_config['enable'] = true;
 			$ipsec_client_config['user_source'] = 'system';
 			$ipsec_client_config['group_source'] = 'system';
@@ -1331,7 +1327,7 @@ function upgrade_047_to_048() {
 		config_del_path('dnsupdate');
 	}
 
-	$wan_config = config_get_path('interfaces/wan');
+	$wan_config = config_get_path('interfaces/wan', []);
 	$pppoe_config = config_get_path('pppoe/0');
 	if (is_array($pppoe_config)) {
 		config_del_path('pppoe');
@@ -1363,10 +1359,8 @@ function upgrade_048_to_049() {
 	$all['gid'] = 1998;
 	$all['member'] = array();
 
-	config_init_path('system/user');
-	$user_config = config_get_path('system/user');
-	config_init_path('system/group');
-	$group_config = config_get_path('system/group');
+	$user_config = config_get_path('system/user', []);
+	$group_config = config_get_path('system/group', []);
 
 	/* work around broken uid assignments */
 	$nextuid = 2000;
@@ -1422,8 +1416,7 @@ function upgrade_048_to_049() {
 
 
 function upgrade_049_to_050() {
-	config_init_path('system/user');
-	$user_config = config_get_path('system/user');
+	$user_config = config_get_path('system/user', []);
 	/* update user privileges */
 	foreach ($user_config as & $user) {
 		$privs = array();
@@ -1444,8 +1437,7 @@ function upgrade_049_to_050() {
 		$user['priv'] = $privs;
 	}
 
-	config_init_path('system/group');
-	$group_config = config_get_path('system/group');
+	$group_config = config_get_path('system/group', []);
 	/* update group privileges */
 	foreach ($group_config as & $group) {
 		$privs = array();
@@ -1472,7 +1464,7 @@ function upgrade_049_to_050() {
 
 
 function upgrade_050_to_051() {
-	$sysctl_config = config_get_path('sysctl/item');
+	$sysctl_config = config_get_path('sysctl/item', []);
 	$pconfig = array();
 	$pconfig['descr'] = "Set to 0 to disable filtering on the incoming and outgoing member interfaces.";
 	$pconfig['tunable'] = "net.link.bridge.pfil_member";
@@ -1495,8 +1487,8 @@ function upgrade_050_to_051() {
 		}
 	}
 	if ($convert_bridges == true) {
-		$bridge_config = config_get_path('bridges/bridged');
-		$if_config = config_get_path('interfaces');
+		$bridge_config = config_get_path('bridges/bridged', []);
+		$if_config = config_get_path('interfaces', []);
 		$i = 0;
 		foreach ($if_config as $ifr => &$intf) {
 			if (isset($intf['bridge']) && $intf['bridge'] <> "") {
@@ -1517,8 +1509,6 @@ function upgrade_050_to_051() {
 
 function upgrade_051_to_052() {
 	config_set_path('openvpn', []);
-	config_init_path('ca');
-	config_init_path('cert');
 
 	$vpnid = 1;
 
@@ -1902,9 +1892,6 @@ function upgrade_051_to_052() {
 
 
 function upgrade_052_to_053() {
-	config_init_path('ca');
-	config_init_path('cert');
-
 	/* migrate advanced admin page webui ssl to certificate manager */
 	$webgui_config = config_get_path('system/webgui');
 	if ($webgui_config['certificate'] &&
@@ -1944,8 +1931,7 @@ function upgrade_053_to_054() {
 		$gateway_group_arr = array();
 		$gateways = get_gateways();
 		$group_name_changes = array();
-		config_init_path('gateways/gateway_item');
-		$a_gateways = config_get_path('gateways/gateway_item');
+		$a_gateways = config_get_path('gateways/gateway_item', []);
 		foreach ($lbpool_arr as $lbpool) {
 			if ($lbpool['type'] == "gateway") {
 				// Gateway Groups have to have valid names in pf, old lb pools did not. Clean them up.
@@ -2012,7 +1998,7 @@ function upgrade_053_to_054() {
 		config_set_path('gateways/gateway_group', $gateway_group_arr);
 		// Update any rules that had a gateway change, if any.
 		if (count($group_name_changes) > 0) {
-			$filter_rule_config =  config_get_path('filter/rule');
+			$filter_rule_config =  config_get_path('filter/rule', []);
 			foreach ($filter_rule_config as & $rule) {
 				if (!empty($rule["gateway"]) && array_key_exists($rule["gateway"], $group_name_changes)) {
 					$rule["gateway"] = $group_name_changes[$rule["gateway"]];
@@ -2166,11 +2152,9 @@ function upgrade_054_to_055() {
 
 
 function upgrade_055_to_056() {
-	config_init_path('ca');
-	config_init_path('cert');
-	$ca_config = config_get_path('ca');
-	$cert_config = config_get_path('cert');
-	$ipsec_config = config_get_path('ipsec');
+	$ca_config = config_get_path('ca', []);
+	$cert_config = config_get_path('cert', []);
+	$ipsec_config = config_get_path('ipsec', []);
 
 	/* migrate ipsec ca's to cert manager */
 	if (is_array($ipsec_config['cacert'])) {
@@ -2221,8 +2205,7 @@ function upgrade_055_to_056() {
 
 
 function upgrade_056_to_057() {
-	config_init_path('system/user');
-	$user_config = config_get_path('system/user');
+	$user_config = config_get_path('system/user', []);
 
 	/* migrate captivate portal to user manager */
 	if (is_array(config_get_path('captiveportal/user'))) {
@@ -2280,8 +2263,6 @@ function upgrade_058_to_059() {
 
 function upgrade_059_to_060() {
 	require_once("/etc/inc/certs.inc");
-	config_init_path('ca');
-	config_init_path('cert');
 	$ca_config = config_get_path('ca');
 	$cert_config = config_get_path('cert');
 	if (is_array($ca_config)) {
@@ -2319,7 +2300,7 @@ function upgrade_059_to_060() {
 }
 
 function upgrade_060_to_061() {
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 
 	if (is_array($if_config['wan'])) {
 		config_set_path('interfaces/wan/enable', true);
@@ -2389,10 +2370,8 @@ function upgrade_062_to_063() {
 
 function upgrade_063_to_064() {
 	$j = 0;
-	config_init_path('ppps/ppp');
-	config_init_path('interfaces');
-	$ppp_config = config_get_path('ppps/ppp');
-	$ifcfg = config_get_path('interfaces');
+	$ppp_config = config_get_path('ppps/ppp', []);
+	$ifcfg = config_get_path('interfaces', []);
 	$cron_config = config_get_path('cron/item');
 
 	if (count($ppp_config)) {
@@ -2505,7 +2484,6 @@ function upgrade_064_to_065() {
 }
 
 function upgrade_065_to_066() {
-	config_init_path('dhcrelay');
 	$dhcrelaycfg = config_get_path('dhcrelay');
 
 	if (is_array($dhcrelaycfg)) {
@@ -2590,7 +2568,7 @@ function upgrade_068_to_069() {
 }
 
 function upgrade_069_to_070() {
-	$binat_config = config_get_path('nat/onetoone');
+	$binat_config = config_get_path('nat/onetoone', []);
 	/* Convert NAT 1:1 rules */
 	if (is_array($binat_config)) {
 		foreach ($binat_config as $nidx => &$natent) {
@@ -2669,7 +2647,7 @@ function upgrade_072_to_073() {
 }
 
 function upgrade_073_to_074() {
-	$user_config = config_get_path('system/user');
+	$user_config = config_get_path('system/user', []);
 	rename_field($user_config, 'fullname', 'descr');
 	config_set_path('system/user', $user_config);
 }
@@ -2693,8 +2671,7 @@ function upgrade_074_to_075() {
 }
 
 function upgrade_075_to_076() {
-	$cron_config = config_get_path('cron/item');
-	$cron_config[] = [
+	config_set_path('cron/item/', [
 		'minute' => '30',
 		'hour' => '12',
 		'mday' => '*',
@@ -2702,12 +2679,11 @@ function upgrade_075_to_076() {
 		'wday' => '*',
 		'who' => 'root',
 		'command' => '/usr/bin/nice -n20 /etc/rc.update_urltables'
-	];
-	config_set_path('cron/item', $cron_config);
+	]);
 }
 
 function upgrade_076_to_077() {
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = config_get_path('filter/rule', []);
 	foreach ($filter_rule_config as & $rule) {
 		if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 			$rule['protocol'] = strtolower($rule['protocol']);
@@ -2917,7 +2893,7 @@ function upgrade_080_to_081() {
 	if (is_platform_booting()) {
 		echo "Updating configuration...";
 	}
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = config_get_path('filter/rule', []);
 	foreach ($filter_rule_config as & $rule) {
 		if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 			$rule['protocol'] = strtolower($rule['protocol']);
@@ -3095,10 +3071,8 @@ function upgrade_087_to_088() {
 }
 
 function upgrade_088_to_089() {
-	config_init_path('ca');
-	config_init_path('cert');
-	$ca_config = config_get_path('ca');
-	$cert_config = config_get_path('cert');
+	$ca_config = config_get_path('ca', []);
+	$cert_config = config_get_path('cert', []);
 	$cp_config = config_get_path('captiveportal');
 
 	/* migrate captive portal ssl to certificate manager */
@@ -3647,9 +3621,7 @@ function upgrade_110_to_111() {
 }
 
 function upgrade_111_to_112() {
-	$cron_config = config_get_path('cron/item');
-
-	$cron_config[] = array(
+	config_set_path('cron/item/', [
 		'minute' => '*/60',
 		'hour' => '*',
 		'mday' => '*',
@@ -3657,7 +3629,7 @@ function upgrade_111_to_112() {
 		'wday' => '*',
 		'who' => 'root',
 		'command' => '/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout'
-	);
+	]);
 }
 
 function upgrade_112_to_113() {
@@ -3729,8 +3701,7 @@ function upgrade_117_to_118() {
 	config_del_path('system/ca');
 	config_del_path('system/cert');
 
-	config_init_path('ipsec/phase1');
-	$a_phase1 = config_get_path('ipsec/phase1');
+	$a_phase1 = config_get_path('ipsec/phase1', []);
 
 	foreach ($a_phase1 as &$ph1_entry) {
 		// update asn1dn strings from racoon's format to strongswan's
@@ -3752,8 +3723,7 @@ function upgrade_118_to_119() {
 	}
 
 	// change peerid_type to 'any' for EAP types to retain previous behavior of omitting rightid
-	config_init_path('ipsec/phase1');
-	$a_phase1 = config_get_path('ipsec/phase1');
+	$a_phase1 = config_get_path('ipsec/phase1', []);
 
 	foreach ($a_phase1 as &$ph1_entry) {
 		if (strstr($ph1_entry['authentication_method'], 'eap')) {
@@ -3834,9 +3804,10 @@ function upgrade_122_to_123() {
 			}
 		}
 		config_set_path('filter/rule', $filter_rules_config);
+		filter_rules_sort();
 	}
 
-	$binat_config = config_get_path('nat/onetoone');
+	$binat_config = config_get_path('nat/onetoone', []);
 	// Cleanup 1:1 NAT rules
 	if (is_array($binat_config)) {
 		$onetoone = &$binat_config;
@@ -3909,7 +3880,7 @@ function upgrade_122_to_123() {
 				continue;
 			}
 		}
-		config_set_path('nat/rule', $onat_rule_config);
+		config_set_path('nat/outbound/rule', $onat_rule_config);
 	}
 }
 
@@ -3945,11 +3916,9 @@ function upgrade_125_to_126() {
 
 	$ipsec_config = config_get_path('ipsec');
 	$def_loglevel = 1;
-	if (!is_array(config_get_path('ipsec'))) {
+	if (!is_array($ipsec_config)) {
 		return;
 	}
-
-	config_init_path('ipsec/logging');
 
 	/* subtract 2 from ipsec log levels. the value stored in the config.xml
 	 * will now match the strongswan level exactly.
@@ -3962,9 +3931,9 @@ function upgrade_125_to_126() {
 		}
 
 		if (in_array($new_level, array_keys($ipsec_log_sevs))) {
-			$ipsec_config['logging'][$cat] = $new_level;
+			array_set_path($ipsec_config, "logging/{$cat}", $new_level);
 		} else {
-			$ipsec_config['logging'][$cat] = $def_loglevel;
+			array_set_path($ipsec_config, "logging/{$cat}", $def_loglevel);
 		}
 		unset($ipsec_config["ipsec_{$cat}"]);
 	}
@@ -4091,23 +4060,23 @@ function upgrade_130_to_131() {
 			// dpinger uses milliseconds
 			if (isset($gw['interval']) &&
 				is_numeric($gw['interval'])) {
-				$gw['interval'] = $gw['interval'] * 1000;
+				$gw['interval'] = intval($gw['interval']) * 1000;
 			}
 
 			if (!empty($gw['interval'])) {
-				$effective_interval = $gw['interval'];
+				$effective_interval = intval($gw['interval']);
 			} else {
 				$effective_interval = $default_interval;
 			}
 
 			if (isset($gw['down']) &&
 				is_numeric($gw['down'])) {
-				$gw['time_period'] = $gw['down'] * 1000;
+				$gw['time_period'] = intval($gw['down']) * 1000;
 				unset($gw['down']);
 			}
 
 			if (!empty($gw['time_period'])) {
-				$effective_time_period = $gw['time_period'];
+				$effective_time_period = intval($gw['time_period']);
 			} else {
 				$effective_time_period = $default_time_period;
 			}
@@ -4115,13 +4084,13 @@ function upgrade_130_to_131() {
 			if (isset($gw['latencyhigh'])) {
 				// Default loss_interval is 2000, but must be set
 				// higher if latencyhigh is higher.
-				if ($gw['latencyhigh'] > $default_loss_interval) {
-					$gw['loss_interval'] = $gw['latencyhigh'];
+				if (intval($gw['latencyhigh']) > $default_loss_interval) {
+					$gw['loss_interval'] = intval($gw['latencyhigh']);
 				}
 			}
 
 			if (!empty($gw['loss_interval'])) {
-				$effective_loss_interval = $gw['loss_interval'];
+				$effective_loss_interval = intval($gw['loss_interval']);
 			} else {
 				$effective_loss_interval = $default_loss_interval;
 			}
@@ -4129,8 +4098,8 @@ function upgrade_130_to_131() {
 			if (isset($gw['interval'])) {
 				// Default alert_interval is 1000, but must be set
 				// higher if interval is higher.
-				if ($gw['interval'] > $default_alert_interval) {
-					$gw['alert_interval'] = $gw['interval'];
+				if (intval($gw['interval']) > $default_alert_interval) {
+					$gw['alert_interval'] = intval($gw['interval']);
 				}
 			}
 
@@ -4256,7 +4225,7 @@ function upgrade_136_to_137() {
 	$dhcpd_config = config_get_path('dhcpd');
 	if (is_array($dhcpd_config)) {
 		foreach ($dhcpd_config as &$dhcpd) {
-			if (!is_array($dhcpd['numberoptions']['item'])) {
+			if (!is_array($dhcpd) || !is_array(array_get_path($dhcpd, 'numberoptions/item'))) {
 				continue;
 			}
 
@@ -4270,7 +4239,7 @@ function upgrade_136_to_137() {
 	$dhcpdv6_config = config_get_path('dhcpdv6');
 	if (is_array($dhcpdv6_config)) {
 		foreach ($dhcpdv6_config as &$dhcpdv6) {
-			if (!is_array($dhcpdv6['numberoptions']['item'])) {
+			if (!is_array($dhcpdv6) || !is_array(array_get_path($dhcpdv6, 'numberoptions/item'))) {
 				continue;
 			}
 
@@ -4344,8 +4313,7 @@ function upgrade_140_to_141() {
 function upgrade_141_to_142() {
 	/* Convert Namecheap type DynDNS entries to the new split hostname and domain format */
 
-	config_init_path('dyndnses/dyndns');
-	$a_dyndns = config_get_path('dyndnses/dyndns');
+	$a_dyndns = config_get_path('dyndnses/dyndns', []);
 
 	foreach ($a_dyndns as &$dyndns) {
 		if ($dyndns['type'] == "namecheap") {
@@ -4373,7 +4341,7 @@ function upgrade_141_to_142() {
 
 // Updated to check for empty separator definitions via is_array()
 function upgrade_142_to_143() {
-	$filter_config = config_get_path('filter');
+	$filter_config = config_get_path('filter', []);
 
 	/* Re-index firewall rule separators per interface */
 	if (is_array($filter_config['separator'])) {
@@ -4546,7 +4514,7 @@ function upgrade_143_to_144() {
 
 function upgrade_144_to_145() {
 	$if_config = config_get_path('interfaces');
-	$dhcpdv6_config = config_get_path('dhcpdv6');
+	$dhcpdv6_config = config_get_path('dhcpdv6', []);
 
 	// Enable DHCPv6 server and radvd config for track6 interfaces,
 	// matching what used to be automatically enabled with no user
@@ -4555,17 +4523,17 @@ function upgrade_144_to_145() {
 		foreach ($if_config as $ifname => $ifcfg) {
 			if (isset($ifcfg['enable'])) {
 				if ($ifcfg['ipaddrv6'] == "track6") {
-					$dhcpdv6_config[$ifname]['enable'] = true;
-					$dhcpdv6_config[$ifname]['range']['from'] = "::1000";
-					$dhcpdv6_config[$ifname]['range']['to'] = "::2000";
-					$dhcpdv6_config[$ifname]['ramode'] = "assist";
-					$dhcpdv6_config[$ifname]['rapriority'] = "medium";
+					array_set_path($dhcpdv6_config, "{$ifname}/enable", true);
+					array_set_path($dhcpdv6_config, "{$ifname}/range/from", "::1000");
+					array_set_path($dhcpdv6_config, "{$ifname}/range/to", "::2000");
+					array_set_path($dhcpdv6_config, "{$ifname}/ramode", "assist");
+					array_set_path($dhcpdv6_config, "{$ifname}/rapriority", "medium");
 				}
 			}
 		}
 	}
 
-	if ($dhcpdv6_config !== null) {
+	if (!empty($dhcpdv6_config)) {
 		config_set_path('dhcpdv6', $dhcpdv6_config);
 	}
 }
@@ -4764,31 +4732,31 @@ function upgrade_150_to_151() {
 	if (is_array($gateways_config)) {
 		foreach ($gateways_config as &$gw) {
 			if (isset($gw['interval'])) {
-				$effective_interval = $gw['interval'];
+				$effective_interval = intval($gw['interval']);
 			} else {
 				$effective_interval = $default_interval;
 			}
 
 			if (isset($gw['alert_interval'])) {
-				$effective_alert_interval = $gw['alert_interval'];
+				$effective_alert_interval = intval($gw['alert_interval']);
 			} else {
 				$effective_alert_interval = $default_alert_interval;
 			}
 
 			if (isset($gw['loss_interval'])) {
-				$effective_loss_interval = $gw['loss_interval'];
+				$effective_loss_interval = intval($gw['loss_interval']);
 			} else {
 				$effective_loss_interval = $default_loss_interval;
 			}
 
 			if (isset($gw['time_period'])) {
-				$effective_time_period = $gw['time_period'];
+				$effective_time_period = intval($gw['time_period']);
 			} else {
 				$effective_time_period = $default_time_period;
 			}
 
 			if (isset($gw['latencyhigh'])) {
-				$effective_latencyhigh = $gw['latencyhigh'];
+				$effective_latencyhigh = intval($gw['latencyhigh']);
 			} else {
 				$effective_latencyhigh = $default_latencyhigh;
 			}
@@ -4915,8 +4883,7 @@ function upgrade_155_to_156() {
 function upgrade_156_to_157() {
 	/* Convert Cloudflare and GratisDNS type DynDNS entries to the new split hostname and domain format */
 
-	config_init_path('dyndnses/dyndns');
-	$a_dyndns = config_get_path('dyndnses/dyndns');
+	$a_dyndns = config_get_path('dyndnses/dyndns', []);
 
 	foreach ($a_dyndns as &$dyndns) {
 		if (($dyndns['type'] == "cloudflare") || ($dyndns['type'] == "cloudflare-v6") || ($dyndns['type'] == "gratisdns")) {
@@ -4943,8 +4910,7 @@ function upgrade_156_to_157() {
 function upgrade_157_to_158() {
 	/* Convert Dynamic DNS passwords to base64 encoding. Redmine #6688 */
 
-	config_init_path('dyndnses/dyndns');
-	$a_dyndns = config_get_path('dyndnses/dyndns');
+	$a_dyndns = config_get_path('dyndnses/dyndns', []);
 
 	foreach ($a_dyndns as &$dyndns) {
 		$dyndns['password'] = base64_encode($dyndns['password']);
@@ -5115,7 +5081,7 @@ function upgrade_162_to_163() {
  * of a widget on the dashboard. Migrate any old settings.
  */
 function convert_widget_164($oldname, $newname, $settings_keys) {
-	$user_config = config_get_path('system/user');
+	$user_config = config_get_path('system/user', []);
 
 	if ($newname == '') {
 		$newname = $oldname . '-0';
@@ -5210,7 +5176,7 @@ function upgrade_163_to_164() {
 
 /* Work around broken wizard rules. See https://redmine.pfsense.org/issues/7434 */
 function upgrade_164_to_165() {
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = config_get_path('filter/rule', []);
 	foreach ($filter_rule_config as & $rule) {
 		if ($rule['destination']['port'] == "137-139-137-139") {
 			$rule['destination']['port'] = "137-139";
@@ -5244,7 +5210,7 @@ function upgrade_165_to_166() {
 function upgrade_166_to_167() {
 	if (strpos(config_get_path('widgets/sequence'),
 	    'netgate_services_and_support') === false) {
-		$widgets = explode(",", config_get_path('widgets/sequence'));
+		$widgets = array_filter(explode(",", config_get_path('widgets/sequence')));
 		$cnt = count($widgets);
 		$col2 = $cnt;
 		$newsequence = array();
@@ -5284,7 +5250,6 @@ function upgrade_168_to_169() {
 	config_del_path('cron/rc_update_pkg_metadata');
 
 	$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
-	config_init_path('cron/item');
 	$cron_config = config_get_path('cron/item');
 	if (is_array($cron_config)) {
 		foreach ($cron_config as $entry) {
@@ -5310,7 +5275,7 @@ function upgrade_168_to_169() {
  * Each wireless interface now needs to be a cloned instance, the card itself
  * Can no longer be assigned. https://redmine.pfsense.org/issues/6770 */
 function upgrade_169_to_170() {
-	foreach (config_get_path('interfaces', []) as $friendly => & $iface) {
+	foreach (config_get_path('interfaces', []) as $friendly => $iface) {
 		if (is_array($iface['wireless']) && !empty($iface['wireless']['mode'])) {
 			/* This test can only be true for one instance per card, so it is safe. */
 			if (stristr($iface['if'], '_wlan') === false) {
@@ -5321,9 +5286,9 @@ function upgrade_169_to_170() {
 				/* It was not possible to create clones of _wlan0 before, so this is safe. */
 				$wlan['cloneif'] = "{$iface['if']}_wlan0";
 				/* Make sure this entry is placed in the list of wireless interface clones. */
-				config_init_path('wireless/clone');
-				config_set_path('wireless/clone', $wlan);
+				config_set_path('wireless/clone/', $wlan);
 				/* The interface assignment must now be the cloned interface name. */
+				config_set_path("interfaces/{$friendly}/if", $wlan['cloneif']);
 				$iface['if'] = $wlan['cloneif'];
 			}
 		}
@@ -5335,7 +5300,7 @@ function upgrade_169_to_170() {
  */
 function upgrade_170_to_171() {
 	$vlan_config = config_get_path('vlans/vlan');
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 
 	if (!is_array($vlan_config) || count($vlan_config) == 0) {
 		return;
@@ -5361,7 +5326,7 @@ function upgrade_170_to_171() {
  */
 function upgrade_171_to_172() {
 	$qinq_config = config_get_path('qinqs/qinqentry');
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 
 	if (!is_array($qinq_config) || count($qinq_config) == 0) {
 		return;
@@ -5431,8 +5396,7 @@ function upgrade_173_to_174() {
  * This is useful for mobile users using different OS's supporting different ciphers.
  */
 function upgrade_174_to_175() {
-	config_init_path('ipsec/phase1');
-	$ipsec_phase1_config = config_get_path('ipsec/phase1');
+	$ipsec_phase1_config = config_get_path('ipsec/phase1', []);
 	if (count($ipsec_phase1_config)) {
 		$a_phase1 = &$ipsec_phase1_config;
 		foreach($a_phase1 as &$phase1) {
@@ -5720,8 +5684,7 @@ function upgrade_184_to_185() {
 	if (is_array($acb_pkg_config)) {
 		$acbpkg = &$acb_pkg_config;
 
-		config_init_path('system/acb');
-		$acb = config_get_path('system/acb');
+		$acb = config_get_path('system/acb', []);
 		$acb['enable'] = ($acbpkg['enable_acb'] != 'disabled') ?  'yes':'no';
 		$acb['gold_encryption_password'] = $acbpkg['crypto_password'];
 
@@ -5856,7 +5819,6 @@ function upgrade_186_to_187() {
 function upgrade_187_to_188() {
 	$old_cmd = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout";
 	$new_cmd = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard";
-	config_init_path('cron/item');
 	foreach (config_get_path('cron/item', []) as $idx => $entry) {
 		if ($entry['command'] == $old_cmd) {
 			config_set_path("cron/item/{$idx}/command", $new_cmd);
@@ -5868,7 +5830,6 @@ function upgrade_187_to_188() {
 function upgrade_188_to_189() {
 	/* Migrate ssh setting to new location */
 	if (config_path_enabled('system', 'enablesshd')) {
-		config_init_path('system/ssh');
 		config_set_path('system/ssh/enable', "enabled");
 		config_del_path('system/enablesshd');
 	}
@@ -5881,8 +5842,7 @@ function upgrade_188_to_189() {
  * defined. Fill in the default value of 'inet'.
  * https://redmine.pfsense.org/issues/9207 */
 function upgrade_189_to_190() {
-	config_init_path('ipsec/phase1');
-	$ipsec_phase1_config = config_get_path('ipsec/phase1');
+	$ipsec_phase1_config = config_get_path('ipsec/phase1', []);
 	foreach ($ipsec_phase1_config as & $ph1ent) {
 		if (empty($ph1ent)) {
 			continue;
@@ -6009,8 +5969,7 @@ function upgrade_198_to_199() {
 		'xauth_rsa_server' => 'xauth_cert_server',
 		'rsasig' => 'cert',
 	);
-	config_init_path('ipsec/phase1');
-	$ipsec_phase1_config = config_get_path('ipsec/phase1');
+	$ipsec_phase1_config = config_get_path('ipsec/phase1', []);
 	foreach ($ipsec_phase1_config as & $ph1ent) {
 		/* If the auth method for this P1 is in the list to change, change it */
 		if (array_key_exists($ph1ent['authentication_method'], $namechanges)) {
@@ -6032,8 +5991,7 @@ function upgrade_200_to_201() {
 		'TCP - STARTTLS' => 'STARTTLS Encrypted',
 		'SSL - Encrypted' => 'SSL/TLS Encrypted',
 	);
-	config_init_path('system/authserver');
-	$authserver_config = config_get_path('system/authserver');
+	$authserver_config = config_get_path('system/authserver', []);
 	foreach ($authserver_config as & $authserver) {
 		if (array_key_exists($authserver['ldap_urltype'], $namechanges)) {
 			$authserver['ldap_urltype'] = $namechanges[$authserver['ldap_urltype']];
@@ -6079,8 +6037,7 @@ function upgrade_202_to_203() {
  */
 
 function upgrade_203_to_204() {
-	config_init_path('ipsec/phase1');
-	$ipsec_phase1_config = config_get_path('ipsec/phase1');
+	$ipsec_phase1_config = config_get_path('ipsec/phase1', []);
 	foreach ($ipsec_phase1_config as & $ph1ent) {
 		if (empty($ph1ent)) {
 			continue;
@@ -6152,7 +6109,6 @@ function upgrade_207_to_208() {
 function upgrade_208_to_209() {
 	require_once("interfaces.inc");
 
-	config_init_path('ipsec/vtimaps/item');
 	$ipsec_config = config_get_path('ipsec');
 
 	if (!is_array($ipsec_config['phase1']) ||
@@ -6169,18 +6125,18 @@ function upgrade_208_to_209() {
 				continue;
 			}
 			foreach ($vtisubnet_spec as $idx => $vtisub) {
-				$ipsec_config['vtimaps']['item'][] = array(
+				array_set_path($ipsec_config, 'vtimaps/item/', [
 					"reqid" => $ph1ent['ikeid'],
 					"index" => $idx,
 					"ifnum" => "{$ph1ent['ikeid']}00{$idx}"
-				);
+				]);
 			}
 		} else {
-			$ipsec_config['vtimaps']['item'][] = array(
+			array_set_path($ipsec_config, 'vtimaps/item/', [
 				"reqid" => $ph1ent['ikeid'],
 				"index" => "0",
 				"ifnum" => "{$ph1ent['ikeid']}000"
-			);
+			]);
 		}
 	}
 	config_set_path('ipsec', $ipsec_config);
@@ -6195,11 +6151,9 @@ function upgrade_209_to_210() {
 /* OpenVPN Data Cipher changes
  * https://redmine.pfsense.org/issues/10919 */
 function upgrade_210_to_211() {
-	config_init_path('openvpn/openvpn-server');
-	config_init_path('openvpn/openvpn-client');
-	$openvpn_config = config_get_path('openvpn');
 	foreach(array('server', 'client') as $mode) {
-		foreach ($openvpn_config["openvpn-{$mode}"] as & $settings) {
+		$openvpn_config = config_get_path("openvpn/openvpn-{$mode}", []);
+		foreach ($openvpn_config as & $settings) {
 			/* Rename ncp-ciphers to data_ciphers */
 			if (!empty($settings['ncp-ciphers'])) {
 				$settings['data_ciphers'] = $settings['ncp-ciphers'];
@@ -6227,8 +6181,8 @@ function upgrade_210_to_211() {
 			$settings['ncp_enable'] = "enabled";
 		}
 		unset($settings);
+		config_set_path("openvpn/openvpn-{$mode}", $openvpn_config);
 	}
-	config_set_path('openvpn', $openvpn_config);
 }
 
 function upgrade_211_to_212() {
@@ -6243,8 +6197,7 @@ function upgrade_211_to_212() {
  * https://redmine.pfsense.org/issues/9983
  */
 function upgrade_212_to_213() {
-	config_init_path('ipsec/phase1');
-	$ipsec_phase1_config = config_get_path('ipsec/phase1');
+	$ipsec_phase1_config = config_get_path('ipsec/phase1', []);
 	foreach ($ipsec_phase1_config as & $ph1ent) {
 		if (empty($ph1ent)) {
 			continue;
@@ -6365,8 +6318,7 @@ function upgrade_215_to_216() {
  * https://redmine.pfsense.org/issues/11576
  */
 function upgrade_216_to_217() {
-	config_init_path('ipsec/phase1');
-	$ipsec_phase1_config = config_get_path('ipsec/phase1');
+	$ipsec_phase1_config = config_get_path('ipsec/phase1', []);
 	foreach ($ipsec_phase1_config as & $ph1ent) {
 		if (empty($ph1ent)) {
 			continue;
@@ -6384,7 +6336,6 @@ function upgrade_216_to_217() {
  * https://redmine.pfsense.org/issues/11933
  */
 function upgrade_217_to_218() {
-	config_init_path('ipsec/phase1');
 	foreach (config_get_path('ipsec/phase1', []) as $ph1ent) {
 		if (empty($ph1ent)) {
 			continue;
@@ -6401,10 +6352,6 @@ function upgrade_217_to_218() {
  * Convert VTI interface names to new format
  */
 function upgrade_218_to_219() {
-	config_init_path('ipsec/phase1');
-	config_init_path('ipsec/phase2');
-	config_init_path('ipsec/vtimaps/item');
-
 	/* Deprecated method.
 	 * $ipsecifnum = get_ipsecifnum($ikeid, $idx);
 	 * locates and returns an ipsecifnum in the config.
@@ -6463,7 +6410,7 @@ function upgrade_218_to_219() {
 		return null;
 	}
 
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($if_config as &$ifcfg) {
 		/* Check current interface assignments and see if any match a value we want */
 		if (array_key_exists($ifcfg['if'], $ipsecifs)) {
@@ -6480,8 +6427,6 @@ function upgrade_218_to_219() {
  * If the cron job already exists, no harm is done
  */
 function upgrade_219_to_220() {
-	config_init_path('system/acb');
-
 	if (config_get_path('system/acb/enable') == "yes" && file_exists("/usr/local/sbin/acbupload.php")) {
 		install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/acbupload.php", true, "*");
 	}
@@ -6515,12 +6460,11 @@ function upgrade_220_to_221() {
 	config_set_path('widgets/sequence', implode(',', $widgets));
 }
 
-/* No functional changes. */
 function upgrade_221_to_222() {
 }
 
 function upgrade_222_to_223() {
-	$user_config = config_get_path('system/user');
+	$user_config = config_get_path('system/user', []);
 
 	foreach ($user_config as & $user) {
 		if ($user['name'] == 'admin') {
@@ -6538,8 +6482,7 @@ function upgrade_222_to_223() {
 }
 
 function upgrade_223_to_224() {
-	config_init_path('filter/rule');
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = config_get_path('filter/rule', []);
 	foreach ($filter_rule_config as & $rule) {
 		if (isset($rule['floating']) && !isset($rule['interface'])) {
 			$rule['interface'] = 'any';
@@ -6549,7 +6492,7 @@ function upgrade_223_to_224() {
 }
 
 function upgrade_224_to_225() {
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 
 	/* DHCP6 now uses single config for all interfaces
 	 * see https://redmine.pfsense.org/issues/6880 */
@@ -6935,6 +6878,49 @@ function upgrade_232_to_233() {
 	    array_key_exists($curlang, $lang_changes)) {
 		config_set_path('system/language', $lang_changes[$curlang]);
 	}
+}
+
+/* OpenVPN Client-Specific Override options have changed.
+ * https://redmine.pfsense.org/issues/12522 */
+ function upgrade_233_to_234() {
+	$openvpn_csc_config = config_get_path('openvpn/openvpn-csc', []);
+	if (empty($openvpn_csc_config)) {
+		return;
+	}
+	foreach ($openvpn_csc_config as &$settings) {
+		if (!is_array($settings)) {
+			continue;
+		}
+
+		// Update "push_reset" detection and migrate "remove_route".
+		if (array_get_path($settings, 'push_reset', '') == 'yes') {
+			$settings['push_reset'] = true;
+		} else {
+			if (isset($settings['push_reset'])) {
+				unset($settings['push_reset']);
+			}
+			if (array_get_path($settings, 'remove_route', '') == 'yes') {
+				$settings['remove_options'] = 'remove_route';
+			}
+		}
+		if (isset($settings['remove_route'])) {
+			unset($settings['remove_route']);
+		}
+	}
+	config_set_path('openvpn/openvpn-csc', $openvpn_csc_config);
+}
+
+/* System aliases can now be used in filter rules. */
+function upgrade_234_to_235() {
+	rename_conflicting_aliases();
+}
+
+function upgrade_235_to_236() {
+}
+
+/* Additional system aliases have been added. */
+function upgrade_236_to_237() {
+	rename_conflicting_aliases();
 }
 
 /*

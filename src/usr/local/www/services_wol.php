@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -33,8 +33,6 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-
-config_init_path('wol/wolentry');
 
 function send_wol($if, $mac, $description, & $savemsg, & $class) {
 	$ipaddr = get_interface_ip($if);
@@ -89,7 +87,7 @@ if ($_POST['Submit'] || $_POST['mac']) {
 	}
 }
 
-if ($_POST['act'] == "del") {
+if (is_numericint($_POST['id']) && $_POST['act'] == "del") {
 	if (config_get_path("wol/wolentry/{$_POST['id']}")) {
 		config_del_path("wol/wolentry/{$_POST['id']}");
 		write_config(gettext("Deleted a device from WOL configuration."));
@@ -161,7 +159,7 @@ print $form;
 
 <?php
 	// Add top buttons if more than 24 entries in the table
-	if (count(config_get_path('wol/wolentry', 0)) > 24) {
+	if (count(config_get_path('wol/wolentry', [])) > 24) {
 ?>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">

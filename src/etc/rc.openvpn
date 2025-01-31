@@ -7,7 +7,7 @@
  * Copyright (c) 2009 Seth Mos <seth.mos@dds.nl>.
  * Copyright (c) 2007-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -67,7 +67,7 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 }
 
 /* make sure to wait until the boot scripts have finished */
-if (file_exists("{$g['varrun_path']}/booting")) {
+if (is_platform_booting()) {
 	return;
 }
 
@@ -84,7 +84,7 @@ $gateways_arr = get_gateways();
 if (isset($gateways_arr[$argument])) {
 	//file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED WITH GW:".$argument);
 	// called upon rc.gateway_alarm 
-	system_routing_configure();
+	system_routing_configure($gateways_arr[$argument]['friendlyiface']);
 }
 
 if (count(config_get_path("openvpn/openvpn-server", [])) ||
@@ -107,7 +107,7 @@ if (!$openvpnlck) {
 	$openvpnlck = lock('openvpn', LOCK_EX);
 }
 
-$arg_array = explode(",", $argument);
+$arg_array = array_filter(explode(",", $argument));
 foreach ($arg_array as $arg_element) {
 	$gwgroups = array();
 	if ($arg_element == "all") {

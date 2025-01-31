@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +55,7 @@ function updatecopyright() {
 			set_curlproxy($ch);
 
 			$response = curl_exec($ch);
-			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 			curl_close($ch);
 
 			if ($status == 200) {

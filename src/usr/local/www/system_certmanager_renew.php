@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -34,9 +34,6 @@ require_once("certs.inc");
 require_once("pfsense-utils.inc");
 
 global $cert_strict_values, $curve_compatible_list;
-
-config_init_path('ca');
-config_init_path('cert');
 
 $type = $_REQUEST['type'];
 
@@ -137,7 +134,7 @@ print_info_box(gettext('Renewing or reissuing a CA or certificate will replace t
 $form = new Form(false);
 $form->setAction('system_certmanager_renew.php');
 
-$section = new Form_Section("Renew or Reissue: " . htmlspecialchars($torenew['descr']));
+$section = new Form_Section("Renew or Reissue: " . $torenew['descr']);
 
 $section->addInput(new Form_StaticText(
 	"Subject",

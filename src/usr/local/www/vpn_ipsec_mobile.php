@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -38,10 +38,6 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
-
-config_init_path('ipsec/phase1');
-config_init_path('ipsec/client');
-config_init_path('system/group');
 
 $auth_groups = array();
 foreach (config_get_path('system/group', []) as $group) {
@@ -582,10 +578,10 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile Clients"), true, "vpn_ipsec_mobile.php");
-$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
-$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
+$tab_array[] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+$tab_array[] = array(gettext("Mobile Clients"), true, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -675,7 +671,7 @@ $group->add(new Form_Input(
 	'pool_address',
 	'Network',
 	'text',
-	htmlspecialchars($pconfig['pool_address'])
+	$pconfig['pool_address']
 ))->setWidth(4)->setHelp('Network configuration for Virtual Address Pool');
 
 $netBits = array();
@@ -712,7 +708,7 @@ $group->add(new Form_Input(
 	'pool_address_v6',
 	'IPv6 Network',
 	'text',
-	htmlspecialchars($pconfig['pool_address_v6'])
+	$pconfig['pool_address_v6']
 ))->setWidth(4)->setHelp('Network configuration for Virtual IPv6 Address Pool');
 
 $netBits = array();
@@ -821,7 +817,7 @@ $group->add(new Form_Input(
 	'dns_domain',
 	'',
 	'text',
-	htmlspecialchars($pconfig['dns_domain'])
+	$pconfig['dns_domain']
 ))->setHelp('Specify domain as DNS Default Domain');
 
 $section->add($group);
@@ -844,7 +840,7 @@ $group->add(new Form_Input(
 	'dns_split',
 	'',
 	'text',
-	htmlspecialchars($pconfig['dns_split'])
+	$pconfig['dns_split']
 ))->setHelp('NOTE: If left blank, and a default domain is set, it will be used for this value.');
 
 $section->add($group);
@@ -868,7 +864,7 @@ for ($i = 1; $i <= 4; $i++) {
 		'dns_server' . $i,
 		'Server #' . $i,
 		'text',
-		htmlspecialchars($pconfig['dns_server' . $i])
+		$pconfig['dns_server' . $i]
 	));
 
 	$section->add($group);
@@ -893,7 +889,7 @@ for ($i = 1; $i <= 2; $i++) {
 		'wins_server' . $i,
 		'Server #' . $i,
 		'text',
-		htmlspecialchars($pconfig['wins_server' . $i]),
+		$pconfig['wins_server' . $i],
 		array('size' => 20)
 	));
 
@@ -942,7 +938,7 @@ $group->add(new Form_Input(
 	'login_banner',
 	'',
 	'text',
-	htmlspecialchars($pconfig['login_banner'])
+	$pconfig['login_banner']
 ));
 
 $section->add($group);

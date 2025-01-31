@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  *
@@ -457,7 +457,7 @@ function get_services() {
 	if (config_get_path('installedpackages/miniupnpd/config/0/enable') == 'on') {
 		$pconfig = array();
 		$pconfig['name'] = "miniupnpd";
-		$pconfig['description'] = gettext("UPnP Service");
+		$pconfig['description'] = gettext("UPnP IGD & PCP Service");
 		$pconfig['enabled'] = true;
 		$pconfig['status'] = get_service_status($pconfig);
 		$services[] = $pconfig;
@@ -866,7 +866,7 @@ function service_control_stop($name, $extras) {
 				usleep(100000);
 			}
 			/* Make sure sshguard stops as well */
-			sigkillbyname("sshguard", "TERM");
+			system_sshguard_stop();
 			break;
 		default:
 			stop_service($name);
@@ -911,6 +911,8 @@ function service_control_restart($name, $extras) {
 		case 'unbound':
 			services_unbound_configure();
 			break;
+		case 'kea-dhcp4':
+		case 'kea-dhcp6':
 		case 'dhcpd':
 			services_dhcpd_configure();
 			break;

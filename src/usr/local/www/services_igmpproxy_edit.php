@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,8 +38,6 @@ $pglinks = array("", "services_igmpproxy.php", "@self");
 require_once("guiconfig.inc");
 
 //igmpproxy_sort();
-
-config_init_path('igmpproxy/igmpentry');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -154,7 +152,7 @@ $section = new Form_Section('IGMP Proxy Edit');
 $optionlist = array();
 $iflist = get_configured_interface_with_descr();
 
-$if_config = config_get_path('interfaces');
+$if_config = config_get_path('interfaces', []);
 foreach ($iflist as $ifnam => $ifdescr) {
 	if (!empty($if_config[$ifnam]['ipaddr'])) {
 		$optionlist[$ifnam] = $ifdescr;

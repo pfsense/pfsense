@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -39,7 +39,6 @@ $ntp_poll_values = system_ntp_poll_values();
 $serialports = get_serial_ports(true);
 
 function set_default_gps() {
-	config_init_path('ntpd');
 	config_del_path('ntpd/gps');
 	config_set_path('ntpd/gps/type', 'Default');
 	/* copy an existing configured GPS port if it exists, the unset may be uncommented post production */
@@ -354,8 +353,7 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
-config_init_path('ntpd/gps');
-$pconfig = config_get_path('ntpd/gps');
+$pconfig = config_get_path('ntpd/gps', []);
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
@@ -549,7 +547,7 @@ $section->addInput(new Form_Input(
 // Statistics logging section
 $btnadv = new Form_Button(
 	'btnadvgps',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -753,7 +751,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvgps').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvgps').children();
+		$('#btnadvgps').text(text).prepend(children);
 	}
 
 	$('#btnadvgps').click(function(event) {

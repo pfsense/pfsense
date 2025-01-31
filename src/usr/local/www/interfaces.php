@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -3130,14 +3130,14 @@ $section->add($group);
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
 	'*Local IP address',
-	$_POST['pptp_local0'] ? $_POST['pptp_local0'] : array_get_path($pconfig, 'pptp_localip', [])[0],
+	$_POST['pptp_local0'] ? $_POST['pptp_local0'] : array_get_path($pconfig, 'pptp_localip/0', []),
 	'V4'
-))->addMask('pptp_subnet0', $_POST['pptp_subnet0'] ? $_POST['pptp_subnet0'] : array_get_path($pconfig, 'pptp_subnet', [])[0]);
+))->addMask('pptp_subnet0', $_POST['pptp_subnet0'] ? $_POST['pptp_subnet0'] : array_get_path($pconfig, 'pptp_subnet/0', []));
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'*Remote IP address',
-	$_POST['pptp_remote0'] ? $_POST['pptp_remote0'] : array_get_path($pconfig, 'pptp_remote', [])[0],
+	$_POST['pptp_remote0'] ? $_POST['pptp_remote0'] : array_get_path($pconfig, 'pptp_remote/0', []),
 	'HOSTV4'
 ));
 

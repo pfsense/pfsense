@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,14 +37,12 @@ function wolcmp($a, $b) {
 }
 
 function wol_sort() {
-	$wol_config = config_get_path('wol/wolentry');
+	$wol_config = config_get_path('wol/wolentry', []);
 	usort($wol_config, "wolcmp");
 	config_set_path('wol/wolentry', $wol_config);
 }
 
 require_once("guiconfig.inc");
-
-config_init_path('wol/wolentry');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];

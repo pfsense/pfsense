@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-pfsensewizardsubsystem
-##|*NAME=pfSense wizard subsystem
-##|*DESCR=Allow access to the 'pfSense wizard subsystem' page.
+##|*NAME=Wizard Subsystem
+##|*DESCR=Allow access to the Wizard Subsystem (e.g. Setup Wizard, OpenVPN Wizard).
 ##|*MATCH=wizard.php*
 ##|-PRIV
 
@@ -149,15 +149,20 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if ($arraynum != "") {
 		$field_conv .= "/{$arraynum}";
 	}
-	if ($unset == "yes") {
-		config_del_path($field_conv);
+
+	if ($updatetext == '') {
+		if (config_get_path($field_conv) !== null) {
+			config_del_path($field_conv);
+		}
+		return;
 	}
 
-	if (($field_type == "checkbox" and $updatetext != "on") || $updatetext == "") {
-		/*
-		 * item is a checkbox, it should have the value "on"
-		 * if it was checked
-		 */
+	if ($field_type == "checkbox") {
+		if (($updatetext == 'on' ) || ($updatetext == 'yes')) {
+			config_set_path($field_conv, true);
+		} elseif (config_get_path($field_conv) !== null) {
+			config_del_path($field_conv);
+		}
 		return;
 	}
 
@@ -172,9 +177,11 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		}
 	}
 
-	// Verify that the needed config array element exists. If not, create it
-	config_init_path($field_conv);
+	if ($unset == "yes") {
+		config_del_path($field_conv);
+	}
 
+	// Verify that the needed config array element exists. If not, create it
 	config_set_path($field_conv, $updatetext);
 }
 
@@ -369,7 +376,7 @@ function fixup_string($string) {
 			$host_if = find_ip_interface($urlhost);
 			if ($host_if) {
 				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
-				$host_if_ip = config_get_path("interfaces/{$host_if}/ipaddr");
+				$host_if_ip = (!empty($host_if)) ? config_get_path("interfaces/{$host_if}/ipaddr") : null;
 				if ($host_if && is_ipaddr($host_if_ip)) {
 					$urlhost = $host_if_ip;
 				}
@@ -481,13 +488,12 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$field_conv_path .= "/{$field['arraynum']}";
 			}
 
-			if ($field['type'] == "checkbox") {
-				$value = config_get_path($field_conv_path);
-				if (empty($value)) {
-					$value = true;
-				}
-			} else {
-				if (config_get_path($field_conv_path) !== null) {
+			if (config_get_path($field_conv_path) !== null) {
+				if ($field['type'] == "checkbox") {
+					if (empty(config_get_path($field_conv_path))) {
+						$value = true;
+					}
+				} else {
 					$value = config_get_path($field_conv_path);
 				}
 			}
@@ -643,8 +649,6 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
 
-				config_init_path('ca');
-
 				foreach (config_get_path('ca', []) as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
@@ -693,8 +697,6 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
 				}
-
-				config_init_path('cert');
 
 				foreach (config_get_path('cert', []) as $ca) {
 					if (stristr($ca['descr'], "webconf")) {
@@ -871,6 +873,30 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				  ->setAttribute('rows', $field['rows'])
 				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
 
+				break;
+			case "textarea_source":
+				if ($field['displayname']) {
+					$etitle = $field['displayname'];
+				} else if (!$field['dontdisplayname']) {
+					$etitle =  fixup_string($field['name']);
+				}
+
+				$source = $field['source'];
+				try{
+					@eval("\$value = &$source;");
+				} catch (\Throwable | \Error | \Exception $e) {
+					log_error($e);
+				}
+				$input = $section->addInput(new Form_Textarea(
+					$name,
+					$etitle,
+					$value
+				))->setHelp($field['description'])
+				  ->setAttribute('rows', $field['rows'])
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
+				if ($field['readonly']) {
+					$input->setReadonly();
+				}
 				break;
 			case "submit":
 				$form->addGlobal(new Form_Button(

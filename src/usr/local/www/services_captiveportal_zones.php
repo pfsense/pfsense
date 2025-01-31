@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,14 +37,12 @@ require_once("captiveportal.inc");
 global $cpzone;
 global $cpzoneid;
 
-config_init_path('captiveportal');
-
 if ($_POST['act'] == "del" && !empty($_POST['zone'])) {
 	$cpzone = strtolower(htmlspecialchars($_POST['zone']));
 	if (config_get_path("captiveportal/{$cpzone}")) {
 		$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 		config_del_path("captiveportal/{$cpzone}/enable");
-		captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}"));
+		captiveportal_configure_zone(config_get_path("captiveportal/{$cpzone}", []));
 		config_del_path("captiveportal/{$cpzone}");
 		config_del_path("voucher/{$cpzone}");
 		unlink_if_exists("/var/db/captiveportal{$cpzone}.db");
@@ -91,7 +89,7 @@ if (is_subsystem_dirty('captiveportal')) {
 						<td><?=htmlspecialchars($cpitem['zone']);?></td>
 						<td>
 <?php
-		$cpifaces = explode(",", $cpitem['interface']);
+		$cpifaces = array_filter(explode(",", $cpitem['interface']));
 		foreach ($cpifaces as $cpiface) {
 			echo convert_friendly_interface_to_friendly_descr($cpiface) . " ";
 		}

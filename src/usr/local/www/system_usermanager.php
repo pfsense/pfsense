@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * All rights reserved.
@@ -54,7 +54,6 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
 }
 
-config_init_path('system/user');
 $act = $_REQUEST['act'];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
@@ -110,7 +109,7 @@ if (!empty($_POST) && $read_only) {
 
 if (($_POST['act'] == "deluser") && !$read_only) {
 
-	if (!isset($_POST['username']) || (config_get_path("system/user/{$id}") === null) || ($_POST['username'] != config_get_path("system/user/{$id}/name"))) {
+	if (!isset($_POST['username']) || !isset($id) || (config_get_path("system/user/{$id}") === null) || ($_POST['username'] != config_get_path("system/user/{$id}/name"))) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -122,7 +121,7 @@ if (($_POST['act'] == "deluser") && !$read_only) {
 		$userdeleted = config_get_path("system/user/{$id}/name");
 		config_del_path("system/user/{$id}");
 		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
-		config_set_path('system/user', array_values(config_get_path('system/user')));
+		config_set_path('system/user', array_values(config_get_path('system/user', [])));
 		$savemsg = sprintf(gettext("Successfully deleted user: %s"), $userdeleted);
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
@@ -172,7 +171,7 @@ if (isset($_POST['dellall']) && !$read_only) {
 		if (count($deleted_users) > 0) {
 			$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
 			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
-			config_set_path('system/user', array_values(config_get_path('system/user')));
+			config_set_path('system/user', array_values(config_get_path('system/user', [])));
 			write_config($savemsg);
 			syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		}
@@ -181,7 +180,7 @@ if (isset($_POST['dellall']) && !$read_only) {
 
 if (($_POST['act'] == "delcert") && !$read_only) {
 
-	if (!config_get_path("system/user/{$id}")) {
+	if (!isset($id) || !config_get_path("system/user/{$id}")) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -195,7 +194,7 @@ if (($_POST['act'] == "delcert") && !$read_only) {
 	$_POST['act'] = "edit";
 }
 
-if (($_POST['act'] == "delprivid") && !$read_only) {
+if (($_POST['act'] == "delprivid") && !$read_only && isset($id)) {
 	$privdeleted = array_get_path($priv_list, (config_get_path("system/user/{$id}/priv/{$_POST['privid']}") . '/name'));
 	config_del_path("system/user/{$id}/priv/{$_POST['privid']}");
 	local_user_set(config_get_path("system/user/{$id}"));
@@ -261,7 +260,7 @@ if ($_POST['save'] && !$read_only) {
 		}
 	}
 
-	$oldusername = config_get_path("system/user/{$id}/name", '');
+	$oldusername = (isset($id)) ? config_get_path("system/user/{$id}/name", '') : '';
 	/* make sure this user name is unique */
 	if (!$input_errors) {
 		foreach (config_get_path('system/user', []) as $userent) {
@@ -495,7 +494,7 @@ if ($_POST['save'] && !$read_only) {
 		}
 
 		/* Sort it alphabetically */
-		$user_config = config_get_path('system/user');
+		$user_config = config_get_path('system/user', []);
 		usort($user_config, function($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});
@@ -542,7 +541,8 @@ function build_priv_table() {
 	$i = 0;
 	$user_has_root_priv = false;
 
-	foreach (get_user_privdesc(config_get_path("system/user/{$id}")) as $priv) {
+	$user_privs = (is_numericint($id)) ? get_user_privdesc(config_get_path("system/user/{$id}", [])) : [];
+	foreach ($user_privs as $priv) {
 		$group = false;
 		if ($priv['group']) {
 			$group = $priv['group'];
@@ -609,7 +609,8 @@ function build_cert_table() {
 	$certhtml .=		'<tbody>';
 
 	$i = 0;
-	foreach (config_get_path("system/user/{$id}/cert", []) as $certref) {
+	$user_certs = (is_numericint($id)) ? config_get_path("system/user/{$id}/cert", []) : [];
+	foreach ($user_certs as $certref) {
 		$cert = lookup_cert($certref);
 		$cert = $cert['item'];
 		$ca = lookup_ca($cert['caref']);
@@ -634,7 +635,7 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	if (!$read_only) {
+	if (!$read_only && is_numericint($id)) {
 		$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa-solid fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	}
 	$certhtml .= '</nav>';
@@ -692,7 +693,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 				</thead>
 				<tbody>
 <?php
-foreach (config_get_path("system/user/{$id}", []) as $i => $userent):
+foreach (config_get_path('system/user', []) as $i => $userent):
 	?>
 					<tr>
 						<td>
@@ -865,7 +866,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'descr',
 		'Full name',
 		'text',
-		htmlspecialchars($pconfig['descr'])
+		$pconfig['descr']
 	))->setHelp('User\'s full name, for administrative information only');
 
 	if ($ro) {
@@ -901,7 +902,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	foreach (config_get_path('system/group', []) as $Ggroup) {
 		if ($Ggroup['name'] != "all") {
-			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array(config_get_path("system/user/{$id}/uid", []), $Ggroup['member'])) {
+			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && is_numericint($id) && in_array(config_get_path("system/user/{$id}/uid", []), $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
 			} else {
 				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -38,8 +38,6 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_npt.inc");
-
-config_init_path('nat/npt');
 
 // Process $_POST/$_REQUEST =======================================================================
 if ($_REQUEST['savemsg']) {
@@ -143,14 +141,16 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 <?php
-		$dst_arr = explode("/", $natent['destination']['network']);
-		if (count($dst_arr) > 1) {
-			$natent['destination']['network'] = $dst_arr[0];
-		}
-		if (config_get_path("interfaces/{$natent['destination']['network']}/ipaddrv6") == 'track6') {
-			$track6ip = get_interface_track6ip($natent['destination']['network']);
-			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
-			$dst = config_get_path("interfaces/{$natent['destination']['network']}/descr") . " ({$pdsubnet}/{$track6ip[1]})";
+		if (!empty($natent['destination']['network'])) {
+			if (str_contains($natent['destination']['network'], '/')) {
+				$dst_arr = explode("/", $natent['destination']['network']);
+				$natent['destination']['network'] = $dst_arr[0];
+			}
+			if (config_get_path("interfaces/{$natent['destination']['network']}/ipaddrv6") == 'track6') {
+				$track6ip = get_interface_track6ip($natent['destination']['network']);
+				$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+				$dst = config_get_path("interfaces/{$natent['destination']['network']}/descr") . " ({$pdsubnet}/{$track6ip[1]})";
+			}
 		} else {
 			$dst = pprint_address($natent['destination']);
 		}

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -400,11 +400,10 @@ $form_match_ethertype +=  array(
 	'arp' => '[ARP]'
 );
 $form_match_protocol += array(
-	'icmp' => '[ICMPv4]',
-	'icmp6' => '[ICMPv6]',
+	'ping' => '[Ping]',
+	'ipsec' => '[IPsec]',
 	'tcp' => '[TCP]',
 	'udp' => '[UDP]',
-	'ipsec' => '[IPsec]',
 	'carp' => '[CARP]',
 	'pfsync' => '[pfsync]',
 	'ospf' => '[OSPF]'

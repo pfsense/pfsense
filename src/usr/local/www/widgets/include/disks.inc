@@ -3,7 +3,7 @@
  * disks.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2021-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2021-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -240,7 +240,7 @@ function disks_compose_widget_user_body($widget_config) {
 		}
 	}
 
-	return $has_user_row ? $tbody : null;
+	return $has_user_row ? $tbody : '';
 }
 
 function disks_compose_widget_tree_body() {

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -36,12 +36,9 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
 global $openvpn_sharedkey_warning;
+global $openvpn_prots;
 
-config_init_path('openvpn/openvpn-client');
-
-config_init_path('ca');
-config_init_path('cert');
-config_init_path('crl');
+$openvpn_all_data_ciphers = openvpn_get_cipherlist();
 
 $proxy_auth_types = array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'));
 $certlist = openvpn_build_cert_list(true);
@@ -236,6 +233,7 @@ if ($_POST['save']) {
 	    !array_key_exists($pconfig['dev_mode'], $openvpn_dev_mode)) {
 		$input_errors[] = gettext("The selected Device Mode is not valid.");
 	}
+
 	if (!empty($pconfig['protocol']) &&
 	    !array_key_exists($pconfig['protocol'], $openvpn_prots)) {
 		$input_errors[] = gettext("The selected Protocol is not valid.");
@@ -246,7 +244,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The selected Interface is not valid.");
 	}
 
-	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
+	$cipher_validation_list = array_keys($openvpn_all_data_ciphers);
 	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
 		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
 	}
@@ -427,8 +425,10 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['data_ciphers_fallback'], "GCM")) {
-		$input_errors[] = gettext("GCM Encryption Algorithms cannot be used with Shared Key mode.");
+	if (($pconfig['mode'] == "p2p_shared_key") &&
+	    (strstr($pconfig['data_ciphers_fallback'], "GCM") ||
+	    strstr($pconfig['data_ciphers_fallback'], "CHACHA"))) {
+		$input_errors[] = gettext("AEAD Encryption Algorithms (GCM, CHACHA) cannot be used with Shared Key mode.");
 	}
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
@@ -511,7 +511,7 @@ if ($_POST['save']) {
 		$client = array();
 
 		if ($this_client_config &&
-		    $pconfig['dev_mode'] <> $this_client_config['dev_mode']) {
+		    ($pconfig['dev_mode'] != $this_client_config['dev_mode'])) {
 			/*
 			 * delete old interface so a new TUN or TAP interface
 			 * can be created.
@@ -573,7 +573,6 @@ if ($_POST['save']) {
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
-		$client['data_ciphers_fallback'] = $pconfig['data_ciphers_fallback'];
 		$client['digest'] = $pconfig['digest'];
 
 		foreach (array('', 'v6') as $ntype) {
@@ -599,6 +598,7 @@ if ($_POST['save']) {
 		if (!empty($pconfig['data_ciphers'])) {
 			$client['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 		}
+		$client['data_ciphers_fallback'] = $pconfig['data_ciphers_fallback'];
 
 		$client['ping_method'] = $pconfig['ping_method'];
 		$client['keepalive_interval'] = $pconfig['keepalive_interval'];
@@ -924,16 +924,17 @@ if ($act=="new" || $act=="edit"):
 		))->setHelp('Certificates known to be incompatible with use for OpenVPN are not included in this list, ' .
 				'such as certificates using incompatible ECDSA curves or weak digest algorithms.');
 
-	foreach (explode(",", $pconfig['data_ciphers']) as $cipher) {
+	foreach (array_filter(explode(",", $pconfig['data_ciphers'])) as $cipher) {
 		$data_ciphers_list[$cipher] = $cipher;
 	}
 	$group = new Form_Group('Data Encryption Algorithms');
+	$group->addClass("datacipherlist");
 
 	$group->add(new Form_Select(
 		'availciphers',
 		null,
 		array(),
-		openvpn_get_cipherlist(),
+		$openvpn_all_data_ciphers,
 		true
 	))->setAttribute('size', '10')
 	  ->setHelp('Available Data Encryption Algorithms%1$sClick to add or remove an algorithm from the list', '<br />');
@@ -962,7 +963,7 @@ if ($act=="new" || $act=="edit"):
 		'data_ciphers_fallback',
 		'Fallback Data Encryption Algorithm',
 		$pconfig['data_ciphers_fallback'],
-		openvpn_get_cipherlist()
+		$openvpn_all_data_ciphers
 		))->setHelp('The Fallback Data Encryption Algorithm used for data channel packets when communicating with ' .
 				'clients that do not support data encryption algorithm negotiation (e.g. Shared Key). ' .
 				'This algorithm is automatically included in the Data Encryption Algorithms list.');
@@ -1541,6 +1542,7 @@ events.push(function() {
 
 	function updateCipher(mem) {
 		var found = false;
+		var ciphers_all = <?= json_encode($openvpn_all_data_ciphers) ?>;
 
 		// If the cipher exists, remove it
 		$('[id="data_ciphers[]"] option').each(function() {
@@ -1552,7 +1554,7 @@ events.push(function() {
 
 		// If not, add it
 		if (!found) {
-			$('[id="data_ciphers[]"]').append(new Option(mem , mem));
+			$('[id="data_ciphers[]"]').append(new Option(ciphers_all[mem], mem));
 		}
 	}
 

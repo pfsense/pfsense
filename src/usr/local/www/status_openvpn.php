@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -37,13 +37,33 @@ require_once("openvpn.inc");
 require_once("shortcuts.inc");
 require_once("service-utils.inc");
 
+$servers = openvpn_get_active_servers();
+$sk_servers = openvpn_get_active_servers("p2p");
+$clients = openvpn_get_active_clients();
+
 /* Handle AJAX */
 if ($_POST['action']) {
 	if ($_POST['action'] == "kill") {
-		$port  = $_POST['port'];
-		$remipp  = $_POST['remipp'];
-		$client_id  = $_POST['client_id'];
-		if (!empty($port) and !empty($remipp)) {
+		$port      = $_POST['port'];
+		$remipp    = $_POST['remipp'];
+		$client_id = $_POST['client_id'];
+		$error     = false;
+
+		/* Validate remote IP address and port. */
+		if (!is_ipaddrwithport($remipp)) {
+			$error = true;
+		}
+		/* Validate submitted server ID */
+		$found_server = false;
+		foreach ($servers as $server) {
+			if ($port == $server['mgmt']) {
+				$found_server = true;
+			} else {
+				continue;
+			}
+		}
+
+		if (!$error && $found_server) {
 			$retval = openvpn_kill_client($port, $remipp, $client_id);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
@@ -64,23 +84,17 @@ if ($_POST['action']) {
 	}
 }
 
-$servers = openvpn_get_active_servers();
-$sk_servers = openvpn_get_active_servers("p2p");
-$clients = openvpn_get_active_clients();
-
 include("head.inc"); ?>
 
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 //<![CDATA[
 	function killClient(mport, remipp, client_id) {
-		var busy = function(index,icon) {
-			$(icon).bind("onclick","");
-			$(icon).attr('src',$(icon).attr('src').replace("\.gif", "_d.gif"));
-			$(icon).css("cursor","wait");
+		if (client_id === '') {
+			$('a[id="i:' + mport + ":" + remipp + '"]').first().children('i').removeClass().addClass('fa-solid fa-cog fa-spin text-danger');
+		} else {
+			$('a[id="i:' + mport + ":" + remipp + '"]').last().children('i').removeClass().addClass('fa-solid fa-cog fa-spin text-danger');
 		}
-
-		$('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 
 		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>",

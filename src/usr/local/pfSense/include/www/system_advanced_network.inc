@@ -3,7 +3,7 @@
  * system_advanced_network.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,7 +110,6 @@ function saveAdvancedNetworking($post, $json = false) {
 
 	if (!$input_errors) {
 		if ($post['ipv6nat_enable'] == "yes") {
-			config_init_path('diag/ipv6nat');
 			config_set_path('diag/ipv6nat/enable', true);
 			config_set_path('diag/ipv6nat/ipaddr', $post['ipv6nat_ipaddr']);
 		} else {

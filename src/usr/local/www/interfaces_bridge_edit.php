@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,9 +62,8 @@ foreach ($ifacelist as $bif => $bdescr) {
 	}
 }
 
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
-config_init_path('bridges/bridged');
 $this_bridge_config = isset($id) ? config_get_path("bridges/bridged/{$id}") : null;
 if ($this_bridge_config) {
 	$pconfig['enablestp'] = isset($this_bridge_config['enablestp']);
@@ -259,7 +258,7 @@ if ($_POST['save']) {
 		$pconfig['autoptp'] = implode(',', $_POST['autoptp']);
 	}
 	if (is_array($_POST['members'])) {
-		$if_config = config_get_path('interfaces');
+		$if_config = config_get_path('interfaces', []);
 		foreach ($_POST['members'] as $ifmembers) {
 			if (empty($if_config[$ifmembers])) {
 				$input_errors[] = gettext("A member interface passed does not exist in configuration");
@@ -397,7 +396,7 @@ function build_port_list($selection) {
 
 	$portlist = array('list' => array(), 'selected' => array());
 
-	$if_config = config_get_path('interfaces');
+	$if_config = config_get_path('interfaces', []);
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		if (substr($if_config[$ifn]['if'], 0, 6) != "bridge") {
 			$portlist['list'][$ifn] = $ifdescr;
@@ -444,7 +443,7 @@ $section->addInput(new Form_Input(
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -698,7 +697,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {

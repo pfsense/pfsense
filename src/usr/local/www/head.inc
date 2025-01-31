@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -334,8 +334,8 @@ $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 
 if (g_get('services_dhcp_server_enable')) {
-	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
-	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server")), "/services_dhcpv6.php");
+	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp_settings.php");
+	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server")), "/services_dhcpv6_settings.php");
 }
 
 $services_menu[] = [gettext('Router Advertisement'), '/services_radvd.php'];
@@ -350,7 +350,7 @@ if (count(config_get_path('interfaces', [])) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
+	$services_menu[] = array(gettext("UPnP IGD &amp; PCP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 
 $services_menu[] = array(gettext("Wake-on-LAN"), "/services_wol.php");
@@ -384,7 +384,7 @@ $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php");
 
 if (count(config_get_path('interfaces', [])) > 1) {
-	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
+	$status_menu[] = array(gettext("UPnP IGD &amp; PCP"), "/status_upnp.php");
 }
 
 $wifdescrs = array();

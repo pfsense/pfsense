@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -36,8 +36,7 @@
 
 require_once("guiconfig.inc");
 
-config_init_path('unbound/domainoverrides');
-$id = $_REQUEST['id'];
+$id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 
 $this_domainOverrides_config = isset($id) ? config_get_path("unbound/domainoverrides/{$id}") : null;
 if ($this_domainOverrides_config) {
@@ -98,7 +97,7 @@ if ($_POST['save']) {
 		if ($this_domainOverrides_config) {
 			config_set_path("unbound/domainoverrides/{$id}", $doment);
 		} else {
-			config_set_path('unbound/domainoverrides', $doment);
+			config_set_path('unbound/domainoverrides/', $doment);
 		}
 
 		mark_subsystem_dirty('unbound');

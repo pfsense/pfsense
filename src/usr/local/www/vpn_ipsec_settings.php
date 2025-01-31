@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,8 +36,6 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 
 global $ipsec_filtermodes;
-
-config_init_path('ipsec/phase1');
 
 $pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = config_path_enabled('ipsec', 'unityplugin');
@@ -126,7 +124,7 @@ if ($_POST['save']) {
 					       	IPsec bypass rule'), htmlspecialchars($source));
 				}
 				if (!is_subnetv4($destination) && !is_subnetv6($destination)) {
-					$input_errors[] = sprintf(gettext('%s is not valid destination IP address 
+					$input_errors[] = sprintf(gettext('%s is not valid destination IP address
 						for IPsec bypass rule'), htmlspecialchars($destination));
 				}
 				if ((is_subnetv4($source) && is_subnetv6($destination)) ||
@@ -137,7 +135,7 @@ if ($_POST['save']) {
 				$bypassrules['rule'][] = array(
 					'source' => $_POST["source{$x}"],
 				       	'srcmask' => $_POST["srcmask{$x}"],
-					'destination' => $_POST["destination{$x}"], 
+					'destination' => $_POST["destination{$x}"],
 					'dstmask' => $_POST["dstmask{$x}"]
 				);
 			}
@@ -407,10 +405,10 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
-$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
-$tab_array[3] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
+$tab_array[] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+$tab_array[] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
+$tab_array[] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
 $form = new Form;

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -64,7 +64,7 @@ if (isset($_REQUEST['after'])) {
 	$_POST['after'] = $after;
 }
 
-if (isset($_REQUEST['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$id = $_REQUEST['dup'];
 	$after = $_REQUEST['dup'];
 }
@@ -313,7 +313,7 @@ events.push(function() {
 
 	// ---------- Autocomplete --------------------------------------------------------------------
 
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list('host,network,urltable')) ?>;
 
 	$('#dst').autocomplete({
 		source: addressarray

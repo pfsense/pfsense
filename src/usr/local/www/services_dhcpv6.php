@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -35,70 +35,7 @@
 
 require_once('guiconfig.inc');
 require_once('filter.inc');
-
-function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
-	global $g;
-	$retval = 0;
-	$retvaldhcp = 0;
-	$retvaldns = 0;
-	if (dhcp_is_backend('isc')) {
-		/* Stop DHCPv6 so we can cleanup leases */
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
-	}
-	// dhcp_clean_leases();
-	/* dnsmasq_configure calls dhcpd_configure */
-	/* no need to restart dhcpd twice */
-	if (config_path_enabled('dnsmasq') &&
-	    config_path_enabled('dnsmasq', 'regdhcpstatic')) {
-		$retvaldns |= services_dnsmasq_configure();
-		if ($retvaldns == 0) {
-			clear_subsystem_dirty('hosts');
-			clear_subsystem_dirty('dhcpd6');
-		}
-	} elseif (config_path_enabled('unbound') &&
-		  config_path_enabled('unbound', 'regdhcpstatic')) {
-		$retvaldns |= services_unbound_configure();
-		if ($retvaldns == 0) {
-			clear_subsystem_dirty('unbound');
-			clear_subsystem_dirty('dhcpd6');
-		}
-	} else {
-		$retvaldhcp |= services_dhcpd_configure();
-		if ($retvaldhcp == 0) {
-			clear_subsystem_dirty('dhcpd6');
-		}
-	}
-	/* BIND package - Bug #3710 */
-	if (!function_exists('is_package_installed')) {
-		require_once('pkg-utils.inc');
-	}
-	if (is_package_installed('pfSense-pkg-bind') &&
-	    config_path_enabled('installedpackages/bind/config/0', 'enable_bind')) {
-		$reloadbind = false;
-		$bindzone = config_get_path('installedpackages/bindzone/config', []);
-
-		for ($x = 0; $x < sizeof($bindzone); $x++) {
-			$zone = $bindzone[$x];
-			if ($zone['regdhcpstatic'] == 'on') {
-				$reloadbind = true;
-				break;
-			}
-		}
-		if ($reloadbind === true) {
-			if (file_exists("/usr/local/pkg/bind.inc")) {
-				require_once("/usr/local/pkg/bind.inc");
-				bind_sync();
-			}
-		}
-	}
-	if ($dhcpdv6_enable_changed) {
-		$retvalfc |= filter_configure();
-	}
-	if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
-		$retval = 1;
-	}
-	return $retval;
-}
+require_once('services_dhcp.inc');
 
 if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
@@ -138,17 +75,13 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 		exit;
 	}
 
-	config_init_path("dhcpdv6/{$if}/pool");
-
 	if (is_numeric($pool) && config_get_path("dhcpdv6/{$if}/pool/{$pool}")) {
 		$dhcpdconf = config_get_path("dhcpdv6/{$if}/pool/{$pool}");
 	} elseif ($act === 'newpool') {
 		$dhcpdconf = [];
 	} else {
-		$dhcpdconf = config_get_path("dhcpdv6/{$if}");
+		$dhcpdconf = config_get_path("dhcpdv6/{$if}", []);
 	}
-
-	config_init_path("dhcpdv6/{$if}/staticmap");
 }
 
 if (is_array($dhcpdconf)) {
@@ -237,7 +170,7 @@ if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycf
 
 if (isset($_POST['apply'])) {
 	$changes_applied = true;
-	$retval = dhcpv6_apply_changes(false);
+	$retval = dhcp6_apply_changes();
 } elseif (isset($_POST['save'])) {
 
 	unset($input_errors);
@@ -481,8 +414,7 @@ if (isset($_POST['apply'])) {
 			if ($act === 'newpool') {
 				$dhcpdconf = [];
 			} else {
-				config_init_path("dhcpdv6/{$if}");
-				$dhcpdconf = config_get_path("dhcpdv6/{$if}");
+				$dhcpdconf = config_get_path("dhcpdv6/{$if}", []);
 			}
 		} else {
 			if (is_array(config_get_path("dhcpdv6/{$if}/pool/{$pool}"))) {
@@ -718,10 +650,12 @@ $tab_array = array();
 $tabscounter = 0;
 $i = 0;
 
-foreach ($iflist as $ifent => $ifname) {
-	config_init_path("dhcpdv6/{$ifent}");
+if (dhcp_is_backend('kea')) {
+	$tab_array[] = [gettext('Settings'), false, 'services_dhcpv6_settings.php'];
+}
 
-	$oc = config_get_path("interfaces/{$ifent}");
+foreach ($iflist as $ifent => $ifname) {
+	$oc = config_get_path("interfaces/{$ifent}", []);
 	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
 	    (is_ipaddrv6($oc['ipaddrv6']) &&
 	    !is_linklocal($oc['ipaddrv6'])));
@@ -746,11 +680,19 @@ if ($tabscounter == 0) {
 	exit;
 }
 
+if ($dhcrelay_enabled) {
+	print_info_box(gettext('DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the DHCPv6 Relay is enabled on any interface.'), 'danger', false);
+}
+
 display_top_tabs($tab_array);
+
+if (is_null($pconfig) || !is_array($pconfig)) {
+	$pconfig = [];
+}
 
 $form = new Form();
 
-$section = new Form_Section(gettext('General DHCPv6 Options'));
+$section = new Form_Section(gettext('General Settings'));
 
 $section->addInput(new Form_StaticText(
 	gettext('DHCP Backend'),
@@ -773,7 +715,7 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
 			gettext('Enable'),
-			sprintf(gettext('Enable DHCPv6 server on %s interface'), htmlspecialchars($iflist[$if])),
+			sprintf(gettext('Enable DHCPv6 server on %s interface'), $iflist[$if]),
 			$pconfig['enable']
 		));
 	}
@@ -804,7 +746,7 @@ if (is_numeric($pool) || ($act == "newpool")) {
 		$pconfig['descr']
 	))->setHelp(gettext('Description for administrative reference (not parsed).'));
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 $form->add($section);
 
@@ -915,7 +857,7 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
 		gettext('Add Address Pool'),
-		'services_dhcpv6.php?if=' . htmlspecialchars($if) . '&act=newpool',
+		'services_dhcpv6.php?if=' . $if . '&act=newpool',
 		'fa-solid fa-plus'
 	);
 	$btnaddpool->addClass('btn-success');
@@ -925,14 +867,12 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		$btnaddpool
 	))->setHelp(gettext('If additional pools of addresses are needed inside of this prefix outside the above range, they may be specified here.'));
 }
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 $form->add($section);
 
-if (dhcp_is_backend('isc')):
 if (!is_numeric($pool) && !($act === 'newpool')):
 $section = new Form_Section(gettext('Prefix Delegation Pool'));
-
 $f1 = new Form_Input(
 	'prefixrange_from',
 	null,
@@ -941,7 +881,7 @@ $f1 = new Form_Input(
 );
 
 $f1->addClass('trim')
-   ->setHelp('From');
+   ->setHelp(gettext('From'));
 
 $f2 = new Form_Input(
 	'prefixrange_to',
@@ -951,7 +891,7 @@ $f2 = new Form_Input(
 );
 
 $f2->addClass('trim')
-   ->setHelp('To');
+   ->setHelp(gettext('To'));
 
 $group = new Form_Group(gettext('Prefix Delegation Range'));
 
@@ -962,7 +902,7 @@ $section->add($group);
 
 $section->addInput(new Form_Select(
 	'prefixrange_length',
-	'Prefix Delegation Size',
+	gettext('Prefix Delegation Size'),
 	$pconfig['prefixrange_length'],
 	array(
 		'48' => '48',
@@ -976,9 +916,7 @@ $section->addInput(new Form_Select(
 		'64' => '64'
 		)
 ))->setHelp(gettext('A prefix range can be defined here for DHCP Prefix Delegation. This allows for assigning networks to subrouters. The start and end of the range must end on boundaries of the prefix delegation size.'));
-
 $form->add($section);
-endif;
 endif;
 
 $section = new Form_Section(gettext('Server Options'));
@@ -1078,9 +1016,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default DHCPv6 leases are displayed in UTC time. ' .
 			'By checking this box DHCPv6 lease time will be displayed in local time and set to time zone selected. ' .
 			'This will be used for all DHCPv6 interfaces lease time.');
-endif;
 
-if (dhcp_is_backend('isc')):
 $btnadv = new Form_Button(
 	'btnadvdns',
 	gettext('Display Advanced'),
@@ -1178,7 +1114,7 @@ $section->addInput(new Form_Checkbox(
 	'Add reverse dynamic DNS entries.',
 	$pconfig['ddnsreverse']
 ));
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 $btnadv = new Form_Button(
 	'btnadvntp',
@@ -1258,7 +1194,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ldap']
 ))->setAttribute('placeholder', sprintf(gettext('LDAP Server URI (e.g. %s)'), $ldap_example))
   ->setHelp(gettext('Leave blank to disable. Enter a full URI for the LDAP server in the form %s'), $ldap_example);
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 $btnadv = new Form_Button(
 	'btnadvnetboot',
@@ -1291,7 +1227,7 @@ $section->addInput(new Form_Input(
 if (dhcp_is_backend('isc')):
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Display Advanced',
+	gettext('Display Advanced'),
 	null,
 	'fa-solid fa-cog'
 );
@@ -1367,11 +1303,11 @@ $btnaddopt = new Form_Button(
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
-endif;
+endif; /* dhcp_is_backend('isc') */
 
 if (dhcp_is_backend('kea')):
 $form->add($section);
-endif;
+endif; /* dhcp_is_backend('kea') */
 
 if ($act === 'newpool') {
 	$form->addGlobal(new Form_Input(
@@ -1436,8 +1372,8 @@ foreach (config_get_path("dhcpdv6/{$if}/staticmap", []) as $mapent):
 					<?=htmlspecialchars($mapent['descr'])?>
 				</td>
 				<td>
-					<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>"></a>
-					<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete static mapping')?>" href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+					<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>"></a>
+					<a class="fa-solid fa-trash-can text-danger" title="<?=gettext('Delete static mapping')?>" href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php
@@ -1507,7 +1443,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvdns').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvdns').children();
+		$('#btnadvdns').text(text).prepend(children);
 	}
 
 	$('#btnadvdns').click(function(event) {
@@ -1544,7 +1481,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvntp').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvntp').children();
+		$('#btnadvntp').text(text).prepend(children);
 	}
 
 	$('#btnadvntp').click(function(event) {
@@ -1578,7 +1516,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvldap').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvldap').children();
+		$('#btnadvldap').text(text).prepend(children);
 	}
 
 	$('#btnadvldap').click(function(event) {
@@ -1613,7 +1552,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvnetboot').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvnetboot').children();
+		$('#btnadvnetboot').text(text).prepend(children);
 	}
 
 	$('#btnadvnetboot').click(function(event) {
@@ -1649,7 +1589,8 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnadvopts').html('<i class="fa-solid fa-cog"></i> ' + text);
+		var children = $('#btnadvopts').children();
+		$('#btnadvopts').text(text).prepend(children);
 	}
 
 	$('#btnadvopts').click(function(event) {
@@ -1670,7 +1611,6 @@ events.push(function() {
 		hideClass('adnloptions', true);
 		hideInput('addrow', true);
 	}
-
 });
 //]]>
 </script>

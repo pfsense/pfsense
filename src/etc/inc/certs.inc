@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc. All rights reserved.
  * All rights reserved.
  *
@@ -70,7 +70,7 @@ $crl_max_lifetime = 9999;
 function lookup_ca($refid) {
 	$ca_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('ca', []) as $idx => $ca) {
-		if (empty($ca)) {
+		if (!is_array($ca) || empty($ca)) {
 			continue;
 		}
 		if ($ca['refid'] == $refid) {
@@ -88,7 +88,7 @@ function lookup_ca($refid) {
 function lookup_ca_by_subject($subject) {
 	$ca_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('ca', []) as $idx => $ca) {
-		if (empty($ca)) {
+		if (!is_array($ca) || empty($ca)) {
 			continue;
 		}
 		$ca_subject = cert_get_subject($ca['crt']);
@@ -107,7 +107,7 @@ function lookup_ca_by_subject($subject) {
 function lookup_cert($refid) {
 	$cert_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('cert', []) as $idx => $cert) {
-		if (empty($cert)) {
+		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
 		if ($cert['refid'] == $refid) {
@@ -125,7 +125,7 @@ function lookup_cert($refid) {
 function lookup_cert_by_name($name) {
 	$cert_item = ['idx' => null, 'item' => null];
 	foreach (config_get_path('cert', []) as $idx => $cert) {
-		if (empty($cert)) {
+		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
 		if ($cert['descr'] == $name) {
@@ -313,7 +313,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	if (!$signing_ca_res_crt || !$signing_ca_res_key) {
 		return false;
 	}
-	$signing_ca_serial = config_set_path("ca/{$ca_item_config['idx']}", ++$signing_ca['serial']);
+	$signing_ca_serial = config_set_path("ca/{$ca_item_config['idx']}/serial", ++$signing_ca['serial']);
 
 	$args = array(
 		"x509_extensions" => "v3_ca",
@@ -434,7 +434,6 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 
 	// If this is a self-signed cert, blank out the CA and sign with the cert's key
 	if ($type == "self-signed") {
-		config_del_path("ca/{$ca_item_config['idx']}");
 		$ca           = null;
 		$ca_res_crt   = null;
 		$ca_res_key   = $res_key;
@@ -864,6 +863,20 @@ function ca_in_use($caref) {
 		is_ldap_peer_ca($caref));
 }
 
+function is_kea_cert(string $certref): bool {
+	if (config_path_enabled('kea/ha', 'tls')) {
+		if (config_get_path('kea/ha/scertref') === $certref) {
+			return true;
+		}
+		if (config_path_enabled('kea/ha', 'mutualtls') &&
+		    (config_get_path('kea/ha/ccertref') === $certref)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function is_user_cert($certref) {
 	foreach (config_get_path('system/user', []) as $user) {
 		if (!is_array($user['cert'])) {
@@ -946,8 +959,8 @@ function is_unbound_cert($certref) {
 }
 
 function cert_in_use($certref) {
-
-	return (is_webgui_cert($certref) ||
+	return (is_kea_cert($certref) ||
+		is_webgui_cert($certref) ||
 		is_user_cert($certref) ||
 		is_openvpn_server_cert($certref) ||
 		is_openvpn_client_cert($certref) ||
@@ -2366,12 +2379,10 @@ function cert_notify_expiring() {
 	$notifications = array();
 
 	/* Check all CA and Cert entries at once */
-	config_init_path('ca');
-	config_init_path('cert');
-	$all_certs = array_merge_recursive(config_get_path('ca'), config_get_path('cert'));
+	$all_certs = array_merge_recursive(config_get_path('ca', []), config_get_path('cert', []));
 
 	foreach ($all_certs as $cert) {
-		if (empty($cert)) {
+		if (!is_array($cert) || empty($cert)) {
 			continue;
 		}
 		/* Proceed only for not revoked certificate if ignore setting enabled */

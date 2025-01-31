@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -62,11 +62,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 
 if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
-	config_init_path('system/user');
 }
-
-config_init_path('ca');
-config_init_path('cert');
 
 $internal_ca_count = 0;
 foreach (config_get_path('cert', []) as $ca) {
@@ -757,7 +753,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'descr',
 		'*Descriptive name',
 		'text',
-		(config_get_path('system/user') && empty($pconfig['descr'])) ? config_get_path("system/user/{$userid}/name") : $pconfig['descr']
+		(isset($userid) && config_get_path('system/user') && empty($pconfig['descr'])) ? config_get_path("system/user/{$userid}/name") : $pconfig['descr']
 	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse')
 	->setHelp('The name of this entry as displayed in the GUI for reference.%s' .
 		'This name can contain spaces but it cannot contain any of the ' .
@@ -1460,28 +1456,31 @@ foreach (config_get_path('cert', []) as $cert):
 					</td>
 					<td>
 						<?php if (is_cert_revoked($cert)): ?>
-							<i><?=gettext("Revoked")?></i>
-						<?php endif?>
-						<?php if (is_webgui_cert($cert['refid'])): ?>
-							<?=gettext("webConfigurator")?>
-						<?php endif?>
-						<?php if (is_user_cert($cert['refid'])): ?>
-							<?=gettext("User Cert")?>
-						<?php endif?>
-						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Server")?>
-						<?php endif?>
-						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Client")?>
-						<?php endif?>
-						<?php if (is_ipsec_cert($cert['refid'])): ?>
-							<?=gettext("IPsec Tunnel")?>
+							<i><?=gettext("Revoked")?></i><br/>
 						<?php endif?>
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
-							<?=gettext("Captive Portal")?>
+							<?=gettext("Captive Portal")?><br/>
 						<?php endif?>
 						<?php if (is_unbound_cert($cert['refid'])): ?>
-							<?=gettext("DNS Resolver")?>
+							<?=gettext("DNS Resolver")?><br/>
+						<?php endif?>
+						<?php if (is_ipsec_cert($cert['refid'])): ?>
+							<?=gettext("IPsec Tunnel")?><br/>
+						<?php endif?>
+						<?php if (is_kea_cert($cert['refid'])): ?>
+							<?=gettext("Kea")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
+						<?php endif?>
+						<?php if (is_user_cert($cert['refid'])): ?>
+							<?=gettext("User Cert")?><br/>
+						<?php endif?>
+						<?php if (is_webgui_cert($cert['refid'])): ?>
+							<?=gettext("webConfigurator")?><br/>
 						<?php endif?>
 						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
 					</td>

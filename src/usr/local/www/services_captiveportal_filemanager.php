@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Jonathan De Graeve (jonathan.de.graeve@imelda.be)
  * Copyright (c) 2005-2006 Paul Taylor (paultaylor@winn-dixie.com)
  * All rights reserved.
@@ -41,7 +41,7 @@ function cpelementscmp($a, $b) {
 function cpelements_sort() {
 	global $cpzone;
 
-	$cp_config = config_get_path("captiveportal/{$cpzone}/element");
+	$cp_config = config_get_path("captiveportal/{$cpzone}/element", []);
 	usort($cp_config, "cpelementscmp");
 	config_set_path("captiveportal/{$cpzone}/element", $cp_config);
 }
@@ -61,15 +61,13 @@ if (empty($cpzone)) {
 	exit;
 }
 
-config_init_path("captiveportal/{$cpzone}/element");
-
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("File Manager"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 // Calculate total size of all files
 $total_size = 0;
-$a_element = config_get_path("captiveportal/{$cpzone}/element");
+$a_element = config_get_path("captiveportal/{$cpzone}/element", []);
 for ($i = 0; $i < count($a_element); $i++) {
 
 	// if the image in the directory does not exist remove it from config
@@ -128,9 +126,9 @@ if ($_POST['Submit']) {
 			exit;
 		}
 	}
-} else if (($_POST['act'] == "del") && !empty($cpzone) && config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")) {
-	@unlink("{$g['captiveportal_element_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")['name']);
-	@unlink("{$g['captiveportal_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")['name']);
+} else if (($_POST['act'] == "del") && !empty($cpzone) && is_numericint($_POST['id']) && config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}")) {
+	@unlink("{$g['captiveportal_element_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}/name"));
+	@unlink("{$g['captiveportal_path']}/" . config_get_path("captiveportal/{$cpzone}/element/{$_POST['id']}/name"));
 	config_del_path("captiveportal/{$cpzone}/element/{$_POST['id']}");
 	write_config("Captive portal file manager: file deleted");
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");

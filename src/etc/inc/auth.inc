@@ -8,7 +8,7 @@
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -2156,13 +2156,14 @@ function session_auth() {
 
 	// Handle HTTPS httponly and secure flags
 	$currentCookieParams = session_get_cookie_params();
-	session_set_cookie_params(
-		$currentCookieParams["lifetime"],
-		$currentCookieParams["path"],
-		NULL,
-		(config_get_path('system/webgui/protocol') == "https"),
-		true
-	);
+	session_set_cookie_params([
+		'lifetime' => $currentCookieParams["lifetime"],
+		'path' => $currentCookieParams["path"],
+		'domain' => NULL,
+		'secure' => (config_get_path('system/webgui/protocol') == "https"),
+		'httponly' => true,
+		'samesite' => 'Strict'
+	]);
 
 	phpsession_begin();
 
@@ -2254,9 +2255,9 @@ function session_auth() {
 	if (isset($_POST['logout'])) {
 
 		if ($_SESSION['Logout']) {
-			log_error(sprintf(gettext("Session timed out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()));
+			log_auth(sprintf(gettext("Session timed out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()), true);
 		} else {
-			log_error(sprintf(gettext("User logged out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()));
+			log_auth(sprintf(gettext("User logged out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()), true);
 		}
 
 		/* wipe out $_SESSION */
@@ -2302,6 +2303,19 @@ function session_auth() {
 	return true;
 }
 
+function print_login_message() {
+	$login_message = htmlentities(base64_decode(config_get_path('system/login_message', '')));
+	if (empty($login_message)) {
+		return '';
+	}
+	$login_message = str_replace(PHP_EOL, '<br />', $login_message);
+	$login_message = '<div><div class="col-sm-2"></div><div class="col-sm-8 text-center">' .
+		'<div class="alert alert-info" style="overflow-wrap:anywhere;margin-top:20px;"><p>' .
+		$login_message .
+		'</p></div></div><div class="col-sm-2"></div></div>';
+
+	return $login_message;
+}
 function print_credit() {
 	global $g;
 

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -36,8 +36,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_nat_npt.inc");
 
-config_init_path('nat/npt');
-
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -46,7 +44,7 @@ if (isset($_REQUEST['after'])) {
 	$after = $_REQUEST['after'];
 }
 
-if (isset($_REQUEST['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$id = $_REQUEST['dup'];
 	$after = $_REQUEST['dup'];
 }

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -45,7 +45,7 @@ $pconfig['dnsserver'] = config_get_path('system/dnsserver');
 $arr_gateways = get_gateways();
 
 // set default columns to two if unset
-if (!config_path_enabled('system/webgui', 'dashboardcolumns')) {
+if (!is_numericint(config_get_path('system/webgui/dashboardcolumns'))) {
 	config_set_path('system/webgui/dashboardcolumns', 2);
 }
 
@@ -66,7 +66,7 @@ $dnsgw_counter = 1;
 
 while (config_get_path("system/dns{$dnsgw_counter}gw") !== null) {
 	$pconfig_dnsgw_counter = $dnsgw_counter - 1;
-	$pconfig["dnsgw{$pconfig_dnsgw_counter}"] = config_get_path("system/dns{$dnsgw_counter}host");
+	$pconfig["dnsgw{$pconfig_dnsgw_counter}"] = config_get_path("system/dns{$dnsgw_counter}gw");
 	$dnsgw_counter++;
 }
 
@@ -90,6 +90,7 @@ $pconfig['dnslocalhost'] = config_get_path('system/dnslocalhost');
 //$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['roworderdragging'] = config_path_enabled('system/webgui', 'roworderdragging');
 $pconfig['loginshowhost'] = config_path_enabled('system/webgui', 'loginshowhost');
+$pconfig['login_message'] = htmlentities(base64_decode(config_get_path('system/login_message', '')));
 $pconfig['requirestatefilter'] = config_path_enabled('system/webgui', 'requirestatefilter');
 $pconfig['requirefirewallinterface'] = config_path_enabled('system/webgui', 'requirefirewallinterface');
 
@@ -333,6 +334,13 @@ if ($_POST) {
 		}
 
 		config_set_path('system/webgui/loginshowhost', $_POST['loginshowhost'] ? true:false);
+
+		if (isset($_POST['login_message']) && (strlen(strval($_POST['login_message'])) > 0)) {
+			$login_message = strip_tags(strval($pconfig['login_message']));
+			$pconfig['login_message'] = $login_message;
+			config_set_path('system/login_message', base64_encode($login_message));
+		}
+	
 
 		if ($_POST['webguifixedmenu']) {
 			config_set_path('system/webgui/webguifixedmenu', $_POST['webguifixedmenu']);
@@ -720,6 +728,15 @@ $section->addInput(new Form_Checkbox(
 	'Show hostname on login banner',
 	$pconfig['loginshowhost']
 ));
+
+$section->addInput(new Form_Textarea(
+	'login_message',
+	'Login Message',
+	$pconfig['login_message']
+))->setHelp('Text message to display on the login page, such as a warning or disclaimer. ' .
+	'Plain text only - tags, e.g. HTML and PHP, are automatically removed.'
+);
+
 /*
 $section->addInput(new Form_Input(
 	'dashboardperiod',

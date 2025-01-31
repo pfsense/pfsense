@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -38,8 +38,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("firewall_virtual_ip.inc");
 
-config_init_path('virtualip/vip');
-
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -49,7 +47,7 @@ function return_first_two_octets($ip) {
 	return $ip_split[0] . "." . $ip_split[1];
 }
 
-$a_vip = config_get_path('virtualip/vip');
+$a_vip = config_get_path('virtualip/vip', []);
 if (isset($id) && $a_vip[$id]) {
 	$pconfig['mode'] = $a_vip[$id]['mode'];
 	$pconfig['vhid'] = $a_vip[$id]['vhid'];
@@ -85,8 +83,6 @@ $pglinks = array("", "firewall_virtual_ip.php", "@self");
 include("head.inc");
 
 function build_if_list() {
-	$list = array();
-
 	$interfaces = get_configured_interface_with_descr(true);
 	$carplist = get_configured_vip_list('all', VIP_CARP);
 
@@ -195,7 +191,7 @@ $section->addInput(new Form_Select(
 	array_combine(range(1, 255, 1), range(1, 255, 1))
 ))->setHelp('Enter the VHID group that the machines will share.');
 
-$group = new Form_Group('Advertising frequency');
+$group = new Form_Group('Advertising Frequency');
 $group->add(new Form_Select(
 	'advbase',
 	'Base',
@@ -301,7 +297,6 @@ events.push(function() {
 			$('#type').val('single');
 			setRequired('type', false);
 			disableInput('subnet_bits', false);
-
 		} else if (mode == 'carp') {
 			$('#address_note').html("<?=$ipaliashelp?>");
 			disableInput('vhid', false);

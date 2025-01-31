@@ -90,7 +90,7 @@
 
 	function validate_form_miniupnpd($post, &$input_errors) {
 		if ($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp'])) {
-			$input_errors[] = 'At least one of \'UPnP\' or \'NAT-PMP\' must be allowed';
+			$input_errors[] = 'At least one of \'UPnP IGD\' or \'PCP/NAT-PMP\' must be allowed';
 		}
 		if ($post['iface_array']) {
 			foreach ($post['iface_array'] as $iface) {
@@ -102,7 +102,7 @@
 			}
 		}
 		if ($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'], false)) {
-			$input_errors[] = 'You must specify a valid ip address in the \'Override WAN address\' field';
+			$input_errors[] = 'You must specify a valid IP address in the \'Override WAN address\' field';
 		}
 		if (($post['download'] && !$post['upload']) || ($post['upload'] && !$post['download'])) {
 			$input_errors[] = 'You must fill in both \'Maximum Download Speed\' and \'Maximum Upload Speed\' fields';
@@ -121,31 +121,31 @@
 			if (!$post['stun_host'] || (!is_ipaddrv4($post['stun_host']) && !is_hostname($post['stun_host']))) {
 				$input_errors[] = 'A valid IP address or hostname for \'STUN Server\' must be specified';
 			}
-			if (!$post['stun_port'] || !is_port($post['stun_port'])) {
+			if ($post['stun_port'] && !is_port($post['stun_port'])) {
 				$input_errors[] = 'A valid port number for \'STUN Port\' must be specified';
 			}
 		}
 
-		/* user permissions validation */
+		/* ACL Entries validation */
 		$j = substr_count(implode(array_keys($post)), "permuser");
 		for ($i = 0; $i < $j; $i++) {
 			if ($post["permuser{$i}"]) {
 				$perm = explode(' ', $post["permuser{$i}"]);
 				/* should explode to 4 args */
 				if (count($perm) != 4) {
-					$input_errors[] = "You must follow the specified format in the 'User specified permissions {$i}' field";
+					$input_errors[] = "You must follow the specified format in the 'ACL Entries {$i}' field";
 				} else {
 					/* must with allow or deny */
 					if (!($perm[0] == 'allow' || $perm[0] == 'deny')) {
-						$input_errors[] = "You must begin with allow or deny in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must begin with allow or deny in the 'ACL Entries {$i}' field";
 					}
 					/* verify port or port range */
 					if (!upnp_validate_port($perm[1]) || !upnp_validate_port($perm[3])) {
-						$input_errors[] = "You must specify a port or port range between 0 and 65535 in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must specify a port or port range between 1 and 65535 in the 'ACL Entries {$i}' field";
 					}
 					/* verify ip address */
 					if (!upnp_validate_ip($perm[2], true)) {
-						$input_errors[] = "You must specify a valid ip address in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must specify a valid IP address in the 'ACL Entries {$i}' field";
 					}
 				}
 			}
@@ -200,7 +200,7 @@
 							$ifaces_active .= ", {$iface}";
 						}
 					} else {
-						upnp_warn("Interface {$iface} has no ip address, ignoring");
+						upnp_warn("Interface {$iface} has no IP address, ignoring");
 					}
 				} else {
 					upnp_warn("Could not resolve real interface for {$iface}");
@@ -267,7 +267,7 @@
 				}
 
 				if ($upnp_config['permdefault']) {
-					$config_text .= "deny 0-65535 0.0.0.0/0 0-65535\n";
+					$config_text .= "deny 1-65535 0.0.0.0/0 1-65535\n";
 				}
 
 				/* Recheck if queue is valid */
@@ -280,15 +280,17 @@
 					$config_text .= "queue={$upnp_config['upnpqueue']}\n";
 				}
 
-				/* Allow UPnP or NAT-PMP as requested */
+				/* Allow UPnP IGD or PCP/NAT-PMP as requested */
 				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp']   ? "yes\n" : "no\n");
-				$config_text .= "enable_natpmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
+				$config_text .= "enable_pcp_pmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
 
 				/* STUN configuration */
 				if ($upnp_config['enable_stun']) {
 					$config_text .= "ext_perform_stun=yes\n";
 					$config_text .= "ext_stun_host={$upnp_config['stun_host']}\n";
-					$config_text .= "ext_stun_port={$upnp_config['stun_port']}\n";
+					if ($upnp_config['stun_port']){
+						$config_text .= "ext_stun_port={$upnp_config['stun_port']}\n";
+					}
 				}
 
 				/* write out the configuration */

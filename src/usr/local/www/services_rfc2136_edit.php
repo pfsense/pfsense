@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,8 +38,6 @@ $tsig_key_algos = array(
 	'hmac-sha384' => 'HMAC-SHA384',
 	'hmac-sha512' => 'HMAC-SHA512 (most secure)',
 );
-
-config_init_path('dnsupdates/dnsupdate');
 
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,7 +41,6 @@ require_once("firewall_nat_out.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-config_init_path('nat/outbound/rule');
 $nat_srctype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_IFNET, SPECIALNET_GROUP];
 $nat_tgttype_flags = [SPECIALNET_NETAL, SPECIALNET_IFADDR, SPECIALNET_VIPS];
@@ -148,6 +147,8 @@ print($form);
 global $user_settings;
 $show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
 $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
+$system_aliases_ports = get_reserved_table_names('', 'port,url_ports,urltable_ports');
+$system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable');
 ?>
 
 <form action="firewall_nat_out.php" method="post" name="iform">
@@ -231,8 +232,12 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['source']['network'])?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['source']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['source']['network'], $system_aliases_hosts)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['source']['network']), true)?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($natent['source'], $nat_srctype_flags))?>
@@ -242,25 +247,20 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 						<td>
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-						if (!$natent['sourceport']) {
-							echo "*";
-						} else {
-
-							if (isset($alias['srcport'])):
 ?>
+						<?php if (!$natent['sourceport']): ?>
+							&ast;
+						<?php elseif (isset($alias['srcport'])): ?>
 							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
-<?php
-							endif;
-?>
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['sourceport'])))?>
+							</a>
+						<?php elseif ($show_system_alias_popup && array_key_exists($natent['sourceport'], $system_aliases_ports)): ?>
+							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['sourceport']), true)?>" data-html="true">
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['sourceport'])))?>
+							</a>
+						<?php else: ?>
 							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['sourceport'])))?>
-<?php
-							if (isset($alias['srcport'])):
-?>
-							<i class='fa-solid fa-pencil'></i></a>
-<?php
-							endif;
-						}
-?>
+						<?php endif; ?>
 						</td>
 
 						<td>
@@ -269,8 +269,12 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
 								</a>
 							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_alias_specialnet)): ?>
-								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=system_alias_info_popup($natent['destination']['network'])?>" data-html="true">
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtoupper($natent['destination']['network']) . '__NETWORK', true)?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['destination']['network'], $system_aliases_hosts)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['destination']['network']), true)?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($natent['destination'], $nat_dsttype_flags))?>
@@ -280,26 +284,20 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 						<td>
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-
-						if (!$natent['dstport']) {
-							echo "*";
-						} else {
-							if (isset($alias['dstport'])):
 ?>
+						<?php if (!$natent['dstport']): ?>
+							&ast;
+						<?php elseif (isset($alias['dstport'])): ?>
 							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
-<?php
-							endif;
-?>
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['dstport'])))?>
+							</a>
+						<?php elseif ($show_system_alias_popup && array_key_exists($natent['dstport'], $system_aliases_ports)): ?>
+							<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['dstport']), true)?>" data-html="true">
+								<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['dstport'])))?>
+							</a>
+						<?php else: ?>
 							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['dstport'])))?>
-<?php
-							if (isset($alias['dstport'])):
-?>
-							<i class='fa-solid fa-pencil'></i></a>
-<?php
-							endif;
-						}
-?>
-
+						<?php endif; ?>
 						</td>
 						<td>
 							<?php if (isset($natent['nonat'])): ?>
@@ -307,6 +305,10 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 							<?php elseif (isset($alias['target'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags)))?>
+								</a>
+							<?php elseif ($show_system_alias_popup && array_key_exists($natent['target'], $system_aliases_hosts)): ?>
+								<a data-toggle="popover" data-trigger="hover focus" title="<?=gettext('System alias details')?>" data-content="<?=alias_info_popup(strtolower($natent['target']), true)?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address(['address' => $natent['target']])))?>
 								</a>
 							<?php elseif (empty($natent['target_subnet'])): ?>
 								<?=htmlspecialchars(pprint_address(['network' => $natent['target']], $nat_tgttype_flags))?>

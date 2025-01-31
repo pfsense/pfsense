@@ -6,7 +6,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2006-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2024 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -60,6 +60,10 @@ if (empty($argument)) {
 	$interface_real = get_real_interface();
 } else {
 	$interface = convert_real_interface_to_friendly_interface_name($argument);
+	if (empty($interface)) {
+		log_error("Interface is unassigned, nothing to do.");
+		return;
+	}
 	$interface_real = $argument;
 }
 
@@ -202,7 +206,12 @@ if (is_platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp
 	// setting up gateways monitor doesn't seem to have issues here, and fixes the
 	// most commonly encountered bugs from earlier versions when everything below
 	// was skipped during boot
+	filter_configure_sync();
 	setup_gateways_monitor();
+
+	// Make sure the default gateway is set up after DHCP succeeds. See:
+	// https://redmine.pfsense.org/issues/15791
+	system_routing_configure($interface);
 	exit;
 }
 

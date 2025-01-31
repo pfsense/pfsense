@@ -181,7 +181,7 @@ fi
 if [ -d "/conf" ]; then
 	# If item is not a symlink then rm and recreate
 	CONFPOINTSTO=`readlink /conf`
-	if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then
+	if [ "$CONFPOINTSTO" != "/cf/conf" ]; then
 		/bin/rm -rf /conf
 		/bin/ln -s /cf/conf /conf
 	fi

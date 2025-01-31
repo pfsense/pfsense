@@ -480,10 +480,10 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			install_cron_job("/etc/rc.backup_logs.sh", false, null, null, null, null, null, null, false);
 		} else {
 			/* See #7146 for detail on why the extra parameters are needed for the time being. */
-			install_cron_job("/etc/rc.backup_rrd.sh", (config_get_path('system/rrdbackup') > 0), $minute="0", "*/{config_get_path('system/rrdbackup')}", '*', '*', '*', 'root', false);
-			install_cron_job("/etc/rc.backup_dhcpleases.sh", (config_get_path('system/dhcpbackup') > 0), $minute="0", "*/{config_get_path('system/dhcpbackup')}", '*', '*', '*', 'root', false);
-			install_cron_job("/etc/rc.backup_logs.sh", (config_get_path('system/logsbackup') > 0), $minute="0", "*/{config_get_path('system/logsbackup')}", '*', '*', '*', 'root', false);
-			install_cron_job("/etc/rc.backup_captiveportal.sh", (config_get_path('system/captiveportalbackup') > 0), $minute="0", "*/{config_get_path('system/captiveportalbackup')}", '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_rrd.sh", (config_get_path('system/rrdbackup') > 0), $minute="0", ('*/' . config_get_path('system/rrdbackup', '')), '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", (config_get_path('system/dhcpbackup') > 0), $minute="0", ('*/' . config_get_path('system/dhcpbackup', '')), '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_logs.sh", (config_get_path('system/logsbackup') > 0), $minute="0", ('*/' . config_get_path('system/logsbackup', '')), '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_captiveportal.sh", (config_get_path('system/captiveportalbackup') > 0), $minute="0", ('*/' . config_get_path('system/captiveportalbackup', '')), '*', '*', '*', 'root', false);
 		}
 
 		write_config("Miscellaneous Advanced Settings saved");

@@ -120,20 +120,20 @@ function does_vip_exist($vip) {
 			return false;
 	}
 
-	$ifacedata = pfSense_getall_interface_addresses($realif);
-
-	if (is_subnetv6("{$vip['subnet']}/{$vip['subnet_bits']}")) {
-		$comparevip = text_to_compressed_ip6($vip['subnet']);
-		if (is_linklocal($vip['subnet'])) {
-			$comparevip .= "%{$realif}";
-		}
-		$comparevip .= "/{$vip['subnet_bits']}";
+	if (is_ipaddrv6($vip['subnet'])) {
+		$comparevip = Net_IPv6::uncompress($vip['subnet']);
 	} else {
-		$comparevip = "{$vip['subnet']}/{$vip['subnet_bits']}";
+		$comparevip = $vip['subnet'];
 	}
 
-	foreach ($ifacedata as $vipips) {
-		if ($vipips == $comparevip) {
+	$ifacedata = pfSense_get_ifaddrs($realif);
+	foreach (array_get_path($ifacedata, 'addrs', []) as $addrs) {
+		if ($addrs['addr'] == $comparevip) {
+			return true;
+		}
+	}
+	foreach (array_get_path($ifacedata, 'addrs6', []) as $addrs) {
+		if (Net_IPv6::uncompress($addrs['addr']) == $comparevip) {
 			return true;
 		}
 	}
@@ -4082,25 +4082,19 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	if (!is_platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
-		$tmpifaces = pfSense_getall_interface_addresses($realif);
-		if (is_array($tmpifaces)) {
-			foreach ($tmpifaces as $tmpiface) {
-				if (is_ipaddrv6($tmpiface) || is_subnetv6($tmpiface)) {
-					if (!is_linklocal($tmpiface)) {
-						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
-					}
-				} elseif (strstr($tmpiface, "fe80::1:1")) {
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 fe80::1:1 -alias");
-				} else {
-					if (is_subnetv4($tmpiface)) {
-						$tmpip = explode('/', $tmpiface);
-						$tmpip = $tmpip[0];
-					} else {
-						$tmpip = $tmpiface;
-					}
-					pfSense_interface_deladdress($realif, $tmpip);
-				}
+		$tmpifaces = pfSense_get_ifaddrs($realif);
+		foreach (array_get_path($tmpifaces, 'addrs', []) as $addrs) {
+			pfSense_interface_deladdress($realif, $addrs['addr']);
+		}
+		foreach (array_get_path($tmpifaces, 'addrs6', []) as $addrs) {
+			if ($addrs['addr'] == 'fe80::1:1') {
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 fe80::1:1 -alias");
+				continue;
 			}
+			if (isset($addrs['linklocal'])) {
+				continue;
+			}
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$addrs['addr']} delete");
 		}
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */
@@ -6362,12 +6356,11 @@ function find_interface_ip($interface, $flush = false) {
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
 		if (file_exists("/var/db/{$interface}_ip")) {
 			$ifip = chop(file_get_contents("/var/db/{$interface}_ip"));
-			$ifaddrs = pfSense_getall_interface_addresses($interface);
-			foreach ($ifaddrs as $ifaddr) {
-				list($ip, $mask) = explode("/", $ifaddr);
-				if ($ip == $ifip) {
-					$interface_ip_arr_cache[$interface] = $ip;
-					$interface_sn_arr_cache[$interface] = $mask;
+			$ifaddrs = pfSense_get_ifaddrs($interface);
+			foreach (array_get_path($ifaddrs, 'addrs', []) as $addrs) {
+				if ($addrs['addr'] == $ifip) {
+					$interface_ip_arr_cache[$interface] = $addrs['addr'];
+					$interface_sn_arr_cache[$interface] = $addrs['subnetbits'];
 					break;
 				}
 			}
@@ -6420,19 +6413,15 @@ function find_interface_ipv6_ll($interface, $flush = false, $usefirst = true) {
 
 	/* Setup IP cache */
 	if (!isset($interface_llv6_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_getall_interface_addresses($interface);
-		foreach ($ifinfo as $line) {
-			if (strstr($line, ":")) {
-				$parts = explode("/", $line);
-				if (is_linklocal($parts[0])) {
-					$ifinfo['linklocal'] = $parts[0];
-					if ($usefirst) {
-						break;
-					}
+		$ifinfo = pfSense_get_ifaddrs($interface);
+		foreach (array_get_path($ifinfo, 'addrs6', []) as $addrs) {
+			if (isset($addrs['linklocal'])) {
+				$interface_llv6_arr_cache[$interface] = $addrs['addr'];
+				if ($usefirst) {
+					break;
 				}
 			}
 		}
-		$interface_llv6_arr_cache[$interface] = $ifinfo['linklocal'];
 	}
 	return $interface_llv6_arr_cache[$interface];
 }

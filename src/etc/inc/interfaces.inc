@@ -7593,10 +7593,155 @@ function get_interface_addresses($interface) {
 	}
 
 	if ($v6addrs) {
-		// use the first IPv6 GUA address if one exists, otherwise the first address
-		$v6addr = $v6addrs[array_key_first($v6addrs)];
+		// Group IPv6 addresses by their flags
+		$address_flags = [
+			'linklocal' => [],
+			'anycast' => [],
+			'tentative' => [],
+			'duplicated' => [],
+			'detached' => [],
+			'deprecated' => [],
+			'autoconf' => [],
+			'temporary' => [],
+			'prefer_source' => [],
+			'no_flag' => []
+		];
+		foreach ($v6addrs as $addrs) {
+			$has_flag = false;
+			foreach (array_keys($addrs) as $key) {
+				if (isset($address_flags[$key])) {
+					$has_flag = true;
+					$address_flags[$key][] = $addrs['addr'];
+				}
+			}
+			if (!$has_flag) {
+				$address_flags['no_flag'][] = $addrs['addr'];
+			}
+		}
+
+		/**
+		 * Create a list of IPv6 addresses that prioritizes the most
+		 * "valid" source address. Each key in the array references a
+		 * group of IPv6 addresses. Each key is assigned the first GUA of
+		 * the respective group. If a GUA for the group does not exist,
+		 * then the first IPv6 address of the group is assigned.
+		 * 
+		 * A "preferred" address has the prefer_source flag and does not
+		 * have any flags considered "invalid".
+		 * 
+		 * A "manual" address does not have any flags.
+		 * 
+		 * A "valid" address does not have any flags considered "invalid".
+		 * 
+		 * An "invalid" address must have any of the following flags:
+		 * deprecated, duplicated, tentative, or detached. It may have
+		 * additional flags that need to be considered. The selected
+		 * address is based on the following flag order:
+		 * prefer_source, temporary, anycast, autoconf, deprecated, duplicated
+		 * tentative, and lastly detached.
+		 * 
+		 * A "linklocal" address has the linklocal flag.
+		 */
+		$address_priority_list = [
+			'preferred' => null,
+			'manual' => null,
+			'valid' => null,
+			'invalid' => null,
+			'linklocal' => null
+		];
+		// The merge/intersect/diff order here is important.
+		$candidate_addresses = array_unique(array_merge($address_flags['prefer_source'], $address_flags['no_flag'], $address_flags['temporary'], $address_flags['anycast'], $address_flags['autoconf']));
+		$invalid_addresses = array_unique(array_merge($address_flags['deprecated'], $address_flags['duplicated'], $address_flags['tentative'], $address_flags['detached']));
+		$invalid_addresses = array_unique(array_merge(array_intersect($candidate_addresses, $invalid_addresses), $invalid_addresses));
+		$valid_addresses = array_diff($candidate_addresses, $invalid_addresses);
+
+		// Get a preferred address.
+		$temp_list = [];
+		foreach ($address_flags['prefer_source'] as $address) {
+			if (in_array($address, $valid_addresses)) {
+				if (is_v6gua($address)) {
+					$temp_list = [$address];
+					break;
+				} else {
+					$temp_list[] = $address;
+				}
+			}
+		}
+		if (!empty($temp_list)) {
+			$address_priority_list['preferred'] = $temp_list[array_key_first($temp_list)];
+		}
+
+		// Get a manual address.
+		$temp_list = [];
+		foreach ($address_flags['no_flag'] as $address) {
+			if (is_v6gua($address)) {
+				$temp_list = [$address];
+				break;
+			} else {
+				$temp_list[] = $address;
+			}
+		}
+		if (!empty($temp_list)) {
+			$address_priority_list['manual'] = $temp_list[array_key_first($temp_list)];
+		}
+
+		// Get a valid address.
+		$temp_list = [];
+		foreach ($valid_addresses as $address) {
+			if (is_v6gua($address)) {
+				$temp_list = [$address];
+				break;
+			} else {
+				$temp_list[] = $address;
+			}
+		}
+		if (!empty($temp_list)) {
+			$address_priority_list['valid'] = $temp_list[array_key_first($temp_list)];
+		}
+
+		// Get an invalid address.
+		$temp_list = [];
+		foreach ($invalid_addresses as $address) {
+			if (is_v6gua($address)) {
+				$temp_list = [$address];
+				break;
+			} else {
+				$temp_list[] = $address;
+			}
+		}
+		if (!empty($temp_list)) {
+			$address_priority_list['invalid'] = $temp_list[array_key_first($temp_list)];
+		}
+
+		// Get a link-local address
+		if (!empty($address_flags['linklocal'])) {
+			$address_priority_list['linklocal'] = $address_flags[array_key_first($address_flags['linklocal'])];
+		}
+
+		$selected_address = null;
+		if (isset($address_priority_list['preferred']) && is_v6gua($address_priority_list['preferred'])) {
+			$selected_address = $address_priority_list['preferred'];
+		} elseif (isset($address_priority_list['manual']) && is_v6gua($address_priority_list['manual'])) {
+			$selected_address = $address_priority_list['manual'];
+		} elseif (isset($address_priority_list['valid']) && is_v6gua($address_priority_list['valid'])) {
+			$selected_address = $address_priority_list['valid'];
+		} elseif (isset($address_priority_list['preferred'])) {
+			$selected_address = $address_priority_list['preferred'];
+		} elseif (isset($address_priority_list['manual'])) {
+			$selected_address = $address_priority_list['manual'];
+		} elseif (isset($address_priority_list['valid'])) {
+			$selected_address = $address_priority_list['valid'];
+		} elseif (isset($address_priority_list['invalid'])) {
+			$selected_address = $address_priority_list['invalid'];
+		} elseif (isset($address_priority_list['linklocal'])) {
+			$selected_address = $address_priority_list['linklocal'];
+		} else {
+			// Unexpected condition
+			$v6addr = $v6addrs[array_key_first($v6addrs)];
+		}
+
 		foreach ($v6addrs as $addr) {
-			if (is_v6gua($addr['addr'])) {
+			if ($addr['addr'] == $selected_address) {
 				$v6addr = $addr;
 				break;
 			}

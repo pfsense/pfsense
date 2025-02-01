@@ -2069,7 +2069,7 @@ function interface_wait_tentative($interface, $timeout = 10) {
 	$time = 0;
 	while ($time <= $timeout) {
 		$if = get_interface_addresses($interface);
-		if (!isset($if['tentative'])) {
+		if (!array_get_path($if, 'ipaddr6_flags/tentative', false)) {
 			return true;
 		}
 		sleep(1);
@@ -7531,7 +7531,7 @@ function restart_interface_services($interface, $ipv6type = "") {
  * - broadcast: ipv4 broadcast addr (if applicable)
  * - tunnel: ipv4 PPP endpoint (if applicable)
  * - ipaddr6: ipv6 address
- * - tentative: ipv6 tentative flag (if applicable)
+ * - ipaddr6_flags: list of flags for the ipv6 address (if applicable)
  * - subnetbits6: ipv6 subnet bits
  * - tunnel6: ipv6 tunnel endpoint
  * - status: up or down interface status
@@ -7739,21 +7739,34 @@ function get_interface_addresses($interface) {
 			// Unexpected condition
 			$v6addr = $v6addrs[array_key_first($v6addrs)];
 		}
-
 		foreach ($v6addrs as $addr) {
 			if ($addr['addr'] == $selected_address) {
 				$v6addr = $addr;
 				break;
 			}
 		}
+
 		$ifaddrs['ipaddr6'] = $v6addr['addr'];
 		foreach(array("subnetbits", "tunnel") as $key) {
 			if (array_key_exists($key, $v6addr)) {
 				$ifaddrs[$key.'6'] = $v6addr[$key];
 			}
 		}
-		if (array_key_exists('tentative', $v6addr)) {
-			$ifaddrs['tentative'] = $v6addr['tentative'];
+
+		$selected_address_flags = [];
+		foreach ($address_flags as $flag => $addresses) {
+			if ($flag == 'no_flag') {
+				continue;
+			}
+			foreach ($addresses as $address) {
+				if ($address == $selected_address) {
+					$selected_address_flags[$flag] = true;
+					continue 2;
+				}
+			}
+		}
+		if (!empty($selected_address_flags)) {
+			$ifaddrs['ipaddr6_flags'] = $selected_address_flags;
 		}
 	}
 	unset($ifaddrs['addrs']);

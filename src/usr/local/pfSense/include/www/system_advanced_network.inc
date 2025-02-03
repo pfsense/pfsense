@@ -34,6 +34,7 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['radvddebug'] = config_path_enabled('system', 'radvddebug');
 	$pconfig['ignoreiscwarning'] = config_path_enabled('system', 'ignoreiscwarning');
 	$pconfig['dhcp6debug'] = config_path_enabled('system', 'dhcp6debug');
+	$pconfig['dhcpkearunscript'] = config_path_enabled('system', 'dhcpkearunscript');
 	$pconfig['dhcp6norelease'] = config_path_enabled('system', 'dhcp6norelease');
 	$pconfig['global-v6duid'] = config_path_enabled('system', 'global-v6duid') ? config_get_path('system/global-v6duid') : null;
 	$pconfig['prefer_ipv4'] = config_path_enabled('system', 'prefer_ipv4');
@@ -152,6 +153,12 @@ function saveAdvancedNetworking($post, $json = false) {
 			config_set_path('system/dhcp6debug', true);
 		} else {
 			config_del_path('system/dhcp6debug');
+		}
+
+		if ($post['dhcpkearunscript'] == "yes") {
+			config_set_path('system/dhcpkearunscript', true);
+		} else {
+			config_del_path('system/dhcpkearunscript');
 		}
 
 		if ($post['dhcp6norelease'] == "yes") {

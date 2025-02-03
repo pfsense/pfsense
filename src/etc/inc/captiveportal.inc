@@ -228,11 +228,11 @@ function captiveportal_configure_zone($cpcfg, $reload_rules = false) {
 	$captiveportallck = lock("captiveportal{$cpzone}", LOCK_EX);
 
 	if (isset($cpcfg['enable'])) {
-
+		$zone_description = $cpzone . ($cpcfg['descr'] ? " ({$cpcfg['descr']})" : '');
 		if (is_platform_booting()) {
-			echo "Starting captive portal({$cpzone})... ";
+			echo "Starting captive portal zone {$zone_description}... ";
 		} else {
-			captiveportal_syslog("Reconfiguring captive portal({$cpzone}).");
+			captiveportal_syslog("Reconfiguring captive portal zone {$zone_description}.");
 		}
 
 		/* init captive portal pipes and anchors */
@@ -386,7 +386,7 @@ EOD;
 
 				$connected_users = captiveportal_read_db();
 				if (!empty($connected_users)) {
-					echo "Reconnecting users to captive portal {$cpzone}... ";
+					echo "Reconnecting users to captive portal zone {$zone_description}... ";
 					foreach ($connected_users as $user) {
 						captiveportal_reserve_ruleno($user['pipeno']);
 						captiveportal_ether_configure_entry($user, 'auth', true);

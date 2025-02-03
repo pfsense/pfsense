@@ -193,7 +193,7 @@ if ($_POST['save']) {
 			foreach ($a_cp as $cpkey => $cp) {
 				if ($cpkey != $cpzone || empty($cpzone)) {
 					if (in_array($cpbrif, explode(",", $cp['interface']))) {
-						$input_errors[] = sprintf(gettext('The captive portal cannot be used on interface %1$s since it is used already on %2$s instance.'), $cpbrif, $cpkey);
+						$input_errors[] = sprintf(gettext('The captive portal cannot be used on interface %1$s since it is used already on %2$s instance.'), $cpbrif, ($cpkey . ($cp['descr'] ? " ({$cp['descr']})" : '')));
 					}
 				}
 			}

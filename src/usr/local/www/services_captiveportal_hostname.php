@@ -55,7 +55,7 @@ if (isset($cpzone) && !empty($cpzone) && (config_get_path("captiveportal/{$cpzon
 	$cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Allowed Hostnames"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), htmlspecialchars($cpzone), gettext("Allowed Hostnames"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 

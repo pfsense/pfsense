@@ -48,26 +48,25 @@ if ($_POST['Submit']) {
 	$reqdfieldsn = array(gettext("Zone name"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+	$cpzone = strtolower(htmlspecialchars(strval($_POST['zone'])));
 
-	if (preg_match('/[^A-Za-z0-9_]/', $_POST['zone'])) {
+	if (preg_match('/[^A-Za-z0-9_]/', $cpzone)) {
 		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores ( _ ).");
 	}
 
-	if (in_array(strtolower($_POST['zone']), array_keys(array_merge(listtags(), listtags_pkg()), true))) {
+	if (in_array($cpzone, array_keys(array_merge(listtags(), listtags_pkg()), true))) {
 		$input_errors[] = sprintf(gettext("The zone name [%s] is reserved."), $_POST['zone']);
 	}
 
-	foreach (config_get_path('captiveportal', []) as $cpent) {
-		if ($cpent['zone'] == $_POST['zone']) {
+	foreach (config_get_path('captiveportal', []) as $cp_zone => $cpent) {
+		if (strtolower($cp_zone) == $cpzone) {
 			$input_errors[] = sprintf(gettext("Zone [%s] already exists."), $_POST['zone']);
 			break;
 		}
 	}
 
 	if (!$input_errors) {
-		$cpzone = strtolower(htmlspecialchars($_POST['zone']));
 		config_set_path("captiveportal/{$cpzone}", [
-			'zone' => str_replace(" ", "", $_POST['zone']),
 			'descr' => $_POST['descr'],
 			'localauth_priv' => true
 		]);
@@ -91,7 +90,7 @@ $section = new Form_Section('Add Captive Portal Zone');
 $section->addInput(new Form_Input(
 	'zone',
 	'*Zone name'
-))->setPattern('^[A-Za-z_][0-9A-Za-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_) and may not start with a digit.');
+))->setPattern('^[A-Za-z_][0-9A-Za-z_]+')->setHelp('Zone name. Can only contain lowercase letters, digits, and underscores (_) and may not start with a digit.');
 
 $section->addInput(new Form_Input(
 	'descr',

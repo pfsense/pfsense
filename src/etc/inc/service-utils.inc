@@ -368,7 +368,7 @@ function get_services() {
 			$pconfig['name'] = "captiveportal";
 			$pconfig['zone'] = $zone;
 			$pconfig['enabled'] = true;
-			$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($setting['zone']);
+			$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($zone);
 			$services[] = $pconfig;
 		}
 	}

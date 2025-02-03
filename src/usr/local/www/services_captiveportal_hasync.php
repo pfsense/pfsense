@@ -50,7 +50,7 @@ if (empty(config_get_path("captiveportal/{$cpzone}"))) {
 	exit();
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("High Availability"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), htmlspecialchars($cpzone), gettext("High Availability"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 
 $pconfig['enablebackwardsync'] = config_path_enabled("captiveportal/{$cpzone}", 'enablebackwardsync');

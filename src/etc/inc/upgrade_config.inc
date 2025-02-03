@@ -3077,12 +3077,12 @@ function upgrade_088_to_089() {
 
 	/* migrate captive portal ssl to certificate manager */
 	if (is_array($cp_config)) {
-		foreach ($cp_config as &$setting) {
+		foreach ($cp_config as $cp_zone => &$setting) {
 			if (isset($setting['httpslogin'])) {
 				/* create cert entry */
 				$cert = array();
 				$cert['refid'] = uniqid();
-				$cert['descr'] = "Captive Portal Cert - {$setting['zone']}";
+				$cert['descr'] = "Captive Portal Cert - {$cp_zone}";
 				$cert['crt'] = $setting['certificate'];
 				$cert['prv'] = $setting['private-key'];
 
@@ -3090,7 +3090,7 @@ function upgrade_088_to_089() {
 					/* create ca entry */
 					$ca = array();
 					$ca['refid'] = uniqid();
-					$ca['descr'] = "Captive Portal CA - {$setting['zone']}";
+					$ca['descr'] = "Captive Portal CA - {$cp_zone}";
 					$ca['crt'] = $setting['cacertificate'];
 					$ca_config[] = $ca;
 

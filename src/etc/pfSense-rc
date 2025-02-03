@@ -106,7 +106,7 @@ fi
 fsck_forced_iterations=`/bin/kenv -q pfsense.fsck.force`
 if [ ! -z "${fsck_forced_iterations}" ]; then
 	echo "Forcing filesystem check (${fsck_forced_iterations} times)..."
-	while [ ${fsck_forced_iterations} -gt 0 ]; do
+	while [ "${fsck_forced_iterations}" -gt 0 ]; do
 		/sbin/fsck -fy -t ufs
 		fsck_forced_iterations=$((fsck_forced_iterations - 1))
 	done
@@ -118,7 +118,7 @@ fsck_fix_flag_file="/.fix_for_SA-19-10.ufs"
 unset fsck_fix_applied
 unset skip_fsck_fix
 unset fsck_fix_count
-if [ -f ${fsck_fix_flag_file} ]; then
+if [ -f "${fsck_fix_flag_file}" ]; then
 	if ! awk '{print $3}' /etc/fstab | grep -q ufs; then
 		echo "Fix for FreeBSD-SA-19:10.ufs is not needed in this system"
 		skip_fsck_fix=1
@@ -179,13 +179,13 @@ fi
 unset USE_ZFS
 if /sbin/kldstat -qm zfs; then
 	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-	if [ $ZFSFSAVAILABLE -eq 0 ]; then
+	if [ "$ZFSFSAVAILABLE" -eq 0 ]; then
 		/sbin/kldunload zfs
 	else
 		USE_ZFS=1
 		ZFSROOT=$(/sbin/zfs mount | /usr/bin/awk '$2 == "/" {print $1}')
 		if [ -n "$ZFSROOT" ]; then
-			/sbin/zfs set readonly=off $ZFSROOT
+			/sbin/zfs set readonly=off "$ZFSROOT"
 		fi
 		/sbin/zfs mount -a
 		# If /bootpool is present, then there is an additional zfs pool to import
@@ -257,7 +257,7 @@ fi
 
 # Setup ddb on all platforms.
 if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/${product_name}-ddb.conf
+	/sbin/ddb "/etc/${product_name}-ddb.conf"
 fi
 
 # Restore contents of the RAM disk store
@@ -288,7 +288,7 @@ fi
 varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
 if ! ramdisk_is_active; then
-	/sbin/mount -o rw,size=4m,mode=1777 -t tmpfs tmpfs $varrunpath
+	/sbin/mount -o rw,size=4m,mode=1777 -t tmpfs tmpfs "$varrunpath"
 fi
 
 echo
@@ -320,14 +320,14 @@ if [ -n "${SWAPDEVICE}" ]; then
 fi
 
 # make some directories in /var
-/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
+/bin/mkdir -p "$varrunpath" /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
 
 # turn off the immutable flag, set /var/empty to read-only, make it immutable again
 chflags noschg /var/empty
 chmod 0555 /var/empty
 chflags schg /var/empty
 
-/bin/rm -rf $varrunpath/*
+/bin/rm -rf "$varrunpath"/*
 
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*
@@ -378,7 +378,7 @@ echo -n "."
 LOG_FILES="system filter dhcpd vpn poes l2tps openvpn auth portalauth ipsec ppp wireless nginx ntpd gateways resolver routing"
 
 for logfile in $LOG_FILES; do
-	/usr/bin/touch /var/log/${logfile}.log
+	/usr/bin/touch "/var/log/${logfile}.log"
 done
 
 # change permissions on newly created log files.
@@ -391,10 +391,9 @@ if [ "$DEVFS" = "0" ]; then
 fi
 
 # Create an initial utmp file
-cd $varrunpath && /bin/cp /dev/null utmp && /bin/chmod 644 utmp
+/bin/cp /dev/null "${varrunpath}/utmp" && /bin/chmod 644 "${varrunpath}/utmp"
 
 echo -n "."
-/sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 /etc/rc.d/ldconfig start 2>/dev/null
 
 # Launching kbdmux(4)
@@ -428,19 +427,19 @@ fi
 
 # Second upgrade stage
 [ -z "$skip_packages" ] \
-	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 2
+	&& "/usr/local/sbin/${product_name}-upgrade" -y -U -b 2
 
 # Copy default openssl config file and Netgate CA
 [ -d /etc/ssl ] \
 	|| mkdir -p /etc/ssl
-[ -f /usr/local/share/${product_name}/ssl/openssl.cnf ] \
-	&& cp -f /usr/local/share/${product_name}/ssl/openssl.cnf /etc/ssl
+[ -f "/usr/local/share/${product_name}/ssl/openssl.cnf" ] \
+	&& cp -f "/usr/local/share/${product_name}/ssl/openssl.cnf" /etc/ssl
 mkdir -p /usr/local/openssl >/dev/null 2>&1
 ln -sf /etc/ssl/openssl.cnf \
 	/usr/local/openssl/openssl.cnf
 
-[ -f /usr/local/share/${product_name}/ssl/netgate-ca.pem ] \
-	&& cp -f /usr/local/share/${product_name}/ssl/netgate-ca.pem /etc/ssl
+[ -f "/usr/local/share/${product_name}/ssl/netgate-ca.pem" ] \
+	&& cp -f "/usr/local/share/${product_name}/ssl/netgate-ca.pem" /etc/ssl
 
 # Populate /usr/local/etc/php.ini
 /usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
@@ -460,13 +459,13 @@ export fcgipath=/var/run/php-fpm.socket
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
-/usr/bin/touch $varrunpath/booting
+/usr/bin/touch "$varrunpath/booting"
 
 # Copy custom logo over if it's present
-if [ -d /usr/local/share/${product_name}/custom_logos ]; then
-	cp -f /usr/local/share/${product_name}/custom_logos/*svg \
+if [ -d "/usr/local/share/${product_name}/custom_logos" ]; then
+	cp -f "/usr/local/share/${product_name}/custom_logos/"*svg \
 		/usr/local/www
-	cp -f /usr/local/share/${product_name}/custom_logos/*css \
+	cp -f "/usr/local/share/${product_name}/custom_logos/"*css \
 		/usr/local/www/css
 fi
 
@@ -475,16 +474,16 @@ fi
 	&& /usr/local/etc/rc.d/microcode_update onestart
 
 if [ -n "${skip_fsck_fix}" ]; then
-	rm -f ${fsck_fix_flag_file}
-elif [ -f ${fsck_fix_flag_file} ]; then
+	rm -f "${fsck_fix_flag_file}"
+elif [ -f "${fsck_fix_flag_file}" ]; then
 	# fsck fix already applied
 	if [ -n "${fsck_fix_applied}" ]; then
 		touch /cf/conf/applied_fix_for_SA-19-10.ufs
-		rm -f ${fsck_fix_flag_file}
-	elif [ ${fsck_fix_count} -ge 3 ]; then
+		rm -f "${fsck_fix_flag_file}"
+	elif [ "${fsck_fix_count}" -ge 3 ]; then
 		echo "ERROR: fsck fix for SA-19-10 failed to apply..."
 		sleep 5
-		rm -f ${fsck_fix_flag_file}
+		rm -f "${fsck_fix_flag_file}"
 	else
 		# if / is UFS, reroot instead of reboot
 		root_fstype=$(mount -p / | awk '{print $3}')
@@ -511,8 +510,8 @@ fi
 
 # /etc/rc.bootup unset $g['booting'], and removes file
 # Be sure the file is removed to not create troubles after
-if [ -f $varrunpath/booting ]; then
-	/bin/rm $varrunpath/booting
+if [ -f "$varrunpath/booting" ]; then
+	/bin/rm "$varrunpath/booting"
 fi
 
 if [ -n "${USE_ZFS}" ]; then
@@ -521,13 +520,13 @@ if [ -n "${USE_ZFS}" ]; then
 		zpool list -o name pfSense > /dev/null 2>&1 && ZPOOL=pfSense
 		zpool list -o name zroot > /dev/null 2>&1 && ZPOOL=zroot
 		if [ -n "${ZPOOL}" ]; then
-			zfs list -Hp -o name -t filesystem | grep -q ${ZPOOL}/reservation
+			zfs list -Hp -o name -t filesystem | grep -q "${ZPOOL}/reservation"
 			if [ $? -ne 0 ]; then
-				AVAIL=$( zfs list -Hpo avail ${ZPOOL} )
-				RESSIZE=$( zfs list -Hpo avail,used ${ZPOOL} | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
-				if [ $(( ${AVAIL} / 2 )) -gt ${RESSIZE} ]; then
+				AVAIL=$( zfs list -Hpo avail "${ZPOOL}" )
+				RESSIZE=$( zfs list -Hpo avail,used "${ZPOOL}" | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
+				if [ $(( AVAIL / 2 )) -gt "${RESSIZE}" ]; then
 					logger "Creating ZFS reservation of ${RESSIZE} bytes on ${ZPOOL}"
-					zfs create -o reservation=${RESSIZE} ${ZPOOL}/reservation
+					zfs create -o reservation="${RESSIZE}" "${ZPOOL}/reservation"
 				else
 					logger "Not enough space to create reservation on ${ZPOOL};  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
 				fi
@@ -558,16 +557,16 @@ echo "done."
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
 # Start ping handler every 240 seconds
-/usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
+/usr/local/bin/minicron 240 "$varrunpath/ping_hosts.pid" /usr/local/bin/ping_hosts.sh
 
 # Start IPsec keep alive handler every 300 seconds
-/usr/local/bin/minicron 300 $varrunpath/ipsec_keepalive.pid /usr/local/bin/ipsec_keepalive.php
+/usr/local/bin/minicron 300 "$varrunpath/ipsec_keepalive.pid" /usr/local/bin/ipsec_keepalive.php
 
 # Start account expire handler every hour
-/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
+/usr/local/bin/minicron 3600 "$varrunpath/expire_accounts.pid" '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
 
 # Start alias url updater every 24 hours
-/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid '/usr/local/sbin/fcgicli -f /etc/rc.update_alias_url_data'
+/usr/local/bin/minicron 86400 "$varrunpath/update_alias_url_data.pid" '/usr/local/sbin/fcgicli -f /etc/rc.update_alias_url_data'
 
 /bin/chmod a+rw /tmp/.
 
@@ -581,7 +580,7 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 fi
 
 if [ -z "$skip_packages" ]; then
-	/usr/local/sbin/${product_name}-upgrade -y -U -b 3
+	"/usr/local/sbin/${product_name}-upgrade" -y -U -b 3
 fi
 
 # Start packages

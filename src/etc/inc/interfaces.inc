@@ -120,21 +120,20 @@ function does_vip_exist($vip) {
 			return false;
 	}
 
+	$ifacedata = pfSense_get_ifaddrs($realif);
 	if (is_ipaddrv6($vip['subnet'])) {
-		$comparevip = Net_IPv6::uncompress($vip['subnet']);
+		$comparevip = explode('%', Net_IPv6::uncompress($vip['subnet']));
+		foreach (array_get_path($ifacedata, 'addrs6', []) as $addrs) {
+			if (Net_IPv6::uncompress($addrs['addr']) == $comparevip[0]) {
+				return true;
+			}
+		}
 	} else {
 		$comparevip = $vip['subnet'];
-	}
-
-	$ifacedata = pfSense_get_ifaddrs($realif);
-	foreach (array_get_path($ifacedata, 'addrs', []) as $addrs) {
-		if ($addrs['addr'] == $comparevip) {
-			return true;
-		}
-	}
-	foreach (array_get_path($ifacedata, 'addrs6', []) as $addrs) {
-		if (Net_IPv6::uncompress($addrs['addr']) == $comparevip) {
-			return true;
+		foreach (array_get_path($ifacedata, 'addrs', []) as $addrs) {
+			if ($addrs['addr'] == $comparevip) {
+				return true;
+			}
 		}
 	}
 
@@ -6416,7 +6415,7 @@ function find_interface_ipv6_ll($interface, $flush = false, $usefirst = true) {
 		$ifinfo = pfSense_get_ifaddrs($interface);
 		foreach (array_get_path($ifinfo, 'addrs6', []) as $addrs) {
 			if (isset($addrs['linklocal'])) {
-				$interface_llv6_arr_cache[$interface] = $addrs['addr'];
+				$interface_llv6_arr_cache[$interface] = "{$addrs['addr']}%{$interface}";
 				if ($usefirst) {
 					break;
 				}
@@ -7747,6 +7746,10 @@ function get_interface_addresses($interface) {
 		}
 
 		$ifaddrs['ipaddr6'] = $v6addr['addr'];
+		if (isset($v6addr['linklocal'])) {
+			$ifaddrs['ipaddr6'] .= "%{$interface}";
+		}
+
 		foreach(array("subnetbits", "tunnel") as $key) {
 			if (array_key_exists($key, $v6addr)) {
 				$ifaddrs[$key.'6'] = $v6addr[$key];

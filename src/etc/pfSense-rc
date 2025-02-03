@@ -216,6 +216,9 @@ fi
 # Sanity check the clock
 /etc/rc.checkclock
 
+# Make sure the dynamic linker is setup for xmllint
+[ ! -f /var/run/ld-elf.so.hints ] && /etc/rc.d/ldconfig start
+
 # Check if RAM disks are enabled, store for repeated use
 if ramdisk_check_enabled; then
 	USE_RAMDISK=true

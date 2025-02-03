@@ -6923,6 +6923,19 @@ function upgrade_236_to_237() {
 	rename_conflicting_aliases();
 }
 
+/* The config path captiveportal/<zone>/zone has been removed. */
+function upgrade_237_to_238() {
+	$zones_to_update = [];
+	foreach (config_get_path('captiveportal', []) as $zone_name => $zone_config) {
+		if (array_key_exists('zone', $zone_config)) {
+			$zones_to_update[] = $zone_name;
+		}
+	}
+	foreach ($zones_to_update as $zone) {
+		config_del_path("captiveportal/{$zone}/zone");
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

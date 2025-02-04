@@ -737,6 +737,14 @@ function services_kea6_configure() {
 		$keasubnet['interface'] = $realif;
 		$keasubnet['subnet'] = $subnetv6 . '/' . $ifcfgsnv6;
 
+		if ($dhcpv6ifconf['pdprefix']) {
+			$keasubnet['pd-pools'][] = [
+				'prefix' => $dhcpv6ifconf['pdprefix'],
+				'prefix-len' => (int)$dhcpv6ifconf['pdprefixlen'],
+				'delegated-len' => (int)$dhcpv6ifconf['pddellen']
+			];
+		}
+
 		$all_pools = [];
 		$all_pools[] = $dhcpv6ifconf;
 		if (is_array($dhcpv6ifconf['pool'])) {

@@ -103,6 +103,10 @@ if (is_array($dhcpdconf)) {
 		$pconfig['prefixrange_length'] = $dhcpdconf['prefixrange']['prefixlength'];
 	}
 
+	$pconfig['pdprefix'] = $dhcpdconf['pdprefix'];
+	$pconfig['pdprefixlen'] = $dhcpdconf['pdprefixlen'];
+	$pconfig['pddellen'] = $dhcpdconf['pddellen'];
+
 	$pconfig['deftime'] = $dhcpdconf['defaultleasetime'];
 	$pconfig['maxtime'] = $dhcpdconf['maxleasetime'];
 	$pconfig['domain'] = $dhcpdconf['domain'];
@@ -194,6 +198,15 @@ if (isset($_POST['apply'])) {
 	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
+
+	if ($_POST['pdprefix']) {
+		if (!is_ipaddrv6($_POST['pdprefix'])) {
+			$input_errors[] = gettext('Delegated prefix must be a valid IPv6 prefix.');
+		}
+		if ((int)$_POST['pddellen'] < (int)$_POST['pdprefixlen']) {
+			$input_errors[] = gettext('Delegated length must be greater than or equal to the prefix length.');
+		}
+	}
 
 	// Note: if DHCPv6 Server is not enabled, then it is OK to adjust other parameters without specifying range from-to.
 	if ($_POST['enable'] || is_numeric($pool) || ($act === 'newpool')) {
@@ -434,6 +447,17 @@ if (isset($_POST['apply'])) {
 		}
 		if (!is_array($dhcpdconf['range'])) {
 			$dhcpdconf['range'] = [];
+		}
+
+		// Kea prefix delegation
+		if ($_POST['pdprefix']) {
+			$dhcpdconf['pdprefix'] = $_POST['pdprefix'];
+			$dhcpdconf['pdprefixlen'] = $_POST['pdprefixlen'];
+			$dhcpdconf['pddellen'] = $_POST['pddellen'];
+		} else {
+			unset($dhcpdconf['pdprefix']);
+			unset($dhcpdconf['pdprefixlen']);
+			unset($dhcpdconf['pddellen']);
 		}
 
 		// Global options
@@ -873,6 +897,7 @@ $form->add($section);
 
 if (!is_numeric($pool) && !($act === 'newpool')):
 $section = new Form_Section(gettext('Prefix Delegation Pool'));
+if (dhcp_is_backend('isc')):
 $f1 = new Form_Input(
 	'prefixrange_from',
 	null,
@@ -916,6 +941,24 @@ $section->addInput(new Form_Select(
 		'64' => '64'
 		)
 ))->setHelp(gettext('A prefix range can be defined here for DHCP Prefix Delegation. This allows for assigning networks to subrouters. The start and end of the range must end on boundaries of the prefix delegation size.'));
+else:
+$section->addInput(new Form_IpAddress(
+	'pdprefix',
+	gettext('Delegated Prefix'),
+	$pconfig['pdprefix'],
+	'V6'
+))->addClass('trim')
+  ->addMask('pdprefixlen', $pconfig['pdprefixlen'], 48, 64, false)
+  ->setWidth(5)
+  ->setHelp(gettext('Starting address range from which delegated prefixes will be assigned. The prefix length here determines the fixed portion of the address, and it must be smaller than or equal to the delegated length below.' ));
+$section->addInput(new Form_Select(
+	'pddellen',
+	gettext('Delegated Length'),
+	$pconfig['pddellen'],
+	[] /* filled by `update_delegated_length` on page load and on changes to pdprefix */
+))->setWidth(5)
+  ->setHelp(gettext('The length of the prefixes that will be delegated to clients.'));
+endif;
 $form->add($section);
 endif;
 
@@ -1598,6 +1641,18 @@ events.push(function() {
 		checkLastRow();
 	});
 
+	function update_delegated_length() {
+		let start = parseInt($('#pdprefixlen').val(), 10);
+		let dellen = $('#pddellen');
+		dellen.empty();
+		for (let i = start; i <= 128; i++) {
+			let selected = (i.toString() === "<?=$pconfig['pddellen']?>");
+			dellen.append(new Option(i, i, false, selected));
+		}
+	}
+
+	$('#pdprefixlen').on('change', update_delegated_length);
+
 	// On initial load
 	show_advdns(true);
 	show_advntp(true);
@@ -1611,6 +1666,7 @@ events.push(function() {
 		hideClass('adnloptions', true);
 		hideInput('addrow', true);
 	}
+	update_delegated_length();
 });
 //]]>
 </script>

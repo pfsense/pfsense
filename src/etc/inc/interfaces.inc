@@ -6388,6 +6388,17 @@ function find_interface_ipv6($interface, $flush = false, $linklocal_fallback = f
 		return;
 	}
 
+	/**
+	 * Cache the previous linklocal_fallback value per interface.
+	 * If the linklocal_fallback value has changed for this interface,
+	 * force a flush and update the static cache.
+	 */
+	static $linklocal_fallback_cache = [];
+	if (!isset($linklocal_fallback_cache[$interface]) || $linklocal_fallback_cache[$interface] !== $linklocal_fallback) {
+		$flush = true;
+		$linklocal_fallback_cache[$interface] = $linklocal_fallback;
+	}
+
 	/* Setup IP cache */
 	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = get_interface_addresses($interface, $linklocal_fallback);

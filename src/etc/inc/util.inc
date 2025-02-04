@@ -933,7 +933,7 @@ function is_mcastv6($ipaddr) {
 }
 
 /* returns 4 or 6 respectively (== TRUE) if $ipaddr is a valid IPv4 or IPv6 linklocal address
-   returns '' if not a valid linklocal address */
+   returns false if not a valid linklocal address */
 function is_linklocal($ipaddr) {
 	if (is_ipaddrv4($ipaddr)) {
 		// input is IPv4
@@ -945,7 +945,7 @@ function is_linklocal($ipaddr) {
 	} elseif (Net_IPv6::getAddressType($ipaddr) == NET_IPV6_LOCAL_LINK) {
 		return 6;
 	}
-	return '';
+	return false;
 }
 
 /* returns scope of a linklocal address */

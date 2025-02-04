@@ -220,7 +220,7 @@ fi
 [ ! -f /var/run/ld-elf.so.hints ] && /etc/rc.d/ldconfig start
 
 # Check if RAM disks are enabled, store for repeated use
-if ramdisk_check_enabled; then
+if ramdisk_check_enabled && ramdisk_check_size; then
 	USE_RAMDISK=true
 fi
 
@@ -236,7 +236,23 @@ fi
 
 # Attempt to create and mount RAM disks
 if [ -n "${USE_RAMDISK}" ]; then
-	/etc/rc.embedded
+	echo -n "Setting up memory disks..."
+	if ramdisk_try_mount tmp && ramdisk_try_mount var; then
+		/bin/rm -f "${RAMDISK_FLAG_FILE}"
+		# Create some needed directories
+		/bin/mkdir -p /var/db /var/spool/lock
+		/usr/sbin/chown uucp:dialer /var/spool/lock
+		# Ensure vi's recover directory is present
+		/bin/mkdir -p /var/tmp/vi.recover
+		/bin/mkdir -p /var/crash
+		/bin/mkdir -p /var/run
+		/bin/mkdir -p /var/log
+		echo " done."
+	else
+		/usr/bin/touch "${RAMDISK_FLAG_FILE}"
+		/sbin/umount -f /tmp /var 2>/dev/null
+		echo " failed."
+	fi
 	# Remount the correct subordinate ZFS datasets to ensure they are used properly
 	[ -n "${USE_ZFS}" ] && _be_mount_zfs
 fi
@@ -290,7 +306,7 @@ fi
 # Use php -n here because we are not ready to load extensions yet
 varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
-if ! ramdisk_is_active; then
+if [ -z "${USE_RAMDISK}" ]; then
 	/sbin/mount -o rw,size=4m,mode=1777 -t tmpfs tmpfs "$varrunpath"
 fi
 
@@ -323,7 +339,7 @@ if [ -n "${SWAPDEVICE}" ]; then
 fi
 
 # make some directories in /var
-/bin/mkdir -p "$varrunpath" /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
+/bin/mkdir -p "$varrunpath" /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
 
 # turn off the immutable flag, set /var/empty to read-only, make it immutable again
 chflags noschg /var/empty

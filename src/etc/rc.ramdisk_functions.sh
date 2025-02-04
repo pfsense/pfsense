@@ -128,18 +128,14 @@ ramdisk_check_size () {
 #   ramdisk_try_mount var
 ramdisk_try_mount () {
 	NAME=$1
-	if [ ramdisk_check_size ]; then
-		SIZE=$(eval echo \${${NAME}size})m
-		if [ "${NAME}" = "tmp" ]; then
-			MODE="1777"
-		else
-			MODE="1755"
-		fi
-		/sbin/mount -o rw,size=${SIZE},mode=${MODE} -t tmpfs tmpfs /${NAME}
-		return $?
+	SIZE=$(eval echo \${${NAME}size})m
+	if [ "${NAME}" = "tmp" ]; then
+		MODE="1777"
 	else
-		return 1;
+		MODE="1755"
 	fi
+	/sbin/mount -o rw,size=${SIZE},mode=${MODE} -t tmpfs tmpfs /${NAME}
+	return $?
 }
 
 # If the install has RAM disks, or if the full install _was_ using RAM disks, make a backup.

@@ -83,7 +83,7 @@ if (isset($_POST['save'])) {
 	if (isset($_POST['name'])) {
 		/* check for overlaps */
 		foreach (config_get_path('gateways/gateway_group', []) as $gateway_group) {
-			if ($this_gateway_group_config && ($this_gateway_group_config === $gateway_group)) {
+			if (isset($id) && ($this_gateway_group_config && ($this_gateway_group_config === $gateway_group))) {
 				if ($gateway_group['name'] != $_POST['name']) {
 					$input_errors[] = gettext("Changing name on a gateway group is not allowed.");
 				}

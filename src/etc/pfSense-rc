@@ -63,6 +63,7 @@ product_label=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_la
 echo "Configuring crash dumps..."
 /etc/rc.dumpon
 
+unset SWAP_FSTAB_ADD
 if [ -e /root/force_growfs ]; then
 	/sbin/gpart show mmcsd0 2> /dev/null | grep -q freebsd-zfs
 	if [ $? -eq 0 ]; then
@@ -73,6 +74,26 @@ if [ -e /root/force_growfs ]; then
 		fi
 	fi
 	/etc/rc.d/growfs onestart
+	ALL_SWAPFS="$(/usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1}' "${DESTDIR}/etc/fstab")"
+	HAS_SWAP="0"
+	for SFS in ${ALL_SWAPFS}
+	do
+		DEV="${SFS##/dev/}"
+		[ "${DEV}" = "" ] && continue
+		SWAPDEV="${DEV}"
+                echo "FS: Swap slice on device ${SWAPDEV}"
+		HAS_SWAP="1"
+	done
+
+	# Check if growfs has created a swap partition.
+	if [ "${HAS_SWAP}" = "0" ] && \
+	    [ "$(/sbin/glabel status | /usr/bin/grep -c "growfs_swap")" = "1" ]; then
+		DEV="$(/sbin/glabel status | /usr/bin/grep growfs_swap | /usr/bin/awk '{ printf $3 }')"
+		# Rename the default growfs swap partition name.
+		/sbin/glabel destroy -f growfs_swap
+		/sbin/glabel label swap1 "/dev/${DEV}"
+		SWAP_FSTAB_ADD="1"
+	fi
 fi
 
 #
@@ -175,6 +196,11 @@ if /sbin/kldstat -qm zfs; then
 		# We need to handle ZFS boot environments here
 		_be_mount_zfs
 	fi
+fi
+
+# Add the swap partition created by growfs to the system fstab.
+if [ -n "${SWAP_FSTAB_ADD}" ] && [ -c "/dev/label/swap1" ]; then
+	printf "/dev/label/swap1\tnone\tswap\tsw\t0\t0\n" >> /etc/fstab
 fi
 
 # If /conf is a directory, convert it to a symlink to /cf/conf

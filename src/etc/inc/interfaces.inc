@@ -7737,7 +7737,7 @@ function get_interface_addresses($interface, $linklocal_fallback = false) {
 			}
 		}
 
-		if (!isset($v6addr['addr']['linklocal']) || $linklocal_fallback) {
+		if (!isset($v6addr['linklocal']) || $linklocal_fallback) {
 			$ifaddrs['ipaddr6'] = $v6addr['addr'];
 			if (isset($v6addr['linklocal'])) {
 				$ifaddrs['ipaddr6'] .= "%{$interface}";

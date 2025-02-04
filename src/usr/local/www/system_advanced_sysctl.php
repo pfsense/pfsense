@@ -35,9 +35,50 @@
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
-require_once("system_advanced_sysctl.inc");
 
-$tunables = getTunables();
+function get_default_sysctl_value($id) {
+	global $sysctls;
+
+	if (isset($sysctls[$id])) {
+		return $sysctls[$id];
+	}
+}
+
+function system_get_sysctls() {
+	global $sysctls;
+
+	$disp_sysctl = array();
+	$disp_cache = array();
+	foreach (config_get_path('sysctl/item', []) as $id => $tunable) {
+		if ($tunable['value'] == "default") {
+			$value = get_default_sysctl_value($tunable['tunable']);
+		} else {
+			$value = $tunable['value'];
+		}
+
+		$disp_sysctl[$id] = $tunable;
+		$disp_sysctl[$id]['modified'] = true;
+		$disp_cache[$tunable['tunable']] = 'set';
+	}
+
+	foreach ($sysctls as $sysctl => $value) {
+		if (isset($disp_cache[$sysctl])) {
+			continue;
+		}
+
+		$disp_sysctl[$sysctl] = array('tunable' => $sysctl, 'value' => $value, 'descr' => get_sysctl_descr($sysctl));
+	}
+	unset($disp_cache);
+
+	//sort by tunable names initially
+	uksort($disp_sysctl, function($key1, $key2) {
+		return strcmp($key1, $key2);
+	});
+
+	return $disp_sysctl;
+}
+
+$tunables = system_get_sysctls();
 
 if (isset($_REQUEST['id'])) {
 	$id = htmlspecialchars_decode($_REQUEST['id']);
@@ -120,7 +161,7 @@ if ($act != "edit"): ?>
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<table class="table table-responsive table-hover table-condensed">
+			<table class="table table-responsive table-hover table-condensed" data-sortable>
 				<caption><strong><?=gettext('NOTE: '); ?></strong><?=gettext('The options on this page are intended for use by advanced users only.'); ?></caption>
 				<thead>
 					<tr>

@@ -6375,9 +6375,9 @@ function find_interface_ip($interface, $flush = false) {
 }
 
 /*
- * find_interface_ipv6($interface): return the interface ip (first found)
+ * find_interface_ipv6($interface): return the interface ip
  */
-function find_interface_ipv6($interface, $flush = false) {
+function find_interface_ipv6($interface, $flush = false, $linklocal_fallback = false) {
 	global $interface_ipv6_arr_cache;
 	global $interface_snv6_arr_cache;
 
@@ -6390,7 +6390,7 @@ function find_interface_ipv6($interface, $flush = false) {
 
 	/* Setup IP cache */
 	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
-		$ifinfo = get_interface_addresses($interface);
+		$ifinfo = get_interface_addresses($interface, $linklocal_fallback);
 		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddr6'];
 		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbits6'];
 	}
@@ -6637,25 +6637,12 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 	}
 
 	/*
-	 * Beware that find_interface_ip() is our last option, it will
-	 * return the first IP it find on interface, not necessarily the
-	 * main IP address.
+	 * NOTE: On the case when only the prefix is requested,
+	 * the communication on WAN will be done over link-local.
 	 */
-	$curip = find_interface_ipv6($realif, $flush);
+	$curip = find_interface_ipv6($realif, $flush, $linklocal_fallback);
 	if ($curip && is_ipaddrv6($curip) && ($curip != "::")) {
 		return $curip;
-	} else {
-		/*
-		 * NOTE: On the case when only the prefix is requested,
-		 * the communication on WAN will be done over link-local.
-		 */
-		$iface = config_get_path("interfaces/{$interface}");
-		if ($linklocal_fallback || (is_array($iface) && isset($iface['dhcp6prefixonly']))) {
-			$curip = find_interface_ipv6_ll($realif, $flush);
-			if ($curip && is_ipaddrv6($curip) && ($curip != "::")) {
-				return $curip;
-			}
-		}
 	}
 	return null;
 }
@@ -7523,6 +7510,11 @@ function restart_interface_services($interface, $ipv6type = "") {
  * Return interface parameters and primary ipv4 and ipv6 addresses for the real iface
  * $interface, identified by exclusion of VIPs. Deprecates pfSense_get_interface_addresses()
  *
+ * @param string $interface The "real" interface name.
+ * @param bool $linklocal_fallback If true, include the IPv6 LL address
+ *             when no other addresses exist. This defaults to false to
+ *             retain the function's previous behavior.
+ *
  * Result array contains keyed values:
  * - ipaddr: ipv4 address
  * - subnetbits: ipv4 subnet bits
@@ -7553,7 +7545,7 @@ function restart_interface_services($interface, $ipv6type = "") {
  * - macaddr: interface configured ethernet address
  * - hwaddr: hardware ethernet address
  */
-function get_interface_addresses($interface) {
+function get_interface_addresses($interface, $linklocal_fallback = false) {
 	$v4addrs = array();
 	$v6addrs = array();
 	$v4vips = array();
@@ -7745,31 +7737,33 @@ function get_interface_addresses($interface) {
 			}
 		}
 
-		$ifaddrs['ipaddr6'] = $v6addr['addr'];
-		if (isset($v6addr['linklocal'])) {
-			$ifaddrs['ipaddr6'] .= "%{$interface}";
-		}
-
-		foreach(array("subnetbits", "tunnel") as $key) {
-			if (array_key_exists($key, $v6addr)) {
-				$ifaddrs[$key.'6'] = $v6addr[$key];
+		if (!isset($v6addr['addr']['linklocal']) || $linklocal_fallback) {
+			$ifaddrs['ipaddr6'] = $v6addr['addr'];
+			if (isset($v6addr['linklocal'])) {
+				$ifaddrs['ipaddr6'] .= "%{$interface}";
 			}
-		}
-
-		$selected_address_flags = [];
-		foreach ($address_flags as $flag => $addresses) {
-			if ($flag == 'no_flag') {
-				continue;
-			}
-			foreach ($addresses as $address) {
-				if ($address == $selected_address) {
-					$selected_address_flags[$flag] = true;
-					continue 2;
+	
+			foreach(array("subnetbits", "tunnel") as $key) {
+				if (array_key_exists($key, $v6addr)) {
+					$ifaddrs[$key.'6'] = $v6addr[$key];
 				}
 			}
-		}
-		if (!empty($selected_address_flags)) {
-			$ifaddrs['ipaddr6_flags'] = $selected_address_flags;
+	
+			$selected_address_flags = [];
+			foreach ($address_flags as $flag => $addresses) {
+				if ($flag == 'no_flag') {
+					continue;
+				}
+				foreach ($addresses as $address) {
+					if ($address == $selected_address) {
+						$selected_address_flags[$flag] = true;
+						continue 2;
+					}
+				}
+			}
+			if (!empty($selected_address_flags)) {
+				$ifaddrs['ipaddr6_flags'] = $selected_address_flags;
+			}
 		}
 	}
 	unset($ifaddrs['addrs']);

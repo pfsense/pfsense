@@ -778,10 +778,7 @@ function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "
 function unbound_add_host_entries($cfgsubdir = "") {
 	global $g, $nooutifs;
 
-	/* Only keep entries that make sense for DNS
-	 * https://redmine.pfsense.org/issues/16035 */
 	$hosts = system_hosts_entries(config_get_path('unbound', []));
-	$hosts = array_filter($hosts, fn($host) => !is_linklocal($host['ipaddr']));
 
 	/* Pass 1: Build domain list and hosts inside domains */
 	$hosts_by_domain = array();

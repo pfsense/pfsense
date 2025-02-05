@@ -221,7 +221,7 @@ fi
 
 # Check if RAM disks are enabled, store for repeated use
 if ramdisk_check_enabled && ramdisk_check_size; then
-	USE_RAMDISK=true
+	export USE_RAMDISK=true
 fi
 
 # Relocate pkgdb on UFS based on desired RAM disk settings

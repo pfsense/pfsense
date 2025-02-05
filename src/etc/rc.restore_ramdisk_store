@@ -24,61 +24,33 @@
 
 . /etc/rc.ramdisk_functions.sh
 
-# Wildcard file existence check function
-wildcard_file_exists() {
-	for file in "$1"; do
-		if [ -f "$file" ]; then
-			return 0
-		fi
-	done
-	return 1
-}
-
 : ${DBPATH:=/var/dhcpd/var/db}
 : ${CF_CONF_PATH:=/cf/conf}
 
-: ${RAM_Disk_Store:=${CF_CONF_PATH}/RAM_Disk_Store}
+: ${RAM_Disk_Store:="${CF_CONF_PATH}/RAM_Disk_Store"}
 
-# See if there are any backup files (*.tgz) in the RAM disk store.  If so, restore them.
-if wildcard_file_exists "${RAM_Disk_Store}/"*".tgz"; then
+if [ -d "${RAM_Disk_Store}" ]; then
+	echo "Restoring contents of RAM disk store..."
 
-	mesg="Restoring contents of RAM disk store..."
-	echo -n "$mesg"
+	# Clean up.
+	/bin/rm -f /var/log/restore_ramdisk_store.boot
 
-	# Restore the ram disk
-	for backup_file in "${RAM_Disk_Store}/"*".tgz"; do
-		if [ -f "$backup_file" ]; then
-			/usr/bin/tar -xzf "${backup_file}" -C / 2>&1
-			exit_code=$?
-			if [ $exit_code -ne 0 ]; then
-				mesg="$mesg\nRAM disk restore failed: exit code $exit_code: $backup_file"
-				error=1;
-				continue
-			fi
+	# See if there are any backup files (*.tgz) in the RAM disk store.  If so, restore them.
+	for backup_file in "${RAM_Disk_Store}/"*.tgz; do
+		[ -f "${backup_file}" ] || break
+		if ! /usr/bin/tar -xf "${backup_file}" -C / 2>&1; then
+			echo "RAM disk restore failed: $backup_file" >> /var/log/restore_ramdisk_store.boot
+			continue
+		fi
 
-			mesg="$mesg\nRAM disk restore succeeded: $backup_file"
+		echo "RAM disk restore succeeded: $backup_file" >> /var/log/restore_ramdisk_store.boot
 
-			#If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition.
-			if ! ramdisk_is_active; then
-				/bin/rm -f "${backup_file}"
-			fi
+		# If this backup is still there on a full install, but we aren't going to use RAM disks, remove the archive since this is a transition.
+		if [ -z "${USE_RAMDISK}" ]; then
+			/bin/rm -f "${backup_file}"
 		fi
 	done
-
-	if [ $error ]; then
-		mesg="$mesg\nRAM disk restore failed."
-		echo " error.";
-	else
-		mesg="$mesg\nRAM disk restore succeeded."
-		echo " done.";
-	fi
-
-	/bin/mkdir -p /var/log/
-	printf "$mesg" > /var/log/restore_ramdisk_store.boot
-
-	# See if there are any backup files (*.tgz) in the RAM disk store.  If not, and no error, clean up.
-	if ! wildcard_file_exists "${RAM_Disk_Store}/"*".tgz" && [ ! $error ]; then
-		/bin/rmdir "$RAM_Disk_Store" >/dev/null 2>&1
-		/bin/rm -f /var/log/restore_ramdisk_store.boot
+	if [ -z "${USE_RAMDISK}" ]; then
+		/bin/rmdir "${RAM_Disk_Store}" >/dev/null 2>&1
 	fi
 fi

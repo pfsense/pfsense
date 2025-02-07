@@ -136,6 +136,9 @@ if ($this_ppp_config) {
 				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 		case "pppoe":
 			$pconfig['provider'] = $this_ppp_config['provider'];
+			if (isset($this_ppp_config['if_pppoe'])) {
+				$pconfig['if_pppoe'] = true;
+			}
 			if (isset($this_ppp_config['provider']) && empty($this_ppp_config['provider'])) {
 				$pconfig['null_service'] = true;
 			}
@@ -406,6 +409,19 @@ if ($_POST['save']) {
 				} else {
 					unset($ppp['provider']);
 					$ppp['provider'] = $_POST['null_service'] ? true : false;
+				}
+				$ppp['if_pppoe'] = (!empty($_POST['if_pppoe'])) ? true : false;
+				$if_pppoe_en = false;
+				if (isset($id) && $this_ppp_config != NULL) {
+					$if_pppoe_en = (isset($this_ppp_config['if_pppoe'])) ? true : false;
+				}
+				if ($if_pppoe_en != $ppp['if_pppoe']) {
+					$if_config = config_get_path('interfaces', []);
+					foreach ($iflist as $pppif => $ifdescr) {
+						if ($if_config[$pppif]['if'] == $ppp['if']) {
+							interface_bring_down($pppif, true);
+						}
+					}
 				}
 				if (!empty($_POST['pppoe-reset-type'])) {
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
@@ -683,6 +699,19 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Causes cumulative uptime to be recorded and displayed on the %1$sStatus->Interfaces%2$s page.', '<a href="status_interfaces.php">', '</a>');
 
 if ($pconfig['type'] == 'pppoe') {
+	$group = new Form_Group('if_pppoe');
+	$group->addClass('pppoe');
+
+	$group->add(new Form_Checkbox(
+		'if_pppoe',
+		null,
+		'Enable the if_pppoe kernel module',
+		$pconfig['if_pppoe']
+	));
+	$group->setHelp('Checking this option will force the system to use the if_pppoe kernel module. '.
+	    'Keep unchecked to use the old mpd5 PPPoE support.');
+	$section->add($group);
+
 	$group = new Form_Group('Service name');
 	$group->addClass('pppoe');
 

@@ -1895,15 +1895,16 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		case "pppoe":
 		case "pptp":
 		case "l2tp":
-			if ($ifcfg['ipaddr'] == "pppoe" &&
-			    !config_path_enabled('system',
-			    'use_mpd5_for_pppoe')) {
-				if (does_interface_exist($realif)) {
-					pfSense_interface_destroy($realif);
-				}
-			} elseif (is_array($ppps) && count($ppps)) {
+			if (is_array($ppps) && count($ppps) > 0) {
 				foreach ($ppps as  $ppp) {
-					if ($realif == $ppp['if']) {
+					if ($realif != $ppp['if']) {
+						continue;
+					}
+					if (isset($ppp['if_pppoe'])) {
+						if (does_interface_exist($realif)) {
+							pfSense_interface_destroy($realif);
+						}
+					} else {
 						if (isset($ppp['ondemand']) && !$destroy) {
 							send_event("interface reconfigure {$interface}");
 							break;
@@ -1913,8 +1914,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 							sleep(2);
 						}
 						unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-						break;
 					}
+					break;
 				}
 			}
 			break;
@@ -2359,8 +2360,7 @@ function interface_ppps_configure($interface) {
 
 	$confports = array_filter(explode(',', $ppp['ports']));
 
-	if (!config_path_enabled('system', 'use_mpd5_for_pppoe') &&
-	    $type == "pppoe" && count($confports) == 1) {
+	if (isset($ppp['if_pppoe']) && $type == "pppoe" && count($confports) == 1) {
 		return interface_pppoe_configure($ifcfg, $ppp);
 	}
 

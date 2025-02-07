@@ -759,11 +759,11 @@ function filter_generate_scrubbing() {
 		if (($scrubcfg['mss'] <> "") &&
 		    (is_numeric($scrubcfg['mss']))) {
 			$mss = intval($scrubcfg['mss']);
-		} elseif (!config_path_enabled('system',
-		    'use_mpd5_for_pppoe')) {
+		} else {
 			$ppps = config_get_path('ppps/ppp', []);
 			foreach ($ppps as $pppid => $ppp) {
-				if ($scrubcfg['if'] != $ppp['if']) {
+				if (!isset($ppp['if_pppoe']) ||
+				    $scrubcfg['if'] != $ppp['if']) {
 					continue;
 				}
 				if (isset($ppp['tcpmssfix'])) {

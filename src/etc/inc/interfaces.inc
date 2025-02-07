@@ -4082,18 +4082,20 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!is_platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_get_ifaddrs($realif);
-		foreach (array_get_path($tmpifaces, 'addrs', []) as $addrs) {
-			pfSense_interface_deladdress($realif, $addrs['addr']);
-		}
-		foreach (array_get_path($tmpifaces, 'addrs6', []) as $addrs) {
-			if ($addrs['addr'] == 'fe80::1:1') {
-				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 fe80::1:1 -alias");
-				continue;
+		if (isset($tmpifaces) && is_array($tmpifaces)) {
+			foreach (array_get_path($tmpifaces, 'addrs', []) as $addrs) {
+				pfSense_interface_deladdress($realif, $addrs['addr']);
 			}
-			if (isset($addrs['linklocal'])) {
-				continue;
+			foreach (array_get_path($tmpifaces, 'addrs6', []) as $addrs) {
+				if ($addrs['addr'] == 'fe80::1:1') {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 fe80::1:1 -alias");
+					continue;
+				}
+				if (isset($addrs['linklocal'])) {
+					continue;
+				}
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$addrs['addr']} delete");
 			}
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$addrs['addr']} delete");
 		}
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */

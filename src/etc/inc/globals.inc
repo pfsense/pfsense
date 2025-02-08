@@ -738,6 +738,7 @@ function get_ipprotocols(?string $type = ''):array {
 		'ah' => 'AH',
 		'gre' => 'GRE',
 		'etherip' => 'EoIP',
+		'ipencap' => 'IPIP',
 		'ipv6' => 'IPV6',
 		'igmp' => 'IGMP',
 		'pim' => 'PIM',

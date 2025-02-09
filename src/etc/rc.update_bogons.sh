@@ -38,7 +38,6 @@ process_url() {
 	local file=$1
 	local url=$2
 	local filename=${url##*/}
-	local ext=${filename#*.}
 
 	/usr/bin/fetch -a -w 600 -T 30 -q -o $file "${url}"
 
@@ -47,26 +46,7 @@ process_url() {
 		proc_error="true"
 	fi
 
-	case "$ext" in
-		tar)
-			mv $file $file.tmp
-			/usr/bin/tar -xf $file.tmp -O > $file 2> /dev/null
-			;;
-		tar.gz)
-			mv $file $file.tmp
-			/usr/bin/tar -xzf $file.tmp -O > $file 2> /dev/null
-			;;
-		tgz)
-			mv $file $file.tmp
-			/usr/bin/tar -xzf $file.tmp -O > $file 2> /dev/null
-			;;
-		tar.bz2)
-			mv $file $file.tmp
-			/usr/bin/tar -xjf $file.tmp -O > $file 2> /dev/null
-			;;
-		*)
-			;;
-	esac
+	/usr/bin/tar -xf "$file.tmp" -O > "$file" 2> /dev/null
 
 	if [ -f $file.tmp ]; then
 		rm $file.tmp

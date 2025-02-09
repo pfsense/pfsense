@@ -157,7 +157,7 @@ fi
 /sbin/mount -a 2>/dev/null
 mount_rc=$?
 attempts=0
-while [ ${mount_rc} -ne 0 -a ${attempts} -lt 10 ]; do
+while [ "${mount_rc}" -ne 0 ] && [ "${attempts}" -lt 10 ]; do
 	/sbin/fsck -fy -t ufs
 	/sbin/mount -a 2>/dev/null
 	mount_rc=$?
@@ -227,7 +227,7 @@ if [ -z "${USE_ZFS}" ]; then
 fi
 
 # Dismount /tmp and /var on ZFS if using RAM disks and they are separate volumes
-if [ -n "${USE_ZFS}" -a -n "${USE_RAMDISK}" ]; then
+if [ -n "${USE_ZFS}" ] && [ -n "${USE_RAMDISK}" ]; then
 	ramdisk_fixup_zfs_unmount
 fi
 
@@ -255,7 +255,7 @@ if [ -n "${USE_RAMDISK}" ]; then
 fi
 
 # If RAM disks are active, make symlinks for pkg database on UFS
-if [ -n "${USE_RAMDISK}" -o -n "${MOVE_PKG_DATA}" ]; then
+if [ -n "${USE_RAMDISK}" ] || [ -n "${MOVE_PKG_DATA}" ]; then
 	if [ -z "${USE_ZFS}" ]; then
 		ramdisk_link_pkgdb
 	fi

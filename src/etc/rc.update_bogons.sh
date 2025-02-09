@@ -48,11 +48,9 @@ process_url() {
 
 	/usr/bin/tar -xf "$file.tmp" -O > "$file" 2> /dev/null
 
-	if [ -f $file.tmp ]; then
-		rm $file.tmp
-	fi
-
-	if [ ! -f $file ]; then
+	if [ -f "$file.tmp" ]; then
+		rm "$file.tmp"
+	else
 		echo "Could not extract ${filename}" | logger
 		proc_error="true"
 	fi

@@ -35,13 +35,13 @@ fi
 
 # Download and extract if necessary
 process_url() {
-	local file=$1
-	local url=$2
-	local filename=${url##*/}
+	local file="$1"
+	local url="$2"
+	local filename="${url##*/}"
 
-	/usr/bin/fetch -a -w 600 -T 30 -q -o $file "${url}"
+	/usr/bin/fetch -a -w 600 -T 30 -q -o "$file" "${url}"
 
-	if [ ! -f $file ]; then
+	if [ ! -f "$file" ]; then
 		echo "Could not download ${url}" | logger
 		proc_error="true"
 	fi
@@ -63,7 +63,7 @@ if [ "$1" = "" ]; then
 	# Grab a random value
 	value=$( jot -r 1 86400 )
 	echo "rc.update_bogons.sh is sleeping for $value" | logger
-	sleep $value
+	sleep "$value"
 fi
 
 echo "rc.update_bogons.sh is beginning the update cycle." | logger
@@ -100,7 +100,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 		ENTRIES_TOT=`pfctl -vvsTables | awk '/Addresses/ {s+=$2}; END {print s}'`
 		ENTRIES_V4=`pfctl -vvsTables | awk '/-\tbogons$/ {getline; print $2}'`
 		LINES_V4=`wc -l /tmp/bogons | awk '{ print $1 }'`
-		if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT-${ENTRIES_V4:-0}+LINES_V4)) ]; then
+		if [ "$ENTRIES_MAX" -gt $((2*ENTRIES_TOT-${ENTRIES_V4:-0}+LINES_V4)) ]; then
 			egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
 			RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
 			echo "$RESULT" | awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
@@ -117,9 +117,9 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 		BOGONS_V6_TABLE_COUNT=`pfctl -sTables | grep ^bogonsv6$ | wc -l | awk '{ print $1 }'`
 		ENTRIES_TOT=`pfctl -vvsTables | awk '/Addresses/ {s+=$2}; END {print s}'`
 		LINES_V6=`wc -l /tmp/bogonsv6 | awk '{ print $1 }'`
-		if [ $BOGONS_V6_TABLE_COUNT -gt 0 ]; then
+		if [ "$BOGONS_V6_TABLE_COUNT" -gt 0 ]; then
 			ENTRIES_V6=`pfctl -vvsTables | awk '/-\tbogonsv6$/ {getline; print $2}'`
-			if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT-${ENTRIES_V6:-0}+LINES_V6)) ]; then
+			if [ "$ENTRIES_MAX" -gt $((2*ENTRIES_TOT-${ENTRIES_V6:-0}+LINES_V6)) ]; then
 				egrep -iv "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
 				RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
 				echo "$RESULT" | awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
@@ -127,7 +127,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 				echo "Not saving or updating IPv6 bogons (increase table-entries limit)" | logger
 			fi
 		else
-			if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT+LINES_V6)) ]; then
+			if [ "$ENTRIES_MAX" -gt $((2*ENTRIES_TOT+LINES_V6)) ]; then
 				egrep -iv "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
 				echo "Bogons V6 file downloaded but not updating IPv6 bogons table because it is not in use." | logger
 			else

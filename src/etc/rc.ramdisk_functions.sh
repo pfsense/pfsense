@@ -189,7 +189,7 @@ ramdisk_relocate_pkgdb_all () {
 	if ramdisk_check_enabled; then
 		USE_RAMDISK=true
 	fi
-	if [ -z "${USE_RAMDISK}" -a -f /root/var/db/pkg/local.sqlite ]; then
+	if [ -z "${USE_RAMDISK}" ] && [ -f /root/var/db/pkg/local.sqlite ]; then
 		if ramdisk_failed; then
 			echo "Not relocating pkg db due to previous RAM disk failure."
 			return 1
@@ -197,7 +197,7 @@ ramdisk_relocate_pkgdb_all () {
 		# If RAM disks are disabled, move files back into place
 		MOVE_PKG_DATA=1
 		ramdisk_relocate_pkgdb disk
-	elif [ -n "${USE_RAMDISK}" -a -f /var/db/pkg/local.sqlite ]; then
+	elif [ -n "${USE_RAMDISK}" ] && [ -f /var/db/pkg/local.sqlite ]; then
 		# If RAM disks are enabled, move files to a safe place
 		MOVE_PKG_DATA=1
 		ramdisk_relocate_pkgdb ram

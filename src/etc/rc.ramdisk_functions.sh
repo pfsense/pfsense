@@ -83,7 +83,7 @@ ramdisk_reset_status () {
 ramdisk_was_active() {
 	# If /var is on a memory disk, then RAM disks are active now or were active and recently disabled
 	DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
-	DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
+	DISK_TYPE=$( /usr/bin/basename "${DISK_NAME}" | /usr/bin/cut -c1-2 )
 	[ "${DISK_TYPE}" = "md" ]
 	return $?
 }
@@ -97,11 +97,11 @@ ramdisk_get_size () {
 	NAME=${1}
 	DEFAULT_SIZE=$(eval echo \${RAMDISK_DEFAULT_SIZE_${NAME}})
 
-	SIZE=$(/usr/local/sbin/read_xml_tag.sh string system/use_mfs_${NAME}_size)
-	if [ -n "${SIZE}" ] && [ ${SIZE} -gt 0 ]; then
-		echo ${SIZE}
+	SIZE=$(/usr/local/sbin/read_xml_tag.sh string "system/use_mfs_${NAME}_size")
+	if [ -n "${SIZE}" ] && [ "${SIZE}" -gt 0 ]; then
+		echo "${SIZE}"
 	else
-		echo ${DEFAULT_SIZE}
+		echo "${DEFAULT_SIZE}"
 	fi
 	return 0
 }
@@ -134,7 +134,7 @@ ramdisk_try_mount () {
 	else
 		MODE="1755"
 	fi
-	/sbin/mount -o rw,size=${SIZE},mode=${MODE} -t tmpfs tmpfs /${NAME}
+	/sbin/mount -o rw,size="${SIZE}",mode="${MODE}" -t tmpfs tmpfs "/${NAME}"
 	return $?
 }
 
@@ -157,7 +157,7 @@ ramdisk_make_backup () {
 #   ramdisk_relocate_pkgdb disk
 #   ramdisk_relocate_pkgdb ram
 ramdisk_relocate_pkgdb () {
-	if [ ${1} = "disk" ]; then
+	if [ "${1}" = "disk" ]; then
 		local SRC=/root
 		local DST=
 	else

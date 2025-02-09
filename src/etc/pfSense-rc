@@ -102,7 +102,7 @@ fi
 /sbin/mount -ur /
 
 fsck_forced_iterations=`/bin/kenv -q pfsense.fsck.force`
-if [ ! -z "${fsck_forced_iterations}" ]; then
+if [ -n "${fsck_forced_iterations}" ]; then
 	echo "Forcing filesystem check (${fsck_forced_iterations} times)..."
 	while [ "${fsck_forced_iterations}" -gt 0 ]; do
 		/sbin/fsck -fy -t ufs
@@ -272,7 +272,7 @@ else
 fi
 
 # Setup ddb on all platforms.
-if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+if [ -n "$( sysctl -Nq debug.ddb.scripting.scripts )" ]; then
 	/sbin/ddb "/etc/${product_name}-ddb.conf"
 fi
 

@@ -61,7 +61,7 @@ echo "rc.update_bogons.sh is starting up." | logger
 # Sleep for some time, unless an argument is specified.
 if [ "$1" = "" ]; then
 	# Grab a random value
-	value=`od -A n -d -N2 /dev/random | awk '{ print $1 }'`
+	value=$( jot -r 1 86400 )
 	echo "rc.update_bogons.sh is sleeping for $value" | logger
 	sleep $value
 fi

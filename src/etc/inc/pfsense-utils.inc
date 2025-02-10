@@ -566,6 +566,9 @@ function hardware_offloading_applyflags($iface) {
 	$flags_on = 0;
 	$flags_off = 0;
 	$options = get_interface_addresses($iface);
+	if (!isset($options)) {
+		return;
+	}
 
 	/* disable hardware checksum offloading for VirtIO network drivers,
 	 * see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=165059 */
@@ -1626,7 +1629,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];
-	$ifinfotmp = get_interface_addresses($chkif);
+	$ifinfotmp = get_interface_addresses($chkif) ?? [];
 	$ifinfo['status'] = $ifinfotmp['status'];
 	if (empty($ifinfo['status'])) {
 		$ifinfo['status'] = "down";

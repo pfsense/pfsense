@@ -203,8 +203,7 @@ if ($_POST['save']) {
 					$qinq = array();
 					$qinq['if'] = $qinqentry['vlanif'];
 					$qinq['tag'] = $member;
-					$macaddr = get_interface_mac($qinqentry['vlanif']);
-					interface_qinq2_configure($qinq, $macaddr);
+					interface_qinq2_configure($qinq);
 				}
 			}
 			config_set_path("qinqs/qinqentry/{$id}", $qinqentry);

@@ -784,7 +784,10 @@ function return_gateways_status($byname = false) {
 			continue;
 		}
 		$srcips = get_interface_addresses($gwitem['interface']);
-		if (is_ipaddrv4($gwitem['gateway'])) {
+		if (!isset($srcips)) {
+			$tgtip = 'none';
+			$srcip = null;
+		} elseif (is_ipaddrv4($gwitem['gateway'])) {
 			$tgtip = $srcips['ipaddr'];
 			$srcip = $tgtip;
 		} elseif (is_ipaddrv6($gwitem['gateway'])) {

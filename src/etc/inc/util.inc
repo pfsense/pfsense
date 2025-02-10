@@ -4862,6 +4862,9 @@ function get_specialnet_address($specialnet) {
 		return false;
 	}
 	$interface_addresses = get_interface_addresses($interface);
+	if (!isset($interface_addresses)) {
+		return false;
+	}
 
 	if (str_ends_with($specialnet, 'ip4')) {
 		if (isset($interface_addresses['ipaddr']) && is_ipaddrv4($interface_addresses['ipaddr'])) {

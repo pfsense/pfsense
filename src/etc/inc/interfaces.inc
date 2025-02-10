@@ -121,6 +121,9 @@ function does_vip_exist($vip) {
 	}
 
 	$ifacedata = pfSense_get_ifaddrs($realif);
+	if (!is_array($ifacedata)) {
+		return false;
+	}
 	if (is_ipaddrv6($vip['subnet'])) {
 		$comparevip = explode('%', Net_IPv6::uncompress($vip['subnet']));
 		foreach (array_get_path($ifacedata, 'addrs6', []) as $addrs) {
@@ -527,14 +530,13 @@ function interface_qinq_configure(&$qinq, $flush = true) {
 		mwexec("/sbin/ifconfig {$qinqif} promisc\n");
 	}
 
-	$macaddr = get_interface_mac($qinqif);
 	if (!empty($qinq['members'])) {
 		$members = explode(" ", $qinq['members']);
 		foreach ($members as $qtag) {
 			$qinq2 = array();
 			$qinq2['tag'] = $qtag;
 			$qinq2['if'] = $vlanif;
-			interface_qinq2_configure($qinq2, $macaddr);
+			interface_qinq2_configure($qinq2);
 			unset($qinq2);
 		}
 	}
@@ -572,7 +574,7 @@ function interfaces_qinq_configure($ovpn=false) {
 	}
 }
 
-function interface_qinq2_configure(&$qinq, $macaddr) {
+function interface_qinq2_configure(&$qinq) {
 	if (!is_array($qinq)) {
 		log_error(sprintf(gettext("QinQ compat VLAN: called with wrong options. Problems with config!%s"), "\n"));
 		return;
@@ -2068,7 +2070,7 @@ function interface_wait_tentative($interface, $timeout = 10) {
 	$time = 0;
 	while ($time <= $timeout) {
 		$if = get_interface_addresses($interface);
-		if (!array_get_path($if, 'ipaddr6_flags/tentative', false)) {
+		if (isset($if) && !array_get_path($if, 'ipaddr6_flags/tentative', false)) {
 			return true;
 		}
 		sleep(1);
@@ -3661,8 +3663,8 @@ EOD;
 		}
 		if ($wlcfg['mode'] == "hostap") {
 			/* add line to script to restore old mac to make hostapd happy */
-			if (file_exists("{$g['tmp_path']}/{$if}_oldmac")) {
-				$if_oldmac = file_get_contents("{$g['tmp_path']}/{$if}_oldmac");
+			$if_oldmac = file_get_contents("{$g['tmp_path']}/{$if}_oldmac");
+			if (!empty($if_oldmac)) {
 				$if_curmac = get_interface_mac($if);
 				if ($if_curmac != $if_oldmac && is_macaddr($if_oldmac)) {
 					fwrite($fd_set, "{$ifconfig} " . escapeshellarg($if) .
@@ -3739,7 +3741,7 @@ EOD;
 		$clones_up = array();
 		foreach ($clone_list as $clone_if) {
 			$clone_status = get_interface_addresses($clone_if);
-			if ($clone_status['status'] == 'up') {
+			if (isset($clone_status) && ($clone_status['status'] == 'up')) {
 				$clones_up[] = $clone_if;
 				mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " down");
 			}
@@ -4082,7 +4084,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!is_platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_get_ifaddrs($realif);
-		if (isset($tmpifaces) && is_array($tmpifaces)) {
+		if (isset($tmpifaces)) {
 			foreach (array_get_path($tmpifaces, 'addrs', []) as $addrs) {
 				pfSense_interface_deladdress($realif, $addrs['addr']);
 			}
@@ -4131,7 +4133,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$current_mac = get_interface_mac($realhwif);
 	$vendor_mac = get_interface_vendor_mac($realhwif);
 
-	if ($current_mac != "ff:ff:ff:ff:ff:ff") {
+	if (!empty($current_mac) && ($current_mac != "ff:ff:ff:ff:ff:ff")) {
 		$mac_addr = $mac_if_cfg['spoofmac'] ?: $vendor_mac;
 
 		interface_set_macaddr($realhwif, $mac_addr);
@@ -6358,6 +6360,9 @@ function find_interface_ip($interface, $flush = false) {
 		if (file_exists("/var/db/{$interface}_ip")) {
 			$ifip = chop(file_get_contents("/var/db/{$interface}_ip"));
 			$ifaddrs = pfSense_get_ifaddrs($interface);
+			if (!isset($ifaddrs)) {
+				return;
+			}
 			foreach (array_get_path($ifaddrs, 'addrs', []) as $addrs) {
 				if ($addrs['addr'] == $ifip) {
 					$interface_ip_arr_cache[$interface] = $addrs['addr'];
@@ -6368,6 +6373,9 @@ function find_interface_ip($interface, $flush = false) {
 		}
 		if (!isset($interface_ip_arr_cache[$interface])) {
 			$ifinfo = get_interface_addresses($interface);
+			if (!isset($ifinfo)) {
+				return;
+			}
 			$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
 			$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
 		}
@@ -6404,6 +6412,9 @@ function find_interface_ipv6($interface, $flush = false, $linklocal_fallback = f
 	/* Setup IP cache */
 	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = get_interface_addresses($interface, $linklocal_fallback);
+		if (!isset($ifinfo)) {
+			return;
+		}
 		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddr6'];
 		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbits6'];
 	}
@@ -6426,6 +6437,9 @@ function find_interface_ipv6_ll($interface, $flush = false, $usefirst = true) {
 	/* Setup IP cache */
 	if (!isset($interface_llv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_ifaddrs($interface);
+		if (!isset($ifinfo)) {
+			return;
+		}
 		foreach (array_get_path($ifinfo, 'addrs6', []) as $addrs) {
 			if (isset($addrs['linklocal'])) {
 				$interface_llv6_arr_cache[$interface] = "{$addrs['addr']}%{$interface}";
@@ -6449,6 +6463,9 @@ function find_interface_subnet($interface, $flush = false) {
 
 	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
 		$ifinfo = get_interface_addresses($interface);
+		if (!isset($ifinfo)) {
+			return;
+		}
 		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
 		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
 	}
@@ -6467,6 +6484,9 @@ function find_interface_subnetv6($interface, $flush = false) {
 
 	if (!isset($interface_snv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = get_interface_addresses($interface);
+		if (!isset($ifinfo)) {
+			return;
+		}
 		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddr6'];
 		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbits6'];
 	}
@@ -6691,7 +6711,7 @@ function get_interface_linklocal($interface = "wan") {
 function get_interface_track6ip($interface = "wan") {
 	$ifinfo = get_interface_addresses(get_real_interface($interface));
 
-	if (isset($ifinfo['ipaddr6']) && isset($ifinfo['subnetbits6'])) {
+	if (isset($ifinfo) && isset($ifinfo['ipaddr6']) && isset($ifinfo['subnetbits6'])) {
 		return [$ifinfo['ipaddr6'], $ifinfo['subnetbits6']];
 	}
 
@@ -7082,6 +7102,9 @@ function get_interface_mtu($interface) {
 
 function get_interface_mac($interface) {
 	$macinfo = get_interface_addresses($interface);
+	if (!isset($macinfo)) {
+		return '';
+	}
 	return $macinfo["macaddr"];
 }
 
@@ -7089,7 +7112,7 @@ function get_interface_vendor_mac($interface) {
 	global $g;
 
 	$macinfo = get_interface_addresses($interface);
-	if (isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] !=
+	if (isset($macinfo) && isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] !=
 	    "00:00:00:00:00:00") {
 		return ($macinfo["hwaddr"]);
 	}
@@ -7100,7 +7123,7 @@ function get_interface_vendor_mac($interface) {
 		if (is_macaddr($macaddr)) {
 			return ($macaddr);
 		}
-	} elseif (is_macaddr($macinfo['macaddr'])) {
+	} elseif (isset($macinfo) && is_macaddr($macinfo['macaddr'])) {
 		/* Save original macaddress to be restored when necessary */
 		@file_put_contents($hwaddr_file, $macinfo['macaddr']);
 	}
@@ -7564,6 +7587,9 @@ function get_interface_addresses($interface, $linklocal_fallback = false) {
 	$v4vips = array();
 	$v6vips = array();
 	$ifaddrs = pfSense_get_ifaddrs($interface);
+	if (!isset($ifaddrs)) {
+		return null;
+	}
 
 	foreach (array_keys(get_configured_vip_list()) as $viface) {
 		$vip = get_configured_vip($viface);
@@ -7794,10 +7820,10 @@ function get_interface_addresses_all(string $interface): array {
 
 	// Get primary IPv4/6 addresses
 	$addresses_primary = get_interface_addresses($interface);
-	if (!empty($addresses_primary['ipaddr'])) {
+	if (isset($addresses_primary) && !empty($addresses_primary['ipaddr'])) {
 		$addresses[] = $addresses_primary['ipaddr'];
 	}
-	if (!empty($addresses_primary['ipaddr6'])) {
+	if (isset($addresses_primary) && !empty($addresses_primary['ipaddr6'])) {
 		$addresses[] = $addresses_primary['ipaddr6'];
 	}
 

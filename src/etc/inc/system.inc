@@ -3097,7 +3097,7 @@ function system_get_serial() {
 	unset($output);
 	if ($platform['name'] == 'Turbot Dual-E') {
 		$if_info = get_interface_addresses('igb0');
-		if (!empty($if_info['hwaddr'])) {
+		if (isset($if_info) && !empty($if_info['hwaddr'])) {
 			$serial = str_replace(":", "", $if_info['hwaddr']);
 		}
 	} else {

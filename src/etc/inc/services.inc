@@ -1038,9 +1038,11 @@ kea6_skip_first_pool_options:
 				$realif = get_real_interface($dhcpv6if, "inet6");
 				if (stristr("$realif", "bridge")) {
 					$mac = get_interface_mac($realif);
-					$v6address = generate_ipv6_from_mac($mac);
-					/* Create link local address for bridges */
-					mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
+					if (is_macaddr($mac)) {
+						$v6address = generate_ipv6_from_mac($mac);
+						/* Create link local address for bridges */
+						mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
+					}
 				}
 				$realif = escapeshellcmd($realif);
 				$dhcpdv6ifs[] = $realif;
@@ -3788,9 +3790,11 @@ EOD;
 				$realif = get_real_interface($dhcpv6if, "inet6");
 				if (stristr("$realif", "bridge")) {
 					$mac = get_interface_mac($realif);
-					$v6address = generate_ipv6_from_mac($mac);
-					/* Create link local address for bridges */
-					mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
+					if (is_macaddr($mac)) {
+						$v6address = generate_ipv6_from_mac($mac);
+						/* Create link local address for bridges */
+						mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
+					}
 				}
 				$realif = escapeshellcmd($realif);
 				$dhcpdv6ifs[] = $realif;

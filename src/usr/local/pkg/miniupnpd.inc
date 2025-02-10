@@ -33,9 +33,13 @@
 		fclose($handle);
 	}
 
-	function upnp_uuid() {
-		/* md5 hash of wan mac */
-		$uuid = md5(get_interface_mac(get_real_interface("wan")));
+	function upnp_uuid($interface) {
+		$mac = get_interface_mac($interface);
+		if (empty($mac)) {
+			$mac = generate_random_mac_address();
+		}
+		/* md5 hash of external inteface mac */
+		$uuid = md5($mac);
 		/* put uuid in correct format 8-4-4-4-12 */
 		return substr($uuid, 0, 8) . '-' . substr($uuid, 9, 4) . '-' . substr($uuid, 13, 4) . '-' . substr($uuid, 17, 4) . '-' . substr($uuid, 21, 12);
 	}
@@ -248,8 +252,9 @@
 				}
 
 				/* set uuid and serial */
-				$config_text .= "uuid=".upnp_uuid()."\n";
-				$config_text .= "serial=".strtoupper(substr(upnp_uuid(), 0, 8))."\n";
+				$uuid = upnp_uuid($ext_ifname);
+				$config_text .= "uuid={$uuid}\n";
+				$config_text .= "serial=".strtoupper(substr($uuid, 0, 8))."\n";
 
 				/* set model number */
 				if (!empty($upnp_config['modelnumber'])){

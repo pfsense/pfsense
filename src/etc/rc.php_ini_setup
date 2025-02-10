@@ -40,7 +40,7 @@ fi
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then
-	AVAILMEM=$(/bin/cat /var/log/dmesg.boot |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}')
+	AVAILMEM=$(/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}' < /var/log/dmesg.boot)
 else
 	AVAILMEM=$(/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}')
 fi
@@ -424,7 +424,7 @@ for EXT in $PHPMODULESLC; do
 	if [ "$SHOULDREMOVE" = "true" ]; then
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt
-			/bin/cat /usr/local/etc/php.ini | /usr/bin/grep -v $EXT > /tmp/php.ini
+			/usr/bin/grep -v $EXT /usr/local/etc/php.ini > /tmp/php.ini
 			/bin/rm -f /usr/local/etc/php.ini
 			/bin/mv /tmp/php.ini /usr/local/etc/php.ini
 		fi

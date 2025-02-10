@@ -273,7 +273,7 @@ fi
 PHP_MEMORY_LIMIT="$(read_xml_tag.sh number system/php_memory_limit)"
 
 # Set local variable for available memory to match the PHP code which always pulls from sysctl
-MEM=$(/bin/expr $(/sbin/sysctl -q hw.physmem | cut -d':' -f2) / 1048576)
+MEM=$(( $( /sbin/sysctl -n hw.physmem ) / 1048576 ))
 
 # Calculate MAX memory in the same fashion as get_php_max_memory() in /etc/inc/util.inc
 PHP_MAX_LIMIT="$(( MEM - 512 ))"

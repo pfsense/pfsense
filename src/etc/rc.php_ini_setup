@@ -52,13 +52,13 @@ fi
 
 # Get amount of ram installed on this system
 REALMEM=$(/sbin/sysctl -qn hw.realmem | /usr/bin/awk '{print $1/1048576}' | /usr/bin/awk -F '.' '{print $1}')
-if [ -z "$REALMEM" -o "$REALMEM" == "0" ]; then
-	REALMEM=$AVAILMEM
+if [ -z "$REALMEM" ] || [ "$REALMEM" = "0" ]; then
+	REALMEM="$AVAILMEM"
 fi
 export REALMEM
 export LOWMEM
 
-if [ ${REALMEM} -lt $MIN_REALMEM_FOR_OPCACHE ]; then
+if [ "${REALMEM}" -lt "$MIN_REALMEM_FOR_OPCACHE" ]; then
 	LOWMEM="TRUE"
 	echo ">>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache"
 	echo ">>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache" | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
@@ -288,7 +288,7 @@ fi
 
 # If outside of limits, revert to default in same fashion as get_php_default_memory() in /etc/inc/util.inc
 if ! { [ -n "${PHP_MEMORY_LIMIT}" ] && [ "${PHP_MEMORY_LIMIT}" -ge "128" ] && [ "${PHP_MEMORY_LIMIT}" -le "${PHP_MAX_LIMIT}" ]; }; then
-	if [ "$(uname -m)" == "amd64" ]; then
+	if [ "$(uname -m)" = "amd64" ]; then
 		PHP_MEMORY_LIMIT=512
 	else
 		PHP_MEMORY_LIMIT=128
@@ -311,13 +311,13 @@ PHPFPMIDLE=30
 PHPFPMSTART=1
 PHPFPMSPARE=2
 PHPFPMREQ=500
-if [ $REALMEM -lt 250 ]; then
+if [ "$REALMEM" -lt 250 ]; then
 	PHPFPMMAX=2
 	PHPFPMIDLE=5
 	PHPFPMSTART=1
 	PHPFPMSPARE=1
 	PHPFPMREQ=500
-elif [ ${REALMEM} -gt 1000 ]; then
+elif [ "${REALMEM}" -gt 1000 ]; then
 	PHPFPMMAX=8
 	PHPFPMIDLE=3600
 	PHPFPMSTART=2
@@ -355,7 +355,7 @@ env[LOGNAME] = root
 
 EOF
 
-if [ $REALMEM -lt 350 ]; then
+if [ "$REALMEM" -lt 350 ]; then
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = ondemand
@@ -364,7 +364,7 @@ pm.max_children = $PHPFPMMAX
 pm.max_requests = $PHPFPMREQ
 EOF
 
-elif [ $REALMEM -gt 1000 ]; then
+elif [ "$REALMEM" -gt 1000 ]; then
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = dynamic
@@ -424,7 +424,7 @@ for EXT in $PHPMODULESLC; do
 	if [ "$SHOULDREMOVE" = "true" ]; then
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt
-			/usr/bin/grep -v $EXT /usr/local/etc/php.ini > /tmp/php.ini
+			/usr/bin/grep -v "$EXT" /usr/local/etc/php.ini > /tmp/php.ini
 			/bin/rm -f /usr/local/etc/php.ini
 			/bin/mv /tmp/php.ini /usr/local/etc/php.ini
 		fi

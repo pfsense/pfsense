@@ -2360,7 +2360,7 @@ function interface_ppps_configure($interface) {
 
 	$confports = array_filter(explode(',', $ppp['ports']));
 
-	if (isset($ppp['if_pppoe']) && $type == "pppoe" && count($confports) == 1) {
+	if (isset($ppp['if_pppoe']) && $type == "pppoe") {
 		return interface_pppoe_configure($ifcfg, $ppp);
 	}
 

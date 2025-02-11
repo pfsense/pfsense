@@ -257,6 +257,9 @@ if ($_POST['save']) {
 	if (($_POST['type'] == "ppp") && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
+	if (($_POST['type'] == "pppoe") && isset($_POST['if_pppoe']) && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
+		$input_errors[] = gettext("Multilink connections (MLPPP) using the if_pppoe kernel driver is not currently supported. Please select only one Link Interface.");
+	}
 	if ($_POST['provider'] && $_POST['null_service']) {
 		$input_errors[] = gettext("Do not specify both a Service name and a NULL Service name.");
 	}

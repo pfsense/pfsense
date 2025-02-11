@@ -47,6 +47,13 @@ function restart_packages() {
 	send_event("service reload packages");
 }
 
+/* dhcp6c reasons: INFOREQ, REQUEST, RENEW, REBIND, RELEASE, EXIT */
+if (isset($_GET['reason'])) {
+	$reason = $_GET['reason'];
+} else {
+	$reason = trim($argv[4]);
+}
+
 /* Interface IP address has changed */
 if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
@@ -54,7 +61,7 @@ if (isset($_GET['interface'])) {
 	$argument = trim($argv[1], " \n\t");
 }
 
-log_error("rc.newwanipv6: Info: starting on {$argument}.");
+log_error("rc.newwanipv6: Info: starting on {$argument} due to {$reason}.");
 
 if (empty($argument)) {
 	$interface = "wan";
@@ -94,6 +101,7 @@ if (isset($_GET['dmips'])) {
 }
 
 if (!empty($new_domain_name_servers)) {
+	$new_domain_name_servers_received = true;
 	$name_servers = explode(" ", $new_domain_name_servers);
 	$valid_ns = array();
 	foreach ($name_servers as $ns) {
@@ -102,7 +110,15 @@ if (!empty($new_domain_name_servers)) {
 		}
 	}
 
-	if (count($valid_ns) > 0) {
+	$saved_name_servers = file_get_contents("{$g['varetc_path']}/nameserver_v6{$interface}");
+	if ($saved_name_servers !== false) {
+		$saved_name_servers = array_filter(explode(PHP_EOL, $saved_name_servers));
+		if ($saved_name_servers === $valid_ns) {
+			$new_domain_name_servers_received = false;
+		}
+	}
+
+	if ($new_domain_name_servers_received && count($valid_ns) > 0) {
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 	}
 }
@@ -113,7 +129,15 @@ if (isset($_GET['dmnames'])) {
 }
 
 if (!empty($new_domain_name)) {
-	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $new_domain_name);
+	$new_searchdomains_received = true;
+	$saved_searchdomains = file_get_contents("{$g['varetc_path']}/searchdomain_v6{$interface}");
+	if (($saved_searchdomains !== false) && ($saved_searchdomains === $new_domain_name)) {
+		$new_searchdomains_received = false;
+	}
+
+	if ($new_searchdomains_received) {
+		file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $new_domain_name);
+	}
 }
 
 /* write current WAN IPv6 to file */
@@ -128,15 +152,51 @@ if (file_exists(g_get('vardb_path') . "/{$interface_real}_cacheipv6")) {
 	$oldipv6 = file_get_contents(g_get('vardb_path') . "/{$interface_real}_cacheipv6");
 }
 
-$grouptmp = link_interface_to_group($interface);
-if (!empty($grouptmp)) {
-	array_walk($grouptmp, 'interface_group_add_member');
+/**
+ * @var bool Used for only taking action when the address is replaced.
+ */
+$address_replaced = true;
+if (($curwanipv6 == $oldipv6) && (substr($interface_real, 0, 4) != "ovpn")) {
+	/**
+	 * Reasons other than RENEW may replace the current address with the
+	 * same one causing the address to temporarily disappear - this is
+	 * also considered a change.
+	 */
+	switch ($reason) {
+		case 'RENEW':
+			$address_replaced = false;
+			break;
+		default:
+			break;
+	}
 }
 
-link_interface_to_track6($interface, "update");
+/**
+ * @var bool Used for only action when the DNS information changes.
+ */
+$dns_changed = true;
+if (($new_domain_name_servers_received === false) && ($new_searchdomains_received === false)) {
+	$dns_changed = false;
+}
 
-/* regenerate resolv.conf if DNS overrides are allowed */
-system_resolvconf_generate(true);
+if (($reason != 'RENEW') || $address_replaced) {
+	$grouptmp = link_interface_to_group($interface);
+	if (!empty($grouptmp)) {
+		array_walk($grouptmp, 'interface_group_add_member');
+	}
+
+	link_interface_to_track6($interface, "update");
+}
+
+if (($reason != 'RENEW') || $dns_changed) {
+	/* regenerate resolv.conf if DNS overrides are allowed */
+	system_resolvconf_generate(true);
+}
+
+// Only continue on RENEW if there has been an address change.
+if (($reason == 'RENEW') && !$address_replaced) {
+	return;
+}
 
 /* reconfigure our gateway monitor, dpinger results need to be 
  * available when configuring the default gateway */
@@ -163,7 +223,11 @@ if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 		} else {
 			$srvupdate = false;
 		}
-	} elseif (does_interface_exist($interface_real) && !empty($oldipv6)) {
+	} elseif (($reason != 'RENEW') && does_interface_exist($interface_real) && !empty($oldipv6)) {
+		/**
+		 * Don't call this on RENEW since dhcp6c already removes the old
+		 * address and adds the new one.
+		 */
 		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
 	}
 

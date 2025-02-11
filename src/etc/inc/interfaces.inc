@@ -5023,13 +5023,13 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 			if ($debugOption == '-D') {
 				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c RELEASE, REQUEST or EXIT on {$wanif} running rc.newwanipv6\"\n";
 			}
-			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
+			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}&reason=\${REASON}\"\n";
 			$dhcp6cscript .= ";;\n";
 			$dhcp6cscript .= "RENEW|INFO)\n";
 			if ($debugOption == '-D') {
 				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c RENEW on {$wanif} running rc.newwanipv6\"\n";
 			}
-			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
+			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}&reason=\${REASON}\"\n";
 			$dhcp6cscript .= "esac\n";
 			$rtsold_ra_ifs[] = $wanif;
 		} else {
@@ -5037,7 +5037,7 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 			$dhcp6cscript .= "dmips=\$(cat \"/tmp/{$wanif}_domain_name_servers\")\n";
 			$dhcp6cscript .= "dmnames=\$(cat \"/tmp/{$wanif}_new_domain_name\")\n";
 			$dhcp6cscript .= "/bin/sleep 1\n";
-			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
+			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}&reason=\${REASON}\"\n";
 		}
 
 		/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */

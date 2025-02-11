@@ -657,7 +657,12 @@ if ($changes_applied) {
 }
 
 if (is_subsystem_dirty('dhcpd6')) {
-	print_apply_box(gettext('The DHCP Server configuration has been changed.') . "<br />" . gettext('The changes must be applied for them to take effect.'));
+	print_apply_box(
+		gettext('The DHCP Server configuration has been changed.') . "<br />" .
+		gettext('The changes must be applied for them to take effect.') . "<br />" .
+		gettext('If the prefix has changed, remember to STOP then START the ' .
+			'Router Advertisement service to inform clients of the prefix change.')
+	);
 }
 
 $is_stateless_dhcp = in_array(config_get_path('dhcpdv6/'.$if.'/ramode', 'disabled'), ['stateless_dhcp']);

@@ -449,7 +449,11 @@ if ($_POST['save']) {
 		$ppp['mtu-override'] =
 		    $_POST['mtu-override'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
-		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
+		if (isset($ppp['if_pppoe']) && $ppp['if_pppoe'] == true) {
+			$ppp['tcpmssfix'] = $_POST['ifpppoe_tcpmssfix'] ? true : false;
+		} else {
+			$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
+		}
 		if (is_array($port_data['bandwidth'])) {
 			$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
 		}
@@ -829,6 +833,20 @@ $section->addInput(new Form_StaticText(
 $form->add($section);
 
 $section = new Form_Section('Advanced Configuration');
+$section->addClass('advifpppoeopts');
+$section->addInput(new Form_Checkbox(
+	'ifpppoe_tcpmssfix',
+	'TCPmssFix',
+	'Disable tcpmssfix (enabled by default).',
+	$pconfig['tcpmssfix']
+))->setHelp('Causes mpd to adjust incoming and outgoing TCP SYN segments so that the requested maximum segment size is not greater than the amount ' .
+			'allowed by the interface MTU. This is necessary in many setups to avoid problems caused by routers that drop ICMP Datagram Too Big messages. Without these messages, ' .
+			'the originating machine sends data, it passes the rogue router then hits a machine that has an MTU that is not big enough for the data. Because the IP Don\'t Fragment option is set, ' .
+			'this machine sends an ICMP Datagram Too Big message back to the originator and drops the packet. The rogue router drops the ICMP message and the originator never ' .
+			'gets to discover that it must reduce the fragment size or drop the IP Don\'t Fragment option from its outgoing data.');
+$form->add($section);
+
+$section = new Form_Section('Advanced Configuration');
 $section->addClass('adnlopts');
 
 $section->addInput(new Form_Checkbox(
@@ -1029,7 +1047,16 @@ events.push(function() {
 			showadvopts = !showadvopts;
 		}
 
-		hideClass('adnlopts', !showadvopts);
+		// if_pppoe options.
+		var if_pppoetype = ($('#type').val() == 'pppoe' && $('#if_pppoe:checked').val() == 'yes');
+
+		if (if_pppoetype) {
+			hideClass('adnlopts', 1);
+			hideClass('advifpppoeopts', !showadvopts);
+		} else {
+			hideClass('adnlopts', !showadvopts);
+			hideClass('advifpppoeopts', 1);
+		}
 
 		// The options that follow are only shown if type == 'ppp'
 		var ppptype = ($('#type').val() == 'ppp');
@@ -1043,9 +1070,9 @@ events.push(function() {
 		hideCheckbox('uptime', !(showadvopts && ppptype));
 
 		// The options that follow are only shown if type == 'pppoe'
-		var pppoetype = ($('#type').val() == 'pppoe');
+		var pppoetype = ($('#type').val() == 'pppoe' && $('#if_pppoe:checked').val() != 'yes');
 
-		hideClass('pppoe', !pppoetype);
+		hideClass('pppoe', (!pppoetype && !if_pppoetype));
 		hideResetDisplay(!(showadvopts && pppoetype));
 		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
 		hideCheckbox('pppoe-multilink-over-singlelink', !(showadvopts && pppoetype));

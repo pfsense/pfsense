@@ -121,7 +121,7 @@ function does_vip_exist($vip) {
 	}
 
 	$ifacedata = pfSense_get_ifaddrs($realif);
-	if (!is_array($ifacedata)) {
+	if (!isset($ifacedata)) {
 		return false;
 	}
 	if (is_ipaddrv6($vip['subnet'])) {
@@ -4133,7 +4133,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$current_mac = get_interface_mac($realhwif);
 	$vendor_mac = get_interface_vendor_mac($realhwif);
 
-	if (!empty($current_mac) && ($current_mac != "ff:ff:ff:ff:ff:ff")) {
+	if ($current_mac != "ff:ff:ff:ff:ff:ff") {
 		$mac_addr = $mac_if_cfg['spoofmac'] ?: $vendor_mac;
 
 		interface_set_macaddr($realhwif, $mac_addr);

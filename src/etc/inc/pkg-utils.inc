@@ -1296,6 +1296,22 @@ function get_meta_pkg_name() {
 	return false;
 }
 
+/* Identify which package has the product dependencies */
+function get_dep_pkg_name() {
+	$name = get_meta_pkg_name();
+
+	if ($name == false) {
+		return false;
+	}
+
+	// The dependencies have been moved to another package.
+	if ($name == g_get('product_name')) {
+		$name .= '-system';
+	}
+
+	return $name;
+}
+
 /* Identify which base package is installed */
 function get_base_pkg_name() {
 	global $g;
@@ -1355,10 +1371,10 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 	}
 
 	$base_pkg = get_base_pkg_name();
-	$meta_pkg = get_meta_pkg_name();
+	$dep_pkg = get_dep_pkg_name();
 
-	if (!$base_pkg || !$meta_pkg) {
-		$result['pkg_version_error'] = "no base pkg: $base_pkg:$meta_pkg";
+	if (!$base_pkg || !$dep_pkg) {
+		$result['pkg_version_error'] = "no base pkg: $base_pkg:$dep_pkg";
 		return false;
 	}
 
@@ -1374,10 +1390,10 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 
 	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] ==
 	    $pkg_info['installed_version']))) {
-		$info = get_pkg_info($meta_pkg, true, true);
+		$info = get_pkg_info($dep_pkg, true, true);
 
 		foreach ($info as $item) {
-			if ($item['name'] == $meta_pkg) {
+			if ($item['name'] == $dep_pkg) {
 				$pkg_info = $item;
 				break;
 			}

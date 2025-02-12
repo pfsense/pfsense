@@ -53,8 +53,10 @@ function process_state_req($post, $request, $json = false) {
 	}
 
 	/* Interface filter. */
+	$interface_selected = null;
 	if (isset($post['interface']) && $post['interface'] != "all") {
-		$arr[] = array("interface" => get_real_interface($post['interface']));
+		$interface_selected = get_real_interface($post['interface']);
+		$arr[] = array("interface" => $interface_selected);
 	}
 
 	if (isset($post['filter']) && strlen($post['filter']) > 0) {
@@ -83,6 +85,9 @@ function process_state_req($post, $request, $json = false) {
 		}
 
 		foreach ($res as $state) {
+			if (isset($interface_selected) && ($state['if'] !== $interface_selected)) {
+				continue;
+			}
 			$statedisp[] = [
 				'interface' => $interfaces[$state['if']] ?? $state['if'],
 				'proto' => $state['proto'],

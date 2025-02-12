@@ -352,8 +352,8 @@ $section->addInput(new Form_Select(
 		'all' => 'Kill all states for lower-priority gateways',
 		'addrfamily' => 'Only kill states with the same address family as the gateway group',
 	]
-))->setHelp('Controls the state killing behavior for the %1$sdefault ' .
-	'gateway%2$s when set to a failover gateway group.',
+))->setHelp('Controls the state killing behavior for the %1$ssystem\'s ' .
+	'default gateway%2$s when set to a failover gateway group.',
 	'<strong>', '</strong>');
 $section->addInput(new Form_Checkbox(
 	'keep_failover_states',
@@ -361,7 +361,8 @@ $section->addInput(new Form_Checkbox(
 	'Don\'t kill policy routing states for lower-priority gateways',
 	$pconfig['keep_failover_states']
 ))->setHelp('Controls the default state killing behavior for %1$sall gateway ' .
-	'groups%2$s on gateway recovery.', '<strong>', '</strong>');
+	'groups%2$s on gateway recovery. This only affects states created by ' .
+	'firewall rules with policy routing.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Select(
 	'gw_down_kill_states',

@@ -1110,9 +1110,11 @@ function services_dhcpd_kill_all($family = 'all') {
 
 	if (($family === 'all') || ($family === 'inet')) {
 		$pids = array_merge($pids, $pids4);
+		killbyname('kea-dhcp4'); /* See https://redmine.pfsense.org/issues/16019 */
 	}
 	if (($family === 'all') || ($family === 'inet6')) {
 		$pids = array_merge($pids, $pids6);
+		killbyname('kea-dhcp6'); /* See https://redmine.pfsense.org/issues/16019 */
 	}
 
 	foreach ($pids as $pid) {

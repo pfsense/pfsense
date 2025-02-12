@@ -5014,14 +5014,22 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c rebind on {$wanif}\"\n";
 			}
 			$dhcp6cscript .= ";;\n";
-			$dhcp6cscript .= "REQUEST|";
+			$dhcp6cscript .= "REQUEST)\n";
+			$dhcp6cscript .= "/sbin/ifconfig -f inet6:numeric {$wanif} inet6 | /usr/bin/sed -nEe 's/^[[:space:]]*(inet6[[:>:]].*[[:<:]]autoconf[[:>:]].*)$/\\1/p' > /tmp/{$wanif}_ra_configured_inet6.tmp\n";
+			$dhcp6cscript .= "/bin/mv -f /tmp/{$wanif}_ra_configured_inet6.tmp /tmp/{$wanif}_ra_configured_inet6\n";
+			$dhcp6cscript .= "rm -f /tmp/{$wanif}_ra_configured_inet6.lock\n";
+			if ($debugOption == '-D') {
+				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c REQUEST on {$wanif} running rc.newwanipv6\"\n";
+			}
+			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}&reason=\${REASON}\"\n";
+			$dhcp6cscript .= ";;\n";
 			if (isset($wancfg['dhcp6norelease'])) {
 				$dhcp6cscript .= "EXIT)\n";
 			} else {
 				$dhcp6cscript .= "RELEASE)\n";
 			}
 			if ($debugOption == '-D') {
-				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c RELEASE, REQUEST or EXIT on {$wanif} running rc.newwanipv6\"\n";
+				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c RELEASE or EXIT on {$wanif} running rc.newwanipv6\"\n";
 			}
 			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}&reason=\${REASON}\"\n";
 			$dhcp6cscript .= ";;\n";
@@ -5094,6 +5102,8 @@ EOD;
 				 * Check for a lock file, trying to prevent multiple instances
 				 * of dhcp6c being launched
 				 */
+				$rtsoldscript .= "/sbin/ifconfig -f inet6:numeric {$wanif} inet6 | /usr/bin/sed -nEe 's/^[[:space:]]*(inet6[[:>:]].*[[:<:]]autoconf[[:>:]].*)$/\\1/p' > /tmp/{$wanif}_ra_configured_inet6.tmp\n";
+				$rtsoldscript .= "/bin/mv -f /tmp/{$wanif}_ra_configured_inet6.tmp /tmp/{$wanif}_ra_configured_inet6\n";
 				$rtsoldscript .= "if [ ! -f /tmp/dhcp6c_lock ]; then\n";
 				/*
 				 * Create the lock file, trying to prevent multiple instances
@@ -5114,6 +5124,7 @@ EOD;
 				$rtsoldscript .= "\tdhcp6c_pid=\$(cat \"{$g['varrun_path']}/dhcp6c.pid\")\n";
 				$rtsoldscript .= "\t/bin/kill -1 \${dhcp6c_pid}\n";
 				$rtsoldscript .= "fi\n";
+				$rtsoldscript .= "rm -f /tmp/{$wanif}_ra_configured_inet6.lock\n";
 			} else {
 				/*
 				 * The script needs to run in dhcp6withoutra mode as RA may
@@ -5191,6 +5202,9 @@ EOD;
 			 * ( it does not background, it exits! ) It will launch dhcp6c
 			 * if dhcpwihtoutra is not set
 			 */
+			if (!isset($ifcfg['dhcp6withoutra'])) {
+				file_put_contents("/tmp/{$realif}_ra_configured_inet6.lock", '');
+			}
 			log_error("Starting rtsold process on {$ifconf}({$realif})");
 			sleep(2);
 			mwexec("/usr/sbin/rtsold -1 " .

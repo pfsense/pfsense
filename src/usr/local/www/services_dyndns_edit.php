@@ -255,7 +255,18 @@ if ($_POST['save'] || $_POST['force']) {
 		}
 		$dyndns['curl_proxy'] = $_POST['curl_proxy'] ? true : false;
 		$dyndns['descr'] = $_POST['descr'];
-		$dyndns['force'] = isset($_POST['force']);
+
+		/**
+		 * An update is forced when the interface changes because the IP
+		 * for the new interface may already be cached; if that cache
+		 * contains the same IP address as the new interface then the
+		 * record is not updated.
+		 */
+		if (isset($_POST['force']) || $dup || ($_POST['interface'] != $this_dyndns_config['interface'])) {
+			$dyndns['force'] = true;
+		} else {
+			$dyndns['force'] = false;
+		}
 
 		if ($dyndns['username'] == "none") {
 			$dyndns['username'] = "";

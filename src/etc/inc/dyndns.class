@@ -3068,7 +3068,6 @@
 
 			if ($successful_update == true) {
 				/* Write WAN IP to cache file */
-				$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamilyRR);
 				if ($this->_addressFamilyRR == AF_INET) {
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IP Address for %1$s on %2$s (%3$s) to %4$s'), $this->_FQDN, convert_real_interface_to_friendly_descr($this->_if), $this->_if, $this->_dnsIP));

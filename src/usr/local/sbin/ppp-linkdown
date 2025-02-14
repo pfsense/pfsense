@@ -33,7 +33,7 @@ if echo "${IF}" | /usr/bin/egrep -qv "ppp[0-9]+"; then
 	/etc/rc.kill_states ${IF} ${LOCAL_IP}
 fi
 
-if [ "${PROTOCOL}" == "inet" && -s "/tmp/${IF}_defaultgw" ]; then
+if [ "${PROTOCOL}" = "inet" ] && [ -s "/tmp/${IF}_defaultgw" ]; then
 	GW=`head -n 1 /tmp/${IF}_defaultgw`
 	DGW=`/sbin/route -n get -inet default | /usr/bin/awk '/gateway:/ {print $2}'`
 	# Only remove the default gateway if it matches the gateway for this interface. See redmine #1837
@@ -42,7 +42,7 @@ if [ "${PROTOCOL}" == "inet" && -s "/tmp/${IF}_defaultgw" ]; then
 	fi
 fi
 
-if [ "${PROTOCOL}" == "inet6" ]; then
+if [ "${PROTOCOL}" = "inet6" ]; then
 	/usr/local/sbin/ppp-ipv6 ${IF} down
 fi
 # delete the node just in case mpd cannot do that

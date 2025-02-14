@@ -22,5 +22,5 @@
 
 # record logout
 /usr/bin/logger -p local3.info "logout,$1,$5,$6"
-/sbin/pfctl -i $2 -Fs
-/sbin/pfctl -K $5/32
+/sbin/pfctl -i "$2" -Fs
+/sbin/pfctl -K "$5/32"

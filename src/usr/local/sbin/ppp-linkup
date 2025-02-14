@@ -32,57 +32,57 @@ AUTH_NAME="${5}"
 DNS1_RAW="${6}"
 DNS2_RAW="${7}"
 
-if [ "${PROTOCOL}" == "inet" ]; then
+if [ "${PROTOCOL}" = "inet" ]; then
 	# let the configuration system know that the ipv4 has changed.
-	echo ${REMOTE_IP} > /tmp/${IF}_router
-	/bin/rm -f /tmp/${IF}_router.last
-	echo ${LOCAL_IP} > /tmp/${IF}_ip
-	touch /tmp/${IF}up
-	touch /tmp/${IF}_upstart4
+	echo "${REMOTE_IP}" > "/tmp/${IF}_router"
+	/bin/rm -f "/tmp/${IF}_router.last"
+	echo "${LOCAL_IP}" > "/tmp/${IF}_ip"
+	touch "/tmp/${IF}up"
+	touch "/tmp/${IF}_upstart4"
 
 	if [ "${DNSALLOWOVERRIDE}" = "true" ]; then
 		# write nameservers to file
-		echo -n "" > /var/etc/nameserver_${IF}
+		echo -n "" > "/var/etc/nameserver_${IF}"
 		if echo "${DNS1_RAW}" | grep -q dns1; then
 			DNS1=`echo "${DNS1_RAW}" | awk '{print $2}'`
-			echo "${DNS1}" >> /var/etc/nameserver_${IF}
-			route change "${DNS1}" ${REMOTE_IP} \
-				|| route add "${DNS1}" ${REMOTE_IP}
+			echo "${DNS1}" >> "/var/etc/nameserver_${IF}"
+			route change "${DNS1}" "${REMOTE_IP}" \
+				|| route add "${DNS1}" "${REMOTE_IP}"
 		fi
 		if echo "${DNS2_RAW}" | grep -q dns2; then
 			DNS2=`echo "${DNS2_RAW}" | awk '{print $2}'`
-			echo "${DNS2}" >> /var/etc/nameserver_${IF}
-			route change "${DNS2}" ${REMOTE_IP} \
-				|| route add "${DNS2}" ${REMOTE_IP}
+			echo "${DNS2}" >> "/var/etc/nameserver_${IF}"
+			route change "${DNS2}" "${REMOTE_IP}" \
+				|| route add "${DNS2}" "${REMOTE_IP}"
 		fi
 		pfSctl -c 'service reload dns'
 		sleep 1
 	fi
 	pfSctl -c "interface newip ${IF}"
 
-elif [ "${PROTOCOL}" == "inet6" ]; then
-	/usr/local/sbin/ppp-ipv6 ${IF} up
+elif [ "${PROTOCOL}" = "inet6" ]; then
+	/usr/local/sbin/ppp-ipv6 "${IF}" up
 	# let the configuration system know that the ipv6 has changed.
-	echo ${REMOTE_IP} > /tmp/${IF}_routerv6
-	/bin/rm -f /tmp/${IF}_routerv6.last
-	echo ${LOCAL_IP} |cut -d% -f1 > /tmp/${IF}_ipv6
-	touch /tmp/${IF}upv6
-	touch /tmp/${IF}_upstart6
+	echo "${REMOTE_IP}" > "/tmp/${IF}_routerv6"
+	/bin/rm -f "/tmp/${IF}_routerv6.last"
+	echo "${LOCAL_IP}" | cut -d% -f1 > "/tmp/${IF}_ipv6"
+	touch "/tmp/${IF}upv6"
+	touch "/tmp/${IF}_upstart6"
 
 	if [ "${DNSALLOWOVERRIDE}" = "true" ]; then
 		# write nameservers to file
-		echo -n "" > /var/etc/nameserver_v6${IF}
+		echo -n "" > "/var/etc/nameserver_v6${IF}"
 		if echo "${DNS1_RAW}" | grep -q dns1; then
 			DNS1=`echo "${DNS1_RAW}" | awk '{print $2}'`
-			echo "${DNS1}" >> /var/etc/nameserver_v6${IF}
-			route change -inet6 "${DNS1}" ${REMOTE_IP} \
-				|| route add -inet6 "${DNS1}" ${REMOTE_IP}
+			echo "${DNS1}" >> "/var/etc/nameserver_v6${IF}"
+			route change -inet6 "${DNS1}" "${REMOTE_IP}" \
+				|| route add -inet6 "${DNS1}" "${REMOTE_IP}"
 		fi
 		if echo "${DNS2_RAW}" | grep -q dns2; then
 			DNS2=`echo "${DNS2_RAW}" | awk '{print $2}'`
-			echo "${DNS2}" >> /var/etc/nameserver_v6${IF}
-			route change -inet6 "${DNS2}" ${REMOTE_IP} \
-				|| route add -inet6 "${DNS2}" ${REMOTE_IP}
+			echo "${DNS2}" >> "/var/etc/nameserver_v6${IF}"
+			route change -inet6 "${DNS2}" "${REMOTE_IP}" \
+				|| route add -inet6 "${DNS2}" "${REMOTE_IP}"
 		fi
 		pfSctl -c 'service reload dns'
 		sleep 1

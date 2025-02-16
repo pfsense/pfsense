@@ -2305,6 +2305,9 @@ function interface_pppoe_configure($ifcfg, $ppp) {
 	 */
 	//exec("/sbin/ifconfig {$ifcfg['if']} debug");
 
+	$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : "";
+	exec("/sbin/ifconfig {$ifcfg['if']} descr \"{$descr}\"");
+
 	exec("/sbin/pppcfg {$ifcfg['if']} " .
 	    "pppoedev {$ppp['ports']} pppoesvc \"{$hostuniq}{$provider}\" " .
 	    "authname {$ppp['username']} authkey \"{$authkey}\" 2>&1",

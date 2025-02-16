@@ -51,6 +51,7 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+unset($input_errors);
 $this_ppp_config = isset($id) ? config_get_path("ppps/ppp/{$id}") : null;
 if ($this_ppp_config) {
 	$pconfig['ptpid'] = $this_ppp_config['ptpid'];
@@ -58,6 +59,10 @@ if ($this_ppp_config) {
 		$pconfig['type'] = $this_ppp_config['type'];
 	}
 	$pconfig['interfaces'] = array_filter(explode(",", $this_ppp_config['ports']));
+	if (config_path_enabled('system', 'use_if_pppoe') &&
+	    is_array($pconfig['interfaces']) && count($pconfig['interfaces']) > 1) {
+		$input_errors[] = gettext("Multilink connections (MLPPP) using the if_pppoe kernel driver is not currently supported. Please select only one Link Interface.");
+	}
 	$pconfig['username'] = $this_ppp_config['username'];
 	$pconfig['password'] = base64_decode($this_ppp_config['password']);
 	if (isset($this_ppp_config['secret'])) {
@@ -136,9 +141,6 @@ if ($this_ppp_config) {
 				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 		case "pppoe":
 			$pconfig['provider'] = $this_ppp_config['provider'];
-			if (isset($this_ppp_config['if_pppoe'])) {
-				$pconfig['if_pppoe'] = true;
-			}
 			if (isset($this_ppp_config['provider']) && empty($this_ppp_config['provider'])) {
 				$pconfig['null_service'] = true;
 			}
@@ -257,7 +259,7 @@ if ($_POST['save']) {
 	if (($_POST['type'] == "ppp") && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
-	if (($_POST['type'] == "pppoe") && isset($_POST['if_pppoe']) && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
+	if (config_path_enabled('system', 'use_if_pppoe') && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the if_pppoe kernel driver is not currently supported. Please select only one Link Interface.");
 	}
 	if ($_POST['provider'] && $_POST['null_service']) {
@@ -413,19 +415,6 @@ if ($_POST['save']) {
 					unset($ppp['provider']);
 					$ppp['provider'] = $_POST['null_service'] ? true : false;
 				}
-				$ppp['if_pppoe'] = (!empty($_POST['if_pppoe'])) ? true : false;
-				$if_pppoe_en = false;
-				if (isset($id) && $this_ppp_config != NULL) {
-					$if_pppoe_en = (isset($this_ppp_config['if_pppoe'])) ? true : false;
-				}
-				if ($if_pppoe_en != $ppp['if_pppoe']) {
-					$if_config = config_get_path('interfaces', []);
-					foreach ($iflist as $pppif => $ifdescr) {
-						if ($if_config[$pppif]['if'] == $ppp['if']) {
-							interface_bring_down($pppif, true);
-						}
-					}
-				}
 				if (!empty($_POST['pppoe-reset-type'])) {
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
 				} else {
@@ -452,7 +441,7 @@ if ($_POST['save']) {
 		$ppp['mtu-override'] =
 		    $_POST['mtu-override'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
-		if (isset($ppp['if_pppoe']) && $ppp['if_pppoe'] == true) {
+		if (config_path_enabled('system', 'use_if_pppoe')) {
 			$ppp['tcpmssfix'] = $_POST['ifpppoe_tcpmssfix'] ? true : false;
 		} else {
 			$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
@@ -546,6 +535,10 @@ $section->addInput(new Form_Select(
 ));
 
 $linklist = build_ppps_link_list();
+$if_select_help = "Select the interface for the PPP connection.";
+if ($pconfig['type'] == "pppoe" && !config_path_enabled('system', 'use_if_pppoe')) {
+	$if_select_help = "Select at least two interfaces for Multilink (MLPPP) connections.";
+}
 
 $section->addInput(new Form_Select(
 	'interfaces',
@@ -553,7 +546,7 @@ $section->addInput(new Form_Select(
 	$linklist['selected'],
 	$linklist['list'],
 	true // Allow multiples
-))->addClass('interfaces')->setHelp('Select at least two interfaces for Multilink (MLPPP) connections.');
+))->addClass('interfaces')->setHelp($if_select_help);
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -706,19 +699,6 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Causes cumulative uptime to be recorded and displayed on the %1$sStatus->Interfaces%2$s page.', '<a href="status_interfaces.php">', '</a>');
 
 if ($pconfig['type'] == 'pppoe') {
-	$group = new Form_Group('if_pppoe');
-	$group->addClass('pppoe');
-
-	$group->add(new Form_Checkbox(
-		'if_pppoe',
-		null,
-		'Enable the if_pppoe kernel module',
-		$pconfig['if_pppoe']
-	));
-	$group->setHelp('Checking this option will force the system to use the if_pppoe kernel module. '.
-	    'Keep unchecked to use the old mpd5 PPPoE support.');
-	$section->add($group);
-
 	$group = new Form_Group('Service name');
 	$group->addClass('pppoe');
 
@@ -1051,7 +1031,7 @@ events.push(function() {
 		}
 
 		// if_pppoe options.
-		var if_pppoetype = ($('#type').val() == 'pppoe' && $('#if_pppoe:checked').val() == 'yes');
+		var if_pppoetype = <?php if (config_path_enabled('system', 'use_if_pppoe')) { echo 'true'; } else { echo 'false'; } ?>
 
 		if (if_pppoetype) {
 			hideClass('adnlopts', 1);
@@ -1073,7 +1053,7 @@ events.push(function() {
 		hideCheckbox('uptime', !(showadvopts && ppptype));
 
 		// The options that follow are only shown if type == 'pppoe'
-		var pppoetype = ($('#type').val() == 'pppoe' && $('#if_pppoe:checked').val() != 'yes');
+		var pppoetype = ($('#type').val() == 'pppoe' && if_pppoetype == false);
 
 		hideClass('pppoe', (!pppoetype && !if_pppoetype));
 		hideResetDisplay(!(showadvopts && pppoetype));

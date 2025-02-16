@@ -762,7 +762,7 @@ function filter_generate_scrubbing() {
 		} else {
 			$ppps = config_get_path('ppps/ppp', []);
 			foreach ($ppps as $pppid => $ppp) {
-				if (!isset($ppp['if_pppoe']) ||
+				if (!config_path_enabled('system', 'use_if_pppoe') ||
 				    $scrubcfg['if'] != $ppp['if']) {
 					continue;
 				}

@@ -1900,7 +1900,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 					if ($realif != $ppp['if']) {
 						continue;
 					}
-					if (isset($ppp['if_pppoe'])) {
+					if (config_path_enabled('system', 'use_if_pppoe')) {
 						if (does_interface_exist($realif)) {
 							pfSense_interface_destroy($realif);
 						}
@@ -2360,7 +2360,12 @@ function interface_ppps_configure($interface) {
 
 	$confports = array_filter(explode(',', $ppp['ports']));
 
-	if (isset($ppp['if_pppoe']) && $type == "pppoe") {
+	if (config_path_enabled('system', 'use_if_pppoe') && $type == "pppoe") {
+		if (is_array($confports) && count($confports) > 1) {
+			log_error(sprintf(gettext("Error creating PPPoE interface %s.  MLPP is not supported by if_pppoe.  Aborting setup."),
+			    $ifcfg['if']));
+			return (0);
+		}
 		return interface_pppoe_configure($ifcfg, $ppp);
 	}
 

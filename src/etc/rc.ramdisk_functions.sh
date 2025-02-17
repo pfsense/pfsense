@@ -33,7 +33,7 @@ _be_remount_ds() {
 	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${_dataset}" | \
 	while read _mp _name _canmount _mounted ; do
 		# skip filesystems that must *not* be mounted
-		[ "${_canmount}" = "off" -o "${_mp}" = "/" ] && continue
+		[ "${_canmount}" = "off" ] || [ "${_mp}" = "/" ] && continue
 		# unmount the dataset if mounted...
 		[ "$_mounted" = "yes" ] && /sbin/umount -f "${_name}"
 		# mount the dataset

@@ -60,6 +60,7 @@ function saveAdvancedNetworking($post, $json = false) {
 	$input_errors = array();
 	$rv = array();
 	$show_reboot_msg = false;
+	$reboot_cause = "offload";
 
 	if ($post['ipv6nat_enable'] && !is_ipaddr($post['ipv6nat_ipaddr'])) {
 		$input_errors[] = gettext("An IP address to NAT IPv6 packets must be specified.");
@@ -230,6 +231,8 @@ function saveAdvancedNetworking($post, $json = false) {
 				}
 				interface_bring_down($ifn, true);
 			}
+			$show_reboot_msg = true;
+			$reboot_cause = "pppoe";
 		}
 		if ($post['use_if_pppoe'] == "yes") {
 			config_set_path('system/use_if_pppoe', true);
@@ -275,6 +278,7 @@ function saveAdvancedNetworking($post, $json = false) {
 		$rv['retval'] = $retval;
 		$rv['changes_applied'] = $changes_applied;
 		$rv['show_reboot_msg'] = $show_reboot_msg;
+		$rv['reboot_cause'] = $reboot_cause;
 		$rv['pconfig'] = $post;
 
 		return $json ? json_encode($rv) : $rv;

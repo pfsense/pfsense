@@ -47,9 +47,7 @@ check_hostname() {
 }
 
 arp_flush() {
-	$ARP -an -i "$interface" | \
-		$SED -n -e 's/^.*(\(.*\)) at .*$/arp -d \1/p' | \
-		/bin/sh >/dev/null 2>&1
+	$ARP -ad -i "$interface" >/dev/null 2>&1
 }
 
 delete_old_address() {

@@ -22,49 +22,49 @@
 
 if [ "${dev_type}" = "tun" ]; then
 	if [ -n "${route_vpn_gateway}" ]; then
-		/bin/echo ${route_vpn_gateway} > /tmp/${1}_router
+		echo "${route_vpn_gateway}" > "/tmp/${1}_router"
 	elif [ -n "${ifconfig_remote}" ]; then
-		/bin/echo ${ifconfig_remote} > /tmp/${1}_router
+		echo "${ifconfig_remote}" > "/tmp/${1}_router"
 	elif [ -n "${ifconfig_local}" ]; then
-		/bin/echo ${ifconfig_local} > /tmp/${1}_router
+		echo "${ifconfig_local}" > "/tmp/${1}_router"
 	else
-		/bin/echo ${5} > /tmp/${1}_router
+		echo "${5}" > "/tmp/${1}_router"
 	fi
 
 	if [ -n "${route_ipv6_gateway_1}" ]; then
-		/bin/echo ${route_ipv6_gateway_1} > /tmp/${1}_routerv6
+		echo "${route_ipv6_gateway_1}" > "/tmp/${1}_routerv6"
 	elif [ -n "${ifconfig_ipv6_remote}" ]; then
-		/bin/echo ${ifconfig_ipv6_remote} > /tmp/${1}_routerv6
+		echo "${ifconfig_ipv6_remote}" > "/tmp/${1}_routerv6"
 	elif [ -n "${ifconfig_ipv6_local}" ]; then
-		/bin/echo ${ifconfig_ipv6_local} > /tmp/${1}_routerv6
+		echo "${ifconfig_ipv6_local}" > "/tmp/${1}_routerv6"
 	fi
 
 else
 	if [ -n "${route_vpn_gateway}" ]; then
-		/bin/echo ${route_vpn_gateway} > /tmp/${1}_router
+		echo "${route_vpn_gateway}" > "/tmp/${1}_router"
 	fi
 
 	if [ -n "${route_ipv6_gateway_1}" ]; then
-		/bin/echo ${route_ipv6_gateway_1} > /tmp/${1}_routerv6
+		echo "${route_ipv6_gateway_1}" > "/tmp/${1}_routerv6"
 	fi
 fi
 
 if [ -f "/tmp/${1}_router" ]; then
-	/bin/rm -f /tmp/${1}_router.last
+	/bin/rm -f "/tmp/${1}_router.last"
 fi
 if [ -f "/tmp/${1}_routerv6" ]; then
-	/bin/rm -f /tmp/${1}_routerv6.last
+	/bin/rm -f "/tmp/${1}_routerv6.last"
 fi
 
 if [ -n "${ifconfig_local}" ]; then
-	/usr/bin/touch /tmp/${1}_upstart4
+	/usr/bin/touch "/tmp/${1}_upstart4"
 fi
 
 if [ -n "${ifconfig_ipv6_local}" ]; then
-	/usr/bin/touch /tmp/${1}_upstart6
+	/usr/bin/touch "/tmp/${1}_upstart6"
 fi
 
-/usr/bin/touch /tmp/${1}up
+/usr/bin/touch "/tmp/${1}up"
 # reload filter
 /usr/local/sbin/pfSctl -c "interface newip ${1}"
 exit 0

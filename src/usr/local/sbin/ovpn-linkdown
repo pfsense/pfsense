@@ -21,26 +21,26 @@
 # limitations under the License.
 
 if [ -n "${1}" ]; then
-	echo "Flushing states on OpenVPN interface ${1} (Link Down)" | /usr/bin/logger -t openvpn
-	/sbin/pfctl -i ${1} -Fs
+	/usr/bin/logger -t openvpn "Flushing states on OpenVPN interface ${1} (Link Down)"
+	/sbin/pfctl -i "${1}" -Fs
 else
-	echo "WARNING: ovpn-linkdown called without interface" | /usr/bin/logger -t openvpn
+	/usr/bin/logger -t openvpn "WARNING: ovpn-linkdown called without interface"
 fi
 
-/bin/rm -f /var/etc/searchdomain_${1}
+/bin/rm -f "/var/etc/searchdomain_${1}"
 
 if [ -f "/tmp/${1}_router" ]; then
-	/bin/mv /tmp/${1}_router /tmp/${1}_router.last
+	/bin/mv "/tmp/${1}_router" "/tmp/${1}_router.last"
 fi
 if [ -f "/tmp/${1}_routerv6" ]; then
-	/bin/mv /tmp/${1}_routerv6 /tmp/${1}_routerv6.last
+	/bin/mv "/tmp/${1}_routerv6" "/tmp/${1}_routerv6.last"
 fi
-/bin/rm -f /tmp/${1}up
+/bin/rm -f "/tmp/${1}up"
 /usr/local/sbin/pfSctl -c 'filter reload'
 
-if [ -f "/var/etc/nameserver_${1}" -o -f "/var/etc/nameserver_v6${1}" ]; then
-	/bin/rm -f /var/etc/nameserver_${1}
-	/bin/rm -f /var/etc/nameserver_v6${1}
+if [ -f "/var/etc/nameserver_${1}" ] || [ -f "/var/etc/nameserver_v6${1}" ]; then
+	/bin/rm -f "/var/etc/nameserver_${1}"
+	/bin/rm -f "/var/etc/nameserver_v6${1}"
 	if /usr/bin/pgrep -q -a -F /var/run/unbound.pid unbound >/dev/null 2>&1; then
 		/usr/local/sbin/pfSsh.php playback svc restart unbound
 	elif /usr/bin/pgrep -q -a -F /var/run/dnsmasq.pid unbound >/dev/null 2>&1; then

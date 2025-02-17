@@ -20,7 +20,6 @@
 
 HOSTNAME=/bin/hostname
 ROUTE=/sbin/route
-SED=/usr/bin/sed
 ARP=/usr/sbin/arp
 IFCONFIG=/sbin/ifconfig
 

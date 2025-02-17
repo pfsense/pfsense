@@ -23,7 +23,6 @@ ROUTE=/sbin/route
 SED=/usr/bin/sed
 ARP=/usr/sbin/arp
 IFCONFIG=/sbin/ifconfig
-PFCTL=/sbin/pfctl
 
 LOCALHOST=127.0.0.1
 
@@ -43,19 +42,19 @@ check_hostname() {
 	   [ "$current_hostname" = "$old_host_name" -a \
 	     "$new_hostname" != "$old_host_name" ]; then
 		$LOGGER "New Hostname ($interface): $new_host_name"
-		$HOSTNAME $new_host_name
+		$HOSTNAME "$new_host_name"
 	fi
 }
 
 arp_flush() {
-	$ARP -an -i $interface | \
+	$ARP -an -i "$interface" | \
 		$SED -n -e 's/^.*(\(.*\)) at .*$/arp -d \1/p' | \
 		/bin/sh >/dev/null 2>&1
 }
 
 delete_old_address() {
-	/bin/rm -f /var/db/${interface}_ip
-	$IFCONFIG $interface inet -alias $old_ip_address $medium
+	/bin/rm -f "/var/db/${interface}_ip"
+	eval $IFCONFIG "$interface" inet -alias "$old_ip_address" "$medium"
 }
 
 add_new_address() {
@@ -64,11 +63,11 @@ add_new_address() {
 
 	$LOGGER "ifconfig $interface inet $new_ip_address netmask $new_subnet_mask broadcast $new_broadcast_address $medium"
 
-	$IFCONFIG $interface \
-		inet $new_ip_address \
-		netmask $new_subnet_mask \
-		broadcast $new_broadcast_address \
-		$medium
+	eval $IFCONFIG "$interface" \
+		inet "$new_ip_address" \
+		netmask "$new_subnet_mask" \
+		broadcast "$new_broadcast_address" \
+		"$medium"
 
 	$LOGGER "New IP Address ($interface): $new_ip_address"
 	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
@@ -78,39 +77,39 @@ add_new_address() {
 
 	# This is necessary otherwise dpinger will try to ping all 1s address
 	if [ -n "$new_routers" ] && [ "$new_routers" != "255.255.255.255" ]; then
-		echo $new_routers > /tmp/${interface}_router
-		/bin/rm -f /tmp/${interface}_router.last
+		echo "$new_routers" > "/tmp/${interface}_router"
+		/bin/rm -f "/tmp/${interface}_router.last"
 	fi
-	echo $new_ip_address > /var/db/${interface}_ip
+	echo "$new_ip_address" > "/var/db/${interface}_ip"
 }
 
 delete_old_alias() {
 	if [ -n "$alias_ip_address" ]; then
-		$IFCONFIG $interface inet -alias $alias_ip_address > /dev/null 2>&1
-		$ROUTE delete $alias_ip_address $LOCALHOST > /dev/null 2>&1
+		$IFCONFIG "$interface" inet -alias "$alias_ip_address" > /dev/null 2>&1
+		$ROUTE delete "$alias_ip_address" "$LOCALHOST" > /dev/null 2>&1
 	fi
 }
 
 add_new_alias() {
 	if [ -n "$alias_ip_address" ]; then
-		$IFCONFIG $interface inet alias $alias_ip_address netmask \
-		    $alias_subnet_mask
-		$ROUTE add $alias_ip_address $LOCALHOST
+		$IFCONFIG "$interface" inet alias "$alias_ip_address" netmask \
+		    "$alias_subnet_mask"
+		$ROUTE add "$alias_ip_address" "$LOCALHOST"
 	fi
 }
 
 fill_classless_routes() {
 	set $1
 	while [ $# -ge 5 ]; do
-		if [ $1 -eq 0 ]; then
+		if [ "$1" -eq 0 ]; then
 			route="default"
-		elif [ $1 -le 8 ]; then
+		elif [ "$1" -le 8 ]; then
 			route="$2.0.0.0/$1"
 			shift
-		elif [ $1 -le 16 ]; then
+		elif [ "$1" -le 16 ]; then
 			route="$2.$3.0.0/$1"
 			shift; shift
-		elif [ $1 -le 24 ]; then
+		elif [ "$1" -le 24 ]; then
 			route="$2.$3.$4.0/$1"
 			shift; shift; shift
 		else
@@ -142,12 +141,12 @@ delete_old_routes() {
 		for router in $old_routers; do
 			#  delete local route to the router ip address.
 			#  cleans up our route to a gateway possibly outside of the assigned subnet
-			$ROUTE delete -host $router -iface $interface
+			$ROUTE delete -host "$router" -iface "$interface"
 
-			$ROUTE delete default $router >/dev/null 2>&1
+			$ROUTE delete default "$router" >/dev/null 2>&1
 		done
 		if [ -f "/tmp/${interface}_router" ]; then
-			/bin/mv /tmp/${interface}_router /tmp/${interface}_router.last
+			/bin/mv "/tmp/${interface}_router" "/tmp/${interface}_router.last"
 		fi
 	fi
 
@@ -158,7 +157,7 @@ delete_old_routes() {
 			shift; shift
 		done
 		if [ -f "/tmp/${interface}_router" ]; then
-			/bin/mv /tmp/${interface}_router /tmp/${interface}_router.last
+			/bin/mv "/tmp/${interface}_router" "/tmp/${interface}_router.last"
 		fi
 	fi
 
@@ -194,29 +193,29 @@ add_new_routes() {
 	ADDED_ROUTE=no
 	# Only allow the default route to be overridden if it's on our own interface
 	if [ -f "/tmp/${interface}_defaultgw" ]; then
-		OLD_ROUTER=$(cat /tmp/${interface}_defaultgw)
-		$ROUTE delete default ${OLD_ROUTER}
+		OLD_ROUTER=$(cat "/tmp/${interface}_defaultgw")
+		$ROUTE delete default "${OLD_ROUTER}"
 		for router in $new_routers; do
-			if [ "$new_ip_address" = "$router" -o "$router" = "255.255.255.255" ]; then
-				$ROUTE add default -iface $interface
-				echo $ROUTE add default -iface $interface | $LOGGER
+			if [ "$new_ip_address" = "$router" ] || [ "$router" = "255.255.255.255" ]; then
+				$ROUTE add default -iface "$interface"
+				echo $ROUTE add default -iface "$interface" | $LOGGER
 				# NOTE: Do not activate this for all ones address since pf(4) will try to forward packets to it.
 				if [ "$new_ip_address" = "$router" ]; then
-					echo $router > /tmp/${interface}_router
-					/bin/rm -f /tmp/${interface}_router.last
+					echo "$router" > "/tmp/${interface}_router"
+					/bin/rm -f "/tmp/${interface}_router.last"
 				fi
 			else
 				#  add local route to the router ip address.
 				#  this will not cause any harm if the router is within the subnet
 				#  but it will prevent route troubles if the router is outside of the subnet
 				#  this is useful for captive subnets or similar gateway out-of-subnet situations
-				$ROUTE add -host $router -iface $interface
-				echo $ROUTE add -host $router -iface $interface | $LOGGER
+				$ROUTE add -host "$router" -iface "$interface"
+				echo $ROUTE add -host "$router" -iface "$interface" | $LOGGER
 
-				$ROUTE add default $router
-				echo $ROUTE add default $router | $LOGGER
-				echo $router > /tmp/${interface}_router
-				/bin/rm -f /tmp/${interface}_router.last
+				$ROUTE add default "$router"
+				echo $ROUTE add default "$router" | $LOGGER
+				echo "$router" > "/tmp/${interface}_router"
+				/bin/rm -f "/tmp/${interface}_router.last"
 			fi
 			ADDED_ROUTE=yes
 			# 2nd and subsequent default routers error out, so explicitly
@@ -229,10 +228,10 @@ add_new_routes() {
 		$LOGGER "New Static Routes ($interface): $new_static_routes"
 		set $new_static_routes
 		while [ $# -gt 1 ]; do
-			$ROUTE add $1 $2
+			$ROUTE add "$1" "$2"
 			if [ "$ADDED_ROUTE" = "no" ]; then
-				echo $2 > /tmp/${interface}_router
-				/bin/rm -f /tmp/${interface}_router.last
+				echo "$2" > "/tmp/${interface}_router"
+				/bin/rm -f "/tmp/${interface}_router.last"
 			fi
 			shift; shift
 		done
@@ -243,23 +242,23 @@ add_new_resolv_conf() {
 	$LOGGER "Creating resolv.conf"
 	if [ -f "/var/etc/nameserver_$interface" ]; then
 		# Remove old entries
-		for nameserver in `cat /var/etc/nameserver_$interface`; do
-			$ROUTE delete $nameserver >/dev/null 2>&1
+		for nameserver in `cat "/var/etc/nameserver_$interface"`; do
+			$ROUTE delete "$nameserver" >/dev/null 2>&1
 		done
 	fi
 	if [ -n "$new_domain_name_servers" ]; then
-		/bin/rm -f /var/etc/nameserver_$interface
+		/bin/rm -f "/var/etc/nameserver_$interface"
 		ALLOWOVERRIDE=$(/usr/local/sbin/read_xml_tag.sh boolean system/dnsallowoverride)
 		for nameserver in $new_domain_name_servers; do
 			# Add a route to the nameserver out the correct interface
 			# so that multiple wans work correctly with multiple dns
 			# also backup the nameserver for later route removal
 			if [ "$ALLOWOVERRIDE" = "true" ]; then
-				echo $nameserver >>/var/etc/nameserver_$interface
-				$ROUTE add $nameserver -iface $interface
+				echo "$nameserver" >> "/var/etc/nameserver_$interface"
+				$ROUTE add "$nameserver" -iface "$interface"
 			fi
 		done
-		echo $new_domain_name >/var/etc/searchdomain_$interface
+		echo "$new_domain_name" > "/var/etc/searchdomain_$interface"
 	fi
 
 	return 0
@@ -286,7 +285,7 @@ if [ -f /etc/dhclient-enter-hooks ]; then
 	fi
 fi
 
-$LOGGER $reason
+$LOGGER "$reason"
 case $reason in
 MEDIUM)
 	eval "$IFCONFIG $interface $medium"
@@ -297,7 +296,7 @@ PREINIT)
 	delete_old_alias
 	eval "$IFCONFIG $interface up"
 	if [ -f "/tmp/${interface}_router" ]; then
-		/bin/mv /tmp/${interface}_router /tmp/${interface}_router.last
+		/bin/mv "/tmp/${interface}_router" "/tmp/${interface}_router.last"
 	fi
 	;;
 
@@ -367,8 +366,8 @@ TIMEOUT)
 			exit_status=0
 		fi
 	fi
-	if [ $exit_status -ne 0 ]; then
-		$IFCONFIG $interface inet -alias $new_ip_address $medium
+	if [ "$exit_status" -ne 0 ]; then
+		eval "$IFCONFIG" "$interface" inet -alias "$new_ip_address" "$medium"
 		delete_old_routes
 	fi
 	;;

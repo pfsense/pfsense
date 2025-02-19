@@ -259,7 +259,7 @@ $section->addInput(new Form_Select(
 ))->setHelp(
 	'%1$sInterface Bound States are more strict and secure. States '.
 	'are bound to specific interfaces by their OS/driver name (e.g. '.
-	'igcX). If a packet attempts to takes an path through a different '.
+	'igcX). If a packet attempts to takes a path through a different '.
 	'interface than the one to which it is bound, the packet is '.
 	'dropped. This policy is less likely to allow VPN or other '.
 	'traffic to egress via unexpected paths (e.g. during interface '.

@@ -6918,9 +6918,31 @@ function upgrade_234_to_235() {
 function upgrade_235_to_236() {
 }
 
-/* Additional system aliases have been added. */
 function upgrade_236_to_237() {
+	/* Additional system aliases have been added. */
 	rename_conflicting_aliases();
+
+	/* Cron jobs may be clobbered, see: #16059. */
+	$write_cron_config = false;
+	$cron_command_paths = [
+		'/etc/rc.backup_rrd.sh' => 'system/rrdbackup',
+		'/etc/rc.backup_dhcpleases.sh' => 'system/dhcpbackup',
+		'/etc/rc.backup_logs.sh' => 'system/logsbackup',
+		'/etc/rc.backup_captiveportal.sh' => 'system/captiveportalbackup'
+	];
+	$cron_config = config_get_path('cron/item', []);
+	foreach ($cron_config as &$cron_item) {
+		if (!str_contains($cron_item['hour'], 'config_get_path') ||
+		    !isset($cron_command_paths[$cron_item['command']])) {
+			continue;
+		}
+		$cron_item['hour'] = '*/' . config_get_path($cron_command_paths[$cron_item['command']], '');
+		$write_cron_config = true;
+	}
+	unset($cron_item);
+	if ($write_cron_config) {
+		config_set_path('cron/item', $cron_config);
+	}
 }
 
 /* The config path captiveportal/<zone>/zone has been removed. */

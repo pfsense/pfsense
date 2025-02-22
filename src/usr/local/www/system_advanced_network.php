@@ -320,6 +320,16 @@ $section->addInput(new Form_Checkbox(
     'states associated with the previous IP Address.');
 
 $form->add($section);
+
+$section = new Form_Section('DNS Client Configuration');
+
+$section->addInput(new Form_Textarea(
+    'resolvconf_custom_options',
+    'resolv.conf custom options',
+    $pconfig['resolvconf_custom_options']
+))->setHelp('Enter any additional options to add to the /etc/resolv.conf configuration here.');
+
+$form->add($section);
 print $form;
 ?>
 

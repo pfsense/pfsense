@@ -467,7 +467,7 @@ $section->addInput(new Form_Input(
 	['autocomplete' => 'new-password']
 ))->setHelp('Username is required for all providers except Cloudflare, Custom Entries, DigitalOcean, DNS Made Easy, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), Linode and Namecheap.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
-			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
+			'Cloudflare: Enter email if using the Global API Key, or Zone ID (optional, empty = auto-detect) if using an API Token.%1$s' .
 			'Custom Entries: Username and Password represent HTTP Authentication username and passwords.%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Domeneshop: Enter the API token.%1$s' .
@@ -484,7 +484,7 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('Azure: client secret of the AD application%1$s' .
-			'Cloudflare: Enter the Global API Key or API token with DNS edit permission on the provided zone.%1$s' .
+			'Cloudflare: Enter the Global API Key, or an API token with DNS Edit permission for the provided zone.%1$s' .
 			'deSEC: Enter the API token.%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
 			'DNSExit: Enter the API Key.%1$s' .

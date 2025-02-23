@@ -1784,7 +1784,7 @@ function get_interface_info($ifdescr) {
 	} else {
 		$ppp_if_file = "{$g['varrun_path']}/{$link_type}_{$ifdescr}.pid";
 	}
-	if (file_exists($ppp_if_file) {
+	if (file_exists($ppp_if_file)) {
 		$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
 		$ifinfo['ppp_uptime'] = convert_seconds_to_dhms($sec);
 	}

@@ -1779,7 +1779,12 @@ function get_interface_info($ifdescr) {
 			break;
 	}
 
-	if (file_exists("{$g['varrun_path']}/{$link_type}_{$ifdescr}.pid")) {
+	if (config_path_enabled('system', 'use_if_pppoe')) {
+		$ppp_if_file = "/tmp/{$ifinfo['if']}up";
+	} else {
+		$ppp_if_file = "{$g['varrun_path']}/{$link_type}_{$ifdescr}.pid";
+	}
+	if (file_exists($ppp_if_file) {
 		$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
 		$ifinfo['ppp_uptime'] = convert_seconds_to_dhms($sec);
 	}

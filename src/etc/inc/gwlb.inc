@@ -352,6 +352,9 @@ function setup_gateways_monitor() {
 						route_add_or_change($gateway['monitor'],
 						    '', $gateway['interface']);
 						system_staticroutes_configure($gateway['friendlyiface']);
+					} elseif ($gateway['gateway'] == 'dynamic') {
+						route_add_or_change($gateway['monitor'],
+						    '', $gateway['interface']);
 					} else {
 						route_add_or_change($gateway['monitor'],
 						    $gateway['gateway']);
@@ -399,6 +402,9 @@ function setup_gateways_monitor() {
 						route_add_or_change($gateway['monitor'],
 						    '', $gateway['interface']);
 						system_staticroutes_configure($gateway['friendlyiface']);
+					} elseif ($gateway['gateway'] == 'dynamic') {
+						route_add_or_change($gateway['monitor'],
+						    '', $gateway['interface']);
 					} else {
 						route_add_or_change($gateway['monitor'],
 						    $gateway['gateway']);

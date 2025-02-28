@@ -82,7 +82,7 @@ $g = [
 	'disablehelpicon' => false,
 	'disablecrashreporter' => false,
 	'debug' => false,
-	'latest_config' => '23.8',
+	'latest_config' => '23.9',
 	'minimum_ram_warning' => '101',
 	'minimum_ram_warning_text' => '128 MB',
 	'wan_interface_name' => 'wan',
@@ -354,15 +354,36 @@ function add_reserved_table(array $table, array $values) {
 
 add_reserved_table(
 	[
-		'name' => '_loopback_',
+		'name' => '_loopback4_',
+		'type' => 'network',
+		'descr' => 'IPv4 loopback network.',
+	],
+	[
+		'127.0.0.0/8' => 'Loopback', // RFC1122
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_loopback6_',
+		'type' => 'network',
+		'descr' => 'IPv6 loopback network.',
+	],
+	[
+		'::1/128' => 'Loopback Address', // RFC4291
+	],
+);
+add_reserved_table(
+	[
+		'name' => '_loopback46_',
 		'type' => 'network',
 		'descr' => 'IPv4 and IPv6 loopback networks.',
 	],
 	[
-		'127.0.0.0/8' => 'Loopback', // RFC1122
-		'::1/128' => 'Loopback Address', // RFC4291
+		'_loopback4_' => 'IPv4 Loopback',
+		'_loopback6_' => 'IPv6 Loopback',
 	],
 );
+
 add_reserved_table(
 	[
 		'name' => '_linklocal4_',
@@ -383,6 +404,18 @@ add_reserved_table(
 		'fe80::/10' => 'Linked-Scoped Unicast', // RFC4291
 	],
 );
+add_reserved_table(
+	[
+		'name' => '_linklocal46_',
+		'type' => 'network',
+		'descr' => 'IPv4 and IPv6 link-local networks.',
+	],
+	[
+		'_linklocal4_' => 'IPv4 link-local networks',
+		'_linklocal6_' => 'IPv6 link-local networks',
+	],
+);
+
 add_reserved_table(
 	[
 		'name' => '_private4_',
@@ -408,6 +441,18 @@ add_reserved_table(
 );
 add_reserved_table(
 	[
+		'name' => '_private46_',
+		'type' => 'network',
+		'descr' => 'IPv4 and IPv6 private networks.',
+	],
+	[
+		'_private4_' => 'IPv4 private networks',
+		'_private6_' => 'IPv6 private networks',
+	],
+);
+
+add_reserved_table(
+	[
 		'name' => '_multicast4_',
 		'type' => 'network',
 		'descr' => 'IPv4 multicast networks.',
@@ -426,6 +471,18 @@ add_reserved_table(
 		'ff00::/8' => 'Multicast', // RFC4291
 	],
 );
+add_reserved_table(
+	[
+		'name' => '_multicast46_',
+		'type' => 'network',
+		'descr' => 'IPv4 and IPv6 multicast networks.',
+	],
+	[
+		'_multicast4_' => 'IPv4 multicast networks',
+		'_multicast6_' => 'IPv6 multicast networks',
+	],
+);
+
 add_reserved_table(
 	[
 		'name' => '_reserved4_',
@@ -474,6 +531,17 @@ add_reserved_table(
 		'fe80::/10' => 'Linked-Scoped Unicast', // RFC4291
 		'ff00::/8' => 'Multicast', // RFC4291
 	]
+);
+add_reserved_table(
+	[
+		'name' => '_reserved46_',
+		'type' => 'network',
+		'descr' => 'IPv4 and IPv6 networks reserved for local use.',
+	],
+	[
+		'_reserved4_' => 'IPv4 networks reserved for local use',
+		'_reserved6_' => 'IPv6 networks reserved for local use',
+	],
 );
 
 /* VLAN Prio values. */

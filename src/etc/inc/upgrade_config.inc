@@ -6958,6 +6958,14 @@ function upgrade_237_to_238() {
 	}
 }
 
+function upgrade_238_to_239() {
+	// The reserved Loopback alias has been renamed so update references.
+	update_alias_name('_loopback46_', '_loopback4_');
+
+	// Additional system aliases have been added.
+	rename_conflicting_aliases();
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

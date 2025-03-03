@@ -2962,16 +2962,18 @@ function filter_rules_sort() {
 	$rules = config_get_path('filter/rule', []);
 
 	/* mark each rule with the sequence number (to retain the order while sorting) */
-	for ($i = 0; isset($rules[$i]); $i++) {
-		$rules[$i]['seq'] =$i;
+	$i = 0;
+	foreach ($rules as &$rule) {
+		$rule['seq'] = $i++;
 	}
+	unset($rule);
 	usort($rules, "filter_rules_compare");
 
 	/* strip the sequence numbers again */
-	for ($i = 0; isset($rules[$i]); $i++) {
-		unset($rules[$i]['seq']);
+	foreach ($rules as &$rule) {
+		unset($rule['seq']);
 	}
-
+	unset($rule);
 	/* commit changes */
 	config_set_path('filter/rule', $rules);
 }

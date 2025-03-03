@@ -269,7 +269,7 @@ class pfsense_xmlrpc_server {
 					if ($idx === false) {
 						// section config group not found in local config
 						$g2add[] = $group;
-					} else if ($group['gid'] < 2000) {
+					} else if ($group['gid'] < 1999) {
 						// section config group found in local config and is a special group
 						$g2keep[] = $idx;
 					} else if ($group != $local_groups[$idx]) {

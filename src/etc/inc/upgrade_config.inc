@@ -6960,7 +6960,7 @@ function upgrade_237_to_238() {
 
 function upgrade_238_to_239() {
 	// The reserved Loopback alias has been renamed so update references.
-	update_alias_name('_loopback46_', '_loopback4_');
+	update_alias_name('_loopback46_', '_loopback_');
 
 	// Additional system aliases have been added.
 	rename_conflicting_aliases();

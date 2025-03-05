@@ -563,15 +563,19 @@ if ($_POST['save']) {
 	}
 
 	if (isset($_POST['ipprotocol']) && $_POST['gateway'] <> '') {
-		if (($_POST['ipprotocol'] == "inet6") && $_POST['nat']) {
-			$input_errors[] = gettext("NAT64 rules cannot use specific gateways.");
-		}
-
 		foreach (config_get_path('gateways/gateway_group',[]) as $gw_group) {
-			if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
-				if ($_POST['ipprotocol'] == "inet46") {
-					$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
-				} elseif ($_POST['ipprotocol'] == "inet6") {
+			if ($gw_group['name'] != $_POST['gateway']) {
+				continue;
+			}
+
+			if ($_POST['ipprotocol'] == "inet46") {
+				$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+			} elseif ($_POST['nat']) {
+				if (($_POST['ipprotocol'] == "inet6") && ($a_gatewaygroups[$_POST['gateway']]['ipprotocol'] != 'inet')) {
+					$input_errors[] = gettext("An IPv6 gateway group can not be assigned in NAT64 rules.");
+				}
+			} elseif ($_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
+				if ($_POST['ipprotocol'] == "inet6") {
 					$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
 				} elseif ($_POST['ipprotocol'] == "inet") {
 					$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
@@ -582,12 +586,17 @@ if ($_POST['save']) {
 			// this also implies that  $_POST['gateway'] was set and not empty
 			if ($_POST['ipprotocol'] == "inet46") {
 				$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
-			}
-			if (($_POST['ipprotocol'] == "inet6") && ($iptype != 6)) {
-				$input_errors[] = gettext("An IPv4 gateway can not be assigned in IPv6 rules.");
-			}
-			if (($_POST['ipprotocol'] == "inet") && ($iptype != 4)) {
-				$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
+			} elseif ($_POST['nat']) {
+				if (($_POST['ipprotocol'] == "inet6") && ($iptype != 4)) {
+					$input_errors[] = gettext("An IPv6 gateway can not be assigned in NAT64 rules.");
+				}
+			} else {
+				if (($_POST['ipprotocol'] == "inet6") && ($iptype != 6)) {
+					$input_errors[] = gettext("An IPv4 gateway can not be assigned in IPv6 rules.");
+				}
+				if (($_POST['ipprotocol'] == "inet") && ($iptype != 4)) {
+					$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
+				}
 			}
 		}
 	}
@@ -2185,7 +2194,9 @@ events.push(function() {
 
 		// Add new ones as appropriate for the address family
 		json.forEach(function(gwobj) {
-			if (((gwobj.family == protocol) || (gwobj.family == "inet46")) && (protocol != "inet46")) {
+			if ((protocol != "inet46") &&
+			    ((!$('#nat').prop('checked') && (gwobj.family == protocol) || (gwobj.family == "inet46")) ||
+			    ($('#nat').prop('checked') && (protocol == "inet6") && (gwobj.family == "inet")))) {
 				$('#gateway').append($('<option>', {
 				    text: gwobj.gateway,
 				    value: gwobj.name
@@ -2341,6 +2352,7 @@ events.push(function() {
 
 	$('#ipprotocol').on('change', function() {
 		proto_change();
+		nat_change('address_family');
 	});
 
 	$('#proto').on('change', function() {
@@ -2390,6 +2402,7 @@ events.push(function() {
 	}
 
 	function nat_change(action) {
+		updateGWselect();
 		if ($('#ipprotocol option:selected').val() == "inet6") {
 			if (action == 'address_family') {
 				$('#nat').parent()[0].childNodes[1].nodeValue = 'Enable NAT64';
@@ -2423,9 +2436,6 @@ events.push(function() {
 	}
 	$('#nat').on('change', function() {
 		nat_change('nat_toggle');
-	});
-	$('#ipprotocol').on('change', function() {
-		nat_change('address_family');
 	});
 	$('#nat64_source').on('change', function() {
 		nat_change();

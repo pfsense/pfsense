@@ -148,33 +148,33 @@ function find_config_xml() {
 				if ($debug) {
 					echo "\n/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 				}
-				$result = exec("/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				$_out = exec("/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				// try regular fs (ufs)
-				if (!$result) {
+				if ($_out === false || $status != 0) {
 					if ($debug) {
 						echo "\n/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
-					$result = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+					$_out = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				}
 				// try cd9660 (standard CD-ROM format)
-				if (!$result) {
+				if ($_out === false || $status != 0) {
 					if ($debug) {
 						echo "\n/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
-					$result = exec("/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+					$_out = exec("/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				}
 				// try udf (common for modern DVDs and some CDs)
-				if (!$result) {
+				if ($_out === false || $status != 0) {
 					if ($debug) {
 						echo "\n/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
-					$result = exec("/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+					$_out = exec("/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				}
 				$mounted = trim(exec("/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep '/tmp/mnt/cf' | /usr/bin/wc -l"));
 				if ($debug) {
 					echo "\nmounted: $mounted ";
 				}
-				if (intval($mounted) > 0) {
+				if ($status == 0 && intval($mounted) > 0) {
 					// Item was mounted - look for config.xml file
 					$config_location = discover_config($slice);
 					if ($config_location) {

@@ -101,6 +101,8 @@ if ($_POST['save'] || $_POST['force']) {
 		"godaddy" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"godaddy-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"googledomains" => array("apex" => false, "wildcard" => true, "username_none" => false),
+		"hetzner" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"hetzner-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"linode" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"linode-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
@@ -153,6 +155,23 @@ if ($_POST['save'] || $_POST['force']) {
 		if (((array_get_path($ddns_attr, "{$pconfig['type']}/apex") == true) && (($_POST['host'] == '@.') || ($_POST['host'] == '@'))) ||
 		    ((array_get_path($ddns_attr, "{$pconfig['type']}/wildcard") == true) && (($_POST['host'] == '*.') || ($_POST['host'] == '*')))) {
 			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "hetzner") || ($pconfig['type'] == "hetzner-v6")) {
+			/* Hetzner allows hostnames with '@' and '*', but not at the same time */
+			$host_to_check = $_POST['host'];
+			
+			if (!strpos($host_to_check, '@') !== false && !strpos($host_to_check, '*') !== false) {
+				
+				if (strrpos($host_to_check, '@') !== false) {
+					$last_to_check = strrpos($host_to_check, '@');
+				} else {
+					$last_to_check = strrpos($host_to_check, '*');
+				}
+				
+				if ($last_to_check !== false) {
+					$host_to_check = substr_replace($host_to_check, '0', $last_to_check, 1);
+				}
+				unset($last_to_check);
+			}
 		} else {
 			switch ($pconfig['type']) {
 				case 'azure':
@@ -409,6 +428,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
 				'GleSYS: Enter the record ID.%1$s' .
 				'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
+				'Hetzner DNS Console: Enter @ in the fully qualified domain name format, to indicate an empty field.%1$s' .
 				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
 					The domain name is the domain or subdomain zone being handled by the provider.', '<br />');
 
@@ -496,6 +516,7 @@ $section->addPassword(new Form_Input(
 			'Gandi LiveDNS: Enter API token%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
+			'Hetzner DNS Console: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
 			'Porkbun: Enter the API secret.%1$s' .
@@ -671,6 +692,13 @@ events.push(function() {
 				break;
 			case "godaddy":
 			case "godaddy-v6":
+			case "hetzner":
+			case "hetzner-v6":
+				hideInput('username', true);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideInput('ttl', false);
+				break;	
 			case "linode":
 			case "linode-v6":
 			case "name.com":

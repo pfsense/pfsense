@@ -1280,20 +1280,20 @@ if ($_POST['save']) {
 
 			$ridx = get_interface_ruleindex($tmpif, $after);
 			if (is_numeric($after) && ($tmpif == $if || (isset($pconfig['floating'])))) {
-				// save the rule after the one being requested
-				array_splice($a_filter, $after+1, 0, array($filterent));
-				// shift the separators
+				// shift the separators and insert the rule
 				$a_separators = config_get_path('filter/separator/' . strtolower($tmpif), []);
 				if ($after == -1) {
 					// rule is being placed on top
 					shift_separators($a_separators, -1);
+					array_splice($a_filter, $ridx['first'], 0, array($filterent));
 				} else {
 					// rule is being placed after another rule
 					shift_separators($a_separators, $ridx['index']);
+					array_splice($a_filter, $after+1, 0, array($filterent));
 				}
 				config_set_path('filter/separator/' . strtolower($tmpif), $a_separators);
 			} else {
-				// rule copied to different interface; place it at the bottom
+				// rule is being added at the end or copied to a different interface; place it at the bottom
 				array_splice($a_filter, $ridx['last']+1, 0, array($filterent));
 			}
 		}

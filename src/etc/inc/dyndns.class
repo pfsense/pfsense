@@ -1783,7 +1783,7 @@
 					$url = "{$gandi_api}{$this->_dnsDomain}/records/{$this->_dnsHost}/{$record_type}";
 
 					$headers = array(
-						'Authorization: Apikey ' . $this->_dnsPass,
+						'Authorization: Bearer ' . $this->_dnsPass,
 						'Content-Type: application/json'
 					);
 					$body = array(

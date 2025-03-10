@@ -2978,17 +2978,26 @@ function filter_rules_sort() {
 	config_set_path('filter/rule', $rules);
 }
 function filter_rules_compare($a, $b) {
-	if (isset($a['floating']) && isset($b['floating'])) {
-		return $a['seq'] - $b['seq'];
-	} else if (isset($a['floating'])) {
-		return -1;
-	} else if (isset($b['floating'])) {
+	if (isset($a['floating'])) {
+		// Floating rules are placed before Interface rules.
+		if (!isset($b['floating'])) {
+			return -1;
+		}
+	} elseif (isset($b['floating'])) {
+		// Interface rules are placed after Floating rules.
 		return 1;
-	} else if ($a['interface'] == $b['interface']) {
-		return $a['seq'] - $b['seq'];
-	} else {
+	} elseif ($a['interface'] != $b['interface']) {
+		// Interface rules for the same interface are grouped together.
 		return compare_interface_friendly_names($a['interface'], $b['interface']);
 	}
+
+	// Use the sequence number as a last resort.
+	if (isset($a['seq']) && isset($b['seq'])) {
+		return ($a['seq'] <=> $b['seq']);
+	}
+
+	// Nothing to compare.
+	return 0;
 }
 
 function generate_ipv6_from_mac($mac) {

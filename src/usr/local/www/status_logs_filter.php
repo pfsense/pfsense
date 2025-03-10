@@ -235,19 +235,19 @@ if (!$rawfilter) {
 		$dst_htmlclass = str_replace(array('.', ':'), '-', $rawdstip);
 ?>
 					<td class="text-nowrap">
-						<i class="fa-solid fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$rawsrcip}"; ?>');" title="<?=gettext("Click to resolve")?>">
+						<i class="fa-solid fa-info icon-pointer" onclick="javascript:resolve_with_ajax('<?="{$rawsrcip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<a class="fa-regular fa-square-minus icon-pointer icon-primary" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Add to Block List")?>">
+						<a class="fa-regular fa-square-minus icon-pointer" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Add to Block List")?>">
 						</a>
 
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 					</td>
 					<td class="text-nowrap">
-						<i class="fa-solid fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$rawdstip}"; ?>');" title="<?=gettext("Click to resolve")?>">
+						<i class="fa-solid fa-info icon-pointer; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$rawdstip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<a class="fa-regular fa-square-plus icon-pointer icon-primary" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Pass this traffic")?>">
+						<a class="fa-regular fa-square-plus icon-pointer" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Pass this traffic")?>">
 						</a>
 						<?=$dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>'?>
 					</td>
@@ -346,7 +346,7 @@ events.push(function() {
 <?php
 print_info_box('<a href="https://docs.netgate.com/pfsense/en/latest/firewall/configure.html#tcp-flags">' .
 	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.' . '<br />' .
-	'<i class="fa-regular fa-square-minus icon-primary"></i> = ' . gettext('Add to block list') . ', <i class="fa-regular fa-square-plus icon-primary"></i> = ' . gettext('Pass traffic') . ', <i class="fa-solid fa-info icon-primary"></i> = ' . gettext('Resolve'), 'info', false);
+	'<i class="fa-regular fa-square-minus"></i> = ' . gettext('Add to block list') . ', <i class="fa-regular fa-square-plus"></i> = ' . gettext('Pass traffic') . ', <i class="fa-solid fa-info"></i> = ' . gettext('Resolve'), 'info', false);
 ?>
 </div>
 

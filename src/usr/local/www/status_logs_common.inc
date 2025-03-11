@@ -990,31 +990,35 @@ function manage_log_section() {
 	if ($logfile == 'filter') {
 		$section->addInput(new Form_Checkbox(
 			'logdefaultblock',
-			'Log firewall default blocks',
-			'Log packets matched from the default block rules in the ruleset',
+			null,
+			'Default firewall "block" rules',
 			$pconfig['logdefaultblock']
-		))->setHelp('Packets that are blocked by the implicit default block rule will not be logged if this option is unchecked. Per-rule logging options are still respected.');
-
+		))->setHelp('Log packets that are %1$sblocked%2$s by the implicit default block rule.', '<strong>', '</strong>');
+		
 		$section->addInput(new Form_Checkbox(
 			'logdefaultpass',
 			null,
-			'Log packets matched from the default pass rules put in the ruleset',
+			'Default firewall "pass" rules',
 			$pconfig['logdefaultpass']
-		))->setHelp('Packets that are allowed by the implicit default pass rule will be logged if this option is checked. Per-rule logging options are still respected. ');
-
+		))->setHelp('Log packets that are %1$sallowed%2$s by the implicit ' .
+			'default pass rule. Note: Packets with IP options are not affected ' .
+			'by this option and %3$sare logged by default%4$s.', '<strong>', '</strong>',
+			'<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/log-filter-blocked.html#packets-with-ip-options">', '</a>'
+		);
+		
 		$section->addInput(new Form_Checkbox(
 			'logbogons',
 			null,
-			'Log packets blocked by \'Block Bogon Networks\' rules',
+			'Default "Bogon Networks" block rules',
 			$pconfig['logbogons']
-		));
-
+		))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block bogon networks".', '<strong>', '</strong>');
+		
 		$section->addInput(new Form_Checkbox(
 			'logprivatenets',
 			null,
-			'Log packets blocked by \'Block Private Networks\' rules',
+			'Default "Private Networks" block rules',
 			$pconfig['logprivatenets']
-		));
+		))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block private networks and loopback addresses".', '<strong>', '</strong>');		
 
 		$section->addInput(new Form_Select(
 			'filterdescriptions',

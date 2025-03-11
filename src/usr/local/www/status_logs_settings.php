@@ -354,45 +354,49 @@ $section = new Form_Section('Logging Preferences');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultblock',
-	'Log firewall default blocks',
-	'Log packets matched from the default block rules in the ruleset',
+	null,
+	'Default firewall "block" rules',
 	$pconfig['logdefaultblock']
-))->setHelp('Log packets that are %1$sblocked%2$s by the implicit default block rule. - Per-rule logging options are still respected.', '<strong>', '</strong>');
+))->setHelp('Log packets that are %1$sblocked%2$s by the implicit default block rule.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultpass',
 	null,
-	'Log packets matched from the default pass rules put in the ruleset',
+	'Default firewall "pass" rules',
 	$pconfig['logdefaultpass']
-))->setHelp('Log packets that are %1$sallowed%2$s by the implicit default pass rule. - Per-rule logging options are still respected. ', '<strong>', '</strong>');
+))->setHelp('Log packets that are %1$sallowed%2$s by the implicit ' .
+	'default pass rule. Note: Packets with IP options are not affected ' .
+	'by this option and %3$sare logged by default%4$s.', '<strong>', '</strong>',
+	'<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/log-filter-blocked.html#packets-with-ip-options">', '</a>'
+);
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',
 	null,
-	'Log packets blocked by \'Block Bogon Networks\' rules',
+	'Default "Bogon Networks" block rules',
 	$pconfig['logbogons']
-));
+))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block bogon networks".', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logprivatenets',
 	null,
-	'Log packets blocked by \'Block Private Networks\' rules',
+	'Default "Private Networks" block rules',
 	$pconfig['logprivatenets']
-));
+))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block private networks and loopback addresses".', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'lognginx',
-	'Web Server Log',
-	'Log errors from the web server process',
+	null,
+	'Web server',
 	$pconfig['lognginx']
-))->setHelp('If this is checked, errors from the web server process for the GUI or Captive Portal will appear in the main system log.');
+))->setHelp('Log errors from the web server process for the GUI and Captive Portal.');
 
 $section->addInput(new Form_Checkbox(
 	'logconfigchanges',
-	'Log Configuration Changes',
-	"Generate log entries when making changes to the configuration.",
+	null,
+	"Configuration changes",
 	$pconfig['logconfigchanges']
-));
+))->setHelp('Log changes to the configuration.');
 
 $form->add($section);
 $section = new Form_Section('Log Rotation Options');

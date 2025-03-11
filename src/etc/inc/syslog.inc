@@ -1238,25 +1238,41 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 		return;
 	}
 
-	if ($trackernum == "0") {
-		$lookup_pattern = "^@{$rulenum}\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
-	} else {
-		$lookup_pattern = "^@[0-9]+[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]].*[[:space:]]ridentifier[[:space:]]{$trackernum}";
-	}
-
-	/* At the moment, miniupnpd is the only thing I know of that
-	   generates logging rdr rules */
-	unset($buffer);
+	$command = '/sbin/pfctl -vvPsr';
 	if ($type == "rdr") {
-		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/egrep " . escapeshellarg("^@{$rulenum}"), $buffer);
+		/* miniupnpd generates logging rdr rules */
+		$lookup_pattern = "/^@{$rulenum}/m";
+		$command = '/sbin/pfctl -vvPsn -a "miniupnpd"';
+	} elseif ($trackernum == "0") {
+		$lookup_pattern = "/^@{$rulenum}\([0-9]+\)[[:blank:]]{$type}[[:blank:]].*[[:blank:]]log[[:blank:]]/m";
 	} else {
-		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
-	}
-	if (is_array($buffer)) {
-		return $buffer[0];
+		$lookup_pattern = "/^@[0-9]+[[:blank:]]{$type}[[:blank:]].*[[:blank:]]log[[:blank:]].*[[:blank:]]ridentifier[[:blank:]]{$trackernum}$/m";
 	}
 
-	return "";
+	$output = exec_command($command);
+	$result = 'unavailable';
+	$matches = [];
+	if (preg_match($lookup_pattern, $output, $matches)) {
+		$result = $matches[0];
+	} elseif ($type == 'block') {
+		// Check for IP options; check 'pass' with no log.
+		$lookup_pattern = "/^@([0-9]+)[[:blank:]]pass[[:blank:]].*[[:blank:]]ridentifier[[:blank:]]{$trackernum}$/m";
+		if (preg_match_all($lookup_pattern, $output, $matches)) {
+			// Default to the first match.
+			$result = $matches[0][0];
+			if (count($matches[0]) > 1) {
+				// If the rule is a IPv4+IPv6 rule, there may be multiple matches.
+				foreach ($matches[1] as $idx => $value) {
+					if ($rulenum == $value) {
+						$result = $matches[0][$idx];
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return $result;
 }
 
 function buffer_rules_load() {

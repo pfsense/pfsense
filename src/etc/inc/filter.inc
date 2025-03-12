@@ -3908,7 +3908,6 @@ function filter_rules_generate() {
 		 * Default deny rule IPv6
 		 * Block traffic from port 0
 		 * Block traffic to port 0
-		 * Block snort2c hosts
 		 * sshguard
 		 * GUI Lockout
 		 * virusprot overload table
@@ -3961,6 +3960,11 @@ function filter_rules_generate() {
 		 * Block ULA networks
 		 */
 		'private_networks' => !config_path_enabled('syslog','nologprivatenets') ? 'log' : '',
+
+		/**
+		 * Block snort2c hosts
+		 */
+		'snort2c_hosts' => !config_path_enabled('syslog','nologsnort2c') ? 'log' : '',
 	];
 
 	$fix_rule_label = 'fix_rule_label';

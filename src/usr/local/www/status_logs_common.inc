@@ -666,6 +666,7 @@ function manage_log_code() {
 		$pconfig['logdefaultpass'] = isset($syslog_config['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($syslog_config['nologbogons']);
 		$pconfig['logprivatenets'] = !isset($syslog_config['nologprivatenets']);
+		$pconfig['logsnort2c'] = !isset($syslog_config['nologsnort2c']);
 		$pconfig['filterdescriptions'] = isset($syslog_config['filterdescriptions']) ? $syslog_config['filterdescriptions'] : null;
 	}
 
@@ -696,6 +697,7 @@ function manage_log_code() {
 			$logbogons = getGETPOSTsettingvalue('logbogons', null);
 			$logprivatenets  = getGETPOSTsettingvalue('logprivatenets',  null);
 			$filterdescriptions  = getGETPOSTsettingvalue('filterdescriptions',  null);
+			$loglogsnort2c = getGETPOSTsettingvalue('logsnort2c',  null);
 		}
 
 		unset($input_errors);
@@ -772,11 +774,13 @@ function manage_log_code() {
 				$oldnologdefaultpass = isset($syslog_config['nologdefaultpass']);
 				$oldnologbogons = isset($syslog_config['nologbogons']);
 				$oldnologprivatenets = isset($syslog_config['nologprivatenets']);
+				$oldnologsnort2c = isset($syslog_config['nologsnort2c']);
 
 				$syslog_config['nologdefaultblock'] = $logdefaultblock ? false : true;
 				$syslog_config['nologdefaultpass'] = $logdefaultpass ? true : false;
 				$syslog_config['nologbogons'] = $logbogons ? false : true;
 				$syslog_config['nologprivatenets'] = $logprivatenets ? false : true;
+				$syslog_config['nologsnort2c'] = $loglogsnort2c ? false : true;
 
 				if (is_numeric($filterdescriptions) && $filterdescriptions > 0) {
 					$syslog_config['filterdescriptions'] = $filterdescriptions;
@@ -788,7 +792,8 @@ function manage_log_code() {
 				    ($oldnologdefaultblock !== $syslog_config['nologdefaultblock']) ||
 				    ($oldnologdefaultpass !== $syslog_config['nologdefaultpass']) ||
 				    ($oldnologbogons !== $syslog_config['nologbogons']) ||
-				    ($oldnologprivatenets !== $syslog_config['nologprivatenets'])) {
+				    ($oldnologprivatenets !== $syslog_config['nologprivatenets']) ||
+				    ($oldnologsnort2c !== $syslog_config['nologsnort2c'])) {
 					$logging_changed = $firewall_logging_changed = true;
 				}
 			}
@@ -1019,6 +1024,13 @@ function manage_log_section() {
 			'Default "Private Networks" block rules',
 			$pconfig['logprivatenets']
 		))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block private networks and loopback addresses".', '<strong>', '</strong>');		
+
+		$section->addInput(new Form_Checkbox(
+			'logsnort2c',
+			null,
+			'Hosts blocked by IDS',
+			$pconfig['nologsnort2c']
+		))->setHelp('Log packets that are %1$sblocked%2$s by IDS packages.', '<strong>', '</strong>');
 
 		$section->addInput(new Form_Select(
 			'filterdescriptions',

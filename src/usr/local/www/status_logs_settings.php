@@ -65,6 +65,7 @@ $pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock'
 $pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
 $pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
 $pconfig['logprivatenets'] = !config_path_enabled('syslog', 'nologprivatenets');
+$pconfig['logsnort2c'] = !config_path_enabled('syslog', 'nologsnort2c');
 $pconfig['lognginx'] = !config_path_enabled('syslog', 'nolognginx');
 $pconfig['rawfilter'] = config_path_enabled('syslog', 'rawfilter');
 $pconfig['filterdescriptions'] = config_get_path('syslog/filterdescriptions');
@@ -203,11 +204,13 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologdefaultpass = config_path_enabled('syslog', 'nologdefaultpass');
 		$oldnologbogons = config_path_enabled('syslog', 'nologbogons');
 		$oldnologprivatenets = config_path_enabled('syslog', 'nologprivatenets');
+		$oldnologsnort2c = config_path_enabled('syslog', 'nologsnort2c');
 		$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
 		config_set_path('syslog/nologdefaultblock', $_POST['logdefaultblock'] ? false : true);
 		config_set_path('syslog/nologdefaultpass', $_POST['logdefaultpass'] ? true : false);
 		config_set_path('syslog/nologbogons', $_POST['logbogons'] ? false : true);
 		config_set_path('syslog/nologprivatenets', $_POST['logprivatenets'] ? false : true);
+		config_set_path('syslog/nologsnort2c', $_POST['logsnort2c'] ? false : true);
 		config_set_path('syslog/nolognginx', $_POST['lognginx'] ? false : true);
 		config_set_path('syslog/rawfilter', $_POST['rawfilter'] ? true : false);
 
@@ -232,7 +235,8 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		if (($oldnologdefaultblock !== config_path_enabled('syslog', 'nologdefaultblock')) ||
 		    ($oldnologdefaultpass !== config_path_enabled('syslog', 'nologdefaultpass')) ||
 		    ($oldnologbogons !== config_path_enabled('syslog', 'nologbogons')) ||
-		    ($oldnologprivatenets !== config_path_enabled('syslog', 'nologprivatenets'))) {
+		    ($oldnologprivatenets !== config_path_enabled('syslog', 'nologprivatenets')) ||
+		    ($oldnologsnort2c !== config_path_enabled('syslog', 'nologsnort2c'))) {
 			$retval |= filter_configure();
 		}
 
@@ -383,6 +387,13 @@ $section->addInput(new Form_Checkbox(
 	'Default "Private Networks" block rules',
 	$pconfig['logprivatenets']
 ))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block private networks and loopback addresses".', '<strong>', '</strong>');
+
+$section->addInput(new Form_Checkbox(
+	'logsnort2c',
+	null,
+	'Hosts blocked by IDS',
+	$pconfig['nologsnort2c']
+))->setHelp('Log packets that are %1$sblocked%2$s by IDS packages.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'lognginx',

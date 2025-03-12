@@ -1234,8 +1234,22 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	global $g;
 
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
-	if (!is_numeric($rulenum) || !is_numeric($trackernum) || !in_array($type, array('pass', 'block', 'match', 'rdr'))) {
+	if (!is_numeric($rulenum) || !is_numeric($trackernum)) {
 		return;
+	}
+
+	switch ($type) {
+		case 'pass':
+		case 'block':
+		case 'match':
+		case 'rdr':
+			break;
+		case 'unkn(%u)':
+			// Work around filterlog issue with 'match' rules.
+			$type = 'match';
+			break;
+		default:
+			return;
 	}
 
 	$command = '/sbin/pfctl -vvPsr';
@@ -1388,13 +1402,42 @@ function handle_ajax() {
 					$icon_act = "fa-solid fa-check text-success";
 				}
 
-				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
+				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['reason'] .'/'. $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}
 		echo $new_rules;
 		exit;
 	}
+}
+
+function print_syslog_rule_action($rule) {
+	$pf_rule = htmlspecialchars(find_rule_by_number($rule['rulenum'], $rule['tracker'], $rule['act']));
+	$margin = $rule['count'] ? '0em' : '0.4em';
+	$reason = htmlspecialchars($rule['reason']);
+	$tracker = htmlspecialchars($rule['tracker']);
+
+	// "match" action is not supported - filterlog writes it as 'unkn(%u)'
+	$icon_class = match ($rule['act']) {
+		'block' => 'fa-solid fa-times text-danger',
+		'reject' => 'fa-regular fa-hand text-warning',
+		default => 'fa-solid fa-filter'
+	};
+	switch ($rule['act']) {
+		case 'pass':
+		case 'block':
+		case 'match':
+		case 'rdr':
+			$action = $rule['act'];
+			break;
+		default:
+			$action = 'unknown';
+			break;
+	}
+
+	return '<a data-toggle="popover" data-trigger="hover focus" title="' . gettext('Rule details') . '" data-content="' .
+		"Action: {$action}<br />Reason: {$reason}<br />Tracker ID: {$tracker}<br />Rule: {$pf_rule}" .
+		'" data-html="true"><i style="margin-left:' . $margin . '" class="' . $icon_class . ' icon-pointer"></i></a>';
 }
 
 /* Compatibility stubs for old clog functions until packages catch up.

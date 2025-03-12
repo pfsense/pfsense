@@ -79,6 +79,7 @@ if ($view == 'normal')  { $view_title = gettext("Normal View"); }
 if ($view == 'dynamic') { $view_title = gettext("Dynamic View"); }
 if ($view == 'summary') { $view_title = gettext("Summary View"); }
 
+// Used for the firewall log widget and the firewall logs dynamic view.
 $rulenum = getGETPOSTsettingvalue('getrulenum', null);
 
 if ($rulenum) {
@@ -175,21 +176,7 @@ if (!$rawfilter) {
 	foreach ($filterlog as $filterent) {
 ?>
 				<tr class="text-nowrap">
-					<td>
-<?php
-		if ($filterent['act'] == "block") {
-			$icon_act = "fa-solid fa-times text-danger";
-		} else {
-			$icon_act = "fa-solid fa-check text-success";
-		}
-
-		if ($filterent['count']) {
-			$margin_left = '0em';
-		} else {
-			$margin_left = '0.4em';
-		}
-?>
-						<i style="margin-left:<?=$margin_left;?>" class="<?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+					<td><?=print_syslog_rule_action($filterent)?>
 <?php
 		if ($filterent['count']) {
 			echo $filterent['count'];

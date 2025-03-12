@@ -77,6 +77,8 @@ function prepare_ARP_table($json = false) {
 			$entry['dnsresolve'] = "Z_ ";
 		}
 
+		$entry['mac-man'] = null;
+
 		// Fix MAC address
 		if (empty($entry['mac-address'])) {
 			$mac = '(' . gettext("Incomplete") .')';
@@ -90,9 +92,7 @@ function prepare_ARP_table($json = false) {
 			    $mac[7]);
 
 			if (isset($mac_man[$mac_hi])) {
-				$entry['mac-address'] .= ' <small>('.
-				    $mac_man[$mac_hi] .
-				    ')</small>';
+				$entry['mac-man'] = $mac_man[$mac_hi];
 			}
 		}
 

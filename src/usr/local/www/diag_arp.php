@@ -145,7 +145,12 @@ if ($savemsg) {
 				<tr>
 					<td><?=$entry['interface']?></td>
 					<td><?=$entry['ip-address']?></td>
-					<td><?=$entry['mac-address']?></td>
+					<td>
+						<?=$entry['mac-address']?>
+<?php if ($entry['mac-man']):?>
+						<small>(<?=$entry['mac-man']?>)</small>
+<?php endif; ?>
+					</td>
 					<td><?=$entry['dnsresolve']?></td>
 					<td><?=$entry['expires']?></td>
 					<td><?=$entry['type']?></td>

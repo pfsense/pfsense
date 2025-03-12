@@ -45,6 +45,7 @@ net/%%PRODUCT_NAME%%-pkg-frr
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel
 net/%%PRODUCT_NAME%%-pkg-LADVD
+net/%%PRODUCT_NAME%%-pkg-mDNS-Bridge
 net/%%PRODUCT_NAME%%-pkg-mtr-nox11
 net/%%PRODUCT_NAME%%-pkg-ntopng
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
@@ -61,6 +62,7 @@ net/kea
 net/keama
 net/librdkafka
 net/mcjoin
+net/mdns-bridge
 net/mosh
 net/mrouted
 net/py-speedtest-cli

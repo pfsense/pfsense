@@ -3903,7 +3903,6 @@ function filter_rules_generate() {
 	$log_preferences = [
 		/**
 		 * Block all IPv6
-		 * Block IPv4 link-local
 		 * Default deny rule IPv4
 		 * Default deny rule IPv6
 		 * Block traffic from port 0
@@ -3962,6 +3961,11 @@ function filter_rules_generate() {
 		'private_networks' => !config_path_enabled('syslog','nologprivatenets') ? 'log' : '',
 
 		/**
+		 * Block IPv4 link-local
+		 */
+		'linklocal4' => !config_path_enabled('syslog','nologlinklocal4') ? 'log' : '',
+
+		/**
 		 * Block snort2c hosts
 		 */
 		'snort2c_hosts' => !config_path_enabled('syslog','nologsnort2c') ? 'log' : '',
@@ -4008,8 +4012,8 @@ function filter_rules_generate() {
 # block IPv4 link-local. Per RFC 3927, link local "MUST NOT" be forwarded by a routing device,
 # and clients "MUST NOT" send such packets to a router. FreeBSD won't route 169.254./16, but
 # route-to can override that, causing problems such as in redmine #2073
-block in {$log_preferences['default_block']} quick from 169.254.0.0/16 to any ridentifier {$increment_tracker()} label "Block IPv4 link-local"
-block in {$log_preferences['default_block']} quick from any to 169.254.0.0/16 ridentifier {$increment_tracker()} label "Block IPv4 link-local"
+block in {$log_preferences['linklocal4']} quick from 169.254.0.0/16 to any ridentifier {$increment_tracker()} label "Block IPv4 link-local"
+block in {$log_preferences['linklocal4']} quick from any to 169.254.0.0/16 ridentifier {$increment_tracker()} label "Block IPv4 link-local"
 
 EOD;
 	}

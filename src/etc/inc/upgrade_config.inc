@@ -6965,6 +6965,10 @@ function upgrade_238_to_239() {
 	// Additional system aliases have been added.
 	rename_conflicting_aliases();
 
+	// linklocal4 logs have been split from the default block logs.
+	if (config_path_enabled('syslog', 'nologdefaultblock')) {
+		config_set_path('syslog/nologlinklocal4', true);
+	}
 	// snort2c logs have been split from the default block logs.
 	if (config_path_enabled('syslog', 'nologdefaultblock')) {
 		config_set_path('syslog/nologsnort2c', true);

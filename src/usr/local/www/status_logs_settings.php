@@ -65,6 +65,7 @@ $pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock'
 $pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
 $pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
 $pconfig['logprivatenets'] = !config_path_enabled('syslog', 'nologprivatenets');
+$pconfig['loglinklocal4'] = !config_path_enabled('syslog', 'nologlinklocal4');
 $pconfig['logsnort2c'] = !config_path_enabled('syslog', 'nologsnort2c');
 $pconfig['lognginx'] = !config_path_enabled('syslog', 'nolognginx');
 $pconfig['rawfilter'] = config_path_enabled('syslog', 'rawfilter');
@@ -204,12 +205,14 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologdefaultpass = config_path_enabled('syslog', 'nologdefaultpass');
 		$oldnologbogons = config_path_enabled('syslog', 'nologbogons');
 		$oldnologprivatenets = config_path_enabled('syslog', 'nologprivatenets');
+		$oldnologlinklocal4 = config_path_enabled('syslog', 'nologlinklocal4');
 		$oldnologsnort2c = config_path_enabled('syslog', 'nologsnort2c');
 		$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
 		config_set_path('syslog/nologdefaultblock', $_POST['logdefaultblock'] ? false : true);
 		config_set_path('syslog/nologdefaultpass', $_POST['logdefaultpass'] ? true : false);
 		config_set_path('syslog/nologbogons', $_POST['logbogons'] ? false : true);
 		config_set_path('syslog/nologprivatenets', $_POST['logprivatenets'] ? false : true);
+		config_set_path('syslog/nologlinklocal4', $_POST['loglinklocal4'] ? false : true);
 		config_set_path('syslog/nologsnort2c', $_POST['logsnort2c'] ? false : true);
 		config_set_path('syslog/nolognginx', $_POST['lognginx'] ? false : true);
 		config_set_path('syslog/rawfilter', $_POST['rawfilter'] ? true : false);
@@ -236,6 +239,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		    ($oldnologdefaultpass !== config_path_enabled('syslog', 'nologdefaultpass')) ||
 		    ($oldnologbogons !== config_path_enabled('syslog', 'nologbogons')) ||
 		    ($oldnologprivatenets !== config_path_enabled('syslog', 'nologprivatenets')) ||
+		    ($oldnologlinklocal4 !== config_path_enabled('syslog', 'nologlinklocal4')) ||
 		    ($oldnologsnort2c !== config_path_enabled('syslog', 'nologsnort2c'))) {
 			$retval |= filter_configure();
 		}
@@ -387,6 +391,13 @@ $section->addInput(new Form_Checkbox(
 	'Default "Private Networks" block rules',
 	$pconfig['logprivatenets']
 ))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block private networks and loopback addresses".', '<strong>', '</strong>');
+
+$section->addInput(new Form_Checkbox(
+	'loglinklocal4',
+	null,
+	'Default "IPv4 link-local" block rules',
+	$pconfig['nologlinklocal4']
+))->setHelp('Log packets that are %1$sblocked%2$s by the default "Block IPv4 link-local" rules.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logsnort2c',

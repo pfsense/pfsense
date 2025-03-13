@@ -666,6 +666,7 @@ function manage_log_code() {
 		$pconfig['logdefaultpass'] = isset($syslog_config['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($syslog_config['nologbogons']);
 		$pconfig['logprivatenets'] = !isset($syslog_config['nologprivatenets']);
+		$pconfig['loglinklocal4'] = !isset($syslog_config['nologlinklocal4']);
 		$pconfig['logsnort2c'] = !isset($syslog_config['nologsnort2c']);
 		$pconfig['filterdescriptions'] = isset($syslog_config['filterdescriptions']) ? $syslog_config['filterdescriptions'] : null;
 	}
@@ -696,8 +697,9 @@ function manage_log_code() {
 			$logdefaultpass = getGETPOSTsettingvalue('logdefaultpass', null);
 			$logbogons = getGETPOSTsettingvalue('logbogons', null);
 			$logprivatenets  = getGETPOSTsettingvalue('logprivatenets',  null);
+			$loglinklocal4 = getGETPOSTsettingvalue('loglinklocal4',  null);
 			$filterdescriptions  = getGETPOSTsettingvalue('filterdescriptions',  null);
-			$loglogsnort2c = getGETPOSTsettingvalue('logsnort2c',  null);
+			$logsnort2c = getGETPOSTsettingvalue('logsnort2c',  null);
 		}
 
 		unset($input_errors);
@@ -774,13 +776,15 @@ function manage_log_code() {
 				$oldnologdefaultpass = isset($syslog_config['nologdefaultpass']);
 				$oldnologbogons = isset($syslog_config['nologbogons']);
 				$oldnologprivatenets = isset($syslog_config['nologprivatenets']);
+				$oldnologlinklocal4 = isset($syslog_config['nologlinklocal4']);
 				$oldnologsnort2c = isset($syslog_config['nologsnort2c']);
 
 				$syslog_config['nologdefaultblock'] = $logdefaultblock ? false : true;
 				$syslog_config['nologdefaultpass'] = $logdefaultpass ? true : false;
 				$syslog_config['nologbogons'] = $logbogons ? false : true;
 				$syslog_config['nologprivatenets'] = $logprivatenets ? false : true;
-				$syslog_config['nologsnort2c'] = $loglogsnort2c ? false : true;
+				$syslog_config['nologlinklocal4'] = $loglinklocal4 ? false : true;
+				$syslog_config['nologsnort2c'] = $logsnort2c ? false : true;
 
 				if (is_numeric($filterdescriptions) && $filterdescriptions > 0) {
 					$syslog_config['filterdescriptions'] = $filterdescriptions;
@@ -793,6 +797,7 @@ function manage_log_code() {
 				    ($oldnologdefaultpass !== $syslog_config['nologdefaultpass']) ||
 				    ($oldnologbogons !== $syslog_config['nologbogons']) ||
 				    ($oldnologprivatenets !== $syslog_config['nologprivatenets']) ||
+				    ($oldnologlinklocal4 !== $syslog_config['nologlinklocal4']) ||
 				    ($oldnologsnort2c !== $syslog_config['nologsnort2c'])) {
 					$logging_changed = $firewall_logging_changed = true;
 				}
@@ -1024,6 +1029,13 @@ function manage_log_section() {
 			'Default "Private Networks" block rules',
 			$pconfig['logprivatenets']
 		))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block private networks and loopback addresses".', '<strong>', '</strong>');		
+
+		$section->addInput(new Form_Checkbox(
+			'loglinklocal4',
+			null,
+			'Default "IPv4 link-local" block rules',
+			$pconfig['nologlinklocal4']
+		))->setHelp('Log packets that are %1$sblocked%2$s by the default "Block IPv4 link-local" rules.', '<strong>', '</strong>');
 
 		$section->addInput(new Form_Checkbox(
 			'logsnort2c',

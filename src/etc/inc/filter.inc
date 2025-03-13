@@ -4066,8 +4066,8 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # Snort package
-block {$log_preferences['default_block']} quick from <snort2c> to any ridentifier {$increment_tracker()} label "Block snort2c hosts"
-block {$log_preferences['default_block']} quick from any to <snort2c> ridentifier {$increment_tracker()} label "Block snort2c hosts"
+block {$log_preferences['snort2c_hosts']} quick from <snort2c> to any ridentifier {$increment_tracker()} label "Block snort2c hosts"
+block {$log_preferences['snort2c_hosts']} quick from any to <snort2c> ridentifier {$increment_tracker()} label "Block snort2c hosts"
 
 EOD;
 

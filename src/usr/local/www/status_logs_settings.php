@@ -396,14 +396,14 @@ $section->addInput(new Form_Checkbox(
 	'loglinklocal4',
 	null,
 	'Default "IPv4 link-local" block rules',
-	$pconfig['nologlinklocal4']
+	$pconfig['loglinklocal4']
 ))->setHelp('Log packets that are %1$sblocked%2$s by the default "Block IPv4 link-local" rules.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logsnort2c',
 	null,
 	'Hosts blocked by IDS',
-	$pconfig['nologsnort2c']
+	$pconfig['logsnort2c']
 ))->setHelp('Log packets that are %1$sblocked%2$s by IDS packages.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(

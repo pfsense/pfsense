@@ -536,7 +536,7 @@ if [ -n "${USE_ZFS}" ]; then
 		zpool list -o name pfSense > /dev/null 2>&1 && ZPOOL=pfSense
 		zpool list -o name zroot > /dev/null 2>&1 && ZPOOL=zroot
 		if [ -n "${ZPOOL}" ]; then
-			if zfs list -Hp -o name -t filesystem | grep -q "${ZPOOL}/reservation"; then
+			if ! zfs list -Hp -o name -t filesystem | grep -q "${ZPOOL}/reservation"; then
 				AVAIL=$( zfs list -Hpo avail "${ZPOOL}" )
 				RESSIZE=$( zfs list -Hpo avail,used "${ZPOOL}" | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
 				if [ $(( AVAIL / 2 )) -gt "${RESSIZE}" ]; then

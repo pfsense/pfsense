@@ -63,6 +63,7 @@
 	 *    - HE.net (dns.he.net)
 	 *    - HE.net IPv6 (dns.he.net)
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
+	 *    - Hetzner DNS API (dns.hetzner.com)
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - Hover (www.hover.com)
 	 *    - Loopia (loopia.se)
@@ -92,62 +93,64 @@
 	 *    - _detectChange()
 	 *    - _debug()
 	 * +----------------------------------------------------+
-	 *  All-Inkl        - Last Tested: 12 November 2016
-	 *  Amazon Route 53 - Last Tested: 04 February 2017
-	 *  Azure DNS       - Last Tested: 08 March 2018
-	 *  City Network    - Last Tested: 13 November 2013
-	 *  Cloudflare      - Last Tested: 05 September 2016
-	 *  Cloudflare IPv6 - Last Tested: 17 July 2016
-	 *  ClouDNS         - Last Tested: 22 August 2017
-	 *  deSEC           - Last Tested: NEVER
-	 *  deSEC IPv6      - Last Tested: NEVER
-	 *  DHS             - Last Tested: 12 July 2005
-	 *  DigitalOcean    - Not Yet Tested
-	 *  DNS Made Easy   - Last Tested: 27 April 2015
-	 *  DNS-O-Matic     - Last Tested: 9 September 2010
-	 *  DNSexit         - Last Tested: 27 June 2022
-	 *  DNSimple        - Last Tested: 09 February 2015
-	 *  DreamHost       - Last Tested: 30 April 2017
-	 *  DreamHost IPv6  - Not Yet Tested
-	 *  DuiaDNS         - Last Tested: 25 November 2016
-	 *  DuiaDNS IPv6    - Last Tested: 25 November 2016
-	 *  DY.fi           - Last Tested: 22 April 2021
-	 *  DynDNS Custom   - Last Tested: NEVER
-	 *  DynDNS Dynamic  - Last Tested: 12 July 2005
-	 *  DynDNS Static   - Last Tested: NEVER
-	 *  Dyns            - Last Tested: NEVER
-	 *  EasyDNS         - Last Tested: 20 July 2008
-	 *  Eurodns         - Last Tested: 27 June 2013
-	 *  FreeDNS         - Last Tested: 01 May 2016
-	 *  FreeDNS IPv6    - Last Tested: 01 May 2016
-	 *  FreeDNS IPv6 v2 - Last Tested: 01 June 2020
-	 *  FreeDNS v2      - Last Tested: 01 June 2020
-	 *  Gandi LiveDNS   - Not Yet Tested
-	 *  GleSYS          - Last Tested: 3 February 2015
-	 *  GoDaddy         - Last Tested: 22 November 2017
-	 *  GoDaddy IPv6    - Last Tested: 22 November 2017
-	 *  Google Domains  - Last Tested: 27 April 2015
-	 *  GratisDNS       - Last Tested: 15 August 2012
-	 *  HE.net          - Last Tested: 7 July 2013
-	 *  HE.net IPv6     - Last Tested: 7 July 2013
-	 *  HE.net Tunnel   - Last Tested: 28 June 2011
-	 *  HN.org          - Last Tested: 12 July 2005
-	 *  Hover           - Last Tested: 15 February 2017
-	 *  Loopia          - Last Tested: 21 August 2019
-	 *  Name.com        - Last Tested: 5 Dec 2021
-	 *  Name.com IPv6   - Last Tested: 5 Dec 2021
-	 *  Namecheap       - Last Tested: 31 August 2010
-	 *  No-IP           - Last Tested: 20 July 2008
-	 *  ODS             - Last Tested: 02 August 2005
-	 *  OpenDNS         - Last Tested: 4 August 2008
-	 *  OVH DynHOST     - Last Tested: NEVER
-	 *  Porkbun         - Last Tested: 22 October 2024
-	 *  SelfHost        - Last Tested: 26 December 2011
-	 *  SPDYN           - Last Tested: 02 July 2016
-	 *  SPDYN IPv6      - Last Tested: 02 July 2016
-	 *  StaticCling     - Last Tested: 27 April 2006
-	 *  Strato          - Last Tested: 29 May 2021
-	 *  ZoneEdit        - Last Tested: NEVER
+	 *  All-Inkl           - Last Tested: 12 November 2016
+	 *  Amazon Route 53    - Last Tested: 04 February 2017
+	 *  Azure DNS          - Last Tested: 08 March 2018
+	 *  City Network       - Last Tested: 13 November 2013
+	 *  Cloudflare         - Last Tested: 05 September 2016
+	 *  Cloudflare IPv6    - Last Tested: 17 July 2016
+	 *  ClouDNS            - Last Tested: 22 August 2017
+	 *  deSEC              - Last Tested: NEVER
+	 *  deSEC IPv6         - Last Tested: NEVER
+	 *  DHS                - Last Tested: 12 July 2005
+	 *  DigitalOcean       - Not Yet Tested
+	 *  DNS Made Easy      - Last Tested: 27 April 2015
+	 *  DNS-O-Matic        - Last Tested: 9 September 2010
+	 *  DNSexit            - Last Tested: 27 June 2022
+	 *  DNSimple           - Last Tested: 09 February 2015
+	 *  DreamHost          - Last Tested: 30 April 2017
+	 *  DreamHost IPv6     - Not Yet Tested
+	 *  DuiaDNS            - Last Tested: 25 November 2016
+	 *  DuiaDNS IPv6       - Last Tested: 25 November 2016
+	 *  DY.fi              - Last Tested: 22 April 2021
+	 *  DynDNS Custom      - Last Tested: NEVER
+	 *  DynDNS Dynamic     - Last Tested: 12 July 2005
+	 *  DynDNS Static      - Last Tested: NEVER
+	 *  Dyns               - Last Tested: NEVER
+	 *  EasyDNS            - Last Tested: 20 July 2008
+	 *  Eurodns            - Last Tested: 27 June 2013
+	 *  FreeDNS            - Last Tested: 01 May 2016
+	 *  FreeDNS IPv6       - Last Tested: 01 May 2016
+	 *  FreeDNS IPv6 v2    - Last Tested: 01 June 2020
+	 *  FreeDNS v2         - Last Tested: 01 June 2020
+	 *  Gandi LiveDNS      - Not Yet Tested
+	 *  GleSYS             - Last Tested: 3 February 2015
+	 *  GoDaddy            - Last Tested: 22 November 2017
+	 *  GoDaddy IPv6       - Last Tested: 22 November 2017
+	 *  Google Domains     - Last Tested: 27 April 2015
+	 *  GratisDNS          - Last Tested: 15 August 2012
+	 *  HE.net             - Last Tested: 7 July 2013
+	 *  HE.net IPv6        - Last Tested: 7 July 2013
+	 *  HE.net Tunnel      - Last Tested: 28 June 2011
+	 *  Hetzner DNS API    - Last Tested: 02 June 2024
+	 *  Hetzner DNS API v6 - Last Tested: 02 June 2024
+	 *  HN.org             - Last Tested: 12 July 2005
+	 *  Hover              - Last Tested: 15 February 2017
+	 *  Loopia             - Last Tested: 21 August 2019
+	 *  Name.com           - Last Tested: 5 Dec 2021
+	 *  Name.com IPv6      - Last Tested: 5 Dec 2021
+	 *  Namecheap          - Last Tested: 31 August 2010
+	 *  No-IP              - Last Tested: 20 July 2008
+	 *  ODS                - Last Tested: 02 August 2005
+	 *  OpenDNS            - Last Tested: 4 August 2008
+	 *  OVH DynHOST        - Last Tested: NEVER
+	 *  Porkbun            - Last Tested: 22 October 2024
+	 *  SelfHost           - Last Tested: 26 December 2011
+	 *  SPDYN              - Last Tested: 02 July 2016
+	 *  SPDYN IPv6         - Last Tested: 02 July 2016
+	 *  StaticCling        - Last Tested: 27 April 2006
+	 *  Strato             - Last Tested: 29 May 2021
+	 *  ZoneEdit           - Last Tested: NEVER
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -282,6 +285,12 @@
 				if (!$dnsDomain) $this->_error(5);
 				if (!$dnsTTL) $this->_error(9);
 				break;
+			case 'hetzner':
+			case 'hetzner-v6':
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsTTL) $this->_error(9);
+				break;
 			case 'desec':
 			case 'desec-v6':
 				if (!$dnsPass) $this->_error(4);
@@ -357,6 +366,7 @@
 				case 'gandi-livedns-v6':
 				case 'godaddy-v6':
 				case 'he-net-v6':
+				case 'hetzner-v6':
 				case 'linode-v6':
 				case 'mythicbeasts-v6':
 				case 'name.com-v6':
@@ -482,6 +492,8 @@
 					case 'he-net':
 					case 'he-net-tunnelbroker':
 					case 'he-net-v6':
+					case 'hetzner':
+					case 'hetzner-v6':
 					case 'hn':
 					case 'hover':
 					case 'linode':
@@ -604,6 +616,87 @@
 					$post_data['data'] = $this->_dnsIP;
 					curl_setopt($ch, CURLOPT_URL, $server);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					break;
+				case 'hetzner':
+				case 'hetzner-v6':
+					// API documentation: https://dns.hetzner.com/api-docs
+					$server = 'https://dns.hetzner.com/api/v1';
+					$fqdn = str_replace(' ', '', $this->_dnsHost);
+					$recordType = $this->_useIPv6 ? "AAAA" : "A";
+					$ttlData = intval($this->_dnsTTL) < 1 ? 120 : intval($this->_dnsTTL);
+					$hostData = [
+						"value" => "{$this->_dnsIP}",
+						"type" => $recordType,
+						"name" => "",
+						"ttl" => $ttlData,
+						"zone_id" => ""
+					];	
+
+					$headerAuth = [
+						"Auth-API-Token: {$this->_dnsPass}",
+						'Content-Type: application/json'
+					];
+
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, $headerAuth);
+
+					// Get all zone info
+					$zonesUrl = "{$server}/zones";
+					curl_setopt($ch, CURLOPT_URL, $zonesUrl);
+					$output = json_decode(curl_exec($ch));
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					$zoneId = null; // Set default value
+
+					if (!empty($output->zones)) {
+						// Iterate zone objects, check if $fqdn is equal to or ends with zone name
+						foreach ($output->zones as $key => $zoneObj) {
+							if (preg_match("/^{$zoneObj->name}$|\.{$zoneObj->name}$/", $fqdn)) {
+								// Found matching zone
+								$zoneId = $zoneObj->id;
+								// Get $hostName from $fqdn, set $domainName
+								// These are only really used for log messages.
+								$hostName = preg_replace("/\.?{$zoneObj->name}$/", '', $fqdn);
+								$domainName = $zoneObj->name;
+								break;
+							}
+						}
+					}
+
+					if ($zoneId) { // If zone ID was found get host ID
+						$dnsRecordsUrl = "{$server}/records?zone_id={$zoneId}";
+						curl_setopt($ch, CURLOPT_URL, $dnsRecordsUrl);
+						$output = json_decode(curl_exec($ch));
+						$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+						$recordId = null; // Set default value
+
+					if (!empty($output->records)) {
+						// Iterate zone objects, check if $hostName exist of the same type
+						foreach ($output->records as $key => $recordObj) {
+							if (preg_match("/^{$recordObj->name}$/", $hostName)) {
+								if ($recordObj->type == $recordType) {
+									// Found matching host
+									$recordId = $recordObj->id;
+									break;
+								}
+							}
+						}
+					}
+
+					if ($recordId) { // If record ID was found, update record
+						$setRecordUrl = "{$server}/records/{$recordId}";
+						curl_setopt($ch, CURLOPT_URL, $setRecordUrl);
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+					} else {
+						$setRecordUrl = "{$server}/records";
+						curl_setopt($ch, CURLOPT_URL, $setRecordUrl);
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+					}
+
+					$hostData["zone_id"] = $zoneId;
+					$hostData["name"] = $hostName;
+
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($hostData));
+					}
 					break;
 				//
 				// Not yet ordered providers.
@@ -2600,6 +2693,22 @@
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
+					}
+					break;
+				case 'hetzner':
+				case 'hetzner-v6':
+					$output = json_decode($data);
+					if ($output->record->value === $this->_dnsIP) {
+						$status = "Dynamic DNS: (Success) {$this->_dnsHost} updated to {$this->_dnsIP}";
+						$successful_update = true;
+					} elseif ($http_code == 401) {
+						$status = 'Dynamic DNS: (Error) Authentication failed, incorrect API Key.';
+					} elseif ($http_code == 403) {
+						$status = 'Dynamic DNS: (Error) Access denied due to lack of permissions.';
+					} else {
+						$status = 'Dynamic DNS: (Error) "Unknown Response"'; 
+						log_error("Dynamic DNS ({$this->_dnsHost}): PAYLOAD: {$data}");
+						$this->_debug("Unknown Response: " . $data);
 					}
 					break;
 				case 'selfhost':

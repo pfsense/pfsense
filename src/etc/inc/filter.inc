@@ -5033,42 +5033,50 @@ function filter_generate_ipsec_rules() {
 			}
 
 			/* Add rules to allow IKE to pass */
-			$shorttunneldescr = substr($descr, 0, 35);
+			$tunnel_rule_label_prefix = 'IPsec: ' . substr($descr, 0, 35) . ' - ';
 			// don't add "pass out" rules where $rgip is any, 0.0.0.0/0 or ::/0 as it will over-match and often break VPN clients behind the system in multi-WAN scenarios. redmine #5819, #12262
 			if ($passout) {
+				$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'outbound isakmp');
 				$ike_out = isset($ph1ent['ikeport']) ? $ph1ent['ikeport'] : 500;
-				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$ike_out} ridentifier {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound isakmp\"\n";
+				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$ike_out} ridentifier {$increment_tracker()} keep state label \"{$shorttunneldescr}\"\n";
 			}
 			$ike_in = config_get_path('ipsec/port', 500);
+			$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'inbound isakmp');
 			$ipfrules .= <<<EOD
-pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = {$ike_in} ridentifier {$increment_tracker()} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
+pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = {$ike_in} ridentifier {$increment_tracker()} keep state label "{$shorttunneldescr}"
 
 EOD;
 			if ($passout) {
 				$natt_out = isset($ph1ent['nattport']) ? $ph1ent['nattport'] : 4500;
-				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$natt_out} ridentifier {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound nat-t\"\n";
+				$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'outbound nat-t');
+				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$natt_out} ridentifier {$increment_tracker()} keep state label \"{$shorttunneldescr}\"\n";
 			}
 			$natt_in = config_get_path('ipsec/port_nat_t', 4500);
+			$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'inbound nat-t');
 			$ipfrules .= <<<EOD
-pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = {$natt_in} ridentifier {$increment_tracker()} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
+pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = {$natt_in} ridentifier {$increment_tracker()} keep state label "{$shorttunneldescr}"
 
 EOD;
 			/* Add rules to allow the protocols in use */
 			if ($prot_used_esp) {
 				if ($passout) {
-					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto esp from (self) to {$rgip} ridentifier {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound esp proto\"\n";
+					$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'outbound esp proto');
+					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto esp from (self) to {$rgip} ridentifier {$increment_tracker()} keep state label \"{$shorttunneldescr}\"\n";
 				}
+				$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'inbound esp proto');
 				$ipfrules .= <<<EOD
-pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to (self) ridentifier {$increment_tracker()} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
+pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to (self) ridentifier {$increment_tracker()} keep state label "{$shorttunneldescr}"
 
 EOD;
 			}
 			if ($prot_used_ah) {
 				if ($passout) {
-					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto ah from (self) to {$rgip} ridentifier {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound ah proto\"\n";
+					$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'outbound ah proto');
+					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto ah from (self) to {$rgip} ridentifier {$increment_tracker()} keep state label \"{$shorttunneldescr}\"\n";
 				}
+				$shorttunneldescr = fix_rule_label($tunnel_rule_label_prefix . 'inbound ah proto');
 				$ipfrules .= <<<EOD
-pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to (self) ridentifier {$increment_tracker()} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
+pass in {$log_preferences['default_pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to (self) ridentifier {$increment_tracker()} keep state label "{$shorttunneldescr}"
 
 EOD;
 			}

@@ -181,7 +181,7 @@
 		$ifaces_active = '';
 
 		/* since config is written before this file is invoked we don't need to read post data */
-		if ($upnp_config['enable'] && !empty($upnp_config['iface_array'])) {
+		if ($upnp_config['enable'] == 'on' && !empty($upnp_config['iface_array'])) {
 			$iface_array = explode(',', $upnp_config['iface_array']);
 
 			foreach ($iface_array as $iface) {
@@ -227,12 +227,12 @@
 				}
 
 				/* enable logging of packets handled by miniupnpd rules */
-				if ($upnp_config['logpackets']) {
+				if ($upnp_config['logpackets'] == 'on') {
 					$config_text .= "packet_log=yes\n";
 				}
 
 				/* enable system uptime instead of miniupnpd uptime */
-				if ($upnp_config['sysuptime']) {
+				if ($upnp_config['sysuptime'] == 'on') {
 					$config_text .= "system_uptime=yes\n";
 				}
 
@@ -271,7 +271,7 @@
 					}
 				}
 
-				if ($upnp_config['permdefault']) {
+				if ($upnp_config['permdefault'] == 'on') {
 					$config_text .= "deny 1-65535 0.0.0.0/0 1-65535\n";
 				}
 
@@ -286,11 +286,11 @@
 				}
 
 				/* Allow UPnP IGD or PCP/NAT-PMP as requested */
-				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp']   ? "yes\n" : "no\n");
-				$config_text .= "enable_pcp_pmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
+				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp'] == 'on' ? "yes\n" : "no\n");
+				$config_text .= "enable_pcp_pmp=" . ($upnp_config['enable_natpmp'] == 'on' ? "yes\n" : "no\n");
 
 				/* STUN configuration */
-				if ($upnp_config['enable_stun']) {
+				if ($upnp_config['enable_stun'] == 'on') {
 					$config_text .= "ext_perform_stun=yes\n";
 					$config_text .= "ext_stun_host={$upnp_config['stun_host']}\n";
 					if ($upnp_config['stun_port']){
@@ -316,7 +316,7 @@
 			/* lets stop the service and remove the rc file */
 
 			if (file_exists($config_file)) {
-				if (!$upnp_config['enable']) {
+				if ($upnp_config['enable'] != 'on') {
 					upnp_notice('Stopping service: miniupnpd disabled');
 				} else {
 					upnp_notice('Stopping service: no interfaces selected');

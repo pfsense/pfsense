@@ -66,6 +66,7 @@
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - Hover (www.hover.com)
 	 *    - Loopia (loopia.se)
+	 *    - LuaDNS (luadns.com)
 	 *    - Name.com (name.com)
 	 *    - Name.com IPv6 (name.com)
 	 *    - Namecheap (namecheap.com)
@@ -134,6 +135,7 @@
 	 *  HN.org          - Last Tested: 12 July 2005
 	 *  Hover           - Last Tested: 15 February 2017
 	 *  Loopia          - Last Tested: 21 August 2019
+	 *  LuaDNS          - Last Tested: 20 March 2025
 	 *  Name.com        - Last Tested: 5 Dec 2021
 	 *  Name.com IPv6   - Last Tested: 5 Dec 2021
 	 *  Namecheap       - Last Tested: 31 August 2010
@@ -276,6 +278,8 @@
 			case 'cloudns':
 			case 'godaddy':
 			case 'godaddy-v6':
+			case 'luadns':
+			case 'luadns-v6':
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
@@ -358,6 +362,7 @@
 				case 'godaddy-v6':
 				case 'he-net-v6':
 				case 'linode-v6':
+				case 'luadns-v6':
 				case 'mythicbeasts-v6':
 				case 'name.com-v6':
 				case 'noip-free-v6':
@@ -486,6 +491,8 @@
 					case 'hover':
 					case 'linode':
 					case 'linode-v6':
+					case 'luadns':
+					case 'luadns-v6':
 					case 'loopia':
 					case 'mythicbeasts':
 					case 'mythicbeasts-v6':
@@ -1804,6 +1811,96 @@
 					curl_setopt($ch, CURLOPT_URL, 'https://update6.dedyn.io/?hostname=' . $this->_dnsHost);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
 					break;
+				case 'luadns':
+				case 'luadns-v6':
+					/* LuaDNS REST API: https://www.luadns.com/api.html
+					 *
+					 * For the sake of simplicity, the DNS record must exist
+					 * before it can be updated, since updates require lookup of
+					 * zone and record numerical IDs.
+					 */
+					$needsIP = TRUE;
+					$server = 'https://api.luadns.com/v1';
+					$recordType = ($this->_addressFamilyRR == AF_INET6) ? "AAAA" : "A";
+					$this->_FQDN = ltrim($this->_FQDN, '@.');
+
+					/* Common settings */
+					$headers = array(
+						'Accept: application/json',
+					);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+					curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+
+					/* Lookup Zone ID */
+					curl_setopt($ch, CURLOPT_URL, "{$server}/zones");
+					$response = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code != 200) {
+						log_error(gettext("Could not get zone list"));
+						$curl_error = @curl_error($ch);
+						$this->_checkStatus($http_code, $curl_error, $response, null);
+						return false;
+					}
+
+					$zone_id = -1;
+					foreach (json_decode($response, true) as $zone) {
+						if ($zone['name'] != $this->_dnsDomain) {
+							continue;
+						}
+
+						$zone_id = $zone['id'];
+						if ($this->_dnsVerboseLog) {
+							log_error("{$zone['name']}: {$zone['id']}");
+						}
+						break;
+					}
+
+					if ($zone_id < 0) {
+						log_error(gettext("Could not find zone"));
+						return false;
+					}
+
+					/* Lookup Record ID */
+					curl_setopt($ch, CURLOPT_URL, "{$server}/zones/{$zone_id}/records");
+					$response = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code != 200) {
+						log_error(gettext("Could not get record list"));
+						$curl_error = @curl_error($ch);
+						$this->_checkStatus($http_code, $curl_error, $response, null);
+						return false;
+					}
+
+					$record_name = "{$this->_FQDN}.";
+					$record_id = -1;
+					foreach (json_decode($response, true) as $record) {
+						if ($record['type'] != $recordType || $record['name'] != $record_name) {
+							continue;
+						}
+
+						$record_id = $record['id'];
+						if ($this->_dnsVerboseLog) {
+							log_error("{$record['name']}: {$record['id']}");
+						}
+						break;
+					}
+
+					if ($record_id < 0) {
+						log_error(gettext("Could not find record"));
+						return false;
+					}
+
+					$post_data = array();
+					$post_data['id'] = $record_id;
+					$post_data['zone_id'] = $zone_id;
+					$post_data['name'] = $record_name;
+					$post_data['type'] = $recordType;
+					$post_data['content'] = $this->_dnsIP;
+					$post_data['ttl'] = $this->_dnsTTL ? (int)$this->_dnsTTL : 3600;
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+					curl_setopt($ch, CURLOPT_URL, "{$server}/zones/{$zone_id}/records/{$record_id}");
+					break;
 				default:
 					break;
 			}
@@ -3060,6 +3157,31 @@
 						$successful_update = true;
 					} else {
 						log_error($status_intro . " ( " . gettext("Error message: ") . $result['status'] . " )");
+					}
+					break;
+				case 'luadns':
+				case 'luadns-v6':
+					switch ($http_code) {
+						case '200':
+							$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+							$successful_update = true;
+							break;
+						case '400':
+						case '401':
+						case '403':
+						case '404':
+						case '422':
+						case '429':
+							/* https://www.luadns.com/api.html#server-error-codes */
+							$result = json_decode($data, true);
+							$status = $status_intro . $error_str . $result['status'] . " - " . $result['message'];
+							break;
+						default:
+							/* Don't expect JSON */
+							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+							log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+							$this->_debug($data);
+							break;
 					}
 					break;
 				default:

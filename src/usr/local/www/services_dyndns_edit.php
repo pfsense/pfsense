@@ -103,6 +103,8 @@ if ($_POST['save'] || $_POST['force']) {
 		"googledomains" => array("apex" => false, "wildcard" => true, "username_none" => false),
 		"linode" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"linode-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"luadns" => array("apex" => true, "wildcard" => true, "username_none" => false),
+		"luadns-v6" => array("apex" => true, "wildcard" => true, "username_none" => false),
 		"namecheap" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"yandex" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"yandex-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
@@ -403,13 +405,13 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-				'Azure, Cloudflare, Linode, Porkbun, Name.com: Enter @ as the hostname to indicate an empty field.%1$s' .
+				'Azure, Cloudflare, Linode, LuaDNS, Porkbun: Name.com: Enter @ as the hostname to indicate an empty field.%1$s' .
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
 				'GleSYS: Enter the record ID.%1$s' .
 				'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
-				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
+				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, LuaDNS, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
 					The domain name is the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
@@ -474,6 +476,7 @@ $section->addInput(new Form_Input(
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
+			'LuaDNS: Enter account email.%1$s' .
 			'NoIP: For group authentication, replace semicolon (:) with pound-key (#).%1$s' .
 			'Porkbun: Enter the API key.%1$s' .
 			'Route 53: Enter the Access Key ID.', '<br />');
@@ -497,6 +500,7 @@ $section->addPassword(new Form_Input(
 			'GleSYS: Enter the API key.%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
+			'LuaDNS: Enter the API key.%1$s' .
 			'Name.com: Enter the API token.%1$s' .
 			'Porkbun: Enter the API secret.%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
@@ -673,6 +677,8 @@ events.push(function() {
 			case "godaddy-v6":
 			case "linode":
 			case "linode-v6":
+			case "luadns":
+			case "luadns-v6":
 			case "name.com":
 			case "name.com-v6":
 			case "onecom":

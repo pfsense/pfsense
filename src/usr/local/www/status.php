@@ -154,6 +154,12 @@ status_cmd_define("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.c
 status_cmd_define("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
 status_cmd_define("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
 
+foreach (glob('/var/unbound/leases/lease*.conf') as $lease_conf) {
+	$basename = basename($lease_conf);
+	status_cmd_define("DNS-Resolver Lease Records ({$basename})",
+		"/bin/cat {$lease_conf}");
+}
+
 if (file_exists("/var/dhcpd/etc/dhcpd.conf")) {
 	status_cmd_define("DHCP-ISC-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
 }

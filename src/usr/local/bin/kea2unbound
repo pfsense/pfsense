@@ -1,0 +1,988 @@
+#!/usr/bin/env php
+<?php
+/*
+ * kea2unbound
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2024-2025 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ */
+
+namespace kea2unbound;
+
+require_once 'vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+\define('BUFSIZ', 16 * 1024);
+\define('HASHALGO', 'xxh3');
+\define('LOGFLAGS', LOG_NDELAY | LOG_PID);
+\define('RETRIES', 5);
+\define('UBCTRLBIN', '/usr/local/sbin/unbound-control');
+
+final class FileLockException extends \Exception {}
+final class KeaConfigException extends \Exception {}
+final class KeaException extends \Exception {}
+final class UnboundException extends \Exception {}
+
+enum DnsRecordType {
+    case A;
+    case AAAA;
+    case PTR;
+}
+
+enum AddressFamily: string
+{
+    case INET   = '4';
+    case INET6  = '6';
+    case ANY    = 'any';
+
+    public function is(AddressFamily $family): bool
+    {
+        return ($this === $family);
+    }
+
+    public function getDNSRecordType(): DnsRecordType
+    {
+        return (match($this) {
+            self::INET  => DnsRecordType::A,
+            self::INET6 => DnsRecordType::AAAA
+        });
+    }
+}
+
+abstract class Singleton
+{
+    private static array $instances = [];
+
+    protected function __construct() {}
+
+    protected function __clone() {}
+
+    public function __wakeup()
+    {
+        throw new Exception(
+            \gettext('Cannot unserialize a singleton')
+        );
+    }
+
+    public static function getInstance(mixed ...$args): static
+    {
+        $class = static::class;
+        if (!isset(self::$instances[$class])) {
+            self::$instances[$class] = new static(...$args);
+        }
+
+        return (self::$instances[$class]);
+    }
+}
+
+final class KeaConfig extends Singleton
+{
+    private AddressFamily $addressFamily;
+    private array $config;
+    private string $socketPath;
+
+    protected function __construct(private string $confPath, AddressFamily $family = AddressFamily::ANY)
+    {
+        $configJson = \file_get_contents($confPath);
+        if ($configJson === false) {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to read Kea configuration file: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        $this->config = \json_decode($configJson, true);
+        if (\json_last_error() !== JSON_ERROR_NONE) {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to parse Kea configuration file: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        if (isset($this->config['Dhcp4'])) {
+            $this->addressFamily = AddressFamily::INET;
+            $this->socketPath = $this->config['Dhcp4']['control-socket']['socket-name'] ?? '/var/kea/dhcp4.sock';
+        } elseif (isset($this->config['Dhcp6'])) {
+            $this->addressFamily = AddressFamily::INET6;
+            $this->socketPath = $this->config['Dhcp6']['control-socket']['socket-name'] ?? '/var/kea/dhcp6.sock';
+        } else {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to determine address family from Kea configuration: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        /* Apply family constaint if provided */
+        if (!$family->is(AddressFamily::ANY) &&
+            !$this->addressFamily->is($family)) {
+                throw new KeaConfigException(
+                    \sprintf(
+                        \gettext("Address family mismatch: expected '%s', found '%s' in '%s'."),
+                        $family,
+                        $this->addressFamily,
+                        $this->confPath
+                    )
+                );
+        }
+    }
+
+    public function getAddressFamily(): AddressFamily
+    {
+        return ($this->addressFamily);
+    }
+
+    public function getConfPath(): string
+    {
+        return ($this->confPath);
+    }
+
+    public function getSocketAddress(): string
+    {
+        return ("unix://{$this->socketPath}");
+    }
+
+    public function getSocketPath(): string
+    {
+        return ($this->socketPath);
+    }
+}
+
+class FileLock
+{
+    private bool $removeFile = false;
+    private $fd = null;
+
+    public function __construct(private string $lockFile = __FILE__)
+    {
+        if (!\file_exists($lockFile) && @\touch($lockFile)) {
+            $this->removeFile = true;
+        }
+    }
+
+    public function __destruct()
+    {
+        $this->release();
+
+        if ($this->removeFile && \file_exists($this->lockFile)) {
+            @\unlink($this->lockFile);
+        }
+    }
+
+    public function isLocked(): bool
+    {
+        return (\is_resource($this->fd));
+    }
+
+    public function tryAquire(): bool
+    {
+        if ($this->isLocked()) {
+            throw new FileLockException(
+                \sprintf(
+                    \gettext('Lock already acquired: %s'),
+                    $this->lockFile
+                )
+            );
+        }
+
+        $this->fd = \fopen($this->lockFile, 'c+');
+        if (!$this->fd) {
+            return (false);
+        }
+
+        if (!\flock($this->fd, LOCK_EX | LOCK_NB)) {
+            \fclose($this->fd);
+            $this->fd = null;
+            return (false);
+        }
+
+        return (true);
+    }
+
+    public function aquire(int $timeout = 5): self
+    {
+        $startTime = \time();
+
+        while (!$this->tryAquire()) {
+            if ((\time() - $startTime) >= $timeout) {
+                throw new FileLockException(
+                    \sprintf(
+                        \gettext('Unable to obtain lock after %d seconds: %s'),
+                        $timeout,
+                        $this->lockFile
+                    )
+                );
+            }
+            \usleep(100000); // Sleep for 100ms before retrying
+        }
+
+        return ($this);
+    }
+
+    public function release(): void
+    {
+        if (\is_resource($this->fd)) {
+            \flock($this->fd, LOCK_UN);
+            \fclose($this->fd);
+            $this->fd = null;
+        }
+    }
+}
+
+function unlink_safe(string $filename): bool
+{
+    if (\file_exists($filename)) {
+        try {
+            return (\unlink($filename));
+        } catch (\Exception $e) {
+            syslogf(LOG_NOTICE, \gettext('Unable to unlink file: %s'), $filename);
+        }
+    }
+
+    return (false);
+}
+
+function mkdir_safe(string $directory, int $permissions = 0777, bool $recursive = false): bool
+{
+    if (!\is_dir($directory)) {
+        try {
+            return (\mkdir($directory, $permissions, $recursive));
+        } catch (\Exception $e) {
+            syslogf(LOG_NOTICE, \gettext('Unable to mkdir directory: %s'), $directory);
+        }
+    }
+
+    return (false);
+}
+
+function normalize_whitespace(string &$input): void
+{
+    $input = \preg_replace('/\s+/', ' ', \trim($input));
+}
+
+function unset_if(callable $testfn, mixed &...$inputs): void
+{
+    foreach ($inputs as &$input) {
+        if ($testfn($input)) {
+            unset($input);
+        }
+    }
+}
+
+function unset_if_empty(mixed &...$inputs): void
+{
+    unset_if(fn($x) => empty($x), ...$inputs);
+}
+
+function syslogf(int $priority, string $format, mixed ...$values): true
+{
+    return (\syslog($priority, \sprintf($format, ...$values)));
+}
+
+function first_of(mixed ...$inputs): mixed
+{
+    foreach ($inputs as $input) {
+        if (!\is_null($input)) {
+            break;
+        }
+    }
+
+    return ($input);
+}
+
+function ensure_arrays(mixed &...$inputs): void
+{
+    foreach ($inputs as &$input) {
+        if (!\is_array($input)) {
+            $input = [];
+        }
+    }
+}
+
+function all_empty(mixed ...$inputs): bool
+{
+    foreach ($inputs as $input) {
+        if (!empty($input)) {
+            return (false);
+        }
+    }
+
+    return (true);
+}
+
+function array_diff_key_recursive(array $array, array ...$arrays): array
+{
+    $diff = \array_diff_key($array, ...$arrays);
+    foreach ($array as $key => $value) {
+        if (!\is_array($value)) {
+            continue;
+        }
+        $nested_diff = [];
+        foreach ($arrays as $compare) {
+            if (isset($compare[$key]) && \is_array($compare[$key])) {
+                $nested_diff = array_diff_key_recursive($value, $compare[$key]);
+                break;
+            }
+        }
+        if (!empty($nested_diff)) {
+            $diff[$key] = $nested_diff;
+        }
+    }
+
+    return ($diff);
+}
+
+function ipv6_to_ptr(string $ip): string|false
+{
+    if (\filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        $unpacked = \unpack('H*', \inet_pton($ip))[1];
+        return \implode('.', \array_reverse(\str_split($unpacked))) . '.ip6.arpa.';
+    }
+
+    return (false);
+}
+
+function ipv4_to_ptr(string $ip): string|false
+{
+    if (\filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        return (\implode('.', \array_reverse(\explode('.', $ip))) . '.in-addr.arpa.');
+    }
+
+    return (false);
+}
+
+function ip_to_ptr(string $ip): string|false
+{
+    return (ipv4_to_ptr($ip) ?: ipv6_to_ptr($ip));
+}
+
+function kea_leases_records(KeaConfig $config, ?string $fallbackDomain = null, array $subnetIds = [], bool $exclude = false): array
+{
+    $subnetIds = \array_flip($subnetIds); /* For O(1) lookups */
+    $family = $config->getAddressFamily();
+
+    /* Initialize and connect to socket */
+    $socket = \stream_socket_client($config->getSocketAddress(), $errno, $errstr);
+    if (!$socket) {
+        throw new KeaException(
+            \sprintf(
+                \gettext('Unable to connect to Kea control socket: %s. Error %d: %s'),
+                $config->getSocketPath(),
+                $errno,
+                $errstr
+            )
+        );
+    }
+
+    /* Craft the request payload */
+    $command = \sprintf('lease%s-get-all', $config->getAddressFamily()->value);
+    $reqJson = \json_encode(['command' => $command]);
+
+    $length = \strlen($reqJson);
+    $written = 0;
+
+    /* Send request payload, handling partial writes as needed */
+    while ($written < $length) {
+        $bytes = \fwrite($socket, \substr($reqJson, $written), $length - $written);
+        if ($bytes === false) {
+            \fclose($socket);
+            throw new KeaException(
+                \sprintf(
+                    \gettext('Failed to send \'%s\' command to Kea control socket: %s'),
+                    $command,
+                    $config->getSocketPath()
+                )
+            );
+        }
+        $written += $bytes;
+    }
+
+    /* Receive the response payload */
+    $resJson = '';
+    while (!\feof($socket)) {
+        $chunk = \fread($socket, BUFSIZ);
+        if ($chunk === false) {
+            \fclose($socket);
+            throw new KeaException(
+                \sprintf(
+                    \gettext('Error decoding response from Kea control socket: %s'),
+                    $config->getSocketPath()
+                )
+            );
+        }
+        $resJson .= $chunk;
+    }
+
+    /* All done with the socket */
+    \fclose($socket);
+
+    /* Decode and parse response payload */
+    $res = \json_decode($resJson, true);
+    if (\json_last_error() !== JSON_ERROR_NONE) {
+        throw new KeaException(
+            \sprintf(
+                \gettext('Error decoding response from Kea control socket: %s'),
+                $config->getSocketPath()
+            )
+        );
+    }
+
+    $result = [];
+    foreach ($res['arguments']['leases'] as $lease) {
+        /* Apply the filtering logic */
+        $inList = isset($subnetIds[$lease['subnet-id']]);
+        if (($exclude && $inList) || (!$exclude && !$inList)) {
+            continue;
+        }
+
+        /* General lease sanity checking */
+        if (($lease['state'] !== 0) || empty($lease['hostname'])) {
+            continue;
+        }
+
+        /* IPv6 specific lease sanity checking */
+        if ($family->is(AddressFamily::INET6)) {
+            if ($lease['type'] !== 'IA_NA') {
+                continue;
+            }
+        }
+
+        /* Determine the domain name to use */
+        $option_data = &$lease['user-context']['Netgate']['option-data'];
+        $domain = \rtrim(
+            first_of(
+                $option_data['domain-name'],
+                $option_data['domain-search'][0],
+                $fallbackDomain,
+                'unknown.home.arpa' /* Should never get this far */
+            ),
+            '.' /* Remove trailing dot */
+        );
+
+        /* Ensure hostname is not already a fqdn */
+        $hostname = \strtok($lease['hostname'], '.');
+
+        /* RFC 4702, Section 5.1 */
+        $ttl = ($lease['valid-lft'] / 3);
+
+        /* Add address record */
+        $fqdn = "{$hostname}.{$domain}.";
+        $result[$fqdn][\implode(' ', [
+            $fqdn,
+            '%d',
+            'IN',
+            $family->getDNSRecordType()->name,
+            $lease['ip-address']
+        ])] = [$ttl];
+
+        /* Add pointer record */
+        $ptr_fqdn = ip_to_ptr($lease['ip-address']);
+        $result[$ptr_fqdn][\implode(' ', [
+            $ptr_fqdn,
+            '%d',
+            'IN',
+            'PTR',
+            $fqdn
+        ])] = [$ttl];
+    }
+
+    return ($result);
+}
+
+function unbound_all_records(string $unboundConfFile): array
+{
+    $argv = [
+        UBCTRLBIN,
+        '-c', $unboundConfFile, /* proc_open will escape */
+        'list_local_data'
+    ];
+    $desc = [
+        0 => ['file', '/dev/null', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['file', '/dev/null', 'w']
+    ];
+    $result = false;
+    $tries = 0;
+    while ($tries < RETRIES) {
+        $proc = \proc_open($argv, $desc, $pipes);
+        if ($proc) {
+            $result = [];
+            while ($line = \fgets($pipes[1])) {
+                normalize_whitespace($line);
+                if (\preg_match('/^(?<name>\S+)\s+(?<ttl>\d+)\s+(?<data>.+)$/', $line, $matches)) {
+                    $result[$matches['name']][\implode(' ', [
+                        $matches['name'],
+                        '%d',
+                        $matches['data']
+                    ])] = [(int)$matches['ttl']];
+                }
+            }
+            if (\proc_close($proc) === 0) {
+                /* All is good! */
+                break;
+            }
+        }
+        /* Something has gone wrong, try again! */
+        $result = false;
+        $tries++;
+    }
+
+    if ($result === false) {
+        throw new UnboundException(
+            \sprintf(
+                \gettext('Unable to query Unbound Control: %s'),
+                $unboundConfFile
+            )
+        );
+    }
+
+    return ($result);
+}
+
+function unbound_leases_records(string $unboundConfFile, string $unboundIncludeFile, bool $skipValidation = false): array|false
+{
+    $result = false;
+    $fd = \fopen($unboundIncludeFile, 'r');
+    if ($fd) {
+        $result = [];
+        $hasher = \hash_init(HASHALGO);
+        \hash_update($hasher, (string) unbound_get_pid($unboundConfFile));
+        $expectedHash = \trim(\substr(\fgets($fd), 1));
+        while ($line = \fgets($fd)) {
+            normalize_whitespace($line);
+            if (\preg_match('/^local-data:\s*\"(?<record>(?<name>\S+)\s+(?<ttl>\d+)\s+(?<data>.+))\"/', $line, $matches)) {
+                \hash_update($hasher, $matches['record']);
+                $result[$matches['name']][\implode(' ', [
+                    $matches['name'],
+                    '%d',
+                    $matches['data']
+                ])] = [(int)$matches['ttl']];
+            }
+        }
+        \fclose($fd);
+        if (!($skipValidation || \hash_equals($expectedHash, \hash_final($hasher)))) {
+            return (false);
+        }
+    }
+
+    return ($result);
+}
+
+function unbound_write_include(string $unboundConfFile, string $unboundIncludeFile, array $recordsByName): void
+{
+    mkdir_safe(\dirname($unboundIncludeFile), recursive: true);
+
+    $fd = \fopen($unboundIncludeFile, 'w');
+    if ($fd) {
+        $entries = [];
+        $hasher = \hash_init(HASHALGO);
+        \hash_update($hasher, (string) unbound_get_pid($unboundConfFile));
+        foreach ($recordsByName as $name => $records) {
+            foreach ($records as $recordf => $values) {
+                $record = \sprintf($recordf, ...$values);
+                \hash_update($hasher, $record);
+                $entries[] = \sprintf('local-data: "%s"', $record);
+            }
+        }
+        $hash = \hash_final($hasher);
+        \fprintf($fd, "# %s\n", $hash);
+        \fprintf($fd, "# Automatically generated! DO NOT EDIT!\n");
+        \fprintf($fd, "# Last updated: %s\n", \date('Y-m-d H:i:s'));
+        if (!empty($entries)) {
+            \fwrite($fd, implode("\n", $entries));
+            \fwrite($fd, "\n");
+        }
+        \fclose($fd);
+        syslogf(LOG_NOTICE, \gettext('Include updated: %s (%s)'), $unboundIncludeFile, $hash);
+    }
+}
+
+function unbound_reload(string $unboundConfFile): void
+{
+    /* Only reloads if already running, fails otherwise */
+    \exec(\implode(' ', [
+        UBCTRLBIN,
+        '-c', \escapeshellarg($unboundConfFile),
+        'reload',
+    ]), $_lines, $rc);
+    if ($rc === 0) {
+        syslogf(LOG_NOTICE, \gettext('Unbound reloaded: %s'), $unboundConfFile);
+    }
+}
+
+function validate_pid_file(string $pidFilePath): int|false
+{
+    if (\is_readable($pidFilePath)) {
+        $pid = \trim(\file_get_contents($pidFilePath));
+        if ($pid !== false && \is_numeric($pid)) {
+            $pid = (int) $pid;
+            if (\posix_kill($pid, 0) && \posix_get_last_error() === 0) {
+                return ($pid);
+            }
+        }
+    }
+
+    return (false);
+}
+
+function unbound_get_pid(string $unboundConfFile, bool $flush = false): int|false
+{
+    static $pids = [];
+
+    $pid = &$pids[$unboundConfFile];
+    if (!$flush && isset($pid)) {
+        return ($pid);
+    }
+
+    \exec(\implode(' ', [
+        UBCTRLBIN,
+        '-c', \escapeshellarg($unboundConfFile),
+        'get_option', 'pidfile'
+    ]), $lines, $rc);
+    if (($rc === 0)) {
+        $tpid = validate_pid_file($lines[0]);
+        if ($tpid !== false) {
+            $pid = $tpid;
+            return ($pid);
+        }
+    }
+
+    return (false);
+}
+
+function unbound_local_datas(string $unboundConfFile, array $recordsByName): bool
+{
+    $argv = [
+        UBCTRLBIN,
+        '-c', $unboundConfFile, /* proc_open will escape */
+        'local_datas'
+    ];
+    $desc = [
+        0 => ['pipe', 'r'],
+        1 => ['file', '/dev/null', 'w'],
+        2 => ['file', '/dev/null', 'w']
+    ];
+    $result = false;
+    $tries = 0;
+    while ($tries < RETRIES) {
+        $proc = \proc_open($argv, $desc, $pipes);
+        if ($proc) {
+            foreach ($recordsByName as $name => $records) {
+                foreach ($records as $recordf => $values) {
+                    $record = \sprintf($recordf, ...$values);
+                    syslogf(LOG_NOTICE, \gettext('Record installed: "%s"'), $record);
+                    \fwrite($pipes[0], "{$record}\n");
+                }
+            }
+            if (\proc_close($proc) === 0) {
+                /* All is good! */
+                $result = true;
+                break;
+            }
+        }
+        /* Something has gone wrong, try again! */
+        $tries++;
+    }
+
+    return ($result);
+}
+
+function unbound_local_datas_remove(string $unboundConfFile, array $recordsByName): bool
+{
+    $argv = [
+        UBCTRLBIN,
+        '-c', $unboundConfFile, /* proc_open will escape */
+        'local_datas_remove'
+    ];
+    $desc = [
+        0 => ['pipe', 'r'],
+        1 => ['file', '/dev/null', 'w'],
+        2 => ['file', '/dev/null', 'w']
+    ];
+    $tries = 0;
+    while ($tries < RETRIES) {
+        $proc = \proc_open($argv, $desc, $pipes);
+        if ($proc) {
+            foreach ($recordsByName as $name => $records) {
+                foreach ($records as $recordf => $values) {
+                    $record = \sprintf($recordf, ...$values);
+                    syslogf(LOG_NOTICE, \gettext('Record removed: "%s"'), $record);
+                }
+                /* One name per line */
+                \fwrite($pipes[0], $name);
+                \fwrite($pipes[0], "\n");
+            }
+            if (\proc_close($proc) === 0) {
+                return (true);
+            }
+        }
+        /* Something has gone wrong, try again! */
+        $tries++;
+    }
+
+    return (false);
+}
+
+function unbound_flush(string $unboundConfFile, $unboundIncludeFile): void
+{
+    unbound_write_include($unboundConfFile, $unboundIncludeFile, []);
+    unbound_reload($unboundConfFile);
+}
+
+function unbound_sync(string $unboundConfFile, array $newAllRecordsByName, array $oldAllRecordsByName): bool
+{
+    $toRemove = array_diff_key_recursive($oldAllRecordsByName, $newAllRecordsByName);
+    $toAdd = array_diff_key_recursive($newAllRecordsByName, $oldAllRecordsByName);
+
+    foreach ($toRemove as $name => $records) {
+        if (isset($newAllRecordsByName[$name])) {
+            $toAdd[$name] = array_diff_key_recursive($newAllRecordsByName[$name], $records);
+        }
+    }
+
+    /* Nothing to do */
+    if (all_empty($toRemove, $toAdd)) {
+        return (false);
+    }
+
+    /* Apply removals */
+    if (!empty($toRemove) && !unbound_local_datas_remove($unboundConfFile, $toRemove)) {
+        syslogf(LOG_ERR, \gettext('Error processing records to remove'));
+        return (false);
+    }
+
+    /* Apply additions */
+    if (!empty($toAdd) && !unbound_local_datas($unboundConfFile, $toAdd)) {
+        syslogf(LOG_ERR, \gettext('Error processing records to install'));
+        unbound_reload($unboundConfFile);
+        return (false);
+    }
+
+    /* Things happened! */
+    return (true);
+}
+
+function records_sync(array $leaseRecords, array &$installedRecords, array &$allRecords): void
+{
+    /* Process records to add */
+    foreach ($leaseRecords as $name => $records) {
+        ensure_arrays($records, $installedRecords[$name], $allRecords[$name]);
+        $to_add = \array_diff_key($records, $allRecords[$name]);
+        $installedRecords[$name] = \array_merge($installedRecords[$name], $to_add);
+        $allRecords[$name] = \array_merge($allRecords[$name], $to_add);
+        unset_if_empty($installedRecords[$name], $allRecords[$name]);
+    }
+
+    /* Process records to remove */
+    foreach ($installedRecords as $name => $records) {
+        ensure_arrays($records, $leaseRecords[$name], $allRecords[$name]);
+        $to_remove = \array_diff_key($records, $leaseRecords[$name]);
+        $installedRecords[$name] = \array_diff_key($records, $to_remove);
+        $allRecords[$name] = \array_diff_key($allRecords[$name], $to_remove);
+        unset_if_empty($installedRecords[$name], $allRecords[$name]);
+    }
+}
+
+class FlushCommand extends Command
+{
+    protected function configure(): void
+    {
+        $this
+            ->setName('flush')
+            ->setDescription(\gettext('Flush Kea lease records from Unbound'))
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $startTime = \microtime(true);
+        $flushHappened = false;
+
+        $lock = new FileLock(__FILE__);
+        $logFlags = LOGFLAGS;
+        $ret = Command::SUCCESS;
+
+        if (!$input->getOption('quiet')) {
+            $logFlags |= LOG_PERROR;
+        }
+
+        \openlog(\basename(__FILE__), $logFlags, LOG_USER);
+
+        try {
+            $lock->aquire();
+
+            $keaConfFile = $input->getOption('kea-conf');
+            $keaConfig = KeaConfig::getInstance($keaConfFile);
+            $family = $keaConfig->getAddressFamily();
+
+            $includeFile = \sprintf($input->getOption('include-file'), $family->value);
+            $unboundConfFile = $input->getOption('unbound-conf');
+
+            unbound_flush($unboundConfFile, $includeFile);
+            $flushHappened = true;
+        } catch (Exception $e) {
+            syslogf(LOG_ERR, $e->getMessage());
+            $ret = Command::FAILURE;
+        } finally {
+            $lock->release();
+        }
+
+        if ($flushHappened) {
+            syslogf(LOG_NOTICE, \gettext('Flush completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+        }
+
+        \closelog();
+
+        return ($ret);
+    }
+}
+
+class SyncCommand extends Command
+{
+    protected function configure(): void
+    {
+        $this
+            ->setName('sync')
+            ->setDescription(\gettext('Sync Kea lease records with Unbound'))
+            ->addOption(
+                'exclude',
+                'x',
+                InputOption::VALUE_NONE,
+                \gettext('Exclude specified subnet IDs')
+            )
+            ->addOption(
+                'fallback-domain',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                \gettext('Fallback domain name'),
+                'unknown.home.arpa'
+            )
+            ->addOption(
+                'subnet-id',
+                's',
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                \gettext('Subnet IDs to process')
+            )
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $startTime = \microtime(true);
+        $syncHappened = false;
+
+        $lock = new FileLock(__FILE__);
+        $logFlags = LOGFLAGS;
+        $ret = Command::SUCCESS;
+
+        if (!$input->getOption('quiet')) {
+            $logFlags |= LOG_PERROR;
+        }
+
+        \openlog(\basename(__FILE__), $logFlags, LOG_USER);
+
+        try {
+            $lock->aquire();
+
+            /* Parse Kea configuration */
+            $keaConfFile = $input->getOption('kea-conf');
+            $keaConfig = KeaConfig::getInstance($keaConfFile);
+            $family = $keaConfig->getAddressFamily();
+
+            /* Grab lease records from Kea */
+            $leaseRecords = kea_leases_records(
+                $keaConfig,
+                $input->getOption('fallback-domain'),
+                $input->getOption('subnet-id'),
+                $input->getOption('exclude')
+            );
+
+            /* Parse Unbound configuration */
+            $unboundConfFile = $input->getOption('unbound-conf');
+            $includeFile = \sprintf($input->getOption('include-file'), $family->value);
+
+            /* Grab installed lease records from Unbound */
+            $installedRecords = unbound_leases_records($unboundConfFile, $includeFile);
+            if ($installedRecords === false) {
+                syslogf(LOG_NOTICE, \gettext('Unbound lease include is missing or inconsistent: %s'), $includeFile);
+                unbound_flush($unboundConfFile, $includeFile);
+                $installedRecords = []; /* No need to reparse */
+            }
+
+            /* Finaly, grab *two* copies of the Unbound cache, one to mutate and one to compare against */
+            $desiredRecords = $currentRecords = unbound_all_records($unboundConfFile);
+
+            /* Mutate the first copy in-place (this becomces the "desired" state) */
+            records_sync($leaseRecords, $installedRecords, $desiredRecords);
+
+            /* Reconcile the desired state with the original copy (the "current" state) */
+            if (unbound_sync($unboundConfFile, $desiredRecords, $currentRecords)) {
+                /* Update the include file *only* if something changed */
+                unbound_write_include($unboundConfFile, $includeFile, $installedRecords);
+                $syncHappened = true;
+            }
+        } catch (Exception $e) {
+            syslogf(LOG_ERR, $e->getMessage());
+            $ret = Command::FAILURE;
+        } finally {
+            $lock->release();
+        }
+
+        if ($syncHappened) {
+            syslogf(LOG_NOTICE, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+        }
+
+        \closelog();
+
+        return ($ret);
+    }
+}
+
+$app = new Application(\basename(__FILE__));
+
+$app->getDefinition()->addOptions([
+    new InputOption(
+        'include-file',
+        'i',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Unbound include file'),
+        '/var/unbound/leases/leases%s.conf'
+    ),
+    new InputOption(
+        'kea-conf',
+        'k',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Path to Kea configuration file'),
+        '/usr/local/etc/kea/kea-dhcp4.conf'
+    ),
+    new InputOption(
+        'quiet',
+        'q',
+        InputOption::VALUE_NONE,
+        \gettext('Quiet mode')
+    ),
+    new InputOption(
+        'unbound-conf',
+        'u',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Path to Unbound configuration file'),
+        '/var/unbound/unbound.conf'
+    )
+]);
+
+$app->add(new FlushCommand());
+$app->add(new SyncCommand());
+
+$app->run();

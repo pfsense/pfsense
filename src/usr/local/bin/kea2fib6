@@ -1,0 +1,549 @@
+#!/usr/bin/env php
+<?php
+/*
+ * kea2fib6
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2025 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ */
+
+namespace kea2fib6;
+
+require_once 'vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+\define('BUFSIZ', 16 * 1024);
+\define('LOGFLAGS', LOG_NDELAY | LOG_PID);
+
+final class CacheException extends \Exception {}
+final class FileLockException extends \Exception {}
+final class KeaConfigException extends \Exception {}
+final class KeaException extends \Exception {}
+
+enum AddressFamily: string
+{
+    case INET   = '4';
+    case INET6  = '6';
+    case ANY    = 'any';
+
+    public function is(AddressFamily $family): bool
+    {
+        return ($this === $family);
+    }
+}
+
+abstract class Singleton
+{
+    private static array $instances = [];
+
+    protected function __construct() {}
+
+    protected function __clone() {}
+
+    public function __wakeup()
+    {
+        throw new \Exception(
+            \gettext('Cannot unserialize a singleton')
+        );
+    }
+
+    public static function getInstance(mixed ...$args): static
+    {
+        $class = static::class;
+        if (!isset(self::$instances[$class])) {
+            self::$instances[$class] = new static(...$args);
+        }
+
+        return (self::$instances[$class]);
+    }
+}
+
+final class KeaConfig extends Singleton
+{
+    private AddressFamily $addressFamily;
+    private array $config;
+    private string $socketPath;
+
+    protected function __construct(private string $confPath, AddressFamily $family = AddressFamily::ANY)
+    {
+        $configJson = \file_get_contents($confPath);
+        if ($configJson === false) {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to read Kea configuration file: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        $this->config = \json_decode($configJson, true);
+        if (\json_last_error() !== JSON_ERROR_NONE) {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to parse Kea configuration file: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        if (isset($this->config['Dhcp4'])) {
+            $this->addressFamily = AddressFamily::INET;
+            $this->socketPath = $this->config['Dhcp4']['control-socket']['socket-name'] ?? '/var/kea/dhcp4.sock';
+        } elseif (isset($this->config['Dhcp6'])) {
+            $this->addressFamily = AddressFamily::INET6;
+            $this->socketPath = $this->config['Dhcp6']['control-socket']['socket-name'] ?? '/var/kea/dhcp6.sock';
+        } else {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to determine address family from Kea configuration: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        /* Apply family constaint if provided */
+        if (!$family->is(AddressFamily::ANY) &&
+            !$this->addressFamily->is($family)) {
+                throw new KeaConfigException(
+                    \sprintf(
+                        \gettext("Address family mismatch: expected '%s', found '%s' in '%s'."),
+                        $family,
+                        $this->addressFamily,
+                        $this->confPath
+                    )
+                );
+        }
+    }
+
+    public function getAddressFamily(): AddressFamily
+    {
+        return ($this->addressFamily);
+    }
+
+    public function getConfPath(): string
+    {
+        return ($this->confPath);
+    }
+
+    public function getSocketAddress(): string
+    {
+        return ("unix://{$this->socketPath}");
+    }
+
+    public function getSocketPath(): string
+    {
+        return ($this->socketPath);
+    }
+}
+
+class FileLock
+{
+    private bool $removeFile = false;
+    private $fd = null;
+
+    public function __construct(private string $lockFile = __FILE__)
+    {
+        if (!\file_exists($lockFile) && @\touch($lockFile)) {
+            $this->removeFile = true;
+        }
+    }
+
+    public function __destruct()
+    {
+        $this->release();
+
+        if ($this->removeFile && \file_exists($this->lockFile)) {
+            @\unlink($this->lockFile);
+        }
+    }
+
+    public function isLocked(): bool
+    {
+        return (\is_resource($this->fd));
+    }
+
+    public function tryAquire(): bool
+    {
+        if ($this->isLocked()) {
+            throw new FileLockException(
+                \sprintf(
+                    \gettext('Lock already acquired: %s'),
+                    $this->lockFile
+                )
+            );
+        }
+
+        $this->fd = \fopen($this->lockFile, 'c+');
+        if (!$this->fd) {
+            return (false);
+        }
+
+        if (!\flock($this->fd, LOCK_EX | LOCK_NB)) {
+            \fclose($this->fd);
+            $this->fd = null;
+            return (false);
+        }
+
+        return (true);
+    }
+
+    public function aquire(int $timeout = 5): self
+    {
+        $startTime = \time();
+
+        while (!$this->tryAquire()) {
+            if ((\time() - $startTime) >= $timeout) {
+                throw new FileLockException(
+                    \sprintf(
+                        \gettext('Unable to obtain lock after %d seconds: %s'),
+                        $timeout,
+                        $this->lockFile
+                    )
+                );
+            }
+            \usleep(100000); // Sleep for 100ms before retrying
+        }
+
+        return ($this);
+    }
+
+    public function release(): void
+    {
+        if (\is_resource($this->fd)) {
+            \flock($this->fd, LOCK_UN);
+            \fclose($this->fd);
+            $this->fd = null;
+        }
+    }
+}
+
+function syslogf(int $priority, string $format, mixed ...$values): true
+{
+    return (\syslog($priority, \sprintf($format, ...$values)));
+}
+
+function mkdir_safe(string $directory, int $permissions = 0777, bool $recursive = false): bool
+{
+    if (!\is_dir($directory)) {
+        try {
+            return (\mkdir($directory, $permissions, $recursive));
+        } catch (\Exception $e) {
+            syslogf(LOG_NOTICE, \gettext('Unable to mkdir directory: %s'), $directory);
+        }
+    }
+
+    return (false);
+}
+
+function kea_leases_routes(KeaConfig $config): array
+{
+    /* Initialize and connect to socket */
+    $socket = \stream_socket_client($config->getSocketAddress(), $errno, $errstr);
+    if (!$socket) {
+        throw new KeaException(
+            \sprintf(
+                \gettext('Unable to connect to Kea control socket: %s. Error %d: %s'),
+                $config->getSocketPath(),
+                $errno,
+                $errstr
+            )
+        );
+    }
+
+    /* Craft the request payload */
+    $command = \sprintf('lease%s-get-all', $config->getAddressFamily()->value);
+    $reqJson = \json_encode(['command' => $command]);
+
+    $length = \strlen($reqJson);
+    $written = 0;
+
+    /* Send request payload, handling partial writes as needed */
+    while ($written < $length) {
+        $bytes = \fwrite($socket, \substr($reqJson, $written), $length - $written);
+        if ($bytes === false) {
+            \fclose($socket);
+            throw new KeaException(
+                \sprintf(
+                    \gettext('Failed to send \'%s\' command to Kea control socket: %s'),
+                    $command,
+                    $config->getSocketPath()
+                )
+            );
+        }
+        $written += $bytes;
+    }
+
+    /* Receive the response payload */
+    $resJson = '';
+    while (!\feof($socket)) {
+        $chunk = \fread($socket, BUFSIZ);
+        if ($chunk === false) {
+            \fclose($socket);
+            throw new KeaException(
+                \sprintf(
+                    \gettext('Error decoding response from Kea control socket: %s'),
+                    $config->getSocketPath()
+                )
+            );
+        }
+        $resJson .= $chunk;
+    }
+
+    /* All done with the socket */
+    \fclose($socket);
+
+    /* Decode and parse response payload */
+    $res = \json_decode($resJson, true);
+    if (\json_last_error() !== JSON_ERROR_NONE) {
+        throw new KeaException(
+            \sprintf(
+                \gettext('Error decoding response from Kea control socket: %s'),
+                $config->getSocketPath()
+            )
+        );
+    }
+
+    $routesByPrefix = [];
+    foreach ($res['arguments']['leases'] as $lease) {
+        /* General lease sanity checking */
+        if (($lease['state'] === 0) &&
+            ($lease['type'] !== 'IA_PD')) {
+                continue;
+        }
+
+        /* Ensure lease entry has a valid query6 key */
+        $query6 = &$lease['user-context']['Netgate']['query6'];
+        if (isset($query6, $query6['remote-addr'], $query6['iface-name'])) {
+            $prefix = "{$lease['ip-address']}/{$lease['prefix-len']}";
+            $nextHop = "{$query6['remote-addr']}%{$query6['iface-name']}";
+            $routesByPrefix[$prefix] = $nextHop;
+        }
+    }
+
+    return ($routesByPrefix);
+}
+
+function write_owned_routes(string $cachePath, array $routesByPrefix): void
+{
+    mkdir_safe(\dirname($cachePath), recursive: true);
+
+    \file_put_contents($cachePath, \serialize($routesByPrefix));
+
+    syslogf(LOG_NOTICE, \gettext('Route cache updated: %s'), $cachePath);
+}
+
+function owned_routes(string $cachePath): array
+{
+    $retry = true;
+
+    try {
+        /* Catch any failure of file_get_contents and unserialize */
+        \set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        });
+
+        while (true) {
+            try {
+                /* This will throw an error on failure */
+                $routes = \unserialize(\file_get_contents($cachePath));
+                if (\is_array($routes)) {
+                    return ($routes);
+                }
+                throw new CacheException();
+            } catch (\Exception $e) {
+                if (!$retry) {
+                    throw $e;
+                }
+                /* Write a new empty cache and try one more time */
+                $retry = false;
+                syslogf(LOG_NOTICE, \gettext('Route cache missing or inconsistent: %s'), $cachePath);
+                write_owned_routes($cachePath, []);
+            }
+        }
+    } finally {
+        /* Don't forget... */
+        \restore_error_handler();
+    }
+}
+
+function routes_sync(array $leaseRoutesByPrefix, array $ownedRoutesByPrefix): bool
+{
+    $syncHappened = false;
+
+    /* Determine which routes to add and remove */
+    $routesToAdd = \array_diff_key($leaseRoutesByPrefix, $ownedRoutesByPrefix);
+    $routesToRemove = \array_diff_key($ownedRoutesByPrefix, $leaseRoutesByPrefix);
+
+    /* Bring in pfSense helpers */
+    require_once('system.inc');
+    require_once('util.inc');
+
+    foreach ($routesToAdd as $dest => $nextHop) {
+        route_add_or_change($dest, $nextHop);
+        $syncHappened = true;
+        syslogf(LOG_NOTICE, \gettext('Route installed: %s via %s'), $dest, $nextHop);
+    }
+
+    foreach (\array_keys($routesToRemove) as $dest) {
+        route_del($dest);
+        $syncHappened = true;
+        syslogf(LOG_NOTICE, \gettext('Route removed: %s'), $dest);
+    }
+
+    return ($syncHappened);
+}
+
+class FlushCommand extends Command
+{
+    protected function configure(): void
+    {
+        $this
+            ->setName('flush')
+            ->setDescription(\gettext('Flush owned prefix delegation lease routes from system routing table'))
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $startTime = \microtime(true);
+        $syncHappened = false;
+
+        $lock = new FileLock();
+        $logFlags = LOGFLAGS;
+        $ret = Command::SUCCESS;
+
+        if (!$input->getOption('quiet')) {
+            $logFlags |= LOG_PERROR;
+        }
+
+        \openlog(\basename(__FILE__), $logFlags, LOG_USER);
+
+        try {
+            $cachePath = $input->getOption('cache-file');
+
+            $lock->aquire();
+
+            $leaseRoutes = [];
+            $ownedRoutes = owned_routes($cachePath);
+
+            /* Reconcile with system routing table */
+            if (routes_sync([], $ownedRoutes)) {
+                write_owned_routes($cachePath, $leaseRoutes);
+                $syncHappened = true;
+            }
+        } catch (\Exception $e) {
+            syslogf(LOG_ERR, $e->getMessage());
+            $ret = Command::FAILURE;
+        } finally {
+            $lock->release();
+        }
+
+        if ($syncHappened) {
+            syslogf(LOG_NOTICE, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+        }
+
+        \closelog();
+
+        return ($ret);
+    }
+}
+
+class SyncCommand extends Command
+{
+    protected function configure(): void
+    {
+        $this
+            ->setName('sync')
+            ->setDescription(\gettext('Sync prefix delegation lease routes with system routing table'))
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $startTime = \microtime(true);
+        $syncHappened = false;
+    
+        $lock = new FileLock();
+        $logFlags = LOGFLAGS;
+        $ret = Command::SUCCESS;
+
+        if (!$input->getOption('quiet')) {
+            $logFlags |= LOG_PERROR;
+        }
+
+        \openlog(\basename(__FILE__), $logFlags, LOG_USER);
+
+        try {
+            $keaConfig = KeaConfig::getInstance(
+                $input->getOption('kea-conf'),
+                AddressFamily::INET6
+            );
+
+            $cachePath = $input->getOption('cache-file');
+
+            $lock->aquire();
+
+            /* Grab lease routes from Kea */
+            $leaseRoutes = kea_leases_routes($keaConfig);
+
+            /* Grab owned routes from cache */
+            $ownedRoutes = owned_routes($cachePath);
+            
+            /* Reconcile with system routing table */
+            if (routes_sync($leaseRoutes, $ownedRoutes)) {
+                write_owned_routes($cachePath, $leaseRoutes);
+                $syncHappened = true;
+            }
+        } catch (\Exception $e) {
+            syslogf(LOG_ERR, $e->getMessage());
+            $ret = Command::FAILURE;
+        } finally {
+            $lock->release();
+        }
+
+        if ($syncHappened) {
+            syslogf(LOG_NOTICE, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+        }
+
+        \closelog();
+
+        return ($ret);
+    }
+}
+
+$app = new Application(\basename(__FILE__));
+
+$app->getDefinition()->addOptions([
+    new InputOption(
+        'cache-file',
+        'c',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Route cache file'),
+        '/var/run/'.\basename(__FILE__).'.cache'
+    ),
+    new InputOption(
+        'kea-conf',
+        'k',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Path to Kea configuration file (Dhcp6 only!)'),
+        '/usr/local/etc/kea/kea-dhcp6.conf'
+    ),
+    new InputOption(
+        'quiet',
+        'q',
+        InputOption::VALUE_NONE,
+        \gettext('Quiet mode')
+    ),
+]);
+
+$app->add(new FlushCommand());
+$app->add(new SyncCommand());
+
+$app->run();

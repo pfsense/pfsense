@@ -34,6 +34,12 @@
 
 global $ddnsdomainkeyalgorithms;
 
+$dnsregpolicy_values = [
+	'default' => gettext('Track subnet'),
+	'enable' => gettext('Enable'),
+	'disable' => gettext('Disable')
+];
+
 function staticmapcmp($a, $b) {
 	return ipcmp($a['ipaddr'], $b['ipaddr']);
 }
@@ -78,6 +84,7 @@ if ($this_map_config) {
 	$pconfig['filename'] = $this_map_config['filename'];
 	$pconfig['rootpath'] = $this_map_config['rootpath'];
 	$pconfig['descr'] = $this_map_config['descr'];
+	$pconfig['earlydnsregpolicy'] = $this_map_config['earlydnsregpolicy'];
 	$pconfig['arp_table_static_entry'] = isset($this_map_config['arp_table_static_entry']);
 	$pconfig['deftime'] = $this_map_config['defaultleasetime'];
 	$pconfig['maxtime'] = $this_map_config['maxleasetime'];
@@ -106,6 +113,9 @@ if ($this_map_config) {
 	$pconfig['uefihttpboot'] = $this_map_config['uefihttpboot'];
 	$pconfig['netmask'] = $this_map_config['netmask'];
 	$pconfig['numberoptions'] = $this_map_config['numberoptions'];
+	if (dhcp_is_backend('kea')) {
+		$pconfig['custom_kea_config'] = base64_decode($this_map_config['custom_kea_config']);
+	}
 } else {
 	$pconfig['mac'] = $_REQUEST['mac'];
 	$pconfig['cid'] = $_REQUEST['cid'];
@@ -113,6 +123,7 @@ if ($this_map_config) {
 	$pconfig['filename'] = $_REQUEST['filename'];
 	$pconfig['rootpath'] = $_REQUEST['rootpath'];
 	$pconfig['descr'] = $_REQUEST['descr'];
+	$pconfig['earlydnsregpolicy'] = $_REQUEST['earlydnsregpolicy'];
 	$pconfig['arp_table_static_entry'] = $_REQUEST['arp_table_static_entry'];
 	$pconfig['deftime'] = $_REQUEST['defaultleasetime'];
 	$pconfig['maxtime'] = $_REQUEST['maxleasetime'];
@@ -149,6 +160,9 @@ if ($this_map_config) {
 	$pconfig['rootpath'] = $_REQUEST['rootpath'];
 	$pconfig['netmask'] = $_REQUEST['netmask'];
 	$pconfig['numberoptions'] = $_REQUEST['numberoptions'];
+	if (dhcp_is_backend('kea')) {
+		$pconfig['custom_kea_config'] = $_REQUEST['custom_kea_config'];
+	}
 }
 
 if ($_POST['save']) {
@@ -199,6 +213,11 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
 			}
 		}
+	}
+
+
+	if ($_POST['earlydnsregpolicy'] && !array_key_exists($_POST['earlydnsregpolicy'], $dnsregpolicy_values)) {
+		$input_errors[] = gettext("Invalid Early DNS Registration Policy.");
 	}
 
 	if (($_POST['ipaddr'] && !is_ipaddrv4($_POST['ipaddr']))) {
@@ -368,6 +387,15 @@ if ($_POST['save']) {
 		}
 	}
 
+	/* validate custom config */
+	if (dhcp_is_backend('kea')) {
+		if (!empty($_POST['custom_kea_config'])) {
+			$json = json_decode($_POST['custom_kea_config'], true);
+			if (!is_array($json) || (json_last_error() !== JSON_ERROR_NONE)) {
+				$input_errors[] = gettext('Custom configuration is not a well formed JSON object.');
+			}
+		}
+	}
 
 	if (!$input_errors) {
 		$mapent = array();
@@ -376,6 +404,7 @@ if ($_POST['save']) {
 		$mapent['ipaddr'] = $_POST['ipaddr'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
+		$mapent['earlydnsregpolicy'] = $_POST['earlydnsregpolicy'];
 		$mapent['arp_table_static_entry'] = ($_POST['arp_table_static_entry']) ? true : false;
 		$mapent['filename'] = $_POST['filename'];
 		$mapent['rootpath'] = $_POST['rootpath'];
@@ -438,6 +467,10 @@ if ($_POST['save']) {
 		$mapent['filename64arm'] = $_POST['filename64arm'];
 		$mapent['uefihttpboot'] = $_POST['uefihttpboot'];
 		$mapent['numberoptions'] = $pconfig['numberoptions'];
+
+		if (dhcp_is_backend('kea')) {
+			$mapent['custom_kea_config'] = base64_encode($_POST['custom_kea_config']);
+		}
 
 		if ($this_map_config) {
 			config_set_path("dhcpd/{$if}/staticmap/{$id}", $mapent);
@@ -583,6 +616,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr']
 ))->setHelp(gettext('A description for administrative reference (not parsed).'));
+
+$section->addInput(new Form_Select(
+	'earlydnsregpolicy',
+	gettext('Early DNS Registration'),
+	array_get_path($pconfig, 'earlydnsregpolicy', 'default'),
+	$dnsregpolicy_values
+))->setHelp(gettext('Optionally overides the subnet early DNS registration policy to force a specific policy.'));
 
 $form->add($section);
 
@@ -1025,6 +1065,16 @@ endif;
 
 
 $form->add($section);
+
+if (dhcp_is_backend('kea')):
+$section = new Form_Section(gettext('Custom Configuration'));
+$section->addInput(new Form_Textarea(
+	'custom_kea_config',
+	gettext('JSON Configuration'),
+	array_get_path($pconfig, 'custom_kea_config')
+))->setWidth(8)->setHelp(gettext('JSON to be merged into the "%1$s" section of the generated Kea DHCPv4 configuration.%2$sThe input must be a well formed JSON object and should not include the "%1$s" key itself.'), 'reservation', '<br/>');
+$form->add($section);
+endif;
 
 print($form);
 ?>

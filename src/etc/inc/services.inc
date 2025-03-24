@@ -518,13 +518,15 @@ function kea_is_hexstring(string $string): bool {
     return false;
 }
 
-function services_kea6_configure() {
+function services_kea6_configure(bool $with_custom = true) {
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
 	$kea_var_db = '/var/db/kea';
 
 	$kea6socket = g_get('varrun_path') . '/kea6-ctrl-socket';
 	unlink_if_exists($kea6socket . '.lock');
+
+	$keaconf_path = '/usr/local/etc/kea/kea-dhcp6.conf';
 
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;
@@ -582,10 +584,14 @@ function services_kea6_configure() {
 			'output_options' => [[
 				'output' => 'syslog'
 			]],
-			'severity' => 'INFO'
+			'severity' => config_get_path('kea6/loglevel', 'WARN')
 		]],
 		'valid-lifetime' => 7200,
 		'max-valid-lifetime' => 86400,
+		'host-reservation-identifiers' => [ /* order of priority */
+			'hw-address',
+			'duid'
+		],
 		'hooks-libraries' => [],
 		'control-socket' => [
 			'socket-type' => 'unix',
@@ -697,6 +703,107 @@ function services_kea6_configure() {
 		];
 
 		$keaconf['Dhcp6']['hooks-libraries'][] = $kea_ha_hook;
+	}
+
+	/* Store DHCP response options in the lease database */
+	$lease_options = '/usr/local/lib/kea/hooks/libdhcp_lease_options.so';
+	if (file_exists($lease_options)) {
+		$keaconf['Dhcp6']['hooks-libraries'][] = [
+			'library' => $lease_options,
+		];
+	}
+
+	$run_scriptd_base = g_get('conf_path') . '/kea6_scripts.d';
+	safe_mkdir($run_scriptd_base);
+
+	// Install kea2unbound hook
+	$run_script_path = $run_scriptd_base . '/kea2unbound.sh';
+
+	$base_bin = '/usr/local/bin/kea2unbound';
+	$base_args = implode(' ', [
+		'--kea-conf', $keaconf_path,
+		'--unbound-conf', g_get('unbound_chroot_path') . '/unbound.conf',
+		'--include-file', g_get('unbound_chroot_path') . '/leases/leases6.conf'
+	]);
+
+	$sync_args = implode(' ', array_map(function($v) {
+		return ("--subnet-id {$v}");
+	}, array_keys(kea6_dnsreg_enabled_ids())));
+
+	$run_script =<<<EOD
+#!/bin/sh
+# Automatically generated! DO NOT EDIT!
+
+case "$1" in
+	hook_load)
+		;&
+	lease6_add)
+		;&
+	lease6_delete)
+		;&
+	lease6_update)
+		{$base_bin} {$base_args} sync {$sync_args}
+		;;
+esac
+EOD;
+
+	/* Compute hash of script file */
+	$run_script_hash = '';
+	if (file_exists($run_script_path)) {
+		$run_script_hash = hash_file('xxh3', $run_script_path);
+	}
+	/* Only need to (re)write script on-disk if it has changed */
+	if (!hash_equals($run_script_hash, hash('xxh3', $run_script))) {
+		file_put_contents($run_script_path, $run_script);
+		chmod($run_script_path, 0755);
+	}
+
+	// Install kea2fib6 hook
+	$run_script_path = $run_scriptd_base . '/kea2fib6.sh';
+
+	$base_bin = '/usr/local/bin/kea2fib6';
+	$base_args = implode(' ', [
+		'--kea-conf', $keaconf_path,
+		'--cache-file', g_get('varrun_path').'/kea2fib6.cache'
+	]);
+
+	$run_script =<<<EOD
+#!/bin/sh
+# Automatically generated! DO NOT EDIT!
+
+case "$1" in
+	hook_load)
+		;&
+	lease6_add)
+		;&
+	lease6_delete)
+		;&
+	lease6_update)
+		{$base_bin} {$base_args} sync
+		;;
+esac
+EOD;
+
+	/* Compute hash of script file */
+	$run_script_hash = '';
+	if (file_exists($run_script_path)) {
+		$run_script_hash = hash_file('xxh3', $run_script_path);
+	}
+	/* Only need to (re)write script on-disk if it has changed */
+	if (!hash_equals($run_script_hash, hash('xxh3', $run_script))) {
+		file_put_contents($run_script_path, $run_script);
+		chmod($run_script_path, 0755);
+	}
+
+	$run_script_main = '/usr/local/bin/kea_run6';
+	if (file_exists($run_script_main)) {
+		$keaconf['Dhcp6']['hooks-libraries'][] = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_run_script.so',
+			'parameters' => [
+				'name' => $run_script_main,
+				'sync' => false
+			]
+		];
 	}
 
 	$dhcpdv6ifs = array();
@@ -977,6 +1084,14 @@ kea6_skip_first_pool_options:
 				'test' => $pool_client_class_test
 			];
 
+			/* Merge custom Kea config */
+			if ($with_custom && !$first_pool) {
+				if (!empty($poolconf['custom_kea_config'])) {
+					$keapool = array_merge_override_recursive(
+						$keapool, json_decode(base64_decode($poolconf['custom_kea_config']), true));
+				}
+			}
+
 			$keasubnet['pools'][] = $keapool;
 		}
 
@@ -1002,10 +1117,25 @@ kea6_skip_first_pool_options:
 					$keares['ip-addresses'][] = $ipaddrv6;
 				}
 
+				if ($sm['pdprefix']) {
+					if (isset($dhcpv6ifconf['pdprefix'])) {
+						$pdprefix = $sm['pdprefix'];
+						$keares['prefixes'][] = $pdprefix;
+					}
+				}
+
 				if ($sm['hostname']) {
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$keares['hostname'] = $dhhostname;
+				}
+
+				/* Merge custom Kea config */
+				if ($with_custom) {
+					if (!empty($sm['custom_kea_config'])) {
+						$keares = array_merge_override_recursive(
+							$keares, json_decode(base64_decode($sm['custom_kea_config']), true));
+					}
 				}
 
 				$keasubnet['reservations'][] = $keares;
@@ -1044,6 +1174,14 @@ kea6_skip_first_pool_options:
 		}
 		$keasubnet['reservations-in-subnet'] = true;
 
+		/* Merge custom Kea config */
+		if ($with_custom) {
+			if (!empty($dhcpv6ifconf['custom_kea_config'])) {
+				$keasubnet = array_merge_override_recursive(
+					$keasubnet, json_decode(base64_decode($dhcpv6ifconf['custom_kea_config']), true));
+			}
+		}
+
 		$keaconf['Dhcp6']['subnet6'][] = $keasubnet;
 	}
 
@@ -1054,7 +1192,12 @@ kea6_skip_first_pool_options:
 		];
 	}
 
-	$keaconf_path = '/usr/local/etc/kea/kea-dhcp6.conf';
+	if ($with_custom) {
+		if (config_path_enabled('kea6', 'custom_kea_config')) {
+			$keaconf = array_merge_override_recursive(
+				$keaconf, ['Dhcp6' => json_decode(base64_decode(config_get_path('kea6/custom_kea_config')), true)]);
+		}
+	}
 
 	/* render kea-dhcp6.conf json */
 	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
@@ -1075,7 +1218,24 @@ kea6_skip_first_pool_options:
 	}
 
 	$kea_bin = '/usr/local/sbin/kea-dhcp6';
-	mwexec_bg(sprintf('%s -c %s', $kea_bin, $keaconf_path));
+
+	/* lint/test kea-dhcp6 */
+	if ($with_custom) {
+		$retval = mwexec(implode(' ', [
+			$kea_bin,
+			'-t', $keaconf_path
+		]));
+		if ($retval <> 0) {
+			/* Try again without any custom configuration */
+			file_notice('DHCP', gettext('Failed to lint kea-dhcp6 with custom configurations. See Status > System Logs for more information about this failure.'));
+			return (services_kea6_configure(false));
+		}
+	}
+
+	mwexec_bg(implode(' ',[
+		$kea_bin,
+		'-c', $keaconf_path
+	]));
 
 	if (is_platform_booting()) {
 		print gettext('done') . ".\n";
@@ -1142,7 +1302,7 @@ function services_dhcpd_configure($family = "all") {
 	if (($family === 'all') || ($family === 'inet')) {
 		switch (dhcp_get_backend()) {
 		case 'kea':
-			services_kea4_configure();
+			services_kea4_configure(true);
 			break;
 		case 'isc':
 		default:
@@ -1154,7 +1314,7 @@ function services_dhcpd_configure($family = "all") {
 	if (($family === 'all') || ($family === 'inet6')) {
 		switch (dhcp_get_backend()) {
 		case 'kea':
-			services_kea6_configure();
+			services_kea6_configure(true);
 			break;
 		case 'isc':
 		default:
@@ -1167,7 +1327,7 @@ function services_dhcpd_configure($family = "all") {
 	unlock($dhcpdconfigurelck);
 }
 
-function services_kea4_configure() {
+function services_kea4_configure(bool $with_custom = true) {
 	$need_ddns_updates = false;
 	$ddns_zones = array();
 
@@ -1176,6 +1336,8 @@ function services_kea4_configure() {
 
 	$kea4socket = g_get('varrun_path').'/kea4-ctrl-socket';
 	unlink_if_exists($kea4socket . '.lock');
+
+	$keaconf_path = '/usr/local/etc/kea/kea-dhcp4.conf';
 
 	if (g_get('services_dhcp_server_enable') == false) {
 		return;
@@ -1226,11 +1388,16 @@ function services_kea4_configure() {
 			'output_options' => [[
 				'output' => 'syslog'
 			]],
-			'severity' => 'INFO'
+			'severity' => config_get_path('kea/loglevel', 'WARN')
 		]],
 		'valid-lifetime' => 7200,
 		'max-valid-lifetime' => 86400,
 		'ip-reservations-unique' => false,
+		'host-reservation-identifiers' => [ /* order of priority */
+			'hw-address',
+			'client-id',
+			'duid'
+		],
 		'echo-client-id' => false, /* RFC6842 compatibility mode */
 		'option-data' => [[
 			'name' => 'domain-name',
@@ -1353,6 +1520,68 @@ function services_kea4_configure() {
 		];
 
 		$keaconf['Dhcp4']['hooks-libraries'][] = $kea_ha_hook;
+	}
+
+	/* Store DHCP response options in the lease database */
+	$lease_options = '/usr/local/lib/kea/hooks/libdhcp_lease_options.so';
+	if (file_exists($lease_options)) {
+		$keaconf['Dhcp4']['hooks-libraries'][] = [
+			'library' => $lease_options,
+		];
+	}
+
+	$run_scriptd_base = g_get('conf_path') . '/kea4_scripts.d';
+	safe_mkdir($run_scriptd_base);
+	$run_script_path = $run_scriptd_base . '/kea2unbound.sh';
+
+	$base_bin = '/usr/local/bin/kea2unbound';
+	$base_args = implode(' ', [
+		'--kea-conf', $keaconf_path,
+		'--unbound-conf', g_get('unbound_chroot_path') . '/unbound.conf',
+		'--include-file', g_get('unbound_chroot_path') . '/leases/leases4.conf'
+	]);
+
+	$sync_args = implode(' ', array_map(function($v) {
+		return ("--subnet-id {$v}");
+	}, array_keys(kea_dnsreg_enabled_ids())));
+
+		$run_script =<<<EOD
+#!/bin/sh
+# Automatically generated! DO NOT EDIT!
+
+case "$1" in
+	hook_load)
+		;&
+	lease4_add)
+		;&
+	lease4_delete)
+		;&
+	lease4_update)
+		{$base_bin} {$base_args} sync {$sync_args}
+		;;
+esac
+EOD;
+
+	/* Compute hash of script file */
+	$run_script_hash = null;
+	if (file_exists($run_script_path)) {
+		$run_script_hash = hash_file('xxh3', $run_script_path);
+	}
+	/* Only need to (re)write script on-disk if it has changed */
+	if (hash('xxh3', $run_script) !== $run_script_hash) {
+		file_put_contents($run_script_path, $run_script);
+		chmod($run_script_path, 0755);
+	}
+
+	$run_script_main = '/usr/local/bin/kea_run4';
+	if (file_exists($run_script_main)) {
+		$keaconf['Dhcp4']['hooks-libraries'][] = [
+			'library' => '/usr/local/lib/kea/hooks/libdhcp_run_script.so',
+			'parameters' => [
+				'name' => $run_script_main,
+				'sync' => false
+			]
+		];
 	}
 
 	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
@@ -1503,6 +1732,7 @@ function services_kea4_configure() {
 		}
 
 		// Setup pool options
+		$first_pool = true;
 		foreach ($all_pools as $all_pools_idx => $poolconf) {
 			$keapool = [];
 
@@ -1647,6 +1877,7 @@ function services_kea4_configure() {
 			if (!empty($poolconf['tftp'])) {
 				$keapool['option-data'][] = [
 					'name' => 'tftp-server-name',
+					'code' => 66, /* See: https://redmine.pfsense.org/issues/15518 */
 					'data' => $poolconf['tftp']
 				];
 			}
@@ -1783,6 +2014,15 @@ function services_kea4_configure() {
 				'test' => $pool_client_class_test
 			];
 
+			/* Merge custom Kea config */
+			if ($with_custom && !$first_pool) {
+				if (!empty($poolconf['custom_kea_config'])) {
+					$keapool = array_merge_override_recursive(
+						$keapool, json_decode(base64_decode($poolconf['custom_kea_config']), true));
+				}
+			}
+
+			$first_pool = false;
 			$keasubnet['pools'][] = $keapool;
 
 		}
@@ -2077,6 +2317,7 @@ function services_kea4_configure() {
 				if (!empty($sm['tftp']) && ($sm['tftp'] != $dhcpifconf['tftp'])) {
 					$keares['option-data'][] = [
 						'name' => 'tftp-server-name',
+						'code' => 66, /* See: https://redmine.pfsense.org/issues/15518 */
 						'data' => $sm['tftp']
 					];
 				}
@@ -2216,11 +2457,27 @@ function services_kea4_configure() {
 
 				$i++;
 
+				/* Merge custom Kea config */
+				if ($with_custom) {
+					if (!empty($sm['custom_kea_config'])) {
+						$keares = array_merge_override_recursive(
+							$keares, json_decode(base64_decode($sm['custom_kea_config']), true));
+					}
+				}
+
 				$keasubnet['reservations'][] = $keares;
 			}
 		}
 
 		$keasubnet['reservations-in-subnet'] = true;
+
+		/* Merge custom Kea config */
+		if ($with_custom) {
+			if (!empty($dhcpifconf['custom_kea_config'])) {
+				$keasubnet = array_merge_override_recursive(
+					$keasubnet, json_decode(base64_decode($dhcpifconf['custom_kea_config']), true));
+			}
+		}
 
 		$keaconf['Dhcp4']['subnet4'][] = $keasubnet;
 		$keaconf['Dhcp4']['interfaces-config']['interfaces'][] = get_real_interface($dhcpif);
@@ -2263,6 +2520,13 @@ function services_kea4_configure() {
 		];
 	}
 
+	if ($with_custom) {
+		if (config_path_enabled('kea', 'custom_kea_config')) {
+			$keaconf = array_merge_override_recursive(
+				$keaconf, ['Dhcp4' => json_decode(base64_decode(config_get_path('kea/custom_kea_config')), true)]);
+		}
+	}
+
 	/* render json */
 	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
 		log_error(sprintf(gettext('error: unable to render json for kea-dhcp4.conf in %s()'), __FUNCTION__));
@@ -2270,7 +2534,6 @@ function services_kea4_configure() {
 	}
 
 	/* write kea-dhcp4.conf */
-	$keaconf_path = '/usr/local/etc/kea/kea-dhcp4.conf';
 	if (!file_put_contents($keaconf_path, $keaconf)) {
 		log_error(sprintf(gettext('error: cannot open %s in %s()'), $keaconf_path, __FUNCTION__));
 		return 1;
@@ -2282,9 +2545,25 @@ function services_kea4_configure() {
 		touch($kea_lease_db);
 	}
 
-	/* start kea-dhcp4 */
 	$kea_bin = '/usr/local/sbin/kea-dhcp4';
-	mwexec_bg(sprintf('%s -c %s', $kea_bin, $keaconf_path));
+
+	/* lint/test kea-dhcp4 */
+	if ($with_custom) {
+		$retval = mwexec(implode(' ', [
+			$kea_bin,
+			'-t', $keaconf_path
+		]));
+		if ($retval <> 0) {
+			/* Try again without any custom configuration */
+			file_notice('DHCP', gettext('Failed to lint kea-dhcp4 with custom configurations. See Status > System Logs for more information about this failure.'));
+			return (services_kea4_configure(false));
+		}
+	}
+
+	mwexec_bg(implode(' ',[
+		$kea_bin,
+		'-c', $keaconf_path
+	]));
 
 	if (is_platform_booting()) {
 		print "done.\n";

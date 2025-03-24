@@ -550,8 +550,24 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/access_lists.conf
 # Static host entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 
+
+EOD;
+
+if (dhcp_is_backend('isc')) {
+	$unboundconf .= <<< EOD
 # dhcp lease entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
+EOD;
+} elseif (dhcp_is_backend('kea') &&
+    (kea_dnsreg_enabled() || kea6_dnsreg_enabled())) {
+	$unboundconf .= <<< EOD
+# kea2unbound entries
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/leases/*
+EOD;
+}
+
+$unboundconf .= <<< EOD
+
 
 {$openvpn_clients_conf}
 

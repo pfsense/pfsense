@@ -27,6 +27,7 @@ require_once('pfsense-utils.inc');
 function kea_defaults(string $key): int|string {
 	/* throws an exception if $key isn't matched */
 	return (match($key) {
+		'fallback'					=> config_get_path('system/domain', 'unknown.home.arpa'),
 		'heartbeatdelay'			=> 10000,
 		'listenport'				=> 8765,
 		'maxackdelay'				=> 60000,
@@ -35,6 +36,194 @@ function kea_defaults(string $key): int|string {
 		'maxunackedclients' 		=> 0,
 		'name' 						=> config_get_path('system/hostname', g_get('product_name'))
 	});
+}
+
+function kea_earlydnsreg_enabled(array $dhcpdconf, array $mapent): array|false {
+	$ret = false;
+	if (!($mapent['hostname'] && $mapent['ipaddr'])) {
+		goto done;
+	}
+
+	$policies = [];
+	$policies[] = config_path_enabled('kea', 'earlydnsreg') ? 'enable' : 'disable';
+	$policies[] = array_get_path($dhcpdconf, 'earlydnsregpolicy', 'default');
+	$policies[] = array_get_path($mapent, 'earlydnsregpolicy', 'default');
+
+	$domain = kea_defaults('fallback');
+	if ($dhcpdconf['domain']) {
+		$domain = $dhcpdconf['domain'];
+	}
+	if ($mapent['domain']) {
+		$domain = $mapent['domain'];
+	}
+
+	$name = trim($mapent['hostname']);
+	$domain = trim($domain);
+	$fqdn = "{$name}.{$domain}";
+	$ipaddr = trim($mapent['ipaddr']);
+
+	foreach (array_reverse($policies) as $policy) {
+		switch ($policy) {
+			case 'enable':
+				$ret = [
+					'name'		=> $name,
+					'domain'	=> $domain,
+					'fqdn'		=> $fqdn,
+					'ipaddr'	=> $ipaddr,
+				];
+			case 'disable':
+				break 2;
+			default:
+				continue;
+		}
+	}
+
+done:
+	return ($ret);
+}
+
+function kea6_earlydnsreg_enabled(array $dhcpdconf, array $mapent): array|false {
+	$ret = false;
+	if (!($mapent['hostname'] && $mapent['ipaddrv6'])) {
+		goto done;
+	}
+
+	$policies = [];
+	$policies[] = config_path_enabled('kea6', 'earlydnsreg') ? 'enable' : 'disable';
+	$policies[] = array_get_path($dhcpdconf, 'earlydnsregpolicy', 'default');
+	$policies[] = array_get_path($mapent, 'earlydnsregpolicy', 'default');
+
+	$domain = kea_defaults('fallback');
+	if ($dhcpdconf['domain']) {
+		$domain = $dhcpdconf['domain'];
+	}
+	if ($mapent['domain']) {
+		$domain = $mapent['domain'];
+	}
+
+	$name = trim($mapent['hostname']);
+	$domain = trim($domain);
+	$fqdn = "{$name}.{$domain}";
+	$ipaddr = trim($mapent['ipaddrv6']);
+
+	foreach (array_reverse($policies) as $policy) {
+		switch ($policy) {
+			case 'enable':
+				$ret = [
+					'name'		=> $name,
+					'domain'	=> $domain,
+					'fqdn'		=> $fqdn,
+					'ipaddr'	=> $ipaddr,
+				];
+			case 'disable':
+				break 2;
+			default:
+				continue;
+		}
+	}
+
+done:
+	return ($ret);
+}
+
+function dhcp_static_mapping_icons(array $dhcpdconf, array $mapent): string {
+	$icons = [];
+
+	if (dhcp_is_backend('kea') &&
+	    kea_earlydnsreg_enabled($dhcpdconf, $mapent)) {
+		$icons[] = [ 'fa-solid fa-globe', gettext('Early DNS Registration Enabled') ];
+	}
+
+	if (isset($mapent['arp_table_static_entry'])) {
+		$icons[] = [ 'fa-solid fa-lock', gettext('Static ARP Enabled') ];
+	}
+
+	return (implode(' ', (array_map(function($v) {
+		return (sprintf('<i class="%s" title="%s" />', $v[0], $v[1]));
+	}, $icons))));
+}
+
+function dhcp6_static_mapping_icons(array $dhcpdconf, array $mapent): string {
+	$icons = [];
+
+	if (dhcp_is_backend('kea') &&
+	    kea6_earlydnsreg_enabled($dhcpdconf, $mapent)) {
+		$icons[] = [ 'fa-solid fa-globe', gettext('Early DNS Registration Enabled') ];
+	}
+
+	return (implode(' ', (array_map(function($v) {
+		return (sprintf('<i class="%s" title="%s" />', $v[0], $v[1]));
+	}, $icons))));
+}
+
+function kea_earlydnsreg_mappings(): array {
+	$mappings = [];
+	foreach (config_get_path('dhcpd', []) as $if => $conf) {
+		foreach (array_get_path($conf, 'staticmap', []) as $static) {
+			if ($mapping = kea_earlydnsreg_enabled($conf, $static)) {
+				$mappings[] = $mapping;
+			}
+		}
+	}
+	return ($mappings);
+}
+
+function kea6_earlydnsreg_mappings(): array {
+	$mappings = [];
+	foreach (config_get_path('dhcpdv6', []) as $if => $conf) {
+		foreach (array_get_path($conf, 'staticmap', []) as $static) {
+			if ($mapping = kea6_earlydnsreg_enabled($conf, $static)) {
+				$mappings[] = $mapping;
+			}
+		}
+	}
+	return ($mappings);
+}
+
+function kea_dnsreg_enabled_ids(): array {
+	$ids = [];
+	$enabled['enable'] = true;
+	if (config_path_enabled('kea', 'dnsreg')) {
+		$enabled['default'] = true;
+	}
+	foreach (array_keys(config_get_path('dhcpd', [])) as $idx => $if) {
+		$dnsregpolicy = config_get_path("dhcpd/${if}/dnsregpolicy", 'default');
+		if (array_key_exists($dnsregpolicy, $enabled)) {
+			$ids[$idx + 1] = true;
+		}
+	}
+	return ($ids);
+}
+
+function kea_dnsreg_enabled(): bool {
+	return ((bool)kea_dnsreg_enabled_ids());
+}
+
+function kea_dnsreg_subnet_enabled(int $subnet_id): bool {
+	return (array_key_exists($subnet_id, kea_dnsreg_enabled_ids()));
+}
+
+function kea6_dnsreg_enabled_ids(): array {
+	$ids = [];
+	$enabled['enable'] = true;
+	if (config_path_enabled('kea6', 'dnsreg')) {
+		$enabled['default'] = true;
+	}
+	foreach (array_keys(config_get_path('dhcpdv6', [])) as $idx => $if) {
+		$dnsregpolicy = config_get_path("dhcpdv6/${if}/dnsregpolicy", 'default');
+		if (array_key_exists($dnsregpolicy, $enabled)) {
+			$ids[$idx + 1] = true;
+		}
+	}
+	return ($ids);
+}
+
+function kea6_dnsreg_enabled(): bool {
+	return ((bool)kea6_dnsreg_enabled_ids());
+}
+
+function kea6_dnsreg_subnet_enabled(int $subnet_id): bool {
+	return (array_key_exists($subnet_id, kea6_dnsreg_enabled_ids()));
 }
 
 function kea_format_age(string|null $age): string {
@@ -139,6 +328,14 @@ function dhcp_validate_settings_post(array $pconfig): array {
 		}
 	}
 
+	/* validate custom config */
+	if (!empty($pconfig['custom_kea_config'])) {
+		$json = json_decode(base64_decode(array_get_path($pconfig, 'custom_kea_config')), true);
+		if (!is_array($json) || (json_last_error() !== JSON_ERROR_NONE)) {
+			$input_errors[] = gettext('Custom configuration is not a well formed JSON object.');
+		}
+	}
+
     return ($input_errors);
 }
 
@@ -147,20 +344,27 @@ function dhcp_do_settings_post(): array {
 
 	/* normalize these fields so that changes comparison below works properly */
 	foreach ([
-		['', 'hidedisabled'],
+		['', 'dnsreg'],
+		['', 'earlydnsreg'],
 		['ha', 'enable'], 
 		['ha', 'tls'],
 		['ha', 'mutualtls']
 	] as $parts) {
 		if (array_path_enabled($old_config, $parts[0], $parts[1])) {
-			array_set_path($old_config, implode('/', $parts), true);
+			array_set_path($old_config, ltrim(implode('/', $parts), '/'), true);
 		}
 	}
 
-	if (isset($_POST['hidedisabled'])) {
-		array_set_path($pconfig, 'hidedisabled', true);
+	if (isset($_POST['dnsreg'])) {
+		array_set_path($pconfig, 'dnsreg', true);
 	} else {
-		array_del_path($pconfig, 'hidedisabled');
+		array_del_path($pconfig, 'dnsreg');
+	}
+
+	if (isset($_POST['earlydnsreg'])) {
+		array_set_path($pconfig, 'earlydnsreg', true);
+	} else {
+		array_del_path($pconfig, 'earlydnsreg');
 	}
 
 	if (isset($_POST['ha_enable'])) {
@@ -209,49 +413,36 @@ function dhcp_do_settings_post(): array {
 		}
 	}
 
+	if (!empty($_POST['custom_kea_config'])) {
+		array_set_path($pconfig, 'custom_kea_config', base64_encode($_POST['custom_kea_config']));
+	} else {
+		array_del_path($pconfig, 'custom_kea_config');
+	}
+
 	/* don't leave empty ha config section */
 	if (empty(array_get_path($pconfig, 'ha', []))) {
 		array_del_path($pconfig, 'ha');
 	}
 
 	$input_errors = dhcp_validate_settings_post($pconfig);
-	if (!$input_errors) {
-		$changes = ($pconfig !== $old_config);
-		$need_sync = false;
-
-		/* determine interfaces to enable */
-		foreach (array_diff((array) $_POST['interface'], $subnets['enabled']) as $ifent) {
-			config_set_path("dhcpd/{$ifent}/enable", true);
-			$changes = $need_sync = true;
-		}
-
-		/* determine interfaces to disable */
-		foreach (array_diff($subnets['enabled'], (array) $_POST['interface']) as $ifent) {
-			config_del_path("dhcpd/{$ifent}/enable");
-			$changes = $need_sync = true;
-        }
-
-		/* write the updated config and determine if we really need to resync */
-		if ($changes) {
-			config_set_path('kea', $pconfig);
-			write_config(gettext('DHCP Server - Settings changed'));
-
-			if ($need_sync ||
-			    ($pconfig['ha'] !== $old_config['ha'])) {
-				mark_subsystem_dirty('dhcpd');
-			}
+	if (!$input_errors && ($pconfig !== $old_config)) {
+		config_set_path('kea', $pconfig);
+		write_config(gettext('DHCP Server - Settings changed'));
+		if (is_dhcp_server_enabled()) {
+			mark_subsystem_dirty('dhcpd');
 		}
 	}
 
 	return ([$input_errors, $pconfig]);
 }
 
-function dhcp6_do_settings_post(array $subnets): array {
+function dhcp6_do_settings_post(): array {
 	$pconfig = $old_config = config_get_path('kea6', []);
 
 	/* normalize these fields so that changes comparison below works properly */
 	foreach ([
-		['', 'hidedisabled'],
+		['', 'dnsreg'],
+		['', 'earlydnsreg'],
 		['ha', 'enable'], 
 		['ha', 'tls'],
 		['ha', 'mutualtls']
@@ -261,10 +452,16 @@ function dhcp6_do_settings_post(array $subnets): array {
 		}
 	}
 
-	if (isset($_POST['hidedisabled'])) {
-		array_set_path($pconfig, 'hidedisabled', true);
+	if (isset($_POST['dnsreg'])) {
+		array_set_path($pconfig, 'dnsreg', true);
 	} else {
-		array_del_path($pconfig, 'hidedisabled');
+		array_del_path($pconfig, 'dnsreg');
+	}
+
+	if (isset($_POST['earlydnsreg'])) {
+		array_set_path($pconfig, 'earlydnsreg', true);
+	} else {
+		array_del_path($pconfig, 'earlydnsreg');
 	}
 
 	if (isset($_POST['ha_enable'])) {
@@ -313,37 +510,23 @@ function dhcp6_do_settings_post(array $subnets): array {
 		}
 	}
 
+	if (!empty($_POST['custom_kea_config'])) {
+		array_set_path($pconfig, 'custom_kea_config', base64_encode($_POST['custom_kea_config']));
+	} else {
+		array_del_path($pconfig, 'custom_kea_config');
+	}
+
 	/* don't leave empty ha config section */
 	if (empty(array_get_path($pconfig, 'ha', []))) {
 		array_del_path($pconfig, 'ha');
 	}
 
 	$input_errors = dhcp_validate_settings_post($pconfig);
-	if (!$input_errors) {
-		$changes = ($pconfig !== $old_config);
-		$need_sync = false;
-
-		/* determine interfaces to enable */
-		foreach (array_diff((array) $_POST['interface'], $subnets['enabled']) as $ifent) {
-			config_set_path("dhcpdv6/{$ifent}/enable", true);
-			$changes = $need_sync = true;
-		}
-
-		/* determine interfaces to disable */
-		foreach (array_diff($subnets['enabled'], (array) $_POST['interface']) as $ifent) {
-			config_del_path("dhcpdv6/{$ifent}/enable");
-			$changes = $need_sync = true;
-        }
-
-		/* write the updated config and determine if we really need to resync */
-		if ($changes) {
-			config_set_path('kea6', $pconfig);
-			write_config(gettext('DHCPv6 Server - Settings changed'));
-
-			if ($need_sync ||
-			    ($pconfig['ha'] !== $old_config['ha'])) {
-				mark_subsystem_dirty('dhcpd6');
-			}
+	if (!$input_errors && ($pconfig !== $old_config)) {
+		config_set_path('kea6', $pconfig);
+		write_config(gettext('DHCPv6 Server - Settings changed'));
+		if (is_dhcpv6_server_enabled()) {
+			mark_subsystem_dirty('dhcpd6');
 		}
 	}
 
@@ -356,17 +539,13 @@ function dhcp_apply_changes(): int {
 	$retvaldns = 0;
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
-	if (config_path_enabled('dnsmasq') &&
-	    config_path_enabled('dnsmasq', 'regdhcpstatic') &&
-	    dhcp_is_backend('isc')) {
+	if (config_path_enabled('dnsmasq')) {
 		$retvaldns |= services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('dhcpd');
 		}
-	} elseif (config_path_enabled('unbound') &&
-	    config_path_enabled('unbound', 'regdhcpstatic') &&
-	    dhcp_is_backend('isc')) {
+	} elseif (config_path_enabled('unbound')) {
 		$retvaldns |= services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');
@@ -416,15 +595,13 @@ function dhcp6_apply_changes(): int {
 	$retvaldns = 0;
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
-	if (config_path_enabled('dnsmasq') &&
-	    config_path_enabled('dnsmasq', 'regdhcpstatic')) {
+	if (config_path_enabled('dnsmasq')) {
 		$retvaldns |= services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('dhcpd6');
 		}
-	} elseif (config_path_enabled('unbound') &&
-	    config_path_enabled('unbound', 'regdhcpstatic')) {
+	} elseif (config_path_enabled('unbound')) {
 		$retvaldns |= services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');

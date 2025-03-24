@@ -213,7 +213,16 @@ EOD;
 	safe_mkdir("{$g['varetc_path']}/syslog.d");
 
 	$syslogd_extra = "";
-	$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
+	$separatelogfacilities = [
+		'bgpd', 'charon', 'dhclient', 'dhcp6c',
+		'dhcpd', 'dhcrelay', 'dnsmasq', 'dpinger',
+		'filterdns', 'filterlog', 'hostapd', 'igmpproxy',
+		'ipsec_starter', 'kea-dhcp4', 'kea-dhcp6', 'unbound',
+		'kea2fib6', 'kea2unbound', 'l2tps', 'miniupnpd', 'named',
+		'ntp', 'ntpd', 'ntpdate', 'openvpn',
+		'ospf6d', 'ospfd', 'poes', 'radvd',
+		'routed', 'watchfrr', 'zebra'
+	];
 	$syslogconf = "# Automatically generated, do not edit!\n";
 
 	foreach (config_get_path('installedpackages/package', []) as $key => $package) {
@@ -321,7 +330,7 @@ EOD;
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 	}
 
-	$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6,kea-dhcp4,kea-dhcp6\n";
+	$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6,kea2fib6,kea2unbound,kea-dhcp4,kea-dhcp6\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= "*.*									{$g['varlog_path']}/dhcpd.log\n";
 	}

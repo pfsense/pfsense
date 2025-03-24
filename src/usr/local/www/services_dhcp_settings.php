@@ -67,6 +67,8 @@ if ($_POST['apply']) {
 	}
 }
 
+$pconfig['custom_kea_config'] = base64_decode($pconfig['custom_kea_config']);
+
 $pgtitle = array(gettext('Services'), gettext('DHCP Server'), gettext('Settings'));
 $pglinks = array('', '@self', '@self');
 
@@ -126,6 +128,26 @@ if ($tabscounter === 0) {
 display_top_tabs($tab_array);
 
 $form = new Form();
+
+$section = new Form_Section(gettext('General Settings'));
+
+$section->addInput(new Form_Checkbox(
+	'dnsreg',
+	gettext('DNS Registration'),
+	gettext('Enable DNS registration'),
+	array_path_enabled($pconfig, '', 'dnsreg'),
+))->setHelp(gettext('Default DNS registration policy for DHCP server.%1$s' .
+			'When checked, DHCP leases will automatically be registered with the DNS Resolver.'), '<br/>');
+
+$section->addInput(new Form_Checkbox(
+	'earlydnsreg',
+	gettext('Early DNS Registration'),
+	gettext('Enable early DNS registration'),
+	array_path_enabled($pconfig, '', 'earlydnsreg'),
+))->setHelp(gettext('Default early DNS registration policy for DHCP server.%1$s' .
+			'When checked, DHCP static mappings will automatically be pre-registered with the DNS Resolver.'), '<br/>');
+
+$form->add($section);
 
 $section = new Form_Section(gettext('High Availability'));
 
@@ -317,6 +339,14 @@ $section->addInput(new Form_Select(
 ))->setHelp(gettext('Certificates known to be incompatible with use for HTTPS are not included in this list, such as certificates ' .
 				    'using incompatible ECDSA curves or weak digest algorithms.'));
 
+$form->add($section);
+
+$section = new Form_Section(gettext('Custom Configuration'));
+$section->addInput(new Form_Textarea(
+	'custom_kea_config',
+	gettext('JSON Configuration'),
+	array_get_path($pconfig, 'custom_kea_config')
+))->setWidth(8)->setHelp(gettext('JSON to be merged into the "%1$s" section of the generated Kea DHCPv4 configuration.%2$sThe input must be a well formed JSON object and should not include the "%1$s" key itself.'), 'Dhcp4', '<br/>');
 $form->add($section);
 
 $form->addGlobal(new Form_Input(

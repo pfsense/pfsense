@@ -4146,6 +4146,32 @@ function array_del_path(array &$arr, string $path, $default = null) {
 	return ($ret);
 }
 
+/**
+ * Alternate version of array_merge_recursive() that replaces the values
+ * for string keys instead of merging them into a new array.
+ */
+function array_merge_override_recursive(array ...$arrays): array {
+	$merged = [];
+
+	foreach ($arrays as $array) {
+		foreach ($array as $key => $value) {
+			if (!isset($merged[$key]) || !is_array($merged[$key]) || !is_array($value)) {
+				// Override with the new value
+				$merged[$key] = $value;
+				continue;
+			}
+
+			if (is_numericint($key)) {
+				// Append lists
+				$merged[] = $value;
+			} else {
+				$merged[$key] = array_merge_override_recursive($merged[$key], $value);
+			}
+		}
+	}
+
+	return ($merged);
+}
 
 function dhcpd_date_adjust_gmt($dt) {
 	foreach (config_get_path('dhcpd', []) as $dhcpditem) {

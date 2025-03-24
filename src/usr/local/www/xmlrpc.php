@@ -212,6 +212,8 @@ class pfsense_xmlrpc_server {
 			'dnsmasq',
 			'filter',
 			'ipsec',
+			'kea',
+			'kea6',
 			'nat',
 			'openvpn',
 			'schedules',

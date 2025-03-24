@@ -1238,8 +1238,6 @@ function get_port_with_service($port, $proto) {
 }
 
 function find_rule_by_number($rulenum, $trackernum, $type="block") {
-	global $g;
-
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
 	if (!is_numeric($rulenum) || !is_numeric($trackernum)) {
 		return;
@@ -1259,18 +1257,19 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 			return;
 	}
 
-	$command = '/sbin/pfctl -vvPsr';
+	static $pf_rules_output = exec_command('/sbin/pfctl -vvPsr');
+	$output = $pf_rules_output;
 	if ($type == "rdr") {
 		/* miniupnpd generates logging rdr rules */
 		$lookup_pattern = "/^@{$rulenum}/m";
-		$command = '/sbin/pfctl -vvPsn -a "miniupnpd"';
+		static $pf_miniupnpd_output = exec_command('/sbin/pfctl -vvPsn -a "miniupnpd"');
+		$output = $pf_miniupnpd_output;
 	} elseif ($trackernum == "0") {
 		$lookup_pattern = "/^@{$rulenum}\([0-9]+\)[[:blank:]]{$type}[[:blank:]].*[[:blank:]]log[[:blank:]]/m";
 	} else {
-		$lookup_pattern = "/^@[0-9]+[[:blank:]]{$type}[[:blank:]].*[[:blank:]]log[[:blank:]].*[[:blank:]]ridentifier[[:blank:]]{$trackernum}$/m";
+		$lookup_pattern = "/^@[0-9]+[[:blank:]]{$type}[[:blank:]].*[[:blank:]]log[[:blank:]].*[[:blank:]]ridentifier[[:blank:]]{$trackernum}/m";
 	}
 
-	$output = exec_command($command);
 	$result = 'unavailable';
 	$matches = [];
 	if (preg_match($lookup_pattern, $output, $matches)) {

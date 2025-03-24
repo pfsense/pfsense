@@ -2399,23 +2399,25 @@ function save_gateway($gateway_settings, $realid = "", $json = false) {
 		$gateway['data_payload'] = $gateway_settings['data_payload'];
 	}
 
-	$a_gateway_item = config_get_path("gateways/gateway_item/{$realid}");
-	/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
-	if ($gateway_settings['monitor'] != "dynamic" &&
-	    !empty($a_gateway_item) &&
-	    is_ipaddr($a_gateway_item['gateway']) &&
-	    $gateway['gateway'] != $a_gateway_item['gateway'] &&
-	    isset($a_gateway_item["nonlocalgateway"])) {
-		route_del($a_gateway_item['gateway']);
-	}
+	if (isset($realid)) {
+		$a_gateway_item = config_get_path("gateways/gateway_item/{$realid}");
+		/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
+		if ($gateway_settings['monitor'] != "dynamic" &&
+		    !empty($a_gateway_item) &&
+		    is_ipaddr($a_gateway_item['gateway']) &&
+		    $gateway['gateway'] != $a_gateway_item['gateway'] &&
+		    isset($a_gateway_item["nonlocalgateway"])) {
+			route_del($a_gateway_item['gateway']);
+		}
 
-	/* NOTE: If monitor ip is changed need to cleanup the old static route */
-	if ($gateway_settings['monitor'] != "dynamic" &&
-	    !empty($a_gateway_item) &&
-	    is_ipaddr($a_gateway_item['monitor']) &&
-	    $gateway_settings['monitor'] != $a_gateway_item['monitor'] &&
-	    $gateway['gateway'] != $a_gateway_item['monitor']) {
-		route_del($a_gateway_item['monitor']);
+		/* NOTE: If monitor ip is changed need to cleanup the old static route */
+		if ($gateway_settings['monitor'] != "dynamic" &&
+		    !empty($a_gateway_item) &&
+		    is_ipaddr($a_gateway_item['monitor']) &&
+		    $gateway_settings['monitor'] != $a_gateway_item['monitor'] &&
+		    $gateway['gateway'] != $a_gateway_item['monitor']) {
+			route_del($a_gateway_item['monitor']);
+		}
 	}
 
 	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
@@ -2456,17 +2458,19 @@ function save_gateway($gateway_settings, $realid = "", $json = false) {
 		$gateway['loss_interval'] = $gateway_settings['loss_interval'];
 	}
 
-	$a_gateway_item = config_get_path("gateways/gateway_item/{$realid}");
-	/* reload IPsec and OpenVPN on gateway IP, 'Mark Gateway as Down', or 'Disabled' option change
-	 * see https://redmine.pfsense.org/issues/13076 */
-	if (!empty($a_gateway_item) &&
-	    (isset($gateway['disabled']) ^ isset($a_gateway_item['disabled'])) ||
-	    (!isset($a_gateway_item['disabled']) &&
-	    ((($gateway['monitor'] != "dynamic") &&
-	    is_ipaddr($a_gateway_item['gateway']) &&
-	    ($gateway['gateway'] != $a_gateway_item['gateway'])) ||
-	    (isset($gateway['force_down']) ^ isset($a_gateway_item['force_down']))))) {
-		$reloadvpn = true;
+	if (isset($realid)) {
+		$a_gateway_item = config_get_path("gateways/gateway_item/{$realid}");
+		/* reload IPsec and OpenVPN on gateway IP, 'Mark Gateway as Down', or 'Disabled' option change
+		 * see https://redmine.pfsense.org/issues/13076 */
+		if (!empty($a_gateway_item) &&
+		    (isset($gateway['disabled']) ^ isset($a_gateway_item['disabled'])) ||
+		    (!isset($a_gateway_item['disabled']) &&
+		    ((($gateway['monitor'] != "dynamic") &&
+		    is_ipaddr($a_gateway_item['gateway']) &&
+		    ($gateway['gateway'] != $a_gateway_item['gateway'])) ||
+		    (isset($gateway['force_down']) ^ isset($a_gateway_item['force_down']))))) {
+			$reloadvpn = true;
+		}
 	}
 
 	/* when saving the manual gateway we use the attribute which has the corresponding id */

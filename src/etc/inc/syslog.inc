@@ -1425,6 +1425,7 @@ function print_syslog_rule_action($rule) {
 
 	// "match" action is not supported - filterlog writes it as 'unkn(%u)'
 	$icon_class = match ($rule['act']) {
+		'pass' => 'fa-solid fa-check text-success',
 		'block' => 'fa-solid fa-times text-danger',
 		'reject' => 'fa-regular fa-hand text-warning',
 		default => 'fa-solid fa-filter'

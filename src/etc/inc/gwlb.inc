@@ -2399,7 +2399,7 @@ function save_gateway($gateway_settings, $realid = "", $json = false) {
 		$gateway['data_payload'] = $gateway_settings['data_payload'];
 	}
 
-	if (isset($realid)) {
+	if (is_numericint($realid)) {
 		$a_gateway_item = config_get_path("gateways/gateway_item/{$realid}");
 		/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
 		if ($gateway_settings['monitor'] != "dynamic" &&
@@ -2458,7 +2458,7 @@ function save_gateway($gateway_settings, $realid = "", $json = false) {
 		$gateway['loss_interval'] = $gateway_settings['loss_interval'];
 	}
 
-	if (isset($realid)) {
+	if (is_numericint($realid)) {
 		$a_gateway_item = config_get_path("gateways/gateway_item/{$realid}");
 		/* reload IPsec and OpenVPN on gateway IP, 'Mark Gateway as Down', or 'Disabled' option change
 		 * see https://redmine.pfsense.org/issues/13076 */

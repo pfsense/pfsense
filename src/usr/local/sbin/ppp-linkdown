@@ -61,12 +61,14 @@ if [ -f "/tmp/${IF}_router" ]; then
 fi
 
 # cleanup all VIPs, see https://redmine.pfsense.org/issues/11629
-while
-	aliases=$(/sbin/ifconfig "${IF}" | /usr/bin/grep netmask)
-	if [ -z "${aliases}" ]; then
-		break
-	fi
-do ifconfig "${IF}" -alias; done
+if [ "${PROTOCOL}" != "inet6" ]; then
+	while
+		aliases=$(/sbin/ifconfig "${IF}" | /usr/bin/grep netmask)
+		if [ -z "${aliases}" ]; then
+			break
+		fi
+	do ifconfig "${IF}" -alias; done
+fi
 
 /bin/rm -f "/tmp/${IF}up"
 /bin/rm -f "/tmp/${IF}_ip"

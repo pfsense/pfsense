@@ -328,7 +328,9 @@ $section->addInput(new Form_Checkbox(
 	'Use if_pppoe kernel module for PPPoE client',
 	$pconfig['use_if_pppoe']
 ))->setHelp('Checking this option will set the system to use the new if_pppoe kernel driver '.
-    'for PPPoE client connections.  Keep it unchecked to use the deprecated PPPoE support from mpd5.');
+    'for PPPoE client connections. Keep it unchecked to use the deprecated PPPoE support from mpd5.%s'.
+    'NOTE: Changing this option interrupts connectivity for affected interfaces and requires a system reboot.',
+    '<br />');
 
 $form->add($section);
 print $form;

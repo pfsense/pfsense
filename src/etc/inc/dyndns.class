@@ -123,7 +123,7 @@
 	 *  FreeDNS IPv6    - Last Tested: 01 May 2016
 	 *  FreeDNS IPv6 v2 - Last Tested: 01 June 2020
 	 *  FreeDNS v2      - Last Tested: 01 June 2020
-	 *  Gandi LiveDNS   - Not Yet Tested
+	 *  Gandi LiveDNS   - Last Tested: 6 February 2025
 	 *  GleSYS          - Last Tested: 3 February 2015
 	 *  GoDaddy         - Last Tested: 22 November 2017
 	 *  GoDaddy IPv6    - Last Tested: 22 November 2017
@@ -1790,7 +1790,7 @@
 					$url = "{$gandi_api}{$this->_dnsDomain}/records/{$this->_dnsHost}/{$record_type}";
 
 					$headers = array(
-						'Authorization: Apikey ' . $this->_dnsPass,
+						'Authorization: Bearer ' . $this->_dnsPass,
 						'Content-Type: application/json'
 					);
 					$body = array(

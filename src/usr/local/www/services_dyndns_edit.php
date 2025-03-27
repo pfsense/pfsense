@@ -496,7 +496,7 @@ $section->addPassword(new Form_Input(
 			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
 			'FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
-			'Gandi LiveDNS: Enter API token%1$s' .
+			'Gandi LiveDNS: Enter PAT token%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .

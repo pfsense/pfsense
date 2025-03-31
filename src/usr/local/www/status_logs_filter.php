@@ -85,6 +85,7 @@ $rulenum = getGETPOSTsettingvalue('getrulenum', null);
 if ($rulenum) {
 	list($rulenum, $tracker, $type) = explode(',', $rulenum);
 	$rule = find_rule_by_number($rulenum, $tracker, $type);
+	$rule = $rule['match'] ?? 'unavailable';
 	echo gettext("The rule that triggered this action is") . ":\n\n{$rule}";
 	exit;
 }

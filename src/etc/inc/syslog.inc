@@ -1247,9 +1247,14 @@ function get_port_with_service($port, $proto) {
 }
 
 function find_rule_by_number($rulenum, $trackernum, $type="block") {
+	$result = [
+		'match' => null,
+		'associated' => null
+	];
+
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
 	if (!is_numeric($rulenum) || !is_numeric($trackernum)) {
-		return;
+		return $result;
 	}
 
 	switch ($type) {
@@ -1258,47 +1263,54 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 		case 'match':
 		case 'rdr':
 			break;
-		case 'unkn(%u)':
-			// Work around filterlog issue with 'match' rules.
-			$type = 'match';
-			break;
 		default:
-			return;
+			return $result;
 	}
 
-	static $pf_rules_output = exec_command('/sbin/pfctl -vvPsr');
-	$output = $pf_rules_output;
-	if ($type == "rdr") {
+	if ($type == 'rdr') {
 		/* miniupnpd generates logging rdr rules */
-		$lookup_pattern = "/^@{$rulenum}/m";
 		static $pf_miniupnpd_output = exec_command('/sbin/pfctl -vvPsn -a "miniupnpd"');
-		$output = $pf_miniupnpd_output;
-	} elseif ($trackernum == "0") {
-		$lookup_pattern = "/^@{$rulenum}\([0-9]+\)[[:blank:]]{$type}[[:blank:]].*[[:blank:]]log[[:blank:]]/m";
+		$lookup_pattern = "/^@{$rulenum}\b.*/m";
+		$pf_output = $pf_miniupnpd_output;
 	} else {
-		$lookup_pattern = "/^@[0-9]+[[:blank:]]{$type}[[:blank:]].*[[:blank:]]log[[:blank:]].*[[:blank:]]ridentifier[[:blank:]]{$trackernum}/m";
+		static $pf_rules_output = exec_command('/sbin/pfctl -vvPsr');
+		if ($trackernum == '0') {
+			// Find rules with a matching rule number and type.
+			$lookup_pattern = "/^@{$rulenum} {$type} .*/m";
+		} else {
+			// Find rules associated with the tracking number. Ignore the type so rules like reject are included.
+			$lookup_pattern = "/^@\d+ (?:pass|block|match) .* ridentifier {$trackernum}\b.*/m";
+		}
+		$pf_output = $pf_rules_output;
 	}
 
-	$result = 'unavailable';
 	$matches = [];
-	if (preg_match($lookup_pattern, $output, $matches)) {
-		$result = $matches[0];
-	} elseif ($type == 'block') {
-		// Check for IP options; check 'pass' with no log.
-		$lookup_pattern = "/^@([0-9]+)[[:blank:]]pass[[:blank:]].*[[:blank:]]ridentifier[[:blank:]]{$trackernum}$/m";
-		if (preg_match_all($lookup_pattern, $output, $matches)) {
-			// Default to the first match.
-			$result = $matches[0][0];
-			if (count($matches[0]) > 1) {
-				// If the rule is a IPv4+IPv6 rule, there may be multiple matches.
-				foreach ($matches[1] as $idx => $value) {
-					if ($rulenum == $value) {
-						$result = $matches[0][$idx];
-						break;
-					}
-				}
+	preg_match_all($lookup_pattern, $pf_output, $matches);
+	if (empty($matches[0])) {
+		return $result;
+	}
+	$matches = array_map('trim', $matches[0]);
+
+	if ($trackernum != '0') {
+		$matched_rule_index = null;
+		foreach ($matches as $idx => $match) {
+			if (str_starts_with($match, "@{$rulenum} {$type} ")) {
+				$matched_rule_index = $idx;
+				// Include the closest match.
+				$result['match'] = $match;
+				break;
 			}
 		}
+
+		// Omit the closest match from related rules.
+		if (isset($matched_rule_index) && (count($matches) > 1)) {
+			array_splice($matches, $matched_rule_index, 1);
+		}
+
+		$result['associated'] = $matches;
+	} else {
+		// Only return the closest match.
+		$result['match'] = $matches[0];
 	}
 
 	return $result;
@@ -1427,32 +1439,47 @@ function handle_ajax() {
 }
 
 function print_syslog_rule_action($rule) {
-	$pf_rule = htmlspecialchars(find_rule_by_number($rule['rulenum'], $rule['tracker'], $rule['act']));
 	$margin = $rule['count'] ? '0em' : '0.4em';
 	$reason = htmlspecialchars($rule['reason']);
 	$tracker = htmlspecialchars($rule['tracker']);
 
-	// "match" action is not supported - filterlog writes it as 'unkn(%u)'
-	$icon_class = match ($rule['act']) {
-		'pass' => 'fa-solid fa-check text-success',
-		'block' => 'fa-solid fa-times text-danger',
-		'reject' => 'fa-regular fa-hand text-warning',
-		default => 'fa-solid fa-filter'
-	};
 	switch ($rule['act']) {
 		case 'pass':
 		case 'block':
-		case 'match':
 		case 'rdr':
 			$action = $rule['act'];
+			break;
+		case 'unkn(%u)':
+			// "match" action is not supported - filterlog writes it as 'unkn(%u)' - override it.
+			$action = 'match';
 			break;
 		default:
 			$action = 'unknown';
 			break;
 	}
 
+	$rules = find_rule_by_number($rule['rulenum'], $rule['tracker'], $action);
+	if (isset($rules['match']) && ($action == 'block') && preg_match('/^@\d+ block return /', $rules['match'])) {
+		// "reject" action is not supported - filterlog writes it as 'block' - check the rule itself.
+		$action = 'reject';
+	}
+
+	$rules_text = 'Matched Rule:' . (isset($rules['match']) ? '<br />' . htmlspecialchars($rules['match']) : ' unavailable');
+	if (isset($rules['associated'])) {
+		$rules['associated'] = array_map('htmlspecialchars', $rules['associated']);
+		$rules_text .= "<br />Associated Rules:<br />" . implode('<br />', $rules['associated']);
+	}
+
+	$icon_class = match ($action) {
+		'pass' => 'fa-solid fa-check text-success',
+		'block' => 'fa-solid fa-times text-danger',
+		'reject' => 'fa-regular fa-hand text-warning',
+		// "match" rules and associated rules which no longer exist
+		default => 'fa-solid fa-filter'
+	};
+
 	return '<a data-toggle="popover" data-trigger="hover focus" title="' . gettext('Rule details') . '" data-content="' .
-		"Action: {$action}<br />Reason: {$reason}<br />Tracker ID: {$tracker}<br />Rule: {$pf_rule}" .
+		"Action: {$action}<br />Reason: {$reason}<br />Tracker ID: {$tracker}<br />{$rules_text}" .
 		'" data-html="true"><i style="margin-left:' . $margin . '" class="' . $icon_class . ' icon-pointer"></i></a>';
 }
 

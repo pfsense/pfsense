@@ -47,7 +47,7 @@ $wolcomputers = config_get_path('wol/wolentry', []);
 // Constructs a unique key that will identify a WoL entry in the filter list.
 if (!function_exists('get_wolent_key')) {
 	function get_wolent_key($wolent) {
-		return ($wolent['interface'] . "|" . $wolent['mac']);
+		return (htmlspecialchars($wolent['interface']) . "|" . $wolent['mac']);
 	}
 }
 
@@ -117,7 +117,7 @@ if (count($wolcomputers) > 0):
 				<?= $wolent['mac'] ?>
 			</td>
 			<td>
-				<?= convert_friendly_interface_to_friendly_descr($wolent['interface']) ?>
+				<?= htmlspecialchars(convert_friendly_interface_to_friendly_descr($wolent['interface'])) ?>
 			</td>
 			<td>
 		<?php if ($status == 'expires'): ?>
@@ -129,7 +129,7 @@ if (count($wolcomputers) > 0):
 		<?php endif; ?>
 			</td>
 			<td>
-				<a href="services_wol.php?mac=<?= $wolent['mac'] ?>&amp;if=<?= $wolent['interface']?>" usepost>
+				<a href="services_wol.php?mac=<?= $wolent['mac'] ?>&amp;if=<?= urlencode($wolent['interface']) ?>" usepost>
 				<i class="fa-solid fa-power-off" data-toggle="tooltip" title="<?= gettext("Wake up!") ?>"></i>
 				</a>
 			</td>

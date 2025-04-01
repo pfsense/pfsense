@@ -78,7 +78,7 @@ if ($_POST['Submit'] || $_POST['mac']) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
 
-	if (!$if) {
+	if (!$if || !array_key_exists($if, get_configured_interface_with_descr())) {
 		$input_errors[] = gettext("A valid interface must be specified.");
 	}
 
@@ -190,10 +190,10 @@ print $form;
 					<?php foreach (config_get_path('wol/wolentry', []) as $i => $wolent): ?>
 						<tr>
 							<td>
-								<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
+								<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($wolent['interface']));?>
 							</td>
 							<td>
-								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost><?=strtolower($wolent['mac']);?></a>
+								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=urlencode($wolent['interface']);?>" usepost><?=strtolower($wolent['mac']);?></a>
 							</td>
 							<td>
 								<?=htmlspecialchars($wolent['descr']);?>
@@ -201,7 +201,7 @@ print $form;
 							<td>
 								<a class="fa-solid fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
 								<a class="fa-solid fa-trash-can"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
-								<a class="fa-solid fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
+								<a class="fa-solid fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=urlencode($wolent['interface']);?>" usepost></a>
 							</td>
 						</tr>
 					<?php endforeach?>

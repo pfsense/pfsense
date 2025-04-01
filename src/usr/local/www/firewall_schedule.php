@@ -107,8 +107,8 @@ foreach (config_get_path('schedules/schedule', []) as $schedule):
 				$firstDayFound = false;
 				$firstPrint = false;
 				foreach ($tempmontharray as $monthtmp) {
-					$month = $tempmontharray[$arraycounter];
-					$day = $tempdayarray[$arraycounter];
+					$month = (int)$tempmontharray[$arraycounter];
+					$day = (int)$tempdayarray[$arraycounter];
 
 					if (!$firstDayFound) {
 						$firstDay = $day;

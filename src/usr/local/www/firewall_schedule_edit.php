@@ -76,24 +76,18 @@ if (isset($id) && $a_schedules[$id]) {
 }
 
 if ($_POST['save']) {
-
-	if (strtolower($_POST['name']) == "lan") {
-		$input_errors[] = gettext("Schedule may not be named LAN.");
-	}
-
-	if (strtolower($_POST['name']) == "wan") {
-		$input_errors[] = gettext("Schedule may not be named WAN.");
-	}
-
-	if (strtolower($_POST['name']) == "") {
+	if (empty($_POST['name'])) {
 		$input_errors[] = gettext("Schedule name cannot be blank.");
 	}
 
+	/* Schedule names are not directly referenced in firewall rules, so they
+	 * do not have to follow this format, but since this limitation was
+	 * already in place, it makes for convenient validation. */
 	if (!is_validaliasname($_POST['name'])) {
 		$input_errors[] = invalidaliasnamemsg($_POST['name'], gettext("schedule"));
 	}
 
-	/* check for name conflicts */
+	/* Check for name conflicts */
 	foreach ($a_schedules as $schedule) {
 		if (isset($id) && ($a_schedules[$id]) && ($a_schedules[$id] === $schedule)) {
 			continue;
@@ -121,6 +115,17 @@ if ($_POST['save']) {
 
 			if (!preg_match('/^[0-9]+:[0-9]+$/', $_POST['stoptime' . $x])) {
 				$input_errors[] = sprintf(gettext("Invalid stop time - '%s'"), $_POST['stoptime' . $x]);
+				continue;
+			}
+
+			/* Valid schedule specifications are a comma-separated list containing
+			 * or or more of:
+			 *
+			 * - Single digit "day of week" numbers: <1-7>
+			 * - Specific days in the format: w<1-52>p<1-7>-m<1-12>d<1-31>
+			 */
+			if (!preg_match('/^([1-7]|,|w(5[0-2]|[1-4][0-9]|[0-9])p([1-7])-m(1[0-2]|[1-9])d([12][0-9]|3[01]|[1-9]))+$/', $_POST['schedule' . $x])) {
+				$input_errors[] = sprintf(gettext("Invalid schedule specification in row %d."), $x+1);
 				continue;
 			}
 
@@ -489,8 +494,9 @@ if ($getSchedule && !empty($pconfig['timerange'])) {
 				$tempdayarray = explode(",", $timerange['day']);
 				$arraycounter = 0;
 				foreach ($tempmontharray as $monthtmp) {
-					$month = $tempmontharray[$arraycounter];
-					$day = $tempdayarray[$arraycounter];
+					$month = (int)$tempmontharray[$arraycounter];
+					$day = (int)$tempdayarray[$arraycounter];
+
 					$daypos = date("w", mktime(0, 0, 0, date($month), date($day), date("Y")));
 					//if sunday, set position to 7 to get correct week number. This is due to php limitations on ISO-8601. When we move to php5.1 we can change this.
 					if ($daypos == 0) {

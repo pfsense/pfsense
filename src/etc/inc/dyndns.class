@@ -929,11 +929,11 @@
 					$response = json_decode(curl_exec($ch), true);
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ($http_code != "200") {
-						log_error(gettext("Error message: ") . $response);
+						log_error(gettext("Error message: ") . (is_array($response) ? implode('; ', $response) : $response));
 						return false;
 					}
 					if (!is_array($response["records"])) {
-						log_error(gettext("Unexpected response: ") . $response);
+						log_error(gettext("Unexpected response: ") . (is_array($response) ? implode('; ', $response) : $response));
 						return false;
 					}
 					foreach($response["records"] as $record) {
@@ -997,11 +997,11 @@
 					$response = json_decode(curl_exec($ch), true);
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ($http_code != "200") {
-						log_error(gettext("Error message: ") . $response);
+						log_error(gettext("Error message: ") . (is_array($response) ? implode('; ', $response) : $response));
 						return false;
 					}
 					if (!is_array($response["records"])) {
-						log_error(gettext("Unexpected response: ") . $response);
+						log_error(gettext("Unexpected response: ") . (is_array($response) ? implode('; ', $response) : $response));
 						return false;
 					}
 					foreach($response["records"] as $record) {
@@ -2593,7 +2593,7 @@
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {
-						log_error($status_intro . " ( " . gettext("Error message: ") . $result['error'] . " )");
+						log_error($status_intro . " ( " . gettext("Error message: ") . (is_array($result) ? implode('; ', $result) : $result) . " )");
 					}
 					break;
 				case 'name.com':

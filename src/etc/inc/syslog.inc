@@ -1291,26 +1291,23 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	}
 	$matches = array_map('trim', $matches[0]);
 
-	if ($trackernum != '0') {
-		$matched_rule_index = null;
-		foreach ($matches as $idx => $match) {
-			if (str_starts_with($match, "@{$rulenum} {$type} ")) {
-				$matched_rule_index = $idx;
-				// Include the closest match.
-				$result['match'] = $match;
-				break;
-			}
-		}
-
-		// Omit the closest match from related rules.
-		if (isset($matched_rule_index) && (count($matches) > 1)) {
-			array_splice($matches, $matched_rule_index, 1);
-		}
-
-		$result['associated'] = $matches;
-	} else {
+	if ($trackernum == '0') {
 		// Only return the closest match.
 		$result['match'] = $matches[0];
+		return $result;
+	}
+
+	foreach ($matches as $idx => $match) {
+		if (str_starts_with($match, "@{$rulenum} {$type} ")) {
+			// Include the closest match.
+			$result['match'] = $match;
+			// Omit the closest match from related rules.
+			array_splice($matches, $idx, 1);
+			break;
+		}
+	}
+	if (count($matches) > 0) {
+		$result['associated'] = $matches;
 	}
 
 	return $result;

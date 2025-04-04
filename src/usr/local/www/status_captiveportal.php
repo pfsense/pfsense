@@ -186,7 +186,7 @@ if (count(config_get_path('captiveportal', [])) > 1) {
 	$zonelist = array("" => 'None');
 
 	foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
-		$zonelist[$cpkey] = $cp['zone'];
+		$zonelist[$cpkey] = "{$cpkey} ({$cp['descr']})";
 	}
 
 	$section->addInput(new Form_Select(

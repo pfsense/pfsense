@@ -29,23 +29,6 @@ require_once("pfsense-utils.inc");
 
 // Functions included by system_advanced_sysctl.php ===========================
 
-// Return a list of system tunables
-function getTunables($json = false) {
-	$st = system_get_sysctls();
-
-	if (!$json) {
-		return $st;
-	}
-
-	$tunables = [];
-
-	foreach ($st as $t) {
-	   array_push($tunables, $t);
-	}
-
-	return(json_encode($tunables));
-}
-
 // Delete a system tunable
 function deleteTunable($id, $complete = false) {
 	if (config_get_path('sysctl/item/' . $id)) {

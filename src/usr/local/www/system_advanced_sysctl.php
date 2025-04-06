@@ -120,7 +120,7 @@ if ($act != "edit"): ?>
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<table class="table table-responsive table-hover table-condensed">
+			<table class="table table-responsive table-hover table-condensed" data-sortable>
 				<caption><strong><?=gettext('NOTE: '); ?></strong><?=gettext('The options on this page are intended for use by advanced users only.'); ?></caption>
 				<thead>
 					<tr>

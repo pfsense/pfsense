@@ -383,6 +383,9 @@ function saveNATrule($post, $id, $json = false) {
 		if (isset($id) && ($a_nat[$id]) && ($a_nat[$id] === $natent)) {
 			continue;
 		}
+		if ($natent['ipprotocol'] != $post['ipprotocol']) {
+			continue;
+		}
 		if ($natent['interface'] != $post['interface']) {
 			continue;
 		}

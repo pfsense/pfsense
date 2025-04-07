@@ -378,6 +378,8 @@ EOD;
 !*
 :msg, startswith, "if_pppoe: "
 *.*								{$g['varlog_path']}/ppp.log
+:*
+
 EOD;
 
 	if (config_path_enabled('syslog', 'vpn')) {

@@ -40,26 +40,27 @@ process_url() {
 	local filename="${url##*/}"
 	local ext=${filename#*.}
 
-	/usr/bin/fetch -a -w 600 -T 30 -q -o "$file" "${url}"
+	/usr/bin/fetch -a -m -w 600 -T 30 -q -o "$file" "${url}"
 
 	if [ ! -f "$file" ]; then
 		echo "Could not download ${url}" | logger
 		proc_error="true"
 	fi
 
-	case "$ext" in
-		tar|tar.gz|tgz|tar.bz2)
-			mv "$file" "$file.tmp"
-			/usr/bin/tar -xf "$file.tmp" -O > "$file" 2> /dev/null
-			;;
-		*)
-			;;
-	esac
+	if [ -s "$file" ]; then
+		case "$ext" in
+			tar|tar.gz|tgz|tar.bz2)
+				if ! /usr/bin/tar -xf "$file" -O > "$file.tmp" 2> /dev/null; then
+					logger "Could not extract ${filename}"
+					proc_error="true"
+				fi
 
-	if [ -f "$file.tmp" ]; then
-		rm "$file.tmp"
+				if [ -f "$file.tmp" ]; then
+					mv "$file.tmp" "$file"
+				fi
+		esac
 	else
-		echo "Could not extract ${filename}" | logger
+		echo "Empty file ${filename}" | logger
 		proc_error="true"
 	fi
 }

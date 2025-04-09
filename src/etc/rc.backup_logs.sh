@@ -36,7 +36,7 @@ if [ -d "${DBPATH}" ]; then
 		mkdir -p "${RAM_Disk_Store}"
 	fi
 
-	/usr/bin/tar -czf "${RAM_Disk_Store}/logs.tgz" --exclude "${DBPATH}/restore_ramdisk_store.boot" -C / "${DBPATH#/}/"
+	/usr/bin/tar -czf "${RAM_Disk_Store}/logs.tgz" --exclude "${DBPATH#/}/restore_ramdisk_store.boot" -C / "${DBPATH#/}/"
 
 	echo "done.";
 fi

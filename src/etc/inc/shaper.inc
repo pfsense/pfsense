@@ -337,6 +337,19 @@ function shaper_config_get_path($mypath) {
 	return $path;
 }
 
+function shaper_config_get_next_queue_index($mypath) {
+	if (!is_array($mypath)) {
+		return 0;
+	}
+
+	$q = config_get_path(shaper_config_get_path($mypath) . "/queue", []);
+	if (is_array($q) && count($q) > 0) {
+		return max(array_keys($q)) + 1;
+	} else {
+		return 0;
+	}
+}
+
 function shaper_config_del($mypath) {
 	$path = 'shaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
@@ -353,6 +366,20 @@ function shaper_dn_config_get_path($mypath) {
 
 	return $path;
 }
+
+function shaper_dn_config_get_next_queue_index($mypath) {
+	if (!is_array($mypath)) {
+		return 0;
+	}
+
+	$q = config_get_path(shaper_dn_config_get_path($mypath) . "/queue", []);
+	if (is_array($q) && count($q) > 0) {
+		return max(array_keys($q)) + 1;
+	} else {
+		return 0;
+	}
+}
+
 
 function shaper_dn_config_del($mypath) {
 	$path = 'dnshaper';

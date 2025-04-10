@@ -490,7 +490,8 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 			if (config_get_path($field_conv_path) !== null) {
 				if ($field['type'] == "checkbox") {
-					if (empty(config_get_path($field_conv_path))) {
+					$isChecked = config_get_path($field_conv_path);
+					if ($isChecked || $isChecked === "") {
 						$value = true;
 					}
 				} else {
@@ -971,7 +972,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$name,
 					$etitle,
 					$field['typehint'],
-					($value != ""),
+					isset($value),
 					'on'
 				))->setHelp($field['description'])
 				  ->setOnclick($onclick);

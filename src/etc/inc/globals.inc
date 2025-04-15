@@ -109,7 +109,9 @@ $g = [
 		'voucher' => '/var/db/voucher_*.db'
 	],
 	'cp_prefix' => 'cpzoneid',
-	'booting' => false
+	'booting' => false,
+	'rrddbpath' => '/var/db/rrd',
+	'rrdtool' => '/usr/bin/nice -n20 /usr/local/bin/rrdtool'
 ];
 
 /* IP TOS flags */

@@ -26,9 +26,9 @@
  * limitations under the License.
  */
 
-require_once("xmlparse.inc");
-require_once('util.inc');
 require_once('globals.inc');
+require_once('util.inc');
+require_once('xmlparse.inc');
 
 /****f* config/encrypted_configxml
  * NAME
@@ -257,7 +257,9 @@ function restore_xmldatafile($type='voucher', $conf = false) {
 }
 
 function restore_rrddata($conf = false) {
-	global $g, $rrdtool, $input_errors;
+	global $g, $input_errors;
+
+	$rrdtool = g_get('rrdtool');
 
 	if (!$conf) {
 		$conf = config_get_path('');
@@ -275,7 +277,7 @@ function restore_rrddata($conf = false) {
 			$status = null;
 			exec("{$rrdtool} restore -f " . escapeshellarg($xml_file) . ' ' . escapeshellarg($rrd_file), $output, $status);
 			if ($status) {
-				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
+				log_error("{$rrdtool} restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
 				continue;
 			}
 			unlink($xml_file);

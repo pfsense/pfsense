@@ -178,6 +178,10 @@ function activate_sysctls() {
 		$sysctls['kern.vt.enable_bell'] = '0';
 	}
 
+	if (is_module_loaded('zfs.ko')) {
+		$sysctls['vfs.zfs.txg.timeout'] = '30';
+	}
+
 	foreach (config_get_path('sysctl/item', []) as $tunable) {
 		if ($tunable['value'] == "default") {
 			$value = get_default_sysctl_value($tunable['tunable']);

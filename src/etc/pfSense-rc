@@ -563,6 +563,11 @@ if [ -n "${USE_ZFS}" ]; then
 			fi
 		fi
 	fi
+
+	# Make sure the config dataset is always synced
+	if [ "$(/sbin/zfs get -H -o value sync pfSense/ROOT/default/cf)" != "always" ]; then
+		zfs set sync=always pfSense/ROOT/default/cf
+	fi
 fi
 
 echo -n "Starting CRON... "

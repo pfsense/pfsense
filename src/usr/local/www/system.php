@@ -339,8 +339,9 @@ if ($_POST) {
 			$login_message = strip_tags(strval($pconfig['login_message']));
 			$pconfig['login_message'] = $login_message;
 			config_set_path('system/login_message', base64_encode($login_message));
+		} else {
+			config_del_path('system/login_message');
 		}
-	
 
 		if ($_POST['webguifixedmenu']) {
 			config_set_path('system/webgui/webguifixedmenu', $_POST['webguifixedmenu']);

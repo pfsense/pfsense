@@ -519,6 +519,7 @@ function kea_is_hexstring(string $string): bool {
 }
 
 function services_kea6_configure(bool $with_custom = true) {
+	$has_custom = false;
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
 	$kea_var_db = '/var/db/kea';
@@ -1087,6 +1088,7 @@ kea6_skip_first_pool_options:
 			/* Merge custom Kea config */
 			if ($with_custom && !$first_pool) {
 				if (!empty($poolconf['custom_kea_config'])) {
+					$has_custom = true;
 					$keapool = array_merge_override_recursive(
 						$keapool, json_decode(base64_decode($poolconf['custom_kea_config']), true));
 				}
@@ -1133,6 +1135,7 @@ kea6_skip_first_pool_options:
 				/* Merge custom Kea config */
 				if ($with_custom) {
 					if (!empty($sm['custom_kea_config'])) {
+						$has_custom = true;
 						$keares = array_merge_override_recursive(
 							$keares, json_decode(base64_decode($sm['custom_kea_config']), true));
 					}
@@ -1177,6 +1180,7 @@ kea6_skip_first_pool_options:
 		/* Merge custom Kea config */
 		if ($with_custom) {
 			if (!empty($dhcpv6ifconf['custom_kea_config'])) {
+				$has_custom = true;
 				$keasubnet = array_merge_override_recursive(
 					$keasubnet, json_decode(base64_decode($dhcpv6ifconf['custom_kea_config']), true));
 			}
@@ -1220,14 +1224,14 @@ kea6_skip_first_pool_options:
 	$kea_bin = '/usr/local/sbin/kea-dhcp6';
 
 	/* lint/test kea-dhcp6 */
-	if ($with_custom) {
+	if ($with_custom && $has_custom) {
 		$retval = mwexec(implode(' ', [
 			$kea_bin,
 			'-t', $keaconf_path
 		]));
 		if ($retval <> 0) {
 			/* Try again without any custom configuration */
-			file_notice('DHCP', gettext('Failed to lint kea-dhcp6 with custom configurations. See Status > System Logs for more information about this failure.'));
+			file_notice('DHCP', gettext('Failed to start DHCPv6 Server with custom configurations. See Status > System Logs for more information about this failure.'));
 			return (services_kea6_configure(false));
 		}
 	}
@@ -1328,6 +1332,7 @@ function services_dhcpd_configure($family = "all") {
 }
 
 function services_kea4_configure(bool $with_custom = true) {
+	$has_custom = false;
 	$need_ddns_updates = false;
 	$ddns_zones = array();
 
@@ -2017,6 +2022,7 @@ EOD;
 			/* Merge custom Kea config */
 			if ($with_custom && !$first_pool) {
 				if (!empty($poolconf['custom_kea_config'])) {
+					$has_custom = true;
 					$keapool = array_merge_override_recursive(
 						$keapool, json_decode(base64_decode($poolconf['custom_kea_config']), true));
 				}
@@ -2460,6 +2466,7 @@ EOD;
 				/* Merge custom Kea config */
 				if ($with_custom) {
 					if (!empty($sm['custom_kea_config'])) {
+						$has_custom = true;
 						$keares = array_merge_override_recursive(
 							$keares, json_decode(base64_decode($sm['custom_kea_config']), true));
 					}
@@ -2474,6 +2481,7 @@ EOD;
 		/* Merge custom Kea config */
 		if ($with_custom) {
 			if (!empty($dhcpifconf['custom_kea_config'])) {
+				$has_custom = true;
 				$keasubnet = array_merge_override_recursive(
 					$keasubnet, json_decode(base64_decode($dhcpifconf['custom_kea_config']), true));
 			}
@@ -2548,14 +2556,14 @@ EOD;
 	$kea_bin = '/usr/local/sbin/kea-dhcp4';
 
 	/* lint/test kea-dhcp4 */
-	if ($with_custom) {
+	if ($with_custom && $has_custom) {
 		$retval = mwexec(implode(' ', [
 			$kea_bin,
 			'-t', $keaconf_path
 		]));
 		if ($retval <> 0) {
 			/* Try again without any custom configuration */
-			file_notice('DHCP', gettext('Failed to lint kea-dhcp4 with custom configurations. See Status > System Logs for more information about this failure.'));
+			file_notice('DHCP', gettext('Failed to start DHCP Server with custom configurations. See Status > System Logs for more information about this failure.'));
 			return (services_kea4_configure(false));
 		}
 	}

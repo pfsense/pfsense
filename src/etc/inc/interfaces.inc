@@ -4025,7 +4025,7 @@ function run_dhcp6client_process($interfaces, $debugOption, $noreleaseOption) {
 		    "-p {$g['varrun_path']}/dhcp6c.pid " .
 		    implode(' ', $interfaces));
 		log_error(sprintf(gettext(
-		    "Starting DHCP6 client for interfaces %s in DHCP6 without RA mode"),
+		    "Starting DHCP6 client for interfaces %s"),
 		    implode(',', $interfaces)));
 	}
 }

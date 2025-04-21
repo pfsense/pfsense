@@ -61,7 +61,11 @@ if (isset($_GET['interface'])) {
 	$argument = trim($argv[1], " \n\t");
 }
 
-log_error("rc.newwanipv6: Info: starting on {$argument} due to {$reason}.");
+if (!empty($reason) && ($reason != 'RENEW')) {
+	log_error("rc.newwanipv6: Info: starting on {$argument} due to {$reason}.");
+} else {
+	log_error("rc.newwanipv6: Info: starting on {$argument}.");
+}
 
 if (empty($argument)) {
 	$interface = "wan";
@@ -145,8 +149,6 @@ if (is_ipaddrv6($curwanipv6)) {
 	@file_put_contents(g_get('vardb_path') . "/{$interface_real}_ipv6", $curwanipv6);
 }
 
-log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
-
 $oldipv6 = '';
 if (file_exists(g_get('vardb_path') . "/{$interface_real}_cacheipv6")) {
 	$oldipv6 = file_get_contents(g_get('vardb_path') . "/{$interface_real}_cacheipv6");
@@ -179,6 +181,16 @@ if (($new_domain_name_servers_received === false) && ($new_searchdomains_receive
 	$dns_changed = false;
 }
 
+// Only continue on RENEW if there has been a change.
+if (($reason == 'RENEW') && !$address_replaced && !$dns_changed) {
+	return;
+}
+
+if ($reason == 'RENEW') {
+	log_error("rc.newwanipv6: Info: received {$reason} on {$argument} (previous IP address: {$oldipv6}).");
+}
+log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
+
 if (($reason != 'RENEW') || $address_replaced) {
 	$grouptmp = link_interface_to_group($interface);
 	if (!empty($grouptmp)) {
@@ -191,11 +203,6 @@ if (($reason != 'RENEW') || $address_replaced) {
 if (($reason != 'RENEW') || $dns_changed) {
 	/* regenerate resolv.conf if DNS overrides are allowed */
 	system_resolvconf_generate(true);
-}
-
-// Only continue on RENEW if there has been an address change.
-if (($reason == 'RENEW') && !$address_replaced) {
-	return;
 }
 
 /* reconfigure our gateway monitor, dpinger results need to be 

@@ -4536,11 +4536,20 @@ function services_dyndns_configure($int = "") {
 /**
  * Get the source IPv4 or IPv6 address to use for sending a request.
  * @param string $interface A VIP ID, gateway group, or friendly name.
- * @param mixed $address_family Force an IP address family.
+ * @param mixed $address_family Force an IP address family. If not set,
+ *        the address returned is based on the system preference.
  * @return string|false The IP address to use; False otherwise.
  */
 function get_request_source_address($interface, int|null $address_family = null) {
 	$source_address = '';
+	$prefer_ipv4 = config_path_enabled('system', 'prefer_ipv4');
+	// Get the string equivalent for the functions that need it.
+	$address_family_string = match ($address_family) {
+		AF_INET => 'inet',
+		AF_INET6 => 'inet6',
+		// If the address family hasn't been specified, check the system preference.
+		default => $prefer_ipv4 ? 'inet' : 'inet6'
+	};
 
 	// Get the interface gateway.
 	$interface_gateway = '';
@@ -4550,10 +4559,10 @@ function get_request_source_address($interface, int|null $address_family = null)
 		$interface_gateway = $gateways_groups[$interface][0]['gw'];
 	} elseif (str_starts_with($interface, '_vip')) {
 		// Given interface is a VIP.
-		$interface_gateway = get_interface_gateway_name(get_root_interface($interface));
+		$interface_gateway = get_interface_gateway_name(get_root_interface($interface), $address_family_string);
 	} else {
 		// Given interface is a friendly name.
-		$interface_gateway = get_interface_gateway_name($interface);
+		$interface_gateway = get_interface_gateway_name($interface, $address_family_string);
 	}
 
 	if (!empty($interface_gateway)) {
@@ -4562,6 +4571,7 @@ function get_request_source_address($interface, int|null $address_family = null)
 		if (array_get_path($gateways_status, "{$interface_gateway}/status", '') != 'online') {
 			return false;
 		}
+		// Note: Gateway monitoring for IPv6 may be using a link-local address.
 		$source_address_gw = array_get_path($gateways_status, "{$interface_gateway}/srcip", '');
 
 		// If the address family hasn't been specified, base it on the gateway.
@@ -4574,15 +4584,14 @@ function get_request_source_address($interface, int|null $address_family = null)
 	if ($address_family == AF_INET) {
 		$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
 	} elseif ($address_family == AF_INET6) {
-		$source_address = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
+		$source_address = (is_ipaddrv6($source_address_gw) && is_v6gua($source_address_gw)) ? $source_address_gw : get_interface_ipv6($interface);
 	} else {
-		$prefer_ipv4 = config_path_enabled('system', 'prefer_ipv4');
 		if ($prefer_ipv4) {
 			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
 		}
 		if (empty($source_address)) {
 			// Also check IPv6 if IPv4 is preferred but not available.
-			$source_address = is_ipaddrv6($source_address_gw) ? $source_address_gw : get_interface_ipv6($interface);
+			$source_address = (is_ipaddrv6($source_address_gw) && is_v6gua($source_address_gw)) ? $source_address_gw : get_interface_ipv6($interface);
 		}
 		if (empty($source_address) && !$prefer_ipv4) {
 			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);

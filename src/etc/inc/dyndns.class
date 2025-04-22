@@ -394,19 +394,24 @@
 			$this->_dnsRequestIf = $dnsRequestIf;
 
 			/**
-			 * The request's source IP address is chosen as follows:
-			 * If IPv4 is forced by $_curlIpresolveV4 then the source IP
-			 * is set to the primary IPv4 address of the "interface to
-			 * monitor". When the "interface to monitor" only has either
-			 * IPv4 or IPv6, the the respective "primary" address for the
-			 * interface is chosen. If both IPv4 and IPv6 addresses exist
-			 * on the "interface to monitor", the chosen address depends
-			 * on the system preference ("prefer_ipv4").
-			 * 
-			 * To instead choose the source IP address based on the DNS RR
-			 * type, replace 'null' with '$this->_addressFamilyRR'.
+			 * It is assumed that the DNS RR should be updated using
+			 * the respective IP address family on the record unless
+			 * otherwise forced by $_curlIpresolveV4.
 			 */
-			$this->_dnsRequestIfIP = get_request_source_address($this->_dnsRequestIf, ($this->_curlIpresolveV4 ? AF_INET : null));
+			if ($this->_curlIpresolveV4) {
+				$request_source_af = AF_INET;
+			} else {
+				/**
+				 * The request source address family may instead be set
+				 * by the system preference by setting $request_source_af
+				 * to null.
+				 */
+				switch ($this->_dnsService) {
+					default:
+						$request_source_af = $this->_addressFamilyRR;
+				}
+			}
+			$this->_dnsRequestIfIP = get_request_source_address($this->_dnsRequestIf, $request_source_af);
 
 			$this->_addressFamilyRequest = is_ipaddrv6($this->_dnsRequestIfIP) ? AF_INET6 : AF_INET;
 			$this->_checkIPMode = $checkIPMode;

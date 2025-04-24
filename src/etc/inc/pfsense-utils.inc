@@ -3857,3 +3857,32 @@ function rename_conflicting_aliases() {
 		implode(', ', array_column($renamed_aliases, 'old'))
 	);
 }
+
+function remove_pppoe_cron_items(string $interface = '') {
+	$cron_config = config_get_path('cron/item', []);
+	$cron_pppoe_file_paths = [];
+	foreach (config_get_path('ppps/ppp') as $ppp_config) {
+		if ($ppp_config['type'] != 'pppoe') {
+			continue;
+		}
+		if (empty($interface) || ($ppp_config['if'] == $interface)) {
+			$cron_pppoe_file_paths[] = g_get('varetc_path') . "/pppoe_restart_{$ppp_config['if']}";
+		}
+	}
+	if (!empty($cron_pppoe_file_paths)) {
+		foreach ($cron_pppoe_file_paths as $file_path) {
+			unlink_if_exists($file_path);
+		}
+
+		$config_changed = false;
+		foreach ($cron_config as $idx => $cron_item) {
+			if (in_array($cron_item['command'], $cron_pppoe_file_paths)) {
+				unset($cron_config[$idx]);
+				$config_changed = true;
+			}
+		}
+		if ($config_changed) {
+			config_set_path('cron/item', $cron_config);
+		}
+	}
+}

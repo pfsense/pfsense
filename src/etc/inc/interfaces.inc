@@ -2337,6 +2337,7 @@ function interface_ppps_configure($interface) {
 	}
 	$ifcfg = $iface;
 	if (!isset($ifcfg['enable'])) {
+		remove_pppoe_cron_items($ifcfg['if']);
 		return 0;
 	}
 

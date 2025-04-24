@@ -236,6 +236,7 @@ function saveAdvancedNetworking($post, $json = false) {
 		}
 		if ($post['use_if_pppoe'] == "yes") {
 			config_set_path('system/use_if_pppoe', true);
+			remove_pppoe_cron_items();
 		} else {
 			config_del_path('system/use_if_pppoe');
 		}

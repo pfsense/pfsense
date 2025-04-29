@@ -155,7 +155,7 @@ function pppoe_detach($interface) {
 	mwexec_bg("/usr/local/sbin/ppp-ipv6 {$interface} down");
 }
 
-if (config_path_enabled('system', 'use_mpd5_for_pppoe')) {
+if (!config_path_enabled('system', 'use_if_pppoe')) {
 	/* Nothing to be done here, system is using mpd5 */
 	return;
 }

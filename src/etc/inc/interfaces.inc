@@ -2088,9 +2088,15 @@ function interface_wait_tentative($interface, $timeout = 10) {
 }
 
 function interface_isppp_type($interface) {
-	$iface = config_get_path("interfaces/{$interface}");
-	if (!is_array($iface)) {
-		return false;
+	$iface = NULL;
+	/* Allow the caller to supply an interface from the config to avoid an additional lookup */
+	if (is_array($interface)) {
+		$iface = $interface;
+	} else {
+		$iface = config_get_path("interfaces/{$interface}");
+		if (!is_array($iface)) {
+			return false;
+		}
 	}
 
 	switch ($iface['ipaddr']) {
@@ -2104,6 +2110,23 @@ function interface_isppp_type($interface) {
 			return false;
 			break;
 	}
+}
+
+/* interface_isppp_type_ephemeral()
+ * Similar to interface_isppp_type(), determine whether an interface is
+ * an ppp type and created by a daemon.
+ */
+function interface_isppp_type_ephemeral($interface) {
+	$iface = config_get_path("interfaces/{$interface}");
+	if (!is_array($iface)) {
+		return false;
+	}
+
+	if (config_path_enabled('system', 'use_if_pppoe') && $iface['ipaddr'] == 'pppoe') {
+		return false;
+	}
+
+	return interface_isppp_type($interface);
 }
 
 function interfaces_ptpid_used($ptpid) {
@@ -2849,7 +2872,7 @@ EOD;
 	if (is_platform_booting()) {
 		$count = 0;
 		foreach (config_get_path('interfaces', []) as $tempifacename => $tempiface) {
-			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type($tempifacename)) {
+			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type_ephemeral($tempifacename)) {
 				$tempaddr[$count]['if'] = $tempiface['if'];
 				$tempaddr[$count]['ipaddr'] = '192.0.2.' . strval (10 + ($count * 2)) . '/31';
 				mwexec('/sbin/ifconfig ' . escapeshellarg($tempaddr[$count]['if']) . ' inet ' . escapeshellarg($tempaddr[$count]['ipaddr']) . ' alias', true);
@@ -4392,7 +4415,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		case 'dhcp6':
 			// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script
 			// calls interface_dhcpv6_configure() for these connections after IPv6CP is up, whilst rc.newwanip
-			// handles all non-PPP connections with 'dhcp6usev4iface' set
+			// handles all non-PPP connections with 'dhcp6usev4iface' set.
 			log_error(gettext("calling interface_dhcpv6_configure."));
 			if ((($wancfg['ipaddrv6'] == 'dhcp6') && !isset($wancfg['dhcp6usev4iface'])) ||
 			    (($wancfg['ipaddrv6'] == 'slaac') && !isset($wancfg['slaacusev4iface'])) ||

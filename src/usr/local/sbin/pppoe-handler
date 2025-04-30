@@ -67,8 +67,6 @@ function pppoe_add_addr($interface, $address) {
 	} else {
 		pppoe_add_addrv6($interface, $address);
 	}
-
-	mwexec_bg("/usr/local/sbin/ppp-ipv6 {$interface} up");
 }
 
 function pppoe_add_dns($interface, $address, $append = false) {
@@ -90,6 +88,10 @@ function pppoe_add_dns($interface, $address, $append = false) {
 	if ($append) {
 		send_event('service reload dns');
 	}
+}
+
+function pppoe_attach($interface) {
+	mwexec_bg("/usr/local/sbin/ppp-ipv6 {$interface} up");
 }
 
 function pppoe_detach($interface) {
@@ -181,6 +183,9 @@ if (!is_ipaddr($address)) {
 }
 
 switch ($action) {
+case "LINK_UP":
+	pppoe_attach($interface);
+	break;
 case "ADDR_ADD":
 	pppoe_add_addr($interface, $address);
 	break;

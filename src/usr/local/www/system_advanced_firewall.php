@@ -285,7 +285,7 @@ $section->addInput(new Form_Checkbox(
 	'Bound States%2$s, unchecking this option allows IPsec rules to '.
 	'automatically use floating states where needed. This option is '.
 	'ignored when %3$sIPsec Filter Mode%4$s is set to assigned '.
-	'interfaces.', '<b>', '</b>','<a href="firewall_nat_out.php">', '</a>'
+	'interfaces.', '<b>', '</b>','<a href="vpn_ipsec_settings.php">', '</a>'
 );
 
 $section->addInput(new Form_Checkbox(

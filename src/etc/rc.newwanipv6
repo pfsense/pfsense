@@ -98,6 +98,9 @@ if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real,
 	return;
 }
 
+$new_domain_name_servers_received = false;
+$new_searchdomains_received = false;
+
 if (isset($_GET['dmips'])) {
 	$new_domain_name_servers = $_GET['dmips'];
 } else {
@@ -174,12 +177,9 @@ if (($curwanipv6 == $oldipv6) && (substr($interface_real, 0, 4) != "ovpn")) {
 }
 
 /**
- * @var bool Used for only action when the DNS information changes.
+ * @var bool Used for only taking action when the DNS information changes.
  */
-$dns_changed = true;
-if (($new_domain_name_servers_received === false) && ($new_searchdomains_received === false)) {
-	$dns_changed = false;
-}
+$dns_changed = (($reason == 'RENEW') && ($new_domain_name_servers_received || $new_searchdomains_received));
 
 // Only continue on RENEW if there has been a change.
 if (($reason == 'RENEW') && !$address_replaced && !$dns_changed) {

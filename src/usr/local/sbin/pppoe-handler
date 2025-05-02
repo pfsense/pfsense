@@ -178,19 +178,24 @@ if (empty($interface)) {
 	return;
 }
 
-if (!is_ipaddr($address)) {
-	log_error("HOTPLUG event: Invalid IP address {$address}");
-}
-
 switch ($action) {
 case "LINK_UP":
 	pppoe_attach($interface);
 	break;
 case "ADDR_ADD":
+	if (!is_ipaddr($address)) {
+		log_error("HOTPLUG event: Invalid IP address {$address}");
+		break;
+	}
 	pppoe_add_addr($interface, $address);
 	break;
 case "ADD_DNS1":
 case "ADD_DNS2":
+	if (!is_ipaddr($address)) {
+		log_error("HOTPLUG event: Invalid IP address {$address}");
+		break;
+	}
+
 	$dns_idx = substr($action, strlen("ADD_DNS"), 1);
 	pppoe_add_dns($interface, $address, $dns_idx == 2);
 	break;

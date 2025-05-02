@@ -2277,7 +2277,7 @@ function restart_ppp_interfaces_using_interfaces($triggerinterfaces) {
 function interface_pppoe_get_hostuniq($ppp) {
 	$hostuniq = '';
 
-	if (!empty($ppp['hostuniq'])) {
+	if (is_string($ppp['hostuniq']) && !empty($ppp['hostuniq'])) {
 		if (preg_match('/^0x[a-fA-F0-9]+$/', $ppp['hostuniq'])) {
 			$hostuniq = strtolower($ppp['hostuniq']) .'|';
 		} elseif (preg_match('/^[a-zA-Z0-9]+$/i', $ppp['hostuniq'])) {
@@ -2319,7 +2319,7 @@ function interface_pppoe_configure($ifcfg, $ppp) {
 	set_interface_mtu($ifcfg['if'], $mtu);
 
 	$hostuniq = interface_pppoe_get_hostuniq($ppp);
-	$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
+	$provider = (isset($ppp['provider']) && is_string($ppp['provider']))? $ppp['provider'] : "";
 	$authkey = base64_decode($ppp['password']);
 
 	/*
@@ -2794,7 +2794,7 @@ EOD;
 		if ($type == "pppoe") {
 			$hostuniq = interface_pppoe_get_hostuniq($ppp);
 			// Send a null service name if none is set.
-			$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
+			$provider = (isset($ppp['provider']) && is_string($ppp['provider']))? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD
 	set pppoe service "{$hostuniq}{$provider}"
 

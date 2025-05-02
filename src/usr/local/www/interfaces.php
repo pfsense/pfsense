@@ -1426,13 +1426,9 @@ if ($_POST['apply']) {
 				}
 				if (!empty($_POST['provider'])) {
 					array_set_path($a_ppps, "{$pppid}/provider", $_POST['provider']);
-				} else {
-					array_set_path($a_ppps, "{$pppid}/provider", true);
 				}
 				if (!empty($_POST['hostuniq'])) {
 					array_set_path($a_ppps, "{$pppid}/hostuniq", strtolower($_POST['hostuniq']));
-				} else {
-					array_set_path($a_ppps, "{$pppid}/hostuniq", true);
 				}
 				array_set_path($a_ppps, "{$pppid}/ondemand", ($_POST['pppoe_dialondemand'] ? true : false));
 

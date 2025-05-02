@@ -239,7 +239,7 @@ if ($_POST['apply']) {
 		$save = 0;
 	}
 
-	if ($save === 1) {
+	if (empty($input_errors) && ($save === 1)) {
 		if (write_config(gettext("Saved configuration changes for IPsec tunnels."))) {
 			mark_subsystem_dirty('ipsec');
 		}

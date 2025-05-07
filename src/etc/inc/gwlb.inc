@@ -302,6 +302,8 @@ function setup_gateways_monitor() {
 	if (is_platform_booting()) {
 		echo "Setting up gateway monitors...";
 	}
+
+	$skip_static_route = config_path_enabled('system', 'dpinger_dont_add_static_routes');
 	$monitor_ips = array();
 	foreach ($gateways_arr as $gwname => $gateway) {
 		/* Do not monitor if such was requested */
@@ -344,23 +346,14 @@ function setup_gateways_monitor() {
 			 * Add static routes for each gateway with their monitor IP
 			 * not strictly necessary but is a added level of protection.
 			 */
-			if (!config_path_enabled('system', 'dpinger_dont_add_static_routes') &&
-					!isset($gateway['dpinger_dont_add_static_route'])) {
-				if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
+			if (!$skip_static_route && !isset($gateway['dpinger_dont_add_static_route']) && ($gateway['monitor'] != $gateway['gateway']) && is_ipaddrv4($gateway['gateway'])) {
+				if (interface_isppp_type($gateway['friendlyiface'])) {
+					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['interface']));
+					route_add_or_change($gateway['monitor'], '', $gateway['interface']);
+					system_staticroutes_configure($gateway['friendlyiface']);
+				} else {
 					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-					if (interface_isppp_type($gateway['friendlyiface'])) {
-						route_add_or_change($gateway['monitor'],
-						    '', $gateway['interface']);
-						system_staticroutes_configure($gateway['friendlyiface']);
-					} elseif ($gateway['gateway'] == 'dynamic') {
-						route_add_or_change($gateway['monitor'],
-						    '', $gateway['interface']);
-					} else {
-						route_add_or_change($gateway['monitor'],
-						    $gateway['gateway']);
-					}
-
-					pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
+					route_add_or_change($gateway['monitor'], $gateway['gateway']);
 				}
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
@@ -394,23 +387,14 @@ function setup_gateways_monitor() {
 			 * not strictly necessary but is a added level of protection.
 			 */
 
-			if (!config_path_enabled('system', 'dpinger_dont_add_static_routes') &&
-					!isset($gateway['dpinger_dont_add_static_route'])) {
-				if ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) {
+			if (!$skip_static_route && !isset($gateway['dpinger_dont_add_static_route']) && ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) && is_ipaddrv6($gateway['gateway'])) {
+				if (interface_isppp_type($gateway['friendlyiface'])) {
+					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['interface']));
+					route_add_or_change($gateway['monitor'], '', $gateway['interface']);
+					system_staticroutes_configure($gateway['friendlyiface']);
+				} else {
 					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-					if (interface_isppp_type($gateway['friendlyiface'])) {
-						route_add_or_change($gateway['monitor'],
-						    '', $gateway['interface']);
-						system_staticroutes_configure($gateway['friendlyiface']);
-					} elseif ($gateway['gateway'] == 'dynamic') {
-						route_add_or_change($gateway['monitor'],
-						    '', $gateway['interface']);
-					} else {
-						route_add_or_change($gateway['monitor'],
-						    $gateway['gateway']);
-					}
-
-					pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
+					route_add_or_change($gateway['monitor'], $gateway['gateway']);
 				}
 			}
 		} else {
@@ -423,6 +407,16 @@ function setup_gateways_monitor() {
 	}
 
 	stop_dpinger();
+
+	/* Kill all states to the gateway monitoring address in case the
+	 * monitoring traffic exited out of a different interface. */
+	foreach ($monitor_ips as $monitor_address) {
+		if (is_ipaddrv4($monitor_address)) {
+			pfSense_kill_states("0.0.0.0/0", $monitor_address, null, "icmp");
+		} else {
+			pfSense_kill_states("::/0", $monitor_address, null, "icmpv6");
+		}
+	}
 
 	/* Start new processes */
 	foreach ($gateways_arr as $gateway) {
@@ -1770,10 +1764,19 @@ function lookup_gateway_or_group_by_name($gwname) {
 
 function lookup_gateway_ip_by_name($name, $disabled = false) {
 
+	$gateway = null;
 	$gateways_arr = get_gateways(($disabled ? GW_CACHE_DISABLED : 0) | GW_CACHE_LOCALHOST);
 	foreach ($gateways_arr as $gname => $gw) {
 		if ($gw['name'] === $name || $gname === $name) {
-			return $gw['gateway'];
+			$gateway = $gw;
+		}
+	}
+
+	if (isset($gateway)) {
+		if ($gateway['gateway'] == 'dynamic') {
+			return get_interface_gateway_from_router_file($gateway['interface'], (($gateway['ipprotocol'] == 'inet') ? AF_INET : AF_INET6));
+		} else {
+			return $gateway['gateway'];
 		}
 	}
 
@@ -1782,14 +1785,21 @@ function lookup_gateway_ip_by_name($name, $disabled = false) {
 
 function lookup_gateway_monitor_ip_by_name($name) {
 
+	$gateway = null;
 	$gateways_arr = get_gateways(GW_CACHE_LOCALHOST);
 	if (!empty($gateways_arr[$name])) {
 		$gateway = $gateways_arr[$name];
-		if (!is_ipaddr($gateway['monitor'])) {
+		if (is_ipaddr($gateway['monitor'])) {
+			return $gateway['monitor'];
+		}
+	}
+
+	if (isset($gateway)) {
+		if ($gateway['gateway'] == 'dynamic') {
+			return get_interface_gateway_from_router_file($gateway['interface'], (($gateway['ipprotocol'] == 'inet') ? AF_INET : AF_INET6));
+		} else {
 			return $gateway['gateway'];
 		}
-
-		return $gateway['monitor'];
 	}
 
 	return (false);
@@ -1814,6 +1824,19 @@ function get_root_interface($interface) {
 		}
 	}
 	return $interface;
+}
+
+function get_interface_gateway_from_router_file(string $realif, $address_family = AF_INET) {
+	$gateway = match ($address_family) {
+		AF_INET6 =>  @file_get_contents(g_get('tmp_path', '') . "/{$realif}_routerv6"),
+		default =>  @file_get_contents(g_get('tmp_path', '') . "/{$realif}_router"),
+	};
+	$gateway = trim($gateway);
+	if (!is_ipaddr($gateway)) {
+		return false;
+	}
+
+	return $gateway;
 }
 
 function get_interface_gateway($interface, &$dynamic = false) {

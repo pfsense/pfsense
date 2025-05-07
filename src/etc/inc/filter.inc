@@ -3938,6 +3938,7 @@ function filter_rules_generate() {
 		 * virusprot overload table
 		 * antispoof
 		 * CARP rules (block)
+		 * gateway monitoring
 		 */
 		'default_block' => !config_path_enabled('syslog','nologdefaultblock') ? 'log' : '',
 
@@ -4449,6 +4450,79 @@ EOD;
 					}
 					$ipfrules .= "pass out {$log_preferences['default_pass']} {$routeto} inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} ridentifier {$increment_tracker()} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 				}
+			}
+		}
+	}
+
+	/**
+	 * Block gateway monitoring traffic for gateways without a valid
+	 * gateway IP address. If this traffic were to be allowed in such
+	 * cases then it can potentially leave out the wrong interface; this
+	 * would happen because static routes require a valid gateway address.
+	 */
+	if (!config_path_enabled('system', 'dpinger_dont_add_static_routes')) {
+		$gateways_to_process = [];
+		foreach (get_gateways() as $gateway_item) {
+			if (isset($gateway_item['dpinger_dont_add_static_route']) ||
+			    $gateway_item['monitor_disable'] ||
+			    (isset($gateway_item['gateway']) && is_ipaddr($gateway_item['gateway']))) {
+				continue;
+			}
+			$gateways_to_process[$gateway_item['name']] = $gateway_item;
+		}
+
+		if (!empty($gateways_to_process)) {
+			$GatewaysStatus = return_gateways_status(true);
+			$gateway_monitoring_block = [];
+			foreach ($gateways_to_process as $gateway_item) {
+				/**
+				 * If no gateway status exists on a gateway that should be
+				 * monitored, default to blocking monitoring traffic. Once
+				 * a gateway address is available, e.g. due to some
+				 * interface event, the filter should be reloaded.
+				 */
+				if (isset($GatewaysStatus[$gateway_item['name']])) {
+					/**
+					 * If the gateway is online, there's nothing to do.
+					 */
+					if ($GatewaysStatus[$gateway_item['name']]['status'] == 'online') {
+						continue;
+					}
+					/**
+					 * If the gateway has no IP address to monitor then a
+					 * rule can't be created.
+					 */
+					if (!is_ipaddr($GatewaysStatus[$gateway_item['name']]['monitorip']) && !is_ipaddr($gateway_item['monitor'])) {
+						continue;
+					}
+				} else {
+					/**
+					 * If the gateway has no IP address to monitor then a
+					 * rule can't be created.
+					 */
+					if (!is_ipaddr($gateway_item['monitor'])) {
+						continue;
+					}
+				}
+	
+				$gateway_monitoring_block[$gateway_item['name']] = [
+					'ipprotocol' => $gateway_item['ipprotocol'],
+					'proto' => ($gateway_item['ipprotocol'] == 'inet') ? 'icmp' : 'ipv6-icmp',
+					'proto-type' => ($gateway_item['ipprotocol'] == 'inet') ? 'icmp-type' : 'icmp6-type',
+					'monitor' => $gateway_item['monitor']
+				];
+			}
+	
+			if (!empty($gateway_monitoring_block)) {
+				$saved_tracker += 100;
+				$tracker = $saved_tracker;
+				$ipfrules .= "\n# gateway monitoring\n";
+				foreach ($gateway_monitoring_block as $gateway_to_block_name => $gateway_to_block) {
+					$ipfrules .= "block out {$log_preferences['default_block']} quick {$gateway_to_block['ipprotocol']} " .
+						"proto {$gateway_to_block['proto']} from any to {$gateway_to_block['monitor']} " .
+						"{$gateway_to_block['proto-type']} echoreq ridentifier {$increment_tracker()} label \"gateway monitoring\"\n";
+				}
+				$ipfrules .= "\n";
 			}
 		}
 	}

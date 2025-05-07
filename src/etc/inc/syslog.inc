@@ -1478,7 +1478,7 @@ function print_syslog_rule_action($rule) {
 	};
 
 	return '<a data-toggle="popover" data-trigger="hover focus" title="' . gettext('Rule details') . '" data-content="' .
-		"Action: {$action}<br />Reason: {$reason}<br />Tracker ID: {$tracker}<br />{$rules_text}" .
+		htmlspecialchars("Action: {$action}<br />Reason: {$reason}<br />Tracker ID: {$tracker}<br />{$rules_text}") .
 		'" data-html="true"><i style="margin-left:' . $margin . '" class="' . $icon_class . ' icon-pointer"></i></a>';
 }
 

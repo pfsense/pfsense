@@ -65,7 +65,12 @@ function pppoe_add_addr($interface, $address) {
 		/* Nothing to be done here */
 		return;
 	} else {
-		pppoe_add_addrv6($interface, $address);
+		$ifname = convert_real_interface_to_friendly_interface_name($interface);
+		$if = config_get_path("interfaces/{$ifname}");
+		// Only execute pppoe_add_addrv6() if dhcp6c will not respond to the address change
+		if (!empty($if) && $if["ipaddr6"] != "dhcp6") {
+			pppoe_add_addrv6($interface, $address);
+		}
 	}
 }
 

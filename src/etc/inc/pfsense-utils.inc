@@ -2355,7 +2355,7 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $new_alias_name, $orig_alias_name);
 	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
 	// Alias in an alias
-	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name, ' ');
 	// Static routes
 	update_alias_names_upon_change(array('staticroutes', 'route'), array('network'), $new_alias_name, $orig_alias_name);
 	// OpenVPN
@@ -2377,7 +2377,7 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 	update_alias_names_upon_change(array('openvpn', 'openvpn-csc'), array('remote_networkv6'), $new_alias_name, $orig_alias_name);
 }
 
-function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
+function update_alias_names_upon_change($section, $field, $new_alias_name, $origname, string $separator = '') {
 	global $g, $pconfig, $debug;
 	if (!$origname) {
 		return;
@@ -2414,11 +2414,28 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 					break;
 				}
 			}
-			if ($fieldfound && $fieldref == $origname) {
-				if ($debug) {
+			if ($fieldfound) {
+				$replaced = false;
+				if ((mb_strlen($separator) > 0) && !empty($fieldref)) {
+					$fieldref_new = [];
+					foreach (array_filter(explode($separator, $fieldref)) as $temp_item) {
+						if ($temp_item == $origname) {
+							$fieldref_new[] = $new_alias_name;
+							$replaced = true;
+						} else {
+							$fieldref_new[] = $temp_item;
+						}
+					}
+					if ($replaced) {
+						$fieldref = implode($separator, $fieldref_new);
+					}
+				} elseif ($fieldref == $origname) {
+					$fieldref = $new_alias_name;
+					$replaced = true;
+				}
+				if ($replaced && $debug) {
 					fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
 				}
-				$fieldref = $new_alias_name;
 			}
 		}
 		config_set_path('', $config);

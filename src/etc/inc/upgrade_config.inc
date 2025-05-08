@@ -6975,6 +6975,9 @@ function upgrade_238_to_239() {
 	}
 }
 
+function upgrade_239_to_240() {
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

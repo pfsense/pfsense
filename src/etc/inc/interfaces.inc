@@ -1902,6 +1902,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 					}
 					if (config_path_enabled('system', 'use_if_pppoe')) {
 						if (does_interface_exist($realif)) {
+							mwexec("/sbin/ifconfig {$realif} down");
 							pfSense_interface_destroy($realif);
 						}
 					} else {
@@ -2297,6 +2298,7 @@ function interface_pppoe_configure($ifcfg, $ppp) {
 		mwexec('/sbin/kldload if_pppoe.ko');
 	}
 	if (does_interface_exist($ifcfg['if'])) {
+		mwexec("/sbin/ifconfig {$realif} down");
 		pfSense_interface_destroy($ifcfg['if']);
 	}
 

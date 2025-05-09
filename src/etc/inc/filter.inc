@@ -1092,11 +1092,10 @@ function filter_generate_aliases() {
 				}
 			}
 		}
-		if (!empty($if_subnets)) {
-			$tablename = strtoupper($if) . '__NETWORK';
-			$aliases .= "table <{$tablename}> persist { " . implode(' ', $if_subnets) . " }\n";
-			$aliases .= "{$tablename} = \"<{$tablename}>\"\n";
-		}
+
+		$tablename = strtoupper($if) . '__NETWORK';
+		$aliases .= "table <{$tablename}> persist { " . implode(' ', $if_subnets) . " }\n";
+		$aliases .= "{$tablename} = \"<{$tablename}>\"\n";
 	}
 
 	$aliases .= filter_generate_alias_tables(get_reserved_table_names());

@@ -2113,23 +2113,6 @@ function interface_isppp_type($interface) {
 	}
 }
 
-/* interface_isppp_type_ephemeral()
- * Similar to interface_isppp_type(), determine whether an interface is
- * an ppp type and created by a daemon.
- */
-function interface_isppp_type_ephemeral($interface) {
-	$iface = config_get_path("interfaces/{$interface}");
-	if (!is_array($iface)) {
-		return false;
-	}
-
-	if (config_path_enabled('system', 'use_if_pppoe') && $iface['ipaddr'] == 'pppoe') {
-		return false;
-	}
-
-	return interface_isppp_type($interface);
-}
-
 function interfaces_ptpid_used($ptpid) {
 	$ppps = config_get_path('ppps/ppp');
 	if (is_array($ppps)) {
@@ -2874,7 +2857,7 @@ EOD;
 	if (is_platform_booting()) {
 		$count = 0;
 		foreach (config_get_path('interfaces', []) as $tempifacename => $tempiface) {
-			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type_ephemeral($tempifacename)) {
+			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type($tempifacename)) {
 				$tempaddr[$count]['if'] = $tempiface['if'];
 				$tempaddr[$count]['ipaddr'] = '192.0.2.' . strval (10 + ($count * 2)) . '/31';
 				mwexec('/sbin/ifconfig ' . escapeshellarg($tempaddr[$count]['if']) . ' inet ' . escapeshellarg($tempaddr[$count]['ipaddr']) . ' alias', true);

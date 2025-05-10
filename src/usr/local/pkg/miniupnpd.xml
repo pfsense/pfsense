@@ -26,22 +26,21 @@
 			<description>
 				<![CDATA[
 				Universal Plug and Play Internet Gateway Device (UPnP IGD) and Port Control Protocol (PCP) are
-				network protocols which allow local software and devices to configure each other when attaching
-				to a network. This includes autonomously creating dynamic NAT rules to redirect and pass
-				incoming connections from remote hosts.
+				network protocols which allow local software and devices to autonomously create dynamic NAT
+				rules to map and pass incoming connections from remote hosts.
 				]]>
 			</description>
 		</field>
 		<field>
 			<name>Service Settings</name>
 			<type>listtopic</type>
-			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,allow_third_party_mapping,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 		</field>
 		<field>
 			<fielddescr>Enable</fielddescr>
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
-			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,allow_third_party_mapping,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 			<description>Enable port mapping service</description>
 			<sethelp>
 				<![CDATA[
@@ -58,7 +57,7 @@
 			<sethelp>
 				<![CDATA[
 				Enables support for client requests using Universal Plug and Play Internet
-				Gateway Device (UPnP IGD).
+				Gateway Device (UPnP IGD) Control Protocol.
 				<br/><br/>
 				This protocol is commonly used by game consoles and Microsoft-compatible systems.
 				]]>
@@ -72,7 +71,7 @@
 			<sethelp>
 				<![CDATA[
 				Enables support for client requests using Port Control Protocol (PCP) and its
-				compatible predecessor NAT Port Mapping Protocol (NAT-PMP).
+				predecessor NAT Port Mapping Protocol (NAT-PMP).
 				<br/><br/>
 				These protocols are commonly used by Apple-compatible systems.
 				]]>
@@ -120,7 +119,7 @@
 				address, the service will refuse to map any ports without additional
 				configuration.
 				<br/><br/>
-				If the <strong>External Interface</strong> is behind unrestricted NAT with
+				If the <strong>External Interface</strong> is behind unrestricted endpoint-independent (1:1) NAT with
 				incoming traffic forwarded from upstream without any filtering, this service can
 				still function so long as it can locate its public IP address.
 				<br/><br/>
@@ -161,7 +160,7 @@
 				Example public STUN servers:
 				<ul>
 					<li>stun.counterpath.com</li>
-					<li>stun.cloudflare.com</li>
+					<li>stun.nextcloud.com</li>
 				</ul>
 				]]>
 			</description>
@@ -193,11 +192,21 @@
 			<type>listtopic</type>
 		</field>
 		<field>
+			<fielddescr>Allow Third-Party Mapping</fielddescr>
+			<fieldname>allow_third_party_mapping</fieldname>
+			<description>
+				<![CDATA[
+				Allow adding port maps for non-requesting IP addresses
+				]]>
+			</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>Download Speed</fielddescr>
 			<fieldname>download</fieldname>
 			<description>
 				<![CDATA[
-				Value to report when clients query the maximum link download speed (Kbit/s).
+				Value to report when clients query the maximum link download speed (kbit/s).
 				<br/><br/>
 				The default value is the link speed of the interface.
 				]]>
@@ -209,7 +218,7 @@
 			<fieldname>upload</fieldname>
 			<description>
 				<![CDATA[
-				Value to report when clients query the maximum link upload speed (Kbit/s).
+				Value to report when clients query the maximum link upload speed (kbit/s).
 				<br/><br/>
 				The default value is the link speed of the interface.
 				]]>
@@ -286,9 +295,9 @@
 				criteria. The entries only control access for IPv4 clients, they do not apply
 				to IPv6 clients.
 				<br/><br/>
-				Format: <tt>[allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]</tt>
+				Format: <tt>(allow|deny) (ext port|range) (int IP|IP/netmask) (int port|range)</tt>
 				<br/>
-				Example: <tt>allow 1024-65535 192.168.0.0/24 1024-65535</tt>
+				Example: <tt>allow 1024-65535 192.168.1.0/24 1024-65535</tt>
 				]]>
 			</description>
 		</field>

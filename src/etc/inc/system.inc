@@ -142,6 +142,12 @@ function system_get_sysctls() {
 		$disp_sysctl[$sysctl] = array('tunable' => $sysctl, 'value' => $value, 'descr' => get_sysctl_descr($sysctl));
 	}
 	unset($disp_cache);
+
+	//sort alphabetically
+	uksort($disp_sysctl, function($key1, $key2) {
+		return strcmp($key1, $key2);
+	});
+
 	return $disp_sysctl;
 }
 

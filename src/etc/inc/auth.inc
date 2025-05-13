@@ -1088,6 +1088,9 @@ function ldap_test_connection($authcfg) {
 		return false;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1099,24 +1102,21 @@ function ldap_test_connection($authcfg) {
 		return false;
 	}
 
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
-
 	return true;
 }
 
-function ldap_setup_caenv($ldap, $authcfg) {
+function ldap_setup_caenv($authcfg) {
 	global $g;
 	require_once("certs.inc");
 
 	unset($caref);
 	if (empty($authcfg['ldap_caref']) || strstr($authcfg['ldap_urltype'], "Standard")) {
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 		return;
 	} elseif ($authcfg['ldap_caref'] == "global") {
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, "/etc/ssl/");
 		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, "/etc/ssl/cert.pem");
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
 		$caref = $caref['item'];
@@ -1126,7 +1126,7 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		if (!$caref) {
 			log_error(sprintf(gettext("LDAP: Could not lookup CA by reference for host %s."), $authcfg['ldap_caref']));
 			/* XXX: Prevent for credential leaking since we cannot setup the CA env. Better way? */
-			ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
+			ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 			return;
 		}
 
@@ -1137,7 +1137,7 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		file_put_contents($cert_filename, $cachain);
 		@chmod($cert_filename, 0600);
 
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, $cert_path);
 		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, $cert_filename);
 	}
@@ -1175,6 +1175,9 @@ function ldap_test_bind($authcfg) {
 		return false;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1185,9 +1188,6 @@ function ldap_test_bind($authcfg) {
 		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
 		return false;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1261,6 +1261,9 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 		return $ous;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1271,9 +1274,6 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
 		return $ous;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	$ldapfilter = "(|(ou=*)(cn=Users))";
 
@@ -1403,6 +1403,9 @@ function ldap_get_groups($username, $authcfg) {
 	$ldapgroupattribute = strtolower($ldapgroupattribute);
 	$memberof = array();
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1413,9 +1416,6 @@ function ldap_get_groups($username, $authcfg) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
 		return $memberof;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1611,6 +1611,9 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		log_error(sprintf(gettext("LDAP Debug: Group Filter: %s"), $ldapgroupfilter));
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($authcfg);
+
 	/* Make sure we can connect to LDAP */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1626,9 +1629,6 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
 		return null;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);

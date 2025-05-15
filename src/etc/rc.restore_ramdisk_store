@@ -51,6 +51,7 @@ if [ -d "${RAM_Disk_Store}" ]; then
 		fi
 	done
 	if [ -z "${USE_RAMDISK}" ]; then
-		/bin/rmdir "${RAM_Disk_Store}" >/dev/null 2>&1
+		# best effort, non-fatal
+		/bin/rmdir "${RAM_Disk_Store}" >/dev/null 2>&1 || true
 	fi
 fi

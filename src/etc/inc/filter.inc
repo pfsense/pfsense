@@ -4488,21 +4488,16 @@ EOD;
 					if ($GatewaysStatus[$gateway_item['name']]['status'] == 'online') {
 						continue;
 					}
-					/**
-					 * If the gateway has no IP address to monitor then a
-					 * rule can't be created.
-					 */
-					if (!is_ipaddr($GatewaysStatus[$gateway_item['name']]['monitorip']) && !is_ipaddr($gateway_item['monitor'])) {
-						continue;
+					if (is_ipaddr($GatewaysStatus[$gateway_item['name']]['monitorip'])) {
+						$gateway_item['monitor'] = $GatewaysStatus[$gateway_item['name']]['monitorip'];
 					}
-				} else {
-					/**
-					 * If the gateway has no IP address to monitor then a
-					 * rule can't be created.
-					 */
-					if (!is_ipaddr($gateway_item['monitor'])) {
-						continue;
-					}
+				}
+				/**
+				 * If the gateway has no IP address to monitor then a rule
+				 * can't be created.
+				 */
+				if (!is_ipaddr($gateway_item['monitor'])) {
+					continue;
 				}
 	
 				$gateway_monitoring_block[$gateway_item['name']] = [

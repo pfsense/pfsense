@@ -236,8 +236,10 @@
 					$config_text .= "system_uptime=yes\n";
 				}
 
-				/* set secure_mode */
-				$config_text .= "secure_mode=yes\n";
+				if ($upnp_config['allow_third_party_mapping'] == 'on') {
+					$config_text .= "secure_mode=no\n";
+					$config_text .= "pcp_allow_thirdparty=yes\n";
+				}
 
 				/* set webgui url */
 				$webgui_config = config_get_path('system/webgui');

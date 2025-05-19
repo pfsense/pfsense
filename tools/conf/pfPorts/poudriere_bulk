@@ -9,6 +9,7 @@ devel/gdb
 devel/git
 devel/pecl-xdebug
 devel/valgrind
+dns/coredns
 dns/%%PRODUCT_NAME%%-pkg-bind
 dns/dnstop
 editors/nano

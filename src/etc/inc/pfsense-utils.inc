@@ -3576,6 +3576,15 @@ function get_pppoes_child_interfaces($ifpattern) {
  *   pkg_call_plugins
  * INPUTS
  *   $plugin_type value used to search in package configuration if the plugin is used, also used to create the function name
+ *   - plugin_xmlrpc_send
+ *     The XMLRPC client calls this plugin on the client system when building the list of config sections to sync. The
+ *     client system should return a string array list of full config paths. The XMLRPC client includes the config at these
+ *     paths when sending the sync data to the server.
+ *   - plugin_xmlrpc_recv
+ *     The XMLRPC server calls this plugin on the server system when merging the (new) config sent by the XMLRPC client with
+ *     the system's current (old) config. The merge behavior should normally match that of merge_installedpackages_section().
+ *   - plugin_xmlrpc_recv_done
+ *     The XMLRPC server calls this plugin after it finishes the sync process. Packages can act on this event, e.g. to reload.
  *   $plugin_params parameters to pass to the plugin function for passing multiple parameters a array can be used.
  * RESULT
  *   returns associative array results from the plugin calls for each package

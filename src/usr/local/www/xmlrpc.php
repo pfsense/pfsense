@@ -576,14 +576,19 @@ class pfsense_xmlrpc_server {
 
 		/* xmlrpc_recv plugin expects path => value pairs of changed nodes, not an associative tree */
 		$pkg_merged_paths = pkg_call_plugins("plugin_xmlrpc_recv", $pkg_sections);
-		foreach ($pkg_merged_paths as $pkg => $sections) {
-			if (!is_array($sections)) {
-				log_error('Package {$pkg} xmlrpc_recv plugin returned invalid value.');
+		foreach ($pkg_merged_paths as $pkg => $pkg_merged_sections) {
+			if (!is_array($pkg_merged_sections)) {
+				log_error("Package {$pkg} xmlrpc_recv plugin returned invalid value.");
 				continue;
 			}
-			foreach ($sections as $path => $section) {
+			foreach ($pkg_merged_sections as $path => $section) {
+				if ($path == 'xmlrpc_recv_result') {
+					continue;
+				}
 				if (is_null(config_set_path($path, $section))) {
-					log_error('Could not write section {$path} supplied by package {$pkg} xmlrpc_recv plugin');
+					log_error("Could not write section {$path} supplied by package {$pkg} xmlrpc_recv plugin");
+				} else {
+					array_set_path($sections, $path, $section);
 				}
 			}
 		}
@@ -711,7 +716,7 @@ class pfsense_xmlrpc_server {
 		$this->filter_configure(false, $force_filterconfigure);
 		unset($old_config);
 
-		pkg_call_plugins('plugin_xmlrpc_recv_done', []);
+		pkg_call_plugins('plugin_xmlrpc_recv_done', $pkg_merged_paths);
 		return true;
 	}
 

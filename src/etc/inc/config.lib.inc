@@ -92,21 +92,13 @@ function encrypted_configxml(string $file_name = null) {
 function generate_config_cache($config) {
 	global $g, $config_extra;
 
-	$configcache = fopen(g_get('tmp_path') . '/config.cache', "w");
-	if (!$configcache) {
-		/* Cannot open file for writing, so stop here. */
+	if (!safe_write_file(g_get('tmp_path') . '/config.cache', serialize($config))) {
 		return false;
 	}
-	fwrite($configcache, serialize($config));
-	fclose($configcache);
 
-	unset($configcache);
 	/* Used for config.extra.xml */
 	if (file_exists(g_get('tmp_path') . '/config.extra.cache') && $config_extra) {
-		$configcacheextra = fopen(g_get('tmp_path') . '/config.extra.cache', "w");
-		fwrite($configcacheextra, serialize($config_extra));
-		fclose($configcacheextra);
-		unset($configcacheextra);
+		safe_write_file(g_get('tmp_path') . '/config.extra.cache', serialize($config_extra));
 	}
 	return true;
 }
@@ -192,14 +184,19 @@ function restore_backup(string|array $backup) {
 		restore_xmldatafile($bk, $conf);
 		$data = clear_tagdata($bk, $data);
 	}
-	file_put_contents($file, $data);
+	if (!safe_write_file($file, $data)) {
+		return false;
+	}
 
 	$lockkey = lock('config', LOCK_EX);
 	if (!isset($lockkey)) {
 		return false;
 	}
+	if (!safe_write_file(g_get('cf_conf_path') . '/config.xml', $data)) {
+		unlock($lockkey);
+		return false;
+	}
 	unlink_if_exists(g_get('tmp_path') . '/config.cache');
-	copy($file, g_get('cf_conf_path') . '/config.xml');
 	unlock($lockkey);
 
 	disable_security_checks();
@@ -510,7 +507,12 @@ function safe_write_file($file, $content, $force_binary = false) {
 		fclose($fd);
 		return false;
 	}
-	fflush($fd);
+	// fsync implies fflush
+	if (!fsync($fd)) {
+		// Unable to sync temp file to storage
+		fclose($fd);
+		return false;
+	}
 	fclose($fd);
 
 	if (!rename($tmp_file, $file)) {
@@ -518,6 +520,18 @@ function safe_write_file($file, $content, $force_binary = false) {
 		@unlink($tmp_file);
 		return false;
 	}
+
+	$dir_fd = fopen(dirname($file), 'r');
+	if (!$dir_fd) {
+		// Unable to open temporary file directory for sync
+		return false;
+	}
+	if (!fsync($dir_fd)) {
+		// Unable to sync directory
+		fclose($dir_fd);
+		return false;
+	}
+	fclose($dir_fd);
 
 	return true;
 }
@@ -907,9 +921,7 @@ function cleanup_backupcache($lock = false) {
 		}
 		$tocache = $newcache;
 	}
-	$bakout = fopen(g_get('cf_conf_path') . '/backup/backup.cache', "w");
-	fwrite($bakout, serialize($tocache));
-	fclose($bakout);
+	safe_write_file(g_get('cf_conf_path') . '/backup/backup.cache', serialize($tocache));
 
 	if (!$lock) {
 		unlock($lockkey);
@@ -953,12 +965,11 @@ function backup_config(): bool
 		$backupcache = array();
 	}
 	$backupcache[$backup_time] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($backup_file));
-	$bakout = fopen(g_get('cf_conf_path') . '/backup/backup.cache', "w");
-	fwrite($bakout, serialize($backupcache));
-	fclose($bakout);
+	$backupcache_serialized = serialize($backupcache);
+	safe_write_file(g_get('cf_conf_path') . '/backup/backup.cache', $backupcache_serialized);
 
 	/* Do the backup */
-	return copy(g_get('cf_conf_path') . '/config.xml', $backup_file);
+	return safe_write_file(g_get('cf_conf_path') . '/config.xml', $backupcache_serialized);
 }
 
 function backup_info($backup_info, $number) {

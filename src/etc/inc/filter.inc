@@ -3693,7 +3693,7 @@ function filter_generate_user_rule($rule, & $extralabels = null) {
 	if (!empty($rule['tagged']) && isset($rule['nottagged'])) {
 		$aline['nottagged'] = " ! ";
 	}
-	if ($type == "pass") {
+	if (($type == "pass") || ($type == "match")) {
 		if (isset($rule['allowopts'])) {
 			$aline['allowopts'] = " allow-opts ";
 		}

@@ -2978,19 +2978,17 @@
 					}
 					break;
 				case 'all-inkl':
- 					if (preg_match('/good\s' . $this->_dnsIP . '/i', $data)) {
-							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
- 							$successful_update = true;
- 					} else if (preg_match('/good/i', $data)) {
-						$status = $status_intro . $error_str . gettext("Result did not match.");
+ 					if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
 					} else if (preg_match("/\s401\sUnauthorized/i", $header)) {
 						$status = $status_intro . $error_str . gettext("Invalid username or password");
 					}
 					else {
-							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-							log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
- 							$this->_debug($data);
- 							$this->_debug($header);
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
+						$this->_debug($data);
+						$this->_debug($header);
  					}
  					break;
 				case 'hover':

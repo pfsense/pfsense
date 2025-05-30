@@ -26,9 +26,8 @@
 			<description>
 				<![CDATA[
 				Universal Plug and Play Internet Gateway Device (UPnP IGD) and Port Control Protocol (PCP) are
-				network protocols which allow local software and devices to configure each other when attaching
-				to a network. This includes autonomously creating dynamic NAT rules to redirect and pass
-				incoming connections from remote hosts.
+				network protocols which allow local software and devices to autonomously create dynamic NAT
+				rules to map and pass incoming connections from remote hosts.
 				]]>
 			</description>
 		</field>
@@ -72,7 +71,7 @@
 			<sethelp>
 				<![CDATA[
 				Enables support for client requests using Port Control Protocol (PCP) and its
-				compatible predecessor NAT Port Mapping Protocol (NAT-PMP).
+				predecessor NAT Port Mapping Protocol (NAT-PMP).
 				<br/><br/>
 				These protocols are commonly used by Apple-compatible systems.
 				]]>
@@ -111,8 +110,8 @@
 			<type>info</type>
 			<description>
 				<![CDATA[
-				This service <strong>must</strong> be able to locate its routable public IP
-				address to function properly. If this device is behind NAT, port forwarding may
+				This service <strong>must</strong> be able to locate its routable public IPv4
+				address to function properly. If this device is behind CGNAT, port forwarding may
 				be impossible.
 				<br/><br/>
 				If the <strong>External Interface</strong> has a public IP address, the settings
@@ -120,7 +119,7 @@
 				address, the service will refuse to map any ports without additional
 				configuration.
 				<br/><br/>
-				If the <strong>External Interface</strong> is behind unrestricted NAT with
+				If the <strong>External Interface</strong> is behind unrestricted endpoint-independent (1:1) CGNAT with
 				incoming traffic forwarded from upstream without any filtering, this service can
 				still function so long as it can locate its public IP address.
 				<br/><br/>
@@ -160,8 +159,8 @@
 				<br/><br/>
 				Example public STUN servers:
 				<ul>
+					<li>stun.3cx.com</li>
 					<li>stun.counterpath.com</li>
-					<li>stun.cloudflare.com</li>
 				</ul>
 				]]>
 			</description>
@@ -197,7 +196,7 @@
 			<fieldname>download</fieldname>
 			<description>
 				<![CDATA[
-				Value to report when clients query the maximum link download speed (Kbit/s).
+				Value to report when clients query the maximum link speed (kbit/s).
 				<br/><br/>
 				The default value is the link speed of the interface.
 				]]>
@@ -209,7 +208,7 @@
 			<fieldname>upload</fieldname>
 			<description>
 				<![CDATA[
-				Value to report when clients query the maximum link upload speed (Kbit/s).
+				Value to report when clients query the maximum link speed (kbit/s).
 				<br/><br/>
 				The default value is the link speed of the interface.
 				]]>
@@ -288,7 +287,7 @@
 				<br/><br/>
 				Format: <tt>[allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]</tt>
 				<br/>
-				Example: <tt>allow 1024-65535 192.168.0.0/24 1024-65535</tt>
+				Example: <tt>allow 1024-65535 192.168.1.0/24 1024-65535</tt>
 				]]>
 			</description>
 		</field>

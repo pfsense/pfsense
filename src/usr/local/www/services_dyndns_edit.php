@@ -669,6 +669,7 @@ events.push(function() {
 			case "dreamhost":
 			case "dreamhost-v6":
 			case "dyfi":
+			case "infomaniak":
 			case "nicru":
 			case "nicru-v6":
 			case "strato":

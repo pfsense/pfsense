@@ -965,11 +965,10 @@ function backup_config(): bool
 		$backupcache = array();
 	}
 	$backupcache[$backup_time] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($backup_file));
-	$backupcache_serialized = serialize($backupcache);
-	safe_write_file(g_get('cf_conf_path') . '/backup/backup.cache', $backupcache_serialized);
+	safe_write_file(g_get('cf_conf_path') . '/backup/backup.cache', serialize($backupcache));
 
 	/* Do the backup */
-	return safe_write_file(g_get('cf_conf_path') . '/config.xml', $backupcache_serialized);
+	return safe_write_file($backup_file, file_get_contents(g_get('cf_conf_path') . '/config.xml'));
 }
 
 function backup_info($backup_info, $number) {

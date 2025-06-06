@@ -50,9 +50,7 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
-if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
-    !config_path_enabled('installedpackages/miniupnpd/config/0')) {
-
+if (!config_get_path('installedpackages/miniupnpd/config/0/enable')) {
 	print_info_box(sprintf(gettext('Service is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP IGD &amp; PCP'), '</a>'), 'danger');
 	include("foot.inc");
 	exit;

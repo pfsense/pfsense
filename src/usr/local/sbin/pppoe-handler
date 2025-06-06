@@ -60,6 +60,13 @@ function pppoe_add_addrv6($interface, $address) {
 
 function pppoe_add_addr($interface, $address) {
 	if (is_ipaddrv4($address)) {
+		if (in_array($address, get_configured_vip_list('inet'))) {
+			/**
+			 * Avoid loop between pppoe-handler and rc.newwanip.
+			 * See https://redmine.pfsense.org/issues/16235
+			 */
+			return;
+		}
 		pppoe_add_addrv4($interface, $address);
 	} elseif (is_linklocal($address)) {
 		/* Nothing to be done here */

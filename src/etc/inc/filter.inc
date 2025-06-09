@@ -786,7 +786,12 @@ function filter_generate_scrubbing() {
 		if ($mss) {
 			/* different size of IPv4/IPv6 header, https://redmine.pfsense.org/issues/11409 */
 			$mssclamp4 = "max-mss " . ($mss - 40);
-			$mssclamp6 = "max-mss " . ($mss - 60);
+			/* additional 20B header on v6 tunnel types https://redmine.pfsense.org/issues/16243 */
+			if (($scrubcfg['type6'] == '6rd') || ($scrubcfg['type6'] == '6to4')) {
+				$mssclamp6 = "max-mss " . ($mss - 80);
+			} else {
+				$mssclamp6 = "max-mss " . ($mss - 60);
+			}
 		} else {
 			$mssclamp4 = "";
 			$mssclamp6 = "";

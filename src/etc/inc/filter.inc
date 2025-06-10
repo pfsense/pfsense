@@ -3193,7 +3193,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		} elseif (is_alias($rule['nat'][$target])) {
 			$src = alias_expand($rule['nat'][$target]) . ' round-robin';
 		} elseif (preg_match('/^(wan|lan|opt[[:digit:]]+)ip$/', $rule['nat'][$target], $matches)) {
-			$src = '(' . get_real_interface($matches[1]) . ')';
+			if (is_ipaddrv4($FilterIflist[$matches[1]]['ip'])) {
+				$src = $FilterIflist[$matches[1]]['ip'];
+			}
 		} else {
 			$source_address = explode('/', $rule['nat'][$target], 2);
 			if (($nat_type == '64') && is_ipaddrv4($source_address[0])) {

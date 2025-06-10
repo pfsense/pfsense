@@ -239,10 +239,18 @@
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($this->_FQDN) . "{$dnsID}.debug";
 
 			$this->_curlIpresolveV4 = match ($dnsService) {
-				'duiadns' => true,
+				'dnsimple-v6' => true,
+				'dreamhost-v6' => true,
 				'duiadns-v6' => true,
-				'he-net' => true,
+				'easydns-v6' => true,
+				'freedns-v6' => true,
+				'gandi-livedns-v6' => true,
 				'he-net-v6' => true,
+				'name.com-v6' => true,
+				'nicru-v6' => true,
+				'noip-free-v6' => true,
+				'noip-v6' => true,
+				'route53-v6' => true,
 				default => $curlIpresolveV4
 			};
 			$this->_curlSslVerifypeer = $curlSslVerifypeer;

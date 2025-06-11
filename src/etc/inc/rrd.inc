@@ -220,9 +220,9 @@ function enable_rrd_graphing() {
 	$ntpdvalid = $rrdntpdinterval * 2;
 	$dhcpdvalid = $rrddhcpdinterval * 2;
 
-	/* Assume 2*10GigE for now */
-	$downstream = 2500000000;
-	$upstream = 2500000000;
+	/* Assume 2*100GigE for now */
+	$downstream = 25000000000;
+	$upstream = 25000000000;
 
 	/* read the shaper config */
 	read_altq_config();

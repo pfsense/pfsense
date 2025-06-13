@@ -31,10 +31,10 @@ function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams) {
 	} else {
 		if (firstTime) {
 			buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
-			updateThermalSensorsDataGraph(thermalSensorsData, widgetKey);
+			updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
 			firstTime = false;
 		} else {
-			updateThermalSensorsDataGraph(thermalSensorsData, widgetKey);
+			updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
 		}
 	}
 }
@@ -119,7 +119,7 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 }
 
-function updateThermalSensorsDataGraph(thermalSensorsData, widgetKey) {
+function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 	var thermalSensorsArray = new Array();
 
 	if (thermalSensorsData && thermalSensorsData != "") {
@@ -130,7 +130,20 @@ function updateThermalSensorsDataGraph(thermalSensorsData, widgetKey) {
 	for (var i = 0; i < thermalSensorsArray.length; i++) {
 
 		var sensorDataArray = thermalSensorsArray[i].split(":");
+		var sensorName = sensorDataArray[0].trim();
 		var thermalSensorValue = getThermalSensorValue(sensorDataArray[1]);
+
+		//set thresholds every time we update
+		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
+			warningTemp = tsParams.coreWarningTempThreshold;
+			criticalTemp = tsParams.coreCriticalTempThreshold;
+		} else if (sensorName.indexOf("pch") > -1) { //check PCH Threshold config settings
+			warningTemp = tsParams.pchWarningTempThreshold;
+			criticalTemp = tsParams.pchCriticalTempThreshold;
+		} else { //assuming sensor is for a zone, check Zone Threshold config settings
+			warningTemp = tsParams.zoneWarningTempThreshold;
+			criticalTemp = tsParams.zoneCriticalTempThreshold;
+		}
 
 		setTempProgress(i, thermalSensorValue, widgetKey);
 	}

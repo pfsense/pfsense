@@ -28,15 +28,23 @@ require_once("util.inc");
 function pppoe_add_addrv4($interface, $address) {
 	$tmp = g_get('tmp_path', '');
 	$addresses = get_interface_addresses($interface);
-	if (!is_ipaddrv4($addresses['tunnel'])) {
+
+	// Ignore events when the tunnel isn't available.
+	if (!isset($addresses['tunnel'])) {
 		return;
 	}
-	file_put_contents("{$tmp}/{$interface}_router",
-	    $addresses['tunnel']);
+
+	file_put_contents("{$tmp}/{$interface}_router", $addresses['tunnel']);
 	unlink_if_exists("{$tmp}/{$interface}_router.last");
-	file_put_contents("{$tmp}/{$interface}_ip", $address);
 	touch("{$tmp}/{$interface}up");
 	touch("{$tmp}/{$interface}_upstart4");
+
+	// Only the interface's primary address needs further handling; e.g. ignore VIPs.
+	if ($addresses['ipaddr'] != $address) {
+		return;
+	}
+
+	file_put_contents("{$tmp}/{$interface}_ip", $address);
 
 	send_event("interface newip {$interface}");
 }
@@ -44,40 +52,57 @@ function pppoe_add_addrv4($interface, $address) {
 function pppoe_add_addrv6($interface, $address) {
 	$tmp = g_get('tmp_path', '');
 	$addresses = get_interface_addresses($interface);
-	if (!is_ipaddrv6($addresses['tunnel6'])) {
+
+	// Workaround for when tunnel6 is never set - see #16265.
+	if (!isset($addresses['tunnel6']) && isset($addresses['tunnel'])) {
+		$default_route = route_get('default', 'inet6', true);
+		if ((array_get_path($default_route, '0/interface-name') == $interface) &&
+		    is_ipaddrv6($default_route[0]['gateway'])) {
+			$addresses['tunnel6'] = $default_route[0]['gateway'];
+		}
+	}
+
+	// Ignore events when the tunnel isn't available.
+	if (!isset($addresses['tunnel6'])) {
 		return;
 	}
-	file_put_contents("{$tmp}/{$interface}_routerv6",
-	    $addresses['tunnel6']);
+
+	file_put_contents("{$tmp}/{$interface}_routerv6", $addresses['tunnel6']);
 	unlink_if_exists("{$tmp}/{$interface}_routerv6.last");
-	file_put_contents("{$tmp}/{$interface}_ipv6", $address);
 	touch("{$tmp}/{$interface}upv6");
 	touch("{$tmp}/{$interface}_upstart6");
 	touch("{$tmp}/{$interface}_v6_by_pppoe");
 
+	// Only the interface's primary address needs further handling; e.g. ignore VIPs.
+	if ($addresses['ipaddr6'] != $address) {
+		return;
+	}
+
+	file_put_contents("{$tmp}/{$interface}_ipv6", $address);
+
+	// Defer running rc.newwanipv6 to the dhcp6c script
+	$interface_label = convert_real_interface_to_friendly_interface_name($interface);
+	$interface_config = config_get_path("interfaces/{$interface_label}");
+	if (!empty($interface_config) && ($interface_config["ipaddr6"] == "dhcp6")) {
+		return;
+	}
 	send_event("interface newipv6 {$interface}");
 }
 
 function pppoe_add_addr($interface, $address) {
-	if (is_ipaddrv4($address)) {
-		if (in_array($address, get_configured_vip_list('inet'))) {
-			/**
-			 * Avoid loop between pppoe-handler and rc.newwanip.
-			 * See https://redmine.pfsense.org/issues/16235
-			 */
-			return;
-		}
-		pppoe_add_addrv4($interface, $address);
-	} elseif (is_linklocal($address)) {
-		/* Nothing to be done here */
+	$address_family = match (is_ipaddr($address)) {
+		4 => AF_INET,
+		6 => AF_INET6,
+		default => null
+	};
+	if (!isset($address_family)) {
 		return;
+	}
+
+	if ($address_family == AF_INET) {
+		pppoe_add_addrv4($interface, $address);
 	} else {
-		$ifname = convert_real_interface_to_friendly_interface_name($interface);
-		$if = config_get_path("interfaces/{$ifname}");
-		// Only execute pppoe_add_addrv6() if dhcp6c will not respond to the address change
-		if (!empty($if) && $if["ipaddr6"] != "dhcp6") {
-			pppoe_add_addrv6($interface, $address);
-		}
+		pppoe_add_addrv6($interface, $address);
 	}
 }
 

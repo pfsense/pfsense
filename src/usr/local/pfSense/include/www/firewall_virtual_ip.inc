@@ -471,7 +471,7 @@ function deleteVIP($id, $json = false) {
 		if ($a_vip[$id]['mode'] == "ipalias") {
 			$subnet = gen_subnet($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']) . "/" . $a_vip[$id]['subnet_bits'];
 			$found_if = false;
-			$found_carp = false;
+			$found_carp = null;
 			$found_other_alias = false;
 
 			if ($subnet == $if_subnet) {
@@ -487,15 +487,15 @@ function deleteVIP($id, $json = false) {
 
 				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], $subnet)) {
 					if ($vip['mode'] == "carp") {
-						$found_carp = true;
+						$found_carp = $vip_id;
 					} else if ($vip['mode'] == "ipalias") {
 						$found_other_alias = true;
 					}
 				}
 			}
 
-			if ($found_carp === true && $found_other_alias === false && $found_if === false) {
-				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $vip['descr']);
+			if (isset($a_vip[$found_carp]) && $found_other_alias === false && $found_if === false) {
+				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $a_vip[$found_carp]['descr']);
 			}
 		} else if ($a_vip[$id]['mode'] == "carp") {
 			$vipiface = "_vip{$a_vip[$id]['uniqid']}";

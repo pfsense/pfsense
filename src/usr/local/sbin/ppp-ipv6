@@ -28,72 +28,79 @@ require_once("interfaces.inc");
 function interface_ipv6_lower($interface_real) {
 	global $g;
 
-	if (!empty($interface_real)) {
-		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
-		if (empty($interface)) {
-			return;
+	if (empty($interface_real)) {
+		return;
+	}
+
+	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+	if (empty($interface)) {
+		return;
+	}
+
+	$ifcfg = config_get_path("interfaces/{$interface}");
+	if (empty($interface) || !is_array($ifcfg) ||
+	    !interface_isppp_type($interface) || empty($ifcfg['ipaddrv6'])) {
+		return;
+	}
+
+	switch ($ifcfg['ipaddrv6']) {
+	case 'slaac':
+	case 'dhcp6':
+		// Take no action if dhcp6 is active on the parent interface, not the PPP interface
+		if ((($ifcfg['ipaddrv6'] == 'dhcp6') && !isset($ifcfg['dhcp6usev4iface'])) ||
+		    (($ifcfg['ipaddrv6'] == 'slaac') && !isset($ifcfg['slaacusev4iface'])) ||
+		    !interface_isppp_type($interface)) {
+			break;
 		}
+		// reconfigure dhcp6c if it is running
+		interface_dhcpv6_configure($interface, $ifcfg, true);
 
-		$ifcfg = config_get_path("interfaces/{$interface}");
-		if (!empty($interface) && is_array($ifcfg) && interface_isppp_type($interface)) {
-			if (!empty($ifcfg['ipaddrv6'])) {
-				switch ($ifcfg['ipaddrv6']) {
-				case 'slaac':
-				case 'dhcp6':
-					// Take no action if dhcp6 is active on the parent interface, not the PPP interface
-					if ((($ifcfg['ipaddrv6'] == 'dhcp6') && !isset($ifcfg['dhcp6usev4iface'])) ||
-					    (($ifcfg['ipaddrv6'] == 'slaac') && !isset($ifcfg['slaacusev4iface'])) ||
-					    !interface_isppp_type($interface)) {
-						break;
-					}
-					// reconfigure dhcp6c if it is running
-					interface_dhcpv6_configure($interface, $ifcfg, true);
+		// disable router advertisements (and therefore SLAAC)
+		mwexec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6 -accept_rtadv");
 
-					// disable router advertisements (and therefore SLAAC)
-					mwexec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6 -accept_rtadv");
-
-					// remove any autoconfigured IPv6 addresses
-					exec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6", $ifconfig_output);
-					foreach ($ifconfig_output as $output) {
-						if (preg_match('{ \A \s+ inet6 \s+ (\S+) .* autoconf .* \Z}xmsi', $output, $matches)) {
-							mwexec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6 " . escapeshellarg($matches[1]) . " delete");
-						}
-					}
-					break;
-				default:
-					break;
-				}
+		// remove any autoconfigured IPv6 addresses
+		exec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6", $ifconfig_output);
+		foreach ($ifconfig_output as $output) {
+			/* FIXME there should be a better way to do it */
+			if (preg_match('{ \A \s+ inet6 \s+ (\S+) .* autoconf .* \Z}xmsi', $output, $matches)) {
+				mwexec("/sbin/ifconfig " . escapeshellarg($interface_real) . " inet6 " . escapeshellarg($matches[1]) . " delete");
 			}
 		}
+		break;
+	default:
+		break;
 	}
 }
 
 function interface_ipv6_raise($interface_real) {
-	if (!empty($interface_real)) {
-		$interface = convert_real_interface_to_friendly_interface_name($interface_real);
-		if (empty($interface)) {
-			return;
-		}
+	if (empty($interface_real)) {
+		return;
+	}
 
-		$ifcfg = config_get_path("interfaces/{$interface}");
-		if (!empty($interface) && is_array($ifcfg) && interface_isppp_type($interface)) {
-			if (!empty($ifcfg['ipaddrv6'])) {
-				switch ($ifcfg['ipaddrv6']) {
-				case 'slaac':
-				case 'dhcp6':
-					// Take no action if dhcp6 is active on the parent interface, not the PPP interface
-					if ((($ifcfg['ipaddrv6'] == 'dhcp6') && !isset($ifcfg['dhcp6usev4iface'])) ||
-					    (($ifcfg['ipaddrv6'] == 'slaac') && !isset($ifcfg['slaacusev4iface'])) ||
-					    !interface_isppp_type($interface)) {
-						break;
-					}
-					interface_dhcpv6_configure($interface, $ifcfg);
-					break;
-				default:
-					break;
-				}
-			}
+	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+	if (empty($interface)) {
+		return;
+	}
+
+	$ifcfg = config_get_path("interfaces/{$interface}");
+	if (empty($interface) || !is_array($ifcfg) ||
+	    !interface_isppp_type($interface) || empty($ifcfg['ipaddrv6'])) {
+		return;
+	}
+
+	switch ($ifcfg['ipaddrv6']) {
+	case 'slaac':
+	case 'dhcp6':
+		// Take no action if dhcp6 is active on the parent interface, not the PPP interface
+		if ((($ifcfg['ipaddrv6'] == 'dhcp6') && !isset($ifcfg['dhcp6usev4iface'])) ||
+		    (($ifcfg['ipaddrv6'] == 'slaac') && !isset($ifcfg['slaacusev4iface'])) ||
+		    !interface_isppp_type($interface)) {
+			break;
 		}
+		interface_dhcpv6_configure($interface, $ifcfg);
+		break;
+	default:
+		break;
 	}
 }
 

@@ -192,6 +192,19 @@
 			<type>listtopic</type>
 		</field>
 		<field>
+			<fielddescr>Traffic Shaping</fielddescr>
+			<fieldname>upnpqueue</fieldname>
+			<description>ALTQ traffic shaping queue name for connections passed through port mappings.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Firewall Logs</fielddescr>
+			<fieldname>logpackets</fieldname>
+			<type>checkbox</type>
+			<description>Log mapped connections</description>
+			<sethelp>When set, connections matching dynamic port mapping rules will appear in the firewall log.</sethelp>
+		</field>
+		<field>
 			<fielddescr>Download Speed</fielddescr>
 			<fieldname>download</fieldname>
 			<description>
@@ -213,12 +226,6 @@
 				The default value is the link speed of the interface.
 				]]>
 			</description>
-			<type>input</type>
-		</field>
-		<field>
-			<fielddescr>Traffic Shaping</fielddescr>
-			<fieldname>upnpqueue</fieldname>
-			<description>ALTQ traffic shaping queue name for connections passed through port mappings.</description>
 			<type>input</type>
 		</field>
 		<field>
@@ -244,13 +251,6 @@
 				The default value is the current firmware version of this device.
 				]]>
 			</description>
-		</field>
-		<field>
-			<fielddescr>Firewall Logs</fielddescr>
-			<fieldname>logpackets</fieldname>
-			<type>checkbox</type>
-			<description>Log mapped connections</description>
-			<sethelp>When set, connections matching dynamic port mapping rules will appear in the firewall log.</sethelp>
 		</field>
 		<field>
 			<fielddescr>Uptime</fielddescr>

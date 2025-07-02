@@ -120,7 +120,7 @@
 				address, the service will refuse to map any ports without additional
 				configuration.
 				<br/><br/>
-				If the <strong>External Interface</strong> is behind unrestricted NAT with
+				If the <strong>External Interface</strong> is behind unrestricted endpoint-independent (1:1) NAT with
 				incoming traffic forwarded from upstream without any filtering, this service can
 				still function so long as it can locate its public IP address.
 				<br/><br/>
@@ -160,8 +160,8 @@
 				<br/><br/>
 				Example public STUN servers:
 				<ul>
+					<li>stun.3cx.com</li>
 					<li>stun.counterpath.com</li>
-					<li>stun.cloudflare.com</li>
 				</ul>
 				]]>
 			</description>
@@ -170,7 +170,6 @@
 			<fielddescr>STUN Port</fielddescr>
 			<fieldname>stun_port</fieldname>
 			<type>input</type>
-			<default_value>3478</default_value>
 			<description>UDP port the STUN Server uses to accept queries (Default: 3478)</description>
 		</field>
 		<field>
@@ -197,7 +196,7 @@
 			<fieldname>download</fieldname>
 			<description>
 				<![CDATA[
-				Value to report when clients query the maximum link download speed (Kbit/s).
+				Value to report when clients query the maximum link download speed (kbit/s).
 				<br/><br/>
 				The default value is the link speed of the interface.
 				]]>
@@ -209,7 +208,7 @@
 			<fieldname>upload</fieldname>
 			<description>
 				<![CDATA[
-				Value to report when clients query the maximum link upload speed (Kbit/s).
+				Value to report when clients query the maximum link upload speed (kbit/s).
 				<br/><br/>
 				The default value is the link speed of the interface.
 				]]>
@@ -288,7 +287,7 @@
 				<br/><br/>
 				Format: <tt>[allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]</tt>
 				<br/>
-				Example: <tt>allow 1024-65535 192.168.0.0/24 1024-65535</tt>
+				Example: <tt>allow 1024-65535 192.168.1.0/24 1024-65535</tt>
 				]]>
 			</description>
 		</field>

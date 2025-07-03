@@ -769,7 +769,7 @@ function system_dhcpleases_configure() {
 }
 
 function system_get_kea6status() {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -813,7 +813,7 @@ out:
 }
 
 function system_get_kea4status() {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -857,7 +857,7 @@ out:
 }
 
 function system_clear_all_kea4leases() {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -885,7 +885,7 @@ function system_clear_all_kea4leases() {
 }
 
 function system_del_kea4lease(string $ip) {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -918,7 +918,7 @@ function system_del_kea4lease(string $ip) {
 }
 
 function system_clear_all_kea6leases() {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -946,7 +946,7 @@ function system_clear_all_kea6leases() {
 }
 
 function system_del_kea6lease(string $ip, string $type = 'IA_NA') {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -984,7 +984,7 @@ function system_del_kea6lease(string $ip, string $type = 'IA_NA') {
 function system_get_kea6prefixes() {
 	$prefixes = [];
 
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1132,7 +1132,7 @@ function system_get_kea6leases() {
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1276,7 +1276,7 @@ function system_get_kea4leases() {
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/var/run/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {

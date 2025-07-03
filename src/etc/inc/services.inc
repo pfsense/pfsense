@@ -522,9 +522,9 @@ function services_kea6_configure(bool $with_custom = true) {
 	$has_custom = false;
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
-	$kea_var_db = '/var/db/kea';
 
 	$kea6socket = $kea_var_run . '/kea6-ctrl-socket';
+	unlink_if_exists($kea6socket);
 	unlink_if_exists($kea6socket . '.lock');
 
 	$keaconf_path = '/usr/local/etc/kea/kea-dhcp6.conf';
@@ -554,9 +554,12 @@ function services_kea6_configure(bool $with_custom = true) {
 		return 0;
 	}
 
-	foreach ([$kea_var_run, $kea_var_lib, $kea_var_db] as $path) {
+	/* Kea 2.6.3 requires some additional path hardening (750) */
+	foreach ([$kea_var_run, $kea_var_lib] as $path) {
 		if (!file_exists($path)) {
-			mkdir($path, 0777, true);
+			mkdir($path, 0750, true);
+		} else {
+			chmod($path, 0750);
 		}
 	}
 
@@ -1340,6 +1343,7 @@ function services_kea4_configure(bool $with_custom = true) {
 	$kea_var_lib = '/var/lib/kea';
 
 	$kea4socket = $kea_var_run . '/kea4-ctrl-socket';
+	unlink_if_exists($kea4socket);
 	unlink_if_exists($kea4socket . '.lock');
 
 	$keaconf_path = '/usr/local/etc/kea/kea-dhcp4.conf';
@@ -1363,14 +1367,12 @@ function services_kea4_configure(bool $with_custom = true) {
 		return 0;
 	}
 
-	/* ensure we have a valid /var/run/kea directory */
-	if (!file_exists($kea_var_run)) {
-		mkdir($kea_var_run, 0777, true);
-	}
-
-	/* ensure we have a valid /var/lib/kea directory */
-	if (!file_exists($kea_var_lib)) {
-		mkdir($kea_var_lib, 0777, true);
+	foreach ([$kea_var_run, $kea_var_lib] as $path) {
+		if (!file_exists($path)) {
+			mkdir($path, 0750, true);
+		} else {
+			chmod($path, 0750);
+		}
 	}
 
 	$syscfg = config_get_path('system');

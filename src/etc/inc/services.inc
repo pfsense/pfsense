@@ -521,7 +521,9 @@ function kea_is_hexstring(string $string): bool {
 function services_kea6_configure(bool $with_custom = true) {
 	$has_custom = false;
 	$kea_var_run = g_get('varrun_path') . '/kea';
-	$kea_var_lib = '/var/lib/kea';
+	$kea_var_db = '/var/db/kea';
+
+	$kea_lease_db = $kea_var_db . '/dhcp6.leases';
 
 	$kea6socket = $kea_var_run . '/kea6-ctrl-socket';
 	unlink_if_exists($kea6socket);
@@ -555,7 +557,7 @@ function services_kea6_configure(bool $with_custom = true) {
 	}
 
 	/* Kea 2.6.3 requires some additional path hardening (750) */
-	foreach ([$kea_var_run, $kea_var_lib] as $path) {
+	foreach ([$kea_var_run, $kea_var_db] as $path) {
 		if (!file_exists($path)) {
 			mkdir($path, 0750, true);
 		} else {
@@ -581,7 +583,7 @@ function services_kea6_configure(bool $with_custom = true) {
 		'lease-database' => [
 			'type' => 'memfile',
 			'persist' => true,
-			'name' => '/var/lib/kea/dhcp6.leases'
+			'name' => $kea_lease_db
 		],
 		'loggers' => [[
 			'name' => 'kea-dhcp6',
@@ -1219,7 +1221,6 @@ kea6_skip_first_pool_options:
 	}
 
 	/* create an empty leases database */
-	$kea_lease_db = $kea_var_lib . '/dhcp6.leases';
 	if (!file_exists($kea_lease_db)) {
 		touch($kea_lease_db);
 	}
@@ -1340,7 +1341,9 @@ function services_kea4_configure(bool $with_custom = true) {
 	$ddns_zones = array();
 
 	$kea_var_run = g_get('varrun_path') . '/kea';
-	$kea_var_lib = '/var/lib/kea';
+	$kea_var_db = '/var/db/kea';
+
+	$kea_lease_db = $kea_var_db . '/dhcp4.leases';
 
 	$kea4socket = $kea_var_run . '/kea4-ctrl-socket';
 	unlink_if_exists($kea4socket);
@@ -1367,7 +1370,7 @@ function services_kea4_configure(bool $with_custom = true) {
 		return 0;
 	}
 
-	foreach ([$kea_var_run, $kea_var_lib] as $path) {
+	foreach ([$kea_var_run, $kea_var_db] as $path) {
 		if (!file_exists($path)) {
 			mkdir($path, 0750, true);
 		} else {
@@ -1388,7 +1391,7 @@ function services_kea4_configure(bool $with_custom = true) {
 		'lease-database' => [
 			'type' => 'memfile',
 			'persist' => true,
-			'name' => $kea_var_lib . '/dhcp4.leases'
+			'name' => $kea_lease_db
 		],
 		'loggers' => [[
 			'name' => 'kea-dhcp4',
@@ -2550,7 +2553,6 @@ EOD;
 	}
 
 	/* create an empty leases database */
-	$kea_lease_db = $kea_var_lib . '/dhcp4.leases';
 	if (!file_exists($kea_lease_db)) {
 		touch($kea_lease_db);
 	}

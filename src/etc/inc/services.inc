@@ -524,7 +524,7 @@ function services_kea6_configure(bool $with_custom = true) {
 	$kea_var_lib = '/var/lib/kea';
 	$kea_var_db = '/var/db/kea';
 
-	$kea6socket = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$kea6socket = $kea_var_run . '/kea6-ctrl-socket';
 	unlink_if_exists($kea6socket . '.lock');
 
 	$keaconf_path = '/usr/local/etc/kea/kea-dhcp6.conf';
@@ -1339,7 +1339,7 @@ function services_kea4_configure(bool $with_custom = true) {
 	$kea_var_run = g_get('varrun_path') . '/kea';
 	$kea_var_lib = '/var/lib/kea';
 
-	$kea4socket = g_get('varrun_path').'/kea4-ctrl-socket';
+	$kea4socket = $kea_var_run . '/kea4-ctrl-socket';
 	unlink_if_exists($kea4socket . '.lock');
 
 	$keaconf_path = '/usr/local/etc/kea/kea-dhcp4.conf';

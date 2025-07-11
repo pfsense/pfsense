@@ -59,6 +59,7 @@ net/dhcpcd
 net/hping3
 net/intel-em-kmod
 net/kea
+net/kea-devel
 net/keama
 net/librdkafka
 net/mcjoin

@@ -2658,7 +2658,7 @@ function filter_captiveportal_tables() {
 }
 
 function filter_captiveportal_ether() {
-	global $g;
+	global $PFConfig, $g;
 
 	$rules = '';
 	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
@@ -2682,15 +2682,13 @@ function filter_captiveportal_ether() {
 		}
 	}
 
-	if (!empty($rules)) {
-		$rules = "\n# Captive Portal\n" . $rules . "\n";
-	}
-
-	return $rules;
+	$PFConfig->set_config(PFCONFIG_ETHERNET_CAPTIVE_PORTAL['id'],
+		array_from_filter_lines($rules)
+	);
 }
 
 function filter_captiveportal_rdr() {
-	global $g, $FilterIflist;
+	global $PFConfig, $g, $FilterIflist;
 
 	$rules = '';
 	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
@@ -2717,11 +2715,11 @@ function filter_captiveportal_rdr() {
 		}
 	}
 
-	if (!empty($rules)) {
-		$rules = "\n# Captive Portal\n" . $rules . "\n";
-	}
-
-	return $rules;
+	$PFConfig->set_config(PFCONFIG_ALL_NAT_RULES['id'],
+		array_from_filter_lines($rules),
+		null,
+		PFCONFIG_NAT_CAPTIVE_PORTAL['id']
+	);
 }
 
 function filter_captiveportal_pass() {

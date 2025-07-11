@@ -1184,10 +1184,15 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		array_from_filter_lines(discover_pkg_rules("filter"))
 	);
 
-	$reload_filter_result = reload_filter();
-	if (!$reload_filter_result[0]) {
-		unlock($filterlck);
-		return;
+	$reload_filter_result = null;
+	if ($PFConfig->filter_sync_needed()) {
+		$reload_filter_result = reload_filter();
+		if (!$reload_filter_result[0]) {
+			unlock($filterlck);
+			return;
+		}
+	} else {
+		update_filter_reload_status(gettext("Skipping filter configuration reload"));
 	}
 	reload_filterdns();
 	filter_run_commands_late();

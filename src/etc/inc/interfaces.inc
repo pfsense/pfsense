@@ -7711,7 +7711,7 @@ function get_interface_addresses($interface, $linklocal_fallback = false) {
 	if ($v4addrs) {
 		$v4addr = array_shift($v4addrs);
 		$ifaddrs['ipaddr'] = $v4addr['addr'];
-		foreach(array("subnetbits", "subnet", "broadcast", "tunnel") as $key) {
+		foreach(array("subnetbits", "subnet", "broadcast", "dstaddr") as $key) {
 			if (array_key_exists($key, $v4addr)) {
 				$ifaddrs[$key] = $v4addr[$key];
 			}
@@ -7878,7 +7878,7 @@ function get_interface_addresses($interface, $linklocal_fallback = false) {
 				$ifaddrs['ipaddr6'] .= "%{$interface}";
 			}
 	
-			foreach(array("subnetbits", "tunnel") as $key) {
+			foreach(array("subnetbits", "dstaddr") as $key) {
 				if (array_key_exists($key, $v6addr)) {
 					$ifaddrs[$key.'6'] = $v6addr[$key];
 				}

@@ -29,12 +29,12 @@ function pppoe_add_addrv4($interface, $address) {
 	$tmp = g_get('tmp_path', '');
 	$addresses = get_interface_addresses($interface);
 
-	// Ignore events when the tunnel isn't available.
-	if (!isset($addresses['tunnel'])) {
+	// Ignore events when the tunnel isn't established.
+	if (!isset($addresses['dstaddr'])) {
 		return;
 	}
 
-	file_put_contents("{$tmp}/{$interface}_router", $addresses['tunnel']);
+	file_put_contents("{$tmp}/{$interface}_router", $addresses['dstaddr']);
 	unlink_if_exists("{$tmp}/{$interface}_router.last");
 	touch("{$tmp}/{$interface}up");
 	touch("{$tmp}/{$interface}_upstart4");
@@ -53,21 +53,21 @@ function pppoe_add_addrv6($interface, $address) {
 	$tmp = g_get('tmp_path', '');
 	$addresses = get_interface_addresses($interface);
 
-	// Workaround for when tunnel6 is never set - see #16265.
-	if (!isset($addresses['tunnel6']) && isset($addresses['tunnel'])) {
+	// Workaround for when dstaddr6 is never set - see #16265.
+	if (!isset($addresses['dstaddr6']) && isset($addresses['dstaddr'])) {
 		$default_route = route_get('default', 'inet6', true);
 		if ((array_get_path($default_route, '0/interface-name') == $interface) &&
 		    is_ipaddrv6($default_route[0]['gateway'])) {
-			$addresses['tunnel6'] = $default_route[0]['gateway'];
+			$addresses['dstaddr6'] = $default_route[0]['gateway'];
 		}
 	}
 
-	// Ignore events when the tunnel isn't available.
-	if (!isset($addresses['tunnel6'])) {
+	// Ignore events when the tunnel isn't established.
+	if (!isset($addresses['dstaddr6'])) {
 		return;
 	}
 
-	file_put_contents("{$tmp}/{$interface}_routerv6", $addresses['tunnel6']);
+	file_put_contents("{$tmp}/{$interface}_routerv6", $addresses['dstaddr6']);
 	unlink_if_exists("{$tmp}/{$interface}_routerv6.last");
 	touch("{$tmp}/{$interface}upv6");
 	touch("{$tmp}/{$interface}_upstart6");

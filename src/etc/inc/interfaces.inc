@@ -4761,7 +4761,7 @@ function interface_6rd_configure($interface, $wancfg) {
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
 	mwexec("/sbin/ifconfig {$stfiface} stfv4br " . escapeshellarg($wancfg['gateway-6rd']));
 	if ($wancfg['prefix-6rd-v4plen'] >= 0 && $wancfg['prefix-6rd-v4plen'] <= 32) {
-		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/" . escapeshellarg($wancfg['prefix-6rd-v4plen']));
+		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/" . escapeshellarg(($wancfg['prefix-6rd-v4plen'] > 0) ? $wancfg['prefix-6rd-v4plen'] : 32));
 	}
 	$parentmtu = get_interface_mtu(get_real_interface($interface));
 	if (isset($wancfg['mtu']) && ($wancfg['mtu'] >= 1300)) {

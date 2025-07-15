@@ -35,13 +35,13 @@
 		<field>
 			<name>Service Settings</name>
 			<type>listtopic</type>
-			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,allow_third_party_mapping,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 		</field>
 		<field>
 			<fielddescr>Enable</fielddescr>
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
-			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,allow_third_party_mapping,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 			<description>Enable port mapping service</description>
 			<sethelp>
 				<![CDATA[
@@ -191,6 +191,16 @@
 		<field>
 			<name>Advanced Settings</name>
 			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Allow Third-Party Mapping</fielddescr>
+			<fieldname>allow_third_party_mapping</fieldname>
+			<description>
+				<![CDATA[
+				Allow adding port maps for non-requesting IP addresses
+				]]>
+			</description>
+			<type>checkbox</type>
 		</field>
 		<field>
 			<fielddescr>Download Speed</fielddescr>

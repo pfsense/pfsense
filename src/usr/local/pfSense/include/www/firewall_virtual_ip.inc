@@ -182,6 +182,10 @@ function saveVIP($post, $json = false) {
 			break;
 	}
 
+	if ($post['mode'] == 'proxyarp' && is_v6($post['subnet'])) {
+		$input_errors[] = gettext("Only IPv4 addresses are valid for Proxy ARP VIPs.");
+	}
+
 	if (!$input_errors) {
 		$vipent = array();
 

@@ -1198,15 +1198,12 @@ foreach ($pkg['fields']['field'] as $pkga) {
 							$ips[] = array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
 							break;
 						case "proxyarp":
-							if ($vip['type'] == "network") {
-								$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
-								$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
-								$len = $end - $start;
-								for ($i = 0; $i <= $len; $i++) {
-									$ips[]= array('ip' => long2ip32($start+$i), 'description' => long2ip32($start+$i)." from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}");
-								}
-							} else {
-								$ips[]= array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
+							$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
+							$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
+							$len = $end - $start;
+							$sufx = ($len > 0)?" from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}":$vip_description;
+							for ($i = 0; $i <= $len; $i++) {
+								$ips[]= array('ip' => long2ip32($start+$i), 'description' => long2ip32($start+$i).$sufx);
 							}
 							break;
 					}

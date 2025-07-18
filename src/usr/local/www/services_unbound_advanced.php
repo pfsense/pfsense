@@ -322,6 +322,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dnsrecordcache']
 ))->setHelp('When enabled, allows unbound to serve one query even with a TTL of 0, if TTL is 0 then new record will be requested in the background when the cache is served to ensure cache is updated without latency on service of the DNS request.');
 
+/* Not supported on FreeBSD. See https://redmine.pfsense.org/issues/16299
 $section->addInput(new Form_Input(
 	'sock_queue_timeout',
 	'Drop Old UDP Queries',
@@ -331,6 +332,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Timeout in seconds before dropping UDP queries waiting in the ' .
             'socket buffer. Queries that have waited for a long time don\'t ' .
             'need to be processed and can be dropped. Disabled by default (0).');
+*/
 
 $section->addInput(new Form_Checkbox(
 	'aggressivensec',

@@ -201,7 +201,7 @@ if ($_POST['act'] == "del") {
 if (($_POST['act'] == 'killid') &&
     (!empty($_POST['tracker'])) &&
     (!empty($if))) {
-	mwexec("/sbin/pfctl -k label -k " . escapeshellarg("id:{$_POST['tracker']}"));
+	mwexec("/sbin/pfctl -k label -k " . escapeshellarg(make_rule_label_string($_POST['tracker'], RULE_LABEL_KEY_IDENTIFIER, false)));
 	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 	exit;
 }

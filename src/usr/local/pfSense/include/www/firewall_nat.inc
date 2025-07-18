@@ -606,6 +606,10 @@ function saveNATrule($post, $id, $json = false) {
 					mark_subsystem_dirty('filter');
 				}
 			}
+			if (isset($a_nat[$id]['labels'])) {
+				// Keep rule labels.
+				$natent['labels'] = $a_nat[$id]['labels'];
+			}
 			$a_nat[$id] = $natent;
 		} else {
 			$natent['created'] = make_config_revision_entry();

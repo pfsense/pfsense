@@ -93,6 +93,10 @@ function savenptNATrule($post, $id, $json = false) {
 
 		$a_npt = config_get_path('nat/npt', []);
 		if (isset($id) && $a_npt[$id]) {
+			if (isset($a_npt[$id]['labels'])) {
+				// Keep rule labels.
+				$natent['labels'] = $a_npt[$id]['labels'];
+			}
 			$a_npt[$id] = $natent;
 		} else {
 			if (is_numeric($after)) {

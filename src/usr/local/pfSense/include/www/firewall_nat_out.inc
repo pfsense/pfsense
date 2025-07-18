@@ -353,6 +353,10 @@ function saveoutNATrule($post, $id, $json = false) {
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/pre_write_config");
 
 		if (isset($id) && config_get_path("nat/outbound/rule/{$id}")) {
+			if (config_get_path("nat/outbound/rule/{$id}/labels")) {
+				// Keep rule labels.
+				$natent['labels'] = config_get_path("nat/outbound/rule/{$id}/labels");
+			}
 			config_set_path("nat/outbound/rule/{$id}", $natent);
 		} else {
 			$natent['created'] = make_config_revision_entry();

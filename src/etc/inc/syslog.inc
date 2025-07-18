@@ -1361,7 +1361,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 		$rulename = substr($ruleString, 0, 30);
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
-		$rulename = str_replace("USER_RULE: ", '<i class="fa-solid fa-user"></i> ', $ruleString);
+		$rulename = str_replace(RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER, '<i class="fa-solid fa-user"></i> ', $ruleString);
 	}
 	return "{$rulename} ({$lookup_key})";
 }

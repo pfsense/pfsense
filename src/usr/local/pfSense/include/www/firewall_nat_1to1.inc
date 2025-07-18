@@ -208,6 +208,10 @@ function save1to1NATrule($post, $id, $json = false) {
 
 		$a_1to1 = config_get_path('nat/onetoone', []);
 		if (isset($id) && $a_1to1[$id]) {
+			if (isset($a_1to1[$id]['labels'])) {
+				// Keep rule labels.
+				$natent['labels'] = $a_1to1[$id]['labels'];
+			}
 			$a_1to1[$id] = $natent;
 		} else {
 			if (is_numeric($after)) {

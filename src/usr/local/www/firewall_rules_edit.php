@@ -1260,6 +1260,8 @@ if ($_POST['save']) {
 
 		if (isset($id) && $a_filter[$id]) {
 			$tmpif = $filterent['interface'];
+			// Retain rule labels
+			set_labels_for_rule_item($filterent, get_label_items_from_rule_item($a_filter[$id]));
 			if (($tmpif == $if) || isset($pconfig['floating'])) {
 				$a_filter[$id] = $filterent;
 			} else {							// rule moved to different interface

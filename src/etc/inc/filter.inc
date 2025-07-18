@@ -276,6 +276,34 @@ class PFConfig {
 	}
 
 	/**
+	 * Get the hash from the pf configuration file.
+	 * @return string
+	 */
+	private function get_saved_hash(): string|null {
+		$hash = '';
+		$pf_configuration_file = fopen($this->conf_paths['pfconf'], "r");
+		if ($pf_configuration_file === false) {
+			return $hash;
+		}
+		while (!feof($pf_configuration_file)) {
+			$line = fgets($pf_configuration_file);
+			if (!str_starts_with($line, 'match ') && !str_starts_with($line, 'pass ') && !str_starts_with($line, 'block ')) {
+				continue;
+			}
+			foreach (get_label_tags_from_rule_string($line) as $tag) {
+				$hash_tag = explode(':', $tag);
+				if ((count($hash_tag) != 2) || !isset($hash_tag[0]) || ($hash_tag[0] != 'ruleset')) {
+					continue;
+				}
+				$hash = $hash_tag[1];
+				break 2;
+			}
+		}
+		fclose($pf_configuration_file);
+		return $hash;
+	}
+
+	/**
 	 * Get the hash of the generated configuration.
 	 */
 	private function get_generated_hash(): string|null {
@@ -418,7 +446,11 @@ class PFConfig {
 	 */
 	public function filter_sync_needed() {
 		$this->regenerate_config();
-		return ($this->get_active_hash() !== $this->get_generated_hash());
+		return (
+			empty($this->get_generated_hash()) ||
+			($this->get_active_hash() !== $this->get_generated_hash()) ||
+			($this->get_saved_hash() !== $this->get_generated_hash())
+		);
 	}
 
 	/**

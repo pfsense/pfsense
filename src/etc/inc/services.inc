@@ -4583,8 +4583,33 @@ function get_request_source_address($interface, int|null $address_family = null)
 		if (array_get_path($gateways_status, "{$interface_gateway}/status", '') != 'online') {
 			return false;
 		}
-		// Note: Gateway monitoring for IPv6 may be using a link-local address.
-		$source_address_gw = array_get_path($gateways_status, "{$interface_gateway}/srcip", '');
+
+		// Check for the gateway group VIP preference.
+		$use_vip = false;
+		$source_address_gw = array_get_path($gateways_groups, "{$interface}/0/vip", '');
+		if (!empty($source_address_gw)) {
+			$vip_carp_status = get_carp_bind_status($source_address_gw);
+			if (empty($vip_carp_status)) {
+				// IP alias VIP not on CARP parent.
+				$use_vip = true;
+			} elseif ($vip_carp_status == 'MASTER') {
+				// CARP VIP or IP alias on CARP parent
+				$use_vip = true;
+			}
+		}
+		if ($use_vip) {
+			$vip_list = get_configured_vip_list();
+			if (isset($vip_list[$source_address_gw])) {
+				$source_address_gw = $vip_list[$source_address_gw];
+			}
+		} else {
+			$source_address_gw = '';
+		}
+
+		if (empty($source_address_gw)) {
+			// Note: Gateway monitoring for IPv6 may be using a link-local address.
+			$source_address_gw = array_get_path($gateways_status, "{$interface_gateway}/srcip", '');
+		}
 
 		// If the address family hasn't been specified, base it on the gateway.
 		if (!isset($address_family)) {

@@ -51,7 +51,7 @@ function pppoe_add_addrv4($interface, $address) {
 
 function pppoe_add_addrv6($interface, $address) {
 	$tmp = g_get('tmp_path', '');
-	$addresses = get_interface_addresses($interface, true);
+	$addresses = get_interface_addresses($interface);
 
 	// Ignore events when the tunnel isn't established.
 	if (!isset($addresses['dstaddr6'])) {

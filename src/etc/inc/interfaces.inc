@@ -7868,7 +7868,13 @@ function get_interface_addresses($interface, $linklocal_fallback = false) {
 		foreach ($v6addrs as $addr) {
 			if ($addr['addr'] == $selected_address) {
 				$v6addr = $addr;
-				break;
+			}
+			// Always get the peer address
+			if (isset($addr['dstaddr'])) {
+				$ifaddrs['dstaddr6'] = $addr['dstaddr'];
+				if (is_linklocal($addr['dstaddr'])) {
+					$ifaddrs['dstaddr6'] .= "%{$interface}";
+				}
 			}
 		}
 
@@ -7878,10 +7884,8 @@ function get_interface_addresses($interface, $linklocal_fallback = false) {
 				$ifaddrs['ipaddr6'] .= "%{$interface}";
 			}
 	
-			foreach(array("subnetbits", "dstaddr") as $key) {
-				if (array_key_exists($key, $v6addr)) {
-					$ifaddrs[$key.'6'] = $v6addr[$key];
-				}
+			if (array_key_exists('subnetbits', $v6addr)) {
+				$ifaddrs['subnetbits6'] = $v6addr['subnetbits'];
 			}
 	
 			$selected_address_flags = [];

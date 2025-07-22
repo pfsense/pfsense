@@ -61,6 +61,7 @@ $pconfig['ppp'] = config_path_enabled('syslog', 'ppp');
 $pconfig['routing'] = config_path_enabled('syslog', 'routing');
 $pconfig['ntpd'] = config_path_enabled('syslog', 'ntpd');
 $pconfig['enable'] = config_path_enabled('syslog', 'enable');
+$pconfig['logipoptions'] = !config_path_enabled('syslog', 'nologipoptions');
 $pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock');
 $pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
 $pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
@@ -201,6 +202,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		config_set_path('syslog/disablelocallogging', $_POST['disablelocallogging'] ? true : false);
 		config_set_path('syslog/logconfigchanges', $_POST['logconfigchanges'] ? "enabled" : "disabled");
 		config_set_path('syslog/enable', $_POST['enable'] ? true : false);
+		$oldnologipoptions = config_path_enabled('syslog', 'nologipoptions');
 		$oldnologdefaultblock = config_path_enabled('syslog', 'nologdefaultblock');
 		$oldnologdefaultpass = config_path_enabled('syslog', 'nologdefaultpass');
 		$oldnologbogons = config_path_enabled('syslog', 'nologbogons');
@@ -208,6 +210,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologlinklocal4 = config_path_enabled('syslog', 'nologlinklocal4');
 		$oldnologsnort2c = config_path_enabled('syslog', 'nologsnort2c');
 		$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
+		config_set_path('syslog/nologipoptions', $_POST['logipoptions'] ? false : true);
 		config_set_path('syslog/nologdefaultblock', $_POST['logdefaultblock'] ? false : true);
 		config_set_path('syslog/nologdefaultpass', $_POST['logdefaultpass'] ? true : false);
 		config_set_path('syslog/nologbogons', $_POST['logbogons'] ? false : true);
@@ -235,7 +238,8 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$retval = 0;
 		system_sshguard_stop();
 		system_syslogd_start();
-		if (($oldnologdefaultblock !== config_path_enabled('syslog', 'nologdefaultblock')) ||
+		if (($oldnologipoptions !== config_path_enabled('syslog', 'nologipoptions')) ||
+		    ($oldnologdefaultblock !== config_path_enabled('syslog', 'nologdefaultblock')) ||
 		    ($oldnologdefaultpass !== config_path_enabled('syslog', 'nologdefaultpass')) ||
 		    ($oldnologbogons !== config_path_enabled('syslog', 'nologbogons')) ||
 		    ($oldnologprivatenets !== config_path_enabled('syslog', 'nologprivatenets')) ||
@@ -252,7 +256,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$extra_save_msg = gettext("WebGUI process is restarting.");
 		}
 
-		filter_pflog_start();
+		filter_pflog_start(($oldnologipoptions !== config_path_enabled('syslog', 'nologipoptions')));
 	}
 }
 
@@ -361,6 +365,13 @@ $form->add($section);
 $section = new Form_Section('Logging Preferences');
 
 $section->addInput(new Form_Checkbox(
+	'logipoptions',
+	null,
+	'Packets blocked due to IP options',
+	$pconfig['logipoptions']
+))->setHelp('Log packets that are %1$sblocked%2$s due to unmatched IP options in "pass" rules.', '<strong>', '</strong>');
+
+$section->addInput(new Form_Checkbox(
 	'logdefaultblock',
 	null,
 	'Default firewall "block" rules',
@@ -372,11 +383,7 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Default firewall "pass" rules',
 	$pconfig['logdefaultpass']
-))->setHelp('Log packets that are %1$sallowed%2$s by the implicit ' .
-	'default pass rule. Note: Packets with IP options are not affected ' .
-	'by this option and %3$sare logged by default%4$s.', '<strong>', '</strong>',
-	'<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/log-filter-blocked.html#packets-with-ip-options">', '</a>'
-);
+))->setHelp('Log packets that are %1$sallowed%2$s by the implicit default pass rule.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',

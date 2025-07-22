@@ -644,6 +644,7 @@ function manage_log_code() {
 	global $logfile, $specific_log, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied, $allowed_logs;
 
 	$changes_applied = false;
+	$filterlog_changed = false;
 	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
 	$syslog_config = config_get_path('syslog', []);
@@ -662,6 +663,7 @@ function manage_log_code() {
 
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
+		$pconfig['logipoptions'] = !isset($syslog_config['nologipoptions']);
 		$pconfig['logdefaultblock'] = !isset($syslog_config['nologdefaultblock']);
 		$pconfig['logdefaultpass'] = isset($syslog_config['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($syslog_config['nologbogons']);
@@ -693,6 +695,7 @@ function manage_log_code() {
 
 		// Specific to Firewall Log
 		if ($logfile == 'filter') {
+			$logipoptions = getGETPOSTsettingvalue('logipoptions',  null);
 			$logdefaultblock = getGETPOSTsettingvalue('logdefaultblock',  null);
 			$logdefaultpass = getGETPOSTsettingvalue('logdefaultpass', null);
 			$logbogons = getGETPOSTsettingvalue('logbogons', null);
@@ -772,6 +775,7 @@ function manage_log_code() {
 
 		// Specific to  Firewall Log
 			if ($logfile == 'filter') {
+				$oldnologipoptions = isset($syslog_config['nologipoptions']);
 				$oldnologdefaultblock = isset($syslog_config['nologdefaultblock']);
 				$oldnologdefaultpass = isset($syslog_config['nologdefaultpass']);
 				$oldnologbogons = isset($syslog_config['nologbogons']);
@@ -779,6 +783,7 @@ function manage_log_code() {
 				$oldnologlinklocal4 = isset($syslog_config['nologlinklocal4']);
 				$oldnologsnort2c = isset($syslog_config['nologsnort2c']);
 
+				$syslog_config['nologipoptions'] = $logipoptions ? false : true;
 				$syslog_config['nologdefaultblock'] = $logdefaultblock ? false : true;
 				$syslog_config['nologdefaultpass'] = $logdefaultpass ? true : false;
 				$syslog_config['nologbogons'] = $logbogons ? false : true;
@@ -793,6 +798,7 @@ function manage_log_code() {
 				}
 
 				if (
+				    ($oldnologipoptions !== $syslog_config['nologipoptions']) ||
 				    ($oldnologdefaultblock !== $syslog_config['nologdefaultblock']) ||
 				    ($oldnologdefaultpass !== $syslog_config['nologdefaultpass']) ||
 				    ($oldnologbogons !== $syslog_config['nologbogons']) ||
@@ -800,6 +806,10 @@ function manage_log_code() {
 				    ($oldnologlinklocal4 !== $syslog_config['nologlinklocal4']) ||
 				    ($oldnologsnort2c !== $syslog_config['nologsnort2c'])) {
 					$logging_changed = $firewall_logging_changed = true;
+				}
+
+				if ($oldnologipoptions !== $syslog_config['nologipoptions']) {
+					$filterlog_changed = true;
 				}
 			}
 
@@ -833,7 +843,7 @@ function manage_log_code() {
 				if ($firewall_logging_changed) {
 					require_once("filter.inc");
 					$retval |= filter_configure();
-					filter_pflog_start();
+					filter_pflog_start($filterlog_changed);
 				}
 			}
 		}
@@ -999,6 +1009,13 @@ function manage_log_section() {
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
 		$section->addInput(new Form_Checkbox(
+			'logipoptions',
+			null,
+			'Packets blocked due to IP options',
+			$pconfig['logipoptions']
+		))->setHelp('Log packets that are %1$sblocked%2$s due to unmatched IP options in "pass" rules.', '<strong>', '</strong>');
+
+		$section->addInput(new Form_Checkbox(
 			'logdefaultblock',
 			null,
 			'Default firewall "block" rules',
@@ -1010,11 +1027,7 @@ function manage_log_section() {
 			null,
 			'Default firewall "pass" rules',
 			$pconfig['logdefaultpass']
-		))->setHelp('Log packets that are %1$sallowed%2$s by the implicit ' .
-			'default pass rule. Note: Packets with IP options are not affected ' .
-			'by this option and %3$sare logged by default%4$s.', '<strong>', '</strong>',
-			'<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/log-filter-blocked.html#packets-with-ip-options">', '</a>'
-		);
+		))->setHelp('Log packets that are %1$sallowed%2$s by the implicit default pass rule.', '<strong>', '</strong>');
 		
 		$section->addInput(new Form_Checkbox(
 			'logbogons',

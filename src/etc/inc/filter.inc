@@ -1192,16 +1192,29 @@ function is_bogonsv6_used($force = false) {
 	return $usebogonsv6;
 }
 
-function filter_pflog_start() {
-	global $g;
-
+function filter_pflog_start(bool $restart = false) {
 	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";
 	}
-	if ((!file_exists("{$g['varrun_path']}/filterlog.pid")) ||
-	    (!isvalidpid("{$g['varrun_path']}/filterlog.pid"))) {
-		mwexec("/usr/local/sbin/filterlog -i pflog0 -p {$g['varrun_path']}/filterlog.pid");
+
+	$pid = g_get('varrun_path', '') . "/filterlog.pid";
+
+	if ($restart && isvalidpid($pid)) {
+		killbypid($pid, 10);
+		unlink_if_exists($pid);
+	}
+	
+	if (!file_exists($pid) || !isvalidpid($pid)) {
+		$command = [
+			'/usr/local/sbin/filterlog',
+			'-i pflog0',
+			"-p {$pid}"
+		];
+		if (config_path_enabled('syslog', 'nologipoptions')) {
+			$command[] = '-r 8';
+		}
+		mwexec(implode(' ', $command));
 	}
 }
 

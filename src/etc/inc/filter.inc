@@ -4974,7 +4974,8 @@ function filter_generate_user_rule($rule) {
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['nottagged'] . $aline['tagged'] .
 			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . filter_negaterule_tracker() . $aline['allowopts'] . $aline['flags'] .
-			$aline['queue'] . $aline['dnpipe'] . ' ' . make_rule_label_item('NEGATE_ROUTE: Negate policy routing for destination') . PHP_EOL;
+			$aline['queue'] . $aline['dnpipe'] . ' ' .
+			make_rule_label_string('NEGATE_ROUTE: Negate policy routing for destination', RULE_LABEL_KEY_DESCRIPTION, true) . PHP_EOL;
 	}
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .

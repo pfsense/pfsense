@@ -4559,6 +4559,7 @@ function filter_generate_user_rule($rule) {
 	$aline = array();
 	$labels = array_get_path($rule, 'labels/item', []);
 	$labels[] = make_rule_label_item($rule['descr']);
+	$labels[] = make_rule_label_item('user_rule', RULE_LABEL_KEY_TAGS);
 
 	/* Check to see if the interface is in our list */
 	if (isset($rule['floating'])) {

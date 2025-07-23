@@ -1335,7 +1335,41 @@ function buffer_rules_load() {
 	if (is_array($rules)) {
 		foreach ($rules as $rule) {
 			$key = sprintf("%d", $rule['tracker']);
-			$buffer_rules_normal[$key] = is_array($rule['labels']) ? array_shift($rule['labels']) : $rule['labels'];
+			$buffer_rules_normal[$key] = null;
+			if (empty($rule['labels'])) {
+				continue;
+			}
+			if (is_string($rule['labels']) &&
+			    str_starts_with($rule['labels'], RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER)) {
+				$buffer_rules_normal[$key] = str_replace(
+					RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER,
+					'',
+					$rule['labels']
+				);
+				continue;
+			} elseif (!is_array($rule['labels'])) {
+				continue;
+			}
+
+			$tags = '';
+			foreach ($rule['labels'] as $label) {
+				if (str_starts_with($label, RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER)) {
+					$buffer_rules_normal[$key] = str_replace(
+						RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER,
+						'',
+						$label
+					);
+				} elseif (str_starts_with($label, RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER)) {
+					$tags = explode(RULE_LABEL_TAG_DELIMITER, str_replace(
+						RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER,
+						'',
+						$label
+					));
+				}
+			}
+			if (!empty($buffer_rules_normal[$key]) && !empty($tags) && in_array('user_rule', $tags)) {
+				$buffer_rules_normal[$key] = "USER_RULE: {$buffer_rules_normal[$key]}";
+			}
 		}
 	}
 	unset($_gb, $buffer);
@@ -1361,7 +1395,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 		$rulename = substr($ruleString, 0, 30);
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
-		$rulename = str_replace(RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER, '<i class="fa-solid fa-user"></i> ', $ruleString);
+		$rulename = str_replace("USER_RULE: ", '<i class="fa-solid fa-user"></i> ', $ruleString);
 	}
 	return "{$rulename} ({$lookup_key})";
 }

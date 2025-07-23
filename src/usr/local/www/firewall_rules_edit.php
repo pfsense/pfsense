@@ -2372,7 +2372,7 @@ events.push(function() {
 		} else {
 			$('#allowopts').prop('checked', allowopts_state_without_igmp);
 		}
-		show_advopts();
+		show_advopts(true);
 	});
 
 	$('#allowopts').on('change', function() {

@@ -896,6 +896,35 @@ function user_rule_descr_maxlen() {
 }
 
 /**
+ * Get a list of valid rule label tags.
+ *
+ * Each tag is trimmed, has a minimum length of 1, is stripped of
+ * double-quotes, and is delimited by RULE_LABEL_TAG_DELIMITER.
+ */
+function parse_rule_label_tags(string|array $tags): array {
+	if (is_string($tags)) {
+		$tags = array_filter(explode(RULE_LABEL_TAG_DELIMITER, $tags));
+	}
+
+	$new_tags = [];
+	foreach ($tags as $tag) {
+		if (!is_string($tag)) {
+			continue;
+		}
+		$tag = str_replace('"', '', trim($tag));
+		if (strlen($tag) < 1) {
+			continue;
+		}
+		$new_tags[] = $tag;
+	}
+	if (!empty($new_tags)) {
+		$new_tags = array_unique($new_tags);
+	}
+
+	return $new_tags;
+}
+
+/**
  * Get a valid config rule label from the given label item.
  *
  * # Label string
@@ -913,8 +942,6 @@ function user_rule_descr_maxlen() {
  * # Label description
  * - Min length: 1
  * - Max length: RULE_LABEL_MAXLEN - RULE_LABEL_DELIMITER - name
- * - Each tag in the description for RULE_LABEL_KEY_TAGS is trimmed, has a
- *   minimum length of 1, and is delimited by RULE_LABEL_TAG_DELIMITER.
  */
 function parse_rule_label_item(array $label): array|null {
 	if (!isset($label['name']) || !is_string($label['name']) || (strlen(trim($label['name'])) < 1)) {
@@ -931,28 +958,23 @@ function parse_rule_label_item(array $label): array|null {
 	}
 
 	// Validate the label description.
+	$label_descr = '';
+	$label_tags = [];
 	if (isset($label['descr']) && is_string($label['descr'])) {
-		$label_descr = str_replace('"', '', trim($label['descr']));
-	} else {
-		$label_descr = '';
+		if ($label_name == RULE_LABEL_KEY_TAGS) {
+			// Validate label tags.
+			$label_tags = parse_rule_label_tags($label['descr']);
+			if (!empty($label_tags)) {
+				$label_descr = implode(RULE_LABEL_TAG_DELIMITER, $label_tags);
+			}
+		} else {
+			$label_descr = str_replace('"', '', trim($label['descr']));
+		}
 	}
 	$label_descr_length = strlen($label_descr);
 	if ($label_descr_length < 1) {
 		// Empty descriptions are not valid.
 		return null;
-	}
-
-	// Validate tag format.
-	$new_tags = [];
-	if ($label_name == RULE_LABEL_KEY_TAGS) {
-		foreach (array_filter(explode(RULE_LABEL_TAG_DELIMITER, $label_descr)) as $tag) {
-			$tag = trim($tag);
-			if (strlen($tag) < 1) {
-				continue;
-			}
-			$new_tags[] = $tag;
-		}
-		$label_descr = implode(RULE_LABEL_TAG_DELIMITER, $new_tags);
 	}
 
 	// Handle label descriptions that exceed the max length.
@@ -967,8 +989,8 @@ function parse_rule_label_item(array $label): array|null {
 			// Only include the first tags that fit.
 			$new_tags_description = '';
 			$tag_delimiter_length = strlen(RULE_LABEL_TAG_DELIMITER);
-			foreach ($new_tags as $index => $tag) {
-				if ($index == array_key_first($new_tags)) {
+			foreach ($label_tags as $index => $tag) {
+				if ($index == array_key_first($label_tags)) {
 					if ($label_descr_max_length < strlen($new_tags_description) + strlen($tag)) {
 						break;
 					}
@@ -995,37 +1017,44 @@ function parse_rule_label_item(array $label): array|null {
 }
 
 /**
- * Remove invalid labels, sort valid labels, and limit label count.
- * Labels for pf rules are unique.
+ * Remove invalid labels, sort valid labels, and limit the label count.
+ * Labels and label tags are unique.
  */
 function filter_rule_label_items(array $labels): array {
 	$ordered = array_fill_keys(array_keys(RULE_LABEL_ORDER), '');
+	$tags = [];
 	foreach ($labels as $label) {
+		// Defer label tag items to be merged.
+		if (isset($label['name']) && ($label['name'] == RULE_LABEL_KEY_TAGS)) {
+			if (isset($label['descr'])) {
+				$tags[] = $label['descr'];
+			}
+			// Avoid redundant calls to parse_rule_label_item().
+			continue;
+		}
 		$label = parse_rule_label_item($label);
 		if (!isset($label)) {
 			continue;
 		}
 		$ordered[$label['name']] = $label;
 	}
+	$tags_label = make_rule_label_item(implode(RULE_LABEL_TAG_DELIMITER, $tags), RULE_LABEL_KEY_TAGS);
+	if (!empty($tags_label)) {
+		$ordered[RULE_LABEL_KEY_TAGS] = $tags_label;
+	}
 	return array_slice(array_filter(array_values($ordered)), 0, RULE_LABEL_LIMIT);
 }
 
 /**
- * Get all labels from a config rule.
+ * Get all valid labels from a config rule.
  */
 function get_label_items_from_rule_item(array $rule): array  {
 	$labels = [];
-	if (!isset($rule['labels']) || !isset($rule['labels']['item']) || !array_is_list($rule['labels']['item'])) {
+	if (!isset($rule['labels']) || !isset($rule['labels']['item']) ||
+	    !is_array($rule['labels']['item']) || !array_is_list($rule['labels']['item'])) {
 		return $labels;
 	}
-	foreach ($rule['labels']['item'] as $label) {
-		$label = parse_rule_label_item($label);
-		if (!isset($label)) {
-			continue;
-		}
-		$labels[] = $label;
-	}
-	return $labels;
+	return filter_rule_label_items($rule['labels']['item']);
 }
 
 /**
@@ -1062,28 +1091,54 @@ function get_labels_string_from_rule_item(array $rule): string {
 	return get_labels_string_from_label_items(get_label_items_from_rule_item($rule));
 }
 
+/**
+ * Get label tags from a pf rule.
+ */
 function get_label_tags_from_rule_string(string $rule): array {
 	$matches = [];
 	if (!preg_match('/ label "' . RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER . '(.*?)"/', $rule, $matches)) {
 		return [];
 	}
-	return array_filter(explode(RULE_LABEL_TAG_DELIMITER, $matches[1]));
+	$label_item = make_rule_label_item($matches[1], RULE_LABEL_KEY_TAGS);
+	if (empty($label_item)) {
+		return [];
+	}
+	return explode(RULE_LABEL_TAG_DELIMITER, $label_item['descr']);
 }
 
 /**
  * Remove all labels from a config rule.
  */
-function remove_label_from_rule_item(array &$rule): void {
-	if (isset($rule['labels'])) {
+function remove_labels_from_rule_item(array &$rule, string|null $label_key = null): void {
+	if (!isset($label_key) || !!isset($rule['labels']) || !isset($rule['labels']['item']) || empty($rule['labels']['item']) ||
+	    !is_array($rule['labels']['item']) || !array_is_list($rule['labels']['item'])) {
 		unset($rule['labels']);
+		return;
 	}
+
+	$new_labels = [];
+	foreach ($rule['labels']['item'] as $label) {
+		if (isset($label['name']) && ($label['name'] == $label_key)) {
+			continue;
+		}
+		$new_labels[] = $label;
+	}
+	$rule['labels']['item'] = $new_labels;
 }
 
 /**
- * Remove all labels from a pf rule.
+ * Remove a specific label or all labels from a pf rule.
  */
-function remove_labels_from_rule_string(string &$rule): void {
-	$new_rule = preg_replace('/ label "(.*?)"/', '', $rule);
+function remove_labels_from_rule_string(string &$rule, string|null $label_key = null): void {
+	if (isset($label_key)) {
+		if (!isset(RULE_LABEL_ORDER[$label_key])) {
+			return;
+		}
+		$pattern = '/ label "' . $label_key . RULE_LABEL_DELIMITER . '.*?"/';
+	} else {
+		$pattern = '/ label ".*?"/';
+	}
+	$new_rule = preg_replace($pattern, '', $rule);
 	if (isset($new_rule)) {
 		$rule = $new_rule;
 	}
@@ -1120,36 +1175,21 @@ function make_rule_label_string($descr, string $name = RULE_LABEL_KEY_DESCRIPTIO
  * Build a pf rule label for tags.
  */
 function make_tags_label_string(array $tags): string {
-	$new_tags = [];
-	foreach ($tags as &$tag) {
-		$tag = str_replace(['"', RULE_LABEL_TAG_DELIMITER], '', trim($tag));
-		if (strlen($tag) < 1) {
-			continue;
-		}
-		$new_tags[] = $tag;
-	}
-	if (empty($new_tags)) {
+	$label_item = make_rule_label_item(implode(RULE_LABEL_TAG_DELIMITER, $tags), RULE_LABEL_KEY_TAGS);
+	if (empty($label_item)) {
 		return '';
 	}
-	return 'label "' . RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER . implode(RULE_LABEL_TAG_DELIMITER, $new_tags) . '"';
+	return 'label "' . RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER . $label_item['descr'] . '"';
 }
 
 /**
  * Replace all labels on a config rule with the given labels.
  */
 function set_labels_for_rule_item(array &$rule, array $labels): void {
-	$set_labels = false;
-	foreach ($labels as $index => &$label) {
-		$label = parse_rule_label_item($label);
-		if (!isset($label)) {
-			unset($labels[$index]);
-			continue;
-		}
-		$set_labels = true;
-	}
-	if ($set_labels) {
+	$labels = filter_rule_label_items($labels);
+	if (!empty($labels)) {
 		$rule['labels'] = [
-			'item' => array_slice($labels, 0, RULE_LABEL_LIMIT)
+			'item' => $labels
 		];
 	}
 }
@@ -1167,10 +1207,8 @@ function set_labels_for_rule_string(string &$rule, array $labels): void {
  * Replace pf rule label tags with the given tags.
  */
 function set_label_tags_for_rule_string(string $rule, array $tags): string {
-	$new_rule = preg_replace('/ label "' . RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER . '.*?"/', '', $rule);
-	if (!is_string($new_rule)) {
-		$new_rule = $rule;
-	}
+	$new_rule = $rule;
+	remove_labels_from_rule_string($new_rule, RULE_LABEL_KEY_TAGS);
 	$new_label = make_tags_label_string($tags);
 	if (!empty($new_label)) {
 		$new_rule = "{$new_rule} {$new_label}";

@@ -43,27 +43,6 @@ define('DMYPWD', '********');
 // Captive Portal aliases prefix
 define('CPPREFIX', 'cpzoneid_');
 
-// Rule labels.
-define("RULE_LABEL_MAXLEN", 63);
-define("RULE_LABEL_LIMIT", 5);
-define("RULE_LABEL_DELIMITER", "=");
-define("RULE_LABEL_TAG_DELIMITER", ",");
-// Label keys must match a regex WORD and must have a max length of:
-// RULE_LABEL_MAXLEN - strlen(RULE_LABEL_DELIMITER) - 1;
-define("RULE_LABEL_KEY_IDENTIFIER", "id");
-define("RULE_LABEL_KEY_SCHEDULE", "s");
-define("RULE_LABEL_KEY_GATEwAY", "gw");
-define("RULE_LABEL_KEY_TAGS", "tags");
-define("RULE_LABEL_KEY_DESCRIPTION", "descr");
-// Used for pf rules.
-define("RULE_LABEL_ORDER", [
-	RULE_LABEL_KEY_IDENTIFIER => 'RULE_LABEL_KEY_IDENTIFIER',
-	RULE_LABEL_KEY_SCHEDULE => 'RULE_LABEL_KEY_SCHEDULE',
-	RULE_LABEL_KEY_GATEwAY => 'RULE_LABEL_KEY_GATEwAY',
-	RULE_LABEL_KEY_TAGS => 'RULE_LABEL_KEY_TAGS',
-	RULE_LABEL_KEY_DESCRIPTION => 'RULE_LABEL_KEY_DESCRIPTION'
-]);
-
 $version_file = '/etc/version';
 $version_patch_file = $version_file . 'patch';
 

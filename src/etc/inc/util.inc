@@ -52,6 +52,488 @@ define('SPECIALNET_VIPALIAS', 15);
 define('SPECIALNET_CHECKPERM', 98);
 define('SPECIALNET_EXCLUDE', 99);
 
+// pf configuration categories and subcategories.
+define('PFCONFIG_OPTION_LIMITS', ['id' => 'pfc_optlim', 'description' => 'General configuration for pf']);
+define('PFCONFIG_ALL_ALIAS_RULES', ['id' => 'pfc_allalias', 'description' => 'Aliases used by the firewall']);
+define('PFCONFIG_ALIAS_INTERFACES', ['id' => 'pfc_ifalias', 'description' => 'System-defined aliases for interfaces']);
+define('PFCONFIG_ALIAS_SYSTEM_USABLE', ['id' => 'pfc_sysalias', 'description' => 'System-defined aliases available to the user']);
+define('PFCONFIG_ALIAS_CAPTIVE_PORTAL', ['id' => 'pfc_cpalias', 'description' => 'System-defined aliases for Captive Portal']);
+define('PFCONFIG_USER_ALIAS', ['id' => 'pfc_usralias', 'description' => 'User-defined aliases']);
+define('PFCONFIG_ALIAS_GATEWAYS', ['id' => 'pfc_gwalias', 'description' => 'System gateways']);
+define('PFCONFIG_OPTION_LOGGING_INTERFACES', ['id' => 'pfc_optlogif', 'description' => 'Interfaces used with pf stats collection']);
+define('PFCONFIG_OPTION_SKIP_INTERfACES', ['id' => 'pfc_optskipif', 'description' => 'Interfaces without pf filtering']);
+define('PFCONFIG_OPTION_KEEPCOUNTERS', ['id' => 'pfc_optkeepct', 'description' => 'Preserve rule counters across rule updates']);
+define('PFCONFIG_ETHERNET_CAPTIVE_PORTAL', ['id' => 'pfc_cpeth', 'description' => 'Ethernet rules for Captive Portal']);
+define('PFCONFIG_NORMALIZE_SCRUBBING', ['id' => 'pfc_normscrub', 'description' => 'Required rules for traffic normalization']);
+define('PFCONFIG_SHAPING_ALTQ', ['id' => 'pfc_altq', 'description' => 'Rules for traffic shaping with ALTQ']);
+define('PFCONFIG_ALL_NAT_RULES', ['id' => 'pfc_allnat', 'description' => 'Rules for Network Address Translation']);
+define('PFCONFIG_USER_NAT_BINAT', ['id' => 'pfc_usrbinat', 'description' => 'User-defined 1-to-1 NAT rules']);
+define('PFCONFIG_USER_NAT_NPT', ['id' => 'pfc_usrnpt', 'description' => 'User-defined NPT rules']);
+define('PFCONFIG_NAT_IPSEC', ['id' => 'pfc_ipsecnat', 'description' => 'Automatic IPsec NAT rules']);
+define('PFCONFIG_USER_NAT_OUTBOUND', ['id' => 'pfc_usronat', 'description' => 'Outbound NAT rules (manual)']);
+define('PFCONFIG_NAT_OUTBOUND', ['id' => 'pfc_onat', 'description' => 'Outbound NAT rules (automatic)']);
+define('PFCONFIG_NAT_TFTP', ['id' => 'pfc_tftpnat', 'description' => 'NAT rules for the TFTP Proxy service']);
+define('PFCONFIG_NAT_CAPTIVE_PORTAL', ['id' => 'pfc_cpnat', 'description' => 'NAT rules for Captive Portal']);
+define('PFCONFIG_NAT_IPV6NAT', ['id' => 'pfc_ipv6nat', 'description' => '']);
+define('PFCONFIG_USER_NAT_INBOUND', ['id' => 'pfc_usrinat', 'description' => 'NAT Inbound Redirects']);
+define('PFCONFIG_PACKAGE_NAT', ['id' => 'pfc_pkgnat', 'description' => 'Extra NAT rules from packages']);
+define('PFCONFIG_NAT_UPNP', ['id' => 'pfc_upnpnat', 'description' => 'Rules for the miniupnpd service']);
+define('PFCONFIG_NAT_REFLECTION_BINAT', ['id' => 'pfc_rbinat', 'description' => 'Reflection redirects and NAT for 1:1 mappings']);
+define('PFCONFIG_PACKAGE_EARLY', ['id' => 'pfc_pkgearly', 'description' => 'Extra rules from packages']);
+define('PFCONFIG_RADIUS_OPENVPN', ['id' => 'pfc_ovpnrad', 'description' => 'Extra rules from OpenVPN RADIUS']);
+define('PFCONFIG_RADIUS_IPSEC', ['id' => 'pfc_ipsecrad', 'description' => 'Extra rules from IPsec RADIUS']);
+define('PFCONFIG_FILTER_BLOCK_IPV6', ['id' => 'pfc_block6', 'description' => 'Rules to block all IPv6 packets']);
+define('PFCONFIG_FILTER_BLOCK_IPV4_LINKLOCAL', ['id' => 'pfc_block4ll', 'description' => 'Rules to block IPv4 link-local packets']);
+define('PFCONFIG_FILTER_BLOCK', ['id' => 'pfc_block', 'description' => 'Required rules for the default-deny filter behavior']);
+define('PFCONFIG_FILTER_ICMPV6_REQUIRED', ['id' => 'pfc_icmp6req', 'description' => 'Required rules for IPv6 operation']);
+define('PFCONFIG_FILTER_ICMPV6_ESSENTIAL', ['id' => 'pfc_icmp6ess', 'description' => 'Required rules for general IPv6 connectivity']);
+define('PFCONFIG_FILTER_BLOCK_PORT_0', ['id' => 'pfc_blockp0', 'description' => 'Rules to drop invalid packets on port 0']);
+define('PFCONFIG_FILTER_SNORT2C', ['id' => 'pfc_snort2c', 'description' => 'Rules to block packets matched by IDS packages']);
+define('PFCONFIG_FILTER_CARP', ['id' => 'pfc_carp', 'description' => 'Required rules for CARP functionality']);
+define('PFCONFIG_FILTER_LOCKOUT_SSH', ['id' => 'pfc_lockssh', 'description' => 'Rules for blocklisted hosts accessing the SSH service']);
+define('PFCONFIG_FILTER_LOCKOUT_GUI', ['id' => 'pfc_lockgui', 'description' => 'Rules for blocklisted hosts accessing the WebGUI']);
+define('PFCONFIG_FILTER_VIRUSPROT', ['id' => 'pfc_virusprot', 'description' => 'Rules to block packets matched by anti-virus packages']);
+define('PFCONFIG_FILTER_DHCP_BLOCK_ROUTING', ['id' => 'pfc_dhcpleak', 'description' => 'Rules to prevent DHCP leaks in multi-WAN setups']);
+define('PFCONFIG_ALL_FILTER_IF_RULES', ['id' => 'pfc_allif', 'description' => 'Default interface rules']);
+define('PFCONFIG_FILTER_IF_DHCP_CLIENT_IPV4', ['id' => 'pfc_ifdhcpc4', 'description' => 'Required rules for WAN interfaces using DHCPv4']);
+define('PFCONFIG_FILTER_IF_DHCP_CLIENT_IPV6', ['id' => 'pfc_ifdhcpc6', 'description' => 'Required rules for WAN interfaces using DHCPv6']);
+define('PFCONFIG_FILTER_IF_BOGON_IPV4', ['id' => 'pfc_ifbogon4', 'description' => 'Rules to block invalid IPv4 traffic on the WAN']);
+define('PFCONFIG_FILTER_IF_BOGON_IPV6', ['id' => 'pfc_ifbogon6', 'description' => 'Rules to block invalid IPv6 traffic on the WAN']);
+define('PFCONFIG_FILTER_IF_ANTISPOOF', ['id' => 'pfc_ifantispoof', 'description' => 'Required rules for antispoof protection']);
+define('PFCONFIG_FILTER_IF_PRIVATE', ['id' => 'pfc_ifprivate', 'description' => 'Rules to block packets from private addresses on the WAN']);
+define('PFCONFIG_FILTER_IF_PPTP', ['id' => 'pfc_ifpptp', 'description' => 'Required rules for WAN interfaces using PPTP']);
+define('PFCONFIG_FILTER_IF_DHCP_SERVER_IPV4', ['id' => 'pfc_ifdhcps4', 'description' => 'Required rules for the DHCP Server service']);
+define('PFCONFIG_FILTER_IF_DHCP_FAILOVER_IPV4', ['id' => 'pfc_ifdhcps4ha', 'description' => 'Required rules for High Availability in the DHCPv4 Server service']);
+define('PFCONFIG_FILTER_IF_DHCP_RELAY_IPV4', ['id' => 'pfc_ifdhcpr4', 'description' => 'Required rules for the DHCP Relay service']);
+define('PFCONFIG_FILTER_IF_6RD', ['id' => 'pfc_if6rd', 'description' => 'Required rules for WAN interfaces using IPv6 Rapid Deployment']);
+define('PFCONFIG_FILTER_IF_6TO4', ['id' => 'pfc_if6to4', 'description' => 'Required rules for WAN interfaces using IPv6 in IPv4 tunneling']);
+define('PFCONFIG_FILTER_IF_DHCP_SERVER_IPV6', ['id' => 'pfc_ifdhcps6', 'description' => 'Required rules for the DHCPv6 Server service']);
+define('PFCONFIG_FILTER_LOOPBACK', ['id' => 'pfc_loopback', 'description' => 'Required rules for loopback traffic']);
+define('PFCONFIG_FILTER_SELF', ['id' => 'pfc_self', 'description' => 'Required rules for traffic from the firewall host itself']);
+define('PFCONFIG_FILTER_GATEWAY_MONITORING', ['id' => 'pfc_gwmon', 'description' => 'Rules to prevent incorrect routing of gateway monitoring traffic']);
+define('PFCONFIG_FILTER_IPSEC_INTERNAL', ['id' => 'pfc_ipsecint', 'description' => 'Required rules for IPsec host connectivity']);
+define('PFCONFIG_FILTER_ANTILOCKOUT', ['id' => 'pfc_antilock', 'description' => 'Rules to prevent accidental lockout from the firewall']);
+define('PFCONFIG_FILTER_NAT_REFLECTION', ['id' => 'pfc_rnat', 'description' => 'Rules for NAT reflection']);
+define('PFCONFIG_FILTER_CAPTIVE_PORTAL', ['id' => 'pfc_cp', 'description' => 'Rules for the Captive Portal service']);
+define('PFCONFIG_USER_FILTER', ['id' => 'pfc_usr', 'description' => 'Rules defined by the user']);
+define('PFCONFIG_FILTER_STATIC_ROUTES', ['id' => 'pfc_bypassif', 'description' => 'Rules to bypass the firewall for traffic ingressing and egressing on the same interface']);
+define('PFCONFIG_FILTER_IPSEC_SERVICE', ['id' => 'pfc_ipsec', 'description' => 'Rules for the IPsec service']);
+define('PFCONFIG_FILTER_TFTP_PROXY', ['id' => 'pfc_tftp', 'description' => 'Rules for the TFTP Proxy service']);
+define('PFCONFIG_FILTER_UPNP', ['id' => 'pfc_upnp', 'description' => 'Rules for the UPnP IGD & PCP service']);
+define('PFCONFIG_PACKAGE_FILTER', ['id' => 'pfc_pkglate', 'description' => 'Extra rules from packages']);
+define('PFCONFIG_CATEGORIES', [
+	PFCONFIG_OPTION_LIMITS['id'] => 'PFCONFIG_OPTION_LIMITS',
+	PFCONFIG_ALL_ALIAS_RULES['id'] => 'PFCONFIG_ALL_ALIAS_RULES',
+	PFCONFIG_ALIAS_INTERFACES['id'] => 'PFCONFIG_ALIAS_INTERFACES',
+	PFCONFIG_ALIAS_SYSTEM_USABLE['id'] => 'PFCONFIG_ALIAS_SYSTEM_USABLE',
+	PFCONFIG_ALIAS_CAPTIVE_PORTAL['id'] => 'PFCONFIG_ALIAS_CAPTIVE_PORTAL',
+	PFCONFIG_USER_ALIAS['id'] => 'PFCONFIG_USER_ALIAS',
+	PFCONFIG_ALIAS_GATEWAYS['id'] => 'PFCONFIG_ALIAS_GATEWAYS',
+	PFCONFIG_OPTION_LOGGING_INTERFACES['id'] => 'PFCONFIG_OPTION_LOGGING_INTERFACES',
+	PFCONFIG_OPTION_SKIP_INTERfACES['id'] => 'PFCONFIG_OPTION_SKIP_INTERfACES',
+	PFCONFIG_OPTION_KEEPCOUNTERS['id'] => 'PFCONFIG_OPTION_KEEPCOUNTERS',
+	PFCONFIG_ETHERNET_CAPTIVE_PORTAL['id'] => 'PFCONFIG_ETHERNET_CAPTIVE_PORTAL',
+	PFCONFIG_NORMALIZE_SCRUBBING['id'] => 'PFCONFIG_NORMALIZE_SCRUBBING',
+	PFCONFIG_SHAPING_ALTQ['id'] => 'PFCONFIG_SHAPING_ALTQ',
+	PFCONFIG_ALL_NAT_RULES['id'] => 'PFCONFIG_ALL_NAT_RULES',
+	PFCONFIG_USER_NAT_BINAT['id'] => 'PFCONFIG_USER_NAT_BINAT',
+	PFCONFIG_USER_NAT_NPT['id'] => 'PFCONFIG_USER_NAT_NPT',
+	PFCONFIG_NAT_IPSEC['id'] => 'PFCONFIG_NAT_IPSEC',
+	PFCONFIG_USER_NAT_OUTBOUND['id'] => 'PFCONFIG_USER_NAT_OUTBOUND',
+	PFCONFIG_NAT_OUTBOUND['id'] => 'PFCONFIG_NAT_OUTBOUND',
+	PFCONFIG_NAT_TFTP['id'] => 'PFCONFIG_NAT_TFTP',
+	PFCONFIG_NAT_CAPTIVE_PORTAL['id'] => 'PFCONFIG_NAT_CAPTIVE_PORTAL',
+	PFCONFIG_NAT_IPV6NAT['id'] => 'PFCONFIG_NAT_IPV6NAT',
+	PFCONFIG_USER_NAT_INBOUND['id'] => 'PFCONFIG_USER_NAT_INBOUND',
+	PFCONFIG_PACKAGE_NAT['id'] => 'PFCONFIG_PACKAGE_NAT',
+	PFCONFIG_NAT_UPNP['id'] => 'PFCONFIG_NAT_UPNP',
+	PFCONFIG_NAT_REFLECTION_BINAT['id'] => 'PFCONFIG_NAT_REFLECTION_BINAT',
+	PFCONFIG_PACKAGE_EARLY['id'] => 'PFCONFIG_PACKAGE_EARLY',
+	PFCONFIG_RADIUS_OPENVPN['id'] => 'PFCONFIG_RADIUS_OPENVPN',
+	PFCONFIG_RADIUS_IPSEC['id'] => 'PFCONFIG_RADIUS_IPSEC',
+	PFCONFIG_FILTER_BLOCK_IPV6['id'] => 'PFCONFIG_FILTER_BLOCK_IPV6',
+	PFCONFIG_FILTER_BLOCK_IPV4_LINKLOCAL['id'] => 'PFCONFIG_FILTER_BLOCK_IPV4_LINKLOCAL',
+	PFCONFIG_FILTER_BLOCK['id'] => 'PFCONFIG_FILTER_BLOCK',
+	PFCONFIG_FILTER_ICMPV6_REQUIRED['id'] => 'PFCONFIG_FILTER_ICMPV6_REQUIRED',
+	PFCONFIG_FILTER_ICMPV6_ESSENTIAL['id'] => 'PFCONFIG_FILTER_ICMPV6_ESSENTIAL',
+	PFCONFIG_FILTER_BLOCK_PORT_0['id'] => 'PFCONFIG_FILTER_BLOCK_PORT_0',
+	PFCONFIG_FILTER_SNORT2C['id'] => 'PFCONFIG_FILTER_SNORT2C',
+	PFCONFIG_FILTER_CARP['id'] => 'PFCONFIG_FILTER_CARP',
+	PFCONFIG_FILTER_LOCKOUT_SSH['id'] => 'PFCONFIG_FILTER_LOCKOUT_SSH',
+	PFCONFIG_FILTER_LOCKOUT_GUI['id'] => 'PFCONFIG_FILTER_LOCKOUT_GUI',
+	PFCONFIG_FILTER_VIRUSPROT['id'] => 'PFCONFIG_FILTER_VIRUSPROT',
+	PFCONFIG_FILTER_DHCP_BLOCK_ROUTING['id'] => 'PFCONFIG_FILTER_DHCP_BLOCK_ROUTING',
+	PFCONFIG_ALL_FILTER_IF_RULES['id'] => 'PFCONFIG_ALL_FILTER_IF_RULES',
+	PFCONFIG_FILTER_IF_DHCP_CLIENT_IPV4['id'] => 'PFCONFIG_FILTER_IF_DHCP_CLIENT_IPV4',
+	PFCONFIG_FILTER_IF_DHCP_CLIENT_IPV6['id'] => 'PFCONFIG_FILTER_IF_DHCP_CLIENT_IPV6',
+	PFCONFIG_FILTER_IF_BOGON_IPV4['id'] => 'PFCONFIG_FILTER_IF_BOGON_IPV4',
+	PFCONFIG_FILTER_IF_BOGON_IPV6['id'] => 'PFCONFIG_FILTER_IF_BOGON_IPV6',
+	PFCONFIG_FILTER_IF_ANTISPOOF['id'] => 'PFCONFIG_FILTER_IF_ANTISPOOF',
+	PFCONFIG_FILTER_IF_PRIVATE['id'] => 'PFCONFIG_FILTER_IF_PRIVATE',
+	PFCONFIG_FILTER_IF_PPTP['id'] => 'PFCONFIG_FILTER_IF_PPTP',
+	PFCONFIG_FILTER_IF_DHCP_SERVER_IPV4['id'] => 'PFCONFIG_FILTER_IF_DHCP_SERVER_IPV4',
+	PFCONFIG_FILTER_IF_DHCP_FAILOVER_IPV4['id'] => 'PFCONFIG_FILTER_IF_DHCP_FAILOVER_IPV4',
+	PFCONFIG_FILTER_IF_DHCP_RELAY_IPV4['id'] => 'PFCONFIG_FILTER_IF_DHCP_RELAY_IPV4',
+	PFCONFIG_FILTER_IF_6RD['id'] => 'PFCONFIG_FILTER_IF_6RD',
+	PFCONFIG_FILTER_IF_6TO4['id'] => 'PFCONFIG_FILTER_IF_6TO4',
+	PFCONFIG_FILTER_IF_DHCP_SERVER_IPV6['id'] => 'PFCONFIG_FILTER_IF_DHCP_SERVER_IPV6',
+	PFCONFIG_FILTER_LOOPBACK['id'] => 'PFCONFIG_FILTER_LOOPBACK',
+	PFCONFIG_FILTER_SELF['id'] => 'PFCONFIG_FILTER_SELF',
+	PFCONFIG_FILTER_GATEWAY_MONITORING['id'] => 'PFCONFIG_FILTER_GATEWAY_MONITORING',
+	PFCONFIG_FILTER_IPSEC_INTERNAL['id'] => 'PFCONFIG_FILTER_IPSEC_INTERNAL',
+	PFCONFIG_FILTER_ANTILOCKOUT['id'] => 'PFCONFIG_FILTER_ANTILOCKOUT',
+	PFCONFIG_FILTER_NAT_REFLECTION['id'] => 'PFCONFIG_FILTER_NAT_REFLECTION',
+	PFCONFIG_FILTER_CAPTIVE_PORTAL['id'] => 'PFCONFIG_FILTER_CAPTIVE_PORTAL',
+	PFCONFIG_USER_FILTER['id'] => 'PFCONFIG_USER_FILTER',
+	PFCONFIG_FILTER_STATIC_ROUTES['id'] => 'PFCONFIG_FILTER_STATIC_ROUTES',
+	PFCONFIG_FILTER_IPSEC_SERVICE['id'] => 'PFCONFIG_FILTER_IPSEC_SERVICE',
+	PFCONFIG_FILTER_TFTP_PROXY['id'] => 'PFCONFIG_FILTER_TFTP_PROXY',
+	PFCONFIG_FILTER_UPNP['id'] => 'PFCONFIG_FILTER_UPNP',
+	PFCONFIG_PACKAGE_FILTER['id'] => 'PFCONFIG_PACKAGE_FILTER'
+]);
+
+// Rule labels.
+define("RULE_LABEL_MAXLEN", 63);
+define("RULE_LABEL_LIMIT", 5);
+define("RULE_LABEL_DELIMITER", "=");
+define("RULE_LABEL_TAG_DELIMITER", ",");
+// Label keys must match a regex WORD and must have a max length of:
+// RULE_LABEL_MAXLEN - strlen(RULE_LABEL_DELIMITER) - 1;
+define("RULE_LABEL_KEY_IDENTIFIER", "id");
+define("RULE_LABEL_KEY_SCHEDULE", "s");
+define("RULE_LABEL_KEY_GATEwAY", "gw");
+define("RULE_LABEL_KEY_TAGS", "tags");
+define("RULE_LABEL_KEY_DESCRIPTION", "descr");
+// Used for pf rules.
+define("RULE_LABEL_ORDER", [
+	RULE_LABEL_KEY_IDENTIFIER => 'RULE_LABEL_KEY_IDENTIFIER',
+	RULE_LABEL_KEY_SCHEDULE => 'RULE_LABEL_KEY_SCHEDULE',
+	RULE_LABEL_KEY_GATEwAY => 'RULE_LABEL_KEY_GATEwAY',
+	RULE_LABEL_KEY_TAGS => 'RULE_LABEL_KEY_TAGS',
+	RULE_LABEL_KEY_DESCRIPTION => 'RULE_LABEL_KEY_DESCRIPTION'
+]);
+
+/**
+ * Get a list of valid rule label tags.
+ *
+ * Each tag is trimmed, has a minimum length of 1, is stripped of
+ * double-quotes, and is delimited by RULE_LABEL_TAG_DELIMITER.
+ */
+function parse_rule_label_tags(string|array $tags): array {
+	if (is_string($tags)) {
+		$tags = array_filter(explode(RULE_LABEL_TAG_DELIMITER, $tags));
+	}
+
+	$new_tags = [];
+	foreach ($tags as $tag) {
+		if (!is_string($tag)) {
+			continue;
+		}
+		$tag = str_replace('"', '', trim($tag));
+		if (strlen($tag) < 1) {
+			continue;
+		}
+		$new_tags[] = $tag;
+	}
+	if (!empty($new_tags)) {
+		$new_tags = array_unique($new_tags);
+	}
+
+	return $new_tags;
+}
+
+/**
+ * Get a valid config rule label from the given label item.
+ *
+ * # Label string
+ * - Min length: RULE_LABEL_DELIMITER + 2
+ * - Max length: name + RULE_LABEL_DELIMITER + descr <= RULE_LABEL_MAXLEN
+ * - The label string is stripped of double-quotes
+ *
+ * # Label name
+ * - Min length: 1
+ * - Max legnth: RULE_LABEL_MAXLEN - RULE_LABEL_DELIMITER - 1
+ * - The label name is stripped of RULE_LABEL_DELIMITER, defaults to
+ *   RULE_LABEL_KEY_DESCRIPTION if none is provided, and must match a
+ *   regex WORD.
+ *
+ * # Label description
+ * - Min length: 1
+ * - Max length: RULE_LABEL_MAXLEN - RULE_LABEL_DELIMITER - name
+ */
+function parse_rule_label_item(array $label): array|null {
+	if (!isset($label['name']) || !is_string($label['name']) || (strlen(trim($label['name'])) < 1)) {
+		// Default to a catch-all name.
+		$label_name = RULE_LABEL_KEY_DESCRIPTION;
+	} else {
+		// Remove invalid characters for easier regex matching in callers.
+		$label_name = str_replace(['"', RULE_LABEL_DELIMITER], '', trim($label['name']));
+	}
+	// Known labels are assumed to be valid.
+	if (!isset(RULE_LABEL_ORDER[$label_name])) {
+		// Unknown names are not valid.
+		return null;
+	}
+
+	// Validate the label description.
+	$label_descr = '';
+	$label_tags = [];
+	if (isset($label['descr']) && is_string($label['descr'])) {
+		if ($label_name == RULE_LABEL_KEY_TAGS) {
+			// Validate label tags.
+			$label_tags = parse_rule_label_tags($label['descr']);
+			if (!empty($label_tags)) {
+				$label_descr = implode(RULE_LABEL_TAG_DELIMITER, $label_tags);
+			}
+		} else {
+			$label_descr = str_replace('"', '', trim($label['descr']));
+		}
+	}
+	$label_descr_length = strlen($label_descr);
+	if ($label_descr_length < 1) {
+		// Empty descriptions are not valid.
+		return null;
+	}
+
+	// Handle label descriptions that exceed the max length.
+	$label_name_length = strlen($label_name);
+	$label_max_length = RULE_LABEL_MAXLEN - strlen(RULE_LABEL_DELIMITER);
+	$label_descr_max_length = $label_max_length - $label_name_length;
+	if ($label_descr_length > $label_descr_max_length) {
+		if ($label_name == RULE_LABEL_KEY_DESCRIPTION) {
+			// Insert ellipses in rule descriptions.
+			$label_descr = substr($label_descr, 0, $label_descr_max_length - 3) . '...';
+		} elseif ($label_name == RULE_LABEL_KEY_TAGS) {
+			// Only include the first tags that fit.
+			$new_tags_description = '';
+			$tag_delimiter_length = strlen(RULE_LABEL_TAG_DELIMITER);
+			foreach ($label_tags as $index => $tag) {
+				if ($index == array_key_first($label_tags)) {
+					if ($label_descr_max_length < strlen($new_tags_description) + strlen($tag)) {
+						break;
+					}
+					$new_tags_description .= $tag;
+				} else {
+					if ($label_descr_max_length < strlen($new_tags_description) + $tag_delimiter_length + strlen($tag)) {
+						break;
+					}
+					$new_tags_description = $new_tags_description . RULE_LABEL_TAG_DELIMITER . $tag;
+				}
+			}
+			$label_descr = $new_tags_description;
+		} else {
+			// Trim excess length.
+			$label_descr = substr($label_descr, 0, $label_descr_max_length);
+		}
+		$label_descr_length = strlen($label_descr);
+	}
+
+	return [
+		'name' => $label_name,
+		'descr' => $label_descr
+	];
+}
+
+/**
+ * Remove invalid labels, sort valid labels, and limit the label count.
+ * Labels and label tags are unique.
+ */
+function filter_rule_label_items(array $labels): array {
+	$ordered = array_fill_keys(array_keys(RULE_LABEL_ORDER), '');
+	$tags = [];
+	foreach ($labels as $label) {
+		// Defer label tag items to be merged.
+		if (isset($label['name']) && ($label['name'] == RULE_LABEL_KEY_TAGS)) {
+			if (isset($label['descr'])) {
+				$tags[] = $label['descr'];
+			}
+			// Avoid redundant calls to parse_rule_label_item().
+			continue;
+		}
+		$label = parse_rule_label_item($label);
+		if (!isset($label)) {
+			continue;
+		}
+		$ordered[$label['name']] = $label;
+	}
+	$tags_label = make_rule_label_item(implode(RULE_LABEL_TAG_DELIMITER, $tags), RULE_LABEL_KEY_TAGS);
+	if (!empty($tags_label)) {
+		$ordered[RULE_LABEL_KEY_TAGS] = $tags_label;
+	}
+	return array_slice(array_filter(array_values($ordered)), 0, RULE_LABEL_LIMIT);
+}
+
+/**
+ * Get all valid labels from a config rule.
+ */
+function get_label_items_from_rule_item(array $rule): array  {
+	$labels = [];
+	if (!isset($rule['labels']) || !isset($rule['labels']['item']) ||
+	    !is_array($rule['labels']['item']) || !array_is_list($rule['labels']['item'])) {
+		return $labels;
+	}
+	return filter_rule_label_items($rule['labels']['item']);
+}
+
+/**
+ * Get all valid labels from a pf rule.
+ */
+function get_label_items_from_rule_string(string $rule): array  {
+	$labels = [];
+	$matches = [];
+	preg_match_all('/ label "([[:word:]]+' . RULE_LABEL_DELIMITER . ')?(.*?)"/', $rule, $matches);
+	foreach ($matches[0] as $index => $label) {
+		$labels[] = [
+			'name' => $matches[1][$index],
+			'descr' => $matches[2][$index]
+		];
+	}
+	return filter_rule_label_items($labels);
+}
+
+/**
+ * Generate the pf rule labels string from a list of labels.
+ */
+function get_labels_string_from_label_items(array $labels): string {
+	$label_strings = [];
+	foreach (filter_rule_label_items($labels) as $label) {
+		$label_strings[] = "label \"{$label['name']}" . RULE_LABEL_DELIMITER . "{$label['descr']}\"";
+	}
+	return implode(' ', $label_strings);
+}
+
+/**
+ * Generate the pf rule labels string from a config rule.
+ */
+function get_labels_string_from_rule_item(array $rule): string {
+	return get_labels_string_from_label_items(get_label_items_from_rule_item($rule));
+}
+
+/**
+ * Get label tags from a pf rule.
+ */
+function get_label_tags_from_rule_string(string $rule): array {
+	$matches = [];
+	if (!preg_match('/ label "' . RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER . '(.*?)"/', $rule, $matches)) {
+		return [];
+	}
+	$label_item = make_rule_label_item($matches[1], RULE_LABEL_KEY_TAGS);
+	if (empty($label_item)) {
+		return [];
+	}
+	return explode(RULE_LABEL_TAG_DELIMITER, $label_item['descr']);
+}
+
+/**
+ * Remove all labels from a config rule.
+ */
+function remove_labels_from_rule_item(array &$rule, string|null $label_key = null): void {
+	if (!isset($label_key) || !!isset($rule['labels']) || !isset($rule['labels']['item']) || empty($rule['labels']['item']) ||
+	    !is_array($rule['labels']['item']) || !array_is_list($rule['labels']['item'])) {
+		unset($rule['labels']);
+		return;
+	}
+
+	$new_labels = [];
+	foreach ($rule['labels']['item'] as $label) {
+		if (isset($label['name']) && ($label['name'] == $label_key)) {
+			continue;
+		}
+		$new_labels[] = $label;
+	}
+	$rule['labels']['item'] = $new_labels;
+}
+
+/**
+ * Remove a specific label or all labels from a pf rule.
+ */
+function remove_labels_from_rule_string(string &$rule, string|null $label_key = null): void {
+	if (isset($label_key)) {
+		if (!isset(RULE_LABEL_ORDER[$label_key])) {
+			return;
+		}
+		$pattern = '/ label "' . $label_key . RULE_LABEL_DELIMITER . '.*?"/';
+	} else {
+		$pattern = '/ label ".*?"/';
+	}
+	$new_rule = preg_replace($pattern, '', $rule);
+	if (isset($new_rule)) {
+		$rule = $new_rule;
+	}
+}
+
+/**
+ * Build a config rule label.
+ */
+function make_rule_label_item($descr, string $name = RULE_LABEL_KEY_DESCRIPTION): array {
+	$label_item = parse_rule_label_item([
+		'name' => $name,
+		'descr' => $descr
+	]);
+	return $label_item ?? [];
+}
+
+/**
+ * Build a pf rule label.
+ */
+function make_rule_label_string($descr, string $name = RULE_LABEL_KEY_DESCRIPTION, bool $full_string = true): string|null {
+	$label_item = make_rule_label_item($descr, $name);
+	if (empty($label_item)) {
+		return '';
+	}
+	if ($full_string) {
+		return "label \"{$label_item['name']}" . RULE_LABEL_DELIMITER . "{$label_item['descr']}\"";
+	} else {
+		return "{$label_item['name']}" . RULE_LABEL_DELIMITER . "{$label_item['descr']}";
+	}
+	
+}
+
+/**
+ * Build a pf rule label for tags.
+ */
+function make_tags_label_string(array $tags): string {
+	$label_item = make_rule_label_item(implode(RULE_LABEL_TAG_DELIMITER, $tags), RULE_LABEL_KEY_TAGS);
+	if (empty($label_item)) {
+		return '';
+	}
+	return 'label "' . RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER . $label_item['descr'] . '"';
+}
+
+/**
+ * Replace all labels on a config rule with the given labels.
+ */
+function set_labels_for_rule_item(array &$rule, array $labels): void {
+	$labels = filter_rule_label_items($labels);
+	if (!empty($labels)) {
+		$rule['labels'] = [
+			'item' => $labels
+		];
+	}
+}
+
+/**
+ * Replace all labels on a pf rule with the given labels.
+ */
+function set_labels_for_rule_string(string &$rule, array $labels): void {
+	$labels_string = get_labels_string_from_label_items($labels);
+	remove_labels_from_rule_string($rule);
+	$rule = implode(' ', [trim($rule), $labels_string]);
+}
+
+/**
+ * Replace pf rule label tags with the given tags.
+ */
+function set_label_tags_for_rule_string(string $rule, array $tags): string {
+	$new_rule = $rule;
+	remove_labels_from_rule_string($new_rule, RULE_LABEL_KEY_TAGS);
+	$new_label = make_tags_label_string($tags);
+	if (!empty($new_label)) {
+		$new_rule = "{$new_rule} {$new_label}";
+	}
+	return $new_rule;
+}
+
 function v6_range_to_prefixlen(string $start, string $end): string|false {
 	$start_packed = inet_pton(Net_IPv6::uncompress($start, true));
 	$end_packed = inet_pton(Net_IPv6::uncompress($end, true));

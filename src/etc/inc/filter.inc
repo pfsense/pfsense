@@ -2920,7 +2920,7 @@ function filter_nat_rules_generate() {
 	$natrules = '';
 
 	/* any 1:1 mappings? */
-	foreach (config_get_path('nat/onetoone', []) as $rule) {
+	foreach (get_anynat_rules_list('binat') as $rule) {
 		if (isset($rule['disabled'])) {
 			continue;
 		}
@@ -3026,7 +3026,7 @@ function filter_nat_rules_generate() {
 	$natrules = '';
 
 	/* Add binat rules for Network Prefix translation */
-	foreach (config_get_path('nat/npt', []) as $rule) {
+	foreach (get_anynat_rules_list('npt') as $rule) {
 		if (isset($rule['disabled'])) {
 			continue;
 		}
@@ -3163,7 +3163,7 @@ function filter_nat_rules_generate() {
 	case "advanced": /* fallthrough */
 	case "hybrid":
 		/* advanced outbound rules */
-		foreach (config_get_path('nat/outbound/rule', []) as $obent) {
+		foreach (get_anynat_rules_list('nat') as $obent) {
 			if (isset($obent['disabled'])) {
 				continue;
 			}
@@ -3407,7 +3407,7 @@ function filter_nat_rules_generate() {
 	/* start reflection redirects on port 19000 of localhost */
 	$starting_localhost_port = 19000;
 	$nonatrule = array();
-	foreach (config_get_path('nat/rule', []) as $rule) {
+	foreach (get_anynat_rules_list('rdr') as $rule) {
 		update_filter_reload_status(sprintf(gettext("Creating NAT rule %s"), $rule['descr']));
 
 		if (isset($rule['disabled'])) {
@@ -5297,7 +5297,7 @@ function filter_rules_generate() {
 	$tracker = $saved_tracker;
 
 	$add_nat_reflect_rule = false;
-	foreach (config_get_path('nat/rule', []) as $rule) {
+	foreach (get_anynat_rules_list('rdr') as $rule) {
 		if ((!config_path_enabled('system','disablenatreflection') || $rule['natreflection'] == "enable") &&
 		    ($rule['natreflection'] != "disable")) {
 			$add_nat_reflect_rule = true;
@@ -5322,64 +5322,53 @@ function filter_rules_generate() {
 		array_from_filter_lines(filter_captiveportal_pass())
 	);
 
-	$filter_rules = config_get_path('filter/rule', []);
-	if (count($filter_rules) > 0) {
-		/* Pre-cache all our rules so we only have to generate them once */
-		$rule_arr1 = array();
-		$rule_arr2 = array();
-		$rule_arr3 = array();
-		/*
-		 * NB: The order must be: Floating rules, then interface group and then regular ones.
-		 */
-		foreach ($filter_rules as $rule) {
-			update_filter_reload_status("Pre-caching {$rule['descr']}...");
-			if (isset ($rule['disabled'])) {
-				continue;
-			}
+	/* Generate user rule lines */
+	$PFConfig->set_config(PFCONFIG_ANCHOR_FILTER_USER['id'],
+		['anchor "userrules/*"']
+	);
 
-			// Webgui separator bar. Not a real rule
-			if (isset($rule['separator'])) {
-				continue;
-			}
-			update_filter_reload_status(sprintf(gettext("Creating filter rule %s ..."), $rule['descr']));
-			if (!empty($rule['ipprotocol']) && $rule['ipprotocol'] == "inet46") {
-				if (isset($rule['floating'])) {
-					$rule['ipprotocol'] = "inet";
-					$rule_arr1[] = filter_generate_user_rule($rule);
-					$rule['ipprotocol'] = "inet6";
-					$rule_arr1[] = filter_generate_user_rule($rule);
-				} else if (is_interface_group($rule['interface']) || in_array($rule['interface'], $vpn_and_ppp_ifs)) {
-					$rule['ipprotocol'] = "inet";
-					$rule_arr2[] = filter_generate_user_rule($rule);
-					$rule['ipprotocol'] = "inet6";
-					$rule_arr2[] = filter_generate_user_rule($rule);
-				} else {
-					$rule['ipprotocol'] = "inet";
-					$rule_arr3[] = filter_generate_user_rule($rule);
-					$rule['ipprotocol'] = "inet6";
-					$rule_arr3[] = filter_generate_user_rule($rule);
+	foreach (get_filter_rules_map() as $category_name => $category) {
+		foreach ($category as $group_name => $group) {
+			foreach ($group as $subcategory_name => $rules) {
+				$description = array_get_path($FilterIflist, "{$group_name}/descr", null);
+				if (isset($description)) {
+					$description = "Rules for {$description}";
+				} elseif (preg_match('/^pppoe(\d+)$/', $group_name, $matches)) {
+					$description = array_get_path($FilterIflist, "pppoe/{$matches[1]}/descr");
+					$description = 'Rules for ' . ($description ?? $group_name);
 				}
-				$rule['ipprotocol'] = "inet46";
-			} else {
-				if (isset($rule['floating'])) {
-					$rule_arr1[] = filter_generate_user_rule($rule);
-				} else if (is_interface_group($rule['interface']) || in_array($rule['interface'], $vpn_and_ppp_ifs)) {
-					$rule_arr2[] = filter_generate_user_rule($rule);
-				} else {
-					$rule_arr3[] = filter_generate_user_rule($rule);
+
+				$generated_rules = [];
+				foreach ($rules as $rule) {
+					if (isset($rule['disabled'])) {
+						// Skip disabled rules.
+						continue;
+					}
+
+					if ($rule['sched']) {
+						$time_based_rules = true;
+					}
+
+					update_filter_reload_status(sprintf(gettext("Creating filter rule %s ..."), $rule['descr']));
+					if (isset($rule['ipprotocol']) && ($rule['ipprotocol'] == "inet46")) {
+						$rule['ipprotocol'] = "inet";
+						$generated_rules[] = filter_generate_user_rule($rule);
+						$rule['ipprotocol'] = "inet6";
+						$generated_rules[] = filter_generate_user_rule($rule);
+					} else {
+						$generated_rules[] = filter_generate_user_rule($rule);
+					}
 				}
-			}
-			if ($rule['sched']) {
-				$time_based_rules = true;
+
+				$PFConfig->set_config(
+					$category_name,
+					$generated_rules,
+					$description,
+					$subcategory_name,
+					$group_name
+				);
 			}
 		}
-
-		/* Generate user rule lines */
-		$rules_temp = array_merge(['anchor "userrules/*"'], $rule_arr1, $rule_arr2, $rule_arr3);
-		unset($rule_arr1, $rule_arr2, $rule_arr3);
-		$PFConfig->set_config(PFCONFIG_USER_FILTER['id'],
-			$rules_temp
-		);
 	}
 
 	$saved_tracker += 100;
@@ -5997,11 +5986,12 @@ function filter_get_antilockout_ports($wantarray = false) {
  * 
  * @return array Contains the matching interface's first and last rule's index,
  *               and the matching rule's relative index if found.
+ * 
+ * @deprecated Retained for backwards compatibility with versions <= 24.11.
+ *
+ * @see get_filter_rules_index() for replacement.
  */
 function get_interface_ruleindex(string $interface, ?int $rule_index = null, ?array $rules = null): array {
-	if (isset($rule_index) && ($rule_index < 0)) {
-		unset($rule_index);
-	}
 	$interface_rule_index = [
 		'index' => null,
 		'first' => null,
@@ -6010,39 +6000,25 @@ function get_interface_ruleindex(string $interface, ?int $rule_index = null, ?ar
 	if (empty($interface)) {
 		return $interface_rule_index;
 	}
-
-	$rules = $rules ?? config_get_path('filter/rule', []);
-	$interface = strtolower($interface);
-	$relative_index_count = -1; // a valid index count starts at 0
-	foreach ($rules as $idx => $rule) {
-		// skip rules on unrelated interfaces
-		if ((isset($rule['floating']) && ($interface != "floatingrules")) ||
-		    (!isset($rule['floating']) && ($interface != strtolower($rule['interface'])))) {
-			if (isset($rule_index) && isset($interface_rule_index['first']) && ($idx >= $rule_index)) {
-				// the last rule on the matching interface has already been reached
-				break;
+	if (!isset($rule_index) || ($rule_index < 0)) {
+		foreach (get_filter_rules_list() as $index => $rule) {
+			if ($rule['interface'] == $interface) {
+				$rule_index = $index;
 			}
-			continue;
-		}
-		// this rule has a matching interface, increment the count
-		$relative_index_count++;
-
-		// save the interface's first rule's index
-		if ($relative_index_count == 0) {
-			$interface_rule_index['first'] = $idx;
-		}
-
-		// found the rule, save the relative index
-		if (isset($rule_index) && ($idx == $rule_index)) {
-			$interface_rule_index['index'] = $relative_index_count;
 		}
 	}
 
-	// the interface was found, save its last rule's index
-	if (isset($interface_rule_index['first'])) {
-		$interface_rule_index['last'] = $interface_rule_index['first'] + $relative_index_count;
+	foreach (get_filter_rules_index([$rule_index], $interface) as $category) {
+		foreach ($category as $group) {
+			foreach ($group as $rules_index) {
+				$interface_rule_index = [
+					'index' => array_get_path($rules_index, 'matched_rules/0/relative_index', null),
+					'first' => array_get_path($rules_index, 'matched_rules/category_first', null),
+					'last' => array_get_path($rules_index, 'matched_rules/category_last', null)
+				];
+			}
+		}
 	}
-	
 	return $interface_rule_index;
 }
 
@@ -6088,11 +6064,12 @@ function separator_rows($separators) {
  * @param bool $shiftup Shift the separators up (true), or down
  * 
  */
-function shift_separators(array &$separators, ?int $index, bool $shiftup = false): void {
+function shift_separators(array &$separators, ?int $index, bool $shiftup = false): bool {
 	if (!isset($index)) {
-		return;
+		return false;
 	}
 
+	$changed = false;
 	foreach ($separators as $rowkey => $name) {
 		if (empty($name)) {
 			// Skip undefined separators
@@ -6120,10 +6097,13 @@ function shift_separators(array &$separators, ?int $index, bool $shiftup = false
 			continue;
 		} elseif ($shift < 0) {
 			array_set_path($separators, "{$rowkey}/row/0", 'fr' . --$row);
+			$changed = true;
 		} else {
 			array_set_path($separators, "{$rowkey}/row/0", 'fr' . ++$row);
+			$changed = true;
 		}
 	}
+	return $changed;
 }
 
 function filter_get_interface_list() {
@@ -6158,6 +6138,186 @@ function filter_get_host_id() {
 		}
 	}
 	return $pfhostid;
+}
+
+function delete_nat_association(array $associations_to_remove = [], array &$changes = []) {
+	if (empty($associations_to_remove)) {
+		return;
+	}
+
+	$nat_rules = get_anynat_rules_list('rdr');
+	if (empty($nat_rules)) {
+		return;
+	}
+
+	$changed_rules = false;
+	foreach ($nat_rules as &$natent) {
+		if (in_array($natent['associated-rule-id'], $associations_to_remove)) {
+			$natent['associated-rule-id'] = '';
+			$changed_rules = true;
+		}
+	}
+
+	if ($changed_rules) {
+		set_anynat_rules_list('rdr', $nat_rules);
+		$changes['rdr_rules'] = true;
+	}
+}
+
+/**
+ * @param array $rules_list A list of config rules.
+ * @param int $index A config rule index used to place the new rule(s).
+ * 		A zero or greater value adds the rule(s) after that index.
+ * 		A value of -1 adds the rule(s) at the top of the respective
+ * 		filter interface before all separators. A value of -2 or lower
+ * 		adds the rule(s) at the end of the respective filter interface
+ * 		after all separators.
+ * @param bool $replace If a rule is found where the new rule(s) would
+ * 		be added that existing rule will be replaced with the new rule(s).
+ */
+function add_filter_rules(array $rules_list, int $index = -2, bool $replace = false, array &$changes = []) {
+	$index = get_filter_rule_relative_index($index);
+	if (!isset($index)) {
+		return;
+	}
+	$rules_map = get_filter_rules_map();
+	$separators = config_get_path('filter/separator', []);
+	$changed_rules = false;
+	$changed_separators = false;
+	foreach (get_filter_rules_map($rules_list) as $new_category_name => $new_category) {
+		foreach ($new_category as $new_group_name => $new_group) {
+			foreach ($new_group as $new_subcategory_name => $new_rules) {
+				// Get existing rules and separators to modify.
+				$rules = array_get_path(
+					$rules_map,
+					"{$new_category_name}/{$new_group_name}/{$new_subcategory_name}",
+					[]
+				);
+
+				// Separators group names are always lower case.
+				$separator_group = strtolower($new_group_name);
+				if (isset($separators[$separator_group]) && !empty($separators[$separator_group])) {
+					$group_separators = &$separators[$separator_group];
+				} else {
+					$group_separators = [];
+				}
+
+				// Insert the rules.
+				$result = insert_config_rules($rules, $group_separators, $new_rules, $index, $replace);
+				if ($result['rules']) {
+					array_set_path(
+						$rules_map,
+						"{$new_category_name}/{$new_group_name}/{$new_subcategory_name}",
+						$rules
+					);
+					$changed_rules = true;
+					if ($result['separators']) {
+						$changed_separators = true;
+					}
+				}
+			}
+		}
+	}
+
+	if ($changed_rules) {
+		if ($changed_separators) {
+			config_set_path('filter/separator', $separators);
+			$changes['filter_separators'] = true;
+		}
+		set_filter_rules_map($rules_map);
+		$changes['filter_rules'] = true;
+	}
+}
+
+function remove_filter_rules(int|array $search_index, string $filter_interface = '', bool $update_associated_rules = true, array &$changes = []) {
+	$remove_all_separators = false;
+	if (!is_array($search_index)) {
+		$search_index = [$search_index];
+	} elseif (empty($search_index) && !empty($filter_interface)) {
+		/**
+		 * Remove all rules with a matching interface. Rules with more
+		 * than one interface, e.g. floating rules, are skipped.
+		 */
+		foreach (get_filter_rules_list() as $index => $rule) {
+			if ($rule['interface'] == $filter_interface) {
+				$search_index[] = $index;
+			}
+		}
+		// Also remove all separators when all rules should be removed.
+		$remove_all_separators = true;
+	}
+	if (empty($search_index)) {
+		return;
+	}
+
+	/**
+	 * Separators don't distiniguish between subcategories. There must
+	 * only be one subcategory per group for the index to remain aligned
+	 * between rules and separators.
+	 */
+	$separators = config_get_path('filter/separator', []);
+	$associated_id_list = [];
+	$rules_map = get_filter_rules_map();
+	$changed_rules = false;
+	$changed_separators = false;
+	foreach (get_filter_rules_index($search_index, $filter_interface) as $category_name => $category) {
+		foreach ($category as $group_name => $group) {
+			foreach ($group as $subcategory_name => $rules_index) {
+				// Get existing rules and separators to modify.
+				$rules = &$rules_map[$category_name][$group_name][$subcategory_name];
+
+				// Separators group names are always lower case.
+				$separator_group = strtolower($group_name);
+				if (isset($separators[$separator_group]) && !empty($separators[$separator_group])) {
+					$group_separators = &$separators[$separator_group];
+				} else {
+					$group_separators = [];
+				}
+
+				// Get related info before rules are removed.
+				$relative_index_list = [];
+				foreach (array_reverse($rules_index['matched_rules']) as $index) {
+					$relative_index_list[] = $index['relative_index'];
+					if (!empty($rules[$index['relative_index']]['associated-rule-id'])) {
+						// Remove the association in NAT rules.
+						$associated_id_list[] = $rules[$index['relative_index']]['associated-rule-id'];
+					}
+				}
+
+				// Remove the rules.
+				$result = remove_config_rules($rules, $group_separators, $relative_index_list);
+				if ($result['rules']) {
+					$changed_rules = true;
+					if ($result['separators']) {
+						$changed_separators = true;
+					}
+					// Don't remove all separators if any rules are left.
+					if (!empty($rules)) {
+						$remove_all_separators = false;
+					}
+				}
+				unset($rules);
+			}
+
+			// Separators don't distiniguish between subcategories.
+			if ($remove_all_separators && isset($separators[$group_name])) {
+				unset($separators[$group_name]);
+				$changed_separators = true;
+			}
+		}
+	}
+
+	if ($changed_rules) {
+		if ($update_associated_rules) {
+			delete_nat_association($associated_id_list, $changes);
+		}
+		if ($changed_separators) {
+			config_set_path('filter/separator', $separators);
+			$changes['filter_separators'] = true;
+		}
+		set_filter_rules_map($rules_map);
+		$changes['filter_rules'] = true;
+	}
 }
 
 ?>

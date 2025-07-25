@@ -22,6 +22,8 @@
  * limitations under the License.
  */
 
+require_once("filter.inc");
+
 /****f* itemid/delete_id
  * NAME
  *   delete_id - delete an item with ['associated-rule-id'] = $id from $array
@@ -31,29 +33,19 @@
  * RESULT
  *   boolean   - true if item was found and deleted
  ******/
-function delete_id($id) {
-	$array = config_get_path('filter/rule', []);
+function delete_id($id, $update_associated_rules = true, array &$changes = []) {
+	$array = get_filter_rules_list();
 
 	// Search for the item in the array
 	$delete_index = get_id($id, $array);
 
 	// If we found the item, unset it
 	if ($delete_index === false) {
-		return false;
+		return;
 	}
 
 	$if = $array[$delete_index]['interface'];
-	unset($array[$delete_index]);
-
-	// shift the separators
-	$ridx = get_interface_ruleindex($if, $delete_index);
-	$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
-	shift_separators($a_separators, $ridx['index'], true);
-	config_set_path('filter/separator/' . strtolower($if), $a_separators);
-
-	config_set_path('filter/rule', $array);
-	filter_rules_sort();
-	return true;
+	remove_filter_rules($delete_index, $if, $update_associated_rules, $changes);
 }
 
 /****f* itemid/toggle_id
@@ -66,15 +58,15 @@ function delete_id($id) {
  * RESULT
  *   boolean   - true if item was found and set
  ******/
-function toggle_id($id, $status) {
-	$array = config_get_path('filter/rule', []);
+function toggle_id($id, $status, array &$changes = []) {
+	$array = get_filter_rules_list();
 
 	// Search for the item in the array
 	$toggle_index = get_id($id, $array);
 
 	// If we found the item, unset it
 	if ($toggle_index === false) {
-		return false;
+		return;
 	}
 
 	if ($status) {
@@ -83,9 +75,8 @@ function toggle_id($id, $status) {
 		$array[$toggle_index]['disabled'] = true;
 	}
 
-	config_set_path('filter/rule', $array);
-
-	return true;
+	set_filter_rules_list($array);
+	$changes['filter_rules'] = true;
 }
 
 /****f* itemid/get_id

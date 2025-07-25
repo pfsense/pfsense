@@ -119,7 +119,7 @@ if ($_GET) {
 			$can_add = false;
 			$can_enable = false;
 			$dontshow = true;
-			foreach (config_get_path('filter/rule', []) as $key => $rule) {
+			foreach (get_filter_rules_list() as $key => $rule) {
 				if (isset($rule['dnpipe'])) {
 					config_del_path("filter/rule/{$key}/dnpipe");
 				}

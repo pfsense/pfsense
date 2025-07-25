@@ -28,6 +28,7 @@ require_once("functions.inc");
 require_once("util.inc");
 require_once("ipsec.inc");
 require_once("config.inc");
+require_once("filter.inc");
 
 function easyrule_find_rule_interface($int) {
 	/* Borrowed from firewall_rules.php */
@@ -92,13 +93,13 @@ function easyrule_find_rule_interface($int) {
 function easyrule_block_rule_exists($int = 'wan', $ipproto = "inet") {
 	global $blockaliasname;
 	/* No rules, we we know it doesn't exist */
-	if (empty(config_get_path('filter/rule', []))) {
+	if (get_filter_rules_list()) {
 		return false;
 	}
 
 	/* Search through the rules for one referencing our alias */
-	foreach (config_get_path('filter/rule', []) as $rule) {
-		if (!is_array($rule) || !is_array($rule['source'])) {
+	foreach (get_filter_rules_list() as $rule) {
+		if (!is_array($rule['source'])) {
 			continue;
 		}
 		$checkproto = isset($rule['ipprotocol']) ? $rule['ipprotocol'] : "inet";
@@ -124,9 +125,6 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 		return true;
 	}
 
-	filter_rules_sort();
-	$a_filter = config_get_path('filter/rule', []);
-
 	/* Make up a new rule */
 	$filterent = array();
 	$filterent['type'] = 'block';
@@ -141,15 +139,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$filterent['tracker'] = (int)microtime(true);
 
 	// place the rule on top
-	$ridx = get_interface_ruleindex($int);
-	array_splice($a_filter, $ridx['first'], 0, array($filterent));
-	config_set_path('filter/rule', $a_filter);
-	filter_rules_sort();
-
-	// shift the separators
-	$a_separators = config_get_path('filter/separator/' . strtolower($int), []);
-	shift_separators($a_separators, -1);
-	config_set_path('filter/separator/' . strtolower($int), $a_separators);
+	add_filter_rules([$filterent], -1);
 
 	return true;
 }
@@ -307,8 +297,6 @@ function easyrule_block_host_add($host, $int = 'wan') {
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	$easyrule_nettype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS];
 
-	filter_rules_sort();
-
 	/* Make up a new rule */
 	$filterent = array();
 	$filterent['type'] = 'pass';
@@ -357,7 +345,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	$filterent['created'] = make_config_revision_entry(null, "EasyRule");
 	$filterent['tracker'] = (int)microtime(true);
-	config_set_path('filter/rule/', $filterent);
+	add_filter_rules([$filterent]);
 
 	write_config($filterent['descr']);
 	$retval = filter_configure();

@@ -115,7 +115,13 @@ define('PFCONFIG_FILTER_IPSEC_INTERNAL', ['id' => 'pfc_ipsecint', 'description' 
 define('PFCONFIG_FILTER_ANTILOCKOUT', ['id' => 'pfc_antilock', 'description' => 'Rules to prevent accidental lockout from the firewall']);
 define('PFCONFIG_FILTER_NAT_REFLECTION', ['id' => 'pfc_rnat', 'description' => 'Rules for NAT reflection']);
 define('PFCONFIG_FILTER_CAPTIVE_PORTAL', ['id' => 'pfc_cp', 'description' => 'Rules for the Captive Portal service']);
-define('PFCONFIG_USER_FILTER', ['id' => 'pfc_usr', 'description' => 'Rules defined by the user']);
+define('PFCONFIG_ANCHOR_FILTER_USER', ['id' => 'pfc_anchorusr', 'description' => 'Anchor for user rules']);
+define('PFCONFIG_PACKAGE_FILTER_FLOATING_BEFORE', ['id' => 'pfc_pkgfloat0', 'description' => 'Floating rules from packages']);
+define('PFCONFIG_USER_FILTER_FLOATING', ['id' => 'pfc_float', 'description' => 'Floating rules defined by the user']);
+define('PFCONFIG_PACKAGE_FILTER_FLOATING_AFTER', ['id' => 'pfc_pkgfloat1', 'description' => 'Floating rules from packages']);
+define('PFCONFIG_USER_FILTER_IF_GROUP_USER', ['id' => 'pfc_ifgroupusr', 'description' => 'User rules for user-defined interface groups']);
+define('PFCONFIG_USER_FILTER_IF_GROUP_SYSTEM', ['id' => 'pfc_ifgroupsys', 'description' => 'User rules for system-defined interface groups']);
+define('PFCONFIG_USER_FILTER_INTERFACE', ['id' => 'pfc_usrif', 'description' => 'Interface rules defined by the user']);
 define('PFCONFIG_FILTER_STATIC_ROUTES', ['id' => 'pfc_bypassif', 'description' => 'Rules to bypass the firewall for traffic ingressing and egressing on the same interface']);
 define('PFCONFIG_FILTER_IPSEC_SERVICE', ['id' => 'pfc_ipsec', 'description' => 'Rules for the IPsec service']);
 define('PFCONFIG_FILTER_TFTP_PROXY', ['id' => 'pfc_tftp', 'description' => 'Rules for the TFTP Proxy service']);
@@ -184,7 +190,13 @@ define('PFCONFIG_CATEGORIES', [
 	PFCONFIG_FILTER_ANTILOCKOUT['id'] => 'PFCONFIG_FILTER_ANTILOCKOUT',
 	PFCONFIG_FILTER_NAT_REFLECTION['id'] => 'PFCONFIG_FILTER_NAT_REFLECTION',
 	PFCONFIG_FILTER_CAPTIVE_PORTAL['id'] => 'PFCONFIG_FILTER_CAPTIVE_PORTAL',
-	PFCONFIG_USER_FILTER['id'] => 'PFCONFIG_USER_FILTER',
+	PFCONFIG_ANCHOR_FILTER_USER['id'] => 'PFCONFIG_ANCHOR_FILTER_USER',
+	PFCONFIG_PACKAGE_FILTER_FLOATING_BEFORE['id'] => 'PFCONFIG_PACKAGE_FILTER_FLOATING_BEFORE',
+	PFCONFIG_USER_FILTER_FLOATING['id'] => 'PFCONFIG_USER_FILTER_FLOATING',
+	PFCONFIG_PACKAGE_FILTER_FLOATING_AFTER['id'] => 'PFCONFIG_PACKAGE_FILTER_FLOATING_AFTER',
+	PFCONFIG_USER_FILTER_IF_GROUP_USER['id'] => 'PFCONFIG_USER_FILTER_IF_GROUP_USER',
+	PFCONFIG_USER_FILTER_IF_GROUP_SYSTEM['id'] => 'PFCONFIG_USER_FILTER_IF_GROUP_SYSTEM',
+	PFCONFIG_USER_FILTER_INTERFACE['id'] => 'PFCONFIG_USER_FILTER_INTERFACE',
 	PFCONFIG_FILTER_STATIC_ROUTES['id'] => 'PFCONFIG_FILTER_STATIC_ROUTES',
 	PFCONFIG_FILTER_IPSEC_SERVICE['id'] => 'PFCONFIG_FILTER_IPSEC_SERVICE',
 	PFCONFIG_FILTER_TFTP_PROXY['id'] => 'PFCONFIG_FILTER_TFTP_PROXY',

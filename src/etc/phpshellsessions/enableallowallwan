@@ -24,7 +24,7 @@ require_once("shaper.inc");
 config_read_file(true);
 echo "Adding allow all rule...\n";
 
-config_set_path('filter/rule/', [
+add_filter_rules([[
 	"tracker" => (int)microtime(true),
 	"type" => "pass",
 	"interface" => "wan",
@@ -35,7 +35,7 @@ config_set_path('filter/rule/', [
 	"destination" => array("any" => ""),
 	"descr" => "Allow all ipv4+ipv6 via pfSsh.php",
 	"created" => make_config_revision_entry(null, "pfSsh.php added allow all wan rule")
-]);
+]]);
 
 echo "Turning off block private networks (if on)...\n";
 config_del_path('interfaces/wan/blockpriv');

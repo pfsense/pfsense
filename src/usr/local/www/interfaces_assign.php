@@ -379,18 +379,14 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				config_del_path("dhcpdv6/{$id}");
 				services_dhcpd_configure('inet6');
 			}
-
-			foreach (config_get_path('filter/rule', []) as $x => $rule) {
+			remove_filter_rules([], $id);
+			$rdr_rules_list = [];
+			foreach (get_anynat_rules_list('rdr') as $x => $rule) {
 				if ($rule['interface'] == $id) {
-					config_del_path("filter/rule/{$x}");
+					$rdr_rules_list[] = $x;
 				}
 			}
-		
-			foreach (config_get_path('nat/rule', []) as $x => $rule) {
-				if ($rule['interface'] == $id) {
-					config_del_path("nat/rule/{$x}/interface");
-				}
-			}
+			remove_rdr_rules($rdr_rules_list);
 
 			write_config(gettext('Interface assignment deleted'));
 

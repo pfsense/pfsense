@@ -71,7 +71,7 @@ if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
 		$input_errors[] = gettext('Cannot remove a gateway group that is being used as the default gateway.');
 	} else {
 		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
-		foreach (config_get_path('filter/rule', []) as $idx => $rule) {
+		foreach (get_filter_rules_list() as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
 				config_del_path("filter/rule/{$idx}/gateway");
 			}

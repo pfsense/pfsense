@@ -576,7 +576,7 @@ function get_interface_bandwidth($object) {
 }
 
 function cleanup_queue_from_rules($queue) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['defaultqueue'] == $queue) {
 			unset($rule['defaultqueue']);
@@ -588,11 +588,11 @@ function cleanup_queue_from_rules($queue) {
 			unset($rule['ackqueue']);
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 function cleanup_dnqueue_from_rules($queue) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['dnpipe'] == $queue) {
 			unset($rule['dnpipe']);
@@ -601,11 +601,11 @@ function cleanup_dnqueue_from_rules($queue) {
 			unset($rule['pdnpipe']);
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 function rename_queue_in_rules($name, $newname) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['defaultqueue'] == $name) {
 			$rule['defaultqueue'] = $newname;
@@ -614,11 +614,11 @@ function rename_queue_in_rules($name, $newname) {
 			$rule['ackqueue'] = $newname;
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 function rename_dnqueue_in_rules($name, $newname) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['dnpipe'] == $name) {
 			$rule['dnpipe'] = $newname;
@@ -627,7 +627,7 @@ function rename_dnqueue_in_rules($name, $newname) {
 			$rule['pdnpipe'] = $newname;
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 class altq_root_queue {

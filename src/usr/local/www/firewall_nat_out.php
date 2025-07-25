@@ -175,7 +175,7 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-			foreach (config_get_path('nat/outbound/rule', []) as $natent):
+			foreach (get_anynat_rules_list('nat') as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
 				$trclass = '';

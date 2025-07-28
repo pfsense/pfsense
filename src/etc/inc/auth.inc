@@ -155,6 +155,7 @@ if (function_exists("display_error_form") && !config_path_enabled('system/webgui
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<? include('includes/iconheaders.html') ?>
 	<link rel="stylesheet" href="/css/pfSense.css" />
 	<title><?=gettext("Redirecting..."); ?></title>
 </head>

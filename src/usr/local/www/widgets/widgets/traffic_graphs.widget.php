@@ -39,7 +39,7 @@ if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
 }
 
-if ($_POST) {
+if ($_POST && $_POST['widget'] === __FILE__) {
 
 	if (!is_array($user_settings["widgets"]["traffic_graphs"])) {
 		$user_settings["widgets"]["traffic_graphs"] = array();
@@ -257,7 +257,7 @@ $tg_displayed_realifsarray = [];
 
 		<div class="form-group">
 			<div class="col-sm-offset-3 col-sm-6">
-				<button type="submit" class="btn btn-primary"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+				<button type="submit" class="btn btn-primary" name="widget" value="<?=__FILE__?>"><i class="fa-solid fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
 				<button id="showalltgitems" type="button" class="btn btn-info"><i class="fa-solid fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 			</div>
 		</div>

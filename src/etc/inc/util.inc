@@ -1984,7 +1984,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 				'enc',
 				'tun',
 				'lagg',
-				'vip'
+				'vip',
+				'tailscale'
 		);
 	} else {
 		$vfaces = array(
@@ -2003,7 +2004,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = fal
 				'tun',
 				'lagg',
 				'vip',
-				'l2tps'
+				'l2tps',
+				'tailscale'
 		);
 	}
 	switch ($mode) {

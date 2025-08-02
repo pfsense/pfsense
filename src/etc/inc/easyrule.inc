@@ -92,11 +92,6 @@ function easyrule_find_rule_interface($int) {
 
 function easyrule_block_rule_exists($int = 'wan', $ipproto = "inet") {
 	global $blockaliasname;
-	/* No rules, we we know it doesn't exist */
-	if (get_filter_rules_list()) {
-		return false;
-	}
-
 	/* Search through the rules for one referencing our alias */
 	foreach (get_filter_rules_list() as $rule) {
 		if (!is_array($rule['source'])) {

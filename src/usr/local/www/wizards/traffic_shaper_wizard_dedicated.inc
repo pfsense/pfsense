@@ -691,7 +691,7 @@ function apply_all_chosen_items() {
 			$remove_list[] = $key;
 		}
 	}
-	remove_filter_rules($remove_list, '', true, $changedd);
+	remove_filter_rules($remove_list);
 
 	/* restart the cached config */
 	unset($altq_list_queues);

@@ -3384,11 +3384,11 @@ function get_filter_rules_list(): array {
 	foreach (get_filter_rules_map() as $category) {
 		foreach ($category as $group) {
 			foreach ($group as $rules) {
-				$rules_list = array_merge($rules_list, $rules);
+				$rules_list[] = &$rules;
 			}
 		}
 	}
-	return $rules_list;
+	return array_merge(...$rules_list);
 }
 
 /**
@@ -3655,11 +3655,11 @@ function get_anynat_rules_list(string $nat_type): array {
 	foreach (get_anynat_rules_map($nat_type) as $category) {
 		foreach ($category as $group) {
 			foreach ($group as $rules) {
-				$rules_list = array_merge($rules_list, $rules);
+				$rules_list[] = &$rules;
 			}
 		}
 	}
-	return $rules_list;
+	return array_merge(...$rules_list);
 }
 
 /**

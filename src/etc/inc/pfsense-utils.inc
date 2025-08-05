@@ -3381,9 +3381,10 @@ function get_filter_rules_map(array $rules_list = []): array {
  */
 function get_filter_rules_list(): array {
 	$rules_list = [];
-	foreach (get_filter_rules_map() as $category) {
-		foreach ($category as $group) {
-			foreach ($group as $rules) {
+	$rules_map = get_filter_rules_map();
+	foreach ($rules_map as &$category) {
+		foreach ($category as &$group) {
+			foreach ($group as &$rules) {
 				$rules_list[] = &$rules;
 			}
 		}
@@ -3652,9 +3653,10 @@ function get_anynat_rules_map(string $nat_type, array $rules_list = []): array {
  */
 function get_anynat_rules_list(string $nat_type): array {
 	$rules_list = [];
-	foreach (get_anynat_rules_map($nat_type) as $category) {
-		foreach ($category as $group) {
-			foreach ($group as $rules) {
+	$rules_map = get_anynat_rules_map($nat_type);
+	foreach ($rules_map as &$category) {
+		foreach ($category as &$group) {
+			foreach ($group as &$rules) {
 				$rules_list[] = &$rules;
 			}
 		}

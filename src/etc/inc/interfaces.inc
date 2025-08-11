@@ -6445,7 +6445,8 @@ function find_interface_ip($interface, $flush = false) {
 	global $interface_ip_arr_cache;
 	global $interface_sn_arr_cache;
 
-	$interface = str_replace("\n", "", $interface);
+	$interface = trim($interface);
+	$interface = get_real_interface($interface);
 
 	if (!does_interface_exist($interface)) {
 		return;
@@ -6453,28 +6454,12 @@ function find_interface_ip($interface, $flush = false) {
 
 	/* Setup IP cache */
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
-		if (file_exists("/var/db/{$interface}_ip")) {
-			$ifip = chop(file_get_contents("/var/db/{$interface}_ip"));
-			$ifaddrs = pfSense_get_ifaddrs($interface);
-			if (!isset($ifaddrs)) {
-				return;
-			}
-			foreach (array_get_path($ifaddrs, 'addrs', []) as $addrs) {
-				if ($addrs['addr'] == $ifip) {
-					$interface_ip_arr_cache[$interface] = $addrs['addr'];
-					$interface_sn_arr_cache[$interface] = $addrs['subnetbits'];
-					break;
-				}
-			}
+		$ifinfo = get_interface_addresses($interface);
+		if (!isset($ifinfo)) {
+			return;
 		}
-		if (!isset($interface_ip_arr_cache[$interface])) {
-			$ifinfo = get_interface_addresses($interface);
-			if (!isset($ifinfo)) {
-				return;
-			}
-			$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
-			$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
-		}
+		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
+		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
 	}
 
 	return $interface_ip_arr_cache[$interface];

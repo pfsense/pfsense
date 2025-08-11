@@ -661,7 +661,7 @@ function sigkillbypid(string $pidfile, string|int $sig, int $waitfor = 0): int {
 
 	exec(implode(' ', [
 		'/bin/pkill',
-		"-${sig}",
+		"-{$sig}",
 		'-F', $pidfile,
 		'2>/dev/null'
 	]), $_out, $ret);

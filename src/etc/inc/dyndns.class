@@ -423,7 +423,7 @@
 
 			$this->_addressFamilyRequest = is_ipaddrv6($this->_dnsRequestIfIP) ? AF_INET6 : AF_INET;
 			$this->_checkIPMode = $checkIPMode;
-			$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamilyRR);
+			$this->_dnsIP = dyndnsCheckIP($this->_if, $this->_checkIPMode, $this->_addressFamilyRR);
 
 			if (($dnsMaxCacheAge !== null) && ($dnsMaxCacheAge !== "")) {
 				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
@@ -3287,7 +3287,7 @@
 
 			$currentTime = time();
 
-			$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamilyRR);
+			$this->_dnsIP = dyndnsCheckIP($this->_if, $this->_checkIPMode, $this->_addressFamilyRR);
 			if (!$this->_dnsIP) {
 				log_error(sprintf(gettext("Dynamic Dns (%s): Current WAN IP could not be determined, skipping update process."), $this->_FQDN));
 				return false;

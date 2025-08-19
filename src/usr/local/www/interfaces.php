@@ -2810,45 +2810,6 @@ $form->add($section);
 $section = new Form_Section('Track IPv6 Interface');
 $section->addClass('track6');
 
-function build_ipv6interface_list() {
-	global $form;
-
-	$list = ['' => ''];
-
-	$interfaces = get_configured_interface_with_descr(true);
-	$dynv6ifs = [];
-
-	foreach ($interfaces as $iface => $ifacename) {
-		switch (config_get_path("interfaces/{$iface}/ipaddrv6")) {
-			case "6to4":
-			case "6rd":
-			case "dhcp6":
-				array_set_path($dynv6ifs,
-					$iface,
-					[
-						'name' => $ifacename,
-						'ipv6_num_prefix_ids' => pow(2, (int) calculate_ipv6_delegation_length($iface)) - 1
-					]);
-				break;
-			default:
-				continue 2;
-		}
-	}
-
-	foreach ($dynv6ifs as $iface => $ifacedata) {
-		array_set_path($list, $iface, array_get_path($ifacedata, 'name'));
-
-		$form->addGlobal(new Form_Input(
-			'ipv6-num-prefix-ids-' . $iface,
-			null,
-			'hidden',
-			array_get_path($ifacedata, 'ipv6_num_prefix_ids')
-		));
-	}
-
-	return($list);
-}
-
 $section->addInput(new Form_Select(
 	'track6-interface',
 	'*IPv6 Interface',

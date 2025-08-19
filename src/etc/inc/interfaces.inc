@@ -4592,7 +4592,7 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 	return 0;
 }
 
-function generate_6rd_prefix($prefix_6rd, $prefix_6rd_v4plen, $track6_prefix_id) {
+function generate_6rd_prefix($prefix_6rd, $wanv4, $prefix_6rd_v4plen, $track6_prefix_id) {
 	/* create the long prefix notation for math, save the prefix length */
 	$rd6prefix = explode("/", $prefix_6rd);
 	$rd6prefixlen = $rd6prefix[1];
@@ -4604,7 +4604,7 @@ function generate_6rd_prefix($prefix_6rd, $prefix_6rd_v4plen, $track6_prefix_id)
 	/* just save the left prefix length bits */
 	$rd6lanbin = substr($rd6lanbin, 0, $rd6prefixlen);
 	/* add the v4 address, offset n bits from the left */
-	$rd6lanbin .= substr(sprintf("%032b", hexdec($hexwanv4)), (0 + $prefix_6rd_v4plen), 32);
+	$rd6lanbin .= substr(sprintf("%032b", hexdec(return_hex_ipv4($wanv4))), (0 + $prefix_6rd_v4plen), 32);
 
 	/* add the custom prefix id, max 32bits long? (64 bits - (prefixlen + (32 - v4plen)) */
 	/* 64 - (37 + (32 - 17)) = 8 == /52 */
@@ -4642,9 +4642,8 @@ function interface_track6_6rd_configure($interface, $lancfg) {
 		log_error(sprintf(gettext('The interface IPv4 \'%1$s\' address on interface \'%2$s\' is not valid, not configuring 6RD tunnel'), $ip4address, $lancfg['track6-interface']));
 		return;
 	}
-	$hexwanv4 = return_hex_ipv4($ip4address);
 
-	$rd6lan = generate_6rd_prefix($wancfg['prefix-6rd'], $wancfg['prefix-6rd-v4plen'], $lancfg['track6-prefix-id']) .'.1';
+	$rd6lan = generate_6rd_prefix($wancfg['prefix-6rd'], $ip4address, $wancfg['prefix-6rd-v4plen'], $lancfg['track6-prefix-id']) .'.1';
 
 	$lanif = get_real_interface($interface);
 	$oip = find_interface_ipv6($lanif);

@@ -999,7 +999,13 @@ function openvpn_reconfigure($mode, $settings) {
 	if ($mode == 'server') {
 
 		list($ip, $cidr) = openvpn_gen_tunnel_network($settings['tunnel_network']);
-		list($ipv6, $prefix) = openvpn_gen_tunnel_network($settings['tunnel_networkv6']);
+		if ($settings['tunnel_networkv6_type'] != 'track6') {
+			list($ipv6, $prefix) = openvpn_gen_tunnel_network($settings['tunnel_networkv6']);
+		}
+		else {
+			$rd6lan = generate_6rd_prefix(config_get_path('interfaces/wan/prefix-6rd'), get_interface_ip($settings['tunnel_track6_interface']), config_get_path('interfaces/wan/prefix-6rd-v4plen'), $settings['tunnel_track6_prefix_id']);
+			list($ipv6, $prefix) = openvpn_gen_tunnel_network($rd6lan . '/64');
+		}
 		$mask = gen_subnet_mask($cidr);
 
 		// configure tls modes

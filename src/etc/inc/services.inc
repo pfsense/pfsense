@@ -711,14 +711,6 @@ function services_kea6_configure(bool $with_custom = true) {
 		$keaconf['Dhcp6']['hooks-libraries'][] = $kea_ha_hook;
 	}
 
-	/* Store DHCP response options in the lease database */
-	$lease_options = '/usr/local/lib/kea/hooks/libdhcp_lease_options.so';
-	if (file_exists($lease_options)) {
-		$keaconf['Dhcp6']['hooks-libraries'][] = [
-			'library' => $lease_options,
-		];
-	}
-
 	$run_scriptd_base = g_get('conf_path') . '/kea6_scripts.d';
 	safe_mkdir($run_scriptd_base);
 
@@ -801,7 +793,7 @@ EOD;
 		chmod($run_script_path, 0755);
 	}
 
-	$run_script_main = '/usr/local/bin/kea_run6';
+	$run_script_main = '/usr/local/share/kea/scripts/kea_run6';
 	if (file_exists($run_script_main)) {
 		$keaconf['Dhcp6']['hooks-libraries'][] = [
 			'library' => '/usr/local/lib/kea/hooks/libdhcp_run_script.so',
@@ -1532,14 +1524,6 @@ function services_kea4_configure(bool $with_custom = true) {
 		$keaconf['Dhcp4']['hooks-libraries'][] = $kea_ha_hook;
 	}
 
-	/* Store DHCP response options in the lease database */
-	$lease_options = '/usr/local/lib/kea/hooks/libdhcp_lease_options.so';
-	if (file_exists($lease_options)) {
-		$keaconf['Dhcp4']['hooks-libraries'][] = [
-			'library' => $lease_options,
-		];
-	}
-
 	$run_scriptd_base = g_get('conf_path') . '/kea4_scripts.d';
 	safe_mkdir($run_scriptd_base);
 	$run_script_path = $run_scriptd_base . '/kea2unbound.sh';
@@ -1583,7 +1567,7 @@ EOD;
 		chmod($run_script_path, 0755);
 	}
 
-	$run_script_main = '/usr/local/bin/kea_run4';
+	$run_script_main = '/usr/local/share/kea/scripts/kea_run4';
 	if (file_exists($run_script_main)) {
 		$keaconf['Dhcp4']['hooks-libraries'][] = [
 			'library' => '/usr/local/lib/kea/hooks/libdhcp_run_script.so',

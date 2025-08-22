@@ -610,9 +610,16 @@ function services_kea6_configure(bool $with_custom = true) {
 		'lease-checks' => 'fix-del'
 	];
 
-	/* required for HA support */
+	/* Store domain-search response option in lease database */
 	$keaconf['Dhcp6']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
+		'parameters' => [
+			'binding-variables' => [[
+				'name' => 'domain-search',
+				'expression' => 'option[24].text',
+				'source' => 'response'
+			]]
+		]
 	];
 
 	if (config_path_enabled('kea6/ha')) {
@@ -1423,9 +1430,16 @@ function services_kea4_configure(bool $with_custom = true) {
 		'lease-checks' => 'fix-del'
 	];
 
-	/* required for HA support */
+	/* Store domain-name response option in lease database */
 	$keaconf['Dhcp4']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
+		'parameters' => [
+			'binding-variables' => [[
+				'name' => 'domain-name',
+				'expression' => 'option[15].text',
+				'source' => 'response'
+			]]
+		]
 	];
 
 	if (config_path_enabled('kea/ha')) {

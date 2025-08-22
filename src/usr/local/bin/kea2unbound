@@ -425,7 +425,7 @@ function kea_leases_records(KeaConfig $config, ?string $fallbackDomain = null, a
         }
 
         /* Determine the domain name to use for the record */
-        $option_data = &$lease['user-context']['Netgate']['option-data'];
+        $option_data = &$lease['user-context']['ISC']['binding-variables'];
         $domain = \rtrim(
             first_of(
                 $option_data['domain-name'] ?? null,

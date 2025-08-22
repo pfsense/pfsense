@@ -209,13 +209,13 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	}
 
 	// Setup DNS64 support
-	if (isset($unboundcfg['dns64'])) {
+	if (array_path_enabled($unboundcfg, 'dns64')) {
 		$module_config .= 'dns64 ';
 		$dns64_conf = 'dns64-prefix: ';
-		if (is_subnetv6($unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'])) {
-			$dns64_conf .= $unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'];
+		if (isset($unboundcfg['dns64']['prefix']) && validate_nat64_prefix($unboundcfg['dns64']['prefix'])) {
+			$dns64_conf .= $unboundcfg['dns64']['prefix'];
 		} else {
-			$dns64_conf .= '64:ff9b::/96';
+			$dns64_conf .= NAT64_WELLKNOWN_PREFIX_CIDR;
 		}
 	}
 

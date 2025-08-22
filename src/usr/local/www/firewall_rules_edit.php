@@ -172,8 +172,14 @@ function parse_firewall_rule_nat_from_post(array $post): array {
 		return [gettext('NAT may only be set on "pass" rules')];
 	}
 
-	if ((($post['interface'] == 'FloatingRules') || isset($post['floating'])) && (!isset($post['direction']) || ($post['direction'] != 'in'))) {
-		return [gettext('NAT may only be set on inbound rules')];
+	$multiple_interfaces = false;
+	if (isset($post['floating'])) {
+		if (!isset($post['direction']) || ($post['direction'] != 'in')) {
+			return [gettext('NAT may only be set on inbound rules')];
+		}
+		if (empty($post['interface']) || (count($_POST['interface']) > 1) || in_array('any', $_POST['interface'])) {
+			$multiple_interfaces = true;
+		}
 	}
 
 	$config_values = [
@@ -197,11 +203,17 @@ function parse_firewall_rule_nat_from_post(array $post): array {
 		// Validate the drop-down selection and respective input
 		if (empty($post["nat{$nat_type}_{$target}"]) || ($post["nat{$nat_type}_{$target}"] == 'default')) {
 			// The target should be determined automatically during filter reloads
+			if ($multiple_interfaces) {
+				return [gettext(
+					"The NAT {$target} can be automatically determined only " .
+					"when a single interface (that is not \"Any\") is selected."
+				)];
+			}
 			$address[0] = '';
 			$validated = true;
 		} elseif ($post["nat{$nat_type}_{$target}"] == 'network') {
 			if (empty($post["nat{$nat_type}_{$target}_value"])) {
-				return [gettext('A valid NAT {$target} must be specified')];
+				return [gettext("A valid NAT {$target} must be specified")];
 			}
 			if (is_alias($post["nat{$nat_type}_{$target}_value"])) {
 				// Validate aliases
@@ -658,7 +670,14 @@ if ($_POST['save']) {
 			$_POST['srcmask'] = 32;
 		}
 	}
-	if (get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags_validation)) {
+	if (!config_path_enabled('system', 'allow_nat64_prefix_override') &&
+	    $_POST['nat'] && ($_POST['ipprotocol'] == 'inet6')) {
+		// Force the well-known NAT64 prefix.
+		unset($_POST['dstnot']);
+		$_POST['dsttype'] = 'network';
+		$_POST['dst'] = NAT64_WELLKNOWN_PREFIX;
+		$_POST['dstmask'] = NAT64_WELLKNOWN_PREFIX_LENGTH;
+	} elseif (get_specialnet($_POST['dsttype'], $filter_srcdsttype_flags_validation)) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
 	} else if ($_POST['dsttype'] == "single") {
@@ -722,6 +741,19 @@ if ($_POST['save']) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (config_path_enabled('system', 'allow_nat64_prefix_override') && 
+	    ($_POST['nat'] && ($_POST['ipprotocol'] == 'inet6'))) {
+		if (isset($_POST['dstnot'])) {
+			$input_errors[] = gettext("Invert match cannot be selected with NAT64.");
+		}
+		if ($_POST['dsttype'] != "network") {
+			$input_errors[] = gettext("The NAT64 destination type must be a network.");
+		}
+		if (!validate_nat64_prefix($_POST['dst'] . '/' . $_POST['dstmask'])) {
+			$input_errors[] = gettext("The NAT64 prefix is invalid.");
+		}
+	}
 
 	if ((isset($_POST['srcnot']) && ($_POST['srctype'] == 'any')) ||
 	    (isset($_POST['dstnot']) && ($_POST['dsttype'] == 'any'))) {
@@ -2419,7 +2451,14 @@ events.push(function() {
 	}
 
 	function nat_change(action) {
+		can_override_nat64prefix = <?=(config_path_enabled('system', 'allow_nat64_prefix_override') ? "true" : "false")?>;
 		updateGWselect();
+		if ((action == 'nat_toggle') && (($('#ipprotocol option:selected').val() != "inet6") || !$('#nat').prop('checked'))) {
+			disableInput('dstnot', false);
+			disableInput('dsttype', false);
+			disableInput('dst', false);
+			disableInput('dstmask', false);
+		}
 		if ($('#ipprotocol option:selected').val() == "inet6") {
 			if (action == 'address_family') {
 				$('#nat').parent()[0].childNodes[1].nodeValue = 'Enable NAT64';
@@ -2434,13 +2473,20 @@ events.push(function() {
 			hideInput('nat64_source_value', ($('#nat64_source option:selected').val() != "network"));
 
 			if (action == 'nat_toggle') {
-				if (!$('#dst').val()) {
-					$('#dsttype').val('network');
-					$('#dsttype').change();
-					$('#dst').val('64:ff9b::');
+				$('#dstnot').prop('checked', false);
+				$('#dsttype').val('network');
+				$('#dsttype').change();
+				if (!can_override_nat64prefix || !$('#dst').val()) {
+					$('#dst').val("<?=NAT64_WELLKNOWN_PREFIX?>");
 					$('#dst').change();
 					$('#dstmask').val('96');
 				}
+			}
+			disableInput('dstnot', true);
+			disableInput('dsttype', true);
+			if (!can_override_nat64prefix) {
+				disableInput('dst', true);
+				disableInput('dstmask', true);
 			}
 		} else {
 			$('#nat').prop('checked', false);

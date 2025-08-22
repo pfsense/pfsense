@@ -83,6 +83,7 @@ define('PFCONFIG_PACKAGE_EARLY', ['id' => 'pfc_pkgearly', 'description' => 'Extr
 define('PFCONFIG_RADIUS_OPENVPN', ['id' => 'pfc_ovpnrad', 'description' => 'Extra rules from OpenVPN RADIUS']);
 define('PFCONFIG_RADIUS_IPSEC', ['id' => 'pfc_ipsecrad', 'description' => 'Extra rules from IPsec RADIUS']);
 define('PFCONFIG_FILTER_BLOCK_IPV6', ['id' => 'pfc_block6', 'description' => 'Rules to block all IPv6 packets']);
+define('PFCONFIG_FILTER_BLOCK_NAT64_RESERVED', ['id' => 'pfc_nat64reserv', 'description' => 'Rules to block NAT64 translation for non-global IPv4 addresses']);
 define('PFCONFIG_FILTER_BLOCK_IPV4_LINKLOCAL', ['id' => 'pfc_block4ll', 'description' => 'Rules to block IPv4 link-local packets']);
 define('PFCONFIG_FILTER_BLOCK', ['id' => 'pfc_block', 'description' => 'Required rules for the default-deny filter behavior']);
 define('PFCONFIG_FILTER_ICMPV6_REQUIRED', ['id' => 'pfc_icmp6req', 'description' => 'Required rules for IPv6 operation']);
@@ -158,6 +159,7 @@ define('PFCONFIG_CATEGORIES', [
 	PFCONFIG_RADIUS_OPENVPN['id'] => 'PFCONFIG_RADIUS_OPENVPN',
 	PFCONFIG_RADIUS_IPSEC['id'] => 'PFCONFIG_RADIUS_IPSEC',
 	PFCONFIG_FILTER_BLOCK_IPV6['id'] => 'PFCONFIG_FILTER_BLOCK_IPV6',
+	PFCONFIG_FILTER_BLOCK_NAT64_RESERVED['id'] => 'PFCONFIG_FILTER_BLOCK_NAT64_RESERVED',
 	PFCONFIG_FILTER_BLOCK_IPV4_LINKLOCAL['id'] => 'PFCONFIG_FILTER_BLOCK_IPV4_LINKLOCAL',
 	PFCONFIG_FILTER_BLOCK['id'] => 'PFCONFIG_FILTER_BLOCK',
 	PFCONFIG_FILTER_ICMPV6_REQUIRED['id'] => 'PFCONFIG_FILTER_ICMPV6_REQUIRED',
@@ -1489,6 +1491,30 @@ function is_hostnamewithport($hostport) {
 		return is_hostname($parts[0]) && is_port($parts[1]);
 	}
 	return false;
+}
+
+// See RFC 6052
+function validate_nat64_prefix(mixed $prefix):bool {
+	if (!isset($prefix) || !is_string($prefix) || (strlen($prefix) < 1)) {
+		return false;
+	}
+	if (!is_subnetv6($prefix)) {
+		return false;
+	}
+
+	$prefix_parts = explode('/', $prefix);
+
+	switch (intval($prefix_parts[1])) {
+		case 32:
+		case 40:
+		case 48:
+		case 56:
+		case 64:
+		case 96:
+			return true;
+		default:
+			return false;
+	}
 }
 
 function get_reserved_table_names($name = '', $type = '') {

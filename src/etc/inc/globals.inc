@@ -43,6 +43,11 @@ define('DMYPWD', '********');
 // Captive Portal aliases prefix
 define('CPPREFIX', 'cpzoneid_');
 
+// Default NAT64 prefix
+define('NAT64_WELLKNOWN_PREFIX', '64:ff9b::');
+define('NAT64_WELLKNOWN_PREFIX_LENGTH', '96');
+define('NAT64_WELLKNOWN_PREFIX_CIDR', NAT64_WELLKNOWN_PREFIX . '/' . NAT64_WELLKNOWN_PREFIX_LENGTH);
+
 $version_file = '/etc/version';
 $version_patch_file = $version_file . 'patch';
 
@@ -82,7 +87,7 @@ $g = [
 	'disablehelpicon' => false,
 	'disablecrashreporter' => false,
 	'debug' => false,
-	'latest_config' => '24.0',
+	'latest_config' => '24.1',
 	'minimum_ram_warning' => '101',
 	'minimum_ram_warning_text' => '128 MB',
 	'wan_interface_name' => 'wan',
@@ -545,6 +550,31 @@ add_reserved_table(
 		'_reserved4_' => 'IPv4 networks reserved for local use',
 		'_reserved6_' => 'IPv6 networks reserved for local use',
 	],
+);
+add_reserved_table(
+	[
+		'name' => '_nat64reserved_',
+		'type' => 'network',
+		'descr' => 'IPv6 networks in the well-known NAT64 prefix which represent non-global IPv4 addresses.'
+	],
+	[
+		NAT64_WELLKNOWN_PREFIX . "0/104" => 'This host on this network', // RFC1122
+		NAT64_WELLKNOWN_PREFIX . "a00:0/104" => 'Private-Use', // RFC1918
+		NAT64_WELLKNOWN_PREFIX . "6440:0/106" => 'Shared Address Space', // RFC6598
+		NAT64_WELLKNOWN_PREFIX . "7f00:0/104" => 'Loopback', // RFC1122
+		NAT64_WELLKNOWN_PREFIX . "a9fe:0/112" => 'Link Local', // RFC3927
+		NAT64_WELLKNOWN_PREFIX . "ac10:0/108" => 'Private-Use', // RFC1918
+		NAT64_WELLKNOWN_PREFIX . "c000:0/120" => 'IETF Protocol Assignments', // RFC6890
+		NAT64_WELLKNOWN_PREFIX . "c000:200/120" => 'Documentation (TEST-NET-1)', // RFC5737
+		NAT64_WELLKNOWN_PREFIX . "c058:6300/120" => '6to4 Relay Anycast', // RFC3068
+		NAT64_WELLKNOWN_PREFIX . "c0a8:0/112" => 'Private-Use', // RFC1918
+		NAT64_WELLKNOWN_PREFIX . "c612:0/111" => 'Benchmarking', //RFC2544
+		NAT64_WELLKNOWN_PREFIX . "c633:6400/120" => 'Documentation (TEST-NET-2)', // RFC5737
+		NAT64_WELLKNOWN_PREFIX . "cb00:7100/120" => 'Documentation (TEST-NET-3)', // RFC5737
+		NAT64_WELLKNOWN_PREFIX . "e000:0/100" => 'Multicast', // RFC5771
+		NAT64_WELLKNOWN_PREFIX . "f000:0/100" => 'Reserved', // RFC1112
+		NAT64_WELLKNOWN_PREFIX . "ffff:ffff/128" => 'Limited Broadcast' // RFC0919
+	]
 );
 
 /* VLAN Prio values. */

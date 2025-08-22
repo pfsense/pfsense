@@ -72,11 +72,9 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 	$pconfig['raminrtradvinterval'] = config_get_path("dhcpdv6/{$if}/raminrtradvinterval");
 	$pconfig['ramaxrtradvinterval'] = config_get_path("dhcpdv6/{$if}/ramaxrtradvinterval");
 	$pconfig['raadvdefaultlifetime'] = config_get_path("dhcpdv6/{$if}/raadvdefaultlifetime");
-	$pconfig['ranat64'] = config_get_path("dhcpdv6/{$if}/ranat64");
-	if (isset($pconfig['ranat64'])) {
-		list($pconfig['ranat64_address'], $pconfig['ranat64_mask']) = explode('/', $pconfig['ranat64']);
-	}
-	$pconfig['ranat64_lifetime'] = config_get_path("dhcpdv6/{$if}/ranat64_lifetime");
+	$pconfig['pref64_enable'] = config_path_enabled("dhcpdv6/{$if}/pref64");
+	$pconfig['pref64_prefix'] = config_get_path("dhcpdv6/{$if}/pref64/prefix");
+	$pconfig['pref64_lifetime'] = config_get_path("dhcpdv6/{$if}/pref64/lifetime");
 
 	$pconfig['radomainsearchlist'] = config_get_path("dhcpdv6/{$if}/radomainsearchlist");
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3'], $pconfig['radns4']) = config_get_path("dhcpdv6/{$if}/radnsserver");
@@ -206,21 +204,14 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Default valid lifetime must be greater than Default preferred lifetime.");
 	}
 
-	if (!empty($pconfig['ranat64'])) {
-		if (is_subnetv6($pconfig['ranat64'])) {
-			list($pconfig['ranat64_address'], $pconfig['ranat64_mask']) = explode('/', $pconfig['ranat64']);
-		} else {
-			$input_errors[] = gettext("The NAT64 prefix is invalid.");
-		}
+	if (!empty($_POST['pref64_prefix']) && !validate_nat64_prefix($pconfig['pref64_prefix'])) {
+		$input_errors[] = gettext("The NAT64 prefix is invalid.");
 	}
-	if ($_POST['ranat64_lifetime']) {
-		if (!is_numericint($_POST['ranat64_lifetime'])) {
+	if ($_POST['pref64_lifetime']) {
+		if (!is_numericint($_POST['pref64_lifetime'])) {
 			$input_errors[] = gettext("NAT64 Prefix Lifetime must be an integer.");
-		} elseif (intval($_POST['ranat64_lifetime']) < 1 || intval($_POST['ranat64_lifetime']) > 65528) {
+		} elseif (intval($_POST['pref64_lifetime']) < 1 || intval($_POST['pref64_lifetime']) > 65528) {
 			$input_errors[] = gettext("NAT64 Prefix Lifetime must be from 1 to 65528.");
-		} elseif (empty($_POST['ranat64_address']) && intval($_POST['ranat64_lifetime']) == 128) {
-			// Don't save the default lifetime value
-			unset($_POST['ranat64_lifetime']);
 		}
 	}
 
@@ -236,15 +227,23 @@ if ($_POST['save']) {
 		$dhcpd6_config['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
 		$dhcpd6_config['ramaxrtradvinterval'] = $_POST['ramaxrtradvinterval'];
 		$dhcpd6_config['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
-		if (!empty($_POST['ranat64_address'])) {
-			$dhcpd6_config['ranat64'] = "{$_POST['ranat64_address']}/{$_POST['ranat64_mask']}";
+		if (!empty($pconfig['pref64_enable'])) {
+			array_set_path($dhcpd6_config, 'pref64/enable', true);
 		} else {
-			array_del_path($dhcpd6_config, 'ranat64');
+			array_del_path($dhcpd6_config, 'pref64/enable');
 		}
-		if (isset($_POST['ranat64_lifetime'])) {
-			$dhcpd6_config['ranat64_lifetime'] = $_POST['ranat64_lifetime'];
+		if ($_POST['pref64_lifetime']) {
+			array_set_path($dhcpd6_config, 'pref64/lifetime', $_POST['pref64_lifetime']);
 		} else {
-			array_del_path($dhcpd6_config, 'ranat64_lifetime');
+			array_del_path($dhcpd6_config, 'pref64/lifetime');
+		}
+		if (config_path_enabled('system', 'allow_nat64_prefix_override') && !empty($_POST['pref64_prefix'])) {
+			array_set_path($dhcpd6_config, 'pref64/prefix', $_POST['pref64_prefix']);
+		} else {
+			array_del_path($dhcpd6_config, 'pref64/prefix');
+		}
+		if (empty(array_get_path($dhcpd6_config, 'pref64'))) {
+			array_del_path($dhcpd6_config, 'pref64');
 		}
 
 		$dhcpd6_config['radomainsearchlist'] = $_POST['radomainsearchlist'];
@@ -439,25 +438,33 @@ $section->addInput(new Form_Input(
 ))->setHelp(gettext('The lifetime associated with the default router in seconds.%1$s' .
 'The default is 3 * Maximum RA interval seconds.'), '<br />');
 
-
-$section->addInput(new Form_IpAddress(
-	'ranat64_address',
-	gettext('NAT64 Prefix'),
-	($pconfig['ranat64_address'] ?? ''),
-	'V6'
-))->addClass('autotrim')->addMask('ranat64_mask', ($pconfig['ranat64_mask'] ?? 128))->setWidth(5)->setHelp(
-	'Specify a NAT64 prefix to enable PREF64 support. This is typically set to "64:ff9b::/96".'
-);
+$section->addInput(new Form_Checkbox(
+	'pref64_enable',
+	'PREF64',
+	'Advertise a NAT64 prefix',
+	$pconfig['pref64_enable']
+))->setHelp('Check to enable advertising of the NAT64 prefix with PREF64.');
 $section->addInput(new Form_Input(
-	'ranat64_lifetime',
+	'pref64_lifetime',
 	gettext('NAT64 Prefix Lifetime'),
 	'number',
-	$pconfig['ranat64_lifetime'],
+	$pconfig['pref64_lifetime'],
 	['min' => 1, 'max' => 65528, 'placeholder' => (intval(array_get_path($pconfig, 'ramaxrtradvinterval', 600)) * 3)]
 ))->setHelp(gettext('The length of time in seconds (relative to the time
 	the packet is sent) that the prefix is valid for the purpose of NAT64
 	existence determination. The default is 3 * Maximum RA Interval seconds.'
 ));
+if (config_path_enabled('system', 'allow_nat64_prefix_override')) {
+	$section->addInput(new Form_Input(
+		'pref64_prefix',
+		gettext('NAT64 Prefix'),
+		'text',
+		($pconfig['pref64_prefix'] ?? ''),
+		['placeholder' => NAT64_WELLKNOWN_PREFIX_CIDR]
+	))->addClass('autotrim')->setWidth(5)->setHelp(
+		'Override the NAT64 prefix advertised by PREF64.'
+	);
+}
 
 if (empty($pconfig['subnets'])) {
 	$pconfig['subnets'] = array('0' => '/128');

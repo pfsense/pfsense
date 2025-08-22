@@ -6981,6 +6981,147 @@ function upgrade_238_to_239() {
 function upgrade_239_to_240() {
 }
 
+function upgrade_240_to_241() {
+	/**
+	 * Configuration related to NAT64 has changed. See:
+	 * https://redmine.pfsense.org/issues/16241
+	 */
+
+	$override_nat64_prefix = false;
+
+	// Migrate the DNS64 configuration and check for a custom prefix.
+	$changed = false;
+	$unbound_config = config_get_path('unbound', []);
+	if (isset($unbound_config['dns64'])) {
+		array_set_path($unbound_config, 'dns64/enable', true);
+		$changed = true;
+	}
+	if (isset($unbound_config['dns64prefix']) && isset($unbound_config['dns64netbits']) &&
+	    (gen_subnetv6($unbound_config['dns64prefix'], $unbound_config['dns64netbits']) . "/{$unbound_config['dns64netbits']}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+	    validate_nat64_prefix("{$unbound_config['dns64prefix']}/{$unbound_config['dns64netbits']}")) {
+		array_set_path($unbound_config, 'dns64/prefix', "{$unbound_config['dns64prefix']}/{$unbound_config['dns64netbits']}");
+		$override_nat64_prefix = true;
+	}
+	if (isset($unbound_config['dns64prefix'])) {
+		unset($unbound_config['dns64prefix']);
+		$changed = true;
+	}
+	if (isset($unbound_config['dns64netbits'])) {
+		unset($unbound_config['dns64netbits']);
+		$changed = true;
+	}
+	if ($changed) {
+		config_set_path('unbound', $unbound_config);
+	}
+
+	// Migrate the PREF64 configuration and check for custom prefixes.
+	$changed = false;
+	$dhcp6_config = config_get_path("dhcpdv6", []);
+	foreach ($dhcp6_config as &$if_config) {
+		if (!empty($if_config['ranat64'])) {
+			array_set_path($if_config, 'pref64/enable', true);
+			if (is_subnetv6($if_config['ranat64'])) {
+				$prefix_parts = explode('/', $if_config['ranat64']);
+				if ((gen_subnetv6($prefix_parts[0], $prefix_parts[1]) . "/{$prefix_parts[1]}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+					validate_nat64_prefix($if_config['ranat64'])) {
+					array_set_path($if_config, 'pref64/prefix', $if_config['ranat64']);
+					$override_nat64_prefix = true;
+				}
+			}
+		}
+		if (!empty($if_config['ranat64_lifetime'])) {
+			array_set_path($if_config, 'pref64/lifetime', $if_config['ranat64_lifetime']);
+		}
+
+		if (isset($if_config['ranat64'])) {
+			unset($if_config['ranat64']);
+			$changed = true;
+		}
+		if (isset($if_config['ranat64_lifetime'])) {
+			unset($if_config['ranat64_lifetime']);
+			$changed = true;
+		}
+	}
+	unset($if_config);
+	if ($changed) {
+		config_set_path('dhcpdv6', $dhcp6_config);
+	}
+
+	// Normalize filter rule NAT64 values and check for custom prefixes.
+	$changed = false;
+	$alias_list = config_get_path('aliases/alias', []);
+	$rules_list = get_filter_rules_list();
+	foreach ($rules_list as &$rule) {
+		// Check for NAT64 rule.
+		if (!isset($rule['nat'])) {
+			continue;
+		}
+
+		// Remove unsupported types, e.g. "WAN subnets".
+		if (!isset($rule['destination']) || !isset($rule['destination']['address'])) {
+			$rule['destination'] = [
+				'address' => NAT64_WELLKNOWN_PREFIX_CIDR
+			];
+			$changed = true;
+			continue;
+		}
+
+		// Remove unsupported options, e.g. "not".
+		if (count($rule['destination']) > 1) {
+			$rule['destination'] = [
+				'address' => $rule['destination']['address']
+			];
+			$changed = true;
+		}
+
+		// Check if the well-known prefix is already in use.
+		if ($rule['destination']['address'] == NAT64_WELLKNOWN_PREFIX_CIDR) {
+			continue;
+		}
+
+		// Check for a custom prefix.
+		if (is_subnetv6($rule['destination']['address'])) {
+			$rule_prefix_parts = explode('/', $rule['destination']['address']);
+			if ((gen_subnetv6($rule_prefix_parts[0], $rule_prefix_parts[1]) . "/{$rule_prefix_parts[1]}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+			    validate_nat64_prefix($rule['destination']['address'])) {
+				$override_nat64_prefix = true;
+				continue;
+			}
+		} else {
+			foreach ($alias_list as $alias) {
+				if (!isset($alias['name']) || ($alias['name'] != $rule['destination']['address'])) {
+					continue;
+				}
+
+				// Check network aliases with a single value (address is space-separated).
+				if (is_subnetv6($alias['address'])) {
+					$alias_prefix_parts = explode('/', $alias['address']);
+					if ((gen_subnetv6($alias_prefix_parts[0], $alias_prefix_parts[1]) . "/{$alias_prefix_parts[1]}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+						validate_nat64_prefix($alias['address'])) {
+						$rule['destination']['address'] = $alias['address'];
+						$override_nat64_prefix = true;
+						continue 2;
+					}
+				}
+				break;
+			}
+		}
+
+		// A valid custom prefix not found.
+		$rule['destination']['address'] = NAT64_WELLKNOWN_PREFIX_CIDR;
+		$changed = true;
+	}
+	unset($rule);
+	if ($changed) {
+		set_filter_rules_list($rules_list);
+	}
+
+
+	if ($override_nat64_prefix) {
+		config_set_path('system/allow_nat64_prefix_override', true);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

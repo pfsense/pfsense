@@ -4233,6 +4233,7 @@ function filter_generate_user_rule($rule) {
 			return "# Could not determine NAT{$nat_type} source address - {$rule['descr']}";
 		}
 
+		// For NAT46 the AF would be "inet6".
 		$aline['nat'] = " af-to inet from {$nat_source_address} ";
 	}
 
@@ -4323,9 +4324,14 @@ function filter_generate_user_rule($rule) {
 	}
 
 	/* destination address */
-	$dst = trim(filter_generate_address($rule, "destination"));
-	if (empty($dst) || ($dst == "/") || ($dst == "!")) {
-		return "# destination address is empty - {$rule['descr']}";
+	if (array_path_enabled($rule, 'nat') && !config_path_enabled('system', 'allow_nat64_prefix_override')) {
+		// Force the well-known NAT64 prefix.
+		$dst = NAT64_WELLKNOWN_PREFIX_CIDR;
+	} else {
+		$dst = trim(filter_generate_address($rule, "destination"));
+		if (empty($dst) || ($dst == "/") || ($dst == "!")) {
+			return "# destination address is empty - {$rule['descr']}";
+		}
 	}
 	$aline['dst'] = "to $dst ";
 
@@ -4706,6 +4712,15 @@ function filter_rules_generate() {
 		$rules_temp[] = "block in {$log_preferences['default_block']} quick inet6 all ridentifier {$increment_tracker()} {$make_rule_label_string("Block all IPv6")}";
 		$rules_temp[] = "block out {$log_preferences['default_block']} quick inet6 all ridentifier {$increment_tracker()} {$make_rule_label_string("Block all IPv6")}";
 		$PFConfig->set_config(PFCONFIG_FILTER_BLOCK_IPV6['id'],
+			$rules_temp
+		);
+	}
+
+	if (!config_path_enabled('system', 'allow_nat64_prefix_override')) {
+		$rules_temp = [];
+		$rules_temp[] = "block in {$log_preferences['default_block']} quick inet6 from any to <_nat64reserved_> ridentifier {$increment_tracker()} {$make_rule_label_string("Block NAT64 for non-global IPv4")}";
+		$rules_temp[] = "block out {$log_preferences['default_block']} quick inet6 from any to <_nat64reserved_> ridentifier {$increment_tracker()} {$make_rule_label_string("Block NAT64 for non-global IPv4")}";
+		$PFConfig->set_config(PFCONFIG_FILTER_BLOCK_NAT64_RESERVED['id'],
 			$rules_temp
 		);
 	}

@@ -2314,12 +2314,25 @@ function interface_pppoe_configure($ifcfg, $ppp) {
 	//exec("/sbin/ifconfig {$ifcfg['if']} debug");
 
 	$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : "";
-	exec("/sbin/ifconfig {$ifcfg['if']} descr \"{$descr}\"");
+	exec(implode(' ', [
+		'/sbin/ifconfig',
+		escapeshellarg($ifcfg['if']),
+		'descr ' . escapeshellarg($descr)
+	]));
 
-	exec("/sbin/pppcfg {$ifcfg['if']} " .
-	    "pppoedev {$ppp['ports']} pppoesvc \"{$hostuniq}{$provider}\" " .
-	    "authname {$ppp['username']} authkey \"{$authkey}\" 2>&1",
-	    $out, $ret);
+	exec(
+		implode(' ', [
+			'/sbin/pppcfg',
+			escapeshellarg($ifcfg['if']),
+			'pppoedev ' . escapeshellarg($ppp['ports']),
+			'pppoesvc ' . escapeshellarg($hostuniq . $provider),
+			'authname ' . escapeshellarg($ppp['username']),
+			'authkey ' . escapeshellarg($authkey),
+			'2>&1',
+		]),
+		$out,
+		$ret,
+	);
 
 	if ($ret != 0) {
 		log_error(sprintf(gettext("Error configuring PPPoE interface %s"),
@@ -2329,6 +2342,13 @@ function interface_pppoe_configure($ifcfg, $ppp) {
 
 	interfaces_bring_up($ppp['ports']);
 	interfaces_bring_up($ifcfg['if']);
+}
+
+function get_mpd_str(string|null $text) {
+	if (!isset($text) || (mb_strlen($text) < 1)) {
+		return '""';
+	}
+	return '"' . str_replace(['\\', '"', '$'], ['\\\\', '\"', '\$'], $text) . '"';
 }
 
 /*
@@ -2527,6 +2547,7 @@ function interface_ppps_configure($interface) {
 	}
 
 	// Construct the mpd.conf file
+	$get_mpd_str = 'get_mpd_str';
 	$mpdconf = <<<EOD
 startup:
 	# configure the console
@@ -2550,7 +2571,7 @@ EOD;
 
 	if (isset($ifcfg['descr'])) {
 		$mpdconf .= <<<EOD
-	set iface description "{$ifcfg['descr']}"
+	set iface description {$get_mpd_str($ifcfg['descr'])}
 
 EOD;
 	}
@@ -2731,8 +2752,8 @@ EOD;
 		}
 
 		$mpdconf .= <<<EOD
-	set auth authname "{$ppp['username']}"
-	set auth password {$passwd}
+	set auth authname {$get_mpd_str($ppp['username'])}
+	set auth password {$get_mpd_str($passwd)}
 
 EOD;
 		if ($type == "modem") {
@@ -2742,20 +2763,20 @@ EOD;
 	set modem idle-script Ringback
 	set modem watch -cd
 	set modem var \$DialPrefix "DT"
-	set modem var \$Telephone "{$ppp['phone']}"
+	set modem var \$Telephone {$get_mpd_str($ppp['phone'])}
 
 EOD;
 		}
 		if (isset($ppp['connect-timeout']) && $type == "modem") {
 			$mpdconf .= <<<EOD
-	set modem var \$ConnectTimeout "{$ppp['connect-timeout']}"
+	set modem var \$ConnectTimeout {$get_mpd_str($ppp['connect-timeout'])}
 
 EOD;
 		}
 		if (isset($ppp['initstr']) && $type == "modem") {
 			$initstr = base64_decode($ppp['initstr']);
 			$mpdconf .= <<<EOD
-	set modem var \$InitString "{$initstr}"
+	set modem var \$InitString {$get_mpd_str($initstr)}
 
 EOD;
 		}
@@ -2764,15 +2785,15 @@ EOD;
 				$ppp['pin-wait'] = 0;
 			}
 			$mpdconf .= <<<EOD
-	set modem var \$SimPin "{$ppp['simpin']}"
-	set modem var \$PinWait "{$ppp['pin-wait']}"
+	set modem var \$SimPin {$get_mpd_str($ppp['simpin'])}
+	set modem var \$PinWait {$get_mpd_str($ppp['pin-wait'])}
 
 EOD;
 		}
 		if (isset($ppp['apn']) && $type == "modem") {
 			$mpdconf .= <<<EOD
-	set modem var \$APN "{$ppp['apn']}"
-	set modem var \$APNum "{$ppp['apnum']}"
+	set modem var \$APN {$get_mpd_str($ppp['apn'])}
+	set modem var \$APNum {$get_mpd_str($ppp['apnum'])}
 
 EOD;
 		}
@@ -2781,7 +2802,7 @@ EOD;
 			// Send a null service name if none is set.
 			$provider = (isset($ppp['provider']) && is_string($ppp['provider']))? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD
-	set pppoe service "{$hostuniq}{$provider}"
+	set pppoe service {$get_mpd_str("{$hostuniq}{$provider}")}
 
 EOD;
 		}
@@ -2799,9 +2820,9 @@ EOD;
 		}
 
 		if (($type == "l2tp") && !empty($ppp['secret'])) {
-			$secret = str_replace('"', '\"', base64_decode($ppp['secret']));
+			$secret = base64_decode($ppp['secret']);
 			$mpdconf .= <<<EOD
-	set l2tp secret "{$secret}"
+	set l2tp secret {$get_mpd_str($secret)}
 
 EOD;
 		}

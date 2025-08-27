@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-
 use Tools\Rector\Rector\Rules;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -36,8 +35,8 @@ return static function (RectorConfig $rectorConfig): void {
      * See https://github.com/rectorphp/rector/blob/main/docs/create_own_rule.md
      */ 
 
-	$rectorConfig->ruleWithConfiguration(Rules\ArrayGetExprRector::class,
-										 ['g' => 'g_get',
-										  'config' => 'config_get_path']);
-
+	$rectorConfig->ruleWithConfiguration(Rules\ArrayGetExprRector::class, [
+     		'g' => 'g_get',
+		'config' => 'config_get_path'
+     	]);
 };

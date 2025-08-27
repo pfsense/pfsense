@@ -6983,6 +6983,18 @@ function upgrade_239_to_240() {
 
 function upgrade_240_to_241() {
 	/**
+	 * Special characters in PPP passwords are now handled correctly.
+	 * Trim spaces that were previously ignored. See:
+	 * https://redmine.pfsense.org/issues/16128
+	 */
+	foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+		if (!isset($ppp['password']) || !is_string($ppp['password']) || ($ppp['password']) < 1) {
+			continue;
+		}
+		config_set_path("ppps/ppp/{$pppid}/password", base64_encode(trim(base64_decode($ppp['password']), ' ')));
+	}
+
+	/**
 	 * Configuration related to NAT64 has changed. See:
 	 * https://redmine.pfsense.org/issues/16241
 	 */

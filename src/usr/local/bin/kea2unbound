@@ -424,12 +424,12 @@ function kea_leases_records(KeaConfig $config, ?string $fallbackDomain = null, a
             }
         }
 
-        /* Determine the domain name to use for the record */
-        $option_data = &$lease['user-context']['ISC']['binding-variables'];
+        /* Determine the domain name or search domain to use for the record */
+        $binding_variables = &$lease['user-context']['ISC']['binding-variables'];
         $domain = \rtrim(
             first_of(
-                $option_data['domain-name'] ?? null,
-                $option_data['domain-search'][0] ?? null,
+                $binding_variables['domain-name'] ?? null,
+                $binding_variables['domain-search'][0] ?? null,
                 $fallbackDomain,
                 'unknown.home.arpa'
             ),

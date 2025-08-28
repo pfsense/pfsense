@@ -624,7 +624,7 @@ function services_kea6_configure(bool $with_custom = true) {
 		'lease-checks' => 'fix-del'
 	];
 
-	/* Store domain-search response option in lease database */
+	/* Store domain-search response option and remote address and interface name in lease database */
 	$keaconf['Dhcp6']['hooks-libraries'][] = [
 		'library' => '/usr/local/lib/kea/hooks/libdhcp_lease_cmds.so',
 		'parameters' => [
@@ -632,6 +632,14 @@ function services_kea6_configure(bool $with_custom = true) {
 				'name' => 'domain-search',
 				'expression' => 'option[24].text',
 				'source' => 'response'
+			], [
+				'name' => 'remote-addr',
+				'expression' => 'pkt.src',
+				'source' => 'query'
+			], [
+				'name' => 'iface-name',
+				'expression' => 'pkt.iface',
+				'source' => 'query'
 			]]
 		]
 	];

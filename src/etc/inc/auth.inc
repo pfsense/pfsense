@@ -506,7 +506,13 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		mwexec($cmd);
-		local_group_del_user($user);
+		foreach ($u2add as $adduser) {
+			if ($adduser['id'] == $user['id']) {
+				// don't delete a user from the local users if it is actually being modified
+				break;
+			}
+			local_group_del_user($user);
+		}
 
 		for ($i = 0; $i < count($users); $i++) {
 			if ($users[$i]['name'] == $user['name']) {

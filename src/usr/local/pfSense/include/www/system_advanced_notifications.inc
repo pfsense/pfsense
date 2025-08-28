@@ -81,6 +81,13 @@ function getAdvancedNotifications($json = false) {
 	$nconfig['consolebell'] = config_get_path('system/consolebell', 'enabled');
 	$nconfig['disablebeep'] = config_path_enabled('system', 'disablebeep');
 
+	// Discord
+	$nconfig['enable_discord'] = config_path_enabled('notifications/discord', 'enabled');
+
+	if (config_get_path('notifications/discord/webhook')) {
+		$nconfig['discord_webhook'] = config_get_path('notifications/discord/webhook');
+	}
+
 	// Telegram
 	$nconfig['enable_telegram'] = config_path_enabled('notifications/telegram', 'enabled') ;
 
@@ -134,11 +141,12 @@ function saveAdvancedNotifications($post, $json = false) {
 	$rv = array();
 
 	$testsmtp = isset($post['test-smtp']);
+	$testdiscord = isset($post['test-discord']);
 	$testtelegram = isset($post['test-telegram']);
 	$testpushover = isset($post['test-pushover']);
 	$testslack = isset($post['test-slack']);
 
-	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover || $testslack) {
+	if (isset($post['save']) || $testsmtp || $testdiscord || $testtelegram || $testpushover || $testslack) {
 
 		// General Settings
 		config_set_path('notifications/certexpire/enable', (($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled"));
@@ -230,6 +238,19 @@ function saveAdvancedNotifications($post, $json = false) {
 			config_del_path('system/disablebeep');
 		}
 
+		// Discord
+		config_set_path('notifications/discord/enabled', (($post['enable_discord'] == "yes") ? true : false));
+		config_set_path('notifications/discord/webhook', $post['discord_webhook']);
+
+		// Validate Discord webhook URL format
+		if (!empty(config_get_path('notifications/discord/webhook'))) {
+			$webhook_url = config_get_path('notifications/discord/webhook');
+			if (!filter_var($webhook_url, FILTER_VALIDATE_URL) || 
+			    !preg_match('/^https:\/\/discord\.com\/api\/webhooks\/\d+\/[\w\-]+$/', $webhook_url)) {
+				$input_errors[] = gettext("Please enter a valid Discord webhook URL in the format: https://discord.com/api/webhooks/ID/TOKEN");
+			}
+		}
+
 		// Telegram
 		config_set_path('notifications/telegram/enabled', (($post['enable_telegram'] == "yes") ? true : false));
 		config_set_path('notifications/telegram/api', $post['api']);
@@ -293,7 +314,7 @@ function saveAdvancedNotifications($post, $json = false) {
 			$input_errors[] = gettext("The Slack Channel name must be 80 characters or less.");
 		}
 
-		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack) {
+		if (!$input_errors && !$testsmtp && !$testdiscord && !$testtelegram && !$testpushover && !$testslack) {
 			write_config("Notifications Advanced Settings saved");
 
 			if (!$json) {
@@ -312,6 +333,17 @@ function saveAdvancedNotifications($post, $json = false) {
 		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
 		if (empty($test_result)) {
 			$test_result = gettext("SMTP testing e-mail successfully sent");
+			$test_class = 'success';
+		} else {
+			$test_class = 'danger';
+		}
+	}
+
+	if ($testdiscord) {
+		// Send test message via discord
+		$test_result = notify_via_discord(sprintf(gettext("This is a Discord test message from %s. It is safe to ignore this message."), g_get('product_label')), true);
+		if (empty($test_result)) {
+			$test_result = gettext("Discord testing message successfully sent");
 			$test_class = 'success';
 		} else {
 			$test_class = 'danger';

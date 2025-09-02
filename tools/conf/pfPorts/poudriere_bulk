@@ -20,6 +20,7 @@ ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd
 graphics/drm-515-kmod
 mail/%%PRODUCT_NAME%%-pkg-mailreport
+net-mgmt/%%PRODUCT_NAME%%-pkg-ANDwatch
 net-mgmt/%%PRODUCT_NAME%%-pkg-arpwatch
 net-mgmt/%%PRODUCT_NAME%%-pkg-bandwidthd
 net-mgmt/%%PRODUCT_NAME%%-pkg-collectd
@@ -34,6 +35,7 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent6
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent7
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy6
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy7
+net-mgmt/andwatch
 net-mgmt/dhcp_probe
 net-mgmt/iprange
 net-mgmt/net-snmp

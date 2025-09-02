@@ -1,6 +1,4 @@
 benchmarks/%%PRODUCT_NAME%%-pkg-iperf
-benchmarks/iperf
-benchmarks/iperf3
 databases/php83-mysqli
 databases/php83-pdo_mysql
 databases/php83-pgsql
@@ -35,10 +33,8 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent6
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent7
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy6
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy7
-net-mgmt/andwatch
 net-mgmt/dhcp_probe
 net-mgmt/iprange
-net-mgmt/net-snmp
 net/%%PRODUCT_NAME%%-pkg-arping
 net/%%PRODUCT_NAME%%-pkg-Avahi
 net/%%PRODUCT_NAME%%-pkg-cellular
@@ -65,7 +61,6 @@ net/kea-devel
 net/keama
 net/librdkafka
 net/mcjoin
-net/mdns-bridge
 net/mosh
 net/mrouted
 net/py-speedtest-cli
@@ -73,7 +68,6 @@ net/realtek-re-kmod
 net/speedtest-go
 net/trafshow
 net/trafshow3
-net/udpbroadcastrelay
 net/vnstat
 security/%%PRODUCT_NAME%%
 security/%%PRODUCT_NAME%%-ce

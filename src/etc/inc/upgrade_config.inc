@@ -7060,30 +7060,38 @@ function upgrade_240_to_241() {
 	}
 
 	// Normalize filter rule NAT64 values and check for custom prefixes.
-	$changed = false;
+	$changes = [];
 	$alias_list = config_get_path('aliases/alias', []);
 	$rules_list = get_filter_rules_list();
-	foreach ($rules_list as &$rule) {
+	foreach ($rules_list as $ridx => &$rule) {
 		// Check for NAT64 rule.
 		if (!isset($rule['nat'])) {
 			continue;
 		}
 
+		if (isset($rule['descr']) && is_string($rule['descr']) && (strlen($rule['descr']) > 0)) {
+			$changes_message = gettext(sprintf(" (rule %s)", "\"{$rule['descr']})\""));
+		} elseif (isset($rule['tracker']) && (strlen(strval($rule['tracker'])) > 0)) {
+			$changes_message = gettext(sprintf(" (rule %s)", strval($rule['tracker'])));
+		} else {
+			$changes_message = gettext(sprintf(" (rule ID %s)", $ridx));
+		}
+
 		// Remove unsupported types, e.g. "WAN subnets".
 		if (!isset($rule['destination']) || !isset($rule['destination']['address'])) {
+			$changes[] = gettext('a NAT64 prefix was not found, setting destination to well-known prefix') . $changes_message;
 			$rule['destination'] = [
 				'address' => NAT64_WELLKNOWN_PREFIX_CIDR
 			];
-			$changed = true;
 			continue;
 		}
 
 		// Remove unsupported options, e.g. "not".
 		if (count($rule['destination']) > 1) {
+			$changes[] = gettext('unsupported destination configuration found, resetting destination options') . $changes_message;
 			$rule['destination'] = [
 				'address' => $rule['destination']['address']
 			];
-			$changed = true;
 		}
 
 		// Check if the well-known prefix is already in use.
@@ -7119,13 +7127,17 @@ function upgrade_240_to_241() {
 			}
 		}
 
-		// A valid custom prefix not found.
+		// A valid custom prefix was not found.
+		$changes[] = gettext(sprintf("invalid NAT64 prefix found, changing destination from %s to the well-known prefix", "\"{$rule['destination']['address']}\"")) . $changes_message;
 		$rule['destination']['address'] = NAT64_WELLKNOWN_PREFIX_CIDR;
-		$changed = true;
 	}
 	unset($rule);
-	if ($changed) {
+	if (!empty($changes)) {
 		set_filter_rules_list($rules_list);
+		foreach ($changes as $message) {
+			log_error($message);
+		}
+		file_notice('config.xml', gettext("NAT64 firewall rules were changed, see system logs for details."));
 	}
 
 

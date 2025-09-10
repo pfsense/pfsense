@@ -48,6 +48,7 @@ require_once("openvpn.inc");
 require_once("captiveportal.inc");
 require_once("rrd.inc");
 require_once("interfaces_fast.inc");
+require_once("firewall_nat.inc");
 
 global $friendlyifnames;
 

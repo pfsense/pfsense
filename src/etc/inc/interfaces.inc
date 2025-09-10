@@ -4643,7 +4643,7 @@ function interface_track6_6rd_configure($interface, $lancfg) {
 		return;
 	}
 
-	$rd6lan = generate_6rd_prefix($wancfg['prefix-6rd'], $ip4address, $wancfg['prefix-6rd-v4plen'], $lancfg['track6-prefix-id']) .'.1';
+	$rd6lan = generate_6rd_prefix($wancfg['prefix-6rd'], $ip4address, $wancfg['prefix-6rd-v4plen'], $lancfg['track6-prefix-id']) . '1';
 
 	$lanif = get_real_interface($interface);
 	$oip = find_interface_ipv6($lanif);

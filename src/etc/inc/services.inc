@@ -5233,7 +5233,7 @@ EOD;
 		if (is_port($pollport)) {
 			foreach ($bind_to_ips as $bind_to_ip) {
 				$snmpdconf .= <<<EOD
-begemotSnmpdPortStatus.{$bind_to_ip}.{$pollport} = 1
+begemotSnmpdTransInetStatus.1.4.{$bind_to_ip}.{$pollport}.1 = 4
 
 EOD;
 

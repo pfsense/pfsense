@@ -2483,8 +2483,8 @@ events.push(function() {
 				}
 			}
 			disableInput('dstnot', true);
-			disableInput('dsttype', true);
 			if (!can_override_nat64prefix) {
+				disableInput('dsttype', true);
 				disableInput('dst', true);
 				disableInput('dstmask', true);
 			}

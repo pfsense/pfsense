@@ -167,6 +167,7 @@ $sysctls = [
 	'net.inet.tcp.sendspace' => '65228',
 	'net.inet.tcp.delayed_ack' => '0',
 	'net.inet.udp.maxdgram' => '57344',
+	'net.link.bridge.member_ifaddrs' => '1',
 	'net.link.bridge.pfil_onlyip' => '0',
 	'net.link.bridge.pfil_member' => '1',
 	'net.link.bridge.pfil_bridge' => '0',

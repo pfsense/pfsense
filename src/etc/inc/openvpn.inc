@@ -1152,6 +1152,7 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		switch ($settings['mode']) {
+			case 'p2p_tls':
 			case 'server_tls':
 			case 'server_user':
 			case 'server_tls_user':

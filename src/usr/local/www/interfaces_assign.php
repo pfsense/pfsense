@@ -300,7 +300,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 					}
 
 					if ((substr($ifport, 0, 3) == 'gre') ||
-					    (substr($ifport, 0, 5) == 'gif')) {
+					    (substr($ifport, 0, 3) == 'gif')) {
 						unset($this_if_config['ipaddr']);
 						unset($this_if_config['subnet']);
 						unset($this_if_config['ipaddrv6']);

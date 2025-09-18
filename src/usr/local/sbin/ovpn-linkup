@@ -21,7 +21,18 @@
 # limitations under the License.
 
 if [ "${dev_type}" = "tun" ]; then
-	if [ -n "${route_vpn_gateway}" ]; then
+	case "${dev}" in
+		"ovpns"*)
+			configuration_type="server"
+			;;
+		*)
+			configuration_type="client"
+			;;
+	esac
+
+	if [ "${configuration_type}" = "server" ] && [ -n "${ifconfig_local}" ]; then
+		echo "${ifconfig_local}" > "/tmp/${1}_router"
+	elif [ -n "${route_vpn_gateway}" ]; then
 		echo "${route_vpn_gateway}" > "/tmp/${1}_router"
 	elif [ -n "${ifconfig_remote}" ]; then
 		echo "${ifconfig_remote}" > "/tmp/${1}_router"
@@ -31,7 +42,9 @@ if [ "${dev_type}" = "tun" ]; then
 		echo "${5}" > "/tmp/${1}_router"
 	fi
 
-	if [ -n "${route_ipv6_gateway_1}" ]; then
+	if [ "${configuration_type}" = "server" ] && [ -n "${ifconfig_ipv6_local}" ]; then
+		echo "${ifconfig_ipv6_local}" > "/tmp/${1}_routerv6"
+	elif [ -n "${route_ipv6_gateway_1}" ]; then
 		echo "${route_ipv6_gateway_1}" > "/tmp/${1}_routerv6"
 	elif [ -n "${ifconfig_ipv6_remote}" ]; then
 		echo "${ifconfig_ipv6_remote}" > "/tmp/${1}_routerv6"

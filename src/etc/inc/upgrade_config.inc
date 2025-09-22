@@ -6619,6 +6619,13 @@ function upgrade_227_to_228() {
 	if ($any_removed) {
 		file_notice("IPsec", gettext("One or more IPsec entries contained deprecated algorithms. The following are no longer supported: 3DES encryption, Blowfish encryption, CAST128 encryption, MD5 hashing."));
 	}
+
+	// Keep the VLAN Tag Type as C-Tag for existing Q-in-Q interfaces.
+	$qinq_config = config_get_path('qinqs/qinqentry');
+	foreach ($qinq_config as &$qinq) {
+		$qinq['tag_type'] = 'ctag';
+	}
+	config_set_path('qinqs/qinqentry', $qinq_config);
 }
 
 function upgrade_228_to_229() {

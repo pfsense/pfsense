@@ -387,6 +387,25 @@ function interfaces_vlan_configure($parentif = "", $skip_parent_mtu = false) {
 }
 
 /**
+ * Sets the VLAN Tag Type for a VLAN interface.
+ * 
+ * @param string $interface VLAN interface port name.
+ * @param string $tag_type Either '802.1ad' or '802.1q'.
+ */
+function interface_vlan_set_tag_type(string $interface, string $tag_type): void {
+	$command = [
+		'/sbin/ifconfig',
+		escapeshellarg($interface),
+		'vlanproto',
+		(($tag_type == 'stag') ? '802.1ad' : '802.1q'),
+		'>',
+		'/dev/null',
+		'2>&1'
+	];
+	mwexec(implode(' ', $command));
+}
+
+/**
  * Configure a VLAN interface.
  *
  * @param bool $skip_parent_mtu Skip setting the parent interface's MTU
@@ -450,6 +469,8 @@ function interface_vlan_configure(&$vlan, $flush = true, $skip_parent_mtu = fals
 	if (interface_vlan_mtu_configured($vlanif)) {
 		set_interface_mtu($vlanif, interface_vlan_mtu_configured($vlanif));
 	}
+
+	interface_vlan_set_tag_type($vlanif, $vlan['tag_type']);
 
 	return $vlanif;
 }
@@ -515,8 +536,6 @@ function interface_qinq_configure(&$qinq, $flush = true) {
 		log_error(gettext("interface_qinq_configure cannot create VLAN interface"));
 		return;
 	}
-
-	exec("/sbin/ifconfig {$vlanif} vlanproto 802.1ad > /dev/null 2>&1");
 
 	/* make sure the parent is up */
 	interfaces_bring_up($qinqif);

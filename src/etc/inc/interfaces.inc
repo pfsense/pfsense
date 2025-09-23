@@ -470,7 +470,12 @@ function interface_vlan_configure(&$vlan, $flush = true, $skip_parent_mtu = fals
 		set_interface_mtu($vlanif, interface_vlan_mtu_configured($vlanif));
 	}
 
-	interface_vlan_set_tag_type($vlanif, $vlan['tag_type']);
+	$tag_type = match ($vlan['tag_type']) {
+		'ctag' => 'ctag',
+		'stag' => 'stag',
+		default => 'ctag'
+	};
+	interface_vlan_set_tag_type($vlanif, $tag_type);
 
 	return $vlanif;
 }

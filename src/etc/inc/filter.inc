@@ -1157,7 +1157,7 @@ function reload_filter() {
 
 	for ($pfctl_try = 1; $pfctl_try <= 10; $pfctl_try++) {
 		unset($rules_loading, $rules_error);
-		$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
+		$rules_result = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
 		if (config_path_enabled('system','developerspew')) {
 			$mt = microtime();
 			echo "pfctl done at $mt\n";
@@ -1169,9 +1169,9 @@ function reload_filter() {
 			}
 			break;
 		}
-		if (strstr($_grbg, "DIOCADDALTQ: Device busy") ||
-		    strstr($_grbg, "DIOCADDRULE: Device busy") ||
-		    strstr($_grbg, "DIOCXCOMMIT: Device busy")) {
+		if (strstr($rules_result, "DIOCADDALTQ: Device busy") ||
+		    strstr($rules_result, "DIOCADDRULE: Device busy") ||
+		    strstr($rules_result, "DIOCXCOMMIT: Device busy")) {
 			// when busy status is returned retry after a short pause
 			usleep(200000);//try again after 200 ms..unless it still fails after 10x
 		} else {
@@ -1204,8 +1204,8 @@ function reload_filter() {
 				$_grbg = exec("/sbin/pfctl -o basic -f {$g['cf_conf_path']}/rules.debug.old 2>&1");
 			}
 			if ($line_error and $line_number) {
-				file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");
-				update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error));
+				file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules%3$s: %1$s - %2$s'), $saved_line_error, $line_error, (empty($rules_result) ? '' : ' (' . strval($rules_result) . ')')), "Filter Reload", "");
+				update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules%3$s: %1$s - %2$s'), $saved_line_error, $line_error, (empty($rules_result) ? '' : ' (' . strval($rules_result) . ')')));
 				$result[1] = $line_error;
 				return $result;
 			}

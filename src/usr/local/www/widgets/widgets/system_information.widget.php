@@ -92,17 +92,15 @@ if ($_REQUEST['getupdatestatus']) {
 	);
 
 	unset($error);
+	
 	if ($system_version === false || !is_array($system_version)) {
-		$error = gettext("<i>Unable to check for updates</i>");
+	    $error = "<i>" . gettext("Unable to check for updates") . "</i>";
+	} elseif (isset($system_version['pkg_busy']) || isset($system_version['pkg_version_error'])) {
+	    $error = "<i>" . gettext("Update system is busy, try again later") . "</i>";
+	} elseif (!isset($system_version['version']) || !isset($system_version['installed_version'])) {
+	    $error = "<i>" . gettext("Error in version information") . "</i>";
 	}
-	if (isset($system_version['pkg_busy']) ||
-	    isset($system_version['pkg_version_error'])) {
-		$error = gettext("<i>Update system is busy, try again later</i>");
-	}
-	if (!isset($system_version['version']) ||
-	    !isset($system_version['installed_version'])) {
-		$error = gettext("<i>Error in version information</i>");
-	}
+	
 	if (isset($error)) {
 		print($error);
 ?>

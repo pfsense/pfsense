@@ -530,8 +530,7 @@ prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
 use-caps-for-id: {$use_caps}
 serve-expired: {$dns_record_cache}
-# Not supported on FreeBSD. See https://redmine.pfsense.org/issues/16299
-# sock-queue-timeout: {$sock_queue_timeout}
+sock-queue-timeout: {$sock_queue_timeout}
 aggressive-nsec: {$aggressivensec}
 # Statistics
 {$statistics}

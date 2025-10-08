@@ -1010,7 +1010,8 @@ EOD;
 				$keapool['pool'] = $range_from . ' - ' . $range_to;
 			}
 
-			$keapool['client-class'] = 'pool_' . $dhcpv6if . '_'. $all_pools_idx;
+			$pool_class = 'pool_' . $dhcpv6if . '_'. $all_pools_idx;
+			$keapool['client-classes'][] = $pool_class;
 
 			$class_exprs = [];
 
@@ -1107,7 +1108,7 @@ EOD;
 
 kea6_skip_first_pool_options:
 			$keaconf['Dhcp6']['client-classes'][] = [
-				'name' => $keapool['client-class'],
+				'name' => $pool_class,
 				'test' => $pool_client_class_test
 			];
 
@@ -1795,7 +1796,8 @@ EOD;
 			}
 
 			$keapool['pool'] = $poolconf['range']['from'] . ' - '. $poolconf['range']['to'];
-			$keapool['client-class'] = 'pool_' . $dhcpif . '_'. $all_pools_idx;
+			$pool_class = 'pool_' . $dhcpif . '_'. $all_pools_idx;
+			$keapool['client-classes'][] = $pool_class;
 
 			$class_exprs = $mac_exprs = [];
 
@@ -2040,7 +2042,7 @@ EOD;
 			}
 
 			$keaconf['Dhcp4']['client-classes'][] = [
-				'name' => $keapool['client-class'],
+				'name' => $pool_class,
 				'test' => $pool_client_class_test
 			];
 

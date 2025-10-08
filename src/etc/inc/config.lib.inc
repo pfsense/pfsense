@@ -1298,24 +1298,42 @@ function config_read_file(bool $use_backup = false, bool $use_cache = true) {
 	 * the config recovery. */
 
 	$config_read = function (bool $_use_cache = true): bool {
+		$cache_file_path = g_get('tmp_path') . '/config.cache';
+		$config_file_path = g_get('conf_path') . '/config.xml';
+
+		if ($_use_cache && file_exists($cache_file_path) && (filesize($cache_file_path) > 0)) {
+			$cache_modified_time = filemtime($cache_file_path);
+			$config_modified_time = 0;
+			if (file_exists($config_file_path) && (filesize($config_file_path) > 0)) {
+				$config_modified_time = filemtime($config_file_path);
+			}
+
+			// The cache is only valid if it's not older than the config.
+			if ($cache_modified_time < $config_modified_time) {
+				$_use_cache = false;
+			}
+		} else {
+			$_use_cache = false;
+		}
+
 		$update_cache = false;
 		$parsed_config = null;
 		if ($_use_cache) {
-			$parsed_config = @file_get_contents(g_get('tmp_path') . '/config.cache');
+			$parsed_config = @file_get_contents($cache_file_path);
 			if (is_string($parsed_config)) {
 				$parsed_config = unserialize($parsed_config);
 			}
 		}
 
 		if (!is_array($parsed_config)) {
-			$parsed_config = parse_xml_config((g_get('conf_path') . '/config.xml'), [g_get('xml_rootobj')]);
+			$parsed_config = parse_xml_config($config_file_path, [g_get('xml_rootobj')]);
 			$update_cache = true;
 		}
 	
 		if (is_array($parsed_config) && !empty($parsed_config) &&
 			is_array(config_set_path('', $parsed_config))) {
 			if ($update_cache) {
-				safe_write_file(g_get('tmp_path') . '/config.cache', serialize($parsed_config));
+				safe_write_file($cache_file_path, serialize($parsed_config));
 			}
 			return true;
 		}

@@ -154,7 +154,8 @@ function run_cmds($cmds) {
 }
 }
 
-unlink_if_exists("/tmp/config.cache");
+// Make sure the configuraiton is read using the new code.
+unlink_if_exists(g_get('tmp_path') . '/config.cache');
 
 if (!file_exists($GIT_BIN)) {
 	require_once("pkg-utils.inc");

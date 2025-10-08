@@ -445,7 +445,6 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The settings have already been applied!");
 	} else {
 		$retval = 0;
-		unlink_if_exists(g_get('tmp_path') . '/config.cache');
 		clear_subsystem_dirty('interfaces');
 
 		$vlan_redo = [];

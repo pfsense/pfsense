@@ -88,6 +88,8 @@ function encrypted_configxml(string $file_name = null) {
  *   $config	- array containing current firewall configuration
  * RESULT
  *   boolean	- true on completion
+ * 
+ * @deprecated Retained for backwards compatibility with versions <= 2.8.1.
  ******/
 function generate_config_cache($config) {
 	global $g, $config_extra;
@@ -196,6 +198,7 @@ function restore_backup(string|array $backup) {
 		unlock($lockkey);
 		return false;
 	}
+	// Configuration file has been replaced, remove the config cache.
 	unlink_if_exists(g_get('tmp_path') . '/config.cache');
 	unlock($lockkey);
 
@@ -339,7 +342,7 @@ function restore_sshdata($conf = false) {
  *   null
  ******/
 function parse_config_bootup() {
-	if (!config_read_file(true)) {
+	if (!config_read_file(true, false)) {
 		die(gettext("Could not find a usable configuration file or it's backup! Exiting...."));
 	}
 	if ((float)config_get_path('version') > (float)g_get('latest_config')) {
@@ -709,7 +712,8 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 		}
 	}
 	closedir($dh);
-	unlink_if_exists(g_get('tmp_path') . "/config.cache");
+	// Configuration file is being replaced, remove the config cache.
+	unlink_if_exists(g_get('tmp_path') . '/config.cache');
 
 	/* copy default configuration */
 	copy("{$g['conf_default_path']}/config.xml", "{$g['cf_conf_path']}/config.xml");
@@ -740,13 +744,14 @@ function config_restore(string $path, string $descr): bool {
 	if (!isset($lockkey)) {
 		return false;
 	}
-	unlink_if_exists(g_get('tmp_path'). '/config.cache');
+	// Configuration file is being replaced, remove the config cache.
+	unlink_if_exists(g_get('tmp_path') . '/config.cache');
 	$copy_result = copy($path, g_get('cf_conf_path') . '/config.xml');
 	unlock($lockkey);
 
 	if ($copy_result) {
 		disable_security_checks();
-		config_read_file(true);
+		config_read_file(true, false);
 		write_config(sprintf(gettext('Reverted to "%s"'), $descr), false);
 		return true;
 	}
@@ -775,7 +780,8 @@ function config_install($conffile) {
 	if (!isset($lockkey)) {
 		return 1;
 	}
-	unlink_if_exists("{$g['tmp_path']}/config.cache");
+	// Configuration file is being replaced, remove the config cache.
+	unlink_if_exists(g_get('tmp_path') . '/config.cache');
 	$copy_result = copy($conffile, "{$g['conf_path']}/config.xml");
 	unlock($lockkey);
 
@@ -1270,6 +1276,9 @@ function config_write_file() {
 			return sprintf(gettext('Unable to open %1$s for writing.'), g_get('cf_conf_path') . '/config.xml');
 		}
 
+		// Configuration file has been replaced, remove the config cache.
+		unlink_if_exists(g_get('tmp_path') . '/config.cache');
+
 		// success
 		return true;
 }
@@ -1283,16 +1292,21 @@ function config_write_file() {
  *
  * @return bool True if the configuration was successfully reloaded.
  */
-function config_read_file(bool $use_backup = false, bool $use_cache = false) {
+function config_read_file(bool $use_backup = false, bool $use_cache = true) {
 	/* We leave calls to file_notice() for the end before returning.
 	 * This mitigates the potential for PHP errors to interfere with
 	 * the config recovery. */
-	$config_read = function () {
+
+	$config_read = function (bool $_use_cache = true): bool {
 		$update_cache = false;
-		$parsed_config = @file_get_contents(g_get('tmp_path') . '/config.cache');
-		if (is_string($parsed_config)) {
-			$parsed_config = unserialize($parsed_config);
+		$parsed_config = null;
+		if ($_use_cache) {
+			$parsed_config = @file_get_contents(g_get('tmp_path') . '/config.cache');
+			if (is_string($parsed_config)) {
+				$parsed_config = unserialize($parsed_config);
+			}
 		}
+
 		if (!is_array($parsed_config)) {
 			$parsed_config = parse_xml_config((g_get('conf_path') . '/config.xml'), [g_get('xml_rootobj')]);
 			$update_cache = true;
@@ -1301,7 +1315,7 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 		if (is_array($parsed_config) && !empty($parsed_config) &&
 			is_array(config_set_path('', $parsed_config))) {
 			if ($update_cache) {
-				generate_config_cache($parsed_config);
+				safe_write_file(g_get('tmp_path') . '/config.cache', serialize($parsed_config));
 			}
 			return true;
 		}
@@ -1309,13 +1323,10 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 		return false;
 	};
 
-	if (!$use_cache) {
-		@unlink(g_get('tmp_path') . '/config.cache');
-	}
-	global $config, $config_parsed;
+	global $config_parsed;
 	$config_parsed = false;
 
-	$config_parsed = $config_read();
+	$config_parsed = $config_read($use_cache);
 
 	if ($config_parsed || !$use_backup) {
 		if (!$config_parsed) {
@@ -1378,22 +1389,6 @@ function config_read_file(bool $use_backup = false, bool $use_cache = false) {
 	}
 
 	return $config_parsed;
-}
-
-/**
- * Reloads the in-memory configuration with config.xml.
- *
- * @param bool $parse If False, use the config cache when available.
- *
- * @return mixed Config array.
- *
- * @deprecated Retained for backwards compatibility with versions <= 24.03.
- *
- * @see config_read_file() Supports updated recovery code.
- */
-function parse_config($parse = false) {
-	config_read_file(!$parse);
-	return config_get_path('');
 }
 
 /**

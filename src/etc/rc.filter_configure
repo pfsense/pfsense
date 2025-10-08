@@ -30,7 +30,6 @@ require_once("shaper.inc");
 /* invalidate interface cache */
 get_interface_arr(true);
 
-unlink_if_exists("/tmp/config.cache");
 filter_configure();
 
 ?>

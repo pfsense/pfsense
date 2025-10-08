@@ -73,9 +73,8 @@ if ($_POST['action']) {
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
 				$ret = file_put_contents($_POST['file'], $_POST['data']);
 				if ($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
-					if (file_exists("/tmp/config.cache")) {
-						unlink("/tmp/config.cache");
-					}
+					// Configuration file may have been manually modified by the user.
+					unlink_if_exists(g_get('tmp_path') . "/config.cache");
 					disable_security_checks();
 				}
 				if ($ret === false) {

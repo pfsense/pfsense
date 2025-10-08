@@ -109,7 +109,7 @@ if (is_platform_booting() && is_cli_sapi() &&
 			}
 		}
 		echo ".";
-		if (!$cfgdevice && !config_read_file(true)) {
+		if (!$cfgdevice && !config_read_file(true, false)) {
 			log_error(gettext("No config.xml or config backups found, resetting to factory defaults."));
 			if (restore_backup('/conf.default/config.xml')) {
 				config_read_file();

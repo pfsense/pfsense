@@ -934,9 +934,6 @@ function restore_config_section($section_name, $new_contents) {
 	}
 
 	config_set_path($section_name, $section_xml);
-	if (file_exists("{$g['tmp_path']}/config.cache")) {
-		unlink("{$g['tmp_path']}/config.cache");
-	}
 
 	/* Restore previously pkg repo configured */
 	if ($section_name == "system") {

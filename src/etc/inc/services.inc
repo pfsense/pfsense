@@ -4572,10 +4572,11 @@ function services_dyndns_configure($int = "") {
  * @param string $interface A VIP ID, gateway group, or friendly name.
  * @param mixed $address_family Force an IP address family. If not set,
  *        the address returned is based on the system preference.
- * @return string|false The IP address to use; False otherwise.
+ * @return array [0] The IP address to use, [1] error string.
  */
-function get_request_source_address($interface, int|null $address_family = null) {
+function get_request_source_address($interface, int|null $address_family = null): array {
 	$source_address = '';
+	$error = null;
 	$prefer_ipv4 = config_path_enabled('system', 'prefer_ipv4');
 	// Get the string equivalent for the functions that need it.
 	$address_family_string = match ($address_family) {
@@ -4603,7 +4604,8 @@ function get_request_source_address($interface, int|null $address_family = null)
 		// Bail early if the gateway is down.
 		$gateways_status = return_gateways_status(true);
 		if (array_get_path($gateways_status, "{$interface_gateway}/status", '') != 'online') {
-			return false;
+			$error = 'gateway not online';
+			return [$source_address, $error];
 		}
 
 		// Check for the gateway group VIP preference.
@@ -4615,8 +4617,12 @@ function get_request_source_address($interface, int|null $address_family = null)
 				// IP alias VIP not on CARP parent.
 				$use_vip = true;
 			} elseif ($vip_carp_status == 'MASTER') {
-				// CARP VIP or IP alias on CARP parent
+				// CARP VIP or IP alias on CARP parent.
 				$use_vip = true;
+			} elseif (($vip_carp_status == 'BACKUP') || ($vip_carp_status == 'INIT')) {
+				// CARP VIP or IP alias on CARP parent is unavailable.
+				$error = 'CARP not master';
+				return [$source_address, $error];
 			}
 		}
 		if ($use_vip) {
@@ -4659,10 +4665,11 @@ function get_request_source_address($interface, int|null $address_family = null)
 
 	// Bail if no IPv4 or IPv6 address is found for the given interface.
 	if (empty($source_address) || !is_ipaddr($source_address)) {
-		return false;
+		$error = 'no IP address for interface';
+		return [$source_address, $error];
 	}
 
-	return $source_address;
+	return [$source_address, $error];
 }
 
 /**
@@ -4675,8 +4682,8 @@ function get_request_source_address($interface, int|null $address_family = null)
 function dyndnsCheckIP($interface, string|null $mode = null, int|null $address_family = null) {
 	global $factory_default_checkipservice;
 
-	$interface_address = get_request_source_address($interface, $address_family);
-	if ($interface_address === false) {
+	list($interface_address, $error) = get_request_source_address($interface, $address_family);
+	if (isset($error)) {
 		return false;
 	} elseif ($mode == 'never') {
 		return $interface_address;

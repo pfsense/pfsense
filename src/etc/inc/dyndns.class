@@ -419,7 +419,13 @@
 						$request_source_af = $this->_addressFamilyRR;
 				}
 			}
-			$this->_dnsRequestIfIP = get_request_source_address($this->_dnsRequestIf, $request_source_af);
+
+			list($this->_dnsRequestIfIP, $error) = get_request_source_address($this->_dnsRequestIf, $request_source_af);
+			if (isset($error)) {
+				log_error(sprintf(gettext('Dynamic DNS (%1$s) Could not determine the request IP address (using "%2$s", "%3$s"): %4$s'), $this->_FQDN, $dnsIf, $this->_if, $error));
+				unlock($dyndnslck);
+				return;
+			}
 
 			$this->_addressFamilyRequest = is_ipaddrv6($this->_dnsRequestIfIP) ? AF_INET6 : AF_INET;
 			$this->_checkIPMode = $checkIPMode;

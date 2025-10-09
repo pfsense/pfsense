@@ -1,7 +1,7 @@
 benchmarks/%%PRODUCT_NAME%%-pkg-iperf
-databases/php83-mysqli
-databases/php83-pdo_mysql
-databases/php83-pgsql
+databases/php84-mysqli
+databases/php84-pdo_mysql
+databases/php84-pgsql
 devel/aws-sdk-php
 devel/gdb
 devel/git

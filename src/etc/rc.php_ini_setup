@@ -24,7 +24,9 @@
 VERSION=$(/bin/cat /etc/version)
 MIN_REALMEM_FOR_OPCACHE=512
 
-if /usr/local/sbin/pkg-static info -e php83; then
+if /usr/local/sbin/pkg-static info -e php84; then
+	EXTENSIONSDIR="/usr/local/lib/php/20240924/"
+elif /usr/local/sbin/pkg-static info -e php83; then
 	EXTENSIONSDIR="/usr/local/lib/php/20230831/"
 elif /usr/local/sbin/pkg-static info -e php82; then
 	EXTENSIONSDIR="/usr/local/lib/php/20220829/"

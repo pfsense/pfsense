@@ -23,10 +23,20 @@
  */
 
 require_once("config.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once("interfaces.inc");
+require_once("util.inc");
 
-interfaces_carp_configure();
+$viparr = config_get_path('virtualip/vip');
+if (is_array($viparr)) {
+	foreach ($viparr as $vip) {
+		switch ($vip['mode']) {
+			case "carp":
+				interface_carp_configure($vip);
+				sleep(1);
+				break;
+		}
+	}
+}
+interfaces_sync_setup();
 
 ?>

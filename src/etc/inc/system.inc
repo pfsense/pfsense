@@ -2956,7 +2956,7 @@ function system_ntp_configure() {
 	/* A leapseconds file is really only useful if this clock is stratum 1 */
 	$ntpcfg .= "\n";
 	if (!empty(config_get_path('ntpd/leapsec'))) {
-		$leapsec .= base64_decode(config_get_path('ntpd/leapsec'));
+		$leapsec = base64_decode(config_get_path('ntpd/leapsec'));
 		file_put_contents('/var/db/leap-seconds', $leapsec);
 		$ntpcfg .= "leapfile /var/db/leap-seconds\n";
 	}

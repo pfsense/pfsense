@@ -50,11 +50,6 @@ if (($_REQUEST) && ($_REQUEST['ajax'])) {
 function get_pkg_table() {
 	$installed_packages = get_pkg_info('all', false, true);
 
-	if (is_array($input_errors)) {
-		print("error");
-		exit;
-	}
-
 	if (empty($installed_packages)) {
 		print ("nopkg");
 		exit;

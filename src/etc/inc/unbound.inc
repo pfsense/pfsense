@@ -353,7 +353,7 @@ EOF;
 			$private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
 			$private_domains .= unbound_add_domain_overrides("private");
 		}
-		$reverse_zones .= unbound_add_domain_overrides("reverse");
+		$reverse_zones = unbound_add_domain_overrides("reverse");
 	}
 
 	// Configure Unbound statistics
@@ -401,7 +401,7 @@ EOF;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
 
 	if (isset($unboundcfg['regovpnclients'])) {
-		$openvpn_clients_conf .=<<<EOD
+		$openvpn_clients_conf =<<<EOD
 # OpenVPN client entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
 EOD;
@@ -414,7 +414,7 @@ EOD;
 	if (isset($unboundcfg['forwarding'])) {
 		$dnsservers = get_dns_nameservers(false, true);
 		if (!empty($dnsservers)) {
-			$forward_conf .=<<<EOD
+			$forward_conf =<<<EOD
 # Forwarding
 forward-zone:
 	name: "."

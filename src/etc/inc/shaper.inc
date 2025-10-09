@@ -189,7 +189,7 @@ function array_map_assoc(callable $f, array $a) {
 	return array_column(array_map($f, array_keys($a), $a), 1, 0);
 }
 function build_queue_params($array, $selected, $params, $id) {
-	$form .= '<div id="params_' . $id . '">';
+	$form = '<div id="params_' . $id . '">';
 
 	$selectedAlgorithm = $array[$selected];
 
@@ -1032,7 +1032,6 @@ class altq_root_queue {
 				unset($error);
 				return "\n";
 			}
-			$frule .= $rules;
 		} else if ($this->GetEnabled() == "on" && $this->GetScheduler() == "CODELQ") {
 			$rules = " altq on " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler()) {
@@ -3629,7 +3628,7 @@ class dummynet_class {
 	}
 
 	function build_javascript() {
-		$javascript .= "<script type=\"text/javascript\">\n";
+		$javascript = "<script type=\"text/javascript\">\n";
 		$javascript .= "//<![CDATA[\n";
 		$javascript .= "function enable_maskbits(enable_over) {\n";
 		$javascript .= "var e = document.getElementById(\"mask\");\n";

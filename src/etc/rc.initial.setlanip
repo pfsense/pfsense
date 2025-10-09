@@ -314,12 +314,12 @@ function console_configure_ip_address($version) {
 					if ($version === 4 && $intbits < $maxbits) {
 						if ($intip == gen_subnet($intip, $intbits)) {
 							echo gettext("You cannot set network address to an interface");
-							continue 2;
 							$intbits_ok = false;
+							continue 2;
 						} else if ($intip == gen_subnet_max($intip, $intbits)) {
 							echo gettext("You cannot set broadcast address to an interface");
-							continue 2;
 							$intbits_ok = false;
+							continue 2;
 						}
 					}
 				}

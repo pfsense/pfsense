@@ -194,7 +194,7 @@ if ($_POST['save']) {
 		}
 	}
 	if ($_POST['raadvdefaultlifetime'] && (($_POST['raadvdefaultlifetime'] < 1) || ($_POST['raadvdefaultlifetime'] > 9000))) {
-		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
+		$input_errors[] = gettext("Router lifetime must be an integer between 0 and 9000.");
 	}
 	if (($_POST['ravalidlifetime'] && $_POST['rapreferredlifetime'] &&
 	    ($_POST['ravalidlifetime'] < $_POST['rapreferredlifetime'])) ||
@@ -434,7 +434,7 @@ $section->addInput(new Form_Input(
 	gettext('Router Lifetime'),
 	'number',
 	$pconfig['raadvdefaultlifetime'],
-	['min' => 1, 'max' => 9000, 'placeholder' => $raadvdefaultlifetime]
+	['min' => 0, 'max' => 9000, 'placeholder' => $raadvdefaultlifetime]
 ))->setHelp(gettext('The lifetime associated with the default router in seconds.%1$s' .
 'The default is 3 * Maximum RA interval seconds.'), '<br />');
 

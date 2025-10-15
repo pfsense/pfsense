@@ -4608,58 +4608,47 @@ function get_request_source_address($interface, int|null $address_family = null)
 			return [$source_address, $error];
 		}
 
-		// Check for the gateway group VIP preference.
-		$use_vip = false;
-		$source_address_gw = array_get_path($gateways_groups, "{$interface}/0/vip", '');
-		if (!empty($source_address_gw)) {
-			$vip_carp_status = get_carp_bind_status($source_address_gw);
-			if (empty($vip_carp_status)) {
-				// IP alias VIP not on CARP parent.
-				$use_vip = true;
-			} elseif ($vip_carp_status == 'MASTER') {
-				// CARP VIP or IP alias on CARP parent.
-				$use_vip = true;
-			} elseif (($vip_carp_status == 'BACKUP') || ($vip_carp_status == 'INIT')) {
-				// CARP VIP or IP alias on CARP parent is unavailable.
-				$error = 'CARP not master';
-				return [$source_address, $error];
-			}
-		}
-		if ($use_vip) {
-			$vip_list = get_configured_vip_list();
-			if (isset($vip_list[$source_address_gw])) {
-				$source_address_gw = $vip_list[$source_address_gw];
-			}
-		} else {
-			$source_address_gw = '';
-		}
-
-		if (empty($source_address_gw)) {
-			// Note: Gateway monitoring for IPv6 may be using a link-local address.
-			$source_address_gw = array_get_path($gateways_status, "{$interface_gateway}/srcip", '');
-		}
-
 		// If the address family hasn't been specified, base it on the gateway.
 		if (!isset($address_family)) {
-			$address_family = is_ipaddrv4($source_address_gw) ? AF_INET : AF_INET6;
+			$address_family = is_ipaddrv4(array_get_path($gateways_status, "{$interface_gateway}/srcip", '')) ? AF_INET : AF_INET6;
 		}
 	}
 
-	// Prefer the source address on the gateway group.
+	$gateway_group_vip = null;
+	// Check for the gateway group VIP preference.
+	if (isset($gateways_groups[$interface]) && !empty(array_get_path($gateways_groups, "{$interface}/0/vip", ''))) {
+		$vip_carp_status = get_carp_bind_status($gateways_groups[$interface][0]['vip']);
+		if (!empty($vip_carp_status) && ($vip_carp_status != 'MASTER')) {
+			// CARP VIP or IP alias on CARP parent is unavailable.
+			$error = 'CARP not master';
+			return [$source_address, $error];
+		} else {
+			// Use the preferred VIP.
+			$gateway_group_vip = $gateways_groups[$interface][0]['vip'];
+		}
+	}
+
 	if ($address_family == AF_INET) {
-		$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+		$source_address = get_interface_ip($gateway_group_vip ?? $interface);
 	} elseif ($address_family == AF_INET6) {
-		$source_address = (is_ipaddrv6($source_address_gw) && is_v6gua($source_address_gw)) ? $source_address_gw : get_interface_ipv6($interface);
+		$source_address = get_interface_ipv6($gateway_group_vip ?? $interface);
+		if (is_linklocal($source_address)) {
+			$source_address = '';
+		}
 	} else {
 		if ($prefer_ipv4) {
-			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+			$source_address = get_interface_ip($gateway_group_vip ?? $interface);
 		}
 		if (empty($source_address)) {
 			// Also check IPv6 if IPv4 is preferred but not available.
-			$source_address = (is_ipaddrv6($source_address_gw) && is_v6gua($source_address_gw)) ? $source_address_gw : get_interface_ipv6($interface);
+			$source_address = get_interface_ipv6($gateway_group_vip ?? $interface);
+			if (is_linklocal($source_address)) {
+				$source_address = '';
+			}
 		}
 		if (empty($source_address) && !$prefer_ipv4) {
-			$source_address = is_ipaddrv4($source_address_gw) ? $source_address_gw : get_interface_ip($interface);
+			// Check IPv4 if IPv6 is preferred but not available.
+			$source_address = get_interface_ip($gateway_group_vip ?? $interface);
 		}
 	}
 

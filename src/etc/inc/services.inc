@@ -5375,27 +5375,24 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			continue;
 		}
 
-		/* determine interface name */
-		$if = get_failover_interface($dnsupdate['interface']);
-
 		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
-			$wanip = dyndnsCheckIP($if, null, AF_INET);
+			$wanip = dyndnsCheckIP($dnsupdate['interface'], null, AF_INET);
 			if (!$wanip || is_private_ip($wanip)) {
 				log_error(sprintf(gettext(
 				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),
 				    $dnsupdate['host']));
 				continue;
 			}
-			$bindipv4 = get_interface_ip($if);
+			list($bindipv4, $error) = get_request_source_address($dnsupdate['interface'], AF_INET);
 		} else {
-			$wanip = get_interface_ip($if);
+			list($wanip, $error) = get_request_source_address($dnsupdate['interface'], AF_INET);
 			$bindipv4 = $wanip;
 		}
 		if (is_stf_interface($dnsupdate['interface'])) {
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface'] . '_stf');
 		} else {
-			$wanipv6 = get_interface_ipv6($if);
+			list($wanipv6, $error) = get_request_source_address($dnsupdate['interface'], AF_INET6);
 		}
 		$bindipv6 = $wanipv6;
 
@@ -5406,11 +5403,11 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			$bindipv6 = "";
 		} elseif (!empty($dnsupdate['updatesource'])) {
 			/* Find the alternate binding address */
-			$bindipv4 = get_interface_ip($dnsupdate['updatesource']);
+			list($bindipv4, $error) = get_request_source_address($dnsupdate['updatesource'], AF_INET);
 			if (is_stf_interface($dnsupdate['interface'])) {
 				$bindipv6 = get_interface_ipv6($dnsupdate['updatesource'] . '_stf');
 			} else {
-				$bindipv6 = get_interface_ipv6($dnsupdate['updatesource']);
+				list($bindipv6, $error) = get_request_source_address($dnsupdate['updatesource'], AF_INET6);
 			}
 		}
 
@@ -5558,6 +5555,7 @@ EOD;
 		$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
 
 		if (mwexec($cmd) == 0) {
+			$if = get_real_interface($dnsupdate['interface']);
 			if (!empty($cacheFile)) {
 				@file_put_contents($cacheFile,
 				    "{$wanip}|{$currentTime}");

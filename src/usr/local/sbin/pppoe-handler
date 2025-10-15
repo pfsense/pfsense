@@ -124,6 +124,9 @@ function pppoe_attach($interface) {
 
 function pppoe_detach($interface) {
 	$tmp = g_get('tmp_path', '');
+	$interface_label = convert_real_interface_to_friendly_interface_name($interface);
+
+	interface_vip_cleanup($interface_label);
 
 	if (file_exists("{$tmp}/{$interface}_defaultgw")) {
 		$current_defaultgw = route_get_default('inet');
@@ -183,6 +186,13 @@ function pppoe_detach($interface) {
 	}
 
 	mwexec_bg("/usr/local/sbin/ppp-ipv6 {$interface} down");
+
+	foreach (get_gateways(GW_CACHE_DISABLED) as $gw) {
+		if ($gw['friendlyiface'] == $interface_label) {
+			setup_gateways_monitor();
+			break;
+		}
+	}
 }
 
 if (!config_path_enabled('system', 'use_if_pppoe')) {

@@ -42,7 +42,7 @@ define('DEFAULT_COUNT', 3);
 define('MAX_WAIT', 10);
 define('DEFAULT_WAIT', 1);
 $do_ping = false;
-$host = '';
+$host = $host_utf8 = '';
 $count = DEFAULT_COUNT;
 $wait = DEFAULT_WAIT;
 
@@ -61,7 +61,11 @@ if ($_POST || $_REQUEST['host']) {
 	    ($_REQUEST['wait'] > MAX_WAIT) || (!is_numericint($_REQUEST['wait'])))) {
 		$input_errors[] = sprintf(gettext("Wait must be between 1 and %s"), MAX_WAIT);
 	}	
-	$host = idn_to_ascii(trim($_REQUEST['host']));
+	$host = trim($_REQUEST['host']);
+	if (!empty($host)) {
+		$host = idn_to_ascii($host);
+		$host_utf8 = idn_to_utf8($host);
+	}
 	$ipproto = $_REQUEST['ipproto'];
 	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
 		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
@@ -119,7 +123,7 @@ if ($do_ping) {
 	$result = shell_exec($cmd);
 
 	if (empty($result)) {
-		$input_errors[] = sprintf(gettext('Host "%s" did not respond or could not be resolved.'), idn_to_utf8($host));
+		$input_errors[] = sprintf(gettext('Host "%s" did not respond or could not be resolved.'), $host_utf8);
 	}
 
 }
@@ -138,7 +142,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'*Hostname',
 	'text',
-	idn_to_utf8($host),
+	$host_utf8,
 	['placeholder' => 'Hostname to ping']
 ));
 

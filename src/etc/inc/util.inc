@@ -5037,16 +5037,20 @@ function parse_cisco_acl($attribs, $dev) {
 function alias_idn_to_utf8($alias) {
 	if (is_alias($alias)) {
 		return $alias;
-	} else {
+	} else if (!empty($alias)) {
 		return idn_to_utf8($alias);
+	} else {
+		return '';
 	}
 }
 
 function alias_idn_to_ascii($alias) {
 	if (is_alias($alias)) {
 		return $alias;
-	} else {
+	} else if (!empty($alias)) {
 		return idn_to_ascii($alias);
+	} else {
+		return '';
 	}
 }
 

@@ -68,7 +68,7 @@ if (empty($argument)) {
 					$phase1iface = $phase1['interface'];
 				}
 				if (($phase1iface == $interface) ||
-				    (!empty($gwgroups) && in_array($phase1iface, $gwgroups))) {
+				    (in_array($phase1iface, $gwgroups))) {
 					$ipsec_reload = true;
 					break 2;
 				}

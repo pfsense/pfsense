@@ -128,7 +128,7 @@ foreach ($arg_array as $arg_element) {
 			continue;
 		}
 		if ($server['interface'] == $interface || empty($interface) ||
-		    (!empty($gwgroups) && in_array($server['interface'], $gwgroups))) {
+		    (in_array($server['interface'], $gwgroups))) {
 			openvpn_resync_if_needed('server', $server, $interface);
 		}
 	}
@@ -138,7 +138,7 @@ foreach ($arg_array as $arg_element) {
 			continue;
 		}
 		if ($client['interface'] == $interface || empty($interface) ||
-		    (!empty($gwgroups) && in_array($client['interface'], $gwgroups))) {
+		    (in_array($client['interface'], $gwgroups))) {
 			openvpn_resync_if_needed('client', $client, $interface);
 		}
 	}

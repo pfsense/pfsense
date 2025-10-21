@@ -2017,10 +2017,6 @@ function gateway_is_gwgroup_member($name, $detail=false) {
 		}
 	}
 
-	if (empty($members)) {
-		return false;
-	}
-
 	return $members;
 }
 /*

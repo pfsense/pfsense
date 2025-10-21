@@ -5037,7 +5037,7 @@ function parse_cisco_acl($attribs, $dev) {
 function alias_idn_to_utf8($alias) {
 	if (is_alias($alias)) {
 		return $alias;
-	} else if (!empty($alias)) {
+	} elseif (is_string($alias) && (strlen($alias) > 0)) {
 		return idn_to_utf8($alias);
 	} else {
 		return '';
@@ -5047,7 +5047,7 @@ function alias_idn_to_utf8($alias) {
 function alias_idn_to_ascii($alias) {
 	if (is_alias($alias)) {
 		return $alias;
-	} else if (!empty($alias)) {
+	} elseif (is_string($alias) && (strlen($alias) > 0)) {
 		return idn_to_ascii($alias);
 	} else {
 		return '';

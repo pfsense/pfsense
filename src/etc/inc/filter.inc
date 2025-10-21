@@ -5128,6 +5128,33 @@ function filter_rules_generate() {
 	}
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;
+
+	/**
+	 * Used in adding the appropriate gateway label for the default
+	 * "pass out" policy rules. This allows state killing on gateway
+	 * recovery to work for traffic from the firewall itself.
+	*/
+	$default_failover_gateway4 = config_get_path('gateways/defaultgw4', '');
+	$default_failover_gateway6 = config_get_path('gateways/defaultgw6', '');
+	$default_failover_gateway4_tier = null;
+	$default_failover_gateway6_tier = null;
+	if (!empty($default_failover_gateway4) && ($default_failover_gateway4 != '-')) {
+		$default_failover_gateway4_tier = get_highest_failover_tier_online($default_failover_gateway4);
+		if (empty($default_failover_gateway4_tier)) {
+			$default_failover_gateway4 = null;
+		}
+	} else {
+		$default_failover_gateway4 = null;
+	}
+	if (!empty($default_failover_gateway6) && ($default_failover_gateway6 != '-')) {
+		$default_failover_gateway6_tier = get_highest_failover_tier_online($default_failover_gateway6);
+		if (empty($default_failover_gateway6_tier)) {
+			$default_failover_gateway6 = null;
+		}
+	} else {
+		$default_failover_gateway6 = null;
+	}
+
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
 		if (isset($ifcfg['virtual'])) {
 			continue;
@@ -5136,7 +5163,26 @@ function filter_rules_generate() {
 		$gw = get_interface_gateway($ifdescr);
 		$routeto = (substr($ifcfg['if'], 0, 5) != "ipsec") ? "route-to ( {$ifcfg['if']} {$gw} )" : "";
 		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip']) && is_subnetv4("{$ifcfg['sa']}/{$ifcfg['sn']}")) {
-			$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} ridentifier {$increment_tracker()} keep state allow-opts {$make_rule_label_string("let out anything from firewall host itself")}";
+			$gwlabel = null;
+			if (!empty($routeto)) {
+				foreach ($GatewaysList as $gw_item) {
+					if ($gw_item['gateway'] != $gw) {
+						continue;
+					}
+					if (isset($default_failover_gateway4) && in_array($default_failover_gateway4, gateway_is_gwgroup_member($gw_item['name']))) {
+						// Gateway is a member of the default failover gateway group.
+						$gwlabel = make_rule_label_string("{$default_failover_gateway4}{$gw_item['name']}", RULE_LABEL_KEY_GATEwAY);
+					} else {
+						/* Not part of a default failover group, or
+						 * no online gateways in the group, or
+						 * group is not in failover state. */
+						$gwlabel = make_rule_label_string($gw_item['name'], RULE_LABEL_KEY_GATEwAY);
+					}
+					break;
+				}
+			}
+
+			$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} ridentifier {$increment_tracker()} keep state allow-opts {$gwlabel} {$make_rule_label_string("let out anything from firewall host itself")}";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip) {
 					if ($vip['mode'] == "proxyarp") {
@@ -5146,9 +5192,9 @@ function filter_rules_generate() {
 						continue;
 					}
 					if (ip_in_subnet($vip['ip'], "{$ifcfg['sa']}/{$ifcfg['sn']}")) {
-						$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} ridentifier {$increment_tracker()} keep state allow-opts {$make_rule_label_string("let out anything from firewall host itself")}";
+						$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} ridentifier {$increment_tracker()} keep state allow-opts {$gwlabel} {$make_rule_label_string("let out anything from firewall host itself")}";
 					} else {
-						$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} from {$vip['ip']} to !" . gen_subnet($vip['ip'], $vip['sn']) . "/{$vip['sn']} ridentifier {$increment_tracker()} keep state allow-opts {$make_rule_label_string("let out anything from firewall host itself")}";
+						$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} from {$vip['ip']} to !" . gen_subnet($vip['ip'], $vip['sn']) . "/{$vip['sn']} ridentifier {$increment_tracker()} keep state allow-opts {$gwlabel} {$make_rule_label_string("let out anything from firewall host itself")}";
 					}
 				}
 			}
@@ -5159,13 +5205,32 @@ function filter_rules_generate() {
 		$pdlen = 64 - (int) calculate_ipv6_delegation_length($ifdescr);
 		$routeto = (substr($ifcfg['if'], 0, 5) != "ipsec") ? "route-to ( {$stf} {$gwv6} )" : "";
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']) && is_subnetv6("{$ifcfg['ipv6']}/{$pdlen}")) {
-			$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} ridentifier {$increment_tracker()} keep state allow-opts {$make_rule_label_string("let out anything from firewall host itself")}";
+			$gwlabel = null;
+			if (!empty($routeto)) {
+				foreach ($GatewaysList as $gw_item) {
+					if ($gw_item['gateway'] != $gwv6) {
+						continue;
+					}
+					if (isset($default_failover_gateway6) && in_array($default_failover_gateway6, gateway_is_gwgroup_member($gw_item['name']))) {
+						// Gateway is a member of the default failover gateway group.
+						$gwlabel = make_rule_label_string("{$default_failover_gateway6}{$gw_item['name']}", RULE_LABEL_KEY_GATEwAY);
+					} else {
+						/* Not part of a default failover group, or
+						 * no online gateways in the group, or
+						 * group is not in failover state. */
+						$gwlabel = make_rule_label_string($gw_item['name'], RULE_LABEL_KEY_GATEwAY);
+					}
+					break;
+				}
+			}
+
+			$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} ridentifier {$increment_tracker()} keep state allow-opts {$gwlabel} {$make_rule_label_string("let out anything from firewall host itself")}";
 			if (is_array($ifcfg['vips6'])) {
 				foreach ($ifcfg['vips6'] as $vip) {
 					if (!is_ipaddrv6($vip['ip']) || !is_subnetv6("{$vip['ip']}/{$pdlen}")) {
 						continue;
 					}
-					$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} ridentifier {$increment_tracker()} keep state allow-opts {$make_rule_label_string("let out anything from firewall host itself")}";
+					$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} ridentifier {$increment_tracker()} keep state allow-opts {$gwlabel} {$make_rule_label_string("let out anything from firewall host itself")}";
 				}
 			}
 		}

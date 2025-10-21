@@ -523,7 +523,7 @@ function remove_failover_states(?string $gateway_name = null): void {
 
 	// if killing states from the firewall itself, check for default failover gateway groups
 	$remove_states_default = config_get_path('system/remove_failover_states_default');
-	if ($remove_states_default) {
+	if ($remove_states_default && ($remove_states_default != 'policy')) {
 		$default_gateways = [];
 
 		$default_gateway4 = config_get_path('gateways/defaultgw4', '');
@@ -581,7 +581,7 @@ function remove_failover_states(?string $gateway_name = null): void {
 		}
 
 		// build a list of interfaces, used to kill states from the firewall itself
-		if ($remove_states_default && array_key_exists($group['name'], $default_gateways)) {
+		if ($remove_states_default && ($remove_states_default != 'policy') && array_key_exists($group['name'], $default_gateways)) {
 			// get the interfaces of the default gateway group
 			$default_gateways[$group['name']] = $gateway_interfaces;
 
@@ -605,7 +605,7 @@ function remove_failover_states(?string $gateway_name = null): void {
 	}
 
 	// kill all states for the default failover gateway groups
-	if (!$remove_states_default) {
+	if (!$remove_states_default || ($remove_states_default == 'policy')) {
 		return;
 	}
 	foreach ($default_gateways as $gateway_name => $gateway_interfaces) {

@@ -5138,6 +5138,7 @@ function filter_rules_generate() {
 	$default_failover_gateway6 = config_get_path('gateways/defaultgw6', '');
 	$default_failover_gateway4_tier = null;
 	$default_failover_gateway6_tier = null;
+	$active_gateways = get_gateways();
 	if (!empty($default_failover_gateway4) && ($default_failover_gateway4 != '-')) {
 		$default_failover_gateway4_tier = get_highest_failover_tier_online($default_failover_gateway4);
 		if (empty($default_failover_gateway4_tier)) {
@@ -5165,17 +5166,17 @@ function filter_rules_generate() {
 		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip']) && is_subnetv4("{$ifcfg['sa']}/{$ifcfg['sn']}")) {
 			$gwlabel = null;
 			if (!empty($routeto)) {
-				foreach ($GatewaysList as $gw_item) {
+				foreach ($active_gateways as $gw_item) {
 					if ($gw_item['gateway'] != $gw) {
 						continue;
 					}
 					if (isset($default_failover_gateway4) && in_array($default_failover_gateway4, gateway_is_gwgroup_member($gw_item['name']))) {
 						// Gateway is a member of the default failover gateway group.
-						$gwlabel = make_rule_label_string("{$default_failover_gateway4}{$gw_item['name']}", RULE_LABEL_KEY_GATEwAY);
+						$gwlabel = make_rule_label_string("{$default_failover_gateway4_tier}:{$default_failover_gateway4}", RULE_LABEL_KEY_GATEwAY);
 					} else {
 						/* Not part of a default failover group, or
 						 * no online gateways in the group, or
-						 * group is not in failover state. */
+						 * group is not in a failover state. */
 						$gwlabel = make_rule_label_string($gw_item['name'], RULE_LABEL_KEY_GATEwAY);
 					}
 					break;
@@ -5207,17 +5208,17 @@ function filter_rules_generate() {
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']) && is_subnetv6("{$ifcfg['ipv6']}/{$pdlen}")) {
 			$gwlabel = null;
 			if (!empty($routeto)) {
-				foreach ($GatewaysList as $gw_item) {
+				foreach ($active_gateways as $gw_item) {
 					if ($gw_item['gateway'] != $gwv6) {
 						continue;
 					}
 					if (isset($default_failover_gateway6) && in_array($default_failover_gateway6, gateway_is_gwgroup_member($gw_item['name']))) {
 						// Gateway is a member of the default failover gateway group.
-						$gwlabel = make_rule_label_string("{$default_failover_gateway6}{$gw_item['name']}", RULE_LABEL_KEY_GATEwAY);
+						$gwlabel = make_rule_label_string("{$default_failover_gateway6_tier}:{$default_failover_gateway6}", RULE_LABEL_KEY_GATEwAY);
 					} else {
 						/* Not part of a default failover group, or
 						 * no online gateways in the group, or
-						 * group is not in failover state. */
+						 * group is not in a failover state. */
 						$gwlabel = make_rule_label_string($gw_item['name'], RULE_LABEL_KEY_GATEwAY);
 					}
 					break;

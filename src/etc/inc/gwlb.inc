@@ -595,6 +595,7 @@ function remove_failover_states(?string $gateway_name = null): void {
 		$tiers_to_kill = array_diff($tiers_to_kill, [min($tiers_to_kill)]);
 		foreach ($tiers_to_kill as $tier) {
 			mwexec_bg('/sbin/pfctl -M -k label -k ' . escapeshellarg(make_rule_label_string("{$tier}:{$group['name']}", RULE_LABEL_KEY_GATEwAY, false)) . ' -q');
+			log_error("Gateway Recovery: killed policy routing states for tier {$tier} in {$group['name']}");
 		}
 	}
 
@@ -610,14 +611,22 @@ function remove_failover_states(?string $gateway_name = null): void {
 		/* filtering for the address family allows states that have been created by user
 		   rules with a gateway of a different address family on the same interface to remain */
 		if ($remove_states_default == 'addrfamily') {
-			$host_prefix = ($gateway_name == $default_gateway4) ? '-k 0.0.0.0/0' : '-k ::/0';
+			if ($gateway_name == $default_gateway4) {
+				$host_prefix = '-k 0.0.0.0/0';
+				$log_message = 'IPv4';
+			} else {
+				$host_prefix = '-k ::/0';
+				$log_message = 'IPv6';
+			}
 		} elseif ($remove_states_default == 'all') {
 			$host_prefix = '-Fs';
+			$log_message = 'all';
 		} else {
 			continue;
 		}
 		foreach (array_keys($gateway_interfaces) as $gateway_interface) {
 			mwexec_bg('/sbin/pfctl -M -i ' . escapeshellarg($gateway_interface) . " {$host_prefix} -q");
+			log_error("Gateway Recovery: killed {$log_message} states for the lower-priority gateway {$gateway_name} ({$gateway_interface})");
 		}
 	}
 }

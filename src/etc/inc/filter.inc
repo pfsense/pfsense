@@ -1717,7 +1717,7 @@ function filter_generate_aliases() {
 }
 
 function filter_generate_gateways() {
-	global $PFConfig, $g, $GatewaysList;
+	global $PFConfig, $GatewaysList, $GatewaysStatus;
 
 	$rules = '';
 
@@ -1850,6 +1850,87 @@ function filter_generate_gateways() {
 		null,
 		PFCONFIG_ALIAS_GATEWAYS['id']
 	);
+}
+
+/**
+ * Returns the failover gateway label item to be used in a policy routing
+ * rule. The label includes the gateway group name and its active tier.
+ *
+ * @param string|null $gateway A gateway group name or gateway IP address.
+ *        If a gateway IP address is specified then it's assumed that the
+ *        default failover gateway group is used. If the specified gateway
+ *        address does not belong to a failover gateway group then an
+ *        empty array is returned.
+*/
+function get_failover_gateway_group_label_item(string|null $gateway): array {
+	if (empty($gateway)) {
+		return [];
+	}
+
+	$rule_gateway_group = '';
+	$rule_gateway_group_tier = '';
+
+	// Check if a gateway group was specified.
+	foreach(config_get_path('gateways/gateway_group', []) as $gw_group) {
+		if ($gw_group['name'] != $gateway) {
+			continue;
+		}
+		$rule_gateway_group = $gateway;
+		$rule_gateway_group_tier = get_highest_failover_tier_online($gateway);
+		break;
+	}
+
+	// When an address is provided then the default failover group is used.
+	if (empty($rule_gateway_group)) {
+		$gateway_name = null;
+		$address_family = match (is_ipaddr($gateway)) {
+			4 => AF_INET,
+			6 => AF_INET6,
+			default => null
+		};
+		if (isset($address_family)) {
+			static $active_gateways = get_gateways();
+			foreach ($active_gateways as $gw_item) {
+				if ($gw_item['gateway'] != $gateway) {
+					continue;
+				}
+				$gateway_name = $gw_item['name'];
+				break;
+			}
+		}
+		if (isset($gateway_name)) {
+			if ($address_family == AF_INET) {
+				static $default_failover_gateway4 = config_get_path('gateways/defaultgw4', '');
+				if (!empty($default_failover_gateway4) && ($default_failover_gateway4 != '-')) {
+					static $default_failover_gateway4_tier = get_highest_failover_tier_online($default_failover_gateway4);
+				}
+
+				if (!empty($default_failover_gateway4_tier) && in_array($default_failover_gateway4, gateway_is_gwgroup_member($gateway_name))) {
+					// Gateway is a member of the default failover gateway group.
+					$rule_gateway_group = $default_failover_gateway4;
+					$rule_gateway_group_tier = $default_failover_gateway4_tier;
+				}
+			} elseif ($address_family == AF_INET6) {
+				static $default_failover_gateway6 = config_get_path('gateways/defaultgw6', '');
+				if (!empty($default_failover_gateway6) && ($default_failover_gateway6 != '-')) {
+					static $default_failover_gateway6_tier = get_highest_failover_tier_online($default_failover_gateway6);
+				}
+
+				if (!empty($default_failover_gateway6_tier) && in_array($default_failover_gateway6, gateway_is_gwgroup_member($gateway_name))) {
+					// Gateway is a member of the default failover gateway group.
+					$rule_gateway_group = $default_failover_gateway6;
+					$rule_gateway_group_tier = $default_failover_gateway6_tier;
+				}
+			}
+		}
+	}
+
+	if (empty($rule_gateway_group) || empty($rule_gateway_group_tier)) {
+		// Not part of a default failover group, or no online gateways in the group.
+		return [];
+	}
+
+	return make_rule_label_item("{$rule_gateway_group_tier}:{$rule_gateway_group}", RULE_LABEL_KEY_GATEwAY);
 }
 
 /* returns space separated list of vpn subnets */
@@ -4277,14 +4358,13 @@ function filter_generate_user_rule($rule) {
 	/* if user has selected a custom gateway, lets work with it */
 	else if ($rule['gateway'] <> "" && $type == "pass") {
 		if (isset($GatewaysList[$rule['gateway']])) {
-			/* Check if the rule uses a failover gateway group that is currently
-			 * in a failover state. If so, add the current tier to use for
-			 * state killing on gateway recovery */
-			$gwlabel_prefix = get_highest_failover_tier_online($rule['gateway']);
-			$gwlabel_prefix = empty($gwlabel_prefix) ? '' : "{$gwlabel_prefix}:";
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
-			$labels[] = make_rule_label_item("{$gwlabel_prefix}{$rule['gateway']}", RULE_LABEL_KEY_GATEwAY);
+
+			$gwlabel_item = get_failover_gateway_group_label_item($rule['gateway']);
+			if (!empty($gwlabel_item)) {
+				$labels[] = $gwlabel_item;
+			}
 		} else if (config_path_enabled('system','skip_rules_gw_down')) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {
@@ -4601,7 +4681,7 @@ function array_from_filter_lines(string|null $lines) {
 }
 
 function filter_rules_generate() {
-	global $PFConfig, $FilterIflist, $time_based_rules, $GatewaysList, $log_preferences,
+	global $PFConfig, $FilterIflist, $time_based_rules, $GatewaysStatus, $GatewaysList, $log_preferences,
 	       $tracker, $vlanprio_values, $vpn_and_ppp_ifs, $use_floating_states_for_ipsec;
 
 	// Log preferences for firewall rules.
@@ -5129,33 +5209,6 @@ function filter_rules_generate() {
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;
 
-	/**
-	 * Used in adding the appropriate gateway label for the default
-	 * "pass out" policy rules. This allows state killing on gateway
-	 * recovery to work for traffic from the firewall itself.
-	*/
-	$default_failover_gateway4 = config_get_path('gateways/defaultgw4', '');
-	$default_failover_gateway6 = config_get_path('gateways/defaultgw6', '');
-	$default_failover_gateway4_tier = null;
-	$default_failover_gateway6_tier = null;
-	$active_gateways = get_gateways();
-	if (!empty($default_failover_gateway4) && ($default_failover_gateway4 != '-')) {
-		$default_failover_gateway4_tier = get_highest_failover_tier_online($default_failover_gateway4);
-		if (empty($default_failover_gateway4_tier)) {
-			$default_failover_gateway4 = null;
-		}
-	} else {
-		$default_failover_gateway4 = null;
-	}
-	if (!empty($default_failover_gateway6) && ($default_failover_gateway6 != '-')) {
-		$default_failover_gateway6_tier = get_highest_failover_tier_online($default_failover_gateway6);
-		if (empty($default_failover_gateway6_tier)) {
-			$default_failover_gateway6 = null;
-		}
-	} else {
-		$default_failover_gateway6 = null;
-	}
-
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
 		if (isset($ifcfg['virtual'])) {
 			continue;
@@ -5164,25 +5217,7 @@ function filter_rules_generate() {
 		$gw = get_interface_gateway($ifdescr);
 		$routeto = (substr($ifcfg['if'], 0, 5) != "ipsec") ? "route-to ( {$ifcfg['if']} {$gw} )" : "";
 		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip']) && is_subnetv4("{$ifcfg['sa']}/{$ifcfg['sn']}")) {
-			$gwlabel = null;
-			if (!empty($routeto)) {
-				foreach ($active_gateways as $gw_item) {
-					if ($gw_item['gateway'] != $gw) {
-						continue;
-					}
-					if (isset($default_failover_gateway4) && in_array($default_failover_gateway4, gateway_is_gwgroup_member($gw_item['name']))) {
-						// Gateway is a member of the default failover gateway group.
-						$gwlabel = make_rule_label_string("{$default_failover_gateway4_tier}:{$default_failover_gateway4}", RULE_LABEL_KEY_GATEwAY);
-					} else {
-						/* Not part of a default failover group, or
-						 * no online gateways in the group, or
-						 * group is not in a failover state. */
-						$gwlabel = make_rule_label_string($gw_item['name'], RULE_LABEL_KEY_GATEwAY);
-					}
-					break;
-				}
-			}
-
+			$gwlabel = !empty($routeto) ? get_labels_string_from_label_items([get_failover_gateway_group_label_item($gw)]) : '';
 			$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} ridentifier {$increment_tracker()} keep state allow-opts {$gwlabel} {$make_rule_label_string("let out anything from firewall host itself")}";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip) {
@@ -5206,25 +5241,7 @@ function filter_rules_generate() {
 		$pdlen = 64 - (int) calculate_ipv6_delegation_length($ifdescr);
 		$routeto = (substr($ifcfg['if'], 0, 5) != "ipsec") ? "route-to ( {$stf} {$gwv6} )" : "";
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']) && is_subnetv6("{$ifcfg['ipv6']}/{$pdlen}")) {
-			$gwlabel = null;
-			if (!empty($routeto)) {
-				foreach ($active_gateways as $gw_item) {
-					if ($gw_item['gateway'] != $gwv6) {
-						continue;
-					}
-					if (isset($default_failover_gateway6) && in_array($default_failover_gateway6, gateway_is_gwgroup_member($gw_item['name']))) {
-						// Gateway is a member of the default failover gateway group.
-						$gwlabel = make_rule_label_string("{$default_failover_gateway6_tier}:{$default_failover_gateway6}", RULE_LABEL_KEY_GATEwAY);
-					} else {
-						/* Not part of a default failover group, or
-						 * no online gateways in the group, or
-						 * group is not in a failover state. */
-						$gwlabel = make_rule_label_string($gw_item['name'], RULE_LABEL_KEY_GATEwAY);
-					}
-					break;
-				}
-			}
-
+			$gwlabel = !empty($routeto) ? get_labels_string_from_label_items([get_failover_gateway_group_label_item($gwv6)]) : '';
 			$rules_temp[] = "pass out {$log_preferences['default_pass']} {$routeto} inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} ridentifier {$increment_tracker()} keep state allow-opts {$gwlabel} {$make_rule_label_string("let out anything from firewall host itself")}";
 			if (is_array($ifcfg['vips6'])) {
 				foreach ($ifcfg['vips6'] as $vip) {
@@ -5258,7 +5275,6 @@ function filter_rules_generate() {
 		}
 
 		if (!empty($gateways_to_process)) {
-			$GatewaysStatus = return_gateways_status(true);
 			$gateway_monitoring_block = [];
 			foreach ($gateways_to_process as $gateway_item) {
 				/**
@@ -5909,6 +5925,9 @@ function filter_generate_ipsec_rules() {
 			if ((!is_ipaddr($gateway) || empty($interface))) {
 				$route_to = " ";
 				$reply_to = " ";
+				$gwlabel = '';
+			} elseif ($passout) {
+				$gwlabel = get_labels_string_from_label_items([get_failover_gateway_group_label_item($gateway)]);
 			}
 
 			/* Add rules to allow IKE to pass */
@@ -5917,7 +5936,7 @@ function filter_generate_ipsec_rules() {
 			if ($passout) {
 				$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'outbound isakmp');
 				$ike_out = isset($ph1ent['ikeport']) ? $ph1ent['ikeport'] : 500;
-				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$ike_out} ridentifier {$increment_tracker()} keep state {$shorttunneldescr}\n";
+				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$ike_out} ridentifier {$increment_tracker()} keep state {$gwlabel} {$shorttunneldescr}\n";
 			}
 			$ike_in = config_get_path('ipsec/port', 500);
 			$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'inbound isakmp');
@@ -5928,7 +5947,7 @@ EOD;
 			if ($passout) {
 				$natt_out = isset($ph1ent['nattport']) ? $ph1ent['nattport'] : 4500;
 				$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'outbound nat-t');
-				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$natt_out} ridentifier {$increment_tracker()} keep state {$shorttunneldescr}\n";
+				$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto udp from (self) to {$rgip} port = {$natt_out} ridentifier {$increment_tracker()} keep state {$gwlabel} {$shorttunneldescr}\n";
 			}
 			$natt_in = config_get_path('ipsec/port_nat_t', 4500);
 			$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'inbound nat-t');
@@ -5940,7 +5959,7 @@ EOD;
 			if ($prot_used_esp) {
 				if ($passout) {
 					$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'outbound esp proto');
-					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto esp from (self) to {$rgip} ridentifier {$increment_tracker()} keep state {$shorttunneldescr}\n";
+					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto esp from (self) to {$rgip} ridentifier {$increment_tracker()} keep state {$gwlabel} {$shorttunneldescr}\n";
 				}
 				$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'inbound esp proto');
 				$ipfrules .= <<<EOD
@@ -5951,7 +5970,7 @@ EOD;
 			if ($prot_used_ah) {
 				if ($passout) {
 					$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'outbound ah proto');
-					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto ah from (self) to {$rgip} ridentifier {$increment_tracker()} keep state {$shorttunneldescr}\n";
+					$ipfrules .= "pass out {$log_preferences['default_pass']} $route_to proto ah from (self) to {$rgip} ridentifier {$increment_tracker()} keep state {$gwlabel} {$shorttunneldescr}\n";
 				}
 				$shorttunneldescr = make_rule_label_string($tunnel_rule_label_prefix . 'inbound ah proto');
 				$ipfrules .= <<<EOD

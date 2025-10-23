@@ -436,18 +436,24 @@ function setup_gateways_monitor() {
 }
 
 /**
- * Looks for the highest priority failover tier that is currently online in a
- * failover gateway group. A failover tier is any tier number greater than the
- * lowest configured tier number. A failover gateway group must consist of at
- * least two different tiers.
+ * Looks for the highest priority tier that is currently online in a
+ * failover gateway group. A failover gateway group must consist of at
+ * least two different tiers. No distinction is made for two online
+ * gateways with the same tier (i.e. load balancing); in such a case then
+ * e.g. gateway recovery would kill states for all gateways on that tier.
  *
  * @param string $gateway_group Name of an existing failover gateway group
  *
- * @return int The tier number - returns 0 if no matches are found
+ * @return int The tier number - returns 0 if no online gateways were found
  * @return false Not a valid failover gateway group
  */
 function get_highest_failover_tier_online(?string $gateway_group): int|false {
 	if (empty($gateway_group)) {
+		return false;
+	}
+
+	global $GatewaysStatus;
+	if (empty($GatewaysStatus)) {
 		return false;
 	}
 
@@ -479,15 +485,9 @@ function get_highest_failover_tier_online(?string $gateway_group): int|false {
 			break;
 		}
 
-		if (!isset($gateways_states)) {
-			// get a list of all relevant gateway states
-			$gateways_states = return_gateways_status(true);
-		}
-
-		$highest_tier = min($group_tiers);
 		// remove offline gateways
 		foreach (array_keys($group_gateways) as $gateway_name) {
-			if ($gateways_states[$gateway_name]['status'] != 'online') {
+			if ($GatewaysStatus[$gateway_name]['status'] != 'online') {
 				unset($group_gateways[$gateway_name]);
 			}
 		}
@@ -497,14 +497,8 @@ function get_highest_failover_tier_online(?string $gateway_group): int|false {
 			return 0;
 		}
 
-		// highest online is highest tier
-		$highest_online_tier = min(array_values($group_gateways));
-		if ($highest_online_tier == $highest_tier) {
-			return 0;
-		}
-
 		// return the highest-priority failover tier of online gateways
-		return $highest_online_tier;
+		return min(array_values($group_gateways));
 	}
 
 	return false;

@@ -1324,10 +1324,13 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
 
-	/* Enable ALTQ support for hnX NICs. */
+	/* Enable ALTQ support for vtnetX/hnX NICs. */
 	if (config_path_enabled('system','hn_altq_enable')) {
 		$data[] = 'hw.hn.vf_transparent="0"';
 		$data[] = 'hw.hn.use_if_start="1"';
+		$data[] = 'hw.vtnet.altq_disable="0"';
+	} else {
+		$data[] = 'hw.vtnet.altq_disable="1"';
 	}
 
 	/* Set maximum send queue length. */

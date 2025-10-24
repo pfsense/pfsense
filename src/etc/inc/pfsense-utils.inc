@@ -4021,7 +4021,7 @@ function get_locale_list() {
 		"fr_FR" => gettext("French"),
 		"de_DE" => gettext("German (Germany)"),
 		"it_IT" => gettext("Italian"),
-		"ko_FR" => gettext("Korean"),
+		"ko_KR" => gettext("Korean"),
 		"nb_NO" => gettext("Norwegian Bokmål"),
 		"pl_PL" => gettext("Polish"),
 		"pt_PT" => gettext("Portuguese"),

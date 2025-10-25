@@ -321,8 +321,10 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_StaticText(
 	'Member(s)',
-	'Ranges can be specified in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
-	'Click "Add Tag" as many times as needed to add new inputs.'
+	 sprintf(
+		gettext('Ranges can be specified in the inputs below. Enter a range (2-3) or individual numbers.%sClick "Add Tag" as many times as needed to add new inputs.'),
+		'<br />'
+	)
 ));
 
 if ($this_qinq_config) {

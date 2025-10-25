@@ -4012,9 +4012,9 @@ function set_language() {
 function get_locale_list() {
 	$locales = array(
 		"bs" => gettext("Bosnian"),
-		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
-		"zh_Hans_HK" => gettext("Chinese (Simplified, Hong Kong SAR China)"),
-		"zh_Hant_TW" => gettext("Chinese (Traditional, Taiwan)"),
+		"zh_CN" => gettext("Chinese (Simplified, China)"),
+		"zh_HK" => gettext("Chinese (Simplified, Hong Kong SAR China)"),
+		"zh_TW" => gettext("Chinese (Traditional, Taiwan)"),
 		"nl_NL" => gettext("Dutch"),
 		"en_US" => gettext("English"),
 		"fr_FR" => gettext("French"),

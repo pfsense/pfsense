@@ -1214,10 +1214,12 @@ function ldap_test_bind($authcfg) {
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
+			log_error(sprintf(gettext("ERROR! ldap_test_bind() could not bind anonymously to server %s. Error Info: %s."), $ldapname, ldap_error($ldap)));
 			@ldap_close($ldap);
 			return false;
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+		log_error(sprintf(gettext("ERROR! ldap_test_bind() could not bind to server %s. Error Info: %s."), $ldapname, ldap_error($ldap)));
 		@ldap_close($ldap);
 		return false;
 	}
@@ -1302,12 +1304,12 @@ function ldap_get_user_ous($show_complete_ou, $authcfg) {
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
-			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind anonymously to server %s."), $ldapname));
+			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind anonymously to server %s. Error Info: %s."), $ldapname, ldap_error($ldap)));
 			@ldap_close($ldap);
 			return $ous;
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-		log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind to server %s."), $ldapname));
+		log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind to server %s. Error Info: %s."), $ldapname, ldap_error($ldap)));
 		@ldap_close($ldap);
 		return $ous;
 	}
@@ -1443,12 +1445,12 @@ function ldap_get_groups($username, $authcfg) {
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
-			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
+			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s. Error Info: %s."), $ldapname, ldap_error($ldap)));
 			@ldap_close($ldap);
 			return array();
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s."), $ldapname));
+		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s. Error Info: %s,"), $ldapname, ldap_error($ldap)));
 		@ldap_close($ldap);
 		return $memberof;
 	}
@@ -1654,19 +1656,22 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 
 	/* ok, its up.  now, lets bind as the bind user so we can search it */
 	$error = false;
+	$errmsg = "";
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindun, 'UTF-8') : $ldapbindun;
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapbindpw, 'UTF-8') : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			$error = true;
+			$errmsg = ldap_error($ldap);
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		$error = true;
+		$errmsg = ldap_error($ldap);
 	}
 
 	if ($error == true) {
 		@ldap_close($ldap);
-		log_error(sprintf(gettext("ERROR! Could not bind to LDAP server %s. Please check the bind credentials."), $ldapname));
+		log_error(sprintf(gettext("ERROR! Could not bind to LDAP server %s. Please check the bind credentials. Error Info: %s."), $ldapname, $errmsg));
 		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
 		return null;
 	}

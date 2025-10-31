@@ -1553,7 +1553,7 @@ function openvpn_stop_process($mode, $settings) {
 		/* read the pid file */
 		$pid = rtrim(file_get_contents($pfile));
 		unlink($pfile);
-		logger(LOG_INFO, localize_text("terminate old pid: ", $pid), LOG_PREFIX_OPENVPN);
+		logger(LOG_INFO, localize_text("terminate old pid: %s", $pid), LOG_PREFIX_OPENVPN);
 
 		/* send a term signal to the process */
 		posix_kill($pid, SIGTERM);
@@ -1626,7 +1626,7 @@ function openvpn_restart($mode, $settings) {
 			usleep(1000);
 			$i++;
 		}
-		logger(LOG_INFO, localize_text("PID written: ", $pid), LOG_PREFIX_OPENVPN);
+		logger(LOG_INFO, localize_text("PID written: %s", $pid), LOG_PREFIX_OPENVPN);
 	} else {
 		logger(LOG_ERR, localize_text("failed to start"), LOG_PREFIX_OPENVPN);
 	}

@@ -125,12 +125,7 @@ $section = new Form_Section('Change Password');
 
 $section->addInput(new Form_StaticText(
 	'',
-	'This page changes the password for the current user in the local configuration. ' .
-	'This affects all services which utilize the Local Authentication database ' .
-	'(User Manager).' .
-	'<br/><br/>' .
-	'This page cannot change passwords for users from other authentication ' .
-	'sources such as LDAP or RADIUS.'
+	gettext('This page changes the password for the current user in the local configuration. This affects all services which utilize the Local Authentication database (User Manager).<br/><br/>This page cannot change passwords for users from other authentication sources such as LDAP or RADIUS.')
 ));
 
 /* Only display password change fields for local users. */

@@ -339,8 +339,10 @@ while ($counter < $numaddrs) {
 	))->addClass('btn-warning btn-xs');
 
 	if ($counter == ($numaddrs - 1)) {
-		$group->setHelp(gettext(sprintf("%sAddresses added to the pass list will bypass login protection.%s", 
-			'<span class="text-danger">', '</span>')));
+		$group->setHelp(sprintf(
+		'<span class="text-danger">%s</span>',
+		gettext('Addresses added to the pass list will bypass login protection.')
+	));
 	}
 
 	$section->add($group);

@@ -121,7 +121,7 @@ if ($do_traceroute) {
 	$result = shell_exec($cmd);
 
 	if (!$result) {
-		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), htmlspecialchars(idn_to_utf8($host))));
+		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), htmlspecialchars($host_utf8)));
 	}
 }
 
@@ -133,7 +133,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'*Hostname',
 	'text',
-	idn_to_utf8($host),
+	$host_utf8,
 	['placeholder' => 'Hostname to trace.']
 ));
 

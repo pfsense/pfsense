@@ -51,11 +51,10 @@ if (!$ARCH) {
 // Set memory limit to 512M on amd64.
 ini_set("memory_limit", get_php_default_memory($ARCH) . 'M');
 
-/* if /debugging exists, lets set $debugging
+/* if /debugging exists, lets set debug
    so we can output more information */
 if (file_exists("/debugging")) {
-	$debugging = true;
-	$g['debug'] = true;
+	g_set('debug', true);
 }
 
 if (is_platform_booting() && is_cli_sapi() &&

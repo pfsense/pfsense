@@ -265,12 +265,12 @@ if (file_exists("/tmp/dhcp6c_ifs")) {
 }
 
 /* set up interfaces */
-if (!$debugging) {
+if (!g_get('debug')) {
 	mute_kernel_msgs();
 }
 interfaces_configure();
 interfaces_sync_setup();
-if (!$debugging) {
+if (!g_get('debug')) {
 	unmute_kernel_msgs();
 }
 

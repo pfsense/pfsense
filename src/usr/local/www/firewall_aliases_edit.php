@@ -49,7 +49,7 @@ if (isset($_POST['referer'])) {
 $max_alias_addresses = 5000;
 
 // Debugging
-if ($debug) {
+if (g_get('debug')) {
 	unlink_if_exists($g['tmp_path'] . '/alias_rename_log.txt');
 }
 

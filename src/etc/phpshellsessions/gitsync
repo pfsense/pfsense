@@ -144,9 +144,8 @@ function isUrl($url = "") {
 
 if (!function_exists('run_cmds')) {
 function run_cmds($cmds) {
-	global $debug;
 	foreach ($cmds as $cmd) {
-		if ($debug) {
+		if (g_get('debug')) {
 			echo "Running $cmd";
 		}
 		exec($cmd);

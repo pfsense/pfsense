@@ -276,7 +276,7 @@ $groupindex = index_groups();
 $userindex = index_users();
 
 function index_groups() {
-	global $g, $debug, $groupindex;
+	global $g, $groupindex;
 
 	$groupindex = array();
 
@@ -474,8 +474,6 @@ function local_backed($username, $passwd) {
 }
 
 function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
-	global $debug;
-
 	if (empty($u2add) && empty($u2del) && empty($g2add) && empty($g2del)) {
 		/* Nothing to be done here */
 		return;
@@ -502,7 +500,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		 */
 		unlink_if_exists("/var/cron/tabs/{$user['name']}");
 		$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . $rmhome;
-		if ($debug) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		mwexec($cmd);
@@ -532,7 +530,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 
 		$cmd = "/usr/sbin/pw groupdel -n " .
 		    escapeshellarg($group['name']);
-		if ($debug) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		mwexec($cmd);
@@ -584,8 +582,6 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 }
 
 function local_reset_accounts() {
-	global $debug;
-
 	/* remove local users to avoid uid conflicts */
 	$fd = popen("/usr/sbin/pw usershow -a", "r");
 	if ($fd) {
@@ -608,7 +604,7 @@ function local_reset_accounts() {
 			 */
 			unlink_if_exists("/var/cron/tabs/{$line[0]}");
 			$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($line[0]);
-			if ($debug) {
+			if (g_get('debug')) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
 			mwexec($cmd);
@@ -632,7 +628,7 @@ function local_reset_accounts() {
 				continue;
 			}
 			$cmd = "/usr/sbin/pw groupdel -g " . escapeshellarg($line[2]);
-			if ($debug) {
+			if (g_get('debug')) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
 			mwexec($cmd);
@@ -711,7 +707,7 @@ function check_current_password($username) {
 }
 
 function local_user_set($user) {
-	global $g, $debug;
+	global $g;
 
 	if (empty($user['sha512-hash']) && empty($user['bcrypt-hash']) && empty($user['password'])) {
 		log_error("There is something wrong in the config because user {$user['name']} password is missing!");
@@ -759,7 +755,7 @@ function local_user_set($user) {
 	/* root user special handling */
 	if ($user_uid == 0) {
 		$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh -H 0";
-		if ($debug) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		$fd = popen($cmd, "w");
@@ -803,7 +799,7 @@ function local_user_set($user) {
 			" -c " . escapeshellarg($comment) .
 			" -H 0 2>&1";
 
-	if ($debug) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	$fd = popen($cmd, "w");
@@ -854,8 +850,6 @@ function local_user_set($user) {
 }
 
 function local_user_del($user) {
-	global $debug;
-
 	/* Don't remove /root */
 	if ($user['uid'] != 0) {
 		$rmhome = "-r";
@@ -875,7 +869,7 @@ function local_user_del($user) {
 	/* delete from pw db */
 	$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . escapeshellarg($rmhome);
 
-	if ($debug) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	mwexec($cmd);
@@ -944,7 +938,7 @@ function local_user_get_groups($user, $all = false) {
 }
 
 function local_user_set_groups($user, $new_groups = NULL) {
-	global $debug, $groupindex, $userindex;
+	global $groupindex, $userindex;
 
 	$groups = config_get_path('system/group', []);
 	if (empty($groups)) {
@@ -1022,8 +1016,6 @@ function local_group_del_user($user) {
 }
 
 function local_group_set($group, $reset = false) {
-	global $debug;
-
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
 	$group_members = '';
@@ -1055,7 +1047,7 @@ function local_group_set($group, $reset = false) {
 		" -g " . escapeshellarg($group_gid) .
 		" -M " . escapeshellarg($group_members) . " 2>&1";
 
-	if ($debug) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 
@@ -1063,12 +1055,10 @@ function local_group_set($group, $reset = false) {
 }
 
 function local_group_del($group) {
-	global $debug;
-
 	/* delete from group db */
 	$cmd = "/usr/sbin/pw groupdel -n " . escapeshellarg($group['name']);
 
-	if ($debug) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	mwexec($cmd);
@@ -1525,8 +1515,6 @@ function ldap_format_host($host) {
 }
 
 function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
-	global $debug;
-
 	if (!$username) {
 		$attributes['error_message'] = gettext("Invalid Login.");
 		return false;
@@ -1605,7 +1593,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		return null;
 	}
 
-	if ($debug) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("LDAP Debug: Attempting to authenticate %s on %s"), $username, $ldapname));
 		log_error(sprintf(gettext("LDAP Debug: URI: %s (v%s)"), $ldapserver, $ldapver));
 		log_error(sprintf(gettext("LDAP Debug: Base DN: %s"), $ldapbasedn));
@@ -1624,7 +1612,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$error = true;
 	}
 
-	if ($debug) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("LDAP Debug: LDAP connection error flag: %s"), var_export($error, true)));
 	}
 
@@ -1684,7 +1672,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	/*  person.  To later be used by ldap_get_groups.                */
 	/*  that way we don't have to search twice.                      */
 	/*****************************************************************/
-	if ($debug) {
+	if (g_get('debug')) {
 		log_error(sprintf(gettext("LDAP Debug: Now Searching for %s in directory."), $username));
 	}
 	/* Iterate through the user containers for search */
@@ -1693,7 +1681,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$ldapfilter = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($ldapfilter, 'UTF-8') : $ldapfilter;
 		$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding("{$ldac_split},{$ldapbasedn}", 'UTF-8') : "{$ldac_split},{$ldapbasedn}";
 		/* Make sure we just use the first user we find */
-		if ($debug) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext('LDAP Debug: Now searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, mb_convert_encoding($ldac_split, 'ISO-8859-1', 'UTF-8'), mb_convert_encoding($ldapfilter, 'ISO-8859-1', 'UTF-8')));
 		}
 		if ($ldapscope == "one") {
@@ -1718,7 +1706,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 			}
 			$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
 			$groupsearch = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter);
-			if ($debug) {
+			if (g_get('debug')) {
 				log_error(sprintf(gettext("LDAP Debug: RFC2307 group filter search: %s"), $ldapgroupfilter));
 			}
 		}
@@ -1729,7 +1717,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		}
 		if (isset($groupsearch)) {
 			$validgroup = ldap_count_entries($ldap, $groupsearch);
-			if ($debug) {
+			if (g_get('debug')) {
 				log_error(sprintf(gettext("LDAP Debug: Group search contains %s results."), $validgroup));
 			}
 		}
@@ -1746,7 +1734,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 
 	if ($usercount != 1) {
 		@ldap_unbind($ldap);
-		if ($debug) {
+		if (g_get('debug')) {
 			if ($usercount === 0) {
 				log_error(sprintf(gettext("LDAP Debug: ERROR! LDAP search failed, no user matching %s was found."), $username));
 			} else {
@@ -1760,19 +1748,19 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	/* Now lets bind as the user we found */
 	$passwd = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($passwd, 'UTF-8') : $passwd;
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
-		if ($debug) {
+		if (g_get('debug')) {
 			log_error(sprintf(gettext('LDAP Debug: ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
 		}
 		@ldap_unbind($ldap);
 		return false;
 	}
 
-	if ($debug) {
+	if (g_get('debug')) {
 		$userdn = isset($authcfg['ldap_utf8']) ? mb_convert_encoding($userdn, 'ISO-8859-1', 'UTF-8') : $userdn;
 		log_error(sprintf(gettext('LDAP Debug: Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 	}
 
-	if ($debug && isset($ldapgroupfilter) && $validgroup < 1) {
+	if (g_get('debug') && isset($ldapgroupfilter) && $validgroup < 1) {
 		log_error(sprintf(gettext('LDAP Debug: Logged in successfully as %1$s but did not match any field in extended query.'), $username));
 	}
 

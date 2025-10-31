@@ -3377,9 +3377,7 @@
 		 *   - status is returned from a DynDNS service provider.
 		 */
 		function _debug($data) {
-			global $g;
-
-			if (!$g['debug']) {
+			if (!g_get('debug')) {
 				return;
 			}
 			$string = date('m-d-y h:i:s') . ' - (' . $this->_debugID . ') - [' . $this->_dnsService . '] - ' . $data . "\n";

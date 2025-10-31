@@ -2375,7 +2375,7 @@ function update_alias_name($new_alias_name, $orig_alias_name) {
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname, string $separator = '') {
-	global $g, $pconfig, $debug;
+	global $g, $pconfig;
 	if (!$origname) {
 		return;
 	}
@@ -2390,14 +2390,14 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 		}
 	}
 
-	if ($debug) {
+	if (g_get('debug')) {
 		$fd = fopen("{$g['tmp_path']}/print_r", "a");
 		fwrite($fd, print_r($pconfig, true));
 	}
 
 	if (is_array($sectionref)) {
 		foreach (array_keys($sectionref) as $itemkey) {
-			if ($debug) {
+			if (g_get('debug')) {
 				fwrite($fd, "$itemkey\n");
 			}
 
@@ -2430,7 +2430,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 					$fieldref = $new_alias_name;
 					$replaced = true;
 				}
-				if ($replaced && $debug) {
+				if ($replaced && g_get('debug')) {
 					fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
 				}
 			}
@@ -2438,7 +2438,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 		config_set_path('', $config);
 	}
 
-	if ($debug) {
+	if (g_get('debug')) {
 		fclose($fd);
 	}
 

@@ -26,10 +26,8 @@ require_once("functions.inc");
 require_once("config.lib.inc");
 require_once("config.inc");
 
-$debug = false;
-
 function get_boot_disk() {
-	global $g, $debug;
+	global $g;
 	$disk = exec("/sbin/mount | /usr/bin/grep \"on / \" | /usr/bin/cut -d'/' -f3 | /usr/bin/cut -d' ' -f1");
 	return $disk;
 }
@@ -40,7 +38,7 @@ function get_swap_disks() {
 }
 
 function get_disk_slices($disk) {
-	global $g, $debug;
+	global $g;
 
 	if (str_starts_with($disk, 'cd')) {
 		$slices[] = $disk;
@@ -52,7 +50,7 @@ function get_disk_slices($disk) {
 }
 
 function get_disks() {
-	global $g, $debug;
+	global $g;
 	$disks_array = array();
 	$disks_s = explode(" ", get_single_sysctl("kern.disks"));
 	foreach ($disks_s as $disk) {
@@ -68,13 +66,13 @@ function get_disks() {
 }
 
 function discover_config($mountpoint) {
-	global $g, $debug;
+	global $g;
 	/* List of locations to check. Requires trailing slash.
 	 * See https://redmine.pfsense.org/issues/9066 */
 	$locations_to_check = array("/", "/config/");
 	foreach ($locations_to_check as $ltc) {
 		$tocheck = "/tmp/mnt/cf{$ltc}config.xml";
-		if ($debug) {
+		if (g_get('debug')) {
 			echo "\nChecking for $tocheck";
 			if (file_exists($tocheck)) {
 				echo " -> found!";
@@ -88,7 +86,7 @@ function discover_config($mountpoint) {
 }
 
 function test_config($file_location) {
-	global $g, $debug;
+	global $g;
 	if (!$file_location) {
 		return;
 	}
@@ -97,7 +95,7 @@ function test_config($file_location) {
 	$enc_root_obj = "---- BEGIN config.xml ----";
 	$xml_file_head = exec("/usr/bin/head -2 " . escapeshellarg($file_location) . " | /usr/bin/tail -n1");
 	$enc_file_head = exec("/usr/bin/head -1 " . escapeshellarg($file_location));
-	if ($debug) {
+	if (g_get('debug')) {
 		echo "\nroot obj  = $root_obj";
 		echo "\nfile head = $xml_file_head";
 	}
@@ -115,7 +113,7 @@ function test_config($file_location) {
 
 // Probes all disks looking for config.xml
 function find_config_xml() {
-	global $g, $debug;
+	global $g;
 	$disks = get_disks();
 	// Safety check.
 	if (!is_array($disks)) {
@@ -132,46 +130,46 @@ function find_config_xml() {
 					continue;
 				}
 				if (stristr($slice, $boot_disk)) {
-					if ($debug) {
+					if (g_get('debug')) {
 						echo "\nSkipping boot device slice $slice";
 					}
 					continue;
 				}
 				if (in_array($slice, $swap_disks)) {
-					if ($debug) {
+					if (g_get('debug')) {
 						echo "\nSkipping swap device slice $slice";
 					}
 					continue;
 				}
 				echo " $slice";
 				// try msdos fs
-				if ($debug) {
+				if (g_get('debug')) {
 					echo "\n/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 				}
 				$_out = exec("/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				// try regular fs (ufs)
 				if ($_out === false || $status != 0) {
-					if ($debug) {
+					if (g_get('debug')) {
 						echo "\n/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
 					$_out = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				}
 				// try cd9660 (standard CD-ROM format)
 				if ($_out === false || $status != 0) {
-					if ($debug) {
+					if (g_get('debug')) {
 						echo "\n/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
 					$_out = exec("/sbin/mount -t cd9660 /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				}
 				// try udf (common for modern DVDs and some CDs)
 				if ($_out === false || $status != 0) {
-					if ($debug) {
+					if (g_get('debug')) {
 						echo "\n/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					}
 					$_out = exec("/sbin/mount -t udf /dev/{$slice} /tmp/mnt/cf 2>/dev/null", $stdout, $status);
 				}
 				$mounted = trim(exec("/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep '/tmp/mnt/cf' | /usr/bin/wc -l"));
-				if ($debug) {
+				if (g_get('debug')) {
 					echo "\nmounted: $mounted ";
 				}
 				if ($status == 0 && intval($mounted) > 0) {

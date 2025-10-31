@@ -31,9 +31,9 @@ require_once("pfsense-utils.inc");
 if (!function_exists("pkg_debug")) {
 	/* set up logging if needed */
 	function pkg_debug($msg) {
-		global $g, $debug, $fd_log;
+		global $g, $fd_log;
 
-		if (!$debug) {
+		if (!g_get('debug')) {
 			return;
 		}
 

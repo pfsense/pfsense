@@ -527,7 +527,7 @@ if ($intip6 != '') {
 if ($intip != '' || $intip6 != '') {
 	if ((count($ifdescrs) == "1") ||
 	    (!interface_has_gateway($interface) && !interface_has_gatewayv6($interface))) {
-		if ($debug) {
+		if (g_get('debug')) {
 			echo "ifdescrs count is " . count($ifdescrs) . "\n";
 			echo "interface is {$interface} \n";
 		}

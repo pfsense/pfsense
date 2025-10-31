@@ -328,9 +328,12 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 
 						<td>
 <?php						if (isset($natent['staticnatport'])) { ?>
-							<i class="fa-solid fa-check" title="Keep Source Port Static"></i>
+							<i class="fa-solid fa-check" title="<?=gettext('Keep Source Port Static')?>"></i>
 <?php						} else { ?>
-							<i class="fa-solid fa-random" title="Randomize Source Port"></i>
+							<i class="fa-solid fa-random" title="<?=gettext('Randomize Source Port')?>"></i>
+<?php						} ?>
+<?php						if (isset($natent['eimnat'])) { ?>
+							<i class="fa-solid fa-arrows-to-circle" title="<?=gettext('Endpoint-Independent Mapping (UDP Only)')?>"></i>
 <?php						} ?>
 						</td>
 

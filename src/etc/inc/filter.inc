@@ -2810,7 +2810,7 @@ function filter_nat_rules_outbound_automatic($src) {
 }
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
-function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
+function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $eimnat = false, $proto = "", $poolopts = "") {
 	global $FilterIflist;
 
 	if (!empty($descr)) {
@@ -2928,6 +2928,11 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 		$tgtport = " port 1024:65535"; // set source port range
 	}
 
+	$eimnat_txt = '';
+	if ($eimnat) {
+		$eimnat_txt = ' endpoint-independent';
+	}
+
 	if (empty($if_friendly) || empty($src) || empty($dst)) {
 		return "# validation of rule properties failed to verify the interface/source/destination in nat rule{$descr}\n";
 	}
@@ -2941,14 +2946,14 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 			if (empty($tgt4)) {
 				$natrules .= "# validation of rule properties failed to verify the IPv4 target in nat rule{$descr}\n";
 			} else {
-				$natrules .= "nat on \${$if_friendly} inet{$protocol} from {$src} to {$dst} -> {$tgt4}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+				$natrules .= "nat on \${$if_friendly} inet{$protocol} from {$src} to {$dst} -> {$tgt4}{$tgtport} {$poolopts}{$staticnatport_txt}{$eimnat_txt}{$descr}\n";
 			}
 		}
 		if ($inet == "" || $inet == 'inet6') {
 			if (empty($tgt6)) {
 				$natrules .= "# validation of rule properties failed to verify the IPv6 target in nat rule{$descr}\n";
 			} else {
-				$natrules .= "nat on \${$if_friendly} inet6{$protocol} from {$src} to {$dst} -> {$tgt6}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+				$natrules .= "nat on \${$if_friendly} inet6{$protocol} from {$src} to {$dst} -> {$tgt6}{$tgtport} {$poolopts}{$staticnatport_txt}{$eimnat_txt}{$descr}\n";
 			}
 		}
 	}
@@ -3360,6 +3365,7 @@ function filter_nat_rules_generate() {
 				$obent['natport'],
 				isset($obent['nonat']),
 				isset($obent['staticnatport']),
+				isset($obent['eimnat']),
 				$obent['protocol'],
 				$poolopts
 				);

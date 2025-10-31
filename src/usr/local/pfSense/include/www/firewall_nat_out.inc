@@ -391,6 +391,13 @@ function saveoutNATrule($post, $id, $json = false) {
 			unset($natent['staticnatport']);
 		}
 
+		/* endpoint-independent */
+		if (isset($post['eimnat'])) {
+			$natent['eimnat'] = true;
+		} else {
+			unset($natent['eimnat']);
+		}
+
 		if (isset($post['disabled'])) {
 			$natent['disabled'] = true;
 		} else {
@@ -554,6 +561,7 @@ function getoutNATrule($id, $json = false) {
 		$pconfig['nonat'] = $a_out[$id]['nonat'];
 		$pconfig['disabled'] = isset($a_out[$id]['disabled']);
 		$pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);
+		$pconfig['eimnat'] = isset($a_out[$id]['eimnat']);
 		$pconfig['nosync'] = isset($a_out[$id]['nosync']);
 	} else {
 		$pconfig['source_type'] = 'any';

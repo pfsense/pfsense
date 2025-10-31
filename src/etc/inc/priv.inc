@@ -294,10 +294,10 @@ function getAllowedPages($username, &$attributes = array()) {
 		}
 	}
 
-//	$dbg_pages = implode(",", $allowed_pages);
-//	$dbg_groups = implode(",", $allowed_groups);
-//	log_error("debug: user {$username} groups = {$dbg_groups}");
-//	log_error("debug: user {$username} pages = {$dbg_pages}");
+	if (g_get('debug')) {
+		logger(LOG_DEBUG, localize_text("user %s groups = %s", $username, implode(",", $allowed_groups)));
+		logger(LOG_DEBUG, localize_text("user %s pages = %s", $username, implode(",", $allowed_pages)));
+	}
 
 	$_SESSION['page-match'] = $allowed_pages;
 	phpsession_end(true);

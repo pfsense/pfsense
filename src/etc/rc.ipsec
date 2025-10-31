@@ -87,7 +87,7 @@ if ($ipsec_reload) {
 	sleep(12);
 	unlock($ipseclck_pending);
 	sleep(3);
-	log_error("IPSEC: One or more IPsec tunnel gateways have changed. Refreshing.");
+	logger(LOG_INFO, localize_text("One or more IPsec tunnel gateways have changed. Refreshing."), LOG_PREFIX_IPSEC);
 	ipsec_configure();
 	unlock($ipseclck);
 	ipsec_reload_package_hook();

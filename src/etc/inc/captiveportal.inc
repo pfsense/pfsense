@@ -954,7 +954,7 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 	/* if we still don't have the lock, unlock forcefully and take it */
 	if (!$rcprunelock) {
-		log_error("CP zone {$cpzone}: could not obtain the lock for more than 15 seconds, lock taken forcefully to disconnect all users");
+		logger(LOG_WARNING, localize_text("CP zone %s: could not obtain the lock for more than 15 seconds, lock taken forcefully to disconnect all users", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 		unlock_force("rcprunecaptiveportal{$cpzone}");
 		$rcprunelock = lock("rcprunecaptiveportal{$cpzone}", LOCK_EX);
 	}
@@ -1189,12 +1189,8 @@ function captiveportal_logportalauth($user, $mac, $ip, $status, $message = null)
 function captiveportal_syslog($message) {
 	global $cpzone;
 
-	$message = trim($message);
-	$message = "Zone: {$cpzone} - {$message}";
-	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
 	// Log it
-	syslog(LOG_INFO, $message);
-	closelog();
+	logger(LOG_INFO, localize_text("logportalauth: Zone: %s - %s", $cpzone, trim($message)), LOG_PREFIX_CAPTIVEPORTAL, LOG_LOCAL4);
 }
 
 /* Authenticate users using Authentication Backend */
@@ -1251,7 +1247,7 @@ function captiveportal_authenticate_user(&$login = '', $password = '', $clientma
 				if (auth_get_authserver($authserver) !== null) {
 					$auth_servers[] = auth_get_authserver($authserver);
 				} else {
-					log_error("Zone: {$cpzone} - Captive portal was unable to find the settings of the server '{$authserver}' used for authentication !");
+					logger(LOG_ERR, localize_text("Zone: %s - unable to find the settings of the server '%s' used for authentication!", $cpzone, $authserver), LOG_PREFIX_CAPTIVEPORTAL);
 				}
 			}
 		}
@@ -1259,7 +1255,7 @@ function captiveportal_authenticate_user(&$login = '', $password = '', $clientma
 
 	/* Unable to find the any authentication server config - shouldn't happen! - bail out */
 	if (count($auth_servers) === 0) {
-		log_error("Zone: {$cpzone} - No valid server could be used for authentication.");
+		logger(LOG_ERR, localize_text("Zone: %s - No valid server could be used for authentication.", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 		$login_msg = gettext("Internal Error");
 	} else {
 		foreach ($auth_servers as $authcfg) {
@@ -1285,7 +1281,7 @@ function captiveportal_authenticate_user(&$login = '', $password = '', $clientma
 					} else {
 						/* Trying to perform a Radius MAC authentication on a non-radius server - shouldn't happen! - bail out */
 						$msg = gettext("Internal Error");
-						log_error("Zone: {$cpzone} - Trying to perform RADIUS MAC authentication on a non-RADIUS server !");
+						logger(LOG_ERR, localize_text("Zone: %s - Trying to perform RADIUS MAC authentication on a non-RADIUS server!", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 						$radmac_error = true;
 						$result = null;
 					}
@@ -2943,7 +2939,7 @@ function captiveportal_load_pfctl($anchor, $host, $rules) {
 	if (!empty($rules)) {
 		mwexec("/usr/bin/printf \"{$rules}\" | /sbin/pfctl -a {$anchor}/{$host} -f-");
 	} else {
-		log_error("CP zone {$cpzone}: {$anchor} rules are empty for {$host}");
+		logger(LOG_INFO, localize_text("CP zone %s: %s rules are empty for %s", $cpzone, $anchor, $host), LOG_PREFIX_CAPTIVEPORTAL);
 	}
 }
 

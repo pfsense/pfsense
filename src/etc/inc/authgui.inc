@@ -70,7 +70,7 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 		pfSenseHeader("/{$page}");
 
 		$username = get_config_user();
-		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
+		logger(LOG_NOTICE, localize_text("%s attempted to access %s but does not have access to that page. Redirecting to %s.", $username, $_SERVER['SCRIPT_NAME'], $page), LOG_PREFIX_WEBGUI);
 		phpsession_end();
 
 		exit;

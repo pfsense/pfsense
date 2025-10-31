@@ -227,6 +227,33 @@ define("RULE_LABEL_ORDER", [
 	RULE_LABEL_KEY_DESCRIPTION => 'RULE_LABEL_KEY_DESCRIPTION'
 ]);
 
+// Log prefixes
+define('LOG_PREFIX_SYSTEM', 'System');
+define('LOG_PREFIX_UPGRADE', 'Upgrade');
+define('LOG_PREFIX_NOTICE', 'Notifications');
+define('LOG_PREFIX_CONFIG', 'Config');
+define('LOG_PREFIX_FILTER', 'Filter');
+define('LOG_PREFIX_ACB', 'AutoConfigBackup');
+define('LOG_PREFIX_DDNS', 'phpDynDNS');
+define('LOG_PREFIX_WEBGUI', 'webConfigurator');
+define('LOG_PREFIX_AUTHPROVIDER_LOCAL', 'Local Auth');
+define('LOG_PREFIX_AUTHPROVIDER_LDAP', 'LDAP Auth');
+define('LOG_PREFIX_AUTHPROVIDER_RADIUS', 'RADIUS Auth');
+define('LOG_PREFIX_CAPTIVEPORTAL', 'Captive Portal');
+define('LOG_PREFIX_GWMON', 'Gateway Monitoring');
+define('LOG_PREFIX_IPSEC', 'IPsec');
+define('LOG_PREFIX_OPENVPN', 'OpenVPN');
+define('LOG_PREFIX_RADVD', 'Router Advertisement');
+define('LOG_PREFIX_DHCPS', 'DHCP Server');
+define('LOG_PREFIX_DHCPR', 'DHCP Relay');
+define('LOG_PREFIX_DHCPC', 'DHCP Client');
+define('LOG_PREFIX_IGMPPROXY', 'IGMP Proxy');
+define('LOG_PREFIX_HA', 'High Availability');
+define('LOG_PREFIX_DNSR', 'DNS Resolver');
+define('LOG_PREFIX_DNSF', 'DNS Forwarder');
+define('LOG_PREFIX_SHAPER', 'Traffic Shaper');
+define('LOG_PREFIX_NTP', 'NTP');
+
 /**
  * Get a list of valid rule label tags.
  *
@@ -709,7 +736,7 @@ function mark_subsystem_dirty($subsystem = "") {
 	global $g;
 
 	if (!file_put_contents("{$g['varrun_path']}/{$subsystem}.dirty", "DIRTY")) {
-		log_error(sprintf(gettext("WARNING: Could not mark subsystem: %s dirty"), $subsystem));
+		logger(LOG_ERR, localize_text("Could not mark subsystem: %s dirty", $subsystem));
 	}
 }
 
@@ -802,7 +829,7 @@ function send_event($cmd) {
 			fwrite($fd, $cmd);
 			$resp = fread($fd, 4096);
 			if ($resp != "OK\n") {
-				log_error("send_event: sent {$cmd} got {$resp}");
+				logger(LOG_ERR, localize_text("%s sent %s got %s", 'send_event:', $cmd, $resp));
 			}
 			fclose($fd);
 			$try = 3;
@@ -832,7 +859,7 @@ function send_multiple_events($cmds) {
 				fwrite($fd, $cmd);
 				$resp = fread($fd, 4096);
 				if ($resp != "OK\n") {
-					log_error("send_event: sent {$cmd} got {$resp}");
+					logger(LOG_ERR, localize_text("%s sent %s got %s", 'send_event:', $cmd, $resp));
 				}
 			}
 			fclose($fd);
@@ -2622,6 +2649,14 @@ function get_lagg_interface_list() {
 	return ($plist);
 }
 
+function localize_text(...$args) {
+	$arg0_len = strlen($args[0]);
+	if (($arg0_len > 0) && ($arg0_len < 4096)) {
+		$args[0] = gettext($args[0]);
+	}
+	return (count($args) == 1) ? $args[0] : sprintf(...$args);
+}
+
 /****f* util/log_error
 * NAME
 *   log_error  - Sends a string to syslog.
@@ -2629,19 +2664,10 @@ function get_lagg_interface_list() {
 *   $error     - string containing the syslog message.
 * RESULT
 *   null
+* @deprecated Use logger().
 ******/
 function log_error($error) {
-	global $g;
-	$page = $_SERVER['SCRIPT_NAME'];
-	if (empty($page)) {
-		$files = get_included_files();
-		$page = basename($files[0]);
-	}
-	syslog(LOG_ERR, "$page: $error");
-	if (g_get('debug')) {
-		syslog(LOG_WARNING, var_export(debug_backtrace()));
-	}
-	return;
+	logger(LOG_ERR, $error);
 }
 
 /****f* util/log_auth
@@ -2651,16 +2677,90 @@ function log_error($error) {
 *   $error     - string containing the syslog message.
 * RESULT
 *   null
+* @deprecated Use logger().
 ******/
 function log_auth($error, $force_quiet = false) {
-	global $g;
-	$page = $_SERVER['SCRIPT_NAME'];
-	$level = ($force_quiet || config_path_enabled('system/webgui', 'quietlogin')) ? LOG_NOTICE|LOG_AUTH : LOG_AUTH;
-	syslog($level, "{$page}: {$error}");
-	if (g_get('debug')) {
-		syslog(LOG_WARNING, var_export(debug_backtrace()));
+	logger(
+		($force_quiet || config_path_enabled('system/webgui', 'quietlogin')) ? LOG_NOTICE|LOG_AUTH : LOG_AUTH,
+		$error,
+	);
+}
+
+/**
+ * Sends a message, prefixed with the log level, to the system logger.
+ *
+ * The message is encoded as JSON if any of the following are true:
+ * - The global debug variable is set.
+ * - The log priority is set to LOG_DEBUG.
+ * - The message contains new lines.
+ *
+ * If the message cannot be encoded, it's exported without new lines.
+ */
+function logger(int $priority, mixed $message, string|null $prefix = null, int|null $facilities = null): void {
+	// Always include the log level.
+	$log_prefix = match ($priority) {
+		LOG_EMERG => 'EMERGENCY',
+		LOG_ALERT => 'ALERT',
+		LOG_CRIT => 'CRITICAL',
+		LOG_ERR => 'ERROR',
+		LOG_WARNING => 'WARNING',
+		LOG_NOTICE => 'NOTICE',
+		LOG_INFO => 'INFO',
+		LOG_DEBUG => 'DEBUG',
+		default => 'DEBUG'
+	};
+
+	// Append the prefix.
+	if (isset($prefix)) {
+		$log_prefix = $log_prefix . ' [' . gettext($prefix) . '] ';
 	}
-	return;
+
+	if (g_get('debug')) {
+		$trace = DEBUG_BACKTRACE_PROVIDE_OBJECT;
+	} elseif ($priority == LOG_DEBUG) {
+		$trace = DEBUG_BACKTRACE_IGNORE_ARGS;
+	} else {
+		$trace = null;
+	}
+
+	if (isset($trace)) {
+		$log_string = json_encode(
+			[
+				'prefix' => $log_prefix,
+				'message' => $message,
+				'backtrace' => debug_backtrace($trace)
+			],
+			JSON_FORCE_OBJECT
+		);
+		if ($log_string === false) {
+			$log_string = str_replace(PHP_EOL, '',
+				is_string($message) ? $message : var_export($message, true)
+			);
+		}
+		syslog((isset($facilities) ? $priority|$facilities : $priority), $log_string);
+	} elseif (is_string($message)) {
+		if (str_contains($message, PHP_EOL)) {
+			$log_string = json_encode("{$log_prefix}{$message}", JSON_FORCE_OBJECT);
+			if ($log_string === false) {
+				$log_string = $log_prefix . str_replace(PHP_EOL, '', var_export($message, true));
+			}
+			syslog((isset($facilities) ? $priority|$facilities : $priority), $log_string);
+		} else {
+			syslog((isset($facilities) ? $priority|$facilities : $priority), "{$log_prefix}{$message}");
+		}
+	} else {
+		$log_string = json_encode(
+			[
+				'prefix' => $log_prefix,
+				'message' => $message
+			],
+			JSON_FORCE_OBJECT
+		);
+		if ($log_string === false) {
+			$log_string = $log_prefix . str_replace(PHP_EOL, '', var_export($message, true));
+		}
+		syslog((isset($facilities) ? $priority|$facilities : $priority), $log_string);
+	}
 }
 
 /****f* util/exec_command
@@ -2704,7 +2804,7 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 		$outputarray = array();
 		exec("$command 2>&1", $outputarray, $retval);
 		if (($retval <> 0) && (!$nologentry || config_path_enabled('system', 'developerspew'))) {
-			log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, implode(" ", $outputarray)));
+			logger(LOG_INFO, localize_text("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' ", $command, $retval, implode(" ", $outputarray)));
 		}
 	}
 
@@ -3233,13 +3333,18 @@ function get_sysctl($names) {
 	do {
 		$ret = exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output, $status);
 		if ($ret === false || $status != 0) {
-			log_error("Warning: \"/sbin/sysctl -iq " .
-			    implode(" ", $name_list) . "\" returned status: {$status}.  Trying again.");
+			logger(LOG_WARNING, localize_text(
+				"\"%s\" returned status: %s. Trying again.",
+				"/sbin/sysctl -iq " . implode(" ", $name_list), $status)
+			);
 			sleep(1);
 		}
 	} while (($ret === false || $status != 0) && $retries-- > 0);
 	if ($ret === false || $status != 0) {
-		log_error("Warning: \"/sbin/sysctl -iq " . implode(" ", $name_list) . "\" returned status: {$status}");
+		logger(LOG_ERR, localize_text(
+			"\"%s\" returned status: %s",
+			"/sbin/sysctl -iq " . implode(" ", $name_list), $status)
+		);
 	}
 
 	$values = array();
@@ -3906,8 +4011,8 @@ function route_del($target, $ipprotocol = '') {
 		exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
 		    "{$target} {$gw}"), $output, $rc);
 
-		if (config_path_enabled('system', 'route-debug')) {
-			log_error("ROUTING debug: " . microtime() .
+		if (g_get('debug')) {
+			logger(LOG_DEBUG, "ROUTING debug: " . microtime() .
 			    " - DEL RC={$rc} - {$target} - gw: " . $gw);
 			file_put_contents("/dev/console", "\n[" . getmypid() .
 			    "] ROUTE DEL: {$target_prefix} {$target} {$gw} " .
@@ -3976,11 +4081,11 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 
 	if (empty($params)) {
 		if (!empty($gw) && !empty($iface)) {
-			log_error("route_add_or_change: Invalid gateway ({$gw}) and network interface was not found ({$iface})");
+			logger(LOG_ERR, localize_text("%s Invalid gateway (%s) and network interface was not found (%s)", 'route_add_or_change:', $gw, $iface));
 		} elseif (!empty($gw)) {
-			log_error("route_add_or_change: Invalid gateway ({$gw})");
+			logger(LOG_ERR, localize_text("%s Invalid gateway (%s)", 'route_add_or_change:', $gw));
 		} else {
-			log_error("route_add_or_change: Network interface was not found ({$iface})");
+			logger(LOG_ERR, localize_text("%s Network interface was not found (%s)", 'route_add_or_change:', $iface));
 		}
 		return false;
 	}
@@ -3988,8 +4093,8 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
 	    "{$target} {$args} {$params}"), $output, $rc);
 
-	if (config_path_enabled('system', 'route-debug')) {
-		log_error("ROUTING debug: " . microtime() .
+	if (g_get('debug')) {
+		logger(LOG_DEBUG, "ROUTING debug: " . microtime() .
 		    " - ADD RC={$rc} - {$target} {$args}");
 		file_put_contents("/dev/console", "\n[" . getmypid() .
 		    "] ROUTE ADD: {$target_prefix} {$target} {$args} " .
@@ -4408,7 +4513,7 @@ function write_dhcp6_duid($duidstring) {
 	global $g;
 
 	if(!is_duid($duidstring)) {
-		log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
+		logger(LOG_ERR, localize_text("Attempting to write DUID file - Invalid DUID detected"), LOG_PREFIX_DHCPC);
 		return false;
 	}
 	$temp = str_replace(":","",$duidstring);
@@ -4418,7 +4523,7 @@ function write_dhcp6_duid($duidstring) {
 		fclose($fd);
 		return true;
 	}
-	log_error(gettext("Error: attempting to write DUID file - File write error"));
+	logger(LOG_ERR, localize_text("Attempting to write DUID file - File write error"), LOG_PREFIX_DHCPC);
 	return false;
 }
 
@@ -4773,7 +4878,7 @@ function cisco_extract_index($prule) {
 	if (is_numeric($index[1])) {
 		return intval($index[1]);
 	} else {
-		syslog(LOG_WARNING, "Error parsing rule {$prule}: Could not extract index");
+		logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Could not extract index", $prule));
 	}
 	return -1;;
 }
@@ -4806,7 +4911,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			$tmprule .= "proto {$rule[$index]} ";
 			break;
 		default:
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid protocol.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid protocol", $rule_orig));
 			return;
 	}
 	$index++;
@@ -4823,7 +4928,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			}
 			$index++;
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source host '{$rule[$index]}'.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid source host '%s'", $rule_orig, $rule[$index]));
 			return;
 		}
 	} elseif (is_subnetv6(trim($rule[$index])) && ($proto == "inet6")) {
@@ -4840,12 +4945,12 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
 			} catch(Exception $e) {
-				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask' (" . $e->getMessage() . ").");
+				logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid source netmask '%s' (%s)", $rule_orig, $netmask, $e->getMessage()));
 				return;
 			}
 			$tmprule .= "from {$network}/{$netmask} ";
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source network '$network'.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid source network '%s'", $rule_orig, $network));
 			return;
 		}
 
@@ -4873,7 +4978,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_port($port)) {
 			$tmprule .= "port {$operator} {$port} ";
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source port: '$port' not a numeric value between 0 and 65535.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid source port: '%s' not a numeric value between 0 and 65535.", $rule_orig, $port));
 			return;
 		}
 		$index++;
@@ -4882,7 +4987,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_port($port[0]) && is_port($port[1])) {
 			$tmprule .= "port {$port[0]}:{$port[1]} ";
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source ports: '$port[0]' & '$port[1]' one or both are not a numeric value between 0 and 65535.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid source ports: '%s' & '%s' one or both are not a numeric value between 0 and 65535.", $rule_orig, $port[0], $port[1]));
 			return;
 		}
 		$index++;
@@ -4896,7 +5001,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			$tmprule .= "to {$rule[$index]} ";
 			$index++;
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination host '{$rule[$index]}'.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid destination host '%s'.", $rule_orig, $rule[$index]));
 			return;
 		}
 	} elseif (is_subnetv6(trim($rule[$index])) && ($proto == "inet6")) {
@@ -4913,12 +5018,12 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 			try {
 				$netmask = cisco_to_cidr($netmask);
 			} catch(Exception $e) {
-				syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination netmask '$netmask' (" . $e->getMessage() . ").");
+				logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid destination netmask '%s' (%s).", $rule_orig, $netmask, $e->getMessage()));
 				return;
 			}
 			$tmprule .= "to {$network}/{$netmask} ";
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination network '$network'.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid destination network '%s'.", $rule_orig, $network));
 			return;
 		}
 
@@ -4946,7 +5051,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_port($port)) {
 			$tmprule .= "port {$operator} {$port} ";
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination port: '$port' not a numeric value between 0 and 65535.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid destination port: '%s' not a numeric value between 0 and 65535.", $rule_orig, $port));
 			return;
 		}
 		$index++;
@@ -4955,7 +5060,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		if (is_port($port[0]) && is_port($port[1])) {
 			$tmprule .= "port {$port[0]}:{$port[1]} ";
 		} else {
-			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination ports: '$port[0]' '$port[1]' one or both are not a numeric value between 0 and 65535.");
+			logger(LOG_WARNING, localize_text("Error parsing RADIUS attribute - rule %s %s: Invalid destination ports: '%s' '%s' one or both are not a numeric value between 0 and 65535.", $rule_orig, $port[0], $port[1]));
 			return;
 		}
 		$index++;

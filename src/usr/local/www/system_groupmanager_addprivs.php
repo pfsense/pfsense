@@ -38,7 +38,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
 $logging_level = LOG_WARNING;
-$logging_prefix = gettext("Local User Database");
 
 $groupid = $_REQUEST['groupid'];
 
@@ -95,9 +94,9 @@ if ($_POST['save'] && !$read_only) {
 			}
 		}
 
-		$savemsg = sprintf(gettext("Privileges changed for group: %s"), config_get_path("system/group/{$groupid}/name"));
+		$savemsg = localize_text("Privileges changed for group: %s", config_get_path("system/group/{$groupid}/name"));
 		write_config($savemsg);
-		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+		logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 
 		pfSenseHeader("system_groupmanager.php?act=edit&groupid={$groupid}");
 		exit;

@@ -37,7 +37,7 @@ while($ntries <= $max_tries) {
 	if (package_reinstall_all()) {
 		break;
 	}
-	log_error("Attempt #{$ntries} to reinstall packages FAILED.");
+	logger(LOG_WARNING, localize_text("Attempt #%d to reinstall packages FAILED.", $ntries));
 	$ntries++;
 }
 

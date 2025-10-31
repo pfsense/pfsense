@@ -103,7 +103,7 @@ function services_radvd_configure($blacklist = array()) {
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		if (!is_subnetv6($subnetv6 . "/" . $ifcfgsnv6)) {
-			log_error("radvd: skipping configuration for interface $dhcpv6if because its subnet or prefix length is invalid.");
+			logger(LOG_WARNING, localize_text("Skipping configuration for interface %s because its subnet or prefix length is invalid.", $dhcpv6if), LOG_PREFIX_RADVD);
 			continue;
 		}
 		$radvdifs[$realif] = $realif;
@@ -273,7 +273,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvValidLifetime {$nat64_lifetime};\n";
 				$radvdconf .= "\t};\n";
 			} else {
-				log_error("radvd: skipping nat64prefix for interface {$dhcpv6if} because the prefix is invalid.");
+				logger(LOG_WARNING, localize_text("Skipping nat64prefix for interface %s because the prefix is invalid.", $dhcpv6if), LOG_PREFIX_RADVD);
 			}
 		}
 
@@ -393,7 +393,7 @@ function services_radvd_configure($blacklist = array()) {
 		$autotype = config_get_path("interfaces/{$trackif}/ipaddrv6");
 
 		if (g_get('debug')) {
-			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
+			logger(LOG_DEBUG, localize_text("Configuring RA on %s for type %s radvd subnet %s/%s", $if, $autotype, $subnetv6, $ifcfgsnv6), LOG_PREFIX_RADVD);
 		}
 
 		$dhcpv6ifconf = config_get_path("dhcpdv6/{$if}", []);
@@ -443,7 +443,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvValidLifetime {$nat64_lifetime};\n";
 				$radvdconf .= "\t};\n";
 			} else {
-				log_error("radvd: skipping nat64prefix for interface {$if} because the prefix is invalid.");
+				logger(LOG_WARNING, localize_text("Skipping nat64prefix for interface %s because the prefix is invalid.", $if), LOG_PREFIX_RADVD);
 			}
 		}
 
@@ -481,7 +481,7 @@ function services_radvd_configure($blacklist = array()) {
 
 	/* write radvd.conf */
 	if (!@file_put_contents("{$g['varetc_path']}/radvd.conf", $radvdconf)) {
-		log_error(gettext("Error: cannot open radvd.conf in services_radvd_configure()."));
+		logger(LOG_ERR, localize_text("Cannot open %s in %s.", 'radvd.conf', 'services_radvd_configure()'), LOG_PREFIX_RADVD);
 		if (is_platform_booting()) {
 			printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
 		}
@@ -498,7 +498,7 @@ function services_radvd_configure($blacklist = array()) {
 		/* we need to shut down the radvd cleanly, it will send out the prefix
 		 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
 		if (isvalidpid("{$g['varrun_path']}/radvd.pid")) {
-			log_error(gettext("Shutting down Router Advertisement daemon cleanly"));
+			logger(LOG_INFO, localize_text("Shutting down Router Advertisement daemon cleanly"), LOG_PREFIX_RADVD);
 			killbypid("{$g['varrun_path']}/radvd.pid");
 			@unlink("{$g['varrun_path']}/radvd.pid");
 		}
@@ -996,7 +996,7 @@ EOD;
 				$subnet_end = gen_subnetv6_max($ifcfgipv6, $ifcfgsnv6);
 				if ((!is_inrange_v6($range_from, $subnet_start, $subnet_end)) ||
 				    (!is_inrange_v6($range_to, $subnet_start, $subnet_end))) {
-					log_error(gettext("The specified range lies outside of the current subnet. Skipping DHCP6 entry."));
+					logger(LOG_WARNING, localize_text("The specified range lies outside of the current subnet. Skipping DHCP6 entry."), LOG_PREFIX_DHCPS);
 					continue;
 				}
 			}
@@ -1232,13 +1232,13 @@ kea6_skip_first_pool_options:
 
 	/* render kea-dhcp6.conf json */
 	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
-		log_error(sprintf(gettext('error: cannot render json for %s in %s'), $keaconf_path, __FUNCTION__));
+		logger(LOG_ERR, localize_text('Cannot render json for %s in %s', $keaconf_path, __FUNCTION__), LOG_PREFIX_DHCPS);
 		return 1;
 	}
 
 	/* write kea-dhcp6.conf */
 	if (!file_put_contents($keaconf_path, $keaconf)) {
-		log_error(sprintf(gettext('error: cannot write %s in %s()'), $keaconf_path, __FUNCTION__));
+		logger(LOG_ERR, localize_text('Cannot write %s in %s()', $keaconf_path, __FUNCTION__), LOG_PREFIX_DHCPS);
 		return 1;
 	}
 
@@ -1785,7 +1785,7 @@ EOD;
 						// services_dhcpdv4_configure will be called again later when the new interface settings from
 						// the config are applied and at that time everything will match up.
 						// Ignore this pool on this interface for now and just log the error to the system log.
-						log_error($error_msg);
+						logger(LOG_ERR, $error_msg, LOG_PREFIX_DHCPS);
 						$do_file_notice = false;
 					}
 				}
@@ -2564,13 +2564,13 @@ EOD;
 
 	/* render json */
 	if (($keaconf = json_encode($keaconf, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)) === false) {
-		log_error(sprintf(gettext('error: unable to render json for kea-dhcp4.conf in %s()'), __FUNCTION__));
+		logger(LOG_ERR, localize_text('Unable to render json for kea-dhcp4.conf in %s()', __FUNCTION__), LOG_PREFIX_DHCPS);
 		return 1;
 	}
 
 	/* write kea-dhcp4.conf */
 	if (!file_put_contents($keaconf_path, $keaconf)) {
-		log_error(sprintf(gettext('error: cannot open %s in %s()'), $keaconf_path, __FUNCTION__));
+		logger(LOG_ERR, localize_text('Cannot open %s in %s()', $keaconf_path, __FUNCTION__), LOG_PREFIX_DHCPS);
 		return 1;
 	}
 
@@ -2838,7 +2838,7 @@ EOD;
 					}
 				}
 			} else {
-				log_error(gettext("Warning!  DHCP Failover setup and no CARP virtual IPs defined!"));
+				logger(LOG_ERR, localize_text("DHCP Failover setup and no CARP virtual IPs defined!"), LOG_PREFIX_DHCPS);
 			}
 			if ($skew > 10) {
 				$type = "secondary";
@@ -3018,7 +3018,7 @@ EOPP;
 						// services_dhcpdv4_configure will be called again later when the new interface settings from
 						// the config are applied and at that time everything will match up.
 						// Ignore this pool on this interface for now and just log the error to the system log.
-						log_error($error_msg);
+						logger(LOG_ERR, $error_msg, LOG_PREFIX_DHCPS);
 						$do_file_notice = false;
 					}
 				}
@@ -3868,7 +3868,7 @@ EOD;
 			$subnet_end = gen_subnetv6_max($ifcfgipv6, $ifcfgsnv6);
 			if ((!is_inrange_v6($range_from, $subnet_start, $subnet_end)) ||
 			    (!is_inrange_v6($range_to, $subnet_start, $subnet_end))) {
-				log_error(gettext("The specified range lies outside of the current subnet. Skipping DHCP6 entry."));
+				logger(LOG_WARNING, localize_text("The specified range lies outside of the current subnet. Skipping DHCP6 entry."), LOG_PREFIX_DHCPS);
 				continue;
 			}
 		}
@@ -4116,7 +4116,7 @@ EOD;
 
 	/* write dhcpdv6.conf */
 	if (!@file_put_contents("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", $dhcpdv6conf)) {
-		log_error("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
+		logger(LOG_ERR, localize_text("cannot open %s in %s", "{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", 'services_dhcpdv6_configure()'), LOG_PREFIX_DHCPS);
 		if (is_platform_booting()) {
 			printf("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
 		}
@@ -4164,7 +4164,7 @@ function services_igmpproxy_configure($interface='') {
 
 	if (!config_path_enabled('igmpproxy')) {
 		if (isvalidproc("igmpproxy")) {
-			log_error(gettext("Stopping IGMP Proxy service."));
+			logger(LOG_INFO, localize_text("Stopping IGMP Proxy service."), LOG_PREFIX_IGMPPROXY);
 			killbyname("igmpproxy");
 		}
 		return true;
@@ -4178,7 +4178,7 @@ function services_igmpproxy_configure($interface='') {
 	}
 
 	if (isvalidproc("igmpproxy")) {
-		log_error(gettext("Restarting IGMP Proxy service."));
+		logger(LOG_INFO, localize_text("Restarting IGMP Proxy service."), LOG_PREFIX_IGMPPROXY);
 		killbyname("igmpproxy");
 	}
 
@@ -4226,13 +4226,13 @@ EOD;
 	$igmpconf .= "\n";
 
 	if (!$upstream || !$downstream) {
-		log_error(gettext("Could not find upstream or downstream IGMP Proxy interfaces!"));
+		logger(LOG_ERR, localize_text("Could not find upstream or downstream IGMP Proxy interfaces!"), LOG_PREFIX_IGMPPROXY);
 		return;
 	}
 
 	$igmpfl = fopen(g_get('varetc_path') . "/igmpproxy.conf", "w");
 	if (!$igmpfl) {
-		log_error(gettext("Could not write IGMP Proxy configuration file!"));
+		logger(LOG_ERR, localize_text("Could not write IGMP Proxy configuration file!"), LOG_PREFIX_IGMPPROXY);
 		return;
 	}
 	fwrite($igmpfl, $igmpconf);
@@ -4245,7 +4245,7 @@ EOD;
 		mwexec_bg("/usr/local/sbin/igmpproxy {$g['varetc_path']}/igmpproxy.conf");
 	}
 
-	log_error(gettext("Started IGMP Proxy service."));
+	logger(LOG_INFO, localize_text("Started IGMP Proxy service."), LOG_PREFIX_IGMPPROXY);
 
 	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
@@ -4280,7 +4280,7 @@ function services_dhcrelay_configure() {
 			// Do not start DHCP Relay service if the VIP is in BACKUP or INIT state.
 			case "BACKUP":
 			case "INIT":
-				log_error("Stopping DHCP Relay (CARP BACKUP/INIT)");
+				logger(LOG_INFO, localize_text("Stopping DHCP Relay (CARP BACKUP/INIT)"), LOG_PREFIX_DHCPR);
 				return 0;
 				break;
 			// Start the service if the VIP is MASTER state.
@@ -4318,7 +4318,7 @@ function services_dhcrelay_configure() {
 	 */
 	$srvips = array_filter(explode(",", $dhcrelaycfg['server']));
 	if (!is_array($srvips)) {
-		log_error(gettext("No destination IP has been configured!"));
+		logger(LOG_ERR, localize_text("No destination IP has been configured!"), LOG_PREFIX_DHCPR);
 		return;
 	}
 	$srvifaces = array();
@@ -4343,11 +4343,11 @@ function services_dhcrelay_configure() {
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs) && empty($srvrelayifs)) {
-		log_error(gettext("No suitable downstream interfaces found for running dhcrelay!"));
+		logger(LOG_ERR, localize_text("No suitable downstream interfaces found for running dhcrelay!"), LOG_PREFIX_DHCPR);
 		return; /* XXX */
 	}
 	if (empty($srvifaces) && empty($srvrelayifs)) {
-		log_error(gettext("No suitable upstream interfaces found for running dhcrelay!"));
+		logger(LOG_ERR, localize_text("No suitable upstream interfaces found for running dhcrelay!"), LOG_PREFIX_DHCPR);
 		return; /* XXX */
 	}
 
@@ -4400,7 +4400,7 @@ function services_dhcrelay6_configure() {
 			// Do not start DHCP Relay service if the VIP is in BACKUP or INIT state.
 			case "BACKUP":
 			case "INIT":
-				log_error("Stopping DHCPv6 Relay (CARP BACKUP/INIT)");
+				logger(LOG_INFO, localize_text("Stopping DHCPv6 Relay (CARP BACKUP/INIT)"), LOG_PREFIX_DHCPR);
 				return 0;
 				break;
 			// Start the service if the VIP is MASTER state.
@@ -4446,7 +4446,7 @@ function services_dhcrelay6_configure() {
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs) || empty($srvifaces)) {
-		log_error(gettext("No suitable interface found for running dhcrelay -6!"));
+		logger(LOG_ERR, localize_text("No suitable interface found for running dhcrelay -6!"), LOG_PREFIX_DHCPR);
 		return; /* XXX */
 	}
 
@@ -4896,7 +4896,9 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 
 		/* run dnsmasq. Use "-C /dev/null" since we use command line args only (Issue #6730) */
 		$cmd = "/usr/local/sbin/dnsmasq -C /dev/null {$dns_rebind} {$args}";
-		//log_error("dnsmasq command: {$cmd}");
+		if (g_get('debug')) {
+			logger(LOG_DEBUG, localize_text("%s command: %s", 'dnsmasq', $cmd), LOG_PREFIX_DNSF);
+		}
 		mwexec_bg($cmd);
 		unset($args);
 
@@ -4993,9 +4995,9 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 					// Disable Unbound python on mount failure
 					if ($retval != 0) {
 						config_set_path('unbound/python','');
-						$log_msg = "[Unbound-pymod]: Disabling Unbound python due to failed mount";
+						$log_msg = "Disabling Unbound python due to failed mount";
 						write_config($log_msg);
-						log_error($log_msg);
+						logger(LOG_ERR, localize_text($log_msg), LOG_PREFIX_DNSR);
 					}
 				}
 			}
@@ -5016,7 +5018,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 					}
 				}
 				else {
-					log_error("[Unbound-pymod]: Failed to unmount!");
+					logger(LOG_ERR, localize_text("Failed to unmount!"), LOG_PREFIX_DNSR);
 				}
 			}
 		}
@@ -5037,11 +5039,11 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 			if (is_platform_booting()) {
 				for ($i=1; $i <= 10; $i++) {
 					if (!file_exists("/tmp/{$wanif}_dhcp6_complete")) {
-						log_error(gettext("Unbound start waiting on dhcp6c."));
+						logger(LOG_INFO, localize_text("Unbound start waiting on dhcp6c."), LOG_PREFIX_DNSR);
 						sleep(1);
 					} else {
 						unlink_if_exists("/tmp/{$wanif}_dhcp6_complete");
-						log_error(gettext("dhcp6 init complete. Continuing"));
+						logger(LOG_INFO, localize_text("dhcp6 init complete. Continuing"), LOG_PREFIX_DNSR);
 						break;
 					}
 				}
@@ -5050,7 +5052,7 @@ function services_unbound_configure($restart_dhcp = true, $interface = '') {
 
 		sync_unbound_service();
 		if (is_platform_booting()) {
-			log_error(gettext("sync unbound done."));
+			logger(LOG_INFO, localize_text("sync unbound done."), LOG_PREFIX_DNSR);
 			echo gettext("done.") . "\n";
 		}
 
@@ -5379,9 +5381,9 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($dnsupdate['interface'], null, AF_INET);
 			if (!$wanip || is_private_ip($wanip)) {
-				log_error(sprintf(gettext(
-				    "phpDynDNS: Not updating %s A record because the public IP address cannot be determined."),
-				    $dnsupdate['host']));
+				logger(LOG_WARNING, localize_text(
+				    "Not updating %s A record because the public IP address cannot be determined.",
+				    $dnsupdate['host']), LOG_PREFIX_DDNS);
 				continue;
 			}
 			list($bindipv4, $error) = get_request_source_address($dnsupdate['interface'], AF_INET);
@@ -5505,9 +5507,9 @@ EOD;
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
 				$need_update = true;
 			} else {
-				log_error(sprintf(gettext(
-				    "phpDynDNS: Not updating %s A record because the IP address has not changed."),
-				    $dnsupdate['host']));
+				logger(LOG_INFO, localize_text(
+				    "Not updating %s A record because the IP address has not changed.",
+				    $dnsupdate['host']), LOG_PREFIX_DDNS);
 			}
 		} else {
 			@unlink($cacheFile);
@@ -5524,9 +5526,9 @@ EOD;
 				    "{$dnsupdate['ttl']} AAAA {$wanipv6}\n";
 				$need_update = true;
 			} else {
-				log_error(sprintf(gettext(
-				    "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not changed."),
-				    $dnsupdate['host']));
+				logger(LOG_INFO, localize_text(
+				    "Not updating %s AAAA record because the IPv6 address has not changed.",
+				    $dnsupdate['host']), LOG_PREFIX_DDNS);
 			}
 		} else {
 			@unlink($cacheFilev6);
@@ -5559,9 +5561,9 @@ EOD;
 			if (!empty($cacheFile)) {
 				@file_put_contents($cacheFile,
 				    "{$wanip}|{$currentTime}");
-				log_error(sprintf(gettext(
-				    'phpDynDNS: updating cache file %1$s: %2$s'),
-				    $cacheFile, $wanip));
+				logger(LOG_INFO, localize_text(
+				    'updating cache file %1$s: %2$s',
+				    $cacheFile, $wanip), LOG_PREFIX_DDNS);
 				$notify_text .= sprintf(gettext(
 				    'DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s'),
 				    $dnsupdate['host'],
@@ -5571,9 +5573,9 @@ EOD;
 			if (!empty($cacheFilev6)) {
 				@file_put_contents($cacheFilev6,
 				    "{$wanipv6}|{$currentTime}");
-				log_error(sprintf(gettext(
-				    'phpDynDNS: updating cache file %1$s: %2$s'),
-				    $cacheFilev6, $wanipv6));
+				logger(LOG_INFO, localize_text(
+				    'updating cache file %1$s: %2$s',
+				    $cacheFilev6, $wanipv6), LOG_PREFIX_DDNS);
 				$notify_text .= sprintf(gettext(
 				    'DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s'),
 				    $dnsupdate['host'],
@@ -5582,14 +5584,14 @@ EOD;
 			}
 		} else {
 			if (!empty($cacheFile)) {
-				log_error(sprintf(gettext(
-				    'phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)'),
-				    $dnsupdate['host'], $wanip));
+				logger(LOG_ERR, localize_text(
+				    'Error while updating IP Address (A) for %1$s (%2$s)',
+				    $dnsupdate['host'], $wanip), LOG_PREFIX_DDNS);
 			}
 			if (!empty($cacheFilev6)) {
-				log_error(sprintf(gettext(
-				    'phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)'),
-				    $dnsupdate['host'], $wanipv6));
+				logger(LOG_ERR, localize_text(
+				    'Error while updating IP Address (AAAA) for %1$s (%2$s)',
+				    $dnsupdate['host'], $wanipv6), LOG_PREFIX_DDNS);
 			}
 		}
 		unset($cmd);

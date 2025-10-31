@@ -406,7 +406,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 			try{
 				@eval("\$pkg_source_txt = $source_url;");
 			} catch (\Throwable | \Error | \Exception $e) {
-				log_error(sprintf(gettext("Error in '{$source_url}': %s"), $e->getMessage()));
+				logger(LOG_ERR, localize_text("Error in '%s': %s", $source_url, $e->getMessage()));
 			}
 
 			foreach ($pkg_source_txt as $opt) {
@@ -919,7 +919,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			try{
 				@eval("\$pkg_source_txt = $source_url;");
 			} catch (\Throwable | \Error | \Exception $e) {
-				log_error(sprintf(gettext("Error in '{$source_url}': %s"), $e->getMessage()));
+				logger(LOG_ERR, localize_text("Error in '%s': %s", $source_url, $e->getMessage()));
 			}
 			#check if show disable option is present on xml
 			if (!is_array($pkg_source_txt)) {

@@ -35,8 +35,9 @@ require_once('globals.inc');
 function cmp_page_matches($page, & $matches, $fullwc = true) {
 
 	global $g;
-//	$dbg_matches = implode(",", $matches);
-//	log_error("debug: checking page {$page} match with {$dbg_matches}");
+	if (g_get('debug')) {
+		logger(LOG_DEBUG, localize_text("checking page %s match with %s", $page, implode(",", $matches)), LOG_PREFIX_WEBGUI);
+	}
 
 	if (!is_array($matches)) {
 		return false;

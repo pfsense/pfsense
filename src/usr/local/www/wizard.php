@@ -883,7 +883,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				try{
 					@eval("\$value = &$source;");
 				} catch (\Throwable | \Error | \Exception $e) {
-					log_error($e);
+					logger(LOG_ERR, $e);
 				}
 				$input = $section->addInput(new Form_Textarea(
 					$name,

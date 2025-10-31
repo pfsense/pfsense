@@ -201,7 +201,7 @@ if (!config_path_enabled('system', 'use_if_pppoe')) {
 }
 
 if ($argc < 4) {
-	log_error("HOTPLUG event: Missing mandatory parameters!");
+	logger(LOG_ERR, localize_text("HOTPLUG event: Missing mandatory parameters!"));
 	return;
 }
 $interface = trim($argv[1], " \n\t");
@@ -212,7 +212,7 @@ if (!empty($argv[3])) {
 }
 
 if (empty($interface)) {
-	log_error("HOTPLUG event: Ignoring event with empty interface");
+	logger(LOG_NOTICE, localize_text("HOTPLUG event: Ignoring event with empty interface"));
 	return;
 }
 
@@ -222,7 +222,7 @@ case "LINK_UP":
 	break;
 case "ADDR_ADD":
 	if (!is_ipaddr($address)) {
-		log_error("HOTPLUG event: Invalid IP address {$address}");
+		logger(LOG_ERR, localize_text("HOTPLUG event: Invalid IP address %s", $address));
 		break;
 	}
 	pppoe_add_addr($interface, $address);
@@ -230,7 +230,7 @@ case "ADDR_ADD":
 case "ADD_DNS1":
 case "ADD_DNS2":
 	if (!is_ipaddr($address)) {
-		log_error("HOTPLUG event: Invalid IP address {$address}");
+		logger(LOG_ERR, localize_text("HOTPLUG event: Invalid IP address %s", $address));
 		break;
 	}
 

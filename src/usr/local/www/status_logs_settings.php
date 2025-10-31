@@ -251,7 +251,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		if ($oldnolognginx !== config_path_enabled('syslog', 'nolognginx')) {
 			ob_flush();
 			flush();
-			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+			logger(LOG_NOTICE, localize_text('webConfigurator configuration has changed. Restarting webConfigurator.'));
 			send_event("service restart webgui");
 			$extra_save_msg = gettext("WebGUI process is restarting.");
 		}

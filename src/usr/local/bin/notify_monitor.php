@@ -32,5 +32,5 @@ try {
 
 	notices_sendqueue();
 } catch (Exception $e) {
-	log_error(gettext("Unable to send notices queue") . ": " . $e->getMessage());
+	logger(LOG_ERR, localize_text("Unable to send notices queue: %s", $e->getMessage()), LOG_PREFIX_NOTICE);
 }

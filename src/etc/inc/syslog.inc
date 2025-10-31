@@ -983,7 +983,7 @@ function parse_vpn_login_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1006,7 +1006,7 @@ function parse_vpn_service_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1044,7 +1044,7 @@ function parse_unknown_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1068,7 +1068,7 @@ function parse_system_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1217,7 +1217,7 @@ function parse_firewall_log_line($line) {
 		}
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing rule number: %s. Please report to mailing list or forum."), $flent['rulenum']));
+			logger(LOG_DEBUG, localize_text("There was a error parsing rule number: %s.", $flent['rulenum']));
 		}
 		return "";
 	}
@@ -1227,7 +1227,7 @@ function parse_firewall_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing rule: %s.", $line));
 		}
 		return "";
 	}

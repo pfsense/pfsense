@@ -832,7 +832,7 @@ function manage_log_code() {
 				if ($nginx_logging_changed) {
 					ob_flush();
 					flush();
-					log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+					logger(LOG_NOTICE, localize_text('webConfigurator configuration has changed. Restarting webConfigurator.'));
 					send_event("service restart webgui");
 					$extra_save_msg = gettext("WebGUI process is restarting.");
 				}

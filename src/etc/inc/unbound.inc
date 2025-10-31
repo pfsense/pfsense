@@ -674,7 +674,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			if (file_exists($root_key_file)) {
 				$rootkeycheck = mwexec("/usr/bin/grep 'autotrust trust anchor file' {$root_key_file}", true);
 				if ($rootkeycheck != "0") {
-					log_error("Unbound {$root_key_file} file is corrupt, removing and recreating.");
+					logger(LOG_WARNING, localize_text("Unbound %s file is corrupt, removing and recreating.", $root_key_file), LOG_PREFIX_DNSR);
 					unlink_if_exists($root_key_file);
 				}
 			}

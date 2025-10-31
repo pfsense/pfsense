@@ -4977,7 +4977,7 @@ function upgrade_160_to_161() {
 		unset($rrdrestore);
 		$_gb = exec("LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
 		if ($rrdreturn != 0) {
-			log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s'), $rrdreturn, $rrdrestore));
+			logger(LOG_ERR, localize_text('RRD restore failed exited with %1$s, the error is: %2$s', $rrdreturn, $rrdrestore), LOG_PREFIX_UPGRADE);
 		} else {
 			foreach ($rrdrestore as $xml_file) {
 				$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
@@ -4986,12 +4986,12 @@ function upgrade_160_to_161() {
 				file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
 				$_gb = exec("LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -C / -T {$g['tmp_path']}/rrd_restore");
 				if (!file_exists("/{$xml_file}")) {
-					log_error(sprintf(gettext("Could not extract %s RRD xml file from archive!"), $xml_file));
+					logger(LOG_ERR, localize_text("Could not extract %s RRD xml file from archive!", $xml_file), LOG_PREFIX_UPGRADE);
 					continue;
 				}
 				$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
 				if ($status) {
-					log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
+					logger(LOG_ERR, localize_text("%s failed returning %s", "rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $status), LOG_PREFIX_UPGRADE);
 					continue;
 				}
 				unset($output);
@@ -5884,7 +5884,7 @@ function upgrade_191_to_192() {
 		}
 		file_notice("Load Balancer", $deprecation_notice);
 	} else {
-		log_error("INFO: {$deprecation_notice}");
+		logger(LOG_INFO, "INFO: {$deprecation_notice}", LOG_PREFIX_UPGRADE);
 	}
 
 	config_del_path('load_balancer');
@@ -7142,7 +7142,7 @@ function upgrade_240_to_241() {
 	if (!empty($changes)) {
 		set_filter_rules_list($rules_list);
 		foreach ($changes as $message) {
-			log_error($message);
+			logger(LOG_ERR, $message, LOG_PREFIX_UPGRADE);
 		}
 		file_notice('config.xml', gettext("NAT64 firewall rules were changed, see system logs for details."));
 	}

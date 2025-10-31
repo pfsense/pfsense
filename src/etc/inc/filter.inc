@@ -862,9 +862,9 @@ function filter_delete_states_for_down_gateways() {
 			/* Cannot locate the gateway IP address, so we
 			 * cannot proceed. */
 			if (!is_ipaddr($gwip)) {
-				$message = gettext("GW States: Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
+				$message = gettext("Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
 				update_filter_reload_status($message);
-				log_error($message);
+				logger(LOG_INFO, $message, LOG_PREFIX_GWMON);
 				continue;
 			}
 
@@ -872,9 +872,9 @@ function filter_delete_states_for_down_gateways() {
 			 * or configured to do so on a specific gateway. */
 			if (($gw_down_kill_states == 'down') ||
 			    ($gateway['gw_down_kill_states'] == 'down')) {
-				$message = gettext("GW States: Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
+				$message = gettext("Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
 				update_filter_reload_status($message);
-				log_error($message);
+				logger(LOG_NOTICE, $message, LOG_PREFIX_GWMON);
 				mwexec("/sbin/pfctl -M -k gateway -k " . escapeshellarg($gwip));
 			}
 		}
@@ -882,9 +882,9 @@ function filter_delete_states_for_down_gateways() {
 
 	if ((config_get_path('system/gw_down_kill_states') == 'all') &&
 	    ($any_gateway_down !== false)) {
-		$message = gettext("GW States: One or more gateways is down, flushing all states") . ": {$gateway['name']} ";
+		$message = gettext("One or more gateways is down, flushing all states") . ": {$gateway['name']} ";
 		update_filter_reload_status($message);
-		log_error($message);
+		logger(LOG_NOTICE, $message, LOG_PREFIX_GWMON);
 		mwexec("/sbin/pfctl -Fs");
 	}
 }
@@ -1142,8 +1142,8 @@ function reload_filter() {
 		''
 	];
 	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $PFConfig->get_config(), LOCK_EX)) {
-		$result[1] = 'WARNING: Could not write new rules!';
-		log_error($result[1]);
+		$result[1] = 'Could not write new rules!';
+		logger(LOG_CRIT, localize_text($result[1]), LOG_PREFIX_FILTER);
 		return $result;
 	}
 
@@ -1799,11 +1799,11 @@ function filter_generate_gateways() {
 					    (($GatewaysStatus[$member['gw']]['substatus'] != 'highdelay') &&
 					    stristr($trigger, 'latency')))))) {
 						if (g_get('debug')) {
-							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
+							logger(LOG_DEBUG, localize_text('Setting up route with %1$s on %2$s', $gatewayip, $int), LOG_PREFIX_FILTER);
 						}
 						if ($routetomembers + ((int) $member['weight'] * $mult) > 384) {
 							// would create invalid ruleset, bail
-							log_error(sprintf(gettext("Too many members in group %s, gateway group truncated in ruleset."), $member['name']));
+							logger(LOG_ERR, localize_text("Too many members in group %s, gateway group truncated in ruleset.", $member['name']), LOG_PREFIX_FILTER);
 							continue;
 						}
 						/* Only repeat the gateway string if the gateway is weighted
@@ -1820,7 +1820,7 @@ function filter_generate_gateways() {
 						}
 						$foundlb++;
 					} else {
-						log_error(sprintf(gettext('Omitting gateway from filter ruleset. Group: "%s" Gateway: "%s" IP: "%s"'), $gateway, $member['gw'], $gatewayip));
+						logger(LOG_INFO, localize_text('Omitting gateway from filter ruleset. Group: "%s" Gateway: "%s" IP: "%s"', $gateway, $member['gw'], $gatewayip), LOG_PREFIX_FILTER);
 					}
 				}
 				$route = "";
@@ -2543,13 +2543,13 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 				}
 
 				if (($inetdport + $delta + 1) - $starting_localhost_port_tmp > 500) {
-					log_error(gettext("Not installing NAT reflection rules for a port range > 500"));
+					logger(LOG_INFO, localize_text("Not installing NAT reflection rules for a port range > 500"), LOG_PREFIX_FILTER);
 					$inetdport = $starting_localhost_port;
 					$toadd_array = array();
 					$toomanyports = true;
 					break;
 				} else if (($inetdport + $delta) > 19990) {
-					log_error(gettext("Installing partial NAT reflection rules. Maximum 1,000 reached."));
+					logger(LOG_INFO, localize_text("Installing partial NAT reflection rules. Maximum 1,000 reached."), LOG_PREFIX_FILTER);
 					$delta = 19990 - $inetdport;
 					$loc_pt[1] = $loc_pt[0] + $delta;
 					if ($delta == 0) {
@@ -3800,7 +3800,7 @@ function filter_generate_port($rule, $target = "source", $isnat = false) {
 			$srcport = explode("-", $rule[$target]['port']);
 			$srcporta = alias_expand($srcport[0]);
 			if (!$srcporta) {
-				log_error(sprintf(gettext('filter_generate_port: %1$s is not a valid %2$s port.'), $srcport[0], $target));
+				logger(LOG_ERR, localize_text('%1$s%2$s is not a valid %3$s port.', 'filter_generate_port: ', $srcport[0], $target), LOG_PREFIX_FILTER);
 			} else if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 				$src .= " port {$srcporta} ";
 			} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
@@ -4368,7 +4368,7 @@ function filter_generate_user_rule($rule) {
 		} else if (config_path_enabled('system','skip_rules_gw_down')) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {
-			log_error(sprintf(gettext("The gateway: %s is invalid or unknown, not using it."), $rule['gateway']));
+			logger(LOG_ERR, localize_text("The gateway: %s is invalid or unknown, not using it.", $rule['gateway']), LOG_PREFIX_FILTER);
 		}
 	}
 
@@ -4626,7 +4626,7 @@ function filter_generate_user_rule($rule) {
 					}
 					return "# schedule finished - {$rule['descr']}";
 				} else if (g_get('debug')) {
-					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
+					logger(LOG_DEBUG, localize_text("status true -- rule type '%s'", $type), LOG_PREFIX_FILTER);
 				}
 				break;
 			}
@@ -5685,7 +5685,7 @@ function filter_tdr_day($schedule) {
 	global $g;
 
 	if (g_get('debug')) {
-		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
+		logger(LOG_DEBUG, "filter_tdr_day($schedule)", LOG_PREFIX_FILTER);
 	}
 
 	/*
@@ -5710,7 +5710,7 @@ function filter_tdr_hour($schedule) {
 	$ending_time = strtotime($tmp[1]);
 	$now = strtotime("now");
 	if (g_get('debug')) {
-		log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
+		logger(LOG_DEBUG, "S: $starting_time E: $ending_time N: $now", LOG_PREFIX_FILTER);
 	}
 	if ($now >= $starting_time and $now < $ending_time) {
 		return true;
@@ -5730,7 +5730,7 @@ function filter_tdr_position($schedule) {
 	 */
 	$weekday = date("w");
 	if (g_get('debug')) {
-		log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
+		logger(LOG_DEBUG, "filter_tdr_position($schedule) $weekday", LOG_PREFIX_FILTER);
 	}
 	if ($weekday == 0) {
 		$weekday = 7;
@@ -5753,7 +5753,7 @@ function filter_tdr_month($schedule) {
 	$todays_month = date("n");
 	$months = explode(",", $schedule);
 	if (g_get('debug')) {
-		log_error("[TDR DEBUG] filter_tdr_month($schedule)");
+		logger(LOG_DEBUG, "filter_tdr_month($schedule)", LOG_PREFIX_FILTER);
 	}
 	foreach ($months as $month) {
 		if ($month == $todays_month) {
@@ -6042,7 +6042,7 @@ function discover_pkg_rules($ruletype) {
 			$errorrules = sprintf(gettext(
 			    "There was an error while parsing the package filter rules for %s."),
 			    $pkg_config['include_file']) . "\n";
-			log_error($errorrules);
+			logger(LOG_ERR, $errorrules, LOG_PREFIX_FILTER);
 			file_put_contents("{$g['tmp_path']}/rules.packages.{$pkgname}",
 			    "#{$errorrules}\n{$tmprules}\n");
 			continue;

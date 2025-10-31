@@ -53,7 +53,7 @@ if ($_POST['act'] == "del") {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");
 	} else {
 		if (!does_interface_exist(config_get_path("bridges/bridged/{$_POST['id']}/bridgeif"))) {
-			log_error("Bridge interface does not exist, skipping ifconfig destroy.");
+			logger(LOG_NOTICE, localize_text("Bridge interface does not exist, skipping ifconfig destroy."));
 		} else {
 			pfSense_interface_destroy(config_get_path("bridges/bridged/{$_POST['id']}/bridgeif"));
 		}

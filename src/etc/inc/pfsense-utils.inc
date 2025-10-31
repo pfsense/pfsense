@@ -859,18 +859,18 @@ function WakeOnLan($addr, $mac) {
 	// send it to the broadcast address using UDP
 	$s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 	if ($s == false) {
-		log_error(gettext("Error creating socket!"));
-		log_error(sprintf(gettext("Error code is '%1\$s' - %2\$s"), socket_last_error(), socket_strerror(socket_last_error())));
+		logger(LOG_ERR, localize_text("WOL: Error creating socket!"));
+		logger(LOG_ERR, localize_text("WOL: Error code is '%1\$s' - %2\$s", socket_last_error(), socket_strerror(socket_last_error())));
 	} else {
 		// setting a broadcast option to socket:
 		$opt_ret = socket_set_option($s, 1, 6, TRUE);
 		if ($opt_ret < 0) {
-			log_error(sprintf(gettext("setsockopt() failed, error: %s"),
+			logger(LOG_ERR, localize_text("WOL: setsockopt() failed, error: %s",
 							  socket_strerror(socket_last_error($s))));
 		}
 		$e = socket_sendto($s, $msg, strlen($msg), 0, $addr, 2050);
 		socket_close($s);
-		log_error(sprintf(gettext('Magic Packet sent (%1$s) to (%2$s) MAC=%3$s'), $e, $addr, $mac));
+		logger(LOG_INFO, localize_text('WOL: Magic Packet sent (%1$s) to (%2$s) MAC=%3$s', $e, $addr, $mac));
 		return true;
 	}
 
@@ -1050,7 +1050,7 @@ function reload_interfaces_sync() {
 	global $g;
 
 	if (g_get('debug')) {
-		log_error(gettext("reload_interfaces_sync() is starting."));
+		logger(LOG_DEBUG, localize_text("%s is starting.", 'reload_interfaces_sync()'));
 	}
 
 	/* parse config.xml */
@@ -1059,11 +1059,11 @@ function reload_interfaces_sync() {
 	/* enable routing */
 	system_routing_enable();
 	if (g_get('debug')) {
-		log_error(gettext("Enabling system routing"));
+		logger(LOG_DEBUG, localize_text("Enabling system routing"));
 	}
 
 	if (g_get('debug')) {
-		log_error(gettext("Cleaning up Interfaces"));
+		logger(LOG_DEBUG, localize_text("Cleaning up Interfaces"));
 	}
 
 	/* set up interfaces */
@@ -2024,7 +2024,7 @@ function compare_hostname_to_dnscache($hostname) {
 
 	if (trim($oldcontents) != trim($contents)) {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext('DNSCACHE: Found old IP %1$s and new IP %2$s'), $oldcontents, $contents));
+			logger(LOG_DEBUG, localize_text('DNSCACHE: Found old IP %1$s and new IP %2$s', $oldcontents, $contents));
 		}
 		return ($oldcontents);
 	} else {
@@ -2048,7 +2048,7 @@ function load_crypto() {
 			continue;
 		}
 		if (!is_module_loaded($enmod)) {
-			log_error(sprintf(gettext("Loading %s cryptographic accelerator module."), $enmod));
+			logger(LOG_INFO, localize_text("Loading %s cryptographic accelerator module.", $enmod));
 			mute_kernel_msgs();
 			mwexec("/sbin/kldload " . escapeshellarg($enmod));
 			unmute_kernel_msgs();
@@ -2068,7 +2068,7 @@ function load_thermal_hardware() {
 	}
 
 	if (!empty($thermal_hardware) && !is_module_loaded($thermal_hardware)) {
-		log_error(sprintf(gettext("Loading %s thermal monitor module."), $thermal_hardware));
+		logger(LOG_INFO, localize_text("Loading %s thermal monitor module.", $thermal_hardware));
 		mute_kernel_msgs();
 		mwexec("/sbin/kldload {$thermal_hardware}");
 		unmute_kernel_msgs();
@@ -2145,7 +2145,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	if ($http_code == 200) {
 		return true;
 	} else {
-		log_error(sprintf(gettext('Download file failed with status code %1$s. URL: %2$s'), $http_code, $url));
+		logger(LOG_ERR, localize_text('Download file failed with status code %1$s. URL: %2$s', $http_code, $url));
 		unlink_if_exists($destination);
 		return false;
 	}
@@ -2198,7 +2198,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	if ($http_code == 200) {
 		return true;
 	} else {
-		log_error(sprintf(gettext('Download file failed with status code %1$s. URL: %2$s'), $http_code, $url));
+		logger(LOG_ERR, localize_text('Download file failed with status code %1$s. URL: %2$s', $http_code, $url));
 		unlink_if_exists($destination);
 		return false;
 	}
@@ -2455,17 +2455,17 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	 */
 
 	if (!file_exists($filename)) {
-		log_error(sprintf(gettext("Could not process non-existent file from alias: %s"), $filename));
+		logger(LOG_ERR, localize_text("Could not process non-existent file from alias: %s", $filename));
 		return null;
 	}
 
 	if (filesize($filename) == 0) {
-		log_error(sprintf(gettext("Could not process empty file from alias: %s"), $filename));
+		logger(LOG_ERR, localize_text("Could not process empty file from alias: %s", $filename));
 		return null;
 	}
 	$fd = @fopen($filename, 'r');
 	if (!$fd) {
-		log_error(sprintf(gettext("Could not process aliases from alias: %s"), $filename));
+		logger(LOG_ERR, localize_text("Could not process aliases from alias: %s", $filename));
 		return null;
 	}
 	$items = array();
@@ -2560,14 +2560,14 @@ function update_alias_url_data() {
 				$verify_ssl = config_path_enabled('system','checkaliasesurlcert');
 				mkdir($temp_filename);
 				if (!download_file($alias_url, $temp_filename . "/aliases", $verify_ssl)) {
-					log_error(sprintf(gettext("Failed to download alias %s"), $alias_url));
+					logger(LOG_ERR, localize_text("Failed to download alias %s", $alias_url));
 					rmdir_recursive($temp_filename);
 					continue;
 				}
 
 				/* if the item is tar gzipped then extract */
 				if (stripos($alias_url, '.tgz') && !process_alias_tgz($temp_filename)) {
-					log_error(sprintf(gettext("Could not unpack tgz from the URL '%s'."), $alias_url));
+					logger(LOG_ERR, localize_text("Could not unpack tgz from the URL '%s'.", $alias_url));
 					rmdir_recursive($temp_filename);
 					continue;
 				}
@@ -2575,7 +2575,7 @@ function update_alias_url_data() {
 					$t_address = parse_aliases_file("{$temp_filename}/aliases", $type, 5000);
 					if ($t_address == null) {
 						/* nothing was found */
-						log_error(sprintf(gettext("Could not fetch usable data from '%s'."), $alias_url));
+						logger(LOG_ERR, localize_text("Could not fetch usable data from '%s'.", $alias_url));
 						//rmdir_recursive($temp_filename);
 						continue;
 					} else {
@@ -2591,7 +2591,7 @@ function update_alias_url_data() {
 				}
 				$t_address = explode(" ", $aliastable[$alias_url]);
 				if ($t_address == null) {
-					log_error(sprintf(gettext("Could not get usable data from '%s' URL alias."), $alias_url));
+					logger(LOG_ERR, localize_text("Could not get usable data from '%s' URL alias.", $alias_url));
 					continue;
 				}
 				array_push($address, ...$t_address);
@@ -2611,7 +2611,7 @@ function update_alias_url_data() {
 
 function process_alias_tgz($temp_filename) {
 	if (!file_exists('/usr/bin/tar')) {
-		log_error(gettext("Alias archive is a .tar/tgz file which cannot be decompressed because utility is missing!"));
+		logger(LOG_CRIT, localize_text("Alias archive is a .tar/tgz file which cannot be decompressed because utility is missing!"));
 		return false;
 	}
 	rename("{$temp_filename}/aliases", "{$temp_filename}/aliases.tgz");
@@ -2621,13 +2621,13 @@ function process_alias_tgz($temp_filename) {
 	/* foreach through all extracted files and build up aliases file */
 	$fd = @fopen("{$temp_filename}/aliases", "w");
 	if (!$fd) {
-		log_error(sprintf(gettext("Could not open %s/aliases for writing!"), $temp_filename));
+		logger(LOG_ERR, localize_text("Could not open %s/aliases for writing!", $temp_filename));
 		return false;
 	}
 	foreach ($files_to_process as $f2p) {
 		$tmpfd = @fopen($f2p, 'r');
 		if (!$tmpfd) {
-			log_error(sprintf(gettext('The following file could not be read %1$s from %2$s'), $f2p, $temp_filename));
+			logger(LOG_ERR, localize_text('The following file could not be read %1$s from %2$s', $f2p, $temp_filename));
 			continue;
 		}
 		while (($tmpbuf = fread($tmpfd, 65536)) !== FALSE) {

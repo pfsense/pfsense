@@ -60,7 +60,7 @@ $ipseclck = lock('ipsecdns', LOCK_EX);
 sleep(12);
 unlock($ipseclck_pending);
 sleep(3);
-log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
+logger(LOG_NOTICE, localize_text("One or more IPsec tunnel endpoints has changed its IP. Refreshing."), LOG_PREFIX_IPSEC);
 
 /* make sure we have the latest configuration changes loaded. */
 config_read_file(true, true);

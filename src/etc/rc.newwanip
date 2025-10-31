@@ -42,7 +42,7 @@ function restart_packages() {
 	global $oldip, $curwanip, $g;
 
 	/* restart packages */
-	log_error("{$g['product_label']} package system has detected an IP change or dynamic WAN reconnection - $oldip ->  $curwanip - Restarting packages.");
+	logger(LOG_NOTICE, localize_text("%s package system has detected an IP change or dynamic WAN reconnection - %s -> %s - Restarting packages.", $g['product_label'], $oldip, $curwanip));
 	send_event("service reload packages");
 }
 
@@ -53,7 +53,7 @@ if (isset($_GET['interface'])) {
 	$argument = str_replace("\n", "", $argv[1]);
 }
 
-log_error("rc.newwanip: Info: starting on {$argument}.");
+logger(LOG_INFO, localize_text("%s starting on %s.", 'rc.newwanip:', $argument));
 
 if (empty($argument)) {
 	$interface = "wan";
@@ -61,7 +61,7 @@ if (empty($argument)) {
 } else {
 	$interface = convert_real_interface_to_friendly_interface_name($argument);
 	if (empty($interface)) {
-		log_error("Interface is unassigned, nothing to do.");
+		logger(LOG_INFO, localize_text("Interface is unassigned, nothing to do."));
 		return;
 	}
 	$interface_real = $argument;
@@ -71,7 +71,7 @@ $interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
 /* If the interface is configured and not enabled, bail. We do not need to change settings for disabled interfaces. #3313 */
 if (is_array(config_get_path("interfaces/{$interface}")) && !config_path_enabled("interfaces/{$interface}")) {
-	log_error("Interface is disabled, nothing to do.");
+	logger(LOG_INFO, localize_text("Interface is disabled, nothing to do."));
 	return;
 }
 
@@ -84,7 +84,7 @@ if (empty($argument)) {
 	}
 }
 
-log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
+logger(LOG_INFO, localize_text("%s on (IP address: %s) (interface: %s[%s]) (real interface: %s).", 'rc.newwanip:', $curwanip, $interface_descr, $interface, $interface_real));
 
 /*
  * NOTE: Take care of openvpn, no-ip or similar interfaces if you generate the event to reconfigure an interface.
@@ -93,7 +93,7 @@ log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_des
 if ($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
 	if (substr($interface_real, 0, 4) != "ovpn") {
 		if (!empty(config_get_path("interfaces/{$interface}/ipaddr"))) {
-			log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
+			logger(LOG_WARNING, localize_text("%s Failed to update %s IP, restarting...", 'rc.newwanip:', $interface));
 			send_event("interface reconfigure {$interface}");
 			return;
 		}
@@ -105,7 +105,7 @@ if (empty($interface)) {
 	if (is_platform_booting()) {
 		return;
 	}
-	log_error("rc.newwanip called with empty interface.");
+	logger(LOG_WARNING, localize_text("%s called with empty interface.", 'rc.newwanip'));
 	filter_configure();
 	restart_packages();
 	return;
@@ -240,10 +240,10 @@ if (!is_ipaddr($oldip) || ($curwanip != $oldip) || file_exists("{$g['tmp_path']}
 	/* If the IP address changed, kill old states after rules and routing have been updated */
 	if ($curwanip != $oldip) {
 		if (config_path_enabled('system', 'ip_change_kill_states')) {
-			log_error("IP Address has changed, killing all states (ip_change_kill_states is set).");
+			logger(LOG_NOTICE, localize_text("IP Address has changed, killing all states (%s is set).", 'ip_change_kill_states'), LOG_PREFIX_FILTER);
 			filter_flush_state_table();
 		} else {
-			log_error("IP Address has changed, killing states on former IP Address $oldip.");
+			logger(LOG_NOTICE, localize_text("IP Address has changed, killing states on former IP Address %s.", $oldip), LOG_PREFIX_FILTER);
 			pfSense_kill_states($oldip);
 		}
 	}

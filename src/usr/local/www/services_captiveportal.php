@@ -121,6 +121,9 @@ $pconfig['auth_method'] = config_get_path("captiveportal/{$cpzone}/auth_method")
 $pconfig['auth_server'] = explode(",", config_get_path("captiveportal/{$cpzone}/auth_server"));
 $pconfig['auth_server2'] = explode(",", config_get_path("captiveportal/{$cpzone}/auth_server2"));
 $pconfig['localauth_priv'] = config_path_enabled("captiveportal/{$cpzone}", 'localauth_priv');
+$pconfig['totpsecret'] = config_get_path("captiveportal/{$cpzone}/totpsecret");
+$pconfig['totpdigits'] = config_get_path("captiveportal/{$cpzone}/totpdigits");
+$pconfig['totpperiod'] = config_get_path("captiveportal/{$cpzone}/totpperiod");
 $pconfig['radacct_server'] = config_get_path("captiveportal/{$cpzone}/radacct_server");
 $pconfig['radacct_enable'] = config_path_enabled("captiveportal/{$cpzone}", 'radacct_enable');
 $pconfig['radmac_secret'] = config_get_path("captiveportal/{$cpzone}/radmac_secret");
@@ -199,7 +202,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if ($_POST['auth_method'] && !in_array($_POST['auth_method'], array('none', 'authserver', 'radmac'))) {
+		if ($_POST['auth_method'] && !in_array($_POST['auth_method'], array('none', 'totp', 'authserver', 'radmac'))) {
 			$input_errors[] = gettext("Authentication method is invalid.");
 		}
 
@@ -287,6 +290,16 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("You need to select an option for Concurrent user logins.");
 	}
 
+	if (trim($_POST['totpsecret']) !== "" && !preg_match("/^[0-9A-Za-z]{16,128}/", trim($_POST['totpsecret']))) {
+		$input_errors[] = gettext("The TOTP Secret must be between 16 and 128 characters long and should only contain alphanumeric characters.");
+	}
+	if (trim($_POST['totpdigits']) !== "" && !preg_match("/^[0-9]{1,2}/", trim($_POST['totpdigits']))) {
+		$input_errors[] = gettext("The TOTP Digits ranges between 1 and 99.");
+	}
+	if (trim($_POST['totpperiod']) !== "" && !preg_match("/^[0-9]{2,3}/", trim($_POST['totpperiod']))) {
+		$input_errors[] = gettext("The TOTP Period ranges between 10 and 999.");
+	}
+
 	if (isset($_POST['radacct_enable']) && empty(auth_get_authserver($_POST['radacct_server']))) {
 		$input_errors[] = gettext("You need to select at least one accounting server.");
 	}
@@ -353,6 +366,9 @@ if ($_POST['save']) {
 		if (!empty($_POST['auth_server2']) && $_POST['auth_method'] === 'authserver') {
 			$newcp['auth_server2'] = implode(",", $_POST['auth_server2']);
 		}
+		$newcp['totpsecret'] = $_POST['totpsecret'];
+		$newcp['totpdigits'] = $_POST['totpdigits'];
+		$newcp['totpperiod'] = $_POST['totpperiod'];
 		$newcp['radacct_server'] = $_POST['radacct_server'];
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
@@ -921,6 +937,7 @@ $section->addClass('Authentication');
 $group = new Form_Group('*Authentication Method');
 
 $options['authserver'] = 'Use an Authentication backend';
+$options['totp'] = 'Use TOTP Authentication';
 $options['none'] = 'None, don\'t authenticate users';
 $options['radmac'] = 'Use RADIUS MAC Authentication';
 
@@ -931,6 +948,7 @@ $group->add(new Form_Select(
 	$options
 ))->setHelp('Select an Authentication Method to use for this zone. One method must be selected.<br />'.
 '- "Authentication backend" will force the login page to be displayed and will authenticate users using their login and password, or using vouchers.<br />'.
+'- "Use TOTP Authentication" will require a TOTP secret to be configured and will allow any TOTP client to generate a code for login.<br/>'.
 '- "None" method will force the login page to be displayed but will accept any visitor that clicks the "submit" button.<br/>'.
 '- "RADIUS MAC Authentication" method will try to authenticate devices automatically with their MAC address without displaying any login page.');
 
@@ -962,6 +980,75 @@ $group->add(new Form_Select(
 ))->setHelp("You can optionally select a second set of servers to to authenticate users. Users will then be able to login using separated HTML inputs.<br />".
 			"This setting is useful if you want to provide multiple authentication method to your users. If you don't need multiple authentication method, then leave this setting empty.");
 $section->add($group);
+
+$section->addInput(new Form_Input(
+	'totpdigits',
+	'TOTP Digits',
+	'text',
+	$pconfig['totpdigits']
+))->setHelp('The TOTP Digits sets the length of the OTP codes used.<br/>'.
+'6 digits Is the industry standard number, most authenticator applications do not even support anything else and will still generate 6.<br/><br/>'.
+'<b>NOTE:</b> Modifying this requires you to generate the secret again.', $cpzone);
+
+$section->addInput(new Form_Input(
+	'totpperiod',
+	'TOTP Period',
+	'text',
+	$pconfig['totpperiod']
+))->setHelp('The TOTP Period allowed to input the OTP codes in seconds.<br/>'.
+'30 Seconds is the industry standard timeout, most authenticator applications do not even support anything else and will still generate a code every 30 seconds.<br/><br/>'.
+'<b>NOTE:</b> Modifying this requires you to generate the secret again.', $cpzone);
+
+$section->addInput(new Form_StaticText(
+    'Generate TOTP Secret',
+    '<a id="btngensec" class="btn btn-sm btn-primary" onClick="setupTotp()"><i class="fa fa-cog icon-embed-btn"> </i>Generate</a>'
+));
+
+$section->addInput(new Form_Input(
+	'totpsecret',
+	'TOTP Secret',
+	'text',
+	$pconfig['totpsecret']
+))->setHelp('The TOTP Secret used to generate the OTP codes.', $cpzone);
+
+$section->addInput(new Form_StaticText(
+    'Application QRcode',
+    'The QR code here can be used to add the TOTP secret to your Google Authenticator or a similar application that supports scanning QR codes.<br/>'.
+    '<img src="" id="totpqr" class="hidden">'.
+    '<script src="/js/totp.js"></script>'.
+    "<script>function setupTotp() {".
+    "let d = document.getElementById('totpdigits').value || 6;".
+    "let p = document.getElementById('totpperiod').value || 30;".
+    "let totp = new OTPAuth.TOTP({".
+    "  issuer: 'pfSense',".
+    "  label: '" . $cpzone . "',".
+    "  digits: d,".
+    "  period: p".
+    "});".
+    "document.getElementById('totpsecret').value = totp.secret.base32;".
+    "let element = document.getElementById('totpqr');".
+    "element.src = 'https://api.qrserver.com/v1/create-qr-code/?data='+encodeURIComponent(totp.toString())+'&size=200x200&ecc=M';".
+    "element.classList.remove('hidden');".
+    "}".
+    "let defdig = document.getElementById('totpdigits').value || 6;".
+    "document.getElementById('totpdigits').value = defdig;".
+    "let defper = document.getElementById('totpperiod').value || 30;".
+    "document.getElementById('totpperiod').value = defper;".
+    "let genqr = document.getElementById('totpsecret').value || -1;".
+    "if (genqr != -1) {".
+    "   let totp = new OTPAuth.TOTP({".
+    "     issuer: 'pfSense',".
+    "     label: '" . $cpzone . "',".
+    "     digits: defdig,".
+    "     period: defper,".
+    "     secret: OTPAuth.Secret.fromBase32(genqr)".
+    "   });".
+    "   let element = document.getElementById('totpqr');".
+    "   element.src = 'https://api.qrserver.com/v1/create-qr-code/?data='+encodeURIComponent(totp.toString())+'&size=200x200&ecc=M';".
+    "   element.classList.remove('hidden');".
+    "}".
+    "</script>"
+));
 
 $section->addInput(new Form_Input(
 	'radiusnasid',
@@ -1160,10 +1247,7 @@ $section->addInput(new Form_Select(
 	'*SSL/TLS Certificate',
 	$pconfig['certref'],
 	cert_build_list('cert', 'HTTPS')
-))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list, ' .
-		'such as certificates using incompatible ECDSA curves or weak digest algorithms.%3$s%3$s' .
-		'If no certificates are defined, one may be defined at %1$sSystem &gt; Certificates%2$s',
-		'<a href="system_certmanager.php">', '</a>', '<br/>');
+))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list. If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'nohttpsforwards',
@@ -1200,6 +1284,12 @@ events.push(function() {
 		hideGeneral(hide);
 		hideClass('Accounting', hide);
 	}
+
+    function hideTotp(hide) {
+        hideInput('totpdigits', hide);
+        hideInput('totpperiod', hide);
+        hideInput('totpsecret', hide);
+    }
 
 	function hideRadius(hide) {
 		hideCheckbox('radiussession_timeout', hide);
@@ -1286,8 +1376,17 @@ events.push(function() {
 			hideClass('auth_server', false);
 			hideInput('radmac_secret', true);
 			hideCheckbox('radmac_fallback', true);
+            hideCheckbox('localauth_priv', true);
 			$('.auth_server .vouchers_helptext').removeClass('hidden');
 		}
+		else if(auth_method.indexOf("totp") === 0) {
+            hideCheckbox('reauthenticate', true);
+            hideClass('auth_server', true);
+            hideInput('radmac_secret', true);
+            hideCheckbox('radmac_fallback', true);
+            hideCheckbox('localauth_priv', true);
+            hideInput('totpsecret', false);
+        }
 		else if(auth_method.indexOf("radmac") === 0) {
 			// If Radmac is selected : only RADIUS servers should be displayed
 			$('select[name="auth_server[]"]').find('option').remove();
@@ -1305,6 +1404,7 @@ events.push(function() {
 		} else {
 			// if "none" is selected : we hide most of authentication settings
 			hideRadius(true);
+            hideTotp(true);
 			hideCheckbox('reauthenticate', true);
 			hideClass('auth_server', true);
 			hideInput('radmac_secret', true);
@@ -1328,7 +1428,7 @@ events.push(function() {
 		let shouldHideLdap = true;
 		let shouldHideSecondAuth = true;
 
-		if($('#auth_method').val().indexOf("none") !== 0) {
+		if($('#auth_method').val().indexOf("none") !== 0 && $('#auth_method').val().indexOf("totp") !== 0) {
 			$.each($('select[name="auth_server[]"]').val(), function(key,value) {
 				if(value.indexOf("radius") === 0) {
 					shouldHideRadius = false;

@@ -2668,7 +2668,8 @@ function filter_captiveportal_ether() {
 
 		if (!empty($interfaces)) {
 			/* set 'rdr' tag for further captive portal web portal redirection */
-			$rules .= "ether pass on { {$interfaces} } tag \"{$rdrtag}\"\n";
+			$rules .= "ether pass in on { {$interfaces} } tag \"{$rdrtag}\"\n";
+			$rules .= "ether pass out on { {$interfaces} }\n";
 			/* anchor to set the PASS tag for authenticated clients */
 			$rules .= "ether anchor \"{$cpzoneprefix}_auth/*\" on { {$interfaces} }\n";
 			/* anchor for Services / Captive Portal / CPZONE / MACs */
@@ -2842,8 +2843,11 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 		}
 	}
 
-	$rules = "ether pass in quick {$macfrom} {$l3from} tag {$tag} dnpipe {$pipeup}\n";
-	$rules .= "ether pass out quick {$macto} {$l3to} tag {$tag} dnpipe {$pipedown}\n";
+	// prevent ARP from being sent to dummynet, pass the rest
+	$rules = "ether pass in quick proto 0x0806 {$macfrom} {$l3from} tag {$tag}\n";
+	$rules .= "ether pass out quick proto 0x0806 {$macto} {$l3to}\n";
+	$rules .= "ether pass in quick {$macfrom} {$l3from} tag {$tag} dnpipe {$pipeup}\n";
+	$rules .= "ether pass out quick {$macto} {$l3to} dnpipe {$pipedown}\n";
 
 	captiveportal_load_pfctl("{$cpzoneprefix}_{$anchor}", $host, $rules);
 }

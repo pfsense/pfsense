@@ -2712,7 +2712,7 @@ function logger(int $priority, mixed $message, string|null $prefix = null, int|n
 
 	// Append the prefix.
 	if (isset($prefix)) {
-		$log_prefix = $log_prefix . ' [' . gettext($prefix) . '] ';
+		$log_prefix = $log_prefix . ' [' . gettext($prefix) . ']';
 	}
 
 	if (g_get('debug')) {
@@ -2740,13 +2740,18 @@ function logger(int $priority, mixed $message, string|null $prefix = null, int|n
 		syslog((isset($facilities) ? $priority|$facilities : $priority), $log_string);
 	} elseif (is_string($message)) {
 		if (str_contains($message, PHP_EOL)) {
-			$log_string = json_encode("{$log_prefix}{$message}", JSON_FORCE_OBJECT);
+			$log_string = json_encode("{$log_prefix} {$message}", JSON_FORCE_OBJECT);
 			if ($log_string === false) {
-				$log_string = $log_prefix . str_replace(PHP_EOL, '', var_export($message, true));
+				$log_string = $log_prefix . ' ' . str_replace(PHP_EOL, '', var_export($message, true));
 			}
 			syslog((isset($facilities) ? $priority|$facilities : $priority), $log_string);
 		} else {
-			syslog((isset($facilities) ? $priority|$facilities : $priority), "{$log_prefix}{$message}");
+			if (strlen($message) > 0 ) {
+				$log_string = "{$log_prefix} {$message}";
+			} else {
+				$log_string = $log_prefix;
+			}
+			syslog((isset($facilities) ? $priority|$facilities : $priority), $log_string);
 		}
 	} else {
 		$log_string = json_encode(
@@ -2757,7 +2762,7 @@ function logger(int $priority, mixed $message, string|null $prefix = null, int|n
 			JSON_FORCE_OBJECT
 		);
 		if ($log_string === false) {
-			$log_string = $log_prefix . str_replace(PHP_EOL, '', var_export($message, true));
+			$log_string = $log_prefix . ' ' . str_replace(PHP_EOL, '', var_export($message, true));
 		}
 		syslog((isset($facilities) ? $priority|$facilities : $priority), $log_string);
 	}

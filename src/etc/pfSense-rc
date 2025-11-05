@@ -709,7 +709,7 @@ ARCH=`uname -m`
 echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
 
 echo "Bootup complete"
-echo "Bootup complete" | /usr/bin/logger
+echo "NOTICE Bootup complete" | /usr/bin/logger -p user.notice
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

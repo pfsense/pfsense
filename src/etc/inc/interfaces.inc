@@ -5106,12 +5106,20 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 		$dhcp6cscriptwithoutra .= "REQUEST)\n";
 		$dhcp6cscriptwithoutra .= "/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -A {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}\n";
 		if ($debugOption == '-D') {
-			$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c REQUEST on {$wanif} - running rtsold\"\n";
+			$dhcp6cscriptwithoutra .= implode(' ', [
+				'/usr/bin/logger', '-p user.info', '-t dhcp6c',
+				'"INFO [' . LOG_PREFIX_DHCPC . ']',
+				"dhcp6c REQUEST on {$wanif} - running rtsold" . '"' . PHP_EOL
+			]);
 		}
 		$dhcp6cscriptwithoutra .= ";;\n";
 		$dhcp6cscriptwithoutra .= "REBIND)\n";
 		if ($debugOption == '-D') {
-			$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c rebind on {$wanif}\"\n";
+			$dhcp6cscriptwithoutra .= implode(' ', [
+				'/usr/bin/logger', '-p user.notice', '-t dhcp6c',
+				'"NOTICE [' . LOG_PREFIX_DHCPC . ']',
+				"dhcp6c rebind on {$wanif}" . '"' . PHP_EOL
+			]);
 		}
 		$dhcp6cscriptwithoutra .= ";;\n";
 		if (isset($wancfg['dhcp6norelease'])) {
@@ -5120,13 +5128,21 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 			$dhcp6cscriptwithoutra .= "RELEASE)\n";
 		}
 		if ($debugOption == '-D') {
-			$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c EXIT or RELEASE on {$wanif} running rc.newwanipv6\"\n";
+			$dhcp6cscriptwithoutra .= implode(' ', [
+				'/usr/bin/logger', '-p user.notice', '-t dhcp6c',
+				'"NOTICE [' . LOG_PREFIX_DHCPC . ']',
+				"dhcp6c EXIT or RELEASE on {$wanif} running rc.newwanipv6" . '"' . PHP_EOL
+			]);
 		}
 		$dhcp6cscriptwithoutra .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
 		$dhcp6cscriptwithoutra .= ";;\n";
 		$dhcp6cscriptwithoutra .= "RENEW|INFO)\n";
 		if ($debugOption == '-D') {
-			$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c renew, no change - bypassing update on {$wanif}\"\n";
+			$dhcp6cscriptwithoutra .= implode(' ', [
+				'/usr/bin/logger', '-p user.info', '-t dhcp6c',
+				'"INFO [' . LOG_PREFIX_DHCPC . ']',
+				"dhcp6c renew, no change - bypassing update on {$wanif}" . '"' . PHP_EOL
+			]);
 		}
 		$dhcp6cscriptwithoutra .= "esac\n";
 		if (!@file_put_contents(
@@ -5153,7 +5169,11 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 			$dhcp6cscript .= "case \$REASON in\n";
 			$dhcp6cscript .= "REBIND)\n";
 			if ($debugOption == '-D') {
-				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c rebind on {$wanif}\"\n";
+				$dhcp6cscript .= implode(' ', [
+					'/usr/bin/logger', '-p user.notice', '-t dhcp6c',
+					'"NOTICE [' . LOG_PREFIX_DHCPC . ']',
+					"dhcp6c rebind on {$wanif}" . '"' . PHP_EOL
+				]);
 			}
 			$dhcp6cscript .= ";;\n";
 			$dhcp6cscript .= "REQUEST|";
@@ -5163,13 +5183,21 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 				$dhcp6cscript .= "RELEASE)\n";
 			}
 			if ($debugOption == '-D') {
-				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c RELEASE, REQUEST or EXIT on {$wanif} running rc.newwanipv6\"\n";
+				$dhcp6cscript .= implode(' ', [
+					'/usr/bin/logger', '-p user.notice', '-t dhcp6c',
+					'"NOTICE [' . LOG_PREFIX_DHCPC . ']',
+					"dhcp6c RELEASE, REQUEST or EXIT on {$wanif} running rc.newwanipv6" . '"' . PHP_EOL
+				]);
 			}
 			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}&reason=\${REASON}\"\n";
 			$dhcp6cscript .= ";;\n";
 			$dhcp6cscript .= "RENEW|INFO)\n";
 			if ($debugOption == '-D') {
-				$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c RENEW on {$wanif} running rc.newwanipv6\"\n";
+				$dhcp6cscript .= implode(' ', [
+					'/usr/bin/logger', '-p user.notice', '-t dhcp6c',
+					'"NOTICE [' . LOG_PREFIX_DHCPC . ']',
+					"dhcp6c RENEW on {$wanif} running rc.newwanipv6" . '"' . PHP_EOL
+				]);
 			}
 			$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}&reason=\${REASON}\"\n";
 			$dhcp6cscript .= "esac\n";
@@ -5204,6 +5232,7 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 		}
 		$dhcp6cdescr = implode(',', $dhcp6cifs_descr);
 		$dhcp6cifs = implode(' ', $dhcp6crealifs);
+		$LOG_PREFIX_DHCPC = LOG_PREFIX_DHCPC;
 		foreach ($dhcp6cinterfaces as $interface => $wancfg) {
 			$wanif = get_real_interface($interface, "inet6");
 
@@ -5220,7 +5249,7 @@ if [ -n "\$2" ]; then
 		/bin/rm -f {$g['tmp_path']}/{$wanif}_routerv6.last
 		echo \$2 > {$g['tmp_path']}/{$wanif}_defaultgwv6
 	fi
-	/usr/bin/logger -t rtsold "Received RA specifying route \$2 for interface {$interface}({$wanif})"
+	/usr/bin/logger -p user.notice -t rtsold "NOTICE [{$LOG_PREFIX_DHCPC}] Received RA specifying route \$2 for interface {$interface}({$wanif})"
 fi
 
 EOD;
@@ -5250,9 +5279,17 @@ EOD;
 				$rtsoldscript .= "\t/usr/local/sbin/dhcp6c {$debugOption} " .
 				    "{$noreleaseOption} -c {$g['varetc_path']}/dhcp6c.conf " .
 				    "-p {$g['varrun_path']}/dhcp6c.pid {$dhcp6cifs}\n";
-				$rtsoldscript .= "\t/usr/bin/logger -t rtsold \"Starting dhcp6 client for interfaces {$dhcp6cdescr}\"\n";
+				$rtsoldscript .= implode(' ', [
+					"\t/usr/bin/logger", '-p user.info', '-t rtsold',
+					'"INFO [' . LOG_PREFIX_DHCPC . ']',
+					"Starting dhcp6 client for interfaces {$dhcp6cdescr}" . '"' . PHP_EOL
+				]);
 				$rtsoldscript .= "else\n";
-				$rtsoldscript .= "\t/usr/bin/logger -t rtsold \"RTSOLD Lock in place - sending SIGHUP to dhcp6c\"\n";
+				$rtsoldscript .= implode(' ', [
+					"\t/usr/bin/logger", '-p user.info', '-t rtsold',
+					'"INFO [' . LOG_PREFIX_DHCPC . ']',
+					"RTSOLD Lock in place - sending SIGHUP to dhcp6c" . '"' . PHP_EOL
+				]);
 				$rtsoldscript .= "\tdhcp6c_pid=\$(cat \"{$g['varrun_path']}/dhcp6c.pid\")\n";
 				$rtsoldscript .= "\t/bin/kill -1 \${dhcp6c_pid}\n";
 				$rtsoldscript .= "fi\n";
@@ -7284,7 +7321,7 @@ function interface_setup_pppoe_reset_file($pppif, $iface="") {
 		$cron_cmd = <<<EOD
 #!/bin/sh
 /usr/local/sbin/pfSctl -c 'interface reload {$iface}'
-/usr/bin/logger -t {$pppif} "PPPoE periodic reset executed on {$iface}"
+/usr/bin/logger -p user.notice -t {$pppif} "NOTICE PPPoE periodic reset executed on {$iface}"
 
 EOD;
 

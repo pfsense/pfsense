@@ -63,7 +63,7 @@ export LOWMEM
 if [ "${REALMEM}" -lt "$MIN_REALMEM_FOR_OPCACHE" ]; then
 	LOWMEM="TRUE"
 	echo ">>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache"
-	echo ">>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache" | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
+	echo "INFO >>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache" | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
 else
 
 	# Calculate opcache memory size according

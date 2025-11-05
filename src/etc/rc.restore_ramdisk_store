@@ -39,11 +39,11 @@ if [ -d "${RAM_Disk_Store}" ]; then
 	for backup_file in "${RAM_Disk_Store}/"*.tgz; do
 		[ -f "${backup_file}" ] || break
 		if ! /usr/bin/tar -xf "${backup_file}" -C / 2>&1; then
-			echo "RAM disk restore failed: $backup_file" >> /var/log/restore_ramdisk_store.boot
+			echo "INFO RAM disk restore failed: $backup_file" >> /var/log/restore_ramdisk_store.boot
 			continue
 		fi
 
-		echo "RAM disk restore succeeded: $backup_file" >> /var/log/restore_ramdisk_store.boot
+		echo "INFO RAM disk restore succeeded: $backup_file" >> /var/log/restore_ramdisk_store.boot
 
 		# If this backup is still there on a full install, but we aren't going to use RAM disks, remove the archive since this is a transition.
 		if [ -z "${USE_RAMDISK}" ]; then

@@ -804,10 +804,10 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 			break;
 		case 'system':
 		case 'vpn_service':
-			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
-						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ " .
+						$base_patterns['rfc3164']['host_pattern'] . "\ " .
 						$base_patterns['rfc3164']['process_pattern'] .
-						$base_patterns['rfc3164']['pid_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['pid_pattern'] . "\ " .
 						$base_patterns['rfc3164']['log_message_pattern'] . "$";
 			$patterns['rfc5424'] .= $base_patterns['rfc5424']['date_pattern'] . "\ " .
 						$base_patterns['rfc5424']['host_pattern'] . "\ " .
@@ -820,8 +820,8 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 			$type_pattern = "\(.*?\)";
 			$ip_address_pattern = "\(.*?\)";
 			$user_pattern = "\(.*?\)";
-			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
-						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ " .
+						$base_patterns['rfc3164']['host_pattern'] . "\ " .
 						$base_patterns['rfc3164']['process_pattern'] . "\ +" .
 						"\(.*?\)\,\ *" .
 						"\(.*?\)\,\ *" .

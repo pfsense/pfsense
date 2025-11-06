@@ -250,7 +250,7 @@ $section->add($group);
 $section->addInput(new Form_Checkbox(
 	'eimnat',
 	gettext('Endpoint-Independent Mapping'),
-	gettext('Enable EIM-NAT for UDP connections"'),
+	gettext('Enable EIM-NAT for UDP connections'),
 	$pconfig['eimnat']
 ))->setHelp(gettext('Endpoint-Independent Mapping (A.K.A. "full-cone") NAT enables applications ' .
 		'behind NAT speaking to multiple remote hosts to receive the same mappings.'));

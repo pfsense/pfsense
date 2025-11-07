@@ -7162,6 +7162,7 @@ function upgrade_240_to_241() {
  *     version
  */
 function additional_config_upgrade() {
+	fix_config_artifacts();
 }
 
 ?>

@@ -4672,3 +4672,152 @@ function remove_pppoe_cron_items(string $interface = '') {
 		}
 	}
 }
+
+/**
+ * Fixes a variety of configuration issues.
+ */
+function fix_config_artifacts() {
+	$conf = config_get_path('');
+	$conf_write = false;
+
+	/**
+	 * ===================================================================
+	 * Remove empty DHCP fields that can cause PHP errors.
+	 * ===================================================================
+	 */
+	foreach (['dhcpd', 'dhcpdv6'] as $path) {
+		foreach (array_get_path($conf, $path, []) as $interface_label => $interface_config) {
+			if (empty($interface_config)) {
+				array_del_path($conf, "{$path}/{$interface_label}");
+				$conf_write = true;
+			}
+		}
+	}
+
+	/**
+	 * ===================================================================
+	 * sudo package 0.3.10 and older added extra users and groups to the
+	 * in-memory config which could potentially be written to config.xml.
+	 * ===================================================================
+	 */
+
+	// Collect users and groups from config
+	$users_config = array_get_path($conf, 'system/user', []);
+	$groups_config = array_get_path($conf, 'system/group', []);
+
+	// Collect users and groups from packages
+	$package_users = [];
+	$command_output = exec_command('/usr/local/sbin/pkg-static query %U');
+	foreach (explode(PHP_EOL, $command_output) as $user) {
+		$user = trim($user);
+		if ($user == '') {
+			continue;
+		}
+		$package_users[$user] = $user;
+	}
+	$package_groups = [];
+	$command_output = exec_command('/usr/local/sbin/pkg-static query %G');
+	foreach (explode(PHP_EOL, $command_output) as $group) {
+		$group = trim($group);
+		if ($group == '') {
+			continue;
+		}
+		$package_groups[$group] = $group;
+	}
+
+	// Make the changes
+	$changed = false;
+	foreach ($users_config as $idx => $user_config) {
+		if (!is_array($user_config) || (count($user_config) > 1) || !isset($user_config['name']) ||
+		    (!isset($package_users[$user_config['name']]) && ($user_config['name'] != 'root'))) {
+			continue;
+		}
+		unset($users_config[$idx]);
+		$changed = true;
+	}
+	if ($changed) {
+		array_set_path($conf, 'system/user', array_values($users_config));
+		$conf_write = true;
+	}
+	$changed = false;
+	foreach ($groups_config as $idx => $group_config) {
+		if (!is_array($group_config) || (count($group_config) > 1) || !isset($group_config['name']) ||
+		    !isset($package_groups[$group_config['name']])) {
+			continue;
+		}
+		unset($groups_config[$idx]);
+		$changed = true;
+	}
+	if ($changed) {
+		array_set_path($conf, 'system/group', array_values($groups_config));
+		$conf_write = true;
+	}
+
+	/**
+	 * ===================================================================
+	 * Firewall rules should have unique tracker IDs. This is required to
+	 * properly trace firewall logs to their triggering rules. A now-fixed
+	 * bug resulted in copied rules with duplicate tracker IDs.
+	 * ===================================================================
+	 */
+
+	// Collect the broken rules.
+	$rule_trackers = [];
+	$rules = array_get_path($conf, 'filter/rule');
+	$rules_to_fix = [];
+	foreach ($rules as &$rule) {
+		// The tracker is required.
+		if (empty($rule['tracker']) || !is_numericint($rule['tracker'])) {
+			$rules_to_fix[] = &$rule;
+			continue;
+		}
+
+		// Make sure we're comparing strings.
+		if (!is_string($rule['tracker'])) {
+			$rule['tracker'] = strval($rule['tracker']);
+		}
+
+		// Prefix with 'a' to force a string array key.
+		$rule_tracker_string = "a{$rule['tracker']}";
+
+		// Trackers must be unique.
+		if (isset($rule_trackers[$rule_tracker_string])) {
+			$rules_to_fix[] = &$rule;
+			continue;
+		}
+
+		$rule_trackers[$rule_tracker_string] = true;
+	}
+	unset($rule);
+
+	// Make the changes.
+	if (!empty($rules_to_fix)) {
+		// Find an available tracker to start from.
+		ksort($rule_trackers, SORT_NATURAL);
+		$tracker = str_increment(ltrim(array_key_last($rule_trackers), 'a'));
+		if ($tracker > strval(PHP_INT_MAX - count($rules_to_fix))) {
+			// Fix all rules.
+			$tracker = strval((int)microtime(true));
+			$rules_to_fix = &$rules;
+		}
+
+		// Fix the broken rules.
+		foreach ($rules_to_fix as &$rule_to_fix) {
+			$rule_to_fix['tracker'] = str_increment($tracker);
+		}
+		unset($rule_to_fix);
+
+		array_set_path($conf, 'filter/rule', $rules);
+		$conf_write = true;
+	}
+
+	/**
+	 * ===================================================================
+	 * Write the fixed configuration.
+	 * ===================================================================
+	 */
+	if ($conf_write) {
+		config_set_path('', $conf);
+		write_config('Fixed configuration artifacts');
+	}
+}

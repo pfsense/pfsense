@@ -121,7 +121,7 @@ class pfsense_xmlrpc_client {
 					if (empty($errormsg) || (is_array($errormsg) && empty($errormsg[1]))) {
 						$errormsg = $e->getMessage();
 					}
-					$this->error = localize_text("A communications error occurred while attempting to call XMLRPC method {%s}: {%s}", $method, $errormsg);
+					$this->error = localize_text("A communications error occurred while attempting to call XMLRPC method %s: %s", $method, $errormsg);
 				} else {
 					$this->error = localize_text("CurlException calling XMLRPC method %s #%s", $method, $previouserror->getMessage());
 				}

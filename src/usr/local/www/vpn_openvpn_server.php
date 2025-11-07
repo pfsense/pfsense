@@ -1088,8 +1088,11 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'*Peer Certificate Authority',
-			sprintf('No Certificate Authorities defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
-		));
+			sprintf(
+		        gettext('No Certificate Authorities defined. One may be created here: <a href="%s">System &gt; Cert. Manager</a>'),
+		        'system_camanager.php'
+			)
+	));
 	}
 
 	if (count(config_get_path('crl', []))) {
@@ -1102,8 +1105,11 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
-		));
+			    sprintf(
+                    gettext('No Certificate Revocation Lists defined. One may be created here: <a href="%s">System &gt; Cert. Manager</a>'),
+                    'system_camanager.php'
+		 )
+	));
 	}
 
 	$section->addInput(new Form_Checkbox(

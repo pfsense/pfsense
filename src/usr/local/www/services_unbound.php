@@ -648,12 +648,7 @@ endforeach;
 </div>
 
 <span class="help-block">
-	Enter any domains for which the resolver's standard DNS lookup process should be overridden and a different (non-standard)
-	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered,
-	such as 'test', 'nas.home.arpa', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the
-	authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.
-	If there are multiple authoritative DNS servers available for a domain then make a separate entry for each,
-	using the same domain name.
+	<?= gettext("Enter any domains for which the resolver's standard DNS lookup process should be overridden and a different (non-standard) lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered, such as 'test', 'nas.home.arpa', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried. If there are multiple authoritative DNS servers available for a domain then make a separate entry for each, using the same domain name.") ?>
 </span>
 
 <nav class="action-buttons">

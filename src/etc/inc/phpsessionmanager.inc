@@ -65,14 +65,14 @@ function phpsession_end($write = false) {
 	}
 	if ($session_opencounter < 0) {
 		$session_opencounter = 0;
-		syslog(LOG_WARNING, "PHPSESSION closed more often than opened!" . simplestacktrace());
+		syslog(LOG_WARNING, "WARNING [PHPSESSION] closed more often than opened!" . simplestacktrace());
 	}
 }
 
 function phpsession_cleanupcheck() {
 	global $session_opencounter, $session_action_list;
 	if ($session_opencounter > 0) {
-		syslog(LOG_WARNING, "PHPSESSION {$session_opencounter} open sessions left at shutdown script!".print_r($session_action_list, true));
+		syslog(LOG_WARNING, "WARNING [PHPSESSION] {$session_opencounter} open sessions left at shutdown script!".print_r($session_action_list, true));
 	}
 }
 

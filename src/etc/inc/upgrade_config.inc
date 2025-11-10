@@ -6990,6 +6990,23 @@ function upgrade_239_to_240() {
 
 function upgrade_240_to_241() {
 	/**
+	 * The DH 1024 option has beeen removed. See:
+	 * https://redmine.pfsense.org/issues/16421
+	 */
+	$changed = false;
+	$openvpn_servers_config = config_get_path('openvpn/openvpn-server', []);
+	foreach ($openvpn_servers_config as &$server_config) {
+		if (array_get_path($server_config, 'dh_length', 'none') == '1024') {
+			$server_config['dh_length'] = '2048';
+			$changed = true;
+		}
+	}
+	if ($changed) {
+		config_set_path('openvpn/openvpn-server', $openvpn_servers_config);
+		file_notice('config.xml', gettext('The OpenVPN Server option "DH Parameter Length" has been updated to a minimum of 2048.'));
+	}
+
+	/**
 	 * Special characters in PPP passwords are now handled correctly.
 	 * Trim spaces that were previously ignored. See:
 	 * https://redmine.pfsense.org/issues/16128

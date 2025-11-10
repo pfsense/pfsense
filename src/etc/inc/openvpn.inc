@@ -89,7 +89,6 @@ $openvpn_verbosity_level = array(
 
 global $openvpn_dh_lengths;
 $openvpn_dh_lengths = array(
-	1024 => "1024 bit",
 	2048 => "2048 bit",
 	3072 => "3072 bit",
 	4096 => "4096 bit",

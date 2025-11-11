@@ -2148,6 +2148,32 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	return $authenticated;
 }
 
+/*
+ * Function to remove problematic characters from a username before using it in
+ * logs or other sensitive contexts.
+ *
+ * These usernames are not valid, so there is little use in printing them as-is.
+ */
+function cleanup_invalid_username($username) {
+	$clean_username = "";
+	/* Trim to 32 chars, add string indicate text was removed */
+	if (strlen($username) > 32) {
+		$username = substr($username, 0, 32);
+		$username .= "[...]";
+	}
+	/* Remove any control characters, ASCII as well as Unicode, along with
+	 * other problematic characters. */
+	for ($i=0; $i < strlen($username); $i++) {
+		if (!IntlChar::iscntrl($username[$i]) &&
+		    !in_array($username[$i], ["'", '"', ':'])) {
+			$clean_username .= $username[$i];
+		} else {
+			$clean_username .= "_";
+		}
+	}
+	return $clean_username;
+}
+
 function session_auth() {
 	global $_SESSION, $page;
 
@@ -2216,7 +2242,16 @@ function session_auth() {
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
-			logger($log_priority, localize_text("webConfigurator authentication error for user '%1\$s' from: %2\$s", $_POST['usernamefld'], get_user_remote_address(false)), null, LOG_AUTH);
+			logger(
+				$log_priority,
+				sprintf(
+					"webConfigurator authentication error for user '%1\$s' from: %2\$s",
+					cleanup_invalid_username($_POST['usernamefld']),
+					get_user_remote_address(false)
+				),
+				null,
+				LOG_AUTH
+			);
 			if (isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;

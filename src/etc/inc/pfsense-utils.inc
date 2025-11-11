@@ -4795,7 +4795,7 @@ function fix_config_artifacts() {
 		// Find an available tracker to start from.
 		ksort($rule_trackers, SORT_NATURAL);
 		$tracker = str_increment(ltrim(array_key_last($rule_trackers), 'a'));
-		if ($tracker > strval(PHP_INT_MAX - count($rules_to_fix))) {
+		if ($tracker > strval(4294967295 - count($rules_to_fix))) {
 			// Fix all rules.
 			$tracker = strval((int)microtime(true));
 			$rules_to_fix = &$rules;

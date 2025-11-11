@@ -254,6 +254,12 @@ define('LOG_PREFIX_DNSF', 'DNS Forwarder');
 define('LOG_PREFIX_SHAPER', 'Traffic Shaper');
 define('LOG_PREFIX_NTP', 'NTP');
 
+// User authentication events
+define('LOG_AUTH_EVENT_LOGIN', 1);
+define('LOG_AUTH_EVENT_LOGOUT', 2);
+define('LOG_AUTH_EVENT_ERROR', 3);
+define('LOG_AUTH_EVENT_TIMEOUT', 4);
+
 /**
  * Get a list of valid rule label tags.
  *
@@ -2677,12 +2683,12 @@ function log_error($error) {
 *   $error     - string containing the syslog message.
 * RESULT
 *   null
-* @deprecated Use logger().
+* @deprecated Use log_auth_event().
 ******/
 function log_auth($error, $force_quiet = false) {
-	logger(
+	syslog(
 		($force_quiet || config_path_enabled('system/webgui', 'quietlogin')) ? LOG_NOTICE|LOG_AUTH : LOG_AUTH,
-		$error,
+		"{$_SERVER['SCRIPT_NAME']}: {$error}",
 	);
 }
 
@@ -2707,6 +2713,27 @@ function get_user_remote_authsource() {
 		$authsource .= " ({$_SESSION['authsource']})";
 	}
 	return $authsource;
+}
+
+function log_auth_event(int $log_auth_event, string $username, string $source, string $reason = '') {
+	$log_format = match ($log_auth_event) {
+		// sshguard checks for this (English) string format.
+		LOG_AUTH_EVENT_ERROR => "%s: webConfigurator authentication error for user '%s' from: %s%s",
+
+		LOG_AUTH_EVENT_LOGIN => "%s: Successful login for user '%s' from: %s%s",
+		LOG_AUTH_EVENT_LOGOUT => "%s: User logged out for user '%s' from: %s%s",
+		LOG_AUTH_EVENT_TIMEOUT => "%s: Session timed out for user '%s' from: %s%s",
+
+		default => false
+	};
+	if ($log_format === false) {
+		throw new Exception("Invalid log_auth_event ({$log_auth_event})", 1);
+	}
+
+	syslog(
+		(config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE|LOG_AUTH : LOG_EMERG|LOG_AUTH),
+		sprintf($log_format, $_SERVER['SCRIPT_NAME'], $username, $source, ((strlen($reason) > 0) ? " - {$reason}" : ''))
+	);
 }
 
 /**

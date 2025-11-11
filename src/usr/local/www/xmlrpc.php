@@ -65,14 +65,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		if (!$login_ok) {
-			logger(
-				(config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE|LOG_AUTH : LOG_AUTH),
-				sprintf(
-					"webConfigurator authentication error for user '%1\$s' from: %2\$s",
-					cleanup_invalid_username($username),
-					$this->remote_addr
-				)
-			);
+			log_auth_event(LOG_AUTH_EVENT_ERROR, cleanup_invalid_username($username), $this->remote_addr);
 
 			require_once("XML/RPC2/Exception.php");
 			throw new XML_RPC2_FaultException(gettext(
@@ -88,13 +81,7 @@ class pfsense_xmlrpc_server {
 		 */
 		if (isset($user_entry['uid']) && $user_entry['uid'] != '0' &&
 		    !userHasPrivilege($user_entry, 'system-xmlrpc-ha-sync')) {
-			logger(
-				(config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE|LOG_AUTH : LOG_AUTH),
-				localize_text(
-					"webConfigurator authentication error for '%s' from %s not enough privileges",
-					$username, $this->remote_addr
-				)
-			);
+			log_auth_event(LOG_AUTH_EVENT_ERROR, $username, $this->remote_addr, 'not enough privileges');
 
 			require_once("XML/RPC2/Exception.php");
 			throw new XML_RPC2_FaultException(gettext(

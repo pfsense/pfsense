@@ -2229,7 +2229,7 @@ function session_auth() {
 			$_SESSION['protocol'] = config_get_path('system/webgui/protocol');
 			$_SESSION['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
 			phpsession_end(true);
-			logger($log_priority, localize_text("Successful login for user '%1\$s' from: %2\$s", $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()), null, LOG_AUTH);
+			log_auth_event(LOG_AUTH_EVENT_LOGIN, $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource());
 			if (isset($_POST['postafterlogin'])) {
 				return true;
 			} else {
@@ -2242,16 +2242,7 @@ function session_auth() {
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
-			logger(
-				$log_priority,
-				sprintf(
-					"webConfigurator authentication error for user '%1\$s' from: %2\$s",
-					cleanup_invalid_username($_POST['usernamefld']),
-					get_user_remote_address(false)
-				),
-				null,
-				LOG_AUTH
-			);
+			log_auth_event(LOG_AUTH_EVENT_ERROR, cleanup_invalid_username($_POST['usernamefld']), get_user_remote_address(false));
 			if (isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;
@@ -2289,9 +2280,9 @@ function session_auth() {
 	if (isset($_POST['logout'])) {
 
 		if ($_SESSION['Logout']) {
-			logger(LOG_NOTICE, localize_text("Session timed out for user '%1\$s' from: %2\$s", $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()), null, LOG_AUTH);
+			log_auth_event(LOG_AUTH_EVENT_TIMEOUT, $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource());
 		} else {
-			logger(LOG_NOTICE, localize_text("User logged out for user '%1\$s' from: %2\$s", $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()), null, LOG_AUTH);
+			log_auth_event(LOG_AUTH_EVENT_LOGOUT, $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource());
 		}
 
 		/* wipe out $_SESSION */

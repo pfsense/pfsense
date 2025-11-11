@@ -2359,27 +2359,6 @@ function print_credit() {
 			'<a target="_blank" href="https://pfsense.org/license">' .
 			gettext(' View license.') . '</a>';
 }
-function get_user_remote_address($print_all=true) {
-	$remote_address = $_SERVER['REMOTE_ADDR'];
-	/* Add extra identifying header information upon request */
-	if ($print_all) {
-		if (!empty($_SERVER['HTTP_CLIENT_IP'] &&
-		    is_ipaddr($_SERVER['HTTP_CLIENT_IP']))) {
-			$remote_address .= "[{$_SERVER['HTTP_CLIENT_IP']}]";
-		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) &&
-			  is_ipaddr($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			$remote_address .= "[{$_SERVER['HTTP_X_FORWARDED_FOR']}]";
-		}
-	}
-	return $remote_address;
-}
-function get_user_remote_authsource() {
-	$authsource = "";
-	if (!empty($_SESSION['authsource'])) {
-		$authsource .= " ({$_SESSION['authsource']})";
-	}
-	return $authsource;
-}
 
 function set_pam_auth() {
 	$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode', []));

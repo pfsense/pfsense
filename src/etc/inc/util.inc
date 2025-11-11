@@ -2686,6 +2686,29 @@ function log_auth($error, $force_quiet = false) {
 	);
 }
 
+function get_user_remote_address($print_all=true) {
+	$remote_address = $_SERVER['REMOTE_ADDR'];
+	/* Add extra identifying header information upon request */
+	if ($print_all) {
+		if (!empty($_SERVER['HTTP_CLIENT_IP'] &&
+		    is_ipaddr($_SERVER['HTTP_CLIENT_IP']))) {
+			$remote_address .= "[{$_SERVER['HTTP_CLIENT_IP']}]";
+		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) &&
+			  is_ipaddr($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$remote_address .= "[{$_SERVER['HTTP_X_FORWARDED_FOR']}]";
+		}
+	}
+	return $remote_address;
+}
+
+function get_user_remote_authsource() {
+	$authsource = "";
+	if (!empty($_SESSION['authsource'])) {
+		$authsource .= " ({$_SESSION['authsource']})";
+	}
+	return $authsource;
+}
+
 /**
  * Sends a message, prefixed with the log level, to the system logger.
  *

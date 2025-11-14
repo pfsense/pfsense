@@ -680,15 +680,11 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	global $g;
 
 	/* Remove all additional packages */
-	if (is_array(config_get_path('installedpackages/package'))) {
-		foreach (get_pkg_info('all', true, true) as $pkg) {
-			if (is_system_default_package($pkg['name'])) {
-				continue;
-			} else {
-				mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade " .
-				    "-r {$pkg['name']} -f");
-			}
+	foreach (get_pkg_info('all', true, true) as $pkg) {
+		if (is_system_default_package($pkg['name'])) {
+			continue;
 		}
+		mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade -r {$pkg['name']} -f");
 	}
 
 	/*

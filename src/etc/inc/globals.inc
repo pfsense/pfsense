@@ -578,6 +578,36 @@ add_reserved_table(
 	]
 );
 
+/* Default packages included with a system install. */
+global $default_system_packages;
+$default_system_packages = [];
+
+function add_default_system_package(array $package) {
+	global $default_system_packages;
+	if (!array_key_exists('name', $package)) {
+		return;
+	}
+	$default_system_packages[$package['name']] = [
+		'vital' => (array_key_exists('vital', $package) && ($package['vital'] === true))
+	];
+}
+
+function is_system_default_package(string $name) {
+	if (empty($name)) {
+		return false;
+	}
+	global $default_system_packages;
+	return isset($default_system_packages[$name]);
+}
+
+function is_vital_system_default_package(string $name) {
+	if (empty($name)) {
+		return false;
+	}
+	global $default_system_packages;
+	return (isset($default_system_packages[$name]) && ($default_system_packages[$name]['vital'] === true));
+}
+
 /* VLAN Prio values. */
 global $vlanprio_values;
 $vlanprio_values = [

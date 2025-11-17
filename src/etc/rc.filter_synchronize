@@ -79,14 +79,16 @@ function carp_check_version($rpc_client) {
 
 	$resp = $rpc_client->xmlrpc_method('host_firmware_version');
 	$ver = config_get_path('version');
-	log_error(sprintf(gettext("XMLRPC versioncheck: ").$resp['config_version'] ." -- ". $ver));
+	logger(LOG_INFO, localize_text("XMLRPC versioncheck: %s -- %s", $resp['config_version'], $ver), LOG_PREFIX_HA);
 	if (!isset($resp['config_version'])) {
-		update_filter_reload_status("The {$g['product_label']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
-		log_error("The {$g['product_label']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
+		$msg = localize_text("The %s software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!", $g['product_label']);
+		update_filter_reload_status($msg);
+		logger(LOG_WARNING, $msg, LOG_PREFIX_HA);
 		return false;
 	} elseif ($resp['config_version'] != $ver) {
-		update_filter_reload_status("The other member is on a different configuration version of {$g['product_label']}. Sync will not be done to prevent problems!");
-		log_error("The other member is on a different configuration version of {$g['product_label']}. Sync will not be done to prevent problems!");
+		$msg = localize_text("The other member is on a different configuration version of %s. Sync will not be done to prevent problems!", $g['product_label']);
+		update_filter_reload_status($msg);
+		logger(LOG_WARNING, $msg, LOG_PREFIX_HA);
 		return false;
 	} else {
 		return true;
@@ -333,7 +335,7 @@ if (config_get_path('hasync')) {
 	}
 
 	if (is_array($sections) && count($sections) <= 0) {
-		log_error("Nothing has been configured to be synched. Skipping....");
+		logger(LOG_INFO, localize_text("Nothing has been configured to be synched. Skipping...."), LOG_PREFIX_HA);
 		return;
 	}
 
@@ -346,7 +348,7 @@ if (config_get_path('hasync')) {
 	/* Retrieve sections for sync from any packages that provide them */
 	foreach (pkg_call_plugins("plugin_xmlrpc_send", []) as $pkg => $result) {
 		if (!is_array($result)) {
-			log_error("Package {$pkg} returned non-array from its plugin_xmlrpc_send handler");
+			logger(LOG_ERR, localize_text("Package %s returned non-array from its plugin_xmlrpc_send handler", $pkg), LOG_PREFIX_HA);
 			continue;
 		}
 

@@ -88,7 +88,7 @@ if ($_POST['widgetkey']) {
 			}
 			fclose($fd_pic);
 			if (!$data) {
-				log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
+				logger(LOG_ERR, localize_text("Could not read file %s", $_FILES['pictfile']['tmp_name']));
 				die("Could not read temporary file");
 			} else {
 				// Make sure they upload an image and not some other file

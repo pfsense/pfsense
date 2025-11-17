@@ -32,9 +32,6 @@
 ##|*MATCH=diag_halt.php*
 ##|-PRIV
 
-// Set DEBUG to true to prevent the system_halt() function from being called
-define("DEBUG", false);
-
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
@@ -53,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 	print_info_box(gettext("The system is halting now. This may take one minute or so."), 'success', false);
 
-	if (DEBUG) {
+	if (g_get('debug')) {
 	   printf(gettext("Not actually halting (DEBUG is set true)%s"), "<br />");
 	} else {
 		notify_all_remote(sprintf(gettext("%s will shutdown and halt system now."), g_get('product_label')));

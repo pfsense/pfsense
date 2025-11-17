@@ -132,7 +132,7 @@ function get_acb_device_key() {
 
 	/* Still no valid key, something went wrong */
 	if (!is_valid_acb_device_key($config_device_key)) {
-		log_error(gettext('Unable to locate or generate a valid AutoConfigBackup device key'));
+		logger(LOG_ERR, localize_text('Unable to locate or generate a valid device key'), LOG_PREFIX_ACB);
 		return null;
 	} else {
 		return $config_device_key;
@@ -267,23 +267,25 @@ function acb_backup_stage_upload($manual = false) {
 	$encryptpw = config_get_path('system/acb/encryption_password');
 
 	if (is_acb_ignored_reason($reason)) {
-		log_error(sprintf(gettext('Skipping staging AutoConfigBackup entry for ignored reason: %s.'), $reason));
+		logger(LOG_NOTICE, localize_text('Skipping staging entry for ignored reason: %s.', $reason), LOG_PREFIX_ACB);
 		return;
 	}
 
 	if (!$encryptpw) {
 		if (!file_exists("/cf/conf/autoconfigback.notice")) {
-			$notice_text = gettext('The Automatic Configuration Backup Encryption Password is not set. ' .
-				'Configure the Encryption Password at Services > AutoConfigBackup > Settings.');
-			log_error($notice_text);
-			file_notice("AutoConfigBackup", $notice_text, $notice_text, "");
+			$notice_text = localize_text(
+				'The Encryption Password is not set. Configure the Encryption Password at %s > %s > %s.',
+				localize_text('Services'), localize_text('AutoConfigBackup'), localize_text('Settings')
+			);
+			logger(LOG_ERR, $notice_text, LOG_PREFIX_ACB);
+			file_notice("AutoConfigBackup", $notice_text, LOG_PREFIX_ACB);
 			touch("/cf/conf/autoconfigback.notice");
 		}
 	} else {
 		/* If the configuration has changed, upload to ACB service */
 		if (is_acb_upload_needed()) {
-			$notice_text = sprintf(gettext('Staging AutoConfigBackup encrypted configuration backup for deferred upload to %s'), $acb_base_url);
-			log_error($notice_text);
+			$notice_text = localize_text('Staging encrypted configuration backup for deferred upload to %s', $acb_base_url);
+			logger(LOG_INFO, $notice_text, LOG_PREFIX_ACB);
 			update_filter_reload_status($notice_text);
 
 			/* Encrypt config.xml contents */
@@ -317,8 +319,9 @@ function acb_backup_stage_upload($manual = false) {
 			file_put_contents($acbuploadpath . $post_fields['sha256_hash'] . ".form", json_encode($post_fields));
 			file_put_contents($acbuploadpath . $post_fields['sha256_hash'] . ".data", $data);
 		} else {
-			/* Debugging */
-			//log_error(gettext('No AutoConfigBackup action required.'));
+			if (g_get('debug')) {
+				logger(LOG_DEBUG, localize_text('No action required.'), LOG_PREFIX_ACB);
+			}
 		}
 	}
 }
@@ -346,7 +349,7 @@ function acb_backup_upload($basename) {
 
 	/* Check backup reason in metadata against ignore list */
 	if (is_acb_ignored_reason($post_fields['reason'])) {
-		log_error(sprintf(gettext('Skipping staged AutoConfigBackup entry for ignored reason: %s.'), $post_fields['reason']));
+		logger(LOG_NOTICE, localize_text('Skipping staged entry for ignored reason: %s.', $post_fields['reason']), LOG_PREFIX_ACB);
 		/* Delete the staged backup files */
 		unlink_if_exists($acbuploadpath . $basename . ".data");
 		unlink_if_exists($acbuploadpath . $basename . ".form");
@@ -375,8 +378,8 @@ function acb_backup_upload($basename) {
 		$fd = fopen($acb_last_backup_file, "w");
 		fwrite($fd, config_get_path('revision/time'));
 		fclose($fd);
-		$notice_text = sprintf(gettext('Completed AutoConfigBackup encrypted configuration backup upload to %s (success)'), $acb_base_url);
-		log_error($notice_text);
+		$notice_text = localize_text('Completed encrypted configuration backup upload to %s (success)', $acb_base_url);
+		logger(LOG_INFO, $notice_text, LOG_PREFIX_ACB);
 		update_filter_reload_status($notice_text);
 	}
 }
@@ -532,13 +535,13 @@ function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $d
 /* Log ACB errors when necessary. */
 function acb_error_log($data) {
 	global $acb_base_url;
-	$notice_text = sprintf(
-		gettext("An error occurred while uploading the encrypted %s configuration backup to %s (%s)"),
+	$notice_text = localize_text(
+		"An error occurred while uploading the encrypted %s configuration backup to %s",
 		g_get('product_label'),
-		$acb_base_url,
-		htmlspecialchars($data));
-	log_error($notice_text . " - " . $data);
-	file_notice("AutoConfigBackup", $notice_text);
+		$acb_base_url
+	);
+	logger(LOG_ERR, "{$notice_text} - {$data}", LOG_PREFIX_ACB);
+	file_notice("AutoConfigBackup", "{$notice_text} (" . htmlspecialchars($data) . ")", LOG_PREFIX_ACB);
 	update_filter_reload_status($notice_text);
 }
 

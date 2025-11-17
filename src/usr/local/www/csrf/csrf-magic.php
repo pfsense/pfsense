@@ -185,7 +185,7 @@ function csrf_ob_handler($buffer, $flags) {
 /**
  * Checks if this is a post request, and if it is, checks if the nonce is valid.
  * @param bool $fatal Whether or not to fatally error out if there is a problem.
- * @return True if check passes or is not necessary, false if failure.
+ * @return true if check passes or is not necessary, false if failure.
  */
 function csrf_check($fatal = true) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') return true;

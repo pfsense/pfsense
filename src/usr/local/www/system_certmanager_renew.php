@@ -75,13 +75,13 @@ if ($_POST['renew']) {
 	$old_serial = cert_get_serial($torenew['crt']);
 	if (cert_renew($torenew_config, ($_POST['reusekey'] == "yes"), ($_POST['strictsecurity'] == "yes"), ($_POST['reuseserial'] == "yes"))) {
 		$new_serial = cert_get_serial($torenew['crt']);
-		$message = sprintf(gettext("Renewed %s %s (%s) - Serial %s -> %s"),
+		$message = localize_text("Renewed %s %s (%s) - Serial %s -> %s",
 					$typestring,
 					$torenew['refid'],
 					$torenew['descr'],
 					$old_serial,
 					$new_serial);
-		log_error($message);
+		logger(LOG_NOTICE, $message);
 		write_config($message);
 		ca_setup_trust_store();
 		cert_restart_services($service_function($torenew['refid']));

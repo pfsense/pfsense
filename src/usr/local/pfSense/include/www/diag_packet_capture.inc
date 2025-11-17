@@ -245,7 +245,6 @@ class FilterAttribute {
 				default:
 					throw new Exception("Invalid match operator given for the Type: " .
 					                    "{$filter_section}:{$attribute_operator}:{$attribute_type}");
-					break;
 			}
 		}
 		$this->operator = $attribute_operator;

@@ -40,7 +40,7 @@ global $cpzoneid;
 
 $cpzone = str_replace("\n", "", $argv[1]);
 if (!is_array(config_get_path("captiveportal/{$cpzone}"))) {
-	log_error("{$cpzone} is not a valid zone in the configuration!");
+	logger(LOG_WARNING, localize_text("%s is not a valid zone in the configuration!", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 	return;
 }
 $cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
@@ -48,7 +48,7 @@ $cpzoneid = config_get_path("captiveportal/{$cpzone}/zoneid");
 $rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 3);
 
 if (!$rcprunelock) {
-	log_error("Skipping CP pruning process for zone {$cpzone} because previous/another instance is already running");
+	logger(LOG_NOTICE, localize_text("Skipping pruning process for zone %s because previous/another instance is already running", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 	unlock_force("rcprunecaptiveportal{$cpzone}");
 	return;
 }

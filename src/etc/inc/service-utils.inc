@@ -148,13 +148,17 @@ function stop_service($name) {
 	}
 }
 
-function restart_service($name) {
+function restart_service($name, string $pid = '', int $timeout = 1) {
 	if (empty($name)) {
 		return;
 	}
 
 	if (is_service_running($name)) {
 		stop_service($name);
+	}
+
+	if (strlen($pid) > 0) {
+		sigkillbypid($pid, "TERM", $timeout);
 	}
 	start_service($name);
 

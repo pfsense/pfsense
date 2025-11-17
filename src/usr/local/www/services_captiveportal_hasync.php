@@ -45,7 +45,7 @@ if (empty($cpzone)) {
 }
 
 if (empty(config_get_path("captiveportal/{$cpzone}"))) {
-	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
+	logger(LOG_WARNING, localize_text("Submission on captiveportal page with unknown zone parameter: %s", htmlspecialchars($cpzone)), LOG_PREFIX_CAPTIVEPORTAL);
 	header("Location: services_captiveportal_zones.php");
 	exit();
 }

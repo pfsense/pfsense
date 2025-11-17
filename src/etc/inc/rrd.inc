@@ -31,7 +31,7 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	exec("$rrdtool dump " . escapeshellarg($rrddatabase) . " {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {
 		$dumpout = implode(" ", $dumpout);
-		log_error(sprintf(gettext('RRD dump failed exited with %1$s, the error is: %2$s'), $dumpret, $dumpout));
+		logger(LOG_ERR, localize_text('RRD dump failed exited with %1$s, the error is: %2$s', $dumpret, $dumpout));
 	}
 	return($dumpret);
 }
@@ -42,7 +42,7 @@ function create_new_rrd($rrdcreatecmd) {
 	$_gb = exec("$rrdcreatecmd 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 	if ($rrdcreatereturn <> 0) {
 		$rrdcreateoutput = implode(" ", $rrdcreateoutput);
-		log_error(sprintf(gettext('RRD create failed exited with %1$s, the error is: %2$s'), $rrdcreatereturn, $rrdcreateoutput));
+		logger(LOG_ERR, localize_text('RRD create failed exited with %1$s, the error is: %2$s', $rrdcreatereturn, $rrdcreateoutput));
 	}
 	unset($rrdcreateoutput);
 	return $rrdcreatereturn;
@@ -57,7 +57,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsold = count($rrdoldxml['ds']);
 	$numdsnew = count($rrdnewxml['ds']);
-	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew , $numrranew));
+	logger(LOG_NOTICE, localize_text('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases', $numdsold, $numrraold, $numdsnew , $numrranew));
 
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
@@ -141,7 +141,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 
 	$numrranew = count($rrdoldxml['rra']);
 	$numdsnew = count($rrdoldxml['ds']);
-	log_error(sprintf(gettext('The new RRD now has %1$s DS values and %2$s RRA databases'), $numdsnew, $numrranew));
+	logger(LOG_NOTICE, localize_text('The new RRD now has %1$s DS values and %2$s RRA databases', $numdsnew, $numrranew));
 	return $rrdoldxml;
 }
 
@@ -1018,7 +1018,7 @@ EOD;
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
-		log_error(gettext("Creating rrd update script"));
+		logger(LOG_INFO, localize_text("Creating rrd update script"));
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");

@@ -187,7 +187,7 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes) {
 	xml_parser_set_option($xml_parser, XML_OPTION_SKIP_WHITE, 1);
 
 	if (!($fp = fopen($cffile, "r"))) {
-		log_error(gettext("Error: could not open XML input") . "\n");
+		logger(LOG_CRIT, localize_text("Could not open XML input"), LOG_PREFIX_CONFIG);
 		if (isset($parsed_attributes)) {
 			$parsed_attributes = array();
 			unset($parsedattrs);
@@ -197,9 +197,9 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes) {
 
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			log_error(sprintf(gettext('XML error: %1$s at line %2$d') . "\n",
+			logger(LOG_CRIT, localize_text('XML error: %1$s at line %2$d',
 				xml_error_string(xml_get_error_code($xml_parser)),
-				xml_get_current_line_number($xml_parser)));
+				xml_get_current_line_number($xml_parser)), LOG_PREFIX_CONFIG);
 			if (isset($parsed_attributes)) {
 				$parsed_attributes = array();
 				unset($parsedattrs);
@@ -209,7 +209,7 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes) {
 	}
 
 	if (!$parsedcfg[$rootobj]) {
-		log_error(sprintf(gettext("XML error: no %s object found!") . "\n", $rootobj));
+		logger(LOG_CRIT, localize_text("XML error: no %s object found!", $rootobj), LOG_PREFIX_CONFIG);
 		if (isset($parsed_attributes)) {
 			$parsed_attributes = array();
 			unset($parsedattrs);

@@ -26,6 +26,7 @@ require_once("util.inc");
 require_once("globals.inc");
 require_once("pfsense-utils.inc");
 
+// TODO: fix hardcoded interface labels and use of unassigned variables
 // Save all of the parameters changed by the setup wizard
 function save_setupwizard_config(
 	$hostname,

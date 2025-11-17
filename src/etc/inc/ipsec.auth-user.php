@@ -34,9 +34,6 @@ require_once("config.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
-/* setup syslog logging */
-openlog("charon", LOG_ODELAY, LOG_AUTH);
-
 if (isset($_GET['username'])) {
 	$authmodes = array_filter(explode(",", $_GET['authcfg']));
 	$username = $_GET['username'];
@@ -51,13 +48,11 @@ if (isset($_GET['username'])) {
 }
 
 if (!$username) {
-	syslog(LOG_ERR, "invalid user authentication environment");
+	logger(LOG_ERR, localize_text("invalid user authentication environment"), LOG_PREFIX_IPSEC, LOG_AUTH);
 	if (isset($_GET['username'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		exit (-1);
 	}
 }
@@ -65,13 +60,11 @@ if (!$username) {
 $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
-	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.");
+	logger(LOG_WARNING, localize_text("Username does not match certificate common name (%s != %s), access denied.", $username, $common_name), LOG_PREFIX_IPSEC, LOG_AUTH);
 	if (isset($_GET['username'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		exit (1);
 	}
 }
@@ -98,7 +91,7 @@ foreach ($authmodes as $authmode) {
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin") ||
 			    (!empty($ipsec_groups) && (count(array_intersect($userGroups, $ipsec_groups)) == 0))) {
 				$authenticated = false;
-				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.");
+				logger(LOG_WARNING, localize_text("user '%s' cannot authenticate through IPsec since the required privileges are missing.", $username), LOG_PREFIX_IPSEC, LOG_AUTH);
 				continue;
 			}
 		}
@@ -107,13 +100,11 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user '{$username}' could not authenticate.");
+	logger(LOG_WARNING, localize_text("user '%s' could not authenticate.", $username), LOG_PREFIX_IPSEC, LOG_AUTH);
 	if (isset($_GET['username'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		exit (-1);
 	}
 }
@@ -122,8 +113,7 @@ if (file_exists("/etc/inc/ipsec.attributes.php")) {
 	include_once("/etc/inc/ipsec.attributes.php");
 }
 
-syslog(LOG_NOTICE, "user '{$username}' authenticated");
-closelog();
+logger(LOG_NOTICE, localize_text("user '%s' authenticated", $username), LOG_PREFIX_IPSEC, LOG_AUTH);
 
 if (isset($_GET['username'])) {
 	echo "OK";

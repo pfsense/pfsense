@@ -34,12 +34,12 @@ function handle_argument_group($iface, $action) {
 	global $g;
 
 	if (empty(config_get_path("interfaces/{$iface}"))) {
-		log_error("Cannot find interface configuration for {$iface}");
+		logger(LOG_ERR, localize_text("Cannot find interface configuration for %s", $iface));
 		return;
 	}
 
 	if (!config_path_enabled("interfaces/{$iface}")) {
-		log_error("Linkup detected on disabled interface...Ignoring");
+		logger(LOG_NOTICE, localize_text("Linkup detected on disabled interface... Ignoring"));
 		return;
 	}
 
@@ -52,14 +52,14 @@ function handle_argument_group($iface, $action) {
 	/* Take care of events on bridge members when IP is configured on bridge */
 	$bridge_if = link_interface_to_bridge($iface);
 	if (!empty($bridge_if) && empty($ipaddr) && empty($ip6addr)) {
-		log_error("Ignoring link event for bridge member without IP address configuration");
+		logger(LOG_NOTICE, localize_text("Ignoring link event for bridge member without IP address configuration"));
 		return;
 	}
 
 	/* Ignore events on LAGG members without IP address configuration */
 	$lagg_if = link_interface_to_lagg($iface);
 	if (!empty($lagg_if) && empty($ipaddr) && empty($ip6addr)) {
-		log_error("Ignoring link event for LAGG member without IP address configuration");
+		logger(LOG_NOTICE, localize_text("Ignoring link event for LAGG member without IP address configuration"));
 		return;
 	}
 
@@ -73,11 +73,11 @@ function handle_argument_group($iface, $action) {
 	}
 	$addrs = implode(', ', $addrs);
 	if (($staticv4 === true) && ($staticv6 === true)) {
-		log_error("Hotplug event detected for {$friendly}({$iface}) static IP address ({$addrs})");
+		logger(LOG_NOTICE, localize_text("Hotplug event detected for %s (%s) static IP address (%s)", $friendly, $iface, $addrs));
 		interfaces_staticarp_configure($iface);
 		switch ($action) {
 			case "stop":
-				log_error("DEVD Ethernet detached event for {$iface}");
+				logger(LOG_NOTICE, localize_text("DEVD Ethernet detached event for %s", $iface));
 				/* Restart unbound on interface down (static),
 				 * only when this interface is referenced in resolver configuration.
 				 * https://redmine.pfsense.org/issues/13254
@@ -87,11 +87,11 @@ function handle_argument_group($iface, $action) {
 				}
 				break;
 			case 'start':
-				log_error("DEVD Ethernet attached event for {$iface}");
+				logger(LOG_NOTICE, localize_text("DEVD Ethernet attached event for %s", $iface));
 				$realif = get_real_interface($iface);
 				/* NOTE: Do not generate event for OpenVPN since the daemon does that for us. */
 				if (substr($realif, 0, 4) != "ovpn") {
-					log_error("HOTPLUG: Triggering address refresh on {$iface} ({$realif})");
+					logger(LOG_NOTICE, localize_text("HOTPLUG: Triggering address refresh on %s (%s)", $iface, $realif));
 					touch("{$g['tmp_path']}/{$iface}_upstart4");
 					touch("{$g['tmp_path']}/{$iface}_upstart6");
 					send_event("interface newip {$realif}");
@@ -101,10 +101,10 @@ function handle_argument_group($iface, $action) {
 				/* Do nothing, invalid action */
 		}
 	} else {
-		log_error("Hotplug event detected for {$friendly}({$iface}) dynamic IP address ({$addrs})");
+		logger(LOG_NOTICE, localize_text("Hotplug event detected for %s (%s) dynamic IP address (%s)", $friendly, $iface, $addrs));
 		switch ($action) {
 			case "stop":
-				log_error("DEVD Ethernet detached event for {$iface}");
+				logger(LOG_NOTICE, localize_text("DEVD Ethernet detached event for %s", $iface));
 
 				/* Locate interface gateways, if any exist. */
 				$gw4 = get_interface_gateway_name($iface, 'inet');
@@ -165,8 +165,8 @@ function handle_argument_group($iface, $action) {
 				}
 				break;
 			case "start":
-				log_error("DEVD Ethernet attached event for {$iface}");
-				log_error("HOTPLUG: Configuring interface {$iface}");
+				logger(LOG_NOTICE, localize_text("DEVD Ethernet attached event for %s", $iface));
+				logger(LOG_NOTICE, localize_text("HOTPLUG: Configuring interface %s", $iface));
 				/* trigger services restart
 				 * see https://redmine.pfsense.org/issues/11570 */
 				if (!$staticv4) {
@@ -194,7 +194,7 @@ if (isset($_GET['interface'])) {
 	$action = $_GET['action'];
 } else {
 	if ($argc < 3) {
-		log_error("HOTPLUG event: The required number of parameters not passed!");
+		logger(LOG_ERR, localize_text("HOTPLUG event: The required number of parameters not passed!"));
 		return;
 	}
 	$action = $argv[1];
@@ -204,7 +204,7 @@ $action = ltrim($action, '$');
 $realiface = ltrim($realiface, '$');
 
 if (!in_array($action, ['start', 'stop'])) {
-		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop are allowed!");
+		logger(LOG_ERR, localize_text("HOTPLUG event: Action parameter (%s) passed is wrong - only start/stop are allowed!", $action));
 		return;
 }
 
@@ -216,18 +216,18 @@ if (is_platform_booting()) {
 	    (config_get_path("interfaces/{$interface}/ipaddr", '') == 'dhcp')) {
 		if (find_dhclient_process($realiface) == 0) {
 			/* dhclient is not running */
-			log_error("DHCP Client not running on {$interface} ($realiface), reconfiguring dhclient.");
+			logger(LOG_INFO, localize_text("DHCP Client not running on %s (%s), reconfiguring dhclient.", $interface, $realiface));
 			interface_dhcp_configure($interface);
 		}
 	} else {
-		log_error("Ignoring link event during boot sequence.");
+		logger(LOG_INFO, localize_text("Ignoring link event during boot sequence."));
 	}
 	return;
 }
 
 if (!empty($realiface)) {
 	if (substr($realiface, 0, 4) == 'ovpn') {
-		log_error("Ignoring link event for OpenVPN interface");
+		logger(LOG_INFO, localize_text("Ignoring link event for OpenVPN interface"));
 		return;
 	}
 	$rclinkuplock = lock("rclinkup{$realiface}", LOCK_EX);

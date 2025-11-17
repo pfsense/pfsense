@@ -35,8 +35,9 @@ if ($_POST) {
 	$pconfig = $_POST;
 	unset($input_errors);
 
-	global $debug;
-	$debug = ($_POST['debug'] == 'yes');
+	if ($_POST['debug'] == 'yes') {
+		g_set('debug', true);
+	}
 
 	$authcfg = auth_get_authserver($_POST['authmode']);
 	if (!$authcfg) {

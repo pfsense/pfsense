@@ -175,7 +175,7 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-			foreach (config_get_path('nat/outbound/rule', []) as $natent):
+			foreach (get_anynat_rules_list('nat') as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
 				$trclass = '';
@@ -328,9 +328,12 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 
 						<td>
 <?php						if (isset($natent['staticnatport'])) { ?>
-							<i class="fa-solid fa-check" title="Keep Source Port Static"></i>
+							<i class="fa-solid fa-check" title="<?=gettext('Keep Source Port Static')?>"></i>
 <?php						} else { ?>
-							<i class="fa-solid fa-random" title="Randomize Source Port"></i>
+							<i class="fa-solid fa-random" title="<?=gettext('Randomize Source Port')?>"></i>
+<?php						} ?>
+<?php						if (isset($natent['eimnat'])) { ?>
+							<i class="fa-solid fa-arrows-to-circle" title="<?=gettext('Endpoint-Independent Mapping (UDP Only)')?>"></i>
 <?php						} ?>
 						</td>
 

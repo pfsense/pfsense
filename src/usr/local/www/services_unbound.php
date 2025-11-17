@@ -167,7 +167,7 @@ if ($_POST['save']) {
 	}
 
 	$test_output = array();
-	if (test_unbound_config($pconfig, $test_output)) {
+	if (test_unbound_config(array_merge(config_get_path('unbound', []), $pconfig), $test_output)) {
 		$input_errors[] = gettext("The generated config file cannot be parsed by unbound. Please correct the following errors:");
 		$input_errors = array_merge($input_errors, $test_output);
 	}

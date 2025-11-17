@@ -107,7 +107,7 @@ foreach ($rdr_entries as $rdr_entry) {
 							<?= htmlspecialchars($matches['srcport'] ?: "any") ?>
 						</td>
 						<td>
-							<?= htmlspecialchars($matches['descr']) ?>
+							<?= htmlspecialchars(strval(preg_replace('/^' . RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER . '/', '', $matches['descr'], 1))) ?>
 						</td>
 					</tr>
 <?php

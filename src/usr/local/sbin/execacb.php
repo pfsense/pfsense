@@ -38,6 +38,6 @@ if (acb_enabled()) {
 		write_config(gettext('Scheduled Backup via AutoConfigBackup'));
 		acb_backup_stage_upload();
 	} else {
-		log_error(gettext('Skipping AutoConfigBackup scheduled backup (no changes since previous backup)'));
+		logger(LOG_INFO, localize_text('Skipping scheduled backup (no changes since previous backup)'), LOG_PREFIX_ACB);
 	}
 }

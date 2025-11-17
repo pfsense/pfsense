@@ -550,11 +550,7 @@ function voucher_unlink_db($roll) {
 
 /* we share the log with captiveportal for now */
 function voucher_log($priority, $message) {
-
-	$message = trim($message);
-	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
-	syslog($priority, sprintf(gettext("Voucher: %s"), $message));
-	closelog();
+	logger($priority, localize_text("logportalauth: Voucher: %s", trim($message)), LOG_PREFIX_CAPTIVEPORTAL, LOG_LOCAL4);
 }
 
 /* Perform natural expiration of vouchers

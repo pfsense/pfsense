@@ -406,7 +406,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 			try{
 				@eval("\$pkg_source_txt = $source_url;");
 			} catch (\Throwable | \Error | \Exception $e) {
-				log_error(sprintf(gettext("Error in '{$source_url}': %s"), $e->getMessage()));
+				logger(LOG_ERR, localize_text("Error in '%s': %s", $source_url, $e->getMessage()));
 			}
 
 			foreach ($pkg_source_txt as $opt) {
@@ -919,7 +919,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			try{
 				@eval("\$pkg_source_txt = $source_url;");
 			} catch (\Throwable | \Error | \Exception $e) {
-				log_error(sprintf(gettext("Error in '{$source_url}': %s"), $e->getMessage()));
+				logger(LOG_ERR, localize_text("Error in '%s': %s", $source_url, $e->getMessage()));
 			}
 			#check if show disable option is present on xml
 			if (!is_array($pkg_source_txt)) {
@@ -1198,15 +1198,12 @@ foreach ($pkg['fields']['field'] as $pkga) {
 							$ips[] = array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
 							break;
 						case "proxyarp":
-							if ($vip['type'] == "network") {
-								$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
-								$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
-								$len = $end - $start;
-								for ($i = 0; $i <= $len; $i++) {
-									$ips[]= array('ip' => long2ip32($start+$i), 'description' => long2ip32($start+$i)." from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}");
-								}
-							} else {
-								$ips[]= array('ip' => $vip['subnet'], 'description' => "{$vip['subnet']} $vip_description");
+							$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
+							$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
+							$len = $end - $start;
+							$sufx = ($len > 0)?" from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}":$vip_description;
+							for ($i = 0; $i <= $len; $i++) {
+								$ips[]= array('ip' => long2ip32($start+$i), 'description' => long2ip32($start+$i).$sufx);
 							}
 							break;
 					}

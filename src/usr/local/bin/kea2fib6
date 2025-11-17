@@ -318,11 +318,10 @@ function kea_leases_routes(KeaConfig $config): array
                 continue;
         }
 
-        /* Ensure lease entry has a valid query6 key */
-        $query6 = &$lease['user-context']['Netgate']['query6'];
-        if (isset($query6, $query6['remote-addr'], $query6['iface-name'])) {
+        $binding_variables = &$lease['user-context']['ISC']['binding-variables'];
+        if (isset($binding_variables, $binding_variables['remote-addr'], $binding_variables['iface-name'])) {
             $prefix = "{$lease['ip-address']}/{$lease['prefix-len']}";
-            $nextHop = "{$query6['remote-addr']}%{$query6['iface-name']}";
+            $nextHop = "{$binding_variables['remote-addr']}%{$binding_variables['iface-name']}";
             $routesByPrefix[$prefix] = $nextHop;
         }
     }

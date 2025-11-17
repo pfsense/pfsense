@@ -33,7 +33,6 @@ require_once("certs.inc");
 require_once("guiconfig.inc");
 
 $logging_level = LOG_WARNING;
-$logging_prefix = gettext("Local User Database");
 
 $pgtitle = array(gettext("System"), gettext("User Password Manager"));
 
@@ -86,11 +85,11 @@ if (isset($_POST['save'])) {
 		// Save changes to the current user
 		local_user_set_password($user_item_config, $_POST['passwordfld1']);
 		local_user_set($userent);
-		$savemsg = sprintf(gettext("Password changed for user: %s"), $userent['name']);
+		$savemsg = localize_text("Password changed for user: %s", $userent['name']);
 		phpsession_end(true);
 
 		write_config($savemsg);
-		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+		logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 	}
 }
 

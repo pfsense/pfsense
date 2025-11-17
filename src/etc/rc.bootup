@@ -243,7 +243,7 @@ set_pam_auth();
 
 /* Log the RAM disk restore messages. */
 if (file_exists("/var/log/restore_ramdisk_store.boot")) {
-	exec("/usr/bin/logger -f /var/log/restore_ramdisk_store.boot");
+	exec("/usr/bin/logger -p user.info -f /var/log/restore_ramdisk_store.boot");
 }
 
 /* setup interface microcode which improves tcp/ip speed */
@@ -265,12 +265,12 @@ if (file_exists("/tmp/dhcp6c_ifs")) {
 }
 
 /* set up interfaces */
-if (!$debugging) {
+if (!g_get('debug')) {
 	mute_kernel_msgs();
 }
 interfaces_configure();
 interfaces_sync_setup();
-if (!$debugging) {
+if (!g_get('debug')) {
 	unmute_kernel_msgs();
 }
 

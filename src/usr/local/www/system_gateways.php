@@ -38,26 +38,26 @@ require_once("gwlb.inc");
 $simplefields = array('defaultgw4', 'defaultgw6');
 
 refresh_gateways(); // make sure we're working on a current gateway list
+unset($input_errors);
 
 $pconfig = $_REQUEST;
 
 if ($_POST['order-store']) {
-	// Include the rules of this (the selected) interface.
-	// If a rule is not in POST[rule], it has been deleted by the user
-	$a_gateway_item_new = array();
-	//print "<pre>";
+	$gateways_config = config_get_path('gateways/gateway_item', []);
+	$gateways_config_ordered = [];
 	foreach ($_POST['row'] as $id) {
-		//print " $id";
-		$a_gateway_item_new[] = config_get_path("gateways/gateway_item/{$id}");
+		if (!is_numericint($id) || !isset($gateways_config[$id])) {
+			$input_errors[] = 'Invalid gateway order provided';
+			break;
+		}
+		$gateways_config_ordered[] = &$gateways_config[$id];
 	}
-	//print_r($a_gateway_item);
-	//print_r($a_gateway_item_new);
-	//print "</pre>";
-	config_set_path('gateways/gateway_item', $a_gateway_item_new);
-	//mark_subsystem_dirty('staticroutes');
-	write_config("System - Gateways: save default gateway");
+	if (empty($input_errors)) {
+		config_set_path('gateways/gateway_item', $gateways_config_ordered);
+		write_config("System - Gateways: save default gateway");
+		refresh_gateways();
+	}
 } else if ($_POST['save']) {
-	unset($input_errors);
 	$pconfig = $_POST;
 	foreach($simplefields as $field) {
 		config_set_path("gateways/{$field}", $pconfig[$field]);
@@ -177,7 +177,6 @@ function delete_gateway_item($id) {
 	config_del_path("gateways/gateway_item/{$a_gateways[$id]['attribute']}");
 }
 
-unset($input_errors);
 if ($_REQUEST['act'] == "del") {
 	if (can_delete_disable_gateway_item($_REQUEST['id'])) {
 		$realid = $a_gateways[$_REQUEST['id']]['attribute'];

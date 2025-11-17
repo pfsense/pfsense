@@ -38,10 +38,10 @@ sleep 2
 /bin/rm -f /var/run/php-fpm.socket 2>/dev/null
 if [ -f /tmp/xmlrpc.lock ]; then
 	echo ">>> Found XMLRPC lock. Removing."
-	echo ">>> Found XMLRPC lock. Removing." | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
+	echo "INFO >>> Found XMLRPC lock. Removing." | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
 	rm /tmp/xmlrpc.lock
 fi
-echo ">>> Restarting php-fpm" | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
+echo "INFO >>> Restarting php-fpm" | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
 echo ">>> Starting php-fpm"
 /usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 

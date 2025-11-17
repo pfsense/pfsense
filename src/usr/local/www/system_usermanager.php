@@ -40,7 +40,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
 $logging_level = LOG_WARNING;
-$logging_prefix = gettext("Local User Database");
 $cert_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
 $cert_keytypes = array("RSA", "ECDSA");
 $openssl_ecnames = cert_build_curve_list();
@@ -122,9 +121,9 @@ if (($_POST['act'] == "deluser") && !$read_only) {
 		config_del_path("system/user/{$id}");
 		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
 		config_set_path('system/user', array_values(config_get_path('system/user', [])));
-		$savemsg = sprintf(gettext("Successfully deleted user: %s"), $userdeleted);
+		$savemsg = localize_text("Successfully deleted user: %s", $userdeleted);
 		write_config($savemsg);
-		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+		logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 	}
 
 } else if ($act == "new") {
@@ -169,11 +168,11 @@ if (isset($_POST['dellall']) && !$read_only) {
 		}
 
 		if (count($deleted_users) > 0) {
-			$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
+			$savemsg = localize_text("Successfully deleted %s: %s", (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
 			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
 			config_set_path('system/user', array_values(config_get_path('system/user', [])));
 			write_config($savemsg);
-			syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+			logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 		}
 	}
 }
@@ -187,10 +186,10 @@ if (($_POST['act'] == "delcert") && !$read_only) {
 
 	$certdeleted = lookup_cert(config_get_path("system/user/{$id}/cert/{$_POST['certid']}"));
 	$certdeleted = $certdeleted['item']['descr'];
-	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, config_get_path("system/user/{$id}/name"));
+	$savemsg = localize_text("Removed certificate association \"%s\" from user %s", $certdeleted, config_get_path("system/user/{$id}/name"));
 	config_del_path("system/user/{$id}/cert/{$_POST['certid']}");
 	write_config($savemsg);
-	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+	logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 	$_POST['act'] = "edit";
 }
 
@@ -198,9 +197,9 @@ if (($_POST['act'] == "delprivid") && !$read_only && isset($id)) {
 	$privdeleted = array_get_path($priv_list, (config_get_path("system/user/{$id}/priv/{$_POST['privid']}") . '/name'));
 	config_del_path("system/user/{$id}/priv/{$_POST['privid']}");
 	local_user_set(config_get_path("system/user/{$id}"));
-	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from user %s"), $privdeleted, config_get_path("system/user/{$id}/name"));
+	$savemsg = localize_text("Removed Privilege \"%s\" from user %s", $privdeleted, config_get_path("system/user/{$id}/name"));
 	write_config($savemsg);
-	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+	logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 	$_POST['act'] = "edit";
 }
 
@@ -507,15 +506,15 @@ if ($_POST['save'] && !$read_only) {
 		global $userindex;
 		$userindex = index_users();
 
-		$savemsg = sprintf(gettext("Successfully %s user %s"), (isset($id)) ? gettext("edited") : gettext("created"), $userent['name']);
+		$savemsg = localize_text("Successfully %s user %s", (isset($id)) ? gettext("edited") : gettext("created"), $userent['name']);
 		write_config($savemsg);
-		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+		logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
 		}
 
 		if ($userent['uid'] == 0) {
-			log_error(gettext("Restarting sshd due to admin account change."));
+			logger(LOG_NOTICE, localize_text("Restarting sshd due to admin account change."), LOG_PREFIX_AUTHPROVIDER_LOCAL);
 			send_event("service restart sshd");
 		}
 

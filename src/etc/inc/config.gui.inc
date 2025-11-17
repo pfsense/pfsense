@@ -42,11 +42,10 @@ require_once("Net/IPv6.php");
 require_once("xmlparse.inc");
 require_once("crypt.inc");
 
-/* if /debugging exists, lets set $debugging
+/* if /debugging exists, lets set debug
    so we can output more information */
 if (file_exists("/debugging")) {
-	$debugging = true;
-	$g['debug'] = true;
+	g_set('debug', true);
 }
 
 config_read_file(true, true);

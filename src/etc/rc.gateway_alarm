@@ -24,6 +24,7 @@ alarm_flag="$3"
 alarm_rtt="$4"
 alarm_rttsd="$5"
 alarm_loss="$6"
+LOG_PREFIX_GWMON="Gateway Monitoring"
 
 if [ -z "$GW" ]; then
 	exit 1
@@ -35,7 +36,7 @@ print_rtt() {
 	echo "${usec_to_ms}ms"
 }
 
-echo ">>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:$( print_rtt ${alarm_rtt} ) RTTsd:$( print_rtt ${alarm_rttsd} ) Loss:${alarm_loss}%)" | /usr/bin/logger -p daemon.info -i -t rc.gateway_alarm
+echo "INFO [${LOG_PREFIX_GWMON}] >>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:$( print_rtt ${alarm_rtt} ) RTTsd:$( print_rtt ${alarm_rttsd} ) Loss:${alarm_loss}%)" | /usr/bin/logger -p daemon.info -i -t rc.gateway_alarm
 
 /usr/local/sbin/pfSctl \
 	-c "service reload dyndns ${GW}" \

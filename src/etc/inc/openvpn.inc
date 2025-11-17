@@ -89,7 +89,6 @@ $openvpn_verbosity_level = array(
 
 global $openvpn_dh_lengths;
 $openvpn_dh_lengths = array(
-	1024 => "1024 bit",
 	2048 => "2048 bit",
 	3072 => "3072 bit",
 	4096 => "4096 bit",
@@ -999,7 +998,13 @@ function openvpn_reconfigure($mode, $settings) {
 	if ($mode == 'server') {
 
 		list($ip, $cidr) = openvpn_gen_tunnel_network($settings['tunnel_network']);
-		list($ipv6, $prefix) = openvpn_gen_tunnel_network($settings['tunnel_networkv6']);
+		if ($settings['tunnel_networkv6_type'] != 'track6') {
+			list($ipv6, $prefix) = openvpn_gen_tunnel_network($settings['tunnel_networkv6']);
+		}
+		else {
+			$rd6lan = generate_6rd_prefix(config_get_path('interfaces/' . $settings['tunnel_track6_interface'] . '/prefix-6rd'), get_interface_ip($settings['tunnel_track6_interface']), config_get_path('interfaces/' . $settings['tunnel_track6_interface'] . '/prefix-6rd-v4plen'), $settings['tunnel_track6_prefix_id']);
+			list($ipv6, $prefix) = openvpn_gen_tunnel_network($rd6lan . '/64');
+		}
 		$mask = gen_subnet_mask($cidr);
 
 		// configure tls modes
@@ -1146,6 +1151,7 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		switch ($settings['mode']) {
+			case 'p2p_tls':
 			case 'server_tls':
 			case 'server_user':
 			case 'server_tls_user':
@@ -1334,7 +1340,7 @@ function openvpn_reconfigure($mode, $settings) {
 				if (is_numeric($settings['dh_length'])) {
 					if (!in_array($settings['dh_length'], array_keys($openvpn_dh_lengths))) {
 						/* The user selected a DH parameter length that does not have a corresponding file. */
-						log_error(gettext("Failed to construct OpenVPN server configuration. The selected DH Parameter length cannot be used."));
+						logger(LOG_ERR, localize_text("Failed to construct OpenVPN server configuration. The selected DH Parameter length cannot be used."), LOG_PREFIX_OPENVPN);
 						return;
 					}
 					$dh_file = "{$g['etc_path']}/dh-parameters.{$settings['dh_length']}";
@@ -1546,7 +1552,7 @@ function openvpn_stop_process($mode, $settings) {
 		/* read the pid file */
 		$pid = rtrim(file_get_contents($pfile));
 		unlink($pfile);
-		syslog(LOG_INFO, "OpenVPN terminate old pid: {$pid}");
+		logger(LOG_INFO, localize_text("terminate old pid: %s", $pid), LOG_PREFIX_OPENVPN);
 
 		/* send a term signal to the process */
 		posix_kill($pid, SIGTERM);
@@ -1556,7 +1562,7 @@ function openvpn_stop_process($mode, $settings) {
 		while (posix_kill($pid, 0)) {
 			usleep(250000);
 			if ($i > 10) {
-				log_error(sprintf(gettext('OpenVPN ID %1$s PID %2$s still running, killing.'), $mode_id, $pid));
+				logger(LOG_INFO, localize_text('ID %1$s PID %2$s still running, killing.', $mode_id, $pid), LOG_PREFIX_OPENVPN);
 				posix_kill($pid, SIGKILL);
 				usleep(500000);
 			}
@@ -1619,9 +1625,9 @@ function openvpn_restart($mode, $settings) {
 			usleep(1000);
 			$i++;
 		}
-		syslog(LOG_INFO, "OpenVPN PID written: {$pid}");
+		logger(LOG_INFO, localize_text("PID written: %s", $pid), LOG_PREFIX_OPENVPN);
 	} else {
-		syslog(LOG_ERR, "OpenVPN failed to start");
+		logger(LOG_ERR, localize_text("failed to start"), LOG_PREFIX_OPENVPN);
 	}
 	if (!is_platform_booting()) {
 		send_event("filter reload");
@@ -1875,9 +1881,9 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 	global $g;
 
 	if ($interface <> "") {
-		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
+		logger(LOG_INFO, localize_text("Resyncing OpenVPN instances for interface %s.", convert_friendly_interface_to_friendly_descr($interface)), LOG_PREFIX_OPENVPN);
 	} else {
-		log_error(gettext("Resyncing OpenVPN instances."));
+		logger(LOG_INFO, localize_text("Resyncing OpenVPN instances."), LOG_PREFIX_OPENVPN);
 	}
 
 	// Check if OpenVPN clients and servers require a resync.
@@ -1942,14 +1948,14 @@ function openvpn_resync_gwgroup($gwgroupname = "") {
 		foreach (["server", "client"] as $mode) {
 			foreach (config_get_path("openvpn/openvpn-{$mode}", []) as $settings) {
 				if ($gwgroupname == $settings['interface']) {
-					log_error(sprintf(gettext('Resyncing OpenVPN for gateway group %1$s %2$s %3$s.'), $gwgroupname, $mode, $settings["description"]));
+					logger(LOG_INFO, localize_text('Resyncing OpenVPN for gateway group %1$s %2$s %3$s.', $gwgroupname, $mode, $settings["description"]), LOG_PREFIX_OPENVPN);
 					openvpn_resync('server', $settings);
 				}
 			}
 		}
 		// Note: no need to resysnc Client Specific (csc) here, as changes to the OpenVPN real interface do not effect these.
 	} else {
-		log_error(gettext("openvpn_resync_gwgroup called with null gwgroup parameter."));
+		logger(LOG_ERR, localize_text("%s called with null gwgroup parameter.", 'openvpn_resync_gwgroup'), LOG_PREFIX_OPENVPN);
 	}
 }
 
@@ -2433,7 +2439,7 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 							$networks[] = $net . $mask;
 						}
 					} else {
-						log_error(gettext("Failed to resolve {$net}. Skipping OpenVPN route entry."));
+						logger(LOG_ERR, localize_text("Failed to resolve %s. Skipping OpenVPN route entry.", $net), LOG_PREFIX_OPENVPN);
 					}
 				}
 			}

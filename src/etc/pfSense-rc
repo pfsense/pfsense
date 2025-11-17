@@ -393,7 +393,7 @@ echo
 
 /sbin/conscontrol mute off >/dev/null
 
-SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/awk '{ printf $1 }' | /usr/bin/head -n 1`
+SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/awk '{ print $1 }' | /usr/bin/head -n 1`
 if [ -n "${SWAPDEVICE}" ]; then
 	/bin/rm -f /tmp/fstab.swap
 	if ! [ -c "${SWAPDEVICE}" ]; then
@@ -709,7 +709,7 @@ ARCH=`uname -m`
 echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
 
 echo "Bootup complete"
-echo "Bootup complete" | /usr/bin/logger
+echo "NOTICE Bootup complete" | /usr/bin/logger -p user.notice
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

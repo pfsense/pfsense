@@ -24,14 +24,12 @@ include_once('ipsec.inc');
 include_once('service-utils.inc');
 include_once('gwlb.inc');
 
-$debug = false;
-
 /* Check if there are any tunnels defined, bail if not */
 /* Check if IPsec is enabled and running, bail if disabled or stopped */
 if (empty(config_get_path('ipsec/phase2')) ||
     !ipsec_enabled() ||
     !get_service_status(array('name' => 'ipsec'))) {
-	if ($debug) {
+	if (g_get('debug')) {
 		echo "IPsec is not configured and running.\n";
 	}
 	return false;
@@ -51,7 +49,7 @@ foreach (config_get_path('ipsec/phase2', []) as $p2) {
 /* If the list is empty, nothing to do, so bail */
 
 if (empty($initiate)) {
-	if ($debug) {
+	if (g_get('debug')) {
 		echo "No tunnels marked keepalive.\n";
 	}
 	return false;
@@ -69,7 +67,7 @@ $a_groups = return_gateway_groups_array(true);
 
 /* Check each connected entry to see if the one we want is enabled */
 foreach ($initiate as $conid) {
-	if ($debug) {
+	if (g_get('debug')) {
 		echo "Checking {$conid}.\n";
 	}
 	if (is_array($status['disconnected']) &&
@@ -82,16 +80,16 @@ foreach ($initiate as $conid) {
 		    (is_array($a_groups[$status[$ikeid]['p1']['interface']]) &&
 		    !empty($a_groups[$status[$ikeid]['p1']['interface']][0]['vip']) &&
 		    in_array(get_carp_bind_status($a_groups[$status[$ikeid]['p1']['interface']][0]['vip']), array('BACKUP', 'INIT')))) {
-			if ($debug) {
+			if (g_get('debug')) {
 				echo "{$conid} is disconnected but using a CARP VIP in BACKUP or INIT status. Skipping.\n";
 			}
 			continue;
 		}
-		if ($debug) {
+		if (g_get('debug')) {
 			echo "{$conid} is disconnected. Attempting to initiate.\n";
 		}
 		ipsec_initiate_by_conid('child', $conid);
-	} elseif ($debug) {
+	} elseif (g_get('debug')) {
 		echo "{$conid} is already connected.\n";
 	}
 }

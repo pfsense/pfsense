@@ -39,7 +39,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
 $logging_level = LOG_WARNING;
-$logging_prefix = gettext("Local User Database");
 
 $id = is_numericint($_REQUEST['groupid']) ? $_REQUEST['groupid'] : null;
 $act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
@@ -99,10 +98,10 @@ if (($_POST['act'] == "delgroup") && !$read_only) {
 	 */
 	config_set_path("system/group", array_values(config_get_path('system/group', [])));
 
-	$savemsg = sprintf(gettext("Successfully deleted group: %s"),
+	$savemsg = localize_text("Successfully deleted group: %s",
 	    $groupdeleted);
 	write_config($savemsg);
-	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+	logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 }
 
 if (($_POST['act'] == "delpriv") && !$read_only && ($dup === null)) {
@@ -123,10 +122,10 @@ if (($_POST['act'] == "delpriv") && !$read_only && ($dup === null)) {
 		}
 	}
 
-	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from group %s"),
+	$savemsg = localize_text("Removed Privilege \"%s\" from group %s",
 	    $privdeleted, config_get_path("system/group/{$id}/name"));
 	write_config($savemsg);
-	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+	logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 
 	$act = "edit";
 }
@@ -165,7 +164,7 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 			}
 		}
 
-		$savemsg = sprintf(gettext("Successfully deleted %s: %s"),
+		$savemsg = localize_text("Successfully deleted %s: %s",
 		    (count($deleted_groups) == 1)
 		    ? gettext("group") : gettext("groups"),
 		    implode(', ', $deleted_groups));
@@ -175,7 +174,7 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 		 */
 		config_set_path("system/group", array_values(config_get_path('system/group', [])));
 		write_config($savemsg);
-		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+		logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 	}
 }
 
@@ -281,11 +280,11 @@ if (isset($_POST['save']) && !$read_only) {
 		});
 		config_set_path('system/group', $group_config);
 
-		$savemsg = sprintf(gettext("Successfully %s group %s"),
+		$savemsg = localize_text("Successfully %s group %s",
 		    (strlen($id) > 0) ? gettext("edited") : gettext("created"),
 		    $group['name']);
 		write_config($savemsg);
-		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+		logger($logging_level, $savemsg, LOG_PREFIX_AUTHPROVIDER_LOCAL);
 
 		header("Location: system_groupmanager.php");
 		exit;

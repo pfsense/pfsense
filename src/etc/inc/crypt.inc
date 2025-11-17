@@ -64,7 +64,7 @@ define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 			$result = crypt_data($val, $pass, $opt, true);
 		} else {
 			$result = "";
-			log_error(gettext("Failed to encrypt/decrypt data!"));
+			logger(LOG_ERR, localize_text("Failed to encrypt/decrypt data!"));
 		}
 
 		/* Cleanup */

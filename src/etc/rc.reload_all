@@ -30,10 +30,10 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("captiveportal.inc");
 
-log_error("rc.reload_all: Reloading all configuration settings.");
+logger(LOG_INFO, localize_text("%s Reloading all configuration settings.", 'rc.reload_all:'));
 reload_all_sync();
 sleep(2);
-log_error("rc.reload_all: Reloading filter configuration.");
+logger(LOG_INFO, localize_text("%s Reloading filter configuration.", 'rc.reload_all:'));
 filter_configure_sync();
 
 ?>

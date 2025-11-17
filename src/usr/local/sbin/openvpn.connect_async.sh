@@ -18,11 +18,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+LOG_PREFIX_OPENVPN="OpenVPN"
 log_session() {
-	if [ -z "${1}" ]; then
+	case "${1}" in
+	"LOG_EMERG")
+		loglvl="emerg"
+		logpri="EMERGENCY"
+		;;
+	"LOG_ALERT")
+		loglvl="alert"
+		logpri="ALERT"
+		;;
+	"LOG_CRIT")
+		loglvl="crit"
+		logpri="CRITICAL"
+		;;
+	"LOG_ERR")
+		loglvl="err"
+		logpri="ERROR"
+		;;
+	"LOG_WARNING")
+		loglvl="warning"
+		logpri="WARNING"
+		;;
+	"LOG_NOTICE")
+		loglvl="notice"
+		logpri="NOTICE"
+		;;
+	"LOG_INFO")
+		loglvl="info"
+		logpri="INFO"
+		;;
+	"LOG_DEBUG")
+		loglvl="debug"
+		logpri="DEBUG"
+		;;
+	*)
+		loglvl="debug"
+		logpri="DEBUG"
+		;;
+	esac
+
+	if [ -z "${2}" ]; then
 		logmsg=""
 	else
-		logmsg=" - ${1}"
+		logmsg=" - ${2}"
 	fi
 
 	if [ -z "${untrusted_ip6}" ]; then
@@ -37,7 +77,7 @@ log_session() {
 		hostuser="user '${username}'"
 	fi
 
-	/usr/bin/logger -t openvpn "openvpn server '${dev}' ${hostuser} address '${hostaddress}'${logmsg}"
+	/usr/bin/logger -p "user.${loglvl}" -t openvpn "${logpri} [${LOG_PREFIX_OPENVPN}] openvpn server '${dev}' ${hostuser} address '${hostaddress}'${logmsg}"
 }
 
 if [ -n "${username}" ]; then
@@ -48,7 +88,7 @@ if [ -n "${username}" ]; then
 fi
 
 if [ "${script_type}" = "client-disconnect" ]; then
-	log_session "disconnected"
+	log_session "LOG_NOTICE" "disconnected"
 
 	if [ -n "${username}" ]; then
 		# Avoid race condition. See https://redmine.pfsense.org/issues/9206
@@ -64,7 +104,7 @@ if [ "${script_type}" = "client-disconnect" ]; then
 		do :;  done
 
 		if [ ${i} -ge 30 ]; then
-			log_session "Timeout while waiting for lockfile"
+			log_session "LOG_WARNING" "Timeout while waiting for lockfile"
 		else
 			/usr/bin/touch "${lockfile}"
 			eval "/sbin/pfctl -a '${anchorname}' -F rules"
@@ -80,7 +120,7 @@ if [ "${script_type}" = "client-disconnect" ]; then
 	/sbin/pfctl -k "$ifconfig_pool_remote_ip6"
 	/sbin/pfctl -K "$ifconfig_pool_remote_ip6"
 elif [ "${script_type}" = "client-connect" ]; then
-	log_session "connecting"
+	log_session "LOG_INFO" "connecting"
 
 	# Verify defer status code before continuing
 	i=1
@@ -95,7 +135,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 		[ "${i}" -lt 3 ]
 	do :;  done
 	if [ ${i} -ge 3 ]; then
-		log_session "server write to defer file failed"
+		log_session "LOG_WARNING" "server write to defer file failed"
 		/bin/echo 0 > "${client_connect_deferred_file}"
 		exit 1
 	fi
@@ -119,7 +159,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 				sessioncount=$(/bin/echo "${active_sessions}" | /usr/bin/grep -o "${usersession}" | /usr/bin/wc -l | /usr/bin/sed -e 's/[[:space:]]//g')
 
 				if [ "${sessioncount}" -gt "${sessionlimit}" ]; then
-					log_session "active connection limit of '${sessionlimit}' reached"
+					log_session "LOG_NOTICE" "active connection limit of '${sessionlimit}' reached"
 					/bin/echo 0 > "${client_connect_deferred_file}"
 					if [ -n "${username}" ]; then
 						/bin/rm "${rulesfile}"
@@ -142,7 +182,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 			[ "${i}" -lt 30 ]
 		do :;  done
 		if [ ${i} -ge 30 ]; then
-			log_session "Timeout while waiting for lockfile"
+			log_session "LOG_WARNING" "Timeout while waiting for lockfile"
 			/bin/echo 0 > "${client_connect_deferred_file}"
 			exit 1
 		else
@@ -171,7 +211,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 
 	# success; allow client connection
 	/bin/echo 1 > "${client_connect_deferred_file}"
-	log_session "connected"
+	log_session "LOG_NOTICE" "connected"
 fi
 
 exit 0

@@ -56,7 +56,7 @@ if (!is_URL(urldecode($redirurl), true)) {
 }
 
 if (empty($cpcfg)) {
-	log_error("Submission to captiveportal with unknown parameter zone: " . htmlspecialchars($cpzone));
+	logger(LOG_WARNING, localize_text("Submission with unknown parameter zone: %s", htmlspecialchars($cpzone)), LOG_PREFIX_CAPTIVEPORTAL);
 	portal_reply_page($redirurl, "error", gettext("Internal error"));
 	ob_flush();
 	return;
@@ -69,7 +69,7 @@ $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
 	/* not good - bail out */
-	log_error("Zone: {$cpzone} - Captive portal could not determine client's IP address.");
+	logger(LOG_WARNING, localize_text("Zone: %s - could not determine client's IP address.", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 	$errormsg = gettext("An error occurred.  Please check the system logs for more information.");
 	portal_reply_page($redirurl, "error", $errormsg);
 	ob_flush();
@@ -161,7 +161,7 @@ if (!is_array($tmpres)) {
 		/* unable to find MAC address - shouldn't happen! - bail out */
 		captiveportal_logportalauth("unauthenticated", "noclientmac", $clientip, "ERROR");
 		echo "An error occurred.  Please check the system logs for more information.";
-		log_error("Zone: {$cpzone} - Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
+		logger(LOG_WARNING, localize_text("Zone: %s - could not determine client's MAC address. Disable MAC address filtering in Captive Portal if you do not need this functionality.", $cpzone));
 		ob_flush();
 		return;
 	}
@@ -256,7 +256,7 @@ if ($_POST['logout_id']) {
 		} else {
 			portal_reply_page($redirurl, "error", $replymsg, $clientmac, $clientip);
 		}
-		log_error("Zone: {$cpzone} - WARNING!  Captive portal has reached maximum login capacity");
+		logger(LOG_WARNING, localize_text("Zone: %s - Captive Portal has reached maximum login capacity", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 		
 	}
 	

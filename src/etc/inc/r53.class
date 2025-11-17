@@ -132,7 +132,7 @@ class Route53
 	* @param string zoneId Amazon Zone
 	* @param string regionId Amazon Region Code (e.g. us-east-1)
 	* @param string requestBodySHA256 SHA256 hash of the request body
-	* @return Array headers
+	* @return array headers
 	*/
 	public function getHttpPostHeaders($zoneId, $regionId, $requestBodySHA256){
 

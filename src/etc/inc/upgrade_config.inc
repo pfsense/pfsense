@@ -33,6 +33,9 @@ if (!function_exists("console_configure")) {
 if (!function_exists("get_specialnet")) {
 	require_once("/etc/inc/util.inc");
 }
+if (!function_exists("add_filter_rules")) {
+	require_once("filter.inc");
+}
 
 /* Upgrade functions must be named:
  *    upgrade_XXX_to_YYY
@@ -100,7 +103,7 @@ function upgrade_010_to_011() {
 	config_set_path('interfaces', $if_config);
 
 	/* convert filter rules */
-	$filter_rule_config = config_get_path('filter/rule', []);
+	$filter_rule_config = get_filter_rules_list();
 	$n = count($filter_rule_config);
 	for ($i = 0; $i < $n; $i++) {
 
@@ -144,7 +147,7 @@ function upgrade_010_to_011() {
 		}
 	}
 
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_list($filter_rule_config);
 	filter_rules_sort();
 
 	/* convert shaper rules */
@@ -220,7 +223,7 @@ function upgrade_012_to_013() {
 	config_set_path('nat/advancedoutbound/rule', $onat_rule_config);
 
 	/* add an explicit type="pass" to all filter rules to make things consistent */
-	$filter_rule_config = config_get_path('filter/rule', []);
+	$filter_rule_config = get_filter_rules_list();
 	for ($i = 0; isset($filter_rule_config[$i]); $i++) {
 		$filter_rule_config[$i]['type'] = "pass";
 	}
@@ -501,7 +504,7 @@ function upgrade_028_to_029() {
 	$rule_item['destination']['any'] = true;
 	$rule_item['descr'] = gettext("Permit IPsec traffic.");
 	$rule_item['statetype'] = "keep state";
-	config_set_path('filter/rule/', $rule_item);
+	add_filter_rules([$rule_item]);
 }
 
 
@@ -723,7 +726,7 @@ function upgrade_042_to_043() {
 	/* migrate old interface gateway to the new gateways config */
 	$gateways_config = config_get_path('gateways/gateway_item', []);
 	$if_config = config_get_path('interfaces', []);
-	$filter_rule_config = config_get_path('filter/rule', []);
+	$filter_rule_config = get_filter_rules_list();
 	$iflist = get_configured_interface_list(true);
 	$gateways = array();
 	$i = 0;
@@ -774,7 +777,7 @@ function upgrade_042_to_043() {
 	}
 	config_set_path('gateways/gateway_item', $gateways_config);
 	config_set_path('interfaces', $if_config);
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_list($filter_rule_config);
 }
 
 
@@ -1868,7 +1871,7 @@ function upgrade_051_to_052() {
 
 	if (count(config_get_path('openvpn-server', [])) > 0 ||
 	    count(config_get_path('openvpn-client', [])) > 0) {
-		config_set_path('filter/rule/', [
+		add_filter_rules([[
 			'type' => 'pass',
 			'interface' => 'openvpn',
 			'statetype' => 'keep state',
@@ -1879,7 +1882,7 @@ function upgrade_051_to_052() {
 				'any' => true
 			],
 			'descr' => gettext('Auto added OpenVPN rule from config upgrade.')
-		]);
+		]]);
 	}
 
 	/*
@@ -1998,13 +2001,13 @@ function upgrade_053_to_054() {
 		config_set_path('gateways/gateway_group', $gateway_group_arr);
 		// Update any rules that had a gateway change, if any.
 		if (count($group_name_changes) > 0) {
-			$filter_rule_config =  config_get_path('filter/rule', []);
+			$filter_rule_config =  get_filter_rules_list();
 			foreach ($filter_rule_config as & $rule) {
 				if (!empty($rule["gateway"]) && array_key_exists($rule["gateway"], $group_name_changes)) {
 					$rule["gateway"] = $group_name_changes[$rule["gateway"]];
 				}
 			}
-			config_set_path('filter/rule', $filter_rule_config);
+			set_filter_rules_list($filter_rule_config);
 		}
 	}
 }
@@ -2323,7 +2326,7 @@ function upgrade_060_to_061() {
 }
 
 function upgrade_061_to_062() {
-	$nat_rule_config = config_get_path('nat/rule');
+	$nat_rule_config = get_anynat_rules_list('rdr');
 
 	/* Convert NAT port forwarding rules */
 	if (is_array($nat_rule_config)) {
@@ -2358,7 +2361,7 @@ function upgrade_061_to_062() {
 		}
 
 		unset($natent);
-		config_set_path('nat/rule', $nat_rule_config);
+		set_anynat_rules_list('rdr', $nat_rule_config);
 	}
 }
 
@@ -2568,7 +2571,7 @@ function upgrade_068_to_069() {
 }
 
 function upgrade_069_to_070() {
-	$binat_config = config_get_path('nat/onetoone', []);
+	$binat_config = get_anynat_rules_list('binat');
 	/* Convert NAT 1:1 rules */
 	if (is_array($binat_config)) {
 		foreach ($binat_config as $nidx => &$natent) {
@@ -2585,7 +2588,7 @@ function upgrade_069_to_070() {
 		}
 
 		unset($natent);
-		config_set_path('nat/onetoone', $binat_config);
+		set_anynat_rules_list('binat', $binat_config);
 	}
 }
 
@@ -2683,13 +2686,13 @@ function upgrade_075_to_076() {
 }
 
 function upgrade_076_to_077() {
-	$filter_rule_config = config_get_path('filter/rule', []);
+	$filter_rule_config = get_filter_rules_list();
 	foreach ($filter_rule_config as & $rule) {
 		if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 			$rule['protocol'] = strtolower($rule['protocol']);
 		}
 	}
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_list($filter_rule_config);
 }
 
 function upgrade_077_to_078() {
@@ -2893,14 +2896,14 @@ function upgrade_080_to_081() {
 	if (is_platform_booting()) {
 		echo "Updating configuration...";
 	}
-	$filter_rule_config = config_get_path('filter/rule', []);
+	$filter_rule_config = get_filter_rules_list();
 	foreach ($filter_rule_config as & $rule) {
 		if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 			$rule['protocol'] = strtolower($rule['protocol']);
 		}
 	}
 	unset($rule);
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_list($filter_rule_config);
 }
 
 function upgrade_081_to_082() {
@@ -3030,7 +3033,7 @@ function upgrade_086_to_087() {
 	unset($dnqueue_number, $dnpipe_number, $dnpipe, $dnqueue);
 	config_set_path('dnshaper/queue', $shaper_config);
 
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = get_filter_rules_list();
 	if (!is_array($filter_rule_config)) {
 		return;
 	}
@@ -3061,7 +3064,7 @@ function upgrade_086_to_087() {
 			}
 		}
 	}
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_list($filter_rule_config);
 }
 function upgrade_087_to_088() {
 	if (config_path_enabled('system', 'glxsb_enable')) {
@@ -3415,7 +3418,7 @@ function upgrade_105_to_106() {
 }
 
 function upgrade_106_to_107() {
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = get_filter_rules_list();
 
 	if (is_array($filter_rule_config)) {
 		$tracker = (int)microtime(true);
@@ -3426,9 +3429,9 @@ function upgrade_106_to_107() {
 			}
 		}
 		unset($tracker, $rule);
-		config_set_path('filter/rule', $filter_rule_config);
+		set_filter_rules_map($filter_rule_config);
 	}
-	$nat_rule_config = config_get_path('nat/rule');
+	$nat_rule_config = get_anynat_rules_list('rdr');
 	if (is_array($nat_rule_config)) {
 		$tracker = (int)microtime(true);
 		foreach ($nat_rule_config as &$rule) {
@@ -3438,7 +3441,7 @@ function upgrade_106_to_107() {
 			}
 		}
 		unset($tracker, $rule);
-		config_set_path('nat/rule', $nat_rule_config);
+		set_anynat_rules_list('rdr', $nat_rule_config);
 	}
 }
 
@@ -3451,7 +3454,7 @@ function upgrade_107_to_108() {
 }
 
 function upgrade_108_to_109() {
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = get_filter_rules_list();
 
 	if (!is_array($filter_rule_config)) {
 		return;
@@ -3468,7 +3471,7 @@ function upgrade_108_to_109() {
 		}
 		unset($pos);
 	}
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_map($filter_rule_config);
 }
 
 function upgrade_109_to_110() {
@@ -3783,7 +3786,7 @@ function upgrade_122_to_123() {
 	// PPTP server was removed
 	config_del_path('pptpd');
 
-	$filter_rules_config = config_get_path('filter/rule');
+	$filter_rules_config = get_filter_rules_list();
 	// Cleanup firewall rules
 	if (is_array($filter_rules_config)) {
 		$rules = &$filter_rules_config;
@@ -3803,11 +3806,11 @@ function upgrade_122_to_123() {
 				continue;
 			}
 		}
-		config_set_path('filter/rule', $filter_rules_config);
+		set_filter_rules_list($filter_rules_config);
 		filter_rules_sort();
 	}
 
-	$binat_config = config_get_path('nat/onetoone', []);
+	$binat_config = get_anynat_rules_list('binat');
 	// Cleanup 1:1 NAT rules
 	if (is_array($binat_config)) {
 		$onetoone = &$binat_config;
@@ -3827,10 +3830,10 @@ function upgrade_122_to_123() {
 				continue;
 			}
 		}
-		config_set_path('nat/onetoone', $binat_config);
+		set_anynat_rules_list('binat', $binat_config);
 	}
 
-	$npt_config = config_get_path('nat/npt');
+	$npt_config = get_anynat_rules_list('npt');
 	// Cleanup npt NAT rules
 	if (is_array($npt_config)) {
 		$npt = &$npt_config;
@@ -3842,10 +3845,10 @@ function upgrade_122_to_123() {
 				continue;
 			}
 		}
-		config_set_path('nat/npt', $npt_config);
+		set_anynat_rules_list('npt', $npt_config);
 	}
 
-	$nat_rule_config = config_get_path('nat/rule');
+	$nat_rule_config = get_anynat_rules_list('rdr');
 	// Cleanup Port-forward NAT rules
 	if (is_array($nat_rule_config)) {
 		$nat_rules = &$nat_rule_config;
@@ -3865,10 +3868,10 @@ function upgrade_122_to_123() {
 				continue;
 			}
 		}
-		config_set_path('nat/rule', $nat_rule_config);
+		set_anynat_rules_list('rdr', $nat_rule_config);
 	}
 
-	$onat_rule_config = config_get_path('nat/outbound/rule');
+	$onat_rule_config = get_anynat_rules_list('nat');
 	// Cleanup Port-forward NAT rules
 	if (is_array($onat_rule_config)) {
 		$out_rules = &$onat_rule_config;
@@ -3880,7 +3883,7 @@ function upgrade_122_to_123() {
 				continue;
 			}
 		}
-		config_set_path('nat/outbound/rule', $onat_rule_config);
+		set_anynat_rules_list('nat', $onat_rule_config);
 	}
 }
 
@@ -4205,7 +4208,7 @@ function upgrade_135_to_136() {
 	$l7_active = false;
 	if (config_get_path('l7shaper') !== null) {
 		config_del_path('l7shaper');
-		$filter_rule_config = config_get_path('filter/rule');
+		$filter_rule_config = get_filter_rules_list();
 		if (is_array($filter_rule_config)) {
 			foreach ($filter_rule_config as &$rule) {
 				if (isset($rule['l7container'])) {
@@ -4213,7 +4216,7 @@ function upgrade_135_to_136() {
 					$l7_active = true;
 				}
 			}
-			config_set_path('filter/rule', $filter_rule_config);
+			set_filter_rules_list($filter_rule_config);
 		}
 		if ($l7_active) {
 			file_notice("L7shaper", gettext("Layer 7 shaping is no longer supported. Its configuration has been removed."));
@@ -4294,7 +4297,7 @@ function upgrade_140_to_141() {
 		config_set_path('openvpn/openvpn-client', $openvpn_config);
 	}
 
-	$filter_rule_config = config_get_path('filter/rule');
+	$filter_rule_config = get_filter_rules_list();
 	// repeat addition of filter tracker IDs from 106_to_107 where missing since associated filter rules were missing them
 	if (is_array($filter_rule_config)) {
 		$tracker = (int)microtime(true);
@@ -4305,7 +4308,7 @@ function upgrade_140_to_141() {
 			}
 		}
 		unset($tracker, $rule);
-		config_set_path('filter/rule', $filter_rule_config);
+		set_filter_rules_list($filter_rule_config);
 	}
 
 }
@@ -4974,7 +4977,7 @@ function upgrade_160_to_161() {
 		unset($rrdrestore);
 		$_gb = exec("LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
 		if ($rrdreturn != 0) {
-			log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s'), $rrdreturn, $rrdrestore));
+			logger(LOG_ERR, localize_text('RRD restore failed exited with %1$s, the error is: %2$s', $rrdreturn, $rrdrestore), LOG_PREFIX_UPGRADE);
 		} else {
 			foreach ($rrdrestore as $xml_file) {
 				$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
@@ -4983,12 +4986,12 @@ function upgrade_160_to_161() {
 				file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
 				$_gb = exec("LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -C / -T {$g['tmp_path']}/rrd_restore");
 				if (!file_exists("/{$xml_file}")) {
-					log_error(sprintf(gettext("Could not extract %s RRD xml file from archive!"), $xml_file));
+					logger(LOG_ERR, localize_text("Could not extract %s RRD xml file from archive!", $xml_file), LOG_PREFIX_UPGRADE);
 					continue;
 				}
 				$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
 				if ($status) {
-					log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
+					logger(LOG_ERR, localize_text("%s failed returning %s", "rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $status), LOG_PREFIX_UPGRADE);
 					continue;
 				}
 				unset($output);
@@ -5176,13 +5179,13 @@ function upgrade_163_to_164() {
 
 /* Work around broken wizard rules. See https://redmine.pfsense.org/issues/7434 */
 function upgrade_164_to_165() {
-	$filter_rule_config = config_get_path('filter/rule', []);
+	$filter_rule_config = get_filter_rules_list();
 	foreach ($filter_rule_config as & $rule) {
 		if ($rule['destination']['port'] == "137-139-137-139") {
 			$rule['destination']['port'] = "137-139";
 		}
 	}
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_list($filter_rule_config);
 }
 
 /* Fixup digest algorithm selection for OpenVPN clients and servers so they do not use aliased names. */
@@ -5881,7 +5884,7 @@ function upgrade_191_to_192() {
 		}
 		file_notice("Load Balancer", $deprecation_notice);
 	} else {
-		log_error("INFO: {$deprecation_notice}");
+		logger(LOG_INFO, "INFO: {$deprecation_notice}", LOG_PREFIX_UPGRADE);
 	}
 
 	config_del_path('load_balancer');
@@ -6482,13 +6485,13 @@ function upgrade_222_to_223() {
 }
 
 function upgrade_223_to_224() {
-	$filter_rule_config = config_get_path('filter/rule', []);
+	$filter_rule_config = get_filter_rules_list();
 	foreach ($filter_rule_config as & $rule) {
 		if (isset($rule['floating']) && !isset($rule['interface'])) {
 			$rule['interface'] = 'any';
 		}
 	}
-	config_set_path('filter/rule', $filter_rule_config);
+	set_filter_rules_list($filter_rule_config);
 }
 
 function upgrade_224_to_225() {
@@ -6616,6 +6619,13 @@ function upgrade_227_to_228() {
 	if ($any_removed) {
 		file_notice("IPsec", gettext("One or more IPsec entries contained deprecated algorithms. The following are no longer supported: 3DES encryption, Blowfish encryption, CAST128 encryption, MD5 hashing."));
 	}
+
+	// Keep the VLAN Tag Type as C-Tag for existing Q-in-Q interfaces.
+	$qinq_config = config_get_path('qinqs/qinqentry');
+	foreach ($qinq_config as &$qinq) {
+		$qinq['tag_type'] = 'ctag';
+	}
+	config_set_path('qinqs/qinqentry', $qinq_config);
 }
 
 function upgrade_228_to_229() {
@@ -6638,7 +6648,7 @@ function upgrade_228_to_229() {
 
 function upgrade_229_to_230() {
 	/* The "target" GUI for outbound NAT rules now behaves similarly to other pages. */
-	$obn_rules = config_get_path('nat/outbound/rule', []);
+	$obn_rules = get_anynat_rules_list('nat');
 	foreach ($obn_rules as & $obent) {
 		if (empty($obent['target'])) {
 			// migrate interface address selection
@@ -6666,7 +6676,7 @@ function upgrade_229_to_230() {
 	if (isset($obent)) {
 		unset($obent);
 	}
-	config_set_path('nat/outbound/rule', $obn_rules);
+	set_anynat_rules_list('nat', $obn_rules);
 
 	/* A reserved keyword suffix has been added; migrate conflicting aliases */
 	$aliases = config_get_path('aliases/alias', []);
@@ -6978,6 +6988,188 @@ function upgrade_238_to_239() {
 function upgrade_239_to_240() {
 }
 
+function upgrade_240_to_241() {
+	/**
+	 * The DH 1024 option has beeen removed. See:
+	 * https://redmine.pfsense.org/issues/16421
+	 */
+	$changed = false;
+	$openvpn_servers_config = config_get_path('openvpn/openvpn-server', []);
+	foreach ($openvpn_servers_config as &$server_config) {
+		if (array_get_path($server_config, 'dh_length', 'none') == '1024') {
+			$server_config['dh_length'] = '2048';
+			$changed = true;
+		}
+	}
+	if ($changed) {
+		config_set_path('openvpn/openvpn-server', $openvpn_servers_config);
+		file_notice('config.xml', gettext('The OpenVPN Server option "DH Parameter Length" has been updated to a minimum of 2048.'));
+	}
+
+	/**
+	 * Special characters in PPP passwords are now handled correctly.
+	 * Trim spaces that were previously ignored. See:
+	 * https://redmine.pfsense.org/issues/16128
+	 */
+	foreach (config_get_path('ppps/ppp', []) as $pppid => $ppp) {
+		if (!isset($ppp['password']) || !is_string($ppp['password']) || ($ppp['password']) < 1) {
+			continue;
+		}
+		config_set_path("ppps/ppp/{$pppid}/password", base64_encode(trim(base64_decode($ppp['password']), ' ')));
+	}
+
+	/**
+	 * Configuration related to NAT64 has changed. See:
+	 * https://redmine.pfsense.org/issues/16241
+	 */
+
+	$override_nat64_prefix = false;
+
+	// Migrate the DNS64 configuration and check for a custom prefix.
+	$changed = false;
+	$unbound_config = config_get_path('unbound', []);
+	if (isset($unbound_config['dns64'])) {
+		array_set_path($unbound_config, 'dns64/enable', true);
+		$changed = true;
+	}
+	if (isset($unbound_config['dns64prefix']) && isset($unbound_config['dns64netbits']) &&
+	    (gen_subnetv6($unbound_config['dns64prefix'], $unbound_config['dns64netbits']) . "/{$unbound_config['dns64netbits']}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+	    validate_nat64_prefix("{$unbound_config['dns64prefix']}/{$unbound_config['dns64netbits']}")) {
+		array_set_path($unbound_config, 'dns64/prefix', "{$unbound_config['dns64prefix']}/{$unbound_config['dns64netbits']}");
+		$override_nat64_prefix = true;
+	}
+	if (isset($unbound_config['dns64prefix'])) {
+		unset($unbound_config['dns64prefix']);
+		$changed = true;
+	}
+	if (isset($unbound_config['dns64netbits'])) {
+		unset($unbound_config['dns64netbits']);
+		$changed = true;
+	}
+	if ($changed) {
+		config_set_path('unbound', $unbound_config);
+	}
+
+	// Migrate the PREF64 configuration and check for custom prefixes.
+	$changed = false;
+	$dhcp6_config = config_get_path("dhcpdv6", []);
+	foreach ($dhcp6_config as &$if_config) {
+		if (!empty($if_config['ranat64'])) {
+			array_set_path($if_config, 'pref64/enable', true);
+			if (is_subnetv6($if_config['ranat64'])) {
+				$prefix_parts = explode('/', $if_config['ranat64']);
+				if ((gen_subnetv6($prefix_parts[0], $prefix_parts[1]) . "/{$prefix_parts[1]}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+					validate_nat64_prefix($if_config['ranat64'])) {
+					array_set_path($if_config, 'pref64/prefix', $if_config['ranat64']);
+					$override_nat64_prefix = true;
+				}
+			}
+		}
+		if (!empty($if_config['ranat64_lifetime'])) {
+			array_set_path($if_config, 'pref64/lifetime', $if_config['ranat64_lifetime']);
+		}
+
+		if (isset($if_config['ranat64'])) {
+			unset($if_config['ranat64']);
+			$changed = true;
+		}
+		if (isset($if_config['ranat64_lifetime'])) {
+			unset($if_config['ranat64_lifetime']);
+			$changed = true;
+		}
+	}
+	unset($if_config);
+	if ($changed) {
+		config_set_path('dhcpdv6', $dhcp6_config);
+	}
+
+	// Normalize filter rule NAT64 values and check for custom prefixes.
+	$changes = [];
+	$alias_list = config_get_path('aliases/alias', []);
+	$rules_list = get_filter_rules_list();
+	foreach ($rules_list as $ridx => &$rule) {
+		// Check for NAT64 rule.
+		if (!isset($rule['nat'])) {
+			continue;
+		}
+
+		if (isset($rule['descr']) && is_string($rule['descr']) && (strlen($rule['descr']) > 0)) {
+			$changes_message = gettext(sprintf(" (rule %s)", "\"{$rule['descr']})\""));
+		} elseif (isset($rule['tracker']) && (strlen(strval($rule['tracker'])) > 0)) {
+			$changes_message = gettext(sprintf(" (rule %s)", strval($rule['tracker'])));
+		} else {
+			$changes_message = gettext(sprintf(" (rule ID %s)", $ridx));
+		}
+
+		// Remove unsupported types, e.g. "WAN subnets".
+		if (!isset($rule['destination']) || !isset($rule['destination']['address'])) {
+			$changes[] = gettext('a NAT64 prefix was not found, setting destination to well-known prefix') . $changes_message;
+			$rule['destination'] = [
+				'address' => NAT64_WELLKNOWN_PREFIX_CIDR
+			];
+			continue;
+		}
+
+		// Remove unsupported options, e.g. "not".
+		if (count($rule['destination']) > 1) {
+			$changes[] = gettext('unsupported destination configuration found, resetting destination options') . $changes_message;
+			$rule['destination'] = [
+				'address' => $rule['destination']['address']
+			];
+		}
+
+		// Check if the well-known prefix is already in use.
+		if ($rule['destination']['address'] == NAT64_WELLKNOWN_PREFIX_CIDR) {
+			continue;
+		}
+
+		// Check for a custom prefix.
+		if (is_subnetv6($rule['destination']['address'])) {
+			$rule_prefix_parts = explode('/', $rule['destination']['address']);
+			if ((gen_subnetv6($rule_prefix_parts[0], $rule_prefix_parts[1]) . "/{$rule_prefix_parts[1]}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+			    validate_nat64_prefix($rule['destination']['address'])) {
+				$override_nat64_prefix = true;
+				continue;
+			}
+		} else {
+			foreach ($alias_list as $alias) {
+				if (!isset($alias['name']) || ($alias['name'] != $rule['destination']['address'])) {
+					continue;
+				}
+
+				// Check network aliases with a single value (address is space-separated).
+				if (is_subnetv6($alias['address'])) {
+					$alias_prefix_parts = explode('/', $alias['address']);
+					if ((gen_subnetv6($alias_prefix_parts[0], $alias_prefix_parts[1]) . "/{$alias_prefix_parts[1]}" != NAT64_WELLKNOWN_PREFIX_CIDR) &&
+						validate_nat64_prefix($alias['address'])) {
+						$rule['destination']['address'] = $alias['address'];
+						$override_nat64_prefix = true;
+						continue 2;
+					}
+				}
+				break;
+			}
+		}
+
+		// A valid custom prefix was not found.
+		$changes[] = gettext(sprintf("invalid NAT64 prefix found, changing destination from %s to the well-known prefix", "\"{$rule['destination']['address']}\"")) . $changes_message;
+		$rule['destination']['address'] = NAT64_WELLKNOWN_PREFIX_CIDR;
+	}
+	unset($rule);
+	if (!empty($changes)) {
+		set_filter_rules_list($rules_list);
+		foreach ($changes as $message) {
+			logger(LOG_ERR, $message, LOG_PREFIX_UPGRADE);
+		}
+		file_notice('config.xml', gettext("NAT64 firewall rules were changed, see system logs for details."));
+	}
+
+
+	if ($override_nat64_prefix) {
+		config_set_path('system/allow_nat64_prefix_override', true);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
@@ -6987,6 +7179,7 @@ function upgrade_239_to_240() {
  *     version
  */
 function additional_config_upgrade() {
+	fix_config_artifacts();
 }
 
 ?>

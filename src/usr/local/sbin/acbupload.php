@@ -47,7 +47,7 @@ if (file_exists($lockfile)) {
 		/* The lock file is more than an hour old.
 		 * Something probably went wrong. */
 		unlink_if_exists($lockfile);
-		log_error(gettext('Stale AutoConfigBackup lock file removed'));
+		logger(LOG_INFO, localize_text('Stale lock file removed'), LOG_PREFIX_ACB);
 	} else {
 		exit();
 	}
@@ -65,8 +65,8 @@ if (count($files) > 0) {
 	});
 
 	/* Upload staged backups to the ACB service */
-	$notice_text = sprintf(gettext('Starting upload of staged AutoConfigBackup encrypted configuration backups to %s'), $acb_base_url);
-	log_error($notice_text);
+	$notice_text = localize_text('Starting upload of staged AutoConfigBackup encrypted configuration backups to %s', $acb_base_url);
+	logger(LOG_INFO, $notice_text, LOG_PREFIX_ACB);
 	update_filter_reload_status($notice_text);
 	foreach ($files as $file) {
 		$basename = basename($file, ".form");

@@ -34,8 +34,6 @@ require_once("globals.inc");
 require_once("config.inc");
 require_once("interfaces.inc");
 
-openlog("openvpn", LOG_ODELAY, LOG_AUTH);
-
 /* read data from command line */
 if (isset($_GET['certdepth'])) {
 	$cert_depth = $_GET['certdepth'];
@@ -61,13 +59,11 @@ foreach ($subj at $s) {
 //<template>
 
 if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
-	syslog(LOG_WARNING, "Certificate depth {$cert_depth} exceeded max allowed depth of {$allowed_depth}.");
+	logger(LOG_WARNING, localize_text("Certificate depth {$cert_depth} exceeded max allowed depth of {$allowed_depth}."), LOG_PREFIX_OPENVPN, LOG_AUTH);
 	if (isset($_GET['certdepth'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		exit(1);
 	}
 }
@@ -92,7 +88,6 @@ foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 		$status = implode(",", $status_out);
 		if (preg_match('/(error|fail)/', $status)) {
 			echo "FAILED";
-			closelog();
 			return;
 		} else if (preg_match('/Cert Status: good/', $status)) {
 			if (preg_match('/OCSP Response Status: successful \(0x0\)/', $status)) {
@@ -100,16 +95,15 @@ foreach (config_get_path('openvpn/openvpn-server', []) as $ovpns) {
 			}
 		} else {
 			echo "FAILED";
-			closelog();
 			return;
 		}
 	}
 }
 
-// Debug
-//syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}");
+if (g_get('debug')) {
+	logger(LOG_WARNING, localize_text("Found certificate %s with depth %s", $argv[2], $cert_depth), LOG_PREFIX_OPENVPN, LOG_AUTH);
+}
 
-closelog();
 if (isset($_GET['certdepth'])) {
 	echo "OK";
 } else {

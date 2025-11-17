@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-config_read_file(true);
+config_read_file(true, false);
 config_del_path('installedpackages');
 echo "Clearing package configuration information...\n";
 write_config("pfSsh.php cleared package configuration data.");

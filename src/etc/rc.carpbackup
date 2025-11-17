@@ -36,7 +36,7 @@ if (isset($_GET['interface'])) {
 }
 $argument = ltrim($argument, '$');
 if (!strstr($argument, "@")) {
-	log_error("CARP master event triggered from wrong source {$argument}");
+	logger(LOG_WARNING, localize_text("CARP master event triggered from wrong source %s", $argument), LOG_PREFIX_HA);
 	exit;
 }
 
@@ -46,15 +46,15 @@ $friendly = convert_real_interface_to_friendly_interface_name($iface);
 $friendly_descr = (!empty($friendly)) ? convert_friendly_interface_to_friendly_descr($friendly) : null;
 $vips = (!empty($friendly)) ? link_interface_to_vips($friendly, '', $vhid) : null;
 if (!is_array($vips)) {
-	log_error("CARP master event triggered from wrong source {$argument} - no associated VIPs");
+	logger(LOG_WARNING, localize_text("CARP master event triggered from wrong source %s - no associated VIPs", $argument), LOG_PREFIX_HA);
 	exit;
 }
 foreach ($vips as $vip) {
-	$notificationmsg = sprintf('HA cluster member "(%1$s@%2$s): (%3$s)" has resumed CARP state "BACKUP" for vhid %4$s',
+	$notificationmsg = localize_text('HA cluster member "(%1$s@%2$s): (%3$s)" has resumed CARP state "BACKUP" for vhid %4$s',
 					$vip['subnet'], $iface, $friendly_descr, $vhid);
 
 	notify_all_remote($notificationmsg);
-	log_error($notificationmsg);
+	logger(LOG_NOTICE, $notificationmsg, LOG_PREFIX_HA);
 }
 restart_ppp_interfaces_using_interfaces($vips);
 
@@ -80,7 +80,7 @@ foreach (array('server', 'client') as $mode) {
 		}
 		foreach ($vips as $vip) {
 			if ($openvpn_vip == "_vip{$vip['uniqid']}") {
-				log_error("Stopping OpenVPN {$mode} instance on {$friendly_descr} because of transition to CARP backup.");
+				logger(LOG_NOTICE, localize_text("Stopping OpenVPN {$mode} instance on {$friendly_descr} because of transition to CARP backup."), LOG_PREFIX_HA);
 				openvpn_restart($mode, $settings);
 			}
 		}
@@ -93,7 +93,7 @@ foreach (config_get_path("ipsec/phase1", []) as $ph1ent) {
 	}
 	if ((substr($ph1ent['interface'], 0, 4) == '_vip') &&
 	    (in_array(substr($ph1ent['interface'], 4), array_column($vips, 'uniqid')))) {
-		log_error("Reconfiguring IPsec because of transition to CARP backup.");
+		logger(LOG_NOTICE, localize_text("Reconfiguring IPsec because of transition to CARP backup."), LOG_PREFIX_HA);
 		ipsec_configure();
 		break;
 	}
@@ -107,7 +107,7 @@ foreach (config_get_path("dhcpdv6", []) as $dhcpv6if => $dhcpv6ifconf) {
 	}
 	foreach ($vips as $vip) {
 		if ($dhcpv6ifconf['rainterface'] == "_vip{$vip['uniqid']}") {
-			log_error("Stopping radvd instance on {$friendly_descr} because of transition to CARP backup.");
+			logger(LOG_NOTICE, localize_text("Stopping radvd instance on %s because of transition to CARP backup.", $friendly_descr), LOG_PREFIX_HA);
 			$rafound = true;
 		}
 	}
@@ -119,14 +119,14 @@ if ($rafound) {
 /* Reconfigure DHCP Relay when necessary */
 if (config_path_enabled('dhcrelay') &&
     (config_get_path('dhcrelay/carpstatusvip') == "_vip{$vip['uniqid']}")) {
-	log_error("Stopping DHCP Relay service because of transition to CARP backup.");
+	logger(LOG_NOTICE, localize_text("Stopping DHCP Relay service because of transition to CARP backup."), LOG_PREFIX_HA);
 	services_dhcrelay_configure();
 }
 
 /* Reconfigure DHCPv6 Relay when necessary */
 if (config_path_enabled('dhcrelay6') &&
     (config_get_path('dhcrelay6/carpstatusvip') == "_vip{$vip['uniqid']}")) {
-	log_error("Stopping DHCPv6 Relay service because of transition to CARP backup.");
+	logger(LOG_NOTICE, localize_text("Stopping DHCPv6 Relay service because of transition to CARP backup."), LOG_PREFIX_HA);
 	services_dhcrelay6_configure();
 }
 

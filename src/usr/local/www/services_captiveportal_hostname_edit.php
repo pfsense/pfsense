@@ -29,7 +29,9 @@
 ##|-PRIV
 
 function allowedhostnamescmp($a, $b) {
-	return strcmp(idn_to_utf8($a['hostname']), idn_to_utf8($b['hostname']));
+	return strcmp(
+		(is_string($a['hostname']) && (strlen($a['hostname']) > 0)) ? idn_to_utf8($a['hostname']) : '',
+		(is_string($b['hostname']) && (strlen($b['hostname']) > 0)) ? idn_to_utf8($b['hostname']) : '');
 }
 
 function allowedhostnames_sort() {
@@ -67,7 +69,7 @@ $id = is_numericint($_REQUEST['id']) ? $_REQUEST['id'] : null;
 $this_allowedhostname_config = isset($id) ? config_get_path("captiveportal/{$cpzone}/allowedhostname/{$id}") : null;
 if ($this_allowedhostname_config) {
 	$pconfig['zone'] = $this_allowedhostname_config['zone'];
-	$pconfig['hostname'] = idn_to_utf8($this_allowedhostname_config['hostname']);
+	$pconfig['hostname'] = (is_string($this_allowedhostname_config['hostname']) && (strlen($this_allowedhostname_config['hostname']) > 0)) ? idn_to_utf8($this_allowedhostname_config['hostname']) : '';
 	$pconfig['sn'] = $this_allowedhostname_config['sn'];
 	$pconfig['dir'] = $this_allowedhostname_config['dir'];
 	$pconfig['bw_up'] = $this_allowedhostname_config['bw_up'];
@@ -78,7 +80,7 @@ if ($this_allowedhostname_config) {
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
-	$_POST['hostname'] = idn_to_ascii($_POST['hostname']);
+	$_POST['hostname'] = (is_string($_POST['hostname']) && (strlen($_POST['hostname']) > 0)) ? idn_to_ascii($_POST['hostname']) : '';
 
 	/* input validation */
 	$reqdfields = explode(" ", "hostname");

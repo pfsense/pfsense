@@ -20,11 +20,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+LOG_PREFIX_OPENVPN="OpenVPN"
+
 if [ -n "${1}" ]; then
-	/usr/bin/logger -t openvpn "Flushing states on OpenVPN interface ${1} (Link Down)"
+	/usr/bin/logger -p user.notice -t openvpn "NOTICE [${LOG_PREFIX_OPENVPN}] Flushing states on OpenVPN interface ${1} (Link Down)"
 	/sbin/pfctl -i "${1}" -Fs
 else
-	/usr/bin/logger -t openvpn "WARNING: ovpn-linkdown called without interface"
+	/usr/bin/logger -p user.warning -t openvpn "WARNING [${LOG_PREFIX_OPENVPN}] ovpn-linkdown called without interface"
 fi
 
 /bin/rm -f "/var/etc/searchdomain_${1}"

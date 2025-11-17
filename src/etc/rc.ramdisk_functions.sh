@@ -26,32 +26,34 @@ RAMDISK_FLAG_FILE=/conf/ram_disks_failed
 RAMDISK_DEFAULT_SIZE_tmp=40
 RAMDISK_DEFAULT_SIZE_var=60
 
-# Replacement for /etc/rc.d/zfsbe onestart
-_be_remount_ds() {
-	local _dataset="${1}"
-
-	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${_dataset}" | \
-	while read _mp _name _canmount _mounted ; do
-		# skip filesystems that must *not* be mounted
-		[ "${_canmount}" = "off" ] || [ "${_mp}" = "/" ] && continue
-		# unmount the dataset if mounted...
-		[ "$_mounted" = "yes" ] && /sbin/umount -f "${_name}"
-		# mount the dataset
-		/sbin/zfs mount "${_name}"
-	done
+#
+# Remounts subordinate datasets of a parent dataset
+#
+_be_remount_subordinate()
+{
+	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${1}" | \
+		while read _mp _name _canmount _mounted ; do
+			# skip filesystems that must *not* be mounted
+			[ "${_canmount}" = "off" -o "${_mp}" = "/" ] && continue
+			# unmount the dataset if mounted...
+			[ "${_mounted}" = "yes" ] && /sbin/zfs umount -f "${_name}"
+			# finally, mount the dataset
+			/sbin/zfs mount "${_name}"
+		done
 }
 
-# Replacement for /etc/rc.d/zfsbe onestart
+#
+# Mount ZFS boot environment
+#
 _be_mount_zfs() {
 	echo -n "Mounting ZFS boot environment..."
 	/sbin/mount -p | while read _dev _mp _type _rest; do
 		[ "${_mp}"  = "/" ] || continue
-		if [ "${_type}" = "zfs" ] ; then
-			_be_remount_ds "${_dev}"
-		fi
+		[ "${_type}" = "zfs" ] || continue
+		_be_remount_subordinate "${_dev}"
 		break
 	done
-	echo " done."
+	echo "done."
 }
 
 # Check if RAM disks are enabled in config.xml

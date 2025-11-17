@@ -209,13 +209,13 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	}
 
 	// Setup DNS64 support
-	if (isset($unboundcfg['dns64'])) {
+	if (array_path_enabled($unboundcfg, 'dns64')) {
 		$module_config .= 'dns64 ';
 		$dns64_conf = 'dns64-prefix: ';
-		if (is_subnetv6($unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'])) {
-			$dns64_conf .= $unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'];
+		if (isset($unboundcfg['dns64']['prefix']) && validate_nat64_prefix($unboundcfg['dns64']['prefix'])) {
+			$dns64_conf .= $unboundcfg['dns64']['prefix'];
 		} else {
-			$dns64_conf .= '64:ff9b::/96';
+			$dns64_conf .= NAT64_WELLKNOWN_PREFIX_CIDR;
 		}
 	}
 
@@ -353,7 +353,7 @@ EOF;
 			$private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
 			$private_domains .= unbound_add_domain_overrides("private");
 		}
-		$reverse_zones .= unbound_add_domain_overrides("reverse");
+		$reverse_zones = unbound_add_domain_overrides("reverse");
 	}
 
 	// Configure Unbound statistics
@@ -401,7 +401,7 @@ EOF;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
 
 	if (isset($unboundcfg['regovpnclients'])) {
-		$openvpn_clients_conf .=<<<EOD
+		$openvpn_clients_conf =<<<EOD
 # OpenVPN client entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
 EOD;
@@ -414,7 +414,7 @@ EOD;
 	if (isset($unboundcfg['forwarding'])) {
 		$dnsservers = get_dns_nameservers(false, true);
 		if (!empty($dnsservers)) {
-			$forward_conf .=<<<EOD
+			$forward_conf =<<<EOD
 # Forwarding
 forward-zone:
 	name: "."
@@ -674,15 +674,25 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			if (file_exists($root_key_file)) {
 				$rootkeycheck = mwexec("/usr/bin/grep 'autotrust trust anchor file' {$root_key_file}", true);
 				if ($rootkeycheck != "0") {
-					log_error("Unbound {$root_key_file} file is corrupt, removing and recreating.");
+					logger(LOG_WARNING, localize_text("Unbound %s file is corrupt, removing and recreating.", $root_key_file), LOG_PREFIX_DNSR);
 					unlink_if_exists($root_key_file);
 				}
 			}
 			// When there are conectivity issues, it may take ~10 seconds for the command to time out
 			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
-			if ($param1 == "") {
-				//pfSense_fsync($root_key_file);
+			if (($param1 == "") && file_exists($root_key_file)) {
+				$fd = fopen($root_key_file, 'r');
+				if ($fd !== false) {
+					fsync($fd);
+					fclose($fd);
+
+					$dir_fd = fopen(dirname($root_key_file), 'r');
+					if ($dir_fd !== false) {
+						fsync($dir_fd);
+						fclose($dir_fd);
+					}
+				}
 			}
 			break;
 		case "unbound-control-setup":

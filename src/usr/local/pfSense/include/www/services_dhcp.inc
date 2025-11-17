@@ -187,7 +187,7 @@ function kea_dnsreg_enabled_ids(): array {
 		$enabled['default'] = true;
 	}
 	foreach (array_keys(config_get_path('dhcpd', [])) as $idx => $if) {
-		$dnsregpolicy = config_get_path("dhcpd/${if}/dnsregpolicy", 'default');
+		$dnsregpolicy = config_get_path("dhcpd/{$if}/dnsregpolicy", 'default');
 		if (array_key_exists($dnsregpolicy, $enabled)) {
 			$ids[$idx + 1] = true;
 		}
@@ -210,7 +210,7 @@ function kea6_dnsreg_enabled_ids(): array {
 		$enabled['default'] = true;
 	}
 	foreach (array_keys(config_get_path('dhcpdv6', [])) as $idx => $if) {
-		$dnsregpolicy = config_get_path("dhcpdv6/${if}/dnsregpolicy", 'default');
+		$dnsregpolicy = config_get_path("dhcpdv6/{$if}/dnsregpolicy", 'default');
 		if (array_key_exists($dnsregpolicy, $enabled)) {
 			$ids[$idx + 1] = true;
 		}

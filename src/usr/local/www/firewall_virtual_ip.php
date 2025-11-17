@@ -110,8 +110,7 @@ $interfaces['lo0'] = "Localhost";
 
 $i = 0;
 foreach (config_get_path('virtualip/vip', []) as $vipent):
-	if ($vipent['subnet'] != "" or $vipent['range'] != "" or
-		$vipent['subnet_bits'] != "" or (isset($vipent['range']['from']) && $vipent['range']['from'] != "")):
+	if ($vipent['subnet'] != ""):
 ?>
 				<tr>
 					<td>
@@ -120,10 +119,6 @@ foreach (config_get_path('virtualip/vip', []) as $vipent):
 		if ($vipent['subnet_bits']) {
 			print("{$vipent['subnet']}/{$vipent['subnet_bits']}");
 		}
-	}
-
-	if ($vipent['type'] == "range") {
-		print("{$vipent['range']['from']}-{$vipent['range']['to']}");
 	}
 
 	if ($vipent['mode'] == "carp") {

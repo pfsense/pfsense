@@ -64,9 +64,6 @@ if ($savemsg) {
 
 $services = get_services();
 
-// $debugsvcs = array('name' => 'captiveportal', 'description' => 'Captive Portal', 'zone' => '14');
-// array_push($services, $debugsvcs);
-
 if (count($services) > 0) {
 ?>
 <form action="status_services.php" method="post">

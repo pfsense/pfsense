@@ -43,7 +43,7 @@ function restart_packages() {
 	global $oldipv6, $curwanipv6, $g;
 
 	/* restart packages */
-	log_error("{$g['product_label']} package system has detected an IP change or dynamic WAN reconnection - $oldipv6 -> $curwanipv6 - Restarting packages.");
+	logger(LOG_NOTICE, localize_text("%s package system has detected an IP change or dynamic WAN reconnection - %s -> %s - Restarting packages.", $g['product_label'], $oldipv6, $curwanipv6));
 	send_event("service reload packages");
 }
 
@@ -62,9 +62,9 @@ if (isset($_GET['interface'])) {
 }
 
 if (!empty($reason) && ($reason != 'RENEW')) {
-	log_error("rc.newwanipv6: Info: starting on {$argument} due to {$reason}.");
+	logger(LOG_INFO, localize_text("rc.newwanipv6: starting on %s due to %s.", $argument, $reason));
 } else {
-	log_error("rc.newwanipv6: Info: starting on {$argument}.");
+	logger(LOG_INFO, localize_text("rc.newwanipv6: starting on %s.", $argument));
 }
 
 if (empty($argument)) {
@@ -75,7 +75,7 @@ if (empty($argument)) {
 	$interface_real = $argument;
 	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
 	if (empty($interface)) {
-		log_error("Interface is unassigned, nothing to do.");
+		logger(LOG_INFO, localize_text("Interface is unassigned, nothing to do."));
 		return;
 	}
 	$curwanipv6 = get_interface_ipv6($interface, true);
@@ -84,7 +84,7 @@ if (empty($argument)) {
 $interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
 if (empty($interface)) {
-	log_error("rc.newwanipv6 called with empty interface");
+	logger(LOG_WARNING, localize_text("%s called with empty interface", 'rc.newwanipv6'));
 	filter_configure();
 	return;
 }
@@ -94,7 +94,7 @@ if (empty($interface)) {
  *	i.e. OpenVPN might be in tap mode and not have an ip.
  */
 if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real, 0, 4) != "ovpn") {
-	log_error("rc.newwanipv6: No IPv6 address found for interface {$interface_descr} [{$interface}].");
+	logger(LOG_NOTICE, localize_text("%s No IPv6 address found for interface %s [%s].", 'rc.newwanipv6:', $interface_descr, $interface));
 	return;
 }
 
@@ -187,9 +187,9 @@ if (($reason == 'RENEW') && !$address_replaced && !$dns_changed) {
 }
 
 if ($reason == 'RENEW') {
-	log_error("rc.newwanipv6: Info: received {$reason} on {$argument} (previous IP address: {$oldipv6}).");
+	logger(LOG_INFO, localize_text("%s received %s on %s (previous IP address: %s).", 'rc.newwanipv6:', $reason, $argument, $oldipv6));
 }
-log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
+logger(LOG_INFO, localize_text("%s on (IP address: %s) (interface: %s) (real interface: %s).", 'rc.newwanipv6:', $curwanipv6, $interface, $interface_real));
 
 if (($reason != 'RENEW') || $address_replaced) {
 	$grouptmp = link_interface_to_group($interface);

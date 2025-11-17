@@ -149,7 +149,7 @@ if ($_POST['save']) {
 
 		// Edit group name
 		if ($this_ifgroup_config && $_POST['ifname'] != $this_ifgroup_config['ifname']) {
-			$filter_rule_config = config_get_path('filter/rule');
+			$filter_rule_config = get_filter_rules_list();
 			if (is_array($filter_rule_config)) {
 				foreach ($filter_rule_config as &$rule) {
 					if (isset($rule['floating'])) {
@@ -171,9 +171,9 @@ if ($_POST['save']) {
 					}
 				}
 				unset($rule);
-				config_set_path('filter/rule', $filter_rule_config);
+				set_filter_rules_list($filter_rule_config);
 			}
-			$nat_rule_config = config_get_path('nat/rule');
+			$nat_rule_config = get_anynat_rules_list('rdr');
 			if (is_array($nat_rule_config)) {
 				foreach ($nat_rule_config as $ridx => &$rule) {
 					if ($rule['interface'] == $this_ifgroup_config['ifname']) {
@@ -181,7 +181,7 @@ if ($_POST['save']) {
 					}
 				}
 				unset($rule);
-				config_set_path('nat/rule', $nat_rule_config);
+				set_anynat_rules_list('rdr', $nat_rule_config);
 			}
 			$omembers = explode(" ", $this_ifgroup_config['members']);
 			if (count($omembers) > 0) {
@@ -194,6 +194,7 @@ if ($_POST['save']) {
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
 			$this_ifgroup_config = $ifgroupentry;
+			config_set_path("ifgroups/ifgroupentry/{$id}", $ifgroupentry);
 
 		// Edit old group
 		} else if ($this_ifgroup_config) {

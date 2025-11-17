@@ -239,17 +239,25 @@
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($this->_FQDN) . "{$dnsID}.debug";
 
 			$this->_curlIpresolveV4 = match ($dnsService) {
-				'duiadns' => true,
+				'dnsimple-v6' => true,
+				'dreamhost-v6' => true,
 				'duiadns-v6' => true,
-				'he-net' => true,
+				'easydns-v6' => true,
+				'freedns-v6' => true,
+				'gandi-livedns-v6' => true,
 				'he-net-v6' => true,
+				'name.com-v6' => true,
+				'nicru-v6' => true,
+				'noip-free-v6' => true,
+				'noip-v6' => true,
+				'route53-v6' => true,
 				default => $curlIpresolveV4
 			};
 			$this->_curlSslVerifypeer = $curlSslVerifypeer;
 			$this->_curlProxy = $curlProxy;
 			$this->_dnsVerboseLog = $dnsVerboseLog;
 			if ($this->_dnsVerboseLog) {
-				log_error(gettext("Dynamic DNS: updatedns() starting"));
+				logger(LOG_INFO, localize_text("%s starting", 'updatedns()'), LOG_PREFIX_DDNS);
 			}
 
 			$dyndnslck = lock("DDNS" . $dnsID, LOCK_EX);
@@ -411,11 +419,17 @@
 						$request_source_af = $this->_addressFamilyRR;
 				}
 			}
-			$this->_dnsRequestIfIP = get_request_source_address($this->_dnsRequestIf, $request_source_af);
+
+			list($this->_dnsRequestIfIP, $error) = get_request_source_address($this->_dnsRequestIf, $request_source_af);
+			if (isset($error)) {
+				logger(LOG_ERR, localize_text('(%1$s) Could not determine the request IP address (using "%2$s", "%3$s"): %4$s', $this->_FQDN, $dnsIf, $this->_if, $error), LOG_PREFIX_DDNS);
+				unlock($dyndnslck);
+				return;
+			}
 
 			$this->_addressFamilyRequest = is_ipaddrv6($this->_dnsRequestIfIP) ? AF_INET6 : AF_INET;
 			$this->_checkIPMode = $checkIPMode;
-			$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamilyRR);
+			$this->_dnsIP = dyndnsCheckIP($this->_if, $this->_checkIPMode, $this->_addressFamilyRR);
 
 			if (($dnsMaxCacheAge !== null) && ($dnsMaxCacheAge !== "")) {
 				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
@@ -434,7 +448,7 @@
 
 			// Ensure that we were able to lookup the IP
 			if (!is_ipaddr($this->_dnsIP)) {
-				log_error(sprintf(gettext('Dynamic DNS (%1$s) There was an error trying to determine the public IP for interface - %2$s (%3$s %4$s).'), $this->_FQDN, $dnsIf, $this->_if, $this->_dnsIP));
+				logger(LOG_ERR, localize_text('(%1$s) There was an error trying to determine the public IP for interface - %2$s (%3$s %4$s).', $this->_FQDN, $dnsIf, $this->_if, $this->_dnsIP), LOG_PREFIX_DDNS);
 				unlock($dyndnslck);
 				return;
 			}
@@ -564,7 +578,7 @@
 		function _update() {
 
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _update() starting.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s starting.', $this->_dnsService, $this->_FQDN, '_update()'), LOG_PREFIX_DDNS);
 			}
 
 			$ch = curl_init();
@@ -596,7 +610,7 @@
 					}
 					$server = str_replace("%IP%", $this->_dnsIP, $this->_dnsUpdateURL);
 					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext("Sending request to: %s"), $server));
+						logger(LOG_INFO, localize_text("Sending request to: %s", $server), LOG_PREFIX_DDNS);
 					}
 					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
@@ -686,10 +700,10 @@
 						// Update the IP to a dummy value to force No-IP free accounts to see a change.
 						$iptoset = "fd00:d::1";
 						$this->_dnsDummyUpdateDone = true;
-						$log_message = 'Dynamic DNS %1$s (%2$s): ';
-						$log_message .= 'Processing dummy update on No-IP free account. ';
-						$log_message .= 'IP temporarily set to %3$s';
-						log_error(sprintf(gettext($log_message), $this->_dnsService, $this->_dnsHost, $iptoset));
+						logger(LOG_INFO, localize_text(
+							'%1$s (%2$s): Processing dummy update on %3$s free account. IP temporarily set to %4$s',
+							$this->_dnsService, $this->_dnsHost, 'No-IP', $iptoset), LOG_PREFIX_DDNS
+						);
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
@@ -713,7 +727,10 @@
 						// Update the IP to a dummy value to force No-IP free accounts to see a change.
 						$iptoset = "192.168.1.1";
 						$this->_dnsDummyUpdateDone = true;
-						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP temporarily set to %3$s'), $this->_dnsService, $this->_dnsHost, $iptoset));
+						logger(LOG_INFO, localize_text(
+							'%1$s (%2$s): Processing dummy update on %3$s free account. IP temporarily set to %4$s',
+							$this->_dnsService, $this->_dnsHost, 'No-IP', $iptoset), LOG_PREFIX_DDNS
+						);
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
@@ -934,11 +951,11 @@
 					$response = json_decode(curl_exec($ch), true);
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ($http_code != "200") {
-						log_error(gettext("Error message: ") . (is_array($response) ? implode('; ', $response) : $response));
+						logger(LOG_ERR, localize_text("Error message: %s", (is_array($response) ? implode('; ', $response) : $response)), LOG_PREFIX_DDNS);
 						return false;
 					}
 					if (!is_array($response["records"])) {
-						log_error(gettext("Unexpected response: ") . (is_array($response) ? implode('; ', $response) : $response));
+						logger(LOG_ERR, localize_text("Unexpected response: %s", (is_array($response) ? implode('; ', $response) : $response)), LOG_PREFIX_DDNS);
 						return false;
 					}
 					foreach($response["records"] as $record) {
@@ -952,7 +969,7 @@
 					}
 					if (!$record_id && $response["nextPage"])
 					{
-						log_error(gettext("Too many (>1000) Name.com DNS records. Paging not supported."));
+						logger(LOG_ERR, localize_text("Too many (>1000) %s DNS records. Paging not supported.", 'Name.com'), LOG_PREFIX_DDNS);
 						return false;
 					}
 					// Either update an existing record or create a new one.
@@ -1002,11 +1019,11 @@
 					$response = json_decode(curl_exec($ch), true);
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ($http_code != "200") {
-						log_error(gettext("Error message: ") . (is_array($response) ? implode('; ', $response) : $response));
+						logger(LOG_ERR, localize_text("Error message: %s", (is_array($response) ? implode('; ', $response) : $response)), LOG_PREFIX_DDNS);
 						return false;
 					}
 					if (!is_array($response["records"])) {
-						log_error(gettext("Unexpected response: ") . (is_array($response) ? implode('; ', $response) : $response));
+						logger(LOG_ERR, localize_text("Unexpected response: %s", (is_array($response) ? implode('; ', $response) : $response)), LOG_PREFIX_DDNS);
 						return false;
 					}
 					foreach($response["records"] as $record) {
@@ -1041,10 +1058,10 @@
 					    ($this->_dnsDummyUpdateDone == false)) {
 						$post_data['content'] = ($this->_addressFamilyRR == AF_INET6) ? "fd00:d::1" : "127.0.0.1";
 						$this->_dnsDummyUpdateDone = true;
-						$log_message = 'Dynamic DNS %1$s (%2$s): ';
-						$log_message .= 'Performing forced update. ';
-						$log_message .= 'IP temporarily set to %3$s';
-						log_error(sprintf(gettext($log_message), $this->_dnsService, $this->_dnsHost, $post_data['content']));
+						logger(LOG_INFO, localize_text(
+							'%1$s (%2$s): Performing forced update. IP temporarily set to %3$s',
+							$this->_dnsService, $this->_dnsHost, $post_data['content']), LOG_PREFIX_DDNS
+						);
 					} else {
 						$post_data['content'] = $this->_dnsIP;
 					}
@@ -1149,11 +1166,11 @@
 					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneID, "us-east-1", hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
-						log_error(sprintf("Sending request to: %s", $apiurl));
+						logger(LOG_INFO, localize_text("Sending request to: %s", $apiurl), LOG_PREFIX_DDNS);
 						foreach($httphead as $hv){
-							log_error(sprintf("Header: %s", $hv));
+							logger(LOG_INFO, localize_text("Header: %s", $hv), LOG_PREFIX_DDNS);
 						}
-						log_error(sprintf("XMLPOST: %s", $xmlreq));
+						logger(LOG_INFO, localize_text("XMLPOST: %s", $xmlreq), LOG_PREFIX_DDNS);
 					}
 					curl_setopt($ch, CURLOPT_URL, $apiurl);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);
@@ -1166,11 +1183,11 @@
 					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneID, "us-east-1", hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
-						log_error(sprintf("Sending request to: %s", $apiurl));
+						logger(LOG_INFO, localize_text("Sending request to: %s", $apiurl), LOG_PREFIX_DDNS);
 						foreach($httphead as $hv){
-							log_error(sprintf("Header: %s", $hv));
+							logger(LOG_INFO, localize_text("Header: %s", $hv), LOG_PREFIX_DDNS);
 						}
-						log_error(sprintf("XMLPOST: %s", $xmlreq));
+						logger(LOG_INFO, localize_text("XMLPOST: %s", $xmlreq), LOG_PREFIX_DDNS);
 					}
 					curl_setopt($ch, CURLOPT_URL, $apiurl);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);
@@ -1401,7 +1418,7 @@
 						curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 						curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/dns/{$hostID}");
-						log_error("HostID:{$hostID}, OldIP:{$hostIP}");
+						logger(LOG_INFO, localize_text("HostID:%s, OldIP:%s", $hostID, $hostIP), LOG_PREFIX_DDNS);
 					}
 					break;
 				case 'onecom':
@@ -1464,7 +1481,7 @@
 						}
 					}
 					if (!$id) {
-						log_error("Could not find one.com hostname record id");
+						logger(LOG_ERR, localize_text("Could not find %s hostname record id", 'one.com'), LOG_PREFIX_DDNS);
 						return false;
 					}
 
@@ -1637,7 +1654,7 @@
 					if (isset($result['sid'])) {
 						$subscriptionid = $result['sid'];
 					} else {
-						log_error("Azure subscription id not found in resource id");
+						logger(LOG_ERR, localize_text("%s subscription id not found in resource id", 'Azure'), LOG_PREFIX_DDNS);
 						return false;
 					}
 						// find tenant id from subscription id
@@ -1652,7 +1669,7 @@
 					if (isset($result['tid'])) {
 						$tenantid = $result['tid'];
 					} else {
-						log_error("Tenant ID not found");
+						logger(LOG_ERR, localize_text("Tenant ID not found"), LOG_PREFIX_DDNS);
 						return false;
 					}
 						// get an bearer token
@@ -1668,7 +1685,7 @@
 					if (isset($result['tok'])) {
 						$bearertoken = $result['tok'];
 					} else {
-						log_error("no valid bearer token");
+						logger(LOG_ERR, localize_text("no valid bearer token"), LOG_PREFIX_DDNS);
 						return false;
 					}
 						// Update the DNS record
@@ -1696,7 +1713,7 @@
 					$linode_api = "https://api.linode.com/v4";
 					$record_type = ($this->_addressFamilyRR == AF_INET6) ? "AAAA" : "A";
 					$record_name = $this->_dnsHost == "@" ? "" : $this->_dnsHost;
-					$err_prefix = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): (" . gettext("Error") . ")";
+					$err_prefix = "{$this->_dnsService} ({$this->_FQDN}): (" . gettext("Error") . ")";
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 						'Accept: application/json',
@@ -1716,23 +1733,23 @@
 					}
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ( $http_code == 401 && preg_match('/invalid oauth token/i', $domains_output) ) {
-						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authentication Failed"));
+						logger(LOG_ERR, localize_text("%s querying domains: %s", $err_prefix, gettext("User Authentication Failed")), LOG_PREFIX_DDNS);
 						return false;
 					} else if ( $http_code == 401 ) {
-						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authorization Failed"));
+						logger(LOG_ERR, localize_text("%s querying domains: %s", $err_prefix, gettext("User Authorization Failed")), LOG_PREFIX_DDNS);
 						return false;
 					} else if ( $http_code != 200 ) {
-						log_error("$err_prefix " . gettext("querying domains") . ": " .
-							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
+						logger(LOG_ERR, localize_text("%s querying domains: %s", $err_prefix,
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" )), LOG_PREFIX_DDNS);
 						return false;
 					}
 
 					if ( ! $domain_id ) {
-						log_error("{$err_prefix} " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'");
+						logger(LOG_ERR, "{$err_prefix} " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'", LOG_PREFIX_DDNS);
 						return false;
 					}
 					if ($this->_dnsVerboseLog) {
-						log_error("_update(): " . sprintf(gettext("found domain id: %s"), $domain_id));
+						logger(LOG_INFO, localize_text("%s: found domain id: %s", '_update()', $domain_id), LOG_PREFIX_DDNS);
 					}
 
 					// get existing record if present
@@ -1742,8 +1759,8 @@
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ( $http_code != 200 )
 					{
-						log_error("$err_prefix " . gettext("querying domains") . ": " .
-							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
+						logger(LOG_ERR, localize_text("%s querying domains: %s", $err_prefix,
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" )), LOG_PREFIX_DDNS);
 						return false;
 					}
 
@@ -1755,7 +1772,7 @@
 						}
 					}
 					if ($this->_dnsVerboseLog) {
-						log_error("_update(): " . ( $record ? sprintf(gettext("found existing record id: %s"), $record["id"]) : gettext("no matching record found") ));
+						logger(LOG_INFO, "_update(): " . ( $record ? sprintf(gettext("found existing record id: %s"), $record["id"]) : gettext("no matching record found")), LOG_PREFIX_DDNS);
 					}
 
 					if (is_array($record)) {
@@ -1809,11 +1826,11 @@
 					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
 					break;
 				case 'desec':
-					curl_setopt($ch, CURLOPT_URL, 'https://update.dedyn.io/?hostname=' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, 'https://update.dedyn.io/?hostname=' . $this->_dnsHost . '&myipv4=' . $this->_dnsIP . '&myipv6=preserve');
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
 					break;
 				case 'desec-v6':
-					curl_setopt($ch, CURLOPT_URL, 'https://update6.dedyn.io/?hostname=' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, 'https://update6.dedyn.io/?hostname=' . $this->_dnsHost . '&myipv4=preserve' . '&myipv6=' . $this->_dnsIP);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
 					break;
 				case 'luadns':
@@ -1841,7 +1858,7 @@
 					$response = curl_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code != 200) {
-						log_error(gettext("Could not get zone list"));
+						logger(LOG_ERR, localize_text("Could not get zone list"), LOG_PREFIX_DDNS);
 						$curl_error = @curl_error($ch);
 						$this->_checkStatus($http_code, $curl_error, $response, null);
 						return false;
@@ -1855,13 +1872,13 @@
 
 						$zone_id = $zone['id'];
 						if ($this->_dnsVerboseLog) {
-							log_error("{$zone['name']}: {$zone['id']}");
+							logger(LOG_INFO, "{$zone['name']}: {$zone['id']}", LOG_PREFIX_DDNS);
 						}
 						break;
 					}
 
 					if ($zone_id < 0) {
-						log_error(gettext("Could not find zone"));
+						logger(LOG_ERR, localize_text("Could not find zone"), LOG_PREFIX_DDNS);
 						return false;
 					}
 
@@ -1870,7 +1887,7 @@
 					$response = curl_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code != 200) {
-						log_error(gettext("Could not get record list"));
+						logger(LOG_ERR, localize_text("Could not get record list"), LOG_PREFIX_DDNS);
 						$curl_error = @curl_error($ch);
 						$this->_checkStatus($http_code, $curl_error, $response, null);
 						return false;
@@ -1885,13 +1902,13 @@
 
 						$record_id = $record['id'];
 						if ($this->_dnsVerboseLog) {
-							log_error("{$record['name']}: {$record['id']}");
+							logger(LOG_INFO, "{$record['name']}: {$record['id']}", LOG_PREFIX_DDNS);
 						}
 						break;
 					}
 
 					if ($record_id < 0) {
-						log_error(gettext("Could not find record"));
+						logger(LOG_ERR, localize_text("Could not find record"), LOG_PREFIX_DDNS);
 						return false;
 					}
 
@@ -1921,16 +1938,16 @@
 				$data = substr($response, $header_size);
 				if ($this->_dnsVerboseLog) {
 					foreach (explode(PHP_EOL, $header) as $hv) {
-						log_error(sprintf("Response Header: %s", rtrim($hv)));
+						logger(LOG_INFO, localize_text("Response Header: %s", rtrim($hv)), LOG_PREFIX_DDNS);
 					}
-					log_error(sprintf("Response Data: %s", $data));
+					logger(LOG_INFO, localize_text("Response Data: %s", $data), LOG_PREFIX_DDNS);
 				}
 				$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 				$curl_error = @curl_error($ch);
 				$this->_checkStatus($http_code, $curl_error, $data, $header);
 			}
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _update() ending.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s ending.', $this->_dnsService, $this->_FQDN, '_update()'), LOG_PREFIX_DDNS);
 			}
 		}
 
@@ -1946,7 +1963,7 @@
 		function _remove($existing_ip = NULL) {
 			$remove_allowed = false;
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _remove() starting.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s starting.', $this->_dnsService, $this->_FQDN, '_remove()'), LOG_PREFIX_DDNS);
 			}
 
 			$ch = curl_init();
@@ -2011,7 +2028,7 @@
 		function _lookup_current() {
 			$lookup_allowed = false;
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _listCurrent() starting.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s starting.', $this->_dnsService, $this->_FQDN, '_listCurrent()'), LOG_PREFIX_DDNS);
 			}
 
 			$ch = curl_init();
@@ -2064,15 +2081,15 @@
 		 */
 		function _checkLookupStatus($curl_error, $data, $header) {
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s starting.', $this->_dnsService, $this->_FQDN, '_checkLookupStatus()'), LOG_PREFIX_DDNS);
 			}
 			$success_str = "(" . gettext("Success") . ") ";
 			$error_str = "(" . gettext("Error") . ") ";
-			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
+			$status_intro = "({$this->_dnsHost}): ";
 
 			if ($this->_dnsService != 'ods' && !empty($curl_error)) {
 				$status = gettext("Curl error occurred:") . " {$curl_error}";
-				log_error($status);
+				logger(LOG_ERR, $status, LOG_PREFIX_DDNS);
 				$this->status = $status;
 				return;
 			}
@@ -2081,7 +2098,7 @@
 			case 'dreamhost-v6':
 				$result = json_decode($data,true);
 				if($result["result"] != "success") {
-					log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+					logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 					$this->_debug($data);
 					return;
 				} else {
@@ -2091,7 +2108,7 @@
 										|| ($row["type"] == "AAAA" && ($this->_addressFamilyRR == AF_INET6))
 								)) {
 							if($row["editable"] == 0) {
-								log_error($status_intro . "host " . $this->_dnsHost . " is not editable.");
+								logger(LOG_ERR, localize_text("%shost %s is not editable.", $status_intro, $this->_dnsHost), LOG_PREFIX_DDNS);
 								continue;
 							}
 							$this->_existingRecords[]=array("record"=>$row["type"], "type"=>$row["type"], "existing_val"=>$row["value"]);
@@ -2100,7 +2117,7 @@
 				}
 				if (!is_array($this->_existingRecords)){
 					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records found.'), $this->_dnsService, $this->_FQDN));
+						logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s ending. No matching records found.', $this->_dnsService, $this->_FQDN, '_checkLookupStatus()'), LOG_PREFIX_DDNS);
 					}
 				}
 				break;
@@ -2115,16 +2132,16 @@
 		 */
 		function _checkStatus($http_code, $curl_error, $data, $header) {
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() starting.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s starting.', $this->_dnsService, $this->_FQDN, '_checkStatus()'), LOG_PREFIX_DDNS);
 			}
 			$successful_update = false;
 			$success_str = "(" . gettext("Success") . ") ";
 			$error_str = "(" . gettext("Error") . ") ";
-			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
+			$status_intro = "({$this->_dnsHost}): ";
 
 			if ($this->_dnsService != 'ods' && !empty($curl_error)) {
 				$status = gettext("Curl error occurred:") . " {$curl_error}";
-				log_error($status);
+				logger(LOG_ERR, $status, LOG_PREFIX_DDNS);
 				$this->status = $status;
 				return;
 			}
@@ -2175,7 +2192,7 @@
 						$status = $status_intro . $error_str . gettext("Updating too frequently, considered abuse.");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2186,7 +2203,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2213,7 +2230,7 @@
 						$status = $status_intro . gettext("DNS error encountered. Stop updating for 30 minutes.");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2227,7 +2244,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $http_code . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:" . " " . $data), LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2239,7 +2256,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $http_code . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:" . " " . $data), LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2258,7 +2275,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2276,7 +2293,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2293,7 +2310,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2310,7 +2327,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2338,7 +2355,7 @@
 						$status = $status_intro . $error_str . gettext("Fatal error");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2421,7 +2438,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2439,7 +2456,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2459,7 +2476,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2477,7 +2494,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2487,7 +2504,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2501,7 +2518,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2515,7 +2532,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2528,7 +2545,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2543,7 +2560,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2562,7 +2579,7 @@
 						$status = $status_intro . $error_str . gettext("Updating too frequently, considered abuse.");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2586,7 +2603,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2598,7 +2615,7 @@
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {
-						log_error($status_intro . " ( " . gettext("Error message: ") . (is_array($result) ? implode('; ', $result) : $result) . " )");
+						logger(LOG_ERR, $status_intro . " ( " . gettext("Error message: ") . (is_array($result) ? implode('; ', $result) : $result) . " )", LOG_PREFIX_DDNS);
 					}
 					break;
 				case 'name.com':
@@ -2608,7 +2625,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Error, HTTP response code") . ": " . $http_code . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 					}
 					break;
 				case 'namecheap':
@@ -2639,7 +2656,7 @@
 						$status = $status_intro . $error_str . implode(", ", $ncresponse["interface-response"]["errors"]);
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2659,7 +2676,7 @@
 						$status = $status_intro . gettext("DNS error encountered. Stop updating for 30 minutes.");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2679,7 +2696,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2700,7 +2717,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2717,7 +2734,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2738,7 +2755,7 @@
 						$status = $status_intro . $error_str . gettext("too many requests - please wait");
 					} else {
 						$status = $status_intro . "(" . gettext("unknown response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $header . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 						$this->_debug($header);
 					}
@@ -2747,7 +2764,7 @@
 				case 'route53-v6':
 					if(preg_match('/ErrorResponse/', $data)){
 						$status = $status_intro . $error_str . gettext("Route53 API call failed");
-						log_error(sprintf("error message: %s", $data));
+						logger(LOG_ERR, localize_text("error message: %s", $data), LOG_PREFIX_DDNS);
 						$status_update = false;
 					} else {
 						$status = $status_intro . $success_str . gettext("IP address changed successfully");
@@ -2766,7 +2783,7 @@
 						$status = $status_intro . $error_str . gettext("Zone or Host ID was not found, check the hostname.");
 					} else {
 						$status = $status_intro . gettext("UNKNOWN ERROR") . " - " . $output->errors[0]->message;
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 					}
 					break;
 				case 'yandex-v6':
@@ -2775,27 +2792,27 @@
 					if ($result['success'] == 'ok') {
 						$successful_update = true;
 					} elseif ($result['error'] == 'bad_domain') {
-						log_error($status_intro . $error_str .  gettext("The domain name was not specified or does not conform to the RFC"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("The domain name was not specified or does not conform to the RFC"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'unknown') {
-						log_error($status_intro . $error_str .  gettext("A temporary failure or API error occurred"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("A temporary failure or API error occurred"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'prohibited') {
-						log_error($status_intro . $error_str .  gettext("A forbidden domain name"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("A forbidden domain name"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'bad_token') {
-						log_error($status_intro . $error_str .  gettext("Invalid PDD token"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("Invalid PDD token"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'no_auth') {
-						log_error($status_intro . $error_str .  gettext("The PddToken header was omitted"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("The PddToken header was omitted"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'not_allowed') {
-						log_error($status_intro . $error_str .  gettext("This operation is not allowed for this user"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("This operation is not allowed for this user"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'blocked') {
-						log_error($status_intro . $error_str .  gettext("Blocked domain"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("Blocked domain"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'occupied') {
-						log_error($status_intro . $error_str .  gettext("The domain name is in use by another user"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("The domain name is in use by another user"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'domain_limit_reached') {
-						log_error($status_intro . $error_str .  gettext("Exceeded the acceptable number of connected domains (50)"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("Exceeded the acceptable number of connected domains (50)"), LOG_PREFIX_DDNS);
 					} elseif ($result['error'] == 'no_reply') {
-						log_error($status_intro . $error_str .  gettext("Yandex.Mail for Domain cannot connect to the server source for the import"));
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("Yandex.Mail for Domain cannot connect to the server source for the import"), LOG_PREFIX_DDNS);
 					} else {
-						log_error($status_intro . $error_str .  gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . $error_str .  gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 					}
 					break;
 				case 'eurodns':
@@ -2811,7 +2828,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2829,7 +2846,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2842,7 +2859,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2866,7 +2883,7 @@
 						$status = $status_intro . $error_str . $message;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $http_code . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2890,7 +2907,7 @@
 						$status = $status_intro . $error_str . $message;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2915,7 +2932,7 @@
 						$status = $status_intro . $error_str . gettext("Error on Google's end, retry in 5 minutes");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2952,7 +2969,7 @@
 							break;
 						default:
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-							log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+							logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 							$this->_debug($data);
 							break;
 					}
@@ -2973,7 +2990,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -2988,7 +3005,7 @@
 					}
 					else {
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-							log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
+							logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $header . $data, LOG_PREFIX_DDNS);
  							$this->_debug($data);
  							$this->_debug($header);
  					}
@@ -2999,7 +3016,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -3008,14 +3025,14 @@
 					if ($result['status'] == 'Success') {
 						$successful_update = true;
 					} else {
-						log_error($result['status'] . "(" . $result['statusDescription'] . ")");
+						logger(LOG_ERR, $result['status'] . "(" . $result['statusDescription'] . ")", LOG_PREFIX_DDNS);
 					}
 					break;
 				case 'dreamhost':
 				case 'dreamhost-v6':
 					$result = json_decode($data,true);
 					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext('_checkStatus() results: %1$s'), $data));
+						logger(LOG_INFO, localize_text('%1$s results: %2$s', '_checkStatus()', $data), LOG_PREFIX_DDNS);
 					}
 					switch ($result['data']) {
 					case 'success':
@@ -3087,7 +3104,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $http_code);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $http_code, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -3096,7 +3113,7 @@
 					$status_intro = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): ";
 					$result = json_decode($data,true);
 					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext('_checkStatus() results: %1$s'), $data));
+						logger(LOG_INFO, localize_text('%1$s results: %2$s', '_checkStatus()', $data), LOG_PREFIX_DDNS);
 					}
 					if ($http_code == 200 && isset($result["id"]) && ! isset($result["errors"])) {
 						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
@@ -3117,7 +3134,7 @@
 						$successful_update = true;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $http_code);
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $http_code, LOG_PREFIX_DDNS);
 						$this->_debug($data);
 					}
 					break;
@@ -3133,7 +3150,7 @@
 							break;
 						default:
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-							log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+							logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 							$this->_debug($data);
 							break;
 					}
@@ -3149,7 +3166,7 @@
 							break;
 						default:
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-							log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+							logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
 							$this->_debug($data);
 							break;
 					}
@@ -3161,7 +3178,7 @@
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {
-						log_error($status_intro . " ( " . gettext("Error message: ") . $result['status'] . " )");
+						logger(LOG_ERR, $status_intro . " ( " . gettext("Error message: ") . $result['status'] . " )", LOG_PREFIX_DDNS);
 					}
 					break;
 				case 'luadns':
@@ -3184,7 +3201,7 @@
 						default:
 							/* Don't expect JSON */
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-							log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+							logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " {$data}", LOG_PREFIX_DDNS);
 							$this->_debug($data);
 							break;
 					}
@@ -3198,7 +3215,7 @@
 				if ($this->_addressFamilyRR == AF_INET) {
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IP Address for %1$s on %2$s (%3$s) to %4$s'), $this->_FQDN, convert_real_interface_to_friendly_descr($this->_if), $this->_if, $this->_dnsIP));
-					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile, $this->_dnsIP));
+					logger(LOG_INFO, localize_text('updating cache file %1$s: %2$s', $this->_cacheFile, $this->_dnsIP), LOG_PREFIX_DDNS);
 					@file_put_contents($this->_cacheFile, "{$this->_dnsIP}|{$currentTime}");
 				} else {
 					@unlink($this->_cacheFile);
@@ -3206,16 +3223,16 @@
 				if ($this->_addressFamilyRR == AF_INET6) {
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IPv6 Address for %1$s on %2$s (%3$s) to %4$s'), $this->_FQDN, convert_real_interface_to_friendly_descr($this->_if), $this->_if, $this->_dnsIP));
-					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile_v6, $this->_dnsIP));
+					logger(LOG_INFO, localize_text('updating cache file %1$s: %2$s', $this->_cacheFile_v6, $this->_dnsIP), LOG_PREFIX_DDNS);
 					@file_put_contents($this->_cacheFile_v6, "{$this->_dnsIP}|{$currentTime}");
 				} else {
 					@unlink($this->_cacheFile_v6);
 				}
 			}
 			$this->status = $status;
-			log_error($status);
+			logger(LOG_INFO, $status, LOG_PREFIX_DDNS);
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() ending.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s ending.', $this->_dnsService, $this->_FQDN, '_checkStatus()'), LOG_PREFIX_DDNS);
 			}
 		}
 
@@ -3224,7 +3241,7 @@
 		 *   Return Error, Set Last Error, and Die.
 		 */
 		function _error($errorNumber = '1') {
-			$err_str = 'phpDynDNS: (' . gettext('ERROR!') . ') ';
+			$err_str = '(' . gettext('ERROR!') . ') ';
 			$err_str_r53 = 'Route 53: (' . gettext('Error') . ') ';
 			switch ($errorNumber) {
 				case 0:
@@ -3254,7 +3271,7 @@
 					$status = $err_str_r53 . gettext("Invalid TTL");
 					break;
 				case 10:
-					$error = "phpDynDNS ({$this->_FQDN}): " . sprintf(gettext("No change in my IP address and/or %s days has not passed. Not updating dynamic DNS entry."), $this->_dnsMaxCacheAgeDays);
+					$error = "({$this->_FQDN}): " . sprintf(gettext("No change in my IP address and/or %s days has not passed. Not updating dynamic DNS entry."), $this->_dnsMaxCacheAgeDays);
 					break;
 				default:
 					$error = $err_str . gettext('Unknown Response.');
@@ -3263,7 +3280,7 @@
 					break;
 			}
 			$this->lastError = $error;
-			log_error($error);
+			logger(LOG_ERR, $error, LOG_PREFIX_DDNS);
 		}
 
 		/*
@@ -3274,17 +3291,16 @@
 		 */
 		function _detectChange() {
 			if ($this->_dnsVerboseLog) {
-				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _detectChange() starting.'), $this->_dnsService, $this->_FQDN));
+				logger(LOG_INFO, localize_text('%1$s (%2$s): %3$s starting.', $this->_dnsService, $this->_FQDN, '_detectChange()'), LOG_PREFIX_DDNS);
 			}
 
 			$currentTime = time();
 
-			$this->_dnsIP = dyndnsCheckIP($this->_dnsRequestIf, $this->_checkIPMode, $this->_addressFamilyRR);
+			$this->_dnsIP = dyndnsCheckIP($this->_if, $this->_checkIPMode, $this->_addressFamilyRR);
 			if (!$this->_dnsIP) {
-				log_error(sprintf(gettext("Dynamic Dns (%s): Current WAN IP could not be determined, skipping update process."), $this->_FQDN));
+				logger(LOG_ERR, localize_text("(%s): Current WAN IP could not be determined, skipping update process.", $this->_FQDN), LOG_PREFIX_DDNS);
 				return false;
 			}
-			$log_error = sprintf(gettext('Dynamic Dns (%1$s): Current WAN IP: %2$s'), $this->_FQDN, $this->_dnsIP) . " ";
 
 			if (($this->_addressFamilyRR == AF_INET6)) {
 				if (file_exists($this->_cacheFile_v6)) {
@@ -3292,13 +3308,13 @@
 					list($cacheIP, $cacheTime) = explode('|', $contents);
 					$this->_debug($cacheIP . '/' . $cacheTime);
 					$initial = false;
-					$log_error .= sprintf(gettext("Cached IPv6: %s"), $cacheIP);
+					$log_error = sprintf(gettext("Cached IPv6: %s"), $cacheIP);
 				} else {
 					$cacheIP = '::';
 					@file_put_contents($this->_cacheFile, "::|{$currentTime}");
 					$cacheTime = $currentTime;
 					$initial = true;
-					$log_error .= gettext("No Cached IPv6 found.");
+					$log_error = gettext("No Cached IPv6 found.");
 				}
 			} else {
 				if (file_exists($this->_cacheFile)) {
@@ -3306,17 +3322,17 @@
 					list($cacheIP, $cacheTime) = explode('|', $contents);
 					$this->_debug($cacheIP . '/' . $cacheTime);
 					$initial = false;
-					$log_error .= sprintf(gettext("Cached IP: %s"), $cacheIP);
+					$log_error = sprintf(gettext("Cached IP: %s"), $cacheIP);
 				} else {
 					$cacheIP = '0.0.0.0';
 					@file_put_contents($this->_cacheFile, "0.0.0.0|{$currentTime}");
 					$cacheTime = $currentTime;
 					$initial = true;
-					$log_error .= gettext("No Cached IP found.");
+					$log_error = gettext("No Cached IP found.");
 				}
 			}
 			if ($this->_dnsVerboseLog) {
-				log_error($log_error);
+				logger(LOG_INFO, localize_text('(%1$s): Current WAN IP: %2$s %3$s', $this->_FQDN, $this->_dnsIP, $log_error), LOG_PREFIX_DDNS);
 			}
 
 			// Convert seconds = days * hr/day * min/hr * sec/min
@@ -3348,7 +3364,7 @@
 			 */
 			if ($needs_updating == true) {
 				if ($this->_dnsVerboseLog) {
-					log_error("DynDns ({$this->_FQDN}): {$update_reason}");
+					logger(LOG_INFO, "({$this->_FQDN}): {$update_reason}", LOG_PREFIX_DDNS);
 				}
 				return true;
 			}
@@ -3363,9 +3379,7 @@
 		 *   - status is returned from a DynDNS service provider.
 		 */
 		function _debug($data) {
-			global $g;
-
-			if (!$g['debug']) {
+			if (!g_get('debug')) {
 				return;
 			}
 			$string = date('m-d-y h:i:s') . ' - (' . $this->_debugID . ') - [' . $this->_dnsService . '] - ' . $data . "\n";

@@ -422,16 +422,16 @@ function doAdvancedAdminPOST($post, $json = false) {
 function restart_GUI() {
 	ob_flush();
 	flush();
-	log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+	logger(LOG_NOTICE, localize_text("configuration has changed. Restarting webConfigurator."), LOG_PREFIX_WEBGUI);
 	send_event("service restart webgui");
 }
 
 function restart_SSHD() {
 	killbyname("sshd");
-	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
+	logger(LOG_NOTICE, localize_text("secure shell configuration has changed. Stopping sshd."));
 
 	if (config_path_enabled('system/ssh', 'enable')) {
-		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
+		logger(LOG_NOTICE, localize_text("secure shell configuration has changed. Restarting sshd."));
 		send_event("service restart sshd");
 	}
 }

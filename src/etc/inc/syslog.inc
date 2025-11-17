@@ -804,10 +804,10 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 			break;
 		case 'system':
 		case 'vpn_service':
-			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
-						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ " .
+						$base_patterns['rfc3164']['host_pattern'] . "\ " .
 						$base_patterns['rfc3164']['process_pattern'] .
-						$base_patterns['rfc3164']['pid_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['pid_pattern'] . "\ " .
 						$base_patterns['rfc3164']['log_message_pattern'] . "$";
 			$patterns['rfc5424'] .= $base_patterns['rfc5424']['date_pattern'] . "\ " .
 						$base_patterns['rfc5424']['host_pattern'] . "\ " .
@@ -820,8 +820,8 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 			$type_pattern = "\(.*?\)";
 			$ip_address_pattern = "\(.*?\)";
 			$user_pattern = "\(.*?\)";
-			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
-						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ " .
+						$base_patterns['rfc3164']['host_pattern'] . "\ " .
 						$base_patterns['rfc3164']['process_pattern'] . "\ +" .
 						"\(.*?\)\,\ *" .
 						"\(.*?\)\,\ *" .
@@ -983,7 +983,7 @@ function parse_vpn_login_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1006,7 +1006,7 @@ function parse_vpn_service_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1044,7 +1044,7 @@ function parse_unknown_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1068,7 +1068,7 @@ function parse_system_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1217,7 +1217,7 @@ function parse_firewall_log_line($line) {
 		}
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing rule number: %s. Please report to mailing list or forum."), $flent['rulenum']));
+			logger(LOG_DEBUG, localize_text("There was a error parsing rule number: %s.", $flent['rulenum']));
 		}
 		return "";
 	}
@@ -1227,7 +1227,7 @@ function parse_firewall_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing rule: %s.", $line));
 		}
 		return "";
 	}
@@ -1335,7 +1335,41 @@ function buffer_rules_load() {
 	if (is_array($rules)) {
 		foreach ($rules as $rule) {
 			$key = sprintf("%d", $rule['tracker']);
-			$buffer_rules_normal[$key] = is_array($rule['labels']) ? array_shift($rule['labels']) : $rule['labels'];
+			$buffer_rules_normal[$key] = null;
+			if (empty($rule['labels'])) {
+				continue;
+			}
+			if (is_string($rule['labels']) &&
+			    str_starts_with($rule['labels'], RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER)) {
+				$buffer_rules_normal[$key] = str_replace(
+					RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER,
+					'',
+					$rule['labels']
+				);
+				continue;
+			} elseif (!is_array($rule['labels'])) {
+				continue;
+			}
+
+			$tags = '';
+			foreach ($rule['labels'] as $label) {
+				if (str_starts_with($label, RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER)) {
+					$buffer_rules_normal[$key] = str_replace(
+						RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER,
+						'',
+						$label
+					);
+				} elseif (str_starts_with($label, RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER)) {
+					$tags = explode(RULE_LABEL_TAG_DELIMITER, str_replace(
+						RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER,
+						'',
+						$label
+					));
+				}
+			}
+			if (!empty($buffer_rules_normal[$key]) && !empty($tags) && in_array('user_rule', $tags)) {
+				$buffer_rules_normal[$key] = "USER_RULE: {$buffer_rules_normal[$key]}";
+			}
 		}
 	}
 	unset($_gb, $buffer);

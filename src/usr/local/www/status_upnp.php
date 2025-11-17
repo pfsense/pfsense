@@ -31,6 +31,17 @@
 
 require_once("guiconfig.inc");
 
+$pgtitle = array(gettext("Status"), gettext("UPnP IGD &amp; PCP"));
+$shortcut_section = "upnp";
+
+include("head.inc");
+
+if (config_get_path('installedpackages/miniupnpd/config/0/enable') != 'on') {
+	print_info_box(sprintf(gettext('Service is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP IGD &amp; PCP'), '</a>'), 'danger');
+	include("foot.inc");
+	exit;
+}
+
 if ($_POST) {
 	if ($_POST['delete-all']) {
 		upnp_action('restart');
@@ -41,21 +52,8 @@ if ($_POST) {
 $rdr_entries = array();
 exec("/sbin/pfctl -a miniupnpd -s nat -P", $rdr_entries, $pf_ret);
 
-$pgtitle = array(gettext("Status"), gettext("UPnP IGD &amp; PCP"));
-$shortcut_section = "upnp";
-
-include("head.inc");
-
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
-}
-
-if (!config_get_path('installedpackages/miniupnpd/config/0/iface_array') ||
-    !config_path_enabled('installedpackages/miniupnpd/config/0')) {
-
-	print_info_box(sprintf(gettext('Service is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP IGD &amp; PCP'), '</a>'), 'danger');
-	include("foot.inc");
-	exit;
 }
 
 ?>
@@ -109,7 +107,7 @@ foreach ($rdr_entries as $rdr_entry) {
 							<?= htmlspecialchars($matches['srcport'] ?: "any") ?>
 						</td>
 						<td>
-							<?= htmlspecialchars($matches['descr']) ?>
+							<?= htmlspecialchars(strval(preg_replace('/^' . RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER . '/', '', $matches['descr'], 1))) ?>
 						</td>
 					</tr>
 <?php

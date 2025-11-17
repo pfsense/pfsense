@@ -2049,13 +2049,13 @@ function cert_restart_services($services) {
 	}
 
 	/* Base string to log when restarting a service */
-	$restart_string = gettext('Restarting %s %s due to certificate change');
+	$restart_string = 'Restarting %s %s due to certificate change';
 
 	/* Restart GUI: */
 	if ($services['webgui']) {
 		ob_flush();
 		flush();
-		log_error(sprintf($restart_string, gettext('service'), 'WebGUI'));
+		logger(LOG_INFO, localize_text($restart_string, gettext('service'), 'WebGUI'));
 		send_event("service restart webgui");
 	}
 
@@ -2072,7 +2072,7 @@ function cert_restart_services($services) {
 				default:
 					$service_name = $service['name'];
 			}
-			log_error(sprintf($restart_string, gettext('service'), $service_name));
+			logger(LOG_INFO, localize_text($restart_string, gettext('service'), $service_name));
 			service_control_restart($service['name'], $service['extras']);
 		}
 	}
@@ -2080,7 +2080,7 @@ function cert_restart_services($services) {
 	/* Restart Packages: */
 	if (is_array($services['packages'])) {
 		foreach ($services['packages'] as $service) {
-			log_error(sprintf($restart_string, gettext('package'), $service));
+			logger(LOG_INFO, localize_text($restart_string, gettext('package'), $service));
 			restart_service($service);
 		}
 	}
@@ -2900,7 +2900,7 @@ function cert_create_selfsigned($descr = '', $hostname = '', $log = true) {
 	global $cert_strict_values;
 
 	if ($log) {
-		log_error(sprintf(gettext("Creating self-signed SSL/TLS certificate (%s)"), $descr));
+		logger(LOG_INFO, localize_text("Creating self-signed SSL/TLS certificate (%s)", $descr));
 	}
 
 	if (empty($descr)) {
@@ -2927,7 +2927,7 @@ function cert_create_selfsigned($descr = '', $hostname = '', $log = true) {
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 	if (!cert_create($cert, null, 2048, $cert_strict_values['max_server_cert_lifetime'], $dn, "self-signed", "sha256")) {
 		while ($log && ($ssl_err = openssl_error_string())) {
-			log_error(sprintf(gettext("Error creating self-signed certificate: openssl library returns: %s"), $ssl_err));
+			logger(LOG_ERR, localize_text("Error creating self-signed certificate: openssl library returns: %s", $ssl_err));
 		}
 		error_reporting($old_err_level);
 		return null;

@@ -40,7 +40,7 @@ $interface = str_replace("\n", "", $argv[1]);
 $local_ip = str_replace("\n", "", $argv[2]);
 
 if (empty($interface) || !does_interface_exist($interface)) {
-	log_error("rc.kill_states: Invalid interface '{$interface}'");
+	logger(LOG_WARNING, localize_text("rc.kill_states: Invalid interface '%s'", $interface), LOG_PREFIX_FILTER);
 	return;
 }
 
@@ -52,14 +52,14 @@ if (!empty($local_ip)) {
 	}
 
 	if (!is_ipaddr($local_ip)) {
-		log_error("rc.kill_states: Invalid IP address '{$local_ip}'");
+		logger(LOG_WARNING, localize_text("rc.kill_states: Invalid IP address '%s'", $local_ip), LOG_PREFIX_FILTER);
 		return;
 	}
 }
 
 if (config_path_enabled('system', 'gw_down_kill_states')) {
 	if (!empty($local_ip)) {
-		log_error("rc.kill_states: Removing states for IP {$local_ip}/{$subnet_bits}");
+		logger(LOG_NOTICE, localize_text("rc.kill_states: Removing states for IP %s/%s", $local_ip, $subnet_bits), LOG_PREFIX_FILTER);
 		$filter = array(
 			array('interface' => $interface),
 			array('filter' => $local_ip)
@@ -86,6 +86,6 @@ if (config_path_enabled('system', 'gw_down_kill_states')) {
 		pfSense_kill_states("{$local_ip}/{$subnet_bits}");
 		pfSense_kill_srcstates("{$local_ip}/{$subnet_bits}");
 	}
-	log_error("rc.kill_states: Removing states for interface {$interface}");
+	logger(LOG_NOTICE, localize_text("rc.kill_states: Removing states for interface %s", $interface), LOG_PREFIX_FILTER);
 	mwexec("/sbin/pfctl -i {$interface} -Fs", true);
 }

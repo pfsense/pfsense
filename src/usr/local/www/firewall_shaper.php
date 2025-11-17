@@ -110,11 +110,14 @@ if ($_GET) {
 		$can_add = false;
 		$can_enable = false;
 		$dontshow = true;
-		foreach (config_get_path('filter/rule', []) as $key => $rule) {
+		// remove_filter_rules
+		$remove_list = [];
+		foreach (get_filter_rules_list() as $key => $rule) {
 			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-				config_del_path("filter/rule/{$key}");
+				$remove_list[] = $key;
 			}
 		}
+		remove_filter_rules($remove_list);
 
 		if (write_config("Traffic Shaper: Reset all")) {
 			$changes_applied = true;

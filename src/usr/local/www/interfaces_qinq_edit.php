@@ -34,6 +34,13 @@ $shortcut_section = "interfaces";
 
 require_once("guiconfig.inc");
 
+function get_vlan_tag_types() {
+	return [
+		'ctag' => 'C-Tag (0x8100)',
+		'stag' => 'S-Tag (0x88A8)'
+	];
+}
+
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
 $portlist = array_merge($portlist, $lagglist);
@@ -73,6 +80,7 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 $this_qinq_config = isset($id) ? config_get_path("qinqs/qinqentry/{$id}") : null;
 if ($this_qinq_config) {
 	$pconfig['if'] = $this_qinq_config['if'];
+	$pconfig['tag_type'] = $this_vlan_config['tag_type'];
 	$pconfig['tag'] = $this_qinq_config['tag'];
 	$pconfig['members'] = $this_qinq_config['members'];
 	$pconfig['descr'] = html_entity_decode($this_qinq_config['descr']);
@@ -96,6 +104,10 @@ if ($_POST['save']) {
 
 	if ($read_only) {
 		$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+	}
+
+	if (!array_key_exists($_POST['tag_type'], get_vlan_tag_types())) {
+		$input_errors[] = gettext("The selected VLAN Tag Type is invalid.");
 	}
 
 	if (empty($_POST['tag'])) {
@@ -122,6 +134,7 @@ if ($_POST['save']) {
 
 	$qinqentry = array();
 	$qinqentry['if'] = $_POST['if'];
+	$qinqentry['tag_type'] = $_POST['tag_type'];
 	$qinqentry['tag'] = $_POST['tag'];
 
 	if ($_POST['autogroup'] == "yes") {
@@ -207,6 +220,8 @@ if ($_POST['save']) {
 				}
 			}
 			config_set_path("qinqs/qinqentry/{$id}", $qinqentry);
+
+			interface_vlan_set_tag_type($qinqentry['vlanif'], $qinqentry['tag_type']);
 		} else {
 			interface_qinq_configure($qinqentry);
 			config_set_path('qinqs/qinqentry/', $qinqentry);
@@ -274,6 +289,13 @@ $section->addInput(new Form_Select(
 	$pconfig['if'],
 	build_parent_list()
 ))->setHelp('Only QinQ capable interfaces will be shown.');
+
+$section->addInput(new Form_Select(
+	'tag_type',
+	'*VLAN Tag Type',
+	$pconfig['tag_type'] ?? 'stag',
+	get_vlan_tag_types()
+))->setHelp('The type of VLAN tag to use for the first level tag (defaults to S-Tag).');
 
 $section->addInput(new Form_Input(
 	'tag',

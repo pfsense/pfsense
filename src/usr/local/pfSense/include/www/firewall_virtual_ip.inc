@@ -182,6 +182,10 @@ function saveVIP($post, $json = false) {
 			break;
 	}
 
+	if ($post['mode'] == 'proxyarp' && is_v6($post['subnet'])) {
+		$input_errors[] = gettext("Only IPv4 addresses are valid for Proxy ARP VIPs.");
+	}
+
 	if (!$input_errors) {
 		$vipent = array();
 
@@ -248,16 +252,23 @@ function saveVIP($post, $json = false) {
 
 		if (!empty($a_vip[$id])) {
 			/* modify all virtual IP rules with this address */
-			for ($i = 0; !empty(config_get_path("nat/rule/{$i}")); $i++) {
-				if (config_get_path("nat/rule/{$i}/destination/address") == $a_vip[$id]['subnet']) {
-					config_set_path("nat/rule/{$i}/destination/address", $vipent['subnet']);
+			$rdr_rules = get_anynat_rules_list('rdr');
+			foreach ($rdr_rules as &$rule) {
+				if (array_get_path($rule, 'destination/address') == $a_vip[$id]['subnet']) {
+					array_set_path($rule, 'destination/address', $vipent['subnet']);
 				}
 			}
-			for ($i = 0; !empty(config_get_path("nat/outbound/rule/{$i}")); $i++) {
-				if (config_get_path("nat/outbound/rule/{$i}/target") == $a_vip[$id]['subnet']) {
-					config_set_path("nat/outbound/rule/{$i}/target", $vipent['subnet']);
+			unset($rule);
+			set_anynat_rules_list('rdr', $rdr_rules);
+
+			$nat_rules = get_anynat_rules_list('nat');
+			foreach ($nat_rules as &$rule) {
+				if (array_get_path($rule, 'target') == $a_vip[$id]['subnet']) {
+					array_set_path($rule, 'target', $vipent['subnet']);
 				}
 			}
+			unset($rule);
+			set_anynat_rules_list('nat', $nat_rules);
 		}
 
 		config_set_path("virtualip/vip/{$id}", $vipent);
@@ -352,7 +363,7 @@ function deleteVIP($id, $json = false) {
 
 	if ($a_vip[$id]) {
 		/* make sure no inbound NAT mappings reference this entry */
-		foreach (config_get_path('nat/rule', []) as $rule) {
+		foreach (get_anynat_rules_list('rdr') as $rule) {
 			if ($rule['destination']['address'] != "") {
 				if ($rule['destination']['address'] == $a_vip[$id]['subnet']) {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
@@ -361,7 +372,7 @@ function deleteVIP($id, $json = false) {
 			}
 		}
 		/* make sure no outbound NAT mappings reference this entry */
-		foreach (config_get_path('nat/outbound/rule', []) as $rule) {
+		foreach (get_anynat_rules_list('nat') as $rule) {
 			if ($rule['target'] != "") {
 				if ($rule['target'] == $a_vip[$id]['subnet']) {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one Outbound NAT mapping.");
@@ -471,7 +482,7 @@ function deleteVIP($id, $json = false) {
 		if ($a_vip[$id]['mode'] == "ipalias") {
 			$subnet = gen_subnet($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']) . "/" . $a_vip[$id]['subnet_bits'];
 			$found_if = false;
-			$found_carp = false;
+			$found_carp = null;
 			$found_other_alias = false;
 
 			if ($subnet == $if_subnet) {
@@ -487,15 +498,15 @@ function deleteVIP($id, $json = false) {
 
 				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], $subnet)) {
 					if ($vip['mode'] == "carp") {
-						$found_carp = true;
+						$found_carp = $vip_id;
 					} else if ($vip['mode'] == "ipalias") {
 						$found_other_alias = true;
 					}
 				}
 			}
 
-			if ($found_carp === true && $found_other_alias === false && $found_if === false) {
-				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $vip['descr']);
+			if (isset($a_vip[$found_carp]) && $found_other_alias === false && $found_if === false) {
+				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $a_vip[$found_carp]['descr']);
 			}
 		} else if ($a_vip[$id]['mode'] == "carp") {
 			$vipiface = "_vip{$a_vip[$id]['uniqid']}";

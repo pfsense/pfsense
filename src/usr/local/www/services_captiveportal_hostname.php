@@ -97,7 +97,7 @@ $i = 0;
 foreach (config_get_path("captiveportal/{$cpzone}/allowedhostname", []) as $ip): ?>
 			<tr>
 				<td>
-					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower(idn_to_utf8($ip['hostname']))?>
+					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower((is_string($ip['hostname']) && (strlen($ip['hostname']) > 0)) ? idn_to_utf8($ip['hostname']) : '')?>
 				</td>
 				<td >
 					<?=htmlspecialchars($ip['descr'])?>

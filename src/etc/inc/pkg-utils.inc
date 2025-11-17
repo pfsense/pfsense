@@ -31,9 +31,9 @@ require_once("pfsense-utils.inc");
 if (!function_exists("pkg_debug")) {
 	/* set up logging if needed */
 	function pkg_debug($msg) {
-		global $g, $debug, $fd_log;
+		global $g, $fd_log;
 
-		if (!$debug) {
+		if (!g_get('debug')) {
 			return;
 		}
 
@@ -585,7 +585,7 @@ function register_all_installed_packages(bool $force = false) {
  * indicating progress.
  */
 function resync_all_package_configs($show_message = false) {
-	log_error(gettext("Resyncing configuration for all packages."));
+	logger(LOG_INFO, localize_text("Resyncing configuration for all packages."));
 
 	if ($show_message == true) {
 		echo "Syncing packages:";
@@ -671,8 +671,8 @@ function sync_package($package_name) {
 	}
 
 	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		log_error(sprintf(gettext("The %s package is missing its " .
-		    "configuration file and must be reinstalled."),
+		logger(LOG_WARNING, localize_text("The %s package is missing its " .
+		    "configuration file and must be reinstalled.",
 		    $package['name']));
 		delete_package_xml($package['name']);
 		return;
@@ -690,14 +690,14 @@ function sync_package($package_name) {
 		if (file_exists($include_file)) {
 			require_once($include_file);
 		} else {
-			log_error(sprintf(gettext('Reinstalling package %1$s " .
-			    "because its include file(%2$s) is missing!'),
+			logger(LOG_WARNING, localize_text('Reinstalling package %1$s " .
+			    "because its include file(%2$s) is missing!',
 			    $package['name'], $include_file));
 			uninstall_package($package['name']);
 			if (reinstall_package($package['name']) != 0) {
-				log_error(sprintf(gettext("Reinstalling " .
+				logger(LOG_ERR, localize_text("Reinstalling " .
 				    "package %s failed. Take appropriate " .
-				    "measures!!!"), $package['name']));
+				    "measures!!!", $package['name']));
 				return;
 			}
 			if (file_exists($include_file)) {
@@ -790,7 +790,7 @@ function install_package_xml($package_name) {
 	}
 
 	pkg_debug(gettext("Beginning package installation.") . "\n");
-	log_error(sprintf(gettext('Beginning package installation for %s .'),
+	logger(LOG_INFO, localize_text('Beginning package installation for %s .',
 	    $pkg_info['name']));
 
 	/* add package information to config.xml */
@@ -820,7 +820,7 @@ function install_package_xml($package_name) {
 
 		uninstall_package($package_name);
 		write_config($changedesc);
-		log_error(sprintf(gettext("Failed to install package: %s."),
+		logger(LOG_ERR, localize_text("Failed to install package: %s.",
 		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
 		return false;
@@ -835,7 +835,7 @@ function install_package_xml($package_name) {
 
 		uninstall_package($package_name);
 		write_config($changedesc);
-		log_error(sprintf(gettext("Failed to install package: %s."),
+		logger(LOG_ERR, localize_text("Failed to install package: %s.",
 		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
 		return false;
@@ -874,8 +874,8 @@ function install_package_xml($package_name) {
 
 			uninstall_package($package_name);
 			write_config($changedesc);
-			log_error(sprintf(gettext(
-			    "Failed to install package: %s."),
+			logger(LOG_ERR, localize_text(
+			    "Failed to install package: %s.",
 			    $pkg_info['name']));
 			update_status(gettext("Failed to install package.") .
 			    "\n");
@@ -956,7 +956,7 @@ function install_package_xml($package_name) {
 
 	update_status(gettext("Writing configuration... "));
 	write_config($changedesc);
-	log_error(sprintf(gettext("Successfully installed package: %s."),
+	logger(LOG_INFO, localize_text("Successfully installed package: %s.",
 	    $pkg_info['name']));
 	update_status(gettext("done.") . "\n");
 	if ($pkg_info['after_install_info']) {
@@ -1158,7 +1158,7 @@ function package_reinstall_all() {
 	}
 
 	/* wait for internet connection */
-	log_error(gettext("Waiting for Internet connection to update pkg " .
+	logger(LOG_NOTICE, localize_text("Waiting for Internet connection to update pkg " .
 	    "metadata and finish package reinstallation"));
 	$ntries = 3;
 	while ($ntries > 0) {
@@ -1241,7 +1241,7 @@ function stop_packages() {
 	require_once("pfsense-utils.inc");
 	require_once("service-utils.inc");
 
-	log_error(gettext("Stopping all packages."));
+	logger(LOG_INFO, localize_text("Stopping all packages."));
 
 	$rcfiles = glob(RCFILEPREFIX . "*.sh");
 	if (!$rcfiles) {

@@ -37,7 +37,7 @@ if (is_platform_booting()) {
 $staticroutes = get_staticroutes(false, false, true);
 
 if (count($staticroutes)) {
-	log_error("Static Routes: One or more aliases used for routing has changed its IP. Refreshing.");
+	logger(LOG_NOTICE, localize_text("Static Routes: One or more aliases used for routing has changed its IP. Refreshing."));
 } else {
 	return;
 }

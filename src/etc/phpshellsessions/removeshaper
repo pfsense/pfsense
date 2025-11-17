@@ -35,12 +35,13 @@ if (is_array(config_get_path('shaper'))) {
 
 unset($queue);
 unset($altq);
-
-foreach (config_get_path('filter/rule', []) as $key => $rule) {
+$remove_list = [];
+foreach (get_filter_rules_list() as $key => $rule) {
 	if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-		config_del_path("filter/rule/{$key}");
+		$remove_list[] = $key;
 	}
 }
+remove_filter_rules($remove_list);
 if (write_config(gettext("pfSsh.php removed shaper settings"))) {
 	echo gettext("Shaper Successfully Removed.\n");
 } else {

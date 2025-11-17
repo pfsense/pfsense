@@ -100,7 +100,7 @@ class Form_Section extends Form_Element
 		$body = implode('', $this->_groups);
 		$hdricon = "";
 		$bodyclass = '<div class="panel-body">';
-		$id = $this->_attributes['id'];
+		$id = strval($this->_attributes['id']);
 
 		if (intval($this->_collapsible) & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .

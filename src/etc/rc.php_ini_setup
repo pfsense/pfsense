@@ -24,7 +24,9 @@
 VERSION=$(/bin/cat /etc/version)
 MIN_REALMEM_FOR_OPCACHE=512
 
-if /usr/local/sbin/pkg-static info -e php83; then
+if /usr/local/sbin/pkg-static info -e php84; then
+	EXTENSIONSDIR="/usr/local/lib/php/20240924/"
+elif /usr/local/sbin/pkg-static info -e php83; then
 	EXTENSIONSDIR="/usr/local/lib/php/20230831/"
 elif /usr/local/sbin/pkg-static info -e php82; then
 	EXTENSIONSDIR="/usr/local/lib/php/20220829/"
@@ -61,7 +63,7 @@ export LOWMEM
 if [ "${REALMEM}" -lt "$MIN_REALMEM_FOR_OPCACHE" ]; then
 	LOWMEM="TRUE"
 	echo ">>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache"
-	echo ">>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache" | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
+	echo "INFO >>> Under $MIN_REALMEM_FOR_OPCACHE megabytes of ram detected.  Not enabling opcache" | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
 else
 
 	# Calculate opcache memory size according

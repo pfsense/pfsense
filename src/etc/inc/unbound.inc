@@ -681,8 +681,18 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			// When there are conectivity issues, it may take ~10 seconds for the command to time out
 			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
-			if ($param1 == "") {
-				//pfSense_fsync($root_key_file);
+			if (($param1 == "") && file_exists($root_key_file)) {
+				$fd = fopen($root_key_file, 'r');
+				if ($fd !== false) {
+					fsync($fd);
+					fclose($fd);
+
+					$dir_fd = fopen(dirname($root_key_file), 'r');
+					if ($dir_fd !== false) {
+						fsync($dir_fd);
+						fclose($dir_fd);
+					}
+				}
 			}
 			break;
 		case "unbound-control-setup":

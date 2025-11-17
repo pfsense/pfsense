@@ -9,6 +9,7 @@ devel/gdb
 devel/git
 devel/pecl-xdebug
 devel/valgrind
+dns/coredns
 dns/%%PRODUCT_NAME%%-pkg-bind
 dns/dnstop
 editors/nano
@@ -73,6 +74,7 @@ net/udpbroadcastrelay
 net/vnstat
 security/%%PRODUCT_NAME%%
 security/%%PRODUCT_NAME%%-ce
+security/snort3
 shells/zsh
 sysutils/%%PRODUCT_NAME%%-default-config
 sysutils/%%PRODUCT_NAME%%-default-config-serial

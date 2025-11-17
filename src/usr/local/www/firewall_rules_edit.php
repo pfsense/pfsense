@@ -2031,6 +2031,11 @@ events.push(function() {
 	var editenabled = 1;
 	var srcportsvisible = false;
 
+	var allowopts_state_without_igmp = false;
+	if ($('#proto option:selected').val() != "igmp") {
+		var allowopts_state_without_igmp = $('#allowopts').prop('checked');
+	}
+
 	// Show advanced additional opts options ======================================================
 	var showadvopts = false;
 
@@ -2039,8 +2044,11 @@ events.push(function() {
 
 	function show_advopts(ispageload) {
 		var text;
-		// On page load decide the initial state based on the data.
-		if (ispageload) {
+		if ($('#allowopts').prop('checked')) {
+			// Always show advanced options when Allow IP options is checked.
+			showadvopts = true;
+		} else if (ispageload) {
+			// On page load decide the initial state based on the data.
 			showadvopts = <?php if (is_aoadv_used($pconfig)) {echo 'true';} else {echo 'false';} ?>;
 		} else {
 			// It was a click, swap the state.
@@ -2357,6 +2365,18 @@ events.push(function() {
 
 	$('#proto').on('change', function() {
 		proto_change();
+		if ($('#proto option:selected').val() == "igmp") {
+			$('#allowopts').prop('checked', true);
+		} else {
+			$('#allowopts').prop('checked', allowopts_state_without_igmp);
+		}
+		show_advopts();
+	});
+
+	$('#allowopts').on('change', function() {
+		if ($('#proto option:selected').val() != "igmp") {
+			allowopts_state_without_igmp = $('#allowopts').prop('checked');
+		}
 	});
 
 	$('#icmptype\\[\\]').on('change', function() {

@@ -194,6 +194,7 @@ if ($_POST['save']) {
 			}
 			$ifgroupentry['ifname'] = $_POST['ifname'];
 			$this_ifgroup_config = $ifgroupentry;
+			config_set_path("ifgroups/ifgroupentry/{$id}", $ifgroupentry);
 
 		// Edit old group
 		} else if ($this_ifgroup_config) {

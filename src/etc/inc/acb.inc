@@ -160,8 +160,8 @@ function acb_check_dns() {
 /* Change the time zone to reflect local time of ACB revisions.
  * See Redmine #5250 */
 function acb_time_shift($revision, $format = DATE_RFC2822) {
-	global $acbtz;
-	$budate = new DateTime($revision, $acbtz);
+	global $acb_server_tz;
+	$budate = new DateTime($revision, $acb_server_tz);
 	$mytz = new DateTimeZone(date_default_timezone_get());
 	$budate->setTimezone($mytz);
 	return htmlspecialchars($budate->format($format));

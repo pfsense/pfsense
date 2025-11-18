@@ -108,7 +108,7 @@ class PFConfig {
 	private array $conf_paths;
 
 	/**
-	 * A category is a set of pf configuraiton. Each category consists of
+	 * A category is a set of pf configuration. Each category consists of
 	 * groups of subcategories which further separate the configuration
 	 * into related rules. For example a category could contain all
 	 * interface rules grouped per interface; each subcategory in a group
@@ -140,7 +140,7 @@ class PFConfig {
 	private array $order;
 
 	/**
-	 * Remove the configuration hash from the configuraiton.
+	 * Remove the configuration hash from the configuration.
 	 * @param string $category_name The category that contains the label.
 	 * @return string|null The removed hash; empty string if no tag was
 	 * 		available to remove; null if there's no applicable category.

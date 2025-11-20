@@ -252,8 +252,9 @@ $section->addInput(new Form_Checkbox(
 	gettext('Endpoint-Independent Mapping'),
 	gettext('Enable EIM-NAT for UDP connections'),
 	$pconfig['eimnat']
-))->setHelp(gettext('Endpoint-Independent Mapping (A.K.A. "full-cone") NAT enables applications ' .
-		'behind NAT speaking to multiple remote hosts to receive the same mappings.'));
+))->setHelp(gettext("Experimental. Allows for a consistent external IP:port mapping across " .
+	"multiple destinations when the client's source IP:port is the same. Inbound communication " .
+	"is only possible after the client initiates contact with the respective destination."));
 $form->add($section);
 
 $section = new Form_Section('Misc');

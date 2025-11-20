@@ -135,15 +135,7 @@ if ($_POST['save']) {
 			$ip['bw_down'] = $_POST['bw_down'];
 		}
 
-		$oldip = array();
 		if ($this_allowedip_config) {
-			$oldip['ip'] = $this_allowedip_config['ip'];
-			if (!empty($this_allowedip_config['sn'])) {
-				$oldip['sn'] = $this_allowedip_config['sn'];
-			} else {
-				$oldip['sn'] = 32;
-			}
-
 			config_set_path("captiveportal/{$cpzone}/allowedip/{$id}", $ip);
 		} else {
 			config_set_path("captiveportal/{$cpzone}/allowedip/", $ip);
@@ -154,8 +146,8 @@ if ($_POST['save']) {
 		write_config("Captive portal allowed IPs added");
 
 		if (config_path_enabled("captiveportal/{$cpzone}")) {
-			if (!empty($oldip)) {
-				captiveportal_ether_delete_entry($oldip, 'allowedhosts');
+			if ($this_allowedip_config) {
+				captiveportal_ether_delete_entry($this_allowedip_config, 'allowedhosts');
 			}
 			captiveportal_allowedip_configure_entry($ip);
 		}

@@ -1020,6 +1020,7 @@ function captiveportal_passthrumac_delete_entry($macent) {
 	if ($macent['action'] == 'pass') {
 		$pipes = captiveportal_get_dn_passthru_pipes($macent['mac']);
 		if (!empty($pipes)) {
+			// passthrumac should always have 2 pipes, one each for 'ether in' and 'ether out'.
 			captiveportal_pipes_delete($pipes);
 		}
 	} else {
@@ -1088,6 +1089,14 @@ function captiveportal_ether_delete_entry($hostent, $anchor = 'allowedhosts') {
 
 	$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/{$host}");
 	if (!empty($pipes)) {
+		// 2 pipes are reserved per entry; keep the reservation list aligned when a rule is created for a single direction.
+		if (count($pipes) == 1) {
+			if ($hostent['dir'] == 'to') {
+				$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] + 1;
+			} elseif ($hostent['dir'] == 'from') {
+				$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] - 1;
+			}
+		}
 		captiveportal_pipes_delete($pipes);
 	}
 	/* flush anchor rules */
@@ -2586,6 +2595,14 @@ function captiveportal_allowedhostname_cleanup() {
 		$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_allowedhosts/hostname_{$id}");
 		pfSense_pf_cp_flush("{$cpzoneprefix}_allowedhosts/hostname_{$id}", "ether");
 		if (!empty($pipes)) {
+			// 2 pipes are reserved per entry; keep the reservation list aligned when a rule is created for a single direction.
+			if (count($pipes) == 1) {
+				if ($hostnameent['dir'] == 'to') {
+					$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] + 1;
+				} elseif ($hostnameent['dir'] == 'from') {
+					$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] - 1;
+				}
+			}
 			captiveportal_pipes_delete($pipes);
 		}
 	}

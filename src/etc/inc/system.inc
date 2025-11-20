@@ -3047,18 +3047,21 @@ function system_reboot_cleanup() {
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
 	$cps = config_get_path('captiveportal', []);
+	$preservedb = false;
 	foreach ($cps as $cpzone=>$cp) {
 		if (!isset($cp['preservedb'])) {
 			/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
 			captiveportal_radius_stop_all(7); // Admin-Reboot
 			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 			captiveportal_free_dnrules();
+		} else {
+			$preservedb = true;
 		}
 		/* Send Accounting-Off packet to the RADIUS server */
 		captiveportal_send_server_accounting('off');
 	}
 
-	if (count($cps)> 0) {
+	if (!$preservedb) {
 		/* Remove the pipe database */
 		unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
 	}

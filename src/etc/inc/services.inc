@@ -630,11 +630,16 @@ function services_kea6_configure(bool $with_custom = true) {
 		'parameters' => [
 			'binding-variables' => [[
 				'name' => 'domain-search',
-				'expression' => 'option[24].text',
+				/**
+				 * Get the first search domain to use as the domain name.
+				 * Parsing additional search domains needs an upstream fix:
+				 * https://gitlab.isc.org/isc-projects/kea/-/issues/4227
+				 */
+				'expression' => "split(split(option[24].text, ' ', 3), '\"', 2)",
 				'source' => 'response'
 			], [
 				'name' => 'remote-addr',
-				'expression' => 'pkt.src',
+				'expression' => 'addrtotext(pkt.src)',
 				'source' => 'query'
 			], [
 				'name' => 'iface-name',

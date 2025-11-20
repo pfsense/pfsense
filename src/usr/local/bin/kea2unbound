@@ -429,7 +429,8 @@ function kea_leases_records(KeaConfig $config, ?string $fallbackDomain = null, a
         $domain = \rtrim(
             first_of(
                 $binding_variables['domain-name'] ?? null,
-                $binding_variables['domain-search'][0] ?? null,
+                // "domain-search" is only populated for IPv6 leases; see services_kea6_configure().
+                $binding_variables['domain-search'] ?? null,
                 $fallbackDomain,
                 'unknown.home.arpa'
             ),

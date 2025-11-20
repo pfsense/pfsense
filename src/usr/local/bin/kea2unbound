@@ -302,6 +302,9 @@ function first_of(mixed ...$inputs): mixed
 {
     foreach ($inputs as $input) {
         if (!\is_null($input)) {
+            if (is_string($input) && (strlen($input) < 1)) {
+                continue;
+            }
             break;
         }
     }

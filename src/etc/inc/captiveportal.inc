@@ -2861,8 +2861,8 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 	}
 
 	// prevent ARP from being sent to dummynet, pass the rest
-	$rules = "ether pass in quick proto 0x0806 {$macfrom} {$l3from} tag {$tag}\n";
-	$rules .= "ether pass out quick proto 0x0806 {$macto} {$l3to}\n";
+	$rules = "ether pass in quick proto 0x0806 {$macfrom} tag {$tag}\n";
+	$rules .= "ether pass out quick proto 0x0806 {$macto}\n";
 	$rules .= "ether pass in quick {$macfrom} {$l3from} tag {$tag} dnpipe {$pipeup}\n";
 	$rules .= "ether pass out quick {$macto} {$l3to} dnpipe {$pipedown}\n";
 

@@ -917,7 +917,8 @@ EOD;
 		if (!empty($searchlist)) {
 			$keasubnet['option-data'][] = [
 				'name' => 'domain-search',
-				'data' => implode(', ', $searchlist)
+				'data' => implode(', ', $searchlist),
+				'always-send' => true
 			];
 		}
 
@@ -1061,7 +1062,8 @@ EOD;
 			if (!empty($searchlist)) {
 				$keapool['option-data'][] = [
 					'name' => 'domain-search',
-					'data' => implode(', ', $searchlist)
+					'data' => implode(', ', $searchlist),
+					'always-send' => true
 				];
 			}
 
@@ -1704,14 +1706,16 @@ EOD;
 		if ($dhcpifconf['domain']) {
 			$keasubnet['option-data'][] = [
 				'name' => 'domain-name',
-				'data' => $dhcpifconf['domain']
+				'data' => $dhcpifconf['domain'],
+				'always-send' => true
 			];
 		}
 
 		if ($dhcpifconf['domainsearchlist'] <> "") {
 			$keasubnet['option-data'][] = [
 				'name' => 'domain-search',
-				'data' => implode(', ', array_map('trim', explode(';', $dhcpifconf['domainsearchlist'])))
+				'data' => implode(', ', array_map('trim', explode(';', $dhcpifconf['domainsearchlist']))),
+				'always-send' => true
 			];
 		}
 
@@ -1874,14 +1878,16 @@ EOD;
 			if ($poolconf['domain'] && ($poolconf['domain'] != $dhcpifconf['domain'])) {
 				$keapool['option-data'][] = [
 					'name' => 'domain-name',
-					'data' => $poolconf['domain']
+					'data' => $poolconf['domain'],
+					'always-send' => true
 				];
 			}
 
 			if (!empty($poolconf['domainsearchlist']) && ($poolconf['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
 				$keapool['option-data'][] = [
 					'name' => 'domain-search',
-					'data' => implode(', ', array_map('trim', explode(';', $poolconf['domainsearchlist'])))
+					'data' => implode(', ', array_map('trim', explode(';', $poolconf['domainsearchlist']))),
+					'always-send' => true
 				];
 			}
 
@@ -2302,7 +2308,8 @@ EOD;
 				if ($sm['domain'] && ($sm['domain'] != $dhcpifconf['domain'])) {
 					$keares['option-data'][] = [
 						'name' => 'domain-name',
-						'data' => $sm['domain']
+						'data' => $sm['domain'],
+						'always-send' => true
 					];
 				}
 
@@ -2310,7 +2317,8 @@ EOD;
 				if (!empty($sm['domainsearchlist']) && ($sm['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
 					$keares['option-data'][] = [
 						'name' => 'domain-search',
-						'data' => implode(', ', array_map('trim', explode(';', $sm['domainsearchlist'])))
+						'data' => implode(', ', array_map('trim', explode(';', $sm['domainsearchlist']))),
+						'always-send' => true
 					];
 				}
 

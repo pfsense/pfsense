@@ -556,6 +556,10 @@ function safe_write_file($file, $content, $force_binary = false) {
 function write_config($desc="Unknown", $backup = true, $write_config_only = false) {
 	global $g;
 
+	if (!is_string($desc) || (strlen(trim($desc)) < 1)) {
+		$desc="Unknown";
+	}
+
 	// Certain strings may be embedded in the $desc (reason) parameter to trigger certain behavior.
 	// If detected, those strings are removed and a variable set.
 	$doacb = true;

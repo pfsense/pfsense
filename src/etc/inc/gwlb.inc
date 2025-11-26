@@ -875,30 +875,21 @@ function return_gateways_status_text($byname = false, $brief = false) {
 }
 
 function compare_gateway_order_configured($a, $b) {
-	/* XXX WAN always has precedence */
-	if ($a['friendlyiface'] == "wan") {
-		return -1;
-	} elseif ($b['friendlyiface'] == "wan") {
-		return 1;
+	if ($a['friendlyiface'] == $b['friendlyiface']) {
+		return strcasecmp($a['name'], $b['name']);
 	}
-
-	if ($a['attribute'] === $b['attribute']) {
-		if ($a['attribute'] === 'system') {
-			$res = (($a['name'] < $b['name'])) ? -1 : 1;
-			return $res;
-		}
-		return 0;
-	}
-	if ($a['attribute'] === 'system' || $b['attribute'] === 'system') {
-		$res = (($b['attribute'] === 'system')) ? -1 : 1;
-		return $res;
-	}
-	$res = ($a['attribute'] < $b['attribute']) ? -1 : 1;
-	return $res;
+	return compare_interface_friendly_names($a['friendlyiface'], $b['friendlyiface']);
 }
 
 function order_gateways_as_configured($gateways_arr) {
 	uasort($gateways_arr, 'compare_gateway_order_configured');
+	$count = count($gateways_arr);
+	for ($i = 0; $i < $count; $i++) {
+		if ($gateway['attribute'] == 'system') {
+			continue;
+		}
+		$gateway['attribute'] = $i;
+	}
 	return $gateways_arr;
 }
 
@@ -1019,9 +1010,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 	}
 	unset($gateway);
-
-	//Sort the array by GW name before moving on.
-	ksort($gateways_arr, SORT_STRING | SORT_FLAG_CASE);
 
 	/* Loop through all interfaces with a gateway and add it to a array */
 	if ($disabled == false) {

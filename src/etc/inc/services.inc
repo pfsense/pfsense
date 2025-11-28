@@ -3252,9 +3252,7 @@ EOPP;
 						$dhcpdconf .= "		}";
 					}
 					$dhcpdconf .= "\n\n";
-				} elseif (!empty($filename)) {
-					$dhcpdconf .= "		filename \"{$filename}\";\n";
-				}
+				} 
 				unset($filename);
 
 				if (!empty($poolconf['rootpath']) && ($poolconf['rootpath'] != $dhcpifconf['rootpath'])) {

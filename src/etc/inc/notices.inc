@@ -537,6 +537,7 @@ function notify_via_telegram($message, $force = false) {
 	$url = "https://api.telegram.org/bot" . config_get_path('notifications/telegram/api') . "/sendMessage?";
 	$data = array(
 		"chat_id" => config_get_path('notifications/telegram/chatid'),
+		"message_thread_id" => config_get_path('notifications/telegram/messagethreadid'),
 		"text" => config_get_path('system/hostname') . '.' . config_get_path('system/domain') . "\n{$message}"
 	);
 	$result = json_decode(curl_post_notification($url . http_build_query($data)), true);

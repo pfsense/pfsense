@@ -229,21 +229,30 @@ $section->addInput(new Form_Checkbox(
 	))->setHelp('Check this option to enable Telegram notifications. <br>You will need a Telegram Bot and its associated API key. <a href="https://core.telegram.org/bots#creating-a-new-bot" target="_blank">Instructions here.</a>');
 
 $section->addInput(new Form_Input(
-	'api',
+	'telegram_api',
 	'API Key',
 	'text',
-	$pconfig['api'],
+	$pconfig['telegram_api'],
 	['placeholder' => '123456789:ABCDEabcde_FGHIJfghijKLMNOklmnoPQRST']
 ))->setHelp('Enter the Bot API key required to authenticate with the Telegram API server.');
 
 $section->addInput(new Form_Input(
-	'chatid',
+	'telegram_chat_id',
 	'Chat ID',
 	'text',
-	$pconfig['chatid'],
+	$pconfig['telegram_chat_id'],
 	['placeholder' => '123456789']
 
 ))->setHelp('Enter the chat ID number (private) or channel @username (public) that will be used to send the notifications to.');
+
+$section->addInput(new Form_Input(
+	'telegram_message_thread_id',
+	'Message Thread ID',
+	'text',
+	$pconfig['telegram_message_thread_id'],
+	['placeholder' => '1']
+
+))->setHelp('Enter the message thread (topic) ID number that will be used to send the notifications to. Or leave this blank for use the default message thread (topic).');
 
 $section->addInput(new Form_Button(
 	'test-telegram',

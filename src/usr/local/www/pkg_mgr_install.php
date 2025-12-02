@@ -467,7 +467,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 					</div>
 				</div>
 <?php
-	elseif ($pkgname_vital):
+	elseif (($pkgmode == 'delete') && $pkgname_vital):
 		print_info_box($pkgname_vital_message);
 	else:
 ?>

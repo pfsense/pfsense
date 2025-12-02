@@ -660,7 +660,7 @@ function deleteMultipleoutNATrules($post, $json = false) {
 // Delete outbound rule
 function deleteoutNATrule($post, $json = false) {
 	remove_nat_rules($post['id']);
-	if (write_config(gettext("Firewall: NAT: Outbound - deleted NPt mapping.")) && !$json) {
+	if (write_config(gettext("Firewall: NAT: Outbound - deleted outbound mapping.")) && !$json) {
 		mark_subsystem_dirty('natconf');
 	}
 

@@ -186,9 +186,6 @@ function restore_backup(string|array $backup) {
 		restore_xmldatafile($bk, $conf);
 		$data = clear_tagdata($bk, $data);
 	}
-	if (!safe_write_file($file, $data)) {
-		return false;
-	}
 
 	$lockkey = lock('config', LOCK_EX);
 	if (!isset($lockkey)) {

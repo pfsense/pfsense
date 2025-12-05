@@ -157,17 +157,6 @@ if ($_POST['save']) {
 	}
 }
 
-function build_dir_list() {
-	$dirs = array(gettext("Both"), gettext("From"), gettext("To"));
-	$dirlist = array();
-
-	foreach ($dirs as $dir) {
-		$dirlist[strtolower($dir)] = $dir;
-	}
-
-	return($dirlist);
-}
-
 include("head.inc");
 
 if ($input_errors) {
@@ -195,7 +184,7 @@ $section->addInput(new Form_Select(
 	'dir',
 	'*Direction',
 	strtolower($pconfig['dir']),
-	build_dir_list()
+	['both' => gettext('Both'), 'from' => gettext('From'), 'to' => gettext('To')]
 ))->setHelp('Use "From" to always allow access to an address through the captive portal (without authentication). ' .
 			'Use "To" to allow access from all clients (even non-authenticated ones) behind the portal to this IP.');
 

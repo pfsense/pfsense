@@ -1110,6 +1110,11 @@ function parse_firewall_log_line($line) {
 	$flent['version'] = $rule_data[$field++];
 
 	if ($flent['version'] == '4' || $flent['version'] == '6') {
+		// Handle short (truncated-ip/truncated-ip6) errors.
+		if (str_starts_with($rule_data[$field], 'error=')) {
+			// Ignore the value.
+			$field++;
+		}
 		if ($flent['version'] == '4') {
 			$flent['tos'] = $rule_data[$field++];
 			$flent['ecn'] = $rule_data[$field++];

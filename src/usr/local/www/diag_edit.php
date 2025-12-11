@@ -69,6 +69,10 @@ if ($_POST['action']) {
 				print('|');
 				print_info_box(gettext("No file name specified."), 'danger');
 				print('|');
+			} elseif (!str_starts_with($_POST['file'], '/')) {
+				print('|');
+				print_info_box(gettext("Absolute file path required."), 'danger');
+				print('|');
 			} else {
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
 				$ret = file_put_contents($_POST['file'], $_POST['data']);

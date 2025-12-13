@@ -1088,7 +1088,7 @@ function pfSense_clear_globals() {
 			    ($errortype = "warning"))) {
 				print('<pre style="white-space: pre-wrap;">' . htmlentities($errorstr) . '</pre>');
 				logger(LOG_ERR, $errorstr);
-				file_notice("php{$errortype}", $errorstr, 'PHP {$errortype}s');
+				file_notice("php{$errortype}", $errorstr, "PHP {$errortype}s");
 			}
 		} else {
 			print(str_replace(',', "\n", $errorstr));

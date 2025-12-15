@@ -7022,7 +7022,6 @@ function upgrade_240_to_241() {
 	 * Configuration related to NAT64 has changed. See:
 	 * https://redmine.pfsense.org/issues/16241
 	 */
-
 	$override_nat64_prefix = false;
 
 	// Migrate the DNS64 configuration and check for a custom prefix.
@@ -7159,14 +7158,45 @@ function upgrade_240_to_241() {
 	if (!empty($changes)) {
 		set_filter_rules_list($rules_list);
 		foreach ($changes as $message) {
-			logger(LOG_ERR, $message, LOG_PREFIX_UPGRADE);
+			logger(LOG_WARNING, $message, LOG_PREFIX_UPGRADE);
 		}
 		file_notice('config.xml', gettext("NAT64 firewall rules were changed, see system logs for details."));
 	}
 
-
 	if ($override_nat64_prefix) {
 		config_set_path('system/allow_nat64_prefix_override', true);
+	}
+
+	/**
+	 * "match quick" rules did not work correctly. Remove "quick" from
+	 * existing "match" rules to retain the expected behavior. See:
+	 * https://redmine.pfsense.org/issues/16475
+	 */
+	$changes = [];
+	$rules_list = get_filter_rules_list();
+	foreach ($rules_list as $ridx => &$rule) {
+		if (!isset($rule['quick']) || ($rule['type'] != 'match')) {
+			continue;
+		}
+
+		if (isset($rule['descr']) && is_string($rule['descr']) && (strlen($rule['descr']) > 0)) {
+			$changes_message = gettext(sprintf(" (rule %s)", "\"{$rule['descr']})\""));
+		} elseif (isset($rule['tracker']) && (strlen(strval($rule['tracker'])) > 0)) {
+			$changes_message = gettext(sprintf(" (rule %s)", strval($rule['tracker'])));
+		} else {
+			$changes_message = gettext(sprintf(" (rule ID %s)", $ridx));
+		}
+
+		unset($rule['quick']);
+		$changes[] = gettext('Removed "quick" option from match rule') . $changes_message;
+	}
+	unset($rule);
+	if (!empty($changes)) {
+		set_filter_rules_list($rules_list);
+		foreach ($changes as $message) {
+			logger(LOG_WARNING, $message, LOG_PREFIX_UPGRADE);
+		}
+		file_notice('config.xml', gettext('Firewall "match quick" rules were changed, see system logs for details.'));
 	}
 }
 

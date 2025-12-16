@@ -16,7 +16,7 @@ emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 emulators/qemu-guest-agent
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd
-graphics/drm-515-kmod
+graphics/drm-61-kmod
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 net-mgmt/%%PRODUCT_NAME%%-pkg-ANDwatch
 net-mgmt/%%PRODUCT_NAME%%-pkg-arpwatch

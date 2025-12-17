@@ -5104,7 +5104,7 @@ function interface_dhcpv6_configure($ifconf, $ifcfg, $destroy = false) {
 		$dhcp6cscriptwithoutra .= "echo \$dreason > /tmp/{$wanif}_reason\n";
 		$dhcp6cscriptwithoutra .= "case \$REASON in\n";
 		$dhcp6cscriptwithoutra .= "REQUEST)\n";
-		$dhcp6cscriptwithoutra .= "/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -A {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}\n";
+		$dhcp6cscriptwithoutra .= "/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -A {$g['varetc_path']}/rtsold_{$wanif}_script.sh -R /usr/bin/true {$wanif}\n";
 		if ($debugOption == '-D') {
 			$dhcp6cscriptwithoutra .= implode(' ', [
 				'/usr/bin/logger', '-p user.info', '-t dhcp6c',
@@ -5375,6 +5375,7 @@ EOD;
 			mwexec("/usr/sbin/rtsold -1 " .
 			    "-p {$g['varrun_path']}/rtsold_{$realif}.pid " .
 			    "-A {$g['varetc_path']}/rtsold_{$realif}_script.sh " .
+			    "-R /usr/bin/true " .
 			    $realif);
 		}
 	} else {

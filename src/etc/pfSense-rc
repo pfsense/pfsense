@@ -617,10 +617,10 @@ if [ -n "${USE_ZFS}" ]; then
 				AVAIL=$( zfs list -Hpo avail "${ZPOOL}" )
 				RESSIZE=$( zfs list -Hpo avail,used "${ZPOOL}" | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
 				if [ $(( AVAIL / 2 )) -gt "${RESSIZE}" ]; then
-					logger "Creating ZFS reservation of ${RESSIZE} bytes on ${ZPOOL}"
+					logger -p user.info "INFO Creating ZFS reservation of ${RESSIZE} bytes on ${ZPOOL}"
 					zfs create -o reservation="${RESSIZE}" "${ZPOOL}/reservation"
 				else
-					logger "Not enough space to create reservation on ${ZPOOL};  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
+					logger -p user.err "ERROR Not enough space to create reservation on ${ZPOOL};  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
 				fi
 			fi
 		fi

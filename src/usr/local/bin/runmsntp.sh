@@ -27,6 +27,6 @@ echo $$ > $1
 # exits (wait 1 second to avoid restarting too fast in case
 # the network is not yet setup)
 while true; do
-	/usr/local/bin/msntp -v -r -P no -l $2 -x $3 $4 2>&1 | logger -p daemon.info -i -t msntp
+	/usr/local/bin/msntp -v -r -P no -l $2 -x $3 $4 2>&1 | /usr/bin/sed 's/^/INFO /' | logger -p daemon.info -i -t msntp
 	sleep 60
 done

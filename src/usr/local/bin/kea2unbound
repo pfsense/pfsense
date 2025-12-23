@@ -137,8 +137,8 @@ final class KeaConfig extends Singleton
             );
         }
 
-        $this->config = \json_decode($configJson, true);
-        if (\json_last_error() !== JSON_ERROR_NONE) {
+        $tmpConfig = \json_decode($configJson, true);
+        if (!is_array($tmpConfig) || (\json_last_error() !== JSON_ERROR_NONE)) {
             throw new KeaConfigException(
                 \sprintf(
                     \gettext('Unable to parse Kea configuration file: %s'),
@@ -146,6 +146,7 @@ final class KeaConfig extends Singleton
                 )
             );
         }
+        $this->config = $tmpConfig;
 
         if (isset($this->config['Dhcp4'])) {
             $this->addressFamily = AddressFamily::INET;

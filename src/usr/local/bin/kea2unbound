@@ -476,8 +476,11 @@ function unbound_read_include_hash(string $unboundIncludeFile): string|false
     $hash = false;
     $fd = \fopen($unboundIncludeFile, 'r');
     if ($fd) {
-        /* First line is assumed to *always* be a commented hash */
-        $hash = \trim(\substr(\fgets($fd), 1));
+        $firstLine = \fgets($fd);
+        /* Don't crash if the file is empty */
+        if (is_string($firstLine)) {
+            $hash = \trim(\substr($firstLine));
+        }
         fclose($fd);
     }
 

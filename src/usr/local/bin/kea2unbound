@@ -479,7 +479,7 @@ function unbound_read_include_hash(string $unboundIncludeFile): string|false
         $firstLine = \fgets($fd);
         /* Don't crash if the file is empty */
         if (is_string($firstLine)) {
-            $hash = \trim(\substr($firstLine));
+            $hash = \trim(\substr($firstLine, 1));
         }
         fclose($fd);
     }

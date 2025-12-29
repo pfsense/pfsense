@@ -3987,10 +3987,6 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			$matches = "";
 			if ($rule['ipprotocol'] == "inet6") {
 				if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-					$opt_sa = $FilterIflist["opt{$optmatch[1]}"]['sav6'];
-					if (!is_ipaddrv6($opt_sa)) {
-						return "";
-					}
 					$add_macro = true;
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
@@ -4004,10 +4000,6 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				}
 			} else {
 				if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-					$opt_sa = $FilterIflist["opt{$optmatch[1]}"]['sa'];
-					if (!is_ipaddrv4($opt_sa)) {
-						return "";
-					}
 					$add_macro = true;
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
@@ -4024,12 +4016,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			if ($rule['ipprotocol'] == "inet6") {
 				switch ($rule[$target]['network']) {
 					case 'wan':
-						$wansa = $FilterIflist['wan']['sav6'];
-						if (!is_ipaddrv6($wansa)) {
-							return "";
-						}
-						$wansn = $FilterIflist['wan']['snv6'];
-						$src = "{$wansa}/{$wansn}";
+						$add_macro = true;
 						break;
 					case 'wanip':
 						$src = $FilterIflist["wan"]['ipv6'];
@@ -4044,12 +4031,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						}
 						break;
 					case 'lan':
-						$lansa = $FilterIflist['lan']['sav6'];
-						if (!is_ipaddrv6($lansa)) {
-							return "";
-						}
-						$lansn = $FilterIflist['lan']['snv6'];
-						$src = "{$lansa}/{$lansn}";
+						$add_macro = true;
 						break;
 					case '(self)':
 						$src = "(self)";
@@ -4071,10 +4053,6 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			} else {
 				switch ($rule[$target]['network']) {
 					case 'wan':
-						$wansa = $FilterIflist['wan']['sa'];
-						if (!is_ipaddrv4($wansa)) {
-							return "";
-						}
 						$add_macro = true;
 						break;
 					case 'wanip':
@@ -4084,10 +4062,6 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$src = $FilterIflist["lan"]['ip'];
 						break;
 					case 'lan':
-						$lansa = $FilterIflist['lan']['sa'];
-						if (!is_ipaddrv4($lansa)) {
-							return "";
-						}
 						$add_macro = true;
 						break;
 					case '(self)':
@@ -4132,7 +4106,11 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				} else {
 					$src = '';
 				}
-			} elseif (!empty($ifmacro)) {
+			} elseif (!empty($ifmacro) && isset($FilterIflist[$ifmacro]) &&
+			    (!empty($FilterIflist[$ifmacro]['sa']) || !empty($FilterIflist[$ifmacro]['sav6']) ||
+			    !empty($FilterIflist[$ifmacro]['vips']) || !empty($FilterIflist[$ifmacro]['vips6']))
+			) {
+				// Interface macros are expected to contain at least a primary address or VIP.
 				$src = ' ' . (isset($rule[$target]['not']) ? '! ' : '') . '$' . strtoupper($ifmacro) . '__NETWORK';
 			} else {
 				$src = '';

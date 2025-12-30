@@ -210,23 +210,70 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
 	// Setup DNS64 support
 	if (array_path_enabled($unboundcfg, 'dns64')) {
+		$dns64_prefix = null;
+		$add_reserved_nat64_conf = false;
+		$add_respip_module = false;
+
+		// Define the DNS64 prefix
 		if (config_path_enabled('system', 'allow_nat64_prefix_override')) {
-			$module_config .= 'dns64 ';
-			$dns64_conf = 'dns64-prefix: ';
 			if (validate_nat64_prefix(array_get_path($unboundcfg, 'dns64/prefix'))) {
-				$dns64_conf .= $unboundcfg['dns64']['prefix'];
+				$dns64_prefix = $unboundcfg['dns64']['prefix'];
 			} else {
-				$dns64_conf .= NAT64_WELLKNOWN_PREFIX_CIDR;
+				$dns64_prefix = NAT64_WELLKNOWN_PREFIX_CIDR;
 			}
 		} else {
+			$add_reserved_nat64_conf = true;
+			$dns64_prefix = NAT64_WELLKNOWN_PREFIX_CIDR;
+		}
+		$dns64_conf = ["dns64-prefix: {$dns64_prefix}"];
+
+		// Omit reserved NAT64 addresses
+		if ($add_reserved_nat64_conf) {
+			$add_respip_module = true;
 			global $reserved_table_names;
-			$module_config .= 'respip dns64 ';
-			$dns64_conf = ['dns64-prefix: ' . NAT64_WELLKNOWN_PREFIX_CIDR];
 			foreach (explode(' ', $reserved_table_names['_nat64reserved_']['address']) as $reserved_na64_address) {
 				$dns64_conf[] = "response-ip: \"{$reserved_na64_address}\" redirect";
 			}
-			$dns64_conf = implode(PHP_EOL, $dns64_conf);
 		}
+
+		// Omit NAT64 addresses for queries from localhost
+		if (!config_path_enabled('unbound/dns64', 'allow_dns64_for_localhost')) {
+			$add_respip_module = true;
+			$dns64_tag = "dns64";
+			$dns64_conf[] = "define-tag: \"{$dns64_tag}\"";
+			$dns64_conf[] = "response-ip-tag: {$dns64_prefix} \"{$dns64_tag}\"";
+			// Always include the loopback interface
+			$localhost_addresses = get_interface_addresses_all('lo0');
+			// Also include addresses from assigned interfaces
+			foreach (config_get_path('interfaces', []) as $interface_label => $interface_config) {
+				if (!isset($interface_config['enable'])) {
+					continue;
+				}
+				$localhost_addresses = array_merge($localhost_addresses,
+					get_interface_addresses_all(get_real_interface($interface_label))
+				);
+			}
+			$localhost_addresses = array_unique($localhost_addresses);
+			foreach ($localhost_addresses as $address) {
+				$netblock = match (is_ipaddr($address)) {
+					4 => "{$address}/32",
+					6 => "{$address}/128",
+					default => null
+				};
+				if (!isset($netblock)) {
+					continue;
+				}
+				$dns64_conf[] = "access-control-tag: {$netblock} \"{$dns64_tag}\"";
+				$dns64_conf[] = "access-control-tag-action: {$netblock} \"{$dns64_tag}\" redirect";
+			}
+		}
+
+		if ($add_respip_module) {
+			$module_config .= 'respip dns64 ';
+		} else {
+			$module_config .= 'dns64 ';
+		}
+		$dns64_conf = implode(PHP_EOL, $dns64_conf);
 	}
 
 	// Setup DNSSEC support

@@ -78,6 +78,7 @@ $pconfig['use_caps'] = config_path_enabled('unbound', 'use_caps');
 
 $pconfig['dns64_enable'] = config_path_enabled('unbound/dns64');
 $pconfig['dns64_prefix'] = config_get_path('unbound/dns64/prefix', '');
+$pconfig['allow_dns64_for_localhost'] = config_path_enabled('unbound/dns64', 'allow_dns64_for_localhost');
 
 if ($_POST) {
 	if ($_POST['apply']) {
@@ -225,6 +226,11 @@ if ($_POST) {
 				config_set_path('unbound/dns64/prefix', $_POST['dns64_prefix']);
 			} else {
 				config_del_path('unbound/dns64/prefix');
+			}
+			if ($_POST['allow_dns64_for_localhost'] == "yes") {
+				config_set_path('unbound/dns64/allow_dns64_for_localhost', true);
+			} else {
+				config_del_path('unbound/dns64/allow_dns64_for_localhost');
 			}
 			if (empty(config_get_path('unbound/dns64'))) {
 				config_del_path('unbound/dns64');
@@ -498,6 +504,13 @@ if (config_path_enabled('system', 'allow_nat64_prefix_override')) {
 		'Override the default prefix for DNS64.'
 	);
 }
+
+$section->addInput(new Form_Checkbox(
+	'allow_dns64_for_localhost',
+	'DNS64 for Localhost',
+	'Disable the automatically-added configuration that removes DNS64 answers from localhost queries.',
+	$pconfig['allow_dns64_for_localhost']
+));
 
 $form->add($section);
 print($form);
